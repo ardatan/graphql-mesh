@@ -967,11 +967,7 @@ function findBalancedParenClose(s: string, openIdx: number): number {
  * Connectors `$()` body: JSON literal, path/`->` expr, or `a ?? b` / `a ?! b`
  * (Apollo nullish coalescing — required before `->match` when `get` may be None).
  */
-function evalConnectorsDollarParen(
-  inner: string,
-  root: any,
-  extras: ConnectSelectionExtras,
-): any {
+function evalConnectorsDollarParen(inner: string, root: any, extras: ConnectSelectionExtras): any {
   const trimmed = inner.trim();
   if (!trimmed) return undefined;
   try {
@@ -1008,11 +1004,7 @@ function evalConnectorsDollarParen(
       }
     }
   }
-  if (
-    trimmed.startsWith('$') ||
-    trimmed.includes('->') ||
-    /^[A-Za-z_]/.test(trimmed)
-  ) {
+  if (trimmed.startsWith('$') || trimmed.includes('->') || /^[A-Za-z_]/.test(trimmed)) {
     return evalPath(trimmed, root, extras);
   }
   return trimmed;
@@ -1637,9 +1629,7 @@ export function addConnectFieldResolver(
       // `$expand` + inline nav). Re-running `->match` on mapped objects loses
       // `@odata.type` and collapses every row to the default union member.
       const alreadyMapped = Array.isArray(embedded)
-        ? embedded.some(
-            item => item != null && typeof item === 'object' && '__typename' in item,
-          )
+        ? embedded.some(item => item != null && typeof item === 'object' && '__typename' in item)
         : embedded != null &&
           typeof embedded === 'object' &&
           !Array.isArray(embedded) &&

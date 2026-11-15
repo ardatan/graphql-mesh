@@ -8,6 +8,10 @@
 #   B) Manual: secret MSGRAPH_ACCESS_TOKEN (expires ~1h — not for day-to-day CI).
 # Without credentials the live describe is skipped (job stays green).
 name: odata-msgraph-live
+
+permissions:
+  contents: read
+
 on:
   pull_request:
     paths:

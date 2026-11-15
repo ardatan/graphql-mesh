@@ -284,9 +284,41 @@ function collectField(
     return;
   }
 
+  // Entity unions (`IPerson`, `IPlanItem`) can still `$expand` via a representative
+  // `@key` member. Non-entity abstracts (e.g. Location unions) stay `$select`-only —
+  // nested shape comes from the Connectors selection, not OData column lists.
   if (isAbstractType(namedType)) {
-    // Abstract-valued fields cannot be projected safely via `$select` alone.
-    out.select.add('__odata_projection_unsafe__');
+    const member =
+      expandNavProps && isODataExpandableField(fieldDef) && field.selectionSet
+        ? pickEntityMemberType(namedType)
+        : null;
+    if (member && field.selectionSet) {
+      const nested = { select: new Set<string>(), expand: [] as string[] };
+      collectSelections(
+        field.selectionSet.selections,
+        member,
+        info,
+        propertyMap,
+        nested,
+        expandNavProps,
+      );
+      if (nested.select.has('__odata_projection_unsafe__')) {
+        out.select.add('__odata_projection_unsafe__');
+        return;
+      }
+      addEntityKeySelects(member, propertyMap, nested.select);
+      const nestedParts: string[] = [];
+      if (nested.select.size) {
+        nestedParts.push(`$select=${[...nested.select].join(',')}`);
+      }
+      if (nested.expand.length) {
+        nestedParts.push(`$expand=${nested.expand.join(',')}`);
+      }
+      out.expand.push(nestedParts.length ? `${odataName}(${nestedParts.join(';')})` : odataName);
+      out.select.add(odataName);
+      return;
+    }
+    out.select.add(odataName);
     return;
   }
 
@@ -305,16 +337,7 @@ function collectField(
         out.select.add('__odata_projection_unsafe__');
         return;
       }
-      // Nested entities need their key / identifier for bound ops / @odata.id.
-      const nestedKeyDirs = getDirectiveExtensions(namedType as any)?.key;
-      if (Array.isArray(nestedKeyDirs)) {
-        for (const key of nestedKeyDirs) {
-          const fields = typeof key?.fields === 'string' ? key.fields.split(/\s+/) : [];
-          for (const f of fields) {
-            if (f) nested.select.add(propertyMap.get(f) || f);
-          }
-        }
-      }
+      addEntityKeySelects(namedType, propertyMap, nested.select);
       const nestedParts: string[] = [];
       if (nested.select.size) {
         nestedParts.push(`$select=${[...nested.select].join(',')}`);
@@ -331,9 +354,44 @@ function collectField(
   }
 }
 
+/** First `@key` object member of a union (entity polymorphism), else first object. */
+function pickEntityMemberType(type: GraphQLOutputType): GraphQLObjectType | null {
+  const named = getNamedType(type);
+  if (isObjectType(named)) {
+    return named;
+  }
+  if (!isUnionType(named)) {
+    return null;
+  }
+  const objects = named.getTypes().filter(isObjectType);
+  return (
+    objects.find(t => hasDirective(getDirectiveExtensions(t as any) || {}, 'key')) ||
+    objects[0] ||
+    null
+  );
+}
+
+function addEntityKeySelects(
+  entityType: GraphQLObjectType,
+  propertyMap: Map<string, string>,
+  select: Set<string>,
+): void {
+  const nestedKeyDirs = getDirectiveExtensions(entityType as any)?.key;
+  if (!Array.isArray(nestedKeyDirs)) {
+    return;
+  }
+  for (const key of nestedKeyDirs) {
+    const fields = typeof key?.fields === 'string' ? key.fields.split(/\s+/) : [];
+    for (const f of fields) {
+      if (f) select.add(propertyMap.get(f) || f);
+    }
+  }
+}
+
 /**
  * Build OData `$select` / `$expand` from the GraphQL field selection.
- * Skips when the return type is abstract (inline fragments / inheritance).
+ * Entity unions (`IPerson`) project via a representative `@key` member so
+ * `expandNavProps` still emits `$expand` (e.g. TripPin `Me` → `Trips`).
  */
 export function buildODataSelectExpand(
   info: GraphQLResolveInfo,
@@ -342,7 +400,8 @@ export function buildODataSelectExpand(
 ): { select: string[]; expand: string[] } {
   const empty = { select: [] as string[], expand: [] as string[] };
   const returnType = unwrapOutputType(info.returnType);
-  if (isAbstractType(returnType) || !isObjectType(returnType)) {
+  const projectionType = isObjectType(returnType) ? returnType : pickEntityMemberType(returnType);
+  if (!projectionType) {
     return empty;
   }
   const propertyMap = buildConnectPropertyNameMap(connectSelection);
@@ -351,7 +410,7 @@ export function buildODataSelectExpand(
     if (!fieldNode.selectionSet) continue;
     collectSelections(
       fieldNode.selectionSet.selections,
-      returnType,
+      projectionType,
       info,
       propertyMap,
       out,
@@ -363,15 +422,7 @@ export function buildODataSelectExpand(
   }
   // Always include `@key` / identifier fields so entity URLs / bound ops keep working.
   // Translate GraphQL key field names through the connector property map.
-  const keyDirs = getDirectiveExtensions(returnType as any)?.key;
-  if (Array.isArray(keyDirs)) {
-    for (const key of keyDirs) {
-      const fields = typeof key?.fields === 'string' ? key.fields.split(/\s+/) : [];
-      for (const f of fields) {
-        if (f) out.select.add(propertyMap.get(f) || f);
-      }
-    }
-  }
+  addEntityKeySelects(projectionType, propertyMap, out.select);
   return {
     select: [...out.select],
     expand: mergeExpandItems(out.expand),
@@ -482,7 +533,25 @@ export function attachExpandedNavFromRaw(
     return selected;
   }
   const returnType = unwrapOutputType(info.returnType);
-  if (!isObjectType(returnType)) {
+  // Prefer concrete `__typename` after union match; else a representative `@key` member.
+  let objectType: GraphQLObjectType | null = null;
+  if (isObjectType(returnType)) {
+    objectType = returnType;
+  } else {
+    const typename =
+      !Array.isArray(selected) &&
+      typeof (selected as { __typename?: unknown }).__typename === 'string'
+        ? (selected as { __typename: string }).__typename
+        : null;
+    if (typename) {
+      const fromSchema = info.schema.getType(typename);
+      if (isObjectType(fromSchema)) {
+        objectType = fromSchema;
+      }
+    }
+    objectType ||= pickEntityMemberType(returnType);
+  }
+  if (!objectType) {
     return selected;
   }
   // Attach under the schema field name (resolvers read `root.friends`, not the alias).
@@ -491,7 +560,7 @@ export function attachExpandedNavFromRaw(
     if (!fieldNode.selectionSet) continue;
     for (const sel of fieldNode.selectionSet.selections) {
       if (sel.kind !== Kind.FIELD) continue;
-      const fieldDef = returnType.getFields()[sel.name.value];
+      const fieldDef = objectType.getFields()[sel.name.value];
       if (!fieldDef) continue;
       if (!isODataStructuralField(fieldDef, true)) continue;
       if (!isODataExpandableField(fieldDef)) continue;

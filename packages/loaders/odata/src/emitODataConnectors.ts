@@ -265,8 +265,7 @@ function entitySelection(
         .map((t: any) => (typeof t === 'string' ? t : t.getTypeName?.()))
         .filter((n: unknown): n is string => typeof n === 'string');
       const defaultTypename = (utc.getExtensions() as any)?.odata?.defaultTypename as
-        | string
-        | undefined;
+        string | undefined;
       return odataAbstractTypenameSpread(schemaComposer, members, defaultTypename);
     } catch {
       return '';
@@ -367,8 +366,7 @@ function selectionAndParamsForPluralNav(
     if (schemaComposer.isObjectType(named)) {
       const childTC = schemaComposer.getOTC(named);
       const childInfo = (childTC.getExtensions() as any)?.odata?.entityInfo as
-        | { navigationFields?: string[] }
-        | undefined;
+        { navigationFields?: string[] } | undefined;
       const navSet = new Set(childInfo?.navigationFields || []);
       for (const fn of childTC.getFieldNames()) {
         const f = childTC.getField(fn);
@@ -443,8 +441,7 @@ function selectionForFieldReturnType(
         .map((t: any) => (typeof t === 'string' ? t : t.getTypeName?.()))
         .filter((n: unknown): n is string => typeof n === 'string');
       const defaultTypename = (utc.getExtensions() as any)?.odata?.defaultTypename as
-        | string
-        | undefined;
+        string | undefined;
       const spread = odataAbstractTypenameSpread(schemaComposer, members, defaultTypename);
       if (!spread) return '$';
       return isList ? `$.value { ${spread} }` : spread;
@@ -913,10 +910,7 @@ export function emitODataConnectors(
           const navName = dirs.pluralNav.navigationPropertyName as string;
           // Bake child `$expand` + selection so Apollo (no Mesh expandNavProps) and
           // Hive share one HTTP for nested entity nav (e.g. Trips→PlanItems).
-          const { selection, queryParams } = selectionAndParamsForPluralNav(
-            schemaComposer,
-            field,
-          );
+          const { selection, queryParams } = selectionAndParamsForPluralNav(schemaComposer, field);
           setConnect(
             otc,
             fieldName,
@@ -1223,8 +1217,7 @@ export function emitODataPolymorphicUnions(
       continue;
     }
 
-    const defaultTypename =
-      !isAbstract && members.includes(base) ? base : members[0];
+    const defaultTypename = !isAbstract && members.includes(base) ? base : members[0];
 
     let abstractOrphan: string | undefined;
     if (isAbstract && schemaComposer.isObjectType(base)) {

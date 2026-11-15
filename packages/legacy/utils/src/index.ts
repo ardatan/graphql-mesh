@@ -21,6 +21,7 @@ export * from './registerTerminateHandler.js';
 export * from './getAdditionalResolversFromTypeDefs.js';
 export * from './get-def-directives.js';
 export * from './disposable.js';
+export { iterateAsync } from '@whatwg-node/promise-helpers';
 export * from './in-context-sdk.js';
 export * from './with-filter.js';
 export * from './transport-directive.js';

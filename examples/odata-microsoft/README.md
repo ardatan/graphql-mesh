@@ -51,8 +51,10 @@ You do **not** paste a new access token every run. Store a refresh token once; t
 3. **API permissions** (delegated) + **admin consent** for the app:
    - `User.Read`, `Mail.Read`, `Group.Read.All`, `Files.Read`, `offline_access`
 4. Use a dedicated test user that actually has the backing workload (MFA/CA exception if needed):
-   - **Mail** (`fetchRecentEmails`): Exchange Online mailbox + `Mail.Read` (403 / Access Denied → soft-skipped in live e2e until fixed)
-   - **OneDrive / SPO** (`fetchFilesFromOneDrive`): Microsoft 365 / OneDrive license so `/me/drives` returns quota (license / SPO gaps → soft-skipped)
+   - **Mail** (`fetchRecentEmails`): Exchange Online mailbox + `Mail.Read` (403 / Access Denied →
+     soft-skipped in live e2e until fixed)
+   - **OneDrive / SPO** (`fetchFilesFromOneDrive`): Microsoft 365 / OneDrive license so `/me/drives`
+     returns quota (license / SPO gaps → soft-skipped)
    - **Groups** (`fetchGroupsAndMembers`): `Group.Read.All` and at least one readable group
 5. Mint a refresh token once:
 
@@ -85,8 +87,8 @@ If Microsoft rotates/revokes the refresh token, re-run the helper and update
 
 Schema note: live execute keeps the e2e fixture metadata (example-query surface). The HTTP endpoint
 is real Graph (`GRAPH_VERSION=v1.0` or `beta`, same as `yarn start` / `yarn start:beta`). Abstract
-OData bases and inheritance become GraphQL unions (`directoryObject`, `IPerson`, …) discriminated
-by `@odata.type` → `__typename` (Router-safe; interfaces/`implements` break Connectors expand).
+OData bases and inheritance become GraphQL unions (`directoryObject`, `IPerson`, …) discriminated by
+`@odata.type` → `__typename` (Router-safe; interfaces/`implements` break Connectors expand).
 
 ## Sample requests
 
