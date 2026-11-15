@@ -1,4 +1,4 @@
-import type { GraphQLField, GraphQLSchema } from 'graphql';
+import type { GraphQLField, GraphQLOutputType, GraphQLSchema } from 'graphql';
 import {
   getNamedType,
   isEnumType,
@@ -172,29 +172,46 @@ export function processDirectives(
           }
         }
         // Former `@flatten`: OpenAPI oneOf(string|array) → `[Scalar]` needs deep-flatten.
-        // No Connectors expression for this — coerce list-of-leaf fields without a directive.
-        installListFlattenCoercion(field as GraphQLField<any, any>);
+        // Also legacy SOAP soapDefaultResolver: wrap/unwrap nested lists by GraphQL type.
+        installXmlListPluralization(field as GraphQLField<any, any>);
       }
     }
   }
   return schema;
 }
 
-/** `[Scalar]` fields: normalize nested arrays / singular values (ex-`@flatten`). */
-function installListFlattenCoercion(field: GraphQLField<any, any>) {
-  let t = field.type;
-  while (isNonNullType(t)) t = t.ofType;
-  if (!isListType(t)) return;
-  const leaf = getNamedType(t.ofType);
-  if (!isScalarType(leaf) && !isEnumType(leaf)) return;
+function isListTypeOrNonNullListType(type: GraphQLOutputType): boolean {
+  if (isNonNullType(type)) {
+    return isListType(type.ofType);
+  }
+  return isListType(type);
+}
+
+/**
+ * Nested XML/SOAP responses: a single unbounded element is an object, not an array.
+ * Match legacy transport-soap `soapDefaultResolver` (+ OpenAPI `@flatten` for scalar lists).
+ * Skip fields that already have a custom resolver (e.g. `@connect` roots handle their own wrap).
+ */
+function installXmlListPluralization(field: GraphQLField<any, any>) {
   if (field.resolve && field.resolve.name !== 'defaultFieldResolver') return;
+  const isPlural = isListTypeOrNonNullListType(field.type);
+  let listInner = field.type;
+  while (isNonNullType(listInner)) listInner = listInner.ofType;
+  const leaf = isListType(listInner) ? getNamedType(listInner.ofType) : getNamedType(field.type);
+  const flattenScalars = isPlural && (isScalarType(leaf) || isEnumType(leaf));
   const fieldName = field.name;
-  field.resolve = function listFlattenCoercion(root) {
+  field.resolve = function xmlListPluralization(root) {
     let result = root?.[fieldName];
     if (result == null) return result;
-    if (!Array.isArray(result)) {
-      result = [result];
+    if (isPlural) {
+      if (!Array.isArray(result)) {
+        result = [result];
+      }
+      return flattenScalars ? result.flat(Infinity) : result;
     }
-    return result.flat(Infinity);
+    if (Array.isArray(result)) {
+      return result[0];
+    }
+    return result;
   };
 }

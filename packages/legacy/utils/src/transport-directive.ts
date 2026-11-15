@@ -77,6 +77,8 @@ export type RESTTransportDirectiveOptions = {
   queryStringOptions?: Record<string, any>;
   /** Present when the subgraph was loaded from OData. */
   odata?: ODataTransportOptions;
+  /** SOAP WSDL: GraphQL input type name → XSD namespace URI (nested envelope prefixes). */
+  typeNamespacesJson?: Record<string, string>;
 };
 
 /** Read kind-specific options from `@transport(options:)`. */

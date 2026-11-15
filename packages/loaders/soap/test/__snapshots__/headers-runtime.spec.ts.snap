@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SOAP Headers should pass headers to the executor: soap-with-headers 1`] = `
-"schema @transport(kind: "rest", subgraph: "Test") @source(name: "Test", http: {baseURL: "http://www.webservicex.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "rest", subgraph: "Test", options: {typeNamespacesJson: {tns_GetWeather_Input: "http://www.webserviceX.NET", tns_GetCitiesByCountry_Input: "http://www.webserviceX.NET"}}) @source(name: "Test", http: {baseURL: "http://www.webservicex.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 

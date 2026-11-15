@@ -1504,10 +1504,16 @@ export class SOAPLoader {
     // the schema from SDL still see this metadata. typeNamespacesJson is
     // included here (rather than on schema.extensions directly) so the
     // namespace-aware envelope path also works after federation composition.
-    // Connectors subgraph: Hive loads transport-rest for @connect / @source.
+    // Connectors subgraph: Hive loads transport-rest for @connect / @source;
+    // XML codec uses typeNamespacesJson to qualify nested complex types
+    // (legacy transport-soap buildValueXml parity).
     schemaExts.directives.transport = {
       kind: 'rest',
       subgraph: this.subgraphName,
+      // Kind-specific bag (survives compose via @extraSchemaDefinitionDirective).
+      options: {
+        typeNamespacesJson: Object.fromEntries(this.typeNamespaceMap),
+      },
     };
     schemaExts.directives.source = [
       buildSoapSourceDirectiveArgs({

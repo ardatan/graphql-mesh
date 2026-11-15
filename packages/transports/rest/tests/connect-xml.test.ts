@@ -1,6 +1,7 @@
 import { buildSchema, execute, parse, type GraphQLSchema } from 'graphql';
 import { Response } from '@whatwg-node/fetch';
 import { processConnectDirectives } from '../src/directives/connect.js';
+import { processDirectives } from '../src/directives/process.js';
 import {
   inheritXmlNamespacePrefixes,
   isXmlContentType,
@@ -220,6 +221,71 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
     expect(jsObjectToXml(inherited)).toContain(
       '<orders:SubmitOrder><orders:customerId>c1</orders:customerId><orders:items><orders:productId>p1</orders:productId><orders:quantity>2</orders:quantity></orders:items></orders:SubmitOrder>',
     );
+  });
+
+  it('unwraps innerText on attributed leaves (legacy normalizeResult)', () => {
+    const parsed = xmlToJsObject(
+      '<Envelope><Body><Name id="1">Alice</Name></Body></Envelope>',
+    ) as any;
+    expect(parsed.Envelope.Body.Name).toBe('Alice');
+  });
+
+  it('wraps a single nested XML element into a GraphQL list field', async () => {
+    // Legacy soapDefaultResolver: one sibling for an unbounded element must still
+    // satisfy [T]. processDirectives installs the pluralization (not connect-only).
+    const fetchImpl = async () =>
+      new Response(
+        `<?xml version="1.0"?><Envelope><Body><Items><Item><Name>Solo</Name></Item></Items></Body></Envelope>`,
+        { status: 200, headers: { 'content-type': 'text/xml' } },
+      );
+
+    const sdl = /* GraphQL */ `
+      schema @source(name: "xmlApi", http: { baseURL: "http://localhost" }) {
+        query: Query
+      }
+
+      type Query {
+        bag: Bag
+          @connect(
+            source: "xmlApi"
+            http: {
+              POST: "/bag"
+              headers: [{ name: "Content-Type", value: "text/xml" }]
+              body: """
+              Request: { id: $("1") }
+              """
+            }
+            selection: "items: Envelope.Body.Items.Item { name: Name }"
+          )
+      }
+
+      type Bag {
+        items: [Item!]
+      }
+
+      type Item {
+        name: String
+      }
+    `;
+
+    const schema = processDirectives(buildSchema(`${CONNECTOR_DIRECTIVES}\n${sdl}`), {
+      globalFetch: fetchImpl as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          bag {
+            items {
+              name
+            }
+          }
+        }
+      `),
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ bag: { items: [{ name: 'Solo' }] } });
   });
 
   it('parses XML when Content-Type is omitted but body has an XML declaration', async () => {
