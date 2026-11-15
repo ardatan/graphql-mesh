@@ -1,10 +1,5 @@
-import {
-  getNamedType,
-  isInputObjectType,
-  type GraphQLField,
-  type GraphQLType,
-} from 'graphql';
 import { XMLBuilder, XMLParser } from 'fast-xml-parser';
+import { getNamedType, isInputObjectType, type GraphQLField, type GraphQLType } from 'graphql';
 
 /**
  * Shared fast-xml-parser options for Mesh `@connect` XML bodies/responses.
@@ -129,9 +124,7 @@ function buildValueXml(
   if (typeof value === 'object') {
     const namedType = graphqlType ? getNamedType(graphqlType) : null;
     const typeNsUri = namedType ? typeNamespaceMap.get(namedType.name) : null;
-    const resolvedPrefix = typeNsUri
-      ? getOrAssignPrefix(typeNsUri, assigned, envelopeAttrs)
-      : null;
+    const resolvedPrefix = typeNsUri ? getOrAssignPrefix(typeNsUri, assigned, envelopeAttrs) : null;
     const nsPrefix = resolvedPrefix ?? fallbackPrefix ?? null;
 
     const result: Record<string, unknown> = {};
@@ -225,14 +218,16 @@ function deriveXmlPrefix(nsUri: string): string {
   return 'body';
 }
 
-function localNameOf(key: string): string {
-  const i = key.indexOf(':');
-  return i === -1 ? key : key.slice(i + 1);
+function localNameOf(key: string | number): string {
+  const s = String(key);
+  const i = s.indexOf(':');
+  return i === -1 ? s : s.slice(i + 1);
 }
 
-function prefixOf(key: string): string | undefined {
-  const i = key.indexOf(':');
-  return i === -1 ? undefined : key.slice(0, i);
+function prefixOf(key: string | number): string | undefined {
+  const s = String(key);
+  const i = s.indexOf(':');
+  return i === -1 ? undefined : s.slice(0, i);
 }
 
 /**

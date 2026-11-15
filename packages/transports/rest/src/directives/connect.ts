@@ -2179,8 +2179,7 @@ export function addConnectFieldResolver(
           const transportDir = (schema.extensions as any)?.directives?.transport;
           const transport = Array.isArray(transportDir) ? transportDir[0] : transportDir;
           const transportOptions = transport?.options || {};
-          const rawTypeNs =
-            transportOptions.typeNamespacesJson ?? transport?.typeNamespacesJson;
+          const rawTypeNs = transportOptions.typeNamespacesJson ?? transport?.typeNamespacesJson;
           const typeNamespacesJson =
             typeof rawTypeNs === 'string' ? JSON.parse(rawTypeNs) : rawTypeNs;
           requestBody = jsObjectToXml(bodyValue, {
