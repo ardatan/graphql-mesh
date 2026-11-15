@@ -26,7 +26,7 @@ import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
-import transportRest, { type RESTTransportOptions } from '@graphql-mesh/transport-rest';
+import transportConnector, { type ConnectorTransportOptions } from '@graphql-mesh/transport-connector';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import {
@@ -992,7 +992,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     log,
   });
 
-  // Federation Connectors surface — Hive runs via transport-rest (+ odata.metadata $select).
+  // Federation Connectors surface — Hive runs via transport-connector (+ odata.metadata $select).
   const connectMeta = emitODataConnectors(schemaComposer, {
     name,
     endpoint,
@@ -1040,18 +1040,18 @@ export async function loadGraphQLSchemaFromOData(
   opts: LoadGraphQLSchemaFromODataOpts,
 ) {
   const schema = await loadNonExecutableGraphQLSchemaFromOData(name, opts);
-  // transport-rest wires `@connect` + abstract resolveType (incl. `@odata.type`).
-  const { processDirectives } = await import('@graphql-mesh/transport-rest');
+  // transport-connector wires `@connect` + abstract resolveType (incl. `@odata.type`).
+  const { processDirectives } = await import('@graphql-mesh/transport-connector');
   return processDirectives(schema, {
     globalFetch: opts.fetchFn,
     log: opts.log,
   });
 }
 
-export { processDirectives } from '@graphql-mesh/transport-rest';
+export { processDirectives } from '@graphql-mesh/transport-connector';
 
-export const getSubgraphExecutor: TransportGetSubgraphExecutor<RESTTransportOptions> = opts => {
-  return transportRest.getSubgraphExecutor(opts);
+export const getSubgraphExecutor: TransportGetSubgraphExecutor<ConnectorTransportOptions> = opts => {
+  return transportConnector.getSubgraphExecutor(opts);
 };
 
 export function loadODataSubgraph(

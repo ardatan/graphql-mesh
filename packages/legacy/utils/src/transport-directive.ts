@@ -70,8 +70,8 @@ export type ODataTransportOptions = {
   securityHeaderNames?: string[];
 };
 
-/** REST-specific `@transport(options:)` fields. */
-export type RESTTransportDirectiveOptions = {
+/** Connector-transport `@transport(options:)` fields (HTTP qs/timeout, optional OData). */
+export type ConnectorTransportDirectiveOptions = {
   timeout?: number;
   queryParams?: Record<string, string>;
   queryStringOptions?: Record<string, any>;

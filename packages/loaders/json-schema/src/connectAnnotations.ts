@@ -28,7 +28,7 @@ import {
   LinkDirective,
   SourceDirective,
   SourceHTTPInput,
-} from '@graphql-mesh/transport-rest';
+} from '@graphql-mesh/transport-connector';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { getMeshEntityKeyFields, getMeshEntityRef, isMeshEntityType } from './entityRefs.js';

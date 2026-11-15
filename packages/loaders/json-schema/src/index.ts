@@ -1,6 +1,6 @@
 import { type Logger } from '@graphql-hive/logger';
 import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
-import transportRest, { type RESTTransportOptions } from '@graphql-mesh/transport-rest';
+import transportConnector, { type ConnectorTransportOptions } from '@graphql-mesh/transport-connector';
 import type { MeshFetch } from '@graphql-mesh/types';
 import {
   loadGraphQLSchemaFromJSONSchemas,
@@ -38,8 +38,8 @@ export function loadJSONSchemaSubgraph(name: string, options: JSONSchemaLoaderOp
   });
 }
 
-export { processDirectives } from '@graphql-mesh/transport-rest';
+export { processDirectives } from '@graphql-mesh/transport-connector';
 
-export const getSubgraphExecutor: TransportGetSubgraphExecutor<RESTTransportOptions> = opts => {
-  return transportRest.getSubgraphExecutor(opts);
+export const getSubgraphExecutor: TransportGetSubgraphExecutor<ConnectorTransportOptions> = opts => {
+  return transportConnector.getSubgraphExecutor(opts);
 };

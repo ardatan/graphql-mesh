@@ -1,5 +1,5 @@
 ---
-'@graphql-mesh/transport-rest': minor
+'@graphql-mesh/transport-connector': minor
 ---
 
 Mesh `@connect` can speak XML (including SOAP-shaped documents) without a separate `@soap` directive.

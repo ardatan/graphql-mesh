@@ -1,5 +1,5 @@
 ---
-'@graphql-mesh/transport-rest': patch
+'@graphql-mesh/transport-connector': patch
 ---
 
 Support frozen resolver arguments in REST operations

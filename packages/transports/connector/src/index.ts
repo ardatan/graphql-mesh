@@ -1,13 +1,13 @@
 import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-common';
 import { processDirectives, type ProcessDirectiveArgs } from './directives/process.js';
 
-export interface RESTTransportOptions {
+export interface ConnectorTransportOptions {
   timeout?: number;
   queryParams?: Record<string, string>;
   queryStringOptions?: any;
 }
 
-const transport: Transport<RESTTransportOptions> = {
+const transport: Transport<ConnectorTransportOptions> = {
   getSubgraphExecutor({ transportEntry, subgraph, fetch, pubsub, log }) {
     const processDirectiveOpts: ProcessDirectiveArgs = {
       globalFetch: fetch,

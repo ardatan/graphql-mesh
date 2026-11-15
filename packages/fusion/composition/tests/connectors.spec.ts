@@ -231,7 +231,7 @@ describe('Federation Connectors composition', () => {
         @extraSchemaDefinitionDirective(
           directives: {
             source: [{ name: "rest", http: { baseURL: "https://api.example.com" } }]
-            transport: [{ subgraph: "REST", kind: "rest", location: "https://api.example.com" }]
+            transport: [{ subgraph: "REST", kind: "connector", location: "https://api.example.com" }]
           }
         ) {
         user: String @connect(source: "rest", selection: "id")
@@ -283,7 +283,7 @@ describe('Federation Connectors composition', () => {
         transport: [
           {
             subgraph: 'REST',
-            kind: 'rest',
+            kind: 'connector',
             location: 'https://api.example.com',
           },
         ],

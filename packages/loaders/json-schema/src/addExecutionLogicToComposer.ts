@@ -714,7 +714,7 @@ ${operationConfig.description || ''}
     schemaExtensions.directives.transport = [
       {
         subgraph: subgraphName,
-        kind: 'rest',
+        kind: 'connector',
         location: endpoint,
         options: { queryStringOptions },
       },

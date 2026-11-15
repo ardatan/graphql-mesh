@@ -17,7 +17,7 @@ const JSON_BATCH_MAX_REQUESTS = 20;
 /**
  * Per-GraphQL-context DataLoader that coalesces Connectors HTTP calls into a single
  * OData `POST /$batch` (json or multipart). Mirrors the legacy `@omnigraph/odata`
- * `getDataloaderFactory` behavior for the transport-rest Connectors path.
+ * `getDataloaderFactory` behavior for the transport-connector Connectors path.
  */
 /** Default + configurable names that must not cross tenants on outer `/$batch`. */
 export function isODataBatchSecurityHeader(

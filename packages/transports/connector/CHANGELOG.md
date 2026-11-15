@@ -1,4 +1,5 @@
-# @graphql-mesh/transport-rest
+# @graphql-mesh/transport-connector
+
 
 ## 0.12.4
 

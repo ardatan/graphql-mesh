@@ -12,7 +12,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-type Query @shareable @extraSchemaDefinitionDirective(directives: {source: [{name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}], transport: [{subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3"}]}) {
+type Query @shareable @extraSchemaDefinitionDirective(directives: {source: [{name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}], transport: [{subgraph: "petstore", kind: "connector", location: "http://localhost:<petstore_port>/api/v3"}]}) {
   """Multiple status values can be provided with comma separated strings"""
   findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @connect(source: "petstore", http: {GET: "/pet/findByStatus", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status")
   """

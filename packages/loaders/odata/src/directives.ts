@@ -12,4 +12,4 @@ export type TransportDirectiveArgs = SharedTransportDirectiveArgs<{
     expandNavProps?: boolean;
     securityHeaderNames?: string[];
   };
-}> & { kind: 'rest' };
+}> & { kind: 'connector' };
