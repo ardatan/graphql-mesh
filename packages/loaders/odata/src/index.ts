@@ -26,7 +26,9 @@ import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
-import transportConnector, { type ConnectorTransportOptions } from '@graphql-mesh/transport-connector';
+import transportConnector, {
+  type ConnectorTransportOptions,
+} from '@graphql-mesh/transport-connector';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import {
@@ -1050,7 +1052,9 @@ export async function loadGraphQLSchemaFromOData(
 
 export { processDirectives } from '@graphql-mesh/transport-connector';
 
-export const getSubgraphExecutor: TransportGetSubgraphExecutor<ConnectorTransportOptions> = opts => {
+export const getSubgraphExecutor: TransportGetSubgraphExecutor<
+  ConnectorTransportOptions
+> = opts => {
   return transportConnector.getSubgraphExecutor(opts);
 };
 
