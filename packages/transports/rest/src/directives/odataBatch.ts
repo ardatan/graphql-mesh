@@ -19,12 +19,42 @@ const JSON_BATCH_MAX_REQUESTS = 20;
  * OData `POST /$batch` (json or multipart). Mirrors the legacy `@omnigraph/odata`
  * `getDataloaderFactory` behavior for the transport-rest Connectors path.
  */
+/** Default + configurable names that must not cross tenants on outer `/$batch`. */
+export function isODataBatchSecurityHeader(
+  key: string,
+  extraSecurityHeaderNames?: readonly string[],
+): boolean {
+  const lower = key.toLowerCase();
+  if (extraSecurityHeaderNames?.some(n => n.toLowerCase() === lower)) {
+    return true;
+  }
+  if (
+    lower === 'authorization' ||
+    lower === 'proxy-authorization' ||
+    lower === 'cookie' ||
+    lower === 'cookie2' ||
+    lower === 'api-key' ||
+    lower === 'x-api-key' ||
+    lower === 'x-auth-token' ||
+    lower === 'ocp-apim-subscription-key' ||
+    lower === 'ocp-apim-trace'
+  ) {
+    return true;
+  }
+  // Gateway / SaaS custom auth headers (subscription keys, tokens, secrets).
+  return /(?:^|-)(auth|api-?key|subscription-?key|access-?token|secret|credential)(?:-|$)/i.test(
+    lower,
+  );
+}
+
 export function createODataBatchFetch(opts: {
   fetchFn: MeshFetch;
   endpoint: string;
   batchMode: ODataBatchMode;
+  /** Extra header names treated like credentials for batch partitioning / outer forward. */
+  securityHeaderNames?: readonly string[];
 }): BatchableFetch {
-  const { fetchFn, endpoint, batchMode } = opts;
+  const { fetchFn, endpoint, batchMode, securityHeaderNames } = opts;
   if (!batchMode || batchMode === 'none' || !endpoint) {
     return (url, init, context) => fetchFn(url, init as any, context) as Promise<Response>;
   }
@@ -43,19 +73,8 @@ export function createODataBatchFetch(opts: {
       context,
     ) as Promise<Response>;
 
-  /** Headers that must not cross tenants on a shared outer `/$batch` POST. */
-  const isSecuritySensitiveHeader = (key: string): boolean => {
-    const lower = key.toLowerCase();
-    return (
-      lower === 'authorization' ||
-      lower === 'proxy-authorization' ||
-      lower === 'cookie' ||
-      lower === 'cookie2' ||
-      lower === 'api-key' ||
-      lower === 'x-api-key' ||
-      lower === 'x-auth-token'
-    );
-  };
+  const isSecuritySensitiveHeader = (key: string): boolean =>
+    isODataBatchSecurityHeader(key, securityHeaderNames);
 
   const authHeadersFromRequest = (request: Request): Record<string, string> => {
     const headers: Record<string, string> = {};

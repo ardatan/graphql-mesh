@@ -508,6 +508,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               odata: {
                 boundFunction: {
                   functionRef,
+                  // OData binding parameter name (EntitySetPath / first param) — not "any Input".
+                  bindingParameterName: parameterName,
                 },
               } as any,
             },
@@ -667,6 +669,9 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         };
       });
 
+      const bindingParameterName =
+        entityParameterObj?.attributes?.Name ||
+        (typeof entitySetPath === 'string' ? entitySetPath.split('/')[0] : undefined);
       const boundField: ObjectTypeComposerFieldConfigDefinition<any, any, any> = {
         type: 'JSON',
         args,
@@ -674,6 +679,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           odata: {
             boundAction: {
               actionRef,
+              // Filter action body by this name so e.g. `recipient: PersonInput` stays.
+              bindingParameterName,
             },
           } as any,
         },

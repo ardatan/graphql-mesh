@@ -25,9 +25,9 @@ export interface ODataFieldEmit {
   pluralNav?: { navigationPropertyName: string };
   navProp?: { navigationPropertyName: string };
   unboundFunction?: { functionName: string };
-  boundFunction?: { functionRef: string };
+  boundFunction?: { functionRef: string; bindingParameterName?: string };
   unboundAction?: { actionName: string };
-  boundAction?: { actionRef: string };
+  boundAction?: { actionRef: string; bindingParameterName?: string };
   singleton?: { singletonName: string };
   entitySet?: { entitySetName: string };
   entitySetByIdentifier?: {

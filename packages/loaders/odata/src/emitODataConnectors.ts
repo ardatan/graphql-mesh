@@ -464,55 +464,47 @@ function selectionForFieldReturnType(
   return entitySelection(schemaComposer, entityTC) || '$';
 }
 
-/**
- * True when this Input arg is the bound entity parameter (URL already identifies it).
- * Unbound ops pass no parentTypeName so complex Inputs (AddressInput) stay in the call.
- * Derived entity fields (Employee.GetFavoriteAirline) still bind via base PersonInput -
- * detect entity Inputs by `entityInfo.identifierFieldName`, not name equality alone.
- */
-function isBindingInputArg(
-  schemaComposer: SchemaComposer,
-  parentTypeName: string | undefined,
-  argTypeName: string,
-): boolean {
-  if (!parentTypeName) return false;
-  if (
-    argTypeName === `${parentTypeName}Input` ||
-    argTypeName === `${parentTypeName}UpdateInput` ||
-    argTypeName === `${parentTypeName}Instance`
-  ) {
-    return true;
-  }
-  const m = /^(.*)(UpdateInput|Input|Instance)$/.exec(argTypeName);
-  if (!m) return false;
-  const entityName = m[1];
+function argTypeNameOf(argConfig: { type: unknown }): string {
+  return (
+    typeof (argConfig.type as any)?.getTypeName === 'function'
+      ? (argConfig.type as any).getTypeName()
+      : String(argConfig.type)
+  ).replace(/[[\]!]/g, '');
+}
+
+function isInputObjectArgType(schemaComposer: SchemaComposer, argTypeName: string): boolean {
   try {
-    if (!schemaComposer.isObjectType(entityName)) return false;
-    const ext = schemaComposer.getOTC(entityName).getExtensions() as any;
-    // Entity types have keys; complex type Inputs do not.
-    return Boolean(ext?.odata?.entityInfo?.identifierFieldName);
+    if (schemaComposer.isEnumType(argTypeName) || schemaComposer.isScalarType(argTypeName)) {
+      return false;
+    }
+    return schemaComposer.isInputType(argTypeName);
   } catch {
-    return false;
+    return /(Input|Instance)$/.test(argTypeName);
   }
 }
 
-/** OData function/action call args: `(lat={$args.lat},userName='{$args.userName}')`. */
-function odataCallArgsSuffix(
+/**
+ * OData function call args: `(lat={$args.lat},address=@address)`.
+ * Complex Inputs use parameter aliases (`@name`) so the URL is not `[object Object]`.
+ * Binding parameter is excluded by **name** (EntitySetPath / first param), not by Input type
+ * (so e.g. `recipient: PersonInput` still appears).
+ */
+function odataCallArgsParts(
   schemaComposer: SchemaComposer,
   field: ObjectTypeComposerFieldConfig<any, any>,
-  parentTypeName?: string,
-): string {
+  bindingParameterName?: string,
+): { suffix: string; aliasQueryParams?: Record<string, string> } {
   const args = field.args || {};
   const parts: string[] = [];
+  const aliasQueryParams: Record<string, string> = {};
   for (const [name, argConfig] of Object.entries(args)) {
     if (name === 'queryOptions') continue;
-    const argTypeName = (
-      typeof (argConfig.type as any)?.getTypeName === 'function'
-        ? (argConfig.type as any).getTypeName()
-        : String(argConfig.type)
-    ).replace(/[[\]!]/g, '');
-    // Binding parameter only - keep other complex Input args (unbound/extra params).
-    if (isBindingInputArg(schemaComposer, parentTypeName, argTypeName)) {
+    if (bindingParameterName && name === bindingParameterName) continue;
+    const argTypeName = argTypeNameOf(argConfig);
+    if (isInputObjectArgType(schemaComposer, argTypeName)) {
+      // Alias: Function(address=@address)?@address={$args.address}
+      parts.push(`${name}=@${name}`);
+      aliasQueryParams[`@${name}`] = `$args.${name}`;
       continue;
     }
     const isStringish =
@@ -523,8 +515,31 @@ function odataCallArgsSuffix(
     parts.push(isStringish ? `${name}='{$args.${name}}'` : `${name}={$args.${name}}`);
   }
   // OData omits `()` when there are no parameters (bound-with-only-binding-arg).
-  if (!parts.length) return '';
-  return `(${parts.join(',')})`;
+  if (!parts.length) return { suffix: '' };
+  return {
+    suffix: `(${parts.join(',')})`,
+    ...(Object.keys(aliasQueryParams).length ? { aliasQueryParams } : {}),
+  };
+}
+
+/** Append OData parameter-alias entries into a Connectors `queryParams` selection object. */
+function mergeQueryParamsSelection(
+  base: string | undefined,
+  aliases?: Record<string, string>,
+): string | undefined {
+  if (!aliases || !Object.keys(aliases).length) return base;
+  const aliasLines = Object.entries(aliases)
+    .map(([k, v]) => `  "${k}": ${v}`)
+    .join('\n');
+  if (!base) {
+    return `{\n${aliasLines}\n}`;
+  }
+  const trimmed = base.trim();
+  if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+    const inner = trimmed.slice(1, -1).trimEnd();
+    return `{\n${inner}\n${aliasLines}\n}`;
+  }
+  return base;
 }
 
 function connectArgs(opts: {
@@ -783,15 +798,18 @@ export function emitODataConnectors(
 
       if (dirs.unboundFunction) {
         const functionName = dirs.unboundFunction.functionName as string;
-        const callArgs = odataCallArgsSuffix(schemaComposer, field);
+        const callArgs = odataCallArgsParts(schemaComposer, field);
         setConnect(
           root,
           fieldName,
           connectArgs({
             source: sourceName,
             http: {
-              GET: `/${functionName}${callArgs}`,
-              queryParams: ODATA_QUERY_OPTIONS_QUERY_PARAMS,
+              GET: `/${functionName}${callArgs.suffix}`,
+              queryParams: mergeQueryParamsSelection(
+                ODATA_QUERY_OPTIONS_QUERY_PARAMS,
+                callArgs.aliasQueryParams,
+              ),
             },
             selection: selectionForFieldReturnType(schemaComposer, field),
           }),
@@ -983,15 +1001,20 @@ export function emitODataConnectors(
         }
         if (dirs.boundFunction) {
           const functionRef = dirs.boundFunction.functionRef as string;
-          const callArgs = odataCallArgsSuffix(schemaComposer, field, typeName);
+          const bindingParameterName = dirs.boundFunction.bindingParameterName as
+            string | undefined;
+          const callArgs = odataCallArgsParts(schemaComposer, field, bindingParameterName);
           setConnect(
             otc,
             fieldName,
             connectArgs({
               source: sourceName,
               http: {
-                GET: `${basePath}/${functionRef}${callArgs}`,
-                queryParams: ODATA_QUERY_OPTIONS_QUERY_PARAMS,
+                GET: `${basePath}/${functionRef}${callArgs.suffix}`,
+                queryParams: mergeQueryParamsSelection(
+                  ODATA_QUERY_OPTIONS_QUERY_PARAMS,
+                  callArgs.aliasQueryParams,
+                ),
               },
               selection: selectionForFieldReturnType(schemaComposer, field),
             }),
@@ -1000,19 +1023,13 @@ export function emitODataConnectors(
         }
         if (dirs.boundAction) {
           const actionRef = dirs.boundAction.actionRef as string;
-          // OData action bodies exclude the binding parameter (URL identifies the entity).
-          // Other complex Input args stay in the body.
+          // OData action bodies exclude the binding parameter **by name**
+          // (URL identifies the entity). Other Inputs (e.g. recipient: PersonInput) stay.
+          const bindingParameterName = dirs.boundAction.bindingParameterName as string | undefined;
           const bodyArgs: string[] = [];
-          for (const [argName, argConfig] of Object.entries(field.args || {})) {
+          for (const argName of Object.keys(field.args || {})) {
             if (argName === 'queryOptions') continue;
-            const argTypeName = (
-              typeof (argConfig.type as any)?.getTypeName === 'function'
-                ? (argConfig.type as any).getTypeName()
-                : String(argConfig.type)
-            ).replace(/[[\]!]/g, '');
-            if (isBindingInputArg(schemaComposer, typeName, argTypeName)) {
-              continue;
-            }
+            if (bindingParameterName && argName === bindingParameterName) continue;
             bodyArgs.push(argName);
           }
           const body =
@@ -1137,8 +1154,48 @@ export function emitODataConnectors(
   }
   const headerMappings = headersToConnectMappings(sourceHeaderEntries);
   const fieldArgHeaderMappings = headersToConnectMappings(argHeaderEntries);
+
+  /** `$args.foo` / `{args.foo}` names referenced by a header template. */
+  const headerArgRefs = (value: string): string[] => {
+    const names: string[] = [];
+    for (const m of String(value).matchAll(/\{\$?args\.([A-Za-z_][\w]*)/g)) {
+      names.push(m[1]);
+    }
+    return names;
+  };
+
+  /**
+   * Apollo Router validates `$args` in `@connect` headers against that field's args.
+   * Only attach a header onto fields that declare every referenced argument.
+   */
+  const attachArgHeadersIfDeclared = (
+    field: ObjectTypeComposerFieldConfig<any, any>,
+    setField: (name: string, f: any) => void,
+    fieldName: string,
+  ) => {
+    const connect = (field.extensions as any)?.directives?.connect;
+    if (!connect?.http || !fieldArgHeaderMappings?.length) return;
+    const declared = new Set(Object.keys(field.args || {}));
+    const applicable = fieldArgHeaderMappings.filter(h => {
+      const refs = headerArgRefs(h.value);
+      return refs.length > 0 && refs.every(r => declared.has(r));
+    });
+    if (!applicable.length) return;
+    const existing = Array.isArray(connect.http.headers) ? connect.http.headers : [];
+    connect.http.headers = [...existing, ...applicable];
+    setField(fieldName, {
+      ...field,
+      extensions: {
+        ...(field.extensions || {}),
+        directives: {
+          ...((field.extensions as any)?.directives || {}),
+          connect,
+        },
+      },
+    });
+  };
+
   if (fieldArgHeaderMappings?.length) {
-    // Attach arg-dependent headers onto every field-level `@connect` http block.
     for (const tc of schemaComposer.types.values()) {
       const typeName = (tc as any).getTypeName?.();
       if (typeof typeName !== 'string') continue;
@@ -1147,41 +1204,21 @@ export function emitODataConnectors(
       }
       const typed = tc as ObjectTypeComposer | InterfaceTypeComposer;
       for (const fieldName of typed.getFieldNames()) {
-        const field = typed.getField(fieldName);
-        const connect = (field.extensions as any)?.directives?.connect;
-        if (!connect?.http) continue;
-        const existing = Array.isArray(connect.http.headers) ? connect.http.headers : [];
-        connect.http.headers = [...existing, ...fieldArgHeaderMappings];
-        typed.setField(fieldName, {
-          ...field,
-          extensions: {
-            ...(field.extensions || {}),
-            directives: {
-              ...((field.extensions as any)?.directives || {}),
-              connect,
-            },
-          },
-        });
+        attachArgHeadersIfDeclared(
+          typed.getField(fieldName),
+          (n, f) => typed.setField(n, f),
+          fieldName,
+        );
       }
     }
     for (const rootName of ['Query', 'Mutation'] as const) {
       const root = schemaComposer[rootName];
       for (const fieldName of root.getFieldNames()) {
-        const field = root.getField(fieldName);
-        const connect = (field.extensions as any)?.directives?.connect;
-        if (!connect?.http) continue;
-        const existing = Array.isArray(connect.http.headers) ? connect.http.headers : [];
-        connect.http.headers = [...existing, ...fieldArgHeaderMappings];
-        root.setField(fieldName, {
-          ...field,
-          extensions: {
-            ...(field.extensions || {}),
-            directives: {
-              ...((field.extensions as any)?.directives || {}),
-              connect,
-            },
-          },
-        });
+        attachArgHeadersIfDeclared(
+          root.getField(fieldName),
+          (n, f) => root.setField(n, f),
+          fieldName,
+        );
       }
     }
   }

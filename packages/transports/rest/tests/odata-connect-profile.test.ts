@@ -6,6 +6,7 @@ import {
   buildConnectPropertyNameMapTree,
   hasODataMetadataAcceptHeader,
   isODataMetadataAccept,
+  splitTopLevelComma,
 } from '../src/directives/odataConnectProfile.js';
 
 const CONNECTOR_DIRECTIVES = /* GraphQL */ `
@@ -96,6 +97,46 @@ describe('odataConnectProfile helpers', () => {
     expect(tree.children.get('friends')?.children.get('bestFriend')?.map.get('id')).toBe(
       'BestFriendId',
     );
+  });
+
+  it('maps $.Wire remaps to the OData wire name (does not invent from the GraphQL alias)', () => {
+    const tree = buildConnectPropertyNameMapTree(`
+      displayName: $.FirstName
+      userName: UserName
+    `);
+    expect(tree.projectionUnsafe).toBeFalsy();
+    expect(tree.map.get('displayName')).toBe('FirstName');
+    expect(tree.map.get('userName')).toBe('UserName');
+  });
+
+  it('does not mark projection unsafe for __typename / _odataId connector exprs', () => {
+    const tree = buildConnectPropertyNameMapTree(`
+      __typename: $("Person")
+      _odataId: $->get("@odata.id")
+      userName: UserName
+    `);
+    expect(tree.projectionUnsafe).toBeFalsy();
+    expect(tree.map.get('userName')).toBe('UserName');
+    expect(tree.map.has('__typename')).toBe(false);
+    expect(tree.map.has('_odataId')).toBe(false);
+  });
+
+  it('marks projection unsafe for non-synthetic $->get remaps', () => {
+    const tree = buildConnectPropertyNameMapTree(`
+      label: $->get("DisplayName")
+      userName: UserName
+    `);
+    expect(tree.projectionUnsafe).toBe(true);
+    expect(tree.map.has('label')).toBe(false);
+    expect(tree.map.get('userName')).toBe('UserName');
+  });
+
+  it('splits $expand lists without breaking nested $select commas', () => {
+    expect(splitTopLevelComma('PlanItems($select=TripId,Name),Friends')).toEqual([
+      'PlanItems($select=TripId,Name)',
+      'Friends',
+    ]);
+    expect(splitTopLevelComma('TripId,Name')).toEqual(['TripId', 'Name']);
   });
 });
 
@@ -358,6 +399,77 @@ describe('Connect OData $select / $expand', () => {
     expect(result.errors).toBeUndefined();
     const decoded = decodeURIComponent(requestedUrl.replace(/\+/g, ' '));
     expect(decoded).toMatch(/\$expand=friends\(\$top=2;\$filter=UserName ne 'x';\$select=/i);
+  });
+
+  it('resolves GraphQL variables inside expand queryOptions', async () => {
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+
+      input QueryOptions {
+        top: Int
+      }
+
+      schema
+        @source(
+          name: "trippin"
+          http: {
+            baseURL: "https://odata.example.com"
+            headers: [{ name: "Accept", value: "application/json;odata.metadata=minimal" }]
+          }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        person(userName: String!): Person
+          @connect(
+            source: "trippin"
+            http: { GET: "/People('{$args.userName}')" }
+            selection: "userName: UserName"
+          )
+      }
+
+      type Person @key(fields: "userName") {
+        userName: String
+        friends(queryOptions: QueryOptions): [Person]
+          @connect(
+            source: "trippin"
+            http: { GET: "/People/{$this.userName}/Friends" }
+            selection: "userName: UserName"
+          )
+      }
+    `;
+
+    let requestedUrl = '';
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      odata: { expandNavProps: true },
+      globalFetch: (async (url: string) => {
+        requestedUrl = String(url);
+        return Response.json({
+          UserName: 'russellwhyte',
+          Friends: [{ UserName: 'scottketchum' }],
+        });
+      }) as any,
+    });
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        query ($top: Int!) {
+          person(userName: "russellwhyte") {
+            userName
+            friends(queryOptions: { top: $top }) {
+              userName
+            }
+          }
+        }
+      `),
+      variableValues: { top: 3 },
+    });
+
+    expect(result.errors).toBeUndefined();
+    const decoded = decodeURIComponent(requestedUrl.replace(/\+/g, ' '));
+    expect(decoded).toMatch(/\$expand=friends\(\$top=3;\$select=/i);
   });
 
   it('prefers parent-expanded nav over a second @connect HTTP fetch when expandNavProps', async () => {

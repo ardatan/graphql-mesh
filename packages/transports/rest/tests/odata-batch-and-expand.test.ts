@@ -259,6 +259,58 @@ describe('OData $batch json coalescing', () => {
     expect(batchRequestCount).toBe(2);
   });
 
+  it('splits /$batch by Ocp-Apim-Subscription-Key like Authorization', async () => {
+    const batchKeys: string[] = [];
+    const fetchFn = (async (url: string, init?: RequestInit) => {
+      if (!String(url).includes('/$batch')) {
+        return Response.json({ ok: true });
+      }
+      const headerBag = init?.headers as Record<string, string>;
+      batchKeys.push(
+        headerBag?.['Ocp-Apim-Subscription-Key'] || headerBag?.['ocp-apim-subscription-key'] || '',
+      );
+      const parsed = JSON.parse(String(init?.body));
+      return Response.json({
+        responses: parsed.requests.map((req: { id: string }) => ({
+          id: req.id,
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+          body: { ok: true },
+        })),
+      });
+    }) as any;
+
+    const batchFetch = createODataBatchFetch({
+      fetchFn,
+      endpoint: 'https://odata.example.com',
+      batchMode: 'json',
+    });
+    const context = {};
+    await Promise.all([
+      batchFetch(
+        'https://odata.example.com/A',
+        { headers: { 'Ocp-Apim-Subscription-Key': 'key-a' } },
+        context,
+      ),
+      batchFetch(
+        'https://odata.example.com/B',
+        { headers: { 'Ocp-Apim-Subscription-Key': 'key-b' } },
+        context,
+      ),
+      batchFetch(
+        'https://odata.example.com/C',
+        { headers: { 'Ocp-Apim-Subscription-Key': 'key-a' } },
+        context,
+      ),
+      batchFetch(
+        'https://odata.example.com/D',
+        { headers: { 'Ocp-Apim-Subscription-Key': 'key-b' } },
+        context,
+      ),
+    ]);
+    expect(batchKeys.sort()).toEqual(['key-a', 'key-b']);
+  });
+
   it('splits /$batch by Authorization so different credentials never share a batch', async () => {
     const batchPosts: Array<{ auth: string; urls: string[] }> = [];
     const fetchFn = (async (url: string, init?: RequestInit) => {
@@ -412,5 +464,86 @@ describe('rebuildOpenInputObjects', () => {
       UserName: 'alice',
       customFlag: true,
     });
+  });
+});
+
+describe('OData path encode mix (_odataId raw, args encoded)', () => {
+  it('keeps _odataId unencoded while encoding sibling {$args} in absolute templates', async () => {
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+
+      schema
+        @source(
+          name: "api"
+          http: {
+            baseURL: "https://odata.example.com"
+            headers: [{ name: "Accept", value: "${ODATA_ACCEPT}" }]
+          }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        person: Person
+          @connect(
+            source: "api"
+            http: { GET: "/People/root" }
+            selection: "userName: UserName"
+          )
+      }
+
+      type Person {
+        userName: String
+        item(id: String!): Item
+          @connect(
+            source: "api"
+            http: { GET: "{$this._odataId}/Items('{$args.id}')" }
+            selection: "name: Name"
+          )
+      }
+
+      type Item {
+        name: String
+      }
+    `;
+
+    const urls: string[] = [];
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        if (String(url).includes('/People/root')) {
+          return Response.json({
+            UserName: 'x',
+            '@odata.id': 'https://odata.example.com/People/a b',
+          });
+        }
+        return Response.json({ Name: 'n' });
+      }) as any,
+    });
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          person {
+            userName
+            item(id: "a/b?x=1") {
+              name
+            }
+          }
+        }
+      `),
+    });
+
+    expect(result.errors).toBeUndefined();
+    const follow = urls.find(u => u.includes('/Items('));
+    expect(follow).toBeTruthy();
+    // Args stay percent-encoded as one segment; `_odataId` is not left unencoded as a
+    // break-out (URL serializers may turn spaces into %20 after template resolve).
+    expect(follow!).toContain(encodeURIComponent('a/b?x=1'));
+    expect(follow!).not.toContain("/Items('a/b?x=1')");
+    expect(decodeURIComponent(follow!.replace(/\+/g, ' '))).toContain(
+      'https://odata.example.com/People/a b/Items(',
+    );
   });
 });

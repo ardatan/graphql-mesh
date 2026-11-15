@@ -152,6 +152,14 @@ export function getConnectArgsFromNode(node: {
  * values like `1?admin=true` cannot break out of a path segment. Leave
  * `encodeValues` off for `@source` baseURL (host/port) and header values.
  */
+function shouldSkipPathEncode(path: string, skipEncode?: (path: string) => boolean): boolean {
+  if (skipEncode?.(path)) {
+    return true;
+  }
+  // `_odataId` holds a full URL / entity id path — must not be percent-encoded.
+  return /^(this|root)\._odataId\b/.test(path) || /^(this|root)\[['\"]_odataId['\"]\]/.test(path);
+}
+
 function resolveTemplate(
   template: string,
   vars: {
@@ -161,7 +169,7 @@ function resolveTemplate(
     context: any;
     config?: Record<string, any>;
   },
-  options: { encodeValues?: boolean } = {},
+  options: { encodeValues?: boolean; skipEncode?: (path: string) => boolean } = {},
 ): string {
   if (!template) {
     return '';
@@ -183,11 +191,17 @@ function resolveTemplate(
     const value = evalConnectorsVarExpr(`$${exprPath}`, vars);
     if (value == null || value === '') {
       if (defaultValue != null) {
-        return options.encodeValues ? encodeURIComponent(defaultValue) : defaultValue;
+        if (!options.encodeValues || shouldSkipPathEncode(exprPath, options.skipEncode)) {
+          return defaultValue;
+        }
+        return encodeURIComponent(defaultValue);
       }
       return '';
     }
-    return options.encodeValues ? encodeURIComponent(String(value)) : String(value);
+    if (!options.encodeValues || shouldSkipPathEncode(exprPath, options.skipEncode)) {
+      return String(value);
+    }
+    return encodeURIComponent(String(value));
   });
   // Normalize remaining Connectors `{$args.x|base64}` / `{$context.headers['x-port']:4001}` to Mesh
   // `{args.x|base64}` / `{context.headers['x-port']:4001}` so stringInterpolator modifiers work.
@@ -209,12 +223,16 @@ function resolveTemplate(
     return interpolated == null ? '' : String(interpolated);
   }
   // Encode each `{expr}` replacement individually (not the whole URL).
+  // Absolute `@odata.id` follow-ups keep `_odataId` as a raw URL segment; other
+  // interpolations in the same template (e.g. `{$args.id}`) stay percent-encoded.
   return meshForm.replace(/\{([^{}]+)\}/g, (_match, path: string) => {
     const value = stringInterpolator.parse(`{${path}}`, interpolateArgs);
     if (value == null || value === '') {
       return '';
     }
-    return encodeURIComponent(String(value));
+    return shouldSkipPathEncode(path, options.skipEncode)
+      ? String(value)
+      : encodeURIComponent(String(value));
   });
 }
 
@@ -1776,22 +1794,14 @@ export function addConnectFieldResolver(
     // `{$this._odataId}/Nav` when `@odata.id` has a trailing slash → `…//Nav`.
     // Collapse those (keep `https://`).
     const collapseExtraSlashes = (u: string) => u.replace(/([^:])\/{2,}/g, '$1/');
-    let fullPath: string;
-    // Absolute `@odata.id` follow-ups must not encode the URL value. Other absolute
-    // templates (e.g. `https://…/items/{$args.id}`) still encode interpolated args.
-    const isODataIdPath = /\$this\._odataId\b/.test(picked.path);
-    if (isODataIdPath) {
-      fullPath = collapseExtraSlashes(resolveTemplate(picked.path, vars, { encodeValues: false }));
-    } else {
-      // Path templates percent-encode expression values; baseURL / headers do not.
-      const path = resolveTemplate(picked.path, vars, { encodeValues: true });
-      // Absolute connector URLs skip baseURL join.
-      // Match Mesh httpOperation (`urlJoin(base, path)`): empty base keeps relative paths
-      // so test mocks like `fetch('pets/1')` keep working.
-      fullPath = /^https?:\/\//i.test(path)
-        ? collapseExtraSlashes(path)
-        : urlJoin(baseURL || '', path) || path;
-    }
+    // Path templates percent-encode expression values; `_odataId` stays raw (full URL).
+    // Absolute connector URLs skip baseURL join.
+    // Match Mesh httpOperation (`urlJoin(base, path)`): empty base keeps relative paths
+    // so test mocks like `fetch('pets/1')` keep working.
+    const path = resolveTemplate(picked.path, vars, { encodeValues: true });
+    let fullPath = /^https?:\/\//i.test(path)
+      ? collapseExtraSlashes(path)
+      : urlJoin(baseURL || '', path) || path;
 
     const resolveArg = (argName: string, value: any) => {
       const argDef = field.args?.find(arg => arg.name === argName);

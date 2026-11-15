@@ -62,6 +62,8 @@ export function hasODataMetadataAcceptHeader(
 export type ConnectPropertyMapNode = {
   map: Map<string, string>;
   children: Map<string, ConnectPropertyMapNode>;
+  /** True when selection uses non-identifier RHS (`$.X`, `$("Y")`, exprs) — skip `$select`. */
+  projectionUnsafe?: boolean;
 };
 
 /**
@@ -132,6 +134,7 @@ function parseConnectPropertyBlock(selection: string, node: ConnectPropertyMapNo
     i = j;
     while (i < s.length && /\s/.test(s[i])) i++;
     let odataName = gqlName;
+    let skipMap = false;
     if (s[i] === ':') {
       i++;
       while (i < s.length && /\s/.test(s[i])) i++;
@@ -141,9 +144,77 @@ function parseConnectPropertyBlock(selection: string, node: ConnectPropertyMapNo
         odataName = s.slice(i, k);
         i = k;
         while (i < s.length && /\s/.test(s[i])) i++;
+      } else if (i < s.length && (s[i] === '$' || s[i] === '(' || s[i] === '.')) {
+        // Connector exprs: `__typename: $("T")`, `_odataId: $->get("@odata.id")`,
+        // `displayName: $.FirstName`. Never invent a `$select` key from the GraphQL
+        // alias alone. Synthetic fields are skipped; `$.Wire` remaps to Wire; other
+        // exprs make projection unsafe for this subtree.
+        const exprStart = i;
+        if (s[i] === '$' && s[i + 1] === '.') {
+          // `$.FirstName` / `$.a.b` → last identifier is the OData wire name.
+          i += 2;
+          let last = '';
+          while (i < s.length && !/[\s,{]/.test(s[i])) {
+            if (isIdentStart(s[i])) {
+              let k = i + 1;
+              while (k < s.length && isIdent(s[k])) k++;
+              last = s.slice(i, k);
+              i = k;
+            } else {
+              i++;
+            }
+          }
+          if (last) {
+            odataName = last;
+          } else {
+            skipMap = true;
+            node.projectionUnsafe = true;
+          }
+        } else {
+          // `$("…")`, `$->get(…)`, `$(…)` — consume the expression.
+          skipMap = true;
+          if (gqlName !== '__typename' && gqlName !== '_odataId') {
+            node.projectionUnsafe = true;
+          }
+          if (s[i] === '$' && s[i + 1] === '(') {
+            let depth = 0;
+            for (; i < s.length; i++) {
+              if (s[i] === '(') depth++;
+              else if (s[i] === ')') {
+                depth--;
+                if (depth === 0) {
+                  i++;
+                  break;
+                }
+              }
+            }
+          } else if (s[i] === '$' || s[i] === '.') {
+            while (i < s.length && !/[\s,{]/.test(s[i])) i++;
+            // `$->get("…")` may be followed by `(...)` — consume it.
+            while (i < s.length && /\s/.test(s[i])) i++;
+            if (i < s.length && s[i] === '(') {
+              let depth = 0;
+              for (; i < s.length; i++) {
+                if (s[i] === '(') depth++;
+                else if (s[i] === ')') {
+                  depth--;
+                  if (depth === 0) {
+                    i++;
+                    break;
+                  }
+                }
+              }
+            }
+          } else {
+            // Bare `(` — should not appear as a property RHS; mark unsafe.
+            node.projectionUnsafe = true;
+            i = exprStart;
+          }
+        }
+        while (i < s.length && /\s/.test(s[i])) i++;
       }
     }
-    if (gqlName !== 'get') {
+    if (!skipMap && gqlName !== 'get') {
       node.map.set(gqlName, odataName);
     }
     if (s[i] === '{') {
@@ -160,9 +231,32 @@ function parseConnectPropertyBlock(selection: string, node: ConnectPropertyMapNo
       i++; // past closing }
       const child: ConnectPropertyMapNode = { map: new Map(), children: new Map() };
       parseConnectPropertyBlock(inner, child);
+      if (child.projectionUnsafe) {
+        node.projectionUnsafe = true;
+      }
       node.children.set(gqlName, child);
     }
   }
+}
+
+/** Split on commas that are not inside `(...)` option lists. */
+export function splitTopLevelComma(s: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === '(') depth++;
+    else if (c === ')') depth = Math.max(0, depth - 1);
+    else if (c === ',' && depth === 0) {
+      const part = s.slice(start, i).trim();
+      if (part) parts.push(part);
+      start = i + 1;
+    }
+  }
+  const last = s.slice(start).trim();
+  if (last) parts.push(last);
+  return parts;
 }
 
 function unwrapOutputType(type: GraphQLOutputType): GraphQLOutputType {
@@ -323,7 +417,7 @@ function isODataExpandableField(fieldDef: GraphQLField<any, any>): boolean {
   // Interfaces without schema.getPossibleTypes — treat as expandable when abstract.
   return isAbstractType(namedType);
 }
-function expandOptionsFromFieldArgs(field: FieldNode): string[] {
+function expandOptionsFromFieldArgs(field: FieldNode, info: GraphQLResolveInfo): string[] {
   const parts: string[] = [];
   if (!field.arguments?.length) return parts;
   for (const arg of field.arguments) {
@@ -347,13 +441,12 @@ function expandOptionsFromFieldArgs(field: FieldNode): string[] {
                       ? '$inlinecount'
                       : null;
       if (!odataKey) continue;
-      if (f.value.kind === Kind.INT || f.value.kind === Kind.FLOAT) {
-        parts.push(`${odataKey}=${f.value.value}`);
-      } else if (f.value.kind === Kind.STRING) {
-        parts.push(`${odataKey}=${f.value.value}`);
-      } else if (f.value.kind === Kind.BOOLEAN) {
-        parts.push(`${odataKey}=${f.value.value}`);
+      const lit = graphqlValueToExpandLiteral(f.value, info);
+      if (lit === null) {
+        // Unresolved variable — fall back to a dedicated nav GET.
+        return ['__odata_expand_unsupported__'];
       }
+      parts.push(`${odataKey}=${lit}`);
     }
   }
   // Non-queryOptions args cannot be expressed in `$expand` - caller should skip expand.
@@ -362,6 +455,44 @@ function expandOptionsFromFieldArgs(field: FieldNode): string[] {
     return ['__odata_expand_unsupported__'];
   }
   return parts;
+}
+
+/** Resolve a GraphQL value node for `$expand` options; null = unresolved variable. */
+function graphqlValueToExpandLiteral(
+  value: import('graphql').ValueNode,
+  info: GraphQLResolveInfo,
+): string | null {
+  if (value.kind === Kind.INT || value.kind === Kind.FLOAT) {
+    return String(value.value);
+  }
+  if (value.kind === Kind.STRING) {
+    return value.value;
+  }
+  if (value.kind === Kind.BOOLEAN) {
+    return String(value.value);
+  }
+  if (value.kind === Kind.NULL) {
+    return 'null';
+  }
+  if (value.kind === Kind.ENUM) {
+    return value.value;
+  }
+  if (value.kind === Kind.VARIABLE) {
+    const vars = info.variableValues || {};
+    if (!Object.prototype.hasOwnProperty.call(vars, value.name.value)) {
+      return null;
+    }
+    const v = vars[value.name.value];
+    if (v == null) {
+      return null;
+    }
+    if (typeof v === 'boolean' || typeof v === 'number') {
+      return String(v);
+    }
+    return String(v);
+  }
+  // Objects / lists in queryOptions are not representable in `$expand` options.
+  return null;
 }
 
 function collectField(
@@ -396,7 +527,7 @@ function collectField(
     member: GraphQLObjectType,
     nested: { select: Set<string>; expand: string[] },
   ) => {
-    const argOpts = expandOptionsFromFieldArgs(field);
+    const argOpts = expandOptionsFromFieldArgs(field, info);
     if (argOpts.includes('__odata_expand_unsupported__')) {
       // Keep a separate `@connect` request so nav args still apply.
       return;
@@ -516,6 +647,10 @@ export function buildODataSelectExpand(
     return empty;
   }
   const propertyNode = buildConnectPropertyNameMapTree(connectSelection);
+  if (propertyNode.projectionUnsafe) {
+    // Selection remaps via unresolved connector exprs — do not invent `$select` names.
+    return empty;
+  }
   const out = { select: new Set<string>(), expand: [] as string[] };
   for (const fieldNode of info.fieldNodes) {
     if (!fieldNode.selectionSet) continue;
@@ -568,13 +703,15 @@ function mergeExpandItems(items: string[]): string[] {
     };
     for (const part of opts.split(';')) {
       if (part.startsWith('$select=')) {
-        for (const f of part.slice('$select='.length).split(',')) {
+        for (const f of splitTopLevelComma(part.slice('$select='.length))) {
           if (f) entry.select.add(f);
         }
       } else if (part.startsWith('$expand=')) {
-        entry.expand.push(...part.slice('$expand='.length).split(',').filter(Boolean));
+        // Nesting-aware: `$expand=PlanItems($select=TripId,Name),Friends` must not
+        // split on the comma inside `$select=...`.
+        entry.expand.push(...splitTopLevelComma(part.slice('$expand='.length)));
       } else if (part.includes('=')) {
-        // Preserve $top / $filter / $orderby / … from navigation queryOptions.
+        // Preserve $top / $filter / $orderby / ... from navigation queryOptions.
         const eq = part.indexOf('=');
         entry.other.set(part.slice(0, eq), part.slice(eq + 1));
       }
