@@ -37,12 +37,7 @@ import {
 import { rebuildOpenInputObjects } from './odataOpenInput.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
-import {
-  isXmlContentType,
-  jsObjectToXml,
-  looksLikeXml,
-  xmlToJsObject,
-} from './xmlCodec.js';
+import { isXmlContentType, jsObjectToXml, looksLikeXml, xmlToJsObject } from './xmlCodec.js';
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(
   type: GraphQLOutputType,

@@ -45,9 +45,12 @@ export function isXmlContentType(contentType: string | undefined | null): boolea
   );
 }
 
+/**
+ * Strict sniff for XML when Content-Type is missing. Only `<?xml …` — do **not**
+ * match bare `<…>` (HTML 404 pages would otherwise be treated as successful XML).
+ */
 export function looksLikeXml(text: string): boolean {
-  const trimmed = text.trimStart();
-  return trimmed.startsWith('<?xml') || /^<[A-Za-z_?!]/.test(trimmed);
+  return text.trimStart().startsWith('<?xml');
 }
 
 export function jsObjectToXml(value: unknown): string {
