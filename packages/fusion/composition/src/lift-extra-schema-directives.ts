@@ -4,10 +4,25 @@ import type {
   ConstValueNode,
   DefinitionNode,
   DocumentNode,
+  EnumTypeDefinitionNode,
   StringValueNode,
 } from 'graphql';
 import { Kind, parse, print, visit } from 'graphql';
 import { astFromValueUntyped } from '@graphql-tools/utils';
+
+type LiftedOccurrence = Record<string, unknown> & {
+  /** Owning subgraph name from co-located `@transport(subgraph:)` in the same extras blob. */
+  __meshSubgraph?: string;
+};
+
+const JOIN_DIRECTIVE_DEFS = /* GraphQL */ `
+  directive @join__directive(
+    graphs: [join__Graph!]
+    name: String!
+    args: join__DirectiveArguments
+  ) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+  scalar join__DirectiveArguments
+`;
 
 const MESH_SPEC_PREFIX = 'https://the-guild.dev/graphql/mesh/spec/';
 const CONNECT_SPEC_PREFIX = 'https://specs.apollo.dev/connect';
@@ -44,7 +59,7 @@ export function liftExtraSchemaDefinitionDirectives(supergraphSdl: string): stri
   }
 
   const document = parse(supergraphSdl, { noLocation: true });
-  const liftedByName = new Map<string, any[]>();
+  const liftedByName = new Map<string, LiftedOccurrence[]>();
 
   visit(document, {
     ObjectTypeDefinition(node) {
@@ -59,10 +74,12 @@ export function liftExtraSchemaDefinitionDirectives(supergraphSdl: string): stri
     return supergraphSdl;
   }
 
+  const subgraphToGraphEnum = readJoinGraphNameToEnum(document);
   const existingDirectiveNames = new Set<string>();
   let hasObjMap = false;
   let hasTransportOptions = false;
   let hasSourceHTTP = false;
+  let hasJoinDirectiveArgs = false;
   for (const def of document.definitions) {
     if (def.kind === Kind.DIRECTIVE_DEFINITION) {
       existingDirectiveNames.add(def.name.value);
@@ -70,14 +87,36 @@ export function liftExtraSchemaDefinitionDirectives(supergraphSdl: string): stri
       hasObjMap = true;
     } else if (def.kind === Kind.SCALAR_TYPE_DEFINITION && def.name.value === 'TransportOptions') {
       hasTransportOptions = true;
+    } else if (
+      def.kind === Kind.SCALAR_TYPE_DEFINITION &&
+      def.name.value === 'join__DirectiveArguments'
+    ) {
+      hasJoinDirectiveArgs = true;
     } else if (def.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION && def.name.value === 'SourceHTTP') {
       hasSourceHTTP = true;
     }
   }
 
   const schemaDirectiveNodes: ConstDirectiveNode[] = [];
+  let emittedJoinSource = false;
+  let emittedRawSource = false;
   for (const [directiveName, occurrences] of liftedByName) {
-    for (const args of occurrences) {
+    for (const occurrence of occurrences) {
+      if (directiveName === 'source') {
+        const { __meshSubgraph, ...args } = occurrence;
+        const graphEnum = __meshSubgraph ? subgraphToGraphEnum.get(__meshSubgraph) : undefined;
+        if (graphEnum) {
+          // Preserve owning graph through lift so finalize does not re-guess when
+          // multiple graphs share a source name (incl. same baseURL, different headers).
+          schemaDirectiveNodes.push(buildJoinDirective(graphEnum, 'source', args));
+          emittedJoinSource = true;
+          continue;
+        }
+        schemaDirectiveNodes.push(buildConstDirective('source', args));
+        emittedRawSource = true;
+        continue;
+      }
+      const { __meshSubgraph: _ignored, ...args } = occurrence;
       schemaDirectiveNodes.push(buildConstDirective(directiveName, args));
     }
   }
@@ -92,7 +131,8 @@ export function liftExtraSchemaDefinitionDirectives(supergraphSdl: string): stri
     hasTransportOptions = true;
     existingDirectiveNames.add('transport');
   }
-  if (liftedByName.has('source') && !existingDirectiveNames.has('source')) {
+  // Only add raw `@source` def when we still emit raw usages (finalize will rewrite).
+  if (emittedRawSource && !existingDirectiveNames.has('source')) {
     if (hasSourceHTTP) {
       definitionsToAppend.push(
         ...parse(DEFAULT_APOLLO_SOURCE_DIRECTIVE_SDL, { noLocation: true }).definitions,
@@ -112,6 +152,13 @@ export function liftExtraSchemaDefinitionDirectives(supergraphSdl: string): stri
       );
     }
     existingDirectiveNames.add('source');
+  }
+  if (emittedJoinSource && !existingDirectiveNames.has('join__directive')) {
+    const joinSdl = hasJoinDirectiveArgs
+      ? JOIN_DIRECTIVE_DEFS.replace(/^\s*scalar join__DirectiveArguments\s*$/m, '')
+      : JOIN_DIRECTIVE_DEFS;
+    definitionsToAppend.push(...parse(joinSdl, { noLocation: true }).definitions);
+    existingDirectiveNames.add('join__directive');
   }
 
   let schemaDirectivesApplied = false;
@@ -160,7 +207,8 @@ export function liftExtraSchemaDefinitionDirectives(supergraphSdl: string): stri
         rewriteSchemaLinks(node, {
           stillHasExtrasUsage,
           liftedTransport: liftedByName.has('transport'),
-          liftedSource: liftedByName.has('source'),
+          // Keep `@source` on the connect `@link` import only when raw usages remain.
+          liftedSource: emittedRawSource,
         }),
         stillHasExtrasUsage,
       );
@@ -170,7 +218,7 @@ export function liftExtraSchemaDefinitionDirectives(supergraphSdl: string): stri
         rewriteSchemaLinks(node, {
           stillHasExtrasUsage,
           liftedTransport: liftedByName.has('transport'),
-          liftedSource: liftedByName.has('source'),
+          liftedSource: emittedRawSource,
         }),
         stillHasExtrasUsage,
       );
@@ -201,7 +249,7 @@ export function liftExtraSchemaDefinitionDirectives(supergraphSdl: string): stri
 
 function collectExtrasFromDirectives(
   directives: readonly ConstDirectiveNode[] | undefined,
-  liftedByName: Map<string, any[]>,
+  liftedByName: Map<string, LiftedOccurrence[]>,
 ) {
   if (!directives) {
     return;
@@ -218,13 +266,88 @@ function collectExtrasFromDirectives(
     if (!value || typeof value !== 'object' || Array.isArray(value)) {
       continue;
     }
-    for (const [name, occurrences] of Object.entries(value as Record<string, unknown>)) {
+    const blob = value as Record<string, unknown>;
+    const transportList = Array.isArray(blob.transport) ? blob.transport : [];
+    const subgraphFromTransport = readSubgraphFromTransportEntries(transportList);
+
+    for (const [name, occurrences] of Object.entries(blob)) {
       const list = Array.isArray(occurrences) ? occurrences : [occurrences];
       const bucket = liftedByName.get(name) || [];
-      bucket.push(...list);
+      for (const item of list) {
+        if (!item || typeof item !== 'object' || Array.isArray(item)) {
+          continue;
+        }
+        const occurrence: LiftedOccurrence = { ...(item as Record<string, unknown>) };
+        // Pair SCHEMA `@source` with the subgraph from the same extras blob's `@transport`.
+        if (name === 'source' && subgraphFromTransport) {
+          occurrence.__meshSubgraph = subgraphFromTransport;
+        }
+        bucket.push(occurrence);
+      }
       liftedByName.set(name, bucket);
     }
   }
+}
+
+function readSubgraphFromTransportEntries(transportList: unknown[]): string | undefined {
+  for (const entry of transportList) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+      continue;
+    }
+    const subgraph = (entry as Record<string, unknown>).subgraph;
+    if (typeof subgraph === 'string' && subgraph) {
+      return subgraph;
+    }
+  }
+  return undefined;
+}
+
+function readJoinGraphNameToEnum(document: DocumentNode): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const def of document.definitions) {
+    if (def.kind !== Kind.ENUM_TYPE_DEFINITION || def.name.value !== 'join__Graph') {
+      continue;
+    }
+    for (const value of (def as EnumTypeDefinitionNode).values || []) {
+      const graphDir = value.directives?.find(d => d.name.value === 'join__graph');
+      const name = graphDir ? getStringArg(graphDir, 'name') : value.name.value;
+      if (name) {
+        map.set(name, value.name.value);
+      }
+    }
+  }
+  return map;
+}
+
+function buildJoinDirective(
+  graphEnum: string,
+  name: string,
+  args: Record<string, unknown>,
+): ConstDirectiveNode {
+  return {
+    kind: Kind.DIRECTIVE,
+    name: { kind: Kind.NAME, value: 'join__directive' },
+    arguments: [
+      {
+        kind: Kind.ARGUMENT,
+        name: { kind: Kind.NAME, value: 'graphs' },
+        value: {
+          kind: Kind.LIST,
+          values: [{ kind: Kind.ENUM, value: graphEnum }],
+        },
+      },
+      {
+        kind: Kind.ARGUMENT,
+        name: { kind: Kind.NAME, value: 'name' },
+        value: { kind: Kind.STRING, value: name },
+      },
+      {
+        kind: Kind.ARGUMENT,
+        name: { kind: Kind.NAME, value: 'args' },
+        value: astFromValueUntyped(args) as ConstValueNode,
+      },
+    ],
+  };
 }
 
 function stripExtrasDirective<T extends { directives?: readonly ConstDirectiveNode[] }>(

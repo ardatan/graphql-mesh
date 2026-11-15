@@ -184,14 +184,22 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
     const graphs = new Set<string>();
     const baseURL = getSourceBaseURL(args);
     const fromTransport = baseURL ? transportsByLocation.get(baseURL) : undefined;
-    if (fromTransport?.size) {
-      // Transport/baseURL match is authoritative for this config — do not also
-      // add nameToGraphEnum(sourceName), which wrongly tags every pending
-      // `@source(name: "api")` onto a subgraph also named `api`.
+    if (fromTransport?.size === 1) {
+      // Single transport at this location — authoritative for this config.
+      // Do not also add nameToGraphEnum(sourceName) (subgraph named `api` case).
+      graphs.add([...fromTransport][0]);
+    } else if (
+      fromTransport &&
+      fromTransport.size > 1 &&
+      pendingSources.every(
+        other => getSourceBaseURL(other) !== baseURL || sourcesDeepEqual(other, args),
+      )
+    ) {
+      // Same location, identical configs — genuinely shared; fan out.
       for (const g of fromTransport) {
         graphs.add(g);
       }
-    } else {
+    } else if (!fromTransport?.size) {
       const byName = sourceName ? nameToGraphEnum.get(sourceName) : undefined;
       if (byName) {
         graphs.add(byName);
@@ -358,6 +366,10 @@ function getSourceBaseURL(args: Record<string, unknown>): string | undefined {
   }
   const baseURL = (http as Record<string, unknown>).baseURL;
   return typeof baseURL === 'string' ? baseURL : undefined;
+}
+
+function sourcesDeepEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
 }
 
 /** Map `@transport(location)` → join graph enums (Mesh pairs location with source baseURL). */
