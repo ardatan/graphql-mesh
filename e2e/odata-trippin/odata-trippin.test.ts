@@ -106,6 +106,41 @@ it('should compose the appropriate schema', async () => {
   expect(result).toMatch(/entity:\s*true/);
 });
 
+const planItemsQuery = /* GraphQL */ `
+  query PlanItemsPolymorphic {
+    PeopleByUserName(UserName: "russellwhyte") {
+      ... on Person {
+        Trips(queryOptions: { top: 1 }) {
+          TripId
+          PlanItems(queryOptions: { top: 5 }) {
+            ... on PlanItem {
+              PlanItemId
+              ConfirmationCode
+            }
+            ... on Flight {
+              PlanItemId
+              FlightNumber
+              SeatNumber
+            }
+            ... on Event {
+              PlanItemId
+              Description
+              OccursAt {
+                BuildingInfo
+                Address
+              }
+            }
+            ... on PublicTransportation {
+              PlanItemId
+              ConfirmationCode
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {
   it('executes GetMe with nav', async () => {
     const composition = await compose({ output: 'graphql' });
@@ -121,5 +156,24 @@ describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', run
     const person = result.data?.PeopleByUserName as Record<string, unknown> | undefined;
     expect(person?.UserName).toBe('russellwhyte');
     expect(Array.isArray(person?.Friends)).toBe(true);
+  });
+
+  it('executes PlanItems with Flight/Event exclusive fields', async () => {
+    const composition = await compose({ output: 'graphql' });
+    const { execute } = await serve({
+      runner,
+      supergraph: composition.output,
+    });
+    const result = await execute({ query: planItemsQuery });
+    expect(result.errors).toBeUndefined();
+    const person = result.data?.PeopleByUserName as {
+      Trips?: Array<{ PlanItems?: Array<Record<string, unknown>> }>;
+    };
+    const items = person?.Trips?.[0]?.PlanItems || [];
+    expect(items.length).toBeGreaterThan(0);
+    const flight = items.find(i => typeof i.FlightNumber === 'string');
+    const event = items.find(i => typeof i.Description === 'string');
+    expect(flight?.FlightNumber).toEqual(expect.any(String));
+    expect(event?.Description).toEqual(expect.any(String));
   });
 });

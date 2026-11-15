@@ -5,6 +5,7 @@ import {
   isListType,
   isNonNullType,
   isObjectType,
+  isUnionType,
   Kind,
   type FieldNode,
   type FragmentDefinitionNode,
@@ -241,15 +242,23 @@ function isODataExpandableField(fieldDef: GraphQLField<any, any>): boolean {
   if (hasDirective(dirs, 'navProp') || hasDirective(dirs, 'pluralNav')) {
     return true;
   }
-  // Connectors-only schemas may omit Mesh `@pluralNav` / `@navProp`. Expand only when
-  // the target type is an entity (`@key`). Complex types (e.g. TripPin `AddressInfo` →
-  // `Location`) are `$select`ed and returned inline — `$expand` is rejected by OData.
+  // Connectors-only schemas may omit Mesh `@pluralNav` / `@navProp`. Expand when the
+  // target is an entity (`@key`) or a polymorphic entity union (`IPerson` / `IPlanItem`).
+  // Complex types (e.g. TripPin `AddressInfo` → `Location`) stay `$select`-only.
   const namedType = getNamedType(fieldDef.type);
-  if (!isObjectType(namedType)) {
-    return false;
+  if (isObjectType(namedType)) {
+    const typeDirs = getDirectiveExtensions(namedType as any) || {};
+    return hasDirective(typeDirs, 'key');
   }
-  const typeDirs = getDirectiveExtensions(namedType as any) || {};
-  return hasDirective(typeDirs, 'key');
+  if (isUnionType(namedType)) {
+    return namedType.getTypes().some(t => {
+      if (!isObjectType(t)) return false;
+      const typeDirs = getDirectiveExtensions(t as any) || {};
+      return hasDirective(typeDirs, 'key');
+    });
+  }
+  // Interfaces without schema.getPossibleTypes — treat as expandable when abstract.
+  return isAbstractType(namedType);
 }
 function collectField(
   field: FieldNode,

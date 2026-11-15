@@ -62,7 +62,7 @@ type user @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs
   officeLocation: String
   messages(queryOptions: QueryOptions): [message] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/messages", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\") }"})
   messagesById(id: ID): message @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/messages/{$args.id}/"}, selection: "id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\")"})
-  drives(queryOptions: QueryOptions): [drive] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/drives", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id quota { used remaining } _odataId: $->get(\\"@odata.id\\") }"})
+  drives(queryOptions: QueryOptions): [drive] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/drives", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n  \\"$expand\\": $(\\"root\\")\\n}"}, selection: "$.value { id quota { used remaining } _odataId: $->get(\\"@odata.id\\") root: root { id name size lastModifiedDateTime webUrl _odataId: $->get(\\"@odata.id\\") } }"})
   drivesById(id: ID): drive @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/drives/{$args.id}/"}, selection: "id quota { used remaining } _odataId: $->get(\\"@odata.id\\")"})
   rest: JSON
   displayName: String
@@ -96,7 +96,7 @@ type driveItem @join__type(graph: MICROSOFT_GRAPH, key: "id") {
   size: BigInt
   lastModifiedDateTime: DateTime
   webUrl: String
-  children(queryOptions: QueryOptions): [driveItem] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "{$this._odataId}/children", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id name size lastModifiedDateTime webUrl _odataId: $->get(\\"@odata.id\\") }"})
+  children(queryOptions: QueryOptions): [driveItem] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "{$this._odataId}/children", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n  \\"$expand\\": $(\\"children\\")\\n}"}, selection: "$.value { id name size lastModifiedDateTime webUrl _odataId: $->get(\\"@odata.id\\") children: children { id name size lastModifiedDateTime webUrl _odataId: $->get(\\"@odata.id\\") } }"})
   childrenById(id: ID): driveItem @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "{$this._odataId}/children/{$args.id}/"}, selection: "id name size lastModifiedDateTime webUrl _odataId: $->get(\\"@odata.id\\")"})
   """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
@@ -285,35 +285,11 @@ exports[`Microsoft Graph Connectors execute with apollo-router fetchFilesFromOne
             "remaining": 10485760,
             "used": 1024,
           },
-          "root": {
-            "children": null,
-          },
+          "root": null,
         },
       ],
     },
   },
-  "errors": [
-    {
-      "extensions": {
-        "code": "CONNECTOR_FETCH",
-        "connector": {
-          "coordinate": "MicrosoftGraph:driveItem.children[0]",
-        },
-        "http": {
-          "status": 404,
-        },
-        "service": "MicrosoftGraph",
-      },
-      "message": "Not found: /children",
-      "path": [
-        "me",
-        "drives",
-        0,
-        "root",
-        "children",
-      ],
-    },
-  ],
 }
 `;
 
@@ -389,31 +365,57 @@ exports[`Microsoft Graph Connectors execute with hive fetchFilesFromOneDrive (v0
             "used": 1024,
           },
           "root": {
-            "children": [
-              {
-                "lastModifiedDateTime": "2024-02-01T12:00:00.000Z",
-                "name": "notes.txt",
-                "size": 42,
-                "webUrl": "https://example.com/drive/notes.txt",
-              },
-              {
-                "lastModifiedDateTime": "2024-02-02T12:00:00.000Z",
-                "name": "diagrams",
-                "size": 0,
-                "webUrl": "https://example.com/drive/diagrams",
-              },
-              {
-                "lastModifiedDateTime": "2024-02-03T12:00:00.000Z",
-                "name": "readme.md",
-                "size": 128,
-                "webUrl": "https://example.com/drive/readme.md",
-              },
-            ],
+            "children": null,
           },
         },
       ],
     },
   },
+  "errors": [
+    {
+      "extensions": {
+        "code": "CONNECTOR_FETCH",
+        "connector": {
+          "coordinate": "MicrosoftGraph:driveItem.children@connect[0]",
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:37727/users/user-ada/drives/drive-1/children?%24top=3&%24expand=children",
+        },
+        "response": {
+          "body": {
+            "error": {
+              "message": "Not found: /users/user-ada/drives/drive-1/children",
+            },
+          },
+          "headers": {
+            "connection": "keep-alive",
+            "content-type": "application/json",
+            "date": "Sun, 15 Nov 2026 02:44:20 GMT",
+            "keep-alive": "timeout=5",
+            "transfer-encoding": "chunked",
+          },
+          "status": 404,
+          "statusText": "Not Found",
+        },
+        "serviceName": "MicrosoftGraph",
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line": 9,
+        },
+      ],
+      "message": "Not found: /users/user-ada/drives/drive-1/children",
+      "path": [
+        "me",
+        "drives",
+        0,
+        "root",
+        "children",
+      ],
+    },
+  ],
 }
 `;
 

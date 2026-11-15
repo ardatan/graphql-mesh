@@ -715,7 +715,46 @@ export function ensureODataIdField(selected: any, raw: any, requestOriginPath: s
       : Array.isArray((raw as { value?: unknown })?.value)
         ? (raw as { value: unknown[] }).value
         : null;
-    return selected.map((item, i) => ensureODataIdField(item, rawItems?.[i], requestOriginPath));
+    const base = requestOriginPath ? stripTrailingSlash(requestOriginPath) : '';
+    return selected.map((item, i) => {
+      // List members under `odata.metadata=minimal` omit `@odata.id`. Prefer
+      // `collectionUrl/key` over the bare collection URL so nested
+      // `{$this._odataId}/Nav` resolves (`…/Trips/0/PlanItems`).
+      const rawItem = rawItems?.[i];
+      if (
+        item != null &&
+        typeof item === 'object' &&
+        !Array.isArray(item) &&
+        base &&
+        (item as Record<string, unknown>)._odataId == null
+      ) {
+        const rec = item as Record<string, unknown>;
+        const rawRec =
+          rawItem != null && typeof rawItem === 'object' && !Array.isArray(rawItem)
+            ? (rawItem as Record<string, unknown>)
+            : undefined;
+        const fromRaw = rawRec?.['@odata.id'];
+        if (typeof fromRaw === 'string' && fromRaw) {
+          rec._odataId = stripTrailingSlash(fromRaw);
+        } else {
+          const key =
+            rec.TripId ??
+            rec.PlanItemId ??
+            rec.UserName ??
+            rec.id ??
+            rec.Id ??
+            rawRec?.TripId ??
+            rawRec?.PlanItemId ??
+            rawRec?.UserName ??
+            rawRec?.id ??
+            rawRec?.Id;
+          if (key != null && key !== '') {
+            rec._odataId = `${base}/${key}`;
+          }
+        }
+      }
+      return ensureODataIdField(item, rawItem, requestOriginPath);
+    });
   }
   const record = selected as Record<string, unknown>;
   if (record._odataId == null || record._odataId === '') {
@@ -1583,7 +1622,7 @@ export function addConnectFieldResolver(
   const preferEmbeddedNav = expandNavProps && hasODataMetadataAcceptHeader(source?.http?.headers);
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
-    // When `$expand` already put this field on `root`, skip the field-level HTTP trip.
+    // When `$expand` / parent selection already put this field on `root`, skip HTTP.
     // Apollo may skip via planner; Hive always invokes the field resolver.
     if (
       preferEmbeddedNav &&
@@ -1594,6 +1633,20 @@ export function addConnectFieldResolver(
       (root as Record<string, unknown>)[info.fieldName] != null
     ) {
       const embedded = (root as Record<string, unknown>)[info.fieldName];
+      // Parent `@connect` selection may already have mapped `__typename` (baked
+      // `$expand` + inline nav). Re-running `->match` on mapped objects loses
+      // `@odata.type` and collapses every row to the default union member.
+      const alreadyMapped = Array.isArray(embedded)
+        ? embedded.some(
+            item => item != null && typeof item === 'object' && '__typename' in item,
+          )
+        : embedded != null &&
+          typeof embedded === 'object' &&
+          !Array.isArray(embedded) &&
+          '__typename' in (embedded as object);
+      if (alreadyMapped) {
+        return embedded;
+      }
       const parentId =
         typeof (root as Record<string, unknown>)._odataId === 'string'
           ? ((root as Record<string, unknown>)._odataId as string)

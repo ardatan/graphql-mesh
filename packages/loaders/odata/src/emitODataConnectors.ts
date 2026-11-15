@@ -349,6 +349,71 @@ function listSelection(
   return inner ? `$.value { ${inner} }` : '$.value';
 }
 
+/**
+ * Plural nav `@connect`: selection + queryParams, with child entity nav baked into
+ * `$expand` / selection so Router does not need a follow-up `{$this._odataId}/…`
+ * (list members often lack `@odata.id` under `odata.metadata=minimal`).
+ */
+function selectionAndParamsForPluralNav(
+  schemaComposer: SchemaComposer,
+  field: ObjectTypeComposerFieldConfig<any, any>,
+): { selection: string; queryParams: string } {
+  const typeName = fieldTypeNameString(field);
+  const named = typeName.replace(/[[\]!]/g, '');
+  const baseSelection = selectionForFieldReturnType(schemaComposer, field);
+  const childNav: string[] = [];
+  const inlineBits: string[] = [];
+  try {
+    if (schemaComposer.isObjectType(named)) {
+      const childTC = schemaComposer.getOTC(named);
+      const childInfo = (childTC.getExtensions() as any)?.odata?.entityInfo as
+        | { navigationFields?: string[] }
+        | undefined;
+      const navSet = new Set(childInfo?.navigationFields || []);
+      for (const fn of childTC.getFieldNames()) {
+        const f = childTC.getField(fn);
+        const d = ((f.extensions as any)?.odata || {}) as ODataFieldEmit;
+        const navName =
+          (d.pluralNav?.navigationPropertyName as string | undefined) ||
+          (navSet.has(fn) ? fn : undefined);
+        if (!navName) continue;
+        const inner = selectionForFieldReturnType(schemaComposer, f);
+        // Expanded nav is a bare array/entity — strip `$.value { … }` wrapper.
+        const bare = inner.startsWith('$.value {')
+          ? inner.replace(/^\$\.value\s*\{\s*/, '').replace(/\s*\}$/, '')
+          : inner.startsWith('$.value')
+            ? '$'
+            : inner;
+        if (!bare || bare === '$') continue;
+        childNav.push(navName);
+        inlineBits.push(`${navName}: ${navName} { ${bare} }`);
+      }
+    }
+  } catch {
+    // keep base selection only
+  }
+  if (!childNav.length) {
+    return { selection: baseSelection, queryParams: ODATA_QUERY_OPTIONS_QUERY_PARAMS };
+  }
+  const expandLiteral = childNav.join(',');
+  const queryParams = `{
+  "$filter": $args.queryOptions.filter
+  "$orderby": $args.queryOptions.orderby
+  "$top": $args.queryOptions.top
+  "$skip": $args.queryOptions.skip
+  "$search": $args.queryOptions.search
+  "$count": $args.queryOptions.count
+  "$inlinecount": $args.queryOptions.inlinecount
+  "$expand": $("${expandLiteral}")
+}`;
+  let selection = baseSelection;
+  if (selection.startsWith('$.value {') && selection.endsWith('}')) {
+    const inner = selection.slice('$.value {'.length, -1).trim();
+    selection = `$.value { ${inner} ${inlineBits.join(' ')} }`;
+  }
+  return { selection, queryParams };
+}
+
 function fieldTypeNameString(field: ObjectTypeComposerFieldConfig<any, any>): string {
   return typeof (field.type as any)?.getTypeName === 'function'
     ? (field.type as any).getTypeName()
@@ -831,7 +896,8 @@ export function emitODataConnectors(
 
     // Field-level `@connect` for nav + bound ops.
     // Prefer entity-set relative paths (Apollo OData pattern). Nested-only types use
-    // `{$this._odataId}` (Hive synthesizes id from the parent request URL).
+    // `{$this._odataId}` (Hive fills entity URL from collection+key when `@odata.id`
+    // is omitted; Apollo falls back to the parent request URI for `_odataId`).
     if (isObject) {
       const basePath = entitySetName
         ? `/${entitySetName}/{$this.${identifierFieldName}}`
@@ -845,6 +911,12 @@ export function emitODataConnectors(
         }
         if (dirs.pluralNav) {
           const navName = dirs.pluralNav.navigationPropertyName as string;
+          // Bake child `$expand` + selection so Apollo (no Mesh expandNavProps) and
+          // Hive share one HTTP for nested entity nav (e.g. Trips→PlanItems).
+          const { selection, queryParams } = selectionAndParamsForPluralNav(
+            schemaComposer,
+            field,
+          );
           setConnect(
             otc,
             fieldName,
@@ -852,9 +924,9 @@ export function emitODataConnectors(
               source: sourceName,
               http: {
                 GET: `${basePath}/${navName}`,
-                queryParams: ODATA_QUERY_OPTIONS_QUERY_PARAMS,
+                queryParams,
               },
-              selection: selectionForFieldReturnType(schemaComposer, field),
+              selection,
             }),
           );
           continue;
