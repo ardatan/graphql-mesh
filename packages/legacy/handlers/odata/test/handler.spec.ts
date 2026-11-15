@@ -408,8 +408,7 @@ describe('odata', () => {
     addMock(correctUrl, async request => {
       sentRequest = request.clone();
       const bodyObj: any = await request.json();
-      bodyObj['@odata.type'] =
-        '#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
+      bodyObj['@odata.type'] = '#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new MockResponse(JSON.stringify(bodyObj));
     });
     using cache = new InMemoryLRUCache();
@@ -509,8 +508,7 @@ describe('odata', () => {
     addMock(correctUrl, async request => {
       sentRequest = request.clone() as Request;
       const returnBody: any = await request.json();
-      returnBody['@odata.type'] =
-        '#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
+      returnBody['@odata.type'] = '#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new MockResponse(JSON.stringify(returnBody));
     });
     using cache = new InMemoryLRUCache();

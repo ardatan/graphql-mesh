@@ -1,6 +1,5 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import EventEmitter from 'node:events';
-import type DataLoader from 'dataloader';
 import { XMLParser } from 'fast-xml-parser';
 import { specifiedDirectives } from 'graphql';
 import { SchemaComposer } from 'graphql-compose';
@@ -39,7 +38,8 @@ import type { EntityTypeExtensions } from './types.js';
 import { getTypeNameFromRef } from './utils/getTypeNameFromRef.js';
 import { QUERY_OPTIONS_FIELDS } from './utils/QueryOptionsFields.js';
 
-type DataLoaderMap = Record<symbol, DataLoader<Request, Response, Request>>;
+/** Context bag type for field configs (Connectors path; no Mesh DataLoader). */
+type FieldContext = Record<string, unknown>;
 
 export interface LoadGraphQLSchemaFromODataOpts {
   endpoint: string;
@@ -268,7 +268,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             extensions: { propertyObj },
           },
         });
-        const field: ObjectTypeComposerFieldConfigDefinition<unknown, DataLoaderMap> = {
+        const field: ObjectTypeComposerFieldConfigDefinition<unknown, FieldContext> = {
           type: getTypeNameFromRef({
             typeRef: propertyTypeRef,
             isInput: false,
@@ -318,7 +318,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               } as any,
             },
           };
-          const pluralField: ObjectTypeComposerFieldConfigDefinition<any, DataLoaderMap> = {
+          const pluralField: ObjectTypeComposerFieldConfigDefinition<any, FieldContext> = {
             type: getTypeNameFromRef({
               typeRef: navigationPropertyTypeRef,
               isInput: false,
@@ -346,7 +346,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             [`${navigationPropertyName}ById`]: singularField,
           });
         } else {
-          const field: ObjectTypeComposerFieldConfigDefinition<any, DataLoaderMap> = {
+          const field: ObjectTypeComposerFieldConfigDefinition<any, FieldContext> = {
             type: getTypeNameFromRef({
               typeRef: navigationPropertyTypeRef,
               isInput: false,

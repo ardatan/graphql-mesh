@@ -14307,17 +14307,13 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^12.3.3"
     "@graphql-tools/utils": "npm:^13.2.2"
-    "@types/http-string-parser": "npm:0.0.33"
     "@types/url-join": "npm:4.0.3"
     "@whatwg-node/fetch": "npm:^0.12.1"
     "@whatwg-node/promise-helpers": "npm:^2.0.1"
-    dataloader: "npm:^2.2.2"
     fast-xml-parser: "npm:^5.10.1"
     graphql: "npm:16.14.0"
     graphql-compose: "npm:^9.3.0"
-    graphql-parse-resolve-info: "npm:^4.13.0"
     graphql-scalars: "npm:^2.0.1"
-    http-string-parser: "npm:^0.0.6"
     pascal-case: "npm:^3.1.2"
     tslib: "npm:^2.4.0"
     url-join: "npm:^4.0.1"
@@ -29824,7 +29820,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"graphql-parse-resolve-info@npm:4.14.1, graphql-parse-resolve-info@npm:^4.12.3, graphql-parse-resolve-info@npm:^4.13.0":
+"graphql-parse-resolve-info@npm:4.14.1, graphql-parse-resolve-info@npm:^4.12.3":
   version: 4.14.1
   resolution: "graphql-parse-resolve-info@npm:4.14.1"
   dependencies:
