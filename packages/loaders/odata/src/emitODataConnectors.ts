@@ -474,6 +474,27 @@ function argTypeNameOf(argConfig: { type: unknown }): string {
   ).replace(/[[\]!]/g, '');
 }
 
+/** True when the GraphQL arg type is a list (e.g. `[String]` / `Collection(Edm.String)`). */
+function isListArgType(argConfig: { type: unknown }): boolean {
+  let t = argConfig.type as any;
+  if (!t) return false;
+  // Unwrap NonNullComposer so `[String!]!` is detected via the inner list name.
+  while (t?.ofType && /NonNull/i.test(t.constructor?.name || '')) {
+    t = t.ofType;
+  }
+  if (typeof t?.getTypeName === 'function') {
+    const name = String(t.getTypeName());
+    if (name.startsWith('[')) return true;
+  }
+  if (/\bList\b/i.test(t?.constructor?.name || '')) return true;
+  const raw = String(
+    typeof (argConfig.type as any)?.getTypeName === 'function'
+      ? (argConfig.type as any).getTypeName()
+      : argConfig.type,
+  );
+  return raw.includes('[') || /^Collection\(/i.test(raw);
+}
+
 function isInputObjectArgType(schemaComposer: SchemaComposer, argTypeName: string): boolean {
   try {
     if (schemaComposer.isEnumType(argTypeName) || schemaComposer.isScalarType(argTypeName)) {
@@ -489,8 +510,9 @@ function isInputObjectArgType(schemaComposer: SchemaComposer, argTypeName: strin
 
 /**
  * OData function call args: `(lat={$args.lat},address=@address)`.
- * Complex Inputs use parameter aliases (`@name`) so the URL is not `[object Object]`.
- * Binding parameter is excluded by **name** (EntitySetPath / first param), not by Input type
+ * Complex Inputs and collection args use parameter aliases (`@name`) so the URL
+ * is not `[object Object]` / loses list shape. Binding parameter is excluded by
+ * **name** (EntitySetPath / first param), not by Input type
  * (so e.g. `recipient: PersonInput` still appears).
  */
 function odataCallArgsParts(
@@ -505,8 +527,9 @@ function odataCallArgsParts(
     if (name === 'queryOptions') continue;
     if (bindingParameterName && name === bindingParameterName) continue;
     const argTypeName = argTypeNameOf(argConfig);
-    if (isInputObjectArgType(schemaComposer, argTypeName)) {
-      // Alias: Function(address=@address)?@address={$args.address}
+    // Collection(Edm.String) / [String] — keep JSON list via alias; bare unwrap loses [].
+    if (isListArgType(argConfig) || isInputObjectArgType(schemaComposer, argTypeName)) {
+      // Alias: Function(colors=@colors)?@colors={$args.colors}
       parts.push(`${name}=@${name}`);
       aliasQueryParams[`@${name}`] = `$args.${name}`;
       continue;
@@ -1191,7 +1214,19 @@ export function emitODataConnectors(
     });
     if (!applicable.length) return;
     const existing = Array.isArray(connect.http.headers) ? connect.http.headers : [];
-    connect.http.headers = [...existing, ...applicable];
+    // Root Query/Mutation are also visited as object composers — replace same-name
+    // headers case-insensitively instead of appending duplicates.
+    const next = [...existing];
+    for (const header of applicable) {
+      const lower = String(header.name).toLowerCase();
+      const idx = next.findIndex(h => String(h?.name || '').toLowerCase() === lower);
+      if (idx >= 0) {
+        next[idx] = header;
+      } else {
+        next.push(header);
+      }
+    }
+    connect.http.headers = next;
     setField(fieldName, {
       ...field,
       extensions: {

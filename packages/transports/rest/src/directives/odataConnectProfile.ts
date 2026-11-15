@@ -160,21 +160,26 @@ function parseConnectPropertyBlock(selection: string, node: ConnectPropertyMapNo
         // exprs make projection unsafe for this subtree.
         const exprStart = i;
         if (s[i] === '$' && s[i + 1] === '.') {
-          // `$.FirstName` / `$.a.b` → last identifier is the OData wire name.
+          // `$.FirstName` → FirstName. Multi-segment `$.Address.City` must `$select`
+          // the root property `Address` (or mark unsafe) — never invent `City` alone.
           i += 2;
-          let last = '';
+          const segments: string[] = [];
           while (i < s.length && !/[\s,{]/.test(s[i])) {
             if (isIdentStart(s[i])) {
               let k = i + 1;
               while (k < s.length && isIdent(s[k])) k++;
-              last = s.slice(i, k);
+              segments.push(s.slice(i, k));
               i = k;
+            } else if (s[i] === '.') {
+              i++;
             } else {
               i++;
             }
           }
-          if (last) {
-            odataName = last;
+          if (segments.length === 1) {
+            odataName = segments[0];
+          } else if (segments.length > 1) {
+            odataName = segments[0];
           } else {
             skipMap = true;
             node.projectionUnsafe = true;
@@ -248,13 +253,32 @@ function parseConnectPropertyBlock(selection: string, node: ConnectPropertyMapNo
   }
 }
 
-/** Split on `sep` that are not inside `(...)` option lists. */
+/**
+ * Split on `sep` that are not inside `(...)` option lists or quoted string values
+ * (`$filter=Name eq 'A;B'` / `startswith(Name,'(')` must stay one part).
+ */
 export function splitTopLevel(s: string, sep: ',' | ';'): string[] {
   const parts: string[] = [];
   let depth = 0;
   let start = 0;
+  let quote: "'" | '"' | null = null;
   for (let i = 0; i < s.length; i++) {
     const c = s[i];
+    if (quote) {
+      // OData single-quoted strings escape a quote by doubling it.
+      if (c === quote) {
+        if (quote === "'" && s[i + 1] === "'") {
+          i++;
+          continue;
+        }
+        quote = null;
+      }
+      continue;
+    }
+    if (c === "'" || c === '"') {
+      quote = c;
+      continue;
+    }
     if (c === '(') depth++;
     else if (c === ')') depth = Math.max(0, depth - 1);
     else if (c === sep && depth === 0) {
@@ -818,8 +842,9 @@ function mergeExpandItems(items: string[]): string[] {
       nestedParts.push(`${k}=${v}`);
     }
     if (entry.select.size) nestedParts.push(`$select=${[...entry.select].join(',')}`);
-    if (entry.expand.length) {
-      nestedParts.push(`$expand=${mergeExpandItems(entry.expand).join(',')}`);
+    const nestedExpand = mergeExpandItems(entry.expand);
+    if (nestedExpand.length) {
+      nestedParts.push(`$expand=${nestedExpand.join(',')}`);
     }
     return nestedParts.length ? `${path}(${nestedParts.join(';')})` : path;
   });

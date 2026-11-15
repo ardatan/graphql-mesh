@@ -1705,13 +1705,6 @@ export function addConnectFieldResolver(
     ) {
       const embedded = (root as Record<string, unknown>)[info.fieldName];
       const selection = connectArgs.selection || '$';
-      // Parent `@connect` selection may already have mapped `__typename` (baked
-      // `$expand` + inline nav). Re-running `->match` on mapped objects loses
-      // `@odata.type` and collapses every row to the default union member.
-      // Same for `gql: Wire` remaps already applied (e.g. `userName: UserName`).
-      if (navValueAlreadyMapped(embedded, selection)) {
-        return embedded;
-      }
       const parentId =
         typeof (root as Record<string, unknown>)._odataId === 'string'
           ? ((root as Record<string, unknown>)._odataId as string)
@@ -1736,6 +1729,14 @@ export function addConnectFieldResolver(
         }
         return nav ? `${base}/${nav}` : base;
       })();
+      // Parent `@connect` selection may already have mapped `__typename` (baked
+      // `$expand` + inline nav). Re-running `->match` on mapped objects loses
+      // `@odata.type` and collapses every row to the default union member.
+      // Same for `gql: Wire` remaps already applied (e.g. `userName: UserName`).
+      // Still complete `_odataId` — parent ensureODataIdField does not walk nested nav.
+      if (navValueAlreadyMapped(embedded, selection)) {
+        return ensureODataIdField(embedded, embedded, navCollectionBase);
+      }
       const extras = {
         status: 200,
         responseHeaders: new Headers(),

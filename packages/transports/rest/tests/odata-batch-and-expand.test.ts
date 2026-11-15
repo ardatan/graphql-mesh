@@ -640,3 +640,16 @@ describe('OData path encode mix (_odataId raw, args encoded)', () => {
     );
   });
 });
+
+describe('prefer-embedded completes _odataId for already-mapped nav', () => {
+  it('fills nested _odataId on mapped expand payloads without rematching', async () => {
+    const { ensureODataIdField } = await import('../src/directives/connect.js');
+    const mapped = [
+      { __typename: 'Order', id: 'o1' },
+      { __typename: 'Order', id: 'o2', '@odata.id': 'https://odata.example.com/Orders/o2' },
+    ];
+    const out = ensureODataIdField(mapped, mapped, 'https://odata.example.com/People/p/Orders');
+    expect(out[0]._odataId).toBe('https://odata.example.com/People/p/Orders/o1');
+    expect(out[1]._odataId).toBe('https://odata.example.com/Orders/o2');
+  });
+});

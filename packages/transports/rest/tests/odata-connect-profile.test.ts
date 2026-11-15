@@ -110,6 +110,15 @@ describe('odataConnectProfile helpers', () => {
     expect(tree.map.get('userName')).toBe('UserName');
   });
 
+  it('maps multi-segment $.Address.City to the root Address property', () => {
+    const tree = buildConnectPropertyNameMapTree(`
+      city: $.Address.City
+      userName: UserName
+    `);
+    expect(tree.map.get('city')).toBe('Address');
+    expect(tree.map.get('userName')).toBe('UserName');
+  });
+
   it('does not mark projection unsafe for __typename / _odataId connector exprs', () => {
     const tree = buildConnectPropertyNameMapTree(`
       __typename: $("Person")
@@ -144,6 +153,18 @@ describe('odataConnectProfile helpers', () => {
     expect(
       splitTopLevelSemicolon('$expand=Trips($top=2;$select=TripId,Name);$select=UserName'),
     ).toEqual(['$expand=Trips($top=2;$select=TripId,Name)', '$select=UserName']);
+  });
+
+  it('does not split on separators or parens inside quoted filter values', () => {
+    expect(splitTopLevelSemicolon(`$filter=Name eq 'A;B';$select=UserName`)).toEqual([
+      `$filter=Name eq 'A;B'`,
+      '$select=UserName',
+    ]);
+    expect(splitTopLevelComma(`Name eq 'A,B',UserName`)).toEqual([`Name eq 'A,B'`, 'UserName']);
+    expect(splitTopLevelSemicolon(`$filter=startswith(Name,'(');$top=2`)).toEqual([
+      `$filter=startswith(Name,'(')`,
+      '$top=2',
+    ]);
   });
 
   it('promotes $.value { ... } property map to the root', () => {
