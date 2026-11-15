@@ -1,11 +1,6 @@
-import { buildSchema, print } from 'graphql';
+import { buildSchema } from 'graphql';
 import { createSchema } from 'graphql-yoga';
-import {
-  composeSubgraphs,
-  createFederationTransform,
-  getAnnotatedSubgraphs,
-  type SubgraphConfig,
-} from '@graphql-mesh/fusion-composition';
+import { createFederationTransform, type SubgraphConfig } from '@graphql-mesh/fusion-composition';
 import { TransformValidationError } from '../../src/transforms/utils';
 import { composeAndGetExecutor } from './utils';
 
