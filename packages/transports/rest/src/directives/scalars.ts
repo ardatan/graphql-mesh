@@ -9,10 +9,14 @@ import { getDirectiveAnnotations } from './utils.js';
 
 /**
  * XSD `xs:date` allows an optional timezone (`2017-03-10+00:00`, `2017-03-10Z`).
- * GraphQL Date (RFC 3339 full-date) only accepts `YYYY-MM-DD`. Strip the zone so
- * SOAP/XML responses serialize without INTERNAL_SERVER_ERROR.
+ * GraphQL Date (RFC 3339 full-date) only accepts `YYYY-MM-DD`. Strip a *valid*
+ * XSD zone so SOAP/XML responses serialize without INTERNAL_SERVER_ERROR.
+ *
+ * Valid offsets: `Z`, or `[+-]hh:mm` with hh 00-13 and mm 00-59, or exactly
+ * `[+-]14:00`. Invalid suffixes (e.g. `+99:99`, `+14:01`, `+00:60`) are left
+ * intact for GraphQL Date to reject.
  */
-const XSD_DATE_WITH_TZ = /^(-?\d{4}-\d{2}-\d{2})(Z|[+-]\d{2}:\d{2})$/;
+const XSD_DATE_WITH_TZ = /^(-?\d{4}-\d{2}-\d{2})(Z|[+-](?:14:00|(?:0\d|1[0-3]):[0-5]\d))$/;
 
 export function coerceXsdDateString(value: unknown): unknown {
   if (typeof value === 'string') {

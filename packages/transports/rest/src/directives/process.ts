@@ -41,13 +41,7 @@ export interface ProcessDirectiveArgs {
 
 export function processDirectives(
   schema: GraphQLSchema,
-  {
-    globalFetch,
-    log,
-    pubsub,
-    operationHeaders: runtimeOperationHeaders,
-    ...extraGlobalOptions
-  }: ProcessDirectiveArgs = {},
+  { globalFetch, log, pubsub, ...extraGlobalOptions }: ProcessDirectiveArgs = {},
 ) {
   const nonExecutableObjMapScalar = schema.getType('ObjMap');
   if (nonExecutableObjMapScalar && isScalarType(nonExecutableObjMapScalar)) {
@@ -90,14 +84,9 @@ export function processDirectives(
     timeout: transportOpts.timeout,
     ...extraGlobalOptions,
   };
-  let runtimeHeaders = runtimeOperationHeaders;
-  if (typeof runtimeHeaders === 'string') {
-    runtimeHeaders = JSON.parse(runtimeHeaders);
-  }
-  if (Array.isArray(runtimeHeaders)) {
-    runtimeHeaders = Object.fromEntries(runtimeHeaders);
-  }
-  // Wire @connect resolvers (Federation Connectors)
+  // Wire @connect resolvers (Federation Connectors).
+  // HTTP headers come from `@source` / `@connect` only (WSDL emit already bakes yaml
+  // operationHeaders into `@source`); no separate runtime header bag.
   const odataOpts = transportOpts.odata;
   processConnectDirectives(schema, {
     globalFetch,
@@ -111,8 +100,6 @@ export function processDirectives(
       batch: odataOpts?.batch,
       securityHeaderNames: odataOpts?.securityHeaderNames,
     },
-    // Handler-config headers (SDL soap sources) — merged under @source/@connect headers.
-    operationHeaders: runtimeHeaders as Record<string, string> | undefined,
   });
   if (typeof globalOptions.operationHeaders === 'string') {
     globalOptions.operationHeaders = JSON.parse(globalOptions.operationHeaders);

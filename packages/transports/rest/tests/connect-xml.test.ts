@@ -2,6 +2,7 @@ import { buildSchema, execute, parse, type GraphQLSchema } from 'graphql';
 import { Response } from '@whatwg-node/fetch';
 import { processConnectDirectives } from '../src/directives/connect.js';
 import { processDirectives } from '../src/directives/process.js';
+import { coerceXsdDateString } from '../src/directives/scalars.js';
 import {
   inheritXmlNamespacePrefixes,
   isXmlContentType,
@@ -259,6 +260,64 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
         },
       },
     });
+  });
+
+  it('strips only valid XSD date timezone offsets', () => {
+    expect(coerceXsdDateString('2017-03-10+00:00')).toBe('2017-03-10');
+    expect(coerceXsdDateString('2017-03-10Z')).toBe('2017-03-10');
+    expect(coerceXsdDateString('2017-03-10+13:59')).toBe('2017-03-10');
+    expect(coerceXsdDateString('2017-03-10+14:00')).toBe('2017-03-10');
+    expect(coerceXsdDateString('2017-03-10-14:00')).toBe('2017-03-10');
+    // Invalid XSD offsets stay intact for GraphQL Date to reject.
+    expect(coerceXsdDateString('2017-03-10+99:99')).toBe('2017-03-10+99:99');
+    expect(coerceXsdDateString('2017-03-10+14:01')).toBe('2017-03-10+14:01');
+    expect(coerceXsdDateString('2017-03-10+00:60')).toBe('2017-03-10+00:60');
+  });
+
+  it('rejects invalid XSD date offsets via GraphQL Date after coerce', async () => {
+    const fetchImpl = async () =>
+      new Response(
+        `<?xml version="1.0"?><Envelope><Body><Person><DOB>2017-03-10+14:01</DOB></Person></Body></Envelope>`,
+        { status: 200, headers: { 'content-type': 'text/xml' } },
+      );
+    const sdl = /* GraphQL */ `
+      schema @source(name: "xmlApi", http: { baseURL: "http://localhost" }) {
+        query: Query
+      }
+      scalar Date
+      type Query {
+        person: Person
+          @connect(
+            source: "xmlApi"
+            http: {
+              POST: "/person"
+              headers: [{ name: "Content-Type", value: "text/xml" }]
+              body: """
+              Request: { id: $("1") }
+              """
+            }
+            selection: "dob: Envelope.Body.Person.DOB"
+          )
+      }
+      type Person {
+        dob: Date
+      }
+    `;
+    const schema = processDirectives(buildSchema(`${CONNECTOR_DIRECTIVES}\n${sdl}`), {
+      globalFetch: fetchImpl as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          person {
+            dob
+          }
+        }
+      `),
+    });
+    expect(result.errors?.length).toBeGreaterThan(0);
+    expect(String(result.errors?.[0]?.message)).toContain('invalid date-string');
   });
 
   it('coerces XSD xs:date with timezone to GraphQL Date YYYY-MM-DD', async () => {

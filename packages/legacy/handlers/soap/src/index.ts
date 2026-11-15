@@ -94,8 +94,6 @@ export default class SoapHandler implements MeshHandler {
           const processed = processDirectives(schema, {
             globalFetch: fetchFn,
             log,
-            // SDL sources do not re-run SOAPLoader; keep yaml operationHeaders at runtime.
-            operationHeaders: this.config.operationHeaders,
           });
           executor = createDefaultExecutor(processed);
         }
