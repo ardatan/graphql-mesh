@@ -154,11 +154,12 @@ describe('Federation Connectors composition', () => {
     expect(sdl).toMatch(/import:\s*\[[^\]]*@source/);
     expect(sdl).toContain('specs.apollo.dev/connect/v0.4');
     expect(sdl).toContain('@connect');
-    // Apollo/Rover do not `@composeDirective` `@connect` — annotated SDL matches that.
+    // Rover/Federation-connect style: no `@composeDirective` for `@connect`, no extras wrapper.
     expect(sdl).not.toMatch(/@composeDirective\(name:\s*"@connect"\)/);
+    expect(sdl).not.toContain('extraSchemaDefinitionDirective');
   });
 
-  it('keeps Apollo @source on schema extensions path', () => {
+  it('keeps Federation Connectors @source on schema (no extras wrapper)', () => {
     const annotated = getAnnotatedSubgraphs([
       {
         name: 'REST',
@@ -166,10 +167,11 @@ describe('Federation Connectors composition', () => {
       },
     ]);
     const sdl = print(annotated[0].typeDefs);
-    // Apollo `@source` is carried via Mesh `@extraSchemaDefinitionDirective` on Query
-    // until compose post-process lifts it onto `schema @source`.
-    expect(sdl).toContain('extraSchemaDefinitionDirective');
+    // Annotated SDL is Rover-like: SCHEMA `@source` on `schema`, not Query extras.
+    expect(sdl).not.toContain('extraSchemaDefinitionDirective');
+    expect(sdl).toMatch(/schema[\s\S]*@source\(name:\s*"rest"/);
     expect(sdl).toContain('https://api.example.com');
+    expect(sdl).not.toMatch(/@transport\b/);
   });
 
   it('rewrites @connect $args when rename transform renames arguments', () => {

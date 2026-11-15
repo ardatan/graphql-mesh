@@ -22,6 +22,7 @@ import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
+  astFromValueUntyped,
   getDirectiveExtensions,
   getDocumentNodeFromSchema,
   getRootTypeMap,
@@ -207,13 +208,15 @@ export function getAnnotatedSubgraphs(
     const apolloSource = (subgraphSchemaExtensions?.source || []).find(
       (source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null,
     );
-    // Strip Mesh `@transport` from printed subgraph SDL (directive definition / schema AST).
-    // Connectors still keep a connect transport *entry* in schema extensions so Hive Gateway
-    // can resolve `@graphql-mesh/transport-connect` via `@extraSchemaDefinitionDirective`.
+    // Strip Mesh `@transport` from annotated Federation Connectors subgraph SDL
+    // (not part of the connect contract). Hive still gets `@transport` /
+    // `@graphql-mesh/transport-connect` on the supergraph via Guild-only extras
+    // packing in `composeAnnotatedSubgraphs`.
     let removeTransportDirectiveDefinition = false;
     let removeTransportFromExtras = false;
     if (isConnectorsSubgraph) {
       removeTransportDirectiveDefinition = true;
+      removeTransportFromExtras = true;
       if (apolloSource?.http?.baseURL) {
         url = apolloSource.http.baseURL;
       }
@@ -732,32 +735,25 @@ export function getAnnotatedSubgraphs(
         return valueConfig;
       },
     });
-    // Workaround to keep directives on unsupported nodes since not all of them are supported by the composition library
-    let extraSchemaDefinitionDirectives: Record<string, any> | undefined;
-    const schemaDirectiveExtensions = getDirectiveExtensions(transformedSubgraph);
-    if (schemaDirectiveExtensions) {
-      const schemaDirectiveExtensionsEntries = Object.entries(schemaDirectiveExtensions);
-      const schemaDirectiveExtraEntries = schemaDirectiveExtensionsEntries.filter(
-        ([dirName]) =>
-          dirName !== 'link' &&
-          dirName !== 'composeDirective' &&
-          (removeTransportFromExtras ? dirName !== 'transport' : true),
-      );
-      if (schemaDirectiveExtraEntries.length) {
+    // Keep SCHEMA directive usages on the schema (`@source`, `@transport`, …) in
+    // annotated subgraph SDL — no `@extraSchemaDefinitionDirective` (Rover-like).
+    // Guild cannot preserve SCHEMA usages through compose; packing into Query
+    // extras happens only in `composeAnnotatedSubgraphs`.
+    if (removeTransportFromExtras) {
+      const schemaDirs = getDirectiveExtensions(transformedSubgraph) || {};
+      if (schemaDirs.transport) {
+        const { transport: _omit, ...rest } = schemaDirs;
+        const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
+        extensions.directives = rest;
         transformedSubgraph = new GraphQLSchema({
           ...transformedSubgraph.toConfig(),
           extensions: {
             ...transformedSubgraph.extensions,
-            directives: {
-              link: schemaDirectiveExtensions.link || [],
-              composeDirective: schemaDirectiveExtensions.composeDirective || [],
-            },
+            directives: rest,
           },
-          // Cleanup AST Node to avoid conflicts with extensions
           astNode: undefined,
           extensionASTNodes: [],
         });
-        extraSchemaDefinitionDirectives = Object.fromEntries(schemaDirectiveExtraEntries);
       }
     }
 
@@ -782,30 +778,6 @@ export function getAnnotatedSubgraphs(
           subgraph: String!
         ) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
       `);
-    }
-
-    const queryType = transformedSubgraph.getQueryType();
-    if (queryType) {
-      const queryTypeDirectives = getDirectiveExtensions(queryType) || {};
-
-      if (extraSchemaDefinitionDirectives) {
-        importedDirectives.push('@extraSchemaDefinitionDirective');
-        importedDirectivesAST.add(/* GraphQL */ `
-          scalar _DirectiveExtensions
-        `);
-        importedDirectivesAST.add(/* GraphQL */ `
-          directive @extraSchemaDefinitionDirective(
-            directives: _DirectiveExtensions
-          ) repeatable on OBJECT
-        `);
-        queryTypeDirectives.extraSchemaDefinitionDirective ||= [];
-        queryTypeDirectives.extraSchemaDefinitionDirective.push({
-          directives: extraSchemaDefinitionDirectives,
-        });
-      }
-
-      const queryTypeExtensions: Record<string, unknown> = (queryType.extensions ||= {});
-      queryTypeExtensions.directives = queryTypeDirectives;
     }
 
     if (importedDirectives.length) {
@@ -856,12 +828,15 @@ export function composeSubgraphs(
 }
 
 export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[]) {
-  // Keep annotated subgraphs Rover/Federation-connect-like (no `@composeDirective`
-  // for `@connect`). Guild's composer has no connect special-case, so stamp it
-  // only for this call.
+  // Annotated subgraphs stay Rover-like: SCHEMA `@source` on `schema`, no
+  // `@extraSchemaDefinitionDirective`, no `@composeDirective` for `@connect`.
+  // Guild cannot keep SCHEMA usages or connect without those stamps — apply both
+  // only for this composeServices call.
   const forGuildCompose = annotatedSubgraphs.map(sg => ({
     ...sg,
-    typeDefs: withGuildConnectComposeDirective(sg.typeDefs),
+    typeDefs: withGuildConnectComposeDirective(
+      packSchemaDirectivesIntoExtrasForGuild(sg.typeDefs, sg.name),
+    ),
   }));
   const composedSupergraphSdl = composeServices(forGuildCompose);
   const rawSupergraphSdl = composedSupergraphSdl.supergraphSdl?.trim();
@@ -876,6 +851,276 @@ export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[
     supergraphSdl: lifted ? finalizeConnectorsSupergraph(lifted) : lifted,
     annotatedSubgraphs,
   };
+}
+
+/**
+ * Guild drops SCHEMA directive usages. Pack `@source` / `@transport` / … into
+ * Query `@extraSchemaDefinitionDirective` for compose only. Annotated subgraphs
+ * returned to callers keep those directives on `schema` (no extras wrapper).
+ *
+ * When Federation Connectors `@source(http.baseURL)` is present without Mesh
+ * `@transport` (stripped from annotated SDL), synthesize rest transport for Hive.
+ */
+function packSchemaDirectivesIntoExtrasForGuild(
+  typeDefs: DocumentNode,
+  subgraphName: string,
+): DocumentNode {
+  const packed: Record<string, unknown[]> = {};
+  const schemaDirectiveNames = new Set<string>();
+
+  visit(typeDefs, {
+    SchemaDefinition(node) {
+      collectPackableSchemaDirectives(node.directives, packed, schemaDirectiveNames);
+    },
+    SchemaExtension(node) {
+      collectPackableSchemaDirectives(node.directives, packed, schemaDirectiveNames);
+    },
+  });
+
+  if (Object.keys(packed).length === 0) {
+    return typeDefs;
+  }
+
+  // Annotated connectors omit `@transport`; Hive still needs it on the supergraph.
+  if (!packed.transport?.length && Array.isArray(packed.source)) {
+    for (const src of packed.source) {
+      const baseURL =
+        src &&
+        typeof src === 'object' &&
+        (src as { http?: { baseURL?: string } }).http?.baseURL;
+      if (typeof baseURL === 'string' && baseURL) {
+        packed.transport = [
+          {
+            subgraph: subgraphName,
+            kind: 'rest',
+            location: baseURL,
+          },
+        ];
+        schemaDirectiveNames.add('transport');
+        break;
+      }
+    }
+  }
+
+  const extrasDirective: ConstDirectiveNode = {
+    kind: Kind.DIRECTIVE,
+    name: { kind: Kind.NAME, value: 'extraSchemaDefinitionDirective' },
+    arguments: [
+      {
+        kind: Kind.ARGUMENT,
+        name: { kind: Kind.NAME, value: 'directives' },
+        value: astFromValueUntyped(packed) as any,
+      },
+    ],
+  };
+
+  const composeExtrasDir: ConstDirectiveNode = {
+    kind: Kind.DIRECTIVE,
+    name: { kind: Kind.NAME, value: 'composeDirective' },
+    arguments: [
+      {
+        kind: Kind.ARGUMENT,
+        name: { kind: Kind.NAME, value: 'name' },
+        value: { kind: Kind.STRING, value: '@extraSchemaDefinitionDirective' },
+      },
+    ],
+  };
+
+  let stampedCompose = false;
+  let stampedExtrasOnQuery = false;
+
+  let next = visit(typeDefs, {
+    SchemaDefinition(node) {
+      const kept = (node.directives || []).filter(
+        d => d.name.value === 'link' || d.name.value === 'composeDirective',
+      );
+      const withCompose = stampedCompose
+        ? kept
+        : [...ensureFederationComposeDirectiveImport(kept, false), composeExtrasDir];
+      stampedCompose = true;
+      return { ...node, directives: withCompose };
+    },
+    SchemaExtension(node) {
+      const kept = (node.directives || []).filter(
+        d => d.name.value === 'link' || d.name.value === 'composeDirective',
+      );
+      const withCompose = stampedCompose
+        ? kept
+        : [...ensureFederationComposeDirectiveImport(kept, false), composeExtrasDir];
+      stampedCompose = true;
+      return { ...node, directives: withCompose };
+    },
+    ObjectTypeDefinition(node) {
+      if (stampedExtrasOnQuery || node.name.value !== 'Query') {
+        return node;
+      }
+      stampedExtrasOnQuery = true;
+      return {
+        ...node,
+        directives: [...(node.directives || []), extrasDirective],
+      };
+    },
+    ObjectTypeExtension(node) {
+      if (stampedExtrasOnQuery || node.name.value !== 'Query') {
+        return node;
+      }
+      stampedExtrasOnQuery = true;
+      return {
+        ...node,
+        directives: [...(node.directives || []), extrasDirective],
+      };
+    },
+  });
+
+  // Ensure Mesh link import + directive defs for extras (Guild composeDirective).
+  const extrasDefs = parse(
+    /* GraphQL */ `
+      scalar _DirectiveExtensions
+      directive @extraSchemaDefinitionDirective(
+        directives: _DirectiveExtensions
+      ) repeatable on OBJECT
+    `,
+    { noLocation: true },
+  );
+  next = concatAST([next, extrasDefs]);
+
+  // Ensure Mesh `@link` imports `@extraSchemaDefinitionDirective` (Guild core feature).
+  next = visit(next, {
+    SchemaDefinition(node) {
+      return {
+        ...node,
+        directives: ensureMeshExtrasLinkImport(node.directives),
+      };
+    },
+    SchemaExtension(node) {
+      return {
+        ...node,
+        directives: ensureMeshExtrasLinkImport(node.directives),
+      };
+    },
+  });
+
+  return next;
+}
+
+function ensureMeshExtrasLinkImport(
+  directives: readonly ConstDirectiveNode[] | undefined,
+): ConstDirectiveNode[] {
+  const list = [...(directives || [])];
+  const meshIdx = list.findIndex(d => {
+    if (d.name.value !== 'link') return false;
+    const url = d.arguments?.find(a => a.name.value === 'url');
+    return (
+      url?.value.kind === Kind.STRING &&
+      url.value.value.startsWith('https://the-guild.dev/graphql/mesh/spec/')
+    );
+  });
+  const extrasImport = {
+    kind: Kind.STRING as const,
+    value: '@extraSchemaDefinitionDirective',
+  };
+  if (meshIdx < 0) {
+    return [
+      ...list,
+      {
+        kind: Kind.DIRECTIVE,
+        name: { kind: Kind.NAME, value: 'link' },
+        arguments: [
+          {
+            kind: Kind.ARGUMENT,
+            name: { kind: Kind.NAME, value: 'url' },
+            value: {
+              kind: Kind.STRING,
+              value: 'https://the-guild.dev/graphql/mesh/spec/v1.0',
+            },
+          },
+          {
+            kind: Kind.ARGUMENT,
+            name: { kind: Kind.NAME, value: 'import' },
+            value: { kind: Kind.LIST, values: [extrasImport] },
+          },
+        ],
+      },
+    ];
+  }
+  return list.map((d, i) => {
+    if (i !== meshIdx) return d;
+    const importArg = d.arguments?.find(a => a.name.value === 'import');
+    if (!importArg || importArg.value.kind !== Kind.LIST) {
+      return {
+        ...d,
+        arguments: [
+          ...(d.arguments || []).filter(a => a.name.value !== 'import'),
+          {
+            kind: Kind.ARGUMENT,
+            name: { kind: Kind.NAME, value: 'import' },
+            value: { kind: Kind.LIST, values: [extrasImport] },
+          },
+        ],
+      };
+    }
+    const already = importArg.value.values.some(
+      v => v.kind === Kind.STRING && v.value === '@extraSchemaDefinitionDirective',
+    );
+    if (already) return d;
+    return {
+      ...d,
+      arguments: (d.arguments || []).map(a => {
+        if (a.name.value !== 'import' || a.value.kind !== Kind.LIST) return a;
+        return {
+          ...a,
+          value: {
+            ...a.value,
+            values: [...a.value.values, extrasImport],
+          },
+        };
+      }),
+    };
+  });
+}
+
+function collectPackableSchemaDirectives(
+  directives: readonly ConstDirectiveNode[] | undefined,
+  packed: Record<string, unknown[]>,
+  names: Set<string>,
+) {
+  for (const dir of directives || []) {
+    if (dir.name.value === 'link' || dir.name.value === 'composeDirective') {
+      continue;
+    }
+    names.add(dir.name.value);
+    const args: Record<string, unknown> = {};
+    for (const arg of dir.arguments || []) {
+      args[arg.name.value] = constValueToJs(arg.value);
+    }
+    (packed[dir.name.value] ||= []).push(args);
+  }
+}
+
+function constValueToJs(value: any): unknown {
+  switch (value.kind) {
+    case Kind.STRING:
+    case Kind.BOOLEAN:
+    case Kind.ENUM:
+      return value.value;
+    case Kind.INT:
+      return parseInt(value.value, 10);
+    case Kind.FLOAT:
+      return parseFloat(value.value);
+    case Kind.NULL:
+      return null;
+    case Kind.LIST:
+      return value.values.map(constValueToJs);
+    case Kind.OBJECT: {
+      const obj: Record<string, unknown> = {};
+      for (const f of value.fields) {
+        obj[f.name.value] = constValueToJs(f.value);
+      }
+      return obj;
+    }
+    default:
+      return null;
+  }
 }
 
 /**
