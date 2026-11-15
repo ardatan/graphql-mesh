@@ -10171,6 +10171,7 @@ __metadata:
     "@whatwg-node/promise-helpers": "npm:^2.0.1"
     dataloader: "npm:^2.2.2"
     dset: "npm:^3.1.3"
+    fast-xml-parser: "npm:^5.10.1"
     graphql: "npm:16.14.0"
     graphql-fields: "npm:^2.0.3"
     graphql-scalars: "npm:^2.0.1"

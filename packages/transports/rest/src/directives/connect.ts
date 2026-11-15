@@ -37,6 +37,12 @@ import {
 import { rebuildOpenInputObjects } from './odataOpenInput.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
+import {
+  isXmlContentType,
+  jsObjectToXml,
+  looksLikeXml,
+  xmlToJsObject,
+} from './xmlCodec.js';
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(
   type: GraphQLOutputType,
@@ -1487,7 +1493,11 @@ function isRawBinaryConnectBody(input: unknown, contentType: string | undefined)
   return true;
 }
 
-function buildBody(
+/**
+ * Evaluate `@connect(http.body:)` JSONSelection to a JS value (object/array/scalar).
+ * Callers serialize as JSON, XML (FXP), or form-urlencoded as needed.
+ */
+function evaluateConnectBodySelection(
   bodySelection: string | undefined,
   vars: {
     args: Record<string, any>;
@@ -1501,7 +1511,7 @@ function buildBody(
     /** Flatten OData open-type `rest` bags only - never rewrite ordinary REST inputs. */
     odataOpenTypes?: boolean;
   } = {},
-): string | undefined {
+): any {
   if (!bodySelection) return undefined;
   const trimmed = bodySelection.trim();
   const flattenOpen = Boolean(opts.odataOpenTypes);
@@ -1537,9 +1547,7 @@ function buildBody(
         rebuildOpenInputObjects(recoveredArgs.input);
       }
     }
-    return JSON.stringify(
-      applySelection(trimmed, {}, { vars: { ...selectionVars, args: recoveredArgs } }),
-    );
+    return applySelection(trimmed, {}, { vars: { ...selectionVars, args: recoveredArgs } });
   }
   if (trimmed === '$args') {
     // Only clone+flatten when open-type `rest` is present - leave bound-action
@@ -1560,9 +1568,9 @@ function buildBody(
       }
       const clone = structuredClone(plain);
       rebuildOpenInputObjects(clone);
-      return JSON.stringify(clone);
+      return clone;
     }
-    return JSON.stringify(args);
+    return args;
   }
   if (trimmed === '$args.input' || trimmed.startsWith('$args.input')) {
     const input = recoverInput(vars.args.input, 'input');
@@ -1573,10 +1581,10 @@ function buildBody(
     // `$args.input { alias: field }` subselection
     const subMatch = trimmed.match(/^\$args\.input\s*\{([\s\S]*)\}$/);
     if (subMatch) {
-      return JSON.stringify(applySelection(subMatch[1], input, {}));
+      return applySelection(subMatch[1], input, {});
     }
     if (trimmed === '$args.input') {
-      return JSON.stringify(input);
+      return input;
     }
   }
   if (trimmed.startsWith('$args.')) {
@@ -1584,22 +1592,24 @@ function buildBody(
     if (pathMatch) {
       const value = recoverInput(vars.args[pathMatch[1]], pathMatch[1]);
       if (pathMatch[3] != null) {
-        return JSON.stringify(applySelection(pathMatch[3], value, {}));
+        return applySelection(pathMatch[3], value, {});
       }
-      return JSON.stringify(value);
+      return value;
     }
   }
   if (trimmed.startsWith('$({') && trimmed.endsWith('})')) {
     try {
-      return JSON.stringify(JSON.parse(trimmed.slice(2, -1)));
+      return JSON.parse(trimmed.slice(2, -1));
     } catch {
       /* fall through */
     }
   }
+  // Multi-field / nested body selections (`"soap:Envelope": { … id: $args.id }`) need
+  // `$args` / `$this` via extras.vars — root is empty object (Connectors object literal).
   try {
-    return JSON.stringify(applySelection(trimmed.replace(/^\$args\s*/, ''), vars.args, {}));
+    return applySelection(trimmed, {}, { vars: selectionVars });
   } catch {
-    return JSON.stringify(vars.args);
+    return vars.args;
   }
 }
 
@@ -1862,6 +1872,26 @@ function navValueAlreadyMapped(embedded: unknown, selection: string): boolean {
     }
   }
   return false;
+}
+
+function buildBody(
+  bodySelection: string | undefined,
+  vars: {
+    args: Record<string, any>;
+    thisValue: any;
+    env: Record<string, string | undefined>;
+    context: any;
+  },
+  opts: {
+    schema?: GraphQLSchema;
+    field?: GraphQLField<any, any>;
+    /** Flatten OData open-type `rest` bags only - never rewrite ordinary REST inputs. */
+    odataOpenTypes?: boolean;
+  } = {},
+): string | undefined {
+  const value = evaluateConnectBodySelection(bodySelection, vars, opts);
+  if (value === undefined) return undefined;
+  return JSON.stringify(value);
 }
 
 export function addConnectFieldResolver(
@@ -2142,6 +2172,16 @@ export function addConnectFieldResolver(
         }
         requestBody = formData;
         requestInit.body = formData;
+      } else if (isXmlContentType(contentType)) {
+        // Mesh-specific: JSONSelection → FXP object → XML (SOAP is just document shape).
+        const bodyValue = evaluateConnectBodySelection(connectArgs.http?.body, vars, {
+          schema,
+          field,
+        });
+        if (bodyValue !== undefined) {
+          requestBody = jsObjectToXml(bodyValue);
+          requestInit.body = requestBody;
+        }
       } else {
         const bodyJson = buildBody(connectArgs.http?.body, vars, {
           schema,
@@ -2160,6 +2200,7 @@ export function addConnectFieldResolver(
             }
           } else if (contentType?.startsWith('text/')) {
             // text/plain (and other text/*): send the raw scalar, not a JSON-encoded string
+            // (text/xml is handled above via isXmlContentType).
             try {
               const parsed = JSON.parse(bodyJson);
               requestBody = typeof parsed === 'string' ? parsed : bodyJson;
@@ -2266,14 +2307,37 @@ export function addConnectFieldResolver(
       return response.status.toString().startsWith('2');
     };
 
+    const responseContentType = response.headers.get('content-type');
+
     if (!text) {
       // Preserve legacy Mesh behavior for empty / 204 responses (e.g. String fields → "")
       responseData = isScalarType(returnNamedGraphQLType) ? '' : {};
+    } else if (isXmlContentType(responseContentType)) {
+      try {
+        responseData = xmlToJsObject(text);
+      } catch (error) {
+        if (isScalarType(returnNamedGraphQLType)) {
+          responseData = text;
+        } else {
+          throw buildConnectorError(text, error);
+        }
+      }
     } else {
       try {
         responseData = JSON.parse(text);
       } catch (error) {
-        if (isScalarType(returnNamedGraphQLType)) {
+        // Some SOAP/XML servers omit Content-Type; fall back when the body looks like XML.
+        if (looksLikeXml(text)) {
+          try {
+            responseData = xmlToJsObject(text);
+          } catch (xmlError) {
+            if (isScalarType(returnNamedGraphQLType)) {
+              responseData = text;
+            } else {
+              throw buildConnectorError(text, xmlError);
+            }
+          }
+        } else if (isScalarType(returnNamedGraphQLType)) {
           responseData = text;
         } else if (response.status === 204 || (response.status === 200 && text === '')) {
           responseData = {};
