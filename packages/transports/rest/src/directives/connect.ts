@@ -474,6 +474,11 @@ function applyQueryParams(
     if (argNameMatch && resolveArg) {
       value = resolveArg(argNameMatch[1], value);
     }
+    // OData parameter aliases (`@colors`, `@address`) must be one JSON value —
+    // default qs repeat-style would emit `@colors=red&@colors=blue`.
+    if (key.startsWith('@') && value != null && typeof value === 'object') {
+      value = JSON.stringify(value);
+    }
     params[key] = value;
   }
   if (!Object.keys(params).length) {
@@ -1637,6 +1642,81 @@ function navArgsRequireDedicatedFetch(args: Record<string, unknown> | null | und
   return false;
 }
 
+/** Marks a mapped Connectors selection result so prefer-embedded can skip rematch. */
+const ODATA_SELECTION_APPLIED = Symbol.for('@graphql-mesh/odata.selectionApplied');
+
+function markSelectionApplied(value: unknown): unknown {
+  if (value == null || typeof value !== 'object') {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      markSelectionApplied(item);
+    }
+    return value;
+  }
+  Object.defineProperty(value, ODATA_SELECTION_APPLIED, {
+    value: true,
+    enumerable: false,
+    configurable: true,
+  });
+  for (const child of Object.values(value as Record<string, unknown>)) {
+    markSelectionApplied(child);
+  }
+  return value;
+}
+
+/**
+ * Body of the primary selection object (`$.value { … }` or first `{ … }`), else
+ * the whole string. Nested blocks inside that body are stripped so alias scans
+ * stay at this level — `customer: Customer { id: Id }` must not prove the outer
+ * nav value is already mapped.
+ */
+function selectionTopLevelAliasScanTarget(selection: string): string {
+  const trimmed = selection.trim();
+  const valueMatch = /\$\.value\s*\{/.exec(trimmed);
+  let open = -1;
+  if (valueMatch) {
+    open = trimmed.indexOf('{', valueMatch.index);
+  } else {
+    open = trimmed.indexOf('{');
+  }
+  let body = trimmed;
+  if (open >= 0) {
+    let depth = 0;
+    let close = -1;
+    for (let i = open; i < trimmed.length; i++) {
+      const c = trimmed[i];
+      if (c === '{') depth++;
+      else if (c === '}') {
+        depth--;
+        if (depth === 0) {
+          close = i;
+          break;
+        }
+      }
+    }
+    body = close >= 0 ? trimmed.slice(open + 1, close) : trimmed.slice(open + 1);
+  }
+  let out = '';
+  let depth = 0;
+  for (let i = 0; i < body.length; i++) {
+    const c = body[i];
+    if (c === '{') {
+      depth++;
+      continue;
+    }
+    if (c === '}') {
+      depth = Math.max(0, depth - 1);
+      continue;
+    }
+    if (depth === 0) {
+      out += c;
+    }
+  }
+  return out;
+}
+
 /** True when prefer-embedded value is already GraphQL-shaped (do not re-run selection). */
 function navValueAlreadyMapped(embedded: unknown, selection: string): boolean {
   const sample = Array.isArray(embedded)
@@ -1646,11 +1726,16 @@ function navValueAlreadyMapped(embedded: unknown, selection: string): boolean {
     return false;
   }
   const obj = sample as Record<string, unknown>;
+  // Explicit parent-applied selection marker (set after applySelection on this value).
+  if (Object.prototype.hasOwnProperty.call(obj, ODATA_SELECTION_APPLIED)) {
+    return true;
+  }
   if ('__typename' in obj) {
     return true;
   }
-  // `gqlName: WireName` remaps - if gqlName is present and WireName is not, already mapped.
-  for (const match of selection.matchAll(/\b([A-Za-z_][\w]*)\s*:\s*([A-Za-z_][\w]*)\b/g)) {
+  // Only top-level remaps in this field's selection (ignore nested object aliases).
+  const topLevel = selectionTopLevelAliasScanTarget(selection);
+  for (const match of topLevel.matchAll(/\b([A-Za-z_][\w]*)\s*:\s*([A-Za-z_][\w]*)\b/g)) {
     const gqlName = match[1];
     const wireName = match[2];
     if (!gqlName || !wireName || gqlName === wireName) {
@@ -1756,7 +1841,11 @@ export function addConnectFieldResolver(
       } else {
         mapped = applySelection(selection, embedded, extras);
       }
-      return ensureODataIdField(mapped, embedded, navCollectionBase);
+      return ensureODataIdField(
+        markSelectionApplied(mapped),
+        embedded,
+        navCollectionBase,
+      );
     }
 
     // Virtual connector: no http — selection may only use $args / $this / literals.
@@ -2096,7 +2185,9 @@ export function addConnectFieldResolver(
       throw buildConnectorError(responseData);
     }
 
-    let selected = applySelection(connectArgs.selection || '$', responseData, selectionExtras);
+    let selected = markSelectionApplied(
+      applySelection(connectArgs.selection || '$', responseData, selectionExtras),
+    );
     // Normalize after selection so mappings like `$.products { id }` (object → array) work.
     const isListReturnType = isListTypeOrNonNullListType(field.type);
     if (isListReturnType && !Array.isArray(selected)) {
@@ -2109,6 +2200,7 @@ export function addConnectFieldResolver(
       selected = preserveODataEntityMetadata(selected, responseData);
       selected = ensureODataIdField(selected, responseData, requestUrlForMeta.originPath);
       // Re-attach `$expand`ed nav so child `@connect` can prefer embedded (expandNavProps).
+      // Raw attach skips keys already present from selection (those stay marked).
       if (expandNavProps && info) {
         selected = attachExpandedNavFromRaw(selected, responseData, info, expandNavProps);
       }

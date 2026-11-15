@@ -23,6 +23,7 @@ const CONNECTOR_DIRECTIVES = /* GraphQL */ `
     PATCH: String
     headers: [HTTPHeaderMapping!]
     body: String
+    queryParams: String
   }
   input HTTPHeaderMapping {
     name: String!
@@ -651,5 +652,149 @@ describe('prefer-embedded completes _odataId for already-mapped nav', () => {
     const out = ensureODataIdField(mapped, mapped, 'https://odata.example.com/People/p/Orders');
     expect(out[0]._odataId).toBe('https://odata.example.com/People/p/Orders/o1');
     expect(out[1]._odataId).toBe('https://odata.example.com/Orders/o2');
+  });
+
+  it('still maps top-level remaps when only nested aliases match raw keys', async () => {
+    // Nested `id: Id` must not prove the outer order is already mapped — otherwise
+    // `name: Name` / `customer: Customer` never run and GraphQL sees nulls.
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+
+      schema
+        @source(
+          name: "api"
+          http: {
+            baseURL: "https://odata.example.com"
+            headers: [{ name: "Accept", value: "${ODATA_ACCEPT}" }]
+          }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        person(id: String!): Person
+          @connect(
+            source: "api"
+            http: { GET: "/People/{$args.id}" }
+            selection: "id"
+          )
+      }
+
+      type Person @key(fields: "id") {
+        id: String
+        orders: [Order]
+          @connect(
+            source: "api"
+            http: { GET: "/People/{$this.id}/Orders" }
+            selection: "$.value { id name: Name customer: Customer { id: Id } }"
+          )
+      }
+
+      type Order @key(fields: "id") {
+        id: String
+        name: String
+        customer: Customer
+      }
+
+      type Customer @key(fields: "id") {
+        id: String
+      }
+    `;
+
+    const urls: string[] = [];
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      odata: { expandNavProps: true },
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json({
+          id: 'p1',
+          Orders: [{ id: 'o1', Name: 'One', Customer: { Id: 'c1' } }],
+        });
+      }) as any,
+    });
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          person(id: "p1") {
+            id
+            orders {
+              id
+              name
+              customer {
+                id
+              }
+            }
+          }
+        }
+      `),
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      person: {
+        id: 'p1',
+        orders: [{ id: 'o1', name: 'One', customer: { id: 'c1' } }],
+      },
+    });
+    expect(urls).toHaveLength(1);
+  });
+});
+
+describe('OData parameter alias query encoding', () => {
+  it('JSON-encodes @colors as one array value (not repeated params)', async () => {
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+
+      schema
+        @source(
+          name: "api"
+          http: {
+            baseURL: "https://odata.example.com"
+            headers: [{ name: "Accept", value: "${ODATA_ACCEPT}" }]
+          }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        paint(colors: [String!]!): String
+          @connect(
+            source: "api"
+            http: {
+              GET: "/Paint(colors=@colors)"
+              queryParams: "{ \\"@colors\\": $args.colors }"
+            }
+            selection: "$"
+          )
+      }
+    `;
+
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json('ok');
+      }) as any,
+    });
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          paint(colors: ["red", "blue"])
+        }
+      `),
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(urls).toHaveLength(1);
+    const u = new URL(urls[0]);
+    const raw = u.searchParams.get('@colors');
+    expect(raw).toBeTruthy();
+    expect(JSON.parse(raw!)).toEqual(['red', 'blue']);
+    // Not repeat-style `@colors=red&@colors=blue`
+    expect(u.searchParams.getAll('@colors')).toHaveLength(1);
   });
 });

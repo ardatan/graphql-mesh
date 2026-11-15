@@ -527,7 +527,8 @@ function odataCallArgsParts(
     if (name === 'queryOptions') continue;
     if (bindingParameterName && name === bindingParameterName) continue;
     const argTypeName = argTypeNameOf(argConfig);
-    // Collection(Edm.String) / [String] — keep JSON list via alias; bare unwrap loses [].
+    // Collection(Edm.String) / [String] — keep list via alias; bare unwrap loses [].
+    // Runtime JSON-encodes `@…` query values (one `@colors=["red","blue"]`, not repeats).
     if (isListArgType(argConfig) || isInputObjectArgType(schemaComposer, argTypeName)) {
       // Alias: Function(colors=@colors)?@colors={$args.colors}
       parts.push(`${name}=@${name}`);
