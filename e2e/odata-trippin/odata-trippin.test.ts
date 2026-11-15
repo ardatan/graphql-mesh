@@ -104,6 +104,11 @@ it('should compose the appropriate schema', async () => {
   expect(result).toMatch(/\$\(\$->get\(/);
   expect(result).toMatch(/\?\?/);
   expect(result).toMatch(/entity:\s*true/);
+  // Connectors entity contract — no Mesh `@merge`; nested-only Trip is non-resolvable.
+  expect(result).not.toMatch(/@merge\(/);
+  expect(result).toMatch(
+    /type Trip[\s\S]*@join__type\(graph: TRIPPIN,\s*key: "TripId",\s*resolvable: false\)/,
+  );
 });
 
 const planItemsQuery = /* GraphQL */ `

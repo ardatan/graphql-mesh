@@ -11,6 +11,7 @@ import {
   isObjectType,
   isScalarType,
   type GraphQLField,
+  type GraphQLNamedType,
   type GraphQLObjectType,
   type GraphQLOutputType,
   type GraphQLResolveInfo,
@@ -19,6 +20,7 @@ import {
 import type { IStringifyOptions } from 'qs';
 import { stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
+import { entitiesResolver } from '@apollo/subgraph';
 import { Logger, type Logger as HiveLogger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
@@ -46,6 +48,31 @@ import {
   unwrapXmlScalarLeaf,
   xmlToJsObject,
 } from './xmlCodec.js';
+
+type ResolveReferenceFn = (reference: any, context: any, info: GraphQLResolveInfo) => any;
+
+/**
+ * Record `__resolveReference` the way `@apollo/subgraph` expects
+ * (`extensions.apollo.subgraph.resolveReference`) so we can reuse
+ * `entitiesResolver` instead of maintaining our own `_entities` dispatch.
+ * Also mirror on `type.resolveReference` for Hive stub hydration helpers / tests.
+ */
+function setTypeResolveReference(type: GraphQLNamedType, resolveReference: ResolveReferenceFn) {
+  const extensions = (type.extensions ??= {}) as Record<string, any>;
+  const apollo = (extensions.apollo ??= {});
+  const subgraph = (apollo.subgraph ??= {});
+  subgraph.resolveReference = resolveReference;
+  (type as any).resolveReference = resolveReference;
+}
+
+function getTypeResolveReference(type: GraphQLNamedType): ResolveReferenceFn | undefined {
+  const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
+  if (typeof fromExtensions === 'function') {
+    return fromExtensions;
+  }
+  const fromType = (type as any).resolveReference;
+  return typeof fromType === 'function' ? fromType : undefined;
+}
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(
   type: GraphQLOutputType,
@@ -2664,8 +2691,9 @@ export function processConnectDirectives(
       addConnectFieldResolver(schema, syntheticField, connectArgs, fieldOpts);
       const resolve = syntheticField.resolve;
       if (resolve) {
-        (type as any).resolveReference = (reference: any, context: any, info: any) =>
-          resolve(reference, {}, context, info);
+        setTypeResolveReference(type, (reference, context, info) =>
+          resolve(reference, {}, context, info),
+        );
       }
     }
     if (!('getFields' in type)) continue;
@@ -2680,15 +2708,15 @@ export function processConnectDirectives(
       // Query `@connect(entity: true)` → type.resolveReference (Federation `_entities`).
       if (connectArgs.entity && type === queryType && isObjectType(getNamedType(field.type))) {
         const returnType = getNamedType(field.type) as GraphQLObjectType;
-        if (typeof (returnType as any).resolveReference !== 'function') {
+        if (!getTypeResolveReference(returnType)) {
           const entityField = field as GraphQLField<any, any>;
-          (returnType as any).resolveReference = (reference: any, context: any, info: any) => {
+          setTypeResolveReference(returnType, (reference, context, info) => {
             const args: Record<string, any> = {};
             for (const arg of entityField.args) {
               args[arg.name] = reference?.[arg.name];
             }
             return entityField.resolve?.(null, args, context, info);
-          };
+          });
         }
       }
     }
@@ -2714,8 +2742,8 @@ function hydrateEntityStubFieldResolvers(schema: GraphQLSchema) {
     if (!isObjectType(type) || type.name.startsWith('__')) {
       continue;
     }
-    const resolveReference = (type as any).resolveReference;
-    if (typeof resolveReference !== 'function') {
+    const resolveReference = getTypeResolveReference(type);
+    if (!resolveReference) {
       continue;
     }
     const fields = type.getFields();
@@ -2749,9 +2777,19 @@ function hydrateEntityStubFieldResolvers(schema: GraphQLSchema) {
 }
 
 /**
- * Add Federation `Query._entities` that dispatches to type `resolveReference`
- * (from type-level `@connect` or `entity: true`). Lets Hive Gateway resolve
- * entities without Mesh `@merge`.
+ * Add / repair Federation `Query._entities`.
+ *
+ * Dispatch is `@apollo/subgraph`'s `entitiesResolver` (same as the legacy federation
+ * transform) — we only own the Connectors → `resolveReference` wiring and the Hive
+ * bare-field repair. `@apollo/subgraph` >= 2.15 no longer exports `_Any` / `_Entity`,
+ * so those GraphQL types stay local when we have to create the field from scratch.
+ *
+ * Hive Gateway extracts subgraph schemas from the supergraph SDL — those already
+ * carry a bare `Query._entities` for `@key` types, with no resolver. Skipping when
+ * the field exists left defaultFieldResolver returning null →
+ * `Cannot return null for non-nullable field Query._entities` (DOWNSTREAM_SERVICE_ERROR)
+ * whenever Hive planned `_entities` against a Connectors REST subgraph (e.g. OData
+ * owner + GraphQL/Connectors stub). Always install the resolveReference dispatcher.
  */
 function ensureFederationEntitiesField(schema: GraphQLSchema) {
   const queryType = schema.getQueryType();
@@ -2759,14 +2797,9 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return;
   }
   const queryFields = queryType.getFields();
-  if (queryFields._entities) {
-    return;
-  }
   const entityTypes = Object.values(schema.getTypeMap()).filter(
     (t): t is GraphQLObjectType =>
-      isObjectType(t) &&
-      !t.name.startsWith('__') &&
-      typeof (t as any).resolveReference === 'function',
+      isObjectType(t) && !t.name.startsWith('__') && !!getTypeResolveReference(t),
   );
   if (!entityTypes.length) {
     return;
@@ -2796,6 +2829,25 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     typeMap._Entity = entityUnion;
   }
 
+  const entitiesResolve = (
+    _root: unknown,
+    args: { representations?: unknown },
+    context: any,
+    info: GraphQLResolveInfo,
+  ) => {
+    const representations = args?.representations;
+    if (!Array.isArray(representations)) {
+      return [];
+    }
+    return entitiesResolver({ representations, context, info });
+  };
+
+  if (queryFields._entities) {
+    // Federation-extracted subgraph: field exists, resolver does not — wire it.
+    queryFields._entities.resolve = entitiesResolve;
+    return;
+  }
+
   queryFields._entities = {
     name: '_entities',
     description: 'Federation entity resolver for Connectors REST transport (Hive `_entities` path)',
@@ -2811,32 +2863,7 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
         astNode: undefined,
       },
     ],
-    resolve(_root, args, context, info) {
-      const representations = args?.representations;
-      if (!Array.isArray(representations)) {
-        return [];
-      }
-      return representations.map(async (representation: any) => {
-        const typeName = representation?.__typename;
-        if (!typeName) {
-          return representation;
-        }
-        const type = info.schema.getType(typeName);
-        if (!isObjectType(type)) {
-          return representation;
-        }
-        const resolveReference = (type as any).resolveReference;
-        if (typeof resolveReference !== 'function') {
-          return representation;
-        }
-        const resolved = await resolveReference(representation, context, info);
-        // Preserve __typename for `_Entity.resolveType`.
-        if (resolved && typeof resolved === 'object' && !resolved.__typename) {
-          resolved.__typename = typeName;
-        }
-        return resolved ?? representation;
-      });
-    },
+    resolve: entitiesResolve,
     subscribe: undefined,
     deprecationReason: undefined,
     extensions: {},

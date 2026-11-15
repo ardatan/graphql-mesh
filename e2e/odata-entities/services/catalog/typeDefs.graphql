@@ -1,0 +1,10 @@
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@external"])
+
+type Query {
+  featuredAirline: Airline
+}
+
+extend type Airline @key(fields: "AirlineCode") {
+  AirlineCode: String! @external
+  isFeatured: Boolean
+}

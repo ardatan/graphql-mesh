@@ -5302,6 +5302,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/odata-entities@workspace:e2e/odata-entities":
+  version: 0.0.0-use.local
+  resolution: "@e2e/odata-entities@workspace:e2e/odata-entities"
+  dependencies:
+    "@apollo/server": "npm:^5.5.1"
+    "@apollo/subgraph": "npm:^2.15.1"
+    "@graphql-hive/gateway": "npm:^2.15.7"
+    graphql: "npm:^16.14.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/odata-msgraph@workspace:e2e/odata-msgraph":
   version: 0.0.0-use.local
   resolution: "@e2e/odata-msgraph@workspace:e2e/odata-msgraph"
@@ -10159,6 +10170,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-rest@workspace:packages/transports/rest"
   dependencies:
+    "@apollo/subgraph": "npm:^2.15.1"
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"

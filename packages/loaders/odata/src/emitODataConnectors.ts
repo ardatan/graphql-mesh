@@ -939,6 +939,22 @@ export function emitODataConnectors(
     }
   }
 
+  // Ambiguous types must not own `_entities`: `rewriteRoot` stamped `entity: true`
+  // on by-ID Query connectors before we knew the return type was claimed by more
+  // than one entity set. Clear that flag so processConnectDirectives does not
+  // register resolveReference / include the type in `_Entity`.
+  for (const qName of schemaComposer.Query.getFieldNames()) {
+    const qField = schemaComposer.Query.getField(qName);
+    const connect = (qField.extensions as any)?.directives?.connect;
+    if (!connect?.entity) {
+      continue;
+    }
+    const returnName = qField.type.getTypeName().replace(/[[\]!]/g, '');
+    if (ambiguousEntitySets.has(returnName)) {
+      delete connect.entity;
+    }
+  }
+
   // Entity types: `@key` + type-level `@connect` + nav/bound field `@connect`.
   for (const tc of schemaComposer.types.values()) {
     if (!('getTypeName' in tc) || typeof (tc as any).getExtensions !== 'function') {
@@ -1099,9 +1115,17 @@ export function emitODataConnectors(
 
     const existing = [...(otc.getDirectives() || [])];
     if (isObject && !existing.some(d => d.name === 'key')) {
+      // Entity-set-backed types get a resolvable `@key` + type-level `@connect(entity: true)`
+      // so Hive `Query._entities` / Router entity fill work without Mesh `@merge`.
+      // Nested-only or ambiguous entity sets keep `@key` (Hive `$expand` heuristics) but
+      // mark `resolvable: false` — no type-level connect means this subgraph cannot own
+      // `_entities` resolution (Connectors-native; mirrors stub-only `resolvable: false`).
       existing.push({
         name: 'key',
-        args: { fields: identifierFieldName },
+        args: {
+          fields: identifierFieldName,
+          ...(entitySetName ? {} : { resolvable: false }),
+        },
       });
     }
 

@@ -706,4 +706,580 @@ describe('Federation Connectors composition', () => {
     expect(result.supergraphSdl).toMatch(/@join__type\(graph: SUPPLIERS,\s*key: "id"\)/);
     expect(result.supergraphSdl).not.toMatch(/@resolveTo/);
   });
+
+  it('attributes type-level @connect to the source owner when extension join__type is listed first', () => {
+    // Mimic compose output before finalize: stub subgraph extension key first,
+    // then OData/Connectors owner with type-level entity @connect(source: "Trippin").
+    const before = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "Trippin", http: { baseURL: "http://127.0.0.1:4001" }) {
+        query: Query
+      }
+
+      directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+      directive @join__type(
+        graph: join__Graph!
+        key: join__FieldSet
+        extension: Boolean! = false
+        resolvable: Boolean! = true
+      ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+      directive @join__field(graph: join__Graph) repeatable on FIELD_DEFINITION
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @link(url: String!, import: [String], for: link__Purpose) repeatable on SCHEMA
+
+      enum link__Purpose {
+        SECURITY
+        EXECUTION
+      }
+      scalar join__FieldSet
+      enum join__Graph {
+        CATALOG @join__graph(name: "catalog", url: "http://localhost:4002/graphql")
+        TRIPPIN @join__graph(name: "Trippin", url: "http://127.0.0.1:4001")
+      }
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      type Query @join__type(graph: CATALOG) @join__type(graph: TRIPPIN) {
+        featuredAirline: Airline @join__field(graph: CATALOG)
+        AirlinesByAirlineCode(AirlineCode: String!): Airline
+          @join__field(graph: TRIPPIN)
+          @connect(
+            source: "Trippin"
+            http: { GET: "/Airlines/{$args.AirlineCode}/" }
+            selection: "AirlineCode Name"
+            entity: true
+          )
+      }
+
+      type Airline
+        @join__type(graph: CATALOG, key: "AirlineCode", extension: true, resolvable: false)
+        @join__type(graph: TRIPPIN, key: "AirlineCode")
+        @connect(
+          source: "Trippin"
+          http: { GET: "/Airlines/{$this.AirlineCode}/" }
+          selection: "AirlineCode Name"
+          entity: true
+        ) {
+        AirlineCode: String!
+        isFeatured: Boolean @join__field(graph: CATALOG)
+        Name: String @join__field(graph: TRIPPIN)
+      }
+    `;
+
+    const out = finalizeConnectorsSupergraph(before);
+    // Scope to the Airline type — Query.AirlinesByAirlineCode also has connect.
+    expect(out).toMatch(
+      /type Airline[\s\S]*@join__directive\(graphs: \[TRIPPIN\], name: "connect", args: \{source: "Trippin"[\s\S]*entity: true\}/,
+    );
+    expect(out).not.toMatch(
+      /type Airline[\s\S]*@join__directive\(graphs: \[CATALOG\], name: "connect"/,
+    );
+  });
+
+  it('attributes field-level @connect by @join__field when source names collide', () => {
+    // Two subgraphs both use connector source name "api"; field ownership must
+    // follow `@join__field(graph:)`, not the first graph that claimed "api".
+    // Schema @source must be emitted for every graph that referenced "api", and a
+    // sole-join type-level @connect on Product must stay on PRODUCTS.
+    const before = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "api", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+      directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on OBJECT
+      directive @join__field(graph: join__Graph) on FIELD_DEFINITION
+      directive @join__directive(
+        graphs: [join__Graph!]
+        name: String!
+        args: join__DirectiveArguments
+      ) repeatable on FIELD_DEFINITION | OBJECT | SCHEMA
+      directive @link(
+        url: String!
+        as: String
+        for: link__Purpose
+        import: [link__Import]
+      ) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+
+      scalar join__FieldSet
+      scalar join__DirectiveArguments
+      scalar link__Import
+      enum link__Purpose {
+        SECURITY
+        EXECUTION
+      }
+      enum join__Graph {
+        PRODUCTS @join__graph(name: "products", url: "http://localhost:4001")
+        INVENTORY @join__graph(name: "inventory", url: "http://localhost:4002")
+      }
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      type Query @join__type(graph: PRODUCTS) @join__type(graph: INVENTORY) {
+        # stock first so the shared source cache holds INVENTORY before Product's
+        # type-level @connect is attributed — exercises preferSoleJoinType.
+        stock(id: ID!): Stock
+          @join__field(graph: INVENTORY)
+          @connect(source: "api", http: { GET: "/stock/{$args.id}" }, selection: "id qty")
+        product(id: ID!): Product
+          @join__field(graph: PRODUCTS)
+          @connect(source: "api", http: { GET: "/products/{$args.id}" }, selection: "id name")
+      }
+
+      type Product
+        @join__type(graph: PRODUCTS, key: "id")
+        @join__type(graph: PRODUCTS, key: "sku")
+        @connect(
+          source: "api"
+          http: { GET: "/products/{$this.id}" }
+          selection: "id name"
+          entity: true
+        ) {
+        id: ID!
+        sku: String
+        name: String
+      }
+
+      type Stock @join__type(graph: INVENTORY, key: "id") {
+        id: ID!
+        qty: Int
+      }
+    `;
+
+    const out = finalizeConnectorsSupergraph(before);
+    const productField = out.match(/product\(id: ID!\): Product[^\n]*/)?.[0] ?? '';
+    const stockField = out.match(/stock\(id: ID!\): Stock[^\n]*/)?.[0] ?? '';
+    const productType = out.match(/type Product[^\n]*/)?.[0] ?? '';
+    expect(productField).toMatch(/@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
+    expect(stockField).toMatch(/@join__directive\(graphs: \[INVENTORY\], name: "connect"/);
+    expect(stockField).not.toMatch(/@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
+    // Sole join__type on Product → type-level connect stays PRODUCTS (not stolen by
+    // a later field that also used source "api").
+    expect(productType).toMatch(/@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
+    expect(productType).not.toMatch(/@join__directive\(graphs: \[INVENTORY\], name: "connect"/);
+    // Schema @source emitted for every graph that referenced "api".
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[PRODUCTS\], name: "source", args: \{name: "api"/,
+    );
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api"/,
+    );
+  });
+
+  it('attributes source-less type-level @connect to the owner join, not the stub', () => {
+    const before = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+        query: Query
+      }
+
+      directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+      directive @join__type(
+        graph: join__Graph!
+        key: join__FieldSet
+        extension: Boolean! = false
+        resolvable: Boolean! = true
+      ) repeatable on OBJECT
+      directive @join__field(graph: join__Graph) on FIELD_DEFINITION
+      directive @join__directive(
+        graphs: [join__Graph!]
+        name: String!
+        args: join__DirectiveArguments
+      ) repeatable on FIELD_DEFINITION | OBJECT | SCHEMA
+      directive @link(url: String!, import: [link__Import], for: link__Purpose) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      scalar join__FieldSet
+      scalar join__DirectiveArguments
+      scalar link__Import
+      enum link__Purpose {
+        SECURITY
+        EXECUTION
+      }
+      enum join__Graph {
+        CATALOG @join__graph(name: "catalog", url: "http://localhost:4002/graphql")
+        PRODUCTS @join__graph(name: "products", url: "http://localhost:4001")
+      }
+      input ConnectHTTP {
+        GET: String
+      }
+
+      type Query @join__type(graph: CATALOG) @join__type(graph: PRODUCTS) {
+        featured: Product @join__field(graph: CATALOG)
+      }
+
+      type Product
+        @join__type(graph: CATALOG, key: "id", extension: true, resolvable: false)
+        @join__type(graph: PRODUCTS, key: "id")
+        @connect(
+          http: { GET: "https://api.example.com/products/{$this.id}" }
+          selection: "id name"
+          entity: true
+        ) {
+        id: ID!
+        name: String @join__field(graph: PRODUCTS)
+      }
+    `;
+
+    const out = finalizeConnectorsSupergraph(before);
+    const productType = out.match(/type Product[^\n]*/)?.[0] ?? '';
+    expect(productType).toMatch(/@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
+    expect(productType).not.toMatch(/@join__directive\(graphs: \[CATALOG\], name: "connect"/);
+    expect(out).not.toMatch(/type Product[\s\S]*@connect\(/);
+  });
+
+  it('treats a graph as resolvable when any of its join keys is resolvable', () => {
+    const before = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+        query: Query
+      }
+
+      directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+      directive @join__type(
+        graph: join__Graph!
+        key: join__FieldSet
+        extension: Boolean! = false
+        resolvable: Boolean! = true
+      ) repeatable on OBJECT
+      directive @join__field(graph: join__Graph) on FIELD_DEFINITION
+      directive @join__directive(
+        graphs: [join__Graph!]
+        name: String!
+        args: join__DirectiveArguments
+      ) repeatable on FIELD_DEFINITION | OBJECT | SCHEMA
+      directive @link(url: String!, import: [link__Import], for: link__Purpose) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      scalar join__FieldSet
+      scalar join__DirectiveArguments
+      scalar link__Import
+      enum link__Purpose {
+        SECURITY
+        EXECUTION
+      }
+      enum join__Graph {
+        CATALOG @join__graph(name: "catalog", url: "http://localhost:4002/graphql")
+        PRODUCTS @join__graph(name: "products", url: "http://localhost:4001")
+      }
+      input ConnectHTTP {
+        GET: String
+      }
+
+      type Query @join__type(graph: CATALOG) @join__type(graph: PRODUCTS) {
+        featured: Product @join__field(graph: CATALOG)
+      }
+
+      type Product
+        @join__type(graph: CATALOG, key: "id", extension: true, resolvable: false)
+        @join__type(graph: PRODUCTS, key: "id")
+        @join__type(graph: PRODUCTS, key: "sku", resolvable: false)
+        @connect(
+          http: { GET: "https://api.example.com/products/{$this.id}" }
+          selection: "id name"
+          entity: true
+        ) {
+        id: ID!
+        sku: String
+        name: String @join__field(graph: PRODUCTS)
+      }
+    `;
+
+    const out = finalizeConnectorsSupergraph(before);
+    const productType = out.match(/type Product[^\n]*/)?.[0] ?? '';
+    expect(productType).toMatch(/@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
+    expect(productType).not.toMatch(/@join__directive\(graphs: \[CATALOG\], name: "connect"/);
+  });
+
+  it('preserves per-graph @source ownership when supplied schemas share a source name', () => {
+    // Two hand-supplied connector subgraphs both declare `@source(name: "api")`
+    // with different baseURLs. Compose lifts extras onto schema (losing graph),
+    // but Mesh `@transport(subgraph, location)` still pairs each baseURL with
+    // its owning subgraph — finalize must emit each source only for that graph.
+    const common = /* GraphQL */ `
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+    `;
+
+    const products = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "api", http: { baseURL: "https://products.example.com" }) {
+        query: Query
+      }
+      ${common}
+      type Query {
+        product(id: ID!): Product
+          @connect(source: "api", http: { GET: "/products/{$args.id}" }, selection: "id name")
+      }
+      type Product {
+        id: ID!
+        name: String
+      }
+    `);
+
+    const inventory = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "api", http: { baseURL: "https://inventory.example.com" }) {
+        query: Query
+      }
+      ${common}
+      type Query {
+        stock(id: ID!): Int
+          @connect(source: "api", http: { GET: "/stock/{$args.id}" }, selection: "$")
+      }
+    `);
+
+    const result = composeSubgraphs([
+      { name: 'products', schema: products, transforms: [s => s] },
+      { name: 'inventory', schema: inventory, transforms: [s => s] },
+    ]);
+    expect(result.errors ?? []).toEqual([]);
+    const out = result.supergraphSdl!;
+
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[PRODUCTS\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/products\.example\.com"\}\}/,
+    );
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/inventory\.example\.com"\}\}/,
+    );
+    // Must not cross-attach the other graph's baseURL.
+    expect(out).not.toMatch(
+      /@join__directive\(graphs: \[PRODUCTS\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/inventory\.example\.com"\}\}/,
+    );
+    expect(out).not.toMatch(
+      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/products\.example\.com"\}\}/,
+    );
+    // Field-level connect ownership follows @join__field.
+    expect(out).toMatch(
+      /product\(id: ID!\): Product[\s\S]*?@join__directive\(graphs: \[PRODUCTS\], name: "connect"/,
+    );
+    expect(out).toMatch(
+      /stock\(id: ID!\): Int[\s\S]*?@join__directive\(graphs: \[INVENTORY\], name: "connect"/,
+    );
+  });
+
+  it('keeps source and connect ownership when a subgraph name equals the shared source name', () => {
+    // Subgraphs `api` and `inventory` both declare `@source(name: "api")` with
+    // different baseURLs. Source→subgraph name match must not attach inventory's
+    // config (or its @connect) onto the `api` graph.
+    const common = /* GraphQL */ `
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+    `;
+
+    const api = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "api", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+      ${common}
+      type Query {
+        product(id: ID!): Product
+          @connect(source: "api", http: { GET: "/products/{$args.id}" }, selection: "id name")
+      }
+      type Product {
+        id: ID!
+        name: String
+      }
+    `);
+
+    const inventory = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "api", http: { baseURL: "https://inventory.example.com" }) {
+        query: Query
+      }
+      ${common}
+      type Query {
+        stock(id: ID!): Int
+          @connect(source: "api", http: { GET: "/stock/{$args.id}" }, selection: "$")
+      }
+    `);
+
+    const result = composeSubgraphs([
+      { name: 'api', schema: api, transforms: [s => s] },
+      { name: 'inventory', schema: inventory, transforms: [s => s] },
+    ]);
+    expect(result.errors ?? []).toEqual([]);
+    const out = result.supergraphSdl!;
+
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[API\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com"\}\}/,
+    );
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/inventory\.example\.com"\}\}/,
+    );
+    expect(out).not.toMatch(
+      /@join__directive\(graphs: \[API\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/inventory\.example\.com"\}\}/,
+    );
+    expect(out).not.toMatch(
+      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com"\}\}/,
+    );
+    expect(out).toMatch(
+      /product\(id: ID!\): Product[\s\S]*?@join__directive\(graphs: \[API\], name: "connect"/,
+    );
+    expect(out).toMatch(
+      /stock\(id: ID!\): Int[\s\S]*?@join__directive\(graphs: \[INVENTORY\], name: "connect"/,
+    );
+    expect(out).not.toMatch(
+      /stock\(id: ID!\): Int[\s\S]*?@join__directive\(graphs: \[API\], name: "connect"/,
+    );
+  });
+
+  it('preserves per-graph @source when same name and baseURL differ only by headers', () => {
+    // Same source name + baseURL with different headers must not cross-attach.
+    // Lift keeps ownership via co-located @transport.subgraph in each extras blob.
+    const common = /* GraphQL */ `
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+        headers: [HTTPHeaderMapping!]
+      }
+      input HTTPHeaderMapping {
+        name: String!
+        value: String!
+      }
+    `;
+
+    const products = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(
+          name: "api"
+          http: {
+            baseURL: "https://api.example.com"
+            headers: [{ name: "X-Tenant", value: "products" }]
+          }
+        ) {
+        query: Query
+      }
+      ${common}
+      type Query {
+        product(id: ID!): Product
+          @connect(source: "api", http: { GET: "/products/{$args.id}" }, selection: "id name")
+      }
+      type Product {
+        id: ID!
+        name: String
+      }
+    `);
+
+    const inventory = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(
+          name: "api"
+          http: {
+            baseURL: "https://api.example.com"
+            headers: [{ name: "X-Tenant", value: "inventory" }]
+          }
+        ) {
+        query: Query
+      }
+      ${common}
+      type Query {
+        stock(id: ID!): Int
+          @connect(source: "api", http: { GET: "/stock/{$args.id}" }, selection: "$")
+      }
+    `);
+
+    const result = composeSubgraphs([
+      { name: 'products', schema: products, transforms: [s => s] },
+      { name: 'inventory', schema: inventory, transforms: [s => s] },
+    ]);
+    expect(result.errors ?? []).toEqual([]);
+    const out = result.supergraphSdl!;
+
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[PRODUCTS\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com", headers: \[\{name: "X-Tenant", value: "products"\}\]\}\}/,
+    );
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com", headers: \[\{name: "X-Tenant", value: "inventory"\}\]\}\}/,
+    );
+    expect(out).not.toMatch(
+      /@join__directive\(graphs: \[PRODUCTS\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com", headers: \[\{name: "X-Tenant", value: "inventory"\}\]\}\}/,
+    );
+    expect(out).not.toMatch(
+      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com", headers: \[\{name: "X-Tenant", value: "products"\}\]\}\}/,
+    );
+  });
 });

@@ -90,7 +90,7 @@ type group @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graph
   _odataId: String @inaccessible
 }
 
-type driveItem @join__type(graph: MICROSOFT_GRAPH, key: "id") {
+type driveItem @join__type(graph: MICROSOFT_GRAPH, key: "id", resolvable: false) {
   id: String!
   name: String
   size: BigInt

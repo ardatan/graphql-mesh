@@ -65,7 +65,8 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
   const singleGraphEnum = graphEnumToName.size === 1 ? [...graphEnumToName.keys()][0] : undefined;
 
   const pendingSources: Array<Record<string, unknown>> = [];
-  const sourceNameToGraph = new Map<string, string>();
+  // Source name → every graph that referenced it via `@connect` (collision-safe).
+  const sourceNameToGraphs = new Map<string, Set<string>>();
   const graphsWithConnect = new Set<string>();
 
   let nextDoc = visit(document, {
@@ -108,10 +109,14 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
       return rewriteConnectDirectivesOnNode(node, {
         graphEnumToName,
         nameToGraphEnum,
-        sourceNameToGraph,
+        sourceNameToGraphs,
         graphsWithConnect,
         singleGraphEnum,
         graphFromNodeDirectives: getJoinFieldGraph,
+        // Field-level: prefer explicit `@join__field(graph:)` over the shared
+        // source-name cache so two subgraphs that both use `source: "api"` keep
+        // their own field ownership.
+        preferNodeGraph: true,
       });
     },
     // Type-level `@connect` (Apollo entity pattern with `$this.<key>`)
@@ -119,20 +124,22 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
       return rewriteConnectDirectivesOnNode(node, {
         graphEnumToName,
         nameToGraphEnum,
-        sourceNameToGraph,
+        sourceNameToGraphs,
         graphsWithConnect,
         singleGraphEnum,
         graphFromNodeDirectives: getJoinTypeGraph,
+        preferSoleJoinType: true,
       });
     },
     ObjectTypeExtension(node) {
       return rewriteConnectDirectivesOnNode(node, {
         graphEnumToName,
         nameToGraphEnum,
-        sourceNameToGraph,
+        sourceNameToGraphs,
         graphsWithConnect,
         singleGraphEnum,
         graphFromNodeDirectives: getJoinTypeGraph,
+        preferSoleJoinType: true,
       });
     },
     InputObjectTypeDefinition(node) {
@@ -157,23 +164,68 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
     },
   });
 
-  // Attribute schema @source to graphs (by source name → subgraph name, connect usage, or sole graph)
+  // Attribute schema @source to graphs.
+  // - Unique pending config for a name: fan out to every graph that referenced
+  //   that name via `@connect` (shared identical config).
+  // - Duplicate pending configs for the same name (different baseURLs): match
+  //   each `@source` to `@transport(subgraph, location)` by baseURL === location
+  //   so ownership survives compose → lift flattening of extras. Do not
+  //   cross-product mismatched configs onto every referencing graph.
+  const pendingSourceNameCounts = new Map<string, number>();
+  for (const args of pendingSources) {
+    const sourceName = typeof args.name === 'string' ? args.name : undefined;
+    if (!sourceName) continue;
+    pendingSourceNameCounts.set(sourceName, (pendingSourceNameCounts.get(sourceName) || 0) + 1);
+  }
+  const transportsByLocation = readSchemaTransports(nextDoc, nameToGraphEnum);
   const schemaJoinDirs: ConstDirectiveNode[] = [];
   for (const args of pendingSources) {
     const sourceName = typeof args.name === 'string' ? args.name : undefined;
-    const graphEnum =
-      (sourceName ? nameToGraphEnum.get(sourceName) : undefined) ||
-      (sourceName ? sourceNameToGraph.get(sourceName) : undefined) ||
-      singleGraphEnum ||
-      (graphsWithConnect.size === 1 ? [...graphsWithConnect][0] : undefined);
-    if (!graphEnum) {
-      continue;
+    const graphs = new Set<string>();
+    const baseURL = getSourceBaseURL(args);
+    const fromTransport = baseURL ? transportsByLocation.get(baseURL) : undefined;
+    if (fromTransport?.size === 1) {
+      // Single transport at this location — authoritative for this config.
+      // Do not also add nameToGraphEnum(sourceName) (subgraph named `api` case).
+      graphs.add([...fromTransport][0]);
+    } else if (
+      fromTransport &&
+      fromTransport.size > 1 &&
+      pendingSources.every(
+        other => getSourceBaseURL(other) !== baseURL || sourcesDeepEqual(other, args),
+      )
+    ) {
+      // Same location, identical configs — genuinely shared; fan out.
+      for (const g of fromTransport) {
+        graphs.add(g);
+      }
+    } else if (!fromTransport?.size) {
+      const byName = sourceName ? nameToGraphEnum.get(sourceName) : undefined;
+      if (byName) {
+        graphs.add(byName);
+      }
+      const fromConnect = sourceName ? sourceNameToGraphs.get(sourceName) : undefined;
+      const uniquePending = sourceName ? pendingSourceNameCounts.get(sourceName) === 1 : false;
+      if (fromConnect && uniquePending) {
+        for (const g of fromConnect) {
+          graphs.add(g);
+        }
+      }
+      // Duplicate-name configs without a transport match: do not guess a graph.
+      if (!graphs.size && uniquePending && singleGraphEnum) {
+        graphs.add(singleGraphEnum);
+      }
+      if (!graphs.size && uniquePending && graphsWithConnect.size === 1) {
+        graphs.add([...graphsWithConnect][0]);
+      }
     }
-    graphsWithConnect.add(graphEnum);
-    if (sourceName) {
-      sourceNameToGraph.set(sourceName, graphEnum);
+    for (const graphEnum of graphs) {
+      graphsWithConnect.add(graphEnum);
+      if (sourceName) {
+        rememberSourceGraph(sourceNameToGraphs, sourceName, graphEnum);
+      }
+      schemaJoinDirs.push(buildJoinDirective(graphEnum, 'source', args));
     }
-    schemaJoinDirs.push(buildJoinDirective(graphEnum, 'source', args));
   }
 
   for (const graphEnum of graphsWithConnect) {
@@ -196,6 +248,18 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
     });
   }
 
+  // Stable schema directive order for snapshots / consumers:
+  // @link* → Mesh (@transport, …) → join link → join source → other joins.
+  // Lift may emit owned `@source` as join__directive before `@transport`; normalize here.
+  nextDoc = visit(nextDoc, {
+    SchemaDefinition(node) {
+      return { ...node, directives: canonicalizeSchemaDirectives(node.directives) };
+    },
+    SchemaExtension(node) {
+      return { ...node, directives: canonicalizeSchemaDirectives(node.directives) };
+    },
+  });
+
   if (
     !nextDoc.definitions.some(
       d => d.kind === Kind.DIRECTIVE_DEFINITION && d.name.value === 'join__directive',
@@ -209,6 +273,48 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
   }
 
   return print(nextDoc).trim();
+}
+
+function canonicalizeSchemaDirectives(
+  directives: readonly ConstDirectiveNode[] | undefined,
+): ConstDirectiveNode[] {
+  if (!directives?.length) {
+    return [];
+  }
+  const links: ConstDirectiveNode[] = [];
+  const mesh: ConstDirectiveNode[] = [];
+  const joinLinks: ConstDirectiveNode[] = [];
+  const joinSources: ConstDirectiveNode[] = [];
+  const otherJoins: ConstDirectiveNode[] = [];
+  const other: ConstDirectiveNode[] = [];
+  for (const dir of directives) {
+    if (dir.name.value === 'link') {
+      links.push(dir);
+      continue;
+    }
+    if (dir.name.value === 'join__directive') {
+      const name = getStringArg(dir, 'name');
+      if (name === 'link') {
+        joinLinks.push(dir);
+      } else if (name === 'source') {
+        joinSources.push(dir);
+      } else {
+        otherJoins.push(dir);
+      }
+      continue;
+    }
+    if (
+      dir.name.value === 'transport' ||
+      dir.name.value === 'pubsubOperation' ||
+      dir.name.value === 'meshSource' ||
+      dir.name.value === 'merge'
+    ) {
+      mesh.push(dir);
+      continue;
+    }
+    other.push(dir);
+  }
+  return [...links, ...mesh, ...other, ...joinLinks, ...joinSources, ...otherJoins];
 }
 
 function readJoinGraphMap(document: DocumentNode): Map<string, string> {
@@ -240,6 +346,58 @@ function getJoinTypeGraph(
   return getJoinGraphArg(directives, 'join__type');
 }
 
+/**
+ * Preferred graph for type-level `@connect` when source name does not match a
+ * subgraph name: sole distinct `@join__type` graph (multiple keys on one graph
+ * still count as one), else the single non-extension / resolvable owner join
+ * when a stub join is also present.
+ */
+function getPreferredTypeJoinGraph(
+  directives: readonly ConstDirectiveNode[] | undefined,
+): string | undefined {
+  const byGraph = new Map<string, { extension: boolean; resolvable: boolean }>();
+  for (const dir of directives || []) {
+    if (dir.name.value !== 'join__type') {
+      continue;
+    }
+    const graphArg = dir.arguments?.find(a => a.name.value === 'graph');
+    if (graphArg?.value.kind !== Kind.ENUM) {
+      continue;
+    }
+    const graph = graphArg.value.value;
+    const extension = getBooleanArg(dir, 'extension') === true;
+    const resolvable = getBooleanArg(dir, 'resolvable') !== false;
+    const prev = byGraph.get(graph);
+    byGraph.set(graph, {
+      // An extension entry sticks for that graph. Any resolvable key keeps it eligible
+      // (Federation allows repeatable `@key` with per-key `resolvable` flags).
+      extension: Boolean(prev?.extension || extension),
+      resolvable: prev ? prev.resolvable || resolvable : resolvable,
+    });
+  }
+  if (byGraph.size === 1) {
+    return byGraph.keys().next().value;
+  }
+  const owners: string[] = [];
+  for (const [graph, meta] of byGraph) {
+    if (!meta.extension && meta.resolvable) {
+      owners.push(graph);
+    }
+  }
+  return owners.length === 1 ? owners[0] : undefined;
+}
+
+function getBooleanArg(dir: ConstDirectiveNode, name: string): boolean | undefined {
+  const arg = dir.arguments?.find(a => a.name.value === name);
+  if (!arg) {
+    return undefined;
+  }
+  if (arg.value.kind === Kind.BOOLEAN) {
+    return arg.value.value;
+  }
+  return undefined;
+}
+
 function getJoinGraphArg(
   directives: readonly ConstDirectiveNode[] | undefined,
   directiveName: string,
@@ -255,6 +413,77 @@ function getJoinGraphArg(
   return undefined;
 }
 
+function getSourceBaseURL(args: Record<string, unknown>): string | undefined {
+  const http = args.http;
+  if (!http || typeof http !== 'object' || Array.isArray(http)) {
+    return undefined;
+  }
+  const baseURL = (http as Record<string, unknown>).baseURL;
+  return typeof baseURL === 'string' ? baseURL : undefined;
+}
+
+function sourcesDeepEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+/** Map `@transport(location)` → join graph enums (Mesh pairs location with source baseURL). */
+function readSchemaTransports(
+  document: DocumentNode,
+  nameToGraphEnum: Map<string, string>,
+): Map<string, Set<string>> {
+  const byLocation = new Map<string, Set<string>>();
+  for (const def of document.definitions) {
+    if (def.kind !== Kind.SCHEMA_DEFINITION && def.kind !== Kind.SCHEMA_EXTENSION) {
+      continue;
+    }
+    for (const dir of def.directives || []) {
+      if (dir.name.value !== 'transport') {
+        continue;
+      }
+      const location = getStringArg(dir, 'location');
+      const subgraph = getStringArg(dir, 'subgraph');
+      if (!location || !subgraph) {
+        continue;
+      }
+      const graphEnum = nameToGraphEnum.get(subgraph);
+      if (!graphEnum) {
+        continue;
+      }
+      let graphs = byLocation.get(location);
+      if (!graphs) {
+        graphs = new Set();
+        byLocation.set(location, graphs);
+      }
+      graphs.add(graphEnum);
+    }
+  }
+  return byLocation;
+}
+
+function rememberSourceGraph(
+  sourceNameToGraphs: Map<string, Set<string>>,
+  sourceName: string,
+  graphEnum: string,
+) {
+  let graphs = sourceNameToGraphs.get(sourceName);
+  if (!graphs) {
+    graphs = new Set();
+    sourceNameToGraphs.set(sourceName, graphs);
+  }
+  graphs.add(graphEnum);
+}
+
+function firstSourceGraph(
+  sourceNameToGraphs: Map<string, Set<string>>,
+  sourceName: string,
+): string | undefined {
+  const graphs = sourceNameToGraphs.get(sourceName);
+  if (!graphs?.size) {
+    return undefined;
+  }
+  return graphs.values().next().value;
+}
+
 function rewriteConnectDirectivesOnNode<
   T extends {
     directives?: readonly ConstDirectiveNode[];
@@ -264,12 +493,16 @@ function rewriteConnectDirectivesOnNode<
   ctx: {
     graphEnumToName: Map<string, string>;
     nameToGraphEnum: Map<string, string>;
-    sourceNameToGraph: Map<string, string>;
+    sourceNameToGraphs: Map<string, Set<string>>;
     graphsWithConnect: Set<string>;
     singleGraphEnum: string | undefined;
     graphFromNodeDirectives: (
       directives: readonly ConstDirectiveNode[] | undefined,
     ) => string | undefined;
+    /** Field-level: prefer `@join__field(graph:)` before the source-name cache. */
+    preferNodeGraph?: boolean;
+    /** Type-level: prefer sole/owner `@join__type` before the source-name cache. */
+    preferSoleJoinType?: boolean;
   },
 ): T {
   const connectDirs = (node.directives || []).filter(d => d.name.value === 'connect');
@@ -283,10 +516,18 @@ function rewriteConnectDirectivesOnNode<
   for (const connectDir of connectDirs) {
     const args = constDirectiveArgsToJs(connectDir);
     const sourceName = typeof args.source === 'string' ? args.source : undefined;
+    // Field-level: prefer explicit `@join__field(graph:)` before source→subgraph
+    // name match — a subgraph named `api` must not steal inventory's
+    // `@connect(source: "api")` when the field is owned by INVENTORY.
+    // Type-level: prefer sole/owner `@join__type` before source→subgraph name
+    // match so Product/Airline stay on the Connectors owner (not a stub, and not
+    // a differently-named subgraph that happens to match `source`).
+    // Then `@connect(source:)` → subgraph name, then the shared source-name cache.
     const graphEnum =
-      ctx.graphFromNodeDirectives(node.directives) ||
+      (ctx.preferNodeGraph ? ctx.graphFromNodeDirectives(node.directives) : undefined) ||
+      (ctx.preferSoleJoinType ? getPreferredTypeJoinGraph(node.directives) : undefined) ||
       (sourceName ? ctx.nameToGraphEnum.get(sourceName) : undefined) ||
-      (sourceName ? ctx.sourceNameToGraph.get(sourceName) : undefined) ||
+      (sourceName ? firstSourceGraph(ctx.sourceNameToGraphs, sourceName) : undefined) ||
       ctx.singleGraphEnum;
     if (!graphEnum) {
       // Keep raw @connect if we cannot attribute a graph
@@ -294,7 +535,7 @@ function rewriteConnectDirectivesOnNode<
     }
     ctx.graphsWithConnect.add(graphEnum);
     if (sourceName) {
-      ctx.sourceNameToGraph.set(sourceName, graphEnum);
+      rememberSourceGraph(ctx.sourceNameToGraphs, sourceName, graphEnum);
     }
     joinDirs.push(buildJoinDirective(graphEnum, 'connect', args));
   }
