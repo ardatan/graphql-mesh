@@ -907,6 +907,172 @@ describe('Federation Connectors HTTP / templates', () => {
     ]);
   });
 
+  it('repairs bare Federation-extracted Query._entities (Hive subgraph path)', async () => {
+    // Hive extracts subgraph SDL from the supergraph — Query already has `_entities`
+    // with no resolver. processConnectDirectives must install resolveReference dispatch
+    // instead of early-returning (otherwise defaultFieldResolver → null → NonNull error).
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      scalar _Any
+      union _Entity = Airline
+      schema @source(name: "Trippin", http: { baseURL: "https://odata.example.com" }) {
+        query: Query
+      }
+
+      type Query {
+        _entities(representations: [_Any!]!): [_Entity]!
+        AirlinesByAirlineCode(AirlineCode: String!): Airline
+          @connect(
+            source: "Trippin"
+            http: { GET: "/Airlines/{$args.AirlineCode}/" }
+            selection: "AirlineCode Name"
+            entity: true
+          )
+      }
+
+      type Airline
+        @key(fields: "AirlineCode")
+        @connect(
+          source: "Trippin"
+          http: { GET: "/Airlines/{$this.AirlineCode}/" }
+          selection: "AirlineCode Name"
+          entity: true
+        ) {
+        AirlineCode: String!
+        Name: String
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json({ AirlineCode: 'AA', Name: 'American Airlines' });
+      }) as any,
+    });
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        query ($representations: [_Any!]!) {
+          _entities(representations: $representations) {
+            ... on Airline {
+              AirlineCode
+              Name
+            }
+          }
+        }
+      `),
+      variableValues: {
+        representations: [{ __typename: 'Airline', AirlineCode: 'AA' }],
+      },
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      _entities: [{ AirlineCode: 'AA', Name: 'American Airlines' }],
+    });
+    expect(urls).toEqual(['https://odata.example.com/Airlines/AA/']);
+  });
+
+  it('resolves OData-shaped Airline/Person via Query._entities (no Mesh @merge)', async () => {
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema
+        @source(
+          name: "Trippin"
+          http: {
+            baseURL: "https://odata.example.com"
+            headers: [{ name: "Accept", value: "application/json;odata.metadata=minimal" }]
+          }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        AirlinesByAirlineCode(AirlineCode: String!): Airline
+          @connect(
+            source: "Trippin"
+            http: { GET: "/Airlines/{$args.AirlineCode}/" }
+            selection: "AirlineCode Name"
+            entity: true
+          )
+      }
+
+      type Airline
+        @key(fields: "AirlineCode")
+        @connect(
+          source: "Trippin"
+          http: { GET: "/Airlines/{$this.AirlineCode}/" }
+          selection: "AirlineCode Name"
+          entity: true
+        ) {
+        AirlineCode: String!
+        Name: String
+      }
+
+      type Person
+        @key(fields: "UserName")
+        @connect(
+          source: "Trippin"
+          http: { GET: "/People/{$this.UserName}/" }
+          selection: "UserName FirstName"
+          entity: true
+        ) {
+        UserName: String!
+        FirstName: String
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        if (String(url).includes('/Airlines/')) {
+          return Response.json({ AirlineCode: 'AA', Name: 'American Airlines' });
+        }
+        return Response.json({ UserName: 'russellwhyte', FirstName: 'Russell' });
+      }) as any,
+    });
+
+    expect(schema.getQueryType()?.getFields()._entities).toBeDefined();
+    const entityUnion = schema.getType('_Entity') as { getTypes?: () => { name: string }[] };
+    const entityNames = (entityUnion.getTypes?.() || []).map(t => t.name).sort();
+    expect(entityNames).toEqual(['Airline', 'Person']);
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        query ($representations: [_Any!]!) {
+          _entities(representations: $representations) {
+            ... on Airline {
+              AirlineCode
+              Name
+            }
+            ... on Person {
+              UserName
+              FirstName
+            }
+          }
+        }
+      `),
+      variableValues: {
+        representations: [
+          { __typename: 'Airline', AirlineCode: 'AA' },
+          { __typename: 'Person', UserName: 'russellwhyte' },
+        ],
+      },
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      _entities: [
+        { AirlineCode: 'AA', Name: 'American Airlines' },
+        { UserName: 'russellwhyte', FirstName: 'Russell' },
+      ],
+    });
+    expect(urls).toEqual([
+      'https://odata.example.com/Airlines/AA/',
+      'https://odata.example.com/People/russellwhyte/',
+    ]);
+  });
+
   it('bakes Mesh _response with Apollo-portable selection + runtime url/statusText/headers', async () => {
     const sdl = /* GraphQL */ `
       ${CONNECTOR_DIRECTIVES}

@@ -283,10 +283,15 @@ function rewriteConnectDirectivesOnNode<
   for (const connectDir of connectDirs) {
     const args = constDirectiveArgsToJs(connectDir);
     const sourceName = typeof args.source === 'string' ? args.source : undefined;
+    // Prefer `@connect(source:)` → subgraph name over the first `@join__type` /
+    // `@join__field`. Multi-subgraph entity types list extension graphs first
+    // (e.g. Catalog stub + OData owner); attributing type-level entity `@connect`
+    // to the stub graph breaks Router ("Object type has no field …") and Hive
+    // `_entities` planning against the Connectors owner.
     const graphEnum =
-      ctx.graphFromNodeDirectives(node.directives) ||
       (sourceName ? ctx.nameToGraphEnum.get(sourceName) : undefined) ||
       (sourceName ? ctx.sourceNameToGraph.get(sourceName) : undefined) ||
+      ctx.graphFromNodeDirectives(node.directives) ||
       ctx.singleGraphEnum;
     if (!graphEnum) {
       // Keep raw @connect if we cannot attribute a graph

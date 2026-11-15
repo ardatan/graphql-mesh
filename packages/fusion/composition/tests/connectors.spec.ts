@@ -706,4 +706,90 @@ describe('Federation Connectors composition', () => {
     expect(result.supergraphSdl).toMatch(/@join__type\(graph: SUPPLIERS,\s*key: "id"\)/);
     expect(result.supergraphSdl).not.toMatch(/@resolveTo/);
   });
+
+  it('attributes type-level @connect to the source owner when extension join__type is listed first', () => {
+    // Mimic compose output before finalize: stub subgraph extension key first,
+    // then OData/Connectors owner with type-level entity @connect(source: "Trippin").
+    const before = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(
+          name: "Trippin"
+          http: { baseURL: "http://127.0.0.1:4001" }
+        ) {
+        query: Query
+      }
+
+      directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+      directive @join__type(
+        graph: join__Graph!
+        key: join__FieldSet
+        extension: Boolean! = false
+        resolvable: Boolean! = true
+      ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+      directive @join__field(graph: join__Graph) repeatable on FIELD_DEFINITION
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @link(url: String!, import: [String], for: link__Purpose) repeatable on SCHEMA
+
+      enum link__Purpose {
+        SECURITY
+        EXECUTION
+      }
+      scalar join__FieldSet
+      enum join__Graph {
+        CATALOG @join__graph(name: "catalog", url: "http://localhost:4002/graphql")
+        TRIPPIN @join__graph(name: "Trippin", url: "http://127.0.0.1:4001")
+      }
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      type Query
+        @join__type(graph: CATALOG)
+        @join__type(graph: TRIPPIN) {
+        featuredAirline: Airline @join__field(graph: CATALOG)
+        AirlinesByAirlineCode(AirlineCode: String!): Airline
+          @join__field(graph: TRIPPIN)
+          @connect(
+            source: "Trippin"
+            http: { GET: "/Airlines/{$args.AirlineCode}/" }
+            selection: "AirlineCode Name"
+            entity: true
+          )
+      }
+
+      type Airline
+        @join__type(graph: CATALOG, key: "AirlineCode", extension: true, resolvable: false)
+        @join__type(graph: TRIPPIN, key: "AirlineCode")
+        @connect(
+          source: "Trippin"
+          http: { GET: "/Airlines/{$this.AirlineCode}/" }
+          selection: "AirlineCode Name"
+          entity: true
+        ) {
+        AirlineCode: String!
+        isFeatured: Boolean @join__field(graph: CATALOG)
+        Name: String @join__field(graph: TRIPPIN)
+      }
+    `;
+
+    const out = finalizeConnectorsSupergraph(before);
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[TRIPPIN\], name: "connect", args: \{source: "Trippin"[\s\S]*entity: true\}/,
+    );
+    expect(out).not.toMatch(
+      /type Airline[\s\S]*@join__directive\(graphs: \[CATALOG\], name: "connect"/,
+    );
+  });
 });

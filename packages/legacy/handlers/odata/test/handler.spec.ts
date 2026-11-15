@@ -894,4 +894,86 @@ describe('odata', () => {
     expect(sentRequest!.url).toBe(correctUrl);
     expect(await sentRequest!.text()).toBe(JSON.stringify(correctBody));
   });
+
+  it('wires Query._entities for entity-set types and marks nested-only keys non-resolvable', async () => {
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
+    const urls: string[] = [];
+    // Hive OData Accept profile may append `$select=…` — match the by-id path prefix.
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/Airlines/AA/',
+      async request => {
+        urls.push(decodeURIComponent(request.url));
+        return new MockResponse(
+          JSON.stringify({
+            AirlineCode: 'AA',
+            Name: 'American Airlines',
+          }),
+        );
+      },
+    );
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/Airlines/AA/?$select=AirlineCode,Name',
+      async request => {
+        urls.push(decodeURIComponent(request.url));
+        return new MockResponse(
+          JSON.stringify({
+            AirlineCode: 'AA',
+            Name: 'American Airlines',
+          }),
+        );
+      },
+    );
+    using cache = new InMemoryLRUCache();
+    const handler = new ODataHandler({
+      name: 'TripPin',
+      config: {
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
+      },
+      pubsub,
+      cache,
+      store,
+      baseDir,
+      importFn,
+      log,
+    });
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
+
+    const sdl = printSchemaWithDirectives(source.schema);
+    expect(sdl).toMatch(/type Airline[\s\S]*@key\(fields: "AirlineCode"\)/);
+    expect(sdl).toMatch(/type Airline[\s\S]*entity:\s*true/);
+    // Nested-only Trip: keep `@key` for `$expand` heuristics, not `_entities`-owned.
+    expect(sdl).toMatch(/type Trip @key\(fields: "TripId", resolvable: false\)/);
+    expect(source.schema.getQueryType()?.getFields()._entities).toBeDefined();
+
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
+      document: parse(/* GraphQL */ `
+        query ($representations: [_Any!]!) {
+          _entities(representations: $representations) {
+            ... on Airline {
+              AirlineCode
+              Name
+            }
+          }
+        }
+      `),
+      variableValues: {
+        representations: [{ __typename: 'Airline', AirlineCode: 'AA' }],
+      },
+    })) as ExecutionResult;
+
+    expect(graphqlResult.errors).toBeFalsy();
+    expect(graphqlResult.data).toEqual({
+      _entities: [{ AirlineCode: 'AA', Name: 'American Airlines' }],
+    });
+    expect(urls).toEqual([
+      'https://services.odata.org/TripPinRESTierService/Airlines/AA/?$select=AirlineCode,Name',
+    ]);
+  });
 });

@@ -1099,9 +1099,17 @@ export function emitODataConnectors(
 
     const existing = [...(otc.getDirectives() || [])];
     if (isObject && !existing.some(d => d.name === 'key')) {
+      // Entity-set-backed types get a resolvable `@key` + type-level `@connect(entity: true)`
+      // so Hive `Query._entities` / Router entity fill work without Mesh `@merge`.
+      // Nested-only or ambiguous entity sets keep `@key` (Hive `$expand` heuristics) but
+      // mark `resolvable: false` — no type-level connect means this subgraph cannot own
+      // `_entities` resolution (Connectors-native; mirrors stub-only `resolvable: false`).
       existing.push({
         name: 'key',
-        args: { fields: identifierFieldName },
+        args: {
+          fields: identifierFieldName,
+          ...(entitySetName ? {} : { resolvable: false }),
+        },
       });
     }
 

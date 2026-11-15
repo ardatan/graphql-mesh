@@ -2749,9 +2749,15 @@ function hydrateEntityStubFieldResolvers(schema: GraphQLSchema) {
 }
 
 /**
- * Add Federation `Query._entities` that dispatches to type `resolveReference`
- * (from type-level `@connect` or `entity: true`). Lets Hive Gateway resolve
- * entities without Mesh `@merge`.
+ * Add / repair Federation `Query._entities` that dispatches to type
+ * `resolveReference` (from type-level `@connect` or `entity: true`).
+ *
+ * Hive Gateway extracts subgraph schemas from the supergraph SDL — those already
+ * carry a bare `Query._entities` for `@key` types, with no resolver. Skipping when
+ * the field exists left defaultFieldResolver returning null →
+ * `Cannot return null for non-nullable field Query._entities` (DOWNSTREAM_SERVICE_ERROR)
+ * whenever Hive planned `_entities` against a Connectors REST subgraph (e.g. OData
+ * owner + GraphQL/Connectors stub). Always install the resolveReference dispatcher.
  */
 function ensureFederationEntitiesField(schema: GraphQLSchema) {
   const queryType = schema.getQueryType();
@@ -2759,9 +2765,6 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return;
   }
   const queryFields = queryType.getFields();
-  if (queryFields._entities) {
-    return;
-  }
   const entityTypes = Object.values(schema.getTypeMap()).filter(
     (t): t is GraphQLObjectType =>
       isObjectType(t) &&
@@ -2796,6 +2799,39 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     typeMap._Entity = entityUnion;
   }
 
+  const entitiesResolve = (_root: unknown, args: { representations?: unknown }, context: any, info: any) => {
+    const representations = args?.representations;
+    if (!Array.isArray(representations)) {
+      return [];
+    }
+    return representations.map(async (representation: any) => {
+      const typeName = representation?.__typename;
+      if (!typeName) {
+        return representation;
+      }
+      const type = info.schema.getType(typeName);
+      if (!isObjectType(type)) {
+        return representation;
+      }
+      const resolveReference = (type as any).resolveReference;
+      if (typeof resolveReference !== 'function') {
+        return representation;
+      }
+      const resolved = await resolveReference(representation, context, info);
+      // Preserve __typename for `_Entity.resolveType`.
+      if (resolved && typeof resolved === 'object' && !resolved.__typename) {
+        resolved.__typename = typeName;
+      }
+      return resolved ?? representation;
+    });
+  };
+
+  if (queryFields._entities) {
+    // Federation-extracted subgraph: field exists, resolver does not — wire it.
+    queryFields._entities.resolve = entitiesResolve;
+    return;
+  }
+
   queryFields._entities = {
     name: '_entities',
     description: 'Federation entity resolver for Connectors REST transport (Hive `_entities` path)',
@@ -2811,32 +2847,7 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
         astNode: undefined,
       },
     ],
-    resolve(_root, args, context, info) {
-      const representations = args?.representations;
-      if (!Array.isArray(representations)) {
-        return [];
-      }
-      return representations.map(async (representation: any) => {
-        const typeName = representation?.__typename;
-        if (!typeName) {
-          return representation;
-        }
-        const type = info.schema.getType(typeName);
-        if (!isObjectType(type)) {
-          return representation;
-        }
-        const resolveReference = (type as any).resolveReference;
-        if (typeof resolveReference !== 'function') {
-          return representation;
-        }
-        const resolved = await resolveReference(representation, context, info);
-        // Preserve __typename for `_Entity.resolveType`.
-        if (resolved && typeof resolved === 'object' && !resolved.__typename) {
-          resolved.__typename = typeName;
-        }
-        return resolved ?? representation;
-      });
-    },
+    resolve: entitiesResolve,
     subscribe: undefined,
     deprecationReason: undefined,
     extensions: {},
