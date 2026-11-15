@@ -182,31 +182,34 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
   for (const args of pendingSources) {
     const sourceName = typeof args.name === 'string' ? args.name : undefined;
     const graphs = new Set<string>();
-    const byName = sourceName ? nameToGraphEnum.get(sourceName) : undefined;
-    if (byName) {
-      graphs.add(byName);
-    }
     const baseURL = getSourceBaseURL(args);
     const fromTransport = baseURL ? transportsByLocation.get(baseURL) : undefined;
-    if (fromTransport) {
+    if (fromTransport?.size) {
+      // Transport/baseURL match is authoritative for this config — do not also
+      // add nameToGraphEnum(sourceName), which wrongly tags every pending
+      // `@source(name: "api")` onto a subgraph also named `api`.
       for (const g of fromTransport) {
         graphs.add(g);
       }
-    }
-    const fromConnect = sourceName ? sourceNameToGraphs.get(sourceName) : undefined;
-    const uniquePending = sourceName ? pendingSourceNameCounts.get(sourceName) === 1 : false;
-    if (fromConnect && uniquePending) {
-      for (const g of fromConnect) {
-        graphs.add(g);
+    } else {
+      const byName = sourceName ? nameToGraphEnum.get(sourceName) : undefined;
+      if (byName) {
+        graphs.add(byName);
       }
-    }
-    // Duplicate-name configs without a transport/baseURL match: do not guess a
-    // graph (would steal ownership). Mesh compose always lifts `@transport`.
-    if (!graphs.size && uniquePending && singleGraphEnum) {
-      graphs.add(singleGraphEnum);
-    }
-    if (!graphs.size && uniquePending && graphsWithConnect.size === 1) {
-      graphs.add([...graphsWithConnect][0]);
+      const fromConnect = sourceName ? sourceNameToGraphs.get(sourceName) : undefined;
+      const uniquePending = sourceName ? pendingSourceNameCounts.get(sourceName) === 1 : false;
+      if (fromConnect && uniquePending) {
+        for (const g of fromConnect) {
+          graphs.add(g);
+        }
+      }
+      // Duplicate-name configs without a transport match: do not guess a graph.
+      if (!graphs.size && uniquePending && singleGraphEnum) {
+        graphs.add(singleGraphEnum);
+      }
+      if (!graphs.size && uniquePending && graphsWithConnect.size === 1) {
+        graphs.add([...graphsWithConnect][0]);
+      }
     }
     for (const graphEnum of graphs) {
       graphsWithConnect.add(graphEnum);
@@ -447,20 +450,17 @@ function rewriteConnectDirectivesOnNode<
   for (const connectDir of connectDirs) {
     const args = constDirectiveArgsToJs(connectDir);
     const sourceName = typeof args.source === 'string' ? args.source : undefined;
-    // Prefer `@connect(source:)` → subgraph name over the first `@join__type` /
-    // `@join__field`. Multi-subgraph entity types list extension graphs first
-    // (e.g. Catalog stub + OData owner); attributing type-level entity `@connect`
-    // to the stub graph breaks Router ("Object type has no field …") and Hive
-    // `_entities` planning against the Connectors owner.
-    // Field-level `@connect` still prefers an explicit `@join__field(graph:)`
-    // before the shared source-name cache (two subgraphs may both use `source: "api"`).
-    // Type-level prefers a sole/owner `@join__type` before that cache so a Product
-    // with only PRODUCTS (or PRODUCTS + stub) is not stolen by a later field that
-    // wrote `api → INVENTORY`. Also covers source-less absolute-URL `@connect`.
+    // Field-level: prefer explicit `@join__field(graph:)` before source→subgraph
+    // name match — a subgraph named `api` must not steal inventory's
+    // `@connect(source: "api")` when the field is owned by INVENTORY.
+    // Type-level: prefer sole/owner `@join__type` before source→subgraph name
+    // match so Product/Airline stay on the Connectors owner (not a stub, and not
+    // a differently-named subgraph that happens to match `source`).
+    // Then `@connect(source:)` → subgraph name, then the shared source-name cache.
     const graphEnum =
-      (sourceName ? ctx.nameToGraphEnum.get(sourceName) : undefined) ||
       (ctx.preferNodeGraph ? ctx.graphFromNodeDirectives(node.directives) : undefined) ||
       (ctx.preferSoleJoinType ? getPreferredTypeJoinGraph(node.directives) : undefined) ||
+      (sourceName ? ctx.nameToGraphEnum.get(sourceName) : undefined) ||
       (sourceName ? firstSourceGraph(ctx.sourceNameToGraphs, sourceName) : undefined) ||
       ctx.singleGraphEnum;
     if (!graphEnum) {

@@ -1113,4 +1113,85 @@ describe('Federation Connectors composition', () => {
       /stock\(id: ID!\): Int[\s\S]*?@join__directive\(graphs: \[INVENTORY\], name: "connect"/,
     );
   });
+
+  it('keeps source and connect ownership when a subgraph name equals the shared source name', () => {
+    // Subgraphs `api` and `inventory` both declare `@source(name: "api")` with
+    // different baseURLs. Source→subgraph name match must not attach inventory's
+    // config (or its @connect) onto the `api` graph.
+    const common = /* GraphQL */ `
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+    `;
+
+    const api = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "api", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+      ${common}
+      type Query {
+        product(id: ID!): Product
+          @connect(source: "api", http: { GET: "/products/{$args.id}" }, selection: "id name")
+      }
+      type Product {
+        id: ID!
+        name: String
+      }
+    `);
+
+    const inventory = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "api", http: { baseURL: "https://inventory.example.com" }) {
+        query: Query
+      }
+      ${common}
+      type Query {
+        stock(id: ID!): Int
+          @connect(source: "api", http: { GET: "/stock/{$args.id}" }, selection: "$")
+      }
+    `);
+
+    const result = composeSubgraphs([
+      { name: 'api', schema: api, transforms: [s => s] },
+      { name: 'inventory', schema: inventory, transforms: [s => s] },
+    ]);
+    expect(result.errors ?? []).toEqual([]);
+    const out = result.supergraphSdl!;
+
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[API\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com"\}\}/,
+    );
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/inventory\.example\.com"\}\}/,
+    );
+    expect(out).not.toMatch(
+      /@join__directive\(graphs: \[API\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/inventory\.example\.com"\}\}/,
+    );
+    expect(out).not.toMatch(
+      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com"\}\}/,
+    );
+    expect(out).toMatch(
+      /product\(id: ID!\): Product[\s\S]*?@join__directive\(graphs: \[API\], name: "connect"/,
+    );
+    expect(out).toMatch(
+      /stock\(id: ID!\): Int[\s\S]*?@join__directive\(graphs: \[INVENTORY\], name: "connect"/,
+    );
+    expect(out).not.toMatch(
+      /stock\(id: ID!\): Int[\s\S]*?@join__directive\(graphs: \[API\], name: "connect"/,
+    );
+  });
 });
