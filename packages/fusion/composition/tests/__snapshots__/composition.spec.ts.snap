@@ -44,11 +44,11 @@ directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: S
 type Query @join__type(graph: A) @join__type(graph: B) {
   myFoo: Foo! @join__field(graph: A)
   foo(id: ID!): Foo! @merge(subgraph: "B", keyField: "id", keyArg: "id") @join__field(graph: B) @join__directive(graphs: [B], name: "connect", args: {selection: "id: $args.id", entity: true})
-  foos(ids: [ID!]!): [Foo!]! @merge(subgraph: "B", keyField: "id", keyArg: "ids") @join__field(graph: B) @join__directive(graphs: [B], name: "connect", args: {selection: "id: $args.ids"})
+  foos(ids: [ID!]!): [Foo!]! @join__field(graph: B)
   foosByFilter(where: FooFilter!): [Foo!]! @join__field(graph: B)
 }
 
-type Foo @connect(selection: "id: $args.ids") @join__type(graph: A) @join__type(graph: B, key: "id") {
+type Foo @join__type(graph: A) @join__type(graph: B, key: "id") {
   id: ID!
   bar: String! @join__field(graph: B)
 }
@@ -107,7 +107,7 @@ directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: S
 type Query @source(name: "Query", subgraph: "A") @source(name: "Query", subgraph: "B") @join__type(graph: A) @join__type(graph: B) {
   A_myFoo: A_Foo! @source(name: "myFoo", type: "Foo!", subgraph: "A") @join__field(graph: A)
   B_foo(id: ID!): B_Foo! @source(name: "foo", type: "Foo!", subgraph: "B") @merge(subgraph: "B", keyField: "id", keyArg: "id") @join__field(graph: B) @join__directive(graphs: [B], name: "connect", args: {selection: "id: $args.id", entity: true})
-  B_foos(ids: [ID!]!): [B_Foo!]! @source(name: "foos", type: "[Foo!]!", subgraph: "B") @merge(subgraph: "B", keyField: "id", keyArg: "ids") @join__field(graph: B) @join__directive(graphs: [B], name: "connect", args: {selection: "id: $args.ids"})
+  B_foos(ids: [ID!]!): [B_Foo!]! @source(name: "foos", type: "[Foo!]!", subgraph: "B") @join__field(graph: B)
   B_foosByFilter(where: B_FooFilter! @source(name: "where", type: "FooFilter!", subgraph: "B")): [B_Foo!]! @source(name: "foosByFilter", type: "[Foo!]!", subgraph: "B") @join__field(graph: B)
 }
 
@@ -115,7 +115,7 @@ type A_Foo @source(name: "Foo", subgraph: "A") @join__type(graph: A) {
   id: ID!
 }
 
-type B_Foo @source(name: "Foo", subgraph: "B") @join__type(graph: B, key: "id") @join__directive(graphs: [B], name: "connect", args: {selection: "id: $args.ids"}) {
+type B_Foo @source(name: "Foo", subgraph: "B") @join__type(graph: B, key: "id") {
   id: ID!
   bar: String!
 }
@@ -177,12 +177,12 @@ directive @foo on FIELD_DEFINITION
 type Query @join__type(graph: A) @join__type(graph: B) @join__type(graph: C) {
   myFoo: Foo! @join__field(graph: A)
   foo(id: ID!): Foo! @merge(subgraph: "B", keyField: "id", keyArg: "id") @join__field(graph: B) @join__directive(graphs: [B], name: "connect", args: {selection: "id: $args.id", entity: true})
-  foos(ids: [ID!]!): [Foo!]! @merge(subgraph: "B", keyField: "id", keyArg: "ids") @join__field(graph: B) @join__directive(graphs: [B], name: "connect", args: {selection: "id: $args.ids"})
+  foos(ids: [ID!]!): [Foo!]! @join__field(graph: B)
   foosByFilter(where: FooFilter!): [Foo!]! @join__field(graph: B)
   cFoo: Foo! @foo @join__field(graph: C)
 }
 
-type Foo @connect(selection: "id: $args.ids") @join__type(graph: A) @join__type(graph: B, key: "id") @join__type(graph: C) {
+type Foo @join__type(graph: A) @join__type(graph: B, key: "id") @join__type(graph: C) {
   id: ID!
   bar: String! @join__field(graph: B)
 }

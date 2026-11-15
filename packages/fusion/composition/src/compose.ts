@@ -1283,8 +1283,13 @@ function addAnnotationsForSemanticConventions({
     return;
   }
   const type = getNamedType(queryFieldConfig.type);
+  // Skip when the return type is already a Federation entity (`@key` on AST or extensions).
+  // Otherwise semantic dual `@connect` + connect `@link` would flip a real Federation
+  // GraphQL subgraph into Connectors mode for Rover (CONNECTORS_UNRESOLVED_FIELD).
+  const existingTypeDirectives = getDirectiveExtensions(type) || {};
   if (
-    type.astNode?.directives?.some((directive: DirectiveNode) => directive.name.value === 'key')
+    type.astNode?.directives?.some((directive: DirectiveNode) => directive.name.value === 'key') ||
+    (Array.isArray(existingTypeDirectives.key) && existingTypeDirectives.key.length > 0)
   ) {
     return;
   }
@@ -1368,18 +1373,29 @@ function addAnnotationsForSemanticConventions({
             typeExtensions.directives = typeDirectives;
             return;
           }
-          // Non-Connectors: Mesh `@merge` for Hive + virtual `@connect` for Router.
+          // Non-Connectors: Mesh `@merge` for Hive.
           directiveExtensions.merge ||= [];
           directiveExtensions.merge.push({
             subgraph: subgraphName,
             keyField: fieldName,
             keyArg: argName,
           });
-          attachVirtualEntityConnect(directiveExtensions, {
-            keyField: fieldName,
-            keyArg: argName,
-            returnType: getNamedType(queryFieldConfig.type),
-          });
+          // Virtual `@connect` only for Mesh-only entities. Skip when the type is already
+          // a Federation `@interfaceObject` (Router uses `_entities`; any connect `@link`
+          // would make Rover treat the GraphQL subgraph as Connectors-only).
+          const isInterfaceObject =
+            (Array.isArray(typeDirectives.interfaceObject) &&
+              typeDirectives.interfaceObject.length > 0) ||
+            type.astNode?.directives?.some(
+              (directive: DirectiveNode) => directive.name.value === 'interfaceObject',
+            );
+          if (!isInterfaceObject) {
+            attachVirtualEntityConnect(directiveExtensions, {
+              keyField: fieldName,
+              keyArg: argName,
+              returnType: getNamedType(queryFieldConfig.type),
+            });
+          }
         };
         switch (queryFieldNameSnakeCase) {
           case snakeCase(type.name):

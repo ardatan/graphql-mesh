@@ -20,18 +20,27 @@ import {
   isAsyncIterable,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { getUnifiedGraphGracefully, type SubgraphConfig } from '../../src/compose';
+
+export type TestExecutor = ((opts: { query: string; variables?: Record<string, any> }) => any) & {
+  dispose: () => Promise<void>;
+};
 
 export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
   const executor = composeAndGetExecutor(subgraphs);
   return handleMaybePromise(
     () => executor({ query: getIntrospectionQuery() }),
-    result => buildClientSchema(result),
+    result =>
+      handleMaybePromise(
+        () => executor.dispose(),
+        () => buildClientSchema(result),
+      ),
   );
 }
 
-export function composeAndGetExecutor(subgraphs: SubgraphConfig[]) {
+export function composeAndGetExecutor(subgraphs: SubgraphConfig[]): TestExecutor {
   const manager = new UnifiedGraphManager({
     getUnifiedGraph: () => getUnifiedGraphGracefully(subgraphs),
     transports() {
@@ -46,52 +55,57 @@ export function composeAndGetExecutor(subgraphs: SubgraphConfig[]) {
       };
     },
   });
-  return function testExecutor({
-    query,
-    variables: variableValues,
-  }: {
-    query: string;
-    variables?: Record<string, any>;
-  }) {
-    const document = parse(query);
-    return handleMaybePromise(
-      () => manager.getUnifiedGraph(),
-      schema => {
-        const validationErrors = validate(schema, document);
-        if (validationErrors.length === 1) {
-          throw validationErrors[0];
-        }
-        if (validationErrors.length > 1) {
-          throw new AggregateError(validationErrors);
-        }
-        return handleMaybePromise(
-          () => manager.getContext(),
-          contextValue =>
-            handleMaybePromise(
-              () =>
-                normalizedExecutor({
-                  schema,
-                  document,
-                  contextValue,
-                  variableValues,
-                }),
-              res => {
-                if (isAsyncIterable(res)) {
-                  throw new Error('AsyncIterable is not supported');
-                }
-                if (res.errors?.length === 1) {
-                  throw res.errors[0];
-                }
-                if (res.errors?.length > 1) {
-                  throw new AggregateError(res.errors);
-                }
-                return res.data;
-              },
-            ),
-        );
-      },
-    );
-  };
+  const dispose = () => manager[DisposableSymbols.asyncDispose]();
+  const testExecutor = Object.assign(
+    function testExecutor({
+      query,
+      variables: variableValues,
+    }: {
+      query: string;
+      variables?: Record<string, any>;
+    }) {
+      const document = parse(query);
+      return handleMaybePromise(
+        () => manager.getUnifiedGraph(),
+        schema => {
+          const validationErrors = validate(schema, document);
+          if (validationErrors.length === 1) {
+            throw validationErrors[0];
+          }
+          if (validationErrors.length > 1) {
+            throw new AggregateError(validationErrors);
+          }
+          return handleMaybePromise(
+            () => manager.getContext(),
+            contextValue =>
+              handleMaybePromise(
+                () =>
+                  normalizedExecutor({
+                    schema,
+                    document,
+                    contextValue,
+                    variableValues,
+                  }),
+                res => {
+                  if (isAsyncIterable(res)) {
+                    throw new Error('AsyncIterable is not supported');
+                  }
+                  if (res.errors?.length === 1) {
+                    throw res.errors[0];
+                  }
+                  if (res.errors?.length > 1) {
+                    throw new AggregateError(res.errors);
+                  }
+                  return res.data;
+                },
+              ),
+          );
+        },
+      );
+    },
+    { dispose },
+  );
+  return testExecutor;
 }
 
 export function expectTheSchemaSDLToBe(schema: GraphQLSchema, sdl: string) {

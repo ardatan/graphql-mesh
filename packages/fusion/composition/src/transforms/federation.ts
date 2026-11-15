@@ -20,9 +20,7 @@ import {
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
 import {
-  attachVirtualEntityConnect,
   connectHasHttp,
-  ensureVirtualConnectLink,
   hasEquivalentTypeConnect,
   toTypeLevelEntityConnect,
 } from '../connect-entity.js';
@@ -271,7 +269,6 @@ export function createFederationTransform(config: FederationTransformConfig): Su
     );
     const usedFederationDirectives = new Set<string>();
     let mergeDirectiveUsed = false;
-    let virtualConnectUsed = false;
     subgraphSchema = mapSchema(subgraphSchema, {
       [MapperKind.TYPE]: type => {
         const configByType = configurationByType.get(type.name);
@@ -418,7 +415,10 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           // - keyArg === keyField → Query `@connect(entity: true)`
           // - keyArg !== keyField → type-level `@connect` with `$this.<keyField>`
           // HTTP `@connect`: Hive REST `_entities` — skip Mesh `@merge`.
-          // Otherwise dual-annotate: Mesh `@merge` (Hive) + virtual `@connect` (Router).
+          // Otherwise Mesh `@merge` only. Do **not** dual-emit virtual `@connect` here:
+          // Federation `@key` already gives Router `_entities`, and any `@connect` +
+          // connect `@link` makes Rover treat the whole GraphQL subgraph as Connectors
+          // (CONNECTORS_UNRESOLVED_FIELD on every other field).
           const keyArg = mergeDirectiveConfig.keyArg;
           const keyField = mergeDirectiveConfig.keyField;
           if (connectHasHttp(fieldDirectives.connect)) {
@@ -443,26 +443,6 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               }));
             }
           } else {
-            // Dual virtual `@connect(entity: true)` only for simple single-field keys.
-            // Compound / nested keys (`sku package`, `sku variation { id }`) cannot be
-            // expressed as requestless `$args` mapping — Rover rejects them. Hive still
-            // gets Mesh `@merge`.
-            const simpleKeyField =
-              typeof keyField === 'string' && /^[A-Za-z_][A-Za-z0-9_]*$/.test(keyField)
-                ? keyField
-                : undefined;
-            const simpleKeyArg =
-              typeof keyArg === 'string' && /^[A-Za-z_][A-Za-z0-9_]*$/.test(keyArg)
-                ? keyArg
-                : simpleKeyField;
-            if (simpleKeyField && simpleKeyArg) {
-              attachVirtualEntityConnect(fieldDirectives, {
-                keyField: simpleKeyField,
-                keyArg: simpleKeyArg,
-                returnType: getNamedType(fieldConfig.type),
-              });
-              virtualConnectUsed = true;
-            }
             const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
             mergeDirectiveExtensions.push({
               subgraph: subgraphConfig.name,
@@ -523,9 +503,6 @@ export function createFederationTransform(config: FederationTransformConfig): Su
     });
     subgraphSchema = addFederation2DirectivesToSubgraph(subgraphSchema);
     subgraphSchema = importFederationDirectives(subgraphSchema, [...usedFederationDirectives]);
-    if (virtualConnectUsed) {
-      subgraphSchema = ensureVirtualConnectLink(subgraphSchema);
-    }
     if (mergeDirectiveUsed) {
       subgraphSchema = importMeshDirectives(subgraphSchema, ['@merge']);
       const schemaConfig = subgraphSchema.toConfig();

@@ -1,4 +1,5 @@
-import { buildSchema, GraphQLEnumType, GraphQLSchema } from 'graphql';
+import { buildSchema, GraphQLEnumType } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
 import {
   composeSubgraphs,
   createPruneTransform,

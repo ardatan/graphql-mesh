@@ -197,7 +197,7 @@ describe('Federation', () => {
     });
   });
 
-  it('resolveReference dual-emits @merge + virtual @connect(entity:true) with no flag', () => {
+  it('resolveReference emits Mesh @merge only (no virtual @connect on Federation GraphQL)', () => {
     const schema = buildSchema(/* GraphQL */ `
       type Query {
         author(id: ID!): Author
@@ -228,10 +228,12 @@ describe('Federation', () => {
       },
     ]);
     const sdl = print(annotated[0].typeDefs);
-    expect(sdl).toMatch(/author\(id:[\s\S]*entity:\s*true/);
-    expect(sdl).toMatch(/id:\s*\$args\.id/);
+    // Router uses Federation `_entities` from `@key`; virtual `@connect` would make Rover
+    // treat this GraphQL subgraph as Connectors-only.
     expect(sdl).toMatch(/@merge\(/);
-    expect(sdl).toMatch(/specs\.apollo\.dev\/connect\/v0\.4/);
+    expect(sdl).toMatch(/@key\(fields:\s*"id"\)/);
+    expect(sdl).not.toMatch(/@connect\(/);
+    expect(sdl).not.toMatch(/specs\.apollo\.dev\/connect/);
     expect(sdl).not.toMatch(/kind:\s*"rest"/);
 
     const composed = composeSubgraphs([
@@ -256,7 +258,6 @@ describe('Federation', () => {
     ]);
     expect(composed.errors).toBeUndefined();
     expect(composed.supergraphSdl).toMatch(/@merge\(/);
-    expect(composed.supergraphSdl).toMatch(/entity:\s*true/);
-    expect(composed.supergraphSdl).toMatch(/name:\s*"connect"/);
+    expect(composed.supergraphSdl).not.toMatch(/name:\s*"connect"/);
   });
 });

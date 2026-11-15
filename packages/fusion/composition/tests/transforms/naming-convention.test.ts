@@ -185,79 +185,83 @@ describe('Naming Convention', () => {
         transforms: [transform],
       },
     ]);
-    const result = await executor({
-      query: /* GraphQL */ `
-        {
-          user(Input: { id: "0", firstName: "John", lastName: "Doe", type: ADMIN }) {
-            id
-            firstName
-            lastName
-            type
+    try {
+      const result = await executor({
+        query: /* GraphQL */ `
+          {
+            user(Input: { id: "0", firstName: "John", lastName: "Doe", type: ADMIN }) {
+              id
+              firstName
+              lastName
+              type
+            }
           }
-        }
-      `,
-    });
-    // Pass transformed output to the client
-    expect(result?.user).toEqual({
-      id: '0',
-      firstName: 'John',
-      lastName: 'Doe',
-      type: 'ADMIN',
-    });
+        `,
+      });
+      // Pass transformed output to the client
+      expect(result?.user).toEqual({
+        id: '0',
+        firstName: 'John',
+        lastName: 'Doe',
+        type: 'ADMIN',
+      });
 
-    const result2 = await executor({
-      query: /* GraphQL */ `
-        {
-          userById(UserId: "1") {
-            id
-            firstName
-            lastName
-            type
+      const result2 = await executor({
+        query: /* GraphQL */ `
+          {
+            userById(UserId: "1") {
+              id
+              firstName
+              lastName
+              type
+            }
           }
-        }
-      `,
-    });
-    // Pass transformed output to the client
-    expect(result2.userById).toEqual({
-      id: '1',
-      firstName: 'John',
-      lastName: 'Doe',
-      type: 'ADMIN',
-    });
+        `,
+      });
+      // Pass transformed output to the client
+      expect(result2.userById).toEqual({
+        id: '1',
+        firstName: 'John',
+        lastName: 'Doe',
+        type: 'ADMIN',
+      });
 
-    const result3 = await executor({
-      query: /* GraphQL */ `
-        {
-          userByType(Type: ADMIN) {
-            firstName
-            lastName
-            type
-            interests
+      const result3 = await executor({
+        query: /* GraphQL */ `
+          {
+            userByType(Type: ADMIN) {
+              firstName
+              lastName
+              type
+              interests
+            }
           }
-        }
-      `,
-    });
-    // Pass transformed output to the client
-    expect(result3.userByType).toEqual({
-      firstName: 'John',
-      lastName: 'Smith',
-      type: 'ADMIN',
-      interests: ['BOOKS', 'COMICS'],
-    });
+        `,
+      });
+      // Pass transformed output to the client
+      expect(result3.userByType).toEqual({
+        firstName: 'John',
+        lastName: 'Smith',
+        type: 'ADMIN',
+        interests: ['BOOKS', 'COMICS'],
+      });
 
-    const result4 = await executor({
-      query: /* GraphQL */ `
-        {
-          node(Id: "1") {
-            __typename
+      const result4 = await executor({
+        query: /* GraphQL */ `
+          {
+            node(Id: "1") {
+              __typename
+            }
           }
-        }
-      `,
-    });
-    // Pass transformed output to the client
-    expect(result4.node).toEqual({
-      __typename: 'user',
-    });
+        `,
+      });
+      // Pass transformed output to the client
+      expect(result4.node).toEqual({
+        __typename: 'user',
+      });
+    } finally {
+      await executor.dispose();
+    }
   });
 
   it('skips if the result is empty string', async () => {
@@ -291,6 +295,7 @@ describe('Naming Convention', () => {
       `,
     });
     expect(result._).toBe('test');
+    await executor.dispose();
   });
 
   it('applies to default values of enums for arguments', async () => {
@@ -403,5 +408,6 @@ describe('Naming Convention', () => {
     expect(data.cartGetCart).toBeDefined();
     expect(data.cartGetCart).not.toBeNull();
     expect(data.cartGetCart.id).toBe('asdf');
+    await executor.dispose();
   });
 });
