@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<DataServices>
+		<Schema Namespace="Sample.Service" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<EntityType Name="Order">
+				<Key>
+					<PropertyRef Name="OrderId" />
+				</Key>
+				<Property Name="OrderId" Type="Edm.String" Nullable="false" />
+				<Property Name="Status" Type="Edm.String" />
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="CurrentOrders" EntityType="Sample.Service.Order" />
+				<EntitySet Name="ArchivedOrders" EntityType="Sample.Service.Order" />
+			</EntityContainer>
+		</Schema>
+	</DataServices>
+</Edmx>

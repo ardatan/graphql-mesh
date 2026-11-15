@@ -780,11 +780,87 @@ describe('Federation Connectors composition', () => {
     `;
 
     const out = finalizeConnectorsSupergraph(before);
+    // Scope to the Airline type — Query.AirlinesByAirlineCode also has connect.
     expect(out).toMatch(
-      /@join__directive\(graphs: \[TRIPPIN\], name: "connect", args: \{source: "Trippin"[\s\S]*entity: true\}/,
+      /type Airline[\s\S]*@join__directive\(graphs: \[TRIPPIN\], name: "connect", args: \{source: "Trippin"[\s\S]*entity: true\}/,
     );
     expect(out).not.toMatch(
       /type Airline[\s\S]*@join__directive\(graphs: \[CATALOG\], name: "connect"/,
+    );
+  });
+
+  it('attributes field-level @connect by @join__field when source names collide', () => {
+    // Two subgraphs both use connector source name "api"; field ownership must
+    // follow `@join__field(graph:)`, not the first graph that claimed "api".
+    const before = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+        query: Query
+      }
+
+      directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+      directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on OBJECT
+      directive @join__field(graph: join__Graph) on FIELD_DEFINITION
+      directive @join__directive(
+        graphs: [join__Graph!]
+        name: String!
+        args: join__DirectiveArguments
+      ) repeatable on FIELD_DEFINITION | OBJECT | SCHEMA
+      directive @link(
+        url: String!
+        as: String
+        for: link__Purpose
+        import: [link__Import]
+      ) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      scalar join__FieldSet
+      scalar join__DirectiveArguments
+      scalar link__Import
+      enum link__Purpose {
+        SECURITY
+        EXECUTION
+      }
+      enum join__Graph {
+        PRODUCTS @join__graph(name: "products", url: "http://localhost:4001")
+        INVENTORY @join__graph(name: "inventory", url: "http://localhost:4002")
+      }
+      input ConnectHTTP {
+        GET: String
+      }
+
+      type Query @join__type(graph: PRODUCTS) @join__type(graph: INVENTORY) {
+        product(id: ID!): Product
+          @join__field(graph: PRODUCTS)
+          @connect(source: "api", http: { GET: "/products/{$args.id}" }, selection: "id name")
+        stock(id: ID!): Stock
+          @join__field(graph: INVENTORY)
+          @connect(source: "api", http: { GET: "/stock/{$args.id}" }, selection: "id qty")
+      }
+
+      type Product @join__type(graph: PRODUCTS, key: "id") {
+        id: ID!
+        name: String
+      }
+
+      type Stock @join__type(graph: INVENTORY, key: "id") {
+        id: ID!
+        qty: Int
+      }
+    `;
+
+    const out = finalizeConnectorsSupergraph(before);
+    expect(out).toMatch(/product\([\s\S]*@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
+    expect(out).toMatch(/stock\([\s\S]*@join__directive\(graphs: \[INVENTORY\], name: "connect"/);
+    expect(out).not.toMatch(
+      /stock\([\s\S]*@join__directive\(graphs: \[PRODUCTS\], name: "connect"/,
     );
   });
 });

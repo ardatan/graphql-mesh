@@ -21,6 +21,7 @@ const SimplePersonMockData = JSON.parse(readFixture('./fixtures/alice.json'));
 const TripMockData = JSON.parse(readFixture('./fixtures/trip.json'));
 const BasicMetadata = readFixture('./fixtures/simple-metadata.xml');
 const BoundActionMetadata = readFixture('./fixtures/bound-action.xml');
+const AmbiguousOrdersMetadata = readFixture('./fixtures/ambiguous-orders-metadata.xml');
 
 const baseDir = __dirname;
 const importFn = (id: string) => require(id);
@@ -972,5 +973,39 @@ describe('odata', () => {
     expect(urls).toEqual([
       'https://services.odata.org/TripPinRESTierService/Airlines/AA/?$select=AirlineCode,Name',
     ]);
+  });
+
+  it('clears root entity:true for ambiguous entity-set types so they do not own _entities', async () => {
+    addMock(
+      'https://example.com/odata/$metadata',
+      async () => new MockResponse(AmbiguousOrdersMetadata),
+    );
+    using cache = new InMemoryLRUCache();
+    const handler = new ODataHandler({
+      name: 'Orders',
+      config: {
+        endpoint: 'https://example.com/odata',
+      },
+      pubsub,
+      cache,
+      store,
+      baseDir,
+      importFn,
+      log,
+    });
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
+
+    const sdl = printSchemaWithDirectives(source.schema);
+    // Ambiguous Order: keep @key for $expand heuristics, not resolvable / no type-level connect.
+    expect(sdl).toMatch(/type Order @key\(fields: "OrderId", resolvable: false\)/);
+    expect(sdl).not.toMatch(/type Order[\s\S]*@connect\([\s\S]*entity:\s*true/);
+    // Root by-ID connectors must not keep entity: true either — otherwise
+    // processConnectDirectives would still register resolveReference.
+    expect(sdl).not.toMatch(
+      /CurrentOrdersByOrderId[\s\S]*entity:\s*true|ArchivedOrdersByOrderId[\s\S]*entity:\s*true/,
+    );
+    expect(source.schema.getQueryType()?.getFields()._entities).toBeUndefined();
   });
 });

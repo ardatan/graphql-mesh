@@ -112,6 +112,10 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
         graphsWithConnect,
         singleGraphEnum,
         graphFromNodeDirectives: getJoinFieldGraph,
+        // Field-level: prefer explicit `@join__field(graph:)` over the shared
+        // source-name cache so two subgraphs that both use `source: "api"` keep
+        // their own field ownership.
+        preferNodeGraph: true,
       });
     },
     // Type-level `@connect` (Apollo entity pattern with `$this.<key>`)
@@ -270,6 +274,8 @@ function rewriteConnectDirectivesOnNode<
     graphFromNodeDirectives: (
       directives: readonly ConstDirectiveNode[] | undefined,
     ) => string | undefined;
+    /** Field-level: prefer `@join__field(graph:)` before the source-name cache. */
+    preferNodeGraph?: boolean;
   },
 ): T {
   const connectDirs = (node.directives || []).filter(d => d.name.value === 'connect');
@@ -288,10 +294,13 @@ function rewriteConnectDirectivesOnNode<
     // (e.g. Catalog stub + OData owner); attributing type-level entity `@connect`
     // to the stub graph breaks Router ("Object type has no field …") and Hive
     // `_entities` planning against the Connectors owner.
+    // Field-level `@connect` still prefers an explicit `@join__field(graph:)`
+    // before the shared source-name cache (two subgraphs may both use `source: "api"`).
     const graphEnum =
       (sourceName ? ctx.nameToGraphEnum.get(sourceName) : undefined) ||
+      (ctx.preferNodeGraph ? ctx.graphFromNodeDirectives(node.directives) : undefined) ||
       (sourceName ? ctx.sourceNameToGraph.get(sourceName) : undefined) ||
-      ctx.graphFromNodeDirectives(node.directives) ||
+      (ctx.preferNodeGraph ? undefined : ctx.graphFromNodeDirectives(node.directives)) ||
       ctx.singleGraphEnum;
     if (!graphEnum) {
       // Keep raw @connect if we cannot attribute a graph
