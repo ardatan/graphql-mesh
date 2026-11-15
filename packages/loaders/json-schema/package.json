@@ -40,11 +40,11 @@
     "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/fusion-composition": "^0.11.4",
     "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/transport-common": "^1.1.1",
+    "@graphql-mesh/transport-common": "^1.1.2",
     "@graphql-mesh/transport-rest": "^0.12.4",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/delegate": "^12.3.2",
+    "@graphql-tools/delegate": "^12.3.3",
     "@graphql-tools/utils": "^13.2.2",
     "@json-schema-tools/meta-schema": "^1.7.5",
     "@whatwg-node/fetch": "^0.12.1",
@@ -62,7 +62,7 @@
     "url-join": "4.0.1"
   },
   "devDependencies": {
-    "@graphql-tools/executor": "^4.1.7",
+    "@graphql-tools/executor": "^4.1.8",
     "@types/qs": "6.15.1",
     "@types/to-json-schema": "0.2.4",
     "@types/url-join": "4.0.3",
