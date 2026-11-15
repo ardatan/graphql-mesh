@@ -164,8 +164,17 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
     },
   });
 
-  // Attribute schema @source to every graph that referenced that source name
-  // (by source→subgraph name match, connect usage, or sole graph).
+  // Attribute schema @source to graphs. When a source name has a single pending
+  // config, fan it out to every graph that referenced that name via `@connect`
+  // (shared identical config). When multiple pending `@source` share a name with
+  // different configs, do not cross-product — Mesh loaders use unique names, and
+  // duplicate-name configs would otherwise attach the wrong baseURL to a graph.
+  const pendingSourceNameCounts = new Map<string, number>();
+  for (const args of pendingSources) {
+    const sourceName = typeof args.name === 'string' ? args.name : undefined;
+    if (!sourceName) continue;
+    pendingSourceNameCounts.set(sourceName, (pendingSourceNameCounts.get(sourceName) || 0) + 1);
+  }
   const schemaJoinDirs: ConstDirectiveNode[] = [];
   for (const args of pendingSources) {
     const sourceName = typeof args.name === 'string' ? args.name : undefined;
@@ -175,9 +184,16 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
       graphs.add(byName);
     }
     const fromConnect = sourceName ? sourceNameToGraphs.get(sourceName) : undefined;
-    if (fromConnect) {
+    const uniquePending = sourceName ? pendingSourceNameCounts.get(sourceName) === 1 : false;
+    if (fromConnect && uniquePending) {
       for (const g of fromConnect) {
         graphs.add(g);
+      }
+    } else if (fromConnect && !graphs.size) {
+      // Multiple configs for the same name: emit this entry once, not to every graph.
+      const first = fromConnect.values().next().value;
+      if (first) {
+        graphs.add(first);
       }
     }
     if (!graphs.size && singleGraphEnum) {
@@ -259,21 +275,55 @@ function getJoinTypeGraph(
   return getJoinGraphArg(directives, 'join__type');
 }
 
-/** Sole `@join__type(graph:)` when the type has exactly one join graph. */
-function getSoleJoinTypeGraph(
+/**
+ * Preferred graph for type-level `@connect` when source name does not match a
+ * subgraph name: sole distinct `@join__type` graph (multiple keys on one graph
+ * still count as one), else the single non-extension / resolvable owner join
+ * when a stub join is also present.
+ */
+function getPreferredTypeJoinGraph(
   directives: readonly ConstDirectiveNode[] | undefined,
 ): string | undefined {
-  const graphs: string[] = [];
+  const byGraph = new Map<string, { extension: boolean; resolvable: boolean }>();
   for (const dir of directives || []) {
     if (dir.name.value !== 'join__type') {
       continue;
     }
     const graphArg = dir.arguments?.find(a => a.name.value === 'graph');
-    if (graphArg?.value.kind === Kind.ENUM) {
-      graphs.push(graphArg.value.value);
+    if (graphArg?.value.kind !== Kind.ENUM) {
+      continue;
+    }
+    const graph = graphArg.value.value;
+    const extension = getBooleanArg(dir, 'extension') === true;
+    const resolvable = getBooleanArg(dir, 'resolvable') !== false;
+    const prev = byGraph.get(graph);
+    byGraph.set(graph, {
+      // Any entry marked extension/non-resolvable sticks for that graph.
+      extension: Boolean(prev?.extension || extension),
+      resolvable: prev ? prev.resolvable && resolvable : resolvable,
+    });
+  }
+  if (byGraph.size === 1) {
+    return byGraph.keys().next().value;
+  }
+  const owners: string[] = [];
+  for (const [graph, meta] of byGraph) {
+    if (!meta.extension && meta.resolvable) {
+      owners.push(graph);
     }
   }
-  return graphs.length === 1 ? graphs[0] : undefined;
+  return owners.length === 1 ? owners[0] : undefined;
+}
+
+function getBooleanArg(dir: ConstDirectiveNode, name: string): boolean | undefined {
+  const arg = dir.arguments?.find(a => a.name.value === name);
+  if (!arg) {
+    return undefined;
+  }
+  if (arg.value.kind === Kind.BOOLEAN) {
+    return arg.value.value;
+  }
+  return undefined;
 }
 
 function getJoinGraphArg(
@@ -332,7 +382,7 @@ function rewriteConnectDirectivesOnNode<
     ) => string | undefined;
     /** Field-level: prefer `@join__field(graph:)` before the source-name cache. */
     preferNodeGraph?: boolean;
-    /** Type-level: prefer a sole `@join__type` before the source-name cache. */
+    /** Type-level: prefer sole/owner `@join__type` before the source-name cache. */
     preferSoleJoinType?: boolean;
   },
 ): T {
@@ -354,16 +404,14 @@ function rewriteConnectDirectivesOnNode<
     // `_entities` planning against the Connectors owner.
     // Field-level `@connect` still prefers an explicit `@join__field(graph:)`
     // before the shared source-name cache (two subgraphs may both use `source: "api"`).
-    // Type-level prefers a sole `@join__type` before that cache so a Product with
-    // only PRODUCTS is not stolen by a later field that wrote `api → INVENTORY`.
+    // Type-level prefers a sole/owner `@join__type` before that cache so a Product
+    // with only PRODUCTS (or PRODUCTS + stub) is not stolen by a later field that
+    // wrote `api → INVENTORY`. Also covers source-less absolute-URL `@connect`.
     const graphEnum =
       (sourceName ? ctx.nameToGraphEnum.get(sourceName) : undefined) ||
       (ctx.preferNodeGraph ? ctx.graphFromNodeDirectives(node.directives) : undefined) ||
-      (ctx.preferSoleJoinType ? getSoleJoinTypeGraph(node.directives) : undefined) ||
+      (ctx.preferSoleJoinType ? getPreferredTypeJoinGraph(node.directives) : undefined) ||
       (sourceName ? firstSourceGraph(ctx.sourceNameToGraphs, sourceName) : undefined) ||
-      (ctx.preferNodeGraph || ctx.preferSoleJoinType
-        ? undefined
-        : ctx.graphFromNodeDirectives(node.directives)) ||
       ctx.singleGraphEnum;
     if (!graphEnum) {
       // Keep raw @connect if we cannot attribute a graph
