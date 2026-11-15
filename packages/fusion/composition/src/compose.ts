@@ -20,6 +20,7 @@ import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
   getDirectiveExtensions,
   getDocumentNodeFromSchema,
+  getRootTypeMap,
   MapperKind,
   mapSchema,
   type FieldMapper,
@@ -28,6 +29,7 @@ import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
 import {
   attachVirtualEntityConnect,
+  attachVirtualRenameConnect,
   ensureNonResolvableKeysForEntityStubs,
   ensureVirtualConnectLink,
   hasEquivalentTypeConnect,
@@ -529,6 +531,41 @@ export function getAnnotatedSubgraphs(
               astNode: undefined,
             };
           }
+        },
+      });
+    }
+    // GraphQL field renames: `@meshSource(name: old)` on field `new` → also virtual
+    // `@connect(selection: "$this.old")` for Router (object fields only).
+    if (!isConnectorsSubgraph && sourceDirectiveUsed) {
+      const rootNames = new Set(
+        [...getRootTypeMap(transformedSubgraph).values()]
+          .filter(Boolean)
+          .map(t => (t as { name: string }).name),
+      );
+      transformedSubgraph = mapSchema(transformedSubgraph, {
+        [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName) => {
+          if (rootNames.has(typeName)) {
+            return fieldConfig;
+          }
+          const fieldDirectives = getDirectiveExtensions(fieldConfig) || {};
+          const sources =
+            fieldDirectives[meshSourceDirectiveName] || fieldDirectives.source || [];
+          const originalName = sources[0]?.name;
+          if (typeof originalName !== 'string' || originalName === fieldName) {
+            return fieldConfig;
+          }
+          if (attachVirtualRenameConnect(fieldDirectives, originalName)) {
+            virtualConnectUsed = true;
+            return {
+              ...fieldConfig,
+              extensions: {
+                ...(fieldConfig.extensions || {}),
+                directives: fieldDirectives,
+              },
+              astNode: undefined,
+            };
+          }
+          return fieldConfig;
         },
       });
     }

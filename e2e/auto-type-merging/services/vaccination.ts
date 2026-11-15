@@ -18,7 +18,8 @@ export const yoga = createYoga({
 
       type Pet {
         id: BigInt!
-        vaccinated: Boolean!
+        """Upstream snake_case — naming-convention → isVaccinated (+ virtual $this rename)."""
+        is_vaccinated: Boolean!
       }
     `,
     resolvers: {
@@ -26,7 +27,7 @@ export const yoga = createYoga({
         pet_by_id: (_root, args, _context, _info) => {
           return {
             id: args.id,
-            vaccinated: false,
+            is_vaccinated: false,
           };
         },
       },

@@ -35,6 +35,15 @@ it('should compose the appropriate schema', async () => {
   expect(petByIdField).toMatch(/name:\s*"connect"/);
   expect(petByIdField).toMatch(/entity:\s*true/);
   expect(result).toMatch(/@meshSource\(/);
+  // Field rename is_vaccinated → isVaccinated: @meshSource + virtual `$this.is_vaccinated`.
+  const isVaccinatedField =
+    result.match(/isVaccinated:\s*Boolean!?[^\n]*/)?.[0] ||
+    result.match(/isVaccinated:[^\n]*/)?.[0] ||
+    '';
+  expect(isVaccinatedField).toMatch(/meshSource|@source/);
+  expect(result).toMatch(
+    /isVaccinated[\s\S]*?name:\s*"connect"[\s\S]*?\$this\.is_vaccinated|isVaccinated[\s\S]*?\$this\.is_vaccinated/,
+  );
 });
 
 it('should execute GetPet on hive (Mesh @merge still fills vaccinated)', async () => {
@@ -50,7 +59,7 @@ it('should execute GetPet on hive (Mesh @merge still fills vaccinated)', async (
           __typename
           id
           name
-          vaccinated
+          isVaccinated
         }
       }
     `,
@@ -61,17 +70,18 @@ it('should execute GetPet on hive (Mesh @merge still fills vaccinated)', async (
       __typename: 'Pet',
       id: 1,
       name: 'Cat 1',
-      vaccinated: false,
+      isVaccinated: false,
     },
   });
 });
 
-it('apollo-router loads dual-annotated SDL; virtual connect cannot GraphQL-fetch vaccinated', async () => {
+it('apollo-router loads dual-annotated SDL; virtual connect cannot GraphQL-fetch isVaccinated', async () => {
   const { output, result: sdl } = await compose({
     output: 'graphql',
     services: [petstore, await service('vaccination')],
   });
   expect(sdl).toMatch(/petById\([\s\S]*name:\s*"connect"/);
+  expect(sdl).toMatch(/\$this\.is_vaccinated/);
   const servePromise = serve({
     runner: 'apollo-router' satisfies ServeRunner,
     supergraph: output,
@@ -84,13 +94,14 @@ it('apollo-router loads dual-annotated SDL; virtual connect cannot GraphQL-fetch
           getPetById(petId: 1) {
             id
             name
-            vaccinated
+            isVaccinated
           }
         }
       `,
     });
-    // Router ignores Mesh @merge; virtual @connect has no http to vaccination Yoga.
-    expect(result.data?.getPetById?.vaccinated ?? null).toBeNull();
+    // Router ignores Mesh @merge; virtual entity @connect has no http to vaccination Yoga.
+    // isVaccinated virtual `$this.is_vaccinated` only helps once parent carries that key.
+    expect(result.data?.getPetById?.isVaccinated ?? null).toBeNull();
   } catch (err) {
     expect(String(err)).toMatch(/500|INTERNAL_SERVER_ERROR|Connector|error|Unknown type|_entities/i);
   }

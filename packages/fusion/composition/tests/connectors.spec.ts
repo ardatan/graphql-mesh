@@ -96,14 +96,14 @@ describe('Federation Connectors composition', () => {
     ).toBe(false);
   });
 
-  it('auto-type-merging GraphQL @merge also dual-emits virtual @connect (no flag)', () => {
+  it('auto-type-merging dual-emits virtual @connect for @merge and field renames', () => {
     const vaccination = buildSchema(/* GraphQL */ `
       type Query {
         pet_by_id(id: ID!): Pet
       }
       type Pet {
         id: ID!
-        vaccinated: Boolean!
+        is_vaccinated: Boolean!
       }
     `);
     const composed = composeSubgraphs([
@@ -122,6 +122,8 @@ describe('Federation Connectors composition', () => {
     expect(petById).toMatch(/name:\s*"connect"/);
     expect(petById).toMatch(/entity:\s*true/);
     expect(composed.supergraphSdl).toMatch(/@meshSource\(/);
+    // is_vaccinated → isVaccinated: Mesh @meshSource + virtual `$this.is_vaccinated`
+    expect(composed.supergraphSdl).toMatch(/isVaccinated[\s\S]*\$this\.is_vaccinated/);
   });
 
   it('does not add Mesh @transport or stitching @source for connectors subgraphs', () => {

@@ -2,4 +2,4 @@
 '@graphql-mesh/fusion-composition': minor
 ---
 
-When Mesh emits `@merge` for GraphQL auto type-merging (semantic conventions or federation `resolveReference`), also emit a virtual `@connect(entity: true)` for Apollo Router. Hive keeps `@merge` / `@meshSource`. Virtual-only connect does not flip the subgraph to rest transport; Mesh `@source` is aliased to `@meshSource` when a connect `@link` is present.
+When Mesh emits `@merge` for GraphQL auto type-merging (semantic conventions or federation `resolveReference`), also emit a virtual `@connect(entity: true)` for Apollo Router. Field renames that stamp `@meshSource(name: old)` on object fields also get virtual `@connect(selection: "$this.old")`. Hive keeps `@merge` / `@meshSource`. Virtual-only connect does not flip the subgraph to rest transport; Mesh `@source` is aliased to `@meshSource` when a connect `@link` is present.

@@ -85,6 +85,30 @@ export function connectHasHttp(connects: unknown): boolean {
 }
 
 /**
+ * Dual-annotate a Mesh field rename (`@meshSource(name: old)` on GraphQL field `new`)
+ * with virtual `@connect(selection: "$this.old")` for Apollo Router. Object fields only —
+ * root GraphQL fetches still need `@meshSource` / HTTP; virtual cannot call GraphQL.
+ */
+export function attachVirtualRenameConnect(
+  fieldDirectives: Record<string, any>,
+  originalFieldName: string,
+): boolean {
+  if (!originalFieldName || connectHasHttp(fieldDirectives.connect)) {
+    return false;
+  }
+  if (fieldDirectives.connect?.length) {
+    // Entity dual (or other connect) already owns this field.
+    return false;
+  }
+  fieldDirectives.connect = [
+    {
+      selection: `$this.${originalFieldName}`,
+    },
+  ];
+  return true;
+}
+
+/**
  * Dual-annotate a Mesh `@merge` owner field with a requestless virtual `@connect`
  * for Apollo Router. Caller still adds Mesh `@merge` for Hive.
  */
