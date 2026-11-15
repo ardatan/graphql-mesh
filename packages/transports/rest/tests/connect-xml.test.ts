@@ -139,27 +139,25 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
             source: "soapDemo"
             http: {
               POST: "/SOAP.Demo.cls"
-              headers: [
-                { name: "SOAPAction", value: "http://tempuri.org/SOAP.Demo.FindPerson" }
-              ]
+              headers: [{ name: "SOAPAction", value: "http://tempuri.org/SOAP.Demo.FindPerson" }]
               body: """
-                "soap:Envelope": {
-                  attributes: {
-                    "xmlns:soap": $("http://schemas.xmlsoap.org/soap/envelope/")
-                    "xmlns:tns": $("http://tempuri.org")
-                  }
-                  "soap:Body": {
-                    "tns:FindPerson": {
-                      "tns:id": $args.id
-                    }
+              "soap:Envelope": {
+                attributes: {
+                  "xmlns:soap": $("http://schemas.xmlsoap.org/soap/envelope/")
+                  "xmlns:tns": $("http://tempuri.org")
+                }
+                "soap:Body": {
+                  "tns:FindPerson": {
+                    "tns:id": $args.id
                   }
                 }
+              }
               """
             }
             selection: """
-              name: Envelope.Body.FindPersonResponse.FindPersonResult.Name
-              ssn: Envelope.Body.FindPersonResponse.FindPersonResult.SSN
-              city: Envelope.Body.FindPersonResponse.FindPersonResult.Home.City
+            name: Envelope.Body.FindPersonResponse.FindPersonResult.Name
+            ssn: Envelope.Body.FindPersonResponse.FindPersonResult.SSN
+            city: Envelope.Body.FindPersonResponse.FindPersonResult.Home.City
             """
           )
       }
@@ -201,10 +199,10 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
     expect(requestBody).not.toMatch(/^\s*\{/); // not JSON
   });
 
-  it('parses XML when Content-Type is omitted but body is XML', async () => {
+  it('parses XML when Content-Type is omitted but body has an XML declaration', async () => {
     const fetchImpl = async () =>
       new Response(
-        `<Envelope><Body><Item><Name>Bob</Name></Item></Body></Envelope>`,
+        `<?xml version="1.0"?><Envelope><Body><Item><Name>Bob</Name></Item></Body></Envelope>`,
         { status: 200 },
       );
 
@@ -221,7 +219,7 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
               POST: "/item"
               headers: [{ name: "Content-Type", value: "application/xml" }]
               body: """
-                Request: { id: $("1") }
+              Request: { id: $("1") }
               """
             }
             selection: "name: Envelope.Body.Item.Name"
