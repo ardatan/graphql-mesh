@@ -25,3 +25,16 @@ export default transport;
 export { processDirectives } from './directives/process.js';
 export type { ProcessDirectiveArgs } from './directives/process.js';
 export { processScalarType } from './directives/scalars.js';
+export {
+  CONNECT_LINK_URL,
+  ConnectDirective,
+  ConnectorErrorsInput,
+  ConnectHTTPInput,
+  FEDERATION_LINK_URL,
+  HTTPHeaderMappingInput,
+  JSONSelectionScalar,
+  LinkDirective,
+  SourceDirective,
+  SourceHTTPInput,
+  URLPathTemplateScalar,
+} from './directives/federationConnectDirectives.js';

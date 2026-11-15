@@ -13,7 +13,8 @@ export const APOLLO_ROUTER_VERSION = '2.19.0';
 
 /**
  * Ensure an Apollo Router binary is available for e2e (download once into /tmp).
- * Mesh compose already emits a Router-ready connectors supergraph — no Rover step.
+ * Mesh compose already emits a Router-ready connectors supergraph — no Rover step,
+ * no Apollo-only SDL rewrite.
  */
 export async function ensureApolloRouterBinary(
   version = process.env.APOLLO_ROUTER_VERSION || APOLLO_ROUTER_VERSION,

@@ -19,6 +19,11 @@ export const QUERY_OPTIONS_FIELDS = {
     description:
       'A URI with a $filter System Query Option identifies a subset of the Entries from the Collection of Entries identified by the Resource Path section of the URI. The subset is determined by selecting only the Entries that satisfy the predicate expression specified by the query option.',
   },
+  search: {
+    type: 'String',
+    description:
+      'A URI with a $search System Query Option identifies a subset of Entries from the Collection that match the free-text search expression specified by this query option.',
+  },
   inlinecount: {
     type: 'InlineCount',
     description:

@@ -25,6 +25,18 @@ evaluation as-is.
 4. Configure App Id and redirect URIs in the AppConfiguration of build/index.html
 5. Run `npm start` and go to `localhost:4000`
 
+### Connectors e2e
+
+Fixture metadata + local Graph mock (Hive Gateway + Apollo Router, v0 `example-queries`):
+
+```bash
+yarn test:e2e e2e/odata-msgraph
+```
+
+Live `graph.microsoft.com` CI is not used (personal Microsoft accounts lack the Mail / OneDrive /
+admin-consent surface those example queries need). Point `examples/odata-microsoft` at a work/school
+tenant locally if you want real Graph traffic.
+
 ## Sample requests
 
 #### Fetch recent emails

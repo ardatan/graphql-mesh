@@ -78,8 +78,8 @@ export interface ServeOptions extends ProcOptions {
    * - `hive` (default): `@graphql-hive/gateway`
    * - `apollo-router`: Apollo Router
    *
-   * Both consume the Mesh-composed supergraph as-is (Connectors are emitted as
-   * `@join__directive` metadata that both runtimes understand).
+   * Both consume the same Mesh-composed Connectors supergraph (`@join__directive`)
+   * with no Apollo-only rewrite.
    */
   runner?: ServeRunner;
 }
@@ -731,15 +731,16 @@ async function serveWithApolloRouter(opts: {
   leftoverStack.defer(() => fs.rm(workDir, { recursive: true }));
 
   const resolved = path.isAbsolute(supergraph) ? supergraph : path.join(cwd, supergraph);
-  let apolloSupergraph: string;
+  let apolloSupergraph = path.join(workDir, 'supergraph.graphql');
+  let rawSdl: string;
   try {
     await fs.access(resolved);
-    apolloSupergraph = resolved;
+    rawSdl = await fs.readFile(resolved, 'utf8');
   } catch {
     // Inline SDL
-    apolloSupergraph = path.join(workDir, 'supergraph.graphql');
-    await fs.writeFile(apolloSupergraph, supergraph, 'utf8');
+    rawSdl = supergraph;
   }
+  await fs.writeFile(apolloSupergraph, rawSdl, 'utf8');
 
   const routerBin = await ensureApolloRouterBinary();
   const configPath = path.join(workDir, 'router.yaml');

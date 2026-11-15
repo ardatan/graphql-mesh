@@ -2,6 +2,7 @@ import type { GraphQLField, GraphQLSchema } from 'graphql';
 import {
   getNamedType,
   isEnumType,
+  isInterfaceType,
   isIntrospectionType,
   isListType,
   isNonNullType,
@@ -83,11 +84,19 @@ export function processDirectives(
     ...extraGlobalOptions,
   };
   // Wire @connect resolvers (Federation Connectors)
+  const odataOpts = transportOpts.odata;
   processConnectDirectives(schema, {
     globalFetch,
     log,
     timeout: globalOptions.timeout,
     queryStringOptions: globalOptions.queryStringOptions,
+    // Mirror `@transport(options: { odata: … })` under connect opts.
+    // Batch root URL comes from `@source` http.baseURL (see processConnectDirectives).
+    odata: {
+      expandNavProps: Boolean(odataOpts?.expandNavProps),
+      batch: odataOpts?.batch,
+      securityHeaderNames: odataOpts?.securityHeaderNames,
+    },
   });
   if (typeof globalOptions.operationHeaders === 'string') {
     globalOptions.operationHeaders = JSON.parse(globalOptions.operationHeaders);
@@ -121,14 +130,12 @@ export function processDirectives(
     if (isScalarType(type)) {
       processScalarType(type);
     }
-    // `@discriminator` on interfaces/unions is baked into `@connect(selection:)` as
-    // `... $.field->match(...)` / `__typename: $status->match(...)` and stripped —
-    // no Mesh interface resolveType installer.
-    if (isUnionType(type)) {
-      // resolveType: prefer `__typename` from Connectors selection; structural /
-      // scalar fallback for non-Connectors / `$` passthrough unions.
+    // Abstract resolveType: `__typename`, OData `@odata.type`, then structural /
+    // scalar fallback. OpenAPI `@discriminator` is baked into `@connect(selection:)`
+    // and stripped — no Mesh `@abstractType` directive.
+    if (isInterfaceType(type) || isUnionType(type)) {
       type.resolveType = getTypeResolverForAbstractType({
-        possibleTypes: type.getTypes(),
+        possibleTypes: isUnionType(type) ? type.getTypes() : schema.getPossibleTypes(type),
         serviceName: currDirective?.subgraph,
       });
     }

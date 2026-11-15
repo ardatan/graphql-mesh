@@ -12,11 +12,16 @@ export const MockRequest = function (url: string, config: RequestInit) {
     },
   } as Request;
 } as any as typeof Request;
-export const MockResponse = function (body: any) {
+export const MockResponse = function (body: any, init?: { status?: number; statusText?: string }) {
+  const status = init?.status ?? 200;
   return {
+    status,
+    statusText: init?.statusText ?? 'OK',
+    ok: status >= 200 && status < 300,
+    headers: new Map(),
     text: async () => body.toString('utf-8'),
     json: async () => JSON.parse(body.toString('utf-8')),
-  } as Response;
+  } as unknown as Response;
 } as any as typeof Response;
 
 export function addMock(url: string, responseFn: (request: Request) => Promise<Response>) {

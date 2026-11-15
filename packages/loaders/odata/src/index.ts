@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import EventEmitter from 'node:events';
-import type DataLoader from 'dataloader';
 import { XMLParser } from 'fast-xml-parser';
 import { specifiedDirectives } from 'graphql';
-import { InterfaceTypeComposer, SchemaComposer } from 'graphql-compose';
+import { SchemaComposer } from 'graphql-compose';
 import type {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposer,
+  InterfaceTypeComposer,
   ObjectTypeComposer,
   ObjectTypeComposerArgumentConfigMapDefinition,
   ObjectTypeComposerFieldConfigDefinition,
@@ -25,34 +25,21 @@ import urljoin from 'url-join';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/string-interpolation';
+import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
+import transportRest, { type RESTTransportOptions } from '@graphql-mesh/transport-rest';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import {
-  AbstractTypeDirective,
-  BoundActionDirective,
-  BoundFunctionDirective,
-  CreateEntitySetDirective,
-  DeleteEntitySetDirective,
-  EntityInfoDirective,
-  EntitySetByIdentifierDirective,
-  EntitySetCountDirective,
-  EntitySetDirective,
-  NavPropDirective,
-  PluralNavDirective,
-  processDirectives,
-  ResolveRootDirective,
-  SingletonDirective,
-  SingularNavDirective,
-  UnboundActionDirective,
-  UnboundFunctionDirective,
-  UpdateEntitySetDirective,
-  type TransportDirectiveArgs,
-} from './directives.js';
+  applyODataConnectSchemaExtensions,
+  emitODataConnectors,
+  emitODataPolymorphicUnions,
+} from './emitODataConnectors.js';
 import type { EntityTypeExtensions } from './types.js';
 import { getTypeNameFromRef } from './utils/getTypeNameFromRef.js';
 import { QUERY_OPTIONS_FIELDS } from './utils/QueryOptionsFields.js';
 
-type DataLoaderMap = Record<symbol, DataLoader<Request, Response, Request>>;
+/** Context bag type for field configs (Connectors path; no Mesh DataLoader). */
+type FieldContext = Record<string, unknown>;
 
 export interface LoadGraphQLSchemaFromODataOpts {
   endpoint: string;
@@ -122,6 +109,10 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
   const schemas = metadataJson.Edmx[0].DataServices[0].Schema;
   const multipleSchemas = schemas.length > 1;
   const namespaces = new Set<string>();
+  /** OData `Abstract="true"` entity/complex GraphQL names. */
+  const abstractTypeNames = new Set<string>();
+  /** BaseType parent → direct child GraphQL names (for polymorphic unions). */
+  const childrenByBase = new Map<string, Set<string>>();
 
   schemaComposer.createEnumTC({
     name: 'InlineCount',
@@ -179,14 +170,20 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     schemaObj.EnumType?.forEach((enumObj: any) => {
       const values: Record<string, EnumTypeComposerValueConfigDefinition> = {};
       enumObj.Member?.forEach((memberObj: any) => {
-        const key = memberObj.attributes.Name;
-        // This doesn't work.
-        // const value = memberElement.getAttribute('Value')!;
+        const rawKey = String(memberObj.attributes.Name ?? '');
+        // GraphQL enum values cannot be named `null` / `true` / `false` (MS Graph has these).
+        const key = ['null', 'true', 'false'].includes(rawKey) ? `_${rawKey}` : rawKey;
+        if (!key || !/^[_A-Za-z][_0-9A-Za-z]*$/.test(key)) {
+          return;
+        }
         values[key] = {
-          value: key,
+          value: rawKey,
           extensions: { memberObj },
         };
       });
+      if (!Object.keys(values).length) {
+        return;
+      }
       const enumTypeName = buildName({ schemaNamespace, name: enumObj.attributes.Name });
       schemaComposer.createEnumTC({
         name: enumTypeName,
@@ -202,70 +199,59 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       const entityTypeName = buildName({ schemaNamespace, name: typeObj.attributes.Name });
       const isOpenType = typeObj.attributes.OpenType === 'true';
       const isAbstract = typeObj.attributes.Abstract === 'true';
+      if (isAbstract) {
+        abstractTypeNames.add(entityTypeName);
+      }
       const eventEmitter = new EventEmitter();
       eventEmitter.setMaxListeners(Infinity);
       eventEmitterSet.add(eventEmitter);
-      const extensions: EntityTypeExtensions = {
-        directives: {
-          entityInfo: {
-            actualFields: [],
-            navigationFields: [],
-            isOpenType,
-          },
+      // Share `entityInfo` + `eventEmitter` across object/input, but give each
+      // TC its own `odata` bag — otherwise object stamps must not leak.
+      const entityInfo = {
+        actualFields: [] as string[],
+        navigationFields: [] as string[],
+        isOpenType,
+        identifierFieldName: undefined as string | undefined,
+        identifierFieldTypeRef: undefined as string | undefined,
+        // Full `@odata.type` string Graph returns for this entity (Router `__typename` match).
+        odataTypeName: `#${schemaNamespace}.${typeObj.attributes.Name}` as string | undefined,
+      };
+      const outputExtensions: EntityTypeExtensions = {
+        odata: {
+          entityInfo,
         },
         eventEmitter,
       };
-      schemaComposer.addDirective(EntityInfoDirective);
       const inputType = schemaComposer.createInputTC({
         name: entityTypeName + 'Input',
         fields: {},
-        extensions: () => extensions,
+        extensions: {
+          odata: { entityInfo },
+          eventEmitter,
+        } as any,
       });
-      let abstractType: InterfaceTypeComposer;
-      if (
-        typesWithBaseType.some((typeObj: any) =>
-          typeObj.attributes.BaseType.includes(`.${entityTypeName}`),
-        ) ||
-        isAbstract
-      ) {
-        abstractType = schemaComposer.createInterfaceTC({
-          name: isAbstract ? entityTypeName : `I${entityTypeName}`,
-          extensions: extensions as any,
-        });
-        const directiveExtensions: any = ((extensions.directives as any) ||= {});
-        directiveExtensions.abstractType = {
-          entityTypeName,
-          isAbstract,
-          get aliasNamespaceMap() {
-            return [...aliasNamespaceMap.entries()];
-          },
-          multipleSchemas,
-          get namespaces() {
-            return [...namespaces];
-          },
-        };
-        schemaComposer.addDirective(AbstractTypeDirective);
-      }
+      // Concrete GraphQL objects first. Polymorphism is restored later as unions
+      // (Router Connectors reject `implements` interface expand). BaseType merge
+      // copies fields onto subtypes; unions re-link Person→Manager / Location→AirportLocation.
       const outputType = schemaComposer.createObjectTC({
-        name: isAbstract ? `T${entityTypeName}` : entityTypeName,
-        extensions: extensions as any,
-        interfaces: abstractType ? [abstractType] : [],
+        name: entityTypeName,
+        extensions: outputExtensions as any,
+        interfaces: [],
       });
 
-      abstractType?.setInputTypeComposer(inputType);
       outputType.setInputTypeComposer(inputType);
 
       const propertyRefObj = typeObj.Key && typeObj.Key[0].PropertyRef[0];
       if (propertyRefObj) {
-        extensions.directives.entityInfo.identifierFieldName = propertyRefObj.attributes.Name;
+        entityInfo.identifierFieldName = propertyRefObj.attributes.Name;
       }
 
       typeObj.Property?.forEach((propertyObj: any) => {
         const propertyName = propertyObj.attributes.Name;
-        extensions.directives.entityInfo.actualFields.push(propertyName);
+        entityInfo.actualFields.push(propertyName);
         const propertyTypeRef = propertyObj.attributes.Type;
-        if (propertyName === extensions.directives.entityInfo.identifierFieldName) {
-          extensions.directives.entityInfo.identifierFieldTypeRef = propertyTypeRef;
+        if (propertyName === entityInfo.identifierFieldName) {
+          entityInfo.identifierFieldTypeRef = propertyTypeRef;
         }
         const isRequired = propertyObj.attributes.Nullable === 'false';
         inputType.addFields({
@@ -282,7 +268,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             extensions: { propertyObj },
           },
         });
-        const field: ObjectTypeComposerFieldConfigDefinition<unknown, DataLoaderMap> = {
+        const field: ObjectTypeComposerFieldConfigDefinition<unknown, FieldContext> = {
           type: getTypeNameFromRef({
             typeRef: propertyTypeRef,
             isInput: false,
@@ -294,16 +280,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           }),
           extensions: { propertyObj },
         };
-        abstractType?.addFields({
-          [propertyName]: field,
-        });
         outputType.addFields({
           [propertyName]: field,
         });
       });
       typeObj.NavigationProperty?.forEach((navigationPropertyObj: any) => {
         const navigationPropertyName = navigationPropertyObj.attributes.Name;
-        extensions.directives.entityInfo.navigationFields.push(navigationPropertyName);
+        entityInfo.navigationFields.push(navigationPropertyName);
         const navigationPropertyTypeRef = navigationPropertyObj.attributes.Type;
         const isRequired = navigationPropertyObj.attributes.Nullable === 'false';
         const isList = navigationPropertyTypeRef.startsWith('Collection(');
@@ -328,15 +311,14 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             },
             extensions: {
               navigationPropertyObj,
-              directives: {
+              odata: {
                 singularNav: {
                   navigationPropertyName,
                 },
               } as any,
             },
           };
-          schemaComposer.addDirective(SingularNavDirective);
-          const pluralField: ObjectTypeComposerFieldConfigDefinition<any, DataLoaderMap> = {
+          const pluralField: ObjectTypeComposerFieldConfigDefinition<any, FieldContext> = {
             type: getTypeNameFromRef({
               typeRef: navigationPropertyTypeRef,
               isInput: false,
@@ -352,24 +334,19 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             },
             extensions: {
               navigationPropertyObj,
-              directives: {
+              odata: {
                 pluralNav: {
                   navigationPropertyName,
                 },
               } as any,
             },
           };
-          schemaComposer.addDirective(PluralNavDirective);
-          abstractType?.addFields({
-            [navigationPropertyName]: pluralField,
-            [`${navigationPropertyName}ById`]: singularField,
-          });
           outputType.addFields({
             [navigationPropertyName]: pluralField,
             [`${navigationPropertyName}ById`]: singularField,
           });
         } else {
-          const field: ObjectTypeComposerFieldConfigDefinition<any, DataLoaderMap> = {
+          const field: ObjectTypeComposerFieldConfigDefinition<any, FieldContext> = {
             type: getTypeNameFromRef({
               typeRef: navigationPropertyTypeRef,
               isInput: false,
@@ -384,44 +361,33 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             },
             extensions: {
               navigationPropertyObj,
-              directives: {
+              odata: {
                 navProp: {
                   navigationPropertyName,
                 },
               } as any,
             },
           };
-          schemaComposer.addDirective(NavPropDirective);
-          abstractType?.addFields({
-            [navigationPropertyName]: field,
-          });
           outputType.addFields({
             [navigationPropertyName]: field,
           });
         }
       });
       if (isOpenType || outputType.getFieldNames().length === 0) {
-        extensions.directives.entityInfo.isOpenType = true;
+        entityInfo.isOpenType = true;
         inputType.addFields({
           rest: {
             type: 'JSON',
           },
         });
-        abstractType?.addFields({
-          rest: {
-            type: 'JSON',
-            extensions: {
-              directives: {
-                resolveRoot: {},
-              } as any,
-            },
-          },
-        });
-        schemaComposer.addDirective(ResolveRootDirective);
+        // Open-type catch-all `rest: JSON` — Connectors map via `rest: $` (whole entity).
+        // In-process Mesh uses `resolve: root => root` (no `@resolveRoot` directive).
+        const restField = {
+          type: 'JSON' as const,
+          resolve: (root: unknown) => root,
+        };
         outputType.addFields({
-          rest: {
-            type: 'JSON',
-          },
+          rest: restField,
         });
       }
       const updateInputType = inputType.clone(`${entityTypeName}UpdateInput`);
@@ -457,7 +423,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             ...commonArgs,
           },
           extensions: {
-            directives: {
+            odata: {
               unboundFunction: {
                 functionName,
               },
@@ -465,7 +431,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           },
         },
       });
-      schemaComposer.addDirective(UnboundFunctionDirective);
       unboundFunctionObj.Parameter?.forEach((parameterObj: any) => {
         const parameterName = parameterObj.attributes.Name;
         const parameterTypeRef = parameterObj.attributes.Type;
@@ -540,14 +505,15 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             type: returnType,
             args,
             extensions: {
-              directives: {
+              odata: {
                 boundFunction: {
                   functionRef,
+                  // OData binding parameter name (EntitySetPath / first param) — not "any Input".
+                  bindingParameterName: parameterName,
                 },
               } as any,
             },
           };
-          schemaComposer.addDirective(BoundFunctionDirective);
         }
         args[parameterName] = {
           type: parameterTypeName,
@@ -583,7 +549,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             ...commonArgs,
           },
           extensions: {
-            directives: {
+            odata: {
               unboundAction: {
                 actionName,
               },
@@ -591,7 +557,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           },
         },
       });
-      schemaComposer.addDirective(UnboundActionDirective);
 
       unboundActionObj.Parameter?.forEach((parameterObj: any) => {
         const parameterName = parameterObj.attributes.Name;
@@ -655,7 +620,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       const entityOutputTC = getTCByTypeNames('I' + boundEntityTypeName, boundEntityTypeName) as
         InterfaceTypeComposer | ObjectTypeComposer;
       const entityTypeExtensions = entityOutputTC.getExtensions() as any as EntityTypeExtensions;
-      const argName = entityTypeExtensions.directives.entityInfo.identifierFieldName;
+      const argName = entityTypeExtensions.odata!.entityInfo!.identifierFieldName;
       const argType = entityOutputTC.getFieldTypeName(argName);
       return { boundEntityTypeName, argName, argType };
     };
@@ -677,13 +642,18 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               ) ?? [],
           ) ?? [],
       )?.[0];
-      const { boundEntityTypeName, argName, argType } = entitySetObj
+      const bindingDetails = entitySetObj
         ? boundActionEntitySetDetails(entitySetObj)
         : entityParameterObj
           ? boundActionEntityParameterDetails(entityParameterObj)
-          : (() => {
-              throw new Error(`EntitySet ${entitySetPath} not found in schema ${schemaNamespace}`);
-            })();
+          : null;
+      if (!bindingDetails) {
+        log.warn(
+          `OData: skip bound action ${actionName}; EntitySet ${entitySetPath} not found in schema ${schemaNamespace}`,
+        );
+        return;
+      }
+      const { boundEntityTypeName, argName, argType } = bindingDetails;
 
       const args: ObjectTypeComposerArgumentConfigMapDefinition<any> = {
         ...commonArgs,
@@ -699,29 +669,45 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         };
       });
 
+      const bindingParameterName =
+        entityParameterObj?.attributes?.Name ||
+        (typeof entitySetPath === 'string' ? entitySetPath.split('/')[0] : undefined);
       const boundField: ObjectTypeComposerFieldConfigDefinition<any, any, any> = {
         type: 'JSON',
         args,
         extensions: {
-          directives: {
+          odata: {
             boundAction: {
               actionRef,
+              // Filter action body by this name so e.g. `recipient: PersonInput` stays.
+              bindingParameterName,
             },
           } as any,
         },
       };
-      schemaComposer.addDirective(BoundActionDirective);
-      const boundEntityType = schemaComposer.getAnyTC(boundEntityTypeName) as InterfaceTypeComposer;
+      const boundEntityType = getTCByTypeNames(
+        boundEntityTypeName,
+        `I${boundEntityTypeName}`,
+        `T${boundEntityTypeName}`,
+      ) as InterfaceTypeComposer | ObjectTypeComposer | null;
+      if (!boundEntityType) {
+        log.warn(
+          `OData: skip bound action ${actionName}; entity type ${boundEntityTypeName} not found`,
+        );
+        return;
+      }
       boundEntityType.addFields({
         [actionName]: boundField,
       });
       const otherType = getTCByTypeNames(
         `I${boundEntityTypeName}`,
         `T${boundEntityTypeName}`,
-      ) as InterfaceTypeComposer;
-      otherType?.addFields({
-        [actionName]: boundField,
-      });
+      ) as InterfaceTypeComposer | null;
+      if (otherType && otherType !== boundEntityType) {
+        otherType.addFields({
+          [actionName]: boundField,
+        });
+      }
     };
 
     schemaObj.Action?.forEach((actionObj: any) => {
@@ -738,14 +724,20 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         schemaNamespace,
         name: typeObj.attributes.Name,
       });
-      const inputType = schemaComposer.getITC(typeName + 'Input') as InputTypeComposer;
-      const abstractType = getTCByTypeNames('I' + typeName, typeName) as InterfaceTypeComposer;
+      const inputType = getTCByTypeNames(typeName + 'Input') as InputTypeComposer | null;
       const outputType = getTCByTypeNames('T' + typeName, typeName) as ObjectTypeComposer;
+      if (!outputType) {
+        log.warn(`OData: skip base-type merge for missing output type ${typeName}`);
+        return;
+      }
       const baseTypeRef = typeObj.attributes.BaseType;
-      const {
-        directives: { entityInfo },
-        eventEmitter,
-      } = outputType.getExtensions() as any as EntityTypeExtensions;
+      const outputExt = outputType.getExtensions() as any as EntityTypeExtensions;
+      const entityInfo = outputExt.odata?.entityInfo;
+      const eventEmitter = outputExt.eventEmitter;
+      if (!entityInfo || !eventEmitter) {
+        log.warn(`OData: skip base-type merge for ${typeName}; missing entityInfo`);
+        return;
+      }
       const baseTypeName = getTypeNameFromRef({
         typeRef: baseTypeRef,
         isInput: false,
@@ -755,32 +747,48 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         multipleSchemas,
         isEnumType: typeName => schemaComposer.isEnumType(typeName),
       });
-      const baseInputType = schemaComposer.getAnyTC(baseTypeName + 'Input') as InputTypeComposer;
-      const baseAbstractType = getTCByTypeNames(
-        'I' + baseTypeName,
-        baseTypeName,
-      ) as InterfaceTypeComposer;
+      // MS Graph (and similar) use Alias in BaseType (`graph.entity`) while Inputs are
+      // registered under buildName(); also some abstract bases may be declared later.
+      const baseInputType = getTCByTypeNames(
+        baseTypeName + 'Input',
+        pascalCase(baseTypeRef.replace(/\./g, '_')) + 'Input',
+      ) as InputTypeComposer | null;
       const baseOutputType = getTCByTypeNames(
         'T' + baseTypeName,
         baseTypeName,
-      ) as ObjectTypeComposer;
-      const {
-        directives: { entityInfo: baseEntityInfo },
-        eventEmitter: baseEventEmitter,
-      } = baseOutputType.getExtensions() as any as EntityTypeExtensions;
+      ) as ObjectTypeComposer | null;
+      if (!baseOutputType?.getExtensions) {
+        log.warn(
+          `OData: skip base-type merge for ${typeName}; missing base ${baseTypeRef} (${baseTypeName})`,
+        );
+        return;
+      }
+      const baseExt = baseOutputType.getExtensions() as any as EntityTypeExtensions;
+      const baseEntityInfo = baseExt.odata?.entityInfo;
+      const baseEventEmitter = baseExt.eventEmitter;
+      if (!baseEntityInfo || !baseEventEmitter) {
+        log.warn(
+          `OData: skip base-type merge for ${typeName}; base ${baseTypeName} has no entityInfo`,
+        );
+        return;
+      }
       const baseEventEmitterListener = () => {
-        inputType.addFields(baseInputType.getFields());
+        if (inputType && baseInputType?.getFields) {
+          inputType.addFields(baseInputType.getFields());
+        }
         entityInfo.identifierFieldName =
           baseEntityInfo.identifierFieldName || entityInfo.identifierFieldName;
         entityInfo.identifierFieldTypeRef =
           baseEntityInfo.identifierFieldTypeRef || entityInfo.identifierFieldTypeRef;
-        entityInfo.actualFields.unshift(...baseEntityInfo.actualFields);
-        abstractType?.addFields(baseAbstractType?.getFields());
+        entityInfo.actualFields.unshift(...(baseEntityInfo.actualFields || []));
+        // Field copy only — polymorphism via unions after all merges (not `implements`).
         outputType.addFields(baseOutputType.getFields());
-        if (baseAbstractType instanceof InterfaceTypeComposer) {
-          // abstractType.addInterface(baseAbstractType.getTypeName());
-          outputType.addInterface(baseAbstractType.getTypeName());
+        let kids = childrenByBase.get(baseTypeName);
+        if (!kids) {
+          kids = new Set();
+          childrenByBase.set(baseTypeName, kids);
         }
+        kids.add(typeName);
         eventEmitter.emit('onFieldChange');
       };
       baseEventEmitter.on('onFieldChange', baseEventEmitterListener);
@@ -809,7 +817,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               ...commonArgs,
             },
             extensions: {
-              directives: {
+              odata: {
                 singleton: {
                   singletonName,
                 },
@@ -817,7 +825,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             },
           },
         });
-        schemaComposer.addDirective(SingletonDirective);
       });
 
       entityContainerObj?.EntitySet?.forEach((entitySetObj: any) => {
@@ -834,19 +841,15 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         });
         const entityOutputTC = getTCByTypeNames('I' + entityTypeName, entityTypeName) as
           InterfaceTypeComposer | ObjectTypeComposer;
-        const {
-          directives: { entityInfo },
-        } = entityOutputTC.getExtensions() as any as EntityTypeExtensions;
+        const entityInfo = (entityOutputTC.getExtensions() as any as EntityTypeExtensions).odata
+          ?.entityInfo;
+        if (!entityInfo) {
+          return;
+        }
         const identifierFieldName = entityInfo.identifierFieldName;
         const identifierFieldTypeRef = entityInfo.identifierFieldTypeRef;
         const identifierFieldTypeName = entityOutputTC.getFieldTypeName(identifierFieldName);
         const typeName = entityOutputTC.getTypeName();
-        schemaComposer.addDirective(EntitySetDirective);
-        schemaComposer.addDirective(EntitySetByIdentifierDirective);
-        schemaComposer.addDirective(EntitySetCountDirective);
-        schemaComposer.addDirective(CreateEntitySetDirective);
-        schemaComposer.addDirective(DeleteEntitySetDirective);
-        schemaComposer.addDirective(UpdateEntitySetDirective);
         const commonFields: Record<string, ObjectTypeComposerFieldConfigDefinition<any, any>> = {
           [entitySetName]: {
             type: `[${typeName}]`,
@@ -855,7 +858,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               queryOptions: { type: 'QueryOptions' },
             },
             extensions: {
-              directives: {
+              odata: {
                 entitySet: {
                   entitySetName,
                 },
@@ -871,7 +874,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               },
             },
             extensions: {
-              directives: {
+              odata: {
                 entitySetByIdentifier: {
                   entitySetName,
                   identifierFieldName,
@@ -890,7 +893,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               queryOptions: { type: 'QueryOptions' },
             },
             extensions: {
-              directives: {
+              odata: {
                 entitySetCount: {
                   entitySetName,
                 },
@@ -909,7 +912,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               },
             },
             extensions: {
-              directives: {
+              odata: {
                 createEntitySet: {
                   entitySetName,
                 },
@@ -925,7 +928,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               },
             },
             extensions: {
-              directives: {
+              odata: {
                 deleteEntitySet: {
                   entitySetName,
                   identifierFieldName,
@@ -946,7 +949,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               },
             },
             extensions: {
-              directives: {
+              odata: {
                 updateEntitySet: {
                   entitySetName,
                   identifierFieldName,
@@ -963,21 +966,71 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
   // graphql-compose doesn't add @defer and @stream to the schema
   specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
 
+  // GraphQL rejects empty input objects (MS Graph has entity/complex types with no
+  // creatable properties). Keep a placeholder so composition can succeed.
+  for (const tc of schemaComposer.types.values()) {
+    // graphql-compose InputTypeComposer (avoid relying on SchemaComposer.isInputType).
+    if ((tc as any)?.constructor?.name !== 'InputTypeComposer') {
+      continue;
+    }
+    const inputTC = tc as InputTypeComposer;
+    if (inputTC.getFieldNames().length === 0) {
+      inputTC.addFields({
+        _empty: {
+          type: 'Boolean',
+          description: 'Placeholder — upstream OData type has no input fields',
+        },
+      });
+    }
+  }
+
+  // Restore OData inheritance as GraphQL unions + `@odata.type`→`__typename` selections.
+  // (Interfaces/`implements` break Apollo Router Connectors expand.)
+  emitODataPolymorphicUnions(schemaComposer, {
+    abstractTypeNames,
+    childrenByBase,
+    log,
+  });
+
+  // Federation Connectors surface — Hive runs via transport-rest (+ odata.metadata $select).
+  const connectMeta = emitODataConnectors(schemaComposer, {
+    name,
+    endpoint,
+    operationHeaders:
+      typeof operationHeaders === 'object' && operationHeaders ? operationHeaders : undefined,
+  });
+
   const schema = schemaComposer.buildSchema();
-  const schemaExtensions: any = (schema.extensions ||= {});
-  const directiveExtensions = (schemaExtensions.directives ||= {});
-  directiveExtensions.transport = {
-    kind: 'odata',
-    subgraph: name,
-    location: endpoint,
-    headers: Object.entries(operationHeaders || []),
-    options: {
-      batch,
-      expandNavProps,
-    },
-  };
+  const odataOpts: { batch?: typeof batch; expandNavProps?: boolean } = {};
+  if (batch != null) odataOpts.batch = batch;
+  if (expandNavProps != null) odataOpts.expandNavProps = expandNavProps;
+  applyODataConnectSchemaExtensions(
+    schema,
+    connectMeta,
+    name,
+    endpoint,
+    Object.keys(odataOpts).length ? odataOpts : undefined,
+  );
   eventEmitterSet.forEach(ee => ee.removeAllListeners());
   eventEmitterSet.clear();
+  // Drop EventEmitter refs from TC extensions so Jest leak detection stays clean.
+  for (const tc of schemaComposer.types.values()) {
+    const typed = tc as any;
+    const ext = typed.getExtensions?.();
+    if (ext?.eventEmitter) {
+      delete ext.eventEmitter;
+    }
+    if (typeof typed.getFieldNames !== 'function' || typeof typed.getField !== 'function') {
+      continue;
+    }
+    for (const fieldName of typed.getFieldNames()) {
+      const field = typed.getField(fieldName);
+      const fext = field?.extensions as any;
+      if (fext?.eventEmitter) {
+        delete fext.eventEmitter;
+      }
+    }
+  }
 
   return schema;
 }
@@ -987,13 +1040,19 @@ export async function loadGraphQLSchemaFromOData(
   opts: LoadGraphQLSchemaFromODataOpts,
 ) {
   const schema = await loadNonExecutableGraphQLSchemaFromOData(name, opts);
-  return processDirectives({
-    schema,
-    fetchFn: opts.fetchFn,
+  // transport-rest wires `@connect` + abstract resolveType (incl. `@odata.type`).
+  const { processDirectives } = await import('@graphql-mesh/transport-rest');
+  return processDirectives(schema, {
+    globalFetch: opts.fetchFn,
+    log: opts.log,
   });
 }
 
-export { processDirectives };
+export { processDirectives } from '@graphql-mesh/transport-rest';
+
+export const getSubgraphExecutor: TransportGetSubgraphExecutor<RESTTransportOptions> = opts => {
+  return transportRest.getSubgraphExecutor(opts);
+};
 
 export function loadODataSubgraph(
   name: string,

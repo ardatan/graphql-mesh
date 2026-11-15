@@ -27,6 +27,14 @@ import { getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
 import { Blob, fetch as defaultFetch, File, FormData } from '@whatwg-node/fetch';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 import { isFileUpload } from './isFileUpload.js';
+import { createODataBatchFetch, type ODataBatchMode } from './odataBatch.js';
+import {
+  appendODataSelectExpand,
+  attachExpandedNavFromRaw,
+  hasODataMetadataAcceptHeader,
+  isODataMetadataAccept,
+} from './odataConnectProfile.js';
+import { rebuildOpenInputObjects } from './odataOpenInput.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
 
@@ -144,6 +152,14 @@ export function getConnectArgsFromNode(node: {
  * values like `1?admin=true` cannot break out of a path segment. Leave
  * `encodeValues` off for `@source` baseURL (host/port) and header values.
  */
+function shouldSkipPathEncode(path: string, skipEncode?: (path: string) => boolean): boolean {
+  if (skipEncode?.(path)) {
+    return true;
+  }
+  // `_odataId` holds a full URL / entity id path — must not be percent-encoded.
+  return /^(this|root)\._odataId\b/.test(path) || /^(this|root)\[['"]_odataId['"]\]/.test(path);
+}
+
 function resolveTemplate(
   template: string,
   vars: {
@@ -153,7 +169,7 @@ function resolveTemplate(
     context: any;
     config?: Record<string, any>;
   },
-  options: { encodeValues?: boolean } = {},
+  options: { encodeValues?: boolean; skipEncode?: (path: string) => boolean } = {},
 ): string {
   if (!template) {
     return '';
@@ -175,11 +191,17 @@ function resolveTemplate(
     const value = evalConnectorsVarExpr(`$${exprPath}`, vars);
     if (value == null || value === '') {
       if (defaultValue != null) {
-        return options.encodeValues ? encodeURIComponent(defaultValue) : defaultValue;
+        if (!options.encodeValues || shouldSkipPathEncode(exprPath, options.skipEncode)) {
+          return defaultValue;
+        }
+        return encodeURIComponent(defaultValue);
       }
       return '';
     }
-    return options.encodeValues ? encodeURIComponent(String(value)) : String(value);
+    if (!options.encodeValues || shouldSkipPathEncode(exprPath, options.skipEncode)) {
+      return String(value);
+    }
+    return encodeURIComponent(String(value));
   });
   // Normalize remaining Connectors `{$args.x|base64}` / `{$context.headers['x-port']:4001}` to Mesh
   // `{args.x|base64}` / `{context.headers['x-port']:4001}` so stringInterpolator modifiers work.
@@ -201,12 +223,16 @@ function resolveTemplate(
     return interpolated == null ? '' : String(interpolated);
   }
   // Encode each `{expr}` replacement individually (not the whole URL).
+  // Absolute `@odata.id` follow-ups keep `_odataId` as a raw URL segment; other
+  // interpolations in the same template (e.g. `{$args.id}`) stay percent-encoded.
   return meshForm.replace(/\{([^{}]+)\}/g, (_match, path: string) => {
     const value = stringInterpolator.parse(`{${path}}`, interpolateArgs);
     if (value == null || value === '') {
       return '';
     }
-    return encodeURIComponent(String(value));
+    return shouldSkipPathEncode(path, options.skipEncode)
+      ? String(value)
+      : encodeURIComponent(String(value));
   });
 }
 
@@ -448,6 +474,11 @@ function applyQueryParams(
     if (argNameMatch && resolveArg) {
       value = resolveArg(argNameMatch[1], value);
     }
+    // OData parameter aliases (`@colors`, `@address`) must be one JSON value —
+    // default qs repeat-style would emit `@colors=red&@colors=blue`.
+    if (key.startsWith('@') && value != null && typeof value === 'object') {
+      value = JSON.stringify(value);
+    }
     params[key] = value;
   }
   if (!Object.keys(params).length) {
@@ -659,6 +690,115 @@ export type ConnectSelectionExtras = {
 };
 
 /**
+ * Copy `@odata.*` control properties from the raw JSON entity onto the Connectors
+ * selection result so Hive residual OData resolvers (nav / bound ops) still see
+ * `@odata.id` when the selection is not bare `$`.
+ */
+export function preserveODataEntityMetadata(selected: any, raw: any): any {
+  if (selected == null || raw == null || typeof selected !== 'object') {
+    return selected;
+  }
+  if (Array.isArray(selected)) {
+    const rawItems = Array.isArray(raw)
+      ? raw
+      : Array.isArray((raw as { value?: unknown })?.value)
+        ? (raw as { value: unknown[] }).value
+        : null;
+    if (!rawItems) {
+      return selected;
+    }
+    return selected.map((item, i) => preserveODataEntityMetadata(item, rawItems[i]));
+  }
+  if (typeof raw !== 'object' || Array.isArray(raw)) {
+    return selected;
+  }
+  for (const key of Object.keys(raw as Record<string, unknown>)) {
+    if (key.startsWith('@odata.') && (selected as Record<string, unknown>)[key] === undefined) {
+      (selected as Record<string, unknown>)[key] = (raw as Record<string, unknown>)[key];
+    }
+  }
+  return selected;
+}
+
+function stripTrailingSlash(url: string): string {
+  return url.replace(/\/+$/, '');
+}
+
+/**
+ * Ensure `_odataId` is set for nested OData `@connect` paths when the upstream
+ * omitted `@odata.id` (`odata.metadata=minimal`).
+ */
+export function ensureODataIdField(selected: any, raw: any, requestOriginPath: string): any {
+  if (selected == null || typeof selected !== 'object') {
+    return selected;
+  }
+  if (Array.isArray(selected)) {
+    const rawItems = Array.isArray(raw)
+      ? raw
+      : Array.isArray((raw as { value?: unknown })?.value)
+        ? (raw as { value: unknown[] }).value
+        : null;
+    const base = requestOriginPath ? stripTrailingSlash(requestOriginPath) : '';
+    return selected.map((item, i) => {
+      // List members under `odata.metadata=minimal` omit `@odata.id`. Prefer
+      // `collectionUrl/key` over the bare collection URL so nested
+      // `{$this._odataId}/Nav` resolves (`…/Trips/0/PlanItems`).
+      const rawItem = rawItems?.[i];
+      if (
+        item != null &&
+        typeof item === 'object' &&
+        !Array.isArray(item) &&
+        base &&
+        (item as Record<string, unknown>)._odataId == null
+      ) {
+        const rec = item as Record<string, unknown>;
+        const rawRec =
+          rawItem != null && typeof rawItem === 'object' && !Array.isArray(rawItem)
+            ? (rawItem as Record<string, unknown>)
+            : undefined;
+        const fromRaw = rawRec?.['@odata.id'];
+        if (typeof fromRaw === 'string' && fromRaw) {
+          rec._odataId = stripTrailingSlash(fromRaw);
+        } else {
+          const key =
+            rec.TripId ??
+            rec.PlanItemId ??
+            rec.UserName ??
+            rec.id ??
+            rec.Id ??
+            rawRec?.TripId ??
+            rawRec?.PlanItemId ??
+            rawRec?.UserName ??
+            rawRec?.id ??
+            rawRec?.Id;
+          if (key != null && key !== '') {
+            rec._odataId = `${base}/${key}`;
+          }
+        }
+      }
+      return ensureODataIdField(item, rawItem, requestOriginPath);
+    });
+  }
+  const record = selected as Record<string, unknown>;
+  if (record._odataId == null || record._odataId === '') {
+    const fromRaw =
+      (typeof record['@odata.id'] === 'string' && record['@odata.id']) ||
+      (raw && typeof raw === 'object' && !Array.isArray(raw)
+        ? (raw as Record<string, unknown>)['@odata.id']
+        : undefined);
+    const id =
+      (typeof fromRaw === 'string' && fromRaw) ||
+      (requestOriginPath ? stripTrailingSlash(requestOriginPath) : '');
+    if (id) {
+      record._odataId = stripTrailingSlash(String(id));
+    }
+  } else if (typeof record._odataId === 'string') {
+    record._odataId = stripTrailingSlash(record._odataId);
+  }
+  return selected;
+}
+
+/**
  * Minimal selection evaluator:
  * - `id name` field picks
  * - `alias: path` aliases
@@ -691,7 +831,14 @@ export function applySelection(selection: string, root: any, extras: ConnectSele
   }
   // Connectors literals / single path expressions (not multi-field selections).
   // `$status->match(...)` may contain spaces inside the argument list.
-  if (trimmed.startsWith('$') && !trimmed.includes('\n') && !/^[A-Za-z_][\w]*\s*:/.test(trimmed)) {
+  // Single-line `$.value { a b }` / `$.foo { alias: x }` must still run as a
+  // subselection — otherwise aliases like `_odataId: $->get("@odata.id")` are dropped.
+  if (
+    trimmed.startsWith('$') &&
+    !trimmed.includes('\n') &&
+    !/^[A-Za-z_][\w]*\s*:/.test(trimmed) &&
+    !/\{\s*[\s\S]+\}/.test(trimmed)
+  ) {
     return evalPath(trimmed, root, extras);
   }
   return evalSubSelection(trimmed, root, extras);
@@ -716,11 +863,12 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
     // Apollo: header vars are always arrays (fetch Headers.get → single joined string).
     return value == null ? undefined : [value];
   }
-  if (path.startsWith('$(') && path.endsWith(')')) {
-    try {
-      return JSON.parse(path.slice(2, -1));
-    } catch {
-      return path.slice(2, -1);
+  // `$("lit")` / `$(123)` / `$($->get("k") ?? "default")` — expression wrapper.
+  // Method chains after `$()` (e.g. `…->match`) are handled via split below.
+  if (path.startsWith('$(')) {
+    const closed = findBalancedParenClose(path, 1);
+    if (closed === path.length - 1) {
+      return evalConnectorsDollarParen(path.slice(2, closed), root, extras);
     }
   }
   // Method calls: `$status->match(...)`, `$->map(@->match(...))`, `$->entries`,
@@ -813,6 +961,76 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
     cur = cur[part];
   }
   return cur;
+}
+
+/** Index of the `)` that closes `s[openIdx]` (`(`), or -1. */
+function findBalancedParenClose(s: string, openIdx: number): number {
+  let depth = 0;
+  for (let i = openIdx; i < s.length; i++) {
+    const c = s[i];
+    if (c === '"' || c === "'") {
+      const q = c;
+      i++;
+      while (i < s.length && s[i] !== q) {
+        if (s[i] === '\\') i++;
+        i++;
+      }
+      continue;
+    }
+    if (c === '(') depth++;
+    else if (c === ')') {
+      depth--;
+      if (depth === 0) return i;
+    }
+  }
+  return -1;
+}
+
+/**
+ * Connectors `$()` body: JSON literal, path/`->` expr, or `a ?? b` / `a ?! b`
+ * (Apollo nullish coalescing — required before `->match` when `get` may be None).
+ */
+function evalConnectorsDollarParen(inner: string, root: any, extras: ConnectSelectionExtras): any {
+  const trimmed = inner.trim();
+  if (!trimmed) return undefined;
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    // not a JSON literal
+  }
+  // Top-level `??` / `?!` (Apollo: `??` coalesces null|None; `?!` only None).
+  let depth = 0;
+  for (let i = 0; i < trimmed.length; i++) {
+    const c = trimmed[i];
+    if (c === '"' || c === "'") {
+      const q = c;
+      i++;
+      while (i < trimmed.length && trimmed[i] !== q) {
+        if (trimmed[i] === '\\') i++;
+        i++;
+      }
+      continue;
+    }
+    if (c === '(' || c === '[' || c === '{') depth++;
+    else if (c === ')' || c === ']' || c === '}') depth--;
+    else if (depth === 0 && c === '?') {
+      const op = trimmed.slice(i, i + 2);
+      if (op === '??' || op === '?!') {
+        const left = evalPath(trimmed.slice(0, i).trim(), root, extras);
+        const rightRaw = trimmed.slice(i + 2).trim();
+        const right = evalConnectorsDollarParen(rightRaw, root, extras);
+        if (op === '??') {
+          return left == null ? right : left;
+        }
+        // `?!` — only missing/None (undefined), not JSON null.
+        return left === undefined ? right : left;
+      }
+    }
+  }
+  if (trimmed.startsWith('$') || trimmed.includes('->') || /^[A-Za-z_]/.test(trimmed)) {
+    return evalPath(trimmed, root, extras);
+  }
+  return trimmed;
 }
 
 /**
@@ -1083,58 +1301,46 @@ function readSelectionIdent(s: string, start: number): { value: string; end: num
     return { value, end: i };
   }
   // `$status->match([200, "User"], …)`, `$["patent-id"]`, `$.foo["bar"]->match(...)`,
-  // `$("literal")` / `$('literal')` Connectors string/number literals.
+  // `$("literal")` / `$($->get("k") ?? "default")->match(...)` (balanced `$()` + chains).
   if (s[i] === '$') {
     i++;
-    // `$("…")` / `$('…')` / `$(123)` / `$(true)` — consume before path segments.
+    // `$()` — balanced (nested get/match / `??` inside).
     if (s[i] === '(') {
-      i++;
-      if (s[i] === '"' || s[i] === "'") {
-        const quote = s[i++];
-        while (i < s.length && s[i] !== quote) {
-          if (s[i] === '\\' && i + 1 < s.length) i += 2;
-          else i++;
-        }
-        if (s[i] === quote) i++;
-      } else {
-        while (i < s.length && s[i] !== ')') i++;
+      const close = findBalancedParenClose(s, i);
+      if (close < 0) {
+        return { value: s.slice(start), end: s.length };
       }
-      if (s[i] === ')') i++;
-      return { value: s.slice(start, i), end: i };
-    }
-    // Don't consume the `-` of `->` into the path segment.
-    while (i < s.length && /[A-Za-z0-9_.]/.test(s[i])) i++;
-    // Bracket accessors: `["key"]` / `['key']` / `[0]`
-    while (s[i] === '[') {
-      i++;
-      if (s[i] === '"' || s[i] === "'") {
-        const quote = s[i++];
-        while (i < s.length && s[i] !== quote) {
-          if (s[i] === '\\' && i + 1 < s.length) i += 2;
-          else i++;
-        }
-        if (s[i] === quote) i++;
-      } else {
-        while (i < s.length && s[i] !== ']') i++;
-      }
-      if (s[i] === ']') i++;
+      i = close + 1;
+    } else {
+      // Don't consume the `-` of `->` into the path segment.
       while (i < s.length && /[A-Za-z0-9_.]/.test(s[i])) i++;
+      // Bracket accessors: `["key"]` / `['key']` / `[0]`
+      while (s[i] === '[') {
+        i++;
+        if (s[i] === '"' || s[i] === "'") {
+          const quote = s[i++];
+          while (i < s.length && s[i] !== quote) {
+            if (s[i] === '\\' && i + 1 < s.length) i += 2;
+            else i++;
+          }
+          if (s[i] === quote) i++;
+        } else {
+          while (i < s.length && s[i] !== ']') i++;
+        }
+        if (s[i] === ']') i++;
+        while (i < s.length && /[A-Za-z0-9_.]/.test(s[i])) i++;
+      }
     }
     while (s.slice(i, i + 2) === '->') {
       i += 2;
       while (i < s.length && /[A-Za-z0-9_]/.test(s[i])) i++;
       if (s[i] === '(') {
-        let depth = 0;
-        for (; i < s.length; i++) {
-          if (s[i] === '(') depth++;
-          else if (s[i] === ')') {
-            depth--;
-            if (depth === 0) {
-              i++;
-              break;
-            }
-          }
+        const close = findBalancedParenClose(s, i);
+        if (close < 0) {
+          i = s.length;
+          break;
         }
+        i = close + 1;
       }
     }
     return { value: s.slice(start, i), end: i };
@@ -1292,10 +1498,13 @@ function buildBody(
   opts: {
     schema?: GraphQLSchema;
     field?: GraphQLField<any, any>;
+    /** Flatten OData open-type `rest` bags only - never rewrite ordinary REST inputs. */
+    odataOpenTypes?: boolean;
   } = {},
 ): string | undefined {
   if (!bodySelection) return undefined;
   const trimmed = bodySelection.trim();
+  const flattenOpen = Boolean(opts.odataOpenTypes);
 
   const recoverInput = (value: any, argName: string) => {
     if (value == null || !opts.schema || !opts.field) {
@@ -1324,16 +1533,43 @@ function buildBody(
     const recoveredArgs = { ...vars.args };
     if ('input' in recoveredArgs) {
       recoveredArgs.input = recoverInput(recoveredArgs.input, 'input');
+      if (flattenOpen && recoveredArgs.input != null && typeof recoveredArgs.input === 'object') {
+        rebuildOpenInputObjects(recoveredArgs.input);
+      }
     }
     return JSON.stringify(
       applySelection(trimmed, {}, { vars: { ...selectionVars, args: recoveredArgs } }),
     );
   }
   if (trimmed === '$args') {
-    return JSON.stringify(vars.args);
+    // Only clone+flatten when open-type `rest` is present - leave bound-action
+    // arg objects alone (no clone); open-type bodies are plain JSON values.
+    const args = vars.args;
+    const needsFlatten =
+      flattenOpen &&
+      args != null &&
+      typeof args === 'object' &&
+      ('rest' in args ||
+        (args.input != null && typeof args.input === 'object' && 'rest' in args.input));
+    if (needsFlatten) {
+      // `vars.args` may be a Proxy (serializeArgumentsForInterpolation) —
+      // structuredClone rejects Proxies, so materialize plain values first.
+      const plain: Record<string, unknown> = {};
+      for (const key of Object.keys(args as object)) {
+        plain[key] = (args as Record<string, unknown>)[key];
+      }
+      const clone = structuredClone(plain);
+      rebuildOpenInputObjects(clone);
+      return JSON.stringify(clone);
+    }
+    return JSON.stringify(args);
   }
   if (trimmed === '$args.input' || trimmed.startsWith('$args.input')) {
     const input = recoverInput(vars.args.input, 'input');
+    // Open-type OData inputs carry overflow under `rest` - flatten into the body.
+    if (flattenOpen && input != null && typeof input === 'object') {
+      rebuildOpenInputObjects(input);
+    }
     // `$args.input { alias: field }` subselection
     const subMatch = trimmed.match(/^\$args\.input\s*\{([\s\S]*)\}$/);
     if (subMatch) {
@@ -1367,16 +1603,272 @@ function buildBody(
   }
 }
 
+/** OData-only Connectors runtime opts (mirrors `@transport(options: { odata: … })`). */
+export type ConnectODataOptions = {
+  /** `$expand` selected nav and prefer embedded values over per-nav HTTP. */
+  expandNavProps?: boolean;
+  /** Coalesce sibling `@connect` HTTP into `POST /$batch`. */
+  batch?: ODataBatchMode;
+  /** Shared DataLoader fetch — usually created by `processConnectDirectives`. */
+  batchFetch?: ReturnType<typeof createODataBatchFetch>;
+  /** Extra credential header names for `/$batch` partition / outer forward. */
+  securityHeaderNames?: readonly string[];
+};
+
+export type ConnectFieldResolverOptions = {
+  globalFetch?: MeshFetch;
+  log?: HiveLogger;
+  timeout?: number;
+  queryStringOptions?: MeshQsOptions;
+  odata?: ConnectODataOptions;
+};
+
+/**
+ * Custom nav args (e.g. `limit`) cannot ride `$expand`; queryOptions alone can.
+ * Prefer-embedded must not skip the connector when those args need a dedicated GET.
+ */
+function navArgsRequireDedicatedFetch(args: Record<string, unknown> | null | undefined): boolean {
+  if (args == null || typeof args !== 'object') {
+    return false;
+  }
+  for (const key of Object.keys(args)) {
+    if (key === 'queryOptions') {
+      continue;
+    }
+    if (args[key] != null) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** Marks a mapped Connectors selection result so prefer-embedded can skip rematch. */
+const ODATA_SELECTION_APPLIED = Symbol.for('@graphql-mesh/odata.selectionApplied');
+
+/** Identity / bare path — applySelection returns raw; do not tag nested pass-through. */
+function isRawPassThroughSelection(selection: string): boolean {
+  const t = selection.trim();
+  if (!t || t === '$' || t === '$root') {
+    return true;
+  }
+  // Bare `$.value` / `$.person` with no `{ … }` mapping block.
+  return /^\$(\.[A-Za-z_][\w]*)+$/.test(t);
+}
+
+/**
+ * Body of a root `$.name { … }` wrapper when that wraps the whole selection.
+ * Covers OData `$.value { … }` and hand-written roots like `$.person { … }` so
+ * nestedMappedSelections sees `orders`, not the wrapper name `person`.
+ */
+function dollarRootSelectionBody(selection: string): string | null {
+  const trimmed = selection.trim();
+  const m = /^\$\.([A-Za-z_][\w]*)\s*\{/.exec(trimmed);
+  if (!m) return null;
+  const open = trimmed.indexOf('{', m.index);
+  if (open < 0) return null;
+  let depth = 0;
+  let close = -1;
+  for (let i = open; i < trimmed.length; i++) {
+    const c = trimmed[i];
+    if (c === '{') depth++;
+    else if (c === '}') {
+      depth--;
+      if (depth === 0) {
+        close = i;
+        break;
+      }
+    }
+  }
+  if (close < 0) {
+    return trimmed.slice(open + 1);
+  }
+  // Only unwrap when this `{ … }` is the whole selection (root wrapper).
+  if (trimmed.slice(close + 1).trim() !== '') {
+    return null;
+  }
+  return trimmed.slice(open + 1, close);
+}
+
+/**
+ * Fields at this selection level that have an explicit `{ … }` subselection
+ * (actually mapped). Pass-through paths like `Orders` / `orders: Orders` without
+ * braces are omitted so raw expand children stay unmarked for nav rematch.
+ */
+function nestedMappedSelections(selection: string): Map<string, string> {
+  const map = new Map<string, string>();
+  const body = dollarRootSelectionBody(selection) ?? selection.trim();
+  let i = 0;
+  while (i < body.length) {
+    while (i < body.length && /\s/.test(body[i]!)) i++;
+    if (i >= body.length) break;
+    const rest = body.slice(i);
+    // `orders: Orders { … }` or `Orders { … }` or `orders { … }`
+    const m = /^([A-Za-z_][\w]*)\s*(?::\s*[A-Za-z_][\w]*)?\s*\{/.exec(rest);
+    if (!m) {
+      i++;
+      continue;
+    }
+    const gqlName = m[1]!;
+    const open = i + m[0].length - 1;
+    let depth = 0;
+    let close = -1;
+    for (let j = open; j < body.length; j++) {
+      const c = body[j];
+      if (c === '{') depth++;
+      else if (c === '}') {
+        depth--;
+        if (depth === 0) {
+          close = j;
+          break;
+        }
+      }
+    }
+    if (close < 0) break;
+    map.set(gqlName, body.slice(open + 1, close));
+    i = close + 1;
+  }
+  return map;
+}
+
+/**
+ * Mark values a selection actually mapped. Raw `$` pass-through is left unmarked
+ * so prefer-embedded can still run nav selections like `$.value { id name: Name }`.
+ * Explicit nested mappings (`orders: Orders { id name: Name }`) stay marked so
+ * rematch does not wipe already-mapped fields.
+ */
+function markSelectionApplied(value: unknown, selection = ''): unknown {
+  if (value == null || typeof value !== 'object') {
+    return value;
+  }
+  const trimmed = selection.trim();
+  if (isRawPassThroughSelection(trimmed)) {
+    return value;
+  }
+
+  const rootBody = dollarRootSelectionBody(trimmed);
+  if (Array.isArray(value)) {
+    // `$.value { … }` list mapping — mark each item with the entity body.
+    const itemSelection = rootBody ?? trimmed;
+    for (const item of value) {
+      markSelectionApplied(item, itemSelection);
+    }
+    return value;
+  }
+
+  Object.defineProperty(value, ODATA_SELECTION_APPLIED, {
+    value: true,
+    enumerable: false,
+    configurable: true,
+  });
+
+  const nested = nestedMappedSelections(rootBody ?? trimmed);
+  const obj = value as Record<string, unknown>;
+  for (const [fieldName, subSelection] of nested) {
+    if (Object.prototype.hasOwnProperty.call(obj, fieldName)) {
+      markSelectionApplied(obj[fieldName], subSelection);
+      continue;
+    }
+    const found = Object.keys(obj).find(k => k.toLowerCase() === fieldName.toLowerCase());
+    if (found) {
+      markSelectionApplied(obj[found], subSelection);
+    }
+  }
+  return value;
+}
+
+/**
+ * Body of the primary selection object (`$.value { … }` or first `{ … }`), else
+ * the whole string. Nested blocks inside that body are stripped so alias scans
+ * stay at this level — `customer: Customer { id: Id }` must not prove the outer
+ * nav value is already mapped.
+ */
+function selectionTopLevelAliasScanTarget(selection: string): string {
+  const trimmed = selection.trim();
+  const valueMatch = /\$\.value\s*\{/.exec(trimmed);
+  let open = -1;
+  if (valueMatch) {
+    open = trimmed.indexOf('{', valueMatch.index);
+  } else {
+    open = trimmed.indexOf('{');
+  }
+  let body = trimmed;
+  if (open >= 0) {
+    let depth = 0;
+    let close = -1;
+    for (let i = open; i < trimmed.length; i++) {
+      const c = trimmed[i];
+      if (c === '{') depth++;
+      else if (c === '}') {
+        depth--;
+        if (depth === 0) {
+          close = i;
+          break;
+        }
+      }
+    }
+    body = close >= 0 ? trimmed.slice(open + 1, close) : trimmed.slice(open + 1);
+  }
+  let out = '';
+  let depth = 0;
+  for (let i = 0; i < body.length; i++) {
+    const c = body[i];
+    if (c === '{') {
+      depth++;
+      continue;
+    }
+    if (c === '}') {
+      depth = Math.max(0, depth - 1);
+      continue;
+    }
+    if (depth === 0) {
+      out += c;
+    }
+  }
+  return out;
+}
+
+/** True when prefer-embedded value is already GraphQL-shaped (do not re-run selection). */
+function navValueAlreadyMapped(embedded: unknown, selection: string): boolean {
+  const sample = Array.isArray(embedded)
+    ? embedded.find(item => item != null && typeof item === 'object')
+    : embedded;
+  if (sample == null || typeof sample !== 'object' || Array.isArray(sample)) {
+    return false;
+  }
+  const obj = sample as Record<string, unknown>;
+  // Explicit parent-applied selection marker (set after applySelection on this value).
+  if (Object.prototype.hasOwnProperty.call(obj, ODATA_SELECTION_APPLIED)) {
+    return true;
+  }
+  if ('__typename' in obj) {
+    return true;
+  }
+  // Only top-level remaps in this field's selection (ignore nested object aliases).
+  const topLevel = selectionTopLevelAliasScanTarget(selection);
+  for (const match of topLevel.matchAll(/\b([A-Za-z_][\w]*)\s*:\s*([A-Za-z_][\w]*)\b/g)) {
+    const gqlName = match[1];
+    const wireName = match[2];
+    if (!gqlName || !wireName || gqlName === wireName) {
+      continue;
+    }
+    if (gqlName.startsWith('$') || gqlName === '__typename') {
+      continue;
+    }
+    if (
+      Object.prototype.hasOwnProperty.call(obj, gqlName) &&
+      !Object.prototype.hasOwnProperty.call(obj, wireName)
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function addConnectFieldResolver(
   schema: GraphQLSchema,
   field: GraphQLField<any, any>,
   connectArgs: ConnectArgs,
-  opts: {
-    globalFetch?: MeshFetch;
-    log?: HiveLogger;
-    timeout?: number;
-    queryStringOptions?: MeshQsOptions;
-  } = {},
+  opts: ConnectFieldResolverOptions = {},
 ) {
   const log = opts.log || new Logger({ prefix: 'connect' });
   const sources = getSourceMap(schema);
@@ -1385,8 +1877,87 @@ export function addConnectFieldResolver(
   // Schema/field qs + timeout come from `@transport(options:)` / serve-time entry.
   const queryStringOptions: MeshQsOptions = { ...opts.queryStringOptions };
   const timeout = opts.timeout;
+  const expandNavProps = Boolean(opts.odata?.expandNavProps);
+  const odataBatchFetch = opts.odata?.batchFetch;
+  // Prefer-embedded: expandNavProps + literal `@source` Accept `odata.metadata=…`.
+  // Schema-static — no per-call header resolve / empty arg stubs.
+  const preferEmbeddedNav = expandNavProps && hasODataMetadataAcceptHeader(source?.http?.headers);
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
+    // When `$expand` / parent selection already put this field on `root`, skip HTTP.
+    // Apollo may skip via planner; Hive always invokes the field resolver.
+    // Non-queryOptions nav args are excluded from `$expand` - never reuse embedded
+    // for those (connector must apply limit/filter args via its own HTTP).
+    const navArgsNeedFetch = navArgsRequireDedicatedFetch(args);
+    if (
+      preferEmbeddedNav &&
+      !navArgsNeedFetch &&
+      root != null &&
+      typeof root === 'object' &&
+      info?.fieldName &&
+      Object.prototype.hasOwnProperty.call(root, info.fieldName) &&
+      (root as Record<string, unknown>)[info.fieldName] != null
+    ) {
+      const embedded = (root as Record<string, unknown>)[info.fieldName];
+      const selection = connectArgs.selection || '$';
+      const parentId =
+        typeof (root as Record<string, unknown>)._odataId === 'string'
+          ? ((root as Record<string, unknown>)._odataId as string)
+          : '';
+      // Expanded members need `/People/p/Orders/o`, not `/People/p/o` — use the nav
+      // segment from the connector GET path (fallback: GraphQL field name).
+      const navCollectionBase = (() => {
+        const base = parentId ? stripTrailingSlash(parentId) : '';
+        if (!base) return '';
+        let nav = '';
+        const getPath = connectArgs.http?.GET;
+        if (typeof getPath === 'string') {
+          const pathOnly = getPath.split('?')[0].replace(/\/+$/, '');
+          const parts = pathOnly.split('/').filter(Boolean);
+          const last = parts[parts.length - 1];
+          if (last && !last.includes('{')) {
+            nav = last;
+          }
+        }
+        if (!nav && info?.fieldName) {
+          nav = info.fieldName;
+        }
+        return nav ? `${base}/${nav}` : base;
+      })();
+      // Parent `@connect` selection may already have mapped `__typename` (baked
+      // `$expand` + inline nav). Re-running `->match` on mapped objects loses
+      // `@odata.type` and collapses every row to the default union member.
+      // Same for `gql: Wire` remaps already applied (e.g. `userName: UserName`).
+      // Still complete `_odataId` — parent ensureODataIdField does not walk nested nav.
+      if (navValueAlreadyMapped(embedded, selection)) {
+        return ensureODataIdField(embedded, embedded, navCollectionBase);
+      }
+      const extras = {
+        status: 200,
+        responseHeaders: new Headers(),
+        vars: {
+          args: args || {},
+          thisValue: root,
+          env: process.env as Record<string, string>,
+          context: context || {},
+        },
+      };
+      // Expanded nav is a raw entity/array; `$.value { ... }` selections need a wrapper.
+      let mapped: unknown;
+      if (Array.isArray(embedded) && selection.includes('$.value')) {
+        mapped = applySelection(selection, { value: embedded }, extras);
+      } else if (Array.isArray(embedded)) {
+        mapped = embedded.map(item => applySelection(selection, item, extras));
+      } else {
+        mapped = applySelection(selection, embedded, extras);
+      }
+      return ensureODataIdField(
+        markSelectionApplied(mapped, selection),
+        embedded,
+        navCollectionBase,
+      );
+    }
+
     // Virtual connector: no http — selection may only use $args / $this / literals.
     if (!picked) {
       const selection = connectArgs.selection || '$({})';
@@ -1442,11 +2013,17 @@ export function addConnectFieldResolver(
     };
 
     const baseURL = resolveTemplate(source?.http?.baseURL || '', vars);
-    // Path templates percent-encode expression values; baseURL / headers do not.
-    const path = resolveTemplate(picked.path, vars, { encodeValues: true });
+    // `{$this._odataId}/Nav` when `@odata.id` has a trailing slash → `…//Nav`.
+    // Collapse those (keep `https://`).
+    const collapseExtraSlashes = (u: string) => u.replace(/([^:])\/{2,}/g, '$1/');
+    // Path templates percent-encode expression values; `_odataId` stays raw (full URL).
+    // Absolute connector URLs skip baseURL join.
     // Match Mesh httpOperation (`urlJoin(base, path)`): empty base keeps relative paths
     // so test mocks like `fetch('pets/1')` keep working.
-    let fullPath = urlJoin(baseURL || '', path) || path;
+    const path = resolveTemplate(picked.path, vars, { encodeValues: true });
+    let fullPath = /^https?:\/\//i.test(path)
+      ? collapseExtraSlashes(path)
+      : urlJoin(baseURL || '', path) || path;
 
     const resolveArg = (argName: string, value: any) => {
       const argDef = field.args?.find(arg => arg.name === argName);
@@ -1493,6 +2070,11 @@ export function addConnectFieldResolver(
     applyHeaders(headers, connectArgs.http?.headers, vars);
 
     const method = picked.method;
+    // OData dual-runtime: `Accept: …;odata.metadata=…` is a normal Connectors header
+    // (Router sends it as-is). Hive additionally projects `$select` / `$expand`.
+    if ((method === 'GET' || method === 'HEAD') && isODataMetadataAccept(headers) && info) {
+      fullPath = appendODataSelectExpand(fullPath, info, connectArgs.selection, expandNavProps);
+    }
     const requestInit: MeshFetchRequestInit = {
       method,
       headers,
@@ -1561,7 +2143,11 @@ export function addConnectFieldResolver(
         requestBody = formData;
         requestInit.body = formData;
       } else {
-        const bodyJson = buildBody(connectArgs.http?.body, vars, { schema, field });
+        const bodyJson = buildBody(connectArgs.http?.body, vars, {
+          schema,
+          field,
+          odataOpenTypes: isODataMetadataAccept(headers),
+        });
         if (bodyJson != null) {
           if (contentType?.includes('application/x-www-form-urlencoded')) {
             try {
@@ -1591,7 +2177,9 @@ export function addConnectFieldResolver(
       }
     }
 
-    const fetchFn: MeshFetch = context?.fetch || opts.globalFetch || defaultFetch;
+    const fetchFn: MeshFetch = odataBatchFetch
+      ? (odataBatchFetch as MeshFetch)
+      : context?.fetch || opts.globalFetch || defaultFetch;
     const operationLogger =
       log.child?.({ operation: `${info.parentType.name}.${info.fieldName}` }) || log;
     operationLogger.debug?.(`Connect ${method} ${fullPath}`);
@@ -1707,13 +2295,27 @@ export function addConnectFieldResolver(
       throw buildConnectorError(responseData);
     }
 
-    let selected = applySelection(connectArgs.selection || '$', responseData, selectionExtras);
+    const selectionText = connectArgs.selection || '$';
+    let selected = markSelectionApplied(
+      applySelection(selectionText, responseData, selectionExtras),
+      selectionText,
+    );
     // Normalize after selection so mappings like `$.products { id }` (object → array) work.
     const isListReturnType = isListTypeOrNonNullListType(field.type);
     if (isListReturnType && !Array.isArray(selected)) {
       selected = [selected];
     } else if (!isListReturnType && Array.isArray(selected)) {
       selected = selected[0];
+    }
+    // OData only: keep `@odata.*` and fill `_odataId` when metadata=minimal omits id.
+    if (isODataMetadataAccept(headers)) {
+      selected = preserveODataEntityMetadata(selected, responseData);
+      selected = ensureODataIdField(selected, responseData, requestUrlForMeta.originPath);
+      // Re-attach `$expand`ed nav so child `@connect` can prefer embedded (expandNavProps).
+      // Raw attach skips keys already present from selection (those stay marked).
+      if (expandNavProps && info) {
+        selected = attachExpandedNavFromRaw(selected, responseData, info, expandNavProps);
+      }
     }
     // Fill Mesh-only `_response` fields Apollo selection cannot express.
     selected = fillExposeResponseMetadata(selected, {
@@ -1934,13 +2536,36 @@ function attachResponseMetadata(
 
 export function processConnectDirectives(
   schema: GraphQLSchema,
-  opts: {
-    globalFetch?: MeshFetch;
-    log?: HiveLogger;
-    timeout?: number;
-    queryStringOptions?: MeshQsOptions;
-  } = {},
+  opts: ConnectFieldResolverOptions = {},
 ) {
+  const odata = opts.odata;
+  const batchMode = odata?.batch;
+  const batchEndpoint = (() => {
+    const sources = getSourceMap(schema);
+    for (const source of sources.values()) {
+      if (typeof source?.http?.baseURL === 'string') {
+        return source.http.baseURL;
+      }
+    }
+    return undefined;
+  })();
+  // Single factory for the whole schema — per-field factories would not coalesce.
+  const batchFetch =
+    odata?.batchFetch ||
+    (batchMode && batchMode !== 'none' && batchEndpoint
+      ? createODataBatchFetch({
+          fetchFn: (url, init, ctx, inf) =>
+            (ctx?.fetch || opts.globalFetch || defaultFetch)(url, init, ctx, inf) as any,
+          endpoint: batchEndpoint,
+          batchMode,
+          securityHeaderNames: odata?.securityHeaderNames,
+        })
+      : undefined);
+  const fieldOpts: ConnectFieldResolverOptions = {
+    ...opts,
+    odata: odata || batchFetch ? { ...odata, batchFetch } : undefined,
+  };
+
   const queryType = schema.getQueryType();
   const typeMap = schema.getTypeMap();
   for (const typeName in typeMap) {
@@ -1955,7 +2580,7 @@ export function processConnectDirectives(
         args: [],
         extensions: {},
       } as unknown as GraphQLField<any, any>;
-      addConnectFieldResolver(schema, syntheticField, connectArgs, opts);
+      addConnectFieldResolver(schema, syntheticField, connectArgs, fieldOpts);
       const resolve = syntheticField.resolve;
       if (resolve) {
         (type as any).resolveReference = (reference: any, context: any, info: any) =>
@@ -1970,7 +2595,7 @@ export function processConnectDirectives(
       if (!directives?.length) continue;
       // First connect wins for execution (repeatable for schema merge cases)
       const connectArgs = directives[0];
-      addConnectFieldResolver(schema, field as GraphQLField<any, any>, connectArgs, opts);
+      addConnectFieldResolver(schema, field as GraphQLField<any, any>, connectArgs, fieldOpts);
       // Query `@connect(entity: true)` → type.resolveReference (Federation `_entities`).
       if (connectArgs.entity && type === queryType && isObjectType(getNamedType(field.type))) {
         const returnType = getNamedType(field.type) as GraphQLObjectType;

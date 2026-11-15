@@ -57,11 +57,26 @@ export type TransportDirectiveArgs<Options extends Record<string, unknown> = Rec
     options?: Options;
   };
 
+/** OData-only knobs nested under `@transport(options: { odata: … })`. */
+export type ODataTransportOptions = {
+  /** Coalesce sibling Connectors HTTP into `POST /$batch`. */
+  batch?: 'none' | 'json' | 'multipart';
+  /** Prefer parent `$expand` payloads over per-nav HTTP round-trips. */
+  expandNavProps?: boolean;
+  /**
+   * Extra header names treated like credentials for `/$batch` partitioning and
+   * outer-batch forward (e.g. `x-session`, gateway subscription keys).
+   */
+  securityHeaderNames?: string[];
+};
+
 /** REST-specific `@transport(options:)` fields. */
 export type RESTTransportDirectiveOptions = {
   timeout?: number;
   queryParams?: Record<string, string>;
   queryStringOptions?: Record<string, any>;
+  /** Present when the subgraph was loaded from OData. */
+  odata?: ODataTransportOptions;
 };
 
 /** Read kind-specific options from `@transport(options:)`. */
