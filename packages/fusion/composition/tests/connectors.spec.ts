@@ -792,11 +792,14 @@ describe('Federation Connectors composition', () => {
   it('attributes field-level @connect by @join__field when source names collide', () => {
     // Two subgraphs both use connector source name "api"; field ownership must
     // follow `@join__field(graph:)`, not the first graph that claimed "api".
+    // Schema @source must be emitted for every graph that referenced "api", and a
+    // sole-join type-level @connect on Product must stay on PRODUCTS.
     const before = /* GraphQL */ `
       schema
         @link(url: "https://specs.apollo.dev/link/v1.0")
         @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "api", http: { baseURL: "https://api.example.com" }) {
         query: Query
       }
 
@@ -820,6 +823,7 @@ describe('Federation Connectors composition', () => {
         selection: String!
         entity: Boolean
       ) repeatable on FIELD_DEFINITION | OBJECT
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
       scalar join__FieldSet
       scalar join__DirectiveArguments
@@ -835,6 +839,9 @@ describe('Federation Connectors composition', () => {
       input ConnectHTTP {
         GET: String
       }
+      input SourceHTTP {
+        baseURL: String!
+      }
 
       type Query @join__type(graph: PRODUCTS) @join__type(graph: INVENTORY) {
         product(id: ID!): Product
@@ -845,7 +852,14 @@ describe('Federation Connectors composition', () => {
           @connect(source: "api", http: { GET: "/stock/{$args.id}" }, selection: "id qty")
       }
 
-      type Product @join__type(graph: PRODUCTS, key: "id") {
+      type Product
+        @join__type(graph: PRODUCTS, key: "id")
+        @connect(
+          source: "api"
+          http: { GET: "/products/{$this.id}" }
+          selection: "id name"
+          entity: true
+        ) {
         id: ID!
         name: String
       }
@@ -857,10 +871,22 @@ describe('Federation Connectors composition', () => {
     `;
 
     const out = finalizeConnectorsSupergraph(before);
-    expect(out).toMatch(/product\([\s\S]*@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
-    expect(out).toMatch(/stock\([\s\S]*@join__directive\(graphs: \[INVENTORY\], name: "connect"/);
-    expect(out).not.toMatch(
-      /stock\([\s\S]*@join__directive\(graphs: \[PRODUCTS\], name: "connect"/,
+    const productField = out.match(/product\(id: ID!\): Product[^\n]*/)?.[0] ?? '';
+    const stockField = out.match(/stock\(id: ID!\): Stock[^\n]*/)?.[0] ?? '';
+    const productType = out.match(/type Product[^\n]*/)?.[0] ?? '';
+    expect(productField).toMatch(/@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
+    expect(stockField).toMatch(/@join__directive\(graphs: \[INVENTORY\], name: "connect"/);
+    expect(stockField).not.toMatch(/@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
+    // Sole join__type on Product → type-level connect stays PRODUCTS (not stolen by
+    // a later field that also used source "api").
+    expect(productType).toMatch(/@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
+    expect(productType).not.toMatch(/@join__directive\(graphs: \[INVENTORY\], name: "connect"/);
+    // Schema @source emitted for every graph that referenced "api".
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[PRODUCTS\], name: "source", args: \{name: "api"/,
+    );
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api"/,
     );
   });
 });
