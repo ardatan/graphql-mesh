@@ -245,7 +245,12 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
     expect(coerceXmlLeafForGraphQLType('true', 'ID')).toBe('true');
     expect(coerceXmlLeafForGraphQLType(true, 'ID')).toBe('true');
     expect(coerceXmlLeafForGraphQLType('true', 'Boolean')).toBe(true);
+    expect(coerceXmlLeafForGraphQLType('1', 'Boolean')).toBe(true);
+    expect(coerceXmlLeafForGraphQLType('0', 'Boolean')).toBe(false);
     expect(coerceXmlLeafForGraphQLType('42', 'Int')).toBe(42);
+    // Ordinary JSON shaped like an XML leaf must not unwrap to null.
+    const jsonLike = { attributes: { id: 'A' } };
+    expect(unwrapXmlScalarLeaf(jsonLike)).toEqual({ attributes: { id: 'A' } });
   });
 
   it('keeps boolean-shaped XML text as GraphQL ID string', async () => {
@@ -302,6 +307,90 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
 
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({ item: { code: 'true', z: '00123' } });
+  });
+
+  it('preserves JSON attribute-shaped objects on scalar fields', async () => {
+    // Regression: installXmlScalarUnwrap must not null JSON `{ attributes: ... }`.
+    const fetchImpl = async () =>
+      new Response(JSON.stringify({ metadata: { attributes: { id: 'A' } } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    const sdl = /* GraphQL */ `
+      schema @source(name: "jsonApi", http: { baseURL: "http://localhost" }) {
+        query: Query
+      }
+      scalar JSON
+      type Query {
+        row: Row
+          @connect(
+            source: "jsonApi"
+            http: { GET: "/row" }
+            selection: """
+            metadata
+            """
+          )
+      }
+      type Row {
+        metadata: JSON
+      }
+    `;
+    const schema = processDirectives(buildSchema(`${CONNECTOR_DIRECTIVES}\n${sdl}`), {
+      globalFetch: fetchImpl as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          row {
+            metadata
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ row: { metadata: { attributes: { id: 'A' } } } });
+  });
+
+  it('coerces XSD 1/0 and list Boolean connector returns', async () => {
+    const fetchImpl = async () =>
+      new Response(
+        `<?xml version="1.0"?><Root><Enabled>1</Enabled><Flag>true</Flag><Flag>0</Flag></Root>`,
+        { status: 200, headers: { 'content-type': 'text/xml' } },
+      );
+    const sdl = /* GraphQL */ `
+      schema @source(name: "xmlApi", http: { baseURL: "http://localhost" }) {
+        query: Query
+      }
+      type Query {
+        enabled: Boolean
+          @connect(
+            source: "xmlApi"
+            http: { GET: "/enabled" }
+            selection: "$.Root.Enabled"
+          )
+        flags: [Boolean!]
+          @connect(
+            source: "xmlApi"
+            http: { GET: "/flags" }
+            selection: "$.Root.Flag"
+          )
+      }
+    `;
+    const schema = processDirectives(buildSchema(`${CONNECTOR_DIRECTIVES}\n${sdl}`), {
+      globalFetch: fetchImpl as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          enabled
+          flags
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ enabled: true, flags: [true, false] });
   });
 
   it('does not force parent prefix onto unprefixed children with default xmlns', () => {

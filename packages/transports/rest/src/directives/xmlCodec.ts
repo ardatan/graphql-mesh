@@ -117,8 +117,31 @@ export function xmlToJsObject(xml: string): unknown {
 }
 
 /**
+ * Non-enumerable mark on objects produced by `xmlToJsObject`. Field resolvers and
+ * `unwrapXmlScalarLeaf` use this so ordinary JSON values that happen to look like
+ * `{ attributes: ... }` are not treated as XML leaves.
+ */
+export const XML_DERIVED = Symbol.for('@graphql-mesh/xml-derived');
+
+function markXmlDerived<T>(value: T): T {
+  if (value != null && typeof value === 'object') {
+    Object.defineProperty(value, XML_DERIVED, { value: true });
+  }
+  return value;
+}
+
+/** True when `value` is an object/array node from `xmlToJsObject`. */
+export function isXmlDerived(value: unknown): boolean {
+  return (
+    value != null && typeof value === 'object' && Boolean((value as Record<symbol, unknown>)[XML_DERIVED])
+  );
+}
+
+/**
  * Collapse singleton arrays. Keep attributed / mixed nodes intact for selection.
  * Pure `{ innerText }` leaves (no attributes/children) unwrap for convenience.
+ * Every remaining object/array is marked so JSON `{ attributes }` is not mistaken
+ * for an XML leaf later.
  */
 function normalizeXmlResult(result: unknown): unknown {
   if (result != null && typeof result === 'object') {
@@ -126,7 +149,7 @@ function normalizeXmlResult(result: unknown): unknown {
       if (result.length === 1) {
         return normalizeXmlResult(result[0]);
       }
-      return result.map(normalizeXmlResult);
+      return markXmlDerived(result.map(normalizeXmlResult));
     }
     const obj = result as Record<string, unknown>;
     const keys = Object.keys(obj);
@@ -136,6 +159,7 @@ function normalizeXmlResult(result: unknown): unknown {
     for (const key of keys) {
       obj[key] = normalizeXmlResult(obj[key]);
     }
+    return markXmlDerived(obj);
   }
   return result;
 }
@@ -145,9 +169,12 @@ function normalizeXmlResult(result: unknown): unknown {
  * - `{ innerText, attributes? }` (no other children) -> text
  * - `{ attributes }` only (e.g. xsi:nil) -> null
  * - otherwise leave the object for structured fields
+ *
+ * Only XML-derived objects are unwrapped. JSON values shaped like
+ * `{ attributes: { id: "A" } }` stay intact.
  */
 export function unwrapXmlScalarLeaf(value: unknown): unknown {
-  if (value == null || typeof value !== 'object' || Array.isArray(value)) {
+  if (!isXmlDerived(value) || Array.isArray(value)) {
     return value;
   }
   const obj = value as Record<string, unknown>;
@@ -168,6 +195,7 @@ export function unwrapXmlScalarLeaf(value: unknown): unknown {
  * After lexical XML parse, coerce a leaf to match the GraphQL output scalar.
  * `String` / `ID` stay text (including boolean-shaped `true`); Int/Float/Boolean
  * get typed values only when the field type requires them.
+ * XSD Boolean also allows `1` / `0`.
  */
 export function coerceXmlLeafForGraphQLType(value: unknown, typeName: string): unknown {
   if (value == null) {
@@ -180,8 +208,8 @@ export function coerceXmlLeafForGraphQLType(value: unknown, typeName: string): u
     return value;
   }
   if (typeName === 'Boolean' && typeof value === 'string') {
-    if (value === 'true') return true;
-    if (value === 'false') return false;
+    if (value === 'true' || value === '1') return true;
+    if (value === 'false' || value === '0') return false;
     return value;
   }
   if (typeName === 'Int' && typeof value === 'string' && /^-?\d+$/.test(value)) {

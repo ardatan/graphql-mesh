@@ -2386,15 +2386,17 @@ export function addConnectFieldResolver(
       }
     }
     // Scalar / enum returns: unwrap attributed XML leaves, then coerce by type
-    // so ID/String keep lexical text (`true`, `00123`).
-    if (
-      !isListReturnType &&
-      (isScalarType(returnNamedGraphQLType) || isEnumType(returnNamedGraphQLType))
-    ) {
-      selected = coerceXmlLeafForGraphQLType(
-        unwrapXmlScalarLeaf(selected),
-        returnNamedGraphQLType.name,
-      );
+    // so ID/String keep lexical text (`true`, `00123`). List returns coerce each
+    // item — connector resolvers skip installXmlListPluralization.
+    if (isScalarType(returnNamedGraphQLType) || isEnumType(returnNamedGraphQLType)) {
+      const leafName = returnNamedGraphQLType.name;
+      if (isListReturnType && Array.isArray(selected)) {
+        selected = selected.map(item =>
+          coerceXmlLeafForGraphQLType(unwrapXmlScalarLeaf(item), leafName),
+        );
+      } else if (!isListReturnType) {
+        selected = coerceXmlLeafForGraphQLType(unwrapXmlScalarLeaf(selected), leafName);
+      }
     }
     // Fill Mesh-only `_response` fields Apollo selection cannot express.
     selected = fillExposeResponseMetadata(selected, {

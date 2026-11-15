@@ -225,6 +225,7 @@ function installXmlListPluralization(field: GraphQLField<any, any>) {
  * Singular scalar/enum fields: deferred unwrap of attributed XML leaves
  * (`{ innerText, attributes }` / attributes-only nil) after selection can read attributes.
  * Then coerce by GraphQL type so `ID`/`String` keep lexical text (`true`, `00123`).
+ * `unwrapXmlScalarLeaf` no-ops on non-XML values (JSON `{ attributes: ... }` stays).
  */
 function installXmlScalarUnwrap(field: GraphQLField<any, any>) {
   if (field.resolve && field.resolve.name !== 'defaultFieldResolver') return;
