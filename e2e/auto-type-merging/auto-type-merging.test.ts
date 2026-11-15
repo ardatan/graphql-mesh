@@ -46,7 +46,43 @@ it('should compose the appropriate schema', async () => {
   );
 });
 
-it('should execute GetPet on hive (Mesh @merge still fills vaccinated)', async () => {
+/**
+ * Connectors-owned fields (HTTP `@connect` on petstore) are the parity path:
+ * Hive Gateway and Apollo Router return the same `id` / `name` on the same SDL.
+ * GraphQL vaccination fill is covered separately — virtual `@connect` cannot
+ * HTTP-fetch Yoga, so that side is Hive-only via `@merge` / `@meshSource`.
+ */
+describe.each(['hive', 'apollo-router'] as ServeRunner[])(
+  'dual Connectors parity with %s (id/name)',
+  runner => {
+    it('getPetById id+name match on both runners', async () => {
+      const { output } = await compose({
+        output: 'graphql',
+        services: [petstore, await service('vaccination')],
+      });
+      const { execute } = await serve({ runner, supergraph: output });
+      const result = await execute({
+        query: /* GraphQL */ `
+          query GetPet {
+            getPetById(petId: 1) {
+              id
+              name
+            }
+          }
+        `,
+      });
+      expect(result.errors).toBeFalsy();
+      expect(result.data).toEqual({
+        getPetById: {
+          id: 1,
+          name: 'Cat 1',
+        },
+      });
+    });
+  },
+);
+
+it('Hive fills isVaccinated via Mesh @merge (GraphQL vaccination)', async () => {
   const { output } = await compose({
     output: 'graphql',
     services: [petstore, await service('vaccination')],
@@ -56,7 +92,6 @@ it('should execute GetPet on hive (Mesh @merge still fills vaccinated)', async (
     query: /* GraphQL */ `
       query GetPet {
         getPetById(petId: 1) {
-          __typename
           id
           name
           isVaccinated
@@ -67,7 +102,6 @@ it('should execute GetPet on hive (Mesh @merge still fills vaccinated)', async (
   expect(result.errors).toBeFalsy();
   expect(result.data).toEqual({
     getPetById: {
-      __typename: 'Pet',
       id: 1,
       name: 'Cat 1',
       isVaccinated: false,
@@ -75,7 +109,7 @@ it('should execute GetPet on hive (Mesh @merge still fills vaccinated)', async (
   });
 });
 
-it('apollo-router loads dual-annotated SDL; virtual connect cannot GraphQL-fetch isVaccinated', async () => {
+it('Router does not GraphQL-fetch isVaccinated (virtual @connect only)', async () => {
   const { output, result: sdl } = await compose({
     output: 'graphql',
     services: [petstore, await service('vaccination')],
@@ -101,8 +135,11 @@ it('apollo-router loads dual-annotated SDL; virtual connect cannot GraphQL-fetch
     });
     // Router ignores Mesh @merge; virtual entity @connect has no http to vaccination Yoga.
     // isVaccinated virtual `$this.is_vaccinated` only helps once parent carries that key.
+    expect(result.data?.getPetById?.id).toBe(1);
+    expect(result.data?.getPetById?.name).toBe('Cat 1');
     expect(result.data?.getPetById?.isVaccinated ?? null).toBeNull();
   } catch (err) {
+    // Some Router builds 500 when entity planning hits the GraphQL-only virtual connect.
     expect(String(err)).toMatch(/500|INTERNAL_SERVER_ERROR|Connector|error|Unknown type|_entities/i);
   }
 });
