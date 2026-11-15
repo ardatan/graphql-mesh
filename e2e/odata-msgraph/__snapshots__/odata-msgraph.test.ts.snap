@@ -369,57 +369,31 @@ exports[`Microsoft Graph Connectors execute with hive fetchFilesFromOneDrive (v0
             "used": 1024,
           },
           "root": {
-            "children": null,
+            "children": [
+              {
+                "lastModifiedDateTime": "2024-02-01T12:00:00.000Z",
+                "name": "notes.txt",
+                "size": 42,
+                "webUrl": "https://example.com/drive/notes.txt",
+              },
+              {
+                "lastModifiedDateTime": "2024-02-02T12:00:00.000Z",
+                "name": "diagrams",
+                "size": 0,
+                "webUrl": "https://example.com/drive/diagrams",
+              },
+              {
+                "lastModifiedDateTime": "2024-02-03T12:00:00.000Z",
+                "name": "readme.md",
+                "size": 128,
+                "webUrl": "https://example.com/drive/readme.md",
+              },
+            ],
           },
         },
       ],
     },
   },
-  "errors": [
-    {
-      "extensions": {
-        "code": "CONNECTOR_FETCH",
-        "connector": {
-          "coordinate": "MicrosoftGraph:driveItem.children@connect[0]",
-        },
-        "request": {
-          "method": "GET",
-          "url": "http://127.0.0.1:42917/users/user-ada/drives/drive-1/children?%24top=3&%24expand=children",
-        },
-        "response": {
-          "body": {
-            "error": {
-              "message": "Not found: /users/user-ada/drives/drive-1/children",
-            },
-          },
-          "headers": {
-            "connection": "keep-alive",
-            "content-type": "application/json",
-            "date": "Sun, 15 Nov 2026 04:38:36 GMT",
-            "keep-alive": "timeout=5",
-            "transfer-encoding": "chunked",
-          },
-          "status": 404,
-          "statusText": "Not Found",
-        },
-        "serviceName": "MicrosoftGraph",
-      },
-      "locations": [
-        {
-          "column": 9,
-          "line": 9,
-        },
-      ],
-      "message": "Not found: /users/user-ada/drives/drive-1/children",
-      "path": [
-        "me",
-        "drives",
-        0,
-        "root",
-        "children",
-      ],
-    },
-  ],
 }
 `;
 

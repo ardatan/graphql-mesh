@@ -4478,6 +4478,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "defaultValue": null,
             "deprecationReason": null,
             "isDeprecated": false,
+            "name": "search",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
             "name": "skip",
             "type": {
               "kind": "SCALAR",
@@ -5897,30 +5908,6 @@ exports[`OData TripPin should give correct response for example queries: example
       "Trips": [
         {
           "Description": "Trip in US",
-        },
-        {
-          "Description": "Trip from Shanghai to Beijing",
-        },
-        {
-          "Description": "Happy honeymoon trip",
-        },
-        {
-          "Description": "Business trip to OData",
-        },
-        {
-          "Description": "Travel trip in US",
-        },
-        {
-          "Description": "Study music in Europe",
-        },
-        {
-          "Description": "Conference talk about ODatan",
-        },
-        {
-          "Description": "Vocation at hometown",
-        },
-        {
-          "Description": "Business trip for tech training",
         },
       ],
       "UserName": "aprilcline",

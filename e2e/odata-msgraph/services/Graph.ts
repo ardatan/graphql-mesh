@@ -193,7 +193,7 @@ createServer((req, res) => {
     return;
   }
 
-  // /drives/{id}/root
+  // /drives/{id}/root or /users/{id}/drives/{id}/root or /me/drives/{id}/root
   if (req.method === 'GET' && /\/drives\/[^/]+\/root$/i.test(path)) {
     json(res, 200, {
       ...driveRoot,
@@ -202,8 +202,14 @@ createServer((req, res) => {
     return;
   }
 
-  // /drives/{id}/root/children
+  // /drives/{id}/root/children (and user-/me-prefixed equivalents)
   if (req.method === 'GET' && /\/drives\/[^/]+\/root\/children$/i.test(path)) {
+    json(res, 200, driveChildren);
+    return;
+  }
+
+  // Hive may resolve driveItem.children off the drive `@odata.id` (…/drives/{id}/children).
+  if (req.method === 'GET' && /\/drives\/[^/]+\/children$/i.test(path)) {
     json(res, 200, driveChildren);
     return;
   }

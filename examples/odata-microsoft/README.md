@@ -27,68 +27,15 @@ evaluation as-is.
 
 ### Connectors e2e
 
-**Fixture + mock** (always — Hive Gateway + Apollo Router, v0 `example-queries`):
+Fixture metadata + local Graph mock (Hive Gateway + Apollo Router, v0 `example-queries`):
 
 ```bash
 yarn test:e2e e2e/odata-msgraph
 ```
 
-**Live Graph** (same example queries through Hive + Apollo Router → `graph.microsoft.com`):
-
-```bash
-export MSGRAPH_LIVE=1
-export MSGRAPH_ACCESS_TOKEN='…' # short-lived; prefer CI refresh secrets below
-yarn test:e2e e2e/odata-msgraph
-```
-
-#### One-time setup so CI refreshes the token for you
-
-You do **not** paste a new access token every run. Store a refresh token once; the
-`odata-msgraph-live` workflow exchanges it for an access token on each job.
-
-1. **Entra ID → App registrations → New registration** (public client is fine).
-2. **Authentication** → “Allow public client flows” = **Yes** (for device-code helper).
-3. **API permissions** (delegated) + **admin consent** for the app:
-   - `User.Read`, `Mail.Read`, `Group.Read.All`, `Files.Read`, `offline_access`
-4. Use a dedicated test user that actually has the backing workload (MFA/CA exception if needed):
-   - **Mail** (`fetchRecentEmails`): Exchange Online mailbox + `Mail.Read` (403 / Access Denied →
-     soft-skipped in live e2e until fixed)
-   - **OneDrive / SPO** (`fetchFilesFromOneDrive`): Microsoft 365 / OneDrive license so `/me/drives`
-     returns quota (license / SPO gaps → soft-skipped)
-   - **Groups** (`fetchGroupsAndMembers`): `Group.Read.All` and at least one readable group
-5. Mint a refresh token once:
-
-```bash
-export MSGRAPH_TENANT_ID='<directory-tenant-id>'
-export MSGRAPH_CLIENT_ID='<app-client-id>'
-# optional for confidential apps:
-# export MSGRAPH_CLIENT_SECRET='…'
-node e2e/odata-msgraph/scripts/get-refresh-token.mjs
-```
-
-Follow the device-code prompt, then copy the printed values.
-
-6. **GitHub → repo Settings → Secrets and variables → Actions** — add:
-
-| Secret                  | Required | Notes                                       |
-| ----------------------- | -------- | ------------------------------------------- |
-| `MSGRAPH_TENANT_ID`     | yes\*    | Directory (tenant) ID                       |
-| `MSGRAPH_CLIENT_ID`     | yes\*    | Application (client) ID                     |
-| `MSGRAPH_REFRESH_TOKEN` | yes\*    | From the helper script                      |
-| `MSGRAPH_CLIENT_SECRET` | no       | Only if the app is confidential             |
-| `MSGRAPH_ACCESS_TOKEN`  | no       | Fallback only (~1h); prefer refresh secrets |
-
-\*Required for automatic refresh. If none are set, the live suite skips (job stays green).
-
-Workflow: `.github/workflows/odata-msgraph-live.yml` (path-filtered + `workflow_dispatch`).
-
-If Microsoft rotates/revokes the refresh token, re-run the helper and update
-`MSGRAPH_REFRESH_TOKEN`.
-
-Schema note: live execute keeps the e2e fixture metadata (example-query surface). The HTTP endpoint
-is real Graph (`GRAPH_VERSION=v1.0` or `beta`, same as `yarn start` / `yarn start:beta`). Abstract
-OData bases and inheritance become GraphQL unions (`directoryObject`, `IPerson`, …) discriminated by
-`@odata.type` → `__typename` (Router-safe; interfaces/`implements` break Connectors expand).
+Live `graph.microsoft.com` CI is not used (personal Microsoft accounts lack the Mail /
+OneDrive / admin-consent surface those example queries need). Point `examples/odata-microsoft`
+at a work/school tenant locally if you want real Graph traffic.
 
 ## Sample requests
 
