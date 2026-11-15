@@ -201,4 +201,5 @@ directive @transport(subgraph: String!, kind: String!, location: String, headers
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
 scalar join__DirectiveArguments
-";
+"
+`;
