@@ -46,6 +46,14 @@ import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
+import {
+  buildSoapConnectDirectiveArgs,
+  buildSoapSourceDirectiveArgs,
+  CONNECT_LINK_URL,
+  ConnectDirective,
+  LinkDirective,
+  SourceDirective,
+} from './connectEmit.js';
 import type {
   WSDLBinding,
   WSDLDefinition,
@@ -301,18 +309,27 @@ export class SOAPLoader {
   private soapHeaders: SOAPHeaders;
   private bodyAlias?: string;
   private soapNamespace: string;
+  private operationHeaders?: Record<string, string>;
+  /** First discovered WSDL port location (or constructor endpoint). */
+  private resolvedEndpoint?: string;
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
     this.log = options.log || new Logger({ prefix: options.subgraphName });
     this.subgraphName = options.subgraphName;
     this.loadXMLSchemaNamespace();
+    this.schemaComposer.addDirective(ConnectDirective);
+    this.schemaComposer.addDirective(SourceDirective);
+    this.schemaComposer.addDirective(LinkDirective);
+    // Keep @soap registered so legacy annotated SDL can still be parsed if loaded.
     this.schemaComposer.addDirective(soapDirective);
     this.schemaHeadersFactory = getInterpolatedHeadersFactory(options.schemaHeaders || {});
     this.endpoint = options.endpoint;
+    this.resolvedEndpoint = options.endpoint;
     this.cwd = options.cwd;
     this.soapHeaders = options.soapHeaders;
     this.bodyAlias = options.bodyAlias;
+    this.operationHeaders = options.operationHeaders;
     this.soapNamespace = 'http://schemas.xmlsoap.org/soap/envelope/';
   }
 
@@ -686,6 +703,9 @@ export class SOAPLoader {
                 }
               }
             }
+            if (soapAnnotations.endpoint && !this.resolvedEndpoint) {
+              this.resolvedEndpoint = soapAnnotations.endpoint;
+            }
             if (this.bodyAlias) {
               soapAnnotations.bodyAlias = this.bodyAlias;
             }
@@ -695,12 +715,7 @@ export class SOAPLoader {
             rootTC.addFields({
               [operationFieldName]: {
                 type,
-                directives: [
-                  {
-                    name: 'soap',
-                    args: soapAnnotations,
-                  },
-                ],
+                directives: [],
               },
             });
             const inputObj = operationObj.input[0];
@@ -809,6 +824,27 @@ export class SOAPLoader {
             if (Object.keys(argNamespaceMap).length > 0) {
               soapAnnotations.argNamespaces = argNamespaceMap;
             }
+
+            const field = rootTC.getField(operationFieldName);
+            const argNames = Object.keys(field.args || {});
+            field.directives = [
+              {
+                name: 'connect',
+                args: buildSoapConnectDirectiveArgs({
+                  sourceName: this.subgraphName,
+                  endpoint: soapAnnotations.endpoint,
+                  soapNamespace: soapAnnotations.soapNamespace,
+                  soapAction: soapAnnotations.soapAction,
+                  elementName: soapAnnotations.elementName,
+                  bindingNamespace: soapAnnotations.bindingNamespace,
+                  bodyAlias: soapAnnotations.bodyAlias,
+                  argNamespaces: soapAnnotations.argNamespaces,
+                  headerArgNames: soapAnnotations.headerArgNames,
+                  soapHeaders: soapAnnotations.soapHeaders,
+                  argNames,
+                }),
+              },
+            ];
           }
         }
       }
@@ -1535,11 +1571,27 @@ export class SOAPLoader {
     // the schema from SDL still see this metadata. typeNamespacesJson is
     // included here (rather than on schema.extensions directly) so the
     // namespace-aware envelope path also works after federation composition.
+    // Connectors subgraph: Hive loads transport-rest for @connect / @source.
     schemaExts.directives.transport = {
-      kind: 'soap',
+      kind: 'rest',
       subgraph: this.subgraphName,
-      typeNamespacesJson: Object.fromEntries(this.typeNamespaceMap),
     };
+    schemaExts.directives.source = [
+      buildSoapSourceDirectiveArgs({
+        name: this.subgraphName,
+        endpoint: this.resolvedEndpoint || this.endpoint || '',
+        operationHeaders: this.operationHeaders,
+      }),
+    ];
+    const existingLinks = Array.isArray(schemaExts.directives.link)
+      ? schemaExts.directives.link
+      : schemaExts.directives.link
+        ? [schemaExts.directives.link]
+        : [];
+    schemaExts.directives.link = [
+      ...existingLinks,
+      { url: CONNECT_LINK_URL, import: ['@connect', '@source'] },
+    ];
     return schema;
   }
 }

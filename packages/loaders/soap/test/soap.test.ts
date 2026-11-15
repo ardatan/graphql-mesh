@@ -2,12 +2,11 @@
 import { promises as fsPromises } from 'fs';
 import { globalAgent } from 'https';
 import { join } from 'path';
-import { parse } from 'graphql';
-import type { MeshFetch } from '@graphql-mesh/types';
+import { execute, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { dummyLogger as log } from '../../../testing/dummyLogger';
-import { createExecutorFromSchemaAST, SOAPLoader } from '../src/index.js';
+import { processDirectives, SOAPLoader } from '../src/index.js';
 
 describe('SOAP Loader', () => {
   afterEach(() => {
@@ -22,9 +21,9 @@ describe('SOAP Loader', () => {
       log,
     });
     await soapLoader.fetchWSDL('https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL');
-    const schema = soapLoader.buildSchema();
-    const executor = createExecutorFromSchemaAST(schema, fetch);
-    const result: any = await executor({
+    const schema = processDirectives(soapLoader.buildSchema(), { globalFetch: fetch });
+    const result: any = await execute({
+      schema,
       document: parse(/* GraphQL */ `
         mutation AddInteger {
           s0_SOAPDemo_SOAPDemoSoap_AddInteger(AddInteger: { Arg1: 2, Arg2: 3 }) {
@@ -51,21 +50,19 @@ describe('SOAP Loader', () => {
     const schema = soapLoader.buildSchema();
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
 
-    const executor = createExecutorFromSchemaAST(schema, (() => {}) as unknown as MeshFetch);
+    const executable = processDirectives(schema, {
+      globalFetch: (() => {}) as any,
+    });
 
-    let err;
-    try {
-      await executor({
-        document: parse(/* GraphQL */ `
-          {
-            placeholder
-          }
-        `),
-      });
-    } catch (e) {
-      err = e;
-    }
+    const result = await execute({
+      schema: executable,
+      document: parse(/* GraphQL */ `
+        {
+          placeholder
+        }
+      `),
+    });
 
-    expect(err).toBeUndefined();
+    expect(result.errors).toBeUndefined();
   });
 });
