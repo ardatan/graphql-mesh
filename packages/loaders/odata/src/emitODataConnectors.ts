@@ -477,7 +477,9 @@ function isInputObjectArgType(schemaComposer: SchemaComposer, argTypeName: strin
     if (schemaComposer.isEnumType(argTypeName) || schemaComposer.isScalarType(argTypeName)) {
       return false;
     }
-    return schemaComposer.isInputType(argTypeName);
+    // SchemaComposer has no `isInputType` — resolve via InputTypeComposer.
+    schemaComposer.getITC(argTypeName);
+    return true;
   } catch {
     return /(Input|Instance)$/.test(argTypeName);
   }
@@ -1027,15 +1029,16 @@ export function emitODataConnectors(
           // (URL identifies the entity). Other Inputs (e.g. recipient: PersonInput) stay.
           const bindingParameterName = dirs.boundAction.bindingParameterName as string | undefined;
           const bodyArgs: string[] = [];
-          for (const argName of Object.keys(field.args || {})) {
+          for (const argName of Object.keys(field.args || {}) as string[]) {
             if (argName === 'queryOptions') continue;
             if (bindingParameterName && argName === bindingParameterName) continue;
             bodyArgs.push(argName);
           }
+          const declaredArgCount = Object.keys(field.args || {}).length;
           const body =
             bodyArgs.length === 0
               ? '$({})'
-              : bodyArgs.length === Object.keys(field.args || {}).length
+              : bodyArgs.length === declaredArgCount
                 ? '$args'
                 : `$args { ${bodyArgs.join(' ')} }`;
           setConnect(
