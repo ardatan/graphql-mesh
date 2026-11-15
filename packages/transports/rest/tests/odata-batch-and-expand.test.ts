@@ -1,5 +1,6 @@
 import { buildSchema, execute, parse } from 'graphql';
 import { processConnectDirectives } from '../src/directives/connect.js';
+import { createODataBatchFetch } from '../src/directives/odataBatch.js';
 import { rebuildOpenInputObjects } from '../src/directives/odataOpenInput.js';
 
 const CONNECTOR_DIRECTIVES = /* GraphQL */ `
@@ -256,6 +257,73 @@ describe('OData $batch json coalescing', () => {
     expect(urls[0]).toContain('/People/russellwhyte');
     expect(urls[1]).toContain('/$batch');
     expect(batchRequestCount).toBe(2);
+  });
+
+  it('splits /$batch by Authorization so different credentials never share a batch', async () => {
+    const batchPosts: Array<{ auth: string; urls: string[] }> = [];
+    const fetchFn = (async (url: string, init?: RequestInit) => {
+      if (!String(url).includes('/$batch')) {
+        return Response.json({ ok: true });
+      }
+      const headerBag =
+        init?.headers && typeof init.headers === 'object' && !Array.isArray(init.headers)
+          ? (init.headers as Record<string, string>)
+          : {};
+      const auth =
+        headerBag.Authorization ||
+        headerBag.authorization ||
+        new Headers(init?.headers as HeadersInit).get('authorization') ||
+        '';
+      const parsed = JSON.parse(String(init?.body));
+      batchPosts.push({
+        auth,
+        urls: parsed.requests.map((req: { url: string }) => req.url),
+      });
+      return Response.json({
+        responses: parsed.requests.map((req: { id: string }) => ({
+          id: req.id,
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+          body: { ok: true },
+        })),
+      });
+    }) as any;
+
+    const batchFetch = createODataBatchFetch({
+      fetchFn,
+      endpoint: 'https://odata.example.com',
+      batchMode: 'json',
+    });
+
+    const context = {};
+    // Two requests per tenant so both partitions use /$batch (n===1 is forwarded).
+    await Promise.all([
+      batchFetch(
+        'https://odata.example.com/A',
+        { headers: { Authorization: 'Bearer tenant-a' } },
+        context,
+      ),
+      batchFetch(
+        'https://odata.example.com/B',
+        { headers: { Authorization: 'Bearer tenant-b' } },
+        context,
+      ),
+      batchFetch(
+        'https://odata.example.com/C',
+        { headers: { Authorization: 'Bearer tenant-a' } },
+        context,
+      ),
+      batchFetch(
+        'https://odata.example.com/D',
+        { headers: { Authorization: 'Bearer tenant-b' } },
+        context,
+      ),
+    ]);
+
+    expect(batchPosts).toHaveLength(2);
+    const byAuth = Object.fromEntries(batchPosts.map(p => [p.auth, p.urls.sort()]));
+    expect(byAuth['Bearer tenant-a']).toEqual(['/A', '/C']);
+    expect(byAuth['Bearer tenant-b']).toEqual(['/B', '/D']);
   });
 });
 

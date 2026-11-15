@@ -1598,6 +1598,57 @@ export type ConnectFieldResolverOptions = {
   odata?: ConnectODataOptions;
 };
 
+/**
+ * Custom nav args (e.g. `limit`) cannot ride `$expand`; queryOptions alone can.
+ * Prefer-embedded must not skip the connector when those args need a dedicated GET.
+ */
+function navArgsRequireDedicatedFetch(args: Record<string, unknown> | null | undefined): boolean {
+  if (args == null || typeof args !== 'object') {
+    return false;
+  }
+  for (const key of Object.keys(args)) {
+    if (key === 'queryOptions') {
+      continue;
+    }
+    if (args[key] != null) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** True when prefer-embedded value is already GraphQL-shaped (do not re-run selection). */
+function navValueAlreadyMapped(embedded: unknown, selection: string): boolean {
+  const sample = Array.isArray(embedded)
+    ? embedded.find(item => item != null && typeof item === 'object')
+    : embedded;
+  if (sample == null || typeof sample !== 'object' || Array.isArray(sample)) {
+    return false;
+  }
+  const obj = sample as Record<string, unknown>;
+  if ('__typename' in obj) {
+    return true;
+  }
+  // `gqlName: WireName` remaps - if gqlName is present and WireName is not, already mapped.
+  for (const match of selection.matchAll(/\b([A-Za-z_][\w]*)\s*:\s*([A-Za-z_][\w]*)\b/g)) {
+    const gqlName = match[1];
+    const wireName = match[2];
+    if (!gqlName || !wireName || gqlName === wireName) {
+      continue;
+    }
+    if (gqlName.startsWith('$') || gqlName === '__typename') {
+      continue;
+    }
+    if (
+      Object.prototype.hasOwnProperty.call(obj, gqlName) &&
+      !Object.prototype.hasOwnProperty.call(obj, wireName)
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function addConnectFieldResolver(
   schema: GraphQLSchema,
   field: GraphQLField<any, any>,
@@ -1620,8 +1671,12 @@ export function addConnectFieldResolver(
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
     // When `$expand` / parent selection already put this field on `root`, skip HTTP.
     // Apollo may skip via planner; Hive always invokes the field resolver.
+    // Non-queryOptions nav args are excluded from `$expand` - never reuse embedded
+    // for those (connector must apply limit/filter args via its own HTTP).
+    const navArgsNeedFetch = navArgsRequireDedicatedFetch(args);
     if (
       preferEmbeddedNav &&
+      !navArgsNeedFetch &&
       root != null &&
       typeof root === 'object' &&
       info?.fieldName &&
@@ -1629,23 +1684,18 @@ export function addConnectFieldResolver(
       (root as Record<string, unknown>)[info.fieldName] != null
     ) {
       const embedded = (root as Record<string, unknown>)[info.fieldName];
+      const selection = connectArgs.selection || '$';
       // Parent `@connect` selection may already have mapped `__typename` (baked
       // `$expand` + inline nav). Re-running `->match` on mapped objects loses
       // `@odata.type` and collapses every row to the default union member.
-      const alreadyMapped = Array.isArray(embedded)
-        ? embedded.some(item => item != null && typeof item === 'object' && '__typename' in item)
-        : embedded != null &&
-          typeof embedded === 'object' &&
-          !Array.isArray(embedded) &&
-          '__typename' in (embedded as object);
-      if (alreadyMapped) {
+      // Same for `gql: Wire` remaps already applied (e.g. `userName: UserName`).
+      if (navValueAlreadyMapped(embedded, selection)) {
         return embedded;
       }
       const parentId =
         typeof (root as Record<string, unknown>)._odataId === 'string'
           ? ((root as Record<string, unknown>)._odataId as string)
           : '';
-      const selection = connectArgs.selection || '$';
       const extras = {
         status: 200,
         responseHeaders: new Headers(),
@@ -1656,7 +1706,7 @@ export function addConnectFieldResolver(
           context: context || {},
         },
       };
-      // Expanded nav is a raw entity/array; `$.value { … }` selections need a wrapper.
+      // Expanded nav is a raw entity/array; `$.value { ... }` selections need a wrapper.
       let mapped: unknown;
       if (Array.isArray(embedded) && selection.includes('$.value')) {
         mapped = applySelection(selection, { value: embedded }, extras);

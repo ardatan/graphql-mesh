@@ -682,11 +682,14 @@ export function attachExpandedNavFromRaw(
     return selected;
   }
   // Attach under the schema field name (resolvers read `root.friends`, not the alias).
+  // Skip nav fields with non-queryOptions args - those were excluded from `$expand`
+  // and must not be prefer-embedded (connector applies limit/filter via its own GET).
   const navFields: Array<{ schemaName: string; responseName: string }> = [];
   for (const fieldNode of info.fieldNodes) {
     if (!fieldNode.selectionSet) continue;
     for (const sel of fieldNode.selectionSet.selections) {
       if (sel.kind !== Kind.FIELD) continue;
+      if (sel.arguments?.some(a => a.name.value !== 'queryOptions')) continue;
       const fieldDef = objectType.getFields()[sel.name.value];
       if (!fieldDef) continue;
       if (!isODataStructuralField(fieldDef, true)) continue;
