@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@resolveTo", {name: "@source", as: "@meshSource"}, "@transport"]) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @transport(subgraph: "subgraph-b", kind: "connect", location: "http://localhost:<subgraph-b_port>") @join__directive(graphs: [SUBGRAPH_B], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [SUBGRAPH_B], name: "source", args: {name: "subgraph-b", http: {baseURL: "http://localhost:<subgraph-b_port>", headers: [{name: "x-custom-header", value: "{$args.xCustomHeader}"}]}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@resolveTo", {name: "@source", as: "@meshSource"}, "@transport"]) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @transport(subgraph: "subgraph-b", kind: "connect", location: "http://localhost:<subgraph-b_port>") @join__directive(graphs: [SUBGRAPH_A], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [SUBGRAPH_B], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [SUBGRAPH_B], name: "source", args: {name: "subgraph-b", http: {baseURL: "http://localhost:<subgraph-b_port>", headers: [{name: "x-custom-header", value: "{$args.xCustomHeader}"}]}}) {
   query: Query
 }
 
@@ -52,7 +52,7 @@ scalar SubgraphAResolveToSourceArgs @join__type(graph: SUBGRAPH_A)
 scalar SubgraphBResolveToSourceArgs @join__type(graph: SUBGRAPH_B)
 
 type Query @join__type(graph: SUBGRAPH_A) @join__type(graph: SUBGRAPH_B) {
-  _encapsulated_SubgraphA_foo(id: ID!): SubgraphAFoo @meshSource(name: "foo", type: "Foo", subgraph: "subgraph-a") @merge(subgraph: "subgraph-a", keyField: "id", argsExpr: "id: $key.id") @join__field(graph: SUBGRAPH_A) @inaccessible
+  _encapsulated_SubgraphA_foo(id: ID!): SubgraphAFoo @meshSource(name: "foo", type: "Foo", subgraph: "subgraph-a") @merge(subgraph: "subgraph-a", keyField: "id", argsExpr: "id: $key.id") @join__field(graph: SUBGRAPH_A) @inaccessible @join__directive(graphs: [SUBGRAPH_A], name: "connect", args: {selection: "id: $args.id", entity: true})
   _encapsulated_SubgraphA_echoString(argument: String): String @meshSource(name: "echoString", type: "String", subgraph: "subgraph-a") @join__field(graph: SUBGRAPH_A) @inaccessible
   _encapsulated_SubgraphA_echoInt(argument: Int): Int @meshSource(name: "echoInt", type: "Int", subgraph: "subgraph-a") @join__field(graph: SUBGRAPH_A) @inaccessible
   _encapsulated_SubgraphA_echoBoolean(argument: Boolean): Boolean @meshSource(name: "echoBoolean", type: "Boolean", subgraph: "subgraph-a") @join__field(graph: SUBGRAPH_A) @inaccessible
@@ -66,7 +66,7 @@ type SubgraphAFoo @meshSource(name: "Foo", subgraph: "subgraph-a") @join__type(g
 }
 
 type SubgraphASubgraphAQuery @join__type(graph: SUBGRAPH_A) {
-  foo(id: ID!): SubgraphAFoo @meshSource(name: "foo", type: "Foo", subgraph: "subgraph-a") @merge(subgraph: "subgraph-a", keyField: "id", argsExpr: "id: $key.id") @resolveTo(sourceName: "subgraph-a", sourceTypeName: "Query", sourceFieldName: "_encapsulated_SubgraphA_foo", sourceArgs: {id: "{args.id}"})
+  foo(id: ID!): SubgraphAFoo @meshSource(name: "foo", type: "Foo", subgraph: "subgraph-a") @connect(selection: "id: $args.id", entity: true) @merge(subgraph: "subgraph-a", keyField: "id", argsExpr: "id: $key.id") @resolveTo(sourceName: "subgraph-a", sourceTypeName: "Query", sourceFieldName: "_encapsulated_SubgraphA_foo", sourceArgs: {id: "{args.id}"})
   echoString(argument: String): String @resolveTo(sourceName: "subgraph-a", sourceTypeName: "Query", sourceFieldName: "_encapsulated_SubgraphA_echoString", sourceArgs: {argument: "{args.argument}"})
   echoInt(argument: Int): Int @resolveTo(sourceName: "subgraph-a", sourceTypeName: "Query", sourceFieldName: "_encapsulated_SubgraphA_echoInt", sourceArgs: {argument: "{args.argument}"})
   echoBoolean(argument: Boolean): Boolean @resolveTo(sourceName: "subgraph-a", sourceTypeName: "Query", sourceFieldName: "_encapsulated_SubgraphA_echoBoolean", sourceArgs: {argument: "{args.argument}"})

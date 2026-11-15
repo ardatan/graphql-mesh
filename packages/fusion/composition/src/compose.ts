@@ -127,10 +127,7 @@ function schemaHasHttpConnectDirective(schema: GraphQLSchema): boolean {
         return fieldConfig;
       }
       const connects = getDirectiveExtensions(fieldConfig)?.connect;
-      if (
-        Array.isArray(connects) &&
-        connects.some((c: { http?: unknown }) => c?.http != null)
-      ) {
+      if (Array.isArray(connects) && connects.some((c: { http?: unknown }) => c?.http != null)) {
         found = true;
       }
       return fieldConfig;
@@ -140,10 +137,7 @@ function schemaHasHttpConnectDirective(schema: GraphQLSchema): boolean {
         return type;
       }
       const connects = getDirectiveExtensions(type)?.connect;
-      if (
-        Array.isArray(connects) &&
-        connects.some((c: { http?: unknown }) => c?.http != null)
-      ) {
+      if (Array.isArray(connects) && connects.some((c: { http?: unknown }) => c?.http != null)) {
         found = true;
       }
       return type;
@@ -410,6 +404,12 @@ export function getAnnotatedSubgraphs(
             });
             if (directiveExtensions.merge) {
               mergeDirectiveUsed = true;
+            }
+            if (
+              Array.isArray(directiveExtensions.connect) &&
+              directiveExtensions.connect.some((c: { http?: unknown }) => c?.http == null)
+            ) {
+              virtualConnectUsed = true;
             }
             return {
               ...fieldConfig,
@@ -885,14 +885,12 @@ function packSchemaDirectivesIntoExtrasForGuild(
   if (!packed.transport?.length && Array.isArray(packed.source)) {
     for (const src of packed.source) {
       const baseURL =
-        src &&
-        typeof src === 'object' &&
-        (src as { http?: { baseURL?: string } }).http?.baseURL;
+        src && typeof src === 'object' && (src as { http?: { baseURL?: string } }).http?.baseURL;
       if (typeof baseURL === 'string' && baseURL) {
         packed.transport = [
           {
             subgraph: subgraphName,
-            kind: 'rest',
+            kind: 'connect',
             location: baseURL,
           },
         ];
@@ -1147,8 +1145,7 @@ function withGuildConnectComposeDirective(typeDefs: DocumentNode): DocumentNode 
     for (const dir of directives || []) {
       if (dir.name.value === 'link') {
         const urlArg = dir.arguments?.find(a => a.name.value === 'url');
-        const url =
-          urlArg?.value.kind === Kind.STRING ? urlArg.value.value : undefined;
+        const url = urlArg?.value.kind === Kind.STRING ? urlArg.value.value : undefined;
         if (url?.startsWith('https://specs.apollo.dev/connect')) {
           hasConnectLink = true;
         }
@@ -1189,9 +1186,7 @@ function withGuildConnectComposeDirective(typeDefs: DocumentNode): DocumentNode 
   };
 
   let stamped = false;
-  const stamp = (node: {
-    directives?: readonly ConstDirectiveNode[];
-  }) => {
+  const stamp = (node: { directives?: readonly ConstDirectiveNode[] }) => {
     if (stamped) {
       return node;
     }

@@ -443,12 +443,26 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               }));
             }
           } else {
-            attachVirtualEntityConnect(fieldDirectives, {
-              keyField: keyField || 'id',
-              keyArg: keyArg || keyField || 'id',
-              returnType: getNamedType(fieldConfig.type),
-            });
-            virtualConnectUsed = true;
+            // Dual virtual `@connect(entity: true)` only for simple single-field keys.
+            // Compound / nested keys (`sku package`, `sku variation { id }`) cannot be
+            // expressed as requestless `$args` mapping — Rover rejects them. Hive still
+            // gets Mesh `@merge`.
+            const simpleKeyField =
+              typeof keyField === 'string' && /^[A-Za-z_][A-Za-z0-9_]*$/.test(keyField)
+                ? keyField
+                : undefined;
+            const simpleKeyArg =
+              typeof keyArg === 'string' && /^[A-Za-z_][A-Za-z0-9_]*$/.test(keyArg)
+                ? keyArg
+                : simpleKeyField;
+            if (simpleKeyField && simpleKeyArg) {
+              attachVirtualEntityConnect(fieldDirectives, {
+                keyField: simpleKeyField,
+                keyArg: simpleKeyArg,
+                returnType: getNamedType(fieldConfig.type),
+              });
+              virtualConnectUsed = true;
+            }
             const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
             mergeDirectiveExtensions.push({
               subgraph: subgraphConfig.name,

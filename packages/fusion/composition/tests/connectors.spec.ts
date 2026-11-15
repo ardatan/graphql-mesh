@@ -1,3 +1,4 @@
+import { camelCase } from 'change-case';
 import { buildSchema, print } from 'graphql';
 import {
   composeSubgraphs,
@@ -13,7 +14,6 @@ import {
 import { createNamingConventionTransform } from '../src/transforms/naming-convention.js';
 import { createPrefixTransform } from '../src/transforms/prefix.js';
 import { createRenameTransform } from '../src/transforms/rename.js';
-import { camelCase } from 'change-case';
 
 describe('Federation Connectors composition', () => {
   const connectorsSchema = buildSchema(/* GraphQL */ `
@@ -77,15 +77,13 @@ describe('Federation Connectors composition', () => {
     expect(
       isFederationConnectorsSubgraph(
         buildSchema(/* GraphQL */ `
-          schema
-            @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) {
+          schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) {
             query: Query
           }
           directive @link(url: String!, import: [String]) repeatable on SCHEMA
           directive @connect(selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION
           type Query {
-            author(id: ID!): Author
-              @connect(selection: "id: $args.id", entity: true)
+            author(id: ID!): Author @connect(selection: "id: $args.id", entity: true)
           }
           type Author {
             id: ID!
@@ -116,8 +114,7 @@ describe('Federation Connectors composition', () => {
       },
     ]);
     expect(composed.errors).toBeUndefined();
-    const petById =
-      composed.supergraphSdl?.match(/petById\([\s\S]*?\):\s*Pet[^\n]*/)?.[0] || '';
+    const petById = composed.supergraphSdl?.match(/petById\([\s\S]*?\):\s*Pet[^\n]*/)?.[0] || '';
     expect(petById).toMatch(/@merge\(subgraph:\s*"vaccination"/);
     expect(petById).toMatch(/name:\s*"connect"/);
     expect(petById).toMatch(/entity:\s*true/);
