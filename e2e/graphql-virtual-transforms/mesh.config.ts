@@ -9,16 +9,11 @@ import {
 const opts = Opts(process.argv);
 
 /**
- * type-merging-with-transforms shape WITHOUT additionalTypeDefs / `@resolveTo`.
+ * Dual annotation (GraphQL only — no OpenAPI):
+ * - Hive: Mesh `@merge` / `@source` (rename → stitching source)
+ * - Router: virtual `@connect(entity: true)` beside `@merge` on the entity owner field
  *
- * - books: plain GraphQL; `Book.author` stub on the service schema; rename `books`→`titles`
- *   shows Mesh transforms still apply (stitching `@source` / `@meshSource` on GraphQL).
- * - authors (virtual mode): plain GraphQL + federation `virtualConnect: true` → Apollo
- *   virtual `@connect(entity: true)` instead of Mesh `@merge`. Selection only echoes
- *   `$args.id` (no HTTP) so GraphQL `name` is not fetched.
- * - authors (federation mode): real `@apollo/subgraph` fills `name` via `_entities`.
- *
- * Set MESH_SPIKE_MODE=federation for the Federation dual-run path.
+ * Set MESH_SPIKE_MODE=federation for real Federation `_entities` authors (control).
  */
 const mode = process.env.MESH_SPIKE_MODE || 'virtual';
 
@@ -42,6 +37,7 @@ export const composeConfig = defineConfig({
                   resolveReference: {
                     fieldName: 'author',
                     keyArg: 'id',
+                    // Dual: keep @merge for Hive; also emit virtual @connect for Router.
                     virtualConnect: true,
                   },
                 },

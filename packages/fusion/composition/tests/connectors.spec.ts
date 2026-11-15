@@ -71,6 +71,27 @@ describe('Federation Connectors composition', () => {
         `),
       ),
     ).toBe(false);
+    // Virtual-only connect @link (no SCHEMA @source http, no @connect http) is NOT Connectors.
+    expect(
+      isFederationConnectorsSubgraph(
+        buildSchema(/* GraphQL */ `
+          schema
+            @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) {
+            query: Query
+          }
+          directive @link(url: String!, import: [String]) repeatable on SCHEMA
+          directive @connect(selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION
+          type Query {
+            author(id: ID!): Author
+              @connect(selection: "id: $args.id", entity: true)
+          }
+          type Author {
+            id: ID!
+            name: String
+          }
+        `),
+      ),
+    ).toBe(false);
   });
 
   it('does not add Mesh @transport or stitching @source for connectors subgraphs', () => {

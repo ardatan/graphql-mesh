@@ -84,23 +84,63 @@ function isEmptyObject(obj: any) {
 }
 
 /**
- * Federation Connectors subgraphs use `@link(url: "https://specs.apollo.dev/connect/...")`
- * and/or schema `@source(http: { baseURL })`. They must not get Mesh `@transport`
- * or stitching `@meshSource(subgraph:)` annotations — transforms rewrite connect SDL instead.
+ * True when the schema has an Apollo Connectors **HTTP** contract (SCHEMA
+ * `@source(http:)` and/or `@connect(http:)`).
+ *
+ * A bare connect `@link` plus **virtual** `@connect` (no `http:`) is *not*
+ * enough — that pattern is for Router-facing dual annotation while Hive still
+ * uses GraphQL `@merge` / `@source`. Treating virtual-only as Connectors would
+ * flip the subgraph to rest transport and preempt Mesh type-merging.
  */
 export function isFederationConnectorsSubgraph(schema: GraphQLSchema): boolean {
   const directives = getDirectiveExtensions(schema);
-  const links = directives?.link || [];
-  if (
-    links.some(
-      (link: { url?: string }) =>
-        typeof link?.url === 'string' && link.url.startsWith('https://specs.apollo.dev/connect'),
-    )
-  ) {
+  const sources = directives?.source || [];
+  if (sources.some((source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null)) {
     return true;
   }
-  const sources = directives?.source || [];
-  return sources.some((source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null);
+  return schemaHasHttpConnectDirective(schema);
+}
+
+/** Connect `@link` present (virtual and/or HTTP Connectors). */
+export function schemaHasConnectLink(schema: GraphQLSchema): boolean {
+  const links = getDirectiveExtensions(schema)?.link || [];
+  return links.some(
+    (link: { url?: string }) =>
+      typeof link?.url === 'string' && link.url.startsWith('https://specs.apollo.dev/connect'),
+  );
+}
+
+function schemaHasHttpConnectDirective(schema: GraphQLSchema): boolean {
+  let found = false;
+  mapSchema(schema, {
+    [MapperKind.FIELD]: fieldConfig => {
+      if (found) {
+        return fieldConfig;
+      }
+      const connects = getDirectiveExtensions(fieldConfig)?.connect;
+      if (
+        Array.isArray(connects) &&
+        connects.some((c: { http?: unknown }) => c?.http != null)
+      ) {
+        found = true;
+      }
+      return fieldConfig;
+    },
+    [MapperKind.OBJECT_TYPE]: type => {
+      if (found) {
+        return type;
+      }
+      const connects = getDirectiveExtensions(type)?.connect;
+      if (
+        Array.isArray(connects) &&
+        connects.some((c: { http?: unknown }) => c?.http != null)
+      ) {
+        found = true;
+      }
+      return type;
+    },
+  });
+  return found;
 }
 
 /** @deprecated Use {@link isFederationConnectorsSubgraph}. */
@@ -110,30 +150,39 @@ export function getAnnotatedSubgraphs(
   subgraphs: SubgraphConfig[],
   options: GetAnnotatedSubgraphsOptions = {},
 ) {
-  // Alias Mesh stitching `@source` as `@meshSource` only when the composition also
-  // has Federation Connectors (SCHEMA `@source`). Mesh-only graphs keep plain `@source`.
-  // Transforms may add connect/v0.4 (e.g. federation `virtualConnect`) — probe with the
-  // real subgraph config (never a fake name: prefix transform latches `value` from
-  // `subgraphConfig.name` on first call).
-  const schemaLooksLikeConnectors = (subgraphConfig: SubgraphConfig) => {
-    if (isFederationConnectorsSubgraph(subgraphConfig.schema)) {
-      return true;
-    }
+  // Alias Mesh stitching `@source` as `@meshSource` when the composition also has
+  // Apollo Connectors `@source` *or* a connect `@link` (including virtual-only dual
+  // annotation). Otherwise Router's connectors parser treats Mesh `@source` as Apollo
+  // SCHEMA `@source` and fails. Mesh-only graphs (no connect link) keep plain `@source`.
+  // Probe with the real subgraph config (never a fake name: prefix transform latches
+  // `value` from `subgraphConfig.name` on first call).
+  const probeTransformedSchema = (subgraphConfig: SubgraphConfig): GraphQLSchema => {
+    let probe = subgraphConfig.schema;
     const transforms = subgraphConfig.transforms;
     if (!transforms?.length) {
+      return probe;
+    }
+    for (const transform of transforms) {
+      probe = transform(probe, subgraphConfig);
+    }
+    return probe;
+  };
+  const schemaLooksLikeConnectors = (subgraphConfig: SubgraphConfig) => {
+    try {
+      return isFederationConnectorsSubgraph(probeTransformedSchema(subgraphConfig));
+    } catch {
       return false;
     }
+  };
+  const schemaLooksLikeConnectLink = (subgraphConfig: SubgraphConfig) => {
     try {
-      let probe = subgraphConfig.schema;
-      for (const transform of transforms) {
-        probe = transform(probe, subgraphConfig);
-      }
-      return isFederationConnectorsSubgraph(probe);
+      return schemaHasConnectLink(probeTransformedSchema(subgraphConfig));
     } catch {
       return false;
     }
   };
   const compositionHasConnectors = subgraphs.some(schemaLooksLikeConnectors);
+  const compositionHasConnectLink = subgraphs.some(schemaLooksLikeConnectLink);
   const compositionHasMeshStitchingSource = subgraphs.some(
     subgraphConfig =>
       !schemaLooksLikeConnectors(subgraphConfig) && !!subgraphConfig.transforms?.length,
@@ -177,9 +226,11 @@ export function getAnnotatedSubgraphs(
     // Stitching source is only for non-connectors transforms. Connectors transforms
     // rewrite `@connect` selection/http instead of adding Mesh source annotations.
     const sourceDirectiveUsed = !isConnectorsSubgraph && transforms?.length > 0;
-    // When Connectors are in the same composition, alias to `@meshSource` so Guild
-    // does not treat Mesh + Apollo `@source` as one composed directive.
-    const aliasMeshSource = sourceDirectiveUsed && compositionHasConnectors;
+    // When Connectors *or* virtual connect `@link` are in the composition, alias to
+    // `@meshSource` so Apollo Router does not parse Mesh stitching `@source` as
+    // Connectors SCHEMA `@source`.
+    const aliasMeshSource =
+      sourceDirectiveUsed && (compositionHasConnectors || compositionHasConnectLink);
     const meshSourceDirectiveName = aliasMeshSource ? 'meshSource' : 'source';
     const normalizedSchema = normalizeDirectiveExtensions(schema);
     if (isConnectorsSubgraph) {
@@ -472,7 +523,8 @@ export function getAnnotatedSubgraphs(
         },
       });
     }
-    // Federation `virtualConnect` (and similar) may add connect/v0.4 during transforms.
+    // HTTP Connectors added during transforms (e.g. loader emit) → rest transport.
+    // Virtual-only `@connect` (no http) must NOT flip GraphQL subgraphs to rest.
     if (!isConnectorsSubgraph && isFederationConnectorsSubgraph(transformedSubgraph)) {
       isConnectorsSubgraph = true;
       removeTransportDirectiveDefinition = true;
@@ -490,6 +542,8 @@ export function getAnnotatedSubgraphs(
         },
       ];
     }
+    const hasVirtualOrHttpConnect =
+      isConnectorsSubgraph || schemaHasConnectLink(transformedSubgraph);
     // Cross-subgraph Connectors stubs → `@key(..., resolvable: false)` so Hive
     // plans `_entities` (Router already resolves stubs from selection). Runs for
     // OpenAPI subgraphs with no transforms as well as transform pipelines.
@@ -510,11 +564,12 @@ export function getAnnotatedSubgraphs(
         importedDirectives.push('@source');
       }
     }
-    // Preserve Apollo `@connect` through federation via `@composeDirective`.
+    // Preserve Apollo `@connect` through federation via `@composeDirective`
+    // (HTTP Connectors *and* virtual-only dual annotation for Router).
     // When Mesh stitching `@source` is also in the composition, drop `@source` from the
     // connect `@link` import so Guild does not clash (args stay in extras; post-process
     // restores `@source` on the connect `@link` after lifting SCHEMA directives).
-    if (isConnectorsSubgraph) {
+    if (hasVirtualOrHttpConnect) {
       const schemaDirectives = getDirectiveExtensions(transformedSubgraph) || {};
       const composeDirectives = (schemaDirectives.composeDirective =
         schemaDirectives.composeDirective?.filter(Boolean) || []);

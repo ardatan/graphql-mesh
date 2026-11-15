@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`GraphQL virtual Connectors transforms (no additionalTypeDefs) virtualConnect on plain GraphQL authors composes authors.author as entity:true without Mesh @merge on that field 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", {name: "@source", as: "@meshSource"}, "@transport"]) @transport(kind: "rest", subgraph: "authors", location: "http://localhost:<authors_port>/graphql", options: {}) @join__directive(graphs: [AUTHORS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) {
+exports[`GraphQL dual @merge + virtual @connect (no OpenAPI) virtualConnect dual annotation on plain GraphQL authors composes @merge and @connect(entity:true) on author; keeps Mesh @source for books rename 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", {name: "@source", as: "@meshSource"}]) @join__directive(graphs: [AUTHORS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) {
   query: Query
 }
 
@@ -35,18 +35,18 @@ enum link__Purpose {
 }
 
 enum join__Graph {
-  AUTHORS @join__graph(name: "authors", url: "")
+  AUTHORS @join__graph(name: "authors", url: "http://localhost:<authors_port>/graphql")
   BOOKS @join__graph(name: "books", url: "http://localhost:<books_port>/graphql")
 }
 
-directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
+directive @merge(subgraph: String!, argsExpr: String, keyArg: String, keyField: String, key: [String], additionalArgs: String) repeatable on FIELD_DEFINITION
 
 directive @meshSource(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
 scalar TransportOptions @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
 
 type Query @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
-  author(id: ID!): Author @join__field(graph: AUTHORS) @join__directive(graphs: [AUTHORS], name: "connect", args: {selection: "id: $args.id", entity: true})
+  author(id: ID!): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @join__field(graph: AUTHORS) @join__directive(graphs: [AUTHORS], name: "connect", args: {selection: "id: $args.id", entity: true})
   authors(ids: [ID]): [Author] @merge(subgraph: "authors", keyField: "id", keyArg: "ids") @join__field(graph: AUTHORS)
   book(id: ID!): Book @merge(subgraph: "books", keyField: "id", keyArg: "id") @join__field(graph: BOOKS)
   bookList(ids: [ID]): [Book!]! @meshSource(name: "books", type: "[Book!]!", subgraph: "books") @join__field(graph: BOOKS)
@@ -63,8 +63,6 @@ type Book @join__type(graph: BOOKS, key: "id") {
   authorId: ID!
   author: Author
 }
-
-directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 

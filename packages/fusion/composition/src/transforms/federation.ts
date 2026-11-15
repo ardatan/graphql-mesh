@@ -198,11 +198,13 @@ interface FederationResolveReferenceConfig {
    */
   argsExpr?: string;
   /**
-   * Emit an Apollo **virtual** `@connect` (no `http:`) with `entity: true` instead of
-   * Mesh `@merge`. Selection can only map `$args` / `$this` / literals — it cannot call
-   * a GraphQL HTTP upstream. Linking connect/v0.4 also flips the subgraph to the
-   * Connectors (rest) transport for Hive. Prefer real Federation `_entities` or an
-   * HTTP-backed `@connect` when entity fields must be fetched from a GraphQL server.
+   * Also emit an Apollo **virtual** `@connect` (no `http:`, `entity: true`) **alongside**
+   * Mesh `@merge` (dual annotation):
+   * - Hive keeps `@merge` + GraphQL HTTP type-merging
+   * - Apollo Router can read `join__directive` `@connect` on the same field
+   *
+   * Selection only maps `$args` / `$this` / literals — it does not call a GraphQL
+   * HTTP upstream. Virtual-only connect must not flip the subgraph to rest transport.
    */
   virtualConnect?: boolean;
 }
@@ -422,11 +424,10 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           // - keyArg === keyField → Query `@connect(entity: true)`
           // - keyArg !== keyField → type-level `@connect` with `$this.<keyField>`
           //   (see https://www.apollographql.com/docs/graphos/connectors/entities/patterns)
-          // Hive uses REST transport `Query._entities` — skip Mesh `@merge` when Connectors cover it.
-          // Optional `virtualConnect`: synthesize a no-`http` `@connect` so Mesh `@merge` is
-          // skipped (Router-shaped Connectors entity). Selection only echoes key args — it does
-          // not invoke the GraphQL HTTP upstream (Apollo virtual connector rules).
-          if (mergeDirectiveConfig.virtualConnect && !fieldDirectives.connect?.length) {
+          // HTTP `@connect`: Hive REST `_entities` — skip Mesh `@merge`.
+          // `virtualConnect`: ALSO emit requestless `@connect` for Router, keep `@merge` for Hive.
+          const dualVirtualConnect = !!mergeDirectiveConfig.virtualConnect;
+          if (dualVirtualConnect && !fieldDirectives.connect?.length) {
             const keyField = mergeDirectiveConfig.keyField || 'id';
             const keyArg = mergeDirectiveConfig.keyArg || keyField;
             fieldDirectives.connect = [
@@ -459,8 +460,8 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                 entity: true,
               }));
             }
-            // Connectors entity covered — no `@merge`.
-          } else {
+          }
+          if (!fieldDirectives.connect?.length || dualVirtualConnect) {
             const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
             mergeDirectiveExtensions.push({
               subgraph: subgraphConfig.name,
@@ -522,7 +523,8 @@ export function createFederationTransform(config: FederationTransformConfig): Su
     subgraphSchema = addFederation2DirectivesToSubgraph(subgraphSchema);
     subgraphSchema = importFederationDirectives(subgraphSchema, [...usedFederationDirectives]);
     if (virtualConnectUsed) {
-      // Connectors @link flips this subgraph to the Connectors (rest) transport in compose.
+      // Connect @link for Router composeDirective — compose must NOT treat virtual-only
+      // as HTTP Connectors (no rest transport flip; see isFederationConnectorsSubgraph).
       const schemaDirectives = getDirectiveExtensions(subgraphSchema) || {};
       const linkDirectives = (schemaDirectives.link ||= []);
       if (

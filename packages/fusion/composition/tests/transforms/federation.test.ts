@@ -197,7 +197,7 @@ describe('Federation', () => {
     });
   });
 
-  it('virtualConnect emits entity:true @connect instead of Mesh @merge', () => {
+  it('virtualConnect dual-emits @connect(entity:true) alongside Mesh @merge (no rest flip)', () => {
     const schema = buildSchema(/* GraphQL */ `
       type Query {
         author(id: ID!): Author
@@ -210,6 +210,7 @@ describe('Federation', () => {
     const annotated = getAnnotatedSubgraphs([
       {
         name: 'authors',
+        url: 'http://authors.example/graphql',
         schema,
         transforms: [
           createFederationTransform({
@@ -230,12 +231,15 @@ describe('Federation', () => {
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).toMatch(/author\(id:[\s\S]*entity:\s*true/);
     expect(sdl).toMatch(/id:\s*\$args\.id/);
-    expect(sdl).not.toMatch(/@merge\(/);
+    expect(sdl).toMatch(/@merge\(/);
     expect(sdl).toMatch(/specs\.apollo\.dev\/connect\/v0\.4/);
+    // Virtual-only must not be classified as HTTP Connectors (no rest transport flip).
+    expect(sdl).not.toMatch(/kind:\s*"rest"/);
 
     const composed = composeSubgraphs([
       {
         name: 'authors',
+        url: 'http://authors.example/graphql',
         schema,
         transforms: [
           createFederationTransform({
@@ -254,7 +258,8 @@ describe('Federation', () => {
       },
     ]);
     expect(composed.errors).toBeUndefined();
-    expect(composed.supergraphSdl).not.toMatch(/@merge\(/);
+    expect(composed.supergraphSdl).toMatch(/@merge\(/);
     expect(composed.supergraphSdl).toMatch(/entity:\s*true/);
+    expect(composed.supergraphSdl).toMatch(/name:\s*"connect"/);
   });
 });

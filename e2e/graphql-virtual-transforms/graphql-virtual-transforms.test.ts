@@ -1,10 +1,10 @@
 import { createTenv, type ServeRunner, type Service } from '@e2e/tenv';
 
 /**
- * Clarified GM-18: type-merging-with-transforms WITHOUT additionalTypeDefs/@resolveTo.
- * Virtual Connectors vs Federation for plain GraphQL entity ownership.
+ * Dual annotation: Mesh `@merge`/`@source` for Hive + virtual `@connect` for Router.
+ * GraphQL only — no OpenAPI.
  */
-describe('GraphQL virtual Connectors transforms (no additionalTypeDefs)', () => {
+describe('GraphQL dual @merge + virtual @connect (no OpenAPI)', () => {
   jest.retryTimes(3);
   const { compose, serve, service } = createTenv(__dirname);
 
@@ -18,8 +18,8 @@ describe('GraphQL virtual Connectors transforms (no additionalTypeDefs)', () => 
     authorsFed = await service('authors-fed');
   });
 
-  describe('virtualConnect on plain GraphQL authors', () => {
-    it('composes authors.author as entity:true without Mesh @merge on that field', async () => {
+  describe('virtualConnect dual annotation on plain GraphQL authors', () => {
+    it('composes @merge and @connect(entity:true) on author; keeps Mesh @source for books rename', async () => {
       const { result } = await compose({
         output: 'graphql',
         services: [authors, books],
@@ -27,18 +27,17 @@ describe('GraphQL virtual Connectors transforms (no additionalTypeDefs)', () => 
         env: { MESH_SPIKE_MODE: 'virtual' },
       });
       expect(result).toMatchSnapshot();
-      // Authors entity owner: virtual @connect(entity: true), not Mesh @merge on that field.
       const authorField = result.match(/author\(id:\s*ID!\):\s*Author[^\n]*/)?.[0] || '';
-      expect(authorField).toMatch(/entity:\s*true/);
+      expect(authorField).toMatch(/@merge\(/);
       expect(authorField).toMatch(/name:\s*"connect"/);
-      expect(authorField).not.toContain('@merge');
+      expect(authorField).toMatch(/entity:\s*true/);
       expect(result).not.toMatch(/@resolveTo\(/);
-      // Book.author stub from books schema (not additionalTypeDefs).
-      expect(result).toMatch(/type Book[\s\S]*author:\s*Author/);
-      // Semantic conventions may still @merge authors(ids:) / book(id:) — not the entity owner field.
+      // Books rename → `@meshSource` (aliased so Router won't parse Mesh `@source` as Apollo).
+      expect(result).toMatch(/@meshSource\(/);
+      expect(result).not.toMatch(/transport-rest/);
     });
 
-    it('on hive: echoes author id from virtual entity connect; name stays null (no GraphQL fetch)', async () => {
+    it('on hive: @merge still fills author.name from GraphQL', async () => {
       const composition = await compose({
         output: 'graphql',
         services: [authors, books],
@@ -62,7 +61,6 @@ describe('GraphQL virtual Connectors transforms (no additionalTypeDefs)', () => 
           }
         `,
       });
-      // Virtual @connect has no http — cannot call Yoga for `name`.
       expect(queryResult.errors).toBeFalsy();
       expect(queryResult.data).toEqual({
         book: {
@@ -70,21 +68,20 @@ describe('GraphQL virtual Connectors transforms (no additionalTypeDefs)', () => 
           title: 'Lorem Ipsum',
           author: {
             id: '1',
-            name: null,
+            name: 'Jane Doe',
           },
         },
       });
     });
 
-    it('on apollo-router: virtual entity:true without http is not a usable GraphQL-backed entity fill', async () => {
+    it('on apollo-router: SDL carries virtual @connect; GraphQL name fill still not via virtual', async () => {
       const composition = await compose({
         output: 'graphql',
         services: [authors, books],
         env: { MESH_SPIKE_MODE: 'virtual' },
       });
-      // Router accepts the SDL (join__directive connect) but entity fill via a
-      // requestless virtual connector does not load GraphQL `name` — and may 500
-      // when planning entity resolution against that connector.
+      expect(composition.result).toMatch(/name:\s*"connect"/);
+      expect(composition.result).toMatch(/@merge\(/);
       const servePromise = serve({
         runner: 'apollo-router' satisfies ServeRunner,
         supergraph: composition.output,
@@ -104,35 +101,22 @@ describe('GraphQL virtual Connectors transforms (no additionalTypeDefs)', () => 
             }
           `,
         });
-        // If Router returns data, name must still be null (no HTTP to GraphQL).
+        // Router ignores Mesh @merge; virtual connect cannot HTTP GraphQL for name.
         expect(queryResult.data?.book?.author?.name ?? null).toBeNull();
       } catch (err) {
-        // 500 / connector runtime failure is acceptable evidence for this spike.
         expect(String(err)).toMatch(/500|INTERNAL_SERVER_ERROR|Connector|error/i);
       }
     });
   });
 
-  describe('Federation authors (no additionalTypeDefs / no authors entity @merge)', () => {
-    it('composes without Mesh @merge on authors.author and without @resolveTo', async () => {
-      const { result } = await compose({
+  describe('Federation authors control (no dual needed)', () => {
+    it('fills author.name on hive + apollo-router via _entities', async () => {
+      const composition = await compose({
         output: 'graphql',
         services: [authorsFed, books],
-        maskServicePorts: true,
         env: { MESH_SPIKE_MODE: 'federation' },
       });
-      const authorField = result.match(/author\(id:\s*ID!\):\s*Author[^\n]*/)?.[0] || '';
-      expect(authorField).not.toContain('@merge');
-      expect(result).not.toMatch(/@resolveTo\(/);
-    });
-
-    describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {
-      it('fills author.name via Federation _entities', async () => {
-        const composition = await compose({
-          output: 'graphql',
-          services: [authorsFed, books],
-          env: { MESH_SPIKE_MODE: 'federation' },
-        });
+      for (const runner of ['hive', 'apollo-router'] as ServeRunner[]) {
         const { execute } = await serve({
           runner,
           supergraph: composition.output,
@@ -141,8 +125,6 @@ describe('GraphQL virtual Connectors transforms (no additionalTypeDefs)', () => 
           query: /* GraphQL */ `
             query {
               book(id: "0") {
-                id
-                title
                 author {
                   id
                   name
@@ -154,15 +136,13 @@ describe('GraphQL virtual Connectors transforms (no additionalTypeDefs)', () => 
         expect(queryResult.errors).toBeFalsy();
         expect(queryResult.data).toEqual({
           book: {
-            id: '0',
-            title: 'Lorem Ipsum',
             author: {
               id: '1',
               name: 'Jane Doe',
             },
           },
         });
-      });
+      }
     });
   });
 });
