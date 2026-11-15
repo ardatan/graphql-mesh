@@ -4,6 +4,7 @@ import { process } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import { createDefaultExecutor } from '@graphql-mesh/transport-common';
 import type {
   GetMeshSourcePayload,
   ImportFn,
@@ -14,7 +15,7 @@ import type {
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import type { Executor } from '@graphql-tools/utils';
-import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
+import { processDirectives, SOAPLoader } from '@omnigraph/soap';
 
 export default class SoapHandler implements MeshHandler {
   private name: string;
@@ -83,14 +84,18 @@ export default class SoapHandler implements MeshHandler {
         return soapLoader.buildSchema();
       });
     }
-    // Create executor lazily for faster startup
+    // Create executor lazily for faster startup — Connectors via transport-rest.
     let executor: Executor;
-    const operationHeaders = this.config.operationHeaders;
+    const log = this.log;
     return {
       schema,
       executor(...args) {
         if (!executor) {
-          executor = createExecutorFromSchemaAST(schema, fetchFn, operationHeaders);
+          const processed = processDirectives(schema, {
+            globalFetch: fetchFn,
+            log,
+          });
+          executor = createDefaultExecutor(processed);
         }
         return executor(...args);
       },

@@ -8,9 +8,8 @@ export * from './SOAPLoader.js';
 export type * from './types.js';
 export * from './connectEmit.js';
 // SOAP WSDL subgraphs emit `@connect` / `@source` — Hive executes via transport-rest.
-export { processDirectives, getSubgraphExecutor } from '@graphql-mesh/transport-rest';
-// Legacy `@soap` transport kept available for annotated SDL that still uses it.
-export * from '@graphql-mesh/transport-soap';
+export { processDirectives } from '@graphql-mesh/transport-rest';
+export { default as getSubgraphExecutor } from '@graphql-mesh/transport-rest';
 
 export interface SOAPSubgraphLoaderOptions {
   /**

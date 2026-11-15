@@ -1,15 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import type { GraphQLScalarType } from 'graphql';
-import {
-  DirectiveLocation,
-  GraphQLBoolean,
-  GraphQLDirective,
-  GraphQLFloat,
-  GraphQLInputObjectType,
-  GraphQLInt,
-  GraphQLList,
-  GraphQLString,
-} from 'graphql';
+import { GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString } from 'graphql';
 import type {
   AnyTypeComposer,
   EnumTypeComposer,
@@ -42,7 +33,6 @@ import { Logger } from '@graphql-hive/logger';
 import { path, process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
-import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
@@ -107,61 +97,6 @@ export interface SOAPHeaders {
    */
   headers: unknown;
 }
-
-const SOAPHeadersInput = new GraphQLInputObjectType({
-  name: 'SOAPHeaders',
-  fields: {
-    namespace: {
-      type: GraphQLString,
-    },
-    alias: {
-      type: GraphQLString,
-    },
-    headers: {
-      type: ObjMapScalar,
-    },
-  },
-});
-
-const soapDirective = new GraphQLDirective({
-  name: 'soap',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    elementName: {
-      type: GraphQLString,
-    },
-    bindingNamespace: {
-      type: GraphQLString,
-    },
-    endpoint: {
-      type: GraphQLString,
-    },
-    subgraph: {
-      type: GraphQLString,
-    },
-    bodyAlias: {
-      type: GraphQLString,
-    },
-    soapHeaders: {
-      type: SOAPHeadersInput,
-    },
-    soapAction: {
-      type: GraphQLString,
-    },
-    soapNamespace: {
-      type: GraphQLString,
-    },
-    headerArgNames: {
-      type: new GraphQLList(GraphQLString),
-    },
-    argNamespaces: {
-      type: ObjMapScalar,
-    },
-    typeNamespaces: {
-      type: ObjMapScalar,
-    },
-  },
-});
 
 const QUERY_PREFIXES = [
   'get',
@@ -321,8 +256,6 @@ export class SOAPLoader {
     this.schemaComposer.addDirective(ConnectDirective);
     this.schemaComposer.addDirective(SourceDirective);
     this.schemaComposer.addDirective(LinkDirective);
-    // Keep @soap registered so legacy annotated SDL can still be parsed if loaded.
-    this.schemaComposer.addDirective(soapDirective);
     this.schemaHeadersFactory = getInterpolatedHeadersFactory(options.schemaHeaders || {});
     this.endpoint = options.endpoint;
     this.resolvedEndpoint = options.endpoint;
@@ -826,7 +759,7 @@ export class SOAPLoader {
             }
 
             const field = rootTC.getField(operationFieldName);
-            const argNames = Object.keys(field.args || {});
+            const argNames = Object.keys(field.args || {}) as string[];
             field.directives = [
               {
                 name: 'connect',

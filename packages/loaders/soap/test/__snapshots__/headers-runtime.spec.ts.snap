@@ -11,8 +11,6 @@ directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
-
 type Query {
   tns_GlobalWeather_GlobalWeatherSoap_GetWeather(GetWeather: tns_GetWeather_Input): tns_GetWeatherResponse @connect(source: "Test", http: {POST: "/globalweather.asmx", headers: [{name: "SOAPAction", value: "http://www.webserviceX.NET/GetWeather"}], body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:guild\\": $(\\"http://www.webserviceX.NET\\")\\n      \\"xmlns:the\\": $(\\"https://the-guild.dev\\")\\n    }\\n    \\"soap:Header\\": {\\n        \\"the:MyHeader\\": {\\n          UserName: $context.USER_NAME\\n          Password: $context.PASSWORD\\n        }\\n    }\\n    \\"soap:Body\\": {\\n        \\"guild:GetWeather\\": $args.GetWeather\\n    }\\n  }"}, selection: "$.Envelope.Body.GetWeatherResponse")
   tns_GlobalWeather_GlobalWeatherSoap_GetCitiesByCountry(GetCitiesByCountry: tns_GetCitiesByCountry_Input): tns_GetCitiesByCountryResponse @connect(source: "Test", http: {POST: "/globalweather.asmx", headers: [{name: "SOAPAction", value: "http://www.webserviceX.NET/GetCitiesByCountry"}], body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:guild\\": $(\\"http://www.webserviceX.NET\\")\\n      \\"xmlns:the\\": $(\\"https://the-guild.dev\\")\\n    }\\n    \\"soap:Header\\": {\\n        \\"the:MyHeader\\": {\\n          UserName: $context.USER_NAME\\n          Password: $context.PASSWORD\\n        }\\n    }\\n    \\"soap:Body\\": {\\n        \\"guild:GetCitiesByCountry\\": $args.GetCitiesByCountry\\n    }\\n  }"}, selection: "$.Envelope.Body.GetCitiesByCountryResponse")
@@ -63,13 +61,5 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
