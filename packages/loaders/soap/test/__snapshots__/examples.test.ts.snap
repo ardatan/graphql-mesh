@@ -11,8 +11,6 @@ directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
-
 type Query {
   AnySimpleType_AttributeService_AttributePort_getAttributes(GetAttributes: AnySimpleType_GetAttributes_Input): AnySimpleType_GetAttributesResponse @connect(source: "any-simple-type", http: {POST: "/attributes", headers: [{name: "SOAPAction", value: "getAttributes"}], body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\")\\n      \\"xmlns:body\\": $(\\"http://example.com/any-simple-type\\")\\n    }\\n    \\"soap:Body\\": {\\n        \\"body:GetAttributes\\": $args.GetAttributes\\n    }\\n  }"}, selection: "$.Envelope.Body.GetAttributesResponse")
 }
@@ -52,15 +50,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Examples should generate schema for any-wildcard-namespace: any-wildcard-namespace 1`] = `
@@ -74,8 +64,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -126,15 +114,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Examples should generate schema for axis: axis 1`] = `
@@ -148,8 +128,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -288,15 +266,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Examples should generate schema for empty-complextype: empty-complextype 1`] = `
@@ -310,8 +280,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -367,15 +335,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Examples should generate schema for example1: example1 1`] = `
@@ -389,8 +349,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   TodoService_TodoService_BasicHttpBinding_ITodoService_GetTodos(GetTodos: JSON = ""): TodoService_GetTodosResponse @connect(source: "example1", http: {POST: "/TodoService/basichttp", headers: [{name: "SOAPAction", value: "http://tempuri.org/ITodoService/GetTodos"}], body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:body\\": $(\\"http://tempuri.org/\\")\\n    }\\n    \\"soap:Body\\": {\\n        \\"body:GetTodos\\": $args.GetTodos\\n    }\\n  }"}, selection: "$.Envelope.Body.GetTodosResponse")
@@ -538,15 +496,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Examples should generate schema for example2: example2 1`] = `
@@ -560,8 +510,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetServiceHealth(GetServiceHealth: JSON = ""): tns_GetServiceHealthResponse @connect(source: "example2", http: {POST: "/AdminServiceType", headers: [{name: "SOAPAction", value: "http://tempuri.org/IPfxServiceHealth/GetServiceHealth"}], body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:body2\\": $(\\"http://tempuri.org/\\")\\n    }\\n    \\"soap:Body\\": {\\n        \\"body2:GetServiceHealth\\": $args.GetServiceHealth\\n    }\\n  }"}, selection: "$.Envelope.Body.GetServiceHealthResponse")
@@ -807,15 +755,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Examples should generate schema for forward-ref-elements: forward-ref-elements 1`] = `
@@ -829,8 +769,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -877,15 +815,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Examples should generate schema for greeting: greeting 1`] = `
@@ -899,8 +829,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -957,15 +885,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Examples should generate schema for illegal-gql-names: illegal-gql-names 1`] = `
@@ -978,8 +898,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   IllegalGqlNames_IllegalGqlNames_IllegalGqlNamesSoap_GetState(GetState: IllegalGqlNames_GetState_Input): IllegalGqlNames_GetStateResponse @connect(source: "illegal-gql-names", http: {POST: "/illegal-gql-names/soap", body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\")\\n      \\"xmlns:body\\": $(\\"http://example.com/illegal-gql-names/\\")\\n    }\\n    \\"soap:Body\\": {\\n        \\"body:GetState\\": $args.GetState\\n    }\\n  }"}, selection: "$.Envelope.Body.GetStateResponse")
@@ -1034,15 +952,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Examples should generate schema for inline-type-collision: inline-type-collision 1`] = `
@@ -1055,8 +965,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   InlineTypeCollision_CollisionService_CollisionPort_getA(GetA: InlineTypeCollision_GetA_Input): InlineTypeCollision_GetAResponse @connect(source: "inline-type-collision", http: {POST: "/collision", headers: [{name: "SOAPAction", value: "getA"}], body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\")\\n      \\"xmlns:body\\": $(\\"http://example.com/inline-collision\\")\\n    }\\n    \\"soap:Body\\": {\\n        \\"body:GetA\\": $args.GetA\\n    }\\n  }"}, selection: "$.Envelope.Body.GetAResponse")
@@ -1133,15 +1041,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Examples should generate schema for prefix-collision: prefix-collision 1`] = `
@@ -1154,8 +1054,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   PrefixCollision_ItemsService_ItemsPort_getNs1Items(GetNs1Items: PrefixCollision_GetNs1Items_Input): PrefixCollision_GetNs1ItemsResponse @connect(source: "prefix-collision", http: {POST: "/items", headers: [{name: "SOAPAction", value: "getNs1Items"}], body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\")\\n      \\"xmlns:body\\": $(\\"http://example.com/service\\")\\n    }\\n    \\"soap:Body\\": {\\n        \\"body:GetNs1Items\\": $args.GetNs1Items\\n    }\\n  }"}, selection: "$.Envelope.Body.GetNs1ItemsResponse")
@@ -1210,15 +1108,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Examples should generate schema for tempconvert: tempconvert 1`] = `
@@ -1232,8 +1122,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -1289,13 +1177,5 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;

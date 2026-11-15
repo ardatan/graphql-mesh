@@ -193,10 +193,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
     // "body" prefix, same xmlns binding, same element structure.
     const soapLoader = new SOAPLoader({ subgraphName: 'Test', fetch, log });
     await soapLoader.loadWSDL(
-      readFileSync(
-        join(__dirname, '../../../loaders/soap/test/fixtures/tempconvert.wsdl'),
-        'utf-8',
-      ),
+      readFileSync(join(__dirname, './fixtures/tempconvert.wsdl'), 'utf-8'),
     );
     const schema = soapLoader.buildSchema();
 

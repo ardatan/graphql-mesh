@@ -12,8 +12,6 @@ directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
-
 type Query {
   placeholder: Void
 }
@@ -60,15 +58,7 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Multi-file WSDL resolves relative source against the loader cwd, not globalThis.process?.cwd?.() 1`] = `
@@ -83,8 +73,6 @@ directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
-
 type Query {
   placeholder: Void
 }
@@ -131,13 +119,5 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-}
-
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
-}
-
-scalar ObjMap"
+}"
 `;
