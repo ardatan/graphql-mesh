@@ -298,9 +298,10 @@ function getPreferredTypeJoinGraph(
     const resolvable = getBooleanArg(dir, 'resolvable') !== false;
     const prev = byGraph.get(graph);
     byGraph.set(graph, {
-      // Any entry marked extension/non-resolvable sticks for that graph.
+      // An extension entry sticks for that graph. Any resolvable key keeps it eligible
+      // (Federation allows repeatable `@key` with per-key `resolvable` flags).
       extension: Boolean(prev?.extension || extension),
-      resolvable: prev ? prev.resolvable && resolvable : resolvable,
+      resolvable: prev ? prev.resolvable || resolvable : resolvable,
     });
   }
   if (byGraph.size === 1) {

@@ -962,4 +962,74 @@ describe('Federation Connectors composition', () => {
     expect(productType).not.toMatch(/@join__directive\(graphs: \[CATALOG\], name: "connect"/);
     expect(out).not.toMatch(/type Product[\s\S]*@connect\(/);
   });
+
+  it('treats a graph as resolvable when any of its join keys is resolvable', () => {
+    const before = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+        query: Query
+      }
+
+      directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+      directive @join__type(
+        graph: join__Graph!
+        key: join__FieldSet
+        extension: Boolean! = false
+        resolvable: Boolean! = true
+      ) repeatable on OBJECT
+      directive @join__field(graph: join__Graph) on FIELD_DEFINITION
+      directive @join__directive(
+        graphs: [join__Graph!]
+        name: String!
+        args: join__DirectiveArguments
+      ) repeatable on FIELD_DEFINITION | OBJECT | SCHEMA
+      directive @link(url: String!, import: [link__Import], for: link__Purpose) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      scalar join__FieldSet
+      scalar join__DirectiveArguments
+      scalar link__Import
+      enum link__Purpose {
+        SECURITY
+        EXECUTION
+      }
+      enum join__Graph {
+        CATALOG @join__graph(name: "catalog", url: "http://localhost:4002/graphql")
+        PRODUCTS @join__graph(name: "products", url: "http://localhost:4001")
+      }
+      input ConnectHTTP {
+        GET: String
+      }
+
+      type Query @join__type(graph: CATALOG) @join__type(graph: PRODUCTS) {
+        featured: Product @join__field(graph: CATALOG)
+      }
+
+      type Product
+        @join__type(graph: CATALOG, key: "id", extension: true, resolvable: false)
+        @join__type(graph: PRODUCTS, key: "id")
+        @join__type(graph: PRODUCTS, key: "sku", resolvable: false)
+        @connect(
+          http: { GET: "https://api.example.com/products/{$this.id}" }
+          selection: "id name"
+          entity: true
+        ) {
+        id: ID!
+        sku: String
+        name: String @join__field(graph: PRODUCTS)
+      }
+    `;
+
+    const out = finalizeConnectorsSupergraph(before);
+    const productType = out.match(/type Product[^\n]*/)?.[0] ?? '';
+    expect(productType).toMatch(/@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
+    expect(productType).not.toMatch(/@join__directive\(graphs: \[CATALOG\], name: "connect"/);
+  });
 });
