@@ -112,31 +112,31 @@ export function getAnnotatedSubgraphs(
 ) {
   // Alias Mesh stitching `@source` as `@meshSource` only when the composition also
   // has Federation Connectors (SCHEMA `@source`). Mesh-only graphs keep plain `@source`.
-  // Transforms may add connect/v0.4 (e.g. federation `virtualConnect`) — detect after
-  // applying transforms as well as on the raw schema.
-  const schemaLooksLikeConnectors = (schema: GraphQLSchema, transforms?: SubgraphTransform[]) => {
-    if (isFederationConnectorsSubgraph(schema)) {
+  // Transforms may add connect/v0.4 (e.g. federation `virtualConnect`) — probe with the
+  // real subgraph config (never a fake name: prefix transform latches `value` from
+  // `subgraphConfig.name` on first call).
+  const schemaLooksLikeConnectors = (subgraphConfig: SubgraphConfig) => {
+    if (isFederationConnectorsSubgraph(subgraphConfig.schema)) {
       return true;
     }
+    const transforms = subgraphConfig.transforms;
     if (!transforms?.length) {
       return false;
     }
     try {
-      let probe = schema;
+      let probe = subgraphConfig.schema;
       for (const transform of transforms) {
-        probe = transform(probe, { name: '__probe__', schema: probe, transforms });
+        probe = transform(probe, subgraphConfig);
       }
       return isFederationConnectorsSubgraph(probe);
     } catch {
       return false;
     }
   };
-  const compositionHasConnectors = subgraphs.some(({ schema, transforms }) =>
-    schemaLooksLikeConnectors(schema, transforms),
-  );
+  const compositionHasConnectors = subgraphs.some(schemaLooksLikeConnectors);
   const compositionHasMeshStitchingSource = subgraphs.some(
-    ({ schema, transforms }) =>
-      !schemaLooksLikeConnectors(schema, transforms) && !!transforms?.length,
+    subgraphConfig =>
+      !schemaLooksLikeConnectors(subgraphConfig) && !!subgraphConfig.transforms?.length,
   );
 
   const annotatedSubgraphs: ServiceDefinition[] = [];
