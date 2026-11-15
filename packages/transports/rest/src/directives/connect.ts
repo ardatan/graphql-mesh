@@ -2174,18 +2174,7 @@ export function addConnectFieldResolver(
           field,
         });
         if (bodyValue !== undefined) {
-          // SOAPLoader stores GraphQL input type → XSD NS on @transport(options:)
-          // so nested complex types keep per-schema prefixes (legacy transport-soap).
-          const transportDir = (schema.extensions as any)?.directives?.transport;
-          const transport = Array.isArray(transportDir) ? transportDir[0] : transportDir;
-          const transportOptions = transport?.options || {};
-          const rawTypeNs = transportOptions.typeNamespacesJson ?? transport?.typeNamespacesJson;
-          const typeNamespacesJson =
-            typeof rawTypeNs === 'string' ? JSON.parse(rawTypeNs) : rawTypeNs;
-          requestBody = jsObjectToXml(bodyValue, {
-            field,
-            typeNamespaces: typeNamespacesJson,
-          });
+          requestBody = jsObjectToXml(bodyValue);
           requestInit.body = requestBody;
         }
       } else {

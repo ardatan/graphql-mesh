@@ -188,30 +188,24 @@ function isListTypeOrNonNullListType(type: GraphQLOutputType): boolean {
 }
 
 /**
- * Nested XML/SOAP responses: a single unbounded element is an object, not an array.
- * Match legacy transport-soap `soapDefaultResolver` (+ OpenAPI `@flatten` for scalar lists).
- * Skip fields that already have a custom resolver (e.g. `@connect` roots handle their own wrap).
+ * Nested XML/SOAP list fields: a single unbounded sibling is an object, not an array.
+ * Match legacy transport-soap `soapDefaultResolver` wrap (+ OpenAPI `@flatten` for scalar lists).
+ * Only list fields — singular Date/String fields keep the default resolver.
  */
 function installXmlListPluralization(field: GraphQLField<any, any>) {
   if (field.resolve && field.resolve.name !== 'defaultFieldResolver') return;
-  const isPlural = isListTypeOrNonNullListType(field.type);
+  if (!isListTypeOrNonNullListType(field.type)) return;
   let listInner = field.type;
   while (isNonNullType(listInner)) listInner = listInner.ofType;
   const leaf = isListType(listInner) ? getNamedType(listInner.ofType) : getNamedType(field.type);
-  const flattenScalars = isPlural && (isScalarType(leaf) || isEnumType(leaf));
+  const flattenScalars = isScalarType(leaf) || isEnumType(leaf);
   const fieldName = field.name;
   field.resolve = function xmlListPluralization(root) {
     let result = root?.[fieldName];
     if (result == null) return result;
-    if (isPlural) {
-      if (!Array.isArray(result)) {
-        result = [result];
-      }
-      return flattenScalars ? result.flat(Infinity) : result;
+    if (!Array.isArray(result)) {
+      result = [result];
     }
-    if (Array.isArray(result)) {
-      return result[0];
-    }
-    return result;
+    return flattenScalars ? result.flat(Infinity) : result;
   };
 }

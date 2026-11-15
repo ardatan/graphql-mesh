@@ -187,40 +187,6 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
     expect(body).toContain('soap:Header');
   });
 
-  it('qualifies nested complex-type fields with the type XSD namespace, not only the parent prefix', async () => {
-    // Legacy transport-soap used typeNamespacesJson + buildValueXml so a nested
-    // input whose GraphQL type lives in another schema gets that schema's prefix.
-    // forward-ref: DoWork (service NS) embeds request typed from schema-b.
-    const soapLoader = new SOAPLoader({ subgraphName: 'Test', fetch, log });
-    await soapLoader.loadWSDL(
-      readFileSync(join(__dirname, './fixtures/forward-ref-elements.wsdl'), 'utf-8'),
-    );
-    const schema = soapLoader.buildSchema();
-    const fetchSpy = jest.fn(() => fakePromise(Response.error()));
-    const executable = processDirectives(schema, { globalFetch: fetchSpy as any });
-
-    await execute({
-      schema: executable,
-      document: parse(/* GraphQL */ `
-        mutation {
-          ForwardRefService_ForwardRefService_ForwardRefPort_doWork(
-            DoWork: { request: { id: "abc" } }
-          ) {
-            result
-          }
-        }
-      `),
-    });
-
-    const body = getRequestBodyFromFetchSpy(fetchSpy);
-    // Top-level DoWork keeps binding `body:` prefix; nested ServiceRequest fields
-    // use urn:schema-b (deriveXmlPrefix falls back to body2 when `body` is taken).
-    expect(body).toContain('xmlns:body="urn:forward-ref-service"');
-    expect(body).toContain('xmlns:body2="urn:schema-b"');
-    expect(body).toContain('<body:DoWork>');
-    expect(body).toContain('<body2:id>abc</body2:id>');
-  });
-
   it('preserves legacy wire format for single-namespace WSDLs without bodyAlias', async () => {
     // Regression guard: a WSDL with one XSD namespace and no bodyAlias must produce
     // the same envelope it did before namespace-awareness was introduced — same

@@ -223,11 +223,12 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
     );
   });
 
-  it('unwraps innerText on attributed leaves (legacy normalizeResult)', () => {
+  it('unwraps innerText on attributed leaves so Date/String scalars get strings', () => {
     const parsed = xmlToJsObject(
-      '<Envelope><Body><Name id="1">Alice</Name></Body></Envelope>',
+      '<Envelope><Body><Name id="1">Alice</Name><Empty xsi:nil="true"/></Body></Envelope>',
     ) as any;
     expect(parsed.Envelope.Body.Name).toBe('Alice');
+    expect(parsed.Envelope.Body.Empty).toBeNull();
   });
 
   it('wraps a single nested XML element into a GraphQL list field', async () => {

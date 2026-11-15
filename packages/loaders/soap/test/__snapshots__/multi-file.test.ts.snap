@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Multi-file WSDL resolves nested <wsdl:import> / <xsd:import> against each document's own location 1`] = `
-"schema @transport(kind: "rest", subgraph: "multi-file", options: {typeNamespacesJson: {tns_Hello_Input: "http://example.com/hello/types", tns_Name_Input: "http://example.com/hello/names"}}) @source(name: "multi-file", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "rest", subgraph: "multi-file") @source(name: "multi-file", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -62,7 +62,7 @@ input SourceHTTP {
 `;
 
 exports[`Multi-file WSDL resolves relative source against the loader cwd, not globalThis.process?.cwd?.() 1`] = `
-"schema @transport(kind: "rest", subgraph: "multi-file", options: {typeNamespacesJson: {tns_Hello_Input: "http://example.com/hello/types", tns_Name_Input: "http://example.com/hello/names"}}) @source(name: "multi-file", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "rest", subgraph: "multi-file") @source(name: "multi-file", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
