@@ -3,10 +3,11 @@ import EventEmitter from 'node:events';
 import type DataLoader from 'dataloader';
 import { XMLParser } from 'fast-xml-parser';
 import { specifiedDirectives } from 'graphql';
-import { InterfaceTypeComposer, SchemaComposer } from 'graphql-compose';
+import { SchemaComposer } from 'graphql-compose';
 import type {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposer,
+  InterfaceTypeComposer,
   ObjectTypeComposer,
   ObjectTypeComposerArgumentConfigMapDefinition,
   ObjectTypeComposerFieldConfigDefinition,
@@ -1005,6 +1006,24 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
   );
   eventEmitterSet.forEach(ee => ee.removeAllListeners());
   eventEmitterSet.clear();
+  // Drop EventEmitter refs from TC extensions so Jest leak detection stays clean.
+  for (const tc of schemaComposer.types.values()) {
+    const typed = tc as any;
+    const ext = typed.getExtensions?.();
+    if (ext?.eventEmitter) {
+      delete ext.eventEmitter;
+    }
+    if (typeof typed.getFieldNames !== 'function' || typeof typed.getField !== 'function') {
+      continue;
+    }
+    for (const fieldName of typed.getFieldNames()) {
+      const field = typed.getField(fieldName);
+      const fext = field?.extensions as any;
+      if (fext?.eventEmitter) {
+        delete fext.eventEmitter;
+      }
+    }
+  }
 
   return schema;
 }

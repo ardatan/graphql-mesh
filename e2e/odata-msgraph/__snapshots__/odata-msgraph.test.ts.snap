@@ -380,7 +380,7 @@ exports[`Microsoft Graph Connectors execute with hive fetchFilesFromOneDrive (v0
         },
         "request": {
           "method": "GET",
-          "url": "http://127.0.0.1:37727/users/user-ada/drives/drive-1/children?%24top=3&%24expand=children",
+          "url": "http://127.0.0.1:42917/users/user-ada/drives/drive-1/children?%24top=3&%24expand=children",
         },
         "response": {
           "body": {
@@ -391,7 +391,7 @@ exports[`Microsoft Graph Connectors execute with hive fetchFilesFromOneDrive (v0
           "headers": {
             "connection": "keep-alive",
             "content-type": "application/json",
-            "date": "Sun, 15 Nov 2026 02:44:20 GMT",
+            "date": "Sun, 15 Nov 2026 04:38:36 GMT",
             "keep-alive": "timeout=5",
             "transfer-encoding": "chunked",
           },

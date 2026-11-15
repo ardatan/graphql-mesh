@@ -13,27 +13,38 @@ export interface ReadFileOrUrlOptions extends MeshFetchRequestInit {
   cwd: string;
   fetch: MeshFetch;
   importFn: ImportFn;
-  log: Logger;
+  /** Preferred Hive logger key. */
+  log?: Logger;
+  /**
+   * Legacy alias used by some `@graphql-hive/gateway-runtime` builds that still
+   * pass `logger` instead of `log`. Prefer `log`.
+   */
+  logger?: Logger;
 }
 
 export { isUrl };
+
+function resolveLog(config: ReadFileOrUrlOptions): Logger | undefined {
+  return config.log ?? config.logger;
+}
 
 export async function readFileOrUrl<T>(
   filePathOrUrl: string,
   config: ReadFileOrUrlOptions,
 ): Promise<T> {
+  const log = resolveLog(config);
   if (isUrl(filePathOrUrl)) {
-    config.log.debug(`Fetching ${filePathOrUrl} via HTTP`);
+    log?.debug(`Fetching ${filePathOrUrl} via HTTP`);
     return readUrl(filePathOrUrl, config);
   } else if (filePathOrUrl.startsWith('{') || filePathOrUrl.startsWith('[')) {
     return JSON.parse(filePathOrUrl);
   } else {
-    config.log.debug(`Reading ${filePathOrUrl} from the file system`);
+    log?.debug(`Reading ${filePathOrUrl} from the file system`);
     return readFile(filePathOrUrl, config);
   }
 }
 
-function getSchema(filepath: string, log: Logger): Schema {
+function getSchema(filepath: string, log?: Logger): Schema {
   return DEFAULT_SCHEMA.extend([
     new Type('!include', {
       kind: 'scalar',
@@ -70,20 +81,22 @@ function getSchema(filepath: string, log: Logger): Schema {
   ]);
 }
 
-export function loadYaml(filepath: string, content: string, log: Logger): any {
+export function loadYaml(filepath: string, content: string, log?: Logger): any {
   return loadYamlFromJsYaml(content, {
     filename: filepath,
     schema: getSchema(filepath, log),
     onWarning(warning) {
-      log.warn(`${filepath}: ${warning.message}\n${warning.stack}`);
+      log?.warn(`${filepath}: ${warning.message}\n${warning.stack}`);
     },
   });
 }
 
 export async function readFile<T>(
   fileExpression: string,
-  { allowUnknownExtensions, cwd, fallbackFormat, importFn, log }: ReadFileOrUrlOptions,
+  config: ReadFileOrUrlOptions,
 ): Promise<T> {
+  const { allowUnknownExtensions, cwd, fallbackFormat, importFn } = config;
+  const log = resolveLog(config);
   const [filePath] = fileExpression.split('#');
   if (/js$/.test(filePath) || /ts$/.test(filePath)) {
     return loadFromModuleExportExpression<T>(fileExpression, {
@@ -120,12 +133,13 @@ export async function readFile<T>(
 
 export async function readUrl<T>(path: string, config: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, fallbackFormat } = config || {};
+  const log = resolveLog(config);
   config.headers ||= {};
   config.fetch ||= fetch;
   const response = await config.fetch(path, config);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
-  config?.log?.debug(`${path} returned `, responseText);
+  log?.debug(`${path} returned `, responseText);
   if (
     /json$/.test(path) ||
     contentType.startsWith('application/json') ||
@@ -139,7 +153,7 @@ export async function readUrl<T>(path: string, config: ReadFileOrUrlOptions): Pr
     contentType.includes('yml') ||
     fallbackFormat === 'yaml'
   ) {
-    return loadYaml(path, responseText, config?.log);
+    return loadYaml(path, responseText, log);
   } else if (!allowUnknownExtensions) {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure URL '${path}' has ` +

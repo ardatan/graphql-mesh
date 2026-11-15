@@ -408,7 +408,8 @@ describe('odata', () => {
     addMock(correctUrl, async request => {
       sentRequest = request.clone();
       const bodyObj: any = await request.json();
-      bodyObj['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
+      bodyObj['@odata.type'] =
+        '#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new MockResponse(JSON.stringify(bodyObj));
     });
     using cache = new InMemoryLRUCache();
@@ -437,7 +438,9 @@ describe('odata', () => {
       document: parse(/* GraphQL */ `
         mutation CreatePeople($input: PersonInput) {
           createPeople(input: $input) {
-            UserName
+            ... on Person {
+              UserName
+            }
           }
         }
       `),
@@ -506,7 +509,8 @@ describe('odata', () => {
     addMock(correctUrl, async request => {
       sentRequest = request.clone() as Request;
       const returnBody: any = await request.json();
-      returnBody['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
+      returnBody['@odata.type'] =
+        '#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new MockResponse(JSON.stringify(returnBody));
     });
     using cache = new InMemoryLRUCache();
@@ -536,7 +540,9 @@ describe('odata', () => {
       document: parse(/* GraphQL */ `
         mutation UpdatePeople($UserName: String!, $input: PersonUpdateInput!) {
           updatePeopleByUserName(UserName: $UserName, input: $input) {
-            FirstName
+            ... on Person {
+              FirstName
+            }
           }
         }
       `),
@@ -615,11 +621,19 @@ describe('odata', () => {
       personLoader,
     );
     // Connectors queryParams percent-encode spaces as `+` / `%20`.
+    // Plural nav may bake child `$expand=PlanItems` into the Trips request.
+    const tripsLoader = async () => new MockResponse(JSON.stringify(TripMockData));
     addMock(
       `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips?$filter=TripId+eq+0&$select=TripId`,
-      async () => {
-        return new MockResponse(JSON.stringify(TripMockData));
-      },
+      tripsLoader,
+    );
+    addMock(
+      `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips?$filter=TripId+eq+0&$expand=PlanItems`,
+      tripsLoader,
+    );
+    addMock(
+      `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips?$filter=TripId eq 0&$expand=PlanItems`,
+      tripsLoader,
     );
     addMock(correctUrl, async request => {
       sentRequest = request;

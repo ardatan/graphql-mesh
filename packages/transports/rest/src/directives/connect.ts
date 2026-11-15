@@ -1475,10 +1475,13 @@ function buildBody(
   opts: {
     schema?: GraphQLSchema;
     field?: GraphQLField<any, any>;
+    /** Flatten OData open-type `rest` bags only - never rewrite ordinary REST inputs. */
+    odataOpenTypes?: boolean;
   } = {},
 ): string | undefined {
   if (!bodySelection) return undefined;
   const trimmed = bodySelection.trim();
+  const flattenOpen = Boolean(opts.odataOpenTypes);
 
   const recoverInput = (value: any, argName: string) => {
     if (value == null || !opts.schema || !opts.field) {
@@ -1507,7 +1510,7 @@ function buildBody(
     const recoveredArgs = { ...vars.args };
     if ('input' in recoveredArgs) {
       recoveredArgs.input = recoverInput(recoveredArgs.input, 'input');
-      if (recoveredArgs.input != null && typeof recoveredArgs.input === 'object') {
+      if (flattenOpen && recoveredArgs.input != null && typeof recoveredArgs.input === 'object') {
         rebuildOpenInputObjects(recoveredArgs.input);
       }
     }
@@ -1516,10 +1519,11 @@ function buildBody(
     );
   }
   if (trimmed === '$args') {
-    // Only clone+flatten when open-type `rest` is present — leave bound-action
+    // Only clone+flatten when open-type `rest` is present - leave bound-action
     // arg objects alone (no clone); open-type bodies are plain JSON values.
     const args = vars.args;
     const needsFlatten =
+      flattenOpen &&
       args != null &&
       typeof args === 'object' &&
       ('rest' in args ||
@@ -1539,8 +1543,8 @@ function buildBody(
   }
   if (trimmed === '$args.input' || trimmed.startsWith('$args.input')) {
     const input = recoverInput(vars.args.input, 'input');
-    // Open-type OData inputs carry overflow under `rest` — flatten into the body.
-    if (input != null && typeof input === 'object') {
+    // Open-type OData inputs carry overflow under `rest` - flatten into the body.
+    if (flattenOpen && input != null && typeof input === 'object') {
       rebuildOpenInputObjects(input);
     }
     // `$args.input { alias: field }` subselection
@@ -1857,7 +1861,11 @@ export function addConnectFieldResolver(
         requestBody = formData;
         requestInit.body = formData;
       } else {
-        const bodyJson = buildBody(connectArgs.http?.body, vars, { schema, field });
+        const bodyJson = buildBody(connectArgs.http?.body, vars, {
+          schema,
+          field,
+          odataOpenTypes: isODataMetadataAccept(headers),
+        });
         if (bodyJson != null) {
           if (contentType?.includes('application/x-www-form-urlencoded')) {
             try {

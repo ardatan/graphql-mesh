@@ -464,10 +464,43 @@ function selectionForFieldReturnType(
   return entitySelection(schemaComposer, entityTC) || '$';
 }
 
+/**
+ * True when this Input arg is the bound entity parameter (URL already identifies it).
+ * Unbound ops pass no parentTypeName so complex Inputs (AddressInput) stay in the call.
+ * Derived entity fields (Employee.GetFavoriteAirline) still bind via base PersonInput -
+ * detect entity Inputs by `entityInfo.identifierFieldName`, not name equality alone.
+ */
+function isBindingInputArg(
+  schemaComposer: SchemaComposer,
+  parentTypeName: string | undefined,
+  argTypeName: string,
+): boolean {
+  if (!parentTypeName) return false;
+  if (
+    argTypeName === `${parentTypeName}Input` ||
+    argTypeName === `${parentTypeName}UpdateInput` ||
+    argTypeName === `${parentTypeName}Instance`
+  ) {
+    return true;
+  }
+  const m = /^(.*)(UpdateInput|Input|Instance)$/.exec(argTypeName);
+  if (!m) return false;
+  const entityName = m[1];
+  try {
+    if (!schemaComposer.isObjectType(entityName)) return false;
+    const ext = schemaComposer.getOTC(entityName).getExtensions() as any;
+    // Entity types have keys; complex type Inputs do not.
+    return Boolean(ext?.odata?.entityInfo?.identifierFieldName);
+  } catch {
+    return false;
+  }
+}
+
 /** OData function/action call args: `(lat={$args.lat},userName='{$args.userName}')`. */
 function odataCallArgsSuffix(
   schemaComposer: SchemaComposer,
   field: ObjectTypeComposerFieldConfig<any, any>,
+  parentTypeName?: string,
 ): string {
   const args = field.args || {};
   const parts: string[] = [];
@@ -478,16 +511,9 @@ function odataCallArgsSuffix(
         ? (argConfig.type as any).getTypeName()
         : String(argConfig.type)
     ).replace(/[[\]!]/g, '');
-    // Binding parameters are Input objects (PersonInput, TripInput) — parent supplies `$this`.
-    if (argTypeName.endsWith('Input') || argTypeName.endsWith('UpdateInput')) {
+    // Binding parameter only - keep other complex Input args (unbound/extra params).
+    if (isBindingInputArg(schemaComposer, parentTypeName, argTypeName)) {
       continue;
-    }
-    try {
-      if (schemaComposer.getITC(argTypeName)) {
-        continue;
-      }
-    } catch {
-      // not an input type
     }
     const isStringish =
       argTypeName === 'String' ||
@@ -797,12 +823,22 @@ export function emitODataConnectors(
 
   // typeName → OData entity set (for Apollo-style `/EntitySet/{$this.key}/…` nav connects).
   const entitySetByType = new Map<string, string>();
-  /** First entity set wins — TripPin also exposes `NewComePeople` for `Person`. */
+  // Types claimed by more than one entity set - force `{$this._odataId}` nav instead of
+  // guessing the wrong set (e.g. CurrentOrders vs ArchivedOrders).
+  const ambiguousEntitySets = new Set<string>();
+  /** First distinct entity set wins; a second different set marks the type ambiguous. */
   const rememberEntitySet = (typeName: string, entitySetName: string) => {
     if (!typeName || !entitySetName) return;
     const setOnce = (name: string) => {
-      if (!entitySetByType.has(name)) {
+      if (ambiguousEntitySets.has(name)) return;
+      const existing = entitySetByType.get(name);
+      if (!existing) {
         entitySetByType.set(name, entitySetName);
+        return;
+      }
+      if (existing !== entitySetName) {
+        entitySetByType.delete(name);
+        ambiguousEntitySets.add(name);
       }
     };
     setOnce(typeName);
@@ -844,19 +880,13 @@ export function emitODataConnectors(
     const connect = (qField.extensions as any)?.directives?.connect;
     const returnName = qField.type.getTypeName().replace(/[[\]!]/g, '');
     const getPath = connect?.http?.GET as string | undefined;
-    // Entity-set by-id (`/People/{$args.UserName}/`) — including union returns that
-    // omit `entity: true`. Do NOT stamp bare `/FunctionImport` paths (e.g.
-    // GetPersonWithMostFriends) as entity sets.
+    // Entity-set by-id only (`/People/{$args.UserName}/`). Do not stamp singletons
+    // like `/Me` or bare `/FunctionImport` — those are not entity-set origins and
+    // would falsely mark Person as ambiguous (People vs Me).
     if (getPath) {
       const byId = getPath.match(/^\/([^/]+)\/\{\$args\./);
       if (byId) {
         rememberEntitySet(returnName, byId[1]);
-      }
-    }
-    if (connect?.entity && getPath) {
-      const match = getPath.match(/^\/([^/]+)\//);
-      if (match) {
-        rememberEntitySet(returnName, match[1]);
       }
     }
   }
@@ -953,7 +983,7 @@ export function emitODataConnectors(
         }
         if (dirs.boundFunction) {
           const functionRef = dirs.boundFunction.functionRef as string;
-          const callArgs = odataCallArgsSuffix(schemaComposer, field);
+          const callArgs = odataCallArgsSuffix(schemaComposer, field, typeName);
           setConnect(
             otc,
             fieldName,
@@ -971,6 +1001,7 @@ export function emitODataConnectors(
         if (dirs.boundAction) {
           const actionRef = dirs.boundAction.actionRef as string;
           // OData action bodies exclude the binding parameter (URL identifies the entity).
+          // Other complex Input args stay in the body.
           const bodyArgs: string[] = [];
           for (const [argName, argConfig] of Object.entries(field.args || {})) {
             if (argName === 'queryOptions') continue;
@@ -979,13 +1010,8 @@ export function emitODataConnectors(
                 ? (argConfig.type as any).getTypeName()
                 : String(argConfig.type)
             ).replace(/[[\]!]/g, '');
-            if (argTypeName.endsWith('Input') || argTypeName.endsWith('UpdateInput')) {
+            if (isBindingInputArg(schemaComposer, typeName, argTypeName)) {
               continue;
-            }
-            try {
-              if (schemaComposer.getITC(argTypeName)) continue;
-            } catch {
-              // scalar / enum arg — include in body
             }
             bodyArgs.push(argName);
           }
@@ -1098,7 +1124,67 @@ export function emitODataConnectors(
     Accept: ODATA_ACCEPT_METADATA,
     ...(opts.operationHeaders || {}),
   };
-  const headerMappings = headersToConnectMappings(mergedHeaders);
+  // Apollo Router source headers cannot see `$args` - keep those on field `@connect`.
+  const sourceHeaderEntries: Record<string, string> = {};
+  const argHeaderEntries: Record<string, string> = {};
+  for (const [name, value] of Object.entries(mergedHeaders)) {
+    const raw = String(value);
+    if (/\{args\./.test(raw) || /\{\$args\./.test(raw)) {
+      argHeaderEntries[name] = raw;
+    } else {
+      sourceHeaderEntries[name] = raw;
+    }
+  }
+  const headerMappings = headersToConnectMappings(sourceHeaderEntries);
+  const fieldArgHeaderMappings = headersToConnectMappings(argHeaderEntries);
+  if (fieldArgHeaderMappings?.length) {
+    // Attach arg-dependent headers onto every field-level `@connect` http block.
+    for (const tc of schemaComposer.types.values()) {
+      const typeName = (tc as any).getTypeName?.();
+      if (typeof typeName !== 'string') continue;
+      if (!schemaComposer.isObjectType(typeName) && !schemaComposer.isInterfaceType(typeName)) {
+        continue;
+      }
+      const typed = tc as ObjectTypeComposer | InterfaceTypeComposer;
+      for (const fieldName of typed.getFieldNames()) {
+        const field = typed.getField(fieldName);
+        const connect = (field.extensions as any)?.directives?.connect;
+        if (!connect?.http) continue;
+        const existing = Array.isArray(connect.http.headers) ? connect.http.headers : [];
+        connect.http.headers = [...existing, ...fieldArgHeaderMappings];
+        typed.setField(fieldName, {
+          ...field,
+          extensions: {
+            ...(field.extensions || {}),
+            directives: {
+              ...((field.extensions as any)?.directives || {}),
+              connect,
+            },
+          },
+        });
+      }
+    }
+    for (const rootName of ['Query', 'Mutation'] as const) {
+      const root = schemaComposer[rootName];
+      for (const fieldName of root.getFieldNames()) {
+        const field = root.getField(fieldName);
+        const connect = (field.extensions as any)?.directives?.connect;
+        if (!connect?.http) continue;
+        const existing = Array.isArray(connect.http.headers) ? connect.http.headers : [];
+        connect.http.headers = [...existing, ...fieldArgHeaderMappings];
+        root.setField(fieldName, {
+          ...field,
+          extensions: {
+            ...(field.extensions || {}),
+            directives: {
+              ...((field.extensions as any)?.directives || {}),
+              connect,
+            },
+          },
+        });
+      }
+    }
+  }
 
   return {
     source: {
