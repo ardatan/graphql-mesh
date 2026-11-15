@@ -6,6 +6,7 @@ import {
   inheritXmlNamespacePrefixes,
   isXmlContentType,
   jsObjectToXml,
+  unwrapXmlScalarLeaf,
   xmlToJsObject,
 } from '../src/directives/xmlCodec.js';
 
@@ -223,12 +224,41 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
     );
   });
 
-  it('unwraps innerText on attributed leaves so Date/String scalars get strings', () => {
+  it('keeps attributed XML nodes for selection and unwraps them for scalars', () => {
     const parsed = xmlToJsObject(
-      '<Envelope><Body><Name id="1">Alice</Name><Empty xsi:nil="true"/></Body></Envelope>',
+      '<Envelope><Body><Name id="1">Alice</Name><Empty xsi:nil="true"/><Code>00123</Code></Body></Envelope>',
     ) as any;
-    expect(parsed.Envelope.Body.Name).toBe('Alice');
-    expect(parsed.Envelope.Body.Empty).toBeNull();
+    // Attributed leaves stay structured so `attributes.id` selection works.
+    expect(parsed.Envelope.Body.Name).toEqual({
+      innerText: 'Alice',
+      attributes: { id: '1' },
+    });
+    expect(parsed.Envelope.Body.Empty).toEqual({
+      attributes: { nil: 'true' },
+    });
+    // Leading-zero identifiers stay lexical strings (FXP leadingZeros: false).
+    expect(parsed.Envelope.Body.Code).toBe('00123');
+    expect(unwrapXmlScalarLeaf(parsed.Envelope.Body.Name)).toBe('Alice');
+    expect(unwrapXmlScalarLeaf(parsed.Envelope.Body.Empty)).toBeNull();
+  });
+
+  it('does not force parent prefix onto unprefixed children with default xmlns', () => {
+    const inherited = inheritXmlNamespacePrefixes({
+      'p:Root': {
+        child: {
+          attributes: { xmlns: 'urn:child' },
+          value: 'x',
+        },
+      },
+    });
+    expect(inherited).toEqual({
+      'p:Root': {
+        child: {
+          attributes: { xmlns: 'urn:child' },
+          value: 'x',
+        },
+      },
+    });
   });
 
   it('coerces XSD xs:date with timezone to GraphQL Date YYYY-MM-DD', async () => {

@@ -79,7 +79,8 @@ export const LinkDirective = new GraphQLDirective({
   isRepeatable: true,
 });
 
-const RESERVED_XML_PREFIXES = new Set(['xml', 'xmlns']);
+/** Envelope uses `soap:`; never let body/header aliases steal that prefix. */
+const RESERVED_XML_PREFIXES = new Set(['xml', 'xmlns', 'soap']);
 
 export function splitSoapEndpoint(endpoint: string | undefined): {
   baseURL: string;
@@ -162,8 +163,11 @@ function formatStaticXmlTree(value: unknown): string {
     return literalExpr(value);
   }
   if (Array.isArray(value)) {
-    // FXP repeated elements - emit first shape only for static config headers.
-    return value.length ? formatStaticXmlTree(value[0]) : literalExpr(null);
+    // Static soapHeaders may list repeated element values; emit every item.
+    if (!value.length) {
+      return literalExpr(null);
+    }
+    return `[ ${value.map(item => formatStaticXmlTree(item)).join(', ')} ]`;
   }
   const entries = Object.entries(value as Record<string, unknown>);
   if (entries.length === 0) {
@@ -231,13 +235,15 @@ function formatHeaderWithOptionalArg(
 
 export function buildSoapConnectBody(input: SoapConnectEmitInput): string {
   const assigned = new Map<string, string>();
-  const preferredBody = input.bodyAlias || 'body';
+  const preferredBody =
+    input.bodyAlias && !RESERVED_XML_PREFIXES.has(input.bodyAlias) ? input.bodyAlias : 'body';
   // Reserve preferred body prefix without implying an xmlns until an element uses it.
   if (input.bindingNamespace) {
     assigned.set(input.bindingNamespace, preferredBody);
   }
   if (input.soapHeaders?.headers && input.soapHeaders.namespace) {
-    const userAlias = input.soapHeaders.alias ?? 'header';
+    const rawAlias = input.soapHeaders.alias ?? 'header';
+    const userAlias = RESERVED_XML_PREFIXES.has(rawAlias) ? 'header' : rawAlias;
     const nsUri = input.soapHeaders.namespace;
     const taken = new Set(assigned.values());
     if (!assigned.has(nsUri) && !taken.has(userAlias) && !RESERVED_XML_PREFIXES.has(userAlias)) {
@@ -261,9 +267,11 @@ export function buildSoapConnectBody(input: SoapConnectEmitInput): string {
 
   if (soapHeaderEntries.length) {
     const hdrNs = input.soapHeaders!.namespace;
+    const rawHdrAlias = input.soapHeaders!.alias ?? 'header';
+    const preferredHdrAlias = RESERVED_XML_PREFIXES.has(rawHdrAlias) ? 'header' : rawHdrAlias;
     const hdrAlias = hdrNs
-      ? getOrAssignPrefix(hdrNs, assigned, input.soapHeaders!.alias ?? 'header')
-      : (input.soapHeaders!.alias ?? 'header');
+      ? getOrAssignPrefix(hdrNs, assigned, preferredHdrAlias)
+      : preferredHdrAlias;
     markPrefix(hdrAlias);
     for (const [k, v] of soapHeaderEntries) {
       const elementKey = `${hdrAlias}:${k}`;

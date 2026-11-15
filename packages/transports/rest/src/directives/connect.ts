@@ -5,6 +5,7 @@ import {
   GraphQLNonNull,
   GraphQLScalarType,
   GraphQLUnionType,
+  isEnumType,
   isListType,
   isNonNullType,
   isObjectType,
@@ -37,7 +38,13 @@ import {
 import { rebuildOpenInputObjects } from './odataOpenInput.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
-import { isXmlContentType, jsObjectToXml, looksLikeXml, xmlToJsObject } from './xmlCodec.js';
+import {
+  isXmlContentType,
+  jsObjectToXml,
+  looksLikeXml,
+  unwrapXmlScalarLeaf,
+  xmlToJsObject,
+} from './xmlCodec.js';
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(
   type: GraphQLOutputType,
@@ -1600,9 +1607,10 @@ function evaluateConnectBodySelection(
     }
   }
   // Multi-field / nested body selections (`"soap:Envelope": { … id: $args.id }`) need
-  // `$args` / `$this` via extras.vars — root is empty object (Connectors object literal).
+  // `$args` / `$this` via extras.vars. Root is `vars.args` so bare paths (`name`, `$`)
+  // resolve request arguments (Apollo `http.body: "name"` / `"$"`).
   try {
-    return applySelection(trimmed, {}, { vars: selectionVars });
+    return applySelection(trimmed, vars.args, { vars: selectionVars });
   } catch {
     return vars.args;
   }
@@ -1626,6 +1634,8 @@ export type ConnectFieldResolverOptions = {
   timeout?: number;
   queryStringOptions?: MeshQsOptions;
   odata?: ConnectODataOptions;
+  /** Extra headers from handler config (e.g. legacy soap operationHeaders for SDL). */
+  operationHeaders?: Record<string, string>;
 };
 
 /**
@@ -1907,6 +1917,9 @@ export function addConnectFieldResolver(
   // Prefer-embedded: expandNavProps + literal `@source` Accept `odata.metadata=…`.
   // Schema-static — no per-call header resolve / empty arg stubs.
   const preferEmbeddedNav = expandNavProps && hasODataMetadataAcceptHeader(source?.http?.headers);
+  const runtimeHeaderMappings = opts.operationHeaders
+    ? Object.entries(opts.operationHeaders).map(([name, value]) => ({ name, value }))
+    : undefined;
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
     // When `$expand` / parent selection already put this field on `root`, skip HTTP.
@@ -2091,6 +2104,8 @@ export function addConnectFieldResolver(
     })();
 
     const headers: Record<string, string> = {};
+    // Runtime/handler headers first; `@source` / `@connect` mappings override on conflict.
+    applyHeaders(headers, runtimeHeaderMappings, vars);
     applyHeaders(headers, source?.http?.headers, vars);
     applyHeaders(headers, connectArgs.http?.headers, vars);
 
@@ -2375,6 +2390,13 @@ export function addConnectFieldResolver(
       if (expandNavProps && info) {
         selected = attachExpandedNavFromRaw(selected, responseData, info, expandNavProps);
       }
+    }
+    // Scalar / enum returns: unwrap attributed XML leaves after selection.
+    if (
+      !isListReturnType &&
+      (isScalarType(returnNamedGraphQLType) || isEnumType(returnNamedGraphQLType))
+    ) {
+      selected = unwrapXmlScalarLeaf(selected);
     }
     // Fill Mesh-only `_response` fields Apollo selection cannot express.
     selected = fillExposeResponseMetadata(selected, {

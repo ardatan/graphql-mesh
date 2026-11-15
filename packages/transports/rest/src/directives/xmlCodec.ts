@@ -12,8 +12,12 @@ import { XMLBuilder, XMLParser } from 'fast-xml-parser';
  *
  * Nested `$args` objects stay unprefixed in selection; `inheritXmlNamespacePrefixes`
  * copies the parent element's prefix onto descendants (typical WSDL elementFormDefault).
- * Singleton arrays are collapsed and `innerText` is unwrapped so GraphQL scalars
- * (e.g. Date) receive strings, not `{ innerText, attributes }` objects.
+ * Attributed leaves keep `{ attributes, innerText }` through selection so mappings like
+ * `code: Item.attributes.code` work; `unwrapXmlScalarLeaf` runs when a GraphQL scalar
+ * field needs the text (or null for attributes-only / `xsi:nil`).
+ *
+ * `numberParseOptions.leadingZeros: false` keeps leading-zero identifiers as strings
+ * (`00123`) while still coercing plain numbers and booleans.
  */
 export const connectXmlOptions = {
   attributeNamePrefix: '',
@@ -22,6 +26,10 @@ export const connectXmlOptions = {
   ignoreAttributes: false,
   removeNSPrefix: true,
   allowBooleanAttributes: true,
+  numberParseOptions: {
+    // FXP: false => do not parse values that start with 0 as numbers.
+    leadingZeros: false,
+  },
 } as const;
 
 const xmlBuilder = new XMLBuilder({
@@ -58,6 +66,9 @@ export function looksLikeXml(text: string): boolean {
  * When a parent element is `"orders:SubmitOrder": $args.SubmitOrder`, GraphQL args
  * are unprefixed objects. Inherit the parent's namespace prefix onto descendant
  * keys (except `attributes` / `innerText`) so SOAP/XML codecs match WSDL-qualified trees.
+ *
+ * Exception: an unprefixed child that declares `attributes.xmlns` (default namespace)
+ * stays unprefixed — forcing the parent prefix would ignore the child's xmlns.
  */
 export function inheritXmlNamespacePrefixes(value: unknown, inheritPrefix?: string): unknown {
   if (Array.isArray(value)) {
@@ -73,10 +84,21 @@ export function inheritXmlNamespacePrefixes(value: unknown, inheritPrefix?: stri
       continue;
     }
     const prefixed = key.match(/^([^:]+):(.+)$/);
-    const prefix = prefixed ? prefixed[1] : inheritPrefix;
+    const childAttrs =
+      child != null && typeof child === 'object' && !Array.isArray(child)
+        ? (child as Record<string, unknown>).attributes
+        : undefined;
+    const hasDefaultXmlns =
+      childAttrs != null &&
+      typeof childAttrs === 'object' &&
+      !Array.isArray(childAttrs) &&
+      Object.prototype.hasOwnProperty.call(childAttrs, 'xmlns');
+    const prefix = prefixed ? prefixed[1] : hasDefaultXmlns ? undefined : inheritPrefix;
     const localName = prefixed ? prefixed[2] : key;
     const outKey = prefix ? `${prefix}:${localName}` : localName;
-    out[outKey] = inheritXmlNamespacePrefixes(child, prefix ?? inheritPrefix);
+    // Default xmlns subtree: stop inheriting the outer prefix into descendants.
+    const childInherit = hasDefaultXmlns ? undefined : (prefix ?? inheritPrefix);
+    out[outKey] = inheritXmlNamespacePrefixes(child, childInherit);
   }
   return out;
 }
@@ -97,9 +119,8 @@ export function xmlToJsObject(xml: string): unknown {
 }
 
 /**
- * Legacy transport-soap `normalizeResult`: unwrap `innerText` and length-1 arrays.
- * Attributed leaves without text (e.g. `xsi:nil`) become `null` so Date/String
- * scalars do not receive `{ attributes }` objects.
+ * Collapse singleton arrays. Keep attributed / mixed nodes intact for selection.
+ * Pure `{ innerText }` leaves (no attributes/children) unwrap for convenience.
  */
 function normalizeXmlResult(result: unknown): unknown {
   if (result != null && typeof result === 'object') {
@@ -110,18 +131,39 @@ function normalizeXmlResult(result: unknown): unknown {
       return result.map(normalizeXmlResult);
     }
     const obj = result as Record<string, unknown>;
-    if (Object.prototype.hasOwnProperty.call(obj, 'innerText')) {
-      return obj.innerText;
-    }
     const keys = Object.keys(obj);
-    if (keys.length === 1 && keys[0] === 'attributes') {
-      return null;
+    if (keys.length === 1 && keys[0] === 'innerText') {
+      return obj.innerText;
     }
     for (const key of keys) {
       obj[key] = normalizeXmlResult(obj[key]);
     }
   }
   return result;
+}
+
+/**
+ * When a GraphQL scalar/enum field needs a value from an XML node:
+ * - `{ innerText, attributes? }` (no other children) -> text
+ * - `{ attributes }` only (e.g. xsi:nil) -> null
+ * - otherwise leave the object for structured fields
+ */
+export function unwrapXmlScalarLeaf(value: unknown): unknown {
+  if (value == null || typeof value !== 'object' || Array.isArray(value)) {
+    return value;
+  }
+  const obj = value as Record<string, unknown>;
+  const keys = Object.keys(obj);
+  if (keys.length === 1 && keys[0] === 'attributes') {
+    return null;
+  }
+  if (Object.prototype.hasOwnProperty.call(obj, 'innerText')) {
+    const nonAttrKeys = keys.filter(k => k !== 'attributes');
+    if (nonAttrKeys.length === 1 && nonAttrKeys[0] === 'innerText') {
+      return obj.innerText;
+    }
+  }
+  return value;
 }
 
 /** @deprecated kept for unit tests that import the old name */

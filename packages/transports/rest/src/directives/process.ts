@@ -25,6 +25,7 @@ import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
+import { unwrapXmlScalarLeaf } from './xmlCodec.js';
 
 export interface ProcessDirectiveArgs {
   pubsub?: PubSub;
@@ -40,7 +41,13 @@ export interface ProcessDirectiveArgs {
 
 export function processDirectives(
   schema: GraphQLSchema,
-  { globalFetch, log, pubsub, ...extraGlobalOptions }: ProcessDirectiveArgs = {},
+  {
+    globalFetch,
+    log,
+    pubsub,
+    operationHeaders: runtimeOperationHeaders,
+    ...extraGlobalOptions
+  }: ProcessDirectiveArgs = {},
 ) {
   const nonExecutableObjMapScalar = schema.getType('ObjMap');
   if (nonExecutableObjMapScalar && isScalarType(nonExecutableObjMapScalar)) {
@@ -83,6 +90,13 @@ export function processDirectives(
     timeout: transportOpts.timeout,
     ...extraGlobalOptions,
   };
+  let runtimeHeaders = runtimeOperationHeaders;
+  if (typeof runtimeHeaders === 'string') {
+    runtimeHeaders = JSON.parse(runtimeHeaders);
+  }
+  if (Array.isArray(runtimeHeaders)) {
+    runtimeHeaders = Object.fromEntries(runtimeHeaders);
+  }
   // Wire @connect resolvers (Federation Connectors)
   const odataOpts = transportOpts.odata;
   processConnectDirectives(schema, {
@@ -97,6 +111,8 @@ export function processDirectives(
       batch: odataOpts?.batch,
       securityHeaderNames: odataOpts?.securityHeaderNames,
     },
+    // Handler-config headers (SDL soap sources) — merged under @source/@connect headers.
+    operationHeaders: runtimeHeaders as Record<string, string> | undefined,
   });
   if (typeof globalOptions.operationHeaders === 'string') {
     globalOptions.operationHeaders = JSON.parse(globalOptions.operationHeaders);
@@ -174,6 +190,8 @@ export function processDirectives(
         // Former `@flatten`: OpenAPI oneOf(string|array) → `[Scalar]` needs deep-flatten.
         // Also legacy SOAP soapDefaultResolver: wrap/unwrap nested lists by GraphQL type.
         installXmlListPluralization(field as GraphQLField<any, any>);
+        // Attributed XML leaves stay structured for selection; unwrap at scalar fields.
+        installXmlScalarUnwrap(field as GraphQLField<any, any>);
       }
     }
   }
@@ -190,7 +208,7 @@ function isListTypeOrNonNullListType(type: GraphQLOutputType): boolean {
 /**
  * Nested XML/SOAP list fields: a single unbounded sibling is an object, not an array.
  * Match legacy transport-soap `soapDefaultResolver` wrap (+ OpenAPI `@flatten` for scalar lists).
- * Only list fields — singular Date/String fields keep the default resolver.
+ * Only list fields — singular Date/String fields use `installXmlScalarUnwrap`.
  */
 function installXmlListPluralization(field: GraphQLField<any, any>) {
   if (field.resolve && field.resolve.name !== 'defaultFieldResolver') return;
@@ -206,6 +224,24 @@ function installXmlListPluralization(field: GraphQLField<any, any>) {
     if (!Array.isArray(result)) {
       result = [result];
     }
-    return flattenScalars ? result.flat(Infinity) : result;
+    if (!flattenScalars) {
+      return result;
+    }
+    return result.flat(Infinity).map(unwrapXmlScalarLeaf);
+  };
+}
+
+/**
+ * Singular scalar/enum fields: deferred unwrap of attributed XML leaves
+ * (`{ innerText, attributes }` / attributes-only nil) after selection can read attributes.
+ */
+function installXmlScalarUnwrap(field: GraphQLField<any, any>) {
+  if (field.resolve && field.resolve.name !== 'defaultFieldResolver') return;
+  if (isListTypeOrNonNullListType(field.type)) return;
+  const named = getNamedType(field.type);
+  if (!isScalarType(named) && !isEnumType(named)) return;
+  const fieldName = field.name;
+  field.resolve = function xmlScalarUnwrap(root) {
+    return unwrapXmlScalarLeaf(root?.[fieldName]);
   };
 }

@@ -43,6 +43,7 @@ import {
   ConnectDirective,
   LinkDirective,
   SourceDirective,
+  splitSoapEndpoint,
 } from './connectEmit.js';
 import type {
   WSDLBinding,
@@ -245,8 +246,11 @@ export class SOAPLoader {
   private bodyAlias?: string;
   private soapNamespace: string;
   private operationHeaders?: Record<string, string>;
-  /** First discovered WSDL port location (or constructor endpoint). */
-  private resolvedEndpoint?: string;
+  /**
+   * One `@source` per distinct port origin. Key is URL origin (or raw endpoint when
+   * unparseable). Value holds the source name and a representative absolute endpoint.
+   */
+  private sourcesByOrigin = new Map<string, { name: string; endpoint: string }>();
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
@@ -258,12 +262,28 @@ export class SOAPLoader {
     this.schemaComposer.addDirective(LinkDirective);
     this.schemaHeadersFactory = getInterpolatedHeadersFactory(options.schemaHeaders || {});
     this.endpoint = options.endpoint;
-    this.resolvedEndpoint = options.endpoint;
     this.cwd = options.cwd;
     this.soapHeaders = options.soapHeaders;
     this.bodyAlias = options.bodyAlias;
     this.operationHeaders = options.operationHeaders;
     this.soapNamespace = 'http://schemas.xmlsoap.org/soap/envelope/';
+  }
+
+  /** Register (or reuse) an `@source` for this endpoint's origin; return its source name. */
+  private sourceNameForEndpoint(endpoint: string | undefined): string {
+    const ep = endpoint || this.endpoint || '';
+    const { baseURL } = splitSoapEndpoint(ep);
+    const originKey = baseURL || ep || '';
+    let entry = this.sourcesByOrigin.get(originKey);
+    if (!entry) {
+      const name =
+        this.sourcesByOrigin.size === 0
+          ? this.subgraphName
+          : `${this.subgraphName}_${this.sourcesByOrigin.size + 1}`;
+      entry = { name, endpoint: ep };
+      this.sourcesByOrigin.set(originKey, entry);
+    }
+    return entry.name;
   }
 
   loadXMLSchemaNamespace() {
@@ -636,9 +656,6 @@ export class SOAPLoader {
                 }
               }
             }
-            if (soapAnnotations.endpoint && !this.resolvedEndpoint) {
-              this.resolvedEndpoint = soapAnnotations.endpoint;
-            }
             if (this.bodyAlias) {
               soapAnnotations.bodyAlias = this.bodyAlias;
             }
@@ -764,7 +781,7 @@ export class SOAPLoader {
               {
                 name: 'connect',
                 args: buildSoapConnectDirectiveArgs({
-                  sourceName: this.subgraphName,
+                  sourceName: this.sourceNameForEndpoint(soapAnnotations.endpoint),
                   endpoint: soapAnnotations.endpoint,
                   soapNamespace: soapAnnotations.soapNamespace,
                   soapAction: soapAnnotations.soapAction,
@@ -1506,13 +1523,18 @@ export class SOAPLoader {
       kind: 'rest',
       subgraph: this.subgraphName,
     };
-    schemaExts.directives.source = [
+    // One `@source` per distinct port origin (multi-port WSDLs must not collapse hosts).
+    const sourceEntries =
+      this.sourcesByOrigin.size > 0
+        ? [...this.sourcesByOrigin.values()]
+        : [{ name: this.subgraphName, endpoint: this.endpoint || '' }];
+    schemaExts.directives.source = sourceEntries.map(({ name, endpoint }) =>
       buildSoapSourceDirectiveArgs({
-        name: this.subgraphName,
-        endpoint: this.resolvedEndpoint || this.endpoint || '',
+        name,
+        endpoint,
         operationHeaders: this.operationHeaders,
       }),
-    ];
+    );
     const existingLinks = Array.isArray(schemaExts.directives.link)
       ? schemaExts.directives.link
       : schemaExts.directives.link
