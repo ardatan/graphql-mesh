@@ -112,31 +112,11 @@ export function getAnnotatedSubgraphs(
 ) {
   // Alias Mesh stitching `@source` as `@meshSource` only when the composition also
   // has Federation Connectors (SCHEMA `@source`). Mesh-only graphs keep plain `@source`.
-  // Transforms may add connect/v0.4 (e.g. federation `virtualConnect`) — probe with the
-  // real subgraph config (never a fake name: prefix transform latches `value` from
-  // `subgraphConfig.name` on first call).
-  const schemaLooksLikeConnectors = (subgraphConfig: SubgraphConfig) => {
-    if (isFederationConnectorsSubgraph(subgraphConfig.schema)) {
-      return true;
-    }
-    const transforms = subgraphConfig.transforms;
-    if (!transforms?.length) {
-      return false;
-    }
-    try {
-      let probe = subgraphConfig.schema;
-      for (const transform of transforms) {
-        probe = transform(probe, subgraphConfig);
-      }
-      return isFederationConnectorsSubgraph(probe);
-    } catch {
-      return false;
-    }
-  };
-  const compositionHasConnectors = subgraphs.some(schemaLooksLikeConnectors);
+  const compositionHasConnectors = subgraphs.some(({ schema }) =>
+    isFederationConnectorsSubgraph(schema),
+  );
   const compositionHasMeshStitchingSource = subgraphs.some(
-    subgraphConfig =>
-      !schemaLooksLikeConnectors(subgraphConfig) && !!subgraphConfig.transforms?.length,
+    ({ schema, transforms }) => !isFederationConnectorsSubgraph(schema) && !!transforms?.length,
   );
 
   const annotatedSubgraphs: ServiceDefinition[] = [];
@@ -144,7 +124,7 @@ export function getAnnotatedSubgraphs(
     const { name: subgraphName, schema, transforms } = subgraphConfig;
     let url: string = subgraphConfig.url;
     const subgraphSchemaExtensions = getDirectiveExtensions(schema);
-    let isConnectorsSubgraph = isFederationConnectorsSubgraph(schema);
+    const isConnectorsSubgraph = isFederationConnectorsSubgraph(schema);
     const transportDirectives = subgraphSchemaExtensions?.transport;
     const transportDirective = transportDirectives?.[0];
     const apolloSource = (subgraphSchemaExtensions?.source || []).find(
@@ -471,24 +451,6 @@ export function getAnnotatedSubgraphs(
           }
         },
       });
-    }
-    // Federation `virtualConnect` (and similar) may add connect/v0.4 during transforms.
-    if (!isConnectorsSubgraph && isFederationConnectorsSubgraph(transformedSubgraph)) {
-      isConnectorsSubgraph = true;
-      removeTransportDirectiveDefinition = true;
-      const extensions: Record<string, any> = (transformedSubgraph.extensions ||= {});
-      extensions.directives = extensions.directives || {};
-      const existingTransport = (extensions.directives.transport || [])[0] || {};
-      const mergedOptions = { ...(existingTransport.options || {}) };
-      extensions.directives.transport = [
-        {
-          ...existingTransport,
-          subgraph: subgraphName,
-          kind: 'rest',
-          location: url || existingTransport.location || '',
-          ...(Object.keys(mergedOptions).length ? { options: mergedOptions } : {}),
-        },
-      ];
     }
     // Cross-subgraph Connectors stubs → `@key(..., resolvable: false)` so Hive
     // plans `_entities` (Router already resolves stubs from selection). Runs for

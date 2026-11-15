@@ -1,7 +1,6 @@
 import {
   DirectiveLocation,
   getNamedType,
-  GraphQLBoolean,
   GraphQLDirective,
   GraphQLList,
   GraphQLNonNull,
@@ -197,14 +196,6 @@ interface FederationResolveReferenceConfig {
    * - selections from the key can be referenced by using the $ sign and dot notation: `"upcs: [[$key.upc]]"`, so that `$key.upc` refers to the upc field of the key.
    */
   argsExpr?: string;
-  /**
-   * Emit an Apollo **virtual** `@connect` (no `http:`) with `entity: true` instead of
-   * Mesh `@merge`. Selection can only map `$args` / `$this` / literals — it cannot call
-   * a GraphQL HTTP upstream. Linking connect/v0.4 also flips the subgraph to the
-   * Connectors (rest) transport for Hive. Prefer real Federation `_entities` or an
-   * HTTP-backed `@connect` when entity fields must be fetched from a GraphQL server.
-   */
-  virtualConnect?: boolean;
 }
 
 interface MergeDirectiveConfig {
@@ -212,7 +203,6 @@ interface MergeDirectiveConfig {
   keyField?: string;
   keyArg?: string;
   argsExpr?: string;
-  virtualConnect?: boolean;
 }
 
 const federationDirectiveNames = [
@@ -274,7 +264,6 @@ export function createFederationTransform(config: FederationTransformConfig): Su
     );
     const usedFederationDirectives = new Set<string>();
     let mergeDirectiveUsed = false;
-    let virtualConnectUsed = false;
     subgraphSchema = mapSchema(subgraphSchema, {
       [MapperKind.TYPE]: type => {
         const configByType = configurationByType.get(type.name);
@@ -339,7 +328,6 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                     operationMergeDirectiveConfig.set(targetFieldName, {
                       keyField: keyConfig.fields,
                       ...keyConfig.resolveReference,
-                      virtualConnect: keyConfig.resolveReference.virtualConnect,
                     });
                   }
                   break;
@@ -423,19 +411,6 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           // - keyArg !== keyField → type-level `@connect` with `$this.<keyField>`
           //   (see https://www.apollographql.com/docs/graphos/connectors/entities/patterns)
           // Hive uses REST transport `Query._entities` — skip Mesh `@merge` when Connectors cover it.
-          // Optional `virtualConnect`: synthesize a no-`http` `@connect` so Mesh `@merge` is
-          // skipped (Router-shaped Connectors entity). Selection only echoes key args — it does
-          // not invoke the GraphQL HTTP upstream (Apollo virtual connector rules).
-          if (mergeDirectiveConfig.virtualConnect && !fieldDirectives.connect?.length) {
-            const keyField = mergeDirectiveConfig.keyField || 'id';
-            const keyArg = mergeDirectiveConfig.keyArg || keyField;
-            fieldDirectives.connect = [
-              {
-                selection: `${keyField}: $args.${keyArg}`,
-              },
-            ];
-            virtualConnectUsed = true;
-          }
           if (fieldDirectives.connect?.length) {
             const keyArg = mergeDirectiveConfig.keyArg;
             const keyField = mergeDirectiveConfig.keyField;
@@ -521,47 +496,6 @@ export function createFederationTransform(config: FederationTransformConfig): Su
     });
     subgraphSchema = addFederation2DirectivesToSubgraph(subgraphSchema);
     subgraphSchema = importFederationDirectives(subgraphSchema, [...usedFederationDirectives]);
-    if (virtualConnectUsed) {
-      // Connectors @link flips this subgraph to the Connectors (rest) transport in compose.
-      const schemaDirectives = getDirectiveExtensions(subgraphSchema) || {};
-      const linkDirectives = (schemaDirectives.link ||= []);
-      if (
-        !linkDirectives.some(
-          (l: { url?: string }) =>
-            typeof l?.url === 'string' && l.url.startsWith('https://specs.apollo.dev/connect'),
-        )
-      ) {
-        linkDirectives.push({
-          url: 'https://specs.apollo.dev/connect/v0.4',
-          import: ['@connect', '@source'],
-        });
-      }
-      const extensions: Record<string, unknown> = (subgraphSchema.extensions ||= {});
-      extensions.directives = schemaDirectives;
-      // Federation composition needs a real `@connect` directive def on the schema.
-      if (!subgraphSchema.getDirective('connect')) {
-        const schemaConfig = subgraphSchema.toConfig();
-        subgraphSchema = new GraphQLSchema({
-          ...schemaConfig,
-          directives: [
-            ...schemaConfig.directives,
-            new GraphQLDirective({
-              name: 'connect',
-              locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
-              args: {
-                source: { type: GraphQLString },
-                selection: { type: new GraphQLNonNull(GraphQLString) },
-                entity: { type: GraphQLBoolean },
-              },
-              isRepeatable: true,
-            }),
-          ],
-        });
-        // Preserve link extensions after toConfig rebuild.
-        const rebuiltExtensions: Record<string, unknown> = (subgraphSchema.extensions ||= {});
-        rebuiltExtensions.directives = schemaDirectives;
-      }
-    }
     if (mergeDirectiveUsed) {
       subgraphSchema = importMeshDirectives(subgraphSchema, ['@merge']);
       const schemaConfig = subgraphSchema.toConfig();
