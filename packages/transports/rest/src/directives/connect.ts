@@ -1484,8 +1484,6 @@ export type ConnectODataOptions = {
   expandNavProps?: boolean;
   /** Coalesce sibling `@connect` HTTP into `POST /$batch`. */
   batch?: ODataBatchMode;
-  /** Service root for `/$batch` (transport location / source baseURL). */
-  endpoint?: string;
   /** Shared DataLoader fetch — usually created by `processConnectDirectives`. */
   batchFetch?: ReturnType<typeof createODataBatchFetch>;
 };
@@ -2137,17 +2135,15 @@ export function processConnectDirectives(
 ) {
   const odata = opts.odata;
   const batchMode = odata?.batch;
-  const batchEndpoint =
-    odata?.endpoint ||
-    (() => {
-      const sources = getSourceMap(schema);
-      for (const source of sources.values()) {
-        if (typeof source?.http?.baseURL === 'string') {
-          return source.http.baseURL;
-        }
+  const batchEndpoint = (() => {
+    const sources = getSourceMap(schema);
+    for (const source of sources.values()) {
+      if (typeof source?.http?.baseURL === 'string') {
+        return source.http.baseURL;
       }
-      return undefined;
-    })();
+    }
+    return undefined;
+  })();
   // Single factory for the whole schema — per-field factories would not coalesce.
   const batchFetch =
     odata?.batchFetch ||

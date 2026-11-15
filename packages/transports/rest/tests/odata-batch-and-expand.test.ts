@@ -204,7 +204,6 @@ describe('OData $batch json coalescing', () => {
       odata: {
         expandNavProps: false,
         batch: 'json',
-        endpoint: 'https://odata.example.com',
       },
       globalFetch: (async (url: string, init?: RequestInit) => {
         urls.push(String(url));

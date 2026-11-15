@@ -91,10 +91,10 @@ export function processDirectives(
     timeout: globalOptions.timeout,
     queryStringOptions: globalOptions.queryStringOptions,
     // Mirror `@transport(options: { odata: … })` under connect opts.
+    // Batch root URL comes from `@source` http.baseURL (see processConnectDirectives).
     odata: {
       expandNavProps: Boolean(odataOpts?.expandNavProps),
       batch: odataOpts?.batch,
-      endpoint: typeof globalOptions.endpoint === 'string' ? globalOptions.endpoint : undefined,
     },
   });
   if (typeof globalOptions.operationHeaders === 'string') {
