@@ -7,6 +7,7 @@ import {
   hasODataMetadataAcceptHeader,
   isODataMetadataAccept,
   splitTopLevelComma,
+  splitTopLevelSemicolon,
 } from '../src/directives/odataConnectProfile.js';
 
 const CONNECTOR_DIRECTIVES = /* GraphQL */ `
@@ -137,6 +138,21 @@ describe('odataConnectProfile helpers', () => {
       'Friends',
     ]);
     expect(splitTopLevelComma('TripId,Name')).toEqual(['TripId', 'Name']);
+  });
+
+  it('splits expand options on top-level semicolons only', () => {
+    expect(
+      splitTopLevelSemicolon('$expand=Trips($top=2;$select=TripId,Name);$select=UserName'),
+    ).toEqual(['$expand=Trips($top=2;$select=TripId,Name)', '$select=UserName']);
+  });
+
+  it('promotes $.value { ... } property map to the root', () => {
+    const tree = buildConnectPropertyNameMapTree(
+      '$.value { userName: UserName firstName: FirstName }',
+    );
+    expect(tree.map.get('userName')).toBe('UserName');
+    expect(tree.map.get('firstName')).toBe('FirstName');
+    expect(tree.children.has('value')).toBe(false);
   });
 });
 
@@ -470,6 +486,78 @@ describe('Connect OData $select / $expand', () => {
     expect(result.errors).toBeUndefined();
     const decoded = decodeURIComponent(requestedUrl.replace(/\+/g, ' '));
     expect(decoded).toMatch(/\$expand=friends\(\$top=3;\$select=/i);
+  });
+
+  it('resolves whole-object queryOptions variable in expand', async () => {
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+
+      input QueryOptions {
+        top: Int
+        filter: String
+      }
+
+      schema
+        @source(
+          name: "trippin"
+          http: {
+            baseURL: "https://odata.example.com"
+            headers: [{ name: "Accept", value: "application/json;odata.metadata=minimal" }]
+          }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        person(userName: String!): Person
+          @connect(
+            source: "trippin"
+            http: { GET: "/People('{$args.userName}')" }
+            selection: "userName: UserName"
+          )
+      }
+
+      type Person @key(fields: "userName") {
+        userName: String
+        friends(queryOptions: QueryOptions): [Person]
+          @connect(
+            source: "trippin"
+            http: { GET: "/People/{$this.userName}/Friends" }
+            selection: "userName: UserName"
+          )
+      }
+    `;
+
+    let requestedUrl = '';
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      odata: { expandNavProps: true },
+      globalFetch: (async (url: string) => {
+        requestedUrl = String(url);
+        return Response.json({
+          UserName: 'russellwhyte',
+          Friends: [{ UserName: 'scottketchum' }],
+        });
+      }) as any,
+    });
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        query ($options: QueryOptions) {
+          person(userName: "russellwhyte") {
+            userName
+            friends(queryOptions: $options) {
+              userName
+            }
+          }
+        }
+      `),
+      variableValues: { options: { top: 5, filter: "UserName ne 'x'" } },
+    });
+
+    expect(result.errors).toBeUndefined();
+    const decoded = decodeURIComponent(requestedUrl.replace(/\+/g, ' '));
+    expect(decoded).toMatch(/\$expand=friends\(\$top=5;\$filter=UserName ne 'x';\$select=/i);
   });
 
   it('prefers parent-expanded nav over a second @connect HTTP fetch when expandNavProps', async () => {

@@ -95,6 +95,7 @@ export function processDirectives(
     odata: {
       expandNavProps: Boolean(odataOpts?.expandNavProps),
       batch: odataOpts?.batch,
+      securityHeaderNames: odataOpts?.securityHeaderNames,
     },
   });
   if (typeof globalOptions.operationHeaders === 'string') {

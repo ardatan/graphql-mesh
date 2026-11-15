@@ -1606,6 +1606,8 @@ export type ConnectODataOptions = {
   batch?: ODataBatchMode;
   /** Shared DataLoader fetch — usually created by `processConnectDirectives`. */
   batchFetch?: ReturnType<typeof createODataBatchFetch>;
+  /** Extra credential header names for `/$batch` partition / outer forward. */
+  securityHeaderNames?: readonly string[];
 };
 
 export type ConnectFieldResolverOptions = {
@@ -1714,6 +1716,26 @@ export function addConnectFieldResolver(
         typeof (root as Record<string, unknown>)._odataId === 'string'
           ? ((root as Record<string, unknown>)._odataId as string)
           : '';
+      // Expanded members need `/People/p/Orders/o`, not `/People/p/o` — use the nav
+      // segment from the connector GET path (fallback: GraphQL field name).
+      const navCollectionBase = (() => {
+        const base = parentId ? stripTrailingSlash(parentId) : '';
+        if (!base) return '';
+        let nav = '';
+        const getPath = connectArgs.http?.GET;
+        if (typeof getPath === 'string') {
+          const pathOnly = getPath.split('?')[0].replace(/\/+$/, '');
+          const parts = pathOnly.split('/').filter(Boolean);
+          const last = parts[parts.length - 1];
+          if (last && !last.includes('{')) {
+            nav = last;
+          }
+        }
+        if (!nav && info?.fieldName) {
+          nav = info.fieldName;
+        }
+        return nav ? `${base}/${nav}` : base;
+      })();
       const extras = {
         status: 200,
         responseHeaders: new Headers(),
@@ -1733,7 +1755,7 @@ export function addConnectFieldResolver(
       } else {
         mapped = applySelection(selection, embedded, extras);
       }
-      return ensureODataIdField(mapped, embedded, parentId);
+      return ensureODataIdField(mapped, embedded, navCollectionBase);
     }
 
     // Virtual connector: no http — selection may only use $args / $this / literals.
@@ -2331,6 +2353,7 @@ export function processConnectDirectives(
             (ctx?.fetch || opts.globalFetch || defaultFetch)(url, init, ctx, inf) as any,
           endpoint: batchEndpoint,
           batchMode,
+          securityHeaderNames: odata?.securityHeaderNames,
         })
       : undefined);
   const fieldOpts: ConnectFieldResolverOptions = {

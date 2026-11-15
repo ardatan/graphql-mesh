@@ -311,6 +311,99 @@ describe('OData $batch json coalescing', () => {
     expect(batchKeys.sort()).toEqual(['key-a', 'key-b']);
   });
 
+  it('partitions multipart /$batch by configured securityHeaderNames (x-session)', async () => {
+    const batchSessions: string[] = [];
+    const fetchFn = (async (url: string, init?: RequestInit) => {
+      if (!String(url).includes('/$batch')) {
+        return Response.json({ ok: true });
+      }
+      const headerBag = init?.headers as Record<string, string>;
+      batchSessions.push(headerBag?.['x-session'] || headerBag?.['X-Session'] || '');
+      // multipart body — return a minimal multipart with one part per request
+      const body = String(init?.body || '');
+      const n = (body.match(/Content-ID:/g) || []).length || 1;
+      let response = '';
+      const boundary = 'batchresponse_test';
+      for (let i = 0; i < n; i++) {
+        response += `--${boundary}\r\nContent-Type: application/http\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{"ok":true}\r\n`;
+      }
+      response += `--${boundary}--\r\n`;
+      return new Response(response, {
+        headers: { 'content-type': `multipart/mixed;boundary=${boundary}` },
+      });
+    }) as any;
+
+    const batchFetch = createODataBatchFetch({
+      fetchFn,
+      endpoint: 'https://odata.example.com',
+      batchMode: 'multipart',
+      securityHeaderNames: ['x-session'],
+    });
+    const context = {};
+    await Promise.all([
+      batchFetch('https://odata.example.com/A', { headers: { 'x-session': 's-a' } }, context),
+      batchFetch('https://odata.example.com/B', { headers: { 'x-session': 's-b' } }, context),
+      batchFetch('https://odata.example.com/C', { headers: { 'x-session': 's-a' } }, context),
+      batchFetch('https://odata.example.com/D', { headers: { 'x-session': 's-b' } }, context),
+    ]);
+    expect(batchSessions.sort()).toEqual(['s-a', 's-b']);
+  });
+
+  it('isolates partition failures so other auth groups still succeed', async () => {
+    const fetchFn = (async (url: string, init?: RequestInit) => {
+      if (!String(url).includes('/$batch')) {
+        return Response.json({ ok: true });
+      }
+      const headerBag = init?.headers as Record<string, string>;
+      const auth = headerBag?.Authorization || headerBag?.authorization || '';
+      if (auth === 'Bearer bad') {
+        throw new Error('upstream batch denied');
+      }
+      const parsed = JSON.parse(String(init?.body));
+      return Response.json({
+        responses: parsed.requests.map((req: { id: string }) => ({
+          id: req.id,
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+          body: { ok: true },
+        })),
+      });
+    }) as any;
+
+    const batchFetch = createODataBatchFetch({
+      fetchFn,
+      endpoint: 'https://odata.example.com',
+      batchMode: 'json',
+    });
+    const context = {};
+    const results = await Promise.allSettled([
+      batchFetch(
+        'https://odata.example.com/A',
+        { headers: { Authorization: 'Bearer bad' } },
+        context,
+      ),
+      batchFetch(
+        'https://odata.example.com/B',
+        { headers: { Authorization: 'Bearer bad' } },
+        context,
+      ),
+      batchFetch(
+        'https://odata.example.com/C',
+        { headers: { Authorization: 'Bearer good' } },
+        context,
+      ),
+      batchFetch(
+        'https://odata.example.com/D',
+        { headers: { Authorization: 'Bearer good' } },
+        context,
+      ),
+    ]);
+    expect(results[0].status).toBe('rejected');
+    expect(results[1].status).toBe('rejected');
+    expect(results[2].status).toBe('fulfilled');
+    expect(results[3].status).toBe('fulfilled');
+  });
+
   it('splits /$batch by Authorization so different credentials never share a batch', async () => {
     const batchPosts: Array<{ auth: string; urls: string[] }> = [];
     const fetchFn = (async (url: string, init?: RequestInit) => {

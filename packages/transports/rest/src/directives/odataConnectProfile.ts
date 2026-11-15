@@ -77,6 +77,15 @@ export function buildConnectPropertyNameMapTree(selection?: string): ConnectProp
     return root;
   }
   parseConnectPropertyBlock(selection, root);
+  // `$.value { userName: UserName }` nests the entity map under `value` (and may also
+  // map identity `value → value`). Projection reads the root map — promote the
+  // list-wrapper child when it is the only structural content.
+  const onlyValueChild = root.children.size === 1 && root.children.has('value');
+  const mapOnlyValueIdentity =
+    root.map.size === 0 || (root.map.size === 1 && root.map.get('value') === 'value');
+  if (onlyValueChild && mapOnlyValueIdentity) {
+    return root.children.get('value')!;
+  }
   return root;
 }
 
@@ -239,8 +248,8 @@ function parseConnectPropertyBlock(selection: string, node: ConnectPropertyMapNo
   }
 }
 
-/** Split on commas that are not inside `(...)` option lists. */
-export function splitTopLevelComma(s: string): string[] {
+/** Split on `sep` that are not inside `(...)` option lists. */
+export function splitTopLevel(s: string, sep: ',' | ';'): string[] {
   const parts: string[] = [];
   let depth = 0;
   let start = 0;
@@ -248,7 +257,7 @@ export function splitTopLevelComma(s: string): string[] {
     const c = s[i];
     if (c === '(') depth++;
     else if (c === ')') depth = Math.max(0, depth - 1);
-    else if (c === ',' && depth === 0) {
+    else if (c === sep && depth === 0) {
       const part = s.slice(start, i).trim();
       if (part) parts.push(part);
       start = i + 1;
@@ -257,6 +266,16 @@ export function splitTopLevelComma(s: string): string[] {
   const last = s.slice(start).trim();
   if (last) parts.push(last);
   return parts;
+}
+
+/** Split on commas that are not inside `(...)` option lists. */
+export function splitTopLevelComma(s: string): string[] {
+  return splitTopLevel(s, ',');
+}
+
+/** Split on semicolons that are not inside nested `(...)` option lists. */
+export function splitTopLevelSemicolon(s: string): string[] {
+  return splitTopLevel(s, ';');
 }
 
 function unwrapOutputType(type: GraphQLOutputType): GraphQLOutputType {
@@ -417,29 +436,73 @@ function isODataExpandableField(fieldDef: GraphQLField<any, any>): boolean {
   // Interfaces without schema.getPossibleTypes — treat as expandable when abstract.
   return isAbstractType(namedType);
 }
+function queryOptionsKeyToOData(key: string): string | null {
+  switch (key) {
+    case 'top':
+      return '$top';
+    case 'skip':
+      return '$skip';
+    case 'filter':
+      return '$filter';
+    case 'orderby':
+      return '$orderby';
+    case 'search':
+      return '$search';
+    case 'count':
+      return '$count';
+    case 'inlinecount':
+      return '$inlinecount';
+    default:
+      return null;
+  }
+}
+
+/** Fold a resolved JS queryOptions object into `$expand` option parts. */
+function expandPartsFromQueryOptionsObject(obj: Record<string, unknown>): string[] | null {
+  const parts: string[] = [];
+  for (const [key, value] of Object.entries(obj)) {
+    const odataKey = queryOptionsKeyToOData(key);
+    if (!odataKey) continue;
+    if (value == null) {
+      return null;
+    }
+    if (typeof value === 'boolean' || typeof value === 'number') {
+      parts.push(`${odataKey}=${value}`);
+    } else {
+      parts.push(`${odataKey}=${String(value)}`);
+    }
+  }
+  return parts;
+}
+
 function expandOptionsFromFieldArgs(field: FieldNode, info: GraphQLResolveInfo): string[] {
   const parts: string[] = [];
   if (!field.arguments?.length) return parts;
   for (const arg of field.arguments) {
-    if (arg.name.value !== 'queryOptions' || arg.value.kind !== Kind.OBJECT) continue;
+    if (arg.name.value !== 'queryOptions') continue;
+    // Whole-object variable: `friends(queryOptions: $options)`.
+    if (arg.value.kind === Kind.VARIABLE) {
+      const vars = info.variableValues || {};
+      const name = arg.value.name.value;
+      if (!Object.prototype.hasOwnProperty.call(vars, name) || vars[name] == null) {
+        return ['__odata_expand_unsupported__'];
+      }
+      const resolved = vars[name];
+      if (typeof resolved !== 'object' || Array.isArray(resolved)) {
+        return ['__odata_expand_unsupported__'];
+      }
+      const fromObj = expandPartsFromQueryOptionsObject(resolved as Record<string, unknown>);
+      if (fromObj == null) {
+        return ['__odata_expand_unsupported__'];
+      }
+      parts.push(...fromObj);
+      continue;
+    }
+    if (arg.value.kind !== Kind.OBJECT) {
+      return ['__odata_expand_unsupported__'];
+    }
     for (const f of arg.value.fields) {
-      const key = f.name.value;
-      const odataKey =
-        key === 'top'
-          ? '$top'
-          : key === 'skip'
-            ? '$skip'
-            : key === 'filter'
-              ? '$filter'
-              : key === 'orderby'
-                ? '$orderby'
-                : key === 'search'
-                  ? '$search'
-                  : key === 'count'
-                    ? '$count'
-                    : key === 'inlinecount'
-                      ? '$inlinecount'
-                      : null;
+      const odataKey = queryOptionsKeyToOData(f.name.value);
       if (!odataKey) continue;
       const lit = graphqlValueToExpandLiteral(f.value, info);
       if (lit === null) {
@@ -675,6 +738,13 @@ export function buildODataSelectExpand(
   };
 }
 
+function expandOtherFingerprint(other: Map<string, string>): string {
+  return [...other.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([k, v]) => `${k}=${v}`)
+    .join(';');
+}
+
 /** OData forbids repeating the same navigation path in `$expand` — merge nested options. */
 function mergeExpandItems(items: string[]): string[] {
   const byPath = new Map<
@@ -682,6 +752,8 @@ function mergeExpandItems(items: string[]): string[] {
     { select: Set<string>; expand: string[]; other: Map<string, string> }
   >();
   const bare: string[] = [];
+  /** Paths whose `$top`/`$filter`/… sets conflict across aliases — omit from `$expand`. */
+  const conflictingPaths = new Set<string>();
   for (const item of items) {
     const m = item.match(/^([^(]+)(?:\((.*)\))?$/);
     if (!m) {
@@ -691,32 +763,54 @@ function mergeExpandItems(items: string[]): string[] {
     const path = m[1];
     const opts = m[2];
     if (!opts) {
-      if (!byPath.has(path)) {
+      if (!byPath.has(path) && !conflictingPaths.has(path)) {
         byPath.set(path, { select: new Set(), expand: [], other: new Map() });
       }
       continue;
     }
-    const entry = byPath.get(path) || {
-      select: new Set<string>(),
-      expand: [] as string[],
-      other: new Map<string, string>(),
-    };
-    for (const part of opts.split(';')) {
+    if (conflictingPaths.has(path)) {
+      continue;
+    }
+    const incomingOther = new Map<string, string>();
+    const incomingSelect = new Set<string>();
+    const incomingExpand: string[] = [];
+    // Nesting-aware: do not split on `;` inside `Trips($top=2;$select=TripId,Name)`.
+    for (const part of splitTopLevelSemicolon(opts)) {
       if (part.startsWith('$select=')) {
         for (const f of splitTopLevelComma(part.slice('$select='.length))) {
-          if (f) entry.select.add(f);
+          if (f) incomingSelect.add(f);
         }
       } else if (part.startsWith('$expand=')) {
         // Nesting-aware: `$expand=PlanItems($select=TripId,Name),Friends` must not
         // split on the comma inside `$select=...`.
-        entry.expand.push(...splitTopLevelComma(part.slice('$expand='.length)));
+        incomingExpand.push(...splitTopLevelComma(part.slice('$expand='.length)));
       } else if (part.includes('=')) {
         // Preserve $top / $filter / $orderby / ... from navigation queryOptions.
         const eq = part.indexOf('=');
-        entry.other.set(part.slice(0, eq), part.slice(eq + 1));
+        incomingOther.set(part.slice(0, eq), part.slice(eq + 1));
       }
     }
-    byPath.set(path, entry);
+    const entry = byPath.get(path);
+    if (entry) {
+      const existingFp = expandOtherFingerprint(entry.other);
+      const incomingFp = expandOtherFingerprint(incomingOther);
+      // Different nav arg sets (e.g. $top=1 vs $top=2) must not share one expand —
+      // drop the path so each alias uses a dedicated `@connect` GET.
+      if (existingFp !== incomingFp && (existingFp || incomingFp)) {
+        byPath.delete(path);
+        conflictingPaths.add(path);
+        continue;
+      }
+      for (const f of incomingSelect) entry.select.add(f);
+      entry.expand.push(...incomingExpand);
+      for (const [k, v] of incomingOther) entry.other.set(k, v);
+    } else {
+      byPath.set(path, {
+        select: incomingSelect,
+        expand: incomingExpand,
+        other: incomingOther,
+      });
+    }
   }
   const merged = [...byPath.entries()].map(([path, entry]) => {
     const nestedParts: string[] = [];

@@ -1,4 +1,5 @@
 import {
+  GraphQLObjectType,
   isSpecifiedScalarType,
   type GraphQLFieldConfig,
   type GraphQLFieldConfigArgumentMap,
@@ -347,6 +348,7 @@ export function createRenameTypeTransform(
         });
       },
     });
+    const typeRenameForConnect = renamedTypeMap.size ? renamedTypeMap : undefined;
     const renamedFieldAndTypes = mapSchema(renamedTypes, {
       [MapperKind.FIELD](field) {
         const fieldDirectives = getDirectiveExtensions(field, schema);
@@ -361,11 +363,36 @@ export function createRenameTypeTransform(
           fieldDirectives,
           new Map(),
           undefined,
-          renamedTypeMap.size ? renamedTypeMap : undefined,
+          typeRenameForConnect,
         );
         const fieldExtensions: any = (field.extensions ||= {});
         fieldExtensions.directives = rewrittenDirectives || fieldDirectives;
         return field;
+      },
+      // Type-level `@connect(entity: true)` selections keep `__typename: $("Old")`
+      // unless rewritten here (field pass does not see object directives).
+      [MapperKind.OBJECT_TYPE](type) {
+        if (!typeRenameForConnect) {
+          return type;
+        }
+        const typeDirectives = getDirectiveExtensions(type, schema);
+        const rewrittenDirectives = rewriteConnectArgReferences(
+          typeDirectives,
+          new Map(),
+          undefined,
+          typeRenameForConnect,
+        );
+        if (!rewrittenDirectives || rewrittenDirectives === typeDirectives) {
+          return type;
+        }
+        return new GraphQLObjectType({
+          ...type.toConfig(),
+          extensions: {
+            ...(type.extensions || {}),
+            directives: rewrittenDirectives,
+          },
+          astNode: undefined,
+        });
       },
     });
     return renamedFieldAndTypes;

@@ -973,3 +973,31 @@ describe('Rename', () => {
     expect(fieldMap.Carts).toBeDefined();
   });
 });
+
+describe('rewriteConnectArgReferences __typename one-pass', () => {
+  it('does not double-rewrite FooBar->Foo then Foo->Bar', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const typeRenameMap = new Map([
+      ['FooBar', 'Foo'],
+      ['Foo', 'Bar'],
+    ]);
+    const rewritten = rewriteConnectArgReferences(
+      {
+        connect: [
+          {
+            selection: '{ __typename: $("FooBar"), id } { __typename: $("Foo"), name }',
+          },
+        ],
+      },
+      new Map(),
+      undefined,
+      typeRenameMap,
+    );
+    const selection = rewritten!.connect[0].selection as string;
+    expect(selection).toContain('__typename: $("Foo")');
+    expect(selection).toContain('__typename: $("Bar")');
+    expect(selection).not.toMatch(/__typename: \$\("FooBar"\)/);
+    // FooBar must become Foo, not chain into Bar
+    expect(selection).toMatch(/__typename: \$\("Foo"\), id/);
+  });
+});

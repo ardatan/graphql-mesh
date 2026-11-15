@@ -63,6 +63,11 @@ export type ODataTransportOptions = {
   batch?: 'none' | 'json' | 'multipart';
   /** Prefer parent `$expand` payloads over per-nav HTTP round-trips. */
   expandNavProps?: boolean;
+  /**
+   * Extra header names treated like credentials for `/$batch` partitioning and
+   * outer-batch forward (e.g. `x-session`, gateway subscription keys).
+   */
+  securityHeaderNames?: string[];
 };
 
 /** REST-specific `@transport(options:)` fields. */

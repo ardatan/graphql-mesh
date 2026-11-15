@@ -213,6 +213,8 @@ function odataAbstractTypenameSpread(
   schemaComposer: SchemaComposer,
   memberTypeNames: string[],
   defaultTypeName?: string,
+  /** Shared cycle history — arms must not reset (Tree → ITree → Tree). */
+  visited: Set<string> = new Set(),
 ): string {
   const arms: string[] = [];
   let defaultODataType: string | undefined;
@@ -230,7 +232,7 @@ function odataAbstractTypenameSpread(
       defaultODataType = odataType;
     }
     arms.push(
-      `[${JSON.stringify(odataType)}, ${odataTypenameSelectionObject(schemaComposer, name, new Set())}]`,
+      `[${JSON.stringify(odataType)}, ${odataTypenameSelectionObject(schemaComposer, name, visited)}]`,
     );
   }
   if (!arms.length) return '';
@@ -266,7 +268,7 @@ function entitySelection(
         .filter((n: unknown): n is string => typeof n === 'string');
       const defaultTypename = (utc.getExtensions() as any)?.odata?.defaultTypename as
         string | undefined;
-      return odataAbstractTypenameSpread(schemaComposer, members, defaultTypename);
+      return odataAbstractTypenameSpread(schemaComposer, members, defaultTypename, visited);
     } catch {
       return '';
     }
@@ -801,6 +803,11 @@ export function emitODataConnectors(
       if (dirs.unboundFunction) {
         const functionName = dirs.unboundFunction.functionName as string;
         const callArgs = odataCallArgsParts(schemaComposer, field);
+        const hasQueryOptions = Boolean((field.args || {}).queryOptions);
+        const queryParams = mergeQueryParamsSelection(
+          hasQueryOptions ? ODATA_QUERY_OPTIONS_QUERY_PARAMS : undefined,
+          callArgs.aliasQueryParams,
+        );
         setConnect(
           root,
           fieldName,
@@ -808,10 +815,7 @@ export function emitODataConnectors(
             source: sourceName,
             http: {
               GET: `/${functionName}${callArgs.suffix}`,
-              queryParams: mergeQueryParamsSelection(
-                ODATA_QUERY_OPTIONS_QUERY_PARAMS,
-                callArgs.aliasQueryParams,
-              ),
+              ...(queryParams ? { queryParams } : {}),
             },
             selection: selectionForFieldReturnType(schemaComposer, field),
           }),
@@ -1006,6 +1010,11 @@ export function emitODataConnectors(
           const bindingParameterName = dirs.boundFunction.bindingParameterName as
             string | undefined;
           const callArgs = odataCallArgsParts(schemaComposer, field, bindingParameterName);
+          const hasQueryOptions = Boolean((field.args || {}).queryOptions);
+          const queryParams = mergeQueryParamsSelection(
+            hasQueryOptions ? ODATA_QUERY_OPTIONS_QUERY_PARAMS : undefined,
+            callArgs.aliasQueryParams,
+          );
           setConnect(
             otc,
             fieldName,
@@ -1013,10 +1022,7 @@ export function emitODataConnectors(
               source: sourceName,
               http: {
                 GET: `${basePath}/${functionRef}${callArgs.suffix}`,
-                queryParams: mergeQueryParamsSelection(
-                  ODATA_QUERY_OPTIONS_QUERY_PARAMS,
-                  callArgs.aliasQueryParams,
-                ),
+                ...(queryParams ? { queryParams } : {}),
               },
               selection: selectionForFieldReturnType(schemaComposer, field),
             }),
@@ -1325,6 +1331,9 @@ export function emitODataPolymorphicUnions(
       members.push(base);
     }
     for (const d of [...descendants].sort()) {
+      // Abstract descendants are still object composers here — exclude them so the
+      // union only lists concrete members (graphql-compose would otherwise keep them).
+      if (abstractTypeNames.has(d)) continue;
       if (schemaComposer.isObjectType(d) && !members.includes(d)) {
         members.push(d);
       }
@@ -1370,6 +1379,23 @@ export function emitODataPolymorphicUnions(
 
     if (abstractOrphan) {
       rewriteOutputFields(abstractOrphan, unionName);
+      // Loader registered the abstract OTC via addSchemaMustHaveType; delete() alone
+      // leaves it in _schemaMustHaveTypes and schema build can re-surface the orphan.
+      try {
+        const orphanTC = schemaComposer.getAnyTC(abstractOrphan);
+        const mustHave = (schemaComposer as any)._schemaMustHaveTypes as any[] | undefined;
+        if (Array.isArray(mustHave)) {
+          for (let i = mustHave.length - 1; i >= 0; i--) {
+            const t = mustHave[i];
+            const n = t?.getTypeName?.() ?? t?.name;
+            if (t === orphanTC || n === abstractOrphan) {
+              mustHave.splice(i, 1);
+            }
+          }
+        }
+      } catch {
+        // already gone
+      }
       schemaComposer.delete(abstractOrphan);
     }
 

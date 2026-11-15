@@ -10,5 +10,6 @@ export type TransportDirectiveArgs = SharedTransportDirectiveArgs<{
   odata?: {
     batch?: 'none' | 'json' | 'multipart';
     expandNavProps?: boolean;
+    securityHeaderNames?: string[];
   };
 }> & { kind: 'rest' };

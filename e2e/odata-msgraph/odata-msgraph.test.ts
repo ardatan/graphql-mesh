@@ -1,11 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import {
-  applyMaskServicePorts,
-  createTenv,
-  type ServeRunner,
-  type Service,
-} from '@e2e/tenv';
+import { createTenv, type ServeRunner, type Service } from '@e2e/tenv';
 
 const { compose, serve, service } = createTenv(__dirname);
 
@@ -24,12 +19,21 @@ const fetchGroupsAndMembers = loadExampleQuery('fetchGroupsAndMembers.graphql');
 const fetchFilesFromOneDrive = loadExampleQuery('fetchFilesFromOneDrive.graphql');
 
 /**
- * Stabilize execute snapshots: mask service ports (same as compose `maskServicePorts`)
- * and drop ephemeral HTTP Date headers from connector error extensions.
+ * Stabilize execute snapshots: mask service ports in URL authorities only
+ * (do not replace numeric result values like `quota.remaining`), and drop
+ * ephemeral HTTP Date headers from connector error extensions.
  */
 function stabilizeExecuteResult(result: unknown, services: Service[]): unknown {
   let text = JSON.stringify(result, null, 2);
-  text = applyMaskServicePorts(text, services);
+  for (const subgraph of services) {
+    const port = String(subgraph.port);
+    const esc = port.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // `http://host:PORT/...` or `http://host:PORT` — not bare digits elsewhere.
+    text = text.replace(
+      new RegExp(`(https?:\\/\\/[^\\s"'\\\\]*?:)${esc}(?=[/?"'#\\\\]|$)`, 'g'),
+      `$1<${subgraph.name}_port>`,
+    );
+  }
   text = text.replaceAll(/"date": "[^"]*"/g, '"date": "<date>"');
   return JSON.parse(text);
 }

@@ -134,14 +134,24 @@ export function createODataBatchFetch(opts: {
     if (groups.size === 1) {
       return runGroup(requests);
     }
-    const results: Response[] = new Array(requests.length);
-    for (const group of groups.values()) {
-      const groupResults = await runGroup(group.reqs);
-      for (let j = 0; j < group.indices.length; j++) {
-        results[group.indices[j]] = groupResults[j];
-      }
-    }
-    return results;
+    // Run partitions independently so one auth group's failure does not skip others.
+    const results: Array<Response | Error> = new Array(requests.length);
+    await Promise.all(
+      [...groups.values()].map(async group => {
+        try {
+          const groupResults = await runGroup(group.reqs);
+          for (let j = 0; j < group.indices.length; j++) {
+            results[group.indices[j]] = groupResults[j];
+          }
+        } catch (err) {
+          const error = err instanceof Error ? err : new Error(String(err));
+          for (const idx of group.indices) {
+            results[idx] = error;
+          }
+        }
+      }),
+    );
+    return results as Response[];
   }
 
   async function sendMultipartBatch(
@@ -267,14 +277,18 @@ export function createODataBatchFetch(opts: {
     return handleBatchJsonResults(batchResponseJson, requests);
   }
 
+  // `cache: false` — each `load()` uses a new Request object as the key; caching
+  // those keys forever would leak memory for the process-lifetime noContext loader.
   const multipartFactory = (context: any) =>
-    new DataLoader<Request, Response>(async requests =>
-      mapBySecurityGroup(requests, group => sendMultipartBatch(group, context)),
+    new DataLoader<Request, Response>(
+      async requests => mapBySecurityGroup(requests, group => sendMultipartBatch(group, context)),
+      { cache: false },
     );
 
   const jsonFactory = (context: any) =>
-    new DataLoader<Request, Response>(async requests =>
-      mapBySecurityGroup(requests, group => sendJsonBatch(group, context)),
+    new DataLoader<Request, Response>(
+      async requests => mapBySecurityGroup(requests, group => sendJsonBatch(group, context)),
+      { cache: false },
     );
 
   const factory = batchMode === 'multipart' ? multipartFactory : jsonFactory;

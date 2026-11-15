@@ -147,15 +147,23 @@ export function rewriteConnectArgReferences(
       }
     }
     if (typeRenameMap?.size) {
-      // Longer names first so `FooBar` is not partially rewritten by `Foo`.
+      // One pass with a lookup: `FooBar→Foo` then `Foo→Bar` must not rewrite the
+      // already-replaced `Foo` again. Longer names win the alternation first.
       const entries = [...typeRenameMap.entries()]
         .filter(([from, to]) => from && to && from !== to)
         .sort((a, b) => b[0].length - a[0].length);
-      for (const [from, to] of entries) {
-        const esc = escapeRegExp(from);
+      if (entries.length) {
+        const lookup = new Map(entries);
+        const names = entries.map(([from]) => escapeRegExp(from)).join('|');
         out = out
-          .replace(new RegExp(`__typename:\\s*\\$\\("${esc}"\\)`, 'g'), `__typename: $("${to}")`)
-          .replace(new RegExp(`__typename:\\s*"${esc}"`, 'g'), `__typename: "${to}"`);
+          .replace(
+            new RegExp(`__typename:\\s*\\$\\("(${names})"\\)`, 'g'),
+            (_m, name: string) => `__typename: $("${lookup.get(name) ?? name}")`,
+          )
+          .replace(
+            new RegExp(`__typename:\\s*"(${names})"`, 'g'),
+            (_m, name: string) => `__typename: "${lookup.get(name) ?? name}"`,
+          );
       }
     }
     return out;
