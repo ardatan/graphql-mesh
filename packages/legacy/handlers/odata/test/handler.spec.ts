@@ -902,18 +902,15 @@ describe('odata', () => {
     );
     const urls: string[] = [];
     // Hive OData Accept profile may append `$select=…` — match the by-id path prefix.
-    addMock(
-      'https://services.odata.org/TripPinRESTierService/Airlines/AA/',
-      async request => {
-        urls.push(decodeURIComponent(request.url));
-        return new MockResponse(
-          JSON.stringify({
-            AirlineCode: 'AA',
-            Name: 'American Airlines',
-          }),
-        );
-      },
-    );
+    addMock('https://services.odata.org/TripPinRESTierService/Airlines/AA/', async request => {
+      urls.push(decodeURIComponent(request.url));
+      return new MockResponse(
+        JSON.stringify({
+          AirlineCode: 'AA',
+          Name: 'American Airlines',
+        }),
+      );
+    });
     addMock(
       'https://services.odata.org/TripPinRESTierService/Airlines/AA/?$select=AirlineCode,Name',
       async request => {

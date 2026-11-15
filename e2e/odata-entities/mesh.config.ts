@@ -1,8 +1,5 @@
 import { Opts } from '@e2e/opts';
-import {
-  defineConfig,
-  loadGraphQLHTTPSubgraph,
-} from '@graphql-mesh/compose-cli';
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli';
 import { loadODataSubgraph } from '@omnigraph/odata';
 
 const opts = Opts(process.argv);

@@ -61,7 +61,11 @@ describe('Microsoft Graph Connectors', () => {
     expect(result).toMatch(/\bmessages\b/);
     expect(result).toMatch(/\bdrives\b/);
     // Federation lifts `@key` into `@join__type(..., key: "id")`.
+    // Nested-only driveItem has no entity-set type-level connect → resolvable: false.
     expect(result).toMatch(/key:\s*"id"/);
+    expect(result).toMatch(
+      /type driveItem[\s\S]*@join__type\(graph: MICROSOFT_GRAPH,\s*key: "id",\s*resolvable: false\)/,
+    );
     expect(result).toMatchSnapshot();
   });
 

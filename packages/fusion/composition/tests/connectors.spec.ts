@@ -715,10 +715,7 @@ describe('Federation Connectors composition', () => {
         @link(url: "https://specs.apollo.dev/link/v1.0")
         @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
         @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
-        @source(
-          name: "Trippin"
-          http: { baseURL: "http://127.0.0.1:4001" }
-        ) {
+        @source(name: "Trippin", http: { baseURL: "http://127.0.0.1:4001" }) {
         query: Query
       }
 
@@ -755,9 +752,7 @@ describe('Federation Connectors composition', () => {
         baseURL: String!
       }
 
-      type Query
-        @join__type(graph: CATALOG)
-        @join__type(graph: TRIPPIN) {
+      type Query @join__type(graph: CATALOG) @join__type(graph: TRIPPIN) {
         featuredAirline: Airline @join__field(graph: CATALOG)
         AirlinesByAirlineCode(AirlineCode: String!): Airline
           @join__field(graph: TRIPPIN)

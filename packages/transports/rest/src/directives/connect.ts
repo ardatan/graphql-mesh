@@ -49,11 +49,7 @@ import {
   xmlToJsObject,
 } from './xmlCodec.js';
 
-type ResolveReferenceFn = (
-  reference: any,
-  context: any,
-  info: GraphQLResolveInfo,
-) => any;
+type ResolveReferenceFn = (reference: any, context: any, info: GraphQLResolveInfo) => any;
 
 /**
  * Record `__resolveReference` the way `@apollo/subgraph` expects

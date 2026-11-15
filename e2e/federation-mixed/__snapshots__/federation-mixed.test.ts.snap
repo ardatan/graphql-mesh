@@ -473,7 +473,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
           {
             "author": {
               "id": "1",
-              "name": null,
+              "name": "Ada Lovelace",
               "reviews": [
                 {
                   "body": "Love it!",
@@ -508,7 +508,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
           {
             "author": {
               "id": "2",
-              "name": null,
+              "name": "Alan Turing",
               "reviews": [
                 {
                   "body": "Could be better.",
@@ -553,7 +553,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
           {
             "author": {
               "id": "1",
-              "name": null,
+              "name": "Ada Lovelace",
               "reviews": [
                 {
                   "body": "Love it!",
@@ -598,7 +598,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
           {
             "author": {
               "id": "2",
-              "name": null,
+              "name": "Alan Turing",
               "reviews": [
                 {
                   "body": "Could be better.",
@@ -652,7 +652,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "1",
-                    "name": null,
+                    "name": "Ada Lovelace",
                     "reviews": [
                       {
                         "body": "Love it!",
@@ -687,7 +687,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "2",
-                    "name": null,
+                    "name": "Alan Turing",
                     "reviews": [
                       {
                         "body": "Could be better.",
@@ -736,7 +736,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "1",
-                    "name": null,
+                    "name": "Ada Lovelace",
                     "reviews": [
                       {
                         "body": "Love it!",
@@ -792,7 +792,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "2",
-                    "name": null,
+                    "name": "Alan Turing",
                     "reviews": [
                       {
                         "body": "Could be better.",
@@ -841,7 +841,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "1",
-                    "name": null,
+                    "name": "Ada Lovelace",
                     "reviews": [
                       {
                         "body": "Love it!",
@@ -876,7 +876,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "2",
-                    "name": null,
+                    "name": "Alan Turing",
                     "reviews": [
                       {
                         "body": "Could be better.",
