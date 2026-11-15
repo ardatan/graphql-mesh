@@ -5170,20 +5170,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/graphql-virtual-connectors@workspace:e2e/graphql-virtual-connectors":
-  version: 0.0.0-use.local
-  resolution: "@e2e/graphql-virtual-connectors@workspace:e2e/graphql-virtual-connectors"
-  dependencies:
-    "@apollo/server": "npm:^5.5.1"
-    "@apollo/subgraph": "npm:^2.15.1"
-    "@graphql-hive/gateway": "npm:^2.15.7"
-    "@graphql-mesh/compose-cli": "workspace:*"
-    "@omnigraph/openapi": "workspace:*"
-    fets: "npm:^0.8.13"
-    graphql: "npm:16.14.0"
-  languageName: unknown
-  linkType: soft
-
 "@e2e/grpc-multiple@workspace:e2e/grpc-multiple":
   version: 0.0.0-use.local
   resolution: "@e2e/grpc-multiple@workspace:e2e/grpc-multiple"
