@@ -164,17 +164,20 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
     },
   });
 
-  // Attribute schema @source to graphs. When a source name has a single pending
-  // config, fan it out to every graph that referenced that name via `@connect`
-  // (shared identical config). When multiple pending `@source` share a name with
-  // different configs, do not cross-product — Mesh loaders use unique names, and
-  // duplicate-name configs would otherwise attach the wrong baseURL to a graph.
+  // Attribute schema @source to graphs.
+  // - Unique pending config for a name: fan out to every graph that referenced
+  //   that name via `@connect` (shared identical config).
+  // - Duplicate pending configs for the same name (different baseURLs): match
+  //   each `@source` to `@transport(subgraph, location)` by baseURL === location
+  //   so ownership survives compose → lift flattening of extras. Do not
+  //   cross-product mismatched configs onto every referencing graph.
   const pendingSourceNameCounts = new Map<string, number>();
   for (const args of pendingSources) {
     const sourceName = typeof args.name === 'string' ? args.name : undefined;
     if (!sourceName) continue;
     pendingSourceNameCounts.set(sourceName, (pendingSourceNameCounts.get(sourceName) || 0) + 1);
   }
+  const transportsByLocation = readSchemaTransports(nextDoc, nameToGraphEnum);
   const schemaJoinDirs: ConstDirectiveNode[] = [];
   for (const args of pendingSources) {
     const sourceName = typeof args.name === 'string' ? args.name : undefined;
@@ -183,23 +186,26 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
     if (byName) {
       graphs.add(byName);
     }
+    const baseURL = getSourceBaseURL(args);
+    const fromTransport = baseURL ? transportsByLocation.get(baseURL) : undefined;
+    if (fromTransport) {
+      for (const g of fromTransport) {
+        graphs.add(g);
+      }
+    }
     const fromConnect = sourceName ? sourceNameToGraphs.get(sourceName) : undefined;
     const uniquePending = sourceName ? pendingSourceNameCounts.get(sourceName) === 1 : false;
     if (fromConnect && uniquePending) {
       for (const g of fromConnect) {
         graphs.add(g);
       }
-    } else if (fromConnect && !graphs.size) {
-      // Multiple configs for the same name: emit this entry once, not to every graph.
-      const first = fromConnect.values().next().value;
-      if (first) {
-        graphs.add(first);
-      }
     }
-    if (!graphs.size && singleGraphEnum) {
+    // Duplicate-name configs without a transport/baseURL match: do not guess a
+    // graph (would steal ownership). Mesh compose always lifts `@transport`.
+    if (!graphs.size && uniquePending && singleGraphEnum) {
       graphs.add(singleGraphEnum);
     }
-    if (!graphs.size && graphsWithConnect.size === 1) {
+    if (!graphs.size && uniquePending && graphsWithConnect.size === 1) {
       graphs.add([...graphsWithConnect][0]);
     }
     for (const graphEnum of graphs) {
@@ -340,6 +346,49 @@ function getJoinGraphArg(
     return graphArg.value.value;
   }
   return undefined;
+}
+
+function getSourceBaseURL(args: Record<string, unknown>): string | undefined {
+  const http = args.http;
+  if (!http || typeof http !== 'object' || Array.isArray(http)) {
+    return undefined;
+  }
+  const baseURL = (http as Record<string, unknown>).baseURL;
+  return typeof baseURL === 'string' ? baseURL : undefined;
+}
+
+/** Map `@transport(location)` → join graph enums (Mesh pairs location with source baseURL). */
+function readSchemaTransports(
+  document: DocumentNode,
+  nameToGraphEnum: Map<string, string>,
+): Map<string, Set<string>> {
+  const byLocation = new Map<string, Set<string>>();
+  for (const def of document.definitions) {
+    if (def.kind !== Kind.SCHEMA_DEFINITION && def.kind !== Kind.SCHEMA_EXTENSION) {
+      continue;
+    }
+    for (const dir of def.directives || []) {
+      if (dir.name.value !== 'transport') {
+        continue;
+      }
+      const location = getStringArg(dir, 'location');
+      const subgraph = getStringArg(dir, 'subgraph');
+      if (!location || !subgraph) {
+        continue;
+      }
+      const graphEnum = nameToGraphEnum.get(subgraph);
+      if (!graphEnum) {
+        continue;
+      }
+      let graphs = byLocation.get(location);
+      if (!graphs) {
+        graphs = new Set();
+        byLocation.set(location, graphs);
+      }
+      graphs.add(graphEnum);
+    }
+  }
+  return byLocation;
 }
 
 function rememberSourceGraph(
