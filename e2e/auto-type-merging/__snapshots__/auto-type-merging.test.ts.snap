@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", {name: "@source", as: "@meshSource"}, "@transport"]) @transport(subgraph: "petstore", kind: "connect", location: "http://localhost:<petstore_port>/api/v3") @join__directive(graphs: [PETSTORE], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PETSTORE], name: "source", args: {name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", {name: "@source", as: "@meshSource"}, "@transport"]) @transport(subgraph: "petstore", kind: "connect", location: "http://localhost:<petstore_port>/api/v3") @join__directive(graphs: [VACCINATION], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PETSTORE], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PETSTORE], name: "source", args: {name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}) {
   query: Query
   mutation: Mutation
 }
@@ -109,7 +109,7 @@ type Query @join__type(graph: PETSTORE) @join__type(graph: VACCINATION) {
     """The name that needs to be fetched. Use user1 for testing."""
     username: String!
   ): User @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/user/{$args.username}", headers: [{name: "accept", value: "application/json"}]}, selection: "id username firstName lastName email password phone userStatus"})
-  petById(id: BigInt!): Pet @meshSource(name: "pet_by_id", type: "Pet", subgraph: "vaccination") @merge(subgraph: "vaccination", keyField: "id", keyArg: "id") @join__field(graph: VACCINATION)
+  petById(id: BigInt!): Pet @meshSource(name: "pet_by_id", type: "Pet", subgraph: "vaccination") @merge(subgraph: "vaccination", keyField: "id", keyArg: "id") @join__field(graph: VACCINATION) @join__directive(graphs: [VACCINATION], name: "connect", args: {selection: "id: $args.id", entity: true})
 }
 
 """Pet object that needs to be added to the store"""
@@ -120,7 +120,10 @@ type Pet @join__type(graph: PETSTORE, key: "id") @join__type(graph: VACCINATION,
   photoUrls: [String]! @join__field(graph: PETSTORE)
   tags: [Tag] @join__field(graph: PETSTORE)
   status: mutation_updatePet_status @join__field(graph: PETSTORE)
-  vaccinated: Boolean! @join__field(graph: VACCINATION)
+  """
+  Upstream snake_case — naming-convention → isVaccinated (+ virtual $this rename).
+  """
+  isVaccinated: Boolean! @meshSource(name: "is_vaccinated", type: "Boolean!", subgraph: "vaccination") @join__field(graph: VACCINATION)
 }
 
 type Category @join__type(graph: PETSTORE) {

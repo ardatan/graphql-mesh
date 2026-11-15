@@ -32,9 +32,9 @@ import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/ut
 const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 
 /**
- * Ensure connect/v0.4 `@link` + `@connect` directive def (Apollo style: `@link`
- * alone; no `@composeDirective` for `@connect`). Does not imply HTTP Connectors
- * / rest transport.
+ * Ensure connect/v0.4 `@link` + `@connect` directive def (Federation Connectors
+ * style: `@link` alone; no `@composeDirective` for `@connect`). Does not imply
+ * HTTP Federation Connectors / rest transport.
  */
 export function ensureVirtualConnectLink(schema: GraphQLSchema): GraphQLSchema {
   const schemaDirectives = getDirectiveExtensions(schema) || {};
@@ -85,9 +85,11 @@ export function connectHasHttp(connects: unknown): boolean {
 }
 
 /**
- * Dual-annotate a Mesh field rename (`@meshSource(name: old)` on GraphQL field `new`)
- * with virtual `@connect(selection: "$this.old")` for Apollo Router. Object fields only —
- * root GraphQL fetches still need `@meshSource` / HTTP; virtual cannot call GraphQL.
+ * Dual-annotate a field rename when **both** GraphQL fields still exist on the type
+ * (`old` + `new`), with virtual `@connect(selection: "$this.old")` for Router.
+ *
+ * Do **not** call this after Mesh naming-convention/rename that **removes** `old` —
+ * Router then fails: `type does not have a field old`. Hive uses `@meshSource` for that.
  */
 export function attachVirtualRenameConnect(
   fieldDirectives: Record<string, any>,

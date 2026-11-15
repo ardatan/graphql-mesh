@@ -19,7 +19,7 @@ it('should compose the appropriate schema', async () => {
   });
   expect(result).toMatchSnapshot();
 
-  // Connectors entity contract (arg ≠ key → type-level `$this`, no Mesh `@merge` on REST):
+  // Federation Connectors entity contract (arg ≠ key → type-level `$this`, no Mesh `@merge` on REST):
   // Query keeps `$args.petId`; Pet entity connector uses `/pet/{$this.id}`.
   expect(result).toMatch(/getPetById\([\s\S]*\$args\.petId/);
   expect(result).toMatch(
@@ -35,25 +35,23 @@ it('should compose the appropriate schema', async () => {
   expect(petByIdField).toMatch(/name:\s*"connect"/);
   expect(petByIdField).toMatch(/entity:\s*true/);
   expect(result).toMatch(/@meshSource\(/);
-  // Field rename is_vaccinated → isVaccinated: @meshSource + virtual `$this.is_vaccinated`.
-  const isVaccinatedField =
-    result.match(/isVaccinated:\s*Boolean!?[^\n]*/)?.[0] ||
-    result.match(/isVaccinated:[^\n]*/)?.[0] ||
-    '';
-  expect(isVaccinatedField).toMatch(/meshSource|@source/);
-  expect(result).toMatch(
-    /isVaccinated[\s\S]*?name:\s*"connect"[\s\S]*?\$this\.is_vaccinated|isVaccinated[\s\S]*?\$this\.is_vaccinated/,
-  );
+  // Rename is_vaccinated → isVaccinated stays Mesh `@meshSource` only (no `$this.old`
+  // virtual connect — Router requires the old field to still exist on the type).
+  expect(result).toMatch(/isVaccinated/);
+  expect(result).not.toMatch(/\$this\.is_vaccinated/);
 });
 
 /**
- * Connectors-owned fields (HTTP `@connect` on petstore) are the parity path:
- * Hive Gateway and Apollo Router return the same `id` / `name` on the same SDL.
- * GraphQL vaccination fill is covered separately — virtual `@connect` cannot
- * HTTP-fetch Yoga, so that side is Hive-only via `@merge` / `@meshSource`.
+ * Federation Connectors-owned fields (HTTP `@connect` on petstore) are the
+ * parity path: Hive Gateway and Apollo Router return the same `id` / `name` on
+ * the same SDL.
+ *
+ * Virtual `@connect(entity: true)` on `petById` makes Router treat vaccination as
+ * an entity connector (requestless `$args` mapping) — it does **not** HTTP-call
+ * Yoga. Hive still fills `isVaccinated` via `@merge`.
  */
 describe.each(['hive', 'apollo-router'] as ServeRunner[])(
-  'dual Connectors parity with %s (id/name)',
+  'dual Federation Connectors parity with %s (id/name)',
   runner => {
     it('getPetById id+name match on both runners', async () => {
       const { output } = await compose({
@@ -109,37 +107,34 @@ it('Hive fills isVaccinated via Mesh @merge (GraphQL vaccination)', async () => 
   });
 });
 
-it('Router does not GraphQL-fetch isVaccinated (virtual @connect only)', async () => {
+it('Router starts with virtual entity:true; id/name from petstore HTTP connect', async () => {
   const { output, result: sdl } = await compose({
     output: 'graphql',
     services: [petstore, await service('vaccination')],
   });
   expect(sdl).toMatch(/petById\([\s\S]*name:\s*"connect"/);
-  expect(sdl).toMatch(/\$this\.is_vaccinated/);
-  const servePromise = serve({
+  expect(sdl).toMatch(/entity:\s*true/);
+  expect(sdl).not.toMatch(/\$this\.is_vaccinated/);
+
+  const { execute } = await serve({
     runner: 'apollo-router' satisfies ServeRunner,
     supergraph: output,
   });
-  try {
-    const { execute } = await servePromise;
-    const result = await execute({
-      query: /* GraphQL */ `
-        query GetPet {
-          getPetById(petId: 1) {
-            id
-            name
-            isVaccinated
-          }
+  const result = await execute({
+    query: /* GraphQL */ `
+      query GetPet {
+        getPetById(petId: 1) {
+          id
+          name
         }
-      `,
-    });
-    // Router ignores Mesh @merge; virtual entity @connect has no http to vaccination Yoga.
-    // isVaccinated virtual `$this.is_vaccinated` only helps once parent carries that key.
-    expect(result.data?.getPetById?.id).toBe(1);
-    expect(result.data?.getPetById?.name).toBe('Cat 1');
-    expect(result.data?.getPetById?.isVaccinated ?? null).toBeNull();
-  } catch (err) {
-    // Some Router builds 500 when entity planning hits the GraphQL-only virtual connect.
-    expect(String(err)).toMatch(/500|INTERNAL_SERVER_ERROR|Connector|error|Unknown type|_entities/i);
-  }
+      }
+    `,
+  });
+  expect(result.errors).toBeFalsy();
+  expect(result.data).toEqual({
+    getPetById: {
+      id: 1,
+      name: 'Cat 1',
+    },
+  });
 });

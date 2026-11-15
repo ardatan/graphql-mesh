@@ -33,7 +33,6 @@ import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
 import {
   attachVirtualEntityConnect,
-  attachVirtualRenameConnect,
   ensureNonResolvableKeysForEntityStubs,
   ensureVirtualConnectLink,
   hasEquivalentTypeConnect,
@@ -92,13 +91,14 @@ function isEmptyObject(obj: any) {
 }
 
 /**
- * True when the schema has an Apollo Connectors **HTTP** contract (SCHEMA
+ * True when the schema has a Federation Connectors **HTTP** contract (SCHEMA
  * `@source(http:)` and/or `@connect(http:)`).
  *
  * A bare connect `@link` plus **virtual** `@connect` (no `http:`) is *not*
  * enough — that pattern is for Router-facing dual annotation while Hive still
- * uses GraphQL `@merge` / `@source`. Treating virtual-only as Connectors would
- * flip the subgraph to rest transport and preempt Mesh type-merging.
+ * uses GraphQL `@merge` / `@source`. Treating virtual-only as Federation
+ * Connectors would flip the subgraph to connect transport and preempt Mesh
+ * type-merging.
  */
 export function isFederationConnectorsSubgraph(schema: GraphQLSchema): boolean {
   const directives = getDirectiveExtensions(schema);
@@ -159,8 +159,8 @@ export function getAnnotatedSubgraphs(
   options: GetAnnotatedSubgraphsOptions = {},
 ) {
   // Alias Mesh stitching `@source` as `@meshSource` when the composition also has
-  // Apollo Connectors `@source` *or* a connect `@link` (including virtual-only dual
-  // annotation). Otherwise Router's connectors parser treats Mesh `@source` as Apollo
+  // Federation Connectors `@source` *or* a connect `@link` (including virtual-only dual
+  // annotation). Otherwise Router's connectors parser treats Mesh `@source` as connect
   // SCHEMA `@source` and fails. Mesh-only graphs (no connect link) keep plain `@source`.
   // Probe with the real subgraph config (never a fake name: prefix transform latches
   // `value` from `subgraphConfig.name` on first call).
@@ -396,7 +396,7 @@ export function getAnnotatedSubgraphs(
       },
       [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
         const directiveExtensions = getDirectiveExtensions(fieldConfig);
-        // Connectors must never get stitching `@meshSource` (Apollo owns SCHEMA `@source`).
+        // Federation Connectors must never get stitching `@meshSource` (connect SCHEMA `@source`).
         if (!sourceDirectiveUsed) {
           if (!transforms?.length && !options.ignoreSemanticConventions) {
             addAnnotationsForSemanticConventions({
@@ -484,7 +484,7 @@ export function getAnnotatedSubgraphs(
         if (directive.name === 'transport' && removeTransportDirectiveDefinition) {
           return null;
         }
-        // Keep Apollo SCHEMA `@source` on connectors. When aliasing to `@meshSource`,
+        // Keep Federation Connectors SCHEMA `@source`. When aliasing to `@meshSource`,
         // drop any leftover Mesh `@source` def on non-connectors.
         if (directive.name === 'source' && !isConnectorsSubgraph && aliasMeshSource) {
           return null;
@@ -538,46 +538,15 @@ export function getAnnotatedSubgraphs(
         },
       });
     }
-    // GraphQL field renames: `@meshSource(name: old)` on field `new` → also virtual
-    // `@connect(selection: "$this.old")` for Router (object fields only).
-    if (!isConnectorsSubgraph && sourceDirectiveUsed) {
-      const rootNames = new Set(
-        [...getRootTypeMap(transformedSubgraph).values()]
-          .filter(Boolean)
-          .map(t => (t as { name: string }).name),
-      );
-      transformedSubgraph = mapSchema(transformedSubgraph, {
-        [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName) => {
-          if (rootNames.has(typeName)) {
-            return fieldConfig;
-          }
-          const fieldDirectives = getDirectiveExtensions(fieldConfig) || {};
-          const sources =
-            fieldDirectives[meshSourceDirectiveName] || fieldDirectives.source || [];
-          const originalName = sources[0]?.name;
-          if (typeof originalName !== 'string' || originalName === fieldName) {
-            return fieldConfig;
-          }
-          if (attachVirtualRenameConnect(fieldDirectives, originalName)) {
-            virtualConnectUsed = true;
-            return {
-              ...fieldConfig,
-              extensions: {
-                ...(fieldConfig.extensions || {}),
-                directives: fieldDirectives,
-              },
-              astNode: undefined,
-            };
-          }
-          return fieldConfig;
-        },
-      });
-    }
+    // Do **not** dual-emit `@connect(selection: "$this.old")` after Mesh renames.
+    // Router requires `$this.<name>` to be a real field on the type; naming-convention
+    // removes `old`, so `$this.old` crashes Router startup. Hive keeps `@meshSource`.
+    // (Virtual rename still works when both fields remain — see connect-entity helper.)
     if (virtualConnectUsed) {
       transformedSubgraph = ensureVirtualConnectLink(transformedSubgraph);
     }
-    // HTTP Connectors added during transforms (e.g. loader emit) → rest transport.
-    // Virtual-only `@connect` (no http) must NOT flip GraphQL subgraphs to rest.
+    // HTTP Connectors added during transforms (e.g. loader emit) → connect transport.
+    // Virtual-only `@connect` (no http) must NOT flip GraphQL subgraphs to connect.
     if (!isConnectorsSubgraph && isFederationConnectorsSubgraph(transformedSubgraph)) {
       isConnectorsSubgraph = true;
       removeTransportDirectiveDefinition = true;
@@ -589,7 +558,7 @@ export function getAnnotatedSubgraphs(
         {
           ...existingTransport,
           subgraph: subgraphName,
-          kind: 'rest',
+          kind: 'connect',
           location: url || existingTransport.location || '',
           ...(Object.keys(mergedOptions).length ? { options: mergedOptions } : {}),
         },
@@ -611,16 +580,17 @@ export function getAnnotatedSubgraphs(
     }
     if (sourceDirectiveUsed) {
       if (aliasMeshSource) {
-        // Coexist with Apollo SCHEMA `@source` in mixed compositions.
+        // Coexist with Federation Connectors SCHEMA `@source` in mixed compositions.
         importedDirectives.push({ name: '@source', as: '@meshSource' });
       } else {
         importedDirectives.push('@source');
       }
     }
-    // Apollo/Rover recognize connect/v0.4 via `@link` alone — annotated subgraphs
-    // must **not** stamp `@composeDirective(name: "@connect")`. Guild composition
-    // still needs that stamp to emit `@join__directive` for `@connect`; we add it
-    // only inside `composeAnnotatedSubgraphs` (see `withGuildConnectComposeDirective`).
+    // Federation connect/v0.4 is recognized via `@link` alone (Rover style) —
+    // annotated subgraphs must **not** stamp `@composeDirective(name: "@connect")`.
+    // Guild composition still needs that stamp to emit `@join__directive` for
+    // `@connect`; we add it only inside `composeAnnotatedSubgraphs`
+    // (see `withGuildConnectComposeDirective`).
     // When Mesh stitching `@source` is also in the composition, drop `@source` from the
     // connect `@link` import so Guild does not clash (args stay in extras; post-process
     // restores `@source` on the connect `@link` after lifting SCHEMA directives).
@@ -886,8 +856,9 @@ export function composeSubgraphs(
 }
 
 export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[]) {
-  // Keep annotated subgraphs Apollo-like (no `@composeDirective` for `@connect`).
-  // Guild's composer has no connect special-case, so stamp it only for this call.
+  // Keep annotated subgraphs Rover/Federation-connect-like (no `@composeDirective`
+  // for `@connect`). Guild's composer has no connect special-case, so stamp it
+  // only for this call.
   const forGuildCompose = annotatedSubgraphs.map(sg => ({
     ...sg,
     typeDefs: withGuildConnectComposeDirective(sg.typeDefs),
@@ -908,9 +879,9 @@ export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[
 }
 
 /**
- * Guild federation-composition has no Apollo connect/v0.4 special case: without
- * `@composeDirective(name: "@connect")` it drops field/type `@connect` before
- * the supergraph is built. Apollo/Rover do **not** put that stamp on subgraph
+ * Guild federation-composition has no Federation connect/v0.4 special case:
+ * without `@composeDirective(name: "@connect")` it drops field/type `@connect`
+ * before the supergraph is built. Rover does **not** put that stamp on subgraph
  * SDL — so annotated Mesh subgraphs stay clean, and we only add it for Guild.
  */
 function withGuildConnectComposeDirective(typeDefs: DocumentNode): DocumentNode {

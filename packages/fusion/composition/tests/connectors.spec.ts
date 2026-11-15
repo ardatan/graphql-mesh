@@ -96,7 +96,7 @@ describe('Federation Connectors composition', () => {
     ).toBe(false);
   });
 
-  it('auto-type-merging dual-emits virtual @connect for @merge and field renames', () => {
+  it('auto-type-merging dual-emits virtual @connect(entity: true) for @merge', () => {
     const vaccination = buildSchema(/* GraphQL */ `
       type Query {
         pet_by_id(id: ID!): Pet
@@ -122,9 +122,10 @@ describe('Federation Connectors composition', () => {
     expect(petById).toMatch(/name:\s*"connect"/);
     expect(petById).toMatch(/entity:\s*true/);
     expect(composed.supergraphSdl).toMatch(/@meshSource\(/);
-    // is_vaccinated → isVaccinated: Mesh @meshSource + virtual `$this.is_vaccinated`
-    expect(composed.supergraphSdl).toMatch(/isVaccinated[\s\S]*\$this\.is_vaccinated/);
-    // Annotated subgraphs stay Apollo-like (no composeDirective for @connect).
+    // Rename keeps Mesh @meshSource; no `$this.old` (old field gone → Router would crash).
+    expect(composed.supergraphSdl).toMatch(/isVaccinated/);
+    expect(composed.supergraphSdl).not.toMatch(/\$this\.is_vaccinated/);
+    // Annotated subgraphs stay Rover/Federation-connect-like (no composeDirective for @connect).
     for (const sg of composed.annotatedSubgraphs || []) {
       expect(print(sg.typeDefs)).not.toMatch(/@composeDirective\(name:\s*"@connect"\)/);
     }

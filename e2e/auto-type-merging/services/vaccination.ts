@@ -5,7 +5,8 @@ import { Opts } from '@e2e/opts';
 /**
  * Plain GraphQL subgraph — Mesh `@merge` auto-type-merging is the point of this
  * e2e (Hive). Compose also dual-emits virtual `@connect(entity: true)` on
- * `petById` for Apollo Router. Do not convert to a Federation subgraph.
+ * `petById` for Router entity planning (requestless `$args` mapping — not a
+ * Yoga HTTP call). Do not convert to a Federation subgraph.
  */
 export const yoga = createYoga({
   schema: createSchema({

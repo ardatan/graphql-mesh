@@ -74,7 +74,7 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
       const kept: ConstDirectiveNode[] = [];
       for (const dir of node.directives || []) {
         if (dir.name.value === 'source') {
-          // Apollo SCHEMA `@source` — rewrite later to `@join__directive`
+          // Federation Connectors SCHEMA `@source` — rewrite later to `@join__directive`
           pendingSources.push(constDirectiveArgsToJs(dir));
           continue;
         }
@@ -119,7 +119,7 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
         preferNodeGraph: true,
       });
     },
-    // Type-level `@connect` (Apollo entity pattern with `$this.<key>`)
+    // Type-level `@connect` (Federation Connectors entity pattern with `$this.<key>`)
     ObjectTypeDefinition(node) {
       return rewriteConnectDirectivesOnNode(node, {
         graphEnumToName,
@@ -156,7 +156,7 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
       return node;
     },
     DirectiveDefinition(node) {
-      // Drop Apollo connect/source defs — execution uses join__directive metadata.
+      // Drop connect/source defs — execution uses join__directive metadata.
       if (node.name.value === 'connect' || node.name.value === 'source') {
         return null;
       }
