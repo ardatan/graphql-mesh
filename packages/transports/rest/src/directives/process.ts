@@ -25,7 +25,7 @@ import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
-import { unwrapXmlScalarLeaf } from './xmlCodec.js';
+import { coerceXmlLeafForGraphQLType, unwrapXmlScalarLeaf } from './xmlCodec.js';
 
 export interface ProcessDirectiveArgs {
   pubsub?: PubSub;
@@ -205,6 +205,7 @@ function installXmlListPluralization(field: GraphQLField<any, any>) {
   const leaf = isListType(listInner) ? getNamedType(listInner.ofType) : getNamedType(field.type);
   const flattenScalars = isScalarType(leaf) || isEnumType(leaf);
   const fieldName = field.name;
+  const leafName = leaf.name;
   field.resolve = function xmlListPluralization(root) {
     let result = root?.[fieldName];
     if (result == null) return result;
@@ -214,13 +215,16 @@ function installXmlListPluralization(field: GraphQLField<any, any>) {
     if (!flattenScalars) {
       return result;
     }
-    return result.flat(Infinity).map(unwrapXmlScalarLeaf);
+    return result
+      .flat(Infinity)
+      .map(item => coerceXmlLeafForGraphQLType(unwrapXmlScalarLeaf(item), leafName));
   };
 }
 
 /**
  * Singular scalar/enum fields: deferred unwrap of attributed XML leaves
  * (`{ innerText, attributes }` / attributes-only nil) after selection can read attributes.
+ * Then coerce by GraphQL type so `ID`/`String` keep lexical text (`true`, `00123`).
  */
 function installXmlScalarUnwrap(field: GraphQLField<any, any>) {
   if (field.resolve && field.resolve.name !== 'defaultFieldResolver') return;
@@ -228,7 +232,8 @@ function installXmlScalarUnwrap(field: GraphQLField<any, any>) {
   const named = getNamedType(field.type);
   if (!isScalarType(named) && !isEnumType(named)) return;
   const fieldName = field.name;
+  const typeName = named.name;
   field.resolve = function xmlScalarUnwrap(root) {
-    return unwrapXmlScalarLeaf(root?.[fieldName]);
+    return coerceXmlLeafForGraphQLType(unwrapXmlScalarLeaf(root?.[fieldName]), typeName);
   };
 }

@@ -4,6 +4,7 @@ import { processConnectDirectives } from '../src/directives/connect.js';
 import { processDirectives } from '../src/directives/process.js';
 import { coerceXsdDateString } from '../src/directives/scalars.js';
 import {
+  coerceXmlLeafForGraphQLType,
   inheritXmlNamespacePrefixes,
   isXmlContentType,
   jsObjectToXml,
@@ -237,10 +238,70 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
     expect(parsed.Envelope.Body.Empty).toEqual({
       attributes: { nil: 'true' },
     });
-    // Leading-zero identifiers stay lexical strings (FXP leadingZeros: false).
+    // Lexical parse (parseTagValue: false): leading zeros and boolean-shaped text stay strings.
     expect(parsed.Envelope.Body.Code).toBe('00123');
     expect(unwrapXmlScalarLeaf(parsed.Envelope.Body.Name)).toBe('Alice');
     expect(unwrapXmlScalarLeaf(parsed.Envelope.Body.Empty)).toBeNull();
+    expect(coerceXmlLeafForGraphQLType('true', 'ID')).toBe('true');
+    expect(coerceXmlLeafForGraphQLType(true, 'ID')).toBe('true');
+    expect(coerceXmlLeafForGraphQLType('true', 'Boolean')).toBe(true);
+    expect(coerceXmlLeafForGraphQLType('42', 'Int')).toBe(42);
+  });
+
+  it('keeps boolean-shaped XML text as GraphQL ID string', async () => {
+    // Regression: FXP parseTagValue would turn <Code>true</Code> into boolean true,
+    // then GraphQL ID serialize throws "ID cannot represent value: true".
+    const fetchImpl = async () =>
+      new Response(
+        `<?xml version="1.0"?><Envelope><Body><Item><Code>true</Code><Z>00123</Z></Item></Body></Envelope>`,
+        { status: 200, headers: { 'content-type': 'text/xml' } },
+      );
+    const sdl = /* GraphQL */ `
+      schema @source(name: "xmlApi", http: { baseURL: "http://localhost" }) {
+        query: Query
+      }
+
+      type Query {
+        item: Item
+          @connect(
+            source: "xmlApi"
+            http: {
+              POST: "/item"
+              headers: [{ name: "Content-Type", value: "text/xml" }]
+              body: """
+              Request: { id: $("1") }
+              """
+            }
+            selection: """
+            code: Envelope.Body.Item.Code
+            z: Envelope.Body.Item.Z
+            """
+          )
+      }
+
+      type Item {
+        code: ID
+        z: ID
+      }
+    `;
+
+    const schema = processDirectives(buildSchema(`${CONNECTOR_DIRECTIVES}\n${sdl}`), {
+      globalFetch: fetchImpl as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          item {
+            code
+            z
+          }
+        }
+      `),
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ item: { code: 'true', z: '00123' } });
   });
 
   it('does not force parent prefix onto unprefixed children with default xmlns', () => {

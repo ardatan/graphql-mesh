@@ -39,6 +39,7 @@ import { rebuildOpenInputObjects } from './odataOpenInput.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
 import {
+  coerceXmlLeafForGraphQLType,
   isXmlContentType,
   jsObjectToXml,
   looksLikeXml,
@@ -2384,12 +2385,16 @@ export function addConnectFieldResolver(
         selected = attachExpandedNavFromRaw(selected, responseData, info, expandNavProps);
       }
     }
-    // Scalar / enum returns: unwrap attributed XML leaves after selection.
+    // Scalar / enum returns: unwrap attributed XML leaves, then coerce by type
+    // so ID/String keep lexical text (`true`, `00123`).
     if (
       !isListReturnType &&
       (isScalarType(returnNamedGraphQLType) || isEnumType(returnNamedGraphQLType))
     ) {
-      selected = unwrapXmlScalarLeaf(selected);
+      selected = coerceXmlLeafForGraphQLType(
+        unwrapXmlScalarLeaf(selected),
+        returnNamedGraphQLType.name,
+      );
     }
     // Fill Mesh-only `_response` fields Apollo selection cannot express.
     selected = fillExposeResponseMetadata(selected, {

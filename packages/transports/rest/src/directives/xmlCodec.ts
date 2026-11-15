@@ -16,8 +16,9 @@ import { XMLBuilder, XMLParser } from 'fast-xml-parser';
  * `code: Item.attributes.code` work; `unwrapXmlScalarLeaf` runs when a GraphQL scalar
  * field needs the text (or null for attributes-only / `xsi:nil`).
  *
- * `numberParseOptions.leadingZeros: false` keeps leading-zero identifiers as strings
- * (`00123`) while still coercing plain numbers and booleans.
+ * `parseTagValue: false` keeps every text node lexical (`00123`, `true`) so GraphQL
+ * `String` / `ID` fields are not corrupted. Typed coercion for Int/Float/Boolean
+ * happens later via `coerceXmlLeafForGraphQLType` when the field type needs it.
  */
 export const connectXmlOptions = {
   attributeNamePrefix: '',
@@ -26,10 +27,7 @@ export const connectXmlOptions = {
   ignoreAttributes: false,
   removeNSPrefix: true,
   allowBooleanAttributes: true,
-  numberParseOptions: {
-    // FXP: false => do not parse values that start with 0 as numbers.
-    leadingZeros: false,
-  },
+  parseTagValue: false,
 } as const;
 
 const xmlBuilder = new XMLBuilder({
@@ -162,6 +160,40 @@ export function unwrapXmlScalarLeaf(value: unknown): unknown {
     if (nonAttrKeys.length === 1 && nonAttrKeys[0] === 'innerText') {
       return obj.innerText;
     }
+  }
+  return value;
+}
+
+/**
+ * After lexical XML parse, coerce a leaf to match the GraphQL output scalar.
+ * `String` / `ID` stay text (including boolean-shaped `true`); Int/Float/Boolean
+ * get typed values only when the field type requires them.
+ */
+export function coerceXmlLeafForGraphQLType(value: unknown, typeName: string): unknown {
+  if (value == null) {
+    return value;
+  }
+  if (typeName === 'ID' || typeName === 'String') {
+    if (typeof value === 'boolean' || typeof value === 'number') {
+      return String(value);
+    }
+    return value;
+  }
+  if (typeName === 'Boolean' && typeof value === 'string') {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  }
+  if (typeName === 'Int' && typeof value === 'string' && /^-?\d+$/.test(value)) {
+    return Number(value);
+  }
+  if (
+    typeName === 'Float' &&
+    typeof value === 'string' &&
+    value !== '' &&
+    !Number.isNaN(Number(value))
+  ) {
+    return Number(value);
   }
   return value;
 }
