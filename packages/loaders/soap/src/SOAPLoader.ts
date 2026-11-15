@@ -1,15 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import type { GraphQLScalarType } from 'graphql';
-import {
-  DirectiveLocation,
-  GraphQLBoolean,
-  GraphQLDirective,
-  GraphQLFloat,
-  GraphQLInputObjectType,
-  GraphQLInt,
-  GraphQLList,
-  GraphQLString,
-} from 'graphql';
+import { GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString } from 'graphql';
 import type {
   AnyTypeComposer,
   EnumTypeComposer,
@@ -42,10 +33,18 @@ import { Logger } from '@graphql-hive/logger';
 import { path, process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
-import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
+import {
+  buildSoapConnectDirectiveArgs,
+  buildSoapSourceDirectiveArgs,
+  CONNECT_LINK_URL,
+  ConnectDirective,
+  LinkDirective,
+  SourceDirective,
+  splitSoapEndpoint,
+} from './connectEmit.js';
 import type {
   WSDLBinding,
   WSDLDefinition,
@@ -99,61 +98,6 @@ export interface SOAPHeaders {
    */
   headers: unknown;
 }
-
-const SOAPHeadersInput = new GraphQLInputObjectType({
-  name: 'SOAPHeaders',
-  fields: {
-    namespace: {
-      type: GraphQLString,
-    },
-    alias: {
-      type: GraphQLString,
-    },
-    headers: {
-      type: ObjMapScalar,
-    },
-  },
-});
-
-const soapDirective = new GraphQLDirective({
-  name: 'soap',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    elementName: {
-      type: GraphQLString,
-    },
-    bindingNamespace: {
-      type: GraphQLString,
-    },
-    endpoint: {
-      type: GraphQLString,
-    },
-    subgraph: {
-      type: GraphQLString,
-    },
-    bodyAlias: {
-      type: GraphQLString,
-    },
-    soapHeaders: {
-      type: SOAPHeadersInput,
-    },
-    soapAction: {
-      type: GraphQLString,
-    },
-    soapNamespace: {
-      type: GraphQLString,
-    },
-    headerArgNames: {
-      type: new GraphQLList(GraphQLString),
-    },
-    argNamespaces: {
-      type: ObjMapScalar,
-    },
-    typeNamespaces: {
-      type: ObjMapScalar,
-    },
-  },
-});
 
 const QUERY_PREFIXES = [
   'get',
@@ -301,19 +245,45 @@ export class SOAPLoader {
   private soapHeaders: SOAPHeaders;
   private bodyAlias?: string;
   private soapNamespace: string;
+  private operationHeaders?: Record<string, string>;
+  /**
+   * One `@source` per distinct port origin. Key is URL origin (or raw endpoint when
+   * unparseable). Value holds the source name and a representative absolute endpoint.
+   */
+  private sourcesByOrigin = new Map<string, { name: string; endpoint: string }>();
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
     this.log = options.log || new Logger({ prefix: options.subgraphName });
     this.subgraphName = options.subgraphName;
     this.loadXMLSchemaNamespace();
-    this.schemaComposer.addDirective(soapDirective);
+    this.schemaComposer.addDirective(ConnectDirective);
+    this.schemaComposer.addDirective(SourceDirective);
+    this.schemaComposer.addDirective(LinkDirective);
     this.schemaHeadersFactory = getInterpolatedHeadersFactory(options.schemaHeaders || {});
     this.endpoint = options.endpoint;
     this.cwd = options.cwd;
     this.soapHeaders = options.soapHeaders;
     this.bodyAlias = options.bodyAlias;
+    this.operationHeaders = options.operationHeaders;
     this.soapNamespace = 'http://schemas.xmlsoap.org/soap/envelope/';
+  }
+
+  /** Register (or reuse) an `@source` for this endpoint's origin; return its source name. */
+  private sourceNameForEndpoint(endpoint: string | undefined): string {
+    const ep = endpoint || this.endpoint || '';
+    const { baseURL } = splitSoapEndpoint(ep);
+    const originKey = baseURL || ep || '';
+    let entry = this.sourcesByOrigin.get(originKey);
+    if (!entry) {
+      const name =
+        this.sourcesByOrigin.size === 0
+          ? this.subgraphName
+          : `${this.subgraphName}_${this.sourcesByOrigin.size + 1}`;
+      entry = { name, endpoint: ep };
+      this.sourcesByOrigin.set(originKey, entry);
+    }
+    return entry.name;
   }
 
   loadXMLSchemaNamespace() {
@@ -695,12 +665,7 @@ export class SOAPLoader {
             rootTC.addFields({
               [operationFieldName]: {
                 type,
-                directives: [
-                  {
-                    name: 'soap',
-                    args: soapAnnotations,
-                  },
-                ],
+                directives: [],
               },
             });
             const inputObj = operationObj.input[0];
@@ -809,6 +774,27 @@ export class SOAPLoader {
             if (Object.keys(argNamespaceMap).length > 0) {
               soapAnnotations.argNamespaces = argNamespaceMap;
             }
+
+            const field = rootTC.getField(operationFieldName);
+            const argNames = Object.keys(field.args || {}) as string[];
+            field.directives = [
+              {
+                name: 'connect',
+                args: buildSoapConnectDirectiveArgs({
+                  sourceName: this.sourceNameForEndpoint(soapAnnotations.endpoint),
+                  endpoint: soapAnnotations.endpoint,
+                  soapNamespace: soapAnnotations.soapNamespace,
+                  soapAction: soapAnnotations.soapAction,
+                  elementName: soapAnnotations.elementName,
+                  bindingNamespace: soapAnnotations.bindingNamespace,
+                  bodyAlias: soapAnnotations.bodyAlias,
+                  argNamespaces: soapAnnotations.argNamespaces,
+                  headerArgNames: soapAnnotations.headerArgNames,
+                  soapHeaders: soapAnnotations.soapHeaders,
+                  argNames,
+                }),
+              },
+            ];
           }
         }
       }
@@ -1530,16 +1516,34 @@ export class SOAPLoader {
     const schema = this.schemaComposer.buildSchema();
     const schemaExts: any = (schema.extensions ||= {});
     schemaExts.directives ||= {};
-    // The transport definition survives SDL roundtrip via
-    // @extraSchemaDefinitionDirective, so subgraph routers that reconstruct
-    // the schema from SDL still see this metadata. typeNamespacesJson is
-    // included here (rather than on schema.extensions directly) so the
-    // namespace-aware envelope path also works after federation composition.
+    // Connectors subgraph: Hive loads transport-rest for @connect / @source.
+    // Nested XML prefixes inherit from parent element keys (inheritXmlNamespacePrefixes);
+    // no typeNamespacesJson bag on @transport.
     schemaExts.directives.transport = {
-      kind: 'soap',
+      kind: 'rest',
       subgraph: this.subgraphName,
-      typeNamespacesJson: Object.fromEntries(this.typeNamespaceMap),
     };
+    // One `@source` per distinct port origin (multi-port WSDLs must not collapse hosts).
+    const sourceEntries =
+      this.sourcesByOrigin.size > 0
+        ? [...this.sourcesByOrigin.values()]
+        : [{ name: this.subgraphName, endpoint: this.endpoint || '' }];
+    schemaExts.directives.source = sourceEntries.map(({ name, endpoint }) =>
+      buildSoapSourceDirectiveArgs({
+        name,
+        endpoint,
+        operationHeaders: this.operationHeaders,
+      }),
+    );
+    const existingLinks = Array.isArray(schemaExts.directives.link)
+      ? schemaExts.directives.link
+      : schemaExts.directives.link
+        ? [schemaExts.directives.link]
+        : [];
+    schemaExts.directives.link = [
+      ...existingLinks,
+      { url: CONNECT_LINK_URL, import: ['@connect', '@source'] },
+    ];
     return schema;
   }
 }

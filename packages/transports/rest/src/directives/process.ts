@@ -1,4 +1,4 @@
-import type { GraphQLField, GraphQLSchema } from 'graphql';
+import type { GraphQLField, GraphQLOutputType, GraphQLSchema } from 'graphql';
 import {
   getNamedType,
   isEnumType,
@@ -25,6 +25,7 @@ import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
+import { coerceXmlLeafForGraphQLType, unwrapXmlScalarLeaf } from './xmlCodec.js';
 
 export interface ProcessDirectiveArgs {
   pubsub?: PubSub;
@@ -83,7 +84,9 @@ export function processDirectives(
     timeout: transportOpts.timeout,
     ...extraGlobalOptions,
   };
-  // Wire @connect resolvers (Federation Connectors)
+  // Wire @connect resolvers (Federation Connectors).
+  // HTTP headers come from `@source` / `@connect` only (WSDL emit already bakes yaml
+  // operationHeaders into `@source`); no separate runtime header bag.
   const odataOpts = transportOpts.odata;
   processConnectDirectives(schema, {
     globalFetch,
@@ -172,29 +175,66 @@ export function processDirectives(
           }
         }
         // Former `@flatten`: OpenAPI oneOf(string|array) → `[Scalar]` needs deep-flatten.
-        // No Connectors expression for this — coerce list-of-leaf fields without a directive.
-        installListFlattenCoercion(field as GraphQLField<any, any>);
+        // Also legacy SOAP soapDefaultResolver: wrap/unwrap nested lists by GraphQL type.
+        installXmlListPluralization(field as GraphQLField<any, any>);
+        // Attributed XML leaves stay structured for selection; unwrap at scalar fields.
+        installXmlScalarUnwrap(field as GraphQLField<any, any>);
       }
     }
   }
   return schema;
 }
 
-/** `[Scalar]` fields: normalize nested arrays / singular values (ex-`@flatten`). */
-function installListFlattenCoercion(field: GraphQLField<any, any>) {
-  let t = field.type;
-  while (isNonNullType(t)) t = t.ofType;
-  if (!isListType(t)) return;
-  const leaf = getNamedType(t.ofType);
-  if (!isScalarType(leaf) && !isEnumType(leaf)) return;
+function isListTypeOrNonNullListType(type: GraphQLOutputType): boolean {
+  if (isNonNullType(type)) {
+    return isListType(type.ofType);
+  }
+  return isListType(type);
+}
+
+/**
+ * Nested XML/SOAP list fields: a single unbounded sibling is an object, not an array.
+ * Match legacy transport-soap `soapDefaultResolver` wrap (+ OpenAPI `@flatten` for scalar lists).
+ * Only list fields — singular Date/String fields use `installXmlScalarUnwrap`.
+ */
+function installXmlListPluralization(field: GraphQLField<any, any>) {
   if (field.resolve && field.resolve.name !== 'defaultFieldResolver') return;
+  if (!isListTypeOrNonNullListType(field.type)) return;
+  let listInner = field.type;
+  while (isNonNullType(listInner)) listInner = listInner.ofType;
+  const leaf = isListType(listInner) ? getNamedType(listInner.ofType) : getNamedType(field.type);
+  const flattenScalars = isScalarType(leaf) || isEnumType(leaf);
   const fieldName = field.name;
-  field.resolve = function listFlattenCoercion(root) {
+  const leafName = leaf.name;
+  field.resolve = function xmlListPluralization(root) {
     let result = root?.[fieldName];
     if (result == null) return result;
     if (!Array.isArray(result)) {
       result = [result];
     }
-    return result.flat(Infinity);
+    if (!flattenScalars) {
+      return result;
+    }
+    return result
+      .flat(Infinity)
+      .map(item => coerceXmlLeafForGraphQLType(unwrapXmlScalarLeaf(item), leafName));
+  };
+}
+
+/**
+ * Singular scalar/enum fields: deferred unwrap of attributed XML leaves
+ * (`{ innerText, attributes }` / attributes-only nil) after selection can read attributes.
+ * Then coerce by GraphQL type so `ID`/`String` keep lexical text (`true`, `00123`).
+ * `unwrapXmlScalarLeaf` no-ops on non-XML values (JSON `{ attributes: ... }` stays).
+ */
+function installXmlScalarUnwrap(field: GraphQLField<any, any>) {
+  if (field.resolve && field.resolve.name !== 'defaultFieldResolver') return;
+  if (isListTypeOrNonNullListType(field.type)) return;
+  const named = getNamedType(field.type);
+  if (!isScalarType(named) && !isEnumType(named)) return;
+  const fieldName = field.name;
+  const typeName = named.name;
+  field.resolve = function xmlScalarUnwrap(root) {
+    return coerceXmlLeafForGraphQLType(unwrapXmlScalarLeaf(root?.[fieldName]), typeName);
   };
 }

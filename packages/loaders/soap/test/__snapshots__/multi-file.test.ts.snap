@@ -1,12 +1,16 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Multi-file WSDL resolves nested <wsdl:import> / <xsd:import> against each document's own location 1`] = `
-"schema @transport(kind: "soap", subgraph: "multi-file", typeNamespacesJson: {tns_Hello_Input: "http://example.com/hello/types", tns_Name_Input: "http://example.com/hello/names"}) {
+"schema @transport(kind: "rest", subgraph: "multi-file") @source(name: "multi-file", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   placeholder: Void
@@ -16,7 +20,7 @@ type Query {
 scalar Void
 
 type Mutation {
-  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @soap(elementName: "HelloResponse", bindingNamespace: "http://example.com/hello/wsdl", endpoint: "http://example.com/hello", subgraph: "multi-file", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "hello", argNamespaces: "{\\"Hello\\":\\"http://example.com/hello/types\\"}")
+  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @connect(source: "multi-file", http: {POST: "/hello", headers: [{name: "SOAPAction", value: "hello"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:types\\": $(\\"http://example.com/hello/types\\") } \\"soap:Body\\": { \\"types:Hello\\": $args.Hello } }"}, selection: "$.Envelope.Body.HelloResponse")
 }
 
 type tns_HelloResponse {
@@ -32,22 +36,42 @@ input tns_Name_Input {
   last: String
 }
 
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+}"
 `;
 
 exports[`Multi-file WSDL resolves relative source against the loader cwd, not globalThis.process?.cwd?.() 1`] = `
-"schema @transport(kind: "soap", subgraph: "multi-file", typeNamespacesJson: {tns_Hello_Input: "http://example.com/hello/types", tns_Name_Input: "http://example.com/hello/names"}) {
+"schema @transport(kind: "rest", subgraph: "multi-file") @source(name: "multi-file", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   placeholder: Void
@@ -57,7 +81,7 @@ type Query {
 scalar Void
 
 type Mutation {
-  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @soap(elementName: "HelloResponse", bindingNamespace: "http://example.com/hello/wsdl", endpoint: "http://example.com/hello", subgraph: "multi-file", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "hello", argNamespaces: "{\\"Hello\\":\\"http://example.com/hello/types\\"}")
+  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @connect(source: "multi-file", http: {POST: "/hello", headers: [{name: "SOAPAction", value: "hello"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:types\\": $(\\"http://example.com/hello/types\\") } \\"soap:Body\\": { \\"types:Hello\\": $args.Hello } }"}, selection: "$.Envelope.Body.HelloResponse")
 }
 
 type tns_HelloResponse {
@@ -73,11 +97,27 @@ input tns_Name_Input {
   last: String
 }
 
-input SOAPHeaders {
-  namespace: String
-  alias: String
-  headers: ObjMap
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+}"
 `;
