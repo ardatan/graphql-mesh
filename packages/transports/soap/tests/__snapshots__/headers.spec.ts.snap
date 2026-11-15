@@ -1,21 +1,27 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SOAP Headers should pass headers to the executor: soap-with-headers 1`] = `
-"schema @transport(kind: "soap", subgraph: "Test", typeNamespacesJson: {tns_GetWeather_Input: "http://www.webserviceX.NET", tns_GetCitiesByCountry_Input: "http://www.webserviceX.NET"}) {
+"schema @transport(kind: "rest", subgraph: "Test") @source(name: "Test", http: {baseURL: "http://www.webservicex.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
-  tns_GlobalWeather_GlobalWeatherSoap_GetWeather(GetWeather: tns_GetWeather_Input): tns_GetWeatherResponse @soap(elementName: "GetWeatherResponse", bindingNamespace: "http://www.webserviceX.NET", endpoint: "http://www.webservicex.com/globalweather.asmx", subgraph: "Test", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://www.webserviceX.NET/GetWeather", bodyAlias: "guild", soapHeaders: {namespace: "https://the-guild.dev", alias: "guild", headers: "{\\"MyHeader\\":{\\"UserName\\":\\"{context.USER_NAME}\\",\\"Password\\":\\"{context.PASSWORD}\\"}}"}, argNamespaces: "{\\"GetWeather\\":\\"http://www.webserviceX.NET\\"}")
-  tns_GlobalWeather_GlobalWeatherSoap_GetCitiesByCountry(GetCitiesByCountry: tns_GetCitiesByCountry_Input): tns_GetCitiesByCountryResponse @soap(elementName: "GetCitiesByCountryResponse", bindingNamespace: "http://www.webserviceX.NET", endpoint: "http://www.webservicex.com/globalweather.asmx", subgraph: "Test", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://www.webserviceX.NET/GetCitiesByCountry", bodyAlias: "guild", soapHeaders: {namespace: "https://the-guild.dev", alias: "guild", headers: "{\\"MyHeader\\":{\\"UserName\\":\\"{context.USER_NAME}\\",\\"Password\\":\\"{context.PASSWORD}\\"}}"}, argNamespaces: "{\\"GetCitiesByCountry\\":\\"http://www.webserviceX.NET\\"}")
-  tns_GlobalWeather_GlobalWeatherSoap12_GetWeather(GetWeather: tns_GetWeather_Input): tns_GetWeatherResponse @soap(elementName: "GetWeatherResponse", bindingNamespace: "http://www.webserviceX.NET", endpoint: "http://www.webservicex.com/globalweather.asmx", subgraph: "Test", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://www.webserviceX.NET/GetWeather", bodyAlias: "guild", soapHeaders: {namespace: "https://the-guild.dev", alias: "guild", headers: "{\\"MyHeader\\":{\\"UserName\\":\\"{context.USER_NAME}\\",\\"Password\\":\\"{context.PASSWORD}\\"}}"}, argNamespaces: "{\\"GetWeather\\":\\"http://www.webserviceX.NET\\"}")
-  tns_GlobalWeather_GlobalWeatherSoap12_GetCitiesByCountry(GetCitiesByCountry: tns_GetCitiesByCountry_Input): tns_GetCitiesByCountryResponse @soap(elementName: "GetCitiesByCountryResponse", bindingNamespace: "http://www.webserviceX.NET", endpoint: "http://www.webservicex.com/globalweather.asmx", subgraph: "Test", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://www.webserviceX.NET/GetCitiesByCountry", bodyAlias: "guild", soapHeaders: {namespace: "https://the-guild.dev", alias: "guild", headers: "{\\"MyHeader\\":{\\"UserName\\":\\"{context.USER_NAME}\\",\\"Password\\":\\"{context.PASSWORD}\\"}}"}, argNamespaces: "{\\"GetCitiesByCountry\\":\\"http://www.webserviceX.NET\\"}")
-  tns_GlobalWeather_GlobalWeatherHttpGet_GetWeather(CityName: String = "", CountryName: String = ""): String @soap(elementName: "string", bindingNamespace: "http://www.webserviceX.NET", endpoint: "http://www.webservicex.com/globalweather.asmx", subgraph: "Test", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", bodyAlias: "guild", soapHeaders: {namespace: "https://the-guild.dev", alias: "guild", headers: "{\\"MyHeader\\":{\\"UserName\\":\\"{context.USER_NAME}\\",\\"Password\\":\\"{context.PASSWORD}\\"}}"}, argNamespaces: "{\\"CityName\\":\\"http://www.webserviceX.NET\\",\\"CountryName\\":\\"http://www.webserviceX.NET\\"}")
-  tns_GlobalWeather_GlobalWeatherHttpGet_GetCitiesByCountry(CountryName: String = ""): String @soap(elementName: "string", bindingNamespace: "http://www.webserviceX.NET", endpoint: "http://www.webservicex.com/globalweather.asmx", subgraph: "Test", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", bodyAlias: "guild", soapHeaders: {namespace: "https://the-guild.dev", alias: "guild", headers: "{\\"MyHeader\\":{\\"UserName\\":\\"{context.USER_NAME}\\",\\"Password\\":\\"{context.PASSWORD}\\"}}"}, argNamespaces: "{\\"CountryName\\":\\"http://www.webserviceX.NET\\"}")
-  tns_GlobalWeather_GlobalWeatherHttpPost_GetWeather(CityName: String = "", CountryName: String = ""): String @soap(elementName: "string", bindingNamespace: "http://www.webserviceX.NET", endpoint: "http://www.webservicex.com/globalweather.asmx", subgraph: "Test", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", bodyAlias: "guild", soapHeaders: {namespace: "https://the-guild.dev", alias: "guild", headers: "{\\"MyHeader\\":{\\"UserName\\":\\"{context.USER_NAME}\\",\\"Password\\":\\"{context.PASSWORD}\\"}}"}, argNamespaces: "{\\"CityName\\":\\"http://www.webserviceX.NET\\",\\"CountryName\\":\\"http://www.webserviceX.NET\\"}")
-  tns_GlobalWeather_GlobalWeatherHttpPost_GetCitiesByCountry(CountryName: String = ""): String @soap(elementName: "string", bindingNamespace: "http://www.webserviceX.NET", endpoint: "http://www.webservicex.com/globalweather.asmx", subgraph: "Test", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", bodyAlias: "guild", soapHeaders: {namespace: "https://the-guild.dev", alias: "guild", headers: "{\\"MyHeader\\":{\\"UserName\\":\\"{context.USER_NAME}\\",\\"Password\\":\\"{context.PASSWORD}\\"}}"}, argNamespaces: "{\\"CountryName\\":\\"http://www.webserviceX.NET\\"}")
+  tns_GlobalWeather_GlobalWeatherSoap_GetWeather(GetWeather: tns_GetWeather_Input): tns_GetWeatherResponse @connect(source: "Test", http: {POST: "/globalweather.asmx", headers: [{name: "SOAPAction", value: "http://www.webserviceX.NET/GetWeather"}], body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:guild\\": $(\\"http://www.webserviceX.NET\\")\\n      \\"xmlns:the\\": $(\\"https://the-guild.dev\\")\\n    }\\n    \\"soap:Header\\": {\\n        \\"the:MyHeader\\": {\\n          UserName: $context.USER_NAME\\n          Password: $context.PASSWORD\\n        }\\n    }\\n    \\"soap:Body\\": {\\n        \\"guild:GetWeather\\": $args.GetWeather\\n    }\\n  }"}, selection: "$.Envelope.Body.GetWeatherResponse")
+  tns_GlobalWeather_GlobalWeatherSoap_GetCitiesByCountry(GetCitiesByCountry: tns_GetCitiesByCountry_Input): tns_GetCitiesByCountryResponse @connect(source: "Test", http: {POST: "/globalweather.asmx", headers: [{name: "SOAPAction", value: "http://www.webserviceX.NET/GetCitiesByCountry"}], body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:guild\\": $(\\"http://www.webserviceX.NET\\")\\n      \\"xmlns:the\\": $(\\"https://the-guild.dev\\")\\n    }\\n    \\"soap:Header\\": {\\n        \\"the:MyHeader\\": {\\n          UserName: $context.USER_NAME\\n          Password: $context.PASSWORD\\n        }\\n    }\\n    \\"soap:Body\\": {\\n        \\"guild:GetCitiesByCountry\\": $args.GetCitiesByCountry\\n    }\\n  }"}, selection: "$.Envelope.Body.GetCitiesByCountryResponse")
+  tns_GlobalWeather_GlobalWeatherSoap12_GetWeather(GetWeather: tns_GetWeather_Input): tns_GetWeatherResponse @connect(source: "Test", http: {POST: "/globalweather.asmx", headers: [{name: "SOAPAction", value: "http://www.webserviceX.NET/GetWeather"}], body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:guild\\": $(\\"http://www.webserviceX.NET\\")\\n      \\"xmlns:the\\": $(\\"https://the-guild.dev\\")\\n    }\\n    \\"soap:Header\\": {\\n        \\"the:MyHeader\\": {\\n          UserName: $context.USER_NAME\\n          Password: $context.PASSWORD\\n        }\\n    }\\n    \\"soap:Body\\": {\\n        \\"guild:GetWeather\\": $args.GetWeather\\n    }\\n  }"}, selection: "$.Envelope.Body.GetWeatherResponse")
+  tns_GlobalWeather_GlobalWeatherSoap12_GetCitiesByCountry(GetCitiesByCountry: tns_GetCitiesByCountry_Input): tns_GetCitiesByCountryResponse @connect(source: "Test", http: {POST: "/globalweather.asmx", headers: [{name: "SOAPAction", value: "http://www.webserviceX.NET/GetCitiesByCountry"}], body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:guild\\": $(\\"http://www.webserviceX.NET\\")\\n      \\"xmlns:the\\": $(\\"https://the-guild.dev\\")\\n    }\\n    \\"soap:Header\\": {\\n        \\"the:MyHeader\\": {\\n          UserName: $context.USER_NAME\\n          Password: $context.PASSWORD\\n        }\\n    }\\n    \\"soap:Body\\": {\\n        \\"guild:GetCitiesByCountry\\": $args.GetCitiesByCountry\\n    }\\n  }"}, selection: "$.Envelope.Body.GetCitiesByCountryResponse")
+  tns_GlobalWeather_GlobalWeatherHttpGet_GetWeather(CityName: String = "", CountryName: String = ""): String @connect(source: "Test", http: {POST: "/globalweather.asmx", body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:guild\\": $(\\"http://www.webserviceX.NET\\")\\n      \\"xmlns:the\\": $(\\"https://the-guild.dev\\")\\n    }\\n    \\"soap:Header\\": {\\n        \\"the:MyHeader\\": {\\n          UserName: $context.USER_NAME\\n          Password: $context.PASSWORD\\n        }\\n    }\\n    \\"soap:Body\\": {\\n        \\"guild:CityName\\": $args.CityName\\n        \\"guild:CountryName\\": $args.CountryName\\n    }\\n  }"}, selection: "$.Envelope.Body.string")
+  tns_GlobalWeather_GlobalWeatherHttpGet_GetCitiesByCountry(CountryName: String = ""): String @connect(source: "Test", http: {POST: "/globalweather.asmx", body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:guild\\": $(\\"http://www.webserviceX.NET\\")\\n      \\"xmlns:the\\": $(\\"https://the-guild.dev\\")\\n    }\\n    \\"soap:Header\\": {\\n        \\"the:MyHeader\\": {\\n          UserName: $context.USER_NAME\\n          Password: $context.PASSWORD\\n        }\\n    }\\n    \\"soap:Body\\": {\\n        \\"guild:CountryName\\": $args.CountryName\\n    }\\n  }"}, selection: "$.Envelope.Body.string")
+  tns_GlobalWeather_GlobalWeatherHttpPost_GetWeather(CityName: String = "", CountryName: String = ""): String @connect(source: "Test", http: {POST: "/globalweather.asmx", body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:guild\\": $(\\"http://www.webserviceX.NET\\")\\n      \\"xmlns:the\\": $(\\"https://the-guild.dev\\")\\n    }\\n    \\"soap:Header\\": {\\n        \\"the:MyHeader\\": {\\n          UserName: $context.USER_NAME\\n          Password: $context.PASSWORD\\n        }\\n    }\\n    \\"soap:Body\\": {\\n        \\"guild:CityName\\": $args.CityName\\n        \\"guild:CountryName\\": $args.CountryName\\n    }\\n  }"}, selection: "$.Envelope.Body.string")
+  tns_GlobalWeather_GlobalWeatherHttpPost_GetCitiesByCountry(CountryName: String = ""): String @connect(source: "Test", http: {POST: "/globalweather.asmx", body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\")\\n      \\"xmlns:guild\\": $(\\"http://www.webserviceX.NET\\")\\n      \\"xmlns:the\\": $(\\"https://the-guild.dev\\")\\n    }\\n    \\"soap:Header\\": {\\n        \\"the:MyHeader\\": {\\n          UserName: $context.USER_NAME\\n          Password: $context.PASSWORD\\n        }\\n    }\\n    \\"soap:Body\\": {\\n        \\"guild:CountryName\\": $args.CountryName\\n    }\\n  }"}, selection: "$.Envelope.Body.string")
 }
 
 type tns_GetWeatherResponse {
@@ -33,6 +39,30 @@ type tns_GetCitiesByCountryResponse {
 
 input tns_GetCitiesByCountry_Input {
   CountryName: String
+}
+
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }
 
 input SOAPHeaders {

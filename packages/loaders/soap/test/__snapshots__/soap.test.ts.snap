@@ -1,10 +1,16 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SOAP Loader should create executor for a service with mutations and query placeholder 1`] = `
-"schema @transport(kind: "soap", subgraph: "Test", typeNamespacesJson: {NumberConversion_NumberToWords_Input: "http://www.dataaccess.com/webservicesserver/", NumberConversion_NumberToDollars_Input: "http://www.dataaccess.com/webservicesserver/"}) {
+"schema @transport(kind: "rest", subgraph: "Test") @source(name: "Test", http: {baseURL: "https://www.dataaccess.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
@@ -16,8 +22,8 @@ type Query {
 scalar Void
 
 type Mutation {
-  NumberConversion_NumberConversion_NumberConversionSoap_NumberToWords(NumberToWords: NumberConversion_NumberToWords_Input): NumberConversion_NumberToWordsResponse @soap(elementName: "NumberToWordsResponse", bindingNamespace: "http://www.dataaccess.com/webservicesserver/", endpoint: "https://www.dataaccess.com/webservicesserver/NumberConversion.wso", subgraph: "Test", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", argNamespaces: "{\\"NumberToWords\\":\\"http://www.dataaccess.com/webservicesserver/\\"}")
-  NumberConversion_NumberConversion_NumberConversionSoap_NumberToDollars(NumberToDollars: NumberConversion_NumberToDollars_Input): NumberConversion_NumberToDollarsResponse @soap(elementName: "NumberToDollarsResponse", bindingNamespace: "http://www.dataaccess.com/webservicesserver/", endpoint: "https://www.dataaccess.com/webservicesserver/NumberConversion.wso", subgraph: "Test", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", argNamespaces: "{\\"NumberToDollars\\":\\"http://www.dataaccess.com/webservicesserver/\\"}")
+  NumberConversion_NumberConversion_NumberConversionSoap_NumberToWords(NumberToWords: NumberConversion_NumberToWords_Input): NumberConversion_NumberToWordsResponse @connect(source: "Test", http: {POST: "/webservicesserver/NumberConversion.wso", body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\")\\n      \\"xmlns:body\\": $(\\"http://www.dataaccess.com/webservicesserver/\\")\\n    }\\n    \\"soap:Body\\": {\\n        \\"body:NumberToWords\\": $args.NumberToWords\\n    }\\n  }"}, selection: "$.Envelope.Body.NumberToWordsResponse")
+  NumberConversion_NumberConversion_NumberConversionSoap_NumberToDollars(NumberToDollars: NumberConversion_NumberToDollars_Input): NumberConversion_NumberToDollarsResponse @connect(source: "Test", http: {POST: "/webservicesserver/NumberConversion.wso", body: "\\"soap:Envelope\\": {\\n    attributes: {\\n      \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\")\\n      \\"xmlns:body\\": $(\\"http://www.dataaccess.com/webservicesserver/\\")\\n    }\\n    \\"soap:Body\\": {\\n        \\"body:NumberToDollars\\": $args.NumberToDollars\\n    }\\n  }"}, selection: "$.Envelope.Body.NumberToDollarsResponse")
 }
 
 type NumberConversion_NumberToWordsResponse {
@@ -39,6 +45,30 @@ type NumberConversion_NumberToDollarsResponse {
 
 input NumberConversion_NumberToDollars_Input {
   dNum: Float
+}
+
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }
 
 input SOAPHeaders {

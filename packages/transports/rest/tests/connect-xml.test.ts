@@ -1,7 +1,12 @@
 import { buildSchema, execute, parse, type GraphQLSchema } from 'graphql';
 import { Response } from '@whatwg-node/fetch';
 import { processConnectDirectives } from '../src/directives/connect.js';
-import { isXmlContentType, jsObjectToXml, xmlToJsObject } from '../src/directives/xmlCodec.js';
+import {
+  inheritXmlNamespacePrefixes,
+  isXmlContentType,
+  jsObjectToXml,
+  xmlToJsObject,
+} from '../src/directives/xmlCodec.js';
 
 const CONNECTOR_DIRECTIVES = /* GraphQL */ `
   directive @source(
@@ -197,6 +202,24 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
     expect(requestBody).toContain('tns:FindPerson');
     expect(requestBody).toContain('42');
     expect(requestBody).not.toMatch(/^\s*\{/); // not JSON
+  });
+
+  it('inherits parent namespace prefixes onto unprefixed nested object keys', () => {
+    const inherited = inheritXmlNamespacePrefixes({
+      'orders:SubmitOrder': {
+        customerId: 'c1',
+        items: [{ productId: 'p1', quantity: 2 }],
+      },
+    });
+    expect(inherited).toEqual({
+      'orders:SubmitOrder': {
+        'orders:customerId': 'c1',
+        'orders:items': [{ 'orders:productId': 'p1', 'orders:quantity': 2 }],
+      },
+    });
+    expect(jsObjectToXml(inherited)).toContain(
+      '<orders:SubmitOrder><orders:customerId>c1</orders:customerId><orders:items><orders:productId>p1</orders:productId><orders:quantity>2</orders:quantity></orders:items></orders:SubmitOrder>',
+    );
   });
 
   it('parses XML when Content-Type is omitted but body has an XML declaration', async () => {

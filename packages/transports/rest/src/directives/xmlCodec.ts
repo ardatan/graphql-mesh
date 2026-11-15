@@ -53,6 +53,33 @@ export function looksLikeXml(text: string): boolean {
   return text.trimStart().startsWith('<?xml');
 }
 
+/**
+ * When a parent element is `"orders:SubmitOrder": $args.SubmitOrder`, GraphQL args
+ * are unprefixed objects. Inherit the parent's namespace prefix onto descendant
+ * keys (except `attributes` / `innerText`) so SOAP/XML codecs match WSDL-qualified trees.
+ */
+export function inheritXmlNamespacePrefixes(value: unknown, inheritPrefix?: string): unknown {
+  if (Array.isArray(value)) {
+    return value.map(item => inheritXmlNamespacePrefixes(item, inheritPrefix));
+  }
+  if (value == null || typeof value !== 'object') {
+    return value;
+  }
+  const out: Record<string, unknown> = {};
+  for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+    if (key === 'attributes' || key === 'innerText') {
+      out[key] = child;
+      continue;
+    }
+    const prefixed = key.match(/^([^:]+):(.+)$/);
+    const prefix = prefixed ? prefixed[1] : inheritPrefix;
+    const localName = prefixed ? prefixed[2] : key;
+    const outKey = prefix ? `${prefix}:${localName}` : localName;
+    out[outKey] = inheritXmlNamespacePrefixes(child, prefix ?? inheritPrefix);
+  }
+  return out;
+}
+
 export function jsObjectToXml(value: unknown): string {
   if (value == null) {
     return '';
@@ -60,7 +87,7 @@ export function jsObjectToXml(value: unknown): string {
   if (typeof value === 'string') {
     return value;
   }
-  return xmlBuilder.build(value);
+  return xmlBuilder.build(inheritXmlNamespacePrefixes(value));
 }
 
 export function xmlToJsObject(xml: string): unknown {
