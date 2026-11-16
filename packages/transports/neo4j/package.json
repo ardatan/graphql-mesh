@@ -44,7 +44,7 @@
     "@graphql-tools/utils": "^13.2.2",
     "@neo4j/graphql": "^7.6.8",
     "@whatwg-node/disposablestack": "^0.1.0",
-    "@whatwg-node/promise-helpers": "^2.0.1",
+    "@whatwg-node/promise-helpers": "^2.0.2",
     "neo4j-driver": "^6.3.0",
     "tslib": "^2.4.0"
   },
