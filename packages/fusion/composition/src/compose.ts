@@ -1385,19 +1385,20 @@ function addAnnotationsForSemanticConventions({
         //   `$this.<keyField>` (entity:true would be invalid / ENTITY_RESOLVER_ARGUMENT_MISMATCH)
         // Hive resolves these via REST transport `Query._entities` → resolveReference;
         // no Mesh `@merge` needed for Connectors subgraphs.
-        const markConnectEntityOrMerge = (): { shouldEnsureKey: boolean } => {
+        const markConnectEntityOrMerge = () => {
           if (directiveExtensions.connect?.length) {
-            // Connectors subgraphs still need `@key` for entity resolution; never `@merge`.
+            // Connectors subgraphs: mark entity connectors; never Mesh `@merge`.
+            // `@key` is still ensured by the caller (same as master).
             const alreadyEntity = directiveExtensions.connect.some((c: any) => c?.entity === true);
             if (alreadyEntity) {
-              return { shouldEnsureKey: true };
+              return;
             }
             if (argName === fieldName) {
               directiveExtensions.connect = directiveExtensions.connect.map((c: any) => ({
                 ...c,
                 entity: true,
               }));
-              return { shouldEnsureKey: true };
+              return;
             }
             // Type-level entity connector: `/pet/{$args.petId}` → `/pet/{$this.id}`
             const typeConnects = directiveExtensions.connect.map((c: any) =>
@@ -1411,19 +1412,14 @@ function addAnnotationsForSemanticConventions({
             }
             const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
             typeExtensions.directives = typeDirectives;
-            return { shouldEnsureKey: true };
+            return;
           }
           const isPreexistingFederationEntity = preexistingFederationEntities.has(type.name);
-          const hadKeyAlready =
-            (Array.isArray(typeDirectives.key) && typeDirectives.key.length > 0) ||
-            type.astNode?.directives?.some(
-              (directive: DirectiveNode) => directive.name.value === 'key',
-            );
-          // Mesh `@merge` always — Hive gateway entity resolution (incl. AFC products
-          // serving Inventory via `inventoryById`). Virtual `@connect` only for Mesh-only
-          // types: preexisting Federation `@key`/`@interfaceObject` would flip Rover into
-          // Connectors mode. Never add a new `@key` when keys already exist (Product must
-          // not gain `@key(fields: "id")` beside its compound keys).
+          // Mesh `@merge` + `ensureKey` always (matches master AFC): Product needs
+          // `@key(fields: "id")` for inventory→products Rover satisfiability, and
+          // `product(id)`/`inventoryById` need `@merge` so Hive can resolve those keys.
+          // Virtual `@connect` only for Mesh-only types — preexisting Federation
+          // `@key`/`@interfaceObject` would flip Rover into Connectors-only mode.
           directiveExtensions.merge ||= [];
           directiveExtensions.merge.push({
             subgraph: subgraphName,
@@ -1437,7 +1433,6 @@ function addAnnotationsForSemanticConventions({
               returnType: getNamedType(queryFieldConfig.type),
             });
           }
-          return { shouldEnsureKey: !hadKeyAlready };
         };
         switch (queryFieldNameSnakeCase) {
           case snakeCase(type.name):
@@ -1447,10 +1442,8 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(`get_${type.name}_by_${fieldName}`):
           case snakeCase(`${type.name}_by_${fieldName}`): {
             if (isNonNullType(arg.type)) {
-              const { shouldEnsureKey } = markConnectEntityOrMerge();
-              if (shouldEnsureKey) {
-                ensureKey();
-              }
+              markConnectEntityOrMerge();
+              ensureKey();
             }
             break;
           }
@@ -1460,10 +1453,8 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(`get_${pluralTypeName}_by_${pluralFieldName}`):
           case snakeCase(`${pluralTypeName}_by_${pluralFieldName}`):
           case snakeCase(`${pluralTypeName}_by_${pluralFieldName}_list`): {
-            const { shouldEnsureKey } = markConnectEntityOrMerge();
-            if (shouldEnsureKey) {
-              ensureKey();
-            }
+            markConnectEntityOrMerge();
+            ensureKey();
             break;
           }
         }
