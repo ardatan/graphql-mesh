@@ -128,7 +128,7 @@ export function attachVirtualEntityConnect(
     ];
   }
   if (keyArg !== keyField && opts.returnType && isObjectType(opts.returnType as any)) {
-    const returnNamedType = opts.returnType as import('graphql').GraphQLObjectType;
+    const returnNamedType = opts.returnType as GraphQLObjectType;
     const typeDirectives = getDirectiveExtensions(returnNamedType) || {};
     typeDirectives.connect ||= [];
     for (const connectArgs of fieldDirectives.connect) {

@@ -22,14 +22,21 @@ import {
 } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { getUnifiedGraphGracefully, type SubgraphConfig } from '../../src/compose';
+import {
+  getUnifiedGraphGracefully,
+  type ComposeSubgraphsOptions,
+  type SubgraphConfig,
+} from '../../src/compose';
 
 export type TestExecutor = ((opts: { query: string; variables?: Record<string, any> }) => any) & {
   dispose: () => Promise<void>;
 };
 
-export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
-  const executor = composeAndGetExecutor(subgraphs);
+export function composeAndGetPublicSchema(
+  subgraphs: SubgraphConfig[],
+  options?: ComposeSubgraphsOptions,
+) {
+  const executor = composeAndGetExecutor(subgraphs, options);
   return handleMaybePromise(
     () => executor({ query: getIntrospectionQuery() }),
     result =>
@@ -40,9 +47,12 @@ export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
   );
 }
 
-export function composeAndGetExecutor(subgraphs: SubgraphConfig[]): TestExecutor {
+export function composeAndGetExecutor(
+  subgraphs: SubgraphConfig[],
+  options?: ComposeSubgraphsOptions,
+): TestExecutor {
   const manager = new UnifiedGraphManager({
-    getUnifiedGraph: () => getUnifiedGraphGracefully(subgraphs),
+    getUnifiedGraph: () => getUnifiedGraphGracefully(subgraphs, options),
     transports() {
       return {
         getSubgraphExecutor({ subgraphName }) {

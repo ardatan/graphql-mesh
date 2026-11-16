@@ -3,6 +3,7 @@ import {
   getNamedType,
   GraphQLError,
   GraphQLSchema,
+  isInterfaceType,
   isNonNullType,
   isObjectType,
   isSpecifiedScalarType,
@@ -68,8 +69,11 @@ export interface GetMeshFederationTypeDefsForDirectivesOpts {
   federationVersion?: string;
 }
 
-export function getUnifiedGraphGracefully(subgraphs: SubgraphConfig[]) {
-  const result = composeSubgraphs(subgraphs);
+export function getUnifiedGraphGracefully(
+  subgraphs: SubgraphConfig[],
+  options?: ComposeSubgraphsOptions,
+) {
+  const result = composeSubgraphs(subgraphs, options);
   if (result.errors?.length) {
     throw new AggregateError(
       result.errors,
@@ -229,6 +233,10 @@ export function getAnnotatedSubgraphs(
 
     let mergeDirectiveUsed = false;
     let virtualConnectUsed = false;
+    // Types that already had Federation `@key` / `@interfaceObject` before Mesh
+    // semantic conventions run (e.g. from `createFederationTransform`). Virtual
+    // `@connect` on those flips Rover into Connectors-only mode.
+    let preexistingFederationEntities = new Set<string>();
     // Stitching source is only for non-connectors transforms. Connectors transforms
     // rewrite `@connect` selection/http instead of adding Mesh source annotations.
     const sourceDirectiveUsed = !isConnectorsSubgraph && transforms?.length > 0;
@@ -260,6 +268,9 @@ export function getAnnotatedSubgraphs(
       (normalizedSchema.extensions?.directives as any)?.transport
     ) {
       delete (normalizedSchema.extensions?.directives as any).transport;
+    }
+    if (!transforms?.length) {
+      preexistingFederationEntities = collectPreexistingFederationEntityTypeNames(normalizedSchema);
     }
     const annotatedSubgraph = mapSchema(normalizedSchema, {
       [MapperKind.TYPE]: type => {
@@ -401,6 +412,7 @@ export function getAnnotatedSubgraphs(
               queryFieldConfig: fieldConfig,
               directiveExtensions,
               subgraphName,
+              preexistingFederationEntities,
             });
             if (directiveExtensions.merge) {
               mergeDirectiveUsed = true;
@@ -510,6 +522,8 @@ export function getAnnotatedSubgraphs(
       }
       // Semantic conventions (ById/ByIds) after transforms — including connectors.
       // Connectors with `entity: true` skip Mesh `@merge` inside the helper; `@key` still lands.
+      preexistingFederationEntities =
+        collectPreexistingFederationEntityTypeNames(transformedSubgraph);
       transformedSubgraph = mapSchema(transformedSubgraph, {
         [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
           const directiveExtensions = getDirectiveExtensions(fieldConfig);
@@ -519,6 +533,7 @@ export function getAnnotatedSubgraphs(
               queryFieldConfig: fieldConfig,
               directiveExtensions,
               subgraphName,
+              preexistingFederationEntities,
             });
             if (directiveExtensions.merge) {
               mergeDirectiveUsed = true;
@@ -1268,28 +1283,52 @@ function ensureFederationComposeDirectiveImport(
   });
 }
 
+/** Types that already carried Federation entity markers before semantic conventions. */
+function collectPreexistingFederationEntityTypeNames(schema: GraphQLSchema): Set<string> {
+  const names = new Set<string>();
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) && !isInterfaceType(type)) {
+      continue;
+    }
+    if (type.name.startsWith('__')) {
+      continue;
+    }
+    const dirs = getDirectiveExtensions(type) || {};
+    const hasKey =
+      (Array.isArray(dirs.key) && dirs.key.length > 0) ||
+      type.astNode?.directives?.some((directive: DirectiveNode) => directive.name.value === 'key');
+    const hasInterfaceObject =
+      (Array.isArray(dirs.interfaceObject) && dirs.interfaceObject.length > 0) ||
+      type.astNode?.directives?.some(
+        (directive: DirectiveNode) => directive.name.value === 'interfaceObject',
+      );
+    if (hasKey || hasInterfaceObject) {
+      names.add(type.name);
+    }
+  }
+  return names;
+}
+
 function addAnnotationsForSemanticConventions({
   queryFieldName,
   queryFieldConfig,
   directiveExtensions,
   subgraphName,
+  preexistingFederationEntities,
 }: {
   queryFieldConfig: GraphQLFieldConfig<any, any>;
   queryFieldName: string;
   directiveExtensions: any;
   subgraphName: string;
+  preexistingFederationEntities: Set<string>;
 }) {
   if (directiveExtensions.merge?.length) {
     return;
   }
   const type = getNamedType(queryFieldConfig.type);
-  // Skip when the return type is already a Federation entity (`@key` on AST or extensions).
-  // Otherwise semantic dual `@connect` + connect `@link` would flip a real Federation
-  // GraphQL subgraph into Connectors mode for Rover (CONNECTORS_UNRESOLVED_FIELD).
-  const existingTypeDirectives = getDirectiveExtensions(type) || {};
+  // Source SDL `@key` on AST — leave the type alone (real Federation subgraph field).
   if (
-    type.astNode?.directives?.some((directive: DirectiveNode) => directive.name.value === 'key') ||
-    (Array.isArray(existingTypeDirectives.key) && existingTypeDirectives.key.length > 0)
+    type.astNode?.directives?.some((directive: DirectiveNode) => directive.name.value === 'key')
   ) {
     return;
   }
@@ -1373,23 +1412,26 @@ function addAnnotationsForSemanticConventions({
             typeExtensions.directives = typeDirectives;
             return;
           }
-          // Non-Connectors: Mesh `@merge` for Hive.
-          directiveExtensions.merge ||= [];
-          directiveExtensions.merge.push({
-            subgraph: subgraphName,
-            keyField: fieldName,
-            keyArg: argName,
-          });
-          // Virtual `@connect` only for Mesh-only entities. Skip when the type is already
-          // a Federation `@interfaceObject` (Router uses `_entities`; any connect `@link`
-          // would make Rover treat the GraphQL subgraph as Connectors-only).
+          // Federation entities that already had `@key` / `@interfaceObject` before this
+          // pass (federation transform): Mesh `@merge` is optional noise for Rover;
+          // virtual `@connect` would flip the whole GraphQL subgraph into Connectors mode.
+          // Keys added *by* semantic conventions in this same pass must still dual-emit.
+          const isPreexistingFederationEntity = preexistingFederationEntities.has(type.name);
           const isInterfaceObject =
             (Array.isArray(typeDirectives.interfaceObject) &&
               typeDirectives.interfaceObject.length > 0) ||
             type.astNode?.directives?.some(
               (directive: DirectiveNode) => directive.name.value === 'interfaceObject',
             );
-          if (!isInterfaceObject) {
+          // Preexisting Federation entities (incl. `@interfaceObject`): no Mesh `@merge` /
+          // virtual `@connect` — Rover uses `_entities`. Still `ensureKey()` below when needed.
+          if (!isPreexistingFederationEntity && !isInterfaceObject) {
+            directiveExtensions.merge ||= [];
+            directiveExtensions.merge.push({
+              subgraph: subgraphName,
+              keyField: fieldName,
+              keyArg: argName,
+            });
             attachVirtualEntityConnect(directiveExtensions, {
               keyField: fieldName,
               keyArg: argName,

@@ -178,13 +178,18 @@ describe('Naming Convention', () => {
       fieldNames: 'camelCase',
       fieldArgumentNames: 'pascalCase',
     });
-    const executor = composeAndGetExecutor([
-      {
-        name: 'SUBGRAPH1',
-        schema: subgraphSchema,
-        transforms: [transform],
-      },
-    ]);
+    // Naming-convention coverage only — skip Mesh semantic dual-annotations that
+    // rewrite the public schema (virtual `@connect` / `@merge`) and break this execute path.
+    const executor = composeAndGetExecutor(
+      [
+        {
+          name: 'SUBGRAPH1',
+          schema: subgraphSchema,
+          transforms: [transform],
+        },
+      ],
+      { ignoreSemanticConventions: true },
+    );
     try {
       const result = await executor({
         query: /* GraphQL */ `
