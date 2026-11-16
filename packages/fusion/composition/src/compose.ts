@@ -1385,18 +1385,19 @@ function addAnnotationsForSemanticConventions({
         //   `$this.<keyField>` (entity:true would be invalid / ENTITY_RESOLVER_ARGUMENT_MISMATCH)
         // Hive resolves these via REST transport `Query._entities` → resolveReference;
         // no Mesh `@merge` needed for Connectors subgraphs.
-        const markConnectEntityOrMerge = () => {
+        const markConnectEntityOrMerge = (): { shouldEnsureKey: boolean } => {
           if (directiveExtensions.connect?.length) {
+            // Connectors subgraphs still need `@key` for entity resolution; never `@merge`.
             const alreadyEntity = directiveExtensions.connect.some((c: any) => c?.entity === true);
             if (alreadyEntity) {
-              return;
+              return { shouldEnsureKey: true };
             }
             if (argName === fieldName) {
               directiveExtensions.connect = directiveExtensions.connect.map((c: any) => ({
                 ...c,
                 entity: true,
               }));
-              return;
+              return { shouldEnsureKey: true };
             }
             // Type-level entity connector: `/pet/{$args.petId}` → `/pet/{$this.id}`
             const typeConnects = directiveExtensions.connect.map((c: any) =>
@@ -1410,34 +1411,33 @@ function addAnnotationsForSemanticConventions({
             }
             const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
             typeExtensions.directives = typeDirectives;
-            return;
+            return { shouldEnsureKey: true };
           }
-          // Federation entities that already had `@key` / `@interfaceObject` before this
-          // pass (federation transform): Mesh `@merge` is optional noise for Rover;
-          // virtual `@connect` would flip the whole GraphQL subgraph into Connectors mode.
-          // Keys added *by* semantic conventions in this same pass must still dual-emit.
           const isPreexistingFederationEntity = preexistingFederationEntities.has(type.name);
-          const isInterfaceObject =
-            (Array.isArray(typeDirectives.interfaceObject) &&
-              typeDirectives.interfaceObject.length > 0) ||
+          const hadKeyAlready =
+            (Array.isArray(typeDirectives.key) && typeDirectives.key.length > 0) ||
             type.astNode?.directives?.some(
-              (directive: DirectiveNode) => directive.name.value === 'interfaceObject',
+              (directive: DirectiveNode) => directive.name.value === 'key',
             );
-          // Preexisting Federation entities (incl. `@interfaceObject`): no Mesh `@merge` /
-          // virtual `@connect` — Rover uses `_entities`. Still `ensureKey()` below when needed.
-          if (!isPreexistingFederationEntity && !isInterfaceObject) {
-            directiveExtensions.merge ||= [];
-            directiveExtensions.merge.push({
-              subgraph: subgraphName,
-              keyField: fieldName,
-              keyArg: argName,
-            });
+          // Mesh `@merge` always — Hive gateway entity resolution (incl. AFC products
+          // serving Inventory via `inventoryById`). Virtual `@connect` only for Mesh-only
+          // types: preexisting Federation `@key`/`@interfaceObject` would flip Rover into
+          // Connectors mode. Never add a new `@key` when keys already exist (Product must
+          // not gain `@key(fields: "id")` beside its compound keys).
+          directiveExtensions.merge ||= [];
+          directiveExtensions.merge.push({
+            subgraph: subgraphName,
+            keyField: fieldName,
+            keyArg: argName,
+          });
+          if (!isPreexistingFederationEntity) {
             attachVirtualEntityConnect(directiveExtensions, {
               keyField: fieldName,
               keyArg: argName,
               returnType: getNamedType(queryFieldConfig.type),
             });
           }
+          return { shouldEnsureKey: !hadKeyAlready };
         };
         switch (queryFieldNameSnakeCase) {
           case snakeCase(type.name):
@@ -1447,8 +1447,10 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(`get_${type.name}_by_${fieldName}`):
           case snakeCase(`${type.name}_by_${fieldName}`): {
             if (isNonNullType(arg.type)) {
-              markConnectEntityOrMerge();
-              ensureKey();
+              const { shouldEnsureKey } = markConnectEntityOrMerge();
+              if (shouldEnsureKey) {
+                ensureKey();
+              }
             }
             break;
           }
@@ -1458,8 +1460,10 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(`get_${pluralTypeName}_by_${pluralFieldName}`):
           case snakeCase(`${pluralTypeName}_by_${pluralFieldName}`):
           case snakeCase(`${pluralTypeName}_by_${pluralFieldName}_list`): {
-            markConnectEntityOrMerge();
-            ensureKey();
+            const { shouldEnsureKey } = markConnectEntityOrMerge();
+            if (shouldEnsureKey) {
+              ensureKey();
+            }
             break;
           }
         }
