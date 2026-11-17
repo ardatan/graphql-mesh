@@ -1,7 +1,5 @@
-import { readFileSync } from 'node:fs';
 import { createPool, type Pool as Mysql2Pool, type Pool } from 'mysql2/promise';
 import { DatabaseSync } from 'node:sqlite';
-import { path as pathHelper } from '@graphql-mesh/cross-helpers';
 import { resolveSqlitePath } from './dialect.js';
 import type { SqlClient, SqlDialect } from './types.js';
 import { parseSqlUri } from './uri.js';
@@ -57,19 +55,8 @@ export function wrapMysqlPoolAsSqlClient(pool: {
 }
 
 function createSqliteClient(location: string, cwd?: string): SqlClient {
-  let db: DatabaseSync;
-  if (location.startsWith('infile:')) {
-    const dumpPath = location.slice('infile:'.length);
-    const abs = pathHelper.isAbsolute(dumpPath)
-      ? dumpPath
-      : pathHelper.join(cwd || process.cwd(), dumpPath);
-    const dump = readFileSync(abs, 'utf8');
-    db = new DatabaseSync(':memory:');
-    db.exec(dump);
-  } else {
-    const dbPath = resolveSqlitePath(location, cwd);
-    db = new DatabaseSync(dbPath);
-  }
+  const dbPath = resolveSqlitePath(location, cwd);
+  const db = new DatabaseSync(dbPath);
   return {
     dialect: 'sqlite',
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {

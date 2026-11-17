@@ -1,20 +1,20 @@
-import { readFileSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
-import { path as pathHelper } from '@graphql-mesh/cross-helpers';
 import { resolveSqlitePath } from '@graphql-mesh/transport-sql';
 import type { SqlColumnMeta, SqlForeignKeyMeta, SqlSchemaMeta, SqlTableMeta } from './types.js';
 
 export interface IntrospectSqliteOpts {
-  db?: string;
-  /** SQL dump → in-memory database (legacy tuql infile). */
-  infile?: string;
+  db: string;
   cwd?: string;
   includeTables?: string[];
   excludeTables?: string[];
 }
 
 export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
-  const db = openSqlite(opts);
+  const dbPath = resolveSqlitePath(
+    opts.db.startsWith('file:') ? opts.db : `file:${opts.db}`,
+    opts.cwd,
+  );
+  const db = new DatabaseSync(dbPath);
   try {
     const tableRows = db
       .prepare(
@@ -83,27 +83,6 @@ export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
   } finally {
     db.close();
   }
-}
-
-function openSqlite(opts: IntrospectSqliteOpts): DatabaseSync {
-  if (opts.infile) {
-    const cwd = opts.cwd || process.cwd();
-    const abs = pathHelper.isAbsolute(opts.infile)
-      ? opts.infile
-      : pathHelper.join(cwd, opts.infile);
-    const dump = readFileSync(abs, 'utf8');
-    const db = new DatabaseSync(':memory:');
-    db.exec(dump);
-    return db;
-  }
-  if (!opts.db) {
-    throw new Error('introspectSqlite requires db or infile');
-  }
-  const dbPath = resolveSqlitePath(
-    opts.db.startsWith('file:') ? opts.db : `file:${opts.db}`,
-    opts.cwd,
-  );
-  return new DatabaseSync(dbPath);
 }
 
 function quote(name: string): string {

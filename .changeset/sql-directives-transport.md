@@ -25,7 +25,8 @@ One field directive `@sql__` covers reads and writes via `kind`
 
 - `@graphql-mesh/postgraphile` — unchanged PostGraphile runtime
 - `@graphql-mesh/mysql` / `@graphql-mesh/tuql` — same YAML entrypoints, now call `@omnigraph/sql` +
-  `transport-sql` under the hood (including `pool` / `tableFields` / `infile`)
+  `transport-sql` under the hood (`pool` / `tableFields` supported; tuql `infile` is materialized
+  to a sqlite file inside the legacy handler — not a core loader/transport feature)
 
 Dialects are `postgres` | `mysql` | `sqlite` via loader `type` / URI / `options.dialect`. Sqlite +
 MySQL are end-to-end; Postgres API is shared (introspect/execute still landing) except via the

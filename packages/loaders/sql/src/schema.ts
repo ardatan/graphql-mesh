@@ -28,11 +28,6 @@ export interface LoadSqlSubgraphOpts {
   type: SqlDialect;
   /** Sqlite file path (relative to cwd or absolute) */
   db?: string;
-  /**
-   * SQL dump file (tuql `infile` shape). Loaded into an in-memory SQLite DB at
-   * introspect + execute time. Transport location becomes `infile:<abs-path>`.
-   */
-  infile?: string;
   /** Connection URI for postgres/mysql (or sqlite file:) */
   connectionString?: string;
   /** Alias for connectionString (legacy mysql handler shape) */
@@ -399,7 +394,6 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     location,
     options: {
       dialect: opts.type,
-      ...(opts.infile ? { infile: true } : {}),
     },
   };
   extensions.directives.link = [
@@ -417,17 +411,9 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
 async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
   switch (opts.type) {
     case 'sqlite': {
-      if (opts.infile) {
-        return introspectSqlite({
-          infile: opts.infile,
-          cwd: opts.cwd,
-          includeTables: opts.includeTables,
-          excludeTables: opts.excludeTables,
-        });
-      }
       const db = opts.db || opts.connectionString || opts.endpoint;
       if (!db) {
-        throw new Error(`loadSqlSubgraph type "sqlite" requires db, infile, or connectionString`);
+        throw new Error(`loadSqlSubgraph type "sqlite" requires db or connectionString`);
       }
       return introspectSqlite({
         db,
@@ -459,13 +445,6 @@ async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
 }
 
 function resolveLocation(opts: LoadSqlSubgraphOpts): string {
-  if (opts.infile) {
-    const cwd = opts.cwd || process.cwd();
-    const abs = pathHelper.isAbsolute(opts.infile)
-      ? opts.infile
-      : pathHelper.join(cwd, opts.infile);
-    return `infile:${abs}`;
-  }
   if (opts.connectionString) return opts.connectionString;
   if (opts.endpoint) return opts.endpoint;
   if (opts.db) {
@@ -473,7 +452,7 @@ function resolveLocation(opts: LoadSqlSubgraphOpts): string {
     const abs = pathHelper.isAbsolute(opts.db) ? opts.db : pathHelper.join(cwd, opts.db);
     return `file:${abs}`;
   }
-  throw new Error('SQL loader requires db, infile, endpoint, or connectionString');
+  throw new Error('SQL loader requires db, endpoint, or connectionString');
 }
 
 function applyTableFieldsFilter(
