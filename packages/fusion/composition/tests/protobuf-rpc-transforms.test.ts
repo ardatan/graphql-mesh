@@ -759,4 +759,39 @@ describe('rewriteProtobufMappingBindsTypeScoped ownership', () => {
     expect(out).toMatch(/2\(message\):\s*\{[\s\S]*1\(int64\):\s*releaseYear/);
     expect(out).not.toMatch(/1\(int64\):\s*cYear/);
   });
+
+  it('unbound sibling inside input inherits MovieInput, not stale ChildInput', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(
+      /* GraphQL */ `
+        input MovieInput {
+          year: Int!
+          child: ChildInput
+        }
+        input ChildInput {
+          year: Int!
+        }
+        type Query {
+          q(input: MovieInput): String
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const fieldRenameMap = new Map<string, Map<string, string>>([
+      ['MovieInput', new Map([['year', 'publicationYear']])],
+      ['ChildInput', new Map([['year', 'childYear']])],
+    ]);
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      `1(message): input {
+  2(message): child { 1(int64): year }
+  3(message): { 1(int64): year }
+}`,
+      fieldRenameMap,
+      { argTypes: new Map([['input', schema.getType('MovieInput')!]]) },
+    );
+    expect(out).toMatch(/2\(message\):\s*child\s*\{\s*1\(int64\):\s*childYear/);
+    // Sibling unbound block must inherit MovieInput after child closes.
+    expect(out).toMatch(/3\(message\):\s*\{\s*1\(int64\):\s*publicationYear/);
+    expect(out).not.toMatch(/3\(message\):\s*\{[^}]*childYear/);
+  });
 });
