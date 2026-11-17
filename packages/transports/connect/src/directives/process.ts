@@ -17,7 +17,7 @@ import type { MeshFetch } from '@graphql-mesh/types';
 import {
   getDefDirectives,
   getTransportOptions,
-  type ConnectorTransportDirectiveOptions,
+  type ConnectTransportDirectiveOptions,
 } from '@graphql-mesh/utils';
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processConnectDirectives } from './connect.js';
@@ -75,7 +75,7 @@ export function processDirectives(
       )
     : undefined;
   // Kind-specific REST opts live under `@transport(options:)` (Hive TransportEntry).
-  const transportOpts = getTransportOptions<ConnectorTransportDirectiveOptions>(currDirective);
+  const transportOpts = getTransportOptions<ConnectTransportDirectiveOptions>(currDirective);
   const globalOptions = {
     endpoint: sourceDirective?.http?.baseURL ?? currDirective?.location,
     operationHeaders: sourceHeaders ?? currDirective?.headers,

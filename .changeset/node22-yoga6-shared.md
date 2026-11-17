@@ -64,7 +64,7 @@
 "@graphql-mesh/transport-grpc": minor
 "@graphql-mesh/transport-mysql": minor
 "@graphql-mesh/transport-neo4j": minor
-"@graphql-mesh/transport-connector": minor
+"@graphql-mesh/transport-connect": minor
 "@graphql-mesh/transport-sqlite": minor
 "@graphql-mesh/transport-thrift": minor
 "@graphql-mesh/tuql": minor

@@ -1,11 +1,11 @@
 {
-  "name": "@graphql-mesh/transport-connector",
+  "name": "@graphql-mesh/transport-connect",
   "version": "0.12.4",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "ardatan/graphql-mesh",
-    "directory": "packages/transports/connector"
+    "directory": "packages/transports/connect"
   },
   "license": "MIT",
   "engines": {

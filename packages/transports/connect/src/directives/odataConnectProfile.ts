@@ -861,7 +861,7 @@ function pathAlreadyHasODataProjection(fullPath: string): boolean {
 
 /**
  * When Accept signals OData metadata, append `$select` / `$expand` derived from the
- * GraphQL selection (transport-connector path; Apollo Router never runs this).
+ * GraphQL selection (transport-connect path; Apollo Router never runs this).
  */
 export function appendODataSelectExpand(
   fullPath: string,

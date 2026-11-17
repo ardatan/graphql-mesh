@@ -1516,11 +1516,11 @@ export class SOAPLoader {
     const schema = this.schemaComposer.buildSchema();
     const schemaExts: any = (schema.extensions ||= {});
     schemaExts.directives ||= {};
-    // Connectors subgraph: Hive loads transport-connector for @connect / @source.
+    // Connectors subgraph: Hive loads transport-connect for @connect / @source.
     // Nested XML prefixes inherit from parent element keys (inheritXmlNamespacePrefixes);
     // no typeNamespacesJson bag on @transport.
     schemaExts.directives.transport = {
-      kind: 'connector',
+      kind: 'connect',
       subgraph: this.subgraphName,
     };
     // One `@source` per distinct port origin (multi-port WSDLs must not collapse hosts).

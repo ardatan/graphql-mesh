@@ -1,5 +1,5 @@
 import { buildSchema, OperationTypeNode, parse } from 'graphql';
-import { processDirectives } from '@graphql-mesh/transport-connector';
+import { processDirectives } from '@graphql-mesh/transport-connect';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';

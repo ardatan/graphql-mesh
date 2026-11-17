@@ -71,7 +71,7 @@ export type ODataTransportOptions = {
 };
 
 /** Connector-transport `@transport(options:)` fields (HTTP qs/timeout, optional OData). */
-export type ConnectorTransportDirectiveOptions = {
+export type ConnectTransportDirectiveOptions = {
   timeout?: number;
   queryParams?: Record<string, string>;
   queryStringOptions?: Record<string, any>;

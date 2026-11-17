@@ -49,7 +49,7 @@ type Query
   @shareable
   @extraSchemaDefinitionDirective(
     directives: {
-      transport: [{ subgraph: "myrest", kind: "connector", location: "http://localhost:4002" }]
+      transport: [{ subgraph: "myrest", kind: "connect", location: "http://localhost:4002" }]
     }
   ) {
   greetingsFromREST(name: String!): greetingsFromREST_200_response

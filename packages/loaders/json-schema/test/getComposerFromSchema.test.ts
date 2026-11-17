@@ -37,7 +37,7 @@ import {
 import type { JSONSchemaObject } from 'json-machete';
 import { Logger } from '@graphql-hive/logger';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
-import { processDirectives, processScalarType } from '@graphql-mesh/transport-connector';
+import { processDirectives, processScalarType } from '@graphql-mesh/transport-connect';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { JSONSchema } from '@json-schema-tools/meta-schema';
 import { fetch } from '@whatwg-node/fetch';

@@ -41,7 +41,7 @@
     "@graphql-mesh/fusion-composition": "^0.11.4",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/transport-common": "^1.1.2",
-    "@graphql-mesh/transport-connector": "^0.12.4",
+    "@graphql-mesh/transport-connect": "^0.12.4",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/delegate": "^12.3.3",

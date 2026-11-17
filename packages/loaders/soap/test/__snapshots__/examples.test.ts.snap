@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Examples should generate schema for any-simple-type: any-simple-type 1`] = `
-"schema @transport(kind: "connector", subgraph: "any-simple-type") @source(name: "any-simple-type", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "any-simple-type") @source(name: "any-simple-type", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -54,7 +54,7 @@ input SourceHTTP {
 `;
 
 exports[`Examples should generate schema for any-wildcard-namespace: any-wildcard-namespace 1`] = `
-"schema @transport(kind: "connector", subgraph: "any-wildcard-namespace") @source(name: "any-wildcard-namespace", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "any-wildcard-namespace") @source(name: "any-wildcard-namespace", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -118,7 +118,7 @@ input SourceHTTP {
 `;
 
 exports[`Examples should generate schema for axis: axis 1`] = `
-"schema @transport(kind: "connector", subgraph: "axis") @source(name: "axis", http: {baseURL: "http://the-guild.dev", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "axis") @source(name: "axis", http: {baseURL: "http://the-guild.dev", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -270,7 +270,7 @@ input SourceHTTP {
 `;
 
 exports[`Examples should generate schema for empty-complextype: empty-complextype 1`] = `
-"schema @transport(kind: "connector", subgraph: "empty-complextype") @source(name: "empty-complextype", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "empty-complextype") @source(name: "empty-complextype", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -339,7 +339,7 @@ input SourceHTTP {
 `;
 
 exports[`Examples should generate schema for example1: example1 1`] = `
-"schema @transport(kind: "connector", subgraph: "example1") @source(name: "example1", http: {baseURL: "http://localhost:8088", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "example1") @source(name: "example1", http: {baseURL: "http://localhost:8088", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -500,7 +500,7 @@ input SourceHTTP {
 `;
 
 exports[`Examples should generate schema for example2: example2 1`] = `
-"schema @transport(kind: "connector", subgraph: "example2") @source(name: "example2", http: {baseURL: "http://[::]", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "example2") @source(name: "example2", http: {baseURL: "http://[::]", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -759,7 +759,7 @@ input SourceHTTP {
 `;
 
 exports[`Examples should generate schema for forward-ref-elements: forward-ref-elements 1`] = `
-"schema @transport(kind: "connector", subgraph: "forward-ref-elements") @source(name: "forward-ref-elements", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "forward-ref-elements") @source(name: "forward-ref-elements", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -819,7 +819,7 @@ input SourceHTTP {
 `;
 
 exports[`Examples should generate schema for greeting: greeting 1`] = `
-"schema @transport(kind: "connector", subgraph: "greeting") @source(name: "greeting", http: {baseURL: "https://www.dataaccess.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "greeting") @source(name: "greeting", http: {baseURL: "https://www.dataaccess.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -889,7 +889,7 @@ input SourceHTTP {
 `;
 
 exports[`Examples should generate schema for illegal-gql-names: illegal-gql-names 1`] = `
-"schema @transport(kind: "connector", subgraph: "illegal-gql-names") @source(name: "illegal-gql-names", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "illegal-gql-names") @source(name: "illegal-gql-names", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -956,7 +956,7 @@ input SourceHTTP {
 `;
 
 exports[`Examples should generate schema for inline-type-collision: inline-type-collision 1`] = `
-"schema @transport(kind: "connector", subgraph: "inline-type-collision") @source(name: "inline-type-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "inline-type-collision") @source(name: "inline-type-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -1045,7 +1045,7 @@ input SourceHTTP {
 `;
 
 exports[`Examples should generate schema for prefix-collision: prefix-collision 1`] = `
-"schema @transport(kind: "connector", subgraph: "prefix-collision") @source(name: "prefix-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "prefix-collision") @source(name: "prefix-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -1112,7 +1112,7 @@ input SourceHTTP {
 `;
 
 exports[`Examples should generate schema for tempconvert: tempconvert 1`] = `
-"schema @transport(kind: "connector", subgraph: "tempconvert") @source(name: "tempconvert", http: {baseURL: "http://www.w3schools.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @transport(kind: "connect", subgraph: "tempconvert") @source(name: "tempconvert", http: {baseURL: "http://www.w3schools.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }

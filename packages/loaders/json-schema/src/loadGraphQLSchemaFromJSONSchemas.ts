@@ -1,5 +1,5 @@
 import { Logger } from '@graphql-hive/logger';
-import { processDirectives } from '@graphql-mesh/transport-connector';
+import { processDirectives } from '@graphql-mesh/transport-connect';
 import { fetch } from '@whatwg-node/fetch';
 import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations.js';
 import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema.js';

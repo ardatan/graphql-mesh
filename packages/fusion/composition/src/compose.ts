@@ -131,8 +131,8 @@ export function getAnnotatedSubgraphs(
       (source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null,
     );
     // Strip Mesh `@transport` from printed subgraph SDL (directive definition / schema AST).
-    // Connectors still keep a connector transport *entry* in schema extensions so Hive Gateway
-    // can resolve `@graphql-mesh/transport-connector` via `@extraSchemaDefinitionDirective`.
+    // Connectors still keep a connect transport *entry* in schema extensions so Hive Gateway
+    // can resolve `@graphql-mesh/transport-connect` via `@extraSchemaDefinitionDirective`.
     let removeTransportDirectiveDefinition = false;
     let removeTransportFromExtras = false;
     if (isConnectorsSubgraph) {
@@ -173,7 +173,7 @@ export function getAnnotatedSubgraphs(
         {
           ...existingTransport,
           subgraph: subgraphName,
-          kind: 'connector',
+          kind: 'connect',
           location: url || apolloSource?.http?.baseURL || existingTransport.location || '',
           ...(Object.keys(mergedOptions).length ? { options: mergedOptions } : {}),
         },
