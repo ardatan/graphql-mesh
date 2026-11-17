@@ -9,7 +9,7 @@ const dbPath = join(__dirname, '../../../../e2e/sqlite-chinook/chinook.db');
 describe('getSqlExecutor sqlite', () => {
   it('resolves albums with artist relation', async () => {
     const schema = await loadGraphQLSchemaFromSql('chinook', {
-      connectionString: dbPath,
+      endpoint: dbPath,
       includeTables: ['albums', 'artists'],
     });
     const executor = getSqlExecutor({ subgraph: schema });
@@ -49,7 +49,7 @@ describe('getSqlExecutor sqlite', () => {
 
   it('resolves Federation _entities via type-level @sql', async () => {
     const schema = await loadGraphQLSchemaFromSql('chinook', {
-      connectionString: dbPath,
+      endpoint: dbPath,
       includeTables: ['albums', 'artists'],
     });
     const executor = getSqlExecutor({ subgraph: schema });
@@ -90,7 +90,7 @@ describe('getSqlExecutor sqlite', () => {
 
   it('batches relation ROW lookups with WHERE IN', async () => {
     const schema = await loadGraphQLSchemaFromSql('chinook', {
-      connectionString: dbPath,
+      endpoint: dbPath,
       includeTables: ['albums', 'artists'],
     });
 

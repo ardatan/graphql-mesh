@@ -31,11 +31,10 @@ export interface LoadSqlSubgraphOpts {
    */
   type?: SqlDialect;
   /**
-   * Connection URI / path. Sqlite: `file:…`, `sqlite:…`, `:memory:`, or a `*.db` path.
+   * Connection URI / path — becomes `@transport(location)`.
+   * Sqlite: `file:…`, `sqlite:…`, `:memory:`, or a `*.db` path.
    * Mysql/Postgres: `mysql(2|s)://…`, `mariadb://…`, `postgres(ql)://…`, or host-style.
    */
-  connectionString?: string;
-  /** Alias for connectionString (legacy mysql handler shape) */
   endpoint?: string;
   cwd?: string;
   schema?: string;
@@ -441,41 +440,32 @@ async function introspect(
 ): Promise<SqlSchemaMeta> {
   switch (opts.type) {
     case 'sqlite': {
-      const connectionString = opts.connectionString || opts.endpoint;
-      if (!connectionString) {
-        throw new Error(
-          `loadSqlSubgraph sqlite requires connectionString or endpoint (file:… / *.db)`,
-        );
+      if (!opts.endpoint) {
+        throw new Error(`loadSqlSubgraph sqlite requires endpoint (file:… / *.db)`);
       }
       return introspectSqlite({
-        db: connectionString,
+        db: opts.endpoint,
         cwd: opts.cwd,
         includeTables: opts.includeTables,
         excludeTables: opts.excludeTables,
       });
     }
     case 'mysql': {
-      const connectionString = opts.connectionString || opts.endpoint;
-      if (!connectionString) {
-        throw new Error(
-          `loadSqlSubgraph mysql requires connectionString or endpoint (mysql://…)`,
-        );
+      if (!opts.endpoint) {
+        throw new Error(`loadSqlSubgraph mysql requires endpoint (mysql://…)`);
       }
       return introspectMysql({
-        connectionString,
+        connectionString: opts.endpoint,
         includeTables: opts.includeTables,
         excludeTables: opts.excludeTables,
       });
     }
     case 'postgres': {
-      const connectionString = opts.connectionString || opts.endpoint;
-      if (!connectionString) {
-        throw new Error(
-          `loadSqlSubgraph postgres requires connectionString or endpoint (postgres://…)`,
-        );
+      if (!opts.endpoint) {
+        throw new Error(`loadSqlSubgraph postgres requires endpoint (postgres://…)`);
       }
       return introspectPostgres({
-        connectionString,
+        connectionString: opts.endpoint,
         includeTables: opts.includeTables,
         excludeTables: opts.excludeTables,
       });
@@ -487,23 +477,20 @@ async function introspect(
 
 /**
  * Resolve dialect: explicit `type` wins; otherwise Bun-style protocol detection
- * from connectionString / endpoint.
+ * from `endpoint`.
  */
 export function resolveDialect(opts: LoadSqlSubgraphOpts): SqlDialect {
   if (opts.type) return opts.type;
-  const location = opts.connectionString || opts.endpoint;
-  if (!location) {
-    throw new Error(
-      'loadSqlSubgraph requires type or a connection string (connectionString / endpoint)',
-    );
+  if (!opts.endpoint) {
+    throw new Error('loadSqlSubgraph requires type or endpoint');
   }
-  return inferDialectFromConnectionString(location);
+  return inferDialectFromConnectionString(opts.endpoint);
 }
 
 function resolveLocation(opts: LoadSqlSubgraphOpts): string {
-  const raw = opts.connectionString || opts.endpoint;
+  const raw = opts.endpoint;
   if (!raw) {
-    throw new Error('SQL loader requires connectionString or endpoint');
+    throw new Error('SQL loader requires endpoint');
   }
   // Normalize bare sqlite paths to absolute file: URIs for @transport(location).
   try {

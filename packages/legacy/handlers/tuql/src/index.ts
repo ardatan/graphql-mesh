@@ -38,7 +38,7 @@ export default class TuqlHandler implements MeshHandler {
         : this.config.db!;
 
     const schema = await loadGraphQLSchemaFromSql(this.name, {
-      connectionString: dbPath,
+      endpoint: dbPath,
       cwd: this.baseDir,
     });
 

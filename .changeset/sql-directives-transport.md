@@ -40,7 +40,7 @@ loadSQLiteSubgraph('chinook', { db: 'chinook.db' })
 loadMySQLSubgraph('employees', { endpoint: 'mysql://…' })
 
 // after — dialect from URI protocol (Bun-compatible); `type` optional override
-loadSqlSubgraph('chinook', { connectionString: 'file:chinook.db' })
+loadSqlSubgraph('chinook', { endpoint: 'file:chinook.db' })
 loadSqlSubgraph('employees', { endpoint: 'mysql://…' })
 loadSqlSubgraph('shop', { endpoint: 'postgres://…' })
 loadSqlSubgraph('shop', { endpoint: 'localhost:5432/shop' }) // host-style → postgres
