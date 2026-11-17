@@ -63,4 +63,4 @@ gone -- recompose and update client queries.
 
 - Fusion rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql__*`
 - e2e `sqlite-chinook` and `mysql-employees` use the new stack (snapshots updated)
-- v1 docs for sqlite / mysql / postgres point at `@omnigraph/sql`
+- Website docs intentionally untouched in this PR; update them once the surface is ready to announce
