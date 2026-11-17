@@ -3,11 +3,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "mesh dev"
+    "start": "echo 'This v0 .meshrc example was removed with @graphql-mesh/tuql. Use e2e/sqlite-chinook (loadSqlSubgraph) instead.'"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.103.4",
-    "@graphql-mesh/tuql": "0.108.3",
     "graphql": "16.14.0"
   },
   "resolutions": {

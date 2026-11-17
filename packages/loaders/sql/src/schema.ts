@@ -11,6 +11,7 @@ import {
   SqlRelationDirective,
   TransportDirective,
 } from './directives.js';
+import { introspectMysql } from './introspect/mysql.js';
 import { introspectSqlite } from './introspect/sqlite.js';
 import type { SqlColumnMeta, SqlSchemaMeta, SqlTableMeta } from './introspect/types.js';
 import { createDefaultNaming, type SqlNaming } from './naming.js';
@@ -24,6 +25,8 @@ export interface LoadSqlSubgraphOpts {
   db?: string;
   /** Connection URI for postgres/mysql (or sqlite file:) */
   connectionString?: string;
+  /** Alias for connectionString (legacy mysql handler shape) */
+  endpoint?: string;
   cwd?: string;
   schema?: string;
   includeTables?: string[];
@@ -389,7 +392,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
 async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
   switch (opts.type) {
     case 'sqlite': {
-      const db = opts.db || opts.connectionString;
+      const db = opts.db || opts.connectionString || opts.endpoint;
       if (!db) {
         throw new Error(`loadSqlSubgraph type "sqlite" requires db or connectionString`);
       }
@@ -400,13 +403,22 @@ async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
         excludeTables: opts.excludeTables,
       });
     }
+    case 'mysql': {
+      const connectionString = opts.connectionString || opts.endpoint;
+      if (!connectionString) {
+        throw new Error(
+          `loadSqlSubgraph type "mysql" requires connectionString or endpoint (mysql://…)`,
+        );
+      }
+      return introspectMysql({
+        connectionString,
+        includeTables: opts.includeTables,
+        excludeTables: opts.excludeTables,
+      });
+    }
     case 'postgres':
       throw new Error(
-        'Postgres introspection is not implemented yet in this PR (sqlite end-to-end first).',
-      );
-    case 'mysql':
-      throw new Error(
-        'MySQL introspection is not implemented yet in this PR (sqlite end-to-end first).',
+        'Postgres introspection is not implemented yet; use type "sqlite" or "mysql" for now.',
       );
     default:
       throw new Error(`Unknown SQL loader type: ${(opts as any).type}`);
@@ -415,12 +427,13 @@ async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
 
 function resolveLocation(opts: LoadSqlSubgraphOpts): string {
   if (opts.connectionString) return opts.connectionString;
+  if (opts.endpoint) return opts.endpoint;
   if (opts.db) {
     const cwd = opts.cwd || process.cwd();
     const abs = pathHelper.isAbsolute(opts.db) ? opts.db : pathHelper.join(cwd, opts.db);
     return `file:${abs}`;
   }
-  throw new Error('SQL loader requires db or connectionString');
+  throw new Error('SQL loader requires db, endpoint, or connectionString');
 }
 
 function ensureSharedFilterInputs(schemaComposer: SchemaComposer) {

@@ -35,25 +35,25 @@ it('should execute GetSomeEmployees', async () => {
   const res = await gw.execute({
     query: /* GraphQL */ `
       query GetSomeEmployees {
-        employees(limit: 5, orderBy: { emp_no: asc }) {
+        employees(limit: 5, orderBy: [ID_ASC]) {
           __typename
-          emp_no
+          id
           # TODO: dates are different in GH actions
-          # birth_date
-          first_name
-          last_name
+          # birthDate
+          firstName
+          lastName
           gender
           # TODO: dates are different in GH actions
-          # hire_date
-          dept_emp {
-            emp_no
-            dept_no
+          # hireDate
+          deptEmps {
+            empNo
+            deptNo
             # TODO: dates are different in GH actions
-            # from_date
-            # to_date
-            departments {
-              dept_no
-              dept_name
+            # fromDate
+            # toDate
+            department {
+              id
+              deptName
             }
           }
         }

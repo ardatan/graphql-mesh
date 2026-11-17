@@ -3,7 +3,7 @@ import { parse } from 'graphql';
 import { loadGraphQLSchemaFromSql } from '@omnigraph/sql';
 import { getSqlExecutor } from '../src/execution.js';
 
-const dbPath = join(__dirname, '../../../../e2e/sql-sqlite-chinook/chinook.db');
+const dbPath = join(__dirname, '../../../../e2e/sqlite-chinook/chinook.db');
 
 describe('getSqlExecutor sqlite', () => {
   it('resolves albums with artist relation', async () => {

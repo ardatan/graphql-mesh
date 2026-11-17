@@ -1,6 +1,8 @@
+import { createPool, type Pool } from 'mysql2/promise';
 import { DatabaseSync } from 'node:sqlite';
 import { resolveSqlitePath } from './dialect.js';
 import type { SqlClient, SqlDialect } from './types.js';
+import { parseSqlUri } from './uri.js';
 
 export interface CreateSqlClientOptions {
   dialect: SqlDialect;
@@ -12,13 +14,11 @@ export function createSqlClient(opts: CreateSqlClientOptions): SqlClient {
   switch (opts.dialect) {
     case 'sqlite':
       return createSqliteClient(opts.location, opts.cwd);
+    case 'mysql':
+      return createMysqlClient(opts.location);
     case 'postgres':
       throw new Error(
-        'Postgres SQL transport dialect is not implemented yet in this PR (sqlite first).',
-      );
-    case 'mysql':
-      throw new Error(
-        'MySQL SQL transport dialect is not implemented yet in this PR (sqlite first).',
+        'Postgres SQL transport dialect is not implemented yet (sqlite/mysql first).',
       );
     default:
       throw new Error(`Unknown SQL dialect: ${opts.dialect as string}`);
@@ -46,6 +46,38 @@ function createSqliteClient(location: string, cwd?: string): SqlClient {
     },
     dispose() {
       db.close();
+    },
+  };
+}
+
+function createMysqlClient(location: string): SqlClient {
+  const parsed = parseSqlUri(location);
+  if (parsed.dialect !== 'mysql') {
+    throw new Error(`Expected mysql URI, got ${parsed.dialect}`);
+  }
+  const pool: Pool = createPool({
+    host: parsed.host,
+    port: parsed.port,
+    user: parsed.user,
+    password: parsed.password,
+    database: parsed.database,
+    ssl: parsed.ssl ? { rejectUnauthorized: false } : undefined,
+    supportBigNumbers: true,
+    bigNumberStrings: true,
+    connectionLimit: 10,
+  });
+  return {
+    dialect: 'mysql',
+    async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
+      const [result] = await pool.query(sql, params);
+      if (Array.isArray(result)) {
+        return { rows: result as T[], rowCount: result.length };
+      }
+      const header = result as { affectedRows?: number };
+      return { rows: [] as T[], rowCount: Number(header.affectedRows ?? 0) };
+    },
+    async dispose() {
+      await pool.end();
     },
   };
 }

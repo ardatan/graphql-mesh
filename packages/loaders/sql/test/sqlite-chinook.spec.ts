@@ -2,7 +2,7 @@ import { join } from 'node:path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromSql } from '../src/index.js';
 
-const chinookDb = join(__dirname, '../../../../e2e/sql-sqlite-chinook/chinook.db');
+const chinookDb = join(__dirname, '../../../../e2e/sqlite-chinook/chinook.db');
 
 describe('@omnigraph/sql sqlite chinook', () => {
   it('emits @sql__* directives and slim @transport(kind: sql)', async () => {

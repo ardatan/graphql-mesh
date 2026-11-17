@@ -228,13 +228,13 @@ on compose-cli). The migrator prints the exact add/remove list for **your** conf
 | `grpc`         | `@graphql-mesh/grpc`                            | `loadGRPCSubgraph`                                 | `@omnigraph/grpc`           |
 | `soap`         | `@graphql-mesh/soap`                            | `loadSOAPSubgraph`                                 | `@omnigraph/soap`           |
 | `raml`         | `@graphql-mesh/raml`                            | `loadRAMLSubgraph`                                 | `@omnigraph/raml`           |
-| `mysql`        | `@graphql-mesh/mysql`                           | `loadMySQLSubgraph`                                | `@omnigraph/mysql`          |
-| `postgraphile` | `@graphql-mesh/postgraphile`                    | `loadPostgreSQLSubgraph`                           | `@omnigraph/postgresql`     |
+| `mysql`        | `@graphql-mesh/mysql`                           | `loadSqlSubgraph` (`type: 'mysql'`)                | `@omnigraph/sql`            |
+| `postgraphile` | `@graphql-mesh/postgraphile`                    | `loadSqlSubgraph` (`type: 'postgres'`)             | `@omnigraph/sql`            |
 | `mongoose`     | `@graphql-mesh/mongoose`                        | `loadMongooseSubgraph`                             | `@omnigraph/mongoose`       |
 | `neo4j`        | `@graphql-mesh/neo4j`                           | `loadNeo4jSubgraph`                                | `@omnigraph/neo4j`          |
 | `odata`        | `@graphql-mesh/odata`                           | `loadODataSubgraph`                                | `@omnigraph/odata`          |
 | `thrift`       | `@graphql-mesh/thrift`                          | `loadThriftSubgraph`                               | `@omnigraph/thrift`         |
-| `tuql`         | `@graphql-mesh/tuql`                            | `loadSQLiteSubgraph`                               | `@omnigraph/sqlite`         |
+| `tuql`         | `@graphql-mesh/tuql`                            | `loadSqlSubgraph` (`type: 'sqlite'`)               | `@omnigraph/sql`            |
 | `supergraph`   | consume an existing supergraph as a Mesh source | **Do not compose.** Give that SDL to Hive Gateway. | `@graphql-hive/gateway`     |
 
 GraphQL handler differences the migrator knows about:

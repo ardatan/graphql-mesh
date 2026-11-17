@@ -395,6 +395,45 @@ function mapHandlerConfig(
   handlerConfig: any,
   messages: MigrationMessage[],
 ): unknown | undefined {
+  if (handlerName === 'tuql') {
+    const cfg = handlerConfig && typeof handlerConfig === 'object' ? handlerConfig : {};
+    return {
+      type: 'sqlite',
+      ...(cfg.db ? { db: cfg.db } : {}),
+      ...(cfg.infile ? { db: cfg.infile } : {}),
+    };
+  }
+  if (handlerName === 'mysql') {
+    const cfg = handlerConfig && typeof handlerConfig === 'object' ? { ...handlerConfig } : {};
+    if (cfg.endpoint) {
+      return { type: 'mysql', endpoint: cfg.endpoint };
+    }
+    if (cfg.host || cfg.database) {
+      const user = cfg.user || cfg.username || 'root';
+      const password = cfg.password || '';
+      const host = cfg.host || 'localhost';
+      const port = cfg.port || 3306;
+      const database = cfg.database || '';
+      const auth = password ? `${user}:${password}` : user;
+      return {
+        type: 'mysql',
+        endpoint: `mysql://${auth}@${host}:${port}/${database}`,
+      };
+    }
+    return { type: 'mysql', ...cfg };
+  }
+  if (handlerName === 'postgraphile') {
+    const cfg = handlerConfig && typeof handlerConfig === 'object' ? handlerConfig : {};
+    messages.push({
+      level: 'warn',
+      message:
+        'postgraphile handler now maps to @omnigraph/sql (type: "postgres"). Postgres dialect execute/introspect may still be landing; check the SQL directives docs.',
+    });
+    return {
+      type: 'postgres',
+      connectionString: cfg.connectionString || cfg.endpoint,
+    };
+  }
   if (handlerName !== 'graphql' || handlerConfig == null || typeof handlerConfig !== 'object') {
     return handlerConfig;
   }
@@ -438,9 +477,9 @@ const handlerInfoMap: Record<
     importName: 'loadMongooseSubgraph',
   },
   mysql: {
-    packageName: '@omnigraph/mysql',
+    packageName: '@omnigraph/sql',
     oldPackageName: '@graphql-mesh/mysql',
-    importName: 'loadMySQLSubgraph',
+    importName: 'loadSqlSubgraph',
   },
   neo4j: {
     packageName: '@omnigraph/neo4j',
@@ -453,9 +492,9 @@ const handlerInfoMap: Record<
     importName: 'loadODataSubgraph',
   },
   postgraphile: {
-    packageName: '@omnigraph/postgresql',
+    packageName: '@omnigraph/sql',
     oldPackageName: '@graphql-mesh/postgraphile',
-    importName: 'loadPostgreSQLSubgraph',
+    importName: 'loadSqlSubgraph',
   },
   raml: {
     packageName: '@omnigraph/raml',
@@ -478,9 +517,9 @@ const handlerInfoMap: Record<
     importName: 'loadThriftSubgraph',
   },
   tuql: {
-    packageName: '@omnigraph/sqlite',
+    packageName: '@omnigraph/sql',
     oldPackageName: '@graphql-mesh/tuql',
-    importName: 'loadSQLiteSubgraph',
+    importName: 'loadSqlSubgraph',
   },
 };
 

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @transport(kind: "sqlite", subgraph: "chinook", location: "chinook.db", options: {type: "db"}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport", "@sql__query", "@sql__mutation", "@sql__relation"]) @transport(subgraph: "chinook", kind: "sql", location: "file:e2e/sqlite-chinook/chinook.db", options: {dialect: "sqlite"}) {
   query: Query
   mutation: Mutation
 }
@@ -36,403 +36,191 @@ enum link__Purpose {
 }
 
 enum join__Graph {
-  CHINOOK @join__graph(name: "chinook", url: "chinook.db")
+  CHINOOK @join__graph(name: "chinook", url: "file:e2e/sqlite-chinook/chinook.db")
 }
 
-"""The \`JSON\` scalar type represents raw JSON as values."""
-scalar SequelizeJSON @join__type(graph: CHINOOK)
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+directive @sql__query(subgraph: String, table: String!, kind: SqlQueryKind = ROWS, args: String, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION
+
+directive @sql__mutation(subgraph: String, table: String!, kind: SqlMutationKind!, args: String!, selection: String) repeatable on FIELD_DEFINITION
+
+directive @sql__relation(subgraph: String, table: String!, kind: SqlQueryKind = ROW, args: String!, selection: String!) repeatable on FIELD_DEFINITION
+
+scalar TransportOptions @join__type(graph: CHINOOK)
 
 type Query @join__type(graph: CHINOOK) {
-  albums(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Album]
-  album(
-    albumId: Int
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-  ): Album
-  artists(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Artist]
-  artist(
-    artistId: Int
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-  ): Artist
-  customers(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Customer]
-  customer(
-    customerId: Int
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-  ): Customer
-  employees(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Employee]
-  employee(
-    employeeId: Int
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-  ): Employee
-  genres(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Genre]
-  genre(
-    genreId: Int
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-  ): Genre
-  invoices(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Invoice]
-  invoice(
-    invoiceId: Int
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-  ): Invoice
-  invoiceItems(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [InvoiceItem]
-  invoiceItem(
-    invoiceLineId: Int
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-  ): InvoiceItem
-  mediaTypes(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [MediaType]
-  mediaType(
-    mediaTypeId: Int
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-  ): MediaType
-  playlists(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Playlist]
-  playlist(
-    playlistId: Int
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-  ): Playlist
-  tracks(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Track]
-  track(
-    trackId: Int
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-  ): Track
+  album(id: ID!): Album @sql__query(subgraph: "chinook", table: "albums", kind: ROW, args: "AlbumId: $args.id", selection: "id: AlbumId\\ntitle: Title\\nartistId: ArtistId", entity: true)
+  albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @sql__query(subgraph: "chinook", table: "albums", kind: ROWS, args: "filter: $args.filter\\norderBy: $args.orderBy\\nlimit: $args.limit\\noffset: $args.offset", selection: "id: AlbumId\\ntitle: Title\\nartistId: ArtistId")
+  allAlbums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection! @sql__query(subgraph: "chinook", table: "albums", kind: CONNECTION, args: "filter: $args.filter\\norderBy: $args.orderBy\\nfirst: $args.first\\nafter: $args.after", selection: "nodes {\\n  id: AlbumId\\n  title: Title\\n  artistId: ArtistId\\n}\\nedges {\\n  cursor: $cursor\\n  node {\\n    id: AlbumId\\n    title: Title\\n    artistId: ArtistId\\n  }\\n}\\npageInfo {\\n  hasNextPage: $hasNextPage\\n  hasPreviousPage: $hasPreviousPage\\n  startCursor: $startCursor\\n  endCursor: $endCursor\\n}\\ntotalCount: $totalCount")
+  albumsCount(filter: AlbumFilter): Int! @sql__query(subgraph: "chinook", table: "albums", kind: COUNT, args: "filter: $args.filter", selection: "$")
+  artist(id: ID!): Artist @sql__query(subgraph: "chinook", table: "artists", kind: ROW, args: "ArtistId: $args.id", selection: "id: ArtistId\\nname: Name", entity: true)
+  artists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @sql__query(subgraph: "chinook", table: "artists", kind: ROWS, args: "filter: $args.filter\\norderBy: $args.orderBy\\nlimit: $args.limit\\noffset: $args.offset", selection: "id: ArtistId\\nname: Name")
+  allArtists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], first: Int, after: String): ArtistConnection! @sql__query(subgraph: "chinook", table: "artists", kind: CONNECTION, args: "filter: $args.filter\\norderBy: $args.orderBy\\nfirst: $args.first\\nafter: $args.after", selection: "nodes {\\n  id: ArtistId\\n  name: Name\\n}\\nedges {\\n  cursor: $cursor\\n  node {\\n    id: ArtistId\\n    name: Name\\n  }\\n}\\npageInfo {\\n  hasNextPage: $hasNextPage\\n  hasPreviousPage: $hasPreviousPage\\n  startCursor: $startCursor\\n  endCursor: $endCursor\\n}\\ntotalCount: $totalCount")
+  artistsCount(filter: ArtistFilter): Int! @sql__query(subgraph: "chinook", table: "artists", kind: COUNT, args: "filter: $args.filter", selection: "$")
 }
 
-type Album @join__type(graph: CHINOOK) {
-  albumId: Int!
+type Album @join__type(graph: CHINOOK, key: "id") {
+  id: ID!
   title: String!
   artistId: Int!
-  tracks(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Track]
-  artist: Artist
+  artist: Artist @sql__relation(subgraph: "chinook", table: "artists", kind: ROW, args: "ArtistId: $this.artistId", selection: "id: ArtistId\\nname: Name")
 }
 
-type Track @join__type(graph: CHINOOK) {
-  trackId: Int!
-  name: String!
-  albumId: Int
-  mediaTypeId: Int!
-  genreId: Int
-  composer: String
-  milliseconds: Int!
-  bytes: Int
-  unitPrice: String!
-  invoiceItems(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [InvoiceItem]
-  mediaType: MediaType
-  genre: Genre
-  album: Album
-  playlists: [Playlist]
-}
-
-type InvoiceItem @join__type(graph: CHINOOK) {
-  invoiceLineId: Int!
-  invoiceId: Int!
-  trackId: Int!
-  unitPrice: String!
-  quantity: Int!
-  track: Track
-  invoice: Invoice
-}
-
-type Invoice @join__type(graph: CHINOOK) {
-  invoiceId: Int!
-  customerId: Int!
-  invoiceDate: String!
-  billingAddress: String
-  billingCity: String
-  billingState: String
-  billingCountry: String
-  billingPostalCode: String
-  total: String!
-  invoiceItems(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [InvoiceItem]
-  customer: Customer
-}
-
-type Customer @join__type(graph: CHINOOK) {
-  customerId: Int!
-  firstName: String!
-  lastName: String!
-  company: String
-  address: String
-  city: String
-  state: String
-  country: String
-  postalCode: String
-  phone: String
-  fax: String
-  email: String!
-  supportRepId: Int
-  invoices(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Invoice]
-  employee: Employee
-}
-
-type Employee @join__type(graph: CHINOOK) {
-  employeeId: Int!
-  lastName: String!
-  firstName: String!
-  title: String
-  reportsTo: Int
-  birthDate: String
-  hireDate: String
-  address: String
-  city: String
-  state: String
-  country: String
-  postalCode: String
-  phone: String
-  fax: String
-  email: String
-  customers(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Customer]
-  employees(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Employee]
-  employee: Employee
-}
-
-type MediaType @join__type(graph: CHINOOK) {
-  mediaTypeId: Int!
+type Artist @join__type(graph: CHINOOK, key: "id") {
+  id: ID!
   name: String
-  tracks(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Track]
+  albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]! @sql__relation(subgraph: "chinook", table: "albums", kind: ROWS, args: "ArtistId: $this.id\\nfilter: $args.filter\\norderBy: $args.orderBy\\nlimit: $args.limit\\noffset: $args.offset", selection: "id: AlbumId\\ntitle: Title\\nartistId: ArtistId")
 }
 
-type Genre @join__type(graph: CHINOOK) {
-  genreId: Int!
-  name: String
-  tracks(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Track]
+type AlbumConnection @join__type(graph: CHINOOK) {
+  edges: [AlbumEdge!]!
+  pageInfo: PageInfo!
+  nodes: [Album!]!
+  totalCount: Int!
 }
 
-type Playlist @join__type(graph: CHINOOK) {
-  playlistId: Int!
-  name: String
-  tracks: [Track]
+type AlbumEdge @join__type(graph: CHINOOK) {
+  cursor: String!
+  node: Album!
 }
 
-type Artist @join__type(graph: CHINOOK) {
-  artistId: Int!
-  name: String
-  albums(
-    limit: Int
-    order: String
-    """
-    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
-    """
-    where: SequelizeJSON
-    offset: Int
-  ): [Album]
+type PageInfo @join__type(graph: CHINOOK) {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type ArtistConnection @join__type(graph: CHINOOK) {
+  edges: [ArtistEdge!]!
+  pageInfo: PageInfo!
+  nodes: [Artist!]!
+  totalCount: Int!
+}
+
+type ArtistEdge @join__type(graph: CHINOOK) {
+  cursor: String!
+  node: Artist!
 }
 
 type Mutation @join__type(graph: CHINOOK) {
-  createAlbum(title: String!, artistId: Int!): Album
-  updateAlbum(albumId: Int, title: String, artistId: Int): Album
-  deleteAlbum(albumId: Int!): GenericResponse
-  createArtist(name: String): Artist
-  updateArtist(artistId: Int, name: String): Artist
-  deleteArtist(artistId: Int!): GenericResponse
-  createCustomer(firstName: String!, lastName: String!, company: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String!, supportRepId: Int): Customer
-  updateCustomer(customerId: Int, firstName: String, lastName: String, company: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String, supportRepId: Int): Customer
-  deleteCustomer(customerId: Int!): GenericResponse
-  createEmployee(lastName: String!, firstName: String!, title: String, reportsTo: Int, birthDate: String, hireDate: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String): Employee
-  updateEmployee(employeeId: Int, lastName: String, firstName: String, title: String, reportsTo: Int, birthDate: String, hireDate: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String): Employee
-  deleteEmployee(employeeId: Int!): GenericResponse
-  createGenre(name: String): Genre
-  updateGenre(genreId: Int, name: String): Genre
-  deleteGenre(genreId: Int!): GenericResponse
-  createInvoice(customerId: Int!, invoiceDate: String!, billingAddress: String, billingCity: String, billingState: String, billingCountry: String, billingPostalCode: String, total: String!): Invoice
-  updateInvoice(invoiceId: Int, customerId: Int, invoiceDate: String, billingAddress: String, billingCity: String, billingState: String, billingCountry: String, billingPostalCode: String, total: String): Invoice
-  deleteInvoice(invoiceId: Int!): GenericResponse
-  createInvoiceItem(invoiceId: Int!, trackId: Int!, unitPrice: String!, quantity: Int!): InvoiceItem
-  updateInvoiceItem(invoiceLineId: Int, invoiceId: Int, trackId: Int, unitPrice: String, quantity: Int): InvoiceItem
-  deleteInvoiceItem(invoiceLineId: Int!): GenericResponse
-  createMediaType(name: String): MediaType
-  updateMediaType(mediaTypeId: Int, name: String): MediaType
-  deleteMediaType(mediaTypeId: Int!): GenericResponse
-  createPlaylist(name: String): Playlist
-  updatePlaylist(playlistId: Int, name: String): Playlist
-  deletePlaylist(playlistId: Int!): GenericResponse
-  addPlaylistToTrack(playlistId: Int!, trackId: Int!): GenericResponse
-  removePlaylistFromTrack(playlistId: Int!, trackId: Int!): GenericResponse
-  createTrack(name: String!, albumId: Int, mediaTypeId: Int!, genreId: Int, composer: String, milliseconds: Int!, bytes: Int, unitPrice: String!): Track
-  updateTrack(trackId: Int, name: String, albumId: Int, mediaTypeId: Int, genreId: Int, composer: String, milliseconds: Int, bytes: Int, unitPrice: String): Track
-  deleteTrack(trackId: Int!): GenericResponse
-  addTrackToPlaylist(trackId: Int!, playlistId: Int!): GenericResponse
-  removeTrackFromPlaylist(trackId: Int!, playlistId: Int!): GenericResponse
+  createAlbum(input: CreateAlbumInput!): AlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: INSERT, args: "Title: $args.input.title\\nArtistId: $args.input.artistId", selection: "album {\\n  id: AlbumId\\n  title: Title\\n  artistId: ArtistId\\n}")
+  updateAlbum(id: ID!, input: UpdateAlbumInput!): AlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: UPDATE, args: "set {\\n  Title: $args.input.title\\n  ArtistId: $args.input.artistId\\n}\\nwhere {\\n  AlbumId: $args.id\\n}", selection: "album {\\n  id: AlbumId\\n  title: Title\\n  artistId: ArtistId\\n}")
+  deleteAlbum(id: ID!): DeleteAlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: DELETE, args: "where {\\n  AlbumId: $args.id\\n}", selection: "ok: $affectedRows\\naffectedRows: $affectedRows")
+  createArtist(input: CreateArtistInput!): ArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: INSERT, args: "Name: $args.input.name", selection: "artist {\\n  id: ArtistId\\n  name: Name\\n}")
+  updateArtist(id: ID!, input: UpdateArtistInput!): ArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: UPDATE, args: "set {\\n  Name: $args.input.name\\n}\\nwhere {\\n  ArtistId: $args.id\\n}", selection: "artist {\\n  id: ArtistId\\n  name: Name\\n}")
+  deleteArtist(id: ID!): DeleteArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: DELETE, args: "where {\\n  ArtistId: $args.id\\n}", selection: "ok: $affectedRows\\naffectedRows: $affectedRows")
 }
 
-type GenericResponse @join__type(graph: CHINOOK) {
-  success: Boolean
+type AlbumPayload @join__type(graph: CHINOOK) {
+  album: Album
 }
 
-scalar TransportOptions
+type DeleteAlbumPayload @join__type(graph: CHINOOK) {
+  ok: Boolean!
+  affectedRows: Int!
+}
 
-directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+type ArtistPayload @join__type(graph: CHINOOK) {
+  artist: Artist
+}
+
+type DeleteArtistPayload @join__type(graph: CHINOOK) {
+  ok: Boolean!
+  affectedRows: Int!
+}
+
+enum AlbumOrderBy @join__type(graph: CHINOOK) {
+  ID_ASC @join__enumValue(graph: CHINOOK)
+  ID_DESC @join__enumValue(graph: CHINOOK)
+  TITLE_ASC @join__enumValue(graph: CHINOOK)
+  TITLE_DESC @join__enumValue(graph: CHINOOK)
+  ARTIST_ID_ASC @join__enumValue(graph: CHINOOK)
+  ARTIST_ID_DESC @join__enumValue(graph: CHINOOK)
+}
+
+enum ArtistOrderBy @join__type(graph: CHINOOK) {
+  ID_ASC @join__enumValue(graph: CHINOOK)
+  ID_DESC @join__enumValue(graph: CHINOOK)
+  NAME_ASC @join__enumValue(graph: CHINOOK)
+  NAME_DESC @join__enumValue(graph: CHINOOK)
+}
+
+enum SqlQueryKind @join__type(graph: CHINOOK) {
+  ROW @join__enumValue(graph: CHINOOK)
+  ROWS @join__enumValue(graph: CHINOOK)
+  CONNECTION @join__enumValue(graph: CHINOOK)
+  COUNT @join__enumValue(graph: CHINOOK)
+}
+
+enum SqlMutationKind @join__type(graph: CHINOOK) {
+  INSERT @join__enumValue(graph: CHINOOK)
+  UPDATE @join__enumValue(graph: CHINOOK)
+  DELETE @join__enumValue(graph: CHINOOK)
+}
+
+input AlbumFilter @join__type(graph: CHINOOK) {
+  and: [AlbumFilter!]
+  or: [AlbumFilter!]
+  not: AlbumFilter
+  id: StringFilter
+  title: StringFilter
+  artistId: IntFilter
+}
+
+input StringFilter @join__type(graph: CHINOOK) {
+  eq: String
+  ne: String
+  in: [String!]
+  nin: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  includes: String
+  startsWith: String
+  endsWith: String
+  isNull: Boolean
+}
+
+input IntFilter @join__type(graph: CHINOOK) {
+  eq: Int
+  ne: Int
+  in: [Int!]
+  nin: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  isNull: Boolean
+}
+
+input ArtistFilter @join__type(graph: CHINOOK) {
+  and: [ArtistFilter!]
+  or: [ArtistFilter!]
+  not: ArtistFilter
+  id: StringFilter
+  name: StringFilter
+}
+
+input CreateAlbumInput @join__type(graph: CHINOOK) {
+  title: String!
+  artistId: Int!
+}
+
+input UpdateAlbumInput @join__type(graph: CHINOOK) {
+  title: String
+  artistId: Int
+}
+
+input CreateArtistInput @join__type(graph: CHINOOK) {
+  name: String
+}
+
+input UpdateArtistInput @join__type(graph: CHINOOK) {
+  name: String
+}
 "
 `;
 
@@ -441,17 +229,17 @@ exports[`should execute Albums 1`] = `
   "data": {
     "albums": [
       {
-        "albumId": 1,
         "artist": {
           "name": "AC/DC",
         },
+        "id": "1",
         "title": "For Those About To Rock We Salute You",
       },
       {
-        "albumId": 2,
         "artist": {
           "name": "Accept",
         },
+        "id": "2",
         "title": "Balls to the Wall",
       },
     ],

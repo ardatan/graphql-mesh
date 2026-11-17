@@ -200,16 +200,13 @@ export interface Handler {
   grpc?: GrpcHandler;
   jsonSchema?: JsonSchemaHandler;
   mongoose?: MongooseHandler;
-  mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
   odata?: ODataHandler;
   openapi?: OpenapiHandler;
-  postgraphile?: PostGraphileHandler;
   raml?: RAMLHandler;
   soap?: SoapHandler;
   supergraph?: SupergraphHandler;
   thrift?: ThriftHandler;
-  tuql?: TuqlHandler;
   [k: string]: any;
 }
 export interface GraphQLHandlerHTTPConfiguration {
@@ -790,63 +787,6 @@ export interface TypeConverterResolversOpts1 {
    */
   pagination?: boolean | PaginationResolverOpts;
 }
-export interface MySQLHandler {
-  /**
-   * The hostname of the database you are connecting to. (Default: localhost)
-   */
-  host?: string;
-  /**
-   * The port number to connect to. (Default: 3306)
-   */
-  port?: number;
-  /**
-   * The source IP address to use for TCP connection
-   */
-  localAddress?: string;
-  /**
-   * The MySQL user to authenticate as
-   */
-  user?: string;
-  /**
-   * The password of that MySQL user
-   */
-  password?: string;
-  /**
-   * Name of the database to use for this connection
-   */
-  database?: string;
-  ssl?: MySQLSSLOptions;
-  /**
-   * Use existing `Pool` instance
-   * Format: modulePath#exportName
-   */
-  pool?: any;
-  /**
-   * Use specific tables for your schema
-   */
-  tables?: string[];
-  /**
-   * Use specific fields of specific tables
-   */
-  tableFields?: TableField[];
-}
-/**
- * SSL Options for your MySQL connection
- */
-export interface MySQLSSLOptions {
-  /**
-   * Default: true
-   */
-  rejectUnauthorized?: boolean;
-  /**
-   * Path to your CA
-   */
-  ca?: string;
-}
-export interface TableField {
-  table: string;
-  fields: string[];
-}
 /**
  * Handler for Neo4j
  */
@@ -958,51 +898,6 @@ export interface OpenapiHandler {
    * Timeout for the HTTP request in milliseconds
    */
   timeout?: number;
-}
-/**
- * Handler for Postgres database, based on `postgraphile`
- */
-export interface PostGraphileHandler {
-  /**
-   * A connection string to your Postgres database
-   */
-  connectionString?: string;
-  /**
-   * An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema.
-   */
-  schemaName?: string[];
-  /**
-   * Connection Pool instance or settings or you can provide the path of a code file that exports any of those
-   */
-  pool?: any;
-  /**
-   * Extra Postgraphile Plugins to append
-   */
-  appendPlugins?: string[];
-  /**
-   * Postgraphile Plugins to skip (e.g. "graphile-build#NodePlugin")
-   */
-  skipPlugins?: string[];
-  /**
-   * Extra Postgraphile options that will be added to the postgraphile constructor. It can either be an object or a string pointing to the object's path (e.g. "./my-config#options"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-library/) for more information. (Any of: JSON, String)
-   */
-  options?:
-    | {
-        [k: string]: any;
-      }
-    | string;
-  /**
-   * Enable GraphQL websocket transport support for subscriptions (default: true)
-   */
-  subscriptions?: boolean;
-  /**
-   * Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
-   */
-  live?: boolean;
-  /**
-   * A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. "./my-function#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information.
-   */
-  contextOptions?: any;
 }
 export interface RAMLHandler {
   source: string;
@@ -1203,19 +1098,6 @@ export interface ThriftHandler {
    * Path to IDL file
    */
   idl: string;
-}
-/**
- * Handler for SQLite database, based on `tuql`
- */
-export interface TuqlHandler {
-  /**
-   * Pointer to your SQLite database
-   */
-  db?: string;
-  /**
-   * Path to the SQL Dump file if you want to build a in-memory database
-   */
-  infile?: string;
 }
 export interface Transform {
   /**

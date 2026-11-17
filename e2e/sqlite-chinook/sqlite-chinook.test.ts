@@ -13,7 +13,7 @@ it.concurrent.each([
     query: /* GraphQL */ `
       query Albums {
         albums(limit: 2) {
-          albumId
+          id
           title
           artist {
             name

@@ -1,59 +1,38 @@
 ---
 description:
-  Use GraphQL schema created by Tuql for SQLite databases or SQL dump files with GraphQL Mesh Tuql
-  handler.
+  Generate a hand-writable GraphQL SQL subgraph from an SQLite database with GraphQL Mesh
+  (`@omnigraph/sql`).
 ---
 
 import { Callout } from '@theguild/components'
 
 # SQLite
 
-This handler allows you to use GraphQL schema created by [Tuql](https://github.com/bradleyboy/tuql),
-based on an SQLite database schema or an SQL dump file.
-
-To get started, install the handler library:
+Use `@omnigraph/sql` with `type: 'sqlite'`. The loader introspects the database and emits GraphQL
+SDL annotated with `@sql__query` / `@sql__mutation` / `@sql__relation`. Runtime is
+`@graphql-mesh/transport-sql` (`kind: "sql"`).
 
 ```sh npm2yarn
-npm i @omnigraph/sqlite
+npm i @omnigraph/sql
 ```
 
-## How to use?
-
-Then you can import the library in your configuration file, and define your Tuql source;
-
-```ts filename="mesh.config.ts" {2,7-9}
+```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/compose-cli'
-import { loadSQLiteSubgraph } from '@omnigraph/sqlite'
+import { loadSqlSubgraph } from '@omnigraph/sql'
 
 export const composeConfig = defineConfig({
   subgraphs: [
     {
-      sourceHandler: loadSQLiteSubgraph('MyDb', {
-        db: 'path/to/database.sqlite'
+      sourceHandler: loadSqlSubgraph('chinook', {
+        type: 'sqlite',
+        db: 'chinook.db'
       })
     }
   ]
 })
 ```
 
-<Callout>
-  [You can find a working example here](
-  https://github.com/ardatan/graphql-mesh/tree/main/examples/v1-next/sqlite-chinook )
+<Callout type="info">
+  This replaces the old `@omnigraph/sqlite` (tuql) and legacy `@graphql-mesh/tuql` handlers. Emit is
+  Connectors-style `@sql__*` directives — not a black-box PostGraphile/tuql runtime schema.
 </Callout>
-
-And also you can create an in-memory database using an SQL dump file;
-
-```ts filename="mesh.config.ts" {8}
-import { defineConfig } from '@graphql-mesh/compose-cli'
-import { loadSQLiteSubgraph } from '@omnigraph/sqlite'
-
-export const composeConfig = defineConfig({
-  subgraphs: [
-    {
-      sourceHandler: loadSQLiteSubgraph('MyDb', {
-        infile: 'path/to/db_dump.sql'
-      })
-    }
-  ]
-})
-```

@@ -7,6 +7,7 @@ export * from './dialect.js';
 export * from './execution.js';
 export * from './mapping.js';
 export * from './sql-builder.js';
+export * from './uri.js';
 export type * from './types.js';
 
 export default {
