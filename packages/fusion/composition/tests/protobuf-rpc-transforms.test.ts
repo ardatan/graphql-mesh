@@ -1772,6 +1772,35 @@ describe('rewriteProtobufMappingBindsTypeScoped ownership', () => {
     expect(out).toMatch(/2\(int64\):\s*rootYear/);
   });
 
+  it('resolves message@Name under bare $args against argument types', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(
+      /* GraphQL */ `
+        input LeafInput {
+          year: Int!
+        }
+        type Query {
+          q(input: LeafInput): String
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    // Depth-1 bind under `$args { }` must still treat `input` as an arg head.
+    const mapping = `@Leaf {
+  1(int64): year
+}
+1(message): $args {
+  2(message@Leaf): input
+}`;
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      mapping,
+      new Map([['LeafInput', new Map([['year', 'requestYear']])]]),
+      { argTypes: new Map([['input', schema.getType('LeafInput')!]]) },
+    );
+    expect(out).toMatch(/@Leaf\s*\{[\s\S]*1\(int64\):\s*requestYear/);
+    expect(out).not.toMatch(/@Leaf\s*\{[\s\S]*1\(int64\):\s*year\b/);
+  });
+
   it('clears closed-block owners so unbound wrappers inherit the enclosing type', async () => {
     const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
     const schema = buildSchema(

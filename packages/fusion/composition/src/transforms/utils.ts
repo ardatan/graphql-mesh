@@ -719,7 +719,7 @@ function collectNamedDefOwners(
           options,
           fieldRenameMap,
           argRenameLookup,
-          !namedCtx && depth === 0,
+          !namedCtx && (depth === 0 || isArgsRootAtDepth(depth, argsRootAtDepth, typeAtDepth)),
         );
         if (tip) {
           owners.set(msgName, tip);
