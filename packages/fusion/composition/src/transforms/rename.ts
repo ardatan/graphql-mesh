@@ -354,7 +354,7 @@ export function createRenameTransform(opts: RenameTransformConfig) {
   };
 }
 
-function applyProtobufFieldRenames(
+export function applyProtobufFieldRenames(
   field: GraphQLFieldConfig<any, any>,
   fieldRenameMap: Map<string, Map<string, string>>,
   schema: GraphQLSchema,
@@ -415,7 +415,7 @@ function applyProtobufFieldRenames(
 }
 
 /** Object-level `@protobuf__rpc` (entity / type-level) — rewrite selection + `$this` against the owning type. */
-function applyProtobufTypeRenames(
+export function applyProtobufTypeRenames(
   type: GraphQLObjectType,
   fieldRenameMap: Map<string, Map<string, string>>,
   schema: GraphQLSchema,

@@ -231,6 +231,16 @@ function braceDepthAt(source: string, index: number): number {
   return depth;
 }
 
+/** True when `index` sits on a `# …` comment line (parser-compatible). */
+function isInsideHashComment(source: string, index: number): boolean {
+  for (let i = index - 1; i >= 0; i--) {
+    const c = source[i];
+    if (c === '\n') return false;
+    if (c === '#') return true;
+  }
+  return false;
+}
+
 export interface RewriteProtobufMappingBindsTypeScopedOptions {
   /**
    * GraphQL type for relative binds at brace depth 0 (selection return type).
@@ -272,6 +282,11 @@ export function rewriteProtobufMappingBindsTypeScoped(
   return mapping.replace(
     /(\)\s*:\s*)([\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
     (match, pre: string, path: string, offset: number, whole: string) => {
+      // `# 2(int64): ignored }` must not count as a bind — matching it advances scannedTo past
+      // `#`, so a later brace walk would see the commented `}` as real and clear owners.
+      if (isInsideHashComment(whole, offset)) {
+        return match;
+      }
       // Pop owners when blocks close so a later unbound `{ … }` does not keep a sibling's type.
       clearOwnersClosedBetween(whole, scannedTo, offset, typeAtDepth);
       scannedTo = offset + match.length;
@@ -456,6 +471,11 @@ export function rewriteConnectArgReferences(
   argRenameMap: Map<string, string>,
   fieldRenameMap?: Map<string, string>,
   typeRenameMap?: Map<string, string>,
+  /**
+   * When false, skip applying `fieldRenameMap` to `@protobuf__rpc` binds (caller uses
+   * type-scoped `applyProtobufFieldRenames` instead). Connect selection still uses the flat map.
+   */
+  protobufNestedFieldRenames: boolean = true,
 ): Record<string, any[]> | undefined {
   const protobufKey = protobufRpcDirectiveKey(fieldDirectives);
   const hasConnect = !!fieldDirectives?.connect?.length;
@@ -569,21 +589,25 @@ export function rewriteConnectArgReferences(
       })),
     };
   }
-  if (protobufKey && (argRenameMap.size > 0 || (fieldRenameMap?.size ?? 0) > 0)) {
+  const protobufFieldMap =
+    protobufNestedFieldRenames && fieldRenameMap?.size ? fieldRenameMap : undefined;
+  if (protobufKey && (argRenameMap.size > 0 || (protobufFieldMap?.size ?? 0) > 0)) {
     // Arg renames update request arg roots (`$args.x` / top-level binds).
     // Field/input renames update nested args path segments and response `selection:`.
     // Do not apply field renames to argument roots (Query `release_year` arg ≠
     // `Movie.release_year` field under `fieldNames: camelCase`).
-    const selectionMap = fieldRenameMap?.size ? fieldRenameMap : undefined;
+    // When `protobufNestedFieldRenames` is false, nested/selection field renames are
+    // applied type-scoped elsewhere (naming-convention / rename transforms).
+    const selectionMap = protobufFieldMap;
     let protobufChanged = false;
     const rewritten = nextDirectives[protobufKey].map((rpcArgs: any) => {
       let args = rpcArgs?.args;
       let selection = rpcArgs?.selection;
-      if (typeof args === 'string' && (argRenameMap.size || fieldRenameMap?.size)) {
+      if (typeof args === 'string' && (argRenameMap.size || protobufFieldMap?.size)) {
         // Always pass nestedRenameMap for args (empty when arg-only) so nested
         // input fields do not fall back to the argument rename map.
         args = rewriteProtobufMappingBinds(args, argRenameMap, {
-          nestedRenameMap: fieldRenameMap?.size ? fieldRenameMap : new Map(),
+          nestedRenameMap: protobufFieldMap?.size ? protobufFieldMap : new Map(),
         });
       }
       if (typeof selection === 'string' && selectionMap?.size) {

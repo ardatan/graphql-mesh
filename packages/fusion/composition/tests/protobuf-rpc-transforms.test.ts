@@ -1,5 +1,6 @@
 import { buildSchema, print } from 'graphql';
 import { getAnnotatedSubgraphs } from '../src/index.js';
+import { createNamingConventionTransform } from '../src/transforms/naming-convention.js';
 import { createRenameFieldTransform, createRenameTransform } from '../src/transforms/rename.js';
 
 /**
@@ -875,6 +876,33 @@ describe('rewriteProtobufMappingBindsTypeScoped ownership', () => {
     expect(out).not.toMatch(/1\(int64\):\s*cYear/);
   });
 
+  it('ignores bind-like text and braces inside # comments', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(
+      /* GraphQL */ `
+        input MovieInput {
+          year: Int!
+        }
+        type Query {
+          q(input: MovieInput): String
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      `1(message): input {
+  # 2(int64): ignored }
+  2(int64): year
+}`,
+      new Map([['MovieInput', new Map([['year', 'publicationYear']])]],
+      ),
+      { argTypes: new Map([['input', schema.getType('MovieInput')!]]) },
+    );
+    expect(out).toContain('# 2(int64): ignored }');
+    expect(out).toMatch(/2\(int64\):\s*publicationYear/);
+    expect(out).not.toMatch(/^\s*2\(int64\):\s*year\s*$/m);
+  });
+
   it('unbound sibling inside input inherits MovieInput, not stale ChildInput', async () => {
     const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
     const schema = buildSchema(
@@ -908,5 +936,91 @@ describe('rewriteProtobufMappingBindsTypeScoped ownership', () => {
     // Sibling unbound block must inherit MovieInput after child closes.
     expect(out).toMatch(/3\(message\):\s*\{\s*1\(int64\):\s*publicationYear/);
     expect(out).not.toMatch(/3\(message\):\s*\{[^}]*childYear/);
+  });
+});
+
+describe('naming-convention type-scoped protobuf field renames', () => {
+  it('does not rewrite ConnectHTTP.GET when Movie.GET becomes get', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        input ConnectHTTP {
+          GET: String
+          POST: String
+        }
+
+        input Movie {
+          GET: String
+          Title: String
+        }
+
+        schema @transport(subgraph: "movies", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          fetch(input: ConnectHTTP): String!
+            @protobuf__rpc(
+              service: "Example"
+              method: "Fetch"
+              args: """
+              1(message): input {
+                1(string): GET
+              }
+              """
+              selection: """
+              1(string): ok
+              """
+            )
+          movie(input: Movie): String!
+            @protobuf__rpc(
+              service: "Example"
+              method: "Movie"
+              args: """
+              1(message): input {
+                1(string): GET
+                2(string): Title
+              }
+              """
+              selection: """
+              1(string): ok
+              """
+            )
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'movies',
+        schema,
+        transforms: [createNamingConventionTransform({ fieldNames: 'camelCase' })],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    // ConnectHTTP.GET stays; Movie.GET → get.
+    expect(sdl).toMatch(/input ConnectHTTP[\s\S]*\bGET:/);
+    expect(sdl).toMatch(/input Movie[\s\S]*\bget:/);
+    const fetchArgs = sdl.match(/method:\s*"Fetch",\s*args:\s*"([^"]*)"/)?.[1] ?? '';
+    const movieArgs = sdl.match(/method:\s*"Movie",\s*args:\s*"([^"]*)"/)?.[1] ?? '';
+    expect(fetchArgs).toMatch(/1\(string\):\s*GET/);
+    expect(fetchArgs).not.toMatch(/1\(string\):\s*get\b/);
+    expect(movieArgs).toMatch(/1\(string\):\s*get\b/);
+    expect(movieArgs).toMatch(/2\(string\):\s*title/);
   });
 });
