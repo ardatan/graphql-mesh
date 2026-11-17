@@ -9,7 +9,7 @@ import {
   resolveEqualityKey,
 } from './batch.js';
 import { createSqlClient } from './client.js';
-import { inferDialectFromLocation } from './dialect.js';
+import { inferAdapterFromLocation } from './adapter.js';
 import { wireSqlEntityResolvers } from './entity.js';
 import {
   buildDelete,
@@ -26,7 +26,7 @@ import {
 import type {
   ParsedSqlMapping,
   SqlClient,
-  SqlDialect,
+  SqlAdapter,
   SqlKind,
   SqlMutationKind,
   SqlQueryKind,
@@ -88,7 +88,7 @@ async function runSqlSelect(
     }
   }
 
-  const query = buildSelect(sqlClient.dialect, {
+  const query = buildSelect(sqlClient.adapter, {
     table,
     kind,
     selection: selectSelection,
@@ -124,7 +124,7 @@ async function runSqlSelect(
 
     let totalCount = offset + pageRows.length + (hasNextPage ? 1 : 0);
     if (selection.entries.some(e => e.key === 'totalCount')) {
-      const countQ = buildSelect(sqlClient.dialect, {
+      const countQ = buildSelect(sqlClient.adapter, {
         table,
         kind: 'COUNT',
         selection: selectSelection,
@@ -165,9 +165,9 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
   };
   const location =
     transport.location ||
-    resolveConnectionStringFromEnv(undefined, { dialect: transport.options?.dialect });
-  const dialect: SqlDialect =
-    transport.options?.dialect || inferDialectFromLocation(location) || 'sqlite';
+    resolveConnectionStringFromEnv(undefined, { adapter: transport.options?.adapter });
+  const adapter: SqlAdapter =
+    transport.options?.adapter || inferAdapterFromLocation(location) || 'sqlite';
   if (!location) {
     throw new Error(
       '@transport(kind: "sql") requires location (connection URI / file path) or a Bun-compatible env URL (DATABASE_URL, POSTGRES_URL, MYSQL_URL, SQLITE_URL, …)',
@@ -177,7 +177,7 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
   const sqlClient =
     client ||
     createSqlClient({
-      dialect,
+      adapter,
       location,
       cwd,
       max: transport.options?.max,
@@ -203,7 +203,7 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
               const mutationKind = kind as SqlMutationKind;
               fieldConfig.resolve = async function sqlMutationResolver(_root, args) {
                 if (mutationKind === 'DELETE') {
-                  const query = buildDelete(sqlClient.dialect, table, argsMapping, args);
+                  const query = buildDelete(sqlClient.adapter, table, argsMapping, args);
                   const result = await sqlClient.query(query.sql, query.params);
                   const affected = result.rowCount;
                   return {
@@ -215,11 +215,11 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
                 const returningCols = collectReturningColumns(selection);
                 const query =
                   mutationKind === 'INSERT'
-                    ? buildInsert(sqlClient.dialect, table, argsMapping, args, returningCols)
-                    : buildUpdate(sqlClient.dialect, table, argsMapping, args, returningCols);
+                    ? buildInsert(sqlClient.adapter, table, argsMapping, args, returningCols)
+                    : buildUpdate(sqlClient.adapter, table, argsMapping, args, returningCols);
 
                 let row: Record<string, unknown> | undefined;
-                if (returningCols.length && (dialect === 'sqlite' || dialect === 'postgres')) {
+                if (returningCols.length && (adapter === 'sqlite' || adapter === 'postgres')) {
                   const result = await sqlClient.query(query.sql, query.params);
                   row = result.rows[0] as Record<string, unknown> | undefined;
                 } else {

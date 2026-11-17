@@ -79,7 +79,7 @@ export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
       };
     });
 
-    return { dialect: 'sqlite', tables };
+    return { adapter: 'sqlite', tables };
   } finally {
     db.close();
   }

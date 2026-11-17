@@ -28,7 +28,7 @@ Relations use the same `@sql` with `$this` in `args`.
   `transport-sql` under the hood (`pool` / `tableFields` supported; tuql `infile` is materialized
   to a sqlite file inside the legacy handler — not a core loader/transport feature)
 
-Dialects are `postgres` | `mysql` | `sqlite` via loader `type` / URI / `options.dialect`. All
+Adapters are `postgres` | `mysql` | `sqlite` via loader `adapter` / URI / `options.adapter`. All
 three are end-to-end on the new stack. Legacy PostGraphile handler remains for the full
 PostGraphile runtime.
 
@@ -39,11 +39,12 @@ PostGraphile runtime.
 loadSQLiteSubgraph('chinook', { db: 'chinook.db' })
 loadMySQLSubgraph('employees', { endpoint: 'mysql://…' })
 
-// after — dialect from URI protocol (Bun-compatible); `type` optional override
+// after — adapter from URI protocol (Bun-compatible); `adapter` optional override
 loadSqlSubgraph('chinook', { endpoint: 'file:chinook.db' })
 loadSqlSubgraph('employees', { endpoint: 'mysql://…' })
 loadSqlSubgraph('shop', { endpoint: 'postgres://…' })
 loadSqlSubgraph('shop', { endpoint: 'localhost:5432/shop' }) // host-style → postgres
+loadSqlSubgraph('shop', { adapter: 'postgres' }) // or from DATABASE_URL / PG*
 ```
 
 Emitted GraphQL naming is PostGraphile-inspired. Old raw-table / String-where surfaces are gone —

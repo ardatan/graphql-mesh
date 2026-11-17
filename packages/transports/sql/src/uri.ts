@@ -1,7 +1,7 @@
-import type { SqlDialect } from './types.js';
+import type { SqlAdapter } from './types.js';
 
 export interface ParsedSqlUri {
-  dialect: SqlDialect;
+  adapter: SqlAdapter;
   user?: string;
   password?: string;
   host?: string;
@@ -41,20 +41,20 @@ export const SQL_URL_ENV_VARS = [
  */
 export function resolveConnectionStringFromEnv(
   env: EnvLike = typeof process !== 'undefined' ? process.env : {},
-  opts?: { dialect?: SqlDialect },
+  opts?: { adapter?: SqlAdapter },
 ): string | undefined {
   for (const key of SQL_URL_ENV_VARS) {
     const value = env[key]?.trim();
     if (!value) continue;
-    if (opts?.dialect) {
+    if (opts?.adapter) {
       try {
-        if (inferDialectFromConnectionString(value) !== opts.dialect) {
-          // With an explicit dialect, skip URLs that name another adapter
+        if (inferAdapterFromConnectionString(value) !== opts.adapter) {
+          // With an explicit adapter, skip URLs that name another adapter
           // (Bun does the same when `adapter` is set).
           if (key === 'DATABASE_URL' || key === 'TLS_DATABASE_URL') continue;
-          if (opts.dialect === 'postgres' && !isPostgresUrlEnvKey(key)) continue;
-          if (opts.dialect === 'mysql' && !isMysqlUrlEnvKey(key)) continue;
-          if (opts.dialect === 'sqlite' && key !== 'SQLITE_URL') continue;
+          if (opts.adapter === 'postgres' && !isPostgresUrlEnvKey(key)) continue;
+          if (opts.adapter === 'mysql' && !isMysqlUrlEnvKey(key)) continue;
+          if (opts.adapter === 'sqlite' && key !== 'SQLITE_URL') continue;
         }
       } catch {
         // unknown protocol — still return; caller / infer will throw
@@ -66,11 +66,11 @@ export function resolveConnectionStringFromEnv(
     return value;
   }
 
-  if (opts?.dialect === 'mysql' || (!opts?.dialect && env.MYSQL_HOST)) {
+  if (opts?.adapter === 'mysql' || (!opts?.adapter && env.MYSQL_HOST)) {
     const mysql = composeMysqlUrlFromEnv(env);
     if (mysql) return mysql;
   }
-  if (opts?.dialect !== 'mysql' && opts?.dialect !== 'sqlite') {
+  if (opts?.adapter !== 'mysql' && opts?.adapter !== 'sqlite') {
     const pg = composePostgresUrlFromEnv(env);
     if (pg) return pg;
   }
@@ -143,9 +143,9 @@ function composeMysqlUrlFromEnv(env: EnvLike): string | undefined {
 }
 
 /**
- * Detect dialect from a connection string protocol — Bun SQL–compatible.
+ * Detect adapter from a connection string protocol — Bun SQL–compatible.
  *
- * | Connection string | Dialect |
+ * | Connection string | Adapter |
  * | --- | --- |
  * | `postgres://`, `postgresql://`, or host-style with no protocol | postgres |
  * | `mysql://`, `mysql2://`, `mysqls://`, `mariadb://` | mysql |
@@ -154,7 +154,7 @@ function composeMysqlUrlFromEnv(env: EnvLike): string | undefined {
  * Unknown protocols throw. Plain `*.db` / `*.sqlite` paths are treated as sqlite
  * (Mesh convenience; Bun would require an explicit adapter for bare filenames).
  */
-export function inferDialectFromConnectionString(location: string): SqlDialect {
+export function inferAdapterFromConnectionString(location: string): SqlAdapter {
   const trimmed = location.trim();
   const lower = trimmed.toLowerCase();
 
@@ -214,9 +214,9 @@ function looksLikeSqliteFile(location: string): boolean {
 
 export function parseSqlUri(location: string): ParsedSqlUri {
   const searchParams: Record<string, string> = {};
-  const dialect = inferDialectFromConnectionString(location);
+  const adapter = inferAdapterFromConnectionString(location);
 
-  if (dialect === 'sqlite') {
+  if (adapter === 'sqlite') {
     let filePath = location.trim();
     if (filePath.toLowerCase().startsWith('file:')) filePath = filePath.slice('file:'.length);
     else if (filePath.toLowerCase().startsWith('sqlite:')) {
@@ -244,7 +244,7 @@ export function parseSqlUri(location: string): ParsedSqlUri {
       });
       filePath = filePath.slice(0, qIdx);
     }
-    return { dialect: 'sqlite', filePath, searchParams };
+    return { adapter: 'sqlite', filePath, searchParams };
   }
 
   // URL parser needs a known scheme; normalize aliases Bun also accepts.
@@ -256,7 +256,7 @@ export function parseSqlUri(location: string): ParsedSqlUri {
     .replace(/^mariadb:/i, 'mysql:');
 
   // Host-style with no protocol → Bun treats as postgres
-  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(normalized) && dialect === 'postgres') {
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(normalized) && adapter === 'postgres') {
     normalized = `postgres://${normalized}`;
   }
 
@@ -266,9 +266,9 @@ export function parseSqlUri(location: string): ParsedSqlUri {
   });
   const database = url.pathname.replace(/^\//, '') || undefined;
 
-  if (dialect === 'postgres') {
+  if (adapter === 'postgres') {
     return {
-      dialect: 'postgres',
+      adapter: 'postgres',
       user: decode(url.username) || undefined,
       password: decode(url.password) || undefined,
       host: url.hostname || 'localhost',
@@ -281,7 +281,7 @@ export function parseSqlUri(location: string): ParsedSqlUri {
 
   // mysql / mysql2 / mariadb / mysqls
   return {
-    dialect: 'mysql',
+    adapter: 'mysql',
     user: decode(url.username) || undefined,
     password: decode(url.password) || undefined,
     host: url.hostname || 'localhost',

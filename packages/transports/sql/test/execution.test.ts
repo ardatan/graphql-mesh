@@ -96,12 +96,12 @@ describe('getSqlExecutor sqlite', () => {
 
     const { createSqlClient } = await import('../src/client.js');
     const real = createSqlClient({
-      dialect: 'sqlite',
+      adapter: 'sqlite',
       location: `file:${dbPath}`,
     });
     const queries: string[] = [];
     const spyClient: SqlClient = {
-      dialect: 'sqlite',
+      adapter: 'sqlite',
       async query(sql, params) {
         queries.push(sql);
         return real.query(sql, params);

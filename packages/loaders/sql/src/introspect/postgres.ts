@@ -12,7 +12,7 @@ export interface IntrospectPostgresOpts {
 
 export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<SqlSchemaMeta> {
   const parsed = parseSqlUri(opts.connectionString);
-  if (parsed.dialect !== 'postgres') {
+  if (parsed.adapter !== 'postgres') {
     throw new Error('Postgres introspection requires a postgres(ql)://… URI');
   }
   const schemaName = opts.schema || 'public';
@@ -135,7 +135,7 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
       });
     }
 
-    return { dialect: 'postgres', tables };
+    return { adapter: 'postgres', tables };
   } finally {
     await pool.end();
   }

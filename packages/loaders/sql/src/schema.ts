@@ -10,9 +10,9 @@ import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLDate, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
 import { path as pathHelper } from '@graphql-mesh/cross-helpers';
 import {
-  inferDialectFromConnectionString,
+  inferAdapterFromConnectionString,
   resolveConnectionStringFromEnv,
-  type SqlDialect,
+  type SqlAdapter,
   type SqlTransportOptions,
 } from '@graphql-mesh/transport-sql';
 import { SqlDirective, SqlKindEnum, TransportDirective } from './directives.js';
@@ -30,11 +30,11 @@ export interface LoadSqlSubgraphOpts extends Pick<
   'max' | 'idleTimeout' | 'connectionTimeout' | 'tls'
 > {
   /**
-   * Dialect override. When omitted, inferred from the connection URI protocol
-   * (Bun SQL–compatible: `postgres://`, `mysql://` / `mysql2://` / `mariadb://`,
+   * Bun-style adapter override. When omitted, inferred from the connection URI
+   * protocol (`postgres://`, `mysql://` / `mysql2://` / `mariadb://`,
    * `sqlite://` / `file:`, host-style → postgres, `*.db` → sqlite).
    */
-  type?: SqlDialect;
+  adapter?: SqlAdapter;
   /**
    * Connection URI / path — becomes `@transport(location)`.
    * When omitted, resolved from Bun-compatible env vars (`DATABASE_URL`,
@@ -55,10 +55,10 @@ export interface LoadSqlSubgraphOpts extends Pick<
 export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadSqlSubgraphOpts) {
   const naming: SqlNaming = { ...createDefaultNaming(), ...opts.naming };
   const withEndpoint = resolveOptsEndpoint(opts);
-  const dialect = resolveDialect(withEndpoint);
-  const resolved: LoadSqlSubgraphOpts & { type: SqlDialect } = {
+  const adapter = resolveAdapter(withEndpoint);
+  const resolved: LoadSqlSubgraphOpts & { adapter: SqlAdapter } = {
     ...withEndpoint,
-    type: dialect,
+    adapter,
   };
   const meta = applyTableFieldsFilter(await introspect(resolved), opts.tableFields);
   const location = resolveLocation(resolved);
@@ -430,7 +430,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     subgraph: subgraphName,
     kind: 'sql',
     location,
-    options: buildTransportOptions(resolved, dialect),
+    options: buildTransportOptions(resolved, adapter),
   };
   extensions.directives.link = [
     {
@@ -445,9 +445,9 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
 }
 
 async function introspect(
-  opts: LoadSqlSubgraphOpts & { type: SqlDialect },
+  opts: LoadSqlSubgraphOpts & { adapter: SqlAdapter },
 ): Promise<SqlSchemaMeta> {
-  switch (opts.type) {
+  switch (opts.adapter) {
     case 'sqlite': {
       if (!opts.endpoint) {
         throw new Error(`loadSqlSubgraph sqlite requires endpoint (file:… / *.db)`);
@@ -480,7 +480,7 @@ async function introspect(
       });
     }
     default:
-      throw new Error(`Unknown SQL loader type: ${(opts as any).type}`);
+      throw new Error(`Unknown SQL adapter: ${(opts as any).adapter}`);
   }
 }
 
@@ -489,7 +489,7 @@ async function introspect(
  */
 export function resolveOptsEndpoint(opts: LoadSqlSubgraphOpts): LoadSqlSubgraphOpts {
   if (opts.endpoint) return opts;
-  const fromEnv = resolveConnectionStringFromEnv(undefined, { dialect: opts.type });
+  const fromEnv = resolveConnectionStringFromEnv(undefined, { adapter: opts.adapter });
   if (!fromEnv) {
     throw new Error(
       'loadSqlSubgraph requires endpoint or a Bun-compatible env URL (DATABASE_URL, POSTGRES_URL, MYSQL_URL, SQLITE_URL, …)',
@@ -499,23 +499,23 @@ export function resolveOptsEndpoint(opts: LoadSqlSubgraphOpts): LoadSqlSubgraphO
 }
 
 /**
- * Resolve dialect: explicit `type` wins; otherwise Bun-style protocol detection
+ * Resolve adapter: explicit `adapter` wins; otherwise Bun-style protocol detection
  * from `endpoint` (or env-resolved endpoint).
  */
-export function resolveDialect(opts: LoadSqlSubgraphOpts): SqlDialect {
-  if (opts.type) return opts.type;
+export function resolveAdapter(opts: LoadSqlSubgraphOpts): SqlAdapter {
+  if (opts.adapter) return opts.adapter;
   const endpoint = opts.endpoint || resolveConnectionStringFromEnv();
   if (!endpoint) {
-    throw new Error('loadSqlSubgraph requires type or endpoint (or DATABASE_URL / …)');
+    throw new Error('loadSqlSubgraph requires adapter or endpoint (or DATABASE_URL / …)');
   }
-  return inferDialectFromConnectionString(endpoint);
+  return inferAdapterFromConnectionString(endpoint);
 }
 
 function buildTransportOptions(
   opts: LoadSqlSubgraphOpts,
-  dialect: SqlDialect,
+  adapter: SqlAdapter,
 ): SqlTransportOptions {
-  const options: SqlTransportOptions = { dialect };
+  const options: SqlTransportOptions = { adapter };
   if (opts.max != null) options.max = opts.max;
   if (opts.idleTimeout != null) options.idleTimeout = opts.idleTimeout;
   if (opts.connectionTimeout != null) options.connectionTimeout = opts.connectionTimeout;
@@ -530,7 +530,7 @@ function resolveLocation(opts: LoadSqlSubgraphOpts): string {
   }
   // Normalize bare sqlite paths to absolute file: URIs for @transport(location).
   try {
-    if (inferDialectFromConnectionString(raw) === 'sqlite') {
+    if (inferAdapterFromConnectionString(raw) === 'sqlite') {
       if (raw === ':memory:' || raw.toLowerCase().startsWith('sqlite:')) {
         return raw;
       }

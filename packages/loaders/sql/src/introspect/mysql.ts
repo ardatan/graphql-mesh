@@ -10,7 +10,7 @@ export interface IntrospectMysqlOpts {
 
 export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSchemaMeta> {
   const parsed = parseSqlUri(opts.connectionString);
-  if (parsed.dialect !== 'mysql' || !parsed.database) {
+  if (parsed.adapter !== 'mysql' || !parsed.database) {
     throw new Error('MySQL introspection requires a mysql://…/database URI');
   }
   const pool = createPool({
@@ -103,7 +103,7 @@ export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSch
       });
     }
 
-    return { dialect: 'mysql', tables };
+    return { adapter: 'mysql', tables };
   } finally {
     await pool.end();
   }

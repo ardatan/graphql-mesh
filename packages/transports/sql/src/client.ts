@@ -1,12 +1,12 @@
 import { createPool, type Pool as Mysql2Pool, type Pool } from 'mysql2/promise';
 import { DatabaseSync } from 'node:sqlite';
 import pg from 'pg';
-import { resolveSqlitePath } from './dialect.js';
-import type { SqlClient, SqlDialect, SqlTransportOptions } from './types.js';
+import { resolveSqlitePath } from './adapter.js';
+import type { SqlClient, SqlAdapter, SqlTransportOptions } from './types.js';
 import { parseSqlUri } from './uri.js';
 
 export interface CreateSqlClientOptions extends SqlTransportOptions {
-  dialect: SqlDialect;
+  adapter: SqlAdapter;
   location: string;
   cwd?: string;
   /** Force Node drivers even when `Bun.SQL` is present. */
@@ -35,7 +35,7 @@ export function createSqlClient(opts: CreateSqlClientOptions): SqlClient {
   if (!opts.preferNode && isBunSqlAvailable()) {
     return createBunSqlClient(opts);
   }
-  switch (opts.dialect) {
+  switch (opts.adapter) {
     case 'sqlite':
       return createSqliteClient(opts.location, opts.cwd);
     case 'mysql':
@@ -43,13 +43,13 @@ export function createSqlClient(opts: CreateSqlClientOptions): SqlClient {
     case 'postgres':
       return createPostgresClient(opts);
     default:
-      throw new Error(`Unknown SQL dialect: ${opts.dialect as string}`);
+      throw new Error(`Unknown SQL adapter: ${opts.adapter as string}`);
   }
 }
 
 /**
  * Wrap Bun's native `SQL` client when running under Bun.
- * Uses `sql.unsafe(query, params)` so our dialect placeholders (`$1` / `?`) work as-is.
+ * Uses `sql.unsafe(query, params)` so our adapter placeholders (`$1` / `?`) work as-is.
  */
 export function createBunSqlClient(opts: CreateSqlClientOptions): SqlClient {
   const BunSQL = getBunSqlCtor();
@@ -58,7 +58,7 @@ export function createBunSqlClient(opts: CreateSqlClientOptions): SqlClient {
   }
 
   const bunOpts: Record<string, unknown> = {
-    adapter: opts.dialect === 'mysql' ? 'mysql' : opts.dialect,
+    adapter: opts.adapter === 'mysql' ? 'mysql' : opts.adapter,
   };
   if (opts.max != null) bunOpts.max = opts.max;
   if (opts.idleTimeout != null) bunOpts.idleTimeout = opts.idleTimeout;
@@ -68,7 +68,7 @@ export function createBunSqlClient(opts: CreateSqlClientOptions): SqlClient {
   const sql = new BunSQL(opts.location, bunOpts);
 
   return {
-    dialect: opts.dialect,
+    adapter: opts.adapter,
     async query<T = Record<string, unknown>>(query: string, params: unknown[] = []) {
       const result = await sql.unsafe(query, params);
       const rows = normalizeBunRows<T>(result);
@@ -110,7 +110,7 @@ export function wrapPgPoolAsSqlClient(pool: {
   end?: () => Promise<void>;
 }): SqlClient {
   return {
-    dialect: 'postgres',
+    adapter: 'postgres',
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
       const result = await pool.query(sql, params);
       return {
@@ -138,7 +138,7 @@ export function wrapMysqlPoolAsSqlClient(pool: {
   const p = typeof pool.promise === 'function' ? pool.promise() : (pool as unknown as Mysql2Pool);
 
   return {
-    dialect: 'mysql',
+    adapter: 'mysql',
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
       const [result] = await p.query(sql, params);
       if (Array.isArray(result)) {
@@ -159,7 +159,7 @@ function createSqliteClient(location: string, cwd?: string): SqlClient {
   const dbPath = resolveSqlitePath(location, cwd);
   const db = new DatabaseSync(dbPath);
   return {
-    dialect: 'sqlite',
+    adapter: 'sqlite',
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
       const stmt = db.prepare(sql);
       const bind = params as Array<null | number | bigint | string | Uint8Array>;
@@ -182,8 +182,8 @@ function createSqliteClient(location: string, cwd?: string): SqlClient {
 
 function createMysqlClient(opts: CreateSqlClientOptions): SqlClient {
   const parsed = parseSqlUri(opts.location);
-  if (parsed.dialect !== 'mysql') {
-    throw new Error(`Expected mysql URI, got ${parsed.dialect}`);
+  if (parsed.adapter !== 'mysql') {
+    throw new Error(`Expected mysql URI, got ${parsed.adapter}`);
   }
   const tls = resolveTlsFlag(opts.tls, parsed.ssl);
   const pool: Pool = createPool({
@@ -204,8 +204,8 @@ function createMysqlClient(opts: CreateSqlClientOptions): SqlClient {
 
 function createPostgresClient(opts: CreateSqlClientOptions): SqlClient {
   const parsed = parseSqlUri(opts.location);
-  if (parsed.dialect !== 'postgres') {
-    throw new Error(`Expected postgres URI, got ${parsed.dialect}`);
+  if (parsed.adapter !== 'postgres') {
+    throw new Error(`Expected postgres URI, got ${parsed.adapter}`);
   }
   const tls = resolveTlsFlag(opts.tls, parsed.ssl);
   const pool = new pg.Pool({

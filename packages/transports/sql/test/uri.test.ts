@@ -1,49 +1,49 @@
 import {
-  inferDialectFromConnectionString,
+  inferAdapterFromConnectionString,
   parseSqlUri,
   resolveConnectionStringFromEnv,
 } from '../src/uri.js';
 
-describe('inferDialectFromConnectionString (Bun-compatible)', () => {
+describe('inferAdapterFromConnectionString (Bun-compatible)', () => {
   it('detects postgres protocols and host-style URIs', () => {
-    expect(inferDialectFromConnectionString('postgres://u:p@localhost:5432/db')).toBe('postgres');
-    expect(inferDialectFromConnectionString('postgresql://localhost/db')).toBe('postgres');
-    expect(inferDialectFromConnectionString('localhost:5432/mydb')).toBe('postgres');
-    expect(inferDialectFromConnectionString('user:pass@localhost:5432/shop')).toBe('postgres');
+    expect(inferAdapterFromConnectionString('postgres://u:p@localhost:5432/db')).toBe('postgres');
+    expect(inferAdapterFromConnectionString('postgresql://localhost/db')).toBe('postgres');
+    expect(inferAdapterFromConnectionString('localhost:5432/mydb')).toBe('postgres');
+    expect(inferAdapterFromConnectionString('user:pass@localhost:5432/shop')).toBe('postgres');
   });
 
   it('detects mysql / mysql2 / mariadb / mysqls', () => {
-    expect(inferDialectFromConnectionString('mysql://u:p@localhost:3306/db')).toBe('mysql');
-    expect(inferDialectFromConnectionString('mysql2://u:p@localhost/db')).toBe('mysql');
-    expect(inferDialectFromConnectionString('mariadb://u:p@localhost/db')).toBe('mysql');
-    expect(inferDialectFromConnectionString('mysqls://u:p@localhost/db')).toBe('mysql');
+    expect(inferAdapterFromConnectionString('mysql://u:p@localhost:3306/db')).toBe('mysql');
+    expect(inferAdapterFromConnectionString('mysql2://u:p@localhost/db')).toBe('mysql');
+    expect(inferAdapterFromConnectionString('mariadb://u:p@localhost/db')).toBe('mysql');
+    expect(inferAdapterFromConnectionString('mysqls://u:p@localhost/db')).toBe('mysql');
   });
 
   it('detects sqlite / file / :memory: / *.db', () => {
-    expect(inferDialectFromConnectionString('sqlite://myapp.db')).toBe('sqlite');
-    expect(inferDialectFromConnectionString('sqlite:myapp.db')).toBe('sqlite');
-    expect(inferDialectFromConnectionString('file:./data.db')).toBe('sqlite');
-    expect(inferDialectFromConnectionString(':memory:')).toBe('sqlite');
-    expect(inferDialectFromConnectionString('chinook.db')).toBe('sqlite');
-    expect(inferDialectFromConnectionString('./local.sqlite')).toBe('sqlite');
+    expect(inferAdapterFromConnectionString('sqlite://myapp.db')).toBe('sqlite');
+    expect(inferAdapterFromConnectionString('sqlite:myapp.db')).toBe('sqlite');
+    expect(inferAdapterFromConnectionString('file:./data.db')).toBe('sqlite');
+    expect(inferAdapterFromConnectionString(':memory:')).toBe('sqlite');
+    expect(inferAdapterFromConnectionString('chinook.db')).toBe('sqlite');
+    expect(inferAdapterFromConnectionString('./local.sqlite')).toBe('sqlite');
   });
 
   it('throws on unknown protocols', () => {
-    expect(() => inferDialectFromConnectionString('pg://localhost/db')).toThrow(/Unsupported/);
-    expect(() => inferDialectFromConnectionString('sqlite3://x.db')).toThrow(/Unsupported/);
+    expect(() => inferAdapterFromConnectionString('pg://localhost/db')).toThrow(/Unsupported/);
+    expect(() => inferAdapterFromConnectionString('sqlite3://x.db')).toThrow(/Unsupported/);
   });
 });
 
 describe('parseSqlUri', () => {
-  it('parses mysql2 and mariadb as mysql dialect', () => {
-    expect(parseSqlUri('mysql2://root:secret@db:3307/app').dialect).toBe('mysql');
+  it('parses mysql2 and mariadb as mysql adapter', () => {
+    expect(parseSqlUri('mysql2://root:secret@db:3307/app').adapter).toBe('mysql');
     expect(parseSqlUri('mysql2://root:secret@db:3307/app').port).toBe(3307);
     expect(parseSqlUri('mariadb://u@localhost/db').database).toBe('db');
   });
 
   it('parses host-style postgres without protocol', () => {
     const parsed = parseSqlUri('localhost:5432/mydb');
-    expect(parsed.dialect).toBe('postgres');
+    expect(parsed.adapter).toBe('postgres');
     expect(parsed.host).toBe('localhost');
     expect(parsed.port).toBe(5432);
     expect(parsed.database).toBe('mydb');
@@ -96,7 +96,7 @@ describe('resolveConnectionStringFromEnv (Bun-compatible)', () => {
     ).toBe('postgres://app:s3cret@db.internal:6543/shop?sslmode=require');
   });
 
-  it('composes mysql URL when dialect is mysql', () => {
+  it('composes mysql URL when adapter is mysql', () => {
     expect(
       resolveConnectionStringFromEnv(
         {
@@ -104,19 +104,19 @@ describe('resolveConnectionStringFromEnv (Bun-compatible)', () => {
           MYSQL_USER: 'root',
           MYSQL_DATABASE: 'employees',
         },
-        { dialect: 'mysql' },
+        { adapter: 'mysql' },
       ),
     ).toBe('mysql://root@mysql/employees');
   });
 
-  it('skips DATABASE_URL whose protocol disagrees with dialect', () => {
+  it('skips DATABASE_URL whose protocol disagrees with adapter', () => {
     expect(
       resolveConnectionStringFromEnv(
         {
           DATABASE_URL: 'sqlite://./x.db',
           POSTGRES_URL: 'postgres://u@localhost/db',
         },
-        { dialect: 'postgres' },
+        { adapter: 'postgres' },
       ),
     ).toBe('postgres://u@localhost/db');
   });

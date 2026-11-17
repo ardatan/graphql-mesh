@@ -1,4 +1,4 @@
-export type SqlDialect = 'postgres' | 'mysql' | 'sqlite';
+export type SqlAdapter = 'postgres' | 'mysql' | 'sqlite';
 
 export type SqlQueryKind = 'ROW' | 'ROWS' | 'CONNECTION' | 'COUNT';
 
@@ -13,7 +13,7 @@ export type SqlKind = SqlQueryKind | SqlMutationKind;
  * forward to `Bun.SQL` when present are included.
  */
 export interface SqlTransportOptions {
-  dialect?: SqlDialect;
+  adapter?: SqlAdapter;
   /** Max pool size (default 10). Maps to Bun `max`, mysql2 `connectionLimit`, pg `max`. */
   max?: number;
   /** Idle connection lifetime in seconds (0 = off). Bun `idleTimeout`. */
@@ -44,7 +44,7 @@ export interface ParsedSqlMapping {
 }
 
 export interface SqlClient {
-  readonly dialect: SqlDialect;
+  readonly adapter: SqlAdapter;
   query<T = Record<string, unknown>>(
     sql: string,
     params?: unknown[],

@@ -1,22 +1,22 @@
 import { isAbsolute as pathIsAbsolute, join as pathJoin } from 'node:path';
-import type { SqlDialect } from './types.js';
-import { inferDialectFromConnectionString } from './uri.js';
+import type { SqlAdapter } from './types.js';
+import { inferAdapterFromConnectionString } from './uri.js';
 
 /**
- * Infer dialect from a transport `location` / connection URI.
- * Prefer {@link inferDialectFromConnectionString} for full Bun-compatible rules.
+ * Infer adapter from a transport `location` / connection URI.
+ * Prefer {@link inferAdapterFromConnectionString} for full Bun-compatible rules.
  */
-export function inferDialectFromLocation(location: string | undefined): SqlDialect | undefined {
+export function inferAdapterFromLocation(location: string | undefined): SqlAdapter | undefined {
   if (!location) return undefined;
   try {
-    return inferDialectFromConnectionString(location);
+    return inferAdapterFromConnectionString(location);
   } catch {
     return undefined;
   }
 }
 
-export function quoteIdent(dialect: SqlDialect, name: string): string {
-  switch (dialect) {
+export function quoteIdent(adapter: SqlAdapter, name: string): string {
+  switch (adapter) {
     case 'mysql':
       return `\`${name.replace(/`/g, '``')}\``;
     case 'postgres':
@@ -26,9 +26,9 @@ export function quoteIdent(dialect: SqlDialect, name: string): string {
   }
 }
 
-export function placeholder(dialect: SqlDialect, index: number): string {
+export function placeholder(adapter: SqlAdapter, index: number): string {
   // index is 1-based for postgres
-  if (dialect === 'postgres') {
+  if (adapter === 'postgres') {
     return `$${index}`;
   }
   return '?';

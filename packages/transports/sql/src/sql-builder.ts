@@ -1,6 +1,6 @@
-import { placeholder, quoteIdent } from './dialect.js';
+import { placeholder, quoteIdent } from './adapter.js';
 import { columnMapFromSelection, parseSqlMapping, resolveMappingValue } from './mapping.js';
-import type { ParsedSqlMapping, SqlDialect, SqlMappingEntry, SqlQueryKind } from './types.js';
+import type { ParsedSqlMapping, SqlAdapter, SqlMappingEntry, SqlQueryKind } from './types.js';
 
 export interface BuiltQuery {
   sql: string;
@@ -29,10 +29,10 @@ const PLANNER_KEYS = new Set([
   'where',
 ]);
 
-export function buildSelect(dialect: SqlDialect, plan: SelectPlan): BuiltQuery {
+export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   const columns = columnMapFromSelection(plan.selection);
   const selectCols =
-    columns.size === 0 ? ['*'] : [...new Set(columns.values())].map(c => quoteIdent(dialect, c));
+    columns.size === 0 ? ['*'] : [...new Set(columns.values())].map(c => quoteIdent(adapter, c));
 
   const params: unknown[] = [];
   const whereParts: string[] = [];
@@ -48,7 +48,7 @@ export function buildSelect(dialect: SqlDialect, plan: SelectPlan): BuiltQuery {
     });
     if (resolved === undefined) continue;
     params.push(resolved);
-    whereParts.push(`${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`);
+    whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
   }
 
   // filter: $args.filter
@@ -59,22 +59,22 @@ export function buildSelect(dialect: SqlDialect, plan: SelectPlan): BuiltQuery {
       parent: plan.parent,
     });
     if (filterVal && typeof filterVal === 'object') {
-      appendFilter(dialect, filterVal as Record<string, any>, columns, whereParts, params);
+      appendFilter(adapter, filterVal as Record<string, any>, columns, whereParts, params);
     }
   }
 
   // Also accept direct graphqlArgs.filter when mapping omitted the binder but arg exists
   if (!filterEntry && plan.graphqlArgs.filter) {
-    appendFilter(dialect, plan.graphqlArgs.filter, columns, whereParts, params);
+    appendFilter(adapter, plan.graphqlArgs.filter, columns, whereParts, params);
   }
 
-  let sql = `SELECT ${selectCols.join(', ')} FROM ${quoteIdent(dialect, plan.table)}`;
+  let sql = `SELECT ${selectCols.join(', ')} FROM ${quoteIdent(adapter, plan.table)}`;
   if (whereParts.length) {
     sql += ` WHERE ${whereParts.join(' AND ')}`;
   }
 
   if (plan.kind === 'COUNT') {
-    sql = `SELECT COUNT(*) AS ${quoteIdent(dialect, 'count')} FROM ${quoteIdent(dialect, plan.table)}`;
+    sql = `SELECT COUNT(*) AS ${quoteIdent(adapter, 'count')} FROM ${quoteIdent(adapter, plan.table)}`;
     if (whereParts.length) {
       sql += ` WHERE ${whereParts.join(' AND ')}`;
     }
@@ -82,7 +82,7 @@ export function buildSelect(dialect: SqlDialect, plan: SelectPlan): BuiltQuery {
   }
 
   const orderBy = resolvePlannerArg(plan, 'orderBy') as string[] | string | undefined;
-  const orderSql = buildOrderBy(dialect, orderBy, columns);
+  const orderSql = buildOrderBy(adapter, orderBy, columns);
   if (orderSql) {
     sql += ` ORDER BY ${orderSql}`;
   }
@@ -98,9 +98,9 @@ export function buildSelect(dialect: SqlDialect, plan: SelectPlan): BuiltQuery {
     const limit = Math.max(0, first);
     // fetch one extra to detect hasNextPage
     params.push(limit + 1);
-    sql += ` LIMIT ${placeholder(dialect, params.length)}`;
+    sql += ` LIMIT ${placeholder(adapter, params.length)}`;
     params.push(offset);
-    sql += ` OFFSET ${placeholder(dialect, params.length)}`;
+    sql += ` OFFSET ${placeholder(adapter, params.length)}`;
     return { sql, params };
   }
 
@@ -108,14 +108,14 @@ export function buildSelect(dialect: SqlDialect, plan: SelectPlan): BuiltQuery {
   const offset = resolvePlannerArg(plan, 'offset');
   if (limit != null) {
     params.push(Number(limit));
-    sql += ` LIMIT ${placeholder(dialect, params.length)}`;
+    sql += ` LIMIT ${placeholder(adapter, params.length)}`;
   } else if (plan.kind === 'ROW') {
     params.push(1);
-    sql += ` LIMIT ${placeholder(dialect, params.length)}`;
+    sql += ` LIMIT ${placeholder(adapter, params.length)}`;
   }
   if (offset != null) {
     params.push(Number(offset));
-    sql += ` OFFSET ${placeholder(dialect, params.length)}`;
+    sql += ` OFFSET ${placeholder(adapter, params.length)}`;
   }
 
   return { sql, params };
@@ -126,12 +126,12 @@ export function buildSelect(dialect: SqlDialect, plan: SelectPlan): BuiltQuery {
  * equality binder for `column` with `WHERE column IN (...)`.
  */
 export function buildSelectByColumnIn(
-  dialect: SqlDialect,
+  adapter: SqlAdapter,
   plan: SelectPlan & { column: string; values: unknown[] },
 ): BuiltQuery {
   const columns = columnMapFromSelection(plan.selection);
   const selectCols =
-    columns.size === 0 ? ['*'] : [...new Set(columns.values())].map(c => quoteIdent(dialect, c));
+    columns.size === 0 ? ['*'] : [...new Set(columns.values())].map(c => quoteIdent(adapter, c));
 
   const params: unknown[] = [];
   const whereParts: string[] = [];
@@ -145,7 +145,7 @@ export function buildSelectByColumnIn(
     });
     if (resolved === undefined) continue;
     params.push(resolved);
-    whereParts.push(`${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`);
+    whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
   }
 
   const filterEntry = plan.argsMapping.entries.find(e => e.key === 'filter');
@@ -155,33 +155,33 @@ export function buildSelectByColumnIn(
       parent: plan.parent,
     });
     if (filterVal && typeof filterVal === 'object') {
-      appendFilter(dialect, filterVal as Record<string, any>, columns, whereParts, params);
+      appendFilter(adapter, filterVal as Record<string, any>, columns, whereParts, params);
     }
   } else if (plan.graphqlArgs.filter) {
-    appendFilter(dialect, plan.graphqlArgs.filter, columns, whereParts, params);
+    appendFilter(adapter, plan.graphqlArgs.filter, columns, whereParts, params);
   }
 
   const inPhs = plan.values.map(v => {
     params.push(v);
-    return placeholder(dialect, params.length);
+    return placeholder(adapter, params.length);
   });
   whereParts.push(
-    `${quoteIdent(dialect, plan.column)} IN (${inPhs.join(', ')})`,
+    `${quoteIdent(adapter, plan.column)} IN (${inPhs.join(', ')})`,
   );
 
   // Always include the batch column so we can regroup rows by key.
-  const batchColSql = quoteIdent(dialect, plan.column);
+  const batchColSql = quoteIdent(adapter, plan.column);
   if (!selectCols.includes(batchColSql) && selectCols[0] !== '*') {
     selectCols.push(batchColSql);
   }
 
-  let sql = `SELECT ${selectCols.join(', ')} FROM ${quoteIdent(dialect, plan.table)}`;
+  let sql = `SELECT ${selectCols.join(', ')} FROM ${quoteIdent(adapter, plan.table)}`;
   if (whereParts.length) {
     sql += ` WHERE ${whereParts.join(' AND ')}`;
   }
 
   const orderBy = resolvePlannerArg(plan, 'orderBy') as string[] | string | undefined;
-  const orderSql = buildOrderBy(dialect, orderBy, columns);
+  const orderSql = buildOrderBy(adapter, orderBy, columns);
   if (orderSql) {
     sql += ` ORDER BY ${orderSql}`;
   }
@@ -190,18 +190,18 @@ export function buildSelectByColumnIn(
   const offset = resolvePlannerArg(plan, 'offset');
   if (limit != null) {
     params.push(Number(limit));
-    sql += ` LIMIT ${placeholder(dialect, params.length)}`;
+    sql += ` LIMIT ${placeholder(adapter, params.length)}`;
   }
   if (offset != null) {
     params.push(Number(offset));
-    sql += ` OFFSET ${placeholder(dialect, params.length)}`;
+    sql += ` OFFSET ${placeholder(adapter, params.length)}`;
   }
 
   return { sql, params };
 }
 
 export function buildInsert(
-  dialect: SqlDialect,
+  adapter: SqlAdapter,
   table: string,
   argsMapping: ParsedSqlMapping,
   graphqlArgs: Record<string, any>,
@@ -219,17 +219,17 @@ export function buildInsert(
   if (!cols.length) {
     throw new Error(`@sql INSERT on ${table} has no column values`);
   }
-  const colSql = cols.map(c => quoteIdent(dialect, c)).join(', ');
-  const ph = cols.map((_, i) => placeholder(dialect, i + 1)).join(', ');
-  let sql = `INSERT INTO ${quoteIdent(dialect, table)} (${colSql}) VALUES (${ph})`;
-  if (returningColumns.length && (dialect === 'postgres' || dialect === 'sqlite')) {
-    sql += ` RETURNING ${returningColumns.map(c => quoteIdent(dialect, c)).join(', ')}`;
+  const colSql = cols.map(c => quoteIdent(adapter, c)).join(', ');
+  const ph = cols.map((_, i) => placeholder(adapter, i + 1)).join(', ');
+  let sql = `INSERT INTO ${quoteIdent(adapter, table)} (${colSql}) VALUES (${ph})`;
+  if (returningColumns.length && (adapter === 'postgres' || adapter === 'sqlite')) {
+    sql += ` RETURNING ${returningColumns.map(c => quoteIdent(adapter, c)).join(', ')}`;
   }
   return { sql, params };
 }
 
 export function buildUpdate(
-  dialect: SqlDialect,
+  adapter: SqlAdapter,
   table: string,
   argsMapping: ParsedSqlMapping,
   graphqlArgs: Record<string, any>,
@@ -246,7 +246,7 @@ export function buildUpdate(
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
-    sets.push(`${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`);
+    sets.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
   }
   if (!sets.length) {
     throw new Error(`@sql UPDATE on ${table} has no SET columns`);
@@ -257,20 +257,20 @@ export function buildUpdate(
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
-    whereParts.push(`${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`);
+    whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
   }
-  let sql = `UPDATE ${quoteIdent(dialect, table)} SET ${sets.join(', ')}`;
+  let sql = `UPDATE ${quoteIdent(adapter, table)} SET ${sets.join(', ')}`;
   if (whereParts.length) {
     sql += ` WHERE ${whereParts.join(' AND ')}`;
   }
-  if (returningColumns.length && (dialect === 'postgres' || dialect === 'sqlite')) {
-    sql += ` RETURNING ${returningColumns.map(c => quoteIdent(dialect, c)).join(', ')}`;
+  if (returningColumns.length && (adapter === 'postgres' || adapter === 'sqlite')) {
+    sql += ` RETURNING ${returningColumns.map(c => quoteIdent(adapter, c)).join(', ')}`;
   }
   return { sql, params };
 }
 
 export function buildDelete(
-  dialect: SqlDialect,
+  adapter: SqlAdapter,
   table: string,
   argsMapping: ParsedSqlMapping,
   graphqlArgs: Record<string, any>,
@@ -284,9 +284,9 @@ export function buildDelete(
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
-    whereParts.push(`${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`);
+    whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
   }
-  let sql = `DELETE FROM ${quoteIdent(dialect, table)}`;
+  let sql = `DELETE FROM ${quoteIdent(adapter, table)}`;
   if (whereParts.length) {
     sql += ` WHERE ${whereParts.join(' AND ')}`;
   }
@@ -302,7 +302,7 @@ function resolvePlannerArg(plan: SelectPlan, key: string): unknown {
 }
 
 function buildOrderBy(
-  dialect: SqlDialect,
+  adapter: SqlAdapter,
   orderBy: string[] | string | undefined,
   columns: Map<string, string>,
 ): string {
@@ -322,12 +322,12 @@ function buildOrderBy(
       if (graphqlField === 'id') {
         const idCol = columns.get('id');
         if (idCol) {
-          parts.push(`${quoteIdent(dialect, idCol)} ${desc ? 'DESC' : 'ASC'}`);
+          parts.push(`${quoteIdent(adapter, idCol)} ${desc ? 'DESC' : 'ASC'}`);
         }
       }
       continue;
     }
-    parts.push(`${quoteIdent(dialect, col)} ${desc ? 'DESC' : 'ASC'}`);
+    parts.push(`${quoteIdent(adapter, col)} ${desc ? 'DESC' : 'ASC'}`);
   }
   return parts.join(', ');
 }
@@ -338,7 +338,7 @@ function constToCamel(constant: string): string {
 }
 
 function appendFilter(
-  dialect: SqlDialect,
+  adapter: SqlAdapter,
   filter: Record<string, any>,
   columns: Map<string, string>,
   whereParts: string[],
@@ -350,7 +350,7 @@ function appendFilter(
     const parts: string[] = [];
     for (const sub of filter.and) {
       const inner: string[] = [];
-      appendFilter(dialect, sub, columns, inner, params);
+      appendFilter(adapter, sub, columns, inner, params);
       if (inner.length) parts.push(`(${inner.join(' AND ')})`);
     }
     if (parts.length) whereParts.push(`(${parts.join(' AND ')})`);
@@ -359,14 +359,14 @@ function appendFilter(
     const parts: string[] = [];
     for (const sub of filter.or) {
       const inner: string[] = [];
-      appendFilter(dialect, sub, columns, inner, params);
+      appendFilter(adapter, sub, columns, inner, params);
       if (inner.length) parts.push(`(${inner.join(' AND ')})`);
     }
     if (parts.length) whereParts.push(`(${parts.join(' OR ')})`);
   }
   if (filter.not && typeof filter.not === 'object') {
     const inner: string[] = [];
-    appendFilter(dialect, filter.not, columns, inner, params);
+    appendFilter(adapter, filter.not, columns, inner, params);
     if (inner.length) whereParts.push(`NOT (${inner.join(' AND ')})`);
   }
 
@@ -375,57 +375,57 @@ function appendFilter(
     if (ops == null || typeof ops !== 'object') continue;
     const col = columns.get(field);
     if (!col) continue;
-    const q = quoteIdent(dialect, col);
+    const q = quoteIdent(adapter, col);
     const o = ops as Record<string, any>;
     if ('eq' in o) {
       params.push(o.eq);
-      whereParts.push(`${q} = ${placeholder(dialect, params.length)}`);
+      whereParts.push(`${q} = ${placeholder(adapter, params.length)}`);
     }
     if ('ne' in o) {
       params.push(o.ne);
-      whereParts.push(`${q} <> ${placeholder(dialect, params.length)}`);
+      whereParts.push(`${q} <> ${placeholder(adapter, params.length)}`);
     }
     if ('lt' in o) {
       params.push(o.lt);
-      whereParts.push(`${q} < ${placeholder(dialect, params.length)}`);
+      whereParts.push(`${q} < ${placeholder(adapter, params.length)}`);
     }
     if ('lte' in o) {
       params.push(o.lte);
-      whereParts.push(`${q} <= ${placeholder(dialect, params.length)}`);
+      whereParts.push(`${q} <= ${placeholder(adapter, params.length)}`);
     }
     if ('gt' in o) {
       params.push(o.gt);
-      whereParts.push(`${q} > ${placeholder(dialect, params.length)}`);
+      whereParts.push(`${q} > ${placeholder(adapter, params.length)}`);
     }
     if ('gte' in o) {
       params.push(o.gte);
-      whereParts.push(`${q} >= ${placeholder(dialect, params.length)}`);
+      whereParts.push(`${q} >= ${placeholder(adapter, params.length)}`);
     }
     if ('in' in o && Array.isArray(o.in)) {
       const phs = o.in.map((v: unknown) => {
         params.push(v);
-        return placeholder(dialect, params.length);
+        return placeholder(adapter, params.length);
       });
       whereParts.push(`${q} IN (${phs.join(', ')})`);
     }
     if ('nin' in o && Array.isArray(o.nin)) {
       const phs = o.nin.map((v: unknown) => {
         params.push(v);
-        return placeholder(dialect, params.length);
+        return placeholder(adapter, params.length);
       });
       whereParts.push(`${q} NOT IN (${phs.join(', ')})`);
     }
     if ('includes' in o) {
       params.push(`%${o.includes}%`);
-      whereParts.push(`${q} LIKE ${placeholder(dialect, params.length)}`);
+      whereParts.push(`${q} LIKE ${placeholder(adapter, params.length)}`);
     }
     if ('startsWith' in o) {
       params.push(`${o.startsWith}%`);
-      whereParts.push(`${q} LIKE ${placeholder(dialect, params.length)}`);
+      whereParts.push(`${q} LIKE ${placeholder(adapter, params.length)}`);
     }
     if ('endsWith' in o) {
       params.push(`%${o.endsWith}`);
-      whereParts.push(`${q} LIKE ${placeholder(dialect, params.length)}`);
+      whereParts.push(`${q} LIKE ${placeholder(adapter, params.length)}`);
     }
     if ('isNull' in o) {
       whereParts.push(o.isNull ? `${q} IS NULL` : `${q} IS NOT NULL`);

@@ -96,7 +96,7 @@ export function loadBatchedByColumn(
           return keys.map(() => (opts.kind === 'ROWS' ? [] : null));
         }
 
-        const query = buildSelectByColumnIn(opts.client.dialect, {
+        const query = buildSelectByColumnIn(opts.client.adapter, {
           table: opts.table,
           kind: 'ROWS' as SqlQueryKind,
           selection: opts.selection,

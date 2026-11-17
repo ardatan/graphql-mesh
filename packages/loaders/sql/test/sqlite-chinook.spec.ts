@@ -6,7 +6,7 @@ const chinookDb = join(__dirname, '../../../../e2e/sqlite-chinook/chinook.db');
 
 describe('@omnigraph/sql sqlite chinook', () => {
   it('emits @sql directives and slim @transport(kind: sql)', async () => {
-    // Dialect inferred from path / file: (Bun-style; type optional)
+    // Adapter inferred from path / file: (Bun-style; adapter optional)
     const schema = await loadGraphQLSchemaFromSql('chinook', {
       endpoint: chinookDb,
       includeTables: ['albums', 'artists'],
@@ -18,7 +18,7 @@ describe('@omnigraph/sql sqlite chinook', () => {
     );
     expect(sdl).toContain('@transport');
     expect(sdl).toContain('kind: "sql"');
-    expect(sdl).toContain('dialect: "sqlite"');
+    expect(sdl).toContain('adapter: "sqlite"');
     expect(sdl).toContain('@sql(');
     expect(sdl).toContain('kind: INSERT');
     expect(sdl).toContain('kind: ROW');

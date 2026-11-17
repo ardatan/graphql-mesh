@@ -35,12 +35,12 @@ describe('Bun.SQL client', () => {
     };
 
     const client = createSqlClient({
-      dialect: 'postgres',
+      adapter: 'postgres',
       location: 'postgres://u@localhost/db',
       max: 5,
       tls: true,
     });
-    expect(client.dialect).toBe('postgres');
+    expect(client.adapter).toBe('postgres');
 
     const result = await client.query('SELECT 1 AS id WHERE x = $1', [42]);
     expect(unsafe).toHaveBeenCalledWith('SELECT 1 AS id WHERE x = $1', [42]);
@@ -60,10 +60,10 @@ describe('Bun.SQL client', () => {
       },
     };
     const client = createSqlClient({
-      dialect: 'sqlite',
+      adapter: 'sqlite',
       location: ':memory:',
       preferNode: true,
     });
-    expect(client.dialect).toBe('sqlite');
+    expect(client.adapter).toBe('sqlite');
   });
 });

@@ -1,6 +1,6 @@
-import type { SqlDialect } from '@graphql-mesh/transport-sql';
+import type { SqlAdapter } from '@graphql-mesh/transport-sql';
 
-export type { SqlDialect };
+export type { SqlAdapter };
 
 export interface SqlColumnMeta {
   name: string;
@@ -26,6 +26,6 @@ export interface SqlTableMeta {
 }
 
 export interface SqlSchemaMeta {
-  dialect: SqlDialect;
+  adapter: SqlAdapter;
   tables: SqlTableMeta[];
 }

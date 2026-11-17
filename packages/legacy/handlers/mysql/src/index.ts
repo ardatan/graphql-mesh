@@ -59,7 +59,7 @@ export default class MySQLHandler implements MeshHandler {
         endpointUrl.protocol = 'mysqls:';
       }
       return loadGraphQLSchemaFromSql(this.name, {
-        type: 'mysql',
+        adapter: 'mysql',
         endpoint: endpointUrl.toString(),
         includeTables: this.config.tables,
         tableFields: this.config.tableFields,
