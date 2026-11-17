@@ -32,7 +32,7 @@ Legacy Mesh handler package `@graphql-mesh/grpc` still exists but depends on the
 - No `@grpcMethod`, `@grpcConnectivityState`, `@enum` stamps, or synthetic connectivity fields
 - No `options.roots` on `@transport`
 
-### Transforms
+### Transforms (Mesh composition, `packages/fusion/composition`)
 
 Rename / naming-convention follow the Connectors posture: rewrite `@protobuf__rpc(args|selection)` binds to the public GraphQL names (no Mesh `@source` / `@meshSource`). ById semantic conventions stamp `@key` + `entity: true` instead of Mesh `@merge`.
 
