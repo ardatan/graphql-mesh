@@ -2,6 +2,7 @@ import { join } from 'node:path';
 import { parse } from 'graphql';
 import { loadGraphQLSchemaFromSql } from '@omnigraph/sql';
 import { getSqlExecutor } from '../src/execution.js';
+import type { SqlClient } from '../src/types.js';
 
 const dbPath = join(__dirname, '../../../../e2e/sqlite-chinook/chinook.db');
 
@@ -47,7 +48,7 @@ describe('getSqlExecutor sqlite', () => {
     }
   });
 
-  it('resolves Federation _entities via @sql(entity: true)', async () => {
+  it('resolves Federation _entities via type-level @sql', async () => {
     const schema = await loadGraphQLSchemaFromSql('chinook', {
       type: 'sqlite',
       db: dbPath,
@@ -84,6 +85,53 @@ describe('getSqlExecutor sqlite', () => {
           { id: '1', name: 'AC/DC' },
         ],
       });
+    } finally {
+      await (executor as any)[Symbol.asyncDispose]?.();
+    }
+  });
+
+  it('batches relation ROW lookups with WHERE IN', async () => {
+    const schema = await loadGraphQLSchemaFromSql('chinook', {
+      type: 'sqlite',
+      db: dbPath,
+      includeTables: ['albums', 'artists'],
+    });
+
+    const { createSqlClient } = await import('../src/client.js');
+    const real = createSqlClient({
+      dialect: 'sqlite',
+      location: `file:${dbPath}`,
+    });
+    const queries: string[] = [];
+    const spyClient: SqlClient = {
+      dialect: 'sqlite',
+      async query(sql, params) {
+        queries.push(sql);
+        return real.query(sql, params);
+      },
+      dispose: () => real.dispose(),
+    };
+
+    const executor = getSqlExecutor({ subgraph: schema, client: spyClient });
+    try {
+      const result = await executor({
+        document: parse(/* GraphQL */ `
+          query {
+            albums(limit: 2) {
+              id
+              artist {
+                name
+              }
+            }
+          }
+        `),
+        context: {},
+      });
+      expect(result.errors).toBeUndefined();
+      // Two albums → one batched artists query (not two)
+      const artistQueries = queries.filter(q => /FROM ["`]?artists["`]?/i.test(q));
+      expect(artistQueries.length).toBe(1);
+      expect(artistQueries[0]).toMatch(/IN\s*\(/i);
     } finally {
       await (executor as any)[Symbol.asyncDispose]?.();
     }

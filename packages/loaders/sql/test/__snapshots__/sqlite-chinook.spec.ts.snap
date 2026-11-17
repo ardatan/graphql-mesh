@@ -8,7 +8,7 @@ exports[`@omnigraph/sql sqlite chinook emits @sql directives and slim @transport
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-directive @sql(subgraph: String, table: String!, kind: SqlKind!, args: String, selection: String, entity: Boolean) on FIELD_DEFINITION
+directive @sql(subgraph: String, table: String!, kind: SqlKind!, args: String, selection: String) on FIELD_DEFINITION | OBJECT
 
 type Query {
   album(id: ID!): Album @sql(subgraph: "chinook", table: "albums", kind: ROW, args: """
@@ -18,7 +18,7 @@ type Query {
     id: AlbumId
     title: Title
     artistId: ArtistId
-  """, entity: true)
+  """)
   albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @sql(subgraph: "chinook", table: "albums", kind: ROWS, args: """
     filter: $args.filter
     orderBy: $args.orderBy
@@ -69,7 +69,7 @@ type Query {
   """, selection: """
     id: ArtistId
     name: Name
-  """, entity: true)
+  """)
   artists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @sql(subgraph: "chinook", table: "artists", kind: ROWS, args: """
     filter: $args.filter
     orderBy: $args.orderBy
@@ -113,7 +113,14 @@ type Query {
   """)
 }
 
-type Album @key(fields: "id") {
+type Album @key(fields: "id") @sql(subgraph: "chinook", table: "albums", kind: ROW, args: """
+
+  AlbumId: $this.id
+""", selection: """
+  id: AlbumId
+  title: Title
+  artistId: ArtistId
+""") {
   id: ID!
   title: String!
   artistId: Int!
@@ -126,7 +133,13 @@ type Album @key(fields: "id") {
   """)
 }
 
-type Artist @key(fields: "id") {
+type Artist @key(fields: "id") @sql(subgraph: "chinook", table: "artists", kind: ROW, args: """
+
+  ArtistId: $this.id
+""", selection: """
+  id: ArtistId
+  name: Name
+""") {
   id: ID!
   name: String
   albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]! @sql(subgraph: "chinook", table: "albums", kind: ROWS, args: """

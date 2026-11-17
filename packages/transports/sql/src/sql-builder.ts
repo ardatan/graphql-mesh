@@ -121,6 +121,85 @@ export function buildSelect(dialect: SqlDialect, plan: SelectPlan): BuiltQuery {
   return { sql, params };
 }
 
+/**
+ * Batch helper: same filters/order/limit as `buildSelect`, but replace the single
+ * equality binder for `column` with `WHERE column IN (...)`.
+ */
+export function buildSelectByColumnIn(
+  dialect: SqlDialect,
+  plan: SelectPlan & { column: string; values: unknown[] },
+): BuiltQuery {
+  const columns = columnMapFromSelection(plan.selection);
+  const selectCols =
+    columns.size === 0 ? ['*'] : [...new Set(columns.values())].map(c => quoteIdent(dialect, c));
+
+  const params: unknown[] = [];
+  const whereParts: string[] = [];
+
+  for (const entry of plan.argsMapping.entries) {
+    if (PLANNER_KEYS.has(entry.key) || entry.children) continue;
+    if (entry.key === plan.column) continue; // replaced by IN list
+    const resolved = resolveMappingValue(entry.value, {
+      args: plan.graphqlArgs,
+      parent: plan.parent,
+    });
+    if (resolved === undefined) continue;
+    params.push(resolved);
+    whereParts.push(`${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`);
+  }
+
+  const filterEntry = plan.argsMapping.entries.find(e => e.key === 'filter');
+  if (filterEntry) {
+    const filterVal = resolveMappingValue(filterEntry.value, {
+      args: plan.graphqlArgs,
+      parent: plan.parent,
+    });
+    if (filterVal && typeof filterVal === 'object') {
+      appendFilter(dialect, filterVal as Record<string, any>, columns, whereParts, params);
+    }
+  } else if (plan.graphqlArgs.filter) {
+    appendFilter(dialect, plan.graphqlArgs.filter, columns, whereParts, params);
+  }
+
+  const inPhs = plan.values.map(v => {
+    params.push(v);
+    return placeholder(dialect, params.length);
+  });
+  whereParts.push(
+    `${quoteIdent(dialect, plan.column)} IN (${inPhs.join(', ')})`,
+  );
+
+  // Always include the batch column so we can regroup rows by key.
+  const batchColSql = quoteIdent(dialect, plan.column);
+  if (!selectCols.includes(batchColSql) && selectCols[0] !== '*') {
+    selectCols.push(batchColSql);
+  }
+
+  let sql = `SELECT ${selectCols.join(', ')} FROM ${quoteIdent(dialect, plan.table)}`;
+  if (whereParts.length) {
+    sql += ` WHERE ${whereParts.join(' AND ')}`;
+  }
+
+  const orderBy = resolvePlannerArg(plan, 'orderBy') as string[] | string | undefined;
+  const orderSql = buildOrderBy(dialect, orderBy, columns);
+  if (orderSql) {
+    sql += ` ORDER BY ${orderSql}`;
+  }
+
+  const limit = resolvePlannerArg(plan, 'limit');
+  const offset = resolvePlannerArg(plan, 'offset');
+  if (limit != null) {
+    params.push(Number(limit));
+    sql += ` LIMIT ${placeholder(dialect, params.length)}`;
+  }
+  if (offset != null) {
+    params.push(Number(offset));
+    sql += ` OFFSET ${placeholder(dialect, params.length)}`;
+  }
+
+  return { sql, params };
+}
+
 export function buildInsert(
   dialect: SqlDialect,
   table: string,

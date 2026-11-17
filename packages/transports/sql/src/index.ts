@@ -2,6 +2,7 @@ import type { Transport } from '@graphql-mesh/transport-common';
 import { getSqlExecutor } from './execution.js';
 import type { SqlTransportOptions } from './types.js';
 
+export * from './batch.js';
 export * from './client.js';
 export * from './dialect.js';
 export * from './entity.js';

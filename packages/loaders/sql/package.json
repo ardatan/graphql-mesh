@@ -44,9 +44,11 @@
     "graphql-compose": "^9.3.0",
     "graphql-scalars": "^2.0.1",
     "mysql2": "^3.14.0",
+    "pg": "^8.23.1",
     "pluralize": "^8.0.0"
   },
   "devDependencies": {
+    "@types/pg": "^8.15.4",
     "@types/pluralize": "^0.0.33",
     "graphql": "16.14.0"
   },

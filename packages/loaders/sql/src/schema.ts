@@ -12,6 +12,7 @@ import { path as pathHelper } from '@graphql-mesh/cross-helpers';
 import type { SqlDialect } from '@graphql-mesh/transport-sql';
 import { SqlDirective, SqlKindEnum, TransportDirective } from './directives.js';
 import { introspectMysql } from './introspect/mysql.js';
+import { introspectPostgres } from './introspect/postgres.js';
 import { introspectSqlite } from './introspect/sqlite.js';
 import type { SqlColumnMeta, SqlSchemaMeta, SqlTableMeta } from './introspect/types.js';
 import { createDefaultNaming, type SqlNaming } from './naming.js';
@@ -66,7 +67,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       name: typeName,
       fields: {},
     });
-    otc.setDirectives([
+    const typeDirectives: Array<{ name: string; args: Record<string, unknown> }> = [
       {
         name: 'key',
         args: {
@@ -75,7 +76,30 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             : pkCols.map(c => naming.fieldName(c.name)).join(' '),
         },
       },
-    ]);
+    ];
+    // Type-level `@sql` = Federation entity resolver (Connectors-style `$this` keys).
+    if (pkCols.length) {
+      const keyArgs = pkCols
+        .map(col => {
+          const field =
+            solePk && col.name === solePk.name
+              ? naming.pkFieldName(col.name, true)
+              : naming.fieldName(col.name);
+          return `${col.name}: $this.${field}`;
+        })
+        .join('\n');
+      typeDirectives.push({
+        name: 'sql',
+        args: {
+          subgraph: subgraphName,
+          table: table.name,
+          kind: 'ROW',
+          args: blockArg(keyArgs),
+          selection: selectionBlock(naming, table),
+        },
+      });
+    }
+    otc.setDirectives(typeDirectives);
 
     for (const col of table.columns) {
       const isSolePkCol = Boolean(solePk && col.name === solePk.name);
@@ -203,7 +227,6 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
               kind: 'ROW',
               args: blockArg(`${solePk.name}: $args.${pkField}`),
               selection,
-              entity: true,
             },
           },
         ],
@@ -429,10 +452,19 @@ async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
         excludeTables: opts.excludeTables,
       });
     }
-    case 'postgres':
-      throw new Error(
-        'Postgres introspection is not implemented yet; use type "sqlite" or "mysql" for now.',
-      );
+    case 'postgres': {
+      const connectionString = opts.connectionString || opts.endpoint;
+      if (!connectionString) {
+        throw new Error(
+          `loadSqlSubgraph type "postgres" requires connectionString or endpoint (postgres://…)`,
+        );
+      }
+      return introspectPostgres({
+        connectionString,
+        includeTables: opts.includeTables,
+        excludeTables: opts.excludeTables,
+      });
+    }
     default:
       throw new Error(`Unknown SQL loader type: ${(opts as any).type}`);
   }
@@ -630,21 +662,24 @@ function createMutationInputs(
 }
 
 function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
-  const SQL_DIRECTIVES = new Set(['sql']);
-  for (const type of Object.values(schema.getTypeMap())) {
-    if (!(type instanceof GraphQLObjectType)) continue;
-    for (const field of Object.values(type.getFields())) {
-      const directives = field.astNode?.directives;
-      if (!directives) continue;
-      for (const directive of directives) {
-        if (!SQL_DIRECTIVES.has(directive.name.value) || !directive.arguments) continue;
-        for (const arg of directive.arguments) {
-          if (arg.value.kind !== 'StringValue') continue;
-          if (arg.name.value === 'args' || arg.name.value === 'selection') {
-            (arg.value as { block?: boolean }).block = true;
-          }
+  const markNode = (astNode: { directives?: readonly any[] } | null | undefined) => {
+    const directives = astNode?.directives;
+    if (!directives) return;
+    for (const directive of directives) {
+      if (directive.name.value !== 'sql' || !directive.arguments) continue;
+      for (const arg of directive.arguments) {
+        if (arg.value.kind !== 'StringValue') continue;
+        if (arg.name.value === 'args' || arg.name.value === 'selection') {
+          (arg.value as { block?: boolean }).block = true;
         }
       }
+    }
+  };
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!(type instanceof GraphQLObjectType)) continue;
+    markNode(type.astNode);
+    for (const field of Object.values(type.getFields())) {
+      markNode(field.astNode);
     }
   }
 }

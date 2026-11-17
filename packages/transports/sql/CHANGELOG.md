@@ -4,4 +4,6 @@
 
 ### Major Changes
 
-- Initial release: execute ` @sqlquery` / ` @sqlmutation` / ` @sqlrelation` with transport `kind: "sql"` (sqlite dialect first).
+- Initial release: execute `@sql` with transport `kind: "sql"` (sqlite / mysql / postgres).
+  Type-level `@sql` wires Federation `resolveReference` + `Query._entities`; ROW/ROWS equality
+  lookups are DataLoader-batched.

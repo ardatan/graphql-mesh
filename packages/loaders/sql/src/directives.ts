@@ -1,6 +1,5 @@
 import {
   DirectiveLocation,
-  GraphQLBoolean,
   GraphQLDirective,
   GraphQLEnumType,
   GraphQLNonNull,
@@ -30,14 +29,15 @@ export const SqlMutationKindEnum = SqlKindEnum;
 
 export const SqlDirective = new GraphQLDirective({
   name: 'sql',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
+  // FIELD: Query/Mutation/relations. OBJECT: type-level entity resolver (`$this` keys),
+  // same pattern as Connectors type-level `@connect`.
+  locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
   args: {
     subgraph: { type: GraphQLString },
     table: { type: new GraphQLNonNull(GraphQLString) },
     kind: { type: new GraphQLNonNull(SqlKindEnum) },
     args: { type: GraphQLString },
     selection: { type: GraphQLString },
-    entity: { type: GraphQLBoolean },
   },
 });
 

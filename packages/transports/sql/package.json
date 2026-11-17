@@ -41,11 +41,14 @@
     "@graphql-tools/utils": "^13.2.2",
     "@whatwg-node/disposablestack": "^0.1.0",
     "@whatwg-node/promise-helpers": "^2.0.1",
+    "dataloader": "^2.2.2",
     "mysql2": "^3.14.0",
+    "pg": "^8.23.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@omnigraph/sql": "workspace:*",
+    "@types/pg": "^8.15.4",
     "graphql": "16.14.0"
   },
   "publishConfig": {

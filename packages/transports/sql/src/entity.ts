@@ -3,7 +3,6 @@ import {
   GraphQLNonNull,
   GraphQLScalarType,
   GraphQLUnionType,
-  getNamedType,
   isObjectType,
   type GraphQLField,
   type GraphQLNamedType,
@@ -23,7 +22,10 @@ type ResolveReferenceFn = (reference: any, context: any, info: GraphQLResolveInf
  * `entitiesResolver` instead of maintaining our own `_entities` dispatch.
  * Also mirror on `type.resolveReference` for Hive stub hydration helpers / tests.
  */
-function setTypeResolveReference(type: GraphQLNamedType, resolveReference: ResolveReferenceFn) {
+export function setTypeResolveReference(
+  type: GraphQLNamedType,
+  resolveReference: ResolveReferenceFn,
+) {
   const extensions = (type.extensions ??= {}) as Record<string, any>;
   const apollo = (extensions.apollo ??= {});
   const subgraph = (apollo.subgraph ??= {});
@@ -31,7 +33,7 @@ function setTypeResolveReference(type: GraphQLNamedType, resolveReference: Resol
   (type as any).resolveReference = resolveReference;
 }
 
-function getTypeResolveReference(type: GraphQLNamedType): ResolveReferenceFn | undefined {
+export function getTypeResolveReference(type: GraphQLNamedType): ResolveReferenceFn | undefined {
   const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
   if (typeof fromExtensions === 'function') {
     return fromExtensions;
@@ -43,10 +45,13 @@ function getTypeResolveReference(type: GraphQLNamedType): ResolveReferenceFn | u
 type JoinDirectiveArgs = { name?: string; args?: Record<string, unknown> };
 
 /** Raw `@sql` plus composed `@join__directive(name: "sql")` payloads. */
-function getSqlDirectiveArgs(schema: GraphQLSchema, node: {
-  astNode?: unknown;
-  extensions?: unknown;
-}): Record<string, unknown>[] {
+export function getSqlDirectiveArgs(
+  schema: GraphQLSchema,
+  node: {
+    astNode?: unknown;
+    extensions?: unknown;
+  },
+): Record<string, unknown>[] {
   const fromDef = getDefDirectives(schema, node as any)
     .filter(d => d.name === 'sql')
     .map(d => d.args || {});
@@ -61,7 +66,6 @@ function getSqlDirectiveArgs(schema: GraphQLSchema, node: {
       }
     }
   }
-  // Also accept join__directive at the extensions root (Apollo-shaped).
   const rootJoins = (node.extensions as any)?.join__directive as JoinDirectiveArgs[] | undefined;
   if (Array.isArray(rootJoins)) {
     for (const join of rootJoins) {
@@ -197,35 +201,33 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
   };
 }
 
-/**
- * Wire Federation entity resolution for `@sql(entity: true)` Query fields —
- * same runtime pattern as Connectors `@connect(entity: true)`.
- */
-export function wireSqlEntityResolvers(schema: GraphQLSchema): GraphQLSchema {
-  const queryType = schema.getQueryType();
-  if (!queryType) {
-    return schema;
-  }
+export type TypeLevelSqlExecutor = (
+  sqlArgs: Record<string, unknown>,
+  reference: any,
+  context: any,
+  info: GraphQLResolveInfo,
+) => any;
 
-  const fields = queryType.getFields();
-  for (const fieldName of Object.keys(fields)) {
-    const field = fields[fieldName] as GraphQLField<any, any>;
-    const sqlArgsList = getSqlDirectiveArgs(schema, field as any);
+/**
+ * Wire Federation entity resolution from type-level `@sql` (Connectors type-level pattern).
+ * Query `entity: true` is no longer used — presence of OBJECT `@sql` is the signal.
+ */
+export function wireSqlEntityResolvers(
+  schema: GraphQLSchema,
+  opts: { executeTypeLevelRow: TypeLevelSqlExecutor },
+): GraphQLSchema {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) || type.name.startsWith('__')) continue;
+    if (getTypeResolveReference(type)) continue;
+    const sqlArgsList = getSqlDirectiveArgs(schema, type as any);
     if (!sqlArgsList.length) continue;
     const sqlArgs = sqlArgsList[0];
-    if (!sqlArgs.entity) continue;
+    const kind = (sqlArgs.kind as string) || 'ROW';
+    if (kind !== 'ROW') continue;
 
-    const returnType = getNamedType(field.type);
-    if (!isObjectType(returnType)) continue;
-    if (getTypeResolveReference(returnType)) continue;
-
-    setTypeResolveReference(returnType, (reference, context, info) => {
-      const args: Record<string, any> = {};
-      for (const arg of field.args) {
-        args[arg.name] = reference?.[arg.name];
-      }
-      return field.resolve?.(null, args, context, info);
-    });
+    setTypeResolveReference(type, (reference, context, info) =>
+      opts.executeTypeLevelRow(sqlArgs, reference, context, info),
+    );
   }
 
   ensureFederationEntitiesField(schema);

@@ -1,5 +1,6 @@
 import { createPool, type Pool as Mysql2Pool, type Pool } from 'mysql2/promise';
 import { DatabaseSync } from 'node:sqlite';
+import pg from 'pg';
 import { resolveSqlitePath } from './dialect.js';
 import type { SqlClient, SqlDialect } from './types.js';
 import { parseSqlUri } from './uri.js';
@@ -17,12 +18,34 @@ export function createSqlClient(opts: CreateSqlClientOptions): SqlClient {
     case 'mysql':
       return createMysqlClient(opts.location);
     case 'postgres':
-      throw new Error(
-        'Postgres SQL transport dialect is not implemented yet (sqlite/mysql first).',
-      );
+      return createPostgresClient(opts.location);
     default:
       throw new Error(`Unknown SQL dialect: ${opts.dialect as string}`);
   }
+}
+
+/**
+ * Wrap an existing `pg.Pool` (or compatible) as SqlClient.
+ */
+export function wrapPgPoolAsSqlClient(pool: {
+  query: (sql: string, params?: unknown[]) => Promise<{ rows: any[]; rowCount?: number | null }>;
+  end?: () => Promise<void>;
+}): SqlClient {
+  return {
+    dialect: 'postgres',
+    async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
+      const result = await pool.query(sql, params);
+      return {
+        rows: (result.rows || []) as T[],
+        rowCount: Number(result.rowCount ?? result.rows?.length ?? 0),
+      };
+    },
+    async dispose() {
+      if (typeof pool.end === 'function') {
+        await pool.end();
+      }
+    },
+  };
 }
 
 /**
@@ -96,4 +119,13 @@ function createMysqlClient(location: string): SqlClient {
     connectionLimit: 10,
   });
   return wrapMysqlPoolAsSqlClient(pool);
+}
+
+function createPostgresClient(location: string): SqlClient {
+  const parsed = parseSqlUri(location);
+  if (parsed.dialect !== 'postgres') {
+    throw new Error(`Expected postgres URI, got ${parsed.dialect}`);
+  }
+  const pool = new pg.Pool({ connectionString: location });
+  return wrapPgPoolAsSqlClient(pool);
 }

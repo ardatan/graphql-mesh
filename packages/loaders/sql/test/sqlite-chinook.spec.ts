@@ -25,7 +25,9 @@ describe('@omnigraph/sql sqlite chinook', () => {
     expect(sdl).toContain('type Album');
     expect(sdl).toContain('type Artist');
     expect(sdl).toContain('allAlbums');
-    expect(sdl).toContain('entity: true');
+    // Type-level entity resolver (not Query entity: true)
+    expect(sdl).toMatch(/type Album[\s\S]*@sql\([\s\S]*\$this\.id/);
+    expect(sdl).not.toContain('entity: true');
     expect(sdl).toMatchSnapshot('chinook-albums-artists');
   });
 });
