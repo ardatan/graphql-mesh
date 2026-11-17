@@ -4,7 +4,7 @@ import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import { GrpcTransportHelper } from '@graphql-mesh/transport-protobuf';
+import { ProtobufTransportHelper } from '@graphql-mesh/transport-protobuf';
 import type {
   ImportFn,
   MeshFetch,
@@ -25,7 +25,7 @@ export default class GrpcHandler implements MeshHandler {
   private fetchFn: MeshFetch;
   private importFn: ImportFn;
   private sourceName: string;
-  private transport?: GrpcTransportHelper;
+  private transport?: ProtobufTransportHelper;
 
   constructor({
     name,
@@ -69,7 +69,7 @@ export default class GrpcHandler implements MeshHandler {
   }
 
   getMeshSource() {
-    this.transport = new GrpcTransportHelper(
+    this.transport = new ProtobufTransportHelper(
       this.sourceName,
       this.baseDir,
       this.log,

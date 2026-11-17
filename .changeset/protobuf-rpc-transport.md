@@ -46,8 +46,11 @@ Same `.proto` / reflection parse for all `type` values. Day one emit targets gRP
 ### Dial
 
 - Non-HTTP `location` (e.g. `localhost:50051`) → gRPC channel + length-prefixed frames
-- `http(s)://…` → unary HTTP POST with `application/proto` (Connect/Twirp-style path `{location}/{Service}/{Method}`)
+- `http(s)://…` → unary HTTP POST to `{location}/{Service}/{Method}`
+- Default HTTP `Content-Type` is `application/proto` (Connect unary binary); override via `@transport(headers:)` (Twirp binary needs `[["Content-Type", "application/protobuf"]]`)
 - HTTP path uses Mesh fetch: `context.fetch` / transport `fetch` / `@whatwg-node/fetch` (same as REST), not bare global `fetch`
+
+E2E: `e2e/protobuf-http` runs hand `@protobuf__rpc` SDL against official `@connectrpc/connect-node` and `twirp-ts` servers.
 
 ### Migration
 

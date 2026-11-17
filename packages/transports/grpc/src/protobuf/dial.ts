@@ -21,6 +21,9 @@ export function resolveHttpUrl(
   return `${base}${buildRpcPath(service, method)}`;
 }
 
+/** Default Connect unary binary content type; override via `@transport(headers:)` (e.g. Twirp `application/protobuf`). */
+export const DEFAULT_PROTOBUF_HTTP_CONTENT_TYPE = 'application/proto';
+
 export async function httpProtobufUnary(opts: {
   url: string;
   body: Uint8Array;
@@ -36,7 +39,7 @@ export async function httpProtobufUnary(opts: {
     {
       method: 'POST',
       headers: {
-        'content-type': 'application/proto',
+        'content-type': DEFAULT_PROTOBUF_HTTP_CONTENT_TYPE,
         ...opts.headers,
       },
       body: opts.body as any,

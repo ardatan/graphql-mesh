@@ -1,5 +1,5 @@
 # Hand-authored ConnectRPC-style subgraph (no Connect loader).
-# Same @protobuf__rpc surface as gRPC loader emit; HTTPS location → HTTP + application/proto.
+# Same @protobuf__rpc surface as gRPC loader emit; HTTPS location → HTTP + default application/proto.
 
 extend schema
   @link(

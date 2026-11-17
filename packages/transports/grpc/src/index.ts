@@ -43,8 +43,6 @@ export interface ProtobufTransportOptions {
   headers?: Record<string, string> | [string, string][];
 }
 
-export type gRPCTransportOptions = ProtobufTransportOptions;
-
 export class ProtobufTransportHelper extends DisposableStack {
   private channelCreds: ChannelCredentials | undefined;
   private fetchFn: MeshFetch = defaultFetch;
@@ -264,9 +262,6 @@ export class ProtobufTransportHelper extends DisposableStack {
   }
 }
 
-/** @deprecated */
-export const GrpcTransportHelper = ProtobufTransportHelper;
-
 function grpcUnary(opts: {
   location: string;
   path: string;
@@ -348,14 +343,30 @@ async function* grpcServerStream(opts: {
   }
 }
 
+function mergeTransportHeaders(
+  entryHeaders: [string, string][] | undefined,
+  optionHeaders: ProtobufTransportOptions['headers'],
+): Record<string, string> | [string, string][] | undefined {
+  const fromEntry = entryHeaders?.length ? Object.fromEntries(entryHeaders) : undefined;
+  const fromOptions = Array.isArray(optionHeaders)
+    ? Object.fromEntries(optionHeaders)
+    : optionHeaders;
+  if (!fromEntry && !fromOptions) return undefined;
+  return { ...fromEntry, ...fromOptions };
+}
+
 const transport: Transport<ProtobufTransportOptions> = {
   getSubgraphExecutor({ transportEntry, subgraph, cwd, log, fetch }) {
+    const options = transportEntry.options || {};
     const helper = new ProtobufTransportHelper(
       transportEntry.subgraph,
       cwd,
       log,
       transportEntry.location,
-      transportEntry.options || {},
+      {
+        ...options,
+        headers: mergeTransportHeaders(transportEntry.headers, options.headers),
+      },
     );
     helper.setFetch(fetch);
     return handleMaybePromise(

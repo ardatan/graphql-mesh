@@ -1,0 +1,72 @@
+# Hand-authored protobuf subgraph SDL (no Connect/Twirp loader).
+# __LOCATION__ and optional Twirp Content-Type headers are filled by mesh.config.ts.
+
+scalar TransportOptions
+
+directive @transport(
+  subgraph: String!
+  kind: String!
+  location: String
+  headers: [[String]]
+  options: TransportOptions
+) repeatable on SCHEMA
+
+directive @protobuf__rpc(
+  subgraph: String
+  service: String
+  method: String
+  args: String
+  selection: String
+  stream: Boolean
+) on FIELD_DEFINITION
+
+schema @transport(
+  subgraph: "movies"
+  kind: "protobuf"
+  location: "__LOCATION__"
+  # __TRANSPORT_HEADERS__
+) {
+  query: Query
+}
+
+type Query {
+  moviesByYear(year: Int!): MoviesResult!
+    @protobuf__rpc(
+      service: "Example"
+      method: "GetMovies"
+      args: """
+        # Encode GraphQL field arguments into the protobuf request message.
+        1(message): input.movie {
+          2(int64): year
+        }
+      """
+      selection: """
+        # Decode the protobuf response message into GraphQL fields.
+        1(repeated message): result {
+          1(string): name
+          2(int64): year
+          3(float): rating
+          4(repeated string): cast
+          6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        }
+      """
+    )
+}
+
+type MoviesResult {
+  result: [Movie!]!
+}
+
+type Movie {
+  name: String!
+  year: Int!
+  rating: Float
+  cast: [String!]
+  genre: Genre
+}
+
+enum Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}

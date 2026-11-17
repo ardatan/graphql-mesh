@@ -1,5 +1,5 @@
 # Hand-authored Twirp-style subgraph (no Twirp loader).
-# location includes /twirp base; transport POSTs application/proto to {location}/Service/Method.
+# location includes /twirp base; Content-Type via @transport(headers:) (Twirp uses application/protobuf).
 
 extend schema
   @link(
@@ -11,6 +11,7 @@ schema @transport(
   subgraph: "movies"
   kind: "protobuf"
   location: "https://movies.example.com/twirp"
+  headers: [["Content-Type", "application/protobuf"]]
 ) {
   query: Query
 }

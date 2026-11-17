@@ -185,6 +185,12 @@ export function decodeMessage(
 ): Record<string, any> {
   const byId = new Map(fields.map(f => [f.id, f]));
   const out: Record<string, any> = {};
+  // Absent repeated/map fields are empty collections in protobuf wire format.
+  for (const field of fields) {
+    const key = field.bind && !field.bind.startsWith('$') ? field.bind : `_${field.id}`;
+    if (field.type.kind === 'repeated') out[key] = [];
+    else if (field.type.kind === 'map') out[key] = {};
+  }
   let i = 0;
   while (i < data.length) {
     const tag = readVarint(data, i);
@@ -228,11 +234,10 @@ export function decodeMessage(
       if (name) out[key] = name;
     }
     if (field.type.kind === 'repeated' && field.type.element.kind === 'enum' && Array.isArray(out[key])) {
+      const enumValues = field.type.element.values;
       out[key] = out[key].map((n: any) => {
         if (typeof n !== 'number') return n;
-        return (
-          Object.entries(field.type.element.values).find(([, v]) => v === n)?.[0] ?? n
-        );
+        return Object.entries(enumValues).find(([, v]) => v === n)?.[0] ?? n;
       });
     }
   }
@@ -272,11 +277,14 @@ function readValue(
     if (type.kind === 'scalar' && type.name === 'bytes') {
       return { value: raw, next: end, raw };
     }
+    if (type.kind !== 'message') {
+      throw new Error('Expected message type after length-delimited scalar branch');
+    }
     return { value: decodeMessage(type.fields, raw), next: end, raw };
   }
   if (wire === WIRE_VARINT) {
     const v = readVarint(data, i);
-    let value: number | bigint = v.value;
+    let value: number | bigint | boolean = v.value;
     if (type.kind === 'scalar' && type.name === 'sint32') value = unzigzag32(Number(v.value));
     else if (type.kind === 'scalar' && type.name === 'sint64') value = unzigzag64(v.value);
     else if (type.kind === 'scalar' && type.name === 'bool') value = Number(v.value) !== 0;
