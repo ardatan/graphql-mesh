@@ -87,6 +87,45 @@ describe('emitMapping cycle-aware message& refs', () => {
     expect(decoded).toEqual(value);
   });
 
+  it('emitRequestBody: relative binds for recursive map<string,message> values', () => {
+    const mapRoot = {
+      nested: {
+        Node: {
+          fields: {
+            name: { type: 'string', id: 1 },
+            children: { type: 'Node', id: 2, keyType: 'string' },
+          },
+        },
+      },
+    } as INamespace;
+    const mapping = emitRequestBody(mapRoot, [], 'Node');
+    expect(mapping).toMatch(/2\(map<string,message>\):\s*input\.children\s*\{/);
+    expect(mapping).toMatch(/2\(map<string,message&>\):\s*children/);
+    expect(mapping).not.toMatch(/message&:\s*input\./);
+
+    const fields = parseMapping(mapping);
+    const args = {
+      input: {
+        name: 'root',
+        children: {
+          a: { name: 'childA' },
+          b: { name: 'childB', children: { c: { name: 'grand' } } },
+        },
+      },
+    };
+    const decoded = decodeMessage(
+      parseMapping(emitResponseSelection(mapRoot, [], 'Node')),
+      encodeMessage(fields, args),
+    );
+    expect(decoded).toEqual({
+      name: 'root',
+      children: {
+        a: { name: 'childA', children: {} },
+        b: { name: 'childB', children: { c: { name: 'grand', children: {} } } },
+      },
+    });
+  });
+
   it('emitRequestBody: relative binds inside recursive child (input.child.child)', () => {
     const mapping = emitRequestBody(rootJson, [], 'Node');
     // Prefix only at the request boundary; nested recursive body stays relative.
