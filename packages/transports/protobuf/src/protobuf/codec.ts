@@ -296,7 +296,7 @@ function decodeMessageInner(
       out[key].push(decoded.value);
     } else if (field.type.kind === 'message') {
       if (isMergeableObject(out[key]) && isMergeableObject(decoded.value)) {
-        out[key] = mergeMessage(out[key], decoded.value);
+        out[key] = mergeMessage(out[key], decoded.value, field.fields);
       } else {
         out[key] = decoded.value;
       }
@@ -387,20 +387,50 @@ function applyImplicitPresenceDefaults(fields: MappingField[], out: Record<strin
 
 /**
  * Merge singular message occurrences (protobuf encoding). Later wire values win for
- * scalars/bytes; nested messages recurse. Null-prototype accumulator keeps map keys
- * like `__proto__` as own data.
+ * scalars/bytes; nested messages recurse; maps union keys with last-wins values (no
+ * recursive merge of duplicate map message values). Repeated fields concatenate.
+ * Null-prototype accumulator keeps map keys like `__proto__` as own data.
  */
-function mergeMessage(a: Record<string, any>, b: Record<string, any>): Record<string, any> {
+function mergeMessage(
+  a: Record<string, any>,
+  b: Record<string, any>,
+  fields?: MappingField[],
+): Record<string, any> {
   const out = Object.create(null) as Record<string, any>;
   for (const k of Object.keys(a)) {
     out[k] = a[k];
   }
+  const byBind = new Map<string, MappingField>();
+  if (fields?.length) {
+    for (const f of fields) {
+      const bindKey = f.bind && !f.bind.startsWith('$') ? f.bind : `_${f.id}`;
+      byBind.set(bindKey, f);
+    }
+  }
   for (const k of Object.keys(b)) {
-    if (isMergeableObject(out[k]) && isMergeableObject(b[k])) {
-      out[k] = mergeMessage(out[k], b[k]);
+    const field = byBind.get(k);
+    if (field?.type.kind === 'map' && isMergeableObject(out[k]) && isMergeableObject(b[k])) {
+      // Protobuf maps: duplicate keys last-win; replace the entire value (do not merge messages).
+      const merged = Object.create(null) as Record<string, any>;
+      for (const mk of Object.keys(out[k])) {
+        merged[mk] = out[k][mk];
+      }
+      for (const mk of Object.keys(b[k])) {
+        merged[mk] = b[k][mk];
+      }
+      out[k] = merged;
+    } else if (
+      field?.type.kind === 'message' &&
+      isMergeableObject(out[k]) &&
+      isMergeableObject(b[k])
+    ) {
+      out[k] = mergeMessage(out[k], b[k], field.fields);
     } else if (Array.isArray(out[k]) && Array.isArray(b[k])) {
       // Singular-message merges concatenate repeated fields (empty later arrays must not wipe).
       out[k] = out[k].concat(b[k]);
+    } else if (!field && isMergeableObject(out[k]) && isMergeableObject(b[k])) {
+      // Untyped fallback (no field list): treat as nested message.
+      out[k] = mergeMessage(out[k], b[k]);
     } else {
       out[k] = b[k];
     }

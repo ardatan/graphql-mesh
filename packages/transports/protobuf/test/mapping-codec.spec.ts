@@ -194,6 +194,26 @@ describe('protobuf mapping + codec', () => {
     expect(decodeMessage(fields, bytes)).toEqual({ child: { values: [1] } });
   });
 
+  it('duplicate map keys last-win (no recursive merge of message values)', () => {
+    const fields = parseMapping(`
+      1(message): child {
+        1(map<string,message>): data {
+          1(int32): a
+          2(int32): b
+        }
+      }
+    `);
+    // Two child occurrences both set data.x — later message value replaces earlier entirely.
+    const first = encodeMessage(fields, { child: { data: { x: { a: 1 } } } });
+    const second = encodeMessage(fields, { child: { data: { x: { b: 2 } } } });
+    const merged = new Uint8Array(first.length + second.length);
+    merged.set(first, 0);
+    merged.set(second, first.length);
+    expect(decodeMessage(fields, merged)).toEqual({
+      child: { data: { x: { a: 0, b: 2 } } },
+    });
+  });
+
   it('last encoded scalar wins when merging singular message occurrences', () => {
     const fields = parseMapping(`
       1(message): child {
