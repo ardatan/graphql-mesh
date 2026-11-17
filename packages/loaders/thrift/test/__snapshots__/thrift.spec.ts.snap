@@ -12,8 +12,34 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  add(request: AddRequestInput): Int @connect(source: "Calc", http: {POST: "/", body: "$([\\n  1,\\n  \\"add\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": {\\n        \\"rec\\": {\\n        \\"1\\": { \\"i32\\": $args.request.left },\\n        \\"2\\": { \\"i32\\": $args.request.right }\\n        }\\n      }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"})
-  subtract(left: Int, right: Int): Int @connect(source: "Calc", http: {POST: "/", body: "$([\\n  1,\\n  \\"subtract\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": { \\"i32\\": $args.left },\\n      \\"2\\": { \\"i32\\": $args.right }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"})
+  add(request: AddRequestInput): Int @connect(source: "Calc", http: {POST: "/", body: """
+  $([
+    1,
+    "add",
+    1,
+    1,
+    {
+        "1": {
+          "rec": {
+          "1": { "i32": $args.request.left },
+          "2": { "i32": $args.request.right }
+          }
+        }
+    }
+  ])
+  """}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"})
+  subtract(left: Int, right: Int): Int @connect(source: "Calc", http: {POST: "/", body: """
+  $([
+    1,
+    "subtract",
+    1,
+    1,
+    {
+        "1": { "i32": $args.left },
+        "2": { "i32": $args.right }
+    }
+  ])
+  """}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"})
 }
 
 input AddRequestInput {
@@ -72,8 +98,16 @@ enum ThriftMessageType {
 }
 
 type Query {
-  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "Calc", function: "add", args: "1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "$(i32)", messageType: CALL, service: "Calculator")
-  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calc", function: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: CALL, service: "Calculator")
+  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "Calc", function: "add", args: """
+  1(struct): $args.request {
+    1(i32): left
+    2(i32): right
+  }
+  """, selection: "$(i32)", messageType: CALL)
+  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calc", function: "subtract", args: """
+  1(i32): $args.left
+  2(i32): $args.right
+  """, selection: "$(i32)", messageType: CALL)
 }
 
 input AddRequestInput {
@@ -95,7 +129,18 @@ enum ThriftMessageType {
 }
 
 type Query {
-  bar(foo: FooInput): Foo @thrift__rpc(subgraph: "Recursive", function: "bar", args: "1(struct): $args.foo {\\n  1(string): name\\n  2(struct): foo\\n}", selection: "name: 1(string)\\nfoo: 2 {\\n  name: 1(string)\\n  foo: 2(struct)\\n}", messageType: CALL, service: "Recursive")
+  bar(foo: FooInput): Foo @thrift__rpc(subgraph: "Recursive", function: "bar", args: """
+  1(struct): $args.foo {
+    1(string): name
+    2(struct): foo
+  }
+  """, selection: """
+  name: 1(string)
+  foo: 2 {
+    name: 1(string)
+    foo: 2(struct)
+  }
+  """, messageType: CALL)
 }
 
 type Foo {
@@ -126,10 +171,34 @@ type TwitterUnavailable {
 }
 
 type Query {
-  ping: Void @thrift__rpc(subgraph: "Twitter", function: "ping", args: "", selection: "$(void)", messageType: CALL, service: "twitter-service")
-  postTweet(tweet: TweetInput): Boolean @thrift__rpc(subgraph: "Twitter", function: "postTweet", args: "1(struct): $args.tweet {\\n  1(i32): userId\\n  2(string): userName\\n  3(string): text\\n  4(struct): loc {\\n    1(double): latitude\\n    2(double): longitude\\n  }\\n  5(i32): tweetType\\n  16(string): language\\n}", selection: "$(bool)", messageType: CALL, service: "twitter-service")
-  searchTweets(query: String): TweetSearchResult @thrift__rpc(subgraph: "Twitter", function: "searchTweets", args: "1(string): $args.query", selection: "tweets: 1(list) {\\n  userId: 1(i32)\\n  userName: 2(string)\\n  text: 3(string)\\n  loc: 4 {\\n    latitude: 1(double)\\n    longitude: 2(double)\\n  }\\n  tweetType: 5(i32)\\n  language: 16(string)\\n}", messageType: CALL, service: "twitter-service")
-  zip: Void @thrift__rpc(subgraph: "Twitter", function: "zip", args: "", selection: "$(void)", messageType: ONEWAY, service: "twitter-service")
+  ping: Void @thrift__rpc(subgraph: "Twitter", function: "ping", args: "", selection: "$(void)", messageType: CALL)
+  postTweet(tweet: TweetInput): Boolean @thrift__rpc(subgraph: "Twitter", function: "postTweet", args: """
+  1(struct): $args.tweet {
+    1(i32): userId
+    2(string): userName
+    3(string): text
+    4(struct): loc {
+      1(double): latitude
+      2(double): longitude
+    }
+    5(i32): tweetType
+    16(string): language
+  }
+  """, selection: "$(bool)", messageType: CALL)
+  searchTweets(query: String): TweetSearchResult @thrift__rpc(subgraph: "Twitter", function: "searchTweets", args: "1(string): $args.query", selection: """
+  tweets: 1(list) {
+    userId: 1(i32)
+    userName: 2(string)
+    text: 3(string)
+    loc: 4 {
+      latitude: 1(double)
+      longitude: 2(double)
+    }
+    tweetType: 5(i32)
+    language: 16(string)
+  }
+  """, messageType: CALL)
+  zip: Void @thrift__rpc(subgraph: "Twitter", function: "zip", args: "", selection: "$(void)", messageType: ONEWAY)
 }
 
 """Represents NULL values"""

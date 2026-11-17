@@ -48,10 +48,10 @@ type CalcError @join__type(graph: CALCULATOR) {
 }
 
 type Query @join__type(graph: CALCULATOR) {
-  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "calculator", function: "add", args: "# Add left and right from the request struct.\\n1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "# Add left and right from the request struct.\\n$(i32)", messageType: CALL, service: "Calculator")
-  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "calculator", function: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: CALL, service: "Calculator")
-  divide(left: Int, right: Int): Int @thrift__rpc(subgraph: "calculator", function: "divide", args: "# Divide left by right; throws when right is zero.\\n1(i32): $args.left\\n2(i32): $args.right", selection: "# Divide left by right; throws when right is zero.\\n$(i32)", messageType: CALL, service: "Calculator")
-  zip: Void @thrift__rpc(subgraph: "calculator", function: "zip", args: "", selection: "$(void)", messageType: ONEWAY, service: "Calculator")
+  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "calculator", function: "add", args: "1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "$(i32)", messageType: CALL)
+  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "calculator", function: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: CALL)
+  divide(left: Int, right: Int): Int @thrift__rpc(subgraph: "calculator", function: "divide", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: CALL)
+  zip: Void @thrift__rpc(subgraph: "calculator", function: "zip", args: "", selection: "$(void)", messageType: ONEWAY)
 }
 
 enum ThriftMessageType @join__type(graph: CALCULATOR) {

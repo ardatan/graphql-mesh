@@ -49,9 +49,10 @@ describe('binary (@thrift__rpc)', () => {
     expect(result).toMatch(/function:\s*"add"/);
     expect(result).toMatch(/1\(struct\):\s*\$args\.request/);
     expect(result).toMatch(/\$\(i32\)/);
-    expect(result).toMatch(/# Add left and right from the request struct/);
     expect(result).toMatch(/messageType:\s*ONEWAY/);
     expect(result).toMatch(/function:\s*"divide"/);
+    // Single-service generate omits per-field `service:` (path is on `@transport`).
+    expect(result).not.toMatch(/function:\s*"add"[\s\S]*?service:\s*"/);
     expect(result).not.toMatch(/@fieldTypeMap\(/);
     expect(result).not.toMatch(/topTypeMap/);
     expect(result).not.toMatch(/clientAnnotations/);

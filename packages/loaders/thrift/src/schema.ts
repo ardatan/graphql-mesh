@@ -1,9 +1,12 @@
 import type {
+  ConstValueNode,
   GraphQLEnumValueConfigMap,
+  GraphQLField,
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
   GraphQLInputType,
   GraphQLOutputType,
+  GraphQLSchema as GraphQLSchemaType,
 } from 'graphql';
 import {
   DirectiveLocation,
@@ -19,6 +22,8 @@ import {
   GraphQLSchema,
   GraphQLString,
   GraphQLUnionType,
+  isObjectType,
+  Kind,
 } from 'graphql';
 import { GraphQLBigInt, GraphQLByte, GraphQLJSON, GraphQLVoid } from 'graphql-scalars';
 import type {
@@ -45,6 +50,7 @@ import type {
 } from '@graphql-mesh/transport-thrift';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
+import { getDirectivesInExtensions } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import {
   buildCompactArgs,
@@ -244,7 +250,6 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   const entityMethodSet = new Set(entityMethods);
   const emitConnect = protocol === 'json';
   let currentId = 0;
-  let idlServiceName: string | undefined;
 
   for (const namespace of Object.keys(namespaceASTMap).reverse()) {
     const thriftAST = namespaceASTMap[namespace];
@@ -350,11 +355,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           break;
         }
         case SyntaxType.ServiceDefinition:
-          idlServiceName = statement.name.value;
           for (const fnIndex in statement.functions) {
             const fn = statement.functions[fnIndex];
             const fnName = fn.name.value;
-            const description = processComments(fn.comments);
             const { outputType: returnType, typeVal: returnTypeVal } = getGraphQLFunctionType({
               functionType: fn.returnType,
               id: Number(fnIndex) + 1,
@@ -437,17 +440,12 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               }
             }
 
-            // IDL comments as `#` lines immediately above the mapping body inside
-            // `args:` / `selection:` (not GraphQL field description dumps).
-            // Transport ignores `#` lines when parsing compact mapping.
-            const compactArgs = withIdlHashComments(
-              buildCompactArgs(fieldTypeMap, topTypeMap),
-              description,
-            );
-            const compactSelection = withIdlHashComments(
-              buildCompactSelection(returnTypeVal, topTypeMap),
-              description,
-            );
+            // Mapping bodies only — no `#` dumps inside string values and no GraphQL
+            // field description dumps. Hand-authored SDL may put a GraphQL `#` comment
+            // immediately above `args:` / `selection:` (AST print cannot re-emit those;
+            // parser still strips `#` lines if present inside the string values).
+            const compactArgs = buildCompactArgs(fieldTypeMap, topTypeMap);
+            const compactSelection = buildCompactSelection(returnTypeVal, topTypeMap);
             const compactThrows =
               modelThrows && throwsMeta.length
                 ? buildCompactThrows(throwsMeta, topTypeMap)
@@ -502,9 +500,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               if (compactThrows) {
                 thriftRpcArgs.throws = compactThrows;
               }
-              if (serviceName) {
-                thriftRpcArgs.service = serviceName;
-              }
+              // Binary HTTP path is `@transport(location:)` — omit `service:` for
+              // single-service generate. Directive arg remains for hand-authored SDL.
               if (isEntity) {
                 thriftRpcArgs.entity = true;
               }
@@ -569,7 +566,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
         },
       },
     });
-    return schema;
+    return preferMultilineDirectiveBlockStrings(schema);
   }
 
   const graphQLThriftAnnotations: GraphQLThriftAnnotations = {
@@ -595,7 +592,97 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     },
   });
 
+  return preferMultilineDirectiveBlockStrings(schema);
+}
+
+/**
+ * `printSchemaWithDirectives` rebuilds directive args via JS and prints strings
+ * with escaped `\\n` unless the field `astNode` keeps `StringValue.block: true`.
+ * Attach matching AST directive apps so `args` / `selection` / TJSON `body` print
+ * as GraphQL `"""` block strings (readable generate output).
+ */
+function preferMultilineDirectiveBlockStrings(schema: GraphQLSchemaType): GraphQLSchemaType {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type)) continue;
+    for (const field of Object.values(type.getFields())) {
+      attachBlockStringDirectiveAst(field);
+    }
+  }
   return schema;
+}
+
+function attachBlockStringDirectiveAst(field: GraphQLField<any, any>): void {
+  const dirs = getDirectivesInExtensions(field);
+  if (!dirs?.length) return;
+  const directiveNodes = dirs.map(dir => ({
+    kind: Kind.DIRECTIVE as const,
+    name: { kind: Kind.NAME as const, value: dir.name },
+    arguments: Object.entries(dir.args ?? {}).flatMap(([argName, argValue]) => {
+      const value = constValueNodePreferBlockString(argName, argValue);
+      if (value == null) return [];
+      return [
+        {
+          kind: Kind.ARGUMENT as const,
+          name: { kind: Kind.NAME as const, value: argName },
+          value,
+        },
+      ];
+    }),
+  }));
+  field.astNode = {
+    kind: Kind.FIELD_DEFINITION,
+    name: { kind: Kind.NAME, value: field.name },
+    type: { kind: Kind.NAMED_TYPE, name: { kind: Kind.NAME, value: 'String' } },
+    directives: directiveNodes,
+  };
+}
+
+function constValueNodePreferBlockString(argName: string, value: unknown): ConstValueNode | null {
+  if (value == null) return null;
+  if (typeof value === 'boolean') {
+    return { kind: Kind.BOOLEAN, value };
+  }
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    const asInt = Number.isInteger(value);
+    return {
+      kind: asInt ? Kind.INT : Kind.FLOAT,
+      value: String(value),
+    };
+  }
+  if (typeof value === 'string') {
+    // `@thrift__rpc(messageType:)` is an enum — print bare CALL/ONEWAY.
+    if (argName === 'messageType') {
+      return { kind: Kind.ENUM, value };
+    }
+    const multiline = value.includes('\n') || value.includes('\r');
+    return { kind: Kind.STRING, value, block: multiline };
+  }
+  if (Array.isArray(value)) {
+    return {
+      kind: Kind.LIST,
+      values: value
+        .map(item => constValueNodePreferBlockString('', item))
+        .filter((v): v is ConstValueNode => v != null),
+    };
+  }
+  if (typeof value === 'object') {
+    // Nested inputs e.g. `@connect(http: { POST, body })` / `errors: { message }`.
+    return {
+      kind: Kind.OBJECT,
+      fields: Object.entries(value as Record<string, unknown>).flatMap(([key, child]) => {
+        const childNode = constValueNodePreferBlockString(key, child);
+        if (childNode == null) return [];
+        return [
+          {
+            kind: Kind.OBJECT_FIELD as const,
+            name: { kind: Kind.NAME as const, value: key },
+            value: childNode,
+          },
+        ];
+      }),
+    };
+  }
+  return null;
 }
 
 function processComments(comments: Comment[]): string | undefined {
@@ -605,18 +692,6 @@ function processComments(comments: Comment[]): string | undefined {
     )
     .join('\n');
   return description.trim() === '' ? undefined : description;
-}
-
-/** Prefix mapping with IDL comments as `#` lines for humans reading SDL. */
-function withIdlHashComments(mapping: string, idlComment?: string): string {
-  if (!idlComment) {
-    return mapping;
-  }
-  const commentBlock = idlComment
-    .split(/\r?\n/)
-    .map(line => `# ${line}`.replace(/\s+$/, ''))
-    .join('\n');
-  return mapping ? `${commentBlock}\n${mapping}` : commentBlock;
 }
 
 interface GetGraphQLFunctionTypeOpts {

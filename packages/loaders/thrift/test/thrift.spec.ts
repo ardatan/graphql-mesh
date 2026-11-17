@@ -91,7 +91,7 @@ describe('thrift', () => {
     expect(sdl).toMatch(/union PostTweetResult/);
     expect(sdl).toMatch(/type PostTweetSuccess/);
     expect(sdl).toMatch(/messageType:\s*ONEWAY/);
-    expect(sdl).toMatch(/throws:\s*"TwitterUnavailable:\s*1/);
+    expect(sdl).toMatch(/throws:\s*"""[\s\S]*TwitterUnavailable:\s*1/);
     expect(sdl).not.toMatch(/@fieldTypeMap\(/);
     expect(sdl).not.toMatch(/@thrift__method\(/);
   });
