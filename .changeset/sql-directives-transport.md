@@ -39,9 +39,11 @@ PostGraphile runtime.
 loadSQLiteSubgraph('chinook', { db: 'chinook.db' })
 loadMySQLSubgraph('employees', { endpoint: 'mysql://…' })
 
-// after
-loadSqlSubgraph('chinook', { type: 'sqlite', db: 'chinook.db' })
-loadSqlSubgraph('employees', { type: 'mysql', endpoint: 'mysql://…' })
+// after — dialect from URI protocol (Bun-compatible); `type` optional override
+loadSqlSubgraph('chinook', { db: 'chinook.db' })
+loadSqlSubgraph('employees', { endpoint: 'mysql://…' })
+loadSqlSubgraph('shop', { endpoint: 'postgres://…' })
+loadSqlSubgraph('shop', { endpoint: 'localhost:5432/shop' }) // host-style → postgres
 ```
 
 Emitted GraphQL naming is PostGraphile-inspired. Old raw-table / String-where surfaces are gone —

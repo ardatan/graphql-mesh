@@ -9,7 +9,10 @@ import {
 import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLDate, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
 import { path as pathHelper } from '@graphql-mesh/cross-helpers';
-import type { SqlDialect } from '@graphql-mesh/transport-sql';
+import {
+  inferDialectFromConnectionString,
+  type SqlDialect,
+} from '@graphql-mesh/transport-sql';
 import { SqlDirective, SqlKindEnum, TransportDirective } from './directives.js';
 import { introspectMysql } from './introspect/mysql.js';
 import { introspectPostgres } from './introspect/postgres.js';
@@ -21,10 +24,15 @@ import { mapSqlTypeToGraphQL } from './type-map.js';
 const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
 
 export interface LoadSqlSubgraphOpts {
-  type: SqlDialect;
+  /**
+   * Dialect override. When omitted, inferred from the connection URI protocol
+   * (Bun SQL–compatible: `postgres://`, `mysql://` / `mysql2://` / `mariadb://`,
+   * `sqlite://` / `file:`, host-style → postgres, `*.db` → sqlite).
+   */
+  type?: SqlDialect;
   /** Sqlite file path (relative to cwd or absolute) */
   db?: string;
-  /** Connection URI for postgres/mysql (or sqlite file:) */
+  /** Connection URI for postgres/mysql/sqlite */
   connectionString?: string;
   /** Alias for connectionString (legacy mysql handler shape) */
   endpoint?: string;
@@ -39,8 +47,10 @@ export interface LoadSqlSubgraphOpts {
 
 export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadSqlSubgraphOpts) {
   const naming: SqlNaming = { ...createDefaultNaming(), ...opts.naming };
-  const meta = applyTableFieldsFilter(await introspect(opts), opts.tableFields);
-  const location = resolveLocation(opts);
+  const dialect = resolveDialect(opts);
+  const resolved: LoadSqlSubgraphOpts & { type: SqlDialect } = { ...opts, type: dialect };
+  const meta = applyTableFieldsFilter(await introspect(resolved), opts.tableFields);
+  const location = resolveLocation(resolved);
   const schemaComposer = new SchemaComposer();
 
   schemaComposer.add(GraphQLBigInt);
@@ -410,7 +420,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     kind: 'sql',
     location,
     options: {
-      dialect: opts.type,
+      dialect,
     },
   };
   extensions.directives.link = [
@@ -425,12 +435,14 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
   return schema;
 }
 
-async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
+async function introspect(
+  opts: LoadSqlSubgraphOpts & { type: SqlDialect },
+): Promise<SqlSchemaMeta> {
   switch (opts.type) {
     case 'sqlite': {
       const db = opts.db || opts.connectionString || opts.endpoint;
       if (!db) {
-        throw new Error(`loadSqlSubgraph type "sqlite" requires db or connectionString`);
+        throw new Error(`loadSqlSubgraph sqlite requires db or connectionString`);
       }
       return introspectSqlite({
         db,
@@ -443,7 +455,7 @@ async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
       const connectionString = opts.connectionString || opts.endpoint;
       if (!connectionString) {
         throw new Error(
-          `loadSqlSubgraph type "mysql" requires connectionString or endpoint (mysql://…)`,
+          `loadSqlSubgraph mysql requires connectionString or endpoint (mysql://…)`,
         );
       }
       return introspectMysql({
@@ -456,7 +468,7 @@ async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
       const connectionString = opts.connectionString || opts.endpoint;
       if (!connectionString) {
         throw new Error(
-          `loadSqlSubgraph type "postgres" requires connectionString or endpoint (postgres://…)`,
+          `loadSqlSubgraph postgres requires connectionString or endpoint (postgres://…)`,
         );
       }
       return introspectPostgres({
@@ -470,11 +482,33 @@ async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
   }
 }
 
+/**
+ * Resolve dialect: explicit `type` wins; otherwise Bun-style protocol detection
+ * from connectionString / endpoint / db.
+ */
+export function resolveDialect(opts: LoadSqlSubgraphOpts): SqlDialect {
+  if (opts.type) return opts.type;
+  const location = opts.connectionString || opts.endpoint || opts.db;
+  if (!location) {
+    throw new Error(
+      'loadSqlSubgraph requires type or a connection string (connectionString / endpoint / db)',
+    );
+  }
+  return inferDialectFromConnectionString(location);
+}
+
 function resolveLocation(opts: LoadSqlSubgraphOpts): string {
   if (opts.connectionString) return opts.connectionString;
   if (opts.endpoint) return opts.endpoint;
   if (opts.db) {
     const cwd = opts.cwd || process.cwd();
+    // Keep :memory: and already-schemed URIs as-is
+    if (
+      opts.db === ':memory:' ||
+      /^[a-z][a-z0-9+.-]*:/i.test(opts.db)
+    ) {
+      return opts.db;
+    }
     const abs = pathHelper.isAbsolute(opts.db) ? opts.db : pathHelper.join(cwd, opts.db);
     return `file:${abs}`;
   }
