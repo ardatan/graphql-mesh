@@ -468,6 +468,183 @@ export interface RewriteProtobufMappingBindsTypeScopedOptions {
   skipThisBinds?: boolean;
 }
 
+type NamedDefRange = {
+  name: string;
+  /** Index of content just inside the def's `{`. */
+  bodyStart: number;
+  /** Index of the closing `}` (exclusive for body content). */
+  bodyEnd: number;
+  /** Brace depth of binds inside the def body (usually 1). */
+  bodyDepth: number;
+};
+
+/**
+ * Leading `@Name { … }` ranges from loader-emitted hoisted message defs.
+ * Nested `@` inside a body is ignored (defs only appear at the mapping head).
+ */
+function parseNamedDefRanges(mapping: string): NamedDefRange[] {
+  const ranges: NamedDefRange[] = [];
+  let i = 0;
+  while (i < mapping.length && /\s/.test(mapping[i])) i++;
+  while (i < mapping.length && mapping[i] === '@') {
+    i++;
+    const nameStart = i;
+    while (i < mapping.length && /[A-Za-z0-9_]/.test(mapping[i])) i++;
+    const name = mapping.slice(nameStart, i);
+    if (!name) break;
+    while (i < mapping.length && /\s/.test(mapping[i])) i++;
+    if (mapping[i] !== '{') break;
+    i++;
+    const bodyStart = i;
+    let depth = 1;
+    while (i < mapping.length && depth > 0) {
+      const c = mapping[i];
+      if (c === '#') {
+        while (i < mapping.length && mapping[i] !== '\n') i++;
+        continue;
+      }
+      if (c === '"' || c === "'") {
+        const q = c;
+        i++;
+        while (i < mapping.length && mapping[i] !== q) {
+          if (mapping[i] === '\\') i++;
+          i++;
+        }
+        i++;
+        continue;
+      }
+      if (c === '{') depth++;
+      else if (c === '}') depth--;
+      if (depth > 0) i++;
+    }
+    const bodyEnd = i;
+    if (mapping[i] === '}') i++;
+    ranges.push({ name, bodyStart, bodyEnd, bodyDepth: 1 });
+    while (i < mapping.length && /\s/.test(mapping[i])) i++;
+  }
+  return ranges;
+}
+
+function namedDefAt(offset: number, ranges: NamedDefRange[]): NamedDefRange | undefined {
+  for (const r of ranges) {
+    if (offset >= r.bodyStart && offset < r.bodyEnd) {
+      return r;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Walk a bind path from `base` (or argTypes at root) to the GraphQL type at the tip.
+ * Used to learn each `@Name` owner from its `message@Name: path` reference site.
+ */
+function typeAtBindPath(
+  path: string,
+  base: GraphQLNamedType | null | undefined,
+  options: RewriteProtobufMappingBindsTypeScopedOptions,
+  fieldRenameMap: Map<string, Map<string, string>>,
+  argRenameLookup: Map<string, string>,
+  atMappingRoot: boolean,
+): GraphQLNamedType | null | undefined {
+  if (path.startsWith('$args')) {
+    const rest =
+      path === '$args'
+        ? []
+        : path.startsWith('$args.')
+          ? path.slice('$args.'.length).split('.')
+          : [];
+    if (!rest.length) return undefined;
+    let cur = resolveArgType(
+      options.argTypes,
+      argRenameLookup.get(rest[0]) ?? rest[0],
+      rest[0],
+      argRenameLookup,
+    );
+    for (let i = 1; i < rest.length; i++) {
+      cur = renameFieldSegment(cur, rest[i], fieldRenameMap).type;
+    }
+    return cur;
+  }
+  if (path.startsWith('$this')) {
+    const rest =
+      path === '$this'
+        ? []
+        : path.startsWith('$this.')
+          ? path.slice('$this.'.length).split('.')
+          : [];
+    let cur: GraphQLNamedType | null | undefined = options.rootType ?? base;
+    for (const seg of rest) {
+      cur = renameFieldSegment(cur, seg, fieldRenameMap).type;
+    }
+    return cur;
+  }
+  const left = path.includes('|') ? path.slice(0, path.indexOf('|')) : path;
+  const segs = left.split('.');
+  if (!segs.length || !segs[0]) return base;
+  if (atMappingRoot && options.argTypes?.size) {
+    const head = argRenameLookup.get(segs[0]) ?? segs[0];
+    if (
+      options.argTypes.has(head) ||
+      options.argTypes.has(segs[0]) ||
+      argRenameLookup.has(segs[0])
+    ) {
+      let cur = resolveArgType(options.argTypes, head, segs[0], argRenameLookup);
+      for (let i = 1; i < segs.length; i++) {
+        cur = renameFieldSegment(cur, segs[i], fieldRenameMap).type;
+      }
+      return cur;
+    }
+  }
+  let cur: GraphQLNamedType | null | undefined = base;
+  for (const seg of segs) {
+    cur = renameFieldSegment(cur, seg, fieldRenameMap).type;
+  }
+  return cur;
+}
+
+/**
+ * Map each hoisted `@Name` to the GraphQL type of the message it defines, inferred from
+ * `message@Name: path` reference sites (outside or inside other defs).
+ */
+function collectNamedDefOwners(
+  mapping: string,
+  ranges: NamedDefRange[],
+  fieldRenameMap: Map<string, Map<string, string>>,
+  options: RewriteProtobufMappingBindsTypeScopedOptions,
+  argRenameLookup: Map<string, string>,
+): Map<string, GraphQLNamedType> {
+  const owners = new Map<string, GraphQLNamedType>();
+  if (!ranges.length) return owners;
+  const refRe =
+    /message@([A-Za-z0-9_]+)\s*(?:>)?\s*\)\s*:\s*(\$this(?:\.[\w$]+)*(?:\|\$args(?:\.[\w$]+)*)?|\$args(?:\.[\w$]+)*|[\w$]+(?:\.[\w$]+)*(?:\|[\w$]+(?:\.[\w$]+)*)?)/g;
+  let progressed = true;
+  while (progressed) {
+    progressed = false;
+    refRe.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = refRe.exec(mapping))) {
+      const name = m[1];
+      if (owners.has(name)) continue;
+      if (isInsideHashComment(mapping, m.index)) continue;
+      const path = m[2];
+      const enclosing = namedDefAt(m.index, ranges);
+      let base: GraphQLNamedType | null | undefined;
+      if (enclosing) {
+        base = owners.get(enclosing.name);
+        if (!base) continue;
+      } else {
+        base = options.rootType ?? null;
+      }
+      const tip = typeAtBindPath(path, base, options, fieldRenameMap, argRenameLookup, !enclosing);
+      if (tip) {
+        owners.set(name, tip);
+        progressed = true;
+      }
+    }
+  }
+  return owners;
+}
+
 /**
  * Rewrite `@protobuf__rpc` binds using each segment’s owning GraphQL type.
  *
@@ -488,6 +665,15 @@ export function rewriteProtobufMappingBindsTypeScoped(
   ) {
     return mapping;
   }
+
+  const namedDefRanges = parseNamedDefRanges(mapping);
+  const namedDefOwners = collectNamedDefOwners(
+    mapping,
+    namedDefRanges,
+    fieldRenameMap,
+    options,
+    argRenameLookup,
+  );
 
   /** Type that owns relative binds at each brace depth (parent side when dual). */
   const typeAtDepth: Array<GraphQLNamedType | null | undefined> = [];
@@ -542,6 +728,12 @@ export function rewriteProtobufMappingBindsTypeScoped(
         break;
       }
       const entersBlock = whole[j] === '{';
+
+      const namedCtx = namedDefAt(offset, namedDefRanges);
+      const defOwner = namedCtx ? namedDefOwners.get(namedCtx.name) : undefined;
+      const ownersFallback = defOwner ?? options.rootType;
+      // Inside `@Name { … }`, do not inherit the outer mapping root through depth 0.
+      const inheritFloor = namedCtx ? namedCtx.bodyDepth : 0;
 
       // Dual `$this…|$args…`: leave text for the dual-bind pass; still record the child owner
       // from the `$this` side (parent path) with `$args` as fallback when parent lacks the field.
@@ -661,7 +853,13 @@ export function rewriteProtobufMappingBindsTypeScoped(
         const pipe = path.indexOf('|');
         const leftSegs = path.slice(0, pipe).split('.');
         const rightSegs = path.slice(pipe + 1).split('.');
-        const owners = resolveOwnersAtDepth(depth, typeAtDepth, altArgTypeAtDepth, options.rootType);
+        const owners = resolveOwnersAtDepth(
+          depth,
+          typeAtDepth,
+          altArgTypeAtDepth,
+          ownersFallback,
+          inheritFloor,
+        );
         const left = rewriteSegments(leftSegs, owners.cur, fieldRenameMap);
         const right = rewriteSegments(
           rightSegs,
@@ -674,8 +872,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
         }
         if (entersBlock) {
           typeAtDepth[depth + 1] = left.type ?? null;
-          altArgTypeAtDepth[depth + 1] =
-            owners.altCur != null ? (right.type ?? null) : undefined;
+          altArgTypeAtDepth[depth + 1] = owners.altCur != null ? (right.type ?? null) : undefined;
           argsRootAtDepth[depth + 1] = false;
         }
         return `${pre}${nextPath}`;
@@ -685,7 +882,9 @@ export function rewriteProtobufMappingBindsTypeScoped(
 
       // Depth-0 args mode, or nested relative binds under bare `$args { … }`
       // (including through unbound nested blocks that inherit the args-root marker).
+      // Named-def bodies are always relative field maps — never arg-root.
       if (
+        !namedCtx &&
         (hasArgTypes || argRenameLookup.size) &&
         (depth === 0 || isArgsRootAtDepth(depth, argsRootAtDepth, typeAtDepth))
       ) {
@@ -713,7 +912,14 @@ export function rewriteProtobufMappingBindsTypeScoped(
 
       // Unbound nested `{ … }` leaves typeAtDepth[depth] unset (undefined) — inherit the
       // enclosing owner. Explicit unknown owners are stored as `null` and must not inherit.
-      const owners = resolveOwnersAtDepth(depth, typeAtDepth, altArgTypeAtDepth, options.rootType);
+      // Hoisted `@Name` bodies use the GraphQL type of the referenced nested message.
+      const owners = resolveOwnersAtDepth(
+        depth,
+        typeAtDepth,
+        altArgTypeAtDepth,
+        ownersFallback,
+        inheritFloor,
+      );
       let cur = owners.cur;
       let altCur = owners.altCur;
       const rewritten: string[] = [];
@@ -766,6 +972,8 @@ function resolveOwnersAtDepth(
   typeAtDepth: Array<GraphQLNamedType | null | undefined>,
   altArgTypeAtDepth: Array<GraphQLNamedType | null | undefined>,
   rootType: GraphQLNamedType | null | undefined,
+  /** Lowest depth to inherit from (named-def bodies skip the outer mapping root). */
+  inheritFloor = 0,
 ): {
   cur: GraphQLNamedType | null | undefined;
   altCur: GraphQLNamedType | null | undefined;
@@ -773,7 +981,7 @@ function resolveOwnersAtDepth(
   let cur: GraphQLNamedType | null | undefined = typeAtDepth[depth];
   let altCur: GraphQLNamedType | null | undefined = altArgTypeAtDepth[depth];
   if (cur === undefined) {
-    for (let d = depth - 1; d >= 0; d--) {
+    for (let d = depth - 1; d >= inheritFloor; d--) {
       if (typeAtDepth[d] !== undefined) {
         cur = typeAtDepth[d];
         altCur = altArgTypeAtDepth[d];

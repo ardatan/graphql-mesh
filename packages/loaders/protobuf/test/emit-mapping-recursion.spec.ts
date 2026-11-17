@@ -53,6 +53,42 @@ describe('emitMapping cycle-aware message& refs', () => {
     expect(decodeMessage(fields, bytes)).toEqual({ left: { n: 1 }, right: { n: 2 } });
   });
 
+  it('disambiguates colliding @Name candidates with a numeric suffix', () => {
+    // Nested paths that sanitize to the same identifier (dots → `_`).
+    const colliding = {
+      nested: {
+        Root: {
+          nested: {
+            a: {
+              nested: {
+                b_c: {
+                  fields: { x: { type: 'int32', id: 1 } },
+                },
+              },
+            },
+            a_b: {
+              nested: {
+                c: {
+                  fields: { y: { type: 'int32', id: 1 } },
+                },
+              },
+            },
+          },
+          fields: {
+            left: { type: 'a.b_c', id: 1 },
+            right: { type: 'a_b.c', id: 2 },
+          },
+        },
+      },
+    } as INamespace;
+    const mapping = emitResponseSelection(colliding, [], 'Root');
+    const defNames = [...mapping.matchAll(/@([A-Za-z0-9_]+)\s*\{/g)].map(m => m[1]);
+    expect(defNames.length).toBe(2);
+    expect(new Set(defNames).size).toBe(2);
+    expect(defNames.some(n => /_\d+$/.test(n))).toBe(true);
+    expect(() => parseMapping(mapping)).not.toThrow();
+  });
+
   it('loader→decoder round-trips multiple recursion levels (child.child)', () => {
     const mapping = emitResponseSelection(rootJson, [], 'Node');
     const fields = parseMapping(mapping);

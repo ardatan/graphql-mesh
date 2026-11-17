@@ -1638,6 +1638,47 @@ describe('object-level @protobuf__rpc rename', () => {
 });
 
 describe('rewriteProtobufMappingBindsTypeScoped ownership', () => {
+  it('rewrites binds inside hoisted @Name defs against the nested message type', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(
+      /* GraphQL */ `
+        type Leaf {
+          n: Int!
+          year: Int!
+        }
+        type Branch {
+          left: Leaf
+          right: Leaf
+          year: Int!
+        }
+        type Query {
+          branch: Branch
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const fieldRenameMap = new Map<string, Map<string, string>>([
+      ['Leaf', new Map([['year', 'leafYear']])],
+      ['Branch', new Map([['year', 'branchYear']])],
+    ]);
+    // Loader-emitted shape: shared Leaf hoisted to @Leaf; binds in the def body must
+    // rename against Leaf, not fall back to Branch (rootType).
+    const mapping = `@Leaf {
+  1(int32): n
+  2(int64): year
+}
+1(message@Leaf): left
+2(message@Leaf): right
+3(int64): year`;
+    const out = rewriteProtobufMappingBindsTypeScoped(mapping, fieldRenameMap, {
+      rootType: schema.getType('Branch')!,
+    });
+    expect(out).toMatch(/@Leaf\s*\{[\s\S]*2\(int64\):\s*leafYear/);
+    expect(out).not.toMatch(/@Leaf\s*\{[\s\S]*2\(int64\):\s*branchYear/);
+    expect(out).toMatch(/3\(int64\):\s*branchYear/);
+    expect(out).toContain('1(message@Leaf): left');
+  });
+
   it('clears closed-block owners so unbound wrappers inherit the enclosing type', async () => {
     const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
     const schema = buildSchema(
@@ -1738,6 +1779,82 @@ describe('rewriteProtobufMappingBindsTypeScoped ownership', () => {
     // Sibling unbound block must inherit MovieInput after child closes.
     expect(out).toMatch(/3\(message\):\s*\{\s*1\(int64\):\s*publicationYear/);
     expect(out).not.toMatch(/3\(message\):\s*\{[^}]*childYear/);
+  });
+
+  it('rename transform rewrites nested fields inside loader-emitted @Name defs', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "dag", kind: "protobuf", location: "http://localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          branch: Branch!
+            @protobuf__rpc(
+              service: "Example"
+              method: "GetBranch"
+              selection: """
+              @Leaf {
+                1(int32): n
+                2(int64): year
+              }
+              1(message@Leaf): left
+              2(message@Leaf): right
+              3(int64): year
+              """
+            )
+        }
+
+        type Branch {
+          left: Leaf
+          right: Leaf
+          year: Int!
+        }
+
+        type Leaf {
+          n: Int!
+          year: Int!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'dag',
+        schema,
+        transforms: [
+          createRenameTransform({
+            fieldRenamer: ({ typeName, fieldName }) => {
+              if (typeName === 'Leaf' && fieldName === 'year') return 'leafYear';
+              if (typeName === 'Branch' && fieldName === 'year') return 'branchYear';
+              return fieldName;
+            },
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/@Leaf\s*\{[\s\S]*2\(int64\):\s*leafYear/);
+    expect(sdl).not.toMatch(/@Leaf\s*\{[\s\S]*2\(int64\):\s*branchYear/);
+    expect(sdl).toMatch(/3\(int64\):\s*branchYear/);
+    expect(sdl).toContain('leafYear:');
+    expect(sdl).toContain('branchYear:');
   });
 });
 

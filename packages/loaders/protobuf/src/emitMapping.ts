@@ -175,23 +175,20 @@ function ensureNamedDef(
   if (prior) {
     return prior.name;
   }
-  const name = defNameForTypeKey(nestedKey);
+  const taken = new Set([...state.completed.values()].map(def => def.name));
+  const baseName = defNameForTypeKey(nestedKey);
+  let name = baseName;
+  for (let n = 2; taken.has(name); n++) {
+    name = `${baseName}_${n}`;
+  }
   // Placeholder so a cycle reached while building this def can still message@ itself
   // if we ever choose that path; cycle handling above prefers message& on visited.
   state.completed.set(nestedKey, { name, body: '' });
-  const body = emitFieldsMappingInner(
-    rootJson,
-    nestedScope,
-    nestedType,
-    'relative',
-    '',
-    '  ',
-    {
-      visited: state.visited,
-      relativeFromDepth: nestedRelativeFrom,
-      completed: state.completed,
-    },
-  );
+  const body = emitFieldsMappingInner(rootJson, nestedScope, nestedType, 'relative', '', '  ', {
+    visited: state.visited,
+    relativeFromDepth: nestedRelativeFrom,
+    completed: state.completed,
+  });
   state.completed.set(nestedKey, { name, body });
   return name;
 }

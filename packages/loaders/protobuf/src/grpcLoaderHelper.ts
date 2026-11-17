@@ -556,11 +556,12 @@ export class GrpcLoaderHelper extends DisposableStack {
         }
         const serviceName = pathWithName.join('.') || objPath;
         if (method.requestStream) {
-          // Migration contract: client-streaming RPCs are not supported by the protobuf
-          // transport (would be silently sent as a single unary). Reject at load time.
-          throw new Error(
-            `Client-streaming gRPC method "${serviceName}.${methodName}" is not supported by @protobuf__rpc; use unary or server-streaming`,
+          // Client-streaming is unsupported (would be mis-sent as unary). Skip the method
+          // so the rest of the service still loads.
+          log.warn(
+            `Skipping client-streaming gRPC method "${serviceName}.${methodName}"; @protobuf__rpc supports unary and server-streaming only`,
           );
+          continue;
         }
         const argsMapping = method.requestType
           ? emitRequestBody(rootJson, pathWithName, method.requestType)

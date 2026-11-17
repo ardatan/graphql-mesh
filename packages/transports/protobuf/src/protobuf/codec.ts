@@ -195,8 +195,12 @@ function writeValue(
         chunks.push(bytes);
         return;
       }
-      default:
-        throw new Error(`Unsupported scalar ${type.name}`);
+      default: {
+        // All ProtoScalar cases are listed above; `default` is a runtime guard for
+        // hand-written mappings and narrows to `never` under --strict.
+        const scalarName = String((type as { name?: unknown }).name);
+        throw new Error(`Unsupported scalar ${scalarName}`);
+      }
     }
   }
   if (type.kind === 'enum') {
