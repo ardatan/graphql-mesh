@@ -182,6 +182,18 @@ describe('protobuf mapping + codec', () => {
     expect(decodeMessage(fields, bytes)).toEqual({ child: { a: 1, b: 2 } });
   });
 
+  it('concatenates repeated fields when merging singular message occurrences', () => {
+    const fields = parseMapping(`
+      1(message): child {
+        1(repeated int32): values
+      }
+    `);
+    // First occurrence encodes values=[1]; second is an empty child message.
+    // Empty repeated arrays from the later decode must not wipe earlier values.
+    const bytes = Uint8Array.from([0x0a, 0x02, 0x08, 0x01, 0x0a, 0x00]);
+    expect(decodeMessage(fields, bytes)).toEqual({ child: { values: [1] } });
+  });
+
   it('last encoded scalar wins when merging singular message occurrences', () => {
     const fields = parseMapping(`
       1(message): child {
@@ -268,6 +280,40 @@ describe('protobuf mapping + codec', () => {
     const fields = parseMapping(`1(enum{UNKNOWN=-1,OK=0}): status`);
     const bytes = encodeMessage(fields, { status: 'UNKNOWN' });
     expect(decodeMessage(fields, bytes).status).toBe('UNKNOWN');
+  });
+
+  it('relative dual parentYear|requestYear: encodes from parent when present', () => {
+    const fields = parseMapping(`
+      1(message): $this.input {
+        2(int64): parentYear|requestYear
+      }
+    `);
+    const bytes = encodeMessage(
+      fields,
+      { input: { requestYear: 1999 } },
+      { input: { requestYear: 1999 } },
+      { input: { parentYear: 2024 } },
+    );
+    expect(decodeMessage(parseMapping(`1(message): input { 2(int64): year }`), bytes)).toEqual({
+      input: { year: 2024 },
+    });
+  });
+
+  it('relative dual parentYear|requestYear: encodes from args when parent path missing', () => {
+    const fields = parseMapping(`
+      1(message): $this.input {
+        2(int64): parentYear|requestYear
+      }
+    `);
+    const bytes = encodeMessage(
+      fields,
+      { input: { requestYear: 1999 } },
+      { input: { requestYear: 1999 } },
+      { id: 'movie-1' },
+    );
+    expect(decodeMessage(parseMapping(`1(message): input { 2(int64): year }`), bytes)).toEqual({
+      input: { year: 1999 },
+    });
   });
 
   it('dual $this.parent|$args.arg: prefers parent id over args.requestId', () => {

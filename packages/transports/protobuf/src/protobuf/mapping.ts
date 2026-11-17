@@ -392,6 +392,18 @@ export function resolveBind(
   if (bind === '$args') {
     return args;
   }
+  // Relative dual `parentYear|requestYear`: try each key on the local object so nested
+  // renames stay valid when `$this` falls back from parent to args after diverging renames.
+  const relDual = bind.indexOf('|');
+  if (relDual > 0 && !bind.includes('$')) {
+    const first = bind.slice(0, relDual);
+    const second = bind.slice(relDual + 1);
+    const fromFirst = getPath(args, first);
+    if (fromFirst !== undefined) {
+      return fromFirst;
+    }
+    return getPath(args, second);
+  }
   return getPath(args, bind);
 }
 

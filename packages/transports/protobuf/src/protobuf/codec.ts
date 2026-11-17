@@ -398,6 +398,9 @@ function mergeMessage(a: Record<string, any>, b: Record<string, any>): Record<st
   for (const k of Object.keys(b)) {
     if (isMergeableObject(out[k]) && isMergeableObject(b[k])) {
       out[k] = mergeMessage(out[k], b[k]);
+    } else if (Array.isArray(out[k]) && Array.isArray(b[k])) {
+      // Singular-message merges concatenate repeated fields (empty later arrays must not wipe).
+      out[k] = out[k].concat(b[k]);
     } else {
       out[k] = b[k];
     }

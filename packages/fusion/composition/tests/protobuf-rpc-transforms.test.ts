@@ -670,7 +670,7 @@ describe('rewriteProtobufMappingBinds', () => {
     expect(out).toMatch(/2\(int64\):\s*publicationYear/);
   });
 
-  it('parent-backed $this.input nested renames use parent field type, not arg type', async () => {
+  it('parent-backed $this.input nested renames dualize when arg field renames diverge', async () => {
     const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
     const schema = buildSchema(/* GraphQL */ `
       input ParentInput {
@@ -699,8 +699,8 @@ describe('rewriteProtobufMappingBinds', () => {
       },
     );
     expect(out).toContain('$this.input');
-    expect(out).toMatch(/2\(int64\):\s*parentYear/);
-    expect(out).not.toMatch(/requestYear/);
+    // Both keys so encode works when resolveBind falls back from parent to args.
+    expect(out).toMatch(/2\(int64\):\s*parentYear\|requestYear/);
   });
 
   it('falls back to arg type when parent has no matching $this path', async () => {
@@ -766,9 +766,8 @@ describe('rewriteProtobufMappingBinds', () => {
       },
     );
     expect(out).toContain('$this.input|$args.request');
-    expect(out).toMatch(/2\(int64\):\s*parentYear/);
+    expect(out).toMatch(/2\(int64\):\s*parentYear\|requestYear/);
     expect(out).not.toMatch(/movieYear/);
-    expect(out).not.toMatch(/requestYear/);
   });
 
   it('consecutive renames: dual $this|$args nested year keeps child owner', () => {
@@ -850,7 +849,7 @@ describe('rewriteProtobufMappingBinds', () => {
     expect(sdl).not.toMatch(/\$this\.input\|\$args\.request\s*\{[^}]*movieYear/s);
   });
 
-  it('object field: $this.input nested year uses parent type when arg diverges', () => {
+  it('object field: $this.input nested year dualizes when arg diverges', () => {
     const schema = buildSchema(
       /* GraphQL */ `
         directive @transport(
@@ -919,9 +918,8 @@ describe('rewriteProtobufMappingBinds', () => {
       },
     ]);
     const sdl = print(annotated[0].typeDefs);
-    // Mapping must rename via ParentInput (parentYear), not RequestInput (requestYear).
-    expect(sdl).toMatch(/\$this\.input\s*\{[^}]*parentYear/s);
-    expect(sdl).not.toMatch(/\$this\.input\s*\{[^}]*requestYear/s);
+    // Dual nested names when parent and arg field renames diverge.
+    expect(sdl).toMatch(/\$this\.input\s*\{[^}]*parentYear\|requestYear/s);
   });
 
   it('applies protobuf $args renames once (a→b, b→c does not chain)', () => {

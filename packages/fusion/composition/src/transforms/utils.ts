@@ -459,9 +459,14 @@ export function rewriteProtobufMappingBindsTypeScoped(
     return mapping;
   }
 
-  /** Type that owns relative binds at each brace depth. */
+  /** Type that owns relative binds at each brace depth (parent side when dual). */
   const typeAtDepth: Array<GraphQLNamedType | null | undefined> = [];
   typeAtDepth[0] = options.rootType ?? null;
+  /**
+   * Argument-side owner at a depth entered via `$this…` when parent and arg nested renames
+   * can diverge. Relative binds emit `parentName|argName` when the two renames differ.
+   */
+  const altArgTypeAtDepth: Array<GraphQLNamedType | null | undefined> = [];
   /**
    * When true, relative binds at this depth are GraphQL argument names owned by bare `$args { }`.
    * Cleared with `typeAtDepth` when blocks close.
@@ -470,10 +475,10 @@ export function rewriteProtobufMappingBindsTypeScoped(
   /** End offset of the previous bind match — brace walk clears stale owners between binds. */
   let scannedTo = 0;
 
-  // Dual `$this.x|$args.y` must match as one token so nested `{ … }` records the child owner
-  // (otherwise `|` stops the path match and nested binds inherit the parent type).
+  // Dual `$this.x|$args.y` and relative `a|b` must match as one token so nested `{ … }`
+  // records the child owner (otherwise `|` stops the path match).
   return mapping.replace(
-    /(\)\s*:\s*)(\$this(?:\.[\w$]+)*(?:\|\$args(?:\.[\w$]+)*)?|\$args(?:\.[\w$]+)*|[\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
+    /(\)\s*:\s*)(\$this(?:\.[\w$]+)*(?:\|\$args(?:\.[\w$]+)*)?|\$args(?:\.[\w$]+)*|[\w$]+(?:\.[\w$]+)*(?:\|[\w$]+(?:\.[\w$]+)*)?)(?=[\s{}#]|$)/g,
     (match, pre: string, path: string, offset: number, whole: string) => {
       // `# 2(int64): ignored }` must not count as a bind — matching it advances scannedTo past
       // `#`, so a later brace walk would see the commented `}` as real and clear owners.
@@ -481,7 +486,14 @@ export function rewriteProtobufMappingBindsTypeScoped(
         return match;
       }
       // Pop owners when blocks close so a later unbound `{ … }` does not keep a sibling's type.
-      clearOwnersClosedBetween(whole, scannedTo, offset, typeAtDepth, argsRootAtDepth);
+      clearOwnersClosedBetween(
+        whole,
+        scannedTo,
+        offset,
+        typeAtDepth,
+        argsRootAtDepth,
+        altArgTypeAtDepth,
+      );
       scannedTo = offset + match.length;
 
       const depth = braceDepthAt(whole, offset);
@@ -519,7 +531,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
             : argsPath.startsWith('$args.')
               ? argsPath.slice('$args.'.length).split('.')
               : [];
-        const { owner } = resolveThisPathOwner(
+        const resolved = resolveThisPathOwner(
           thisRest,
           argsRest,
           options,
@@ -528,8 +540,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
           hasArgTypes,
         );
         if (entersBlock) {
-          typeAtDepth[depth + 1] = owner ?? null;
-          argsRootAtDepth[depth + 1] = false;
+          recordThisBlockOwners(depth, resolved, typeAtDepth, altArgTypeAtDepth, argsRootAtDepth);
         }
         return `${pre}${path}`;
       }
@@ -562,6 +573,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
         }
         if (entersBlock) {
           typeAtDepth[depth + 1] = cur ?? null;
+          altArgTypeAtDepth[depth + 1] = undefined;
           argsRootAtDepth[depth + 1] = rest.length === 0;
         }
         return `${pre}${rewritten.join('.')}`;
@@ -569,6 +581,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
 
       // `$this.<field>` entity binds: parent owner (`rootType`) when the parent path exists;
       // argument type when the parent has no matching field (or no parent at all).
+      // When both parent and arg owners exist, nested relative binds may emit dual names.
       if (path.startsWith('$this')) {
         const rest =
           path === '$this'
@@ -585,36 +598,36 @@ export function rewriteProtobufMappingBindsTypeScoped(
           hasArgTypes,
         );
         const usedArgFallback = resolved.usedArgFallback;
-        let cur: GraphQLNamedType | null | undefined = resolved.owner;
         if (options.skipThisBinds) {
-          // Leave `$this` path text for the dual-bind pass; owner already walked above.
+          // Leave `$this` path text for the dual-bind pass; record dual owners when needed.
           if (entersBlock) {
-            typeAtDepth[depth + 1] = cur ?? null;
-            argsRootAtDepth[depth + 1] = false;
+            recordThisBlockOwners(depth, resolved, typeAtDepth, altArgTypeAtDepth, argsRootAtDepth);
           }
           return `${pre}${path}`;
         }
         // Rewrite `$this` segments only when walking the parent field map (not arg fallback).
-        const rewritten = ['$this'];
         if (usedArgFallback) {
-          // Parent lacked the path — keep `$this` text; nested relative binds use arg owner.
           if (entersBlock) {
-            typeAtDepth[depth + 1] = cur ?? null;
-            argsRootAtDepth[depth + 1] = false;
+            recordThisBlockOwners(depth, resolved, typeAtDepth, altArgTypeAtDepth, argsRootAtDepth);
           }
           return `${pre}${path}`;
         }
-        cur = options.rootType;
+        const rewritten = ['$this'];
+        let cur: GraphQLNamedType | null | undefined = options.rootType;
         for (const seg of rest) {
           const stepped = renameFieldSegment(cur, seg, fieldRenameMap);
           rewritten.push(stepped.name);
           cur = stepped.type;
         }
         if (entersBlock) {
-          typeAtDepth[depth + 1] = cur ?? null;
-          argsRootAtDepth[depth + 1] = false;
+          recordThisBlockOwners(depth, resolved, typeAtDepth, altArgTypeAtDepth, argsRootAtDepth);
         }
         return `${pre}${rewritten.join('.')}`;
+      }
+
+      // Already-emitted relative dual `parentYear|requestYear` — leave intact.
+      if (path.includes('|') && !path.includes('$')) {
+        return `${pre}${path}`;
       }
 
       const segments = path.split('.');
@@ -637,6 +650,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
         }
         if (entersBlock) {
           typeAtDepth[depth + 1] = cur ?? null;
+          altArgTypeAtDepth[depth + 1] = undefined;
           argsRootAtDepth[depth + 1] = false;
         }
         return `${pre}${rewritten.join('.')}`;
@@ -645,10 +659,12 @@ export function rewriteProtobufMappingBindsTypeScoped(
       // Unbound nested `{ … }` leaves typeAtDepth[depth] unset (undefined) — inherit the
       // enclosing owner. Explicit unknown owners are stored as `null` and must not inherit.
       let cur: GraphQLNamedType | null | undefined = typeAtDepth[depth];
+      let altCur: GraphQLNamedType | null | undefined = altArgTypeAtDepth[depth];
       if (cur === undefined) {
         for (let d = depth - 1; d >= 0; d--) {
           if (typeAtDepth[d] !== undefined) {
             cur = typeAtDepth[d];
+            altCur = altArgTypeAtDepth[d];
             break;
           }
         }
@@ -657,16 +673,31 @@ export function rewriteProtobufMappingBindsTypeScoped(
         cur = options.rootType;
       }
       const rewritten: string[] = [];
+      const altRewritten: string[] = [];
+      let walkAlt = altCur != null;
       for (const seg of segments) {
         const stepped = renameFieldSegment(cur, seg, fieldRenameMap);
         rewritten.push(stepped.name);
         cur = stepped.type;
+        if (walkAlt) {
+          const altStepped = renameFieldSegment(altCur, seg, fieldRenameMap);
+          altRewritten.push(altStepped.name);
+          altCur = altStepped.type;
+        }
+      }
+      let nextPath = rewritten.join('.');
+      if (walkAlt && altRewritten.length === rewritten.length) {
+        const altPath = altRewritten.join('.');
+        if (altPath !== nextPath) {
+          nextPath = `${nextPath}|${altPath}`;
+        }
       }
       if (entersBlock) {
         typeAtDepth[depth + 1] = cur ?? null;
+        altArgTypeAtDepth[depth + 1] = walkAlt ? (altCur ?? null) : undefined;
         argsRootAtDepth[depth + 1] = false;
       }
-      return `${pre}${rewritten.join('.')}`;
+      return `${pre}${nextPath}`;
     },
   );
 }
@@ -682,6 +713,7 @@ function clearOwnersClosedBetween(
   to: number,
   typeAtDepth: Array<GraphQLNamedType | null | undefined>,
   argsRootAtDepth?: boolean[],
+  altArgTypeAtDepth?: Array<GraphQLNamedType | null | undefined>,
 ): void {
   let depth = braceDepthAt(source, from);
   for (let i = from; i < to; i++) {
@@ -697,10 +729,16 @@ function clearOwnersClosedBetween(
       if (argsRootAtDepth) {
         argsRootAtDepth[depth] = false;
       }
+      if (altArgTypeAtDepth) {
+        altArgTypeAtDepth[depth] = undefined;
+      }
       for (let d = depth + 1; d < typeAtDepth.length; d++) {
         typeAtDepth[d] = undefined;
         if (argsRootAtDepth) {
           argsRootAtDepth[d] = false;
+        }
+        if (altArgTypeAtDepth) {
+          altArgTypeAtDepth[d] = undefined;
         }
       }
       depth = Math.max(0, depth - 1);
@@ -708,10 +746,30 @@ function clearOwnersClosedBetween(
   }
 }
 
+type ThisPathOwners = {
+  owner: GraphQLNamedType | null | undefined;
+  /** Argument-side child type when parent path also exists (for dual nested renames). */
+  altArgOwner?: GraphQLNamedType | null;
+  usedArgFallback: boolean;
+};
+
+function recordThisBlockOwners(
+  depth: number,
+  resolved: ThisPathOwners,
+  typeAtDepth: Array<GraphQLNamedType | null | undefined>,
+  altArgTypeAtDepth: Array<GraphQLNamedType | null | undefined>,
+  argsRootAtDepth: boolean[],
+): void {
+  typeAtDepth[depth + 1] = resolved.owner ?? null;
+  altArgTypeAtDepth[depth + 1] = resolved.altArgOwner;
+  argsRootAtDepth[depth + 1] = false;
+}
+
 /**
- * Resolve the GraphQL type that owns nested relative binds under a `$this…` path.
+ * Resolve owners for nested relative binds under a `$this…` path.
  * Prefer the parent (`rootType`) when every segment exists on that type; otherwise fall
- * back to the argument type (using `argsRest` for dual `$this.x|$args.y` heads).
+ * back to the argument type. When the parent path exists *and* an arg type is available,
+ * also return `altArgOwner` so nested renames can emit `parentYear|requestYear`.
  */
 function resolveThisPathOwner(
   thisRest: string[],
@@ -720,10 +778,19 @@ function resolveThisPathOwner(
   fieldRenameMap: Map<string, Map<string, string>>,
   argRenameLookup: Map<string, string>,
   hasArgTypes: boolean,
-): { owner: GraphQLNamedType | null | undefined; usedArgFallback: boolean } {
+): ThisPathOwners {
+  const argOwner =
+    hasArgTypes && argsRest.length
+      ? walkArgOwner(argsRest, options.argTypes, argRenameLookup, fieldRenameMap)
+      : undefined;
+
   if (options.rootType) {
     if (thisRest.length === 0) {
-      return { owner: options.rootType, usedArgFallback: false };
+      return {
+        owner: options.rootType,
+        altArgOwner: argOwner,
+        usedArgFallback: false,
+      };
     }
     let cur: GraphQLNamedType | null | undefined = options.rootType;
     let parentOk = true;
@@ -735,22 +802,36 @@ function resolveThisPathOwner(
       cur = renameFieldSegment(cur, seg, fieldRenameMap).type;
     }
     if (parentOk) {
-      return { owner: cur, usedArgFallback: false };
+      return {
+        owner: cur,
+        // Only dualize nested renames when the arg owner is a distinct type.
+        altArgOwner: argOwner && argOwner !== cur ? argOwner : undefined,
+        usedArgFallback: false,
+      };
     }
   }
-  if (hasArgTypes && argsRest.length) {
-    let cur: GraphQLNamedType | null | undefined = resolveArgType(
-      options.argTypes,
-      argRenameLookup.get(argsRest[0]) ?? argsRest[0],
-      argsRest[0],
-      argRenameLookup,
-    );
-    for (let i = 1; i < argsRest.length; i++) {
-      cur = renameFieldSegment(cur, argsRest[i], fieldRenameMap).type;
-    }
-    return { owner: cur, usedArgFallback: true };
+  if (argOwner !== undefined) {
+    return { owner: argOwner, usedArgFallback: true };
   }
   return { owner: null, usedArgFallback: false };
+}
+
+function walkArgOwner(
+  argsRest: string[],
+  argTypes: Map<string, GraphQLNamedType> | undefined,
+  argRenameLookup: Map<string, string>,
+  fieldRenameMap: Map<string, Map<string, string>>,
+): GraphQLNamedType | null | undefined {
+  let cur: GraphQLNamedType | null | undefined = resolveArgType(
+    argTypes,
+    argRenameLookup.get(argsRest[0]) ?? argsRest[0],
+    argsRest[0],
+    argRenameLookup,
+  );
+  for (let i = 1; i < argsRest.length; i++) {
+    cur = renameFieldSegment(cur, argsRest[i], fieldRenameMap).type;
+  }
+  return cur;
 }
 
 function ownerHasField(
