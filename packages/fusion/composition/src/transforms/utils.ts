@@ -470,8 +470,10 @@ export function rewriteProtobufMappingBindsTypeScoped(
   /** End offset of the previous bind match — brace walk clears stale owners between binds. */
   let scannedTo = 0;
 
+  // Dual `$this.x|$args.y` must match as one token so nested `{ … }` records the child owner
+  // (otherwise `|` stops the path match and nested binds inherit the parent type).
   return mapping.replace(
-    /(\)\s*:\s*)([\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
+    /(\)\s*:\s*)(\$this(?:\.[\w$]+)*(?:\|\$args(?:\.[\w$]+)*)?|\$args(?:\.[\w$]+)*|[\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
     (match, pre: string, path: string, offset: number, whole: string) => {
       // `# 2(int64): ignored }` must not count as a bind — matching it advances scannedTo past
       // `#`, so a later brace walk would see the commented `}` as real and clear owners.
@@ -498,6 +500,39 @@ export function rewriteProtobufMappingBindsTypeScoped(
         break;
       }
       const entersBlock = whole[j] === '{';
+
+      // Dual `$this…|$args…`: leave text for the dual-bind pass; still record the child owner
+      // from the `$this` side (parent path) with `$args` as fallback when parent lacks the field.
+      const dualPipe = path.indexOf('|$args');
+      if (path.startsWith('$this') && dualPipe !== -1) {
+        const thisPath = path.slice(0, dualPipe);
+        const argsPath = path.slice(dualPipe + 1); // `$args…`
+        const thisRest =
+          thisPath === '$this'
+            ? []
+            : thisPath.startsWith('$this.')
+              ? thisPath.slice('$this.'.length).split('.')
+              : [];
+        const argsRest =
+          argsPath === '$args'
+            ? []
+            : argsPath.startsWith('$args.')
+              ? argsPath.slice('$args.'.length).split('.')
+              : [];
+        const { owner } = resolveThisPathOwner(
+          thisRest,
+          argsRest,
+          options,
+          fieldRenameMap,
+          argRenameLookup,
+          hasArgTypes,
+        );
+        if (entersBlock) {
+          typeAtDepth[depth + 1] = owner ?? null;
+          argsRootAtDepth[depth + 1] = false;
+        }
+        return `${pre}${path}`;
+      }
 
       // `$args.input { … }` / `$args.input.movie`: keep `$args` prefix; descend into
       // arg/input types so nested relative binds (e.g. `year`) rename against the owner.
@@ -532,9 +567,8 @@ export function rewriteProtobufMappingBindsTypeScoped(
         return `${pre}${rewritten.join('.')}`;
       }
 
-      // `$this.<field>` entity binds: parent owner (`rootType`) first; arg type only as
-      // fallback when there is no parent (root fields). Keep those lookup paths separate so
-      // parent-backed nested renames never pick the argument's field map.
+      // `$this.<field>` entity binds: parent owner (`rootType`) when the parent path exists;
+      // argument type when the parent has no matching field (or no parent at all).
       if (path.startsWith('$this')) {
         const rest =
           path === '$this'
@@ -542,37 +576,34 @@ export function rewriteProtobufMappingBindsTypeScoped(
             : path.startsWith('$this.')
               ? path.slice('$this.'.length).split('.')
               : [];
-        let cur: GraphQLNamedType | null | undefined;
-        let usedArgFallback = false;
-        if (options.rootType) {
-          cur = options.rootType;
-        } else if (hasArgTypes && rest.length) {
-          usedArgFallback = true;
-          cur = resolveArgType(
-            options.argTypes,
-            argRenameLookup.get(rest[0]) ?? rest[0],
-            rest[0],
-            argRenameLookup,
-          );
-        } else {
-          cur = null;
-        }
+        const resolved = resolveThisPathOwner(
+          rest,
+          rest,
+          options,
+          fieldRenameMap,
+          argRenameLookup,
+          hasArgTypes,
+        );
+        const usedArgFallback = resolved.usedArgFallback;
+        let cur: GraphQLNamedType | null | undefined = resolved.owner;
         if (options.skipThisBinds) {
-          // Leave `$this` path text for the dual-bind pass; still walk for block owner.
-          if (rest.length && cur != null) {
-            const start = usedArgFallback ? 1 : 0;
-            for (let i = start; i < rest.length; i++) {
-              const stepped = renameFieldSegment(cur, rest[i], fieldRenameMap);
-              cur = stepped.type;
-            }
-          }
+          // Leave `$this` path text for the dual-bind pass; owner already walked above.
           if (entersBlock) {
             typeAtDepth[depth + 1] = cur ?? null;
             argsRootAtDepth[depth + 1] = false;
           }
           return `${pre}${path}`;
         }
+        // Rewrite `$this` segments only when walking the parent field map (not arg fallback).
         const rewritten = ['$this'];
+        if (usedArgFallback) {
+          // Parent lacked the path — keep `$this` text; nested relative binds use arg owner.
+          if (entersBlock) {
+            typeAtDepth[depth + 1] = cur ?? null;
+            argsRootAtDepth[depth + 1] = false;
+          }
+          return `${pre}${path}`;
+        }
         cur = options.rootType;
         for (const seg of rest) {
           const stepped = renameFieldSegment(cur, seg, fieldRenameMap);
@@ -675,6 +706,65 @@ function clearOwnersClosedBetween(
       depth = Math.max(0, depth - 1);
     }
   }
+}
+
+/**
+ * Resolve the GraphQL type that owns nested relative binds under a `$this…` path.
+ * Prefer the parent (`rootType`) when every segment exists on that type; otherwise fall
+ * back to the argument type (using `argsRest` for dual `$this.x|$args.y` heads).
+ */
+function resolveThisPathOwner(
+  thisRest: string[],
+  argsRest: string[],
+  options: RewriteProtobufMappingBindsTypeScopedOptions,
+  fieldRenameMap: Map<string, Map<string, string>>,
+  argRenameLookup: Map<string, string>,
+  hasArgTypes: boolean,
+): { owner: GraphQLNamedType | null | undefined; usedArgFallback: boolean } {
+  if (options.rootType) {
+    if (thisRest.length === 0) {
+      return { owner: options.rootType, usedArgFallback: false };
+    }
+    let cur: GraphQLNamedType | null | undefined = options.rootType;
+    let parentOk = true;
+    for (const seg of thisRest) {
+      if (!ownerHasField(cur, seg, fieldRenameMap)) {
+        parentOk = false;
+        break;
+      }
+      cur = renameFieldSegment(cur, seg, fieldRenameMap).type;
+    }
+    if (parentOk) {
+      return { owner: cur, usedArgFallback: false };
+    }
+  }
+  if (hasArgTypes && argsRest.length) {
+    let cur: GraphQLNamedType | null | undefined = resolveArgType(
+      options.argTypes,
+      argRenameLookup.get(argsRest[0]) ?? argsRest[0],
+      argsRest[0],
+      argRenameLookup,
+    );
+    for (let i = 1; i < argsRest.length; i++) {
+      cur = renameFieldSegment(cur, argsRest[i], fieldRenameMap).type;
+    }
+    return { owner: cur, usedArgFallback: true };
+  }
+  return { owner: null, usedArgFallback: false };
+}
+
+function ownerHasField(
+  owner: GraphQLNamedType | null | undefined,
+  oldName: string,
+  fieldRenameMap: Map<string, Map<string, string>>,
+): boolean {
+  if (!owner || (!isObjectType(owner) && !isInterfaceType(owner) && !isInputObjectType(owner))) {
+    return false;
+  }
+  const renames = fieldRenameMap.get(owner.name);
+  const nextName = renames?.get(oldName) ?? oldName;
+  const fields = owner.getFields();
+  return Boolean(fields[nextName] ?? fields[oldName]);
 }
 
 /**

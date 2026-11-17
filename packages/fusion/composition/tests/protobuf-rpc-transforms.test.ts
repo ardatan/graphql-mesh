@@ -703,6 +703,153 @@ describe('rewriteProtobufMappingBinds', () => {
     expect(out).not.toMatch(/requestYear/);
   });
 
+  it('falls back to arg type when parent has no matching $this path', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(/* GraphQL */ `
+      input RequestInput {
+        year: Int
+      }
+      type Movie {
+        id: ID
+        byYear(input: RequestInput): String
+      }
+    `);
+    const movie = schema.getType('Movie')!;
+    const requestInput = schema.getType('RequestInput')!;
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      '1(message): $this.input {\n  2(int64): year\n}',
+      new Map([
+        ['Movie', new Map([['year', 'movieYear']])],
+        ['RequestInput', new Map([['year', 'requestYear']])],
+      ]),
+      {
+        rootType: movie,
+        argTypes: new Map([['input', requestInput]]),
+        skipThisBinds: true,
+      },
+    );
+    expect(out).toContain('$this.input');
+    expect(out).toMatch(/2\(int64\):\s*requestYear/);
+    expect(out).not.toMatch(/movieYear/);
+  });
+
+  it('dual $this|$args block records child owner (consecutive transform safe)', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(/* GraphQL */ `
+      input ParentInput {
+        year: Int
+      }
+      input RequestInput {
+        year: Int
+      }
+      type Movie {
+        year: Int
+        input: ParentInput
+        byYear(request: RequestInput): String
+      }
+    `);
+    const movie = schema.getType('Movie')!;
+    const requestInput = schema.getType('RequestInput')!;
+    // After an earlier arg rename, dual bind is already present; a later Movie.year rename
+    // must not rewrite the nested input.year via inherited Movie ownership.
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      '1(message): $this.input|$args.request {\n  2(int64): year\n}',
+      new Map([
+        ['Movie', new Map([['year', 'movieYear']])],
+        ['ParentInput', new Map([['year', 'parentYear']])],
+        ['RequestInput', new Map([['year', 'requestYear']])],
+      ]),
+      {
+        rootType: movie,
+        argTypes: new Map([['request', requestInput]]),
+        skipThisBinds: true,
+      },
+    );
+    expect(out).toContain('$this.input|$args.request');
+    expect(out).toMatch(/2\(int64\):\s*parentYear/);
+    expect(out).not.toMatch(/movieYear/);
+    expect(out).not.toMatch(/requestYear/);
+  });
+
+  it('consecutive renames: dual $this|$args nested year keeps child owner', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "movies", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        input ParentInput {
+          year: Int
+        }
+        input RequestInput {
+          year: Int
+        }
+
+        type Movie {
+          year: Int
+          input: ParentInput
+          byYear(input: RequestInput): String!
+            @protobuf__rpc(
+              service: "Movies"
+              method: "ByYear"
+              args: """
+              1(message): $this.input {
+                2(int64): year
+              }
+              """
+              selection: """
+              1(string): ok
+              """
+            )
+        }
+
+        type Query {
+          movie: Movie
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    // First pass: arg rename input→request produces dual $this.input|$args.request.
+    // Second pass: Movie.year→movieYear must not rewrite nested ParentInput.year.
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'movies',
+        schema,
+        transforms: [
+          createRenameTransform({
+            argRenamer: ({ argName }) => (argName === 'input' ? 'request' : argName),
+          }),
+          createRenameTransform({
+            fieldRenamer: ({ typeName, fieldName }) => {
+              if (typeName === 'Movie' && fieldName === 'year') return 'movieYear';
+              if (typeName === 'ParentInput' && fieldName === 'year') return 'parentYear';
+              return fieldName;
+            },
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/\$this\.input\|\$args\.request\s*\{[^}]*parentYear/s);
+    expect(sdl).not.toMatch(/\$this\.input\|\$args\.request\s*\{[^}]*movieYear/s);
+  });
+
   it('object field: $this.input nested year uses parent type when arg diverges', () => {
     const schema = buildSchema(
       /* GraphQL */ `
