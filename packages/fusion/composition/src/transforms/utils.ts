@@ -1,3 +1,11 @@
+import {
+  getNamedType,
+  isInputObjectType,
+  isInterfaceType,
+  isObjectType,
+  type GraphQLNamedType,
+} from 'graphql';
+
 export class TransformValidationError extends Error {
   constructor(message: string) {
     super(message);
@@ -183,6 +191,104 @@ function braceDepthAt(source: string, index: number): number {
     else if (c === '}') depth = Math.max(0, depth - 1);
   }
   return depth;
+}
+
+export interface RewriteProtobufMappingBindsTypeScopedOptions {
+  /**
+   * GraphQL type for relative binds at brace depth 0 (selection return type).
+   * Omit when rewriting request `args:` with `argTypes` instead.
+   */
+  rootType?: GraphQLNamedType | null;
+  /**
+   * Request `args:` mode: depth-0 path heads are argument names (not field-renamed).
+   * Values are the named GraphQL types of those arguments for descending into nested binds.
+   */
+  argTypes?: Map<string, GraphQLNamedType>;
+}
+
+/**
+ * Rewrite `@protobuf__rpc` binds using each segment’s owning GraphQL type.
+ *
+ * Unlike a flattened name→name map, `Review.year→publicationYear` does not rewrite
+ * an unchanged `Movie.year` when both types are reachable from the same root.
+ */
+export function rewriteProtobufMappingBindsTypeScoped(
+  mapping: string,
+  fieldRenameMap: Map<string, Map<string, string>>,
+  options: RewriteProtobufMappingBindsTypeScopedOptions,
+): string {
+  if (!mapping || !fieldRenameMap.size) {
+    return mapping;
+  }
+  const hasArgTypes = Boolean(options.argTypes?.size);
+  if (!options.rootType && !hasArgTypes) {
+    return mapping;
+  }
+
+  /** Type that owns relative binds at each brace depth. */
+  const typeAtDepth: Array<GraphQLNamedType | null | undefined> = [];
+  typeAtDepth[0] = options.rootType ?? null;
+
+  return mapping.replace(
+    /(\):\s*)([\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
+    (match, pre: string, path: string, offset: number, whole: string) => {
+      if (path.startsWith('$args') || path.startsWith('$this')) {
+        return `${pre}${path}`;
+      }
+      const depth = braceDepthAt(whole, offset);
+      const afterPath = offset + match.length;
+      let j = afterPath;
+      while (j < whole.length && /\s/.test(whole[j])) j++;
+      const entersBlock = whole[j] === '{';
+      const segments = path.split('.');
+
+      if (hasArgTypes && depth === 0) {
+        const argName = segments[0];
+        const rewritten = [argName];
+        let cur: GraphQLNamedType | null | undefined = options.argTypes!.get(argName);
+        for (let i = 1; i < segments.length; i++) {
+          const stepped = renameFieldSegment(cur, segments[i], fieldRenameMap);
+          rewritten.push(stepped.name);
+          cur = stepped.type;
+        }
+        if (entersBlock) {
+          typeAtDepth[depth + 1] = cur ?? null;
+        }
+        return `${pre}${rewritten.join('.')}`;
+      }
+
+      let cur: GraphQLNamedType | null | undefined = typeAtDepth[depth] ?? options.rootType;
+      const rewritten: string[] = [];
+      for (const seg of segments) {
+        const stepped = renameFieldSegment(cur, seg, fieldRenameMap);
+        rewritten.push(stepped.name);
+        cur = stepped.type;
+      }
+      if (entersBlock) {
+        typeAtDepth[depth + 1] = cur ?? null;
+      }
+      return `${pre}${rewritten.join('.')}`;
+    },
+  );
+}
+
+function renameFieldSegment(
+  owner: GraphQLNamedType | null | undefined,
+  oldName: string,
+  fieldRenameMap: Map<string, Map<string, string>>,
+): { name: string; type: GraphQLNamedType | null } {
+  if (!owner || (!isObjectType(owner) && !isInterfaceType(owner) && !isInputObjectType(owner))) {
+    return { name: oldName, type: null };
+  }
+  const renames = fieldRenameMap.get(owner.name);
+  const nextName = renames?.get(oldName) ?? oldName;
+  const fields = owner.getFields();
+  // Schema may already expose the public (renamed) field name.
+  const field = fields[nextName] ?? fields[oldName];
+  if (!field) {
+    return { name: nextName, type: null };
+  }
+  return { name: nextName, type: getNamedType(field.type) };
 }
 
 function protobufRpcDirectiveKey(

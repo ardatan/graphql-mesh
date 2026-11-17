@@ -1,6 +1,6 @@
 import { buildSchema, print } from 'graphql';
 import { getAnnotatedSubgraphs } from '../src/index.js';
-import { createRenameTransform } from '../src/transforms/rename.js';
+import { createRenameFieldTransform, createRenameTransform } from '../src/transforms/rename.js';
 
 /**
  * Protobuf RPC follows the Federation Connectors transform posture: skip Mesh
@@ -221,5 +221,105 @@ describe('rewriteProtobufMappingBinds', () => {
     );
     expect(out).toMatch(/^1\(int64\): release_year/m);
     expect(out).toContain('2(int64): releaseYear');
+  });
+});
+
+describe('type-scoped protobuf field renames (overlapping names)', () => {
+  const schemaWithMovieAndReview = () =>
+    buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "media", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          movie(id: ID!): Movie!
+            @protobuf__rpc(
+              service: "Media"
+              method: "GetMovie"
+              args: """
+              1(string): id
+              """
+              selection: """
+              1(string): name
+              2(int64): year
+              3(message): review {
+                1(string): body
+                2(int64): year
+              }
+              """
+            )
+        }
+
+        type Movie {
+          name: String!
+          year: Int!
+          review: Review!
+        }
+
+        type Review {
+          body: String!
+          year: Int!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+
+  it('createRenameTransform: Review.year rename does not rewrite Movie.year', () => {
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'media',
+        schema: schemaWithMovieAndReview(),
+        transforms: [
+          createRenameTransform({
+            fieldRenamer: ({ typeName, fieldName }) =>
+              typeName === 'Review' && fieldName === 'year' ? 'publicationYear' : fieldName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/type Review[\s\S]*publicationYear/);
+    expect(sdl).toMatch(/type Movie[\s\S]*\byear:/);
+    // Nested Review.year rewritten; Movie.year at the same selection root unchanged.
+    expect(sdl).toMatch(
+      /selection:[\s\S]*2\(int64\):\s*year[\s\S]*review\s*\{[\s\S]*2\(int64\):\s*publicationYear/,
+    );
+    expect(sdl).not.toMatch(/selection:[\s\S]*1\(string\):\s*name\s*2\(int64\):\s*publicationYear/);
+  });
+
+  it('createRenameFieldTransform: same owning-type rewrite (no flattenFieldRenameMap)', () => {
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'media',
+        schema: schemaWithMovieAndReview(),
+        transforms: [
+          createRenameFieldTransform(({ typeName, fieldName }) =>
+            typeName === 'Review' && fieldName === 'year' ? 'publicationYear' : fieldName,
+          ),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(
+      /selection:[\s\S]*2\(int64\):\s*year[\s\S]*review\s*\{[\s\S]*2\(int64\):\s*publicationYear/,
+    );
+    expect(sdl).toContain('publicationYear');
   });
 });
