@@ -670,6 +670,113 @@ describe('rewriteProtobufMappingBinds', () => {
     expect(out).toMatch(/2\(int64\):\s*publicationYear/);
   });
 
+  it('parent-backed $this.input nested renames use parent field type, not arg type', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(/* GraphQL */ `
+      input ParentInput {
+        year: Int
+      }
+      input RequestInput {
+        year: Int
+      }
+      type Movie {
+        input: ParentInput
+        byYear(input: RequestInput): String
+      }
+    `);
+    const movie = schema.getType('Movie')!;
+    const requestInput = schema.getType('RequestInput')!;
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      '1(message): $this.input {\n  2(int64): year\n}',
+      new Map([
+        ['ParentInput', new Map([['year', 'parentYear']])],
+        ['RequestInput', new Map([['year', 'requestYear']])],
+      ]),
+      {
+        rootType: movie,
+        argTypes: new Map([['input', requestInput]]),
+        skipThisBinds: true,
+      },
+    );
+    expect(out).toContain('$this.input');
+    expect(out).toMatch(/2\(int64\):\s*parentYear/);
+    expect(out).not.toMatch(/requestYear/);
+  });
+
+  it('object field: $this.input nested year uses parent type when arg diverges', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "movies", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        input ParentInput {
+          year: Int
+        }
+        input RequestInput {
+          year: Int
+        }
+
+        type Movie {
+          input: ParentInput
+          byYear(input: RequestInput): String!
+            @protobuf__rpc(
+              service: "Movies"
+              method: "ByYear"
+              args: """
+              1(message): $this.input {
+                2(int64): year
+              }
+              """
+              selection: """
+              1(string): ok
+              """
+            )
+        }
+
+        type Query {
+          movie: Movie
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'movies',
+        schema,
+        transforms: [
+          createRenameTransform({
+            fieldRenamer: ({ typeName, fieldName }) => {
+              if (typeName === 'ParentInput' && fieldName === 'year') return 'parentYear';
+              if (typeName === 'RequestInput' && fieldName === 'year') return 'requestYear';
+              return fieldName;
+            },
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    // Mapping must rename via ParentInput (parentYear), not RequestInput (requestYear).
+    expect(sdl).toMatch(/\$this\.input\s*\{[^}]*parentYear/s);
+    expect(sdl).not.toMatch(/\$this\.input\s*\{[^}]*requestYear/s);
+  });
+
   it('applies protobuf $args renames once (a→b, b→c does not chain)', () => {
     const schema = buildSchema(
       /* GraphQL */ `

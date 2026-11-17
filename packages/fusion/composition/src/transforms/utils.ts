@@ -415,13 +415,15 @@ function isInsideHashComment(source: string, index: number): boolean {
 
 export interface RewriteProtobufMappingBindsTypeScopedOptions {
   /**
-   * GraphQL type for relative binds at brace depth 0 (selection return type).
-   * Omit when rewriting request `args:` with `argTypes` instead.
+   * GraphQL type for relative binds at brace depth 0 (selection return type), or the
+   * parent object type for field-level `args:` rewrites so `$this.<field>` nested
+   * renames walk the parent field map. Arg types remain the fallback when omitted.
    */
   rootType?: GraphQLNamedType | null;
   /**
    * Request `args:` mode: depth-0 path heads are argument names (not field-renamed).
    * Values are the named GraphQL types of those arguments for descending into nested binds.
+   * Also the fallback owner for `$this.<field>` when no parent `rootType` exists (root fields).
    */
   argTypes?: Map<string, GraphQLNamedType>;
   /**
@@ -430,7 +432,8 @@ export interface RewriteProtobufMappingBindsTypeScopedOptions {
    */
   argRenameMap?: Map<string, string>;
   /**
-   * When true, leave `$this.*` binds unchanged (caller emits dual `$this|/$args` forms).
+   * When true, leave `$this.*` path text unchanged (dual-bind pass owns them), but still
+   * record the block owner so nested relative binds rename correctly.
    */
   skipThisBinds?: boolean;
 }
@@ -529,7 +532,9 @@ export function rewriteProtobufMappingBindsTypeScoped(
         return `${pre}${rewritten.join('.')}`;
       }
 
-      // `$this.<field>` entity binds: descend from rootType when entering a nested block.
+      // `$this.<field>` entity binds: parent owner (`rootType`) first; arg type only as
+      // fallback when there is no parent (root fields). Keep those lookup paths separate so
+      // parent-backed nested renames never pick the argument's field map.
       if (path.startsWith('$this')) {
         const rest =
           path === '$this'
@@ -537,22 +542,26 @@ export function rewriteProtobufMappingBindsTypeScoped(
             : path.startsWith('$this.')
               ? path.slice('$this.'.length).split('.')
               : [];
-        // Even when skipping `$this` path rewrites (dual-bind pass owns them), still
-        // record the block owner so nested relative binds rename against the input type.
-        let cur: GraphQLNamedType | null | undefined =
-          options.rootType ??
-          (hasArgTypes && rest.length
-            ? resolveArgType(
-                options.argTypes,
-                argRenameLookup.get(rest[0]) ?? rest[0],
-                rest[0],
-                argRenameLookup,
-              )
-            : null);
+        let cur: GraphQLNamedType | null | undefined;
+        let usedArgFallback = false;
+        if (options.rootType) {
+          cur = options.rootType;
+        } else if (hasArgTypes && rest.length) {
+          usedArgFallback = true;
+          cur = resolveArgType(
+            options.argTypes,
+            argRenameLookup.get(rest[0]) ?? rest[0],
+            rest[0],
+            argRenameLookup,
+          );
+        } else {
+          cur = null;
+        }
         if (options.skipThisBinds) {
-          if (rest.length && (options.rootType || hasArgTypes)) {
-            // Walk remaining segments for owner only; leave the `$this` path intact.
-            for (let i = options.rootType ? 0 : 1; i < rest.length; i++) {
+          // Leave `$this` path text for the dual-bind pass; still walk for block owner.
+          if (rest.length && cur != null) {
+            const start = usedArgFallback ? 1 : 0;
+            for (let i = start; i < rest.length; i++) {
               const stepped = renameFieldSegment(cur, rest[i], fieldRenameMap);
               cur = stepped.type;
             }

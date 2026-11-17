@@ -417,12 +417,15 @@ export function applyProtobufFieldRenames(
     let args = rpcArgs?.args;
     let selection = rpcArgs?.selection;
     if (typeof args === 'string') {
-      // Nested input / relative binds; leave `$this` for the dual-bind pass.
+      // Nested input / relative binds; leave `$this` paths for the dual-bind pass.
+      // Pass parent owner so `$this.<field>` nested renames use the parent field type;
+      // `argTypes` remains the fallback when there is no parent (root fields).
       if (fieldRenameMap.size || argRenameMap?.size || argTypes.size) {
         args = rewriteProtobufMappingBindsTypeScoped(args, fieldRenameMap, {
           argTypes,
           argRenameMap,
           skipThisBinds: true,
+          rootType: thisOwnerType,
         });
       }
       // Dual `$this.<parent>|$args.<arg>` when parent field and arg renames diverge.
