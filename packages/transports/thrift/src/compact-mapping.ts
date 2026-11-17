@@ -248,7 +248,8 @@ function flattenMapping(src: string): string[] {
   for (const raw of src.split(/\r?\n/)) {
     const line = raw.trim();
     if (!line) continue;
-    // Split trailing `{` onto same line already handled; support `}`.
+    // IDL comments copied above args/selection mapping body.
+    if (line.startsWith('#')) continue;
     if (line === '}') {
       out.push('}');
       continue;

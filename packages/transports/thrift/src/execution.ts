@@ -8,7 +8,7 @@ import {
 } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, getRootTypeMap, type ExecutionResult } from '@graphql-tools/utils';
 import { createGraphQLThriftClient, type ThriftRpcBinding } from './client.js';
-import type { GraphQLThriftAnnotations, TypeMap } from './types.js';
+import type { GraphQLThriftAnnotations } from './types.js';
 
 export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
   const schemaDefDirectives = getDirectiveExtensions<{
@@ -58,30 +58,16 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
       let binding = thriftRpcByField.get(cacheKey);
       if (binding == null) {
         const fieldDirectives = getDirectiveExtensions(field) || {};
-        const thriftRpcDir =
-          fieldDirectives.thrift__rpc?.[0] || fieldDirectives.thrift__method?.[0];
-        const legacyMaps = fieldDirectives.fieldTypeMap || [];
-        const legacyFieldTypeMap: TypeMap | undefined = legacyMaps[0]?.fieldTypeMap;
-        if (thriftRpcDir) {
-          binding = {
-            functionName: thriftRpcDir.function || thriftRpcDir.method || fieldName,
-            messageType: thriftRpcDir.messageType || 'CALL',
-            args: thriftRpcDir.args,
-            selection: thriftRpcDir.selection,
-            legacyFieldTypeMap,
-          };
-        } else if (legacyFieldTypeMap) {
-          // Legacy SDL: `@fieldTypeMap` only.
-          binding = {
-            functionName: fieldName,
-            messageType: 'CALL',
-            legacyFieldTypeMap,
-          };
-        } else {
-          throw new Error(
-            `Field ${cacheKey} is missing @thrift__rpc (or legacy @fieldTypeMap) binding`,
-          );
+        const thriftRpcDir = fieldDirectives.thrift__rpc?.[0];
+        if (!thriftRpcDir) {
+          throw new Error(`Field ${cacheKey} is missing @thrift__rpc binding`);
         }
+        binding = {
+          functionName: thriftRpcDir.function || fieldName,
+          messageType: thriftRpcDir.messageType || 'CALL',
+          args: thriftRpcDir.args,
+          selection: thriftRpcDir.selection,
+        };
         thriftRpcByField.set(cacheKey, binding);
       }
       requestPromises.push(

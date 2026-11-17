@@ -1,8 +1,4 @@
-import type {
-  IMethodAnnotations,
-  IThriftAnnotations,
-  TType,
-} from '@creditkarma/thrift-server-core';
+import type { TType } from '@creditkarma/thrift-server-core';
 
 export type TypeVal =
   | BaseTypeVal
@@ -26,30 +22,10 @@ export type VoidTypeVal = { id?: number; type: TType.VOID };
 export type RefTypeVal = { id?: number; type: 'ref'; name: string };
 export type TypeMap = Record<string, TypeVal>;
 
-export type ThriftProtocolType = 'binary' | 'compact' | 'json';
-
+/** Thrift HTTP transport annotations. Wire protocol is always binary (JSON uses `@connect`). */
 export interface GraphQLThriftAnnotations {
   kind: 'thrift';
   subgraph: string;
   location: string;
   headers: [string, string][] | Record<string, string>;
-  options: {
-    /** Wire protocol for the Thrift HTTP client. Defaults to binary. */
-    protocol?: ThriftProtocolType;
-    /**
-     * @deprecated Legacy schemas only. New emit keeps transport slim; layout lives in
-     * `@thrift__rpc(args/selection)`.
-     */
-    clientAnnotations?: {
-      serviceName: string;
-      annotations: IThriftAnnotations;
-      methodNames: string[];
-      methodAnnotations: IMethodAnnotations;
-      methodParameters: Record<string, number>;
-    };
-    /**
-     * @deprecated Legacy schemas only (`@fieldTypeMap` + refs).
-     */
-    topTypeMap?: TypeMap;
-  };
 }

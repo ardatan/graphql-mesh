@@ -29,8 +29,6 @@ export type ThriftRpcBinding = {
   messageType?: 'CALL' | 'ONEWAY';
   args?: string;
   selection?: string;
-  /** Legacy `@fieldTypeMap` bag when compact args are absent. */
-  legacyFieldTypeMap?: TypeMap;
 };
 
 interface IGraphQLThriftClient extends ThriftClient {
@@ -40,24 +38,19 @@ interface IGraphQLThriftClient extends ThriftClient {
 export function createGraphQLThriftClient<Context = any>({
   location,
   headers,
-  options: { protocol: thriftProtocolOption, clientAnnotations, topTypeMap = {} } = {},
 }: GraphQLThriftAnnotations): IGraphQLThriftClient {
   const httpHeaders: Record<string, string> = Array.isArray(headers)
     ? Object.fromEntries(headers)
     : headers || {};
-  const serviceName = clientAnnotations?.serviceName || '';
-  const annotations: IThriftAnnotations = clientAnnotations?.annotations || {};
-  const methodAnnotations: IMethodAnnotations = clientAnnotations?.methodAnnotations || {};
-  const methodNames: string[] = clientAnnotations?.methodNames || [];
-  const methodParameters: Record<string, number> = clientAnnotations?.methodParameters || {};
+  // creditkarma ThriftClient static stubs (path comes from `location`).
+  const serviceName = '';
+  const annotations: IThriftAnnotations = {};
+  const methodAnnotations: IMethodAnnotations = {};
+  const methodNames: string[] = [];
 
   function getActualType(typeVal: TypeVal): TType {
     if (typeVal.type === 'ref') {
-      const resolved = topTypeMap[typeVal.name];
-      if (!resolved) {
-        return TType.I32;
-      }
-      return getActualType(resolved);
+      return TType.I32;
     }
     return typeVal.type as TType;
   }
@@ -71,19 +64,12 @@ export function createGraphQLThriftClient<Context = any>({
     public readonly _annotations: IThriftAnnotations = annotations;
     public readonly _methodAnnotations: IMethodAnnotations = methodAnnotations;
     public readonly _methodNames: Array<string> = methodNames;
-    public readonly _methodParameters?: Record<string, number> = methodParameters;
 
     writeType(typeVal: TypeVal, value: any, output: TProtocol) {
       switch (typeVal.type) {
-        case 'ref': {
-          const resolved = topTypeMap[typeVal.name];
-          if (!resolved) {
-            output.writeI32(value);
-            break;
-          }
-          this.writeType({ ...resolved, id: typeVal.id ?? resolved.id }, value, output);
+        case 'ref':
+          output.writeI32(value);
           break;
-        }
         case TType.BOOL:
           output.writeBool(value);
           break;
@@ -223,14 +209,8 @@ export function createGraphQLThriftClient<Context = any>({
     }
 
     async doRequest(methodName: string, args: any, binding: ThriftRpcBinding, context?: any) {
-      const fields: TypeMap =
-        binding.args != null && binding.args !== ''
-          ? parseCompactArgsToTypeMap(binding.args)
-          : binding.legacyFieldTypeMap || {};
-      const selection: CompactSelection =
-        binding.selection != null && binding.selection !== ''
-          ? parseCompactSelection(binding.selection)
-          : { kind: 'scalar', wire: 'struct' };
+      const fields: TypeMap = parseCompactArgsToTypeMap(binding.args || '');
+      const selection: CompactSelection = parseCompactSelection(binding.selection || '$(void)');
       const outboundMessageType = binding.messageType || 'CALL';
 
       const Transport = this.transport;
@@ -267,10 +247,8 @@ export function createGraphQLThriftClient<Context = any>({
         } else {
           const result = this.readTypeById(TType.STRUCT, input) as Map<number, any>;
           input.readMessageEnd();
-          // Thrift success is always field id 0 on the result struct.
           if (result.has(0)) {
-            const success = result.get(0);
-            return applyCompactSelection(selection, success);
+            return applyCompactSelection(selection, result.get(0));
           }
           throw new TApplicationException(
             TApplicationExceptionType.UNKNOWN,
@@ -287,14 +265,13 @@ export function createGraphQLThriftClient<Context = any>({
   }
 
   const locationUrl = new URL(location);
-  const thriftProtocol = thriftProtocolOption || 'binary';
 
   return createHttpClient(GraphQLThriftClient, {
     hostName: locationUrl.hostname,
     https: locationUrl.protocol === 'https:',
     port: parseInt(locationUrl.port || '80', 10),
     path: locationUrl.pathname,
-    protocol: thriftProtocol,
+    protocol: 'binary',
     requestOptions: {
       headers: httpHeaders,
     },

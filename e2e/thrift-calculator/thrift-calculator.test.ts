@@ -34,6 +34,7 @@ describe('binary (@thrift__rpc)', () => {
     expect(result).not.toMatch(/@fieldTypeMap\(/);
     expect(result).not.toMatch(/topTypeMap/);
     expect(result).not.toMatch(/clientAnnotations/);
+    expect(result).not.toMatch(/options:\s*\{/);
   });
 
   it('executes add on hive', async () => {

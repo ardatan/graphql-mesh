@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`binary (@thrift__rpc) composes schema with @thrift__rpc 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@thrift__rpc", "@transport"]) @transport(subgraph: "calculator", kind: "thrift", location: "http://localhost:<calculator_port>/thrift", headers: [], options: {protocol: "binary"}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@thrift__rpc", "@transport"]) @transport(subgraph: "calculator", kind: "thrift", location: "http://localhost:<calculator_port>/thrift", headers: []) {
   query: Query
 }
 
@@ -41,26 +41,7 @@ enum join__Graph {
 directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
 
 type Query @join__type(graph: CALCULATOR) {
-  """
-  Thrift binary RPC
-  service: Calculator
-  function: add
-  messageType: CALL
-  args field ids:
-    - 1 = request (struct)
-  success wire type: i32 (result field id 0)
-  """
   add(request: AddRequestInput): Int @thrift__rpc(subgraph: "calculator", function: "add", args: "1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "$(i32)", messageType: CALL, service: "Calculator")
-  """
-  Thrift binary RPC
-  service: Calculator
-  function: subtract
-  messageType: CALL
-  args field ids:
-    - 1 = left (i32)
-    - 2 = right (i32)
-  success wire type: i32 (result field id 0)
-  """
   subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "calculator", function: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: CALL, service: "Calculator")
 }
 
@@ -127,26 +108,7 @@ enum join__Graph {
 }
 
 type Query @join__type(graph: CALCULATOR) {
-  """
-  Thrift json RPC
-  service: Calculator
-  function: add
-  messageType: CALL
-  args field ids:
-    - 1 = request (struct)
-  success wire type: i32 (result field id 0)
-  """
   add(request: AddRequestInput): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([\\n  1,\\n  \\"add\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": {\\n        \\"rec\\": {\\n        \\"1\\": { \\"i32\\": $args.request.left },\\n        \\"2\\": { \\"i32\\": $args.request.right }\\n        }\\n      }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)", errors: {message: "$->get(4)->get(\\"1\\")->get(\\"str\\")"}})
-  """
-  Thrift json RPC
-  service: Calculator
-  function: subtract
-  messageType: CALL
-  args field ids:
-    - 1 = left (i32)
-    - 2 = right (i32)
-  success wire type: i32 (result field id 0)
-  """
   subtract(left: Int, right: Int): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([\\n  1,\\n  \\"subtract\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": { \\"i32\\": $args.left },\\n      \\"2\\": { \\"i32\\": $args.right }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)", errors: {message: "$->get(4)->get(\\"1\\")->get(\\"str\\")"}})
 }
 

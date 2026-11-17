@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Thrift Calculator should generate correct schema: thrift-calculator-schema 1`] = `
-"schema @transport(subgraph: "Calculator", kind: "thrift", location: "http://localhost:9876/thrift", headers: [], options: {protocol: "binary"}) {
+"schema @transport(subgraph: "Calculator", kind: "thrift", location: "http://localhost:9876/thrift", headers: []) {
   query: Query
 }
 
@@ -13,26 +13,7 @@ enum ThriftMessageType {
 }
 
 type Query {
-  """
-  Thrift binary RPC
-  service: calculator-service
-  function: add
-  messageType: CALL
-  args field ids:
-    - 1 = request (struct)
-  success wire type: i32 (result field id 0)
-  """
   add(request: AddRequestInput): Int @thrift__rpc(subgraph: "Calculator", function: "add", args: "1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "$(i32)", messageType: CALL, service: "calculator-service")
-  """
-  Thrift binary RPC
-  service: calculator-service
-  function: subtract
-  messageType: CALL
-  args field ids:
-    - 1 = left (i32)
-    - 2 = right (i32)
-  success wire type: i32 (result field id 0)
-  """
   subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calculator", function: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: CALL, service: "calculator-service")
 }
 

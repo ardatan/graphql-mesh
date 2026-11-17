@@ -16,7 +16,6 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLScalarType,
   GraphQLSchema,
   GraphQLString,
   GraphQLUnionType,
@@ -50,7 +49,6 @@ import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import {
   buildCompactArgs,
   buildCompactSelection,
-  buildThriftRpcDescription,
   buildTJSONConnectBody,
   buildTJSONConnectSelection,
   thriftJsonContentTypeHeaders,
@@ -67,7 +65,10 @@ export interface GraphQLThriftLoaderOptions {
   operationHeaders?: Record<string, string>;
   /** Thrift service name — optional for single-service endpoints. */
   serviceName?: string;
-  /** Wire protocol. `json` emits `@connect` / `@source` (Apollo Router–compatible). */
+  /**
+   * Emit switch: `binary` (default) uses thrift `@transport` + `@thrift__rpc`;
+   * `json` emits `@source` / `@connect` (TJSON, Apollo Router–compatible).
+   */
   protocol?: ThriftProtocol;
   /**
    * Function names that should emit `entity: true` on `@thrift__rpc` / `@connect`
@@ -86,23 +87,6 @@ export interface GraphQLThriftLoaderOptions {
   log?: Logger;
   importFn?: ImportFn;
 }
-
-/** @deprecated Kept for dual-read of legacy SDL only; loader no longer emits it. */
-export const FieldTypeMapScalar = new GraphQLScalarType({ name: 'FieldTypeMap' });
-
-/** @deprecated Kept for dual-read of legacy SDL only; loader no longer emits it. */
-export const fieldTypeMapDirective = new GraphQLDirective({
-  name: 'fieldTypeMap',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-    fieldTypeMap: {
-      type: FieldTypeMapScalar,
-    },
-  },
-});
 
 export const ThriftMessageTypeEnum = new GraphQLEnumType({
   name: 'ThriftMessageType',
@@ -125,9 +109,6 @@ export const thriftRpcDirective = new GraphQLDirective({
     entity: { type: GraphQLBoolean },
   },
 });
-
-/** @deprecated Use {@link thriftRpcDirective}. */
-export const thriftMethodDirective = thriftRpcDirective;
 
 export async function loadNonExecutableGraphQLSchemaFromIDL({
   subgraphName,
@@ -399,7 +380,6 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               };
               fieldTypeMap[fieldName] = typeVal;
             }
-            const effectiveServiceName = serviceName || idlServiceName;
             const isEntity = entityMethodSet.has(fnName);
             const isOneway = Boolean(fn.oneway);
             const messageType = isOneway ? 'ONEWAY' : 'CALL';
@@ -450,25 +430,24 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               }
             }
 
-            const mappingDescription = buildThriftRpcDescription({
-              serviceName: effectiveServiceName,
-              functionName: fnName,
-              fieldTypeMap,
-              returnTypeVal,
-              topTypeMap,
-              protocol,
-              messageType,
-              throws: throwsMeta,
-              ignoreExceptions,
-            });
-            const fieldDescription = [description, mappingDescription].filter(Boolean).join('\n\n');
+            // IDL comments as-is for humans reading SDL: field description, and
+            // `#` lines immediately above the mapping body inside args/selection
+            // (transport ignores `#` lines).
+            const compactArgs = withIdlHashComments(
+              buildCompactArgs(fieldTypeMap, topTypeMap),
+              description,
+            );
+            const compactSelection = withIdlHashComments(
+              buildCompactSelection(returnTypeVal, topTypeMap),
+              description,
+            );
 
             if (emitConnect) {
               // Single-service: path `/`. Explicit serviceName: `/<service>`.
               const connectPath = serviceName ? `/${serviceName}` : '/';
               rootFields[fnName] = {
                 type: fieldReturnType,
-                description: fieldDescription,
+                description,
                 args,
                 extensions: {
                   directives: {
@@ -490,8 +469,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               const thriftRpcArgs: Record<string, unknown> = {
                 subgraph: subgraphName,
                 function: fnName,
-                args: buildCompactArgs(fieldTypeMap, topTypeMap),
-                selection: buildCompactSelection(returnTypeVal, topTypeMap),
+                args: compactArgs,
+                selection: compactSelection,
                 messageType,
               };
               if (serviceName) {
@@ -502,7 +481,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               }
               rootFields[fnName] = {
                 type: fieldReturnType,
-                description: fieldDescription,
+                description,
                 args,
                 extensions: {
                   directives: {
@@ -570,11 +549,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     kind: 'thrift',
     location,
     // Match shared `@transport(headers: [[String]])` / HTTP+OData loaders.
+    // Wire layout lives in `@thrift__rpc(args/selection)`; thrift HTTP is binary.
     headers: Object.entries(headers),
-    // Slim transport: wire layout lives in `@thrift__rpc(args/selection)`.
-    options: {
-      protocol,
-    },
   };
 
   // Do not `@link` `@thrift__rpc` on a custom URL — composition's
@@ -597,6 +573,18 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
 function processComments(comments: Comment[]): string | undefined {
   const description = comments.map(comment => comment.value).join('\n');
   return description.trim() === '' ? undefined : description;
+}
+
+/** Prefix mapping with IDL comments as `#` lines for humans reading SDL. */
+function withIdlHashComments(mapping: string, idlComment?: string): string {
+  if (!idlComment) {
+    return mapping;
+  }
+  const commentBlock = idlComment
+    .split(/\r?\n/)
+    .map(line => `# ${line}`.replace(/\s+$/, ''))
+    .join('\n');
+  return mapping ? `${commentBlock}\n${mapping}` : commentBlock;
 }
 
 interface GetGraphQLFunctionTypeOpts {

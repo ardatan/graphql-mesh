@@ -960,16 +960,24 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
     if (method === 'eq') {
       return left === parseConnectorsLiteralArg(rawArgs);
     }
-    // `$->map(@->match(...))` / `$->map(@.id)` — Apollo list element transform.
+    // `$->map(@->match(...))` / `$->map(@.id)` / `$->map(@->{ ... })` — element transform.
     if (method === 'map') {
       if (!Array.isArray(left)) return left;
       const elementExpr = rawArgs.trim();
       return left.map(item => {
         if (elementExpr === '@') return item;
-        // `@->match(...)` / `@->first` — treat `@` as the element root.
         if (elementExpr.startsWith('@')) {
-          const rewritten = elementExpr.replace(/^@/, '$');
-          return evalPath(rewritten, item, extras);
+          const afterAt = elementExpr.slice(1);
+          // `@->{ ... }` / `@->[ ... ]` — lit object/array with `@` as the element.
+          if (afterAt.startsWith('->{') || afterAt.startsWith('->[')) {
+            const lit = afterAt.slice(2);
+            return evalConnectorsLitExpr(rewriteAtToDollar(lit), item, extras);
+          }
+          if (afterAt.startsWith('{') || afterAt.startsWith('[')) {
+            return evalConnectorsLitExpr(rewriteAtToDollar(afterAt), item, extras);
+          }
+          // `@->match(...)` / `@.id` — treat `@` as the element root.
+          return evalPath(elementExpr.replace(/^@/, '$'), item, extras);
         }
         return evalPath(elementExpr, item, extras);
       });
@@ -1010,6 +1018,11 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
     cur = cur[part];
   }
   return cur;
+}
+
+/** Rewrite `@` / `@.x` element aliases to `$` / `$.x` for lit/path eval against the item. */
+function rewriteAtToDollar(expr: string): string {
+  return expr.replace(/@\./g, '$.').replace(/@/g, '$');
 }
 
 /** Index of the `)` that closes `s[openIdx]` (`(`), or -1. */

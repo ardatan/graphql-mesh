@@ -1,7 +1,8 @@
 import { TType } from '@creditkarma/thrift-server-core';
 import type { TypeMap, TypeVal } from '@graphql-mesh/transport-thrift';
 
-export type ThriftProtocol = 'binary' | 'compact' | 'json';
+/** Loader emit switch: thrift transport is always binary; `json` emits `@connect`. */
+export type ThriftProtocol = 'binary' | 'json';
 
 const WIRE_TYPE_TOKEN: Partial<Record<TType, string>> = {
   [TType.BOOL]: 'bool',
@@ -245,46 +246,6 @@ function formatCompactSelectionField(
   return [`${pad}${graphqlName}: ${id}(${token})`];
 }
 
-export function buildThriftRpcDescription(opts: {
-  serviceName?: string;
-  functionName: string;
-  fieldTypeMap: TypeMap;
-  returnTypeVal?: TypeVal;
-  topTypeMap: TypeMap;
-  protocol: ThriftProtocol;
-  messageType?: 'CALL' | 'ONEWAY';
-  throws?: Array<{ id: number; name: string; typeName: string }>;
-  ignoreExceptions?: boolean;
-}): string {
-  const fieldLines = Object.entries(opts.fieldTypeMap).map(([name, typeVal]) => {
-    const id = typeVal.id ?? '?';
-    return `  - ${id} = ${name} (${wireTypeToken(typeVal, opts.topTypeMap)})`;
-  });
-  const returnTok = opts.returnTypeVal
-    ? wireTypeToken(opts.returnTypeVal, opts.topTypeMap)
-    : 'void';
-  const lines = [
-    `Thrift ${opts.protocol} RPC`,
-    opts.serviceName ? `service: ${opts.serviceName}` : 'service: (single-service endpoint)',
-    `function: ${opts.functionName}`,
-    `messageType: ${opts.messageType || 'CALL'}`,
-    'args field ids:',
-    ...(fieldLines.length ? fieldLines : ['  (none)']),
-    `success wire type: ${returnTok} (result field id 0)`,
-  ];
-  if (opts.throws?.length) {
-    lines.push(
-      opts.ignoreExceptions === false
-        ? 'throws (modeled as GraphQL union):'
-        : 'throws (ignored; use ignoreExceptions: false to model as union):',
-    );
-    for (const t of opts.throws) {
-      lines.push(`  - ${t.id} = ${t.name} (${t.typeName})`);
-    }
-  }
-  return lines.join('\n');
-}
-
 /** TJSON REPLY = 2; EXCEPTION = 3. */
 export const TJSON_IS_SUCCESS = '$->get(2)->eq(2)';
 
@@ -351,9 +312,19 @@ function formatTJSONValueExpr(
 
   if (resolved.type === TType.LIST || resolved.type === TType.SET) {
     const elemTag = tjsonTypeTag(resolved.elementType, topTypeMap);
-    // Mesh `$()` accepts `...$path` spreads. Struct elements stay GraphQL-shaped here;
-    // id-tagged TJSON rec conversion for list<Struct> args is a follow-up (needs
-    // Connectors-capable per-element mapping). Scalar lists are correct for Mesh.
+    const elemResolved = resolveTypeVal(resolved.elementType, topTypeMap);
+    if (elemResolved.type === TType.STRUCT) {
+      // TJSON list header carries "rec"; each element is the id-keyed field object.
+      const fieldsObj = formatTJSONStructFieldsObject(
+        resolved.elementType,
+        '@',
+        topTypeMap,
+        level + 1,
+        seenStructs,
+      );
+      return `{ "${tag}": $([ "${elemTag}", ${valueExpr}->size, ...${valueExpr}->map(@->${fieldsObj}) ]) }`;
+    }
+    // Scalar list/set: Mesh `$()` accepts `...$path` spreads.
     return `{ "${tag}": $([ "${elemTag}", ${valueExpr}->size, ...${valueExpr} ]) }`;
   }
 
@@ -364,6 +335,36 @@ function formatTJSONValueExpr(
   }
 
   return `{ "${tag}": ${valueExpr} }`;
+}
+
+/** Inner TJSON struct object `{ "1": { "i32": ... }, ... }` (no outer `rec` wrapper). */
+function formatTJSONStructFieldsObject(
+  typeVal: TypeVal,
+  valueExpr: string,
+  topTypeMap: TypeMap,
+  level: number,
+  seenStructs: Set<string> = new Set(),
+): string {
+  const resolved = resolveTypeVal(typeVal, topTypeMap);
+  if (resolved.type !== TType.STRUCT) {
+    return formatTJSONValueExpr(typeVal, valueExpr, topTypeMap, level, seenStructs);
+  }
+  const structName = resolved.name || valueExpr;
+  if (seenStructs.has(structName)) {
+    return valueExpr.startsWith('@') ? '{}' : valueExpr;
+  }
+  const nextSeen = new Set(seenStructs);
+  nextSeen.add(structName);
+  const pad = indent(level);
+  const padInner = indent(level + 1);
+  const fields = Object.entries(resolved.fields)
+    .map(([fieldName, fieldType]) => {
+      const fid = String(fieldType.id ?? 1);
+      const childExpr = valueExpr === '@' ? `@.${fieldName}` : `${valueExpr}.${fieldName}`;
+      return `${padInner}"${fid}": ${formatTJSONValueExpr(fieldType, childExpr, topTypeMap, level + 1, nextSeen)}`;
+    })
+    .join(',\n');
+  return `{\n${fields}\n${pad}}`;
 }
 
 /**
