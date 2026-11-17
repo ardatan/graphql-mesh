@@ -1,5 +1,5 @@
 {
-  "name": "@graphql-mesh/transport-grpc",
+  "name": "@graphql-mesh/transport-protobuf",
   "version": "0.7.2",
   "type": "module",
   "repository": {

@@ -1,7 +1,6 @@
 import { specifiedDirectives } from 'graphql';
 import {
   SchemaComposer,
-  type Directive,
   type EnumTypeComposerValueConfigDefinition,
   type ObjectTypeComposer,
   type ObjectTypeComposerFieldConfigAsObjectDefinition,
@@ -31,12 +30,11 @@ import {
 } from '@grpc/grpc-js';
 import { DisposableStack } from '@whatwg-node/disposablestack';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import { protobufRpcDirective, transportDirective } from './directives.js';
 import {
-  EnumDirective,
-  grpcConnectivityStateDirective,
-  grpcMethodDirective,
-  transportDirective,
-} from './directives.js';
+  emitRequestBody,
+  emitResponseSelection,
+} from './emitMapping.js';
 import { addIncludePathResolver, getTypeName, walkToFindTypePath } from './utils.js';
 
 const { Root } = protobufjs;
@@ -69,17 +67,6 @@ export class GrpcLoaderHelper extends DisposableStack {
     this.schemaComposer.createScalarTC({
       name: 'File',
     });
-    // identical of grpc's ConnectivityState
-    this.schemaComposer.createEnumTC({
-      name: 'ConnectivityState',
-      values: {
-        IDLE: { value: 0 },
-        CONNECTING: { value: 1 },
-        READY: { value: 2 },
-        TRANSIENT_FAILURE: { value: 3 },
-        SHUTDOWN: { value: 4 },
-      },
-    });
 
     this.config.requestTimeout = this.config.requestTimeout || 200000;
 
@@ -92,11 +79,6 @@ export class GrpcLoaderHelper extends DisposableStack {
     this.log.debug(`Getting stored root and decoded descriptor set objects`);
     const descriptorSets = await this.getDescriptorSets(creds);
 
-    const directives: Directive[] = [];
-    const roots: {
-      name: string;
-      rootJson: string;
-    }[] = [];
     for (const { name: rootJsonName, rootJson } of descriptorSets) {
       const rootLogger = this.log.child({ root: rootJsonName });
 
@@ -109,9 +91,7 @@ export class GrpcLoaderHelper extends DisposableStack {
         rootJson,
         rootLogger,
       });
-      roots.push({ name: rootJsonName, rootJson: JSON.stringify(rootJson) });
     }
-    this.schemaComposer.Query.setDirectives(directives);
 
     // graphql-compose doesn't add @defer and @stream to the schema
     specifiedDirectives.forEach(directive => this.schemaComposer.addDirective(directive));
@@ -127,7 +107,7 @@ export class GrpcLoaderHelper extends DisposableStack {
     const directiveExtensions = (schemaExtensions.directives = schemaExtensions.directives || {});
     directiveExtensions.transport = {
       subgraph: this.subgraphName,
-      kind: 'grpc',
+      kind: 'protobuf',
       location: this.config.endpoint,
       options: {
         requestTimeout: this.config.requestTimeout,
@@ -138,7 +118,6 @@ export class GrpcLoaderHelper extends DisposableStack {
         channelOptions: this.config.channelOptions
           ? Object.entries(this.config.channelOptions)
           : undefined,
-        roots,
       },
     };
     return schema;
@@ -374,22 +353,12 @@ export class GrpcLoaderHelper extends DisposableStack {
     if ('values' in nested) {
       const enumValues: Record<string, EnumTypeComposerValueConfigDefinition> = {};
       const commentMap = (nested as any).comments;
-      for (const [key, value] of Object.entries(nested.values)) {
+      for (const [key] of Object.entries(nested.values)) {
         log.debug(`Visiting ${currentPath}.nested.values[${key}]`);
         enumValues[key] = {
-          directives: [
-            {
-              name: 'enum',
-              args: {
-                subgraph: this.subgraphName,
-                value: JSON.stringify(value),
-              },
-            },
-          ],
           description: commentMap?.[key],
         };
       }
-      this.schemaComposer.addDirective(EnumDirective);
       this.schemaComposer.createEnumTC({
         name: typeName,
         values: enumValues,
@@ -543,22 +512,29 @@ export class GrpcLoaderHelper extends DisposableStack {
             ? this.schemaComposer.Query
             : this.schemaComposer.Mutation;
         }
-        this.schemaComposer.addDirective(grpcMethodDirective);
+        const serviceName = pathWithName.join('.') || objPath;
+        const body = method.requestType
+          ? emitRequestBody(rootJson, pathWithName, method.requestType)
+          : '';
+        const selection = method.responseType
+          ? emitResponseSelection(rootJson, pathWithName, method.responseType)
+          : '';
+        const rpcDirective = {
+          name: 'protobuf__rpc',
+          args: {
+            subgraph: this.subgraphName,
+            service: serviceName,
+            method: methodName,
+            body,
+            selection,
+            stream: !!method.responseStream,
+          },
+        };
+        this.schemaComposer.addDirective(protobufRpcDirective);
         rootTypeComposer.addFields({
           [rootFieldName]: {
             ...fieldConfig,
-            directives: [
-              {
-                name: 'grpcMethod',
-                args: {
-                  subgraph: this.subgraphName,
-                  rootJsonName,
-                  objPath,
-                  methodName,
-                  responseStream: !!method.responseStream,
-                },
-              },
-            ],
+            directives: [rpcDirective],
           },
         });
         if (method.responseStream) {
@@ -569,42 +545,15 @@ export class GrpcLoaderHelper extends DisposableStack {
               type: fieldConfigTypeFactory,
               directives: [
                 {
-                  name: 'grpcMethod',
-                  args: {
-                    subgraph: this.subgraphName,
-                    rootJsonName,
-                    objPath,
-                    methodName,
-                    responseStream: true,
-                  },
+                  ...rpcDirective,
+                  args: { ...rpcDirective.args, stream: true },
                 },
               ],
             },
           });
         }
       }
-      const connectivityStateFieldName = pathWithName.join('_') + '_connectivityState';
-      this.schemaComposer.addDirective(grpcConnectivityStateDirective);
-      this.schemaComposer.Query.addFields({
-        [connectivityStateFieldName]: {
-          type: 'ConnectivityState',
-          args: {
-            tryToConnect: {
-              type: 'Boolean',
-            },
-          },
-          directives: [
-            {
-              name: 'grpcConnectivityState',
-              args: {
-                subgraph: this.subgraphName,
-                rootJsonName,
-                objPath,
-              },
-            },
-          ],
-        },
-      });
+      // connectivity state removed from protobuf author surface
     }
   }
 }

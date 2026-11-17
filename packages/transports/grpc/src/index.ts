@@ -1,98 +1,64 @@
-import {
-  defaultFieldResolver,
-  isEnumType,
-  isInterfaceType,
-  isListType,
-  isNonNullType,
-  isObjectType,
-  type GraphQLFieldResolver,
-  type GraphQLOutputType,
-  type GraphQLScalarType,
-  type GraphQLSchema,
-} from 'graphql';
-import { resolvers as scalarResolvers } from 'graphql-scalars';
-import lodashGet from 'lodash.get';
-import type protobufjs from 'protobufjs';
+import { GraphQLError, type GraphQLFieldResolver, type GraphQLSchema } from 'graphql';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-common';
+import { getDirectives, getRootTypes } from '@graphql-tools/utils';
 import {
-  createDefaultExecutor,
-  ObjMapScalar,
-  type Transport,
-} from '@graphql-mesh/transport-common';
-import { getDirective, getDirectives, getRootTypes } from '@graphql-tools/utils';
-import type { ChannelCredentials, ChannelOptions } from '@grpc/grpc-js';
-import { credentials, Client as GrpcClient, loadPackageDefinition } from '@grpc/grpc-js';
-import type { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
-import { fromJSON } from '@grpc/proto-loader';
+  credentials,
+  Metadata,
+  type ChannelCredentials,
+  type ChannelOptions,
+} from '@grpc/grpc-js';
+import { makeGenericClientConstructor } from '@grpc/grpc-js';
 import { DisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
-import { addExecutionLogicToScalar, addMetaDataToCall } from './utils.js';
-import './patchLongJs.js';
-import { type Logger } from '@graphql-hive/logger';
 import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import type { Logger } from '@graphql-hive/logger';
+import { decodeMessage, encodeMessage } from './protobuf/codec.js';
+import {
+  buildRpcPath,
+  httpProtobufUnary,
+  isHttpLocation,
+  resolveHttpUrl,
+} from './protobuf/dial.js';
+import { parseMapping } from './protobuf/mapping.js';
+import { toGrpcGraphQLError, buildGrpcMetadata } from './utils.js';
 
-/** Shared fallback when GraphQL omits `input` (protobufjs@8 rejects undefined). */
-const EMPTY_OBJECT = Object.freeze({});
-
-/**
- * SSL Credentials
- */
-interface GrpcCredentialsSsl {
-  rootCA?: string;
-  certChain?: string;
-  privateKey?: string;
-}
-
-export interface gRPCTransportOptions {
-  /**
-   * Request timeout in milliseconds
-   * Default: 200000
-   */
+export interface ProtobufTransportOptions {
   requestTimeout?: number;
-  credentialsSsl?: GrpcCredentialsSsl;
-  /**
-   * Use https instead of http for gRPC connection
-   */
+  credentialsSsl?: {
+    rootCA?: string;
+    certChain?: string;
+    privateKey?: string;
+  };
   useHTTPS?: boolean;
-  /**
-   * MetaData
-   */
   metaData?:
     | {
         [k: string]: any;
       }
     | [string, string][];
-  /**
-   * Channel options passed to the gRPC client constructor
-   * (e.g. grpc.max_receive_message_length, grpc.keepalive_time_ms).
-   * May be a plain object or an entries array (GraphQL-safe serialization from the loader).
-   */
   channelOptions?: ChannelOptions | [string, string | number][];
+  headers?: Record<string, string> | [string, string][];
 }
 
-interface LoadOptions {
-  includeDirs?: string[];
-}
+/** @deprecated use ProtobufTransportOptions */
+export type gRPCTransportOptions = ProtobufTransportOptions;
 
-export class GrpcTransportHelper extends DisposableStack {
+export class ProtobufTransportHelper extends DisposableStack {
+  private channelCreds: ChannelCredentials | undefined;
+
   constructor(
     private subgraphName: string,
     private baseDir: string,
     private log: Logger,
     private endpoint: string,
-    private config: gRPCTransportOptions,
+    private config: ProtobufTransportOptions,
   ) {
     super();
   }
 
   getCredentials(): MaybePromise<ChannelCredentials> {
-    this.log.debug(`Getting channel credentials`);
     if (this.config.credentialsSsl) {
-      this.log.debug(
-        () =>
-          `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`,
-      );
       const absolutePrivateKeyPath = path.isAbsolute(this.config.credentialsSsl.privateKey)
         ? this.config.credentialsSsl.privateKey
         : path.join(this.baseDir, this.config.credentialsSsl.privateKey);
@@ -104,7 +70,7 @@ export class GrpcTransportHelper extends DisposableStack {
         fs.promises.readFile(absolutePrivateKeyPath),
         fs.promises.readFile(absoluteCertChainPath),
       ];
-      if (this.config.credentialsSsl.rootCA !== 'rootCA') {
+      if (this.config.credentialsSsl.rootCA && this.config.credentialsSsl.rootCA !== 'rootCA') {
         const absoluteRootCAPath = path.isAbsolute(this.config.credentialsSsl.rootCA)
           ? this.config.credentialsSsl.rootCA
           : path.join(this.baseDir, this.config.credentialsSsl.rootCA);
@@ -113,267 +79,279 @@ export class GrpcTransportHelper extends DisposableStack {
       return Promise.all(sslFiles).then(([rootCA, privateKey, certChain]) =>
         credentials.createSsl(rootCA, privateKey, certChain),
       );
-    } else if (this.config.useHTTPS) {
-      this.log.debug(`Using SSL Connection`);
+    }
+    if (this.config.useHTTPS) {
       return credentials.createSsl();
     }
-    this.log.debug(`Using insecure connection`);
     return credentials.createInsecure();
   }
 
-  getGrpcObject({
-    rootJson,
-    loadOptions,
-    rootLogger,
-  }: {
-    rootJson: protobufjs.INamespace;
-    loadOptions: LoadOptions;
-    rootLogger: Logger;
-  }) {
-    const packageDefinition = fromJSON(rootJson, loadOptions);
-
-    rootLogger.debug(`Creating service client for package definition`);
-    const grpcObject = loadPackageDefinition(packageDefinition);
-    return grpcObject;
-  }
-
-  private grpcObjectByserviceClientByObjPath = new WeakMap<
-    ReturnType<typeof loadPackageDefinition>,
-    Map<string, ServiceClient>
-  >();
-
-  getServiceClient({
-    grpcObject,
-    objPath,
-    creds,
-  }: {
-    grpcObject: ReturnType<typeof loadPackageDefinition>;
-    objPath: string;
-    creds: ChannelCredentials;
-  }) {
-    let serviceClientByObjPath = this.grpcObjectByserviceClientByObjPath.get(grpcObject);
-    if (!serviceClientByObjPath) {
-      serviceClientByObjPath = new Map<string, ServiceClient>();
-      this.grpcObjectByserviceClientByObjPath.set(grpcObject, serviceClientByObjPath);
-    }
-    let client: ServiceClient = serviceClientByObjPath.get(objPath);
-    if (!client) {
-      const ServiceClient = lodashGet(grpcObject, objPath);
-      if (typeof ServiceClient !== 'function') {
-        throw new Error(`Object at path ${objPath} is not a Service constructor`);
-      }
-      client = new ServiceClient(
-        stringInterpolator.parse(this.endpoint, { env: process.env }) ?? this.endpoint,
-        creds,
-        Array.isArray(this.config.channelOptions)
-          ? Object.fromEntries(this.config.channelOptions)
-          : this.config.channelOptions,
-      );
-      // Use Client.prototype.close so an RPC named `Close` cannot shadow connection teardown
-      this.defer(() => GrpcClient.prototype.close.call(client));
-      serviceClientByObjPath.set(objPath, client);
-    }
-    return client;
-  }
-
-  getFieldResolver({
-    client,
-    methodName,
-    isResponseStream,
-  }: {
-    client: ServiceClient;
-    methodName: string;
-    isResponseStream: boolean;
-  }): GraphQLFieldResolver<any, any> {
-    const clientMethod = client[methodName].bind(client);
-    const metaData = this.config.metaData;
-    const requestTimeout = this.config.requestTimeout;
-    return function grpcFieldResolver(root, args, context) {
-      return addMetaDataToCall(
-        clientMethod,
-        args.input ?? EMPTY_OBJECT,
-        {
-          root,
-          args,
-          context,
-          env: process.env,
-        },
-        metaData,
-        isResponseStream,
-        requestTimeout,
-      );
-    };
-  }
-
-  getConnectivityStateResolver({
-    client,
-  }: {
-    client: ServiceClient;
-  }): GraphQLFieldResolver<any, any> {
-    return function connectivityStateResolver(_, { tryToConnect }) {
-      return client.getChannel().getConnectivityState(tryToConnect);
-    };
-  }
-
   processDirectives({ schema, creds }: { schema: GraphQLSchema; creds: ChannelCredentials }) {
-    const schemaTypeMap = schema.getTypeMap();
-    for (const scalarTypeName in scalarResolvers) {
-      if (scalarTypeName in schemaTypeMap) {
-        addExecutionLogicToScalar(
-          schemaTypeMap[scalarTypeName] as GraphQLScalarType,
-          scalarResolvers[scalarTypeName],
+    this.channelCreds = creds;
+    const location = stringInterpolator.parse(this.endpoint, { env: process.env }) ?? this.endpoint;
+    const channelOptions = Array.isArray(this.config.channelOptions)
+      ? Object.fromEntries(this.config.channelOptions)
+      : this.config.channelOptions;
+
+    for (const type of getRootTypes(schema)) {
+      const typeName = type.name;
+      for (const field of Object.values(type.getFields())) {
+        const directives = getDirectives(schema, field) || [];
+        for (const directiveObj of directives) {
+          if (
+            this.subgraphName &&
+            directiveObj.args?.subgraph &&
+            directiveObj.args.subgraph !== this.subgraphName
+          ) {
+            continue;
+          }
+          if (directiveObj.name !== 'protobuf__rpc' && directiveObj.name !== 'protobufRpc') {
+            continue;
+          }
+          const {
+            service,
+            method,
+            body,
+            selection,
+            stream: isStream,
+          } = directiveObj.args as {
+            service?: string;
+            method: string;
+            body: string;
+            selection: string;
+            stream?: boolean;
+          };
+          const bodyFields = parseMapping(body);
+          const selectionFields = parseMapping(selection);
+          const resolver = this.createRpcResolver({
+            location,
+            service,
+            method,
+            bodyFields,
+            selectionFields,
+            isStream: !!isStream,
+            channelOptions,
+            typeName,
+          });
+          if (typeName === 'Subscription' || isStream) {
+            field.subscribe = resolver;
+            field.resolve = (x: any) => x;
+          } else {
+            field.resolve = resolver;
+          }
+        }
+      }
+    }
+  }
+
+  private createRpcResolver({
+    location,
+    service,
+    method,
+    bodyFields,
+    selectionFields,
+    isStream,
+    channelOptions,
+    typeName,
+  }: {
+    location: string;
+    service?: string;
+    method: string;
+    bodyFields: ReturnType<typeof parseMapping>;
+    selectionFields: ReturnType<typeof parseMapping>;
+    isStream: boolean;
+    channelOptions?: Record<string, string | number>;
+    typeName: string;
+  }): GraphQLFieldResolver<any, any> {
+    const metaData = this.config.metaData;
+    const headersConfig = this.config.headers;
+    const timeout = this.config.requestTimeout;
+    const creds = this.channelCreds ?? credentials.createInsecure();
+    const http = isHttpLocation(location);
+    const rpcPath = buildRpcPath(service, method);
+
+    return async function protobufRpcResolver(_root, args, context) {
+      if (isStream && http) {
+        throw new GraphQLError(
+          'Server streaming protobuf RPCs require a gRPC location (not HTTP Connect/Twirp)',
         );
       }
-    }
-    if ('ObjMap' in schemaTypeMap) {
-      addExecutionLogicToScalar(schemaTypeMap.ObjMap as GraphQLScalarType, ObjMapScalar);
-    }
-    let roots: { name: string; rootJson: any; loadOptions: LoadOptions }[];
-    const transportDirective = getDirective(schema, schema, 'transport');
-    if (transportDirective) {
-      for (const directive of transportDirective) {
-        if (
-          directive?.subgraph != null &&
-          this.subgraphName != null &&
-          directive.subgraph !== this.subgraphName
-        ) {
-          continue;
-        }
-        if (directive?.options?.roots) {
-          roots = directive.options.roots;
-          break;
-        }
-      }
-    }
-    if (!roots?.length) {
-      throw new Error(`No roots found for subgraph '${this.subgraphName}'`);
-    }
-    const grpcObjectByRootJsonName = new Map<string, ReturnType<typeof loadPackageDefinition>>();
-    for (let { name, rootJson, loadOptions } of roots) {
-      rootJson = typeof rootJson === 'string' ? JSON.parse(rootJson) : rootJson;
-      const rootLogger = this.log.child({ root: name });
-      grpcObjectByRootJsonName.set(name, this.getGrpcObject({ rootJson, loadOptions, rootLogger }));
-    }
-    const typeMap = schema.getTypeMap();
-    for (const typeName in typeMap) {
-      const type = typeMap[typeName];
-      if (isEnumType(type)) {
-        const values = type.getValues();
-        for (const value of values) {
-          const enumAnnotations = getDirective(schema, value, 'enum');
-          if (enumAnnotations?.length) {
-            for (const enumAnnotation of enumAnnotations) {
-              const enumSerializedValue = enumAnnotation.value;
-              if (enumSerializedValue) {
-                const serializedValue = JSON.parse(enumSerializedValue);
-                value.value = serializedValue;
-                let valueLookup = (type as any)._valueLookup;
-                if (!valueLookup) {
-                  valueLookup = new Map(
-                    type.getValues().map(enumValue => [enumValue.value, enumValue]),
-                  );
-                  (type as any)._valueLookup = valueLookup;
-                }
-                (type as any)._valueLookup.set(serializedValue, value);
-              }
+      const requestBytes = encodeMessage(bodyFields, args ?? {});
+      try {
+        if (http) {
+          const url = resolveHttpUrl(location, service, method);
+          const headers: Record<string, string> = {};
+          const rawHeaders = Array.isArray(headersConfig)
+            ? Object.fromEntries(headersConfig)
+            : headersConfig;
+          if (rawHeaders) {
+            for (const [k, v] of Object.entries(rawHeaders)) {
+              headers[k] = stringInterpolator.parse(String(v), {
+                args,
+                context,
+                env: process.env,
+              });
             }
           }
+          const ctrl = timeout ? AbortSignal.timeout(timeout) : undefined;
+          const responseBytes = await httpProtobufUnary({
+            url,
+            body: requestBytes,
+            headers,
+            signal: ctrl,
+          });
+          return decodeMessage(selectionFields, responseBytes);
         }
-      } else if (isObjectType(type) || isInterfaceType(type)) {
-        const fields = type.getFields();
-        for (const fieldName in fields) {
-          const field = fields[fieldName];
-          const directives = getDirectives(schema, field);
-          if (directives?.length) {
-            for (const directiveObj of directives) {
-              if (
-                this.subgraphName &&
-                directiveObj.args?.subgraph &&
-                directiveObj.args.subgraph !== this.subgraphName
-              ) {
-                continue;
-              }
-              switch (directiveObj.name) {
-                case 'grpcMethod': {
-                  const { rootJsonName, objPath, methodName, responseStream } = directiveObj.args;
-                  const grpcObject = grpcObjectByRootJsonName.get(rootJsonName);
-                  if (!grpcObject) {
-                    throw new Error(
-                      `Root JSON '${rootJsonName}' not found for subgraph '${this.subgraphName}'`,
-                    );
-                  }
-                  const client = this.getServiceClient({
-                    grpcObject,
-                    objPath,
-                    creds,
-                  });
-                  if (typeName === 'Subscription') {
-                    field.subscribe = this.getFieldResolver({
-                      client,
-                      methodName,
-                      isResponseStream: responseStream,
-                    });
-                    field.resolve = identityFn;
-                  } else {
-                    field.resolve = this.getFieldResolver({
-                      client,
-                      methodName,
-                      isResponseStream: responseStream,
-                    });
-                  }
-                  break;
-                }
-                case 'grpcConnectivityState': {
-                  const { rootJsonName, objPath } = directiveObj.args;
-                  const grpcObject = grpcObjectByRootJsonName.get(rootJsonName);
-                  if (!grpcObject) {
-                    throw new Error(
-                      `Root JSON '${rootJsonName}' not found for subgraph '${this.subgraphName}'`,
-                    );
-                  }
-                  const client = this.getServiceClient({
-                    grpcObject,
-                    objPath,
-                    creds,
-                  });
-                  field.resolve = this.getConnectivityStateResolver({ client });
-                  break;
-                }
-              }
+
+        // gRPC unary (streaming: use generic client stream — unary first for Subscription via repeated unary not supported; use client streaming API)
+        const metadata =
+          buildGrpcMetadata(metaData, {
+            root: {},
+            args,
+            context,
+            env: process.env,
+          }) ?? new Metadata();
+
+        if (isStream || typeName === 'Subscription') {
+          const gen = (async function* () {
+            for await (const chunk of grpcServerStream({
+              location,
+              path: rpcPath,
+              request: requestBytes,
+              creds,
+              metadata,
+              channelOptions,
+            })) {
+              yield decodeMessage(selectionFields, chunk);
             }
+          })();
+          if (typeName === 'Subscription') {
+            return gen;
           }
-          if (isListTypeByAnyMeans(field.type)) {
-            field.resolve = wrapListFieldResolver(field.resolve || defaultFieldResolver);
+          // Query/Mutation with server-stream: collect messages into a list
+          const items: any[] = [];
+          for await (const item of gen) {
+            items.push(item);
           }
+          return items;
         }
+
+        const responseBytes = await grpcUnary({
+          location,
+          path: rpcPath,
+          request: requestBytes,
+          creds,
+          metadata,
+          channelOptions,
+          timeout,
+        });
+        return decodeMessage(selectionFields, responseBytes);
+      } catch (err) {
+        throw toGrpcGraphQLError(err);
       }
+    };
+  }
+}
+
+/** @deprecated */
+export const GrpcTransportHelper = ProtobufTransportHelper;
+
+function grpcUnary(opts: {
+  location: string;
+  path: string;
+  request: Uint8Array;
+  creds: ChannelCredentials;
+  metadata: Metadata;
+  channelOptions?: Record<string, string | number>;
+  timeout?: number;
+}): Promise<Uint8Array> {
+  const Client = makeGenericClientConstructor(
+    {
+      Invoke: {
+        path: opts.path,
+        requestStream: false,
+        responseStream: false,
+        requestSerialize: (v: Uint8Array) => Buffer.from(v),
+        requestDeserialize: (v: Buffer) => new Uint8Array(v),
+        responseSerialize: (v: Uint8Array) => Buffer.from(v),
+        responseDeserialize: (v: Buffer) => new Uint8Array(v),
+      },
+    },
+    'MeshProtobuf',
+  );
+  const client = new Client(opts.location, opts.creds, opts.channelOptions);
+  return new Promise((resolve, reject) => {
+    const deadline =
+      opts.timeout != null && opts.timeout > 0 ? new Date(Date.now() + opts.timeout) : undefined;
+    (client as any).Invoke(
+      opts.request,
+      opts.metadata,
+      deadline ? { deadline } : {},
+      (err: Error | null, value?: Uint8Array) => {
+        try {
+          (client as any).close?.();
+        } catch {
+          // ignore
+        }
+        if (err) reject(err);
+        else resolve(value ?? new Uint8Array());
+      },
+    );
+  });
+}
+
+async function* grpcServerStream(opts: {
+  location: string;
+  path: string;
+  request: Uint8Array;
+  creds: ChannelCredentials;
+  metadata: Metadata;
+  channelOptions?: Record<string, string | number>;
+}): AsyncGenerator<Uint8Array> {
+  const Client = makeGenericClientConstructor(
+    {
+      Invoke: {
+        path: opts.path,
+        requestStream: false,
+        responseStream: true,
+        requestSerialize: (v: Uint8Array) => Buffer.from(v),
+        requestDeserialize: (v: Buffer) => new Uint8Array(v),
+        responseSerialize: (v: Uint8Array) => Buffer.from(v),
+        responseDeserialize: (v: Buffer) => new Uint8Array(v),
+      },
+    },
+    'MeshProtobuf',
+  );
+  const client = new Client(opts.location, opts.creds, opts.channelOptions);
+  const call = (client as any).Invoke(opts.request, opts.metadata);
+  try {
+    for await (const chunk of call) {
+      yield chunk instanceof Uint8Array ? chunk : new Uint8Array(chunk);
+    }
+  } finally {
+    try {
+      (client as any).close?.();
+    } catch {
+      // ignore
     }
   }
 }
 
-function isListTypeByAnyMeans(type: GraphQLOutputType) {
-  if (isNonNullType(type)) {
-    return isListTypeByAnyMeans(type.ofType);
-  } else {
-    return isListType(type);
-  }
-}
-
-const transport: Transport<gRPCTransportOptions> = {
+const transport: Transport<ProtobufTransportOptions> = {
   getSubgraphExecutor({ transportEntry, subgraph, cwd, log }) {
-    const transport = new GrpcTransportHelper(
+    const helper = new ProtobufTransportHelper(
       transportEntry.subgraph,
       cwd,
       log,
       transportEntry.location,
-      transportEntry.options,
+      transportEntry.options || {},
     );
     return handleMaybePromise(
-      () => transport.getCredentials(),
+      () => (isHttpLocation(transportEntry.location) ? credentials.createInsecure() : helper.getCredentials()),
       creds => {
-        transport.processDirectives({ schema: subgraph, creds });
+        helper.processDirectives({ schema: subgraph, creds });
         const executor = createDefaultExecutor(subgraph);
-        executor[DisposableSymbols.dispose] = () => transport.dispose();
+        executor[DisposableSymbols.dispose] = () => helper.dispose();
         return executor;
       },
     );
@@ -381,23 +359,3 @@ const transport: Transport<gRPCTransportOptions> = {
 };
 
 export default transport;
-
-function wrapListFieldResolver(
-  fieldResolver: GraphQLFieldResolver<any, any>,
-): GraphQLFieldResolver<any, any> {
-  return function listFieldResolver(root, args, context, info) {
-    return handleMaybePromise(
-      () => fieldResolver(root, args, context, info),
-      result => {
-        if (result == null) {
-          return [];
-        }
-        return result;
-      },
-    );
-  };
-}
-
-function identityFn<T>(obj: T): T {
-  return obj;
-}

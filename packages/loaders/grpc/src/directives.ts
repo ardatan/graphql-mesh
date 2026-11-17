@@ -1,53 +1,49 @@
 import { DirectiveLocation, GraphQLBoolean, GraphQLDirective, GraphQLString } from 'graphql';
 
-export const grpcMethodDirective = new GraphQLDirective({
-  name: 'grpcMethod',
+export const protobufRpcDirective = new GraphQLDirective({
+  name: 'protobuf__rpc',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
     subgraph: {
       type: GraphQLString,
     },
-    rootJsonName: {
+    service: {
       type: GraphQLString,
     },
-    objPath: {
+    method: {
       type: GraphQLString,
     },
-    methodName: {
+    body: {
       type: GraphQLString,
     },
-    responseStream: {
+    selection: {
+      type: GraphQLString,
+    },
+    stream: {
       type: GraphQLBoolean,
     },
   },
 });
 
+/** @deprecated removed — use @protobuf__rpc */
+export const grpcMethodDirective = protobufRpcDirective;
+
+/** Connectivity removed from protobuf author surface */
 export const grpcConnectivityStateDirective = new GraphQLDirective({
   name: 'grpcConnectivityState',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-    rootJsonName: {
-      type: GraphQLString,
-    },
-    objPath: {
-      type: GraphQLString,
-    },
+    subgraph: { type: GraphQLString },
   },
 });
 
+/** @deprecated enum stamps removed — numbers live in mapping dialect */
 export const EnumDirective = new GraphQLDirective({
   name: 'enum',
   locations: [DirectiveLocation.ENUM_VALUE],
   args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-    value: {
-      type: GraphQLString,
-    },
+    subgraph: { type: GraphQLString },
+    value: { type: GraphQLString },
   },
 });
 

@@ -4,7 +4,7 @@ import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import { GrpcTransportHelper } from '@graphql-mesh/transport-grpc';
+import { GrpcTransportHelper } from '@graphql-mesh/transport-protobuf';
 import type {
   ImportFn,
   MeshFetch,

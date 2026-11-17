@@ -35,4 +35,7 @@ export const composeConfig = defineComposeConfig({
 
 export const gatewayConfig = defineGatewayConfig({
   deferStream: true,
+  transports: {
+    protobuf: import('@graphql-mesh/transport-protobuf'),
+  },
 });

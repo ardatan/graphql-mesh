@@ -1,4 +1,5 @@
 import { Opts } from '@e2e/opts';
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import { createRenameFieldTransform, defineConfig } from '@graphql-mesh/compose-cli';
 import { loadGrpcSubgraph } from '@omnigraph/grpc';
 
@@ -27,4 +28,10 @@ export const composeConfig = defineConfig({
       ],
     },
   ],
+});
+
+export const gatewayConfig = defineGatewayConfig({
+  transports: {
+    protobuf: import('@graphql-mesh/transport-protobuf'),
+  },
 });

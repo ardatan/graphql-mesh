@@ -1,0 +1,56 @@
+# Hand-authored Twirp-style subgraph (no Twirp loader).
+# location includes /twirp base; transport POSTs application/proto to {location}/Service/Method.
+
+extend schema
+  @link(
+    url: "https://the-guild.dev/graphql/mesh/protobuf/v1.0"
+    import: ["@protobuf__rpc"]
+  )
+
+schema @transport(
+  subgraph: "movies"
+  kind: "protobuf"
+  location: "https://movies.example.com/twirp"
+) {
+  query: Query
+}
+
+type Query {
+  moviesByYear(year: Int!): MoviesResult!
+    @protobuf__rpc(
+      service: "Example"
+      method: "GetMovies"
+      body: """
+        1(message): input.movie {
+          2(int64): year
+        }
+      """
+      selection: """
+        1(repeated message): result {
+          1(string): name
+          2(int64): year
+          3(float): rating
+          4(repeated string): cast
+          6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        }
+      """
+    )
+}
+
+type MoviesResult {
+  result: [Movie!]!
+}
+
+type Movie {
+  name: String!
+  year: Int!
+  rating: Float
+  cast: [String!]
+  genre: Genre
+}
+
+enum Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}

@@ -38,4 +38,8 @@ export const composeConfig = defineComposeConfig({
   ],
 });
 
-export const gatewayConfig = defineGatewayConfig({});
+export const gatewayConfig = defineGatewayConfig({
+  transports: {
+    protobuf: import('@graphql-mesh/transport-protobuf'),
+  },
+});
