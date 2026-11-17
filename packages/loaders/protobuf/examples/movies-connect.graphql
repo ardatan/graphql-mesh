@@ -16,7 +16,7 @@ type Query {
       args: """
       # Encode GraphQL field arguments into the protobuf request message.
       # Each line is fieldId(protoType): graphqlPath (relative to this field args).
-      1(message): input.movie {
+      1(message): $args {
         2(int64): year
       }
       """

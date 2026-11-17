@@ -912,11 +912,26 @@ function addAnnotationsForSemanticConventions({
             if (batchListArg) {
               return;
             }
+            // Entity representation only carries key fields. Require every non-null arg
+            // to be that key (id-only). Extra required args (e.g. locale) cannot be filled.
+            const requiredArgNames = argEntries
+              .filter(([, a]) => isNonNullType(a.type))
+              .map(([name]) => name);
+            const requiredArgsAreKeyOnly =
+              requiredArgNames.length > 0 && requiredArgNames.every(name => name === argName);
             if (argName === fieldName) {
-              directiveExtensions[protobufKey] = directiveExtensions[protobufKey].map((c: any) => ({
-                ...c,
-                entity: true,
-              }));
+              if (requiredArgsAreKeyOnly) {
+                directiveExtensions[protobufKey] = directiveExtensions[protobufKey].map(
+                  (c: any) => ({
+                    ...c,
+                    entity: true,
+                  }),
+                );
+              }
+              // Extra required args: leave field-level RPC as-is (no entity: true / type-level).
+              return;
+            }
+            if (!requiredArgsAreKeyOnly) {
               return;
             }
             // Type-level entity RPC: rewrite key arg binds → `$this.<keyField>`.

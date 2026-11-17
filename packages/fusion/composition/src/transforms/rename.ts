@@ -425,10 +425,13 @@ export function applyProtobufFieldRenames(
         });
       }
       // Dual `$this.<parent>|$args.<arg>` when parent field and arg renames diverge.
-      if (parentFieldRenames?.size || argRenameMap?.size) {
+      // Nested parent paths walk owning GraphQL types (e.g. `$this.address.street_name`).
+      if (parentFieldRenames?.size || argRenameMap?.size || (thisOwnerType && fieldRenameMap.size)) {
         args = rewriteProtobufThisBindsDual(args, {
           parentRenames: parentFieldRenames,
           argRenames: argRenameMap,
+          fieldRenameMap,
+          ownerType: thisOwnerType ?? null,
         });
       }
     }

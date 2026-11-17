@@ -142,6 +142,57 @@ describe('protobuf RPC semantic conventions (entity: true)', () => {
     expect(sdl).not.toMatch(/@source\(/);
   });
 
+  it('does not stamp entity: true when another required arg cannot be filled', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "pets", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          getPetById(id: ID!, locale: String!): Pet!
+            @protobuf__rpc(
+              service: "Pets"
+              method: "GetPet"
+              args: """
+              1(string): id
+              2(string): locale
+              """
+              selection: """
+              1(string): id
+              2(string): name
+              """
+            )
+        }
+
+        type Pet {
+          id: ID!
+          name: String!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([{ name: 'pets', schema }]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).not.toMatch(/entity:\s*true/);
+  });
+
   it('does not rewrite batch ByIds list args to $this.id', () => {
     const schema = buildSchema(
       /* GraphQL */ `
@@ -419,6 +470,64 @@ describe('rewriteProtobufMappingBinds', () => {
     );
     expect(out).toContain('$this.fullName');
     expect(out).toMatch(/2\(string\):\s*fullName/);
+  });
+
+  it('collapses dual binds during type-level entity conversion', async () => {
+    const { toTypeLevelEntityProtobufRpc } = await import('../src/connect-entity.js');
+    const out = toTypeLevelEntityProtobufRpc(
+      {
+        service: 'Pets',
+        method: 'GetPet',
+        args: '1(string): $this.id|$args.requestId',
+        entity: true,
+      },
+      'requestId',
+      'id',
+    );
+    expect(out.args).toBe('1(string): $this.id');
+    expect(out.entity).toBeUndefined();
+  });
+
+  it('rewrites nested $this segments with owning GraphQL types', async () => {
+    const { rewriteProtobufThisBindsDual } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(/* GraphQL */ `
+      type Address {
+        street_name: String
+      }
+      type Pet {
+        address: Address
+      }
+    `);
+    const pet = schema.getType('Pet');
+    const fieldRenameMap = new Map([
+      ['Address', new Map([['street_name', 'streetName']])],
+      ['Pet', new Map()],
+    ]);
+    const out = rewriteProtobufThisBindsDual('1(string): $this.address.street_name|$args.street', {
+      argRenames: new Map([['street', 'streetName']]),
+      fieldRenameMap,
+      ownerType: pet,
+    });
+    expect(out).toBe('1(string): $this.address.streetName|$args.streetName');
+  });
+
+  it('skips # comments before detecting nested message owners', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(/* GraphQL */ `
+      input MovieInput {
+        year: Int
+      }
+      type Query {
+        moviesByYear(input: MovieInput): String
+      }
+    `);
+    const movieInput = schema.getType('MovieInput')!;
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      '1(message): input # documentation\n{\n  2(int64): year\n}',
+      new Map([['MovieInput', new Map([['year', 'publicationYear']])]]),
+      { argTypes: new Map([['input', movieInput]]) },
+    );
+    expect(out).toMatch(/2\(int64\):\s*publicationYear/);
   });
 });
 

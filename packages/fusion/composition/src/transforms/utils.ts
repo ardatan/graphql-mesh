@@ -226,6 +226,9 @@ export function rewriteProtobufThisBindsDual(
   options: {
     parentRenames?: Map<string, string>;
     argRenames?: Map<string, string>;
+    /** Walk nested `$this` segments against owning GraphQL types when set with `ownerType`. */
+    fieldRenameMap?: Map<string, Map<string, string>>;
+    ownerType?: GraphQLNamedType | null;
   },
 ): string {
   if (!mapping) {
@@ -233,7 +236,8 @@ export function rewriteProtobufThisBindsDual(
   }
   const parentLookup = options.parentRenames?.size ? toLookup(options.parentRenames) : new Map();
   const argLookup = options.argRenames?.size ? toLookup(options.argRenames) : new Map();
-  if (!parentLookup.size && !argLookup.size) {
+  const typedWalk = Boolean(options.fieldRenameMap?.size && options.ownerType);
+  if (!parentLookup.size && !argLookup.size && !typedWalk) {
     return mapping;
   }
   return mapping.replace(
@@ -242,10 +246,22 @@ export function rewriteProtobufThisBindsDual(
       const thisSegs = thisPath.split('.');
       const argsBase = existingArgsPath ?? thisPath;
       const argsSegs = argsBase.split('.');
-      // Maps are old→new; already-rewritten segments stay put.
-      const parentFirst = parentLookup.get(thisSegs[0]) ?? thisSegs[0];
+      let parentPath: string;
+      if (typedWalk) {
+        const rewritten: string[] = [];
+        let cur: GraphQLNamedType | null | undefined = options.ownerType;
+        for (const seg of thisSegs) {
+          const stepped = renameFieldSegment(cur, seg, options.fieldRenameMap!);
+          rewritten.push(stepped.name);
+          cur = stepped.type;
+        }
+        parentPath = rewritten.join('.');
+      } else {
+        // Flat map: old→new on the first segment only (caller without type context).
+        const parentFirst = parentLookup.get(thisSegs[0]) ?? thisSegs[0];
+        parentPath = [parentFirst, ...thisSegs.slice(1)].join('.');
+      }
       const argFirst = argLookup.get(argsSegs[0]) ?? argsSegs[0];
-      const parentPath = [parentFirst, ...thisSegs.slice(1)].join('.');
       const argsPath = [argFirst, ...argsSegs.slice(1)].join('.');
       if (parentPath === argsPath) {
         return `$this.${parentPath}`;
@@ -336,8 +352,19 @@ export function rewriteProtobufMappingBindsTypeScoped(
 
       const depth = braceDepthAt(whole, offset);
       const afterPath = offset + match.length;
+      // Skip whitespace and `# …` comments so `1(message): input # doc\n{` still enters a block.
       let j = afterPath;
-      while (j < whole.length && /\s/.test(whole[j])) j++;
+      while (j < whole.length) {
+        if (/\s/.test(whole[j])) {
+          j++;
+          continue;
+        }
+        if (whole[j] === '#') {
+          while (j < whole.length && whole[j] !== '\n') j++;
+          continue;
+        }
+        break;
+      }
       const entersBlock = whole[j] === '{';
 
       // `$args.input { … }` / `$args.input.movie`: keep `$args` prefix; descend into

@@ -220,7 +220,7 @@ export function decodeMessage(fields: MappingField[], data: Uint8Array): Record<
   for (const field of fields) {
     const key = field.bind && !field.bind.startsWith('$') ? field.bind : `_${field.id}`;
     if (field.type.kind === 'repeated') out[key] = [];
-    else if (field.type.kind === 'map') out[key] = {};
+    else if (field.type.kind === 'map') out[key] = Object.create(null);
     else if (field.type.kind === 'scalar' && field.presence !== 'explicit') {
       out[key] = proto3ScalarDefault(field.type.name);
     } else if (field.type.kind === 'enum' && field.presence !== 'explicit') {
@@ -282,11 +282,24 @@ export function decodeMessage(fields: MappingField[], data: Uint8Array): Record<
     i = decoded.next;
     if (field.type.kind === 'map') {
       const entry = decoded.value as { key: any; value: any };
-      out[key] = out[key] ?? {};
+      out[key] = out[key] ?? Object.create(null);
       out[key][entry.key] = entry.value;
     } else if (field.type.kind === 'repeated') {
       out[key] = out[key] ?? [];
       out[key].push(decoded.value);
+    } else if (field.type.kind === 'message') {
+      if (
+        out[key] != null &&
+        typeof out[key] === 'object' &&
+        !Array.isArray(out[key]) &&
+        decoded.value != null &&
+        typeof decoded.value === 'object' &&
+        !Array.isArray(decoded.value)
+      ) {
+        out[key] = mergeMessage(out[key], decoded.value);
+      } else {
+        out[key] = decoded.value;
+      }
     } else {
       out[key] = decoded.value;
     }
@@ -311,6 +324,44 @@ export function decodeMessage(fields: MappingField[], data: Uint8Array): Record<
     }
   }
   return out;
+}
+
+function isPlainObject(v: unknown): v is Record<string, any> {
+  return v != null && typeof v === 'object' && !Array.isArray(v);
+}
+
+function isProto3DefaultScalar(v: unknown): boolean {
+  if (v === 0 || v === false || v === '') return true;
+  if (typeof Buffer !== 'undefined' && Buffer.isBuffer(v) && v.length === 0) return true;
+  return false;
+}
+
+function mergeMessage(a: Record<string, any>, b: Record<string, any>): Record<string, any> {
+  const out = { ...a };
+  for (const k of Object.keys(b)) {
+    if (isPlainObject(out[k]) && isPlainObject(b[k])) {
+      out[k] = mergeMessage(out[k], b[k]);
+    } else if (
+      isProto3DefaultScalar(b[k]) &&
+      out[k] !== undefined &&
+      !isProto3DefaultScalar(out[k])
+    ) {
+      // Later occurrence only carried defaults for this key — keep the merged value.
+      continue;
+    } else {
+      out[k] = b[k];
+    }
+  }
+  return out;
+}
+
+function assertLengthDelimitedEnd(end: number, data: Uint8Array, label?: string): void {
+  if (end > data.length) {
+    const detail = label ? ` ${label}` : '';
+    throw new Error(
+      `Truncated length-delimited field${detail}: end ${end} exceeds buffer ${data.length}`,
+    );
+  }
 }
 
 function proto3ScalarDefault(name: string): any {
@@ -377,6 +428,7 @@ function readValue(
   if (type.kind === 'map') {
     const len = readVarint(data, i);
     const end = len.next + Number(len.value);
+    assertLengthDelimitedEnd(end, data, 'map entry');
     const raw = data.subarray(len.next, end);
     const entry = decodeMessage(
       [
@@ -393,6 +445,7 @@ function readValue(
   ) {
     const len = readVarint(data, i);
     const end = len.next + Number(len.value);
+    assertLengthDelimitedEnd(end, data);
     const raw = data.subarray(len.next, end);
     if (type.kind === 'scalar' && type.name === 'string') {
       return { value: new TextDecoder().decode(raw), next: end, raw };
@@ -452,7 +505,9 @@ function readValue(
   if (wire === WIRE_LEN) {
     const len = readVarint(data, i);
     const n = Number(len.value);
-    return { value: data.subarray(len.next, len.next + n), next: len.next + n };
+    const end = len.next + n;
+    assertLengthDelimitedEnd(end, data);
+    return { value: data.subarray(len.next, end), next: end };
   }
   throw new Error(`Unsupported wire type ${wire}`);
 }
@@ -463,13 +518,15 @@ function skipWire(data: Uint8Array, i: number, wire: number): number {
   if (wire === WIRE_32) return i + 4;
   if (wire === WIRE_LEN) {
     const len = readVarint(data, i);
-    return len.next + Number(len.value);
+    const end = len.next + Number(len.value);
+    assertLengthDelimitedEnd(end, data);
+    return end;
   }
   throw new Error(`Cannot skip wire type ${wire}`);
 }
 
 function writeTag(chunks: Uint8Array[], id: number, wire: number) {
-  writeVarint(chunks, (id << 3) | wire);
+  writeVarint(chunks, ((id << 3) | wire) >>> 0);
 }
 
 function writeVarint(chunks: Uint8Array[], value: number | bigint) {

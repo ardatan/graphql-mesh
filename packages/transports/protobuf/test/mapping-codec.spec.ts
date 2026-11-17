@@ -146,6 +146,42 @@ describe('protobuf mapping + codec', () => {
     expect(() => decodeMessage(fields, truncated)).toThrow(/Truncated packed|Invalid packed/);
   });
 
+  it('rejects truncated length-delimited string payloads', () => {
+    const fields = parseMapping(`1(string): name`);
+    // Tag 1 wire-len, length=5, but only one payload byte → truncated.
+    const truncated = Uint8Array.from([0x0a, 0x05, 0x78]);
+    expect(() => decodeMessage(fields, truncated)).toThrow(/Truncated length-delimited/);
+  });
+
+  it('roundtrips high field number tags without sign overflow', () => {
+    const fieldId = 536_870_911; // largest valid protobuf field number
+    const fields = parseMapping(`${fieldId}(string): value`);
+    const bytes = encodeMessage(fields, { value: 'hi' });
+    expect(decodeMessage(fields, bytes).value).toBe('hi');
+  });
+
+  it('stores map key __proto__ as own property (null prototype map)', () => {
+    const fields = parseMapping(`1(map<string,string>): data`);
+    const data = Object.create(null) as Record<string, string>;
+    data.__proto__ = 'own-key';
+    const bytes = encodeMessage(fields, { data });
+    const decoded = decodeMessage(fields, bytes);
+    expect(Object.prototype.hasOwnProperty.call(decoded.data, '__proto__')).toBe(true);
+    expect(decoded.data.__proto__).toBe('own-key');
+    expect(({} as Record<string, string>).__proto__).not.toBe('own-key');
+  });
+
+  it('merges repeated singular message occurrences into one child object', () => {
+    const fields = parseMapping(`
+      1(message): child {
+        1(int32): a
+        2(int32): b
+      }
+    `);
+    const bytes = Uint8Array.from([0x0a, 0x02, 0x08, 0x01, 0x0a, 0x02, 0x10, 0x02]);
+    expect(decodeMessage(fields, bytes)).toEqual({ child: { a: 1, b: 2 } });
+  });
+
   it('maps negative enum wire values to names (signed int32)', () => {
     const fields = parseMapping(`1(enum{UNKNOWN=-1,OK=0}): status`);
     const bytes = encodeMessage(fields, { status: 'UNKNOWN' });

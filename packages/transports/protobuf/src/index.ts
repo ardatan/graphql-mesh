@@ -119,11 +119,13 @@ export class ProtobufTransportHelper extends DisposableStack {
       : this.config.channelOptions;
 
     const queryType = schema.getQueryType();
+    const subscriptionType = schema.getSubscriptionType();
     for (const type of Object.values(schema.getTypeMap())) {
       if (!isObjectType(type) || type.name.startsWith('__')) {
         continue;
       }
       const typeName = type.name;
+      const isSubscription = type === subscriptionType;
       // Type-level `@protobuf__rpc` → resolveReference (entity fill / `$this` binds).
       const typeDirectives = getDirectives(schema, type) || [];
       for (const directiveObj of typeDirectives) {
@@ -142,6 +144,7 @@ export class ProtobufTransportHelper extends DisposableStack {
           location,
           channelOptions,
           typeName,
+          isSubscription,
         );
         setTypeResolveReference(type, (reference, context, info) =>
           resolver(reference, {}, context, info),
@@ -167,11 +170,12 @@ export class ProtobufTransportHelper extends DisposableStack {
             location,
             channelOptions,
             typeName,
+            isSubscription,
           );
           // Subscriptions use `subscribe` (async iterable). Query/Mutation server-stream
           // fields keep `resolve` and return an AsyncIterable so `@stream` can
           // incremental-deliver as gRPC chunks arrive (same pattern as legacy gRPC).
-          if (typeName === 'Subscription') {
+          if (isSubscription) {
             field.subscribe = resolver;
             field.resolve = (x: any) => x;
           } else {
@@ -187,7 +191,7 @@ export class ProtobufTransportHelper extends DisposableStack {
                 for (const arg of entityField.args) {
                   args[arg.name] = reference?.[arg.name];
                 }
-                return entityField.resolve?.(null, args, context, info);
+                return entityField.resolve?.(reference, args, context, info);
               });
             }
           }
@@ -202,6 +206,7 @@ export class ProtobufTransportHelper extends DisposableStack {
     location: string,
     channelOptions: Record<string, string | number> | undefined,
     typeName: string,
+    isSubscription: boolean,
   ): GraphQLFieldResolver<any, any> {
     const {
       service,
@@ -225,6 +230,7 @@ export class ProtobufTransportHelper extends DisposableStack {
       isStream: !!isStream,
       channelOptions,
       typeName,
+      isSubscription,
     });
   }
 
@@ -237,6 +243,7 @@ export class ProtobufTransportHelper extends DisposableStack {
     isStream,
     channelOptions,
     typeName,
+    isSubscription,
   }: {
     location: string;
     service?: string;
@@ -246,6 +253,7 @@ export class ProtobufTransportHelper extends DisposableStack {
     isStream: boolean;
     channelOptions?: Record<string, string | number>;
     typeName: string;
+    isSubscription: boolean;
   }): GraphQLFieldResolver<any, any> {
     const metaData = this.config.metaData;
     const headersConfig = this.config.headers;
@@ -305,24 +313,28 @@ export class ProtobufTransportHelper extends DisposableStack {
             env: process.env,
           }) ?? new Metadata();
 
-        if (isStream || typeName === 'Subscription') {
+        if (isStream || isSubscription) {
           // Return AsyncIterable for both Subscription and Query `@stream` list fields.
           // Materializing into an array first corrupted repeated fields under `@stream`
           // incremental delivery (e.g. duplicated `cast` across chunks).
           // Apply requestTimeout as a per-call deadline for Query streams; long-lived
           // Subscriptions omit it so the stream is not killed by a unary-style timeout.
-          const streamTimeout = typeName === 'Subscription' ? undefined : timeout;
+          const streamTimeout = isSubscription ? undefined : timeout;
           return (async function* () {
-            for await (const chunk of grpcServerStream({
-              location,
-              path: rpcPath,
-              request: requestBytes,
-              creds,
-              metadata,
-              channelOptions,
-              timeout: streamTimeout,
-            })) {
-              yield decodeMessage(selectionFields, chunk);
+            try {
+              for await (const chunk of grpcServerStream({
+                location,
+                path: rpcPath,
+                request: requestBytes,
+                creds,
+                metadata,
+                channelOptions,
+                timeout: streamTimeout,
+              })) {
+                yield decodeMessage(selectionFields, chunk);
+              }
+            } catch (err) {
+              throw toGrpcGraphQLError(err);
             }
           })();
         }

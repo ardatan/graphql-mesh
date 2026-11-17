@@ -64,6 +64,10 @@ export async function migrateLegacyConfig(
     addImport(importMap, handlerInfo.packageName, handlerInfo.importName);
     removedPackages.add(handlerInfo.oldPackageName);
     addedPackages.add(handlerInfo.packageName);
+    // Protobuf loader does not depend on the transport; gateways need both packages.
+    if (handlerName === 'grpc') {
+      addedPackages.add('@graphql-mesh/transport-protobuf');
+    }
 
     const mappedHandler = mapHandlerConfig(
       handlerName,

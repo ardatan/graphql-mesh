@@ -52,6 +52,12 @@ export function toTypeLevelEntityProtobufRpc(
   const renameMap = new Map<string, string>([[keyArg, keyField]]);
   let nextArgs = typeof args === 'string' ? rewriteProtobufMappingBinds(args, renameMap) : args;
   if (typeof nextArgs === 'string') {
+    // Collapse dual `$this.<path>|$args.<path>` to `$this.<path>` first — otherwise
+    // replacing `$args.<keyField>` turns `$this.id|$args.id` into `$this.id|$this.id`.
+    nextArgs = nextArgs.replace(
+      /\$this\.([\w$]+(?:\.[\w$]+)*)\|\$args\.([\w$]+(?:\.[\w$]+)*)/g,
+      (_m, thisPath: string) => `$this.${thisPath}`,
+    );
     // Prefer `$this.<key>` so resolveReference can pass the entity representation as root.
     nextArgs = nextArgs
       .replaceAll(`$args.${keyField}`, `$this.${keyField}`)
