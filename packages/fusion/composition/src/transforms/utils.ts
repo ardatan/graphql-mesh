@@ -216,6 +216,96 @@ function toLookup(renameMap: Map<string, string>): Map<string, string> {
   return new Map(entries);
 }
 
+const THIS_DOT = '$this.';
+const PIPE_ARGS_DOT = '|$args.';
+
+/** `\w` or `$` — GraphQL-safe bind segment chars (same class as the old regex). */
+function isProtobufBindIdentChar(code: number): boolean {
+  return (
+    (code >= 48 && code <= 57) || // 0-9
+    (code >= 65 && code <= 90) || // A-Z
+    (code >= 97 && code <= 122) || // a-z
+    code === 95 || // _
+    code === 36 // $
+  );
+}
+
+/**
+ * Read `ident(.ident)*` starting at `start`. Returns exclusive end, or -1.
+ * Linear scan — avoids nested-quantifier ReDoS on pathological `$this.$…` inputs.
+ */
+function readProtobufDottedIdentPath(source: string, start: number): number {
+  let i = start;
+  if (i >= source.length || !isProtobufBindIdentChar(source.charCodeAt(i))) {
+    return -1;
+  }
+  while (i < source.length && isProtobufBindIdentChar(source.charCodeAt(i))) {
+    i++;
+  }
+  while (source[i] === '.') {
+    i++;
+    if (i >= source.length || !isProtobufBindIdentChar(source.charCodeAt(i))) {
+      return -1;
+    }
+    while (i < source.length && isProtobufBindIdentChar(source.charCodeAt(i))) {
+      i++;
+    }
+  }
+  return i;
+}
+
+/**
+ * Walk `$this.<path>` optionally followed by `|$args.<path>`, invoking `onBind` for each.
+ * O(n) in `mapping.length` — no nested-quantifier regex.
+ */
+function mapProtobufThisDualBinds(
+  mapping: string,
+  onBind: (thisPath: string, argsPath: string | undefined) => string,
+): string {
+  let out = '';
+  let i = 0;
+  while (i < mapping.length) {
+    const at = mapping.indexOf(THIS_DOT, i);
+    if (at < 0) {
+      out += mapping.slice(i);
+      break;
+    }
+    out += mapping.slice(i, at);
+    const thisPathStart = at + THIS_DOT.length;
+    const thisPathEnd = readProtobufDottedIdentPath(mapping, thisPathStart);
+    if (thisPathEnd < 0) {
+      out += mapping[at];
+      i = at + 1;
+      continue;
+    }
+    const thisPath = mapping.slice(thisPathStart, thisPathEnd);
+    let argsPath: string | undefined;
+    let end = thisPathEnd;
+    if (mapping.startsWith(PIPE_ARGS_DOT, thisPathEnd)) {
+      const argsPathStart = thisPathEnd + PIPE_ARGS_DOT.length;
+      const argsPathEnd = readProtobufDottedIdentPath(mapping, argsPathStart);
+      if (argsPathEnd >= 0) {
+        argsPath = mapping.slice(argsPathStart, argsPathEnd);
+        end = argsPathEnd;
+      }
+    }
+    out += onBind(thisPath, argsPath);
+    i = end;
+  }
+  return out;
+}
+
+/**
+ * Collapse dual `$this.<path>|$args.<path>` tokens to `$this.<path>` (entity conversion).
+ * Linear scan — same dual-bind recognition as {@link rewriteProtobufThisBindsDual}.
+ */
+export function collapseProtobufDualThisArgsBinds(mapping: string): string {
+  if (!mapping || !mapping.includes(THIS_DOT) || !mapping.includes(PIPE_ARGS_DOT)) {
+    return mapping;
+  }
+  return mapProtobufThisDualBinds(mapping, thisPath => `${THIS_DOT}${thisPath}`);
+}
+
 /**
  * Rewrite `$this.<path>` so parent field renames and argument renames can diverge.
  * When the public parent path and args path differ, emit dual
@@ -240,35 +330,32 @@ export function rewriteProtobufThisBindsDual(
   if (!parentLookup.size && !argLookup.size && !typedWalk) {
     return mapping;
   }
-  return mapping.replace(
-    /\$this\.([\w$]+(?:\.[\w$]+)*)(?:\|\$args\.([\w$]+(?:\.[\w$]+)*))?/g,
-    (_m, thisPath: string, existingArgsPath?: string) => {
-      const thisSegs = thisPath.split('.');
-      const argsBase = existingArgsPath ?? thisPath;
-      const argsSegs = argsBase.split('.');
-      let parentPath: string;
-      if (typedWalk) {
-        const rewritten: string[] = [];
-        let cur: GraphQLNamedType | null | undefined = options.ownerType;
-        for (const seg of thisSegs) {
-          const stepped = renameFieldSegment(cur, seg, options.fieldRenameMap!);
-          rewritten.push(stepped.name);
-          cur = stepped.type;
-        }
-        parentPath = rewritten.join('.');
-      } else {
-        // Flat map: old→new on the first segment only (caller without type context).
-        const parentFirst = parentLookup.get(thisSegs[0]) ?? thisSegs[0];
-        parentPath = [parentFirst, ...thisSegs.slice(1)].join('.');
+  return mapProtobufThisDualBinds(mapping, (thisPath, existingArgsPath) => {
+    const thisSegs = thisPath.split('.');
+    const argsBase = existingArgsPath ?? thisPath;
+    const argsSegs = argsBase.split('.');
+    let parentPath: string;
+    if (typedWalk) {
+      const rewritten: string[] = [];
+      let cur: GraphQLNamedType | null | undefined = options.ownerType;
+      for (const seg of thisSegs) {
+        const stepped = renameFieldSegment(cur, seg, options.fieldRenameMap!);
+        rewritten.push(stepped.name);
+        cur = stepped.type;
       }
-      const argFirst = argLookup.get(argsSegs[0]) ?? argsSegs[0];
-      const argsPath = [argFirst, ...argsSegs.slice(1)].join('.');
-      if (parentPath === argsPath) {
-        return `$this.${parentPath}`;
-      }
-      return `$this.${parentPath}|$args.${argsPath}`;
-    },
-  );
+      parentPath = rewritten.join('.');
+    } else {
+      // Flat map: old→new on the first segment only (caller without type context).
+      const parentFirst = parentLookup.get(thisSegs[0]) ?? thisSegs[0];
+      parentPath = [parentFirst, ...thisSegs.slice(1)].join('.');
+    }
+    const argFirst = argLookup.get(argsSegs[0]) ?? argsSegs[0];
+    const argsPath = [argFirst, ...argsSegs.slice(1)].join('.');
+    if (parentPath === argsPath) {
+      return `${THIS_DOT}${parentPath}`;
+    }
+    return `${THIS_DOT}${parentPath}${PIPE_ARGS_DOT}${argsPath}`;
+  });
 }
 
 /** Net `{` − `}` count before `index`; `#` comments are ignored through EOL (parser-compatible). */

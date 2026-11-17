@@ -488,6 +488,17 @@ describe('rewriteProtobufMappingBinds', () => {
     expect(out.entity).toBeUndefined();
   });
 
+  it('dual-bind collapse stays linear on pathological $this.$ input', async () => {
+    const { collapseProtobufDualThisArgsBinds } = await import('../src/transforms/utils.js');
+    const poison = `$this.${'$.'.repeat(2000)}`;
+    const started = Date.now();
+    const out = collapseProtobufDualThisArgsBinds(`${poison}|$args.id`);
+    expect(Date.now() - started).toBeLessThan(500);
+    // Incomplete dotted path after `$this.` is left alone (no dual match).
+    expect(out).toBe(`${poison}|$args.id`);
+    expect(collapseProtobufDualThisArgsBinds('$this.id|$args.requestId')).toBe('$this.id');
+  });
+
   it('rewrites nested $this segments with owning GraphQL types', async () => {
     const { rewriteProtobufThisBindsDual } = await import('../src/transforms/utils.js');
     const schema = buildSchema(/* GraphQL */ `

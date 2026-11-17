@@ -6,7 +6,10 @@ import {
   type GraphQLSchema,
 } from 'graphql';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
-import { rewriteProtobufMappingBinds } from './transforms/utils.js';
+import {
+  collapseProtobufDualThisArgsBinds,
+  rewriteProtobufMappingBinds,
+} from './transforms/utils.js';
 
 /**
  * Federation Connectors entity helpers (shared contract).
@@ -54,10 +57,8 @@ export function toTypeLevelEntityProtobufRpc(
   if (typeof nextArgs === 'string') {
     // Collapse dual `$this.<path>|$args.<path>` to `$this.<path>` first — otherwise
     // replacing `$args.<keyField>` turns `$this.id|$args.id` into `$this.id|$this.id`.
-    nextArgs = nextArgs.replace(
-      /\$this\.([\w$]+(?:\.[\w$]+)*)\|\$args\.([\w$]+(?:\.[\w$]+)*)/g,
-      (_m, thisPath: string) => `$this.${thisPath}`,
-    );
+    // Linear scan (not nested-quantifier regex) — CodeQL js/polynomial-redos.
+    nextArgs = collapseProtobufDualThisArgsBinds(nextArgs);
     // Prefer `$this.<key>` so resolveReference can pass the entity representation as root.
     nextArgs = nextArgs
       .replaceAll(`$args.${keyField}`, `$this.${keyField}`)
