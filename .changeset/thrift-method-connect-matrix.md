@@ -5,21 +5,21 @@
 '@graphql-mesh/fusion-composition': patch
 ---
 
-### Why (vs previous release / `master`)
+### Why
 
-On `master`, Thrift subgraphs are authored and executed like this:
+The previous Thrift authoring surface was hard to write, review, and share:
 
-- Loader stamps every RPC with `@fieldTypeMap({ … nested TypeVal bags … })`.
-- `@transport` carries a large `options` bag: `clientAnnotations` (serviceName, methodNames, methodAnnotations, methodParameters, …) plus `topTypeMap`.
-- Transport `doRequest` reads only those bags. Wire field ids / exact Thrift types (`i16` vs `i32`) live in JSON-ish directive args that are hard to hand-write, review, or AI-generate — GraphQL `Int` cannot carry that distinction.
-- There is no loader `protocol` switch: HTTP thrift is always binary Mesh transport. Servers that speak `TJSONProtocol` cannot get Federation `@connect` emit for Hive / Apollo Router.
-- IDL `throws` and `oneway` are ignored. Declared throws on a TJSON path would look like success with a missing `"0"` field and become silent `null`.
+- Loader stamped every RPC with `@fieldTypeMap({ … nested TypeVal bags … })`.
+- `@transport` carried a large `options` bag: `clientAnnotations` (serviceName, methodNames, methodAnnotations, methodParameters, …) plus `topTypeMap`.
+- Transport `doRequest` read only those bags. Wire field ids / exact Thrift types (`i16` vs `i32`) lived in opaque directive args — GraphQL `Int` cannot carry that distinction.
+- There was no loader `protocol` switch: HTTP thrift was always binary Mesh transport. Servers that speak `TJSONProtocol` could not get Federation `@connect` emit for Hive / Apollo Router.
+- IDL `throws` and `oneway` were ignored. Declared throws on a TJSON path would look like success with a missing `"0"` field and become silent `null`.
 
-This release replaces that surface with an explicit compact RPC mapping the transport executes, plus an opt-in TJSON Connectors path.
+This release replaces that with an explicit compact RPC mapping the transport executes, plus an opt-in TJSON Connectors path.
 
 ### Breaking (no dual-read)
 
-**Removed relative to `master` (not executed anymore):**
+**Removed / no longer executed:**
 
 - `@fieldTypeMap`
 - `@transport.options.clientAnnotations` / `topTypeMap`
@@ -55,7 +55,7 @@ directive @thrift__rpc(
 - Single-service **generate omits** `service:` (HTTP path is on `@transport(location:)`). Directive arg remains for hand-authored multi-service SDL.
 - Transport executes `@thrift__rpc` with **field-id** decode (no `topTypeMap`).
 
-#### JSON — `protocol: 'json'` (new vs `master`)
+#### JSON — `protocol: 'json'`
 
 Emits Federation `@source` + `@connect` (TJSON) instead of thrift `@transport`:
 
@@ -66,16 +66,16 @@ Emits Federation `@source` + `@connect` (TJSON) instead of thrift `@transport`:
 - Non-void CALL `isSuccess` requires REPLY plus success field `"0"` (`ne(null)`) so declared throws are not silent nulls; void is REPLY-only; ONEWAY omits `isSuccess`
 - `errors.message` covers `TApplicationException` and declared-throw struct messages
 
-#### Exceptions (new vs `master`)
+#### Exceptions
 
 1. **`TApplicationException`:** binary client throws; JSON uses `isSuccess` / `errors`.
 2. **IDL `throws`:** `ignoreExceptions` defaults to `true`. Set `false` to emit GraphQL unions + `@thrift__rpc(throws:)` / `doRequest` mapping.
 
-#### Transforms (extension vs `master`)
+#### Transforms
 
-On `master`, Fusion rename / naming-convention already rewrote `$args…` inside `@connect`. They now also rewrite `$args…` inside `@thrift__rpc(args/selection/throws)` via the same helper — no `@merge` / `@meshSource` for thrift.
+Fusion rename / naming-convention already rewrote `$args…` inside `@connect`. They now also rewrite `$args…` inside `@thrift__rpc(args/selection/throws)` via the same helper — no `@merge` / `@meshSource` for thrift.
 
-### Migration from `master`
+### Migration
 
 1. Upgrade and **recompose** the Thrift subgraph (prefer regenerate from IDL).
 2. Replace hand-written `@fieldTypeMap` + transport `options` with `@thrift__rpc` (binary) or loader `protocol: 'json'` (`@source` / `@connect`).
