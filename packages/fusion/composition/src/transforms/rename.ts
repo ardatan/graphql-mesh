@@ -319,6 +319,24 @@ export function createRenameTransform(opts: RenameTransformConfig) {
     // across the subgraph (Connect-like; no Mesh `@source` fallback).
     // Keep renames type-scoped so `Review.year→publicationYear` does not rewrite `Movie.year`.
     // Also rewrite object-level entity RPCs (type directives), not only field-level.
+    // Field mappers record renames under the pre-rename type name; rekey to the public
+    // type name so object-level `$this.*` / selection lookups hit after type rename.
+    if (fieldRenameMap.size && typeRenameMap.size) {
+      for (const [from, to] of typeRenameMap) {
+        if (from === to) continue;
+        const fromMap = fieldRenameMap.get(from);
+        if (!fromMap) continue;
+        fieldRenameMap.delete(from);
+        const toMap = fieldRenameMap.get(to);
+        if (toMap) {
+          for (const [oldField, newField] of fromMap) {
+            toMap.set(oldField, newField);
+          }
+        } else {
+          fieldRenameMap.set(to, fromMap);
+        }
+      }
+    }
     if (fieldRenameMap.size) {
       nextSchema = mapSchema(nextSchema, {
         [MapperKind.ROOT_FIELD]: (field, _n, _t, s) =>

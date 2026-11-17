@@ -650,4 +650,113 @@ describe('object-level @protobuf__rpc rename', () => {
     expect(sdl).toMatch(/selection:[\s\S]*2\(string\):\s*fullName/);
     expect(sdl).not.toMatch(/selection:[\s\S]*2\(string\):\s*name\b/);
   });
+
+  it('rewrites $this and selection when Pet→Animal and name→fullName together', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "pets", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          pet(id: ID!): Pet
+        }
+
+        type Pet
+          @protobuf__rpc(
+            service: "Pets"
+            method: "GetPet"
+            args: """
+            1(string): $this.name
+            """
+            selection: """
+            1(string): id
+            2(string): name
+            """
+          ) {
+          id: ID!
+          name: String!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'pets',
+        schema,
+        transforms: [
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => (typeName === 'Pet' ? 'Animal' : typeName),
+            fieldRenamer: ({ typeName, fieldName }) =>
+              typeName === 'Pet' && fieldName === 'name' ? 'fullName' : fieldName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/type Animal[\s\S]*fullName/);
+    expect(sdl).toMatch(/args:[\s\S]*\$this\.fullName/);
+    expect(sdl).not.toMatch(/args:[\s\S]*\$this\.name\b/);
+    expect(sdl).toMatch(/selection:[\s\S]*2\(string\):\s*fullName/);
+    expect(sdl).not.toMatch(/selection:[\s\S]*2\(string\):\s*name\b/);
+  });
+});
+
+describe('rewriteProtobufMappingBindsTypeScoped ownership', () => {
+  it('clears closed-block owners so unbound wrappers inherit the enclosing type', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(
+      /* GraphQL */ `
+        type B {
+          year: Int!
+          first: A
+        }
+        type A {
+          child: C
+        }
+        type C {
+          label: String!
+          year: Int!
+        }
+        type Query {
+          b: B
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const fieldRenameMap = new Map<string, Map<string, string>>([
+      ['B', new Map([['year', 'releaseYear']])],
+      ['C', new Map([['year', 'cYear']])],
+    ]);
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      `1(message): first.child {
+  1(string): label
+}
+2(message): {
+  1(int64): year
+}`,
+      fieldRenameMap,
+      { rootType: schema.getType('B')! },
+    );
+    expect(out).toContain('1(string): label');
+    // Unbound block after first.child closes must inherit B, not stale C.
+    expect(out).toMatch(/2\(message\):\s*\{[\s\S]*1\(int64\):\s*releaseYear/);
+    expect(out).not.toMatch(/1\(int64\):\s*cYear/);
+  });
 });

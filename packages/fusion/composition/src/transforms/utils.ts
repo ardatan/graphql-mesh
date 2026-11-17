@@ -251,10 +251,16 @@ export function rewriteProtobufMappingBindsTypeScoped(
   /** Type that owns relative binds at each brace depth. */
   const typeAtDepth: Array<GraphQLNamedType | null | undefined> = [];
   typeAtDepth[0] = options.rootType ?? null;
+  /** End offset of the previous bind match — brace walk clears stale owners between binds. */
+  let scannedTo = 0;
 
   return mapping.replace(
     /(\)\s*:\s*)([\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
     (match, pre: string, path: string, offset: number, whole: string) => {
+      // Pop owners when blocks close so a later unbound `{ … }` does not keep a sibling's type.
+      clearOwnersClosedBetween(whole, scannedTo, offset, typeAtDepth);
+      scannedTo = offset + match.length;
+
       const depth = braceDepthAt(whole, offset);
       const afterPath = offset + match.length;
       let j = afterPath;
@@ -354,6 +360,36 @@ export function rewriteProtobufMappingBindsTypeScoped(
       return `${pre}${rewritten.join('.')}`;
     },
   );
+}
+
+/**
+ * Walk `[from, to)` and clear `typeAtDepth` entries when a `{…}` block closes, so the next
+ * open (including an unbound `1(message): {`) does not reuse a sibling block's owner.
+ * Explicit `null` owners are cleared on close the same way; inheritance only uses `undefined`.
+ */
+function clearOwnersClosedBetween(
+  source: string,
+  from: number,
+  to: number,
+  typeAtDepth: Array<GraphQLNamedType | null | undefined>,
+): void {
+  let depth = braceDepthAt(source, from);
+  for (let i = from; i < to; i++) {
+    const c = source[i];
+    if (c === '#') {
+      while (i < to && source[i] !== '\n') i++;
+      continue;
+    }
+    if (c === '{') {
+      depth++;
+    } else if (c === '}') {
+      typeAtDepth[depth] = undefined;
+      for (let d = depth + 1; d < typeAtDepth.length; d++) {
+        typeAtDepth[d] = undefined;
+      }
+      depth = Math.max(0, depth - 1);
+    }
+  }
 }
 
 function renameFieldSegment(
