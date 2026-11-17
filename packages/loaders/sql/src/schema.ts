@@ -30,9 +30,10 @@ export interface LoadSqlSubgraphOpts {
    * `sqlite://` / `file:`, host-style → postgres, `*.db` → sqlite).
    */
   type?: SqlDialect;
-  /** Sqlite file path (relative to cwd or absolute) */
-  db?: string;
-  /** Connection URI for postgres/mysql/sqlite */
+  /**
+   * Connection URI / path. Sqlite: `file:…`, `sqlite:…`, `:memory:`, or a `*.db` path.
+   * Mysql/Postgres: `mysql(2|s)://…`, `mariadb://…`, `postgres(ql)://…`, or host-style.
+   */
   connectionString?: string;
   /** Alias for connectionString (legacy mysql handler shape) */
   endpoint?: string;
@@ -440,12 +441,14 @@ async function introspect(
 ): Promise<SqlSchemaMeta> {
   switch (opts.type) {
     case 'sqlite': {
-      const db = opts.db || opts.connectionString || opts.endpoint;
-      if (!db) {
-        throw new Error(`loadSqlSubgraph sqlite requires db or connectionString`);
+      const connectionString = opts.connectionString || opts.endpoint;
+      if (!connectionString) {
+        throw new Error(
+          `loadSqlSubgraph sqlite requires connectionString or endpoint (file:… / *.db)`,
+        );
       }
       return introspectSqlite({
-        db,
+        db: connectionString,
         cwd: opts.cwd,
         includeTables: opts.includeTables,
         excludeTables: opts.excludeTables,
@@ -484,35 +487,44 @@ async function introspect(
 
 /**
  * Resolve dialect: explicit `type` wins; otherwise Bun-style protocol detection
- * from connectionString / endpoint / db.
+ * from connectionString / endpoint.
  */
 export function resolveDialect(opts: LoadSqlSubgraphOpts): SqlDialect {
   if (opts.type) return opts.type;
-  const location = opts.connectionString || opts.endpoint || opts.db;
+  const location = opts.connectionString || opts.endpoint;
   if (!location) {
     throw new Error(
-      'loadSqlSubgraph requires type or a connection string (connectionString / endpoint / db)',
+      'loadSqlSubgraph requires type or a connection string (connectionString / endpoint)',
     );
   }
   return inferDialectFromConnectionString(location);
 }
 
 function resolveLocation(opts: LoadSqlSubgraphOpts): string {
-  if (opts.connectionString) return opts.connectionString;
-  if (opts.endpoint) return opts.endpoint;
-  if (opts.db) {
-    const cwd = opts.cwd || process.cwd();
-    // Keep :memory: and already-schemed URIs as-is
-    if (
-      opts.db === ':memory:' ||
-      /^[a-z][a-z0-9+.-]*:/i.test(opts.db)
-    ) {
-      return opts.db;
-    }
-    const abs = pathHelper.isAbsolute(opts.db) ? opts.db : pathHelper.join(cwd, opts.db);
-    return `file:${abs}`;
+  const raw = opts.connectionString || opts.endpoint;
+  if (!raw) {
+    throw new Error('SQL loader requires connectionString or endpoint');
   }
-  throw new Error('SQL loader requires db, endpoint, or connectionString');
+  // Normalize bare sqlite paths to absolute file: URIs for @transport(location).
+  try {
+    if (inferDialectFromConnectionString(raw) === 'sqlite') {
+      if (raw === ':memory:' || raw.toLowerCase().startsWith('sqlite:')) {
+        return raw;
+      }
+      if (raw.toLowerCase().startsWith('file:')) {
+        const cwd = opts.cwd || process.cwd();
+        const rest = raw.slice('file:'.length).replace(/^\/\/+/, '/');
+        if (pathHelper.isAbsolute(rest) || rest === ':memory:') return raw;
+        return `file:${pathHelper.join(cwd, rest)}`;
+      }
+      const cwd = opts.cwd || process.cwd();
+      const abs = pathHelper.isAbsolute(raw) ? raw : pathHelper.join(cwd, raw);
+      return `file:${abs}`;
+    }
+  } catch {
+    // non-sqlite / unknown — return as given
+  }
+  return raw;
 }
 
 function applyTableFieldsFilter(

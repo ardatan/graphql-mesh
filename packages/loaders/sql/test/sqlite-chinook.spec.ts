@@ -6,9 +6,9 @@ const chinookDb = join(__dirname, '../../../../e2e/sqlite-chinook/chinook.db');
 
 describe('@omnigraph/sql sqlite chinook', () => {
   it('emits @sql directives and slim @transport(kind: sql)', async () => {
-    // Dialect inferred from *.db path (Bun-style; type optional)
+    // Dialect inferred from path / file: (Bun-style; type optional)
     const schema = await loadGraphQLSchemaFromSql('chinook', {
-      db: chinookDb,
+      connectionString: chinookDb,
       includeTables: ['albums', 'artists'],
     });
     // Normalize absolute DB path so the snapshot is portable across machines/CI.

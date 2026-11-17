@@ -5,8 +5,7 @@ export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadSqlSubgraph('chinook', {
-        type: 'sqlite',
-        db: 'chinook.db',
+        connectionString: 'file:chinook.db',
       }),
     },
   ],

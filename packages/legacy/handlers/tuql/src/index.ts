@@ -11,7 +11,7 @@ import { DisposableSymbols } from '@whatwg-node/disposablestack';
 /**
  * Legacy v0 SQLite handler (`tuql`). Under the hood `@omnigraph/sql` + `transport-sql`.
  * `infile` stays a legacy convenience: the dump is materialized to a real `.sqlite` file
- * here so the core SQL loader/transport only ever see a normal `db` path.
+ * here so the core SQL loader/transport only ever see a normal connection string / path.
  */
 export default class TuqlHandler implements MeshHandler {
   private name: string;
@@ -38,8 +38,7 @@ export default class TuqlHandler implements MeshHandler {
         : this.config.db!;
 
     const schema = await loadGraphQLSchemaFromSql(this.name, {
-      type: 'sqlite',
-      db: dbPath,
+      connectionString: dbPath,
       cwd: this.baseDir,
     });
 
