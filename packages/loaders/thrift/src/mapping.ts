@@ -55,7 +55,11 @@ export function wireTypeToken(typeVal: TypeVal, topTypeMap: TypeMap): string {
   return WIRE_TYPE_TOKEN[typeVal.type] || 'struct';
 }
 
-function resolveTypeVal(typeVal: TypeVal, topTypeMap: TypeMap, stack: Set<string> = new Set()): TypeVal {
+function resolveTypeVal(
+  typeVal: TypeVal,
+  topTypeMap: TypeMap,
+  stack: Set<string> = new Set(),
+): TypeVal {
   if (typeVal.type === 'ref') {
     if (stack.has(typeVal.name)) {
       return { type: TType.STRUCT, name: typeVal.name, fields: {}, id: typeVal.id };
@@ -98,7 +102,9 @@ export function buildCompactArgs(
 ): string {
   const lines: string[] = [];
   for (const [argName, typeVal] of Object.entries(fieldTypeMap)) {
-    lines.push(...formatCompactArgField(typeVal, argName, topTypeMap, 0, `${argsPathPrefix}.${argName}`));
+    lines.push(
+      ...formatCompactArgField(typeVal, argName, topTypeMap, 0, `${argsPathPrefix}.${argName}`),
+    );
   }
   return lines.join('\n');
 }
@@ -124,7 +130,9 @@ function formatCompactArgField(
     }
     const nextSeen = new Set(seenStructs);
     nextSeen.add(structName);
-    const lines = [`${pad}${id}(struct): ${graphqlName.startsWith('$') ? graphqlName : valueExpr} {`];
+    const lines = [
+      `${pad}${id}(struct): ${graphqlName.startsWith('$') ? graphqlName : valueExpr} {`,
+    ];
     for (const [fieldName, fieldType] of Object.entries(resolved.fields)) {
       lines.push(
         ...formatCompactArgField(fieldType, fieldName, topTypeMap, level + 1, fieldName, nextSeen),
@@ -134,7 +142,10 @@ function formatCompactArgField(
     return lines;
   }
 
-  if (resolved.type === TType.LIST && resolveTypeVal(resolved.elementType, topTypeMap).type === TType.STRUCT) {
+  if (
+    resolved.type === TType.LIST &&
+    resolveTypeVal(resolved.elementType, topTypeMap).type === TType.STRUCT
+  ) {
     const elem = resolveTypeVal(resolved.elementType, topTypeMap) as Extract<
       TypeVal,
       { type: TType.STRUCT }
@@ -202,7 +213,10 @@ function formatCompactSelectionField(
     return lines;
   }
 
-  if (resolved.type === TType.LIST && resolveTypeVal(resolved.elementType, topTypeMap).type === TType.STRUCT) {
+  if (
+    resolved.type === TType.LIST &&
+    resolveTypeVal(resolved.elementType, topTypeMap).type === TType.STRUCT
+  ) {
     const elem = resolveTypeVal(resolved.elementType, topTypeMap) as Extract<
       TypeVal,
       { type: TType.STRUCT }

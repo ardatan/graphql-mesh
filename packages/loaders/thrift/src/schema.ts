@@ -51,12 +51,12 @@ import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import {
   buildCompactArgs,
   buildCompactSelection,
+  buildThriftRpcDescription,
   buildTJSONConnectBody,
   buildTJSONConnectSelection,
-  buildThriftRpcDescription,
+  thriftJsonContentTypeHeaders,
   TJSON_ERRORS,
   TJSON_IS_SUCCESS,
-  thriftJsonContentTypeHeaders,
   type ThriftProtocol,
 } from './mapping.js';
 
@@ -409,7 +409,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
             const throwsMeta = (fn.throws || []).map(t => ({
               id: t.fieldID?.value ?? 0,
               name: t.name.value,
-              typeName: 'value' in t.fieldType ? String(t.fieldType.value).replace('.', '_') : 'unknown',
+              typeName:
+                'value' in t.fieldType ? String(t.fieldType.value).replace('.', '_') : 'unknown',
             }));
 
             let fieldReturnType: GraphQLOutputType = returnType;
@@ -422,14 +423,23 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                 },
               });
               const exceptionTypes = throwsMeta
-                .map(t => exceptionTypeMap.get(t.typeName) || (outputTypeMap.get(t.typeName) as GraphQLObjectType))
+                .map(
+                  t =>
+                    exceptionTypeMap.get(t.typeName) ||
+                    (outputTypeMap.get(t.typeName) as GraphQLObjectType),
+                )
                 .filter(Boolean) as GraphQLObjectType[];
               if (exceptionTypes.length) {
                 fieldReturnType = new GraphQLUnionType({
                   name: `${fnName[0].toUpperCase()}${fnName.slice(1)}Result`,
                   types: [successType, ...exceptionTypes],
                   resolveType: value => {
-                    if (value && typeof value === 'object' && 'value' in value && Object.keys(value).length === 1) {
+                    if (
+                      value &&
+                      typeof value === 'object' &&
+                      'value' in value &&
+                      Object.keys(value).length === 1
+                    ) {
                       return successTypeName;
                     }
                     for (const ex of exceptionTypes) {
