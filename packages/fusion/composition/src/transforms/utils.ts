@@ -127,13 +127,15 @@ export function withOriginalKeyFallback<T extends Record<string, any>>(
 
 /**
  * Rewrite `$args.<name>` (and related) references after GraphQL argument renames
- * for Federation `@connect` and Thrift `@thrift__rpc`. Mesh stitching used
- * `@meshSource(name:)` for this; Connectors / thrift compact mapping bind args by
- * the GraphQL argument name inside path/body/`args`/`selection` strings.
+ * for Federation `@connect`, Thrift `@thrift__rpc`, and Mesh `@sql__*`.
+ * Mesh stitching used `@meshSource(name:)` for this; Connectors / thrift / SQL
+ * mapping bind args by the GraphQL argument name inside path/body/`args`/`selection`
+ * strings.
  *
  * When `fieldRenameMap` is set, also rewrite selection aliases of the form
  * `newName: oldName` / leading `oldName` field picks so rename/prefix transforms
- * keep Connectors (and thrift compact) selection in sync with GraphQL field names.
+ * keep Connectors (and thrift / SQL) selection in sync with GraphQL field names.
+ * SQL also rewrites `$this.<field>` parent picks.
  *
  * When `typeRenameMap` is set, rewrite `__typename: "Old"` / `__typename: $("Old")`
  * in selections so prefix/rename/naming-convention keep polymorphic Connect arms valid.
@@ -146,8 +148,10 @@ export function rewriteConnectArgReferences(
 ): Record<string, any[]> | undefined {
   const hasConnect = Boolean(fieldDirectives?.connect?.length);
   const hasThriftRpc = Boolean(fieldDirectives?.thrift__rpc?.length);
+  const sqlDirectiveNames = ['sql__query', 'sql__mutation', 'sql__relation'] as const;
+  const hasSql = sqlDirectiveNames.some(name => Boolean(fieldDirectives?.[name]?.length));
   if (
-    (!hasConnect && !hasThriftRpc) ||
+    (!hasConnect && !hasThriftRpc && !hasSql) ||
     (argRenameMap.size === 0 &&
       (!fieldRenameMap || fieldRenameMap.size === 0) &&
       (!typeRenameMap || typeRenameMap.size === 0))
@@ -177,7 +181,11 @@ export function rewriteConnectArgReferences(
         if (from === to) continue;
         out = out
           .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
-          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`);
+          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`)
+          .replace(
+            new RegExp(`\\$this\\.${escapeRegExp(from)}(?![\\w])`, 'g'),
+            `$this.${to}`,
+          );
       }
     }
     if (typeRenameMap?.size) {
@@ -273,6 +281,18 @@ export function rewriteConnectArgReferences(
           ? rewriteExpr(rpcArgs.selection)
           : rpcArgs?.selection,
       throws: typeof rpcArgs?.throws === 'string' ? rewriteExpr(rpcArgs.throws) : rpcArgs?.throws,
+    }));
+  }
+  for (const name of sqlDirectiveNames) {
+    if (!fieldDirectives?.[name]?.length) continue;
+    // `@sql__*(args/selection:)` embed `$args.<name>` / `$this.<field>` the same way.
+    next[name] = fieldDirectives[name].map((sqlArgs: any) => ({
+      ...sqlArgs,
+      args: typeof sqlArgs?.args === 'string' ? rewriteExpr(sqlArgs.args) : sqlArgs?.args,
+      selection:
+        typeof sqlArgs?.selection === 'string'
+          ? rewriteExpr(sqlArgs.selection)
+          : sqlArgs?.selection,
     }));
   }
   return next;

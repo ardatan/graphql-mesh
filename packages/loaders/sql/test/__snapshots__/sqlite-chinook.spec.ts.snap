@@ -1,0 +1,191 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`@omnigraph/sql sqlite chinook emits @sql__* directives and slim @transport(kind: sql): chinook-albums-artists 1`] = `
+"schema @transport(subgraph: "chinook", kind: "sql", location: "file:/agent/repos/graphql-mesh/e2e/sql-sqlite-chinook/chinook.db", options: {dialect: "sqlite"}) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+directive @sql__query(subgraph: String, table: String!, kind: SqlQueryKind = ROWS, args: String, selection: String!, entity: Boolean) on FIELD_DEFINITION
+
+directive @sql__mutation(subgraph: String, table: String!, kind: SqlMutationKind!, args: String!, selection: String) on FIELD_DEFINITION
+
+directive @sql__relation(subgraph: String, table: String!, kind: SqlQueryKind = ROW, args: String!, selection: String!) on FIELD_DEFINITION
+
+type Query {
+  album(id: ID!): Album @sql__query(subgraph: "chinook", table: "albums", kind: ROW, args: "AlbumId: $args.id", selection: "id: AlbumId\\ntitle: Title\\nartistId: ArtistId", entity: true)
+  albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @sql__query(subgraph: "chinook", table: "albums", kind: ROWS, args: "filter: $args.filter\\norderBy: $args.orderBy\\nlimit: $args.limit\\noffset: $args.offset", selection: "id: AlbumId\\ntitle: Title\\nartistId: ArtistId")
+  allAlbums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection! @sql__query(subgraph: "chinook", table: "albums", kind: CONNECTION, args: "filter: $args.filter\\norderBy: $args.orderBy\\nfirst: $args.first\\nafter: $args.after", selection: "nodes {\\n  id: AlbumId\\n  title: Title\\n  artistId: ArtistId\\n}\\nedges {\\n  cursor: $cursor\\n  node {\\n    id: AlbumId\\n    title: Title\\n    artistId: ArtistId\\n  }\\n}\\npageInfo {\\n  hasNextPage: $hasNextPage\\n  hasPreviousPage: $hasPreviousPage\\n  startCursor: $startCursor\\n  endCursor: $endCursor\\n}\\ntotalCount: $totalCount")
+  albumsCount(filter: AlbumFilter): Int! @sql__query(subgraph: "chinook", table: "albums", kind: COUNT, args: "filter: $args.filter", selection: "$")
+  artist(id: ID!): Artist @sql__query(subgraph: "chinook", table: "artists", kind: ROW, args: "ArtistId: $args.id", selection: "id: ArtistId\\nname: Name", entity: true)
+  artists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @sql__query(subgraph: "chinook", table: "artists", kind: ROWS, args: "filter: $args.filter\\norderBy: $args.orderBy\\nlimit: $args.limit\\noffset: $args.offset", selection: "id: ArtistId\\nname: Name")
+  allArtists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], first: Int, after: String): ArtistConnection! @sql__query(subgraph: "chinook", table: "artists", kind: CONNECTION, args: "filter: $args.filter\\norderBy: $args.orderBy\\nfirst: $args.first\\nafter: $args.after", selection: "nodes {\\n  id: ArtistId\\n  name: Name\\n}\\nedges {\\n  cursor: $cursor\\n  node {\\n    id: ArtistId\\n    name: Name\\n  }\\n}\\npageInfo {\\n  hasNextPage: $hasNextPage\\n  hasPreviousPage: $hasPreviousPage\\n  startCursor: $startCursor\\n  endCursor: $endCursor\\n}\\ntotalCount: $totalCount")
+  artistsCount(filter: ArtistFilter): Int! @sql__query(subgraph: "chinook", table: "artists", kind: COUNT, args: "filter: $args.filter", selection: "$")
+}
+
+type Album @key(fields: "id") {
+  id: ID!
+  title: String!
+  artistId: Int!
+  artist: Artist @sql__relation(subgraph: "chinook", table: "artists", kind: ROW, args: "ArtistId: $this.artistId", selection: "id: ArtistId\\nname: Name")
+}
+
+type Artist @key(fields: "id") {
+  id: ID!
+  name: String
+  albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]! @sql__relation(subgraph: "chinook", table: "albums", kind: ROWS, args: "ArtistId: $this.id\\nfilter: $args.filter\\norderBy: $args.orderBy\\nlimit: $args.limit\\noffset: $args.offset", selection: "id: AlbumId\\ntitle: Title\\nartistId: ArtistId")
+}
+
+input AlbumFilter {
+  and: [AlbumFilter!]
+  or: [AlbumFilter!]
+  not: AlbumFilter
+  id: StringFilter
+  title: StringFilter
+  artistId: IntFilter
+}
+
+input StringFilter {
+  eq: String
+  ne: String
+  in: [String!]
+  nin: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  includes: String
+  startsWith: String
+  endsWith: String
+  isNull: Boolean
+}
+
+input IntFilter {
+  eq: Int
+  ne: Int
+  in: [Int!]
+  nin: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  isNull: Boolean
+}
+
+enum AlbumOrderBy {
+  ID_ASC
+  ID_DESC
+  TITLE_ASC
+  TITLE_DESC
+  ARTIST_ID_ASC
+  ARTIST_ID_DESC
+}
+
+type AlbumConnection {
+  edges: [AlbumEdge!]!
+  pageInfo: PageInfo!
+  nodes: [Album!]!
+  totalCount: Int!
+}
+
+type AlbumEdge {
+  cursor: String!
+  node: Album!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+input ArtistFilter {
+  and: [ArtistFilter!]
+  or: [ArtistFilter!]
+  not: ArtistFilter
+  id: StringFilter
+  name: StringFilter
+}
+
+enum ArtistOrderBy {
+  ID_ASC
+  ID_DESC
+  NAME_ASC
+  NAME_DESC
+}
+
+type ArtistConnection {
+  edges: [ArtistEdge!]!
+  pageInfo: PageInfo!
+  nodes: [Artist!]!
+  totalCount: Int!
+}
+
+type ArtistEdge {
+  cursor: String!
+  node: Artist!
+}
+
+type Mutation {
+  createAlbum(input: CreateAlbumInput!): AlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: INSERT, args: "Title: $args.input.title\\nArtistId: $args.input.artistId", selection: "album {\\n  id: AlbumId\\n  title: Title\\n  artistId: ArtistId\\n}")
+  updateAlbum(id: ID!, input: UpdateAlbumInput!): AlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: UPDATE, args: "set {\\n  Title: $args.input.title\\n  ArtistId: $args.input.artistId\\n}\\nwhere {\\n  AlbumId: $args.id\\n}", selection: "album {\\n  id: AlbumId\\n  title: Title\\n  artistId: ArtistId\\n}")
+  deleteAlbum(id: ID!): DeleteAlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: DELETE, args: "where {\\n  AlbumId: $args.id\\n}", selection: "ok: $affectedRows\\naffectedRows: $affectedRows")
+  createArtist(input: CreateArtistInput!): ArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: INSERT, args: "Name: $args.input.name", selection: "artist {\\n  id: ArtistId\\n  name: Name\\n}")
+  updateArtist(id: ID!, input: UpdateArtistInput!): ArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: UPDATE, args: "set {\\n  Name: $args.input.name\\n}\\nwhere {\\n  ArtistId: $args.id\\n}", selection: "artist {\\n  id: ArtistId\\n  name: Name\\n}")
+  deleteArtist(id: ID!): DeleteArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: DELETE, args: "where {\\n  ArtistId: $args.id\\n}", selection: "ok: $affectedRows\\naffectedRows: $affectedRows")
+}
+
+type AlbumPayload {
+  album: Album
+}
+
+input CreateAlbumInput {
+  title: String!
+  artistId: Int!
+}
+
+input UpdateAlbumInput {
+  title: String
+  artistId: Int
+}
+
+type DeleteAlbumPayload {
+  ok: Boolean!
+  affectedRows: Int!
+}
+
+type ArtistPayload {
+  artist: Artist
+}
+
+input CreateArtistInput {
+  name: String
+}
+
+input UpdateArtistInput {
+  name: String
+}
+
+type DeleteArtistPayload {
+  ok: Boolean!
+  affectedRows: Int!
+}
+
+scalar TransportOptions
+
+enum SqlQueryKind {
+  ROW
+  ROWS
+  CONNECTION
+  COUNT
+}
+
+enum SqlMutationKind {
+  INSERT
+  UPDATE
+  DELETE
+}"
+`;

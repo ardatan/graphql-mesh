@@ -1,0 +1,260 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`should compose the appropriate schema 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport", "@sql__query", "@sql__mutation", "@sql__relation"]) @transport(subgraph: "chinook", kind: "sql", location: "file:e2e/sql-sqlite-chinook/chinook.db", options: {dialect: "sqlite"}) {
+  query: Query
+  mutation: Mutation
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+scalar join__FieldSet
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  CHINOOK @join__graph(name: "chinook", url: "file:e2e/sql-sqlite-chinook/chinook.db")
+}
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+directive @sql__query(subgraph: String, table: String!, kind: SqlQueryKind = ROWS, args: String, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION
+
+directive @sql__mutation(subgraph: String, table: String!, kind: SqlMutationKind!, args: String!, selection: String) repeatable on FIELD_DEFINITION
+
+directive @sql__relation(subgraph: String, table: String!, kind: SqlQueryKind = ROW, args: String!, selection: String!) repeatable on FIELD_DEFINITION
+
+scalar TransportOptions @join__type(graph: CHINOOK)
+
+type Query @join__type(graph: CHINOOK) {
+  album(id: ID!): Album @sql__query(subgraph: "chinook", table: "albums", kind: ROW, args: "AlbumId: $args.id", selection: "id: AlbumId\\ntitle: Title\\nartistId: ArtistId", entity: true)
+  albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @sql__query(subgraph: "chinook", table: "albums", kind: ROWS, args: "filter: $args.filter\\norderBy: $args.orderBy\\nlimit: $args.limit\\noffset: $args.offset", selection: "id: AlbumId\\ntitle: Title\\nartistId: ArtistId")
+  allAlbums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection! @sql__query(subgraph: "chinook", table: "albums", kind: CONNECTION, args: "filter: $args.filter\\norderBy: $args.orderBy\\nfirst: $args.first\\nafter: $args.after", selection: "nodes {\\n  id: AlbumId\\n  title: Title\\n  artistId: ArtistId\\n}\\nedges {\\n  cursor: $cursor\\n  node {\\n    id: AlbumId\\n    title: Title\\n    artistId: ArtistId\\n  }\\n}\\npageInfo {\\n  hasNextPage: $hasNextPage\\n  hasPreviousPage: $hasPreviousPage\\n  startCursor: $startCursor\\n  endCursor: $endCursor\\n}\\ntotalCount: $totalCount")
+  albumsCount(filter: AlbumFilter): Int! @sql__query(subgraph: "chinook", table: "albums", kind: COUNT, args: "filter: $args.filter", selection: "$")
+  artist(id: ID!): Artist @sql__query(subgraph: "chinook", table: "artists", kind: ROW, args: "ArtistId: $args.id", selection: "id: ArtistId\\nname: Name", entity: true)
+  artists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @sql__query(subgraph: "chinook", table: "artists", kind: ROWS, args: "filter: $args.filter\\norderBy: $args.orderBy\\nlimit: $args.limit\\noffset: $args.offset", selection: "id: ArtistId\\nname: Name")
+  allArtists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], first: Int, after: String): ArtistConnection! @sql__query(subgraph: "chinook", table: "artists", kind: CONNECTION, args: "filter: $args.filter\\norderBy: $args.orderBy\\nfirst: $args.first\\nafter: $args.after", selection: "nodes {\\n  id: ArtistId\\n  name: Name\\n}\\nedges {\\n  cursor: $cursor\\n  node {\\n    id: ArtistId\\n    name: Name\\n  }\\n}\\npageInfo {\\n  hasNextPage: $hasNextPage\\n  hasPreviousPage: $hasPreviousPage\\n  startCursor: $startCursor\\n  endCursor: $endCursor\\n}\\ntotalCount: $totalCount")
+  artistsCount(filter: ArtistFilter): Int! @sql__query(subgraph: "chinook", table: "artists", kind: COUNT, args: "filter: $args.filter", selection: "$")
+}
+
+type Album @join__type(graph: CHINOOK, key: "id") {
+  id: ID!
+  title: String!
+  artistId: Int!
+  artist: Artist @sql__relation(subgraph: "chinook", table: "artists", kind: ROW, args: "ArtistId: $this.artistId", selection: "id: ArtistId\\nname: Name")
+}
+
+type Artist @join__type(graph: CHINOOK, key: "id") {
+  id: ID!
+  name: String
+  albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]! @sql__relation(subgraph: "chinook", table: "albums", kind: ROWS, args: "ArtistId: $this.id\\nfilter: $args.filter\\norderBy: $args.orderBy\\nlimit: $args.limit\\noffset: $args.offset", selection: "id: AlbumId\\ntitle: Title\\nartistId: ArtistId")
+}
+
+type AlbumConnection @join__type(graph: CHINOOK) {
+  edges: [AlbumEdge!]!
+  pageInfo: PageInfo!
+  nodes: [Album!]!
+  totalCount: Int!
+}
+
+type AlbumEdge @join__type(graph: CHINOOK) {
+  cursor: String!
+  node: Album!
+}
+
+type PageInfo @join__type(graph: CHINOOK) {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type ArtistConnection @join__type(graph: CHINOOK) {
+  edges: [ArtistEdge!]!
+  pageInfo: PageInfo!
+  nodes: [Artist!]!
+  totalCount: Int!
+}
+
+type ArtistEdge @join__type(graph: CHINOOK) {
+  cursor: String!
+  node: Artist!
+}
+
+type Mutation @join__type(graph: CHINOOK) {
+  createAlbum(input: CreateAlbumInput!): AlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: INSERT, args: "Title: $args.input.title\\nArtistId: $args.input.artistId", selection: "album {\\n  id: AlbumId\\n  title: Title\\n  artistId: ArtistId\\n}")
+  updateAlbum(id: ID!, input: UpdateAlbumInput!): AlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: UPDATE, args: "set {\\n  Title: $args.input.title\\n  ArtistId: $args.input.artistId\\n}\\nwhere {\\n  AlbumId: $args.id\\n}", selection: "album {\\n  id: AlbumId\\n  title: Title\\n  artistId: ArtistId\\n}")
+  deleteAlbum(id: ID!): DeleteAlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: DELETE, args: "where {\\n  AlbumId: $args.id\\n}", selection: "ok: $affectedRows\\naffectedRows: $affectedRows")
+  createArtist(input: CreateArtistInput!): ArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: INSERT, args: "Name: $args.input.name", selection: "artist {\\n  id: ArtistId\\n  name: Name\\n}")
+  updateArtist(id: ID!, input: UpdateArtistInput!): ArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: UPDATE, args: "set {\\n  Name: $args.input.name\\n}\\nwhere {\\n  ArtistId: $args.id\\n}", selection: "artist {\\n  id: ArtistId\\n  name: Name\\n}")
+  deleteArtist(id: ID!): DeleteArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: DELETE, args: "where {\\n  ArtistId: $args.id\\n}", selection: "ok: $affectedRows\\naffectedRows: $affectedRows")
+}
+
+type AlbumPayload @join__type(graph: CHINOOK) {
+  album: Album
+}
+
+type DeleteAlbumPayload @join__type(graph: CHINOOK) {
+  ok: Boolean!
+  affectedRows: Int!
+}
+
+type ArtistPayload @join__type(graph: CHINOOK) {
+  artist: Artist
+}
+
+type DeleteArtistPayload @join__type(graph: CHINOOK) {
+  ok: Boolean!
+  affectedRows: Int!
+}
+
+enum AlbumOrderBy @join__type(graph: CHINOOK) {
+  ID_ASC @join__enumValue(graph: CHINOOK)
+  ID_DESC @join__enumValue(graph: CHINOOK)
+  TITLE_ASC @join__enumValue(graph: CHINOOK)
+  TITLE_DESC @join__enumValue(graph: CHINOOK)
+  ARTIST_ID_ASC @join__enumValue(graph: CHINOOK)
+  ARTIST_ID_DESC @join__enumValue(graph: CHINOOK)
+}
+
+enum ArtistOrderBy @join__type(graph: CHINOOK) {
+  ID_ASC @join__enumValue(graph: CHINOOK)
+  ID_DESC @join__enumValue(graph: CHINOOK)
+  NAME_ASC @join__enumValue(graph: CHINOOK)
+  NAME_DESC @join__enumValue(graph: CHINOOK)
+}
+
+enum SqlQueryKind @join__type(graph: CHINOOK) {
+  ROW @join__enumValue(graph: CHINOOK)
+  ROWS @join__enumValue(graph: CHINOOK)
+  CONNECTION @join__enumValue(graph: CHINOOK)
+  COUNT @join__enumValue(graph: CHINOOK)
+}
+
+enum SqlMutationKind @join__type(graph: CHINOOK) {
+  INSERT @join__enumValue(graph: CHINOOK)
+  UPDATE @join__enumValue(graph: CHINOOK)
+  DELETE @join__enumValue(graph: CHINOOK)
+}
+
+input AlbumFilter @join__type(graph: CHINOOK) {
+  and: [AlbumFilter!]
+  or: [AlbumFilter!]
+  not: AlbumFilter
+  id: StringFilter
+  title: StringFilter
+  artistId: IntFilter
+}
+
+input StringFilter @join__type(graph: CHINOOK) {
+  eq: String
+  ne: String
+  in: [String!]
+  nin: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  includes: String
+  startsWith: String
+  endsWith: String
+  isNull: Boolean
+}
+
+input IntFilter @join__type(graph: CHINOOK) {
+  eq: Int
+  ne: Int
+  in: [Int!]
+  nin: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  isNull: Boolean
+}
+
+input ArtistFilter @join__type(graph: CHINOOK) {
+  and: [ArtistFilter!]
+  or: [ArtistFilter!]
+  not: ArtistFilter
+  id: StringFilter
+  name: StringFilter
+}
+
+input CreateAlbumInput @join__type(graph: CHINOOK) {
+  title: String!
+  artistId: Int!
+}
+
+input UpdateAlbumInput @join__type(graph: CHINOOK) {
+  title: String
+  artistId: Int
+}
+
+input CreateArtistInput @join__type(graph: CHINOOK) {
+  name: String
+}
+
+input UpdateArtistInput @join__type(graph: CHINOOK) {
+  name: String
+}
+"
+`;
+
+exports[`should execute AlbumById 1`] = `
+{
+  "data": {
+    "album": {
+      "artistId": 1,
+      "id": "1",
+      "title": "For Those About To Rock We Salute You",
+    },
+  },
+}
+`;
+
+exports[`should execute Albums 1`] = `
+{
+  "data": {
+    "albums": [
+      {
+        "artist": {
+          "name": "AC/DC",
+        },
+        "id": "1",
+        "title": "For Those About To Rock We Salute You",
+      },
+      {
+        "artist": {
+          "name": "Accept",
+        },
+        "id": "2",
+        "title": "Balls to the Wall",
+      },
+    ],
+  },
+}
+`;
