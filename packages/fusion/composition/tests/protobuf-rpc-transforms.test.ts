@@ -78,8 +78,8 @@ describe('protobuf RPC rename transform (Connect-like rewrite)', () => {
     ]);
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).toContain('moviesByYear(releaseYear:');
-    // Args bind rewritten; selection keeps Movie.year (arg rename ≠ field rename).
-    expect(sdl).toMatch(/args:[\s\S]*2\(int64\):\s*releaseYear/);
+    // Arg rename must not leak into nested input.movie.year; selection keeps Movie.year.
+    expect(sdl).toMatch(/args:[\s\S]*2\(int64\):\s*year/);
     expect(sdl).toMatch(/selection:[\s\S]*2\(int64\):\s*year/);
     expect(sdl).not.toMatch(/@source\(/);
     expect(sdl).not.toMatch(/@meshSource\(/);
@@ -376,6 +376,26 @@ describe('rewriteProtobufMappingBinds', () => {
     expect(out).toMatch(/^1\(int64\): release_year/m);
     expect(out).toContain('2(int64): releaseYear');
   });
+
+  it('rewrites nested segments of $args.input.release_year via nestedRenameMap', async () => {
+    const { rewriteProtobufMappingBinds } = await import('../src/transforms/utils.js');
+    const out = rewriteProtobufMappingBinds('1(int64): $args.input.release_year', new Map(), {
+      nestedRenameMap: new Map([['release_year', 'releaseYear']]),
+    });
+    expect(out).toContain('$args.input.releaseYear');
+    expect(out).not.toContain('$args.input.release_year');
+  });
+
+  it('arg-only rename does not rewrite nested input.year', async () => {
+    const { rewriteProtobufMappingBinds } = await import('../src/transforms/utils.js');
+    const out = rewriteProtobufMappingBinds(
+      '1(int64): year\n2(message): input { 1(int64): year }',
+      new Map([['year', 'releaseYear']]),
+      { nestedRenameMap: new Map() },
+    );
+    expect(out).toMatch(/^1\(int64\): releaseYear/m);
+    expect(out).toContain('1(int64): year');
+  });
 });
 
 describe('type-scoped protobuf field renames (overlapping names)', () => {
@@ -564,5 +584,70 @@ describe('type-scoped $args.input nested renames', () => {
     ]);
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).toMatch(/\$args\.input\s*\{[\s\S]*2\(int64\):\s*publicationYear/);
+  });
+});
+
+describe('object-level @protobuf__rpc rename', () => {
+  it('rewrites type-level selection when Pet.name → fullName', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "pets", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          pet(id: ID!): Pet
+        }
+
+        type Pet
+          @protobuf__rpc(
+            service: "Pets"
+            method: "GetPet"
+            args: """
+            1(string): $this.id
+            """
+            selection: """
+            1(string): id
+            2(string): name
+            """
+          ) {
+          id: ID!
+          name: String!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'pets',
+        schema,
+        transforms: [
+          createRenameTransform({
+            fieldRenamer: ({ typeName, fieldName }) =>
+              typeName === 'Pet' && fieldName === 'name' ? 'fullName' : fieldName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/type Pet[\s\S]*fullName/);
+    expect(sdl).toMatch(/selection:[\s\S]*2\(string\):\s*fullName/);
+    expect(sdl).not.toMatch(/selection:[\s\S]*2\(string\):\s*name\b/);
   });
 });

@@ -2,7 +2,7 @@ import type { INamespace } from 'protobufjs';
 import { describe, expect, it } from '@jest/globals';
 import { decodeMessage, encodeMessage } from '../../../transports/protobuf/src/protobuf/codec.js';
 import { parseMapping } from '../../../transports/protobuf/src/protobuf/mapping.js';
-import { emitResponseSelection } from '../src/emitMapping.js';
+import { emitRequestBody, emitResponseSelection } from '../src/emitMapping.js';
 
 describe('emitMapping cycle-aware message& refs', () => {
   const rootJson = {
@@ -85,5 +85,42 @@ describe('emitMapping cycle-aware message& refs', () => {
     };
     const decoded = decodeMessage(fields, encodeMessage(fields, value));
     expect(decoded).toEqual(value);
+  });
+
+  it('emitRequestBody: relative binds inside recursive child (input.child.child)', () => {
+    const mapping = emitRequestBody(rootJson, [], 'Node');
+    // Prefix only at the request boundary; nested recursive body stays relative.
+    expect(mapping).toMatch(/1\(string\):\s*input\.name/);
+    expect(mapping).toMatch(/2\(message\):\s*input\.child\s*\{/);
+    expect(mapping).toMatch(/1\(string\):\s*name/);
+    expect(mapping).toMatch(/2\(message&\):\s*child/);
+    // Shared recursive body must not reuse request-prefixed binds.
+    expect(mapping).not.toMatch(/message&:\s*input\./);
+    expect(mapping).not.toMatch(/\{\s*1\(string\):\s*input\.name/);
+
+    const fields = parseMapping(mapping);
+    const args = {
+      input: {
+        name: 'root',
+        child: {
+          name: 'mid',
+          child: {
+            name: 'leaf',
+          },
+        },
+      },
+    };
+    const bytes = encodeMessage(fields, args);
+    // Decode with relative selection to assert wire payload preserved nested names.
+    const decoded = decodeMessage(parseMapping(emitResponseSelection(rootJson, [], 'Node')), bytes);
+    expect(decoded).toEqual({
+      name: 'root',
+      child: {
+        name: 'mid',
+        child: {
+          name: 'leaf',
+        },
+      },
+    });
   });
 });

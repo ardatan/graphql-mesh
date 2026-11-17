@@ -199,6 +199,25 @@ export function emitFieldsMapping(
           // Parser resolves these to shared field lists so child.child… round-trips.
           // Full named-type defs (`@TypeName`) are deferred; ancestor-relative refs are enough
           // for self- and mutual recursion on the emit stack.
+          if (bindMode === 'prefix' && bindPrefix) {
+            // Request boundary uses `input.*` binds — do not share that list via message&.
+            // Open a relative block so reusable recursive defs keep relative paths.
+            lines.push(`${indent}${id}(${token}): ${bind} {`);
+            const relative = emitFieldsMapping(
+              rootJson,
+              nestedScope,
+              nestedType,
+              'relative',
+              '',
+              indent + '  ',
+              [],
+            );
+            if (relative) {
+              lines.push(relative);
+            }
+            lines.push(`${indent}}`);
+            continue;
+          }
           const levelsUp = visited.length - 1 - cycleIdx;
           const refTok = levelsUp === 0 ? 'message&' : `message&${levelsUp}`;
           const tokenWithRef = token.replace(/\bmessage\b/, refTok);

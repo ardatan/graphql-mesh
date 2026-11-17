@@ -64,11 +64,17 @@ export default class GrpcHandler implements MeshHandler {
         return schema;
       });
     }
-    return this.schemaWithAnnotationsProxy.getWithSet(
-      () =>
-        loadProtobufSubgraph(this.sourceName, this.config)({ cwd: this.baseDir, log: this.log })
-          .schema$,
-    );
+    return this.schemaWithAnnotationsProxy
+      .getWithSet(
+        () =>
+          loadProtobufSubgraph(this.sourceName, this.config)({ cwd: this.baseDir, log: this.log })
+            .schema$,
+      )
+      .then(schema => {
+        // Cached schemas (validate=false) skip the setter — still fail fast on legacy @grpcMethod.
+        assertProtobufRpcAnnotations(schema, interpolatedSource || this.sourceName);
+        return schema;
+      });
   }
 
   getMeshSource() {

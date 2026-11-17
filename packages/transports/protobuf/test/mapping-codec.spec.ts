@@ -138,4 +138,17 @@ describe('protobuf mapping + codec', () => {
       child: { name: 'b', child: { name: 'c' } },
     });
   });
+
+  it('rejects truncated packed repeated payloads', () => {
+    const fields = parseMapping(`1(repeated int32): values`);
+    // Tag 1 wire-len, length=2, but only one payload byte → truncated.
+    const truncated = Uint8Array.from([0x0a, 0x02, 0x01]);
+    expect(() => decodeMessage(fields, truncated)).toThrow(/Truncated packed|Invalid packed/);
+  });
+
+  it('maps negative enum wire values to names (signed int32)', () => {
+    const fields = parseMapping(`1(enum{UNKNOWN=-1,OK=0}): status`);
+    const bytes = encodeMessage(fields, { status: 'UNKNOWN' });
+    expect(decodeMessage(fields, bytes).status).toBe('UNKNOWN');
+  });
 });

@@ -318,12 +318,14 @@ export function createRenameTransform(opts: RenameTransformConfig) {
     // Object/input field renames: rewrite `@protobuf__rpc` args/selection path segments
     // across the subgraph (Connect-like; no Mesh `@source` fallback).
     // Keep renames type-scoped so `Review.year→publicationYear` does not rewrite `Movie.year`.
+    // Also rewrite object-level entity RPCs (type directives), not only field-level.
     if (fieldRenameMap.size) {
       nextSchema = mapSchema(nextSchema, {
         [MapperKind.ROOT_FIELD]: (field, _n, _t, s) =>
           applyProtobufFieldRenames(field, fieldRenameMap, s),
         [MapperKind.OBJECT_FIELD]: (field, _n, _t, s) =>
           applyProtobufFieldRenames(field, fieldRenameMap, s),
+        [MapperKind.OBJECT_TYPE]: (type, s) => applyProtobufTypeRenames(type, fieldRenameMap, s),
       });
     }
     return nextSchema;
@@ -388,6 +390,59 @@ function applyProtobufFieldRenames(
     },
     astNode: undefined,
   };
+}
+
+/** Object-level `@protobuf__rpc` (entity / type-level) — rewrite selection + `$this` against the owning type. */
+function applyProtobufTypeRenames(
+  type: GraphQLObjectType,
+  fieldRenameMap: Map<string, Map<string, string>>,
+  schema: GraphQLSchema,
+): GraphQLObjectType {
+  if (!fieldRenameMap.size) {
+    return type;
+  }
+  const typeDirectives = getDirectiveExtensions(type, schema);
+  const protobufKey = typeDirectives?.protobuf__rpc?.length
+    ? 'protobuf__rpc'
+    : typeDirectives?.protobufRpc?.length
+      ? 'protobufRpc'
+      : undefined;
+  if (!protobufKey) {
+    return type;
+  }
+
+  let protobufChanged = false;
+  const rewrittenRpc = typeDirectives[protobufKey].map((rpcArgs: any) => {
+    let args = rpcArgs?.args;
+    let selection = rpcArgs?.selection;
+    if (typeof args === 'string') {
+      args = rewriteProtobufMappingBindsTypeScoped(args, fieldRenameMap, { rootType: type });
+    }
+    if (typeof selection === 'string') {
+      selection = rewriteProtobufMappingBindsTypeScoped(selection, fieldRenameMap, {
+        rootType: type,
+      });
+    }
+    if (args === rpcArgs?.args && selection === rpcArgs?.selection) {
+      return rpcArgs;
+    }
+    protobufChanged = true;
+    return { ...rpcArgs, args, selection };
+  });
+  if (!protobufChanged) {
+    return type;
+  }
+  return new GraphQLObjectType({
+    ...type.toConfig(),
+    extensions: {
+      ...(type.extensions || {}),
+      directives: {
+        ...typeDirectives,
+        [protobufKey]: rewrittenRpc,
+      },
+    },
+    astNode: undefined,
+  });
 }
 
 type MapperTypeKind =
@@ -555,6 +610,7 @@ export function createRenameFieldTransform(
           applyProtobufFieldRenames(field, fieldRenameMap, s),
         [MapperKind.OBJECT_FIELD]: (field, _n, _t, s) =>
           applyProtobufFieldRenames(field, fieldRenameMap, s),
+        [MapperKind.OBJECT_TYPE]: (type, s) => applyProtobufTypeRenames(type, fieldRenameMap, s),
       });
     }
     return nextSchema;

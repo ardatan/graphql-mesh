@@ -258,10 +258,20 @@ export function decodeMessage(fields: MappingField[], data: Uint8Array): Record<
       // Packed repeated scalars/enums: one length-delimited blob of concatenated elements.
       const len = readVarint(data, i);
       const end = len.next + Number(len.value);
+      if (end > data.length) {
+        throw new Error(
+          `Truncated packed repeated field ${field.id}: end ${end} exceeds buffer ${data.length}`,
+        );
+      }
       let p = len.next;
       out[key] = out[key] ?? [];
       while (p < end) {
         const el = readValue(data, p, packedElementWire(field.type.element), field.type.element);
+        if (el.next <= p || el.next > end) {
+          throw new Error(
+            `Invalid packed repeated field ${field.id}: element did not advance within payload`,
+          );
+        }
         p = el.next;
         out[key].push(el.value);
       }
@@ -402,8 +412,10 @@ function readValue(
     if (type.kind === 'scalar' && type.name === 'sint32') value = unzigzag32(Number(v.value));
     else if (type.kind === 'scalar' && type.name === 'sint64') value = unzigzag64(v.value);
     else if (type.kind === 'scalar' && type.name === 'bool') value = Number(v.value) !== 0;
-    else if (type.kind === 'enum') value = Number(v.value);
-    else if (type.kind === 'scalar' && type.name === 'int32') {
+    else if (type.kind === 'enum') {
+      // Proto enums are int32 on the wire — signed interpretation so -1 matches enum maps.
+      value = Number(BigInt.asIntN(32, v.value));
+    } else if (type.kind === 'scalar' && type.name === 'int32') {
       value = Number(BigInt.asIntN(32, v.value));
     } else if (type.kind === 'scalar' && type.name === 'uint32') {
       value = Number(BigInt.asUintN(32, v.value));

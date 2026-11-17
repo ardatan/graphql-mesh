@@ -144,14 +144,33 @@ export function rewriteProtobufMappingBinds(
     );
   }
 
-  // Path binds after `):` — delimiters match parseMapping (`\s`, `}`, `{`, `#`, EOS),
-  // including compact one-liners: `1(message): input { 2(int64): year 3(string): name }`.
+  // Path binds after `):` — allow whitespace around `:`; delimiters match parseMapping
+  // (`\s`, `}`, `{`, `#`, EOS), including compact one-liners.
   out = out.replace(
-    /(\):\s*)([\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
+    /(\)\s*:\s*)([\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
     (_m, pre: string, path: string, offset: number, whole: string) => {
       if (path.startsWith('$args') || path.startsWith('$this')) {
-        // `$args` / `$this` already handled; remapping segments would double-rename.
-        return `${pre}${path}`;
+        // First segment is handled by the `$args/$this` pass above (avoid a→b→c chaining).
+        // When splitRootNested, deeper segments use nestedRenameMap (input field renames),
+        // e.g. `$args.input.release_year` → `$args.input.releaseYear`.
+        if (!splitRootNested) {
+          return `${pre}${path}`;
+        }
+        const scope = path.startsWith('$args') ? '$args' : '$this';
+        const rest =
+          path === scope
+            ? []
+            : path.startsWith(`${scope}.`)
+              ? path.slice(scope.length + 1).split('.')
+              : [];
+        if (rest.length <= 1) {
+          return `${pre}${path}`;
+        }
+        const rewritten = [scope, rest[0]];
+        for (let i = 1; i < rest.length; i++) {
+          rewritten.push(nestedLookup.get(rest[i]) ?? rest[i]);
+        }
+        return `${pre}${rewritten.join('.')}`;
       }
       const depth = braceDepthAt(whole, offset);
       const segments = path.split('.');
@@ -182,11 +201,15 @@ function toLookup(renameMap: Map<string, string>): Map<string, string> {
   return new Map(entries);
 }
 
-/** Net `{` − `}` count before `index` (string content; mapping dialect has no escapes). */
+/** Net `{` − `}` count before `index`; `#` comments are ignored through EOL (parser-compatible). */
 function braceDepthAt(source: string, index: number): number {
   let depth = 0;
   for (let i = 0; i < index; i++) {
     const c = source[i];
+    if (c === '#') {
+      while (i < index && source[i] !== '\n') i++;
+      continue;
+    }
     if (c === '{') depth++;
     else if (c === '}') depth = Math.max(0, depth - 1);
   }
@@ -230,7 +253,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
   typeAtDepth[0] = options.rootType ?? null;
 
   return mapping.replace(
-    /(\):\s*)([\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
+    /(\)\s*:\s*)([\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
     (match, pre: string, path: string, offset: number, whole: string) => {
       const depth = braceDepthAt(whole, offset);
       const afterPath = offset + match.length;
@@ -305,7 +328,20 @@ export function rewriteProtobufMappingBindsTypeScoped(
         return `${pre}${rewritten.join('.')}`;
       }
 
-      let cur: GraphQLNamedType | null | undefined = typeAtDepth[depth] ?? options.rootType;
+      // Unbound nested `{ … }` leaves typeAtDepth[depth] unset (undefined) — inherit the
+      // enclosing owner. Explicit unknown owners are stored as `null` and must not inherit.
+      let cur: GraphQLNamedType | null | undefined = typeAtDepth[depth];
+      if (cur === undefined) {
+        for (let d = depth - 1; d >= 0; d--) {
+          if (typeAtDepth[d] !== undefined) {
+            cur = typeAtDepth[d];
+            break;
+          }
+        }
+      }
+      if (cur === undefined) {
+        cur = options.rootType;
+      }
       const rewritten: string[] = [];
       for (const seg of segments) {
         const stepped = renameFieldSegment(cur, seg, fieldRenameMap);
@@ -493,8 +529,10 @@ export function rewriteConnectArgReferences(
       let args = rpcArgs?.args;
       let selection = rpcArgs?.selection;
       if (typeof args === 'string' && (argRenameMap.size || fieldRenameMap?.size)) {
+        // Always pass nestedRenameMap for args (empty when arg-only) so nested
+        // input fields do not fall back to the argument rename map.
         args = rewriteProtobufMappingBinds(args, argRenameMap, {
-          nestedRenameMap: fieldRenameMap?.size ? fieldRenameMap : undefined,
+          nestedRenameMap: fieldRenameMap?.size ? fieldRenameMap : new Map(),
         });
       }
       if (typeof selection === 'string' && selectionMap?.size) {
