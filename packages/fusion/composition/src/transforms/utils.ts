@@ -9,36 +9,6 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/** Apply `fn` only to spans outside `'…'` / `"…"` (respects `\\` escapes). */
-function rewriteOutsideQuotes(value: string, fn: (segment: string) => string): string {
-  let out = '';
-  let i = 0;
-  let segmentStart = 0;
-  while (i < value.length) {
-    const c = value[i];
-    if (c === '"' || c === "'") {
-      out += fn(value.slice(segmentStart, i));
-      const q = c;
-      out += c;
-      i++;
-      while (i < value.length && value[i] !== q) {
-        if (value[i] === '\\') {
-          out += value[i++];
-          if (i < value.length) out += value[i++];
-          continue;
-        }
-        out += value[i++];
-      }
-      if (i < value.length) out += value[i++];
-      segmentStart = i;
-      continue;
-    }
-    i++;
-  }
-  out += fn(value.slice(segmentStart));
-  return out;
-}
-
 /**
  * Remove top-level field picks / aliases from a Connectors `selection` string.
  * Used after filter/prune marks fields inaccessible so upstream JSON isn't over-fetched.
@@ -126,18 +96,9 @@ export function withOriginalKeyFallback<T extends Record<string, any>>(
 }
 
 /**
- * Rewrite `$args.<name>` (and related) references after GraphQL argument renames
- * for Federation `@connect`, Thrift `@thrift__rpc`, and Mesh `@protobuf__rpc`.
- * Mesh stitching used `@meshSource(name:)` for this; Connectors / thrift compact /
- * protobuf RPC bind args by the GraphQL argument name inside path/body/`args`/
- * `selection` strings.
- *
- * When `fieldRenameMap` is set, also rewrite selection aliases of the form
- * `newName: oldName` / leading `oldName` field picks so rename/prefix transforms
- * keep Connectors (and thrift/protobuf compact) selection in sync with GraphQL field names.
- *
- * When `typeRenameMap` is set, rewrite `__typename: "Old"` / `__typename: $("Old")`
- * in selections so prefix/rename/naming-convention keep polymorphic Connect arms valid.
+ * Rewrite GraphQL bind path segments in a `@protobuf__rpc` args/selection mapping.
+ * Handles `$args.x` / `$this.x` and bare paths after `):` (e.g. `2(int64): year`,
+ * `1(message): input.movie {`).
  */
 export function rewriteProtobufMappingBinds(
   mapping: string,
@@ -161,10 +122,7 @@ export function rewriteProtobufMappingBinds(
   );
   // Path binds after `):` — head + optional `.seg` segments.
   out = out.replace(
-    new RegExp(
-      `(\\):\\s*)([\\w$]+(?:\\.[\\w$]+)*)(?=\\s*[{]|\\s*$|\\s*[\\n#}])`,
-      'gm',
-    ),
+    /(\):\s*)([\w$]+(?:\.[\w$]+)*)(?=\s*[{]|\s*$|\s*[\n#])/gm,
     (_m, pre: string, path: string) => {
       const next = path
         .split('.')
@@ -189,9 +147,17 @@ function protobufRpcDirectiveKey(
 }
 
 /**
- * Rewrite Federation Connectors `@connect`, Thrift `@thrift__rpc`, and Mesh
- * `@protobuf__rpc` mappings after GraphQL renames. These skip Mesh `@source` /
- * `@meshSource`; transforms keep directive binds on the public GraphQL names instead.
+ * Rewrite Federation Connectors `@connect` and Mesh `@protobuf__rpc` mappings after
+ * GraphQL renames. Connectors and protobuf RPC skip Mesh `@source` / `@meshSource`;
+ * transforms keep directive binds on the public GraphQL names instead.
+ *
+ * When `fieldRenameMap` is set, also rewrite selection aliases of the form
+ * `newName: oldName` / leading `oldName` field picks so rename/prefix transforms
+ * keep Connectors selection in sync with GraphQL field names — and rewrite bare
+ * path segments in `@protobuf__rpc(args|selection)`.
+ *
+ * When `typeRenameMap` is set, rewrite `__typename: "Old"` / `__typename: $("Old")`
+ * in selections so prefix/rename/naming-convention keep polymorphic Connect arms valid.
  */
 export function rewriteConnectArgReferences(
   fieldDirectives: Record<string, any[]> | undefined,
@@ -200,10 +166,9 @@ export function rewriteConnectArgReferences(
   typeRenameMap?: Map<string, string>,
 ): Record<string, any[]> | undefined {
   const protobufKey = protobufRpcDirectiveKey(fieldDirectives);
-  const hasConnect = Boolean(fieldDirectives?.connect?.length);
-  const hasThriftRpc = Boolean(fieldDirectives?.thrift__rpc?.length);
+  const hasConnect = !!fieldDirectives?.connect?.length;
   if (
-    (!hasConnect && !hasThriftRpc && !protobufKey) ||
+    (!hasConnect && !protobufKey) ||
     (argRenameMap.size === 0 &&
       (!fieldRenameMap || fieldRenameMap.size === 0) &&
       (!typeRenameMap || typeRenameMap.size === 0))
@@ -216,13 +181,12 @@ export function rewriteConnectArgReferences(
     }
     let out = value;
     // Single-pass, whole-name matches so `id` does not rewrite `$args.identifier`
-    // and `a→b` + `b→c` does not chain into `$args.c`. Skip quoted spans so
-    // compact map lookups like `->get("$args.request")` keep the literal key.
+    // and `a→b` + `b→c` does not chain into `$args.c`.
     if (argRenameMap.size) {
       const names = [...argRenameMap.keys()].map(escapeRegExp).join('|');
-      const re = new RegExp(`\\$args\\.(${names})(?![\\w])`, 'g');
-      out = rewriteOutsideQuotes(out, segment =>
-        segment.replace(re, (_m, name: string) => `$args.${argRenameMap.get(name) ?? name}`),
+      out = out.replace(
+        new RegExp(`\\$args\\.(${names})(?![\\w])`, 'g'),
+        (_m, name: string) => `$args.${argRenameMap.get(name) ?? name}`,
       );
     }
     // `fieldRenameMap` rewrites nested response-field picks in a selection
@@ -258,15 +222,6 @@ export function rewriteConnectArgReferences(
     }
     return out;
   };
-  /** HTTP path templates: rewrite `$args` even when the literal path has `'` / `"` (e.g. `/O'Reilly/{$args.id}`). Quote-skipping is only for expression strings (`->get("$args.x")`). */
-  const rewriteHttpPath = (value: string): string => {
-    if (!argRenameMap.size) {
-      return value;
-    }
-    const names = [...argRenameMap.keys()].map(escapeRegExp).join('|');
-    const re = new RegExp(`\\$args\\.(${names})(?![\\w])`, 'g');
-    return value.replace(re, (_m, name: string) => `$args.${argRenameMap.get(name) ?? name}`);
-  };
   const rewriteHttp = (http: Record<string, any> | undefined) => {
     if (!http || typeof http !== 'object') {
       return http;
@@ -274,7 +229,7 @@ export function rewriteConnectArgReferences(
     const next: Record<string, any> = { ...http };
     for (const method of ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const) {
       if (typeof next[method] === 'string') {
-        next[method] = rewriteHttpPath(next[method]);
+        next[method] = rewriteExpr(next[method]);
       }
     }
     if (typeof next.body === 'string') {
@@ -297,39 +252,30 @@ export function rewriteConnectArgReferences(
     }
     return next;
   };
-  const next: Record<string, any[]> = { ...fieldDirectives };
+  let nextDirectives = fieldDirectives!;
   if (hasConnect) {
-    next.connect = fieldDirectives!.connect.map((connectArgs: any) => ({
-      ...connectArgs,
-      http: rewriteHttp(connectArgs?.http),
-      selection:
-        typeof connectArgs?.selection === 'string'
-          ? rewriteExpr(connectArgs.selection)
-          : connectArgs?.selection,
-      isSuccess:
-        typeof connectArgs?.isSuccess === 'string'
-          ? rewriteExpr(connectArgs.isSuccess)
-          : connectArgs?.isSuccess,
-      errors: connectArgs?.errors
-        ? {
-            ...connectArgs.errors,
-            message: rewriteExpr(connectArgs.errors.message),
-            extensions: rewriteExpr(connectArgs.errors.extensions),
-          }
-        : connectArgs?.errors,
-    }));
-  }
-  if (hasThriftRpc) {
-    // Compact `@thrift__rpc(args/selection/throws:)` embed `$args.<name>` the same way.
-    next.thrift__rpc = fieldDirectives!.thrift__rpc.map((rpcArgs: any) => ({
-      ...rpcArgs,
-      args: typeof rpcArgs?.args === 'string' ? rewriteExpr(rpcArgs.args) : rpcArgs?.args,
-      selection:
-        typeof rpcArgs?.selection === 'string'
-          ? rewriteExpr(rpcArgs.selection)
-          : rpcArgs?.selection,
-      throws: typeof rpcArgs?.throws === 'string' ? rewriteExpr(rpcArgs.throws) : rpcArgs?.throws,
-    }));
+    nextDirectives = {
+      ...nextDirectives,
+      connect: nextDirectives.connect.map((connectArgs: any) => ({
+        ...connectArgs,
+        http: rewriteHttp(connectArgs?.http),
+        selection:
+          typeof connectArgs?.selection === 'string'
+            ? rewriteExpr(connectArgs.selection)
+            : connectArgs?.selection,
+        isSuccess:
+          typeof connectArgs?.isSuccess === 'string'
+            ? rewriteExpr(connectArgs.isSuccess)
+            : connectArgs?.isSuccess,
+        errors: connectArgs?.errors
+          ? {
+              ...connectArgs.errors,
+              message: rewriteExpr(connectArgs.errors.message),
+              extensions: rewriteExpr(connectArgs.errors.extensions),
+            }
+          : connectArgs?.errors,
+      })),
+    };
   }
   if (protobufKey && (argRenameMap.size > 0 || (fieldRenameMap?.size ?? 0) > 0)) {
     // Arg renames update request `args:`. Field/input renames update args path
@@ -341,7 +287,7 @@ export function rewriteConnectArgReferences(
     ]);
     const selectionMap = fieldRenameMap?.size ? fieldRenameMap : undefined;
     let protobufChanged = false;
-    const rewritten = next[protobufKey].map((rpcArgs: any) => {
+    const rewritten = nextDirectives[protobufKey].map((rpcArgs: any) => {
       let args = rpcArgs?.args;
       let selection = rpcArgs?.selection;
       if (typeof args === 'string' && argsMap.size) {
@@ -357,10 +303,11 @@ export function rewriteConnectArgReferences(
       return { ...rpcArgs, args, selection };
     });
     if (protobufChanged) {
-      next[protobufKey] = rewritten;
+      nextDirectives = {
+        ...nextDirectives,
+        [protobufKey]: rewritten,
+      };
     }
   }
-  return next;
+  return nextDirectives;
 }
-
-

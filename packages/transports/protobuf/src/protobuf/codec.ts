@@ -171,7 +171,6 @@ function writeValue(chunks: Uint8Array[], id: number, type: ProtoType, value: an
       writeVarint(chunks, entry.length);
       chunks.push(entry);
     }
-    return;
   }
 }
 
