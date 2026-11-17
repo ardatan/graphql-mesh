@@ -91,5 +91,33 @@ describe('thrift', () => {
     expect(sdl).toMatch(/union PostTweetResult/);
     expect(sdl).toMatch(/type PostTweetSuccess/);
     expect(sdl).toMatch(/messageType:\s*ONEWAY/);
+    expect(sdl).toMatch(/throws:\s*"TwitterUnavailable:\s*1/);
+    expect(sdl).not.toMatch(/@fieldTypeMap\(/);
+    expect(sdl).not.toMatch(/@thrift__method\(/);
+  });
+
+  it('json protocol ONEWAY body uses message type 4 and void isSuccess', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'Twitter',
+      source: './fixtures/twitter.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/twitter',
+      serviceName: 'Twitter',
+      protocol: 'json',
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    // Unescape printed GraphQL string escapes so body layout is readable.
+    const normalized = sdl.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+    const zipField = normalized.slice(normalized.indexOf('zip: Void'));
+    // zip is oneway — TJSON body message type 4, no isSuccess (no reply wait).
+    expect(zipField).toContain('zip: Void @connect(');
+    expect(zipField).toMatch(/"zip",\s*4,\s*1,/);
+    expect(zipField).toContain('selection: "null"');
+    const zipDirectiveEnd = zipField.indexOf(')');
+    expect(zipField.slice(0, zipDirectiveEnd + 1)).not.toContain('isSuccess');
+    // Non-void CALL methods require success field "0" (declared throws are not silent null).
+    expect(normalized).toMatch(
+      /\$->get\(2\)->eq\(2\)->and\(\$->get\(4\)->get\("0"\)->ne\(null\)\)/,
+    );
   });
 });

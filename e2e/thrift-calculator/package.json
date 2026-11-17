@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "codegen": "thrift-typescript --target thrift-server --sourceDir ./services/calculator --outDir ./services/calculator/__generated__"
+    "codegen": "node -e \"const path=require('path');const {generate}=require('@creditkarma/thrift-typescript');const root=process.cwd();generate({rootDir:root,sourceDir:path.join(root,'services/calculator'),outDir:path.join(root,'services/calculator/__generated__'),target:'thrift-server',files:[path.join(root,'services/calculator/calculator.thrift')]}).then(()=>console.log('codegen ok'))\""
   },
   "dependencies": {
     "@creditkarma/thrift-server-core": "^1.0.4",

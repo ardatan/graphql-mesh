@@ -12,8 +12,8 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  add(request: AddRequestInput): Int @connect(source: "Calc", http: {POST: "/", body: "$([\\n  1,\\n  \\"add\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": {\\n        \\"rec\\": {\\n        \\"1\\": { \\"i32\\": $args.request.left },\\n        \\"2\\": { \\"i32\\": $args.request.right }\\n        }\\n      }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)", errors: {message: "$->get(4)->get(\\"1\\")->get(\\"str\\")"})
-  subtract(left: Int, right: Int): Int @connect(source: "Calc", http: {POST: "/", body: "$([\\n  1,\\n  \\"subtract\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": { \\"i32\\": $args.left },\\n      \\"2\\": { \\"i32\\": $args.right }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)", errors: {message: "$->get(4)->get(\\"1\\")->get(\\"str\\")"})
+  add(request: AddRequestInput): Int @connect(source: "Calc", http: {POST: "/", body: "$([\\n  1,\\n  \\"add\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": {\\n        \\"rec\\": {\\n        \\"1\\": { \\"i32\\": $args.request.left },\\n        \\"2\\": { \\"i32\\": $args.request.right }\\n        }\\n      }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"})
+  subtract(left: Int, right: Int): Int @connect(source: "Calc", http: {POST: "/", body: "$([\\n  1,\\n  \\"subtract\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": { \\"i32\\": $args.left },\\n      \\"2\\": { \\"i32\\": $args.right }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"})
 }
 
 input AddRequestInput {
@@ -64,7 +64,7 @@ exports[`thrift Calc: Calc-schema 1`] = `
   query: Query
 }
 
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
 
 enum ThriftMessageType {
   CALL
@@ -87,7 +87,7 @@ exports[`thrift Recursive: Recursive-schema 1`] = `
   query: Query
 }
 
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
 
 enum ThriftMessageType {
   CALL
@@ -114,7 +114,7 @@ exports[`thrift Twitter: Twitter-schema 1`] = `
   query: Query
 }
 
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
 
 enum ThriftMessageType {
   CALL

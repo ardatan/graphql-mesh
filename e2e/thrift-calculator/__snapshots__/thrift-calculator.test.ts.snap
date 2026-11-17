@@ -38,11 +38,20 @@ enum join__Graph {
   CALCULATOR @join__graph(name: "calculator", url: "http://localhost:<calculator_port>/thrift")
 }
 
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
+
+"""Represents NULL values"""
+scalar Void @join__type(graph: CALCULATOR)
+
+type CalcError @join__type(graph: CALCULATOR) {
+  message: String
+}
 
 type Query @join__type(graph: CALCULATOR) {
-  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "calculator", function: "add", args: "1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "$(i32)", messageType: CALL, service: "Calculator")
+  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "calculator", function: "add", args: "# Add left and right from the request struct.\\n1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "# Add left and right from the request struct.\\n$(i32)", messageType: CALL, service: "Calculator")
   subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "calculator", function: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: CALL, service: "Calculator")
+  divide(left: Int, right: Int): Int @thrift__rpc(subgraph: "calculator", function: "divide", args: "# Divide left by right; throws when right is zero.\\n1(i32): $args.left\\n2(i32): $args.right", selection: "# Divide left by right; throws when right is zero.\\n$(i32)", messageType: CALL, service: "Calculator")
+  zip: Void @thrift__rpc(subgraph: "calculator", function: "zip", args: "", selection: "$(void)", messageType: ONEWAY, service: "Calculator")
 }
 
 enum ThriftMessageType @join__type(graph: CALCULATOR) {
@@ -107,9 +116,14 @@ enum join__Graph {
   CALCULATOR @join__graph(name: "calculator", url: "http://localhost:<calculator_port>/thrift-json")
 }
 
+"""Represents NULL values"""
+scalar Void @join__type(graph: CALCULATOR)
+
 type Query @join__type(graph: CALCULATOR) {
-  add(request: AddRequestInput): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([\\n  1,\\n  \\"add\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": {\\n        \\"rec\\": {\\n        \\"1\\": { \\"i32\\": $args.request.left },\\n        \\"2\\": { \\"i32\\": $args.request.right }\\n        }\\n      }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)", errors: {message: "$->get(4)->get(\\"1\\")->get(\\"str\\")"}})
-  subtract(left: Int, right: Int): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([\\n  1,\\n  \\"subtract\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": { \\"i32\\": $args.left },\\n      \\"2\\": { \\"i32\\": $args.right }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)", errors: {message: "$->get(4)->get(\\"1\\")->get(\\"str\\")"}})
+  add(request: AddRequestInput): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([\\n  1,\\n  \\"add\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": {\\n        \\"rec\\": {\\n        \\"1\\": { \\"i32\\": $args.request.left },\\n        \\"2\\": { \\"i32\\": $args.request.right }\\n        }\\n      }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"}})
+  subtract(left: Int, right: Int): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([\\n  1,\\n  \\"subtract\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": { \\"i32\\": $args.left },\\n      \\"2\\": { \\"i32\\": $args.right }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"}})
+  divide(left: Int, right: Int): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([\\n  1,\\n  \\"divide\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": { \\"i32\\": $args.left },\\n      \\"2\\": { \\"i32\\": $args.right }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"}})
+  zip: Void @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([\\n  1,\\n  \\"zip\\",\\n  4,\\n  1,\\n  {\\n\\n  }\\n])"}, selection: "null"})
 }
 
 input AddRequestInput @join__type(graph: CALCULATOR) {

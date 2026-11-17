@@ -949,16 +949,40 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
       return left.filter(item => {
         if (elementExpr === '@') return Boolean(item);
         if (elementExpr.startsWith('@')) {
-          return Boolean(evalPath(elementExpr.replace(/^@/, '$'), item, extras));
+          return Boolean(evalPath(rewriteAtToDollar(elementExpr), item, extras));
         }
         return Boolean(evalPath(elementExpr, item, extras));
       });
     }
     if (method === 'ne') {
-      return left !== parseConnectorsLiteralArg(rawArgs);
+      const right = parseConnectorsLiteralArg(rawArgs);
+      // Connectors None/null: treat null and undefined as equal for `ne(null)`.
+      if (right === null) return left != null;
+      return left !== right;
     }
     if (method === 'eq') {
-      return left === parseConnectorsLiteralArg(rawArgs);
+      const right = parseConnectorsLiteralArg(rawArgs);
+      if (right === null) return left == null;
+      return left === right;
+    }
+    // `$obj->has("0")` — Mesh helper (Apollo `has` is still future/non-public).
+    if (method === 'has') {
+      if (left == null || typeof left !== 'object') return false;
+      const key = String(parseConnectorsLiteralArg(rawArgs));
+      return Object.prototype.hasOwnProperty.call(left, key) || key in (left as object);
+    }
+    // `$->eq(2)->and($->get(4)->get("0")->ne(null))` — combine booleans; arg eval against root.
+    if (method === 'and') {
+      let arg = rawArgs.trim();
+      if (arg.startsWith('(') && arg.endsWith(')')) {
+        arg = arg.slice(1, -1).trim();
+      }
+      return Boolean(left) && Boolean(evalPath(arg, root, extras));
+    }
+    // `$arr->contains("0")` — Apollo-public membership check.
+    if (method === 'contains') {
+      if (!Array.isArray(left)) return false;
+      return left.includes(parseConnectorsLiteralArg(rawArgs));
     }
     // `$->map(@->match(...))` / `$->map(@.id)` / `$->map(@->{ ... })` — element transform.
     if (method === 'map') {
@@ -977,7 +1001,7 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
             return evalConnectorsLitExpr(rewriteAtToDollar(afterAt), item, extras);
           }
           // `@->match(...)` / `@.id` — treat `@` as the element root.
-          return evalPath(elementExpr.replace(/^@/, '$'), item, extras);
+          return evalPath(rewriteAtToDollar(elementExpr), item, extras);
         }
         return evalPath(elementExpr, item, extras);
       });
@@ -1020,9 +1044,44 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
   return cur;
 }
 
-/** Rewrite `@` / `@.x` element aliases to `$` / `$.x` for lit/path eval against the item. */
+/**
+ * Rewrite `@` / `@.x` element aliases to `$` / `$.x` for lit/path eval against the item.
+ * Leaves `@` inside quoted strings alone (e.g. emails).
+ */
 function rewriteAtToDollar(expr: string): string {
-  return expr.replace(/@\./g, '$.').replace(/@/g, '$');
+  let out = '';
+  let i = 0;
+  while (i < expr.length) {
+    const c = expr[i];
+    if (c === '"' || c === "'") {
+      const q = c;
+      out += c;
+      i++;
+      while (i < expr.length && expr[i] !== q) {
+        if (expr[i] === '\\') {
+          out += expr[i++];
+          if (i < expr.length) out += expr[i++];
+          continue;
+        }
+        out += expr[i++];
+      }
+      if (i < expr.length) out += expr[i++];
+      continue;
+    }
+    if (c === '@' && expr[i + 1] === '.') {
+      out += '$.';
+      i += 2;
+      continue;
+    }
+    if (c === '@') {
+      out += '$';
+      i++;
+      continue;
+    }
+    out += c;
+    i++;
+  }
+  return out;
 }
 
 /** Index of the `)` that closes `s[openIdx]` (`(`), or -1. */

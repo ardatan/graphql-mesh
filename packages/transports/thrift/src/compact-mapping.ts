@@ -43,7 +43,8 @@ export function parseCompactArgsToTypeMap(src: string): TypeMap {
 }
 
 export function parseCompactSelection(src: string): CompactSelection {
-  const trimmed = (src || '').trim();
+  // Strip `#` IDL comment lines before scalar `$(i32)` / fields detection.
+  const trimmed = stripHashCommentLines(src || '').trim();
   if (!trimmed) {
     return { kind: 'scalar', wire: 'void' };
   }
@@ -60,7 +61,37 @@ export function applyCompactSelection(selection: CompactSelection, successWire: 
     if (selection.wire === 'void') return null;
     return successWire;
   }
+  // Top-level list/set of structs: project each element by field mappings.
+  if (Array.isArray(successWire)) {
+    return successWire.map(item => projectSelectionFields(selection.fields, item));
+  }
   return projectSelectionFields(selection.fields, successWire);
+}
+
+/** Drop `# …` lines (IDL comments embedded above args/selection bodies). */
+function stripHashCommentLines(src: string): string {
+  return src
+    .split(/\r?\n/)
+    .filter(line => !line.trim().startsWith('#'))
+    .join('\n');
+}
+
+export type CompactThrow = {
+  typeName: string;
+  id: number;
+  fields: CompactSelectionField[];
+};
+
+/**
+ * Parse compact `@thrift__rpc(throws:)` — `TypeName: <id> { field: id(wire) }`.
+ */
+export function parseCompactThrows(src: string): CompactThrow[] {
+  if (!(src || '').trim()) return [];
+  return parseCompactSelectionFields(src).map(field => ({
+    typeName: field.graphqlName,
+    id: field.id,
+    fields: field.children || [],
+  }));
 }
 
 type ArgField = {
@@ -133,14 +164,19 @@ function tokenToTypeVal(wire: string, id: number): TypeVal {
       elementType: set[1] ? tokenToTypeVal(set[1], id) : { type: TType.I32, id },
     };
   }
-  const map = trimmed.match(/^map<(.+),\s*(.+)>$/);
-  if (map) {
-    return {
-      type: TType.MAP,
-      id,
-      keyType: tokenToTypeVal(map[1], id),
-      valType: tokenToTypeVal(map[2], id),
-    };
+  const mapOpen = trimmed.match(/^map<(.+)>$/);
+  if (mapOpen) {
+    // Split key/val at depth-0 comma so `map<string, map<i32, string>>` parses.
+    const inner = mapOpen[1];
+    const comma = findDepth0Comma(inner);
+    if (comma >= 0) {
+      return {
+        type: TType.MAP,
+        id,
+        keyType: tokenToTypeVal(inner.slice(0, comma).trim(), id),
+        valType: tokenToTypeVal(inner.slice(comma + 1).trim(), id),
+      };
+    }
   }
   const ttype = TOKEN_TO_TTYPE[trimmed];
   if (ttype === TType.STRUCT) {
@@ -240,6 +276,18 @@ function parseSelectionFieldAt(
     field: { graphqlName, id, wire, mapGet, children },
     next: i + 1,
   };
+}
+
+/** Index of the first `,` at angle-bracket depth 0, or -1. */
+function findDepth0Comma(s: string): number {
+  let depth = 0;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === '<') depth++;
+    else if (c === '>') depth--;
+    else if (c === ',' && depth === 0) return i;
+  }
+  return -1;
 }
 
 /** Normalize mapping text into significant lines (`}` alone, no blanks). */

@@ -20,6 +20,7 @@ import {
   applyCompactSelection,
   parseCompactArgsToTypeMap,
   parseCompactSelection,
+  parseCompactThrows,
   type CompactSelection,
 } from './compact-mapping.js';
 import type { GraphQLThriftAnnotations, TypeMap, TypeVal } from './types.js';
@@ -29,6 +30,8 @@ export type ThriftRpcBinding = {
   messageType?: 'CALL' | 'ONEWAY';
   args?: string;
   selection?: string;
+  /** Compact IDL throws mapping when return type is a Result union. */
+  throws?: string;
 };
 
 interface IGraphQLThriftClient extends ThriftClient {
@@ -211,6 +214,7 @@ export function createGraphQLThriftClient<Context = any>({
     async doRequest(methodName: string, args: any, binding: ThriftRpcBinding, context?: any) {
       const fields: TypeMap = parseCompactArgsToTypeMap(binding.args || '');
       const selection: CompactSelection = parseCompactSelection(binding.selection || '$(void)');
+      const throws = parseCompactThrows(binding.throws || '');
       const outboundMessageType = binding.messageType || 'CALL';
 
       const Transport = this.transport;
@@ -233,6 +237,7 @@ export function createGraphQLThriftClient<Context = any>({
       );
       output.writeMessageEnd();
       const data: Buffer = await this.connection.send(writer.flush(), context);
+      // ONEWAY: fire-and-forget — do not wait for / decode a reply body.
       if (outboundMessageType === 'ONEWAY') {
         return null;
       }
@@ -248,7 +253,26 @@ export function createGraphQLThriftClient<Context = any>({
           const result = this.readTypeById(TType.STRUCT, input) as Map<number, any>;
           input.readMessageEnd();
           if (result.has(0)) {
-            return applyCompactSelection(selection, result.get(0));
+            const success = applyCompactSelection(selection, result.get(0));
+            if (throws.length > 0) {
+              return {
+                value: success,
+                __typename: `${methodName[0].toUpperCase()}${methodName.slice(1)}Success`,
+              };
+            }
+            return success;
+          }
+          for (const t of throws) {
+            if (result.has(t.id)) {
+              const projected = applyCompactSelection(
+                { kind: 'fields', fields: t.fields },
+                result.get(t.id),
+              );
+              return {
+                ...(projected && typeof projected === 'object' ? projected : {}),
+                __typename: t.typeName,
+              };
+            }
           }
           throw new TApplicationException(
             TApplicationExceptionType.UNKNOWN,

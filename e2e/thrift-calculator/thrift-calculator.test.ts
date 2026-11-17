@@ -14,6 +14,24 @@ const addExceptionQuery = /* GraphQL */ `
   }
 `;
 
+const divideQuery = /* GraphQL */ `
+  query Divide {
+    divide(left: 10, right: 2)
+  }
+`;
+
+const divideByZeroQuery = /* GraphQL */ `
+  query DivideByZero {
+    divide(left: 10, right: 0)
+  }
+`;
+
+const zipQuery = /* GraphQL */ `
+  query Zip {
+    zip
+  }
+`;
+
 let calculator: Service;
 
 beforeAll(async () => {
@@ -31,10 +49,14 @@ describe('binary (@thrift__rpc)', () => {
     expect(result).toMatch(/function:\s*"add"/);
     expect(result).toMatch(/1\(struct\):\s*\$args\.request/);
     expect(result).toMatch(/\$\(i32\)/);
+    expect(result).toMatch(/# Add left and right from the request struct/);
+    expect(result).toMatch(/messageType:\s*ONEWAY/);
+    expect(result).toMatch(/function:\s*"divide"/);
     expect(result).not.toMatch(/@fieldTypeMap\(/);
     expect(result).not.toMatch(/topTypeMap/);
     expect(result).not.toMatch(/clientAnnotations/);
     expect(result).not.toMatch(/options:\s*\{/);
+    expect(result).not.toMatch(/@thrift__method\(/);
   });
 
   it('executes add on hive', async () => {
@@ -55,8 +77,48 @@ describe('binary (@thrift__rpc)', () => {
     const result = await execute({ query: addExceptionQuery });
     expect(result.data?.add ?? null).toBeNull();
     expect(result.errors?.length).toBeGreaterThan(0);
-    // Hive may mask the downstream message as "Unexpected error." while logging the real one.
-    expect(result.errors?.[0]?.extensions?.code || result.errors?.[0]?.message).toBeTruthy();
+    const err = result.errors?.[0];
+    // Prefer the Thrift message; Hive may mask as "Unexpected error." in `message`
+    // while still attaching the upstream text under extensions / cause.
+    const text = [
+      err?.message,
+      err?.extensions?.message,
+      (err?.extensions as { originalError?: { message?: string } } | undefined)?.originalError
+        ?.message,
+      (err as { originalError?: { message?: string } } | undefined)?.originalError?.message,
+    ]
+      .filter(v => typeof v === 'string' && v.length)
+      .join(' | ');
+    expect(text.length).toBeGreaterThan(0);
+    expect(text).toMatch(/left must not be -1|Unexpected error/i);
+  });
+
+  it('executes divide and maps declared throws as GraphQL errors', async () => {
+    const { output } = await compose({
+      services: [calculator],
+      output: 'graphql',
+    });
+    const { execute } = await serve({ supergraph: output, runner: 'hive' });
+    await expect(execute({ query: divideQuery })).resolves.toEqual({
+      data: { divide: 5 },
+    });
+    const boom = await execute({ query: divideByZeroQuery });
+    expect(boom.data?.divide ?? null).toBeNull();
+    expect(boom.errors?.length).toBeGreaterThan(0);
+    const text = String(boom.errors?.[0]?.message || '');
+    // Binary ignoreExceptions:true → doRequest "unknown result" (declared throw field).
+    expect(text.length).toBeGreaterThan(0);
+  });
+
+  it('ONEWAY zip returns null without waiting for a reply body', async () => {
+    const { output } = await compose({
+      services: [calculator],
+      output: 'graphql',
+    });
+    const { execute } = await serve({ supergraph: output, runner: 'hive' });
+    const result = await execute({ query: zipQuery });
+    expect(result.errors).toBeFalsy();
+    expect(result.data).toEqual({ zip: null });
   });
 });
 
@@ -73,8 +135,13 @@ describe('json (@connect TJSON)', () => {
     expect(result).toMatch(/application\/vnd\.apache\.thrift\.json/);
     expect(result).toMatch(/\$\(\[/);
     expect(result).toMatch(/isSuccess/);
-    expect(result).toMatch(/\$->get\(2\)->eq\(2\)/);
+    const normalized = result.replace(/\\"/g, '"').replace(/\\n/g, '\n');
+    expect(normalized).toMatch(
+      /\$->get\(2\)->eq\(2\)->and\(\$->get\(4\)->get\("0"\)->ne\(null\)\)/,
+    );
+    expect(normalized).toMatch(/"zip",\s*4,\s*1,/); // ONEWAY message type in TJSON body
     expect(result).not.toMatch(/@thrift__rpc\(/);
+    expect(result).not.toMatch(/@thrift__method\(/);
   });
 
   describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {
@@ -107,6 +174,25 @@ describe('json (@connect TJSON)', () => {
       expect(result.data?.add ?? null).toBeNull();
       expect(result.errors?.length).toBeGreaterThan(0);
       expect(String(result.errors?.[0]?.message || '')).toMatch(/left must not be -1/i);
+    });
+
+    it('maps declared IDL throws via isSuccess ne(null) on field "0"', async () => {
+      const composition = await compose({
+        services: [calculator],
+        output: 'graphql',
+        args: ['-c', 'mesh.json.config.ts'],
+      });
+      const { execute } = await serve({
+        runner,
+        supergraph: composition.output,
+      });
+      const ok = await execute({ query: divideQuery });
+      expect(ok.errors).toBeFalsy();
+      expect(ok.data).toEqual({ divide: 5 });
+      const boom = await execute({ query: divideByZeroQuery });
+      expect(boom.data?.divide ?? null).toBeNull();
+      expect(boom.errors?.length).toBeGreaterThan(0);
+      expect(String(boom.errors?.[0]?.message || '')).toMatch(/division by zero/i);
     });
   });
 });

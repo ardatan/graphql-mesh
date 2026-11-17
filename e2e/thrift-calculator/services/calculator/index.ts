@@ -1,7 +1,7 @@
 import express from 'express';
 import { ThriftServerExpress } from '@creditkarma/thrift-server-express';
 import { Opts } from '@e2e/opts';
-import { Calculator } from './__generated__';
+import { CalcError, Calculator } from './__generated__';
 
 const opts = Opts(process.argv);
 
@@ -15,6 +15,15 @@ const serviceHandlers: Calculator.IHandler<express.Request> = {
   },
   subtract(left: number, right: number): number {
     return left - right;
+  },
+  divide(left: number, right: number): number {
+    if (right === 0) {
+      throw new CalcError({ message: 'division by zero' });
+    }
+    return Math.trunc(left / right);
+  },
+  zip(): void {
+    // oneway — no reply consumed by Mesh clients
   },
 };
 

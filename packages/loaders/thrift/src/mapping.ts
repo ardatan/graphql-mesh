@@ -138,7 +138,7 @@ function formatCompactArgField(
   }
 
   if (
-    resolved.type === TType.LIST &&
+    (resolved.type === TType.LIST || resolved.type === TType.SET) &&
     resolveTypeVal(resolved.elementType, topTypeMap).type === TType.STRUCT
   ) {
     const elem = resolveTypeVal(resolved.elementType, topTypeMap) as Extract<
@@ -146,10 +146,18 @@ function formatCompactArgField(
       { type: TType.STRUCT }
     >;
     const elemName = elem.name || 'Anon';
-    const nextSeen = new Set(seenStructs);
-    nextSeen.add(elemName);
-    const lines = [`${pad}${id}(list): ${rhs} {`];
-    if (!seenStructs.has(elemName)) {
+    const wire = resolved.type === TType.SET ? 'set' : 'list';
+    const lines = [`${pad}${id}(${wire}): ${rhs} {`];
+    if (seenStructs.has(elemName)) {
+      // Cycle: still emit element field ids/types for serialization, as leaves.
+      for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
+        const fid = fieldType.id ?? 1;
+        const tok = wireTypeToken(fieldType, topTypeMap);
+        lines.push(`${indent(level + 1)}${fid}(${tok}): ${fieldName}`);
+      }
+    } else {
+      const nextSeen = new Set(seenStructs);
+      nextSeen.add(elemName);
       for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
         lines.push(
           ...formatCompactArgField(
@@ -181,6 +189,21 @@ export function buildCompactSelection(
     return '$(void)';
   }
   const resolved = resolveTypeVal(returnTypeVal, topTypeMap);
+  // Top-level list/set of structs: emit element field mappings (not bare `$(list)`).
+  if (resolved.type === TType.LIST || resolved.type === TType.SET) {
+    const elem = resolveTypeVal(
+      (resolved as Extract<TypeVal, { type: TType.LIST | TType.SET }>).elementType,
+      topTypeMap,
+    );
+    if (elem.type === TType.STRUCT) {
+      const lines: string[] = [];
+      for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
+        lines.push(...formatCompactSelectionField(fieldName, fieldType, topTypeMap, 0));
+      }
+      return lines.join('\n');
+    }
+    return `$(${wireTypeToken(returnTypeVal, topTypeMap)})`;
+  }
   if (resolved.type !== TType.STRUCT) {
     return `$(${wireTypeToken(returnTypeVal, topTypeMap)})`;
   }
@@ -221,7 +244,7 @@ function formatCompactSelectionField(
   }
 
   if (
-    resolved.type === TType.LIST &&
+    (resolved.type === TType.LIST || resolved.type === TType.SET) &&
     resolveTypeVal(resolved.elementType, topTypeMap).type === TType.STRUCT
   ) {
     const elem = resolveTypeVal(resolved.elementType, topTypeMap) as Extract<
@@ -229,10 +252,18 @@ function formatCompactSelectionField(
       { type: TType.STRUCT }
     >;
     const elemName = elem.name || 'Anon';
-    const nextSeen = new Set(seenStructs);
-    nextSeen.add(elemName);
-    const lines = [`${pad}${graphqlName}: ${id}(list) {`];
-    if (!seenStructs.has(elemName)) {
+    const wire = resolved.type === TType.SET ? 'set' : 'list';
+    const lines = [`${pad}${graphqlName}: ${id}(${wire}) {`];
+    if (seenStructs.has(elemName)) {
+      // Cycle: retain element field metadata as leaves (ids + wire tokens).
+      for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
+        const fid = fieldType.id ?? 1;
+        const tok = wireTypeToken(fieldType, topTypeMap);
+        lines.push(`${indent(level + 1)}${fieldName}: ${fid}(${tok})`);
+      }
+    } else {
+      const nextSeen = new Set(seenStructs);
+      nextSeen.add(elemName);
       for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
         lines.push(
           ...formatCompactSelectionField(fieldName, fieldType, topTypeMap, level + 1, nextSeen),
@@ -246,13 +277,29 @@ function formatCompactSelectionField(
   return [`${pad}${graphqlName}: ${id}(${token})`];
 }
 
-/** TJSON REPLY = 2; EXCEPTION = 3. */
-export const TJSON_IS_SUCCESS = '$->get(2)->eq(2)';
+/**
+ * TJSON REPLY(=2) and success field "0" present.
+ * Declared IDL throws arrive as REPLY with a non-0 field id — require "0".
+ * Uses `ne(null)` (Apollo-public); avoid `has` (future/non-public in Connectors).
+ */
+export const TJSON_IS_SUCCESS = '$->get(2)->eq(2)->and($->get(4)->get("0")->ne(null))';
 
-/** TApplicationException message field (id 1, string) inside EXCEPTION payload. */
+/** Void/ONEWAY: only require REPLY (no success field). */
+export const TJSON_IS_SUCCESS_VOID = '$->get(2)->eq(2)';
+
+/**
+ * TApplicationException ("1".str) or declared-throw struct ("1".rec."1".str).
+ * Prefer `joinNotNull` over `??` — Hive gateway connectors are picky about `??` in errors.
+ */
 export const TJSON_ERRORS = {
-  message: '$->get(4)->get("1")->get("str")',
+  message:
+    '$([$->get(4)->get("1")->get("str"), $->get(4)->get("1")->get("rec")->get("1")->get("str")])->joinNotNull("")',
 };
+
+/** Thrift MessageType: CALL=1, ONEWAY=4. */
+export function thriftMessageTypeCode(messageType: 'CALL' | 'ONEWAY' = 'CALL'): number {
+  return messageType === 'ONEWAY' ? 4 : 1;
+}
 
 /**
  * TJSON `@connect(http.body:)` — Apollo `$([…])` list literal with `$args` embeds.
@@ -261,6 +308,7 @@ export function buildTJSONConnectBody(
   methodName: string,
   fieldTypeMap: TypeMap,
   topTypeMap: TypeMap,
+  messageType: 'CALL' | 'ONEWAY' = 'CALL',
 ): string {
   const argsFields = Object.entries(fieldTypeMap)
     .map(([argName, typeVal]) => {
@@ -269,16 +317,42 @@ export function buildTJSONConnectBody(
       return `${indent(3)}"${id}": ${tagged}`;
     })
     .join(',\n');
+  const msgType = thriftMessageTypeCode(messageType);
 
   return `$([
   1,
   "${methodName}",
-  1,
+  ${msgType},
   1,
   {
 ${argsFields}
   }
 ])`;
+}
+
+/**
+ * Compact `@thrift__rpc(throws:)` — one block per IDL throw:
+ * `TypeName: <resultFieldId> { field: id(wire) }`
+ */
+export function buildCompactThrows(
+  throws: Array<{ id: number; name: string; typeName: string }>,
+  topTypeMap: TypeMap,
+): string {
+  const blocks: string[] = [];
+  for (const t of throws) {
+    const typeVal = topTypeMap[t.typeName];
+    const body =
+      typeVal && typeVal.type === TType.STRUCT
+        ? buildCompactSelection(typeVal, topTypeMap)
+        : 'message: 1(string)';
+    blocks.push(
+      `${t.typeName}: ${t.id} {\n${body
+        .split('\n')
+        .map(l => (l ? `  ${l}` : l))
+        .join('\n')}\n}`,
+    );
+  }
+  return blocks.join('\n');
 }
 
 function formatTJSONValueExpr(
@@ -350,13 +424,24 @@ function formatTJSONStructFieldsObject(
     return formatTJSONValueExpr(typeVal, valueExpr, topTypeMap, level, seenStructs);
   }
   const structName = resolved.name || valueExpr;
+  const pad = indent(level);
+  const padInner = indent(level + 1);
   if (seenStructs.has(structName)) {
-    return valueExpr.startsWith('@') ? '{}' : valueExpr;
+    if (!valueExpr.startsWith('@')) {
+      return valueExpr;
+    }
+    // Cycle under list/set `@->map`: keep field ids for serialization as leaf tags.
+    const fields = Object.entries(resolved.fields)
+      .map(([fieldName, fieldType]) => {
+        const fid = String(fieldType.id ?? 1);
+        const tag = tjsonTypeTag(fieldType, topTypeMap);
+        return `${padInner}"${fid}": { "${tag}": @.${fieldName} }`;
+      })
+      .join(',\n');
+    return `{\n${fields}\n${pad}}`;
   }
   const nextSeen = new Set(seenStructs);
   nextSeen.add(structName);
-  const pad = indent(level);
-  const padInner = indent(level + 1);
   const fields = Object.entries(resolved.fields)
     .map(([fieldName, fieldType]) => {
       const fid = String(fieldType.id ?? 1);
@@ -374,10 +459,14 @@ export function buildTJSONConnectSelection(
   returnTypeVal: TypeVal | undefined,
   topTypeMap: TypeMap,
 ): string {
-  if (!returnTypeVal) {
-    return '$->get(4)';
+  if (!returnTypeVal || returnTypeVal.type === TType.VOID) {
+    // Void/ONEWAY — no success payload; connectors coerce to GraphQL Void/null.
+    return 'null';
   }
   const resolved = resolveTypeVal(returnTypeVal, topTypeMap);
+  if (resolved.type === TType.VOID) {
+    return 'null';
+  }
   if (resolved.type === TType.LIST || resolved.type === TType.SET) {
     const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
     const elemResolved = resolveTypeVal(
@@ -406,6 +495,32 @@ export function buildTJSONConnectSelection(
   const lines = Object.entries(resolved.fields).map(([fieldName, fieldType]) =>
     formatTJSONSelectionField(fieldName, fieldType, topTypeMap, `$->get(4)->get("0")->get("rec")`),
   );
+  return lines.join('\n');
+}
+
+/**
+ * TJSON selection for `ignoreExceptions: false` unions — success under `value`,
+ * plus declared throw struct fields projected from their result field ids.
+ */
+export function buildTJSONUnionConnectSelection(
+  returnTypeVal: TypeVal | undefined,
+  throws: Array<{ id: number; name: string; typeName: string }>,
+  topTypeMap: TypeMap,
+): string {
+  const successSel = buildTJSONConnectSelection(returnTypeVal, topTypeMap);
+  const lines: string[] = [`value: ${successSel}`];
+  for (const t of throws) {
+    const typeVal = topTypeMap[t.typeName];
+    const fid = String(t.id);
+    const parent = `$->get(4)->get("${fid}")->get("rec")`;
+    if (typeVal && typeVal.type === TType.STRUCT) {
+      for (const [fieldName, fieldType] of Object.entries(typeVal.fields)) {
+        lines.push(formatTJSONSelectionField(fieldName, fieldType, topTypeMap, parent));
+      }
+    } else {
+      lines.push(`message: ${parent}->get("1")->get("str")`);
+    }
+  }
   return lines.join('\n');
 }
 
@@ -443,7 +558,15 @@ function formatTJSONSelectionField(
     if (elemResolved.type === TType.STRUCT) {
       const elemName = elemResolved.name || graphqlName;
       if (seenStructs.has(elemName)) {
-        return `${graphqlName}: ${listPath}`;
+        // Cycle: keep element field projections as leaves (no further nesting).
+        const nested = Object.entries(elemResolved.fields)
+          .map(([childName, childType]) => {
+            const cid = String(childType.id ?? 1);
+            const ctag = tjsonTypeTag(childType, topTypeMap);
+            return `  ${childName}: $->get("${cid}")->get("${ctag}")`;
+          })
+          .join('\n');
+        return `${graphqlName}: ${listPath} {\n${nested}\n}`;
       }
       const nextSeen = new Set(seenStructs);
       nextSeen.add(elemName);

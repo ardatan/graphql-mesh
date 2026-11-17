@@ -67,6 +67,7 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
           messageType: thriftRpcDir.messageType || 'CALL',
           args: thriftRpcDir.args,
           selection: thriftRpcDir.selection,
+          throws: thriftRpcDir.throws,
         };
         thriftRpcByField.set(cacheKey, binding);
       }

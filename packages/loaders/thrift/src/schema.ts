@@ -49,11 +49,14 @@ import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import {
   buildCompactArgs,
   buildCompactSelection,
+  buildCompactThrows,
   buildTJSONConnectBody,
   buildTJSONConnectSelection,
+  buildTJSONUnionConnectSelection,
   thriftJsonContentTypeHeaders,
   TJSON_ERRORS,
   TJSON_IS_SUCCESS,
+  TJSON_IS_SUCCESS_VOID,
   type ThriftProtocol,
 } from './mapping.js';
 
@@ -105,6 +108,8 @@ export const thriftRpcDirective = new GraphQLDirective({
     function: { type: new GraphQLNonNull(GraphQLString) },
     args: { type: new GraphQLNonNull(GraphQLString) },
     selection: { type: new GraphQLNonNull(GraphQLString) },
+    /** Compact IDL `throws` mapping when `ignoreExceptions: false`. */
+    throws: { type: GraphQLString },
     messageType: { type: ThriftMessageTypeEnum, defaultValue: 'CALL' },
     entity: { type: GraphQLBoolean },
   },
@@ -390,9 +395,10 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                 'value' in t.fieldType ? String(t.fieldType.value).replace('.', '_') : 'unknown',
             }));
 
+            const successTypeName = `${fnName[0].toUpperCase()}${fnName.slice(1)}Success`;
             let fieldReturnType: GraphQLOutputType = returnType;
+            let modelThrows = false;
             if (!ignoreExceptions && throwsMeta.length > 0) {
-              const successTypeName = `${fnName[0].toUpperCase()}${fnName.slice(1)}Success`;
               const successType = new GraphQLObjectType({
                 name: successTypeName,
                 fields: {
@@ -407,20 +413,21 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                 )
                 .filter(Boolean) as GraphQLObjectType[];
               if (exceptionTypes.length) {
+                modelThrows = true;
                 fieldReturnType = new GraphQLUnionType({
                   name: `${fnName[0].toUpperCase()}${fnName.slice(1)}Result`,
                   types: [successType, ...exceptionTypes],
                   resolveType: value => {
-                    if (
-                      value &&
-                      typeof value === 'object' &&
-                      'value' in value &&
-                      Object.keys(value).length === 1
-                    ) {
-                      return successTypeName;
+                    if (value && typeof value === 'object' && value.__typename) {
+                      return value.__typename;
+                    }
+                    if (value && typeof value === 'object' && 'value' in value) {
+                      const keys = Object.keys(value).filter(k => k !== '__typename');
+                      if (keys.length === 1 && keys[0] === 'value') {
+                        return successTypeName;
+                      }
                     }
                     for (const ex of exceptionTypes) {
-                      // Best-effort: match by presence of declared fields
                       const fields = Object.keys(ex.getFields());
                       if (fields.some(f => f in (value || {}))) return ex.name;
                     }
@@ -430,9 +437,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               }
             }
 
-            // IDL comments as-is for humans reading SDL: field description, and
-            // `#` lines immediately above the mapping body inside args/selection
-            // (transport ignores `#` lines).
+            // IDL comments as `#` lines immediately above the mapping body inside
+            // `args:` / `selection:` (not GraphQL field description dumps).
+            // Transport ignores `#` lines when parsing compact mapping.
             const compactArgs = withIdlHashComments(
               buildCompactArgs(fieldTypeMap, topTypeMap),
               description,
@@ -441,27 +448,46 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               buildCompactSelection(returnTypeVal, topTypeMap),
               description,
             );
+            const compactThrows =
+              modelThrows && throwsMeta.length
+                ? buildCompactThrows(throwsMeta, topTypeMap)
+                : undefined;
+
+            const isVoidReturn = returnTypeVal?.type === TType.VOID;
 
             if (emitConnect) {
               // Single-service: path `/`. Explicit serviceName: `/<service>`.
+              // Do not embed `#` IDL comments in Connectors `selection` — Apollo
+              // JSONSelection does not skip hash comments (unlike compact thrift mapping).
               const connectPath = serviceName ? `/${serviceName}` : '/';
+              let selection = buildTJSONConnectSelection(returnTypeVal, topTypeMap);
+              if (modelThrows) {
+                // Union shape: success under `value`; exception fields projected beside it.
+                selection = buildTJSONUnionConnectSelection(returnTypeVal, throwsMeta, topTypeMap);
+              }
+              const connectDir: Record<string, unknown> = {
+                source: subgraphName,
+                http: {
+                  POST: connectPath,
+                  body: buildTJSONConnectBody(fnName, fieldTypeMap, topTypeMap, messageType),
+                },
+                selection,
+                ...(isEntity ? { entity: true } : {}),
+              };
+              // ONEWAY: no reply envelope — HTTP status alone; void mapping must not wait.
+              if (!isOneway) {
+                // ignoreExceptions:false → declared throws arrive as REPLY data (still msg type 2).
+                // Otherwise require success field "0" so throw field ids are not silent null.
+                connectDir.isSuccess =
+                  modelThrows || isVoidReturn ? TJSON_IS_SUCCESS_VOID : TJSON_IS_SUCCESS;
+                connectDir.errors = TJSON_ERRORS;
+              }
               rootFields[fnName] = {
                 type: fieldReturnType,
-                description,
                 args,
                 extensions: {
                   directives: {
-                    connect: {
-                      source: subgraphName,
-                      http: {
-                        POST: connectPath,
-                        body: buildTJSONConnectBody(fnName, fieldTypeMap, topTypeMap),
-                      },
-                      selection: buildTJSONConnectSelection(returnTypeVal, topTypeMap),
-                      isSuccess: TJSON_IS_SUCCESS,
-                      errors: TJSON_ERRORS,
-                      ...(isEntity ? { entity: true } : {}),
-                    },
+                    connect: connectDir,
                   },
                 },
               };
@@ -473,6 +499,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                 selection: compactSelection,
                 messageType,
               };
+              if (compactThrows) {
+                thriftRpcArgs.throws = compactThrows;
+              }
               if (serviceName) {
                 thriftRpcArgs.service = serviceName;
               }
@@ -481,7 +510,6 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               }
               rootFields[fnName] = {
                 type: fieldReturnType,
-                description,
                 args,
                 extensions: {
                   directives: {
@@ -571,7 +599,11 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
 }
 
 function processComments(comments: Comment[]): string | undefined {
-  const description = comments.map(comment => comment.value).join('\n');
+  const description = comments
+    .map(comment =>
+      Array.isArray(comment.value) ? comment.value.join('\n') : String(comment.value ?? ''),
+    )
+    .join('\n');
   return description.trim() === '' ? undefined : description;
 }
 
