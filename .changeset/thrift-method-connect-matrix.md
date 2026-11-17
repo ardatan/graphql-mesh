@@ -54,6 +54,9 @@ directive @thrift__rpc(
 - Multiline mapping strings print as GraphQL `"""` block strings.
 - Single-service **generate omits** `service:` (HTTP path is on `@transport(location:)`). Directive arg remains for hand-authored multi-service SDL.
 - Transport executes `@thrift__rpc` with **field-id** decode (no `topTypeMap`).
+- GraphQL enum internal values are Thrift i32 integers (not member names).
+- Recursive struct **arguments** fail at generate (no silent empty truncation); response selection may still truncate cycles.
+- Void CALL + IDL `throws` with `ignoreExceptions: true` uses empty-result `isSuccess` on TJSON; binary void success is recognized before `UNKNOWN`.
 
 #### JSON — `protocol: 'json'`
 

@@ -116,44 +116,6 @@ input AddRequestInput {
 }"
 `;
 
-exports[`thrift Recursive: Recursive-schema 1`] = `
-"schema @transport(subgraph: "Recursive", kind: "thrift", location: "http://localhost:4000/recursive", headers: [["x-api-key", "123"]]) {
-  query: Query
-}
-
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
-
-enum ThriftMessageType {
-  CALL
-  ONEWAY
-}
-
-type Query {
-  bar(foo: FooInput): Foo @thrift__rpc(subgraph: "Recursive", function: "bar", args: """
-  1(struct): $args.foo {
-    1(string): name
-    2(struct): foo
-  }
-  """, selection: """
-  name: 1(string)
-  foo: 2 {
-    name: 1(string)
-    foo: 2(struct)
-  }
-  """, messageType: CALL)
-}
-
-type Foo {
-  name: String
-  foo: Foo
-}
-
-input FooInput {
-  name: String
-  foo: FooInput
-}"
-`;
-
 exports[`thrift Twitter: Twitter-schema 1`] = `
 "schema @transport(subgraph: "Twitter", kind: "thrift", location: "http://localhost:4000/twitter", headers: [["x-api-key", "123"]]) {
   query: Query

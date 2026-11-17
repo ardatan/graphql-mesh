@@ -1016,18 +1016,12 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
             catch (err) {
                 reject(err);
             }
-        }).then((data: void): Buffer => {
-            const result: IZip__ResultArgs = { success: data };
-            output.writeMessageBegin("zip", thrift.MessageType.REPLY, requestId);
-            Zip__ResultCodec.encode(result, output);
-            output.writeMessageEnd();
-            return output.flush();
-        }).catch((err: Error): Buffer => {
-            const result: thrift.TApplicationException = new thrift.TApplicationException(thrift.TApplicationExceptionType.UNKNOWN, err.message);
-            output.writeMessageBegin("zip", thrift.MessageType.EXCEPTION, requestId);
-            thrift.TApplicationExceptionCodec.encode(result, output);
-            output.writeMessageEnd();
-            return output.flush();
+        }).then((): Buffer => {
+            // ONEWAY zip: do not write REPLY / EXCEPTION envelopes.
+            return Buffer.alloc(0);
+        }).catch((): Buffer => {
+            // ONEWAY: still no response body on handler failure.
+            return Buffer.alloc(0);
         });
     }
 }

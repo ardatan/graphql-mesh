@@ -122,8 +122,12 @@ function formatCompactArgField(
 
   if (resolved.type === TType.STRUCT) {
     const structName = resolved.name || graphqlName;
+    // Compact args have no named type table — a cycle would serialize as an empty
+    // struct and silently drop nested data. Fail at generate instead.
     if (seenStructs.has(structName)) {
-      return [`${pad}${id}(struct): ${level === 0 ? valueExpr : graphqlName}`];
+      throw new Error(
+        `Thrift struct "${structName}" is recursive in RPC arguments; compact @thrift__rpc args cannot expand cycles without truncating. Restructure the IDL (bounded / non-recursive inputs) or hand-author a depth-limited mapping.`,
+      );
     }
     const nextSeen = new Set(seenStructs);
     nextSeen.add(structName);
@@ -147,29 +151,18 @@ function formatCompactArgField(
     >;
     const elemName = elem.name || 'Anon';
     const wire = resolved.type === TType.SET ? 'set' : 'list';
-    const lines = [`${pad}${id}(${wire}): ${rhs} {`];
     if (seenStructs.has(elemName)) {
-      // Cycle: still emit element field ids/types for serialization, as leaves.
-      for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
-        const fid = fieldType.id ?? 1;
-        const tok = wireTypeToken(fieldType, topTypeMap);
-        lines.push(`${indent(level + 1)}${fid}(${tok}): ${fieldName}`);
-      }
-    } else {
-      const nextSeen = new Set(seenStructs);
-      nextSeen.add(elemName);
-      for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
-        lines.push(
-          ...formatCompactArgField(
-            fieldType,
-            fieldName,
-            topTypeMap,
-            level + 1,
-            fieldName,
-            nextSeen,
-          ),
-        );
-      }
+      throw new Error(
+        `Thrift struct "${elemName}" is recursive in RPC ${wire} arguments; compact @thrift__rpc args cannot expand cycles without truncating. Restructure the IDL (bounded / non-recursive inputs) or hand-author a depth-limited mapping.`,
+      );
+    }
+    const nextSeen = new Set(seenStructs);
+    nextSeen.add(elemName);
+    const lines = [`${pad}${id}(${wire}): ${rhs} {`];
+    for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
+      lines.push(
+        ...formatCompactArgField(fieldType, fieldName, topTypeMap, level + 1, fieldName, nextSeen),
+      );
     }
     lines.push(`${pad}}`);
     return lines;
@@ -284,8 +277,15 @@ function formatCompactSelectionField(
  */
 export const TJSON_IS_SUCCESS = '$->get(2)->eq(2)->and($->get(4)->get("0")->ne(null))';
 
-/** Void/ONEWAY: only require REPLY (no success field). */
+/** Void CALL without declared throws (or union-modeled throws): only require REPLY. */
 export const TJSON_IS_SUCCESS_VOID = '$->get(2)->eq(2)';
+
+/**
+ * Void CALL with IDL `throws` when `ignoreExceptions: true` (errors path, no union).
+ * Declared throws arrive as REPLY with a non-empty result struct (no field `"0"`).
+ * Require REPLY + empty result so those are not silent null.
+ */
+export const TJSON_IS_SUCCESS_VOID_WITH_THROWS = '$->get(2)->eq(2)->and($->get(4)->size->eq(0))';
 
 /**
  * TApplicationException ("1".str) or declared-throw struct ("1".rec."1".str).
@@ -370,7 +370,9 @@ function formatTJSONValueExpr(
   if (resolved.type === TType.STRUCT) {
     const structName = resolved.name || valueExpr;
     if (seenStructs.has(structName)) {
-      return `{ "${tag}": ${valueExpr} }`;
+      throw new Error(
+        `Thrift struct "${structName}" is recursive in RPC arguments; TJSON @connect body cannot expand cycles without truncating. Restructure the IDL (bounded / non-recursive inputs) or hand-author a depth-limited mapping.`,
+      );
     }
     const nextSeen = new Set(seenStructs);
     nextSeen.add(structName);
@@ -408,6 +410,12 @@ function formatTJSONValueExpr(
     return `{ "${tag}": $([ "${keyTag}", "${valTag}", ${valueExpr}->size, ${valueExpr} ]) }`;
   }
 
+  // TJSON bool is integer 0/1 (reference readers use ReadI32 / readJSONInteger).
+  // Apollo-compatible `match` — works on Hive Mesh eval and Router Connectors.
+  if (resolved.type === TType.BOOL) {
+    return `{ "${tag}": ${valueExpr}->match([true, 1], [false, 0], [@, 0]) }`;
+  }
+
   return `{ "${tag}": ${valueExpr} }`;
 }
 
@@ -427,18 +435,9 @@ function formatTJSONStructFieldsObject(
   const pad = indent(level);
   const padInner = indent(level + 1);
   if (seenStructs.has(structName)) {
-    if (!valueExpr.startsWith('@')) {
-      return valueExpr;
-    }
-    // Cycle under list/set `@->map`: keep field ids for serialization as leaf tags.
-    const fields = Object.entries(resolved.fields)
-      .map(([fieldName, fieldType]) => {
-        const fid = String(fieldType.id ?? 1);
-        const tag = tjsonTypeTag(fieldType, topTypeMap);
-        return `${padInner}"${fid}": { "${tag}": @.${fieldName} }`;
-      })
-      .join(',\n');
-    return `{\n${fields}\n${pad}}`;
+    throw new Error(
+      `Thrift struct "${structName}" is recursive in RPC arguments; TJSON @connect body cannot expand cycles without truncating. Restructure the IDL (bounded / non-recursive inputs) or hand-author a depth-limited mapping.`,
+    );
   }
   const nextSeen = new Set(seenStructs);
   nextSeen.add(structName);
@@ -507,7 +506,18 @@ export function buildTJSONUnionConnectSelection(
   throws: Array<{ id: number; name: string; typeName: string }>,
   topTypeMap: TypeMap,
 ): string {
-  const successSel = buildTJSONConnectSelection(returnTypeVal, topTypeMap);
+  const resolvedReturn = returnTypeVal ? resolveTypeVal(returnTypeVal, topTypeMap) : undefined;
+  let successSel: string;
+  if (resolvedReturn?.type === TType.STRUCT) {
+    // Struct success must be a sub-selection under `value`, not multiline
+    // `value: a: path\nb: path` (invalid JSONSelection).
+    const nested = Object.entries(resolvedReturn.fields)
+      .map(([n, t]) => formatTJSONSelectionField(n, t, topTypeMap, '$'))
+      .join('\n  ');
+    successSel = `$->get(4)->get("0")->get("rec") {\n  ${nested}\n}`;
+  } else {
+    successSel = buildTJSONConnectSelection(returnTypeVal, topTypeMap);
+  }
   const lines: string[] = [`value: ${successSel}`];
   for (const t of throws) {
     const typeVal = topTypeMap[t.typeName];

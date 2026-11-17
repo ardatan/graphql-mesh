@@ -63,6 +63,7 @@ import {
   TJSON_ERRORS,
   TJSON_IS_SUCCESS,
   TJSON_IS_SUCCESS_VOID,
+  TJSON_IS_SUCCESS_VOID_WITH_THROWS,
   type ThriftProtocol,
 } from './mapping.js';
 
@@ -259,27 +260,38 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
         typeName = `${namespace}_${typeName}`;
       }
       switch (statement.type) {
-        case SyntaxType.EnumDefinition:
+        case SyntaxType.EnumDefinition: {
+          // GraphQL enum internal values must be the Thrift i32 wire values so
+          // writeI32 / readI32 round-trip (names alone cannot encode on the wire).
+          let nextEnumValue = 0;
+          const enumValues = statement.members.reduce((prev, curr) => {
+            let value = nextEnumValue;
+            const init = curr.initializer?.value?.value;
+            if (init != null) {
+              // IntegerLiteral ("2") or HexLiteral ("0xa")
+              value = Number.parseInt(String(init), 0);
+            }
+            nextEnumValue = value + 1;
+            return {
+              ...prev,
+              [curr.name.value]: {
+                description: processComments(curr.comments),
+                value,
+              },
+            };
+          }, {} as GraphQLEnumValueConfigMap);
           enumTypeMap.set(
             typeName,
             new GraphQLEnumType({
               name: typeName,
               description: processComments(statement.comments),
-              values: statement.members.reduce(
-                (prev, curr) => ({
-                  ...prev,
-                  [curr.name.value]: {
-                    description: processComments(curr.comments),
-                    value: curr.name.value,
-                  },
-                }),
-                {} as GraphQLEnumValueConfigMap,
-              ),
+              values: enumValues,
             }),
           );
           // Thrift enums are i32 on the wire — register so ref resolve / wire tokens agree.
           topTypeMap[typeName] = { type: TType.I32 };
           break;
+        }
         case SyntaxType.StructDefinition:
         case SyntaxType.ExceptionDefinition: {
           const description = processComments(statement.comments);
@@ -424,11 +436,15 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                     if (value && typeof value === 'object' && value.__typename) {
                       return value.__typename;
                     }
-                    if (value && typeof value === 'object' && 'value' in value) {
-                      const keys = Object.keys(value).filter(k => k !== '__typename');
-                      if (keys.length === 1 && keys[0] === 'value') {
-                        return successTypeName;
-                      }
+                    // Prefer success when `value` is present — TJSON union selection may
+                    // also project exception keys as undefined beside it.
+                    if (
+                      value &&
+                      typeof value === 'object' &&
+                      value.value !== undefined &&
+                      value.value !== null
+                    ) {
+                      return successTypeName;
                     }
                     for (const ex of exceptionTypes) {
                       const fields = Object.keys(ex.getFields());
@@ -475,9 +491,15 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               // ONEWAY: no reply envelope — HTTP status alone; void mapping must not wait.
               if (!isOneway) {
                 // ignoreExceptions:false → declared throws arrive as REPLY data (still msg type 2).
-                // Otherwise require success field "0" so throw field ids are not silent null.
-                connectDir.isSuccess =
-                  modelThrows || isVoidReturn ? TJSON_IS_SUCCESS_VOID : TJSON_IS_SUCCESS;
+                // Void + throws + ignoreExceptions:true → REPLY with non-empty result (no "0");
+                // require empty result struct so declared throws are not silent null.
+                // Non-void CALL: require success field "0".
+                const voidWithThrows = isVoidReturn && !modelThrows && throwsMeta.length > 0;
+                connectDir.isSuccess = voidWithThrows
+                  ? TJSON_IS_SUCCESS_VOID_WITH_THROWS
+                  : modelThrows || isVoidReturn
+                    ? TJSON_IS_SUCCESS_VOID
+                    : TJSON_IS_SUCCESS;
                 connectDir.errors = TJSON_ERRORS;
               }
               rootFields[fnName] = {

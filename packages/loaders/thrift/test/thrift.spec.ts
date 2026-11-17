@@ -20,11 +20,6 @@ describe('thrift', () => {
       path: '/thrift-with-imports',
       serviceName: 'Calculator',
     },
-    Recursive: {
-      idl: 'recursive_types.thrift',
-      path: '/recursive',
-      serviceName: 'Recursive',
-    },
   };
   Object.entries(schemas).forEach(([schemaName, schemaObj]) => {
     it(schemaName, async () => {
@@ -60,6 +55,36 @@ describe('thrift', () => {
     expect(sdl).toMatch(/isSuccess/);
     expect(sdl).toMatch(/\$->get\(2\)->eq\(2\)/);
     expect(sdl).not.toMatch(/@thrift__rpc\(/);
+  });
+
+  it('rejects recursive struct arguments instead of truncating', async () => {
+    await expect(
+      loadNonExecutableGraphQLSchemaFromIDL({
+        subgraphName: 'Recursive',
+        source: './fixtures/recursive_types.thrift',
+        baseDir: __dirname,
+        endpoint: 'http://localhost:4000/recursive',
+        serviceName: 'Recursive',
+        protocol: 'binary',
+      }),
+    ).rejects.toThrow(/recursive in RPC arguments/);
+  });
+
+  it('GraphQL enum internal values are Thrift integers', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'Twitter',
+      source: './fixtures/twitter.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/twitter',
+      serviceName: 'Twitter',
+      protocol: 'binary',
+    });
+    const tweetType = schema.getType('TweetType') as import('graphql').GraphQLEnumType;
+    const values = tweetType.getValues();
+    expect(values.find(v => v.name === 'TWEET')?.value).toBe(0);
+    expect(values.find(v => v.name === 'RETWEET')?.value).toBe(2);
+    expect(values.find(v => v.name === 'DM')?.value).toBe(0xa);
+    expect(values.find(v => v.name === 'REPLY')?.value).toBe(0xb);
   });
 
   it('entityMethods stamps entity: true', async () => {
@@ -112,12 +137,46 @@ describe('thrift', () => {
     // zip is oneway — TJSON body message type 4, no isSuccess (no reply wait).
     expect(zipField).toContain('zip: Void @connect(');
     expect(zipField).toMatch(/"zip",\s*4,\s*1,/);
-    expect(zipField).toContain('selection: "null"');
-    const zipDirectiveEnd = zipField.indexOf(')');
-    expect(zipField.slice(0, zipDirectiveEnd + 1)).not.toContain('isSuccess');
+    const connect = (schema.getQueryType()!.getFields().zip.extensions as any).directives.connect;
+    expect(connect.isSuccess).toBeUndefined();
+    expect(connect.errors).toBeUndefined();
+    expect(connect.selection).toBe('null');
     // Non-void CALL methods require success field "0" (declared throws are not silent null).
     expect(normalized).toMatch(
       /\$->get\(2\)->eq\(2\)->and\(\$->get\(4\)->get\("0"\)->ne\(null\)\)/,
     );
+    // ping has no throws — REPLY-only isSuccess.
+    const pingConnect = (schema.getQueryType()!.getFields().ping.extensions as any).directives
+      .connect;
+    expect(pingConnect.isSuccess).toBe('$->get(2)->eq(2)');
+    // postTweet is bool + throws — require success field "0".
+    const postTweetConnect = (schema.getQueryType()!.getFields().postTweet.extensions as any)
+      .directives.connect;
+    expect(postTweetConnect.isSuccess).toContain('->get("0")->ne(null)');
+  });
+
+  it('void + throws + ignoreExceptions:true requires empty TJSON result', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'VoidThrows',
+      source: './fixtures/void_throws.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/void-throws',
+      protocol: 'json',
+    });
+    const connect = (schema.getQueryType()!.getFields().flush.extensions as any).directives.connect;
+    expect(connect.isSuccess).toBe('$->get(2)->eq(2)->and($->get(4)->size->eq(0))');
+  });
+
+  it('TJSON bool args use integer match (0/1)', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'BoolSvc',
+      source: './fixtures/bool_arg.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/bool',
+      protocol: 'json',
+    });
+    const body = (schema.getQueryType()!.getFields().setFlag.extensions as any).directives.connect
+      .http.body as string;
+    expect(body).toMatch(/"tf":\s*\$args\.enabled->match\(\[true,\s*1\],\s*\[false,\s*0\]/);
   });
 });

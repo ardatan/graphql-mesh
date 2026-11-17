@@ -274,6 +274,16 @@ export function createGraphQLThriftClient<Context = any>({
               };
             }
           }
+          // Non-oneway void success: empty result struct (no field 0).
+          if (selection.kind === 'scalar' && selection.wire === 'void') {
+            if (throws.length > 0) {
+              return {
+                value: null,
+                __typename: `${methodName[0].toUpperCase()}${methodName.slice(1)}Success`,
+              };
+            }
+            return null;
+          }
           throw new TApplicationException(
             TApplicationExceptionType.UNKNOWN,
             methodName + ' failed: unknown result',
