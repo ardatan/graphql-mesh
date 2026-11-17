@@ -274,11 +274,13 @@ export function createGraphQLThriftClient<Context = any>({
               };
             }
           }
-          // Non-oneway void success: empty result struct (no field 0).
-          if (selection.kind === 'scalar' && selection.wire === 'void') {
+          // Non-oneway void success: empty result struct only (no field 0).
+          // Nonempty unmatched maps are declared throws with ignoreExceptions:true —
+          // must not look like success.
+          if (selection.kind === 'scalar' && selection.wire === 'void' && result.size === 0) {
             if (throws.length > 0) {
               return {
-                value: null,
+                ok: true,
                 __typename: `${methodName[0].toUpperCase()}${methodName.slice(1)}Success`,
               };
             }

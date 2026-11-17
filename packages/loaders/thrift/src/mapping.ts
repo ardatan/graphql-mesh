@@ -400,12 +400,19 @@ function formatTJSONValueExpr(
       return `{ "${tag}": $([ "${elemTag}", ${valueExpr}->size, ...${valueExpr}->map(@->${fieldsObj}) ]) }`;
     }
     // Scalar list/set: Mesh `$()` accepts `...$path` spreads.
+    // Bool elements must be TJSON integers 0/1 (same as scalar `tf`).
+    if (elemResolved.type === TType.BOOL) {
+      return `{ "${tag}": $([ "${elemTag}", ${valueExpr}->size, ...${valueExpr}->map(@->match([true, 1], [false, 0], [@, 0])) ]) }`;
+    }
     return `{ "${tag}": $([ "${elemTag}", ${valueExpr}->size, ...${valueExpr} ]) }`;
   }
 
   if (resolved.type === TType.MAP) {
     const keyTag = tjsonTypeTag(resolved.keyType, topTypeMap);
     const valTag = tjsonTypeTag(resolved.valType, topTypeMap);
+    // Map payloads stay as the object form (pre-existing). Bool map *values* are
+    // not rewritten here: Connectors lack a Router-safe flatMap to emit
+    // alternating key/0|1 pairs; list/set bool elements are handled above.
     return `{ "${tag}": $([ "${keyTag}", "${valTag}", ${valueExpr}->size, ${valueExpr} ]) }`;
   }
 
@@ -506,18 +513,20 @@ export function buildTJSONUnionConnectSelection(
   topTypeMap: TypeMap,
 ): string {
   const resolvedReturn = returnTypeVal ? resolveTypeVal(returnTypeVal, topTypeMap) : undefined;
-  let successSel: string;
-  if (resolvedReturn?.type === TType.STRUCT) {
+  const lines: string[] = [];
+  if (!resolvedReturn || resolvedReturn.type === TType.VOID) {
+    // Void success member is `ok: Boolean!` (not `value: Void!`).
+    lines.push('ok: true');
+  } else if (resolvedReturn.type === TType.STRUCT) {
     // Struct success must be a sub-selection under `value`, not multiline
     // `value: a: path\nb: path` (invalid JSONSelection).
     const nested = Object.entries(resolvedReturn.fields)
       .map(([n, t]) => formatTJSONSelectionField(n, t, topTypeMap, '$'))
       .join('\n  ');
-    successSel = `$->get(4)->get("0")->get("rec") {\n  ${nested}\n}`;
+    lines.push(`value: $->get(4)->get("0")->get("rec") {\n  ${nested}\n}`);
   } else {
-    successSel = buildTJSONConnectSelection(returnTypeVal, topTypeMap);
+    lines.push(`value: ${buildTJSONConnectSelection(returnTypeVal, topTypeMap)}`);
   }
-  const lines: string[] = [`value: ${successSel}`];
   for (const t of throws) {
     const typeVal = topTypeMap[t.typeName];
     const fid = String(t.id);

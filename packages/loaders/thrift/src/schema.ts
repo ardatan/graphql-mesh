@@ -414,11 +414,14 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
             let fieldReturnType: GraphQLOutputType = returnType;
             let modelThrows = false;
             if (!ignoreExceptions && throwsMeta.length > 0) {
+              const isVoidSuccess = returnTypeVal?.type === TType.VOID;
+              // Void! cannot hold a successful null — use `ok: Boolean!` for void RPC
+              // success members; non-void keeps `value: <Return>!`.
               const successType = new GraphQLObjectType({
                 name: successTypeName,
-                fields: {
-                  value: { type: new GraphQLNonNull(returnType as any) },
-                },
+                fields: isVoidSuccess
+                  ? { ok: { type: new GraphQLNonNull(GraphQLBoolean) } }
+                  : { value: { type: new GraphQLNonNull(returnType as any) } },
               });
               const exceptionTypes = throwsMeta
                 .map(
@@ -436,15 +439,15 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                     if (value && typeof value === 'object' && value.__typename) {
                       return value.__typename;
                     }
-                    // Prefer success when `value` is present — TJSON union selection may
-                    // also project exception keys as undefined beside it.
-                    if (
-                      value &&
-                      typeof value === 'object' &&
-                      value.value !== undefined &&
-                      value.value !== null
-                    ) {
-                      return successTypeName;
+                    // Prefer success when `ok` / `value` is present — TJSON union
+                    // selection may also project exception keys as undefined beside it.
+                    if (value && typeof value === 'object') {
+                      if (value.ok === true) {
+                        return successTypeName;
+                      }
+                      if (value.value !== undefined && value.value !== null) {
+                        return successTypeName;
+                      }
                     }
                     for (const ex of exceptionTypes) {
                       const fields = Object.keys(ex.getFields());

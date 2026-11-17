@@ -1043,4 +1043,24 @@ describe('rewriteConnectArgReferences @thrift__rpc', () => {
     expect(args).toContain('$args.requestId');
     expect(args).not.toMatch(/\$args\.request\b/);
   });
+
+  it('preserves quoted map lookup keys while rewriting real $args refs', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        thrift__rpc: [
+          {
+            function: 'lookup',
+            args: '1(string): $args.request',
+            selection: 'value: 1(map<string, i32>)->get("$args.request")',
+          },
+        ],
+      },
+      new Map([['request', 'input']]),
+    );
+    const rpc = rewritten!.thrift__rpc[0];
+    expect(rpc.args).toContain('$args.input');
+    expect(rpc.selection).toContain('->get("$args.request")');
+    expect(rpc.selection).not.toContain('->get("$args.input")');
+  });
 });

@@ -9,7 +9,7 @@
 
 If you load Thrift from IDL and **recompose** after upgrading, you are mostly done.
 
-- **Breaking:** `@fieldTypeMap` / `topTypeMap` / `clientAnnotations` are removed (no dual-read). Regenerate composed SDL.
+- **Breaking:** `@fieldTypeMap` / `@thrift__method` / `topTypeMap` / `clientAnnotations` are removed (no dual-read). Regenerate composed SDL.
 - **Default:** binary HTTP Thrift via slim `@transport` + per-field `@thrift__rpc` (readable compact `args` / `selection`).
 - **Opt-in:** `protocol: 'json'` emits Federation `@source` / `@connect` (TJSON) for Hive and Apollo Router.
 - **Optional:** `ignoreExceptions`, `entityMethods`, `serviceName`.
@@ -20,9 +20,9 @@ The old surface stamped opaque `@fieldTypeMap` bags and a large `@transport.opti
 
 ### Breaking
 
-**Removed / no longer executed:** `@fieldTypeMap`, `@transport.options.clientAnnotations` / `topTypeMap`, and any transport path that preferred those bags when the new directive was absent.
+**Removed / no longer executed:** `@fieldTypeMap`, `@thrift__method` (older draft name), `@transport.options.clientAnnotations` / `topTypeMap`, and any transport path that preferred those bags when the new directive was absent.
 
-**Required:** recompose / regenerate Thrift subgraphs from IDL. Hand-written `@fieldTypeMap` SDL will not run until rewritten to `@thrift__rpc` (binary) or `@connect` (JSON).
+**Required:** recompose / regenerate Thrift subgraphs from IDL. Hand-written `@fieldTypeMap` / `@thrift__method` SDL will not run until rewritten to `@thrift__rpc` (binary) or `@connect` (JSON).
 
 ### What changed
 
@@ -58,7 +58,7 @@ Fusion rename / naming-convention rewrite `$args…` inside `@thrift__rpc(args/s
 ### Migration
 
 1. Upgrade and **recompose** (prefer regenerate from IDL).
-2. Replace hand-written `@fieldTypeMap` + transport `options` with `@thrift__rpc` or `protocol: 'json'`.
+2. Replace hand-written `@fieldTypeMap` / `@thrift__method` + transport `options` with `@thrift__rpc` or `protocol: 'json'`.
 3. Keep binary `@transport` to `location` + `headers` only.
 4. Single-service: no `service:` required on `@thrift__rpc`. TJSON multiplex: set `serviceName`.
 5. Optional: `ignoreExceptions: false`; `entityMethods: ['getX']` only for Federation entity resolvers.

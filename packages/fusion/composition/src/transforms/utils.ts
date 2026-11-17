@@ -9,6 +9,36 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/** Apply `fn` only to spans outside `'…'` / `"…"` (respects `\\` escapes). */
+function rewriteOutsideQuotes(value: string, fn: (segment: string) => string): string {
+  let out = '';
+  let i = 0;
+  let segmentStart = 0;
+  while (i < value.length) {
+    const c = value[i];
+    if (c === '"' || c === "'") {
+      out += fn(value.slice(segmentStart, i));
+      const q = c;
+      out += c;
+      i++;
+      while (i < value.length && value[i] !== q) {
+        if (value[i] === '\\') {
+          out += value[i++];
+          if (i < value.length) out += value[i++];
+          continue;
+        }
+        out += value[i++];
+      }
+      if (i < value.length) out += value[i++];
+      segmentStart = i;
+      continue;
+    }
+    i++;
+  }
+  out += fn(value.slice(segmentStart));
+  return out;
+}
+
 /**
  * Remove top-level field picks / aliases from a Connectors `selection` string.
  * Used after filter/prune marks fields inaccessible so upstream JSON isn't over-fetched.
@@ -130,12 +160,13 @@ export function rewriteConnectArgReferences(
     }
     let out = value;
     // Single-pass, whole-name matches so `id` does not rewrite `$args.identifier`
-    // and `a→b` + `b→c` does not chain into `$args.c`.
+    // and `a→b` + `b→c` does not chain into `$args.c`. Skip quoted spans so
+    // compact map lookups like `->get("$args.request")` keep the literal key.
     if (argRenameMap.size) {
       const names = [...argRenameMap.keys()].map(escapeRegExp).join('|');
-      out = out.replace(
-        new RegExp(`\\$args\\.(${names})(?![\\w])`, 'g'),
-        (_m, name: string) => `$args.${argRenameMap.get(name) ?? name}`,
+      const re = new RegExp(`\\$args\\.(${names})(?![\\w])`, 'g');
+      out = rewriteOutsideQuotes(out, segment =>
+        segment.replace(re, (_m, name: string) => `$args.${argRenameMap.get(name) ?? name}`),
       );
     }
     // `fieldRenameMap` rewrites nested response-field picks in a selection

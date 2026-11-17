@@ -167,6 +167,32 @@ describe('thrift', () => {
     expect(connect.isSuccess).toBe('$->get(2)->eq(2)->and($->get(4)->size->eq(0))');
   });
 
+  it('void + throws + ignoreExceptions:false uses ok: Boolean! success member', async () => {
+    const binary = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'VoidThrows',
+      source: './fixtures/void_throws.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/void-throws',
+      protocol: 'binary',
+      ignoreExceptions: false,
+    });
+    const binarySdl = printSchemaWithDirectives(binary);
+    expect(binarySdl).toMatch(/type FlushSuccess[\s\S]*ok:\s*Boolean!/);
+    expect(binarySdl).not.toMatch(/type FlushSuccess[\s\S]*value:\s*Void!/);
+
+    const json = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'VoidThrows',
+      source: './fixtures/void_throws.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/void-throws',
+      protocol: 'json',
+      ignoreExceptions: false,
+    });
+    const jsonSdl = printSchemaWithDirectives(json);
+    expect(jsonSdl).toMatch(/type FlushSuccess[\s\S]*ok:\s*Boolean!/);
+    expect(jsonSdl).toMatch(/ok:\s*true/);
+  });
+
   it('TJSON bool args use integer match (0/1)', async () => {
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
       subgraphName: 'BoolSvc',
