@@ -320,15 +320,11 @@ export function buildTJSONConnectBody(
     .join(',\n');
   const msgType = thriftMessageTypeCode(messageType);
 
-  return `$([
-  1,
-  "${methodName}",
-  ${msgType},
-  1,
-  {
+  // Keep the TJSON call envelope header compact (`version, name, type, seqId`);
+  // only expand the args object — stacking `1, "add", 1, 1` one-per-line is noise.
+  return `$([1, "${methodName}", ${msgType}, 1, {
 ${argsFields}
-  }
-])`;
+}])`;
 }
 
 /**
