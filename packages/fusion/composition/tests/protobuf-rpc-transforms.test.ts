@@ -142,7 +142,7 @@ describe('protobuf RPC semantic conventions (entity: true)', () => {
     expect(sdl).not.toMatch(/@source\(/);
   });
 
-  it('does not stamp entity: true when another required arg cannot be filled', () => {
+  it('does not stamp entity: true or resolvable @key when another required arg cannot be filled', () => {
     const schema = buildSchema(
       /* GraphQL */ `
         directive @transport(
@@ -191,6 +191,8 @@ describe('protobuf RPC semantic conventions (entity: true)', () => {
     const annotated = getAnnotatedSubgraphs([{ name: 'pets', schema }]);
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).not.toMatch(/entity:\s*true/);
+    // May still stamp @key for the id field, but it must not claim a resolvable entity resolver.
+    expect(sdl).toMatch(/@key\(\s*fields:\s*"id"[^)]*resolvable:\s*false/);
   });
 
   it('does not rewrite batch ByIds list args to $this.id', () => {
@@ -539,6 +541,36 @@ describe('rewriteProtobufMappingBinds', () => {
       { argTypes: new Map([['input', movieInput]]) },
     );
     expect(out).toMatch(/2\(int64\):\s*publicationYear/);
+  });
+
+  it('walks nested $args segments against owning input types for dual binds', async () => {
+    const { rewriteProtobufThisBindsDual } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(/* GraphQL */ `
+      input MovieInput {
+        year: Int
+      }
+      type Query {
+        moviesByYear(input: MovieInput): String
+      }
+    `);
+    const movieInput = schema.getType('MovieInput')!;
+    const out = rewriteProtobufThisBindsDual('1(int64): $this.input.year|$args.input.year', {
+      fieldRenameMap: new Map([['MovieInput', new Map([['year', 'publicationYear']])]]),
+      ownerType: schema.getType('Query'),
+      argTypes: new Map([['input', movieInput]]),
+    });
+    // Parent walk cannot resolve Query.input; args walk renames MovieInput.year.
+    expect(out).toBe('1(int64): $this.input.year|$args.input.publicationYear');
+  });
+
+  it('renames nested relative binds under bare $args against arg names', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      '1(message): $args {\n  2(int64): year\n}',
+      new Map(),
+      { argRenameMap: new Map([['year', 'releaseYear']]) },
+    );
+    expect(out).toMatch(/2\(int64\):\s*releaseYear/);
   });
 });
 

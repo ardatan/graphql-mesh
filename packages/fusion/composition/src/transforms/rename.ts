@@ -418,20 +418,27 @@ export function applyProtobufFieldRenames(
     let selection = rpcArgs?.selection;
     if (typeof args === 'string') {
       // Nested input / relative binds; leave `$this` for the dual-bind pass.
-      if (fieldRenameMap.size && argTypes.size) {
+      if (fieldRenameMap.size || argRenameMap?.size || argTypes.size) {
         args = rewriteProtobufMappingBindsTypeScoped(args, fieldRenameMap, {
           argTypes,
+          argRenameMap,
           skipThisBinds: true,
         });
       }
       // Dual `$this.<parent>|$args.<arg>` when parent field and arg renames diverge.
       // Nested parent paths walk owning GraphQL types (e.g. `$this.address.street_name`).
-      if (parentFieldRenames?.size || argRenameMap?.size || (thisOwnerType && fieldRenameMap.size)) {
+      if (
+        parentFieldRenames?.size ||
+        argRenameMap?.size ||
+        (thisOwnerType && fieldRenameMap.size) ||
+        (fieldRenameMap.size && argTypes.size)
+      ) {
         args = rewriteProtobufThisBindsDual(args, {
           parentRenames: parentFieldRenames,
           argRenames: argRenameMap,
           fieldRenameMap,
           ownerType: thisOwnerType ?? null,
+          argTypes,
         });
       }
     }

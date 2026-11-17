@@ -2,9 +2,41 @@
 import { GraphQLError } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
 import { status as GrpcStatus, Metadata } from '@grpc/grpc-js';
-import { addMetaDataToCall, toGrpcGraphQLError } from '../src/utils.js';
+import { addMetaDataToCall, mapGrpcStreamErrors, toGrpcGraphQLError } from '../src/utils.js';
 
 describe('grpc utils', () => {
+  describe('mapGrpcStreamErrors', () => {
+    test('yields chunks then converts mid-stream ServiceError', async () => {
+      async function* source() {
+        yield Buffer.from([1]);
+        throw Object.assign(new Error('stream failed'), {
+          code: GrpcStatus.UNAVAILABLE,
+          details: 'upstream down',
+          metadata: new Metadata(),
+        });
+      }
+      const chunks: Buffer[] = [];
+      let caught: unknown;
+      try {
+        for await (const chunk of mapGrpcStreamErrors(source())) {
+          chunks.push(chunk);
+        }
+      } catch (err) {
+        caught = err;
+      }
+      expect(chunks).toEqual([Buffer.from([1])]);
+      expect(caught).toBeInstanceOf(GraphQLError);
+      expect((caught as GraphQLError).extensions).toMatchObject({
+        code: 'DOWNSTREAM_SERVICE_ERROR',
+        grpc: {
+          code: GrpcStatus.UNAVAILABLE,
+          status: 'UNAVAILABLE',
+          details: 'upstream down',
+        },
+      });
+    });
+  });
+
   describe('toGrpcGraphQLError', () => {
     test('maps ServiceError into GraphQLError with extensions.grpc', () => {
       const grpcError = Object.assign(new Error('Deadline exceeded'), {

@@ -213,20 +213,27 @@ function coerceMapKey(keyType: ProtoType, key: string): any {
 }
 
 export function decodeMessage(fields: MappingField[], data: Uint8Array): Record<string, any> {
+  return decodeMessageInner(fields, data, true);
+}
+
+/**
+ * Decode wire fields into `out`. Nested message occurrences merge into shared state
+ * without materializing proto3 defaults first — defaults apply once at the outermost call
+ * so an explicit encoded `0`/`false` last-value-wins over an earlier value.
+ */
+function decodeMessageInner(
+  fields: MappingField[],
+  data: Uint8Array,
+  applyDefaults: boolean,
+): Record<string, any> {
   const byId = new Map(fields.map(f => [f.id, f]));
   const out: Record<string, any> = {};
-  // Absent repeated/map → empty collections. Implicit-presence scalars/enums → defaults.
-  // Explicit (`optional`) scalars stay absent so GraphQL can distinguish unset from default.
+  // Only empty collections are pre-created. Implicit-presence scalars/enums stay absent
+  // until after the wire loop (and after singular-message merges) so presence is exact.
   for (const field of fields) {
     const key = field.bind && !field.bind.startsWith('$') ? field.bind : `_${field.id}`;
     if (field.type.kind === 'repeated') out[key] = [];
     else if (field.type.kind === 'map') out[key] = Object.create(null);
-    else if (field.type.kind === 'scalar' && field.presence !== 'explicit') {
-      out[key] = proto3ScalarDefault(field.type.name);
-    } else if (field.type.kind === 'enum' && field.presence !== 'explicit') {
-      const zero = Object.entries(field.type.values).find(([, n]) => n === 0)?.[0];
-      out[key] = zero ?? 0;
-    }
   }
   let i = 0;
   while (i < data.length) {
@@ -288,14 +295,7 @@ export function decodeMessage(fields: MappingField[], data: Uint8Array): Record<
       out[key] = out[key] ?? [];
       out[key].push(decoded.value);
     } else if (field.type.kind === 'message') {
-      if (
-        out[key] != null &&
-        typeof out[key] === 'object' &&
-        !Array.isArray(out[key]) &&
-        decoded.value != null &&
-        typeof decoded.value === 'object' &&
-        !Array.isArray(decoded.value)
-      ) {
+      if (isMergeableObject(out[key]) && isMergeableObject(decoded.value)) {
         out[key] = mergeMessage(out[key], decoded.value);
       } else {
         out[key] = decoded.value;
@@ -303,6 +303,9 @@ export function decodeMessage(fields: MappingField[], data: Uint8Array): Record<
     } else {
       out[key] = decoded.value;
     }
+  }
+  if (applyDefaults) {
+    applyImplicitPresenceDefaults(fields, out);
   }
   // Map enum numbers back to names when bind keys used
   for (const field of fields) {
@@ -326,28 +329,50 @@ export function decodeMessage(fields: MappingField[], data: Uint8Array): Record<
   return out;
 }
 
-function isPlainObject(v: unknown): v is Record<string, any> {
-  return v != null && typeof v === 'object' && !Array.isArray(v);
+/** Message / map dictionaries only — not arrays, Buffers, or typed arrays. */
+function isMergeableObject(v: unknown): v is Record<string, any> {
+  return (
+    v != null &&
+    typeof v === 'object' &&
+    !Array.isArray(v) &&
+    !(typeof Buffer !== 'undefined' && Buffer.isBuffer(v)) &&
+    !(v instanceof Uint8Array)
+  );
 }
 
-function isProto3DefaultScalar(v: unknown): boolean {
-  if (v === 0 || v === false || v === '') return true;
-  if (typeof Buffer !== 'undefined' && Buffer.isBuffer(v) && v.length === 0) return true;
-  return false;
-}
-
-function mergeMessage(a: Record<string, any>, b: Record<string, any>): Record<string, any> {
-  const out = { ...a };
-  for (const k of Object.keys(b)) {
-    if (isPlainObject(out[k]) && isPlainObject(b[k])) {
-      out[k] = mergeMessage(out[k], b[k]);
-    } else if (
-      isProto3DefaultScalar(b[k]) &&
-      out[k] !== undefined &&
-      !isProto3DefaultScalar(out[k])
-    ) {
-      // Later occurrence only carried defaults for this key — keep the merged value.
+/** Materialize implicit-presence defaults only for keys still absent after the wire merge. */
+function applyImplicitPresenceDefaults(fields: MappingField[], out: Record<string, any>): void {
+  for (const field of fields) {
+    const key = field.bind && !field.bind.startsWith('$') ? field.bind : `_${field.id}`;
+    if (field.type.kind === 'message' && field.fields?.length && isMergeableObject(out[key])) {
+      applyImplicitPresenceDefaults(field.fields, out[key]);
       continue;
+    }
+    if (out[key] !== undefined) {
+      continue;
+    }
+    if (field.type.kind === 'scalar' && field.presence !== 'explicit') {
+      out[key] = proto3ScalarDefault(field.type.name);
+    } else if (field.type.kind === 'enum' && field.presence !== 'explicit') {
+      const zero = Object.entries(field.type.values).find(([, n]) => n === 0)?.[0];
+      out[key] = zero ?? 0;
+    }
+  }
+}
+
+/**
+ * Merge singular message occurrences (protobuf encoding). Later wire values win for
+ * scalars/bytes; nested messages recurse. Null-prototype accumulator keeps map keys
+ * like `__proto__` as own data.
+ */
+function mergeMessage(a: Record<string, any>, b: Record<string, any>): Record<string, any> {
+  const out = Object.create(null) as Record<string, any>;
+  for (const k of Object.keys(a)) {
+    out[k] = a[k];
+  }
+  for (const k of Object.keys(b)) {
+    if (isMergeableObject(out[k]) && isMergeableObject(b[k])) {
+      out[k] = mergeMessage(out[k], b[k]);
     } else {
       out[k] = b[k];
     }
@@ -457,7 +482,8 @@ function readValue(
     if (type.kind !== 'message') {
       throw new Error('Expected message type after length-delimited scalar branch');
     }
-    return { value: decodeMessage(type.fields, raw), next: end, raw };
+    // Nested occurrences stay wire-only; the outermost decode applies defaults after merge.
+    return { value: decodeMessageInner(type.fields, raw, false), next: end, raw };
   }
   if (wire === WIRE_VARINT) {
     const v = readVarint(data, i);

@@ -231,13 +231,14 @@ function isProtobufBindIdentChar(code: number): boolean {
 }
 
 /**
- * Read `ident(.ident)*` starting at `start`. Returns exclusive end, or -1.
- * Linear scan — avoids nested-quantifier ReDoS on pathological `$this.$…` inputs.
+ * Read `ident(.ident)*` starting at `start`.
+ * On failure, `end` is still advanced through the scanned invalid region so callers
+ * stay O(n) over repeated `$this.$…` tokens (no one-char rescan).
  */
-function readProtobufDottedIdentPath(source: string, start: number): number {
+function readProtobufDottedIdentPath(source: string, start: number): { ok: boolean; end: number } {
   let i = start;
   if (i >= source.length || !isProtobufBindIdentChar(source.charCodeAt(i))) {
-    return -1;
+    return { ok: false, end: start };
   }
   while (i < source.length && isProtobufBindIdentChar(source.charCodeAt(i))) {
     i++;
@@ -245,13 +246,13 @@ function readProtobufDottedIdentPath(source: string, start: number): number {
   while (source[i] === '.') {
     i++;
     if (i >= source.length || !isProtobufBindIdentChar(source.charCodeAt(i))) {
-      return -1;
+      return { ok: false, end: i };
     }
     while (i < source.length && isProtobufBindIdentChar(source.charCodeAt(i))) {
       i++;
     }
   }
-  return i;
+  return { ok: true, end: i };
 }
 
 /**
@@ -272,24 +273,26 @@ function mapProtobufThisDualBinds(
     }
     out += mapping.slice(i, at);
     const thisPathStart = at + THIS_DOT.length;
-    const thisPathEnd = readProtobufDottedIdentPath(mapping, thisPathStart);
-    if (thisPathEnd < 0) {
-      out += mapping[at];
-      i = at + 1;
+    const thisPath = readProtobufDottedIdentPath(mapping, thisPathStart);
+    if (!thisPath.ok) {
+      // Skip the `$this.` prefix plus any already-scanned invalid region.
+      const advanceTo = Math.max(at + 1, thisPath.end);
+      out += mapping.slice(at, advanceTo);
+      i = advanceTo;
       continue;
     }
-    const thisPath = mapping.slice(thisPathStart, thisPathEnd);
+    const thisPathText = mapping.slice(thisPathStart, thisPath.end);
     let argsPath: string | undefined;
-    let end = thisPathEnd;
-    if (mapping.startsWith(PIPE_ARGS_DOT, thisPathEnd)) {
-      const argsPathStart = thisPathEnd + PIPE_ARGS_DOT.length;
-      const argsPathEnd = readProtobufDottedIdentPath(mapping, argsPathStart);
-      if (argsPathEnd >= 0) {
-        argsPath = mapping.slice(argsPathStart, argsPathEnd);
-        end = argsPathEnd;
+    let end = thisPath.end;
+    if (mapping.startsWith(PIPE_ARGS_DOT, thisPath.end)) {
+      const argsPathStart = thisPath.end + PIPE_ARGS_DOT.length;
+      const argsParsed = readProtobufDottedIdentPath(mapping, argsPathStart);
+      if (argsParsed.ok) {
+        argsPath = mapping.slice(argsPathStart, argsParsed.end);
+        end = argsParsed.end;
       }
     }
-    out += onBind(thisPath, argsPath);
+    out += onBind(thisPathText, argsPath);
     i = end;
   }
   return out;
@@ -319,6 +322,11 @@ export function rewriteProtobufThisBindsDual(
     /** Walk nested `$this` segments against owning GraphQL types when set with `ownerType`. */
     fieldRenameMap?: Map<string, Map<string, string>>;
     ownerType?: GraphQLNamedType | null;
+    /**
+     * Argument name → GraphQL input/named type. When set with `fieldRenameMap`, nested
+     * `$args.input.year` segments walk owning input types (e.g. MovieInput.year→publicationYear).
+     */
+    argTypes?: Map<string, GraphQLNamedType>;
   },
 ): string {
   if (!mapping) {
@@ -327,7 +335,8 @@ export function rewriteProtobufThisBindsDual(
   const parentLookup = options.parentRenames?.size ? toLookup(options.parentRenames) : new Map();
   const argLookup = options.argRenames?.size ? toLookup(options.argRenames) : new Map();
   const typedWalk = Boolean(options.fieldRenameMap?.size && options.ownerType);
-  if (!parentLookup.size && !argLookup.size && !typedWalk) {
+  const typedArgsWalk = Boolean(options.fieldRenameMap?.size && options.argTypes?.size);
+  if (!parentLookup.size && !argLookup.size && !typedWalk && !typedArgsWalk) {
     return mapping;
   }
   return mapProtobufThisDualBinds(mapping, (thisPath, existingArgsPath) => {
@@ -349,8 +358,24 @@ export function rewriteProtobufThisBindsDual(
       const parentFirst = parentLookup.get(thisSegs[0]) ?? thisSegs[0];
       parentPath = [parentFirst, ...thisSegs.slice(1)].join('.');
     }
-    const argFirst = argLookup.get(argsSegs[0]) ?? argsSegs[0];
-    const argsPath = [argFirst, ...argsSegs.slice(1)].join('.');
+    let argsPath: string;
+    if (typedArgsWalk) {
+      const rewritten: string[] = [];
+      const argHead = argLookup.get(argsSegs[0]) ?? argsSegs[0];
+      rewritten.push(argHead);
+      // Type map is keyed by the pre-rename arg name when available.
+      let cur: GraphQLNamedType | null | undefined =
+        options.argTypes!.get(argsSegs[0]) ?? options.argTypes!.get(argHead);
+      for (let i = 1; i < argsSegs.length; i++) {
+        const stepped = renameFieldSegment(cur, argsSegs[i], options.fieldRenameMap!);
+        rewritten.push(stepped.name);
+        cur = stepped.type;
+      }
+      argsPath = rewritten.join('.');
+    } else {
+      const argFirst = argLookup.get(argsSegs[0]) ?? argsSegs[0];
+      argsPath = [argFirst, ...argsSegs.slice(1)].join('.');
+    }
     if (parentPath === argsPath) {
       return `${THIS_DOT}${parentPath}`;
     }
@@ -395,6 +420,11 @@ export interface RewriteProtobufMappingBindsTypeScopedOptions {
    */
   argTypes?: Map<string, GraphQLNamedType>;
   /**
+   * Argument name renames (old→new). Applied to depth-0 arg heads and to nested relative
+   * binds under a bare `1(message): $args { … }` block (the `$args` object owns arg names).
+   */
+  argRenameMap?: Map<string, string>;
+  /**
    * When true, leave `$this.*` binds unchanged (caller emits dual `$this|/$args` forms).
    */
   skipThisBinds?: boolean;
@@ -411,17 +441,24 @@ export function rewriteProtobufMappingBindsTypeScoped(
   fieldRenameMap: Map<string, Map<string, string>>,
   options: RewriteProtobufMappingBindsTypeScopedOptions,
 ): string {
-  if (!mapping || !fieldRenameMap.size) {
-    return mapping;
-  }
   const hasArgTypes = Boolean(options.argTypes?.size);
-  if (!options.rootType && !hasArgTypes) {
+  const argRenameLookup = options.argRenameMap?.size ? toLookup(options.argRenameMap) : new Map();
+  if (
+    !mapping ||
+    (!fieldRenameMap.size && !argRenameLookup.size) ||
+    (!options.rootType && !hasArgTypes && !argRenameLookup.size)
+  ) {
     return mapping;
   }
 
   /** Type that owns relative binds at each brace depth. */
   const typeAtDepth: Array<GraphQLNamedType | null | undefined> = [];
   typeAtDepth[0] = options.rootType ?? null;
+  /**
+   * When true, relative binds at this depth are GraphQL argument names owned by bare `$args { }`.
+   * Cleared with `typeAtDepth` when blocks close.
+   */
+  const argsRootAtDepth: boolean[] = [];
   /** End offset of the previous bind match — brace walk clears stale owners between binds. */
   let scannedTo = 0;
 
@@ -434,7 +471,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
         return match;
       }
       // Pop owners when blocks close so a later unbound `{ … }` does not keep a sibling's type.
-      clearOwnersClosedBetween(whole, scannedTo, offset, typeAtDepth);
+      clearOwnersClosedBetween(whole, scannedTo, offset, typeAtDepth, argsRootAtDepth);
       scannedTo = offset + match.length;
 
       const depth = braceDepthAt(whole, offset);
@@ -456,8 +493,9 @@ export function rewriteProtobufMappingBindsTypeScoped(
 
       // `$args.input { … }` / `$args.input.movie`: keep `$args` prefix; descend into
       // arg/input types so nested relative binds (e.g. `year`) rename against the owner.
+      // Bare `$args { … }` marks the next depth as args-root so nested `year` uses arg renames.
       if (path.startsWith('$args')) {
-        if (!hasArgTypes) {
+        if (!hasArgTypes && !argRenameLookup.size) {
           return `${pre}${path}`;
         }
         const rest =
@@ -469,8 +507,9 @@ export function rewriteProtobufMappingBindsTypeScoped(
         const rewritten = ['$args'];
         let cur: GraphQLNamedType | null | undefined;
         if (rest.length) {
-          rewritten.push(rest[0]);
-          cur = options.argTypes!.get(rest[0]);
+          const argHead = argRenameLookup.get(rest[0]) ?? rest[0];
+          rewritten.push(argHead);
+          cur = options.argTypes?.get(rest[0]) ?? options.argTypes?.get(argHead);
           for (let i = 1; i < rest.length; i++) {
             const stepped = renameFieldSegment(cur, rest[i], fieldRenameMap);
             rewritten.push(stepped.name);
@@ -479,6 +518,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
         }
         if (entersBlock) {
           typeAtDepth[depth + 1] = cur ?? null;
+          argsRootAtDepth[depth + 1] = rest.length === 0;
         }
         return `${pre}${rewritten.join('.')}`;
       }
@@ -503,16 +543,20 @@ export function rewriteProtobufMappingBindsTypeScoped(
         }
         if (entersBlock) {
           typeAtDepth[depth + 1] = cur ?? null;
+          argsRootAtDepth[depth + 1] = false;
         }
         return `${pre}${rewritten.join('.')}`;
       }
 
       const segments = path.split('.');
 
-      if (hasArgTypes && depth === 0) {
+      // Depth-0 args mode, or nested relative binds under bare `$args { … }`.
+      if ((hasArgTypes || argRenameLookup.size) && (depth === 0 || argsRootAtDepth[depth])) {
         const argName = segments[0];
-        const rewritten = [argName];
-        let cur: GraphQLNamedType | null | undefined = options.argTypes!.get(argName);
+        const publicArg = argRenameLookup.get(argName) ?? argName;
+        const rewritten = [publicArg];
+        let cur: GraphQLNamedType | null | undefined =
+          options.argTypes?.get(argName) ?? options.argTypes?.get(publicArg);
         for (let i = 1; i < segments.length; i++) {
           const stepped = renameFieldSegment(cur, segments[i], fieldRenameMap);
           rewritten.push(stepped.name);
@@ -520,6 +564,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
         }
         if (entersBlock) {
           typeAtDepth[depth + 1] = cur ?? null;
+          argsRootAtDepth[depth + 1] = false;
         }
         return `${pre}${rewritten.join('.')}`;
       }
@@ -546,6 +591,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
       }
       if (entersBlock) {
         typeAtDepth[depth + 1] = cur ?? null;
+        argsRootAtDepth[depth + 1] = false;
       }
       return `${pre}${rewritten.join('.')}`;
     },
@@ -562,6 +608,7 @@ function clearOwnersClosedBetween(
   from: number,
   to: number,
   typeAtDepth: Array<GraphQLNamedType | null | undefined>,
+  argsRootAtDepth?: boolean[],
 ): void {
   let depth = braceDepthAt(source, from);
   for (let i = from; i < to; i++) {
@@ -574,8 +621,14 @@ function clearOwnersClosedBetween(
       depth++;
     } else if (c === '}') {
       typeAtDepth[depth] = undefined;
+      if (argsRootAtDepth) {
+        argsRootAtDepth[depth] = false;
+      }
       for (let d = depth + 1; d < typeAtDepth.length; d++) {
         typeAtDepth[d] = undefined;
+        if (argsRootAtDepth) {
+          argsRootAtDepth[d] = false;
+        }
       }
       depth = Math.max(0, depth - 1);
     }

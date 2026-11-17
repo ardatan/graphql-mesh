@@ -51,6 +51,20 @@ export function toGrpcGraphQLError(error: unknown) {
   });
 }
 
+/**
+ * Re-yield a gRPC server stream, converting mid-iteration `ServiceError`s the same way
+ * unary calls do (`DOWNSTREAM_SERVICE_ERROR` + `extensions.grpc`).
+ */
+export async function* mapGrpcStreamErrors<T>(source: AsyncIterable<T>): AsyncGenerator<T> {
+  try {
+    for await (const chunk of source) {
+      yield chunk;
+    }
+  } catch (err) {
+    throw toGrpcGraphQLError(err);
+  }
+}
+
 export function buildGrpcMetadata(
   metaData: Record<string, string | string[] | Buffer> | [string, string][] | undefined,
   resolverData: ResolverData,

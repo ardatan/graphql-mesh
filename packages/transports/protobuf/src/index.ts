@@ -38,7 +38,7 @@ import {
   resolveHttpUrl,
 } from './protobuf/dial.js';
 import { parseMapping } from './protobuf/mapping.js';
-import { buildGrpcMetadata, toGrpcGraphQLError } from './utils.js';
+import { buildGrpcMetadata, mapGrpcStreamErrors, toGrpcGraphQLError } from './utils.js';
 
 type ResolveReferenceFn = (
   reference: Record<string, any>,
@@ -321,8 +321,8 @@ export class ProtobufTransportHelper extends DisposableStack {
           // Subscriptions omit it so the stream is not killed by a unary-style timeout.
           const streamTimeout = isSubscription ? undefined : timeout;
           return (async function* () {
-            try {
-              for await (const chunk of grpcServerStream({
+            for await (const chunk of mapGrpcStreamErrors(
+              grpcServerStream({
                 location,
                 path: rpcPath,
                 request: requestBytes,
@@ -330,11 +330,9 @@ export class ProtobufTransportHelper extends DisposableStack {
                 metadata,
                 channelOptions,
                 timeout: streamTimeout,
-              })) {
-                yield decodeMessage(selectionFields, chunk);
-              }
-            } catch (err) {
-              throw toGrpcGraphQLError(err);
+              }),
+            )) {
+              yield decodeMessage(selectionFields, chunk);
             }
           })();
         }

@@ -182,6 +182,63 @@ describe('protobuf mapping + codec', () => {
     expect(decodeMessage(fields, bytes)).toEqual({ child: { a: 1, b: 2 } });
   });
 
+  it('last encoded scalar wins when merging singular message occurrences', () => {
+    const fields = parseMapping(`
+      1(message): child {
+        1(int32): a
+      }
+    `);
+    // Two child occurrences: a=1 then a=0 — explicit 0 must replace 1.
+    const bytes = Uint8Array.from([0x0a, 0x02, 0x08, 0x01, 0x0a, 0x02, 0x08, 0x00]);
+    expect(decodeMessage(fields, bytes)).toEqual({ child: { a: 0 } });
+  });
+
+  it('last encoded optional false wins when merging singular message occurrences', () => {
+    const fields = parseMapping(`
+      1(message): child {
+        1(optional bool): enabled
+      }
+    `);
+    // enabled=true then enabled=false on the wire.
+    const bytes = Uint8Array.from([0x0a, 0x02, 0x08, 0x01, 0x0a, 0x02, 0x08, 0x00]);
+    expect(decodeMessage(fields, bytes)).toEqual({ child: { enabled: false } });
+  });
+
+  it('merges bytes as last-value-wins scalars (not recursive objects)', () => {
+    const fields = parseMapping(`
+      1(message): child {
+        1(bytes): data
+      }
+    `);
+    const first = encodeMessage(fields, { child: { data: Buffer.from([1]) } });
+    const second = encodeMessage(fields, { child: { data: Buffer.from([2]) } });
+    const merged = new Uint8Array(first.length + second.length);
+    merged.set(first, 0);
+    merged.set(second, first.length);
+    const decoded = decodeMessage(fields, merged);
+    expect(Buffer.isBuffer(decoded.child.data)).toBe(true);
+    expect([...decoded.child.data]).toEqual([2]);
+  });
+
+  it('keeps __proto__ map keys through singular message merges', () => {
+    const fields = parseMapping(`
+      1(message): child {
+        1(map<string,string>): data
+      }
+    `);
+    const first = encodeMessage(fields, { child: { data: { keep: 'a' } } });
+    const protoMap = Object.create(null) as Record<string, string>;
+    protoMap.__proto__ = 'own-key';
+    const second = encodeMessage(fields, { child: { data: protoMap } });
+    const merged = new Uint8Array(first.length + second.length);
+    merged.set(first, 0);
+    merged.set(second, first.length);
+    const decoded = decodeMessage(fields, merged);
+    expect(Object.prototype.hasOwnProperty.call(decoded.child.data, '__proto__')).toBe(true);
+    expect(decoded.child.data.__proto__).toBe('own-key');
+    expect(decoded.child.data.keep).toBe('a');
+  });
+
   it('maps negative enum wire values to names (signed int32)', () => {
     const fields = parseMapping(`1(enum{UNKNOWN=-1,OK=0}): status`);
     const bytes = encodeMessage(fields, { status: 'UNKNOWN' });
