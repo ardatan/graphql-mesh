@@ -346,10 +346,23 @@ export function resolveBind(
     return undefined;
   }
   if (bind.startsWith('$this.')) {
-    return getPath(thisRoot ?? args, bind.slice('$this.'.length));
+    const path = bind.slice('$this.'.length);
+    // Prefer parent/entity object when it has the key (public field names after rename).
+    // If the root is absent, not an object, or lacks the key (e.g. empty Query rootValue),
+    // fall back to args — composition aligns `$this` with arg renames on root fields.
+    if (thisRoot != null && typeof thisRoot === 'object') {
+      const fromParent = getPath(thisRoot, path);
+      if (fromParent !== undefined) {
+        return fromParent;
+      }
+    }
+    return getPath(args, path);
   }
   if (bind === '$this') {
-    return thisRoot ?? args;
+    if (thisRoot != null && typeof thisRoot === 'object') {
+      return thisRoot;
+    }
+    return args;
   }
   if (bind.startsWith('$args.')) {
     return getPath(args, bind.slice('$args.'.length));

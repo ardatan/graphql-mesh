@@ -145,11 +145,11 @@ export function rewriteProtobufMappingBinds(
       (_m, name: string) => `$args.${rootLookup.get(name) ?? name}`,
     );
   }
-  // `$this.<name>` reads the parent/entity object when present (`thisRoot`), and only
-  // falls back to args when no parent is supplied. In args mode (`nestedRenameMap`
-  // set), rootLookup is the argument rename map — do not apply it to `$this` or a
-  // parent-backed `$this.id` becomes `$this.requestId` and encodes undefined.
-  // Use nestedLookup (field renames) in that mode; otherwise rootLookup (selection).
+  // `$this.<name>`: parent/entity field names when a parent is supplied at runtime;
+  // args fallback when it is not. In args mode (`nestedRenameMap` set), do not apply
+  // the argument rename map here — the rename transform rewrites `$this` against the
+  // owning type (field renames) or, for root fields, applies arg renames explicitly.
+  // Selection mode (no nested map) still uses rootLookup for `$this` field renames.
   const thisLookup = splitRootNested ? nestedLookup : rootLookup;
   if (thisLookup.size) {
     const thisNames = [...thisLookup.keys()].map(escapeRegExp).join('|');
@@ -214,6 +214,25 @@ function toLookup(renameMap: Map<string, string>): Map<string, string> {
     .filter(([from, to]) => from && to && from !== to)
     .sort((a, b) => b[0].length - a[0].length);
   return new Map(entries);
+}
+
+/** Rewrite `$this.<from>` segments with a flat rename map (root-field args fallback). */
+export function rewriteProtobufThisBinds(
+  mapping: string,
+  renameMap: Map<string, string>,
+): string {
+  if (!mapping || !renameMap.size) {
+    return mapping;
+  }
+  const lookup = toLookup(renameMap);
+  if (!lookup.size) {
+    return mapping;
+  }
+  const names = [...lookup.keys()].map(escapeRegExp).join('|');
+  return mapping.replace(
+    new RegExp(`\\$this\\.(${names})(?![\\w])`, 'g'),
+    (_m, name: string) => `$this.${lookup.get(name) ?? name}`,
+  );
 }
 
 /** Net `{` − `}` count before `index`; `#` comments are ignored through EOL (parser-compatible). */

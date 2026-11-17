@@ -398,10 +398,9 @@ describe('rewriteProtobufMappingBinds', () => {
     expect(out).toContain('1(int64): year');
   });
 
-  it('arg rename does not rewrite parent-backed $this binds', async () => {
+  it('arg rename does not rewrite $this in flat args-mode first pass', async () => {
     const { rewriteProtobufMappingBinds } = await import('../src/transforms/utils.js');
-    // Args mode (nestedRenameMap set): rootLookup is arg renames. `$this` must stay on
-    // the parent/entity field name; only `$args` picks up the argument rename.
+    // First pass leaves `$this` alone; rename transform applies owner/arg context later.
     const out = rewriteProtobufMappingBinds(
       '1(string): $this.id\n2(string): $args.id',
       new Map([['id', 'requestId']]),
@@ -420,6 +419,137 @@ describe('rewriteProtobufMappingBinds', () => {
     );
     expect(out).toContain('$this.fullName');
     expect(out).toMatch(/2\(string\):\s*fullName/);
+  });
+});
+
+describe('$this parent vs args-fallback renames', () => {
+  it('root field: arg rename aligns $this for no-parent args fallback', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "pets", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          pet(id: ID!): String!
+            @protobuf__rpc(
+              service: "Pets"
+              method: "GetPet"
+              args: """
+              1(string): $this.id
+              2(string): $args.id
+              """
+              selection: """
+              1(string): ok
+              """
+            )
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'pets',
+        schema,
+        transforms: [
+          createRenameTransform({
+            argRenamer: ({ argName }) => (argName === 'id' ? 'requestId' : argName),
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/pet\(requestId:/);
+    expect(sdl).toMatch(/\$this\.requestId/);
+    expect(sdl).toMatch(/\$args\.requestId/);
+    expect(sdl).not.toMatch(/\$this\.id\b/);
+  });
+
+  it('object field: $this follows parent field rename, not arg rename', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "pets", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          pet: Pet
+        }
+
+        type Pet {
+          id: ID!
+          friend(id: ID!): String!
+            @protobuf__rpc(
+              service: "Pets"
+              method: "GetFriend"
+              args: """
+              1(string): $this.id
+              2(string): $args.id
+              """
+              selection: """
+              1(string): ok
+              """
+            )
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'pets',
+        schema,
+        transforms: [
+          createRenameTransform({
+            fieldRenamer: ({ typeName, fieldName }) =>
+              typeName === 'Pet' && fieldName === 'id' ? 'petId' : fieldName,
+            argRenamer: ({ typeName, fieldName, argName }) =>
+              typeName === 'Pet' && fieldName === 'friend' && argName === 'id'
+                ? 'friendId'
+                : argName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/type Pet[\s\S]*petId:/);
+    expect(sdl).toMatch(/friend\(friendId:/);
+    // Parent-backed `$this` uses Pet.petId; `$args` uses the renamed argument.
+    expect(sdl).toMatch(/\$this\.petId/);
+    expect(sdl).toMatch(/\$args\.friendId/);
+    expect(sdl).not.toMatch(/\$this\.friendId/);
+    expect(sdl).not.toMatch(/\$this\.id\b/);
   });
 });
 

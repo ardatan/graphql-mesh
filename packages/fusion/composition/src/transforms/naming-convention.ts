@@ -290,10 +290,10 @@ export function createNamingConventionTransform(
     if (fieldRenameMap.size) {
       // Protobuf binds: type-scoped so ConnectHTTP.GET is not rewritten by Movie.GET→get.
       next = mapSchema(next, {
-        [MapperKind.ROOT_FIELD]: (fieldConfig, _n, _t, s) =>
-          applyProtobufFieldRenames(fieldConfig, fieldRenameMap, s),
-        [MapperKind.OBJECT_FIELD]: (fieldConfig, _n, _t, s) =>
-          applyProtobufFieldRenames(fieldConfig, fieldRenameMap, s),
+        [MapperKind.ROOT_FIELD]: (fieldConfig, _n, typeName, s) =>
+          applyProtobufFieldRenames(fieldConfig, fieldRenameMap, s, typeName),
+        [MapperKind.OBJECT_FIELD]: (fieldConfig, _n, typeName, s) =>
+          applyProtobufFieldRenames(fieldConfig, fieldRenameMap, s, typeName),
         [MapperKind.OBJECT_TYPE]: (type, s) => applyProtobufTypeRenames(type, fieldRenameMap, s),
       });
       // Connect selection picks still use a flat name map; skip flat protobuf nested renames.
