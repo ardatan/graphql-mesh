@@ -573,6 +573,103 @@ describe('rewriteProtobufMappingBinds', () => {
     expect(out).toMatch(/2\(int64\):\s*releaseYear/);
   });
 
+  it('resolves argTypes via public head for chained renames with distinct inputs', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "movies", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        input InputA {
+          year: Int
+        }
+        input InputB {
+          year: Int
+        }
+
+        type Query {
+          search(a: InputA!, b: InputB!): String!
+            @protobuf__rpc(
+              service: "Movies"
+              method: "Search"
+              args: """
+              1(message): $args.a {
+                2(int64): year
+              }
+              3(message): $args.b {
+                2(int64): year
+              }
+              """
+              selection: """
+              1(string): ok
+              """
+            )
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'movies',
+        schema,
+        transforms: [
+          createRenameTransform({
+            argRenamer: ({ argName }) => {
+              if (argName === 'a') return 'b';
+              if (argName === 'b') return 'c';
+              return argName;
+            },
+            fieldRenamer: ({ typeName, fieldName }) =>
+              typeName === 'InputB' && fieldName === 'year' ? 'publicationYear' : fieldName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    // a→b keeps InputA.year; b→c walks InputB so year→publicationYear.
+    expect(sdl).toMatch(/1\(message\):\s*\$args\.b\s*\{[^}]*2\(int64\):\s*year/s);
+    expect(sdl).toMatch(/3\(message\):\s*\$args\.c\s*\{[^}]*2\(int64\):\s*publicationYear/s);
+  });
+
+  it('records $this block owner under skipThisBinds so nested binds rename', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(/* GraphQL */ `
+      input MovieInput {
+        year: Int
+      }
+      type Query {
+        moviesByYear(input: MovieInput): String
+      }
+    `);
+    const movieInput = schema.getType('MovieInput')!;
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      '1(message): $this.input {\n  2(int64): year\n}',
+      new Map([['MovieInput', new Map([['year', 'publicationYear']])]]),
+      {
+        argTypes: new Map([['input', movieInput]]),
+        skipThisBinds: true,
+      },
+    );
+    expect(out).toContain('$this.input');
+    expect(out).toMatch(/2\(int64\):\s*publicationYear/);
+  });
+
   it('applies protobuf $args renames once (a→b, b→c does not chain)', () => {
     const schema = buildSchema(
       /* GraphQL */ `

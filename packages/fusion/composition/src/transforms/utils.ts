@@ -363,9 +363,14 @@ export function rewriteProtobufThisBindsDual(
       const rewritten: string[] = [];
       const argHead = argLookup.get(argsSegs[0]) ?? argsSegs[0];
       rewritten.push(argHead);
-      // Type map is keyed by the pre-rename arg name when available.
-      let cur: GraphQLNamedType | null | undefined =
-        options.argTypes!.get(argsSegs[0]) ?? options.argTypes!.get(argHead);
+      // Prefer the public arg head — `argTypes` from applyProtobufFieldRenames is
+      // built from the already-renamed field.args map.
+      let cur: GraphQLNamedType | null | undefined = resolveArgType(
+        options.argTypes,
+        argHead,
+        argsSegs[0],
+        argLookup,
+      );
       for (let i = 1; i < argsSegs.length; i++) {
         const stepped = renameFieldSegment(cur, argsSegs[i], options.fieldRenameMap!);
         rewritten.push(stepped.name);
@@ -509,7 +514,8 @@ export function rewriteProtobufMappingBindsTypeScoped(
         if (rest.length) {
           const argHead = argRenameLookup.get(rest[0]) ?? rest[0];
           rewritten.push(argHead);
-          cur = options.argTypes?.get(rest[0]) ?? options.argTypes?.get(argHead);
+          // `argTypes` from applyProtobufFieldRenames is keyed by public arg names.
+          cur = resolveArgType(options.argTypes, argHead, rest[0], argRenameLookup);
           for (let i = 1; i < rest.length; i++) {
             const stepped = renameFieldSegment(cur, rest[i], fieldRenameMap);
             rewritten.push(stepped.name);
@@ -525,17 +531,40 @@ export function rewriteProtobufMappingBindsTypeScoped(
 
       // `$this.<field>` entity binds: descend from rootType when entering a nested block.
       if (path.startsWith('$this')) {
-        if (options.skipThisBinds) {
-          return `${pre}${path}`;
-        }
         const rest =
           path === '$this'
             ? []
             : path.startsWith('$this.')
               ? path.slice('$this.'.length).split('.')
               : [];
+        // Even when skipping `$this` path rewrites (dual-bind pass owns them), still
+        // record the block owner so nested relative binds rename against the input type.
+        let cur: GraphQLNamedType | null | undefined =
+          options.rootType ??
+          (hasArgTypes && rest.length
+            ? resolveArgType(
+                options.argTypes,
+                argRenameLookup.get(rest[0]) ?? rest[0],
+                rest[0],
+                argRenameLookup,
+              )
+            : null);
+        if (options.skipThisBinds) {
+          if (rest.length && (options.rootType || hasArgTypes)) {
+            // Walk remaining segments for owner only; leave the `$this` path intact.
+            for (let i = options.rootType ? 0 : 1; i < rest.length; i++) {
+              const stepped = renameFieldSegment(cur, rest[i], fieldRenameMap);
+              cur = stepped.type;
+            }
+          }
+          if (entersBlock) {
+            typeAtDepth[depth + 1] = cur ?? null;
+            argsRootAtDepth[depth + 1] = false;
+          }
+          return `${pre}${path}`;
+        }
         const rewritten = ['$this'];
-        let cur: GraphQLNamedType | null | undefined = options.rootType;
+        cur = options.rootType;
         for (const seg of rest) {
           const stepped = renameFieldSegment(cur, seg, fieldRenameMap);
           rewritten.push(stepped.name);
@@ -555,8 +584,12 @@ export function rewriteProtobufMappingBindsTypeScoped(
         const argName = segments[0];
         const publicArg = argRenameLookup.get(argName) ?? argName;
         const rewritten = [publicArg];
-        let cur: GraphQLNamedType | null | undefined =
-          options.argTypes?.get(argName) ?? options.argTypes?.get(publicArg);
+        let cur: GraphQLNamedType | null | undefined = resolveArgType(
+          options.argTypes,
+          publicArg,
+          argName,
+          argRenameLookup,
+        );
         for (let i = 1; i < segments.length; i++) {
           const stepped = renameFieldSegment(cur, segments[i], fieldRenameMap);
           rewritten.push(stepped.name);
@@ -633,6 +666,36 @@ function clearOwnersClosedBetween(
       depth = Math.max(0, depth - 1);
     }
   }
+}
+
+/**
+ * Resolve an argument's GraphQL type from `argTypes`.
+ * When the map comes from the public (already-renamed) schema, look up the public
+ * head first so chained `a→b`, `b→c` does not bind `$args.b` to `InputA`.
+ */
+function resolveArgType(
+  argTypes: Map<string, GraphQLNamedType> | undefined,
+  publicHead: string,
+  originalHead: string,
+  argRenameLookup: Map<string, string>,
+): GraphQLNamedType | null | undefined {
+  if (!argTypes?.size) {
+    return undefined;
+  }
+  // Public-schema maps: keys are already-renamed arg names.
+  if (argTypes.has(publicHead)) {
+    return argTypes.get(publicHead);
+  }
+  if (argTypes.has(originalHead)) {
+    return argTypes.get(originalHead);
+  }
+  // Inverse: if map still has a pre-rename key that renames to publicHead.
+  for (const [from, to] of argRenameLookup) {
+    if (to === publicHead && argTypes.has(from)) {
+      return argTypes.get(from);
+    }
+  }
+  return undefined;
 }
 
 function renameFieldSegment(
