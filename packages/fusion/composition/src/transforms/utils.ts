@@ -202,6 +202,15 @@ export function rewriteConnectArgReferences(
     }
     return out;
   };
+  /** HTTP path templates: rewrite `$args` even when the literal path has `'` / `"` (e.g. `/O'Reilly/{$args.id}`). Quote-skipping is only for expression strings (`->get("$args.x")`). */
+  const rewriteHttpPath = (value: string): string => {
+    if (!argRenameMap.size) {
+      return value;
+    }
+    const names = [...argRenameMap.keys()].map(escapeRegExp).join('|');
+    const re = new RegExp(`\\$args\\.(${names})(?![\\w])`, 'g');
+    return value.replace(re, (_m, name: string) => `$args.${argRenameMap.get(name) ?? name}`);
+  };
   const rewriteHttp = (http: Record<string, any> | undefined) => {
     if (!http || typeof http !== 'object') {
       return http;
@@ -209,7 +218,7 @@ export function rewriteConnectArgReferences(
     const next: Record<string, any> = { ...http };
     for (const method of ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const) {
       if (typeof next[method] === 'string') {
-        next[method] = rewriteExpr(next[method]);
+        next[method] = rewriteHttpPath(next[method]);
       }
     }
     if (typeof next.body === 'string') {

@@ -168,6 +168,33 @@ function formatCompactArgField(
     return lines;
   }
 
+  // map<*, struct> — expand value-struct field ids like list/set-of-struct.
+  if (
+    resolved.type === TType.MAP &&
+    resolveTypeVal(resolved.valType, topTypeMap).type === TType.STRUCT
+  ) {
+    const val = resolveTypeVal(resolved.valType, topTypeMap) as Extract<
+      TypeVal,
+      { type: TType.STRUCT }
+    >;
+    const valName = val.name || 'Anon';
+    if (seenStructs.has(valName)) {
+      throw new Error(
+        `Thrift struct "${valName}" is recursive in RPC map arguments; compact @thrift__rpc args cannot expand cycles without truncating. Restructure the IDL (bounded / non-recursive inputs) or hand-author a depth-limited mapping.`,
+      );
+    }
+    const nextSeen = new Set(seenStructs);
+    nextSeen.add(valName);
+    const lines = [`${pad}${id}(${token}): ${rhs} {`];
+    for (const [fieldName, fieldType] of Object.entries(val.fields)) {
+      lines.push(
+        ...formatCompactArgField(fieldType, fieldName, topTypeMap, level + 1, fieldName, nextSeen),
+      );
+    }
+    lines.push(`${pad}}`);
+    return lines;
+  }
+
   return [`${pad}${id}(${token}): ${level === 0 ? valueExpr : graphqlName}`];
 }
 
@@ -401,13 +428,23 @@ function formatTJSONValueExpr(
     const valTag = tjsonTypeTag(resolved.valType, topTypeMap);
     const valResolved = resolveTypeVal(resolved.valType, topTypeMap);
     // TJSON map payload is a JSON object (thrift JS / common readers). Bool values
-    // must be integers 0/1, but public Connectors cannot rewrite object map values
-    // (no shipped `mapValues` / fromEntries on Router). Fail at generate rather than
-    // emit true/false tokens Apache readers reject. (List/set args also fail at
-    // generate — no LitArray spread / Router-safe concat for TJSON envelopes.)
+    // must be integers 0/1, and struct/list/set/map values need per-entry TJSON
+    // conversion — public Connectors cannot rewrite object map values (no shipped
+    // `mapValues` / fromEntries on Router). Fail at generate rather than emit a
+    // GraphQL-shaped payload Apache readers reject.
     if (valResolved.type === TType.BOOL) {
       throw new Error(
         `Thrift map with bool values cannot be emitted as TJSON @connect body: Connectors have no public Router-safe way to rewrite object map values to 0/1. Prefer scalar bool args, change the IDL, or hand-author the @connect body.`,
+      );
+    }
+    if (
+      valResolved.type === TType.STRUCT ||
+      valResolved.type === TType.LIST ||
+      valResolved.type === TType.SET ||
+      valResolved.type === TType.MAP
+    ) {
+      throw new Error(
+        `Thrift map with composite values cannot be emitted as TJSON @connect body: Connectors have no public Router-safe way to convert each map value to TJSON. Prefer scalar map values, change the IDL, use binary protocol, or hand-author the @connect body.`,
       );
     }
     return `{ "${tag}": $([ "${keyTag}", "${valTag}", ${valueExpr}->size, ${valueExpr} ]) }`;
@@ -417,6 +454,14 @@ function formatTJSONValueExpr(
   // Apollo-compatible `match` - works on Hive Mesh eval and Router Connectors.
   if (resolved.type === TType.BOOL) {
     return `{ "${tag}": ${valueExpr}->match([true, 1], [false, 0], [@, 0]) }`;
+  }
+
+  // Thrift enums are i32 on the wire; GraphQL may carry the member name after SDL print.
+  if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
+    const arms = Object.entries(resolved.values)
+      .map(([name, n]) => `["${name}", ${n}]`)
+      .join(', ');
+    return `{ "${tag}": ${valueExpr}->match(${arms}, [@, ${valueExpr}]) }`;
   }
 
   return `{ "${tag}": ${valueExpr} }`;
@@ -520,6 +565,9 @@ export function buildTJSONUnionConnectSelection(
     // True only for empty result map; declared throws use non-0 field ids.
     props.push('ok: $->get(4)->size->eq(0)');
   } else if (resolvedReturn.type === TType.STRUCT) {
+    // Stamp field-0 presence so resolveType does not treat an empty `{}` value
+    // projection (exception reply: no "0") as success.
+    props.push('field0: $->get(4)->get("0")->ne(null)');
     const nested = Object.entries(resolvedReturn.fields)
       .map(([n, t]) => formatTJSONLitProperty(n, t, topTypeMap, '$->get(4)->get("0")->get("rec")'))
       .join(',\n    ');
@@ -584,6 +632,13 @@ function formatTJSONLitProperty(
     return `${graphqlName}: ${fieldPath}->get("${tag}")->get(3)`;
   }
 
+  if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
+    const arms = Object.entries(resolved.values)
+      .map(([name, n]) => `[${n}, "${name}"]`)
+      .join(', ');
+    return `${graphqlName}: ${fieldPath}->get("${tag}")->match(${arms}, [@, @])`;
+  }
+
   return `${graphqlName}: ${fieldPath}->get("${tag}")`;
 }
 
@@ -645,6 +700,13 @@ function formatTJSONSelectionField(
 
   if (resolved.type === TType.MAP) {
     return `${graphqlName}: ${fieldPath}->get("${tag}")->get(3)`;
+  }
+
+  if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
+    const arms = Object.entries(resolved.values)
+      .map(([name, n]) => `[${n}, "${name}"]`)
+      .join(', ');
+    return `${graphqlName}: ${fieldPath}->get("${tag}")->match(${arms}, [@, @])`;
   }
 
   return `${graphqlName}: ${fieldPath}->get("${tag}")`;

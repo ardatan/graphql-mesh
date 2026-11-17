@@ -857,7 +857,15 @@ export function applySelection(selection: string, root: any, extras: ConnectSele
   }
   // `$()` expressions (incl. multiline `$({ … })` / `$(null)`) evaluate as a whole so
   // JSON array envelopes (TJSON) are not mistaken for GraphQL list roots.
+  // Trailing NamedSelection (`$($args.user) { id }`) stays on evalSubSelection.
   if (trimmed.startsWith('$(')) {
+    const closed = findBalancedParenClose(trimmed, 1);
+    if (closed > 0) {
+      const after = trimmed.slice(closed + 1).trim();
+      if (after.startsWith('{')) {
+        return evalSubSelection(trimmed, root, extras);
+      }
+    }
     return evalPath(trimmed, root, extras);
   }
   // Mesh: `$ _response: { … }` — keep JSON body fields and overlay mapped keys.
@@ -1060,6 +1068,7 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
 /**
  * Rewrite `@` / `@.x` element aliases to `$` / `$.x` for lit/path eval against the item.
  * Leaves `@` inside quoted strings alone (e.g. emails).
+ * Preserves bare `@` match / pass-through wildcards in list arms (`[@, "other"]`, `[@, @]`).
  */
 function rewriteAtToDollar(expr: string): string {
   let out = '';
@@ -1086,7 +1095,24 @@ function rewriteAtToDollar(expr: string): string {
       i += 2;
       continue;
     }
+    if (c === '@' && expr[i + 1] === '-' && expr[i + 2] === '>') {
+      out += '$->';
+      i += 3;
+      continue;
+    }
     if (c === '@') {
+      // Match-arm wildcard: `[` / `,` … `@` … `,` / `]` (not `@.x` / `@->`).
+      let prev = out.length - 1;
+      while (prev >= 0 && /\s/.test(out[prev])) prev--;
+      let next = i + 1;
+      while (next < expr.length && /\s/.test(expr[next])) next++;
+      const prevOk = prev < 0 || out[prev] === '[' || out[prev] === ',';
+      const nextOk = next >= expr.length || expr[next] === ',' || expr[next] === ']';
+      if (prevOk && nextOk) {
+        out += '@';
+        i++;
+        continue;
+      }
       out += '$';
       i++;
       continue;

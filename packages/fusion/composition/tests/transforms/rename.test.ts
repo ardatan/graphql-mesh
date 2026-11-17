@@ -1063,4 +1063,20 @@ describe('rewriteConnectArgReferences @thrift__rpc', () => {
     expect(rpc.selection).toContain('->get("$args.request")');
     expect(rpc.selection).not.toContain('->get("$args.input")');
   });
+
+  it('rewrites $args in HTTP paths that contain apostrophes', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        connect: [
+          {
+            http: { GET: "/authors/O'Reilly/{$args.request}" },
+            selection: 'id',
+          },
+        ],
+      },
+      new Map([['request', 'input']]),
+    );
+    expect(rewritten!.connect[0].http.GET).toBe("/authors/O'Reilly/{$args.input}");
+  });
 });

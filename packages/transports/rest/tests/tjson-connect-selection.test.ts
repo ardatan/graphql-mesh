@@ -52,4 +52,32 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
       applySelection('$([ "i32", $args.ids->size ])->concat($args.ids)', {}, listExtras),
     ).toEqual(['i32', 2, 10, 20]);
   });
+
+  it('keeps trailing subselection on $($args.x) roots', () => {
+    const userExtras = extrasWithArgs({ user: { id: 1, name: 'a' } });
+    expect(applySelection('$($args.user) { id }', {}, userExtras)).toEqual({ id: 1 });
+  });
+
+  it('preserves match @ wildcard inside map element rewrite', () => {
+    const items = [{ code: 2 }];
+    expect(
+      applySelection('$.items->map(@.code->match([1, "one"], [@, "other"]))', { items }, extras),
+    ).toEqual(['other']);
+  });
+
+  it('struct union field0 is false when reply has no success field', () => {
+    const sel = `$({
+  field0: $->get(4)->get("0")->ne(null),
+  value: $({
+    left: $->get(4)->get("0")->get("rec")->get("1")->get("i32")
+  }),
+  message: $->get(4)->get("1")->get("rec")->get("1")->get("str")
+})`;
+    const thrown = [1, 'divide', 2, 1, { '1': { rec: { '1': { str: 'division by zero' } } } }];
+    expect(applySelection(sel, thrown, extras)).toEqual({
+      field0: false,
+      value: {},
+      message: 'division by zero',
+    });
+  });
 });

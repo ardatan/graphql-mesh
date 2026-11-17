@@ -85,6 +85,24 @@ describe('thrift', () => {
     expect(values.find(v => v.name === 'RETWEET')?.value).toBe(2);
     expect(values.find(v => v.name === 'DM')?.value).toBe(0xa);
     expect(values.find(v => v.name === 'REPLY')?.value).toBe(0xb);
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toMatch(/RETWEET\s+@enum\([^)]*value:\s*"2"/);
+  });
+
+  it('stamps @enum wire integers on enum values for SDL restore', async () => {
+    const { getDirectiveExtensions } = await import('@graphql-tools/utils');
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'Twitter',
+      source: './fixtures/twitter.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/twitter',
+      serviceName: 'Twitter',
+      protocol: 'binary',
+    });
+    const tweetType = schema.getType('TweetType') as import('graphql').GraphQLEnumType;
+    const retweet = tweetType.getValues().find(v => v.name === 'RETWEET')!;
+    expect(retweet.value).toBe(2);
+    expect(getDirectiveExtensions(retweet)?.enum?.[0]?.value).toBe('2');
   });
 
   it('entityMethods stamps entity: true', async () => {
@@ -232,6 +250,32 @@ describe('thrift', () => {
         protocol: 'json',
       }),
     ).rejects.toThrow(/map with bool values cannot be emitted as TJSON/);
+  });
+
+  it('TJSON map with struct values fails at generate', async () => {
+    await expect(
+      loadNonExecutableGraphQLSchemaFromIDL({
+        subgraphName: 'StructMapSvc',
+        source: './fixtures/struct_map_arg.thrift',
+        baseDir: __dirname,
+        endpoint: 'http://localhost:4000/struct-map',
+        protocol: 'json',
+      }),
+    ).rejects.toThrow(/map with composite values cannot be emitted as TJSON/);
+  });
+
+  it('binary map<string,struct> args expand value field descriptors', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'StructMapSvc',
+      source: './fixtures/struct_map_arg.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/struct-map',
+      protocol: 'binary',
+    });
+    const args = (schema.getQueryType()!.getFields().putItems.extensions as any).directives
+      .thrift__rpc.args as string;
+    expect(args).toMatch(/1\(map<string,\s*struct>\):\s*\$args\.items\s*\{/);
+    expect(args).toMatch(/7\(i32\):\s*value/);
   });
 
   it('TJSON ignoreExceptions:false unions emit $({…}) selection', async () => {

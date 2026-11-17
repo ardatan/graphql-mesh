@@ -16,7 +16,12 @@ export type BaseTypeVal = {
 export type ListTypeVal = { id?: number; type: TType.LIST; elementType: TypeVal };
 export type SetTypeVal = { id?: number; type: TType.SET; elementType: TypeVal };
 export type MapTypeVal = { id?: number; type: TType.MAP; keyType: TypeVal; valType: TypeVal };
-export type EnumTypeVal = { id?: number; type: TType.ENUM };
+export type EnumTypeVal = {
+  id?: number;
+  type: TType.ENUM;
+  /** Thrift enum member name → i32 wire value (survives via `@enum` after SDL print). */
+  values?: Record<string, number>;
+};
 export type StructTypeVal = { id?: number; type: TType.STRUCT; name: string; fields: TypeMap };
 export type VoidTypeVal = { id?: number; type: TType.VOID };
 export type RefTypeVal = { id?: number; type: 'ref'; name: string };

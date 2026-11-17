@@ -122,6 +122,16 @@ export const thriftRpcDirective = new GraphQLDirective({
   },
 });
 
+/** Preserve Thrift i32 wire values across SDL print / compose / restore (Mesh `@enum`). */
+export const thriftEnumDirective = new GraphQLDirective({
+  name: 'enum',
+  locations: [DirectiveLocation.ENUM_VALUE],
+  args: {
+    subgraph: { type: GraphQLString },
+    value: { type: GraphQLString },
+  },
+});
+
 export async function loadNonExecutableGraphQLSchemaFromIDL({
   subgraphName,
   source,
@@ -251,6 +261,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   const entityMethodSet = new Set(entityMethods);
   const emitConnect = protocol === 'json';
   let currentId = 0;
+  // Defer service mapping until every named type is in topTypeMap (forward refs).
+  const pendingServices: Array<{ statement: any }> = [];
 
   for (const namespace of Object.keys(namespaceASTMap).reverse()) {
     const thriftAST = namespaceASTMap[namespace];
@@ -262,8 +274,10 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
       switch (statement.type) {
         case SyntaxType.EnumDefinition: {
           // GraphQL enum internal values must be the Thrift i32 wire values so
-          // writeI32 / readI32 round-trip (names alone cannot encode on the wire).
+          // writeI32 / readI32 round-trip. SDL print drops `.value`, so stamp `@enum`
+          // and restore in the thrift executor (and TJSON bakes name↔i32 `->match`).
           let nextEnumValue = 0;
+          const wireValues: Record<string, number> = {};
           const enumValues = statement.members.reduce((prev, curr) => {
             let value = nextEnumValue;
             const init = curr.initializer?.value?.value;
@@ -272,11 +286,18 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               value = Number.parseInt(String(init), 0);
             }
             nextEnumValue = value + 1;
+            wireValues[curr.name.value] = value;
             return {
               ...prev,
               [curr.name.value]: {
                 description: processComments(curr.comments),
-                value,
+                // Connect/Router selections return member names; binary keeps wire ints.
+                value: emitConnect ? curr.name.value : value,
+                extensions: {
+                  directives: {
+                    enum: [{ subgraph: subgraphName, value: JSON.stringify(value) }],
+                  },
+                },
               },
             };
           }, {} as GraphQLEnumValueConfigMap);
@@ -288,8 +309,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               values: enumValues,
             }),
           );
-          // Thrift enums are i32 on the wire — register so ref resolve / wire tokens agree.
-          topTypeMap[typeName] = { type: TType.I32 };
+          topTypeMap[typeName] = { type: TType.ENUM, values: wireValues };
           break;
         }
         case SyntaxType.StructDefinition:
@@ -367,7 +387,31 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           break;
         }
         case SyntaxType.ServiceDefinition:
-          for (const fnIndex in statement.functions) {
+          pendingServices.push({ statement });
+          break;
+        case SyntaxType.TypedefDefinition: {
+          const { inputType, outputType, typeVal } = getGraphQLFunctionType({
+            id: currentId++,
+            functionType: statement.definitionType,
+            enumTypeMap,
+            inputTypeMap,
+            outputTypeMap,
+            topTypeMap,
+          });
+          inputTypeMap.set(typeName, inputType);
+          outputTypeMap.set(typeName, outputType);
+          // So compact/TJSON mapping can resolve `typedef` refs (e.g. digit → i32).
+          topTypeMap[typeName] = typeVal;
+          break;
+        }
+      }
+    }
+  }
+
+  for (const { statement } of pendingServices) {
+    if (statement.type !== SyntaxType.ServiceDefinition) continue;
+    for (const fnIndex in statement.functions) {
+
             const fn = statement.functions[fnIndex];
             const fnName = fn.name.value;
             const { outputType: returnType, typeVal: returnTypeVal } = getGraphQLFunctionType({
@@ -439,19 +483,32 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                     if (value && typeof value === 'object' && value.__typename) {
                       return value.__typename;
                     }
-                    // Prefer success when `ok` / `value` is present — TJSON union
-                    // selection may also project exception keys as undefined beside it.
+                    // Prefer success when `ok` / field0 / non-empty `value` is present —
+                    // TJSON union selection may also project exception keys as undefined.
                     if (value && typeof value === 'object') {
                       if (value.ok === true) {
                         return successTypeName;
                       }
-                      if (value.value !== undefined && value.value !== null) {
+                      // Struct success stamps `field0` when reply field "0" exists.
+                      if (value.field0 === true) {
                         return successTypeName;
+                      }
+                      if (value.value !== undefined && value.value !== null) {
+                        const v = value.value;
+                        const emptyObj =
+                          typeof v === 'object' &&
+                          v !== null &&
+                          !Array.isArray(v) &&
+                          Object.keys(v).length === 0;
+                        if (!emptyObj) {
+                          return successTypeName;
+                        }
                       }
                     }
                     for (const ex of exceptionTypes) {
                       const fields = Object.keys(ex.getFields());
-                      if (fields.some(f => f in (value || {}))) return ex.name;
+                      // Require a defined field value — `in` is true for keys set to undefined.
+                      if (fields.some(f => (value || {})[f] !== undefined)) return ex.name;
                     }
                     return successTypeName;
                   },
@@ -540,24 +597,6 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                 },
               };
             }
-          }
-          break;
-        case SyntaxType.TypedefDefinition: {
-          const { inputType, outputType, typeVal } = getGraphQLFunctionType({
-            id: currentId++,
-            functionType: statement.definitionType,
-            enumTypeMap,
-            inputTypeMap,
-            outputTypeMap,
-            topTypeMap,
-          });
-          inputTypeMap.set(typeName, inputType);
-          outputTypeMap.set(typeName, outputType);
-          // So compact/TJSON mapping can resolve `typedef` refs (e.g. digit → i32).
-          topTypeMap[typeName] = typeVal;
-          break;
-        }
-      }
     }
   }
 
@@ -570,7 +609,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     const headerEntries = Object.entries(headers).map(([name, value]) => ({ name, value }));
     const schema = new GraphQLSchema({
       query: queryObjectType,
-      directives: [ConnectDirective, SourceDirective, LinkDirective],
+      directives: [ConnectDirective, SourceDirective, LinkDirective, thriftEnumDirective],
       extensions: {
         directives: {
           link: [
@@ -609,7 +648,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   const schema = new GraphQLSchema({
     query: queryObjectType,
     types: [ThriftMessageTypeEnum, ...exceptionTypeMap.values()],
-    directives: [thriftRpcDirective],
+    directives: [thriftRpcDirective, thriftEnumDirective],
     extensions: {
       directives: {
         transport: graphQLThriftAnnotations,
@@ -853,8 +892,11 @@ function getGraphQLFunctionType({
         const enumType = enumTypeMap.get(typeName)!;
         inputType = enumType;
         outputType = enumType;
-        // Enums are i32 on the wire (also registered in topTypeMap).
-        typeVal = { type: TType.I32 };
+        const registered = topTypeMap[typeName];
+        typeVal =
+          registered && registered.type === TType.ENUM
+            ? { type: TType.ENUM, values: registered.values }
+            : { type: TType.ENUM };
         break;
       }
       if (inputTypeMap.has(typeName)) {
