@@ -30,6 +30,7 @@ import {
   ensureNonResolvableKeysForEntityStubs,
   hasEquivalentTypeConnect,
   toTypeLevelEntityConnect,
+  toTypeLevelEntityProtobufRpc,
 } from './connect-entity.js';
 import { finalizeConnectorsSupergraph } from './connectors-supergraph.js';
 import {
@@ -106,6 +107,25 @@ export function isFederationConnectorsSubgraph(schema: GraphQLSchema): boolean {
 /** @deprecated Use {@link isFederationConnectorsSubgraph}. */
 export const isApolloConnectorsSubgraph = isFederationConnectorsSubgraph;
 
+/**
+ * Protobuf RPC subgraphs (`@transport(kind: "protobuf")`) follow the Connectors transform
+ * posture: rename/naming-convention rewrite `@protobuf__rpc(args|selection)` binds instead
+ * of stamping Mesh `@source` / `@meshSource`, and semantic conventions use `@key` +
+ * `entity: true` instead of Mesh `@merge`.
+ */
+export function isProtobufRpcSubgraph(schema: GraphQLSchema): boolean {
+  const transports = getDirectiveExtensions(schema)?.transport || [];
+  return transports.some(
+    (transport: { kind?: string }) =>
+      transport?.kind === 'protobuf' || transport?.kind === 'grpc',
+  );
+}
+
+/** True when transforms should rewrite directive mappings instead of Mesh `@source`. */
+export function skipsMeshSourceAnnotations(schema: GraphQLSchema): boolean {
+  return isFederationConnectorsSubgraph(schema) || isProtobufRpcSubgraph(schema);
+}
+
 export function getAnnotatedSubgraphs(
   subgraphs: SubgraphConfig[],
   options: GetAnnotatedSubgraphsOptions = {},
@@ -116,7 +136,7 @@ export function getAnnotatedSubgraphs(
     isFederationConnectorsSubgraph(schema),
   );
   const compositionHasMeshStitchingSource = subgraphs.some(
-    ({ schema, transforms }) => !isFederationConnectorsSubgraph(schema) && !!transforms?.length,
+    ({ schema, transforms }) => !skipsMeshSourceAnnotations(schema) && !!transforms?.length,
   );
 
   const annotatedSubgraphs: ServiceDefinition[] = [];
@@ -154,9 +174,10 @@ export function getAnnotatedSubgraphs(
     }
 
     let mergeDirectiveUsed = false;
-    // Stitching source is only for non-connectors transforms. Connectors transforms
-    // rewrite `@connect` selection/http instead of adding Mesh source annotations.
-    const sourceDirectiveUsed = !isConnectorsSubgraph && transforms?.length > 0;
+    // Stitching source is only for subgraphs that do not rewrite directive mappings
+    // (Connectors `@connect`, protobuf `@protobuf__rpc`). Those skip Mesh `@source`.
+    const sourceDirectiveUsed =
+      !skipsMeshSourceAnnotations(schema) && transforms?.length > 0;
     // When Connectors are in the same composition, alias to `@meshSource` so Guild
     // does not treat Mesh + Apollo `@source` as one composed directive.
     const aliasMeshSource = sourceDirectiveUsed && compositionHasConnectors;
@@ -425,8 +446,8 @@ export function getAnnotatedSubgraphs(
           );
         }
       }
-      // Semantic conventions (ById/ByIds) after transforms — including connectors.
-      // Connectors with `entity: true` skip Mesh `@merge` inside the helper; `@key` still lands.
+      // Semantic conventions (ById/ByIds) after transforms — including connectors / protobuf.
+      // `@connect` / `@protobuf__rpc` with `entity: true` skip Mesh `@merge`; `@key` still lands.
       transformedSubgraph = mapSchema(transformedSubgraph, {
         [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
           const directiveExtensions = getDirectiveExtensions(fieldConfig);
@@ -859,7 +880,49 @@ function addAnnotationsForSemanticConventions({
             typeExtensions.directives = typeDirectives;
             return;
           }
-          // Non-Connectors subgraphs still use Mesh `@merge` for type merging.
+          const protobufKey = directiveExtensions.protobuf__rpc?.length
+            ? 'protobuf__rpc'
+            : directiveExtensions.protobufRpc?.length
+              ? 'protobufRpc'
+              : undefined;
+          if (protobufKey) {
+            const alreadyEntity = directiveExtensions[protobufKey].some(
+              (c: any) => c?.entity === true,
+            );
+            if (alreadyEntity) {
+              return;
+            }
+            if (argName === fieldName) {
+              directiveExtensions[protobufKey] = directiveExtensions[protobufKey].map(
+                (c: any) => ({
+                  ...c,
+                  entity: true,
+                }),
+              );
+              return;
+            }
+            // Type-level entity RPC: rewrite key arg binds → `$this.<keyField>`.
+            const typeRpcs = directiveExtensions[protobufKey].map((c: any) =>
+              toTypeLevelEntityProtobufRpc(c, argName, fieldName),
+            );
+            typeDirectives[protobufKey] ||= [];
+            for (const tr of typeRpcs) {
+              if (
+                !typeDirectives[protobufKey].some(
+                  (existing: any) =>
+                    existing?.service === tr?.service &&
+                    existing?.method === tr?.method &&
+                    existing?.args === tr?.args,
+                )
+              ) {
+                typeDirectives[protobufKey].push(tr);
+              }
+            }
+            const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
+            typeExtensions.directives = typeDirectives;
+            return;
+          }
+          // Other non-Connectors subgraphs still use Mesh `@merge` for type merging.
           directiveExtensions.merge ||= [];
           directiveExtensions.merge.push({
             subgraph: subgraphName,

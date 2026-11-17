@@ -2,6 +2,7 @@
 '@graphql-mesh/transport-protobuf': major
 '@omnigraph/protobuf': major
 '@graphql-mesh/grpc': major
+'@graphql-mesh/fusion-composition': minor
 ---
 
 Breaking cutover: gRPC author/loader/transport surface replaced by a generic protobuf RPC stack (same posture as the Thrift `@thrift__rpc` redesign).
@@ -22,11 +23,12 @@ Legacy Mesh handler package `@graphql-mesh/grpc` still exists but depends on the
 
 ### Author surface
 
-- Directive: `@protobuf__rpc(service, method, args, selection, stream)`
+- Directive: `@protobuf__rpc(service, method, args, selection, stream, entity)`
 - `args` encodes GraphQL arguments into the request message (aligned with `@thrift__rpc(args:)`, **not** Connectors `body`)
 - `selection` decodes the response message into GraphQL fields
 - Mapping dialect uses **id + type** (e.g. `2(int64): year`); loader emits indented multiline strings with `#` comments for readability (GraphQL `"""` block strings)
-- Rename / naming-convention transforms work without author `@connect` / `@merge` / `@meshSource`: Mesh auto-stamps `@source(name: <pre-rename>)` and keeps `@protobuf__rpc` binds on that source name (Connectors rewrite `$args.*` instead because they never get Mesh `@source`)
+- Rename / naming-convention transforms follow the Connectors posture: rewrite `@protobuf__rpc(args|selection)` binds to the public GraphQL names (no Mesh `@source` / `@meshSource`). ById semantic conventions stamp `@key` + `entity: true` instead of Mesh `@merge`
+- Package directories are `packages/loaders/protobuf` and `packages/transports/protobuf` (npm names `@omnigraph/protobuf` / `@graphql-mesh/transport-protobuf`)
 - No `@grpcMethod`, `@grpcConnectivityState`, `@enum` stamps, or synthetic connectivity fields
 - No `options.roots` on `@transport`
 
@@ -62,4 +64,4 @@ E2E: `e2e/protobuf-http` runs hand `@protobuf__rpc` SDL against official `@conne
 5. Gateway: register `transports.protobuf` (or rely on `@graphql-mesh/transport-protobuf` resolution by kind).
 6. Snapshot / e2e updates: composed SDL and any tests asserting old directive names or roots JSON will break on purpose.
 
-Hand SDL examples (Connect / Twirp, no dedicated loaders): `packages/loaders/grpc/examples/movies-connect.graphql`, `movies-twirp.graphql`.
+Hand SDL examples (Connect / Twirp, no dedicated loaders): `packages/loaders/protobuf/examples/movies-connect.graphql`, `movies-twirp.graphql`.

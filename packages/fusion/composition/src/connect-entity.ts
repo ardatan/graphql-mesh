@@ -6,6 +6,7 @@ import {
   type GraphQLSchema,
 } from 'graphql';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { rewriteProtobufMappingBinds } from './transforms/utils.js';
 
 /**
  * Federation Connectors entity helpers (shared contract).
@@ -36,6 +37,33 @@ export function rewriteArgsToThis(value: string, keyArg: string, keyField: strin
   }
   // `$args.petId` and `{$args.petId}` (brace form is covered by the bare replace).
   return value.replaceAll(`$args.${keyArg}`, `$this.${keyField}`);
+}
+
+/**
+ * Clone a field-level `@protobuf__rpc` into a type-level entity resolver:
+ * rewrite key-arg binds → `$this.<keyField>` / path segment rename, drop `entity`.
+ */
+export function toTypeLevelEntityProtobufRpc(
+  rpcArgs: Record<string, any>,
+  keyArg: string,
+  keyField: string,
+): Record<string, any> {
+  const { entity: _entity, args, ...rest } = rpcArgs;
+  const renameMap = new Map<string, string>([[keyArg, keyField]]);
+  let nextArgs = typeof args === 'string' ? rewriteProtobufMappingBinds(args, renameMap) : args;
+  if (typeof nextArgs === 'string') {
+    // Prefer `$this.<key>` so resolveReference can pass the entity representation as root.
+    nextArgs = nextArgs
+      .replaceAll(`$args.${keyField}`, `$this.${keyField}`)
+      .replace(
+        new RegExp(`(\\):\\s*)${keyField.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w.$])`, 'g'),
+        `$1$this.${keyField}`,
+      );
+  }
+  return {
+    ...rest,
+    ...(nextArgs != null ? { args: nextArgs } : {}),
+  };
 }
 
 /**

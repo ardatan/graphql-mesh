@@ -235,9 +235,19 @@ function snippet(source: string, i: number): string {
   return JSON.stringify(source.slice(Math.max(0, i - 10), i + 20));
 }
 
-export function resolveBind(bind: string | undefined, args: Record<string, any>): any {
+export function resolveBind(
+  bind: string | undefined,
+  args: Record<string, any>,
+  thisRoot?: Record<string, any>,
+): any {
   if (bind == null || bind === '') {
     return undefined;
+  }
+  if (bind.startsWith('$this.')) {
+    return getPath(thisRoot ?? args, bind.slice('$this.'.length));
+  }
+  if (bind === '$this') {
+    return thisRoot ?? args;
   }
   if (bind.startsWith('$args.')) {
     return getPath(args, bind.slice('$args.'.length));

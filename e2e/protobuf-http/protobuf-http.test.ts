@@ -2,7 +2,7 @@ import { createTenv, type Service } from '@e2e/tenv';
 
 const { compose, serve, service } = createTenv(__dirname);
 
-/** Public API uses renamed arg; Mesh @source keeps subgraph/mapping on `year`. */
+/** Public API uses renamed arg; `@protobuf__rpc(args:)` bind is rewritten to match. */
 const query = /* GraphQL */ `
   query MoviesByYear($year: Int!) {
     moviesByYear(releaseYear: $year) {
@@ -39,7 +39,7 @@ describe.each([
     upstream = await service(serviceName);
   });
 
-  it(`composes with ${style} location, rename transform, and stable mapping binds`, async () => {
+  it(`composes with ${style} location, rename transform, and rewritten args binds`, async () => {
     const { result } = await compose({
       services: [upstream],
       maskServicePorts: true,
@@ -49,8 +49,10 @@ describe.each([
     expect(result).toContain('@protobuf__rpc');
     expect(result).toContain(maskedLocation);
     expect(result).toContain('releaseYear');
-    expect(result).toMatch(/2\(int64\):\s*year/);
-    expect(result).not.toMatch(/2\(int64\):\s*releaseYear/);
+    // Connect-like: args bind follows the public GraphQL arg name (no Mesh @source).
+    expect(result).toMatch(/2\(int64\):\s*releaseYear/);
+    expect(result).not.toMatch(/@source\(/);
+    expect(result).not.toMatch(/@meshSource\(/);
     if (style === 'twirp') {
       expect(result).toContain('Content-Type');
       expect(result).toContain('application/protobuf');

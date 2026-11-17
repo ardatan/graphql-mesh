@@ -1,5 +1,5 @@
 {
-  "name": "@e2e/grpc",
+  "name": "@e2e/protobuf-options",
   "type": "module",
   "private": true,
   "dependencies": {
@@ -8,12 +8,8 @@
     "@graphql-mesh/transport-protobuf": "workspace:*",
     "@grpc/grpc-js": "^1.14.5",
     "@grpc/proto-loader": "^0.8.1",
+    "@grpc/reflection": "^1.0.4",
     "@omnigraph/protobuf": "workspace:*",
-    "graphql": "16.14.0",
-    "json-bigint-patch": "0.0.9"
-  },
-  "devDependencies": {
-    "@graphql-tools/executor-http": "3.6.2",
-    "@graphql-tools/utils": "^13.2.2"
+    "graphql": "16.14.0"
   }
 }

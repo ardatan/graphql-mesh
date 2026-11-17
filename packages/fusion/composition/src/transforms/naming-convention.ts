@@ -141,12 +141,16 @@ export function createNamingConventionTransform(
       });
     };
   }
+  const fieldRenameMap = new Map<string, string>();
   if (fieldNamesFn || fieldArgumentNamesFn || enumValuesFn || typeNamesFn) {
     schemaMapper[MapperKind.FIELD] = (fieldConfig, fieldName, typeName) => {
       // Keep Connectors HTTP method / baseURL field names intact.
       const newFieldName = CONNECTORS_INPUT_TYPES.has(typeName)
         ? fieldName
         : fieldNamesFn?.(fieldName) || fieldName;
+      if (newFieldName !== fieldName) {
+        fieldRenameMap.set(fieldName, newFieldName);
+      }
       const fieldDirectives = getDirectiveExtensions(fieldConfig);
       const argRenameMap = new Map<string, string>();
       let newArgs: GraphQLFieldConfigArgumentMap | undefined;
@@ -256,7 +260,46 @@ export function createNamingConventionTransform(
       }
     }
     const connectors = schemaUsesConnect(schema);
+    fieldRenameMap.clear();
     let next = mapSchema(schema, schemaMapper);
+    if (fieldRenameMap.size) {
+      next = mapSchema(next, {
+        [MapperKind.ROOT_FIELD]: (fieldConfig, _n, _t, s) => {
+          const fieldDirectives = getDirectiveExtensions(fieldConfig, s);
+          const rewritten = rewriteConnectArgReferences(
+            fieldDirectives,
+            new Map(),
+            fieldRenameMap,
+            undefined,
+          );
+          if (!rewritten || rewritten === fieldDirectives) {
+            return fieldConfig;
+          }
+          return {
+            ...fieldConfig,
+            extensions: { ...(fieldConfig.extensions || {}), directives: rewritten },
+            astNode: undefined,
+          };
+        },
+        [MapperKind.OBJECT_FIELD]: (fieldConfig, _n, _t, s) => {
+          const fieldDirectives = getDirectiveExtensions(fieldConfig, s);
+          const rewritten = rewriteConnectArgReferences(
+            fieldDirectives,
+            new Map(),
+            fieldRenameMap,
+            undefined,
+          );
+          if (!rewritten || rewritten === fieldDirectives) {
+            return fieldConfig;
+          }
+          return {
+            ...fieldConfig,
+            extensions: { ...(fieldConfig.extensions || {}), directives: rewritten },
+            astNode: undefined,
+          };
+        },
+      });
+    }
     if (enumValuesFn && !connectors && !next.getDirective('enum')) {
       const config = next.toConfig();
       next = new GraphQLSchema({

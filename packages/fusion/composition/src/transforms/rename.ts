@@ -278,9 +278,8 @@ export function createRenameTransform(opts: RenameTransformConfig) {
           newArgs[newArgName] = field.args[argName];
         }
       }
-      // Mesh non-connector transforms stamp `@source(name: <pre-rename>)` then rename.
-      // Runtime subgraph args stay on the @source name, so `@protobuf__rpc(args:)` binds
-      // must keep original names (unlike Federation Connectors `$args.*` rewrite).
+      // Connectors + `@protobuf__rpc` skip Mesh `@source`; rewrite directive binds to
+      // the public GraphQL names (same posture as Federation Connectors `$args.*`).
       const rewrittenDirectives = rewriteConnectArgReferences(
         fieldDirectives,
         argRenameMap,
@@ -309,7 +308,58 @@ export function createRenameTransform(opts: RenameTransformConfig) {
       }
       return [newFieldName, withOriginalKeyFallback(field, fieldName, newFieldName)];
     };
-    return mapSchema(schema, schemaMapper);
+    let nextSchema = mapSchema(schema, schemaMapper);
+    // Object/input field renames: rewrite `@protobuf__rpc` args/selection path segments
+    // across the subgraph (Connect-like; no Mesh `@source` fallback).
+    const flatFieldRenames = flattenFieldRenameMap(fieldRenameMap);
+    if (flatFieldRenames.size) {
+      nextSchema = mapSchema(nextSchema, {
+        [MapperKind.ROOT_FIELD]: (field, _n, _t, s) =>
+          applyProtobufFieldRenames(field, flatFieldRenames, s),
+        [MapperKind.OBJECT_FIELD]: (field, _n, _t, s) =>
+          applyProtobufFieldRenames(field, flatFieldRenames, s),
+      });
+    }
+    return nextSchema;
+  };
+}
+
+function flattenFieldRenameMap(
+  fieldRenameMap: Map<string, Map<string, string>>,
+): Map<string, string> {
+  const flat = new Map<string, string>();
+  for (const typeMap of fieldRenameMap.values()) {
+    for (const [from, to] of typeMap) {
+      if (from !== to) {
+        flat.set(from, to);
+      }
+    }
+  }
+  return flat;
+}
+
+function applyProtobufFieldRenames(
+  field: GraphQLFieldConfig<any, any>,
+  flatFieldRenames: Map<string, string>,
+  schema: GraphQLSchema,
+): GraphQLFieldConfig<any, any> {
+  const fieldDirectives = getDirectiveExtensions(field, schema);
+  const rewrittenDirectives = rewriteConnectArgReferences(
+    fieldDirectives,
+    new Map(),
+    flatFieldRenames,
+    undefined,
+  );
+  if (!rewrittenDirectives || rewrittenDirectives === fieldDirectives) {
+    return field;
+  }
+  return {
+    ...field,
+    extensions: {
+      ...(field.extensions || {}),
+      directives: rewrittenDirectives,
+    },
+    astNode: undefined,
   };
 }
 
@@ -470,6 +520,16 @@ export function createRenameFieldTransform(
       fieldExtensions.directives = fieldDirectives;
       return field;
     }
-    return mapSchema(mapSchema(schema, fieldRenameMapper), resolverUpdaterMapper);
+    let nextSchema = mapSchema(mapSchema(schema, fieldRenameMapper), resolverUpdaterMapper);
+    const flatFieldRenames = flattenFieldRenameMap(fieldRenameMap);
+    if (flatFieldRenames.size) {
+      nextSchema = mapSchema(nextSchema, {
+        [MapperKind.ROOT_FIELD]: (field, _n, _t, s) =>
+          applyProtobufFieldRenames(field, flatFieldRenames, s),
+        [MapperKind.OBJECT_FIELD]: (field, _n, _t, s) =>
+          applyProtobufFieldRenames(field, flatFieldRenames, s),
+      });
+    }
+    return nextSchema;
   };
 }

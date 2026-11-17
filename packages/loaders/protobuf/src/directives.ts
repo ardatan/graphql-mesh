@@ -2,7 +2,7 @@ import { DirectiveLocation, GraphQLBoolean, GraphQLDirective, GraphQLString } fr
 
 export const protobufRpcDirective = new GraphQLDirective({
   name: 'protobuf__rpc',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
+  locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
   args: {
     subgraph: {
       type: GraphQLString,
@@ -20,6 +20,9 @@ export const protobufRpcDirective = new GraphQLDirective({
       type: GraphQLString,
     },
     stream: {
+      type: GraphQLBoolean,
+    },
+    entity: {
       type: GraphQLBoolean,
     },
   },

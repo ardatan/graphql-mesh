@@ -127,16 +127,71 @@ export function withOriginalKeyFallback<T extends Record<string, any>>(
 
 /**
  * Rewrite `$args.<name>` (and related) references after GraphQL argument renames
- * for Federation `@connect` and Thrift `@thrift__rpc`. Mesh stitching used
- * `@meshSource(name:)` for this; Connectors / thrift compact mapping bind args by
- * the GraphQL argument name inside path/body/`args`/`selection` strings.
+ * for Federation `@connect`, Thrift `@thrift__rpc`, and Mesh `@protobuf__rpc`.
+ * Mesh stitching used `@meshSource(name:)` for this; Connectors / thrift compact /
+ * protobuf RPC bind args by the GraphQL argument name inside path/body/`args`/
+ * `selection` strings.
  *
  * When `fieldRenameMap` is set, also rewrite selection aliases of the form
  * `newName: oldName` / leading `oldName` field picks so rename/prefix transforms
- * keep Connectors (and thrift compact) selection in sync with GraphQL field names.
+ * keep Connectors (and thrift/protobuf compact) selection in sync with GraphQL field names.
  *
  * When `typeRenameMap` is set, rewrite `__typename: "Old"` / `__typename: $("Old")`
  * in selections so prefix/rename/naming-convention keep polymorphic Connect arms valid.
+ */
+export function rewriteProtobufMappingBinds(
+  mapping: string,
+  renameMap: Map<string, string>,
+): string {
+  if (!mapping || !renameMap.size) {
+    return mapping;
+  }
+  const entries = [...renameMap.entries()].filter(([from, to]) => from && to && from !== to);
+  if (!entries.length) {
+    return mapping;
+  }
+  // Longer names first so `year` does not eat `yearPublished`.
+  entries.sort((a, b) => b[0].length - a[0].length);
+  const lookup = new Map(entries);
+  const names = entries.map(([from]) => escapeRegExp(from)).join('|');
+  let out = mapping;
+  out = out.replace(
+    new RegExp(`\\$(args|this)\\.(${names})(?![\\w])`, 'g'),
+    (_m, scope: string, name: string) => `$${scope}.${lookup.get(name) ?? name}`,
+  );
+  // Path binds after `):` — head + optional `.seg` segments.
+  out = out.replace(
+    new RegExp(
+      `(\\):\\s*)([\\w$]+(?:\\.[\\w$]+)*)(?=\\s*[{]|\\s*$|\\s*[\\n#}])`,
+      'gm',
+    ),
+    (_m, pre: string, path: string) => {
+      const next = path
+        .split('.')
+        .map(seg => lookup.get(seg) ?? seg)
+        .join('.');
+      return `${pre}${next}`;
+    },
+  );
+  return out;
+}
+
+function protobufRpcDirectiveKey(
+  fieldDirectives: Record<string, any[]> | undefined,
+): 'protobuf__rpc' | 'protobufRpc' | undefined {
+  if (fieldDirectives?.protobuf__rpc?.length) {
+    return 'protobuf__rpc';
+  }
+  if (fieldDirectives?.protobufRpc?.length) {
+    return 'protobufRpc';
+  }
+  return undefined;
+}
+
+/**
+ * Rewrite Federation Connectors `@connect`, Thrift `@thrift__rpc`, and Mesh
+ * `@protobuf__rpc` mappings after GraphQL renames. These skip Mesh `@source` /
+ * `@meshSource`; transforms keep directive binds on the public GraphQL names instead.
  */
 export function rewriteConnectArgReferences(
   fieldDirectives: Record<string, any[]> | undefined,
@@ -144,10 +199,11 @@ export function rewriteConnectArgReferences(
   fieldRenameMap?: Map<string, string>,
   typeRenameMap?: Map<string, string>,
 ): Record<string, any[]> | undefined {
+  const protobufKey = protobufRpcDirectiveKey(fieldDirectives);
   const hasConnect = Boolean(fieldDirectives?.connect?.length);
   const hasThriftRpc = Boolean(fieldDirectives?.thrift__rpc?.length);
   if (
-    (!hasConnect && !hasThriftRpc) ||
+    (!hasConnect && !hasThriftRpc && !protobufKey) ||
     (argRenameMap.size === 0 &&
       (!fieldRenameMap || fieldRenameMap.size === 0) &&
       (!typeRenameMap || typeRenameMap.size === 0))
@@ -275,6 +331,36 @@ export function rewriteConnectArgReferences(
       throws: typeof rpcArgs?.throws === 'string' ? rewriteExpr(rpcArgs.throws) : rpcArgs?.throws,
     }));
   }
+  if (protobufKey && (argRenameMap.size > 0 || (fieldRenameMap?.size ?? 0) > 0)) {
+    // Arg renames update request `args:`. Field/input renames update args path
+    // segments and response `selection:` binds. Arg-only renames must not touch
+    // selection (Query arg `year` ≠ Movie field `year`).
+    const argsMap = new Map<string, string>([
+      ...argRenameMap.entries(),
+      ...(fieldRenameMap?.entries() ?? []),
+    ]);
+    const selectionMap = fieldRenameMap?.size ? fieldRenameMap : undefined;
+    let protobufChanged = false;
+    const rewritten = next[protobufKey].map((rpcArgs: any) => {
+      let args = rpcArgs?.args;
+      let selection = rpcArgs?.selection;
+      if (typeof args === 'string' && argsMap.size) {
+        args = rewriteProtobufMappingBinds(args, argsMap);
+      }
+      if (typeof selection === 'string' && selectionMap?.size) {
+        selection = rewriteProtobufMappingBinds(selection, selectionMap);
+      }
+      if (args === rpcArgs?.args && selection === rpcArgs?.selection) {
+        return rpcArgs;
+      }
+      protobufChanged = true;
+      return { ...rpcArgs, args, selection };
+    });
+    if (protobufChanged) {
+      next[protobufKey] = rewritten;
+    }
+  }
   return next;
 }
+
 

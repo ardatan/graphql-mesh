@@ -47,12 +47,17 @@ export function walkToFindTypePath(
   pathWithName: string[],
   baseTypePath: string[],
 ) {
-  const currentWalkingPath = [...pathWithName];
-  while (!lodashHas(rootJson.nested, currentWalkingPath.concat(baseTypePath).join('.nested.'))) {
+  // Reflection / Fully-qualified names often look like `.echo.GreetingRequest`
+  // (`split('.')` → `['', 'echo', …]`). Empty segments break `nested['']` walks.
+  const normalizedBase = baseTypePath.filter(Boolean);
+  const currentWalkingPath = pathWithName.filter(Boolean);
+  while (
+    !lodashHas(rootJson.nested, currentWalkingPath.concat(normalizedBase).join('.nested.'))
+  ) {
     if (!currentWalkingPath.length) {
       break;
     }
     currentWalkingPath.pop();
   }
-  return currentWalkingPath.concat(baseTypePath);
+  return currentWalkingPath.concat(normalizedBase);
 }

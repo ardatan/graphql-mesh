@@ -13,10 +13,11 @@ export function encodeMessage(
   fields: MappingField[],
   args: Record<string, any>,
   localRoot: Record<string, any> = args,
+  thisRoot?: Record<string, any>,
 ): Uint8Array {
   const chunks: Uint8Array[] = [];
   for (const field of fields) {
-    writeField(chunks, field, args, localRoot);
+    writeField(chunks, field, args, localRoot, thisRoot);
   }
   return concat(chunks);
 }
@@ -25,10 +26,13 @@ function resolveFieldValue(
   bind: string | undefined,
   args: Record<string, any>,
   localRoot: Record<string, any>,
+  thisRoot?: Record<string, any>,
 ): any {
   if (bind == null || bind === '') return undefined;
-  if (bind.startsWith('$args')) return resolveBind(bind, args);
-  return resolveBind(bind, localRoot);
+  if (bind.startsWith('$args') || bind.startsWith('$this')) {
+    return resolveBind(bind, args, thisRoot);
+  }
+  return resolveBind(bind, localRoot, thisRoot);
 }
 
 function writeField(
@@ -36,18 +40,19 @@ function writeField(
   field: MappingField,
   args: Record<string, any>,
   localRoot: Record<string, any>,
+  thisRoot?: Record<string, any>,
 ) {
   const type = field.type;
   if (type.kind === 'message') {
     let childRoot = localRoot;
-    if (field.bind != null && !field.bind.startsWith('$args')) {
-      const fromLocal = resolveBind(field.bind, localRoot);
+    if (field.bind != null && !field.bind.startsWith('$args') && !field.bind.startsWith('$this')) {
+      const fromLocal = resolveBind(field.bind, localRoot, thisRoot);
       if (fromLocal != null && typeof fromLocal === 'object') {
         childRoot = fromLocal;
       }
     }
     const nestedFields = field.fields ?? type.fields;
-    const nested = encodeMessage(nestedFields, args, childRoot);
+    const nested = encodeMessage(nestedFields, args, childRoot, thisRoot);
     if (nested.length === 0) return;
     writeTag(chunks, field.id, WIRE_LEN);
     writeVarint(chunks, nested.length);
@@ -56,7 +61,7 @@ function writeField(
   }
 
   if (type.kind === 'repeated') {
-    const list = resolveFieldValue(field.bind, args, localRoot);
+    const list = resolveFieldValue(field.bind, args, localRoot, thisRoot);
     if (!Array.isArray(list)) return;
     const elementType: ProtoType =
       type.element.kind === 'message' && field.fields?.length
@@ -68,7 +73,7 @@ function writeField(
     return;
   }
 
-  const value = resolveFieldValue(field.bind, args, localRoot);
+  const value = resolveFieldValue(field.bind, args, localRoot, thisRoot);
   if (value === undefined || value === null) return;
   writeValue(chunks, field.id, type, value);
 }
@@ -275,7 +280,8 @@ function readValue(
       return { value: new TextDecoder().decode(raw), next: end, raw };
     }
     if (type.kind === 'scalar' && type.name === 'bytes') {
-      return { value: raw, next: end, raw };
+      // graphql-scalars `Byte` validates `Buffer` instances (not bare Uint8Array).
+      return { value: Buffer.from(raw), next: end, raw };
     }
     if (type.kind !== 'message') {
       throw new Error('Expected message type after length-delimited scalar branch');

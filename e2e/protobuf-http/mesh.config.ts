@@ -46,7 +46,7 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadHandProtobufSubgraph('movies', './subgraphs/movies.graphql'),
-      // Prove transforms rewrite `@protobuf__rpc(args:)` binds (no @meshSource / @merge).
+      // Prove transforms rewrite `@protobuf__rpc(args:)` like `@connect` (no @source/@merge).
       transforms: [
         createRenameTransform({
           argRenamer: ({ fieldName, argName }) =>

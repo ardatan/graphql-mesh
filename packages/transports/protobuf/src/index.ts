@@ -1,7 +1,21 @@
-import { GraphQLError, type GraphQLFieldResolver, type GraphQLSchema } from 'graphql';
+import { entitiesResolver } from '@apollo/subgraph';
+import {
+  GraphQLError,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLScalarType,
+  GraphQLUnionType,
+  getNamedType,
+  isObjectType,
+  type GraphQLField,
+  type GraphQLFieldResolver,
+  type GraphQLResolveInfo,
+  type GraphQLSchema,
+} from 'graphql';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-common';
-import { getDirectives, getRootTypes } from '@graphql-tools/utils';
+import { getDirectives } from '@graphql-tools/utils';
 import {
   credentials,
   Metadata,
@@ -25,6 +39,29 @@ import {
 } from './protobuf/dial.js';
 import { parseMapping } from './protobuf/mapping.js';
 import { toGrpcGraphQLError, buildGrpcMetadata } from './utils.js';
+
+type ResolveReferenceFn = (
+  reference: Record<string, any>,
+  context: any,
+  info: GraphQLResolveInfo,
+) => any;
+
+function setTypeResolveReference(type: { extensions?: any; name: string }, resolveReference: ResolveReferenceFn) {
+  const extensions: Record<string, any> = (type.extensions ||= {});
+  const apollo: Record<string, any> = (extensions.apollo ||= {});
+  const subgraph: Record<string, any> = (apollo.subgraph ||= {});
+  subgraph.resolveReference = resolveReference;
+  (type as any).resolveReference = resolveReference;
+}
+
+function getTypeResolveReference(type: { extensions?: any }): ResolveReferenceFn | undefined {
+  const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
+  if (typeof fromExtensions === 'function') {
+    return fromExtensions;
+  }
+  const fromType = (type as any).resolveReference;
+  return typeof fromType === 'function' ? fromType : undefined;
+}
 
 export interface ProtobufTransportOptions {
   requestTimeout?: number;
@@ -97,8 +134,36 @@ export class ProtobufTransportHelper extends DisposableStack {
       ? Object.fromEntries(this.config.channelOptions)
       : this.config.channelOptions;
 
-    for (const type of getRootTypes(schema)) {
+    const queryType = schema.getQueryType();
+    for (const type of Object.values(schema.getTypeMap())) {
+      if (!isObjectType(type) || type.name.startsWith('__')) {
+        continue;
+      }
       const typeName = type.name;
+      // Type-level `@protobuf__rpc` → resolveReference (entity fill / `$this` binds).
+      const typeDirectives = getDirectives(schema, type) || [];
+      for (const directiveObj of typeDirectives) {
+        if (
+          this.subgraphName &&
+          directiveObj.args?.subgraph &&
+          directiveObj.args.subgraph !== this.subgraphName
+        ) {
+          continue;
+        }
+        if (directiveObj.name !== 'protobuf__rpc' && directiveObj.name !== 'protobufRpc') {
+          continue;
+        }
+        const resolver = this.createRpcResolverFromDirectiveArgs(
+          directiveObj.args,
+          location,
+          channelOptions,
+          typeName,
+        );
+        setTypeResolveReference(type, (reference, context, info) =>
+          resolver(reference, {}, context, info),
+        );
+      }
+
       for (const field of Object.values(type.getFields())) {
         const directives = getDirectives(schema, field) || [];
         for (const directiveObj of directives) {
@@ -112,40 +177,71 @@ export class ProtobufTransportHelper extends DisposableStack {
           if (directiveObj.name !== 'protobuf__rpc' && directiveObj.name !== 'protobufRpc') {
             continue;
           }
-          const {
-            service,
-            method,
-            args: argsMapping,
-            selection,
-            stream: isStream,
-          } = directiveObj.args as {
-            service?: string;
-            method: string;
-            args: string;
-            selection: string;
-            stream?: boolean;
-          };
-          const argsFields = parseMapping(argsMapping);
-          const selectionFields = parseMapping(selection);
-          const resolver = this.createRpcResolver({
+          const isEntity = !!(directiveObj.args as { entity?: boolean })?.entity;
+          const resolver = this.createRpcResolverFromDirectiveArgs(
+            directiveObj.args,
             location,
-            service,
-            method,
-            argsFields,
-            selectionFields,
-            isStream: !!isStream,
             channelOptions,
             typeName,
-          });
-          if (typeName === 'Subscription' || isStream) {
+          );
+          // Subscriptions use `subscribe` (async iterable). Query/Mutation server-stream
+          // fields keep `resolve` so the resolver can collect chunks into a list (and
+          // `@stream` can incremental-deliver that iterable).
+          if (typeName === 'Subscription') {
             field.subscribe = resolver;
             field.resolve = (x: any) => x;
           } else {
             field.resolve = resolver;
           }
+          // Query `@protobuf__rpc(entity: true)` → type.resolveReference for Hive `_entities`.
+          if (isEntity && type === queryType && isObjectType(getNamedType(field.type))) {
+            const returnType = getNamedType(field.type) as GraphQLObjectType;
+            if (!getTypeResolveReference(returnType)) {
+              const entityField = field as GraphQLField<any, any>;
+              setTypeResolveReference(returnType, (reference, context, info) => {
+                const args: Record<string, any> = {};
+                for (const arg of entityField.args) {
+                  args[arg.name] = reference?.[arg.name];
+                }
+                return entityField.resolve?.(null, args, context, info);
+              });
+            }
+          }
         }
       }
     }
+    ensureFederationEntitiesField(schema);
+  }
+
+  private createRpcResolverFromDirectiveArgs(
+    directiveArgs: any,
+    location: string,
+    channelOptions: Record<string, string | number> | undefined,
+    typeName: string,
+  ): GraphQLFieldResolver<any, any> {
+    const {
+      service,
+      method,
+      args: argsMapping,
+      selection,
+      stream: isStream,
+    } = directiveArgs as {
+      service?: string;
+      method: string;
+      args: string;
+      selection: string;
+      stream?: boolean;
+    };
+    return this.createRpcResolver({
+      location,
+      service,
+      method,
+      argsFields: parseMapping(argsMapping),
+      selectionFields: parseMapping(selection),
+      isStream: !!isStream,
+      channelOptions,
+      typeName,
+    });
   }
 
   private createRpcResolver({
@@ -181,7 +277,11 @@ export class ProtobufTransportHelper extends DisposableStack {
           'Server streaming protobuf RPCs require a gRPC location (not HTTP Connect/Twirp)',
         );
       }
-      const requestBytes = encodeMessage(argsFields, args ?? {});
+      // Type-level entity resolvers pass the representation as `_root` and empty args;
+      // `$this.*` binds read from that root.
+      const thisRoot =
+        _root != null && typeof _root === 'object' ? (_root as Record<string, any>) : undefined;
+      const requestBytes = encodeMessage(argsFields, args ?? {}, args ?? {}, thisRoot);
       try {
         if (http) {
           const url = resolveHttpUrl(location, service, method);
@@ -215,7 +315,7 @@ export class ProtobufTransportHelper extends DisposableStack {
         // gRPC unary (streaming: use generic client stream — unary first for Subscription via repeated unary not supported; use client streaming API)
         const metadata =
           buildGrpcMetadata(metaData, {
-            root: {},
+            root: thisRoot ?? {},
             args,
             context,
             env: process.env,
@@ -260,6 +360,84 @@ export class ProtobufTransportHelper extends DisposableStack {
       }
     };
   }
+}
+
+function ensureFederationEntitiesField(schema: GraphQLSchema) {
+  const queryType = schema.getQueryType();
+  if (!queryType) {
+    return;
+  }
+  const queryFields = queryType.getFields();
+  const entityTypes = Object.values(schema.getTypeMap()).filter(
+    (t): t is GraphQLObjectType =>
+      isObjectType(t) && !t.name.startsWith('__') && !!getTypeResolveReference(t),
+  );
+  if (!entityTypes.length) {
+    return;
+  }
+
+  const typeMap = schema.getTypeMap() as Record<string, any>;
+  let anyType = typeMap._Any as GraphQLScalarType | undefined;
+  if (!anyType) {
+    anyType = new GraphQLScalarType({
+      name: '_Any',
+      serialize: value => value,
+      parseValue: value => value,
+    });
+    typeMap._Any = anyType;
+  }
+
+  let entityUnion = typeMap._Entity as GraphQLUnionType | undefined;
+  if (!entityUnion) {
+    entityUnion = new GraphQLUnionType({
+      name: '_Entity',
+      types: entityTypes,
+      resolveType(obj) {
+        return obj?.__typename || undefined;
+      },
+    });
+    typeMap._Entity = entityUnion;
+  }
+
+  const entitiesResolve = (
+    _root: unknown,
+    args: { representations?: unknown },
+    context: any,
+    info: GraphQLResolveInfo,
+  ) => {
+    const representations = args?.representations;
+    if (!Array.isArray(representations)) {
+      return [];
+    }
+    return entitiesResolver({ representations, context, info });
+  };
+
+  if (queryFields._entities) {
+    queryFields._entities.resolve = entitiesResolve;
+    return;
+  }
+
+  queryFields._entities = {
+    name: '_entities',
+    description: 'Federation entity resolver for protobuf RPC transport (Hive `_entities` path)',
+    type: new GraphQLNonNull(new GraphQLList(entityUnion)),
+    args: [
+      {
+        name: 'representations',
+        description: undefined,
+        type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
+        defaultValue: undefined,
+        deprecationReason: undefined,
+        extensions: {},
+        astNode: undefined,
+      },
+    ],
+    resolve: entitiesResolve,
+    subscribe: undefined,
+    deprecationReason: undefined,
+    extensions: {},
+    astNode: undefined,
+  } as GraphQLField<any, any>;
 }
 
 function grpcUnary(opts: {
