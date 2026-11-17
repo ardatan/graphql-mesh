@@ -1679,6 +1679,99 @@ describe('rewriteProtobufMappingBindsTypeScoped ownership', () => {
     expect(out).toContain('1(message@Leaf): left');
   });
 
+  it('skips loader # headers so emitResponseSelection @Name defs still rename', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const { emitResponseSelection } = await import('../../../loaders/protobuf/src/emitMapping.js');
+    const schema = buildSchema(
+      /* GraphQL */ `
+        type Leaf {
+          n: Int!
+          year: Int!
+        }
+        type Branch {
+          left: Leaf
+          right: Leaf
+          year: Int!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const rootJson = {
+      nested: {
+        Leaf: {
+          fields: {
+            n: { type: 'int32', id: 1 },
+            year: { type: 'int64', id: 2 },
+          },
+        },
+        Branch: {
+          fields: {
+            left: { type: 'Leaf', id: 1 },
+            right: { type: 'Leaf', id: 2 },
+            year: { type: 'int64', id: 3 },
+          },
+        },
+      },
+    };
+    const mapping = emitResponseSelection(rootJson as any, [], 'Branch');
+    expect(mapping.startsWith('#')).toBe(true);
+    expect(mapping).toMatch(/@Leaf\s*\{/);
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      mapping,
+      new Map([
+        ['Leaf', new Map([['year', 'leafYear']])],
+        ['Branch', new Map([['year', 'branchYear']])],
+      ]),
+      { rootType: schema.getType('Branch')! },
+    );
+    expect(out).toMatch(/@Leaf\s*\{[\s\S]*2\(int64\):\s*leafYear/);
+    expect(out).not.toMatch(/@Leaf\s*\{[\s\S]*2\(int64\):\s*branchYear/);
+    expect(out).toMatch(/3\(int64\):\s*branchYear/);
+  });
+
+  it('resolves message@Name inside inline blocks from the enclosing owner', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(
+      /* GraphQL */ `
+        type Leaf {
+          year: Int!
+        }
+        type Branch {
+          leaf: Leaf
+          year: Int!
+        }
+        type Root {
+          child: Branch
+          year: Int!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    // `message@Leaf: leaf` sits inside `child { … }` — owner must be Branch, not Root.
+    const mapping = `@Leaf {
+  1(int64): year
+}
+1(message): child {
+  1(message@Leaf): leaf
+  2(int64): year
+}
+2(int64): year`;
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      mapping,
+      new Map([
+        ['Leaf', new Map([['year', 'leafYear']])],
+        ['Branch', new Map([['year', 'branchYear']])],
+        ['Root', new Map([['year', 'rootYear']])],
+      ]),
+      { rootType: schema.getType('Root')! },
+    );
+    expect(out).toMatch(/@Leaf\s*\{[\s\S]*1\(int64\):\s*leafYear/);
+    expect(out).not.toMatch(/@Leaf\s*\{[\s\S]*1\(int64\):\s*rootYear/);
+    expect(out).not.toMatch(/@Leaf\s*\{[\s\S]*1\(int64\):\s*branchYear/);
+    expect(out).toMatch(/1\(message\):\s*child\s*\{[\s\S]*2\(int64\):\s*branchYear/);
+    expect(out).toMatch(/2\(int64\):\s*rootYear/);
+  });
+
   it('clears closed-block owners so unbound wrappers inherit the enclosing type', async () => {
     const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
     const schema = buildSchema(

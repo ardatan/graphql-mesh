@@ -478,21 +478,38 @@ type NamedDefRange = {
   bodyDepth: number;
 };
 
+/** Skip whitespace and `# …` comments (loader headers / notes between `@Name` defs). */
+function skipWsAndHashComments(mapping: string, start: number): number {
+  let i = start;
+  while (i < mapping.length) {
+    if (/\s/.test(mapping[i])) {
+      i++;
+      continue;
+    }
+    if (mapping[i] === '#') {
+      while (i < mapping.length && mapping[i] !== '\n') i++;
+      continue;
+    }
+    break;
+  }
+  return i;
+}
+
 /**
  * Leading `@Name { … }` ranges from loader-emitted hoisted message defs.
  * Nested `@` inside a body is ignored (defs only appear at the mapping head).
+ * Skips `#` header comments before/between defs (emitRequestBody / emitResponseSelection).
  */
 function parseNamedDefRanges(mapping: string): NamedDefRange[] {
   const ranges: NamedDefRange[] = [];
-  let i = 0;
-  while (i < mapping.length && /\s/.test(mapping[i])) i++;
+  let i = skipWsAndHashComments(mapping, 0);
   while (i < mapping.length && mapping[i] === '@') {
     i++;
     const nameStart = i;
     while (i < mapping.length && /[A-Za-z0-9_]/.test(mapping[i])) i++;
     const name = mapping.slice(nameStart, i);
     if (!name) break;
-    while (i < mapping.length && /\s/.test(mapping[i])) i++;
+    i = skipWsAndHashComments(mapping, i);
     if (mapping[i] !== '{') break;
     i++;
     const bodyStart = i;
@@ -519,8 +536,10 @@ function parseNamedDefRanges(mapping: string): NamedDefRange[] {
     }
     const bodyEnd = i;
     if (mapping[i] === '}') i++;
-    ranges.push({ name, bodyStart, bodyEnd, bodyDepth: 1 });
-    while (i < mapping.length && /\s/.test(mapping[i])) i++;
+    // Content inside `@Name { … }` sits at brace depth 1 relative to the mapping start
+    // only when no outer braces enclose the def (defs are always at the mapping head).
+    ranges.push({ name, bodyStart, bodyEnd, bodyDepth: braceDepthAt(mapping, bodyStart) });
+    i = skipWsAndHashComments(mapping, i);
   }
   return ranges;
 }
@@ -602,9 +621,27 @@ function typeAtBindPath(
   return cur;
 }
 
+/** `message@Name` in the type clause that ends at the `)` of a `): path` bind. */
+function messageAtNameAtBind(source: string, closeParenOffset: number): string | undefined {
+  let depth = 0;
+  for (let j = closeParenOffset; j >= 0; j--) {
+    const c = source[j];
+    if (c === ')') depth++;
+    else if (c === '(') {
+      depth--;
+      if (depth === 0) {
+        const inside = source.slice(j + 1, closeParenOffset);
+        return /message@([A-Za-z0-9_]+)/.exec(inside)?.[1];
+      }
+    }
+  }
+  return undefined;
+}
+
 /**
  * Map each hoisted `@Name` to the GraphQL type of the message it defines, inferred from
- * `message@Name: path` reference sites (outside or inside other defs).
+ * `message@Name: path` reference sites. Walks binds so refs inside inline `{ … }` blocks
+ * resolve against that block's owner (e.g. `child { message@Leaf: leaf }` → Branch.leaf).
  */
 function collectNamedDefOwners(
   mapping: string,
@@ -615,31 +652,202 @@ function collectNamedDefOwners(
 ): Map<string, GraphQLNamedType> {
   const owners = new Map<string, GraphQLNamedType>();
   if (!ranges.length) return owners;
-  const refRe =
-    /message@([A-Za-z0-9_]+)\s*(?:>)?\s*\)\s*:\s*(\$this(?:\.[\w$]+)*(?:\|\$args(?:\.[\w$]+)*)?|\$args(?:\.[\w$]+)*|[\w$]+(?:\.[\w$]+)*(?:\|[\w$]+(?:\.[\w$]+)*)?)/g;
+  const hasArgTypes = Boolean(options.argTypes?.size);
+  const bindRe =
+    /(\)\s*:\s*)(\$this(?:\.[\w$]+)*(?:\|\$args(?:\.[\w$]+)*)?|\$args(?:\.[\w$]+)*|[\w$]+(?:\.[\w$]+)*(?:\|[\w$]+(?:\.[\w$]+)*)?)(?=[\s{}#]|$)/g;
   let progressed = true;
   while (progressed) {
     progressed = false;
-    refRe.lastIndex = 0;
+    const typeAtDepth: Array<GraphQLNamedType | null | undefined> = [];
+    typeAtDepth[0] = options.rootType ?? null;
+    const altArgTypeAtDepth: Array<GraphQLNamedType | null | undefined> = [];
+    const argsRootAtDepth: Array<boolean | undefined> = [];
+    let scannedTo = 0;
+    bindRe.lastIndex = 0;
     let m: RegExpExecArray | null;
-    while ((m = refRe.exec(mapping))) {
-      const name = m[1];
-      if (owners.has(name)) continue;
-      if (isInsideHashComment(mapping, m.index)) continue;
+    while ((m = bindRe.exec(mapping))) {
       const path = m[2];
-      const enclosing = namedDefAt(m.index, ranges);
-      let base: GraphQLNamedType | null | undefined;
-      if (enclosing) {
-        base = owners.get(enclosing.name);
-        if (!base) continue;
-      } else {
-        base = options.rootType ?? null;
+      const offset = m.index;
+      if (isInsideHashComment(mapping, offset)) continue;
+      clearOwnersClosedBetween(
+        mapping,
+        scannedTo,
+        offset,
+        typeAtDepth,
+        argsRootAtDepth,
+        altArgTypeAtDepth,
+      );
+      scannedTo = offset + m[0].length;
+
+      const depth = braceDepthAt(mapping, offset);
+      let j = offset + m[0].length;
+      while (j < mapping.length) {
+        if (/\s/.test(mapping[j])) {
+          j++;
+          continue;
+        }
+        if (mapping[j] === '#') {
+          while (j < mapping.length && mapping[j] !== '\n') j++;
+          continue;
+        }
+        break;
       }
-      const tip = typeAtBindPath(path, base, options, fieldRenameMap, argRenameLookup, !enclosing);
-      if (tip) {
-        owners.set(name, tip);
-        progressed = true;
+      const entersBlock = mapping[j] === '{';
+
+      const namedCtx = namedDefAt(offset, ranges);
+      const defOwner = namedCtx ? owners.get(namedCtx.name) : undefined;
+      // Inside a named def whose owner is not yet known, skip recording until a later pass.
+      if (namedCtx && defOwner === undefined) {
+        continue;
       }
+      const ownersFallback = defOwner ?? options.rootType;
+      const inheritFloor = namedCtx ? namedCtx.bodyDepth : 0;
+      const pathOwners = resolveOwnersAtDepth(
+        depth,
+        typeAtDepth,
+        altArgTypeAtDepth,
+        ownersFallback,
+        inheritFloor,
+      );
+
+      // Record owner for `message@Name` using the enclosing inline / named-def owner.
+      const msgName = messageAtNameAtBind(mapping, offset);
+      if (msgName && !owners.has(msgName)) {
+        const tip = typeAtBindPath(
+          path,
+          pathOwners.cur,
+          options,
+          fieldRenameMap,
+          argRenameLookup,
+          !namedCtx && depth === 0,
+        );
+        if (tip) {
+          owners.set(msgName, tip);
+          progressed = true;
+        }
+      }
+
+      if (!entersBlock) continue;
+
+      // Same block-owner recording as the rewrite pass so nested refs see inline owners.
+      if (path.startsWith('$this') && path.includes('|$args')) {
+        const dualPipe = path.indexOf('|$args');
+        const thisPath = path.slice(0, dualPipe);
+        const argsPath = path.slice(dualPipe + 1);
+        const thisRest =
+          thisPath === '$this'
+            ? []
+            : thisPath.startsWith('$this.')
+              ? thisPath.slice('$this.'.length).split('.')
+              : [];
+        const argsRest =
+          argsPath === '$args'
+            ? []
+            : argsPath.startsWith('$args.')
+              ? argsPath.slice('$args.'.length).split('.')
+              : [];
+        recordThisBlockOwners(
+          depth,
+          resolveThisPathOwner(
+            thisRest,
+            argsRest,
+            options,
+            fieldRenameMap,
+            argRenameLookup,
+            hasArgTypes,
+          ),
+          typeAtDepth,
+          altArgTypeAtDepth,
+          argsRootAtDepth,
+        );
+        continue;
+      }
+      if (path.startsWith('$args')) {
+        if (!hasArgTypes && !argRenameLookup.size) continue;
+        const rest =
+          path === '$args'
+            ? []
+            : path.startsWith('$args.')
+              ? path.slice('$args.'.length).split('.')
+              : [];
+        let cur: GraphQLNamedType | null | undefined;
+        if (rest.length) {
+          const argHead = argRenameLookup.get(rest[0]) ?? rest[0];
+          cur = resolveArgType(options.argTypes, argHead, rest[0], argRenameLookup);
+          for (let i = 1; i < rest.length; i++) {
+            cur = renameFieldSegment(cur, rest[i], fieldRenameMap).type;
+          }
+        }
+        typeAtDepth[depth + 1] = cur ?? null;
+        altArgTypeAtDepth[depth + 1] = undefined;
+        argsRootAtDepth[depth + 1] = rest.length === 0;
+        continue;
+      }
+      if (path.startsWith('$this')) {
+        const rest =
+          path === '$this'
+            ? []
+            : path.startsWith('$this.')
+              ? path.slice('$this.'.length).split('.')
+              : [];
+        recordThisBlockOwners(
+          depth,
+          resolveThisPathOwner(rest, rest, options, fieldRenameMap, argRenameLookup, hasArgTypes),
+          typeAtDepth,
+          altArgTypeAtDepth,
+          argsRootAtDepth,
+        );
+        continue;
+      }
+
+      if (path.includes('|') && !path.includes('$')) {
+        const pipe = path.indexOf('|');
+        const left = rewriteSegments(
+          path.slice(0, pipe).split('.'),
+          pathOwners.cur,
+          fieldRenameMap,
+        );
+        const right = rewriteSegments(
+          path.slice(pipe + 1).split('.'),
+          pathOwners.altCur != null ? pathOwners.altCur : pathOwners.cur,
+          fieldRenameMap,
+        );
+        typeAtDepth[depth + 1] = left.type ?? null;
+        altArgTypeAtDepth[depth + 1] = pathOwners.altCur != null ? (right.type ?? null) : undefined;
+        argsRootAtDepth[depth + 1] = false;
+        continue;
+      }
+
+      const segments = path.split('.');
+      if (
+        !namedCtx &&
+        (hasArgTypes || argRenameLookup.size) &&
+        (depth === 0 || isArgsRootAtDepth(depth, argsRootAtDepth, typeAtDepth))
+      ) {
+        const argName = segments[0];
+        const publicArg = argRenameLookup.get(argName) ?? argName;
+        let cur = resolveArgType(options.argTypes, publicArg, argName, argRenameLookup);
+        for (let i = 1; i < segments.length; i++) {
+          cur = renameFieldSegment(cur, segments[i], fieldRenameMap).type;
+        }
+        typeAtDepth[depth + 1] = cur ?? null;
+        altArgTypeAtDepth[depth + 1] = undefined;
+        argsRootAtDepth[depth + 1] = false;
+        continue;
+      }
+
+      let cur = pathOwners.cur;
+      let altCur = pathOwners.altCur;
+      const walkAlt = altCur != null;
+      for (const seg of segments) {
+        cur = renameFieldSegment(cur, seg, fieldRenameMap).type;
+        if (walkAlt) {
+          altCur = renameFieldSegment(altCur, seg, fieldRenameMap).type;
+        }
+      }
+      typeAtDepth[depth + 1] = cur ?? null;
+      altArgTypeAtDepth[depth + 1] = walkAlt ? (altCur ?? null) : undefined;
+      argsRootAtDepth[depth + 1] = false;
     }
   }
   return owners;
