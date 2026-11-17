@@ -61,7 +61,7 @@
 "@graphql-mesh/transform-resolvers-composition": minor
 "@graphql-mesh/transform-transfer-schema": minor
 "@graphql-mesh/transform-type-merging": minor
-"@graphql-mesh/transport-grpc": minor
+"@graphql-mesh/transport-protobuf": minor
 "@graphql-mesh/transport-mysql": minor
 "@graphql-mesh/transport-neo4j": minor
 "@graphql-mesh/transport-connect": minor
@@ -71,7 +71,7 @@
 "@graphql-mesh/types": minor
 "@graphql-mesh/urql-exchange": minor
 "@graphql-mesh/utils": minor
-"@omnigraph/grpc": minor
+"@omnigraph/protobuf": minor
 "@omnigraph/json-schema": minor
 "@omnigraph/mysql": minor
 "@omnigraph/neo4j": minor

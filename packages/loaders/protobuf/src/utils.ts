@@ -51,9 +51,7 @@ export function walkToFindTypePath(
   // (`split('.')` → `['', 'echo', …]`). Empty segments break `nested['']` walks.
   const normalizedBase = baseTypePath.filter(Boolean);
   const currentWalkingPath = pathWithName.filter(Boolean);
-  while (
-    !lodashHas(rootJson.nested, currentWalkingPath.concat(normalizedBase).join('.nested.'))
-  ) {
+  while (!lodashHas(rootJson.nested, currentWalkingPath.concat(normalizedBase).join('.nested.'))) {
     if (!currentWalkingPath.length) {
       break;
     }

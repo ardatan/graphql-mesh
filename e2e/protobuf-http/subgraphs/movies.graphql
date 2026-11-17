@@ -20,12 +20,13 @@ directive @protobuf__rpc(
   stream: Boolean
 ) on FIELD_DEFINITION
 
-schema @transport(
-  subgraph: "movies"
-  kind: "protobuf"
-  location: "__LOCATION__"
-  # __TRANSPORT_HEADERS__
-) {
+schema
+  @transport(
+    subgraph: "movies"
+    kind: "protobuf"
+    location: "__LOCATION__"
+    # __TRANSPORT_HEADERS__
+  ) {
   query: Query
 }
 
@@ -35,20 +36,20 @@ type Query {
       service: "Example"
       method: "GetMovies"
       args: """
-        # Encode GraphQL field arguments into the protobuf request message.
-        1(message): input.movie {
-          2(int64): year
-        }
+      # Encode GraphQL field arguments into the protobuf request message.
+      1(message): input.movie {
+        2(int64): year
+      }
       """
       selection: """
-        # Decode the protobuf response message into GraphQL fields.
-        1(repeated message): result {
-          1(string): name
-          2(int64): year
-          3(float): rating
-          4(repeated string): cast
-          6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
-        }
+      # Decode the protobuf response message into GraphQL fields.
+      1(repeated message): result {
+        1(string): name
+        2(int64): year
+        3(float): rating
+        4(repeated string): cast
+        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+      }
       """
     )
 }

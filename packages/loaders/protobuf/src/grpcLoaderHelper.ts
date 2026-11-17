@@ -31,10 +31,7 @@ import {
 import { DisposableStack } from '@whatwg-node/disposablestack';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import { protobufRpcDirective, transportDirective } from './directives.js';
-import {
-  emitRequestBody,
-  emitResponseSelection,
-} from './emitMapping.js';
+import { emitRequestBody, emitResponseSelection } from './emitMapping.js';
 import { addIncludePathResolver, getTypeName, walkToFindTypePath } from './utils.js';
 
 const { Root } = protobufjs;

@@ -37,15 +37,15 @@ const protobufRpcSchema = () =>
             service: "Example"
             method: "GetMovies"
             args: """
-              1(message): input.movie {
-                2(int64): year
-              }
+            1(message): input.movie {
+              2(int64): year
+            }
             """
             selection: """
-              1(repeated message): result {
-                1(string): name
-                2(int64): year
-              }
+            1(repeated message): result {
+              1(string): name
+              2(int64): year
+            }
             """
           )
       }
@@ -117,11 +117,11 @@ describe('protobuf RPC semantic conventions (entity: true)', () => {
               service: "Pets"
               method: "GetPet"
               args: """
-                1(string): id
+              1(string): id
               """
               selection: """
-                1(string): id
-                2(string): name
+              1(string): id
+              2(string): name
               """
             )
         }

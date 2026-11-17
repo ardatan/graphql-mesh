@@ -116,8 +116,7 @@ export const isApolloConnectorsSubgraph = isFederationConnectorsSubgraph;
 export function isProtobufRpcSubgraph(schema: GraphQLSchema): boolean {
   const transports = getDirectiveExtensions(schema)?.transport || [];
   return transports.some(
-    (transport: { kind?: string }) =>
-      transport?.kind === 'protobuf' || transport?.kind === 'grpc',
+    (transport: { kind?: string }) => transport?.kind === 'protobuf' || transport?.kind === 'grpc',
   );
 }
 
@@ -176,8 +175,7 @@ export function getAnnotatedSubgraphs(
     let mergeDirectiveUsed = false;
     // Stitching source is only for subgraphs that do not rewrite directive mappings
     // (Connectors `@connect`, protobuf `@protobuf__rpc`). Those skip Mesh `@source`.
-    const sourceDirectiveUsed =
-      !skipsMeshSourceAnnotations(schema) && transforms?.length > 0;
+    const sourceDirectiveUsed = !skipsMeshSourceAnnotations(schema) && transforms?.length > 0;
     // When Connectors are in the same composition, alias to `@meshSource` so Guild
     // does not treat Mesh + Apollo `@source` as one composed directive.
     const aliasMeshSource = sourceDirectiveUsed && compositionHasConnectors;
@@ -893,12 +891,10 @@ function addAnnotationsForSemanticConventions({
               return;
             }
             if (argName === fieldName) {
-              directiveExtensions[protobufKey] = directiveExtensions[protobufKey].map(
-                (c: any) => ({
-                  ...c,
-                  entity: true,
-                }),
-              );
+              directiveExtensions[protobufKey] = directiveExtensions[protobufKey].map((c: any) => ({
+                ...c,
+                entity: true,
+              }));
               return;
             }
             // Type-level entity RPC: rewrite key arg binds → `$this.<keyField>`.

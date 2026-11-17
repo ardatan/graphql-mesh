@@ -1,8 +1,4 @@
-import {
-  type MappingField,
-  type ProtoType,
-  resolveBind,
-} from './mapping.js';
+import { resolveBind, type MappingField, type ProtoType } from './mapping.js';
 
 const WIRE_VARINT = 0;
 const WIRE_64 = 1;
@@ -78,12 +74,7 @@ function writeField(
   writeValue(chunks, field.id, type, value);
 }
 
-function writeValue(
-  chunks: Uint8Array[],
-  id: number,
-  type: ProtoType,
-  value: any,
-) {
+function writeValue(chunks: Uint8Array[], id: number, type: ProtoType, value: any) {
   if (type.kind === 'scalar') {
     switch (type.name) {
       case 'bool':
@@ -150,7 +141,7 @@ function writeValue(
     const num =
       typeof value === 'number'
         ? value
-        : type.values[String(value)] ?? type.values[String(value).toUpperCase()];
+        : (type.values[String(value)] ?? type.values[String(value).toUpperCase()]);
     if (num == null) {
       throw new Error(`Unknown enum value ${value}`);
     }
@@ -184,10 +175,7 @@ function writeValue(
   }
 }
 
-export function decodeMessage(
-  fields: MappingField[],
-  data: Uint8Array,
-): Record<string, any> {
+export function decodeMessage(fields: MappingField[], data: Uint8Array): Record<string, any> {
   const byId = new Map(fields.map(f => [f.id, f]));
   const out: Record<string, any> = {};
   // Absent repeated/map fields are empty collections in protobuf wire format.
@@ -211,7 +199,11 @@ export function decodeMessage(
     let typeForRead: ProtoType = field.type;
     if (field.type.kind === 'message' && field.fields?.length) {
       typeForRead = { kind: 'message', fields: field.fields };
-    } else if (field.type.kind === 'repeated' && field.type.element.kind === 'message' && field.fields?.length) {
+    } else if (
+      field.type.kind === 'repeated' &&
+      field.type.element.kind === 'message' &&
+      field.fields?.length
+    ) {
       typeForRead = {
         kind: 'repeated',
         element: { kind: 'message', fields: field.fields },
@@ -238,7 +230,11 @@ export function decodeMessage(
       const name = Object.entries(field.type.values).find(([, n]) => n === out[key])?.[0];
       if (name) out[key] = name;
     }
-    if (field.type.kind === 'repeated' && field.type.element.kind === 'enum' && Array.isArray(out[key])) {
+    if (
+      field.type.kind === 'repeated' &&
+      field.type.element.kind === 'enum' &&
+      Array.isArray(out[key])
+    ) {
       const enumValues = field.type.element.values;
       out[key] = out[key].map((n: any) => {
         if (typeof n !== 'number') return n;
@@ -272,7 +268,10 @@ function readValue(
     );
     return { value: entry, next: end, raw };
   }
-  if (type.kind === 'message' || (type.kind === 'scalar' && (type.name === 'string' || type.name === 'bytes'))) {
+  if (
+    type.kind === 'message' ||
+    (type.kind === 'scalar' && (type.name === 'string' || type.name === 'bytes'))
+  ) {
     const len = readVarint(data, i);
     const end = len.next + Number(len.value);
     const raw = data.subarray(len.next, end);
@@ -359,10 +358,7 @@ function writeVarint(chunks: Uint8Array[], value: number | bigint) {
   chunks.push(Uint8Array.from(out));
 }
 
-function readVarint(
-  data: Uint8Array,
-  i: number,
-): { value: bigint; next: number } {
+function readVarint(data: Uint8Array, i: number): { value: bigint; next: number } {
   let result = 0n;
   let shift = 0n;
   let pos = i;

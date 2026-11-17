@@ -47,7 +47,9 @@ function asNumber(value: unknown): number | undefined {
 }
 
 /** OR-match across provided movie filter fields (same posture as grpc-example mock). */
-export function filterMovies(movieFilter: Record<string, unknown> | undefined | null): MovieRecord[] {
+export function filterMovies(
+  movieFilter: Record<string, unknown> | undefined | null,
+): MovieRecord[] {
   const filter = movieFilter ?? {};
   return Movies.filter(movie => {
     for (const [key, value] of Object.entries(filter)) {

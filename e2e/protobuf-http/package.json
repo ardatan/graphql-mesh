@@ -2,6 +2,9 @@
   "name": "@e2e/protobuf-http",
   "type": "module",
   "private": true,
+  "scripts": {
+    "generate": "protoc -I proto --plugin=protoc-gen-es=$(yarn bin protoc-gen-es) --es_out=services/connect/gen --es_opt=target=ts --plugin=protoc-gen-ts=$(yarn bin protoc-gen-ts) --plugin=protoc-gen-twirp_ts=$(yarn bin protoc-gen-twirp_ts) --ts_out=services/twirp/gen --twirp_ts_out=services/twirp/gen proto/movies.proto && node ./scripts/fix-twirp-gen.mjs"
+  },
   "dependencies": {
     "@bufbuild/protobuf": "2.17.0",
     "@connectrpc/connect": "2.3.0",
@@ -19,8 +22,5 @@
     "@protobuf-ts/plugin": "2.11.1",
     "@protobuf-ts/runtime": "2.11.1",
     "@protobuf-ts/runtime-rpc": "2.11.1"
-  },
-  "scripts": {
-    "generate": "protoc -I proto --plugin=protoc-gen-es=$(yarn bin protoc-gen-es) --es_out=services/connect/gen --es_opt=target=ts --plugin=protoc-gen-ts=$(yarn bin protoc-gen-ts) --plugin=protoc-gen-twirp_ts=$(yarn bin protoc-gen-twirp_ts) --ts_out=services/twirp/gen --twirp_ts_out=services/twirp/gen proto/movies.proto && node ./scripts/fix-twirp-gen.mjs"
   }
 }

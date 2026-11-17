@@ -78,11 +78,7 @@ function normalizeScalar(t: string): string {
   return t;
 }
 
-function scalarOrEnum(
-  rootJson: INamespace,
-  pathWithName: string[],
-  t: string,
-): string {
+function scalarOrEnum(rootJson: INamespace, pathWithName: string[], t: string): string {
   if (isScalar(t)) return normalizeScalar(t);
   const typePath = walkToFindTypePath(rootJson, pathWithName, t.split('.'));
   let cur: any = rootJson;
@@ -107,15 +103,13 @@ export function emitFieldsMapping(
     cur = cur?.nested?.[p];
   }
   const fields = cur?.fields as
-    | Record<string, { type?: string; id?: number; rule?: string; keyType?: string }>
-    | undefined;
+    Record<string, { type?: string; id?: number; rule?: string; keyType?: string }> | undefined;
   if (!fields) return '';
   const lines: string[] = [];
   for (const [fieldName, field] of Object.entries(fields)) {
     const id = field.id ?? 0;
     const token = protoTypeToken(rootJson, pathWithName, field);
-    const bind =
-      bindMode === 'prefix' && bindPrefix ? `${bindPrefix}.${fieldName}` : fieldName;
+    const bind = bindMode === 'prefix' && bindPrefix ? `${bindPrefix}.${fieldName}` : fieldName;
     if (token === 'message' || token === 'repeated message') {
       const nestedType = field.type!;
       const nested = emitFieldsMapping(
@@ -144,14 +138,7 @@ export function emitRequestBody(
   pathWithName: string[],
   requestType: string,
 ): string {
-  const inner = emitFieldsMapping(
-    rootJson,
-    pathWithName,
-    requestType,
-    'prefix',
-    'input',
-    '  ',
-  );
+  const inner = emitFieldsMapping(rootJson, pathWithName, requestType, 'prefix', 'input', '  ');
   const header = [
     '# Encode GraphQL field arguments into the protobuf request message.',
     '# Each line is fieldId(protoType): graphqlPath (relative to this field args).',
@@ -167,14 +154,7 @@ export function emitResponseSelection(
   pathWithName: string[],
   responseType: string,
 ): string {
-  const inner = emitFieldsMapping(
-    rootJson,
-    pathWithName,
-    responseType,
-    'relative',
-    '',
-    '  ',
-  );
+  const inner = emitFieldsMapping(rootJson, pathWithName, responseType, 'relative', '', '  ');
   const header = [
     '# Decode the protobuf response message into GraphQL fields.',
     '# Each line is fieldId(protoType): graphqlFieldName.',

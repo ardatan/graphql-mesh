@@ -14,9 +14,7 @@ const opts = Opts(process.argv);
 const style = process.env.PROTOBUF_HTTP_STYLE === 'twirp' ? 'twirp' : 'connect';
 const servicePort = opts.getServicePort(style);
 const location =
-  style === 'twirp'
-    ? `http://localhost:${servicePort}/twirp`
-    : `http://localhost:${servicePort}`;
+  style === 'twirp' ? `http://localhost:${servicePort}/twirp` : `http://localhost:${servicePort}`;
 
 function loadHandProtobufSubgraph(name: string, relativeSdlPath: string) {
   return () => {

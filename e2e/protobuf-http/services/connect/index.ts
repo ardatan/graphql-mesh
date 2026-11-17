@@ -1,7 +1,7 @@
 import { createServer } from 'node:http';
+import { create } from '@bufbuild/protobuf';
 import type { ConnectRouter } from '@connectrpc/connect';
 import { connectNodeAdapter } from '@connectrpc/connect-node';
-import { create } from '@bufbuild/protobuf';
 import { Opts } from '@e2e/opts';
 import { filterMovies } from '../shared-movies.js';
 import { Example, Genre, MovieSchema, MoviesResultSchema } from './gen/movies_pb.js';

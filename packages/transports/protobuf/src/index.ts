@@ -1,35 +1,35 @@
-import { entitiesResolver } from '@apollo/subgraph';
 import {
+  getNamedType,
   GraphQLError,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
-  getNamedType,
   isObjectType,
   type GraphQLField,
   type GraphQLFieldResolver,
   type GraphQLResolveInfo,
   type GraphQLSchema,
 } from 'graphql';
+import { entitiesResolver } from '@apollo/subgraph';
+import type { Logger } from '@graphql-hive/logger';
+import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-common';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { getDirectives } from '@graphql-tools/utils';
 import {
   credentials,
+  makeGenericClientConstructor,
   Metadata,
   type ChannelCredentials,
   type ChannelOptions,
 } from '@grpc/grpc-js';
-import { makeGenericClientConstructor } from '@grpc/grpc-js';
 import { DisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
-import { fs, path, process } from '@graphql-mesh/cross-helpers';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
-import type { Logger } from '@graphql-hive/logger';
-import type { MeshFetch } from '@graphql-mesh/types';
-import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import { decodeMessage, encodeMessage } from './protobuf/codec.js';
 import {
   buildRpcPath,
@@ -38,7 +38,7 @@ import {
   resolveHttpUrl,
 } from './protobuf/dial.js';
 import { parseMapping } from './protobuf/mapping.js';
-import { toGrpcGraphQLError, buildGrpcMetadata } from './utils.js';
+import { buildGrpcMetadata, toGrpcGraphQLError } from './utils.js';
 
 type ResolveReferenceFn = (
   reference: Record<string, any>,
@@ -46,7 +46,10 @@ type ResolveReferenceFn = (
   info: GraphQLResolveInfo,
 ) => any;
 
-function setTypeResolveReference(type: { extensions?: any; name: string }, resolveReference: ResolveReferenceFn) {
+function setTypeResolveReference(
+  type: { extensions?: any; name: string },
+  resolveReference: ResolveReferenceFn,
+) {
   const extensions: Record<string, any> = (type.extensions ||= {});
   const apollo: Record<string, any> = (extensions.apollo ||= {});
   const subgraph: Record<string, any> = (apollo.subgraph ||= {});

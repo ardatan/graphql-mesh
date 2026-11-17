@@ -2,20 +2,23 @@
 // @generated from file movies.proto (syntax proto3)
 /* eslint-disable */
 
-import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { Message } from "@bufbuild/protobuf";
+import type { Message } from '@bufbuild/protobuf';
+import type { GenEnum, GenFile, GenMessage, GenService } from '@bufbuild/protobuf/codegenv2';
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from '@bufbuild/protobuf/codegenv2';
 
 /**
  * Describes the file movies.proto.
  */
-export const file_movies: GenFile = /*@__PURE__*/
-  fileDesc("Cgxtb3ZpZXMucHJvdG8iWAoFTW92aWUSDAoEbmFtZRgBIAEoCRIMCgR5ZWFyGAIgASgDEg4KBnJhdGluZxgDIAEoAhIMCgRjYXN0GAQgAygJEhUKBWdlbnJlGAYgASgOMgYuR2VucmUiJQoMTW92aWVSZXF1ZXN0EhUKBW1vdmllGAEgASgLMgYuTW92aWUiJgoMTW92aWVzUmVzdWx0EhYKBnJlc3VsdBgBIAMoCzIGLk1vdmllKi8KBUdlbnJlEg8KC1VOU1BFQ0lGSUVEEAASCgoGQUNUSU9OEAESCQoFRFJBTUEQAjI2CgdFeGFtcGxlEisKCUdldE1vdmllcxINLk1vdmllUmVxdWVzdBoNLk1vdmllc1Jlc3VsdCIAYgZwcm90bzM");
+export const file_movies: GenFile =
+  /*@__PURE__*/
+  fileDesc(
+    'Cgxtb3ZpZXMucHJvdG8iWAoFTW92aWUSDAoEbmFtZRgBIAEoCRIMCgR5ZWFyGAIgASgDEg4KBnJhdGluZxgDIAEoAhIMCgRjYXN0GAQgAygJEhUKBWdlbnJlGAYgASgOMgYuR2VucmUiJQoMTW92aWVSZXF1ZXN0EhUKBW1vdmllGAEgASgLMgYuTW92aWUiJgoMTW92aWVzUmVzdWx0EhYKBnJlc3VsdBgBIAMoCzIGLk1vdmllKi8KBUdlbnJlEg8KC1VOU1BFQ0lGSUVEEAASCgoGQUNUSU9OEAESCQoFRFJBTUEQAjI2CgdFeGFtcGxlEisKCUdldE1vdmllcxINLk1vdmllUmVxdWVzdBoNLk1vdmllc1Jlc3VsdCIAYgZwcm90bzM',
+  );
 
 /**
  * @generated from message Movie
  */
-export type Movie = Message<"Movie"> & {
+export type Movie = Message<'Movie'> & {
   /**
    * @generated from field: string name = 1;
    */
@@ -46,13 +49,12 @@ export type Movie = Message<"Movie"> & {
  * Describes the message Movie.
  * Use `create(MovieSchema)` to create a new message.
  */
-export const MovieSchema: GenMessage<Movie> = /*@__PURE__*/
-  messageDesc(file_movies, 0);
+export const MovieSchema: GenMessage<Movie> = /*@__PURE__*/ messageDesc(file_movies, 0);
 
 /**
  * @generated from message MovieRequest
  */
-export type MovieRequest = Message<"MovieRequest"> & {
+export type MovieRequest = Message<'MovieRequest'> & {
   /**
    * @generated from field: Movie movie = 1;
    */
@@ -63,13 +65,14 @@ export type MovieRequest = Message<"MovieRequest"> & {
  * Describes the message MovieRequest.
  * Use `create(MovieRequestSchema)` to create a new message.
  */
-export const MovieRequestSchema: GenMessage<MovieRequest> = /*@__PURE__*/
+export const MovieRequestSchema: GenMessage<MovieRequest> =
+  /*@__PURE__*/
   messageDesc(file_movies, 1);
 
 /**
  * @generated from message MoviesResult
  */
-export type MoviesResult = Message<"MoviesResult"> & {
+export type MoviesResult = Message<'MoviesResult'> & {
   /**
    * @generated from field: repeated Movie result = 1;
    */
@@ -80,7 +83,8 @@ export type MoviesResult = Message<"MoviesResult"> & {
  * Describes the message MoviesResult.
  * Use `create(MoviesResultSchema)` to create a new message.
  */
-export const MoviesResultSchema: GenMessage<MoviesResult> = /*@__PURE__*/
+export const MoviesResultSchema: GenMessage<MoviesResult> =
+  /*@__PURE__*/
   messageDesc(file_movies, 2);
 
 /**
@@ -106,8 +110,7 @@ export enum Genre {
 /**
  * Describes the enum Genre.
  */
-export const GenreSchema: GenEnum<Genre> = /*@__PURE__*/
-  enumDesc(file_movies, 0);
+export const GenreSchema: GenEnum<Genre> = /*@__PURE__*/ enumDesc(file_movies, 0);
 
 /**
  * @generated from service Example
@@ -117,10 +120,8 @@ export const Example: GenService<{
    * @generated from rpc Example.GetMovies
    */
   getMovies: {
-    methodKind: "unary";
+    methodKind: 'unary';
     input: typeof MovieRequestSchema;
     output: typeof MoviesResultSchema;
-  },
-}> = /*@__PURE__*/
-  serviceDesc(file_movies, 0);
-
+  };
+}> = /*@__PURE__*/ serviceDesc(file_movies, 0);

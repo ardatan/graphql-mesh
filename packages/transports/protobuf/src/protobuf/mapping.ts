@@ -41,10 +41,7 @@ export function parseMapping(source: string): MappingField[] {
   return parseFieldList(s, 0).fields;
 }
 
-function parseFieldList(
-  source: string,
-  start: number,
-): { fields: MappingField[]; end: number } {
+function parseFieldList(source: string, start: number): { fields: MappingField[]; end: number } {
   const fields: MappingField[] = [];
   let i = skipWs(source, start);
   while (i < source.length && source[i] !== '}') {
@@ -55,10 +52,7 @@ function parseFieldList(
   return { fields, end: i };
 }
 
-function parseField(
-  source: string,
-  start: number,
-): { field: MappingField; end: number } {
+function parseField(source: string, start: number): { field: MappingField; end: number } {
   let i = skipWs(source, start);
   const idStart = i;
   while (i < source.length && /[0-9]/.test(source[i])) i++;
@@ -124,9 +118,7 @@ function parseField(
     const baseType = typeParsed.type;
     const messageType: ProtoType = { kind: 'message', fields: nested.fields };
     const type: ProtoType =
-      baseType.kind === 'repeated'
-        ? { kind: 'repeated', element: messageType }
-        : messageType;
+      baseType.kind === 'repeated' ? { kind: 'repeated', element: messageType } : messageType;
     return {
       field: {
         id,
@@ -149,10 +141,7 @@ function parseField(
   };
 }
 
-function parseType(
-  source: string,
-  start: number,
-): { type: ProtoType; end: number } {
+function parseType(source: string, start: number): { type: ProtoType; end: number } {
   let i = skipWs(source, start);
   if (source.startsWith('repeated', i)) {
     i = skipWs(source, i + 'repeated'.length);
