@@ -1,14 +1,15 @@
 import { Opts } from '@e2e/opts';
 import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import { createRenameFieldTransform, defineConfig } from '@graphql-mesh/compose-cli';
-import { loadGrpcSubgraph } from '@omnigraph/grpc';
+import { loadProtobufSubgraph } from '@omnigraph/protobuf';
 
 const opts = Opts(process.argv);
 
 export const composeConfig = defineConfig({
   subgraphs: [
     {
-      sourceHandler: loadGrpcSubgraph('Pets', {
+      sourceHandler: loadProtobufSubgraph('Pets', {
+        type: 'grpc',
         endpoint: 'localhost:' + opts.getServicePort('Pets'),
         source: './services/Pets/pets.proto', // only needed when not running reflection
       }),
@@ -17,7 +18,8 @@ export const composeConfig = defineConfig({
       ],
     },
     {
-      sourceHandler: loadGrpcSubgraph('Stores', {
+      sourceHandler: loadProtobufSubgraph('Stores', {
+        type: 'grpc',
         endpoint: 'localhost:' + opts.getServicePort('Stores'),
         source: './services/Stores/pet-store.proto', // only needed when not running reflection
       }),

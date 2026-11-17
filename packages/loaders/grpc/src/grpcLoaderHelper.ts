@@ -513,7 +513,7 @@ export class GrpcLoaderHelper extends DisposableStack {
             : this.schemaComposer.Mutation;
         }
         const serviceName = pathWithName.join('.') || objPath;
-        const body = method.requestType
+        const argsMapping = method.requestType
           ? emitRequestBody(rootJson, pathWithName, method.requestType)
           : '';
         const selection = method.responseType
@@ -525,7 +525,7 @@ export class GrpcLoaderHelper extends DisposableStack {
             subgraph: this.subgraphName,
             service: serviceName,
             method: methodName,
-            body,
+            args: argsMapping,
             selection,
             stream: !!method.responseStream,
           },

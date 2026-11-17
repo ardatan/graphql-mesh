@@ -13,7 +13,7 @@ import type {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { loadGrpcSubgraph } from '@omnigraph/grpc';
+import { loadProtobufSubgraph } from '@omnigraph/protobuf';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export default class GrpcHandler implements MeshHandler {
@@ -63,7 +63,7 @@ export default class GrpcHandler implements MeshHandler {
     }
     return this.schemaWithAnnotationsProxy.getWithSet(
       () =>
-        loadGrpcSubgraph(this.sourceName, this.config)({ cwd: this.baseDir, log: this.log })
+        loadProtobufSubgraph(this.sourceName, this.config)({ cwd: this.baseDir, log: this.log })
           .schema$,
     );
   }

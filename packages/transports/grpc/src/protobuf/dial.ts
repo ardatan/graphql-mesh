@@ -1,3 +1,7 @@
+import type { GraphQLResolveInfo } from 'graphql';
+import type { MeshFetch } from '@graphql-mesh/types';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
+
 export function isHttpLocation(location: string): boolean {
   return /^https?:\/\//i.test(location);
 }
@@ -22,16 +26,25 @@ export async function httpProtobufUnary(opts: {
   body: Uint8Array;
   headers?: Record<string, string>;
   signal?: AbortSignal;
+  fetchFn?: MeshFetch;
+  context?: any;
+  info?: GraphQLResolveInfo;
 }): Promise<Uint8Array> {
-  const res = await fetch(opts.url, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/proto',
-      ...opts.headers,
+  const fetchFn = opts.fetchFn || defaultFetch;
+  const res = await fetchFn(
+    opts.url,
+    {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/proto',
+        ...opts.headers,
+      },
+      body: opts.body as any,
+      signal: opts.signal,
     },
-    body: opts.body as any,
-    signal: opts.signal,
-  });
+    opts.context,
+    opts.info as any,
+  );
   if (!res.ok) {
     const text = await res.text().catch(() => '');
     throw new Error(`Protobuf HTTP ${res.status}: ${text || res.statusText}`);

@@ -14,6 +14,8 @@ import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import type { Logger } from '@graphql-hive/logger';
+import type { MeshFetch } from '@graphql-mesh/types';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import { decodeMessage, encodeMessage } from './protobuf/codec.js';
 import {
   buildRpcPath,
@@ -41,11 +43,11 @@ export interface ProtobufTransportOptions {
   headers?: Record<string, string> | [string, string][];
 }
 
-/** @deprecated use ProtobufTransportOptions */
 export type gRPCTransportOptions = ProtobufTransportOptions;
 
 export class ProtobufTransportHelper extends DisposableStack {
   private channelCreds: ChannelCredentials | undefined;
+  private fetchFn: MeshFetch = defaultFetch;
 
   constructor(
     private subgraphName: string,
@@ -55,6 +57,10 @@ export class ProtobufTransportHelper extends DisposableStack {
     private config: ProtobufTransportOptions,
   ) {
     super();
+  }
+
+  setFetch(fetchFn: MeshFetch | undefined) {
+    this.fetchFn = fetchFn || defaultFetch;
   }
 
   getCredentials(): MaybePromise<ChannelCredentials> {
@@ -111,23 +117,23 @@ export class ProtobufTransportHelper extends DisposableStack {
           const {
             service,
             method,
-            body,
+            args: argsMapping,
             selection,
             stream: isStream,
           } = directiveObj.args as {
             service?: string;
             method: string;
-            body: string;
+            args: string;
             selection: string;
             stream?: boolean;
           };
-          const bodyFields = parseMapping(body);
+          const argsFields = parseMapping(argsMapping);
           const selectionFields = parseMapping(selection);
           const resolver = this.createRpcResolver({
             location,
             service,
             method,
-            bodyFields,
+            argsFields,
             selectionFields,
             isStream: !!isStream,
             channelOptions,
@@ -148,7 +154,7 @@ export class ProtobufTransportHelper extends DisposableStack {
     location,
     service,
     method,
-    bodyFields,
+    argsFields,
     selectionFields,
     isStream,
     channelOptions,
@@ -157,7 +163,7 @@ export class ProtobufTransportHelper extends DisposableStack {
     location: string;
     service?: string;
     method: string;
-    bodyFields: ReturnType<typeof parseMapping>;
+    argsFields: ReturnType<typeof parseMapping>;
     selectionFields: ReturnType<typeof parseMapping>;
     isStream: boolean;
     channelOptions?: Record<string, string | number>;
@@ -169,14 +175,15 @@ export class ProtobufTransportHelper extends DisposableStack {
     const creds = this.channelCreds ?? credentials.createInsecure();
     const http = isHttpLocation(location);
     const rpcPath = buildRpcPath(service, method);
+    const transportFetch = this.fetchFn;
 
-    return async function protobufRpcResolver(_root, args, context) {
+    return async function protobufRpcResolver(_root, args, context, info) {
       if (isStream && http) {
         throw new GraphQLError(
           'Server streaming protobuf RPCs require a gRPC location (not HTTP Connect/Twirp)',
         );
       }
-      const requestBytes = encodeMessage(bodyFields, args ?? {});
+      const requestBytes = encodeMessage(argsFields, args ?? {});
       try {
         if (http) {
           const url = resolveHttpUrl(location, service, method);
@@ -194,11 +201,15 @@ export class ProtobufTransportHelper extends DisposableStack {
             }
           }
           const ctrl = timeout ? AbortSignal.timeout(timeout) : undefined;
+          const fetchFn: MeshFetch = context?.fetch || transportFetch || defaultFetch;
           const responseBytes = await httpProtobufUnary({
             url,
             body: requestBytes,
             headers,
             signal: ctrl,
+            fetchFn,
+            context,
+            info,
           });
           return decodeMessage(selectionFields, responseBytes);
         }
@@ -338,7 +349,7 @@ async function* grpcServerStream(opts: {
 }
 
 const transport: Transport<ProtobufTransportOptions> = {
-  getSubgraphExecutor({ transportEntry, subgraph, cwd, log }) {
+  getSubgraphExecutor({ transportEntry, subgraph, cwd, log, fetch }) {
     const helper = new ProtobufTransportHelper(
       transportEntry.subgraph,
       cwd,
@@ -346,8 +357,12 @@ const transport: Transport<ProtobufTransportOptions> = {
       transportEntry.location,
       transportEntry.options || {},
     );
+    helper.setFetch(fetch);
     return handleMaybePromise(
-      () => (isHttpLocation(transportEntry.location) ? credentials.createInsecure() : helper.getCredentials()),
+      () =>
+        isHttpLocation(transportEntry.location)
+          ? credentials.createInsecure()
+          : helper.getCredentials(),
       creds => {
         helper.processDirectives({ schema: subgraph, creds });
         const executor = createDefaultExecutor(subgraph);

@@ -1,5 +1,5 @@
 {
-  "name": "@omnigraph/grpc",
+  "name": "@omnigraph/protobuf",
   "version": "0.3.2",
   "type": "module",
   "repository": {

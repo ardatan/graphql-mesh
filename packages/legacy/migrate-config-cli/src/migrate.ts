@@ -423,9 +423,9 @@ const handlerInfoMap: Record<
     importName: 'loadGraphQLHTTPSubgraph',
   },
   grpc: {
-    packageName: '@omnigraph/grpc',
+    packageName: '@omnigraph/protobuf',
     oldPackageName: '@graphql-mesh/grpc',
-    importName: 'loadGRPCSubgraph',
+    importName: 'loadProtobufSubgraph',
   },
   jsonSchema: {
     packageName: '@omnigraph/json-schema',

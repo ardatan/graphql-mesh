@@ -1,7 +1,7 @@
 import { Opts } from '@e2e/opts';
 import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
-import { loadGrpcSubgraph } from '@omnigraph/grpc';
+import { loadProtobufSubgraph } from '@omnigraph/protobuf';
 
 const opts = Opts(process.argv);
 
@@ -18,7 +18,8 @@ const reflectionToken = process.env.GRPC_REFLECTION_TOKEN;
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
-      sourceHandler: loadGrpcSubgraph('Echo', {
+      sourceHandler: loadProtobufSubgraph('Echo', {
+        type: 'grpc',
         endpoint: 'localhost:' + opts.getServicePort('Echo'),
         // No `source` — schema is loaded via gRPC reflection
         requestTimeout,

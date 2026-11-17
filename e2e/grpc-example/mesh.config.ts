@@ -4,14 +4,15 @@ import {
   createNamingConventionTransform,
   defineConfig as defineComposeConfig,
 } from '@graphql-mesh/compose-cli';
-import { loadGrpcSubgraph } from '@omnigraph/grpc';
+import { loadProtobufSubgraph } from '@omnigraph/protobuf';
 
 const opts = Opts(process.argv);
 
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
-      sourceHandler: loadGrpcSubgraph('movies', {
+      sourceHandler: loadProtobufSubgraph('movies', {
+        type: 'grpc',
         endpoint: 'localhost:' + opts.getServicePort('movies'),
         metaData: {
           someKey: 'someValue',

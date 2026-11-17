@@ -20,7 +20,7 @@ type Query {
     @protobuf__rpc(
       service: "Example"
       method: "GetMovies"
-      body: """
+      args: """
         1(message): input.movie {
           2(int64): year
         }

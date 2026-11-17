@@ -1,14 +1,16 @@
 ---
 '@graphql-mesh/transport-protobuf': major
-'@omnigraph/grpc': major
+'@omnigraph/protobuf': major
 '@graphql-mesh/grpc': major
 ---
 
-Breaking: gRPC author surface replaced by generic protobuf transport.
+Breaking: gRPC author/loader surface replaced by generic protobuf RPC.
 
-- `@transport(kind: "protobuf")` (package `@graphql-mesh/transport-protobuf`; was `kind: "grpc"` / `transport-grpc`)
-- Field binding via `@protobuf__rpc(service, method, body, selection, stream)` with **id + protobuf type** mapping strings (no embedded `roots` / descriptors on `@transport`)
-- Removed `@grpcMethod`, `@grpcConnectivityState`, `@enum` stamps, and synthetic connectivity fields
-- gRPC loader still reads `.proto` / reflection at emit time and writes typed `body`/`selection`; dial is inferred from `location` (`host:port` → gRPC, `https://` → HTTP Connect/Twirp-style `application/proto`)
+- Loader package `@omnigraph/protobuf` with `loadProtobufSubgraph(..., { type: 'grpc' })` (same `.proto` parse; Connect/Twirp emit can follow)
+- Transport `@graphql-mesh/transport-protobuf`, `kind: "protobuf"`
+- `@protobuf__rpc(service, method, args, selection, stream)` — `args` matches `@thrift__rpc(args:)` (not Connectors `body`)
+- No `roots` / descriptors on `@transport`; typed id+proto-type mapping strings
+- Removed `@grpcMethod`, `@grpcConnectivityState`, `@enum` stamps, connectivity fields
+- HTTP dial (Connect/Twirp-style) uses Mesh `fetch` (`context.fetch` / transport `fetch` / `@whatwg-node/fetch`), not bare global fetch
 
-Hand-authored Connect/Twirp SDL examples: `packages/loaders/grpc/examples/movies-connect.graphql`, `movies-twirp.graphql`.
+Hand SDL examples: `packages/loaders/grpc/examples/movies-connect.graphql`, `movies-twirp.graphql`.

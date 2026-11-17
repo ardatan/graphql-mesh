@@ -13,7 +13,7 @@ export const protobufRpcDirective = new GraphQLDirective({
     method: {
       type: GraphQLString,
     },
-    body: {
+    args: {
       type: GraphQLString,
     },
     selection: {
@@ -22,28 +22,6 @@ export const protobufRpcDirective = new GraphQLDirective({
     stream: {
       type: GraphQLBoolean,
     },
-  },
-});
-
-/** @deprecated removed — use @protobuf__rpc */
-export const grpcMethodDirective = protobufRpcDirective;
-
-/** Connectivity removed from protobuf author surface */
-export const grpcConnectivityStateDirective = new GraphQLDirective({
-  name: 'grpcConnectivityState',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    subgraph: { type: GraphQLString },
-  },
-});
-
-/** @deprecated enum stamps removed — numbers live in mapping dialect */
-export const EnumDirective = new GraphQLDirective({
-  name: 'enum',
-  locations: [DirectiveLocation.ENUM_VALUE],
-  args: {
-    subgraph: { type: GraphQLString },
-    value: { type: GraphQLString },
   },
 });
 

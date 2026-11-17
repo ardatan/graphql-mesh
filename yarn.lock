@@ -5192,7 +5192,7 @@ __metadata:
     "@grpc/grpc-js": "npm:^1.14.5"
     "@grpc/proto-loader": "npm:^0.8.1"
     "@grpc/reflection": "npm:^1.0.4"
-    "@omnigraph/grpc": "workspace:*"
+    "@omnigraph/protobuf": "workspace:*"
     graphql: "npm:16.14.0"
   languageName: unknown
   linkType: soft
@@ -5207,7 +5207,7 @@ __metadata:
     "@grpc/grpc-js": "npm:^1.14.5"
     "@grpc/proto-loader": "npm:^0.8.1"
     "@grpc/reflection": "npm:^1.0.4"
-    "@omnigraph/grpc": "workspace:*"
+    "@omnigraph/protobuf": "workspace:*"
     graphql: "npm:16.14.0"
   languageName: unknown
   linkType: soft
@@ -5223,7 +5223,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^13.2.2"
     "@grpc/grpc-js": "npm:^1.14.5"
     "@grpc/proto-loader": "npm:^0.8.1"
-    "@omnigraph/grpc": "workspace:*"
+    "@omnigraph/protobuf": "workspace:*"
     graphql: "npm:16.14.0"
     json-bigint-patch: "npm:0.0.9"
   languageName: unknown
@@ -8805,7 +8805,7 @@ __metadata:
     "@graphql-mesh/transport-protobuf": "npm:^0.7.2"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
-    "@omnigraph/grpc": "npm:^0.3.2"
+    "@omnigraph/protobuf": "npm:^0.3.2"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
     "@whatwg-node/promise-helpers": "npm:^2.0.2"
     graphql: "npm:16.14.0"
@@ -9985,6 +9985,7 @@ __metadata:
     "@grpc/grpc-js": "npm:^1.14.5"
     "@grpc/proto-loader": "npm:^0.8.1"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
+    "@whatwg-node/fetch": "npm:^0.12.1"
     "@whatwg-node/promise-helpers": "npm:^2.0.2"
     graphql: "npm:16.14.0"
     graphql-scalars: "npm:^2.0.1"
@@ -13938,31 +13939,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@omnigraph/grpc@npm:^0.3.2, @omnigraph/grpc@workspace:*, @omnigraph/grpc@workspace:packages/loaders/grpc":
-  version: 0.0.0-use.local
-  resolution: "@omnigraph/grpc@workspace:packages/loaders/grpc"
-  dependencies:
-    "@ardatan/grpc-reflection-js": "npm:^0.0.2"
-    "@graphql-hive/logger": "npm:^1.1.1"
-    "@graphql-mesh/cross-helpers": "npm:^0.4.18"
-    "@graphql-mesh/string-interpolation": "npm:^0.5.18"
-    "@graphql-mesh/transport-common": "npm:^1.1.2"
-    "@graphql-mesh/utils": "npm:^0.107.3"
-    "@graphql-tools/load-files": "npm:^8.0.9"
-    "@graphql-tools/utils": "npm:^13.2.2"
-    "@grpc/grpc-js": "npm:^1.14.5"
-    "@whatwg-node/disposablestack": "npm:^0.1.0"
-    graphql: "npm:16.14.0"
-    graphql-compose: "npm:^9.3.0"
-    graphql-scalars: "npm:^2.0.1"
-    lodash.has: "npm:^4.5.2"
-    micromatch: "npm:^4.0.8"
-    protobufjs: "npm:^8.8.1"
-  peerDependencies:
-    graphql: ^16.0.0 || ^17.0.0
-  languageName: unknown
-  linkType: soft
-
 "@omnigraph/json-schema@npm:0.112.6, @omnigraph/json-schema@npm:^0.112.6, @omnigraph/json-schema@workspace:*, @omnigraph/json-schema@workspace:^, @omnigraph/json-schema@workspace:packages/loaders/json-schema":
   version: 0.0.0-use.local
   resolution: "@omnigraph/json-schema@workspace:packages/loaders/json-schema"
@@ -14096,6 +14072,31 @@ __metadata:
     json-machete: "npm:^0.97.8"
     openapi-types: "npm:^12.1.0"
     tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^16.0.0 || ^17.0.0
+  languageName: unknown
+  linkType: soft
+
+"@omnigraph/protobuf@npm:^0.3.2, @omnigraph/protobuf@workspace:*, @omnigraph/protobuf@workspace:packages/loaders/grpc":
+  version: 0.0.0-use.local
+  resolution: "@omnigraph/protobuf@workspace:packages/loaders/grpc"
+  dependencies:
+    "@ardatan/grpc-reflection-js": "npm:^0.0.2"
+    "@graphql-hive/logger": "npm:^1.1.1"
+    "@graphql-mesh/cross-helpers": "npm:^0.4.18"
+    "@graphql-mesh/string-interpolation": "npm:^0.5.18"
+    "@graphql-mesh/transport-common": "npm:^1.1.2"
+    "@graphql-mesh/utils": "npm:^0.107.3"
+    "@graphql-tools/load-files": "npm:^8.0.9"
+    "@graphql-tools/utils": "npm:^13.2.2"
+    "@grpc/grpc-js": "npm:^1.14.5"
+    "@whatwg-node/disposablestack": "npm:^0.1.0"
+    graphql: "npm:16.14.0"
+    graphql-compose: "npm:^9.3.0"
+    graphql-scalars: "npm:^2.0.1"
+    lodash.has: "npm:^4.5.2"
+    micromatch: "npm:^4.0.8"
+    protobufjs: "npm:^8.8.1"
   peerDependencies:
     graphql: ^16.0.0 || ^17.0.0
   languageName: unknown
