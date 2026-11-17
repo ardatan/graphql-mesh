@@ -29,7 +29,6 @@ import type {
   ThriftDocument,
 } from '@creditkarma/thrift-parser';
 import { parse, SyntaxType } from '@creditkarma/thrift-parser';
-import type { IMethodAnnotations, IThriftAnnotations } from '@creditkarma/thrift-server-core';
 import { TType } from '@creditkarma/thrift-server-core';
 import { Logger } from '@graphql-hive/logger';
 import { path } from '@graphql-mesh/cross-helpers';
@@ -88,8 +87,10 @@ export interface GraphQLThriftLoaderOptions {
   importFn?: ImportFn;
 }
 
+/** @deprecated Kept for dual-read of legacy SDL only; loader no longer emits it. */
 export const FieldTypeMapScalar = new GraphQLScalarType({ name: 'FieldTypeMap' });
 
+/** @deprecated Kept for dual-read of legacy SDL only; loader no longer emits it. */
 export const fieldTypeMapDirective = new GraphQLDirective({
   name: 'fieldTypeMap',
   locations: [DirectiveLocation.FIELD_DEFINITION],
@@ -253,12 +254,6 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   const inputTypeMap = new Map<string, GraphQLInputType>();
   const exceptionTypeMap = new Map<string, GraphQLObjectType>();
   const rootFields: GraphQLFieldConfigMap<any, any> = {};
-  const annotations: IThriftAnnotations = {};
-  const methodAnnotations: IMethodAnnotations = {};
-  const methodNames: string[] = [];
-  const methodParameters: {
-    [methodName: string]: number;
-  } = {};
   const topTypeMap: TypeMap = {};
   const entityMethodSet = new Set(entityMethods);
   const emitConnect = protocol === 'json';
@@ -291,6 +286,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               ),
             }),
           );
+          // Thrift enums are i32 on the wire — register so ref resolve / wire tokens agree.
+          topTypeMap[typeName] = { type: TType.I32 };
           break;
         case SyntaxType.StructDefinition:
         case SyntaxType.ExceptionDefinition: {
@@ -510,18 +507,10 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                 extensions: {
                   directives: {
                     thrift__rpc: thriftRpcArgs,
-                    // Migration: keep fieldTypeMap so existing thrift transport still executes.
-                    fieldTypeMap: {
-                      subgraph: subgraphName,
-                      fieldTypeMap,
-                    },
                   },
                 },
               };
             }
-            methodNames.push(fnName);
-            methodAnnotations[fnName] = { annotations: {}, fieldAnnotations: {} };
-            methodParameters[fnName] = fn.fields.length + 1;
           }
           break;
         case SyntaxType.TypedefDefinition: {
@@ -547,8 +536,6 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     name: 'Query',
     fields: rootFields,
   });
-
-  const effectiveServiceName = serviceName || idlServiceName || subgraphName;
 
   if (emitConnect) {
     const headerEntries = Object.entries(headers).map(([name, value]) => ({ name, value }));
@@ -584,16 +571,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     location,
     // Match shared `@transport(headers: [[String]])` / HTTP+OData loaders.
     headers: Object.entries(headers),
+    // Slim transport: wire layout lives in `@thrift__rpc(args/selection)`.
     options: {
       protocol,
-      clientAnnotations: {
-        serviceName: effectiveServiceName,
-        annotations,
-        methodNames,
-        methodAnnotations,
-        methodParameters,
-      },
-      topTypeMap,
     },
   };
 
@@ -603,7 +583,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   const schema = new GraphQLSchema({
     query: queryObjectType,
     types: [ThriftMessageTypeEnum, ...exceptionTypeMap.values()],
-    directives: [fieldTypeMapDirective, thriftRpcDirective],
+    directives: [thriftRpcDirective],
     extensions: {
       directives: {
         transport: graphQLThriftAnnotations,
@@ -648,6 +628,7 @@ function getGraphQLFunctionType({
     case SyntaxType.StringKeyword:
       inputType = GraphQLString;
       outputType = GraphQLString;
+      typeVal = { type: TType.STRING };
       break;
     case SyntaxType.DoubleKeyword:
       inputType = GraphQLFloat;
@@ -749,6 +730,9 @@ function getGraphQLFunctionType({
         const enumType = enumTypeMap.get(typeName)!;
         inputType = enumType;
         outputType = enumType;
+        // Enums are i32 on the wire (also registered in topTypeMap).
+        typeVal = { type: TType.I32 };
+        break;
       }
       if (inputTypeMap.has(typeName)) {
         inputType = inputTypeMap.get(typeName)!;

@@ -1102,20 +1102,27 @@ function evalConnectorsLitExpr(expr: string, root: any, extras: ConnectSelection
   } catch {
     /* continue */
   }
-  if (trimmed.startsWith('$(')) {
-    const closed = findBalancedParenClose(trimmed, 1);
-    if (closed > 0) {
-      return evalConnectorsDollarParen(trimmed.slice(2, closed), root, extras);
-    }
-  }
-  if (trimmed.startsWith('$') || trimmed.includes('->')) {
-    return evalPath(trimmed, root, extras);
-  }
+  // Parse containers before path/`->` so `$([$args.ids->size])` does not send
+  // the whole array fragment through evalPath (which rejects `size]`).
   if (trimmed.startsWith('[')) {
     return evalConnectorsLitArray(trimmed, root, extras);
   }
   if (trimmed.startsWith('{')) {
     return evalConnectorsLitObject(trimmed, root, extras);
+  }
+  if (trimmed.startsWith('$(')) {
+    const closed = findBalancedParenClose(trimmed, 1);
+    if (closed > 0) {
+      // Only unwrap `$()` when it is the whole fragment; otherwise keep chains
+      // like `$([$args.ids]->size)` for evalPath.
+      if (closed === trimmed.length - 1) {
+        return evalConnectorsDollarParen(trimmed.slice(2, closed), root, extras);
+      }
+      return evalPath(trimmed, root, extras);
+    }
+  }
+  if (trimmed.startsWith('$') || trimmed.includes('->')) {
+    return evalPath(trimmed, root, extras);
   }
   if (/^-?\d+(\.\d+)?$/.test(trimmed)) return Number(trimmed);
   if (trimmed === 'true') return true;

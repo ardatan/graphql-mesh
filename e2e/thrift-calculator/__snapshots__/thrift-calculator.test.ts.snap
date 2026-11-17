@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`binary (@thrift__rpc) composes schema with @thrift__rpc 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@fieldTypeMap", "@thrift__rpc", "@transport"]) @transport(subgraph: "calculator", kind: "thrift", location: "http://localhost:<calculator_port>/thrift", headers: [], options: {protocol: "binary", clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@thrift__rpc", "@transport"]) @transport(subgraph: "calculator", kind: "thrift", location: "http://localhost:<calculator_port>/thrift", headers: [], options: {protocol: "binary"}) {
   query: Query
 }
 
@@ -38,11 +38,7 @@ enum join__Graph {
   CALCULATOR @join__graph(name: "calculator", url: "http://localhost:<calculator_port>/thrift")
 }
 
-directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) repeatable on FIELD_DEFINITION
-
 directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
-
-scalar FieldTypeMap @join__type(graph: CALCULATOR)
 
 type Query @join__type(graph: CALCULATOR) {
   """
@@ -54,7 +50,7 @@ type Query @join__type(graph: CALCULATOR) {
     - 1 = request (struct)
   success wire type: i32 (result field id 0)
   """
-  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "calculator", function: "add", args: "1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "$(i32)", messageType: CALL, service: "Calculator") @fieldTypeMap(subgraph: "calculator", fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
+  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "calculator", function: "add", args: "1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "$(i32)", messageType: CALL, service: "Calculator")
   """
   Thrift binary RPC
   service: Calculator
@@ -65,7 +61,7 @@ type Query @join__type(graph: CALCULATOR) {
     - 2 = right (i32)
   success wire type: i32 (result field id 0)
   """
-  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "calculator", function: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: CALL, service: "Calculator") @fieldTypeMap(subgraph: "calculator", fieldTypeMap: {left: {type: 8, id: 1}, right: {type: 8, id: 2}})
+  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "calculator", function: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: CALL, service: "Calculator")
 }
 
 enum ThriftMessageType @join__type(graph: CALCULATOR) {

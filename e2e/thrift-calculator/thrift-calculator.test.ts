@@ -31,7 +31,9 @@ describe('binary (@thrift__rpc)', () => {
     expect(result).toMatch(/function:\s*"add"/);
     expect(result).toMatch(/1\(struct\):\s*\$args\.request/);
     expect(result).toMatch(/\$\(i32\)/);
-    expect(result).toMatch(/@fieldTypeMap\(/);
+    expect(result).not.toMatch(/@fieldTypeMap\(/);
+    expect(result).not.toMatch(/topTypeMap/);
+    expect(result).not.toMatch(/clientAnnotations/);
   });
 
   it('executes add on hive', async () => {

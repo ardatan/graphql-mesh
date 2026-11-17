@@ -36,13 +36,20 @@ export interface GraphQLThriftAnnotations {
   options: {
     /** Wire protocol for the Thrift HTTP client. Defaults to binary. */
     protocol?: ThriftProtocolType;
-    clientAnnotations: {
+    /**
+     * @deprecated Legacy schemas only. New emit keeps transport slim; layout lives in
+     * `@thrift__rpc(args/selection)`.
+     */
+    clientAnnotations?: {
       serviceName: string;
       annotations: IThriftAnnotations;
       methodNames: string[];
       methodAnnotations: IMethodAnnotations;
       methodParameters: Record<string, number>;
     };
-    topTypeMap: TypeMap;
+    /**
+     * @deprecated Legacy schemas only (`@fieldTypeMap` + refs).
+     */
+    topTypeMap?: TypeMap;
   };
 }

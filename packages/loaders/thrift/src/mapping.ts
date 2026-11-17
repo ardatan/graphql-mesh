@@ -16,6 +16,7 @@ const WIRE_TYPE_TOKEN: Partial<Record<TType, string>> = {
   [TType.SET]: 'set',
   [TType.MAP]: 'map',
   [TType.VOID]: 'void',
+  [TType.ENUM]: 'i32',
 };
 
 /** TJSONProtocol type tags used inside typed field wrappers. */
@@ -31,13 +32,15 @@ const TJSON_TYPE_TAG: Partial<Record<TType, string>> = {
   [TType.LIST]: 'lst',
   [TType.SET]: 'set',
   [TType.MAP]: 'map',
+  [TType.ENUM]: 'i32',
 };
 
 export function wireTypeToken(typeVal: TypeVal, topTypeMap: TypeMap): string {
   if (typeVal.type === 'ref') {
     const resolved = topTypeMap[typeVal.name];
     if (!resolved) {
-      return 'struct';
+      // Align with resolveTypeVal: unresolved ref (enum/typedef) -> i32.
+      return 'i32';
     }
     return wireTypeToken(resolved, topTypeMap);
   }
@@ -52,7 +55,7 @@ export function wireTypeToken(typeVal: TypeVal, topTypeMap: TypeMap): string {
   if (typeVal.type === TType.MAP) {
     return `map<${wireTypeToken(typeVal.keyType, topTypeMap)}, ${wireTypeToken(typeVal.valType, topTypeMap)}>`;
   }
-  return WIRE_TYPE_TOKEN[typeVal.type] || 'struct';
+  return WIRE_TYPE_TOKEN[typeVal.type] || 'i32';
 }
 
 function resolveTypeVal(
@@ -66,7 +69,7 @@ function resolveTypeVal(
     }
     const resolved = topTypeMap[typeVal.name];
     if (!resolved) {
-      // Unknown typedef/import — treat as i32 (common scalar typedef fallback).
+      // Unknown typedef/import/enum — treat as i32 (common scalar typedef fallback).
       return { type: TType.I32, id: typeVal.id };
     }
     const next = new Set(stack);
@@ -78,7 +81,7 @@ function resolveTypeVal(
 
 function tjsonTypeTag(typeVal: TypeVal, topTypeMap: TypeMap): string {
   const resolved = resolveTypeVal(typeVal, topTypeMap);
-  return TJSON_TYPE_TAG[resolved.type as TType] || 'rec';
+  return TJSON_TYPE_TAG[resolved.type as TType] || 'i32';
 }
 
 function indent(level: number): string {
@@ -87,13 +90,6 @@ function indent(level: number): string {
 
 /**
  * Compact `@thrift__rpc(args:)` — Thrift-id first.
- * Example:
- * ```
- * 1(struct): $args.request {
- *   1(i32): left
- *   2(i32): right
- * }
- * ```
  */
 export function buildCompactArgs(
   fieldTypeMap: TypeMap,
@@ -121,18 +117,16 @@ function formatCompactArgField(
   const resolved = resolveTypeVal(typeVal, topTypeMap);
   const token = wireTypeToken(typeVal, topTypeMap);
   const pad = indent(level);
+  const rhs = level === 0 ? valueExpr : graphqlName.startsWith('$') ? graphqlName : valueExpr;
 
   if (resolved.type === TType.STRUCT) {
     const structName = resolved.name || graphqlName;
     if (seenStructs.has(structName)) {
-      // Recursive struct — emit shell only (avoid infinite expansion).
       return [`${pad}${id}(struct): ${level === 0 ? valueExpr : graphqlName}`];
     }
     const nextSeen = new Set(seenStructs);
     nextSeen.add(structName);
-    const lines = [
-      `${pad}${id}(struct): ${graphqlName.startsWith('$') ? graphqlName : valueExpr} {`,
-    ];
+    const lines = [`${pad}${id}(struct): ${rhs} {`];
     for (const [fieldName, fieldType] of Object.entries(resolved.fields)) {
       lines.push(
         ...formatCompactArgField(fieldType, fieldName, topTypeMap, level + 1, fieldName, nextSeen),
@@ -150,17 +144,29 @@ function formatCompactArgField(
       TypeVal,
       { type: TType.STRUCT }
     >;
-    const lines = [`${pad}${id}(list): ${graphqlName.startsWith('$') ? valueExpr : graphqlName} {`];
-    for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
-      lines.push(...formatCompactArgField(fieldType, fieldName, topTypeMap, level + 1, fieldName));
+    const elemName = elem.name || 'Anon';
+    const nextSeen = new Set(seenStructs);
+    nextSeen.add(elemName);
+    const lines = [`${pad}${id}(list): ${rhs} {`];
+    if (!seenStructs.has(elemName)) {
+      for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
+        lines.push(
+          ...formatCompactArgField(
+            fieldType,
+            fieldName,
+            topTypeMap,
+            level + 1,
+            fieldName,
+            nextSeen,
+          ),
+        );
+      }
     }
     lines.push(`${pad}}`);
     return lines;
   }
 
-  // For root args use `$args.name`; nested struct fields use bare GraphQL field names.
-  const rhs = level === 0 ? valueExpr : graphqlName;
-  return [`${pad}${id}(${token}): ${rhs}`];
+  return [`${pad}${id}(${token}): ${level === 0 ? valueExpr : graphqlName}`];
 }
 
 /**
@@ -221,9 +227,16 @@ function formatCompactSelectionField(
       TypeVal,
       { type: TType.STRUCT }
     >;
+    const elemName = elem.name || 'Anon';
+    const nextSeen = new Set(seenStructs);
+    nextSeen.add(elemName);
     const lines = [`${pad}${graphqlName}: ${id}(list) {`];
-    for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
-      lines.push(...formatCompactSelectionField(fieldName, fieldType, topTypeMap, level + 1));
+    if (!seenStructs.has(elemName)) {
+      for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
+        lines.push(
+          ...formatCompactSelectionField(fieldName, fieldType, topTypeMap, level + 1, nextSeen),
+        );
+      }
     }
     lines.push(`${pad}}`);
     return lines;
@@ -282,7 +295,6 @@ export const TJSON_ERRORS = {
 
 /**
  * TJSON `@connect(http.body:)` — Apollo `$([…])` list literal with `$args` embeds.
- * Message: `[version, method, CALL=1, seqId, argsStruct]`.
  */
 export function buildTJSONConnectBody(
   methodName: string,
@@ -338,10 +350,10 @@ function formatTJSONValueExpr(
   }
 
   if (resolved.type === TType.LIST || resolved.type === TType.SET) {
-    // Homogeneous containers: emit type tag + value path; runtime must send TJSON `[type,count,…elems]`.
-    // For scalar lists, wrap as `{ "lst"|"set": [elemTag, $valueExpr->size, ...$valueExpr] }` is not
-    // portable in all Connectors parsers — keep a typed wrapper around the GraphQL list and document.
     const elemTag = tjsonTypeTag(resolved.elementType, topTypeMap);
+    // Mesh `$()` accepts `...$path` spreads. Struct elements stay GraphQL-shaped here;
+    // id-tagged TJSON rec conversion for list<Struct> args is a follow-up (needs
+    // Connectors-capable per-element mapping). Scalar lists are correct for Mesh.
     return `{ "${tag}": $([ "${elemTag}", ${valueExpr}->size, ...${valueExpr} ]) }`;
   }
 
@@ -365,6 +377,27 @@ export function buildTJSONConnectSelection(
     return '$->get(4)';
   }
   const resolved = resolveTypeVal(returnTypeVal, topTypeMap);
+  if (resolved.type === TType.LIST || resolved.type === TType.SET) {
+    const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
+    const elemResolved = resolveTypeVal(
+      (resolved as Extract<TypeVal, { type: TType.LIST | TType.SET }>).elementType,
+      topTypeMap,
+    );
+    const base = `$->get(4)->get("0")->get("${tag}")->slice(2)`;
+    if (elemResolved.type === TType.STRUCT) {
+      const nested = Object.entries(elemResolved.fields)
+        .map(([fieldName, fieldType]) =>
+          formatTJSONSelectionField(fieldName, fieldType, topTypeMap, '$'),
+        )
+        .join('\n  ');
+      return `${base} {\n  ${nested}\n}`;
+    }
+    return base;
+  }
+  if (resolved.type === TType.MAP) {
+    const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
+    return `$->get(4)->get("0")->get("${tag}")->get(3)`;
+  }
   if (resolved.type !== TType.STRUCT) {
     const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
     return `$->get(4)->get("0")->get("${tag}")`;
@@ -380,6 +413,7 @@ function formatTJSONSelectionField(
   typeVal: TypeVal,
   topTypeMap: TypeMap,
   parentPath: string,
+  seenStructs: Set<string> = new Set(),
 ): string {
   const id = String(typeVal.id ?? 1);
   const resolved = resolveTypeVal(typeVal, topTypeMap);
@@ -387,17 +421,39 @@ function formatTJSONSelectionField(
   const fieldPath = `${parentPath}->get("${id}")`;
 
   if (resolved.type === TType.STRUCT) {
+    const structName = resolved.name || graphqlName;
+    if (seenStructs.has(structName)) {
+      return `${graphqlName}: ${fieldPath}->get("rec")`;
+    }
+    const nextSeen = new Set(seenStructs);
+    nextSeen.add(structName);
+    // Inside a Connectors sub-selection, `$` is the parent value — use relative paths.
     const nested = Object.entries(resolved.fields)
       .map(([childName, childType]) =>
-        formatTJSONSelectionField(childName, childType, topTypeMap, `${fieldPath}->get("rec")`),
+        formatTJSONSelectionField(childName, childType, topTypeMap, '$', nextSeen),
       )
       .join('\n  ');
     return `${graphqlName}: ${fieldPath}->get("rec") {\n  ${nested}\n}`;
   }
 
   if (resolved.type === TType.LIST || resolved.type === TType.SET) {
-    // TJSON list/set: [elemType, count, ...elems] — skip prefix with ->slice(2)
-    return `${graphqlName}: ${fieldPath}->get("${tag}")->slice(2)`;
+    const elemResolved = resolveTypeVal(resolved.elementType, topTypeMap);
+    const listPath = `${fieldPath}->get("${tag}")->slice(2)`;
+    if (elemResolved.type === TType.STRUCT) {
+      const elemName = elemResolved.name || graphqlName;
+      if (seenStructs.has(elemName)) {
+        return `${graphqlName}: ${listPath}`;
+      }
+      const nextSeen = new Set(seenStructs);
+      nextSeen.add(elemName);
+      const nested = Object.entries(elemResolved.fields)
+        .map(([childName, childType]) =>
+          formatTJSONSelectionField(childName, childType, topTypeMap, '$', nextSeen),
+        )
+        .join('\n  ');
+      return `${graphqlName}: ${listPath} {\n  ${nested}\n}`;
+    }
+    return `${graphqlName}: ${listPath}`;
   }
 
   if (resolved.type === TType.MAP) {
