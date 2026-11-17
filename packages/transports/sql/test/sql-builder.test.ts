@@ -27,12 +27,13 @@ describe('buildSelect', () => {
       table: 'albums',
       kind: 'ROWS',
       selection,
-      whereMapping: parseSqlMapping(`
-        filter: $args.filter
-        orderBy: $args.orderBy
-        limit: $args.limit
-        offset: $args.offset
-      `),
+      whereMapping: parseSqlMapping(''),
+      planners: {
+        filter: '$args.filter',
+        orderBy: '$args.orderBy',
+        limit: '$args.limit',
+        offset: '$args.offset',
+      },
       graphqlArgs: {
         filter: { title: { startsWith: 'For' } },
         orderBy: ['TITLE_ASC'],

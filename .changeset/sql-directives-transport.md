@@ -54,7 +54,8 @@ recompose and update client queries.
 
 ## What else changed
 
-- `@sql` uses `where` / `set` / `selection` (not a catch-all `args` bag)
+- `@sql` uses `where` (predicates) / `filter` / `orderBy` / `limit` / `offset` /
+  `first` / `after` / `set` / `selection` (not a catch-all `args` bag)
 - Fusion rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql`
 
 - Type-level `@sql` on OBJECT (Connectors-style `$this` keys) wires `resolveReference` + Hive

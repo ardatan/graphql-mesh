@@ -1,6 +1,6 @@
 import DataLoader from 'dataloader';
 import { resolveMappingValue } from './mapping.js';
-import { buildSelectByColumnIn, mapRowToGraphql } from './sql-builder.js';
+import { buildSelectByColumnIn, mapRowToGraphql, type SqlPlanners } from './sql-builder.js';
 import type { ParsedSqlMapping, SqlClient, SqlQueryKind } from './types.js';
 
 const LOADERS = Symbol.for('mesh.sql.loaders');
@@ -66,6 +66,7 @@ export interface BatchSelectOpts {
   kind: 'ROW' | 'ROWS';
   selection: ParsedSqlMapping;
   whereMapping: ParsedSqlMapping;
+  planners?: SqlPlanners;
   column: string;
   graphqlArgs?: Record<string, any>;
 }
@@ -101,6 +102,7 @@ export function loadBatchedByColumn(
           kind: 'ROWS' as SqlQueryKind,
           selection: opts.selection,
           whereMapping: opts.whereMapping,
+          planners: opts.planners,
           graphqlArgs: opts.graphqlArgs || {},
           column: opts.column,
           values: unique,

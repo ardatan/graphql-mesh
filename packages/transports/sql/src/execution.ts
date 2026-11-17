@@ -21,6 +21,7 @@ import {
   mapRowToGraphqlWithJoins,
   nestedSelection,
   parseSqlDirectiveMappings,
+  type SqlPlanners,
 } from './sql-builder.js';
 import type {
   ParsedSqlMapping,
@@ -97,12 +98,13 @@ async function runSqlSelect(
     kind: SqlQueryKind;
     selection: ParsedSqlMapping;
     whereMapping: ParsedSqlMapping;
+    planners?: SqlPlanners;
     graphqlArgs: Record<string, any>;
     parent: any;
     context: any;
   },
 ) {
-  const { table, kind, selection, whereMapping, graphqlArgs, parent, context } = opts;
+  const { table, kind, selection, whereMapping, planners, graphqlArgs, parent, context } = opts;
   const fullSelection = kind === 'CONNECTION' ? connectionNodeSelection(selection) : selection;
 
   // Never run a ROW with unresolved equality binders (would pick an arbitrary row).
@@ -133,6 +135,7 @@ async function runSqlSelect(
             kind,
             selection: selectSelection,
             whereMapping,
+            planners,
             column,
             graphqlArgs,
           },
@@ -147,6 +150,7 @@ async function runSqlSelect(
     kind,
     selection: selectSelection,
     whereMapping,
+    planners,
     graphqlArgs,
     parent,
     joins,
@@ -185,6 +189,7 @@ async function runSqlSelect(
         kind: 'COUNT',
         selection: selectSelection,
         whereMapping,
+        planners,
         graphqlArgs,
         parent,
       });
@@ -254,10 +259,16 @@ export async function getSqlExecutor({
           case 'sql': {
             const table = directive.args.table as string;
             const kind = (directive.args.kind || 'ROWS') as SqlKind;
-            const { whereMapping, setMapping, selection } = parseSqlDirectiveMappings({
+            const { whereMapping, setMapping, selection, planners } = parseSqlDirectiveMappings({
               where: directive.args.where as string | undefined,
               set: directive.args.set as string | undefined,
               selection: directive.args.selection as string | undefined,
+              filter: directive.args.filter as string | undefined,
+              orderBy: directive.args.orderBy as string | undefined,
+              limit: directive.args.limit as string | undefined,
+              offset: directive.args.offset as string | undefined,
+              first: directive.args.first as string | undefined,
+              after: directive.args.after as string | undefined,
             });
 
             if (MUTATION_KINDS.has(kind)) {
@@ -324,6 +335,7 @@ export async function getSqlExecutor({
                 kind: queryKind,
                 selection,
                 whereMapping,
+                planners,
                 graphqlArgs: args,
                 parent: root,
                 context,
@@ -341,15 +353,22 @@ export async function getSqlExecutor({
   subgraph = wireSqlEntityResolvers(subgraph, {
     executeTypeLevelRow(sqlArgs, reference, context) {
       const table = sqlArgs.table as string;
-      const { whereMapping, selection } = parseSqlDirectiveMappings({
+      const { whereMapping, selection, planners } = parseSqlDirectiveMappings({
         where: sqlArgs.where as string | undefined,
         selection: sqlArgs.selection as string | undefined,
+        filter: sqlArgs.filter as string | undefined,
+        orderBy: sqlArgs.orderBy as string | undefined,
+        limit: sqlArgs.limit as string | undefined,
+        offset: sqlArgs.offset as string | undefined,
+        first: sqlArgs.first as string | undefined,
+        after: sqlArgs.after as string | undefined,
       });
       return runSqlSelect(sqlClient, {
         table,
         kind: 'ROW',
         selection,
         whereMapping,
+        planners,
         graphqlArgs: {},
         parent: reference,
         context,

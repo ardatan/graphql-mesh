@@ -36,11 +36,20 @@ export const SqlDirective = new GraphQLDirective({
     subgraph: { type: GraphQLString },
     table: { type: new GraphQLNonNull(GraphQLString) },
     kind: { type: new GraphQLNonNull(SqlKindEnum) },
-    /**
-     * Predicates / binders / list planners:
-     * equality (`AlbumId: $args.id`), `$this` joins, `filter` / `orderBy` / `limit` / …
-     */
+    /** Equality / join predicates only (`AlbumId: $args.id`, `$this` binders). */
     where: { type: GraphQLString },
+    /** Structured Filter input binder (`$args.filter`). */
+    filter: { type: GraphQLString },
+    /** Order-by binder (`$args.orderBy`). */
+    orderBy: { type: GraphQLString },
+    /** Limit binder (`$args.limit`). */
+    limit: { type: GraphQLString },
+    /** Offset binder (`$args.offset`). */
+    offset: { type: GraphQLString },
+    /** CONNECTION page size (`$args.first`). */
+    first: { type: GraphQLString },
+    /** CONNECTION cursor (`$args.after`). */
+    after: { type: GraphQLString },
     /** Column values for INSERT / UPDATE (`Title: $args.input.title`). */
     set: { type: GraphQLString },
     selection: { type: GraphQLString },

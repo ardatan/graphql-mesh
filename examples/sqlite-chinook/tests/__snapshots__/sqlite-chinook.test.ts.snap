@@ -8,7 +8,7 @@ exports[`SQLite Chinook should generate correct schema: sqlite-chinook-schema 1`
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, set: String, selection: String) on FIELD_DEFINITION | OBJECT
+directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, filter: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String) on FIELD_DEFINITION | OBJECT
 
 type Query {
   album(id: ID!): Album @sql(subgraph: "Chinook", table: "albums", kind: ROW, where: """
@@ -19,22 +19,12 @@ type Query {
     title: Title
     artistId: ArtistId
   """)
-  albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @sql(subgraph: "Chinook", table: "albums", kind: ROWS, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @sql(subgraph: "Chinook", table: "albums", kind: ROWS, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: AlbumId
     title: Title
     artistId: ArtistId
   """)
-  allAlbums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection! @sql(subgraph: "Chinook", table: "albums", kind: CONNECTION, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    first: $args.first
-    after: $args.after
-  """, selection: """
+  allAlbums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection! @sql(subgraph: "Chinook", table: "albums", kind: CONNECTION, filter: "$args.filter", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: AlbumId
       title: Title
@@ -56,10 +46,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  albumsCount(filter: AlbumFilter): Int! @sql(subgraph: "Chinook", table: "albums", kind: COUNT, where: """
-  
-    filter: $args.filter
-  """, selection: """
+  albumsCount(filter: AlbumFilter): Int! @sql(subgraph: "Chinook", table: "albums", kind: COUNT, filter: "$args.filter", selection: """
   
     $
   """)
@@ -70,21 +57,11 @@ type Query {
     id: ArtistId
     name: Name
   """)
-  artists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @sql(subgraph: "Chinook", table: "artists", kind: ROWS, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  artists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @sql(subgraph: "Chinook", table: "artists", kind: ROWS, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: ArtistId
     name: Name
   """)
-  allArtists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], first: Int, after: String): ArtistConnection! @sql(subgraph: "Chinook", table: "artists", kind: CONNECTION, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    first: $args.first
-    after: $args.after
-  """, selection: """
+  allArtists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], first: Int, after: String): ArtistConnection! @sql(subgraph: "Chinook", table: "artists", kind: CONNECTION, filter: "$args.filter", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: ArtistId
       name: Name
@@ -104,10 +81,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  artistsCount(filter: ArtistFilter): Int! @sql(subgraph: "Chinook", table: "artists", kind: COUNT, where: """
-  
-    filter: $args.filter
-  """, selection: """
+  artistsCount(filter: ArtistFilter): Int! @sql(subgraph: "Chinook", table: "artists", kind: COUNT, filter: "$args.filter", selection: """
   
     $
   """)
@@ -129,12 +103,7 @@ type Query {
     email: Email
     supportRepId: SupportRepId
   """)
-  customers(filter: CustomerFilter, orderBy: [CustomerOrderBy!], limit: Int = 10, offset: Int = 0): [Customer!]! @sql(subgraph: "Chinook", table: "customers", kind: ROWS, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  customers(filter: CustomerFilter, orderBy: [CustomerOrderBy!], limit: Int = 10, offset: Int = 0): [Customer!]! @sql(subgraph: "Chinook", table: "customers", kind: ROWS, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: CustomerId
     firstName: FirstName
     lastName: LastName
@@ -149,12 +118,7 @@ type Query {
     email: Email
     supportRepId: SupportRepId
   """)
-  allCustomers(filter: CustomerFilter, orderBy: [CustomerOrderBy!], first: Int, after: String): CustomerConnection! @sql(subgraph: "Chinook", table: "customers", kind: CONNECTION, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    first: $args.first
-    after: $args.after
-  """, selection: """
+  allCustomers(filter: CustomerFilter, orderBy: [CustomerOrderBy!], first: Int, after: String): CustomerConnection! @sql(subgraph: "Chinook", table: "customers", kind: CONNECTION, filter: "$args.filter", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: CustomerId
       firstName: FirstName
@@ -196,10 +160,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  customersCount(filter: CustomerFilter): Int! @sql(subgraph: "Chinook", table: "customers", kind: COUNT, where: """
-  
-    filter: $args.filter
-  """, selection: """
+  customersCount(filter: CustomerFilter): Int! @sql(subgraph: "Chinook", table: "customers", kind: COUNT, filter: "$args.filter", selection: """
   
     $
   """)
@@ -223,12 +184,7 @@ type Query {
     fax: Fax
     email: Email
   """)
-  employees(filter: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int = 10, offset: Int = 0): [Employee!]! @sql(subgraph: "Chinook", table: "employees", kind: ROWS, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  employees(filter: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int = 10, offset: Int = 0): [Employee!]! @sql(subgraph: "Chinook", table: "employees", kind: ROWS, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: EmployeeId
     lastName: LastName
     firstName: FirstName
@@ -245,12 +201,7 @@ type Query {
     fax: Fax
     email: Email
   """)
-  allEmployees(filter: EmployeeFilter, orderBy: [EmployeeOrderBy!], first: Int, after: String): EmployeeConnection! @sql(subgraph: "Chinook", table: "employees", kind: CONNECTION, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    first: $args.first
-    after: $args.after
-  """, selection: """
+  allEmployees(filter: EmployeeFilter, orderBy: [EmployeeOrderBy!], first: Int, after: String): EmployeeConnection! @sql(subgraph: "Chinook", table: "employees", kind: CONNECTION, filter: "$args.filter", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: EmployeeId
       lastName: LastName
@@ -296,10 +247,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  employeesCount(filter: EmployeeFilter): Int! @sql(subgraph: "Chinook", table: "employees", kind: COUNT, where: """
-  
-    filter: $args.filter
-  """, selection: """
+  employeesCount(filter: EmployeeFilter): Int! @sql(subgraph: "Chinook", table: "employees", kind: COUNT, filter: "$args.filter", selection: """
   
     $
   """)
@@ -310,21 +258,11 @@ type Query {
     id: GenreId
     name: Name
   """)
-  genres(filter: GenreFilter, orderBy: [GenreOrderBy!], limit: Int = 10, offset: Int = 0): [Genre!]! @sql(subgraph: "Chinook", table: "genres", kind: ROWS, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  genres(filter: GenreFilter, orderBy: [GenreOrderBy!], limit: Int = 10, offset: Int = 0): [Genre!]! @sql(subgraph: "Chinook", table: "genres", kind: ROWS, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: GenreId
     name: Name
   """)
-  allGenres(filter: GenreFilter, orderBy: [GenreOrderBy!], first: Int, after: String): GenreConnection! @sql(subgraph: "Chinook", table: "genres", kind: CONNECTION, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    first: $args.first
-    after: $args.after
-  """, selection: """
+  allGenres(filter: GenreFilter, orderBy: [GenreOrderBy!], first: Int, after: String): GenreConnection! @sql(subgraph: "Chinook", table: "genres", kind: CONNECTION, filter: "$args.filter", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: GenreId
       name: Name
@@ -344,10 +282,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  genresCount(filter: GenreFilter): Int! @sql(subgraph: "Chinook", table: "genres", kind: COUNT, where: """
-  
-    filter: $args.filter
-  """, selection: """
+  genresCount(filter: GenreFilter): Int! @sql(subgraph: "Chinook", table: "genres", kind: COUNT, filter: "$args.filter", selection: """
   
     $
   """)
@@ -361,24 +296,14 @@ type Query {
     unitPrice: UnitPrice
     quantity: Quantity
   """)
-  invoiceItems(filter: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], limit: Int = 10, offset: Int = 0): [InvoiceItem!]! @sql(subgraph: "Chinook", table: "invoice_items", kind: ROWS, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  invoiceItems(filter: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], limit: Int = 10, offset: Int = 0): [InvoiceItem!]! @sql(subgraph: "Chinook", table: "invoice_items", kind: ROWS, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: InvoiceLineId
     invoiceId: InvoiceId
     trackId: TrackId
     unitPrice: UnitPrice
     quantity: Quantity
   """)
-  allInvoiceItems(filter: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], first: Int, after: String): InvoiceItemConnection! @sql(subgraph: "Chinook", table: "invoice_items", kind: CONNECTION, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    first: $args.first
-    after: $args.after
-  """, selection: """
+  allInvoiceItems(filter: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], first: Int, after: String): InvoiceItemConnection! @sql(subgraph: "Chinook", table: "invoice_items", kind: CONNECTION, filter: "$args.filter", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: InvoiceLineId
       invoiceId: InvoiceId
@@ -404,10 +329,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  invoiceItemsCount(filter: InvoiceItemFilter): Int! @sql(subgraph: "Chinook", table: "invoice_items", kind: COUNT, where: """
-  
-    filter: $args.filter
-  """, selection: """
+  invoiceItemsCount(filter: InvoiceItemFilter): Int! @sql(subgraph: "Chinook", table: "invoice_items", kind: COUNT, filter: "$args.filter", selection: """
   
     $
   """)
@@ -425,12 +347,7 @@ type Query {
     billingPostalCode: BillingPostalCode
     total: Total
   """)
-  invoices(filter: InvoiceFilter, orderBy: [InvoiceOrderBy!], limit: Int = 10, offset: Int = 0): [Invoice!]! @sql(subgraph: "Chinook", table: "invoices", kind: ROWS, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  invoices(filter: InvoiceFilter, orderBy: [InvoiceOrderBy!], limit: Int = 10, offset: Int = 0): [Invoice!]! @sql(subgraph: "Chinook", table: "invoices", kind: ROWS, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: InvoiceId
     customerId: CustomerId
     invoiceDate: InvoiceDate
@@ -441,12 +358,7 @@ type Query {
     billingPostalCode: BillingPostalCode
     total: Total
   """)
-  allInvoices(filter: InvoiceFilter, orderBy: [InvoiceOrderBy!], first: Int, after: String): InvoiceConnection! @sql(subgraph: "Chinook", table: "invoices", kind: CONNECTION, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    first: $args.first
-    after: $args.after
-  """, selection: """
+  allInvoices(filter: InvoiceFilter, orderBy: [InvoiceOrderBy!], first: Int, after: String): InvoiceConnection! @sql(subgraph: "Chinook", table: "invoices", kind: CONNECTION, filter: "$args.filter", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: InvoiceId
       customerId: CustomerId
@@ -480,10 +392,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  invoicesCount(filter: InvoiceFilter): Int! @sql(subgraph: "Chinook", table: "invoices", kind: COUNT, where: """
-  
-    filter: $args.filter
-  """, selection: """
+  invoicesCount(filter: InvoiceFilter): Int! @sql(subgraph: "Chinook", table: "invoices", kind: COUNT, filter: "$args.filter", selection: """
   
     $
   """)
@@ -494,21 +403,11 @@ type Query {
     id: MediaTypeId
     name: Name
   """)
-  mediaTypes(filter: MediaTypeFilter, orderBy: [MediaTypeOrderBy!], limit: Int = 10, offset: Int = 0): [MediaType!]! @sql(subgraph: "Chinook", table: "media_types", kind: ROWS, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  mediaTypes(filter: MediaTypeFilter, orderBy: [MediaTypeOrderBy!], limit: Int = 10, offset: Int = 0): [MediaType!]! @sql(subgraph: "Chinook", table: "media_types", kind: ROWS, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: MediaTypeId
     name: Name
   """)
-  allMediaTypes(filter: MediaTypeFilter, orderBy: [MediaTypeOrderBy!], first: Int, after: String): MediaTypeConnection! @sql(subgraph: "Chinook", table: "media_types", kind: CONNECTION, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    first: $args.first
-    after: $args.after
-  """, selection: """
+  allMediaTypes(filter: MediaTypeFilter, orderBy: [MediaTypeOrderBy!], first: Int, after: String): MediaTypeConnection! @sql(subgraph: "Chinook", table: "media_types", kind: CONNECTION, filter: "$args.filter", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: MediaTypeId
       name: Name
@@ -528,28 +427,15 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  mediaTypesCount(filter: MediaTypeFilter): Int! @sql(subgraph: "Chinook", table: "media_types", kind: COUNT, where: """
-  
-    filter: $args.filter
-  """, selection: """
+  mediaTypesCount(filter: MediaTypeFilter): Int! @sql(subgraph: "Chinook", table: "media_types", kind: COUNT, filter: "$args.filter", selection: """
   
     $
   """)
-  playlistTracks(filter: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], limit: Int = 10, offset: Int = 0): [PlaylistTrack!]! @sql(subgraph: "Chinook", table: "playlist_track", kind: ROWS, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  playlistTracks(filter: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], limit: Int = 10, offset: Int = 0): [PlaylistTrack!]! @sql(subgraph: "Chinook", table: "playlist_track", kind: ROWS, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     playlistId: PlaylistId
     trackId: TrackId
   """)
-  allPlaylistTracks(filter: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], first: Int, after: String): PlaylistTrackConnection! @sql(subgraph: "Chinook", table: "playlist_track", kind: CONNECTION, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    first: $args.first
-    after: $args.after
-  """, selection: """
+  allPlaylistTracks(filter: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], first: Int, after: String): PlaylistTrackConnection! @sql(subgraph: "Chinook", table: "playlist_track", kind: CONNECTION, filter: "$args.filter", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       playlistId: PlaylistId
       trackId: TrackId
@@ -569,10 +455,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  playlistTracksCount(filter: PlaylistTrackFilter): Int! @sql(subgraph: "Chinook", table: "playlist_track", kind: COUNT, where: """
-  
-    filter: $args.filter
-  """, selection: """
+  playlistTracksCount(filter: PlaylistTrackFilter): Int! @sql(subgraph: "Chinook", table: "playlist_track", kind: COUNT, filter: "$args.filter", selection: """
   
     $
   """)
@@ -583,21 +466,11 @@ type Query {
     id: PlaylistId
     name: Name
   """)
-  playlists(filter: PlaylistFilter, orderBy: [PlaylistOrderBy!], limit: Int = 10, offset: Int = 0): [Playlist!]! @sql(subgraph: "Chinook", table: "playlists", kind: ROWS, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  playlists(filter: PlaylistFilter, orderBy: [PlaylistOrderBy!], limit: Int = 10, offset: Int = 0): [Playlist!]! @sql(subgraph: "Chinook", table: "playlists", kind: ROWS, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: PlaylistId
     name: Name
   """)
-  allPlaylists(filter: PlaylistFilter, orderBy: [PlaylistOrderBy!], first: Int, after: String): PlaylistConnection! @sql(subgraph: "Chinook", table: "playlists", kind: CONNECTION, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    first: $args.first
-    after: $args.after
-  """, selection: """
+  allPlaylists(filter: PlaylistFilter, orderBy: [PlaylistOrderBy!], first: Int, after: String): PlaylistConnection! @sql(subgraph: "Chinook", table: "playlists", kind: CONNECTION, filter: "$args.filter", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: PlaylistId
       name: Name
@@ -617,10 +490,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  playlistsCount(filter: PlaylistFilter): Int! @sql(subgraph: "Chinook", table: "playlists", kind: COUNT, where: """
-  
-    filter: $args.filter
-  """, selection: """
+  playlistsCount(filter: PlaylistFilter): Int! @sql(subgraph: "Chinook", table: "playlists", kind: COUNT, filter: "$args.filter", selection: """
   
     $
   """)
@@ -638,12 +508,7 @@ type Query {
     bytes: Bytes
     unitPrice: UnitPrice
   """)
-  tracks(filter: TrackFilter, orderBy: [TrackOrderBy!], limit: Int = 10, offset: Int = 0): [Track!]! @sql(subgraph: "Chinook", table: "tracks", kind: ROWS, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  tracks(filter: TrackFilter, orderBy: [TrackOrderBy!], limit: Int = 10, offset: Int = 0): [Track!]! @sql(subgraph: "Chinook", table: "tracks", kind: ROWS, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: TrackId
     name: Name
     albumId: AlbumId
@@ -654,12 +519,7 @@ type Query {
     bytes: Bytes
     unitPrice: UnitPrice
   """)
-  allTracks(filter: TrackFilter, orderBy: [TrackOrderBy!], first: Int, after: String): TrackConnection! @sql(subgraph: "Chinook", table: "tracks", kind: CONNECTION, where: """
-    filter: $args.filter
-    orderBy: $args.orderBy
-    first: $args.first
-    after: $args.after
-  """, selection: """
+  allTracks(filter: TrackFilter, orderBy: [TrackOrderBy!], first: Int, after: String): TrackConnection! @sql(subgraph: "Chinook", table: "tracks", kind: CONNECTION, filter: "$args.filter", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: TrackId
       name: Name
@@ -693,10 +553,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  tracksCount(filter: TrackFilter): Int! @sql(subgraph: "Chinook", table: "tracks", kind: COUNT, where: """
-  
-    filter: $args.filter
-  """, selection: """
+  tracksCount(filter: TrackFilter): Int! @sql(subgraph: "Chinook", table: "tracks", kind: COUNT, filter: "$args.filter", selection: """
   
     $
   """)
@@ -721,12 +578,9 @@ type Album @key(fields: "id") @sql(subgraph: "Chinook", table: "albums", kind: R
     name: Name
   """)
   tracks(filter: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @sql(subgraph: "Chinook", table: "tracks", kind: ROWS, where: """
+  
     AlbumId: $this.id
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  """, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: TrackId
     name: Name
     albumId: AlbumId
@@ -749,12 +603,9 @@ type Artist @key(fields: "id") @sql(subgraph: "Chinook", table: "artists", kind:
   id: ID!
   name: String
   albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]! @sql(subgraph: "Chinook", table: "albums", kind: ROWS, where: """
+  
     ArtistId: $this.id
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  """, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: AlbumId
     title: Title
     artistId: ArtistId
@@ -830,12 +681,9 @@ type Track @key(fields: "id") @sql(subgraph: "Chinook", table: "tracks", kind: R
   bytes: Int
   unitPrice: Float!
   invoiceItems(filter: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], limit: Int, offset: Int): [InvoiceItem!]! @sql(subgraph: "Chinook", table: "invoice_items", kind: ROWS, where: """
+  
     TrackId: $this.id
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  """, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: InvoiceLineId
     invoiceId: InvoiceId
     trackId: TrackId
@@ -843,12 +691,9 @@ type Track @key(fields: "id") @sql(subgraph: "Chinook", table: "tracks", kind: R
     quantity: Quantity
   """)
   playlistTracks(filter: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], limit: Int, offset: Int): [PlaylistTrack!]! @sql(subgraph: "Chinook", table: "playlist_track", kind: ROWS, where: """
+  
     TrackId: $this.id
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  """, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     playlistId: PlaylistId
     trackId: TrackId
   """)
@@ -945,12 +790,9 @@ type Invoice @key(fields: "id") @sql(subgraph: "Chinook", table: "invoices", kin
   billingPostalCode: String
   total: Float!
   invoiceItems(filter: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], limit: Int, offset: Int): [InvoiceItem!]! @sql(subgraph: "Chinook", table: "invoice_items", kind: ROWS, where: """
+  
     InvoiceId: $this.id
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  """, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: InvoiceLineId
     invoiceId: InvoiceId
     trackId: TrackId
@@ -1058,12 +900,9 @@ type Customer @key(fields: "id") @sql(subgraph: "Chinook", table: "customers", k
     email: Email
   """)
   invoices(filter: InvoiceFilter, orderBy: [InvoiceOrderBy!], limit: Int, offset: Int): [Invoice!]! @sql(subgraph: "Chinook", table: "invoices", kind: ROWS, where: """
+  
     CustomerId: $this.id
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  """, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: InvoiceId
     customerId: CustomerId
     invoiceDate: InvoiceDate
@@ -1112,12 +951,9 @@ type Employee @key(fields: "id") @sql(subgraph: "Chinook", table: "employees", k
   fax: String
   email: String
   customers(filter: CustomerFilter, orderBy: [CustomerOrderBy!], limit: Int, offset: Int): [Customer!]! @sql(subgraph: "Chinook", table: "customers", kind: ROWS, where: """
+  
     SupportRepId: $this.id
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  """, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: CustomerId
     firstName: FirstName
     lastName: LastName
@@ -1153,12 +989,9 @@ type Employee @key(fields: "id") @sql(subgraph: "Chinook", table: "employees", k
     email: Email
   """)
   employees(filter: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int, offset: Int): [Employee!]! @sql(subgraph: "Chinook", table: "employees", kind: ROWS, where: """
+  
     ReportsTo: $this.id
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  """, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: EmployeeId
     lastName: LastName
     firstName: FirstName
@@ -1357,12 +1190,9 @@ type Playlist @key(fields: "id") @sql(subgraph: "Chinook", table: "playlists", k
   id: ID!
   name: String
   playlistTracks(filter: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], limit: Int, offset: Int): [PlaylistTrack!]! @sql(subgraph: "Chinook", table: "playlist_track", kind: ROWS, where: """
+  
     PlaylistId: $this.id
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  """, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     playlistId: PlaylistId
     trackId: TrackId
   """)
@@ -1393,12 +1223,9 @@ type MediaType @key(fields: "id") @sql(subgraph: "Chinook", table: "media_types"
   id: ID!
   name: String
   tracks(filter: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @sql(subgraph: "Chinook", table: "tracks", kind: ROWS, where: """
+  
     MediaTypeId: $this.id
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  """, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: TrackId
     name: Name
     albumId: AlbumId
@@ -1457,12 +1284,9 @@ type Genre @key(fields: "id") @sql(subgraph: "Chinook", table: "genres", kind: R
   id: ID!
   name: String
   tracks(filter: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @sql(subgraph: "Chinook", table: "tracks", kind: ROWS, where: """
+  
     GenreId: $this.id
-    filter: $args.filter
-    orderBy: $args.orderBy
-    limit: $args.limit
-    offset: $args.offset
-  """, selection: """
+  """, filter: "$args.filter", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: TrackId
     name: Name
     albumId: AlbumId

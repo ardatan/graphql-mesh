@@ -13,6 +13,11 @@ export interface BuiltQuery {
   params: unknown[];
 }
 
+export type SqlPlannerKey =
+  'filter' | 'orderBy' | 'limit' | 'offset' | 'first' | 'after' | 'last' | 'before';
+
+export type SqlPlanners = Partial<Record<SqlPlannerKey, string>>;
+
 export interface SelectPlan {
   table: string;
   kind: SqlQueryKind;
@@ -20,13 +25,18 @@ export interface SelectPlan {
   whereMapping: ParsedSqlMapping;
   graphqlArgs: Record<string, any>;
   parent?: Record<string, any>;
+  /**
+   * Explicit `@sql` planner binders (`filter: "$args.filter"`, …).
+   * Preferred over stuffing planner keys into `where`.
+   */
+  planners?: SqlPlanners;
   /** Belongs-to joins folded from GraphQL selection lookahead. */
   joins?: BelongsToJoin[];
   /** Has-many folded as correlated JSON subselects. */
   hasMany?: HasManySubselect[];
 }
 
-const PLANNER_KEYS = new Set([
+const PLANNER_KEYS = new Set<string>([
   'filter',
   'orderBy',
   'first',
@@ -67,23 +77,9 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
     whereParts.push(`${qualify(entry.key)} = ${placeholder(adapter, params.length)}`);
   }
 
-  // filter: $args.filter
-  const filterEntry = plan.whereMapping.entries.find(e => e.key === 'filter');
-  if (filterEntry) {
-    const filterVal = resolveMappingValue(filterEntry.value, {
-      args: plan.graphqlArgs,
-      parent: plan.parent,
-    });
-    if (filterVal && typeof filterVal === 'object') {
-      appendFilter(adapter, filterVal as Record<string, any>, columns, whereParts, params, {
-        qualifyColumn: rootAlias ? qualify : undefined,
-      });
-    }
-  }
-
-  // Also accept direct graphqlArgs.filter when mapping omitted the binder but arg exists
-  if (!filterEntry && plan.graphqlArgs.filter) {
-    appendFilter(adapter, plan.graphqlArgs.filter, columns, whereParts, params, {
+  const filterVal = resolvePlannerArg(plan, 'filter');
+  if (filterVal && typeof filterVal === 'object') {
+    appendFilter(adapter, filterVal as Record<string, any>, columns, whereParts, params, {
       qualifyColumn: rootAlias ? qualify : undefined,
     });
   }
@@ -311,17 +307,9 @@ export function buildSelectByColumnIn(
     whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
   }
 
-  const filterEntry = plan.whereMapping.entries.find(e => e.key === 'filter');
-  if (filterEntry) {
-    const filterVal = resolveMappingValue(filterEntry.value, {
-      args: plan.graphqlArgs,
-      parent: plan.parent,
-    });
-    if (filterVal && typeof filterVal === 'object') {
-      appendFilter(adapter, filterVal as Record<string, any>, columns, whereParts, params);
-    }
-  } else if (plan.graphqlArgs.filter) {
-    appendFilter(adapter, plan.graphqlArgs.filter, columns, whereParts, params);
+  const filterVal = resolvePlannerArg(plan, 'filter');
+  if (filterVal && typeof filterVal === 'object') {
+    appendFilter(adapter, filterVal as Record<string, any>, columns, whereParts, params);
   }
 
   const inPhs = plan.values.map(v => {
@@ -449,12 +437,40 @@ export function buildDelete(
   return { sql, params };
 }
 
-function resolvePlannerArg(plan: SelectPlan, key: string): unknown {
+function resolvePlannerArg(plan: SelectPlan, key: SqlPlannerKey): unknown {
+  const ctx = { args: plan.graphqlArgs, parent: plan.parent };
+  const binder = plan.planners?.[key];
+  if (binder != null && String(binder).trim()) {
+    const fromBinder = resolvePlannerBinder(String(binder), ctx);
+    if (fromBinder !== undefined) return fromBinder;
+  }
+  // Compat: planner keys stuffed into `where` before the split.
   const entry = plan.whereMapping.entries.find(e => e.key === key);
   if (entry) {
-    return resolveMappingValue(entry.value, { args: plan.graphqlArgs, parent: plan.parent });
+    return resolveMappingValue(entry.value, ctx);
   }
   return plan.graphqlArgs[key];
+}
+
+/**
+ * Resolve `@sql(filter: "$args.filter")` style binders.
+ * Also accepts a one-line mapping (`filter: $args.filter`) for symmetry with `where`.
+ */
+function resolvePlannerBinder(
+  binder: string,
+  ctx: { args?: Record<string, any>; parent?: any },
+): unknown {
+  const trimmed = binder.trim();
+  if (!trimmed) return undefined;
+  if (trimmed.startsWith('$')) {
+    const mapping = parseSqlMapping(`_: ${trimmed}`);
+    return resolveMappingValue(mapping.entries[0]?.value, ctx);
+  }
+  const mapping = parseSqlMapping(trimmed);
+  if (mapping.entries.length === 1) {
+    return resolveMappingValue(mapping.entries[0].value, ctx);
+  }
+  return undefined;
 }
 
 function buildOrderBy(
@@ -713,11 +729,34 @@ export function parseSqlDirectiveMappings(opts: {
   where?: string | null;
   set?: string | null;
   selection?: string | null;
+  filter?: string | null;
+  orderBy?: string | null;
+  limit?: string | null;
+  offset?: string | null;
+  first?: string | null;
+  after?: string | null;
+  last?: string | null;
+  before?: string | null;
 }) {
+  const planners: SqlPlanners = {};
+  for (const key of [
+    'filter',
+    'orderBy',
+    'limit',
+    'offset',
+    'first',
+    'after',
+    'last',
+    'before',
+  ] as const) {
+    const v = opts[key];
+    if (v != null && String(v).trim()) planners[key] = String(v);
+  }
   return {
     whereMapping: parseSqlMapping(opts.where),
     setMapping: parseSqlMapping(opts.set),
     selection: parseSqlMapping(opts.selection),
+    planners,
   };
 }
 
