@@ -5,7 +5,7 @@ import { loadGraphQLSchemaFromSql } from '../src/index.js';
 const chinookDb = join(__dirname, '../../../../e2e/sqlite-chinook/chinook.db');
 
 describe('@omnigraph/sql sqlite chinook', () => {
-  it('emits @sql__* directives and slim @transport(kind: sql)', async () => {
+  it('emits @sql directives and slim @transport(kind: sql)', async () => {
     const schema = await loadGraphQLSchemaFromSql('chinook', {
       type: 'sqlite',
       db: chinookDb,
@@ -19,9 +19,9 @@ describe('@omnigraph/sql sqlite chinook', () => {
     expect(sdl).toContain('@transport');
     expect(sdl).toContain('kind: "sql"');
     expect(sdl).toContain('dialect: "sqlite"');
-    expect(sdl).toContain('@sql__(');
+    expect(sdl).toContain('@sql(');
     expect(sdl).toContain('kind: INSERT');
-    expect(sdl).toContain('@sql__relation');
+    expect(sdl).toContain('kind: ROW');
     expect(sdl).toContain('type Album');
     expect(sdl).toContain('type Artist');
     expect(sdl).toContain('allAlbums');

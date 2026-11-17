@@ -10,12 +10,7 @@ import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLDate, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
 import { path as pathHelper } from '@graphql-mesh/cross-helpers';
 import type { SqlDialect } from '@graphql-mesh/transport-sql';
-import {
-  SqlDirective,
-  SqlKindEnum,
-  SqlRelationDirective,
-  TransportDirective,
-} from './directives.js';
+import { SqlDirective, SqlKindEnum, TransportDirective } from './directives.js';
 import { introspectMysql } from './introspect/mysql.js';
 import { introspectSqlite } from './introspect/sqlite.js';
 import type { SqlColumnMeta, SqlSchemaMeta, SqlTableMeta } from './introspect/types.js';
@@ -53,7 +48,6 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
   schemaComposer.add(GraphQLDateTime);
   schemaComposer.addDirective(TransportDirective);
   schemaComposer.addDirective(SqlDirective);
-  schemaComposer.addDirective(SqlRelationDirective);
   schemaComposer.add(SqlKindEnum);
 
   ensureSharedFilterInputs(schemaComposer);
@@ -130,7 +124,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
           type: refTypeName,
           directives: [
             {
-              name: 'sql__relation',
+              name: 'sql',
               args: {
                 subgraph: subgraphName,
                 table: fk.refTable,
@@ -157,7 +151,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
           },
           directives: [
             {
-              name: 'sql__relation',
+              name: 'sql',
               args: {
                 subgraph: subgraphName,
                 table: table.name,
@@ -202,7 +196,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
         },
         directives: [
           {
-            name: 'sql__',
+            name: 'sql',
             args: {
               subgraph: subgraphName,
               table: table.name,
@@ -226,7 +220,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       },
       directives: [
         {
-          name: 'sql__',
+          name: 'sql',
           args: {
             subgraph: subgraphName,
             table: table.name,
@@ -255,7 +249,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       },
       directives: [
         {
-          name: 'sql__',
+          name: 'sql',
           args: {
             subgraph: subgraphName,
             table: table.name,
@@ -300,7 +294,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       },
       directives: [
         {
-          name: 'sql__',
+          name: 'sql',
           args: {
             subgraph: subgraphName,
             table: table.name,
@@ -321,7 +315,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       },
       directives: [
         {
-          name: 'sql__',
+          name: 'sql',
           args: {
             subgraph: subgraphName,
             table: table.name,
@@ -343,7 +337,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
         },
         directives: [
           {
-            name: 'sql__',
+            name: 'sql',
             args: {
               subgraph: subgraphName,
               table: table.name,
@@ -371,7 +365,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
         },
         directives: [
           {
-            name: 'sql__',
+            name: 'sql',
             args: {
               subgraph: subgraphName,
               table: table.name,
@@ -403,7 +397,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     },
   ];
   // graphql-compose emits StringValue without `block: true`, so printers escape
-  // newlines as `\n`. Mark @sql__* args/selection as block strings for readable """ SDL.
+  // newlines as `\n`. Mark @sql args/selection as block strings for readable """ SDL.
   markSqlDirectiveStringsAsBlocks(schema);
   return schema;
 }
@@ -636,7 +630,7 @@ function createMutationInputs(
 }
 
 function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
-  const SQL_DIRECTIVES = new Set(['sql__', 'sql__relation']);
+  const SQL_DIRECTIVES = new Set(['sql']);
   for (const type of Object.values(schema.getTypeMap())) {
     if (!(type instanceof GraphQLObjectType)) continue;
     for (const field of Object.values(type.getFields())) {
@@ -656,7 +650,7 @@ function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
 }
 
 /**
- * Format `@sql__*` args/selection for Connectors-style `"""` block strings.
+ * Format `@sql` args/selection for Connectors-style `"""` block strings.
  * Indent body lines; for single-line values prefix a newline so the printer
  * emits a multiline `"""` block (not `"""value"""`) without a trailing blank.
  */

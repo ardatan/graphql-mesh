@@ -4,4 +4,4 @@
 
 ### Major Changes
 
-- Initial release: execute `@sql__query` / `@sql__mutation` / `@sql__relation` with transport `kind: "sql"` (sqlite dialect first).
+- Initial release: execute ` @sqlquery` / ` @sqlmutation` / ` @sqlrelation` with transport `kind: "sql"` (sqlite dialect first).

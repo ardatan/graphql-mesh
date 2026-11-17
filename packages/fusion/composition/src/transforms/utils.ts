@@ -127,7 +127,7 @@ export function withOriginalKeyFallback<T extends Record<string, any>>(
 
 /**
  * Rewrite `$args.<name>` (and related) references after GraphQL argument renames
- * for Federation `@connect`, Thrift `@thrift__rpc`, and Mesh `@sql__` / `@sql__relation`.
+* for Federation `@connect`, Thrift `@thrift__rpc`, and Mesh `@sql`.
  * Mesh stitching used `@meshSource(name:)` for this; Connectors / thrift / SQL
  * mapping bind args by the GraphQL argument name inside path/body/`args`/`selection`
  * strings.
@@ -148,7 +148,7 @@ export function rewriteConnectArgReferences(
 ): Record<string, any[]> | undefined {
   const hasConnect = Boolean(fieldDirectives?.connect?.length);
   const hasThriftRpc = Boolean(fieldDirectives?.thrift__rpc?.length);
-  const sqlDirectiveNames = ['sql__', 'sql__relation'] as const;
+  const sqlDirectiveNames = ['sql'] as const;
   const hasSql = sqlDirectiveNames.some(name => Boolean(fieldDirectives?.[name]?.length));
   if (
     (!hasConnect && !hasThriftRpc && !hasSql) ||
@@ -282,7 +282,7 @@ export function rewriteConnectArgReferences(
   }
   for (const name of sqlDirectiveNames) {
     if (!fieldDirectives?.[name]?.length) continue;
-    // `@sql__*(args/selection:)` embed `$args.<name>` / `$this.<field>` the same way.
+    // `@sql(args/selection:)` embed `$args.<name>` / `$this.<field>` the same way.
     next[name] = fieldDirectives[name].map((sqlArgs: any) => ({
       ...sqlArgs,
       args: typeof sqlArgs?.args === 'string' ? rewriteExpr(sqlArgs.args) : sqlArgs?.args,

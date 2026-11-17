@@ -10,11 +10,11 @@
 ## TL;DR (breaking)
 
 New SQL subgraph stack: `@omnigraph/sql` + `@graphql-mesh/transport-sql` with hand-writable
-`@sql__` / `@sql__relation` and one transport `kind: "sql"`.
+`@sql` and one transport `kind: "sql"`.
 
-One field directive `@sql__` covers reads and writes via `kind`
+One field directive `@sql` covers reads and writes via `kind`
 (`ROW` | `ROWS` | `CONNECTION` | `COUNT` | `INSERT` | `UPDATE` | `DELETE`). Relations stay on
-`@sql__relation`.
+Relations use the same `@sql` with `$this` in `args`.
 
 **Removed from the monorepo** (compose loaders / transports):
 
@@ -51,6 +51,6 @@ recompose and update client queries.
 
 ## What else changed
 
-- Fusion rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql__*`
+- Fusion rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql`
 - e2e `sqlite-chinook` and `mysql-employees` use the new stack (full table set; no artificial
   `includeTables` filter)

@@ -64,7 +64,7 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
       const directives = getDefDirectives(subgraph, fieldConfig);
       for (const directive of directives) {
         switch (directive.name) {
-          case 'sql__': {
+          case 'sql': {
             const table = directive.args.table as string;
             const kind = (directive.args.kind || 'ROWS') as SqlKind;
             const { argsMapping, selection } = parseArgsAndSelection(
@@ -181,33 +181,6 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
               return (result.rows as Record<string, unknown>[]).map(r =>
                 mapRowToGraphql(r, selectSelection),
               );
-            };
-            break;
-          }
-          case 'sql__relation': {
-            const table = directive.args.table as string;
-            const kind = (directive.args.kind || 'ROW') as SqlQueryKind;
-            const { argsMapping, selection } = parseArgsAndSelection(
-              directive.args.args,
-              directive.args.selection,
-            );
-            fieldConfig.resolve = async function sqlRelationResolver(root, args) {
-              const query = buildSelect(sqlClient.dialect, {
-                table,
-                kind: kind === 'ROWS' ? 'ROWS' : 'ROW',
-                selection,
-                argsMapping,
-                graphqlArgs: args,
-                parent: root,
-              });
-              const result = await sqlClient.query(query.sql, query.params);
-              if (kind === 'ROWS') {
-                return (result.rows as Record<string, unknown>[]).map(r =>
-                  mapRowToGraphql(r, selection),
-                );
-              }
-              const row = result.rows[0] as Record<string, unknown> | undefined;
-              return row ? mapRowToGraphql(row, selection) : null;
             };
             break;
           }

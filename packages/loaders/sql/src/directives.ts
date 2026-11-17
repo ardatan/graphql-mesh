@@ -8,8 +8,7 @@ import {
 } from 'graphql';
 
 /**
- * Single kind enum for `@sql__` (reads + writes). Mirrors Connectors' one-directive
- * style instead of splitting query/mutation directive names.
+ * Single kind enum for `@sql` (reads, writes, and relation fields via `$this`).
  */
 export const SqlKindEnum = new GraphQLEnumType({
   name: 'SqlKind',
@@ -24,13 +23,13 @@ export const SqlKindEnum = new GraphQLEnumType({
   },
 });
 
-/** @deprecated use SqlKindEnum — kept as alias during rename */
+/** @deprecated use SqlKindEnum */
 export const SqlQueryKindEnum = SqlKindEnum;
 /** @deprecated use SqlKindEnum */
 export const SqlMutationKindEnum = SqlKindEnum;
 
 export const SqlDirective = new GraphQLDirective({
-  name: 'sql__',
+  name: 'sql',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
     subgraph: { type: GraphQLString },
@@ -46,17 +45,7 @@ export const SqlDirective = new GraphQLDirective({
 export const SqlQueryDirective = SqlDirective;
 /** @deprecated use SqlDirective */
 export const SqlMutationDirective = SqlDirective;
-
-export const SqlRelationDirective = new GraphQLDirective({
-  name: 'sql__relation',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    subgraph: { type: GraphQLString },
-    table: { type: new GraphQLNonNull(GraphQLString) },
-    kind: { type: SqlKindEnum, defaultValue: 'ROW' },
-    args: { type: new GraphQLNonNull(GraphQLString) },
-    selection: { type: new GraphQLNonNull(GraphQLString) },
-  },
-});
+/** @deprecated relations also use `@sql` */
+export const SqlRelationDirective = SqlDirective;
 
 export { TransportDirective } from '@graphql-mesh/utils';
