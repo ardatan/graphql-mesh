@@ -33,6 +33,11 @@ export interface MappingField {
   /** GraphQL bind path (e.g. year, $args.year, input.movie) or nested omit when type is message with fields */
   bind?: string;
   fields?: MappingField[];
+  /**
+   * Proto3 field presence. Implicit-presence scalars/enums materialize wire defaults when
+   * absent; explicit (`optional` / proto3 optional) leave the bind undefined when absent.
+   */
+  presence?: 'implicit' | 'explicit';
 }
 
 export function parseMapping(source: string): MappingField[] {
@@ -65,7 +70,17 @@ function parseField(source: string, start: number): { field: MappingField; end: 
     throw new Error(`Expected '(' after field id ${id} at ${snippet(source, i)}`);
   }
   i++;
+  i = skipWs(source, i);
+  let presence: 'implicit' | 'explicit' | undefined;
+  if (source.startsWith('optional', i)) {
+    presence = 'explicit';
+    i = skipWs(source, i + 'optional'.length);
+  }
   const typeParsed = parseType(source, i);
+  // Scalars/enums default to implicit presence unless marked `optional`.
+  if (presence == null && (typeParsed.type.kind === 'scalar' || typeParsed.type.kind === 'enum')) {
+    presence = 'implicit';
+  }
   i = skipWs(source, typeParsed.end);
   if (source[i] !== ')') {
     throw new Error(`Expected ')' after type at ${snippet(source, i)}`);
@@ -143,6 +158,7 @@ function parseField(source: string, start: number): { field: MappingField; end: 
       id,
       type: typeParsed.type,
       bind: bind || undefined,
+      ...(presence ? { presence } : {}),
     },
     end: i,
   };

@@ -232,14 +232,62 @@ export function rewriteProtobufMappingBindsTypeScoped(
   return mapping.replace(
     /(\):\s*)([\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
     (match, pre: string, path: string, offset: number, whole: string) => {
-      if (path.startsWith('$args') || path.startsWith('$this')) {
-        return `${pre}${path}`;
-      }
       const depth = braceDepthAt(whole, offset);
       const afterPath = offset + match.length;
       let j = afterPath;
       while (j < whole.length && /\s/.test(whole[j])) j++;
       const entersBlock = whole[j] === '{';
+
+      // `$args.input { … }` / `$args.input.movie`: keep `$args` prefix; descend into
+      // arg/input types so nested relative binds (e.g. `year`) rename against the owner.
+      if (path.startsWith('$args')) {
+        if (!hasArgTypes) {
+          return `${pre}${path}`;
+        }
+        const rest =
+          path === '$args'
+            ? []
+            : path.startsWith('$args.')
+              ? path.slice('$args.'.length).split('.')
+              : [];
+        const rewritten = ['$args'];
+        let cur: GraphQLNamedType | null | undefined;
+        if (rest.length) {
+          rewritten.push(rest[0]);
+          cur = options.argTypes!.get(rest[0]);
+          for (let i = 1; i < rest.length; i++) {
+            const stepped = renameFieldSegment(cur, rest[i], fieldRenameMap);
+            rewritten.push(stepped.name);
+            cur = stepped.type;
+          }
+        }
+        if (entersBlock) {
+          typeAtDepth[depth + 1] = cur ?? null;
+        }
+        return `${pre}${rewritten.join('.')}`;
+      }
+
+      // `$this.<field>` entity binds: descend from rootType when entering a nested block.
+      if (path.startsWith('$this')) {
+        const rest =
+          path === '$this'
+            ? []
+            : path.startsWith('$this.')
+              ? path.slice('$this.'.length).split('.')
+              : [];
+        const rewritten = ['$this'];
+        let cur: GraphQLNamedType | null | undefined = options.rootType;
+        for (const seg of rest) {
+          const stepped = renameFieldSegment(cur, seg, fieldRenameMap);
+          rewritten.push(stepped.name);
+          cur = stepped.type;
+        }
+        if (entersBlock) {
+          typeAtDepth[depth + 1] = cur ?? null;
+        }
+        return `${pre}${rewritten.join('.')}`;
+      }
+
       const segments = path.split('.');
 
       if (hasArgTypes && depth === 0) {

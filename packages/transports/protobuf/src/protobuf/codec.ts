@@ -215,13 +215,15 @@ function coerceMapKey(keyType: ProtoType, key: string): any {
 export function decodeMessage(fields: MappingField[], data: Uint8Array): Record<string, any> {
   const byId = new Map(fields.map(f => [f.id, f]));
   const out: Record<string, any> = {};
-  // Absent repeated/map fields are empty collections; proto3 scalars/enums get defaults.
+  // Absent repeated/map → empty collections. Implicit-presence scalars/enums → defaults.
+  // Explicit (`optional`) scalars stay absent so GraphQL can distinguish unset from default.
   for (const field of fields) {
     const key = field.bind && !field.bind.startsWith('$') ? field.bind : `_${field.id}`;
     if (field.type.kind === 'repeated') out[key] = [];
     else if (field.type.kind === 'map') out[key] = {};
-    else if (field.type.kind === 'scalar') out[key] = proto3ScalarDefault(field.type.name);
-    else if (field.type.kind === 'enum') {
+    else if (field.type.kind === 'scalar' && field.presence !== 'explicit') {
+      out[key] = proto3ScalarDefault(field.type.name);
+    } else if (field.type.kind === 'enum' && field.presence !== 'explicit') {
       const zero = Object.entries(field.type.values).find(([, n]) => n === 0)?.[0];
       out[key] = zero ?? 0;
     }

@@ -8,7 +8,7 @@ import { defaultImportFn } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { dummyLogger as log } from '../../../../testing/dummyLogger';
-import GrpcHandler from '../src/index.js';
+import GrpcHandler, { assertProtobufRpcAnnotations } from '../src/index.js';
 
 describe('gRPC Handler', () => {
   let pubsub: MemPubSub;
@@ -138,6 +138,60 @@ describe('gRPC Handler', () => {
       expect(validateSchema(schema)).toHaveLength(0);
       expect(printSchemaWithDirectives(schema)).toContain('AnotherExample_RetrieveMovies');
       expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
+    });
+  });
+
+  describe('legacy .graphql @grpcMethod fail-fast', () => {
+    it('rejects mixed SDL when a field still has only @grpcMethod', () => {
+      const schema = buildSchema(
+        /* GraphQL */ `
+          directive @grpcMethod(serviceName: String, methodName: String) on FIELD_DEFINITION
+          directive @protobuf__rpc(
+            service: String
+            method: String
+            args: String
+            selection: String
+          ) on FIELD_DEFINITION
+
+          type Query {
+            ok: String
+              @protobuf__rpc(
+                service: "S"
+                method: "Ok"
+                args: "1(string): id"
+                selection: "1(string): id"
+              )
+            legacy: String @grpcMethod(serviceName: "S", methodName: "Legacy")
+          }
+        `,
+        { assumeValid: true, assumeValidSDL: true },
+      );
+      expect(() => assertProtobufRpcAnnotations(schema, 'mixed.graphql')).toThrow(/Query\.legacy/);
+    });
+
+    it('allows SDL that only uses @protobuf__rpc', () => {
+      const schema = buildSchema(
+        /* GraphQL */ `
+          directive @protobuf__rpc(
+            service: String
+            method: String
+            args: String
+            selection: String
+          ) on FIELD_DEFINITION
+
+          type Query {
+            ok: String
+              @protobuf__rpc(
+                service: "S"
+                method: "Ok"
+                args: "1(string): id"
+                selection: "1(string): id"
+              )
+          }
+        `,
+        { assumeValid: true, assumeValidSDL: true },
+      );
+      expect(() => assertProtobufRpcAnnotations(schema, 'ok.graphql')).not.toThrow();
     });
   });
 });

@@ -28,7 +28,13 @@ export function emitEnumValues(
 export function protoTypeToken(
   rootJson: INamespace,
   pathWithName: string[],
-  field: { type?: string; rule?: string; keyType?: string },
+  field: {
+    type?: string;
+    rule?: string;
+    keyType?: string;
+    optional?: boolean;
+    options?: Record<string, unknown>;
+  },
 ): string {
   const base = field.type || 'string';
   let token: string;
@@ -53,7 +59,21 @@ export function protoTypeToken(
   if (field.rule === 'repeated') {
     return `repeated ${token}`;
   }
+  // Proto3 explicit presence (`optional` / proto3_optional) — decoder must not default.
+  if (isExplicitOptionalField(field) && token !== 'message') {
+    return `optional ${token}`;
+  }
   return token;
+}
+
+function isExplicitOptionalField(field: {
+  optional?: boolean;
+  options?: Record<string, unknown>;
+  rule?: string;
+}): boolean {
+  if (field.rule === 'repeated') return false;
+  if (field.options?.proto3_optional === true) return true;
+  return false;
 }
 
 function isScalar(t: string): boolean {
@@ -118,7 +138,18 @@ export function emitFieldsMapping(
     cur = cur?.nested?.[p];
   }
   const fields = cur?.fields as
-    Record<string, { type?: string; id?: number; rule?: string; keyType?: string }> | undefined;
+    | Record<
+        string,
+        {
+          type?: string;
+          id?: number;
+          rule?: string;
+          keyType?: string;
+          optional?: boolean;
+          options?: Record<string, unknown>;
+        }
+      >
+    | undefined;
   if (!fields) return '';
 
   // Resolve nested types from the owning message scope (`typePath`), not the RPC path.

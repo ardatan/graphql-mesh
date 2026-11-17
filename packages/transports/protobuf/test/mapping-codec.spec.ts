@@ -88,12 +88,24 @@ describe('protobuf mapping + codec', () => {
     expect(decoded.b).toBe(-2);
   });
 
-  it('materializes proto3 scalar defaults for absent fields', () => {
+  it('materializes proto3 scalar defaults for absent implicit-presence fields', () => {
     const decoded = decodeMessage(
       parseMapping(`1(bool): enabled 2(string): name 3(int32): count`),
       new Uint8Array(),
     );
     expect(decoded).toEqual({ enabled: false, name: '', count: 0 });
+  });
+
+  it('leaves absent explicit optional scalars undefined (presence)', () => {
+    const fields = parseMapping(`1(optional bool): enabled 2(optional string): name`);
+    expect(fields[0].presence).toBe('explicit');
+    const absent = decodeMessage(fields, new Uint8Array());
+    expect(absent).toEqual({});
+    expect(absent.enabled).toBeUndefined();
+    expect(absent.name).toBeUndefined();
+    const present = decodeMessage(fields, encodeMessage(fields, { enabled: false, name: '' }));
+    expect(present.enabled).toBe(false);
+    expect(present.name).toBe('');
   });
 
   it('roundtrips sint32 ZigZag', () => {

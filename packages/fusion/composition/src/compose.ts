@@ -9,13 +9,11 @@ import {
   isObjectType,
   isSpecifiedScalarType,
   parse,
+  type DirectiveNode,
+  type GraphQLArgumentConfig,
+  type GraphQLFieldConfig,
+  type GraphQLFieldConfigArgumentMap,
   type GraphQLType,
-} from 'graphql';
-import type {
-  DirectiveNode,
-  GraphQLArgumentConfig,
-  GraphQLFieldConfig,
-  GraphQLFieldConfigArgumentMap,
 } from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
@@ -837,11 +835,12 @@ function addAnnotationsForSemanticConventions({
       const pluralTypeName = pluralize(type.name);
       if (arg) {
         const typeDirectives = getDirectiveExtensions(type);
-        const ensureKey = () => {
+        const ensureKey = (opts?: { resolvable?: boolean }) => {
           typeDirectives.key ||= [];
           if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
             typeDirectives.key.push({
               fields: fieldName,
+              ...(opts?.resolvable === false ? { resolvable: false } : {}),
             });
             const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
             typeExtensions.directives = typeDirectives;
@@ -855,12 +854,15 @@ function addAnnotationsForSemanticConventions({
         // Hive resolves these via REST transport `Query._entities` → resolveReference;
         // no Mesh `@merge` needed for Connectors subgraphs.
         const markConnectEntityOrMerge = () => {
-          // Batch list args (e.g. `ids: [ID!]!`) must not be rewritten to `$this.<scalarKey>` —
-          // resolveReference supplies a scalar, and the encoder drops non-array repeated binds.
+          // Batch list args (e.g. `id: [ID!]!` / `ids: [ID!]!`) must not get
+          // `entity: true` or `$this.<scalarKey>` — resolveReference supplies a scalar.
           const batchListArg = isBatchListArgType(arg.type);
           if (directiveExtensions.connect?.length) {
             const alreadyEntity = directiveExtensions.connect.some((c: any) => c?.entity === true);
             if (alreadyEntity) {
+              return;
+            }
+            if (batchListArg) {
               return;
             }
             if (argName === fieldName) {
@@ -868,9 +870,6 @@ function addAnnotationsForSemanticConventions({
                 ...c,
                 entity: true,
               }));
-              return;
-            }
-            if (batchListArg) {
               return;
             }
             // Type-level entity connector: `/pet/{$args.petId}` → `/pet/{$this.id}`
@@ -899,14 +898,14 @@ function addAnnotationsForSemanticConventions({
             if (alreadyEntity) {
               return;
             }
+            if (batchListArg) {
+              return;
+            }
             if (argName === fieldName) {
               directiveExtensions[protobufKey] = directiveExtensions[protobufKey].map((c: any) => ({
                 ...c,
                 entity: true,
               }));
-              return;
-            }
-            if (batchListArg) {
               return;
             }
             // Type-level entity RPC: rewrite key arg binds → `$this.<keyField>`.
@@ -946,8 +945,10 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(`get_${type.name}_by_${fieldName}`):
           case snakeCase(`${type.name}_by_${fieldName}`): {
             if (isNonNullType(arg.type)) {
+              const batchListArg = isBatchListArgType(arg.type);
               markConnectEntityOrMerge();
-              ensureKey();
+              // List-keyed ById is not a singular entity resolver — don't advertise resolvable @key.
+              ensureKey(batchListArg ? { resolvable: false } : undefined);
             }
             break;
           }
@@ -957,8 +958,11 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(`get_${pluralTypeName}_by_${pluralFieldName}`):
           case snakeCase(`${pluralTypeName}_by_${pluralFieldName}`):
           case snakeCase(`${pluralTypeName}_by_${pluralFieldName}_list`): {
+            const batchListArg = isBatchListArgType(arg.type);
             markConnectEntityOrMerge();
-            ensureKey();
+            // Batch Query fields keep field-level RPC only; resolvable @key would claim a
+            // missing singular entity resolver for `_entities`.
+            ensureKey(batchListArg ? { resolvable: false } : undefined);
             break;
           }
         }

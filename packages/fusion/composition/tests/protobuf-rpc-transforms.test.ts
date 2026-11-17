@@ -190,7 +190,60 @@ describe('protobuf RPC semantic conventions (entity: true)', () => {
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).toMatch(/1\(repeated string\):\s*ids/);
     expect(sdl).not.toMatch(/\$this\.id/);
-    expect(sdl).toMatch(/@key\(\s*fields:\s*"id"/);
+    expect(sdl).not.toMatch(/entity:\s*true/);
+    // Batch-only subgraph must not advertise a resolvable @key without an entity resolver.
+    expect(sdl).toMatch(/@key\(\s*fields:\s*"id"[^)]*resolvable:\s*false/);
+  });
+
+  it('does not mark entity:true for equal-name list args (id: [ID!]!)', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "pets", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          getPetsById(id: [ID!]!): [Pet!]!
+            @protobuf__rpc(
+              service: "Pets"
+              method: "GetPets"
+              args: """
+              1(repeated string): id
+              """
+              selection: """
+              1(string): id
+              2(string): name
+              """
+            )
+        }
+
+        type Pet {
+          id: ID!
+          name: String!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([{ name: 'pets', schema }]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).not.toMatch(/entity:\s*true/);
+    expect(sdl).toMatch(/@key\(\s*fields:\s*"id"[^)]*resolvable:\s*false/);
   });
 });
 
@@ -321,5 +374,94 @@ describe('type-scoped protobuf field renames (overlapping names)', () => {
       /selection:[\s\S]*2\(int64\):\s*year[\s\S]*review\s*\{[\s\S]*2\(int64\):\s*publicationYear/,
     );
     expect(sdl).toContain('publicationYear');
+  });
+});
+
+describe('type-scoped $args.input nested renames', () => {
+  const schemaWithArgsInput = () =>
+    buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "movies", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        input MovieInput {
+          year: Int!
+        }
+
+        type Query {
+          movies(input: MovieInput!): Movie!
+            @protobuf__rpc(
+              service: "Example"
+              method: "GetMovies"
+              args: """
+              1(message): $args.input {
+                2(int64): year
+              }
+              """
+              selection: """
+              1(string): name
+              2(int64): year
+              """
+            )
+        }
+
+        type Movie {
+          name: String!
+          year: Int!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+
+  it('createRenameTransform: renames nested bind inside $args.input against MovieInput', () => {
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'movies',
+        schema: schemaWithArgsInput(),
+        transforms: [
+          createRenameTransform({
+            fieldRenamer: ({ typeName, fieldName }) =>
+              typeName === 'MovieInput' && fieldName === 'year' ? 'publicationYear' : fieldName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/input MovieInput[\s\S]*publicationYear/);
+    expect(sdl).toMatch(/\$args\.input\s*\{[\s\S]*2\(int64\):\s*publicationYear/);
+    expect(sdl).toMatch(/selection:[\s\S]*2\(int64\):\s*year/);
+  });
+
+  it('createRenameFieldTransform: same $args.input nested rewrite', () => {
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'movies',
+        schema: schemaWithArgsInput(),
+        transforms: [
+          createRenameFieldTransform(({ typeName, fieldName }) =>
+            typeName === 'MovieInput' && fieldName === 'year' ? 'publicationYear' : fieldName,
+          ),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/\$args\.input\s*\{[\s\S]*2\(int64\):\s*publicationYear/);
   });
 });

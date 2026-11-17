@@ -94,36 +94,50 @@ export default class GrpcHandler implements MeshHandler {
   }
 }
 
+const LEGACY_GRPC_METHOD = new Set(['grpcMethod', 'grpc__method']);
+const PROTOBUF_RPC = new Set(['protobuf__rpc', 'protobufRpc']);
+
+function directiveNames(directives: readonly DirectiveNode[] | undefined): Set<string> {
+  const names = new Set<string>();
+  for (const directive of directives || []) {
+    names.add(directive.name.value);
+  }
+  return names;
+}
+
+function hasLegacyGrpcOnly(names: Set<string>): boolean {
+  const hasGrpc = [...LEGACY_GRPC_METHOD].some(n => names.has(n));
+  const hasProtobuf = [...PROTOBUF_RPC].some(n => names.has(n));
+  return hasGrpc && !hasProtobuf;
+}
+
 /**
  * Legacy `@grpcMethod` SDL caches are not executable by the protobuf transport
- * (needs `@protobuf__rpc` with typed args/selection mappings). Fail fast instead
- * of serving a schema with no resolvers.
+ * (needs `@protobuf__rpc` with typed args/selection mappings). Fail fast when any
+ * field/type still has only `@grpcMethod` — even if another field already has
+ * `@protobuf__rpc` (mixed SDL).
  */
-function assertProtobufRpcAnnotations(schema: GraphQLSchema, source: string): void {
-  let hasGrpcMethod = false;
-  let hasProtobufRpc = false;
-  const absorb = (directives: readonly DirectiveNode[] | undefined) => {
-    for (const directive of directives || []) {
-      const name = directive.name.value;
-      if (name === 'grpcMethod' || name === 'grpc__method') {
-        hasGrpcMethod = true;
-      }
-      if (name === 'protobuf__rpc' || name === 'protobufRpc') {
-        hasProtobufRpc = true;
-      }
-    }
-  };
+export function assertProtobufRpcAnnotations(schema: GraphQLSchema, source: string): void {
+  const unsupported: string[] = [];
   for (const type of Object.values(schema.getTypeMap())) {
     if (!isObjectType(type) || type.name.startsWith('__')) continue;
-    absorb(type.astNode?.directives);
-    absorb(type.extensionASTNodes?.flatMap(n => n.directives || []));
+    const typeDirs = directiveNames([
+      ...(type.astNode?.directives || []),
+      ...(type.extensionASTNodes?.flatMap(n => n.directives || []) || []),
+    ]);
+    if (hasLegacyGrpcOnly(typeDirs)) {
+      unsupported.push(type.name);
+    }
     for (const field of Object.values(type.getFields())) {
-      absorb(field.astNode?.directives);
+      const fieldDirs = directiveNames(field.astNode?.directives);
+      if (hasLegacyGrpcOnly(fieldDirs)) {
+        unsupported.push(`${type.name}.${field.name}`);
+      }
     }
   }
-  if (hasGrpcMethod && !hasProtobufRpc) {
+  if (unsupported.length) {
     throw new Error(
-      `Legacy @grpcMethod annotations in ${source} are not executed by @graphql-mesh/transport-protobuf. Recompose the subgraph from .proto / reflection so @protobuf__rpc(args, selection) mappings are emitted.`,
+      `Legacy @grpcMethod annotations without @protobuf__rpc in ${source} are not executed by @graphql-mesh/transport-protobuf (${unsupported.join(', ')}). Recompose the subgraph from .proto / reflection so @protobuf__rpc(args, selection) mappings are emitted.`,
     );
   }
 }
