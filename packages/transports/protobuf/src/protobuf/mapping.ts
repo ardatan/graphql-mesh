@@ -24,6 +24,12 @@ export type ProtoType =
   | { kind: 'scalar'; name: ProtoScalar }
   | { kind: 'enum'; values: Record<string, number> }
   | { kind: 'message'; fields: MappingField[] }
+  /**
+   * Cycle-aware message reference: `message&` / `message&N` means reuse the field list
+   * of the message N levels up (0 = enclosing). Resolved to `{ kind: 'message', fields }`
+   * (shared array) by `parseMapping` before the codec runs.
+   */
+  | { kind: 'messageRef'; levelsUp: number }
   | { kind: 'repeated'; element: ProtoType }
   | { kind: 'map'; key: ProtoType; value: ProtoType };
 
@@ -43,7 +49,80 @@ export interface MappingField {
 export function parseMapping(source: string): MappingField[] {
   const s = source.trim();
   if (!s) return [];
-  return parseFieldList(s, 0).fields;
+  const fields = parseFieldList(s, 0).fields;
+  resolveMessageRefs(fields);
+  return fields;
+}
+
+/**
+ * Replace `message&` / `message&N` placeholders with shared field-list references so
+ * recursive messages keep nested structure across encode/decode without empty stubs.
+ */
+function resolveMessageRefs(fields: MappingField[], ancestors: MappingField[][] = []): void {
+  const stack = [...ancestors, fields];
+  for (const field of fields) {
+    const bound = bindMessageRef(field.type, stack);
+    if (bound) {
+      field.type = bound.type;
+      field.fields = bound.fields;
+      continue;
+    }
+    if (field.type.kind === 'message' && field.fields?.length) {
+      resolveMessageRefs(field.fields, stack);
+    } else if (
+      field.type.kind === 'repeated' &&
+      field.type.element.kind === 'message' &&
+      field.fields?.length
+    ) {
+      resolveMessageRefs(field.fields, stack);
+    } else if (
+      field.type.kind === 'map' &&
+      field.type.value.kind === 'message' &&
+      field.fields?.length
+    ) {
+      resolveMessageRefs(field.fields, stack);
+    }
+  }
+}
+
+function bindMessageRef(
+  type: ProtoType,
+  stack: MappingField[][],
+): { type: ProtoType; fields: MappingField[] } | undefined {
+  if (type.kind === 'messageRef') {
+    const target = stack[stack.length - 1 - type.levelsUp];
+    if (!target) {
+      throw new Error(
+        `Invalid message&${type.levelsUp === 0 ? '' : type.levelsUp}: exceeds nesting depth ${stack.length}`,
+      );
+    }
+    return { type: { kind: 'message', fields: target }, fields: target };
+  }
+  if (type.kind === 'repeated' && type.element.kind === 'messageRef') {
+    const target = stack[stack.length - 1 - type.element.levelsUp];
+    if (!target) {
+      throw new Error(
+        `Invalid repeated message&${type.element.levelsUp === 0 ? '' : type.element.levelsUp}: exceeds nesting depth ${stack.length}`,
+      );
+    }
+    return {
+      type: { kind: 'repeated', element: { kind: 'message', fields: target } },
+      fields: target,
+    };
+  }
+  if (type.kind === 'map' && type.value.kind === 'messageRef') {
+    const target = stack[stack.length - 1 - type.value.levelsUp];
+    if (!target) {
+      throw new Error(
+        `Invalid map value message&${type.value.levelsUp === 0 ? '' : type.value.levelsUp}: exceeds nesting depth ${stack.length}`,
+      );
+    }
+    return {
+      type: { kind: 'map', key: type.key, value: { kind: 'message', fields: target } },
+      fields: target,
+    };
+  }
+  return undefined;
 }
 
 function parseFieldList(source: string, start: number): { fields: MappingField[]; end: number } {
@@ -219,7 +298,18 @@ function parseType(source: string, start: number): { type: ProtoType; end: numbe
     return { type: { kind: 'enum', values }, end: i + 1 };
   }
   if (source.startsWith('message', i)) {
-    return { type: { kind: 'message', fields: [] }, end: i + 'message'.length };
+    let j = i + 'message'.length;
+    if (source[j] === '&') {
+      j++;
+      let levelsUp = 0;
+      if (j < source.length && /[0-9]/.test(source[j])) {
+        const numStart = j;
+        while (j < source.length && /[0-9]/.test(source[j])) j++;
+        levelsUp = Number(source.slice(numStart, j));
+      }
+      return { type: { kind: 'messageRef', levelsUp }, end: j };
+    }
+    return { type: { kind: 'message', fields: [] }, end: j };
   }
   const nameStart = i;
   while (i < source.length && /[a-z0-9]/.test(source[i])) i++;

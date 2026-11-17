@@ -149,7 +149,11 @@ export function emitFieldsMapping(
   bindMode: 'relative' | 'prefix',
   bindPrefix = '',
   indent = '  ',
-  visited: Set<string> = new Set(),
+  /**
+   * Ancestor message type keys on the current emit stack. Used to emit cycle-aware
+   * `message&` / `message&N` refs instead of empty stubs (which drop nested recursive data).
+   */
+  visited: string[] = [],
 ): string {
   const typePath = walkToFindTypePath(rootJson, pathWithName, typeName.split('.'));
   const typeKey = typePath.join('.');
@@ -176,53 +180,53 @@ export function emitFieldsMapping(
   const nestedScope = typePath;
   const oneofFields = collectOneofFieldNames(cur);
 
-  if (visited.has(typeKey)) {
-    // Recursive message: emit field shells without re-expanding the same type.
+  visited.push(typeKey);
+  try {
     const lines: string[] = [];
     for (const [fieldName, field] of Object.entries(fields)) {
       const id = field.id ?? 0;
       const token = protoTypeToken(rootJson, nestedScope, field, oneofFields.has(fieldName));
       const bind = bindMode === 'prefix' && bindPrefix ? `${bindPrefix}.${fieldName}` : fieldName;
-      if (token === 'message' || token === 'repeated message' || token.includes(',message>')) {
+      const isMessageToken =
+        token === 'message' || token === 'repeated message' || /map<[^,]+,message>/.test(token);
+      if (isMessageToken && field.type) {
+        const nestedType = field.type;
+        const nestedTypePath = walkToFindTypePath(rootJson, nestedScope, nestedType.split('.'));
+        const nestedKey = nestedTypePath.join('.');
+        const cycleIdx = visited.indexOf(nestedKey);
+        if (cycleIdx >= 0) {
+          // Cycle-aware ref: `&` / `&N` = N message levels up (0 = enclosing).
+          // Parser resolves these to shared field lists so child.child… round-trips.
+          // Full named-type defs (`@TypeName`) are deferred; ancestor-relative refs are enough
+          // for self- and mutual recursion on the emit stack.
+          const levelsUp = visited.length - 1 - cycleIdx;
+          const refTok = levelsUp === 0 ? 'message&' : `message&${levelsUp}`;
+          const tokenWithRef = token.replace(/\bmessage\b/, refTok);
+          lines.push(`${indent}${id}(${tokenWithRef}): ${bind}`);
+          continue;
+        }
+        const nested = emitFieldsMapping(
+          rootJson,
+          nestedScope,
+          nestedType,
+          'relative',
+          '',
+          indent + '  ',
+          visited,
+        );
         lines.push(`${indent}${id}(${token}): ${bind} {`);
+        if (nested) {
+          lines.push(nested);
+        }
         lines.push(`${indent}}`);
       } else {
         lines.push(`${indent}${id}(${token}): ${bind}`);
       }
     }
     return lines.join('\n');
+  } finally {
+    visited.pop();
   }
-  visited.add(typeKey);
-
-  const lines: string[] = [];
-  for (const [fieldName, field] of Object.entries(fields)) {
-    const id = field.id ?? 0;
-    const token = protoTypeToken(rootJson, nestedScope, field, oneofFields.has(fieldName));
-    const bind = bindMode === 'prefix' && bindPrefix ? `${bindPrefix}.${fieldName}` : fieldName;
-    const isMessageToken =
-      token === 'message' || token === 'repeated message' || /map<[^,]+,message>/.test(token);
-    if (isMessageToken && field.type) {
-      const nestedType = field.type;
-      const nested = emitFieldsMapping(
-        rootJson,
-        nestedScope,
-        nestedType,
-        'relative',
-        '',
-        indent + '  ',
-        visited,
-      );
-      lines.push(`${indent}${id}(${token}): ${bind} {`);
-      if (nested) {
-        lines.push(nested);
-      }
-      lines.push(`${indent}}`);
-    } else {
-      lines.push(`${indent}${id}(${token}): ${bind}`);
-    }
-  }
-  visited.delete(typeKey);
-  return lines.join('\n');
 }
 
 /** Request: GraphQL args use `input` wrapping the request message fields. */

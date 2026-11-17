@@ -122,4 +122,20 @@ describe('protobuf mapping + codec', () => {
       expect(fields[0].type.value.kind).toBe('message');
     }
   });
+
+  it('resolves message& self-refs and round-trips nested recursion', () => {
+    const fields = parseMapping(`
+      1(string): name
+      2(message&): child
+    `);
+    expect(fields[1].fields).toBe(fields);
+    const bytes = encodeMessage(fields, {
+      name: 'a',
+      child: { name: 'b', child: { name: 'c' } },
+    });
+    expect(decodeMessage(fields, bytes)).toEqual({
+      name: 'a',
+      child: { name: 'b', child: { name: 'c' } },
+    });
+  });
 });
