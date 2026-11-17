@@ -188,8 +188,8 @@ export class ProtobufTransportHelper extends DisposableStack {
             typeName,
           );
           // Subscriptions use `subscribe` (async iterable). Query/Mutation server-stream
-          // fields keep `resolve` so the resolver can collect chunks into a list (and
-          // `@stream` can incremental-deliver that iterable).
+          // fields keep `resolve` and return an AsyncIterable so `@stream` can
+          // incremental-deliver as gRPC chunks arrive (same pattern as legacy gRPC).
           if (typeName === 'Subscription') {
             field.subscribe = resolver;
             field.resolve = (x: any) => x;
@@ -325,7 +325,10 @@ export class ProtobufTransportHelper extends DisposableStack {
           }) ?? new Metadata();
 
         if (isStream || typeName === 'Subscription') {
-          const gen = (async function* () {
+          // Return AsyncIterable for both Subscription and Query `@stream` list fields.
+          // Materializing into an array first corrupted repeated fields under `@stream`
+          // incremental delivery (e.g. duplicated `cast` across chunks).
+          return (async function* () {
             for await (const chunk of grpcServerStream({
               location,
               path: rpcPath,
@@ -337,15 +340,6 @@ export class ProtobufTransportHelper extends DisposableStack {
               yield decodeMessage(selectionFields, chunk);
             }
           })();
-          if (typeName === 'Subscription') {
-            return gen;
-          }
-          // Query/Mutation with server-stream: collect messages into a list
-          const items: any[] = [];
-          for await (const item of gen) {
-            items.push(item);
-          }
-          return items;
         }
 
         const responseBytes = await grpcUnary({
