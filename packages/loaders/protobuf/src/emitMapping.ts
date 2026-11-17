@@ -154,6 +154,11 @@ export function emitFieldsMapping(
    * `message&` / `message&N` refs instead of empty stubs (which drop nested recursive data).
    */
   visited: string[] = [],
+  /**
+   * Indices below this in `visited` are prefix-mode ancestors (`input.*` binds).
+   * `message&N` must not reuse those lists from a relative nested context (A→B→A).
+   */
+  relativeFromDepth = 0,
 ): string {
   const typePath = walkToFindTypePath(rootJson, pathWithName, typeName.split('.'));
   const typeKey = typePath.join('.');
@@ -199,9 +204,11 @@ export function emitFieldsMapping(
           // Parser resolves these to shared field lists so child.child… round-trips.
           // Full named-type defs (`@TypeName`) are deferred; ancestor-relative refs are enough
           // for self- and mutual recursion on the emit stack.
-          if (bindMode === 'prefix' && bindPrefix) {
-            // Request boundary uses `input.*` binds — do not share that list via message&.
-            // Open a relative block so reusable recursive defs keep relative paths.
+          // Never share a prefix-bound (`input.*`) field list via message& — open a relative
+          // block so nested reuse (self-recursion and A→B→A) keeps relative binds.
+          const wouldReusePrefixList =
+            (bindMode === 'prefix' && !!bindPrefix) || cycleIdx < relativeFromDepth;
+          if (wouldReusePrefixList) {
             lines.push(`${indent}${id}(${token}): ${bind} {`);
             const relative = emitFieldsMapping(
               rootJson,
@@ -211,6 +218,7 @@ export function emitFieldsMapping(
               '',
               indent + '  ',
               [],
+              0,
             );
             if (relative) {
               lines.push(relative);
@@ -224,6 +232,10 @@ export function emitFieldsMapping(
           lines.push(`${indent}${id}(${tokenWithRef}): ${bind}`);
           continue;
         }
+        // Nested bodies are always relative; mark current visited depth so cycles back to
+        // a prefix-mode ancestor open a relative copy instead of message&N.
+        const nestedRelativeFrom =
+          bindMode === 'prefix' && bindPrefix ? visited.length : relativeFromDepth;
         const nested = emitFieldsMapping(
           rootJson,
           nestedScope,
@@ -232,6 +244,7 @@ export function emitFieldsMapping(
           '',
           indent + '  ',
           visited,
+          nestedRelativeFrom,
         );
         lines.push(`${indent}${id}(${token}): ${bind} {`);
         if (nested) {

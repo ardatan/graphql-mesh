@@ -162,4 +162,71 @@ describe('emitMapping cycle-aware message& refs', () => {
       },
     });
   });
+
+  it('emitRequestBody: mutual recursion A→B→A round-trips nested A values', () => {
+    const mutual = {
+      nested: {
+        A: {
+          fields: {
+            label: { type: 'string', id: 1 },
+            b: { type: 'B', id: 2 },
+          },
+        },
+        B: {
+          fields: {
+            title: { type: 'string', id: 1 },
+            a: { type: 'A', id: 2 },
+          },
+        },
+      },
+    } as INamespace;
+    const mapping = emitRequestBody(mutual, [], 'A');
+    // Prefix only at the request boundary.
+    expect(mapping).toMatch(/1\(string\):\s*input\.label/);
+    expect(mapping).toMatch(/2\(message\):\s*input\.b\s*\{/);
+    // B→A must expand a relative A copy (not message& to the prefix-bound root list).
+    expect(mapping).toMatch(/2\(message\):\s*a\s*\{/);
+    expect(mapping).toMatch(/1\(string\):\s*label/);
+    // Deeper mutual cycle may share that relative A via message&1.
+    expect(mapping).toMatch(/2\(message&1\):\s*a/);
+    // Shared recursive bodies must not carry request-prefixed binds.
+    expect(mapping).not.toMatch(/message&[^:]*:\s*input\./);
+    expect(mapping).not.toMatch(/\{\s*1\(string\):\s*input\.label/);
+
+    const fields = parseMapping(mapping);
+    const args = {
+      input: {
+        label: 'a1',
+        b: {
+          title: 'b1',
+          a: {
+            label: 'a2',
+            b: {
+              title: 'b2',
+              a: {
+                label: 'a3',
+              },
+            },
+          },
+        },
+      },
+    };
+    const bytes = encodeMessage(fields, args);
+    const decoded = decodeMessage(parseMapping(emitResponseSelection(mutual, [], 'A')), bytes);
+    expect(decoded).toEqual({
+      label: 'a1',
+      b: {
+        title: 'b1',
+        a: {
+          label: 'a2',
+          b: {
+            title: 'b2',
+            a: {
+              label: 'a3',
+            },
+          },
+        },
+      },
+    });
+  });
 });
