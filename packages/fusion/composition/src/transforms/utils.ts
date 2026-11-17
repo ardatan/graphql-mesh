@@ -95,43 +95,94 @@ export function withOriginalKeyFallback<T extends Record<string, any>>(
   };
 }
 
+export interface RewriteProtobufMappingBindsOptions {
+  /**
+   * When set, `$args` / top-level path heads use `renameMap` (arg renames), while
+   * nested segments and binds inside `{ … }` use `nestedRenameMap` (field renames).
+   * Selection rewrites omit this and apply `renameMap` to every segment.
+   */
+  nestedRenameMap?: Map<string, string>;
+}
+
 /**
  * Rewrite GraphQL bind path segments in a `@protobuf__rpc` args/selection mapping.
  * Handles `$args.x` / `$this.x` and bare paths after `):` (e.g. `2(int64): year`,
  * `1(message): input.movie {`).
+ *
+ * Each original segment is looked up once (no `a→b` then `b→c` chaining). Paths
+ * already rewritten via `$args`/`$this` are not rewritten again by the bare-path pass.
+ * Compact mappings ending before `}` are supported.
  */
 export function rewriteProtobufMappingBinds(
   mapping: string,
   renameMap: Map<string, string>,
+  options?: RewriteProtobufMappingBindsOptions,
 ): string {
-  if (!mapping || !renameMap.size) {
+  if (!mapping || (!renameMap.size && !options?.nestedRenameMap?.size)) {
     return mapping;
   }
-  const entries = [...renameMap.entries()].filter(([from, to]) => from && to && from !== to);
-  if (!entries.length) {
-    return mapping;
-  }
-  // Longer names first so `year` does not eat `yearPublished`.
-  entries.sort((a, b) => b[0].length - a[0].length);
-  const lookup = new Map(entries);
-  const names = entries.map(([from]) => escapeRegExp(from)).join('|');
+  const rootLookup = toLookup(renameMap);
+  const nestedLookup = options?.nestedRenameMap ? toLookup(options.nestedRenameMap) : rootLookup;
+  const splitRootNested = Boolean(options?.nestedRenameMap);
+
   let out = mapping;
+  if (rootLookup.size) {
+    const names = [...rootLookup.keys()].map(escapeRegExp).join('|');
+    // Single lookup from the original name — JS replace does not rescan replacements,
+    // but we still must not let the bare-path pass remap `$args.b` after `$args.a→b`.
+    out = out.replace(
+      new RegExp(`\\$(args|this)\\.(${names})(?![\\w])`, 'g'),
+      (_m, scope: string, name: string) => `$${scope}.${rootLookup.get(name) ?? name}`,
+    );
+  }
+
+  // Path binds after `):` — delimiters match parseMapping (`\s`, `}`, `{`, `#`, EOS),
+  // including compact one-liners: `1(message): input { 2(int64): year 3(string): name }`.
   out = out.replace(
-    new RegExp(`\\$(args|this)\\.(${names})(?![\\w])`, 'g'),
-    (_m, scope: string, name: string) => `$${scope}.${lookup.get(name) ?? name}`,
-  );
-  // Path binds after `):` — head + optional `.seg` segments.
-  out = out.replace(
-    /(\):\s*)([\w$]+(?:\.[\w$]+)*)(?=\s*[{]|\s*$|\s*[\n#])/gm,
-    (_m, pre: string, path: string) => {
-      const next = path
-        .split('.')
-        .map(seg => lookup.get(seg) ?? seg)
+    /(\):\s*)([\w$]+(?:\.[\w$]+)*)(?=[\s{}#]|$)/g,
+    (_m, pre: string, path: string, offset: number, whole: string) => {
+      if (path.startsWith('$args') || path.startsWith('$this')) {
+        // `$args` / `$this` already handled; remapping segments would double-rename.
+        return `${pre}${path}`;
+      }
+      const depth = braceDepthAt(whole, offset);
+      const segments = path.split('.');
+      const next = segments
+        .map((seg, i) => {
+          if (splitRootNested && depth === 0 && i === 0) {
+            return rootLookup.get(seg) ?? seg;
+          }
+          if (splitRootNested && depth === 0 && i > 0) {
+            return nestedLookup.get(seg) ?? seg;
+          }
+          if (splitRootNested && depth > 0) {
+            return nestedLookup.get(seg) ?? seg;
+          }
+          return rootLookup.get(seg) ?? seg;
+        })
         .join('.');
       return `${pre}${next}`;
     },
   );
   return out;
+}
+
+function toLookup(renameMap: Map<string, string>): Map<string, string> {
+  const entries = [...renameMap.entries()]
+    .filter(([from, to]) => from && to && from !== to)
+    .sort((a, b) => b[0].length - a[0].length);
+  return new Map(entries);
+}
+
+/** Net `{` − `}` count before `index` (string content; mapping dialect has no escapes). */
+function braceDepthAt(source: string, index: number): number {
+  let depth = 0;
+  for (let i = 0; i < index; i++) {
+    const c = source[i];
+    if (c === '{') depth++;
+    else if (c === '}') depth = Math.max(0, depth - 1);
+  }
+  return depth;
 }
 
 function protobufRpcDirectiveKey(
@@ -278,20 +329,19 @@ export function rewriteConnectArgReferences(
     };
   }
   if (protobufKey && (argRenameMap.size > 0 || (fieldRenameMap?.size ?? 0) > 0)) {
-    // Arg renames update request `args:`. Field/input renames update args path
-    // segments and response `selection:` binds. Arg-only renames must not touch
-    // selection (Query arg `year` ≠ Movie field `year`).
-    const argsMap = new Map<string, string>([
-      ...argRenameMap.entries(),
-      ...(fieldRenameMap?.entries() ?? []),
-    ]);
+    // Arg renames update request arg roots (`$args.x` / top-level binds).
+    // Field/input renames update nested args path segments and response `selection:`.
+    // Do not apply field renames to argument roots (Query `release_year` arg ≠
+    // `Movie.release_year` field under `fieldNames: camelCase`).
     const selectionMap = fieldRenameMap?.size ? fieldRenameMap : undefined;
     let protobufChanged = false;
     const rewritten = nextDirectives[protobufKey].map((rpcArgs: any) => {
       let args = rpcArgs?.args;
       let selection = rpcArgs?.selection;
-      if (typeof args === 'string' && argsMap.size) {
-        args = rewriteProtobufMappingBinds(args, argsMap);
+      if (typeof args === 'string' && (argRenameMap.size || fieldRenameMap?.size)) {
+        args = rewriteProtobufMappingBinds(args, argRenameMap, {
+          nestedRenameMap: fieldRenameMap?.size ? fieldRenameMap : undefined,
+        });
       }
       if (typeof selection === 'string' && selectionMap?.size) {
         selection = rewriteProtobufMappingBinds(selection, selectionMap);

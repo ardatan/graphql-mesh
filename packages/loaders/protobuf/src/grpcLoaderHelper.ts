@@ -284,28 +284,30 @@ export class GrpcLoaderHelper extends DisposableStack {
   getCredentials(): MaybePromise<ChannelCredentials> {
     this.log.debug(`Getting channel credentials`);
     if (this.config.credentialsSsl) {
+      const ssl = this.config.credentialsSsl;
       this.log.debug(
         () =>
-          `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`,
+          `Using SSL Connection with credentials at ${ssl.privateKey ?? '(none)'} & ${ssl.certChain ?? '(none)'} (rootCA=${ssl.rootCA ?? '(none)'})`,
       );
-      const absolutePrivateKeyPath = path.isAbsolute(this.config.credentialsSsl.privateKey)
-        ? this.config.credentialsSsl.privateKey
-        : path.join(this.baseDir, this.config.credentialsSsl.privateKey);
-      const absoluteCertChainPath = path.isAbsolute(this.config.credentialsSsl.certChain)
-        ? this.config.credentialsSsl.certChain
-        : path.join(this.baseDir, this.config.credentialsSsl.certChain);
+      const resolvePath = (p: string) => (path.isAbsolute(p) ? p : path.join(this.baseDir, p));
+      const rootCAPath =
+        ssl.rootCA && ssl.rootCA !== 'rootCA' ? resolvePath(ssl.rootCA) : undefined;
+      const privateKeyPath = ssl.privateKey ? resolvePath(ssl.privateKey) : undefined;
+      const certChainPath = ssl.certChain ? resolvePath(ssl.certChain) : undefined;
 
-      const sslFiles = [
-        fs.promises.readFile(absolutePrivateKeyPath),
-        fs.promises.readFile(absoluteCertChainPath),
-      ];
-      if (this.config.credentialsSsl.rootCA !== 'rootCA') {
-        const absoluteRootCAPath = path.isAbsolute(this.config.credentialsSsl.rootCA)
-          ? this.config.credentialsSsl.rootCA
-          : path.join(this.baseDir, this.config.credentialsSsl.rootCA);
-        sslFiles.unshift(fs.promises.readFile(absoluteRootCAPath));
+      if (rootCAPath && !privateKeyPath && !certChainPath) {
+        return fs.promises.readFile(rootCAPath).then(rootCA => credentials.createSsl(rootCA));
       }
-      return Promise.all(sslFiles).then(([rootCA, privateKey, certChain]) =>
+      if (!privateKeyPath || !certChainPath) {
+        throw new Error(
+          'credentialsSsl requires both privateKey and certChain for client certificates, or only rootCA for CA-only trust',
+        );
+      }
+      return Promise.all([
+        rootCAPath ? fs.promises.readFile(rootCAPath) : Promise.resolve(undefined),
+        fs.promises.readFile(privateKeyPath),
+        fs.promises.readFile(certChainPath),
+      ]).then(([rootCA, privateKey, certChain]) =>
         credentials.createSsl(rootCA, privateKey, certChain),
       );
     } else if (this.config.useHTTPS) {

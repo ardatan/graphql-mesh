@@ -33,7 +33,9 @@ export function protoTypeToken(
   const base = field.type || 'string';
   let token: string;
   if (field.keyType) {
-    token = `map<${scalarOrEnum(rootJson, pathWithName, field.keyType)},${scalarOrEnum(rootJson, pathWithName, base)}>`;
+    const keyTok = scalarOrEnumOrMessage(rootJson, pathWithName, field.keyType, 'key');
+    const valTok = scalarOrEnumOrMessage(rootJson, pathWithName, base, 'value');
+    token = `map<${keyTok},${valTok}>`;
   } else if (isScalar(base)) {
     token = base === 'bytes' ? 'bytes' : normalizeScalar(base);
   } else {
@@ -78,7 +80,12 @@ function normalizeScalar(t: string): string {
   return t;
 }
 
-function scalarOrEnum(rootJson: INamespace, pathWithName: string[], t: string): string {
+function scalarOrEnumOrMessage(
+  rootJson: INamespace,
+  pathWithName: string[],
+  t: string,
+  role: 'key' | 'value',
+): string {
   if (isScalar(t)) return normalizeScalar(t);
   const typePath = walkToFindTypePath(rootJson, pathWithName, t.split('.'));
   let cur: any = rootJson;
@@ -86,7 +93,13 @@ function scalarOrEnum(rootJson: INamespace, pathWithName: string[], t: string): 
     cur = cur?.nested?.[p];
   }
   if (cur?.values) return emitEnumValues(rootJson, pathWithName, t);
-  return 'string';
+  if (role === 'key') {
+    // Map keys must be integral/bool/string — message keys are invalid protobuf.
+    throw new Error(
+      `protobuf map key type "${t}" resolved to a message; map keys must be scalar or enum`,
+    );
+  }
+  return 'message';
 }
 
 export function emitFieldsMapping(
@@ -96,8 +109,10 @@ export function emitFieldsMapping(
   bindMode: 'relative' | 'prefix',
   bindPrefix = '',
   indent = '  ',
+  visited: Set<string> = new Set(),
 ): string {
   const typePath = walkToFindTypePath(rootJson, pathWithName, typeName.split('.'));
+  const typeKey = typePath.join('.');
   let cur: any = rootJson;
   for (const p of typePath) {
     cur = cur?.nested?.[p];
@@ -105,20 +120,45 @@ export function emitFieldsMapping(
   const fields = cur?.fields as
     Record<string, { type?: string; id?: number; rule?: string; keyType?: string }> | undefined;
   if (!fields) return '';
+
+  // Resolve nested types from the owning message scope (`typePath`), not the RPC path.
+  const nestedScope = typePath;
+
+  if (visited.has(typeKey)) {
+    // Recursive message: emit field shells without re-expanding the same type.
+    const lines: string[] = [];
+    for (const [fieldName, field] of Object.entries(fields)) {
+      const id = field.id ?? 0;
+      const token = protoTypeToken(rootJson, nestedScope, field);
+      const bind = bindMode === 'prefix' && bindPrefix ? `${bindPrefix}.${fieldName}` : fieldName;
+      if (token === 'message' || token === 'repeated message' || token.includes(',message>')) {
+        lines.push(`${indent}${id}(${token}): ${bind} {`);
+        lines.push(`${indent}}`);
+      } else {
+        lines.push(`${indent}${id}(${token}): ${bind}`);
+      }
+    }
+    return lines.join('\n');
+  }
+  visited.add(typeKey);
+
   const lines: string[] = [];
   for (const [fieldName, field] of Object.entries(fields)) {
     const id = field.id ?? 0;
-    const token = protoTypeToken(rootJson, pathWithName, field);
+    const token = protoTypeToken(rootJson, nestedScope, field);
     const bind = bindMode === 'prefix' && bindPrefix ? `${bindPrefix}.${fieldName}` : fieldName;
-    if (token === 'message' || token === 'repeated message') {
-      const nestedType = field.type!;
+    const isMessageToken =
+      token === 'message' || token === 'repeated message' || /map<[^,]+,message>/.test(token);
+    if (isMessageToken && field.type) {
+      const nestedType = field.type;
       const nested = emitFieldsMapping(
         rootJson,
-        pathWithName,
+        nestedScope,
         nestedType,
         'relative',
         '',
         indent + '  ',
+        visited,
       );
       lines.push(`${indent}${id}(${token}): ${bind} {`);
       if (nested) {
@@ -129,6 +169,7 @@ export function emitFieldsMapping(
       lines.push(`${indent}${id}(${token}): ${bind}`);
     }
   }
+  visited.delete(typeKey);
   return lines.join('\n');
 }
 

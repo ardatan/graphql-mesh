@@ -103,26 +103,7 @@ export class ProtobufTransportHelper extends DisposableStack {
 
   getCredentials(): MaybePromise<ChannelCredentials> {
     if (this.config.credentialsSsl) {
-      const absolutePrivateKeyPath = path.isAbsolute(this.config.credentialsSsl.privateKey)
-        ? this.config.credentialsSsl.privateKey
-        : path.join(this.baseDir, this.config.credentialsSsl.privateKey);
-      const absoluteCertChainPath = path.isAbsolute(this.config.credentialsSsl.certChain)
-        ? this.config.credentialsSsl.certChain
-        : path.join(this.baseDir, this.config.credentialsSsl.certChain);
-
-      const sslFiles = [
-        fs.promises.readFile(absolutePrivateKeyPath),
-        fs.promises.readFile(absoluteCertChainPath),
-      ];
-      if (this.config.credentialsSsl.rootCA && this.config.credentialsSsl.rootCA !== 'rootCA') {
-        const absoluteRootCAPath = path.isAbsolute(this.config.credentialsSsl.rootCA)
-          ? this.config.credentialsSsl.rootCA
-          : path.join(this.baseDir, this.config.credentialsSsl.rootCA);
-        sslFiles.unshift(fs.promises.readFile(absoluteRootCAPath));
-      }
-      return Promise.all(sslFiles).then(([rootCA, privateKey, certChain]) =>
-        credentials.createSsl(rootCA, privateKey, certChain),
-      );
+      return loadSslCredentials(this.baseDir, this.config.credentialsSsl);
     }
     if (this.config.useHTTPS) {
       return credentials.createSsl();
@@ -328,6 +309,9 @@ export class ProtobufTransportHelper extends DisposableStack {
           // Return AsyncIterable for both Subscription and Query `@stream` list fields.
           // Materializing into an array first corrupted repeated fields under `@stream`
           // incremental delivery (e.g. duplicated `cast` across chunks).
+          // Apply requestTimeout as a per-call deadline for Query streams; long-lived
+          // Subscriptions omit it so the stream is not killed by a unary-style timeout.
+          const streamTimeout = typeName === 'Subscription' ? undefined : timeout;
           return (async function* () {
             for await (const chunk of grpcServerStream({
               location,
@@ -336,6 +320,7 @@ export class ProtobufTransportHelper extends DisposableStack {
               creds,
               metadata,
               channelOptions,
+              timeout: streamTimeout,
             })) {
               yield decodeMessage(selectionFields, chunk);
             }
@@ -488,6 +473,7 @@ async function* grpcServerStream(opts: {
   creds: ChannelCredentials;
   metadata: Metadata;
   channelOptions?: Record<string, string | number>;
+  timeout?: number;
 }): AsyncGenerator<Uint8Array> {
   const Client = makeGenericClientConstructor(
     {
@@ -504,7 +490,11 @@ async function* grpcServerStream(opts: {
     'MeshProtobuf',
   );
   const client = new Client(opts.location, opts.creds, opts.channelOptions);
-  const call = (client as any).Invoke(opts.request, opts.metadata);
+  const deadline =
+    opts.timeout != null && opts.timeout > 0 ? new Date(Date.now() + opts.timeout) : undefined;
+  const call = deadline
+    ? (client as any).Invoke(opts.request, opts.metadata, { deadline })
+    : (client as any).Invoke(opts.request, opts.metadata);
   try {
     for await (const chunk of call) {
       yield chunk instanceof Uint8Array ? chunk : new Uint8Array(chunk);
@@ -516,6 +506,38 @@ async function* grpcServerStream(opts: {
       // ignore
     }
   }
+}
+
+async function loadSslCredentials(
+  baseDir: string,
+  ssl: NonNullable<ProtobufTransportOptions['credentialsSsl']>,
+): Promise<ChannelCredentials> {
+  const resolvePath = (p: string) => (path.isAbsolute(p) ? p : path.join(baseDir, p));
+  const rootCAPath = ssl.rootCA && ssl.rootCA !== 'rootCA' ? resolvePath(ssl.rootCA) : undefined;
+  const privateKeyPath = ssl.privateKey ? resolvePath(ssl.privateKey) : undefined;
+  const certChainPath = ssl.certChain ? resolvePath(ssl.certChain) : undefined;
+
+  // CA-only (trust store) — no client cert.
+  if (rootCAPath && !privateKeyPath && !certChainPath) {
+    const rootCA = await fs.promises.readFile(rootCAPath);
+    return credentials.createSsl(rootCA);
+  }
+
+  // Optional rootCA + required client key/cert when either privateKey or certChain is set.
+  if (!privateKeyPath || !certChainPath) {
+    throw new Error(
+      'credentialsSsl requires both privateKey and certChain for client certificates, or only rootCA for CA-only trust',
+    );
+  }
+
+  const [rootCA, privateKey, certChain] = await Promise.all([
+    rootCAPath ? fs.promises.readFile(rootCAPath) : Promise.resolve(undefined),
+    fs.promises.readFile(privateKeyPath),
+    fs.promises.readFile(certChainPath),
+  ]);
+  // createSsl(rootCerts, privateKey, certChain) — pass undefined rootCerts when omitted
+  // so privateKey/certChain stay in the correct argument slots.
+  return credentials.createSsl(rootCA, privateKey, certChain);
 }
 
 function mergeTransportHeaders(

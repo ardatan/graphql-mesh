@@ -1,5 +1,4 @@
-import type { GraphQLSchema } from 'graphql';
-import { buildSchema } from 'graphql';
+import { buildSchema, isObjectType, type GraphQLSchema } from 'graphql';
 import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
@@ -13,6 +12,7 @@ import type {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
+import { getDirectives } from '@graphql-tools/utils';
 import { loadProtobufSubgraph } from '@omnigraph/protobuf';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
@@ -59,7 +59,11 @@ export default class GrpcHandler implements MeshHandler {
         importFn: this.importFn,
         log: this.log,
         headers: this.config.schemaHeaders,
-      }).then(sdl => buildSchema(sdl, { assumeValidSDL: true, assumeValid: true }));
+      }).then(sdl => {
+        const schema = buildSchema(sdl, { assumeValidSDL: true, assumeValid: true });
+        assertProtobufRpcAnnotations(schema, interpolatedSource);
+        return schema;
+      });
     }
     return this.schemaWithAnnotationsProxy.getWithSet(
       () =>
@@ -88,5 +92,41 @@ export default class GrpcHandler implements MeshHandler {
 
   [DisposableSymbols.dispose]() {
     this.transport?.dispose();
+  }
+}
+
+/**
+ * Legacy `@grpcMethod` SDL caches are not executable by the protobuf transport
+ * (needs `@protobuf__rpc` with typed args/selection mappings). Fail fast instead
+ * of serving a schema with no resolvers.
+ */
+function assertProtobufRpcAnnotations(schema: GraphQLSchema, source: string): void {
+  let hasGrpcMethod = false;
+  let hasProtobufRpc = false;
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) || type.name.startsWith('__')) continue;
+    for (const directive of getDirectives(schema, type) || []) {
+      if (directive.name === 'grpcMethod' || directive.name === 'grpc__method') {
+        hasGrpcMethod = true;
+      }
+      if (directive.name === 'protobuf__rpc' || directive.name === 'protobufRpc') {
+        hasProtobufRpc = true;
+      }
+    }
+    for (const field of Object.values(type.getFields())) {
+      for (const directive of getDirectives(schema, field) || []) {
+        if (directive.name === 'grpcMethod' || directive.name === 'grpc__method') {
+          hasGrpcMethod = true;
+        }
+        if (directive.name === 'protobuf__rpc' || directive.name === 'protobufRpc') {
+          hasProtobufRpc = true;
+        }
+      }
+    }
+  }
+  if (hasGrpcMethod && !hasProtobufRpc) {
+    throw new Error(
+      `Legacy @grpcMethod annotations in ${source} are not executed by @graphql-mesh/transport-protobuf. Recompose the subgraph from .proto / reflection so @protobuf__rpc(args, selection) mappings are emitted.`,
+    );
   }
 }

@@ -1,12 +1,15 @@
 import {
   concatAST,
   getNamedType,
+  getNullableType,
   GraphQLError,
   GraphQLSchema,
+  isListType,
   isNonNullType,
   isObjectType,
   isSpecifiedScalarType,
   parse,
+  type GraphQLType,
 } from 'graphql';
 import type {
   DirectiveNode,
@@ -852,6 +855,9 @@ function addAnnotationsForSemanticConventions({
         // Hive resolves these via REST transport `Query._entities` → resolveReference;
         // no Mesh `@merge` needed for Connectors subgraphs.
         const markConnectEntityOrMerge = () => {
+          // Batch list args (e.g. `ids: [ID!]!`) must not be rewritten to `$this.<scalarKey>` —
+          // resolveReference supplies a scalar, and the encoder drops non-array repeated binds.
+          const batchListArg = isBatchListArgType(arg.type);
           if (directiveExtensions.connect?.length) {
             const alreadyEntity = directiveExtensions.connect.some((c: any) => c?.entity === true);
             if (alreadyEntity) {
@@ -862,6 +868,9 @@ function addAnnotationsForSemanticConventions({
                 ...c,
                 entity: true,
               }));
+              return;
+            }
+            if (batchListArg) {
               return;
             }
             // Type-level entity connector: `/pet/{$args.petId}` → `/pet/{$this.id}`
@@ -895,6 +904,9 @@ function addAnnotationsForSemanticConventions({
                 ...c,
                 entity: true,
               }));
+              return;
+            }
+            if (batchListArg) {
               return;
             }
             // Type-level entity RPC: rewrite key arg binds → `$this.<keyField>`.
@@ -993,4 +1005,8 @@ function addAnnotationsForSemanticConventions({
       */
     }
   }
+}
+
+function isBatchListArgType(argType: GraphQLType): boolean {
+  return isListType(getNullableType(argType));
 }

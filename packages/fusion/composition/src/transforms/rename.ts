@@ -1,5 +1,9 @@
 import {
+  getNamedType,
   GraphQLObjectType,
+  isInputObjectType,
+  isInterfaceType,
+  isObjectType,
   isSpecifiedScalarType,
   type GraphQLFieldConfig,
   type GraphQLFieldConfigArgumentMap,
@@ -16,7 +20,11 @@ import {
   type SchemaMapper,
 } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
-import { rewriteConnectArgReferences, withOriginalKeyFallback } from './utils.js';
+import {
+  rewriteConnectArgReferences,
+  rewriteProtobufMappingBinds,
+  withOriginalKeyFallback,
+} from './utils.js';
 
 export const ignoreList = [
   'Int',
@@ -311,53 +319,144 @@ export function createRenameTransform(opts: RenameTransformConfig) {
     let nextSchema = mapSchema(schema, schemaMapper);
     // Object/input field renames: rewrite `@protobuf__rpc` args/selection path segments
     // across the subgraph (Connect-like; no Mesh `@source` fallback).
-    const flatFieldRenames = flattenFieldRenameMap(fieldRenameMap);
-    if (flatFieldRenames.size) {
+    // Keep renames type-scoped so `Review.year→publicationYear` does not rewrite `Movie.year`.
+    if (fieldRenameMap.size) {
       nextSchema = mapSchema(nextSchema, {
         [MapperKind.ROOT_FIELD]: (field, _n, _t, s) =>
-          applyProtobufFieldRenames(field, flatFieldRenames, s),
+          applyProtobufFieldRenames(field, fieldRenameMap, s),
         [MapperKind.OBJECT_FIELD]: (field, _n, _t, s) =>
-          applyProtobufFieldRenames(field, flatFieldRenames, s),
+          applyProtobufFieldRenames(field, fieldRenameMap, s),
       });
     }
     return nextSchema;
   };
 }
 
-function flattenFieldRenameMap(
+/**
+ * Flatten field renames reachable from `rootType` only. Conflicting renames for the
+ * same field name across nested types are omitted (safer than a wrong global rewrite).
+ */
+function collectTypeScopedFieldRenames(
   fieldRenameMap: Map<string, Map<string, string>>,
+  rootType: GraphQLNamedType | undefined | null,
 ): Map<string, string> {
   const flat = new Map<string, string>();
-  for (const typeMap of fieldRenameMap.values()) {
-    for (const [from, to] of typeMap) {
-      if (from !== to) {
-        flat.set(from, to);
+  if (!rootType) {
+    return flat;
+  }
+  const ambiguous = new Set<string>();
+  const visited = new Set<string>();
+  const visit = (type: GraphQLNamedType) => {
+    if (visited.has(type.name)) {
+      return;
+    }
+    visited.add(type.name);
+    const typeMap = fieldRenameMap.get(type.name);
+    if (typeMap) {
+      for (const [from, to] of typeMap) {
+        if (!from || !to || from === to || ambiguous.has(from)) {
+          continue;
+        }
+        const existing = flat.get(from);
+        if (existing === undefined) {
+          flat.set(from, to);
+        } else if (existing !== to) {
+          flat.delete(from);
+          ambiguous.add(from);
+        }
       }
     }
-  }
+    if (isObjectType(type) || isInterfaceType(type) || isInputObjectType(type)) {
+      for (const field of Object.values(type.getFields())) {
+        visit(getNamedType(field.type));
+      }
+    }
+  };
+  visit(rootType);
   return flat;
 }
 
 function applyProtobufFieldRenames(
   field: GraphQLFieldConfig<any, any>,
-  flatFieldRenames: Map<string, string>,
+  fieldRenameMap: Map<string, Map<string, string>>,
   schema: GraphQLSchema,
 ): GraphQLFieldConfig<any, any> {
+  const selectionRenames = collectTypeScopedFieldRenames(fieldRenameMap, getNamedType(field.type));
+  const nestedArgRenames = new Map<string, string>();
+  const ambiguousArgs = new Set<string>();
+  if (field.args) {
+    for (const arg of Object.values(field.args)) {
+      const fromArg = collectTypeScopedFieldRenames(fieldRenameMap, getNamedType(arg.type));
+      for (const [from, to] of fromArg) {
+        if (ambiguousArgs.has(from)) continue;
+        const existing = nestedArgRenames.get(from);
+        if (existing === undefined) nestedArgRenames.set(from, to);
+        else if (existing !== to) {
+          nestedArgRenames.delete(from);
+          ambiguousArgs.add(from);
+        }
+      }
+    }
+  }
+  if (!selectionRenames.size && !nestedArgRenames.size) {
+    return field;
+  }
   const fieldDirectives = getDirectiveExtensions(field, schema);
-  const rewrittenDirectives = rewriteConnectArgReferences(
-    fieldDirectives,
-    new Map(),
-    flatFieldRenames,
-    undefined,
-  );
-  if (!rewrittenDirectives || rewrittenDirectives === fieldDirectives) {
+  const protobufKey = fieldDirectives?.protobuf__rpc?.length
+    ? 'protobuf__rpc'
+    : fieldDirectives?.protobufRpc?.length
+      ? 'protobufRpc'
+      : undefined;
+  if (!protobufKey) {
+    // Connect selections still need a flat pass; scope to return type when possible.
+    const rewrittenDirectives = rewriteConnectArgReferences(
+      fieldDirectives,
+      new Map(),
+      selectionRenames.size ? selectionRenames : nestedArgRenames,
+      undefined,
+    );
+    if (!rewrittenDirectives || rewrittenDirectives === fieldDirectives) {
+      return field;
+    }
+    return {
+      ...field,
+      extensions: {
+        ...(field.extensions || {}),
+        directives: rewrittenDirectives,
+      },
+      astNode: undefined,
+    };
+  }
+
+  let protobufChanged = false;
+  const rewrittenRpc = fieldDirectives[protobufKey].map((rpcArgs: any) => {
+    let args = rpcArgs?.args;
+    let selection = rpcArgs?.selection;
+    if (typeof args === 'string' && nestedArgRenames.size) {
+      args = rewriteProtobufMappingBinds(args, new Map(), {
+        nestedRenameMap: nestedArgRenames,
+      });
+    }
+    if (typeof selection === 'string' && selectionRenames.size) {
+      selection = rewriteProtobufMappingBinds(selection, selectionRenames);
+    }
+    if (args === rpcArgs?.args && selection === rpcArgs?.selection) {
+      return rpcArgs;
+    }
+    protobufChanged = true;
+    return { ...rpcArgs, args, selection };
+  });
+  if (!protobufChanged) {
     return field;
   }
   return {
     ...field,
     extensions: {
       ...(field.extensions || {}),
-      directives: rewrittenDirectives,
+      directives: {
+        ...fieldDirectives,
+        [protobufKey]: rewrittenRpc,
+      },
     },
     astNode: undefined,
   };

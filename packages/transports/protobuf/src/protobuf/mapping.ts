@@ -117,8 +117,15 @@ function parseField(source: string, start: number): { field: MappingField; end: 
     i++;
     const baseType = typeParsed.type;
     const messageType: ProtoType = { kind: 'message', fields: nested.fields };
-    const type: ProtoType =
-      baseType.kind === 'repeated' ? { kind: 'repeated', element: messageType } : messageType;
+    let type: ProtoType;
+    if (baseType.kind === 'repeated') {
+      type = { kind: 'repeated', element: messageType };
+    } else if (baseType.kind === 'map') {
+      // `map<K,message>: bind { …fields }` — keep map wire type, attach value message fields.
+      type = { kind: 'map', key: baseType.key, value: messageType };
+    } else {
+      type = messageType;
+    }
     return {
       field: {
         id,
