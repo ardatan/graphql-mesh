@@ -23,6 +23,36 @@ describe('emitMapping cycle-aware message& refs', () => {
     expect(mapping).not.toMatch(/2\(message\):\s*child\s*\{\s*\}/);
   });
 
+  it('reuses @Name defs for shared acyclic message types (bounded DAG)', () => {
+    const dag = {
+      nested: {
+        Leaf: {
+          fields: {
+            n: { type: 'int32', id: 1 },
+          },
+        },
+        Branch: {
+          fields: {
+            left: { type: 'Leaf', id: 1 },
+            right: { type: 'Leaf', id: 2 },
+          },
+        },
+      },
+    } as INamespace;
+    const mapping = emitResponseSelection(dag, [], 'Branch');
+    expect(mapping).toMatch(/@Leaf\s*\{/);
+    expect(mapping).toMatch(/1\(message@Leaf\):\s*left/);
+    expect(mapping).toMatch(/2\(message@Leaf\):\s*right/);
+    // Leaf field list appears once in the hoisted def.
+    expect(mapping.match(/1\(int32\):\s*n/g)?.length).toBe(1);
+    const fields = parseMapping(mapping);
+    const left = fields.find(f => f.bind === 'left');
+    const right = fields.find(f => f.bind === 'right');
+    expect(left?.fields).toBe(right?.fields);
+    const bytes = encodeMessage(fields, { left: { n: 1 }, right: { n: 2 } });
+    expect(decodeMessage(fields, bytes)).toEqual({ left: { n: 1 }, right: { n: 2 } });
+  });
+
   it('loader→decoder round-trips multiple recursion levels (child.child)', () => {
     const mapping = emitResponseSelection(rootJson, [], 'Node');
     const fields = parseMapping(mapping);
@@ -70,7 +100,8 @@ describe('emitMapping cycle-aware message& refs', () => {
       },
     } as INamespace;
     const mapping = emitResponseSelection(mutual, [], 'A');
-    expect(mapping).toMatch(/2\(message\):\s*b\s*\{/);
+    expect(mapping).toMatch(/@B\s*\{/);
+    expect(mapping).toMatch(/2\(message@B\):\s*b/);
     expect(mapping).toMatch(/2\(message&1\):\s*a/);
 
     const fields = parseMapping(mapping);
@@ -181,14 +212,15 @@ describe('emitMapping cycle-aware message& refs', () => {
       },
     } as INamespace;
     const mapping = emitRequestBody(mutual, [], 'A');
-    // Prefix only at the request boundary.
+    // Prefix only at the request boundary; nested B is a hoisted relative def.
     expect(mapping).toMatch(/1\(string\):\s*input\.label/);
-    expect(mapping).toMatch(/2\(message\):\s*input\.b\s*\{/);
+    expect(mapping).toMatch(/2\(message@B\):\s*input\.b/);
+    expect(mapping).toMatch(/@B\s*\{/);
     // B→A must expand a relative A copy (not message& to the prefix-bound root list).
     expect(mapping).toMatch(/2\(message\):\s*a\s*\{/);
     expect(mapping).toMatch(/1\(string\):\s*label/);
-    // Deeper mutual cycle may share that relative A via message&1.
-    expect(mapping).toMatch(/2\(message&1\):\s*a/);
+    // Deeper mutual cycle reuses the hoisted B def.
+    expect(mapping).toMatch(/2\(message@B\):\s*b/);
     // Shared recursive bodies must not carry request-prefixed binds.
     expect(mapping).not.toMatch(/message&[^:]*:\s*input\./);
     expect(mapping).not.toMatch(/\{\s*1\(string\):\s*input\.label/);

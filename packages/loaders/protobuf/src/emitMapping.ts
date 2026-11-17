@@ -143,6 +143,59 @@ function scalarOrEnumOrMessage(
   return 'message';
 }
 
+type EmitSharedState = {
+  /**
+   * Ancestor message type keys on the current emit stack. Used for cycle-aware
+   * `message&` / `message&N` refs.
+   */
+  visited: string[];
+  /**
+   * Indices below this in `visited` are prefix-mode ancestors (`input.*` binds).
+   * `message&N` must not reuse those lists from a relative nested context (A→B→A).
+   */
+  relativeFromDepth: number;
+  /** Completed relative bodies for shared acyclic reuse via `@Name` / `message@Name`. */
+  completed: Map<string, { name: string; body: string }>;
+};
+
+function defNameForTypeKey(typeKey: string): string {
+  const base = typeKey.replace(/[^A-Za-z0-9_]+/g, '_').replace(/^_+|_+$/g, '');
+  return base || 'Msg';
+}
+
+function ensureNamedDef(
+  rootJson: INamespace,
+  nestedScope: string[],
+  nestedType: string,
+  nestedKey: string,
+  nestedRelativeFrom: number,
+  state: EmitSharedState,
+): string {
+  const prior = state.completed.get(nestedKey);
+  if (prior) {
+    return prior.name;
+  }
+  const name = defNameForTypeKey(nestedKey);
+  // Placeholder so a cycle reached while building this def can still message@ itself
+  // if we ever choose that path; cycle handling above prefers message& on visited.
+  state.completed.set(nestedKey, { name, body: '' });
+  const body = emitFieldsMappingInner(
+    rootJson,
+    nestedScope,
+    nestedType,
+    'relative',
+    '',
+    '  ',
+    {
+      visited: state.visited,
+      relativeFromDepth: nestedRelativeFrom,
+      completed: state.completed,
+    },
+  );
+  state.completed.set(nestedKey, { name, body });
+  return name;
+}
+
 export function emitFieldsMapping(
   rootJson: INamespace,
   pathWithName: string[],
@@ -150,16 +203,53 @@ export function emitFieldsMapping(
   bindMode: 'relative' | 'prefix',
   bindPrefix = '',
   indent = '  ',
-  /**
-   * Ancestor message type keys on the current emit stack. Used to emit cycle-aware
-   * `message&` / `message&N` refs instead of empty stubs (which drop nested recursive data).
-   */
   visited: string[] = [],
-  /**
-   * Indices below this in `visited` are prefix-mode ancestors (`input.*` binds).
-   * `message&N` must not reuse those lists from a relative nested context (A→B→A).
-   */
   relativeFromDepth = 0,
+  shared?: EmitSharedState,
+): string {
+  const state: EmitSharedState = shared ?? {
+    visited,
+    relativeFromDepth,
+    completed: new Map(),
+  };
+  // Keep caller-provided visited/relativeFromDepth in sync when creating the root state.
+  if (!shared) {
+    state.visited = visited;
+    state.relativeFromDepth = relativeFromDepth;
+  }
+  const body = emitFieldsMappingInner(
+    rootJson,
+    pathWithName,
+    typeName,
+    bindMode,
+    bindPrefix,
+    indent,
+    state,
+  );
+  if (shared) {
+    return body;
+  }
+  // Root call: hoist completed named defs so sibling DAG refs stay O(types), not O(2^depth).
+  if (state.completed.size === 0) {
+    return body;
+  }
+  const defBlocks = [...state.completed.values()]
+    .map(({ name, body: defBody }) => `@${name} {\n${defBody}\n}`)
+    .join('\n');
+  if (!body.trim()) {
+    return defBlocks;
+  }
+  return `${defBlocks}\n${body}`;
+}
+
+function emitFieldsMappingInner(
+  rootJson: INamespace,
+  pathWithName: string[],
+  typeName: string,
+  bindMode: 'relative' | 'prefix',
+  bindPrefix: string,
+  indent: string,
+  state: EmitSharedState,
 ): string {
   const typePath = walkToFindTypePath(rootJson, pathWithName, typeName.split('.'));
   const typeKey = typePath.join('.');
@@ -186,7 +276,7 @@ export function emitFieldsMapping(
   const nestedScope = typePath;
   const oneofFields = collectOneofFieldNames(cur);
 
-  visited.push(typeKey);
+  state.visited.push(typeKey);
   try {
     const lines: string[] = [];
     for (const [fieldName, field] of Object.entries(fields)) {
@@ -199,27 +289,27 @@ export function emitFieldsMapping(
         const nestedType = field.type;
         const nestedTypePath = walkToFindTypePath(rootJson, nestedScope, nestedType.split('.'));
         const nestedKey = nestedTypePath.join('.');
-        const cycleIdx = visited.indexOf(nestedKey);
+        const cycleIdx = state.visited.indexOf(nestedKey);
         if (cycleIdx >= 0) {
           // Cycle-aware ref: `&` / `&N` = N message levels up (0 = enclosing).
-          // Parser resolves these to shared field lists so child.child… round-trips.
-          // Full named-type defs (`@TypeName`) are deferred; ancestor-relative refs are enough
-          // for self- and mutual recursion on the emit stack.
           // Never share a prefix-bound (`input.*`) field list via message& — open a relative
           // block so nested reuse (self-recursion and A→B→A) keeps relative binds.
           const wouldReusePrefixList =
-            (bindMode === 'prefix' && !!bindPrefix) || cycleIdx < relativeFromDepth;
+            (bindMode === 'prefix' && !!bindPrefix) || cycleIdx < state.relativeFromDepth;
           if (wouldReusePrefixList) {
             lines.push(`${indent}${id}(${token}): ${bind} {`);
-            const relative = emitFieldsMapping(
+            const relative = emitFieldsMappingInner(
               rootJson,
               nestedScope,
               nestedType,
               'relative',
               '',
               indent + '  ',
-              [],
-              0,
+              {
+                visited: [],
+                relativeFromDepth: 0,
+                completed: state.completed,
+              },
             );
             if (relative) {
               lines.push(relative);
@@ -227,38 +317,33 @@ export function emitFieldsMapping(
             lines.push(`${indent}}`);
             continue;
           }
-          const levelsUp = visited.length - 1 - cycleIdx;
+          const levelsUp = state.visited.length - 1 - cycleIdx;
           const refTok = levelsUp === 0 ? 'message&' : `message&${levelsUp}`;
           const tokenWithRef = token.replace(/\bmessage\b/, refTok);
           lines.push(`${indent}${id}(${tokenWithRef}): ${bind}`);
           continue;
         }
-        // Nested bodies are always relative; mark current visited depth so cycles back to
-        // a prefix-mode ancestor open a relative copy instead of message&N.
+        // Shared / first use: emit `message@Name` and hoist one relative `@Name { … }` def
+        // so sibling fields stay O(types) instead of re-inlining the same DAG.
         const nestedRelativeFrom =
-          bindMode === 'prefix' && bindPrefix ? visited.length : relativeFromDepth;
-        const nested = emitFieldsMapping(
+          bindMode === 'prefix' && bindPrefix ? state.visited.length : state.relativeFromDepth;
+        const defName = ensureNamedDef(
           rootJson,
           nestedScope,
           nestedType,
-          'relative',
-          '',
-          indent + '  ',
-          visited,
+          nestedKey,
           nestedRelativeFrom,
+          state,
         );
-        lines.push(`${indent}${id}(${token}): ${bind} {`);
-        if (nested) {
-          lines.push(nested);
-        }
-        lines.push(`${indent}}`);
+        const tokenWithRef = token.replace(/\bmessage\b/, `message@${defName}`);
+        lines.push(`${indent}${id}(${tokenWithRef}): ${bind}`);
       } else {
         lines.push(`${indent}${id}(${token}): ${bind}`);
       }
     }
     return lines.join('\n');
   } finally {
-    visited.pop();
+    state.visited.pop();
   }
 }
 

@@ -30,6 +30,11 @@ export type ProtoType =
    * (shared array) by `parseMapping` before the codec runs.
    */
   | { kind: 'messageRef'; levelsUp: number }
+  /**
+   * Named message reference: `message@TypeName` reuses a top-level `@TypeName { … }` def.
+   * Used for shared acyclic types so sibling fields do not re-inline the same graph.
+   */
+  | { kind: 'messageNamedRef'; name: string }
   | { kind: 'repeated'; element: ProtoType }
   | { kind: 'map'; key: ProtoType; value: ProtoType };
 
@@ -49,38 +54,86 @@ export interface MappingField {
 export function parseMapping(source: string): MappingField[] {
   const s = source.trim();
   if (!s) return [];
-  const fields = parseFieldList(s, 0).fields;
-  resolveMessageRefs(fields);
+  const { defs, rest } = parseNamedDefs(s);
+  const fields = parseFieldList(rest, 0).fields;
+  resolveMessageRefs(fields, [], defs);
   return fields;
 }
 
+/** Parse leading `@Name { … }` reusable message definitions. */
+function parseNamedDefs(source: string): {
+  defs: Map<string, MappingField[]>;
+  rest: string;
+} {
+  const defs = new Map<string, MappingField[]>();
+  let i = skipWs(source, 0);
+  while (source[i] === '@') {
+    i++;
+    const nameStart = i;
+    while (i < source.length && /[A-Za-z0-9_]/.test(source[i])) i++;
+    const name = source.slice(nameStart, i);
+    if (!name) {
+      throw new Error(`Expected name after '@' at ${snippet(source, i)}`);
+    }
+    i = skipWs(source, i);
+    if (source[i] !== '{') {
+      throw new Error(`Expected '{' after @${name} at ${snippet(source, i)}`);
+    }
+    i++;
+    const nested = parseFieldList(source, i);
+    i = skipWs(source, nested.end);
+    if (source[i] !== '}') {
+      throw new Error(`Expected '}' after @${name} at ${snippet(source, i)}`);
+    }
+    i++;
+    defs.set(name, nested.fields);
+    i = skipWs(source, i);
+  }
+  return { defs, rest: source.slice(i) };
+}
+
 /**
- * Replace `message&` / `message&N` placeholders with shared field-list references so
- * recursive messages keep nested structure across encode/decode without empty stubs.
+ * Replace `message&` / `message&N` / `message@Name` placeholders with shared field-list
+ * references so recursive and DAG-shared messages keep structure without empty stubs.
  */
-function resolveMessageRefs(fields: MappingField[], ancestors: MappingField[][] = []): void {
+function resolveMessageRefs(
+  fields: MappingField[],
+  ancestors: MappingField[][] = [],
+  namedDefs: Map<string, MappingField[]> = new Map(),
+  resolvedNamed: Set<MappingField[]> = new Set(),
+): void {
   const stack = [...ancestors, fields];
   for (const field of fields) {
-    const bound = bindMessageRef(field.type, stack);
+    const wasNamed =
+      field.type.kind === 'messageNamedRef' ||
+      (field.type.kind === 'repeated' && field.type.element.kind === 'messageNamedRef') ||
+      (field.type.kind === 'map' && field.type.value.kind === 'messageNamedRef');
+    const bound = bindMessageRef(field.type, stack, namedDefs);
     if (bound) {
       field.type = bound.type;
       field.fields = bound.fields;
+      // Ancestor `message&` targets are already on the walk stack — do not re-enter.
+      // Named defs are walked once so nested refs inside `@Name { … }` resolve.
+      if (wasNamed && !resolvedNamed.has(bound.fields)) {
+        resolvedNamed.add(bound.fields);
+        resolveMessageRefs(bound.fields, stack, namedDefs, resolvedNamed);
+      }
       continue;
     }
     if (field.type.kind === 'message' && field.fields?.length) {
-      resolveMessageRefs(field.fields, stack);
+      resolveMessageRefs(field.fields, stack, namedDefs, resolvedNamed);
     } else if (
       field.type.kind === 'repeated' &&
       field.type.element.kind === 'message' &&
       field.fields?.length
     ) {
-      resolveMessageRefs(field.fields, stack);
+      resolveMessageRefs(field.fields, stack, namedDefs, resolvedNamed);
     } else if (
       field.type.kind === 'map' &&
       field.type.value.kind === 'message' &&
       field.fields?.length
     ) {
-      resolveMessageRefs(field.fields, stack);
+      resolveMessageRefs(field.fields, stack, namedDefs, resolvedNamed);
     }
   }
 }
@@ -88,7 +141,19 @@ function resolveMessageRefs(fields: MappingField[], ancestors: MappingField[][] 
 function bindMessageRef(
   type: ProtoType,
   stack: MappingField[][],
+  namedDefs: Map<string, MappingField[]>,
 ): { type: ProtoType; fields: MappingField[] } | undefined {
+  const resolveNamed = (name: string): MappingField[] => {
+    const target = namedDefs.get(name);
+    if (!target) {
+      throw new Error(`Unknown message@${name}: no matching @${name} { … } definition`);
+    }
+    return target;
+  };
+  if (type.kind === 'messageNamedRef') {
+    const target = resolveNamed(type.name);
+    return { type: { kind: 'message', fields: target }, fields: target };
+  }
   if (type.kind === 'messageRef') {
     const target = stack[stack.length - 1 - type.levelsUp];
     if (!target) {
@@ -97,6 +162,13 @@ function bindMessageRef(
       );
     }
     return { type: { kind: 'message', fields: target }, fields: target };
+  }
+  if (type.kind === 'repeated' && type.element.kind === 'messageNamedRef') {
+    const target = resolveNamed(type.element.name);
+    return {
+      type: { kind: 'repeated', element: { kind: 'message', fields: target } },
+      fields: target,
+    };
   }
   if (type.kind === 'repeated' && type.element.kind === 'messageRef') {
     const target = stack[stack.length - 1 - type.element.levelsUp];
@@ -107,6 +179,13 @@ function bindMessageRef(
     }
     return {
       type: { kind: 'repeated', element: { kind: 'message', fields: target } },
+      fields: target,
+    };
+  }
+  if (type.kind === 'map' && type.value.kind === 'messageNamedRef') {
+    const target = resolveNamed(type.value.name);
+    return {
+      type: { kind: 'map', key: type.key, value: { kind: 'message', fields: target } },
       fields: target,
     };
   }
@@ -317,6 +396,16 @@ function parseType(source: string, start: number): { type: ProtoType; end: numbe
         levelsUp = Number(source.slice(numStart, j));
       }
       return { type: { kind: 'messageRef', levelsUp }, end: j };
+    }
+    if (source[j] === '@') {
+      j++;
+      const nameStart = j;
+      while (j < source.length && /[A-Za-z0-9_]/.test(source[j])) j++;
+      const name = source.slice(nameStart, j);
+      if (!name) {
+        throw new Error(`Expected name after message@ at ${snippet(source, j)}`);
+      }
+      return { type: { kind: 'messageNamedRef', name }, end: j };
     }
     return { type: { kind: 'message', fields: [] }, end: j };
   }
