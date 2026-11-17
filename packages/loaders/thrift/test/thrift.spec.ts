@@ -205,4 +205,16 @@ describe('thrift', () => {
       .http.body as string;
     expect(body).toMatch(/"tf":\s*\$args\.enabled->match\(\[true,\s*1\],\s*\[false,\s*0\]/);
   });
+
+  it('TJSON map<string,bool> args fail at generate', async () => {
+    await expect(
+      loadNonExecutableGraphQLSchemaFromIDL({
+        subgraphName: 'BoolMapSvc',
+        source: './fixtures/bool_map_arg.thrift',
+        baseDir: __dirname,
+        endpoint: 'http://localhost:4000/bool-map',
+        protocol: 'json',
+      }),
+    ).rejects.toThrow(/map with bool values cannot be emitted as TJSON/);
+  });
 });

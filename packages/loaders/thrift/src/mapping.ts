@@ -410,14 +410,22 @@ function formatTJSONValueExpr(
   if (resolved.type === TType.MAP) {
     const keyTag = tjsonTypeTag(resolved.keyType, topTypeMap);
     const valTag = tjsonTypeTag(resolved.valType, topTypeMap);
-    // Map payloads stay as the object form (pre-existing). Bool map *values* are
-    // not rewritten here: Connectors lack a Router-safe flatMap to emit
-    // alternating key/0|1 pairs; list/set bool elements are handled above.
+    const valResolved = resolveTypeVal(resolved.valType, topTypeMap);
+    // TJSON map payload is a JSON object (thrift JS / common readers). Bool values
+    // must be integers 0/1, but public Connectors cannot rewrite object map values
+    // (no shipped `mapValues` / fromEntries on Router). Fail at generate rather than
+    // emit true/false tokens Apache readers reject. List/set bool elements use
+    // `->map(@->match(...))` above.
+    if (valResolved.type === TType.BOOL) {
+      throw new Error(
+        `Thrift map with bool values cannot be emitted as TJSON @connect body: Connectors have no public Router-safe way to rewrite object map values to 0/1. Prefer list/set of bool, change the IDL, or hand-author the @connect body.`,
+      );
+    }
     return `{ "${tag}": $([ "${keyTag}", "${valTag}", ${valueExpr}->size, ${valueExpr} ]) }`;
   }
 
   // TJSON bool is integer 0/1 (reference readers use ReadI32 / readJSONInteger).
-  // Apollo-compatible `match` — works on Hive Mesh eval and Router Connectors.
+  // Apollo-compatible `match` - works on Hive Mesh eval and Router Connectors.
   if (resolved.type === TType.BOOL) {
     return `{ "${tag}": ${valueExpr}->match([true, 1], [false, 0], [@, 0]) }`;
   }

@@ -45,6 +45,7 @@ Emits `@source` + `@connect` (TJSON) instead of thrift `@transport`:
 - Path `/`, or `/<service>` when `serviceName` is set
 - Body message types CALL=`1`, ONEWAY=`4`
 - `isSuccess` / `errors` so declared throws and `TApplicationException` are not silent nulls; ONEWAY omits `isSuccess`
+- Bool scalars / list / set elements encode as TJSON integers `0`/`1`. `map<*, bool>` **fails at generate** (Connectors have no public Router-safe rewrite of object map values); prefer list/set of bool or hand-author `@connect`
 
 #### Exceptions
 
