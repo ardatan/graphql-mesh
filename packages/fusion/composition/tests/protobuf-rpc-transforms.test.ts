@@ -572,6 +572,69 @@ describe('rewriteProtobufMappingBinds', () => {
     );
     expect(out).toMatch(/2\(int64\):\s*releaseYear/);
   });
+
+  it('applies protobuf $args renames once (a→b, b→c does not chain)', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "pets", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          pet(a: ID!, b: ID!): String!
+            @protobuf__rpc(
+              service: "Pets"
+              method: "GetPet"
+              args: """
+              1(string): $args.a
+              2(string): $args.b
+              """
+              selection: """
+              1(string): ok
+              """
+            )
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'pets',
+        schema,
+        transforms: [
+          createRenameTransform({
+            argRenamer: ({ argName }) => {
+              if (argName === 'a') return 'b';
+              if (argName === 'b') return 'c';
+              return argName;
+            },
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/pet\(b:.*c:/s);
+    // `$args.a` becomes `$args.b` once — not chained to `$args.c`.
+    expect(sdl).toMatch(/1\(string\):\s*\$args\.b/);
+    expect(sdl).toMatch(/2\(string\):\s*\$args\.c/);
+    expect(sdl).not.toMatch(/\$args\.a\b/);
+  });
 });
 
 describe('$this parent vs args-fallback renames', () => {

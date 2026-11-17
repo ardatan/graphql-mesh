@@ -283,7 +283,8 @@ export class ProtobufTransportHelper extends DisposableStack {
             : headersConfig;
           if (rawHeaders) {
             for (const [k, v] of Object.entries(rawHeaders)) {
-              headers[k] = stringInterpolator.parse(String(v), {
+              // Lowercase so `Content-Type` replaces the dial default `content-type` key.
+              headers[k.toLowerCase()] = stringInterpolator.parse(String(v), {
                 args,
                 context,
                 env: process.env,

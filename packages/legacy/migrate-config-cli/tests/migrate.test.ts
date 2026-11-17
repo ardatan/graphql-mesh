@@ -432,6 +432,7 @@ describe('migrateLegacyConfig', () => {
           name: 'Movies',
           handler: {
             grpc: {
+              endpoint: 'localhost:50051',
               source: './movies.proto',
             },
           },

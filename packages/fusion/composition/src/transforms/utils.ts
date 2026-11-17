@@ -685,8 +685,9 @@ export function rewriteConnectArgReferences(
   fieldRenameMap?: Map<string, string>,
   typeRenameMap?: Map<string, string>,
   /**
-   * When false, skip applying `fieldRenameMap` to `@protobuf__rpc` binds (caller uses
-   * type-scoped `applyProtobufFieldRenames` instead). Connect selection still uses the flat map.
+   * When false, skip all `@protobuf__rpc` rewrites here (caller uses type-scoped
+   * `applyProtobufFieldRenames` instead). Avoids a second `$args` rename pass that
+   * would chain `a→b` then `b→c`. Connect selection still uses the flat maps above.
    */
   protobufNestedFieldRenames: boolean = true,
 ): Record<string, any[]> | undefined {
@@ -804,13 +805,17 @@ export function rewriteConnectArgReferences(
   }
   const protobufFieldMap =
     protobufNestedFieldRenames && fieldRenameMap?.size ? fieldRenameMap : undefined;
-  if (protobufKey && (argRenameMap.size > 0 || (protobufFieldMap?.size ?? 0) > 0)) {
+  if (
+    protobufKey &&
+    protobufNestedFieldRenames &&
+    (argRenameMap.size > 0 || (protobufFieldMap?.size ?? 0) > 0)
+  ) {
     // Arg renames update request arg roots (`$args.x` / top-level binds).
     // Field/input renames update nested args path segments and response `selection:`.
     // Do not apply field renames to argument roots (Query `release_year` arg ≠
     // `Movie.release_year` field under `fieldNames: camelCase`).
-    // When `protobufNestedFieldRenames` is false, nested/selection field renames are
-    // applied type-scoped elsewhere (naming-convention / rename transforms).
+    // When `protobufNestedFieldRenames` is false, rename/naming-convention own a single
+    // type-scoped pass via `applyProtobufFieldRenames` (no a→b then b→c chaining).
     const selectionMap = protobufFieldMap;
     let protobufChanged = false;
     const rewritten = nextDirectives[protobufKey].map((rpcArgs: any) => {

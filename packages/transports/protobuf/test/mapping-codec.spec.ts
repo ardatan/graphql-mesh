@@ -220,6 +220,31 @@ describe('protobuf mapping + codec', () => {
     expect([...decoded.child.data]).toEqual([2]);
   });
 
+  it('applies implicit defaults inside repeated message elements', () => {
+    const fields = parseMapping(`
+      1(repeated message): result {
+        1(string): name
+        2(int64): year
+      }
+    `);
+    // One element with only name on the wire — year must default to 0.
+    const bytes = encodeMessage(fields, { result: [{ name: 'Solo' }] });
+    expect(decodeMessage(fields, bytes)).toEqual({
+      result: [{ name: 'Solo', year: 0 }],
+    });
+  });
+
+  it('applies implicit defaults inside map message values', () => {
+    const fields = parseMapping(`
+      1(map<string,message>): movies {
+        1(string): name
+        2(int32): year
+      }
+    `);
+    const bytes = encodeMessage(fields, { movies: { a: { name: 'A' } } });
+    expect(decodeMessage(fields, bytes).movies.a).toEqual({ name: 'A', year: 0 });
+  });
+
   it('keeps __proto__ map keys through singular message merges', () => {
     const fields = parseMapping(`
       1(message): child {

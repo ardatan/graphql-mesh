@@ -292,14 +292,14 @@ export function createRenameTransform(opts: RenameTransformConfig) {
         const publicType = typeRenameMap.get(typeName) ?? typeName;
         argRenamesByPublicField.set(`${publicType}.${newFieldName}`, argRenameMap);
       }
-      // Connectors + `@protobuf__rpc` skip Mesh `@source`; rewrite directive binds to
-      // the public GraphQL names (same posture as Federation Connectors `$args.*`).
-      // `$args.*` only here — `$this.*` is rewritten in the protobuf pass with owner context.
+      // Connectors skip Mesh `@source`; rewrite `$args.*` / `__typename` here.
+      // Protobuf `$args` / nested binds wait for `applyProtobufFieldRenames` (one pass).
       const rewrittenDirectives = rewriteConnectArgReferences(
         fieldDirectives,
         argRenameMap,
         undefined,
         typeRenameMap.size ? typeRenameMap : undefined,
+        false,
       );
       if (rewrittenDirectives !== fieldDirectives || newArgs) {
         const fieldExtensions: Record<string, any> = { ...(field.extensions || {}) };

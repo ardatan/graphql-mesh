@@ -191,11 +191,13 @@ export function createNamingConventionTransform(
         const publicType = typeRenameMap.get(typeName) ?? typeName;
         argRenamesByPublicField.set(`${publicType}.${newFieldName}`, argRenameMap);
       }
+      // Defer protobuf `$args` rewrites to `applyProtobufFieldRenames` (single pass).
       const rewrittenDirectives = rewriteConnectArgReferences(
         fieldDirectives,
         argRenameMap,
         undefined,
         typeRenameMap.size ? typeRenameMap : undefined,
+        false,
       );
       if (rewrittenDirectives !== fieldDirectives || newArgs) {
         const fieldExtensions: Record<string, any> = { ...(fieldConfig.extensions || {}) };

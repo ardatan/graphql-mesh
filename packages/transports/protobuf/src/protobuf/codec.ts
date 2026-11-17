@@ -348,6 +348,31 @@ function applyImplicitPresenceDefaults(fields: MappingField[], out: Record<strin
       applyImplicitPresenceDefaults(field.fields, out[key]);
       continue;
     }
+    // Nested message decode uses applyDefaults=false; walk repeated elements and map values.
+    if (
+      field.type.kind === 'repeated' &&
+      field.type.element.kind === 'message' &&
+      field.fields?.length
+    ) {
+      if (Array.isArray(out[key])) {
+        for (const el of out[key]) {
+          if (isMergeableObject(el)) {
+            applyImplicitPresenceDefaults(field.fields, el);
+          }
+        }
+      }
+      continue;
+    }
+    if (field.type.kind === 'map' && field.type.value.kind === 'message' && field.fields?.length) {
+      if (isMergeableObject(out[key])) {
+        for (const v of Object.values(out[key])) {
+          if (isMergeableObject(v)) {
+            applyImplicitPresenceDefaults(field.fields, v);
+          }
+        }
+      }
+      continue;
+    }
     if (out[key] !== undefined) {
       continue;
     }
