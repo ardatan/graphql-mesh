@@ -30,7 +30,9 @@ import type {
   SqlKind,
   SqlMutationKind,
   SqlQueryKind,
+  SqlTransportOptions,
 } from './types.js';
+import { resolveConnectionStringFromEnv } from './uri.js';
 
 export interface GetSqlExecutorOpts {
   subgraph: GraphQLSchema;
@@ -159,15 +161,30 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
   }
   const transport = transportDirectives[0] as {
     location?: string;
-    options?: { dialect?: SqlDialect };
+    options?: SqlTransportOptions;
   };
+  const location =
+    transport.location ||
+    resolveConnectionStringFromEnv(undefined, { dialect: transport.options?.dialect });
   const dialect: SqlDialect =
-    transport.options?.dialect || inferDialectFromLocation(transport.location) || 'sqlite';
-  if (!transport.location) {
-    throw new Error('@transport(kind: "sql") requires location (connection URI or file path)');
+    transport.options?.dialect || inferDialectFromLocation(location) || 'sqlite';
+  if (!location) {
+    throw new Error(
+      '@transport(kind: "sql") requires location (connection URI / file path) or a Bun-compatible env URL (DATABASE_URL, POSTGRES_URL, MYSQL_URL, SQLITE_URL, …)',
+    );
   }
 
-  const sqlClient = client || createSqlClient({ dialect, location: transport.location, cwd });
+  const sqlClient =
+    client ||
+    createSqlClient({
+      dialect,
+      location,
+      cwd,
+      max: transport.options?.max,
+      idleTimeout: transport.options?.idleTimeout,
+      connectionTimeout: transport.options?.connectionTimeout,
+      tls: transport.options?.tls,
+    });
 
   subgraph = mapSchema(subgraph, {
     [MapperKind.OBJECT_FIELD](fieldConfig) {

@@ -7,8 +7,21 @@ export type SqlMutationKind = 'INSERT' | 'UPDATE' | 'DELETE';
 /** Combined ` @sql` kind (reads + writes). */
 export type SqlKind = SqlQueryKind | SqlMutationKind;
 
+/**
+ * Bun SQL–inspired connection / pool options stored on `@transport(options:)`.
+ * Only the fields we can honour on Node (`pg` / `mysql2` / `node:sqlite`) or
+ * forward to `Bun.SQL` when present are included.
+ */
 export interface SqlTransportOptions {
   dialect?: SqlDialect;
+  /** Max pool size (default 10). Maps to Bun `max`, mysql2 `connectionLimit`, pg `max`. */
+  max?: number;
+  /** Idle connection lifetime in seconds (0 = off). Bun `idleTimeout`. */
+  idleTimeout?: number;
+  /** Seconds to wait for a new connection (default 30). Bun `connectionTimeout`. */
+  connectionTimeout?: number;
+  /** Enable TLS / SSL (`true` or Bun-style mode string). */
+  tls?: boolean | string;
 }
 
 export interface SqlMappingValue {

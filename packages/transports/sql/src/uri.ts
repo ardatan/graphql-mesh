@@ -13,6 +13,135 @@ export interface ParsedSqlUri {
   searchParams: Record<string, string>;
 }
 
+export type EnvLike = Record<string, string | undefined>;
+
+/**
+ * Bun-compatible connection URL env vars, in precedence order.
+ * @see https://bun.com/docs/runtime/sql
+ */
+export const SQL_URL_ENV_VARS = [
+  'DATABASE_URL',
+  'TLS_DATABASE_URL',
+  'POSTGRES_URL',
+  'PGURL',
+  'PG_URL',
+  'TLS_POSTGRES_DATABASE_URL',
+  'MYSQL_URL',
+  'TLS_MYSQL_DATABASE_URL',
+  'MARIADB_URL',
+  'TLS_MARIADB_DATABASE_URL',
+  'SQLITE_URL',
+] as const;
+
+/**
+ * Resolve a connection string from the environment the way Bun SQL does:
+ * URL vars first, then (when no URL) a postgres URL composed from `PG*` fields.
+ *
+ * `TLS_*` URLs get `sslmode=require` unless the URL already names an ssl mode.
+ */
+export function resolveConnectionStringFromEnv(
+  env: EnvLike = typeof process !== 'undefined' ? process.env : {},
+  opts?: { dialect?: SqlDialect },
+): string | undefined {
+  for (const key of SQL_URL_ENV_VARS) {
+    const value = env[key]?.trim();
+    if (!value) continue;
+    if (opts?.dialect) {
+      try {
+        if (inferDialectFromConnectionString(value) !== opts.dialect) {
+          // With an explicit dialect, skip URLs that name another adapter
+          // (Bun does the same when `adapter` is set).
+          if (key === 'DATABASE_URL' || key === 'TLS_DATABASE_URL') continue;
+          if (opts.dialect === 'postgres' && !isPostgresUrlEnvKey(key)) continue;
+          if (opts.dialect === 'mysql' && !isMysqlUrlEnvKey(key)) continue;
+          if (opts.dialect === 'sqlite' && key !== 'SQLITE_URL') continue;
+        }
+      } catch {
+        // unknown protocol — still return; caller / infer will throw
+      }
+    }
+    if (key.startsWith('TLS_')) {
+      return ensureSslModeRequire(value);
+    }
+    return value;
+  }
+
+  if (opts?.dialect === 'mysql' || (!opts?.dialect && env.MYSQL_HOST)) {
+    const mysql = composeMysqlUrlFromEnv(env);
+    if (mysql) return mysql;
+  }
+  if (opts?.dialect !== 'mysql' && opts?.dialect !== 'sqlite') {
+    const pg = composePostgresUrlFromEnv(env);
+    if (pg) return pg;
+  }
+  return undefined;
+}
+
+function isPostgresUrlEnvKey(key: string): boolean {
+  return (
+    key === 'POSTGRES_URL' ||
+    key === 'PGURL' ||
+    key === 'PG_URL' ||
+    key === 'TLS_POSTGRES_DATABASE_URL'
+  );
+}
+
+function isMysqlUrlEnvKey(key: string): boolean {
+  return (
+    key === 'MYSQL_URL' ||
+    key === 'TLS_MYSQL_DATABASE_URL' ||
+    key === 'MARIADB_URL' ||
+    key === 'TLS_MARIADB_DATABASE_URL'
+  );
+}
+
+function ensureSslModeRequire(url: string): string {
+  if (/[?&](sslmode|ssl|tls)=/i.test(url)) return url;
+  return url.includes('?') ? `${url}&sslmode=require` : `${url}?sslmode=require`;
+}
+
+function composePostgresUrlFromEnv(env: EnvLike): string | undefined {
+  const host = env.PGHOST;
+  const database = env.PGDATABASE;
+  const user = env.PGUSERNAME || env.PGUSER || env.USER || env.USERNAME;
+  const password = env.PGPASSWORD;
+  const port = env.PGPORT;
+  const sslmode = env.PGSSLMODE;
+  if (!host && !database && !user && !password) return undefined;
+
+  const auth =
+    user != null && user !== ''
+      ? password != null && password !== ''
+        ? `${encodeURIComponent(user)}:${encodeURIComponent(password)}@`
+        : `${encodeURIComponent(user)}@`
+      : '';
+  const hostPart = host || 'localhost';
+  const portPart = port ? `:${port}` : '';
+  const dbPart = database ? `/${encodeURIComponent(database)}` : '';
+  const qs = sslmode ? `?sslmode=${encodeURIComponent(sslmode)}` : '';
+  return `postgres://${auth}${hostPart}${portPart}${dbPart}${qs}`;
+}
+
+function composeMysqlUrlFromEnv(env: EnvLike): string | undefined {
+  const host = env.MYSQL_HOST || env.MARIADB_HOST;
+  const database = env.MYSQL_DATABASE || env.MARIADB_DATABASE;
+  const user = env.MYSQL_USER || env.MARIADB_USER;
+  const password = env.MYSQL_PASSWORD || env.MARIADB_PASSWORD;
+  const port = env.MYSQL_PORT || env.MARIADB_PORT;
+  if (!host && !database && !user && !password) return undefined;
+
+  const auth =
+    user != null && user !== ''
+      ? password != null && password !== ''
+        ? `${encodeURIComponent(user)}:${encodeURIComponent(password)}@`
+        : `${encodeURIComponent(user)}@`
+      : '';
+  const hostPart = host || 'localhost';
+  const portPart = port ? `:${port}` : '';
+  const dbPart = database ? `/${encodeURIComponent(database)}` : '';
+  return `mysql://${auth}${hostPart}${portPart}${dbPart}`;
+}
+
 /**
  * Detect dialect from a connection string protocol — Bun SQL–compatible.
  *

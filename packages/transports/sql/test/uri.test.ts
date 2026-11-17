@@ -1,6 +1,7 @@
 import {
   inferDialectFromConnectionString,
   parseSqlUri,
+  resolveConnectionStringFromEnv,
 } from '../src/uri.js';
 
 describe('inferDialectFromConnectionString (Bun-compatible)', () => {
@@ -52,5 +53,71 @@ describe('parseSqlUri', () => {
     expect(parseSqlUri('sqlite://./app.db').filePath).toBe('./app.db');
     expect(parseSqlUri(':memory:').filePath).toBe(':memory:');
     expect(parseSqlUri('chinook.db').filePath).toBe('chinook.db');
+  });
+});
+
+describe('resolveConnectionStringFromEnv (Bun-compatible)', () => {
+  it('prefers DATABASE_URL', () => {
+    expect(
+      resolveConnectionStringFromEnv({
+        DATABASE_URL: 'postgres://u@localhost/db',
+        MYSQL_URL: 'mysql://u@localhost/db',
+      }),
+    ).toBe('postgres://u@localhost/db');
+  });
+
+  it('falls through URL env vars in Bun order', () => {
+    expect(
+      resolveConnectionStringFromEnv({
+        MYSQL_URL: 'mysql://root@localhost/app',
+      }),
+    ).toBe('mysql://root@localhost/app');
+    expect(resolveConnectionStringFromEnv({ SQLITE_URL: 'file:./x.db' })).toBe('file:./x.db');
+  });
+
+  it('adds sslmode=require for TLS_* URLs', () => {
+    expect(
+      resolveConnectionStringFromEnv({
+        TLS_DATABASE_URL: 'postgres://u@localhost/db',
+      }),
+    ).toBe('postgres://u@localhost/db?sslmode=require');
+  });
+
+  it('composes postgres URL from PG* fields', () => {
+    expect(
+      resolveConnectionStringFromEnv({
+        PGHOST: 'db.internal',
+        PGPORT: '6543',
+        PGUSER: 'app',
+        PGPASSWORD: 's3cret',
+        PGDATABASE: 'shop',
+        PGSSLMODE: 'require',
+      }),
+    ).toBe('postgres://app:s3cret@db.internal:6543/shop?sslmode=require');
+  });
+
+  it('composes mysql URL when dialect is mysql', () => {
+    expect(
+      resolveConnectionStringFromEnv(
+        {
+          MYSQL_HOST: 'mysql',
+          MYSQL_USER: 'root',
+          MYSQL_DATABASE: 'employees',
+        },
+        { dialect: 'mysql' },
+      ),
+    ).toBe('mysql://root@mysql/employees');
+  });
+
+  it('skips DATABASE_URL whose protocol disagrees with dialect', () => {
+    expect(
+      resolveConnectionStringFromEnv(
+        {
+          DATABASE_URL: 'sqlite://./x.db',
+          POSTGRES_URL: 'postgres://u@localhost/db',
+        },
+        { dialect: 'postgres' },
+      ),
+    ).toBe('postgres://u@localhost/db');
   });
 });

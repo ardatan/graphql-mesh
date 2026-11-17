@@ -11,7 +11,9 @@ import { GraphQLBigInt, GraphQLDate, GraphQLDateTime, GraphQLJSON } from 'graphq
 import { path as pathHelper } from '@graphql-mesh/cross-helpers';
 import {
   inferDialectFromConnectionString,
+  resolveConnectionStringFromEnv,
   type SqlDialect,
+  type SqlTransportOptions,
 } from '@graphql-mesh/transport-sql';
 import { SqlDirective, SqlKindEnum, TransportDirective } from './directives.js';
 import { introspectMysql } from './introspect/mysql.js';
@@ -23,7 +25,10 @@ import { mapSqlTypeToGraphQL } from './type-map.js';
 
 const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
 
-export interface LoadSqlSubgraphOpts {
+export interface LoadSqlSubgraphOpts extends Pick<
+  SqlTransportOptions,
+  'max' | 'idleTimeout' | 'connectionTimeout' | 'tls'
+> {
   /**
    * Dialect override. When omitted, inferred from the connection URI protocol
    * (Bun SQL–compatible: `postgres://`, `mysql://` / `mysql2://` / `mariadb://`,
@@ -32,6 +37,8 @@ export interface LoadSqlSubgraphOpts {
   type?: SqlDialect;
   /**
    * Connection URI / path — becomes `@transport(location)`.
+   * When omitted, resolved from Bun-compatible env vars (`DATABASE_URL`,
+   * `POSTGRES_URL` / `PGURL`, `MYSQL_URL`, `SQLITE_URL`, …) or `PG*` / `MYSQL_*` fields.
    * Sqlite: `file:…`, `sqlite:…`, `:memory:`, or a `*.db` path.
    * Mysql/Postgres: `mysql(2|s)://…`, `mariadb://…`, `postgres(ql)://…`, or host-style.
    */
@@ -47,8 +54,12 @@ export interface LoadSqlSubgraphOpts {
 
 export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadSqlSubgraphOpts) {
   const naming: SqlNaming = { ...createDefaultNaming(), ...opts.naming };
-  const dialect = resolveDialect(opts);
-  const resolved: LoadSqlSubgraphOpts & { type: SqlDialect } = { ...opts, type: dialect };
+  const withEndpoint = resolveOptsEndpoint(opts);
+  const dialect = resolveDialect(withEndpoint);
+  const resolved: LoadSqlSubgraphOpts & { type: SqlDialect } = {
+    ...withEndpoint,
+    type: dialect,
+  };
   const meta = applyTableFieldsFilter(await introspect(resolved), opts.tableFields);
   const location = resolveLocation(resolved);
   const schemaComposer = new SchemaComposer();
@@ -419,9 +430,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     subgraph: subgraphName,
     kind: 'sql',
     location,
-    options: {
-      dialect,
-    },
+    options: buildTransportOptions(resolved, dialect),
   };
   extensions.directives.link = [
     {
@@ -476,15 +485,42 @@ async function introspect(
 }
 
 /**
+ * Fill `endpoint` from Bun-compatible env vars when omitted.
+ */
+export function resolveOptsEndpoint(opts: LoadSqlSubgraphOpts): LoadSqlSubgraphOpts {
+  if (opts.endpoint) return opts;
+  const fromEnv = resolveConnectionStringFromEnv(undefined, { dialect: opts.type });
+  if (!fromEnv) {
+    throw new Error(
+      'loadSqlSubgraph requires endpoint or a Bun-compatible env URL (DATABASE_URL, POSTGRES_URL, MYSQL_URL, SQLITE_URL, …)',
+    );
+  }
+  return { ...opts, endpoint: fromEnv };
+}
+
+/**
  * Resolve dialect: explicit `type` wins; otherwise Bun-style protocol detection
- * from `endpoint`.
+ * from `endpoint` (or env-resolved endpoint).
  */
 export function resolveDialect(opts: LoadSqlSubgraphOpts): SqlDialect {
   if (opts.type) return opts.type;
-  if (!opts.endpoint) {
-    throw new Error('loadSqlSubgraph requires type or endpoint');
+  const endpoint = opts.endpoint || resolveConnectionStringFromEnv();
+  if (!endpoint) {
+    throw new Error('loadSqlSubgraph requires type or endpoint (or DATABASE_URL / …)');
   }
-  return inferDialectFromConnectionString(opts.endpoint);
+  return inferDialectFromConnectionString(endpoint);
+}
+
+function buildTransportOptions(
+  opts: LoadSqlSubgraphOpts,
+  dialect: SqlDialect,
+): SqlTransportOptions {
+  const options: SqlTransportOptions = { dialect };
+  if (opts.max != null) options.max = opts.max;
+  if (opts.idleTimeout != null) options.idleTimeout = opts.idleTimeout;
+  if (opts.connectionTimeout != null) options.connectionTimeout = opts.connectionTimeout;
+  if (opts.tls != null) options.tls = opts.tls;
+  return options;
 }
 
 function resolveLocation(opts: LoadSqlSubgraphOpts): string {
