@@ -704,7 +704,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
       }
       const rewritten: string[] = [];
       const altRewritten: string[] = [];
-      let walkAlt = altCur != null;
+      const walkAlt = altCur != null;
       for (const seg of segments) {
         const stepped = renameFieldSegment(cur, seg, fieldRenameMap);
         rewritten.push(stepped.name);
