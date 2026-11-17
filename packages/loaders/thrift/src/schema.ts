@@ -32,6 +32,12 @@ import type { IMethodAnnotations, IThriftAnnotations } from '@creditkarma/thrift
 import { TType } from '@creditkarma/thrift-server-core';
 import { Logger } from '@graphql-hive/logger';
 import { path } from '@graphql-mesh/cross-helpers';
+import {
+  CONNECT_LINK_URL,
+  ConnectDirective,
+  LinkDirective,
+  SourceDirective,
+} from '@graphql-mesh/transport-rest';
 import type {
   GraphQLThriftAnnotations,
   StructTypeVal,
@@ -41,6 +47,15 @@ import type {
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
+import {
+  buildCompactArgs,
+  buildCompactSelection,
+  buildTJSONConnectBody,
+  buildTJSONConnectSelection,
+  buildThriftMethodDescription,
+  thriftJsonContentTypeHeaders,
+  type ThriftProtocol,
+} from './mapping.js';
 
 export interface GraphQLThriftLoaderOptions {
   subgraphName: string;
@@ -48,7 +63,15 @@ export interface GraphQLThriftLoaderOptions {
   source: string;
   endpoint: string;
   operationHeaders?: Record<string, string>;
-  serviceName: string;
+  /** Thrift service name — optional for single-service endpoints. */
+  serviceName?: string;
+  /** Wire protocol. `json` emits `@connect` / `@source` (Apollo Router–compatible). */
+  protocol?: ThriftProtocol;
+  /**
+   * Method names that should emit `entity: true` on `@thrift__method` / `@connect`
+   * (Query entity resolvers).
+   */
+  entityMethods?: string[];
 
   baseDir?: string;
   schemaHeaders?: Record<string, string>;
@@ -72,12 +95,27 @@ export const fieldTypeMapDirective = new GraphQLDirective({
   },
 });
 
+export const thriftMethodDirective = new GraphQLDirective({
+  name: 'thrift__method',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: { type: GraphQLString },
+    service: { type: GraphQLString },
+    method: { type: new GraphQLNonNull(GraphQLString) },
+    args: { type: new GraphQLNonNull(GraphQLString) },
+    selection: { type: new GraphQLNonNull(GraphQLString) },
+    entity: { type: GraphQLBoolean },
+  },
+});
+
 export async function loadNonExecutableGraphQLSchemaFromIDL({
   subgraphName,
   source,
   endpoint,
   operationHeaders = {},
   serviceName,
+  protocol = 'binary',
+  entityMethods = [],
 
   baseDir = globalThis.process?.cwd?.(),
   schemaHeaders = {},
@@ -103,6 +141,8 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
     location: endpoint,
     headers: operationHeaders,
     serviceName,
+    protocol,
+    entityMethods,
   });
 }
 
@@ -172,13 +212,17 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   location,
   headers = {},
   serviceName,
+  protocol = 'binary',
+  entityMethods = [],
 }: {
   subgraphName: string;
   baseNamespace: string;
   namespaceASTMap: Record<string, ThriftDocument>;
   location: string;
   headers: Record<string, string>;
-  serviceName: string;
+  serviceName?: string;
+  protocol?: ThriftProtocol;
+  entityMethods?: string[];
 }) {
   const enumTypeMap = new Map<string, GraphQLEnumType>();
   const outputTypeMap = new Map<string, GraphQLOutputType>();
@@ -191,7 +235,10 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     [methodName: string]: number;
   } = {};
   const topTypeMap: TypeMap = {};
+  const entityMethodSet = new Set(entityMethods);
+  const emitConnect = protocol === 'json';
   let currentId = 0;
+  let idlServiceName: string | undefined;
 
   for (const namespace of Object.keys(namespaceASTMap).reverse()) {
     const thriftAST = namespaceASTMap[namespace];
@@ -291,11 +338,12 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           break;
         }
         case SyntaxType.ServiceDefinition:
+          idlServiceName = statement.name.value;
           for (const fnIndex in statement.functions) {
             const fn = statement.functions[fnIndex];
             const fnName = fn.name.value;
             const description = processComments(fn.comments);
-            const { outputType: returnType } = getGraphQLFunctionType({
+            const { outputType: returnType, typeVal: returnTypeVal } = getGraphQLFunctionType({
               functionType: fn.returnType,
               id: Number(fnIndex) + 1,
               enumTypeMap,
@@ -325,26 +373,75 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               };
               fieldTypeMap[fieldName] = typeVal;
             }
-            rootFields[fnName] = {
-              type: returnType,
-              description,
-              args,
-              extensions: {
-                directives: {
-                  fieldTypeMap: {
-                    subgraph: subgraphName,
-                    fieldTypeMap,
+            const effectiveServiceName = serviceName || idlServiceName;
+            const isEntity = entityMethodSet.has(fnName);
+            const mappingDescription = buildThriftMethodDescription({
+              serviceName: effectiveServiceName,
+              methodName: fnName,
+              fieldTypeMap,
+              returnTypeVal,
+              topTypeMap,
+              protocol,
+            });
+            const fieldDescription = [description, mappingDescription].filter(Boolean).join('\n\n');
+
+            if (emitConnect) {
+              // Single-service: path `/`. Explicit serviceName: `/<service>`.
+              const connectPath = serviceName ? `/${serviceName}` : '/';
+              rootFields[fnName] = {
+                type: returnType,
+                description: fieldDescription,
+                args,
+                extensions: {
+                  directives: {
+                    connect: {
+                      source: subgraphName,
+                      http: {
+                        POST: connectPath,
+                        body: buildTJSONConnectBody(fnName, fieldTypeMap, topTypeMap),
+                      },
+                      selection: buildTJSONConnectSelection(returnTypeVal, topTypeMap),
+                      ...(isEntity ? { entity: true } : {}),
+                    },
                   },
                 },
-              },
-            };
+              };
+            } else {
+              const thriftMethodArgs: Record<string, unknown> = {
+                subgraph: subgraphName,
+                method: fnName,
+                args: buildCompactArgs(fieldTypeMap, topTypeMap),
+                selection: buildCompactSelection(returnTypeVal, topTypeMap),
+              };
+              if (serviceName) {
+                thriftMethodArgs.service = serviceName;
+              }
+              if (isEntity) {
+                thriftMethodArgs.entity = true;
+              }
+              rootFields[fnName] = {
+                type: returnType,
+                description: fieldDescription,
+                args,
+                extensions: {
+                  directives: {
+                    thrift__method: thriftMethodArgs,
+                    // Migration: keep fieldTypeMap so existing thrift transport still executes.
+                    fieldTypeMap: {
+                      subgraph: subgraphName,
+                      fieldTypeMap,
+                    },
+                  },
+                },
+              };
+            }
             methodNames.push(fnName);
             methodAnnotations[fnName] = { annotations: {}, fieldAnnotations: {} };
             methodParameters[fnName] = fn.fields.length + 1;
           }
           break;
         case SyntaxType.TypedefDefinition: {
-          const { inputType, outputType } = getGraphQLFunctionType({
+          const { inputType, outputType, typeVal } = getGraphQLFunctionType({
             id: currentId++,
             functionType: statement.definitionType,
             enumTypeMap,
@@ -354,6 +451,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           });
           inputTypeMap.set(typeName, inputType);
           outputTypeMap.set(typeName, outputType);
+          // So compact/TJSON mapping can resolve `typedef` refs (e.g. digit → i32).
+          topTypeMap[typeName] = typeVal;
           break;
         }
       }
@@ -365,6 +464,36 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     fields: rootFields,
   });
 
+  const effectiveServiceName = serviceName || idlServiceName || subgraphName;
+
+  if (emitConnect) {
+    const headerEntries = Object.entries(headers).map(([name, value]) => ({ name, value }));
+    const schema = new GraphQLSchema({
+      query: queryObjectType,
+      directives: [ConnectDirective, SourceDirective, LinkDirective],
+      extensions: {
+        directives: {
+          link: [
+            {
+              url: CONNECT_LINK_URL,
+              import: ['@connect', '@source'],
+            },
+          ],
+          source: [
+            {
+              name: subgraphName,
+              http: {
+                baseURL: location,
+                headers: [...thriftJsonContentTypeHeaders(), ...headerEntries],
+              },
+            },
+          ],
+        },
+      },
+    });
+    return schema;
+  }
+
   const graphQLThriftAnnotations: GraphQLThriftAnnotations = {
     subgraph: subgraphName,
     kind: 'thrift',
@@ -372,8 +501,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     // Match shared `@transport(headers: [[String]])` / HTTP+OData loaders.
     headers: Object.entries(headers),
     options: {
+      protocol,
       clientAnnotations: {
-        serviceName,
+        serviceName: effectiveServiceName,
         annotations,
         methodNames,
         methodAnnotations,
@@ -383,9 +513,12 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     },
   };
 
+  // Do not `@link` `@thrift__method` on a custom URL — composition's
+  // `detectAndAddMeshDirectives` imports unknown directives via Mesh spec
+  // (`@composeDirective`). A separate thrift `@link` would exclude it from that path.
   const schema = new GraphQLSchema({
     query: queryObjectType,
-    directives: [fieldTypeMapDirective],
+    directives: [fieldTypeMapDirective, thriftMethodDirective],
     extensions: {
       directives: {
         transport: graphQLThriftAnnotations,

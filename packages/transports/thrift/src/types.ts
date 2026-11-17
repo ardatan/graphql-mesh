@@ -26,12 +26,16 @@ export type VoidTypeVal = { id?: number; type: TType.VOID };
 export type RefTypeVal = { id?: number; type: 'ref'; name: string };
 export type TypeMap = Record<string, TypeVal>;
 
+export type ThriftProtocolType = 'binary' | 'compact' | 'json';
+
 export interface GraphQLThriftAnnotations {
   kind: 'thrift';
   subgraph: string;
   location: string;
   headers: [string, string][] | Record<string, string>;
   options: {
+    /** Wire protocol for the Thrift HTTP client. Defaults to binary. */
+    protocol?: ThriftProtocolType;
     clientAnnotations: {
       serviceName: string;
       annotations: IThriftAnnotations;

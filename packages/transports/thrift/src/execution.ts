@@ -29,6 +29,7 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
   const headersFactory = getInterpolatedHeadersFactory(headers);
   const rootTypeMap = getRootTypeMap(subgraph);
   const fieldTypeMapDirectivesByField = new Map<string, any[]>();
+  const thriftMethodByField = new Map<string, { method?: string; entity?: boolean }>();
 
   return async function thriftExecutor(executionRequest): Promise<ExecutionResult<any, any>> {
     const operationsAndFragments = getOperationsAndFragments(executionRequest.document);
@@ -55,13 +56,23 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
       }
       let fieldTypeMapDirectives = fieldTypeMapDirectivesByField.get(fieldName);
       if (fieldTypeMapDirectives == null) {
-        fieldTypeMapDirectives = getDirectiveExtensions(field)?.fieldTypeMap || [];
+        const fieldDirectives = getDirectiveExtensions(field) || {};
+        fieldTypeMapDirectives = fieldDirectives.fieldTypeMap || [];
         fieldTypeMapDirectivesByField.set(fieldName, fieldTypeMapDirectives);
+        const thriftMethodDir = fieldDirectives.thrift__method?.[0];
+        if (thriftMethodDir) {
+          thriftMethodByField.set(fieldName, {
+            method: thriftMethodDir.method,
+            entity: thriftMethodDir.entity,
+          });
+        }
       }
+      const thriftMethod = thriftMethodByField.get(fieldName);
+      const rpcMethodName = thriftMethod?.method || fieldName;
       fieldTypeMapDirectives?.forEach(fieldTypeMapDirective => {
         requestPromises.push(
           client
-            .doRequest(fieldName, args, fieldTypeMapDirective?.fieldTypeMap, {
+            .doRequest(rpcMethodName, args, fieldTypeMapDirective?.fieldTypeMap, {
               headers: headersFactory({
                 root,
                 args,

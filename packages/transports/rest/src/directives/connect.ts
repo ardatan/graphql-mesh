@@ -918,6 +918,19 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
     if (method === 'first') {
       return Array.isArray(left) ? left[0] : left;
     }
+    if (method === 'size') {
+      if (Array.isArray(left)) return left.length;
+      if (left && typeof left === 'object') return Object.keys(left).length;
+      if (typeof left === 'string') return left.length;
+      return 0;
+    }
+    if (method === 'slice') {
+      if (!Array.isArray(left) && typeof left !== 'string') return left;
+      const parts = rawArgs.split(',').map(s => s.trim());
+      const start = parts[0] ? Number(parts[0]) : 0;
+      const end = parts[1] != null && parts[1] !== '' ? Number(parts[1]) : undefined;
+      return (left as any).slice(start, end);
+    }
     if (method === 'match') {
       return evalMatchMethod(left, rawArgs, root, extras);
     }
@@ -1063,10 +1076,151 @@ function evalConnectorsDollarParen(inner: string, root: any, extras: ConnectSele
       }
     }
   }
+  // Apollo LitArray / LitObject with embedded `$args` / paths (e.g. TJSON envelopes).
+  if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+    try {
+      return evalConnectorsLitExpr(trimmed, root, extras);
+    } catch {
+      /* fall through */
+    }
+  }
   if (trimmed.startsWith('$') || trimmed.includes('->') || /^[A-Za-z_]/.test(trimmed)) {
     return evalPath(trimmed, root, extras);
   }
   return trimmed;
+}
+
+/**
+ * Evaluate Apollo Connectors LitExpr fragments used inside `$()`:
+ * arrays/objects that mix JSON literals with `$args` / path selections / spreads.
+ */
+function evalConnectorsLitExpr(expr: string, root: any, extras: ConnectSelectionExtras): any {
+  const trimmed = expr.trim();
+  if (!trimmed) return undefined;
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    /* continue */
+  }
+  if (trimmed.startsWith('$(')) {
+    const closed = findBalancedParenClose(trimmed, 1);
+    if (closed > 0) {
+      return evalConnectorsDollarParen(trimmed.slice(2, closed), root, extras);
+    }
+  }
+  if (trimmed.startsWith('$') || trimmed.includes('->')) {
+    return evalPath(trimmed, root, extras);
+  }
+  if (trimmed.startsWith('[')) {
+    return evalConnectorsLitArray(trimmed, root, extras);
+  }
+  if (trimmed.startsWith('{')) {
+    return evalConnectorsLitObject(trimmed, root, extras);
+  }
+  if (/^-?\d+(\.\d+)?$/.test(trimmed)) return Number(trimmed);
+  if (trimmed === 'true') return true;
+  if (trimmed === 'false') return false;
+  if (trimmed === 'null') return null;
+  return trimmed;
+}
+
+function splitConnectorsLitItems(inner: string): string[] {
+  const items: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < inner.length; i++) {
+    const c = inner[i];
+    if (c === '"' || c === "'") {
+      const q = c;
+      i++;
+      while (i < inner.length && inner[i] !== q) {
+        if (inner[i] === '\\') i++;
+        i++;
+      }
+      continue;
+    }
+    if (c === '(' || c === '[' || c === '{') depth++;
+    else if (c === ')' || c === ']' || c === '}') depth--;
+    else if (c === ',' && depth === 0) {
+      items.push(inner.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  const last = inner.slice(start).trim();
+  if (last) items.push(last);
+  return items;
+}
+
+function evalConnectorsLitArray(expr: string, root: any, extras: ConnectSelectionExtras): any[] {
+  const inner = expr.trim().slice(1, -1);
+  const out: any[] = [];
+  for (const item of splitConnectorsLitItems(inner)) {
+    if (!item) continue;
+    if (item.startsWith('...')) {
+      const spread = evalConnectorsLitExpr(item.slice(3).trim(), root, extras);
+      if (Array.isArray(spread)) out.push(...spread);
+      else if (spread != null) out.push(spread);
+      continue;
+    }
+    out.push(evalConnectorsLitExpr(item, root, extras));
+  }
+  return out;
+}
+
+function evalConnectorsLitObject(
+  expr: string,
+  root: any,
+  extras: ConnectSelectionExtras,
+): Record<string, any> {
+  const inner = expr.trim().slice(1, -1);
+  const out: Record<string, any> = {};
+  for (const item of splitConnectorsLitItems(inner)) {
+    if (!item) continue;
+    if (item.startsWith('...')) {
+      const spread = evalConnectorsLitExpr(item.slice(3).trim(), root, extras);
+      if (spread && typeof spread === 'object' && !Array.isArray(spread)) {
+        Object.assign(out, spread);
+      }
+      continue;
+    }
+    const colon = findTopLevelColon(item);
+    if (colon < 0) continue;
+    const rawKey = item.slice(0, colon).trim();
+    const rawVal = item.slice(colon + 1).trim();
+    let key = rawKey;
+    try {
+      if (
+        (rawKey.startsWith('"') && rawKey.endsWith('"')) ||
+        (rawKey.startsWith("'") && rawKey.endsWith("'"))
+      ) {
+        key = JSON.parse(rawKey.includes("'") ? `"${rawKey.slice(1, -1)}"` : rawKey);
+      }
+    } catch {
+      /* keep key */
+    }
+    out[key] = evalConnectorsLitExpr(rawVal, root, extras);
+  }
+  return out;
+}
+
+function findTopLevelColon(item: string): number {
+  let depth = 0;
+  for (let i = 0; i < item.length; i++) {
+    const c = item[i];
+    if (c === '"' || c === "'") {
+      const q = c;
+      i++;
+      while (i < item.length && item[i] !== q) {
+        if (item[i] === '\\') i++;
+        i++;
+      }
+      continue;
+    }
+    if (c === '(' || c === '[' || c === '{') depth++;
+    else if (c === ')' || c === ']' || c === '}') depth--;
+    else if (c === ':' && depth === 0) return i;
+  }
+  return -1;
 }
 
 /**

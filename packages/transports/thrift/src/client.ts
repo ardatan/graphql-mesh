@@ -26,6 +26,7 @@ export function createGraphQLThriftClient<Context = any>({
   location,
   headers,
   options: {
+    protocol: thriftProtocolOption,
     clientAnnotations: {
       serviceName,
       annotations,
@@ -253,11 +254,14 @@ export function createGraphQLThriftClient<Context = any>({
 
   const locationUrl = new URL(location);
 
+  const thriftProtocol = thriftProtocolOption || 'binary';
+
   return createHttpClient(GraphQLThriftClient, {
     hostName: locationUrl.hostname,
     https: locationUrl.protocol === 'https:',
     port: parseInt(locationUrl.port || '80', 10),
     path: locationUrl.pathname,
+    protocol: thriftProtocol,
     requestOptions: {
       headers: httpHeaders,
     },

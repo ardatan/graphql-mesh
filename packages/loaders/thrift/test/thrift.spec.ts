@@ -37,8 +37,40 @@ describe('thrift', () => {
           'x-api-key': '123',
         },
         serviceName: schemaObj.serviceName,
+        protocol: 'binary',
       });
-      expect(printSchemaWithDirectives(schema)).toMatchSnapshot(`${schemaName}-schema`);
+      const sdl = printSchemaWithDirectives(schema);
+      expect(sdl).toMatchSnapshot(`${schemaName}-schema`);
+      expect(sdl).toMatch(/@thrift__method\(/);
     });
+  });
+
+  it('Calc json protocol emits @connect', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'Calc',
+      source: './fixtures/calc.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/thrift-json',
+      protocol: 'json',
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toMatchSnapshot('Calc-json-connect-schema');
+    expect(sdl).toMatch(/@connect\(/);
+    expect(sdl).toMatch(/application\/vnd\.apache\.thrift\.json/);
+    expect(sdl).not.toMatch(/@thrift__method\(/);
+  });
+
+  it('entityMethods stamps entity: true', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'Calc',
+      source: './fixtures/calc.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/thrift',
+      serviceName: 'Calculator',
+      protocol: 'binary',
+      entityMethods: ['add'],
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toMatch(/@thrift__method\([\s\S]*entity:\s*true/);
   });
 });

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@fieldTypeMap", "@transport"]) @transport(subgraph: "calculator", kind: "thrift", location: "http://localhost:<calculator_port>/thrift", headers: [], options: {clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}) {
+exports[`binary (@thrift__method) composes schema with @thrift__method 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@fieldTypeMap", "@thrift__method", "@transport"]) @transport(subgraph: "calculator", kind: "thrift", location: "http://localhost:<calculator_port>/thrift", headers: [], options: {protocol: "binary", clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}) {
   query: Query
 }
 
@@ -40,11 +40,30 @@ enum join__Graph {
 
 directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) repeatable on FIELD_DEFINITION
 
+directive @thrift__method(subgraph: String, service: String, method: String!, args: String!, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION
+
 scalar FieldTypeMap @join__type(graph: CALCULATOR)
 
 type Query @join__type(graph: CALCULATOR) {
-  add(request: AddRequestInput): Int @fieldTypeMap(subgraph: "calculator", fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
-  subtract(left: Int, right: Int): Int @fieldTypeMap(subgraph: "calculator", fieldTypeMap: {left: {type: 8, id: 1}, right: {type: 8, id: 2}})
+  """
+  Thrift binary RPC
+  service: Calculator
+  method: add
+  args field ids:
+    - 1 = request (struct)
+  success wire type: i32 (result field id 0)
+  """
+  add(request: AddRequestInput): Int @thrift__method(subgraph: "calculator", method: "add", args: "1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "$(i32)", service: "Calculator") @fieldTypeMap(subgraph: "calculator", fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
+  """
+  Thrift binary RPC
+  service: Calculator
+  method: subtract
+  args field ids:
+    - 1 = left (i32)
+    - 2 = right (i32)
+  success wire type: i32 (result field id 0)
+  """
+  subtract(left: Int, right: Int): Int @thrift__method(subgraph: "calculator", method: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", service: "Calculator") @fieldTypeMap(subgraph: "calculator", fieldTypeMap: {left: {type: 8, id: 1}, right: {type: 8, id: 2}})
 }
 
 input AddRequestInput @join__type(graph: CALCULATOR) {
@@ -58,10 +77,85 @@ directive @transport(subgraph: String!, kind: String!, location: String, headers
 "
 `;
 
-exports[`should execute Add 1`] = `
+exports[`binary (@thrift__method) executes add on hive 1`] = `
 {
   "data": {
     "add": 5,
   },
 }
+`;
+
+exports[`json (@connect TJSON) composes schema with @connect 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @transport(subgraph: "calculator", kind: "rest", location: "http://localhost:<calculator_port>/thrift-json") @join__directive(graphs: [CALCULATOR], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [CALCULATOR], name: "source", args: {name: "calculator", http: {baseURL: "http://localhost:<calculator_port>/thrift-json", headers: [{name: "Content-Type", value: "application/vnd.apache.thrift.json"}, {name: "Accept", value: "application/vnd.apache.thrift.json"}]}}) {
+  query: Query
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+scalar join__FieldSet
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  CALCULATOR @join__graph(name: "calculator", url: "http://localhost:<calculator_port>/thrift-json")
+}
+
+type Query @join__type(graph: CALCULATOR) {
+  """
+  Thrift json RPC
+  service: Calculator
+  method: add
+  args field ids:
+    - 1 = request (struct)
+  success wire type: i32 (result field id 0)
+  """
+  add(request: AddRequestInput): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([\\n  1,\\n  \\"add\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": {\\n        \\"rec\\": {\\n        \\"1\\": { \\"i32\\": $args.request.left },\\n        \\"2\\": { \\"i32\\": $args.request.right }\\n        }\\n      }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")"})
+  """
+  Thrift json RPC
+  service: Calculator
+  method: subtract
+  args field ids:
+    - 1 = left (i32)
+    - 2 = right (i32)
+  success wire type: i32 (result field id 0)
+  """
+  subtract(left: Int, right: Int): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([\\n  1,\\n  \\"subtract\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": { \\"i32\\": $args.left },\\n      \\"2\\": { \\"i32\\": $args.right }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")"})
+}
+
+input AddRequestInput @join__type(graph: CALCULATOR) {
+  left: Int!
+  right: Int!
+}
+
+scalar TransportOptions
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments
+"
 `;
