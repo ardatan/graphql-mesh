@@ -1,22 +1,36 @@
 import type { GraphQLSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type { MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
-import { dispose, isDisposable } from '@graphql-mesh/utils';
-import { getSqlExecutor, loadGraphQLSchemaFromSql } from '@omnigraph/sql';
+import type {
+  ImportFn,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { getSqlExecutor, loadGraphQLSchemaFromSql, wrapMysqlPoolAsSqlClient } from '@omnigraph/sql';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export default class MySQLHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
+  private importFn: ImportFn;
   private schemaProxy: StoreProxy<GraphQLSchema>;
   private disposableResource?: Disposable | AsyncDisposable;
 
-  constructor({ name, config, baseDir, store }: MeshHandlerOptions<YamlConfig.MySQLHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    store,
+    importFn,
+  }: MeshHandlerOptions<YamlConfig.MySQLHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
+    this.importFn = importFn;
     this.schemaProxy = store.proxy(
       'schema.graphql',
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
@@ -24,17 +38,6 @@ export default class MySQLHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    if (this.config.pool != null) {
-      throw new Error(
-        '@graphql-mesh/mysql: `pool` is no longer supported. The handler now uses `@omnigraph/sql` / `transport-sql` and opens its own connection from host/user/password/database (or set those fields).',
-      );
-    }
-    if (this.config.tableFields?.length) {
-      throw new Error(
-        '@graphql-mesh/mysql: `tableFields` is no longer supported under `@omnigraph/sql`. Use `tables` to include whole tables, or hand-edit the emitted `@sql__*` SDL.',
-      );
-    }
-
     const schema = await this.schemaProxy.getWithSet(() => {
       const endpointUrl = new URL('mysql://localhost:3306');
       if (this.config.port) {
@@ -59,13 +62,28 @@ export default class MySQLHandler implements MeshHandler {
         type: 'mysql',
         endpoint: endpointUrl.toString(),
         includeTables: this.config.tables,
+        tableFields: this.config.tableFields,
         cwd: this.baseDir,
       });
     });
 
+    let client;
+    if (this.config.pool != null) {
+      const pool =
+        typeof this.config.pool === 'string'
+          ? await loadFromModuleExportExpression(this.config.pool, {
+              cwd: this.baseDir,
+              defaultExportName: 'default',
+              importFn: this.importFn,
+            })
+          : this.config.pool;
+      client = wrapMysqlPoolAsSqlClient(pool as any);
+    }
+
     const executor = getSqlExecutor({
       subgraph: schema,
       cwd: this.baseDir,
+      client,
     });
 
     if (isDisposable(executor)) {

@@ -10,7 +10,6 @@ export const composeConfig = defineConfig({
       sourceHandler: loadSqlSubgraph('Employees', {
         type: 'mysql',
         endpoint: `mysql://root:passwd@localhost:${opts.getServicePort('employees')}/employees`,
-        includeTables: ['employees', 'dept_emp', 'departments'],
       }),
     },
   ],

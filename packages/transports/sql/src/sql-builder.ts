@@ -138,7 +138,7 @@ export function buildInsert(
     params.push(val);
   }
   if (!cols.length) {
-    throw new Error(`@sql__mutation INSERT on ${table} has no column values`);
+    throw new Error(`@sql__ INSERT on ${table} has no column values`);
   }
   const colSql = cols.map(c => quoteIdent(dialect, c)).join(', ');
   const ph = cols.map((_, i) => placeholder(dialect, i + 1)).join(', ');
@@ -170,7 +170,7 @@ export function buildUpdate(
     sets.push(`${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`);
   }
   if (!sets.length) {
-    throw new Error(`@sql__mutation UPDATE on ${table} has no SET columns`);
+    throw new Error(`@sql__ UPDATE on ${table} has no SET columns`);
   }
   const whereParts: string[] = [];
   for (const entry of whereEntries) {

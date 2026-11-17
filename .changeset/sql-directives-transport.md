@@ -10,7 +10,11 @@
 ## TL;DR (breaking)
 
 New SQL subgraph stack: `@omnigraph/sql` + `@graphql-mesh/transport-sql` with hand-writable
-`@sql__query` / `@sql__mutation` / `@sql__relation` and one transport `kind: "sql"`.
+`@sql__` / `@sql__relation` and one transport `kind: "sql"`.
+
+One field directive `@sql__` covers reads and writes via `kind`
+(`ROW` | `ROWS` | `CONNECTION` | `COUNT` | `INSERT` | `UPDATE` | `DELETE`). Relations stay on
+`@sql__relation`.
 
 **Removed from the monorepo** (compose loaders / transports):
 
@@ -21,8 +25,7 @@ New SQL subgraph stack: `@omnigraph/sql` + `@graphql-mesh/transport-sql` with ha
 
 - `@graphql-mesh/postgraphile` — unchanged PostGraphile runtime
 - `@graphql-mesh/mysql` / `@graphql-mesh/tuql` — same YAML entrypoints, now call `@omnigraph/sql` +
-  `transport-sql` under the hood (emitted GraphQL is the new `@sql__*` surface, not
-  `@mysqlSelect` / classic tuql)
+  `transport-sql` under the hood (including `pool` / `tableFields` / `infile`)
 
 Dialects are `postgres` | `mysql` | `sqlite` via loader `type` / URI / `options.dialect`. Sqlite +
 MySQL are end-to-end; Postgres API is shared (introspect/execute still landing) except via the
@@ -40,12 +43,13 @@ loadSqlSubgraph('chinook', { type: 'sqlite', db: 'chinook.db' })
 loadSqlSubgraph('employees', { type: 'mysql', endpoint: 'mysql://…' })
 ```
 
-v0 `.meshrc` `handler.mysql` / `handler.tuql` keep working as shells; expect a new GraphQL schema
-shape. `handler.mysql.pool` / `tableFields` and `handler.tuql.infile` are no longer supported.
+Emitted GraphQL naming is PostGraphile-inspired. Old raw-table / String-where surfaces are gone —
+recompose and update client queries.
 
 `mesh-migrate-config` and public website docs are intentionally unchanged here.
 
 ## What else changed
 
 - Fusion rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql__*`
-- e2e `sqlite-chinook` and `mysql-employees` use the new stack (snapshots updated)
+- e2e `sqlite-chinook` and `mysql-employees` use the new stack (full table set; no artificial
+  `includeTables` filter)

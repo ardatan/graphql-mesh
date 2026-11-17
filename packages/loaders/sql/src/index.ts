@@ -17,4 +17,4 @@ export function loadSqlSubgraph(name: string, opts: LoadSqlSubgraphOpts) {
   });
 }
 
-export { getSqlExecutor } from '@graphql-mesh/transport-sql';
+export { getSqlExecutor, wrapMysqlPoolAsSqlClient } from '@graphql-mesh/transport-sql';

@@ -7,49 +7,45 @@ import {
   GraphQLString,
 } from 'graphql';
 
-export const SqlQueryKindEnum = new GraphQLEnumType({
-  name: 'SqlQueryKind',
+/**
+ * Single kind enum for `@sql__` (reads + writes). Mirrors Connectors' one-directive
+ * style instead of splitting query/mutation directive names.
+ */
+export const SqlKindEnum = new GraphQLEnumType({
+  name: 'SqlKind',
   values: {
     ROW: { value: 'ROW' },
     ROWS: { value: 'ROWS' },
     CONNECTION: { value: 'CONNECTION' },
     COUNT: { value: 'COUNT' },
-  },
-});
-
-export const SqlMutationKindEnum = new GraphQLEnumType({
-  name: 'SqlMutationKind',
-  values: {
     INSERT: { value: 'INSERT' },
     UPDATE: { value: 'UPDATE' },
     DELETE: { value: 'DELETE' },
   },
 });
 
-export const SqlQueryDirective = new GraphQLDirective({
-  name: 'sql__query',
+/** @deprecated use SqlKindEnum — kept as alias during rename */
+export const SqlQueryKindEnum = SqlKindEnum;
+/** @deprecated use SqlKindEnum */
+export const SqlMutationKindEnum = SqlKindEnum;
+
+export const SqlDirective = new GraphQLDirective({
+  name: 'sql__',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
     subgraph: { type: GraphQLString },
     table: { type: new GraphQLNonNull(GraphQLString) },
-    kind: { type: SqlQueryKindEnum, defaultValue: 'ROWS' },
+    kind: { type: new GraphQLNonNull(SqlKindEnum) },
     args: { type: GraphQLString },
-    selection: { type: new GraphQLNonNull(GraphQLString) },
+    selection: { type: GraphQLString },
     entity: { type: GraphQLBoolean },
   },
 });
 
-export const SqlMutationDirective = new GraphQLDirective({
-  name: 'sql__mutation',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    subgraph: { type: GraphQLString },
-    table: { type: new GraphQLNonNull(GraphQLString) },
-    kind: { type: new GraphQLNonNull(SqlMutationKindEnum) },
-    args: { type: new GraphQLNonNull(GraphQLString) },
-    selection: { type: GraphQLString },
-  },
-});
+/** @deprecated use SqlDirective */
+export const SqlQueryDirective = SqlDirective;
+/** @deprecated use SqlDirective */
+export const SqlMutationDirective = SqlDirective;
 
 export const SqlRelationDirective = new GraphQLDirective({
   name: 'sql__relation',
@@ -57,7 +53,7 @@ export const SqlRelationDirective = new GraphQLDirective({
   args: {
     subgraph: { type: GraphQLString },
     table: { type: new GraphQLNonNull(GraphQLString) },
-    kind: { type: SqlQueryKindEnum, defaultValue: 'ROW' },
+    kind: { type: SqlKindEnum, defaultValue: 'ROW' },
     args: { type: new GraphQLNonNull(GraphQLString) },
     selection: { type: new GraphQLNonNull(GraphQLString) },
   },

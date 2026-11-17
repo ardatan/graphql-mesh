@@ -1,5 +1,7 @@
-import { createPool, type Pool } from 'mysql2/promise';
+import { readFileSync } from 'node:fs';
+import { createPool, type Pool as Mysql2Pool, type Pool } from 'mysql2/promise';
 import { DatabaseSync } from 'node:sqlite';
+import { path as pathHelper } from '@graphql-mesh/cross-helpers';
 import { resolveSqlitePath } from './dialect.js';
 import type { SqlClient, SqlDialect } from './types.js';
 import { parseSqlUri } from './uri.js';
@@ -25,9 +27,49 @@ export function createSqlClient(opts: CreateSqlClientOptions): SqlClient {
   }
 }
 
+/**
+ * Wrap an existing `mysql` / `mysql2` pool (legacy handler `pool` config) as SqlClient.
+ */
+export function wrapMysqlPoolAsSqlClient(pool: {
+  query: (...args: any[]) => any;
+  end?: (...args: any[]) => any;
+  promise?: () => { query: (...args: any[]) => any; end?: (...args: any[]) => any };
+}): SqlClient {
+  // mysql (non-promise) exposes .promise(); mysql2/promise is already thenable
+  const p = typeof pool.promise === 'function' ? pool.promise() : (pool as unknown as Mysql2Pool);
+
+  return {
+    dialect: 'mysql',
+    async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
+      const [result] = await p.query(sql, params);
+      if (Array.isArray(result)) {
+        return { rows: result as T[], rowCount: result.length };
+      }
+      const header = result as { affectedRows?: number };
+      return { rows: [] as T[], rowCount: Number(header.affectedRows ?? 0) };
+    },
+    async dispose() {
+      if (typeof p.end === 'function') {
+        await p.end();
+      }
+    },
+  };
+}
+
 function createSqliteClient(location: string, cwd?: string): SqlClient {
-  const dbPath = resolveSqlitePath(location, cwd);
-  const db = new DatabaseSync(dbPath);
+  let db: DatabaseSync;
+  if (location.startsWith('infile:')) {
+    const dumpPath = location.slice('infile:'.length);
+    const abs = pathHelper.isAbsolute(dumpPath)
+      ? dumpPath
+      : pathHelper.join(cwd || process.cwd(), dumpPath);
+    const dump = readFileSync(abs, 'utf8');
+    db = new DatabaseSync(':memory:');
+    db.exec(dump);
+  } else {
+    const dbPath = resolveSqlitePath(location, cwd);
+    db = new DatabaseSync(dbPath);
+  }
   return {
     dialect: 'sqlite',
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
@@ -66,18 +108,5 @@ function createMysqlClient(location: string): SqlClient {
     bigNumberStrings: true,
     connectionLimit: 10,
   });
-  return {
-    dialect: 'mysql',
-    async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
-      const [result] = await pool.query(sql, params);
-      if (Array.isArray(result)) {
-        return { rows: result as T[], rowCount: result.length };
-      }
-      const header = result as { affectedRows?: number };
-      return { rows: [] as T[], rowCount: Number(header.affectedRows ?? 0) };
-    },
-    async dispose() {
-      await pool.end();
-    },
-  };
+  return wrapMysqlPoolAsSqlClient(pool);
 }

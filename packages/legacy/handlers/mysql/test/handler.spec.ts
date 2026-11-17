@@ -28,6 +28,7 @@ describe('mysql', () => {
     const configMock: YamlConfig.MySQLHandler = {
       database: 'testdb',
       tables: ['testTable'],
+      tableFields: [{ table: 'testTable', fields: ['testField'] }],
       ssl: {
         rejectUnauthorized: true,
         ca: 'someCA',
@@ -54,39 +55,13 @@ describe('mysql', () => {
       type: 'mysql',
       endpoint: 'mysqls://localhost:3306/testdb',
       includeTables: configMock.tables,
+      tableFields: configMock.tableFields,
       cwd: __dirname,
     });
     expect(getSqlExecutor).toHaveBeenCalledWith({
       subgraph: graphQLSchemaMock,
       cwd: __dirname,
+      client: undefined,
     });
-  });
-
-  it('rejects unsupported pool / tableFields options', async () => {
-    const handlerPool = new MySQLHandler({
-      name: 'test',
-      config: { pool: './pool#default' },
-      baseDir: __dirname,
-      cache,
-      pubsub: noOpFunction,
-      store,
-      importFn: noOpFunction,
-      log: noOpFunction,
-    });
-    await expect(handlerPool.getMeshSource()).rejects.toThrow(/pool/);
-
-    const handlerFields = new MySQLHandler({
-      name: 'test',
-      config: {
-        tableFields: [{ table: 't', fields: ['a'] }],
-      },
-      baseDir: __dirname,
-      cache,
-      pubsub: noOpFunction,
-      store,
-      importFn: noOpFunction,
-      log: noOpFunction,
-    });
-    await expect(handlerFields.getMeshSource()).rejects.toThrow(/tableFields/);
   });
 });

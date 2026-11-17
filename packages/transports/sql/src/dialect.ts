@@ -11,11 +11,13 @@ export function inferDialectFromLocation(location: string | undefined): SqlDiale
     return 'mysql';
   }
   if (
+    lower.startsWith('infile:') ||
     lower.startsWith('file:') ||
     lower.startsWith('sqlite:') ||
     lower.endsWith('.db') ||
     lower.endsWith('.sqlite') ||
-    lower.endsWith('.sqlite3')
+    lower.endsWith('.sqlite3') ||
+    lower.endsWith('.sql')
   ) {
     return 'sqlite';
   }

@@ -21,6 +21,7 @@ import type {
   ParsedSqlMapping,
   SqlClient,
   SqlDialect,
+  SqlKind,
   SqlMutationKind,
   SqlQueryKind,
 } from './types.js';
@@ -30,6 +31,8 @@ export interface GetSqlExecutorOpts {
   cwd?: string;
   client?: SqlClient;
 }
+
+const MUTATION_KINDS = new Set<SqlKind>(['INSERT', 'UPDATE', 'DELETE']);
 
 function connectionNodeSelection(selection: ParsedSqlMapping): ParsedSqlMapping {
   const nodes = nestedSelection(selection, 'nodes');
@@ -61,19 +64,60 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
       const directives = getDefDirectives(subgraph, fieldConfig);
       for (const directive of directives) {
         switch (directive.name) {
-          case 'sql__query': {
+          case 'sql__': {
             const table = directive.args.table as string;
-            const kind = (directive.args.kind || 'ROWS') as SqlQueryKind;
+            const kind = (directive.args.kind || 'ROWS') as SqlKind;
             const { argsMapping, selection } = parseArgsAndSelection(
               directive.args.args,
               directive.args.selection,
             );
+
+            if (MUTATION_KINDS.has(kind)) {
+              const mutationKind = kind as SqlMutationKind;
+              fieldConfig.resolve = async function sqlMutationResolver(_root, args) {
+                if (mutationKind === 'DELETE') {
+                  const query = buildDelete(sqlClient.dialect, table, argsMapping, args);
+                  const result = await sqlClient.query(query.sql, query.params);
+                  const affected = result.rowCount;
+                  return {
+                    ok: affected > 0,
+                    affectedRows: affected,
+                  };
+                }
+
+                const returningCols = collectReturningColumns(selection);
+                const query =
+                  mutationKind === 'INSERT'
+                    ? buildInsert(sqlClient.dialect, table, argsMapping, args, returningCols)
+                    : buildUpdate(sqlClient.dialect, table, argsMapping, args, returningCols);
+
+                let row: Record<string, unknown> | undefined;
+                if (returningCols.length && (dialect === 'sqlite' || dialect === 'postgres')) {
+                  const result = await sqlClient.query(query.sql, query.params);
+                  row = result.rows[0] as Record<string, unknown> | undefined;
+                } else {
+                  await sqlClient.query(query.sql, query.params);
+                }
+
+                const payloadKey = selection.entries.find(e => e.children)?.key;
+                if (payloadKey) {
+                  const nested = nestedSelection(selection, payloadKey);
+                  return {
+                    [payloadKey]: row ? mapRowToGraphql(row, nested) : null,
+                  };
+                }
+                return row ? mapRowToGraphql(row, selection) : null;
+              };
+              break;
+            }
+
+            const queryKind = kind as SqlQueryKind;
             fieldConfig.resolve = async function sqlQueryResolver(root, args) {
               const selectSelection =
-                kind === 'CONNECTION' ? connectionNodeSelection(selection) : selection;
+                queryKind === 'CONNECTION' ? connectionNodeSelection(selection) : selection;
               const query = buildSelect(sqlClient.dialect, {
                 table,
-                kind,
+                kind: queryKind,
                 selection: selectSelection,
                 argsMapping,
                 graphqlArgs: args,
@@ -81,16 +125,16 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
               });
               const result = await sqlClient.query(query.sql, query.params);
 
-              if (kind === 'COUNT') {
+              if (queryKind === 'COUNT') {
                 const row = result.rows[0] as Record<string, unknown> | undefined;
                 const count = row?.count ?? row?.COUNT ?? Object.values(row || {})[0] ?? 0;
                 return Number(count);
               }
-              if (kind === 'ROW') {
+              if (queryKind === 'ROW') {
                 const row = result.rows[0] as Record<string, unknown> | undefined;
                 return row ? mapRowToGraphql(row, selectSelection) : null;
               }
-              if (kind === 'CONNECTION') {
+              if (queryKind === 'CONNECTION') {
                 const first = Number(args.first ?? 10);
                 const after = typeof args.after === 'string' ? args.after : '';
                 const offset = after ? decodeCursor(after) : 0;
@@ -163,49 +207,6 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
                 );
               }
               const row = result.rows[0] as Record<string, unknown> | undefined;
-              return row ? mapRowToGraphql(row, selection) : null;
-            };
-            break;
-          }
-          case 'sql__mutation': {
-            const table = directive.args.table as string;
-            const kind = directive.args.kind as SqlMutationKind;
-            const { argsMapping, selection } = parseArgsAndSelection(
-              directive.args.args,
-              directive.args.selection,
-            );
-            fieldConfig.resolve = async function sqlMutationResolver(_root, args) {
-              if (kind === 'DELETE') {
-                const query = buildDelete(sqlClient.dialect, table, argsMapping, args);
-                const result = await sqlClient.query(query.sql, query.params);
-                const affected = result.rowCount;
-                return {
-                  ok: affected > 0,
-                  affectedRows: affected,
-                };
-              }
-
-              const returningCols = collectReturningColumns(selection);
-              const query =
-                kind === 'INSERT'
-                  ? buildInsert(sqlClient.dialect, table, argsMapping, args, returningCols)
-                  : buildUpdate(sqlClient.dialect, table, argsMapping, args, returningCols);
-
-              let row: Record<string, unknown> | undefined;
-              if (returningCols.length && (dialect === 'sqlite' || dialect === 'postgres')) {
-                const result = await sqlClient.query(query.sql, query.params);
-                row = result.rows[0] as Record<string, unknown> | undefined;
-              } else {
-                await sqlClient.query(query.sql, query.params);
-              }
-
-              const payloadKey = selection.entries.find(e => e.children)?.key;
-              if (payloadKey) {
-                const nested = nestedSelection(selection, payloadKey);
-                return {
-                  [payloadKey]: row ? mapRowToGraphql(row, nested) : null,
-                };
-              }
               return row ? mapRowToGraphql(row, selection) : null;
             };
             break;

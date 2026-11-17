@@ -4,6 +4,9 @@ export type SqlQueryKind = 'ROW' | 'ROWS' | 'CONNECTION' | 'COUNT';
 
 export type SqlMutationKind = 'INSERT' | 'UPDATE' | 'DELETE';
 
+/** Combined `@sql__` kind (reads + writes). */
+export type SqlKind = SqlQueryKind | SqlMutationKind;
+
 export interface SqlTransportOptions {
   dialect?: SqlDialect;
 }

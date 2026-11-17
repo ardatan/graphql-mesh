@@ -19,8 +19,8 @@ describe('@omnigraph/sql sqlite chinook', () => {
     expect(sdl).toContain('@transport');
     expect(sdl).toContain('kind: "sql"');
     expect(sdl).toContain('dialect: "sqlite"');
-    expect(sdl).toContain('@sql__query');
-    expect(sdl).toContain('@sql__mutation');
+    expect(sdl).toContain('@sql__(');
+    expect(sdl).toContain('kind: INSERT');
     expect(sdl).toContain('@sql__relation');
     expect(sdl).toContain('type Album');
     expect(sdl).toContain('type Artist');

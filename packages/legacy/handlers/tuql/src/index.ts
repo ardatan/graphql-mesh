@@ -5,8 +5,7 @@ import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 /**
  * Legacy v0 SQLite handler name (`tuql`). Under the hood this now uses
- * `@omnigraph/sql` + `@graphql-mesh/transport-sql` (`@sql__*` directives).
- * The emitted GraphQL shape is the new SQL surface, not classic tuql.
+ * `@omnigraph/sql` + `@graphql-mesh/transport-sql` (`@sql__` / `@sql__relation`).
  */
 export default class TuqlHandler implements MeshHandler {
   private name: string;
@@ -21,18 +20,16 @@ export default class TuqlHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    if (this.config.infile != null) {
+    if (this.config.db == null && this.config.infile == null) {
       throw new Error(
-        '@graphql-mesh/tuql: `infile` (SQL dump → in-memory DB) is not supported on the `@omnigraph/sql` path. Point `db` at an SQLite file instead.',
+        '@graphql-mesh/tuql: provide `db` (SQLite file) or `infile` (SQL dump → in-memory).',
       );
-    }
-    if (this.config.db == null) {
-      throw new Error('@graphql-mesh/tuql: `db` (path to an SQLite file) is required.');
     }
 
     const schema = await loadGraphQLSchemaFromSql(this.name, {
       type: 'sqlite',
       db: this.config.db,
+      infile: this.config.infile,
       cwd: this.baseDir,
     });
 

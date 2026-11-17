@@ -8,14 +8,12 @@ exports[`@omnigraph/sql sqlite chinook emits @sql__* directives and slim @transp
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-directive @sql__query(subgraph: String, table: String!, kind: SqlQueryKind = ROWS, args: String, selection: String!, entity: Boolean) on FIELD_DEFINITION
+directive @sql__(subgraph: String, table: String!, kind: SqlKind!, args: String, selection: String, entity: Boolean) on FIELD_DEFINITION
 
-directive @sql__mutation(subgraph: String, table: String!, kind: SqlMutationKind!, args: String!, selection: String) on FIELD_DEFINITION
-
-directive @sql__relation(subgraph: String, table: String!, kind: SqlQueryKind = ROW, args: String!, selection: String!) on FIELD_DEFINITION
+directive @sql__relation(subgraph: String, table: String!, kind: SqlKind = ROW, args: String!, selection: String!) on FIELD_DEFINITION
 
 type Query {
-  album(id: ID!): Album @sql__query(subgraph: "chinook", table: "albums", kind: ROW, args: """
+  album(id: ID!): Album @sql__(subgraph: "chinook", table: "albums", kind: ROW, args: """
   
     AlbumId: $args.id
   """, selection: """
@@ -23,7 +21,7 @@ type Query {
     title: Title
     artistId: ArtistId
   """, entity: true)
-  albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @sql__query(subgraph: "chinook", table: "albums", kind: ROWS, args: """
+  albums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @sql__(subgraph: "chinook", table: "albums", kind: ROWS, args: """
     filter: $args.filter
     orderBy: $args.orderBy
     limit: $args.limit
@@ -33,7 +31,7 @@ type Query {
     title: Title
     artistId: ArtistId
   """)
-  allAlbums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection! @sql__query(subgraph: "chinook", table: "albums", kind: CONNECTION, args: """
+  allAlbums(filter: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection! @sql__(subgraph: "chinook", table: "albums", kind: CONNECTION, args: """
     filter: $args.filter
     orderBy: $args.orderBy
     first: $args.first
@@ -60,21 +58,21 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  albumsCount(filter: AlbumFilter): Int! @sql__query(subgraph: "chinook", table: "albums", kind: COUNT, args: """
+  albumsCount(filter: AlbumFilter): Int! @sql__(subgraph: "chinook", table: "albums", kind: COUNT, args: """
   
     filter: $args.filter
   """, selection: """
   
     $
   """)
-  artist(id: ID!): Artist @sql__query(subgraph: "chinook", table: "artists", kind: ROW, args: """
+  artist(id: ID!): Artist @sql__(subgraph: "chinook", table: "artists", kind: ROW, args: """
   
     ArtistId: $args.id
   """, selection: """
     id: ArtistId
     name: Name
   """, entity: true)
-  artists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @sql__query(subgraph: "chinook", table: "artists", kind: ROWS, args: """
+  artists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @sql__(subgraph: "chinook", table: "artists", kind: ROWS, args: """
     filter: $args.filter
     orderBy: $args.orderBy
     limit: $args.limit
@@ -83,7 +81,7 @@ type Query {
     id: ArtistId
     name: Name
   """)
-  allArtists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], first: Int, after: String): ArtistConnection! @sql__query(subgraph: "chinook", table: "artists", kind: CONNECTION, args: """
+  allArtists(filter: ArtistFilter, orderBy: [ArtistOrderBy!], first: Int, after: String): ArtistConnection! @sql__(subgraph: "chinook", table: "artists", kind: CONNECTION, args: """
     filter: $args.filter
     orderBy: $args.orderBy
     first: $args.first
@@ -108,7 +106,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  artistsCount(filter: ArtistFilter): Int! @sql__query(subgraph: "chinook", table: "artists", kind: COUNT, args: """
+  artistsCount(filter: ArtistFilter): Int! @sql__(subgraph: "chinook", table: "artists", kind: COUNT, args: """
   
     filter: $args.filter
   """, selection: """
@@ -238,7 +236,7 @@ type ArtistEdge {
 }
 
 type Mutation {
-  createAlbum(input: CreateAlbumInput!): AlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: INSERT, args: """
+  createAlbum(input: CreateAlbumInput!): AlbumPayload! @sql__(subgraph: "chinook", table: "albums", kind: INSERT, args: """
     Title: $args.input.title
     ArtistId: $args.input.artistId
   """, selection: """
@@ -248,7 +246,7 @@ type Mutation {
       artistId: ArtistId
     }
   """)
-  updateAlbum(id: ID!, input: UpdateAlbumInput!): AlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: UPDATE, args: """
+  updateAlbum(id: ID!, input: UpdateAlbumInput!): AlbumPayload! @sql__(subgraph: "chinook", table: "albums", kind: UPDATE, args: """
     set {
       Title: $args.input.title
       ArtistId: $args.input.artistId
@@ -263,7 +261,7 @@ type Mutation {
       artistId: ArtistId
     }
   """)
-  deleteAlbum(id: ID!): DeleteAlbumPayload! @sql__mutation(subgraph: "chinook", table: "albums", kind: DELETE, args: """
+  deleteAlbum(id: ID!): DeleteAlbumPayload! @sql__(subgraph: "chinook", table: "albums", kind: DELETE, args: """
     where {
       AlbumId: $args.id
     }
@@ -271,7 +269,7 @@ type Mutation {
     ok: $affectedRows
     affectedRows: $affectedRows
   """)
-  createArtist(input: CreateArtistInput!): ArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: INSERT, args: """
+  createArtist(input: CreateArtistInput!): ArtistPayload! @sql__(subgraph: "chinook", table: "artists", kind: INSERT, args: """
   
     Name: $args.input.name
   """, selection: """
@@ -280,7 +278,7 @@ type Mutation {
       name: Name
     }
   """)
-  updateArtist(id: ID!, input: UpdateArtistInput!): ArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: UPDATE, args: """
+  updateArtist(id: ID!, input: UpdateArtistInput!): ArtistPayload! @sql__(subgraph: "chinook", table: "artists", kind: UPDATE, args: """
     set {
       Name: $args.input.name
     }
@@ -293,7 +291,7 @@ type Mutation {
       name: Name
     }
   """)
-  deleteArtist(id: ID!): DeleteArtistPayload! @sql__mutation(subgraph: "chinook", table: "artists", kind: DELETE, args: """
+  deleteArtist(id: ID!): DeleteArtistPayload! @sql__(subgraph: "chinook", table: "artists", kind: DELETE, args: """
     where {
       ArtistId: $args.id
     }
@@ -341,14 +339,11 @@ type DeleteArtistPayload {
 
 scalar TransportOptions
 
-enum SqlQueryKind {
+enum SqlKind {
   ROW
   ROWS
   CONNECTION
   COUNT
-}
-
-enum SqlMutationKind {
   INSERT
   UPDATE
   DELETE

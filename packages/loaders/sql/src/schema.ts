@@ -11,10 +11,8 @@ import { GraphQLBigInt, GraphQLDate, GraphQLDateTime, GraphQLJSON } from 'graphq
 import { path as pathHelper } from '@graphql-mesh/cross-helpers';
 import type { SqlDialect } from '@graphql-mesh/transport-sql';
 import {
-  SqlMutationDirective,
-  SqlMutationKindEnum,
-  SqlQueryDirective,
-  SqlQueryKindEnum,
+  SqlDirective,
+  SqlKindEnum,
   SqlRelationDirective,
   TransportDirective,
 } from './directives.js';
@@ -30,6 +28,11 @@ export interface LoadSqlSubgraphOpts {
   type: SqlDialect;
   /** Sqlite file path (relative to cwd or absolute) */
   db?: string;
+  /**
+   * SQL dump file (tuql `infile` shape). Loaded into an in-memory SQLite DB at
+   * introspect + execute time. Transport location becomes `infile:<abs-path>`.
+   */
+  infile?: string;
   /** Connection URI for postgres/mysql (or sqlite file:) */
   connectionString?: string;
   /** Alias for connectionString (legacy mysql handler shape) */
@@ -38,12 +41,14 @@ export interface LoadSqlSubgraphOpts {
   schema?: string;
   includeTables?: string[];
   excludeTables?: string[];
+  /** Limit columns per table (legacy mysql `tableFields` shape). */
+  tableFields?: Array<{ table: string; fields: string[] }>;
   naming?: Partial<SqlNaming>;
 }
 
 export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadSqlSubgraphOpts) {
   const naming: SqlNaming = { ...createDefaultNaming(), ...opts.naming };
-  const meta = await introspect(opts);
+  const meta = applyTableFieldsFilter(await introspect(opts), opts.tableFields);
   const location = resolveLocation(opts);
   const schemaComposer = new SchemaComposer();
 
@@ -52,11 +57,9 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
   schemaComposer.add(GraphQLDate);
   schemaComposer.add(GraphQLDateTime);
   schemaComposer.addDirective(TransportDirective);
-  schemaComposer.addDirective(SqlQueryDirective);
-  schemaComposer.addDirective(SqlMutationDirective);
+  schemaComposer.addDirective(SqlDirective);
   schemaComposer.addDirective(SqlRelationDirective);
-  schemaComposer.add(SqlQueryKindEnum);
-  schemaComposer.add(SqlMutationKindEnum);
+  schemaComposer.add(SqlKindEnum);
 
   ensureSharedFilterInputs(schemaComposer);
   ensurePageInfo(schemaComposer);
@@ -204,7 +207,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
         },
         directives: [
           {
-            name: 'sql__query',
+            name: 'sql__',
             args: {
               subgraph: subgraphName,
               table: table.name,
@@ -228,7 +231,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       },
       directives: [
         {
-          name: 'sql__query',
+          name: 'sql__',
           args: {
             subgraph: subgraphName,
             table: table.name,
@@ -257,7 +260,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       },
       directives: [
         {
-          name: 'sql__query',
+          name: 'sql__',
           args: {
             subgraph: subgraphName,
             table: table.name,
@@ -302,7 +305,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       },
       directives: [
         {
-          name: 'sql__query',
+          name: 'sql__',
           args: {
             subgraph: subgraphName,
             table: table.name,
@@ -323,7 +326,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       },
       directives: [
         {
-          name: 'sql__mutation',
+          name: 'sql__',
           args: {
             subgraph: subgraphName,
             table: table.name,
@@ -345,7 +348,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
         },
         directives: [
           {
-            name: 'sql__mutation',
+            name: 'sql__',
             args: {
               subgraph: subgraphName,
               table: table.name,
@@ -373,7 +376,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
         },
         directives: [
           {
-            name: 'sql__mutation',
+            name: 'sql__',
             args: {
               subgraph: subgraphName,
               table: table.name,
@@ -396,6 +399,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     location,
     options: {
       dialect: opts.type,
+      ...(opts.infile ? { infile: true } : {}),
     },
   };
   extensions.directives.link = [
@@ -413,9 +417,17 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
 async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
   switch (opts.type) {
     case 'sqlite': {
+      if (opts.infile) {
+        return introspectSqlite({
+          infile: opts.infile,
+          cwd: opts.cwd,
+          includeTables: opts.includeTables,
+          excludeTables: opts.excludeTables,
+        });
+      }
       const db = opts.db || opts.connectionString || opts.endpoint;
       if (!db) {
-        throw new Error(`loadSqlSubgraph type "sqlite" requires db or connectionString`);
+        throw new Error(`loadSqlSubgraph type "sqlite" requires db, infile, or connectionString`);
       }
       return introspectSqlite({
         db,
@@ -447,6 +459,13 @@ async function introspect(opts: LoadSqlSubgraphOpts): Promise<SqlSchemaMeta> {
 }
 
 function resolveLocation(opts: LoadSqlSubgraphOpts): string {
+  if (opts.infile) {
+    const cwd = opts.cwd || process.cwd();
+    const abs = pathHelper.isAbsolute(opts.infile)
+      ? opts.infile
+      : pathHelper.join(cwd, opts.infile);
+    return `infile:${abs}`;
+  }
   if (opts.connectionString) return opts.connectionString;
   if (opts.endpoint) return opts.endpoint;
   if (opts.db) {
@@ -454,7 +473,26 @@ function resolveLocation(opts: LoadSqlSubgraphOpts): string {
     const abs = pathHelper.isAbsolute(opts.db) ? opts.db : pathHelper.join(cwd, opts.db);
     return `file:${abs}`;
   }
-  throw new Error('SQL loader requires db, endpoint, or connectionString');
+  throw new Error('SQL loader requires db, infile, endpoint, or connectionString');
+}
+
+function applyTableFieldsFilter(
+  meta: SqlSchemaMeta,
+  tableFields?: Array<{ table: string; fields: string[] }>,
+): SqlSchemaMeta {
+  if (!tableFields?.length) return meta;
+  const allow = new Map(tableFields.map(tf => [tf.table, new Set(tf.fields)]));
+  return {
+    ...meta,
+    tables: meta.tables.map(table => {
+      const fields = allow.get(table.name);
+      if (!fields) return table;
+      return {
+        ...table,
+        columns: table.columns.filter(c => fields.has(c.name) || c.primaryKey),
+      };
+    }),
+  };
 }
 
 function ensureSharedFilterInputs(schemaComposer: SchemaComposer) {
@@ -619,7 +657,7 @@ function createMutationInputs(
 }
 
 function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
-  const SQL_DIRECTIVES = new Set(['sql__query', 'sql__mutation', 'sql__relation']);
+  const SQL_DIRECTIVES = new Set(['sql__', 'sql__relation']);
   for (const type of Object.values(schema.getTypeMap())) {
     if (!(type instanceof GraphQLObjectType)) continue;
     for (const field of Object.values(type.getFields())) {
