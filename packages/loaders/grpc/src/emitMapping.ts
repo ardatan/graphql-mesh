@@ -3,6 +3,7 @@ import { walkToFindTypePath } from './utils.js';
 
 /**
  * Emit typed protobuf mapping strings from protobufjs JSON namespace (loader-time only).
+ * Output is indented and may include `#` comments for humans/AI; the transport parser skips them.
  */
 
 export function emitEnumValues(
@@ -36,7 +37,6 @@ export function protoTypeToken(
   } else if (isScalar(base)) {
     token = base === 'bytes' ? 'bytes' : normalizeScalar(base);
   } else {
-    // enum or message
     const typePath = walkToFindTypePath(rootJson, pathWithName, base.split('.'));
     let cur: any = rootJson;
     for (const p of typePath) {
@@ -115,9 +115,7 @@ export function emitFieldsMapping(
     const id = field.id ?? 0;
     const token = protoTypeToken(rootJson, pathWithName, field);
     const bind =
-      bindMode === 'prefix' && bindPrefix
-        ? `${bindPrefix}.${fieldName}`
-        : fieldName;
+      bindMode === 'prefix' && bindPrefix ? `${bindPrefix}.${fieldName}` : fieldName;
     if (token === 'message' || token === 'repeated message') {
       const nestedType = field.type!;
       const nested = emitFieldsMapping(
@@ -128,7 +126,11 @@ export function emitFieldsMapping(
         '',
         indent + '  ',
       );
-      lines.push(`${indent}${id}(${token}): ${bind} {\n${nested}\n${indent}}`);
+      lines.push(`${indent}${id}(${token}): ${bind} {`);
+      if (nested) {
+        lines.push(nested);
+      }
+      lines.push(`${indent}}`);
     } else {
       lines.push(`${indent}${id}(${token}): ${bind}`);
     }
@@ -150,8 +152,14 @@ export function emitRequestBody(
     'input',
     '  ',
   );
-  // Request message fields are the top-level encode fields (ids of request type)
-  return inner.trim();
+  const header = [
+    '# Encode GraphQL field arguments into the protobuf request message.',
+    '# Each line is fieldId(protoType): graphqlPath (relative to this field args).',
+  ].join('\n');
+  if (!inner.trim()) {
+    return `${header}\n`;
+  }
+  return `${header}\n${inner}\n`;
 }
 
 export function emitResponseSelection(
@@ -159,12 +167,20 @@ export function emitResponseSelection(
   pathWithName: string[],
   responseType: string,
 ): string {
-  return emitFieldsMapping(
+  const inner = emitFieldsMapping(
     rootJson,
     pathWithName,
     responseType,
     'relative',
     '',
     '  ',
-  ).trim();
+  );
+  const header = [
+    '# Decode the protobuf response message into GraphQL fields.',
+    '# Each line is fieldId(protoType): graphqlFieldName.',
+  ].join('\n');
+  if (!inner.trim()) {
+    return `${header}\n`;
+  }
+  return `${header}\n${inner}\n`;
 }

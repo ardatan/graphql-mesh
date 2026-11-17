@@ -37,4 +37,16 @@ describe('protobuf mapping + codec', () => {
     expect(fields[0].type.kind).toBe('repeated');
     expect(fields[0].fields?.[0].bind).toBe('name');
   });
+
+  it('skips # documentation comments', () => {
+    const fields = parseMapping(`
+      # Encode GraphQL field arguments into the protobuf request message.
+      1(message): input.movie {
+        # year is int64 on the wire
+        2(int64): year
+      }
+    `);
+    expect(fields).toHaveLength(1);
+    expect(fields[0].fields?.[0].bind).toBe('year');
+  });
 });

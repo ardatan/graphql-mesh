@@ -216,7 +216,18 @@ function parseType(
 }
 
 function skipWs(source: string, i: number): number {
-  while (i < source.length && /\s/.test(source[i])) i++;
+  while (i < source.length) {
+    if (/\s/.test(source[i])) {
+      i++;
+      continue;
+    }
+    // `#` comments are documentation-only (loader emit / hand SDL); skip to EOL
+    if (source[i] === '#') {
+      while (i < source.length && source[i] !== '\n') i++;
+      continue;
+    }
+    break;
+  }
   return i;
 }
 

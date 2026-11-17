@@ -21,11 +21,15 @@ type Query {
       service: "Example"
       method: "GetMovies"
       args: """
+        # Encode GraphQL field arguments into the protobuf request message.
+        # Each line is fieldId(protoType): graphqlPath (relative to this field args).
         1(message): input.movie {
           2(int64): year
         }
       """
       selection: """
+        # Decode the protobuf response message into GraphQL fields.
+        # Each line is fieldId(protoType): graphqlFieldName.
         1(repeated message): result {
           1(string): name
           2(int64): year
