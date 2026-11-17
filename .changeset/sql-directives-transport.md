@@ -2,7 +2,6 @@
 '@omnigraph/sql': major
 '@graphql-mesh/transport-sql': major
 '@graphql-mesh/fusion-composition': minor
-'@graphql-mesh/migrate-config-cli': minor
 ---
 
 ## TL;DR (breaking)
@@ -39,28 +38,14 @@ loadSqlSubgraph('chinook', { type: 'sqlite', db: 'chinook.db' })
 loadSqlSubgraph('employees', { type: 'mysql', endpoint: 'mysql://…' })
 ```
 
-```yaml
-# before (legacy .meshrc)
-handler:
-  postgraphile:
-    connectionString: postgres://…
-
-# after (compose)
-loadSqlSubgraph('geodb', {
-  type: 'postgres',
-  connectionString: 'postgres://…',
-})
-```
-
-`mesh-migrate-config` maps `mysql` / `tuql` / `postgraphile` handlers to `loadSqlSubgraph` with the
-matching `type`.
-
 Emitted GraphQL naming is PostGraphile-inspired (PascalCase types, camelCase fields, `id` for sole
 PKs, typed filters, `allX` connections, CRUD mutations). Old raw-table / String-where surfaces are
 gone -- recompose and update client queries.
+
+`mesh-migrate-config` and public website docs are intentionally unchanged here; those land in
+follow-up PRs once the surface is ready to announce.
 
 ## What else changed
 
 - Fusion rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql__*`
 - e2e `sqlite-chinook` and `mysql-employees` use the new stack (snapshots updated)
-- Website docs intentionally untouched in this PR; update them once the surface is ready to announce
