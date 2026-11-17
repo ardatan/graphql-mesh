@@ -1,4 +1,4 @@
-import { buildSchema, isObjectType, type GraphQLSchema } from 'graphql';
+import { buildSchema, isObjectType, type DirectiveNode, type GraphQLSchema } from 'graphql';
 import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
@@ -12,7 +12,6 @@ import type {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { getDirectives } from '@graphql-tools/utils';
 import { loadProtobufSubgraph } from '@omnigraph/protobuf';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
@@ -103,25 +102,23 @@ export default class GrpcHandler implements MeshHandler {
 function assertProtobufRpcAnnotations(schema: GraphQLSchema, source: string): void {
   let hasGrpcMethod = false;
   let hasProtobufRpc = false;
-  for (const type of Object.values(schema.getTypeMap())) {
-    if (!isObjectType(type) || type.name.startsWith('__')) continue;
-    for (const directive of getDirectives(schema, type) || []) {
-      if (directive.name === 'grpcMethod' || directive.name === 'grpc__method') {
+  const absorb = (directives: readonly DirectiveNode[] | undefined) => {
+    for (const directive of directives || []) {
+      const name = directive.name.value;
+      if (name === 'grpcMethod' || name === 'grpc__method') {
         hasGrpcMethod = true;
       }
-      if (directive.name === 'protobuf__rpc' || directive.name === 'protobufRpc') {
+      if (name === 'protobuf__rpc' || name === 'protobufRpc') {
         hasProtobufRpc = true;
       }
     }
+  };
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) || type.name.startsWith('__')) continue;
+    absorb(type.astNode?.directives);
+    absorb(type.extensionASTNodes?.flatMap(n => n.directives || []));
     for (const field of Object.values(type.getFields())) {
-      for (const directive of getDirectives(schema, field) || []) {
-        if (directive.name === 'grpcMethod' || directive.name === 'grpc__method') {
-          hasGrpcMethod = true;
-        }
-        if (directive.name === 'protobuf__rpc' || directive.name === 'protobufRpc') {
-          hasProtobufRpc = true;
-        }
-      }
+      absorb(field.astNode?.directives);
     }
   }
   if (hasGrpcMethod && !hasProtobufRpc) {
