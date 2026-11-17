@@ -337,6 +337,29 @@ function snippet(source: string, i: number): string {
   return JSON.stringify(source.slice(Math.max(0, i - 10), i + 20));
 }
 
+/**
+ * `$this.<parentPath>` or dual `$this.<parentPath>|$args.<argsPath>` when parent field
+ * renames and argument renames diverge. Runtime prefers the parent object key, then the
+ * args path (explicit dual args path, or the same path when single-form).
+ */
+export function parseThisBind(bind: string): { thisPath: string; argsPath: string } | undefined {
+  if (bind === '$this') {
+    return { thisPath: '', argsPath: '' };
+  }
+  if (!bind.startsWith('$this.')) {
+    return undefined;
+  }
+  const rest = bind.slice('$this.'.length);
+  const split = rest.indexOf('|$args.');
+  if (split >= 0) {
+    return {
+      thisPath: rest.slice(0, split),
+      argsPath: rest.slice(split + '|$args.'.length),
+    };
+  }
+  return { thisPath: rest, argsPath: rest };
+}
+
 export function resolveBind(
   bind: string | undefined,
   args: Record<string, any>,
@@ -345,24 +368,23 @@ export function resolveBind(
   if (bind == null || bind === '') {
     return undefined;
   }
-  if (bind.startsWith('$this.')) {
-    const path = bind.slice('$this.'.length);
-    // Prefer parent/entity object when it has the key (public field names after rename).
-    // If the root is absent, not an object, or lacks the key (e.g. empty Query rootValue),
-    // fall back to args — composition aligns `$this` with arg renames on root fields.
+  const thisBind = parseThisBind(bind);
+  if (thisBind) {
+    if (thisBind.thisPath === '' && thisBind.argsPath === '') {
+      if (thisRoot != null && typeof thisRoot === 'object') {
+        return thisRoot;
+      }
+      return args;
+    }
+    // Prefer parent/entity when the public parent field is present.
     if (thisRoot != null && typeof thisRoot === 'object') {
-      const fromParent = getPath(thisRoot, path);
+      const fromParent = getPath(thisRoot, thisBind.thisPath);
       if (fromParent !== undefined) {
         return fromParent;
       }
     }
-    return getPath(args, path);
-  }
-  if (bind === '$this') {
-    if (thisRoot != null && typeof thisRoot === 'object') {
-      return thisRoot;
-    }
-    return args;
+    // Parent absent, empty rootValue, or missing key → args path (may differ after renames).
+    return getPath(args, thisBind.argsPath);
   }
   if (bind.startsWith('$args.')) {
     return getPath(args, bind.slice('$args.'.length));

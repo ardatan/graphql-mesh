@@ -151,4 +151,48 @@ describe('protobuf mapping + codec', () => {
     const bytes = encodeMessage(fields, { status: 'UNKNOWN' });
     expect(decodeMessage(fields, bytes).status).toBe('UNKNOWN');
   });
+
+  it('dual $this.parent|$args.arg: prefers parent id over args.requestId', () => {
+    const fields = parseMapping(`1(string): $this.id|$args.requestId`);
+    const bytes = encodeMessage(
+      fields,
+      { requestId: 'from-args' },
+      { requestId: 'from-args' },
+      { id: 'from-parent' },
+    );
+    expect(decodeMessage(parseMapping(`1(string): value`), bytes).value).toBe('from-parent');
+  });
+
+  it('dual $this.id|$args.requestId: empty parent falls back to args.requestId', () => {
+    const fields = parseMapping(`1(string): $this.id|$args.requestId`);
+    const bytes = encodeMessage(
+      fields,
+      { requestId: 'from-args' },
+      { requestId: 'from-args' },
+      {},
+    );
+    expect(decodeMessage(parseMapping(`1(string): value`), bytes).value).toBe('from-args');
+  });
+
+  it('dual $this.petId|$args.friendId: missing parent key uses args.friendId', () => {
+    const fields = parseMapping(`1(string): $this.petId|$args.friendId`);
+    const bytes = encodeMessage(
+      fields,
+      { friendId: 'from-args' },
+      { friendId: 'from-args' },
+      { other: 'x' },
+    );
+    expect(decodeMessage(parseMapping(`1(string): value`), bytes).value).toBe('from-args');
+  });
+
+  it('dual $this.petId|$args.friendId: parent petId wins over args', () => {
+    const fields = parseMapping(`1(string): $this.petId|$args.friendId`);
+    const bytes = encodeMessage(
+      fields,
+      { friendId: 'from-args' },
+      { friendId: 'from-args' },
+      { petId: 'from-parent' },
+    );
+    expect(decodeMessage(parseMapping(`1(string): value`), bytes).value).toBe('from-parent');
+  });
 });

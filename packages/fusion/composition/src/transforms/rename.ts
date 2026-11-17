@@ -22,7 +22,7 @@ import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import {
   rewriteConnectArgReferences,
   rewriteProtobufMappingBindsTypeScoped,
-  rewriteProtobufThisBinds,
+  rewriteProtobufThisBindsDual,
   withOriginalKeyFallback,
 } from './utils.js';
 
@@ -405,30 +405,35 @@ export function applyProtobufFieldRenames(
   const parentType = parentTypeName ? schema.getType(parentTypeName) : undefined;
   const rootTypes = getRootTypes(schema);
   const parentIsRoot = Boolean(parentType && rootTypes.has(parentType as any));
-  // Non-root owner: `$this.*` tracks parent field renames. Root / missing owner: `$this.*`
-  // tracks argument renames so the no-parent args fallback still resolves.
+  // Non-root owner supplies parent field renames for `$this` dual binds.
   const thisOwnerType =
     parentType &&
     !parentIsRoot &&
     (isObjectType(parentType) || isInterfaceType(parentType))
       ? parentType
       : undefined;
+  const parentFieldRenames = thisOwnerType
+    ? fieldRenameMap.get(thisOwnerType.name)
+    : undefined;
 
   let protobufChanged = false;
   const rewrittenRpc = fieldDirectives[protobufKey].map((rpcArgs: any) => {
     let args = rpcArgs?.args;
     let selection = rpcArgs?.selection;
     if (typeof args === 'string') {
-      // Nested input / relative binds + `$this` against a non-root owning type.
-      if (fieldRenameMap.size && (argTypes.size || thisOwnerType)) {
+      // Nested input / relative binds; leave `$this` for the dual-bind pass.
+      if (fieldRenameMap.size && argTypes.size) {
         args = rewriteProtobufMappingBindsTypeScoped(args, fieldRenameMap, {
-          argTypes: argTypes.size ? argTypes : undefined,
-          rootType: thisOwnerType,
+          argTypes,
+          skipThisBinds: true,
         });
       }
-      // Root (or no owner): align `$this` with argument renames for args fallback.
-      if (argRenameMap?.size && !thisOwnerType) {
-        args = rewriteProtobufThisBinds(args, argRenameMap);
+      // Dual `$this.<parent>|$args.<arg>` when parent field and arg renames diverge.
+      if (parentFieldRenames?.size || argRenameMap?.size) {
+        args = rewriteProtobufThisBindsDual(args, {
+          parentRenames: parentFieldRenames,
+          argRenames: argRenameMap,
+        });
       }
     }
     if (typeof selection === 'string' && returnType && fieldRenameMap.size) {

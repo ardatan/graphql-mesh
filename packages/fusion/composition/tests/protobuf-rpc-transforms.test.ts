@@ -423,7 +423,7 @@ describe('rewriteProtobufMappingBinds', () => {
 });
 
 describe('$this parent vs args-fallback renames', () => {
-  it('root field: arg rename aligns $this for no-parent args fallback', () => {
+  it('root field: dual $this.id|$args.requestId after arg rename', () => {
     const schema = buildSchema(
       /* GraphQL */ `
         directive @transport(
@@ -476,12 +476,12 @@ describe('$this parent vs args-fallback renames', () => {
     ]);
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).toMatch(/pet\(requestId:/);
-    expect(sdl).toMatch(/\$this\.requestId/);
+    // Keep parent key `id` and args key `requestId` when they diverge.
+    expect(sdl).toMatch(/\$this\.id\|\$args\.requestId/);
     expect(sdl).toMatch(/\$args\.requestId/);
-    expect(sdl).not.toMatch(/\$this\.id\b/);
   });
 
-  it('object field: $this follows parent field rename, not arg rename', () => {
+  it('object field: dual $this.petId|$args.friendId when renames diverge', () => {
     const schema = buildSchema(
       /* GraphQL */ `
         directive @transport(
@@ -545,11 +545,8 @@ describe('$this parent vs args-fallback renames', () => {
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).toMatch(/type Pet[\s\S]*petId:/);
     expect(sdl).toMatch(/friend\(friendId:/);
-    // Parent-backed `$this` uses Pet.petId; `$args` uses the renamed argument.
-    expect(sdl).toMatch(/\$this\.petId/);
+    expect(sdl).toMatch(/\$this\.petId\|\$args\.friendId/);
     expect(sdl).toMatch(/\$args\.friendId/);
-    expect(sdl).not.toMatch(/\$this\.friendId/);
-    expect(sdl).not.toMatch(/\$this\.id\b/);
   });
 });
 

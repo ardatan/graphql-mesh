@@ -216,22 +216,42 @@ function toLookup(renameMap: Map<string, string>): Map<string, string> {
   return new Map(entries);
 }
 
-/** Rewrite `$this.<from>` segments with a flat rename map (root-field args fallback). */
-export function rewriteProtobufThisBinds(
+/**
+ * Rewrite `$this.<path>` so parent field renames and argument renames can diverge.
+ * When the public parent path and args path differ, emit dual
+ * `$this.<parentPath>|$args.<argsPath>` for runtime dual lookup.
+ */
+export function rewriteProtobufThisBindsDual(
   mapping: string,
-  renameMap: Map<string, string>,
+  options: {
+    parentRenames?: Map<string, string>;
+    argRenames?: Map<string, string>;
+  },
 ): string {
-  if (!mapping || !renameMap.size) {
+  if (!mapping) {
     return mapping;
   }
-  const lookup = toLookup(renameMap);
-  if (!lookup.size) {
+  const parentLookup = options.parentRenames?.size ? toLookup(options.parentRenames) : new Map();
+  const argLookup = options.argRenames?.size ? toLookup(options.argRenames) : new Map();
+  if (!parentLookup.size && !argLookup.size) {
     return mapping;
   }
-  const names = [...lookup.keys()].map(escapeRegExp).join('|');
   return mapping.replace(
-    new RegExp(`\\$this\\.(${names})(?![\\w])`, 'g'),
-    (_m, name: string) => `$this.${lookup.get(name) ?? name}`,
+    /\$this\.([\w$]+(?:\.[\w$]+)*)(?:\|\$args\.([\w$]+(?:\.[\w$]+)*))?/g,
+    (_m, thisPath: string, existingArgsPath?: string) => {
+      const thisSegs = thisPath.split('.');
+      const argsBase = existingArgsPath ?? thisPath;
+      const argsSegs = argsBase.split('.');
+      // Maps are old→new; already-rewritten segments stay put.
+      const parentFirst = parentLookup.get(thisSegs[0]) ?? thisSegs[0];
+      const argFirst = argLookup.get(argsSegs[0]) ?? argsSegs[0];
+      const parentPath = [parentFirst, ...thisSegs.slice(1)].join('.');
+      const argsPath = [argFirst, ...argsSegs.slice(1)].join('.');
+      if (parentPath === argsPath) {
+        return `$this.${parentPath}`;
+      }
+      return `$this.${parentPath}|$args.${argsPath}`;
+    },
   );
 }
 
@@ -271,6 +291,10 @@ export interface RewriteProtobufMappingBindsTypeScopedOptions {
    * Values are the named GraphQL types of those arguments for descending into nested binds.
    */
   argTypes?: Map<string, GraphQLNamedType>;
+  /**
+   * When true, leave `$this.*` binds unchanged (caller emits dual `$this|/$args` forms).
+   */
+  skipThisBinds?: boolean;
 }
 
 /**
@@ -347,6 +371,9 @@ export function rewriteProtobufMappingBindsTypeScoped(
 
       // `$this.<field>` entity binds: descend from rootType when entering a nested block.
       if (path.startsWith('$this')) {
+        if (options.skipThisBinds) {
+          return `${pre}${path}`;
+        }
         const rest =
           path === '$this'
             ? []
