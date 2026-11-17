@@ -1,0 +1,47 @@
+extend type Handler {
+  """
+  Handler for Postgres database, based on `postgraphile`
+  """
+  postgraphile: PostGraphileHandler
+}
+
+type PostGraphileHandler @md {
+  """
+  A connection string to your Postgres database
+  """
+  connectionString: String
+  """
+  An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema.
+  """
+  schemaName: [String!]
+  """
+  Connection Pool instance or settings or you can provide the path of a code file that exports any of those
+  """
+  pool: Any
+  """
+  Extra Postgraphile Plugins to append
+  """
+  appendPlugins: [String]
+  """
+  Postgraphile Plugins to skip (e.g. "graphile-build#NodePlugin")
+  """
+  skipPlugins: [String]
+  """
+  Extra Postgraphile options that will be added to the postgraphile constructor. It can either be an object or a string pointing to the object's path (e.g. "./my-config#options"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-library/) for more information.
+  """
+  options: PostgraphileExternalOptions
+  """
+  Enable GraphQL websocket transport support for subscriptions (default: true)
+  """
+  subscriptions: Boolean
+  """
+  Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
+  """
+  live: Boolean
+  """
+  A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. "./my-function#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information.
+  """
+  contextOptions: Any
+}
+
+union PostgraphileExternalOptions = JSON | String

@@ -2,6 +2,9 @@
 '@omnigraph/sql': major
 '@graphql-mesh/transport-sql': major
 '@graphql-mesh/fusion-composition': minor
+'@graphql-mesh/mysql': major
+'@graphql-mesh/tuql': major
+'@graphql-mesh/postgraphile': patch
 ---
 
 ## TL;DR (breaking)
@@ -9,24 +12,23 @@
 New SQL subgraph stack: `@omnigraph/sql` + `@graphql-mesh/transport-sql` with hand-writable
 `@sql__query` / `@sql__mutation` / `@sql__relation` and one transport `kind: "sql"`.
 
-**Removed** (no dual-read / no deprecation period):
+**Removed from the monorepo** (compose loaders / transports):
 
 - `@omnigraph/mysql`, `@omnigraph/sqlite`
 - `@graphql-mesh/transport-mysql`, `@graphql-mesh/transport-sqlite`
-- Legacy handlers `@graphql-mesh/mysql`, `@graphql-mesh/tuql`, `@graphql-mesh/postgraphile`
 
-Dialects are `postgres` | `mysql` | `sqlite` via loader `type` / URI / `options.dialect` -- not
-separate `@mysql*` directive families. Sqlite + MySQL are end-to-end; Postgres API is shared
-(introspect/execute still landing).
+**Legacy v0 handlers:**
 
-## Why
+- `@graphql-mesh/postgraphile` — unchanged PostGraphile runtime
+- `@graphql-mesh/mysql` / `@graphql-mesh/tuql` — same YAML entrypoints, now call `@omnigraph/sql` +
+  `transport-sql` under the hood (emitted GraphQL is the new `@sql__*` surface, not
+  `@mysqlSelect` / classic tuql)
 
-Mesh already moved Thrift / Protobuf / REST toward explicit mapping directives. SQL was still either
-tuql (opaque resolvers), `@mysqlSelect` bags, or a full PostGraphile runtime. Authors could not
-read or hand-edit the SQL binding the way they edit Connectors. Keeping the old packages beside the
-new stack would freeze a second composition path; this major deletes them.
+Dialects are `postgres` | `mysql` | `sqlite` via loader `type` / URI / `options.dialect`. Sqlite +
+MySQL are end-to-end; Postgres API is shared (introspect/execute still landing) except via the
+kept PostGraphile handler.
 
-## Migration
+## Migration (compose)
 
 ```ts
 // before
@@ -38,12 +40,10 @@ loadSqlSubgraph('chinook', { type: 'sqlite', db: 'chinook.db' })
 loadSqlSubgraph('employees', { type: 'mysql', endpoint: 'mysql://…' })
 ```
 
-Emitted GraphQL naming is PostGraphile-inspired (PascalCase types, camelCase fields, `id` for sole
-PKs, typed filters, `allX` connections, CRUD mutations). Old raw-table / String-where surfaces are
-gone -- recompose and update client queries.
+v0 `.meshrc` `handler.mysql` / `handler.tuql` keep working as shells; expect a new GraphQL schema
+shape. `handler.mysql.pool` / `tableFields` and `handler.tuql.infile` are no longer supported.
 
-`mesh-migrate-config` and public website docs are intentionally unchanged here; those land in
-follow-up PRs once the surface is ready to announce.
+`mesh-migrate-config` and public website docs are intentionally unchanged here.
 
 ## What else changed
 
