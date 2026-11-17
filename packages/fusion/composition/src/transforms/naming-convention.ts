@@ -144,6 +144,8 @@ export function createNamingConventionTransform(
   }
   /** Type-scoped field renames so `Movie.GET→get` does not rewrite `ConnectHTTP.GET`. */
   const fieldRenameMap = new Map<string, Map<string, string>>();
+  /** Public `Type.field` → arg rename map (for root-field `$this` args fallback). */
+  const argRenamesByPublicField = new Map<string, Map<string, string>>();
   if (fieldNamesFn || fieldArgumentNamesFn || enumValuesFn || typeNamesFn) {
     schemaMapper[MapperKind.FIELD] = (fieldConfig, fieldName, typeName) => {
       // Keep Connectors HTTP method / baseURL field names intact.
@@ -184,6 +186,10 @@ export function createNamingConventionTransform(
             defaultValue: newDefaultValue,
           };
         }
+      }
+      if (argRenameMap.size) {
+        const publicType = typeRenameMap.get(typeName) ?? typeName;
+        argRenamesByPublicField.set(`${publicType}.${newFieldName}`, argRenameMap);
       }
       const rewrittenDirectives = rewriteConnectArgReferences(
         fieldDirectives,
@@ -268,6 +274,7 @@ export function createNamingConventionTransform(
     }
     const connectors = schemaUsesConnect(schema);
     fieldRenameMap.clear();
+    argRenamesByPublicField.clear();
     let next = mapSchema(schema, schemaMapper);
     if (fieldRenameMap.size && typeRenameMap.size) {
       const rekeyed = new Map<string, Map<string, string>>();
@@ -287,15 +294,30 @@ export function createNamingConventionTransform(
         fieldRenameMap.set(typeName, fields);
       }
     }
-    if (fieldRenameMap.size) {
-      // Protobuf binds: type-scoped so ConnectHTTP.GET is not rewritten by Movie.GET→get.
+    // Protobuf binds even when only args rename (no field renames): dual `$this|$args`.
+    if (fieldRenameMap.size || argRenamesByPublicField.size) {
+      // Type-scoped so ConnectHTTP.GET is not rewritten by Movie.GET→get.
       next = mapSchema(next, {
-        [MapperKind.ROOT_FIELD]: (fieldConfig, _n, typeName, s) =>
-          applyProtobufFieldRenames(fieldConfig, fieldRenameMap, s, typeName),
-        [MapperKind.OBJECT_FIELD]: (fieldConfig, _n, typeName, s) =>
-          applyProtobufFieldRenames(fieldConfig, fieldRenameMap, s, typeName),
+        [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName, typeName, s) =>
+          applyProtobufFieldRenames(
+            fieldConfig,
+            fieldRenameMap,
+            s,
+            typeName,
+            argRenamesByPublicField.get(`${typeName}.${fieldName}`),
+          ),
+        [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName, s) =>
+          applyProtobufFieldRenames(
+            fieldConfig,
+            fieldRenameMap,
+            s,
+            typeName,
+            argRenamesByPublicField.get(`${typeName}.${fieldName}`),
+          ),
         [MapperKind.OBJECT_TYPE]: (type, s) => applyProtobufTypeRenames(type, fieldRenameMap, s),
       });
+    }
+    if (fieldRenameMap.size) {
       // Connect selection picks still use a flat name map; skip flat protobuf nested renames.
       const flatFieldRenameMap = new Map<string, string>();
       for (const fields of fieldRenameMap.values()) {

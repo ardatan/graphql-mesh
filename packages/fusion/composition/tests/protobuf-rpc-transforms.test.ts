@@ -548,6 +548,65 @@ describe('$this parent vs args-fallback renames', () => {
     expect(sdl).toMatch(/\$this\.petId\|\$args\.friendId/);
     expect(sdl).toMatch(/\$args\.friendId/);
   });
+
+  it('naming convention: dual $this.request_id|$args.requestId after fieldArgumentNames camelCase', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "pets", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          pet(request_id: ID!): String!
+            @protobuf__rpc(
+              service: "Pets"
+              method: "GetPet"
+              args: """
+              1(string): $this.request_id
+              2(string): $args.request_id
+              """
+              selection: """
+              1(string): ok
+              """
+            )
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'pets',
+        schema,
+        transforms: [
+          createNamingConventionTransform({
+            fieldArgumentNames: 'camelCase',
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/pet\(requestId:/);
+    // Parent key stays request_id; args fallback uses camelCased requestId.
+    expect(sdl).toMatch(/\$this\.request_id\|\$args\.requestId/);
+    expect(sdl).toContain('$args.requestId');
+    expect(sdl).not.toContain('$args.request_id');
+  });
 });
 
 describe('type-scoped protobuf field renames (overlapping names)', () => {
