@@ -11,9 +11,11 @@
 '@graphql-mesh/utils': minor
 ---
 
-**Breaking (0.x):** Rename `@graphql-mesh/transport-rest` to `@graphql-mesh/transport-connect`, and rename the Mesh `@transport` kind from `rest` to `connect`.
+**Breaking (0.x) migration:** `@graphql-mesh/transport-rest` + `@transport(kind: "rest")` → `@graphql-mesh/transport-connect` + `@transport(kind: "connect")`. Cut over package name, imports, and `kind` together (no compat shim).
 
-Hive Gateway loads transports as `@graphql-mesh/transport-${kind}` (see `defaultTransportsGetter`). The package executes Federation Connectors (`@connect` / `@source`, Apollo `connect/v0.4`) for OpenAPI/JSON Schema/RAML, OData, and SOAP, so `connect` matches the Apollo Connect spec name. Apollo Router does not use Mesh `@transport`; it runs `@connect` / `@source` only, so the kind string is Mesh/Hive-owned.
+Types rename: `RESTTransportOptions` / `RESTTransportDirectiveOptions` → `ConnectTransportOptions` / `ConnectTransportDirectiveOptions`.
+
+Hive Gateway loads transports as `@graphql-mesh/transport-${kind}`. This package runs Federation Connectors (`@connect` / `@source`, Apollo `connect/v0.4`) for OpenAPI/JSON Schema/RAML, OData, and SOAP, so `connect` matches the Apollo Connect spec name. Apollo Router ignores Mesh `@transport` and only runs `@connect` / `@source`.
 
 ### Before
 
@@ -46,6 +48,3 @@ schema @transport(subgraph: "API", kind: "connect", location: "https://api.examp
   query: Query
 }
 ```
-
-Install `@graphql-mesh/transport-connect` instead of `@graphql-mesh/transport-rest`. No compat shim: cut over package name, imports, and `kind` together. Type `RESTTransportOptions` / `RESTTransportDirectiveOptions` rename to `ConnectTransportOptions` / `ConnectTransportDirectiveOptions`.
-
