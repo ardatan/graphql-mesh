@@ -1,4 +1,11 @@
-import { GraphQLBoolean, GraphQLInt, GraphQLNonNull, GraphQLString } from 'graphql';
+import {
+  GraphQLBoolean,
+  GraphQLInt,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+} from 'graphql';
 import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLDate, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
 import { path as pathHelper } from '@graphql-mesh/cross-helpers';
@@ -130,7 +137,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
                 subgraph: subgraphName,
                 table: fk.refTable,
                 kind: 'ROW',
-                args: `${refCol}: $this.${localField}`,
+                args: blockArg(`${refCol}: $this.${localField}`),
                 selection: selectionBlock(naming, refTable),
               },
             },
@@ -157,13 +164,15 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
                 subgraph: subgraphName,
                 table: table.name,
                 kind: 'ROWS',
-                args: [
-                  `${localCol}: $this.${refField}`,
-                  `filter: $args.filter`,
-                  `orderBy: $args.orderBy`,
-                  `limit: $args.limit`,
-                  `offset: $args.offset`,
-                ].join('\n'),
+                args: blockArg(
+                  [
+                    `${localCol}: $this.${refField}`,
+                    `filter: $args.filter`,
+                    `orderBy: $args.orderBy`,
+                    `limit: $args.limit`,
+                    `offset: $args.offset`,
+                  ].join('\n'),
+                ),
                 selection: selectionBlock(naming, table),
               },
             },
@@ -181,7 +190,8 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     const typeName = typeNameByTable.get(table.name)!;
     const pkCols = table.columns.filter(c => c.primaryKey);
     const solePk = pkCols.length === 1 ? pkCols[0] : undefined;
-    const selection = selectionBlock(naming, table);
+    const selectionRaw = selectionLines(naming, table);
+    const selection = blockArg(selectionRaw);
     const plural = naming.pluralField(typeName);
     const singular = naming.singularField(typeName);
 
@@ -199,7 +209,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
               subgraph: subgraphName,
               table: table.name,
               kind: 'ROW',
-              args: `${solePk.name}: $args.${pkField}`,
+              args: blockArg(`${solePk.name}: $args.${pkField}`),
               selection,
               entity: true,
             },
@@ -223,12 +233,14 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'ROWS',
-            args: [
-              `filter: $args.filter`,
-              `orderBy: $args.orderBy`,
-              `limit: $args.limit`,
-              `offset: $args.offset`,
-            ].join('\n'),
+            args: blockArg(
+              [
+                `filter: $args.filter`,
+                `orderBy: $args.orderBy`,
+                `limit: $args.limit`,
+                `offset: $args.offset`,
+              ].join('\n'),
+            ),
             selection,
           },
         },
@@ -250,30 +262,34 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'CONNECTION',
-            args: [
-              `filter: $args.filter`,
-              `orderBy: $args.orderBy`,
-              `first: $args.first`,
-              `after: $args.after`,
-            ].join('\n'),
-            selection: [
-              `nodes {`,
-              indent(selection),
-              `}`,
-              `edges {`,
-              `  cursor: $cursor`,
-              `  node {`,
-              indent(selection, 2),
-              `  }`,
-              `}`,
-              `pageInfo {`,
-              `  hasNextPage: $hasNextPage`,
-              `  hasPreviousPage: $hasPreviousPage`,
-              `  startCursor: $startCursor`,
-              `  endCursor: $endCursor`,
-              `}`,
-              `totalCount: $totalCount`,
-            ].join('\n'),
+            args: blockArg(
+              [
+                `filter: $args.filter`,
+                `orderBy: $args.orderBy`,
+                `first: $args.first`,
+                `after: $args.after`,
+              ].join('\n'),
+            ),
+            selection: blockArg(
+              [
+                `nodes {`,
+                indent(selectionRaw),
+                `}`,
+                `edges {`,
+                `  cursor: $cursor`,
+                `  node {`,
+                indent(selectionRaw, 2),
+                `  }`,
+                `}`,
+                `pageInfo {`,
+                `  hasNextPage: $hasNextPage`,
+                `  hasPreviousPage: $hasPreviousPage`,
+                `  startCursor: $startCursor`,
+                `  endCursor: $endCursor`,
+                `}`,
+                `totalCount: $totalCount`,
+              ].join('\n'),
+            ),
           },
         },
       ],
@@ -291,8 +307,8 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'COUNT',
-            args: `filter: $args.filter`,
-            selection: '$',
+            args: blockArg(`filter: $args.filter`),
+            selection: blockArg(`$`),
           },
         },
       ],
@@ -313,7 +329,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             table: table.name,
             kind: 'INSERT',
             args: insertArgsBlock(naming, table, solePk),
-            selection: `${payloadKey} {\n${indent(selection)}\n}`,
+            selection: blockArg(`${payloadKey} {\n${indent(selectionRaw)}\n}`),
           },
         },
       ],
@@ -334,15 +350,17 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
               subgraph: subgraphName,
               table: table.name,
               kind: 'UPDATE',
-              args: [
-                `set {`,
-                indent(updateSetBlock(naming, table, solePk)),
-                `}`,
-                `where {`,
-                `  ${solePk.name}: $args.${pkField}`,
-                `}`,
-              ].join('\n'),
-              selection: `${payloadKey} {\n${indent(selection)}\n}`,
+              args: blockArg(
+                [
+                  `set {`,
+                  indent(updateSetBlock(naming, table, solePk)),
+                  `}`,
+                  `where {`,
+                  `  ${solePk.name}: $args.${pkField}`,
+                  `}`,
+                ].join('\n'),
+              ),
+              selection: blockArg(`${payloadKey} {\n${indent(selectionRaw)}\n}`),
             },
           },
         ],
@@ -360,8 +378,8 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
               subgraph: subgraphName,
               table: table.name,
               kind: 'DELETE',
-              args: [`where {`, `  ${solePk.name}: $args.${pkField}`, `}`].join('\n'),
-              selection: [`ok: $affectedRows`, `affectedRows: $affectedRows`].join('\n'),
+              args: blockArg([`where {`, `  ${solePk.name}: $args.${pkField}`, `}`].join('\n')),
+              selection: blockArg([`ok: $affectedRows`, `affectedRows: $affectedRows`].join('\n')),
             },
           },
         ],
@@ -386,6 +404,9 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       import: ['@key'],
     },
   ];
+  // graphql-compose emits StringValue without `block: true`, so printers escape
+  // newlines as `\n`. Mark @sql__* args/selection as block strings for readable """ SDL.
+  markSqlDirectiveStringsAsBlocks(schema);
   return schema;
 }
 
@@ -597,7 +618,42 @@ function createMutationInputs(
   });
 }
 
-function selectionBlock(naming: SqlNaming, table: SqlTableMeta): string {
+function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
+  const SQL_DIRECTIVES = new Set(['sql__query', 'sql__mutation', 'sql__relation']);
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!(type instanceof GraphQLObjectType)) continue;
+    for (const field of Object.values(type.getFields())) {
+      const directives = field.astNode?.directives;
+      if (!directives) continue;
+      for (const directive of directives) {
+        if (!SQL_DIRECTIVES.has(directive.name.value) || !directive.arguments) continue;
+        for (const arg of directive.arguments) {
+          if (arg.value.kind !== 'StringValue') continue;
+          if (arg.name.value === 'args' || arg.name.value === 'selection') {
+            (arg.value as { block?: boolean }).block = true;
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Format `@sql__*` args/selection for Connectors-style `"""` block strings.
+ * Indent body lines; for single-line values prefix a newline so the printer
+ * emits a multiline `"""` block (not `"""value"""`) without a trailing blank.
+ */
+function blockArg(body: string): string {
+  const trimmed = body.replace(/^\n+|\n+$/g, '');
+  const indented = trimmed
+    .split('\n')
+    .map(line => (line.length ? `  ${line}` : line))
+    .join('\n');
+  return indented.includes('\n') ? indented : `\n${indented}`;
+}
+
+/** Raw column mapping lines (no block wrapping / indent). */
+function selectionLines(naming: SqlNaming, table: SqlTableMeta): string {
   const pkCols = table.columns.filter(c => c.primaryKey);
   const solePk = pkCols.length === 1 ? pkCols[0] : undefined;
   return table.columns
@@ -611,6 +667,10 @@ function selectionBlock(naming: SqlNaming, table: SqlTableMeta): string {
     .join('\n');
 }
 
+function selectionBlock(naming: SqlNaming, table: SqlTableMeta): string {
+  return blockArg(selectionLines(naming, table));
+}
+
 function insertArgsBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlColumnMeta): string {
   const lines: string[] = [];
   for (const col of table.columns) {
@@ -619,7 +679,7 @@ function insertArgsBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlCol
     const fieldName = isSolePkCol ? naming.pkFieldName(col.name, true) : naming.fieldName(col.name);
     lines.push(`${col.name}: $args.input.${fieldName}`);
   }
-  return lines.join('\n');
+  return blockArg(lines.join('\n'));
 }
 
 function updateSetBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlColumnMeta): string {
