@@ -226,6 +226,24 @@ function buildSelectList(
   return cols;
 }
 
+/**
+ * Escape a value embedded in a single-quoted SQL string literal.
+ * Backslashes must be escaped before quotes (CodeQL js/incomplete-sanitization).
+ */
+export function escapeSqlStringLiteral(
+  value: string,
+  style: 'mysql' | 'sqlite' = 'sqlite',
+): string {
+  // Always escape `\` first so later quote escapes cannot be undone by a trailing `\`.
+  let out = value.replace(/\\/g, '\\\\');
+  if (style === 'mysql') {
+    out = out.replace(/'/g, "\\'");
+  } else {
+    out = out.replace(/'/g, "''");
+  }
+  return out;
+}
+
 function buildHasManyJsonSubselect(
   adapter: SqlAdapter,
   hm: HasManySubselect,
@@ -249,7 +267,7 @@ function buildHasManyJsonSubselect(
   if (adapter === 'mysql') {
     const objArgs = relCols
       .flatMap(([gql, sqlCol]) => [
-        `'${gql.replace(/'/g, "\\'")}'`,
+        `'${escapeSqlStringLiteral(gql, 'mysql')}'`,
         `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, sqlCol)}`,
       ])
       .join(', ');
@@ -259,7 +277,7 @@ function buildHasManyJsonSubselect(
   // sqlite — aggregate over a limited inner select; json_object reads projected column names.
   const objArgs = relCols
     .flatMap(([gql, sqlCol]) => [
-      `'${gql.replace(/'/g, "''")}'`,
+      `'${escapeSqlStringLiteral(gql, 'sqlite')}'`,
       quoteIdent(adapter, sqlCol),
     ])
     .join(', ');

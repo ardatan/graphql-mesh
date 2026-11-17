@@ -1,5 +1,9 @@
 import { parseSqlMapping } from '../src/mapping.js';
-import { buildSelect, mapRowToGraphql } from '../src/sql-builder.js';
+import {
+  buildSelect,
+  escapeSqlStringLiteral,
+  mapRowToGraphql,
+} from '../src/sql-builder.js';
 
 describe('buildSelect', () => {
   const selection = parseSqlMapping(`
@@ -52,5 +56,54 @@ describe('buildSelect', () => {
       title: 'A',
       artistId: 2,
     });
+  });
+
+  it('escapes backslash before quotes in SQL string literals', () => {
+    // CodeQL js/incomplete-sanitization: `\` must be doubled first.
+    expect(escapeSqlStringLiteral("a\\b'c", 'mysql')).toBe("a\\\\b\\'c");
+    expect(escapeSqlStringLiteral("a\\b'c", 'sqlite')).toBe("a\\\\b''c");
+    expect(escapeSqlStringLiteral("\\", 'mysql')).toBe('\\\\');
+    expect(escapeSqlStringLiteral("'", 'mysql')).toBe("\\'");
+  });
+
+  it('embeds escaped JSON keys in mysql/sqlite has-many subselects', () => {
+    const hasMany = [
+      {
+        fieldName: 'albums',
+        table: 'albums',
+        joinColumn: 'ArtistId',
+        parentGraphqlField: 'id',
+        parentColumn: 'ArtistId',
+        selection: {
+          entries: [
+            {
+              key: "title\\'x",
+              value: { kind: 'column' as const, value: 'Title' },
+            },
+          ],
+        },
+        limit: 2,
+      },
+    ];
+
+    const mysql = buildSelect('mysql', {
+      table: 'artists',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: ArtistId`),
+      whereMapping: parseSqlMapping(`limit: $args.limit`),
+      graphqlArgs: { limit: 1 },
+      hasMany,
+    });
+    expect(mysql.sql).toContain(`'${escapeSqlStringLiteral("title\\'x", 'mysql')}'`);
+
+    const sqlite = buildSelect('sqlite', {
+      table: 'artists',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: ArtistId`),
+      whereMapping: parseSqlMapping(`limit: $args.limit`),
+      graphqlArgs: { limit: 1 },
+      hasMany,
+    });
+    expect(sqlite.sql).toContain(`'${escapeSqlStringLiteral("title\\'x", 'sqlite')}'`);
   });
 });
