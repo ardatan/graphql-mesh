@@ -35,14 +35,17 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
+    "@apollo/subgraph": "^2.16.0",
     "@graphql-mesh/transport-common": "^1.1.2",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/utils": "^13.2.2",
     "@whatwg-node/disposablestack": "^0.1.0",
+    "@whatwg-node/promise-helpers": "^2.0.1",
     "mysql2": "^3.14.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
+    "@omnigraph/sql": "workspace:*",
     "graphql": "16.14.0"
   },
   "publishConfig": {

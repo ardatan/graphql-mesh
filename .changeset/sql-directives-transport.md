@@ -52,5 +52,6 @@ recompose and update client queries.
 ## What else changed
 
 - Fusion rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql`
+- Transport wires `@sql(entity: true)` like Connectors: `resolveReference` + Hive `Query._entities`
 - e2e `sqlite-chinook` and `mysql-employees` use the new stack (full table set; no artificial
   `includeTables` filter)

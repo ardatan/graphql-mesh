@@ -46,4 +46,46 @@ describe('getSqlExecutor sqlite', () => {
       await (executor as any)[Symbol.asyncDispose]?.();
     }
   });
+
+  it('resolves Federation _entities via @sql(entity: true)', async () => {
+    const schema = await loadGraphQLSchemaFromSql('chinook', {
+      type: 'sqlite',
+      db: dbPath,
+      includeTables: ['albums', 'artists'],
+    });
+    const executor = getSqlExecutor({ subgraph: schema });
+    try {
+      const result = await executor({
+        document: parse(/* GraphQL */ `
+          query ($representations: [_Any!]!) {
+            _entities(representations: $representations) {
+              ... on Album {
+                id
+                title
+              }
+              ... on Artist {
+                id
+                name
+              }
+            }
+          }
+        `),
+        variables: {
+          representations: [
+            { __typename: 'Album', id: '1' },
+            { __typename: 'Artist', id: '1' },
+          ],
+        },
+      });
+      expect(result.errors).toBeUndefined();
+      expect(result.data).toEqual({
+        _entities: [
+          { id: '1', title: 'For Those About To Rock We Salute You' },
+          { id: '1', name: 'AC/DC' },
+        ],
+      });
+    } finally {
+      await (executor as any)[Symbol.asyncDispose]?.();
+    }
+  });
 });

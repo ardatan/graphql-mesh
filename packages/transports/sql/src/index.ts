@@ -4,6 +4,7 @@ import type { SqlTransportOptions } from './types.js';
 
 export * from './client.js';
 export * from './dialect.js';
+export * from './entity.js';
 export * from './execution.js';
 export * from './mapping.js';
 export * from './sql-builder.js';

@@ -5,6 +5,7 @@ import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { createSqlClient } from './client.js';
 import { inferDialectFromLocation } from './dialect.js';
+import { wireSqlEntityResolvers } from './entity.js';
 import {
   buildDelete,
   buildInsert,
@@ -189,6 +190,9 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
       return fieldConfig;
     },
   });
+
+  // `@sql(entity: true)` → type.resolveReference + Query._entities (Connectors-style).
+  subgraph = wireSqlEntityResolvers(subgraph);
 
   const defaultExecutor = createDefaultExecutor(subgraph);
   const executor: DisposableExecutor = async function sqlExecutor(executionRequest) {
