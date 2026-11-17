@@ -50,4 +50,9 @@ export interface SqlClient {
     params?: unknown[],
   ): Promise<{ rows: T[]; rowCount: number }>;
   dispose(): void | Promise<void>;
+  /**
+   * Node `pg.Pool` when using the postgres adapter (required for the
+   * Grafast / `@dataplan/pg` fast path). Absent for Bun.SQL / mysql / sqlite.
+   */
+  pgPool?: import('pg').Pool;
 }

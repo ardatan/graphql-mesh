@@ -109,8 +109,10 @@ export function wrapPgPoolAsSqlClient(pool: {
   query: (sql: string, params?: unknown[]) => Promise<{ rows: any[]; rowCount?: number | null }>;
   end?: () => Promise<void>;
 }): SqlClient {
-  return {
+  const client: SqlClient = {
     adapter: 'postgres',
+    // Expose real pg.Pool when present for `@dataplan/pg`.
+    pgPool: 'connect' in pool ? (pool as import('pg').Pool) : undefined,
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
       const result = await pool.query(sql, params);
       return {
@@ -124,6 +126,7 @@ export function wrapPgPoolAsSqlClient(pool: {
       }
     },
   };
+  return client;
 }
 
 /**

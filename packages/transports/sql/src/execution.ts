@@ -11,6 +11,8 @@ import {
 import { createSqlClient } from './client.js';
 import { inferAdapterFromLocation } from './adapter.js';
 import { wireSqlEntityResolvers } from './entity.js';
+import { resolveMappingValue } from './mapping.js';
+import { createPostgresGrafastExecutor } from './pg-executor.js';
 import { hasJoinedField, planSelection } from './plan.js';
 import {
   buildDelete,
@@ -25,7 +27,6 @@ import {
   nestedSelection,
   parseSqlDirectiveMappings,
 } from './sql-builder.js';
-import { resolveMappingValue } from './mapping.js';
 import type {
   ParsedSqlMapping,
   SqlClient,
@@ -356,6 +357,19 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
       });
     },
   });
+
+  // Postgres + Node pg.Pool → Grafast / `@dataplan/pg` fast path.
+  // MySQL / SQLite / Bun.SQL keep the GraphQL.js + JOIN planner path.
+  if (adapter === 'postgres' && sqlClient.pgPool) {
+    const grafastExecutor = createPostgresGrafastExecutor({
+      subgraph,
+      sqlClient,
+      disposeClient: () => sqlClient.dispose(),
+    });
+    if (grafastExecutor) {
+      return grafastExecutor;
+    }
+  }
 
   const defaultExecutor = createDefaultExecutor(subgraph);
   const executor: DisposableExecutor = async function sqlExecutor(executionRequest) {
