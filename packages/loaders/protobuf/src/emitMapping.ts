@@ -35,6 +35,7 @@ export function protoTypeToken(
     optional?: boolean;
     options?: Record<string, unknown>;
   },
+  isOneofMember = false,
 ): string {
   const base = field.type || 'string';
   let token: string;
@@ -59,21 +60,40 @@ export function protoTypeToken(
   if (field.rule === 'repeated') {
     return `repeated ${token}`;
   }
-  // Proto3 explicit presence (`optional` / proto3_optional) — decoder must not default.
-  if (isExplicitOptionalField(field) && token !== 'message') {
+  // Proto3 explicit presence: `optional` / proto3_optional / oneof members — decoder must not default.
+  if (isExplicitOptionalField(field, isOneofMember) && token !== 'message') {
     return `optional ${token}`;
   }
   return token;
 }
 
-function isExplicitOptionalField(field: {
-  optional?: boolean;
-  options?: Record<string, unknown>;
-  rule?: string;
-}): boolean {
+function isExplicitOptionalField(
+  field: {
+    optional?: boolean;
+    options?: Record<string, unknown>;
+    rule?: string;
+  },
+  isOneofMember = false,
+): boolean {
   if (field.rule === 'repeated') return false;
+  if (isOneofMember) return true;
   if (field.options?.proto3_optional === true) return true;
   return false;
+}
+
+/** Field names that belong to any `oneof` on the message (including synthetic proto3_optional oneofs). */
+function collectOneofFieldNames(typeJson: {
+  oneofs?: Record<string, { oneof?: string[] }>;
+}): Set<string> {
+  const names = new Set<string>();
+  const oneofs = typeJson?.oneofs;
+  if (!oneofs) return names;
+  for (const oneof of Object.values(oneofs)) {
+    for (const fieldName of oneof?.oneof ?? []) {
+      names.add(fieldName);
+    }
+  }
+  return names;
 }
 
 function isScalar(t: string): boolean {
@@ -154,13 +174,14 @@ export function emitFieldsMapping(
 
   // Resolve nested types from the owning message scope (`typePath`), not the RPC path.
   const nestedScope = typePath;
+  const oneofFields = collectOneofFieldNames(cur);
 
   if (visited.has(typeKey)) {
     // Recursive message: emit field shells without re-expanding the same type.
     const lines: string[] = [];
     for (const [fieldName, field] of Object.entries(fields)) {
       const id = field.id ?? 0;
-      const token = protoTypeToken(rootJson, nestedScope, field);
+      const token = protoTypeToken(rootJson, nestedScope, field, oneofFields.has(fieldName));
       const bind = bindMode === 'prefix' && bindPrefix ? `${bindPrefix}.${fieldName}` : fieldName;
       if (token === 'message' || token === 'repeated message' || token.includes(',message>')) {
         lines.push(`${indent}${id}(${token}): ${bind} {`);
@@ -176,7 +197,7 @@ export function emitFieldsMapping(
   const lines: string[] = [];
   for (const [fieldName, field] of Object.entries(fields)) {
     const id = field.id ?? 0;
-    const token = protoTypeToken(rootJson, nestedScope, field);
+    const token = protoTypeToken(rootJson, nestedScope, field, oneofFields.has(fieldName));
     const bind = bindMode === 'prefix' && bindPrefix ? `${bindPrefix}.${fieldName}` : fieldName;
     const isMessageToken =
       token === 'message' || token === 'repeated message' || /map<[^,]+,message>/.test(token);

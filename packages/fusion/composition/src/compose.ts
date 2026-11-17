@@ -837,15 +837,26 @@ function addAnnotationsForSemanticConventions({
         const typeDirectives = getDirectiveExtensions(type);
         const ensureKey = (opts?: { resolvable?: boolean }) => {
           typeDirectives.key ||= [];
-          if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
+          const existing = typeDirectives.key.find((key: any) => key.fields === fieldName);
+          if (!existing) {
             typeDirectives.key.push({
               fields: fieldName,
               ...(opts?.resolvable === false ? { resolvable: false } : {}),
             });
-            const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
-            typeExtensions.directives = typeDirectives;
+          } else if (opts?.resolvable !== false && existing.resolvable === false) {
+            // Singular entity resolver exists — upgrade a previously batch-stamped non-resolvable key.
+            delete existing.resolvable;
           }
+          const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
+          typeExtensions.directives = typeDirectives;
         };
+        // Non-resolvable @key is only for Connectors/protobuf batch RPCs that lack a singular
+        // entity resolver. Ordinary Mesh `@merge` batch fields keep the default resolvable key.
+        const isConnectOrProtobufField = !!(
+          directiveExtensions.connect?.length ||
+          directiveExtensions.protobuf__rpc?.length ||
+          directiveExtensions.protobufRpc?.length
+        );
         // Connectors entity patterns
         // (https://www.apollographql.com/docs/graphos/connectors/entities/patterns):
         // - arg name === key field → Query `@connect(entity: true)`
@@ -947,8 +958,11 @@ function addAnnotationsForSemanticConventions({
             if (isNonNullType(arg.type)) {
               const batchListArg = isBatchListArgType(arg.type);
               markConnectEntityOrMerge();
-              // List-keyed ById is not a singular entity resolver — don't advertise resolvable @key.
-              ensureKey(batchListArg ? { resolvable: false } : undefined);
+              // List-keyed ById is not a singular entity resolver — don't advertise resolvable @key
+              // for Connectors/protobuf; Mesh `@merge` keeps the default resolvable key.
+              ensureKey(
+                batchListArg && isConnectOrProtobufField ? { resolvable: false } : undefined,
+              );
             }
             break;
           }
@@ -960,9 +974,10 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(`${pluralTypeName}_by_${pluralFieldName}_list`): {
             const batchListArg = isBatchListArgType(arg.type);
             markConnectEntityOrMerge();
-            // Batch Query fields keep field-level RPC only; resolvable @key would claim a
-            // missing singular entity resolver for `_entities`.
-            ensureKey(batchListArg ? { resolvable: false } : undefined);
+            // Batch Connectors/protobuf Query fields keep field-level RPC only; a resolvable
+            // @key would claim a missing singular entity resolver for `_entities`. Mesh `@merge`
+            // batch fields still use the default resolvable key.
+            ensureKey(batchListArg && isConnectOrProtobufField ? { resolvable: false } : undefined);
             break;
           }
         }

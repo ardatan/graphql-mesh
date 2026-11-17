@@ -245,6 +245,107 @@ describe('protobuf RPC semantic conventions (entity: true)', () => {
     expect(sdl).not.toMatch(/entity:\s*true/);
     expect(sdl).toMatch(/@key\(\s*fields:\s*"id"[^)]*resolvable:\s*false/);
   });
+
+  it.each([
+    {
+      name: 'batch before singular',
+      queryFields: /* GraphQL */ `
+          getPetsByIds(ids: [ID!]!): [Pet!]!
+            @protobuf__rpc(
+              service: "Pets"
+              method: "GetPets"
+              args: """
+              1(repeated string): ids
+              """
+              selection: """
+              1(string): id
+              2(string): name
+              """
+            )
+          getPetById(id: ID!): Pet!
+            @protobuf__rpc(
+              service: "Pets"
+              method: "GetPet"
+              args: """
+              1(string): id
+              """
+              selection: """
+              1(string): id
+              2(string): name
+              """
+            )
+      `,
+    },
+    {
+      name: 'singular before batch',
+      queryFields: /* GraphQL */ `
+          getPetById(id: ID!): Pet!
+            @protobuf__rpc(
+              service: "Pets"
+              method: "GetPet"
+              args: """
+              1(string): id
+              """
+              selection: """
+              1(string): id
+              2(string): name
+              """
+            )
+          getPetsByIds(ids: [ID!]!): [Pet!]!
+            @protobuf__rpc(
+              service: "Pets"
+              method: "GetPets"
+              args: """
+              1(repeated string): ids
+              """
+              selection: """
+              1(string): id
+              2(string): name
+              """
+            )
+      `,
+    },
+  ])('upgrades @key when singular ById exists ($name)', ({ queryFields }) => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "pets", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          ${queryFields}
+        }
+
+        type Pet {
+          id: ID!
+          name: String!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([{ name: 'pets', schema }]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/entity:\s*true/);
+    expect(sdl).toMatch(/@key\(\s*fields:\s*"id"/);
+    expect(sdl).not.toMatch(/resolvable:\s*false/);
+    expect(sdl).not.toMatch(/@merge\(/);
+  });
 });
 
 describe('rewriteProtobufMappingBinds', () => {
