@@ -48,3 +48,4 @@ schema @transport(subgraph: "API", kind: "connect", location: "https://api.examp
 ```
 
 Install `@graphql-mesh/transport-connect` instead of `@graphql-mesh/transport-rest`. No compat shim: cut over package name, imports, and `kind` together. Type `RESTTransportOptions` / `RESTTransportDirectiveOptions` rename to `ConnectTransportOptions` / `ConnectTransportDirectiveOptions`.
+
