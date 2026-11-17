@@ -1,14 +1,94 @@
-import { join } from 'node:path';
-import { loadGraphQLSchemaFromSql } from '@omnigraph/sql';
+import {
+  GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+} from 'graphql';
 import { buildPgRegistryFromSqlSchema } from '../src/pg-registry.js';
 
-const dbPath = join(__dirname, '../../../../e2e/sqlite-chinook/chinook.db');
+const albumSelection = ['id: AlbumId', 'title: Title', 'artistId: ArtistId'].join('\n');
+const artistSelection = ['id: ArtistId', 'name: Name'].join('\n');
 
 describe('buildPgRegistryFromSqlSchema', () => {
-  it('builds codecs/resources/relations from @sql directives', async () => {
-    const schema = await loadGraphQLSchemaFromSql('chinook', {
-      endpoint: dbPath,
-      includeTables: ['albums', 'artists'],
+  it('builds codecs/resources/relations from @sql directives', () => {
+    const Artist: GraphQLObjectType = new GraphQLObjectType({
+      name: 'Artist',
+      fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        name: { type: GraphQLString },
+        albums: {
+          type: new GraphQLList(Album),
+          extensions: {
+            directives: {
+              sql: {
+                table: 'albums',
+                kind: 'ROWS',
+                where: 'ArtistId: $this.id',
+                selection: albumSelection,
+              },
+            },
+          },
+        },
+      }),
+      extensions: {
+        directives: {
+          sql: {
+            table: 'artists',
+            selection: artistSelection,
+          },
+        },
+      },
+    });
+    const Album: GraphQLObjectType = new GraphQLObjectType({
+      name: 'Album',
+      fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        title: { type: GraphQLString },
+        artistId: { type: GraphQLInt },
+        artist: {
+          type: Artist,
+          extensions: {
+            directives: {
+              sql: {
+                table: 'artists',
+                kind: 'ROW',
+                where: 'ArtistId: $this.artistId',
+                selection: artistSelection,
+              },
+            },
+          },
+        },
+      }),
+      extensions: {
+        directives: {
+          sql: {
+            table: 'albums',
+            selection: albumSelection,
+          },
+        },
+      },
+    });
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          albums: {
+            type: new GraphQLList(Album),
+            extensions: {
+              directives: {
+                sql: {
+                  table: 'albums',
+                  kind: 'ROWS',
+                  selection: albumSelection,
+                },
+              },
+            },
+          },
+        },
+      }),
+      types: [Album, Artist],
     });
 
     const { registry, tableByType, relationNames } = buildPgRegistryFromSqlSchema(schema);

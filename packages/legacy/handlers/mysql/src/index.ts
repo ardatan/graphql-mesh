@@ -80,7 +80,7 @@ export default class MySQLHandler implements MeshHandler {
       client = wrapMysqlPoolAsSqlClient(pool as any);
     }
 
-    const executor = getSqlExecutor({
+    const executor = await getSqlExecutor({
       subgraph: schema,
       cwd: this.baseDir,
       client,

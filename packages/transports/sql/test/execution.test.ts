@@ -12,7 +12,7 @@ describe('getSqlExecutor sqlite', () => {
       endpoint: dbPath,
       includeTables: ['albums', 'artists'],
     });
-    const executor = getSqlExecutor({ subgraph: schema });
+    const executor = await getSqlExecutor({ subgraph: schema });
     try {
       const result = await executor({
         document: parse(/* GraphQL */ `
@@ -52,7 +52,7 @@ describe('getSqlExecutor sqlite', () => {
       endpoint: dbPath,
       includeTables: ['albums', 'artists'],
     });
-    const executor = getSqlExecutor({ subgraph: schema });
+    const executor = await getSqlExecutor({ subgraph: schema });
     try {
       const result = await executor({
         document: parse(/* GraphQL */ `
@@ -109,7 +109,7 @@ describe('getSqlExecutor sqlite', () => {
       dispose: () => real.dispose(),
     };
 
-    const executor = getSqlExecutor({ subgraph: schema, client: spyClient });
+    const executor = await getSqlExecutor({ subgraph: schema, client: spyClient });
     try {
       const result = await executor({
         document: parse(/* GraphQL */ `
@@ -167,7 +167,7 @@ describe('getSqlExecutor sqlite', () => {
       dispose: () => real.dispose(),
     };
 
-    const executor = getSqlExecutor({ subgraph: schema, client: spyClient });
+    const executor = await getSqlExecutor({ subgraph: schema, client: spyClient });
     try {
       const result = await executor({
         document: parse(/* GraphQL */ `
@@ -226,7 +226,7 @@ describe('getSqlExecutor sqlite', () => {
       dispose: () => real.dispose(),
     };
 
-    const executor = getSqlExecutor({ subgraph: schema, client: spyClient });
+    const executor = await getSqlExecutor({ subgraph: schema, client: spyClient });
     try {
       const result = await executor({
         document: parse(/* GraphQL */ `

@@ -61,7 +61,10 @@
       "json-machete": ["./packages/json-machete/src/index.ts"],
       "@omnigraph/*": ["./packages/loaders/*/src/index.ts"],
       "@e2e/opts": ["./e2e/utils/opts.ts"],
-      "@e2e/tenv": ["./e2e/utils/tenv.ts"]
+      "@e2e/tenv": ["./e2e/utils/tenv.ts"],
+      "grafast": ["./typings/grafast.d.ts"],
+      "@dataplan/pg": ["./typings/dataplan-pg.d.ts"],
+      "@dataplan/pg/adaptors/pg": ["./typings/dataplan-pg-adaptors-pg.d.ts"]
     },
 
     "ignoreDeprecations": "6.0",

@@ -12,7 +12,6 @@ import { createSqlClient } from './client.js';
 import { inferAdapterFromLocation } from './adapter.js';
 import { wireSqlEntityResolvers } from './entity.js';
 import { resolveMappingValue } from './mapping.js';
-import { createPostgresGrafastExecutor } from './pg-executor.js';
 import { hasJoinedField, planSelection } from './plan.js';
 import {
   buildDelete,
@@ -215,7 +214,11 @@ async function runSqlSelect(
   );
 }
 
-export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): DisposableExecutor {
+export async function getSqlExecutor({
+  subgraph,
+  cwd,
+  client,
+}: GetSqlExecutorOpts): Promise<DisposableExecutor> {
   const transportDirectives = getDirective(subgraph, subgraph, 'transport');
   if (!transportDirectives?.length) {
     throw new Error('No @transport directive found on SQL subgraph schema');
@@ -360,7 +363,9 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
 
   // Postgres + Node pg.Pool → Grafast / `@dataplan/pg` fast path.
   // MySQL / SQLite / Bun.SQL keep the GraphQL.js + JOIN planner path.
+  // Dynamic import keeps grafast off the static graph (Jest --detectLeaks).
   if (adapter === 'postgres' && sqlClient.pgPool) {
+    const { createPostgresGrafastExecutor } = await import('./pg-executor.js');
     const grafastExecutor = createPostgresGrafastExecutor({
       subgraph,
       sqlClient,

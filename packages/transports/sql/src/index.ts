@@ -8,13 +8,12 @@ export * from './client.js';
 export * from './entity.js';
 export * from './execution.js';
 export * from './mapping.js';
-export * from './pg-executor.js';
-export * from './pg-plans.js';
-export * from './pg-registry.js';
 export * from './plan.js';
 export * from './sql-builder.js';
 export * from './uri.js';
 export type * from './types.js';
+// pg-executor / pg-registry / pg-plans stay internal: they pull grafast +
+// @dataplan/pg, which register process-lifetime state that fails Jest --detectLeaks.
 
 export default {
   getSubgraphExecutor({ subgraph, cwd }) {

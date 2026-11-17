@@ -42,7 +42,7 @@ export default class TuqlHandler implements MeshHandler {
       cwd: this.baseDir,
     });
 
-    const executor = getSqlExecutor({
+    const executor = await getSqlExecutor({
       subgraph: schema,
       cwd: this.baseDir,
     });

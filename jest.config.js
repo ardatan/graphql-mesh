@@ -35,6 +35,8 @@ if (process.env.LEAK_TEST) {
   testMatch.push('!**/examples/mysql-*/**');
   testMatch.push('!**/examples/v1-next/mysql-*/**');
   testMatch.push('!**/examples/federation-example/tests/polling.test.ts');
+  // Imports grafast / @dataplan/pg (process-lifetime handles).
+  testMatch.push('!**/packages/transports/sql/test/pg-registry.test.ts');
 }
 
 testMatch.push(process.env.INTEGRATION_TEST ? '!**/packages/**' : '!**/examples/**');
@@ -120,6 +122,10 @@ module.exports = {
       prefix: `${ROOT_DIR}/`,
       useESM: true,
     }),
+    // Override tsconfig type stubs so Jest loads real packages at runtime.
+    '^grafast$': '<rootDir>/node_modules/grafast/dist/index.js',
+    '^@dataplan/pg$': '<rootDir>/node_modules/@dataplan/pg/dist/index.js',
+    '^@dataplan/pg/adaptors/pg$': '<rootDir>/node_modules/@dataplan/pg/dist/adaptors/pg.js',
   },
   collectCoverage: false,
   cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),

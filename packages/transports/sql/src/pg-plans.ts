@@ -114,5 +114,5 @@ function pkAttribute(resource: any): string {
   const attrs = resource?.codec?.attributes;
   if (attrs && typeof attrs === 'object' && 'id' in attrs) return 'id';
   const keys = attrs ? Object.keys(attrs) : [];
-  return keys[0] || 'id';
+  return String(keys[0] ?? 'id');
 }
