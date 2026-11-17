@@ -66,6 +66,9 @@ function getTypeResolveReference(type: { extensions?: any }): ResolveReferenceFn
   return typeof fromType === 'function' ? fromType : undefined;
 }
 
+/** Applied when `@transport(options.requestTimeout)` is omitted (ms). */
+export const DEFAULT_PROTOBUF_REQUEST_TIMEOUT_MS = 200_000;
+
 export interface ProtobufTransportOptions {
   requestTimeout?: number;
   credentialsSsl?: {
@@ -257,7 +260,7 @@ export class ProtobufTransportHelper extends DisposableStack {
   }): GraphQLFieldResolver<any, any> {
     const metaData = this.config.metaData;
     const headersConfig = this.config.headers;
-    const timeout = this.config.requestTimeout;
+    const timeout = this.config.requestTimeout ?? DEFAULT_PROTOBUF_REQUEST_TIMEOUT_MS;
     const creds = this.channelCreds ?? credentials.createInsecure();
     const http = isHttpLocation(location);
     const rpcPath = buildRpcPath(service, method);

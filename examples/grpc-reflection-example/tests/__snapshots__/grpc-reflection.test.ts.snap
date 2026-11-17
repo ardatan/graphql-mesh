@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`gRPC Reflection Example should generate correct schema: grpc-schema 1`] = `
-"schema @transport(subgraph: "gRPC Example", kind: "protobuf", location: "localhost:50052", options: {requestTimeout: 200000}) {
+"schema @transport(subgraph: "gRPC Example", kind: "protobuf", location: "localhost:50052") {
   query: Query
 }
 

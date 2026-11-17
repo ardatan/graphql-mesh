@@ -119,7 +119,7 @@ exports[`gRPC Example should fetch movies by cast as a subscription correctly: m
 `;
 
 exports[`gRPC Example should generate correct schema: grpc-schema 1`] = `
-"schema @transport(subgraph: "Example", kind: "protobuf", location: "localhost:50051", options: {requestTimeout: 200000, metaData: [["someKey", "someValue"], ["connection_type", "{context.headers.connection}"]]}) {
+"schema @transport(subgraph: "Example", kind: "protobuf", location: "localhost:50051", options: {metaData: [["someKey", "someValue"], ["connection_type", "{context.headers.connection}"]]}) {
   query: Query
   subscription: Subscription
 }

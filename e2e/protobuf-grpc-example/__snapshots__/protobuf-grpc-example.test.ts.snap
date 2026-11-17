@@ -35,7 +35,7 @@ exports[`gRPC Example fetches movies by cast as a subscription correctly: 1 1`] 
 `;
 
 exports[`gRPC Example generates the correct schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@protobuf__rpc", "@transport"]) @transport(subgraph: "movies", kind: "protobuf", location: "localhost:<movies_port>", options: {requestTimeout: 200000, metaData: [["someKey", "someValue"], ["connection-type", "{context.headers.connection}"]]}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@protobuf__rpc", "@transport"]) @transport(subgraph: "movies", kind: "protobuf", location: "localhost:<movies_port>", options: {metaData: [["someKey", "someValue"], ["connection-type", "{context.headers.connection}"]]}) {
   query: Query
   subscription: Subscription
 }

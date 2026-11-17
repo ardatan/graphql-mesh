@@ -103,8 +103,6 @@ export class GrpcLoaderHelper extends DisposableStack {
       name: 'File',
     });
 
-    this.config.requestTimeout = this.config.requestTimeout || 200000;
-
     this.log.debug(`Getting channel credentials`);
     const creds = await this.getCredentials();
     if ('_unref' in creds && typeof creds._unref === 'function') {
@@ -140,20 +138,29 @@ export class GrpcLoaderHelper extends DisposableStack {
     const schema = this.schemaComposer.buildSchema();
     const schemaExtensions: Record<string, any> = (schema.extensions = schema.extensions || {});
     const directiveExtensions = (schemaExtensions.directives = schemaExtensions.directives || {});
+    // Default requestTimeout lives in the transport — only stamp an override when configured.
+    const transportOptions: Record<string, unknown> = {};
+    if (this.config.requestTimeout != null) {
+      transportOptions.requestTimeout = this.config.requestTimeout;
+    }
+    if (this.config.credentialsSsl) {
+      transportOptions.credentialsSsl = this.config.credentialsSsl;
+    }
+    if (this.config.useHTTPS) {
+      transportOptions.useHTTPS = this.config.useHTTPS;
+    }
+    if (this.config.metaData) {
+      transportOptions.metaData = Object.entries(this.config.metaData);
+    }
+    // Serialize as entries so keys like `grpc.max_receive_message_length` are GraphQL-safe
+    if (this.config.channelOptions) {
+      transportOptions.channelOptions = Object.entries(this.config.channelOptions);
+    }
     directiveExtensions.transport = {
       subgraph: this.subgraphName,
       kind: 'protobuf',
       location: this.config.endpoint,
-      options: {
-        requestTimeout: this.config.requestTimeout,
-        credentialsSsl: this.config.credentialsSsl,
-        useHTTPS: this.config.useHTTPS,
-        metaData: this.config.metaData ? Object.entries(this.config.metaData) : undefined,
-        // Serialize as entries so keys like `grpc.max_receive_message_length` are GraphQL-safe
-        channelOptions: this.config.channelOptions
-          ? Object.entries(this.config.channelOptions)
-          : undefined,
-      },
+      ...(Object.keys(transportOptions).length > 0 ? { options: transportOptions } : {}),
     };
     return schema;
   }
