@@ -2,4 +2,4 @@
 '@graphql-mesh/transport-protobuf': patch
 ---
 
-Added `@apollo/subgraph` for Hive `_entities` / `entity: true` resolveReference dispatch on protobuf RPC subgraphs.
+Wire subgraph `_entities` / `entity: true` resolveReference dispatch for protobuf RPC subgraphs.
