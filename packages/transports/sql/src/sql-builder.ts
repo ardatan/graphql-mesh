@@ -1,5 +1,6 @@
 import { placeholder, quoteIdent } from './adapter.js';
 import { columnMapFromSelection, parseSqlMapping, resolveMappingValue } from './mapping.js';
+import { stampJoinedFields, type BelongsToJoin } from './plan.js';
 import type { ParsedSqlMapping, SqlAdapter, SqlMappingEntry, SqlQueryKind } from './types.js';
 
 export interface BuiltQuery {
@@ -14,6 +15,8 @@ export interface SelectPlan {
   whereMapping: ParsedSqlMapping;
   graphqlArgs: Record<string, any>;
   parent?: Record<string, any>;
+  /** Belongs-to joins folded from GraphQL selection lookahead. */
+  joins?: BelongsToJoin[];
 }
 
 const PLANNER_KEYS = new Set([
@@ -29,11 +32,16 @@ const PLANNER_KEYS = new Set([
 
 export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   const columns = columnMapFromSelection(plan.selection);
-  const selectCols =
-    columns.size === 0 ? ['*'] : [...new Set(columns.values())].map(c => quoteIdent(adapter, c));
+  const joins = plan.joins?.length ? plan.joins : undefined;
+  const rootAlias = joins ? 't' : undefined;
 
   const params: unknown[] = [];
   const whereParts: string[] = [];
+
+  const qualify = (col: string) =>
+    rootAlias
+      ? `${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, col)}`
+      : quoteIdent(adapter, col);
 
   // Equality / join predicates from `where` mapping (non-planner keys)
   for (const entry of plan.whereMapping.entries) {
@@ -46,7 +54,7 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
     });
     if (resolved === undefined) continue;
     params.push(resolved);
-    whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
+    whereParts.push(`${qualify(entry.key)} = ${placeholder(adapter, params.length)}`);
   }
 
   // filter: $args.filter
@@ -57,22 +65,43 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
       parent: plan.parent,
     });
     if (filterVal && typeof filterVal === 'object') {
-      appendFilter(adapter, filterVal as Record<string, any>, columns, whereParts, params);
+      appendFilter(adapter, filterVal as Record<string, any>, columns, whereParts, params, {
+        qualifyColumn: rootAlias ? qualify : undefined,
+      });
     }
   }
 
   // Also accept direct graphqlArgs.filter when mapping omitted the binder but arg exists
   if (!filterEntry && plan.graphqlArgs.filter) {
-    appendFilter(adapter, plan.graphqlArgs.filter, columns, whereParts, params);
+    appendFilter(adapter, plan.graphqlArgs.filter, columns, whereParts, params, {
+      qualifyColumn: rootAlias ? qualify : undefined,
+    });
   }
 
+  const selectCols = buildSelectList(adapter, plan.selection, joins, rootAlias);
+
   let sql = `SELECT ${selectCols.join(', ')} FROM ${quoteIdent(adapter, plan.table)}`;
+  if (rootAlias) {
+    sql += ` AS ${quoteIdent(adapter, rootAlias)}`;
+    for (const join of joins!) {
+      sql += ` LEFT JOIN ${quoteIdent(adapter, join.table)} AS ${quoteIdent(adapter, join.alias)}`;
+      sql += ` ON ${quoteIdent(adapter, join.alias)}.${quoteIdent(adapter, join.joinColumn)}`;
+      sql += ` = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, join.parentColumn)}`;
+    }
+  }
   if (whereParts.length) {
     sql += ` WHERE ${whereParts.join(' AND ')}`;
   }
 
   if (plan.kind === 'COUNT') {
+    // Joins must not multiply COUNT — count root table only.
     sql = `SELECT COUNT(*) AS ${quoteIdent(adapter, 'count')} FROM ${quoteIdent(adapter, plan.table)}`;
+    if (rootAlias) {
+      // Rebuild WHERE without join qualify for count-only path using unqualified names
+      // when no joins; with joins use subquery-less root filter only when predicates are
+      // on the root table (our where binders always are).
+      sql = `SELECT COUNT(*) AS ${quoteIdent(adapter, 'count')} FROM ${quoteIdent(adapter, plan.table)} AS ${quoteIdent(adapter, rootAlias)}`;
+    }
     if (whereParts.length) {
       sql += ` WHERE ${whereParts.join(' AND ')}`;
     }
@@ -80,7 +109,7 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   }
 
   const orderBy = resolvePlannerArg(plan, 'orderBy') as string[] | string | undefined;
-  const orderSql = buildOrderBy(adapter, orderBy, columns);
+  const orderSql = buildOrderBy(adapter, orderBy, columns, rootAlias ? qualify : undefined);
   if (orderSql) {
     sql += ` ORDER BY ${orderSql}`;
   }
@@ -117,6 +146,48 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   }
 
   return { sql, params };
+}
+
+function buildSelectList(
+  adapter: SqlAdapter,
+  selection: ParsedSqlMapping,
+  joins: BelongsToJoin[] | undefined,
+  rootAlias: string | undefined,
+): string[] {
+  const columns = columnMapFromSelection(selection);
+  if (!joins?.length || !rootAlias) {
+    return columns.size === 0
+      ? ['*']
+      : [...new Set(columns.values())].map(c => quoteIdent(adapter, c));
+  }
+
+  const cols: string[] = [];
+  const seen = new Set<string>();
+  const pushRoot = (sqlCol: string) => {
+    if (seen.has(`t:${sqlCol}`)) return;
+    seen.add(`t:${sqlCol}`);
+    cols.push(
+      `${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, sqlCol)} AS ${quoteIdent(adapter, `t__${sqlCol}`)}`,
+    );
+  };
+  for (const sqlCol of columns.values()) pushRoot(sqlCol);
+  if (!cols.length) {
+    throw new Error('SQL join plan requires a column selection mapping on the root table');
+  }
+  // Ensure join parent keys are selected on root
+  for (const join of joins) {
+    pushRoot(join.parentColumn);
+    const relCols = columnMapFromSelection(join.selection);
+    for (const sqlCol of relCols.values()) {
+      const key = `${join.alias}:${sqlCol}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      cols.push(
+        `${quoteIdent(adapter, join.alias)}.${quoteIdent(adapter, sqlCol)} AS ${quoteIdent(adapter, `${join.alias}__${sqlCol}`)}`,
+      );
+    }
+  }
+  return cols;
 }
 
 /**
@@ -298,6 +369,7 @@ function buildOrderBy(
   adapter: SqlAdapter,
   orderBy: string[] | string | undefined,
   columns: Map<string, string>,
+  qualifyColumn?: (col: string) => string,
 ): string {
   if (!orderBy) return '';
   const list = Array.isArray(orderBy) ? orderBy : [orderBy];
@@ -315,12 +387,14 @@ function buildOrderBy(
       if (graphqlField === 'id') {
         const idCol = columns.get('id');
         if (idCol) {
-          parts.push(`${quoteIdent(adapter, idCol)} ${desc ? 'DESC' : 'ASC'}`);
+          const q = qualifyColumn ? qualifyColumn(idCol) : quoteIdent(adapter, idCol);
+          parts.push(`${q} ${desc ? 'DESC' : 'ASC'}`);
         }
       }
       continue;
     }
-    parts.push(`${quoteIdent(adapter, col)} ${desc ? 'DESC' : 'ASC'}`);
+    const q = qualifyColumn ? qualifyColumn(col) : quoteIdent(adapter, col);
+    parts.push(`${q} ${desc ? 'DESC' : 'ASC'}`);
   }
   return parts.join(', ');
 }
@@ -336,14 +410,16 @@ function appendFilter(
   columns: Map<string, string>,
   whereParts: string[],
   params: unknown[],
+  opts?: { qualifyColumn?: (col: string) => string },
 ): void {
   if (!filter || typeof filter !== 'object') return;
+  const qualify = opts?.qualifyColumn;
 
   if (Array.isArray(filter.and)) {
     const parts: string[] = [];
     for (const sub of filter.and) {
       const inner: string[] = [];
-      appendFilter(adapter, sub, columns, inner, params);
+      appendFilter(adapter, sub, columns, inner, params, opts);
       if (inner.length) parts.push(`(${inner.join(' AND ')})`);
     }
     if (parts.length) whereParts.push(`(${parts.join(' AND ')})`);
@@ -352,14 +428,14 @@ function appendFilter(
     const parts: string[] = [];
     for (const sub of filter.or) {
       const inner: string[] = [];
-      appendFilter(adapter, sub, columns, inner, params);
+      appendFilter(adapter, sub, columns, inner, params, opts);
       if (inner.length) parts.push(`(${inner.join(' AND ')})`);
     }
     if (parts.length) whereParts.push(`(${parts.join(' OR ')})`);
   }
   if (filter.not && typeof filter.not === 'object') {
     const inner: string[] = [];
-    appendFilter(adapter, filter.not, columns, inner, params);
+    appendFilter(adapter, filter.not, columns, inner, params, opts);
     if (inner.length) whereParts.push(`NOT (${inner.join(' AND ')})`);
   }
 
@@ -368,7 +444,7 @@ function appendFilter(
     if (ops == null || typeof ops !== 'object') continue;
     const col = columns.get(field);
     if (!col) continue;
-    const q = quoteIdent(adapter, col);
+    const q = qualify ? qualify(col) : quoteIdent(adapter, col);
     const o = ops as Record<string, any>;
     if ('eq' in o) {
       params.push(o.eq);
@@ -443,10 +519,30 @@ export function mapRowToGraphql(
   for (const entry of selection.entries) {
     if (entry.children) continue;
     if (!entry.value || entry.value.kind !== 'column') continue;
-    const raw = row[entry.value.value];
+    const raw = row[entry.value.value] ?? row[`t__${entry.value.value}`];
     out[entry.key] = raw != null && entry.key === 'id' ? String(raw) : raw;
   }
   return out;
+}
+
+export function mapRowToGraphqlWithJoins(
+  row: Record<string, unknown>,
+  selection: ParsedSqlMapping,
+  joins: BelongsToJoin[],
+): Record<string, unknown> {
+  const out = mapRowToGraphql(row, selection);
+  for (const join of joins) {
+    const nested: Record<string, unknown> = {};
+    let any = false;
+    for (const entry of join.selection.entries) {
+      if (!entry.value || entry.value.kind !== 'column') continue;
+      const raw = row[`${join.alias}__${entry.value.value}`];
+      if (raw !== undefined && raw !== null) any = true;
+      nested[entry.key] = raw != null && entry.key === 'id' ? String(raw) : raw;
+    }
+    out[join.fieldName] = any ? nested : null;
+  }
+  return stampJoinedFields(out, joins);
 }
 
 export function selectionHasNested(selection: ParsedSqlMapping, key: string): boolean {

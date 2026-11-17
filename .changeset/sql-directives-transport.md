@@ -60,5 +60,7 @@ recompose and update client queries.
 - Type-level `@sql` on OBJECT (Connectors-style `$this` keys) wires `resolveReference` + Hive
   `Query._entities` — no Query `entity: true`
 - Transport DataLoader-batches ROW/ROWS equality lookups (`WHERE col IN (...)`)
+- Belongs-to (`@sql(kind: ROW)` + `$this`) nested in the selection are folded into one
+  `LEFT JOIN` (lookahead plan; has-many stays batched)
 - e2e `sqlite-chinook` and `mysql-employees` use the new stack (full table set; no artificial
   `includeTables` filter)

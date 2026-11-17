@@ -1,4 +1,4 @@
-import type { GraphQLSchema } from 'graphql';
+import type { GraphQLResolveInfo, GraphQLSchema } from 'graphql';
 import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
@@ -11,6 +11,7 @@ import {
 import { createSqlClient } from './client.js';
 import { inferAdapterFromLocation } from './adapter.js';
 import { wireSqlEntityResolvers } from './entity.js';
+import { collectBelongsToJoins, hasJoinedField } from './plan.js';
 import {
   buildDelete,
   buildInsert,
@@ -20,6 +21,7 @@ import {
   decodeCursor,
   encodeCursor,
   mapRowToGraphql,
+  mapRowToGraphqlWithJoins,
   nestedSelection,
   parseSqlDirectiveMappings,
 } from './sql-builder.js';
@@ -50,9 +52,19 @@ function connectionNodeSelection(selection: ParsedSqlMapping): ParsedSqlMapping 
   return selection;
 }
 
+function mapSelectRow(
+  row: Record<string, unknown>,
+  selection: ParsedSqlMapping,
+  joins: ReturnType<typeof collectBelongsToJoins>,
+) {
+  return joins.length ? mapRowToGraphqlWithJoins(row, selection, joins) : mapRowToGraphql(row, selection);
+}
+
 async function runSqlSelect(
   sqlClient: SqlClient,
   opts: {
+    schema?: GraphQLSchema;
+    info?: GraphQLResolveInfo;
     table: string;
     kind: SqlQueryKind;
     selection: ParsedSqlMapping;
@@ -65,8 +77,14 @@ async function runSqlSelect(
   const { table, kind, selection, whereMapping, graphqlArgs, parent, context } = opts;
   const selectSelection = kind === 'CONNECTION' ? connectionNodeSelection(selection) : selection;
 
-  // Batch ROW / simple ROWS when there is exactly one equality binder (FK / PK).
-  if (kind === 'ROW' || kind === 'ROWS') {
+  const joins =
+    opts.schema && opts.info && kind !== 'COUNT'
+      ? collectBelongsToJoins(opts.schema, opts.info, selectSelection)
+      : [];
+
+  // Batch ROW / simple ROWS when there is exactly one equality binder (FK / PK)
+  // and we are not folding belongs-to joins into this query.
+  if (!joins.length && (kind === 'ROW' || kind === 'ROWS')) {
     const column = batchableEqualityColumn(whereMapping);
     if (column) {
       const key = resolveEqualityKey(whereMapping, column, graphqlArgs, parent);
@@ -95,6 +113,7 @@ async function runSqlSelect(
     whereMapping,
     graphqlArgs,
     parent,
+    joins,
   });
   const result = await sqlClient.query(query.sql, query.params);
 
@@ -105,7 +124,7 @@ async function runSqlSelect(
   }
   if (kind === 'ROW') {
     const row = result.rows[0] as Record<string, unknown> | undefined;
-    return row ? mapRowToGraphql(row, selectSelection) : null;
+    return row ? mapSelectRow(row, selectSelection, joins) : null;
   }
   if (kind === 'CONNECTION') {
     const first = Number(graphqlArgs.first ?? 10);
@@ -114,7 +133,7 @@ async function runSqlSelect(
     const rows = result.rows as Record<string, unknown>[];
     const hasNextPage = rows.length > first;
     const pageRows = hasNextPage ? rows.slice(0, first) : rows;
-    const nodes = pageRows.map(r => mapRowToGraphql(r, selectSelection));
+    const nodes = pageRows.map(r => mapSelectRow(r, selectSelection, joins));
     const edges = nodes.map((node, i) => ({
       cursor: encodeCursor(offset + i),
       node,
@@ -150,7 +169,7 @@ async function runSqlSelect(
     };
   }
   return (result.rows as Record<string, unknown>[]).map(r =>
-    mapRowToGraphql(r, selectSelection),
+    mapSelectRow(r, selectSelection, joins),
   );
 }
 
@@ -247,8 +266,19 @@ export function getSqlExecutor({ subgraph, cwd, client }: GetSqlExecutorOpts): D
             }
 
             const queryKind = kind as SqlQueryKind;
-            fieldConfig.resolve = async function sqlQueryResolver(root, args, context) {
+            fieldConfig.resolve = async function sqlQueryResolver(
+              root,
+              args,
+              context,
+              info: GraphQLResolveInfo,
+            ) {
+              // Parent already folded this belongs-to via JOIN lookahead.
+              if (hasJoinedField(root, info.fieldName)) {
+                return root[info.fieldName];
+              }
               return runSqlSelect(sqlClient, {
+                schema: subgraph,
+                info,
                 table,
                 kind: queryKind,
                 selection,

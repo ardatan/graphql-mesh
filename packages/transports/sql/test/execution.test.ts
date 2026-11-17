@@ -88,7 +88,7 @@ describe('getSqlExecutor sqlite', () => {
     }
   });
 
-  it('batches relation ROW lookups with WHERE IN', async () => {
+  it('folds belongs-to artist into one JOIN (lookahead plan)', async () => {
     const schema = await loadGraphQLSchemaFromSql('chinook', {
       endpoint: dbPath,
       includeTables: ['albums', 'artists'],
@@ -125,10 +125,68 @@ describe('getSqlExecutor sqlite', () => {
         context: {},
       });
       expect(result.errors).toBeUndefined();
-      // Two albums → one batched artists query (not two)
-      const artistQueries = queries.filter(q => /FROM ["`]?artists["`]?/i.test(q));
-      expect(artistQueries.length).toBe(1);
-      expect(artistQueries[0]).toMatch(/IN\s*\(/i);
+      expect(result.data).toEqual({
+        albums: [
+          {
+            id: '1',
+            artist: { name: 'AC/DC' },
+          },
+          {
+            id: '2',
+            artist: { name: 'Accept' },
+          },
+        ],
+      });
+      // Single root query with LEFT JOIN — no separate artists round-trip
+      expect(queries.length).toBe(1);
+      expect(queries[0]).toMatch(/LEFT JOIN/i);
+      expect(queries[0]).toMatch(/artists/i);
+    } finally {
+      await (executor as any)[Symbol.asyncDispose]?.();
+    }
+  });
+
+  it('still batches has-many / non-joined ROW with WHERE IN', async () => {
+    const schema = await loadGraphQLSchemaFromSql('chinook', {
+      endpoint: dbPath,
+      includeTables: ['albums', 'artists'],
+    });
+
+    const { createSqlClient } = await import('../src/client.js');
+    const real = createSqlClient({
+      adapter: 'sqlite',
+      location: `file:${dbPath}`,
+    });
+    const queries: string[] = [];
+    const spyClient: SqlClient = {
+      adapter: 'sqlite',
+      async query(sql, params) {
+        queries.push(sql);
+        return real.query(sql, params);
+      },
+      dispose: () => real.dispose(),
+    };
+
+    const executor = getSqlExecutor({ subgraph: schema, client: spyClient });
+    try {
+      // artists { albums } — albums is ROWS ($this), not foldable belongs-to JOIN
+      const result = await executor({
+        document: parse(/* GraphQL */ `
+          query {
+            artists(limit: 2) {
+              id
+              albums(limit: 5) {
+                title
+              }
+            }
+          }
+        `),
+        context: {},
+      });
+      expect(result.errors).toBeUndefined();
+      const albumQueries = queries.filter(q => /FROM ["`]?albums["`]?/i.test(q));
+      expect(albumQueries.length).toBe(1);
+      expect(albumQueries[0]).toMatch(/IN\s*\(/i);
     } finally {
       await (executor as any)[Symbol.asyncDispose]?.();
     }
