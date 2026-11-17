@@ -51,8 +51,9 @@ describe.each([
       expect(result).toContain('@protobuf__rpc');
       expect(result).toContain(maskedLocation);
       expect(result).toContain('releaseYear');
-      // Connect-like: args bind follows the public GraphQL arg name (no Mesh @source).
-      expect(result).toMatch(/2\(int64\):\s*releaseYear/);
+      // Connect-like: $args bind follows the public GraphQL arg name (no Mesh @source).
+      expect(result).toMatch(/2\(int64\):\s*\$args\.releaseYear/);
+      expect(result).not.toMatch(/\$args\.year(?![A-Za-z0-9_])/);
       expect(result).not.toMatch(/@source\(/);
       expect(result).not.toMatch(/@meshSource\(/);
       if (style === 'twirp') {

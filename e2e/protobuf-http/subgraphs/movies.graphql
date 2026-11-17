@@ -37,8 +37,9 @@ type Query {
       method: "GetMovies"
       args: """
       # Encode GraphQL field arguments into the protobuf request message.
-      1(message): input.movie {
-        2(int64): year
+      # Flat GraphQL args use $args.*; loader-emitted RPCs use input.<field> against an Input type.
+      1(message): {
+        2(int64): $args.year
       }
       """
       selection: """

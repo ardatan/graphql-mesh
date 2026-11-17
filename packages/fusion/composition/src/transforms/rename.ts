@@ -407,14 +407,10 @@ export function applyProtobufFieldRenames(
   const parentIsRoot = Boolean(parentType && rootTypes.has(parentType as any));
   // Non-root owner supplies parent field renames for `$this` dual binds.
   const thisOwnerType =
-    parentType &&
-    !parentIsRoot &&
-    (isObjectType(parentType) || isInterfaceType(parentType))
+    parentType && !parentIsRoot && (isObjectType(parentType) || isInterfaceType(parentType))
       ? parentType
       : undefined;
-  const parentFieldRenames = thisOwnerType
-    ? fieldRenameMap.get(thisOwnerType.name)
-    : undefined;
+  const parentFieldRenames = thisOwnerType ? fieldRenameMap.get(thisOwnerType.name) : undefined;
 
   let protobufChanged = false;
   const rewrittenRpc = fieldDirectives[protobufKey].map((rpcArgs: any) => {

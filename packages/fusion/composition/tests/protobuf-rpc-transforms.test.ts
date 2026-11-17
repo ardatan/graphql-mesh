@@ -1080,8 +1080,7 @@ describe('rewriteProtobufMappingBindsTypeScoped ownership', () => {
   # 2(int64): ignored }
   2(int64): year
 }`,
-      new Map([['MovieInput', new Map([['year', 'publicationYear']])]],
-      ),
+      new Map([['MovieInput', new Map([['year', 'publicationYear']])]]),
       { argTypes: new Map([['input', schema.getType('MovieInput')!]]) },
     );
     expect(out).toContain('# 2(int64): ignored }');

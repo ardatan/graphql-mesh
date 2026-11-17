@@ -165,12 +165,7 @@ describe('protobuf mapping + codec', () => {
 
   it('dual $this.id|$args.requestId: empty parent falls back to args.requestId', () => {
     const fields = parseMapping(`1(string): $this.id|$args.requestId`);
-    const bytes = encodeMessage(
-      fields,
-      { requestId: 'from-args' },
-      { requestId: 'from-args' },
-      {},
-    );
+    const bytes = encodeMessage(fields, { requestId: 'from-args' }, { requestId: 'from-args' }, {});
     expect(decodeMessage(parseMapping(`1(string): value`), bytes).value).toBe('from-args');
   });
 
