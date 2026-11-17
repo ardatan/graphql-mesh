@@ -18,11 +18,11 @@ type Query {
     id: dept_no
     deptName: dept_name
   """)
-  departments(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], limit: Int = 10, offset: Int = 0): [Department!]! @sql(subgraph: "Employees", table: "departments", kind: ROWS, where: """$args.where""", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+  departments(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], limit: Int = 10, offset: Int = 0): [Department!]! @sql(subgraph: "Employees", table: "departments", kind: ROWS, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: dept_no
     deptName: dept_name
   """)
-  allDepartments(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], first: Int, after: String): DepartmentConnection! @sql(subgraph: "Employees", table: "departments", kind: CONNECTION, where: """$args.where""", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+  allDepartments(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], first: Int, after: String): DepartmentConnection! @sql(subgraph: "Employees", table: "departments", kind: CONNECTION, where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: dept_no
       deptName: dept_name
@@ -42,17 +42,17 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  departmentsCount(where: DepartmentFilter): Int! @sql(subgraph: "Employees", table: "departments", kind: COUNT, where: """$args.where""", selection: """
+  departmentsCount(where: DepartmentFilter): Int! @sql(subgraph: "Employees", table: "departments", kind: COUNT, where: "$args.where", selection: """
   
     $
   """)
-  deptEmps(where: DeptEmpFilter, orderBy: [DeptEmpOrderBy!], limit: Int = 10, offset: Int = 0): [DeptEmp!]! @sql(subgraph: "Employees", table: "dept_emp", kind: ROWS, where: """$args.where""", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+  deptEmps(where: DeptEmpFilter, orderBy: [DeptEmpOrderBy!], limit: Int = 10, offset: Int = 0): [DeptEmp!]! @sql(subgraph: "Employees", table: "dept_emp", kind: ROWS, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     empNo: emp_no
     deptNo: dept_no
     fromDate: from_date
     toDate: to_date
   """)
-  allDeptEmps(where: DeptEmpFilter, orderBy: [DeptEmpOrderBy!], first: Int, after: String): DeptEmpConnection! @sql(subgraph: "Employees", table: "dept_emp", kind: CONNECTION, where: """$args.where""", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+  allDeptEmps(where: DeptEmpFilter, orderBy: [DeptEmpOrderBy!], first: Int, after: String): DeptEmpConnection! @sql(subgraph: "Employees", table: "dept_emp", kind: CONNECTION, where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       empNo: emp_no
       deptNo: dept_no
@@ -76,17 +76,17 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  deptEmpsCount(where: DeptEmpFilter): Int! @sql(subgraph: "Employees", table: "dept_emp", kind: COUNT, where: """$args.where""", selection: """
+  deptEmpsCount(where: DeptEmpFilter): Int! @sql(subgraph: "Employees", table: "dept_emp", kind: COUNT, where: "$args.where", selection: """
   
     $
   """)
-  deptManagers(where: DeptManagerFilter, orderBy: [DeptManagerOrderBy!], limit: Int = 10, offset: Int = 0): [DeptManager!]! @sql(subgraph: "Employees", table: "dept_manager", kind: ROWS, where: """$args.where""", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+  deptManagers(where: DeptManagerFilter, orderBy: [DeptManagerOrderBy!], limit: Int = 10, offset: Int = 0): [DeptManager!]! @sql(subgraph: "Employees", table: "dept_manager", kind: ROWS, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     empNo: emp_no
     deptNo: dept_no
     fromDate: from_date
     toDate: to_date
   """)
-  allDeptManagers(where: DeptManagerFilter, orderBy: [DeptManagerOrderBy!], first: Int, after: String): DeptManagerConnection! @sql(subgraph: "Employees", table: "dept_manager", kind: CONNECTION, where: """$args.where""", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+  allDeptManagers(where: DeptManagerFilter, orderBy: [DeptManagerOrderBy!], first: Int, after: String): DeptManagerConnection! @sql(subgraph: "Employees", table: "dept_manager", kind: CONNECTION, where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       empNo: emp_no
       deptNo: dept_no
@@ -110,7 +110,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  deptManagersCount(where: DeptManagerFilter): Int! @sql(subgraph: "Employees", table: "dept_manager", kind: COUNT, where: """$args.where""", selection: """
+  deptManagersCount(where: DeptManagerFilter): Int! @sql(subgraph: "Employees", table: "dept_manager", kind: COUNT, where: "$args.where", selection: """
   
     $
   """)
@@ -125,7 +125,7 @@ type Query {
     gender: gender
     hireDate: hire_date
   """)
-  employees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int = 10, offset: Int = 0): [Employee!]! @sql(subgraph: "Employees", table: "employees", kind: ROWS, where: """$args.where""", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+  employees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int = 10, offset: Int = 0): [Employee!]! @sql(subgraph: "Employees", table: "employees", kind: ROWS, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: emp_no
     birthDate: birth_date
     firstName: first_name
@@ -133,7 +133,7 @@ type Query {
     gender: gender
     hireDate: hire_date
   """)
-  allEmployees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], first: Int, after: String): EmployeeConnection! @sql(subgraph: "Employees", table: "employees", kind: CONNECTION, where: """$args.where""", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+  allEmployees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], first: Int, after: String): EmployeeConnection! @sql(subgraph: "Employees", table: "employees", kind: CONNECTION, where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: emp_no
       birthDate: birth_date
@@ -161,17 +161,17 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  employeesCount(where: EmployeeFilter): Int! @sql(subgraph: "Employees", table: "employees", kind: COUNT, where: """$args.where""", selection: """
+  employeesCount(where: EmployeeFilter): Int! @sql(subgraph: "Employees", table: "employees", kind: COUNT, where: "$args.where", selection: """
   
     $
   """)
-  salaries(where: SalaryFilter, orderBy: [SalaryOrderBy!], limit: Int = 10, offset: Int = 0): [Salary!]! @sql(subgraph: "Employees", table: "salaries", kind: ROWS, where: """$args.where""", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+  salaries(where: SalaryFilter, orderBy: [SalaryOrderBy!], limit: Int = 10, offset: Int = 0): [Salary!]! @sql(subgraph: "Employees", table: "salaries", kind: ROWS, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     empNo: emp_no
     salary: salary
     fromDate: from_date
     toDate: to_date
   """)
-  allSalaries(where: SalaryFilter, orderBy: [SalaryOrderBy!], first: Int, after: String): SalaryConnection! @sql(subgraph: "Employees", table: "salaries", kind: CONNECTION, where: """$args.where""", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+  allSalaries(where: SalaryFilter, orderBy: [SalaryOrderBy!], first: Int, after: String): SalaryConnection! @sql(subgraph: "Employees", table: "salaries", kind: CONNECTION, where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       empNo: emp_no
       salary: salary
@@ -195,17 +195,17 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  salariesCount(where: SalaryFilter): Int! @sql(subgraph: "Employees", table: "salaries", kind: COUNT, where: """$args.where""", selection: """
+  salariesCount(where: SalaryFilter): Int! @sql(subgraph: "Employees", table: "salaries", kind: COUNT, where: "$args.where", selection: """
   
     $
   """)
-  titles(where: TitleFilter, orderBy: [TitleOrderBy!], limit: Int = 10, offset: Int = 0): [Title!]! @sql(subgraph: "Employees", table: "titles", kind: ROWS, where: """$args.where""", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+  titles(where: TitleFilter, orderBy: [TitleOrderBy!], limit: Int = 10, offset: Int = 0): [Title!]! @sql(subgraph: "Employees", table: "titles", kind: ROWS, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     empNo: emp_no
     title: title
     fromDate: from_date
     toDate: to_date
   """)
-  allTitles(where: TitleFilter, orderBy: [TitleOrderBy!], first: Int, after: String): TitleConnection! @sql(subgraph: "Employees", table: "titles", kind: CONNECTION, where: """$args.where""", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+  allTitles(where: TitleFilter, orderBy: [TitleOrderBy!], first: Int, after: String): TitleConnection! @sql(subgraph: "Employees", table: "titles", kind: CONNECTION, where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       empNo: emp_no
       title: title
@@ -229,7 +229,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  titlesCount(where: TitleFilter): Int! @sql(subgraph: "Employees", table: "titles", kind: COUNT, where: """$args.where""", selection: """
+  titlesCount(where: TitleFilter): Int! @sql(subgraph: "Employees", table: "titles", kind: COUNT, where: "$args.where", selection: """
   
     $
   """)

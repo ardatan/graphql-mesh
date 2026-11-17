@@ -720,12 +720,16 @@ function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
       for (const arg of directive.arguments) {
         if (arg.value.kind !== 'StringValue') continue;
         if (
-          arg.name.value === 'where' ||
-          arg.name.value === 'set' ||
-          arg.name.value === 'selection'
+          arg.name.value !== 'where' &&
+          arg.name.value !== 'set' &&
+          arg.name.value !== 'selection'
         ) {
-          (arg.value as { block?: boolean }).block = true;
+          continue;
         }
+        // Bare binders like `$args.where` stay as normal `"..."` (same as orderBy).
+        // Only real mapping blocks get `"""`.
+        if (isBareSqlBinder(arg.value.value)) continue;
+        (arg.value as { block?: boolean }).block = true;
       }
     }
   };
@@ -736,6 +740,12 @@ function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
       markNode(field.astNode);
     }
   }
+}
+
+/** `$args.where` / `$this.id` — single path, not a multi-entry mapping block. */
+function isBareSqlBinder(value: string): boolean {
+  const trimmed = value.trim();
+  return /^\$[A-Za-z_][\w.]*(?:\.[A-Za-z_][\w.]*)*$/.test(trimmed) && !trimmed.includes('\n');
 }
 
 /**
