@@ -52,9 +52,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
   ensurePageInfo(schemaComposer);
 
   const tableByName = new Map(meta.tables.map(t => [t.name, t]));
-  const typeNameByTable = new Map(
-    meta.tables.map(t => [t.name, naming.typeName(t.name)] as const),
-  );
+  const typeNameByTable = new Map(meta.tables.map(t => [t.name, naming.typeName(t.name)] as const));
 
   // Pass 1: object types + column fields
   for (const table of meta.tables) {
@@ -493,9 +491,7 @@ function createFilterAndOrder(
 
   for (const col of table.columns) {
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
-    const fieldName = isSolePkCol
-      ? naming.pkFieldName(col.name, true)
-      : naming.fieldName(col.name);
+    const fieldName = isSolePkCol ? naming.pkFieldName(col.name, true) : naming.fieldName(col.name);
     const gql = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
     const filterType =
       gql === GraphQLInt || gql.name === 'Int' || gql.name === 'BigInt'
@@ -557,9 +553,7 @@ function createMutationInputs(
   for (const col of table.columns) {
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
     if (isSolePkCol && col.autoIncrement) continue;
-    const fieldName = isSolePkCol
-      ? naming.pkFieldName(col.name, true)
-      : naming.fieldName(col.name);
+    const fieldName = isSolePkCol ? naming.pkFieldName(col.name, true) : naming.fieldName(col.name);
     const gqlType = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
     createFields[fieldName] = {
       type: col.notNull && !col.autoIncrement ? new GraphQLNonNull(gqlType) : gqlType,
@@ -604,28 +598,18 @@ function selectionBlock(naming: SqlNaming, table: SqlTableMeta): string {
     .join('\n');
 }
 
-function insertArgsBlock(
-  naming: SqlNaming,
-  table: SqlTableMeta,
-  solePk?: SqlColumnMeta,
-): string {
+function insertArgsBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlColumnMeta): string {
   const lines: string[] = [];
   for (const col of table.columns) {
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
     if (isSolePkCol && col.autoIncrement) continue;
-    const fieldName = isSolePkCol
-      ? naming.pkFieldName(col.name, true)
-      : naming.fieldName(col.name);
+    const fieldName = isSolePkCol ? naming.pkFieldName(col.name, true) : naming.fieldName(col.name);
     lines.push(`${col.name}: $args.input.${fieldName}`);
   }
   return lines.join('\n');
 }
 
-function updateSetBlock(
-  naming: SqlNaming,
-  table: SqlTableMeta,
-  solePk?: SqlColumnMeta,
-): string {
+function updateSetBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlColumnMeta): string {
   const lines: string[] = [];
   for (const col of table.columns) {
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);

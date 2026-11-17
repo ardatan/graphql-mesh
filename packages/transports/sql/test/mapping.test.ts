@@ -1,4 +1,4 @@
-import { parseSqlMapping, columnMapFromSelection, resolveMappingValue } from '../src/mapping.js';
+import { columnMapFromSelection, parseSqlMapping, resolveMappingValue } from '../src/mapping.js';
 
 describe('parseSqlMapping', () => {
   it('parses column selection and skips comments', () => {

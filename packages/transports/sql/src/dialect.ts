@@ -1,4 +1,4 @@
-import { join as pathJoin, isAbsolute as pathIsAbsolute } from 'node:path';
+import { isAbsolute as pathIsAbsolute, join as pathJoin } from 'node:path';
 import type { SqlDialect } from './types.js';
 
 export function inferDialectFromLocation(location: string | undefined): SqlDialect | undefined {

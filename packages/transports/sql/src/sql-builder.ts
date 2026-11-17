@@ -1,5 +1,5 @@
-import { columnMapFromSelection, parseSqlMapping, resolveMappingValue } from './mapping.js';
 import { placeholder, quoteIdent } from './dialect.js';
+import { columnMapFromSelection, parseSqlMapping, resolveMappingValue } from './mapping.js';
 import type { ParsedSqlMapping, SqlDialect, SqlMappingEntry, SqlQueryKind } from './types.js';
 
 export interface BuiltQuery {
@@ -32,9 +32,7 @@ const PLANNER_KEYS = new Set([
 export function buildSelect(dialect: SqlDialect, plan: SelectPlan): BuiltQuery {
   const columns = columnMapFromSelection(plan.selection);
   const selectCols =
-    columns.size === 0
-      ? ['*']
-      : [...new Set(columns.values())].map(c => quoteIdent(dialect, c));
+    columns.size === 0 ? ['*'] : [...new Set(columns.values())].map(c => quoteIdent(dialect, c));
 
   const params: unknown[] = [];
   const whereParts: string[] = [];
@@ -50,9 +48,7 @@ export function buildSelect(dialect: SqlDialect, plan: SelectPlan): BuiltQuery {
     });
     if (resolved === undefined) continue;
     params.push(resolved);
-    whereParts.push(
-      `${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`,
-    );
+    whereParts.push(`${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`);
   }
 
   // filter: $args.filter
@@ -182,9 +178,7 @@ export function buildUpdate(
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
-    whereParts.push(
-      `${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`,
-    );
+    whereParts.push(`${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`);
   }
   let sql = `UPDATE ${quoteIdent(dialect, table)} SET ${sets.join(', ')}`;
   if (whereParts.length) {
@@ -211,9 +205,7 @@ export function buildDelete(
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
-    whereParts.push(
-      `${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`,
-    );
+    whereParts.push(`${quoteIdent(dialect, entry.key)} = ${placeholder(dialect, params.length)}`);
   }
   let sql = `DELETE FROM ${quoteIdent(dialect, table)}`;
   if (whereParts.length) {

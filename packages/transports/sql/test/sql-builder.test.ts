@@ -47,9 +47,7 @@ describe('buildSelect', () => {
   });
 
   it('maps rows to GraphQL fields and stringifies id', () => {
-    expect(
-      mapRowToGraphql({ AlbumId: 1, Title: 'A', ArtistId: 2 }, selection),
-    ).toEqual({
+    expect(mapRowToGraphql({ AlbumId: 1, Title: 'A', ArtistId: 2 }, selection)).toEqual({
       id: '1',
       title: 'A',
       artistId: 2,

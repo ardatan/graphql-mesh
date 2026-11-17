@@ -33,8 +33,7 @@ function createSqliteClient(location: string, cwd?: string): SqlClient {
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
       const stmt = db.prepare(sql);
       const bind = params as Array<null | number | bigint | string | Uint8Array>;
-      const returnsRows =
-        /^\s*(SELECT|PRAGMA|WITH)\b/i.test(sql) || /\bRETURNING\b/i.test(sql);
+      const returnsRows = /^\s*(SELECT|PRAGMA|WITH)\b/i.test(sql) || /\bRETURNING\b/i.test(sql);
       if (returnsRows) {
         const rows = stmt.all(...bind) as T[];
         return { rows, rowCount: rows.length };

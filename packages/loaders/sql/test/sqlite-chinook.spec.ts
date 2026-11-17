@@ -2,14 +2,20 @@ import { join } from 'node:path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromSql } from '../src/index.js';
 
+const chinookDb = join(__dirname, '../../../../e2e/sql-sqlite-chinook/chinook.db');
+
 describe('@omnigraph/sql sqlite chinook', () => {
   it('emits @sql__* directives and slim @transport(kind: sql)', async () => {
     const schema = await loadGraphQLSchemaFromSql('chinook', {
       type: 'sqlite',
-      db: join(__dirname, '../../../../e2e/sql-sqlite-chinook/chinook.db'),
+      db: chinookDb,
       includeTables: ['albums', 'artists'],
     });
-    const sdl = printSchemaWithDirectives(schema);
+    // Normalize absolute DB path so the snapshot is portable across machines/CI.
+    const sdl = printSchemaWithDirectives(schema).replace(
+      /location: "file:[^"]+"/,
+      'location: "file:<chinook.db>"',
+    );
     expect(sdl).toContain('@transport');
     expect(sdl).toContain('kind: "sql"');
     expect(sdl).toContain('dialect: "sqlite"');

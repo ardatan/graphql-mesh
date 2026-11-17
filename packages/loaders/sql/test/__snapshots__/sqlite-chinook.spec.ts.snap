@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`@omnigraph/sql sqlite chinook emits @sql__* directives and slim @transport(kind: sql): chinook-albums-artists 1`] = `
-"schema @transport(subgraph: "chinook", kind: "sql", location: "file:/agent/repos/graphql-mesh/e2e/sql-sqlite-chinook/chinook.db", options: {dialect: "sqlite"}) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
+"schema @transport(subgraph: "chinook", kind: "sql", location: "file:<chinook.db>", options: {dialect: "sqlite"}) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
   query: Query
   mutation: Mutation
 }

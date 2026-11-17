@@ -10,7 +10,10 @@ export interface IntrospectSqliteOpts {
 }
 
 export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
-  const dbPath = resolveSqlitePath(opts.db.startsWith('file:') ? opts.db : `file:${opts.db}`, opts.cwd);
+  const dbPath = resolveSqlitePath(
+    opts.db.startsWith('file:') ? opts.db : `file:${opts.db}`,
+    opts.cwd,
+  );
   const db = new DatabaseSync(dbPath);
   try {
     const tableRows = db

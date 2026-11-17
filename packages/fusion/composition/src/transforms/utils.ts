@@ -182,10 +182,7 @@ export function rewriteConnectArgReferences(
         out = out
           .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
           .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`)
-          .replace(
-            new RegExp(`\\$this\\.${escapeRegExp(from)}(?![\\w])`, 'g'),
-            `$this.${to}`,
-          );
+          .replace(new RegExp(`\\$this\\.${escapeRegExp(from)}(?![\\w])`, 'g'), `$this.${to}`);
       }
     }
     if (typeRenameMap?.size) {
