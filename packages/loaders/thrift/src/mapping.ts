@@ -313,8 +313,9 @@ export function buildTJSONConnectBody(
   const argsFields = Object.entries(fieldTypeMap)
     .map(([argName, typeVal]) => {
       const id = String(typeVal.id ?? 1);
-      const tagged = formatTJSONValueExpr(typeVal, `$args.${argName}`, topTypeMap, 3);
-      return `${indent(3)}"${id}": ${tagged}`;
+      // level 2 → 4-space indent under the envelope object `{ … }`.
+      const tagged = formatTJSONValueExpr(typeVal, `$args.${argName}`, topTypeMap, 2);
+      return `${indent(2)}"${id}": ${tagged}`;
     })
     .join(',\n');
   const msgType = thriftMessageTypeCode(messageType);
@@ -376,11 +377,13 @@ function formatTJSONValueExpr(
     }
     const nextSeen = new Set(seenStructs);
     nextSeen.add(structName);
+    // Field ids nest under `"rec": { … }` — one indent past `padInner`.
+    const padFields = indent(level + 2);
     const fields = Object.entries(resolved.fields)
       .map(([fieldName, fieldType]) => {
         const fid = String(fieldType.id ?? 1);
         const childExpr = `${valueExpr}.${fieldName}`;
-        return `${padInner}"${fid}": ${formatTJSONValueExpr(fieldType, childExpr, topTypeMap, level + 1, nextSeen)}`;
+        return `${padFields}"${fid}": ${formatTJSONValueExpr(fieldType, childExpr, topTypeMap, level + 2, nextSeen)}`;
       })
       .join(',\n');
     return `{\n${padInner}"${tag}": {\n${fields}\n${padInner}}\n${pad}}`;

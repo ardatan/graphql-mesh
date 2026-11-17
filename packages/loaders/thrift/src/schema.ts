@@ -619,9 +619,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
 
 /**
  * `printSchemaWithDirectives` rebuilds directive args via JS and prints strings
- * with escaped `\\n` unless the field `astNode` keeps `StringValue.block: true`.
- * Attach matching AST directive apps so `args` / `selection` / TJSON `body` print
- * as GraphQL `"""` block strings (readable generate output).
+ * with escaped `\\n` / `\\"` unless the field `astNode` keeps `StringValue.block: true`.
+ * Attach matching AST directive apps so multiline / quote-heavy args (`args`,
+ * TJSON `body` / `selection` / `isSuccess` / `errors`) print as GraphQL `"""`.
  */
 function preferMultilineDirectiveBlockStrings(schema: GraphQLSchemaType): GraphQLSchemaType {
   for (const type of Object.values(schema.getTypeMap())) {
@@ -676,8 +676,11 @@ function constValueNodePreferBlockString(argName: string, value: unknown): Const
     if (argName === 'messageType') {
       return { kind: Kind.ENUM, value };
     }
-    const multiline = value.includes('\n') || value.includes('\r');
-    return { kind: Kind.STRING, value, block: multiline };
+    // Prefer `"""` when the value has newlines **or** embedded `"` so print does
+    // not emit hard-to-read `\"` escapes (common in TJSON `@connect` selection /
+    // isSuccess / errors paths like `$->get("0")`).
+    const preferBlock = value.includes('\n') || value.includes('\r') || value.includes('"');
+    return { kind: Kind.STRING, value, block: preferBlock };
   }
   if (Array.isArray(value)) {
     return {

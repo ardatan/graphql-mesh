@@ -19,15 +19,17 @@ type Query {
     1,
     1,
     {
-        "1": {
-          "rec": {
+      "1": {
+        "rec": {
           "1": { "i32": $args.request.left },
           "2": { "i32": $args.request.right }
-          }
         }
+      }
     }
   ])
-  """}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"})
+  """}, selection: """$->get(4)->get("0")->get("i32")""", isSuccess: """$->get(2)->eq(2)->and($->get(4)->get("0")->ne(null))""", errors: {message: """
+  $([$->get(4)->get("1")->get("str"), $->get(4)->get("1")->get("rec")->get("1")->get("str")])->joinNotNull("")
+  """})
   subtract(left: Int, right: Int): Int @connect(source: "Calc", http: {POST: "/", body: """
   $([
     1,
@@ -35,11 +37,13 @@ type Query {
     1,
     1,
     {
-        "1": { "i32": $args.left },
-        "2": { "i32": $args.right }
+      "1": { "i32": $args.left },
+      "2": { "i32": $args.right }
     }
   ])
-  """}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"})
+  """}, selection: """$->get(4)->get("0")->get("i32")""", isSuccess: """$->get(2)->eq(2)->and($->get(4)->get("0")->ne(null))""", errors: {message: """
+  $([$->get(4)->get("1")->get("str"), $->get(4)->get("1")->get("rec")->get("1")->get("str")])->joinNotNull("")
+  """})
 }
 
 input AddRequestInput {
