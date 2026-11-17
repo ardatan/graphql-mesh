@@ -141,6 +141,7 @@ describe('json (@connect TJSON)', () => {
       /\$->get\(2\)->eq\(2\)->and\(\$->get\(4\)->get\("0"\)->ne\(null\)\)/,
     );
     expect(normalized).toMatch(/"zip",\s*4,\s*1,/); // ONEWAY message type in TJSON body
+    expect(normalized).toMatch(/selection:\s*"\$\(null\)"/); // not bare null (field path)
     expect(result).not.toMatch(/@thrift__rpc\(/);
     expect(result).not.toMatch(/@thrift__method\(/);
   });
@@ -194,6 +195,21 @@ describe('json (@connect TJSON)', () => {
       expect(boom.data?.divide ?? null).toBeNull();
       expect(boom.errors?.length).toBeGreaterThan(0);
       expect(String(boom.errors?.[0]?.message || '')).toMatch(/division by zero/i);
+    });
+
+    it('ONEWAY zip returns null on empty HTTP body', async () => {
+      const composition = await compose({
+        services: [calculator],
+        output: 'graphql',
+        args: ['-c', 'mesh.json.config.ts'],
+      });
+      const { execute } = await serve({
+        runner,
+        supergraph: composition.output,
+      });
+      const result = await execute({ query: zipQuery });
+      expect(result.errors).toBeFalsy();
+      expect(result.data).toEqual({ zip: null });
     });
   });
 });

@@ -855,6 +855,11 @@ export function applySelection(selection: string, root: any, extras: ConnectSele
   if (trimmed === '$' || trimmed === '$root') {
     return root;
   }
+  // `$()` expressions (incl. multiline `$({ … })` / `$(null)`) evaluate as a whole so
+  // JSON array envelopes (TJSON) are not mistaken for GraphQL list roots.
+  if (trimmed.startsWith('$(')) {
+    return evalPath(trimmed, root, extras);
+  }
   // Mesh: `$ _response: { … }` — keep JSON body fields and overlay mapped keys.
   // Only when `$` is followed by whitespace (not `$status` / `$.x` / `$->…`).
   if (/^\$\s+\S/.test(trimmed)) {
@@ -1011,6 +1016,14 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
       const sepMatch = rawArgs.match(/^["'](.*)["']$/);
       const sep = sepMatch ? sepMatch[1] : ',';
       return left.filter(v => v != null).join(sep);
+    }
+    // `$([a, b])->concat($args.ids)` — append array elements (TJSON list/set envelopes).
+    // Prefer over LitArray `...` spreads (Apollo LitArray grammar has no spread).
+    if (method === 'concat') {
+      const right = evalConnectorsLitExpr(rawArgs.trim(), root, extras);
+      const leftArr = Array.isArray(left) ? left : left == null ? [] : [left];
+      const rightArr = Array.isArray(right) ? right : right == null ? [] : [right];
+      return leftArr.concat(rightArr);
     }
     if (method === 'jsonStringify') {
       return JSON.stringify(left);
@@ -1512,8 +1525,14 @@ function evalMappingExpression(
 }
 
 function evalSubSelection(selection: string, root: any, extras: ConnectSelectionExtras): any {
+  // Apollo maps relative NamedSelection over JSON array roots (`id name` → per element).
+  // Root `$` expressions (`$->get`, `$()`, `$.path`) treat the array itself as `$`
+  // (TJSON message envelopes are arrays, not GraphQL lists).
   if (Array.isArray(root)) {
-    return root.map(item => evalSubSelection(selection, item, extras));
+    const t = selection.trim();
+    if (!(t.startsWith('$') || t.startsWith('...') || t.startsWith('{'))) {
+      return root.map(item => evalSubSelection(selection, item, extras));
+    }
   }
   const tokens = tokenizeSelection(selection);
   // Apollo: a lone path root like `$.products { id }` is the field value itself,

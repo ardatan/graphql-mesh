@@ -140,7 +140,7 @@ describe('thrift', () => {
     const connect = (schema.getQueryType()!.getFields().zip.extensions as any).directives.connect;
     expect(connect.isSuccess).toBeUndefined();
     expect(connect.errors).toBeUndefined();
-    expect(connect.selection).toBe('null');
+    expect(connect.selection).toBe('$(null)');
     // Non-void CALL methods require success field "0" (declared throws are not silent null).
     expect(normalized).toMatch(
       /\$->get\(2\)->eq\(2\)->and\(\$->get\(4\)->get\("0"\)->ne\(null\)\)/,
@@ -190,7 +190,23 @@ describe('thrift', () => {
     });
     const jsonSdl = printSchemaWithDirectives(json);
     expect(jsonSdl).toMatch(/type FlushSuccess[\s\S]*ok:\s*Boolean!/);
-    expect(jsonSdl).toMatch(/ok:\s*true/);
+    const flushConnect = (json.getQueryType()!.getFields().flush.extensions as any).directives
+      .connect;
+    expect(flushConnect.selection).toMatch(/^\$\(\{/);
+    expect(flushConnect.selection).toMatch(/ok:\s*\$->get\(4\)->size->eq\(0\)/);
+    expect(flushConnect.selection).not.toMatch(/\bok:\s*true\b/);
+  });
+
+  it('TJSON list args fail at generate (no LitArray spread / Router concat)', async () => {
+    await expect(
+      loadNonExecutableGraphQLSchemaFromIDL({
+        subgraphName: 'ListSvc',
+        source: './fixtures/list_arg.thrift',
+        baseDir: __dirname,
+        endpoint: 'http://localhost:4000/list',
+        protocol: 'json',
+      }),
+    ).rejects.toThrow(/list\/set arguments cannot be emitted as TJSON/);
   });
 
   it('TJSON bool args use integer match (0/1)', async () => {
@@ -216,5 +232,23 @@ describe('thrift', () => {
         protocol: 'json',
       }),
     ).rejects.toThrow(/map with bool values cannot be emitted as TJSON/);
+  });
+
+  it('TJSON ignoreExceptions:false unions emit $({…}) selection', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'Twitter',
+      source: './fixtures/twitter.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/twitter',
+      serviceName: 'Twitter',
+      protocol: 'json',
+      ignoreExceptions: false,
+    });
+    const postTweet = (schema.getQueryType()!.getFields().postTweet.extensions as any).directives
+      .connect.selection as string;
+    expect(postTweet.trim().startsWith('$({')).toBe(true);
+    expect(postTweet).toMatch(/value:\s*\$->get\(4\)/);
+    expect(postTweet).not.toMatch(/^ok:\s*true$/m);
+    expect(postTweet).not.toMatch(/^value:\s*\$->get/m);
   });
 });

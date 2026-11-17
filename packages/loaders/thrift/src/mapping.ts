@@ -386,25 +386,14 @@ function formatTJSONValueExpr(
   }
 
   if (resolved.type === TType.LIST || resolved.type === TType.SET) {
-    const elemTag = tjsonTypeTag(resolved.elementType, topTypeMap);
-    const elemResolved = resolveTypeVal(resolved.elementType, topTypeMap);
-    if (elemResolved.type === TType.STRUCT) {
-      // TJSON list header carries "rec"; each element is the id-keyed field object.
-      const fieldsObj = formatTJSONStructFieldsObject(
-        resolved.elementType,
-        '@',
-        topTypeMap,
-        level + 1,
-        seenStructs,
-      );
-      return `{ "${tag}": $([ "${elemTag}", ${valueExpr}->size, ...${valueExpr}->map(@->${fieldsObj}) ]) }`;
-    }
-    // Scalar list/set: Mesh `$()` accepts `...$path` spreads.
-    // Bool elements must be TJSON integers 0/1 (same as scalar `tf`).
-    if (elemResolved.type === TType.BOOL) {
-      return `{ "${tag}": $([ "${elemTag}", ${valueExpr}->size, ...${valueExpr}->map(@->match([true, 1], [false, 0], [@, 0])) ]) }`;
-    }
-    return `{ "${tag}": $([ "${elemTag}", ${valueExpr}->size, ...${valueExpr} ]) }`;
+    // TJSON list/set wire is `[type, size, elem1, elem2, …]`. Apollo LitArray has
+    // no element spread, and public Connectors have no `concat` / flatten to build
+    // that header+elements array on Router. Fail at generate (same policy as
+    // map<*, bool>). Hand-author `@connect` body on Hive (Mesh accepts
+    // `$([type, size])->concat($args.list)`), or use binary / change the IDL.
+    throw new Error(
+      `Thrift list/set arguments cannot be emitted as TJSON @connect body: Connectors LitArray has no element spread and no public Router-safe concat/flatten to build [type, size, …elements]. Prefer scalar/struct args, change the IDL, use binary protocol, or hand-author the @connect body (Hive Mesh supports ->concat).`,
+    );
   }
 
   if (resolved.type === TType.MAP) {
@@ -414,11 +403,11 @@ function formatTJSONValueExpr(
     // TJSON map payload is a JSON object (thrift JS / common readers). Bool values
     // must be integers 0/1, but public Connectors cannot rewrite object map values
     // (no shipped `mapValues` / fromEntries on Router). Fail at generate rather than
-    // emit true/false tokens Apache readers reject. List/set bool elements use
-    // `->map(@->match(...))` above.
+    // emit true/false tokens Apache readers reject. (List/set args also fail at
+    // generate — no LitArray spread / Router-safe concat for TJSON envelopes.)
     if (valResolved.type === TType.BOOL) {
       throw new Error(
-        `Thrift map with bool values cannot be emitted as TJSON @connect body: Connectors have no public Router-safe way to rewrite object map values to 0/1. Prefer list/set of bool, change the IDL, or hand-author the @connect body.`,
+        `Thrift map with bool values cannot be emitted as TJSON @connect body: Connectors have no public Router-safe way to rewrite object map values to 0/1. Prefer scalar bool args, change the IDL, or hand-author the @connect body.`,
       );
     }
     return `{ "${tag}": $([ "${keyTag}", "${valTag}", ${valueExpr}->size, ${valueExpr} ]) }`;
@@ -473,12 +462,12 @@ export function buildTJSONConnectSelection(
   topTypeMap: TypeMap,
 ): string {
   if (!returnTypeVal || returnTypeVal.type === TType.VOID) {
-    // Void/ONEWAY — no success payload; connectors coerce to GraphQL Void/null.
-    return 'null';
+    // Void/ONEWAY — `$(null)` literal (bare `null` is a field path in Hive/NamedSelection).
+    return '$(null)';
   }
   const resolved = resolveTypeVal(returnTypeVal, topTypeMap);
   if (resolved.type === TType.VOID) {
-    return 'null';
+    return '$(null)';
   }
   if (resolved.type === TType.LIST || resolved.type === TType.SET) {
     const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
@@ -514,6 +503,10 @@ export function buildTJSONConnectSelection(
 /**
  * TJSON selection for `ignoreExceptions: false` unions — success under `value`,
  * plus declared throw struct fields projected from their result field ids.
+ *
+ * Emitted as a single `$({ … })` literal so Hive/Mesh does not treat the TJSON
+ * message array as a GraphQL list and map NamedSelection per element. Bool
+ * literals use `$(true)` (bare `true` is a field path).
  */
 export function buildTJSONUnionConnectSelection(
   returnTypeVal: TypeVal | undefined,
@@ -521,19 +514,18 @@ export function buildTJSONUnionConnectSelection(
   topTypeMap: TypeMap,
 ): string {
   const resolvedReturn = returnTypeVal ? resolveTypeVal(returnTypeVal, topTypeMap) : undefined;
-  const lines: string[] = [];
+  const props: string[] = [];
   if (!resolvedReturn || resolvedReturn.type === TType.VOID) {
     // Void success member is `ok: Boolean!` (not `value: Void!`).
-    lines.push('ok: true');
+    // True only for empty result map; declared throws use non-0 field ids.
+    props.push('ok: $->get(4)->size->eq(0)');
   } else if (resolvedReturn.type === TType.STRUCT) {
-    // Struct success must be a sub-selection under `value`, not multiline
-    // `value: a: path\nb: path` (invalid JSONSelection).
     const nested = Object.entries(resolvedReturn.fields)
-      .map(([n, t]) => formatTJSONSelectionField(n, t, topTypeMap, '$'))
-      .join('\n  ');
-    lines.push(`value: $->get(4)->get("0")->get("rec") {\n  ${nested}\n}`);
+      .map(([n, t]) => formatTJSONLitProperty(n, t, topTypeMap, '$->get(4)->get("0")->get("rec")'))
+      .join(',\n    ');
+    props.push(`value: $({\n    ${nested}\n  })`);
   } else {
-    lines.push(`value: ${buildTJSONConnectSelection(returnTypeVal, topTypeMap)}`);
+    props.push(`value: ${buildTJSONConnectSelection(returnTypeVal, topTypeMap)}`);
   }
   for (const t of throws) {
     const typeVal = topTypeMap[t.typeName];
@@ -541,13 +533,52 @@ export function buildTJSONUnionConnectSelection(
     const parent = `$->get(4)->get("${fid}")->get("rec")`;
     if (typeVal && typeVal.type === TType.STRUCT) {
       for (const [fieldName, fieldType] of Object.entries(typeVal.fields)) {
-        lines.push(formatTJSONSelectionField(fieldName, fieldType, topTypeMap, parent));
+        props.push(formatTJSONLitProperty(fieldName, fieldType, topTypeMap, parent));
       }
     } else {
-      lines.push(`message: ${parent}->get("1")->get("str")`);
+      props.push(`message: ${parent}->get("1")->get("str")`);
     }
   }
-  return lines.join('\n');
+  return `$({\n  ${props.join(',\n  ')}\n})`;
+}
+
+/** LitObject property `name: expr` for `$({ … })` union selections (no NamedSelection braces). */
+function formatTJSONLitProperty(
+  graphqlName: string,
+  typeVal: TypeVal,
+  topTypeMap: TypeMap,
+  parentPath: string,
+  seenStructs: Set<string> = new Set(),
+): string {
+  const id = String(typeVal.id ?? 1);
+  const resolved = resolveTypeVal(typeVal, topTypeMap);
+  const tag = tjsonTypeTag(typeVal, topTypeMap);
+  const fieldPath = `${parentPath}->get("${id}")`;
+
+  if (resolved.type === TType.STRUCT) {
+    const structName = resolved.name || graphqlName;
+    if (seenStructs.has(structName)) {
+      return `${graphqlName}: ${fieldPath}->get("rec")`;
+    }
+    const nextSeen = new Set(seenStructs);
+    nextSeen.add(structName);
+    const nested = Object.entries(resolved.fields)
+      .map(([childName, childType]) =>
+        formatTJSONLitProperty(childName, childType, topTypeMap, `${fieldPath}->get("rec")`, nextSeen),
+      )
+      .join(',\n    ');
+    return `${graphqlName}: $({\n    ${nested}\n  })`;
+  }
+
+  if (resolved.type === TType.LIST || resolved.type === TType.SET) {
+    return `${graphqlName}: ${fieldPath}->get("${tag}")->slice(2)`;
+  }
+
+  if (resolved.type === TType.MAP) {
+    return `${graphqlName}: ${fieldPath}->get("${tag}")->get(3)`;
+  }
+
+  return `${graphqlName}: ${fieldPath}->get("${tag}")`;
 }
 
 function formatTJSONSelectionField(

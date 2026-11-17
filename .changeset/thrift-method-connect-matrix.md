@@ -45,7 +45,8 @@ Emits `@source` + `@connect` (TJSON) instead of thrift `@transport`:
 - Path `/`, or `/<service>` when `serviceName` is set
 - Body message types CALL=`1`, ONEWAY=`4`
 - `isSuccess` / `errors` so declared throws and `TApplicationException` are not silent nulls; ONEWAY omits `isSuccess`
-- Bool scalars / list / set elements encode as TJSON integers `0`/`1`. `map<*, bool>` **fails at generate** (Connectors have no public Router-safe rewrite of object map values); prefer list/set of bool or hand-author `@connect`
+- Bool scalars encode as TJSON integers `0`/`1`. `map<*, bool>` and **list/set args** **fail at generate** (Connectors LitArray has no element spread / no public Router-safe concat to build `[type, size, …elements]`); prefer scalar/struct args, binary protocol, or hand-author `@connect` (Hive Mesh supports `->concat`)
+- Void/ONEWAY `@connect(selection:)` uses `$(null)` (bare `null` is a field path). `ignoreExceptions: false` unions emit a single `$({ … })` selection so TJSON array envelopes are not mapped per element; void `ok` is `$->get(4)->size->eq(0)`
 
 #### Exceptions
 
