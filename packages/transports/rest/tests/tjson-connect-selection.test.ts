@@ -1,6 +1,18 @@
-import { applySelection } from '../src/directives/connect.js';
+import { applySelection, type ConnectSelectionExtras } from '../src/directives/connect.js';
 
-const extras = { vars: { args: {} }, status: 200 };
+function extrasWithArgs(args: Record<string, any> = {}): ConnectSelectionExtras {
+  return {
+    status: 200,
+    vars: {
+      args,
+      thisValue: undefined,
+      env: {},
+      context: {},
+    },
+  };
+}
+
+const extras = extrasWithArgs();
 
 describe('TJSON @connect selection (Hive Mesh eval)', () => {
   it('$(null) returns null on empty body; bare null is a field path', () => {
@@ -35,7 +47,7 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
   });
 
   it('->concat builds TJSON list envelopes without LitArray spreads', () => {
-    const listExtras = { vars: { args: { ids: [10, 20] } }, status: 200 };
+    const listExtras = extrasWithArgs({ ids: [10, 20] });
     expect(
       applySelection('$([ "i32", $args.ids->size ])->concat($args.ids)', {}, listExtras),
     ).toEqual(['i32', 2, 10, 20]);
