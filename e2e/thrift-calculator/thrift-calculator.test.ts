@@ -8,21 +8,27 @@ const addQuery = /* GraphQL */ `
   }
 `;
 
+const addExceptionQuery = /* GraphQL */ `
+  query AddBoom {
+    add(request: { left: -1, right: 3 })
+  }
+`;
+
 let calculator: Service;
 
 beforeAll(async () => {
   calculator = await service('calculator');
 });
 
-describe('binary (@thrift__method)', () => {
-  it('composes schema with @thrift__method', async () => {
+describe('binary (@thrift__rpc)', () => {
+  it('composes schema with @thrift__rpc', async () => {
     const { result } = await compose({
       services: [calculator],
       maskServicePorts: true,
     });
     expect(result).toMatchSnapshot();
-    expect(result).toMatch(/@thrift__method\(/);
-    expect(result).toMatch(/method:\s*"add"/);
+    expect(result).toMatch(/@thrift__rpc\(/);
+    expect(result).toMatch(/function:\s*"add"/);
     expect(result).toMatch(/1\(struct\):\s*\$args\.request/);
     expect(result).toMatch(/\$\(i32\)/);
     expect(result).toMatch(/@fieldTypeMap\(/);
@@ -36,10 +42,23 @@ describe('binary (@thrift__method)', () => {
     const { execute } = await serve({ supergraph: output, runner: 'hive' });
     await expect(execute({ query: addQuery })).resolves.toMatchSnapshot();
   });
+
+  it('surfaces thrift application exceptions on hive', async () => {
+    const { output } = await compose({
+      services: [calculator],
+      output: 'graphql',
+    });
+    const { execute } = await serve({ supergraph: output, runner: 'hive' });
+    const result = await execute({ query: addExceptionQuery });
+    expect(result.data?.add ?? null).toBeNull();
+    expect(result.errors?.length).toBeGreaterThan(0);
+    // Hive may mask the downstream message as "Unexpected error." while logging the real one.
+    expect(result.errors?.[0]?.extensions?.code || result.errors?.[0]?.message).toBeTruthy();
+  });
 });
 
 describe('json (@connect TJSON)', () => {
-  it('composes schema with @connect', async () => {
+  it('composes schema with @connect isSuccess/errors', async () => {
     const { result } = await compose({
       services: [calculator],
       maskServicePorts: true,
@@ -50,7 +69,9 @@ describe('json (@connect TJSON)', () => {
     expect(result).toMatch(/name:\s*"connect"/);
     expect(result).toMatch(/application\/vnd\.apache\.thrift\.json/);
     expect(result).toMatch(/\$\(\[/);
-    expect(result).not.toMatch(/@thrift__method\(/);
+    expect(result).toMatch(/isSuccess/);
+    expect(result).toMatch(/\$->get\(2\)->eq\(2\)/);
+    expect(result).not.toMatch(/@thrift__rpc\(/);
   });
 
   describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {
@@ -67,6 +88,22 @@ describe('json (@connect TJSON)', () => {
       const result = await execute({ query: addQuery });
       expect(result.errors).toBeFalsy();
       expect(result.data).toEqual({ add: 5 });
+    });
+
+    it('maps TJSON EXCEPTION via isSuccess/errors', async () => {
+      const composition = await compose({
+        services: [calculator],
+        output: 'graphql',
+        args: ['-c', 'mesh.json.config.ts'],
+      });
+      const { execute } = await serve({
+        runner,
+        supergraph: composition.output,
+      });
+      const result = await execute({ query: addExceptionQuery });
+      expect(result.data?.add ?? null).toBeNull();
+      expect(result.errors?.length).toBeGreaterThan(0);
+      expect(String(result.errors?.[0]?.message || '')).toMatch(/left must not be -1/i);
     });
   });
 });

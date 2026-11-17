@@ -19,7 +19,13 @@ import {
 import type { GraphQLThriftAnnotations, TypeMap, TypeVal } from './types.js';
 
 interface IGraphQLThriftClient extends ThriftClient {
-  doRequest(methodName: string, args: any, fields: TypeMap, context?: any): Promise<any>;
+  doRequest(
+    methodName: string,
+    args: any,
+    fields: TypeMap,
+    context?: any,
+    messageType?: 'CALL' | 'ONEWAY',
+  ): Promise<any>;
 }
 
 export function createGraphQLThriftClient<Context = any>({
@@ -204,13 +210,21 @@ export function createGraphQLThriftClient<Context = any>({
       }
     }
 
-    async doRequest(methodName: string, args: any, fields: TypeMap, context?: any) {
+    async doRequest(
+      methodName: string,
+      args: any,
+      fields: TypeMap,
+      context?: any,
+      outboundMessageType: 'CALL' | 'ONEWAY' = 'CALL',
+    ) {
       const Transport = this.transport;
       const Protocol = this.protocol;
       const writer: TTransport = new Transport();
       const output: TProtocol = new Protocol(writer);
       const id = this.incrementRequestId();
-      output.writeMessageBegin(methodName, MessageType.CALL, id);
+      const wireMessageType =
+        outboundMessageType === 'ONEWAY' ? MessageType.ONEWAY : MessageType.CALL;
+      output.writeMessageBegin(methodName, wireMessageType, id);
       this.writeType(
         {
           name: pascalCase(methodName) + '__Args',
@@ -223,6 +237,9 @@ export function createGraphQLThriftClient<Context = any>({
       );
       output.writeMessageEnd();
       const data: Buffer = await this.connection.send(writer.flush(), context);
+      if (outboundMessageType === 'ONEWAY') {
+        return null;
+      }
       const reader: TTransport = this.transport.receiver(data);
       const input: TProtocol = new Protocol(reader);
       const { fieldName, messageType }: IThriftMessage = input.readMessageBegin();

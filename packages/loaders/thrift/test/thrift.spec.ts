@@ -41,11 +41,11 @@ describe('thrift', () => {
       });
       const sdl = printSchemaWithDirectives(schema);
       expect(sdl).toMatchSnapshot(`${schemaName}-schema`);
-      expect(sdl).toMatch(/@thrift__method\(/);
+      expect(sdl).toMatch(/@thrift__rpc\(/);
     });
   });
 
-  it('Calc json protocol emits @connect', async () => {
+  it('Calc json protocol emits @connect with isSuccess/errors', async () => {
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
       subgraphName: 'Calc',
       source: './fixtures/calc.thrift',
@@ -57,7 +57,9 @@ describe('thrift', () => {
     expect(sdl).toMatchSnapshot('Calc-json-connect-schema');
     expect(sdl).toMatch(/@connect\(/);
     expect(sdl).toMatch(/application\/vnd\.apache\.thrift\.json/);
-    expect(sdl).not.toMatch(/@thrift__method\(/);
+    expect(sdl).toMatch(/isSuccess/);
+    expect(sdl).toMatch(/\$->get\(2\)->eq\(2\)/);
+    expect(sdl).not.toMatch(/@thrift__rpc\(/);
   });
 
   it('entityMethods stamps entity: true', async () => {
@@ -71,6 +73,23 @@ describe('thrift', () => {
       entityMethods: ['add'],
     });
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toMatch(/@thrift__method\([\s\S]*entity:\s*true/);
+    expect(sdl).toMatch(/@thrift__rpc\([\s\S]*entity:\s*true/);
+  });
+
+  it('ignoreExceptions: false models throws as union', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'Twitter',
+      source: './fixtures/twitter.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/twitter',
+      serviceName: 'Twitter',
+      protocol: 'binary',
+      ignoreExceptions: false,
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toMatch(/type TwitterUnavailable/);
+    expect(sdl).toMatch(/union PostTweetResult/);
+    expect(sdl).toMatch(/type PostTweetSuccess/);
+    expect(sdl).toMatch(/messageType:\s*ONEWAY/);
   });
 });

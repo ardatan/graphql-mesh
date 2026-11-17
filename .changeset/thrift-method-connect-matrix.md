@@ -4,4 +4,4 @@
 '@graphql-mesh/transport-rest': patch
 ---
 
-Thrift loader emits `@thrift__method` (binary/compact) with optional `entity: true`, and TJSON `@connect`/`@source` when `protocol: 'json'`. Transport honors `protocol` and `@thrift__method(method)`. Connectors `$()` lit arrays/objects gain `$args` embeds (`size`/`slice`) for TJSON envelopes. E2E matrix: Hive×binary|json, Apollo Router×json.
+Thrift loader emits `@thrift__rpc` (`function`, `messageType` CALL|ONEWAY, optional `entity`) for binary/compact, and TJSON `@connect`/`@source` with `isSuccess`/`errors` when `protocol: 'json'`. Optional `ignoreExceptions: false` models IDL `throws` as GraphQL unions. Transport honors `protocol`, RPC function name, and ONEWAY. E2E: Hive×binary|json + exception smoke, Apollo Router×json.

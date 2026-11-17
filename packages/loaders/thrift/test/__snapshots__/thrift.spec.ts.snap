@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`thrift Calc json protocol emits @connect: Calc-json-connect-schema 1`] = `
+exports[`thrift Calc json protocol emits @connect with isSuccess/errors: Calc-json-connect-schema 1`] = `
 "schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @source(name: "Calc", http: {baseURL: "http://localhost:4000/thrift-json", headers: [{name: "Content-Type", value: "application/vnd.apache.thrift.json"}, {name: "Accept", value: "application/vnd.apache.thrift.json"}]}) {
   query: Query
 }
@@ -15,22 +15,24 @@ type Query {
   """
   Thrift json RPC
   service: Calculator
-  method: add
+  function: add
+  messageType: CALL
   args field ids:
     - 1 = request (struct)
   success wire type: i32 (result field id 0)
   """
-  add(request: AddRequestInput): Int @connect(source: "Calc", http: {POST: "/", body: "$([\\n  1,\\n  \\"add\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": {\\n        \\"rec\\": {\\n        \\"1\\": { \\"i32\\": $args.request.left },\\n        \\"2\\": { \\"i32\\": $args.request.right }\\n        }\\n      }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")")
+  add(request: AddRequestInput): Int @connect(source: "Calc", http: {POST: "/", body: "$([\\n  1,\\n  \\"add\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": {\\n        \\"rec\\": {\\n        \\"1\\": { \\"i32\\": $args.request.left },\\n        \\"2\\": { \\"i32\\": $args.request.right }\\n        }\\n      }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)", errors: {message: "$->get(4)->get(\\"1\\")->get(\\"str\\")"})
   """
   Thrift json RPC
   service: Calculator
-  method: subtract
+  function: subtract
+  messageType: CALL
   args field ids:
     - 1 = left (i32)
     - 2 = right (i32)
   success wire type: i32 (result field id 0)
   """
-  subtract(left: Int, right: Int): Int @connect(source: "Calc", http: {POST: "/", body: "$([\\n  1,\\n  \\"subtract\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": { \\"i32\\": $args.left },\\n      \\"2\\": { \\"i32\\": $args.right }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")")
+  subtract(left: Int, right: Int): Int @connect(source: "Calc", http: {POST: "/", body: "$([\\n  1,\\n  \\"subtract\\",\\n  1,\\n  1,\\n  {\\n      \\"1\\": { \\"i32\\": $args.left },\\n      \\"2\\": { \\"i32\\": $args.right }\\n  }\\n])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)", errors: {message: "$->get(4)->get(\\"1\\")->get(\\"str\\")"})
 }
 
 input AddRequestInput {
@@ -83,28 +85,35 @@ exports[`thrift Calc: Calc-schema 1`] = `
 
 directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
 
-directive @thrift__method(subgraph: String, service: String, method: String!, args: String!, selection: String!, entity: Boolean) on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
+
+enum ThriftMessageType {
+  CALL
+  ONEWAY
+}
 
 type Query {
   """
   Thrift binary RPC
   service: Calculator
-  method: add
+  function: add
+  messageType: CALL
   args field ids:
     - 1 = request (struct)
   success wire type: i32 (result field id 0)
   """
-  add(request: AddRequestInput): Int @thrift__method(subgraph: "Calc", method: "add", args: "1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "$(i32)", service: "Calculator") @fieldTypeMap(subgraph: "Calc", fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
+  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "Calc", function: "add", args: "1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}", selection: "$(i32)", messageType: CALL, service: "Calculator") @fieldTypeMap(subgraph: "Calc", fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
   """
   Thrift binary RPC
   service: Calculator
-  method: subtract
+  function: subtract
+  messageType: CALL
   args field ids:
     - 1 = left (i32)
     - 2 = right (i32)
   success wire type: i32 (result field id 0)
   """
-  subtract(left: Int, right: Int): Int @thrift__method(subgraph: "Calc", method: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", service: "Calculator") @fieldTypeMap(subgraph: "Calc", fieldTypeMap: {left: {name: "calc_types_digit", type: "ref", id: 1}, right: {name: "calc_types_digit", type: "ref", id: 2}})
+  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calc", function: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: CALL, service: "Calculator") @fieldTypeMap(subgraph: "Calc", fieldTypeMap: {left: {name: "calc_types_digit", type: "ref", id: 1}, right: {name: "calc_types_digit", type: "ref", id: 2}})
 }
 
 input AddRequestInput {
@@ -122,18 +131,24 @@ exports[`thrift Recursive: Recursive-schema 1`] = `
 
 directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
 
-directive @thrift__method(subgraph: String, service: String, method: String!, args: String!, selection: String!, entity: Boolean) on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
+
+enum ThriftMessageType {
+  CALL
+  ONEWAY
+}
 
 type Query {
   """
   Thrift binary RPC
   service: Recursive
-  method: bar
+  function: bar
+  messageType: CALL
   args field ids:
     - 1 = foo (struct)
   success wire type: struct (result field id 0)
   """
-  bar(foo: FooInput): Foo @thrift__method(subgraph: "Recursive", method: "bar", args: "1(struct): $args.foo {\\n  1(struct): name\\n  2(struct): foo\\n}", selection: "name: 1(struct)\\nfoo: 2 {\\n  name: 1(struct)\\n  foo: 2(struct)\\n}", service: "Recursive") @fieldTypeMap(subgraph: "Recursive", fieldTypeMap: {foo: {name: "Foo", type: "ref", id: 1}})
+  bar(foo: FooInput): Foo @thrift__rpc(subgraph: "Recursive", function: "bar", args: "1(struct): $args.foo {\\n  1(struct): name\\n  2(struct): foo\\n}", selection: "name: 1(struct)\\nfoo: 2 {\\n  name: 1(struct)\\n  foo: 2(struct)\\n}", messageType: CALL, service: "Recursive") @fieldTypeMap(subgraph: "Recursive", fieldTypeMap: {foo: {name: "Foo", type: "ref", id: 1}})
 }
 
 type Foo {
@@ -150,51 +165,66 @@ scalar FieldTypeMap"
 `;
 
 exports[`thrift Twitter: Twitter-schema 1`] = `
-"schema @transport(subgraph: "Twitter", kind: "thrift", location: "http://localhost:4000/twitter", headers: [["x-api-key", "123"]], options: {protocol: "binary", clientAnnotations: {serviceName: "twitter-service", annotations: {}, methodNames: ["ping", "postTweet", "searchTweets", "zip"], methodAnnotations: {ping: {annotations: {}, fieldAnnotations: {}}, postTweet: {annotations: {}, fieldAnnotations: {}}, searchTweets: {annotations: {}, fieldAnnotations: {}}, zip: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {ping: 1, postTweet: 2, searchTweets: 2, zip: 1}}, topTypeMap: {Location: {id: 0, name: "Location", type: 12, fields: {latitude: {type: 4, id: 1}, longitude: {type: 4, id: 2}}}, Tweet: {id: 1, name: "Tweet", type: 12, fields: {userId: {type: 8, id: 1}, userName: {id: 2}, text: {id: 3}, loc: {name: "Location", type: "ref", id: 4}, tweetType: {name: "TweetType", type: "ref", id: 5}, language: {id: 16}}}, TweetList: {type: 15, elementType: {name: "Tweet", type: "ref", id: 2}, id: 2}, TweetSearchResult: {id: 3, name: "TweetSearchResult", type: 12, fields: {tweets: {name: "TweetList", type: "ref", id: 1}}}}}) {
+"schema @transport(subgraph: "Twitter", kind: "thrift", location: "http://localhost:4000/twitter", headers: [["x-api-key", "123"]], options: {protocol: "binary", clientAnnotations: {serviceName: "twitter-service", annotations: {}, methodNames: ["ping", "postTweet", "searchTweets", "zip"], methodAnnotations: {ping: {annotations: {}, fieldAnnotations: {}}, postTweet: {annotations: {}, fieldAnnotations: {}}, searchTweets: {annotations: {}, fieldAnnotations: {}}, zip: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {ping: 1, postTweet: 2, searchTweets: 2, zip: 1}}, topTypeMap: {Location: {id: 0, name: "Location", type: 12, fields: {latitude: {type: 4, id: 1}, longitude: {type: 4, id: 2}}}, Tweet: {id: 1, name: "Tweet", type: 12, fields: {userId: {type: 8, id: 1}, userName: {id: 2}, text: {id: 3}, loc: {name: "Location", type: "ref", id: 4}, tweetType: {name: "TweetType", type: "ref", id: 5}, language: {id: 16}}}, TweetList: {type: 15, elementType: {name: "Tweet", type: "ref", id: 2}, id: 2}, TweetSearchResult: {id: 3, name: "TweetSearchResult", type: 12, fields: {tweets: {name: "TweetList", type: "ref", id: 1}}}, TwitterUnavailable: {id: 4, name: "TwitterUnavailable", type: 12, fields: {message: {id: 1}}}}}) {
   query: Query
 }
 
 directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
 
-directive @thrift__method(subgraph: String, service: String, method: String!, args: String!, selection: String!, entity: Boolean) on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
+
+enum ThriftMessageType {
+  CALL
+  ONEWAY
+}
+
+type TwitterUnavailable {
+  message: String
+}
 
 type Query {
   """
   Thrift binary RPC
   service: twitter-service
-  method: ping
+  function: ping
+  messageType: CALL
   args field ids:
     (none)
   success wire type: void (result field id 0)
   """
-  ping: Void @thrift__method(subgraph: "Twitter", method: "ping", args: "", selection: "$(void)", service: "twitter-service") @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {})
+  ping: Void @thrift__rpc(subgraph: "Twitter", function: "ping", args: "", selection: "$(void)", messageType: CALL, service: "twitter-service") @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {})
   """
   Thrift binary RPC
   service: twitter-service
-  method: postTweet
+  function: postTweet
+  messageType: CALL
   args field ids:
     - 1 = tweet (struct)
   success wire type: bool (result field id 0)
+  throws (ignored; use ignoreExceptions: false to model as union):
+    - 1 = unavailable (TwitterUnavailable)
   """
-  postTweet(tweet: TweetInput): Boolean @thrift__method(subgraph: "Twitter", method: "postTweet", args: "1(struct): $args.tweet {\\n  1(i32): userId\\n  2(struct): userName\\n  3(struct): text\\n  4(struct): loc {\\n    1(double): latitude\\n    2(double): longitude\\n  }\\n  5(struct): tweetType\\n  16(struct): language\\n}", selection: "$(bool)", service: "twitter-service") @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {tweet: {name: "Tweet", type: "ref", id: 1}})
+  postTweet(tweet: TweetInput): Boolean @thrift__rpc(subgraph: "Twitter", function: "postTweet", args: "1(struct): $args.tweet {\\n  1(i32): userId\\n  2(struct): userName\\n  3(struct): text\\n  4(struct): loc {\\n    1(double): latitude\\n    2(double): longitude\\n  }\\n  5(struct): tweetType\\n  16(struct): language\\n}", selection: "$(bool)", messageType: CALL, service: "twitter-service") @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {tweet: {name: "Tweet", type: "ref", id: 1}})
   """
   Thrift binary RPC
   service: twitter-service
-  method: searchTweets
+  function: searchTweets
+  messageType: CALL
   args field ids:
     - 1 = query (struct)
   success wire type: struct (result field id 0)
   """
-  searchTweets(query: String): TweetSearchResult @thrift__method(subgraph: "Twitter", method: "searchTweets", args: "1(struct): $args.query", selection: "tweets: 1(list) {\\n  userId: 1(i32)\\n  userName: 2(struct)\\n  text: 3(struct)\\n  loc: 4 {\\n    latitude: 1(double)\\n    longitude: 2(double)\\n  }\\n  tweetType: 5(struct)\\n  language: 16(struct)\\n}", service: "twitter-service") @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {query: {id: 1}})
+  searchTweets(query: String): TweetSearchResult @thrift__rpc(subgraph: "Twitter", function: "searchTweets", args: "1(struct): $args.query", selection: "tweets: 1(list) {\\n  userId: 1(i32)\\n  userName: 2(struct)\\n  text: 3(struct)\\n  loc: 4 {\\n    latitude: 1(double)\\n    longitude: 2(double)\\n  }\\n  tweetType: 5(struct)\\n  language: 16(struct)\\n}", messageType: CALL, service: "twitter-service") @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {query: {id: 1}})
   """
   Thrift binary RPC
   service: twitter-service
-  method: zip
+  function: zip
+  messageType: ONEWAY
   args field ids:
     (none)
   success wire type: void (result field id 0)
   """
-  zip: Void @thrift__method(subgraph: "Twitter", method: "zip", args: "", selection: "$(void)", service: "twitter-service") @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {})
+  zip: Void @thrift__rpc(subgraph: "Twitter", function: "zip", args: "", selection: "$(void)", messageType: ONEWAY, service: "twitter-service") @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {})
 }
 
 """Represents NULL values"""

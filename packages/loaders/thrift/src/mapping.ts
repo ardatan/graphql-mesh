@@ -82,7 +82,7 @@ function indent(level: number): string {
 }
 
 /**
- * Compact `@thrift__method(args:)` — Thrift-id first.
+ * Compact `@thrift__rpc(args:)` — Thrift-id first.
  * Example:
  * ```
  * 1(struct): $args.request {
@@ -153,7 +153,7 @@ function formatCompactArgField(
 }
 
 /**
- * Compact `@thrift__method(selection:)` — GraphQL-field first / scalar `$(wire)`.
+ * Compact `@thrift__rpc(selection:)` — GraphQL-field first / scalar `$(wire)`.
  */
 export function buildCompactSelection(
   returnTypeVal: TypeVal | undefined,
@@ -218,13 +218,16 @@ function formatCompactSelectionField(
   return [`${pad}${graphqlName}: ${id}(${token})`];
 }
 
-export function buildThriftMethodDescription(opts: {
+export function buildThriftRpcDescription(opts: {
   serviceName?: string;
-  methodName: string;
+  functionName: string;
   fieldTypeMap: TypeMap;
   returnTypeVal?: TypeVal;
   topTypeMap: TypeMap;
   protocol: ThriftProtocol;
+  messageType?: 'CALL' | 'ONEWAY';
+  throws?: Array<{ id: number; name: string; typeName: string }>;
+  ignoreExceptions?: boolean;
 }): string {
   const fieldLines = Object.entries(opts.fieldTypeMap).map(([name, typeVal]) => {
     const id = typeVal.id ?? '?';
@@ -233,15 +236,35 @@ export function buildThriftMethodDescription(opts: {
   const returnTok = opts.returnTypeVal
     ? wireTypeToken(opts.returnTypeVal, opts.topTypeMap)
     : 'void';
-  return [
+  const lines = [
     `Thrift ${opts.protocol} RPC`,
     opts.serviceName ? `service: ${opts.serviceName}` : 'service: (single-service endpoint)',
-    `method: ${opts.methodName}`,
+    `function: ${opts.functionName}`,
+    `messageType: ${opts.messageType || 'CALL'}`,
     'args field ids:',
     ...(fieldLines.length ? fieldLines : ['  (none)']),
     `success wire type: ${returnTok} (result field id 0)`,
-  ].join('\n');
+  ];
+  if (opts.throws?.length) {
+    lines.push(
+      opts.ignoreExceptions === false
+        ? 'throws (modeled as GraphQL union):'
+        : 'throws (ignored; use ignoreExceptions: false to model as union):',
+    );
+    for (const t of opts.throws) {
+      lines.push(`  - ${t.id} = ${t.name} (${t.typeName})`);
+    }
+  }
+  return lines.join('\n');
 }
+
+/** TJSON REPLY = 2; EXCEPTION = 3. */
+export const TJSON_IS_SUCCESS = '$->get(2)->eq(2)';
+
+/** TApplicationException message field (id 1, string) inside EXCEPTION payload. */
+export const TJSON_ERRORS = {
+  message: '$->get(4)->get("1")->get("str")',
+};
 
 /**
  * TJSON `@connect(http.body:)` — Apollo `$([…])` list literal with `$args` embeds.

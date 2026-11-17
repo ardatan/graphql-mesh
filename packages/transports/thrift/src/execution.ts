@@ -29,7 +29,10 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
   const headersFactory = getInterpolatedHeadersFactory(headers);
   const rootTypeMap = getRootTypeMap(subgraph);
   const fieldTypeMapDirectivesByField = new Map<string, any[]>();
-  const thriftMethodByField = new Map<string, { method?: string; entity?: boolean }>();
+  const thriftRpcByField = new Map<
+    string,
+    { functionName?: string; messageType?: 'CALL' | 'ONEWAY'; entity?: boolean }
+  >();
 
   return async function thriftExecutor(executionRequest): Promise<ExecutionResult<any, any>> {
     const operationsAndFragments = getOperationsAndFragments(executionRequest.document);
@@ -59,27 +62,36 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
         const fieldDirectives = getDirectiveExtensions(field) || {};
         fieldTypeMapDirectives = fieldDirectives.fieldTypeMap || [];
         fieldTypeMapDirectivesByField.set(fieldName, fieldTypeMapDirectives);
-        const thriftMethodDir = fieldDirectives.thrift__method?.[0];
-        if (thriftMethodDir) {
-          thriftMethodByField.set(fieldName, {
-            method: thriftMethodDir.method,
-            entity: thriftMethodDir.entity,
+        const thriftRpcDir =
+          fieldDirectives.thrift__rpc?.[0] || fieldDirectives.thrift__method?.[0];
+        if (thriftRpcDir) {
+          thriftRpcByField.set(fieldName, {
+            functionName: thriftRpcDir.function || thriftRpcDir.method,
+            messageType: thriftRpcDir.messageType || 'CALL',
+            entity: thriftRpcDir.entity,
           });
         }
       }
-      const thriftMethod = thriftMethodByField.get(fieldName);
-      const rpcMethodName = thriftMethod?.method || fieldName;
+      const thriftRpc = thriftRpcByField.get(fieldName);
+      const rpcFunctionName = thriftRpc?.functionName || fieldName;
+      const messageType = thriftRpc?.messageType || 'CALL';
       fieldTypeMapDirectives?.forEach(fieldTypeMapDirective => {
         requestPromises.push(
           client
-            .doRequest(rpcMethodName, args, fieldTypeMapDirective?.fieldTypeMap, {
-              headers: headersFactory({
-                root,
-                args,
-                context: executionRequest.context,
-                env: globalThis.process?.env,
-              }),
-            })
+            .doRequest(
+              rpcFunctionName,
+              args,
+              fieldTypeMapDirective?.fieldTypeMap,
+              {
+                headers: headersFactory({
+                  root,
+                  args,
+                  context: executionRequest.context,
+                  env: globalThis.process?.env,
+                }),
+              },
+              messageType,
+            )
             .then(result => {
               root[fieldName] = result;
             })

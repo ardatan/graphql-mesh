@@ -5,7 +5,7 @@ import { loadThriftSubgraph } from '@omnigraph/thrift';
 const opts = Opts(process.argv);
 
 /**
- * Default compose config — binary protocol + `@thrift__method`.
+ * Default compose config — binary protocol + `@thrift__rpc`.
  * JSON / `@connect` subgraph uses `mesh.json.config.ts`.
  */
 export const composeConfig = defineConfig({

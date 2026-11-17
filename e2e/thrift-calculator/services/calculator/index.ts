@@ -7,6 +7,10 @@ const opts = Opts(process.argv);
 
 const serviceHandlers: Calculator.IHandler<express.Request> = {
   add(request): number {
+    // Trigger TApplicationException path for e2e (JSON @connect isSuccess/errors).
+    if (request.left === -1) {
+      throw new Error('left must not be -1');
+    }
     return request.left + request.right;
   },
   subtract(left: number, right: number): number {

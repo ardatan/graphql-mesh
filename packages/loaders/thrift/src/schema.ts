@@ -19,6 +19,7 @@ import {
   GraphQLScalarType,
   GraphQLSchema,
   GraphQLString,
+  GraphQLUnionType,
 } from 'graphql';
 import { GraphQLBigInt, GraphQLByte, GraphQLJSON, GraphQLVoid } from 'graphql-scalars';
 import type {
@@ -52,7 +53,9 @@ import {
   buildCompactSelection,
   buildTJSONConnectBody,
   buildTJSONConnectSelection,
-  buildThriftMethodDescription,
+  buildThriftRpcDescription,
+  TJSON_ERRORS,
+  TJSON_IS_SUCCESS,
   thriftJsonContentTypeHeaders,
   type ThriftProtocol,
 } from './mapping.js';
@@ -68,10 +71,15 @@ export interface GraphQLThriftLoaderOptions {
   /** Wire protocol. `json` emits `@connect` / `@source` (Apollo Router–compatible). */
   protocol?: ThriftProtocol;
   /**
-   * Method names that should emit `entity: true` on `@thrift__method` / `@connect`
+   * Function names that should emit `entity: true` on `@thrift__rpc` / `@connect`
    * (Query entity resolvers).
    */
   entityMethods?: string[];
+  /**
+   * When true (default), IDL `throws` are not modeled in the GraphQL return type.
+   * Set false to emit exception object types + a union return (`Success | Throws…`).
+   */
+  ignoreExceptions?: boolean;
 
   baseDir?: string;
   schemaHeaders?: Record<string, string>;
@@ -95,18 +103,30 @@ export const fieldTypeMapDirective = new GraphQLDirective({
   },
 });
 
-export const thriftMethodDirective = new GraphQLDirective({
-  name: 'thrift__method',
+export const ThriftMessageTypeEnum = new GraphQLEnumType({
+  name: 'ThriftMessageType',
+  values: {
+    CALL: { value: 'CALL' },
+    ONEWAY: { value: 'ONEWAY' },
+  },
+});
+
+export const thriftRpcDirective = new GraphQLDirective({
+  name: 'thrift__rpc',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
     subgraph: { type: GraphQLString },
     service: { type: GraphQLString },
-    method: { type: new GraphQLNonNull(GraphQLString) },
+    function: { type: new GraphQLNonNull(GraphQLString) },
     args: { type: new GraphQLNonNull(GraphQLString) },
     selection: { type: new GraphQLNonNull(GraphQLString) },
+    messageType: { type: ThriftMessageTypeEnum, defaultValue: 'CALL' },
     entity: { type: GraphQLBoolean },
   },
 });
+
+/** @deprecated Use {@link thriftRpcDirective}. */
+export const thriftMethodDirective = thriftRpcDirective;
 
 export async function loadNonExecutableGraphQLSchemaFromIDL({
   subgraphName,
@@ -116,6 +136,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
   serviceName,
   protocol = 'binary',
   entityMethods = [],
+  ignoreExceptions = true,
 
   baseDir = globalThis.process?.cwd?.(),
   schemaHeaders = {},
@@ -143,6 +164,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
     serviceName,
     protocol,
     entityMethods,
+    ignoreExceptions,
   });
 }
 
@@ -214,6 +236,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   serviceName,
   protocol = 'binary',
   entityMethods = [],
+  ignoreExceptions = true,
 }: {
   subgraphName: string;
   baseNamespace: string;
@@ -223,10 +246,12 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   serviceName?: string;
   protocol?: ThriftProtocol;
   entityMethods?: string[];
+  ignoreExceptions?: boolean;
 }) {
   const enumTypeMap = new Map<string, GraphQLEnumType>();
   const outputTypeMap = new Map<string, GraphQLOutputType>();
   const inputTypeMap = new Map<string, GraphQLInputType>();
+  const exceptionTypeMap = new Map<string, GraphQLObjectType>();
   const rootFields: GraphQLFieldConfigMap<any, any> = {};
   const annotations: IThriftAnnotations = {};
   const methodAnnotations: IMethodAnnotations = {};
@@ -267,8 +292,10 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
             }),
           );
           break;
-        case SyntaxType.StructDefinition: {
+        case SyntaxType.StructDefinition:
+        case SyntaxType.ExceptionDefinition: {
           const description = processComments(statement.comments);
+          const isException = statement.type === SyntaxType.ExceptionDefinition;
           const structTypeVal: StructTypeVal = {
             id: currentId++,
             name: typeName,
@@ -312,29 +339,31 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                   name.value,
                   {
                     type: requiredness === 'required' ? new GraphQLNonNull(type) : type,
-                    description,
+                    description: entry.description,
                   },
                 ];
               }),
             );
 
           // We use fields thunk to avoid circular dependency in case of recursive types
-          outputTypeMap.set(
-            typeName,
-            new GraphQLObjectType({
-              name: typeName,
-              description,
-              fields: () => getFieldsMap('outputType'),
-            }),
-          );
-          inputTypeMap.set(
-            typeName,
-            new GraphQLInputObjectType({
-              name: typeName + 'Input',
-              description,
-              fields: () => getFieldsMap('inputType'),
-            }),
-          );
+          const objectType = new GraphQLObjectType({
+            name: typeName,
+            description,
+            fields: () => getFieldsMap('outputType'),
+          });
+          outputTypeMap.set(typeName, objectType);
+          if (isException) {
+            exceptionTypeMap.set(typeName, objectType);
+          } else {
+            inputTypeMap.set(
+              typeName,
+              new GraphQLInputObjectType({
+                name: typeName + 'Input',
+                description,
+                fields: () => getFieldsMap('inputType'),
+              }),
+            );
+          }
           break;
         }
         case SyntaxType.ServiceDefinition:
@@ -375,13 +404,55 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
             }
             const effectiveServiceName = serviceName || idlServiceName;
             const isEntity = entityMethodSet.has(fnName);
-            const mappingDescription = buildThriftMethodDescription({
+            const isOneway = Boolean(fn.oneway);
+            const messageType = isOneway ? 'ONEWAY' : 'CALL';
+            const throwsMeta = (fn.throws || []).map(t => ({
+              id: t.fieldID?.value ?? 0,
+              name: t.name.value,
+              typeName: 'value' in t.fieldType ? String(t.fieldType.value).replace('.', '_') : 'unknown',
+            }));
+
+            let fieldReturnType: GraphQLOutputType = returnType;
+            if (!ignoreExceptions && throwsMeta.length > 0) {
+              const successTypeName = `${fnName[0].toUpperCase()}${fnName.slice(1)}Success`;
+              const successType = new GraphQLObjectType({
+                name: successTypeName,
+                fields: {
+                  value: { type: new GraphQLNonNull(returnType as any) },
+                },
+              });
+              const exceptionTypes = throwsMeta
+                .map(t => exceptionTypeMap.get(t.typeName) || (outputTypeMap.get(t.typeName) as GraphQLObjectType))
+                .filter(Boolean) as GraphQLObjectType[];
+              if (exceptionTypes.length) {
+                fieldReturnType = new GraphQLUnionType({
+                  name: `${fnName[0].toUpperCase()}${fnName.slice(1)}Result`,
+                  types: [successType, ...exceptionTypes],
+                  resolveType: value => {
+                    if (value && typeof value === 'object' && 'value' in value && Object.keys(value).length === 1) {
+                      return successTypeName;
+                    }
+                    for (const ex of exceptionTypes) {
+                      // Best-effort: match by presence of declared fields
+                      const fields = Object.keys(ex.getFields());
+                      if (fields.some(f => f in (value || {}))) return ex.name;
+                    }
+                    return successTypeName;
+                  },
+                });
+              }
+            }
+
+            const mappingDescription = buildThriftRpcDescription({
               serviceName: effectiveServiceName,
-              methodName: fnName,
+              functionName: fnName,
               fieldTypeMap,
               returnTypeVal,
               topTypeMap,
               protocol,
+              messageType,
+              throws: throwsMeta,
+              ignoreExceptions,
             });
             const fieldDescription = [description, mappingDescription].filter(Boolean).join('\n\n');
 
@@ -389,7 +460,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               // Single-service: path `/`. Explicit serviceName: `/<service>`.
               const connectPath = serviceName ? `/${serviceName}` : '/';
               rootFields[fnName] = {
-                type: returnType,
+                type: fieldReturnType,
                 description: fieldDescription,
                 args,
                 extensions: {
@@ -401,31 +472,34 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                         body: buildTJSONConnectBody(fnName, fieldTypeMap, topTypeMap),
                       },
                       selection: buildTJSONConnectSelection(returnTypeVal, topTypeMap),
+                      isSuccess: TJSON_IS_SUCCESS,
+                      errors: TJSON_ERRORS,
                       ...(isEntity ? { entity: true } : {}),
                     },
                   },
                 },
               };
             } else {
-              const thriftMethodArgs: Record<string, unknown> = {
+              const thriftRpcArgs: Record<string, unknown> = {
                 subgraph: subgraphName,
-                method: fnName,
+                function: fnName,
                 args: buildCompactArgs(fieldTypeMap, topTypeMap),
                 selection: buildCompactSelection(returnTypeVal, topTypeMap),
+                messageType,
               };
               if (serviceName) {
-                thriftMethodArgs.service = serviceName;
+                thriftRpcArgs.service = serviceName;
               }
               if (isEntity) {
-                thriftMethodArgs.entity = true;
+                thriftRpcArgs.entity = true;
               }
               rootFields[fnName] = {
-                type: returnType,
+                type: fieldReturnType,
                 description: fieldDescription,
                 args,
                 extensions: {
                   directives: {
-                    thrift__method: thriftMethodArgs,
+                    thrift__rpc: thriftRpcArgs,
                     // Migration: keep fieldTypeMap so existing thrift transport still executes.
                     fieldTypeMap: {
                       subgraph: subgraphName,
@@ -513,12 +587,13 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     },
   };
 
-  // Do not `@link` `@thrift__method` on a custom URL — composition's
+  // Do not `@link` `@thrift__rpc` on a custom URL — composition's
   // `detectAndAddMeshDirectives` imports unknown directives via Mesh spec
   // (`@composeDirective`). A separate thrift `@link` would exclude it from that path.
   const schema = new GraphQLSchema({
     query: queryObjectType,
-    directives: [fieldTypeMapDirective, thriftMethodDirective],
+    types: [ThriftMessageTypeEnum, ...exceptionTypeMap.values()],
+    directives: [fieldTypeMapDirective, thriftRpcDirective],
     extensions: {
       directives: {
         transport: graphQLThriftAnnotations,
