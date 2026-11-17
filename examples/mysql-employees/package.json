@@ -3,9 +3,11 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "echo 'This v0 .meshrc example was removed with @graphql-mesh/mysql. Use e2e/mysql-employees (loadSqlSubgraph) instead.'"
+    "start": "mesh dev"
   },
   "dependencies": {
+    "@graphql-mesh/cli": "0.103.4",
+    "@graphql-mesh/mysql": "0.108.3",
     "graphql": "16.14.0"
   }
 }
