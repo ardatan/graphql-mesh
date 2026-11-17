@@ -11,7 +11,7 @@ export interface SelectPlan {
   table: string;
   kind: SqlQueryKind;
   selection: ParsedSqlMapping;
-  argsMapping: ParsedSqlMapping;
+  whereMapping: ParsedSqlMapping;
   graphqlArgs: Record<string, any>;
   parent?: Record<string, any>;
 }
@@ -25,8 +25,6 @@ const PLANNER_KEYS = new Set([
   'before',
   'limit',
   'offset',
-  'set',
-  'where',
 ]);
 
 export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
@@ -37,8 +35,8 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   const params: unknown[] = [];
   const whereParts: string[] = [];
 
-  // Equality / join predicates from args mapping (non-planner keys)
-  for (const entry of plan.argsMapping.entries) {
+  // Equality / join predicates from `where` mapping (non-planner keys)
+  for (const entry of plan.whereMapping.entries) {
     if (PLANNER_KEYS.has(entry.key) || entry.children) {
       continue;
     }
@@ -52,7 +50,7 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   }
 
   // filter: $args.filter
-  const filterEntry = plan.argsMapping.entries.find(e => e.key === 'filter');
+  const filterEntry = plan.whereMapping.entries.find(e => e.key === 'filter');
   if (filterEntry) {
     const filterVal = resolveMappingValue(filterEntry.value, {
       args: plan.graphqlArgs,
@@ -136,7 +134,7 @@ export function buildSelectByColumnIn(
   const params: unknown[] = [];
   const whereParts: string[] = [];
 
-  for (const entry of plan.argsMapping.entries) {
+  for (const entry of plan.whereMapping.entries) {
     if (PLANNER_KEYS.has(entry.key) || entry.children) continue;
     if (entry.key === plan.column) continue; // replaced by IN list
     const resolved = resolveMappingValue(entry.value, {
@@ -148,7 +146,7 @@ export function buildSelectByColumnIn(
     whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
   }
 
-  const filterEntry = plan.argsMapping.entries.find(e => e.key === 'filter');
+  const filterEntry = plan.whereMapping.entries.find(e => e.key === 'filter');
   if (filterEntry) {
     const filterVal = resolveMappingValue(filterEntry.value, {
       args: plan.graphqlArgs,
@@ -203,14 +201,14 @@ export function buildSelectByColumnIn(
 export function buildInsert(
   adapter: SqlAdapter,
   table: string,
-  argsMapping: ParsedSqlMapping,
+  setMapping: ParsedSqlMapping,
   graphqlArgs: Record<string, any>,
   returningColumns: string[],
 ): BuiltQuery {
   const cols: string[] = [];
   const params: unknown[] = [];
-  for (const entry of argsMapping.entries) {
-    if (entry.key === 'set' || entry.key === 'where' || entry.children) continue;
+  for (const entry of setMapping.entries) {
+    if (entry.children) continue;
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     cols.push(entry.key);
@@ -231,18 +229,15 @@ export function buildInsert(
 export function buildUpdate(
   adapter: SqlAdapter,
   table: string,
-  argsMapping: ParsedSqlMapping,
+  setMapping: ParsedSqlMapping,
+  whereMapping: ParsedSqlMapping,
   graphqlArgs: Record<string, any>,
   returningColumns: string[],
 ): BuiltQuery {
-  const setBlock = argsMapping.entries.find(e => e.key === 'set');
-  const whereBlock = argsMapping.entries.find(e => e.key === 'where');
-  const setEntries = setBlock?.children || [];
-  const whereEntries = whereBlock?.children || argsMapping.entries.filter(e => e.key !== 'set');
-
   const params: unknown[] = [];
   const sets: string[] = [];
-  for (const entry of setEntries) {
+  for (const entry of setMapping.entries) {
+    if (entry.children) continue;
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
@@ -252,8 +247,8 @@ export function buildUpdate(
     throw new Error(`@sql UPDATE on ${table} has no SET columns`);
   }
   const whereParts: string[] = [];
-  for (const entry of whereEntries) {
-    if (entry.key === 'set' || entry.children) continue;
+  for (const entry of whereMapping.entries) {
+    if (entry.children || PLANNER_KEYS.has(entry.key)) continue;
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
@@ -272,15 +267,13 @@ export function buildUpdate(
 export function buildDelete(
   adapter: SqlAdapter,
   table: string,
-  argsMapping: ParsedSqlMapping,
+  whereMapping: ParsedSqlMapping,
   graphqlArgs: Record<string, any>,
 ): BuiltQuery {
-  const whereBlock = argsMapping.entries.find(e => e.key === 'where');
-  const whereEntries = whereBlock?.children || argsMapping.entries;
   const params: unknown[] = [];
   const whereParts: string[] = [];
-  for (const entry of whereEntries) {
-    if (entry.children) continue;
+  for (const entry of whereMapping.entries) {
+    if (entry.children || PLANNER_KEYS.has(entry.key)) continue;
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
@@ -294,7 +287,7 @@ export function buildDelete(
 }
 
 function resolvePlannerArg(plan: SelectPlan, key: string): unknown {
-  const entry = plan.argsMapping.entries.find(e => e.key === key);
+  const entry = plan.whereMapping.entries.find(e => e.key === key);
   if (entry) {
     return resolveMappingValue(entry.value, { args: plan.graphqlArgs, parent: plan.parent });
   }
@@ -475,11 +468,21 @@ export function collectReturningColumns(selection: ParsedSqlMapping): string[] {
   return [...columnMapFromSelection(selection).values()];
 }
 
-export function parseArgsAndSelection(argsStr?: string | null, selectionStr?: string | null) {
+export function parseSqlDirectiveMappings(opts: {
+  where?: string | null;
+  set?: string | null;
+  selection?: string | null;
+}) {
   return {
-    argsMapping: parseSqlMapping(argsStr),
-    selection: parseSqlMapping(selectionStr),
+    whereMapping: parseSqlMapping(opts.where),
+    setMapping: parseSqlMapping(opts.set),
+    selection: parseSqlMapping(opts.selection),
   };
+}
+
+/** @deprecated use parseSqlDirectiveMappings */
+export function parseArgsAndSelection(argsStr?: string | null, selectionStr?: string | null) {
+  return parseSqlDirectiveMappings({ where: argsStr, selection: selectionStr });
 }
 
 export type { SqlMappingEntry };

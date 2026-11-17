@@ -282,10 +282,11 @@ export function rewriteConnectArgReferences(
   }
   for (const name of sqlDirectiveNames) {
     if (!fieldDirectives?.[name]?.length) continue;
-    // `@sql(args/selection:)` embed `$args.<name>` / `$this.<field>` the same way.
+    // `@sql(where/set/selection:)` embed `$args.<name>` / `$this.<field>` the same way.
     next[name] = fieldDirectives[name].map((sqlArgs: any) => ({
       ...sqlArgs,
-      args: typeof sqlArgs?.args === 'string' ? rewriteExpr(sqlArgs.args) : sqlArgs?.args,
+      where: typeof sqlArgs?.where === 'string' ? rewriteExpr(sqlArgs.where) : sqlArgs?.where,
+      set: typeof sqlArgs?.set === 'string' ? rewriteExpr(sqlArgs.set) : sqlArgs?.set,
       selection:
         typeof sqlArgs?.selection === 'string'
           ? rewriteExpr(sqlArgs.selection)

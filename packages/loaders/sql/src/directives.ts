@@ -36,7 +36,13 @@ export const SqlDirective = new GraphQLDirective({
     subgraph: { type: GraphQLString },
     table: { type: new GraphQLNonNull(GraphQLString) },
     kind: { type: new GraphQLNonNull(SqlKindEnum) },
-    args: { type: GraphQLString },
+    /**
+     * Predicates / binders / list planners:
+     * equality (`AlbumId: $args.id`), `$this` joins, `filter` / `orderBy` / `limit` / …
+     */
+    where: { type: GraphQLString },
+    /** Column values for INSERT / UPDATE (`Title: $args.input.title`). */
+    set: { type: GraphQLString },
     selection: { type: GraphQLString },
   },
 });

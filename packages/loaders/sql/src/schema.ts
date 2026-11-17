@@ -115,7 +115,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
           subgraph: subgraphName,
           table: table.name,
           kind: 'ROW',
-          args: blockArg(keyArgs),
+          where: blockArg(keyArgs),
           selection: selectionBlock(naming, table),
         },
       });
@@ -174,7 +174,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
                 subgraph: subgraphName,
                 table: fk.refTable,
                 kind: 'ROW',
-                args: blockArg(`${refCol}: $this.${localField}`),
+                where: blockArg(`${refCol}: $this.${localField}`),
                 selection: selectionBlock(naming, refTable),
               },
             },
@@ -201,7 +201,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
                 subgraph: subgraphName,
                 table: table.name,
                 kind: 'ROWS',
-                args: blockArg(
+                where: blockArg(
                   [
                     `${localCol}: $this.${refField}`,
                     `filter: $args.filter`,
@@ -246,7 +246,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
               subgraph: subgraphName,
               table: table.name,
               kind: 'ROW',
-              args: blockArg(`${solePk.name}: $args.${pkField}`),
+              where: blockArg(`${solePk.name}: $args.${pkField}`),
               selection,
             },
           },
@@ -269,7 +269,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'ROWS',
-            args: blockArg(
+            where: blockArg(
               [
                 `filter: $args.filter`,
                 `orderBy: $args.orderBy`,
@@ -298,7 +298,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'CONNECTION',
-            args: blockArg(
+            where: blockArg(
               [
                 `filter: $args.filter`,
                 `orderBy: $args.orderBy`,
@@ -343,7 +343,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'COUNT',
-            args: blockArg(`filter: $args.filter`),
+            where: blockArg(`filter: $args.filter`),
             selection: blockArg(`$`),
           },
         },
@@ -364,7 +364,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'INSERT',
-            args: insertArgsBlock(naming, table, solePk),
+            set: insertSetBlock(naming, table, solePk),
             selection: blockArg(`${payloadKey} {\n${indent(selectionRaw)}\n}`),
           },
         },
@@ -386,16 +386,8 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
               subgraph: subgraphName,
               table: table.name,
               kind: 'UPDATE',
-              args: blockArg(
-                [
-                  `set {`,
-                  indent(updateSetBlock(naming, table, solePk)),
-                  `}`,
-                  `where {`,
-                  `  ${solePk.name}: $args.${pkField}`,
-                  `}`,
-                ].join('\n'),
-              ),
+              set: blockArg(updateSetBlock(naming, table, solePk)),
+              where: blockArg(`${solePk.name}: $args.${pkField}`),
               selection: blockArg(`${payloadKey} {\n${indent(selectionRaw)}\n}`),
             },
           },
@@ -414,7 +406,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
               subgraph: subgraphName,
               table: table.name,
               kind: 'DELETE',
-              args: blockArg([`where {`, `  ${solePk.name}: $args.${pkField}`, `}`].join('\n')),
+              where: blockArg(`${solePk.name}: $args.${pkField}`),
               selection: blockArg([`ok: $affectedRows`, `affectedRows: $affectedRows`].join('\n')),
             },
           },
@@ -738,7 +730,7 @@ function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
       if (directive.name.value !== 'sql' || !directive.arguments) continue;
       for (const arg of directive.arguments) {
         if (arg.value.kind !== 'StringValue') continue;
-        if (arg.name.value === 'args' || arg.name.value === 'selection') {
+        if (arg.name.value === 'where' || arg.name.value === 'set' || arg.name.value === 'selection') {
           (arg.value as { block?: boolean }).block = true;
         }
       }
@@ -754,7 +746,7 @@ function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
 }
 
 /**
- * Format `@sql` args/selection for Connectors-style `"""` block strings.
+ * Format `@sql` where/set/selection for Connectors-style `"""` block strings.
  * Indent body lines; for single-line values prefix a newline so the printer
  * emits a multiline `"""` block (not `"""value"""`) without a trailing blank.
  */
@@ -786,7 +778,7 @@ function selectionBlock(naming: SqlNaming, table: SqlTableMeta): string {
   return blockArg(selectionLines(naming, table));
 }
 
-function insertArgsBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlColumnMeta): string {
+function insertSetBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlColumnMeta): string {
   const lines: string[] = [];
   for (const col of table.columns) {
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);

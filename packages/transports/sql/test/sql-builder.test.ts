@@ -13,7 +13,7 @@ describe('buildSelect', () => {
       table: 'albums',
       kind: 'ROW',
       selection,
-      argsMapping: parseSqlMapping(`AlbumId: $args.id`),
+      whereMapping: parseSqlMapping(`AlbumId: $args.id`),
       graphqlArgs: { id: '1' },
     });
     expect(sql).toContain('FROM "albums"');
@@ -27,7 +27,7 @@ describe('buildSelect', () => {
       table: 'albums',
       kind: 'ROWS',
       selection,
-      argsMapping: parseSqlMapping(`
+      whereMapping: parseSqlMapping(`
         filter: $args.filter
         orderBy: $args.orderBy
         limit: $args.limit

@@ -54,7 +54,9 @@ recompose and update client queries.
 
 ## What else changed
 
+- `@sql` uses `where` / `set` / `selection` (not a catch-all `args` bag)
 - Fusion rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql`
+
 - Type-level `@sql` on OBJECT (Connectors-style `$this` keys) wires `resolveReference` + Hive
   `Query._entities` — no Query `entity: true`
 - Transport DataLoader-batches ROW/ROWS equality lookups (`WHERE col IN (...)`)

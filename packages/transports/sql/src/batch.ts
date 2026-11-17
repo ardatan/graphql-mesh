@@ -40,9 +40,9 @@ const PLANNER_KEYS = new Set([
 /**
  * Detect a single equality column binder suitable for `WHERE col IN (...)` batching.
  */
-export function batchableEqualityColumn(argsMapping: ParsedSqlMapping): string | undefined {
+export function batchableEqualityColumn(whereMapping: ParsedSqlMapping): string | undefined {
   const cols: string[] = [];
-  for (const entry of argsMapping.entries) {
+  for (const entry of whereMapping.entries) {
     if (PLANNER_KEYS.has(entry.key) || entry.children) continue;
     cols.push(entry.key);
   }
@@ -50,12 +50,12 @@ export function batchableEqualityColumn(argsMapping: ParsedSqlMapping): string |
 }
 
 export function resolveEqualityKey(
-  argsMapping: ParsedSqlMapping,
+  whereMapping: ParsedSqlMapping,
   column: string,
   graphqlArgs: Record<string, any>,
   parent: any,
 ): unknown {
-  const entry = argsMapping.entries.find(e => e.key === column);
+  const entry = whereMapping.entries.find(e => e.key === column);
   if (!entry) return undefined;
   return resolveMappingValue(entry.value, { args: graphqlArgs, parent });
 }
@@ -65,7 +65,7 @@ export interface BatchSelectOpts {
   table: string;
   kind: 'ROW' | 'ROWS';
   selection: ParsedSqlMapping;
-  argsMapping: ParsedSqlMapping;
+  whereMapping: ParsedSqlMapping;
   column: string;
   graphqlArgs?: Record<string, any>;
 }
@@ -100,7 +100,7 @@ export function loadBatchedByColumn(
           table: opts.table,
           kind: 'ROWS' as SqlQueryKind,
           selection: opts.selection,
-          argsMapping: opts.argsMapping,
+          whereMapping: opts.whereMapping,
           graphqlArgs: opts.graphqlArgs || {},
           column: opts.column,
           values: unique,

@@ -1,7 +1,7 @@
 import type { ParsedSqlMapping, SqlMappingEntry, SqlMappingValue } from './types.js';
 
 /**
- * Parse `@sql` `args` / `selection` block strings.
+ * Parse `@sql` `where` / `set` / `selection` block strings.
  * Skips `# ...` comments to EOL. Supports nested `{ ... }` blocks and `$args` / `$this` / `$pseudo`.
  */
 export function parseSqlMapping(source: string | null | undefined): ParsedSqlMapping {
