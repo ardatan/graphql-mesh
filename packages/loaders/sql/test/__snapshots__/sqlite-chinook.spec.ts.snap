@@ -19,18 +19,12 @@ type Query {
     title: Title
     artistId: ArtistId
   """)
-  albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @sql(subgraph: "chinook", table: "albums", kind: ROWS, where: """
-  
-    ...$args.where
-  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+  albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @sql(subgraph: "chinook", table: "albums", kind: ROWS, where: """$args.where""", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: AlbumId
     title: Title
     artistId: ArtistId
   """)
-  allAlbums(where: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection! @sql(subgraph: "chinook", table: "albums", kind: CONNECTION, where: """
-  
-    ...$args.where
-  """, orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+  allAlbums(where: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection! @sql(subgraph: "chinook", table: "albums", kind: CONNECTION, where: """$args.where""", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: AlbumId
       title: Title
@@ -52,10 +46,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  albumsCount(where: AlbumFilter): Int! @sql(subgraph: "chinook", table: "albums", kind: COUNT, where: """
-  
-    ...$args.where
-  """, selection: """
+  albumsCount(where: AlbumFilter): Int! @sql(subgraph: "chinook", table: "albums", kind: COUNT, where: """$args.where""", selection: """
   
     $
   """)
@@ -66,17 +57,11 @@ type Query {
     id: ArtistId
     name: Name
   """)
-  artists(where: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @sql(subgraph: "chinook", table: "artists", kind: ROWS, where: """
-  
-    ...$args.where
-  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+  artists(where: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @sql(subgraph: "chinook", table: "artists", kind: ROWS, where: """$args.where""", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
     id: ArtistId
     name: Name
   """)
-  allArtists(where: ArtistFilter, orderBy: [ArtistOrderBy!], first: Int, after: String): ArtistConnection! @sql(subgraph: "chinook", table: "artists", kind: CONNECTION, where: """
-  
-    ...$args.where
-  """, orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+  allArtists(where: ArtistFilter, orderBy: [ArtistOrderBy!], first: Int, after: String): ArtistConnection! @sql(subgraph: "chinook", table: "artists", kind: CONNECTION, where: """$args.where""", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
     nodes {
       id: ArtistId
       name: Name
@@ -96,10 +81,7 @@ type Query {
     }
     totalCount: $totalCount
   """)
-  artistsCount(where: ArtistFilter): Int! @sql(subgraph: "chinook", table: "artists", kind: COUNT, where: """
-  
-    ...$args.where
-  """, selection: """
+  artistsCount(where: ArtistFilter): Int! @sql(subgraph: "chinook", table: "artists", kind: COUNT, where: """$args.where""", selection: """
   
     $
   """)

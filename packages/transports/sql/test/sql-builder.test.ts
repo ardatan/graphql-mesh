@@ -22,12 +22,12 @@ describe('buildSelect', () => {
     expect(params).toEqual(['1', 1]);
   });
 
-  it('builds filtered ROWS with order and limit via ...$args.where spread', () => {
+  it('builds filtered ROWS with bare $args.where (no spread needed alone)', () => {
     const { sql, params } = buildSelect('sqlite', {
       table: 'albums',
       kind: 'ROWS',
       selection,
-      whereMapping: parseSqlMapping(`...$args.where`),
+      whereMapping: parseSqlMapping(`$args.where`),
       planners: {
         orderBy: '$args.orderBy',
         limit: '$args.limit',

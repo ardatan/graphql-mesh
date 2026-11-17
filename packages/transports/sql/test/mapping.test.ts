@@ -17,7 +17,7 @@ describe('parseSqlMapping', () => {
     );
   });
 
-  it('parses $args / $this and nested blocks', () => {
+  it('parses $args / $this, spreads, and nested blocks', () => {
     const parsed = parseSqlMapping(`
       ArtistId: $this.artistId
       ...$args.where
@@ -49,6 +49,16 @@ describe('parseSqlMapping', () => {
         args: { input: { title: 'X' } },
       }),
     ).toBe('X');
+  });
+
+  it('parses bare $args.where as a whole-value binder', () => {
+    const parsed = parseSqlMapping(`$args.where`);
+    expect(parsed.entries).toEqual([
+      {
+        key: '$args.where',
+        value: { kind: 'args', value: 'where', path: ['where'] },
+      },
+    ]);
   });
 
   it('parses connection wrappers and pseudos', () => {

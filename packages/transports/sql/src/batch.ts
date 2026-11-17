@@ -43,7 +43,14 @@ const PLANNER_KEYS = new Set([
 export function batchableEqualityColumn(whereMapping: ParsedSqlMapping): string | undefined {
   const cols: string[] = [];
   for (const entry of whereMapping.entries) {
-    if (entry.spread || PLANNER_KEYS.has(entry.key) || entry.children) continue;
+    if (
+      entry.spread ||
+      entry.key.startsWith('$') ||
+      PLANNER_KEYS.has(entry.key) ||
+      entry.children
+    ) {
+      continue;
+    }
     cols.push(entry.key);
   }
   return cols.length === 1 ? cols[0] : undefined;

@@ -69,7 +69,7 @@ function rowWhereFullyUnresolved(
   let required = 0;
   let resolved = 0;
   for (const entry of whereMapping.entries) {
-    if (entry.children || entry.spread) continue;
+    if (entry.children || entry.spread || entry.key.startsWith('$')) continue;
     if (
       entry.key === 'filter' ||
       entry.key === 'where' ||

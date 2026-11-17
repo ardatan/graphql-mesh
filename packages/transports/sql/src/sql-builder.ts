@@ -67,7 +67,7 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
 
   // Equality / join predicates from `where` mapping (non-planner, non-spread)
   for (const entry of plan.whereMapping.entries) {
-    if (entry.spread || PLANNER_KEYS.has(entry.key) || entry.children) {
+    if (entry.spread || isBareVarPath(entry) || PLANNER_KEYS.has(entry.key) || entry.children) {
       continue;
     }
     const resolved = resolveMappingValue(entry.value, {
@@ -295,7 +295,9 @@ export function buildSelectByColumnIn(
   const whereParts: string[] = [];
 
   for (const entry of plan.whereMapping.entries) {
-    if (entry.spread || PLANNER_KEYS.has(entry.key) || entry.children) continue;
+    if (entry.spread || isBareVarPath(entry) || PLANNER_KEYS.has(entry.key) || entry.children) {
+      continue;
+    }
     if (entry.key === plan.column) continue; // replaced by IN list
     const resolved = resolveMappingValue(entry.value, {
       args: plan.graphqlArgs,
@@ -395,7 +397,9 @@ export function buildUpdate(
   }
   const whereParts: string[] = [];
   for (const entry of whereMapping.entries) {
-    if (entry.spread || entry.children || PLANNER_KEYS.has(entry.key)) continue;
+    if (entry.spread || isBareVarPath(entry) || entry.children || PLANNER_KEYS.has(entry.key)) {
+      continue;
+    }
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
@@ -420,7 +424,9 @@ export function buildDelete(
   const params: unknown[] = [];
   const whereParts: string[] = [];
   for (const entry of whereMapping.entries) {
-    if (entry.spread || entry.children || PLANNER_KEYS.has(entry.key)) continue;
+    if (entry.spread || isBareVarPath(entry) || entry.children || PLANNER_KEYS.has(entry.key)) {
+      continue;
+    }
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
@@ -469,8 +475,20 @@ function resolvePlannerBinder(
   return undefined;
 }
 
+/** Bare `$args.where` / `$this.x` path entry (whole-value binder, not `col: $args.x`). */
+function isBareVarPath(entry: SqlMappingEntry): boolean {
+  return Boolean(
+    entry.key.startsWith('$') &&
+    entry.value &&
+    (entry.value.kind === 'args' || entry.value.kind === 'this'),
+  );
+}
+
 /**
- * Apply Connectors-style `...$args.where` spreads, then legacy filter binders.
+ * Apply structured filters from:
+ * - Connectors-style spreads (`...$args.where`) when merging with fixed keys
+ * - bare whole-value binders (`$args.where`) when where is only the client filter
+ * - legacy `@sql(filter:)` / stuffed `filter: $args.filter`
  */
 function appendStructuredFilters(
   adapter: SqlAdapter,
@@ -482,7 +500,7 @@ function appendStructuredFilters(
 ): void {
   const ctx = { args: plan.graphqlArgs, parent: plan.parent };
   for (const entry of plan.whereMapping.entries) {
-    if (!entry.spread) continue;
+    if (!entry.spread && !isBareVarPath(entry)) continue;
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved && typeof resolved === 'object' && !Array.isArray(resolved)) {
       appendFilter(adapter, resolved as Record<string, any>, columns, whereParts, params, opts);
