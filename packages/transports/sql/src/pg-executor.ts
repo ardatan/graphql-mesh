@@ -1,11 +1,11 @@
+import { execute as grafastExecute } from 'grafast';
+import type { GraphQLSchema } from 'graphql';
 import type { Pool } from 'pg';
 import { makePgAdaptorWithPgClient } from '@dataplan/pg/adaptors/pg';
-import { execute as grafastExecute } from 'grafast';
 import type { DisposableExecutor } from '@graphql-mesh/transport-common';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import type { GraphQLSchema } from 'graphql';
-import { buildPgRegistryFromSqlSchema } from './pg-registry.js';
 import { wirePostgresSqlPlans } from './pg-plans.js';
+import { buildPgRegistryFromSqlSchema } from './pg-registry.js';
 import type { SqlClient } from './types.js';
 
 export interface CreatePostgresGrafastExecutorOpts {

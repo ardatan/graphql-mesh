@@ -730,7 +730,11 @@ function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
       if (directive.name.value !== 'sql' || !directive.arguments) continue;
       for (const arg of directive.arguments) {
         if (arg.value.kind !== 'StringValue') continue;
-        if (arg.name.value === 'where' || arg.name.value === 'set' || arg.name.value === 'selection') {
+        if (
+          arg.name.value === 'where' ||
+          arg.name.value === 'set' ||
+          arg.name.value === 'selection'
+        ) {
           (arg.value as { block?: boolean }).block = true;
         }
       }

@@ -56,8 +56,7 @@ export function getSqlDirectiveArgs(
     .filter(d => d.name === 'sql')
     .map(d => d.args || {});
   const joins = (node.extensions as any)?.directives?.join__directive as
-    | JoinDirectiveArgs[]
-    | undefined;
+    JoinDirectiveArgs[] | undefined;
   const fromJoin: Record<string, unknown>[] = [];
   if (Array.isArray(joins)) {
     for (const join of joins) {

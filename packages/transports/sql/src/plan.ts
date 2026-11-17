@@ -68,11 +68,7 @@ export function planSelection(
     return { selection: fullSelection, joins: [], hasMany: [] };
   }
 
-  const fieldNodes = collectObjectFieldNodes(
-    info.fieldNodes,
-    info.fragments,
-    info.returnType,
-  );
+  const fieldNodes = collectObjectFieldNodes(info.fieldNodes, info.fragments, info.returnType);
 
   const aliasCounter = { n: 0 };
   const joins: BelongsToJoin[] = [];
@@ -233,10 +229,7 @@ function getSqlArgs(schema: GraphQLSchema, field: GraphQLField<any, any>) {
   return sqlDirs[0]?.args || null;
 }
 
-function isSimpleHasManyFoldable(
-  _whereMapping: ParsedSqlMapping,
-  fieldNode: FieldNode,
-): boolean {
+function isSimpleHasManyFoldable(_whereMapping: ParsedSqlMapping, fieldNode: FieldNode): boolean {
   // Loader always emits filter/orderBy binders; fold only when the operation
   // does not pass those args (limit/offset alone are fine).
   if (fieldNode.arguments?.length) {
@@ -325,10 +318,7 @@ function collectObjectFieldNodes(
   const named = getNamedType(returnType);
   if (!isObjectType(named)) return [];
 
-  if (
-    named.name.endsWith('Connection') &&
-    (named.getFields().nodes || named.getFields().edges)
-  ) {
+  if (named.name.endsWith('Connection') && (named.getFields().nodes || named.getFields().edges)) {
     const out: FieldNode[] = [];
     for (const fn of fieldNodes) {
       if (!fn.selectionSet) continue;

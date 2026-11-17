@@ -111,9 +111,7 @@ export function loadBatchedByColumn(
         const byKey = new Map<string, Record<string, unknown>[]>();
         for (const row of rows) {
           const raw =
-            row[opts.column] ??
-            row[opts.column.toLowerCase()] ??
-            row[opts.column.toUpperCase()];
+            row[opts.column] ?? row[opts.column.toLowerCase()] ?? row[opts.column.toUpperCase()];
           const k = String(raw);
           let list = byKey.get(k);
           if (!list) {

@@ -1,5 +1,5 @@
-import type { GraphQLFieldConfig, GraphQLSchema } from 'graphql';
 import { connection } from 'grafast';
+import type { GraphQLFieldConfig, GraphQLSchema } from 'graphql';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import { batchableEqualityColumn } from './batch.js';

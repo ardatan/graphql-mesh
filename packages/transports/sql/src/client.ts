@@ -2,7 +2,7 @@ import { createPool, type Pool as Mysql2Pool, type Pool } from 'mysql2/promise';
 import { DatabaseSync } from 'node:sqlite';
 import pg from 'pg';
 import { resolveSqlitePath } from './adapter.js';
-import type { SqlClient, SqlAdapter, SqlTransportOptions } from './types.js';
+import type { SqlAdapter, SqlClient, SqlTransportOptions } from './types.js';
 import { parseSqlUri } from './uri.js';
 
 export interface CreateSqlClientOptions extends SqlTransportOptions {

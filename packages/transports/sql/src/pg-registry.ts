@@ -1,3 +1,4 @@
+import { context, object, type Step } from 'grafast';
 import {
   getNamedType,
   isNonNullType,
@@ -7,6 +8,7 @@ import {
   type GraphQLOutputType,
   type GraphQLSchema,
 } from 'graphql';
+import { sql } from 'pg-sql2';
 import {
   makeRegistry,
   makeRegistryBuilder,
@@ -17,8 +19,6 @@ import {
   type PgCodec,
   type PgCodecAttribute,
 } from '@dataplan/pg';
-import { context, object, type Step } from 'grafast';
-import { sql } from 'pg-sql2';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { parseSqlMapping } from './mapping.js';
 import type { ParsedSqlMapping, SqlKind } from './types.js';
@@ -113,9 +113,7 @@ export function buildPgRegistryFromSqlSchema(schema: GraphQLSchema): {
         if (returnType && (kind === 'ROW' || kind === 'ROWS' || kind === 'CONNECTION')) {
           // CONNECTION returns Connection type — dig nodes
           const nodeType =
-            kind === 'CONNECTION'
-              ? unwrapConnectionNodeType(returnType)
-              : returnType;
+            kind === 'CONNECTION' ? unwrapConnectionNodeType(returnType) : returnType;
           if (nodeType) {
             info.typeNames.add(nodeType.name);
             tableByType.set(nodeType.name, table);

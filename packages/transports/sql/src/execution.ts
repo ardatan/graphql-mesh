@@ -3,13 +3,9 @@ import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/tr
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import {
-  batchableEqualityColumn,
-  loadBatchedByColumn,
-  resolveEqualityKey,
-} from './batch.js';
-import { createSqlClient } from './client.js';
 import { inferAdapterFromLocation } from './adapter.js';
+import { batchableEqualityColumn, loadBatchedByColumn, resolveEqualityKey } from './batch.js';
+import { createSqlClient } from './client.js';
 import { wireSqlEntityResolvers } from './entity.js';
 import { resolveMappingValue } from './mapping.js';
 import { hasJoinedField, planSelection } from './plan.js';
@@ -28,8 +24,8 @@ import {
 } from './sql-builder.js';
 import type {
   ParsedSqlMapping,
-  SqlClient,
   SqlAdapter,
+  SqlClient,
   SqlKind,
   SqlMutationKind,
   SqlQueryKind,

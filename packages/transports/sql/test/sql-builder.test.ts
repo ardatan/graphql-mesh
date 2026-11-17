@@ -1,9 +1,5 @@
 import { parseSqlMapping } from '../src/mapping.js';
-import {
-  buildSelect,
-  escapeSqlStringLiteral,
-  mapRowToGraphql,
-} from '../src/sql-builder.js';
+import { buildSelect, escapeSqlStringLiteral, mapRowToGraphql } from '../src/sql-builder.js';
 
 describe('buildSelect', () => {
   const selection = parseSqlMapping(`
@@ -62,7 +58,7 @@ describe('buildSelect', () => {
     // CodeQL js/incomplete-sanitization: `\` must be doubled first.
     expect(escapeSqlStringLiteral("a\\b'c", 'mysql')).toBe("a\\\\b\\'c");
     expect(escapeSqlStringLiteral("a\\b'c", 'sqlite')).toBe("a\\\\b''c");
-    expect(escapeSqlStringLiteral("\\", 'mysql')).toBe('\\\\');
+    expect(escapeSqlStringLiteral('\\', 'mysql')).toBe('\\\\');
     expect(escapeSqlStringLiteral("'", 'mysql')).toBe("\\'");
   });
 

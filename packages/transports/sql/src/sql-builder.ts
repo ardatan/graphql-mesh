@@ -251,8 +251,7 @@ function buildHasManyJsonSubselect(
 ): string {
   const relCols = [...columnMapFromSelection(hm.selection).entries()];
   const innerAlias = 'hm';
-  const limitSql =
-    hm.limit != null ? ` LIMIT ${Number(hm.limit)}` : '';
+  const limitSql = hm.limit != null ? ` LIMIT ${Number(hm.limit)}` : '';
 
   if (adapter === 'postgres') {
     const selectList = relCols
@@ -329,9 +328,7 @@ export function buildSelectByColumnIn(
     params.push(v);
     return placeholder(adapter, params.length);
   });
-  whereParts.push(
-    `${quoteIdent(adapter, plan.column)} IN (${inPhs.join(', ')})`,
-  );
+  whereParts.push(`${quoteIdent(adapter, plan.column)} IN (${inPhs.join(', ')})`);
 
   // Always include the batch column so we can regroup rows by key.
   const batchColSql = quoteIdent(adapter, plan.column);
@@ -635,7 +632,8 @@ export function mapRowToGraphqlWithJoins(
     stamped[hm.fieldName] = parseHasManyJson(row[`hm__${hm.fieldName}`], hm);
   }
   if (hasMany.length) {
-    const existing = (stamped as any)[Symbol.for('mesh.sql.joinedFields')] as Set<string> | undefined;
+    const existing = (stamped as any)[Symbol.for('mesh.sql.joinedFields')] as
+      Set<string> | undefined;
     const names = new Set(existing ? [...existing] : []);
     for (const hm of hasMany) names.add(hm.fieldName);
     Object.defineProperty(stamped, Symbol.for('mesh.sql.joinedFields'), {
@@ -669,10 +667,7 @@ function mapJoinedObject(
   return nested;
 }
 
-function parseHasManyJson(
-  raw: unknown,
-  hm: HasManySubselect,
-): Record<string, unknown>[] {
+function parseHasManyJson(raw: unknown, hm: HasManySubselect): Record<string, unknown>[] {
   if (raw == null) return [];
   let parsed: unknown = raw;
   if (typeof raw === 'string') {

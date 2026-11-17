@@ -31,6 +31,9 @@
     "./package.json": "./package.json"
   },
   "typings": "dist/typings/index.d.ts",
+  "scripts": {
+    "test:bun": "bun test ./test/client.bun.test.ts"
+  },
   "peerDependencies": {
     "graphql": "^16.0.0 || ^17.0.0"
   },
@@ -60,9 +63,6 @@
     "directory": "dist"
   },
   "sideEffects": false,
-  "scripts": {
-    "test:bun": "bun test ./test/client.bun.test.ts"
-  },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   }
