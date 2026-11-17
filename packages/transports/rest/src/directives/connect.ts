@@ -1525,14 +1525,8 @@ function evalMappingExpression(
 }
 
 function evalSubSelection(selection: string, root: any, extras: ConnectSelectionExtras): any {
-  // Apollo maps relative NamedSelection over JSON array roots (`id name` → per element).
-  // Root `$` expressions (`$->get`, `$()`, `$.path`) treat the array itself as `$`
-  // (TJSON message envelopes are arrays, not GraphQL lists).
   if (Array.isArray(root)) {
-    const t = selection.trim();
-    if (!(t.startsWith('$') || t.startsWith('...') || t.startsWith('{'))) {
-      return root.map(item => evalSubSelection(selection, item, extras));
-    }
+    return root.map(item => evalSubSelection(selection, item, extras));
   }
   const tokens = tokenizeSelection(selection);
   // Apollo: a lone path root like `$.products { id }` is the field value itself,

@@ -564,7 +564,13 @@ function formatTJSONLitProperty(
     nextSeen.add(structName);
     const nested = Object.entries(resolved.fields)
       .map(([childName, childType]) =>
-        formatTJSONLitProperty(childName, childType, topTypeMap, `${fieldPath}->get("rec")`, nextSeen),
+        formatTJSONLitProperty(
+          childName,
+          childType,
+          topTypeMap,
+          `${fieldPath}->get("rec")`,
+          nextSeen,
+        ),
       )
       .join(',\n    ');
     return `${graphqlName}: $({\n    ${nested}\n  })`;
