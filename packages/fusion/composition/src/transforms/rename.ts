@@ -278,6 +278,9 @@ export function createRenameTransform(opts: RenameTransformConfig) {
           newArgs[newArgName] = field.args[argName];
         }
       }
+      // Mesh non-connector transforms stamp `@source(name: <pre-rename>)` then rename.
+      // Runtime subgraph args stay on the @source name, so `@protobuf__rpc(args:)` binds
+      // must keep original names (unlike Federation Connectors `$args.*` rewrite).
       const rewrittenDirectives = rewriteConnectArgReferences(
         fieldDirectives,
         argRenameMap,

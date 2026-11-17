@@ -3,7 +3,10 @@ import { join } from 'node:path';
 import { buildASTSchema, parse } from 'graphql';
 import { Opts } from '@e2e/opts';
 import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
+import {
+  createRenameTransform,
+  defineConfig as defineComposeConfig,
+} from '@graphql-mesh/compose-cli';
 
 const opts = Opts(process.argv);
 
@@ -43,6 +46,13 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadHandProtobufSubgraph('movies', './subgraphs/movies.graphql'),
+      // Prove transforms rewrite `@protobuf__rpc(args:)` binds (no @meshSource / @merge).
+      transforms: [
+        createRenameTransform({
+          argRenamer: ({ fieldName, argName }) =>
+            fieldName === 'moviesByYear' && argName === 'year' ? 'releaseYear' : argName,
+        }),
+      ],
     },
   ],
 });

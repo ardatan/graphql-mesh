@@ -2,9 +2,10 @@ import { createTenv, type Service } from '@e2e/tenv';
 
 const { compose, serve, service } = createTenv(__dirname);
 
+/** Public API uses renamed arg; Mesh @source keeps subgraph/mapping on `year`. */
 const query = /* GraphQL */ `
   query MoviesByYear($year: Int!) {
-    moviesByYear(year: $year) {
+    moviesByYear(releaseYear: $year) {
       result {
         name
         year
@@ -38,7 +39,7 @@ describe.each([
     upstream = await service(serviceName);
   });
 
-  it(`composes hand SDL with ${style} location`, async () => {
+  it(`composes with ${style} location, rename transform, and stable mapping binds`, async () => {
     const { result } = await compose({
       services: [upstream],
       maskServicePorts: true,
@@ -47,6 +48,9 @@ describe.each([
     expect(result).toContain('kind: "protobuf"');
     expect(result).toContain('@protobuf__rpc');
     expect(result).toContain(maskedLocation);
+    expect(result).toContain('releaseYear');
+    expect(result).toMatch(/2\(int64\):\s*year/);
+    expect(result).not.toMatch(/2\(int64\):\s*releaseYear/);
     if (style === 'twirp') {
       expect(result).toContain('Content-Type');
       expect(result).toContain('application/protobuf');
@@ -56,7 +60,7 @@ describe.each([
     }
   });
 
-  it(`executes unary GetMovies over official ${style} server`, async () => {
+  it(`executes unary GetMovies over official ${style} after arg rename`, async () => {
     const { output } = await compose({
       services: [upstream],
       output: 'graphql',

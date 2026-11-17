@@ -25,7 +25,8 @@ Legacy Mesh handler package `@graphql-mesh/grpc` still exists but depends on the
 - Directive: `@protobuf__rpc(service, method, args, selection, stream)`
 - `args` encodes GraphQL arguments into the request message (aligned with `@thrift__rpc(args:)`, **not** Connectors `body`)
 - `selection` decodes the response message into GraphQL fields
-- Mapping dialect uses **id + type** (e.g. `2(int64): year`); loader emits indented multiline strings with `#` comments for readability
+- Mapping dialect uses **id + type** (e.g. `2(int64): year`); loader emits indented multiline strings with `#` comments for readability (GraphQL `"""` block strings)
+- Rename / naming-convention transforms work without author `@connect` / `@merge` / `@meshSource`: Mesh auto-stamps `@source(name: <pre-rename>)` and keeps `@protobuf__rpc` binds on that source name (Connectors rewrite `$args.*` instead because they never get Mesh `@source`)
 - No `@grpcMethod`, `@grpcConnectivityState`, `@enum` stamps, or synthetic connectivity fields
 - No `options.roots` on `@transport`
 
