@@ -655,15 +655,40 @@ export function rewriteProtobufMappingBindsTypeScoped(
         return `${pre}${rewritten.join('.')}`;
       }
 
-      // Already-emitted relative dual `parentYear|requestYear` — leave intact.
+      // Relative dual `parentYear|requestYear` from an earlier transform: rewrite each arm
+      // against its recorded owner so consecutive field renames stay valid.
       if (path.includes('|') && !path.includes('$')) {
-        return `${pre}${path}`;
+        const pipe = path.indexOf('|');
+        const leftSegs = path.slice(0, pipe).split('.');
+        const rightSegs = path.slice(pipe + 1).split('.');
+        const owners = resolveOwnersAtDepth(depth, typeAtDepth, altArgTypeAtDepth, options.rootType);
+        const left = rewriteSegments(leftSegs, owners.cur, fieldRenameMap);
+        const right = rewriteSegments(
+          rightSegs,
+          owners.altCur != null ? owners.altCur : owners.cur,
+          fieldRenameMap,
+        );
+        let nextPath = left.path;
+        if (right.path !== left.path) {
+          nextPath = `${left.path}|${right.path}`;
+        }
+        if (entersBlock) {
+          typeAtDepth[depth + 1] = left.type ?? null;
+          altArgTypeAtDepth[depth + 1] =
+            owners.altCur != null ? (right.type ?? null) : undefined;
+          argsRootAtDepth[depth + 1] = false;
+        }
+        return `${pre}${nextPath}`;
       }
 
       const segments = path.split('.');
 
-      // Depth-0 args mode, or nested relative binds under bare `$args { … }`.
-      if ((hasArgTypes || argRenameLookup.size) && (depth === 0 || argsRootAtDepth[depth])) {
+      // Depth-0 args mode, or nested relative binds under bare `$args { … }`
+      // (including through unbound nested blocks that inherit the args-root marker).
+      if (
+        (hasArgTypes || argRenameLookup.size) &&
+        (depth === 0 || isArgsRootAtDepth(depth, argsRootAtDepth, typeAtDepth))
+      ) {
         const argName = segments[0];
         const publicArg = argRenameLookup.get(argName) ?? argName;
         const rewritten = [publicArg];
@@ -688,20 +713,9 @@ export function rewriteProtobufMappingBindsTypeScoped(
 
       // Unbound nested `{ … }` leaves typeAtDepth[depth] unset (undefined) — inherit the
       // enclosing owner. Explicit unknown owners are stored as `null` and must not inherit.
-      let cur: GraphQLNamedType | null | undefined = typeAtDepth[depth];
-      let altCur: GraphQLNamedType | null | undefined = altArgTypeAtDepth[depth];
-      if (cur === undefined) {
-        for (let d = depth - 1; d >= 0; d--) {
-          if (typeAtDepth[d] !== undefined) {
-            cur = typeAtDepth[d];
-            altCur = altArgTypeAtDepth[d];
-            break;
-          }
-        }
-      }
-      if (cur === undefined) {
-        cur = options.rootType;
-      }
+      const owners = resolveOwnersAtDepth(depth, typeAtDepth, altArgTypeAtDepth, options.rootType);
+      let cur = owners.cur;
+      let altCur = owners.altCur;
       const rewritten: string[] = [];
       const altRewritten: string[] = [];
       const walkAlt = altCur != null;
@@ -730,6 +744,70 @@ export function rewriteProtobufMappingBindsTypeScoped(
       return `${pre}${nextPath}`;
     },
   );
+}
+
+function rewriteSegments(
+  segments: string[],
+  owner: GraphQLNamedType | null | undefined,
+  fieldRenameMap: Map<string, Map<string, string>>,
+): { path: string; type: GraphQLNamedType | null | undefined } {
+  let cur = owner;
+  const rewritten: string[] = [];
+  for (const seg of segments) {
+    const stepped = renameFieldSegment(cur, seg, fieldRenameMap);
+    rewritten.push(stepped.name);
+    cur = stepped.type;
+  }
+  return { path: rewritten.join('.'), type: cur };
+}
+
+function resolveOwnersAtDepth(
+  depth: number,
+  typeAtDepth: Array<GraphQLNamedType | null | undefined>,
+  altArgTypeAtDepth: Array<GraphQLNamedType | null | undefined>,
+  rootType: GraphQLNamedType | null | undefined,
+): {
+  cur: GraphQLNamedType | null | undefined;
+  altCur: GraphQLNamedType | null | undefined;
+} {
+  let cur: GraphQLNamedType | null | undefined = typeAtDepth[depth];
+  let altCur: GraphQLNamedType | null | undefined = altArgTypeAtDepth[depth];
+  if (cur === undefined) {
+    for (let d = depth - 1; d >= 0; d--) {
+      if (typeAtDepth[d] !== undefined) {
+        cur = typeAtDepth[d];
+        altCur = altArgTypeAtDepth[d];
+        break;
+      }
+    }
+  }
+  if (cur === undefined) {
+    cur = rootType;
+  }
+  return { cur, altCur };
+}
+
+/**
+ * True when relative binds at `depth` are GraphQL argument names under bare `$args { }`.
+ * Inherits through unbound nested blocks (`typeAtDepth` still unset). Explicit bound owners
+ * (including unknown `null`) isolate and do not inherit the args-root marker.
+ */
+function isArgsRootAtDepth(
+  depth: number,
+  argsRootAtDepth: boolean[],
+  typeAtDepth: Array<GraphQLNamedType | null | undefined>,
+): boolean {
+  if (argsRootAtDepth[depth] === true) return true;
+  if (argsRootAtDepth[depth] === false) return false;
+  // Unset at this depth: only inherit across unbound levels (type also unset).
+  if (typeAtDepth[depth] !== undefined) return false;
+  for (let d = depth - 1; d >= 0; d--) {
+    if (argsRootAtDepth[d] === true) return true;
+    if (typeAtDepth[d] !== undefined) {
+      return argsRootAtDepth[d] === true;
+    }
+  }
+  return false;
 }
 
 /**

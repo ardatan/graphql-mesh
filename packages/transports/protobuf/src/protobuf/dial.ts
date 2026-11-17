@@ -17,8 +17,17 @@ export function resolveHttpUrl(
   service: string | undefined,
   method: string,
 ): string {
-  const base = location.replace(/\/$/, '');
-  return `${base}${buildRpcPath(service, method)}`;
+  const rpcPath = buildRpcPath(service, method);
+  // Append to pathname so query strings stay on the URL (not after the RPC path).
+  try {
+    const url = new URL(location);
+    const basePath = url.pathname.replace(/\/$/, '');
+    url.pathname = `${basePath}${rpcPath}`;
+    return url.toString();
+  } catch {
+    const base = location.replace(/\/$/, '');
+    return `${base}${rpcPath}`;
+  }
 }
 
 /** Default Connect unary binary content type; override via `@transport(headers:)` (e.g. Twirp `application/protobuf`). */

@@ -374,4 +374,67 @@ describe('protobuf mapping + codec', () => {
     );
     expect(decodeMessage(parseMapping(`1(string): value`), bytes).value).toBe('from-parent');
   });
+
+  it('preserves repeated for unbound nested message blocks', () => {
+    const fields = parseMapping(`
+      1(repeated message): {
+        1(int32): value
+      }
+    `);
+    expect(fields[0].type.kind).toBe('repeated');
+    // Two wire occurrences must not merge into one object when type stays repeated.
+    const two = Uint8Array.from([0x0a, 0x02, 0x08, 0x01, 0x0a, 0x02, 0x08, 0x02]);
+    expect(decodeMessage(fields, two)._1).toEqual([{ value: 1 }, { value: 2 }]);
+  });
+
+  it('rejects truncated fixed32 inside a nested message boundary', () => {
+    // 1(message): child { 1(fixed32): n } truncated to 1 value byte, then parent 2(fixed32).
+    const fields = parseMapping(`
+      1(message): child {
+        1(fixed32): n
+      }
+      2(fixed32): pad
+    `);
+    const truncated = Uint8Array.from([0x0a, 0x01, 0x0d, 0x15, 0x00, 0x00, 0x00]);
+    expect(() => decodeMessage(fields, truncated)).toThrow(/Truncated fixed/);
+  });
+
+  it('rejects unterminated and overlong varints', () => {
+    const fields = parseMapping(`1(int32): n`);
+    const unterminated = Uint8Array.from([0x08, 0xff, 0xff, 0xff]);
+    expect(() => decodeMessage(fields, unterminated)).toThrow(/Truncated varint/);
+    const overlong = Uint8Array.from([
+      0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    ]);
+    expect(() => decodeMessage(fields, overlong)).toThrow(/Invalid varint|tenth byte/);
+  });
+
+  it('nested relative dual prefers args arm when outer $this falls back', () => {
+    const fields = parseMapping(`
+      1(message): $this.input|$args.request {
+        2(int64): parentYear|requestYear
+      }
+    `);
+    const bytes = encodeMessage(
+      fields,
+      { request: { requestYear: 2024, parentYear: 7 } },
+      { request: { requestYear: 2024, parentYear: 7 } },
+      {}, // parent lacks input
+    );
+    expect(decodeMessage(parseMapping(`1(message): input { 2(int64): year }`), bytes)).toEqual({
+      input: { year: 2024 },
+    });
+  });
+});
+
+describe('resolveHttpUrl', () => {
+  it('appends RPC path to pathname and preserves query', async () => {
+    const { resolveHttpUrl } = await import('../src/protobuf/dial.js');
+    expect(resolveHttpUrl('https://example.test/twirp?token=x', 'Example', 'GetMovies')).toBe(
+      'https://example.test/twirp/Example/GetMovies?token=x',
+    );
+    expect(resolveHttpUrl('https://example.test/twirp', 'Example', 'GetMovies')).toBe(
+      'https://example.test/twirp/Example/GetMovies',
+    );
+  });
 });

@@ -61,6 +61,7 @@ export function protoTypeToken(
     return `repeated ${token}`;
   }
   // Proto3 explicit presence: `optional` / proto3_optional / oneof members — decoder must not default.
+  // Proto2 inputs are rejected at load time (`assertProto3Only`); do not treat bare `optional` here.
   if (isExplicitOptionalField(field, isOneofMember) && token !== 'message') {
     return `optional ${token}`;
   }

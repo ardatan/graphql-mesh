@@ -877,12 +877,25 @@ function addAnnotationsForSemanticConventions({
             if (batchListArg) {
               return false;
             }
+            // Entity representation only carries key fields. Require every non-null arg
+            // to be that key (id-only). Extra required args (e.g. locale) cannot be filled.
+            const requiredArgNames = argEntries
+              .filter(([, a]) => isNonNullType(a.type))
+              .map(([name]) => name);
+            const requiredArgsAreKeyOnly =
+              requiredArgNames.length > 0 && requiredArgNames.every(name => name === argName);
             if (argName === fieldName) {
+              if (!requiredArgsAreKeyOnly) {
+                return false;
+              }
               directiveExtensions.connect = directiveExtensions.connect.map((c: any) => ({
                 ...c,
                 entity: true,
               }));
               return true;
+            }
+            if (!requiredArgsAreKeyOnly) {
+              return false;
             }
             // Type-level entity connector: `/pet/{$args.petId}` → `/pet/{$this.id}`
             const typeConnects = directiveExtensions.connect.map((c: any) =>

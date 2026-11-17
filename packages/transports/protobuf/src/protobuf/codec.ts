@@ -1,4 +1,11 @@
-import { resolveBind, type MappingField, type ProtoType } from './mapping.js';
+import {
+  parseThisBind,
+  resolveBind,
+  resolveThisMessageBind,
+  type DualArmPrefer,
+  type MappingField,
+  type ProtoType,
+} from './mapping.js';
 
 const WIRE_VARINT = 0;
 const WIRE_64 = 1;
@@ -10,10 +17,11 @@ export function encodeMessage(
   args: Record<string, any>,
   localRoot: Record<string, any> = args,
   thisRoot?: Record<string, any>,
+  dualPrefer?: DualArmPrefer,
 ): Uint8Array {
   const chunks: Uint8Array[] = [];
   for (const field of fields) {
-    writeField(chunks, field, args, localRoot, thisRoot);
+    writeField(chunks, field, args, localRoot, thisRoot, dualPrefer);
   }
   return concat(chunks);
 }
@@ -23,12 +31,13 @@ function resolveFieldValue(
   args: Record<string, any>,
   localRoot: Record<string, any>,
   thisRoot?: Record<string, any>,
+  dualPrefer?: DualArmPrefer,
 ): any {
   if (bind == null || bind === '') return undefined;
   if (bind.startsWith('$args') || bind.startsWith('$this')) {
-    return resolveBind(bind, args, thisRoot);
+    return resolveBind(bind, args, thisRoot, dualPrefer);
   }
-  return resolveBind(bind, localRoot, thisRoot);
+  return resolveBind(bind, localRoot, thisRoot, dualPrefer);
 }
 
 function writeField(
@@ -37,23 +46,36 @@ function writeField(
   args: Record<string, any>,
   localRoot: Record<string, any>,
   thisRoot?: Record<string, any>,
+  dualPrefer?: DualArmPrefer,
 ) {
   const type = field.type;
   if (type.kind === 'message') {
     let childRoot = localRoot;
     let boundPresent = false;
+    let childPrefer = dualPrefer;
     if (field.bind != null) {
-      const bound = resolveFieldValue(field.bind, args, localRoot, thisRoot);
-      if (bound != null && typeof bound === 'object') {
-        childRoot = bound;
-        boundPresent = true;
-      } else if (bound == null) {
-        // Explicit bind resolved to null/undefined — omit the message.
-        return;
+      if (parseThisBind(field.bind)) {
+        const resolved = resolveThisMessageBind(field.bind, args, thisRoot);
+        if (resolved.value != null && typeof resolved.value === 'object') {
+          childRoot = resolved.value;
+          boundPresent = true;
+          childPrefer = resolved.dualPrefer;
+        } else if (resolved.value == null) {
+          return;
+        }
+      } else {
+        const bound = resolveFieldValue(field.bind, args, localRoot, thisRoot, dualPrefer);
+        if (bound != null && typeof bound === 'object') {
+          childRoot = bound;
+          boundPresent = true;
+        } else if (bound == null) {
+          // Explicit bind resolved to null/undefined — omit the message.
+          return;
+        }
       }
     }
     const nestedFields = field.fields ?? type.fields;
-    const nested = encodeMessage(nestedFields, args, childRoot, thisRoot);
+    const nested = encodeMessage(nestedFields, args, childRoot, thisRoot, childPrefer);
     // Proto3: omit empty messages unless the bind resolved to an explicit object (`{}`
     // still has presence and must be encoded as a zero-length length-delimited field).
     if (nested.length === 0 && !boundPresent) return;
@@ -64,7 +86,7 @@ function writeField(
   }
 
   if (type.kind === 'repeated') {
-    const list = resolveFieldValue(field.bind, args, localRoot, thisRoot);
+    const list = resolveFieldValue(field.bind, args, localRoot, thisRoot, dualPrefer);
     if (!Array.isArray(list)) return;
     const elementType: ProtoType =
       type.element.kind === 'message' && field.fields?.length
@@ -76,7 +98,7 @@ function writeField(
     return;
   }
 
-  const value = resolveFieldValue(field.bind, args, localRoot, thisRoot);
+  const value = resolveFieldValue(field.bind, args, localRoot, thisRoot, dualPrefer);
   if (value === undefined || value === null) return;
   writeValue(chunks, field.id, type, value);
 }
@@ -447,6 +469,14 @@ function assertLengthDelimitedEnd(end: number, data: Uint8Array, label?: string)
   }
 }
 
+function assertFixedWidthAvailable(data: Uint8Array, i: number, width: number): void {
+  if (i + width > data.length) {
+    throw new Error(
+      `Truncated fixed${width * 8} field: need ${width} bytes at ${i}, buffer length ${data.length}`,
+    );
+  }
+}
+
 function proto3ScalarDefault(name: string): any {
   switch (name) {
     case 'bool':
@@ -568,6 +598,7 @@ function readValue(
     return { value, next: v.next };
   }
   if (wire === WIRE_32) {
+    assertFixedWidthAvailable(data, i, 4);
     const view = new DataView(data.buffer, data.byteOffset + i, 4);
     let value: number;
     if (type.kind === 'scalar' && type.name === 'float') value = view.getFloat32(0, true);
@@ -576,6 +607,7 @@ function readValue(
     return { value, next: i + 4 };
   }
   if (wire === WIRE_64) {
+    assertFixedWidthAvailable(data, i, 8);
     const view = new DataView(data.buffer, data.byteOffset + i, 8);
     let value: number | bigint;
     if (type.kind === 'scalar' && type.name === 'double') value = view.getFloat64(0, true);
@@ -598,8 +630,14 @@ function readValue(
 
 function skipWire(data: Uint8Array, i: number, wire: number): number {
   if (wire === WIRE_VARINT) return readVarint(data, i).next;
-  if (wire === WIRE_64) return i + 8;
-  if (wire === WIRE_32) return i + 4;
+  if (wire === WIRE_64) {
+    assertFixedWidthAvailable(data, i, 8);
+    return i + 8;
+  }
+  if (wire === WIRE_32) {
+    assertFixedWidthAvailable(data, i, 4);
+    return i + 4;
+  }
   if (wire === WIRE_LEN) {
     const len = readVarint(data, i);
     const end = len.next + Number(len.value);
@@ -628,16 +666,30 @@ function writeVarint(chunks: Uint8Array[], value: number | bigint) {
 }
 
 function readVarint(data: Uint8Array, i: number): { value: bigint; next: number } {
+  // Protobuf varints are at most 10 bytes for a 64-bit value (7*9 + 1 bits of payload).
   let result = 0n;
   let shift = 0n;
   let pos = i;
-  while (pos < data.length) {
+  for (let n = 0; n < 10; n++) {
+    if (pos >= data.length) {
+      throw new Error(`Truncated varint: buffer ended at ${pos} before terminating byte`);
+    }
     const b = data[pos++];
+    if (n === 9) {
+      // Tenth byte may only carry the final bit of a 64-bit value (payload 0 or 1).
+      if ((b & 0x80) !== 0 || (b & 0x7f) > 1) {
+        throw new Error(`Invalid varint: tenth byte 0x${b.toString(16)} exceeds 64-bit range`);
+      }
+      result |= BigInt(b & 0x7f) << shift;
+      return { value: result, next: pos };
+    }
     result |= BigInt(b & 0x7f) << shift;
-    if ((b & 0x80) === 0) break;
+    if ((b & 0x80) === 0) {
+      return { value: result, next: pos };
+    }
     shift += 7n;
   }
-  return { value: result, next: pos };
+  throw new Error('Invalid varint: unterminated after 10 bytes');
 }
 
 function writeFixed32(chunks: Uint8Array[], value: number) {

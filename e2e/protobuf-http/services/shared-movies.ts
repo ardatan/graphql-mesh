@@ -59,6 +59,11 @@ export function filterMovies(
           ? asNumber(movie[key as keyof MovieRecord])
           : movie[key as keyof MovieRecord];
       const right = key === 'year' || key === 'genre' ? asNumber(value) : value;
+      // Protobuf `float` is IEEE 754 binary32 — compare at that precision.
+      if (key === 'rating' && typeof left === 'number' && typeof right === 'number') {
+        if (Math.fround(left) === Math.fround(right)) return true;
+        continue;
+      }
       if (left === right) return true;
     }
     return false;

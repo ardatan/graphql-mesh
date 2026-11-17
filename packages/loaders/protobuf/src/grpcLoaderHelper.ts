@@ -36,6 +36,44 @@ import { addIncludePathResolver, getTypeName, walkToFindTypePath } from './utils
 
 const { Root } = protobufjs;
 
+/**
+ * Mesh protobuf RPC supports proto3 only. Proto2 optional/defaults would need explicit
+ * presence + declared defaults in the mapping codec; reject rather than decode incorrectly.
+ * protobufjs records `_edition: "proto2"` on namespaces/types after resolveAll.
+ */
+function assertProto3Only(root: protobufjs.Root): void {
+  const visit = (ns: protobufjs.NamespaceBase): void => {
+    for (const nested of ns.nestedArray) {
+      // Package/root namespaces keep the protobufjs default edition; only message types
+      // reflect the file's declared syntax after resolveAll.
+      if (nested instanceof protobufjs.Type) {
+        const edition = (nested as { _edition?: string })._edition;
+        if (edition === 'proto2') {
+          throw new Error(
+            `Protobuf loader supports proto3 only; ${nested.fullName || nested.name} is proto2`,
+          );
+        }
+        for (const field of nested.fieldsArray) {
+          if (field.required) {
+            throw new Error(
+              `Protobuf loader supports proto3 only; required field ${field.fullName} is proto2`,
+            );
+          }
+          if (field.options && Object.prototype.hasOwnProperty.call(field.options, 'default')) {
+            throw new Error(
+              `Protobuf loader supports proto3 only; field default on ${field.fullName} is proto2`,
+            );
+          }
+        }
+      }
+      if (nested instanceof protobufjs.Namespace) {
+        visit(nested);
+      }
+    }
+  };
+  visit(root);
+}
+
 interface LoadOptions extends IParseOptions {
   includeDirs?: string[];
 }
@@ -270,6 +308,7 @@ export class GrpcLoaderHelper extends DisposableStack {
         const rootLogger = this.log.child({ root: rootName });
         rootLogger.debug(`Resolving entire the root tree`);
         root.resolveAll();
+        assertProto3Only(root);
         rootLogger.debug(`Creating artifacts from descriptor set and root`);
         return {
           name: rootName,

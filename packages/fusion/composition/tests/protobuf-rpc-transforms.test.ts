@@ -573,6 +573,48 @@ describe('rewriteProtobufMappingBinds', () => {
     expect(out).toMatch(/2\(int64\):\s*releaseYear/);
   });
 
+  it('inherits args-root through unbound nested blocks', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      '1(message): $args {\n  2(message): {\n    3(string): id\n  }\n}',
+      new Map(),
+      { argRenameMap: new Map([['id', 'requestId']]) },
+    );
+    expect(out).toMatch(/3\(string\):\s*requestId/);
+  });
+
+  it('rewrites already-emitted relative dual binds on a later transform', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const schema = buildSchema(/* GraphQL */ `
+      input ParentInput {
+        parentYear: Int
+      }
+      input RequestInput {
+        requestYear: Int
+      }
+      type Movie {
+        input: ParentInput
+        byYear(request: RequestInput): String
+      }
+    `);
+    const movie = schema.getType('Movie')!;
+    const requestInput = schema.getType('RequestInput')!;
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      '1(message): $this.input|$args.request {\n  2(int64): parentYear|requestYear\n}',
+      new Map([
+        ['ParentInput', new Map([['parentYear', 'publishedYear']])],
+        ['RequestInput', new Map([['requestYear', 'releaseYear']])],
+      ]),
+      {
+        rootType: movie,
+        argTypes: new Map([['request', requestInput]]),
+        skipThisBinds: true,
+      },
+    );
+    expect(out).toContain('$this.input|$args.request');
+    expect(out).toMatch(/2\(int64\):\s*publishedYear\|releaseYear/);
+  });
+
   it('resolves argTypes via public head for chained renames with distinct inputs', () => {
     const schema = buildSchema(
       /* GraphQL */ `

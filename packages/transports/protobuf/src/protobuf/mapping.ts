@@ -180,12 +180,21 @@ function parseField(source: string, start: number): { field: MappingField; end: 
       throw new Error(`Expected '}' at ${snippet(source, i)}`);
     }
     i++;
-    // optional bind after nested block: `1(message): movie { ... }` already consumed;
-    // support `1(message): { ... }` or `1(message): name { ... }` — if we had a bind before `{`
+    // Unbound nested block: keep collection wrappers (`repeated` / `map`) like the bound branch.
+    const baseType = typeParsed.type;
+    const messageType: ProtoType = { kind: 'message', fields: nested.fields };
+    let type: ProtoType;
+    if (baseType.kind === 'repeated') {
+      type = { kind: 'repeated', element: messageType };
+    } else if (baseType.kind === 'map') {
+      type = { kind: 'map', key: baseType.key, value: messageType };
+    } else {
+      type = messageType;
+    }
     return {
       field: {
         id,
-        type: { kind: 'message', fields: nested.fields },
+        type,
         fields: nested.fields,
       },
       end: i,
@@ -360,10 +369,14 @@ export function parseThisBind(bind: string): { thisPath: string; argsPath: strin
   return { thisPath: rest, argsPath: rest };
 }
 
+/** Which arm of a relative `a|b` dual to try first (`first` = parent side, `second` = args). */
+export type DualArmPrefer = 'first' | 'second';
+
 export function resolveBind(
   bind: string | undefined,
   args: Record<string, any>,
   thisRoot?: Record<string, any>,
+  dualPrefer?: DualArmPrefer,
 ): any {
   if (bind == null || bind === '') {
     return undefined;
@@ -392,12 +405,19 @@ export function resolveBind(
   if (bind === '$args') {
     return args;
   }
-  // Relative dual `parentYear|requestYear`: try each key on the local object so nested
-  // renames stay valid when `$this` falls back from parent to args after diverging renames.
+  // Relative dual `parentYear|requestYear`: honor the outer dual branch that supplied
+  // the local object so an unrelated matching name on the other side cannot win.
   const relDual = bind.indexOf('|');
   if (relDual > 0 && !bind.includes('$')) {
     const first = bind.slice(0, relDual);
     const second = bind.slice(relDual + 1);
+    if (dualPrefer === 'second') {
+      const fromSecond = getPath(args, second);
+      if (fromSecond !== undefined) {
+        return fromSecond;
+      }
+      return getPath(args, first);
+    }
     const fromFirst = getPath(args, first);
     if (fromFirst !== undefined) {
       return fromFirst;
@@ -405,6 +425,34 @@ export function resolveBind(
     return getPath(args, second);
   }
   return getPath(args, bind);
+}
+
+/**
+ * Resolve a `$this…|$args…` message bind and report which outer branch supplied the object.
+ * Parent-first; args fallback when the parent path is undefined.
+ */
+export function resolveThisMessageBind(
+  bind: string,
+  args: Record<string, any>,
+  thisRoot?: Record<string, any>,
+): { value: any; dualPrefer: DualArmPrefer } {
+  const thisBind = parseThisBind(bind);
+  if (!thisBind) {
+    return { value: resolveBind(bind, args, thisRoot), dualPrefer: 'first' };
+  }
+  if (thisBind.thisPath === '' && thisBind.argsPath === '') {
+    if (thisRoot != null && typeof thisRoot === 'object') {
+      return { value: thisRoot, dualPrefer: 'first' };
+    }
+    return { value: args, dualPrefer: 'second' };
+  }
+  if (thisRoot != null && typeof thisRoot === 'object') {
+    const fromParent = getPath(thisRoot, thisBind.thisPath);
+    if (fromParent !== undefined) {
+      return { value: fromParent, dualPrefer: 'first' };
+    }
+  }
+  return { value: getPath(args, thisBind.argsPath), dualPrefer: 'second' };
 }
 
 function getPath(obj: any, pathStr: string): any {
