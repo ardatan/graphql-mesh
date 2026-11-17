@@ -96,13 +96,14 @@ export function withOriginalKeyFallback<T extends Record<string, any>>(
 }
 
 /**
- * Rewrite Federation Connectors `@connect` `$args.<name>` references after GraphQL
- * argument renames. Mesh stitching used `@meshSource(name:)` for this; Connectors
- * bind args by the GraphQL argument name in path/body/query/headers expressions.
+ * Rewrite `$args.<name>` (and related) references after GraphQL argument renames
+ * for Federation `@connect` and Thrift `@thrift__rpc`. Mesh stitching used
+ * `@meshSource(name:)` for this; Connectors / thrift compact mapping bind args by
+ * the GraphQL argument name inside path/body/`args`/`selection` strings.
  *
  * When `fieldRenameMap` is set, also rewrite selection aliases of the form
  * `newName: oldName` / leading `oldName` field picks so rename/prefix transforms
- * keep Connectors selection in sync with GraphQL field names.
+ * keep Connectors (and thrift compact) selection in sync with GraphQL field names.
  *
  * When `typeRenameMap` is set, rewrite `__typename: "Old"` / `__typename: $("Old")`
  * in selections so prefix/rename/naming-convention keep polymorphic Connect arms valid.
@@ -113,8 +114,10 @@ export function rewriteConnectArgReferences(
   fieldRenameMap?: Map<string, string>,
   typeRenameMap?: Map<string, string>,
 ): Record<string, any[]> | undefined {
+  const hasConnect = Boolean(fieldDirectives?.connect?.length);
+  const hasThriftRpc = Boolean(fieldDirectives?.thrift__rpc?.length);
   if (
-    !fieldDirectives?.connect?.length ||
+    (!hasConnect && !hasThriftRpc) ||
     (argRenameMap.size === 0 &&
       (!fieldRenameMap || fieldRenameMap.size === 0) &&
       (!typeRenameMap || typeRenameMap.size === 0))
@@ -198,9 +201,9 @@ export function rewriteConnectArgReferences(
     }
     return next;
   };
-  return {
-    ...fieldDirectives,
-    connect: fieldDirectives.connect.map((connectArgs: any) => ({
+  const next: Record<string, any[]> = { ...fieldDirectives };
+  if (hasConnect) {
+    next.connect = fieldDirectives!.connect.map((connectArgs: any) => ({
       ...connectArgs,
       http: rewriteHttp(connectArgs?.http),
       selection:
@@ -218,6 +221,19 @@ export function rewriteConnectArgReferences(
             extensions: rewriteExpr(connectArgs.errors.extensions),
           }
         : connectArgs?.errors,
-    })),
-  };
+    }));
+  }
+  if (hasThriftRpc) {
+    // Compact `@thrift__rpc(args/selection/throws:)` embed `$args.<name>` the same way.
+    next.thrift__rpc = fieldDirectives!.thrift__rpc.map((rpcArgs: any) => ({
+      ...rpcArgs,
+      args: typeof rpcArgs?.args === 'string' ? rewriteExpr(rpcArgs.args) : rpcArgs?.args,
+      selection:
+        typeof rpcArgs?.selection === 'string'
+          ? rewriteExpr(rpcArgs.selection)
+          : rpcArgs?.selection,
+      throws: typeof rpcArgs?.throws === 'string' ? rewriteExpr(rpcArgs.throws) : rpcArgs?.throws,
+    }));
+  }
+  return next;
 }

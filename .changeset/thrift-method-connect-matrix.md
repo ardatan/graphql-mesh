@@ -2,6 +2,7 @@
 '@omnigraph/thrift': minor
 '@graphql-mesh/transport-thrift': minor
 '@graphql-mesh/transport-rest': patch
+'@graphql-mesh/fusion-composition': patch
 ---
 
 ### Why
@@ -105,7 +106,7 @@ After (JSON): use loader `protocol: 'json'` so compose emits `@source` / `@conne
 3. **Drop** Mesh-only thrift transport annotation options that mirrored codegen. Keep HTTP `location` + `headers` on `@transport` for binary.
 4. **Single-service:** do not require `service:` on `@thrift__rpc`. For TJSON multi-service multiplex only, set loader `serviceName`.
 5. **Optional:** `ignoreExceptions: false` if declared throws should appear as union data instead of GraphQL errors.
-6. **Transforms:** rename/wrap transforms should rewrite `$args…` inside `@thrift__rpc(args/selection)` and `@connect` body/selection the same way Connectors-oriented transforms already target mapping strings — no extra `@merge` / `@meshSource`-style thrift directives are required for that model.
+6. **Transforms:** Fusion rename / naming-convention (and prefix-via-rename) rewrite `$args…` inside both `@connect` path/body/selection **and** `@thrift__rpc(args/selection/throws)` — same helper, no extra `@merge` / `@meshSource`-style thrift directives.
 
 ### Authoring notes
 
@@ -118,3 +119,4 @@ After (JSON): use loader `protocol: 'json'` so compose emits `@source` / `@conne
 - `@omnigraph/thrift` — loader emit (`@thrift__rpc` / TJSON `@connect`), options (`protocol`, `entityMethods`, `ignoreExceptions`, `serviceName`)
 - `@graphql-mesh/transport-thrift` — execute compact mapping, ONEWAY, throws unions
 - `@graphql-mesh/transport-rest` — Connectors helpers used by TJSON (`ne(null)`, `and`, quote-safe `@` rewrite, etc.)
+- `@graphql-mesh/fusion-composition` — rename/naming-convention rewrite `$args` inside `@thrift__rpc` as well as `@connect`

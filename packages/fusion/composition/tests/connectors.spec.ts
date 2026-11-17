@@ -132,6 +132,65 @@ describe('Federation Connectors composition', () => {
     expect(sdl).not.toMatch(/\$args\.id\b/);
   });
 
+  it('rewrites @thrift__rpc $args when rename transform renames arguments', () => {
+    const thriftSchema = buildSchema(/* GraphQL */ `
+      schema @transport(subgraph: "Calc", kind: "thrift", location: "http://localhost/thrift") {
+        query: Query
+      }
+
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        headers: [[String]]
+      ) repeatable on SCHEMA
+
+      directive @thrift__rpc(
+        subgraph: String
+        function: String!
+        args: String!
+        selection: String!
+        messageType: String
+      ) on FIELD_DEFINITION
+
+      input AddRequestInput {
+        left: Int!
+        right: Int!
+      }
+
+      type Query {
+        add(request: AddRequestInput): Int
+          @thrift__rpc(
+            function: "add"
+            args: """
+            1(struct): $args.request {
+              1(i32): left
+              2(i32): right
+            }
+            """
+            selection: "$(i32)"
+            messageType: "CALL"
+          )
+      }
+    `);
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'Calc',
+        schema: thriftSchema,
+        transforms: [
+          createRenameTransform({
+            argRenamer: ({ argName, fieldName }) =>
+              fieldName === 'add' && argName === 'request' ? 'input' : argName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toContain('add(input:');
+    expect(sdl).toMatch(/\$args\.input/);
+    expect(sdl).not.toMatch(/\$args\.request\b/);
+  });
+
   it('lifts transport/source from extras onto schema and drops the wrapper', () => {
     const sdl = /* GraphQL */ `
       schema
