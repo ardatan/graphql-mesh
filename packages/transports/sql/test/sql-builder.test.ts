@@ -22,20 +22,19 @@ describe('buildSelect', () => {
     expect(params).toEqual(['1', 1]);
   });
 
-  it('builds filtered ROWS with order and limit', () => {
+  it('builds filtered ROWS with order and limit via ...$args.where spread', () => {
     const { sql, params } = buildSelect('sqlite', {
       table: 'albums',
       kind: 'ROWS',
       selection,
-      whereMapping: parseSqlMapping(''),
+      whereMapping: parseSqlMapping(`...$args.where`),
       planners: {
-        filter: '$args.filter',
         orderBy: '$args.orderBy',
         limit: '$args.limit',
         offset: '$args.offset',
       },
       graphqlArgs: {
-        filter: { title: { startsWith: 'For' } },
+        where: { title: { startsWith: 'For' } },
         orderBy: ['TITLE_ASC'],
         limit: 2,
         offset: 0,
@@ -45,6 +44,32 @@ describe('buildSelect', () => {
     expect(sql).toContain('ORDER BY "Title" ASC');
     expect(params[0]).toBe('For%');
     expect(params).toContain(2);
+  });
+
+  it('merges join equality with ...$args.where spread', () => {
+    const { sql, params } = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'ROWS',
+      selection,
+      whereMapping: parseSqlMapping(`
+        ArtistId: $this.id
+        ...$args.where
+      `),
+      planners: {
+        orderBy: '$args.orderBy',
+        limit: '$args.limit',
+      },
+      parent: { id: 42 },
+      graphqlArgs: {
+        where: { title: { eq: 'X' } },
+        orderBy: ['TITLE_ASC'],
+        limit: 5,
+      },
+    });
+    expect(sql).toContain('"ArtistId" = ?');
+    expect(sql).toContain('"Title" = ?');
+    expect(params[0]).toBe(42);
+    expect(params[1]).toBe('X');
   });
 
   it('maps rows to GraphQL fields and stringifies id', () => {

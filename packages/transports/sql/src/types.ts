@@ -33,10 +33,15 @@ export interface SqlMappingValue {
 }
 
 export interface SqlMappingEntry {
-  /** GraphQL field name, planner key (filter/orderBy/...), or SQL column on the left of args */
+  /** GraphQL field name, planner key (orderBy/...), or SQL column on the left of args */
   key: string;
   value?: SqlMappingValue;
   children?: SqlMappingEntry[];
+  /**
+   * Connectors-style spread (`...$args.where`): merge the resolved object into
+   * the structured WHERE filter (null/undefined spread is a no-op).
+   */
+  spread?: boolean;
 }
 
 export interface ParsedSqlMapping {

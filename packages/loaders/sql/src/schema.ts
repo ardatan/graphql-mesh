@@ -189,7 +189,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
         refOtc.setField(hasManyName, {
           type: `[${typeName}!]!`,
           args: {
-            filter: naming.filterInput(typeName),
+            where: naming.filterInput(typeName),
             orderBy: `[${naming.orderByEnum(typeName)}!]`,
             limit: 'Int',
             offset: 'Int',
@@ -201,8 +201,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
                 subgraph: subgraphName,
                 table: table.name,
                 kind: 'ROWS',
-                where: blockArg(`${localCol}: $this.${refField}`),
-                filter: '$args.filter',
+                where: blockArg(`${localCol}: $this.${refField}\n...$args.where`),
                 orderBy: '$args.orderBy',
                 limit: '$args.limit',
                 offset: '$args.offset',
@@ -253,7 +252,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     queryTC.setField(plural, {
       type: `[${typeName}!]!`,
       args: {
-        filter: naming.filterInput(typeName),
+        where: naming.filterInput(typeName),
         orderBy: `[${naming.orderByEnum(typeName)}!]`,
         limit: { type: GraphQLInt, defaultValue: 10 },
         offset: { type: GraphQLInt, defaultValue: 0 },
@@ -265,7 +264,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'ROWS',
-            filter: '$args.filter',
+            where: blockArg(`...$args.where`),
             orderBy: '$args.orderBy',
             limit: '$args.limit',
             offset: '$args.offset',
@@ -278,7 +277,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     queryTC.setField(naming.connectionField(typeName), {
       type: `${typeName}Connection!`,
       args: {
-        filter: naming.filterInput(typeName),
+        where: naming.filterInput(typeName),
         orderBy: `[${naming.orderByEnum(typeName)}!]`,
         first: GraphQLInt,
         after: GraphQLString,
@@ -290,7 +289,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'CONNECTION',
-            filter: '$args.filter',
+            where: blockArg(`...$args.where`),
             orderBy: '$args.orderBy',
             first: '$args.first',
             after: '$args.after',
@@ -322,7 +321,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     queryTC.setField(naming.countField(typeName), {
       type: 'Int!',
       args: {
-        filter: naming.filterInput(typeName),
+        where: naming.filterInput(typeName),
       },
       directives: [
         {
@@ -331,7 +330,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'COUNT',
-            filter: '$args.filter',
+            where: blockArg(`...$args.where`),
             selection: blockArg(`$`),
           },
         },

@@ -26,8 +26,9 @@ export interface SelectPlan {
   graphqlArgs: Record<string, any>;
   parent?: Record<string, any>;
   /**
-   * Explicit `@sql` planner binders (`filter: "$args.filter"`, …).
-   * Preferred over stuffing planner keys into `where`.
+   * Explicit `@sql` planner binders (`orderBy: "$args.orderBy"`, …).
+   * Structured filters prefer Connectors-style `...$args.where` spreads in `where`.
+   * Legacy `filter: "$args.filter"` binders remain for older SDL.
    */
   planners?: SqlPlanners;
   /** Belongs-to joins folded from GraphQL selection lookahead. */
@@ -38,6 +39,7 @@ export interface SelectPlan {
 
 const PLANNER_KEYS = new Set<string>([
   'filter',
+  'where',
   'orderBy',
   'first',
   'after',
@@ -63,9 +65,9 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
       ? `${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, col)}`
       : quoteIdent(adapter, col);
 
-  // Equality / join predicates from `where` mapping (non-planner keys)
+  // Equality / join predicates from `where` mapping (non-planner, non-spread)
   for (const entry of plan.whereMapping.entries) {
-    if (PLANNER_KEYS.has(entry.key) || entry.children) {
+    if (entry.spread || PLANNER_KEYS.has(entry.key) || entry.children) {
       continue;
     }
     const resolved = resolveMappingValue(entry.value, {
@@ -77,12 +79,9 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
     whereParts.push(`${qualify(entry.key)} = ${placeholder(adapter, params.length)}`);
   }
 
-  const filterVal = resolvePlannerArg(plan, 'filter');
-  if (filterVal && typeof filterVal === 'object') {
-    appendFilter(adapter, filterVal as Record<string, any>, columns, whereParts, params, {
-      qualifyColumn: rootAlias ? qualify : undefined,
-    });
-  }
+  appendStructuredFilters(adapter, plan, columns, whereParts, params, {
+    qualifyColumn: rootAlias ? qualify : undefined,
+  });
 
   const selectCols = buildSelectList(adapter, plan.selection, joins, hasMany, rootAlias);
 
@@ -296,7 +295,7 @@ export function buildSelectByColumnIn(
   const whereParts: string[] = [];
 
   for (const entry of plan.whereMapping.entries) {
-    if (PLANNER_KEYS.has(entry.key) || entry.children) continue;
+    if (entry.spread || PLANNER_KEYS.has(entry.key) || entry.children) continue;
     if (entry.key === plan.column) continue; // replaced by IN list
     const resolved = resolveMappingValue(entry.value, {
       args: plan.graphqlArgs,
@@ -307,10 +306,7 @@ export function buildSelectByColumnIn(
     whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
   }
 
-  const filterVal = resolvePlannerArg(plan, 'filter');
-  if (filterVal && typeof filterVal === 'object') {
-    appendFilter(adapter, filterVal as Record<string, any>, columns, whereParts, params);
-  }
+  appendStructuredFilters(adapter, plan, columns, whereParts, params);
 
   const inPhs = plan.values.map(v => {
     params.push(v);
@@ -399,7 +395,7 @@ export function buildUpdate(
   }
   const whereParts: string[] = [];
   for (const entry of whereMapping.entries) {
-    if (entry.children || PLANNER_KEYS.has(entry.key)) continue;
+    if (entry.spread || entry.children || PLANNER_KEYS.has(entry.key)) continue;
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
@@ -424,7 +420,7 @@ export function buildDelete(
   const params: unknown[] = [];
   const whereParts: string[] = [];
   for (const entry of whereMapping.entries) {
-    if (entry.children || PLANNER_KEYS.has(entry.key)) continue;
+    if (entry.spread || entry.children || PLANNER_KEYS.has(entry.key)) continue;
     const val = resolveMappingValue(entry.value, { args: graphqlArgs });
     if (val === undefined) continue;
     params.push(val);
@@ -453,8 +449,8 @@ function resolvePlannerArg(plan: SelectPlan, key: SqlPlannerKey): unknown {
 }
 
 /**
- * Resolve `@sql(filter: "$args.filter")` style binders.
- * Also accepts a one-line mapping (`filter: $args.filter`) for symmetry with `where`.
+ * Resolve `@sql(orderBy: "$args.orderBy")` style binders.
+ * Also accepts a one-line mapping (`orderBy: $args.orderBy`) for symmetry with `where`.
  */
 function resolvePlannerBinder(
   binder: string,
@@ -467,10 +463,37 @@ function resolvePlannerBinder(
     return resolveMappingValue(mapping.entries[0]?.value, ctx);
   }
   const mapping = parseSqlMapping(trimmed);
-  if (mapping.entries.length === 1) {
+  if (mapping.entries.length === 1 && !mapping.entries[0].spread) {
     return resolveMappingValue(mapping.entries[0].value, ctx);
   }
   return undefined;
+}
+
+/**
+ * Apply Connectors-style `...$args.where` spreads, then legacy filter binders.
+ */
+function appendStructuredFilters(
+  adapter: SqlAdapter,
+  plan: SelectPlan,
+  columns: Map<string, string>,
+  whereParts: string[],
+  params: unknown[],
+  opts?: { qualifyColumn?: (col: string) => string },
+): void {
+  const ctx = { args: plan.graphqlArgs, parent: plan.parent };
+  for (const entry of plan.whereMapping.entries) {
+    if (!entry.spread) continue;
+    const resolved = resolveMappingValue(entry.value, ctx);
+    if (resolved && typeof resolved === 'object' && !Array.isArray(resolved)) {
+      appendFilter(adapter, resolved as Record<string, any>, columns, whereParts, params, opts);
+    }
+  }
+
+  // Legacy: `@sql(filter: "$args.filter")` or `filter: $args.filter` stuffed in where.
+  const legacyFilter = resolvePlannerArg(plan, 'filter');
+  if (legacyFilter && typeof legacyFilter === 'object') {
+    appendFilter(adapter, legacyFilter as Record<string, any>, columns, whereParts, params, opts);
+  }
 }
 
 function buildOrderBy(

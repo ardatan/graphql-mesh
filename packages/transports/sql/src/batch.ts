@@ -20,8 +20,8 @@ function getLoaderMap(context: any): LoaderMap {
 
 function stableArgsKey(args: Record<string, any> | undefined): string {
   if (!args) return '';
-  const { filter, orderBy, limit, offset, first, after } = args;
-  return JSON.stringify({ filter, orderBy, limit, offset, first, after });
+  const { where, filter, orderBy, limit, offset, first, after } = args;
+  return JSON.stringify({ where, filter, orderBy, limit, offset, first, after });
 }
 
 const PLANNER_KEYS = new Set([
@@ -43,7 +43,7 @@ const PLANNER_KEYS = new Set([
 export function batchableEqualityColumn(whereMapping: ParsedSqlMapping): string | undefined {
   const cols: string[] = [];
   for (const entry of whereMapping.entries) {
-    if (PLANNER_KEYS.has(entry.key) || entry.children) continue;
+    if (entry.spread || PLANNER_KEYS.has(entry.key) || entry.children) continue;
     cols.push(entry.key);
   }
   return cols.length === 1 ? cols[0] : undefined;

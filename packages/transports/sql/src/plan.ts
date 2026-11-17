@@ -202,7 +202,7 @@ function planChildField(
 
   if (kind === 'ROWS') {
     // Only fold when the only non-planner binder is `$this` equality and args are
-    // limited to limit/offset (no filter/orderBy — those stay on DataLoader).
+    // limited to limit/offset (no where/orderBy — those stay on DataLoader).
     if (!isSimpleHasManyFoldable(whereMapping, fieldNode)) return null;
     const limit = readLimitArg(fieldNode);
     const narrowed = narrowSelectionToFieldNodes(relSelection, fieldNode, fragments, childType);
@@ -230,8 +230,8 @@ function getSqlArgs(schema: GraphQLSchema, field: GraphQLField<any, any>) {
 }
 
 function isSimpleHasManyFoldable(_whereMapping: ParsedSqlMapping, fieldNode: FieldNode): boolean {
-  // Loader always emits filter/orderBy binders; fold only when the operation
-  // does not pass those args (limit/offset alone are fine).
+  // Loader emits where/orderBy binders; fold only when the operation does not
+  // pass those args (limit/offset alone are fine).
   if (fieldNode.arguments?.length) {
     for (const arg of fieldNode.arguments) {
       if (arg.name.value !== 'limit' && arg.name.value !== 'offset') return false;

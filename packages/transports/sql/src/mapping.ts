@@ -65,6 +65,25 @@ function parseBlock(
       throw new Error(`Unexpected "{" in SQL mapping at ${i}`);
     }
 
+    // Connectors-style spread: `...$args.where` / `...$this.filters`
+    if (text.startsWith('...', i)) {
+      const afterDots = skipWs(text, i + 3);
+      if (afterDots >= text.length || text[afterDots] !== '$') {
+        throw new Error(`Expected "$" after "..." in SQL mapping at ${i}`);
+      }
+      const rhs = readPseudoOrPath(text, afterDots);
+      if (rhs.value.kind !== 'args' && rhs.value.kind !== 'this') {
+        throw new Error(`Spread target must be $args / $this path, got ${rhs.raw}`);
+      }
+      entries.push({
+        key: `...${rhs.raw}`,
+        value: rhs.value,
+        spread: true,
+      });
+      i = skipWs(text, rhs.next);
+      continue;
+    }
+
     // Bare pseudo `$` (COUNT selection) or `$token`
     if (text[i] === '$' && !isIdentStart(text[i + 1] ?? '')) {
       // look ahead for ident after $

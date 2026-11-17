@@ -20,7 +20,7 @@ describe('parseSqlMapping', () => {
   it('parses $args / $this and nested blocks', () => {
     const parsed = parseSqlMapping(`
       ArtistId: $this.artistId
-      filter: $args.filter
+      ...$args.where
       set {
         Title: $args.input.title
       }
@@ -33,10 +33,14 @@ describe('parseSqlMapping', () => {
       value: 'artistId',
       path: ['artistId'],
     });
-    expect(parsed.entries[1].value).toEqual({
-      kind: 'args',
-      value: 'filter',
-      path: ['filter'],
+    expect(parsed.entries[1]).toMatchObject({
+      spread: true,
+      key: '...$args.where',
+      value: {
+        kind: 'args',
+        value: 'where',
+        path: ['where'],
+      },
     });
     const set = parsed.entries.find(e => e.key === 'set');
     expect(set?.children?.[0].key).toBe('Title');

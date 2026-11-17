@@ -36,10 +36,11 @@ export const SqlDirective = new GraphQLDirective({
     subgraph: { type: GraphQLString },
     table: { type: new GraphQLNonNull(GraphQLString) },
     kind: { type: new GraphQLNonNull(SqlKindEnum) },
-    /** Equality / join predicates only (`AlbumId: $args.id`, `$this` binders). */
+    /**
+     * Equality / join predicates plus Connectors-style spreads
+     * (`ArtistId: $this.id`, `...$args.where`).
+     */
     where: { type: GraphQLString },
-    /** Structured Filter input binder (`$args.filter`). */
-    filter: { type: GraphQLString },
     /** Order-by binder (`$args.orderBy`). */
     orderBy: { type: GraphQLString },
     /** Limit binder (`$args.limit`). */

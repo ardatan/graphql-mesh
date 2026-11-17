@@ -69,9 +69,10 @@ function rowWhereFullyUnresolved(
   let required = 0;
   let resolved = 0;
   for (const entry of whereMapping.entries) {
-    if (entry.children) continue;
+    if (entry.children || entry.spread) continue;
     if (
       entry.key === 'filter' ||
+      entry.key === 'where' ||
       entry.key === 'orderBy' ||
       entry.key === 'limit' ||
       entry.key === 'offset' ||
@@ -263,6 +264,7 @@ export async function getSqlExecutor({
               where: directive.args.where as string | undefined,
               set: directive.args.set as string | undefined,
               selection: directive.args.selection as string | undefined,
+              // Legacy SDL may still carry a separate filter binder.
               filter: directive.args.filter as string | undefined,
               orderBy: directive.args.orderBy as string | undefined,
               limit: directive.args.limit as string | undefined,
