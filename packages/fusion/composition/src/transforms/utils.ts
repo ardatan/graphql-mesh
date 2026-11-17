@@ -501,7 +501,7 @@ export function rewriteProtobufMappingBindsTypeScoped(
    * When true, relative binds at this depth are GraphQL argument names owned by bare `$args { }`.
    * Cleared with `typeAtDepth` when blocks close.
    */
-  const argsRootAtDepth: boolean[] = [];
+  const argsRootAtDepth: Array<boolean | undefined> = [];
   /** End offset of the previous bind match — brace walk clears stale owners between binds. */
   let scannedTo = 0;
 
@@ -794,11 +794,13 @@ function resolveOwnersAtDepth(
  */
 function isArgsRootAtDepth(
   depth: number,
-  argsRootAtDepth: boolean[],
+  argsRootAtDepth: Array<boolean | undefined>,
   typeAtDepth: Array<GraphQLNamedType | null | undefined>,
 ): boolean {
   if (argsRootAtDepth[depth] === true) return true;
-  if (argsRootAtDepth[depth] === false) return false;
+  // `false` is an active boundary only while a bound owner remains at this depth.
+  // Cleared/closed slots leave the type owner unset — do not block sibling inheritance.
+  if (argsRootAtDepth[depth] === false && typeAtDepth[depth] !== undefined) return false;
   // Unset at this depth: only inherit across unbound levels (type also unset).
   if (typeAtDepth[depth] !== undefined) return false;
   for (let d = depth - 1; d >= 0; d--) {
@@ -820,7 +822,7 @@ function clearOwnersClosedBetween(
   from: number,
   to: number,
   typeAtDepth: Array<GraphQLNamedType | null | undefined>,
-  argsRootAtDepth?: boolean[],
+  argsRootAtDepth?: Array<boolean | undefined>,
   altArgTypeAtDepth?: Array<GraphQLNamedType | null | undefined>,
 ): void {
   let depth = braceDepthAt(source, from);
@@ -834,8 +836,9 @@ function clearOwnersClosedBetween(
       depth++;
     } else if (c === '}') {
       typeAtDepth[depth] = undefined;
+      // Unset (do not leave `false`) so the next unbound sibling can inherit args-root.
       if (argsRootAtDepth) {
-        argsRootAtDepth[depth] = false;
+        argsRootAtDepth[depth] = undefined;
       }
       if (altArgTypeAtDepth) {
         altArgTypeAtDepth[depth] = undefined;
@@ -843,7 +846,7 @@ function clearOwnersClosedBetween(
       for (let d = depth + 1; d < typeAtDepth.length; d++) {
         typeAtDepth[d] = undefined;
         if (argsRootAtDepth) {
-          argsRootAtDepth[d] = false;
+          argsRootAtDepth[d] = undefined;
         }
         if (altArgTypeAtDepth) {
           altArgTypeAtDepth[d] = undefined;
@@ -866,7 +869,7 @@ function recordThisBlockOwners(
   resolved: ThisPathOwners,
   typeAtDepth: Array<GraphQLNamedType | null | undefined>,
   altArgTypeAtDepth: Array<GraphQLNamedType | null | undefined>,
-  argsRootAtDepth: boolean[],
+  argsRootAtDepth: Array<boolean | undefined>,
 ): void {
   typeAtDepth[depth + 1] = resolved.owner ?? null;
   altArgTypeAtDepth[depth + 1] = resolved.altArgOwner;

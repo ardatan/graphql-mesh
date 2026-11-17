@@ -425,6 +425,54 @@ describe('protobuf mapping + codec', () => {
       input: { year: 2024 },
     });
   });
+
+  it('forwards dualPrefer through repeated message elements', () => {
+    const fields = parseMapping(`
+      1(repeated message): $this.input|$args.request {
+        2(int64): parentYear|requestYear
+      }
+    `);
+    const bytes = encodeMessage(
+      fields,
+      {
+        request: [
+          { requestYear: 2024, parentYear: 7 },
+          { requestYear: 2025, parentYear: 8 },
+        ],
+      },
+      {
+        request: [
+          { requestYear: 2024, parentYear: 7 },
+          { requestYear: 2025, parentYear: 8 },
+        ],
+      },
+      {},
+    );
+    expect(
+      decodeMessage(parseMapping(`1(repeated message): items { 2(int64): year }`), bytes),
+    ).toEqual({
+      items: [{ year: 2024 }, { year: 2025 }],
+    });
+  });
+
+  it('forwards dualPrefer through message-valued map entries', () => {
+    const fields = parseMapping(`
+      1(map<string,message>): $this.input|$args.request {
+        2(int64): parentYear|requestYear
+      }
+    `);
+    const bytes = encodeMessage(
+      fields,
+      { request: { a: { requestYear: 2024, parentYear: 7 } } },
+      { request: { a: { requestYear: 2024, parentYear: 7 } } },
+      {},
+    );
+    expect(
+      decodeMessage(parseMapping(`1(map<string,message>): items { 2(int64): year }`), bytes),
+    ).toEqual({
+      items: { a: { year: 2024 } },
+    });
+  });
 });
 
 describe('resolveHttpUrl', () => {

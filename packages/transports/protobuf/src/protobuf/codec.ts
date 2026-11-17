@@ -86,24 +86,57 @@ function writeField(
   }
 
   if (type.kind === 'repeated') {
-    const list = resolveFieldValue(field.bind, args, localRoot, thisRoot, dualPrefer);
+    let listPrefer = dualPrefer;
+    let list: any;
+    if (field.bind != null && parseThisBind(field.bind)) {
+      const resolved = resolveThisMessageBind(field.bind, args, thisRoot);
+      list = resolved.value;
+      listPrefer = resolved.dualPrefer;
+    } else {
+      list = resolveFieldValue(field.bind, args, localRoot, thisRoot, dualPrefer);
+    }
     if (!Array.isArray(list)) return;
     const elementType: ProtoType =
       type.element.kind === 'message' && field.fields?.length
         ? { kind: 'message', fields: field.fields }
         : type.element;
     for (const item of list) {
-      writeValue(chunks, field.id, elementType, item);
+      writeValue(chunks, field.id, elementType, item, listPrefer);
     }
     return;
   }
 
-  const value = resolveFieldValue(field.bind, args, localRoot, thisRoot, dualPrefer);
+  let valuePrefer = dualPrefer;
+  let value: any;
+  if (field.bind != null && parseThisBind(field.bind)) {
+    const resolved = resolveThisMessageBind(field.bind, args, thisRoot);
+    value = resolved.value;
+    valuePrefer = resolved.dualPrefer;
+  } else {
+    value = resolveFieldValue(field.bind, args, localRoot, thisRoot, dualPrefer);
+  }
   if (value === undefined || value === null) return;
-  writeValue(chunks, field.id, type, value);
+  // Map fields may carry nested message fields on `field.fields` (same as repeated).
+  if (type.kind === 'map' && type.value.kind === 'message' && field.fields?.length) {
+    writeValue(
+      chunks,
+      field.id,
+      { kind: 'map', key: type.key, value: { kind: 'message', fields: field.fields } },
+      value,
+      valuePrefer,
+    );
+    return;
+  }
+  writeValue(chunks, field.id, type, value, valuePrefer);
 }
 
-function writeValue(chunks: Uint8Array[], id: number, type: ProtoType, value: any) {
+function writeValue(
+  chunks: Uint8Array[],
+  id: number,
+  type: ProtoType,
+  value: any,
+  dualPrefer?: DualArmPrefer,
+) {
   if (type.kind === 'scalar') {
     switch (type.name) {
       case 'bool':
@@ -179,7 +212,7 @@ function writeValue(chunks: Uint8Array[], id: number, type: ProtoType, value: an
     return;
   }
   if (type.kind === 'message') {
-    const nested = encodeMessage(type.fields, value ?? {});
+    const nested = encodeMessage(type.fields, value ?? {}, value ?? {}, undefined, dualPrefer);
     writeTag(chunks, id, WIRE_LEN);
     writeVarint(chunks, nested.length);
     chunks.push(nested);
@@ -195,6 +228,9 @@ function writeValue(chunks: Uint8Array[], id: number, type: ProtoType, value: an
           { id: 2, type: type.value, bind: 'value' },
         ],
         { key: coerceMapKey(type.key, k), value: v },
+        undefined,
+        undefined,
+        dualPrefer,
       );
       writeTag(chunks, id, WIRE_LEN);
       writeVarint(chunks, entry.length);

@@ -583,6 +583,17 @@ describe('rewriteProtobufMappingBinds', () => {
     expect(out).toMatch(/3\(string\):\s*requestId/);
   });
 
+  it('inherits args-root for unbound siblings after a closed unbound block', async () => {
+    const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
+    const out = rewriteProtobufMappingBindsTypeScoped(
+      '1(message): $args {\n  2(message): {\n    3(string): id\n  }\n  4(message): {\n    5(string): id\n  }\n}',
+      new Map(),
+      { argRenameMap: new Map([['id', 'requestId']]) },
+    );
+    expect(out).toMatch(/3\(string\):\s*requestId/);
+    expect(out).toMatch(/5\(string\):\s*requestId/);
+  });
+
   it('rewrites already-emitted relative dual binds on a later transform', async () => {
     const { rewriteProtobufMappingBindsTypeScoped } = await import('../src/transforms/utils.js');
     const schema = buildSchema(/* GraphQL */ `
