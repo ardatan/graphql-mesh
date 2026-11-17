@@ -134,13 +134,28 @@ export function rewriteProtobufMappingBinds(
   const splitRootNested = Boolean(options?.nestedRenameMap);
 
   let out = mapping;
+  // `$args.<name>` always uses rootLookup (arg renames in args mode; field renames
+  // when rewriting selection without a nested map).
   if (rootLookup.size) {
     const names = [...rootLookup.keys()].map(escapeRegExp).join('|');
     // Single lookup from the original name — JS replace does not rescan replacements,
     // but we still must not let the bare-path pass remap `$args.b` after `$args.a→b`.
     out = out.replace(
-      new RegExp(`\\$(args|this)\\.(${names})(?![\\w])`, 'g'),
-      (_m, scope: string, name: string) => `$${scope}.${rootLookup.get(name) ?? name}`,
+      new RegExp(`\\$args\\.(${names})(?![\\w])`, 'g'),
+      (_m, name: string) => `$args.${rootLookup.get(name) ?? name}`,
+    );
+  }
+  // `$this.<name>` reads the parent/entity object when present (`thisRoot`), and only
+  // falls back to args when no parent is supplied. In args mode (`nestedRenameMap`
+  // set), rootLookup is the argument rename map — do not apply it to `$this` or a
+  // parent-backed `$this.id` becomes `$this.requestId` and encodes undefined.
+  // Use nestedLookup (field renames) in that mode; otherwise rootLookup (selection).
+  const thisLookup = splitRootNested ? nestedLookup : rootLookup;
+  if (thisLookup.size) {
+    const thisNames = [...thisLookup.keys()].map(escapeRegExp).join('|');
+    out = out.replace(
+      new RegExp(`\\$this\\.(${thisNames})(?![\\w])`, 'g'),
+      (_m, name: string) => `$this.${thisLookup.get(name) ?? name}`,
     );
   }
 

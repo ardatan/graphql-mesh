@@ -321,20 +321,24 @@ export function createRenameTransform(opts: RenameTransformConfig) {
     // Also rewrite object-level entity RPCs (type directives), not only field-level.
     // Field mappers record renames under the pre-rename type name; rekey to the public
     // type name so object-level `$this.*` / selection lookups hit after type rename.
+    // Build a fresh map so chained type renames (Pet→Animal, Animal→Creature) each
+    // apply once from the original key and do not depend on iteration order.
     if (fieldRenameMap.size && typeRenameMap.size) {
-      for (const [from, to] of typeRenameMap) {
-        if (from === to) continue;
-        const fromMap = fieldRenameMap.get(from);
-        if (!fromMap) continue;
-        fieldRenameMap.delete(from);
-        const toMap = fieldRenameMap.get(to);
-        if (toMap) {
-          for (const [oldField, newField] of fromMap) {
-            toMap.set(oldField, newField);
-          }
-        } else {
-          fieldRenameMap.set(to, fromMap);
+      const rekeyed = new Map<string, Map<string, string>>();
+      for (const [originalName, fields] of fieldRenameMap) {
+        const publicName = typeRenameMap.get(originalName) ?? originalName;
+        let dest = rekeyed.get(publicName);
+        if (!dest) {
+          dest = new Map();
+          rekeyed.set(publicName, dest);
         }
+        for (const [oldField, newField] of fields) {
+          dest.set(oldField, newField);
+        }
+      }
+      fieldRenameMap.clear();
+      for (const [typeName, fields] of rekeyed) {
+        fieldRenameMap.set(typeName, fields);
       }
     }
     if (fieldRenameMap.size) {

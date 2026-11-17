@@ -396,6 +396,30 @@ describe('rewriteProtobufMappingBinds', () => {
     expect(out).toMatch(/^1\(int64\): releaseYear/m);
     expect(out).toContain('1(int64): year');
   });
+
+  it('arg rename does not rewrite parent-backed $this binds', async () => {
+    const { rewriteProtobufMappingBinds } = await import('../src/transforms/utils.js');
+    // Args mode (nestedRenameMap set): rootLookup is arg renames. `$this` must stay on
+    // the parent/entity field name; only `$args` picks up the argument rename.
+    const out = rewriteProtobufMappingBinds(
+      '1(string): $this.id\n2(string): $args.id',
+      new Map([['id', 'requestId']]),
+      { nestedRenameMap: new Map() },
+    );
+    expect(out).toContain('$this.id');
+    expect(out).not.toContain('$this.requestId');
+    expect(out).toContain('$args.requestId');
+  });
+
+  it('selection field rename still rewrites $this binds', async () => {
+    const { rewriteProtobufMappingBinds } = await import('../src/transforms/utils.js');
+    const out = rewriteProtobufMappingBinds(
+      '1(string): $this.name\n2(string): name',
+      new Map([['name', 'fullName']]),
+    );
+    expect(out).toContain('$this.fullName');
+    expect(out).toMatch(/2\(string\):\s*fullName/);
+  });
 });
 
 describe('type-scoped protobuf field renames (overlapping names)', () => {
@@ -649,6 +673,97 @@ describe('object-level @protobuf__rpc rename', () => {
     expect(sdl).toMatch(/type Pet[\s\S]*fullName/);
     expect(sdl).toMatch(/selection:[\s\S]*2\(string\):\s*fullName/);
     expect(sdl).not.toMatch(/selection:[\s\S]*2\(string\):\s*name\b/);
+  });
+
+  it('rekeys field renames once under chained type renames Pet→Animal, Animal→Creature', () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+        ) repeatable on SCHEMA
+
+        directive @protobuf__rpc(
+          subgraph: String
+          service: String
+          method: String
+          args: String
+          selection: String
+          stream: Boolean
+          entity: Boolean
+        ) on FIELD_DEFINITION | OBJECT
+
+        schema @transport(subgraph: "pets", kind: "protobuf", location: "localhost:1") {
+          query: Query
+        }
+
+        type Query {
+          pet(id: ID!): Pet
+          animal(id: ID!): Animal
+        }
+
+        type Pet
+          @protobuf__rpc(
+            service: "Pets"
+            method: "GetPet"
+            args: """
+            1(string): $this.name
+            """
+            selection: """
+            1(string): id
+            2(string): name
+            """
+          ) {
+          id: ID!
+          name: String!
+        }
+
+        type Animal
+          @protobuf__rpc(
+            service: "Animals"
+            method: "GetAnimal"
+            args: """
+            1(string): $this.name
+            """
+            selection: """
+            1(string): id
+            2(string): name
+            """
+          ) {
+          id: ID!
+          name: String!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'pets',
+        schema,
+        transforms: [
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => {
+              if (typeName === 'Pet') return 'Animal';
+              if (typeName === 'Animal') return 'Creature';
+              return typeName;
+            },
+            fieldRenamer: ({ typeName, fieldName }) => {
+              if (typeName === 'Pet' && fieldName === 'name') return 'petName';
+              if (typeName === 'Animal' && fieldName === 'name') return 'animalName';
+              return fieldName;
+            },
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    // Pet→Animal keeps Pet's field renames; Animal→Creature keeps Animal's (no merge overwrite).
+    expect(sdl).toMatch(/type Animal[\s\S]*petName/);
+    expect(sdl).toMatch(/type Creature[\s\S]*animalName/);
+    expect(sdl).toMatch(/type Animal[\s\S]*\$this\.petName/);
+    expect(sdl).toMatch(/type Creature[\s\S]*\$this\.animalName/);
+    expect(sdl).not.toMatch(/type Creature[\s\S]*\$this\.petName/);
   });
 
   it('rewrites $this and selection when Pet→Animal and name→fullName together', () => {
