@@ -25,6 +25,8 @@ if (process.env.LEAK_TEST) {
 }
 
 let testMatch = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'];
+// Bun-native suites (`*.bun.test.ts`) run with `bun test`, not Jest/Node.
+testMatch.push('!**/*.bun.test.ts');
 
 if (process.env.LEAK_TEST) {
   testMatch.push('!**/examples/grpc-reflection-example/**');

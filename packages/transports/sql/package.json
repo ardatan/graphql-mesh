@@ -56,6 +56,9 @@
     "directory": "dist"
   },
   "sideEffects": false,
+  "scripts": {
+    "test:bun": "bun test ./test/client.bun.test.ts"
+  },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   }

@@ -52,6 +52,23 @@ jobs:
           max_attempts: 3
           command: yarn bob check
 
+  unit-bun:
+    name: unit / bun
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
+        with:
+          node-version-file: .node-version
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: latest
+      - name: Run Bun.SQL transport tests
+        run: yarn workspace @graphql-mesh/transport-sql test:bun
+
   unit:
     name: unit / node ${{matrix.node-version}}
     timeout-minutes: 60
