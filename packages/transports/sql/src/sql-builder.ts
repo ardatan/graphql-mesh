@@ -1,6 +1,11 @@
 import { placeholder, quoteIdent } from './adapter.js';
 import { columnMapFromSelection, parseSqlMapping, resolveMappingValue } from './mapping.js';
-import { stampJoinedFields, type BelongsToJoin } from './plan.js';
+import {
+  flattenJoins,
+  stampJoinedFields,
+  type BelongsToJoin,
+  type HasManySubselect,
+} from './plan.js';
 import type { ParsedSqlMapping, SqlAdapter, SqlMappingEntry, SqlQueryKind } from './types.js';
 
 export interface BuiltQuery {
@@ -17,6 +22,8 @@ export interface SelectPlan {
   parent?: Record<string, any>;
   /** Belongs-to joins folded from GraphQL selection lookahead. */
   joins?: BelongsToJoin[];
+  /** Has-many folded as correlated JSON subselects. */
+  hasMany?: HasManySubselect[];
 }
 
 const PLANNER_KEYS = new Set([
@@ -33,7 +40,10 @@ const PLANNER_KEYS = new Set([
 export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   const columns = columnMapFromSelection(plan.selection);
   const joins = plan.joins?.length ? plan.joins : undefined;
-  const rootAlias = joins ? 't' : undefined;
+  const hasMany = plan.hasMany?.length ? plan.hasMany : undefined;
+  const needsAlias = Boolean(joins?.length || hasMany?.length);
+  const rootAlias = needsAlias ? 't' : undefined;
+  const flatJoins = joins?.length ? flattenJoins(joins) : [];
 
   const params: unknown[] = [];
   const whereParts: string[] = [];
@@ -78,15 +88,16 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
     });
   }
 
-  const selectCols = buildSelectList(adapter, plan.selection, joins, rootAlias);
+  const selectCols = buildSelectList(adapter, plan.selection, joins, hasMany, rootAlias);
 
   let sql = `SELECT ${selectCols.join(', ')} FROM ${quoteIdent(adapter, plan.table)}`;
   if (rootAlias) {
     sql += ` AS ${quoteIdent(adapter, rootAlias)}`;
-    for (const join of joins!) {
+    for (const join of flatJoins) {
+      const parentAlias = join.parentAlias || rootAlias;
       sql += ` LEFT JOIN ${quoteIdent(adapter, join.table)} AS ${quoteIdent(adapter, join.alias)}`;
       sql += ` ON ${quoteIdent(adapter, join.alias)}.${quoteIdent(adapter, join.joinColumn)}`;
-      sql += ` = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, join.parentColumn)}`;
+      sql += ` = ${quoteIdent(adapter, parentAlias)}.${quoteIdent(adapter, join.parentColumn)}`;
     }
   }
   if (whereParts.length) {
@@ -97,9 +108,6 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
     // Joins must not multiply COUNT — count root table only.
     sql = `SELECT COUNT(*) AS ${quoteIdent(adapter, 'count')} FROM ${quoteIdent(adapter, plan.table)}`;
     if (rootAlias) {
-      // Rebuild WHERE without join qualify for count-only path using unqualified names
-      // when no joins; with joins use subquery-less root filter only when predicates are
-      // on the root table (our where binders always are).
       sql = `SELECT COUNT(*) AS ${quoteIdent(adapter, 'count')} FROM ${quoteIdent(adapter, plan.table)} AS ${quoteIdent(adapter, rootAlias)}`;
     }
     if (whereParts.length) {
@@ -109,7 +117,14 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   }
 
   const orderBy = resolvePlannerArg(plan, 'orderBy') as string[] | string | undefined;
-  const orderSql = buildOrderBy(adapter, orderBy, columns, rootAlias ? qualify : undefined);
+  let orderSql = buildOrderBy(adapter, orderBy, columns, rootAlias ? qualify : undefined);
+  // Stable pagination: JOINs / JSON subselects can reshuffle unordered LIMIT results.
+  if (!orderSql) {
+    const idCol = columns.get('id');
+    if (idCol) {
+      orderSql = rootAlias ? qualify(idCol) : quoteIdent(adapter, idCol);
+    }
+  }
   if (orderSql) {
     sql += ` ORDER BY ${orderSql}`;
   }
@@ -152,10 +167,11 @@ function buildSelectList(
   adapter: SqlAdapter,
   selection: ParsedSqlMapping,
   joins: BelongsToJoin[] | undefined,
+  hasMany: HasManySubselect[] | undefined,
   rootAlias: string | undefined,
 ): string[] {
   const columns = columnMapFromSelection(selection);
-  if (!joins?.length || !rootAlias) {
+  if ((!joins?.length && !hasMany?.length) || !rootAlias) {
     return columns.size === 0
       ? ['*']
       : [...new Set(columns.values())].map(c => quoteIdent(adapter, c));
@@ -171,12 +187,21 @@ function buildSelectList(
     );
   };
   for (const sqlCol of columns.values()) pushRoot(sqlCol);
-  if (!cols.length) {
-    throw new Error('SQL join plan requires a column selection mapping on the root table');
-  }
-  // Ensure join parent keys are selected on root
-  for (const join of joins) {
-    pushRoot(join.parentColumn);
+
+  const flat = flattenJoins(joins || []);
+  for (const join of flat) {
+    if (join.parentAlias === rootAlias) {
+      pushRoot(join.parentColumn);
+    } else {
+      // Nested hop: ensure the FK column is selected from the parent join alias.
+      const key = `${join.parentAlias}:${join.parentColumn}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        cols.push(
+          `${quoteIdent(adapter, join.parentAlias)}.${quoteIdent(adapter, join.parentColumn)} AS ${quoteIdent(adapter, `${join.parentAlias}__${join.parentColumn}`)}`,
+        );
+      }
+    }
     const relCols = columnMapFromSelection(join.selection);
     for (const sqlCol of relCols.values()) {
       const key = `${join.alias}:${sqlCol}`;
@@ -187,7 +212,59 @@ function buildSelectList(
       );
     }
   }
+
+  for (const hm of hasMany || []) {
+    pushRoot(hm.parentColumn);
+    cols.push(
+      `${buildHasManyJsonSubselect(adapter, hm, rootAlias)} AS ${quoteIdent(adapter, `hm__${hm.fieldName}`)}`,
+    );
+  }
+
+  if (!cols.length) {
+    throw new Error('SQL join plan requires a column selection mapping on the root table');
+  }
   return cols;
+}
+
+function buildHasManyJsonSubselect(
+  adapter: SqlAdapter,
+  hm: HasManySubselect,
+  rootAlias: string,
+): string {
+  const relCols = [...columnMapFromSelection(hm.selection).entries()];
+  const innerAlias = 'hm';
+  const limitSql =
+    hm.limit != null ? ` LIMIT ${Number(hm.limit)}` : '';
+
+  if (adapter === 'postgres') {
+    const selectList = relCols
+      .map(
+        ([gql, sqlCol]) =>
+          `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, sqlCol)} AS ${quoteIdent(adapter, gql)}`,
+      )
+      .join(', ');
+    return `(SELECT COALESCE(json_agg(row_to_json(${quoteIdent(adapter, 'x')})), '[]'::json) FROM (SELECT ${selectList} FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, hm.joinColumn)} = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, hm.parentColumn)}${limitSql}) AS ${quoteIdent(adapter, 'x')})`;
+  }
+
+  if (adapter === 'mysql') {
+    const objArgs = relCols
+      .flatMap(([gql, sqlCol]) => [
+        `'${gql.replace(/'/g, "\\'")}'`,
+        `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, sqlCol)}`,
+      ])
+      .join(', ');
+    return `(SELECT COALESCE(json_arrayagg(json_object(${objArgs})), json_array()) FROM (SELECT ${relCols.map(([, c]) => `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, c)}`).join(', ')} FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, hm.joinColumn)} = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, hm.parentColumn)}${limitSql}) AS ${quoteIdent(adapter, innerAlias)})`;
+  }
+
+  // sqlite — aggregate over a limited inner select; json_object reads projected column names.
+  const objArgs = relCols
+    .flatMap(([gql, sqlCol]) => [
+      `'${gql.replace(/'/g, "''")}'`,
+      quoteIdent(adapter, sqlCol),
+    ])
+    .join(', ');
+  const innerSelect = relCols.map(([, c]) => quoteIdent(adapter, c)).join(', ');
+  return `(SELECT COALESCE(json_group_array(json_object(${objArgs})), json_array()) FROM (SELECT ${innerSelect} FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, hm.joinColumn)} = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, hm.parentColumn)}${limitSql}))`;
 }
 
 /**
@@ -529,20 +606,75 @@ export function mapRowToGraphqlWithJoins(
   row: Record<string, unknown>,
   selection: ParsedSqlMapping,
   joins: BelongsToJoin[],
+  hasMany: HasManySubselect[] = [],
 ): Record<string, unknown> {
   const out = mapRowToGraphql(row, selection);
   for (const join of joins) {
-    const nested: Record<string, unknown> = {};
-    let any = false;
-    for (const entry of join.selection.entries) {
-      if (!entry.value || entry.value.kind !== 'column') continue;
-      const raw = row[`${join.alias}__${entry.value.value}`];
-      if (raw !== undefined && raw !== null) any = true;
-      nested[entry.key] = raw != null && entry.key === 'id' ? String(raw) : raw;
-    }
-    out[join.fieldName] = any ? nested : null;
+    out[join.fieldName] = mapJoinedObject(row, join);
   }
-  return stampJoinedFields(out, joins);
+  const stamped = stampJoinedFields(out, joins);
+  for (const hm of hasMany) {
+    stamped[hm.fieldName] = parseHasManyJson(row[`hm__${hm.fieldName}`], hm);
+  }
+  if (hasMany.length) {
+    const existing = (stamped as any)[Symbol.for('mesh.sql.joinedFields')] as Set<string> | undefined;
+    const names = new Set(existing ? [...existing] : []);
+    for (const hm of hasMany) names.add(hm.fieldName);
+    Object.defineProperty(stamped, Symbol.for('mesh.sql.joinedFields'), {
+      value: names,
+      enumerable: false,
+      configurable: true,
+    });
+  }
+  return stamped;
+}
+
+function mapJoinedObject(
+  row: Record<string, unknown>,
+  join: BelongsToJoin,
+): Record<string, unknown> | null {
+  const nested: Record<string, unknown> = {};
+  let any = false;
+  for (const entry of join.selection.entries) {
+    if (!entry.value || entry.value.kind !== 'column') continue;
+    const raw = row[`${join.alias}__${entry.value.value}`];
+    if (raw !== undefined && raw !== null) any = true;
+    nested[entry.key] = raw != null && entry.key === 'id' ? String(raw) : raw;
+  }
+  if (!any) return null;
+  if (join.joins?.length) {
+    for (const child of join.joins) {
+      nested[child.fieldName] = mapJoinedObject(row, child);
+    }
+    stampJoinedFields(nested, join.joins);
+  }
+  return nested;
+}
+
+function parseHasManyJson(
+  raw: unknown,
+  hm: HasManySubselect,
+): Record<string, unknown>[] {
+  if (raw == null) return [];
+  let parsed: unknown = raw;
+  if (typeof raw === 'string') {
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(parsed)) return [];
+  return parsed.map((item: any) => {
+    if (!item || typeof item !== 'object') return {};
+    const out: Record<string, unknown> = {};
+    for (const entry of hm.selection.entries) {
+      if (!entry.value || entry.value.kind !== 'column') continue;
+      const v = item[entry.key] ?? item[entry.value.value];
+      out[entry.key] = v != null && entry.key === 'id' ? String(v) : v;
+    }
+    return out;
+  });
 }
 
 export function selectionHasNested(selection: ParsedSqlMapping, key: string): boolean {

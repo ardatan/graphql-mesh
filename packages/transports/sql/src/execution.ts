@@ -11,7 +11,7 @@ import {
 import { createSqlClient } from './client.js';
 import { inferAdapterFromLocation } from './adapter.js';
 import { wireSqlEntityResolvers } from './entity.js';
-import { collectBelongsToJoins, hasJoinedField } from './plan.js';
+import { hasJoinedField, planSelection } from './plan.js';
 import {
   buildDelete,
   buildInsert,
@@ -25,6 +25,7 @@ import {
   nestedSelection,
   parseSqlDirectiveMappings,
 } from './sql-builder.js';
+import { resolveMappingValue } from './mapping.js';
 import type {
   ParsedSqlMapping,
   SqlClient,
@@ -55,9 +56,40 @@ function connectionNodeSelection(selection: ParsedSqlMapping): ParsedSqlMapping 
 function mapSelectRow(
   row: Record<string, unknown>,
   selection: ParsedSqlMapping,
-  joins: ReturnType<typeof collectBelongsToJoins>,
+  joins: ReturnType<typeof planSelection>['joins'],
+  hasMany: ReturnType<typeof planSelection>['hasMany'] = [],
 ) {
-  return joins.length ? mapRowToGraphqlWithJoins(row, selection, joins) : mapRowToGraphql(row, selection);
+  return joins.length || hasMany.length
+    ? mapRowToGraphqlWithJoins(row, selection, joins, hasMany)
+    : mapRowToGraphql(row, selection);
+}
+
+function rowWhereFullyUnresolved(
+  whereMapping: ParsedSqlMapping,
+  graphqlArgs: Record<string, any>,
+  parent: any,
+): boolean {
+  let required = 0;
+  let resolved = 0;
+  for (const entry of whereMapping.entries) {
+    if (entry.children) continue;
+    if (
+      entry.key === 'filter' ||
+      entry.key === 'orderBy' ||
+      entry.key === 'limit' ||
+      entry.key === 'offset' ||
+      entry.key === 'first' ||
+      entry.key === 'after' ||
+      entry.key === 'last' ||
+      entry.key === 'before'
+    ) {
+      continue;
+    }
+    required++;
+    const val = resolveMappingValue(entry.value, { args: graphqlArgs, parent });
+    if (val !== undefined) resolved++;
+  }
+  return required > 0 && resolved === 0;
 }
 
 async function runSqlSelect(
@@ -75,16 +107,24 @@ async function runSqlSelect(
   },
 ) {
   const { table, kind, selection, whereMapping, graphqlArgs, parent, context } = opts;
-  const selectSelection = kind === 'CONNECTION' ? connectionNodeSelection(selection) : selection;
+  const fullSelection = kind === 'CONNECTION' ? connectionNodeSelection(selection) : selection;
 
-  const joins =
+  // Never run a ROW with unresolved equality binders (would pick an arbitrary row).
+  if (kind === 'ROW' && rowWhereFullyUnresolved(whereMapping, graphqlArgs, parent)) {
+    return null;
+  }
+
+  const planned =
     opts.schema && opts.info && kind !== 'COUNT'
-      ? collectBelongsToJoins(opts.schema, opts.info, selectSelection)
-      : [];
+      ? planSelection(opts.schema, opts.info, fullSelection)
+      : { selection: fullSelection, joins: [], hasMany: [] };
+
+  const selectSelection = planned.selection.entries.length ? planned.selection : fullSelection;
+  const { joins, hasMany } = planned;
 
   // Batch ROW / simple ROWS when there is exactly one equality binder (FK / PK)
-  // and we are not folding belongs-to joins into this query.
-  if (!joins.length && (kind === 'ROW' || kind === 'ROWS')) {
+  // and we are not folding joins / has-many into this query.
+  if (!joins.length && !hasMany.length && (kind === 'ROW' || kind === 'ROWS')) {
     const column = batchableEqualityColumn(whereMapping);
     if (column) {
       const key = resolveEqualityKey(whereMapping, column, graphqlArgs, parent);
@@ -114,6 +154,7 @@ async function runSqlSelect(
     graphqlArgs,
     parent,
     joins,
+    hasMany,
   });
   const result = await sqlClient.query(query.sql, query.params);
 
@@ -124,7 +165,7 @@ async function runSqlSelect(
   }
   if (kind === 'ROW') {
     const row = result.rows[0] as Record<string, unknown> | undefined;
-    return row ? mapSelectRow(row, selectSelection, joins) : null;
+    return row ? mapSelectRow(row, selectSelection, joins, hasMany) : null;
   }
   if (kind === 'CONNECTION') {
     const first = Number(graphqlArgs.first ?? 10);
@@ -133,7 +174,7 @@ async function runSqlSelect(
     const rows = result.rows as Record<string, unknown>[];
     const hasNextPage = rows.length > first;
     const pageRows = hasNextPage ? rows.slice(0, first) : rows;
-    const nodes = pageRows.map(r => mapSelectRow(r, selectSelection, joins));
+    const nodes = pageRows.map(r => mapSelectRow(r, selectSelection, joins, hasMany));
     const edges = nodes.map((node, i) => ({
       cursor: encodeCursor(offset + i),
       node,
@@ -169,7 +210,7 @@ async function runSqlSelect(
     };
   }
   return (result.rows as Record<string, unknown>[]).map(r =>
-    mapSelectRow(r, selectSelection, joins),
+    mapSelectRow(r, selectSelection, joins, hasMany),
   );
 }
 

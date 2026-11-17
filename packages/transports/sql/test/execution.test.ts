@@ -146,7 +146,7 @@ describe('getSqlExecutor sqlite', () => {
     }
   });
 
-  it('still batches has-many / non-joined ROW with WHERE IN', async () => {
+  it('folds has-many albums into one JSON subselect', async () => {
     const schema = await loadGraphQLSchemaFromSql('chinook', {
       endpoint: dbPath,
       includeTables: ['albums', 'artists'],
@@ -169,7 +169,6 @@ describe('getSqlExecutor sqlite', () => {
 
     const executor = getSqlExecutor({ subgraph: schema, client: spyClient });
     try {
-      // artists { albums } — albums is ROWS ($this), not foldable belongs-to JOIN
       const result = await executor({
         document: parse(/* GraphQL */ `
           query {
@@ -184,9 +183,93 @@ describe('getSqlExecutor sqlite', () => {
         context: {},
       });
       expect(result.errors).toBeUndefined();
-      const albumQueries = queries.filter(q => /FROM ["`]?albums["`]?/i.test(q));
-      expect(albumQueries.length).toBe(1);
-      expect(albumQueries[0]).toMatch(/IN\s*\(/i);
+      expect(queries.length).toBe(1);
+      expect(queries[0]).toMatch(/json_group_array/i);
+      expect(result.data).toEqual({
+        artists: [
+          {
+            id: '1',
+            albums: [
+              { title: 'For Those About To Rock We Salute You' },
+              { title: 'Let There Be Rock' },
+            ],
+          },
+          {
+            id: '2',
+            albums: [{ title: 'Balls to the Wall' }, { title: 'Restless and Wild' }],
+          },
+        ],
+      });
+    } finally {
+      await (executor as any)[Symbol.asyncDispose]?.();
+    }
+  });
+
+  it('folds multi-hop track→album→artist into one JOIN chain', async () => {
+    const schema = await loadGraphQLSchemaFromSql('chinook', {
+      endpoint: dbPath,
+      includeTables: ['albums', 'artists', 'tracks', 'genres'],
+    });
+
+    const { createSqlClient } = await import('../src/client.js');
+    const real = createSqlClient({
+      adapter: 'sqlite',
+      location: `file:${dbPath}`,
+    });
+    const queries: string[] = [];
+    const spyClient: SqlClient = {
+      adapter: 'sqlite',
+      async query(sql, params) {
+        queries.push(sql);
+        return real.query(sql, params);
+      },
+      dispose: () => real.dispose(),
+    };
+
+    const executor = getSqlExecutor({ subgraph: schema, client: spyClient });
+    try {
+      const result = await executor({
+        document: parse(/* GraphQL */ `
+          query {
+            tracks(limit: 2) {
+              name
+              album {
+                title
+                artist {
+                  name
+                }
+              }
+              genre {
+                name
+              }
+            }
+          }
+        `),
+        context: {},
+      });
+      expect(result.errors).toBeUndefined();
+      expect(queries.length).toBe(1);
+      expect(queries[0]).toMatch(/LEFT JOIN/i);
+      expect(result.data).toEqual({
+        tracks: [
+          {
+            name: 'For Those About To Rock (We Salute You)',
+            album: {
+              title: 'For Those About To Rock We Salute You',
+              artist: { name: 'AC/DC' },
+            },
+            genre: { name: 'Rock' },
+          },
+          {
+            name: 'Balls to the Wall',
+            album: {
+              title: 'Balls to the Wall',
+              artist: { name: 'Accept' },
+            },
+            genre: { name: 'Rock' },
+          },
+        ],
+      });
     } finally {
       await (executor as any)[Symbol.asyncDispose]?.();
     }
