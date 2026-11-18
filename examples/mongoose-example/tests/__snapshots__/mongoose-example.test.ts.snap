@@ -6,17 +6,20 @@ exports[`Mongoose should generate correct schema 1`] = `
 directive @transport(headers: [[String]], kind: String!, location: String, options: TransportOptions, subgraph: String!) repeatable on SCHEMA
 
 input CreateUserInput {
-  address: JSON
+  address: UserAddressInput
   age: Float
-  gender: String
-  languages: JSON
+  contacts: UserContactsInput
+  gender: EnumUserGender
+  languages: [UserLanguagesInput]
   name: String
   salaryDecimal: Decimal128
+
+  """Some dynamic data"""
   someMixed: JSON
 }
 
 """
-BSON Decimal128 value. Serialized and parsed as a decimal string (e.g. \`"12.50"\`).
+BSON Decimal128 (Mongoose-compatible cast). Serialized as a decimal string; accepts string, number, or \`{ "$numberDecimal": "…" }\`.
 """
 scalar Decimal128
 
@@ -30,6 +33,18 @@ input Decimal128Filter {
   lte: Decimal128
   ne: Decimal128
   nin: [Decimal128!]
+}
+
+enum EnumUserGender {
+  female
+  male
+  not_specified
+}
+
+enum EnumUserLanguagesSkill {
+  basic
+  fluent
+  native
 }
 
 interface ErrorInterface {
@@ -136,24 +151,51 @@ input StringFilter {
 scalar TransportOptions
 
 input UpdateUserInput {
-  address: JSON
+  address: UserAddressInput
   age: Float
-  gender: String
-  languages: JSON
+  contacts: UserContactsInput
+  gender: EnumUserGender
+  languages: [UserLanguagesInput]
   name: String
   salaryDecimal: Decimal128
+
+  """Some dynamic data"""
   someMixed: JSON
 }
 
 type User {
-  address: JSON
+  address: UserAddress
   age: Float
-  gender: String
+  contacts: UserContacts
+  gender: EnumUserGender
   id: ID!
-  languages: JSON
+  languages: [UserLanguages]
   name: String
   salaryDecimal: Decimal128
+
+  """Some dynamic data"""
   someMixed: JSON
+}
+
+type UserAddress {
+  _id: ID
+  geo: [Float]
+  street: String
+}
+
+input UserAddressInput {
+  _id: ID
+  geo: [Float]
+  street: String
+}
+
+input UserAddressWhereInput {
+  AND: [UserAddressWhereInput!]
+  NOT: UserAddressWhereInput
+  OR: [UserAddressWhereInput!]
+  _id: IDFilter
+  geo: [Float]
+  street: StringFilter
 }
 
 type UserConnection {
@@ -163,20 +205,53 @@ type UserConnection {
   totalCount: Int!
 }
 
+type UserContacts {
+  email: String
+  phones: [String]
+}
+
+input UserContactsInput {
+  email: String
+  phones: [String]
+}
+
+input UserContactsWhereInput {
+  AND: [UserContactsWhereInput!]
+  NOT: UserContactsWhereInput
+  OR: [UserContactsWhereInput!]
+  email: StringFilter
+  phones: [String]
+}
+
 type UserEdge {
   cursor: String!
   node: User!
 }
 
+type UserLanguages {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+input UserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+input UserLanguagesWhereInput {
+  AND: [UserLanguagesWhereInput!]
+  NOT: UserLanguagesWhereInput
+  OR: [UserLanguagesWhereInput!]
+  language: StringFilter
+  skill: StringFilter
+}
+
 input UserOrderByInput {
-  address: SortDirection
   age: SortDirection
   gender: SortDirection
   id: SortDirection
-  languages: SortDirection
   name: SortDirection
   salaryDecimal: SortDirection
-  someMixed: SortDirection
 }
 
 type UserPagination {
@@ -201,13 +276,16 @@ input UserWhereInput {
   AND: [UserWhereInput!]
   NOT: UserWhereInput
   OR: [UserWhereInput!]
-  address: StringFilter
+  address: UserAddressWhereInput
   age: FloatFilter
+  contacts: UserContactsWhereInput
   gender: StringFilter
   id: IDFilter
-  languages: StringFilter
+  languages: UserLanguagesWhereInput
   name: StringFilter
   salaryDecimal: Decimal128Filter
-  someMixed: StringFilter
+
+  """Some dynamic data"""
+  someMixed: JSON
 }"
 `;

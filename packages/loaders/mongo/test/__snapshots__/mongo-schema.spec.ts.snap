@@ -15,9 +15,12 @@ type Query {
     id: _id
     name: name
     age: age
+    languages: languages
     gender: gender
+    address: address
     someMixed: someMixed
     salaryDecimal: salaryDecimal
+    contacts: contacts
   """, where: """
   
     _id: $args.id
@@ -26,9 +29,12 @@ type Query {
     id: _id
     name: name
     age: age
+    languages: languages
     gender: gender
+    address: address
     someMixed: someMixed
     salaryDecimal: salaryDecimal
+    contacts: contacts
   """, where: """
   
     _id: $args.ids
@@ -37,17 +43,23 @@ type Query {
     id: _id
     name: name
     age: age
+    languages: languages
     gender: gender
+    address: address
     someMixed: someMixed
     salaryDecimal: salaryDecimal
+    contacts: contacts
   """, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", skip: "$args.skip")
   findUser(where: UserWhereInput, skip: Int, orderBy: UserOrderByInput): User @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, selection: """
     id: _id
     name: name
     age: age
+    languages: languages
     gender: gender
+    address: address
     someMixed: someMixed
     salaryDecimal: salaryDecimal
+    contacts: contacts
   """, where: "$args.where", orderBy: "$args.orderBy", skip: "$args.skip")
   usersCount(where: UserWhereInput): Int! @mongo(subgraph: "users", collection: "user_users", kind: COUNT, selection: """
   
@@ -62,9 +74,12 @@ type Query {
         id: _id
         name: name
         age: age
+        languages: languages
         gender: gender
+        address: address
         someMixed: someMixed
         salaryDecimal: salaryDecimal
+        contacts: contacts
     }
     edges {
       cursor: $cursor
@@ -72,9 +87,12 @@ type Query {
           id: _id
           name: name
           age: age
+          languages: languages
           gender: gender
+          address: address
           someMixed: someMixed
           salaryDecimal: salaryDecimal
+          contacts: contacts
       }
     }
     pageInfo {
@@ -91,9 +109,12 @@ type Query {
         id: _id
         name: name
         age: age
+        languages: languages
         gender: gender
+        address: address
         someMixed: someMixed
         salaryDecimal: salaryDecimal
+        contacts: contacts
     }
     pageInfo {
       currentPage: $currentPage
@@ -113,16 +134,46 @@ type User @key(fields: "id") @mongo(subgraph: "users", collection: "user_users",
   id: _id
   name: name
   age: age
+  languages: languages
   gender: gender
+  address: address
   someMixed: someMixed
   salaryDecimal: salaryDecimal
+  contacts: contacts
 """) {
   id: ID!
   name: String
   age: Float
-  gender: String
+  languages: [UserLanguages]
+  gender: EnumUserGender
+  address: UserAddress
+  """Some dynamic data"""
   someMixed: JSON
   salaryDecimal: Decimal128
+  contacts: UserContacts
+}
+
+type UserLanguages {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+enum EnumUserLanguagesSkill {
+  basic
+  fluent
+  native
+}
+
+enum EnumUserGender {
+  male
+  female
+  not_specified
+}
+
+type UserAddress {
+  street: String
+  geo: [Float]
+  _id: ID
 }
 
 """
@@ -135,12 +186,16 @@ BSON Decimal128 (Mongoose-compatible cast). Serialized as a decimal string; acce
 """
 scalar Decimal128
 
+type UserContacts {
+  email: String
+  phones: [String]
+}
+
 input UserOrderByInput {
   id: SortDirection
   name: SortDirection
   age: SortDirection
   gender: SortDirection
-  someMixed: SortDirection
   salaryDecimal: SortDirection
 }
 
@@ -156,9 +211,13 @@ input UserWhereInput {
   id: IDFilter
   name: StringFilter
   age: FloatFilter
+  languages: UserLanguagesWhereInput
   gender: StringFilter
-  someMixed: StringFilter
+  address: UserAddressWhereInput
+  """Some dynamic data"""
+  someMixed: JSON
   salaryDecimal: Decimal128Filter
+  contacts: UserContactsWhereInput
 }
 
 input IDFilter {
@@ -190,6 +249,23 @@ input FloatFilter {
   exists: Boolean
 }
 
+input UserLanguagesWhereInput {
+  AND: [UserLanguagesWhereInput!]
+  OR: [UserLanguagesWhereInput!]
+  NOT: UserLanguagesWhereInput
+  language: StringFilter
+  skill: StringFilter
+}
+
+input UserAddressWhereInput {
+  AND: [UserAddressWhereInput!]
+  OR: [UserAddressWhereInput!]
+  NOT: UserAddressWhereInput
+  street: StringFilter
+  geo: [Float]
+  _id: IDFilter
+}
+
 input Decimal128Filter {
   eq: Decimal128
   ne: Decimal128
@@ -200,6 +276,14 @@ input Decimal128Filter {
   lt: Decimal128
   lte: Decimal128
   exists: Boolean
+}
+
+input UserContactsWhereInput {
+  AND: [UserContactsWhereInput!]
+  OR: [UserContactsWhereInput!]
+  NOT: UserContactsWhereInput
+  email: StringFilter
+  phones: [String]
 }
 
 type UserConnection {
@@ -242,26 +326,35 @@ type Mutation {
         id: _id
         name: name
         age: age
+        languages: languages
         gender: gender
+        address: address
         someMixed: someMixed
         salaryDecimal: salaryDecimal
+        contacts: contacts
     }
     recordId: $_id
   """, set: """
     name: $args.input.name
     age: $args.input.age
+    languages: $args.input.languages
     gender: $args.input.gender
+    address: $args.input.address
     someMixed: $args.input.someMixed
     salaryDecimal: $args.input.salaryDecimal
+    contacts: $args.input.contacts
   """)
   createUsers(inputs: [CreateUserInput!]!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: INSERT_MANY, selection: """
     records {
         id: _id
         name: name
         age: age
+        languages: languages
         gender: gender
+        address: address
         someMixed: someMixed
         salaryDecimal: salaryDecimal
+        contacts: contacts
     }
     recordIds: $recordIds
     createdCount: $createdCount
@@ -274,9 +367,12 @@ type Mutation {
         id: _id
         name: name
         age: age
+        languages: languages
         gender: gender
+        address: address
         someMixed: someMixed
         salaryDecimal: salaryDecimal
+        contacts: contacts
     }
     recordId: $_id
   """, where: """
@@ -285,26 +381,35 @@ type Mutation {
   """, set: """
     name: $args.input.name
     age: $args.input.age
+    languages: $args.input.languages
     gender: $args.input.gender
+    address: $args.input.address
     someMixed: $args.input.someMixed
     salaryDecimal: $args.input.salaryDecimal
+    contacts: $args.input.contacts
   """)
   updateUserWhere(where: UserWhereInput, input: UpdateUserInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: UPDATE_ONE, selection: """
     record {
         id: _id
         name: name
         age: age
+        languages: languages
         gender: gender
+        address: address
         someMixed: someMixed
         salaryDecimal: salaryDecimal
+        contacts: contacts
     }
     recordId: $_id
   """, where: "$args.where", set: """
     name: $args.input.name
     age: $args.input.age
+    languages: $args.input.languages
     gender: $args.input.gender
+    address: $args.input.address
     someMixed: $args.input.someMixed
     salaryDecimal: $args.input.salaryDecimal
+    contacts: $args.input.contacts
   """)
   updateUsers(where: UserWhereInput, input: UpdateUserInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: UPDATE_MANY, selection: """
     modifiedCount: $modifiedCount
@@ -312,18 +417,24 @@ type Mutation {
   """, where: "$args.where", set: """
     name: $args.input.name
     age: $args.input.age
+    languages: $args.input.languages
     gender: $args.input.gender
+    address: $args.input.address
     someMixed: $args.input.someMixed
     salaryDecimal: $args.input.salaryDecimal
+    contacts: $args.input.contacts
   """)
   deleteUser(id: ID!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: DELETE_ONE, selection: """
     record {
         id: _id
         name: name
         age: age
+        languages: languages
         gender: gender
+        address: address
         someMixed: someMixed
         salaryDecimal: salaryDecimal
+        contacts: contacts
     }
     recordId: $_id
   """, where: """
@@ -335,9 +446,12 @@ type Mutation {
         id: _id
         name: name
         age: age
+        languages: languages
         gender: gender
+        address: address
         someMixed: someMixed
         salaryDecimal: salaryDecimal
+        contacts: contacts
     }
     recordId: $_id
   """, where: "$args.where")
@@ -371,17 +485,41 @@ interface ErrorInterface {
 input CreateUserInput {
   name: String
   age: Float
-  gender: String
+  languages: [UserLanguagesInput]
+  gender: EnumUserGender
+  address: UserAddressInput
+  """Some dynamic data"""
   someMixed: JSON
   salaryDecimal: Decimal128
+  contacts: UserContactsInput
+}
+
+input UserLanguagesInput {
+  language: String
+  skill: EnumUserLanguagesSkill
+}
+
+input UserAddressInput {
+  street: String
+  geo: [Float]
+  _id: ID
+}
+
+input UserContactsInput {
+  email: String
+  phones: [String]
 }
 
 input UpdateUserInput {
   name: String
   age: Float
-  gender: String
+  languages: [UserLanguagesInput]
+  gender: EnumUserGender
+  address: UserAddressInput
+  """Some dynamic data"""
   someMixed: JSON
   salaryDecimal: Decimal128
+  contacts: UserContactsInput
 }
 
 scalar TransportOptions
