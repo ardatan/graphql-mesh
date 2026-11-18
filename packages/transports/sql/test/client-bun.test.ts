@@ -87,6 +87,28 @@ describe('Bun.SQL availability (Node / Jest)', () => {
     });
     expect(cfg).not.toHaveProperty('connectionString');
   });
+
+  it('mysql wrapper coerces BIT(1) Buffer to boolean; wider BIT stays binary', async () => {
+    const { wrapMysqlPoolAsSqlClient } = await import('../src/client.js');
+    const client = wrapMysqlPoolAsSqlClient({
+      // promise-pool shape (has execute)
+      execute: async () => [{}, []],
+      query: async () => [
+        [{ flag: Buffer.from([1]), off: Buffer.from([0]), wide: Buffer.from([0xff]) }],
+        [
+          { name: 'flag', type: 16, length: 1 },
+          { name: 'off', type: 16, length: 1 },
+          { name: 'wide', type: 16, length: 8 },
+        ],
+      ],
+    });
+    const { rows } = await client.query('select 1');
+    expect(rows[0]).toEqual({
+      flag: true,
+      off: false,
+      wide: Buffer.from([0xff]),
+    });
+  });
 });
 
 describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {

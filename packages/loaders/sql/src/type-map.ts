@@ -22,16 +22,19 @@ export function mapSqlTypeToGraphQL(
     return GraphQLID;
   }
   const t = dataType.toUpperCase();
-  // Match the base type before args / enum labels — `enum('BINARY','TEXT')` is not Byte;
-  // `BIT(8)` is not Boolean.
-  const baseType = t.replace(/\s*\([\s\S]*$/, '').trim();
+  // Strip parenthesized args / enum labels but keep trailing modifiers (`INT(10) UNSIGNED`).
+  // `enum('BINARY','TEXT')` must not become Byte; `BIT(8)` must not become Boolean.
   const typeArgs = t.match(/\(([^)]*)\)/)?.[1]?.trim();
+  const baseType = t
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
   if (baseType.includes('BOOL') || baseType === 'BOOLEAN') {
     return GraphQLBoolean;
   }
   // MySQL BIT(1) is a boolean flag; wider BIT(n) arrives as Buffer from mysql2.
-  if (baseType === 'BIT') {
+  if (/\bBIT\b/.test(baseType)) {
     if (!typeArgs || typeArgs === '1') {
       return GraphQLBoolean;
     }

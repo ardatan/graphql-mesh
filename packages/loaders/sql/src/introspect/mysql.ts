@@ -99,7 +99,8 @@ export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSch
       );
       const columns: SqlColumnMeta[] = colRows.map(c => {
         const extra = String(c.extra || '').toLowerCase();
-        const generated = extra.includes('generated');
+        // Only real generated columns — `DEFAULT_GENERATED` is an expression default.
+        const generated = extra.includes('stored generated') || extra.includes('virtual generated');
         return {
           name: String(c.name),
           dataType: String(c.columnType || c.dataType || 'TEXT'),

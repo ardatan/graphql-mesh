@@ -1,6 +1,14 @@
 /* eslint-disable import/no-nodejs-modules */
 import { createHash, randomBytes } from 'node:crypto';
-import { linkSync, mkdirSync, readFileSync, statSync, unlinkSync } from 'node:fs';
+import {
+  chmodSync,
+  linkSync,
+  lstatSync,
+  mkdirSync,
+  readFileSync,
+  statSync,
+  unlinkSync,
+} from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { isAbsolute, join, resolve } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
@@ -73,7 +81,11 @@ export default class TuqlHandler implements MeshHandler {
   }
 }
 
-/** Prefer a user-private cache dir over the shared OS temp directory. */
+/**
+ * Prefer a user-private cache dir. Before reuse, reject symlinks, foreign
+ * ownership, and group/world-writable modes. Fallback is per-uid under tmp —
+ * never a shared `/tmp/graphql-mesh-tuql` that another user could pre-create.
+ */
 function tuqlCacheDir(baseDir?: string): string {
   const override = process.env.MESH_TUQL_CACHE_DIR?.trim();
   const preferred = override
@@ -82,15 +94,46 @@ function tuqlCacheDir(baseDir?: string): string {
       : resolve(baseDir || process.cwd(), override)
     : typeof homedir === 'function'
       ? join(homedir(), '.cache', 'graphql-mesh-tuql')
-      : join(tmpdir(), 'graphql-mesh-tuql');
+      : perUserTmpTuqlCacheDir();
   try {
-    mkdirSync(preferred, { recursive: true, mode: 0o700 });
-    return preferred;
+    return ensurePrivateTuqlCacheDir(preferred);
+  } catch (err) {
+    if (override) throw err;
+    // Home may be read-only / hostile — fall back to a per-user tmp dir.
+    return ensurePrivateTuqlCacheDir(perUserTmpTuqlCacheDir());
+  }
+}
+
+function perUserTmpTuqlCacheDir(): string {
+  const uid = typeof process.getuid === 'function' ? String(process.getuid()) : 'nouser';
+  return join(tmpdir(), `graphql-mesh-tuql-${uid}`);
+}
+
+function ensurePrivateTuqlCacheDir(dir: string): string {
+  mkdirSync(dir, { recursive: true, mode: 0o700 });
+  // Existing dirs keep prior mode; tighten when we own them.
+  try {
+    chmodSync(dir, 0o700);
   } catch {
-    // Home / override may be read-only — fall back to a private dir under tmp.
-    const fallback = join(tmpdir(), 'graphql-mesh-tuql');
-    mkdirSync(fallback, { recursive: true, mode: 0o700 });
-    return fallback;
+    // ignore — assert below rejects unsafe modes we cannot fix
+  }
+  assertPrivateTuqlCacheDir(dir);
+  return dir;
+}
+
+function assertPrivateTuqlCacheDir(dir: string): void {
+  const st = lstatSync(dir);
+  if (st.isSymbolicLink()) {
+    throw new Error(`@graphql-mesh/tuql: cache dir must not be a symlink (${dir})`);
+  }
+  if (!st.isDirectory()) {
+    throw new Error(`@graphql-mesh/tuql: cache path is not a directory (${dir})`);
+  }
+  if (typeof process.getuid === 'function' && st.uid !== process.getuid()) {
+    throw new Error(`@graphql-mesh/tuql: cache dir not owned by current user (${dir})`);
+  }
+  if ((st.mode & 0o022) !== 0) {
+    throw new Error(`@graphql-mesh/tuql: cache dir has unsafe group/world write bits (${dir})`);
   }
 }
 

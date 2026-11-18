@@ -154,8 +154,11 @@ albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [
 - Shared `pg.Pool`: one schema binding per pool (conflicting schema rejected); `SET search_path`
   fail-closed without double-release under `pool.query` (callback wait path covered)
 - Binary columns map to `GraphQLByte` by **base type** (not `enum('BINARY',…)` labels); wider
-  MySQL `BIT(n)` maps to `Byte`; joined / has-many rows encode Buffer; SQLite skips JSON
-  has-many folds that project `Byte`
+  MySQL `BIT(n)` maps to `Byte`; `BIT(1)` Buffer values coerce to boolean before GraphQL
+  serialize; `int(n) unsigned` keeps UNSIGNED → BigInt; joined / has-many rows encode Buffer;
+  SQLite skips JSON has-many folds that project `Byte`
+- MySQL generated columns: only `STORED` / `VIRTUAL GENERATED` (not `DEFAULT_GENERATED`)
+- tuql dump cache: per-uid tmp fallback; reject symlink / foreign owner / group-writable dirs
 - Batching: reject `$this` pagination binders; omit only the equality `$args` leaf (keep sibling
   filters such as `input.filter` in the loader identity); planner keys vs column bindings
   (`limit: $args.id` binds as a column)

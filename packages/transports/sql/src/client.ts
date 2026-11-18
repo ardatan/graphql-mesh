@@ -397,6 +397,52 @@ export function wrapPgPoolAsSqlClient(
   return client;
 }
 
+/** mysql2 `Types.BIT` — single-bit columns map to GraphQLBoolean and need Buffer→boolean. */
+const MYSQL_TYPE_BIT = 16;
+
+/**
+ * Convert mysql2 `BIT(1)` Buffer values to boolean before GraphQL serialization.
+ * Wider `BIT(n)` stays binary. NULL is preserved.
+ */
+function coerceMysqlBit1Rows(
+  rows: Array<Record<string, unknown>>,
+  fields:
+    | Array<{
+        name?: string;
+        type?: number | string;
+        columnType?: number;
+        length?: number;
+        columnLength?: number;
+      }>
+    | undefined,
+): Array<Record<string, unknown>> {
+  if (!rows.length || !fields?.length) return rows;
+  const bit1: string[] = [];
+  for (const f of fields) {
+    const type = f.type ?? f.columnType;
+    const isBit = type === MYSQL_TYPE_BIT || type === 'BIT';
+    const len = f.length ?? f.columnLength;
+    if (isBit && len === 1 && f.name) bit1.push(f.name);
+  }
+  if (!bit1.length) return rows;
+  return rows.map(row => {
+    let changed = false;
+    const next: Record<string, unknown> = { ...row };
+    for (const name of bit1) {
+      const v = row[name];
+      if (v == null) continue;
+      if (typeof Buffer !== 'undefined' && Buffer.isBuffer(v)) {
+        next[name] = v.length > 0 && v[0] !== 0;
+        changed = true;
+      } else if (v instanceof Uint8Array) {
+        next[name] = v.length > 0 && v[0] !== 0;
+        changed = true;
+      }
+    }
+    return changed ? next : row;
+  });
+}
+
 /** `mysql2/promise` (or `.promise()`) pool wrapper. */
 function mysqlPromiseClient(p: {
   query: (...args: any[]) => any;
@@ -405,9 +451,10 @@ function mysqlPromiseClient(p: {
   return {
     adapter: 'mysql',
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
-      const [result] = await p.query(sql, params);
+      const [result, fields] = await p.query(sql, params);
       if (Array.isArray(result)) {
-        return { rows: result as T[], rowCount: result.length };
+        const rows = coerceMysqlBit1Rows(result as Array<Record<string, unknown>>, fields) as T[];
+        return { rows, rowCount: rows.length };
       }
       const header = result as { affectedRows?: number; insertId?: number | bigint };
       return {
@@ -436,13 +483,17 @@ function mysqlCallbackClient(pool: {
     query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
       return new Promise<{ rows: T[]; rowCount: number; insertId?: number | bigint }>(
         (resolve, reject) => {
-          pool.query(sql, params, (err: Error | null, result: any) => {
+          pool.query(sql, params, (err: Error | null, result: any, fields?: any[]) => {
             if (err) {
               reject(err);
               return;
             }
             if (Array.isArray(result)) {
-              resolve({ rows: result as T[], rowCount: result.length });
+              const rows = coerceMysqlBit1Rows(
+                result as Array<Record<string, unknown>>,
+                fields,
+              ) as T[];
+              resolve({ rows, rowCount: rows.length });
               return;
             }
             const header = result as { affectedRows?: number; insertId?: number | bigint };
