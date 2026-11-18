@@ -631,10 +631,29 @@ function createPostgresClient(opts: CreateSqlClientOptions): SqlClient {
   return wrapPgPoolAsSqlClient(pool);
 }
 
+/** URI query keys consumed by {@link resolveSslOption} — not passed through to `pg.Pool`. */
+const PG_URI_SSL_PARAMS = new Set(['sslmode', 'ssl', 'tls']);
+
+/**
+ * Postgres URI query params we map onto `pg.Pool` config. Unknown keys are rejected
+ * so the transport does not silently drop connection settings.
+ */
+const PG_URI_POOL_PARAMS = new Set([
+  'host',
+  'port',
+  'application_name',
+  'options',
+  'connect_timeout',
+  'client_encoding',
+]);
+
 /**
  * Build a `pg.Pool` config from a postgres URI using discrete connection fields.
  * Prefer this over `{ connectionString, ssl }` so URI `sslmode` / `ssl` query
  * params cannot override an explicit `ssl` object (e.g. private CA).
+ *
+ * Honors URI `?host=` (Unix socket), `application_name`, `options`, etc. Omits
+ * host/port when absent so `pg` can use `PGHOST` / `PGPORT`.
  */
 export function pgPoolConfigFromLocation(
   location: string,
@@ -649,19 +668,51 @@ export function pgPoolConfigFromLocation(
   if (parsed.adapter !== 'postgres') {
     throw new Error(`Expected postgres URI, got ${parsed.adapter}`);
   }
-  return {
-    host: parsed.host || 'localhost',
-    port: parsed.port ?? 5432,
+
+  const sp = parsed.searchParams || {};
+  for (const key of Object.keys(sp)) {
+    const lower = key.toLowerCase();
+    if (PG_URI_SSL_PARAMS.has(lower)) continue;
+    if (!PG_URI_POOL_PARAMS.has(lower)) {
+      throw new Error(
+        `Unsupported postgres URI query parameter "${key}". Supported: ${[...PG_URI_POOL_PARAMS].join(', ')} (plus sslmode/ssl/tls).`,
+      );
+    }
+  }
+
+  // Query `host` wins (e.g. `postgres:///db?host=/var/run/postgresql`).
+  const host = sp.host || parsed.host;
+  const portRaw = sp.port || (parsed.port != null ? String(parsed.port) : undefined);
+  const port = portRaw != null && portRaw !== '' ? Number(portRaw) : undefined;
+
+  const config: PgPoolConfig = {
     user: parsed.user,
     password: parsed.password,
     database: parsed.database,
     ssl: extras?.ssl,
-    ...(extras?.max != null ? { max: extras.max } : {}),
-    ...(extras?.idleTimeoutMillis != null ? { idleTimeoutMillis: extras.idleTimeoutMillis } : {}),
-    ...(extras?.connectionTimeoutMillis != null
-      ? { connectionTimeoutMillis: extras.connectionTimeoutMillis }
-      : {}),
   };
+  if (host) config.host = host;
+  if (port != null && !Number.isNaN(port)) config.port = port;
+  if (sp.application_name) config.application_name = sp.application_name;
+  if (sp.options) config.options = sp.options;
+  if (sp.connect_timeout != null && sp.connect_timeout !== '') {
+    const seconds = Number(sp.connect_timeout);
+    if (!Number.isNaN(seconds)) {
+      config.connectionTimeoutMillis = seconds * 1000;
+    }
+  }
+  if (sp.client_encoding) {
+    // pg reads encoding from startup options; surface via options GUC when unset.
+    config.options = config.options
+      ? `${config.options} -c client_encoding=${sp.client_encoding}`
+      : `-c client_encoding=${sp.client_encoding}`;
+  }
+  if (extras?.max != null) config.max = extras.max;
+  if (extras?.idleTimeoutMillis != null) config.idleTimeoutMillis = extras.idleTimeoutMillis;
+  if (extras?.connectionTimeoutMillis != null) {
+    config.connectionTimeoutMillis = extras.connectionTimeoutMillis;
+  }
+  return config;
 }
 
 /**

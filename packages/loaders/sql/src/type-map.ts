@@ -33,9 +33,18 @@ export function mapSqlTypeToGraphQL(
   if (baseType.includes('BOOL') || baseType === 'BOOLEAN') {
     return GraphQLBoolean;
   }
-  // MySQL BIT(1) is a boolean flag; wider BIT(n) arrives as Buffer from mysql2.
+  // Postgres `varbit` / `bit varying` (and bare `bit` udt_name without width) arrive as
+  // bit-strings from `pg` — map to String. MySQL `BIT(1)` is a boolean flag; wider
+  // `BIT(n)` arrives as Buffer from mysql2 → Byte.
+  if (baseType === 'VARBIT' || baseType.includes('BIT VARYING')) {
+    return GraphQLString;
+  }
   if (/\bBIT\b/.test(baseType)) {
-    if (!typeArgs || typeArgs === '1') {
+    if (!typeArgs) {
+      // Postgres introspection passes udt_name `bit` with no width.
+      return GraphQLString;
+    }
+    if (typeArgs === '1') {
       return GraphQLBoolean;
     }
     return GraphQLByte as unknown as GraphQLScalarType;

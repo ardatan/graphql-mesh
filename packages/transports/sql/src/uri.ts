@@ -299,8 +299,9 @@ export function parseSqlUri(location: string): ParsedSqlUri {
       adapter: 'postgres',
       user: decode(url.username) || undefined,
       password: decode(url.password) || undefined,
-      host: url.hostname || 'localhost',
-      port: url.port ? Number(url.port) : 5432,
+      // Omit empty host/port so `pg` can use PGHOST / PGPORT (and URI `?host=`).
+      host: url.hostname || undefined,
+      port: url.port ? Number(url.port) : undefined,
       database,
       ssl: searchParams.ssl === 'true' || searchParams.sslmode === 'require',
       searchParams,

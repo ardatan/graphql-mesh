@@ -25,7 +25,9 @@ Relations use the same `@sql` with `$this` binders in `where`.
 
 - `@graphql-mesh/mysql` -- `pool` / `tableFields` supported
 - `@graphql-mesh/tuql` -- `infile` is materialized to a sqlite file inside the legacy handler
-  (not a core loader/transport feature)
+  (not a core loader/transport feature). The cache key is dump path + dump bytes: if the
+  dump is unchanged, a later restart reuses the cached DB including any executor writes
+  (the dump is no longer the sole source of truth once the cache has been mutated).
 - `@graphql-mesh/postgraphile` -- schema emit and execution use `@sql` / `transport-sql` only
   (no longer loads the previous embedded runtime). See migration notes below.
 

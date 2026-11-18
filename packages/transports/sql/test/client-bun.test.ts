@@ -88,6 +88,24 @@ describe('Bun.SQL availability (Node / Jest)', () => {
     expect(cfg).not.toHaveProperty('connectionString');
   });
 
+  it('pgPoolConfigFromLocation honors ?host= socket and omits forced localhost defaults', () => {
+    const cfg = pgPoolConfigFromLocation(
+      'postgres:///shop?host=/var/run/postgresql&application_name=mesh',
+    );
+    expect(cfg).toMatchObject({
+      host: '/var/run/postgresql',
+      database: 'shop',
+      application_name: 'mesh',
+    });
+    expect(cfg.port).toBeUndefined();
+  });
+
+  it('pgPoolConfigFromLocation rejects unsupported URI query params', () => {
+    expect(() => pgPoolConfigFromLocation('postgres://localhost/shop?keepalives=1')).toThrow(
+      /Unsupported postgres URI query parameter "keepalives"/,
+    );
+  });
+
   it('mysql wrapper coerces BIT(1) Buffer to boolean; wider BIT stays binary', async () => {
     const { wrapMysqlPoolAsSqlClient } = await import('../src/client.js');
     const client = wrapMysqlPoolAsSqlClient({

@@ -50,6 +50,15 @@ describe('parseSqlUri', () => {
     expect(parsed.database).toBe('mydb');
   });
 
+  it('omits empty postgres host/port so PGHOST/PGPORT can apply', () => {
+    const parsed = parseSqlUri('postgres:///shop?host=/var/run/postgresql');
+    expect(parsed.adapter).toBe('postgres');
+    expect(parsed.host).toBeUndefined();
+    expect(parsed.port).toBeUndefined();
+    expect(parsed.database).toBe('shop');
+    expect(parsed.searchParams?.host).toBe('/var/run/postgresql');
+  });
+
   it('parses sqlite file paths', () => {
     expect(parseSqlUri('sqlite://./app.db').filePath).toBe('./app.db');
     expect(parseSqlUri(':memory:').filePath).toBe(':memory:');

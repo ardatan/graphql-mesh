@@ -9,10 +9,15 @@ describe('mapSqlTypeToGraphQL', () => {
     expect(mapSqlTypeToGraphQL('int(11)')).toBe(GraphQLInt);
   });
 
-  it('maps BIT(1) to Boolean and wider BIT to Byte', () => {
+  it('maps MySQL BIT(1) to Boolean and wider BIT to Byte', () => {
     expect(mapSqlTypeToGraphQL('bit(1)')).toBe(GraphQLBoolean);
-    expect(mapSqlTypeToGraphQL('BIT')).toBe(GraphQLBoolean);
     expect(mapSqlTypeToGraphQL('bit(8)')).toBe(GraphQLByte);
+  });
+
+  it('maps Postgres bit / varbit (no width) to String', () => {
+    expect(mapSqlTypeToGraphQL('bit')).toBe(GraphQLString);
+    expect(mapSqlTypeToGraphQL('varbit')).toBe(GraphQLString);
+    expect(mapSqlTypeToGraphQL('bit varying')).toBe(GraphQLString);
   });
 
   it('does not treat enum labels as binary types', () => {
