@@ -20,7 +20,7 @@ import { type Logger } from '@graphql-hive/logger';
 import { fs, path } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { YamlConfig } from '@graphql-mesh/types';
-import { importMeshDirectives } from '@graphql-mesh/utils';
+import { importMeshDirectives, meshSpecUrl } from '@graphql-mesh/utils';
 import { matchFiles } from '@graphql-tools/load-files';
 import { GraphQLStreamDirective, type Constructor } from '@graphql-tools/utils';
 import {
@@ -163,7 +163,7 @@ export class GrpcLoaderHelper extends DisposableStack {
       location: this.config.endpoint,
       ...(Object.keys(transportOptions).length > 0 ? { options: transportOptions } : {}),
     };
-    return importMeshDirectives(schema, ['@protobuf__rpc', '@transport']);
+    return importMeshDirectives(schema, ['@protobuf__rpc', '@transport'], { url: meshSpecUrl('protobuf') });
   }
 
   private processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {

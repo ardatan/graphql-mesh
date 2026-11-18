@@ -53,6 +53,7 @@ import {
   addConnectComposeDirective,
   defaultImportFn,
   importMeshDirectives,
+  meshSpecUrl,
   readFileOrUrl,
 } from '@graphql-mesh/utils';
 import { getDirectivesInExtensions } from '@graphql-tools/utils';
@@ -877,10 +878,11 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     },
   });
 
-  return importMeshDirectives(preferMultilineDirectiveBlockStrings(schema), [
-    '@thrift__rpc',
-    '@transport',
-  ]);
+  return importMeshDirectives(
+    preferMultilineDirectiveBlockStrings(schema),
+    ['@thrift__rpc', '@transport'],
+    { url: meshSpecUrl('thrift') },
+  );
 }
 
 /**

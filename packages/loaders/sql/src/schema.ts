@@ -22,7 +22,7 @@ import {
   type SqlAdapter,
   type SqlTransportOptions,
 } from '@graphql-mesh/transport-sql';
-import { importMeshDirectives } from '@graphql-mesh/utils';
+import { importMeshDirectives, meshSpecUrl } from '@graphql-mesh/utils';
 import { SqlDirective, SqlKindEnum, TransportDirective } from './directives.js';
 import { graphqlFieldNameForColumn } from './field-names.js';
 import { introspectMysql } from './introspect/mysql.js';
@@ -651,7 +651,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
   // graphql-compose emits StringValue without `block: true`, so printers escape
   // newlines as `\n`. Mark @sql args/selection as block strings for readable """ SDL.
   markSqlDirectiveStringsAsBlocks(schema);
-  return importMeshDirectives(schema, ['@sql', '@transport']);
+  return importMeshDirectives(schema, ['@sql', '@transport'], { url: meshSpecUrl('sql') });
 }
 
 async function introspect(

@@ -28,7 +28,7 @@ import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/str
 import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
 import transportConnect, { type ConnectTransportOptions } from '@graphql-mesh/transport-connect';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn, addConnectComposeDirective, importMeshDirectives, readFileOrUrl } from '@graphql-mesh/utils';
+import { defaultImportFn, addConnectComposeDirective, importMeshDirectives, meshSpecUrl, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   applyODataConnectSchemaExtensions,
   emitODataConnectors,
@@ -1102,7 +1102,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     }
   }
 
-  return addConnectComposeDirective(importMeshDirectives(schema, ['@transport']));
+  return addConnectComposeDirective(importMeshDirectives(schema, ['@transport'], { url: meshSpecUrl('transport') }));
 }
 
 export async function loadGraphQLSchemaFromOData(

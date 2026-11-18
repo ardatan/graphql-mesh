@@ -22,7 +22,7 @@ import type { IStringifyOptions } from 'qs';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { entityKeyFieldsFromHttpPath } from '@graphql-mesh/fusion-composition';
-import { addConnectComposeDirective, importMeshDirectives } from '@graphql-mesh/utils';
+import { addConnectComposeDirective, importMeshDirectives, meshSpecUrl } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   bakeEnumRootSelection,
@@ -784,7 +784,7 @@ ${operationConfig.description || ''}
     },
   });
   flushConnectSelectionPassthroughWarnings(selectionLimit);
-  return addConnectComposeDirective(importMeshDirectives(schema, ['@transport']));
+  return addConnectComposeDirective(importMeshDirectives(schema, ['@transport'], { url: meshSpecUrl('transport') }));
 }
 
 function finalizeConnectorsField(

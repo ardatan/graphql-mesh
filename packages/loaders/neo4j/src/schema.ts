@@ -11,7 +11,7 @@ import {
   getNeo4jDirectiveDefinitions,
   stampSubgraphOnNeo4jDirectives,
 } from '@graphql-mesh/transport-neo4j';
-import { importMeshDirectives, TRANSPORT_DIRECTIVE_SDL } from '@graphql-mesh/utils';
+import { importMeshDirectives, meshSpecUrl, TRANSPORT_DIRECTIVE_SDL } from '@graphql-mesh/utils';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
@@ -198,5 +198,6 @@ export async function loadGraphQLSchemaFromNeo4J(
       '@plural',
       '@transport',
     ],
+    { url: meshSpecUrl('neo4j') },
   );
 }

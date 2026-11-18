@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://graphql-mesh.com/spec/v2.0", import: ["@transport"]) @transport(subgraph: "greetings", kind: "connect", location: "http://localhost:<greetings_port>") @join__directive(graphs: [GREETINGS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [GREETINGS], name: "source", args: {name: "greetings", http: {baseURL: "http://localhost:<greetings_port>"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/transport/v0.1", import: ["@transport"]) @transport(subgraph: "greetings", kind: "connect", location: "http://localhost:<greetings_port>") @join__directive(graphs: [GREETINGS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [GREETINGS], name: "source", args: {name: "greetings", http: {baseURL: "http://localhost:<greetings_port>"}}) {
   query: Query
 }
 

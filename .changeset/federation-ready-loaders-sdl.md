@@ -22,7 +22,7 @@ Mesh Compose previously had to invent Mesh-spec `@link` imports and `@composeDir
 
 - **`importMeshDirectives`** / **`addConnectComposeDirective`** live in **`@graphql-mesh/utils`** so protocol loaders do not depend on `@graphql-mesh/fusion-composition`. Fusion composition re-exports them for Compose.
 - Loaders stamp Mesh `@link` + `@composeDirective` themselves via `importMeshDirectives([...])` with an **explicit** directive list (no auto-scan). Connectors loaders also call `addConnectComposeDirective`.
-- Mesh-spec `@link` URL is now **`https://graphql-mesh.com/spec/v2.0`** (Federation composition requires `vX.Y`; legacy Guild / `spec.graphql-mesh.dev` links are still recognized).
+- Mesh-spec `@link` URLs are per-protocol, starting at **`https://specs.graphql-mesh.com/<protocol>/v0.1`** (e.g. `thrift`, `sql`, `mesh` for Compose `@merge`/`@source`). Federation composition requires `vX.Y`; legacy Guild / `graphql-mesh.com/spec` / `spec.graphql-mesh.dev` links are still recognized.
 - Hand-written SDL: prefer **`subgraphs: [{ name, schema }]`** where `schema` is `MaybePromise<GraphQLSchema | DocumentNode | string>` (inline SDL, path, or URL). Or use **`loadSubgraphFromSDL(name, schema, options?)`** (`loadSdlSubgraph` remains a deprecated alias). Mesh `@link` / `@composeDirective` belong in that SDL (or come from a loader).
 
 Object-level `@shareable` / full Fed v2 conversion remains Compose-time (`convertSubgraphToFederationv2`) — loaders do not blanket-stamp `@shareable`.

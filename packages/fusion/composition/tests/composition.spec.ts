@@ -186,7 +186,7 @@ describe('Composition', () => {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://graphql-mesh.com/spec/v2.0", import: ["@merge"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/mesh/v0.1", import: ["@merge"]) {
   query: Query
 }
 
@@ -303,7 +303,7 @@ type Bar @join__type(graph: BAR, key: "id") {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://graphql-mesh.com/spec/v2.0", import: ["@merge"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/mesh/v0.1", import: ["@merge"]) {
   query: Query
 }
 
@@ -418,7 +418,7 @@ type Bar @join__type(graph: BAR, key: "id") {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://graphql-mesh.com/spec/v2.0", import: ["@merge"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/mesh/v0.1", import: ["@merge"]) {
   query: Query
 }
 
@@ -534,7 +534,7 @@ type Bar @join__type(graph: BAR, key: "id") {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://graphql-mesh.com/spec/v2.0", import: ["@merge"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/mesh/v0.1", import: ["@merge"]) {
   query: Query
 }
 
@@ -649,7 +649,7 @@ type Bar @join__type(graph: BAR, key: "id") {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://graphql-mesh.com/spec/v2.0", import: ["@merge"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/mesh/v0.1", import: ["@merge"]) {
   query: Query
 }
 
@@ -764,7 +764,7 @@ type Bar @join__type(graph: BAR, key: "id") {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://graphql-mesh.com/spec/v2.0", import: ["@merge"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/mesh/v0.1", import: ["@merge"]) {
   query: Query
 }
 
@@ -879,7 +879,7 @@ type Bar @join__type(graph: BAR, key: "id") {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://graphql-mesh.com/spec/v2.0", import: ["@merge"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/mesh/v0.1", import: ["@merge"]) {
   query: Query
 }
 

@@ -105,21 +105,39 @@ function meshDirectiveImportsEqual(a: unknown, b: MeshDirectiveImport): boolean 
   return false;
 }
 
+export interface ImportMeshDirectivesOptions {
+  /**
+   * `@link` URL to stamp / extend. Defaults to {@link MESH_SPEC_URL}
+   * (`https://specs.graphql-mesh.com/mesh/v0.1`). Protocol loaders pass
+   * {@link meshSpecUrl} e.g. `meshSpecUrl('thrift')`.
+   */
+  url?: string;
+}
+
 /**
  * Import Mesh-spec directives (optionally aliased, e.g. `{ name: '@source', as: '@meshSource' }`)
  * and register them with `@composeDirective` under the *local* name.
  *
  * Loaders call this with the directives they emit — there is no auto-scan helper.
+ * Prefer a per-protocol URL via {@link ImportMeshDirectivesOptions.url} so each
+ * loader can version its directive schema independently.
  */
-export function importMeshDirectives(subgraph: GraphQLSchema, directives: MeshDirectiveImport[]) {
+export function importMeshDirectives(
+  subgraph: GraphQLSchema,
+  directives: MeshDirectiveImport[],
+  options?: ImportMeshDirectivesOptions,
+) {
+  const targetUrl = options?.url ?? MESH_SPEC_URL;
   const schemaDirectives = getDirectiveExtensions(subgraph) || {};
   const linkDirectives = (schemaDirectives.link ||= []);
   let importStatement = linkDirectives.find(linkDirectiveArgs =>
-    isMeshSpecLinkUrl(linkDirectiveArgs.url),
+    options?.url != null
+      ? linkDirectiveArgs.url === targetUrl
+      : isMeshSpecLinkUrl(linkDirectiveArgs.url),
   );
   if (!importStatement) {
     importStatement = {
-      url: MESH_SPEC_URL,
+      url: targetUrl,
       import: [],
     };
     linkDirectives.push(importStatement);

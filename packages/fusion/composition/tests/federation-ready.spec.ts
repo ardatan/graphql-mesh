@@ -6,7 +6,7 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
-import { addConnectComposeDirective, importMeshDirectives } from '@graphql-mesh/utils';
+import { addConnectComposeDirective, importMeshDirectives, meshSpecUrl } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('importMeshDirectives / addConnectComposeDirective', () => {
@@ -50,13 +50,13 @@ describe('importMeshDirectives / addConnectComposeDirective', () => {
       },
     });
 
-    schema = importMeshDirectives(schema, ['@sql', '@transport']);
+    schema = importMeshDirectives(schema, ['@sql', '@transport'], { url: meshSpecUrl('sql') });
     const dirs = getDirectiveExtensions(schema);
     expect(
-      dirs?.link?.some((l: { url?: string }) => l.url?.startsWith('https://graphql-mesh.com/spec/')),
+      dirs?.link?.some((l: { url?: string }) => l.url?.startsWith('https://specs.graphql-mesh.com/')),
     ).toBe(true);
     const meshImport = dirs?.link?.find((l: { url?: string }) =>
-      l.url?.startsWith('https://graphql-mesh.com/spec/'),
+      l.url?.startsWith('https://specs.graphql-mesh.com/'),
     );
     expect(meshImport?.import).toEqual(expect.arrayContaining(['@sql', '@transport']));
     expect(dirs?.composeDirective).toEqual(
@@ -71,7 +71,7 @@ describe('importMeshDirectives / addConnectComposeDirective', () => {
     ).toBe(true);
 
     // Idempotent
-    const again = importMeshDirectives(schema, ['@sql', '@transport']);
+    const again = importMeshDirectives(schema, ['@sql', '@transport'], { url: meshSpecUrl('sql') });
     expect(getDirectiveExtensions(again)?.composeDirective).toEqual(dirs?.composeDirective);
   });
 

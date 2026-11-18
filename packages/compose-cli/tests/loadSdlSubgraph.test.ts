@@ -13,7 +13,7 @@ describe('loadSubgraphFromSDL', () => {
       /* GraphQL */ `
         extend schema
           @link(
-            url: "https://graphql-mesh.com/spec/v2.0"
+            url: "https://specs.graphql-mesh.com/sql/v0.1"
             import: ["@sql", "@transport"]
           )
           @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
@@ -51,7 +51,7 @@ describe('loadSubgraphFromSDL', () => {
       expect.arrayContaining([{ name: '@sql' }, { name: '@transport' }]),
     );
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toContain('https://graphql-mesh.com/spec/');
+    expect(sdl).toContain('https://specs.graphql-mesh.com/');
     expect(sdl).toContain('@composeDirective');
   });
 
@@ -64,7 +64,7 @@ describe('loadSubgraphFromSDL', () => {
       /* GraphQL */ `
         extend schema
           @link(
-            url: "https://graphql-mesh.com/spec/v2.0"
+            url: "https://specs.graphql-mesh.com/protobuf/v0.1"
             import: ["@protobuf__rpc", "@transport"]
           )
           @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
