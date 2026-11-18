@@ -153,11 +153,11 @@ function attachMongoResolver(
           return docs.map(doc => mapDocumentToGraphql(doc, selection));
         }
         case 'COUNT':
-          return client.count(directive.collection, filter);
+          return await client.count(directive.collection, filter);
         case 'CONNECTION':
-          return resolveConnection(client, directive, filter, sort, proj, ctx, selection);
+          return await resolveConnection(client, directive, filter, sort, proj, ctx, selection);
         case 'PAGINATION':
-          return resolvePagination(client, directive, filter, sort, proj, ctx, selection);
+          return await resolvePagination(client, directive, filter, sort, proj, ctx, selection);
         case 'INSERT_ONE': {
           const doc = buildSetDocument(directive.set, ctx);
           const { insertedId } = await client.insertOne(directive.collection, doc);
