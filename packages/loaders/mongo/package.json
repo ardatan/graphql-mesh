@@ -42,7 +42,8 @@
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/utils": "^13.2.2",
     "graphql-compose": "^9.3.0",
-    "graphql-scalars": "^2.0.1"
+    "graphql-scalars": "^2.0.1",
+    "mongodb": "^7.0.0"
   },
   "devDependencies": {
     "graphql": "16.14.0",

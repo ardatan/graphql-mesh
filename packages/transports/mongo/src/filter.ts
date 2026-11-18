@@ -177,21 +177,26 @@ export function buildSetDocument(
 }
 
 export function coerceFilterValue(value: unknown): unknown {
-  if (typeof value === 'string') {
-    if (ObjectId.isValid(value) && value.length === 24) {
-      try {
-        return new ObjectId(value);
-      } catch {
-        // fall through
-      }
+  // Already BSON Decimal128 from GraphQLDecimal128.parseValue (Mongoose-aligned cast).
+  if (value instanceof Decimal128) {
+    return value;
+  }
+  if (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as { $numberDecimal?: string }).$numberDecimal === 'string'
+  ) {
+    try {
+      return Decimal128.fromString((value as { $numberDecimal: string }).$numberDecimal);
+    } catch {
+      return value;
     }
-    // Decimal128 wire format from the local GraphQL scalar (decimal string).
-    if (/^-?\d+\.\d+$/.test(value)) {
-      try {
-        return Decimal128.fromString(value);
-      } catch {
-        return value;
-      }
+  }
+  if (typeof value === 'string' && ObjectId.isValid(value) && value.length === 24) {
+    try {
+      return new ObjectId(value);
+    } catch {
+      return value;
     }
   }
   return value;
