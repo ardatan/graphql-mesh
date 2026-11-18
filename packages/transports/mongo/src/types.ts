@@ -53,41 +53,56 @@ export interface MongoCollectionFieldsEntry {
  * ```
  */
 export interface MongoTransportOptions {
-  /** MongoDB driver pool size for {@link createMongoClient}. */
+  /**
+   * MongoDB driver pool size for {@link createMongoClient}.
+   * When omitted, the Node driver uses its own `maxPoolSize` default.
+   */
   maxPoolSize?: number;
   /**
-   * Declared BSON ObjectId field names for hex→ObjectId coercion (flat /
+   * Extra BSON ObjectId field names for hex→ObjectId coercion (flat /
    * subgraph-wide). Prefer {@link objectIdFieldsByCollection} when the same
    * bare field name differs across collections.
+   * The executor always treats `_id` / `id` as ObjectId (unless the collection
+   * is in {@link stringIdCollections}); the loader may stamp additional paths.
    */
   objectIdFields?: string[];
   /**
    * ObjectId paths per collection (entry list encoding; legacy
    * `Record<collection, fields>` still accepted at runtime).
+   * When present, a collection’s list is authoritative (incl. empty `[]` —
+   * no flat {@link objectIdFields} fallback). The loader emits one entry per
+   * collection.
    */
   objectIdFieldsByCollection?: MongoCollectionFieldsEntry[] | Record<string, string[]>;
   /**
    * Fields that may be omitted on patch but reject explicit `null` on `$set`
-   * (flat / subgraph-wide). Prefer {@link requiredFieldsByCollection}.
+   * (and `$unset` / `$rename` of the path). Flat / subgraph-wide — prefer
+   * {@link requiredFieldsByCollection} when collections disagree.
+   * @default `[]` (no required-field checks)
    */
   requiredFields?: string[];
   /**
    * Required fields per collection (entry list encoding; legacy Record accepted).
    * A present empty list is authoritative (no flat `requiredFields` fallback).
+   * The loader stamps this when models set `fields.required`.
    */
   requiredFieldsByCollection?: MongoCollectionFieldsEntry[] | Record<string, string[]>;
   /**
    * Empty-input placeholder keys (e.g. `_`) — stripped on write; not real paths.
-   * Flat / subgraph-wide; prefer {@link placeholderFieldsByCollection}.
+   * Flat / subgraph-wide; prefer {@link placeholderFieldsByCollection} so an
+   * id-only model’s `_` does not strip a real `_` field on another collection.
+   * @default `['_']` when neither flat nor scoped placeholders are configured
    */
   placeholderFields?: string[];
   /**
    * Placeholders per collection (entry list encoding; legacy Record accepted).
+   * The loader emits one entry per collection (often `[]` when unused).
    */
   placeholderFieldsByCollection?: MongoCollectionFieldsEntry[] | Record<string, string[]>;
   /**
    * Collections whose `_id` is BSON String (not ObjectId) — keep 24-hex as string
-   * for inserts, filters, cursors, and payload `recordId`.
+   * for inserts, filters, cursors, and payload `recordId` (no ObjectId coerce).
+   * @default `[]`
    */
   stringIdCollections?: string[];
 }

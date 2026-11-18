@@ -1,7 +1,7 @@
 import { parse, type ExecutionResult } from 'graphql';
 import { Schema } from 'mongoose';
 import { loadGraphQLSchemaFromMongo } from '@omnigraph/mongo';
-import { getMongoExecutor } from '../src/execution.js';
+import { applyGraphqlStringIdInsertAliases, getMongoExecutor } from '../src/execution.js';
 import type { MongoClientLike } from '../src/types.js';
 
 async function execResult(
@@ -425,6 +425,26 @@ describe('getMongoExecutor FIND_* + writes', () => {
     });
     expect(nullAlias.errors).toBeUndefined();
     expect(insertedDocs).toEqual([{ _id: 'bulk-3', id: null, name: 'Nil' }]);
+  });
+
+  it('does not rewrite storedId on hand-written BSON bulk docs', () => {
+    // GraphQL DocumentInput shape — alias both keys.
+    const graphqlDoc: Record<string, unknown> = {
+      id: 'g-1',
+      storedId: 'legacy',
+      name: 'G',
+    };
+    applyGraphqlStringIdInsertAliases(graphqlDoc);
+    expect(graphqlDoc).toEqual({ _id: 'g-1', id: 'legacy', name: 'G' });
+
+    // Hand-written BSON already has `_id` — keep a real `storedId` path.
+    const bsonDoc: Record<string, unknown> = {
+      _id: 'b-1',
+      storedId: 'real-field',
+      name: 'B',
+    };
+    applyGraphqlStringIdInsertAliases(bsonDoc);
+    expect(bsonDoc).toEqual({ _id: 'b-1', storedId: 'real-field', name: 'B' });
   });
 
   it('treats present empty requiredFieldsByCollection as authoritative', async () => {

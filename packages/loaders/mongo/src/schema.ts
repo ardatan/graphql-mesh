@@ -55,36 +55,45 @@ export interface MongoDiscriminatorInfo {
 }
 
 /**
- * Opt out of individual Query/Mutation roots. Omit or `true` = emit; `false` = omit.
+ * Opt out of individual Query/Mutation roots.
  * Keys follow MongoDB collection method names (plus ById / connection helpers).
  * GraphQL field names still come from {@link MongoNaming}
  * (e.g. `insertOne: false` drops `insertOneUser`).
  *
- * @example
- * ```ts
- * queryAndMutations: {
- *   aggregate: false,
- *   deleteMany: false,
- *   insertMany: false,
- * }
- * ```
+ * @default Every key defaults to `true` (emit) when omitted; only `false` omits.
  */
 export type MongoQueryAndMutations = {
+  /** Emit `find*ById` (`db.collection.findOne({ _id })`). @default true */
   findById?: boolean;
+  /** Emit `find*ByIds` (`find({ _id: { $in } })`). @default true */
   findByIds?: boolean;
+  /** Emit `findOne*` (`db.collection.findOne(filter)`). @default true */
   findOne?: boolean;
+  /** Emit `find*` list (`db.collection.find(filter)`). @default true */
   findMany?: boolean;
+  /** Emit `countDocuments*` (`db.collection.countDocuments`). @default true */
   countDocuments?: boolean;
+  /** Emit `aggregate*` (`db.collection.aggregate`). @default true */
   aggregate?: boolean;
+  /** Emit Relay-style `*Connection` root. @default true */
   connection?: boolean;
+  /** Emit page/`perPage` `*Pagination` root. @default true */
   pagination?: boolean;
+  /** Emit `insertOne*` (`db.collection.insertOne`). @default true */
   insertOne?: boolean;
+  /** Emit `insertMany*` (`db.collection.insertMany`). @default true */
   insertMany?: boolean;
+  /** Emit `update*ById` convenience mutation. @default true */
   updateById?: boolean;
+  /** Emit `updateOne*` (`db.collection.updateOne`). @default true */
   updateOne?: boolean;
+  /** Emit `updateMany*` (`db.collection.updateMany`). @default true */
   updateMany?: boolean;
+  /** Emit `delete*ById` convenience mutation. @default true */
   deleteById?: boolean;
+  /** Emit `deleteOne*` (`db.collection.deleteOne`). @default true */
   deleteOne?: boolean;
+  /** Emit `deleteMany*` (`db.collection.deleteMany`). @default true */
   deleteMany?: boolean;
 };
 
@@ -103,13 +112,19 @@ type MongoModelConfigBase = {
    */
   name: string;
   /**
-   * Mongo collection name. Defaults to the Mongoose model/schema collection, else
-   * a pluralized {@link name}.
+   * Mongo collection name used in `@mongo__*` binders and transport maps.
+   * @default Mongoose model/schema `collection`, else a pluralized {@link name}
    */
   collection?: string;
-  /** Field whitelist / blacklist / required policy. */
+  /**
+   * Field whitelist / blacklist / required policy (`only` / `remove` / `required`).
+   * When unset, every introspected path is emitted.
+   */
   fields?: MongoFieldRestrictions;
-  /** Which Query/Mutation roots to emit (`false` omits). */
+  /**
+   * Which Query/Mutation roots to emit for this model (`false` omits a root).
+   * @default All roots enabled (every {@link MongoQueryAndMutations} key `true`)
+   */
   queryAndMutations?: MongoQueryAndMutations;
 };
 
@@ -184,14 +199,21 @@ export interface LoadMongoSubgraphOpts {
   endpoint: string;
   /** One entry per GraphQL object type / collection slice. */
   models: MongoModelConfig[];
-  /** Base directory for `path` model imports. Defaults to `process.cwd()`. */
+  /**
+   * Base directory for `path` model imports (`./models#User`, relative modules).
+   * @default `process.cwd()`
+   */
   cwd?: string;
   /**
    * Override default GraphQL type / field naming ({@link createDefaultNaming}).
-   * Partial merge — only replace the helpers you need.
+   * Partial merge — only replace the helpers you need (e.g. `findManyField`).
+   * @default {@link createDefaultNaming}()
    */
   naming?: Partial<MongoNaming>;
-  /** Custom module loader for `path` models (tests / non-Node runtimes). */
+  /**
+   * Custom module loader for `path` models (tests / non-Node runtimes).
+   * @default Mesh `defaultImportFn`
+   */
   importFn?: ImportFn;
 }
 
@@ -300,6 +322,9 @@ export async function loadGraphQLSchemaFromMongo(
   const pathsByType = new Map(modelMeta.map(m => [m.typeName, m.paths]));
   const collectionsByType = new Map(modelMeta.map(m => [m.typeName, m.collection]));
   for (const meta of modelMeta) {
+    // Subtypes: prepended `$match` is bypassable via `$unionWith` — omit raw aggregate
+    // until the transport can enforce discriminator scope across client stages.
+    const omitAggregate = omitAggregateSubgraphWide || Boolean(meta.discriminator);
     emitModelRootFields(schemaComposer, {
       subgraphName,
       typeName: meta.typeName,
@@ -308,7 +333,7 @@ export async function loadGraphQLSchemaFromMongo(
       naming,
       fieldRestrictions: meta.fieldRestrictions,
       queryAndMutations: meta.queryAndMutations,
-      omitAggregate: omitAggregateSubgraphWide,
+      omitAggregate,
       stringId: meta.stringId,
       discriminator: meta.discriminator,
     });
@@ -1080,8 +1105,9 @@ function emitModelRootFields(
     });
   }
 
-  // Raw aggregate can `$project` / `$unionWith` into restricted collections — omit
-  // subgraph-wide when any model has fields.only/remove.
+  // Raw aggregate can `$project` / `$unionWith` past field restrictions or a
+  // prepended subtype `$match` — omitted when `omitAggregate` (restricted subgraph
+  // and/or discriminator subtype models).
   if (!opts.omitAggregate && isOpEnabled(ops, 'aggregate')) {
     queryTC.setField(naming.aggregateField(typeName), {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLJSON))),

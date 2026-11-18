@@ -283,21 +283,7 @@ function attachMongoResolver(
                 collection: directive.collection,
               }) as Record<string, unknown>;
               if (stringId) {
-                // GraphQL `id` → Mongo `_id` (include null); keep existing `_id`.
-                if (
-                  Object.prototype.hasOwnProperty.call(coerced, 'id') &&
-                  !Object.prototype.hasOwnProperty.call(coerced, '_id')
-                ) {
-                  coerced._id = coerced.id;
-                  delete coerced.id;
-                }
-                // GraphQL `storedId` → mongoose path `id` (include null); preserve explicit BSON `id`.
-                if (Object.prototype.hasOwnProperty.call(coerced, 'storedId')) {
-                  if (!Object.prototype.hasOwnProperty.call(coerced, 'id')) {
-                    coerced.id = coerced.storedId;
-                  }
-                  delete coerced.storedId;
-                }
+                applyGraphqlStringIdInsertAliases(coerced);
               }
               return stripInputPlaceholder({ ...coerced, ...stamp }, directive.collection);
             });
@@ -390,6 +376,28 @@ function isWriteKind(kind: MongoKind): boolean {
     kind === 'DELETE_ONE' ||
     kind === 'DELETE_MANY'
   );
+}
+
+/**
+ * Map GraphQL String-`_id` DocumentInput aliases onto BSON keys for bulk insert.
+ * Applies only to generated GraphQL shapes (no `_id` yet). Hand-written BSON
+ * `{ _id, storedId }` keeps a real `storedId` path — do not rewrite to `id`.
+ */
+export function applyGraphqlStringIdInsertAliases(doc: Record<string, unknown>): void {
+  // BSON already named — leave keys alone (incl. a real `storedId` field).
+  if (Object.prototype.hasOwnProperty.call(doc, '_id')) return;
+  // GraphQL `id` → Mongo `_id` (include null).
+  if (Object.prototype.hasOwnProperty.call(doc, 'id')) {
+    doc._id = doc.id;
+    delete doc.id;
+  }
+  // GraphQL `storedId` → mongoose path `id` (include null); keep explicit BSON `id`.
+  if (Object.prototype.hasOwnProperty.call(doc, 'storedId')) {
+    if (!Object.prototype.hasOwnProperty.call(doc, 'id')) {
+      doc.id = doc.storedId;
+    }
+    delete doc.storedId;
+  }
 }
 
 /** v0 compose parity: selecting `error` on the payload opts into typed errors. */

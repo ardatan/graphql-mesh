@@ -490,6 +490,8 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(insertOneDirs?.[0]?.set).toMatch(/kind:\s*"Circle"/);
     expect(insertOneDirs?.[0]?.set).not.toMatch(/documents:/);
     expect(sdl).not.toContain('rename: JSON');
+    // `$unionWith` can bypass prepended discriminator `$match` — omit until scoped solidly.
+    expect(sdl).not.toMatch(/\baggregateCircles\b/);
   });
 
   it('honors queryAndMutations false toggles and naming overrides', async () => {
