@@ -39,25 +39,17 @@ enum join__Graph {
   MOVIES @join__graph(name: "Movies", url: "neo4j://localhost:<neo4j_port>")
 }
 
-directive @node(
-  subgraph: String
-  """Neo4j labels when they differ from the GraphQL type name"""
-  labels: [String!]
-) repeatable on OBJECT
+directive @node(labels: [String!], subgraph: String) repeatable on OBJECT
 
 directive @relationshipProperties(subgraph: String) repeatable on OBJECT
 
-directive @relationship(subgraph: String, type: String, direction: _RelationDirections, properties: String) repeatable on FIELD_DEFINITION
+directive @relationship(type: String, direction: _RelationDirections, properties: String, subgraph: String) repeatable on FIELD_DEFINITION
 
-directive @alias(
-  subgraph: String
-  """Neo4j property name when it differs from the GraphQL field name"""
-  property: String!
-) repeatable on FIELD_DEFINITION
+directive @alias(property: String!, subgraph: String) repeatable on FIELD_DEFINITION
 
-directive @cypher(subgraph: String, statement: String!, columnName: String!) repeatable on FIELD_DEFINITION
+directive @cypher(statement: String!, columnName: String!, subgraph: String) repeatable on FIELD_DEFINITION
 
-directive @plural(subgraph: String, value: String!) repeatable on OBJECT | INTERFACE | UNION
+directive @plural(value: String!, subgraph: String) repeatable on OBJECT | INTERFACE | UNION
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
