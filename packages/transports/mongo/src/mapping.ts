@@ -88,10 +88,23 @@ export function mapDocumentToGraphql(
       continue;
     }
     if (entry.value?.kind === 'column') {
-      out[entry.key] = getPath(doc, entry.value.value.split('.'));
+      out[entry.key] = coerceGraphqlValue(getPath(doc, entry.value.value.split('.')));
     }
   }
   return out;
+}
+
+/** graphql-scalars ObjectID serialize expects a 24-char hex string, not a driver ObjectId. */
+function coerceGraphqlValue(value: unknown): unknown {
+  if (value == null) return value;
+  if (typeof value === 'object' && value !== null && 'toHexString' in value) {
+    try {
+      return (value as { toHexString: () => string }).toHexString();
+    } catch {
+      return value;
+    }
+  }
+  return value;
 }
 
 function stripComments(source: string): string {

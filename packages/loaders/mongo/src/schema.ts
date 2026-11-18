@@ -8,11 +8,10 @@ import {
   type GraphQLSchema,
 } from 'graphql';
 import { SchemaComposer } from 'graphql-compose';
-import { GraphQLJSON } from 'graphql-scalars';
+import { GraphQLDateTime, GraphQLJSON, GraphQLObjectID } from 'graphql-scalars';
 import type { Model, Schema as MongooseSchema } from 'mongoose';
 import { process as meshProcess } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
-import { GraphQLMongoID } from '@graphql-mesh/transport-mongo';
 import { defaultImportFn, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { MongoDirective, MongoKindEnum, TransportDirective } from './directives.js';
 import { createDefaultNaming, type MongoNaming } from './naming.js';
@@ -50,7 +49,8 @@ export async function loadGraphQLSchemaFromMongo(
   const importFn = opts.importFn || defaultImportFn;
   const schemaComposer = new SchemaComposer();
 
-  schemaComposer.add(GraphQLMongoID);
+  schemaComposer.add(GraphQLObjectID);
+  schemaComposer.add(GraphQLDateTime);
   schemaComposer.add(GraphQLJSON);
   schemaComposer.addDirective(TransportDirective);
   schemaComposer.addDirective(MongoDirective);
@@ -139,7 +139,7 @@ function emitModelTypes(
   });
 
   const selectionLines: string[] = ['id: _id'];
-  otc.setField('id', { type: new GraphQLNonNull(GraphQLMongoID) });
+  otc.setField('id', { type: new GraphQLNonNull(GraphQLObjectID) });
 
   for (const path of paths) {
     if (path.name === '_id' || path.name === '__v') continue;
@@ -175,7 +175,7 @@ function emitModelTypes(
   queryTC.setField(naming.findByIdField(typeName), {
     type: typeName,
     args: {
-      _id: { type: new GraphQLNonNull(GraphQLMongoID) },
+      _id: { type: new GraphQLNonNull(GraphQLObjectID) },
     },
     directives: [
       {
@@ -307,17 +307,21 @@ function createWhereAndSort(
         AND: { type: `[${whereName}!]` },
         OR: { type: `[${whereName}!]` },
         NOT: { type: whereName },
-        id: { type: 'MongoIDWhere' },
+        id: { type: 'ObjectIDWhere' },
         ...Object.fromEntries(
           paths
             .filter(p => p.name !== '_id' && p.name !== '__v' && !p.name.includes('.'))
             .map(p => {
-              const whereType =
-                p.instance === 'Number' || p.instance === 'Decimal128'
-                  ? 'FloatWhere'
-                  : p.instance === 'Boolean'
-                    ? 'BooleanWhere'
-                    : 'StringWhere';
+              let whereType = 'StringWhere';
+              if (p.instance === 'Number' || p.instance === 'Decimal128') {
+                whereType = 'FloatWhere';
+              } else if (p.instance === 'Boolean') {
+                whereType = 'BooleanWhere';
+              } else if (p.instance === 'Date') {
+                whereType = 'DateTimeWhere';
+              } else if (p.instance === 'ObjectID' || p.instance === 'ObjectId') {
+                whereType = 'ObjectIDWhere';
+              }
               return [p.name, { type: whereType }];
             }),
         ),
@@ -351,14 +355,14 @@ function createWhereAndSort(
 }
 
 function ensureSharedWhereInputs(schemaComposer: SchemaComposer) {
-  if (!schemaComposer.has('MongoIDWhere')) {
+  if (!schemaComposer.has('ObjectIDWhere')) {
     schemaComposer.createInputTC({
-      name: 'MongoIDWhere',
+      name: 'ObjectIDWhere',
       fields: {
-        eq: GraphQLMongoID,
-        ne: GraphQLMongoID,
-        in: { type: new GraphQLList(new GraphQLNonNull(GraphQLMongoID)) },
-        nin: { type: new GraphQLList(new GraphQLNonNull(GraphQLMongoID)) },
+        eq: GraphQLObjectID,
+        ne: GraphQLObjectID,
+        in: { type: new GraphQLList(new GraphQLNonNull(GraphQLObjectID)) },
+        nin: { type: new GraphQLList(new GraphQLNonNull(GraphQLObjectID)) },
         exists: 'Boolean',
       },
     });
@@ -398,6 +402,22 @@ function ensureSharedWhereInputs(schemaComposer: SchemaComposer) {
       fields: {
         eq: 'Boolean',
         ne: 'Boolean',
+        exists: 'Boolean',
+      },
+    });
+  }
+  if (!schemaComposer.has('DateTimeWhere')) {
+    schemaComposer.createInputTC({
+      name: 'DateTimeWhere',
+      fields: {
+        eq: 'DateTime',
+        ne: 'DateTime',
+        in: { type: '[DateTime!]' },
+        nin: { type: '[DateTime!]' },
+        gt: 'DateTime',
+        gte: 'DateTime',
+        lt: 'DateTime',
+        lte: 'DateTime',
         exists: 'Boolean',
       },
     });

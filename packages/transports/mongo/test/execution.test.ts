@@ -20,9 +20,11 @@ describe('getMongoExecutor FIND_*', () => {
       models: [{ name: 'User', schema: userSchema, collection: 'user_users' }],
     });
 
+    const adaId = '507f1f77bcf86cd799439011';
+    const alanId = '507f1f77bcf86cd799439012';
     const docs = [
-      { _id: '1', name: 'Ada', age: 36, gender: 'female' },
-      { _id: '2', name: 'Alan', age: 41, gender: 'male' },
+      { _id: adaId, name: 'Ada', age: 36, gender: 'female' },
+      { _id: alanId, name: 'Alan', age: 41, gender: 'male' },
     ];
 
     const client: MongoClientLike = {
@@ -52,17 +54,17 @@ describe('getMongoExecutor FIND_*', () => {
     const executor = getMongoExecutor({ subgraph: schema, client });
 
     const byId = await executor({
-      document: parse(`query { User_findById(_id: "1") { id name age } }`),
+      document: parse(`query { User_findById(_id: "${adaId}") { id name age } }`),
     });
     expect(byId.data).toEqual({
-      User_findById: { id: '1', name: 'Ada', age: 36 },
+      User_findById: { id: adaId, name: 'Ada', age: 36 },
     });
 
     const many = await executor({
       document: parse(`query { User_findMany(where: { name: { eq: "Alan" } }) { id name } }`),
     });
     expect(many.data).toEqual({
-      User_findMany: [{ id: '2', name: 'Alan' }],
+      User_findMany: [{ id: alanId, name: 'Alan' }],
     });
 
     const count = await executor({

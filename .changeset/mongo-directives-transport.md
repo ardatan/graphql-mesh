@@ -47,12 +47,16 @@ loadMongoSubgraph('users', {
 Root field names keep the v0 mongoose pattern (`User_findById`, `User_findMany`, …). Client filter
 arg is `where: *Where` (aligned with the SQL stack; v0 used `filter`).
 
+Scalars come from `graphql-scalars` where possible: `ObjectID` (not a custom `MongoID`),
+`DateTime`, `Byte`, `JSON`. Decimal128 stays `String` until a shared scalar exists.
+
 ## Consumer migration
 
 | Before (v0 mongoose handler) | After (new stack) |
 | --- | --- |
 | Runtime `composeWithMongoose` resolvers | Same YAML handler, or `loadMongoSubgraph` + `transport-mongo` |
 | `User_findMany(filter: …)` | `User_findMany(where: …)` |
+| `MongoID` scalar | `ObjectID` (`graphql-scalars`) |
 | Full graphql-compose-mongoose op set | First slice: `findById` / `findMany` / `findOne` / `count` |
 | Opaque resolvers | Hand-writable `@mongo(where/selection/…)` |
 

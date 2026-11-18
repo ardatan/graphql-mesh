@@ -6,7 +6,6 @@ export * from './client.js';
 export * from './execution.js';
 export * from './filter.js';
 export * from './mapping.js';
-export * from './scalars.js';
 export type * from './types.js';
 
 export default {

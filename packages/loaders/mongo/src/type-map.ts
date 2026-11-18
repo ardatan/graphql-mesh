@@ -7,19 +7,24 @@ import {
   type GraphQLOutputType,
   type GraphQLScalarType,
 } from 'graphql';
-import { GraphQLJSON } from 'graphql-scalars';
-import { GraphQLMongoID } from '@graphql-mesh/transport-mongo';
+import {
+  GraphQLByte,
+  GraphQLDateTime,
+  GraphQLJSON,
+  GraphQLObjectID,
+} from 'graphql-scalars';
 
 /**
  * Map a Mongoose / BSON path instance type name to a GraphQL output type.
- * First slice keeps Decimal128 as String and Mixed as JSON.
+ * Prefer graphql-scalars (`ObjectID`, `DateTime`, `Byte`, `JSON`) over custom Mesh scalars.
+ * Decimal128 has no graphql-scalars equivalent yet -> String.
  */
 export function mapMongoPathToGraphQL(
   instance: string,
   opts?: { asId?: boolean },
 ): GraphQLOutputType | GraphQLScalarType {
   if (opts?.asId || instance === 'ObjectID' || instance === 'ObjectId') {
-    return GraphQLMongoID;
+    return GraphQLObjectID;
   }
   switch (instance) {
     case 'String':
@@ -31,9 +36,9 @@ export function mapMongoPathToGraphQL(
     case 'Boolean':
       return GraphQLBoolean;
     case 'Date':
-      return GraphQLString;
+      return GraphQLDateTime;
     case 'Buffer':
-      return GraphQLString;
+      return GraphQLByte;
     case 'Mixed':
     case 'Array':
       return GraphQLJSON;

@@ -10,7 +10,7 @@ directive @transport(subgraph: String!, kind: String!, location: String, headers
 directive @mongo(subgraph: String, collection: String!, kind: MongoKind!, where: String, sort: String, limit: String, skip: String, first: String, after: String, set: String, selection: String, pipeline: String) on FIELD_DEFINITION | OBJECT
 
 type Query {
-  User_findById(_id: MongoID!): User @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, where: """
+  User_findById(_id: ObjectID!): User @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, where: """
   
     _id: $args._id
   """, selection: """
@@ -50,15 +50,17 @@ type User @key(fields: "id") @mongo(subgraph: "users", collection: "user_users",
   gender: gender
   someMixed: someMixed
 """) {
-  id: MongoID!
+  id: ObjectID!
   name: String
   age: Float
   gender: String
   someMixed: JSON
 }
 
-"""MongoDB ObjectId represented as a 24-char hex string"""
-scalar MongoID
+"""
+A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c
+"""
+scalar ObjectID
 
 """
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
@@ -69,18 +71,18 @@ input UserWhere {
   AND: [UserWhere!]
   OR: [UserWhere!]
   NOT: UserWhere
-  id: MongoIDWhere
+  id: ObjectIDWhere
   name: StringWhere
   age: FloatWhere
   gender: StringWhere
   someMixed: StringWhere
 }
 
-input MongoIDWhere {
-  eq: MongoID
-  ne: MongoID
-  in: [MongoID!]
-  nin: [MongoID!]
+input ObjectIDWhere {
+  eq: ObjectID
+  ne: ObjectID
+  in: [ObjectID!]
+  nin: [ObjectID!]
   exists: Boolean
 }
 
