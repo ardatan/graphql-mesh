@@ -160,19 +160,23 @@ function normalizeBunRows<T>(result: any): T[] {
   return [];
 }
 
+type PgPoolConnectable = {
+  on?(
+    event: 'connect',
+    listener: (client: { query: (sql: string) => Promise<unknown> }) => void,
+  ): unknown;
+};
+
 /**
  * Apply Postgres `search_path` on every new pooled connection (not a one-shot SET).
  * Used for both owned pools and caller-supplied pools (e.g. handler `schemaName`).
  */
-export function applyPgPoolSearchPath(
-  pool: { on?: (event: string, listener: (...args: any[]) => void) => unknown },
-  schema?: string,
-): void {
+export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string): void {
   const trimmed = schema?.trim();
   if (!trimmed || trimmed === 'public') return;
   if (typeof pool.on !== 'function') return;
   const ident = `"${trimmed.replace(/"/g, '""')}"`;
-  pool.on('connect', (client: { query: (sql: string) => Promise<unknown> }) => {
+  pool.on('connect', client => {
     client.query(`SET search_path TO ${ident}`).catch(() => undefined);
   });
 }
@@ -186,8 +190,7 @@ export function wrapPgPoolAsSqlClient(
   pool: {
     query: (sql: string, params?: unknown[]) => Promise<{ rows: any[]; rowCount?: number | null }>;
     end?: () => Promise<void>;
-    on?: (event: string, listener: (...args: any[]) => void) => unknown;
-  },
+  } & PgPoolConnectable,
   opts?: { schema?: string },
 ): SqlClient {
   applyPgPoolSearchPath(pool, opts?.schema);

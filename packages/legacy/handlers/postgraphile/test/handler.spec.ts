@@ -88,7 +88,7 @@ describe('postgraphile', () => {
 
     const handler = new PostGraphileHandler({
       name: 'test',
-      config: { pool, schemaName: 'app' },
+      config: { pool, schemaName: ['app'] },
       baseDir: __dirname,
       cache,
       pubsub: noOpFunction,
