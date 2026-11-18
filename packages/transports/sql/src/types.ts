@@ -66,8 +66,14 @@ export interface SqlRelationFilterMeta {
   /** GraphQL filter field (e.g. `artist`) */
   field: string;
   relatedTable: string;
+  /** Primary join pair (first `$this` equality); prefer `joinPredicates` when present. */
   localColumn: string;
   refColumn: string;
+  /**
+   * All relation join equalities from `@sql(where:)` (`refCol: $this.localField`).
+   * Multi-key relations must correlate every predicate in the EXISTS, not only the first.
+   */
+  joinPredicates?: Array<{ localColumn: string; refColumn: string }>;
   /** Related table GraphQL field → SQL column */
   columns: Map<string, string>;
   /**

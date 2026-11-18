@@ -1084,11 +1084,16 @@ function appendFilter(
         inner.push(`${quoteIdent(adapter, alias)}.${quoteIdent(adapter, softCol)} IS NULL`);
       }
       if (!inner.length) continue;
-      const rootCol = opts?.qualifyColumn
-        ? opts.qualifyColumn(rel.localColumn)
-        : opts?.rootAlias
-          ? `${quoteIdent(adapter, opts.rootAlias)}.${quoteIdent(adapter, rel.localColumn)}`
-          : quoteIdent(adapter, rel.localColumn);
+      const qualifyRoot = (col: string) =>
+        opts?.qualifyColumn
+          ? opts.qualifyColumn(col)
+          : opts?.rootAlias
+            ? `${quoteIdent(adapter, opts.rootAlias)}.${quoteIdent(adapter, col)}`
+            : quoteIdent(adapter, col);
+      const joinPairs =
+        rel.joinPredicates && rel.joinPredicates.length > 0
+          ? rel.joinPredicates
+          : [{ localColumn: rel.localColumn, refColumn: rel.refColumn }];
 
       if (rel.junction) {
         const jAlias = '_j';
@@ -1096,12 +1101,19 @@ function appendFilter(
         const jSoftSql = jSoft
           ? ` AND ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, jSoft)} IS NULL`
           : '';
+        const rootCol = qualifyRoot(rel.localColumn);
         whereParts.push(
           `EXISTS (SELECT 1 FROM ${quoteIdent(adapter, rel.junction.table)} AS ${quoteIdent(adapter, jAlias)} INNER JOIN ${quoteIdent(adapter, rel.relatedTable)} AS ${quoteIdent(adapter, alias)} ON ${quoteIdent(adapter, alias)}.${quoteIdent(adapter, rel.junction.targetColumn)} = ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, rel.junction.remoteColumn)} WHERE ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, rel.junction.localColumn)} = ${rootCol}${jSoftSql} AND ${inner.join(' AND ')})`,
         );
       } else {
+        const joinSql = joinPairs
+          .map(
+            p =>
+              `${quoteIdent(adapter, alias)}.${quoteIdent(adapter, p.refColumn)} = ${qualifyRoot(p.localColumn)}`,
+          )
+          .join(' AND ');
         whereParts.push(
-          `EXISTS (SELECT 1 FROM ${quoteIdent(adapter, rel.relatedTable)} AS ${quoteIdent(adapter, alias)} WHERE ${quoteIdent(adapter, alias)}.${quoteIdent(adapter, rel.refColumn)} = ${rootCol} AND ${inner.join(' AND ')})`,
+          `EXISTS (SELECT 1 FROM ${quoteIdent(adapter, rel.relatedTable)} AS ${quoteIdent(adapter, alias)} WHERE ${joinSql} AND ${inner.join(' AND ')})`,
         );
       }
       continue;

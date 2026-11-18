@@ -940,9 +940,94 @@ enum SqlKind {
 
 exports[`MySQL Employees should give correct response for example queries: example-query.graphql-query-result 1`] = `
 {
-  "data": null,
-  "errors": [
-    [GraphQLError: Argument "orderBy" has invalid value {emp_no: asc}.],
-  ],
+  "data": {
+    "employees": [
+      {
+        "__typename": "Employee",
+        "deptEmps": [
+          {
+            "department": {
+              "deptName": "Development",
+              "id": "d005",
+            },
+            "deptNo": "d005",
+            "empNo": 10001,
+          },
+        ],
+        "firstName": "Georgi",
+        "gender": "M",
+        "id": "10001",
+        "lastName": "Facello",
+      },
+      {
+        "__typename": "Employee",
+        "deptEmps": [
+          {
+            "department": {
+              "deptName": "Sales",
+              "id": "d007",
+            },
+            "deptNo": "d007",
+            "empNo": 10002,
+          },
+        ],
+        "firstName": "Bezalel",
+        "gender": "F",
+        "id": "10002",
+        "lastName": "Simmel",
+      },
+      {
+        "__typename": "Employee",
+        "deptEmps": [
+          {
+            "department": {
+              "deptName": "Production",
+              "id": "d004",
+            },
+            "deptNo": "d004",
+            "empNo": 10003,
+          },
+        ],
+        "firstName": "Parto",
+        "gender": "M",
+        "id": "10003",
+        "lastName": "Bamford",
+      },
+      {
+        "__typename": "Employee",
+        "deptEmps": [
+          {
+            "department": {
+              "deptName": "Production",
+              "id": "d004",
+            },
+            "deptNo": "d004",
+            "empNo": 10004,
+          },
+        ],
+        "firstName": "Chirstian",
+        "gender": "M",
+        "id": "10004",
+        "lastName": "Koblick",
+      },
+      {
+        "__typename": "Employee",
+        "deptEmps": [
+          {
+            "department": {
+              "deptName": "Human Resources",
+              "id": "d003",
+            },
+            "deptNo": "d003",
+            "empNo": 10005,
+          },
+        ],
+        "firstName": "Kyoichi",
+        "gender": "M",
+        "id": "10005",
+        "lastName": "Maliniak",
+      },
+    ],
+  },
 }
 `;

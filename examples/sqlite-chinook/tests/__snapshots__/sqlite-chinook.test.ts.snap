@@ -2260,12 +2260,14 @@ exports[`SQLite Chinook should give correct response for example queries: exampl
         "artist": {
           "name": "AC/DC",
         },
+        "id": "1",
         "title": "For Those About To Rock We Salute You",
       },
       {
         "artist": {
           "name": "Accept",
         },
+        "id": "2",
         "title": "Balls to the Wall",
       },
     ],

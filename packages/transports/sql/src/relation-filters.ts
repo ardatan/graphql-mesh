@@ -35,7 +35,12 @@ export function collectRelationFilters(
 
       const relatedType = unwrapObjectType(field.type);
       if (!relatedType) continue;
-      const relatedColumns = columnMapFromObjectType(schema, relatedType);
+      // Related identity comes from this relation's selection (not a guessed type map).
+      const relatedColumns = columnMapFromSelectionString(dir.selection as string | undefined);
+      if (!relatedColumns.size) {
+        const fromType = columnMapFromObjectType(schema, relatedType);
+        for (const [k, v] of fromType) relatedColumns.set(k, v);
+      }
 
       const through = parseSqlThrough(dir.through as string | undefined);
       if (through) {
@@ -49,6 +54,7 @@ export function collectRelationFilters(
           relatedTable,
           localColumn,
           refColumn: through.targetColumn,
+          joinPredicates: [{ localColumn, refColumn: through.targetColumn }],
           columns: relatedColumns,
           junction: {
             table: through.table,
@@ -62,23 +68,24 @@ export function collectRelationFilters(
 
       if (String(dir.kind || 'ROWS') !== 'ROW') continue;
       const where = parseSqlMapping(dir.where as string | undefined);
-      const eq = where.entries.find(
-        e =>
-          !e.spread &&
-          e.value &&
-          (e.value.kind === 'this' || e.value.kind === 'args') &&
-          !e.children,
-      );
-      if (!eq?.value || eq.value.kind !== 'this') continue;
-      const localGql = eq.value.path?.[0] || eq.value.value;
-      const localColumn = parentColumns.get(localGql);
-      if (!localColumn) continue;
+      const joinPredicates: Array<{ localColumn: string; refColumn: string }> = [];
+      for (const entry of where.entries) {
+        if (entry.spread || entry.children || !entry.value || entry.value.kind !== 'this') {
+          continue;
+        }
+        const localGql = entry.value.path?.[0] || entry.value.value;
+        const localColumn = parentColumns.get(localGql!);
+        if (!localColumn) continue;
+        joinPredicates.push({ localColumn, refColumn: entry.key });
+      }
+      if (!joinPredicates.length) continue;
 
       out.push({
         field: field.name,
         relatedTable,
-        localColumn,
-        refColumn: eq.key,
+        localColumn: joinPredicates[0].localColumn,
+        refColumn: joinPredicates[0].refColumn,
+        joinPredicates,
         columns: relatedColumns,
       });
     }
@@ -93,31 +100,66 @@ function unwrapObjectType(type: GraphQLType): GraphQLObjectType | null {
   return isObjectType(named) ? named : null;
 }
 
+function unwrapConnectionNodeType(connectionType: GraphQLObjectType): GraphQLObjectType | null {
+  const nodes = connectionType.getFields().nodes;
+  if (nodes) return unwrapObjectType(nodes.type);
+  const edges = connectionType.getFields().edges;
+  if (!edges) return null;
+  const edgeType = unwrapObjectType(edges.type);
+  const node = edgeType?.getFields().node;
+  return node ? unwrapObjectType(node.type) : null;
+}
+
+function columnMapFromSelectionString(selection: string | undefined): Map<string, string> {
+  const map = new Map<string, string>();
+  const sel = parseSqlMapping(selection);
+  const walk = (entries: typeof sel.entries) => {
+    for (const e of entries) {
+      if (e.children) {
+        // CONNECTION / payload wrappers — dig for column leaves
+        walk(e.children);
+        continue;
+      }
+      if (e.value?.kind === 'column') map.set(e.key, e.value.value);
+    }
+  };
+  walk(sel.entries);
+  return map;
+}
+
+/**
+ * GraphQL field → SQL column for a table object type.
+ * Prefer type-level `@sql(selection:)`. Fall back to Query/Mutation fields that
+ * return this type — never an outgoing relation field's selection (that describes
+ * the related table).
+ */
 function columnMapFromObjectType(
   schema: GraphQLSchema,
   type: GraphQLObjectType,
 ): Map<string, string> {
-  const map = new Map<string, string>();
-  // Prefer type-level @sql selection when present
   const typeDirs = getDirective(schema, type, 'sql') || [];
   for (const dir of typeDirs) {
-    const sel = parseSqlMapping(dir.selection as string | undefined);
-    for (const e of sel.entries) {
-      if (e.value?.kind === 'column') map.set(e.key, e.value.value);
-    }
+    const map = columnMapFromSelectionString(dir.selection as string | undefined);
+    if (map.size) return map;
   }
-  if (map.size) return map;
 
-  // Fallback: any ROW field selection on the type that looks like identity columns
-  for (const field of Object.values(type.getFields())) {
-    const dirs = getDirective(schema, field, 'sql') || [];
-    for (const dir of dirs) {
-      const sel = parseSqlMapping(dir.selection as string | undefined);
-      for (const e of sel.entries) {
-        if (e.value?.kind === 'column') map.set(e.key, e.value.value);
+  for (const rootName of ['Query', 'Mutation'] as const) {
+    const root = schema.getType(rootName);
+    if (!root || !isObjectType(root)) continue;
+    for (const field of Object.values(root.getFields())) {
+      const dirs = getDirective(schema, field, 'sql') || [];
+      for (const dir of dirs) {
+        const kind = String(dir.kind || 'ROWS');
+        let nodeType = unwrapObjectType(field.type);
+        if (kind === 'CONNECTION' && nodeType) {
+          nodeType = unwrapConnectionNodeType(nodeType);
+        }
+        if (!nodeType || nodeType.name !== type.name) continue;
+        const map = columnMapFromSelectionString(dir.selection as string | undefined);
+        if (map.size) return map;
       }
     }
-    if (map.size) break;
   }
-  return map;
+
+  return new Map();
 }

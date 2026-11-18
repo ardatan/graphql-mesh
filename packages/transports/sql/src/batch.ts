@@ -184,6 +184,7 @@ export function loadBatchedByColumn(
         r.relatedTable,
         r.localColumn,
         r.refColumn,
+        (r.joinPredicates || []).map(p => [p.localColumn, p.refColumn]),
         r.columns?.size ? [...r.columns.entries()].sort(([a], [b]) => a.localeCompare(b)) : null,
         r.junction
           ? [
@@ -251,6 +252,10 @@ export function loadBatchedByColumn(
       { cache: true },
     );
     map.set(loaderKey, loader);
+  }
+  // DataLoader rejects null/undefined keys before the batch function runs.
+  if (key === undefined || key === null) {
+    return opts.kind === 'ROWS' ? Promise.resolve([]) : Promise.resolve(null);
   }
   return loader.load(key);
 }

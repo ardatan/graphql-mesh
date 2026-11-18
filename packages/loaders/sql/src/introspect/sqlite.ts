@@ -53,8 +53,8 @@ export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
       }));
 
       const solePk = columns.filter(c => c.primaryKey);
-      // INTEGER PRIMARY KEY is a rowid alias — never null, autoincrements.
-      if (solePk.length === 1 && /int/i.test(solePk[0].dataType)) {
+      // Only INTEGER PRIMARY KEY is a rowid alias (not INT/BIGINT alone).
+      if (solePk.length === 1 && /^\s*INTEGER\s*$/i.test(solePk[0].dataType)) {
         solePk[0].autoIncrement = true;
         solePk[0].notNull = true;
       }
@@ -64,7 +64,7 @@ export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
         seq: number;
         table: string;
         from: string;
-        to: string;
+        to: string | null;
       }[];
       const fkById = new Map<number, SqlForeignKeyMeta>();
       for (const fk of fkRows) {
@@ -74,7 +74,8 @@ export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
           fkById.set(fk.id, meta);
         }
         meta.columns[fk.seq] = fk.from;
-        meta.refColumns[fk.seq] = fk.to;
+        // PRAGMA leaves `to` NULL when the referenced PK is implicit — filled below.
+        meta.refColumns[fk.seq] = fk.to as string;
       }
 
       return {
@@ -83,6 +84,21 @@ export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
         foreignKeys: [...fkById.values()],
       };
     });
+
+    // Resolve omitted FK target columns from the referenced table's PK order.
+    const byName = new Map(tables.map(t => [t.name, t] as const));
+    for (const table of tables) {
+      for (const fk of table.foreignKeys) {
+        const ref = byName.get(fk.refTable);
+        if (!ref) continue;
+        const refPks = ref.columns.filter(c => c.primaryKey).map(c => c.name);
+        for (let i = 0; i < fk.columns.length; i++) {
+          if (fk.refColumns[i] == null || fk.refColumns[i] === '') {
+            fk.refColumns[i] = refPks[i] || refPks[0];
+          }
+        }
+      }
+    }
 
     return { adapter: 'sqlite', tables };
   } finally {

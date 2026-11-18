@@ -72,13 +72,15 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
         udt_name: string;
         is_nullable: string;
         column_default: string | null;
+        is_identity: string;
       }>(
         `SELECT
            column_name AS name,
            data_type,
            udt_name,
            is_nullable,
-           column_default
+           column_default,
+           is_identity
          FROM information_schema.columns
          WHERE table_schema = $1 AND table_name = $2
          ORDER BY ordinal_position`,
@@ -102,13 +104,14 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
       const columns: SqlColumnMeta[] = colRes.rows.map(c => {
         const dataType = String(c.udt_name || c.data_type || 'text');
         const def = c.column_default != null ? String(c.column_default) : '';
+        const isIdentity = String(c.is_identity || '').toUpperCase() === 'YES';
         return {
           name: String(c.name),
           dataType,
           notNull: String(c.is_nullable).toUpperCase() === 'NO',
           primaryKey: pkCols.has(String(c.name)),
-          autoIncrement: /nextval\(/i.test(def) || /identity/i.test(def),
-          hasDefault: Boolean(def),
+          autoIncrement: isIdentity || /nextval\(/i.test(def) || /identity/i.test(def),
+          hasDefault: isIdentity || Boolean(def),
         };
       });
 

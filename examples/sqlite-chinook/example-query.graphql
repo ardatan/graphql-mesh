@@ -1,6 +1,6 @@
 {
   albums(limit: 2) {
-    albumId
+    id
     title
     artist {
       name
