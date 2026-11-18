@@ -651,7 +651,10 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
   // graphql-compose emits StringValue without `block: true`, so printers escape
   // newlines as `\n`. Mark @sql args/selection as block strings for readable """ SDL.
   markSqlDirectiveStringsAsBlocks(schema);
-  return importMeshDirectives(schema, ['@sql', '@transport'], { url: meshSpecUrl('sql') });
+  return importMeshDirectives(
+    importMeshDirectives(schema, ['@sql'], { url: meshSpecUrl('sql') }),
+    ['@transport'],
+  );
 }
 
 async function introspect(

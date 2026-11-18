@@ -163,7 +163,10 @@ export class GrpcLoaderHelper extends DisposableStack {
       location: this.config.endpoint,
       ...(Object.keys(transportOptions).length > 0 ? { options: transportOptions } : {}),
     };
-    return importMeshDirectives(schema, ['@protobuf__rpc', '@transport'], { url: meshSpecUrl('protobuf') });
+    return importMeshDirectives(
+      importMeshDirectives(schema, ['@protobuf__rpc'], { url: meshSpecUrl('protobuf') }),
+      ['@transport'],
+    );
   }
 
   private processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {

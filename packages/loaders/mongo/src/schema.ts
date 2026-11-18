@@ -502,23 +502,25 @@ export async function loadGraphQLSchemaFromMongo(
   ];
   markMongoDirectiveStringsAsBlocks(schema);
   return importMeshDirectives(
-    schema,
-    [
-      '@mongo__findOne',
-      '@mongo__find',
-      '@mongo__count',
-      '@mongo__connection',
-      '@mongo__pagination',
-      '@mongo__aggregate',
-      '@mongo__insertOne',
-      '@mongo__insertMany',
-      '@mongo__updateOne',
-      '@mongo__updateMany',
-      '@mongo__deleteOne',
-      '@mongo__deleteMany',
-      '@transport',
-    ],
-    { url: meshSpecUrl('mongo') },
+    importMeshDirectives(
+      schema,
+      [
+        '@mongo__findOne',
+        '@mongo__find',
+        '@mongo__count',
+        '@mongo__connection',
+        '@mongo__pagination',
+        '@mongo__aggregate',
+        '@mongo__insertOne',
+        '@mongo__insertMany',
+        '@mongo__updateOne',
+        '@mongo__updateMany',
+        '@mongo__deleteOne',
+        '@mongo__deleteMany',
+      ],
+      { url: meshSpecUrl('mongo') },
+    ),
+    ['@transport'],
   );
 }
 

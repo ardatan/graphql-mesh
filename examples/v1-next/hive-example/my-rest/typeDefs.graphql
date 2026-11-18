@@ -15,7 +15,7 @@ schema
     ]
   )
   @link(
-    url: "https://specs.graphql-mesh.com/mesh/v0.1"
+    url: "https://specs.graphql-mesh.com/core/v0.1"
     import: ["@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
   )
   @composeDirective(name: "@httpOperation")

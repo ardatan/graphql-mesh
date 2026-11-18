@@ -2,7 +2,7 @@ schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
   @link(
-    url: "https://specs.graphql-mesh.com/mesh/v0.1"
+    url: "https://specs.graphql-mesh.com/core/v0.1"
     import: [
       "@resolveRootField"
       "@enum"

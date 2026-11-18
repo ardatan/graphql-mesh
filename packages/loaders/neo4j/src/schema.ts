@@ -183,21 +183,16 @@ export async function loadGraphQLSchemaFromNeo4J(
     },
   ];
   return importMeshDirectives(
-    mergeSchemas({
-      schemas: [schema],
-      typeDefs,
-      assumeValid: true,
-      assumeValidSDL: true,
-    }),
-    [
-      '@node',
-      '@relationship',
-      '@relationshipProperties',
-      '@alias',
-      '@cypher',
-      '@plural',
-      '@transport',
-    ],
-    { url: meshSpecUrl('neo4j') },
+    importMeshDirectives(
+      mergeSchemas({
+        schemas: [schema],
+        typeDefs,
+        assumeValid: true,
+        assumeValidSDL: true,
+      }),
+      ['@node', '@relationship', '@relationshipProperties', '@alias', '@cypher', '@plural'],
+      { url: meshSpecUrl('neo4j') },
+    ),
+    ['@transport'],
   );
 }

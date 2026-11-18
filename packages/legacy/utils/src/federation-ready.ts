@@ -1,6 +1,6 @@
 import { GraphQLSchema } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
-import { isMeshSpecLinkUrl, MESH_SPEC_URL } from './mesh-spec.js';
+import { MESH_SPEC_URL } from './mesh-spec.js';
 
 /**
  * Patch only the named schema-directive keys on `extensions.directives`.
@@ -108,8 +108,9 @@ function meshDirectiveImportsEqual(a: unknown, b: MeshDirectiveImport): boolean 
 export interface ImportMeshDirectivesOptions {
   /**
    * `@link` URL to stamp / extend. Defaults to {@link MESH_SPEC_URL}
-   * (`https://specs.graphql-mesh.com/mesh/v0.1`). Protocol loaders pass
-   * {@link meshSpecUrl} e.g. `meshSpecUrl('thrift')`.
+   * (`https://specs.graphql-mesh.com/core/v0.1`) for shared Mesh core directives.
+   * Protocol loaders pass {@link meshSpecUrl} e.g. `meshSpecUrl('thrift')` for
+   * protocol-only imports; stamp `@transport` separately under the core URL.
    */
   url?: string;
 }
@@ -119,8 +120,9 @@ export interface ImportMeshDirectivesOptions {
  * and register them with `@composeDirective` under the *local* name.
  *
  * Loaders call this with the directives they emit — there is no auto-scan helper.
- * Prefer a per-protocol URL via {@link ImportMeshDirectivesOptions.url} so each
- * loader can version its directive schema independently.
+ * Shared Mesh core directives default to {@link MESH_SPEC_URL} (`core/v0.1`).
+ * Protocol-only imports pass {@link ImportMeshDirectivesOptions.url}
+ * (e.g. `meshSpecUrl('sql')`) so each loader can version independently.
  */
 export function importMeshDirectives(
   subgraph: GraphQLSchema,
@@ -130,10 +132,10 @@ export function importMeshDirectives(
   const targetUrl = options?.url ?? MESH_SPEC_URL;
   const schemaDirectives = getDirectiveExtensions(subgraph) || {};
   const linkDirectives = (schemaDirectives.link ||= []);
-  let importStatement = linkDirectives.find(linkDirectiveArgs =>
-    options?.url != null
-      ? linkDirectiveArgs.url === targetUrl
-      : isMeshSpecLinkUrl(linkDirectiveArgs.url),
+  // Always match the target URL exactly so core imports (`@transport`, `@merge`, …)
+  // do not get folded into a protocol `@link` (e.g. `sql/v0.1`).
+  let importStatement = linkDirectives.find(
+    linkDirectiveArgs => linkDirectiveArgs.url === targetUrl,
   );
   if (!importStatement) {
     importStatement = {

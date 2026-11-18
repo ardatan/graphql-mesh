@@ -26,8 +26,16 @@ export function meshSpecUrl(protocol: string, version = 'v0.1'): string {
   return `${MESH_SPECS_ORIGIN}/${name}/${ver}`;
 }
 
-/** Default shared Mesh `@link` (Compose `@merge` / `@source`, hand-written Mesh directives). */
-export const MESH_SPEC_URL = meshSpecUrl('mesh');
+/**
+ * Mesh **core** `@link` for shared directives (`@transport`, `@merge`, `@source` /
+ * `@meshSource`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, …).
+ * Protocol loaders use {@link meshSpecUrl} for protocol-only dirs (`sql`, `thrift`, …)
+ * and this URL for core dirs.
+ */
+export const MESH_SPEC_URL = meshSpecUrl('core');
+
+/** Alias of {@link MESH_SPEC_URL} (`https://specs.graphql-mesh.com/core/v0.1`). */
+export const MESH_CORE_SPEC_URL = MESH_SPEC_URL;
 
 /**
  * Recognized Mesh-spec `@link` URL prefixes (current + legacy stamps).

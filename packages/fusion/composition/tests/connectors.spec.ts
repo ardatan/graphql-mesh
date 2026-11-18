@@ -654,7 +654,7 @@ describe('Federation Connectors composition', () => {
         @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
         @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"])
         @link(
-          url: "https://specs.graphql-mesh.com/mesh/v0.1"
+          url: "https://specs.graphql-mesh.com/core/v0.1"
           import: ["@extraSchemaDefinitionDirective"]
         ) {
         query: Query

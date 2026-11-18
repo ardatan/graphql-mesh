@@ -12,10 +12,8 @@ describe('loadSubgraphFromSDL', () => {
       'shop',
       /* GraphQL */ `
         extend schema
-          @link(
-            url: "https://specs.graphql-mesh.com/sql/v0.1"
-            import: ["@sql", "@transport"]
-          )
+          @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"])
+          @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
           @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
           @composeDirective(name: "@sql")
           @composeDirective(name: "@transport")
@@ -63,10 +61,8 @@ describe('loadSubgraphFromSDL', () => {
       file,
       /* GraphQL */ `
         extend schema
-          @link(
-            url: "https://specs.graphql-mesh.com/protobuf/v0.1"
-            import: ["@protobuf__rpc", "@transport"]
-          )
+          @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
+          @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
           @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
           @composeDirective(name: "@protobuf__rpc")
           @composeDirective(name: "@transport")

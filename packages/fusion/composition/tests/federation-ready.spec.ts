@@ -62,15 +62,21 @@ describe('importMeshDirectives / addConnectComposeDirective', () => {
       },
     });
 
-    schema = importMeshDirectives(schema, ['@sql', '@transport'], { url: meshSpecUrl('sql') });
+    schema = importMeshDirectives(
+      importMeshDirectives(schema, ['@sql'], { url: meshSpecUrl('sql') }),
+      ['@transport'],
+    );
     const dirs = getDirectiveExtensions(schema);
     expect(
-      dirs?.link?.some((l: { url?: string }) => l.url?.startsWith('https://specs.graphql-mesh.com/')),
+      dirs?.link?.some((l: { url?: string }) => l.url === meshSpecUrl('sql')),
     ).toBe(true);
-    const meshImport = dirs?.link?.find((l: { url?: string }) =>
-      l.url?.startsWith('https://specs.graphql-mesh.com/'),
-    );
-    expect(meshImport?.import).toEqual(expect.arrayContaining(['@sql', '@transport']));
+    expect(
+      dirs?.link?.some((l: { url?: string }) => l.url === meshSpecUrl('core')),
+    ).toBe(true);
+    const sqlImport = dirs?.link?.find((l: { url?: string }) => l.url === meshSpecUrl('sql'));
+    const coreImport = dirs?.link?.find((l: { url?: string }) => l.url === meshSpecUrl('core'));
+    expect(sqlImport?.import).toEqual(expect.arrayContaining(['@sql']));
+    expect(coreImport?.import).toEqual(expect.arrayContaining(['@transport']));
     expect(dirs?.composeDirective).toEqual(
       expect.arrayContaining([{ name: '@sql' }, { name: '@transport' }]),
     );
@@ -83,7 +89,10 @@ describe('importMeshDirectives / addConnectComposeDirective', () => {
     ).toBe(true);
 
     // Idempotent
-    const again = importMeshDirectives(schema, ['@sql', '@transport'], { url: meshSpecUrl('sql') });
+    const again = importMeshDirectives(
+      importMeshDirectives(schema, ['@sql'], { url: meshSpecUrl('sql') }),
+      ['@transport'],
+    );
     expect(getDirectiveExtensions(again)?.composeDirective).toEqual(dirs?.composeDirective);
   });
 

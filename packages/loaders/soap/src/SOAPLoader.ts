@@ -38,7 +38,6 @@ import {
   defaultImportFn,
   addConnectComposeDirective,
   importMeshDirectives,
-  meshSpecUrl,
   readFileOrUrl,
   sanitizeNameForGraphQL,
 } from '@graphql-mesh/utils';
@@ -1626,6 +1625,6 @@ export class SOAPLoader {
       ...existingLinks,
       { url: CONNECT_LINK_URL, import: ['@connect', '@source'] },
     ];
-    return addConnectComposeDirective(importMeshDirectives(schema, ['@transport'], { url: meshSpecUrl('transport') }));
+    return addConnectComposeDirective(importMeshDirectives(schema, ['@transport']));
   }
 }

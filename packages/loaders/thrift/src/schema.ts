@@ -879,9 +879,12 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   });
 
   return importMeshDirectives(
-    preferMultilineDirectiveBlockStrings(schema),
-    ['@thrift__rpc', '@transport'],
-    { url: meshSpecUrl('thrift') },
+    importMeshDirectives(
+      preferMultilineDirectiveBlockStrings(schema),
+      ['@thrift__rpc'],
+      { url: meshSpecUrl('thrift') },
+    ),
+    ['@transport'],
   );
 }
 
