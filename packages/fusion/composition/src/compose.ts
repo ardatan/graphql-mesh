@@ -754,9 +754,20 @@ export function getAnnotatedSubgraphs(
     // annotated subgraph SDL — no `@extraSchemaDefinitionDirective` (Rover-like).
     // Guild cannot preserve SCHEMA usages through compose; packing into Query
     // extras happens only in `composeAnnotatedSubgraphs`.
+    // Capture Hive connect transport (incl. odata `options`) before stripping so
+    // Guild packing can restore it — synthesis from `@source` alone loses options.
+    let hiveConnectTransport: Record<string, unknown> | undefined;
     if (removeTransportFromExtras) {
       const schemaDirs = getDirectiveExtensions(transformedSubgraph) || {};
       if (schemaDirs.transport) {
+        const saved = schemaDirs.transport[0];
+        if (saved && typeof saved === 'object') {
+          hiveConnectTransport = {
+            ...saved,
+            subgraph: subgraphName,
+            kind: (saved as { kind?: string }).kind || 'connect',
+          };
+        }
         const { transport: _omit, ...rest } = schemaDirs;
         const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
         extensions.directives = rest;
@@ -807,11 +818,17 @@ export function getAnnotatedSubgraphs(
       ]);
     }
 
-    annotatedSubgraphs.push({
+    const annotated: ServiceDefinition & {
+      hiveConnectTransport?: Record<string, unknown>;
+    } = {
       name: subgraphName,
       typeDefs: subgraphAST,
       url,
-    });
+    };
+    if (hiveConnectTransport) {
+      annotated.hiveConnectTransport = hiveConnectTransport;
+    }
+    annotatedSubgraphs.push(annotated);
   }
 
   return annotatedSubgraphs;
@@ -847,12 +864,17 @@ export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[
   // `@extraSchemaDefinitionDirective`, no `@composeDirective` for `@connect`.
   // Guild cannot keep SCHEMA usages or connect without those stamps — apply both
   // only for this composeServices call.
-  const forGuildCompose = annotatedSubgraphs.map(sg => ({
-    ...sg,
-    typeDefs: withGuildConnectComposeDirective(
-      packSchemaDirectivesIntoExtrasForGuild(sg.typeDefs, sg.name),
-    ),
-  }));
+  const forGuildCompose = annotatedSubgraphs.map(sg => {
+    const hiveConnectTransport = (
+      sg as ServiceDefinition & { hiveConnectTransport?: Record<string, unknown> }
+    ).hiveConnectTransport;
+    return {
+      ...sg,
+      typeDefs: withGuildConnectComposeDirective(
+        packSchemaDirectivesIntoExtrasForGuild(sg.typeDefs, sg.name, hiveConnectTransport),
+      ),
+    };
+  });
   const composedSupergraphSdl = composeServices(forGuildCompose);
   const rawSupergraphSdl = composedSupergraphSdl.supergraphSdl?.trim();
   // Lift SCHEMA extras, then rewrite Connectors to `@join__directive` metadata
@@ -874,11 +896,13 @@ export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[
  * returned to callers keep those directives on `schema` (no extras wrapper).
  *
  * When Federation Connectors `@source(http.baseURL)` is present without Mesh
- * `@transport` (stripped from annotated SDL), synthesize connect transport for Hive.
+ * `@transport` (stripped from annotated SDL), restore the saved Hive connect
+ * transport (options included) or synthesize a bare connect transport.
  */
 function packSchemaDirectivesIntoExtrasForGuild(
   typeDefs: DocumentNode,
   subgraphName: string,
+  hiveConnectTransport?: Record<string, unknown>,
 ): DocumentNode {
   const packed: Record<string, unknown[]> = {};
   const schemaDirectiveNames = new Set<string>();
@@ -897,20 +921,25 @@ function packSchemaDirectivesIntoExtrasForGuild(
   }
 
   // Annotated connectors omit `@transport`; Hive still needs it on the supergraph.
-  if (!packed.transport?.length && Array.isArray(packed.source)) {
-    for (const src of packed.source) {
-      const baseURL =
-        src && typeof src === 'object' && (src as { http?: { baseURL?: string } }).http?.baseURL;
-      if (typeof baseURL === 'string' && baseURL) {
-        packed.transport = [
-          {
-            subgraph: subgraphName,
-            kind: 'connect',
-            location: baseURL,
-          },
-        ];
-        schemaDirectiveNames.add('transport');
-        break;
+  if (!packed.transport?.length) {
+    if (hiveConnectTransport) {
+      packed.transport = [hiveConnectTransport];
+      schemaDirectiveNames.add('transport');
+    } else if (Array.isArray(packed.source)) {
+      for (const src of packed.source) {
+        const baseURL =
+          src && typeof src === 'object' && (src as { http?: { baseURL?: string } }).http?.baseURL;
+        if (typeof baseURL === 'string' && baseURL) {
+          packed.transport = [
+            {
+              subgraph: subgraphName,
+              kind: 'connect',
+              location: baseURL,
+            },
+          ];
+          schemaDirectiveNames.add('transport');
+          break;
+        }
       }
     }
   }
