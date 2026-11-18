@@ -42,7 +42,7 @@ loadMongoSubgraph('users', {
 | `selection` | Mongo paths -> GraphQL fields |
 
 Root field names keep the v0 mongoose pattern (`User_findById`, `User_findMany`, …). Client filter
-arg is `where: *Where` (SQL tip alignment; v0 used `filter`).
+arg is `where: *Where` (aligned with the SQL stack; v0 used `filter`).
 
 ## Consumer migration
 
