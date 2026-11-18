@@ -192,27 +192,50 @@ export async function loadGraphQLSchemaFromMongo(
   const objectIdFields = collectObjectIdFieldNames(modelMeta.map(m => m.paths));
   // Null-prototype maps so collection names like `__proto__` stay own keys.
   const objectIdFieldsByCollection: Record<string, string[]> = Object.create(null);
+  // Field → ObjectId? per collection — reject ObjectId vs non-ObjectId conflicts.
+  const objectIdPolicyByCollection: Record<string, Map<string, boolean>> = Object.create(null);
   for (const m of modelMeta) {
     if (!m.collection) continue;
-    const fields = collectObjectIdFieldNames([m.paths]);
-    if (!fields.length) continue;
-    objectIdFieldsByCollection[m.collection] = [
-      ...new Set([...(objectIdFieldsByCollection[m.collection] || []), ...fields]),
-    ];
+    const policy =
+      objectIdPolicyByCollection[m.collection] ||
+      (objectIdPolicyByCollection[m.collection] = new Map());
+    for (const field of collectTopLevelFieldObjectIdFlags(m.paths)) {
+      const prev = policy.get(field.name);
+      if (prev != null && prev !== field.isObjectId) {
+        throw new Error(
+          `Conflicting BSON ObjectId declarations for "${field.name}" on collection "${m.collection}"`,
+        );
+      }
+      policy.set(field.name, field.isObjectId);
+    }
+    const fields = [...policy.entries()].filter(([, isOid]) => isOid).map(([name]) => name);
+    if (fields.length) {
+      objectIdFieldsByCollection[m.collection] = fields;
+    }
   }
   const requiredFields = [
     ...new Set(
       modelMeta.flatMap(m => m.fieldRestrictions?.required || []).filter(Boolean) as string[],
     ),
   ];
+  // Explicit `fields.required` policies must agree across views of one collection.
   const requiredFieldsByCollection: Record<string, string[]> = Object.create(null);
+  const requiredPolicyByCollection: Record<string, string> = Object.create(null);
   for (const m of modelMeta) {
-    const req = (m.fieldRestrictions?.required || []).filter(Boolean) as string[];
-    if (m.collection && req.length) {
-      requiredFieldsByCollection[m.collection] = [
-        ...new Set([...(requiredFieldsByCollection[m.collection] || []), ...req]),
-      ];
+    if (!m.collection || m.fieldRestrictions?.required === undefined) continue;
+    const req = [
+      ...new Set((m.fieldRestrictions.required || []).filter(Boolean) as string[]),
+    ].sort();
+    const key = req.join('\0');
+    const prev = requiredPolicyByCollection[m.collection];
+    if (prev != null && prev !== key) {
+      throw new Error(
+        `Conflicting required-field policies for collection "${m.collection}": ` +
+          `[${prev.split('\0').filter(Boolean).join(', ')}] vs [${req.join(', ')}]`,
+      );
     }
+    requiredPolicyByCollection[m.collection] = key;
+    requiredFieldsByCollection[m.collection] = req;
   }
   const placeholderFields = [
     ...new Set(modelMeta.flatMap(m => m.placeholderFields || []).filter(Boolean) as string[]),
@@ -233,16 +256,23 @@ export async function loadGraphQLSchemaFromMongo(
     .filter(Boolean);
   const transportOptions: Record<string, unknown> = {};
   if (objectIdFields.length) transportOptions.objectIdFields = objectIdFields;
+  // Encode as entry lists so hyphenated collection names are not GraphQL object keys.
   if (Object.keys(objectIdFieldsByCollection).length) {
-    transportOptions.objectIdFieldsByCollection = objectIdFieldsByCollection;
+    transportOptions.objectIdFieldsByCollection = encodeCollectionFieldsMap(
+      objectIdFieldsByCollection,
+    );
   }
   if (requiredFields.length) transportOptions.requiredFields = requiredFields;
   if (Object.keys(requiredFieldsByCollection).length) {
-    transportOptions.requiredFieldsByCollection = requiredFieldsByCollection;
+    transportOptions.requiredFieldsByCollection = encodeCollectionFieldsMap(
+      requiredFieldsByCollection,
+    );
   }
   if (placeholderFields.length) transportOptions.placeholderFields = placeholderFields;
   if (Object.keys(placeholderFieldsByCollection).length) {
-    transportOptions.placeholderFieldsByCollection = placeholderFieldsByCollection;
+    transportOptions.placeholderFieldsByCollection = encodeCollectionFieldsMap(
+      placeholderFieldsByCollection,
+    );
   }
   if (stringIdCollections.length) transportOptions.stringIdCollections = stringIdCollections;
   extensions.directives.transport = {
@@ -352,7 +382,7 @@ function queryWithDiscriminator(query: string, disc?: MongoDiscriminatorInfo): s
     return blockArg(`${clause}\n$args.query`);
   }
   // Already a block / multi-line binder body.
-  const body = query.replace(/^\n+|\n+$/g, '').replace(/^ {2}/gm, '');
+  const body = trimNewlines(query).replace(/^ {2}/gm, '');
   return blockArg(`${clause}\n${body}`);
 }
 
@@ -370,6 +400,28 @@ function collectObjectIdFieldNames(pathLists: PathMeta[][]): string[] {
   };
   for (const paths of pathLists) walk(paths);
   return [...out];
+}
+
+/** Top-level fields with ObjectId vs other BSON flags (for multi-view conflict checks). */
+function collectTopLevelFieldObjectIdFlags(
+  paths: PathMeta[],
+): Array<{ name: string; isObjectId: boolean }> {
+  const out: Array<{ name: string; isObjectId: boolean }> = [];
+  for (const path of paths) {
+    if (path.name === '_id' || path.name === 'id' || path.name.includes('.')) continue;
+    out.push({ name: path.name, isObjectId: isBsonObjectIdPath(path) });
+  }
+  return out;
+}
+
+/** Encode collection→fields as an entry list (hyphenated names are string values, not keys). */
+function encodeCollectionFieldsMap(
+  map: Record<string, string[]>,
+): Array<{ collection: string; fields: string[] }> {
+  return Object.keys(map).map(collection => ({
+    collection,
+    fields: map[collection],
+  }));
 }
 
 function applyFieldRestrictions(paths: PathMeta[], fields?: MongoFieldRestrictions): PathMeta[] {
@@ -1810,8 +1862,17 @@ function isBareBinder(value: string): boolean {
   return true;
 }
 
+/** Trim leading/trailing newlines without an alternation regex (CodeQL ReDoS). */
+function trimNewlines(body: string): string {
+  let start = 0;
+  let end = body.length;
+  while (start < end && body.charCodeAt(start) === 10) start++;
+  while (end > start && body.charCodeAt(end - 1) === 10) end--;
+  return start === 0 && end === body.length ? body : body.slice(start, end);
+}
+
 function blockArg(body: string): string {
-  const trimmed = body.replace(/^\n+|\n+$/g, '');
+  const trimmed = trimNewlines(body);
   const indented = trimmed
     .split('\n')
     .map(line => (line.length ? `  ${line}` : line))

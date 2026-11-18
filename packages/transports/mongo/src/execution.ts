@@ -104,17 +104,34 @@ export function getMongoExecutor({
   }
   const transport = transportDirectives?.[0] as
     { location?: string; options?: MongoTransportOptions } | undefined;
-  const toCollectionMap = (raw?: Record<string, string[]>) => {
-    const entries = Object.entries(raw || {}).map(
-      ([collection, fields]) => [collection, new Set(fields)] as [string, ReadonlySet<string>],
+  /**
+   * Decode entry-list or legacy Record maps. When `emptyAuthoritative` is set,
+   * a present empty value yields an empty Map (no flat fallback); otherwise
+   * empty/absent both yield `undefined`.
+   */
+  const toCollectionMap = (
+    raw: MongoTransportOptions['objectIdFieldsByCollection'],
+    opts?: { emptyAuthoritative?: boolean },
+  ) => {
+    if (raw === undefined || raw === null) return undefined;
+    const entries = decodeCollectionFieldsEntries(raw);
+    if (!entries.length) {
+      return opts?.emptyAuthoritative ? new Map() : undefined;
+    }
+    return new Map(
+      entries.map(
+        ([collection, fields]) => [collection, new Set(fields)] as [string, ReadonlySet<string>],
+      ),
     );
-    return entries.length ? new Map(entries) : undefined;
   };
   const fieldRuntime: MongoFieldRuntime = {
     objectIdFields: new Set(['_id', 'id', ...(transport?.options?.objectIdFields || [])]),
     objectIdFieldsByCollection: toCollectionMap(transport?.options?.objectIdFieldsByCollection),
     requiredFields: new Set(transport?.options?.requiredFields || []),
-    requiredFieldsByCollection: toCollectionMap(transport?.options?.requiredFieldsByCollection),
+    // Present empty requiredFieldsByCollection must not fall back to flat requiredFields.
+    requiredFieldsByCollection: toCollectionMap(transport?.options?.requiredFieldsByCollection, {
+      emptyAuthoritative: true,
+    }),
     placeholderFields: new Set(
       transport?.options?.placeholderFields?.length ? transport.options.placeholderFields : ['_'],
     ),
@@ -281,7 +298,7 @@ function attachMongoResolver(
             return { deletedCount: result.deletedCount };
           }
           case 'AGGREGATE': {
-            const pipeline = resolvePipeline(directive.pipeline, ctx, filter);
+            const pipeline = resolvePipeline(directive.pipeline, ctx, filter, directive.collection);
             const rows = await client.aggregate(directive.collection, pipeline);
             if (isRawSelection(selection)) {
               return rows.map(doc => coerceAggregateRow(doc));
@@ -672,6 +689,7 @@ function resolvePipeline(
   pipelineSource: string | undefined,
   ctx: { args?: Record<string, unknown>; parent?: unknown },
   filter: Record<string, unknown>,
+  collection?: string,
 ): Record<string, unknown>[] {
   // Client-supplied stages: `@mongo(pipeline: "$args.pipeline")`
   if (pipelineSource?.trim() === '$args.pipeline' || pipelineSource?.trim() === '$pipeline') {
@@ -705,9 +723,34 @@ function resolvePipeline(
     return stageEntries.map(entry => mappingEntryToStage(entry, ctx, filter));
   }
 
-  // Single match binder / structured where
-  const fromMapping = buildMongoFilter(pipelineSource, ctx);
+  // Single match binder / structured where — honor collection-scoped ObjectId/required.
+  const fromMapping = buildMongoFilter(pipelineSource, ctx, { collection });
   return Object.keys(fromMapping).length ? [{ $match: fromMapping }] : [{ $match: filter }];
+}
+
+/** Decode entry-list encoding or legacy Record keyed by collection name. */
+function decodeCollectionFieldsEntries(
+  raw: MongoTransportOptions['objectIdFieldsByCollection'],
+): Array<[string, string[]]> {
+  if (raw == null) return [];
+  if (Array.isArray(raw)) {
+    return raw
+      .filter(
+        (e): e is { collection: string; fields: string[] } =>
+          e != null &&
+          typeof e === 'object' &&
+          typeof (e as { collection?: unknown }).collection === 'string' &&
+          Array.isArray((e as { fields?: unknown }).fields),
+      )
+      .map(e => [e.collection, e.fields.map(String)]);
+  }
+  if (typeof raw === 'object') {
+    return Object.entries(raw as Record<string, string[]>).map(([collection, fields]) => [
+      collection,
+      Array.isArray(fields) ? fields.map(String) : [],
+    ]);
+  }
+  return [];
 }
 
 function mappingEntryToStage(

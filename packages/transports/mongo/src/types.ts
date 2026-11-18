@@ -12,29 +12,34 @@ export type MongoKind =
   | 'DELETE_ONE'
   | 'DELETE_MANY';
 
+/** One collection’s field list — used so hyphenated names are not GraphQL object keys. */
+export interface MongoCollectionFieldsEntry {
+  collection: string;
+  fields: string[];
+}
+
 export interface MongoTransportOptions {
   maxPoolSize?: number;
   /** Declared BSON ObjectId field names for hex→ObjectId coercion (not String refs). */
   objectIdFields?: string[];
   /**
-   * ObjectId paths keyed by collection so the same bare field name can be ObjectId
-   * on one model and String on another in the same subgraph.
+   * ObjectId paths per collection (encoded as entries so hyphenated collection
+   * names survive printed SDL). Legacy `Record<collection, fields>` is still accepted.
    */
-  objectIdFieldsByCollection?: Record<string, string[]>;
+  objectIdFieldsByCollection?: MongoCollectionFieldsEntry[] | Record<string, string[]>;
   /** Fields that may be omitted on patch but reject explicit `null` on `$set`. */
   requiredFields?: string[];
   /**
-   * Required fields keyed by collection — avoids cross-model bleed of `required`
-   * when two models share a field name.
+   * Required fields per collection (entry list encoding; legacy Record accepted).
+   * A present empty list is authoritative (no flat `requiredFields` fallback).
    */
-  requiredFieldsByCollection?: Record<string, string[]>;
+  requiredFieldsByCollection?: MongoCollectionFieldsEntry[] | Record<string, string[]>;
   /** Empty-input placeholder keys (e.g. `_`) — stripped on write; not real paths. */
   placeholderFields?: string[];
   /**
-   * Placeholders keyed by collection so an id-only model's `_` does not strip a
-   * real writable `_` on another model in the same subgraph.
+   * Placeholders per collection (entry list encoding; legacy Record accepted).
    */
-  placeholderFieldsByCollection?: Record<string, string[]>;
+  placeholderFieldsByCollection?: MongoCollectionFieldsEntry[] | Record<string, string[]>;
   /** Collections whose `_id` is BSON String (not ObjectId) — keep hex as string. */
   stringIdCollections?: string[];
 }

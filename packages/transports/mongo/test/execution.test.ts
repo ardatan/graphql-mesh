@@ -412,6 +412,77 @@ describe('getMongoExecutor FIND_* + writes', () => {
     ]);
     expect(insertedDocs.every(d => d.id === undefined)).toBe(true);
   });
+
+  it('treats present empty requiredFieldsByCollection as authoritative', async () => {
+    const userSchema = new Schema({ title: String }, { collection: 'user_users' });
+    const schema = await loadGraphQLSchemaFromMongo('users', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'User',
+          schema: userSchema,
+          collection: 'user_users',
+          options: { fields: { required: ['title'] } },
+        },
+      ],
+    });
+    // Present empty scoped map must not fall back to flat requiredFields.
+    const transport = (schema.extensions as any).directives.transport;
+    transport.options.requiredFieldsByCollection = [];
+    transport.options.requiredFields = ['title'];
+
+    const docId = '507f1f77bcf86cd799439011';
+    let lastUpdate: Record<string, unknown> | undefined;
+    const client: MongoClientLike = {
+      async findOne() {
+        return { _id: docId, title: null };
+      },
+      async findMany() {
+        return [];
+      },
+      async count() {
+        return 0;
+      },
+      async insertOne() {
+        return { insertedId: docId };
+      },
+      async insertMany() {
+        return { insertedIds: [], insertedCount: 0 };
+      },
+      async updateOne() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async updateMany() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async findOneAndUpdate(_c, _f, update) {
+        lastUpdate = update as Record<string, unknown>;
+        return { value: { _id: docId, title: null }, matchedCount: 1, modifiedCount: 1 };
+      },
+      async deleteOne() {
+        return { deletedCount: 0 };
+      },
+      async deleteMany() {
+        return { deletedCount: 0 };
+      },
+      async findOneAndDelete() {
+        return { value: null, deletedCount: 0 };
+      },
+      async aggregate() {
+        return [];
+      },
+      dispose() {},
+    };
+
+    const executor = getMongoExecutor({ subgraph: schema, client });
+    const result = await execResult(executor, {
+      document: parse(
+        `mutation { updateOneUser(query: { title: { eq: "x" } }, update: { set: { title: null } }) { recordId } }`,
+      ),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(lastUpdate).toEqual({ $set: { title: null } });
+  });
 });
 
 describe('connection cursor sort keys', () => {

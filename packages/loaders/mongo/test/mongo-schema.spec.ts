@@ -167,7 +167,9 @@ describe('@omnigraph/mongo schema emit', () => {
     const objectIdFields: string[] = transport?.options?.objectIdFields || [];
     expect(objectIdFields).toContain('owner');
     expect(objectIdFields).not.toContain('authorId');
-    expect(transport?.options?.objectIdFieldsByCollection).toEqual({ posts: ['owner'] });
+    expect(transport?.options?.objectIdFieldsByCollection).toEqual([
+      { collection: 'posts', fields: ['owner'] },
+    ]);
     const sdl = printSchemaWithDirectives(schema);
     expect(sdl).toMatch(/authorId:\s*String/);
     expect(sdl).toMatch(/owner:\s*ObjectID/);
@@ -194,10 +196,109 @@ describe('@omnigraph/mongo schema emit', () => {
       ],
     });
     const transport = (schema.extensions as any)?.directives?.transport;
-    expect(transport?.options?.objectIdFieldsByCollection).toEqual({ posts: ['owner'] });
-    expect(transport?.options?.objectIdFieldsByCollection?.notes).toBeUndefined();
-    expect(transport?.options?.requiredFieldsByCollection).toEqual({ posts: ['title'] });
-    expect(transport?.options?.requiredFieldsByCollection?.notes).toBeUndefined();
+    expect(transport?.options?.objectIdFieldsByCollection).toEqual([
+      { collection: 'posts', fields: ['owner'] },
+    ]);
+    expect(transport?.options?.requiredFieldsByCollection).toEqual([
+      { collection: 'posts', fields: ['title'] },
+    ]);
+  });
+
+  it('merges ObjectId fields across views and rejects ObjectId conflicts', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('merged-oid', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'AccountOwner',
+          schema: new Schema(
+            { owner: { type: Schema.Types.ObjectId }, name: String },
+            { collection: 'accounts' },
+          ),
+          collection: 'accounts',
+        },
+        {
+          name: 'AccountReviewer',
+          schema: new Schema(
+            { reviewer: { type: Schema.Types.ObjectId }, name: String },
+            { collection: 'accounts' },
+          ),
+          collection: 'accounts',
+        },
+      ],
+    });
+    const transport = (schema.extensions as any)?.directives?.transport;
+    const entry = transport?.options?.objectIdFieldsByCollection?.find(
+      (e: { collection: string }) => e.collection === 'accounts',
+    );
+    expect(entry?.fields?.sort()).toEqual(['owner', 'reviewer']);
+
+    await expect(
+      loadGraphQLSchemaFromMongo('oid-conflict', {
+        endpoint: 'mongodb://localhost:27017/test',
+        models: [
+          {
+            name: 'A',
+            schema: new Schema(
+              { owner: { type: Schema.Types.ObjectId } },
+              { collection: 'accounts' },
+            ),
+            collection: 'accounts',
+          },
+          {
+            name: 'B',
+            schema: new Schema({ owner: String }, { collection: 'accounts' }),
+            collection: 'accounts',
+          },
+        ],
+      }),
+    ).rejects.toThrow(/Conflicting BSON ObjectId/);
+  });
+
+  it('rejects conflicting required policies on the same collection', async () => {
+    await expect(
+      loadGraphQLSchemaFromMongo('req-conflict', {
+        endpoint: 'mongodb://localhost:27017/test',
+        models: [
+          {
+            name: 'TitleView',
+            schema: new Schema({ title: String, nickname: String }, { collection: 'accounts' }),
+            collection: 'accounts',
+            options: { fields: { required: ['title'] } },
+          },
+          {
+            name: 'NickView',
+            schema: new Schema({ title: String, nickname: String }, { collection: 'accounts' }),
+            collection: 'accounts',
+            options: { fields: { required: ['nickname'] } },
+          },
+        ],
+      }),
+    ).rejects.toThrow(/Conflicting required-field policies/);
+  });
+
+  it('prints hyphenated collection ObjectId maps that round-trip through SDL', async () => {
+    const { parse } = await import('graphql');
+    const schema = await loadGraphQLSchemaFromMongo('hyphen', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'AccountRecord',
+          schema: new Schema(
+            { owner: { type: Schema.Types.ObjectId }, name: String },
+            { collection: 'account-records' },
+          ),
+          collection: 'account-records',
+        },
+      ],
+    });
+    const fromExt = (schema.extensions as any)?.directives?.transport?.options
+      ?.objectIdFieldsByCollection;
+    expect(fromExt).toEqual([{ collection: 'account-records', fields: ['owner'] }]);
+    const sdl = printSchemaWithDirectives(schema);
+    // Entry-list encoding: hyphenated name is a string value, not an object key.
+    expect(sdl).toMatch(/collection:\s*"account-records"/);
+    expect(sdl).not.toMatch(/objectIdFieldsByCollection:\s*\{[^}]*account-records\s*:/);
+    expect(() => parse(sdl)).not.toThrow();
   });
 
   it('omits raw aggregate subgraph-wide when any model is restricted', async () => {
@@ -298,10 +399,10 @@ describe('@omnigraph/mongo schema emit', () => {
     });
     const transport = (schema.extensions as any)?.directives?.transport;
     // Empty scoped entry for notes so the executor does not fall back to global `_`.
-    expect(transport?.options?.placeholderFieldsByCollection).toEqual({
-      tokens: ['_'],
-      notes: [],
-    });
+    expect(transport?.options?.placeholderFieldsByCollection).toEqual([
+      { collection: 'tokens', fields: ['_'] },
+      { collection: 'notes', fields: [] },
+    ]);
     expect(transport?.options?.placeholderFields).toEqual(['_']);
   });
 
