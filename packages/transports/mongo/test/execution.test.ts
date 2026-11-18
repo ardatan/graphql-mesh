@@ -1,8 +1,15 @@
-import { parse } from 'graphql';
+import { parse, type ExecutionResult } from 'graphql';
 import { Schema } from 'mongoose';
 import { loadGraphQLSchemaFromMongo } from '@omnigraph/mongo';
 import { getMongoExecutor } from '../src/execution.js';
 import type { MongoClientLike } from '../src/types.js';
+
+async function execResult(
+  executor: ReturnType<typeof getMongoExecutor>,
+  args: Parameters<ReturnType<typeof getMongoExecutor>>[0],
+): Promise<ExecutionResult> {
+  return (await executor(args)) as ExecutionResult;
+}
 
 describe('getMongoExecutor FIND_* + writes', () => {
   it('runs find/count/create via @mongo directives', async () => {
@@ -75,7 +82,7 @@ describe('getMongoExecutor FIND_* + writes', () => {
 
     const executor = getMongoExecutor({ subgraph: schema, client });
 
-    const byId = await executor({
+    const byId = await execResult(executor, {
       document: parse(`query { findUserById(id: "${adaId}") { id name age } }`),
     });
     expect(byId.errors).toBeUndefined();
@@ -83,19 +90,19 @@ describe('getMongoExecutor FIND_* + writes', () => {
       findUserById: { id: adaId, name: 'Ada', age: 36 },
     });
 
-    const many = await executor({
+    const many = await execResult(executor, {
       document: parse(`query { findUsers(query: { name: { eq: "Alan" } }) { id name } }`),
     });
     expect(many.data).toEqual({
       findUsers: [{ id: alanId, name: 'Alan' }],
     });
 
-    const count = await executor({
+    const count = await execResult(executor, {
       document: parse(`query { countDocumentsUsers(query: { gender: { eq: "female" } }) }`),
     });
     expect(count.data).toEqual({ countDocumentsUsers: 1 });
 
-    const created = await executor({
+    const created = await execResult(executor, {
       document: parse(
         `mutation { insertOneUser(document: { name: "Grace", age: 45 }) { recordId record { name } } }`,
       ),

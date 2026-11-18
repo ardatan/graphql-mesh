@@ -1,9 +1,16 @@
-import { parse } from 'graphql';
+import { parse, type ExecutionResult } from 'graphql';
 import { Schema } from 'mongoose';
 import { loadGraphQLSchemaFromMongo } from '@omnigraph/mongo';
 import { getMongoExecutor } from '../src/execution.js';
 import { buildMongoFilter } from '../src/filter.js';
 import type { MongoClientLike } from '../src/types.js';
+
+async function execResult(
+  executor: ReturnType<typeof getMongoExecutor>,
+  args: Parameters<ReturnType<typeof getMongoExecutor>>[0],
+): Promise<ExecutionResult> {
+  return (await executor(args)) as ExecutionResult;
+}
 
 function stubClient(overrides: Partial<MongoClientLike> = {}): MongoClientLike {
   return {
@@ -66,7 +73,7 @@ describe('AGGREGATE pipeline', () => {
     });
 
     const executor = getMongoExecutor({ subgraph: schema, client });
-    const result = await executor({
+    const result = await execResult(executor, {
       document: parse(`
         query Agg($pipeline: JSON) {
           aggregateUsers(query: { gender: { eq: "female" } }, pipeline: $pipeline)
@@ -82,7 +89,7 @@ describe('AGGREGATE pipeline', () => {
     });
     expect(lastPipeline).toEqual([{ $group: { _id: '$gender', count: { $sum: 1 } } }]);
 
-    await executor({
+    await execResult(executor, {
       document: parse(`
         query Agg($pipeline: JSON) {
           aggregateUsers(query: { gender: { eq: "female" } }, pipeline: $pipeline)
@@ -115,7 +122,7 @@ describe('typed error payload', () => {
     });
 
     const executor = getMongoExecutor({ subgraph: schema, client });
-    const withError = await executor({
+    const withError = await execResult(executor, {
       document: parse(`
         mutation {
           insertOneUser(document: { name: "Ada" }) {
@@ -133,7 +140,7 @@ describe('typed error payload', () => {
       },
     });
 
-    const withoutError = await executor({
+    const withoutError = await execResult(executor, {
       document: parse(`
         mutation {
           insertOneUser(document: { name: "Ada" }) {
