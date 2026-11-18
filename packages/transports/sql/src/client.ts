@@ -161,12 +161,36 @@ function normalizeBunRows<T>(result: any): T[] {
 }
 
 /**
- * Wrap an existing `pg.Pool` (or compatible) as SqlClient.
+ * Apply Postgres `search_path` on every new pooled connection (not a one-shot SET).
+ * Used for both owned pools and caller-supplied pools (e.g. handler `schemaName`).
  */
-export function wrapPgPoolAsSqlClient(pool: {
-  query: (sql: string, params?: unknown[]) => Promise<{ rows: any[]; rowCount?: number | null }>;
-  end?: () => Promise<void>;
-}): SqlClient {
+export function applyPgPoolSearchPath(
+  pool: { on?: (event: string, listener: (...args: any[]) => void) => unknown },
+  schema?: string,
+): void {
+  const trimmed = schema?.trim();
+  if (!trimmed || trimmed === 'public') return;
+  if (typeof pool.on !== 'function') return;
+  const ident = `"${trimmed.replace(/"/g, '""')}"`;
+  pool.on('connect', (client: { query: (sql: string) => Promise<unknown> }) => {
+    client.query(`SET search_path TO ${ident}`).catch(() => undefined);
+  });
+}
+
+/**
+ * Wrap an existing `pg.Pool` (or compatible) as SqlClient.
+ * Pass `schema` to enforce `search_path` on every pooled connection (TLS / dial
+ * settings on the supplied pool are preserved).
+ */
+export function wrapPgPoolAsSqlClient(
+  pool: {
+    query: (sql: string, params?: unknown[]) => Promise<{ rows: any[]; rowCount?: number | null }>;
+    end?: () => Promise<void>;
+    on?: (event: string, listener: (...args: any[]) => void) => unknown;
+  },
+  opts?: { schema?: string },
+): SqlClient {
+  applyPgPoolSearchPath(pool, opts?.schema);
   const client: SqlClient = {
     adapter: 'postgres',
     // Expose real pg.Pool when present for `@dataplan/pg`.
@@ -345,13 +369,7 @@ function createPostgresClient(opts: CreateSqlClientOptions): SqlClient {
   pool.on('error', () => {
     // pg discards the broken client; the next query opens a fresh connection.
   });
-  const schema = opts.schema?.trim();
-  if (schema && schema !== 'public') {
-    const ident = `"${schema.replace(/"/g, '""')}"`;
-    pool.on('connect', client => {
-      client.query(`SET search_path TO ${ident}`).catch(() => undefined);
-    });
-  }
+  applyPgPoolSearchPath(pool, opts.schema);
   return wrapPgPoolAsSqlClient(pool);
 }
 

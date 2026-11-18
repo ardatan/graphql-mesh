@@ -60,3 +60,36 @@ describe('Bun.SQL availability (Node / Jest)', () => {
     });
   });
 });
+
+describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
+  it('registers connect listener for non-public schema on supplied pools', async () => {
+    const { applyPgPoolSearchPath, wrapPgPoolAsSqlClient } = await import('../src/client.js');
+    const listeners: Array<(client: any) => void> = [];
+    const pool = {
+      query: async () => ({ rows: [] }),
+      on: (event: string, listener: (client: any) => void) => {
+        if (event === 'connect') listeners.push(listener);
+      },
+    };
+    wrapPgPoolAsSqlClient(pool, { schema: 'app' });
+    expect(listeners).toHaveLength(1);
+    const queries: string[] = [];
+    await listeners[0]({
+      query: async (sql: string) => {
+        queries.push(sql);
+      },
+    });
+    expect(queries[0]).toMatch(/SET search_path TO "app"/);
+
+    const listeners2: Array<(client: any) => void> = [];
+    applyPgPoolSearchPath(
+      {
+        on: (event: string, listener: (client: any) => void) => {
+          if (event === 'connect') listeners2.push(listener);
+        },
+      },
+      'public',
+    );
+    expect(listeners2).toHaveLength(0);
+  });
+});

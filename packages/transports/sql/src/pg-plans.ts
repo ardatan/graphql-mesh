@@ -1,5 +1,6 @@
 import { access, connection } from 'grafast';
 import type { GraphQLFieldConfig, GraphQLSchema } from 'graphql';
+import { getNamedType, isObjectType } from 'graphql';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import { batchableEqualityColumn } from './batch.js';
@@ -26,6 +27,11 @@ export function wirePostgresSqlPlans(
     sqlToAttrByTable?: Map<string, Map<string, string>>;
   },
 ): GraphQLSchema {
+  // Types that may be produced by a bailed (generic-resolve) root must keep
+  // generic child resolvers — relation plans need Pg step parents with
+  // manyRelation/singleRelation, not plain objects.
+  const typesWithGenericRootParent = collectTypesWithGenericRootParents(schema);
+
   return mapSchema(schema, {
     [MapperKind.OBJECT_FIELD](fieldConfig, fieldName, typeName) {
       const sqlDir = getDefDirectives(schema, fieldConfig).find(d => d.name === 'sql');
@@ -57,10 +63,10 @@ export function wirePostgresSqlPlans(
           if (!meta.installedRelations?.get(typeName)?.has(fieldName)) {
             return fieldConfig;
           }
-          // Note: when a root for this parent type keeps a generic resolver, nested
-          // relation plans still apply for *planned* parents (e.g. `country { city }`).
-          // Plain-object parents from a bailed root need the generic child resolve —
-          // that mixed path remains a known limitation (prefer planned roots).
+          // Plain-object parents from a bailed root cannot use relation plans.
+          if (typesWithGenericRootParent.has(typeName)) {
+            return fieldConfig;
+          }
           grafast.plan = makeRelationPlan(kind, fieldName);
           delete (fieldConfig as GraphQLFieldConfig<any, any>).resolve;
           return fieldConfig;
@@ -84,7 +90,8 @@ export function wirePostgresSqlPlans(
         }
 
         const sqlToAttr = meta.sqlToAttrByTable?.get(table);
-        grafast.plan = makeRootPlan(resource, kind, where, sqlToAttr);
+        const paginationArgs = paginationArgNames(sqlDir.args);
+        grafast.plan = makeRootPlan(resource, kind, where, sqlToAttr, paginationArgs);
         delete (fieldConfig as GraphQLFieldConfig<any, any>).resolve;
         return fieldConfig;
       }
@@ -105,6 +112,54 @@ export function wirePostgresSqlPlans(
       return fieldConfig;
     },
   });
+}
+
+/** Object types returned by Query/Mutation roots that keep a generic resolver. */
+function collectTypesWithGenericRootParents(schema: GraphQLSchema): Set<string> {
+  const out = new Set<string>();
+  const query = schema.getQueryType();
+  const mutation = schema.getMutationType();
+  for (const root of [query, mutation]) {
+    if (!root) continue;
+    for (const field of Object.values(root.getFields())) {
+      const sqlDir = getDefDirectives(schema, field).find(d => d.name === 'sql');
+      if (!sqlDir) continue;
+      const kind = (sqlDir.args.kind || 'ROWS') as SqlKind;
+      if (kind === 'INSERT' || kind === 'UPDATE' || kind === 'DELETE' || kind === 'COUNT') {
+        continue;
+      }
+      const where = parseSqlMapping(sqlDir.args.where as string | undefined);
+      const needsGeneric =
+        (kind === 'ROWS' || kind === 'CONNECTION') &&
+        rootWhereNeedsGenericResolver(where, sqlDir.args as Record<string, unknown>);
+      const rowNeedsGeneric = kind === 'ROW' && rowWhereTooComplexForGet(where);
+      if (!needsGeneric && !rowNeedsGeneric) continue;
+      const named = getNamedType(field.type);
+      if (!isObjectType(named)) continue;
+      if (kind === 'CONNECTION') {
+        const nodesField = named.getFields().nodes;
+        if (nodesField) {
+          const nodeType = getNamedType(nodesField.type);
+          if (isObjectType(nodeType)) out.add(nodeType.name);
+          continue;
+        }
+        const edgesField = named.getFields().edges;
+        if (edgesField) {
+          const edgeType = getNamedType(edgesField.type);
+          if (isObjectType(edgeType)) {
+            const nodeField = edgeType.getFields().node;
+            if (nodeField) {
+              const nodeType = getNamedType(nodeField.type);
+              if (isObjectType(nodeType)) out.add(nodeType.name);
+            }
+          }
+        }
+        continue;
+      }
+      out.add(named.name);
+    }
+  }
+  return out;
 }
 
 function relationHasClientPlanners(args: Record<string, unknown>): boolean {
@@ -146,6 +201,39 @@ function whereHasClientFilter(where: ReturnType<typeof parseSqlMapping>): boolea
   );
 }
 
+/** `$args.take` → `take`; exact `$args.<name>` only (null = unsupported form). */
+function argsBinderName(raw: unknown): string | null {
+  if (raw == null || raw === '') return null;
+  const m = /^\$args\.([A-Za-z_][A-Za-z0-9_]*)$/.exec(String(raw).trim());
+  return m ? m[1] : null;
+}
+
+/**
+ * GraphQL arg names for pagination planners. Missing binder → default field name.
+ * Unsupported binder forms are excluded (caller bails to generic via
+ * `rootWhereNeedsGenericResolver`).
+ */
+function paginationArgNames(args: Record<string, unknown>): {
+  limit?: string;
+  offset?: string;
+  first?: string;
+  after?: string;
+  last?: string;
+  before?: string;
+} {
+  const out: Record<string, string> = {};
+  for (const key of ['limit', 'offset', 'first', 'after', 'last', 'before'] as const) {
+    const raw = args[key];
+    if (raw == null || raw === '') {
+      // No directive binder — plan reads the GraphQL arg of the same name when present.
+      continue;
+    }
+    const name = argsBinderName(raw);
+    if (name) out[key] = name;
+  }
+  return out;
+}
+
 function rootWhereNeedsGenericResolver(
   where: ReturnType<typeof parseSqlMapping>,
   args: Record<string, unknown>,
@@ -158,12 +246,12 @@ function rootWhereNeedsGenericResolver(
   for (const entry of where.entries) {
     if (entry.value?.kind === 'this') return true;
   }
-  // makeRootPlan only reads GraphQL args by exact name; non-`$args.<name>` binders
-  // need the generic path (`resolvePlannerArg` honors directive binders).
+  // Pagination: exact `$args.<name>` (including aliases like `$args.take`) is planned;
+  // any other binder form needs the generic path (`resolvePlannerArg`).
   for (const key of ['limit', 'offset', 'first', 'after', 'last', 'before'] as const) {
     const raw = args[key];
     if (raw == null || raw === '') continue;
-    if (String(raw).trim() !== `$args.${key}`) return true;
+    if (!argsBinderName(raw)) return true;
   }
   // Fixed literals (`active: true`) and column `$args` binders are not applied by find().
   for (const entry of where.entries) {
@@ -224,6 +312,14 @@ function makeRootPlan(
   kind: SqlKind,
   where: ReturnType<typeof parseSqlMapping>,
   sqlToAttr?: Map<string, string>,
+  paginationArgs: {
+    limit?: string;
+    offset?: string;
+    first?: string;
+    after?: string;
+    last?: string;
+    before?: string;
+  } = {},
 ) {
   return function sqlRootPlan(_$parent: any, fieldArgs: any) {
     if (kind === 'ROW') {
@@ -246,17 +342,17 @@ function makeRootPlan(
     if (kind === 'CONNECTION') {
       const $rows = resource.find();
       if (typeof $rows.setFirst === 'function') {
-        $rows.setFirst(fieldArg(fieldArgs, 'first'));
+        $rows.setFirst(fieldArg(fieldArgs, paginationArgs.first || 'first'));
       }
       if (typeof $rows.setAfter === 'function') {
-        $rows.setAfter(fieldArg(fieldArgs, 'after'));
+        $rows.setAfter(fieldArg(fieldArgs, paginationArgs.after || 'after'));
       }
       const $connection = connection($rows);
       if (typeof $connection.setFirst === 'function') {
-        $connection.setFirst(fieldArg(fieldArgs, 'first'));
+        $connection.setFirst(fieldArg(fieldArgs, paginationArgs.first || 'first'));
       }
       if (typeof $connection.setAfter === 'function') {
-        $connection.setAfter(fieldArg(fieldArgs, 'after'));
+        $connection.setAfter(fieldArg(fieldArgs, paginationArgs.after || 'after'));
       }
       return $connection;
     }
@@ -264,10 +360,10 @@ function makeRootPlan(
     // ROWS (filters that need generic resolve already bailed above)
     const $rows = resource.find();
     if (typeof $rows.setFirst === 'function') {
-      $rows.setFirst(fieldArg(fieldArgs, 'limit'));
+      $rows.setFirst(fieldArg(fieldArgs, paginationArgs.limit || 'limit'));
     }
     if (typeof $rows.setOffset === 'function') {
-      $rows.setOffset(fieldArg(fieldArgs, 'offset'));
+      $rows.setOffset(fieldArg(fieldArgs, paginationArgs.offset || 'offset'));
     }
     return $rows;
   };

@@ -26,27 +26,29 @@ Relations use the same `@sql` with `$this` binders in `where`.
 - `@graphql-mesh/mysql` — `pool` / `tableFields` supported
 - `@graphql-mesh/tuql` — `infile` is materialized to a sqlite file inside the legacy handler
   (not a core loader/transport feature)
-- `@graphql-mesh/postgraphile` — **no longer embeds the PostGraphile runtime**. Schema emit and
-  execution use `@sql` / `transport-sql`. See migration notes below.
+- `@graphql-mesh/postgraphile` — schema emit and execution use `@sql` / `transport-sql` only
+  (no longer loads the previous embedded runtime). See migration notes below.
 
 Adapters are `postgres` | `mysql` | `sqlite` via loader `adapter` / URI / `options.adapter`. All
 three are end-to-end on the new stack.
 
 ## Migration (`@graphql-mesh/postgraphile`)
 
-Breaking for v0.minor: the handler no longer depends on `postgraphile` / `postgraphile-core`.
+Breaking for v0.minor: the handler no longer depends on the `postgraphile` /
+`postgraphile-core` packages.
 
 | Still supported | Removed / ignored |
 | --- | --- |
 | `connectionString` (env interpolation; optional when `pool` is a real `pg.Pool`) | `appendPlugins` / `skipPlugins` |
-| `schemaName` (first entry only; default `public`) | `options` (Graphile library options) |
+| `schemaName` (first entry only; default `public`) | `options` (opaque library options bag) |
 | `pool` as an existing `pg.Pool` (or module export) — used for introspect + execute | `pool` as plain settings object (use URI / transport opts) |
 | `tables` / `tableFields` (new, mysql-parity) | `subscriptions` / `live` |
 | | `contextOptions` (pgSettings helpers) |
 
-Emitted GraphQL is the shared SQL CRUD/relay surface (`allX` connections, `where` filters,
-mutations), not PostGraphile’s default Relay/`Node` plugin shape. Recompose and update clients.
-Prefer compose `loadSqlSubgraph` for new work; keep this handler only as a v0 YAML bridge.
+Emitted GraphQL is the shared Mesh SQL CRUD / connection / `where` surface
+(`allX` connections, filters, mutations) — not the previous handler’s plugin-shaped
+schema. Recompose and update clients. Prefer compose `loadSqlSubgraph` for new work;
+keep this handler only as a v0 YAML bridge.
 
 ## Migration (compose)
 
@@ -55,7 +57,7 @@ Prefer compose `loadSqlSubgraph` for new work; keep this handler only as a v0 YA
 loadSQLiteSubgraph('chinook', { db: 'chinook.db' })
 loadMySQLSubgraph('employees', { endpoint: 'mysql://…' })
 
-// after — adapter from URI protocol (Bun-compatible); `adapter` optional override
+// after — adapter from URI protocol (or env URL); `adapter` optional override
 loadSqlSubgraph('chinook', { endpoint: 'file:chinook.db' })
 loadSqlSubgraph('employees', { endpoint: 'mysql://…' })
 loadSqlSubgraph('shop', { endpoint: 'postgres://…' })
@@ -63,8 +65,8 @@ loadSqlSubgraph('shop', { endpoint: 'localhost:5432/shop' }) // host-style → p
 loadSqlSubgraph('shop', { adapter: 'postgres' }) // or from DATABASE_URL / PG*
 ```
 
-Emitted GraphQL naming is PostGraphile-inspired. Old raw-table / String-where surfaces are gone —
-recompose and update client queries.
+Emitted GraphQL uses the shared Mesh SQL naming. Old raw-table / String-where surfaces are
+gone — recompose and update client queries.
 
 `mesh-migrate-config` and public website docs are intentionally unchanged here.
 
@@ -81,8 +83,8 @@ Directive mapping no longer uses a catch-all `args` bag or a separate `@sql(filt
 | Pagination / sort binders | inside `args` or under `where` | separate `@sql(orderBy/limit/offset/first/after: "$args.…")` |
 | Mutations | values in `args` | `@sql(set: …)` + `where` for UPDATE/DELETE |
 
-Connectors-style object spread (`...$args.where`) is only needed when merging fixed predicates
-with the client `where` input. When the binder stands alone, use bare `$args.where`.
+Object spread (`...$args.where`) is only needed when merging fixed predicates with the client
+`where` input. When the binder stands alone, use bare `$args.where`.
 
 ```graphql
 # sole filter
@@ -125,23 +127,23 @@ stuffed into `where` keeps working at runtime; new emit does not produce it.
 ## What else changed
 
 - Mesh rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql`
-- Type-level `@sql` on OBJECT (Connectors-style `$this` keys) wires `resolveReference` + Hive
-  `Query._entities` — no Query `entity: true`
+- Type-level `@sql` on OBJECT (`$this` keys) wires `resolveReference` + Hive `Query._entities`
+  — no Query `entity: true`
 - Transport DataLoader-batches ROW/ROWS equality lookups (`WHERE col IN (...)`)
 - Selection lookahead planner for mysql/sqlite: multi-hop belongs-to `LEFT JOIN`,
   has-many JSON subselects, column pruning, DataLoader fallback
-- Postgres fast path: Grafast + `@dataplan/pg` (registry from `@sql`, relation
-  plans via `singleRelation` / `manyRelation`) when a Node `pg.Pool` is available
+- Postgres plan path when a Node `pg.Pool` is available (registry from `@sql`, relation
+  plans via `singleRelation` / `manyRelation`)
 - e2e `sqlite-chinook`, `mysql-employees`, and `postgres-geodb` (world.sql seed) use the new stack
   (full table set; no artificial `includeTables` filter)
 - Optional `softDelete: { column, tables? }` on loader / `@transport(options)`: reads add
-  `column IS NULL`; `DELETE` becomes `UPDATE … SET column = now` (Grafast path skipped when set)
+  `column IS NULL`; `DELETE` becomes `UPDATE … SET column = now` (plan path skipped when set)
 - Richer `where` filters: `like` / `ilike`, `BooleanFilter`, nested belongs-to
   (`where: { artist: { name: { eq: "X" } } }` → `EXISTS`)
-- Postgres computed columns (PostGraphile-style): `CREATE FUNCTION users_full_name(users)…STABLE`
+- Postgres computed columns: `CREATE FUNCTION users_full_name(users)…STABLE`
   → GraphQL `fullName` via `@sql(selection: "fullName: $fn.public.users_full_name")`
-- Many-to-many shortcuts (PostGraphile / `pg-many-to-many` style): junction with two FKs
-  → `Playlist.tracks` / `Track.playlists` via `@sql(through:)` (junction type kept)
+- Many-to-many shortcuts: junction with two FKs → `Playlist.tracks` / `Track.playlists` via
+  `@sql(through:)` (junction type kept)
 - `CONNECTION` pagination uses **keyset** cursors (`after` = opaque order-column values), not
   SQL `OFFSET`
 - Filters / `orderBy` use a full column catalog so selection pruning cannot drop predicates

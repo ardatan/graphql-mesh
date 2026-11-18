@@ -21,9 +21,9 @@ import {
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 /**
- * Legacy v0 Postgres handler (`postgraphile`). Under the hood `@omnigraph/sql` +
- * `transport-sql` — not the PostGraphile runtime. See the package changeset for
- * migration notes (plugins / live queries / Graphile context options removed).
+ * Legacy v0 Postgres handler (`@graphql-mesh/postgraphile`). Under the hood
+ * `@omnigraph/sql` + `transport-sql`. See the package changeset for migration
+ * notes (plugins / live queries / context options removed).
  */
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -60,13 +60,9 @@ export default class PostGraphileHandler implements MeshHandler {
       );
     }
 
-    // Prefer an explicit URI for `@transport(location)`; pool-only falls back to
-    // pool.options.connectionString or a postgres:// stamp inside the loader.
-    const endpoint =
-      connectionString ||
-      poolConnectionString(pool) ||
-      // Loader accepts pgPool without a real URI for introspection.
-      undefined;
+    // Prefer an explicit URI for `@transport(location)`; pool-only may omit
+    // location when this handler injects the execution client below.
+    const endpoint = connectionString || poolConnectionString(pool) || undefined;
 
     const schema = await this.schemaProxy.getWithSet(() =>
       loadGraphQLSchemaFromSql(this.name, {
@@ -81,8 +77,9 @@ export default class PostGraphileHandler implements MeshHandler {
 
     // Always bind the executor to the *current* pool / URI so a cached schema's
     // `@transport(location)` cannot point queries at a previous database.
+    // Enforce schemaName via per-connection search_path on supplied pools.
     const client = pool
-      ? wrapPgPoolAsSqlClient(pool)
+      ? wrapPgPoolAsSqlClient(pool, { schema: schemaName })
       : createSqlClient({
           adapter: 'postgres',
           location: connectionString!,

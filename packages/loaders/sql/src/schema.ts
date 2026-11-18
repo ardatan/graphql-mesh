@@ -62,15 +62,15 @@ export interface LoadSqlSubgraphOpts extends Pick<
   'max' | 'idleTimeout' | 'connectionTimeout' | 'tls' | 'ssl' | 'schema'
 > {
   /**
-   * Bun-style adapter override. When omitted, inferred from the connection URI
+   * Explicit adapter override. When omitted, inferred from the connection URI
    * protocol (`postgres://`, `mysql://` / `mysql2://` / `mariadb://`,
    * `sqlite://` / `file:`, host-style → postgres, `*.db` → sqlite).
    */
   adapter?: SqlAdapter;
   /**
    * Connection URI / path — becomes `@transport(location)`.
-   * When omitted, resolved from Bun-compatible env vars (`DATABASE_URL`,
-   * `POSTGRES_URL` / `PGURL`, `MYSQL_URL`, `SQLITE_URL`, …) or `PG*` / `MYSQL_*` fields.
+   * When omitted, resolved from env URLs (`DATABASE_URL`, `POSTGRES_URL` / `PGURL`,
+   * `MYSQL_URL`, `SQLITE_URL`, …) or `PG*` / `MYSQL_*` fields.
    * Sqlite: `file:…`, `sqlite:…`, `:memory:`, or a `*.db` path.
    * Mysql/Postgres: `mysql(2|s)://…`, `mariadb://…`, `postgres(ql)://…`, or host-style.
    */
@@ -88,8 +88,9 @@ export interface LoadSqlSubgraphOpts extends Pick<
   softDelete?: SqlTransportOptions['softDelete'];
   /**
    * Existing `pg.Pool` for Postgres introspection (TLS / custom dial). When set,
-   * `endpoint` may be omitted for pool-only Mesh configs; `@transport(location)`
-   * still prefers `endpoint` or `pool.options.connectionString`.
+   * `endpoint` may be omitted for pool-only Mesh configs that inject their own
+   * execution client. `@transport(location)` uses `endpoint` or
+   * `pool.options.connectionString` when present — never a placeholder URI.
    */
   pgPool?: PgPool;
 }
@@ -103,7 +104,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     adapter,
   };
   const meta = applyTableFieldsFilter(await introspect(resolved), opts.tableFields);
-  const location = resolveLocation(resolved);
+  const location = resolveLocation(resolved); // may be undefined for pgPool-only + injected client
   const schemaComposer = new SchemaComposer();
 
   schemaComposer.add(GraphQLBigInt);
@@ -150,7 +151,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
         },
       },
     ];
-    // Type-level `@sql` = Federation entity resolver (Connectors-style `$this` keys).
+    // Type-level `@sql` = entity resolver (`$this` keys).
     if (pkCols.length) {
       const keyArgs = pkCols
         .map(col => {
@@ -276,7 +277,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     }
   }
 
-  // Pass 2b: PostGraphile-style many-to-many shortcuts through junction tables
+  // Pass 2b: many-to-many shortcuts through junction tables
   for (const edge of findManyToManyEdges(meta.tables)) {
     emitManyToManyField({
       schemaComposer,
@@ -356,7 +357,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'ROWS',
-            // Sole binder: bare `$args.where` (Connectors-style; no spread needed).
+            // Sole binder: bare `$args.where` (no spread needed).
             where: '$args.where',
             orderBy: '$args.orderBy',
             limit: '$args.limit',
@@ -504,7 +505,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
   extensions.directives.transport = {
     subgraph: subgraphName,
     kind: 'sql',
-    location,
+    ...(location ? { location } : {}),
     ...(Object.keys(transportOptions).length ? { options: transportOptions } : {}),
   };
   extensions.directives.link = [
@@ -566,7 +567,7 @@ async function introspect(
 }
 
 /**
- * Fill `endpoint` from Bun-compatible env vars when omitted.
+ * Fill `endpoint` from env URLs when omitted.
  */
 export function resolveOptsEndpoint(opts: LoadSqlSubgraphOpts): LoadSqlSubgraphOpts {
   if (opts.endpoint) return opts;
@@ -575,28 +576,31 @@ export function resolveOptsEndpoint(opts: LoadSqlSubgraphOpts): LoadSqlSubgraphO
     typeof (opts.pgPool as { options?: { connectionString?: string } }).options === 'object'
       ? (opts.pgPool as { options?: { connectionString?: string } }).options?.connectionString
       : undefined;
-  if (fromPool) {
-    return { ...opts, endpoint: fromPool };
+  if (fromPool && String(fromPool).trim()) {
+    return { ...opts, endpoint: String(fromPool) };
   }
-  // Pool-only without a URI on the pool — stamp a postgres location for `@transport`.
+  // Pool-only without a URI: keep endpoint unset. Callers that inject an execution
+  // client do not need `@transport(location)`. Do not stamp a placeholder
+  // `postgres://` — the standard transport would dial wrong.
   if (opts.pgPool) {
-    return { ...opts, endpoint: 'postgres://' };
+    return opts;
   }
   const fromEnv = resolveConnectionStringFromEnv(undefined, { adapter: opts.adapter });
   if (!fromEnv) {
     throw new Error(
-      'loadSqlSubgraph requires endpoint or a Bun-compatible env URL (DATABASE_URL, POSTGRES_URL, MYSQL_URL, SQLITE_URL, …)',
+      'loadSqlSubgraph requires endpoint or an env URL (DATABASE_URL, POSTGRES_URL, MYSQL_URL, SQLITE_URL, …)',
     );
   }
   return { ...opts, endpoint: fromEnv };
 }
 
 /**
- * Resolve adapter: explicit `adapter` wins; otherwise Bun-style protocol detection
- * from `endpoint` (or env-resolved endpoint).
+ * Resolve adapter: explicit `adapter` wins; otherwise protocol detection from
+ * `endpoint` (or env-resolved endpoint). `pgPool` alone implies postgres.
  */
 export function resolveAdapter(opts: LoadSqlSubgraphOpts): SqlAdapter {
   if (opts.adapter) return opts.adapter;
+  if (opts.pgPool && !opts.endpoint) return 'postgres';
   const endpoint = opts.endpoint || resolveConnectionStringFromEnv();
   if (!endpoint) {
     throw new Error('loadSqlSubgraph requires adapter or endpoint (or DATABASE_URL / …)');
@@ -622,9 +626,12 @@ function buildTransportOptions(
   return options;
 }
 
-function resolveLocation(opts: LoadSqlSubgraphOpts): string {
+function resolveLocation(opts: LoadSqlSubgraphOpts): string | undefined {
   const raw = opts.endpoint;
   if (!raw) {
+    // Pool-only introspection: schema may omit `@transport(location)` when the
+    // caller injects the runtime client. Standard transport still needs a URI.
+    if (opts.pgPool) return undefined;
     throw new Error('SQL loader requires endpoint');
   }
   // Normalize bare sqlite paths to absolute file: URIs for @transport(location).
@@ -669,8 +676,7 @@ function applyTableFieldsFilter(
 }
 
 /**
- * Junction with exactly two single-column FKs to two different tables
- * (PostGraphile / `@graphile-contrib/pg-many-to-many` style).
+ * Junction with exactly two single-column FKs to two different tables.
  * Extra payload columns are fine — junction type stays; we still emit shortcuts.
  */
 function findManyToManyEdges(tables: SqlTableMeta[]): Array<{
@@ -1043,7 +1049,7 @@ function isBareSqlBinder(value: string): boolean {
 }
 
 /**
- * Format `@sql` where/set/selection for Connectors-style `"""` block strings.
+ * Format `@sql` where/set/selection for `"""` block strings.
  * Indent body lines; for single-line values prefix a newline so the printer
  * emits a multiline `"""` block (not `"""value"""`) without a trailing blank.
  */

@@ -88,7 +88,7 @@ describe('postgraphile', () => {
 
     const handler = new PostGraphileHandler({
       name: 'test',
-      config: { pool },
+      config: { pool, schemaName: 'app' },
       baseDir: __dirname,
       cache,
       pubsub: noOpFunction,
@@ -103,14 +103,45 @@ describe('postgraphile', () => {
       'test',
       expect.objectContaining({
         endpoint: 'postgres://from-pool/db',
+        schema: 'app',
         pgPool: pool,
       }),
     );
+    expect(wrapPgPoolAsSqlClient).toHaveBeenCalledWith(pool, { schema: 'app' });
     expect(getSqlExecutor).toHaveBeenCalledWith(
       expect.objectContaining({
         client: expect.anything(),
       }),
     );
+  });
+
+  it('pool-only without pool URI omits endpoint (injected client handoff)', async () => {
+    const graphQLSchemaMock: GraphQLSchema = { description: 'poolNoUri' } as any;
+    const pool = { connect: () => undefined, options: {} };
+    jest.mocked(loadGraphQLSchemaFromSql).mockResolvedValue(graphQLSchemaMock);
+
+    const handler = new PostGraphileHandler({
+      name: 'test',
+      config: { pool, schemaName: ['app'] },
+      baseDir: __dirname,
+      cache,
+      pubsub: noOpFunction,
+      store,
+      importFn: noOpFunction,
+      log: noOpFunction,
+    });
+
+    await handler.getMeshSource();
+
+    expect(loadGraphQLSchemaFromSql).toHaveBeenCalledWith(
+      'test',
+      expect.objectContaining({
+        endpoint: undefined,
+        schema: 'app',
+        pgPool: pool,
+      }),
+    );
+    expect(wrapPgPoolAsSqlClient).toHaveBeenCalledWith(pool, { schema: 'app' });
   });
 
   it('requires connectionString or pool', async () => {

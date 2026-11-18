@@ -374,10 +374,11 @@ export async function getSqlExecutor({
     transport.location ||
     resolveConnectionStringFromEnv(undefined, { adapter: transport.options?.adapter });
   const adapter: SqlAdapter =
-    transport.options?.adapter || inferAdapterFromLocation(location) || 'sqlite';
-  if (!location) {
+    transport.options?.adapter || inferAdapterFromLocation(location) || client?.adapter || 'sqlite';
+  // Injected clients (pool-only handlers) may omit `@transport(location)`.
+  if (!location && !client) {
     throw new Error(
-      '@transport(kind: "sql") requires location (connection URI / file path) or a Bun-compatible env URL (DATABASE_URL, POSTGRES_URL, MYSQL_URL, SQLITE_URL, …)',
+      '@transport(kind: "sql") requires location (connection URI / file path) or an env URL (DATABASE_URL, POSTGRES_URL, MYSQL_URL, SQLITE_URL, …)',
     );
   }
 
@@ -387,7 +388,7 @@ export async function getSqlExecutor({
     client ||
     createSqlClient({
       adapter,
-      location,
+      location: location!,
       cwd,
       max: transport.options?.max,
       idleTimeout: transport.options?.idleTimeout,
@@ -525,7 +526,7 @@ export async function getSqlExecutor({
     },
   });
 
-  // Type-level `@sql` → resolveReference + Query._entities (Connectors-style).
+  // Type-level `@sql` → resolveReference + Query._entities.
   subgraph = wireSqlEntityResolvers(subgraph, {
     executeTypeLevelRow(sqlArgs, reference, context) {
       const table = sqlArgs.table as string;

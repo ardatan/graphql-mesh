@@ -189,14 +189,15 @@ export function buildPgRegistryFromSqlSchema(
     codecByTable.set(info.table, codec);
     builder.addCodec(codec);
 
-    // Prefer Federation `@key` fields that exist as attributes — never invent a fake `id`.
-    const pkAttrs = primaryKeyAttrsForTable(schema, info);
+    // Federation `@key` (complete only) plus other lookup uniques (e.g. `id`).
+    // Never invent a fake `id` column that is not in the selection.
+    const uniques = uniqueAttrsForTable(schema, info);
     const resourceOpts = pgResourceOptions({
       executor,
       codec,
       from: tableIdent,
       name: info.table,
-      uniques: pkAttrs.length ? [{ attributes: pkAttrs, isPrimary: true }] : [],
+      uniques,
     });
     resourceOptionsByTable.set(info.table, resourceOpts);
     builder.addResource(resourceOpts);
@@ -302,8 +303,27 @@ function unwrapConnectionNodeType(connectionType: GraphQLObjectType): GraphQLObj
   return null;
 }
 
-/** Federation `@key` fields that exist as codec attributes; else real `id`; else first col. */
-function primaryKeyAttrsForTable(schema: GraphQLSchema, info: TableBuildInfo): string[] {
+/**
+ * Unique lookup paths for `@dataplan/pg` `resource.get`.
+ * - Accept a Federation `@key` only when **every** key field is a codec attribute
+ *   (partial intersections are not unique).
+ * - Keep other applicable uniques (e.g. `id`) so lookups by those attrs still work
+ *   when `@key` selects a different field such as `slug`.
+ */
+function uniqueAttrsForTable(
+  schema: GraphQLSchema,
+  info: TableBuildInfo,
+): Array<{ attributes: string[]; isPrimary: boolean }> {
+  const uniques: Array<{ attributes: string[]; isPrimary: boolean }> = [];
+  const seen = new Set<string>();
+  const add = (attributes: string[], isPrimary: boolean) => {
+    if (!attributes.length) return;
+    const key = attributes.join('\0');
+    if (seen.has(key)) return;
+    seen.add(key);
+    uniques.push({ attributes, isPrimary });
+  };
+
   for (const typeName of info.typeNames) {
     const type = schema.getType(typeName);
     if (!type || !isObjectType(type)) continue;
@@ -312,13 +332,26 @@ function primaryKeyAttrsForTable(schema: GraphQLSchema, info: TableBuildInfo): s
         .split(/\s+/)
         .map(s => s.trim())
         .filter(Boolean);
-      const existing = fields.filter(f => info.columns.has(f));
-      if (existing.length) return existing;
+      // Require the complete key — partial matches must not be registered as unique.
+      if (fields.length && fields.every(f => info.columns.has(f))) {
+        add(fields, uniques.length === 0);
+      }
     }
   }
-  if (info.columns.has('id')) return ['id'];
-  const first = info.columns.keys().next().value;
-  return first != null ? [String(first)] : [];
+
+  // Preserve id lookup even when `@key` selected another complete key (e.g. slug).
+  if (info.columns.has('id')) {
+    add(['id'], uniques.length === 0);
+  }
+
+  if (!uniques.length) {
+    const first = info.columns.keys().next().value;
+    if (first != null) add([String(first)], true);
+  } else if (!uniques.some(u => u.isPrimary)) {
+    uniques[0].isPrimary = true;
+  }
+
+  return uniques;
 }
 
 function codecFromGraphqlType(type: GraphQLOutputType | undefined): PgCodec {
