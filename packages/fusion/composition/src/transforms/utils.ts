@@ -1480,8 +1480,8 @@ export function rewriteConnectArgReferences(
   const protobufKey = protobufRpcDirectiveKey(fieldDirectives);
   const hasConnect = Boolean(fieldDirectives?.connect?.length);
   const hasThriftRpc = Boolean(fieldDirectives?.thrift__rpc?.length);
-  const mongoDirectiveNames = Object.keys(fieldDirectives || {}).filter(
-    name => name === 'mongo' || name.startsWith('mongo__'),
+  const mongoDirectiveNames = Object.keys(fieldDirectives || {}).filter(name =>
+    name.startsWith('mongo__'),
   );
   const hasMongo = mongoDirectiveNames.some(name => Boolean(fieldDirectives?.[name]?.length));
   if (
@@ -1681,14 +1681,11 @@ export function rewriteConnectArgReferences(
     }
   }
   if (hasMongo) {
-    // `@mongo__findOne(query/selection/…)` (and legacy `@mongo`) embed `$args` / `$this`.
+    // `@mongo__findOne(query/selection/…)` embed `$args` / `$this`.
     const mongoStringArgs = [
       'query',
       'selection',
       'sort',
-      'filter', // legacy
-      'where', // legacy
-      'orderBy', // legacy
       'set',
       'pipeline',
       'limit',

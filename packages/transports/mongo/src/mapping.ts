@@ -1,7 +1,7 @@
 import type { MongoMappingEntry, MongoMappingValue, ParsedMongoMapping } from './types.js';
 
 /**
- * Parse `@mongo` `where` / `set` / `selection` block strings.
+ * Parse `@mongo__*` `query` / `set` / `selection` block strings.
  * Skips `# ...` comments to EOL. Supports nested `{ ... }` blocks and `$args` / `$this` / `$pseudo`.
  */
 export function parseMongoMapping(source: string | null | undefined): ParsedMongoMapping {

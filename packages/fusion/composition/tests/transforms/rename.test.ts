@@ -1312,30 +1312,6 @@ describe('rewriteConnectArgReferences @mongo__*', () => {
     expect(mongo.selection).toBe('id: _id\nname: name');
   });
 
-  it('still rewrites legacy @mongo(kind:)', async () => {
-    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
-    const rewritten = rewriteConnectArgReferences(
-      {
-        mongo: [
-          {
-            collection: 'users',
-            kind: 'FIND_MANY',
-            query: '$args.criteria',
-            sort: '$args.order',
-            selection: 'id: _id\nname: name',
-          },
-        ],
-      },
-      new Map([
-        ['criteria', 'query'],
-        ['order', 'sort'],
-      ]),
-    );
-    const mongo = rewritten!.mongo[0];
-    expect(mongo.query).toBe('$args.query');
-    expect(mongo.sort).toBe('$args.sort');
-  });
-
   it('does not rewrite $args.queryInput when renaming query', async () => {
     const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
     const rewritten = rewriteConnectArgReferences(

@@ -1266,7 +1266,7 @@ createdCount: $createdCount
       type: naming.payloadType(typeName),
       args: {
         id: { type: new GraphQLNonNull(idArgScalar) },
-        // Typed update ops without `$` (`set` / `inc` / … → `$set` / `$inc`).
+        // Typed update ops: bare names (`set` / `inc` / … → `$set` / `$inc`).
         update: { type: `${updateType}!` },
       },
       directives: [
@@ -1507,7 +1507,7 @@ function ensureNestedFilterInput(
   const filterName = `${path.nestedTypeName}FilterInput`;
   if (!schemaComposer.has(filterName)) {
     const fields: Record<string, any> = {
-      // Mongo `$and` / `$or` / `$not` without `$` (same rule as `gte`).
+      // GraphQL-legal bare combinators (`and` / `or` / `not` → `$and` / `$or` / `$not`).
       and: { type: `[${filterName}!]` },
       or: { type: `[${filterName}!]` },
       not: { type: filterName },
@@ -1681,7 +1681,7 @@ function createQuerySortAndDocumentInputs(
     schemaComposer.createInputTC({
       name: filterName,
       fields: {
-        // Mongo `$and` / `$or` / `$not` without `$` (same rule as `gte`).
+        // GraphQL-legal bare combinators (`and` / `or` / `not` → `$and` / `$or` / `$not`).
         and: { type: `[${filterName}!]` },
         or: { type: `[${filterName}!]` },
         not: { type: filterName },
@@ -1792,7 +1792,7 @@ function createQuerySortAndDocumentInputs(
     });
   }
 
-  // Update operators use Mongo names without `$` (`set` / `inc` → `$set` / `$inc`).
+  // Update operators: bare Mongo names (`set` / `inc` → `$set` / `$inc`).
   const updateInput = naming.updateInput(typeName);
   if (!schemaComposer.has(updateInput)) {
     const unsetName = `${typeName}UnsetInput`;
@@ -1984,8 +1984,8 @@ function ensurePageInfo(schemaComposer: SchemaComposer) {
 }
 
 function ensureSharedQueryOperatorInputs(schemaComposer: SchemaComposer) {
-  // Mongo query-predicate names without `$` (GraphQL-legal); transport maps to `$gte` etc.
-  // Also accept `_gte` aliases at runtime.
+  // `$` is illegal in GraphQL names — generated ops use bare Mongo names (`gte`);
+  // transport maps to `$gte` and also accepts `_gte` aliases at runtime.
   const comparable = (scalar: any) => ({
     eq: scalar,
     ne: scalar,

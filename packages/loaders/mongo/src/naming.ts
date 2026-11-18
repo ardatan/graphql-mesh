@@ -5,7 +5,7 @@
  *
  * Client filter args use compose-mongoose style (`filter: *FilterInput`); other
  * args mirror the driver (`sort` / `document` / `update`). Field operators use
- * Mongo names without `$` (`gte`, `in`, … → `$gte` / `$in` in the transport).
+ * Bare Mongo op names (`gte`, `in`, … → `$gte` / `$in` in the transport; `$` is GraphQL-illegal).
  *
  * @example
  * ```ts

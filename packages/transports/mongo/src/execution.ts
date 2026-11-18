@@ -115,14 +115,12 @@ function readMongoDirective(
       return { ...dirs[0], kind };
     }
   }
-  // Legacy single `@mongo(kind:)`
-  const legacy = getDirective(subgraph, fieldConfig, 'mongo') as MongoDirectiveArgs[] | undefined;
-  return legacy?.[0];
+  return undefined;
 }
 
 /**
  * Build a Mesh executor for a mongo subgraph. Reads `@transport` options and
- * wraps fields that carry `@mongo__*` (or legacy `@mongo(kind:)`) binders.
+ * wraps fields that carry `@mongo__*` binders.
  *
  * Filter binders typically use `query: "$args.filter"` so client GraphQL
  * `filter: { name: { eq: "Ada" } }` becomes a Mongo filter document.

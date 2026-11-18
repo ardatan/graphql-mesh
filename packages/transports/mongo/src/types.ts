@@ -1,5 +1,5 @@
 /**
- * Operation kinds for legacy `@mongo(kind:)` and internal executor dispatch.
+ * Internal executor dispatch kinds for `@mongo__*` directives.
  * Prefer op-specific `@mongo__find` / `@mongo__updateOne` / … directives.
  */
 export type MongoKind =

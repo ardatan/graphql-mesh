@@ -45,10 +45,10 @@ export interface CoerceFilterOptions {
 
 /**
  * Build a MongoDB filter document from a directive binder string
- * (`@mongo__find(query: …)` / legacy `@mongo(filter:)`).
+ * (`@mongo__find(query: …)`).
  *
- * Spreads `$args.filter` (or `$args.query` / `$args.where`) and merges fixed
- * clauses. GraphQL ops without `$` (`eq`, `gte`, `and`, …) map to `$eq` / `$gte` /
+ * Spreads `$args.filter` (or `$args.query`) and merges fixed clauses. Bare GraphQL
+ * ops (`eq`, `gte`, `and`, …) map to `$eq` / `$gte` /
  * `$and`.
  *
  * @example
@@ -93,7 +93,7 @@ export function filterFromMapping(
       continue;
     }
 
-    // Bare `$args.filter` (or legacy `$args.where`) binder
+    // Bare `$args.filter` binder
     if (
       entry.value?.kind === 'args' &&
       (entry.key.startsWith('$args') || entry.key === `$args.${entry.value.value}`)
@@ -486,7 +486,7 @@ function isOperatorBag(value: Record<string, unknown>): boolean {
 }
 
 /**
- * Legacy Mesh/SQL-style `*WhereInput` → Mongo filter (kept for hand-written `@mongo`).
+ * Typed `*FilterInput` / hand-written operator maps → Mongo filter.
  *
  * @param objectIdPathPrefix When set (document-array `$elemMatch`), ObjectId policy
  *   uses this prefix + relative keys while output keys stay relative to the element.
@@ -659,7 +659,7 @@ function applyOperatorBag(
   }
 }
 
-/** Build Mongo sort from `@mongo(sort:)` binder (e.g. `$args.sort`). */
+/** Build Mongo sort from `@mongo__*(sort:)` binder (e.g. `$args.sort`). */
 export function buildMongoSort(
   sortSource: string | null | undefined,
   ctx: { args?: Record<string, unknown> },
@@ -697,7 +697,7 @@ function parseSortToken(
 /**
  * Accepts:
  * - Enum list: `['age_desc', 'name_asc']` (generated SDL; case-insensitive)
- * - Object map: `{ age: asc|desc|-1|1 }` (hand-written directive / legacy)
+ * - Object map: `{ age: asc|desc|-1|1 }` (hand-written binder)
  */
 export function graphqlSortToMongo(
   input: Record<string, unknown> | string[] | null | undefined,
@@ -768,7 +768,7 @@ export function buildSetDocument(
   return doc as Record<string, unknown>;
 }
 
-/** Mongo update operators without `$` (GraphQL-legal); transport maps to `$set` / `$inc` / … */
+/** Bare Mongo update op names (GraphQL-legal); transport maps to `$set` / `$inc` / … */
 const UPDATE_OP_KEYS = new Set([
   'set',
   'inc',

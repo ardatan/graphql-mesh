@@ -25,17 +25,18 @@ new stack (like mysql/tuql -> SQL).
   `@mongo__insertOne|insertMany` / `@mongo__updateOne|updateMany` / `@mongo__deleteOne|deleteMany`
   (SDL client API != directive binders)
 - Client args: typed `filter: *FilterInput` (`and` / `or` / `not` + field ops). Binder stays
-  `query: "$args.filter"`. Generated filters expose Mongo op names without `$` (`gte`, `in`, …).
-  Transport binders / hand-written JSON also accept `_gte` and native `{ $gte }`
+  `query: "$args.filter"`. `$` is illegal in GraphQL names, so generated ops use bare Mongo
+  names (`gte`, `in`, …); transport also accepts `_gte` aliases and native `{ $gte }` in
+  hand-written binders
 - `sort: [*Sort!]` (`id_asc` / `age_desc`; transport maps to `{ field: 1|-1 }`)
 - Directive binders: `query` / `selection` / `sort` / `set` / `pipeline`
-- `update: *UpdateInput` with Mongo update ops without `$` (`set` / `inc` / `unset` / … →
-  `$set` / `$inc` / `$unset`; `_set` aliases + native `$set` still accepted; array mods JSON)
+- `update: *UpdateInput`: same rule — bare op names (`set` / `inc` / `unset`) map to
+  `$set` / `$inc` / `$unset`; `_set` aliases + native `$set` still accepted; array mods JSON
 - `document` / `documents` for insertOne / insertMany
 - BSON ObjectId (GraphQL field `id` ← `_id`, ById args, refs, `recordId`) uses
   `ObjectID` scalar + `ObjectIDQueryOperators` (not opaque GraphQL `ID`)
 - Scalars: `graphql-scalars` (`ObjectID`, `DateTime`, `Byte`, `JSON`) + local `Decimal128`
-- Mutation payloads include typed `error: MongoError` when selected
+- Mutation payloads expose optional `error: MongoError`: selecting it opts into typed payload errors; otherwise failures surface as GraphQL `errors`
 - Nested Mongoose paths emit Embedded / DocumentArray object types + enums; `ref` paths emit
   nested `@mongo__findOne` / `@mongo__find` populate fields
 - Mesh composition rewrites `$args` / `$this` in all `mongo__*` binders; `$this`
