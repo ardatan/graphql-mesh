@@ -30,7 +30,7 @@ new stack (like mysql/tuql -> SQL).
   hand-written binders
 - `sort: [*Sort!]` (`id_asc` / `age_desc`; transport maps to `{ field: 1|-1 }`)
 - Directive binders: `query` / `selection` / `sort` / `set` / `pipeline`
-- `update: *UpdateInput`: same rule — bare op names (`set` / `inc` / `unset`) map to
+- `update: *UpdateInput`: same rule - bare op names (`set` / `inc` / `unset`) map to
   `$set` / `$inc` / `$unset`; `_set` aliases + native `$set` still accepted; array mods JSON
 - `document` / `documents` for insertOne / insertMany
 - BSON ObjectId (GraphQL field `id` ← `_id`, ById args, refs, `recordId`) uses
