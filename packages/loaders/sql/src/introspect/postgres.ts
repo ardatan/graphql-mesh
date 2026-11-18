@@ -37,32 +37,35 @@ export interface IntrospectPostgresOpts {
    */
   pool?: pg.Pool;
   /**
-   * Only introspect these tables.
+   * Only introspect these tables (others omitted from the result).
    *
    * @example ['albums', 'artists']
    */
   includeTables?: string[];
   /**
-   * Drop these tables from the result.
+   * Drop these tables from the result even when otherwise included.
    *
    * @example ['schema_migrations']
    */
   excludeTables?: string[];
   /**
-   * Postgres schema / `search_path`.
+   * Postgres schema / `search_path` used when listing tables, columns, and FKs
+   * from `information_schema` (and when discovering `$fn` computed columns).
    *
    * @default 'public'
    * @example 'app'
    */
   schema?: string;
   /**
-   * Enable TLS (`true` or Bun-style mode string).
+   * Enable TLS (`true` or Bun-style mode string) when opening a new pool.
+   * Ignored when `pool` is supplied (that pool's TLS settings are reused).
    *
    * @example true
    */
   tls?: boolean | string;
   /**
-   * Extra TLS details when SSL is enabled.
+   * Extra TLS details (`ca`, `rejectUnauthorized`) when SSL is enabled for a
+   * newly opened pool.
    *
    * @example { ca: process.env.DB_CA_PEM }
    */

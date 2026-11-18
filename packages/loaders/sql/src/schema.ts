@@ -114,7 +114,9 @@ export interface LoadSqlSubgraphOpts extends Pick<
    */
   endpoint?: string;
   /**
-   * Base directory for relative sqlite paths.
+   * Base directory for relative sqlite paths when normalizing `endpoint` into
+   * `@transport(location)` (`file:…` / bare `*.db`). Absolute paths and
+   * `:memory:` / `sqlite:…` are left unchanged.
    *
    * @default process.cwd()
    * @example '/app/data'
@@ -122,24 +124,28 @@ export interface LoadSqlSubgraphOpts extends Pick<
   cwd?: string;
   /**
    * Only introspect these SQL tables (others omitted from the GraphQL schema).
+   * Useful to keep compose schemas small when the database has many tables.
    *
    * @example ['albums', 'artists', 'tracks']
    */
   includeTables?: string[];
   /**
-   * Drop these SQL tables from introspection even when otherwise included.
+   * Drop these SQL tables from introspection even when otherwise included
+   * (migrations / internal tables).
    *
    * @example ['schema_migrations']
    */
   excludeTables?: string[];
   /**
-   * Limit columns per table (legacy mysql `tableFields` shape).
+   * Limit columns per table (legacy mysql `tableFields` shape). Columns not
+   * listed are omitted from GraphQL types and `@sql(selection:)` mappings.
    *
    * @example [{ table: 'employees', fields: ['emp_no', 'first_name', 'last_name'] }]
    */
   tableFields?: Array<{ table: string; fields: string[] }>;
   /**
    * Partial override of GraphQL naming helpers (type / field / filter names).
+   * Unspecified hooks keep {@link createDefaultNaming}.
    *
    * @example { typeName: t => t.replace(/s$/, '') }
    */

@@ -15,31 +15,32 @@ import type { SqlColumnMeta, SqlForeignKeyMeta, SqlSchemaMeta, SqlTableMeta } fr
  */
 export interface IntrospectMysqlOpts {
   /**
-   * MySQL URI including database name (`mysql://…/db`).
+   * MySQL URI including database name (`mysql://…/db` or `mysqls://…`).
    *
    * @example 'mysql://root@127.0.0.1:3306/employees'
    */
   connectionString: string;
   /**
-   * Only introspect these tables.
+   * Only introspect these tables (others omitted from the result).
    *
    * @example ['employees', 'departments']
    */
   includeTables?: string[];
   /**
-   * Drop these tables from the result.
+   * Drop these tables from the result even when otherwise included.
    *
    * @example ['flyway_schema_history']
    */
   excludeTables?: string[];
   /**
-   * Enable TLS (`true` or Bun-style mode string).
+   * Enable TLS (`true` or Bun-style mode string). `mysqls://` and URI `sslmode=`
+   * also turn SSL on via the shared SSL resolver.
    *
    * @example true
    */
   tls?: boolean | string;
   /**
-   * Extra TLS details when SSL is enabled.
+   * Extra TLS details (`ca`, `rejectUnauthorized`) when SSL is enabled.
    *
    * @example { rejectUnauthorized: true, ca: pem }
    */

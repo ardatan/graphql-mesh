@@ -46,7 +46,8 @@ export type SqlKind = SqlQueryKind | SqlMutationKind;
  */
 export interface SqlSoftDeleteOptions {
   /**
-   * Timestamp / marker column set on soft delete.
+   * Timestamp / marker column set on soft delete (e.g. `deleted_at`). Reads add
+   * `column IS NULL`; soft `DELETE` sets the column to the dialect's "now".
    *
    * @example 'deleted_at'
    */
@@ -70,14 +71,16 @@ export interface SqlSoftDeleteOptions {
  */
 export interface SqlSslOptions {
   /**
-   * Verify TLS certificates when SSL is on.
+   * Verify TLS certificates when SSL is on. Set `false` (or use `tls: "insecure"` /
+   * `"no-verify"` / URI `sslmode=no-verify`) only for trusted lab endpoints.
    *
    * @default true
    * @example false
    */
   rejectUnauthorized?: boolean;
   /**
-   * PEM CA bundle / certificate string forwarded to `pg` / `mysql2`.
+   * PEM CA bundle / certificate string forwarded to `pg` / `mysql2` when the
+   * server uses a private CA (e.g. RDS). Merged with URI `sslmode` when both set.
    *
    * @example '-----BEGIN CERTIFICATE-----\n…'
    */
@@ -110,42 +113,49 @@ export interface SqlTransportOptions {
    */
   adapter?: SqlAdapter;
   /**
-   * Max pool size. Maps to Bun `max`, mysql2 `connectionLimit`, pg `max`.
+   * Max pool size. Maps to Bun `max`, mysql2 `connectionLimit`, and pg `max`
+   * when Mesh opens the pool (`createSqlClient`).
    *
    * @default 10
    * @example 20
    */
   max?: number;
   /**
-   * Idle connection lifetime in seconds (`0` = off). Bun `idleTimeout`.
-   * When omitted, the driver / Bun default applies.
+   * Idle connection lifetime in seconds (`0` = off). Forwarded as Bun
+   * `idleTimeout` / mysql2 `idleTimeout` / pg `idleTimeoutMillis` (seconds → ms
+   * on Node). When omitted, the driver / Bun default applies.
    *
    * @example 30
    */
   idleTimeout?: number;
   /**
-   * Seconds to wait for a new connection. Bun `connectionTimeout`.
-   * When omitted, the driver / Bun default applies.
+   * Seconds to wait for a new connection. Forwarded as Bun `connectionTimeout` /
+   * mysql2 `connectTimeout` / pg `connectionTimeoutMillis` (seconds → ms on
+   * Node). When omitted, the driver / Bun default applies.
    *
    * @example 10
    */
   connectionTimeout?: number;
   /**
-   * Enable TLS / SSL (`true` or Bun-style mode string).
+   * Enable TLS / SSL. Accepts `true`, or Bun-style mode strings such as
+   * `'require'` / `'insecure'` / `'no-verify'`. URI schemes (`mysqls://`) and
+   * `sslmode=` query params also enable SSL (merged with {@link SqlSslOptions}).
    *
    * @example true
    * @example 'require'
    */
   tls?: boolean | string;
   /**
-   * Extra TLS details (`ca`, `rejectUnauthorized`) when SSL is enabled.
+   * Extra TLS details (`ca`, `rejectUnauthorized`) merged when SSL is enabled
+   * by `tls` or the connection URI.
    *
    * @example { ca: process.env.DB_CA_PEM, rejectUnauthorized: true }
    */
   ssl?: SqlSslOptions;
   /**
    * Postgres schema / `search_path`. Used for introspection and `@dataplan/pg`
-   * table identity (`schema.table`). Shared pools bind one schema only.
+   * table identity (`schema.table`). Shared pools bind one schema only —
+   * conflicting wrappers on the same pool are rejected.
    * When omitted, introspection still uses `public`; runtime `SET search_path`
    * runs only when this option is provided.
    *
@@ -153,7 +163,8 @@ export interface SqlTransportOptions {
    */
   schema?: string;
   /**
-   * Soft-delete column (+ optional table allowlist).
+   * Soft-delete column (+ optional table allowlist). Reads hide rows where
+   * `column IS NOT NULL`; `DELETE` becomes `UPDATE … SET column = <now>`.
    *
    * @example { column: 'deleted_at' }
    */

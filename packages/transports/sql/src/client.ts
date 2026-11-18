@@ -33,28 +33,31 @@ import { parseSqlUri } from './uri.js';
  */
 export interface CreateSqlClientOptions extends SqlTransportOptions {
   /**
-   * SQL dialect for the client drivers.
+   * SQL dialect for the client drivers (`postgres` → `pg`, `mysql` → `mysql2`,
+   * `sqlite` → `node:sqlite` / `Bun.SQL`).
    *
    * @example 'postgres'
    */
   adapter: SqlAdapter;
   /**
-   * Connection URI or sqlite path (same shapes as `loadSqlSubgraph` `endpoint`).
+   * Connection URI or sqlite path (same shapes as `loadSqlSubgraph` `endpoint`:
+   * `postgres(ql)://…`, `mysql(2|s)://…`, `file:…`, `:memory:`, or a `*.db` path).
    *
    * @example 'postgres://localhost:5432/shop'
    * @example 'file:./chinook.db'
    */
   location: string;
   /**
-   * Base directory for relative sqlite paths. When omitted, relative locations
-   * stay as given (Node/Bun resolve them from the process cwd).
+   * Base directory joined onto relative sqlite paths before opening the DB.
+   * When omitted, relative locations stay as given (Node/Bun resolve them from
+   * the process cwd).
    *
    * @example process.cwd()
    */
   cwd?: string;
   /**
-   * Force Node drivers (`pg` / `mysql2` / `node:sqlite`) even when `Bun.SQL` is present.
-   * When omitted / false, prefers `Bun.SQL` if available.
+   * Force Node drivers (`pg` / `mysql2` / `node:sqlite`) even when `Bun.SQL` is
+   * present. Prefer this in unit tests that must not depend on Bun's SQL client.
    *
    * @default false
    * @example true
@@ -337,7 +340,10 @@ export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string):
  */
 export interface WrapPgPoolAsSqlClientOpts {
   /**
-   * Bind `search_path` on every pooled connection (one schema per shared pool).
+   * Bind `search_path` on every pooled connection (including idle clients
+   * already in a supplied pool). One schema per shared pool — a second wrap
+   * with a different schema is rejected. When omitted, Mesh does not issue
+   * `SET search_path`.
    *
    * @example 'app'
    * @example 'public'

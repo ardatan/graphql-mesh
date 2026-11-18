@@ -20,20 +20,22 @@ export interface IntrospectSqliteOpts {
    */
   db: string;
   /**
-   * Base directory for relative paths. When omitted, relative `db` values stay
-   * as given (Node resolves them from the process cwd).
+   * Base directory joined onto relative `db` paths before opening the file.
+   * When omitted, relative values stay as given (Node resolves them from the
+   * process cwd).
    *
    * @example process.cwd()
    */
   cwd?: string;
   /**
-   * Only introspect these tables.
+   * Only introspect these tables (others omitted from the result).
    *
    * @example ['albums', 'artists']
    */
   includeTables?: string[];
   /**
-   * Drop these tables from the result.
+   * Drop these tables from the result even when otherwise included
+   * (e.g. `sqlite_sequence`).
    *
    * @example ['sqlite_sequence']
    */

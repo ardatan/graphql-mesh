@@ -77,14 +77,16 @@ export interface GetSqlExecutorOpts {
    */
   subgraph: GraphQLSchema;
   /**
-   * Base directory for relative sqlite `@transport(location)` paths. When
-   * omitted, relative locations stay as given (see {@link createSqlClient}).
+   * Base directory for relative sqlite `@transport(location)` paths when Mesh
+   * opens a client. When omitted, relative locations stay as given (see
+   * {@link createSqlClient}).
    *
    * @example process.cwd()
    */
   cwd?: string;
   /**
-   * Pre-built client; when omitted, one is created from `@transport` location/options.
+   * Pre-built client (e.g. a wrapped `pg.Pool` from a Mesh handler). When
+   * omitted, one is created from `@transport` location/options.
    *
    * @example wrapPgPoolAsSqlClient(pool, { schema: 'public' })
    */
