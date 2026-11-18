@@ -1,11 +1,44 @@
-// eslint-disable-next-line import/no-nodejs-modules -- node:sqlite DatabaseSync client
-import { DatabaseSync } from 'node:sqlite';
+// eslint-disable-next-line import/no-nodejs-modules -- sync lazy load for Node SQLite only
+import { createRequire } from 'node:module';
+// eslint-disable-next-line import/no-nodejs-modules -- resolve anchor for createRequire (no import.meta; Jest CJS)
+import { join } from 'node:path';
 import { createPool, type Pool } from 'mysql2/promise';
 import pg from 'pg';
 import type { Pool as PgPool, PoolConfig as PgPoolConfig } from 'pg';
 import { resolveSqlitePath } from './adapter.js';
 import type { SqlAdapter, SqlClient, SqlTransportOptions } from './types.js';
 import { parseSqlUri } from './uri.js';
+
+/** Minimal `node:sqlite` DatabaseSync surface used by {@link createSqliteClient}. */
+type NodeSqliteDatabase = {
+  prepare(sql: string): {
+    columns?: () => unknown[];
+    all: (...params: unknown[]) => unknown[];
+    run: (...params: unknown[]) => { changes?: number };
+  };
+  close(): void;
+};
+
+type NodeSqliteDatabaseSync = new (path: string) => NodeSqliteDatabase;
+
+/**
+ * Load `node:sqlite` only when the Node SQLite client path is selected.
+ * A static import would fail on runtimes without that builtin (e.g. older Bun)
+ * even for MySQL / Postgres / Bun.SQL. Anchor `createRequire` on cwd (not
+ * `import.meta.url`) so Jest's CJS transform can still load this module.
+ */
+function loadNodeSqliteDatabaseSync(): NodeSqliteDatabaseSync {
+  try {
+    const req = createRequire(join(process.cwd(), 'package.json'));
+    const mod = req('node:sqlite') as { DatabaseSync: NodeSqliteDatabaseSync };
+    return mod.DatabaseSync;
+  } catch (err) {
+    throw new Error(
+      'node:sqlite is not available in this runtime. Use Bun.SQL (omit preferNode) or Node >= 22.18.',
+      { cause: err },
+    );
+  }
+}
 
 /**
  * Options for {@link createSqlClient} — dialect + connection location plus
@@ -558,6 +591,7 @@ export function wrapMysqlPoolAsSqlClient(pool: {
 }
 
 function createSqliteClient(location: string, cwd?: string): SqlClient {
+  const DatabaseSync = loadNodeSqliteDatabaseSync();
   const dbPath = resolveSqlitePath(location, cwd);
   const db = new DatabaseSync(dbPath);
   return {
@@ -565,15 +599,10 @@ function createSqliteClient(location: string, cwd?: string): SqlClient {
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
       const stmt = db.prepare(sql);
       // node:sqlite rejects boolean binds — coerce GraphQLBoolean filters/writes.
-      const bind = params.map(p => (typeof p === 'boolean' ? (p ? 1 : 0) : p)) as Array<
-        null | number | bigint | string | Uint8Array
-      >;
+      const bind = params.map(p => (typeof p === 'boolean' ? (p ? 1 : 0) : p));
       // Prefer statement metadata over SQL-text heuristics — a table named
       // `"returning"` must not look like a RETURNING clause.
-      const cols =
-        typeof (stmt as { columns?: () => unknown[] }).columns === 'function'
-          ? (stmt as { columns: () => unknown[] }).columns()
-          : null;
+      const cols = typeof stmt.columns === 'function' ? stmt.columns() : null;
       const returnsRows =
         cols != null
           ? cols.length > 0
@@ -582,7 +611,7 @@ function createSqliteClient(location: string, cwd?: string): SqlClient {
         const rows = stmt.all(...bind) as T[];
         return { rows, rowCount: rows.length };
       }
-      const result = stmt.run(...bind) as { changes?: number };
+      const result = stmt.run(...bind);
       return {
         rows: [] as T[],
         rowCount: Number(result.changes ?? 0),
