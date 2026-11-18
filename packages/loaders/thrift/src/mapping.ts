@@ -719,9 +719,13 @@ function buildTJSONListSetSelectionExpr(returnTypeVal: TypeVal, topTypeMap: Type
   if (elemResolved.type === TType.STRUCT) {
     // TJSON list/set of structs: ["rec", n, { "1":… }, …] — elements are bare
     // field maps (no per-element `rec` wrapper). Project from `@` directly.
+    // Seed seenStructs with the element type so `list<Node>` + `Node.children:
+    // list<Node>` hits the bounded leaf projection instead of overflowing.
+    const elemName = elemResolved.name || 'Anon';
+    const nextSeen = new Set<string>([elemName]);
     const nested = Object.entries(elemResolved.fields)
       .map(([fieldName, fieldType]) =>
-        formatTJSONLitProperty(fieldName, fieldType, topTypeMap, '@'),
+        formatTJSONLitProperty(fieldName, fieldType, topTypeMap, '@', nextSeen),
       )
       .join(',\n    ');
     return `${base}->map(@->{\n    ${nested}\n  })`;
@@ -911,9 +915,23 @@ function formatTJSONLitProperty(
     const elemResolved = resolveTypeVal(resolved.elementType, topTypeMap);
     if (elemResolved.type === TType.STRUCT) {
       // Nested list/set of structs: elements are bare field maps — map from `@`.
+      const elemName = elemResolved.name || graphqlName;
+      if (seenStructs.has(elemName)) {
+        // Cycle: keep element field projections as leaves (no further nesting).
+        const nested = Object.entries(elemResolved.fields)
+          .map(([childName, childType]) => {
+            const cid = String(childType.id ?? 1);
+            const ctag = tjsonTypeTag(childType, topTypeMap);
+            return `${childName}: @->get("${cid}")->get("${ctag}")`;
+          })
+          .join(',\n    ');
+        return `${graphqlName}: ${listPath}->map(@->{\n    ${nested}\n  })`;
+      }
+      const nextSeen = new Set(seenStructs);
+      nextSeen.add(elemName);
       const nested = Object.entries(elemResolved.fields)
         .map(([childName, childType]) =>
-          formatTJSONLitProperty(childName, childType, topTypeMap, '@', seenStructs),
+          formatTJSONLitProperty(childName, childType, topTypeMap, '@', nextSeen),
         )
         .join(',\n    ');
       return `${graphqlName}: ${listPath}->map(@->{\n    ${nested}\n  })`;

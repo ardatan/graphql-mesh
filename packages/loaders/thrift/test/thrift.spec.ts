@@ -753,6 +753,89 @@ describe('thrift', () => {
     expect(successData.__throw_Boom).toBe(false);
   });
 
+  it('TJSON list unions bound recursive list<Node> children without overflowing', async () => {
+    // Schema load still rejects some recursive GraphQL list shapes; exercise the
+    // selection mapper directly with a Node→list<Node> TypeMap (finite Item→Child
+    // coverage remains in the nested-struct test above).
+    const { TType } = await import('@creditkarma/thrift-server-core');
+    const { buildTJSONUnionConnectSelection } = await import('../src/mapping.js');
+    const { applySelection } = await import('../../../transports/rest/src/directives/connect.js');
+    const topTypeMap = {
+      Node: {
+        type: TType.STRUCT,
+        name: 'Node',
+        fields: {
+          id: { id: 1, type: TType.I32 },
+          children: {
+            id: 2,
+            type: TType.LIST,
+            elementType: { type: 'ref' as const, name: 'Node' },
+          },
+        },
+      },
+      Boom: {
+        type: TType.STRUCT,
+        name: 'Boom',
+        fields: {
+          message: { id: 1, type: TType.STRING },
+        },
+      },
+    };
+    const selection = buildTJSONUnionConnectSelection(
+      { type: TType.LIST, elementType: { type: 'ref', name: 'Node' } },
+      [{ id: 1, name: 'boom', typeName: 'Boom' }],
+      topTypeMap as any,
+    );
+    // First Node expansion projects id; recursive children stay leaf-typed (no nested Node map).
+    expect(selection).toMatch(/id:\s*@->get\("1"\)->get\("i32"\)/);
+    expect(selection).toMatch(
+      /children:\s*@->get\("2"\)->get\("lst"\)->slice\(2\)->map\(@->\{\s*id:\s*@->get\("1"\)->get\("i32"\),\s*children:\s*@->get\("2"\)->get\("lst"\)/,
+    );
+    // Must not expand Node.children → Node.children → … again.
+    expect(
+      selection.match(/children:\s*@->get\("2"\)->get\("lst"\)->slice\(2\)->map/g)?.length,
+    ).toBe(1);
+
+    const extras = {
+      status: 200,
+      vars: { args: {}, thisValue: undefined, env: {}, context: {} },
+    };
+    const successReply = [
+      1,
+      'roots',
+      2,
+      1,
+      {
+        '0': {
+          lst: [
+            'rec',
+            1,
+            {
+              '1': { i32: 1 },
+              '2': {
+                lst: [
+                  'rec',
+                  1,
+                  {
+                    '1': { i32: 2 },
+                    '2': { lst: ['rec', 0] },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    ];
+    const successData = applySelection(selection, successReply, extras);
+    expect(successData.value).toEqual([
+      {
+        id: 1,
+        children: [{ id: 2, children: ['rec', 0] }],
+      },
+    ]);
+  });
+
   it('TJSON void union keeps success ok when an exception also declares ok', async () => {
     const { buildSchema } = await import('graphql');
     const { applySelection } = await import('../../../transports/rest/src/directives/connect.js');
