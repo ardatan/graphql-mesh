@@ -512,10 +512,82 @@ describe('thrift', () => {
     });
     const selection = (schema.getQueryType()!.getFields().go.extensions as any).directives.connect
       .selection as string;
-    // One `message` property with `??` — not two keys that clobber at eval time.
+    // One `message` property with throw-gated `??` — not two keys that clobber at eval time.
     expect(selection.match(/\bmessage:/g)?.length).toBe(1);
     expect(selection).toMatch(
-      /message:\s*\$\(\$->get\(4\)->get\("1"\)->get\("rec"\)->get\("1"\)->get\("str"\)\s*\?\?\s*\$->get\(4\)->get\("2"\)->get\("rec"\)->get\("1"\)->get\("str"\)\)/,
+      /message:\s*\$\(\$->get\(4\)->get\("1"\)->ne\(null\)->match\(\[true,/,
     );
+    expect(selection).toMatch(/\?\?\s*\$->get\(4\)->get\("2"\)->ne\(null\)->match\(\[true,/);
+  });
+
+  it('binary list<list<enum>> args fail at generate', async () => {
+    await expect(
+      loadNonExecutableGraphQLSchemaFromIDL({
+        subgraphName: 'NestedEnumListSvc',
+        source: './fixtures/nested_enum_list_arg.thrift',
+        baseDir: __dirname,
+        endpoint: 'http://localhost:4000/nested-enum-list',
+        protocol: 'binary',
+      }),
+    ).rejects.toThrow(/nested list arguments with enum elements cannot be emitted/);
+  });
+
+  it('generated TJSON union selection preserves shared struct fields after processDirectives', async () => {
+    const { buildSchema } = await import('graphql');
+    const { applySelection } = await import('../../../transports/rest/src/directives/connect.js');
+    const { processDirectives } =
+      await import('../../../transports/rest/src/directives/process.js');
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'SharedThrowStructSvc',
+      source: './fixtures/shared_throw_struct_fields.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/shared-throw-struct',
+      protocol: 'json',
+      ignoreExceptions: false,
+    });
+    const go = schema.getQueryType()!.getFields().go;
+    const selection = (go.extensions as any).directives.connect.selection as string;
+    expect(selection).toMatch(/detail:\s*\$\(\$->get\(4\)->get\("1"\)->ne\(null\)->match/);
+    expect(selection.match(/\bdetail:/g)?.length).toBe(1);
+
+    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const union = rebuilt.getType('GoResult') as GraphQLUnionType;
+    const resolveType = union.resolveType!;
+    const extras = {
+      status: 200,
+      vars: { args: {}, thisValue: undefined, env: {}, context: {} },
+    };
+
+    const successReply = [1, 'go', 2, 1, { '0': { rec: { '1': { i32: 42 } } } }];
+    const successData = applySelection(selection, successReply, extras);
+    expect(successData.field0).toBe(true);
+    expect(successData.value).toEqual({ left: 42 });
+    expect(resolveType(successData, null as any, { schema: rebuilt } as any, union)).toBe(
+      'GoSuccess',
+    );
+
+    const firstReply = [
+      1,
+      'go',
+      2,
+      1,
+      { '1': { rec: { '1': { rec: { '1': { str: 'from-first' }, '2': { i32: 7 } } } } } },
+    ];
+    const firstData = applySelection(selection, firstReply, extras);
+    expect(firstData.__throw_First).toBe(true);
+    expect(firstData.detail).toEqual({ text: 'from-first', code: 7 });
+    expect(resolveType(firstData, null as any, { schema: rebuilt } as any, union)).toBe('First');
+
+    const secondReply = [
+      1,
+      'go',
+      2,
+      1,
+      { '2': { rec: { '1': { rec: { '1': { str: 'from-second' }, '2': { i32: 9 } } } } } },
+    ];
+    const secondData = applySelection(selection, secondReply, extras);
+    expect(secondData.__throw_Second).toBe(true);
+    expect(secondData.detail).toEqual({ text: 'from-second', code: 9 });
+    expect(resolveType(secondData, null as any, { schema: rebuilt } as any, union)).toBe('Second');
   });
 });

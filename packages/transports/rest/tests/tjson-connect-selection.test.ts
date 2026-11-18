@@ -31,7 +31,7 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
   value: $->get(4)->get("0")->get("tf"),
   __throw_First: $->get(4)->get("1")->ne(null),
   __throw_Second: $->get(4)->get("2")->ne(null),
-  message: $($->get(4)->get("1")->get("rec")->get("1")->get("str") ?? $->get(4)->get("2")->get("rec")->get("1")->get("str"))
+  message: $($->get(4)->get("1")->ne(null)->match([true, $->get(4)->get("1")->get("rec")->get("1")->get("str")], [@, null]) ?? $->get(4)->get("2")->ne(null)->match([true, $->get(4)->get("2")->get("rec")->get("1")->get("str")], [@, null]))
 })`;
     const firstThrown = [1, 'go', 2, 1, { '1': { rec: { '1': { str: 'from-first' } } } }];
     expect(applySelection(sel, firstThrown, extras)).toEqual({
@@ -46,6 +46,54 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
       __throw_First: false,
       __throw_Second: true,
       message: 'from-second',
+    });
+  });
+
+  it('TJSON union gates shared struct fields on active throw before coalesce', () => {
+    // Absent throw still builds `$({ text: undefined })` — without throw-gating that
+    // object is non-nullish and `??` would hide the active exception's struct.
+    const sel = `$({
+  field0: $->get(4)->get("0")->ne(null),
+  value: $({
+    left: $->get(4)->get("0")->get("rec")->get("1")->get("i32")
+  }),
+  __throw_First: $->get(4)->get("1")->ne(null),
+  __throw_Second: $->get(4)->get("2")->ne(null),
+  detail: $($->get(4)->get("1")->ne(null)->match([true, $({
+    text: $->get(4)->get("1")->get("rec")->get("1")->get("rec")->get("1")->get("str"),
+    code: $->get(4)->get("1")->get("rec")->get("1")->get("rec")->get("2")->get("i32")
+  })], [@, null]) ?? $->get(4)->get("2")->ne(null)->match([true, $({
+    text: $->get(4)->get("2")->get("rec")->get("1")->get("rec")->get("1")->get("str"),
+    code: $->get(4)->get("2")->get("rec")->get("1")->get("rec")->get("2")->get("i32")
+  })], [@, null]))
+})`;
+    const firstThrown = [
+      1,
+      'go',
+      2,
+      1,
+      { '1': { rec: { '1': { rec: { '1': { str: 'from-first' }, '2': { i32: 7 } } } } } },
+    ];
+    expect(applySelection(sel, firstThrown, extras)).toEqual({
+      field0: false,
+      value: {},
+      __throw_First: true,
+      __throw_Second: false,
+      detail: { text: 'from-first', code: 7 },
+    });
+    const secondThrown = [
+      1,
+      'go',
+      2,
+      1,
+      { '2': { rec: { '1': { rec: { '1': { str: 'from-second' }, '2': { i32: 9 } } } } } },
+    ];
+    expect(applySelection(sel, secondThrown, extras)).toEqual({
+      field0: false,
+      value: {},
+      __throw_First: false,
+      __throw_Second: true,
+      detail: { text: 'from-second', code: 9 },
     });
   });
 

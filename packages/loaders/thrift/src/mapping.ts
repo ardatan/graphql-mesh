@@ -120,6 +120,28 @@ function containsStruct(
   return false;
 }
 
+/** True when a type tree contains a named ENUM that needs i32 `->match` on the wire. */
+function containsEnum(
+  typeVal: TypeVal,
+  topTypeMap: TypeMap,
+  stack: Set<string> = new Set(),
+): boolean {
+  const resolved = resolveTypeVal(typeVal, topTypeMap, stack);
+  if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
+    return true;
+  }
+  if (resolved.type === TType.LIST || resolved.type === TType.SET) {
+    return containsEnum(resolved.elementType, topTypeMap, stack);
+  }
+  if (resolved.type === TType.MAP) {
+    return (
+      containsEnum(resolved.keyType, topTypeMap, stack) ||
+      containsEnum(resolved.valType, topTypeMap, stack)
+    );
+  }
+  return false;
+}
+
 function tjsonTypeTag(typeVal: TypeVal, topTypeMap: TypeMap): string {
   const resolved = resolveTypeVal(typeVal, topTypeMap);
   return TJSON_TYPE_TAG[resolved.type as TType] || 'i32';
@@ -253,10 +275,16 @@ function formatCompactArgField(
       return [`${pad}${id}(${token}): ${level === 0 ? valueExpr : graphqlName}`];
     }
     if (elem.type === TType.LIST || elem.type === TType.SET) {
-      // Nested scalar/enum containers (e.g. list<list<i32>>) keep the full wire token.
+      // Nested scalar containers (e.g. list<list<i32>>) keep the full wire token.
+      // Nested enum containers would emit bare i32 tokens and drop name↔i32 match.
       if (containsStruct(elem, topTypeMap)) {
         throw new Error(
           `Thrift nested ${wire} arguments with struct elements cannot be emitted as compact @thrift__rpc args without losing nested descriptors. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
+        );
+      }
+      if (containsEnum(elem, topTypeMap)) {
+        throw new Error(
+          `Thrift nested ${wire} arguments with enum elements cannot be emitted as compact @thrift__rpc args without losing name↔i32 ->match. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
         );
       }
       return [`${pad}${id}(${token}): ${level === 0 ? valueExpr : graphqlName}`];
@@ -338,6 +366,11 @@ export function buildCompactSelection(
     if ((elem.type === TType.LIST || elem.type === TType.SET) && containsStruct(elem, topTypeMap)) {
       throw new Error(
         `Thrift nested list/set of structs in RPC selection cannot be emitted as compact @thrift__rpc selection without losing field projections. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
+      );
+    }
+    if ((elem.type === TType.LIST || elem.type === TType.SET) && containsEnum(elem, topTypeMap)) {
+      throw new Error(
+        `Thrift nested list/set of enums in RPC selection cannot be emitted as compact @thrift__rpc selection without losing name↔i32 ->match. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
       );
     }
     // list<map<string, list<Item>>> → wireTypeToken drops Item descriptors.
@@ -427,6 +460,11 @@ function formatCompactSelectionField(
     if (containsStruct(resolved.elementType, topTypeMap)) {
       throw new Error(
         `Thrift nested ${wire} of structs in RPC selection cannot be emitted as compact @thrift__rpc selection without losing field projections. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
+      );
+    }
+    if (containsEnum(resolved.elementType, topTypeMap)) {
+      throw new Error(
+        `Thrift nested ${wire} of enums in RPC selection cannot be emitted as compact @thrift__rpc selection without losing name↔i32 ->match. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
       );
     }
   }
@@ -755,14 +793,18 @@ export function buildTJSONUnionConnectSelection(
   } else {
     props.push(`value: ${buildTJSONConnectSelection(returnTypeVal, topTypeMap)}`);
   }
-  // Exception field projections — merge shared GraphQL names with `??` so a later
-  // throw's missing path does not overwrite an earlier throw's value with undefined.
+  // Exception field projections — merge shared GraphQL names with `??`.
+  // Gate each source on throw-field presence first: struct `$({…})` projections are
+  // non-nullish even when nested paths are undefined, so bare `??` would hide the
+  // active exception's struct behind an empty projection from an absent throw.
   const throwFieldExprs = new Map<string, string[]>();
   const pushThrowField = (graphqlName: string, expr: string) => {
     const list = throwFieldExprs.get(graphqlName) || [];
     list.push(expr);
     throwFieldExprs.set(graphqlName, list);
   };
+  const gateOnThrow = (fid: string, expr: string): string =>
+    `$->get(4)->get("${fid}")->ne(null)->match([true, ${expr}], [@, null])`;
   for (const t of throws) {
     const typeVal = topTypeMap[t.typeName];
     const fid = String(t.id);
@@ -773,10 +815,11 @@ export function buildTJSONUnionConnectSelection(
       for (const [fieldName, fieldType] of Object.entries(typeVal.fields)) {
         const lit = formatTJSONLitProperty(fieldName, fieldType, topTypeMap, parent);
         const colon = lit.indexOf(':');
-        pushThrowField(fieldName, colon >= 0 ? lit.slice(colon + 1).trim() : lit);
+        const raw = colon >= 0 ? lit.slice(colon + 1).trim() : lit;
+        pushThrowField(fieldName, gateOnThrow(fid, raw));
       }
     } else {
-      pushThrowField('message', `${parent}->get("1")->get("str")`);
+      pushThrowField('message', gateOnThrow(fid, `${parent}->get("1")->get("str")`));
     }
   }
   for (const [fieldName, exprs] of throwFieldExprs) {
