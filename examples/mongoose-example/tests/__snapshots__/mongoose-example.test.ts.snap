@@ -11,8 +11,29 @@ input CreateUserInput {
   gender: String
   languages: JSON
   name: String
-  salaryDecimal: String
+  salaryDecimal: Decimal128
   someMixed: JSON
+}
+
+"""
+BSON Decimal128 value. Serialized and parsed as a decimal string (e.g. \`"12.50"\`).
+"""
+scalar Decimal128
+
+input Decimal128Filter {
+  eq: Decimal128
+  exists: Boolean
+  gt: Decimal128
+  gte: Decimal128
+  in: [Decimal128!]
+  lt: Decimal128
+  lte: Decimal128
+  ne: Decimal128
+  nin: [Decimal128!]
+}
+
+interface ErrorInterface {
+  message: String
 }
 
 input FloatFilter {
@@ -39,6 +60,11 @@ input IDFilter {
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type MongoError implements ErrorInterface {
+  code: String
+  message: String
+}
 
 enum MongoKind {
   AGGREGATE
@@ -83,6 +109,7 @@ type PaginationInfo {
 }
 
 type Query {
+  aggregateUsers(pipeline: JSON, where: UserWhereInput): [JSON!]!
   allUsers(after: String, first: Int, orderBy: UserOrderByInput, where: UserWhereInput): UserConnection
   findUser(orderBy: UserOrderByInput, skip: Int, where: UserWhereInput): User
   user(id: ID!): User
@@ -114,7 +141,7 @@ input UpdateUserInput {
   gender: String
   languages: JSON
   name: String
-  salaryDecimal: String
+  salaryDecimal: Decimal128
   someMixed: JSON
 }
 
@@ -125,7 +152,7 @@ type User {
   id: ID!
   languages: JSON
   name: String
-  salaryDecimal: String
+  salaryDecimal: Decimal128
   someMixed: JSON
 }
 
@@ -161,6 +188,7 @@ type UserPagination {
 type UserPayload {
   createdCount: Int
   deletedCount: Int
+  error: MongoError
   matchedCount: Int
   modifiedCount: Int
   record: User
@@ -179,7 +207,7 @@ input UserWhereInput {
   id: IDFilter
   languages: StringFilter
   name: StringFilter
-  salaryDecimal: FloatFilter
+  salaryDecimal: Decimal128Filter
   someMixed: StringFilter
 }"
 `;

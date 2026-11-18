@@ -9,11 +9,13 @@ import {
   type GraphQLScalarType,
 } from 'graphql';
 import { GraphQLByte, GraphQLDateTime, GraphQLJSON, GraphQLObjectID } from 'graphql-scalars';
+import { GraphQLDecimal128 } from './scalars.js';
 
 /**
  * Map a Mongoose / BSON path instance type name to a GraphQL output type.
  * Sole document PK (`_id` / asId) uses GraphQL `ID` (federation-friendly).
  * Other ObjectId paths keep graphql-scalars `ObjectID`.
+ * Decimal128 uses the local `Decimal128` scalar (string wire format).
  */
 export function mapMongoPathToGraphQL(
   instance: string,
@@ -31,7 +33,7 @@ export function mapMongoPathToGraphQL(
     case 'Number':
       return GraphQLFloat;
     case 'Decimal128':
-      return GraphQLString;
+      return GraphQLDecimal128;
     case 'Boolean':
       return GraphQLBoolean;
     case 'Date':

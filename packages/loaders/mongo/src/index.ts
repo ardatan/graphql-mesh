@@ -4,6 +4,7 @@ import { loadGraphQLSchemaFromMongo } from './schema.js';
 
 export * from './directives.js';
 export * from './naming.js';
+export * from './scalars.js';
 export * from './schema.js';
 export * from './type-map.js';
 

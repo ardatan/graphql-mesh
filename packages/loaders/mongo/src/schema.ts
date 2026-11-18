@@ -16,6 +16,7 @@ import type { ImportFn } from '@graphql-mesh/types';
 import { defaultImportFn, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { MongoDirective, MongoKindEnum, TransportDirective } from './directives.js';
 import { createDefaultNaming, type MongoNaming } from './naming.js';
+import { GraphQLDecimal128 } from './scalars.js';
 import { mapMongoPathToGraphQL } from './type-map.js';
 
 const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
@@ -48,12 +49,14 @@ export async function loadGraphQLSchemaFromMongo(
   schemaComposer.add(GraphQLObjectID);
   schemaComposer.add(GraphQLDateTime);
   schemaComposer.add(GraphQLJSON);
+  schemaComposer.add(GraphQLDecimal128);
   schemaComposer.addDirective(TransportDirective);
   schemaComposer.addDirective(MongoDirective);
   schemaComposer.add(MongoKindEnum);
 
   ensureSharedFilterInputs(schemaComposer);
   ensurePageInfo(schemaComposer);
+  ensureErrorInterface(schemaComposer);
 
   const modelMeta: Array<{
     typeName: string;
@@ -308,6 +311,22 @@ function emitModelRootFields(
     type: new GraphQLNonNull(GraphQLInt),
     args: { where: { type: whereType } },
     directives: [mongo('COUNT', { where: '$args.where', selection: blockArg('$') })],
+  });
+
+  queryTC.setField(naming.aggregateField(typeName), {
+    type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLJSON))),
+    args: {
+      where: { type: whereType },
+      // JSON array of stages (`[{ $match }, { $group }, …]`) — `$` keys need variables.
+      pipeline: { type: GraphQLJSON },
+    },
+    directives: [
+      mongo('AGGREGATE', {
+        where: '$args.where',
+        pipeline: '$args.pipeline',
+        selection: blockArg('$'),
+      }),
+    ],
   });
 
   queryTC.setField(naming.connectionField(typeName), {
@@ -601,8 +620,8 @@ function createFilterSortAndInputs(
             .filter(p => p.name !== '_id' && p.name !== '__v' && !p.name.includes('.'))
             .map(p => {
               let filterType = 'StringFilter';
-              if (p.instance === 'Number' || p.instance === 'Decimal128')
-                filterType = 'FloatFilter';
+              if (p.instance === 'Number') filterType = 'FloatFilter';
+              else if (p.instance === 'Decimal128') filterType = 'Decimal128Filter';
               else if (p.instance === 'Boolean') filterType = 'BooleanFilter';
               else if (p.instance === 'Date') filterType = 'DateTimeFilter';
               else if (p.ref || p.instance === 'ObjectID' || p.instance === 'ObjectId')
@@ -698,6 +717,33 @@ function createPayloadType(schemaComposer: SchemaComposer, naming: MongoNaming, 
         modifiedCount: GraphQLInt,
         matchedCount: GraphQLInt,
         deletedCount: GraphQLInt,
+        /**
+         * v0 graphql-compose-mongoose parity: if the client selects `error`,
+         * operation failures are returned here instead of GraphQL `errors`.
+         */
+        error: 'MongoError',
+      },
+    });
+  }
+}
+
+function ensureErrorInterface(schemaComposer: SchemaComposer) {
+  if (!schemaComposer.has('ErrorInterface')) {
+    schemaComposer.createInterfaceTC({
+      name: 'ErrorInterface',
+      fields: {
+        message: 'String',
+      },
+      resolveType: () => 'MongoError',
+    });
+  }
+  if (!schemaComposer.has('MongoError')) {
+    schemaComposer.createObjectTC({
+      name: 'MongoError',
+      interfaces: ['ErrorInterface'],
+      fields: {
+        message: 'String',
+        code: 'String',
       },
     });
   }
@@ -768,6 +814,22 @@ function ensureSharedFilterInputs(schemaComposer: SchemaComposer) {
         gte: GraphQLFloat,
         lt: GraphQLFloat,
         lte: GraphQLFloat,
+        exists: 'Boolean',
+      },
+    });
+  }
+  if (!schemaComposer.has('Decimal128Filter')) {
+    schemaComposer.createInputTC({
+      name: 'Decimal128Filter',
+      fields: {
+        eq: GraphQLDecimal128,
+        ne: GraphQLDecimal128,
+        in: { type: '[Decimal128!]' },
+        nin: { type: '[Decimal128!]' },
+        gt: GraphQLDecimal128,
+        gte: GraphQLDecimal128,
+        lt: GraphQLDecimal128,
+        lte: GraphQLDecimal128,
         exists: 'Boolean',
       },
     });

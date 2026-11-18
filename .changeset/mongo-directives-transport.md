@@ -22,7 +22,9 @@ new stack (like mysql/tuql -> SQL).
   client args `where` / `orderBy` / `input`
 - Directive binders: `where` / `orderBy` (no `filter` / `sort` aliases)
 - Sole PK GraphQL type: `ID` (`id` arg, not `_id`)
-- Scalars from `graphql-scalars` where available (`ObjectID`, `DateTime`, `Byte`, `JSON`)
+- Scalars: `graphql-scalars` (`ObjectID`, `DateTime`, `Byte`, `JSON`) + local `Decimal128`
+- Mutation payloads include typed `error: MongoError` (v0 compose parity when selected)
+- `aggregateUsers(where, pipeline)` + multi-stage pipeline rewrite (`$match: "$args.where"`)
 - `ref` paths emit nested `@mongo` populate fields
 
 ## Consumer migration

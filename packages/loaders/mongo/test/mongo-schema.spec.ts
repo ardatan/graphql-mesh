@@ -13,6 +13,7 @@ describe('@omnigraph/mongo schema emit', () => {
           enum: ['male', 'female', 'not-specified'],
         },
         someMixed: { type: Schema.Types.Mixed },
+        salaryDecimal: { type: Schema.Types.Decimal128 },
       },
       { collection: 'user_users' },
     );
@@ -47,12 +48,17 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toContain('allUsers(');
     expect(sdl).toContain('usersPagination(');
     expect(sdl).toContain('usersCount(where:');
+    expect(sdl).toContain('aggregateUsers(');
+    expect(sdl).toContain('kind: AGGREGATE');
     expect(sdl).toContain('createUser(input:');
     expect(sdl).toContain('where: UserWhereInput');
     expect(sdl).toContain('orderBy: UserOrderByInput');
     expect(sdl).toContain('$args.where');
     expect(sdl).toContain('$args.orderBy');
     expect(sdl).toContain('id: ID!');
+    expect(sdl).toContain('error: MongoError');
+    expect(sdl).toContain('interface ErrorInterface');
+    expect(sdl).toContain('salaryDecimal: Decimal128');
     expect(sdl).not.toContain('User_findById');
     expect(sdl).not.toContain('filter: UserFilter');
     expect(sdl).not.toContain('$args.filter');

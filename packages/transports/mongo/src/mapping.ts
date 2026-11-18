@@ -334,7 +334,7 @@ function skipWs(text: string, start: number): number {
 
 function isIdentStart(c: string): boolean {
   const code = c.charCodeAt(0);
-  return (code >= 65 && code <= 90) || (code >= 97 && code <= 122) || code === 95 /* _ */;
+  return (code >= 65 && code <= 90) || (code >= 97 && code <= 122) || code === 95; /* _ */
 }
 
 function isIdentPart(c: string): boolean {

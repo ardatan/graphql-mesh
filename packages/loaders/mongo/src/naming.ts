@@ -17,6 +17,7 @@ export interface MongoNaming {
   findManyField(typeName: string): string;
   findOneField(typeName: string): string;
   countField(typeName: string): string;
+  aggregateField(typeName: string): string;
   connectionField(typeName: string): string;
   paginationField(typeName: string): string;
   createOneField(typeName: string): string;
@@ -63,6 +64,7 @@ export function createDefaultNaming(): MongoNaming {
     findManyField: typeName => pluralCamel(typeName),
     findOneField: typeName => `find${typeName}`,
     countField: typeName => `${pluralCamel(typeName)}Count`,
+    aggregateField: typeName => `aggregate${pluralType(typeName)}`,
     connectionField: typeName => `all${pluralType(typeName)}`,
     paginationField: typeName => `${pluralCamel(typeName)}Pagination`,
     createOneField: typeName => `create${typeName}`,
