@@ -1,3 +1,4 @@
+import { isUnionType, type GraphQLUnionType } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadNonExecutableGraphQLSchemaFromIDL } from '../src/index.js';
 
@@ -359,5 +360,90 @@ describe('thrift', () => {
     expect(selection).toMatch(
       /uniqueStates:\s*\$->get\(4\)->get\("0"\)->get\("rec"\)->get\("2"\)->get\("set"\)->slice\(2\)->map\(@->match\(\[7,\s*"READY"\].*\[@,\s*@\]\)\)/,
     );
+  });
+
+  it('TJSON union stamps throw-id discriminators when exceptions share fields', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'SharedThrowSvc',
+      source: './fixtures/shared_throw_fields.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/shared-throw',
+      protocol: 'json',
+      ignoreExceptions: false,
+    });
+    const go = schema.getQueryType()!.getFields().go;
+    const selection = (go.extensions as any).directives.connect.selection as string;
+    expect(selection).toMatch(/__throw_First:\s*\$->get\(4\)->get\("1"\)->ne\(null\)/);
+    expect(selection).toMatch(/__throw_Second:\s*\$->get\(4\)->get\("2"\)->ne\(null\)/);
+    const resultType = go.type;
+    expect(isUnionType(resultType)).toBe(true);
+    const resolveType = (resultType as GraphQLUnionType).resolveType!;
+    expect(
+      resolveType({ message: 'x', __throw_Second: true }, null as any, null as any, null as any),
+    ).toBe('Second');
+    expect(
+      resolveType({ message: 'x', __throw_First: true }, null as any, null as any, null as any),
+    ).toBe('First');
+    // Hive may keep value:{ left: undefined } on exception replies — field0 wins.
+    expect(
+      resolveType(
+        { field0: false, value: { left: undefined }, message: 'x', __throw_Second: true },
+        null as any,
+        null as any,
+        null as any,
+      ),
+    ).toBe('Second');
+    expect(
+      resolveType(
+        { field0: true, value: { left: 1 }, __throw_First: false },
+        null as any,
+        null as any,
+        null as any,
+      ),
+    ).toBe('GoSuccess');
+  });
+
+  it('restores non-zero enum wire ints after SDL print/rebuild (binary)', async () => {
+    const { buildSchema } = await import('graphql');
+    const { getThriftExecutor } = await import('@graphql-mesh/transport-thrift');
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'Twitter',
+      source: './fixtures/twitter.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/twitter',
+      serviceName: 'Twitter',
+      protocol: 'binary',
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    // Mesh directives (@transport / @thrift__rpc / @enum) are present in SDL.
+    const rebuilt = buildSchema(sdl, { assumeValidSDL: true });
+    const before = (rebuilt.getType('TweetType') as import('graphql').GraphQLEnumType)
+      .getValues()
+      .find(v => v.name === 'RETWEET')!;
+    // SDL print drops numeric .value — rebuild sees the member name until restore.
+    expect(before.value).toBe('RETWEET');
+    getThriftExecutor(rebuilt);
+    const after = (rebuilt.getType('TweetType') as import('graphql').GraphQLEnumType)
+      .getValues()
+      .find(v => v.name === 'RETWEET')!;
+    expect(after.value).toBe(2);
+    const dm = (rebuilt.getType('TweetType') as import('graphql').GraphQLEnumType)
+      .getValues()
+      .find(v => v.name === 'DM')!;
+    expect(dm.value).toBe(0xa);
+  });
+
+  it('binary list<map<string,struct>> args keep MAP value field descriptors', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'ListMapSvc',
+      source: './fixtures/list_map_arg.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/list-map',
+      protocol: 'binary',
+    });
+    const args = (schema.getQueryType()!.getFields().putBatches.extensions as any).directives
+      .thrift__rpc.args as string;
+    expect(args).toMatch(/1\(list<map<string,\s*struct>>\):\s*\$args\.batches\s*\{/);
+    expect(args).toMatch(/7\(i32\):\s*value/);
   });
 });

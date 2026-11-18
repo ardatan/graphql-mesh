@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { createTenv, type ServeRunner, type Service } from '@e2e/tenv';
 
 const { compose, service, serve } = createTenv(__dirname);
@@ -36,6 +38,23 @@ let calculator: Service;
 
 beforeAll(async () => {
   calculator = await service('calculator');
+});
+
+describe('codegen ONEWAY patch', () => {
+  it('process_zip returns empty buffer (no REPLY/EXCEPTION)', () => {
+    const src = readFileSync(
+      join(__dirname, 'services/calculator/__generated__/Calculator.ts'),
+      'utf8',
+    );
+    const start = src.indexOf('public process_zip');
+    expect(start).toBeGreaterThan(-1);
+    const end = src.indexOf('\n    public ', start + 1);
+    const method = src.slice(start, end === -1 ? undefined : end);
+    expect(method).toMatch(/Buffer\.alloc\(0\)/);
+    expect(method).not.toMatch(/MessageType\.REPLY/);
+    expect(method).not.toMatch(/MessageType\.EXCEPTION/);
+    expect(method).toMatch(/patch-thrift-oneway-zip/);
+  });
 });
 
 describe('binary (@thrift__rpc)', () => {
@@ -210,6 +229,20 @@ describe('json (@connect TJSON)', () => {
       const result = await execute({ query: zipQuery });
       expect(result.errors).toBeFalsy();
       expect(result.data).toEqual({ zip: null });
+
+      // Direct TJSON ONEWAY to the calculator: response body must be empty.
+      const thriftRes = await fetch(`http://localhost:${calculator.port}/thrift-json`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/vnd.apache.thrift.json',
+          Accept: 'application/vnd.apache.thrift.json',
+        },
+        // [version, name, type=ONEWAY(4), seqId, args]
+        body: JSON.stringify([1, 'zip', 4, 1, {}]),
+      });
+      expect(thriftRes.ok).toBe(true);
+      const raw = Buffer.from(await thriftRes.arrayBuffer());
+      expect(raw.byteLength).toBe(0);
     });
   });
 });

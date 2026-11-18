@@ -141,31 +141,72 @@ function formatCompactArgField(
     return lines;
   }
 
-  if (
-    (resolved.type === TType.LIST || resolved.type === TType.SET) &&
-    resolveTypeVal(resolved.elementType, topTypeMap).type === TType.STRUCT
-  ) {
-    const elem = resolveTypeVal(resolved.elementType, topTypeMap) as Extract<
-      TypeVal,
-      { type: TType.STRUCT }
-    >;
-    const elemName = elem.name || 'Anon';
+  if (resolved.type === TType.LIST || resolved.type === TType.SET) {
+    const elem = resolveTypeVal(resolved.elementType, topTypeMap);
     const wire = resolved.type === TType.SET ? 'set' : 'list';
-    if (seenStructs.has(elemName)) {
+    if (elem.type === TType.STRUCT) {
+      const elemName = elem.name || 'Anon';
+      if (seenStructs.has(elemName)) {
+        throw new Error(
+          `Thrift struct "${elemName}" is recursive in RPC ${wire} arguments; compact @thrift__rpc args cannot expand cycles without truncating. Restructure the IDL (bounded / non-recursive inputs) or hand-author a depth-limited mapping.`,
+        );
+      }
+      const nextSeen = new Set(seenStructs);
+      nextSeen.add(elemName);
+      // Bare `list` / `set` token — element fields follow in the block.
+      const lines = [`${pad}${id}(${wire}): ${rhs} {`];
+      for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
+        lines.push(
+          ...formatCompactArgField(
+            fieldType,
+            fieldName,
+            topTypeMap,
+            level + 1,
+            fieldName,
+            nextSeen,
+          ),
+        );
+      }
+      lines.push(`${pad}}`);
+      return lines;
+    }
+    // list/set of map<*, struct> — keep LIST→MAP→STRUCT descriptors (field ids on map values).
+    if (elem.type === TType.MAP) {
+      const val = resolveTypeVal(elem.valType, topTypeMap);
+      if (val.type === TType.STRUCT) {
+        const valName = val.name || 'Anon';
+        if (seenStructs.has(valName)) {
+          throw new Error(
+            `Thrift struct "${valName}" is recursive in RPC ${wire}<map> arguments; compact @thrift__rpc args cannot expand cycles without truncating. Restructure the IDL (bounded / non-recursive inputs) or hand-author a depth-limited mapping.`,
+          );
+        }
+        const nextSeen = new Set(seenStructs);
+        nextSeen.add(valName);
+        const lines = [`${pad}${id}(${token}): ${rhs} {`];
+        for (const [fieldName, fieldType] of Object.entries(val.fields)) {
+          lines.push(
+            ...formatCompactArgField(
+              fieldType,
+              fieldName,
+              topTypeMap,
+              level + 1,
+              fieldName,
+              nextSeen,
+            ),
+          );
+        }
+        lines.push(`${pad}}`);
+        return lines;
+      }
       throw new Error(
-        `Thrift struct "${elemName}" is recursive in RPC ${wire} arguments; compact @thrift__rpc args cannot expand cycles without truncating. Restructure the IDL (bounded / non-recursive inputs) or hand-author a depth-limited mapping.`,
+        `Thrift ${wire} of map arguments with non-struct values cannot be emitted as compact @thrift__rpc args. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
       );
     }
-    const nextSeen = new Set(seenStructs);
-    nextSeen.add(elemName);
-    const lines = [`${pad}${id}(${wire}): ${rhs} {`];
-    for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
-      lines.push(
-        ...formatCompactArgField(fieldType, fieldName, topTypeMap, level + 1, fieldName, nextSeen),
+    if (elem.type === TType.LIST || elem.type === TType.SET) {
+      throw new Error(
+        `Thrift nested ${wire} arguments cannot be emitted as compact @thrift__rpc args without losing nested descriptors. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
       );
     }
-    lines.push(`${pad}}`);
-    return lines;
   }
 
   // map<*, struct> — expand value-struct field ids like list/set-of-struct.
@@ -609,6 +650,8 @@ export function buildTJSONUnionConnectSelection(
     const typeVal = topTypeMap[t.typeName];
     const fid = String(t.id);
     const parent = `$->get(4)->get("${fid}")->get("rec")`;
+    // Discriminator for resolveType when exceptions share field names (e.g. message).
+    props.push(`__throw_${t.typeName}: $->get(4)->get("${fid}")->ne(null)`);
     if (typeVal && typeVal.type === TType.STRUCT) {
       for (const [fieldName, fieldType] of Object.entries(typeVal.fields)) {
         props.push(formatTJSONLitProperty(fieldName, fieldType, topTypeMap, parent));

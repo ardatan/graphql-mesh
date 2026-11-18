@@ -20,6 +20,28 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
     expect(applySelection('null', {}, extras)).toEqual({ null: undefined });
   });
 
+  it('TJSON bool match encodes true/false as integer 1/0', () => {
+    const expr = '$args.enabled->match([true, 1], [false, 0], [@, 0])';
+    expect(applySelection(expr, {}, extrasWithArgs({ enabled: true }))).toBe(1);
+    expect(applySelection(expr, {}, extrasWithArgs({ enabled: false }))).toBe(0);
+  });
+
+  it('TJSON union throw-id discriminator survives shared message fields', () => {
+    const sel = `$({
+  value: $->get(4)->get("0")->get("tf"),
+  __throw_First: $->get(4)->get("1")->ne(null),
+  __throw_Second: $->get(4)->get("2")->ne(null),
+  message: $->get(4)->get("2")->get("rec")->get("1")->get("str")
+})`;
+    const secondThrown = [1, 'go', 2, 1, { '2': { rec: { '1': { str: 'from-second' } } } }];
+    expect(applySelection(sel, secondThrown, extras)).toEqual({
+      value: undefined,
+      __throw_First: false,
+      __throw_Second: true,
+      message: 'from-second',
+    });
+  });
+
   it('does not map $() / $-> selection over TJSON array envelopes', () => {
     const envelope = [1, 'divide', 2, 1, { '0': { i32: 5 } }];
     const sel = `$({
@@ -75,13 +97,50 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
   value: $({
     left: $->get(4)->get("0")->get("rec")->get("1")->get("i32")
   }),
+  __throw_DivByZero: $->get(4)->get("1")->ne(null),
   message: $->get(4)->get("1")->get("rec")->get("1")->get("str")
 })`;
     const thrown = [1, 'divide', 2, 1, { '1': { rec: { '1': { str: 'division by zero' } } } }];
     expect(applySelection(sel, thrown, extras)).toEqual({
       field0: false,
       value: {},
+      __throw_DivByZero: true,
       message: 'division by zero',
+    });
+  });
+
+  it('void+throws isSuccess: empty result succeeds; declared throw fails', () => {
+    const isSuccess = '$->get(2)->eq(2)->and($->get(4)->size->eq(0))';
+    expect(applySelection(isSuccess, [1, 'flush', 2, 1, {}], extras)).toBe(true);
+    expect(
+      applySelection(
+        isSuccess,
+        [1, 'flush', 2, 1, { '1': { rec: { '1': { str: 'boom' } } } }],
+        extras,
+      ),
+    ).toBe(false);
+  });
+
+  it('scalar union success and throw-id paths', () => {
+    const sel = `$({
+  value: $->get(4)->get("0")->get("tf"),
+  __throw_First: $->get(4)->get("1")->ne(null),
+  __throw_Second: $->get(4)->get("2")->ne(null),
+  message: $->get(4)->get("2")->get("rec")->get("1")->get("str")
+})`;
+    expect(applySelection(sel, [1, 'go', 2, 1, { '0': { tf: 1 } }], extras)).toEqual({
+      value: 1,
+      __throw_First: false,
+      __throw_Second: false,
+      message: undefined,
+    });
+    expect(
+      applySelection(sel, [1, 'go', 2, 1, { '2': { rec: { '1': { str: 'x' } } } }], extras),
+    ).toEqual({
+      value: undefined,
+      __throw_First: false,
+      __throw_Second: true,
+      message: 'x',
     });
   });
 });

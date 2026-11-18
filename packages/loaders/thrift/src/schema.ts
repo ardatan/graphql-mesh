@@ -484,34 +484,42 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
             name: `${fnName[0].toUpperCase()}${fnName.slice(1)}Result`,
             types: [successType, ...exceptionTypes],
             resolveType: value => {
+              // Binary client stamps `__typename` from the result field id.
               if (value && typeof value === 'object' && value.__typename) {
                 return value.__typename;
               }
-              // Prefer success when `ok` / field0 / non-empty `value` is present —
-              // TJSON union selection may also project exception keys as undefined.
               if (value && typeof value === 'object') {
                 if (value.ok === true) {
                   return successTypeName;
                 }
-                // Struct success stamps `field0` when reply field "0" exists.
-                if (value.field0 === true) {
-                  return successTypeName;
-                }
-                if (value.value !== undefined && value.value !== null) {
+                // Struct TJSON unions stamp `field0`. When present it is authoritative:
+                // Hive may keep `value: { left: undefined }` keys on exception replies.
+                if (typeof value.field0 === 'boolean') {
+                  if (value.field0 === true) {
+                    return successTypeName;
+                  }
+                } else if (value.value !== undefined && value.value !== null) {
+                  // Scalar / non-struct success (no field0 stamp).
                   const v = value.value;
                   const emptyObj =
                     typeof v === 'object' &&
                     v !== null &&
                     !Array.isArray(v) &&
-                    Object.keys(v).length === 0;
+                    Object.values(v).every(x => x === undefined);
                   if (!emptyObj) {
                     return successTypeName;
+                  }
+                }
+                // Prefer reply throw-id discriminators over shared field names.
+                for (const t of throwsMeta) {
+                  if (value[`__throw_${t.typeName}`] === true) {
+                    return t.typeName;
                   }
                 }
               }
               for (const ex of exceptionTypes) {
                 const fields = Object.keys(ex.getFields());
-                // Require a defined field value — `in` is true for keys set to undefined.
+                // Last resort when no `__throw_*` stamp (hand-authored selections).
                 if (fields.some(f => (value || {})[f] !== undefined)) return ex.name;
               }
               return successTypeName;

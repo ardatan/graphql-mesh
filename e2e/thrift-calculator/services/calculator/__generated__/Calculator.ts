@@ -1012,12 +1012,12 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
             try {
                 input.readMessageEnd();
                 resolve(this._handler.zip(context));
-            }
-            catch (err) {
+            } catch (err) {
                 reject(err);
             }
         }).then((): Buffer => {
             // ONEWAY zip: do not write REPLY / EXCEPTION envelopes.
+            // Patched by scripts/patch-thrift-oneway-zip.mjs after thrift-typescript codegen.
             return Buffer.alloc(0);
         }).catch((): Buffer => {
             // ONEWAY: still no response body on handler failure.

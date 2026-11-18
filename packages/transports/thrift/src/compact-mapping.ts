@@ -116,6 +116,29 @@ function argFieldToTypeVal(field: ArgField): TypeVal {
   const base = tokenToTypeVal(field.wire, field.id);
   if (field.children?.length) {
     if (base.type === TType.LIST || base.type === TType.SET) {
+      // list/set of map<*, struct> { value fields } — keep LIST→MAP→STRUCT.
+      if (base.elementType && base.elementType.type === TType.MAP) {
+        const fields: TypeMap = {};
+        for (const child of field.children) {
+          fields[graphqlKeyFromValuePath(child.valuePath)] = argFieldToTypeVal(child);
+        }
+        const valBase = base.elementType.valType;
+        const valName =
+          valBase && valBase.type === TType.STRUCT && valBase.name ? valBase.name : 'Anon';
+        return {
+          ...base,
+          elementType: {
+            ...base.elementType,
+            keyType: base.elementType.keyType,
+            valType: {
+              type: TType.STRUCT,
+              name: valName,
+              fields,
+              id: (valBase && 'id' in valBase ? valBase.id : undefined) ?? field.id,
+            },
+          },
+        };
+      }
       const elemFields: TypeMap = {};
       for (const child of field.children) {
         elemFields[graphqlKeyFromValuePath(child.valuePath)] = argFieldToTypeVal(child);

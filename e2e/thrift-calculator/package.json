@@ -3,7 +3,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "codegen": "node -e \"const path=require('path');const {generate}=require('@creditkarma/thrift-typescript');const root=process.cwd();generate({rootDir:root,sourceDir:path.join(root,'services/calculator'),outDir:path.join(root,'services/calculator/__generated__'),target:'thrift-server',files:[path.join(root,'services/calculator/calculator.thrift')]}).then(()=>console.log('codegen ok'))\""
+    "codegen": "node -e \"const path=require('path');const {generate}=require('@creditkarma/thrift-typescript');const root=process.cwd();generate({rootDir:root,sourceDir:path.join(root,'services/calculator'),outDir:path.join(root,'services/calculator/__generated__'),target:'thrift-server',files:[path.join(root,'services/calculator/calculator.thrift')]}).then(()=>console.log('codegen ok'))\" && node ../../scripts/patch-thrift-oneway-zip.mjs services/calculator/__generated__/Calculator.ts",
+    "patch:oneway-zip": "node ../../scripts/patch-thrift-oneway-zip.mjs services/calculator/__generated__/Calculator.ts"
   },
   "dependencies": {
     "@creditkarma/thrift-server-core": "^1.0.4",
