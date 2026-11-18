@@ -63,6 +63,32 @@ function colFieldNameBySql(
 
 const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
 
+/**
+ * Options for {@link loadSqlSubgraph} / {@link loadGraphQLSchemaFromSql}.
+ * Pool / TLS / soft-delete fields are forwarded onto `@transport(kind: "sql", options:)`.
+ *
+ * @example
+ * ```ts
+ * import { loadSqlSubgraph } from '@omnigraph/sql';
+ *
+ * const shop = loadSqlSubgraph('shop', {
+ *   endpoint: 'postgres://localhost:5432/shop',
+ *   schema: 'public',
+ *   includeTables: ['albums', 'artists'],
+ *   softDelete: { column: 'deleted_at' },
+ * });
+ * ```
+ * @example
+ * ```ts
+ * // SQLite file (URI becomes `@transport(location)`)
+ * loadSqlSubgraph('chinook', { endpoint: 'file:./chinook.db' })
+ * ```
+ * @example
+ * ```ts
+ * // Inject an existing pg.Pool (TLS / dial already configured)
+ * loadSqlSubgraph('shop', { pgPool: myPool, schema: 'app' })
+ * ```
+ */
 export interface LoadSqlSubgraphOpts extends Pick<
   SqlTransportOptions,
   'max' | 'idleTimeout' | 'connectionTimeout' | 'tls' | 'ssl' | 'schema'
@@ -71,6 +97,8 @@ export interface LoadSqlSubgraphOpts extends Pick<
    * Explicit adapter override. When omitted, inferred from the connection URI
    * protocol (`postgres://`, `mysql://` / `mysql2://` / `mariadb://`,
    * `sqlite://` / `file:`, host-style → postgres, `*.db` → sqlite).
+   *
+   * @example 'mysql'
    */
   adapter?: SqlAdapter;
   /**
@@ -79,17 +107,47 @@ export interface LoadSqlSubgraphOpts extends Pick<
    * `MYSQL_URL`, `SQLITE_URL`, …) or `PG*` / `MYSQL_*` fields.
    * Sqlite: `file:…`, `sqlite:…`, `:memory:`, or a `*.db` path.
    * Mysql/Postgres: `mysql(2|s)://…`, `mariadb://…`, `postgres(ql)://…`, or host-style.
+   *
+   * @example 'postgres://user:pass@localhost:5432/shop'
+   * @example 'mysql://root@127.0.0.1:3306/employees'
+   * @example 'file:./chinook.db'
    */
   endpoint?: string;
+  /**
+   * Base directory for relative sqlite paths (defaults to `process.cwd()`).
+   *
+   * @example '/app/data'
+   */
   cwd?: string;
+  /**
+   * Only introspect these SQL tables (others omitted from the GraphQL schema).
+   *
+   * @example ['albums', 'artists', 'tracks']
+   */
   includeTables?: string[];
+  /**
+   * Drop these SQL tables from introspection even when otherwise included.
+   *
+   * @example ['schema_migrations']
+   */
   excludeTables?: string[];
-  /** Limit columns per table (legacy mysql `tableFields` shape). */
+  /**
+   * Limit columns per table (legacy mysql `tableFields` shape).
+   *
+   * @example [{ table: 'employees', fields: ['emp_no', 'first_name', 'last_name'] }]
+   */
   tableFields?: Array<{ table: string; fields: string[] }>;
+  /**
+   * Partial override of GraphQL naming helpers (type / field / filter names).
+   *
+   * @example { typeName: t => t.replace(/s$/, '') }
+   */
   naming?: Partial<SqlNaming>;
   /**
    * Soft-delete: hide rows where `column IS NOT NULL`; `delete*` mutations set
    * the column to now instead of hard `DELETE`. Forwarded to `@transport(options)`.
+   *
+   * @example { column: 'deleted_at' }
    */
   softDelete?: SqlTransportOptions['softDelete'];
   /**
@@ -97,10 +155,27 @@ export interface LoadSqlSubgraphOpts extends Pick<
    * `endpoint` may be omitted for pool-only Mesh configs that inject their own
    * execution client. `@transport(location)` uses `endpoint` or
    * `pool.options.connectionString` when present — never a placeholder URI.
+   *
+   * @example myPool
    */
   pgPool?: PgPool;
 }
 
+/**
+ * Introspect + emit a GraphQL schema with `@sql` mappings and
+ * `@transport(kind: "sql", location, options)`.
+ *
+ * Prefer {@link loadSqlSubgraph} from Mesh compose; call this directly when you
+ * need the schema object (tests, custom executors).
+ *
+ * @example
+ * ```ts
+ * const schema = await loadGraphQLSchemaFromSql('shop', {
+ *   endpoint: 'postgres://localhost/shop',
+ *   includeTables: ['albums'],
+ * });
+ * ```
+ */
 export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadSqlSubgraphOpts) {
   const naming: SqlNaming = { ...createDefaultNaming(), ...opts.naming };
   const withEndpoint = resolveOptsEndpoint(opts);

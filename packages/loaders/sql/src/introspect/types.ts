@@ -2,16 +2,27 @@ import type { SqlAdapter } from '@graphql-mesh/transport-sql';
 
 export type { SqlAdapter };
 
+/**
+ * Introspected column metadata used when emitting `@sql(selection:)` / filters.
+ */
 export interface SqlColumnMeta {
+  /** @example 'AlbumId' */
   name: string;
+  /** @example 'int4' */
   dataType: string;
   notNull: boolean;
   primaryKey: boolean;
+  /** @example true */
   autoIncrement?: boolean;
   /** Column has a DB default (including runtime defaults like CURRENT_TIMESTAMP). */
   hasDefault?: boolean;
 }
 
+/**
+ * Foreign-key edge discovered during introspection.
+ *
+ * @example { columns: ['ArtistId'], refTable: 'artists', refColumns: ['ArtistId'] }
+ */
 export interface SqlForeignKeyMeta {
   /** Local table column(s) */
   columns: string[];
@@ -21,7 +32,13 @@ export interface SqlForeignKeyMeta {
   refColumns: string[];
 }
 
+/**
+ * Introspected table (columns + FKs).
+ *
+ * @example { name: 'albums', columns: […], foreignKeys: […] }
+ */
 export interface SqlTableMeta {
+  /** @example 'albums' */
   name: string;
   columns: SqlColumnMeta[];
   foreignKeys: SqlForeignKeyMeta[];
@@ -30,17 +47,44 @@ export interface SqlTableMeta {
 /**
  * Postgres computed-column function: `users_full_name(users)` → GraphQL `User.fullName`.
  * Only populated by Postgres introspection (PostGraphile-compatible naming rules).
+ *
+ * @example
+ * ```ts
+ * { table: 'users', functionName: 'public.users_full_name', fieldName: 'fullName', returnType: 'text' }
+ * ```
  */
 export interface SqlComputedColumnMeta {
+  /** @example 'users' */
   table: string;
-  /** Qualified SQL call target, e.g. `public.users_full_name` */
+  /**
+   * Qualified SQL call target.
+   *
+   * @example 'public.users_full_name'
+   */
   functionName: string;
-  /** GraphQL field after stripping `table_` prefix (`users_full_name` → `fullName`) */
+  /**
+   * GraphQL field after stripping `table_` prefix (`users_full_name` → `fullName`).
+   *
+   * @example 'fullName'
+   */
   fieldName: string;
-  /** Postgres result type name (text, int4, …) */
+  /**
+   * Postgres result type name.
+   *
+   * @example 'text'
+   */
   returnType: string;
 }
 
+/**
+ * Full introspection result consumed by schema emit.
+ *
+ * @example
+ * ```ts
+ * const meta = await introspectPostgres({ connectionString: 'postgres://localhost/shop' });
+ * // meta.adapter === 'postgres'; meta.tables[0].name === 'albums'
+ * ```
+ */
 export interface SqlSchemaMeta {
   adapter: SqlAdapter;
   tables: SqlTableMeta[];

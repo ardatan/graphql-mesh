@@ -1,25 +1,55 @@
 import { parseSqlMapping } from './mapping.js';
 
 /**
- * `@sql(through:)` — PostGraphile-style many-to-many via a junction table.
+ * Parsed `@sql(through:)` — PostGraphile-style many-to-many via a junction table.
  *
- * ```
- * table: playlist_track
- * local: PlaylistId
- * remote: TrackId
- * parent: $this.id
- * target: TrackId
+ * @example
+ * ```graphql
+ * tracks: [Track!]!
+ *   @sql(
+ *     table: "tracks"
+ *     kind: ROWS
+ *     through: """
+ *       table: playlist_track
+ *       local: PlaylistId
+ *       remote: TrackId
+ *       parent: $this.id
+ *       target: TrackId
+ *     """
+ *     selection: "id: TrackId\nname: Name"
+ *   )
  * ```
  */
 export interface SqlThroughJoin {
+  /**
+   * Junction table name.
+   *
+   * @example 'playlist_track'
+   */
   table: string;
-  /** Junction column referencing the parent row */
+  /**
+   * Junction column referencing the parent row.
+   *
+   * @example 'PlaylistId'
+   */
   localColumn: string;
-  /** Junction column referencing the target row */
+  /**
+   * Junction column referencing the target row.
+   *
+   * @example 'TrackId'
+   */
   remoteColumn: string;
-  /** Parent value path after `$this.` (e.g. `['id']`) */
+  /**
+   * Parent value path after `$this.` (e.g. `['id']`).
+   *
+   * @example ['id']
+   */
   parentPath: string[];
-  /** Column on the target `@sql(table:)` matched to `remoteColumn` */
+  /**
+   * Column on the target `@sql(table:)` matched to `remoteColumn`.
+   *
+   * @example 'TrackId'
+   */
   targetColumn: string;
 }
 

@@ -9,22 +9,62 @@ import type {
   SqlTableMeta,
 } from './types.js';
 
+/**
+ * Options for Postgres schema introspection (used by {@link loadGraphQLSchemaFromSql}).
+ *
+ * @example
+ * ```ts
+ * await introspectPostgres({
+ *   connectionString: 'postgres://localhost/shop',
+ *   schema: 'app',
+ *   includeTables: ['albums', 'artists'],
+ * })
+ * ```
+ */
 export interface IntrospectPostgresOpts {
   /**
    * Connection URI. Optional when `pool` is provided (pool-only Mesh configs).
    * Still used to derive SSL defaults when opening a new pool.
+   *
+   * @example 'postgres://localhost:5432/shop'
    */
   connectionString?: string;
   /**
    * Existing `pg.Pool` — reuses its TLS / connection settings for introspection
    * and is not ended by this function.
+   *
+   * @example myPool
    */
   pool?: pg.Pool;
+  /**
+   * Only introspect these tables.
+   *
+   * @example ['albums', 'artists']
+   */
   includeTables?: string[];
+  /**
+   * Drop these tables from the result.
+   *
+   * @example ['schema_migrations']
+   */
   excludeTables?: string[];
-  /** Defaults to `public` */
+  /**
+   * Postgres schema / `search_path` (default `public`).
+   *
+   * @example 'app'
+   */
   schema?: string;
+  /**
+   * Enable TLS (`true` or Bun-style mode string).
+   *
+   * @example true
+   */
   tls?: boolean | string;
+  /**
+   * Extra TLS details when SSL is enabled.
+   *
+   * @example { ca: process.env.DB_CA_PEM }
+   */
   ssl?: { rejectUnauthorized?: boolean; ca?: string };
 }
 

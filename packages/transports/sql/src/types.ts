@@ -1,55 +1,156 @@
 import type { Pool as PgPool } from 'pg';
 
+/**
+ * SQL dialect for introspection and runtime execution.
+ *
+ * @example 'postgres'
+ * @example 'mysql'
+ * @example 'sqlite'
+ */
 export type SqlAdapter = 'postgres' | 'mysql' | 'sqlite';
 
+/**
+ * Read-side `@sql(kind:)` values.
+ *
+ * @example 'ROWS'
+ * @example 'CONNECTION'
+ */
 export type SqlQueryKind = 'ROW' | 'ROWS' | 'CONNECTION' | 'COUNT';
 
+/**
+ * Write-side `@sql(kind:)` values.
+ *
+ * @example 'INSERT'
+ */
 export type SqlMutationKind = 'INSERT' | 'UPDATE' | 'DELETE';
 
-/** Combined ` @sql` kind (reads + writes). */
+/**
+ * Combined `@sql` kind (reads + writes). Relations use ROW/ROWS with `$this` binders.
+ *
+ * @example 'ROW'
+ */
 export type SqlKind = SqlQueryKind | SqlMutationKind;
 
 /**
- * Bun SQL–inspired connection / pool options stored on `@transport(options:)`.
- * Only the fields we can honour on Node (`pg` / `mysql2` / `node:sqlite`) or
- * forward to `Bun.SQL` when present are included.
- */
-/**
  * Soft-delete: reads hide rows where `column IS NOT NULL`; `DELETE` becomes
  * `UPDATE … SET column = <now>` (still matching only live rows).
+ *
+ * @example
+ * ```ts
+ * softDelete: { column: 'deleted_at' }
+ * ```
+ * @example
+ * ```ts
+ * softDelete: { column: 'deleted_at', tables: ['albums', 'tracks'] }
+ * ```
  */
 export interface SqlSoftDeleteOptions {
-  /** Timestamp / marker column (e.g. `deleted_at`). */
+  /**
+   * Timestamp / marker column set on soft delete.
+   *
+   * @example 'deleted_at'
+   */
   column: string;
-  /** Limit to these SQL table names; omit = every `@sql` table. */
+  /**
+   * Limit soft-delete to these SQL table names; omit = every `@sql` table.
+   *
+   * @example ['albums', 'tracks']
+   */
   tables?: string[];
 }
 
+/**
+ * Extra TLS details when `tls` / `mysqls://` enables SSL.
+ *
+ * @example
+ * ```ts
+ * ssl: { rejectUnauthorized: true, ca: fs.readFileSync('rds-ca.pem', 'utf8') }
+ * ```
+ */
 export interface SqlSslOptions {
-  /** Verify TLS certificates (default true when SSL is on). */
+  /**
+   * Verify TLS certificates (default true when SSL is on).
+   *
+   * @example false
+   */
   rejectUnauthorized?: boolean;
-  /** PEM CA bundle / certificate string forwarded to `pg` / `mysql2`. */
+  /**
+   * PEM CA bundle / certificate string forwarded to `pg` / `mysql2`.
+   *
+   * @example '-----BEGIN CERTIFICATE-----\n…'
+   */
   ca?: string;
 }
 
+/**
+ * Connection / pool options stored on `@transport(options:)` (and accepted by
+ * `loadSqlSubgraph` / `createSqlClient`).
+ *
+ * Bun-inspired field names; honoured on Node (`pg` / `mysql2` / `node:sqlite`)
+ * or forwarded to `Bun.SQL` when present.
+ *
+ * @example
+ * ```ts
+ * // Mesh compose — options land on `@transport(kind: "sql", options: …)`
+ * loadSqlSubgraph('shop', {
+ *   endpoint: 'postgres://localhost/shop',
+ *   schema: 'app',
+ *   max: 20,
+ *   softDelete: { column: 'deleted_at' },
+ * })
+ * ```
+ */
 export interface SqlTransportOptions {
+  /**
+   * Dialect override when the URI alone is ambiguous.
+   *
+   * @example 'postgres'
+   */
   adapter?: SqlAdapter;
-  /** Max pool size (default 10). Maps to Bun `max`, mysql2 `connectionLimit`, pg `max`. */
+  /**
+   * Max pool size (default 10). Maps to Bun `max`, mysql2 `connectionLimit`, pg `max`.
+   *
+   * @example 20
+   */
   max?: number;
-  /** Idle connection lifetime in seconds (0 = off). Bun `idleTimeout`. */
+  /**
+   * Idle connection lifetime in seconds (`0` = off). Bun `idleTimeout`.
+   *
+   * @example 30
+   */
   idleTimeout?: number;
-  /** Seconds to wait for a new connection (default 30). Bun `connectionTimeout`. */
+  /**
+   * Seconds to wait for a new connection (default 30). Bun `connectionTimeout`.
+   *
+   * @example 10
+   */
   connectionTimeout?: number;
-  /** Enable TLS / SSL (`true` or Bun-style mode string). */
+  /**
+   * Enable TLS / SSL (`true` or Bun-style mode string).
+   *
+   * @example true
+   * @example 'require'
+   */
   tls?: boolean | string;
-  /** Extra TLS details (`ca`, `rejectUnauthorized`) when `tls` / `mysqls://` enables SSL. */
+  /**
+   * Extra TLS details (`ca`, `rejectUnauthorized`) when SSL is enabled.
+   *
+   * @example { ca: process.env.DB_CA_PEM, rejectUnauthorized: true }
+   */
   ssl?: SqlSslOptions;
   /**
-   * Postgres schema / search_path (default `public`). Used for introspection and
-   * `@dataplan/pg` table identity (`schema.table`).
+   * Postgres schema / `search_path` (default `public`). Used for introspection
+   * and `@dataplan/pg` table identity (`schema.table`). Shared pools bind one
+   * schema only.
+   *
+   * @example 'app'
    */
   schema?: string;
-  /** Soft-delete column (+ optional table allowlist). */
+  /**
+   * Soft-delete column (+ optional table allowlist).
+   *
+   * @example { column: 'deleted_at' }
+   */
   softDelete?: SqlSoftDeleteOptions;
 }
 

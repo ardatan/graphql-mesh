@@ -3,10 +3,39 @@ import { DatabaseSync } from 'node:sqlite';
 import { resolveSqlitePath } from '@graphql-mesh/transport-sql';
 import type { SqlColumnMeta, SqlForeignKeyMeta, SqlSchemaMeta, SqlTableMeta } from './types.js';
 
+/**
+ * Options for SQLite schema introspection (used by {@link loadGraphQLSchemaFromSql}).
+ *
+ * @example
+ * ```ts
+ * introspectSqlite({ db: 'file:./chinook.db', cwd: process.cwd() })
+ * ```
+ */
 export interface IntrospectSqliteOpts {
+  /**
+   * Sqlite path / URI (`file:…`, `sqlite:…`, `:memory:`, or `*.db`).
+   *
+   * @example 'file:./chinook.db'
+   * @example ':memory:'
+   */
   db: string;
+  /**
+   * Base directory for relative paths.
+   *
+   * @example process.cwd()
+   */
   cwd?: string;
+  /**
+   * Only introspect these tables.
+   *
+   * @example ['albums', 'artists']
+   */
   includeTables?: string[];
+  /**
+   * Drop these tables from the result.
+   *
+   * @example ['sqlite_sequence']
+   */
   excludeTables?: string[];
 }
 

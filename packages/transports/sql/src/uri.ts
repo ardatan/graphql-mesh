@@ -1,14 +1,42 @@
 import type { SqlAdapter } from './types.js';
 
+/**
+ * Result of {@link parseSqlUri} — normalized connection parts Mesh uses for
+ * drivers and `@transport(location)`.
+ *
+ * @example
+ * ```ts
+ * parseSqlUri('postgres://user@localhost:5432/shop?sslmode=require')
+ * // → { adapter: 'postgres', host: 'localhost', database: 'shop', ssl: true, … }
+ * ```
+ */
 export interface ParsedSqlUri {
+  /**
+   * Inferred dialect.
+   *
+   * @example 'postgres'
+   */
   adapter: SqlAdapter;
+  /** @example 'app' */
   user?: string;
   password?: string;
+  /** @example 'localhost' */
   host?: string;
+  /** @example 5432 */
   port?: number;
+  /** @example 'shop' */
   database?: string;
+  /**
+   * Whether SSL should be enabled from the URI (`mysqls://`, `sslmode=…`).
+   *
+   * @example true
+   */
   ssl?: boolean;
-  /** Absolute or relative file path for sqlite */
+  /**
+   * Absolute or relative file path for sqlite.
+   *
+   * @example './chinook.db'
+   */
   filePath?: string;
   searchParams: Record<string, string>;
 }

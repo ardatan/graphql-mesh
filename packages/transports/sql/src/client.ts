@@ -7,11 +7,55 @@ import { resolveSqlitePath } from './adapter.js';
 import type { SqlAdapter, SqlClient, SqlTransportOptions } from './types.js';
 import { parseSqlUri } from './uri.js';
 
+/**
+ * Options for {@link createSqlClient} — dialect + connection location plus
+ * {@link SqlTransportOptions} pool / TLS / soft-delete fields.
+ *
+ * @example
+ * ```ts
+ * import { createSqlClient } from '@graphql-mesh/transport-sql';
+ *
+ * const client = createSqlClient({
+ *   adapter: 'postgres',
+ *   location: 'postgres://localhost/shop',
+ *   schema: 'app',
+ *   max: 10,
+ * });
+ * ```
+ * @example
+ * ```ts
+ * createSqlClient({
+ *   adapter: 'sqlite',
+ *   location: 'file:./chinook.db',
+ *   cwd: process.cwd(),
+ * })
+ * ```
+ */
 export interface CreateSqlClientOptions extends SqlTransportOptions {
+  /**
+   * SQL dialect for the client drivers.
+   *
+   * @example 'postgres'
+   */
   adapter: SqlAdapter;
+  /**
+   * Connection URI or sqlite path (same shapes as `loadSqlSubgraph` `endpoint`).
+   *
+   * @example 'postgres://localhost:5432/shop'
+   * @example 'file:./chinook.db'
+   */
   location: string;
+  /**
+   * Base directory for relative sqlite paths.
+   *
+   * @example process.cwd()
+   */
   cwd?: string;
-  /** Force Node drivers even when `Bun.SQL` is present. */
+  /**
+   * Force Node drivers (`pg` / `mysql2` / `node:sqlite`) even when `Bun.SQL` is present.
+   *
+   * @example true
+   */
   preferNode?: boolean;
 }
 
@@ -33,6 +77,19 @@ export function isBunSqlAvailable(): boolean {
   return getBunSqlCtor() != null;
 }
 
+/**
+ * Open a {@link SqlClient} for the given adapter / location.
+ * Prefers `Bun.SQL` when available unless {@link CreateSqlClientOptions.preferNode} is set.
+ *
+ * @example
+ * ```ts
+ * const client = createSqlClient({
+ *   adapter: 'mysql',
+ *   location: 'mysql://root@127.0.0.1/employees',
+ *   max: 10,
+ * });
+ * ```
+ */
 export function createSqlClient(opts: CreateSqlClientOptions): SqlClient {
   if (!opts.preferNode && isBunSqlAvailable()) {
     return createBunSqlClient(opts);
@@ -268,16 +325,43 @@ export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string):
 }
 
 /**
+ * Options when wrapping an existing `pg.Pool` as {@link SqlClient}.
+ *
+ * @example
+ * ```ts
+ * wrapPgPoolAsSqlClient(pool, { schema: 'app' })
+ * ```
+ */
+export interface WrapPgPoolAsSqlClientOpts {
+  /**
+   * Bind `search_path` on every pooled connection (one schema per shared pool).
+   *
+   * @example 'app'
+   * @example 'public'
+   */
+  schema?: string;
+}
+
+/**
  * Wrap an existing `pg.Pool` (or compatible) as SqlClient.
  * Pass `schema` to enforce `search_path` on every pooled connection (TLS / dial
  * settings on the supplied pool are preserved).
+ *
+ * @example
+ * ```ts
+ * import pg from 'pg';
+ * import { wrapPgPoolAsSqlClient } from '@graphql-mesh/transport-sql';
+ *
+ * const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+ * const client = wrapPgPoolAsSqlClient(pool, { schema: 'public' });
+ * ```
  */
 export function wrapPgPoolAsSqlClient(
   pool: {
     query: (sql: string, params?: unknown[]) => Promise<{ rows: any[]; rowCount?: number | null }>;
     end?: () => Promise<void>;
   } & PgPoolConnectable,
-  opts?: { schema?: string },
+  opts?: WrapPgPoolAsSqlClientOpts,
 ): SqlClient {
   applyPgPoolSearchPath(pool, opts?.schema);
   const client: SqlClient = {

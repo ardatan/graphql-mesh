@@ -2,11 +2,47 @@ import { createPool, type RowDataPacket } from 'mysql2/promise';
 import { parseSqlUri, resolveSslOption } from '@graphql-mesh/transport-sql';
 import type { SqlColumnMeta, SqlForeignKeyMeta, SqlSchemaMeta, SqlTableMeta } from './types.js';
 
+/**
+ * Options for MySQL schema introspection (used by {@link loadGraphQLSchemaFromSql}).
+ *
+ * @example
+ * ```ts
+ * await introspectMysql({
+ *   connectionString: 'mysql://root@127.0.0.1:3306/employees',
+ *   includeTables: ['employees', 'departments'],
+ * })
+ * ```
+ */
 export interface IntrospectMysqlOpts {
+  /**
+   * MySQL URI including database name (`mysql://…/db`).
+   *
+   * @example 'mysql://root@127.0.0.1:3306/employees'
+   */
   connectionString: string;
+  /**
+   * Only introspect these tables.
+   *
+   * @example ['employees', 'departments']
+   */
   includeTables?: string[];
+  /**
+   * Drop these tables from the result.
+   *
+   * @example ['flyway_schema_history']
+   */
   excludeTables?: string[];
+  /**
+   * Enable TLS (`true` or Bun-style mode string).
+   *
+   * @example true
+   */
   tls?: boolean | string;
+  /**
+   * Extra TLS details when SSL is enabled.
+   *
+   * @example { rejectUnauthorized: true, ca: pem }
+   */
   ssl?: { rejectUnauthorized?: boolean; ca?: string };
 }
 

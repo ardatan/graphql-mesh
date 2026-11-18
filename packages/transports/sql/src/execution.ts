@@ -51,9 +51,42 @@ import type {
 } from './types.js';
 import { resolveConnectionStringFromEnv } from './uri.js';
 
+/**
+ * Options for {@link getSqlExecutor} — build a Mesh subgraph executor from an
+ * `@transport(kind: "sql")` schema (or an injected {@link SqlClient}).
+ *
+ * @example
+ * ```ts
+ * import { getSqlExecutor } from '@graphql-mesh/transport-sql';
+ *
+ * const executor = getSqlExecutor({
+ *   subgraph: await loadGraphQLSchemaFromSql('shop', {
+ *     endpoint: 'postgres://localhost/shop',
+ *   }),
+ * });
+ * ```
+ * @example
+ * ```ts
+ * // Reuse a client (e.g. wrapped pg.Pool from the Mesh handler)
+ * getSqlExecutor({ subgraph, client: wrapPgPoolAsSqlClient(pool, { schema: 'app' }) })
+ * ```
+ */
 export interface GetSqlExecutorOpts {
+  /**
+   * Subgraph schema carrying `@transport(kind: "sql")` and `@sql` mappings.
+   */
   subgraph: GraphQLSchema;
+  /**
+   * Base directory for relative sqlite `@transport(location)` paths.
+   *
+   * @example process.cwd()
+   */
   cwd?: string;
+  /**
+   * Pre-built client; when omitted, one is created from `@transport` location/options.
+   *
+   * @example wrapPgPoolAsSqlClient(pool, { schema: 'public' })
+   */
   client?: SqlClient;
 }
 
