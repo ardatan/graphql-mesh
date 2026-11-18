@@ -20,7 +20,11 @@ import type { SqlRelationFilterMeta } from './types.js';
 export function collectRelationFilters(
   schema: GraphQLSchema,
   typeName: string,
+  visited: Set<string> = new Set(),
 ): SqlRelationFilterMeta[] {
+  if (visited.has(typeName)) return [];
+  visited.add(typeName);
+
   const type = schema.getType(typeName);
   if (!type || !isObjectType(type)) return [];
 
@@ -35,12 +39,18 @@ export function collectRelationFilters(
 
       const relatedType = unwrapObjectType(field.type);
       if (!relatedType) continue;
-      // Related identity comes from this relation's selection (not a guessed type map).
+      // Prefer relation selection; fill missing filter columns from the related type map.
       const relatedColumns = columnMapFromSelectionString(dir.selection as string | undefined);
-      if (!relatedColumns.size) {
-        const fromType = columnMapFromObjectType(schema, relatedType);
-        for (const [k, v] of fromType) relatedColumns.set(k, v);
+      const fromType = columnMapFromObjectType(schema, relatedType);
+      for (const [k, v] of fromType) {
+        if (!relatedColumns.has(k)) relatedColumns.set(k, v);
       }
+
+      const nestedRelationFilters = collectRelationFilters(
+        schema,
+        relatedType.name,
+        new Set(visited),
+      );
 
       const through = parseSqlThrough(dir.through as string | undefined);
       if (through) {
@@ -56,6 +66,7 @@ export function collectRelationFilters(
           refColumn: through.targetColumn,
           joinPredicates: [{ localColumn, refColumn: through.targetColumn }],
           columns: relatedColumns,
+          nestedRelationFilters: nestedRelationFilters.length ? nestedRelationFilters : undefined,
           junction: {
             table: through.table,
             localColumn: through.localColumn,
@@ -87,6 +98,7 @@ export function collectRelationFilters(
         refColumn: joinPredicates[0].refColumn,
         joinPredicates,
         columns: relatedColumns,
+        nestedRelationFilters: nestedRelationFilters.length ? nestedRelationFilters : undefined,
       });
     }
   }
@@ -143,9 +155,8 @@ function columnMapFromObjectType(
     if (map.size) return map;
   }
 
-  for (const rootName of ['Query', 'Mutation'] as const) {
-    const root = schema.getType(rootName);
-    if (!root || !isObjectType(root)) continue;
+  for (const root of [schema.getQueryType(), schema.getMutationType()]) {
+    if (!root) continue;
     for (const field of Object.values(root.getFields())) {
       const dirs = getDirective(schema, field, 'sql') || [];
       for (const dir of dirs) {

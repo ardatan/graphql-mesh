@@ -53,6 +53,30 @@ function stableArgsKey(args: Record<string, any> | undefined): string {
   });
 }
 
+/**
+ * Loader identity must omit the batching equality binder's `$args` root so
+ * `album(id: 1)` and `album(id: 2)` share one DataLoader (keys go in `IN (...)`).
+ * Other predicates / planners stay in the identity.
+ */
+function stableArgsKeyExcludingEquality(
+  args: Record<string, any> | undefined,
+  whereMapping: ParsedSqlMapping,
+  equalityColumn: string,
+): string {
+  if (!args) return '';
+  const entry = whereMapping.entries.find(e => e.key === equalityColumn);
+  const omitRoot =
+    entry?.value?.kind === 'args'
+      ? (entry.value.path?.[0] ?? entry.value.value?.split('.')[0])
+      : undefined;
+  if (!omitRoot || !(omitRoot in args)) {
+    return stableArgsKey(args);
+  }
+  const rest: Record<string, any> = { ...args };
+  delete rest[omitRoot];
+  return stableArgsKey(rest);
+}
+
 const PLANNER_KEYS = new Set([
   'filter',
   'orderBy',
@@ -110,7 +134,12 @@ export function canBatchByEqualityColumn(
     if (graphqlArgs?.[key] != null) return false;
     const binder = planners?.[key];
     if (binder != null && String(binder).trim()) {
-      const resolved = resolveMappingValue(parsePlannerBinderValue(String(binder)), {
+      const parsed = parsePlannerBinderValue(String(binder));
+      // Parent-dependent pagination cannot be applied under a shared IN batch.
+      if (parsed?.kind === 'this' || /\$this\b/.test(String(binder))) {
+        return false;
+      }
+      const resolved = resolveMappingValue(parsed, {
         args: graphqlArgs,
       });
       if (resolved != null) return false;
@@ -172,7 +201,7 @@ export function loadBatchedByColumn(
     opts.kind,
     opts.table,
     opts.column,
-    stableArgsKey(opts.graphqlArgs),
+    stableArgsKeyExcludingEquality(opts.graphqlArgs, opts.whereMapping, opts.column),
     JSON.stringify(opts.planners ?? null),
     JSON.stringify(opts.whereMapping.entries.map(e => [e.key, e.value, e.spread])),
     JSON.stringify(opts.selection.entries.map(e => [e.key, e.value])),

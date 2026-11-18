@@ -665,7 +665,13 @@ function appendMutationWhere(
         );
       }
       if (resolved && typeof resolved === 'object' && !Array.isArray(resolved)) {
+        const before = whereParts.length;
         appendFilter(adapter, resolved as Record<string, any>, columns, whereParts, params);
+        if (whereParts.length === before) {
+          throw new Error(
+            `@sql mutation on ${table}: where filter produced no SQL predicate (refusing unscoped write)`,
+          );
+        }
       }
       continue;
     }
@@ -734,6 +740,8 @@ function isBareVarPath(entry: SqlMappingEntry): boolean {
 type AppendFilterOpts = {
   qualifyColumn?: (col: string) => string;
   relationFilters?: SqlRelationFilterMeta[];
+  /** Nesting depth for distinct EXISTS aliases (`_rf0`, `_rf1`, …). */
+  relationDepth?: number;
   rootAlias?: string;
   softDelete?: SqlSoftDeleteOptions;
 };
@@ -1074,10 +1082,14 @@ function appendFilter(
     // Nested belongs-to / M2M: `where: { artist: { name: { eq: "X" } } }`
     const rel = opts?.relationFilters?.find(r => r.field === field);
     if (rel && !isScalarFilterOps(o)) {
-      const alias = '_rf';
+      const depth = opts?.relationDepth ?? 0;
+      const alias = `_rf${depth}`;
       const inner: string[] = [];
       appendFilter(adapter, o, rel.columns, inner, params, {
         qualifyColumn: col => `${quoteIdent(adapter, alias)}.${quoteIdent(adapter, col)}`,
+        relationFilters: rel.nestedRelationFilters,
+        relationDepth: depth + 1,
+        softDelete: opts?.softDelete,
       });
       const softCol = softDeleteColumnFor(opts?.softDelete, rel.relatedTable);
       if (softCol) {
@@ -1096,7 +1108,7 @@ function appendFilter(
           : [{ localColumn: rel.localColumn, refColumn: rel.refColumn }];
 
       if (rel.junction) {
-        const jAlias = '_j';
+        const jAlias = `_j${depth}`;
         const jSoft = softDeleteColumnFor(opts?.softDelete, rel.junction.table);
         const jSoftSql = jSoft
           ? ` AND ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, jSoft)} IS NULL`
@@ -1228,6 +1240,16 @@ function appendThroughExists(
   );
 }
 
+/** Normalize driver binary values for GraphQLByte (Buffer / base64). */
+function encodeBinaryForGraphql(raw: unknown): unknown {
+  if (raw == null) return raw;
+  if (typeof Buffer !== 'undefined' && Buffer.isBuffer(raw)) return raw;
+  if (raw instanceof Uint8Array) {
+    return typeof Buffer !== 'undefined' ? Buffer.from(raw) : raw;
+  }
+  return raw;
+}
+
 export function mapRowToGraphql(
   row: Record<string, unknown>,
   selection: ParsedSqlMapping,
@@ -1238,12 +1260,13 @@ export function mapRowToGraphql(
     if (!entry.value) continue;
     if (entry.value.kind === 'column') {
       const raw = row[entry.value.value] ?? row[`t__${entry.value.value}`];
-      out[entry.key] = raw != null && entry.key === 'id' ? String(raw) : raw;
+      const value = raw != null && entry.key === 'id' ? String(raw) : encodeBinaryForGraphql(raw);
+      out[entry.key] = value;
       continue;
     }
     if (entry.value.kind === 'fn') {
       const raw = row[entry.key] ?? row[entry.key.toLowerCase()];
-      out[entry.key] = raw;
+      out[entry.key] = encodeBinaryForGraphql(raw);
     }
   }
   return out;

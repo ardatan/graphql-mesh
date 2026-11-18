@@ -1,3 +1,6 @@
+/* eslint-disable import/no-nodejs-modules */
+import { existsSync, readFileSync } from 'node:fs';
+import { isAbsolute, resolve as resolvePath } from 'node:path';
 import type { GraphQLSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
@@ -11,6 +14,19 @@ import type {
 import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { getSqlExecutor, loadGraphQLSchemaFromSql, wrapMysqlPoolAsSqlClient } from '@omnigraph/sql';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
+
+/** Legacy docs treat `ssl.ca` as a filesystem path; mysql2 wants PEM contents. */
+function resolveMysqlSslCa(ca: string | undefined, baseDir: string): string | undefined {
+  if (ca == null || ca === '') return ca;
+  if (/BEGIN ([A-Z ]*CERTIFICATE|TRUSTED CERTIFICATE)/.test(ca)) {
+    return ca;
+  }
+  const abs = isAbsolute(ca) ? ca : resolvePath(baseDir, ca);
+  if (existsSync(abs)) {
+    return readFileSync(abs, 'utf8');
+  }
+  return ca;
+}
 
 export default class MySQLHandler implements MeshHandler {
   private name: string;
@@ -60,10 +76,11 @@ export default class MySQLHandler implements MeshHandler {
       }
       // Protocol on the endpoint (`mysql://` / `mysqls://`) already selects the adapter.
       // Forward ssl.ca / rejectUnauthorized into transport options (not only the scheme).
+      // Resolve filesystem paths (legacy contract) to PEM before mysql2.
       const ssl = this.config.ssl
         ? {
             rejectUnauthorized: this.config.ssl.rejectUnauthorized,
-            ca: this.config.ssl.ca,
+            ca: resolveMysqlSslCa(this.config.ssl.ca, this.baseDir),
           }
         : undefined;
       return loadGraphQLSchemaFromSql(this.name, {

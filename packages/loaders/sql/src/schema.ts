@@ -7,7 +7,13 @@ import {
   type GraphQLSchema,
 } from 'graphql';
 import { SchemaComposer } from 'graphql-compose';
-import { GraphQLBigInt, GraphQLDate, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
+import {
+  GraphQLBigInt,
+  GraphQLByte,
+  GraphQLDate,
+  GraphQLDateTime,
+  GraphQLJSON,
+} from 'graphql-scalars';
 import type { Pool as PgPool } from 'pg';
 import { path as pathHelper } from '@graphql-mesh/cross-helpers';
 import {
@@ -108,6 +114,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
   const schemaComposer = new SchemaComposer();
 
   schemaComposer.add(GraphQLBigInt);
+  schemaComposer.add(GraphQLByte);
   schemaComposer.add(GraphQLJSON);
   schemaComposer.add(GraphQLDate);
   schemaComposer.add(GraphQLDateTime);

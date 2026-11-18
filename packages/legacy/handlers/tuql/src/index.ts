@@ -1,6 +1,6 @@
 /* eslint-disable import/no-nodejs-modules */
-import { createHash } from 'node:crypto';
-import { readFileSync, statSync } from 'node:fs';
+import { createHash, randomBytes } from 'node:crypto';
+import { readFileSync, renameSync, statSync, unlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { isAbsolute, join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
@@ -89,11 +89,24 @@ function materializeInfileToSqlite(infile: string, cwd: string): string {
     // fall through and create
   }
 
-  const db = new DatabaseSync(outPath);
+  // Build into a private temp file, then atomically publish — avoids readers
+  // picking up an empty/partial DB if exec fails or the process dies mid-write.
+  const tmpPath = `${outPath}.${randomBytes(8).toString('hex')}.tmp`;
   try {
-    db.exec(dump.toString('utf8'));
-  } finally {
-    db.close();
+    const db = new DatabaseSync(tmpPath);
+    try {
+      db.exec(dump.toString('utf8'));
+    } finally {
+      db.close();
+    }
+    renameSync(tmpPath, outPath);
+  } catch (err) {
+    try {
+      unlinkSync(tmpPath);
+    } catch {
+      /* best-effort cleanup */
+    }
+    throw err;
   }
   return outPath;
 }

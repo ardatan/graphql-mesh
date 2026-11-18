@@ -77,6 +77,11 @@ export interface SqlRelationFilterMeta {
   /** Related table GraphQL field → SQL column */
   columns: Map<string, string>;
   /**
+   * Relation filters on the related type (track→album→artist nested `where`).
+   * Collected at schema build so EXISTS compilation can recurse.
+   */
+  nestedRelationFilters?: SqlRelationFilterMeta[];
+  /**
    * When set, filter through a junction (M2M) instead of a direct FK:
    * `EXISTS (junction JOIN related …)`.
    */

@@ -1557,16 +1557,24 @@ export function rewriteConnectArgReferences(
     }
     let out = value;
     if (fieldRenameMap?.size) {
-      for (const [from, to] of fieldRenameMap) {
-        if (from === to) continue;
+      // Single pass with a lookup so `a→b` then `b→c` does not cascade `a` into `c`.
+      const entries = [...fieldRenameMap.entries()]
+        .filter(([from, to]) => from && to && from !== to)
+        .sort((a, b) => b[0].length - a[0].length);
+      if (entries.length) {
+        const lookup = new Map(entries);
+        const names = entries.map(([from]) => escapeRegExp(from)).join('|');
+        const reKey = new RegExp(`(^|[\\n\\s])(${names})(\\s*[:{])`, 'g');
+        const reBare = new RegExp(`(^|[\\n])([\\t ]*)(${names})(?=[\\t ]*(?:#.*)?$)`, 'gm');
         out = rewriteOutsideQuotes(out, segment =>
           segment
-            .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
-            // Bare identity picks only (line is just the key) → keep the SQL column name.
-            .replace(
-              new RegExp(`(^|[\\n])([\\t ]*)${escapeRegExp(from)}(?=[\\t ]*(?:#.*)?$)`, 'gm'),
-              `$1$2${to}: ${from}`,
-            ),
+            .replace(reKey, (_m, pre: string, from: string, suf: string) => {
+              return `${pre}${lookup.get(from) ?? from}${suf}`;
+            })
+            // Bare identity picks only → keep the SQL column name on the RHS.
+            .replace(reBare, (_m, pre: string, ws: string, from: string) => {
+              return `${pre}${ws}${lookup.get(from) ?? from}: ${from}`;
+            }),
         );
       }
     }
@@ -1672,6 +1680,11 @@ export function rewriteConnectArgReferences(
         where:
           typeof sqlArgs?.where === 'string' ? rewriteSqlWhereOrSet(sqlArgs.where) : sqlArgs?.where,
         set: typeof sqlArgs?.set === 'string' ? rewriteSqlWhereOrSet(sqlArgs.set) : sqlArgs?.set,
+        // Junction `through:` parent binders (`parent: $this.playlistKey`) need `$this` rewrites.
+        through:
+          typeof sqlArgs?.through === 'string'
+            ? rewriteBindersAndTypenames(sqlArgs.through)
+            : sqlArgs?.through,
         selection:
           typeof sqlArgs?.selection === 'string'
             ? rewriteSqlSelection(sqlArgs.selection)

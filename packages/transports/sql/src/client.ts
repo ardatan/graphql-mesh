@@ -180,10 +180,24 @@ type PgPoolConnectable = {
  * SET before issuing SQL. Pool `connect`/`acquire` listeners cannot block checkout,
  * so this query wrapper is the await barrier.
  */
+/** One schema binding per physical pool — conflicting wrappers must use separate pools. */
+const poolSchemaBindings = new WeakMap<object, string>();
+
 export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string): void {
   const trimmed = schema?.trim();
   if (!trimmed) return;
   if (typeof pool.on !== 'function') return;
+  const bound = poolSchemaBindings.get(pool);
+  if (bound === trimmed) {
+    // Already initialized for this schema — do not stack acquire/connect listeners.
+    return;
+  }
+  if (bound != null) {
+    throw new Error(
+      `SQL transport: shared pg.Pool already bound to schema "${bound}"; refusing conflicting schema "${trimmed}". Use a dedicated pool per schema.`,
+    );
+  }
+  poolSchemaBindings.set(pool, trimmed);
   const ident = `"${trimmed.replace(/"/g, '""')}"`;
   const sql = `SET search_path TO ${ident}`;
   const seen = new WeakSet<object>();
@@ -237,17 +251,10 @@ export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string):
       (err: unknown) => {
         // Fail closed: waiters reject; further queries reject until next acquire
         // retries SET. Leave unseen so a later checkout can recover.
+        // Do NOT release here — `pool.query` / the caller releases once on error;
+        // releasing first causes a double-release throw in pg-pool.
         failed.set(client, err);
         pending.delete(client);
-        // Discard a broken checkout (node-pg: release(err) destroys the client).
-        const release = (client as { release?: (destroy?: Error | boolean) => void }).release;
-        if (typeof release === 'function') {
-          try {
-            release(err instanceof Error ? err : true);
-          } catch {
-            /* already released */
-          }
-        }
         throw err;
       },
     );

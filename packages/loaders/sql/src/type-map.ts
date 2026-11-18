@@ -6,7 +6,13 @@ import {
   GraphQLString,
   type GraphQLScalarType,
 } from 'graphql';
-import { GraphQLBigInt, GraphQLDate, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
+import {
+  GraphQLBigInt,
+  GraphQLByte,
+  GraphQLDate,
+  GraphQLDateTime,
+  GraphQLJSON,
+} from 'graphql-scalars';
 
 export function mapSqlTypeToGraphQL(
   dataType: string,
@@ -52,7 +58,8 @@ export function mapSqlTypeToGraphQL(
     return GraphQLJSON as unknown as GraphQLScalarType;
   }
   if (t.includes('BLOB') || t.includes('BINARY') || t.includes('BYTEA')) {
-    return GraphQLString;
+    // Drivers return Buffer/Uint8Array; GraphQLString cannot serialize those.
+    return GraphQLByte as unknown as GraphQLScalarType;
   }
   return GraphQLString;
 }

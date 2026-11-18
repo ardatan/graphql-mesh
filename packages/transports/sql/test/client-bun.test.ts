@@ -138,6 +138,17 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
     expect(queries2[0]).toMatch(/SET search_path TO "public"/);
   });
 
+  it('rejects conflicting schema bindings on the same shared pool', async () => {
+    const { applyPgPoolSearchPath } = await import('../src/client.js');
+    const pool = {
+      on: () => undefined,
+    };
+    applyPgPoolSearchPath(pool, 'app');
+    expect(() => applyPgPoolSearchPath(pool, 'other')).toThrow(/conflicting schema/);
+    // Same schema is a no-op (no stacked listeners).
+    expect(() => applyPgPoolSearchPath(pool, 'app')).not.toThrow();
+  });
+
   it('rejects callers when search_path SET fails and retries on next acquire', async () => {
     const { applyPgPoolSearchPath } = await import('../src/client.js');
     const byEvent: Record<string, Array<(client: any) => void>> = { connect: [], acquire: [] };
@@ -174,7 +185,7 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
     expect(queries.filter(q => q === 'SELECT 3')).toEqual(['SELECT 3']);
   });
 
-  it('handles SET failure before any query without unhandled rejection and discards client', async () => {
+  it('handles SET failure before any query without unhandled rejection', async () => {
     const { applyPgPoolSearchPath } = await import('../src/client.js');
     const byEvent: Record<string, Array<(client: any) => void>> = { connect: [], acquire: [] };
     applyPgPoolSearchPath(
@@ -192,7 +203,7 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
     };
     process.on('unhandledRejection', onUnhandled);
 
-    let releaseArg: unknown;
+    let releaseCount = 0;
     const client = {
       query: async (q: string) => {
         if (q.startsWith('SET ')) {
@@ -200,8 +211,8 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
         }
         return { rows: [] };
       },
-      release: (destroy?: Error | boolean) => {
-        releaseArg = destroy;
+      release: () => {
+        releaseCount += 1;
       },
     };
 
@@ -211,11 +222,65 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
       await new Promise<void>(resolve => setImmediate(resolve));
       await new Promise<void>(resolve => setImmediate(resolve));
       expect(unhandled).toEqual([]);
-      expect(releaseArg).toBeInstanceOf(Error);
-      expect((releaseArg as Error).message).toMatch(/SET search_path failed before query/);
+      // Must not release here — pool.query / caller releases once on error.
+      expect(releaseCount).toBe(0);
       await expect(client.query('SELECT 1')).rejects.toThrow(/SET search_path failed before query/);
+      expect(releaseCount).toBe(0);
     } finally {
       process.off('unhandledRejection', onUnhandled);
     }
+  });
+
+  it('pool.query-style path releases once when SET fails under a waiting query', async () => {
+    const { applyPgPoolSearchPath } = await import('../src/client.js');
+    const byEvent: Record<string, Array<(client: any) => void>> = { connect: [], acquire: [] };
+    applyPgPoolSearchPath(
+      {
+        on: (event: string, listener: (client: any) => void) => {
+          (byEvent[event] ||= []).push(listener);
+        },
+      },
+      'app',
+    );
+
+    let releaseCount = 0;
+    let setGate!: () => void;
+    const setWait = new Promise<void>(resolve => {
+      setGate = resolve;
+    });
+    const client = {
+      query: async (q: string, cb?: (err: Error | null, res?: any) => void) => {
+        if (q.startsWith('SET ')) {
+          await setWait;
+          const err = new Error('SET search_path failed under pool.query');
+          if (cb) {
+            cb(err);
+            return;
+          }
+          throw err;
+        }
+        return { rows: [] };
+      },
+      release: () => {
+        releaseCount += 1;
+        if (releaseCount > 1) {
+          throw new Error('Release called on client which has already been released to the pool.');
+        }
+      },
+    };
+
+    byEvent.acquire[0](client);
+    // Simulate pg-pool pool.query: wait on SET via patched query, then release once on error.
+    const poolQuery = client.query('SELECT 1').then(
+      () => {
+        client.release();
+      },
+      () => {
+        client.release();
+      },
+    );
+    setGate();
+    await expect(poolQuery).resolves.toBeUndefined();
+    expect(releaseCount).toBe(1);
   });
 });

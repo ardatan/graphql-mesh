@@ -115,9 +115,9 @@ describe('buildSelect', () => {
         },
       ],
     });
-    expect(sql).toContain('EXISTS (SELECT 1 FROM "artists" AS "_rf"');
-    expect(sql).toContain('"_rf"."Name" LIKE ?');
-    expect(sql).toContain('"_rf"."ArtistId" = "t"."ArtistId"');
+    expect(sql).toContain('EXISTS (SELECT 1 FROM "artists" AS "_rf0"');
+    expect(sql).toContain('"_rf0"."Name" LIKE ?');
+    expect(sql).toContain('"_rf0"."ArtistId" = "t"."ArtistId"');
     expect(sql).toContain('LOWER("t"."Title") LIKE LOWER(?)');
     expect(params).toEqual(['A%', '%rock%']);
   });
@@ -362,6 +362,19 @@ describe('buildSelect', () => {
         ['AlbumId'],
       ),
     ).toThrow(/resolved to undefined/);
+
+    expect(() =>
+      buildUpdate(
+        'sqlite',
+        'albums',
+        parseSqlMapping(`Title: $args.input.title`),
+        parseSqlMapping(`$args.where`),
+        { input: { title: 'X' }, where: { unknownField: { eq: 1 } } },
+        ['AlbumId'],
+        undefined,
+        cols,
+      ),
+    ).toThrow(/no SQL predicate/);
   });
 
   it('appends soft-delete IS NULL on reads and soft-deletes via UPDATE', () => {
