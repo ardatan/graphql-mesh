@@ -19,12 +19,13 @@ it('should compose the appropriate schema', async () => {
     maskServicePorts: true,
   });
   expect(composition.result).toContain('kind: "mongo"');
-  expect(composition.result).toContain('user(id:');
-  expect(composition.result).toContain('createUser(input:');
-  expect(composition.result).toContain('where: UserWhereInput');
-  expect(composition.result).toContain('orderBy: UserOrderByInput');
-  expect(composition.result).toContain('id: ID!');
-  expect(composition.result).toMatchSnapshot();
+  expect(composition.result).toContain('findUserById(id:');
+  expect(composition.result).toContain('insertOneUser(document:');
+  expect(composition.result).toContain('query: UserQueryInput');
+  expect(composition.result).toContain('sort: [UserSort!]');
+  expect(composition.result).toContain('id: ObjectID!');
+  expect(composition.result).toContain('@mongo__findOne');
+  expect(composition.result).toContain('update: UserUpdateInput!');
 });
 
 it('should create and find users', async () => {
@@ -34,7 +35,7 @@ it('should create and find users', async () => {
   const created = await gw.execute({
     query: /* GraphQL */ `
       mutation CreateUser {
-        createUser(input: { name: "Ada", age: 36, gender: "female" }) {
+        insertOneUser(document: { name: "Ada", age: 36, gender: "female" }) {
           recordId
           record {
             id
@@ -47,31 +48,31 @@ it('should create and find users', async () => {
     `,
   });
   expect(created.errors).toBeUndefined();
-  const recordId = (created.data as any).createUser.recordId as string;
+  const recordId = (created.data as any).insertOneUser.recordId as string;
   expect(recordId).toBeTruthy();
-  expect((created.data as any).createUser.record.name).toBe('Ada');
+  expect((created.data as any).insertOneUser.record.name).toBe('Ada');
 
   const found = await gw.execute({
     query: /* GraphQL */ `
-      query FindUser($id: ID!) {
-        user(id: $id) {
+      query FindUser($id: ObjectID!) {
+        findUserById(id: $id) {
           id
           name
           age
         }
-        users(where: { name: { eq: "Ada" } }) {
+        findUsers(query: { name: { eq: "Ada" } }) {
           id
           name
         }
-        usersCount(where: { gender: { eq: "female" } })
+        countDocumentsUsers(query: { gender: { eq: "female" } })
       }
     `,
     variables: { id: recordId },
   });
   expect(found.errors).toBeUndefined();
   expect(found.data).toMatchObject({
-    user: { id: recordId, name: 'Ada', age: 36 },
-    users: [{ id: recordId, name: 'Ada' }],
-    usersCount: 1,
+    findUserById: { id: recordId, name: 'Ada', age: 36 },
+    findUsers: [{ id: recordId, name: 'Ada' }],
+    countDocumentsUsers: 1,
   });
 }, 120_000);
