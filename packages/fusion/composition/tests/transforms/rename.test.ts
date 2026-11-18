@@ -1228,6 +1228,13 @@ WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
         new Map([['any', 'needle']]),
       ),
     ).toBe('MATCH (m:$any /* note */ ($labels)) RETURN $needle AS n');
+    // Em space (U+2003) after ANY/ALL stays an operator; `$any` param still renames.
+    expect(
+      rewriteCypherParamNames(
+        'MATCH (m:$any\u2003($labels)) RETURN $any AS n',
+        new Map([['any', 'needle']]),
+      ),
+    ).toBe('MATCH (m:$any\u2003($labels)) RETURN $needle AS n');
     // Standalone backtick identifiers are not parameters.
     expect(rewriteCypherParamNames('RETURN `title` AS n', new Map([['title', 'needle']]))).toBe(
       'RETURN `title` AS n',

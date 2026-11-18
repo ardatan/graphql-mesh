@@ -318,11 +318,29 @@ export function extractNeo4jModelTypeDefs(
   /** Spatial object types Neo4j regenerates from retained model attributes. */
   const NEO4J_REGENERATED_OBJECT_TYPES = new Set(['Point', 'CartesianPoint']);
 
+  function objectTypeFieldNameSet(typeName: string): Set<string> | undefined {
+    const def = typeDefs.definitions.find(
+      d => d.kind === Kind.OBJECT_TYPE_DEFINITION && d.name.value === typeName,
+    );
+    if (!def || def.kind !== Kind.OBJECT_TYPE_DEFINITION) {
+      return undefined;
+    }
+    return new Set((def.fields || []).map(field => field.name.value));
+  }
+
   /**
-   * Generated connection / aggregate object fields Neo4j re-augments on `@node` models.
-   * Do not classify by field-name suffix alone — authored `totalAggregate: Int` must stay.
+   * Generated connection / aggregate object fields Neo4j re-augments from relationships.
+   * Suffix alone is not enough — authored `totalAggregate: Int` and `totalAggregate: Totals`
+   * must stay; drop only relationship-originated siblings or Neo4j Connection/Aggregate shapes.
    */
-  function isGeneratedConnectionOrAggregateField(field: FieldDefinitionNode): boolean {
+  function isGeneratedConnectionOrAggregateField(
+    field: FieldDefinitionNode,
+    siblingFields?: readonly FieldDefinitionNode[],
+  ): boolean {
+    // Authored `@cypher` / `@relationship` fields are never Neo4j-generated connections.
+    if (hasDirective(field, 'cypher') || hasDirective(field, 'relationship')) {
+      return false;
+    }
     const returnName = namedTypeNameFromTypeNode(field.type);
     if (!returnName) {
       return false;
@@ -332,12 +350,39 @@ export function extractNeo4jModelTypeDefs(
       return false;
     }
     const fieldName = field.name.value;
-    return (
-      fieldName.endsWith('Connection') ||
-      fieldName.endsWith('Aggregate') ||
-      returnName.endsWith('Connection') ||
-      returnName.endsWith('Aggregate')
-    );
+    const connectionBase = fieldName.endsWith('Connection')
+      ? fieldName.slice(0, -'Connection'.length)
+      : undefined;
+    const aggregateBase = fieldName.endsWith('Aggregate')
+      ? fieldName.slice(0, -'Aggregate'.length)
+      : undefined;
+    const base = connectionBase || aggregateBase;
+    // Relationship origin: `actors` @relationship → generated `actorsConnection` / `actorsAggregate`.
+    if (
+      base &&
+      siblingFields?.some(
+        sibling => sibling.name.value === base && hasDirective(sibling, 'relationship'),
+      )
+    ) {
+      return true;
+    }
+    const returnFields = objectTypeFieldNameSet(returnName);
+    if (!returnFields) {
+      return false;
+    }
+    // Neo4j Connection objects expose `edges` (plus pageInfo / totalCount when fully augmented).
+    if ((connectionBase || returnName.endsWith('Connection')) && returnFields.has('edges')) {
+      return true;
+    }
+    // Neo4j Aggregate objects expose `count` with `node` and/or `edge` selections.
+    if (
+      (aggregateBase || returnName.endsWith('Aggregate')) &&
+      returnFields.has('count') &&
+      (returnFields.has('node') || returnFields.has('edge'))
+    ) {
+      return true;
+    }
+    return false;
   }
 
   function isRetainedModelField(field: FieldDefinitionNode): boolean {
@@ -464,7 +509,7 @@ export function extractNeo4jModelTypeDefs(
           continue;
         }
         // Unstamped generated connections on authored outputs must not pull foreign edge/node types.
-        if (isGeneratedConnectionOrAggregateField(field)) {
+        if (isGeneratedConnectionOrAggregateField(field, def.fields)) {
           continue;
         }
         collectNamedTypesFromField(field, referenced, { includeArgs: true });
@@ -492,7 +537,12 @@ export function extractNeo4jModelTypeDefs(
   }
 
   function retainedModelHasSpatialField(spatialName: string): boolean {
-    for (const fields of retainedFieldsByType.values()) {
+    // Neo4j regenerates Point/CartesianPoint from model / relationship attributes, not root
+    // operation `@cypher` fields (e.g. `Query.pin: Point` alone does not regenerate Point).
+    for (const [typeName, fields] of retainedFieldsByType) {
+      if (ROOT_OPERATION_NAMES.has(typeName)) {
+        continue;
+      }
       for (const field of fields) {
         if (namedTypeNameFromTypeNode(field.type) === spatialName) {
           return true;
@@ -500,13 +550,6 @@ export function extractNeo4jModelTypeDefs(
       }
     }
     return false;
-  }
-
-  const interfaceFieldsByName = new Map<string, readonly FieldDefinitionNode[]>();
-  for (const def of typeDefs.definitions) {
-    if (def.kind === Kind.INTERFACE_TYPE_DEFINITION) {
-      interfaceFieldsByName.set(def.name.value, def.fields || []);
-    }
   }
 
   function authoredOutputOwnedFields(typeName: string): readonly FieldDefinitionNode[] | undefined {
@@ -521,10 +564,11 @@ export function extractNeo4jModelTypeDefs(
     ) {
       return undefined;
     }
-    return (def.fields || []).filter(
+    const siblings = def.fields || [];
+    return siblings.filter(
       field =>
         fieldOwnedByThisSubgraph(field, subgraphName) &&
-        !isGeneratedConnectionOrAggregateField(field),
+        !isGeneratedConnectionOrAggregateField(field, siblings),
     );
   }
 
@@ -581,6 +625,69 @@ export function extractNeo4jModelTypeDefs(
         prunedAuthored = true;
       }
     }
+  }
+
+  // Unions collected while walking pruned paths must not stay in `referenced` — otherwise
+  // emission throws on memberless foreign unions even when surviving fields (e.g. Stats.count) are fine.
+  for (const unionName of unionNames) {
+    if (!referenced.has(unionName)) {
+      continue;
+    }
+    let stillUsed = false;
+    for (const fields of retainedFieldsByType.values()) {
+      if (stillUsed) {
+        break;
+      }
+      for (const field of fields) {
+        if (namedTypeNameFromTypeNode(field.type) === unionName) {
+          stillUsed = true;
+          break;
+        }
+      }
+    }
+    if (!stillUsed) {
+      for (const outName of authoredOutputTypeNames) {
+        if (
+          survivingAuthoredFields(outName).some(
+            field => namedTypeNameFromTypeNode(field.type) === unionName,
+          )
+        ) {
+          stillUsed = true;
+          break;
+        }
+      }
+    }
+    if (!stillUsed) {
+      referenced.delete(unionName);
+    }
+  }
+
+  function interfaceHasSurvivingFields(ifaceName: string): boolean {
+    if (keepTypeNames.has(ifaceName)) {
+      return (retainedFieldsByType.get(ifaceName) || []).length > 0;
+    }
+    if (authoredOutputTypeNames.has(ifaceName)) {
+      return survivingAuthoredFields(ifaceName).length > 0;
+    }
+    return false;
+  }
+
+  function findInterfaceReferrer(ifaceName: string): string {
+    for (const [typeName, fields] of retainedFieldsByType) {
+      for (const field of fields) {
+        if (namedTypeNameFromTypeNode(field.type) === ifaceName) {
+          return `${typeName}.${field.name.value}`;
+        }
+      }
+    }
+    for (const outName of authoredOutputTypeNames) {
+      for (const field of survivingAuthoredFields(outName)) {
+        if (namedTypeNameFromTypeNode(field.type) === ifaceName) {
+          return `${outName}.${field.name.value}`;
+        }
+      }
+    }
+    return 'unknown field';
   }
 
   function typeEmittedInExtract(name: string): boolean {
@@ -664,11 +771,12 @@ export function extractNeo4jModelTypeDefs(
             let authored = isForeignOwnedModelType(def, subgraphName)
               ? stripForeignModelOwnershipDirectives(def)
               : def;
-            const authoredFields = (authored.fields || []).filter(field => {
+            const siblings = authored.fields || [];
+            const authoredFields = siblings.filter(field => {
               if (!fieldOwnedByThisSubgraph(field, subgraphName)) {
                 return false;
               }
-              if (isGeneratedConnectionOrAggregateField(field)) {
+              if (isGeneratedConnectionOrAggregateField(field, siblings)) {
                 return false;
               }
               const nested = namedTypeNameFromTypeNode(field.type);
@@ -684,6 +792,14 @@ export function extractNeo4jModelTypeDefs(
               return true;
             });
             if (!authoredFields.length) {
+              if (def.kind === Kind.INTERFACE_TYPE_DEFINITION) {
+                if (referenced.has(def.name.value)) {
+                  throw new Error(
+                    `Neo4j model extract: interface "${def.name.value}" has no surviving fields (referenced from ${findInterfaceReferrer(def.name.value)})`,
+                  );
+                }
+                return [];
+              }
               if (directCypherReturnTypes.has(def.name.value)) {
                 const refs =
                   authoredOutputReferrers.get(def.name.value)?.join(', ') || 'unknown field';
@@ -694,10 +810,11 @@ export function extractNeo4jModelTypeDefs(
               // Nested type reached only via dropped paths — omit rather than abort the transport.
               return [];
             }
-            if (authoredFields.length !== (authored.fields || []).length) {
+            if (authoredFields.length !== siblings.length) {
               authored = { ...authored, fields: authoredFields };
             }
             // Interface conformance against the *projected* interface fields extraction emits.
+            // Drop empty interface edges; keep nonempty conformance checks.
             if (authored.kind === Kind.OBJECT_TYPE_DEFINITION && authored.interfaces?.length) {
               const projected = new Set(authoredFields.map(field => field.name.value));
               const nextInterfaces = [];
@@ -706,14 +823,13 @@ export function extractNeo4jModelTypeDefs(
                 if (!keepTypeNames.has(ifaceName) && !authoredOutputTypeNames.has(ifaceName)) {
                   continue;
                 }
+                if (!interfaceHasSurvivingFields(ifaceName)) {
+                  continue;
+                }
                 const projectedIfaceFields = keepTypeNames.has(ifaceName)
                   ? retainedFieldsByType.get(ifaceName) || []
                   : survivingAuthoredFields(ifaceName);
-                const requiredNames = projectedIfaceFields.length
-                  ? projectedIfaceFields.map(field => field.name.value)
-                  : (interfaceFieldsByName.get(ifaceName) || [])
-                      .filter(field => fieldOwnedByThisSubgraph(field, subgraphName))
-                      .map(field => field.name.value);
+                const requiredNames = projectedIfaceFields.map(field => field.name.value);
                 const missing = requiredNames.filter(name => !projected.has(name));
                 if (missing.length) {
                   const refs =
@@ -734,6 +850,14 @@ export function extractNeo4jModelTypeDefs(
             return [];
           }
           const fields = retainedFieldsByType.get(def.name.value) || [];
+          if (def.kind === Kind.INTERFACE_TYPE_DEFINITION && !fields.length) {
+            if (referenced.has(def.name.value)) {
+              throw new Error(
+                `Neo4j model extract: interface "${def.name.value}" has no surviving fields (referenced from ${findInterfaceReferrer(def.name.value)})`,
+              );
+            }
+            return [];
+          }
           if (
             def.kind === Kind.OBJECT_TYPE_DEFINITION &&
             ROOT_OPERATION_NAMES.has(def.name.value)
@@ -742,6 +866,14 @@ export function extractNeo4jModelTypeDefs(
               return [];
             }
             return [{ ...(def as ObjectTypeDefinitionNode), fields: [...fields] }];
+          }
+          if (def.kind === Kind.OBJECT_TYPE_DEFINITION && def.interfaces?.length) {
+            const nextInterfaces = def.interfaces.filter(iface =>
+              interfaceHasSurvivingFields(iface.name.value),
+            );
+            if (nextInterfaces.length !== def.interfaces.length) {
+              return [{ ...def, fields: [...fields], interfaces: nextInterfaces }];
+            }
           }
           return [{ ...def, fields: [...fields] } as typeof def];
         }

@@ -20,6 +20,15 @@ const NEO4J_NON_PROPERTY_FIELD_DIRECTIVES = new Set([
 
 const CYPHER_RESERVED_VARS = new Set(['this', 'jwt', 'context']);
 
+/**
+ * Cypher lexer whitespace (ASCII + Unicode Space_Separator / line separators),
+ * including NBSP (U+00A0) and em space (U+2003). Used when scanning trivia after `$`
+ * and after dynamic `ANY`/`ALL` operators so renames do not rewrite operators.
+ */
+const CYPHER_WHITESPACE_CHAR = new RegExp(
+  `[ \\t\\r\\n\\f${String.fromCharCode(0x0b)}\\u0085\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]`,
+);
+
 /** True when the type (or its directives bag) is a Neo4j `@node` model. */
 export function hasNeo4jNodeDirective(typeDirectives: Record<string, any[]> | undefined): boolean {
   return Boolean(typeDirectives?.node?.length);
@@ -319,8 +328,7 @@ export function rewriteCypherParamNames(
       let trivia = '';
       while (i < statement.length) {
         const ch = statement[i];
-        // Cypher whitespace includes U+00A0 (NBSP).
-        if (/[ \t\r\n\f\u00A0]/.test(ch)) {
+        if (CYPHER_WHITESPACE_CHAR.test(ch)) {
           trivia += statement[i++];
           continue;
         }
@@ -351,7 +359,7 @@ export function rewriteCypherParamNames(
         let j = i + dynOp[0].length;
         while (j < statement.length) {
           const ch = statement[j];
-          if (/[ \t\r\n\f\u00A0]/.test(ch)) {
+          if (CYPHER_WHITESPACE_CHAR.test(ch)) {
             j++;
             continue;
           }
