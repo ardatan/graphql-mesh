@@ -356,7 +356,6 @@ input CreateCityInput @join__type(graph: GEO) {
 }
 
 input UpdateCityInput @join__type(graph: GEO) {
-  id: ID
   name: String
   countrycode: String
   district: String
@@ -382,7 +381,6 @@ input CreateCountryInput @join__type(graph: GEO) {
 }
 
 input UpdateCountryInput @join__type(graph: GEO) {
-  id: ID
   name: String
   continent: String
   region: String

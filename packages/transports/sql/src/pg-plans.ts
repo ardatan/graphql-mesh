@@ -63,11 +63,21 @@ export function wirePostgresSqlPlans(
           if (!meta.installedRelations?.get(typeName)?.has(fieldName)) {
             return fieldConfig;
           }
-          // Plain-object parents from a bailed root cannot use relation plans.
-          if (typesWithGenericRootParent.has(typeName)) {
+          // ROWS / manyRelation need a Pg parent step. Types that may arrive as plain
+          // objects from a bailed root keep the generic resolver for has-many fields.
+          // ROW belongs-to can fall back to remoteResource.get via the local FK attr.
+          if (kind === 'ROWS' && typesWithGenericRootParent.has(typeName)) {
             return fieldConfig;
           }
-          grafast.plan = makeRelationPlan(kind, fieldName);
+          const localTable = meta.tableByType.get(typeName);
+          const localResource = localTable
+            ? (registry.pgResources as Record<string, any>)[localTable]
+            : undefined;
+          const rel =
+            typeof localResource?.getRelation === 'function'
+              ? localResource.getRelation(fieldName)
+              : localResource?.relations?.[fieldName];
+          grafast.plan = makeRelationPlan(kind, fieldName, rel);
           delete (fieldConfig as GraphQLFieldConfig<any, any>).resolve;
           return fieldConfig;
         }
@@ -311,14 +321,31 @@ function rowWhereTooComplexForGet(where: ReturnType<typeof parseSqlMapping>): bo
   return equality[0].value?.kind !== 'args';
 }
 
-function makeRelationPlan(kind: 'ROW' | 'ROWS', relationName: string) {
+function makeRelationPlan(
+  kind: 'ROW' | 'ROWS',
+  relationName: string,
+  rel?: {
+    localAttributes?: string[];
+    remoteAttributes?: string[];
+    remoteResource?: { get?: (spec: Record<string, unknown>) => unknown };
+  },
+) {
   return function sqlRelationPlan($parent: any) {
-    if (kind === 'ROW' && typeof $parent?.singleRelation === 'function') {
-      return $parent.singleRelation(relationName);
+    if (kind === 'ROW') {
+      if (typeof $parent?.singleRelation === 'function') {
+        return $parent.singleRelation(relationName);
+      }
+      // Plain-object parent (bailed root): look up by FK attribute.
+      const localAttr = rel?.localAttributes?.[0];
+      const remoteAttr = rel?.remoteAttributes?.[0];
+      const remote = rel?.remoteResource;
+      if (localAttr && remoteAttr && remote && typeof remote.get === 'function') {
+        return remote.get({ [remoteAttr]: access($parent, localAttr) });
+      }
+      return null;
     }
     if (kind === 'ROWS' && typeof $parent?.manyRelation === 'function') {
-      const $rows = $parent.manyRelation(relationName);
-      return $rows;
+      return $parent.manyRelation(relationName);
     }
     return null;
   };

@@ -1,4 +1,5 @@
 import {
+  GraphQLID,
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
@@ -386,7 +387,7 @@ describe('wirePostgresSqlPlans relation bailouts', () => {
     expect((userFields.profile.extensions as any)?.grafast?.plan).toBeUndefined();
   });
 
-  it('keeps nested relation generic resolve when a root bails (e.g. orderBy)', () => {
+  it('keeps nested ROWS relation generic resolve when a root bails (e.g. orderBy)', () => {
     const Artist: GraphQLObjectType = new GraphQLObjectType({
       name: 'Artist',
       fields: () => ({
@@ -469,5 +470,104 @@ describe('wirePostgresSqlPlans relation bailouts', () => {
     expect(typeof queryFields.artists.resolve).toBe('function');
     expect(typeof artistFields.albums.resolve).toBe('function');
     expect((artistFields.albums.extensions as any)?.grafast?.plan).toBeUndefined();
+  });
+
+  it('plans ROW belongs-to even when a sibling list root bails to generic', () => {
+    const citySelection = ['id: id', 'name: name'].join('\n');
+    const countrySelection = ['id: code', 'name: name', 'capital: capital'].join('\n');
+    const City: GraphQLObjectType = new GraphQLObjectType({
+      name: 'City',
+      fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLString },
+      }),
+      extensions: {
+        directives: {
+          sql: { table: 'city', kind: 'ROW', where: 'id: $this.id', selection: citySelection },
+        },
+      },
+    });
+    const Country: GraphQLObjectType = new GraphQLObjectType({
+      name: 'Country',
+      fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLString },
+        capital: { type: GraphQLInt },
+        city: {
+          type: City,
+          resolve: () => null,
+          extensions: {
+            directives: {
+              sql: {
+                table: 'city',
+                kind: 'ROW',
+                where: 'id: $this.capital',
+                selection: citySelection,
+              },
+            },
+          },
+        },
+      }),
+      extensions: {
+        directives: {
+          sql: {
+            table: 'country',
+            kind: 'ROW',
+            where: 'code: $this.id',
+            selection: countrySelection,
+          },
+        },
+      },
+    });
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          country: {
+            type: Country,
+            args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+            extensions: {
+              directives: {
+                sql: {
+                  table: 'country',
+                  kind: 'ROW',
+                  where: 'code: $args.id',
+                  selection: countrySelection,
+                },
+              },
+            },
+          },
+          // Bails → Country may also be a plain-object parent; ROW city must still plan.
+          countries: {
+            type: new GraphQLList(Country),
+            resolve: () => [],
+            extensions: {
+              directives: {
+                sql: {
+                  table: 'country',
+                  kind: 'ROWS',
+                  where: '$args.where',
+                  selection: countrySelection,
+                },
+              },
+            },
+          },
+        },
+      }),
+      types: [Country, City],
+    });
+
+    const { registry, tableByType, relationNames, installedRelations, sqlToAttrByTable } =
+      buildPgRegistryFromSqlSchema(schema);
+    expect(installedRelations.get('Country')?.has('city')).toBe(true);
+    const wired = wirePostgresSqlPlans(schema, registry, {
+      relationNames,
+      tableByType,
+      installedRelations,
+      sqlToAttrByTable,
+    });
+    const countryFields = (wired.getType('Country') as GraphQLObjectType).getFields();
+    expect(typeof countryFields.city.resolve).toBe('undefined');
+    expect(typeof (countryFields.city.extensions as any)?.grafast?.plan).toBe('function');
   });
 });
