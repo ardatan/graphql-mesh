@@ -7,8 +7,6 @@ exports[`Thrift Calculator should generate correct schema: thrift-calculator-sch
 
 directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 enum ThriftMessageType {
   CALL
   ONEWAY
