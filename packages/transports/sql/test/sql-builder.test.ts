@@ -1,5 +1,10 @@
 import { parseSqlMapping } from '../src/mapping.js';
-import { buildSelect, escapeSqlStringLiteral, mapRowToGraphql } from '../src/sql-builder.js';
+import {
+  buildDelete,
+  buildSelect,
+  escapeSqlStringLiteral,
+  mapRowToGraphql,
+} from '../src/sql-builder.js';
 
 describe('buildSelect', () => {
   const selection = parseSqlMapping(`
@@ -78,6 +83,42 @@ describe('buildSelect', () => {
       title: 'A',
       artistId: 2,
     });
+  });
+
+  it('appends soft-delete IS NULL on reads and soft-deletes via UPDATE', () => {
+    const softDelete = { column: 'deleted_at' };
+    const { sql } = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'ROWS',
+      selection,
+      whereMapping: parseSqlMapping(`$args.where`),
+      planners: { limit: '$args.limit' },
+      graphqlArgs: { where: {}, limit: 5 },
+      softDelete,
+    });
+    expect(sql).toContain('"deleted_at" IS NULL');
+
+    const del = buildDelete(
+      'postgres',
+      'albums',
+      parseSqlMapping(`AlbumId: $args.id`),
+      { id: 1 },
+      softDelete,
+    );
+    expect(del.sql).toMatch(/^UPDATE "albums" SET "deleted_at" = NOW()/);
+    expect(del.sql).toContain('"AlbumId" = $');
+    expect(del.sql).toContain('"deleted_at" IS NULL');
+    expect(del.sql).not.toContain('DELETE FROM');
+
+    const skipped = buildSelect('sqlite', {
+      table: 'artists',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: ArtistId`),
+      whereMapping: parseSqlMapping(`$args.where`),
+      graphqlArgs: { where: {} },
+      softDelete: { column: 'deleted_at', tables: ['albums'] },
+    });
+    expect(skipped.sql).not.toContain('deleted_at');
   });
 
   it('escapes backslash before quotes in SQL string literals', () => {

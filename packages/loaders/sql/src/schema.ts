@@ -50,6 +50,11 @@ export interface LoadSqlSubgraphOpts extends Pick<
   /** Limit columns per table (legacy mysql `tableFields` shape). */
   tableFields?: Array<{ table: string; fields: string[] }>;
   naming?: Partial<SqlNaming>;
+  /**
+   * Soft-delete: hide rows where `column IS NOT NULL`; `delete*` mutations set
+   * the column to now instead of hard `DELETE`. Forwarded to `@transport(options)`.
+   */
+  softDelete?: SqlTransportOptions['softDelete'];
 }
 
 export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadSqlSubgraphOpts) {
@@ -501,6 +506,7 @@ function buildTransportOptions(
   if (opts.idleTimeout != null) options.idleTimeout = opts.idleTimeout;
   if (opts.connectionTimeout != null) options.connectionTimeout = opts.connectionTimeout;
   if (opts.tls != null) options.tls = opts.tls;
+  if (opts.softDelete?.column) options.softDelete = opts.softDelete;
   return options;
 }
 

@@ -6,11 +6,38 @@ import {
   type BelongsToJoin,
   type HasManySubselect,
 } from './plan.js';
-import type { ParsedSqlMapping, SqlAdapter, SqlMappingEntry, SqlQueryKind } from './types.js';
+import type {
+  ParsedSqlMapping,
+  SqlAdapter,
+  SqlMappingEntry,
+  SqlQueryKind,
+  SqlSoftDeleteOptions,
+} from './types.js';
 
 export interface BuiltQuery {
   sql: string;
   params: unknown[];
+}
+
+/** Resolve soft-delete column for a table, or `undefined` if not applicable. */
+export function softDeleteColumnFor(
+  softDelete: SqlSoftDeleteOptions | undefined,
+  table: string,
+): string | undefined {
+  if (!softDelete?.column) return undefined;
+  if (softDelete.tables?.length && !softDelete.tables.includes(table)) return undefined;
+  return softDelete.column;
+}
+
+export function softDeleteNowSql(adapter: SqlAdapter): string {
+  switch (adapter) {
+    case 'postgres':
+      return 'NOW()';
+    case 'mysql':
+      return 'CURRENT_TIMESTAMP';
+    case 'sqlite':
+      return `datetime('now')`;
+  }
 }
 
 export type SqlPlannerKey =
@@ -35,6 +62,8 @@ export interface SelectPlan {
   joins?: BelongsToJoin[];
   /** Has-many folded as correlated JSON subselects. */
   hasMany?: HasManySubselect[];
+  /** Soft-delete config from `@transport(options.softDelete)`. */
+  softDelete?: SqlSoftDeleteOptions;
 }
 
 const PLANNER_KEYS = new Set<string>([
@@ -83,7 +112,19 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
     qualifyColumn: rootAlias ? qualify : undefined,
   });
 
-  const selectCols = buildSelectList(adapter, plan.selection, joins, hasMany, rootAlias);
+  const softCol = softDeleteColumnFor(plan.softDelete, plan.table);
+  if (softCol) {
+    whereParts.push(`${qualify(softCol)} IS NULL`);
+  }
+
+  const selectCols = buildSelectList(
+    adapter,
+    plan.selection,
+    joins,
+    hasMany,
+    rootAlias,
+    plan.softDelete,
+  );
 
   let sql = `SELECT ${selectCols.join(', ')} FROM ${quoteIdent(adapter, plan.table)}`;
   if (rootAlias) {
@@ -164,6 +205,7 @@ function buildSelectList(
   joins: BelongsToJoin[] | undefined,
   hasMany: HasManySubselect[] | undefined,
   rootAlias: string | undefined,
+  softDelete?: SqlSoftDeleteOptions,
 ): string[] {
   const columns = columnMapFromSelection(selection);
   if ((!joins?.length && !hasMany?.length) || !rootAlias) {
@@ -211,7 +253,7 @@ function buildSelectList(
   for (const hm of hasMany || []) {
     pushRoot(hm.parentColumn);
     cols.push(
-      `${buildHasManyJsonSubselect(adapter, hm, rootAlias)} AS ${quoteIdent(adapter, `hm__${hm.fieldName}`)}`,
+      `${buildHasManyJsonSubselect(adapter, hm, rootAlias, softDelete)} AS ${quoteIdent(adapter, `hm__${hm.fieldName}`)}`,
     );
   }
 
@@ -243,10 +285,17 @@ function buildHasManyJsonSubselect(
   adapter: SqlAdapter,
   hm: HasManySubselect,
   rootAlias: string,
+  softDelete?: SqlSoftDeleteOptions,
 ): string {
   const relCols = [...columnMapFromSelection(hm.selection).entries()];
   const innerAlias = 'hm';
   const limitSql = hm.limit != null ? ` LIMIT ${Number(hm.limit)}` : '';
+  const joinPred = `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, hm.joinColumn)} = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, hm.parentColumn)}`;
+  const softCol = softDeleteColumnFor(softDelete, hm.table);
+  const softPred = softCol
+    ? ` AND ${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, softCol)} IS NULL`
+    : '';
+  const whereSql = `${joinPred}${softPred}`;
 
   if (adapter === 'postgres') {
     const selectList = relCols
@@ -255,7 +304,7 @@ function buildHasManyJsonSubselect(
           `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, sqlCol)} AS ${quoteIdent(adapter, gql)}`,
       )
       .join(', ');
-    return `(SELECT COALESCE(json_agg(row_to_json(${quoteIdent(adapter, 'x')})), '[]'::json) FROM (SELECT ${selectList} FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, hm.joinColumn)} = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, hm.parentColumn)}${limitSql}) AS ${quoteIdent(adapter, 'x')})`;
+    return `(SELECT COALESCE(json_agg(row_to_json(${quoteIdent(adapter, 'x')})), '[]'::json) FROM (SELECT ${selectList} FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${whereSql}${limitSql}) AS ${quoteIdent(adapter, 'x')})`;
   }
 
   if (adapter === 'mysql') {
@@ -269,7 +318,7 @@ function buildHasManyJsonSubselect(
         `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, sqlCol)}`,
       ])
       .join(', ');
-    return `(SELECT COALESCE(json_arrayagg(json_object(${objArgs})), json_array()) FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, hm.joinColumn)} = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, hm.parentColumn)}${limitSql})`;
+    return `(SELECT COALESCE(json_arrayagg(json_object(${objArgs})), json_array()) FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${whereSql}${limitSql})`;
   }
 
   // sqlite — aggregate over a limited inner select; json_object reads projected column names.
@@ -280,7 +329,7 @@ function buildHasManyJsonSubselect(
     ])
     .join(', ');
   const innerSelect = relCols.map(([, c]) => quoteIdent(adapter, c)).join(', ');
-  return `(SELECT COALESCE(json_group_array(json_object(${objArgs})), json_array()) FROM (SELECT ${innerSelect} FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, hm.joinColumn)} = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, hm.parentColumn)}${limitSql}))`;
+  return `(SELECT COALESCE(json_group_array(json_object(${objArgs})), json_array()) FROM (SELECT ${innerSelect} FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${whereSql}${limitSql}))`;
 }
 
 /**
@@ -313,6 +362,11 @@ export function buildSelectByColumnIn(
   }
 
   appendStructuredFilters(adapter, plan, columns, whereParts, params);
+
+  const softColIn = softDeleteColumnFor(plan.softDelete, plan.table);
+  if (softColIn) {
+    whereParts.push(`${quoteIdent(adapter, softColIn)} IS NULL`);
+  }
 
   const inPhs = plan.values.map(v => {
     params.push(v);
@@ -386,6 +440,7 @@ export function buildUpdate(
   whereMapping: ParsedSqlMapping,
   graphqlArgs: Record<string, any>,
   returningColumns: string[],
+  softDelete?: SqlSoftDeleteOptions,
 ): BuiltQuery {
   const params: unknown[] = [];
   const sets: string[] = [];
@@ -409,6 +464,10 @@ export function buildUpdate(
     params.push(val);
     whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
   }
+  const softColUpd = softDeleteColumnFor(softDelete, table);
+  if (softColUpd) {
+    whereParts.push(`${quoteIdent(adapter, softColUpd)} IS NULL`);
+  }
   let sql = `UPDATE ${quoteIdent(adapter, table)} SET ${sets.join(', ')}`;
   if (whereParts.length) {
     sql += ` WHERE ${whereParts.join(' AND ')}`;
@@ -424,6 +483,7 @@ export function buildDelete(
   table: string,
   whereMapping: ParsedSqlMapping,
   graphqlArgs: Record<string, any>,
+  softDelete?: SqlSoftDeleteOptions,
 ): BuiltQuery {
   const params: unknown[] = [];
   const whereParts: string[] = [];
@@ -435,6 +495,16 @@ export function buildDelete(
     if (val === undefined) continue;
     params.push(val);
     whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
+  }
+  const softCol = softDeleteColumnFor(softDelete, table);
+  if (softCol) {
+    // Soft-delete: UPDATE marker; only touch rows that are still live.
+    whereParts.push(`${quoteIdent(adapter, softCol)} IS NULL`);
+    let sql = `UPDATE ${quoteIdent(adapter, table)} SET ${quoteIdent(adapter, softCol)} = ${softDeleteNowSql(adapter)}`;
+    if (whereParts.length) {
+      sql += ` WHERE ${whereParts.join(' AND ')}`;
+    }
+    return { sql, params };
   }
   let sql = `DELETE FROM ${quoteIdent(adapter, table)}`;
   if (whereParts.length) {

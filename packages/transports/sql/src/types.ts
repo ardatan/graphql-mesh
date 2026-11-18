@@ -14,6 +14,17 @@ export type SqlKind = SqlQueryKind | SqlMutationKind;
  * Only the fields we can honour on Node (`pg` / `mysql2` / `node:sqlite`) or
  * forward to `Bun.SQL` when present are included.
  */
+/**
+ * Soft-delete: reads hide rows where `column IS NOT NULL`; `DELETE` becomes
+ * `UPDATE … SET column = <now>` (still matching only live rows).
+ */
+export interface SqlSoftDeleteOptions {
+  /** Timestamp / marker column (e.g. `deleted_at`). */
+  column: string;
+  /** Limit to these SQL table names; omit = every `@sql` table. */
+  tables?: string[];
+}
+
 export interface SqlTransportOptions {
   adapter?: SqlAdapter;
   /** Max pool size (default 10). Maps to Bun `max`, mysql2 `connectionLimit`, pg `max`. */
@@ -24,6 +35,8 @@ export interface SqlTransportOptions {
   connectionTimeout?: number;
   /** Enable TLS / SSL (`true` or Bun-style mode string). */
   tls?: boolean | string;
+  /** Soft-delete column (+ optional table allowlist). */
+  softDelete?: SqlSoftDeleteOptions;
 }
 
 export interface SqlMappingValue {

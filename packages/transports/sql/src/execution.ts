@@ -30,6 +30,7 @@ import type {
   SqlKind,
   SqlMutationKind,
   SqlQueryKind,
+  SqlSoftDeleteOptions,
   SqlTransportOptions,
 } from './types.js';
 import { resolveConnectionStringFromEnv } from './uri.js';
@@ -103,9 +104,11 @@ async function runSqlSelect(
     graphqlArgs: Record<string, any>;
     parent: any;
     context: any;
+    softDelete?: SqlSoftDeleteOptions;
   },
 ) {
-  const { table, kind, selection, whereMapping, planners, graphqlArgs, parent, context } = opts;
+  const { table, kind, selection, whereMapping, planners, graphqlArgs, parent, context, softDelete } =
+    opts;
   const fullSelection = kind === 'CONNECTION' ? connectionNodeSelection(selection) : selection;
 
   // Never run a ROW with unresolved equality binders (would pick an arbitrary row).
@@ -139,6 +142,7 @@ async function runSqlSelect(
             planners,
             column,
             graphqlArgs,
+            softDelete,
           },
           key,
         );
@@ -156,6 +160,7 @@ async function runSqlSelect(
     parent,
     joins,
     hasMany,
+    softDelete,
   });
   const result = await sqlClient.query(query.sql, query.params);
 
@@ -193,6 +198,7 @@ async function runSqlSelect(
         planners,
         graphqlArgs,
         parent,
+        softDelete,
       });
       const countRes = await sqlClient.query(countQ.sql, countQ.params);
       const crow = countRes.rows[0] as Record<string, unknown> | undefined;
@@ -240,6 +246,8 @@ export async function getSqlExecutor({
     );
   }
 
+  const softDelete = transport.options?.softDelete;
+
   const sqlClient =
     client ||
     createSqlClient({
@@ -277,7 +285,13 @@ export async function getSqlExecutor({
               const mutationKind = kind as SqlMutationKind;
               fieldConfig.resolve = async function sqlMutationResolver(_root, args) {
                 if (mutationKind === 'DELETE') {
-                  const query = buildDelete(sqlClient.adapter, table, whereMapping, args);
+                  const query = buildDelete(
+                    sqlClient.adapter,
+                    table,
+                    whereMapping,
+                    args,
+                    softDelete,
+                  );
                   const result = await sqlClient.query(query.sql, query.params);
                   const affected = result.rowCount;
                   return {
@@ -297,6 +311,7 @@ export async function getSqlExecutor({
                         whereMapping,
                         args,
                         returningCols,
+                        softDelete,
                       );
 
                 let row: Record<string, unknown> | undefined;
@@ -341,6 +356,7 @@ export async function getSqlExecutor({
                 graphqlArgs: args,
                 parent: root,
                 context,
+                softDelete,
               });
             };
             break;
@@ -374,14 +390,16 @@ export async function getSqlExecutor({
         graphqlArgs: {},
         parent: reference,
         context,
+        softDelete,
       });
     },
   });
 
   // Postgres + Node pg.Pool → Grafast / `@dataplan/pg` fast path.
+  // Soft-delete is implemented on the GraphQL.js planner path; skip Grafast when enabled.
   // MySQL / SQLite / Bun.SQL keep the GraphQL.js + JOIN planner path.
   // Dynamic import keeps grafast off the static graph (Jest --detectLeaks).
-  if (adapter === 'postgres' && sqlClient.pgPool) {
+  if (adapter === 'postgres' && sqlClient.pgPool && !softDelete) {
     const { createPostgresGrafastExecutor } = await import('./pg-executor.js');
     const grafastExecutor = createPostgresGrafastExecutor({
       subgraph,
