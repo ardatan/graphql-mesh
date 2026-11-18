@@ -13,6 +13,7 @@ import {
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { batchableEqualityColumn } from './batch.js';
 import { parseSqlMapping } from './mapping.js';
+import { parseSqlThrough } from './through.js';
 import type { ParsedSqlMapping, SqlAdapter, SqlKind } from './types.js';
 
 /** Parent objects stamped with GraphQL field names already satisfied by a JOIN. */
@@ -89,7 +90,21 @@ export function planSelection(
       0,
       opts,
     );
-    if (!planned) continue;
+    if (!planned) {
+      // M2M `@sql(through:)` is not folded into JOINs, but the parent path must
+      // stay in the root selection so appendThroughExists can resolve $this.…
+      const field = parentType.getFields()[fieldNode.name.value];
+      const sqlArgs = field ? getSqlArgs(schema, field) : null;
+      if (sqlArgs?.through) {
+        try {
+          const through = parseSqlThrough(sqlArgs.through as string);
+          if (through?.parentPath?.[0]) neededRootKeys.add(through.parentPath[0]);
+        } catch {
+          // Invalid through is thrown at resolve time; don't break planning.
+        }
+      }
+      continue;
+    }
     if (planned.kind === 'belongsTo') {
       joins.push(planned.join);
       neededRootKeys.add(planned.parentGraphqlField);

@@ -137,42 +137,14 @@ export function wrapPgPoolAsSqlClient(pool: {
 /**
  * Wrap an existing `mysql` / `mysql2` pool (legacy handler `pool` config) as SqlClient.
  */
-export function wrapMysqlPoolAsSqlClient(pool: {
+function mysqlPromiseClient(p: {
   query: (...args: any[]) => any;
   end?: (...args: any[]) => any;
-  promise?: () => { query: (...args: any[]) => any; end?: (...args: any[]) => any };
 }): SqlClient {
-  // Prefer mysql2 promise API when available.
-  if (typeof pool.promise === 'function') {
-    const p = pool.promise();
-    return {
-      adapter: 'mysql',
-      async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
-        const [result] = await p.query(sql, params);
-        if (Array.isArray(result)) {
-          return { rows: result as T[], rowCount: result.length };
-        }
-        const header = result as { affectedRows?: number };
-        return { rows: [] as T[], rowCount: Number(header.affectedRows ?? 0) };
-      },
-      async dispose() {
-        if (typeof p.end === 'function') {
-          await p.end();
-        }
-      },
-    };
-  }
-
-  // Legacy callback-style `mysql` pool — adapt rather than casting to promise.
   return {
     adapter: 'mysql',
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
-      const result = await new Promise<unknown>((resolve, reject) => {
-        pool.query(sql, params, (err: Error | null, rows: unknown) => {
-          if (err) reject(err);
-          else resolve(rows);
-        });
-      });
+      const [result] = await p.query(sql, params);
       if (Array.isArray(result)) {
         return { rows: result as T[], rowCount: result.length };
       }
@@ -180,12 +152,24 @@ export function wrapMysqlPoolAsSqlClient(pool: {
       return { rows: [] as T[], rowCount: Number(header.affectedRows ?? 0) };
     },
     async dispose() {
-      if (typeof pool.end !== 'function') return;
-      await new Promise<void>((resolve, reject) => {
-        pool.end((err?: Error | null) => (err ? reject(err) : resolve()));
-      });
+      if (typeof p.end === 'function') {
+        await p.end();
+      }
     },
   };
+}
+
+export function wrapMysqlPoolAsSqlClient(pool: {
+  query: (...args: any[]) => any;
+  end?: (...args: any[]) => any;
+  promise?: () => { query: (...args: any[]) => any; end?: (...args: any[]) => any };
+}): SqlClient {
+  // mysql2 callback pool exposes `.promise()`; mysql2/promise createPool does not.
+  if (typeof pool.promise === 'function') {
+    return mysqlPromiseClient(pool.promise());
+  }
+  // Already-promisified pool (`mysql2/promise` or handler-injected promise pool).
+  return mysqlPromiseClient(pool);
 }
 
 function createSqliteClient(location: string, cwd?: string): SqlClient {
@@ -221,7 +205,7 @@ function createMysqlClient(opts: CreateSqlClientOptions): SqlClient {
   if (parsed.adapter !== 'mysql') {
     throw new Error(`Expected mysql URI, got ${parsed.adapter}`);
   }
-  const ssl = resolveSslOption(opts.tls, parsed);
+  const ssl = resolveSslOption(opts.tls, parsed, opts.ssl);
   const pool: Pool = createPool({
     host: parsed.host,
     port: parsed.port,
@@ -243,7 +227,7 @@ function createPostgresClient(opts: CreateSqlClientOptions): SqlClient {
   if (parsed.adapter !== 'postgres') {
     throw new Error(`Expected postgres URI, got ${parsed.adapter}`);
   }
-  const ssl = resolveSslOption(opts.tls, parsed);
+  const ssl = resolveSslOption(opts.tls, parsed, opts.ssl);
   const pool = new pg.Pool({
     connectionString: opts.location,
     max: opts.max ?? 10,
@@ -252,17 +236,26 @@ function createPostgresClient(opts: CreateSqlClientOptions): SqlClient {
       opts.connectionTimeout != null ? opts.connectionTimeout * 1000 : undefined,
     ssl,
   });
+  const schema = opts.schema?.trim();
+  if (schema && schema !== 'public') {
+    const ident = `"${schema.replace(/"/g, '""')}"`;
+    pool.on('connect', client => {
+      client.query(`SET search_path TO ${ident}`).catch(() => undefined);
+    });
+  }
   return wrapPgPoolAsSqlClient(pool);
 }
 
 /**
  * TLS on by default verifies certificates (`rejectUnauthorized: true`).
  * Opt out explicitly with `tls: "insecure"` / `"no-verify"` or URI `sslmode=no-verify`.
+ * `ssl.ca` / `ssl.rejectUnauthorized` are merged when SSL is enabled.
  */
 function resolveSslOption(
   option: boolean | string | undefined,
   parsed: { ssl?: boolean; searchParams?: Record<string, string> },
-): { rejectUnauthorized: boolean } | undefined {
+  sslDetails?: { rejectUnauthorized?: boolean; ca?: string },
+): { rejectUnauthorized: boolean; ca?: string } | undefined {
   const mode = typeof option === 'string' ? option.toLowerCase() : undefined;
   const sslmode = String(parsed.searchParams?.sslmode || '').toLowerCase();
   if (
@@ -278,14 +271,20 @@ function resolveSslOption(
     mode === 'insecure' ||
     mode === 'no-verify' ||
     sslmode === 'no-verify' ||
-    sslmode === 'insecure';
+    sslmode === 'insecure' ||
+    sslDetails?.rejectUnauthorized === false;
   const enabled =
     option === true ||
     mode === 'true' ||
     mode === 'require' ||
     mode === 'insecure' ||
     mode === 'no-verify' ||
-    Boolean(parsed.ssl);
+    Boolean(parsed.ssl) ||
+    Boolean(sslDetails?.ca) ||
+    sslDetails?.rejectUnauthorized != null;
   if (!enabled) return undefined;
-  return { rejectUnauthorized: !insecure };
+  return {
+    rejectUnauthorized: !insecure,
+    ...(sslDetails?.ca ? { ca: sslDetails.ca } : {}),
+  };
 }

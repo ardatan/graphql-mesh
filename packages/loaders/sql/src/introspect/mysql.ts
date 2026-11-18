@@ -6,6 +6,7 @@ export interface IntrospectMysqlOpts {
   connectionString: string;
   includeTables?: string[];
   excludeTables?: string[];
+  ssl?: { rejectUnauthorized?: boolean; ca?: string };
 }
 
 export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSchemaMeta> {
@@ -13,13 +14,20 @@ export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSch
   if (parsed.adapter !== 'mysql' || !parsed.database) {
     throw new Error('MySQL introspection requires a mysql://…/database URI');
   }
+  const ssl =
+    opts.ssl || parsed.ssl
+      ? {
+          rejectUnauthorized: opts.ssl?.rejectUnauthorized !== false,
+          ...(opts.ssl?.ca ? { ca: opts.ssl.ca } : {}),
+        }
+      : undefined;
   const pool = createPool({
     host: parsed.host,
     port: parsed.port,
     user: parsed.user,
     password: parsed.password,
     database: parsed.database,
-    ssl: parsed.ssl ? { rejectUnauthorized: true } : undefined,
+    ssl,
   });
   try {
     const database = parsed.database;

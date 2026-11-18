@@ -57,7 +57,7 @@ const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
 
 export interface LoadSqlSubgraphOpts extends Pick<
   SqlTransportOptions,
-  'max' | 'idleTimeout' | 'connectionTimeout' | 'tls'
+  'max' | 'idleTimeout' | 'connectionTimeout' | 'tls' | 'ssl' | 'schema'
 > {
   /**
    * Bun-style adapter override. When omitted, inferred from the connection URI
@@ -74,7 +74,6 @@ export interface LoadSqlSubgraphOpts extends Pick<
    */
   endpoint?: string;
   cwd?: string;
-  schema?: string;
   includeTables?: string[];
   excludeTables?: string[];
   /** Limit columns per table (legacy mysql `tableFields` shape). */
@@ -535,6 +534,7 @@ async function introspect(
         connectionString: opts.endpoint,
         includeTables: opts.includeTables,
         excludeTables: opts.excludeTables,
+        ssl: opts.ssl,
       });
     }
     case 'postgres': {
@@ -592,6 +592,8 @@ function buildTransportOptions(
   if (opts.idleTimeout != null) options.idleTimeout = opts.idleTimeout;
   if (opts.connectionTimeout != null) options.connectionTimeout = opts.connectionTimeout;
   if (opts.tls != null) options.tls = opts.tls;
+  if (opts.ssl) options.ssl = opts.ssl;
+  if (opts.schema) options.schema = opts.schema;
   if (opts.softDelete?.column) options.softDelete = opts.softDelete;
   return options;
 }

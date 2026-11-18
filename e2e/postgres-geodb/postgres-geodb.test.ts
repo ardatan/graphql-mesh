@@ -26,7 +26,7 @@ beforeAll(async () => {
     name: 'geodb',
     image: 'postgres:16-alpine',
     containerPort: 5432,
-    healthcheck: ['CMD-SHELL', 'pg_isready -U postgres'],
+    healthcheck: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -U postgres'],
     env: {
       POSTGRES_PASSWORD: 'docker',
     },

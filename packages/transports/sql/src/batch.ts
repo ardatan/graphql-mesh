@@ -1,5 +1,5 @@
 import DataLoader from 'dataloader';
-import { resolveMappingValue } from './mapping.js';
+import { parseSqlMapping, resolveMappingValue } from './mapping.js';
 import { buildSelectByColumnIn, mapRowToGraphql, type SqlPlanners } from './sql-builder.js';
 import type {
   ParsedSqlMapping,
@@ -7,6 +7,7 @@ import type {
   SqlQueryKind,
   SqlRelationFilterMeta,
   SqlSoftDeleteOptions,
+  SqlMappingValue,
 } from './types.js';
 
 const LOADERS = Symbol.for('mesh.sql.loaders');
@@ -74,13 +75,15 @@ export function batchableEqualityColumn(whereMapping: ParsedSqlMapping): string 
 /**
  * Batching collapses parents into one `IN (...)` query without a parent row, so
  * extra `$this` binders / spreads cannot be resolved. Pagination (`limit` etc.)
- * also cannot be applied per-parent under a single LIMIT.
+ * also cannot be applied per-parent under a single LIMIT — check resolved planner
+ * values, not only arg names present on the field.
  */
 export function canBatchByEqualityColumn(
   whereMapping: ParsedSqlMapping,
   equalityColumn: string,
   kind: 'ROW' | 'ROWS',
   graphqlArgs?: Record<string, any>,
+  planners?: SqlPlanners,
 ): boolean {
   for (const entry of whereMapping.entries) {
     if (entry.key === equalityColumn) continue;
@@ -90,12 +93,29 @@ export function canBatchByEqualityColumn(
       return false;
     }
   }
-  if (kind === 'ROWS' && graphqlArgs) {
-    for (const key of ['limit', 'offset', 'first', 'after'] as const) {
-      if (graphqlArgs[key] != null) return false;
+  for (const key of ['limit', 'offset', 'first', 'after'] as const) {
+    if (graphqlArgs?.[key] != null) return false;
+    const binder = planners?.[key];
+    if (binder != null && String(binder).trim()) {
+      const resolved = resolveMappingValue(
+        parsePlannerBinderValue(String(binder)),
+        { args: graphqlArgs },
+      );
+      if (resolved != null) return false;
     }
   }
+  // ROW still defaults to LIMIT 1 in buildSelect; batching ROWs is fine without
+  // client pagination. kind is retained for callers / future per-kind rules.
+  void kind;
   return true;
+}
+
+function parsePlannerBinderValue(binder: string): SqlMappingValue | undefined {
+  const trimmed = binder.trim();
+  if (trimmed.startsWith('$')) {
+    return parseSqlMapping(`_: ${trimmed}`).entries[0]?.value;
+  }
+  return parseSqlMapping(trimmed).entries[0]?.value;
 }
 
 export function resolveEqualityKey(

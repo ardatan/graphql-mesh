@@ -59,11 +59,24 @@ export default class MySQLHandler implements MeshHandler {
         endpointUrl.protocol = 'mysqls:';
       }
       // Protocol on the endpoint (`mysql://` / `mysqls://`) already selects the adapter.
+      // Forward ssl.ca / rejectUnauthorized into transport options (not only the scheme).
+      const ssl = this.config.ssl
+        ? {
+            rejectUnauthorized: this.config.ssl.rejectUnauthorized,
+            ca: this.config.ssl.ca,
+          }
+        : undefined;
       return loadGraphQLSchemaFromSql(this.name, {
         endpoint: endpointUrl.toString(),
         includeTables: this.config.tables,
         tableFields: this.config.tableFields,
         cwd: this.baseDir,
+        ...(ssl
+          ? {
+              tls: ssl.rejectUnauthorized === false ? 'insecure' : true,
+              ssl,
+            }
+          : {}),
       });
     });
 

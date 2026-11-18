@@ -192,7 +192,7 @@ async function runSqlSelect(
   // and we are not folding joins / has-many / M2M into this query.
   if (!through && !joins.length && !hasMany.length && (kind === 'ROW' || kind === 'ROWS')) {
     const column = batchableEqualityColumn(whereMapping);
-    if (column && canBatchByEqualityColumn(whereMapping, column, kind, graphqlArgs)) {
+    if (column && canBatchByEqualityColumn(whereMapping, column, kind, graphqlArgs, planners)) {
       const key = resolveEqualityKey(whereMapping, column, graphqlArgs, parent);
       if (key !== undefined) {
         return loadBatchedByColumn(
@@ -283,6 +283,8 @@ async function runSqlSelect(
         softDelete,
         relationFilters,
         columnCatalog,
+        // Junction-scoped connections must count the same membership set.
+        through,
       });
       const countRes = await sqlClient.query(countQ.sql, countQ.params);
       const crow = countRes.rows[0] as Record<string, unknown> | undefined;
@@ -343,6 +345,8 @@ export async function getSqlExecutor({
       idleTimeout: transport.options?.idleTimeout,
       connectionTimeout: transport.options?.connectionTimeout,
       tls: transport.options?.tls,
+      ssl: transport.options?.ssl,
+      schema: transport.options?.schema,
     });
 
   subgraph = mapSchema(subgraph, {
@@ -496,6 +500,7 @@ export async function getSqlExecutor({
       subgraph,
       sqlClient,
       disposeClient: () => sqlClient.dispose(),
+      pgSchema: transport.options?.schema,
     });
     if (grafastExecutor) {
       return grafastExecutor;

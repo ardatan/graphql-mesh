@@ -2,6 +2,7 @@ import { resolveSqlitePath } from '../src/adapter.js';
 import { parseSqlMapping } from '../src/mapping.js';
 import {
   buildDelete,
+  buildInsert,
   buildSelect,
   buildUpdate,
   encodeKeysetCursor,
@@ -143,6 +144,34 @@ describe('buildSelect', () => {
     );
     expect(sql).toContain('FROM "tracks" AS "t"');
     expect(params).toEqual([1]);
+  });
+
+  it('keeps false predicate when through parent is unresolved', () => {
+    const through = parseSqlThrough(`
+      table: playlist_track
+      local: PlaylistId
+      remote: TrackId
+      parent: $this.id
+      target: TrackId
+    `);
+    const { sql, params } = buildSelect('sqlite', {
+      table: 'tracks',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: TrackId`),
+      whereMapping: parseSqlMapping(`$args.where`),
+      graphqlArgs: { where: null },
+      parent: {},
+      through,
+    });
+    expect(sql).toContain('1 = 0');
+    expect(params).toEqual([]);
+  });
+
+  it('emits DEFAULT VALUES for empty INSERT', () => {
+    const empty = parseSqlMapping(``);
+    expect(buildInsert('sqlite', 't', empty, {}, []).sql).toBe('INSERT INTO "t" DEFAULT VALUES');
+    expect(buildInsert('postgres', 't', empty, {}, ['id']).sql).toContain('DEFAULT VALUES');
+    expect(buildInsert('mysql', 't', empty, {}, []).sql).toBe('INSERT INTO `t` () VALUES ()');
   });
 
   it('selects postgres $fn computed columns', () => {

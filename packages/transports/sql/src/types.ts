@@ -25,6 +25,13 @@ export interface SqlSoftDeleteOptions {
   tables?: string[];
 }
 
+export interface SqlSslOptions {
+  /** Verify TLS certificates (default true when SSL is on). */
+  rejectUnauthorized?: boolean;
+  /** PEM CA bundle / certificate string forwarded to `pg` / `mysql2`. */
+  ca?: string;
+}
+
 export interface SqlTransportOptions {
   adapter?: SqlAdapter;
   /** Max pool size (default 10). Maps to Bun `max`, mysql2 `connectionLimit`, pg `max`. */
@@ -35,6 +42,13 @@ export interface SqlTransportOptions {
   connectionTimeout?: number;
   /** Enable TLS / SSL (`true` or Bun-style mode string). */
   tls?: boolean | string;
+  /** Extra TLS details (`ca`, `rejectUnauthorized`) when `tls` / `mysqls://` enables SSL. */
+  ssl?: SqlSslOptions;
+  /**
+   * Postgres schema / search_path (default `public`). Used for introspection and
+   * `@dataplan/pg` table identity (`schema.table`).
+   */
+  schema?: string;
   /** Soft-delete column (+ optional table allowlist). */
   softDelete?: SqlSoftDeleteOptions;
 }

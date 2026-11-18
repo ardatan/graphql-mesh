@@ -80,6 +80,17 @@ describe('parseSqlMapping', () => {
     });
   });
 
+  it('throws on nonempty incomplete @sql(through) config', () => {
+    expect(() =>
+      parseSqlThrough(`
+        table: playlist_track
+        local: PlaylistId
+      `),
+    ).toThrow(/through/);
+    expect(parseSqlThrough('')).toBeUndefined();
+    expect(parseSqlThrough(null)).toBeUndefined();
+  });
+
   it('parses $fn computed-column selections', () => {
     const parsed = parseSqlMapping(`
       id: id

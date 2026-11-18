@@ -13,6 +13,8 @@ export interface CreatePostgresGrafastExecutorOpts {
   sqlClient: SqlClient;
   /** Called on dispose in addition to releasing withPgClient */
   disposeClient: () => void | Promise<void>;
+  /** Postgres schema for `@dataplan/pg` table identity (default public). */
+  pgSchema?: string;
 }
 
 /**
@@ -26,7 +28,9 @@ export function createPostgresGrafastExecutor(
   const pool = opts.sqlClient.pgPool;
   if (!pool) return null;
 
-  const { registry, relationNames, tableByType } = buildPgRegistryFromSqlSchema(opts.subgraph);
+  const { registry, relationNames, tableByType } = buildPgRegistryFromSqlSchema(opts.subgraph, {
+    pgSchema: opts.pgSchema,
+  });
   const schema = wirePostgresSqlPlans(opts.subgraph, registry, { relationNames, tableByType });
   const withPgClient = makePgAdaptorWithPgClient(pool);
 

@@ -45,12 +45,18 @@ export function parseSqlThrough(raw?: string | null): SqlThroughJoin | undefined
   const parentRaw = map.get('parent');
   const targetColumn = map.get('target');
   if (!table || !localColumn || !remoteColumn || !parentRaw || !targetColumn) {
-    return undefined;
+    throw new Error(
+      `@sql(through:) must set table, local, remote, parent ($this.…), and target; got: ${String(raw).trim()}`,
+    );
   }
 
   const parentMapping = parseSqlMapping(`_: ${parentRaw}`);
   const parentVal = parentMapping.entries[0]?.value;
-  if (!parentVal || parentVal.kind !== 'this') return undefined;
+  if (!parentVal || parentVal.kind !== 'this') {
+    throw new Error(
+      `@sql(through:) parent must be a $this path (e.g. $this.id); got: ${parentRaw}`,
+    );
+  }
   const parentPath = parentVal.path?.length ? parentVal.path : [parentVal.value];
 
   return {

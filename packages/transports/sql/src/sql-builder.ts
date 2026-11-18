@@ -313,6 +313,9 @@ function buildSelectList(
         `${quoteIdent(adapter, join.alias)}.${quoteIdent(adapter, sqlCol)} AS ${quoteIdent(adapter, `${join.alias}__${sqlCol}`)}`,
       );
     }
+    for (const fnSel of computedFnSelects(adapter, join.selection, join.alias, join.alias)) {
+      cols.push(fnSel);
+    }
   }
 
   for (const hm of hasMany || []) {
@@ -363,12 +366,12 @@ function buildHasManyJsonSubselect(
   const whereSql = `${joinPred}${softPred}`;
 
   if (adapter === 'postgres') {
-    const selectList = relCols
-      .map(
-        ([gql, sqlCol]) =>
-          `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, sqlCol)} AS ${quoteIdent(adapter, gql)}`,
-      )
-      .join(', ');
+    const colSelects = relCols.map(
+      ([gql, sqlCol]) =>
+        `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, sqlCol)} AS ${quoteIdent(adapter, gql)}`,
+    );
+    const fnSelects = computedFnSelects(adapter, hm.selection, innerAlias);
+    const selectList = [...colSelects, ...fnSelects].join(', ') || '*';
     return `(SELECT COALESCE(json_agg(row_to_json(${quoteIdent(adapter, 'x')})), '[]'::json) FROM (SELECT ${selectList} FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${whereSql}${limitSql}) AS ${quoteIdent(adapter, 'x')})`;
   }
 
@@ -415,8 +418,19 @@ export function buildSelectByColumnIn(
 ): BuiltQuery {
   const columns = columnMapFromSelection(plan.selection);
   const catalog = plan.columnCatalog?.size ? plan.columnCatalog : columns;
+  // Alias the batch root so relation-filter EXISTS correlates on `t.col`, not an
+  // unqualified name that resolves inside the subquery.
+  const batchRootAlias = plan.relationFilters?.length ? 't' : undefined;
+  const qualifyBatch = (col: string) =>
+    batchRootAlias
+      ? `${quoteIdent(adapter, batchRootAlias)}.${quoteIdent(adapter, col)}`
+      : quoteIdent(adapter, col);
   const selectCols =
-    columns.size === 0 ? ['*'] : [...new Set(columns.values())].map(c => quoteIdent(adapter, c));
+    columns.size === 0
+      ? ['*']
+      : [...new Set(columns.values())].map(c =>
+          batchRootAlias ? `${qualifyBatch(c)} AS ${quoteIdent(adapter, c)}` : quoteIdent(adapter, c),
+        );
 
   const params: unknown[] = [];
   const whereParts: string[] = [];
@@ -432,29 +446,40 @@ export function buildSelectByColumnIn(
     });
     if (resolved === undefined) continue;
     params.push(resolved);
-    whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
+    whereParts.push(`${qualifyBatch(entry.key)} = ${placeholder(adapter, params.length)}`);
   }
 
-  appendStructuredFilters(adapter, plan, catalog, whereParts, params);
+  appendStructuredFilters(adapter, plan, catalog, whereParts, params, {
+    qualifyColumn: batchRootAlias ? qualifyBatch : undefined,
+    rootAlias: batchRootAlias,
+    relationFilters: plan.relationFilters,
+    softDelete: plan.softDelete,
+  });
 
   const softColIn = softDeleteColumnFor(plan.softDelete, plan.table);
   if (softColIn) {
-    whereParts.push(`${quoteIdent(adapter, softColIn)} IS NULL`);
+    whereParts.push(`${qualifyBatch(softColIn)} IS NULL`);
   }
 
   const inPhs = plan.values.map(v => {
     params.push(v);
     return placeholder(adapter, params.length);
   });
-  whereParts.push(`${quoteIdent(adapter, plan.column)} IN (${inPhs.join(', ')})`);
+  whereParts.push(`${qualifyBatch(plan.column)} IN (${inPhs.join(', ')})`);
 
   // Always include the batch column so we can regroup rows by key.
   const batchColSql = quoteIdent(adapter, plan.column);
-  if (!selectCols.includes(batchColSql) && selectCols[0] !== '*') {
-    selectCols.push(batchColSql);
+  const batchColSelect = batchRootAlias
+    ? `${qualifyBatch(plan.column)} AS ${batchColSql}`
+    : batchColSql;
+  if (!selectCols.includes(batchColSelect) && !selectCols.includes(batchColSql) && selectCols[0] !== '*') {
+    selectCols.push(batchColSelect);
   }
 
   let sql = `SELECT ${selectCols.join(', ')} FROM ${quoteIdent(adapter, plan.table)}`;
+  if (batchRootAlias) {
+    sql += ` AS ${quoteIdent(adapter, batchRootAlias)}`;
+  }
   if (whereParts.length) {
     sql += ` WHERE ${whereParts.join(' AND ')}`;
   }
@@ -499,12 +524,19 @@ export function buildInsert(
     cols.push(entry.key);
     params.push(val);
   }
+  const qTable = quoteIdent(adapter, table);
+  let sql: string;
   if (!cols.length) {
-    throw new Error(`@sql INSERT on ${table} has no column values`);
+    // All-default row: SQLite/Postgres `DEFAULT VALUES`; MySQL empty column list.
+    sql =
+      adapter === 'mysql'
+        ? `INSERT INTO ${qTable} () VALUES ()`
+        : `INSERT INTO ${qTable} DEFAULT VALUES`;
+  } else {
+    const colSql = cols.map(c => quoteIdent(adapter, c)).join(', ');
+    const ph = cols.map((_, i) => placeholder(adapter, i + 1)).join(', ');
+    sql = `INSERT INTO ${qTable} (${colSql}) VALUES (${ph})`;
   }
-  const colSql = cols.map(c => quoteIdent(adapter, c)).join(', ');
-  const ph = cols.map((_, i) => placeholder(adapter, i + 1)).join(', ');
-  let sql = `INSERT INTO ${quoteIdent(adapter, table)} (${colSql}) VALUES (${ph})`;
   if (returningColumns.length && (adapter === 'postgres' || adapter === 'sqlite')) {
     sql += ` RETURNING ${returningColumns.map(c => quoteIdent(adapter, c)).join(', ')}`;
   }
@@ -723,6 +755,8 @@ function computedFnSelects(
   adapter: SqlAdapter,
   selection: ParsedSqlMapping,
   rootAlias: string | undefined,
+  /** When set (join folds), alias as `prefix__field` for mapJoinedObject. */
+  asPrefix?: string,
 ): string[] {
   if (adapter !== 'postgres') return [];
   const out: string[] = [];
@@ -735,8 +769,8 @@ function computedFnSelects(
           .join('.')
       : quoteIdent(adapter, entry.value.value);
     const rowRef = rootAlias ? quoteIdent(adapter, rootAlias) : quoteIdent(adapter, 't');
-    // Alias with GraphQL field name so mapRowToGraphql can find it.
-    out.push(`${fn}(${rowRef}) AS ${quoteIdent(adapter, entry.key)}`);
+    const asName = asPrefix ? `${asPrefix}__${entry.key}` : entry.key;
+    out.push(`${fn}(${rowRef}) AS ${quoteIdent(adapter, asName)}`);
   }
   return out;
 }
@@ -1071,7 +1105,11 @@ function appendThroughExists(
   },
 ): void {
   const parentVal = resolveThroughParentValue(through, parent);
-  if (parentVal === undefined) return;
+  // Unresolved parent must not silently drop the junction predicate (would widen to all rows).
+  if (parentVal === undefined) {
+    whereParts.push('1 = 0');
+    return;
+  }
   params.push(parentVal);
   const jAlias = '_m2m';
   const softCol = softDeleteColumnFor(opts.softDelete, through.table);
@@ -1139,10 +1177,18 @@ function mapJoinedObject(
   const nested: Record<string, unknown> = {};
   let any = false;
   for (const entry of join.selection.entries) {
-    if (!entry.value || entry.value.kind !== 'column') continue;
-    const raw = row[`${join.alias}__${entry.value.value}`];
-    if (raw !== undefined && raw !== null) any = true;
-    nested[entry.key] = raw != null && entry.key === 'id' ? String(raw) : raw;
+    if (!entry.value) continue;
+    if (entry.value.kind === 'column') {
+      const raw = row[`${join.alias}__${entry.value.value}`];
+      if (raw !== undefined && raw !== null) any = true;
+      nested[entry.key] = raw != null && entry.key === 'id' ? String(raw) : raw;
+      continue;
+    }
+    if (entry.value.kind === 'fn') {
+      const raw = row[`${join.alias}__${entry.key}`] ?? row[entry.key];
+      if (raw !== undefined && raw !== null) any = true;
+      nested[entry.key] = raw;
+    }
   }
   if (!any) return null;
   if (join.joins?.length) {
@@ -1169,9 +1215,15 @@ function parseHasManyJson(raw: unknown, hm: HasManySubselect): Record<string, un
     if (!item || typeof item !== 'object') return {};
     const out: Record<string, unknown> = {};
     for (const entry of hm.selection.entries) {
-      if (!entry.value || entry.value.kind !== 'column') continue;
-      const v = item[entry.key] ?? item[entry.value.value];
-      out[entry.key] = v != null && entry.key === 'id' ? String(v) : v;
+      if (!entry.value) continue;
+      if (entry.value.kind === 'column') {
+        const v = item[entry.key] ?? item[entry.value.value];
+        out[entry.key] = v != null && entry.key === 'id' ? String(v) : v;
+        continue;
+      }
+      if (entry.value.kind === 'fn') {
+        out[entry.key] = item[entry.key];
+      }
     }
     return out;
   });

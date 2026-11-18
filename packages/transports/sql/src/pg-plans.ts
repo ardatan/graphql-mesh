@@ -5,11 +5,14 @@ import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import { batchableEqualityColumn } from './batch.js';
 import { parseSqlMapping } from './mapping.js';
 import type { MeshPgRegistry } from './pg-registry.js';
-import type { SqlKind } from './types.js';
+import type { SqlKind, SqlMappingEntry } from './types.js';
 
 /**
  * Attach Grafast / `@dataplan/pg` plan resolvers for `@sql` query fields.
  * Mutations keep traditional resolvers for this slice.
+ *
+ * Plans that cannot apply client filters / pagination keep the generic
+ * GraphQL.js resolver from `getSqlExecutor` instead of a partial plan.
  */
 export function wirePostgresSqlPlans(
   schema: GraphQLSchema,
@@ -40,11 +43,26 @@ export function wirePostgresSqlPlans(
         const relMeta = meta.relationNames.get(typeName)?.get(fieldName);
 
         if (!isRoot && relMeta && (kind === 'ROW' || kind === 'ROWS')) {
+          // manyRelation / singleRelation do not apply field where/limit/orderBy.
+          if (kind === 'ROWS' && relationHasClientPlanners(sqlDir.args)) {
+            return fieldConfig;
+          }
           grafast.plan = makeRelationPlan(kind, fieldName);
-        } else {
-          grafast.plan = makeRootPlan(resource, kind, where);
+          delete (fieldConfig as GraphQLFieldConfig<any, any>).resolve;
+          return fieldConfig;
         }
 
+        if (kind === 'COUNT') {
+          // Aggregate COUNT plans are not wired yet — keep generic resolver.
+          return fieldConfig;
+        }
+
+        if ((kind === 'ROWS' || kind === 'CONNECTION') && whereHasClientFilter(where)) {
+          // Structured `$args.where` filters are not applied by resource.find() yet.
+          return fieldConfig;
+        }
+
+        grafast.plan = makeRootPlan(resource, kind, where);
         delete (fieldConfig as GraphQLFieldConfig<any, any>).resolve;
         return fieldConfig;
       }
@@ -64,6 +82,25 @@ export function wirePostgresSqlPlans(
       return fieldConfig;
     },
   });
+}
+
+function relationHasClientPlanners(args: Record<string, unknown>): boolean {
+  const where = String(args.where || '');
+  if (where.includes('$args')) return true;
+  for (const key of ['orderBy', 'limit', 'offset', 'first', 'after'] as const) {
+    if (args[key]) return true;
+  }
+  return false;
+}
+
+function whereHasClientFilter(where: ReturnType<typeof parseSqlMapping>): boolean {
+  return where.entries.some(
+    (e: SqlMappingEntry) =>
+      e.spread ||
+      (e.key.startsWith('$') && e.value?.kind === 'args') ||
+      (e.value?.kind === 'args' &&
+        (e.value.value === 'where' || e.value.path?.[0] === 'where')),
+  );
 }
 
 function makeRelationPlan(kind: 'ROW' | 'ROWS', relationName: string) {
@@ -94,7 +131,8 @@ function makeRootPlan(resource: any, kind: SqlKind, where: ReturnType<typeof par
       if (binder?.value?.kind === 'args') {
         const argName = binder.value.path?.[0] || binder.value.value;
         const $arg = fieldArg(fieldArgs, argName);
-        const attr = pkAttribute(resource);
+        // Use the mapped where key (GraphQL attr / SQL binder), not always PK `id`.
+        const attr = attributeForWhereKey(resource, eqCol!);
         return resource.get({ [attr]: $arg });
       }
       const $rows = resource.find();
@@ -106,20 +144,20 @@ function makeRootPlan(resource: any, kind: SqlKind, where: ReturnType<typeof par
       if (typeof $rows.setFirst === 'function') {
         $rows.setFirst(fieldArg(fieldArgs, 'first'));
       }
+      if (typeof $rows.setAfter === 'function') {
+        $rows.setAfter(fieldArg(fieldArgs, 'after'));
+      }
       const $connection = connection($rows);
       if (typeof $connection.setFirst === 'function') {
         $connection.setFirst(fieldArg(fieldArgs, 'first'));
       }
+      if (typeof $connection.setAfter === 'function') {
+        $connection.setAfter(fieldArg(fieldArgs, 'after'));
+      }
       return $connection;
     }
 
-    if (kind === 'COUNT') {
-      const $rows = resource.find();
-      // Dataplan aggregate COUNT can be layered later; approximate via find for now.
-      return $rows;
-    }
-
-    // ROWS
+    // ROWS (no structured `$args.where` — those keep the generic resolver)
     const $rows = resource.find();
     if (typeof $rows.setFirst === 'function') {
       $rows.setFirst(fieldArg(fieldArgs, 'limit'));
@@ -131,9 +169,13 @@ function makeRootPlan(resource: any, kind: SqlKind, where: ReturnType<typeof par
   };
 }
 
-function pkAttribute(resource: any): string {
-  const attrs = resource?.codec?.attributes;
-  if (attrs && typeof attrs === 'object' && 'id' in attrs) return 'id';
-  const keys = attrs ? Object.keys(attrs) : [];
-  return String(keys[0] ?? 'id');
+function attributeForWhereKey(resource: any, key: string): string {
+  const attrs = resource?.codec?.attributes ?? resource?.resource?.codec?.attributes;
+  if (attrs && key in attrs) return key;
+  if (attrs) {
+    for (const gql of Object.keys(attrs)) {
+      if (gql.toLowerCase() === key.toLowerCase()) return gql;
+    }
+  }
+  return key;
 }

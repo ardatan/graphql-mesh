@@ -56,6 +56,11 @@ describe('mysql', () => {
       includeTables: configMock.tables,
       tableFields: configMock.tableFields,
       cwd: __dirname,
+      tls: true,
+      ssl: {
+        rejectUnauthorized: true,
+        ca: 'someCA',
+      },
     });
     expect(getSqlExecutor).toHaveBeenCalledWith({
       subgraph: graphQLSchemaMock,
