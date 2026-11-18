@@ -5,5 +5,6 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 */
 export * from "./AddRequest";
+export * from "./CalcError";
 import * as Calculator from "./Calculator";
 export { Calculator as Calculator };

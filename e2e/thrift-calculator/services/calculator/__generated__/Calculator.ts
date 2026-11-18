@@ -6,8 +6,7 @@
 */
 import * as thrift from "@creditkarma/thrift-server-core";
 import * as AddRequest from "./AddRequest";
-import { fakePromise } from '@whatwg-node/promise-helpers';
-
+import * as CalcError from "./CalcError";
 export const serviceName: string = "Calculator";
 export const annotations: thrift.IThriftAnnotations = {};
 export const methodAnnotations: thrift.IMethodAnnotations = {
@@ -18,14 +17,24 @@ export const methodAnnotations: thrift.IMethodAnnotations = {
     subtract: {
         annotations: {},
         fieldAnnotations: {}
+    },
+    divide: {
+        annotations: {},
+        fieldAnnotations: {}
+    },
+    zip: {
+        annotations: {},
+        fieldAnnotations: {}
     }
 };
-export const methodNames: Array<string> = ["add", "subtract"];
+export const methodNames: Array<string> = ["add", "subtract", "divide", "zip"];
 export const methodParameters: {
     [methodName: string]: number;
 } = {
     add: 2,
-    subtract: 3
+    subtract: 3,
+    divide: 3,
+    zip: 1
 };
 export interface IAdd__Args {
     request: AddRequest.IAddRequest;
@@ -226,6 +235,167 @@ export class Subtract__Args extends thrift.StructLike implements ISubtract__Args
         return Subtract__ArgsCodec.encode(this, output);
     }
 }
+export interface IDivide__Args {
+    left: number;
+    right: number;
+}
+export interface IDivide__ArgsArgs {
+    left: number;
+    right: number;
+}
+export const Divide__ArgsCodec: thrift.IStructCodec<IDivide__ArgsArgs, IDivide__Args> = {
+    encode(args: IDivide__ArgsArgs, output: thrift.TProtocol): void {
+        const obj: any = {
+            left: args.left,
+            right: args.right
+        };
+        output.writeStructBegin("Divide__Args");
+        if (obj.left != null) {
+            output.writeFieldBegin("left", thrift.TType.I32, 1);
+            output.writeI32(obj.left);
+            output.writeFieldEnd();
+        }
+        else {
+            throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, "Required field[left] is unset!");
+        }
+        if (obj.right != null) {
+            output.writeFieldBegin("right", thrift.TType.I32, 2);
+            output.writeI32(obj.right);
+            output.writeFieldEnd();
+        }
+        else {
+            throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, "Required field[right] is unset!");
+        }
+        output.writeFieldStop();
+        output.writeStructEnd();
+        return;
+    },
+    decode(input: thrift.TProtocol): IDivide__Args {
+        let _args: any = {};
+        input.readStructBegin();
+        while (true) {
+            const ret: thrift.IThriftField = input.readFieldBegin();
+            const fieldType: thrift.TType = ret.fieldType;
+            const fieldId: number = ret.fieldId;
+            if (fieldType === thrift.TType.STOP) {
+                break;
+            }
+            switch (fieldId) {
+                case 1:
+                    if (fieldType === thrift.TType.I32) {
+                        const value_7: number = input.readI32();
+                        _args.left = value_7;
+                    }
+                    else {
+                        input.skip(fieldType);
+                    }
+                    break;
+                case 2:
+                    if (fieldType === thrift.TType.I32) {
+                        const value_8: number = input.readI32();
+                        _args.right = value_8;
+                    }
+                    else {
+                        input.skip(fieldType);
+                    }
+                    break;
+                default: {
+                    input.skip(fieldType);
+                }
+            }
+            input.readFieldEnd();
+        }
+        input.readStructEnd();
+        if (_args.left !== undefined && _args.right !== undefined) {
+            return {
+                left: _args.left,
+                right: _args.right
+            };
+        }
+        else {
+            throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, "Unable to read Divide__Args from input");
+        }
+    }
+};
+export class Divide__Args extends thrift.StructLike implements IDivide__Args {
+    public left: number;
+    public right: number;
+    public readonly _annotations: thrift.IThriftAnnotations = {};
+    public readonly _fieldAnnotations: thrift.IFieldAnnotations = {};
+    constructor(args: IDivide__ArgsArgs) {
+        super();
+        if (args.left != null) {
+            const value_9: number = args.left;
+            this.left = value_9;
+        }
+        else {
+            throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, "Required field[left] is unset!");
+        }
+        if (args.right != null) {
+            const value_10: number = args.right;
+            this.right = value_10;
+        }
+        else {
+            throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, "Required field[right] is unset!");
+        }
+    }
+    public static read(input: thrift.TProtocol): Divide__Args {
+        return new Divide__Args(Divide__ArgsCodec.decode(input));
+    }
+    public static write(args: IDivide__ArgsArgs, output: thrift.TProtocol): void {
+        return Divide__ArgsCodec.encode(args, output);
+    }
+    public write(output: thrift.TProtocol): void {
+        return Divide__ArgsCodec.encode(this, output);
+    }
+}
+export interface IZip__Args {
+}
+export interface IZip__ArgsArgs {
+}
+export const Zip__ArgsCodec: thrift.IStructCodec<IZip__ArgsArgs, IZip__Args> = {
+    encode(args: IZip__ArgsArgs, output: thrift.TProtocol): void {
+        output.writeStructBegin("Zip__Args");
+        output.writeFieldStop();
+        output.writeStructEnd();
+        return;
+    },
+    decode(input: thrift.TProtocol): IZip__Args {
+        input.readStructBegin();
+        while (true) {
+            const ret: thrift.IThriftField = input.readFieldBegin();
+            const fieldType: thrift.TType = ret.fieldType;
+            const fieldId: number = ret.fieldId;
+            if (fieldType === thrift.TType.STOP) {
+                break;
+            }
+            switch (fieldId) {
+                default: {
+                    input.skip(fieldType);
+                }
+            }
+            input.readFieldEnd();
+        }
+        input.readStructEnd();
+        return {};
+    }
+};
+export class Zip__Args extends thrift.StructLike implements IZip__Args {
+    public readonly _annotations: thrift.IThriftAnnotations = {};
+    public readonly _fieldAnnotations: thrift.IFieldAnnotations = {};
+    constructor(args: IZip__ArgsArgs = {}) {
+        super();
+    }
+    public static read(input: thrift.TProtocol): Zip__Args {
+        return new Zip__Args(Zip__ArgsCodec.decode(input));
+    }
+    public static write(args: IZip__ArgsArgs, output: thrift.TProtocol): void {
+        return Zip__ArgsCodec.encode(args, output);
+    }
+    public write(output: thrift.TProtocol): void {
+        return Zip__ArgsCodec.encode(this, output);
+    }
+}
 export interface IAdd__Result {
     success?: number;
 }
@@ -260,8 +430,8 @@ export const Add__ResultCodec: thrift.IStructCodec<IAdd__ResultArgs, IAdd__Resul
             switch (fieldId) {
                 case 0:
                     if (fieldType === thrift.TType.I32) {
-                        const value_7: number = input.readI32();
-                        _args.success = value_7;
+                        const value_11: number = input.readI32();
+                        _args.success = value_11;
                     }
                     else {
                         input.skip(fieldType);
@@ -286,8 +456,8 @@ export class Add__Result extends thrift.StructLike implements IAdd__Result {
     constructor(args: IAdd__ResultArgs = {}) {
         super();
         if (args.success != null) {
-            const value_8: number = args.success;
-            this.success = value_8;
+            const value_12: number = args.success;
+            this.success = value_12;
         }
     }
     public static read(input: thrift.TProtocol): Add__Result {
@@ -334,8 +504,8 @@ export const Subtract__ResultCodec: thrift.IStructCodec<ISubtract__ResultArgs, I
             switch (fieldId) {
                 case 0:
                     if (fieldType === thrift.TType.I32) {
-                        const value_9: number = input.readI32();
-                        _args.success = value_9;
+                        const value_13: number = input.readI32();
+                        _args.success = value_13;
                     }
                     else {
                         input.skip(fieldType);
@@ -360,8 +530,8 @@ export class Subtract__Result extends thrift.StructLike implements ISubtract__Re
     constructor(args: ISubtract__ResultArgs = {}) {
         super();
         if (args.success != null) {
-            const value_10: number = args.success;
-            this.success = value_10;
+            const value_14: number = args.success;
+            this.success = value_14;
         }
     }
     public static read(input: thrift.TProtocol): Subtract__Result {
@@ -372,6 +542,168 @@ export class Subtract__Result extends thrift.StructLike implements ISubtract__Re
     }
     public write(output: thrift.TProtocol): void {
         return Subtract__ResultCodec.encode(this, output);
+    }
+}
+export interface IDivide__Result {
+    success?: number;
+    error?: CalcError.ICalcError;
+}
+export interface IDivide__ResultArgs {
+    success?: number;
+    error?: CalcError.ICalcErrorArgs;
+}
+export const Divide__ResultCodec: thrift.IStructCodec<IDivide__ResultArgs, IDivide__Result> = {
+    encode(args: IDivide__ResultArgs, output: thrift.TProtocol): void {
+        const obj: any = {
+            success: args.success,
+            error: args.error
+        };
+        output.writeStructBegin("Divide__Result");
+        if (obj.success != null) {
+            output.writeFieldBegin("success", thrift.TType.I32, 0);
+            output.writeI32(obj.success);
+            output.writeFieldEnd();
+        }
+        if (obj.error != null) {
+            output.writeFieldBegin("error", thrift.TType.STRUCT, 1);
+            CalcError.CalcErrorCodec.encode(obj.error, output);
+            output.writeFieldEnd();
+        }
+        output.writeFieldStop();
+        output.writeStructEnd();
+        return;
+    },
+    decode(input: thrift.TProtocol): IDivide__Result {
+        let _args: any = {};
+        input.readStructBegin();
+        while (true) {
+            const ret: thrift.IThriftField = input.readFieldBegin();
+            const fieldType: thrift.TType = ret.fieldType;
+            const fieldId: number = ret.fieldId;
+            if (fieldType === thrift.TType.STOP) {
+                break;
+            }
+            switch (fieldId) {
+                case 0:
+                    if (fieldType === thrift.TType.I32) {
+                        const value_15: number = input.readI32();
+                        _args.success = value_15;
+                    }
+                    else {
+                        input.skip(fieldType);
+                    }
+                    break;
+                case 1:
+                    if (fieldType === thrift.TType.STRUCT) {
+                        const value_16: CalcError.ICalcError = CalcError.CalcErrorCodec.decode(input);
+                        _args.error = value_16;
+                    }
+                    else {
+                        input.skip(fieldType);
+                    }
+                    break;
+                default: {
+                    input.skip(fieldType);
+                }
+            }
+            input.readFieldEnd();
+        }
+        input.readStructEnd();
+        return {
+            success: _args.success,
+            error: _args.error
+        };
+    }
+};
+export class Divide__Result extends thrift.StructLike implements IDivide__Result {
+    public success?: number;
+    public error?: CalcError.ICalcError;
+    public readonly _annotations: thrift.IThriftAnnotations = {};
+    public readonly _fieldAnnotations: thrift.IFieldAnnotations = {};
+    constructor(args: IDivide__ResultArgs = {}) {
+        super();
+        if (args.success != null) {
+            const value_17: number = args.success;
+            this.success = value_17;
+        }
+        if (args.error != null) {
+            const value_18: CalcError.ICalcError = new CalcError.CalcError(args.error);
+            this.error = value_18;
+        }
+    }
+    public static read(input: thrift.TProtocol): Divide__Result {
+        return new Divide__Result(Divide__ResultCodec.decode(input));
+    }
+    public static write(args: IDivide__ResultArgs, output: thrift.TProtocol): void {
+        return Divide__ResultCodec.encode(args, output);
+    }
+    public write(output: thrift.TProtocol): void {
+        return Divide__ResultCodec.encode(this, output);
+    }
+}
+export interface IZip__Result {
+    success?: void;
+}
+export interface IZip__ResultArgs {
+    success?: void;
+}
+export const Zip__ResultCodec: thrift.IStructCodec<IZip__ResultArgs, IZip__Result> = {
+    encode(args: IZip__ResultArgs, output: thrift.TProtocol): void {
+        output.writeStructBegin("Zip__Result");
+        output.writeFieldStop();
+        output.writeStructEnd();
+        return;
+    },
+    decode(input: thrift.TProtocol): IZip__Result {
+        let _args: any = {};
+        input.readStructBegin();
+        while (true) {
+            const ret: thrift.IThriftField = input.readFieldBegin();
+            const fieldType: thrift.TType = ret.fieldType;
+            const fieldId: number = ret.fieldId;
+            if (fieldType === thrift.TType.STOP) {
+                break;
+            }
+            switch (fieldId) {
+                case 0:
+                    if (fieldType === thrift.TType.VOID) {
+                        input.skip(fieldType);
+                    }
+                    else {
+                        input.skip(fieldType);
+                    }
+                    break;
+                default: {
+                    input.skip(fieldType);
+                }
+            }
+            input.readFieldEnd();
+        }
+        input.readStructEnd();
+        return {
+            success: _args.success
+        };
+    }
+};
+export class Zip__Result extends thrift.StructLike implements IZip__Result {
+    public success?: void;
+    public readonly _annotations: thrift.IThriftAnnotations = {};
+    public readonly _fieldAnnotations: thrift.IFieldAnnotations = {};
+    constructor(args: IZip__ResultArgs = {}) {
+        super();
+        if (args.success != null) {
+            const value_19: void = undefined;
+            this.success = value_19;
+        }
+    }
+    public static read(input: thrift.TProtocol): Zip__Result {
+        return new Zip__Result(Zip__ResultCodec.decode(input));
+    }
+    public static write(args: IZip__ResultArgs, output: thrift.TProtocol): void {
+        return Zip__ResultCodec.encode(args, output);
+    }
+    public write(output: thrift.TProtocol): void {
+        return Zip__ResultCodec.encode(this, output);
     }
 }
 export class Client<Context = any> extends thrift.ThriftClient<Context> {
@@ -408,7 +740,7 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
                         const result: IAdd__Result = Add__ResultCodec.decode(input);
                         input.readMessageEnd();
                         if (result.success != null) {
-                            return fakePromise(result.success);
+                            return Promise.resolve(result.success);
                         }
                         else {
                             return Promise.reject(new thrift.TApplicationException(thrift.TApplicationExceptionType.UNKNOWN, "add failed: unknown result"));
@@ -446,7 +778,7 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
                         const result: ISubtract__Result = Subtract__ResultCodec.decode(input);
                         input.readMessageEnd();
                         if (result.success != null) {
-                            return fakePromise(result.success);
+                            return Promise.resolve(result.success);
                         }
                         else {
                             return Promise.reject(new thrift.TApplicationException(thrift.TApplicationExceptionType.UNKNOWN, "subtract failed: unknown result"));
@@ -462,10 +794,86 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
             }
         });
     }
+    public divide(left: number, right: number, context?: Context): Promise<number> {
+        const writer: thrift.TTransport = new this.transport();
+        const output: thrift.TProtocol = new this.protocol(writer);
+        output.writeMessageBegin("divide", thrift.MessageType.CALL, this.incrementRequestId());
+        const args: IDivide__ArgsArgs = { left, right };
+        Divide__ArgsCodec.encode(args, output);
+        output.writeMessageEnd();
+        return this.connection.send(writer.flush(), context).then((data: Buffer) => {
+            const reader: thrift.TTransport = this.transport.receiver(data);
+            const input: thrift.TProtocol = new this.protocol(reader);
+            try {
+                const { fieldName: fieldName, messageType: messageType }: thrift.IThriftMessage = input.readMessageBegin();
+                if (fieldName === "divide") {
+                    if (messageType === thrift.MessageType.EXCEPTION) {
+                        const err: thrift.TApplicationException = thrift.TApplicationExceptionCodec.decode(input);
+                        input.readMessageEnd();
+                        return Promise.reject(err);
+                    }
+                    else {
+                        const result: IDivide__Result = Divide__ResultCodec.decode(input);
+                        input.readMessageEnd();
+                        if (result.error != null) {
+                            return Promise.reject(result.error);
+                        }
+                        else if (result.success != null) {
+                            return Promise.resolve(result.success);
+                        }
+                        else {
+                            return Promise.reject(new thrift.TApplicationException(thrift.TApplicationExceptionType.UNKNOWN, "divide failed: unknown result"));
+                        }
+                    }
+                }
+                else {
+                    return Promise.reject(new thrift.TApplicationException(thrift.TApplicationExceptionType.WRONG_METHOD_NAME, "Received a response to an unknown RPC function: " + fieldName));
+                }
+            }
+            catch (err) {
+                return Promise.reject(err);
+            }
+        });
+    }
+    public zip(context?: Context): Promise<void> {
+        const writer: thrift.TTransport = new this.transport();
+        const output: thrift.TProtocol = new this.protocol(writer);
+        output.writeMessageBegin("zip", thrift.MessageType.CALL, this.incrementRequestId());
+        const args: IZip__ArgsArgs = {};
+        Zip__ArgsCodec.encode(args, output);
+        output.writeMessageEnd();
+        return this.connection.send(writer.flush(), context).then((data: Buffer) => {
+            const reader: thrift.TTransport = this.transport.receiver(data);
+            const input: thrift.TProtocol = new this.protocol(reader);
+            try {
+                const { fieldName: fieldName, messageType: messageType }: thrift.IThriftMessage = input.readMessageBegin();
+                if (fieldName === "zip") {
+                    if (messageType === thrift.MessageType.EXCEPTION) {
+                        const err: thrift.TApplicationException = thrift.TApplicationExceptionCodec.decode(input);
+                        input.readMessageEnd();
+                        return Promise.reject(err);
+                    }
+                    else {
+                        const result: IZip__Result = Zip__ResultCodec.decode(input);
+                        input.readMessageEnd();
+                        return Promise.resolve(result.success);
+                    }
+                }
+                else {
+                    return Promise.reject(new thrift.TApplicationException(thrift.TApplicationExceptionType.WRONG_METHOD_NAME, "Received a response to an unknown RPC function: " + fieldName));
+                }
+            }
+            catch (err) {
+                return Promise.reject(err);
+            }
+        });
+    }
 }
 export interface IHandler<Context = any> {
     add(request: AddRequest.IAddRequest, context?: Context): number | Promise<number>;
     subtract(left: number, right: number, context?: Context): number | Promise<number>;
+    divide(left: number, right: number, context?: Context): number | Promise<number>;
+    zip(context?: Context): void | Promise<void>;
 }
 export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IHandler<Context>> {
     protected readonly _handler: IHandler<Context>;
@@ -494,6 +902,14 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
                 }
                 case "process_subtract": {
                     resolve(this.process_subtract(requestId, input, output, context));
+                    break;
+                }
+                case "process_divide": {
+                    resolve(this.process_divide(requestId, input, output, context));
+                    break;
+                }
+                case "process_zip": {
+                    resolve(this.process_zip(requestId, input, output, context));
                     break;
                 }
                 default: {
@@ -556,6 +972,56 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
             thrift.TApplicationExceptionCodec.encode(result, output);
             output.writeMessageEnd();
             return output.flush();
+        });
+    }
+    public process_divide(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): Promise<Buffer> {
+        return new Promise<number>((resolve, reject): void => {
+            try {
+                const args: IDivide__Args = Divide__ArgsCodec.decode(input);
+                input.readMessageEnd();
+                resolve(this._handler.divide(args.left, args.right, context));
+            }
+            catch (err) {
+                reject(err);
+            }
+        }).then((data: number): Buffer => {
+            const result: IDivide__ResultArgs = { success: data };
+            output.writeMessageBegin("divide", thrift.MessageType.REPLY, requestId);
+            Divide__ResultCodec.encode(result, output);
+            output.writeMessageEnd();
+            return output.flush();
+        }).catch((err: Error): Buffer => {
+            if (err instanceof CalcError.CalcError) {
+                const result: IDivide__ResultArgs = { error: err };
+                output.writeMessageBegin("divide", thrift.MessageType.REPLY, requestId);
+                Divide__ResultCodec.encode(result, output);
+                output.writeMessageEnd();
+                return output.flush();
+            }
+            else {
+                const result: thrift.TApplicationException = new thrift.TApplicationException(thrift.TApplicationExceptionType.UNKNOWN, err.message);
+                output.writeMessageBegin("divide", thrift.MessageType.EXCEPTION, requestId);
+                thrift.TApplicationExceptionCodec.encode(result, output);
+                output.writeMessageEnd();
+                return output.flush();
+            }
+        });
+    }
+    public process_zip(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): Promise<Buffer> {
+        return new Promise<void>((resolve, reject): void => {
+            try {
+                input.readMessageEnd();
+                resolve(this._handler.zip(context));
+            } catch (err) {
+                reject(err);
+            }
+        }).then((): Buffer => {
+            // ONEWAY zip: do not write REPLY / EXCEPTION envelopes.
+            // Patched by scripts/patch-thrift-oneway-zip.mjs after thrift-typescript codegen.
+            return Buffer.alloc(0);
+        }).catch((): Buffer => {
+            // ONEWAY: still no response body on handler failure.
+            return Buffer.alloc(0);
         });
     }
 }

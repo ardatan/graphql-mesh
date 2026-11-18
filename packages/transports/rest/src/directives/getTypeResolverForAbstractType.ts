@@ -77,6 +77,56 @@ export function getTypeResolverForAbstractType({
       }
     }
 
+    // Thrift TJSON / union selections stamp `__throw_<TypeName>: true` from the
+    // reply field id. Prefer that over field-name scoring so shared exception
+    // fields (e.g. `message`) cannot pick the wrong member after SDL rebuild
+    // (closures from the loader do not survive print/processDirectives).
+    // Require `__throw_*` keys so ordinary REST payloads keep normal scoring.
+    const hasThrowStamps =
+      data != null &&
+      typeof data === 'object' &&
+      Object.keys(data).some(k => k.toString().startsWith('__throw_'));
+    if (hasThrowStamps) {
+      for (const possibleType of possibleTypes) {
+        if (data[`__throw_${possibleType.name}`] === true) {
+          return possibleType.name;
+        }
+      }
+      // No active throw — prefer success even when leftover `message: null` would
+      // tie-break scoring toward an exception member (list/set/scalar successes
+      // do not always stamp `field0`).
+      const success = possibleTypes.find(t => {
+        const fields = t.getFields();
+        return 'value' in fields || 'ok' in fields;
+      });
+      if (success) {
+        return success.name;
+      }
+    }
+
+    // Thrift struct-success unions stamp boolean `field0` (presence of result field
+    // id 0). When no GraphQL member declares `field0`, treat the stamp as
+    // authoritative — leftover `message: undefined` must not beat success via scoring.
+    const anyDeclaresField0 =
+      data != null && typeof data === 'object'
+        ? possibleTypes.some(t => 'field0' in t.getFields())
+        : false;
+    const thriftField0Stamp =
+      data != null &&
+      typeof data === 'object' &&
+      typeof data.field0 === 'boolean' &&
+      !anyDeclaresField0 &&
+      hasThrowStamps;
+    if (thriftField0Stamp && data.field0 === true) {
+      const success = possibleTypes.find(t => {
+        const fields = t.getFields();
+        return 'value' in fields || 'ok' in fields;
+      });
+      if (success) {
+        return success.name;
+      }
+    }
+
     const dataTypeOf = typeof data;
 
     if (dataTypeOf !== 'object') {
@@ -111,13 +161,28 @@ export function getTypeResolverForAbstractType({
     }
 
     // const validationErrors: Record<string, ErrorObject[]> = {};
+    // Thrift union stamps use `field0` as metadata; keep it only when a candidate
+    // GraphQL member actually declares a `field0` field (ordinary REST unions).
     const dataKeys = dataTypeOf
       ? Object.keys(data)
-          // Remove metadata fields used to pass data
-          .filter(property => !property.toString().startsWith('$'))
+          // Remove metadata fields used to pass data / Thrift union discriminators
+          .filter(property => {
+            const key = property.toString();
+            if (key.startsWith('$') || key.startsWith('__throw_')) return false;
+            if (key === 'field0' && !anyDeclaresField0) return false;
+            return true;
+          })
       : null;
     const scoreTypeNameMap = new Map<number, string>();
     for (const possibleType of possibleTypes) {
+      // When Thrift stamped field0:false, do not let empty success `value`/`ok`
+      // keys win scoring against exception members.
+      if (thriftField0Stamp && data.field0 === false) {
+        const fields = possibleType.getFields();
+        if (('value' in fields || 'ok' in fields) && !('message' in fields)) {
+          continue;
+        }
+      }
       const typeName = possibleType.name;
       if (dataKeys != null) {
         const typeFields = Object.keys(possibleType.getFields());

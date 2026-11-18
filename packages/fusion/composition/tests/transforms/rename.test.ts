@@ -1001,3 +1001,82 @@ describe('rewriteConnectArgReferences __typename one-pass', () => {
     expect(selection).toMatch(/__typename: \$\("Foo"\), id/);
   });
 });
+
+describe('rewriteConnectArgReferences @thrift__rpc', () => {
+  it('rewrites $args in thrift__rpc args/selection without requiring @connect', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        thrift__rpc: [
+          {
+            function: 'add',
+            args: '1(struct): $args.request {\n  1(i32): left\n  2(i32): right\n}',
+            selection: '$(i32)',
+            messageType: 'CALL',
+          },
+        ],
+      },
+      new Map([['request', 'input']]),
+    );
+    const rpc = rewritten!.thrift__rpc[0];
+    expect(rpc.args).toContain('$args.input');
+    expect(rpc.args).not.toMatch(/\$args\.request\b/);
+    expect(rpc.selection).toBe('$(i32)');
+  });
+
+  it('does not rewrite $args.requestId when renaming request', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        thrift__rpc: [
+          {
+            function: 'lookup',
+            args: '1(i32): $args.request\n2(string): $args.requestId',
+            selection: '$(i32)',
+          },
+        ],
+      },
+      new Map([['request', 'input']]),
+    );
+    const args = rewritten!.thrift__rpc[0].args as string;
+    expect(args).toContain('$args.input');
+    expect(args).toContain('$args.requestId');
+    expect(args).not.toMatch(/\$args\.request\b/);
+  });
+
+  it('preserves quoted map lookup keys while rewriting real $args refs', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        thrift__rpc: [
+          {
+            function: 'lookup',
+            args: '1(string): $args.request',
+            selection: 'value: 1(map<string, i32>)->get("$args.request")',
+          },
+        ],
+      },
+      new Map([['request', 'input']]),
+    );
+    const rpc = rewritten!.thrift__rpc[0];
+    expect(rpc.args).toContain('$args.input');
+    expect(rpc.selection).toContain('->get("$args.request")');
+    expect(rpc.selection).not.toContain('->get("$args.input")');
+  });
+
+  it('rewrites $args in HTTP paths that contain apostrophes', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        connect: [
+          {
+            http: { GET: "/authors/O'Reilly/{$args.request}" },
+            selection: 'id',
+          },
+        ],
+      },
+      new Map([['request', 'input']]),
+    );
+    expect(rewritten!.connect[0].http.GET).toBe("/authors/O'Reilly/{$args.input}");
+  });
+});

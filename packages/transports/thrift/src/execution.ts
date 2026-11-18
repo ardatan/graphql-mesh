@@ -7,7 +7,7 @@ import {
   projectResultBySelectionSet,
 } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, getRootTypeMap, type ExecutionResult } from '@graphql-tools/utils';
-import { createGraphQLThriftClient } from './client.js';
+import { createGraphQLThriftClient, type ThriftRpcBinding } from './client.js';
 import type { GraphQLThriftAnnotations } from './types.js';
 
 export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
@@ -15,8 +15,10 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
     transport: GraphQLThriftAnnotations;
   }>(subgraph);
   const transportDirectives = schemaDefDirectives?.transport;
-  if (!transportDirectives?.length)
+  if (!transportDirectives?.length) {
     throw new Error('No @transport directive found on schema definition');
+  }
+  // Enum name↔i32 lives in `@thrift__rpc` `i32` + `->match` — no `@enum` restore.
   const graphqlAnnotations = transportDirectives[0];
   const client = createGraphQLThriftClient(graphqlAnnotations);
   let headers: Record<string, string> | undefined;
@@ -28,7 +30,7 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
   }
   const headersFactory = getInterpolatedHeadersFactory(headers);
   const rootTypeMap = getRootTypeMap(subgraph);
-  const fieldTypeMapDirectivesByField = new Map<string, any[]>();
+  const thriftRpcByField = new Map<string, ThriftRpcBinding>();
 
   return async function thriftExecutor(executionRequest): Promise<ExecutionResult<any, any>> {
     const operationsAndFragments = getOperationsAndFragments(executionRequest.document);
@@ -53,30 +55,40 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
       if (!field) {
         throw new Error(`No root field found for field ${fieldName}`);
       }
-      let fieldTypeMapDirectives = fieldTypeMapDirectivesByField.get(fieldName);
-      if (fieldTypeMapDirectives == null) {
-        fieldTypeMapDirectives = getDirectiveExtensions(field)?.fieldTypeMap || [];
-        fieldTypeMapDirectivesByField.set(fieldName, fieldTypeMapDirectives);
+      const cacheKey = `${rootType.name}.${fieldName}`;
+      let binding = thriftRpcByField.get(cacheKey);
+      if (binding == null) {
+        const fieldDirectives = getDirectiveExtensions(field) || {};
+        const thriftRpcDir = fieldDirectives.thrift__rpc?.[0];
+        if (!thriftRpcDir) {
+          throw new Error(`Field ${cacheKey} is missing @thrift__rpc binding`);
+        }
+        binding = {
+          functionName: thriftRpcDir.function || fieldName,
+          messageType: thriftRpcDir.messageType || 'CALL',
+          args: thriftRpcDir.args,
+          selection: thriftRpcDir.selection,
+          throws: thriftRpcDir.throws,
+        };
+        thriftRpcByField.set(cacheKey, binding);
       }
-      fieldTypeMapDirectives?.forEach(fieldTypeMapDirective => {
-        requestPromises.push(
-          client
-            .doRequest(fieldName, args, fieldTypeMapDirective?.fieldTypeMap, {
-              headers: headersFactory({
-                root,
-                args,
-                context: executionRequest.context,
-                env: globalThis.process?.env,
-              }),
-            })
-            .then(result => {
-              root[fieldName] = result;
-            })
-            .catch(err => {
-              errors.push(err);
+      requestPromises.push(
+        client
+          .doRequest(binding.functionName, args, binding, {
+            headers: headersFactory({
+              root,
+              args,
+              context: executionRequest.context,
+              env: globalThis.process?.env,
             }),
-        );
-      });
+          })
+          .then(result => {
+            root[fieldName] = result;
+          })
+          .catch(err => {
+            errors.push(err);
+          }),
+      );
     }
     await Promise.all(requestPromises);
     const projectedData = projectResultBySelectionSet({

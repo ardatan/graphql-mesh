@@ -4,7 +4,8 @@
   "private": true,
   "main": "build/main.js",
   "scripts": {
-    "codegen": "thrift-typescript --target thrift-server --sourceDir ./src --outDir ./src/codegen",
+    "codegen": "thrift-typescript --target thrift-server --sourceDir ./src --outDir ./src/codegen thrift/calculator.thrift && node ../../scripts/patch-thrift-oneway-zip.mjs src/codegen/Calculator.ts",
+    "patch:oneway-zip": "node ../../scripts/patch-thrift-oneway-zip.mjs src/codegen/Calculator.ts",
     "start": "concurrently \"npm run start:thrift\" \"npm run start:mesh\"",
     "start:mesh": "mesh dev",
     "start:thrift": "ts-node src/main.ts"

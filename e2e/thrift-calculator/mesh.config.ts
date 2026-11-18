@@ -4,6 +4,10 @@ import { loadThriftSubgraph } from '@omnigraph/thrift';
 
 const opts = Opts(process.argv);
 
+/**
+ * Default compose config — binary protocol + `@thrift__rpc`.
+ * JSON / `@connect` subgraph uses `mesh.json.config.ts`.
+ */
 export const composeConfig = defineConfig({
   subgraphs: [
     {
@@ -11,6 +15,7 @@ export const composeConfig = defineConfig({
         source: './services/calculator/calculator.thrift',
         endpoint: `http://localhost:${opts.getServicePort('calculator')}/thrift`,
         serviceName: 'Calculator',
+        protocol: 'binary',
       }),
     },
   ],

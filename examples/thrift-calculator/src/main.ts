@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { createThriftServer } from '@creditkarma/thrift-server-express';
-import { Calculator } from './codegen';
+import { CalcError, Calculator } from './codegen';
 
 const PORT = 9876;
 
@@ -11,6 +11,13 @@ const serviceHandlers: Calculator.IHandler<express.Request> = {
   subtract(left: number, right: number, context?: express.Request): number {
     return left - right;
   },
+  divide(left: number, right: number, context?: express.Request): number {
+    if (right === 0) {
+      throw new CalcError({ message: 'division by zero' });
+    }
+    return Math.trunc(left / right);
+  },
+  zip(context?: express.Request): void {},
 };
 
 const app: express.Application = createThriftServer({

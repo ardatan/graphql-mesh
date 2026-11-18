@@ -1,15 +1,37 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Thrift Calculator should generate correct schema: thrift-calculator-schema 1`] = `
-"schema @transport(subgraph: "Calculator", kind: "thrift", location: "http://localhost:9876/thrift", headers: [], options: {clientAnnotations: {serviceName: "calculator-service", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}) {
+"schema @transport(subgraph: "Calculator", kind: "thrift", location: "http://localhost:9876/thrift", headers: []) {
   query: Query
 }
 
-directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
+
+enum ThriftMessageType {
+  CALL
+  ONEWAY
+}
+
+type CalcError {
+  message: String
+}
 
 type Query {
-  add(request: AddRequestInput): Int @fieldTypeMap(subgraph: "Calculator", fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
-  subtract(left: Int, right: Int): Int @fieldTypeMap(subgraph: "Calculator", fieldTypeMap: {left: {type: 8, id: 1}, right: {type: 8, id: 2}})
+  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "Calculator", function: "add", args: """
+  1(struct): $args.request {
+    1(i32): left
+    2(i32): right
+  }
+  """, selection: "$(i32)", messageType: CALL)
+  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calculator", function: "subtract", args: """
+  1(i32): $args.left
+  2(i32): $args.right
+  """, selection: "$(i32)", messageType: CALL)
+  divide(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calculator", function: "divide", args: """
+  1(i32): $args.left
+  2(i32): $args.right
+  """, selection: "$(i32)", messageType: CALL)
+  zip: Void @thrift__rpc(subgraph: "Calculator", function: "zip", args: "", selection: "$(void)", messageType: ONEWAY)
 }
 
 input AddRequestInput {
@@ -17,7 +39,8 @@ input AddRequestInput {
   right: Int!
 }
 
-scalar FieldTypeMap"
+"""Represents NULL values"""
+scalar Void"
 `;
 
 exports[`Thrift Calculator should give correct response for example queries: example-query.graphql-thrift-calculator-result 1`] = `

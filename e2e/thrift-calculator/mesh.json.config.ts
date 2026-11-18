@@ -1,0 +1,22 @@
+import { Opts } from '@e2e/opts';
+import { defineConfig } from '@graphql-mesh/compose-cli';
+import { loadThriftSubgraph } from '@omnigraph/thrift';
+
+const opts = Opts(process.argv);
+
+/**
+ * TJSONProtocol emit: `@source` + `@connect` (Hive + Apollo Router).
+ * Single-service endpoint — omit service path segment (`POST: "/"`).
+ */
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadThriftSubgraph('calculator', {
+        source: './services/calculator/calculator.thrift',
+        endpoint: `http://localhost:${opts.getServicePort('calculator')}/thrift-json`,
+        // Omit serviceName → connect path `/` (single-service convention).
+        protocol: 'json',
+      }),
+    },
+  ],
+});

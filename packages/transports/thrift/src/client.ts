@@ -16,36 +16,53 @@ import {
   ThriftClient,
   TType,
 } from '@creditkarma/thrift-server-core';
+import {
+  applyCompactSelection,
+  enumNameToWire,
+  parseCompactArgsToTypeMap,
+  parseCompactSelection,
+  parseCompactThrows,
+  type CompactSelection,
+} from './compact-mapping.js';
 import type { GraphQLThriftAnnotations, TypeMap, TypeVal } from './types.js';
 
+export type ThriftRpcBinding = {
+  functionName: string;
+  messageType?: 'CALL' | 'ONEWAY';
+  args?: string;
+  selection?: string;
+  /** Compact IDL throws mapping when return type is a Result union. */
+  throws?: string;
+};
+
 interface IGraphQLThriftClient extends ThriftClient {
-  doRequest(methodName: string, args: any, fields: TypeMap, context?: any): Promise<any>;
+  doRequest(methodName: string, args: any, binding: ThriftRpcBinding, context?: any): Promise<any>;
 }
 
 export function createGraphQLThriftClient<Context = any>({
   location,
   headers,
-  options: {
-    clientAnnotations: {
-      serviceName,
-      annotations,
-      methodNames,
-      methodAnnotations,
-      methodParameters,
-    },
-    topTypeMap,
-  },
 }: GraphQLThriftAnnotations): IGraphQLThriftClient {
   const httpHeaders: Record<string, string> = Array.isArray(headers)
     ? Object.fromEntries(headers)
     : headers || {};
+  // creditkarma ThriftClient static stubs (path comes from `location`).
+  const serviceName = '';
+  const annotations: IThriftAnnotations = {};
+  const methodAnnotations: IMethodAnnotations = {};
+  const methodNames: string[] = [];
+
   function getActualType(typeVal: TypeVal): TType {
     if (typeVal.type === 'ref') {
-      return getActualType(topTypeMap[typeVal.name]);
-    } else {
-      return typeVal.type;
+      return TType.I32;
     }
+    // Thrift binary has no distinct enum type byte — enums are i32 on the wire.
+    if (typeVal.type === TType.ENUM) {
+      return TType.I32;
+    }
+    return typeVal.type as TType;
   }
+
   class GraphQLThriftClient extends ThriftClient<Context> {
     public static readonly serviceName: string = serviceName;
     public static readonly annotations: IThriftAnnotations = annotations;
@@ -55,12 +72,11 @@ export function createGraphQLThriftClient<Context = any>({
     public readonly _annotations: IThriftAnnotations = annotations;
     public readonly _methodAnnotations: IMethodAnnotations = methodAnnotations;
     public readonly _methodNames: Array<string> = methodNames;
-    public readonly _methodParameters?: Record<string, number> = methodParameters;
 
     writeType(typeVal: TypeVal, value: any, output: TProtocol) {
       switch (typeVal.type) {
         case 'ref':
-          this.writeType(topTypeMap[typeVal.name], value, output);
+          output.writeI32(value);
           break;
         case TType.BOOL:
           output.writeBool(value);
@@ -100,7 +116,8 @@ export function createGraphQLThriftClient<Context = any>({
           break;
         }
         case TType.ENUM:
-          // TODO: A
+          // GraphQL carries member names; compact args embed `enum<Name=n,…>` for i32.
+          output.writeI32(enumNameToWire(value, typeVal.values));
           break;
         case TType.MAP: {
           const keys = Object.keys(value);
@@ -134,7 +151,8 @@ export function createGraphQLThriftClient<Context = any>({
       }
     }
 
-    readType(type: TType, input: TProtocol): any {
+    /** Binary/compact: field names are not on the wire — index by field id. */
+    readTypeById(type: TType, input: TProtocol): any {
       switch (type) {
         case TType.BOOL:
           return input.readBool();
@@ -151,30 +169,28 @@ export function createGraphQLThriftClient<Context = any>({
         case TType.STRING:
           return input.readString();
         case TType.STRUCT: {
-          const result: any = {};
+          const result = new Map<number, any>();
           input.readStructBegin();
           while (true) {
             const field: IThriftField = input.readFieldBegin();
             const fieldType = field.fieldType;
-            const fieldName = field.fieldName || 'success';
             if (fieldType === TType.STOP) {
               break;
             }
-            result[fieldName] = this.readType(fieldType, input);
+            result.set(field.fieldId, this.readTypeById(fieldType, input));
             input.readFieldEnd();
           }
           input.readStructEnd();
           return result;
         }
         case TType.ENUM:
-          // TODO: A
-          break;
+          return input.readI32();
         case TType.MAP: {
           const result: any = {};
           const map = input.readMapBegin();
           for (let i = 0; i < map.size; i++) {
-            const key = this.readType(map.keyType, input);
-            const value = this.readType(map.valueType, input);
+            const key = this.readTypeById(map.keyType, input);
+            const value = this.readTypeById(map.valueType, input);
             result[key] = value;
           }
           input.readMapEnd();
@@ -184,8 +200,7 @@ export function createGraphQLThriftClient<Context = any>({
           const result: any[] = [];
           const list = input.readListBegin();
           for (let i = 0; i < list.size; i++) {
-            const element = this.readType(list.elementType, input);
-            result.push(element);
+            result.push(this.readTypeById(list.elementType, input));
           }
           input.readListEnd();
           return result;
@@ -194,8 +209,7 @@ export function createGraphQLThriftClient<Context = any>({
           const result: any[] = [];
           const list = input.readSetBegin();
           for (let i = 0; i < list.size; i++) {
-            const element = this.readType(list.elementType, input);
-            result.push(element);
+            result.push(this.readTypeById(list.elementType, input));
           }
           input.readSetEnd();
           return result;
@@ -203,13 +217,20 @@ export function createGraphQLThriftClient<Context = any>({
       }
     }
 
-    async doRequest(methodName: string, args: any, fields: TypeMap, context?: any) {
+    async doRequest(methodName: string, args: any, binding: ThriftRpcBinding, context?: any) {
+      const fields: TypeMap = parseCompactArgsToTypeMap(binding.args || '');
+      const selection: CompactSelection = parseCompactSelection(binding.selection || '$(void)');
+      const throws = parseCompactThrows(binding.throws || '');
+      const outboundMessageType = binding.messageType || 'CALL';
+
       const Transport = this.transport;
       const Protocol = this.protocol;
       const writer: TTransport = new Transport();
       const output: TProtocol = new Protocol(writer);
       const id = this.incrementRequestId();
-      output.writeMessageBegin(methodName, MessageType.CALL, id);
+      const wireMessageType =
+        outboundMessageType === 'ONEWAY' ? MessageType.ONEWAY : MessageType.CALL;
+      output.writeMessageBegin(methodName, wireMessageType, id);
       this.writeType(
         {
           name: pascalCase(methodName) + '__Args',
@@ -222,6 +243,10 @@ export function createGraphQLThriftClient<Context = any>({
       );
       output.writeMessageEnd();
       const data: Buffer = await this.connection.send(writer.flush(), context);
+      // ONEWAY: fire-and-forget — do not wait for / decode a reply body.
+      if (outboundMessageType === 'ONEWAY') {
+        return null;
+      }
       const reader: TTransport = this.transport.receiver(data);
       const input: TProtocol = new Protocol(reader);
       const { fieldName, messageType }: IThriftMessage = input.readMessageBegin();
@@ -231,16 +256,46 @@ export function createGraphQLThriftClient<Context = any>({
           input.readMessageEnd();
           throw err;
         } else {
-          const result = this.readType(TType.STRUCT, input);
+          const result = this.readTypeById(TType.STRUCT, input) as Map<number, any>;
           input.readMessageEnd();
-          if (result.success != null) {
-            return result.success;
-          } else {
-            throw new TApplicationException(
-              TApplicationExceptionType.UNKNOWN,
-              methodName + ' failed: unknown result',
-            );
+          if (result.has(0)) {
+            const success = applyCompactSelection(selection, result.get(0));
+            if (throws.length > 0) {
+              return {
+                value: success,
+                __typename: `${methodName[0].toUpperCase()}${methodName.slice(1)}Success`,
+              };
+            }
+            return success;
           }
+          for (const t of throws) {
+            if (result.has(t.id)) {
+              const projected = applyCompactSelection(
+                { kind: 'fields', fields: t.fields },
+                result.get(t.id),
+              );
+              return {
+                ...(projected && typeof projected === 'object' ? projected : {}),
+                __typename: t.typeName,
+              };
+            }
+          }
+          // Non-oneway void success: empty result struct only (no field 0).
+          // Nonempty unmatched maps are declared throws with ignoreExceptions:true —
+          // must not look like success.
+          if (selection.kind === 'scalar' && selection.wire === 'void' && result.size === 0) {
+            if (throws.length > 0) {
+              return {
+                ok: true,
+                __typename: `${methodName[0].toUpperCase()}${methodName.slice(1)}Success`,
+              };
+            }
+            return null;
+          }
+          throw new TApplicationException(
+            TApplicationExceptionType.UNKNOWN,
+            methodName + ' failed: unknown result',
+          );
         }
       } else {
         throw new TApplicationException(
@@ -258,6 +313,7 @@ export function createGraphQLThriftClient<Context = any>({
     https: locationUrl.protocol === 'https:',
     port: parseInt(locationUrl.port || '80', 10),
     path: locationUrl.pathname,
+    protocol: 'binary',
     requestOptions: {
       headers: httpHeaders,
     },

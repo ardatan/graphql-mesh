@@ -855,6 +855,19 @@ export function applySelection(selection: string, root: any, extras: ConnectSele
   if (trimmed === '$' || trimmed === '$root') {
     return root;
   }
+  // `$()` expressions (incl. multiline `$({ … })` / `$(null)`) evaluate as a whole so
+  // JSON array envelopes (TJSON) are not mistaken for GraphQL list roots.
+  // Trailing NamedSelection (`$($args.user) { id }`) stays on evalSubSelection.
+  if (trimmed.startsWith('$(')) {
+    const closed = findBalancedParenClose(trimmed, 1);
+    if (closed > 0) {
+      const after = trimmed.slice(closed + 1).trim();
+      if (after.startsWith('{')) {
+        return evalSubSelection(trimmed, root, extras);
+      }
+    }
+    return evalPath(trimmed, root, extras);
+  }
   // Mesh: `$ _response: { … }` — keep JSON body fields and overlay mapped keys.
   // Only when `$` is followed by whitespace (not `$status` / `$.x` / `$->…`).
   if (/^\$\s+\S/.test(trimmed)) {
@@ -918,6 +931,19 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
     if (method === 'first') {
       return Array.isArray(left) ? left[0] : left;
     }
+    if (method === 'size') {
+      if (Array.isArray(left)) return left.length;
+      if (left && typeof left === 'object') return Object.keys(left).length;
+      if (typeof left === 'string') return left.length;
+      return 0;
+    }
+    if (method === 'slice') {
+      if (!Array.isArray(left) && typeof left !== 'string') return left;
+      const parts = rawArgs.split(',').map(s => s.trim());
+      const start = parts[0] ? Number(parts[0]) : 0;
+      const end = parts[1] != null && parts[1] !== '' ? Number(parts[1]) : undefined;
+      return (left as any).slice(start, end);
+    }
     if (method === 'match') {
       return evalMatchMethod(left, rawArgs, root, extras);
     }
@@ -936,27 +962,64 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
       return left.filter(item => {
         if (elementExpr === '@') return Boolean(item);
         if (elementExpr.startsWith('@')) {
-          return Boolean(evalPath(elementExpr.replace(/^@/, '$'), item, extras));
+          return Boolean(evalPath(rewriteAtToDollar(elementExpr), item, extras));
         }
         return Boolean(evalPath(elementExpr, item, extras));
       });
     }
     if (method === 'ne') {
-      return left !== parseConnectorsLiteralArg(rawArgs);
+      const right = parseConnectorsLiteralArg(rawArgs);
+      // Connectors None/null: treat null and undefined as equal for `ne(null)`.
+      if (right === null) return left != null;
+      return left !== right;
     }
     if (method === 'eq') {
-      return left === parseConnectorsLiteralArg(rawArgs);
+      const right = parseConnectorsLiteralArg(rawArgs);
+      if (right === null) return left == null;
+      return left === right;
     }
-    // `$->map(@->match(...))` / `$->map(@.id)` — Apollo list element transform.
+    // `$obj->has("0")` — Mesh helper (Apollo `has` is still future/non-public).
+    if (method === 'has') {
+      if (left == null || typeof left !== 'object') return false;
+      const key = String(parseConnectorsLiteralArg(rawArgs));
+      return Object.prototype.hasOwnProperty.call(left, key) || key in (left as object);
+    }
+    // `$->eq(2)->and($->get(4)->get("0")->ne(null))` — combine booleans; arg eval against root.
+    if (method === 'and') {
+      let arg = rawArgs.trim();
+      if (arg.startsWith('(') && arg.endsWith(')')) {
+        arg = arg.slice(1, -1).trim();
+      }
+      return Boolean(left) && Boolean(evalPath(arg, root, extras));
+    }
+    // `$arr->contains("0")` — Apollo-public membership check.
+    if (method === 'contains') {
+      if (!Array.isArray(left)) return false;
+      return left.includes(parseConnectorsLiteralArg(rawArgs));
+    }
+    // `$->map(@->match(...))` / `$->map(@.id)` / `$->map(@->{ ... })` — element transform.
+    // Nested maps: outer `rewriteAtToDollar` turns inner `@->{…}` into `$->{…}`; accept both.
     if (method === 'map') {
       if (!Array.isArray(left)) return left;
       const elementExpr = rawArgs.trim();
       return left.map(item => {
-        if (elementExpr === '@') return item;
-        // `@->match(...)` / `@->first` — treat `@` as the element root.
-        if (elementExpr.startsWith('@')) {
-          const rewritten = elementExpr.replace(/^@/, '$');
-          return evalPath(rewritten, item, extras);
+        if (elementExpr === '@' || elementExpr === '$') return item;
+        if (
+          elementExpr.startsWith('@') ||
+          elementExpr.startsWith('$->{') ||
+          elementExpr.startsWith('$->[')
+        ) {
+          const afterSigil = elementExpr.slice(1);
+          // `@->{ ... }` / `$->{ ... }` / `@->[ ... ]` — lit with element as root.
+          if (afterSigil.startsWith('->{') || afterSigil.startsWith('->[')) {
+            const lit = afterSigil.slice(2);
+            return evalConnectorsLitExpr(rewriteAtToDollar(lit), item, extras);
+          }
+          if (afterSigil.startsWith('{') || afterSigil.startsWith('[')) {
+            return evalConnectorsLitExpr(rewriteAtToDollar(afterSigil), item, extras);
+          }
+          // `@->match(...)` / `@.id` — treat `@` as the element root.
+          return evalPath(rewriteAtToDollar(elementExpr), item, extras);
         }
         return evalPath(elementExpr, item, extras);
       });
@@ -966,6 +1029,14 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
       const sepMatch = rawArgs.match(/^["'](.*)["']$/);
       const sep = sepMatch ? sepMatch[1] : ',';
       return left.filter(v => v != null).join(sep);
+    }
+    // `$([a, b])->concat($args.ids)` — append array elements (TJSON list/set envelopes).
+    // Prefer over LitArray `...` spreads (Apollo LitArray grammar has no spread).
+    if (method === 'concat') {
+      const right = evalConnectorsLitExpr(rawArgs.trim(), root, extras);
+      const leftArr = Array.isArray(left) ? left : left == null ? [] : [left];
+      const rightArr = Array.isArray(right) ? right : right == null ? [] : [right];
+      return leftArr.concat(rightArr);
     }
     if (method === 'jsonStringify') {
       return JSON.stringify(left);
@@ -997,6 +1068,67 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
     cur = cur[part];
   }
   return cur;
+}
+
+/**
+ * Rewrite `@` / `@.x` element aliases to `$` / `$.x` for lit/path eval against the item.
+ * Leaves `@` inside quoted strings alone (e.g. emails).
+ * Preserves bare `@` match / pass-through wildcards in list arms (`[@, "other"]`, `[@, @]`).
+ */
+function rewriteAtToDollar(expr: string): string {
+  let out = '';
+  let i = 0;
+  while (i < expr.length) {
+    const c = expr[i];
+    if (c === '"' || c === "'") {
+      const q = c;
+      out += c;
+      i++;
+      while (i < expr.length && expr[i] !== q) {
+        if (expr[i] === '\\') {
+          out += expr[i++];
+          if (i < expr.length) out += expr[i++];
+          continue;
+        }
+        out += expr[i++];
+      }
+      if (i < expr.length) out += expr[i++];
+      continue;
+    }
+    if (c === '@' && expr[i + 1] === '.') {
+      out += '$.';
+      i += 2;
+      continue;
+    }
+    if (c === '@' && expr[i + 1] === '-' && expr[i + 2] === '>') {
+      out += '$->';
+      i += 3;
+      continue;
+    }
+    if (c === '@') {
+      // Preserve bare `@` only in real match arms (`[@, "other"]`, `[@, @]`), not
+      // ordinary lit arrays like `[@]` / `@->[@]` where `@` is the element root.
+      let prev = out.length - 1;
+      while (prev >= 0 && /\s/.test(out[prev])) prev--;
+      let next = i + 1;
+      while (next < expr.length && /\s/.test(expr[next])) next++;
+      const prevCh = prev >= 0 ? out[prev] : '';
+      const nextCh = next < expr.length ? expr[next] : '';
+      const matchArmFirst = prevCh === '[' && nextCh === ',';
+      const matchArmRest = prevCh === ',' && (nextCh === ',' || nextCh === ']' || nextCh === '');
+      if (matchArmFirst || matchArmRest) {
+        out += '@';
+        i++;
+        continue;
+      }
+      out += '$';
+      i++;
+      continue;
+    }
+    out += c;
+    i++;
+  }
+  return out;
 }
 
 /** Index of the `)` that closes `s[openIdx]` (`(`), or -1. */
@@ -1063,10 +1195,158 @@ function evalConnectorsDollarParen(inner: string, root: any, extras: ConnectSele
       }
     }
   }
+  // Apollo LitArray / LitObject with embedded `$args` / paths (e.g. TJSON envelopes).
+  if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+    try {
+      return evalConnectorsLitExpr(trimmed, root, extras);
+    } catch {
+      /* fall through */
+    }
+  }
   if (trimmed.startsWith('$') || trimmed.includes('->') || /^[A-Za-z_]/.test(trimmed)) {
     return evalPath(trimmed, root, extras);
   }
   return trimmed;
+}
+
+/**
+ * Evaluate Apollo Connectors LitExpr fragments used inside `$()`:
+ * arrays/objects that mix JSON literals with `$args` / path selections / spreads.
+ */
+function evalConnectorsLitExpr(expr: string, root: any, extras: ConnectSelectionExtras): any {
+  const trimmed = expr.trim();
+  if (!trimmed) return undefined;
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    /* continue */
+  }
+  // Parse containers before path/`->` so `$([$args.ids->size])` does not send
+  // the whole array fragment through evalPath (which rejects `size]`).
+  if (trimmed.startsWith('[')) {
+    return evalConnectorsLitArray(trimmed, root, extras);
+  }
+  if (trimmed.startsWith('{')) {
+    return evalConnectorsLitObject(trimmed, root, extras);
+  }
+  if (trimmed.startsWith('$(')) {
+    const closed = findBalancedParenClose(trimmed, 1);
+    if (closed > 0) {
+      // Only unwrap `$()` when it is the whole fragment; otherwise keep chains
+      // like `$([$args.ids]->size)` for evalPath.
+      if (closed === trimmed.length - 1) {
+        return evalConnectorsDollarParen(trimmed.slice(2, closed), root, extras);
+      }
+      return evalPath(trimmed, root, extras);
+    }
+  }
+  if (trimmed.startsWith('$') || trimmed.includes('->')) {
+    return evalPath(trimmed, root, extras);
+  }
+  if (/^-?\d+(\.\d+)?$/.test(trimmed)) return Number(trimmed);
+  if (trimmed === 'true') return true;
+  if (trimmed === 'false') return false;
+  if (trimmed === 'null') return null;
+  return trimmed;
+}
+
+function splitConnectorsLitItems(inner: string): string[] {
+  const items: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < inner.length; i++) {
+    const c = inner[i];
+    if (c === '"' || c === "'") {
+      const q = c;
+      i++;
+      while (i < inner.length && inner[i] !== q) {
+        if (inner[i] === '\\') i++;
+        i++;
+      }
+      continue;
+    }
+    if (c === '(' || c === '[' || c === '{') depth++;
+    else if (c === ')' || c === ']' || c === '}') depth--;
+    else if (c === ',' && depth === 0) {
+      items.push(inner.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  const last = inner.slice(start).trim();
+  if (last) items.push(last);
+  return items;
+}
+
+function evalConnectorsLitArray(expr: string, root: any, extras: ConnectSelectionExtras): any[] {
+  const inner = expr.trim().slice(1, -1);
+  const out: any[] = [];
+  for (const item of splitConnectorsLitItems(inner)) {
+    if (!item) continue;
+    if (item.startsWith('...')) {
+      const spread = evalConnectorsLitExpr(item.slice(3).trim(), root, extras);
+      if (Array.isArray(spread)) out.push(...spread);
+      else if (spread != null) out.push(spread);
+      continue;
+    }
+    out.push(evalConnectorsLitExpr(item, root, extras));
+  }
+  return out;
+}
+
+function evalConnectorsLitObject(
+  expr: string,
+  root: any,
+  extras: ConnectSelectionExtras,
+): Record<string, any> {
+  const inner = expr.trim().slice(1, -1);
+  const out: Record<string, any> = {};
+  for (const item of splitConnectorsLitItems(inner)) {
+    if (!item) continue;
+    if (item.startsWith('...')) {
+      const spread = evalConnectorsLitExpr(item.slice(3).trim(), root, extras);
+      if (spread && typeof spread === 'object' && !Array.isArray(spread)) {
+        Object.assign(out, spread);
+      }
+      continue;
+    }
+    const colon = findTopLevelColon(item);
+    if (colon < 0) continue;
+    const rawKey = item.slice(0, colon).trim();
+    const rawVal = item.slice(colon + 1).trim();
+    let key = rawKey;
+    try {
+      if (
+        (rawKey.startsWith('"') && rawKey.endsWith('"')) ||
+        (rawKey.startsWith("'") && rawKey.endsWith("'"))
+      ) {
+        key = JSON.parse(rawKey.includes("'") ? `"${rawKey.slice(1, -1)}"` : rawKey);
+      }
+    } catch {
+      /* keep key */
+    }
+    out[key] = evalConnectorsLitExpr(rawVal, root, extras);
+  }
+  return out;
+}
+
+function findTopLevelColon(item: string): number {
+  let depth = 0;
+  for (let i = 0; i < item.length; i++) {
+    const c = item[i];
+    if (c === '"' || c === "'") {
+      const q = c;
+      i++;
+      while (i < item.length && item[i] !== q) {
+        if (item[i] === '\\') i++;
+        i++;
+      }
+      continue;
+    }
+    if (c === '(' || c === '[' || c === '{') depth++;
+    else if (c === ')' || c === ']' || c === '}') depth--;
+    else if (c === ':' && depth === 0) return i;
+  }
+  return -1;
 }
 
 /**
