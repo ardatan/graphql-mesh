@@ -1,6 +1,6 @@
-// eslint-disable-next-line import/no-nodejs-modules
-import { DatabaseSync } from 'node:sqlite';
 import { createPool, type Pool } from 'mysql2/promise';
+// eslint-disable-next-line import/no-nodejs-modules -- node:sqlite DatabaseSync client
+import { DatabaseSync } from 'node:sqlite';
 import pg from 'pg';
 import type { Pool as PgPool } from 'pg';
 import { resolveSqlitePath } from './adapter.js';

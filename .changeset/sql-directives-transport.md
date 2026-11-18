@@ -75,24 +75,18 @@ gone -- recompose and update client queries.
 
 `mesh-migrate-config` and public website docs are intentionally unchanged here.
 
-## Migration (`@sql` / client args)
+## Migration (client args / `@sql`)
 
-Directive mapping no longer uses a catch-all `args` bag or a separate `@sql(filter:)` binder.
+Coming from the previous SQL packs, the client list/count filter arg renames
+`filter: AlbumFilter` -> `where: AlbumFilter` (input type name still `*Filter`).
 
-| Surface | Before (early drafts / old packs) | After |
-| --- | --- | --- |
-| Client list/count arg | `filter: AlbumFilter` | `where: AlbumFilter` (input type still `*Filter`) |
-| Equality / joins | `@sql(args: """AlbumId: $args.id""")` | `@sql(where: """AlbumId: $args.id""")` |
-| Structured filter alone | `@sql(filter: "$args.filter")` | `@sql(where: "$args.where")` |
-| Join + client filter | stuffed into `args` / separate `filter` | `@sql(where: """ArtistId: $this.id\n...$args.where""")` |
-| Pagination / sort binders | inside `args` or under `where` | separate `@sql(orderBy/limit/offset/first/after: "$args.…")` |
-| Mutations | values in `args` | `@sql(set: …)` + `where` for UPDATE/DELETE |
-
-Object spread (`...$args.where`) is only needed when merging fixed predicates with the client
-`where` input. When the binder stands alone, use bare `$args.where`.
+New hand-writable `@sql` binders: `where` (equality/joins and structured client filter),
+separate `orderBy` / `limit` / `offset` / `first` / `after`, `set` for INSERT/UPDATE,
+`selection`, and `through` for M2M. Object spread (`...$args.where`) is only needed when
+merging fixed predicates with the client `where` input; alone, use bare `$args.where`.
 
 ```graphql
-# sole filter
+# sole client where
 albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]!
   @sql(
     table: "albums"
@@ -126,9 +120,6 @@ albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [
   )
 ```
 
-Hand-authored SDL that still has `@sql(filter: "$args.filter")` or `filter: $args.filter`
-stuffed into `where` keeps working at runtime; new emit does not produce it.
-
 ## What else changed
 
 - Mesh rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql`
@@ -157,7 +148,6 @@ stuffed into `where` keeps working at runtime; new emit does not produce it.
   sole-PK output nullability follows the database column; `@key` only when a PK exists
 - Generated columns omitted from create/update inputs and SET mappings
 - MySQL has-many JSON subselects cap children before `JSON_ARRAYAGG` (correlated rank)
-- `@sql` / `SqlKind` GraphQL `description` props stripped (lean SDL); TypeScript comments / TSDoc kept
 
 ## Reliability / review follow-ups (this PR)
 
@@ -177,7 +167,8 @@ stuffed into `where` keeps working at runtime; new emit does not produce it.
   create-if-absent publish (no live-DB overwrite)
 - Mutations: reject structured `where` that is `null` / non-object / empty, or that produces no
   SQL predicate; soft-delete marker alone is not enough to authorize DELETE/UPDATE
-- Empty `IN ()` -> FALSE; empty `nin` is a no-op (not a TRUE tautology)
+- Empty `IN ()` -> FALSE; empty `nin: []` -> TRUE (so NOT/OR compose); mutations reject
+  pure tautologies
 - LEFT JOIN presence via always-projected join column; cursor encode prefers SQL column keys
 - SQLite introspect: ASCII-fold FK match; INTEGER PK autoIncrement only when not WITHOUT ROWID /
   DESC PK
