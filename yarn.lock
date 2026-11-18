@@ -9999,6 +9999,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-mesh/transport-mongo@npm:0.1.0, @graphql-mesh/transport-mongo@workspace:packages/transports/mongo":
+  version: 0.0.0-use.local
+  resolution: "@graphql-mesh/transport-mongo@workspace:packages/transports/mongo"
+  dependencies:
+    "@graphql-mesh/transport-common": "npm:^1.1.2"
+    "@graphql-mesh/utils": "npm:^0.107.3"
+    "@graphql-tools/utils": "npm:^13.2.2"
+    "@omnigraph/mongo": "workspace:*"
+    "@whatwg-node/disposablestack": "npm:^0.1.0"
+    graphql: "npm:16.14.0"
+    mongodb: "npm:^7.0.0"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^16.0.0 || ^17.0.0
+  languageName: unknown
+  linkType: soft
+
 "@graphql-mesh/transport-mysql@npm:^0.12.3, @graphql-mesh/transport-mysql@workspace:packages/transports/mysql":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-mysql@workspace:packages/transports/mysql"
@@ -14049,6 +14066,25 @@ __metadata:
     url-join: "npm:4.0.1"
   peerDependencies:
     graphql: ^16.0.0 || ^17.0.0
+  languageName: unknown
+  linkType: soft
+
+"@omnigraph/mongo@workspace:*, @omnigraph/mongo@workspace:packages/loaders/mongo":
+  version: 0.0.0-use.local
+  resolution: "@omnigraph/mongo@workspace:packages/loaders/mongo"
+  dependencies:
+    "@graphql-mesh/cross-helpers": "npm:^0.4.18"
+    "@graphql-mesh/transport-mongo": "npm:0.1.0"
+    "@graphql-mesh/types": "npm:^0.107.3"
+    "@graphql-mesh/utils": "npm:^0.107.3"
+    "@graphql-tools/utils": "npm:^13.2.2"
+    graphql: "npm:16.14.0"
+    graphql-compose: "npm:^9.3.0"
+    graphql-scalars: "npm:^2.0.1"
+    mongoose: "npm:^9.0.0"
+  peerDependencies:
+    graphql: ^16.0.0 || ^17.0.0
+    mongoose: "*"
   languageName: unknown
   linkType: soft
 
@@ -35743,6 +35779,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mongodb@npm:^7.0.0":
+  version: 7.9.0
+  resolution: "mongodb@npm:7.9.0"
+  dependencies:
+    "@mongodb-js/saslprep": "npm:^1.5.0"
+    bson: "npm:^7.3.2"
+    mongodb-connection-string-url: "npm:^7.0.2"
+  peerDependencies:
+    "@aws-sdk/credential-providers": ^3.806.0
+    "@mongodb-js/zstd": ^7.0.0
+    gcp-metadata: ^7.0.1
+    kerberos: ^7.0.0
+    mongodb-client-encryption: ^7.2.0
+    snappy: ^7.3.2
+    socks: ^2.8.6
+  peerDependenciesMeta:
+    "@aws-sdk/credential-providers":
+      optional: true
+    "@mongodb-js/zstd":
+      optional: true
+    gcp-metadata:
+      optional: true
+    kerberos:
+      optional: true
+    mongodb-client-encryption:
+      optional: true
+    snappy:
+      optional: true
+    socks:
+      optional: true
+  checksum: 10c0/383053508163ac9ce4c39718165387b1df8f9db11b4801e2c6b7b846825cd940734064e4134bc61ddd0d03ef956b47a397ad35b7bcfb81f220b63ea36ee50b47
+  languageName: node
+  linkType: hard
+
 "mongodb@npm:~7.7":
   version: 7.7.0
   resolution: "mongodb@npm:7.7.0"
@@ -35777,6 +35847,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mongodb@npm:~7.8":
+  version: 7.8.0
+  resolution: "mongodb@npm:7.8.0"
+  dependencies:
+    "@mongodb-js/saslprep": "npm:^1.5.0"
+    bson: "npm:^7.3.2"
+    mongodb-connection-string-url: "npm:^7.0.2"
+  peerDependencies:
+    "@aws-sdk/credential-providers": ^3.806.0
+    "@mongodb-js/zstd": ^7.0.0
+    gcp-metadata: ^7.0.1
+    kerberos: ^7.0.0
+    mongodb-client-encryption: ^7.2.0
+    snappy: ^7.3.2
+    socks: ^2.8.6
+  peerDependenciesMeta:
+    "@aws-sdk/credential-providers":
+      optional: true
+    "@mongodb-js/zstd":
+      optional: true
+    gcp-metadata:
+      optional: true
+    kerberos:
+      optional: true
+    mongodb-client-encryption:
+      optional: true
+    snappy:
+      optional: true
+    socks:
+      optional: true
+  checksum: 10c0/abdf1e7465717963839c26cc2d785ca73036a8ef84574080e6ac59077182c396a0a310f726dbe432efa05c5d9b72deb4049cf395bbe2976a2d3b58c299462017
+  languageName: node
+  linkType: hard
+
 "mongoose@npm:9.11.4":
   version: 9.11.4
   resolution: "mongoose@npm:9.11.4"
@@ -35789,6 +35893,21 @@ __metadata:
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
   checksum: 10c0/4fab337e4a7cf3a8369ff48f965406ef29963145ec16aff286812ceca5e0d0c9d0a8dfbf318104fe1c26df51eedbc73eb6a3732dd1642383f2978975eb640373
+  languageName: node
+  linkType: hard
+
+"mongoose@npm:^9.0.0":
+  version: 9.12.2
+  resolution: "mongoose@npm:9.12.2"
+  dependencies:
+    "@standard-schema/spec": "npm:^1.1.0"
+    kareem: "npm:3.4.1"
+    mongodb: "npm:~7.8"
+    mpath: "npm:0.9.0"
+    mquery: "npm:6.0.1"
+    ms: "npm:2.1.3"
+    sift: "npm:17.1.4"
+  checksum: 10c0/f275003f6c21bf42e6bd6cff609f6484e4c8cc685cfaedb81fee6a6d35e8f2996b55a39e9b615ba287474bbee9e2edfc9e1e4b506f19938a066629a14fabd764
   languageName: node
   linkType: hard
 
@@ -41384,6 +41503,13 @@ __metadata:
   version: 17.1.3
   resolution: "sift@npm:17.1.3"
   checksum: 10c0/bb05d1d65cc9b549b402c1366ba1fcf685311808b6d5c2f4fa2f477d7b524218bbf6c99587562d5613d407820a6b5a7cad809f89c3f75c513ff5d8c0e0a0cead
+  languageName: node
+  linkType: hard
+
+"sift@npm:17.1.4":
+  version: 17.1.4
+  resolution: "sift@npm:17.1.4"
+  checksum: 10c0/9db645b0423c66cf5e54cd523ad37870cdb899161d2788dedc9667da9021fb5df8da22729bfbb8a9fdb113f68e6876b767ac930e1e63fd3bf70304f9d775432a
   languageName: node
   linkType: hard
 

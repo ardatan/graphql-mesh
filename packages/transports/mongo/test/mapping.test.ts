@@ -1,0 +1,93 @@
+import {
+  columnMapFromSelection,
+  mapDocumentToGraphql,
+  parseMongoMapping,
+  projectionFromSelection,
+  resolveMappingValue,
+} from '../src/mapping.js';
+
+describe('parseMongoMapping', () => {
+  it('parses column selection and skips comments', () => {
+    const parsed = parseMongoMapping(`
+      # User columns
+      id: _id
+      name: name
+      age: age
+    `);
+    expect(columnMapFromSelection(parsed)).toEqual(
+      new Map([
+        ['id', '_id'],
+        ['name', 'name'],
+        ['age', 'age'],
+      ]),
+    );
+  });
+
+  it('parses $args / $this, spreads, and nested blocks', () => {
+    const parsed = parseMongoMapping(`
+      _id: $this.id
+      ...$args.where
+      address {
+        street: address.street
+      }
+    `);
+    expect(parsed.entries[0].value).toEqual({
+      kind: 'this',
+      value: 'id',
+      path: ['id'],
+    });
+    expect(parsed.entries[1]).toMatchObject({
+      spread: true,
+      key: '...$args.where',
+      value: {
+        kind: 'args',
+        value: 'where',
+        path: ['where'],
+      },
+    });
+    const address = parsed.entries.find(e => e.key === 'address');
+    expect(address?.children?.[0].key).toBe('street');
+    expect(address?.children?.[0].value).toEqual({
+      kind: 'column',
+      value: 'address.street',
+    });
+  });
+
+  it('parses bare $args.where as a whole-value binder', () => {
+    const parsed = parseMongoMapping(`$args.where`);
+    expect(parsed.entries).toEqual([
+      {
+        key: '$args.where',
+        value: { kind: 'args', value: 'where', path: ['where'] },
+      },
+    ]);
+    expect(
+      resolveMappingValue(parsed.entries[0].value, {
+        args: { where: { name: { eq: 'Ada' } } },
+      }),
+    ).toEqual({ name: { eq: 'Ada' } });
+  });
+
+  it('builds projection and maps documents', () => {
+    const parsed = parseMongoMapping(`
+      id: _id
+      name: name
+      street: address.street
+    `);
+    expect(projectionFromSelection(parsed)).toEqual({
+      _id: 1,
+      name: 1,
+      'address.street': 1,
+    });
+    expect(
+      mapDocumentToGraphql(
+        { _id: 'abc', name: 'Ada', address: { street: 'Main' } },
+        parsed,
+      ),
+    ).toEqual({
+      id: 'abc',
+      name: 'Ada',
+      street: 'Main',
+    });
+  });
+});
