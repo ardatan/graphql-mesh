@@ -26,8 +26,8 @@ export function createPostgresGrafastExecutor(
   const pool = opts.sqlClient.pgPool;
   if (!pool) return null;
 
-  const { registry, relationNames } = buildPgRegistryFromSqlSchema(opts.subgraph);
-  const schema = wirePostgresSqlPlans(opts.subgraph, registry, { relationNames });
+  const { registry, relationNames, tableByType } = buildPgRegistryFromSqlSchema(opts.subgraph);
+  const schema = wirePostgresSqlPlans(opts.subgraph, registry, { relationNames, tableByType });
   const withPgClient = makePgAdaptorWithPgClient(pool);
 
   const executor: DisposableExecutor = async function postgresGrafastExecutor(executionRequest) {

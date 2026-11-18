@@ -16,35 +16,50 @@ export function wirePostgresSqlPlans(
   registry: MeshPgRegistry,
   meta: {
     relationNames: Map<string, Map<string, { remoteTable: string; kind: 'ROW' | 'ROWS' }>>;
+    tableByType: Map<string, string>;
   },
 ): GraphQLSchema {
   return mapSchema(schema, {
     [MapperKind.OBJECT_FIELD](fieldConfig, fieldName, typeName) {
       const sqlDir = getDefDirectives(schema, fieldConfig).find(d => d.name === 'sql');
-      if (!sqlDir) return fieldConfig;
-
-      const table = String(sqlDir.args.table || '');
-      const kind = (sqlDir.args.kind || 'ROWS') as SqlKind;
-      const resource = (registry.pgResources as any)[table];
-      if (!resource) return fieldConfig;
-
-      if (kind === 'INSERT' || kind === 'UPDATE' || kind === 'DELETE') {
-        return fieldConfig;
-      }
-
-      const where = parseSqlMapping(sqlDir.args.where as string | undefined);
       const extensions = (fieldConfig.extensions ??= {}) as Record<string, any>;
       const grafast = (extensions.grafast ??= {});
 
-      const isRoot = typeName === 'Query' || typeName === 'Mutation';
-      const relMeta = meta.relationNames.get(typeName)?.get(fieldName);
+      if (sqlDir) {
+        const table = String(sqlDir.args.table || '');
+        const kind = (sqlDir.args.kind || 'ROWS') as SqlKind;
+        const resource = (registry.pgResources as any)[table];
+        if (!resource) return fieldConfig;
 
-      if (!isRoot && relMeta && (kind === 'ROW' || kind === 'ROWS')) {
-        grafast.plan = makeRelationPlan(kind, fieldName);
-      } else {
-        grafast.plan = makeRootPlan(resource, kind, where);
+        if (kind === 'INSERT' || kind === 'UPDATE' || kind === 'DELETE') {
+          return fieldConfig;
+        }
+
+        const where = parseSqlMapping(sqlDir.args.where as string | undefined);
+        const isRoot = typeName === 'Query' || typeName === 'Mutation';
+        const relMeta = meta.relationNames.get(typeName)?.get(fieldName);
+
+        if (!isRoot && relMeta && (kind === 'ROW' || kind === 'ROWS')) {
+          grafast.plan = makeRelationPlan(kind, fieldName);
+        } else {
+          grafast.plan = makeRootPlan(resource, kind, where);
+        }
+
+        delete (fieldConfig as GraphQLFieldConfig<any, any>).resolve;
+        return fieldConfig;
       }
 
+      // Column scalars on table types: `$row.get('id')` etc. (no @sql on the field)
+      const parentTable = meta.tableByType.get(typeName);
+      if (!parentTable) return fieldConfig;
+      const parentResource = (registry.pgResources as any)[parentTable];
+      const attrs = parentResource?.codec?.attributes;
+      if (!attrs || !(fieldName in attrs)) return fieldConfig;
+
+      grafast.plan = function sqlAttributePlan($row: any) {
+        if ($row && typeof $row.get === 'function') return $row.get(fieldName);
+        return null;
+      };
       delete (fieldConfig as GraphQLFieldConfig<any, any>).resolve;
       return fieldConfig;
     },
@@ -64,6 +79,13 @@ function makeRelationPlan(kind: 'ROW' | 'ROWS', relationName: string) {
   };
 }
 
+function fieldArg(fieldArgs: any, name: string): any {
+  if (!fieldArgs) return undefined;
+  if (typeof fieldArgs.getRaw === 'function') return fieldArgs.getRaw(name);
+  if (typeof fieldArgs.get === 'function') return fieldArgs.get(name);
+  return undefined;
+}
+
 function makeRootPlan(resource: any, kind: SqlKind, where: ReturnType<typeof parseSqlMapping>) {
   return function sqlRootPlan(_$parent: any, fieldArgs: any) {
     if (kind === 'ROW') {
@@ -71,7 +93,7 @@ function makeRootPlan(resource: any, kind: SqlKind, where: ReturnType<typeof par
       const binder = eqCol ? where.entries.find(e => e.key === eqCol) : undefined;
       if (binder?.value?.kind === 'args') {
         const argName = binder.value.path?.[0] || binder.value.value;
-        const $arg = fieldArgs.get(argName);
+        const $arg = fieldArg(fieldArgs, argName);
         const attr = pkAttribute(resource);
         return resource.get({ [attr]: $arg });
       }
@@ -82,12 +104,11 @@ function makeRootPlan(resource: any, kind: SqlKind, where: ReturnType<typeof par
     if (kind === 'CONNECTION') {
       const $rows = resource.find();
       if (typeof $rows.setFirst === 'function') {
-        const $first = fieldArgs.getRaw('first');
-        $rows.setFirst($first);
+        $rows.setFirst(fieldArg(fieldArgs, 'first'));
       }
       const $connection = connection($rows);
       if (typeof $connection.setFirst === 'function') {
-        $connection.setFirst(fieldArgs.getRaw('first'));
+        $connection.setFirst(fieldArg(fieldArgs, 'first'));
       }
       return $connection;
     }
@@ -101,10 +122,10 @@ function makeRootPlan(resource: any, kind: SqlKind, where: ReturnType<typeof par
     // ROWS
     const $rows = resource.find();
     if (typeof $rows.setFirst === 'function') {
-      $rows.setFirst(fieldArgs.getRaw('limit'));
+      $rows.setFirst(fieldArg(fieldArgs, 'limit'));
     }
     if (typeof $rows.setOffset === 'function') {
-      $rows.setOffset(fieldArgs.getRaw('offset'));
+      $rows.setOffset(fieldArg(fieldArgs, 'offset'));
     }
     return $rows;
   };

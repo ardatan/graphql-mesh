@@ -5443,6 +5443,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/postgres-geodb@workspace:e2e/postgres-geodb":
+  version: 0.0.0-use.local
+  resolution: "@e2e/postgres-geodb@workspace:e2e/postgres-geodb"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^2.15.8"
+    "@omnigraph/sql": "npm:0.1.0"
+    graphql: "npm:^16.14.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/prefix-force-protected-types@workspace:e2e/prefix-force-protected-types":
   version: 0.0.0-use.local
   resolution: "@e2e/prefix-force-protected-types@workspace:e2e/prefix-force-protected-types"

@@ -45,14 +45,19 @@ export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
       const columns: SqlColumnMeta[] = cols.map(c => ({
         name: c.name,
         dataType: c.type || 'TEXT',
-        notNull: Boolean(c.notnull) || Boolean(c.pk),
+        // Do not OR `pk`: composite PRIMARY KEY columns may still be NULL in
+        // ordinary rowid tables unless NOT NULL was declared.
+        notNull: Boolean(c.notnull),
         primaryKey: Boolean(c.pk),
         autoIncrement: false,
+        hasDefault: c.dflt_value != null,
       }));
 
       const solePk = columns.filter(c => c.primaryKey);
+      // INTEGER PRIMARY KEY is a rowid alias — never null, autoincrements.
       if (solePk.length === 1 && /int/i.test(solePk[0].dataType)) {
         solePk[0].autoIncrement = true;
+        solePk[0].notNull = true;
       }
 
       const fkRows = db.prepare(`PRAGMA foreign_key_list(${quote(name)})`).all() as {

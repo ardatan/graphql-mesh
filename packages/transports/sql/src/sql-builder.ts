@@ -6,10 +6,7 @@ import {
   type BelongsToJoin,
   type HasManySubselect,
 } from './plan.js';
-import {
-  resolveThroughParentValue,
-  type SqlThroughJoin,
-} from './through.js';
+import { resolveThroughParentValue, type SqlThroughJoin } from './through.js';
 import type {
   ParsedSqlMapping,
   SqlAdapter,
@@ -153,6 +150,10 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
       sql += ` LEFT JOIN ${quoteIdent(adapter, join.table)} AS ${quoteIdent(adapter, join.alias)}`;
       sql += ` ON ${quoteIdent(adapter, join.alias)}.${quoteIdent(adapter, join.joinColumn)}`;
       sql += ` = ${quoteIdent(adapter, parentAlias)}.${quoteIdent(adapter, join.parentColumn)}`;
+      const joinSoft = softDeleteColumnFor(plan.softDelete, join.table);
+      if (joinSoft) {
+        sql += ` AND ${quoteIdent(adapter, join.alias)}.${quoteIdent(adapter, joinSoft)} IS NULL`;
+      }
     }
   }
   if (whereParts.length) {
@@ -208,6 +209,10 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
     sql += ` LIMIT ${placeholder(adapter, params.length)}`;
   } else if (plan.kind === 'ROW') {
     params.push(1);
+    sql += ` LIMIT ${placeholder(adapter, params.length)}`;
+  } else if (offset != null && adapter === 'mysql') {
+    // MySQL rejects OFFSET without LIMIT.
+    params.push(Number.MAX_SAFE_INTEGER);
     sql += ` LIMIT ${placeholder(adapter, params.length)}`;
   }
   if (offset != null) {
@@ -419,6 +424,9 @@ export function buildSelectByColumnIn(
   if (limit != null) {
     params.push(Number(limit));
     sql += ` LIMIT ${placeholder(adapter, params.length)}`;
+  } else if (offset != null && adapter === 'mysql') {
+    params.push(Number.MAX_SAFE_INTEGER);
+    sql += ` LIMIT ${placeholder(adapter, params.length)}`;
   }
   if (offset != null) {
     params.push(Number(offset));
@@ -612,7 +620,14 @@ function appendStructuredFilters(
     if (!entry.spread && !isBareVarPath(entry)) continue;
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved && typeof resolved === 'object' && !Array.isArray(resolved)) {
-      appendFilter(adapter, resolved as Record<string, any>, columns, whereParts, params, filterOpts);
+      appendFilter(
+        adapter,
+        resolved as Record<string, any>,
+        columns,
+        whereParts,
+        params,
+        filterOpts,
+      );
     }
   }
 

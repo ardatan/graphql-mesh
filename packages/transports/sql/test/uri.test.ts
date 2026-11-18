@@ -54,6 +54,18 @@ describe('parseSqlUri', () => {
     expect(parseSqlUri(':memory:').filePath).toBe(':memory:');
     expect(parseSqlUri('chinook.db').filePath).toBe('chinook.db');
   });
+
+  it('decodes percent-encoded credentials and database names', () => {
+    const parsed = parseSqlUri('mysql://u%40x:p%40ss@host/my%20db');
+    expect(parsed.user).toBe('u@x');
+    expect(parsed.password).toBe('p@ss');
+    expect(parsed.database).toBe('my db');
+  });
+
+  it('does not enable ssl for mysql sslmode=disable', () => {
+    expect(parseSqlUri('mysql://u@h/db?sslmode=disable').ssl).toBeFalsy();
+    expect(parseSqlUri('mysql://u@h/db?sslmode=require').ssl).toBe(true);
+  });
 });
 
 describe('resolveConnectionStringFromEnv (Bun-compatible)', () => {

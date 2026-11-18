@@ -8,7 +8,7 @@ exports[`SQLite Chinook should generate correct schema: sqlite-chinook-schema 1`
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String) on FIELD_DEFINITION | OBJECT
+directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String, through: String) on FIELD_DEFINITION | OBJECT
 
 type Query {
   album(id: ID!): Album @sql(subgraph: "Chinook", table: "albums", kind: ROW, where: """
@@ -619,6 +619,7 @@ input AlbumFilter {
   id: StringFilter
   title: StringFilter
   artistId: IntFilter
+  artist: ArtistFilter
 }
 
 input StringFilter {
@@ -633,6 +634,8 @@ input StringFilter {
   includes: String
   startsWith: String
   endsWith: String
+  like: String
+  ilike: String
   isNull: Boolean
 }
 
@@ -646,6 +649,14 @@ input IntFilter {
   gt: Int
   gte: Int
   isNull: Boolean
+}
+
+input ArtistFilter {
+  and: [ArtistFilter!]
+  or: [ArtistFilter!]
+  not: ArtistFilter
+  id: StringFilter
+  name: StringFilter
 }
 
 enum AlbumOrderBy {
@@ -718,6 +729,10 @@ type Track @key(fields: "id") @sql(subgraph: "Chinook", table: "tracks", kind: R
     id: AlbumId
     title: Title
     artistId: ArtistId
+  """)
+  playlists(where: PlaylistFilter, orderBy: [PlaylistOrderBy!], limit: Int, offset: Int): [Playlist!]! @sql(subgraph: "Chinook", table: "playlists", kind: ROWS, through: "  table: playlist_track\\n  local: TrackId\\n  remote: PlaylistId\\n  parent: $this.id\\n  target: PlaylistId", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: PlaylistId
+    name: Name
   """)
 }
 
@@ -833,6 +848,110 @@ input InvoiceItemFilter {
   trackId: IntFilter
   unitPrice: StringFilter
   quantity: IntFilter
+  track: TrackFilter
+  invoice: InvoiceFilter
+}
+
+input TrackFilter {
+  and: [TrackFilter!]
+  or: [TrackFilter!]
+  not: TrackFilter
+  id: StringFilter
+  name: StringFilter
+  albumId: IntFilter
+  mediaTypeId: IntFilter
+  genreId: IntFilter
+  composer: StringFilter
+  milliseconds: IntFilter
+  bytes: IntFilter
+  unitPrice: StringFilter
+  mediaType: MediaTypeFilter
+  genre: GenreFilter
+  album: AlbumFilter
+  playlists: PlaylistFilter
+}
+
+input MediaTypeFilter {
+  and: [MediaTypeFilter!]
+  or: [MediaTypeFilter!]
+  not: MediaTypeFilter
+  id: StringFilter
+  name: StringFilter
+}
+
+input GenreFilter {
+  and: [GenreFilter!]
+  or: [GenreFilter!]
+  not: GenreFilter
+  id: StringFilter
+  name: StringFilter
+}
+
+input PlaylistFilter {
+  and: [PlaylistFilter!]
+  or: [PlaylistFilter!]
+  not: PlaylistFilter
+  id: StringFilter
+  name: StringFilter
+  tracks: TrackFilter
+}
+
+input InvoiceFilter {
+  and: [InvoiceFilter!]
+  or: [InvoiceFilter!]
+  not: InvoiceFilter
+  id: StringFilter
+  customerId: IntFilter
+  invoiceDate: StringFilter
+  billingAddress: StringFilter
+  billingCity: StringFilter
+  billingState: StringFilter
+  billingCountry: StringFilter
+  billingPostalCode: StringFilter
+  total: StringFilter
+  customer: CustomerFilter
+}
+
+input CustomerFilter {
+  and: [CustomerFilter!]
+  or: [CustomerFilter!]
+  not: CustomerFilter
+  id: StringFilter
+  firstName: StringFilter
+  lastName: StringFilter
+  company: StringFilter
+  address: StringFilter
+  city: StringFilter
+  state: StringFilter
+  country: StringFilter
+  postalCode: StringFilter
+  phone: StringFilter
+  fax: StringFilter
+  email: StringFilter
+  supportRepId: IntFilter
+  employee: EmployeeFilter
+}
+
+input EmployeeFilter {
+  and: [EmployeeFilter!]
+  or: [EmployeeFilter!]
+  not: EmployeeFilter
+  id: StringFilter
+  lastName: StringFilter
+  firstName: StringFilter
+  title: StringFilter
+  reportsTo: IntFilter
+  birthDate: StringFilter
+  hireDate: StringFilter
+  address: StringFilter
+  city: StringFilter
+  state: StringFilter
+  country: StringFilter
+  postalCode: StringFilter
+  phone: StringFilter
+  fax: StringFilter
+  email: StringFilter
+  employee: EmployeeFilter
 }
 
 enum InvoiceItemOrderBy {
@@ -1010,25 +1129,6 @@ type Employee @key(fields: "id") @sql(subgraph: "Chinook", table: "employees", k
   """)
 }
 
-input CustomerFilter {
-  and: [CustomerFilter!]
-  or: [CustomerFilter!]
-  not: CustomerFilter
-  id: StringFilter
-  firstName: StringFilter
-  lastName: StringFilter
-  company: StringFilter
-  address: StringFilter
-  city: StringFilter
-  state: StringFilter
-  country: StringFilter
-  postalCode: StringFilter
-  phone: StringFilter
-  fax: StringFilter
-  email: StringFilter
-  supportRepId: IntFilter
-}
-
 enum CustomerOrderBy {
   ID_ASC
   ID_DESC
@@ -1056,27 +1156,6 @@ enum CustomerOrderBy {
   EMAIL_DESC
   SUPPORT_REP_ID_ASC
   SUPPORT_REP_ID_DESC
-}
-
-input EmployeeFilter {
-  and: [EmployeeFilter!]
-  or: [EmployeeFilter!]
-  not: EmployeeFilter
-  id: StringFilter
-  lastName: StringFilter
-  firstName: StringFilter
-  title: StringFilter
-  reportsTo: IntFilter
-  birthDate: StringFilter
-  hireDate: StringFilter
-  address: StringFilter
-  city: StringFilter
-  state: StringFilter
-  country: StringFilter
-  postalCode: StringFilter
-  phone: StringFilter
-  fax: StringFilter
-  email: StringFilter
 }
 
 enum EmployeeOrderBy {
@@ -1110,21 +1189,6 @@ enum EmployeeOrderBy {
   FAX_DESC
   EMAIL_ASC
   EMAIL_DESC
-}
-
-input InvoiceFilter {
-  and: [InvoiceFilter!]
-  or: [InvoiceFilter!]
-  not: InvoiceFilter
-  id: StringFilter
-  customerId: IntFilter
-  invoiceDate: StringFilter
-  billingAddress: StringFilter
-  billingCity: StringFilter
-  billingState: StringFilter
-  billingCountry: StringFilter
-  billingPostalCode: StringFilter
-  total: StringFilter
 }
 
 enum InvoiceOrderBy {
@@ -1196,6 +1260,17 @@ type Playlist @key(fields: "id") @sql(subgraph: "Chinook", table: "playlists", k
     playlistId: PlaylistId
     trackId: TrackId
   """)
+  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @sql(subgraph: "Chinook", table: "tracks", kind: ROWS, through: "  table: playlist_track\\n  local: PlaylistId\\n  remote: TrackId\\n  parent: $this.id\\n  target: TrackId", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    mediaTypeId: MediaTypeId
+    genreId: GenreId
+    composer: Composer
+    milliseconds: Milliseconds
+    bytes: Bytes
+    unitPrice: UnitPrice
+  """)
 }
 
 input PlaylistTrackFilter {
@@ -1204,6 +1279,8 @@ input PlaylistTrackFilter {
   not: PlaylistTrackFilter
   playlistId: IntFilter
   trackId: IntFilter
+  track: TrackFilter
+  playlist: PlaylistFilter
 }
 
 enum PlaylistTrackOrderBy {
@@ -1211,6 +1288,27 @@ enum PlaylistTrackOrderBy {
   PLAYLIST_ID_DESC
   TRACK_ID_ASC
   TRACK_ID_DESC
+}
+
+enum TrackOrderBy {
+  ID_ASC
+  ID_DESC
+  NAME_ASC
+  NAME_DESC
+  ALBUM_ID_ASC
+  ALBUM_ID_DESC
+  MEDIA_TYPE_ID_ASC
+  MEDIA_TYPE_ID_DESC
+  GENRE_ID_ASC
+  GENRE_ID_DESC
+  COMPOSER_ASC
+  COMPOSER_DESC
+  MILLISECONDS_ASC
+  MILLISECONDS_DESC
+  BYTES_ASC
+  BYTES_DESC
+  UNIT_PRICE_ASC
+  UNIT_PRICE_DESC
 }
 
 type MediaType @key(fields: "id") @sql(subgraph: "Chinook", table: "media_types", kind: ROW, where: """
@@ -1238,42 +1336,6 @@ type MediaType @key(fields: "id") @sql(subgraph: "Chinook", table: "media_types"
   """)
 }
 
-input TrackFilter {
-  and: [TrackFilter!]
-  or: [TrackFilter!]
-  not: TrackFilter
-  id: StringFilter
-  name: StringFilter
-  albumId: IntFilter
-  mediaTypeId: IntFilter
-  genreId: IntFilter
-  composer: StringFilter
-  milliseconds: IntFilter
-  bytes: IntFilter
-  unitPrice: StringFilter
-}
-
-enum TrackOrderBy {
-  ID_ASC
-  ID_DESC
-  NAME_ASC
-  NAME_DESC
-  ALBUM_ID_ASC
-  ALBUM_ID_DESC
-  MEDIA_TYPE_ID_ASC
-  MEDIA_TYPE_ID_DESC
-  GENRE_ID_ASC
-  GENRE_ID_DESC
-  COMPOSER_ASC
-  COMPOSER_DESC
-  MILLISECONDS_ASC
-  MILLISECONDS_DESC
-  BYTES_ASC
-  BYTES_DESC
-  UNIT_PRICE_ASC
-  UNIT_PRICE_DESC
-}
-
 type Genre @key(fields: "id") @sql(subgraph: "Chinook", table: "genres", kind: ROW, where: """
 
   GenreId: $this.id
@@ -1299,6 +1361,13 @@ type Genre @key(fields: "id") @sql(subgraph: "Chinook", table: "genres", kind: R
   """)
 }
 
+enum PlaylistOrderBy {
+  ID_ASC
+  ID_DESC
+  NAME_ASC
+  NAME_DESC
+}
+
 type AlbumConnection {
   edges: [AlbumEdge!]!
   pageInfo: PageInfo!
@@ -1316,14 +1385,6 @@ type PageInfo {
   hasPreviousPage: Boolean!
   startCursor: String
   endCursor: String
-}
-
-input ArtistFilter {
-  and: [ArtistFilter!]
-  or: [ArtistFilter!]
-  not: ArtistFilter
-  id: StringFilter
-  name: StringFilter
 }
 
 enum ArtistOrderBy {
@@ -1369,14 +1430,6 @@ type EmployeeEdge {
   node: Employee!
 }
 
-input GenreFilter {
-  and: [GenreFilter!]
-  or: [GenreFilter!]
-  not: GenreFilter
-  id: StringFilter
-  name: StringFilter
-}
-
 enum GenreOrderBy {
   ID_ASC
   ID_DESC
@@ -1420,14 +1473,6 @@ type InvoiceEdge {
   node: Invoice!
 }
 
-input MediaTypeFilter {
-  and: [MediaTypeFilter!]
-  or: [MediaTypeFilter!]
-  not: MediaTypeFilter
-  id: StringFilter
-  name: StringFilter
-}
-
 enum MediaTypeOrderBy {
   ID_ASC
   ID_DESC
@@ -1457,21 +1502,6 @@ type PlaylistTrackConnection {
 type PlaylistTrackEdge {
   cursor: String!
   node: PlaylistTrack!
-}
-
-input PlaylistFilter {
-  and: [PlaylistFilter!]
-  or: [PlaylistFilter!]
-  not: PlaylistFilter
-  id: StringFilter
-  name: StringFilter
-}
-
-enum PlaylistOrderBy {
-  ID_ASC
-  ID_DESC
-  NAME_ASC
-  NAME_DESC
 }
 
 type PlaylistConnection {

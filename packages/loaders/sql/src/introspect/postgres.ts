@@ -1,5 +1,6 @@
 import pg from 'pg';
 import { parseSqlUri } from '@graphql-mesh/transport-sql';
+import { createDefaultNaming } from '../naming.js';
 import type {
   SqlColumnMeta,
   SqlComputedColumnMeta,
@@ -7,7 +8,6 @@ import type {
   SqlSchemaMeta,
   SqlTableMeta,
 } from './types.js';
-import { createDefaultNaming } from '../naming.js';
 
 export interface IntrospectPostgresOpts {
   connectionString: string;
@@ -88,6 +88,7 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
           notNull: String(c.is_nullable).toUpperCase() === 'NO',
           primaryKey: pkCols.has(String(c.name)),
           autoIncrement: /nextval\(/i.test(def) || /identity/i.test(def),
+          hasDefault: Boolean(def),
         };
       });
 

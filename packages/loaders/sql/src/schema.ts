@@ -292,11 +292,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     const typeName = typeNameByTable.get(table.name)!;
     const pkCols = table.columns.filter(c => c.primaryKey);
     const solePk = pkCols.length === 1 ? pkCols[0] : undefined;
-    const selectionRaw = selectionLines(
-      naming,
-      table,
-      computedByTable.get(table.name) || [],
-    );
+    const selectionRaw = selectionLines(naming, table, computedByTable.get(table.name) || []);
     const selection = blockArg(selectionRaw);
     const plural = naming.pluralField(typeName);
     const singular = naming.singularField(typeName);
@@ -529,6 +525,7 @@ async function introspect(
       }
       return introspectPostgres({
         connectionString: opts.endpoint,
+        schema: opts.schema,
         includeTables: opts.includeTables,
         excludeTables: opts.excludeTables,
       });
@@ -750,11 +747,7 @@ function emitManyToManyField(opts: {
           orderBy: '$args.orderBy',
           limit: '$args.limit',
           offset: '$args.offset',
-          selection: selectionBlock(
-            naming,
-            rightTable,
-            computedByTable.get(rightTableName) || [],
-          ),
+          selection: selectionBlock(naming, rightTable, computedByTable.get(rightTableName) || []),
         },
       },
     ],
@@ -914,7 +907,10 @@ function createMutationInputs(
     const fieldName = isSolePkCol ? naming.pkFieldName(col.name, true) : naming.fieldName(col.name);
     const gqlType = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
     createFields[fieldName] = {
-      type: col.notNull && !col.autoIncrement ? new GraphQLNonNull(gqlType) : gqlType,
+      type:
+        col.notNull && !col.autoIncrement && !col.hasDefault
+          ? new GraphQLNonNull(gqlType)
+          : gqlType,
     };
     updateFields[fieldName] = { type: gqlType };
   }
@@ -1025,9 +1021,7 @@ function selectionLines(
   const solePk = pkCols.length === 1 ? pkCols[0] : undefined;
   const colLines = table.columns.map(col => {
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
-    const fieldName = isSolePkCol
-      ? naming.pkFieldName(col.name, true)
-      : naming.fieldName(col.name);
+    const fieldName = isSolePkCol ? naming.pkFieldName(col.name, true) : naming.fieldName(col.name);
     return `${fieldName}: ${col.name}`;
   });
   const fnLines = computed.map(cc => `${cc.fieldName}: $fn.${cc.functionName}`);

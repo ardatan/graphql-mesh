@@ -159,6 +159,9 @@ export function buildPgRegistryFromSqlSchema(schema: GraphQLSchema): {
     }
   }
 
+  // Align FK endpoint codecs before building record codecs (GraphQL ID→text vs Int FK).
+  alignRelationCodecs(schema, tables, tableByType);
+
   const builder = makeRegistryBuilder();
   const resourceOptionsByTable = new Map<string, ReturnType<typeof pgResourceOptions>>();
   const codecByTable = new Map<string, ReturnType<typeof recordCodec>>();
@@ -283,8 +286,59 @@ function codecFromGraphqlType(type: GraphQLOutputType | undefined): PgCodec {
     case 'Boolean':
       return TYPES.boolean;
     case 'ID':
+      // Natural keys (e.g. country.code) stay text; int PKs aligned via alignRelationCodecs.
       return TYPES.text;
     default:
       return TYPES.text;
+  }
+}
+
+/**
+ * When `@sql` relations join an Int column to a GraphQL `ID` (text codec) attribute,
+ * force both ends to Int so `@dataplan/pg` doesn't emit `text = integer`.
+ */
+function alignRelationCodecs(
+  schema: GraphQLSchema,
+  tables: Map<string, TableBuildInfo>,
+  tableByType: Map<string, string>,
+): void {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) || type.name.startsWith('__')) continue;
+    const localTable = tableByType.get(type.name);
+    if (!localTable) continue;
+    const localInfo = tables.get(localTable);
+    if (!localInfo) continue;
+
+    for (const field of Object.values(type.getFields())) {
+      for (const dir of getDefDirectives(schema, field).filter(d => d.name === 'sql')) {
+        const kind = (dir.args.kind || 'ROWS') as SqlKind;
+        if (kind !== 'ROW' && kind !== 'ROWS') continue;
+        const remoteTable = String(dir.args.table || '');
+        const remoteInfo = tables.get(remoteTable);
+        if (!remoteInfo) continue;
+
+        const where = parseSqlMapping(dir.args.where as string | undefined);
+        for (const entry of where.entries) {
+          if (entry.children || !entry.value || entry.value.kind !== 'this') continue;
+          const remoteSqlOrGql = entry.key;
+          const localAttr = entry.value.path?.[0] || entry.value.value;
+          let remoteGqlAttr = remoteSqlOrGql;
+          for (const [gql, col] of remoteInfo.columns) {
+            if (col.sqlCol === remoteSqlOrGql || gql === remoteSqlOrGql) {
+              remoteGqlAttr = gql;
+              break;
+            }
+          }
+          const localCol = localInfo.columns.get(localAttr);
+          const remoteCol = remoteInfo.columns.get(remoteGqlAttr);
+          if (!localCol || !remoteCol) continue;
+          if (localCol.codec === remoteCol.codec) continue;
+          const preferInt = localCol.codec === TYPES.int || remoteCol.codec === TYPES.int;
+          const codec = preferInt ? TYPES.int : localCol.codec;
+          localCol.codec = codec;
+          remoteCol.codec = codec;
+        }
+      }
+    }
   }
 }

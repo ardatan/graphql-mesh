@@ -8,7 +8,7 @@ exports[`MySQL Employees should generate correct schema: schema 1`] = `
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String) on FIELD_DEFINITION | OBJECT
+directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String, through: String) on FIELD_DEFINITION | OBJECT
 
 type Query {
   department(id: ID!): Department @sql(subgraph: "Employees", table: "departments", kind: ROW, where: """
@@ -262,6 +262,22 @@ type Department @key(fields: "id") @sql(subgraph: "Employees", table: "departmen
     fromDate: from_date
     toDate: to_date
   """)
+  employees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int, offset: Int): [Employee!]! @sql(subgraph: "Employees", table: "employees", kind: ROWS, through: "  table: dept_emp\\n  local: dept_no\\n  remote: emp_no\\n  parent: $this.id\\n  target: emp_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: emp_no
+    birthDate: birth_date
+    firstName: first_name
+    lastName: last_name
+    gender: gender
+    hireDate: hire_date
+  """)
+  employeesByDeptManagerDeptNoAndEmpNo(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int, offset: Int): [Employee!]! @sql(subgraph: "Employees", table: "employees", kind: ROWS, through: "  table: dept_manager\\n  local: dept_no\\n  remote: emp_no\\n  parent: $this.id\\n  target: emp_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: emp_no
+    birthDate: birth_date
+    firstName: first_name
+    lastName: last_name
+    gender: gender
+    hireDate: hire_date
+  """)
 }
 
 type DeptEmp @key(fields: "empNo deptNo") @sql(subgraph: "Employees", table: "dept_emp", kind: ROW, where: """
@@ -355,6 +371,14 @@ type Employee @key(fields: "id") @sql(subgraph: "Employees", table: "employees",
     fromDate: from_date
     toDate: to_date
   """)
+  departments(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], limit: Int, offset: Int): [Department!]! @sql(subgraph: "Employees", table: "departments", kind: ROWS, through: "  table: dept_emp\\n  local: emp_no\\n  remote: dept_no\\n  parent: $this.id\\n  target: dept_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: dept_no
+    deptName: dept_name
+  """)
+  departmentsByDeptManagerEmpNoAndDeptNo(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], limit: Int, offset: Int): [Department!]! @sql(subgraph: "Employees", table: "departments", kind: ROWS, through: "  table: dept_manager\\n  local: emp_no\\n  remote: dept_no\\n  parent: $this.id\\n  target: dept_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: dept_no
+    deptName: dept_name
+  """)
 }
 
 input DeptEmpFilter {
@@ -365,6 +389,8 @@ input DeptEmpFilter {
   deptNo: StringFilter
   fromDate: StringFilter
   toDate: StringFilter
+  employee: EmployeeFilter
+  department: DepartmentFilter
 }
 
 input IntFilter {
@@ -391,7 +417,33 @@ input StringFilter {
   includes: String
   startsWith: String
   endsWith: String
+  like: String
+  ilike: String
   isNull: Boolean
+}
+
+input EmployeeFilter {
+  and: [EmployeeFilter!]
+  or: [EmployeeFilter!]
+  not: EmployeeFilter
+  id: StringFilter
+  birthDate: StringFilter
+  firstName: StringFilter
+  lastName: StringFilter
+  gender: StringFilter
+  hireDate: StringFilter
+  departments: DepartmentFilter
+  departmentsByDeptManagerEmpNoAndDeptNo: DepartmentFilter
+}
+
+input DepartmentFilter {
+  and: [DepartmentFilter!]
+  or: [DepartmentFilter!]
+  not: DepartmentFilter
+  id: StringFilter
+  deptName: StringFilter
+  employees: EmployeeFilter
+  employeesByDeptManagerDeptNoAndEmpNo: EmployeeFilter
 }
 
 enum DeptEmpOrderBy {
@@ -446,6 +498,8 @@ input DeptManagerFilter {
   deptNo: StringFilter
   fromDate: StringFilter
   toDate: StringFilter
+  employee: EmployeeFilter
+  department: DepartmentFilter
 }
 
 enum DeptManagerOrderBy {
@@ -493,6 +547,7 @@ input SalaryFilter {
   salary: IntFilter
   fromDate: StringFilter
   toDate: StringFilter
+  employee: EmployeeFilter
 }
 
 enum SalaryOrderBy {
@@ -541,6 +596,7 @@ input TitleFilter {
   title: StringFilter
   fromDate: StringFilter
   toDate: StringFilter
+  employee: EmployeeFilter
 }
 
 enum TitleOrderBy {
@@ -554,19 +610,26 @@ enum TitleOrderBy {
   TO_DATE_DESC
 }
 
-input DepartmentFilter {
-  and: [DepartmentFilter!]
-  or: [DepartmentFilter!]
-  not: DepartmentFilter
-  id: StringFilter
-  deptName: StringFilter
-}
-
 enum DepartmentOrderBy {
   ID_ASC
   ID_DESC
   DEPT_NAME_ASC
   DEPT_NAME_DESC
+}
+
+enum EmployeeOrderBy {
+  ID_ASC
+  ID_DESC
+  BIRTH_DATE_ASC
+  BIRTH_DATE_DESC
+  FIRST_NAME_ASC
+  FIRST_NAME_DESC
+  LAST_NAME_ASC
+  LAST_NAME_DESC
+  GENDER_ASC
+  GENDER_DESC
+  HIRE_DATE_ASC
+  HIRE_DATE_DESC
 }
 
 type DepartmentConnection {
@@ -610,33 +673,6 @@ type DeptManagerConnection {
 type DeptManagerEdge {
   cursor: String!
   node: DeptManager!
-}
-
-input EmployeeFilter {
-  and: [EmployeeFilter!]
-  or: [EmployeeFilter!]
-  not: EmployeeFilter
-  id: StringFilter
-  birthDate: StringFilter
-  firstName: StringFilter
-  lastName: StringFilter
-  gender: StringFilter
-  hireDate: StringFilter
-}
-
-enum EmployeeOrderBy {
-  ID_ASC
-  ID_DESC
-  BIRTH_DATE_ASC
-  BIRTH_DATE_DESC
-  FIRST_NAME_ASC
-  FIRST_NAME_DESC
-  LAST_NAME_ASC
-  LAST_NAME_DESC
-  GENDER_ASC
-  GENDER_DESC
-  HIRE_DATE_ASC
-  HIRE_DATE_DESC
 }
 
 type EmployeeConnection {

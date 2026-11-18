@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-nodejs-modules
-import { DatabaseSync } from 'node:sqlite';
 import { createPool, type Pool as Mysql2Pool, type Pool } from 'mysql2/promise';
+import { DatabaseSync } from 'node:sqlite';
 import pg from 'pg';
 import type { Pool as PgPool } from 'pg';
 import { resolveSqlitePath } from './adapter.js';
@@ -167,7 +167,10 @@ function createSqliteClient(location: string, cwd?: string): SqlClient {
     adapter: 'sqlite',
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
       const stmt = db.prepare(sql);
-      const bind = params as Array<null | number | bigint | string | Uint8Array>;
+      // node:sqlite rejects boolean binds — coerce GraphQLBoolean filters/writes.
+      const bind = params.map(p => (typeof p === 'boolean' ? (p ? 1 : 0) : p)) as Array<
+        null | number | bigint | string | Uint8Array
+      >;
       const returnsRows = /^\s*(SELECT|PRAGMA|WITH)\b/i.test(sql) || /\bRETURNING\b/i.test(sql);
       if (returnsRows) {
         const rows = stmt.all(...bind) as T[];
@@ -190,14 +193,14 @@ function createMysqlClient(opts: CreateSqlClientOptions): SqlClient {
   if (parsed.adapter !== 'mysql') {
     throw new Error(`Expected mysql URI, got ${parsed.adapter}`);
   }
-  const tls = resolveTlsFlag(opts.tls, parsed.ssl);
+  const ssl = resolveSslOption(opts.tls, parsed);
   const pool: Pool = createPool({
     host: parsed.host,
     port: parsed.port,
     user: parsed.user,
     password: parsed.password,
     database: parsed.database,
-    ssl: tls ? { rejectUnauthorized: false } : undefined,
+    ssl,
     supportBigNumbers: true,
     bigNumberStrings: true,
     connectionLimit: opts.max ?? 10,
@@ -212,24 +215,49 @@ function createPostgresClient(opts: CreateSqlClientOptions): SqlClient {
   if (parsed.adapter !== 'postgres') {
     throw new Error(`Expected postgres URI, got ${parsed.adapter}`);
   }
-  const tls = resolveTlsFlag(opts.tls, parsed.ssl);
+  const ssl = resolveSslOption(opts.tls, parsed);
   const pool = new pg.Pool({
     connectionString: opts.location,
     max: opts.max ?? 10,
     idleTimeoutMillis: opts.idleTimeout != null ? opts.idleTimeout * 1000 : undefined,
     connectionTimeoutMillis:
       opts.connectionTimeout != null ? opts.connectionTimeout * 1000 : undefined,
-    ssl: tls ? { rejectUnauthorized: false } : undefined,
+    ssl,
   });
   return wrapPgPoolAsSqlClient(pool);
 }
 
-function resolveTlsFlag(
+/**
+ * TLS on by default verifies certificates (`rejectUnauthorized: true`).
+ * Opt out explicitly with `tls: "insecure"` / `"no-verify"` or URI `sslmode=no-verify`.
+ */
+function resolveSslOption(
   option: boolean | string | undefined,
-  fromUri: boolean | undefined,
-): boolean {
-  if (option === false || option === 'disable') return false;
-  if (option === true || option === 'true') return true;
-  if (typeof option === 'string' && option.length > 0 && option !== 'false') return true;
-  return Boolean(fromUri);
+  parsed: { ssl?: boolean; searchParams?: Record<string, string> },
+): { rejectUnauthorized: boolean } | undefined {
+  const mode = typeof option === 'string' ? option.toLowerCase() : undefined;
+  const sslmode = String(parsed.searchParams?.sslmode || '').toLowerCase();
+  if (
+    option === false ||
+    mode === 'disable' ||
+    mode === 'false' ||
+    sslmode === 'disable' ||
+    sslmode === 'false'
+  ) {
+    return undefined;
+  }
+  const insecure =
+    mode === 'insecure' ||
+    mode === 'no-verify' ||
+    sslmode === 'no-verify' ||
+    sslmode === 'insecure';
+  const enabled =
+    option === true ||
+    mode === 'true' ||
+    mode === 'require' ||
+    mode === 'insecure' ||
+    mode === 'no-verify' ||
+    Boolean(parsed.ssl);
+  if (!enabled) return undefined;
+  return { rejectUnauthorized: !insecure };
 }

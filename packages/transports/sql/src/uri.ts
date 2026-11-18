@@ -264,7 +264,7 @@ export function parseSqlUri(location: string): ParsedSqlUri {
   url.searchParams.forEach((value, key) => {
     searchParams[key] = value;
   });
-  const database = url.pathname.replace(/^\//, '') || undefined;
+  const database = decode(url.pathname.replace(/^\//, '')) || undefined;
 
   if (adapter === 'postgres') {
     return {
@@ -287,7 +287,11 @@ export function parseSqlUri(location: string): ParsedSqlUri {
     host: url.hostname || 'localhost',
     port: url.port ? Number(url.port) : 3306,
     database,
-    ssl: wantsMysqlSsl || searchParams.ssl === 'true',
+    ssl:
+      wantsMysqlSsl ||
+      searchParams.ssl === 'true' ||
+      searchParams.sslmode === 'require' ||
+      searchParams.sslmode === 'no-verify',
     searchParams,
   };
 }

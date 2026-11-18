@@ -3,8 +3,8 @@ import {
   isListType,
   isNonNullType,
   isObjectType,
-  type GraphQLSchema,
   type GraphQLObjectType,
+  type GraphQLSchema,
   type GraphQLType,
 } from 'graphql';
 import { getDirective } from '@graphql-tools/utils';

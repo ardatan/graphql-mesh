@@ -8,6 +8,8 @@ export interface SqlColumnMeta {
   notNull: boolean;
   primaryKey: boolean;
   autoIncrement?: boolean;
+  /** Column has a DB default (including runtime defaults like CURRENT_TIMESTAMP). */
+  hasDefault?: boolean;
 }
 
 export interface SqlForeignKeyMeta {

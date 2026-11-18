@@ -277,11 +277,15 @@ function narrowRootSelection(
     }
   }
   if (!requested.size) return full;
-  const entries = full.entries.filter(e => requested.has(e.key) && e.value?.kind === 'column');
+  const entries = full.entries.filter(
+    e => requested.has(e.key) && (e.value?.kind === 'column' || e.value?.kind === 'fn'),
+  );
   // If narrowing removed everything (only relations selected), keep needed FK columns.
   if (!entries.length) {
     return {
-      entries: full.entries.filter(e => neededKeys.has(e.key) && e.value?.kind === 'column'),
+      entries: full.entries.filter(
+        e => neededKeys.has(e.key) && (e.value?.kind === 'column' || e.value?.kind === 'fn'),
+      ),
     };
   }
   // Always keep needed FK keys
@@ -431,7 +435,9 @@ function narrowSelectionToFieldNodes(
   }
   if (!requested.size) return full;
   return {
-    entries: full.entries.filter(e => requested.has(e.key) && e.value?.kind === 'column'),
+    entries: full.entries.filter(
+      e => requested.has(e.key) && (e.value?.kind === 'column' || e.value?.kind === 'fn'),
+    ),
   };
 }
 

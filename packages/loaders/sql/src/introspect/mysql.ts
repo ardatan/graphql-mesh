@@ -19,7 +19,7 @@ export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSch
     user: parsed.user,
     password: parsed.password,
     database: parsed.database,
-    ssl: parsed.ssl ? { rejectUnauthorized: false } : undefined,
+    ssl: parsed.ssl ? { rejectUnauthorized: true } : undefined,
   });
   try {
     const database = parsed.database;
@@ -49,21 +49,27 @@ export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSch
            COLUMN_TYPE AS columnType,
            IS_NULLABLE AS isNullable,
            COLUMN_KEY AS columnKey,
+           COLUMN_DEFAULT AS columnDefault,
            EXTRA AS extra
          FROM information_schema.COLUMNS
          WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
          ORDER BY ORDINAL_POSITION`,
         [database, name],
       );
-      const columns: SqlColumnMeta[] = colRows.map(c => ({
-        name: String(c.name),
-        dataType: String(c.columnType || c.dataType || 'TEXT'),
-        notNull: String(c.isNullable).toUpperCase() === 'NO',
-        primaryKey: String(c.columnKey).toUpperCase() === 'PRI',
-        autoIncrement: String(c.extra || '')
-          .toLowerCase()
-          .includes('auto_increment'),
-      }));
+      const columns: SqlColumnMeta[] = colRows.map(c => {
+        const extra = String(c.extra || '').toLowerCase();
+        return {
+          name: String(c.name),
+          dataType: String(c.columnType || c.dataType || 'TEXT'),
+          notNull: String(c.isNullable).toUpperCase() === 'NO',
+          primaryKey: String(c.columnKey).toUpperCase() === 'PRI',
+          autoIncrement: extra.includes('auto_increment'),
+          hasDefault:
+            c.columnDefault != null ||
+            extra.includes('default_generated') ||
+            extra.includes('on update'),
+        };
+      });
 
       const [fkRows] = await pool.query<RowDataPacket[]>(
         `SELECT

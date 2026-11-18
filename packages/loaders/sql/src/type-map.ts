@@ -19,8 +19,16 @@ export function mapSqlTypeToGraphQL(
   if (t.includes('BOOL') || t === 'BIT') {
     return GraphQLBoolean;
   }
-  if (t.includes('INT') || t === 'SERIAL' || t === 'BIGSERIAL') {
-    if (t.includes('BIG') || t.includes('UNSIGNED')) {
+  // Avoid `INTERVAL` / similar false positives from a bare `includes('INT')`.
+  if (
+    /\b(BIG|SMALL|TINY|MEDIUM)?INT(EGER)?\b/.test(t) ||
+    t === 'SERIAL' ||
+    t === 'BIGSERIAL' ||
+    t === 'INT2' ||
+    t === 'INT4' ||
+    t === 'INT8'
+  ) {
+    if (t.includes('BIG') || t.includes('UNSIGNED') || t === 'INT8' || t === 'BIGSERIAL') {
       return GraphQLBigInt as unknown as GraphQLScalarType;
     }
     return GraphQLInt;
