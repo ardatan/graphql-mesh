@@ -9,8 +9,8 @@ import { parseSqlUri } from './uri.js';
 type NodeSqliteDatabase = {
   prepare(sql: string): {
     columns?: () => unknown[];
-    all: (...params: unknown[]) => unknown[];
-    run: (...params: unknown[]) => { changes?: number };
+    all: (...params: any[]) => unknown[];
+    run: (...params: any[]) => { changes?: number };
   };
   close(): void;
 };
@@ -25,7 +25,9 @@ type NodeSqliteDatabaseSync = new (path: string) => NodeSqliteDatabase;
 function loadNodeSqliteDatabaseSync(): NodeSqliteDatabaseSync {
   const getBuiltin = (
     process as NodeJS.Process & {
-      getBuiltinModule?: (id: string) => { DatabaseSync?: NodeSqliteDatabaseSync } | undefined;
+      getBuiltinModule?: (
+        id: string,
+      ) => { DatabaseSync?: new (path: string) => unknown } | undefined;
     }
   ).getBuiltinModule;
   const mod = typeof getBuiltin === 'function' ? getBuiltin('node:sqlite') : undefined;
@@ -34,7 +36,7 @@ function loadNodeSqliteDatabaseSync(): NodeSqliteDatabaseSync {
       'node:sqlite is not available in this runtime. Use Bun.SQL (omit preferNode) or Node >= 22.18.',
     );
   }
-  return mod.DatabaseSync;
+  return mod.DatabaseSync as NodeSqliteDatabaseSync;
 }
 
 /**
