@@ -109,15 +109,28 @@ const PLANNER_KEYS = new Set<string>([
 ]);
 
 /**
- * Legacy stuffed planner entry (`limit: $args.limit`) vs a physical column that
- * happens to share a planner name (`limit: $args.id` for a PK column named `limit`).
- * Only skip when the binder leaf matches the planner key.
+ * Legacy stuffed planner entry (`limit: $args.limit` / `limit: $args.take`) vs a
+ * physical column that shares a planner name (`limit: $args.id` for a column
+ * named `limit`).
+ *
+ * When `columnCatalog` is provided, a planner-named key that exists as a
+ * physical column is never treated as a planner. Otherwise any `$args` /
+ * `$this` binder on that key is a stuffed planner (so `limit: $args.take`
+ * paginates). Without a catalog, only the classic `leaf === key` form counts.
  */
-export function isLegacyPlannerEntry(entry: SqlMappingEntry): boolean {
+export function isLegacyPlannerEntry(
+  entry: SqlMappingEntry,
+  columnCatalog?: Map<string, string>,
+): boolean {
   if (entry.spread || entry.children || entry.key.startsWith('$')) return false;
   if (!PLANNER_KEYS.has(entry.key)) return false;
   const v = entry.value;
   if (!v || (v.kind !== 'args' && v.kind !== 'this')) return false;
+  if (columnCatalog?.has(entry.key)) return false;
+  if (columnCatalog) {
+    // Catalog known and key is not a column → stuffed planner (e.g. `$args.take`).
+    return true;
+  }
   const path = v.path?.length ? v.path : v.value ? v.value.split('.').filter(Boolean) : [];
   const leaf = path[path.length - 1];
   return leaf === entry.key;
@@ -150,7 +163,12 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
 
   // Equality / join predicates from `where` mapping (non-planner, non-spread)
   for (const entry of plan.whereMapping.entries) {
-    if (entry.spread || isBareVarPath(entry) || isLegacyPlannerEntry(entry) || entry.children) {
+    if (
+      entry.spread ||
+      isBareVarPath(entry) ||
+      isLegacyPlannerEntry(entry, catalog) ||
+      entry.children
+    ) {
       continue;
     }
     const resolved = resolveMappingValue(entry.value, {
@@ -490,7 +508,12 @@ export function buildSelectByColumnIn(
   const whereParts: string[] = [];
 
   for (const entry of plan.whereMapping.entries) {
-    if (entry.spread || isBareVarPath(entry) || isLegacyPlannerEntry(entry) || entry.children) {
+    if (
+      entry.spread ||
+      isBareVarPath(entry) ||
+      isLegacyPlannerEntry(entry, catalog) ||
+      entry.children
+    ) {
       continue;
     }
     if (entry.key === plan.column) continue; // replaced by IN list
@@ -748,11 +771,27 @@ function resolvePlannerArg(plan: SelectPlan, key: SqlPlannerKey): unknown {
     const fromBinder = resolvePlannerBinder(String(binder), ctx);
     if (fromBinder !== undefined) return fromBinder;
   }
-  // Compat: planner keys stuffed into `where` before the split. Skip physical
-  // columns that only share a planner name (`limit: $args.id`).
-  const entry = plan.whereMapping.entries.find(e => e.key === key && isLegacyPlannerEntry(e));
-  if (entry) {
-    return resolveMappingValue(entry.value, ctx);
+  const catalog = plan.columnCatalog?.size
+    ? plan.columnCatalog
+    : columnMapFromSelection(plan.selection);
+  // Compat: planner keys stuffed into `where` before the split (`limit: $args.take`).
+  const stuffed = plan.whereMapping.entries.find(
+    e => e.key === key && isLegacyPlannerEntry(e, catalog),
+  );
+  if (stuffed) {
+    return resolveMappingValue(stuffed.value, ctx);
+  }
+  // Physical column sharing the planner name: do not fall back to graphqlArgs.limit.
+  const physical = plan.whereMapping.entries.find(
+    e =>
+      e.key === key &&
+      !e.spread &&
+      !e.children &&
+      !isBareVarPath(e) &&
+      !isLegacyPlannerEntry(e, catalog),
+  );
+  if (physical && catalog.has(key)) {
+    return undefined;
   }
   return plan.graphqlArgs[key];
 }
@@ -1091,6 +1130,28 @@ function isSqlTautology(part: string): boolean {
   return t === 'TRUE' || t === '1';
 }
 
+/** True when a WHERE fragment is always-false (`FALSE` / sqlite `0`, optionally parenthesized). */
+function isSqlContradiction(part: string): boolean {
+  const t = part.replace(/[()\s]/g, '');
+  return t === 'FALSE' || t === '0';
+}
+
+function sqlTrue(adapter: SqlAdapter): string {
+  return adapter === 'sqlite' ? '1' : 'TRUE';
+}
+
+function sqlFalse(adapter: SqlAdapter): string {
+  return adapter === 'sqlite' ? '0' : 'FALSE';
+}
+
+/** Fold a list of AND-joined fragments to a single truth class when possible. */
+function andTruth(parts: string[]): 'true' | 'false' | 'maybe' {
+  if (!parts.length) return 'true';
+  if (parts.some(isSqlContradiction)) return 'false';
+  if (parts.every(isSqlTautology)) return 'true';
+  return 'maybe';
+}
+
 const SCALAR_FILTER_KEYS = new Set([
   'eq',
   'ne',
@@ -1125,26 +1186,69 @@ function appendFilter(
 
   if (Array.isArray(filter.and)) {
     const parts: string[] = [];
+    let contradiction = false;
+    let sawBranch = false;
     for (const sub of filter.and) {
       const inner: string[] = [];
       appendFilter(adapter, sub, columns, inner, params, opts);
-      if (inner.length) parts.push(`(${inner.join(' AND ')})`);
+      if (!inner.length) continue;
+      sawBranch = true;
+      const truth = andTruth(inner);
+      if (truth === 'false') {
+        contradiction = true;
+        break;
+      }
+      if (truth === 'true') continue; // AND-identity
+      parts.push(`(${inner.join(' AND ')})`);
     }
-    if (parts.length) whereParts.push(`(${parts.join(' AND ')})`);
+    if (contradiction) {
+      whereParts.push(sqlFalse(adapter));
+    } else if (parts.length) {
+      whereParts.push(`(${parts.join(' AND ')})`);
+    } else if (sawBranch) {
+      // Every branch was a tautology.
+      whereParts.push(sqlTrue(adapter));
+    }
   }
   if (Array.isArray(filter.or)) {
     const parts: string[] = [];
+    let tautology = false;
+    let sawBranch = false;
     for (const sub of filter.or) {
       const inner: string[] = [];
       appendFilter(adapter, sub, columns, inner, params, opts);
-      if (inner.length) parts.push(`(${inner.join(' AND ')})`);
+      if (!inner.length) continue;
+      sawBranch = true;
+      const truth = andTruth(inner);
+      if (truth === 'true') {
+        tautology = true;
+        break;
+      }
+      if (truth === 'false') continue; // OR-identity
+      parts.push(`(${inner.join(' AND ')})`);
     }
-    if (parts.length) whereParts.push(`(${parts.join(' OR ')})`);
+    if (tautology) {
+      whereParts.push(sqlTrue(adapter));
+    } else if (parts.length) {
+      whereParts.push(`(${parts.join(' OR ')})`);
+    } else if (sawBranch) {
+      // Every branch was a contradiction.
+      whereParts.push(sqlFalse(adapter));
+    }
   }
   if (filter.not && typeof filter.not === 'object') {
     const inner: string[] = [];
     appendFilter(adapter, filter.not, columns, inner, params, opts);
-    if (inner.length) whereParts.push(`NOT (${inner.join(' AND ')})`);
+    if (inner.length) {
+      const truth = andTruth(inner);
+      if (truth === 'true') {
+        whereParts.push(sqlFalse(adapter));
+      } else if (truth === 'false') {
+        whereParts.push(sqlTrue(adapter));
+      } else {
+        whereParts.push(`NOT (${inner.join(' AND ')})`);
+      }
+    }
   }
 
   for (const [field, ops] of Object.entries(filter)) {
@@ -1233,8 +1337,8 @@ function appendFilter(
     }
     if ('in' in o && Array.isArray(o.in)) {
       if (o.in.length === 0) {
-        // Empty IN () is invalid SQL — force no rows.
-        whereParts.push(adapter === 'sqlite' ? '0' : 'FALSE');
+        // Empty IN () is invalid SQL; force no rows.
+        whereParts.push(sqlFalse(adapter));
       } else {
         const phs = o.in.map((v: unknown) => {
           params.push(v);
@@ -1247,7 +1351,7 @@ function appendFilter(
       if (o.nin.length === 0) {
         // Empty NOT IN () is invalid SQL. `nin: []` means "exclude nothing" (= TRUE)
         // so NOT/OR composition stays correct; mutation builders reject pure tautologies.
-        whereParts.push(adapter === 'sqlite' ? '1' : 'TRUE');
+        whereParts.push(sqlTrue(adapter));
       } else {
         const phs = o.nin.map((v: unknown) => {
           params.push(v);

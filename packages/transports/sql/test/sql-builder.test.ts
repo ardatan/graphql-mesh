@@ -404,11 +404,16 @@ describe('buildSelect', () => {
     expect(byLimitCol.sql).toContain('"limit" = ?');
     expect(byLimitCol.params).toEqual([9]);
 
-    // Empty nin alone is a tautology — must not authorize mutations.
+    // Empty nin alone is a tautology; must not authorize mutations (with mapped columns).
     expect(() =>
-      buildDelete('sqlite', 'albums', parseSqlMapping(`$args.where`), {
-        where: { title: { nin: [] } },
-      }),
+      buildDelete(
+        'sqlite',
+        'albums',
+        parseSqlMapping(`$args.where`),
+        { where: { title: { nin: [] } } },
+        undefined,
+        new Map([['title', 'Title']]),
+      ),
     ).toThrow(/no SQL predicate/);
   });
 
@@ -421,8 +426,9 @@ describe('buildSelect', () => {
       graphqlArgs: { where: { not: { title: { nin: [] } } } },
       columnCatalog: new Map([['title', 'Title']]),
     });
-    // nin: [] → TRUE; NOT TRUE → no rows
-    expect(withNotNin.sql).toContain('NOT (1)');
+    // nin: [] → TRUE; NOT TRUE folds to FALSE (no rows)
+    expect(withNotNin.sql).toMatch(/\b0\b/);
+    expect(withNotNin.sql).not.toContain('NOT (');
 
     const withOrNin = buildSelect('sqlite', {
       table: 'albums',
@@ -434,7 +440,9 @@ describe('buildSelect', () => {
       },
       columnCatalog: new Map([['title', 'Title']]),
     });
-    expect(withOrNin.sql).toMatch(/\(1\) OR /);
+    // OR with a tautology branch folds to TRUE
+    expect(withOrNin.sql).toMatch(/\b1\b/);
+    expect(withOrNin.sql).not.toContain(' OR ');
 
     // `limit: $args.id` is a physical column, not page size.
     const physicalLimit = buildSelect('sqlite', {
@@ -448,6 +456,80 @@ describe('buildSelect', () => {
     expect(physicalLimit.sql).toContain('"limit" = ?');
     expect(physicalLimit.params).toEqual([3]);
     expect(physicalLimit.sql).not.toMatch(/LIMIT \?$/);
+  });
+
+  it('classifies stuffed limit binders via column catalog (take vs physical limit)', () => {
+    // limit: $args.take (no limit column) → planner pagination from take
+    const takeLimit = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: AlbumId`),
+      whereMapping: parseSqlMapping(`limit: $args.take`),
+      graphqlArgs: { take: 5 },
+      columnCatalog: new Map([['id', 'AlbumId']]),
+    });
+    expect(takeLimit.sql).toMatch(/LIMIT \?$/);
+    expect(takeLimit.params).toEqual([5]);
+    expect(takeLimit.sql).not.toContain('"limit" =');
+
+    // Physical limit column mapped as limit: $args.limit → equality, not LIMIT
+    const physicalNamedLimit = buildSelect('sqlite', {
+      table: 'tickets',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: id`),
+      whereMapping: parseSqlMapping(`limit: $args.limit`),
+      graphqlArgs: { limit: 9 },
+      columnCatalog: new Map([
+        ['id', 'id'],
+        ['limit', 'limit'],
+      ]),
+    });
+    expect(physicalNamedLimit.sql).toContain('"limit" = ?');
+    expect(physicalNamedLimit.params).toEqual([9]);
+    expect(physicalNamedLimit.sql).not.toMatch(/LIMIT \?$/);
+  });
+
+  it('rejects composed OR tautologies on UPDATE/DELETE with mapped columns; allows FALSE no-ops', () => {
+    const cols = new Map([['id', 'AlbumId']]);
+    const whereSpread = parseSqlMapping(`$args.where`);
+    const setMapping = parseSqlMapping(`Title: $args.input.title`);
+
+    // OR(nin:[], eq) folds to TRUE → refuse unscoped write
+    expect(() =>
+      buildUpdate(
+        'sqlite',
+        'albums',
+        setMapping,
+        whereSpread,
+        { input: { title: 'X' }, where: { or: [{ id: { nin: [] } }, { id: { eq: 7 } }] } },
+        ['AlbumId'],
+        undefined,
+        cols,
+      ),
+    ).toThrow(/no SQL predicate/);
+
+    expect(() =>
+      buildDelete(
+        'sqlite',
+        'albums',
+        whereSpread,
+        { where: { or: [{ id: { nin: [] } }, { id: { eq: 7 } }] } },
+        undefined,
+        cols,
+      ),
+    ).toThrow(/no SQL predicate/);
+
+    // AND with empty in (FALSE) is a no-op filter: allowed, matches no rows
+    const falseNoOp = buildDelete(
+      'sqlite',
+      'albums',
+      whereSpread,
+      { where: { and: [{ id: { in: [] } }, { id: { eq: 7 } }] } },
+      undefined,
+      cols,
+    );
+    expect(falseNoOp.sql).toMatch(/WHERE \(?0\)?/);
+    expect(falseNoOp.sql).not.toMatch(/AlbumId/);
   });
 
   it('appends soft-delete IS NULL on reads and soft-deletes via UPDATE', () => {

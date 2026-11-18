@@ -65,7 +65,11 @@ const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
 
 /**
  * Options for {@link loadSqlSubgraph} / {@link loadGraphQLSchemaFromSql}.
- * Pool / TLS / soft-delete fields are forwarded onto `@transport(kind: "sql", options:)`.
+ *
+ * Forwarded onto `@transport(kind: "sql", options:)`: `max`, `idleTimeout`,
+ * `connectionTimeout`, `tls`, `ssl`, `schema`, `softDelete`.
+ * Not forwarded: `pgPool` (introspection-only). For runtime reuse of the same
+ * pool, wrap it and pass it to `getSqlExecutor`.
  *
  * @example
  * ```ts
@@ -74,6 +78,7 @@ const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
  * const shop = loadSqlSubgraph('shop', {
  *   endpoint: 'postgres://localhost:5432/shop',
  *   schema: 'public',
+ *   max: 10,
  *   includeTables: ['albums', 'artists'],
  *   softDelete: { column: 'deleted_at' },
  * });
@@ -85,10 +90,23 @@ const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
  * ```
  * @example
  * ```ts
- * // Inject an existing pg.Pool for introspection (TLS / dial already configured).
- * // Runtime still needs `@transport(location)` or an injected executor client —
- * // `pgPool` is not stamped onto `@transport(options)`.
- * loadSqlSubgraph('shop', { pgPool: myPool, schema: 'app' })
+ * // pgPool: introspection only (not stamped onto @transport(options)).
+ * // max/tls/ssl/schema still forward when set alongside an endpoint.
+ * // Runtime with the same pool: wrap + getSqlExecutor (no DB URL required).
+ * import {
+ *   getSqlExecutor,
+ *   loadGraphQLSchemaFromSql,
+ *   wrapPgPoolAsSqlClient,
+ * } from '@omnigraph/sql';
+ *
+ * const subgraph = await loadGraphQLSchemaFromSql('shop', {
+ *   pgPool: myPool,
+ *   schema: 'app',
+ * });
+ * const executor = getSqlExecutor({
+ *   subgraph,
+ *   client: wrapPgPoolAsSqlClient(myPool, { schema: 'app' }),
+ * });
  * ```
  */
 export interface LoadSqlSubgraphOpts extends Pick<
@@ -161,11 +179,12 @@ export interface LoadSqlSubgraphOpts extends Pick<
   softDelete?: SqlTransportOptions['softDelete'];
   /**
    * Existing `pg.Pool` for Postgres **introspection** only (TLS / custom dial).
-   * Not forwarded to `@transport(options)` — runtime uses `@transport(location)`
-   * or an injected executor client. When set, `endpoint` may be omitted for
-   * pool-only Mesh configs that inject their own execution client.
+   * Not forwarded to `@transport(options)` (unlike `max`, `tls`, `ssl`, `schema`).
+   * Runtime uses `@transport(location)` or an injected executor client via
+   * `wrapPgPoolAsSqlClient` + `getSqlExecutor`. When set, `endpoint` may be
+   * omitted for pool-only Mesh configs that inject their own execution client.
    * `@transport(location)` uses `endpoint` or `pool.options.connectionString`
-   * when present — never a placeholder URI.
+   * when present; never a placeholder URI.
    *
    * @example myPool
    */
