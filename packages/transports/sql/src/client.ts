@@ -600,13 +600,14 @@ function createMysqlClient(opts: CreateSqlClientOptions): SqlClient {
     throw new Error(`Expected mysql URI, got ${parsed.adapter}`);
   }
   const ssl = resolveSslOption(opts.tls, parsed, opts.ssl);
+  // mysql2 `ssl` is `string | SslOptions` only; omit when disabled (`false`).
   const pool: Pool = createPool({
     host: parsed.host,
     port: parsed.port,
     user: parsed.user,
     password: parsed.password,
     database: parsed.database,
-    ssl,
+    ...(ssl ? { ssl } : {}),
     supportBigNumbers: true,
     bigNumberStrings: true,
     connectionLimit: opts.max ?? 10,

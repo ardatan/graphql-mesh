@@ -54,13 +54,14 @@ export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSch
     throw new Error('MySQL introspection requires a mysql://…/database URI');
   }
   const ssl = resolveSslOption(opts.tls, parsed, opts.ssl);
+  // mysql2 `ssl` is `string | SslOptions` only; omit when disabled (`false`).
   const pool = createPool({
     host: parsed.host,
     port: parsed.port,
     user: parsed.user,
     password: parsed.password,
     database: parsed.database,
-    ssl,
+    ...(ssl ? { ssl } : {}),
   });
   try {
     const database = parsed.database;
