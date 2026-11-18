@@ -41,7 +41,7 @@ import {
   ConnectDirective,
   LinkDirective,
   SourceDirective,
-} from '@graphql-mesh/transport-rest';
+} from '@graphql-mesh/transport-connect';
 import type {
   GraphQLThriftAnnotations,
   StructTypeVal,
