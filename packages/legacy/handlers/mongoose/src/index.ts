@@ -1,10 +1,6 @@
-import { specifiedDirectives } from 'graphql';
-import { SchemaComposer } from 'graphql-compose';
-import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
-import type { ConnectOptions, Document, Model } from 'mongoose';
-import { connect, disconnect } from 'mongoose';
-import { type Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
+import type { GraphQLSchema } from 'graphql';
+import type { StoreProxy } from '@graphql-mesh/store';
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type {
   ImportFn,
@@ -13,181 +9,156 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { dispose, isDisposable } from '@graphql-mesh/utils';
+import {
+  getMongoExecutor,
+  loadGraphQLSchemaFromMongo,
+  type MongoModelConfig,
+  type MongoQueryAndMutations,
+} from '@omnigraph/mongo';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
-const modelQueryOperations = [
-  'findById',
-  'findByIds',
-  'findOne',
-  'findMany',
-  'count',
-  'connection',
-  'pagination',
-  'dataLoader',
-  'dataLoaderMany',
-];
+/** Compose-mongoose `options.resolvers` key → Mongo-style `queryAndMutations` key. */
+const LEGACY_RESOLVER_TO_OP: Record<string, keyof MongoQueryAndMutations> = {
+  findById: 'findById',
+  findByIds: 'findByIds',
+  findOne: 'findOne',
+  findMany: 'findMany',
+  count: 'countDocuments',
+  connection: 'connection',
+  pagination: 'pagination',
+  createOne: 'insertOne',
+  createMany: 'insertMany',
+  updateById: 'updateById',
+  updateOne: 'updateOne',
+  updateMany: 'updateMany',
+  removeById: 'deleteById',
+  removeOne: 'deleteOne',
+  removeMany: 'deleteMany',
+};
 
-const modelMutationOperations = [
-  'createOne',
-  'createMany',
-  'updateById',
-  'updateOne',
-  'updateMany',
-  'removeById',
-  'removeOne',
-  'removeMany',
-];
+/** Map compose `resolvers` flags; only `false` disables emission. */
+function mapLegacyQueryAndMutations(
+  resolvers?: YamlConfig.TypeConverterResolversOpts1,
+): MongoQueryAndMutations | undefined {
+  if (!resolvers) return undefined;
+  const out: MongoQueryAndMutations = {};
+  let any = false;
+  for (const [legacyKey, opKey] of Object.entries(LEGACY_RESOLVER_TO_OP)) {
+    if ((resolvers as Record<string, unknown>)[legacyKey] === false) {
+      out[opKey] = false;
+      any = true;
+    }
+  }
+  return any ? out : undefined;
+}
 
+function mapLegacyModelConfig(m: YamlConfig.MongooseModel): MongoModelConfig {
+  const fields = m.options?.fields
+    ? {
+        only: m.options.fields.only,
+        remove: m.options.fields.remove,
+        required: m.options.fields.required,
+      }
+    : undefined;
+  const queryAndMutations = mapLegacyQueryAndMutations(m.options?.resolvers);
+  // compose-mongoose `options.name` renamed the GraphQL type; the new loader keys
+  // refs off model `name`, so a silent rename would break `ref: 'User'`. Reject.
+  const override = m.options?.name?.trim();
+  if (override && override !== m.name) {
+    throw new Error(
+      `@graphql-mesh/mongoose: model "${m.name}" options.name "${override}" is not supported — ` +
+        `set the model entry name to "${override}" (and keep Mongoose refs in sync) or use ` +
+        `loadMongoSubgraph naming.typeName`,
+    );
+  }
+  return {
+    name: m.name,
+    path: m.path,
+    ...(fields ? { fields } : {}),
+    ...(queryAndMutations ? { queryAndMutations } : {}),
+  };
+}
+
+/**
+ * Legacy v0 Mongoose handler. Under the hood `@omnigraph/mongo` + `transport-mongo`.
+ * YAML entrypoint stays the same (`connectionString` / `models` / `discriminators`);
+ * Mongoose is bootstrap-only, runtime is the native MongoDB driver via `@mongo`.
+ * Discriminator subtypes are auto-detected from `schema.discriminatorMapping`.
+ */
 export default class MongooseHandler implements MeshHandler {
+  private name: string;
   private config: YamlConfig.MongooseHandler;
   private baseDir: string;
-  private pubsub: PubSub;
   private importFn: ImportFn;
-  private log: Logger;
-
-  private shouldDisconnect = false;
+  private schemaProxy: StoreProxy<GraphQLSchema>;
+  private disposableResource?: Disposable | AsyncDisposable;
 
   constructor({
+    name,
     config,
     baseDir,
-    pubsub,
+    store,
     importFn,
-    log,
   }: MeshHandlerOptions<YamlConfig.MongooseHandler>) {
+    this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.pubsub = pubsub;
     this.importFn = importFn;
-    this.log = log;
+    this.schemaProxy = store.proxy(
+      'schema.graphql',
+      PredefinedProxyOptions.GraphQLSchemaWithDiffing,
+    );
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    if (this.config.connectionString) {
-      const interpolatedConnectionString = stringInterpolator.parse(this.config.connectionString, {
-        env: globalThis.process?.env,
-      });
-      connect(interpolatedConnectionString, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      } as ConnectOptions).catch(e => this.log.error(e));
+    const endpoint = this.config.connectionString
+      ? stringInterpolator.parse(this.config.connectionString, {
+          env: globalThis.process?.env,
+        })
+      : 'mongodb://localhost:27017/test';
 
-      this.shouldDisconnect = true;
+    const models: MongoModelConfig[] = [
+      ...(this.config.models || []).map(m => mapLegacyModelConfig(m)),
+      ...(this.config.discriminators || []).map(m => mapLegacyModelConfig(m)),
+    ];
+
+    if (!models.length) {
+      throw new Error(
+        '@graphql-mesh/mongoose: provide at least one entry under `models` (or `discriminators`).',
+      );
     }
 
-    const schemaComposer = new SchemaComposer();
-    const typeMergingOptions: MeshSource['merge'] = {};
+    const schema = await this.schemaProxy.getWithSet(() =>
+      loadGraphQLSchemaFromMongo(this.name, {
+        endpoint,
+        models,
+        cwd: this.baseDir,
+        importFn: this.importFn,
+      }),
+    );
 
-    await Promise.all([
-      Promise.all(
-        this.config.models?.map(async modelConfig => {
-          const model = await loadFromModuleExportExpression<Model<Document<any, any, any>>>(
-            modelConfig.path,
-            {
-              defaultExportName: modelConfig.name,
-              cwd: this.baseDir,
-              importFn: this.importFn,
-            },
-          );
-          if (!model) {
-            throw new Error(`Model ${modelConfig.name} cannot be imported ${modelConfig.path}!`);
-          }
-          const modelTC = composeWithMongoose(model, modelConfig.options as any);
+    // Always bind the executor to the current interpolated endpoint — schema
+    // cache may still carry a stale `@transport(location:)` from an earlier run.
+    const executor = getMongoExecutor({
+      subgraph: schema,
+      cwd: this.baseDir,
+      location: endpoint,
+    });
 
-          const resolversOption = modelConfig.options?.resolvers;
-          function isResolverEnabled(operation): boolean {
-            return (
-              resolversOption == null ||
-              Object.prototype.hasOwnProperty.call(resolversOption, operation) ||
-              resolversOption[operation] !== false
-            );
-          }
-
-          const enabledQueryOperations = modelQueryOperations.filter(isResolverEnabled);
-          const enabledMutationOperations = modelMutationOperations.filter(isResolverEnabled);
-
-          await Promise.all([
-            Promise.all(
-              enabledQueryOperations.map(async queryOperation =>
-                schemaComposer.Query.addFields({
-                  [`${modelConfig.name}_${queryOperation}`]: modelTC.getResolver(queryOperation),
-                }),
-              ),
-            ),
-            Promise.all(
-              enabledMutationOperations.map(async mutationOperation =>
-                schemaComposer.Mutation.addFields({
-                  [`${modelConfig.name}_${mutationOperation}`]:
-                    modelTC.getResolver(mutationOperation),
-                }),
-              ),
-            ),
-          ]);
-          const typeName = modelTC.getTypeName();
-          typeMergingOptions[typeName] = {
-            selectionSet: `{ id }`,
-            key: ({ id }) => id,
-            argsFromKeys: ids => ({ ids }),
-            fieldName: `${typeName}_dataLoaderMany`,
-          };
-        }) || [],
-      ),
-      Promise.all(
-        this.config.discriminators?.map(async discriminatorConfig => {
-          const discriminator = await loadFromModuleExportExpression<any>(
-            discriminatorConfig.path,
-            {
-              defaultExportName: discriminatorConfig.name,
-              cwd: this.baseDir,
-              importFn: this.importFn,
-            },
-          );
-          const discriminatorTC = composeWithMongooseDiscriminators(
-            discriminator,
-            discriminatorConfig.options as any,
-          );
-          await Promise.all([
-            Promise.all(
-              modelQueryOperations.map(async queryOperation =>
-                schemaComposer.Query.addFields({
-                  [`${discriminatorConfig.name}_${queryOperation}`]:
-                    discriminatorTC.getResolver(queryOperation),
-                }),
-              ),
-            ),
-            Promise.all(
-              modelMutationOperations.map(async mutationOperation =>
-                schemaComposer.Mutation.addFields({
-                  [`${discriminatorConfig.name}_${mutationOperation}`]:
-                    discriminatorTC.getResolver(mutationOperation),
-                }),
-              ),
-            ),
-          ]);
-          const typeName = discriminatorTC.getTypeName();
-          typeMergingOptions[typeName] = {
-            selectionSet: `{ id }`,
-            key: ({ id }) => id,
-            argsFromKeys: ids => ({ ids }),
-            fieldName: `${typeName}_dataLoaderMany`,
-          };
-        }) || [],
-      ),
-    ]);
-
-    // graphql-compose doesn't add @defer and @stream to the schema
-    specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
-
-    const schema = schemaComposer.buildSchema();
+    if (isDisposable(executor)) {
+      this.disposableResource = executor;
+    }
 
     return {
       schema,
+      executor,
     };
   }
 
-  [DisposableSymbols.asyncDispose]() {
-    if (this.shouldDisconnect) {
-      return disconnect().catch(e => this.log.error(e));
+  async [DisposableSymbols.asyncDispose]() {
+    if (this.disposableResource) {
+      await dispose(this.disposableResource);
     }
   }
 }

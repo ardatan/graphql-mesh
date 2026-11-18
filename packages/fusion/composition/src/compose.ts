@@ -132,14 +132,26 @@ export function isNeo4jSubgraph(schema: GraphQLSchema): boolean {
 }
 
 /**
+ * Mongo subgraphs use `@mongo__*` mapping binds (`$args` / `$this`) instead of Mesh
+ * `@source` / `@meshSource` for rename / naming-convention transforms. Detect via
+ * `@transport(kind: "mongo")`.
+ */
+export function isMongoSubgraph(schema: GraphQLSchema): boolean {
+  const transports = getDirectiveExtensions(schema)?.transport || [];
+  return transports.some((transport: { kind?: string }) => transport?.kind === 'mongo');
+}
+
+/**
  * True when transforms should rewrite directive mappings instead of Mesh `@source`
- * (Connectors `@connect`, protobuf `@protobuf__rpc`, Neo4j `@node` / `@alias` / `@plural`).
+ * (Connectors `@connect`, protobuf `@protobuf__rpc`, Neo4j `@node` / `@alias` / `@plural`,
+ * Mongo `@mongo__*`).
  */
 export function skipsMeshSourceAnnotations(schema: GraphQLSchema): boolean {
   return (
     isFederationConnectorsSubgraph(schema) ||
     isProtobufRpcSubgraph(schema) ||
-    isNeo4jSubgraph(schema)
+    isNeo4jSubgraph(schema) ||
+    isMongoSubgraph(schema)
   );
 }
 
@@ -195,7 +207,8 @@ export function getAnnotatedSubgraphs(
 
     let mergeDirectiveUsed = false;
     // Stitching source is only for subgraphs that do not rewrite directive mappings
-    // (Connectors `@connect`, protobuf `@protobuf__rpc`, Neo4j `@node` / `@alias`).
+    // (Connectors `@connect`, protobuf `@protobuf__rpc`, Neo4j `@node` / `@alias`,
+    // Mongo `@mongo__*`). Those skip Mesh `@source`.
     const sourceDirectiveUsed = !skipsMeshSourceAnnotations(schema) && transforms?.length > 0;
     // When Connectors are in the same composition, alias to `@meshSource` so Guild
     // does not treat Mesh + Apollo `@source` as one composed directive.
