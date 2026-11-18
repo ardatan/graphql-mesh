@@ -26,7 +26,7 @@ it.concurrent.each([
     name: 'PlaylistTracksManyToMany',
     query: /* GraphQL */ `
       query PlaylistTracksManyToMany {
-        playlist(id: "9") {
+        playlist(id: "1") {
           id
           name
           tracks(limit: 5, orderBy: [ID_ASC]) {

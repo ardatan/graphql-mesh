@@ -57,8 +57,9 @@ export interface IntrospectPostgresOpts {
    */
   schema?: string;
   /**
-   * Enable TLS (`true` or Bun-style mode string) when opening a new pool.
-   * Ignored when `pool` is supplied (that pool's TLS settings are reused).
+   * Enable TLS (`true` or mode strings such as `require` / `insecure` /
+   * `no-verify`) when opening a new pool. Ignored when `pool` is supplied (that
+   * pool's TLS settings are reused).
    *
    * @example true
    */
@@ -117,6 +118,7 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
         is_nullable: string;
         column_default: string | null;
         is_identity: string;
+        is_generated: string;
       }>(
         `SELECT
            column_name AS name,
@@ -124,7 +126,8 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
            udt_name,
            is_nullable,
            column_default,
-           is_identity
+           is_identity,
+           is_generated
          FROM information_schema.columns
          WHERE table_schema = $1 AND table_name = $2
          ORDER BY ordinal_position`,
@@ -137,6 +140,7 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
          JOIN information_schema.key_column_usage kcu
            ON tc.constraint_name = kcu.constraint_name
           AND tc.table_schema = kcu.table_schema
+          AND tc.table_name = kcu.table_name
          WHERE tc.table_schema = $1
            AND tc.table_name = $2
            AND tc.constraint_type = 'PRIMARY KEY'
@@ -149,6 +153,7 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
         const dataType = String(c.udt_name || c.data_type || 'text');
         const def = c.column_default != null ? String(c.column_default) : '';
         const isIdentity = String(c.is_identity || '').toUpperCase() === 'YES';
+        const generated = String(c.is_generated || '').toUpperCase() === 'ALWAYS';
         return {
           name: String(c.name),
           dataType,
@@ -156,7 +161,8 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
           primaryKey: pkCols.has(String(c.name)),
           // Identity via is_identity; sequences via nextval — not nextval inside a quoted literal.
           autoIncrement: isIdentity || isSequenceDefault(def),
-          hasDefault: isIdentity || Boolean(def),
+          hasDefault: isIdentity || generated || Boolean(def),
+          generated,
         };
       });
 
@@ -177,6 +183,7 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
          JOIN information_schema.key_column_usage AS kcu
            ON tc.constraint_name = kcu.constraint_name
           AND tc.table_schema = kcu.table_schema
+          AND tc.table_name = kcu.table_name
          JOIN information_schema.constraint_column_usage AS ccu
            ON ccu.constraint_name = tc.constraint_name
           AND ccu.table_schema = tc.table_schema

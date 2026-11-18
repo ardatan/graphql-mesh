@@ -37,11 +37,7 @@ export type SqlKind = SqlQueryKind | SqlMutationKind;
  *
  * @example
  * ```ts
- * softDelete: { column: 'deleted_at' }
- * ```
- * @example
- * ```ts
- * softDelete: { column: 'deleted_at', tables: ['albums', 'tracks'] }
+ * softDelete: { column: 'deleted_at', tables: ['albums'] }
  * ```
  */
 export interface SqlSoftDeleteOptions {
@@ -75,7 +71,6 @@ export interface SqlSslOptions {
    * `"no-verify"` / URI `sslmode=no-verify`) only for trusted lab endpoints.
    *
    * @default true
-   * @example false
    */
   rejectUnauthorized?: boolean;
   /**
@@ -91,8 +86,8 @@ export interface SqlSslOptions {
  * Connection / pool options stored on `@transport(options:)` (and accepted by
  * `loadSqlSubgraph` / `createSqlClient`).
  *
- * Bun-inspired field names; honoured on Node (`pg` / `mysql2` / `node:sqlite`)
- * or forwarded to `Bun.SQL` when present.
+ * Pool / TLS field names honoured on Node (`pg` / `mysql2` / `node:sqlite`)
+ * and on the optional `globalThis.Bun.SQL` client when present.
  *
  * @example
  * ```ts
@@ -113,35 +108,36 @@ export interface SqlTransportOptions {
    */
   adapter?: SqlAdapter;
   /**
-   * Max pool size. Maps to Bun `max`, mysql2 `connectionLimit`, and pg `max`
-   * when Mesh opens the pool (`createSqlClient`).
+   * Max pool size. Maps to mysql2 `connectionLimit`, pg `max`, and the optional
+   * `globalThis.Bun.SQL` `max` when Mesh opens the pool (`createSqlClient`).
    *
    * @default 10
    * @example 20
    */
   max?: number;
   /**
-   * Idle connection lifetime in seconds (`0` = off). Forwarded as Bun
-   * `idleTimeout` / mysql2 `idleTimeout` / pg `idleTimeoutMillis` (seconds → ms
-   * on Node). When omitted, the driver / Bun default applies.
+   * Idle connection lifetime in seconds (`0` = off). Forwarded as mysql2
+   * `idleTimeout` / pg `idleTimeoutMillis` (seconds to ms on Node), and as
+   * `idleTimeout` on `globalThis.Bun.SQL` when that client is used. When
+   * omitted, the driver default applies.
    *
    * @example 30
    */
   idleTimeout?: number;
   /**
-   * Seconds to wait for a new connection. Forwarded as Bun `connectionTimeout` /
-   * mysql2 `connectTimeout` / pg `connectionTimeoutMillis` (seconds → ms on
-   * Node). When omitted, the driver / Bun default applies.
+   * Seconds to wait for a new connection. Forwarded as mysql2 `connectTimeout` /
+   * pg `connectionTimeoutMillis` (seconds to ms on Node), and as
+   * `connectionTimeout` on `globalThis.Bun.SQL` when that client is used. When
+   * omitted, the driver default applies.
    *
    * @example 10
    */
   connectionTimeout?: number;
   /**
-   * Enable TLS / SSL. Accepts `true`, or Bun-style mode strings such as
-   * `'require'` / `'insecure'` / `'no-verify'`. URI schemes (`mysqls://`) and
-   * `sslmode=` query params also enable SSL (merged with {@link SqlSslOptions}).
+   * Enable TLS / SSL. Accepts `true`, or mode strings such as `'require'` /
+   * `'insecure'` / `'no-verify'`. URI schemes (`mysqls://`) and `sslmode=` query
+   * params also enable SSL (merged with {@link SqlSslOptions}).
    *
-   * @example true
    * @example 'require'
    */
   tls?: boolean | string;

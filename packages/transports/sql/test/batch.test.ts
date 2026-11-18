@@ -27,7 +27,7 @@ describe('loadBatchedByColumn loader identity', () => {
     const selection = parseSqlMapping('id: AlbumId');
     const ctx: Record<string, unknown> = {};
 
-    await Promise.all([
+    const [row1, row2] = await Promise.all([
       loadBatchedByColumn(
         ctx,
         {
@@ -58,7 +58,9 @@ describe('loadBatchedByColumn loader identity', () => {
     // Shared loader identity (equality arg omitted) → one IN query for both keys.
     expect(client.query).toHaveBeenCalledTimes(1);
     const call = client.query.mock.calls[0] as unknown as [string, unknown[]];
-    expect(call[1]).toEqual(expect.arrayContaining([1, 2]));
+    expect(call[1]).toEqual([1, 2]);
+    expect(row1).toEqual({ id: '1' });
+    expect(row2).toEqual({ id: '2' });
   });
 
   it('keeps sibling filter args in the loader identity', async () => {

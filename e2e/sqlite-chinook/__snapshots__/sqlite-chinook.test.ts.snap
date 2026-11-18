@@ -1103,12 +1103,28 @@ exports[`should execute PlaylistTracksManyToMany 1`] = `
 {
   "data": {
     "playlist": {
-      "id": "9",
-      "name": "Music Videos",
+      "id": "1",
+      "name": "Music",
       "tracks": [
         {
-          "id": "3402",
-          "name": "Band Members Discuss Tracks from "Revelations"",
+          "id": "1",
+          "name": "For Those About To Rock (We Salute You)",
+        },
+        {
+          "id": "2",
+          "name": "Balls to the Wall",
+        },
+        {
+          "id": "3",
+          "name": "Fast As a Shark",
+        },
+        {
+          "id": "4",
+          "name": "Restless and Wild",
+        },
+        {
+          "id": "5",
+          "name": "Princess of the Dawn",
         },
       ],
     },

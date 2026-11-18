@@ -403,6 +403,51 @@ describe('buildSelect', () => {
     });
     expect(byLimitCol.sql).toContain('"limit" = ?');
     expect(byLimitCol.params).toEqual([9]);
+
+    // Empty nin alone is a tautology — must not authorize mutations.
+    expect(() =>
+      buildDelete('sqlite', 'albums', parseSqlMapping(`$args.where`), {
+        where: { title: { nin: [] } },
+      }),
+    ).toThrow(/no SQL predicate/);
+  });
+
+  it('treats empty nin as TRUE so NOT/OR compose correctly; physical limit is not LIMIT', () => {
+    const withNotNin = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'ROWS',
+      selection,
+      whereMapping: parseSqlMapping(`$args.where`),
+      graphqlArgs: { where: { not: { title: { nin: [] } } } },
+      columnCatalog: new Map([['title', 'Title']]),
+    });
+    // nin: [] → TRUE; NOT TRUE → no rows
+    expect(withNotNin.sql).toContain('NOT (1)');
+
+    const withOrNin = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'ROWS',
+      selection,
+      whereMapping: parseSqlMapping(`$args.where`),
+      graphqlArgs: {
+        where: { or: [{ title: { nin: [] } }, { title: { eq: 'X' } }] },
+      },
+      columnCatalog: new Map([['title', 'Title']]),
+    });
+    expect(withOrNin.sql).toMatch(/\(1\) OR /);
+
+    // `limit: $args.id` is a physical column, not page size.
+    const physicalLimit = buildSelect('sqlite', {
+      table: 'tickets',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: id`),
+      whereMapping: parseSqlMapping(`limit: $args.id`),
+      graphqlArgs: { id: 3 },
+      columnCatalog: new Map([['limit', 'limit']]),
+    });
+    expect(physicalLimit.sql).toContain('"limit" = ?');
+    expect(physicalLimit.params).toEqual([3]);
+    expect(physicalLimit.sql).not.toMatch(/LIMIT \?$/);
   });
 
   it('appends soft-delete IS NULL on reads and soft-deletes via UPDATE', () => {

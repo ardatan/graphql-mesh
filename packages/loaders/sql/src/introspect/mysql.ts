@@ -33,8 +33,9 @@ export interface IntrospectMysqlOpts {
    */
   excludeTables?: string[];
   /**
-   * Enable TLS (`true` or Bun-style mode string). `mysqls://` and URI `sslmode=`
-   * also turn SSL on via the shared SSL resolver.
+   * Enable TLS (`true` or mode strings such as `require` / `insecure` /
+   * `no-verify`). `mysqls://` and URI `sslmode=` also turn SSL on via the shared
+   * SSL resolver.
    *
    * @example true
    */
@@ -98,6 +99,7 @@ export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSch
       );
       const columns: SqlColumnMeta[] = colRows.map(c => {
         const extra = String(c.extra || '').toLowerCase();
+        const generated = extra.includes('generated');
         return {
           name: String(c.name),
           dataType: String(c.columnType || c.dataType || 'TEXT'),
@@ -106,8 +108,10 @@ export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSch
           autoIncrement: extra.includes('auto_increment'),
           hasDefault:
             c.columnDefault != null ||
+            generated ||
             extra.includes('default_generated') ||
             extra.includes('on update'),
+          generated,
         };
       });
 
@@ -122,8 +126,9 @@ export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSch
          WHERE TABLE_SCHEMA = ?
            AND TABLE_NAME = ?
            AND REFERENCED_TABLE_NAME IS NOT NULL
+           AND REFERENCED_TABLE_SCHEMA = ?
          ORDER BY CONSTRAINT_NAME, ORDINAL_POSITION`,
-        [database, name],
+        [database, name, database],
       );
       const fkByName = new Map<string, SqlForeignKeyMeta>();
       for (const fk of fkRows) {

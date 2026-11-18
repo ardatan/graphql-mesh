@@ -16,6 +16,11 @@ export interface SqlColumnMeta {
   autoIncrement?: boolean;
   /** Column has a DB default (including runtime defaults like CURRENT_TIMESTAMP). */
   hasDefault?: boolean;
+  /**
+   * Stored/virtual generated column (`GENERATED ALWAYS` / MySQL `GENERATED`).
+   * Omitted from create/update inputs — the database assigns the value.
+   */
+  generated?: boolean;
 }
 
 /**

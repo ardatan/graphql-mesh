@@ -71,7 +71,7 @@ export interface SqlDirectiveRowArgs extends SqlDirectiveArgsBase, SqlDirectiveW
  *
  * @example
  * ```graphql
- * albums(where: AlbumFilter, limit: Int): [Album!]!
+ * albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int): [Album!]!
  *   @sql(
  *     table: "albums"
  *     kind: ROWS
@@ -122,7 +122,7 @@ export interface SqlDirectiveRowsArgs extends SqlDirectiveArgsBase, SqlDirective
  *
  * @example
  * ```graphql
- * allAlbums(where: AlbumFilter, first: Int, after: String): AlbumConnection!
+ * allAlbums(where: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection!
  *   @sql(
  *     table: "albums"
  *     kind: CONNECTION
@@ -215,11 +215,11 @@ export interface SqlDirectiveInsertArgs extends SqlDirectiveArgsBase {
 export interface SqlDirectiveUpdateArgs extends SqlDirectiveArgsBase, SqlDirectiveWhere {
   kind: 'UPDATE';
   /**
-   * Column values (`SQL_col: $args.input.field`).
+   * Column values (`SQL_col: $args.input.field`). Required for UPDATE mappings.
    *
    * @example 'Title: $args.input.title'
    */
-  set?: string;
+  set: string;
 }
 
 /**

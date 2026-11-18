@@ -2,7 +2,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { linkSync, mkdirSync, readFileSync, statSync, unlinkSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
-import { isAbsolute, join } from 'node:path';
+import { isAbsolute, join, resolve } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import type { MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { dispose, isDisposable } from '@graphql-mesh/utils';
@@ -27,19 +27,23 @@ export default class TuqlHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    const db = typeof this.config.db === 'string' ? this.config.db.trim() : this.config.db;
-    const infile =
-      typeof this.config.infile === 'string' ? this.config.infile.trim() : this.config.infile;
-    if ((db == null || db === '') && (infile == null || infile === '')) {
+    const dbRaw = typeof this.config.db === 'string' ? this.config.db : this.config.db;
+    const infileRaw =
+      typeof this.config.infile === 'string' ? this.config.infile : this.config.infile;
+    // Trim only for blank detection — keep the original nonblank path for materialization.
+    const dbBlank = dbRaw == null || (typeof dbRaw === 'string' && dbRaw.trim() === '');
+    const infileBlank =
+      infileRaw == null || (typeof infileRaw === 'string' && infileRaw.trim() === '');
+    if (dbBlank && infileBlank) {
       throw new Error(
         '@graphql-mesh/tuql: provide `db` (SQLite file) or `infile` (SQL dump → sqlite file).',
       );
     }
 
     const dbPath =
-      infile != null && infile !== ''
-        ? materializeInfileToSqlite(infile, this.baseDir)
-        : (db as string);
+      !infileBlank && typeof infileRaw === 'string'
+        ? materializeInfileToSqlite(infileRaw, this.baseDir)
+        : (dbRaw as string);
 
     const schema = await loadGraphQLSchemaFromSql(this.name, {
       adapter: 'sqlite',
@@ -70,27 +74,40 @@ export default class TuqlHandler implements MeshHandler {
 }
 
 /** Prefer a user-private cache dir over the shared OS temp directory. */
-function tuqlCacheDir(): string {
-  const base =
-    process.env.MESH_TUQL_CACHE_DIR?.trim() ||
-    (typeof homedir === 'function' ? join(homedir(), '.cache', 'graphql-mesh-tuql') : tmpdir());
+function tuqlCacheDir(baseDir?: string): string {
+  const override = process.env.MESH_TUQL_CACHE_DIR?.trim();
+  const preferred = override
+    ? isAbsolute(override)
+      ? override
+      : resolve(baseDir || process.cwd(), override)
+    : typeof homedir === 'function'
+      ? join(homedir(), '.cache', 'graphql-mesh-tuql')
+      : join(tmpdir(), 'graphql-mesh-tuql');
   try {
-    mkdirSync(base, { recursive: true, mode: 0o700 });
+    mkdirSync(preferred, { recursive: true, mode: 0o700 });
+    return preferred;
   } catch {
-    /* best-effort; fall through if mkdir races */
+    // Home / override may be read-only — fall back to a private dir under tmp.
+    const fallback = join(tmpdir(), 'graphql-mesh-tuql');
+    mkdirSync(fallback, { recursive: true, mode: 0o700 });
+    return fallback;
   }
-  return base;
 }
 
 /**
  * Convert a SQL dump into a durable sqlite file the core loader can open via `db`.
- * Cache key is the dump bytes actually passed to `db.exec` (not mtime/size alone).
+ * Cache key is absolute dump path + dump bytes actually passed to `db.exec`.
  */
 function materializeInfileToSqlite(infile: string, cwd: string): string {
   const dumpAbs = isAbsolute(infile) ? infile : join(cwd, infile);
   const dump = readFileSync(dumpAbs);
-  const tag = createHash('sha1').update(dump).digest('hex').slice(0, 12);
-  const outPath = join(tuqlCacheDir(), `mesh-tuql-${tag}.sqlite`);
+  const tag = createHash('sha1')
+    .update(dumpAbs)
+    .update('\0')
+    .update(dump)
+    .digest('hex')
+    .slice(0, 12);
+  const outPath = join(tuqlCacheDir(cwd), `mesh-tuql-${tag}.sqlite`);
 
   try {
     // Reuse if already built for this dump fingerprint

@@ -720,7 +720,9 @@ function appendMutationWhere(
       {
         const before = whereParts.length;
         appendFilter(adapter, resolved as Record<string, any>, columns, whereParts, params);
-        if (whereParts.length === before) {
+        const added = whereParts.slice(before);
+        // Empty filter, or only tautologies (`nin: []` → TRUE), must not authorize writes.
+        if (!added.length || added.every(isSqlTautology)) {
           throw new Error(
             `@sql mutation on ${table}: where filter produced no SQL predicate (refusing unscoped write)`,
           );
@@ -746,8 +748,9 @@ function resolvePlannerArg(plan: SelectPlan, key: SqlPlannerKey): unknown {
     const fromBinder = resolvePlannerBinder(String(binder), ctx);
     if (fromBinder !== undefined) return fromBinder;
   }
-  // Compat: planner keys stuffed into `where` before the split.
-  const entry = plan.whereMapping.entries.find(e => e.key === key);
+  // Compat: planner keys stuffed into `where` before the split. Skip physical
+  // columns that only share a planner name (`limit: $args.id`).
+  const entry = plan.whereMapping.entries.find(e => e.key === key && isLegacyPlannerEntry(e));
   if (entry) {
     return resolveMappingValue(entry.value, ctx);
   }
@@ -1082,6 +1085,12 @@ export function decodeCursor(cursor: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+/** True when a WHERE fragment is always-true (`TRUE` / sqlite `1`, optionally parenthesized). */
+function isSqlTautology(part: string): boolean {
+  const t = part.replace(/[()\s]/g, '');
+  return t === 'TRUE' || t === '1';
+}
+
 const SCALAR_FILTER_KEYS = new Set([
   'eq',
   'ne',
@@ -1236,8 +1245,9 @@ function appendFilter(
     }
     if ('nin' in o && Array.isArray(o.nin)) {
       if (o.nin.length === 0) {
-        // Empty NOT IN () is invalid SQL. Emitting TRUE would count as mutation
-        // scope while matching every row — treat as a no-op (exclude nothing).
+        // Empty NOT IN () is invalid SQL. `nin: []` means "exclude nothing" (= TRUE)
+        // so NOT/OR composition stays correct; mutation builders reject pure tautologies.
+        whereParts.push(adapter === 'sqlite' ? '1' : 'TRUE');
       } else {
         const phs = o.nin.map((v: unknown) => {
           params.push(v);

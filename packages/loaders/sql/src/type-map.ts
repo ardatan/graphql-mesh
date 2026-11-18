@@ -22,43 +22,58 @@ export function mapSqlTypeToGraphQL(
     return GraphQLID;
   }
   const t = dataType.toUpperCase();
-  if (t.includes('BOOL') || t === 'BIT') {
+  // Match the base type before args / enum labels — `enum('BINARY','TEXT')` is not Byte;
+  // `BIT(8)` is not Boolean.
+  const baseType = t.replace(/\s*\([\s\S]*$/, '').trim();
+  const typeArgs = t.match(/\(([^)]*)\)/)?.[1]?.trim();
+
+  if (baseType.includes('BOOL') || baseType === 'BOOLEAN') {
     return GraphQLBoolean;
   }
-  // Avoid `INTERVAL` / similar false positives from a bare `includes('INT')`.
+  // MySQL BIT(1) is a boolean flag; wider BIT(n) arrives as Buffer from mysql2.
+  if (baseType === 'BIT') {
+    if (!typeArgs || typeArgs === '1') {
+      return GraphQLBoolean;
+    }
+    return GraphQLByte as unknown as GraphQLScalarType;
+  }
+  // Avoid `Interval` / similar false positives from a bare `includes('INT')`.
   if (
-    /\b(BIG|SMALL|TINY|MEDIUM)?INT(EGER)?\b/.test(t) ||
-    t === 'SERIAL' ||
-    t === 'BIGSERIAL' ||
-    t === 'INT2' ||
-    t === 'INT4' ||
-    t === 'INT8'
+    /\b(BIG|SMALL|TINY|MEDIUM)?INT(EGER)?\b/.test(baseType) ||
+    baseType === 'SERIAL' ||
+    baseType === 'BIGSERIAL' ||
+    baseType === 'INT2' ||
+    baseType === 'INT4' ||
+    baseType === 'INT8'
   ) {
-    if (t.includes('BIG') || t.includes('UNSIGNED') || t === 'INT8' || t === 'BIGSERIAL') {
+    if (
+      baseType.includes('BIG') ||
+      baseType.includes('UNSIGNED') ||
+      baseType === 'INT8' ||
+      baseType === 'BIGSERIAL'
+    ) {
       return GraphQLBigInt as unknown as GraphQLScalarType;
     }
     return GraphQLInt;
   }
   if (
-    t.includes('DOUBLE') ||
-    t.includes('FLOAT') ||
-    t.includes('REAL') ||
-    t.includes('NUMERIC') ||
-    t.includes('DECIMAL')
+    baseType.includes('DOUBLE') ||
+    baseType.includes('FLOAT') ||
+    baseType.includes('REAL') ||
+    baseType.includes('NUMERIC') ||
+    baseType.includes('DECIMAL')
   ) {
     return GraphQLFloat;
   }
-  if (t.includes('TIMESTAMP') || t.includes('DATETIME')) {
+  if (baseType.includes('TIMESTAMP') || baseType.includes('DATETIME')) {
     return GraphQLDateTime as unknown as GraphQLScalarType;
   }
-  if (t === 'DATE') {
+  if (baseType === 'DATE') {
     return GraphQLDate as unknown as GraphQLScalarType;
   }
-  if (t.includes('JSON') || t.includes('JSONB')) {
+  if (baseType.includes('JSON')) {
     return GraphQLJSON as unknown as GraphQLScalarType;
   }
-  // Match the base type before args / enum labels — `enum('BINARY','TEXT')` is not Byte.
-  const baseType = t.replace(/\s*\([\s\S]*$/, '').trim();
   if (
     baseType === 'BYTEA' ||
     baseType === 'BINARY' ||

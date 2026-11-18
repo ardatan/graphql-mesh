@@ -56,11 +56,11 @@ export interface CreateSqlClientOptions extends SqlTransportOptions {
    */
   cwd?: string;
   /**
-   * Force Node drivers (`pg` / `mysql2` / `node:sqlite`) even when `Bun.SQL` is
-   * present. Prefer this in unit tests that must not depend on Bun's SQL client.
+   * Force Node drivers (`pg` / `mysql2` / `node:sqlite`) even when
+   * `globalThis.Bun.SQL` is present. Prefer this in unit tests that must not
+   * depend on that client.
    *
    * @default false
-   * @example true
    */
   preferNode?: boolean;
 }
@@ -249,7 +249,11 @@ const poolSchemaBindings = new WeakMap<object, string>();
 export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string): void {
   const trimmed = schema?.trim();
   if (!trimmed) return;
-  if (typeof pool.on !== 'function') return;
+  if (typeof pool.on !== 'function') {
+    throw new Error(
+      `SQL transport: schema "${trimmed}" was requested but the pool cannot emit connect/acquire events to enforce search_path. Pass a real pg.Pool (or omit schema).`,
+    );
+  }
   const bound = poolSchemaBindings.get(pool);
   if (bound === trimmed) {
     // Already initialized for this schema — do not stack acquire/connect listeners.

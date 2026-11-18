@@ -85,7 +85,9 @@ const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
  * ```
  * @example
  * ```ts
- * // Inject an existing pg.Pool (TLS / dial already configured)
+ * // Inject an existing pg.Pool for introspection (TLS / dial already configured).
+ * // Runtime still needs `@transport(location)` or an injected executor client —
+ * // `pgPool` is not stamped onto `@transport(options)`.
  * loadSqlSubgraph('shop', { pgPool: myPool, schema: 'app' })
  * ```
  */
@@ -154,14 +156,16 @@ export interface LoadSqlSubgraphOpts extends Pick<
    * Soft-delete: hide rows where `column IS NOT NULL`; `delete*` mutations set
    * the column to now instead of hard `DELETE`. Forwarded to `@transport(options)`.
    *
-   * @example { column: 'deleted_at' }
+   * @example { column: 'deleted_at', tables: ['albums'] }
    */
   softDelete?: SqlTransportOptions['softDelete'];
   /**
-   * Existing `pg.Pool` for Postgres introspection (TLS / custom dial). When set,
-   * `endpoint` may be omitted for pool-only Mesh configs that inject their own
-   * execution client. `@transport(location)` uses `endpoint` or
-   * `pool.options.connectionString` when present — never a placeholder URI.
+   * Existing `pg.Pool` for Postgres **introspection** only (TLS / custom dial).
+   * Not forwarded to `@transport(options)` — runtime uses `@transport(location)`
+   * or an injected executor client. When set, `endpoint` may be omitted for
+   * pool-only Mesh configs that inject their own execution client.
+   * `@transport(location)` uses `endpoint` or `pool.options.connectionString`
+   * when present — never a placeholder URI.
    *
    * @example myPool
    */
@@ -230,18 +234,18 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       name: typeName,
       fields: {},
     });
-    const typeDirectives: Array<{ name: string; args: Record<string, unknown> }> = [
-      {
+    const typeDirectives: Array<{ name: string; args: Record<string, unknown> }> = [];
+    // Type-level `@sql` = entity resolver (`$this` keys). Federation `@key` only
+    // when the table has a primary key (empty `@key(fields: "")` is invalid).
+    if (pkCols.length) {
+      typeDirectives.push({
         name: 'key',
         args: {
           fields: solePk
             ? colFieldName(naming, solePk, solePk, table)
             : pkCols.map(c => colFieldName(naming, c, undefined, table)).join(' '),
         },
-      },
-    ];
-    // Type-level `@sql` = entity resolver (`$this` keys).
-    if (pkCols.length) {
+      });
       const keyArgs = pkCols
         .map(col => {
           const field = colFieldName(naming, col, solePk, table);
@@ -265,8 +269,9 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       const isSolePkCol = Boolean(solePk && col.name === solePk.name);
       const fieldName = colFieldName(naming, col, solePk, table);
       const gqlType = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
+      // Output nullability follows the database column — do not force sole PK non-null.
       otc.setField(fieldName, {
-        type: col.notNull || isSolePkCol ? new GraphQLNonNull(gqlType) : gqlType,
+        type: col.notNull ? new GraphQLNonNull(gqlType) : gqlType,
       });
     }
 
@@ -621,6 +626,12 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
 async function introspect(
   opts: LoadSqlSubgraphOpts & { adapter: SqlAdapter },
 ): Promise<SqlSchemaMeta> {
+  // Explicit empty allowlist is a configuration error (would emit an empty schema).
+  if (Array.isArray(opts.includeTables) && opts.includeTables.length === 0) {
+    throw new Error(
+      'loadSqlSubgraph: includeTables: [] is empty; omit the option to include all tables',
+    );
+  }
   switch (opts.adapter) {
     case 'sqlite': {
       if (!opts.endpoint) {
@@ -732,19 +743,21 @@ function resolveLocation(opts: LoadSqlSubgraphOpts): string | undefined {
     if (opts.pgPool) return undefined;
     throw new Error('SQL loader requires endpoint');
   }
-  // Normalize bare sqlite paths to absolute file: URIs for @transport(location).
+  // Normalize relative sqlite paths to absolute file: / sqlite: URIs for @transport(location).
   try {
     if (inferAdapterFromConnectionString(raw) === 'sqlite') {
-      if (raw === ':memory:' || raw.toLowerCase().startsWith('sqlite:')) {
-        return raw;
+      const cwd = opts.cwd || process.cwd();
+      if (raw === ':memory:') return raw;
+      if (raw.toLowerCase().startsWith('sqlite:')) {
+        const rest = raw.slice(raw.indexOf(':') + 1);
+        if (!rest || rest === ':memory:' || pathHelper.isAbsolute(rest)) return raw;
+        return `sqlite:${pathHelper.join(cwd, rest)}`;
       }
       if (raw.toLowerCase().startsWith('file:')) {
-        const cwd = opts.cwd || process.cwd();
         const rest = raw.slice('file:'.length).replace(/^\/\/+/, '/');
         if (pathHelper.isAbsolute(rest) || rest === ':memory:') return raw;
         return `file:${pathHelper.join(cwd, rest)}`;
       }
-      const cwd = opts.cwd || process.cwd();
       const abs = pathHelper.isAbsolute(raw) ? raw : pathHelper.join(cwd, raw);
       return `file:${abs}`;
     }
@@ -949,6 +962,22 @@ function ensureSharedFilterInputs(schemaComposer: SchemaComposer) {
       },
     });
   }
+  if (!schemaComposer.has('BigIntFilter')) {
+    schemaComposer.createInputTC({
+      name: 'BigIntFilter',
+      fields: {
+        eq: 'BigInt',
+        ne: 'BigInt',
+        in: '[BigInt!]',
+        nin: '[BigInt!]',
+        lt: 'BigInt',
+        lte: 'BigInt',
+        gt: 'BigInt',
+        gte: 'BigInt',
+        isNull: 'Boolean',
+      },
+    });
+  }
   if (!schemaComposer.has('BooleanFilter')) {
     schemaComposer.createInputTC({
       name: 'BooleanFilter',
@@ -994,11 +1023,13 @@ function createFilterAndOrder(
     const fieldName = colFieldName(naming, col, solePk, table);
     const gql = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
     const filterType =
-      gql === GraphQLInt || gql.name === 'Int' || gql.name === 'BigInt'
+      gql === GraphQLInt || gql.name === 'Int'
         ? 'IntFilter'
-        : gql === GraphQLBoolean
-          ? 'BooleanFilter'
-          : 'StringFilter';
+        : gql.name === 'BigInt'
+          ? 'BigIntFilter'
+          : gql === GraphQLBoolean
+            ? 'BooleanFilter'
+            : 'StringFilter';
     filterFields[fieldName] = filterType;
     orderValues[naming.orderValue(fieldName, 'ASC')] = {
       value: naming.orderValue(fieldName, 'ASC'),
@@ -1052,7 +1083,9 @@ function mutationWritableColumns(
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
     const fieldName = colFieldName(naming, col, solePk, table);
     const gqlType = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
-    // Create: skip generated sole PK (DB assigns it). Non-generated PK stays writable.
+    // Generated columns are DB-assigned — omit from create/update inputs.
+    if (col.generated) continue;
+    // Create: skip auto-increment sole PK (DB assigns it). Non-generated PK stays writable.
     if (!(isSolePkCol && col.autoIncrement)) {
       createFields[fieldName] = {
         type:
@@ -1191,7 +1224,13 @@ function selectionLines(
     const fieldName = colFieldName(naming, col, solePk, table);
     return `${fieldName}: ${col.name}`;
   });
-  const fnLines = computed.map(cc => `${cc.fieldName}: $fn.${cc.functionName}`);
+  const columnFieldNames = new Set(
+    table.columns.map(col => colFieldName(naming, col, solePk, table)),
+  );
+  // Skip computed fields whose GraphQL name collides with a physical column.
+  const fnLines = computed
+    .filter(cc => !columnFieldNames.has(cc.fieldName))
+    .map(cc => `${cc.fieldName}: $fn.${cc.functionName}`);
   return [...colLines, ...fnLines].join('\n');
 }
 
@@ -1206,6 +1245,7 @@ function selectionBlock(
 function insertSetBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlColumnMeta): string {
   const lines: string[] = [];
   for (const col of table.columns) {
+    if (col.generated) continue;
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
     if (isSolePkCol && col.autoIncrement) continue;
     const fieldName = colFieldName(naming, col, solePk, table);
@@ -1217,6 +1257,7 @@ function insertSetBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlColu
 function updateSetBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlColumnMeta): string {
   const lines: string[] = [];
   for (const col of table.columns) {
+    if (col.generated) continue;
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
     if (isSolePkCol) continue;
     const fieldName = naming.fieldName(col.name);
