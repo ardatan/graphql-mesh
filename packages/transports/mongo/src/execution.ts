@@ -74,8 +74,7 @@ function readMongoDirective(
 ): MongoDirectiveArgs | undefined {
   for (const { name, kind } of MONGO_OP_DIRECTIVES) {
     const dirs = getDirective(subgraph, fieldConfig, name) as
-      | Omit<MongoDirectiveArgs, 'kind'>[]
-      | undefined;
+      Omit<MongoDirectiveArgs, 'kind'>[] | undefined;
     if (dirs?.length) {
       return { ...dirs[0], kind };
     }
@@ -91,8 +90,7 @@ export function getMongoExecutor({ subgraph, client }: GetMongoExecutorOpts): Di
     throw new Error('No @transport directive found on schema definition');
   }
   const transport = transportDirectives?.[0] as
-    | { location?: string; options?: MongoTransportOptions }
-    | undefined;
+    { location?: string; options?: MongoTransportOptions } | undefined;
   const mongoClient =
     client ||
     createMongoClient({

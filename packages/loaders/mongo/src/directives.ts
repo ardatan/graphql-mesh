@@ -1,9 +1,4 @@
-import {
-  DirectiveLocation,
-  GraphQLDirective,
-  GraphQLNonNull,
-  GraphQLString,
-} from 'graphql';
+import { DirectiveLocation, GraphQLDirective, GraphQLNonNull, GraphQLString } from 'graphql';
 
 const subgraphArg = { type: GraphQLString };
 const collectionArg = { type: new GraphQLNonNull(GraphQLString) };
