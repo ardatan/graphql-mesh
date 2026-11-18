@@ -481,7 +481,6 @@ input CreateDepartmentInput @join__type(graph: EMPLOYEES) {
 }
 
 input UpdateDepartmentInput @join__type(graph: EMPLOYEES) {
-  id: ID
   deptName: String
 }
 
@@ -509,7 +508,6 @@ input CreateEmployeeInput @join__type(graph: EMPLOYEES) {
 }
 
 input UpdateEmployeeInput @join__type(graph: EMPLOYEES) {
-  id: ID
   birthDate: Date
   firstName: String
   lastName: String

@@ -1,10 +1,14 @@
 import {
   getNamedType,
+  GraphQLObjectType,
   isInputObjectType,
   isInterfaceType,
   isObjectType,
+  type GraphQLFieldConfig,
   type GraphQLNamedType,
+  type GraphQLSchema,
 } from 'graphql';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 
 export class TransformValidationError extends Error {
   constructor(message: string) {
@@ -1475,10 +1479,7 @@ export function rewriteConnectArgReferences(
   ) {
     return fieldDirectives;
   }
-  const rewriteExpr = (value: unknown): unknown => {
-    if (typeof value !== 'string') {
-      return value;
-    }
+  const rewriteBindersAndTypenames = (value: string): string => {
     let out = value;
     // Single-pass, whole-name matches so `id` does not rewrite `$args.identifier`
     // and `a→b` + `b→c` does not chain into `$args.c`. Skip quoted spans so
@@ -1490,15 +1491,9 @@ export function rewriteConnectArgReferences(
         segment.replace(re, (_m, name: string) => `$args.${argRenameMap.get(name) ?? name}`),
       );
     }
-    // `fieldRenameMap` rewrites nested response-field picks in a selection
-    // (`name` → `fullName`). Do not pass the connector field's own rename here —
-    // that would rewrite response keys incorrectly (e.g. Query.user → person).
     if (fieldRenameMap?.size) {
       for (const [from, to] of fieldRenameMap) {
         if (from === to) continue;
-        out = out
-          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
-          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`);
         // Parent binders only — leave `$this.…` text inside SQL string literals alone.
         out = rewriteOutsideQuotes(out, segment =>
           segment.replace(
@@ -1529,6 +1524,58 @@ export function rewriteConnectArgReferences(
       }
     }
     return out;
+  };
+  /** Connect / thrift: rename response picks on both sides of `name: name`. */
+  const rewriteExpr = (value: unknown): unknown => {
+    if (typeof value !== 'string') {
+      return value;
+    }
+    let out = value;
+    if (fieldRenameMap?.size) {
+      for (const [from, to] of fieldRenameMap) {
+        if (from === to) continue;
+        out = out
+          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
+          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`);
+      }
+    }
+    return rewriteBindersAndTypenames(out);
+  };
+  /**
+   * SQL `@sql(selection:)`: rename GraphQL keys / nested relation keys, but keep
+   * physical column references on the RHS (`first_name: first_name` → `firstName: first_name`).
+   * Bare picks become `newKey: oldKey`.
+   */
+  const rewriteSqlSelection = (value: unknown): unknown => {
+    if (typeof value !== 'string') {
+      return value;
+    }
+    let out = value;
+    if (fieldRenameMap?.size) {
+      for (const [from, to] of fieldRenameMap) {
+        if (from === to) continue;
+        out = out.replace(
+          new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'),
+          `$1${to}$2`,
+        );
+        // Bare identity picks only (line is just the key) → keep the SQL column name.
+        out = out.replace(
+          new RegExp(`(^|[\\n])([\\t ]*)${escapeRegExp(from)}(?=[\\t ]*(?:#.*)?$)`, 'gm'),
+          `$1$2${to}: ${from}`,
+        );
+      }
+    }
+    return rewriteBindersAndTypenames(out);
+  };
+  /**
+   * SQL `@sql(where/set:)`: left-hand keys are physical columns — do not apply
+   * GraphQL field renames to them. Only rewrite `$args` / `$this` binders.
+   */
+  const rewriteSqlWhereOrSet = (value: unknown): unknown => {
+    if (typeof value !== 'string') {
+      return value;
+    }
+    return rewriteBindersAndTypenames(value);
   };
   /** HTTP path templates: rewrite `$args` even when the literal path has `'` / `"` (e.g. `/O'Reilly/{$args.id}`). Quote-skipping is only for expression strings (`->get("$args.x")`). */
   const rewriteHttpPath = (value: string): string => {
@@ -1611,21 +1658,31 @@ export function rewriteConnectArgReferences(
   }
   for (const name of sqlDirectiveNames) {
     if (!fieldDirectives?.[name]?.length) continue;
-    // `@sql(where/set/selection:)` embed `$args.<name>` / `$this.<field>` the same way.
+    // `@sql(selection:)` renames GraphQL keys only; `where`/`set` left keys are physical
+    // columns. Binders (`$args` / `$this`) rewrite on every mapping string.
     nextDirectives = {
       ...nextDirectives,
       [name]: fieldDirectives[name].map((sqlArgs: any) => ({
         ...sqlArgs,
-        where: typeof sqlArgs?.where === 'string' ? rewriteExpr(sqlArgs.where) : sqlArgs?.where,
-        set: typeof sqlArgs?.set === 'string' ? rewriteExpr(sqlArgs.set) : sqlArgs?.set,
+        where:
+          typeof sqlArgs?.where === 'string' ? rewriteSqlWhereOrSet(sqlArgs.where) : sqlArgs?.where,
+        set: typeof sqlArgs?.set === 'string' ? rewriteSqlWhereOrSet(sqlArgs.set) : sqlArgs?.set,
         selection:
           typeof sqlArgs?.selection === 'string'
-            ? rewriteExpr(sqlArgs.selection)
+            ? rewriteSqlSelection(sqlArgs.selection)
             : sqlArgs?.selection,
         orderBy:
-          typeof sqlArgs?.orderBy === 'string' ? rewriteExpr(sqlArgs.orderBy) : sqlArgs?.orderBy,
-        limit: typeof sqlArgs?.limit === 'string' ? rewriteExpr(sqlArgs.limit) : sqlArgs?.limit,
-        offset: typeof sqlArgs?.offset === 'string' ? rewriteExpr(sqlArgs.offset) : sqlArgs?.offset,
+          typeof sqlArgs?.orderBy === 'string'
+            ? rewriteBindersAndTypenames(sqlArgs.orderBy)
+            : sqlArgs?.orderBy,
+        limit:
+          typeof sqlArgs?.limit === 'string'
+            ? rewriteBindersAndTypenames(sqlArgs.limit)
+            : sqlArgs?.limit,
+        offset:
+          typeof sqlArgs?.offset === 'string'
+            ? rewriteBindersAndTypenames(sqlArgs.offset)
+            : sqlArgs?.offset,
       })),
     };
   }
@@ -1671,4 +1728,60 @@ export function rewriteConnectArgReferences(
     }
   }
   return nextDirectives;
+}
+
+/**
+ * Rewrite Connect / thrift / SQL directive mappings on a field using a flat
+ * GraphQL field rename map (Connect-style). No-op when nothing changes.
+ */
+export function applyFlatDirectiveFieldRenames(
+  field: GraphQLFieldConfig<any, any>,
+  flatFieldRenameMap: Map<string, string>,
+  schema: GraphQLSchema,
+): GraphQLFieldConfig<any, any> {
+  if (!flatFieldRenameMap.size) return field;
+  const fieldDirectives = getDirectiveExtensions(field, schema);
+  const rewritten = rewriteConnectArgReferences(
+    fieldDirectives,
+    new Map(),
+    flatFieldRenameMap,
+    undefined,
+    false,
+  );
+  if (!rewritten || rewritten === fieldDirectives) return field;
+  return {
+    ...field,
+    extensions: { ...(field.extensions || {}), directives: rewritten },
+    astNode: undefined,
+  };
+}
+
+/**
+ * Type-level `@sql` entity mappings: rename selection keys / `$this` binders for
+ * this type's fields. Required because SQL subgraphs skip Mesh `@source`.
+ */
+export function applySqlTypeFieldRenames(
+  type: GraphQLObjectType,
+  typeFieldRenameMap: Map<string, string> | undefined,
+  schema: GraphQLSchema,
+): GraphQLObjectType {
+  if (!typeFieldRenameMap?.size) return type;
+  const typeDirectives = getDirectiveExtensions(type, schema);
+  if (!typeDirectives?.sql?.length) return type;
+  const rewritten = rewriteConnectArgReferences(
+    typeDirectives,
+    new Map(),
+    typeFieldRenameMap,
+    undefined,
+    false,
+  );
+  if (!rewritten || rewritten === typeDirectives) return type;
+  return new GraphQLObjectType({
+    ...type.toConfig(),
+    extensions: {
+      ...(type.extensions || {}),
+      directives: rewritten,
+    },
+    astNode: undefined,
+  });
 }

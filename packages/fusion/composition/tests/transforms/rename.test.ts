@@ -1080,3 +1080,72 @@ describe('rewriteConnectArgReferences @thrift__rpc', () => {
     expect(rewritten!.connect[0].http.GET).toBe("/authors/O'Reilly/{$args.input}");
   });
 });
+
+describe('rewriteConnectArgReferences @sql', () => {
+  it('renames selection keys without rewriting physical column names', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [
+          {
+            table: 'users',
+            selection: 'first_name: first_name\nlast_name: last_name\nfirst_name',
+            where: 'first_name: $this.first_name',
+            set: 'first_name: $args.input.first_name',
+          },
+        ],
+      },
+      new Map(),
+      new Map([
+        ['first_name', 'firstName'],
+        ['last_name', 'lastName'],
+      ]),
+    );
+    const sql = rewritten!.sql[0];
+    expect(sql.selection).toContain('firstName: first_name');
+    expect(sql.selection).toContain('lastName: last_name');
+    // Bare pick becomes newKey: oldKey (column preserved)
+    expect(sql.selection).toMatch(/(^|\n)firstName: first_name(\n|$)/);
+    expect(sql.selection).not.toContain('firstName: firstName');
+    // where/set left keys stay physical; $this binders rename
+    expect(sql.where).toBe('first_name: $this.firstName');
+    expect(sql.set).toBe('first_name: $args.input.first_name');
+  });
+
+  it('rewrites type-level @sql selection keys via applySqlTypeFieldRenames', async () => {
+    const { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLNonNull } =
+      await import('graphql');
+    const { applySqlTypeFieldRenames } = await import('../../src/transforms/utils.js');
+    const User = new GraphQLObjectType({
+      name: 'User',
+      fields: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        displayName: { type: GraphQLString },
+      },
+      extensions: {
+        directives: {
+          sql: [
+            {
+              table: 'users',
+              kind: 'ROW',
+              selection: 'name: name\nid: id',
+              where: 'id: $this.id',
+            },
+          ],
+        },
+      },
+    });
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: { user: { type: User } },
+      }),
+      types: [User],
+    });
+    const next = applySqlTypeFieldRenames(User, new Map([['name', 'displayName']]), schema);
+    const sql = (next.extensions as any).directives.sql[0];
+    expect(sql.selection).toContain('displayName: name');
+    expect(sql.selection).toContain('id: id');
+    expect(sql.selection).not.toContain('displayName: displayName');
+  });
+});

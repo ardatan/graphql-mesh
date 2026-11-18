@@ -847,7 +847,6 @@ input CreateDepartmentInput {
 }
 
 input UpdateDepartmentInput {
-  id: ID
   deptName: String
 }
 
@@ -892,7 +891,6 @@ input CreateEmployeeInput {
 }
 
 input UpdateEmployeeInput {
-  id: ID
   birthDate: Date
   firstName: String
   lastName: String
