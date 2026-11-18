@@ -306,9 +306,14 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       const refSolePkCol = refSolePk.length === 1 ? refSolePk[0] : undefined;
       const refField = colFieldNameBySql(naming, refCol, refSolePkCol, refTable);
 
-      // belongsTo on local table
-      const belongsToName = naming.singularField(refTypeName);
-      if (!otc.hasField(belongsToName)) {
+      // belongsTo on local table (second FK to same ref → name from local column)
+      const belongsToName = uniqueRelationFieldName(
+        naming.singularField(refTypeName),
+        localCol,
+        naming,
+        name => otc.hasField(name),
+      );
+      if (belongsToName) {
         otc.setField(belongsToName, {
           type: refTypeName,
           directives: [
@@ -332,8 +337,14 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
 
       // hasMany on referenced table
       const refOtc = schemaComposer.getOTC(refTypeName);
-      const hasManyName = naming.pluralField(typeName);
-      if (!refOtc.hasField(hasManyName)) {
+      const hasManyName = uniqueRelationFieldName(
+        naming.pluralField(typeName),
+        localCol,
+        naming,
+        name => refOtc.hasField(name),
+        { pluralizeStem: true },
+      );
+      if (hasManyName) {
         refOtc.setField(hasManyName, {
           type: `[${typeName}!]!`,
           args: {
@@ -363,7 +374,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
 
       // Nested belongs-to filter: AlbumFilter.artist → ArtistFilter
       const localFilter = schemaComposer.getITC(naming.filterInput(typeName));
-      if (!localFilter.hasField(belongsToName)) {
+      if (belongsToName && !localFilter.hasField(belongsToName)) {
         localFilter.setField(belongsToName, {
           type: naming.filterInput(refTypeName),
         });
@@ -767,6 +778,23 @@ function resolveLocation(opts: LoadSqlSubgraphOpts): string | undefined {
   return raw;
 }
 
+/** Prefer `preferred`; on collision, derive an alternate from the FK column stem. */
+function uniqueRelationFieldName(
+  preferred: string,
+  localCol: string,
+  naming: SqlNaming,
+  taken: (name: string) => boolean,
+  opts?: { pluralizeStem?: boolean },
+): string | null {
+  if (!taken(preferred)) return preferred;
+  const stem = localCol.replace(/_id$/i, '').replace(/Id$/, '') || localCol;
+  const alt = opts?.pluralizeStem
+    ? naming.pluralField(naming.typeName(stem))
+    : naming.fieldName(stem);
+  if (alt && alt !== preferred && !taken(alt)) return alt;
+  return null;
+}
+
 function applyTableFieldsFilter(
   meta: SqlSchemaMeta,
   tableFields?: Array<{ table: string; fields: string[] }>,
@@ -778,9 +806,18 @@ function applyTableFieldsFilter(
     tables: meta.tables.map(table => {
       const fields = allow.get(table.name);
       if (!fields) return table;
+      const fkCols = new Set(table.foreignKeys.flatMap(fk => fk.columns));
       return {
         ...table,
-        columns: table.columns.filter(c => fields.has(c.name) || c.primaryKey),
+        // Always keep PK, FK (for `$this` binders), and NOT NULL insert-required
+        // columns so tableFields cannot silently break relations or creates.
+        columns: table.columns.filter(
+          c =>
+            fields.has(c.name) ||
+            c.primaryKey ||
+            fkCols.has(c.name) ||
+            (c.notNull && !c.autoIncrement && !c.hasDefault && !c.generated),
+        ),
       };
     }),
   };

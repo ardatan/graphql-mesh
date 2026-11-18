@@ -1,5 +1,9 @@
 import pg from 'pg';
-import { parseSqlUri, resolveSslOption } from '@graphql-mesh/transport-sql';
+import {
+  parseSqlUri,
+  pgPoolConfigFromLocation,
+  resolveSslOption,
+} from '@graphql-mesh/transport-sql';
 import { createDefaultNaming } from '../naming.js';
 import type {
   SqlColumnMeta,
@@ -86,10 +90,8 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
       throw new Error('Postgres introspection requires a postgres(ql)://… URI');
     }
     const ssl = resolveSslOption(opts.tls, parsed, opts.ssl);
-    pool = new pg.Pool({
-      connectionString: opts.connectionString,
-      ssl,
-    });
+    // Discrete fields — URI sslmode must not override explicit ssl.ca.
+    pool = new pg.Pool(pgPoolConfigFromLocation(opts.connectionString, { ssl }));
   }
   try {
     const tableRes = await pool.query<{ name: string }>(
@@ -166,6 +168,8 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
         };
       });
 
+      // pg_catalog (not information_schema.constraint_column_usage) so non-owner
+      // roles still see FK targets they can otherwise reference.
       const fkRes = await pool.query<{
         constraint_name: string;
         column_name: string;
@@ -174,23 +178,27 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
         ordinal_position: number;
       }>(
         `SELECT
-           tc.constraint_name,
-           kcu.column_name,
-           ccu.table_name AS foreign_table_name,
-           ccu.column_name AS foreign_column_name,
-           kcu.ordinal_position
-         FROM information_schema.table_constraints AS tc
-         JOIN information_schema.key_column_usage AS kcu
-           ON tc.constraint_name = kcu.constraint_name
-          AND tc.table_schema = kcu.table_schema
-          AND tc.table_name = kcu.table_name
-         JOIN information_schema.constraint_column_usage AS ccu
-           ON ccu.constraint_name = tc.constraint_name
-          AND ccu.table_schema = tc.table_schema
-         WHERE tc.constraint_type = 'FOREIGN KEY'
-           AND tc.table_schema = $1
-           AND tc.table_name = $2
-         ORDER BY tc.constraint_name, kcu.ordinal_position`,
+           con.conname AS constraint_name,
+           att.attname AS column_name,
+           rel_f.relname AS foreign_table_name,
+           att_f.attname AS foreign_column_name,
+           cols.ordinality::int AS ordinal_position
+         FROM pg_catalog.pg_constraint con
+         JOIN pg_catalog.pg_class rel ON rel.oid = con.conrelid
+         JOIN pg_catalog.pg_namespace nsp ON nsp.oid = rel.relnamespace
+         JOIN LATERAL unnest(con.conkey) WITH ORDINALITY AS cols(attnum, ordinality)
+           ON true
+         JOIN pg_catalog.pg_attribute att
+           ON att.attrelid = con.conrelid AND att.attnum = cols.attnum
+         JOIN pg_catalog.pg_class rel_f ON rel_f.oid = con.confrelid
+         JOIN LATERAL unnest(con.confkey) WITH ORDINALITY AS fcols(attnum, ordinality)
+           ON fcols.ordinality = cols.ordinality
+         JOIN pg_catalog.pg_attribute att_f
+           ON att_f.attrelid = con.confrelid AND att_f.attnum = fcols.attnum
+         WHERE con.contype = 'f'
+           AND nsp.nspname = $1
+           AND rel.relname = $2
+         ORDER BY con.conname, cols.ordinality`,
         [schemaName, name],
       );
 

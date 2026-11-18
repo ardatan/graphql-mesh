@@ -161,7 +161,10 @@ albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [
   (`limit: $args.id` binds as a column)
 - Postgres: sequence defaults via real `nextval(` (not inside quoted literals); computed functions
   match argument relation **schema + name**; PK/FK introspect joins scoped to the source table;
-  `is_generated` columns marked generated
+  `is_generated` columns marked generated; FK introspect via `pg_catalog` (non-owner safe);
+  pool config uses discrete URI fields so `sslmode` cannot override `ssl.ca`
+- `tableFields`: always keeps PK, FK, and NOT NULL insert-required columns; second FK to the
+  same ref gets a column-stem relation field name instead of being skipped
 - Legacy mysql `ssl.ca` path -> PEM; MySQL FKs limited to the loaded schema; tuql: blank-path
   reject, explicit `adapter: 'sqlite'`, dump-bytes cache key under a trusted cache dir,
   create-if-absent publish (no live-DB overwrite)

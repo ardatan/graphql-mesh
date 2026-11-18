@@ -2,7 +2,7 @@ import { createPool, type Pool } from 'mysql2/promise';
 // eslint-disable-next-line import/no-nodejs-modules -- node:sqlite DatabaseSync client
 import { DatabaseSync } from 'node:sqlite';
 import pg from 'pg';
-import type { Pool as PgPool } from 'pg';
+import type { Pool as PgPool, PoolConfig as PgPoolConfig } from 'pg';
 import { resolveSqlitePath } from './adapter.js';
 import type { SqlAdapter, SqlClient, SqlTransportOptions } from './types.js';
 import { parseSqlUri } from './uri.js';
@@ -562,20 +562,55 @@ function createPostgresClient(opts: CreateSqlClientOptions): SqlClient {
     throw new Error(`Expected postgres URI, got ${parsed.adapter}`);
   }
   const ssl = resolveSslOption(opts.tls, parsed, opts.ssl);
-  const pool = new pg.Pool({
-    connectionString: opts.location,
-    max: opts.max ?? 10,
-    idleTimeoutMillis: opts.idleTimeout != null ? opts.idleTimeout * 1000 : undefined,
-    connectionTimeoutMillis:
-      opts.connectionTimeout != null ? opts.connectionTimeout * 1000 : undefined,
-    ssl,
-  });
+  // Discrete fields so URI `sslmode` cannot replace an explicit `ssl.ca` object.
+  const pool = new pg.Pool(
+    pgPoolConfigFromLocation(opts.location, {
+      ssl,
+      max: opts.max ?? 10,
+      idleTimeoutMillis: opts.idleTimeout != null ? opts.idleTimeout * 1000 : undefined,
+      connectionTimeoutMillis:
+        opts.connectionTimeout != null ? opts.connectionTimeout * 1000 : undefined,
+    }),
+  );
   // Idle-client failures emit `error` on the pool; without a listener Node aborts.
   pool.on('error', () => {
     // pg discards the broken client; the next query opens a fresh connection.
   });
   applyPgPoolSearchPath(pool, opts.schema);
   return wrapPgPoolAsSqlClient(pool);
+}
+
+/**
+ * Build a `pg.Pool` config from a postgres URI using discrete connection fields.
+ * Prefer this over `{ connectionString, ssl }` so URI `sslmode` / `ssl` query
+ * params cannot override an explicit `ssl` object (e.g. private CA).
+ */
+export function pgPoolConfigFromLocation(
+  location: string,
+  extras?: {
+    ssl?: { rejectUnauthorized: boolean; ca?: string } | undefined;
+    max?: number;
+    idleTimeoutMillis?: number;
+    connectionTimeoutMillis?: number;
+  },
+): PgPoolConfig {
+  const parsed = parseSqlUri(location);
+  if (parsed.adapter !== 'postgres') {
+    throw new Error(`Expected postgres URI, got ${parsed.adapter}`);
+  }
+  return {
+    host: parsed.host || 'localhost',
+    port: parsed.port ?? 5432,
+    user: parsed.user,
+    password: parsed.password,
+    database: parsed.database,
+    ssl: extras?.ssl,
+    ...(extras?.max != null ? { max: extras.max } : {}),
+    ...(extras?.idleTimeoutMillis != null ? { idleTimeoutMillis: extras.idleTimeoutMillis } : {}),
+    ...(extras?.connectionTimeoutMillis != null
+      ? { connectionTimeoutMillis: extras.connectionTimeoutMillis }
+      : {}),
+  };
 }
 
 /**

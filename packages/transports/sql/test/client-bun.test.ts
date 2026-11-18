@@ -1,6 +1,7 @@
 import {
   buildBunSqlCtorOptions,
   isBunSqlAvailable,
+  pgPoolConfigFromLocation,
   resolveBunTlsOption,
   resolveSslOption,
 } from '../src/client.js';
@@ -68,6 +69,23 @@ describe('Bun.SQL availability (Node / Jest)', () => {
       rejectUnauthorized: true,
       ca: 'PEM',
     });
+  });
+
+  it('pgPoolConfigFromLocation uses discrete fields so URI sslmode cannot override ssl.ca', () => {
+    const ssl = { rejectUnauthorized: true, ca: 'PEM' };
+    const cfg = pgPoolConfigFromLocation(
+      'postgres://app:s3cret@db.internal:6543/shop?sslmode=require',
+      { ssl },
+    );
+    expect(cfg).toMatchObject({
+      host: 'db.internal',
+      port: 6543,
+      user: 'app',
+      password: 's3cret',
+      database: 'shop',
+      ssl,
+    });
+    expect(cfg).not.toHaveProperty('connectionString');
   });
 });
 
