@@ -5,7 +5,7 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadSqlSubgraph('Rfam', {
-        type: 'mysql',
+        adapter: 'mysql',
         endpoint: 'mysql://rfamro@mysql-rfam-public.ebi.ac.uk:4497/Rfam',
       }),
     },

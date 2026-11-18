@@ -72,5 +72,5 @@
     "types": ["node", "jest"]
   },
   "include": ["declarations.d.ts", "packages", "e2e"],
-  "exclude": ["**/node_modules", "**/dist", "**/bundle"]
+  "exclude": ["**/node_modules", "**/dist", "**/bundle", "**/*.bun.test.ts"]
 }

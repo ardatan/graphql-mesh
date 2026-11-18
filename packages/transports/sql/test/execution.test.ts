@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { parse } from 'graphql';
+import { parse, type ExecutionResult } from 'graphql';
 import { loadGraphQLSchemaFromSql } from '@omnigraph/sql';
 import { getSqlExecutor } from '../src/execution.js';
 import type { SqlClient } from '../src/types.js';
@@ -14,7 +14,7 @@ describe('getSqlExecutor sqlite', () => {
     });
     const executor = await getSqlExecutor({ subgraph: schema });
     try {
-      const result = await executor({
+      const result = (await executor({
         document: parse(/* GraphQL */ `
           query {
             albums(limit: 2) {
@@ -26,7 +26,7 @@ describe('getSqlExecutor sqlite', () => {
             }
           }
         `),
-      });
+      })) as ExecutionResult;
       expect(result.errors).toBeUndefined();
       expect(result.data).toEqual({
         albums: [
@@ -54,7 +54,7 @@ describe('getSqlExecutor sqlite', () => {
     });
     const executor = await getSqlExecutor({ subgraph: schema });
     try {
-      const result = await executor({
+      const result = (await executor({
         document: parse(/* GraphQL */ `
           query ($representations: [_Any!]!) {
             _entities(representations: $representations) {
@@ -75,7 +75,7 @@ describe('getSqlExecutor sqlite', () => {
             { __typename: 'Artist', id: '1' },
           ],
         },
-      });
+      })) as ExecutionResult;
       expect(result.errors).toBeUndefined();
       expect(result.data).toEqual({
         _entities: [
@@ -111,7 +111,7 @@ describe('getSqlExecutor sqlite', () => {
 
     const executor = await getSqlExecutor({ subgraph: schema, client: spyClient });
     try {
-      const result = await executor({
+      const result = (await executor({
         document: parse(/* GraphQL */ `
           query {
             albums(limit: 2) {
@@ -123,7 +123,7 @@ describe('getSqlExecutor sqlite', () => {
           }
         `),
         context: {},
-      });
+      })) as ExecutionResult;
       expect(result.errors).toBeUndefined();
       expect(result.data).toEqual({
         albums: [
@@ -169,7 +169,7 @@ describe('getSqlExecutor sqlite', () => {
 
     const executor = await getSqlExecutor({ subgraph: schema, client: spyClient });
     try {
-      const result = await executor({
+      const result = (await executor({
         document: parse(/* GraphQL */ `
           query {
             artists(limit: 2) {
@@ -181,7 +181,7 @@ describe('getSqlExecutor sqlite', () => {
           }
         `),
         context: {},
-      });
+      })) as ExecutionResult;
       expect(result.errors).toBeUndefined();
       expect(queries.length).toBe(1);
       expect(queries[0]).toMatch(/json_group_array/i);
@@ -228,7 +228,7 @@ describe('getSqlExecutor sqlite', () => {
 
     const executor = await getSqlExecutor({ subgraph: schema, client: spyClient });
     try {
-      const result = await executor({
+      const result = (await executor({
         document: parse(/* GraphQL */ `
           query {
             tracks(limit: 2) {
@@ -246,7 +246,7 @@ describe('getSqlExecutor sqlite', () => {
           }
         `),
         context: {},
-      });
+      })) as ExecutionResult;
       expect(result.errors).toBeUndefined();
       expect(queries.length).toBe(1);
       expect(queries[0]).toMatch(/LEFT JOIN/i);

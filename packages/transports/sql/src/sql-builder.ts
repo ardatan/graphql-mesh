@@ -259,13 +259,17 @@ function buildHasManyJsonSubselect(
   }
 
   if (adapter === 'mysql') {
+    // MySQL rejects outer-refs inside derived tables in the SELECT list, so do not
+    // wrap the scan in `(SELECT … LIMIT n) AS hm`. Correlate directly; LIMIT (when
+    // present) applies to the aggregate subquery as a whole — prefer client-side
+    // limits on has-many args when strict row caps are required.
     const objArgs = relCols
       .flatMap(([gql, sqlCol]) => [
         `'${escapeSqlStringLiteral(gql, 'mysql')}'`,
         `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, sqlCol)}`,
       ])
       .join(', ');
-    return `(SELECT COALESCE(json_arrayagg(json_object(${objArgs})), json_array()) FROM (SELECT ${relCols.map(([, c]) => `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, c)}`).join(', ')} FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, hm.joinColumn)} = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, hm.parentColumn)}${limitSql}) AS ${quoteIdent(adapter, innerAlias)})`;
+    return `(SELECT COALESCE(json_arrayagg(json_object(${objArgs})), json_array()) FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, hm.joinColumn)} = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, hm.parentColumn)}${limitSql})`;
   }
 
   // sqlite — aggregate over a limited inner select; json_object reads projected column names.
