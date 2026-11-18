@@ -95,7 +95,22 @@ const FILTER_OP_KEYS = new Set([
   'lte',
   'regex',
   'exists',
+  // Optional underscore aliases (`_gte`) — GraphQL-legal Mongo-ish names
+  '_eq',
+  '_ne',
+  '_in',
+  '_nin',
+  '_gt',
+  '_gte',
+  '_lt',
+  '_lte',
+  '_regex',
+  '_exists',
 ]);
+
+function normalizeOpKey(op: string): string {
+  return op.startsWith('_') ? op.slice(1) : op;
+}
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return (
@@ -176,8 +191,9 @@ function applyOperatorBag(
 ): void {
   const mongoOps: Record<string, unknown> = {};
   let wroteEq = false;
-  for (const [op, opVal] of Object.entries(ops)) {
+  for (const [rawOp, opVal] of Object.entries(ops)) {
     if (opVal === undefined) continue;
+    const op = normalizeOpKey(rawOp);
     switch (op) {
       case 'eq':
         out[fullKey] = coerceFilterValue(opVal);

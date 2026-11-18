@@ -36,11 +36,13 @@ export const MongoDirective = new GraphQLDirective({
     collection: { type: new GraphQLNonNull(GraphQLString) },
     kind: { type: new GraphQLNonNull(MongoKindEnum) },
     /**
-     * MongoDB filter document binder (`$args.filter`, `_id: $args.id`, …).
-     * Client `filter` values are Mongo filter docs (`{ age: { $gte: 30 } }`).
+     * MongoDB query binder (`$args.query`, `_id: $args.id`, …) — findOne's
+     * first argument. Maps to a typed `*QueryInput` or a native filter doc.
      */
+    query: { type: GraphQLString },
+    /** @deprecated use `query` */
     filter: { type: GraphQLString },
-    /** MongoDB sort document binder (`$args.sort` → `{ age: -1 }`). */
+    /** MongoDB sort binder (`$args.sort`). */
     sort: { type: GraphQLString },
     /** Limit binder (`$args.limit`). */
     limit: { type: GraphQLString },

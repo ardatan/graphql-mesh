@@ -34,11 +34,13 @@ export interface GetMongoExecutorOpts {
 interface MongoDirectiveArgs {
   collection: string;
   kind: MongoKind;
+  query?: string;
+  /** @deprecated prefer `query` */
   filter?: string;
-  /** @deprecated legacy binder name; prefer `filter` */
+  /** @deprecated prefer `query` */
   where?: string;
   sort?: string;
-  /** @deprecated legacy binder name; prefer `sort` */
+  /** @deprecated prefer `sort` */
   orderBy?: string;
   limit?: string;
   skip?: string;
@@ -96,7 +98,7 @@ function attachMongoResolver(
     info: GraphQLResolveInfo,
   ) {
     const ctx = { args: graphqlArgs, parent };
-    const filter = buildMongoFilter(directive.filter ?? directive.where, ctx);
+    const filter = buildMongoFilter(directive.query ?? directive.filter ?? directive.where, ctx);
     const sort = buildMongoSort(directive.sort ?? directive.orderBy, ctx);
     const proj = Object.keys(projection).length ? projection : undefined;
     const typedError = wantsTypedError(info);
@@ -436,7 +438,12 @@ function mappingChildrenToObject(
 }
 
 function rewritePipelineStage(stage: unknown, filter: Record<string, unknown>): unknown {
-  if (stage === '$args.where' || stage === '$where' || stage === '$args.filter') {
+  if (
+    stage === '$args.query' ||
+    stage === '$args.filter' ||
+    stage === '$args.where' ||
+    stage === '$where'
+  ) {
     return filter;
   }
   if (Array.isArray(stage)) {
@@ -445,7 +452,10 @@ function rewritePipelineStage(stage: unknown, filter: Record<string, unknown>): 
   if (stage && typeof stage === 'object') {
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(stage as Record<string, unknown>)) {
-      if (k === '$match' && (v === '$args.where' || v === '$where' || v === '$args.filter')) {
+      if (
+        k === '$match' &&
+        (v === '$args.query' || v === '$args.filter' || v === '$args.where' || v === '$where')
+      ) {
         out.$match = filter;
       } else {
         out[k] = rewritePipelineStage(v, filter);

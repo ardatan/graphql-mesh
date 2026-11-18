@@ -68,12 +68,11 @@ describe('AGGREGATE pipeline', () => {
     const executor = getMongoExecutor({ subgraph: schema, client });
     const result = await executor({
       document: parse(`
-        query Agg($filter: JSON, $pipeline: JSON) {
-          aggregateUsers(filter: $filter, pipeline: $pipeline)
+        query Agg($pipeline: JSON) {
+          aggregateUsers(query: { gender: { eq: "female" } }, pipeline: $pipeline)
         }
       `),
       variables: {
-        filter: { gender: 'female' },
         pipeline: [{ $group: { _id: '$gender', count: { $sum: 1 } } }],
       },
     });
@@ -85,18 +84,17 @@ describe('AGGREGATE pipeline', () => {
 
     await executor({
       document: parse(`
-        query Agg($filter: JSON, $pipeline: JSON) {
-          aggregateUsers(filter: $filter, pipeline: $pipeline)
+        query Agg($pipeline: JSON) {
+          aggregateUsers(query: { gender: { eq: "female" } }, pipeline: $pipeline)
         }
       `),
       variables: {
-        filter: { gender: 'female' },
-        pipeline: [{ $match: '$args.filter' }, { $group: { _id: '$gender', count: { $sum: 1 } } }],
+        pipeline: [{ $match: '$args.query' }, { $group: { _id: '$gender', count: { $sum: 1 } } }],
       },
     });
     expect(lastPipeline[0]).toEqual({
-      $match: buildMongoFilter(`$args.filter`, {
-        args: { filter: { gender: 'female' } },
+      $match: buildMongoFilter(`$args.query`, {
+        args: { query: { gender: { eq: 'female' } } },
       }),
     });
   });

@@ -1296,24 +1296,24 @@ describe('rewriteConnectArgReferences @mongo', () => {
           {
             collection: 'users',
             kind: 'FIND_MANY',
-            filter: '$args.query',
+            query: '$args.criteria',
             sort: '$args.order',
             selection: 'id: _id\nname: name',
           },
         ],
       },
       new Map([
-        ['query', 'filter'],
+        ['criteria', 'query'],
         ['order', 'sort'],
       ]),
     );
     const mongo = rewritten!.mongo[0];
-    expect(mongo.filter).toBe('$args.filter');
+    expect(mongo.query).toBe('$args.query');
     expect(mongo.sort).toBe('$args.sort');
     expect(mongo.selection).toBe('id: _id\nname: name');
   });
 
-  it('does not rewrite $args.filterInput when renaming filter', async () => {
+  it('does not rewrite $args.queryInput when renaming query', async () => {
     const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
     const rewritten = rewriteConnectArgReferences(
       {
@@ -1321,16 +1321,16 @@ describe('rewriteConnectArgReferences @mongo', () => {
           {
             collection: 'users',
             kind: 'FIND_ONE',
-            filter: '_id: $args.filter\nmeta: $args.filterInput',
+            query: '_id: $args.query\nmeta: $args.queryInput',
           },
         ],
       },
-      new Map([['filter', 'query']]),
+      new Map([['query', 'criteria']]),
     );
-    const filter = rewritten!.mongo[0].filter as string;
-    expect(filter).toContain('$args.query');
-    expect(filter).toContain('$args.filterInput');
-    expect(filter).not.toMatch(/\$args\.filter\b/);
+    const query = rewritten!.mongo[0].query as string;
+    expect(query).toContain('$args.criteria');
+    expect(query).toContain('$args.queryInput');
+    expect(query).not.toMatch(/\$args\.query\b/);
   });
 
   it('rewrites $this field picks via fieldRenameMap', async () => {
@@ -1341,7 +1341,7 @@ describe('rewriteConnectArgReferences @mongo', () => {
           {
             collection: 'users',
             kind: 'FIND_ONE',
-            filter: '_id: $this.authorId',
+            query: '_id: $this.authorId',
             selection: 'id: _id',
           },
         ],
@@ -1349,6 +1349,6 @@ describe('rewriteConnectArgReferences @mongo', () => {
       new Map(),
       new Map([['authorId', 'writerId']]),
     );
-    expect(rewritten!.mongo[0].filter).toBe('_id: $this.writerId');
+    expect(rewritten!.mongo[0].query).toBe('_id: $this.writerId');
   });
 });

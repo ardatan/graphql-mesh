@@ -84,14 +84,14 @@ describe('getMongoExecutor FIND_* + writes', () => {
     });
 
     const many = await executor({
-      document: parse(`query { findUsers(filter: { name: "Alan" }) { id name } }`),
+      document: parse(`query { findUsers(query: { name: { eq: "Alan" } }) { id name } }`),
     });
     expect(many.data).toEqual({
       findUsers: [{ id: alanId, name: 'Alan' }],
     });
 
     const count = await executor({
-      document: parse(`query { countDocumentsUsers(filter: { gender: "female" }) }`),
+      document: parse(`query { countDocumentsUsers(query: { gender: { eq: "female" } }) }`),
     });
     expect(count.data).toEqual({ countDocumentsUsers: 1 });
 

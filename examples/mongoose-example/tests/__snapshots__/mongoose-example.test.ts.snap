@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Mongoose should generate correct schema 1`] = `
-"directive @mongo(after: String, collection: String!, filter: String, first: String, kind: MongoKind!, limit: String, page: String, perPage: String, pipeline: String, selection: String, set: String, skip: String, sort: String, subgraph: String) on FIELD_DEFINITION | OBJECT
+"directive @mongo(after: String, collection: String!, filter: String, first: String, kind: MongoKind!, limit: String, page: String, perPage: String, pipeline: String, query: String, selection: String, set: String, skip: String, sort: String, subgraph: String) on FIELD_DEFINITION | OBJECT
 
 directive @transport(headers: [[String]], kind: String!, location: String, options: TransportOptions, subgraph: String!) repeatable on SCHEMA
 
@@ -9,6 +9,18 @@ directive @transport(headers: [[String]], kind: String!, location: String, optio
 BSON Decimal128 (Mongoose-compatible cast). Serialized as a decimal string; accepts string, number, or \`{ "$numberDecimal": "…" }\`.
 """
 scalar Decimal128
+
+input Decimal128QueryOperators {
+  eq: Decimal128
+  exists: Boolean
+  gt: Decimal128
+  gte: Decimal128
+  in: [Decimal128!]
+  lt: Decimal128
+  lte: Decimal128
+  ne: Decimal128
+  nin: [Decimal128!]
+}
 
 enum EnumUserGender {
   female
@@ -24,6 +36,30 @@ enum EnumUserLanguagesSkill {
 
 interface ErrorInterface {
   message: String
+}
+
+input FloatQueryOperators {
+  eq: Float
+  exists: Boolean
+  gt: Float
+  gte: Float
+  in: [Float!]
+  lt: Float
+  lte: Float
+  ne: Float
+  nin: [Float!]
+}
+
+input IDQueryOperators {
+  eq: ID
+  exists: Boolean
+  gt: ID
+  gte: ID
+  in: [ID!]
+  lt: ID
+  lte: ID
+  ne: ID
+  nin: [ID!]
 }
 
 """
@@ -51,14 +87,19 @@ enum MongoKind {
   UPDATE_ONE
 }
 
+enum MongoSort {
+  ASC
+  DESC
+}
+
 type Mutation {
-  deleteManyUsers(filter: JSON!): UserPayload
-  deleteOneUser(filter: JSON!): UserPayload
+  deleteManyUsers(query: UserQueryInput!): UserPayload
+  deleteOneUser(query: UserQueryInput!): UserPayload
   deleteUserById(id: ID!): UserPayload
   insertManyUsers(documents: [UserDocumentInput!]!): UserPayload
   insertOneUser(document: UserDocumentInput!): UserPayload
-  updateManyUsers(filter: JSON!, update: JSON!): UserPayload
-  updateOneUser(filter: JSON!, update: JSON!): UserPayload
+  updateManyUsers(query: UserQueryInput!, update: JSON!): UserPayload
+  updateOneUser(query: UserQueryInput!, update: JSON!): UserPayload
   updateUserById(id: ID!, update: JSON!): UserPayload
 }
 
@@ -79,14 +120,27 @@ type PaginationInfo {
 }
 
 type Query {
-  aggregateUsers(filter: JSON, pipeline: JSON): [JSON!]!
-  countDocumentsUsers(filter: JSON): Int!
-  findOneUser(filter: JSON, skip: Int, sort: JSON): User
+  aggregateUsers(pipeline: JSON, query: UserQueryInput): [JSON!]!
+  countDocumentsUsers(query: UserQueryInput): Int!
+  findOneUser(query: UserQueryInput, skip: Int, sort: UserSortInput): User
   findUserById(id: ID!): User
-  findUsers(filter: JSON, limit: Int = 100, skip: Int, sort: JSON): [User!]!
-  findUsersByIds(ids: [ID!]!, limit: Int = 100, sort: JSON): [User!]!
-  findUsersConnection(after: String, filter: JSON, first: Int, sort: JSON): UserConnection
-  findUsersPagination(filter: JSON, page: Int, perPage: Int = 20, sort: JSON): UserPagination
+  findUsers(limit: Int = 100, query: UserQueryInput, skip: Int, sort: UserSortInput): [User!]!
+  findUsersByIds(ids: [ID!]!, limit: Int = 100, sort: UserSortInput): [User!]!
+  findUsersConnection(after: String, first: Int, query: UserQueryInput, sort: UserSortInput): UserConnection
+  findUsersPagination(page: Int, perPage: Int = 20, query: UserQueryInput, sort: UserSortInput): UserPagination
+}
+
+input StringQueryOperators {
+  eq: String
+  exists: Boolean
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  ne: String
+  nin: [String!]
+  regex: String
 }
 
 scalar TransportOptions
@@ -117,6 +171,15 @@ input UserAddressInput {
   street: String
 }
 
+input UserAddressQueryInput {
+  AND: [UserAddressQueryInput!]
+  NOT: UserAddressQueryInput
+  OR: [UserAddressQueryInput!]
+  _id: IDQueryOperators
+  geo: [Float]
+  street: StringQueryOperators
+}
+
 type UserConnection {
   edges: [UserEdge!]!
   nodes: [User!]!
@@ -131,6 +194,14 @@ type UserContacts {
 
 input UserContactsInput {
   email: String
+  phones: [String]
+}
+
+input UserContactsQueryInput {
+  AND: [UserContactsQueryInput!]
+  NOT: UserContactsQueryInput
+  OR: [UserContactsQueryInput!]
+  email: StringQueryOperators
   phones: [String]
 }
 
@@ -162,6 +233,14 @@ input UserLanguagesInput {
   skill: EnumUserLanguagesSkill
 }
 
+input UserLanguagesQueryInput {
+  AND: [UserLanguagesQueryInput!]
+  NOT: UserLanguagesQueryInput
+  OR: [UserLanguagesQueryInput!]
+  language: StringQueryOperators
+  skill: StringQueryOperators
+}
+
 type UserPagination {
   count: Int
   items: [User]
@@ -178,5 +257,30 @@ type UserPayload {
   recordId: ID
   recordIds: [ID!]
   records: [User!]
+}
+
+input UserQueryInput {
+  AND: [UserQueryInput!]
+  NOT: UserQueryInput
+  OR: [UserQueryInput!]
+  address: UserAddressQueryInput
+  age: FloatQueryOperators
+  contacts: UserContactsQueryInput
+  gender: StringQueryOperators
+  id: IDQueryOperators
+  languages: [UserLanguagesQueryInput]
+  name: StringQueryOperators
+  salaryDecimal: Decimal128QueryOperators
+
+  """Some dynamic data"""
+  someMixed: JSON
+}
+
+input UserSortInput {
+  age: MongoSort
+  gender: MongoSort
+  id: MongoSort
+  name: MongoSort
+  salaryDecimal: MongoSort
 }"
 `;

@@ -1625,14 +1625,15 @@ export function rewriteConnectArgReferences(
         });
 =======
   if (hasMongo) {
-    // `@mongo(filter/sort/set/selection/pipeline/…)` embed `$args.<name>` / `$this.<field>`.
+    // `@mongo(query/selection/sort/set/pipeline/…)` embed `$args.<name>` / `$this.<field>`.
     const mongoStringArgs = [
-      'filter',
+      'query',
+      'selection',
       'sort',
+      'filter', // legacy
       'where', // legacy
       'orderBy', // legacy
       'set',
-      'selection',
       'pipeline',
       'limit',
       'skip',

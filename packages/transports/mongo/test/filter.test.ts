@@ -24,8 +24,8 @@ describe('mongo filter mapping', () => {
 
   it('passes through native Mongo filter docs with $gte', () => {
     expect(
-      buildMongoFilter(`$args.filter`, {
-        args: { filter: { name: 'Ada', age: { $gte: 30 } } },
+      buildMongoFilter(`$args.query`, {
+        args: { query: { name: 'Ada', age: { $gte: 30 } } },
       }),
     ).toEqual({
       name: 'Ada',
@@ -33,23 +33,29 @@ describe('mongo filter mapping', () => {
     });
   });
 
-  it('merges structured filter via bare binder and spread', () => {
+  it('maps typed query operators (gte / _gte) to $gte', () => {
     expect(
-      buildMongoFilter(`$args.filter`, {
-        args: { filter: { name: { eq: 'Ada' }, age: { gte: 30 } } },
+      buildMongoFilter(`$args.query`, {
+        args: { query: { name: { eq: 'Ada' }, age: { gte: 30 } } },
       }),
     ).toEqual({
       name: 'Ada',
       age: { $gte: 30 },
     });
 
+    expect(graphqlFilterToMongo({ age: { _gte: 30, _lt: 40 } })).toEqual({
+      age: { $gte: 30, $lt: 40 },
+    });
+  });
+
+  it('merges structured query via bare binder and spread', () => {
     expect(
       buildMongoFilter(
         `
           gender: "female"
-          ...$args.filter
+          ...$args.query
         `,
-        { args: { filter: { age: { lt: 40 } } } },
+        { args: { query: { age: { lt: 40 } } } },
       ),
     ).toEqual({
       gender: 'female',

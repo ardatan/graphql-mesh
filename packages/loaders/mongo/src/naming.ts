@@ -1,12 +1,18 @@
 /**
  * Default GraphQL naming aligned with MongoDB collection methods
- * (`findOne` / `find` / `insertOne` / `updateMany` / …) plus GraphQL arg names
- * `filter` / `sort` / `document` that mirror the driver/shell API.
+ * (`findOne` / `find` / `insertOne` / `updateMany` / …).
+ *
+ * Client args mirror shell/driver: `query` / `sort` / `document` / `update`.
+ * Query operators use Mongo names without `$` (`gte`, `in`, …) for GraphQL
+ * legality + type safety; transport maps them to `$gte` / `$in`.
  *
  * @see https://www.mongodb.com/docs/manual/reference/method/
+ * @see https://www.mongodb.com/docs/manual/reference/mql/query-predicates/
  */
 export interface MongoNaming {
   typeName(modelName: string): string;
+  queryInput(typeName: string): string;
+  sortInput(typeName: string): string;
   createInput(typeName: string): string;
   updateInput(typeName: string): string;
   payloadType(typeName: string): string;
@@ -52,6 +58,8 @@ function pluralCamel(typeName: string): string {
 export function createDefaultNaming(): MongoNaming {
   return {
     typeName: name => name,
+    queryInput: typeName => `${typeName}QueryInput`,
+    sortInput: typeName => `${typeName}SortInput`,
     createInput: typeName => `${typeName}DocumentInput`,
     updateInput: typeName => `${typeName}UpdateInput`,
     payloadType: typeName => `${typeName}Payload`,

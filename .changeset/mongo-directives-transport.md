@@ -19,9 +19,12 @@ new stack (like mysql/tuql -> SQL).
 - GraphQL roots mirror MongoDB collection methods: `findOneUser` / `findUsers` /
   `countDocumentsUsers` / `insertOneUser` / `updateOneUser` / `deleteManyUsers` / `aggregateUsers`
   ([method reference](https://www.mongodb.com/docs/manual/reference/method/))
-- Client args: `filter` / `sort` / `document` / `documents` / `update` (JSON) — native Mongo docs
-  so `$gte` / `$set` / `{ age: -1 }` work inside GraphQL variables (GraphQL **names** cannot contain `$`)
-- Directive binders: `filter` / `sort` / `set` / `selection` / `pipeline`
+- Client args: typed `query: *QueryInput` / `sort: *SortInput` (Mongo predicate names without `$`:
+  `gte`, `in`, …; transport maps to `$gte` / `$in`; also accepts native `{ $gte }` and `_gte` aliases)
+- Projection = GraphQL selection set + `@mongo(selection:)` (findOne's projection)
+- Directive binders: `query` / `selection` / `sort` / `set` / `pipeline`
+- `update` stays JSON for `$set` / `$inc` / … update operators
+- `document` / `documents` for insertOne / insertMany
 - Sole PK GraphQL type: `ID` (`id` arg convenience for findById)
 - Scalars: `graphql-scalars` (`ObjectID`, `DateTime`, `Byte`, `JSON`) + local `Decimal128`
 - Mutation payloads include typed `error: MongoError` when selected
