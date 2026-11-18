@@ -65,7 +65,7 @@ export type MeshComposeCLISubgraphConfig = {
        */
       composeConnect?: boolean;
       /**
-       * Optional `@transport` stamp when the SDL does not already declare one.
+       * Partial `@transport` fields: merge onto an existing stamp, or add one.
        */
       transport?: ResolveSubgraphSchemaTransport;
       sourceHandler?: never;

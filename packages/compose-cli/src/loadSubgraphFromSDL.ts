@@ -19,6 +19,9 @@ export interface LoadSubgraphFromSdlOptions {
    * @default true
    */
   composeConnect?: boolean;
+  /**
+   * Partial `@transport` fields: merge onto an existing stamp, or add one.
+   */
   transport?: ResolveSubgraphSchemaTransport;
 }
 

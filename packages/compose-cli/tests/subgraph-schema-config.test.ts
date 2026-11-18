@@ -42,6 +42,40 @@ describe('subgraphs[].schema config', () => {
     expect(sdl).toContain('@composeDirective');
   });
 
+  it('merges transport option fields onto an existing @transport', async () => {
+    const schema = await resolveSubgraphSchema(
+      { cwd: process.cwd(), fetch: globalThis.fetch, log },
+      {
+        subgraphName: 'shop',
+        schema: /* GraphQL */ `
+          extend schema
+            @transport(subgraph: "shop", kind: "sql", location: "file:old.db")
+
+          directive @transport(
+            subgraph: String!
+            kind: String!
+            location: String
+            options: String
+          ) repeatable on SCHEMA
+          type Query {
+            albums: String
+          }
+        `,
+        transport: {
+          location: 'file:chinook.db',
+          options: { readonly: true },
+        },
+      },
+    );
+    const dirs = getDirectiveExtensions(schema);
+    expect(dirs?.transport?.[0] || dirs?.transport).toMatchObject({
+      subgraph: 'shop',
+      kind: 'sql',
+      location: 'file:chinook.db',
+      options: { readonly: true },
+    });
+  });
+
   it('composes a subgraph supplied via name + schema', async () => {
     const dir = join(tmpdir(), `mesh-schema-config-${Date.now()}`);
     mkdirSync(dir, { recursive: true });

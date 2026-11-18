@@ -12,12 +12,17 @@ import {
   readFile,
   TransportDirective as transportDirective,
 } from '@graphql-mesh/utils';
-import { isValidPath } from '@graphql-tools/utils';
+import { getDirectiveExtensions, isValidPath } from '@graphql-tools/utils';
 import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 import type { LoaderContext } from './types.js';
 
+/**
+ * Partial `@transport` fields for hand-written SDL.
+ * Provided keys are merged onto an existing `@transport` (if any); otherwise a
+ * new one is created. Nested `options` are shallow-merged.
+ */
 export interface ResolveSubgraphSchemaTransport {
-  kind: string;
+  kind?: string;
   location?: string;
   headers?: [string, string][];
   options?: Record<string, unknown>;
@@ -42,7 +47,7 @@ export interface ResolveSubgraphSchemaOptions {
    */
   composeConnect?: boolean;
   /**
-   * Optional `@transport` stamp when the schema does not already declare one.
+   * Partial `@transport` fields: merge onto an existing stamp, or add one.
    */
   transport?: ResolveSubgraphSchemaTransport;
   subgraphName: string;
@@ -63,35 +68,105 @@ function documentFromTypeDefs(typeDefs: string | DocumentNode): DocumentNode {
   return typeDefs;
 }
 
-function stampTransportIfNeeded(
+function firstTransportArgs(existing: unknown): Record<string, any> | undefined {
+  if (existing == null) {
+    return undefined;
+  }
+  if (Array.isArray(existing)) {
+    const first = existing[0];
+    return first && typeof first === 'object' ? { ...first } : undefined;
+  }
+  if (typeof existing === 'object') {
+    return { ...(existing as Record<string, any>) };
+  }
+  return undefined;
+}
+
+function withoutTransportAstDirectives<T extends { directives?: readonly any[] } | null | undefined>(
+  node: T,
+): T {
+  if (!node?.directives?.length) {
+    return node;
+  }
+  const directives = node.directives.filter(d => d.name.value !== 'transport');
+  if (directives.length === node.directives.length) {
+    return node;
+  }
+  return { ...node, directives };
+}
+
+/**
+ * Merge `transport` option fields onto schema `@transport`.
+ * Existing stamp is patched; missing stamp is created (requires `kind`).
+ */
+function applyTransportOptions(
   subgraphName: string,
   schema: GraphQLSchema,
   transport: ResolveSubgraphSchemaTransport | undefined,
 ): GraphQLSchema {
-  if (!transport?.kind) {
+  if (!transport) {
     return schema;
   }
+  const hasPatch =
+    transport.kind != null ||
+    transport.location != null ||
+    transport.headers != null ||
+    (transport.options != null && Object.keys(transport.options).length > 0);
+  if (!hasPatch) {
+    return schema;
+  }
+
   const schemaExtensions: any = (schema.extensions ||= {});
-  schemaExtensions.directives ||= {};
-  if (schemaExtensions.directives.transport) {
+  const existingDirectives =
+    schemaExtensions.directives && typeof schemaExtensions.directives === 'object'
+      ? { ...schemaExtensions.directives }
+      : {};
+  const existingRaw =
+    existingDirectives.transport ?? getDirectiveExtensions(schema)?.transport;
+  const existing = firstTransportArgs(existingRaw);
+  const kind = transport.kind ?? existing?.kind;
+  if (kind == null) {
+    // Creating a new `@transport` requires `kind`; ignore empty/partial patches.
     return schema;
   }
-  schemaExtensions.directives.transport = {
-    subgraph: subgraphName,
-    kind: transport.kind,
-    ...(transport.location != null ? { location: transport.location } : {}),
-    ...(transport.headers != null ? { headers: transport.headers } : {}),
-    ...(transport.options != null && Object.keys(transport.options).length
-      ? { options: transport.options }
-      : {}),
+
+  const next: Record<string, any> = {
+    ...(existing || {}),
+    subgraph: existing?.subgraph ?? subgraphName,
+    kind,
   };
-  if (schema.getDirective('transport')) {
-    return schema;
+  if (transport.location != null) {
+    next.location = transport.location;
   }
+  if (transport.headers != null) {
+    next.headers = transport.headers;
+  }
+  if (transport.options != null && Object.keys(transport.options).length > 0) {
+    next.options = {
+      ...(existing?.options && typeof existing.options === 'object' ? existing.options : {}),
+      ...transport.options,
+    };
+  }
+
+  // Preserve array shape when the schema already used one; drop AST apps so
+  // extensions are the source of truth after a patch.
+  existingDirectives.transport = Array.isArray(existingRaw)
+    ? [next, ...existingRaw.slice(1)]
+    : next;
+
   const schemaConfig = schema.toConfig();
+  const directives = schema.getDirective('transport')
+    ? schemaConfig.directives
+    : [...schemaConfig.directives, transportDirective as GraphQLDirective];
   return new GraphQLSchema({
     ...schemaConfig,
-    directives: [...schemaConfig.directives, transportDirective as GraphQLDirective],
+    directives,
+    astNode: withoutTransportAstDirectives(schemaConfig.astNode),
+    extensionASTNodes: schemaConfig.extensionASTNodes?.map(withoutTransportAstDirectives),
+    extensions: {
+      ...schemaConfig.extensions,
+      directives: existingDirectives,
+    },
   });
 }
 
@@ -100,7 +175,7 @@ function finalizeSchema(
   schema: GraphQLSchema,
   options: Pick<ResolveSubgraphSchemaOptions, 'composeConnect' | 'transport'>,
 ): GraphQLSchema {
-  let next = stampTransportIfNeeded(subgraphName, schema, options.transport);
+  let next = applyTransportOptions(subgraphName, schema, options.transport);
   if (options.composeConnect !== false) {
     next = addConnectComposeDirective(next);
   }
