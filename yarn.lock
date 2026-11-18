@@ -9035,17 +9035,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/mongoose@workspace:packages/legacy/handlers/mongoose"
   dependencies:
-    "@graphql-hive/logger": "npm:^1.1.1"
-    "@graphql-hive/pubsub": "npm:^2.2.1"
+    "@graphql-mesh/store": "npm:^0.107.3"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
+    "@omnigraph/mongo": "npm:0.1.0"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
     graphql: "npm:16.14.0"
-    graphql-compose: "npm:^9.3.0"
-    graphql-compose-connection: "npm:^8.2.1"
-    graphql-compose-mongoose: "npm:^10.1.0"
-    graphql-compose-pagination: "npm:^8.3.0"
     mongoose: "npm:9.11.4"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -14069,7 +14065,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/mongo@workspace:*, @omnigraph/mongo@workspace:packages/loaders/mongo":
+"@omnigraph/mongo@npm:0.1.0, @omnigraph/mongo@workspace:*, @omnigraph/mongo@workspace:packages/loaders/mongo":
   version: 0.0.0-use.local
   resolution: "@omnigraph/mongo@workspace:packages/loaders/mongo"
   dependencies:
@@ -29578,38 +29574,6 @@ __metadata:
     graphile-build: ^4.5.0
     graphile-build-pg: ^4.5.0
   checksum: 10c0/447321631c0fc757825f3c1162a236f36b94e7951c618b77ac304c64838a857354cb4646504d6e3ff2d246344ee03fc8b74f78dd901f4989e6f2e891f72bf30f
-  languageName: node
-  linkType: hard
-
-"graphql-compose-connection@npm:8.2.1, graphql-compose-connection@npm:^8.2.1":
-  version: 8.2.1
-  resolution: "graphql-compose-connection@npm:8.2.1"
-  peerDependencies:
-    graphql-compose: ^7.15.0 || ^8.0.0 || ^9.0.0
-  checksum: 10c0/b0e52394633db8e01322dd42445307d010e88649bdc86fc4f4f94b9a414809ac916a665a1ef53dca3462a730c3d808c411a637c832f050640dd77c5720816cb0
-  languageName: node
-  linkType: hard
-
-"graphql-compose-mongoose@npm:^10.1.0":
-  version: 10.1.0
-  resolution: "graphql-compose-mongoose@npm:10.1.0"
-  dependencies:
-    dataloader: "npm:^2.2.3"
-    graphql-compose-connection: "npm:8.2.1"
-    graphql-compose-pagination: "npm:8.3.0"
-  peerDependencies:
-    graphql-compose: ^7.21.4 || ^8.0.0 || ^9.0.0
-    mongoose: ^9.0.0 || ^8.0.0 || ^7.0.0 || ^6.0.0
-  checksum: 10c0/f5d95734f2eb7f1c37fd8424859aa3fbe9611a1cf9c16e9a359d40c8b50e07a3cc3a23ff8141141ea5dac885048118f793f8533172e9fab5de38307e43e3b686
-  languageName: node
-  linkType: hard
-
-"graphql-compose-pagination@npm:8.3.0, graphql-compose-pagination@npm:^8.3.0":
-  version: 8.3.0
-  resolution: "graphql-compose-pagination@npm:8.3.0"
-  peerDependencies:
-    graphql-compose: ^7.15.0 || ^8.0.0 || ^9.0.0
-  checksum: 10c0/b661e216763bb718bd5b4f1de42487b801f01082a3e7d1db568b9be68b408596342d1da78639939367a782c0011e8701a51b2fb9ce6c552b46837061269b4726
   languageName: node
   linkType: hard
 

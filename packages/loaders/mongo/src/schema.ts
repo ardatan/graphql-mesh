@@ -11,6 +11,7 @@ import { SchemaComposer } from 'graphql-compose';
 import { GraphQLJSON } from 'graphql-scalars';
 import type { Model, Schema as MongooseSchema } from 'mongoose';
 import { process as meshProcess } from '@graphql-mesh/cross-helpers';
+import type { ImportFn } from '@graphql-mesh/types';
 import { GraphQLMongoID } from '@graphql-mesh/transport-mongo';
 import { defaultImportFn, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { MongoDirective, MongoKindEnum, TransportDirective } from './directives.js';
@@ -36,6 +37,8 @@ export interface LoadMongoSubgraphOpts {
   models: MongoModelConfig[];
   cwd?: string;
   naming?: Partial<MongoNaming>;
+  /** Module loader for `models[].path` (legacy handler passes Mesh `importFn`). */
+  importFn?: ImportFn;
 }
 
 export async function loadGraphQLSchemaFromMongo(
@@ -44,6 +47,7 @@ export async function loadGraphQLSchemaFromMongo(
 ): Promise<GraphQLSchema> {
   const naming: MongoNaming = { ...createDefaultNaming(), ...opts.naming };
   const cwd = opts.cwd || meshProcess.cwd();
+  const importFn = opts.importFn || defaultImportFn;
   const schemaComposer = new SchemaComposer();
 
   schemaComposer.add(GraphQLMongoID);
@@ -55,7 +59,7 @@ export async function loadGraphQLSchemaFromMongo(
   ensureSharedWhereInputs(schemaComposer);
 
   for (const modelConfig of opts.models) {
-    const model = await resolveModel(modelConfig, cwd);
+    const model = await resolveModel(modelConfig, cwd, importFn);
     const collection =
       modelConfig.collection ||
       (model as any).collection?.collectionName ||
@@ -89,7 +93,11 @@ export async function loadGraphQLSchemaFromMongo(
   return schema;
 }
 
-async function resolveModel(config: MongoModelConfig, cwd: string): Promise<Model<any>> {
+async function resolveModel(
+  config: MongoModelConfig,
+  cwd: string,
+  importFn: ImportFn,
+): Promise<Model<any>> {
   if (config.model) return config.model;
   if (config.schema) {
     // Minimal stand-in: callers that only pass schema still need a model-shaped object.
@@ -104,7 +112,7 @@ async function resolveModel(config: MongoModelConfig, cwd: string): Promise<Mode
   const model = await loadFromModuleExportExpression<Model<any>>(config.path, {
     defaultExportName: config.name,
     cwd,
-    importFn: defaultImportFn,
+    importFn,
   });
   if (!model) {
     throw new Error(`Model ${config.name} cannot be imported from ${config.path}`);

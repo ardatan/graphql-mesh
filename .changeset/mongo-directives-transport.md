@@ -1,6 +1,7 @@
 ---
 '@omnigraph/mongo': major
 '@graphql-mesh/transport-mongo': major
+'@graphql-mesh/mongoose': major
 ---
 
 ## TL;DR
@@ -12,7 +13,9 @@ Mongoose is compose/bootstrap only (models -> types + directives). Runtime uses 
 driver and executes `FIND_ONE` / `FIND_MANY` / `COUNT` from Connectors-style `where` / `selection`
 mappings (same family as `@sql` / `@thrift__rpc`).
 
-Legacy `@graphql-mesh/mongoose` is unchanged in this draft.
+**Legacy v0 handler:** `@graphql-mesh/mongoose` keeps the same YAML entrypoint
+(`connectionString` / `models` / `discriminators`) and now shells into the new stack under the hood
+(same pattern as mysql/tuql -> SQL).
 
 ## Why
 
@@ -48,8 +51,9 @@ arg is `where: *Where` (aligned with the SQL stack; v0 used `filter`).
 
 | Before (v0 mongoose handler) | After (new stack) |
 | --- | --- |
-| Runtime `composeWithMongoose` resolvers | Recompose with `loadMongoSubgraph` + `transport-mongo` |
+| Runtime `composeWithMongoose` resolvers | Same YAML handler, or `loadMongoSubgraph` + `transport-mongo` |
 | `User_findMany(filter: …)` | `User_findMany(where: …)` |
+| Full graphql-compose-mongoose op set | First slice: `findById` / `findMany` / `findOne` / `count` |
 | Opaque resolvers | Hand-writable `@mongo(where/selection/…)` |
 
-Website docs and legacy handler cutover are deferred.
+Website docs and remaining ops (connection, writes, dataloaders) are deferred.
