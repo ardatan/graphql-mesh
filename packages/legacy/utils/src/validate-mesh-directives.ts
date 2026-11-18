@@ -56,7 +56,8 @@ function isMeshStitchingSourceArgs(value: unknown): boolean {
  *
  * First slice (GM-37):
  * - `@link` Mesh spec URLs parse + supported versions (`assertSupportedMeshSpec`)
- * - `@transport` shape: `kind` string; `subgraph` string when present; `location` string when present
+ * - `@transport` shape: required non-empty `kind` string; `subgraph`/`location` strings when present
+ * - `@hoist.pathConfig` must be an array when present
  * - If Mesh core dirs are used, a `core` (or legacy) Mesh `@link` should exist
  *
  * Throws on the first hard error unless `soft: true` (returns issues).
@@ -137,10 +138,15 @@ export function validateMeshDirectives(
           );
         }
       }
-      // Validate @hoist path when present
+      // Validate `@hoist(pathConfig:)` when present (arg is `pathConfig`, not `path`).
       for (const hoist of asArray(dirs.hoist)) {
-        if (hoist && typeof hoist === 'object' && hoist.path != null && typeof hoist.path !== 'string') {
-          fail(`@hoist.path must be a string on ${typeName}.${fieldName}`, 'hoist');
+        if (!hoist || typeof hoist !== 'object') continue;
+        if (hoist.pathConfig == null) continue;
+        if (!Array.isArray(hoist.pathConfig)) {
+          fail(
+            `@hoist.pathConfig must be an array on ${typeName}.${fieldName}`,
+            'hoist',
+          );
         }
       }
       return fieldConfig;
@@ -190,11 +196,10 @@ function validateTransportArgs(
     fail('@transport args must be an object', 'transport');
     return;
   }
-  if (transport.kind != null && typeof transport.kind !== 'string') {
+  if (transport.kind == null || transport.kind === '') {
+    fail('@transport.kind is required', 'transport');
+  } else if (typeof transport.kind !== 'string') {
     fail('@transport.kind must be a string', 'transport');
-  }
-  if (transport.kind === '') {
-    fail('@transport.kind must not be empty', 'transport');
   }
   if (transport.subgraph != null && typeof transport.subgraph !== 'string') {
     fail('@transport.subgraph must be a string', 'transport');
