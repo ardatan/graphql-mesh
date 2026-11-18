@@ -22,6 +22,7 @@ import { introspectPostgres } from './introspect/postgres.js';
 import { introspectSqlite } from './introspect/sqlite.js';
 import type {
   SqlColumnMeta,
+  SqlComputedColumnMeta,
   SqlForeignKeyMeta,
   SqlSchemaMeta,
   SqlTableMeta,
@@ -1039,7 +1040,7 @@ function blockArg(body: string): string {
 function selectionLines(
   naming: SqlNaming,
   table: SqlTableMeta,
-  computed: import('./introspect/types.js').SqlComputedColumnMeta[] = [],
+  computed: SqlComputedColumnMeta[] = [],
 ): string {
   const pkCols = table.columns.filter(c => c.primaryKey);
   const solePk = pkCols.length === 1 ? pkCols[0] : undefined;
@@ -1054,7 +1055,7 @@ function selectionLines(
 function selectionBlock(
   naming: SqlNaming,
   table: SqlTableMeta,
-  computed: import('./introspect/types.js').SqlComputedColumnMeta[] = [],
+  computed: SqlComputedColumnMeta[] = [],
 ): string {
   return blockArg(selectionLines(naming, table, computed));
 }
