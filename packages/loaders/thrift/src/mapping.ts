@@ -1,7 +1,13 @@
 import { TType } from '@creditkarma/thrift-server-core';
 import type { TypeMap, TypeVal } from '@graphql-mesh/transport-thrift';
 
-/** Loader emit switch: thrift transport is always binary; `json` emits `@connect`. */
+/**
+ * Loader emit switch for the Thrift `protocol` option.
+ * Thrift transport runtime is always binary; `json` emits `@source` / `@connect` (TJSON).
+ *
+ * @example 'binary'
+ * @example 'json'
+ */
 export type ThriftProtocol = 'binary' | 'json';
 
 const WIRE_TYPE_TOKEN: Partial<Record<TType, string>> = {

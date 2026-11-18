@@ -10,6 +10,25 @@ import { getDirectiveExtensions, getRootTypeMap, type ExecutionResult } from '@g
 import { createGraphQLThriftClient, type ThriftRpcBinding } from './client.js';
 import type { GraphQLThriftAnnotations } from './types.js';
 
+/**
+ * Build a Mesh subgraph executor from an `@transport(kind: "thrift")` schema
+ * (binary `@thrift__rpc` fields).
+ *
+ * @example
+ * ```ts
+ * import { getThriftExecutor } from '@graphql-mesh/transport-thrift';
+ * import { loadNonExecutableGraphQLSchemaFromIDL } from '@omnigraph/thrift';
+ *
+ * const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+ *   subgraphName: 'Calc',
+ *   source: './calc.thrift',
+ *   endpoint: 'http://localhost:4000/thrift',
+ * });
+ * const executor = getThriftExecutor(schema);
+ * ```
+ *
+ * @param subgraph Schema carrying `@transport(kind: "thrift")` and `@thrift__rpc` mappings.
+ */
 export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
   const schemaDefDirectives = getDirectiveExtensions<{
     transport: GraphQLThriftAnnotations;
@@ -18,7 +37,7 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
   if (!transportDirectives?.length) {
     throw new Error('No @transport directive found on schema definition');
   }
-  // Enum name↔i32 lives in `@thrift__rpc` `i32` + `->match` — no `@enum` restore.
+  // Enum name<->i32 lives in `@thrift__rpc` `i32` + `->match` - no `@enum` restore.
   const graphqlAnnotations = transportDirectives[0];
   const client = createGraphQLThriftClient(graphqlAnnotations);
   let headers: Record<string, string> | undefined;

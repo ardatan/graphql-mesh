@@ -31,10 +31,47 @@ export type VoidTypeVal = { id?: number; type: TType.VOID };
 export type RefTypeVal = { id?: number; type: 'ref'; name: string };
 export type TypeMap = Record<string, TypeVal>;
 
-/** Thrift HTTP transport annotations. Wire protocol is always binary (JSON uses `@connect`). */
+/**
+ * `@transport(kind: "thrift")` annotations stored on the schema definition.
+ * Wire protocol for this transport is always binary (`protocol: 'json'` loaders
+ * use `@connect` instead and do not emit these annotations).
+ *
+ * @example
+ * ```graphql
+ * schema @transport(
+ *   subgraph: "Calc"
+ *   kind: "thrift"
+ *   location: "http://localhost:4000/thrift"
+ *   headers: [["x-api-key", "123"]]
+ * ) {
+ *   query: Query
+ * }
+ * ```
+ */
 export interface GraphQLThriftAnnotations {
+  /**
+   * Transport kind discriminator (always `"thrift"`).
+   *
+   * @example 'thrift'
+   */
   kind: 'thrift';
+  /**
+   * Owning subgraph name.
+   *
+   * @example 'Calc'
+   */
   subgraph: string;
+  /**
+   * HTTP base URL for the binary Thrift client (`host` / `path` / `https`).
+   *
+   * @example 'http://localhost:4000/thrift'
+   */
   location: string;
+  /**
+   * Static or interpolated request headers (`[[name, value], ...]` or a record).
+   *
+   * @example [['x-api-key', '123']]
+   * @example { Authorization: 'Bearer {context.token}' }
+   */
   headers: [string, string][] | Record<string, string>;
 }

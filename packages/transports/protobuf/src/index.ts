@@ -66,23 +66,110 @@ function getTypeResolveReference(type: { extensions?: any }): ResolveReferenceFn
   return typeof fromType === 'function' ? fromType : undefined;
 }
 
-/** Applied when `@transport(options.requestTimeout)` is omitted (ms). */
+/**
+ * Applied when `@transport(options.requestTimeout)` is omitted (ms).
+ *
+ * @example 200_000
+ */
 export const DEFAULT_PROTOBUF_REQUEST_TIMEOUT_MS = 200_000;
 
+/**
+ * Connection / channel options stored on `@transport(kind: "protobuf", options:)`
+ * (and accepted by the protobuf loader / transport entry).
+ *
+ * @example
+ * ```ts
+ * // Mesh compose - options land on `@transport(kind: "protobuf", options: ...)`
+ * loadProtobufSubgraph('movies', {
+ *   endpoint: 'movies.example.com:443',
+ *   useHTTPS: true,
+ *   requestTimeout: 30_000,
+ *   metaData: { authorization: 'Bearer {context.token}' },
+ *   channelOptions: { 'grpc.max_receive_message_length': 20_000_000 },
+ * })
+ * ```
+ * @example
+ * ```graphql
+ * schema @transport(
+ *   subgraph: "movies"
+ *   kind: "protobuf"
+ *   location: "localhost:50051"
+ *   options: {
+ *     requestTimeout: 30000
+ *     metaData: [["authorization", "Bearer ..."]]
+ *   }
+ * ) {
+ *   query: Query
+ * }
+ * ```
+ */
 export interface ProtobufTransportOptions {
+  /**
+   * Unary / stream deadline in milliseconds (default {@link DEFAULT_PROTOBUF_REQUEST_TIMEOUT_MS}).
+   *
+   * @example 30_000
+   */
   requestTimeout?: number;
+  /**
+   * TLS materials for the gRPC channel. Paths are resolved relative to the
+   * transport cwd. `rootCA` alone = trust store; client auth needs both
+   * `privateKey` and `certChain`.
+   *
+   * @example { rootCA: './certs/ca.pem' }
+   * @example { rootCA: './certs/ca.pem', certChain: './certs/client.crt', privateKey: './certs/client.key' }
+   */
   credentialsSsl?: {
+    /**
+     * PEM CA / trust bundle path.
+     *
+     * @example './certs/ca.pem'
+     */
     rootCA?: string;
+    /**
+     * Client certificate chain path (requires `privateKey`).
+     *
+     * @example './certs/client.crt'
+     */
     certChain?: string;
+    /**
+     * Client private key path (requires `certChain`).
+     *
+     * @example './certs/client.key'
+     */
     privateKey?: string;
   };
+  /**
+   * Use TLS without custom cert files (`credentials.createSsl()`).
+   *
+   * @example true
+   */
   useHTTPS?: boolean;
+  /**
+   * Per-RPC gRPC metadata (record or `[[name, value], ...]`). String values may use
+   * Mesh `{context.*}` / `{env.*}` interpolation.
+   *
+   * @example { 'x-tenant': '{context.headers.x-tenant}' }
+   * @example [['authorization', 'Bearer ...']]
+   */
   metaData?:
     | {
         [k: string]: any;
       }
     | [string, string][];
+  /**
+   * Channel options for `@grpc/grpc-js` (object or entry pairs for SDL print).
+   *
+   * @example { 'grpc.max_receive_message_length': 20_000_000 }
+   * @example [['grpc.keepalive_time_ms', 10_000]]
+   */
   channelOptions?: ChannelOptions | [string, string | number][];
+  /**
+   * Extra HTTP headers for HTTPS protobuf dial (`https://` transport locations).
+   * Merged with `@transport(headers:)`.
+   *
+   * @example { 'content-type': 'application/proto' }
+   * @example [['authorization', 'Bearer ...']]
+   */
   headers?: Record<string, string> | [string, string][];
 }
 
@@ -308,7 +395,7 @@ export class ProtobufTransportHelper extends DisposableStack {
           return decodeMessage(selectionFields, responseBytes);
         }
 
-        // gRPC unary (streaming: use generic client stream — unary first for Subscription via repeated unary not supported; use client streaming API)
+        // gRPC unary (streaming: use generic client stream - unary first for Subscription via repeated unary not supported; use client streaming API)
         const metadata =
           buildGrpcMetadata(metaData, {
             root: thisRoot ?? {},
@@ -531,7 +618,7 @@ async function loadSslCredentials(
   const privateKeyPath = ssl.privateKey ? resolvePath(ssl.privateKey) : undefined;
   const certChainPath = ssl.certChain ? resolvePath(ssl.certChain) : undefined;
 
-  // CA-only (trust store) — no client cert.
+  // CA-only (trust store) - no client cert.
   if (rootCAPath && !privateKeyPath && !certChainPath) {
     const rootCA = await fs.promises.readFile(rootCAPath);
     return credentials.createSsl(rootCA);
@@ -549,7 +636,7 @@ async function loadSslCredentials(
     fs.promises.readFile(privateKeyPath),
     fs.promises.readFile(certChainPath),
   ]);
-  // createSsl(rootCerts, privateKey, certChain) — pass undefined rootCerts when omitted
+  // createSsl(rootCerts, privateKey, certChain) - pass undefined rootCerts when omitted
   // so privateKey/certChain stay in the correct argument slots.
   return credentials.createSsl(rootCA, privateKey, certChain);
 }

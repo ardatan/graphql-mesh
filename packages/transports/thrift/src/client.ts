@@ -26,12 +26,50 @@ import {
 } from './compact-mapping.js';
 import type { GraphQLThriftAnnotations, TypeMap, TypeVal } from './types.js';
 
+/**
+ * Runtime binding for one `@thrift__rpc` field - parsed by {@link createGraphQLThriftClient}
+ * / {@link getThriftExecutor} from directive args.
+ *
+ * @example
+ * ```ts
+ * const binding: ThriftRpcBinding = {
+ *   functionName: 'add',
+ *   messageType: 'CALL',
+ *   args: '1(i32): $args.left\n2(i32): $args.right',
+ *   selection: '$(i32)',
+ * };
+ * ```
+ */
 export type ThriftRpcBinding = {
+  /**
+   * IDL function name sent in the Thrift message header.
+   *
+   * @example 'add'
+   */
   functionName: string;
+  /**
+   * Thrift message type (`CALL` default, or `ONEWAY`).
+   *
+   * @example 'ONEWAY'
+   */
   messageType?: 'CALL' | 'ONEWAY';
+  /**
+   * Compact `@thrift__rpc(args:)` mapping string.
+   *
+   * @example '1(struct): $args.request {\n  1(i32): left\n}'
+   */
   args?: string;
+  /**
+   * Compact `@thrift__rpc(selection:)` mapping string.
+   *
+   * @example '$(i32)'
+   */
   selection?: string;
-  /** Compact IDL throws mapping when return type is a Result union. */
+  /**
+   * Compact IDL throws mapping when the GraphQL return type is a Result union.
+   *
+   * @example 'InvalidRequest: 1 {\n  message: 1(string)\n}'
+   */
   throws?: string;
 };
 
@@ -39,6 +77,21 @@ interface IGraphQLThriftClient extends ThriftClient {
   doRequest(methodName: string, args: any, binding: ThriftRpcBinding, context?: any): Promise<any>;
 }
 
+/**
+ * Build an HTTP binary Thrift client from `@transport(kind: "thrift")` annotations.
+ *
+ * @example
+ * ```ts
+ * import { createGraphQLThriftClient } from '@graphql-mesh/transport-thrift';
+ *
+ * const client = createGraphQLThriftClient({
+ *   kind: 'thrift',
+ *   subgraph: 'Calc',
+ *   location: 'http://localhost:4000/thrift',
+ *   headers: [['x-api-key', '123']],
+ * });
+ * ```
+ */
 export function createGraphQLThriftClient<Context = any>({
   location,
   headers,
@@ -56,7 +109,7 @@ export function createGraphQLThriftClient<Context = any>({
     if (typeVal.type === 'ref') {
       return TType.I32;
     }
-    // Thrift binary has no distinct enum type byte — enums are i32 on the wire.
+    // Thrift binary has no distinct enum type byte - enums are i32 on the wire.
     if (typeVal.type === TType.ENUM) {
       return TType.I32;
     }
@@ -116,7 +169,7 @@ export function createGraphQLThriftClient<Context = any>({
           break;
         }
         case TType.ENUM:
-          // GraphQL carries member names; compact args embed `enum<Name=n,…>` for i32.
+          // GraphQL carries member names; compact args embed `enum<Name=n,...>` for i32.
           output.writeI32(enumNameToWire(value, typeVal.values));
           break;
         case TType.MAP: {
@@ -151,7 +204,7 @@ export function createGraphQLThriftClient<Context = any>({
       }
     }
 
-    /** Binary/compact: field names are not on the wire — index by field id. */
+    /** Binary/compact: field names are not on the wire - index by field id. */
     readTypeById(type: TType, input: TProtocol): any {
       switch (type) {
         case TType.BOOL:
@@ -243,7 +296,7 @@ export function createGraphQLThriftClient<Context = any>({
       );
       output.writeMessageEnd();
       const data: Buffer = await this.connection.send(writer.flush(), context);
-      // ONEWAY: fire-and-forget — do not wait for / decode a reply body.
+      // ONEWAY: fire-and-forget - do not wait for / decode a reply body.
       if (outboundMessageType === 'ONEWAY') {
         return null;
       }
@@ -281,7 +334,7 @@ export function createGraphQLThriftClient<Context = any>({
             }
           }
           // Non-oneway void success: empty result struct only (no field 0).
-          // Nonempty unmatched maps are declared throws with ignoreExceptions:true —
+          // Nonempty unmatched maps are declared throws with ignoreExceptions:true -
           // must not look like success.
           if (selection.kind === 'scalar' && selection.wire === 'void' && result.size === 0) {
             if (throws.length > 0) {

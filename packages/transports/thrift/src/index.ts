@@ -2,6 +2,7 @@ import type { Transport } from '@graphql-mesh/transport-common';
 import { getThriftExecutor } from './execution.js';
 
 export { getThriftExecutor };
+export { createGraphQLThriftClient, type ThriftRpcBinding } from './client.js';
 
 export type * from './types.js';
 
