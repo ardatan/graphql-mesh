@@ -10018,6 +10018,7 @@ __metadata:
     "@whatwg-node/disposablestack": "npm:^0.1.0"
     graphql: "npm:16.14.0"
     mongodb: "npm:^7.0.0"
+    mongoose: "npm:^9.0.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^16.0.0 || ^17.0.0
@@ -14089,6 +14090,7 @@ __metadata:
     graphql: "npm:16.14.0"
     graphql-compose: "npm:^9.3.0"
     graphql-scalars: "npm:^2.0.1"
+    mongodb: "npm:^7.0.0"
     mongoose: "npm:^9.0.0"
   peerDependencies:
     graphql: ^16.0.0 || ^17.0.0
