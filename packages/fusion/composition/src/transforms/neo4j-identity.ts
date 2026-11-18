@@ -134,6 +134,34 @@ export function ensureNeo4jTypeIdentity(
 }
 
 /**
+ * Stamp a directive bag onto `extensions.directives` and clear AST sources that
+ * would re-merge the same applications (`astNode` + matching `extensionASTNodes`
+ * directives). Without this, `getDirectiveExtensions` returns stamped `@node`
+ * plus the original extend-type `@node`, and the printer can emit both.
+ */
+export function typeConfigWithDirectiveExtensions(
+  type: { extensions?: Record<string, any>; toConfig(): any },
+  directives: Record<string, any[]>,
+): any {
+  const config = type.toConfig();
+  const consumed = new Set(Object.keys(directives));
+  return {
+    ...config,
+    extensions: {
+      ...(type.extensions || {}),
+      directives,
+    },
+    astNode: undefined,
+    extensionASTNodes: config.extensionASTNodes?.map(
+      (ext: { directives?: ReadonlyArray<{ name: { value: string } }> }) => ({
+        ...ext,
+        directives: ext.directives?.filter(d => !consumed.has(d.name.value)),
+      }),
+    ),
+  };
+}
+
+/**
  * After a GraphQL field rename on a `@node` / `@relationshipProperties` type,
  * stamp `@alias(property: originalName)` unless the field is a relationship /
  * cypher field or already has `@alias`.

@@ -18,13 +18,14 @@ import {
   mapSchema,
   type SchemaMapper,
 } from '@graphql-tools/utils';
-import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
+import { isNeo4jSubgraph, type SubgraphConfig, type SubgraphTransform } from '../compose.js';
 import {
   ensureNeo4jFieldAlias,
   ensureNeo4jTypeIdentity,
   isNeo4jModelTypeDirectives,
   rewriteNeo4jCypherArgReferences,
   rewriteNeo4jRelationshipPropertiesRefs,
+  typeConfigWithDirectiveExtensions,
 } from './neo4j-identity.js';
 import {
   rewriteConnectArgReferences,
@@ -209,6 +210,7 @@ export function createRenameTransform(opts: RenameTransformConfig) {
     }
   }
   return function renameTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
+    const neo4j = isNeo4jSubgraph(schema);
     const schemaMapper: SchemaMapper = {};
     const typeRenameMap = new Map<string, string>();
     if (typeRenamers.length) {
@@ -225,19 +227,18 @@ export function createRenameTransform(opts: RenameTransformConfig) {
         if (newTypeName !== type.name) {
           typeRenameMap.set(type.name, newTypeName);
           const typeDirectives = getDirectiveExtensions(type);
-          const withNeo4jIdentity = ensureNeo4jTypeIdentity(typeDirectives, type.name);
+          const withNeo4jIdentity = neo4j
+            ? ensureNeo4jTypeIdentity(typeDirectives, type.name)
+            : typeDirectives;
+          if (withNeo4jIdentity !== typeDirectives && withNeo4jIdentity) {
+            return new (Object.getPrototypeOf(type).constructor)({
+              ...typeConfigWithDirectiveExtensions(type, withNeo4jIdentity),
+              name: newTypeName,
+            });
+          }
           return new (Object.getPrototypeOf(type).constructor)({
             ...type.toConfig(),
             name: newTypeName,
-            ...(withNeo4jIdentity !== typeDirectives
-              ? {
-                  extensions: {
-                    ...(type.extensions || {}),
-                    directives: withNeo4jIdentity,
-                  },
-                  astNode: undefined,
-                }
-              : {}),
           });
         }
         return type;
@@ -312,7 +313,7 @@ export function createRenameTransform(opts: RenameTransformConfig) {
       }
       // Connectors skip Mesh `@source`; rewrite `$args.*` / `__typename` here.
       // Protobuf `$args` / nested binds wait for `applyProtobufFieldRenames` (one pass).
-      // Neo4j then rewrites `@cypher` `$arg` binds and stamps `@alias(property:)`.
+      // Neo4j (transport-gated) rewrites `@cypher` `$arg` binds and stamps `@alias(property:)`.
       let rewrittenDirectives = rewriteConnectArgReferences(
         fieldDirectives,
         argRenameMap,
@@ -320,20 +321,24 @@ export function createRenameTransform(opts: RenameTransformConfig) {
         typeRenameMap.size ? typeRenameMap : undefined,
         false,
       );
-      rewrittenDirectives = rewriteNeo4jCypherArgReferences(rewrittenDirectives, argRenameMap);
-      rewrittenDirectives = rewriteNeo4jRelationshipPropertiesRefs(
-        rewrittenDirectives,
-        typeRenameMap,
-      );
-      const parentType = schema.getType(typeName);
-      const parentDirectives = parentType ? getDirectiveExtensions(parentType, schema) : undefined;
-      if (newFieldName !== fieldName) {
-        rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
-          isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirectives),
-          subgraph:
-            parentDirectives?.node?.[0]?.subgraph ||
-            parentDirectives?.relationshipProperties?.[0]?.subgraph,
-        });
+      if (neo4j) {
+        rewrittenDirectives = rewriteNeo4jCypherArgReferences(rewrittenDirectives, argRenameMap);
+        rewrittenDirectives = rewriteNeo4jRelationshipPropertiesRefs(
+          rewrittenDirectives,
+          typeRenameMap,
+        );
+        if (newFieldName !== fieldName) {
+          const parentType = schema.getType(typeName);
+          const parentDirectives = parentType
+            ? getDirectiveExtensions(parentType, schema)
+            : undefined;
+          rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
+            isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirectives),
+            subgraph:
+              parentDirectives?.node?.[0]?.subgraph ||
+              parentDirectives?.relationshipProperties?.[0]?.subgraph,
+          });
+        }
       }
       if (rewrittenDirectives !== fieldDirectives || newArgs) {
         const fieldExtensions: Record<string, any> = { ...(field.extensions || {}) };
@@ -574,6 +579,7 @@ export function createRenameTypeTransform(
   kind: MapperTypeKind = MapperKind.TYPE,
 ): SubgraphTransform {
   return function renameTypeTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
+    const neo4j = isNeo4jSubgraph(schema);
     const rootTypes: Set<GraphQLNamedType> = getRootTypes(schema);
     const renamedTypeMap = new Map<string, string>();
     const renamedTypes = mapSchema(schema, {
@@ -592,15 +598,18 @@ export function createRenameTypeTransform(
         }
         renamedTypeMap.set(type.name, newName);
         const typeDirectives = getDirectiveExtensions(type, schema);
-        const withNeo4jIdentity = ensureNeo4jTypeIdentity(typeDirectives, type.name);
-        const extensions: Record<string, any> = { ...(type.extensions || {}) };
-        if (withNeo4jIdentity !== typeDirectives) {
-          extensions.directives = withNeo4jIdentity;
+        const withNeo4jIdentity = neo4j
+          ? ensureNeo4jTypeIdentity(typeDirectives, type.name)
+          : typeDirectives;
+        if (withNeo4jIdentity !== typeDirectives && withNeo4jIdentity) {
+          return new (Object.getPrototypeOf(type).constructor)({
+            ...typeConfigWithDirectiveExtensions(type, withNeo4jIdentity),
+            name: newName,
+          });
         }
         return new (Object.getPrototypeOf(type).constructor)({
           ...type.toConfig(),
           name: newName,
-          ...(withNeo4jIdentity !== typeDirectives ? { extensions, astNode: undefined } : {}),
         });
       },
     });
@@ -621,10 +630,12 @@ export function createRenameTypeTransform(
           undefined,
           typeRenameForConnect,
         );
-        rewrittenDirectives = rewriteNeo4jRelationshipPropertiesRefs(
-          rewrittenDirectives,
-          renamedTypeMap,
-        );
+        if (neo4j) {
+          rewrittenDirectives = rewriteNeo4jRelationshipPropertiesRefs(
+            rewrittenDirectives,
+            renamedTypeMap,
+          );
+        }
         if (rewrittenDirectives === fieldDirectives) {
           if (fieldDirectives?.resolveTo) {
             const fieldExtensions: any = (field.extensions ||= {});
@@ -659,12 +670,7 @@ export function createRenameTypeTransform(
           return type;
         }
         return new GraphQLObjectType({
-          ...type.toConfig(),
-          extensions: {
-            ...(type.extensions || {}),
-            directives: rewrittenDirectives,
-          },
-          astNode: undefined,
+          ...typeConfigWithDirectiveExtensions(type, rewrittenDirectives),
         });
       },
     });
@@ -684,6 +690,7 @@ export function createRenameFieldTransform(
   kind: MapperFieldKind = MapperKind.FIELD,
 ): SubgraphTransform {
   return function renameFieldTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
+    const neo4j = isNeo4jSubgraph(schema);
     const fieldRenameMap = new Map<string, Map<string, string>>();
     const fieldRenameMapper = {
       [kind]: (
@@ -710,6 +717,9 @@ export function createRenameFieldTransform(
         }
         typeFieldRenameMap.set(fieldName, newFieldName);
         if (newFieldName === fieldName) {
+          return [newFieldName, field];
+        }
+        if (!neo4j) {
           return [newFieldName, field];
         }
         const parentType = schema.getType(typeName);

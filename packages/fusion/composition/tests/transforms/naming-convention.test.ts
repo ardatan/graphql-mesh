@@ -406,17 +406,31 @@ describe('Naming Convention', () => {
     expect(data.cartGetCart.id).toBe('asdf');
   });
 
-  it('resets Neo4j model membership between schema invocations', () => {
+  it('gates Neo4j @alias on transport metadata across schema invocations', () => {
     const transform = createNamingConventionTransform({
       fieldNames: 'camelCase',
     });
     const neo4jSchema = buildSchema(/* GraphQL */ `
+      schema @transport(subgraph: "Movies", kind: "neo4j", location: "neo4j://localhost") {
+        query: Query
+      }
+      directive @transport(subgraph: String!, kind: String!, location: String) repeatable on SCHEMA
       directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
       type Movie @node(subgraph: "Movies") {
         release_year: Int
       }
       type Query {
         movies: [Movie!]!
+      }
+    `);
+    const bareNodeSchema = buildSchema(/* GraphQL */ `
+      directive @node(idField: String) on OBJECT
+      type Article @node(idField: "id") {
+        release_year: Int
+      }
+      type Query {
+        articles: [Article!]!
       }
     `);
     const ordinarySchema = buildSchema(/* GraphQL */ `
@@ -428,8 +442,14 @@ describe('Naming Convention', () => {
       }
     `);
     const moviesCfg = { name: 'Movies', schema: neo4jSchema };
+    const bareCfg = { name: 'Articles', schema: bareNodeSchema };
     const otherCfg = { name: 'Other', schema: ordinarySchema };
-    transform(neo4jSchema, moviesCfg);
+    const neo4jNext = transform(neo4jSchema, moviesCfg);
+    const neo4jField = (neo4jNext.getType('Movie') as GraphQLObjectType).getFields().releaseYear;
+    expect(getDirectiveExtensions(neo4jField)?.alias?.[0]?.property).toBe('release_year');
+    const bareNext = transform(bareNodeSchema, bareCfg);
+    const bareField = (bareNext.getType('Article') as GraphQLObjectType).getFields().releaseYear;
+    expect(getDirectiveExtensions(bareField)?.alias).toBeUndefined();
     const next = transform(ordinarySchema, otherCfg);
     const movie = next.getType('Movie') as GraphQLObjectType;
     const field = movie.getFields().releaseYear;

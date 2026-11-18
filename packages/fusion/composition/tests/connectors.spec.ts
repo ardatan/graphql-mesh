@@ -1,4 +1,4 @@
-import { buildSchema, print } from 'graphql';
+import { buildSchema, extendSchema, parse, print } from 'graphql';
 import {
   composeSubgraphs,
   entityKeyFieldsFromHttpPath,
@@ -358,6 +358,120 @@ describe('Federation Connectors composition', () => {
     expect(sdl).toMatch(/@relationship\([^)]*properties:\s*"Credit"/);
     expect(sdl).toMatch(/@relationship\([^)]*type:\s*"ACTED_IN"/);
     expect(sdl).not.toMatch(/properties:\s*"ActedIn"/);
+  });
+
+  it('HTTP @node without Neo4j transport does not stamp Neo4j identity directives', () => {
+    const httpSchema = buildSchema(/* GraphQL */ `
+      schema @transport(subgraph: "Articles", kind: "rest", location: "http://localhost/articles") {
+        query: Query
+      }
+
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        headers: [[String]]
+        options: TransportOptions
+      ) repeatable on SCHEMA
+      scalar TransportOptions
+
+      directive @node(idField: String) on OBJECT
+
+      type Article @node(idField: "id") {
+        title: String
+      }
+
+      type Query {
+        articles: [Article!]!
+      }
+    `);
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'Articles',
+        schema: httpSchema,
+        transforms: [
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => (typeName === 'Article' ? 'Story' : typeName),
+            fieldRenamer: ({ typeName, fieldName }) =>
+              (typeName === 'Article' || typeName === 'Story') && fieldName === 'title'
+                ? 'headline'
+                : fieldName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/type Story[\s\S]*@node\(idField:\s*"id"\)/);
+    expect(sdl).not.toMatch(/@plural\b/);
+    expect(sdl).not.toMatch(/labels:\s*\[/);
+    expect(sdl).toContain('headline:');
+    expect(sdl).not.toMatch(/@alias\b/);
+  });
+
+  it('Neo4j type rename strips consumed @node from extensionASTNodes', () => {
+    const base = buildSchema(/* GraphQL */ `
+      schema
+        @transport(
+          subgraph: "Movies"
+          kind: "neo4j"
+          location: "neo4j://localhost"
+          options: { database: "neo4j" }
+        ) {
+        query: Query
+      }
+
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        headers: [[String]]
+        options: TransportOptions
+      ) repeatable on SCHEMA
+      scalar TransportOptions
+
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @plural(subgraph: String, value: String!) on OBJECT
+
+      type Movie {
+        title: String
+      }
+
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const neo4jSchema = extendSchema(
+      base,
+      parse(/* GraphQL */ `
+        extend type Movie @node(subgraph: "Movies") {
+          year: Int
+        }
+      `),
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'Movies',
+        schema: neo4jSchema,
+        transforms: [
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => (typeName === 'Movie' ? 'Film' : typeName),
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    const filmDefs = annotated[0].typeDefs.definitions.filter(
+      def =>
+        (def.kind === 'ObjectTypeDefinition' || def.kind === 'ObjectTypeExtension') &&
+        def.name.value === 'Film',
+    );
+    const nodeApps = filmDefs.flatMap(
+      def => ('directives' in def && def.directives?.filter(d => d.name.value === 'node')) || [],
+    );
+    expect(nodeApps).toHaveLength(1);
+    expect(sdl).toMatch(/type Film[\s\S]*@node\([^)]*labels:\s*\["Movie"\]/);
+    expect(sdl).toMatch(/type Film[\s\S]*@plural\([^)]*value:\s*"movies"/);
+    expect(sdl).not.toMatch(/extend type Film[\s\S]*@node\b/);
   });
 
   it('Neo4j consecutive type renames keep a single @relationship(properties:)', () => {
