@@ -1,0 +1,626 @@
+import {
+  getNamedType,
+  isListType,
+  isNonNullType,
+  isObjectType,
+  type GraphQLResolveInfo,
+  type GraphQLSchema,
+  type GraphQLType,
+} from 'graphql';
+import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
+import { getDefDirectives } from '@graphql-mesh/utils';
+import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import { inferAdapterFromLocation } from './adapter.js';
+import {
+  batchableEqualityColumn,
+  canBatchByEqualityColumn,
+  loadBatchedByColumn,
+  resolveEqualityKey,
+} from './batch.js';
+import { createSqlClient } from './client.js';
+import { wireSqlEntityResolvers } from './entity.js';
+import { columnMapFromSelection, resolveMappingValue } from './mapping.js';
+import { hasJoinedField, planSelection } from './plan.js';
+import { collectRelationFilters } from './relation-filters.js';
+import {
+  buildDelete,
+  buildInsert,
+  buildMysqlMutationReadback,
+  buildSelect,
+  buildUpdate,
+  collectReturningColumns,
+  encodeKeysetCursor,
+  mapRowToGraphql,
+  mapRowToGraphqlWithJoins,
+  nestedSelection,
+  parseSqlDirectiveMappings,
+  type OrderSpec,
+  type SqlPlanners,
+} from './sql-builder.js';
+import { parseSqlThrough, type SqlThroughJoin } from './through.js';
+import type {
+  ParsedSqlMapping,
+  SqlAdapter,
+  SqlClient,
+  SqlKind,
+  SqlMutationKind,
+  SqlQueryKind,
+  SqlSoftDeleteOptions,
+  SqlTransportOptions,
+} from './types.js';
+import { resolveConnectionStringFromEnv } from './uri.js';
+
+/**
+ * Options for {@link getSqlExecutor} — build a Mesh subgraph executor from an
+ * `@transport(kind: "sql")` schema (or an injected {@link SqlClient}).
+ *
+ * @example
+ * ```ts
+ * import { getSqlExecutor } from '@graphql-mesh/transport-sql';
+ *
+ * const executor = await getSqlExecutor({
+ *   subgraph: await loadGraphQLSchemaFromSql('shop', {
+ *     endpoint: 'postgres://localhost/shop',
+ *   }),
+ * });
+ * ```
+ * @example
+ * ```ts
+ * // Reuse a client (e.g. wrapped pg.Pool from the Mesh handler)
+ * await getSqlExecutor({ subgraph, client: wrapPgPoolAsSqlClient(pool, { schema: 'app' }) })
+ * ```
+ */
+export interface GetSqlExecutorOpts {
+  /**
+   * Subgraph schema carrying `@transport(kind: "sql")` and `@sql` mappings.
+   */
+  subgraph: GraphQLSchema;
+  /**
+   * Base directory for relative sqlite `@transport(location)` paths when Mesh
+   * opens a client. When omitted, relative locations stay as given (see
+   * {@link createSqlClient}).
+   *
+   * @example process.cwd()
+   */
+  cwd?: string;
+  /**
+   * Pre-built client (e.g. a wrapped `pg.Pool` from a Mesh handler). When
+   * omitted, one is created from `@transport` location/options.
+   *
+   * @example wrapPgPoolAsSqlClient(pool, { schema: 'public' })
+   */
+  client?: SqlClient;
+}
+
+const MUTATION_KINDS = new Set<SqlKind>(['INSERT', 'UPDATE', 'DELETE']);
+
+function printSchemaHasPlannerExtras(schema: GraphQLSchema): boolean {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) || type.name.startsWith('__')) continue;
+    const typeDirs = getDirective(schema, type, 'sql') || [];
+    for (const d of typeDirs) {
+      if (String(d.selection || '').includes('$fn.')) return true;
+      if (d.through) return true;
+    }
+    for (const field of Object.values(type.getFields())) {
+      const dirs = getDirective(schema, field, 'sql') || [];
+      for (const d of dirs) {
+        if (String(d.selection || '').includes('$fn.')) return true;
+        if (d.through) return true;
+      }
+    }
+  }
+  return false;
+}
+
+function objectTypeNameFromReturnType(returnType: GraphQLType): string {
+  let t: GraphQLType = returnType;
+  while (isNonNullType(t) || isListType(t)) {
+    t = t.ofType;
+  }
+  const named = getNamedType(t);
+  // AlbumConnection → Album when possible
+  if (isObjectType(named) && named.name.endsWith('Connection')) {
+    const nodes = named.getFields().nodes;
+    if (nodes) {
+      let nt: GraphQLType = nodes.type;
+      while (isNonNullType(nt) || isListType(nt)) nt = nt.ofType;
+      return getNamedType(nt).name;
+    }
+  }
+  return named.name;
+}
+
+function uniqueKeysFromCatalog(
+  catalog: Map<string, string>,
+): Array<{ graphqlField: string; sqlColumn: string }> {
+  const idCol = catalog.get('id');
+  return idCol ? [{ graphqlField: 'id', sqlColumn: idCol }] : [];
+}
+
+/** Prefer Federation `@key` fields; fall back to sole `id` in the column catalog. */
+function uniqueKeysFromReturnType(
+  schema: GraphQLSchema,
+  returnType: GraphQLType,
+  catalog: Map<string, string>,
+): Array<{ graphqlField: string; sqlColumn: string }> {
+  const typeName = objectTypeNameFromReturnType(returnType);
+  const type = schema.getType(typeName);
+  if (type && isObjectType(type)) {
+    const keyFields: string[] = [];
+    for (const dir of getDefDirectives(schema, type).filter(d => d.name === 'key')) {
+      const fields = String(dir.args.fields || '')
+        .split(/\s+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+      keyFields.push(...fields);
+    }
+    const fromKey: Array<{ graphqlField: string; sqlColumn: string }> = [];
+    const seen = new Set<string>();
+    for (const field of keyFields) {
+      if (seen.has(field)) continue;
+      const sqlColumn = catalog.get(field);
+      if (!sqlColumn) continue;
+      seen.add(field);
+      fromKey.push({ graphqlField: field, sqlColumn });
+    }
+    if (fromKey.length) return fromKey;
+  }
+  return uniqueKeysFromCatalog(catalog);
+}
+
+function connectionNodeSelection(selection: ParsedSqlMapping): ParsedSqlMapping {
+  const nodes = nestedSelection(selection, 'nodes');
+  if (nodes.entries.length) return nodes;
+  const edgeNode = nestedSelection(nestedSelection(selection, 'edges'), 'node');
+  if (edgeNode.entries.length) return edgeNode;
+  return selection;
+}
+
+function mapSelectRow(
+  row: Record<string, unknown>,
+  selection: ParsedSqlMapping,
+  joins: ReturnType<typeof planSelection>['joins'],
+  hasMany: ReturnType<typeof planSelection>['hasMany'] = [],
+) {
+  return joins.length || hasMany.length
+    ? mapRowToGraphqlWithJoins(row, selection, joins, hasMany)
+    : mapRowToGraphql(row, selection);
+}
+
+function rowWhereFullyUnresolved(
+  whereMapping: ParsedSqlMapping,
+  graphqlArgs: Record<string, any>,
+  parent: any,
+): boolean {
+  let required = 0;
+  let resolved = 0;
+  for (const entry of whereMapping.entries) {
+    if (entry.children || entry.spread || entry.key.startsWith('$')) continue;
+    if (
+      entry.key === 'filter' ||
+      entry.key === 'where' ||
+      entry.key === 'orderBy' ||
+      entry.key === 'limit' ||
+      entry.key === 'offset' ||
+      entry.key === 'first' ||
+      entry.key === 'after' ||
+      entry.key === 'last' ||
+      entry.key === 'before'
+    ) {
+      continue;
+    }
+    required++;
+    const val = resolveMappingValue(entry.value, { args: graphqlArgs, parent });
+    if (val !== undefined) resolved++;
+  }
+  return required > 0 && resolved === 0;
+}
+
+async function runSqlSelect(
+  sqlClient: SqlClient,
+  opts: {
+    schema?: GraphQLSchema;
+    info?: GraphQLResolveInfo;
+    table: string;
+    kind: SqlQueryKind;
+    selection: ParsedSqlMapping;
+    whereMapping: ParsedSqlMapping;
+    planners?: SqlPlanners;
+    graphqlArgs: Record<string, any>;
+    parent: any;
+    context: any;
+    softDelete?: SqlSoftDeleteOptions;
+    through?: SqlThroughJoin;
+  },
+) {
+  const {
+    table,
+    kind,
+    selection,
+    whereMapping,
+    planners,
+    graphqlArgs,
+    parent,
+    context,
+    softDelete,
+    through,
+  } = opts;
+  const fullSelection = kind === 'CONNECTION' ? connectionNodeSelection(selection) : selection;
+
+  // Never run a ROW with unresolved equality binders (would pick an arbitrary row).
+  if (kind === 'ROW' && rowWhereFullyUnresolved(whereMapping, graphqlArgs, parent)) {
+    return null;
+  }
+
+  const planned =
+    opts.schema && opts.info && kind !== 'COUNT'
+      ? planSelection(opts.schema, opts.info, fullSelection, { adapter: sqlClient.adapter })
+      : { selection: fullSelection, joins: [], hasMany: [] };
+
+  const selectSelection = planned.selection.entries.length ? planned.selection : fullSelection;
+  const { joins, hasMany } = planned;
+  const columnCatalog = columnMapFromSelection(fullSelection);
+
+  // Batch ROW / simple ROWS when there is exactly one equality binder (FK / PK)
+  // and we are not folding joins / has-many / M2M into this query.
+  if (!through && !joins.length && !hasMany.length && (kind === 'ROW' || kind === 'ROWS')) {
+    const column = batchableEqualityColumn(whereMapping, columnCatalog);
+    if (column && canBatchByEqualityColumn(whereMapping, column, kind, graphqlArgs, planners)) {
+      const key = resolveEqualityKey(whereMapping, column, graphqlArgs, parent);
+      if (key !== undefined) {
+        return loadBatchedByColumn(
+          context,
+          {
+            client: sqlClient,
+            table,
+            kind,
+            selection: selectSelection,
+            whereMapping,
+            planners,
+            column,
+            graphqlArgs,
+            softDelete,
+            columnCatalog,
+            relationFilters:
+              opts.schema && opts.info
+                ? collectRelationFilters(
+                    opts.schema,
+                    objectTypeNameFromReturnType(opts.info.returnType),
+                  )
+                : undefined,
+          },
+          key,
+        );
+      }
+    }
+  }
+
+  const relationFilters =
+    opts.schema && opts.info
+      ? collectRelationFilters(opts.schema, objectTypeNameFromReturnType(opts.info.returnType))
+      : undefined;
+
+  const uniqueKeys =
+    opts.schema && opts.info
+      ? uniqueKeysFromReturnType(opts.schema, opts.info.returnType, columnCatalog)
+      : uniqueKeysFromCatalog(columnCatalog);
+
+  const query = buildSelect(sqlClient.adapter, {
+    table,
+    kind,
+    selection: selectSelection,
+    whereMapping,
+    planners,
+    graphqlArgs,
+    parent,
+    joins,
+    hasMany,
+    softDelete,
+    relationFilters,
+    through,
+    columnCatalog,
+    uniqueKeys,
+  });
+  const result = await sqlClient.query(query.sql, query.params);
+
+  if (kind === 'COUNT') {
+    const row = result.rows[0] as Record<string, unknown> | undefined;
+    const count = row?.count ?? row?.COUNT ?? Object.values(row || {})[0] ?? 0;
+    return Number(count);
+  }
+  if (kind === 'ROW') {
+    const row = result.rows[0] as Record<string, unknown> | undefined;
+    return row ? mapSelectRow(row, selectSelection, joins, hasMany) : null;
+  }
+  if (kind === 'CONNECTION') {
+    // Prefer planner-resolved values from buildSelect (e.g. first: "$args.pageSize").
+    const first = Number(query.resolvedFirst ?? graphqlArgs.first ?? 10);
+    const rows = result.rows as Record<string, unknown>[];
+    const hasNextPage = rows.length > first;
+    const pageRows = hasNextPage ? rows.slice(0, first) : rows;
+    const orderSpecs: OrderSpec[] = query.orderSpecs?.length
+      ? query.orderSpecs
+      : uniqueKeys.map(k => ({ ...k, dir: 'ASC' as const }));
+    const nodes = pageRows.map(r => mapSelectRow(r, selectSelection, joins, hasMany));
+    const edges = nodes.map((node, i) => ({
+      cursor: encodeKeysetCursor(orderSpecs, pageRows[i]),
+      node,
+    }));
+    const endCursor = edges.length ? edges[edges.length - 1].cursor : null;
+    const startCursor = edges.length ? edges[0].cursor : null;
+
+    let totalCount = pageRows.length + (hasNextPage ? 1 : 0);
+    if (selection.entries.some(e => e.key === 'totalCount')) {
+      const countQ = buildSelect(sqlClient.adapter, {
+        table,
+        kind: 'COUNT',
+        selection: selectSelection,
+        whereMapping,
+        planners,
+        // COUNT must ignore `after` — total is unpaginated.
+        graphqlArgs: { ...graphqlArgs, after: undefined },
+        parent,
+        softDelete,
+        relationFilters,
+        columnCatalog,
+        uniqueKeys,
+        // Junction-scoped connections must count the same membership set.
+        through,
+      });
+      const countRes = await sqlClient.query(countQ.sql, countQ.params);
+      const crow = countRes.rows[0] as Record<string, unknown> | undefined;
+      totalCount = Number(crow?.count ?? crow?.COUNT ?? Object.values(crow || {})[0] ?? 0);
+    }
+
+    const after =
+      query.resolvedAfter ?? (typeof graphqlArgs.after === 'string' ? graphqlArgs.after : '');
+    return {
+      nodes,
+      edges,
+      pageInfo: {
+        hasNextPage,
+        hasPreviousPage: Boolean(after),
+        startCursor,
+        endCursor,
+      },
+      totalCount,
+    };
+  }
+  return (result.rows as Record<string, unknown>[]).map(r =>
+    mapSelectRow(r, selectSelection, joins, hasMany),
+  );
+}
+
+export async function getSqlExecutor({
+  subgraph,
+  cwd,
+  client,
+}: GetSqlExecutorOpts): Promise<DisposableExecutor> {
+  const transportDirectives = getDirective(subgraph, subgraph, 'transport');
+  if (!transportDirectives?.length) {
+    throw new Error('No @transport directive found on SQL subgraph schema');
+  }
+  const transport = transportDirectives[0] as {
+    location?: string;
+    options?: SqlTransportOptions;
+  };
+  const location =
+    transport.location ||
+    resolveConnectionStringFromEnv(undefined, { adapter: transport.options?.adapter });
+  const adapter: SqlAdapter =
+    transport.options?.adapter || inferAdapterFromLocation(location) || client?.adapter || 'sqlite';
+  // Injected clients (pool-only handlers) may omit `@transport(location)`.
+  if (!location && !client) {
+    throw new Error(
+      '@transport(kind: "sql") requires location (connection URI / file path) or an env URL (DATABASE_URL, POSTGRES_URL, MYSQL_URL, SQLITE_URL, …)',
+    );
+  }
+
+  const softDelete = transport.options?.softDelete;
+
+  const sqlClient =
+    client ||
+    createSqlClient({
+      adapter,
+      location: location!,
+      cwd,
+      max: transport.options?.max,
+      idleTimeout: transport.options?.idleTimeout,
+      connectionTimeout: transport.options?.connectionTimeout,
+      tls: transport.options?.tls,
+      ssl: transport.options?.ssl,
+      schema: transport.options?.schema,
+    });
+
+  subgraph = mapSchema(subgraph, {
+    [MapperKind.OBJECT_FIELD](fieldConfig) {
+      const directives = getDefDirectives(subgraph, fieldConfig);
+      for (const directive of directives) {
+        switch (directive.name) {
+          case 'sql': {
+            const table = directive.args.table as string;
+            const kind = (directive.args.kind || 'ROWS') as SqlKind;
+            const { whereMapping, setMapping, selection, planners } = parseSqlDirectiveMappings({
+              where: directive.args.where as string | undefined,
+              set: directive.args.set as string | undefined,
+              selection: directive.args.selection as string | undefined,
+              // Legacy SDL may still carry a separate filter binder.
+              filter: directive.args.filter as string | undefined,
+              orderBy: directive.args.orderBy as string | undefined,
+              limit: directive.args.limit as string | undefined,
+              offset: directive.args.offset as string | undefined,
+              first: directive.args.first as string | undefined,
+              after: directive.args.after as string | undefined,
+            });
+
+            if (MUTATION_KINDS.has(kind)) {
+              const mutationKind = kind as SqlMutationKind;
+              fieldConfig.resolve = async function sqlMutationResolver(_root, args) {
+                const filterColumns = columnMapFromSelection(selection);
+                if (mutationKind === 'DELETE') {
+                  const query = buildDelete(
+                    sqlClient.adapter,
+                    table,
+                    whereMapping,
+                    args,
+                    softDelete,
+                    filterColumns,
+                  );
+                  const result = await sqlClient.query(query.sql, query.params);
+                  const affected = result.rowCount;
+                  return {
+                    ok: affected > 0,
+                    affectedRows: affected,
+                  };
+                }
+
+                const returningCols = collectReturningColumns(selection);
+                const query =
+                  mutationKind === 'INSERT'
+                    ? buildInsert(sqlClient.adapter, table, setMapping, args, returningCols)
+                    : buildUpdate(
+                        sqlClient.adapter,
+                        table,
+                        setMapping,
+                        whereMapping,
+                        args,
+                        returningCols,
+                        softDelete,
+                        filterColumns,
+                      );
+
+                let row: Record<string, unknown> | undefined;
+                if (
+                  returningCols.length &&
+                  (sqlClient.adapter === 'sqlite' || sqlClient.adapter === 'postgres')
+                ) {
+                  const result = await sqlClient.query(query.sql, query.params);
+                  row = result.rows[0] as Record<string, unknown> | undefined;
+                } else {
+                  const result = await sqlClient.query(query.sql, query.params);
+                  // MySQL: no RETURNING — read back the written row for payload mapping.
+                  if (returningCols.length && sqlClient.adapter === 'mysql') {
+                    const readback = buildMysqlMutationReadback(table, returningCols, {
+                      insertId: mutationKind === 'INSERT' ? result.insertId : undefined,
+                      whereMapping: mutationKind === 'UPDATE' ? whereMapping : undefined,
+                      graphqlArgs: args,
+                      filterColumns,
+                    });
+                    if (readback) {
+                      const got = await sqlClient.query(readback.sql, readback.params);
+                      row = got.rows[0] as Record<string, unknown> | undefined;
+                    }
+                  }
+                }
+
+                const payloadKey = selection.entries.find(e => e.children)?.key;
+                if (payloadKey) {
+                  const nested = nestedSelection(selection, payloadKey);
+                  return {
+                    [payloadKey]: row ? mapRowToGraphql(row, nested) : null,
+                  };
+                }
+                return row ? mapRowToGraphql(row, selection) : null;
+              };
+              break;
+            }
+
+            const queryKind = kind as SqlQueryKind;
+            const through = parseSqlThrough(directive.args.through as string | undefined);
+            fieldConfig.resolve = async function sqlQueryResolver(
+              root,
+              args,
+              context,
+              info: GraphQLResolveInfo,
+            ) {
+              // Parent already folded this belongs-to via JOIN lookahead.
+              if (hasJoinedField(root, info.fieldName)) {
+                return root[info.fieldName];
+              }
+              return runSqlSelect(sqlClient, {
+                schema: subgraph,
+                info,
+                table,
+                kind: queryKind,
+                selection,
+                whereMapping,
+                planners,
+                graphqlArgs: args,
+                parent: root,
+                context,
+                softDelete,
+                through,
+              });
+            };
+            break;
+          }
+        }
+      }
+      return fieldConfig;
+    },
+  });
+
+  // Type-level `@sql` → resolveReference + Query._entities.
+  subgraph = wireSqlEntityResolvers(subgraph, {
+    executeTypeLevelRow(sqlArgs, reference, context) {
+      const table = sqlArgs.table as string;
+      const { whereMapping, selection, planners } = parseSqlDirectiveMappings({
+        where: sqlArgs.where as string | undefined,
+        selection: sqlArgs.selection as string | undefined,
+        filter: sqlArgs.filter as string | undefined,
+        orderBy: sqlArgs.orderBy as string | undefined,
+        limit: sqlArgs.limit as string | undefined,
+        offset: sqlArgs.offset as string | undefined,
+        first: sqlArgs.first as string | undefined,
+        after: sqlArgs.after as string | undefined,
+      });
+      return runSqlSelect(sqlClient, {
+        table,
+        kind: 'ROW',
+        selection,
+        whereMapping,
+        planners,
+        graphqlArgs: {},
+        parent: reference,
+        context,
+        softDelete,
+      });
+    },
+  });
+
+  // Postgres + Node pg.Pool → Grafast / `@dataplan/pg` fast path.
+  // Soft-delete / `$fn` computed columns live on the GraphQL.js planner path.
+  // MySQL / SQLite / Bun.SQL keep the GraphQL.js + JOIN planner path.
+  // Dynamic import keeps grafast off the static graph (Jest --detectLeaks).
+  const usesPlannerExtras = Boolean(softDelete) || printSchemaHasPlannerExtras(subgraph);
+  if (adapter === 'postgres' && sqlClient.pgPool && !usesPlannerExtras) {
+    const { createPostgresGrafastExecutor } = await import('./pg-executor.js');
+    const grafastExecutor = createPostgresGrafastExecutor({
+      subgraph,
+      sqlClient,
+      disposeClient: () => sqlClient.dispose(),
+      pgSchema: transport.options?.schema,
+    });
+    if (grafastExecutor) {
+      return grafastExecutor;
+    }
+  }
+
+  const defaultExecutor = createDefaultExecutor(subgraph);
+  const executor: DisposableExecutor = async function sqlExecutor(executionRequest) {
+    // Ensure a shared mutable context so DataLoaders coalesce within one operation.
+    const context =
+      executionRequest.context && typeof executionRequest.context === 'object'
+        ? executionRequest.context
+        : {};
+    return defaultExecutor({
+      ...executionRequest,
+      context,
+    });
+  };
+  executor[DisposableSymbols.dispose] = () => sqlClient.dispose();
+  executor[DisposableSymbols.asyncDispose] = async () => sqlClient.dispose();
+  return executor;
+}

@@ -8,6 +8,7 @@ import {
   inferEntityRefFromParentFkNames,
   isFederationConnectorsSubgraph,
   isMongoSubgraph,
+  isSqlSubgraph,
   liftExtraSchemaDefinitionDirectives,
   parseEntityStubTypesFromSelection,
   skipsMeshSourceAnnotations,
@@ -66,6 +67,29 @@ describe('Federation Connectors composition', () => {
     expect(isFederationConnectorsSubgraph(connectorsSchema)).toBe(true);
     expect(
       isFederationConnectorsSubgraph(
+        buildSchema(/* GraphQL */ `
+          type Query {
+            hello: String
+          }
+        `),
+      ),
+    ).toBe(false);
+  });
+
+  it('detects SQL subgraphs and skips Mesh @source annotations', () => {
+    const sqlSchema = buildSchema(/* GraphQL */ `
+      schema @transport(subgraph: "Geo", kind: "sql", location: "postgres://localhost/db") {
+        query: Query
+      }
+      directive @transport(subgraph: String!, kind: String!, location: String) repeatable on SCHEMA
+      type Query {
+        hello: String
+      }
+    `);
+    expect(isSqlSubgraph(sqlSchema)).toBe(true);
+    expect(skipsMeshSourceAnnotations(sqlSchema)).toBe(true);
+    expect(
+      isSqlSubgraph(
         buildSchema(/* GraphQL */ `
           type Query {
             hello: String

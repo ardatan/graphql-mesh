@@ -1,10 +1,14 @@
 import {
   getNamedType,
+  GraphQLObjectType,
   isInputObjectType,
   isInterfaceType,
   isObjectType,
+  type GraphQLFieldConfig,
   type GraphQLNamedType,
+  type GraphQLSchema,
 } from 'graphql';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 
 export class TransformValidationError extends Error {
   constructor(message: string) {
@@ -60,6 +64,64 @@ function rewriteOutsideQuotes(value: string, fn: (segment: string) => string): s
     i++;
   }
   out += fn(value.slice(segmentStart));
+  return out;
+}
+
+/**
+ * SQL selection bare picks (`name` → `displayName: name`) with colon lookbehind on
+ * the full mapping string. Skips quoted spans and `#` comments (same regions as
+ * {@link rewriteOutsideQuotes}), but keeps absolute offsets so
+ * `key: # comment\\n  name` and `key:\\n  # comment\\n  name` are not rewritten
+ * as a second bare pick.
+ */
+function rewriteSqlBarePicks(value: string, reBare: RegExp, lookup: Map<string, string>): string {
+  let out = '';
+  let i = 0;
+  let segmentStart = 0;
+  const apply = (segment: string, base: number): string =>
+    segment.replace(reBare, (m, pre: string, ws: string, from: string, offset: number) => {
+      // Skip tokens that continue a prior `key:` mapping. After the colon, only
+      // same-line `#` comments, blank lines, and full-line `#` comments may appear
+      // before the RHS (`key:\n  # c\n  name` must not become a second bare pick).
+      if (/:(?:[ \t]*#.*)?(?:\n[ \t]*(?:#.*)?)*$/.test(value.slice(0, base + offset))) {
+        return m;
+      }
+      return `${pre}${ws}${lookup.get(from) ?? from}: ${from}`;
+    });
+  while (i < value.length) {
+    const c = value[i];
+    if (c === '#') {
+      out += apply(value.slice(segmentStart, i), segmentStart);
+      const eol = value.indexOf('\n', i);
+      if (eol === -1) {
+        out += value.slice(i);
+        return out;
+      }
+      out += value.slice(i, eol + 1);
+      i = eol + 1;
+      segmentStart = i;
+      continue;
+    }
+    if (c === '"' || c === "'") {
+      out += apply(value.slice(segmentStart, i), segmentStart);
+      const q = c;
+      out += c;
+      i++;
+      while (i < value.length && value[i] !== q) {
+        if (value[i] === '\\') {
+          out += value[i++];
+          if (i < value.length) out += value[i++];
+          continue;
+        }
+        out += value[i++];
+      }
+      if (i < value.length) out += value[i++];
+      segmentStart = i;
+      continue;
+    }
+    i++;
+  }
+  out += apply(value.slice(segmentStart), segmentStart);
   return out;
 }
 
@@ -1453,14 +1515,15 @@ function protobufRpcDirectiveKey(
 }
 
 /**
- * Rewrite Federation `@connect`, Thrift `@thrift__rpc`, Mesh `@protobuf__rpc`,
- * and Mesh `@mongo__*` mappings after GraphQL renames. These skip Mesh `@source` /
- * `@meshSource`; transforms keep directive binds on the public GraphQL names instead.
+ * Rewrite Federation Connectors `@connect`, Thrift `@thrift__rpc`, Mesh
+ * `@protobuf__rpc`, Mesh `@sql`, and Mesh `@mongo__*` mappings after GraphQL
+ * renames. These skip Mesh `@source` / `@meshSource`; transforms keep directive
+ * binds on the public GraphQL names instead.
  *
  * When `fieldRenameMap` is set, also rewrite selection aliases of the form
  * `newName: oldName` / leading `oldName` field picks so rename/prefix transforms
- * keep compact selection in sync with GraphQL field names.
- * Mongo (and SQL) also rewrite `$this.<field>` parent picks.
+ * keep Connectors (and thrift/protobuf/SQL/Mongo compact) selection in sync with
+ * GraphQL field names. SQL and Mongo also rewrite `$this.<field>` parent picks.
  *
  * When `typeRenameMap` is set, rewrite `__typename: "Old"` / `__typename: $("Old")`
  * in selections so prefix/rename/naming-convention keep polymorphic Connect arms valid.
@@ -1473,29 +1536,29 @@ export function rewriteConnectArgReferences(
   /**
    * When false, skip all `@protobuf__rpc` rewrites here (caller uses type-scoped
    * `applyProtobufFieldRenames` instead). Avoids a second `$args` rename pass that
-   * would chain `a→b` then `b→c`. Connect / thrift selection still uses the maps above.
+   * would chain `a→b` then `b→c`. Connect / thrift / SQL / Mongo selection still uses the maps above.
    */
   protobufNestedFieldRenames: boolean = true,
 ): Record<string, any[]> | undefined {
   const protobufKey = protobufRpcDirectiveKey(fieldDirectives);
   const hasConnect = Boolean(fieldDirectives?.connect?.length);
   const hasThriftRpc = Boolean(fieldDirectives?.thrift__rpc?.length);
+  const sqlDirectiveNames = ['sql'] as const;
+  const hasSql = sqlDirectiveNames.some(name => Boolean(fieldDirectives?.[name]?.length));
   const mongoDirectiveNames = Object.keys(fieldDirectives || {}).filter(name =>
     name.startsWith('mongo__'),
   );
   const hasMongo = mongoDirectiveNames.some(name => Boolean(fieldDirectives?.[name]?.length));
   if (
-    (!hasConnect && !hasThriftRpc && !protobufKey && !hasMongo) ||
+    (!hasConnect && !hasThriftRpc && !protobufKey && !hasSql && !hasMongo) ||
     (argRenameMap.size === 0 &&
       (!fieldRenameMap || fieldRenameMap.size === 0) &&
       (!typeRenameMap || typeRenameMap.size === 0))
   ) {
     return fieldDirectives;
   }
-  const rewriteExpr = (value: unknown): unknown => {
-    if (typeof value !== 'string') {
-      return value;
-    }
+  /** `$args` / `$this` binders only (no `__typename` rewrites). */
+  const rewriteBindersOnly = (value: string): string => {
     let out = value;
     // Single-pass, whole-name matches so `id` does not rewrite `$args.identifier`
     // and `a→b` + `b→c` does not chain into `$args.c`. Skip quoted spans so
@@ -1507,37 +1570,24 @@ export function rewriteConnectArgReferences(
         segment.replace(re, (_m, name: string) => `$args.${argRenameMap.get(name) ?? name}`),
       );
     }
-    // `fieldRenameMap` rewrites nested response-field picks in a selection
-    // (`name` → `fullName`). Do not pass the connector field's own rename here —
-    // that would rewrite response keys incorrectly (e.g. Query.user → person).
     if (fieldRenameMap?.size) {
-      // One lookup per original name (same as `$args`) — sequential map entries
-      // must not cascade (`primaryId→secondaryId→backupId`).
-      const fieldEntries = [...fieldRenameMap.entries()]
+      // Single pass so `a→b` then `b→c` does not rewrite `$this.a` into `$this.c`.
+      const entries = [...fieldRenameMap.entries()]
         .filter(([from, to]) => from && to && from !== to)
         .sort((a, b) => b[0].length - a[0].length);
-      if (fieldEntries.length) {
-        const fieldLookup = new Map(fieldEntries);
-        const fieldNames = fieldEntries.map(([from]) => escapeRegExp(from)).join('|');
-        // Quote-aware pick rewrites: leave `note: " old_name "` literals alone.
+      if (entries.length) {
+        const lookup = new Map(entries);
+        const names = entries.map(([from]) => escapeRegExp(from)).join('|');
+        const re = new RegExp(`\\$this\\.(${names})(?![\\w])`, 'g');
         out = rewriteOutsideQuotes(out, segment =>
-          segment
-            .replace(
-              new RegExp(`(^|[\\n\\s])(${fieldNames})(\\s*[:{])`, 'g'),
-              (_m, pre: string, name: string, trail: string) =>
-                `${pre}${fieldLookup.get(name) ?? name}${trail}`,
-            )
-            .replace(
-              new RegExp(`(^|[\\n\\s])(${fieldNames})(?=\\s|$)`, 'g'),
-              (_m, pre: string, name: string) => `${pre}${fieldLookup.get(name) ?? name}`,
-            )
-            .replace(
-              new RegExp(`\\$this\\.(${fieldNames})(?![\\w])`, 'g'),
-              (_m, name: string) => `$this.${fieldLookup.get(name) ?? name}`,
-            ),
+          segment.replace(re, (_m, name: string) => `$this.${lookup.get(name) ?? name}`),
         );
       }
     }
+    return out;
+  };
+  const rewriteBindersAndTypenames = (value: string): string => {
+    let out = rewriteBindersOnly(value);
     if (typeRenameMap?.size) {
       // One pass with a lookup: `FooBar→Foo` then `Foo→Bar` must not rewrite the
       // already-replaced `Foo` again. Longer names win the alternation first.
@@ -1559,6 +1609,82 @@ export function rewriteConnectArgReferences(
       }
     }
     return out;
+  };
+  /** Connect / thrift / Mongo selection: rename response picks on both sides of `name: name`. */
+  const rewriteExpr = (value: unknown): unknown => {
+    if (typeof value !== 'string') {
+      return value;
+    }
+    let out = value;
+    if (fieldRenameMap?.size) {
+      // One lookup per original name so sequential map entries do not cascade
+      // (`primaryId→secondaryId→backupId`).
+      const fieldEntries = [...fieldRenameMap.entries()]
+        .filter(([from, to]) => from && to && from !== to)
+        .sort((a, b) => b[0].length - a[0].length);
+      if (fieldEntries.length) {
+        const fieldLookup = new Map(fieldEntries);
+        const fieldNames = fieldEntries.map(([from]) => escapeRegExp(from)).join('|');
+        // Quote-aware pick rewrites: leave `note: " old_name "` literals alone.
+        // One replacement against the original segment so a renamed alias/bare
+        // pick is not matched again by a later mapping (`a→b` then `b→c`).
+        out = rewriteOutsideQuotes(out, segment =>
+          segment.replace(
+            new RegExp(`(^|[\\n\\s])(${fieldNames})(?:(\\s*[:{])|(?=\\s|$))`, 'g'),
+            (_m, pre: string, name: string, trail?: string) => {
+              const next = fieldLookup.get(name) ?? name;
+              return trail != null ? `${pre}${next}${trail}` : `${pre}${next}`;
+            },
+          ),
+        );
+      }
+    }
+    return rewriteBindersAndTypenames(out);
+  };
+  /**
+   * SQL `@sql(selection:)`: rename GraphQL keys / nested relation keys, but keep
+   * physical column references on the RHS (`first_name: first_name` → `firstName: first_name`).
+   * Bare picks become `newKey: oldKey`.
+   */
+  const rewriteSqlSelection = (value: unknown): unknown => {
+    if (typeof value !== 'string') {
+      return value;
+    }
+    let out = value;
+    if (fieldRenameMap?.size) {
+      // Single pass with a lookup so `a→b` then `b→c` does not cascade `a` into `c`.
+      const entries = [...fieldRenameMap.entries()]
+        .filter(([from, to]) => from && to && from !== to)
+        .sort((a, b) => b[0].length - a[0].length);
+      if (entries.length) {
+        const lookup = new Map(entries);
+        const names = entries.map(([from]) => escapeRegExp(from)).join('|');
+        const reKey = new RegExp(`(^|[\\n\\s])(${names})(\\s*[:{])`, 'g');
+        const reBare = new RegExp(`(^|[\\n])([\\t ]*)(${names})(?=[\\t ]*(?:#.*)?$)`, 'gm');
+        // Key renames stay quote/comment-aware via rewriteOutsideQuotes.
+        out = rewriteOutsideQuotes(out, segment =>
+          segment.replace(reKey, (_m, pre: string, from: string, suf: string) => {
+            return `${pre}${lookup.get(from) ?? from}${suf}`;
+          }),
+        );
+        // Bare identity picks → `newKey: oldKey`. Run with absolute offsets on the
+        // full string so lookbehind still sees `key: # comment` when
+        // rewriteOutsideQuotes splits the segment at `#`.
+        out = rewriteSqlBarePicks(out, reBare, lookup);
+      }
+    }
+    return rewriteBindersAndTypenames(out);
+  };
+  /**
+   * SQL `@sql(where/set:)`: left-hand keys are physical columns — do not apply
+   * GraphQL field renames to them. Only rewrite `$args` / `$this` binders (never
+   * `__typename` text inside string literals used as SQL values).
+   */
+  const rewriteSqlWhereOrSet = (value: unknown): unknown => {
+    if (typeof value !== 'string') {
+      return value;
+    }
+    return rewriteBindersOnly(value);
   };
   /** HTTP path templates: rewrite `$args` even when the literal path has `'` / `"` (e.g. `/O'Reilly/{$args.id}`). Quote-skipping is only for expression strings (`->get("$args.x")`). */
   const rewriteHttpPath = (value: string): string => {
@@ -1636,6 +1762,53 @@ export function rewriteConnectArgReferences(
             ? rewriteExpr(rpcArgs.selection)
             : rpcArgs?.selection,
         throws: typeof rpcArgs?.throws === 'string' ? rewriteExpr(rpcArgs.throws) : rpcArgs?.throws,
+      })),
+    };
+  }
+  for (const name of sqlDirectiveNames) {
+    if (!fieldDirectives?.[name]?.length) continue;
+    // `@sql(selection:)` renames GraphQL keys only; `where`/`set` left keys are physical
+    // columns. Binders (`$args` / `$this`) rewrite on every mapping string.
+    nextDirectives = {
+      ...nextDirectives,
+      [name]: fieldDirectives[name].map((sqlArgs: any) => ({
+        ...sqlArgs,
+        where:
+          typeof sqlArgs?.where === 'string' ? rewriteSqlWhereOrSet(sqlArgs.where) : sqlArgs?.where,
+        set: typeof sqlArgs?.set === 'string' ? rewriteSqlWhereOrSet(sqlArgs.set) : sqlArgs?.set,
+        // Junction `through:` parent binders (`parent: $this.playlistKey`) need `$this` rewrites.
+        through:
+          typeof sqlArgs?.through === 'string'
+            ? rewriteBindersOnly(sqlArgs.through)
+            : sqlArgs?.through,
+        selection:
+          typeof sqlArgs?.selection === 'string'
+            ? rewriteSqlSelection(sqlArgs.selection)
+            : sqlArgs?.selection,
+        orderBy:
+          typeof sqlArgs?.orderBy === 'string'
+            ? rewriteBindersOnly(sqlArgs.orderBy)
+            : sqlArgs?.orderBy,
+        limit:
+          typeof sqlArgs?.limit === 'string' ? rewriteBindersOnly(sqlArgs.limit) : sqlArgs?.limit,
+        offset:
+          typeof sqlArgs?.offset === 'string'
+            ? rewriteBindersOnly(sqlArgs.offset)
+            : sqlArgs?.offset,
+        first:
+          typeof sqlArgs?.first === 'string' ? rewriteBindersOnly(sqlArgs.first) : sqlArgs?.first,
+        after:
+          typeof sqlArgs?.after === 'string' ? rewriteBindersOnly(sqlArgs.after) : sqlArgs?.after,
+        last: typeof sqlArgs?.last === 'string' ? rewriteBindersOnly(sqlArgs.last) : sqlArgs?.last,
+        before:
+          typeof sqlArgs?.before === 'string'
+            ? rewriteBindersOnly(sqlArgs.before)
+            : sqlArgs?.before,
+        // Legacy `@sql(filter:)` binder (still read by the executor).
+        filter:
+          typeof sqlArgs?.filter === 'string'
+            ? rewriteBindersOnly(sqlArgs.filter)
+            : sqlArgs?.filter,
       })),
     };
   }
@@ -1742,4 +1915,56 @@ export function rewriteConnectArgReferences(
     }
   }
   return nextDirectives;
+}
+
+export function applyFlatDirectiveFieldRenames(
+  field: GraphQLFieldConfig<any, any>,
+  flatFieldRenameMap: Map<string, string>,
+  schema: GraphQLSchema,
+): GraphQLFieldConfig<any, any> {
+  if (!flatFieldRenameMap.size) return field;
+  const fieldDirectives = getDirectiveExtensions(field, schema);
+  const rewritten = rewriteConnectArgReferences(
+    fieldDirectives,
+    new Map(),
+    flatFieldRenameMap,
+    undefined,
+    false,
+  );
+  if (!rewritten || rewritten === fieldDirectives) return field;
+  return {
+    ...field,
+    extensions: { ...(field.extensions || {}), directives: rewritten },
+    astNode: undefined,
+  };
+}
+
+/**
+ * Type-level `@sql` entity mappings: rename selection keys / `$this` binders for
+ * this type's fields. Required because SQL subgraphs skip Mesh `@source`.
+ */
+export function applySqlTypeFieldRenames(
+  type: GraphQLObjectType,
+  typeFieldRenameMap: Map<string, string> | undefined,
+  schema: GraphQLSchema,
+): GraphQLObjectType {
+  if (!typeFieldRenameMap?.size) return type;
+  const typeDirectives = getDirectiveExtensions(type, schema);
+  if (!typeDirectives?.sql?.length) return type;
+  const rewritten = rewriteConnectArgReferences(
+    typeDirectives,
+    new Map(),
+    typeFieldRenameMap,
+    undefined,
+    false,
+  );
+  if (!rewritten || rewritten === typeDirectives) return type;
+  return new GraphQLObjectType({
+    ...type.toConfig(),
+    extensions: {
+      ...(type.extensions || {}),
+      directives: rewritten,
+    },
+    astNode: undefined,
+  });
 }

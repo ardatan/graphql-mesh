@@ -1,0 +1,69 @@
+{
+  "name": "@graphql-mesh/transport-sql",
+  "version": "0.1.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/transports/sql"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "scripts": {
+    "test:bun": "bun test ./test/client.bun.test.ts"
+  },
+  "peerDependencies": {
+    "graphql": "^16.0.0 || ^17.0.0"
+  },
+  "dependencies": {
+    "@apollo/subgraph": "^2.16.0",
+    "@dataplan/pg": "^1.2.1",
+    "@graphql-mesh/transport-common": "^1.1.2",
+    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-tools/utils": "^13.2.2",
+    "@whatwg-node/disposablestack": "^0.1.0",
+    "@whatwg-node/promise-helpers": "^2.0.1",
+    "dataloader": "^2.2.2",
+    "grafast": "^1.2.0",
+    "graphile-config": "^0.0.1-beta.14",
+    "mysql2": "^3.14.0",
+    "pg": "^8.23.1",
+    "pg-sql2": "^5.0.2",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@omnigraph/sql": "workspace:*",
+    "@types/pg": "^8.15.4",
+    "graphql": "16.14.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}

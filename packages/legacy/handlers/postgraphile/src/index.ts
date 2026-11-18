@@ -1,12 +1,7 @@
-// eslint-disable-next-line import/no-nodejs-modules
-import { tmpdir } from 'os';
-import pg from 'pg';
-import type { Plugin } from 'postgraphile';
-import { withPostGraphileContext } from 'postgraphile';
-import { getPostGraphileBuilder } from 'postgraphile-core';
-import { type Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
-import { path, path as pathModule, process } from '@graphql-mesh/cross-helpers';
+import type { GraphQLSchema } from 'graphql';
+import type { Pool as PgPool } from 'pg';
+import { process } from '@graphql-mesh/cross-helpers';
+import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type {
@@ -16,163 +11,151 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import {
+  createSqlClient,
+  getSqlExecutor,
+  loadGraphQLSchemaFromSql,
+  wrapPgPoolAsSqlClient,
+} from '@omnigraph/sql';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
+/**
+ * Legacy v0 Postgres handler (`@graphql-mesh/postgraphile`). Under the hood
+ * `@omnigraph/sql` + `transport-sql`. See the package changeset for migration
+ * notes (plugins / live queries / context options removed).
+ */
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.PostGraphileHandler;
   private baseDir: string;
-  private pubsub: PubSub;
-  private pgCache: any;
-  private log: Logger;
   private importFn: ImportFn;
-  private pgPool?: { end(): Promise<void> };
+  private schemaProxy: StoreProxy<GraphQLSchema>;
+  private disposableResource?: Disposable | AsyncDisposable;
 
   constructor({
     name,
     config,
     baseDir,
-    pubsub,
     store,
-    log,
     importFn,
   }: MeshHandlerOptions<YamlConfig.PostGraphileHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.pubsub = pubsub;
-    this.pgCache = store.proxy('pgCache.json', PredefinedProxyOptions.JsonWithoutValidation);
-    this.log = log;
     this.importFn = importFn;
+    this.schemaProxy = store.proxy(
+      'schema.graphql',
+      PredefinedProxyOptions.GraphQLSchemaWithDiffing,
+    );
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    let pgPool: any;
+    const schemaName = resolveSchemaName(this.config.schemaName);
+    const pool = await resolvePgPool(this.config, this.baseDir, this.importFn);
+    const connectionString = resolveConnectionString(this.config, pool);
+    if (!pool && !connectionString) {
+      throw new Error(
+        '@graphql-mesh/postgraphile: provide `connectionString` (postgres://… URI) and/or `pool` (pg.Pool / module export).',
+      );
+    }
 
-    if (typeof this.config?.pool === 'string') {
-      pgPool = await loadFromModuleExportExpression<any>(this.config.pool, {
+    // Prefer an explicit URI for `@transport(location)`; pool-only may omit
+    // location when this handler injects the execution client below.
+    const endpoint = connectionString || poolConnectionString(pool) || undefined;
+
+    const schema = await this.schemaProxy.getWithSet(() =>
+      loadGraphQLSchemaFromSql(this.name, {
+        endpoint,
+        schema: schemaName,
+        includeTables: this.config.tables,
+        tableFields: this.config.tableFields,
+        pgPool: pool,
         cwd: this.baseDir,
-        importFn: this.importFn,
-        defaultExportName: 'default',
-      });
-    }
-
-    if (!pgPool || !('connect' in pgPool)) {
-      const pgLogger = this.log.child('PostgreSQL');
-      pgPool = new pg.Pool({
-        connectionString: stringInterpolator.parse(this.config.connectionString, {
-          env: process.env,
-        }),
-        log: messages => pgLogger.debug(messages),
-        ...this.config?.pool,
-      });
-    }
-
-    this.pgPool = pgPool;
-
-    const cacheKey = this.name + '_introspection.json';
-    const dummyCacheFilePath = pathModule.join(tmpdir(), cacheKey);
-    let cachedIntrospection = await this.pgCache.get();
-
-    let writeCache: () => Promise<void>;
-
-    const appendPlugins = await Promise.all<Plugin>(
-      (this.config.appendPlugins || []).map(pluginName =>
-        loadFromModuleExportExpression<any>(pluginName, {
-          cwd: this.baseDir,
-          importFn: this.importFn,
-          defaultExportName: 'default',
-        }),
-      ),
+      }),
     );
-    const skipPlugins = await Promise.all<Plugin>(
-      (this.config.skipPlugins || []).map(pluginName =>
-        loadFromModuleExportExpression<any>(pluginName, {
+
+    // Always bind the executor to the *current* pool / URI so a cached schema's
+    // `@transport(location)` cannot point queries at a previous database.
+    // Enforce schemaName via per-connection search_path on supplied pools.
+    const client = pool
+      ? wrapPgPoolAsSqlClient(pool, { schema: schemaName })
+      : createSqlClient({
+          adapter: 'postgres',
+          location: connectionString!,
+          schema: schemaName,
           cwd: this.baseDir,
-          importFn: this.importFn,
-          defaultExportName: 'default',
-        }),
-      ),
-    );
-    const options = await loadFromModuleExportExpression<any>(this.config.options, {
+        });
+
+    const executor = await getSqlExecutor({
+      subgraph: schema,
       cwd: this.baseDir,
-      importFn: this.importFn,
-      defaultExportName: 'default',
+      client,
     });
 
-    const builder = await getPostGraphileBuilder(pgPool, this.config.schemaName || 'public', {
-      dynamicJson: true,
-      subscriptions: 'subscriptions' in this.config ? this.config.subscriptions : true,
-      live: 'live' in this.config ? this.config.live : true,
-      readCache: cachedIntrospection,
-      writeCache: !cachedIntrospection && dummyCacheFilePath,
-      setWriteCacheCallback: fn => {
-        writeCache = fn;
-      },
-      appendPlugins,
-      skipPlugins,
-      simpleCollections: 'both',
-      ...options,
-    });
-
-    const schema = builder.buildSchema();
-    const defaultExecutor = createDefaultExecutor(schema);
-
-    if (!cachedIntrospection) {
-      await writeCache();
-      cachedIntrospection = await import(dummyCacheFilePath);
-      await this.pgCache.set(cachedIntrospection);
+    if (isDisposable(executor)) {
+      this.disposableResource = executor;
     }
-
-    let contextOptions = await loadFromModuleExportExpression<any>(this.config.contextOptions, {
-      cwd: this.baseDir,
-      importFn: this.importFn,
-      defaultExportName: 'default',
-    });
-    if (typeof contextOptions !== 'function') contextOptions = () => ({});
 
     return {
       schema,
-      executor({
-        document,
-        variables,
-        context: meshContext,
-        rootValue,
-        operationName,
-        extensions,
-      }) {
-        return withPostGraphileContext(
-          {
-            pgPool,
-            queryDocumentAst: document,
-            operationName,
-            variables,
-            ...contextOptions(meshContext),
-          },
-          function withPgContextCallback(pgContext) {
-            return defaultExecutor({
-              document,
-              variables,
-              context: {
-                ...meshContext,
-                ...pgContext,
-              },
-              rootValue,
-              operationName,
-              extensions,
-            }) as any;
-          },
-        ) as any;
-      },
+      executor,
     };
   }
 
   [DisposableSymbols.asyncDispose]() {
-    if (this.pgPool) {
-      this.log.debug('Destroying PostgreSQL pool');
-      return this.pgPool.end();
+    if (!this.disposableResource) return;
+    // Prefer async dispose when both hooks exist — sync dispose on the Grafast
+    // executor starts cleanup without returning the awaitable.
+    const resource = this.disposableResource as Disposable & AsyncDisposable;
+    if (typeof resource[DisposableSymbols.asyncDispose] === 'function') {
+      return resource[DisposableSymbols.asyncDispose]();
     }
+    return dispose(resource);
   }
+}
+
+async function resolvePgPool(
+  config: YamlConfig.PostGraphileHandler,
+  baseDir: string,
+  importFn: ImportFn,
+): Promise<PgPool | undefined> {
+  if (config.pool == null) return undefined;
+  const pool =
+    typeof config.pool === 'string'
+      ? await loadFromModuleExportExpression(config.pool, {
+          cwd: baseDir,
+          defaultExportName: 'default',
+          importFn,
+        })
+      : config.pool;
+  // Existing `pg.Pool` instance → use. Plain settings objects are ignored.
+  if (pool && typeof pool === 'object' && 'connect' in pool) {
+    return pool as PgPool;
+  }
+  return undefined;
+}
+
+function poolConnectionString(pool: PgPool | undefined): string | undefined {
+  if (!pool) return undefined;
+  const opts = (pool as { options?: { connectionString?: string } }).options;
+  const uri = opts?.connectionString;
+  return uri && String(uri).trim() ? String(uri) : undefined;
+}
+
+function resolveConnectionString(
+  config: YamlConfig.PostGraphileHandler,
+  pool?: PgPool,
+): string | undefined {
+  if (config.connectionString) {
+    return stringInterpolator.parse(config.connectionString, { env: process.env });
+  }
+  return poolConnectionString(pool);
+}
+
+/** Omnigraph SQL introspects a single Postgres schema; arrays take the first entry. */
+function resolveSchemaName(schemaName: string | string[] | undefined): string {
+  if (schemaName == null) return 'public';
+  if (Array.isArray(schemaName)) return schemaName[0] || 'public';
+  return schemaName || 'public';
 }

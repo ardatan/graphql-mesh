@@ -1,6 +1,7 @@
+/* eslint-disable import/no-nodejs-modules */
+import { existsSync, readFileSync } from 'node:fs';
+import { isAbsolute, resolve as resolvePath } from 'node:path';
 import type { GraphQLSchema } from 'graphql';
-import type { Pool } from 'mysql';
-import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import type {
@@ -11,14 +12,26 @@ import type {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { getMySQLExecutor, loadGraphQLSchemaFromMySQL } from '@omnigraph/mysql';
+import { getSqlExecutor, loadGraphQLSchemaFromSql, wrapMysqlPoolAsSqlClient } from '@omnigraph/sql';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
+
+/** Legacy docs treat `ssl.ca` as a filesystem path; mysql2 wants PEM contents. */
+function resolveMysqlSslCa(ca: string | undefined, baseDir: string): string | undefined {
+  if (ca == null || ca === '') return ca;
+  if (/BEGIN ([A-Z ]*CERTIFICATE|TRUSTED CERTIFICATE)/.test(ca)) {
+    return ca;
+  }
+  const abs = isAbsolute(ca) ? ca : resolvePath(baseDir, ca);
+  if (existsSync(abs)) {
+    return readFileSync(abs, 'utf8');
+  }
+  return ca;
+}
 
 export default class MySQLHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
-  private pubsub: PubSub;
   private importFn: ImportFn;
   private schemaProxy: StoreProxy<GraphQLSchema>;
   private disposableResource?: Disposable | AsyncDisposable;
@@ -27,14 +40,12 @@ export default class MySQLHandler implements MeshHandler {
     name,
     config,
     baseDir,
-    pubsub,
     store,
     importFn,
   }: MeshHandlerOptions<YamlConfig.MySQLHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.pubsub = pubsub;
     this.importFn = importFn;
     this.schemaProxy = store.proxy(
       'schema.graphql',
@@ -43,7 +54,6 @@ export default class MySQLHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    const { pool: configPool } = this.config;
     const schema = await this.schemaProxy.getWithSet(() => {
       const endpointUrl = new URL('mysql://localhost:3306');
       if (this.config.port) {
@@ -64,29 +74,46 @@ export default class MySQLHandler implements MeshHandler {
       if (this.config.ssl) {
         endpointUrl.protocol = 'mysqls:';
       }
-      return loadGraphQLSchemaFromMySQL(this.name, {
+      // Protocol on the endpoint (`mysql://` / `mysqls://`) already selects the adapter.
+      // Forward ssl.ca / rejectUnauthorized into transport options (not only the scheme).
+      // Resolve filesystem paths (legacy contract) to PEM before mysql2.
+      const ssl = this.config.ssl
+        ? {
+            rejectUnauthorized: this.config.ssl.rejectUnauthorized,
+            ca: resolveMysqlSslCa(this.config.ssl.ca, this.baseDir),
+          }
+        : undefined;
+      return loadGraphQLSchemaFromSql(this.name, {
         endpoint: endpointUrl.toString(),
-        tables: this.config.tables,
+        includeTables: this.config.tables,
         tableFields: this.config.tableFields,
-        ssl: {
-          rejectUnauthorized: this.config.ssl?.rejectUnauthorized,
-          caPath: this.config.ssl?.ca,
-        },
+        cwd: this.baseDir,
+        ...(ssl
+          ? {
+              tls: ssl.rejectUnauthorized === false ? 'insecure' : true,
+              ssl,
+            }
+          : {}),
       });
     });
 
-    const pool: Pool =
-      typeof configPool === 'string'
-        ? await loadFromModuleExportExpression(configPool, {
-            cwd: this.baseDir,
-            defaultExportName: 'default',
-            importFn: this.importFn,
-          })
-        : configPool;
+    let client;
+    if (this.config.pool != null) {
+      const pool =
+        typeof this.config.pool === 'string'
+          ? await loadFromModuleExportExpression(this.config.pool, {
+              cwd: this.baseDir,
+              defaultExportName: 'default',
+              importFn: this.importFn,
+            })
+          : this.config.pool;
+      client = wrapMysqlPoolAsSqlClient(pool as any);
+    }
 
-    const executor = getMySQLExecutor({
+    const executor = await getSqlExecutor({
       subgraph: schema,
-      pool,
+      cwd: this.baseDir,
+      client,
     });
 
     if (isDisposable(executor)) {

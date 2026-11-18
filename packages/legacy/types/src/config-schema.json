@@ -1,478 +1,5 @@
 {
   "definitions": {
-    "Handler": {
-      "additionalProperties": true,
-      "type": "object",
-      "title": "Handler",
-      "properties": {
-        "mongoose": {
-          "$ref": "#/definitions/MongooseHandler"
-        },
-        "graphql": {
-          "description": "Handler for remote/local/third-party GraphQL schema (Any of: GraphQLHandlerHTTPConfiguration, GraphQLHandlerCodeFirstConfiguration, GraphQLHandlerMultipleHTTPConfiguration)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/GraphQLHandlerHTTPConfiguration"
-            },
-            {
-              "$ref": "#/definitions/GraphQLHandlerCodeFirstConfiguration"
-            },
-            {
-              "$ref": "#/definitions/GraphQLHandlerMultipleHTTPConfiguration"
-            }
-          ]
-        },
-        "grpc": {
-          "$ref": "#/definitions/GrpcHandler",
-          "description": "Handler for gRPC and Protobuf schemas"
-        },
-        "jsonSchema": {
-          "$ref": "#/definitions/JsonSchemaHandler",
-          "description": "Handler for JSON Schema specification.\nSource could be a local json file, or a url to it."
-        },
-        "mysql": {
-          "$ref": "#/definitions/MySQLHandler"
-        },
-        "neo4j": {
-          "$ref": "#/definitions/Neo4jHandler",
-          "description": "Handler for Neo4j"
-        },
-        "odata": {
-          "$ref": "#/definitions/ODataHandler",
-          "description": "Handler for OData"
-        },
-        "openapi": {
-          "$ref": "#/definitions/OpenapiHandler",
-          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
-        },
-        "postgraphile": {
-          "$ref": "#/definitions/PostGraphileHandler",
-          "description": "Handler for Postgres database, based on `postgraphile`"
-        },
-        "raml": {
-          "$ref": "#/definitions/RAMLHandler"
-        },
-        "soap": {
-          "$ref": "#/definitions/SoapHandler",
-          "description": "Handler for SOAP"
-        },
-        "supergraph": {
-          "$ref": "#/definitions/SupergraphHandler"
-        },
-        "thrift": {
-          "$ref": "#/definitions/ThriftHandler",
-          "description": "Handler for OData"
-        },
-        "tuql": {
-          "$ref": "#/definitions/TuqlHandler",
-          "description": "Handler for SQLite database, based on `tuql`"
-        }
-      }
-    },
-    "MongooseHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MongooseHandler",
-      "properties": {
-        "connectionString": {
-          "type": "string"
-        },
-        "models": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/MongooseModel"
-          },
-          "additionalItems": false
-        },
-        "discriminators": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/MongooseModel"
-          },
-          "additionalItems": false
-        }
-      }
-    },
-    "MongooseModel": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MongooseModel",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "path": {
-          "type": "string"
-        },
-        "options": {
-          "$ref": "#/definitions/ComposeWithMongooseOpts"
-        }
-      },
-      "required": ["name", "path"]
-    },
-    "ComposeWithMongooseOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ComposeWithMongooseOpts",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "fields": {
-          "$ref": "#/definitions/ComposeWithMongooseFieldsOpts"
-        },
-        "inputType": {
-          "$ref": "#/definitions/ComposeMongooseInputType"
-        },
-        "resolvers": {
-          "$ref": "#/definitions/TypeConverterResolversOpts"
-        }
-      }
-    },
-    "ComposeMongooseInputType": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ComposeMongooseInputType",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "fields": {
-          "$ref": "#/definitions/ComposeWithMongooseFieldsOpts"
-        },
-        "resolvers": {
-          "$ref": "#/definitions/TypeConverterResolversOpts"
-        }
-      }
-    },
-    "ComposeWithMongooseFieldsOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ComposeWithMongooseFieldsOpts",
-      "properties": {
-        "only": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        },
-        "remove": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        },
-        "required": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        }
-      }
-    },
-    "TypeConverterResolversOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "TypeConverterResolversOpts",
-      "properties": {
-        "findById": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "findByIds": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "findOne": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "findMany": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "updateById": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "updateOne": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "updateMany": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "removeById": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "removeOne": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "removeMany": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "createOne": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "createMany": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "count": {
-          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
-            }
-          ]
-        },
-        "connection": {
-          "description": "Any of: Boolean, JSON",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
-        },
-        "pagination": {
-          "description": "Any of: Boolean, PaginationResolverOpts",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/PaginationResolverOpts"
-            }
-          ]
-        }
-      }
-    },
-    "ComposeWithMongooseResolverOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ComposeWithMongooseResolverOpts",
-      "properties": {
-        "filter": {
-          "$ref": "#/definitions/FilterHelperArgsOpts"
-        },
-        "sort": {
-          "$ref": "#/definitions/SortHelperArgsOpts"
-        },
-        "limit": {
-          "$ref": "#/definitions/LimitHelperArgsOpts"
-        },
-        "record": {
-          "$ref": "#/definitions/RecordHelperArgsOpts"
-        },
-        "skip": {
-          "type": "boolean"
-        }
-      }
-    },
-    "FilterHelperArgsOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "FilterHelperArgsOpts",
-      "properties": {
-        "filterTypeName": {
-          "type": "string"
-        },
-        "isRequired": {
-          "type": "boolean"
-        },
-        "onlyIndexed": {
-          "type": "boolean"
-        },
-        "requiredFields": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        },
-        "operators": {
-          "description": "Any of: Boolean, JSON",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
-        },
-        "removeFields": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        }
-      }
-    },
-    "SortHelperArgsOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SortHelperArgsOpts",
-      "properties": {
-        "sortTypeName": {
-          "type": "string"
-        }
-      }
-    },
-    "LimitHelperArgsOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "LimitHelperArgsOpts",
-      "properties": {
-        "defaultValue": {
-          "type": "integer"
-        }
-      }
-    },
-    "RecordHelperArgsOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "RecordHelperArgsOpts",
-      "properties": {
-        "recordTypeName": {
-          "type": "string"
-        },
-        "isRequired": {
-          "type": "boolean"
-        },
-        "removeFields": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        },
-        "requiredFields": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        }
-      }
-    },
-    "PaginationResolverOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "PaginationResolverOpts",
-      "properties": {
-        "perPage": {
-          "type": "integer"
-        }
-      }
-    },
     "Cache": {
       "additionalProperties": true,
       "type": "object",
@@ -1055,6 +582,75 @@
         "typeMerging": {
           "$ref": "#/definitions/TypeMergingConfig",
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
+        }
+      }
+    },
+    "Handler": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Handler",
+      "properties": {
+        "graphql": {
+          "description": "Handler for remote/local/third-party GraphQL schema (Any of: GraphQLHandlerHTTPConfiguration, GraphQLHandlerCodeFirstConfiguration, GraphQLHandlerMultipleHTTPConfiguration)",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/GraphQLHandlerHTTPConfiguration"
+            },
+            {
+              "$ref": "#/definitions/GraphQLHandlerCodeFirstConfiguration"
+            },
+            {
+              "$ref": "#/definitions/GraphQLHandlerMultipleHTTPConfiguration"
+            }
+          ]
+        },
+        "grpc": {
+          "$ref": "#/definitions/GrpcHandler",
+          "description": "Handler for gRPC and Protobuf schemas"
+        },
+        "jsonSchema": {
+          "$ref": "#/definitions/JsonSchemaHandler",
+          "description": "Handler for JSON Schema specification.\nSource could be a local json file, or a url to it."
+        },
+        "mongoose": {
+          "$ref": "#/definitions/MongooseHandler"
+        },
+        "mysql": {
+          "$ref": "#/definitions/MySQLHandler"
+        },
+        "neo4j": {
+          "$ref": "#/definitions/Neo4jHandler",
+          "description": "Handler for Neo4j"
+        },
+        "odata": {
+          "$ref": "#/definitions/ODataHandler",
+          "description": "Handler for OData"
+        },
+        "openapi": {
+          "$ref": "#/definitions/OpenapiHandler",
+          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
+        },
+        "postgraphile": {
+          "$ref": "#/definitions/PostGraphileHandler",
+          "description": "Handler for Postgres databases. Under the hood uses `@omnigraph/sql` + `transport-sql`\n(not the PostGraphile runtime). Emitted schema is `@sql`-based CRUD/relay surface."
+        },
+        "raml": {
+          "$ref": "#/definitions/RAMLHandler"
+        },
+        "soap": {
+          "$ref": "#/definitions/SoapHandler",
+          "description": "Handler for SOAP"
+        },
+        "supergraph": {
+          "$ref": "#/definitions/SupergraphHandler"
+        },
+        "thrift": {
+          "$ref": "#/definitions/ThriftHandler",
+          "description": "Handler for OData"
+        },
+        "tuql": {
+          "$ref": "#/definitions/TuqlHandler",
+          "description": "Handler for SQLite database, based on `tuql`"
         }
       }
     },
@@ -1961,6 +1557,410 @@
         }
       },
       "required": ["field", "type", "pubsubTopic"]
+    },
+    "MongooseHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MongooseHandler",
+      "properties": {
+        "connectionString": {
+          "type": "string"
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MongooseModel"
+          },
+          "additionalItems": false
+        },
+        "discriminators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MongooseModel"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "MongooseModel": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MongooseModel",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "options": {
+          "$ref": "#/definitions/ComposeWithMongooseOpts"
+        }
+      },
+      "required": ["name", "path"]
+    },
+    "ComposeWithMongooseOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeWithMongooseOpts",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "fields": {
+          "$ref": "#/definitions/ComposeWithMongooseFieldsOpts"
+        },
+        "inputType": {
+          "$ref": "#/definitions/ComposeMongooseInputType"
+        },
+        "resolvers": {
+          "$ref": "#/definitions/TypeConverterResolversOpts"
+        }
+      }
+    },
+    "ComposeMongooseInputType": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeMongooseInputType",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "fields": {
+          "$ref": "#/definitions/ComposeWithMongooseFieldsOpts"
+        },
+        "resolvers": {
+          "$ref": "#/definitions/TypeConverterResolversOpts"
+        }
+      }
+    },
+    "ComposeWithMongooseFieldsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeWithMongooseFieldsOpts",
+      "properties": {
+        "only": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "remove": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "TypeConverterResolversOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TypeConverterResolversOpts",
+      "properties": {
+        "findById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "findByIds": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "findOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "findMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "updateMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeById": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "removeMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "createOne": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "createMany": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "count": {
+          "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/ComposeWithMongooseResolverOpts"
+            }
+          ]
+        },
+        "connection": {
+          "description": "Any of: Boolean, JSON",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object",
+              "properties": {}
+            }
+          ]
+        },
+        "pagination": {
+          "description": "Any of: Boolean, PaginationResolverOpts",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/PaginationResolverOpts"
+            }
+          ]
+        }
+      }
+    },
+    "ComposeWithMongooseResolverOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ComposeWithMongooseResolverOpts",
+      "properties": {
+        "filter": {
+          "$ref": "#/definitions/FilterHelperArgsOpts"
+        },
+        "sort": {
+          "$ref": "#/definitions/SortHelperArgsOpts"
+        },
+        "limit": {
+          "$ref": "#/definitions/LimitHelperArgsOpts"
+        },
+        "record": {
+          "$ref": "#/definitions/RecordHelperArgsOpts"
+        },
+        "skip": {
+          "type": "boolean"
+        }
+      }
+    },
+    "FilterHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FilterHelperArgsOpts",
+      "properties": {
+        "filterTypeName": {
+          "type": "string"
+        },
+        "isRequired": {
+          "type": "boolean"
+        },
+        "onlyIndexed": {
+          "type": "boolean"
+        },
+        "requiredFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "operators": {
+          "description": "Any of: Boolean, JSON",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object",
+              "properties": {}
+            }
+          ]
+        },
+        "removeFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "SortHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SortHelperArgsOpts",
+      "properties": {
+        "sortTypeName": {
+          "type": "string"
+        }
+      }
+    },
+    "LimitHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LimitHelperArgsOpts",
+      "properties": {
+        "defaultValue": {
+          "type": "integer"
+        }
+      }
+    },
+    "RecordHelperArgsOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RecordHelperArgsOpts",
+      "properties": {
+        "recordTypeName": {
+          "type": "string"
+        },
+        "isRequired": {
+          "type": "boolean"
+        },
+        "removeFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "requiredFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "PaginationResolverOpts": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PaginationResolverOpts",
+      "properties": {
+        "perPage": {
+          "type": "integer"
+        }
+      }
     },
     "MySQLHandler": {
       "additionalProperties": false,
@@ -3063,7 +3063,7 @@
       "properties": {
         "connectionString": {
           "type": "string",
-          "description": "A connection string to your Postgres database"
+          "description": "A connection string to your Postgres database (`postgres://…` / `postgresql://…`).\nSupports Mesh env interpolation (e.g. `postgres://{env.PGUSER}:…`).\nOptional when `pool` is an existing `pg.Pool` (or module export)."
         },
         "schemaName": {
           "type": "array",
@@ -3071,7 +3071,7 @@
             "type": "string"
           },
           "additionalItems": false,
-          "description": "An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema."
+          "description": "PostgreSQL schema(s) to introspect (default: public). Only the first entry is used —\nmulti-schema PostGraphile setups are not supported on this path."
         },
         "pool": {
           "anyOf": [
@@ -3087,61 +3087,43 @@
               "additionalItems": true
             }
           ],
-          "description": "Connection Pool instance or settings or you can provide the path of a code file that exports any of those"
+          "description": "Existing `pg.Pool` instance, or a module path that exports one (`modulePath#exportName`).\nPlain pool *settings* objects are ignored. When set, introspection and execution reuse\nthis pool (including TLS); `connectionString` may be omitted."
         },
-        "appendPlugins": {
+        "tables": {
           "type": "array",
           "items": {
             "type": "string"
           },
           "additionalItems": false,
-          "description": "Extra Postgraphile Plugins to append"
+          "description": "Use specific tables for your schema"
         },
-        "skipPlugins": {
+        "tableFields": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/PostGraphileTableField"
           },
           "additionalItems": false,
-          "description": "Postgraphile Plugins to skip (e.g. \"graphile-build#NodePlugin\")"
-        },
-        "options": {
-          "description": "Extra Postgraphile options that will be added to the postgraphile constructor. It can either be an object or a string pointing to the object's path (e.g. \"./my-config#options\"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-library/) for more information. (Any of: JSON, String)",
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {}
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "subscriptions": {
-          "type": "boolean",
-          "description": "Enable GraphQL websocket transport support for subscriptions (default: true)"
-        },
-        "live": {
-          "type": "boolean",
-          "description": "Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)"
-        },
-        "contextOptions": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. \"./my-function#pgSettings\"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information."
+          "description": "Use specific fields of specific tables"
         }
       }
+    },
+    "PostGraphileTableField": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PostGraphileTableField",
+      "properties": {
+        "table": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["table", "fields"]
     },
     "RAMLHandler": {
       "additionalProperties": false,

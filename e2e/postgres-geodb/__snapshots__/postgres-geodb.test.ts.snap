@@ -1,0 +1,442 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`should compose the appropriate schema 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport", "@sql"]) @transport(subgraph: "Geo", kind: "sql", location: "postgres://postgres:docker@localhost:<geodb_port>/postgres") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+scalar join__FieldSet
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  GEO @join__graph(name: "Geo", url: "postgres://postgres:docker@localhost:<geodb_port>/postgres")
+}
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String, through: String) repeatable on FIELD_DEFINITION | OBJECT
+
+scalar TransportOptions @join__type(graph: GEO)
+
+type Query @join__type(graph: GEO) {
+  city(id: ID!): City @sql(subgraph: "Geo", table: "city", kind: ROW, where: "\\n  id: $args.id", selection: "  id: id\\n  name: name\\n  countrycode: countrycode\\n  district: district\\n  population: population")
+  cities(where: CityFilter, orderBy: [CityOrderBy!], limit: Int = 10, offset: Int = 0): [City!]! @sql(subgraph: "Geo", table: "city", kind: ROWS, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: id\\n  name: name\\n  countrycode: countrycode\\n  district: district\\n  population: population")
+  allCities(where: CityFilter, orderBy: [CityOrderBy!], first: Int, after: String): CityConnection! @sql(subgraph: "Geo", table: "city", kind: CONNECTION, where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: id\\n    name: name\\n    countrycode: countrycode\\n    district: district\\n    population: population\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: id\\n      name: name\\n      countrycode: countrycode\\n      district: district\\n      population: population\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount")
+  citiesCount(where: CityFilter): Int! @sql(subgraph: "Geo", table: "city", kind: COUNT, where: "$args.where", selection: "\\n  $")
+  country(id: ID!): Country @sql(subgraph: "Geo", table: "country", kind: ROW, where: "\\n  code: $args.id", selection: "  id: code\\n  name: name\\n  continent: continent\\n  region: region\\n  surfacearea: surfacearea\\n  indepyear: indepyear\\n  population: population\\n  lifeexpectancy: lifeexpectancy\\n  gnp: gnp\\n  gnpold: gnpold\\n  localname: localname\\n  governmentform: governmentform\\n  headofstate: headofstate\\n  capital: capital\\n  code2: code2")
+  countries(where: CountryFilter, orderBy: [CountryOrderBy!], limit: Int = 10, offset: Int = 0): [Country!]! @sql(subgraph: "Geo", table: "country", kind: ROWS, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: code\\n  name: name\\n  continent: continent\\n  region: region\\n  surfacearea: surfacearea\\n  indepyear: indepyear\\n  population: population\\n  lifeexpectancy: lifeexpectancy\\n  gnp: gnp\\n  gnpold: gnpold\\n  localname: localname\\n  governmentform: governmentform\\n  headofstate: headofstate\\n  capital: capital\\n  code2: code2")
+  allCountries(where: CountryFilter, orderBy: [CountryOrderBy!], first: Int, after: String): CountryConnection! @sql(subgraph: "Geo", table: "country", kind: CONNECTION, where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: code\\n    name: name\\n    continent: continent\\n    region: region\\n    surfacearea: surfacearea\\n    indepyear: indepyear\\n    population: population\\n    lifeexpectancy: lifeexpectancy\\n    gnp: gnp\\n    gnpold: gnpold\\n    localname: localname\\n    governmentform: governmentform\\n    headofstate: headofstate\\n    capital: capital\\n    code2: code2\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: code\\n      name: name\\n      continent: continent\\n      region: region\\n      surfacearea: surfacearea\\n      indepyear: indepyear\\n      population: population\\n      lifeexpectancy: lifeexpectancy\\n      gnp: gnp\\n      gnpold: gnpold\\n      localname: localname\\n      governmentform: governmentform\\n      headofstate: headofstate\\n      capital: capital\\n      code2: code2\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount")
+  countriesCount(where: CountryFilter): Int! @sql(subgraph: "Geo", table: "country", kind: COUNT, where: "$args.where", selection: "\\n  $")
+  countrylanguages(where: CountrylanguageFilter, orderBy: [CountrylanguageOrderBy!], limit: Int = 10, offset: Int = 0): [Countrylanguage!]! @sql(subgraph: "Geo", table: "countrylanguage", kind: ROWS, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  countrycode: countrycode\\n  language: language\\n  isofficial: isofficial\\n  percentage: percentage")
+  allCountrylanguages(where: CountrylanguageFilter, orderBy: [CountrylanguageOrderBy!], first: Int, after: String): CountrylanguageConnection! @sql(subgraph: "Geo", table: "countrylanguage", kind: CONNECTION, where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    countrycode: countrycode\\n    language: language\\n    isofficial: isofficial\\n    percentage: percentage\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      countrycode: countrycode\\n      language: language\\n      isofficial: isofficial\\n      percentage: percentage\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount")
+  countrylanguagesCount(where: CountrylanguageFilter): Int! @sql(subgraph: "Geo", table: "countrylanguage", kind: COUNT, where: "$args.where", selection: "\\n  $")
+}
+
+type City @sql(subgraph: "Geo", table: "city", kind: ROW, where: """id: $this.id""", selection: """
+id: id
+name: name
+countrycode: countrycode
+district: district
+population: population
+""") @join__type(graph: GEO, key: "id") {
+  id: ID!
+  name: String!
+  countrycode: String!
+  district: String!
+  population: Int!
+  countries(where: CountryFilter, orderBy: [CountryOrderBy!], limit: Int, offset: Int): [Country!]! @sql(subgraph: "Geo", table: "country", kind: ROWS, where: "  capital: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: code\\n  name: name\\n  continent: continent\\n  region: region\\n  surfacearea: surfacearea\\n  indepyear: indepyear\\n  population: population\\n  lifeexpectancy: lifeexpectancy\\n  gnp: gnp\\n  gnpold: gnpold\\n  localname: localname\\n  governmentform: governmentform\\n  headofstate: headofstate\\n  capital: capital\\n  code2: code2")
+}
+
+type Country @sql(subgraph: "Geo", table: "country", kind: ROW, where: """code: $this.id""", selection: """
+id: code
+name: name
+continent: continent
+region: region
+surfacearea: surfacearea
+indepyear: indepyear
+population: population
+lifeexpectancy: lifeexpectancy
+gnp: gnp
+gnpold: gnpold
+localname: localname
+governmentform: governmentform
+headofstate: headofstate
+capital: capital
+code2: code2
+""") @join__type(graph: GEO, key: "id") {
+  id: ID!
+  name: String!
+  continent: String!
+  region: String!
+  surfacearea: Float!
+  indepyear: Int
+  population: Int!
+  lifeexpectancy: Float
+  gnp: Float
+  gnpold: Float
+  localname: String!
+  governmentform: String!
+  headofstate: String
+  capital: Int
+  code2: String!
+  city: City @sql(subgraph: "Geo", table: "city", kind: ROW, where: "\\n  id: $this.capital", selection: "  id: id\\n  name: name\\n  countrycode: countrycode\\n  district: district\\n  population: population")
+  countrylanguages(where: CountrylanguageFilter, orderBy: [CountrylanguageOrderBy!], limit: Int, offset: Int): [Countrylanguage!]! @sql(subgraph: "Geo", table: "countrylanguage", kind: ROWS, where: "  countrycode: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  countrycode: countrycode\\n  language: language\\n  isofficial: isofficial\\n  percentage: percentage")
+}
+
+type Countrylanguage @sql(subgraph: "Geo", table: "countrylanguage", kind: ROW, where: """
+countrycode: $this.countrycode
+language: $this.language
+""", selection: """
+countrycode: countrycode
+language: language
+isofficial: isofficial
+percentage: percentage
+""") @join__type(graph: GEO, key: "countrycode language") {
+  countrycode: String!
+  language: String!
+  isofficial: Boolean!
+  percentage: Float!
+  country: Country @sql(subgraph: "Geo", table: "country", kind: ROW, where: "\\n  code: $this.countrycode", selection: "  id: code\\n  name: name\\n  continent: continent\\n  region: region\\n  surfacearea: surfacearea\\n  indepyear: indepyear\\n  population: population\\n  lifeexpectancy: lifeexpectancy\\n  gnp: gnp\\n  gnpold: gnpold\\n  localname: localname\\n  governmentform: governmentform\\n  headofstate: headofstate\\n  capital: capital\\n  code2: code2")
+}
+
+type CityConnection @join__type(graph: GEO) {
+  edges: [CityEdge!]!
+  pageInfo: PageInfo!
+  nodes: [City!]!
+  totalCount: Int!
+}
+
+type CityEdge @join__type(graph: GEO) {
+  cursor: String!
+  node: City!
+}
+
+type PageInfo @join__type(graph: GEO) {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type CountryConnection @join__type(graph: GEO) {
+  edges: [CountryEdge!]!
+  pageInfo: PageInfo!
+  nodes: [Country!]!
+  totalCount: Int!
+}
+
+type CountryEdge @join__type(graph: GEO) {
+  cursor: String!
+  node: Country!
+}
+
+type CountrylanguageConnection @join__type(graph: GEO) {
+  edges: [CountrylanguageEdge!]!
+  pageInfo: PageInfo!
+  nodes: [Countrylanguage!]!
+  totalCount: Int!
+}
+
+type CountrylanguageEdge @join__type(graph: GEO) {
+  cursor: String!
+  node: Countrylanguage!
+}
+
+type Mutation @join__type(graph: GEO) {
+  createCity(input: CreateCityInput!): CityPayload! @sql(subgraph: "Geo", table: "city", kind: INSERT, set: "  id: $args.input.id\\n  name: $args.input.name\\n  countrycode: $args.input.countrycode\\n  district: $args.input.district\\n  population: $args.input.population", selection: "  city {\\n    id: id\\n    name: name\\n    countrycode: countrycode\\n    district: district\\n    population: population\\n  }")
+  updateCity(id: ID!, input: UpdateCityInput!): CityPayload! @sql(subgraph: "Geo", table: "city", kind: UPDATE, set: "  name: $args.input.name\\n  countrycode: $args.input.countrycode\\n  district: $args.input.district\\n  population: $args.input.population", where: "\\n  id: $args.id", selection: "  city {\\n    id: id\\n    name: name\\n    countrycode: countrycode\\n    district: district\\n    population: population\\n  }")
+  deleteCity(id: ID!): DeleteCityPayload! @sql(subgraph: "Geo", table: "city", kind: DELETE, where: "\\n  id: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows")
+  createCountry(input: CreateCountryInput!): CountryPayload! @sql(subgraph: "Geo", table: "country", kind: INSERT, set: "  code: $args.input.id\\n  name: $args.input.name\\n  continent: $args.input.continent\\n  region: $args.input.region\\n  surfacearea: $args.input.surfacearea\\n  indepyear: $args.input.indepyear\\n  population: $args.input.population\\n  lifeexpectancy: $args.input.lifeexpectancy\\n  gnp: $args.input.gnp\\n  gnpold: $args.input.gnpold\\n  localname: $args.input.localname\\n  governmentform: $args.input.governmentform\\n  headofstate: $args.input.headofstate\\n  capital: $args.input.capital\\n  code2: $args.input.code2", selection: "  country {\\n    id: code\\n    name: name\\n    continent: continent\\n    region: region\\n    surfacearea: surfacearea\\n    indepyear: indepyear\\n    population: population\\n    lifeexpectancy: lifeexpectancy\\n    gnp: gnp\\n    gnpold: gnpold\\n    localname: localname\\n    governmentform: governmentform\\n    headofstate: headofstate\\n    capital: capital\\n    code2: code2\\n  }")
+  updateCountry(id: ID!, input: UpdateCountryInput!): CountryPayload! @sql(subgraph: "Geo", table: "country", kind: UPDATE, set: "  name: $args.input.name\\n  continent: $args.input.continent\\n  region: $args.input.region\\n  surfacearea: $args.input.surfacearea\\n  indepyear: $args.input.indepyear\\n  population: $args.input.population\\n  lifeexpectancy: $args.input.lifeexpectancy\\n  gnp: $args.input.gnp\\n  gnpold: $args.input.gnpold\\n  localname: $args.input.localname\\n  governmentform: $args.input.governmentform\\n  headofstate: $args.input.headofstate\\n  capital: $args.input.capital\\n  code2: $args.input.code2", where: "\\n  code: $args.id", selection: "  country {\\n    id: code\\n    name: name\\n    continent: continent\\n    region: region\\n    surfacearea: surfacearea\\n    indepyear: indepyear\\n    population: population\\n    lifeexpectancy: lifeexpectancy\\n    gnp: gnp\\n    gnpold: gnpold\\n    localname: localname\\n    governmentform: governmentform\\n    headofstate: headofstate\\n    capital: capital\\n    code2: code2\\n  }")
+  deleteCountry(id: ID!): DeleteCountryPayload! @sql(subgraph: "Geo", table: "country", kind: DELETE, where: "\\n  code: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows")
+  createCountrylanguage(input: CreateCountrylanguageInput!): CountrylanguagePayload! @sql(subgraph: "Geo", table: "countrylanguage", kind: INSERT, set: "  countrycode: $args.input.countrycode\\n  language: $args.input.language\\n  isofficial: $args.input.isofficial\\n  percentage: $args.input.percentage", selection: "  countrylanguage {\\n    countrycode: countrycode\\n    language: language\\n    isofficial: isofficial\\n    percentage: percentage\\n  }")
+}
+
+type CityPayload @join__type(graph: GEO) {
+  city: City
+}
+
+type DeleteCityPayload @join__type(graph: GEO) {
+  ok: Boolean!
+  affectedRows: Int!
+}
+
+type CountryPayload @join__type(graph: GEO) {
+  country: Country
+}
+
+type DeleteCountryPayload @join__type(graph: GEO) {
+  ok: Boolean!
+  affectedRows: Int!
+}
+
+type CountrylanguagePayload @join__type(graph: GEO) {
+  countrylanguage: Countrylanguage
+}
+
+enum CityOrderBy @join__type(graph: GEO) {
+  ID_ASC @join__enumValue(graph: GEO)
+  ID_DESC @join__enumValue(graph: GEO)
+  NAME_ASC @join__enumValue(graph: GEO)
+  NAME_DESC @join__enumValue(graph: GEO)
+  COUNTRYCODE_ASC @join__enumValue(graph: GEO)
+  COUNTRYCODE_DESC @join__enumValue(graph: GEO)
+  DISTRICT_ASC @join__enumValue(graph: GEO)
+  DISTRICT_DESC @join__enumValue(graph: GEO)
+  POPULATION_ASC @join__enumValue(graph: GEO)
+  POPULATION_DESC @join__enumValue(graph: GEO)
+}
+
+enum CountryOrderBy @join__type(graph: GEO) {
+  ID_ASC @join__enumValue(graph: GEO)
+  ID_DESC @join__enumValue(graph: GEO)
+  NAME_ASC @join__enumValue(graph: GEO)
+  NAME_DESC @join__enumValue(graph: GEO)
+  CONTINENT_ASC @join__enumValue(graph: GEO)
+  CONTINENT_DESC @join__enumValue(graph: GEO)
+  REGION_ASC @join__enumValue(graph: GEO)
+  REGION_DESC @join__enumValue(graph: GEO)
+  SURFACEAREA_ASC @join__enumValue(graph: GEO)
+  SURFACEAREA_DESC @join__enumValue(graph: GEO)
+  INDEPYEAR_ASC @join__enumValue(graph: GEO)
+  INDEPYEAR_DESC @join__enumValue(graph: GEO)
+  POPULATION_ASC @join__enumValue(graph: GEO)
+  POPULATION_DESC @join__enumValue(graph: GEO)
+  LIFEEXPECTANCY_ASC @join__enumValue(graph: GEO)
+  LIFEEXPECTANCY_DESC @join__enumValue(graph: GEO)
+  GNP_ASC @join__enumValue(graph: GEO)
+  GNP_DESC @join__enumValue(graph: GEO)
+  GNPOLD_ASC @join__enumValue(graph: GEO)
+  GNPOLD_DESC @join__enumValue(graph: GEO)
+  LOCALNAME_ASC @join__enumValue(graph: GEO)
+  LOCALNAME_DESC @join__enumValue(graph: GEO)
+  GOVERNMENTFORM_ASC @join__enumValue(graph: GEO)
+  GOVERNMENTFORM_DESC @join__enumValue(graph: GEO)
+  HEADOFSTATE_ASC @join__enumValue(graph: GEO)
+  HEADOFSTATE_DESC @join__enumValue(graph: GEO)
+  CAPITAL_ASC @join__enumValue(graph: GEO)
+  CAPITAL_DESC @join__enumValue(graph: GEO)
+  CODE2_ASC @join__enumValue(graph: GEO)
+  CODE2_DESC @join__enumValue(graph: GEO)
+}
+
+enum CountrylanguageOrderBy @join__type(graph: GEO) {
+  COUNTRYCODE_ASC @join__enumValue(graph: GEO)
+  COUNTRYCODE_DESC @join__enumValue(graph: GEO)
+  LANGUAGE_ASC @join__enumValue(graph: GEO)
+  LANGUAGE_DESC @join__enumValue(graph: GEO)
+  ISOFFICIAL_ASC @join__enumValue(graph: GEO)
+  ISOFFICIAL_DESC @join__enumValue(graph: GEO)
+  PERCENTAGE_ASC @join__enumValue(graph: GEO)
+  PERCENTAGE_DESC @join__enumValue(graph: GEO)
+}
+
+enum SqlKind @join__type(graph: GEO) {
+  ROW @join__enumValue(graph: GEO)
+  ROWS @join__enumValue(graph: GEO)
+  CONNECTION @join__enumValue(graph: GEO)
+  COUNT @join__enumValue(graph: GEO)
+  INSERT @join__enumValue(graph: GEO)
+  UPDATE @join__enumValue(graph: GEO)
+  DELETE @join__enumValue(graph: GEO)
+}
+
+input CountrylanguageFilter @join__type(graph: GEO) {
+  and: [CountrylanguageFilter!]
+  or: [CountrylanguageFilter!]
+  not: CountrylanguageFilter
+  countrycode: StringFilter
+  language: StringFilter
+  isofficial: BooleanFilter
+  percentage: StringFilter
+  country: CountryFilter
+}
+
+input StringFilter @join__type(graph: GEO) {
+  eq: String
+  ne: String
+  in: [String!]
+  nin: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  includes: String
+  startsWith: String
+  endsWith: String
+  like: String
+  ilike: String
+  isNull: Boolean
+}
+
+input BooleanFilter @join__type(graph: GEO) {
+  eq: Boolean
+  ne: Boolean
+  isNull: Boolean
+}
+
+input CountryFilter @join__type(graph: GEO) {
+  and: [CountryFilter!]
+  or: [CountryFilter!]
+  not: CountryFilter
+  id: StringFilter
+  name: StringFilter
+  continent: StringFilter
+  region: StringFilter
+  surfacearea: StringFilter
+  indepyear: IntFilter
+  population: IntFilter
+  lifeexpectancy: StringFilter
+  gnp: StringFilter
+  gnpold: StringFilter
+  localname: StringFilter
+  governmentform: StringFilter
+  headofstate: StringFilter
+  capital: IntFilter
+  code2: StringFilter
+  city: CityFilter
+}
+
+input IntFilter @join__type(graph: GEO) {
+  eq: Int
+  ne: Int
+  in: [Int!]
+  nin: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  isNull: Boolean
+}
+
+input CityFilter @join__type(graph: GEO) {
+  and: [CityFilter!]
+  or: [CityFilter!]
+  not: CityFilter
+  id: StringFilter
+  name: StringFilter
+  countrycode: StringFilter
+  district: StringFilter
+  population: IntFilter
+}
+
+input CreateCityInput @join__type(graph: GEO) {
+  id: ID!
+  name: String!
+  countrycode: String!
+  district: String!
+  population: Int!
+}
+
+input UpdateCityInput @join__type(graph: GEO) {
+  name: String
+  countrycode: String
+  district: String
+  population: Int
+}
+
+input CreateCountryInput @join__type(graph: GEO) {
+  id: ID!
+  name: String!
+  continent: String!
+  region: String!
+  surfacearea: Float!
+  indepyear: Int
+  population: Int!
+  lifeexpectancy: Float
+  gnp: Float
+  gnpold: Float
+  localname: String!
+  governmentform: String!
+  headofstate: String
+  capital: Int
+  code2: String!
+}
+
+input UpdateCountryInput @join__type(graph: GEO) {
+  name: String
+  continent: String
+  region: String
+  surfacearea: Float
+  indepyear: Int
+  population: Int
+  lifeexpectancy: Float
+  gnp: Float
+  gnpold: Float
+  localname: String
+  governmentform: String
+  headofstate: String
+  capital: Int
+  code2: String
+}
+
+input CreateCountrylanguageInput @join__type(graph: GEO) {
+  countrycode: String!
+  language: String!
+  isofficial: Boolean!
+  percentage: Float!
+}
+"
+`;
+
+exports[`should execute cities and country capital 1`] = `
+{
+  "data": {
+    "cities": [
+      {
+        "countrycode": "AFG",
+        "district": "Kabol",
+        "id": "1",
+        "name": "Kabul",
+      },
+      {
+        "countrycode": "AFG",
+        "district": "Qandahar",
+        "id": "2",
+        "name": "Qandahar",
+      },
+      {
+        "countrycode": "AFG",
+        "district": "Herat",
+        "id": "3",
+        "name": "Herat",
+      },
+    ],
+    "country": {
+      "city": {
+        "name": "Amsterdam",
+      },
+      "continent": "Europe",
+      "id": "NLD",
+      "name": "Netherlands",
+    },
+  },
+}
+`;

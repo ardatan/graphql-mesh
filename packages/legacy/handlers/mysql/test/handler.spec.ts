@@ -3,11 +3,9 @@ import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import MySQLHandler from '@graphql-mesh/mysql';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { YamlConfig } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { loadGraphQLSchemaFromMySQL, type LoadGraphQLSchemaFromMySQLOpts } from '@omnigraph/mysql';
+import { getSqlExecutor, loadGraphQLSchemaFromSql } from '@omnigraph/sql';
 
-jest.mock('@graphql-mesh/utils');
-jest.mock('@omnigraph/mysql');
+jest.mock('@omnigraph/sql');
 
 const noOpFunction: any = () => {};
 
@@ -19,9 +17,10 @@ describe('mysql', () => {
       readonly: false,
       validate: false,
     });
+    jest.mocked(getSqlExecutor).mockReturnValue({} as any);
   });
 
-  it('correctly builds schema from loadGraphQLSchemaFromMySQL after passing configuration', async () => {
+  it('builds schema via loadGraphQLSchemaFromSql after mapping MySQL config', async () => {
     const graphQLSchemaMock: GraphQLSchema = {
       description: 'someGraphQLSchemaMock',
     } as any;
@@ -29,19 +28,14 @@ describe('mysql', () => {
     const configMock: YamlConfig.MySQLHandler = {
       database: 'testdb',
       tables: ['testTable'],
-      tableFields: [
-        {
-          table: 'testTable',
-          fields: ['testField'],
-        },
-      ],
+      tableFields: [{ table: 'testTable', fields: ['testField'] }],
       ssl: {
         rejectUnauthorized: true,
         ca: 'someCA',
       },
     };
 
-    jest.mocked(loadGraphQLSchemaFromMySQL).mockResolvedValue(graphQLSchemaMock);
+    jest.mocked(loadGraphQLSchemaFromSql).mockResolvedValue(graphQLSchemaMock);
 
     const handler = new MySQLHandler({
       name: 'test',
@@ -54,19 +48,24 @@ describe('mysql', () => {
       log: noOpFunction,
     });
 
-    const expectedOptions: LoadGraphQLSchemaFromMySQLOpts = {
-      endpoint: 'mysqls://localhost:3306/testdb',
-      ssl: {
-        rejectUnauthorized: configMock.ssl!.rejectUnauthorized,
-        caPath: configMock.ssl!.ca,
-      },
-      tables: configMock.tables,
-      tableFields: configMock.tableFields,
-    };
-
     const { schema } = await handler.getMeshSource();
 
     expect(schema).toBe(graphQLSchemaMock);
-    expect(loadGraphQLSchemaFromMySQL).toHaveBeenCalledWith('test', expectedOptions);
+    expect(loadGraphQLSchemaFromSql).toHaveBeenCalledWith('test', {
+      endpoint: 'mysqls://localhost:3306/testdb',
+      includeTables: configMock.tables,
+      tableFields: configMock.tableFields,
+      cwd: __dirname,
+      tls: true,
+      ssl: {
+        rejectUnauthorized: true,
+        ca: 'someCA',
+      },
+    });
+    expect(getSqlExecutor).toHaveBeenCalledWith({
+      subgraph: graphQLSchemaMock,
+      cwd: __dirname,
+      client: undefined,
+    });
   });
 });

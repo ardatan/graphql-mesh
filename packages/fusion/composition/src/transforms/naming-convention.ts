@@ -42,7 +42,12 @@ import {
   typeConfigWithDirectiveExtensions,
 } from './neo4j-identity.js';
 import { applyProtobufFieldRenames, applyProtobufTypeRenames } from './rename.js';
-import { rewriteConnectArgReferences, withOriginalKeyFallback } from './utils.js';
+import {
+  applyFlatDirectiveFieldRenames,
+  applySqlTypeFieldRenames,
+  rewriteConnectArgReferences,
+  withOriginalKeyFallback,
+} from './utils.js';
 
 const EnumValueDirective = new GraphQLDirective({
   name: 'enum',
@@ -379,6 +384,8 @@ export function createNamingConventionTransform(
     }
     if (fieldRenameMap.size) {
       // Connect selection picks still use a flat name map; skip flat protobuf nested renames.
+      // SQL type-level `@sql` uses the type-scoped map so `User.name→displayName` updates
+      // the entity selection before Mesh `@source` is skipped.
       const flatFieldRenameMap = new Map<string, string>();
       for (const fields of fieldRenameMap.values()) {
         for (const [from, to] of fields) {
@@ -389,42 +396,12 @@ export function createNamingConventionTransform(
       }
       if (flatFieldRenameMap.size) {
         next = mapSchema(next, {
-          [MapperKind.ROOT_FIELD]: (fieldConfig, _n, _t, s) => {
-            const fieldDirectives = getDirectiveExtensions(fieldConfig, s);
-            const rewritten = rewriteConnectArgReferences(
-              fieldDirectives,
-              new Map(),
-              flatFieldRenameMap,
-              undefined,
-              false,
-            );
-            if (!rewritten || rewritten === fieldDirectives) {
-              return fieldConfig;
-            }
-            return {
-              ...fieldConfig,
-              extensions: { ...(fieldConfig.extensions || {}), directives: rewritten },
-              astNode: undefined,
-            };
-          },
-          [MapperKind.OBJECT_FIELD]: (fieldConfig, _n, _t, s) => {
-            const fieldDirectives = getDirectiveExtensions(fieldConfig, s);
-            const rewritten = rewriteConnectArgReferences(
-              fieldDirectives,
-              new Map(),
-              flatFieldRenameMap,
-              undefined,
-              false,
-            );
-            if (!rewritten || rewritten === fieldDirectives) {
-              return fieldConfig;
-            }
-            return {
-              ...fieldConfig,
-              extensions: { ...(fieldConfig.extensions || {}), directives: rewritten },
-              astNode: undefined,
-            };
-          },
+          [MapperKind.ROOT_FIELD]: (fieldConfig, _n, _t, s) =>
+            applyFlatDirectiveFieldRenames(fieldConfig, flatFieldRenameMap, s),
+          [MapperKind.OBJECT_FIELD]: (fieldConfig, _n, _t, s) =>
+            applyFlatDirectiveFieldRenames(fieldConfig, flatFieldRenameMap, s),
+          [MapperKind.OBJECT_TYPE]: (type, s) =>
+            applySqlTypeFieldRenames(type, fieldRenameMap.get(type.name), s),
         });
       }
     }

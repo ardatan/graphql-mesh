@@ -1,0 +1,9 @@
+{
+  "name": "@e2e/postgres-geodb",
+  "private": true,
+  "dependencies": {
+    "@graphql-hive/gateway": "^2.15.8",
+    "@omnigraph/sql": "0.1.0",
+    "graphql": "^16.14.0"
+  }
+}

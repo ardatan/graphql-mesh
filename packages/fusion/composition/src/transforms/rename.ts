@@ -29,6 +29,8 @@ import {
   typeConfigWithDirectiveExtensions,
 } from './neo4j-identity.js';
 import {
+  applyFlatDirectiveFieldRenames,
+  applySqlTypeFieldRenames,
   rewriteConnectArgReferences,
   rewriteProtobufMappingBindsTypeScoped,
   rewriteProtobufThisBindsDual,
@@ -423,6 +425,28 @@ export function createRenameTransform(opts: RenameTransformConfig) {
         [MapperKind.OBJECT_TYPE]: (type, s) => applyProtobufTypeRenames(type, fieldRenameMap, s),
       });
     }
+    // Connect / SQL skip Mesh `@source` — rewrite selection keys (and type-level `@sql`)
+    // the same way naming-convention does after field renames.
+    if (fieldRenameMap.size) {
+      const flatFieldRenameMap = new Map<string, string>();
+      for (const fields of fieldRenameMap.values()) {
+        for (const [from, to] of fields) {
+          if (!flatFieldRenameMap.has(from)) {
+            flatFieldRenameMap.set(from, to);
+          }
+        }
+      }
+      if (flatFieldRenameMap.size) {
+        nextSchema = mapSchema(nextSchema, {
+          [MapperKind.ROOT_FIELD]: (field, _n, _t, s) =>
+            applyFlatDirectiveFieldRenames(field, flatFieldRenameMap, s),
+          [MapperKind.OBJECT_FIELD]: (field, _n, _t, s) =>
+            applyFlatDirectiveFieldRenames(field, flatFieldRenameMap, s),
+          [MapperKind.OBJECT_TYPE]: (type, s) =>
+            applySqlTypeFieldRenames(type, fieldRenameMap.get(type.name), s),
+        });
+      }
+    }
     return nextSchema;
   };
 }
@@ -808,6 +832,24 @@ export function createRenameFieldTransform(
           applyProtobufFieldRenames(field, fieldRenameMap, s, typeName),
         [MapperKind.OBJECT_TYPE]: (type, s) => applyProtobufTypeRenames(type, fieldRenameMap, s),
       });
+      const flatFieldRenameMap = new Map<string, string>();
+      for (const fields of fieldRenameMap.values()) {
+        for (const [from, to] of fields) {
+          if (!flatFieldRenameMap.has(from)) {
+            flatFieldRenameMap.set(from, to);
+          }
+        }
+      }
+      if (flatFieldRenameMap.size) {
+        nextSchema = mapSchema(nextSchema, {
+          [MapperKind.ROOT_FIELD]: (field, _n, _t, s) =>
+            applyFlatDirectiveFieldRenames(field, flatFieldRenameMap, s),
+          [MapperKind.OBJECT_FIELD]: (field, _n, _t, s) =>
+            applyFlatDirectiveFieldRenames(field, flatFieldRenameMap, s),
+          [MapperKind.OBJECT_TYPE]: (type, s) =>
+            applySqlTypeFieldRenames(type, fieldRenameMap.get(type.name), s),
+        });
+      }
     }
     return nextSchema;
   };

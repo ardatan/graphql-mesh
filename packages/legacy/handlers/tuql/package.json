@@ -36,7 +36,9 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "^0.107.3",
-    "@omnigraph/sqlite": "^0.11.3",
+    "@graphql-mesh/utils": "^0.107.3",
+    "@omnigraph/sql": "0.1.0",
+    "@whatwg-node/disposablestack": "^0.1.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

@@ -1081,6 +1081,195 @@ describe('rewriteConnectArgReferences @thrift__rpc', () => {
   });
 });
 
+describe('rewriteConnectArgReferences @sql', () => {
+  it('renames selection keys without rewriting physical column names', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [
+          {
+            table: 'users',
+            selection: 'first_name: first_name\nlast_name: last_name\nfirst_name',
+            where: 'first_name: $this.first_name',
+            set: 'first_name: $args.input.first_name',
+            first: '$args.pageSize',
+            after: '$args.cursor',
+            filter: '$args.filter',
+          },
+        ],
+      },
+      new Map([
+        ['pageSize', 'size'],
+        ['cursor', 'nextCursor'],
+        ['filter', 'where'],
+      ]),
+      new Map([
+        ['first_name', 'firstName'],
+        ['last_name', 'lastName'],
+      ]),
+    );
+    const sql = rewritten!.sql[0];
+    expect(sql.selection).toContain('firstName: first_name');
+    expect(sql.selection).toContain('lastName: last_name');
+    // Bare pick becomes newKey: oldKey (column preserved)
+    expect(sql.selection).toMatch(/(^|\n)firstName: first_name(\n|$)/);
+    expect(sql.selection).not.toContain('firstName: firstName');
+    // where/set left keys stay physical; $this binders rename
+    expect(sql.where).toBe('first_name: $this.firstName');
+    expect(sql.set).toBe('first_name: $args.input.first_name');
+    expect(sql.first).toBe('$args.size');
+    expect(sql.after).toBe('$args.nextCursor');
+    expect(sql.filter).toBe('$args.where');
+  });
+
+  it('does not treat a multiline selection RHS as a bare pick', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [
+          {
+            table: 'users',
+            selection: 'name:\n  name\nid: id',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['name', 'displayName']]),
+    );
+    const selection = rewritten!.sql[0].selection as string;
+    expect(selection).toContain('displayName:\n  name');
+    expect(selection).not.toContain('displayName: name');
+    expect(selection).not.toMatch(/displayName:\s*\n\s*displayName:/);
+  });
+
+  it('does not treat a bare name after `key: # comment` as a bare pick', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [
+          {
+            table: 'users',
+            selection: 'name: # physical column\n  name\nid: id',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['name', 'displayName']]),
+    );
+    const selection = rewritten!.sql[0].selection as string;
+    expect(selection).toContain('displayName: # physical column\n  name');
+    expect(selection).not.toMatch(/displayName:\s*#.*\n\s*displayName:/);
+  });
+
+  it('does not treat a bare name after a separate `#` comment line as a bare pick', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [
+          {
+            table: 'users',
+            selection: 'name:\n  # physical column\n  name\nid: id',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['name', 'displayName']]),
+    );
+    const selection = rewritten!.sql[0].selection as string;
+    expect(selection).toContain('displayName:\n  # physical column\n  name');
+    expect(selection).not.toMatch(/displayName:\s*\n\s*#.*\n\s*displayName:/);
+    expect(selection).not.toContain('displayName: name');
+  });
+
+  it('does not rewrite __typename text inside SQL where/set literals', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [
+          {
+            table: 'users',
+            where: `note: '__typename: "User"'`,
+            set: `note: '__typename: "User"'`,
+            selection: '__typename: "User"\nid: id',
+          },
+        ],
+      },
+      new Map(),
+      undefined,
+      new Map([['User', 'Member']]),
+    );
+    const sql = rewritten!.sql[0];
+    expect(sql.where).toBe(`note: '__typename: "User"'`);
+    expect(sql.set).toBe(`note: '__typename: "User"'`);
+    expect(sql.selection).toContain('__typename: "Member"');
+  });
+
+  it('applies parent $this renames in one pass (no a→b→c chaining)', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [{ where: 'col: $this.a', selection: 'id: id' }],
+      },
+      new Map(),
+      new Map([
+        ['a', 'b'],
+        ['b', 'c'],
+      ]),
+    );
+    expect(rewritten!.sql[0].where).toBe('col: $this.b');
+  });
+
+  it('does not rewrite field names inside quoted SQL literals', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        connect: [{ selection: `status: "display name: legacy"\nname` }],
+      },
+      new Map(),
+      new Map([['name', 'fullName']]),
+    );
+    expect(rewritten!.connect[0].selection).toContain('"display name: legacy"');
+    expect(rewritten!.connect[0].selection).toMatch(/(^|\n)fullName(\n|$)/);
+  });
+
+  it('rewrites type-level @sql selection keys via applySqlTypeFieldRenames', async () => {
+    const { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLNonNull } =
+      await import('graphql');
+    const { applySqlTypeFieldRenames } = await import('../../src/transforms/utils.js');
+    const User = new GraphQLObjectType({
+      name: 'User',
+      fields: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        displayName: { type: GraphQLString },
+      },
+      extensions: {
+        directives: {
+          sql: [
+            {
+              table: 'users',
+              kind: 'ROW',
+              selection: 'name: name\nid: id',
+              where: 'id: $this.id',
+            },
+          ],
+        },
+      },
+    });
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: { user: { type: User } },
+      }),
+      types: [User],
+    });
+    const next = applySqlTypeFieldRenames(User, new Map([['name', 'displayName']]), schema);
+    const sql = (next.extensions as any).directives.sql[0];
+    expect(sql.selection).toContain('displayName: name');
+    expect(sql.selection).toContain('id: id');
+    expect(sql.selection).not.toContain('displayName: displayName');
+  });
+});
+
 describe('Neo4j identity helpers', () => {
   it('stamps @node(labels:)/@plural and @alias; rewrites @cypher $args', async () => {
     const {

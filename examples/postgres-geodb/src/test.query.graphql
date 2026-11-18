@@ -1,5 +1,5 @@
 query citiesAndDevelopers {
-  allCities(orderBy: ID_ASC, first: 1, condition: { name: "London" }) {
+  allCities(orderBy: [ID_ASC], first: 1, where: { name: { eq: "London" } }) {
     nodes {
       name
       countrycode

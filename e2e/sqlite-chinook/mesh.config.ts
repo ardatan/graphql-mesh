@@ -1,11 +1,11 @@
 import { defineConfig } from '@graphql-mesh/compose-cli';
-import { loadSQLiteSubgraph } from '@omnigraph/sqlite';
+import { loadSqlSubgraph } from '@omnigraph/sql';
 
 export const composeConfig = defineConfig({
   subgraphs: [
     {
-      sourceHandler: loadSQLiteSubgraph('chinook', {
-        db: 'chinook.db',
+      sourceHandler: loadSqlSubgraph('chinook', {
+        endpoint: 'file:chinook.db',
       }),
     },
   ],

@@ -190,7 +190,6 @@ export interface Source {
  * Point to the handler you wish to use, it can either be a predefined handler, or a custom
  */
 export interface Handler {
-  mongoose?: MongooseHandler;
   /**
    * Handler for remote/local/third-party GraphQL schema (Any of: GraphQLHandlerHTTPConfiguration, GraphQLHandlerCodeFirstConfiguration, GraphQLHandlerMultipleHTTPConfiguration)
    */
@@ -200,6 +199,7 @@ export interface Handler {
     | GraphQLHandlerMultipleHTTPConfiguration;
   grpc?: GrpcHandler;
   jsonSchema?: JsonSchemaHandler;
+  mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
   odata?: ODataHandler;
@@ -211,208 +211,6 @@ export interface Handler {
   thrift?: ThriftHandler;
   tuql?: TuqlHandler;
   [k: string]: any;
-}
-export interface MongooseHandler {
-  connectionString?: string;
-  models?: MongooseModel[];
-  discriminators?: MongooseModel[];
-}
-export interface MongooseModel {
-  name: string;
-  path: string;
-  options?: ComposeWithMongooseOpts;
-}
-export interface ComposeWithMongooseOpts {
-  name?: string;
-  description?: string;
-  fields?: ComposeWithMongooseFieldsOpts;
-  inputType?: ComposeMongooseInputType;
-  resolvers?: TypeConverterResolversOpts1;
-}
-export interface ComposeWithMongooseFieldsOpts {
-  only?: string[];
-  remove?: string[];
-  required?: string[];
-}
-export interface ComposeMongooseInputType {
-  name?: string;
-  description?: string;
-  fields?: ComposeWithMongooseFieldsOpts1;
-  resolvers?: TypeConverterResolversOpts;
-}
-export interface ComposeWithMongooseFieldsOpts1 {
-  only?: string[];
-  remove?: string[];
-  required?: string[];
-}
-export interface TypeConverterResolversOpts {
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  findById?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  findByIds?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  findOne?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  findMany?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  updateById?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  updateOne?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  updateMany?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  removeById?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  removeOne?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  removeMany?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  createOne?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  createMany?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  count?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, JSON
-   */
-  connection?:
-    | boolean
-    | {
-        [k: string]: any;
-      };
-  /**
-   * Any of: Boolean, PaginationResolverOpts
-   */
-  pagination?: boolean | PaginationResolverOpts;
-}
-export interface ComposeWithMongooseResolverOpts {
-  filter?: FilterHelperArgsOpts;
-  sort?: SortHelperArgsOpts;
-  limit?: LimitHelperArgsOpts;
-  record?: RecordHelperArgsOpts;
-  skip?: boolean;
-}
-export interface FilterHelperArgsOpts {
-  filterTypeName?: string;
-  isRequired?: boolean;
-  onlyIndexed?: boolean;
-  requiredFields?: string[];
-  /**
-   * Any of: Boolean, JSON
-   */
-  operators?:
-    | boolean
-    | {
-        [k: string]: any;
-      };
-  removeFields?: string[];
-}
-export interface SortHelperArgsOpts {
-  sortTypeName?: string;
-}
-export interface LimitHelperArgsOpts {
-  defaultValue?: number;
-}
-export interface RecordHelperArgsOpts {
-  recordTypeName?: string;
-  isRequired?: boolean;
-  removeFields?: string[];
-  requiredFields?: string[];
-}
-export interface PaginationResolverOpts {
-  perPage?: number;
-}
-export interface TypeConverterResolversOpts1 {
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  findById?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  findByIds?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  findOne?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  findMany?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  updateById?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  updateOne?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  updateMany?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  removeById?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  removeOne?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  removeMany?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  createOne?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  createMany?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, ComposeWithMongooseResolverOpts
-   */
-  count?: boolean | ComposeWithMongooseResolverOpts;
-  /**
-   * Any of: Boolean, JSON
-   */
-  connection?:
-    | boolean
-    | {
-        [k: string]: any;
-      };
-  /**
-   * Any of: Boolean, PaginationResolverOpts
-   */
-  pagination?: boolean | PaginationResolverOpts;
 }
 export interface GraphQLHandlerHTTPConfiguration {
   /**
@@ -790,6 +588,208 @@ export interface QueryStringOptions {
    */
   jsonStringify?: boolean;
 }
+export interface MongooseHandler {
+  connectionString?: string;
+  models?: MongooseModel[];
+  discriminators?: MongooseModel[];
+}
+export interface MongooseModel {
+  name: string;
+  path: string;
+  options?: ComposeWithMongooseOpts;
+}
+export interface ComposeWithMongooseOpts {
+  name?: string;
+  description?: string;
+  fields?: ComposeWithMongooseFieldsOpts;
+  inputType?: ComposeMongooseInputType;
+  resolvers?: TypeConverterResolversOpts1;
+}
+export interface ComposeWithMongooseFieldsOpts {
+  only?: string[];
+  remove?: string[];
+  required?: string[];
+}
+export interface ComposeMongooseInputType {
+  name?: string;
+  description?: string;
+  fields?: ComposeWithMongooseFieldsOpts1;
+  resolvers?: TypeConverterResolversOpts;
+}
+export interface ComposeWithMongooseFieldsOpts1 {
+  only?: string[];
+  remove?: string[];
+  required?: string[];
+}
+export interface TypeConverterResolversOpts {
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  findById?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  findByIds?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  findOne?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  findMany?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  updateById?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  updateOne?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  updateMany?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  removeById?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  removeOne?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  removeMany?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  createOne?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  createMany?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  count?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, JSON
+   */
+  connection?:
+    | boolean
+    | {
+        [k: string]: any;
+      };
+  /**
+   * Any of: Boolean, PaginationResolverOpts
+   */
+  pagination?: boolean | PaginationResolverOpts;
+}
+export interface ComposeWithMongooseResolverOpts {
+  filter?: FilterHelperArgsOpts;
+  sort?: SortHelperArgsOpts;
+  limit?: LimitHelperArgsOpts;
+  record?: RecordHelperArgsOpts;
+  skip?: boolean;
+}
+export interface FilterHelperArgsOpts {
+  filterTypeName?: string;
+  isRequired?: boolean;
+  onlyIndexed?: boolean;
+  requiredFields?: string[];
+  /**
+   * Any of: Boolean, JSON
+   */
+  operators?:
+    | boolean
+    | {
+        [k: string]: any;
+      };
+  removeFields?: string[];
+}
+export interface SortHelperArgsOpts {
+  sortTypeName?: string;
+}
+export interface LimitHelperArgsOpts {
+  defaultValue?: number;
+}
+export interface RecordHelperArgsOpts {
+  recordTypeName?: string;
+  isRequired?: boolean;
+  removeFields?: string[];
+  requiredFields?: string[];
+}
+export interface PaginationResolverOpts {
+  perPage?: number;
+}
+export interface TypeConverterResolversOpts1 {
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  findById?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  findByIds?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  findOne?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  findMany?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  updateById?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  updateOne?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  updateMany?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  removeById?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  removeOne?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  removeMany?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  createOne?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  createMany?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, ComposeWithMongooseResolverOpts
+   */
+  count?: boolean | ComposeWithMongooseResolverOpts;
+  /**
+   * Any of: Boolean, JSON
+   */
+  connection?:
+    | boolean
+    | {
+        [k: string]: any;
+      };
+  /**
+   * Any of: Boolean, PaginationResolverOpts
+   */
+  pagination?: boolean | PaginationResolverOpts;
+}
 export interface MySQLHandler {
   /**
    * The hostname of the database you are connecting to. (Default: localhost)
@@ -960,49 +960,39 @@ export interface OpenapiHandler {
   timeout?: number;
 }
 /**
- * Handler for Postgres database, based on `postgraphile`
+ * Handler for Postgres databases. Under the hood uses `@omnigraph/sql` + `transport-sql`
+ * (not the PostGraphile runtime). Emitted schema is `@sql`-based CRUD/relay surface.
  */
 export interface PostGraphileHandler {
   /**
-   * A connection string to your Postgres database
+   * A connection string to your Postgres database (`postgres://…` / `postgresql://…`).
+   * Supports Mesh env interpolation (e.g. `postgres://{env.PGUSER}:…`).
+   * Optional when `pool` is an existing `pg.Pool` (or module export).
    */
   connectionString?: string;
   /**
-   * An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema.
+   * PostgreSQL schema(s) to introspect (default: public). Only the first entry is used —
+   * multi-schema PostGraphile setups are not supported on this path.
    */
   schemaName?: string[];
   /**
-   * Connection Pool instance or settings or you can provide the path of a code file that exports any of those
+   * Existing `pg.Pool` instance, or a module path that exports one (`modulePath#exportName`).
+   * Plain pool *settings* objects are ignored. When set, introspection and execution reuse
+   * this pool (including TLS); `connectionString` may be omitted.
    */
   pool?: any;
   /**
-   * Extra Postgraphile Plugins to append
+   * Use specific tables for your schema
    */
-  appendPlugins?: string[];
+  tables?: string[];
   /**
-   * Postgraphile Plugins to skip (e.g. "graphile-build#NodePlugin")
+   * Use specific fields of specific tables
    */
-  skipPlugins?: string[];
-  /**
-   * Extra Postgraphile options that will be added to the postgraphile constructor. It can either be an object or a string pointing to the object's path (e.g. "./my-config#options"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-library/) for more information. (Any of: JSON, String)
-   */
-  options?:
-    | {
-        [k: string]: any;
-      }
-    | string;
-  /**
-   * Enable GraphQL websocket transport support for subscriptions (default: true)
-   */
-  subscriptions?: boolean;
-  /**
-   * Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
-   */
-  live?: boolean;
-  /**
-   * A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. "./my-function#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information.
-   */
-  contextOptions?: any;
+  tableFields?: PostGraphileTableField[];
+}
+export interface PostGraphileTableField {
+  table: string;
+  fields: string[];
 }
 export interface RAMLHandler {
   source: string;

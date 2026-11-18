@@ -122,6 +122,15 @@ export function isProtobufRpcSubgraph(schema: GraphQLSchema): boolean {
 }
 
 /**
+ * SQL subgraphs (`@transport(kind: "sql")`) rewrite `@sql` binders under rename /
+ * naming-convention instead of stamping Mesh `@source` / `@meshSource`.
+ */
+export function isSqlSubgraph(schema: GraphQLSchema): boolean {
+  const transports = getDirectiveExtensions(schema)?.transport || [];
+  return transports.some((transport: { kind?: string }) => transport?.kind === 'sql');
+}
+
+/**
  * Neo4j subgraphs use `@neo4j/graphql` identity directives (`@node(labels:)`,
  * `@alias(property:)`, `@plural`) instead of Mesh `@source` / `@meshSource` for
  * rename / naming-convention transforms. Detect via `@transport(kind: "neo4j")`.
@@ -143,13 +152,14 @@ export function isMongoSubgraph(schema: GraphQLSchema): boolean {
 
 /**
  * True when transforms should rewrite directive mappings instead of Mesh `@source`
- * (Connectors `@connect`, protobuf `@protobuf__rpc`, Neo4j `@node` / `@alias` / `@plural`,
- * Mongo `@mongo__*`).
+ * (Connectors `@connect`, protobuf `@protobuf__rpc`, SQL `@sql`, Neo4j `@node` /
+ * `@alias` / `@plural`, Mongo `@mongo__*`).
  */
 export function skipsMeshSourceAnnotations(schema: GraphQLSchema): boolean {
   return (
     isFederationConnectorsSubgraph(schema) ||
     isProtobufRpcSubgraph(schema) ||
+    isSqlSubgraph(schema) ||
     isNeo4jSubgraph(schema) ||
     isMongoSubgraph(schema)
   );

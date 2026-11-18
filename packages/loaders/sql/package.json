@@ -1,0 +1,63 @@
+{
+  "name": "@omnigraph/sql",
+  "version": "0.1.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/loaders/sql"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "graphql": "^16.0.0 || ^17.0.0"
+  },
+  "dependencies": {
+    "@graphql-mesh/cross-helpers": "^0.4.18",
+    "@graphql-mesh/transport-sql": "0.1.0",
+    "@graphql-mesh/types": "^0.107.3",
+    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-tools/utils": "^13.2.2",
+    "change-case": "^4.1.2",
+    "graphql-compose": "^9.3.0",
+    "graphql-scalars": "^2.0.1",
+    "mysql2": "^3.14.0",
+    "pg": "^8.23.1",
+    "pluralize": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.4",
+    "@types/pluralize": "^0.0.33",
+    "graphql": "16.14.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}

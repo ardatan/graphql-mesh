@@ -13,9 +13,24 @@ it.concurrent.each([
     query: /* GraphQL */ `
       query Albums {
         albums(limit: 2) {
-          albumId
+          id
           title
           artist {
+            name
+          }
+        }
+      }
+    `,
+  },
+  {
+    name: 'PlaylistTracksManyToMany',
+    query: /* GraphQL */ `
+      query PlaylistTracksManyToMany {
+        playlist(id: "1") {
+          id
+          name
+          tracks(limit: 5, orderBy: [ID_ASC]) {
+            id
             name
           }
         }
