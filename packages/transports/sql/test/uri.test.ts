@@ -126,6 +126,21 @@ describe('resolveConnectionStringFromEnv (Bun-compatible)', () => {
     ).toBe('postgres://app:s3cret@db.internal:6543/shop?sslmode=require');
   });
 
+  it('composes credentialed unix-socket PGHOST with localhost authority', () => {
+    const url = resolveConnectionStringFromEnv({
+      PGHOST: '/var/run/postgresql',
+      PGUSER: 'mesh',
+      PGDATABASE: 'shop',
+    });
+    // Nonempty authority so WHATWG URL accepts userinfo; socket stays in ?host=.
+    expect(url).toMatch(/^postgres:\/\/mesh@localhost\/shop\?host=/);
+    const parsed = parseSqlUri(url!);
+    expect(parsed.adapter).toBe('postgres');
+    expect(parsed.user).toBe('mesh');
+    expect(parsed.database).toBe('shop');
+    expect(parsed.searchParams.host).toBe('/var/run/postgresql');
+  });
+
   it('composes mysql URL when adapter is mysql', () => {
     expect(
       resolveConnectionStringFromEnv(

@@ -80,6 +80,14 @@ describe('Bun.SQL availability (Node / Jest)', () => {
     expect(cfg).not.toHaveProperty('port');
   });
 
+  it('pgPoolConfigFromLocation prefers ?host= socket over localhost authority', () => {
+    // Credentialed socket compose uses localhost authority for WHATWG URL.
+    const cfg = pgPoolConfigFromLocation('postgres://mesh@localhost/shop?host=/var/run/postgresql');
+    expect(cfg.host).toBe('/var/run/postgresql');
+    expect(cfg.user).toBe('mesh');
+    expect(cfg.database).toBe('shop');
+  });
+
   it('pgPoolConfigFromLocation uses discrete fields so URI sslmode cannot override ssl.ca', () => {
     const ssl = { rejectUnauthorized: true, ca: 'PEM' };
     const cfg = pgPoolConfigFromLocation(

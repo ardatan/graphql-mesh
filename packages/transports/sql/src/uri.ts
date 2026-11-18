@@ -153,7 +153,10 @@ function composePostgresUrlFromEnv(env: EnvLike): string | undefined {
   if (sslmode) qs.set('sslmode', sslmode);
   const q = qs.toString() ? `?${qs.toString()}` : '';
   if (isSocket) {
-    return `postgres://${auth}${dbPart}${q}`;
+    // WHATWG URL rejects credentials with an empty host. Use localhost as the
+    // authority placeholder; `?host=` still wins in pgPoolConfigFromLocation.
+    const authority = auth ? 'localhost' : '';
+    return `postgres://${auth}${authority}${dbPart}${q}`;
   }
   const hostPart = host || 'localhost';
   const portPart = port ? `:${port}` : '';

@@ -13,6 +13,7 @@ import {
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { batchableEqualityColumn } from './batch.js';
 import { columnMapFromSelection, parseSqlMapping } from './mapping.js';
+import { isLegacyPlannerEntry } from './sql-builder.js';
 import { parseSqlThrough } from './through.js';
 import type { ParsedSqlMapping, SqlAdapter, SqlKind } from './types.js';
 
@@ -156,10 +157,11 @@ function planChildField(
   const whereMapping = parseSqlMapping(sqlArgs.where as string | undefined);
   const relSelection = parseSqlMapping(sqlArgs.selection as string | undefined);
 
-  // Parent selection is the GraphQL→SQL catalog for this fold: classify planner
-  // vs physical keys (e.g. sole PK SQL column named `limit`) before batching.
-  const parentCatalog = columnMapFromSelection(parentSelection);
-  const joinColumn = batchableEqualityColumn(whereMapping, parentCatalog);
+  // whereMapping targets the child table: classify planner vs physical keys
+  // against the child selection catalog (e.g. child column named `limit`).
+  // parentSelection is only used below to resolve `$this` → parent SQL columns.
+  const childCatalog = columnMapFromSelection(relSelection);
+  const joinColumn = batchableEqualityColumn(whereMapping, childCatalog);
   if (!joinColumn) return null;
   const binder = whereMapping.entries.find(e => e.key === joinColumn);
   if (!binder?.value || binder.value.kind !== 'this') return null;
@@ -229,7 +231,7 @@ function planChildField(
   if (kind === 'ROWS') {
     // Only fold when the only non-planner binder is `$this` equality and args are
     // limited to limit (no where/orderBy/offset — those stay on DataLoader).
-    if (!isSimpleHasManyFoldable(whereMapping, fieldNode, opts)) return null;
+    if (!isSimpleHasManyFoldable(whereMapping, fieldNode, childCatalog)) return null;
     const limit = readLimitArg(fieldNode);
     const narrowed = narrowSelectionToFieldNodes(relSelection, fieldNode, fragments, childType);
     const foldSelection = narrowed.entries.length ? narrowed : relSelection;
@@ -318,10 +320,16 @@ function selectionProjectsByte(childType: GraphQLObjectType, selection: ParsedSq
 }
 
 function isSimpleHasManyFoldable(
-  _whereMapping: ParsedSqlMapping,
+  whereMapping: ParsedSqlMapping,
   fieldNode: FieldNode,
-  opts?: { adapter?: SqlAdapter },
+  columnCatalog?: Map<string, string>,
 ): boolean {
+  // JSON subselect folds only apply the join equality (+ optional literal limit
+  // arg). Stuffed planner binders (`limit: $this.pageSize`) would be dropped —
+  // keep those relations on the field resolver / DataLoader.
+  for (const entry of whereMapping.entries) {
+    if (isLegacyPlannerEntry(entry, columnCatalog)) return false;
+  }
   // Loader emits where/orderBy binders; fold only when the operation does not
   // pass those args. Offset is not applied in JSON subselects — keep DataLoader.
   // Variable / non-literal limits cannot be resolved into the JSON subselect.

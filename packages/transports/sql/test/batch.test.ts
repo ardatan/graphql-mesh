@@ -4,6 +4,7 @@ import {
   loadBatchedByColumn,
 } from '../src/batch.js';
 import { parseSqlMapping } from '../src/mapping.js';
+import { isLegacyPlannerEntry } from '../src/sql-builder.js';
 
 describe('batchableEqualityColumn with catalog', () => {
   it('batches on physical PK column named limit (gql id → sql limit)', () => {
@@ -17,6 +18,30 @@ describe('batchableEqualityColumn with catalog', () => {
     const where = parseSqlMapping('limit: $args.take');
     const catalog = new Map([['id', 'AlbumId']]);
     expect(batchableEqualityColumn(where, catalog)).toBeUndefined();
+  });
+
+  it('classifies has-many binders against the child catalog (not the parent)', () => {
+    // Child selection: id: ChildId, cap: limit, parentId: ParentId
+    const childCatalog = new Map([
+      ['id', 'ChildId'],
+      ['cap', 'limit'],
+      ['parentId', 'ParentId'],
+    ]);
+    // Physical child `limit` + FK → two equality columns (not single-key batchable;
+    // fold stays off DataLoader so both predicates apply).
+    const physicalLimit = parseSqlMapping('ParentId: $this.id\nlimit: $this.quota');
+    expect(isLegacyPlannerEntry(physicalLimit.entries[1], childCatalog)).toBe(false);
+    expect(batchableEqualityColumn(physicalLimit, childCatalog)).toBeUndefined();
+
+    // Stuffed planner `limit: $this.pageSize` with no child limit column: still a
+    // single FK batch key, but has-many fold must reject the planner binder.
+    const parentOnlyCatalog = new Map([
+      ['id', 'ChildId'],
+      ['parentId', 'ParentId'],
+    ]);
+    const stuffedLimit = parseSqlMapping('ParentId: $this.id\nlimit: $this.pageSize');
+    expect(isLegacyPlannerEntry(stuffedLimit.entries[1], parentOnlyCatalog)).toBe(true);
+    expect(batchableEqualityColumn(stuffedLimit, parentOnlyCatalog)).toBe('ParentId');
   });
 });
 
