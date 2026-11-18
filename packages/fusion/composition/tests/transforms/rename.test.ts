@@ -1204,9 +1204,23 @@ WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
     expect(rewriteCypherParamNames('RETURN $`title` AS n', new Map([['title', 'needle']]))).toBe(
       'RETURN $needle AS n',
     );
+    // Trivia between `$` and the name is preserved when rewriting.
     expect(rewriteCypherParamNames('RETURN $ `title` AS n', new Map([['title', 'needle']]))).toBe(
-      'RETURN $needle AS n',
+      'RETURN $ needle AS n',
     );
+    expect(
+      rewriteCypherParamNames('RETURN $\u00A0`title` AS n', new Map([['title', 'needle']])),
+    ).toBe('RETURN $\u00A0needle AS n');
+    expect(
+      rewriteCypherParamNames('RETURN $ /* note */ `title` AS n', new Map([['title', 'needle']])),
+    ).toBe('RETURN $ /* note */ needle AS n');
+    // Dynamic label ANY/ALL after `$` are operators, not parameters.
+    expect(
+      rewriteCypherParamNames(
+        'MATCH (m:$ any($labels)) RETURN count(m) + $any AS n',
+        new Map([['any', 'needle']]),
+      ),
+    ).toBe('MATCH (m:$ any($labels)) RETURN count(m) + $needle AS n');
     // Standalone backtick identifiers are not parameters.
     expect(rewriteCypherParamNames('RETURN `title` AS n', new Map([['title', 'needle']]))).toBe(
       'RETURN `title` AS n',

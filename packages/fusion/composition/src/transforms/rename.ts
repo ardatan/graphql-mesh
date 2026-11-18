@@ -288,18 +288,22 @@ export function createRenameTransform(opts: RenameTransformConfig) {
       // Do rewrite `$args.*` (arg renames) and `__typename` literals (type renames).
       const argRenameMap = new Map<string, string>();
       let newArgs: GraphQLFieldConfigArgumentMap | undefined;
+      const skipNeo4jRelationshipArgRename =
+        neo4j && Boolean(fieldDirectives?.relationship?.length);
       if (argRenamers.length && 'args' in field && field.args) {
         newArgs = {};
         for (const argName in field.args) {
           let newArgName = argName;
-          for (const renamer of argRenamers) {
-            newArgName =
-              renamer({
-                typeName,
-                fieldName,
-                argName: newArgName,
-                subgraphConfig,
-              }) || newArgName;
+          if (!skipNeo4jRelationshipArgRename) {
+            for (const renamer of argRenamers) {
+              newArgName =
+                renamer({
+                  typeName,
+                  fieldName,
+                  argName: newArgName,
+                  subgraphConfig,
+                }) || newArgName;
+            }
           }
           if (newArgName !== argName) {
             argRenameMap.set(argName, newArgName);
@@ -332,8 +336,11 @@ export function createRenameTransform(opts: RenameTransformConfig) {
           const parentDirectives = parentType
             ? getDirectiveExtensions(parentType, schema)
             : undefined;
+          const isRootParent =
+            typeName === 'Query' || typeName === 'Mutation' || typeName === 'Subscription';
           rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
             isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirectives),
+            allowNonModelPropertyAlias: !isRootParent,
             subgraph:
               parentDirectives?.node?.[0]?.subgraph ||
               parentDirectives?.relationshipProperties?.[0]?.subgraph,
@@ -727,8 +734,11 @@ export function createRenameFieldTransform(
           ? getDirectiveExtensions(parentType, schema)
           : undefined;
         const fieldDirectives = getDirectiveExtensions(field, schema);
+        const isRootParent =
+          typeName === 'Query' || typeName === 'Mutation' || typeName === 'Subscription';
         const withAlias = ensureNeo4jFieldAlias(fieldDirectives, fieldName, {
           isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirectives),
+          allowNonModelPropertyAlias: !isRootParent,
           subgraph:
             parentDirectives?.node?.[0]?.subgraph ||
             parentDirectives?.relationshipProperties?.[0]?.subgraph,

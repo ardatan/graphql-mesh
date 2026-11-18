@@ -169,9 +169,14 @@ export function typeConfigWithDirectiveExtensions(
 export function ensureNeo4jFieldAlias(
   fieldDirectives: Record<string, any[]> | undefined,
   originalFieldName: string,
-  opts?: { isNeo4jModelField?: boolean; subgraph?: string },
+  opts?: {
+    isNeo4jModelField?: boolean;
+    /** Stamp `@alias` on non-`@node` types (authored Cypher return objects). */
+    allowNonModelPropertyAlias?: boolean;
+    subgraph?: string;
+  },
 ): Record<string, any[]> | undefined {
-  if (!opts?.isNeo4jModelField) {
+  if (!opts?.isNeo4jModelField && !opts?.allowNonModelPropertyAlias) {
     return fieldDirectives;
   }
   const dirs: Record<string, any[]> = { ...(fieldDirectives || {}) };
@@ -305,11 +310,44 @@ export function rewriteCypherParamNames(
     if (c === '$') {
       const start = i;
       i++;
-      // Cypher allows whitespace between `$` and the parameter name (`$ `title``).
-      while (i < statement.length && /[ \t\r\n\f]/.test(statement[i])) {
-        i++;
+      // Trivia between `$` and the parameter name (Cypher whitespace + comments).
+      // Preserve trivia text when rewriting; still resolve the name across it.
+      let trivia = '';
+      while (i < statement.length) {
+        const ch = statement[i];
+        // Cypher whitespace includes U+00A0 (NBSP).
+        if (/[ \t\r\n\f\u00A0]/.test(ch)) {
+          trivia += statement[i++];
+          continue;
+        }
+        if (ch === '/' && statement[i + 1] === '/') {
+          while (i < statement.length && statement[i] !== '\n' && statement[i] !== '\r') {
+            trivia += statement[i++];
+          }
+          continue;
+        }
+        if (ch === '/' && statement[i + 1] === '*') {
+          trivia += statement[i++] + statement[i++];
+          while (i < statement.length) {
+            if (statement[i] === '*' && statement[i + 1] === '/') {
+              trivia += '*/';
+              i += 2;
+              break;
+            }
+            trivia += statement[i++];
+          }
+          continue;
+        }
+        break;
       }
-      // `$`title`` / `$ `title`` — backtick-delimited parameter name.
+      // Dynamic label / type operators: `:$any(...)` / `:$ all(...)` — not parameters.
+      const dynOp = /^(any|all)(?=\s*\()/i.exec(statement.slice(i));
+      if (dynOp) {
+        out += statement.slice(start, i + dynOp[0].length);
+        i += dynOp[0].length;
+        continue;
+      }
+      // `$`title`` / `$ /* note */ `title`` — backtick-delimited parameter name.
       if (statement[i] === '`') {
         i++;
         let name = '';
@@ -326,7 +364,8 @@ export function rewriteCypherParamNames(
           name += statement[i++];
         }
         if (name && !CYPHER_RESERVED_VARS.has(name) && argRenameMap.has(name)) {
-          out += cypherParamToken(argRenameMap.get(name)!);
+          const token = cypherParamToken(argRenameMap.get(name)!);
+          out += token[0] + trivia + token.slice(1);
         } else {
           out += statement.slice(start, i);
         }
@@ -337,7 +376,8 @@ export function rewriteCypherParamNames(
         name += statement[i++];
       }
       if (name && !CYPHER_RESERVED_VARS.has(name) && argRenameMap.has(name)) {
-        out += cypherParamToken(argRenameMap.get(name)!);
+        const token = cypherParamToken(argRenameMap.get(name)!);
+        out += token[0] + trivia + token.slice(1);
       } else {
         out += statement.slice(start, i);
       }

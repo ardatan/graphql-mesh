@@ -187,10 +187,17 @@ export function createNamingConventionTransform(
         const fieldDirectives = getDirectiveExtensions(fieldConfig);
         const argRenameMap = new Map<string, string>();
         let newArgs: GraphQLFieldConfigArgumentMap | undefined;
+        // Neo4j regenerates relationship filter/pagination args (`where`, …); renaming
+        // them (e.g. `where`→`Where`) leaves the public schema without a matching executor arg.
+        // Authored `@cypher` args are retained by the transport and stay renamable.
+        const skipNeo4jRelationshipArgRename =
+          neo4jSubgraph && Boolean(fieldDirectives?.relationship?.length);
         if ('args' in fieldConfig && fieldConfig.args && (fieldArgumentNamesFn || enumValuesFn)) {
           newArgs = {};
           for (const argName in fieldConfig.args) {
-            const newArgName = fieldArgumentNamesFn?.(argName) || argName;
+            const newArgName = skipNeo4jRelationshipArgRename
+              ? argName
+              : fieldArgumentNamesFn?.(argName) || argName;
             if (newArgName !== argName) {
               argRenameMap.set(argName, newArgName);
             }
@@ -233,8 +240,12 @@ export function createNamingConventionTransform(
           if (newFieldName !== fieldName) {
             const parentType = fieldSchema?.getType(typeName);
             const parentDirs = parentType ? getDirectiveExtensions(parentType) : undefined;
+            const isRootParent =
+              typeName === 'Query' || typeName === 'Mutation' || typeName === 'Subscription';
             rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
               isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirs),
+              // Authored Cypher return objects need `@alias` so map keys survive fieldNames renames.
+              allowNonModelPropertyAlias: !isRootParent,
               subgraph:
                 parentDirs?.node?.[0]?.subgraph ||
                 parentDirs?.relationshipProperties?.[0]?.subgraph,

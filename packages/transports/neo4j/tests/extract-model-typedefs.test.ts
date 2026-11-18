@@ -46,10 +46,15 @@ describe('extractNeo4jModelTypeDefs', () => {
         title: String
       }
 
+      input PersonWhere {
+        name: String
+      }
+
       type Movie implements Production @node(subgraph: "Movies") {
         title: String!
         location: Point
-        actors: [Person!]! @relationship(subgraph: "Movies", type: "ACTED_IN", direction: "IN")
+        actors(where: PersonWhere): [Person!]!
+          @relationship(subgraph: "Movies", type: "ACTED_IN", direction: "IN")
         actorsConnection(where: MovieWhere): MovieActorsConnection
         similar(criteria: SearchCriteria!): [Movie!]!
           @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
@@ -82,6 +87,7 @@ describe('extractNeo4jModelTypeDefs', () => {
     expect(sdl).not.toMatch(/actorsConnection/);
     expect(sdl).not.toMatch(/MovieActorsConnection/);
     expect(sdl).not.toMatch(/MovieWhere/);
+    expect(sdl).not.toMatch(/PersonWhere/);
 
     const movie = extracted.definitions.find(
       def => def.kind === Kind.OBJECT_TYPE_DEFINITION && def.name.value === 'Movie',
@@ -201,6 +207,106 @@ describe('extractNeo4jModelTypeDefs', () => {
     `);
     expect(() => extractNeo4jModelTypeDefs(emptyProjection, 'Movies')).toThrow(
       /Movie\.featured.*Person|Person.*Movie\.featured/,
+    );
+  });
+
+  it('drops generated connections on authored outputs; keeps authored-only Point; checks interfaces', () => {
+    const withConnection = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      type FriendFriendsConnection {
+        edges: [String]
+      }
+
+      type Friend @node(subgraph: "People") {
+        name: String! @cypher(subgraph: "People", statement: "RETURN 1", columnName: "x")
+      }
+
+      type Person {
+        name: String!
+        friendsConnection: FriendFriendsConnection
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        featured: Person! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+
+      type Query {
+        movies: [Movie!]! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+    `);
+    const extracted = extractNeo4jModelTypeDefs(withConnection, 'Movies');
+    const sdl = print(extracted);
+    expect(sdl).toMatch(/type Person/);
+    expect(sdl).toMatch(/name:\s*String!/);
+    expect(sdl).not.toMatch(/friendsConnection/);
+    expect(sdl).not.toMatch(/FriendFriendsConnection/);
+    expect(sdl).not.toMatch(/type Friend/);
+
+    const authoredPoint = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      type Point {
+        latitude: Float!
+        longitude: Float!
+      }
+
+      type Person @node(subgraph: "People") {
+        location: Point
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        featured: Person! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+
+      type Query {
+        movies: [Movie!]! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+    `);
+    const pointSdl = print(extractNeo4jModelTypeDefs(authoredPoint, 'Movies'));
+    expect(pointSdl).toMatch(/type Point/);
+    expect(pointSdl).toMatch(/location:\s*Point/);
+    expect(pointSdl).not.toMatch(/type Person[^\n]*@node/);
+
+    const brokenIface = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      interface Named {
+        name: String!
+      }
+
+      type Person implements Named {
+        name: String! @alias(subgraph: "People", property: "full_name")
+        nickname: String!
+      }
+
+      type Movie implements Named @node(subgraph: "Movies") {
+        name: String!
+        featured: Person! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+
+      type Query {
+        movies: [Movie!]! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+    `);
+    expect(() => extractNeo4jModelTypeDefs(brokenIface, 'Movies')).toThrow(
+      /Person.*Named|missing name/i,
     );
   });
 });

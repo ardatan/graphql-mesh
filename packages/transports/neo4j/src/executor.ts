@@ -308,8 +308,27 @@ export function extractNeo4jModelTypeDefs(
     collectInterfaceClosure(modelName, interfaceImplements, keepTypeNames);
   }
 
-  /** Spatial object types Neo4j regenerates from retained attributes. */
+  const unionNames = new Set<string>();
+  for (const def of typeDefs.definitions) {
+    if (def.kind === Kind.UNION_TYPE_DEFINITION) {
+      unionNames.add(def.name.value);
+    }
+  }
+
+  /** Spatial object types Neo4j regenerates from retained model attributes. */
   const NEO4J_REGENERATED_OBJECT_TYPES = new Set(['Point', 'CartesianPoint']);
+
+  /** Generated connection / aggregate fields Neo4j re-augments on `@node` models. */
+  function isGeneratedConnectionOrAggregateField(field: FieldDefinitionNode): boolean {
+    const fieldName = field.name.value;
+    if (fieldName.endsWith('Connection') || fieldName.endsWith('Aggregate')) {
+      return true;
+    }
+    const returnName = namedTypeNameFromTypeNode(field.type);
+    return Boolean(
+      returnName && (returnName.endsWith('Connection') || returnName.endsWith('Aggregate')),
+    );
+  }
 
   function isRetainedModelField(field: FieldDefinitionNode): boolean {
     // Authored `@cypher` may return non-`@node` object types (e.g. `Stats`); keep the field.
@@ -402,8 +421,10 @@ export function extractNeo4jModelTypeDefs(
   }
 
   // Expand authored cypher output object graphs (fields → nested objects/enums/inputs).
-  // Only walk fields that survive ownership filtering so foreign unions/members are not kept.
+  // Only walk owned, non-generated fields so foreign unions / connection edges are not kept.
   const authoredOutputReferrers = new Map<string, string[]>();
+  /** Types added directly as `@cypher` return types (throw if empty); nested types are dropped. */
+  const directCypherReturnTypes = new Set<string>(authoredOutputTypeNames);
   for (const [typeName, fields] of retainedFieldsByType) {
     for (const field of fields) {
       if (!hasDirective(field, 'cypher')) {
@@ -432,15 +453,22 @@ export function extractNeo4jModelTypeDefs(
         if (!fieldOwnedByThisSubgraph(field, subgraphName)) {
           continue;
         }
+        // Unstamped generated connections on authored outputs must not pull foreign edge/node types.
+        if (isGeneratedConnectionOrAggregateField(field)) {
+          continue;
+        }
         collectNamedTypesFromField(field, referenced, { includeArgs: true });
         const nested = namedTypeNameFromTypeNode(field.type);
         if (!nested) {
           continue;
         }
+        if (NEO4J_REGENERATED_OBJECT_TYPES.has(nested)) {
+          // Spatial types: keep a reference; emission decides regenerate vs retain definition.
+          continue;
+        }
         if (
           objectOrInterfaceNames.has(nested) &&
           !keepTypeNames.has(nested) &&
-          !NEO4J_REGENERATED_OBJECT_TYPES.has(nested) &&
           !authoredOutputTypeNames.has(nested)
         ) {
           authoredOutputTypeNames.add(nested);
@@ -451,6 +479,85 @@ export function extractNeo4jModelTypeDefs(
         }
       }
     }
+  }
+
+  function retainedModelHasSpatialField(spatialName: string): boolean {
+    for (const fields of retainedFieldsByType.values()) {
+      for (const field of fields) {
+        if (namedTypeNameFromTypeNode(field.type) === spatialName) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  const interfaceFieldsByName = new Map<string, readonly FieldDefinitionNode[]>();
+  for (const def of typeDefs.definitions) {
+    if (def.kind === Kind.INTERFACE_TYPE_DEFINITION) {
+      interfaceFieldsByName.set(def.name.value, def.fields || []);
+    }
+  }
+
+  function authoredOutputOwnedFields(typeName: string): readonly FieldDefinitionNode[] | undefined {
+    const def = typeDefs.definitions.find(
+      d =>
+        (d.kind === Kind.OBJECT_TYPE_DEFINITION || d.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
+        d.name.value === typeName,
+    );
+    if (
+      !def ||
+      (def.kind !== Kind.OBJECT_TYPE_DEFINITION && def.kind !== Kind.INTERFACE_TYPE_DEFINITION)
+    ) {
+      return undefined;
+    }
+    return (def.fields || []).filter(
+      field =>
+        fieldOwnedByThisSubgraph(field, subgraphName) &&
+        !isGeneratedConnectionOrAggregateField(field),
+    );
+  }
+
+  // Drop nested authored types that would emit empty (do not abort the whole transport).
+  for (const name of [...authoredOutputTypeNames]) {
+    if (directCypherReturnTypes.has(name)) {
+      continue;
+    }
+    const owned = authoredOutputOwnedFields(name);
+    if (owned && owned.length === 0) {
+      authoredOutputTypeNames.delete(name);
+    }
+  }
+
+  function typeEmittedInExtract(name: string): boolean {
+    if (keepTypeNames.has(name)) {
+      return true;
+    }
+    if (authoredOutputTypeNames.has(name)) {
+      return true;
+    }
+    if (NEO4J_REGENERATED_OBJECT_TYPES.has(name)) {
+      return referenced.has(name) && !retainedModelHasSpatialField(name);
+    }
+    return false;
+  }
+
+  function findUnionReferrer(unionName: string): string {
+    for (const [typeName, fields] of retainedFieldsByType) {
+      for (const field of fields) {
+        if (namedTypeNameFromTypeNode(field.type) === unionName) {
+          return `${typeName}.${field.name.value}`;
+        }
+      }
+    }
+    for (const outName of authoredOutputTypeNames) {
+      for (const field of authoredOutputOwnedFields(outName) || []) {
+        if (namedTypeNameFromTypeNode(field.type) === unionName) {
+          return `${outName}.${field.name.value}`;
+        }
+      }
+    }
+    return 'unknown field';
   }
 
   // Authored inputs / enums / scalars reachable from retained fields (incl. `@cypher` args).
@@ -489,23 +596,74 @@ export function extractNeo4jModelTypeDefs(
       switch (def.kind) {
         case Kind.OBJECT_TYPE_DEFINITION:
         case Kind.INTERFACE_TYPE_DEFINITION: {
+          if (NEO4J_REGENERATED_OBJECT_TYPES.has(def.name.value)) {
+            // Neo4j regenerates Point from retained model attributes; keep the definition
+            // only when authored outputs need it and no retained model can regenerate it.
+            if (referenced.has(def.name.value) && !retainedModelHasSpatialField(def.name.value)) {
+              return [def];
+            }
+            return [];
+          }
           if (authoredOutputTypeNames.has(def.name.value) && !keepTypeNames.has(def.name.value)) {
             // Foreign `@node` / `@relationshipProperties` must not augment as this transport's model.
             let authored = isForeignOwnedModelType(def, subgraphName)
               ? stripForeignModelOwnershipDirectives(def)
               : def;
-            const authoredFields = (authored.fields || []).filter(field =>
-              fieldOwnedByThisSubgraph(field, subgraphName),
-            );
+            const authoredFields = (authored.fields || []).filter(field => {
+              if (!fieldOwnedByThisSubgraph(field, subgraphName)) {
+                return false;
+              }
+              if (isGeneratedConnectionOrAggregateField(field)) {
+                return false;
+              }
+              const nested = namedTypeNameFromTypeNode(field.type);
+              if (
+                nested &&
+                (objectOrInterfaceNames.has(nested) || unionNames.has(nested)) &&
+                !typeEmittedInExtract(nested)
+              ) {
+                return false;
+              }
+              return true;
+            });
             if (!authoredFields.length) {
-              const refs =
-                authoredOutputReferrers.get(def.name.value)?.join(', ') || 'unknown field';
-              throw new Error(
-                `Neo4j model extract: Cypher return type "${def.name.value}" has no fields owned by subgraph "${subgraphName ?? ''}" (referenced from ${refs})`,
-              );
+              if (directCypherReturnTypes.has(def.name.value)) {
+                const refs =
+                  authoredOutputReferrers.get(def.name.value)?.join(', ') || 'unknown field';
+                throw new Error(
+                  `Neo4j model extract: Cypher return type "${def.name.value}" has no fields owned by subgraph "${subgraphName ?? ''}" (referenced from ${refs})`,
+                );
+              }
+              // Nested type reached only via dropped paths — omit rather than abort the transport.
+              return [];
             }
             if (authoredFields.length !== (authored.fields || []).length) {
               authored = { ...authored, fields: authoredFields };
+            }
+            // Interface conformance: projection must include each required interface field.
+            if (authored.kind === Kind.OBJECT_TYPE_DEFINITION && authored.interfaces?.length) {
+              const projected = new Set(authoredFields.map(field => field.name.value));
+              const nextInterfaces = [];
+              for (const iface of authored.interfaces) {
+                const ifaceName = iface.name.value;
+                if (!keepTypeNames.has(ifaceName) && !authoredOutputTypeNames.has(ifaceName)) {
+                  continue;
+                }
+                const missing = (interfaceFieldsByName.get(ifaceName) || [])
+                  .map(field => field.name.value)
+                  .filter(name => !projected.has(name));
+                if (missing.length) {
+                  const refs =
+                    authoredOutputReferrers.get(def.name.value)?.join(', ') || 'unknown field';
+                  throw new Error(
+                    `Neo4j model extract: Cypher return type "${def.name.value}" cannot implement "${ifaceName}" after ownership filtering (missing ${missing.join(', ')}; referenced from ${refs})`,
+                  );
+                }
+                nextInterfaces.push(iface);
+              }
+              if (nextInterfaces.length !== authored.interfaces.length) {
+                authored = { ...authored, interfaces: nextInterfaces };
+              }
             }
             return [authored];
           }
@@ -526,8 +684,24 @@ export function extractNeo4jModelTypeDefs(
         }
         case Kind.ENUM_TYPE_DEFINITION:
         case Kind.SCALAR_TYPE_DEFINITION:
-        case Kind.UNION_TYPE_DEFINITION:
           return referenced.has(def.name.value) ? [def] : [];
+        case Kind.UNION_TYPE_DEFINITION: {
+          if (!referenced.has(def.name.value)) {
+            return [];
+          }
+          const members = (def.types || []).filter(member =>
+            typeEmittedInExtract(member.name.value),
+          );
+          if (!members.length) {
+            throw new Error(
+              `Neo4j model extract: union "${def.name.value}" has no retained members (referenced from ${findUnionReferrer(def.name.value)})`,
+            );
+          }
+          if (members.length === (def.types || []).length) {
+            return [def];
+          }
+          return [{ ...def, types: members }];
+        }
         case Kind.INPUT_OBJECT_TYPE_DEFINITION:
           return keepInputs.has(def.name.value) ? [def] : [];
         case Kind.DIRECTIVE_DEFINITION:
