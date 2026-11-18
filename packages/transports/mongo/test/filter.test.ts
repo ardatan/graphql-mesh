@@ -1,6 +1,8 @@
+import { Decimal128, ObjectId } from 'mongodb';
 import {
   buildMongoFilter,
   buildMongoSort,
+  coerceFilterValue,
   graphqlFilterToMongo,
   graphqlSortToMongo,
   graphqlUpdateToMongo,
@@ -67,6 +69,51 @@ describe('mongo filter mapping', () => {
       gender: 'female',
       age: { $lt: 40 },
     });
+  });
+
+  it('keeps fixed binders when spread query overlaps keys via $and', () => {
+    expect(
+      buildMongoFilter(
+        `
+          gender: "female"
+          ...$args.query
+        `,
+        { args: { query: { gender: { eq: 'male' } } } },
+      ),
+    ).toEqual({
+      $and: [{ gender: 'female' }, { gender: 'male' }],
+    });
+  });
+
+  it('accumulates $and from combinators and multi elemMatch', () => {
+    expect(
+      graphqlFilterToMongo({
+        and: [{ age: { gte: 18 } }],
+        languages: [{ language: { eq: 'en' } }, { language: { eq: 'fr' } }],
+      }),
+    ).toEqual({
+      $and: [
+        { age: { $gte: 18 } },
+        { languages: { $elemMatch: { language: 'en' } } },
+        { languages: { $elemMatch: { language: 'fr' } } },
+      ],
+    });
+  });
+
+  it('converts ObjectId only for id/_id fields', () => {
+    const hex = '507f1f77bcf86cd799439011';
+    expect(coerceFilterValue(hex, { asObjectId: true })).toBeInstanceOf(ObjectId);
+    expect(coerceFilterValue(hex)).toBe(hex);
+    expect(graphqlFilterToMongo({ token: { eq: hex } })).toEqual({ token: hex });
+    expect(graphqlFilterToMongo({ id: { eq: hex } })._id).toBeInstanceOf(ObjectId);
+  });
+
+  it('preserves Decimal128 instances through update coerce', () => {
+    const d = Decimal128.fromString('12.50');
+    expect(graphqlUpdateToMongo({ set: { salaryDecimal: d } })).toEqual({
+      $set: { salaryDecimal: d },
+    });
+    expect(coerceFilterValue('12.50')).toBeInstanceOf(Decimal128);
   });
 
   it('maps array id binders to $in', () => {

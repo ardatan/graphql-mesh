@@ -87,4 +87,20 @@ describe('parseMongoMapping', () => {
       street: 'Main',
     });
   });
+
+  it('hex-stringifies ObjectId elements inside arrays', () => {
+    const parsed = parseMongoMapping(`
+      id: _id
+      friendIds: friendIds
+    `);
+    const oid = {
+      toHexString() {
+        return '507f1f77bcf86cd799439011';
+      },
+    };
+    expect(mapDocumentToGraphql({ _id: 'abc', friendIds: [oid, oid] }, parsed)).toEqual({
+      id: 'abc',
+      friendIds: ['507f1f77bcf86cd799439011', '507f1f77bcf86cd799439011'],
+    });
+  });
 });

@@ -2,6 +2,11 @@ import { Decimal128, ObjectId } from 'mongodb';
 import { parseMongoMapping, resolveMappingValue } from './mapping.js';
 import type { ParsedMongoMapping } from './types.js';
 
+export interface CoerceFilterOptions {
+  /** Convert 24-char hex strings to ObjectId (only for known ObjectId fields). */
+  asObjectId?: boolean;
+}
+
 /**
  * Build a MongoDB filter document from `@mongo(filter:)` mapping.
  */
@@ -23,7 +28,7 @@ export function filterFromMapping(
     if (entry.spread && entry.value) {
       const spreadVal = resolveMappingValue(entry.value, ctx);
       if (spreadVal && typeof spreadVal === 'object' && !Array.isArray(spreadVal)) {
-        Object.assign(filter, normalizeFilterDoc(spreadVal as Record<string, unknown>));
+        mergeFilterFragment(filter, normalizeFilterDoc(spreadVal as Record<string, unknown>));
       }
       continue;
     }
@@ -35,7 +40,7 @@ export function filterFromMapping(
     ) {
       const val = resolveMappingValue(entry.value, ctx);
       if (val && typeof val === 'object' && !Array.isArray(val)) {
-        Object.assign(filter, normalizeFilterDoc(val as Record<string, unknown>));
+        mergeFilterFragment(filter, normalizeFilterDoc(val as Record<string, unknown>));
       }
       continue;
     }
@@ -44,15 +49,60 @@ export function filterFromMapping(
 
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved === undefined) continue;
+    const asObjectId = isObjectIdFieldKey(entry.key);
     // `_id: $args.ids` (array) => `{ _id: { $in: [...] } }`
     if (Array.isArray(resolved)) {
-      filter[entry.key] = { $in: resolved.map(coerceFilterValue) };
+      const next = {
+        $in: resolved.map(v => coerceFilterValue(v, { asObjectId })),
+      };
+      mergeFilterFragment(filter, { [entry.key]: next });
     } else {
-      filter[entry.key] = coerceFilterValue(resolved);
+      mergeFilterFragment(filter, {
+        [entry.key]: coerceFilterValue(resolved, { asObjectId }),
+      });
     }
   }
 
   return filter;
+}
+
+/**
+ * Merge a filter fragment into `target`. Overlapping field keys become `$and`
+ * so fixed binders (e.g. `gender: "female"`) are not overwritten by `$args.query`.
+ */
+function mergeFilterFragment(
+  target: Record<string, unknown>,
+  fragment: Record<string, unknown>,
+): void {
+  for (const [key, value] of Object.entries(fragment)) {
+    if (key === '$and' && Array.isArray(value)) {
+      appendAnd(target, value as Record<string, unknown>[]);
+      continue;
+    }
+    if (key === '$or' || key === '$nor') {
+      if (key in target) {
+        appendAnd(target, [{ [key]: target[key] }, { [key]: value }]);
+        delete target[key];
+      } else {
+        target[key] = value;
+      }
+      continue;
+    }
+    if (key in target) {
+      const prev = target[key];
+      delete target[key];
+      appendAnd(target, [{ [key]: prev }, { [key]: value }]);
+      continue;
+    }
+    target[key] = value;
+  }
+}
+
+function appendAnd(out: Record<string, unknown>, clauses: Record<string, unknown>[]): void {
+  if (!Array.isArray(out.$and)) {
+    out.$and = [];
+  }
+  (out.$and as Record<string, unknown>[]).push(...clauses);
 }
 
 /**
@@ -74,12 +124,13 @@ function looksLikeNativeMongoFilter(input: Record<string, unknown>): boolean {
   return false;
 }
 
-function coerceDeep(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(coerceDeep);
-  if (!isPlainObject(value)) return coerceFilterValue(value);
+function coerceDeep(value: unknown, opts?: CoerceFilterOptions): unknown {
+  if (Array.isArray(value)) return value.map(v => coerceDeep(v, opts));
+  if (isBsonValue(value)) return value;
+  if (!isPlainObject(value)) return coerceFilterValue(value, opts);
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(value)) {
-    out[k] = coerceDeep(v);
+    out[k] = coerceDeep(v, { asObjectId: opts?.asObjectId || isObjectIdFieldKey(k) });
   }
   return out;
 }
@@ -112,10 +163,24 @@ function normalizeOpKey(op: string): string {
   return op.startsWith('_') ? op.slice(1) : op;
 }
 
+function isBsonValue(value: unknown): boolean {
+  if (value == null || typeof value !== 'object') return false;
+  if (value instanceof Date || value instanceof Decimal128 || value instanceof ObjectId)
+    return true;
+  if (typeof Buffer !== 'undefined' && Buffer.isBuffer(value)) return true;
+  if (typeof Uint8Array !== 'undefined' && value instanceof Uint8Array) return true;
+  const bsontype = (value as { _bsontype?: string })._bsontype;
+  return typeof bsontype === 'string' && bsontype.length > 0;
+}
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return (
-    typeof value === 'object' && value !== null && !Array.isArray(value) && !(value instanceof Date)
+    typeof value === 'object' && value !== null && !Array.isArray(value) && !isBsonValue(value)
   );
+}
+
+function isObjectIdFieldKey(key: string): boolean {
+  return key === '_id' || key === 'id';
 }
 
 /** True when every own key is a known GraphQL filter operator (`eq` / `gt` / …). */
@@ -136,7 +201,10 @@ export function graphqlFilterToMongo(
   for (const [key, value] of Object.entries(input)) {
     if (value == null) continue;
     if (key === 'AND' || key === 'and') {
-      out.$and = (value as Record<string, unknown>[]).map(v => graphqlFilterToMongo(v, pathPrefix));
+      appendAnd(
+        out,
+        (value as Record<string, unknown>[]).map(v => graphqlFilterToMongo(v, pathPrefix)),
+      );
       continue;
     }
     if (key === 'OR' || key === 'or') {
@@ -150,6 +218,7 @@ export function graphqlFilterToMongo(
 
     const mongoKey = key === 'id' ? '_id' : key;
     const fullKey = pathPrefix ? `${pathPrefix}.${mongoKey}` : mongoKey;
+    const asObjectId = isObjectIdFieldKey(mongoKey);
 
     if (Array.isArray(value) && value.length > 0 && value.every(isPlainObject)) {
       const elemMatches = (value as Record<string, unknown>[]).map(item => ({
@@ -158,23 +227,28 @@ export function graphqlFilterToMongo(
       if (elemMatches.length === 1) {
         out[fullKey] = elemMatches[0];
       } else {
-        out.$and = elemMatches.map(em => ({ [fullKey]: em }));
+        appendAnd(
+          out,
+          elemMatches.map(em => ({ [fullKey]: em })),
+        );
       }
       continue;
     }
 
     if (typeof value !== 'object' || Array.isArray(value) || value instanceof Date) {
-      out[fullKey] = Array.isArray(value) ? value.map(coerceFilterValue) : coerceFilterValue(value);
+      out[fullKey] = Array.isArray(value)
+        ? value.map(v => coerceFilterValue(v, { asObjectId }))
+        : coerceFilterValue(value, { asObjectId });
       continue;
     }
 
     if (!isPlainObject(value)) {
-      out[fullKey] = coerceFilterValue(value);
+      out[fullKey] = coerceFilterValue(value, { asObjectId });
       continue;
     }
 
     if (isOperatorBag(value)) {
-      applyOperatorBag(out, fullKey, value);
+      applyOperatorBag(out, fullKey, value, asObjectId);
       continue;
     }
 
@@ -188,6 +262,7 @@ function applyOperatorBag(
   out: Record<string, unknown>,
   fullKey: string,
   ops: Record<string, unknown>,
+  asObjectId = false,
 ): void {
   const mongoOps: Record<string, unknown> = {};
   let wroteEq = false;
@@ -196,29 +271,29 @@ function applyOperatorBag(
     const op = normalizeOpKey(rawOp);
     switch (op) {
       case 'eq':
-        out[fullKey] = coerceFilterValue(opVal);
+        out[fullKey] = coerceFilterValue(opVal, { asObjectId });
         wroteEq = true;
         break;
       case 'ne':
-        mongoOps.$ne = coerceFilterValue(opVal);
+        mongoOps.$ne = coerceFilterValue(opVal, { asObjectId });
         break;
       case 'in':
-        mongoOps.$in = (opVal as unknown[]).map(coerceFilterValue);
+        mongoOps.$in = (opVal as unknown[]).map(v => coerceFilterValue(v, { asObjectId }));
         break;
       case 'nin':
-        mongoOps.$nin = (opVal as unknown[]).map(coerceFilterValue);
+        mongoOps.$nin = (opVal as unknown[]).map(v => coerceFilterValue(v, { asObjectId }));
         break;
       case 'gt':
-        mongoOps.$gt = coerceFilterValue(opVal);
+        mongoOps.$gt = coerceFilterValue(opVal, { asObjectId });
         break;
       case 'gte':
-        mongoOps.$gte = coerceFilterValue(opVal);
+        mongoOps.$gte = coerceFilterValue(opVal, { asObjectId });
         break;
       case 'lt':
-        mongoOps.$lt = coerceFilterValue(opVal);
+        mongoOps.$lt = coerceFilterValue(opVal, { asObjectId });
         break;
       case 'lte':
-        mongoOps.$lte = coerceFilterValue(opVal);
+        mongoOps.$lte = coerceFilterValue(opVal, { asObjectId });
         break;
       case 'regex':
         mongoOps.$regex = opVal;
@@ -316,9 +391,11 @@ export function buildSetDocument(
     if (!entry.value) continue;
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved === undefined) continue;
-    doc[entry.key] = resolved;
+    doc[entry.key] = coerceDeep(resolved, {
+      asObjectId: isObjectIdFieldKey(entry.key),
+    });
   }
-  return doc;
+  return doc as Record<string, unknown>;
 }
 
 /** Mongo update operators without `$` (GraphQL-legal); transport maps to `$set` / `$inc` / … */
@@ -347,7 +424,7 @@ function remapUpdateFields(value: unknown): unknown {
   if (!isPlainObject(value)) return coerceDeep(value);
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(value)) {
-    out[remapUpdateFieldKey(k)] = coerceDeep(v);
+    out[remapUpdateFieldKey(k)] = coerceDeep(v, { asObjectId: isObjectIdFieldKey(k) });
   }
   return out;
 }
@@ -408,8 +485,7 @@ export function resolveUpdateDocument(
   return { $set: buildSetDocument(setSource, ctx) };
 }
 
-export function coerceFilterValue(value: unknown): unknown {
-  // Already BSON Decimal128 from GraphQLDecimal128.parseValue (Mongoose-aligned cast).
+export function coerceFilterValue(value: unknown, opts?: CoerceFilterOptions): unknown {
   if (value instanceof Decimal128) {
     return value;
   }
@@ -424,11 +500,27 @@ export function coerceFilterValue(value: unknown): unknown {
       return value;
     }
   }
-  if (typeof value === 'string' && ObjectId.isValid(value) && value.length === 24) {
-    try {
-      return new ObjectId(value);
-    } catch {
-      return value;
+  // Preserve BSON instances (ObjectId / Decimal128 across package copies).
+  if (isBsonValue(value)) {
+    return value;
+  }
+  if (typeof value === 'string') {
+    if (opts?.asObjectId && ObjectId.isValid(value) && value.length === 24) {
+      try {
+        return new ObjectId(value);
+      } catch {
+        return value;
+      }
+    }
+    // Gateway-rebuilt Decimal128 scalars arrive as plain strings (no parseValue).
+    // Only cast decimal-looking strings (require a fractional part) to avoid
+    // turning ordinary String fields like "12" into Decimal128.
+    if (/^-?\d+\.\d+$/.test(value) || /^-?\d+[eE][+-]?\d+$/.test(value)) {
+      try {
+        return Decimal128.fromString(value);
+      } catch {
+        return value;
+      }
     }
   }
   return value;

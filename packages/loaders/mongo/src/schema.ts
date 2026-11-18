@@ -20,12 +20,22 @@ import { mapMongoPathToGraphQL } from './type-map.js';
 
 const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
 
+export interface MongoFieldRestrictions {
+  only?: string[];
+  remove?: string[];
+  required?: string[];
+}
+
 export interface MongoModelConfig {
   name: string;
   path?: string;
   model?: Model<any>;
   schema?: MongooseSchema;
   collection?: string;
+  /** Optional compose-style field restrictions (legacy mongoose handler `options.fields`). */
+  options?: {
+    fields?: MongoFieldRestrictions;
+  };
 }
 
 export interface LoadMongoSubgraphOpts {
@@ -73,7 +83,10 @@ export async function loadGraphQLSchemaFromMongo(
       model.schema?.get('collection') ||
       pluralizeFallback(modelConfig.name);
     const typeName = naming.typeName(modelConfig.name);
-    const paths = introspectPaths(model.schema, typeName);
+    const paths = applyFieldRestrictions(
+      introspectPaths(model.schema, typeName),
+      modelConfig.options?.fields,
+    );
     modelMeta.push({ typeName, collection, schema: model.schema, paths });
     emitModelObjectType(schemaComposer, {
       subgraphName,
@@ -84,6 +97,7 @@ export async function loadGraphQLSchemaFromMongo(
     });
   }
 
+  const pathsByType = new Map(modelMeta.map(m => [m.typeName, m.paths]));
   for (const meta of modelMeta) {
     emitModelRootFields(schemaComposer, {
       subgraphName,
@@ -99,6 +113,7 @@ export async function loadGraphQLSchemaFromMongo(
       naming,
       knownTypes: new Set(modelMeta.map(m => m.typeName)),
       collectionsByType: new Map(modelMeta.map(m => [m.typeName, m.collection])),
+      pathsByType,
     });
   }
 
@@ -127,9 +142,13 @@ async function resolveModel(
 ): Promise<Model<any>> {
   if (config.model) return config.model;
   if (config.schema) {
+    const collectionName =
+      config.collection ||
+      (typeof config.schema.get === 'function' ? config.schema.get('collection') : undefined) ||
+      pluralizeFallback(config.name);
     return {
       schema: config.schema,
-      collection: { collectionName: config.collection || pluralizeFallback(config.name) },
+      collection: { collectionName },
     } as any;
   }
   if (!config.path) {
@@ -161,13 +180,38 @@ interface PathMeta {
   nested?: PathMeta[];
   /** GraphQL object type for nested / grouped paths, e.g. UserAddress. */
   nestedTypeName?: string;
+  /** Nested schema equals an ancestor — GraphQL type is `rootTypeName` (self-ref). */
+  selfRef?: boolean;
+}
+
+function applyFieldRestrictions(paths: PathMeta[], fields?: MongoFieldRestrictions): PathMeta[] {
+  if (!fields) return paths;
+  let out = paths;
+  if (fields.only?.length) {
+    const only = new Set(fields.only);
+    out = out.filter(p => only.has(p.name));
+  }
+  if (fields.remove?.length) {
+    const remove = new Set(fields.remove);
+    out = out.filter(p => !remove.has(p.name));
+  }
+  return out;
 }
 
 function introspectPaths(schema: MongooseSchema, typeName: string): PathMeta[] {
-  return collectPaths(schema as any, typeName, []);
+  return collectPaths(schema as any, typeName, [], new WeakSet());
 }
 
-function collectPaths(schema: any, rootTypeName: string, nameStack: string[]): PathMeta[] {
+function collectPaths(
+  schema: any,
+  rootTypeName: string,
+  nameStack: string[],
+  visited: WeakSet<object>,
+): PathMeta[] {
+  if (schema && typeof schema === 'object') {
+    if (visited.has(schema)) return [];
+    visited.add(schema);
+  }
   const pathsObj = (schema?.paths || {}) as Record<string, any>;
   const direct = new Map<string, any>();
   const dottedGroups = new Map<string, Map<string, any>>();
@@ -189,7 +233,7 @@ function collectPaths(schema: any, rootTypeName: string, nameStack: string[]): P
 
   const out: PathMeta[] = [];
   for (const [name, schemaType] of direct) {
-    out.push(toPathMeta(name, schemaType, rootTypeName, [...nameStack, name]));
+    out.push(toPathMeta(name, schemaType, rootTypeName, [...nameStack, name], visited));
   }
   for (const [groupName, tails] of dottedGroups) {
     if (direct.has(groupName)) continue;
@@ -199,7 +243,7 @@ function collectPaths(schema: any, rootTypeName: string, nameStack: string[]): P
       name: groupName,
       instance: 'Embedded',
       nestedTypeName: `${parentPrefix}${pascalCase(groupName)}`,
-      nested: pathsFromDottedTails(tails, rootTypeName, nestedStack),
+      nested: pathsFromDottedTails(tails, rootTypeName, nestedStack, visited),
     });
   }
   return out;
@@ -209,6 +253,7 @@ function pathsFromDottedTails(
   tails: Map<string, any>,
   rootTypeName: string,
   nameStack: string[],
+  visited: WeakSet<object>,
 ): PathMeta[] {
   const direct = new Map<string, any>();
   const groups = new Map<string, Map<string, any>>();
@@ -225,7 +270,7 @@ function pathsFromDottedTails(
   }
   const out: PathMeta[] = [];
   for (const [name, schemaType] of direct) {
-    out.push(toPathMeta(name, schemaType, rootTypeName, [...nameStack, name]));
+    out.push(toPathMeta(name, schemaType, rootTypeName, [...nameStack, name], visited));
   }
   for (const [groupName, sub] of groups) {
     const nestedStack = [...nameStack, groupName];
@@ -234,7 +279,7 @@ function pathsFromDottedTails(
       name: groupName,
       instance: 'Embedded',
       nestedTypeName: `${parentPrefix}${pascalCase(groupName)}`,
-      nested: pathsFromDottedTails(sub, rootTypeName, nestedStack),
+      nested: pathsFromDottedTails(sub, rootTypeName, nestedStack, visited),
     });
   }
   return out;
@@ -245,6 +290,7 @@ function toPathMeta(
   schemaType: any,
   rootTypeName: string,
   nameStack: string[],
+  visited: WeakSet<object>,
 ): PathMeta {
   const description = schemaType.options?.description
     ? String(schemaType.options.description)
@@ -254,23 +300,42 @@ function toPathMeta(
   const enumName = `Enum${rootTypeName}${nameStack.map(pascalCase).join('')}`;
 
   if (isEmbedded(schemaType)) {
+    if (schemaType.schema && visited.has(schemaType.schema)) {
+      return {
+        name,
+        instance: 'Embedded',
+        description,
+        nestedTypeName: rootTypeName,
+        selfRef: true,
+      };
+    }
     return {
       name,
       instance: 'Embedded',
       description,
       nestedTypeName,
-      nested: collectPaths(schemaType.schema, rootTypeName, nameStack),
+      nested: collectPaths(schemaType.schema, rootTypeName, nameStack, visited),
     };
   }
 
   if (isDocumentArray(schemaType)) {
+    if (schemaType.schema && visited.has(schemaType.schema)) {
+      return {
+        name,
+        instance: 'Array',
+        isArray: true,
+        description,
+        nestedTypeName: rootTypeName,
+        selfRef: true,
+      };
+    }
     return {
       name,
       instance: 'Array',
       isArray: true,
       description,
       nestedTypeName,
-      nested: collectPaths(schemaType.schema, rootTypeName, nameStack),
+      nested: collectPaths(schemaType.schema, rootTypeName, nameStack, visited),
     };
   }
 
@@ -714,6 +779,7 @@ function emitRefFields(
     naming: MongoNaming;
     knownTypes: Set<string>;
     collectionsByType: Map<string, string>;
+    pathsByType: Map<string, PathMeta[]>;
   },
 ) {
   const paths = introspectPaths(opts.schema, opts.typeName);
@@ -730,11 +796,16 @@ function emitRefFields(
       path.name.endsWith('Id') || path.name.endsWith('Ids')
         ? path.name.replace(/Ids?$/, '')
         : path.name + 'Doc';
-    const finalName = otc.hasField(pretty) ? fieldName : pretty;
-    if (otc.hasField(finalName) && finalName !== path.name) {
-      // already set
+    let finalName = otc.hasField(pretty) ? fieldName : pretty;
+    if (otc.hasField(finalName)) {
+      finalName = `${pretty}Ref`;
+      let n = 2;
+      while (otc.hasField(finalName)) {
+        finalName = `${pretty}Ref${n++}`;
+      }
     }
-    const refSelection = blockArg('id: _id');
+    const refPaths = opts.pathsByType.get(path.ref) || [];
+    const refSelection = selectionForPaths(refPaths);
     if (path.isArray) {
       otc.setField(finalName, {
         type: `[${path.ref}!]!`,
@@ -769,20 +840,33 @@ function emitRefFields(
   }
 }
 
+function safeEnumValueName(value: string, used: Set<string>): string {
+  let raw = String(value).replace(/[^_A-Za-z0-9]/g, '_');
+  if (!/^[_A-Za-z]/.test(raw)) raw = `_${raw}`;
+  // GraphQL forbids enum names true/false/null and treats __ as reserved.
+  if (raw === 'true' || raw === 'false' || raw === 'null' || raw.startsWith('__')) {
+    raw = `_${raw}`;
+  }
+  let candidate = raw;
+  let i = 2;
+  while (used.has(candidate)) {
+    candidate = `${raw}_${i++}`;
+  }
+  used.add(candidate);
+  return candidate;
+}
+
 function ensureEnumType(
   schemaComposer: SchemaComposer,
   enumName: string,
   values: string[],
 ): string {
   if (!schemaComposer.has(enumName)) {
+    const used = new Set<string>();
     schemaComposer.createEnumTC({
       name: enumName,
       values: Object.fromEntries(
-        values.map(v => {
-          const raw = String(v).replace(/[^_A-Za-z0-9]/g, '_');
-          const safe = /^[_A-Za-z]/.test(raw) ? raw : `_${raw}`;
-          return [safe, { value: v }];
-        }),
+        values.map(v => [safeEnumValueName(String(v), used), { value: v }]),
       ),
     });
   }
@@ -851,6 +935,9 @@ function queryOperatorTypeForPath(
   path: PathMeta,
   rootTypeName: string,
 ): string {
+  if (path.selfRef) {
+    return 'JSON';
+  }
   if (path.nested?.length) {
     const nestedQuery = ensureNestedQueryInput(schemaComposer, path, rootTypeName);
     return path.isArray ? `[${nestedQuery}]` : nestedQuery;
@@ -899,6 +986,9 @@ function mapPathToOutput(
   path: PathMeta,
   rootTypeName: string,
 ): any {
+  if (path.selfRef) {
+    return path.isArray ? `[${rootTypeName}]` : rootTypeName;
+  }
   if (path.nested?.length) {
     const nestedName = ensureNestedObjectTypes(schemaComposer, path, rootTypeName);
     return path.isArray ? `[${nestedName}]` : nestedName;
@@ -925,6 +1015,10 @@ function mapPathToOutput(
 }
 
 function mapPathToInput(schemaComposer: SchemaComposer, path: PathMeta, rootTypeName: string): any {
+  if (path.selfRef) {
+    // Avoid circular input types; recursive documents accept JSON on write.
+    return path.isArray ? new GraphQLList(GraphQLJSON) : GraphQLJSON;
+  }
   if (path.nested?.length) {
     ensureNestedObjectTypes(schemaComposer, path, rootTypeName);
     const inputName = `${path.nestedTypeName}Input`;
@@ -1005,7 +1099,19 @@ function createQuerySortAndDocumentInputs(
   }
   const documentInput = naming.createInput(typeName);
   if (!schemaComposer.has(documentInput)) {
-    schemaComposer.createInputTC({ name: documentInput, fields: createFields });
+    // GraphQL forbids empty input objects (id-only models).
+    schemaComposer.createInputTC({
+      name: documentInput,
+      fields:
+        Object.keys(createFields).length > 0
+          ? createFields
+          : {
+              _: {
+                type: GraphQLJSON,
+                description: 'Placeholder — model has no writable paths beyond id',
+              },
+            },
+    });
   }
 
   // Update operators use Mongo names without `$` (`set` / `inc` → `$set` / `$inc`).

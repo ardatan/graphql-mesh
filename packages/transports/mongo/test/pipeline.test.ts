@@ -35,11 +35,17 @@ function stubClient(overrides: Partial<MongoClientLike> = {}): MongoClientLike {
     async updateMany() {
       return { matchedCount: 0, modifiedCount: 0 };
     },
+    async findOneAndUpdate() {
+      return { value: null, matchedCount: 0, modifiedCount: 0 };
+    },
     async deleteOne() {
       return { deletedCount: 0 };
     },
     async deleteMany() {
       return { deletedCount: 0 };
+    },
+    async findOneAndDelete() {
+      return { value: null, deletedCount: 0 };
     },
     async aggregate() {
       return [];

@@ -29,6 +29,8 @@ export interface GetMongoExecutorOpts {
   subgraph: GraphQLSchema;
   client?: MongoClientLike;
   cwd?: string;
+  /** Override `@transport(location:)` (e.g. current handler connectionString). */
+  location?: string;
 }
 
 interface MongoDirectiveArgs {
@@ -84,9 +86,13 @@ function readMongoDirective(
   return legacy?.[0];
 }
 
-export function getMongoExecutor({ subgraph, client }: GetMongoExecutorOpts): DisposableExecutor {
+export function getMongoExecutor({
+  subgraph,
+  client,
+  location,
+}: GetMongoExecutorOpts): DisposableExecutor {
   const transportDirectives = getDirective(subgraph, subgraph, 'transport');
-  if (!transportDirectives?.length && !client) {
+  if (!transportDirectives?.length && !client && !location) {
     throw new Error('No @transport directive found on schema definition');
   }
   const transport = transportDirectives?.[0] as
@@ -94,7 +100,7 @@ export function getMongoExecutor({ subgraph, client }: GetMongoExecutorOpts): Di
   const mongoClient =
     client ||
     createMongoClient({
-      location: transport!.location!,
+      location: location || transport!.location!,
       ...(transport?.options || {}),
     });
 
@@ -184,8 +190,11 @@ function attachMongoResolver(
         }
         case 'UPDATE_ONE': {
           const updateDoc = resolveUpdateDocument(directive.set, ctx);
-          await client.updateOne(directive.collection, filter, updateDoc);
-          const updated = await client.findOne(directive.collection, filter);
+          const { value: updated } = await client.findOneAndUpdate(
+            directive.collection,
+            filter,
+            updateDoc,
+          );
           return mapPayload(updated, updated?._id, selection);
         }
         case 'UPDATE_MANY': {
@@ -197,8 +206,7 @@ function attachMongoResolver(
           };
         }
         case 'DELETE_ONE': {
-          const existing = await client.findOne(directive.collection, filter);
-          await client.deleteOne(directive.collection, filter);
+          const { value: existing } = await client.findOneAndDelete(directive.collection, filter);
           return mapPayload(existing, existing?._id, selection);
         }
         case 'DELETE_MANY': {
@@ -285,16 +293,11 @@ async function resolveConnection(
 ) {
   const first = resolveBinderNumber(directive.first, ctx) ?? 10;
   const after = resolveBinderString(directive.after, ctx);
-  const connFilter = { ...filter };
-  if (after) {
-    connFilter._id = {
-      ...(typeof connFilter._id === 'object' && connFilter._id ? (connFilter._id as object) : {}),
-      $gt: coerceFilterValue(after),
-    };
-  }
+  const effectiveSort = ensureIdTiebreaker(sort || { _id: 1 });
+  const connFilter = after ? mergeCursorFilter(filter, after, effectiveSort) : { ...filter };
   const docs = await client.findMany(directive.collection, connFilter, {
     projection,
-    sort: sort || { _id: 1 },
+    sort: effectiveSort,
     limit: first + 1,
   });
   const hasNextPage = docs.length > first;
@@ -303,7 +306,7 @@ async function resolveConnection(
   const nodesSel = nestedSelection(selection, 'nodes');
   const nodes = pageDocs.map(d => mapDocumentToGraphql(d, nodesSel));
   const edges = pageDocs.map(d => ({
-    cursor: String(d._id),
+    cursor: encodeConnectionCursor(d, effectiveSort),
     node: mapDocumentToGraphql(d, nestedSelection(nestedSelection(selection, 'edges'), 'node')),
   }));
   return {
@@ -317,6 +320,94 @@ async function resolveConnection(
     },
     totalCount,
   };
+}
+
+function ensureIdTiebreaker(sort: Record<string, 1 | -1>): Record<string, 1 | -1> {
+  if (Object.prototype.hasOwnProperty.call(sort, '_id')) return sort;
+  return { ...sort, _id: 1 };
+}
+
+function encodeConnectionCursor(
+  doc: Record<string, unknown>,
+  sort: Record<string, 1 | -1>,
+): string {
+  const values: unknown[] = [];
+  for (const key of Object.keys(sort)) {
+    values.push(key === '_id' ? String(doc._id) : doc[key]);
+  }
+  return Buffer.from(JSON.stringify(values), 'utf8').toString('base64url');
+}
+
+function decodeConnectionCursor(cursor: string): unknown[] | null {
+  try {
+    const raw = Buffer.from(cursor, 'base64url').toString('utf8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    // Legacy cursors were plain `_id` strings.
+    return [cursor];
+  }
+}
+
+/**
+ * Keyset continuation: combine the original filter with a sort-aware boundary via `$and`
+ * so an existing `_id` (or other) constraint is never overwritten.
+ */
+function mergeCursorFilter(
+  filter: Record<string, unknown>,
+  after: string,
+  sort: Record<string, 1 | -1>,
+): Record<string, unknown> {
+  const values = decodeConnectionCursor(after);
+  const keys = Object.keys(sort);
+  if (!values || (values.length !== keys.length && values.length !== 1)) {
+    return { ...filter };
+  }
+  // Legacy single-_id cursor when sort is only `_id` or values length is 1.
+  if (values.length === 1 && keys.length === 1 && keys[0] === '_id') {
+    const op = sort._id < 0 ? '$lt' : '$gt';
+    return andFilters(filter, {
+      _id: { [op]: coerceFilterValue(values[0], { asObjectId: true }) },
+    });
+  }
+  if (values.length === 1 && keys.length > 1) {
+    // Ambiguous legacy cursor under multi-field sort — fall back to `_id` tie-breaker only.
+    const idDir = sort._id ?? 1;
+    const op = idDir < 0 ? '$lt' : '$gt';
+    return andFilters(filter, {
+      _id: { [op]: coerceFilterValue(values[0], { asObjectId: true }) },
+    });
+  }
+
+  const orClauses: Record<string, unknown>[] = [];
+  for (let i = 0; i < keys.length; i++) {
+    const clause: Record<string, unknown> = {};
+    for (let j = 0; j < i; j++) {
+      clause[keys[j]] = coerceCursorValue(keys[j], values[j]);
+    }
+    const dir = sort[keys[i]];
+    const op = dir < 0 ? '$lt' : '$gt';
+    clause[keys[i]] = { [op]: coerceCursorValue(keys[i], values[i]) };
+    orClauses.push(clause);
+  }
+  return andFilters(filter, { $or: orClauses });
+}
+
+function coerceCursorValue(field: string, value: unknown): unknown {
+  return coerceFilterValue(value, { asObjectId: field === '_id' || field === 'id' });
+}
+
+function andFilters(
+  base: Record<string, unknown>,
+  extra: Record<string, unknown>,
+): Record<string, unknown> {
+  if (!base || Object.keys(base).length === 0) return { ...extra };
+  if (!extra || Object.keys(extra).length === 0) return { ...base };
+  const and = [
+    ...(Array.isArray(base.$and) ? (base.$and as Record<string, unknown>[]) : [base]),
+    extra,
+  ];
+  return { $and: and };
 }
 
 async function resolvePagination(

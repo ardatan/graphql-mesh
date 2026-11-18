@@ -58,11 +58,34 @@ export default class MongooseHandler implements MeshHandler {
       ...(this.config.models || []).map(m => ({
         name: m.name,
         path: m.path,
+        options: m.options
+          ? {
+              fields: m.options.fields
+                ? {
+                    only: m.options.fields.only,
+                    remove: m.options.fields.remove,
+                    required: m.options.fields.required,
+                  }
+                : undefined,
+            }
+          : undefined,
       })),
-      // First slice: discriminators bootstrap like ordinary models (schema emit).
+      // Discriminators currently bootstrap like ordinary models (schema emit).
+      // Discriminator-key filtering / subtype compose is a follow-up.
       ...(this.config.discriminators || []).map(m => ({
         name: m.name,
         path: m.path,
+        options: m.options
+          ? {
+              fields: m.options.fields
+                ? {
+                    only: m.options.fields.only,
+                    remove: m.options.fields.remove,
+                    required: m.options.fields.required,
+                  }
+                : undefined,
+            }
+          : undefined,
       })),
     ];
 
@@ -81,9 +104,12 @@ export default class MongooseHandler implements MeshHandler {
       }),
     );
 
+    // Always bind the executor to the current interpolated endpoint — schema
+    // cache may still carry a stale `@transport(location:)` from an earlier run.
     const executor = getMongoExecutor({
       subgraph: schema,
       cwd: this.baseDir,
+      location: endpoint,
     });
 
     if (isDisposable(executor)) {

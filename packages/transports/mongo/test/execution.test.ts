@@ -68,11 +68,24 @@ describe('getMongoExecutor FIND_* + writes', () => {
       async updateMany() {
         return { matchedCount: 0, modifiedCount: 0 };
       },
+      async findOneAndUpdate(_c, filter, update) {
+        const doc = docs.find(d => String(d._id) === String((filter as any)._id));
+        if (!doc) return { value: null, matchedCount: 0, modifiedCount: 0 };
+        const set = (update as any).$set || {};
+        Object.assign(doc, set);
+        return { value: { ...doc }, matchedCount: 1, modifiedCount: 1 };
+      },
       async deleteOne() {
         return { deletedCount: 1 };
       },
       async deleteMany() {
         return { deletedCount: 0 };
+      },
+      async findOneAndDelete(_c, filter) {
+        const idx = docs.findIndex(d => String(d._id) === String((filter as any)._id));
+        if (idx < 0) return { value: null, deletedCount: 0 };
+        const [value] = docs.splice(idx, 1);
+        return { value, deletedCount: 1 };
       },
       async aggregate() {
         return [];

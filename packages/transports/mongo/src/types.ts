@@ -67,11 +67,26 @@ export interface MongoClientLike {
     filter: Record<string, unknown>,
     update: Record<string, unknown>,
   ): Promise<{ matchedCount: number; modifiedCount: number }>;
+  /** Atomic update + return the post-image document (or null if unmatched). */
+  findOneAndUpdate(
+    collection: string,
+    filter: Record<string, unknown>,
+    update: Record<string, unknown>,
+  ): Promise<{
+    value: Record<string, unknown> | null;
+    matchedCount: number;
+    modifiedCount: number;
+  }>;
   deleteOne(collection: string, filter: Record<string, unknown>): Promise<{ deletedCount: number }>;
   deleteMany(
     collection: string,
     filter: Record<string, unknown>,
   ): Promise<{ deletedCount: number }>;
+  /** Atomic delete + return the deleted document (or null if unmatched). */
+  findOneAndDelete(
+    collection: string,
+    filter: Record<string, unknown>,
+  ): Promise<{ value: Record<string, unknown> | null; deletedCount: number }>;
   aggregate(
     collection: string,
     pipeline: Record<string, unknown>[],

@@ -13,7 +13,13 @@ export function createMongoClient(opts: CreateMongoClientOptions): MongoClientLi
 
   async function getDb(): Promise<Db> {
     if (!dbPromise) {
-      dbPromise = client.connect().then(() => client.db());
+      dbPromise = client.connect().then(
+        () => client.db(),
+        err => {
+          dbPromise = undefined;
+          throw err;
+        },
+      );
     }
     return dbPromise;
   }
@@ -70,6 +76,21 @@ export function createMongoClient(opts: CreateMongoClientOptions): MongoClientLi
         modifiedCount: result.modifiedCount,
       };
     },
+    async findOneAndUpdate(collection, filter, update) {
+      const db = await getDb();
+      const result = await db.collection(collection).findOneAndUpdate(filter, update, {
+        returnDocument: 'after',
+      });
+      const value =
+        result && typeof result === 'object' && 'value' in result
+          ? ((result as { value: Record<string, unknown> | null }).value ?? null)
+          : ((result as Record<string, unknown> | null) ?? null);
+      return {
+        value,
+        matchedCount: value ? 1 : 0,
+        modifiedCount: value ? 1 : 0,
+      };
+    },
     async deleteOne(collection, filter) {
       const db = await getDb();
       const result = await db.collection(collection).deleteOne(filter);
@@ -79,6 +100,18 @@ export function createMongoClient(opts: CreateMongoClientOptions): MongoClientLi
       const db = await getDb();
       const result = await db.collection(collection).deleteMany(filter);
       return { deletedCount: result.deletedCount ?? 0 };
+    },
+    async findOneAndDelete(collection, filter) {
+      const db = await getDb();
+      const result = await db.collection(collection).findOneAndDelete(filter);
+      const value =
+        result && typeof result === 'object' && 'value' in result
+          ? ((result as { value: Record<string, unknown> | null }).value ?? null)
+          : ((result as Record<string, unknown> | null) ?? null);
+      return {
+        value,
+        deletedCount: value ? 1 : 0,
+      };
     },
     async aggregate(collection, pipeline) {
       const db = await getDb();

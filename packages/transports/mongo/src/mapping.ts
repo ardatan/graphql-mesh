@@ -100,6 +100,9 @@ export function mapDocumentToGraphql(
 /** graphql-scalars ObjectID serialize expects a 24-char hex string, not a driver ObjectId. */
 function coerceGraphqlValue(value: unknown): unknown {
   if (value == null) return value;
+  if (Array.isArray(value)) {
+    return value.map(coerceGraphqlValue);
+  }
   if (typeof value === 'object' && value !== null && 'toHexString' in value) {
     try {
       return (value as { toHexString: () => string }).toHexString();
