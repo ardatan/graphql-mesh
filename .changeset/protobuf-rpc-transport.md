@@ -1,7 +1,7 @@
 ---
-'@graphql-mesh/transport-protobuf': major
-'@omnigraph/protobuf': major
-'@graphql-mesh/grpc': major
+'@graphql-mesh/transport-protobuf': minor
+'@omnigraph/protobuf': minor
+'@graphql-mesh/grpc': minor
 '@graphql-mesh/fusion-composition': minor
 ---
 

@@ -1,10 +1,10 @@
 ---
-'@omnigraph/sql': major
-'@graphql-mesh/transport-sql': major
+'@omnigraph/sql': minor
+'@graphql-mesh/transport-sql': minor
 '@graphql-mesh/fusion-composition': minor
-'@graphql-mesh/mysql': major
-'@graphql-mesh/tuql': major
-'@graphql-mesh/postgraphile': major
+'@graphql-mesh/mysql': minor
+'@graphql-mesh/tuql': minor
+'@graphql-mesh/postgraphile': minor
 ---
 
 ## TL;DR (breaking)
