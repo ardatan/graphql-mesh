@@ -3,13 +3,13 @@ import { parseMongoMapping, resolveMappingValue } from './mapping.js';
 import type { ParsedMongoMapping } from './types.js';
 
 /**
- * Build a MongoDB filter document from `@mongo(where:)` mapping + GraphQL args/parent.
+ * Build a MongoDB filter document from `@mongo(filter:)` (or legacy `where:`) mapping.
  */
 export function buildMongoFilter(
-  whereSource: string | null | undefined,
+  filterSource: string | null | undefined,
   ctx: { args?: Record<string, unknown>; parent?: unknown },
 ): Record<string, unknown> {
-  const parsed = parseMongoMapping(whereSource);
+  const parsed = parseMongoMapping(filterSource);
   return filterFromMapping(parsed, ctx);
 }
 
@@ -23,19 +23,19 @@ export function filterFromMapping(
     if (entry.spread && entry.value) {
       const spreadVal = resolveMappingValue(entry.value, ctx);
       if (spreadVal && typeof spreadVal === 'object' && !Array.isArray(spreadVal)) {
-        Object.assign(filter, graphqlWhereToMongo(spreadVal as Record<string, unknown>));
+        Object.assign(filter, graphqlFilterToMongo(spreadVal as Record<string, unknown>));
       }
       continue;
     }
 
-    // Bare `$args.where` binder
+    // Bare `$args.filter` / `$args.where` binder
     if (
       entry.value?.kind === 'args' &&
       (entry.key.startsWith('$args') || entry.key === `$args.${entry.value.value}`)
     ) {
       const val = resolveMappingValue(entry.value, ctx);
       if (val && typeof val === 'object' && !Array.isArray(val)) {
-        Object.assign(filter, graphqlWhereToMongo(val as Record<string, unknown>));
+        Object.assign(filter, graphqlFilterToMongo(val as Record<string, unknown>));
       }
       continue;
     }
@@ -44,30 +44,35 @@ export function filterFromMapping(
 
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved === undefined) continue;
-    filter[entry.key] = coerceFilterValue(resolved);
+    // `_id: $args._ids` (array) => `{ _id: { $in: [...] } }`
+    if (Array.isArray(resolved)) {
+      filter[entry.key] = { $in: resolved.map(coerceFilterValue) };
+    } else {
+      filter[entry.key] = coerceFilterValue(resolved);
+    }
   }
 
   return filter;
 }
 
-/**
- * Convert typed GraphQL where input (`eq` / `gt` / `AND` / …) into a Mongo filter.
- */
-export function graphqlWhereToMongo(input: Record<string, unknown>): Record<string, unknown> {
+/** @deprecated alias */
+export const graphqlWhereToMongo = graphqlFilterToMongo;
+
+export function graphqlFilterToMongo(input: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(input)) {
     if (value == null) continue;
     if (key === 'AND' || key === 'and') {
-      out.$and = (value as Record<string, unknown>[]).map(graphqlWhereToMongo);
+      out.$and = (value as Record<string, unknown>[]).map(graphqlFilterToMongo);
       continue;
     }
     if (key === 'OR' || key === 'or') {
-      out.$or = (value as Record<string, unknown>[]).map(graphqlWhereToMongo);
+      out.$or = (value as Record<string, unknown>[]).map(graphqlFilterToMongo);
       continue;
     }
     if (key === 'NOT' || key === 'not') {
-      out.$nor = [graphqlWhereToMongo(value as Record<string, unknown>)];
+      out.$nor = [graphqlFilterToMongo(value as Record<string, unknown>)];
       continue;
     }
 
@@ -116,7 +121,6 @@ export function graphqlWhereToMongo(input: Record<string, unknown>): Record<stri
           mongoOps.$exists = opVal;
           break;
         default:
-          // nested relation filter — leave for later
           break;
       }
       if (!hasOps && op === 'eq') break;
@@ -135,7 +139,6 @@ export function buildMongoSort(
 ): Record<string, 1 | -1> | undefined {
   if (!sortSource) return undefined;
   const parsed = parseMongoMapping(sortSource);
-  // Bare `$args.sort`
   if (parsed.entries.length === 1 && parsed.entries[0].value?.kind === 'args') {
     const val = resolveMappingValue(parsed.entries[0].value, ctx);
     return graphqlSortToMongo(val as Record<string, unknown> | null | undefined);
@@ -157,7 +160,25 @@ export function graphqlSortToMongo(
   return Object.keys(out).length ? out : undefined;
 }
 
-function coerceFilterValue(value: unknown): unknown {
+export function buildSetDocument(
+  setSource: string | null | undefined,
+  ctx: { args?: Record<string, unknown>; parent?: unknown },
+): Record<string, unknown> {
+  const parsed = parseMongoMapping(setSource);
+  const doc: Record<string, unknown> = {};
+  for (const entry of parsed.entries) {
+    if (entry.key === 'records' && entry.value?.kind === 'args') {
+      continue;
+    }
+    if (!entry.value) continue;
+    const resolved = resolveMappingValue(entry.value, ctx);
+    if (resolved === undefined) continue;
+    doc[entry.key] = resolved;
+  }
+  return doc;
+}
+
+export function coerceFilterValue(value: unknown): unknown {
   if (typeof value === 'string' && ObjectId.isValid(value) && value.length === 24) {
     try {
       return new ObjectId(value);

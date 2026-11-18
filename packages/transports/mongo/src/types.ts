@@ -13,15 +13,12 @@ export type MongoKind =
   | 'DELETE_MANY';
 
 export interface MongoTransportOptions {
-  /** Max pool size forwarded to MongoClient. */
   maxPoolSize?: number;
 }
 
 export interface MongoMappingValue {
   kind: 'column' | 'pseudo' | 'args' | 'this' | 'literal';
-  /** Mongo path, pseudo token, path after $args/$this, or literal */
   value: string;
-  /** Nested path segments for $args.record.name -> ['record','name'] */
   path?: string[];
 }
 
@@ -29,10 +26,6 @@ export interface MongoMappingEntry {
   key: string;
   value?: MongoMappingValue;
   children?: MongoMappingEntry[];
-  /**
-   * Connectors-style spread (`...$args.where`): merge the resolved object into
-   * the structured WHERE filter (null/undefined spread is a no-op).
-   */
   spread?: boolean;
 }
 
@@ -40,22 +33,54 @@ export interface ParsedMongoMapping {
   entries: MongoMappingEntry[];
 }
 
+export interface MongoFindOptions {
+  projection?: Record<string, 0 | 1>;
+  sort?: Record<string, 1 | -1>;
+  limit?: number;
+  skip?: number;
+}
+
 export interface MongoClientLike {
   findOne(
     collection: string,
     filter: Record<string, unknown>,
-    options?: { projection?: Record<string, 0 | 1>; sort?: Record<string, 1 | -1> },
+    options?: MongoFindOptions,
   ): Promise<Record<string, unknown> | null>;
   findMany(
     collection: string,
     filter: Record<string, unknown>,
-    options?: {
-      projection?: Record<string, 0 | 1>;
-      sort?: Record<string, 1 | -1>;
-      limit?: number;
-      skip?: number;
-    },
+    options?: MongoFindOptions,
   ): Promise<Record<string, unknown>[]>;
   count(collection: string, filter: Record<string, unknown>): Promise<number>;
+  insertOne(
+    collection: string,
+    doc: Record<string, unknown>,
+  ): Promise<{ insertedId: unknown }>;
+  insertMany(
+    collection: string,
+    docs: Record<string, unknown>[],
+  ): Promise<{ insertedIds: unknown[]; insertedCount: number }>;
+  updateOne(
+    collection: string,
+    filter: Record<string, unknown>,
+    update: Record<string, unknown>,
+  ): Promise<{ matchedCount: number; modifiedCount: number; upsertedId?: unknown }>;
+  updateMany(
+    collection: string,
+    filter: Record<string, unknown>,
+    update: Record<string, unknown>,
+  ): Promise<{ matchedCount: number; modifiedCount: number }>;
+  deleteOne(
+    collection: string,
+    filter: Record<string, unknown>,
+  ): Promise<{ deletedCount: number }>;
+  deleteMany(
+    collection: string,
+    filter: Record<string, unknown>,
+  ): Promise<{ deletedCount: number }>;
+  aggregate(
+    collection: string,
+    pipeline: Record<string, unknown>[],
+  ): Promise<Record<string, unknown>[]>;
   dispose(): void | Promise<void>;
 }

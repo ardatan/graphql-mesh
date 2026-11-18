@@ -1,29 +1,28 @@
 import {
   GraphQLBoolean,
   GraphQLFloat,
+  GraphQLID,
   GraphQLInt,
   GraphQLList,
   GraphQLString,
   type GraphQLOutputType,
   type GraphQLScalarType,
 } from 'graphql';
-import {
-  GraphQLByte,
-  GraphQLDateTime,
-  GraphQLJSON,
-  GraphQLObjectID,
-} from 'graphql-scalars';
+import { GraphQLByte, GraphQLDateTime, GraphQLJSON, GraphQLObjectID } from 'graphql-scalars';
 
 /**
  * Map a Mongoose / BSON path instance type name to a GraphQL output type.
- * Prefer graphql-scalars (`ObjectID`, `DateTime`, `Byte`, `JSON`) over custom Mesh scalars.
- * Decimal128 has no graphql-scalars equivalent yet -> String.
+ * Sole document PK (`_id` / asId) uses GraphQL `ID` (federation-friendly).
+ * Other ObjectId paths keep graphql-scalars `ObjectID`.
  */
 export function mapMongoPathToGraphQL(
   instance: string,
   opts?: { asId?: boolean },
 ): GraphQLOutputType | GraphQLScalarType {
-  if (opts?.asId || instance === 'ObjectID' || instance === 'ObjectId') {
+  if (opts?.asId) {
+    return GraphQLID;
+  }
+  if (instance === 'ObjectID' || instance === 'ObjectId') {
     return GraphQLObjectID;
   }
   switch (instance) {

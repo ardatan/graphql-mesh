@@ -1,6 +1,6 @@
-import { buildMongoFilter, graphqlWhereToMongo } from '../src/filter.js';
+import { buildMongoFilter, graphqlFilterToMongo } from '../src/filter.js';
 
-describe('mongo where filter', () => {
+describe('mongo filter', () => {
   it('builds equality from mapping binders', () => {
     expect(
       buildMongoFilter(
@@ -22,10 +22,10 @@ describe('mongo where filter', () => {
     ).toBe('507f1f77bcf86cd799439011');
   });
 
-  it('merges structured where via bare binder and spread', () => {
+  it('merges structured filter via bare binder and spread', () => {
     expect(
-      buildMongoFilter(`$args.where`, {
-        args: { where: { name: { eq: 'Ada' }, age: { gte: 30 } } },
+      buildMongoFilter(`$args.filter`, {
+        args: { filter: { name: { eq: 'Ada' }, age: { gte: 30 } } },
       }),
     ).toEqual({
       name: 'Ada',
@@ -36,9 +36,9 @@ describe('mongo where filter', () => {
       buildMongoFilter(
         `
           gender: "female"
-          ...$args.where
+          ...$args.filter
         `,
-        { args: { where: { age: { lt: 40 } } } },
+        { args: { filter: { age: { lt: 40 } } } },
       ),
     ).toEqual({
       gender: 'female',
@@ -46,9 +46,16 @@ describe('mongo where filter', () => {
     });
   });
 
-  it('maps GraphQL where ops to Mongo operators', () => {
+  it('maps array id binders to $in', () => {
+    const ids = ['507f1f77bcf86cd799439011', '507f1f77bcf86cd799439012'];
+    const filter = buildMongoFilter(`_id: $args._ids`, { args: { _ids: ids } });
+    expect(filter._id).toMatchObject({ $in: expect.any(Array) });
+    expect((filter._id as any).$in.map(String)).toEqual(ids);
+  });
+
+  it('maps GraphQL filter ops to Mongo operators', () => {
     expect(
-      graphqlWhereToMongo({
+      graphqlFilterToMongo({
         AND: [{ name: { regex: '^A' } }, { age: { in: [1, 2] } }],
         OR: [{ gender: { eq: 'male' } }],
       }),

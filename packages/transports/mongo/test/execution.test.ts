@@ -4,8 +4,8 @@ import { Schema } from 'mongoose';
 import { getMongoExecutor } from '../src/execution.js';
 import type { MongoClientLike } from '../src/types.js';
 
-describe('getMongoExecutor FIND_*', () => {
-  it('runs findById / findMany / count via @mongo directives', async () => {
+describe('getMongoExecutor FIND_* + writes', () => {
+  it('runs find/count/create via @mongo directives', async () => {
     const userSchema = new Schema(
       {
         name: { type: String, index: true },
@@ -22,31 +22,53 @@ describe('getMongoExecutor FIND_*', () => {
 
     const adaId = '507f1f77bcf86cd799439011';
     const alanId = '507f1f77bcf86cd799439012';
-    const docs = [
+    const docs: Array<Record<string, unknown>> = [
       { _id: adaId, name: 'Ada', age: 36, gender: 'female' },
       { _id: alanId, name: 'Alan', age: 41, gender: 'male' },
     ];
 
     const client: MongoClientLike = {
-      async findOne(collection, filter) {
-        expect(collection).toBe('user_users');
+      async findOne(_c, filter) {
         return docs.find(d => String(d._id) === String((filter as any)._id)) || null;
       },
-      async findMany(collection, filter, options) {
-        expect(collection).toBe('user_users');
+      async findMany(_c, filter, options) {
         let rows = docs.slice();
-        if ((filter as any).name) {
-          rows = rows.filter(d => d.name === (filter as any).name);
+        if ((filter as any).name) rows = rows.filter(d => d.name === (filter as any).name);
+        if ((filter as any)._id?.$in) {
+          const ids = (filter as any)._id.$in.map(String);
+          rows = rows.filter(d => ids.includes(String(d._id)));
         }
         if (options?.limit != null) rows = rows.slice(0, options.limit);
         return rows;
       },
-      async count(collection, filter) {
-        expect(collection).toBe('user_users');
+      async count(_c, filter) {
         if ((filter as any).gender) {
           return docs.filter(d => d.gender === (filter as any).gender).length;
         }
         return docs.length;
+      },
+      async insertOne(_c, doc) {
+        const insertedId = '507f1f77bcf86cd799439099';
+        docs.push({ ...doc, _id: insertedId });
+        return { insertedId };
+      },
+      async insertMany() {
+        return { insertedIds: [], insertedCount: 0 };
+      },
+      async updateOne() {
+        return { matchedCount: 1, modifiedCount: 1 };
+      },
+      async updateMany() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async deleteOne() {
+        return { deletedCount: 1 };
+      },
+      async deleteMany() {
+        return { deletedCount: 0 };
+      },
+      async aggregate() {
+        return [];
       },
       dispose() {},
     };
@@ -56,20 +78,34 @@ describe('getMongoExecutor FIND_*', () => {
     const byId = await executor({
       document: parse(`query { User_findById(_id: "${adaId}") { id name age } }`),
     });
+    expect(byId.errors).toBeUndefined();
     expect(byId.data).toEqual({
       User_findById: { id: adaId, name: 'Ada', age: 36 },
     });
 
     const many = await executor({
-      document: parse(`query { User_findMany(where: { name: { eq: "Alan" } }) { id name } }`),
+      document: parse(`query { User_findMany(filter: { name: { eq: "Alan" } }) { id name } }`),
     });
     expect(many.data).toEqual({
       User_findMany: [{ id: alanId, name: 'Alan' }],
     });
 
     const count = await executor({
-      document: parse(`query { User_count(where: { gender: { eq: "female" } }) }`),
+      document: parse(`query { User_count(filter: { gender: { eq: "female" } }) }`),
     });
     expect(count.data).toEqual({ User_count: 1 });
+
+    const created = await executor({
+      document: parse(
+        `mutation { User_createOne(record: { name: "Grace", age: 45 }) { recordId record { name } } }`,
+      ),
+    });
+    expect(created.errors).toBeUndefined();
+    expect(created.data).toEqual({
+      User_createOne: {
+        recordId: '507f1f77bcf86cd799439099',
+        record: { name: 'Grace' },
+      },
+    });
   });
 });

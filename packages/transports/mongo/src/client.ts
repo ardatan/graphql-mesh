@@ -40,6 +40,52 @@ export function createMongoClient(opts: CreateMongoClientOptions): MongoClientLi
       const db = await getDb();
       return db.collection(collection).countDocuments(filter);
     },
+    async insertOne(collection, doc) {
+      const db = await getDb();
+      const result = await db.collection(collection).insertOne(doc);
+      return { insertedId: result.insertedId };
+    },
+    async insertMany(collection, docs) {
+      const db = await getDb();
+      const result = await db.collection(collection).insertMany(docs);
+      return {
+        insertedIds: Object.values(result.insertedIds),
+        insertedCount: result.insertedCount,
+      };
+    },
+    async updateOne(collection, filter, update) {
+      const db = await getDb();
+      const result = await db.collection(collection).updateOne(filter, update);
+      return {
+        matchedCount: result.matchedCount,
+        modifiedCount: result.modifiedCount,
+        upsertedId: result.upsertedId ?? undefined,
+      };
+    },
+    async updateMany(collection, filter, update) {
+      const db = await getDb();
+      const result = await db.collection(collection).updateMany(filter, update);
+      return {
+        matchedCount: result.matchedCount,
+        modifiedCount: result.modifiedCount,
+      };
+    },
+    async deleteOne(collection, filter) {
+      const db = await getDb();
+      const result = await db.collection(collection).deleteOne(filter);
+      return { deletedCount: result.deletedCount ?? 0 };
+    },
+    async deleteMany(collection, filter) {
+      const db = await getDb();
+      const result = await db.collection(collection).deleteMany(filter);
+      return { deletedCount: result.deletedCount ?? 0 };
+    },
+    async aggregate(collection, pipeline) {
+      const db = await getDb();
+      return db.collection(collection).aggregate(pipeline).toArray() as Promise<
+        Record<string, unknown>[]
+      >;
+    },
     async dispose() {
       await client.close();
     },

@@ -5297,6 +5297,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/mongoose-users@workspace:e2e/mongoose-users":
+  version: 0.0.0-use.local
+  resolution: "@e2e/mongoose-users@workspace:e2e/mongoose-users"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^2.15.8"
+    "@graphql-mesh/transport-mongo": "npm:0.1.0"
+    "@omnigraph/mongo": "npm:0.1.0"
+    graphql: "npm:^16.14.0"
+    mongoose: "npm:^9.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/mysql-employees@workspace:e2e/mysql-employees":
   version: 0.0.0-use.local
   resolution: "@e2e/mysql-employees@workspace:e2e/mysql-employees"

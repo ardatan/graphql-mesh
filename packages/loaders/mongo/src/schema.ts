@@ -1,5 +1,6 @@
 import {
   GraphQLFloat,
+  GraphQLID,
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
@@ -21,13 +22,9 @@ const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
 
 export interface MongoModelConfig {
   name: string;
-  /** Module path like `./models#User` (compose-time only). */
   path?: string;
-  /** Inline mongoose Model (tests / programmatic). */
   model?: Model<any>;
-  /** Inline mongoose Schema when model is not provided. */
   schema?: MongooseSchema;
-  /** Override collection name. */
   collection?: string;
 }
 
@@ -36,7 +33,6 @@ export interface LoadMongoSubgraphOpts {
   models: MongoModelConfig[];
   cwd?: string;
   naming?: Partial<MongoNaming>;
-  /** Module loader for `models[].path` (legacy handler passes Mesh `importFn`). */
   importFn?: ImportFn;
 }
 
@@ -56,7 +52,15 @@ export async function loadGraphQLSchemaFromMongo(
   schemaComposer.addDirective(MongoDirective);
   schemaComposer.add(MongoKindEnum);
 
-  ensureSharedWhereInputs(schemaComposer);
+  ensureSharedFilterInputs(schemaComposer);
+  ensurePageInfo(schemaComposer);
+
+  const modelMeta: Array<{
+    typeName: string;
+    collection: string;
+    schema: MongooseSchema;
+    paths: PathMeta[];
+  }> = [];
 
   for (const modelConfig of opts.models) {
     const model = await resolveModel(modelConfig, cwd, importFn);
@@ -66,12 +70,32 @@ export async function loadGraphQLSchemaFromMongo(
       model.schema?.get('collection') ||
       pluralizeFallback(modelConfig.name);
     const typeName = naming.typeName(modelConfig.name);
-    emitModelTypes(schemaComposer, {
+    const paths = introspectPaths(model.schema);
+    modelMeta.push({ typeName, collection, schema: model.schema, paths });
+    emitModelObjectType(schemaComposer, {
       subgraphName,
       typeName,
       collection,
-      schema: model.schema,
+      paths,
       naming,
+    });
+  }
+
+  for (const meta of modelMeta) {
+    emitModelRootFields(schemaComposer, {
+      subgraphName,
+      typeName: meta.typeName,
+      collection: meta.collection,
+      paths: meta.paths,
+      naming,
+    });
+    emitRefFields(schemaComposer, {
+      subgraphName,
+      typeName: meta.typeName,
+      schema: meta.schema,
+      naming,
+      knownTypes: new Set(modelMeta.map(m => m.typeName)),
+      collectionsByType: new Map(modelMeta.map(m => [m.typeName, m.collection])),
     });
   }
 
@@ -100,7 +124,6 @@ async function resolveModel(
 ): Promise<Model<any>> {
   if (config.model) return config.model;
   if (config.schema) {
-    // Minimal stand-in: callers that only pass schema still need a model-shaped object.
     return {
       schema: config.schema,
       collection: { collectionName: config.collection || pluralizeFallback(config.name) },
@@ -120,150 +143,12 @@ async function resolveModel(
   return model;
 }
 
-function emitModelTypes(
-  schemaComposer: SchemaComposer,
-  opts: {
-    subgraphName: string;
-    typeName: string;
-    collection: string;
-    schema: MongooseSchema;
-    naming: MongoNaming;
-  },
-) {
-  const { subgraphName, typeName, collection, schema, naming } = opts;
-  const paths = introspectPaths(schema);
-
-  const otc = schemaComposer.createObjectTC({
-    name: typeName,
-    fields: {},
-  });
-
-  const selectionLines: string[] = ['id: _id'];
-  otc.setField('id', { type: new GraphQLNonNull(GraphQLObjectID) });
-
-  for (const path of paths) {
-    if (path.name === '_id' || path.name === '__v') continue;
-    // Skip deeply nested path keys that are covered by parent object fields.
-    if (path.name.includes('.')) continue;
-    const gqlType = mapPathToOutput(path);
-    otc.setField(path.name, { type: gqlType });
-    selectionLines.push(`${path.name}: ${path.name}`);
-  }
-
-  const selection = blockArg(selectionLines.join('\n'));
-
-  otc.setDirectives([
-    {
-      name: 'key',
-      args: { fields: 'id' },
-    },
-    {
-      name: 'mongo',
-      args: {
-        subgraph: subgraphName,
-        collection,
-        kind: 'FIND_ONE',
-        where: blockArg('_id: $this.id'),
-        selection,
-      },
-    },
-  ]);
-
-  createWhereAndSort(schemaComposer, naming, typeName, paths);
-
-  const queryTC = schemaComposer.Query;
-  queryTC.setField(naming.findByIdField(typeName), {
-    type: typeName,
-    args: {
-      _id: { type: new GraphQLNonNull(GraphQLObjectID) },
-    },
-    directives: [
-      {
-        name: 'mongo',
-        args: {
-          subgraph: subgraphName,
-          collection,
-          kind: 'FIND_ONE',
-          where: blockArg('_id: $args._id'),
-          selection,
-        },
-      },
-    ],
-  });
-
-  queryTC.setField(naming.findManyField(typeName), {
-    type: `[${typeName}!]!`,
-    args: {
-      where: { type: naming.whereInput(typeName) },
-      limit: { type: GraphQLInt, defaultValue: 100 },
-      skip: { type: GraphQLInt },
-      sort: { type: naming.sortInput(typeName) },
-    },
-    directives: [
-      {
-        name: 'mongo',
-        args: {
-          subgraph: subgraphName,
-          collection,
-          kind: 'FIND_MANY',
-          where: '$args.where',
-          sort: '$args.sort',
-          limit: '$args.limit',
-          skip: '$args.skip',
-          selection,
-        },
-      },
-    ],
-  });
-
-  queryTC.setField(naming.findOneField(typeName), {
-    type: typeName,
-    args: {
-      where: { type: naming.whereInput(typeName) },
-      skip: { type: GraphQLInt },
-      sort: { type: naming.sortInput(typeName) },
-    },
-    directives: [
-      {
-        name: 'mongo',
-        args: {
-          subgraph: subgraphName,
-          collection,
-          kind: 'FIND_ONE',
-          where: '$args.where',
-          sort: '$args.sort',
-          skip: '$args.skip',
-          selection,
-        },
-      },
-    ],
-  });
-
-  queryTC.setField(naming.countField(typeName), {
-    type: new GraphQLNonNull(GraphQLInt),
-    args: {
-      where: { type: naming.whereInput(typeName) },
-    },
-    directives: [
-      {
-        name: 'mongo',
-        args: {
-          subgraph: subgraphName,
-          collection,
-          kind: 'COUNT',
-          where: '$args.where',
-          selection: blockArg('$'),
-        },
-      },
-    ],
-  });
-}
-
 interface PathMeta {
   name: string;
   instance: string;
   isArray?: boolean;
   enumValues?: string[];
+  ref?: string;
 }
 
 function introspectPaths(schema: MongooseSchema): PathMeta[] {
@@ -272,20 +157,437 @@ function introspectPaths(schema: MongooseSchema): PathMeta[] {
   for (const [name, schemaType] of Object.entries(paths) as [string, any][]) {
     const instance = schemaType.instance || schemaType.constructor?.name || 'Mixed';
     const enumValues = schemaType.enumValues || schemaType.options?.enum;
+    const ref =
+      schemaType.options?.ref ||
+      schemaType.caster?.options?.ref ||
+      schemaType.schema?.options?.ref;
     out.push({
       name,
       instance: String(instance),
       isArray: instance === 'Array' || Array.isArray(schemaType.options?.type),
       enumValues: Array.isArray(enumValues) ? enumValues.map(String) : undefined,
+      ref: ref ? String(ref) : undefined,
     });
   }
   return out;
 }
 
+function selectionForPaths(paths: PathMeta[]): string {
+  const lines = ['id: _id'];
+  for (const path of paths) {
+    if (path.name === '_id' || path.name === '__v' || path.name.includes('.')) continue;
+    if (path.ref) {
+      // Scalar id field kept; populated object is a sibling field.
+      lines.push(`${path.name}: ${path.name}`);
+      continue;
+    }
+    lines.push(`${path.name}: ${path.name}`);
+  }
+  return blockArg(lines.join('\n'));
+}
+
+function emitModelObjectType(
+  schemaComposer: SchemaComposer,
+  opts: {
+    subgraphName: string;
+    typeName: string;
+    collection: string;
+    paths: PathMeta[];
+    naming: MongoNaming;
+  },
+) {
+  const { subgraphName, typeName, collection, paths, naming } = opts;
+  const otc = schemaComposer.createObjectTC({ name: typeName, fields: {} });
+  const selection = selectionForPaths(paths);
+
+  otc.setField('id', { type: new GraphQLNonNull(GraphQLID) });
+  for (const path of paths) {
+    if (path.name === '_id' || path.name === '__v' || path.name.includes('.')) continue;
+    otc.setField(path.name, { type: mapPathToOutput(path) });
+  }
+
+  otc.setDirectives([
+    { name: 'key', args: { fields: 'id' } },
+    {
+      name: 'mongo',
+      args: {
+        subgraph: subgraphName,
+        collection,
+        kind: 'FIND_ONE',
+        filter: blockArg('_id: $this.id'),
+        selection,
+      },
+    },
+  ]);
+
+  createFilterSortAndInputs(schemaComposer, naming, typeName, paths);
+  createConnectionTypes(schemaComposer, naming, typeName);
+  createPayloadType(schemaComposer, naming, typeName);
+}
+
+function emitModelRootFields(
+  schemaComposer: SchemaComposer,
+  opts: {
+    subgraphName: string;
+    typeName: string;
+    collection: string;
+    paths: PathMeta[];
+    naming: MongoNaming;
+  },
+) {
+  const { subgraphName, typeName, collection, paths, naming } = opts;
+  const selection = selectionForPaths(paths);
+  const filterType = naming.filterInput(typeName);
+  const sortType = naming.sortInput(typeName);
+  const queryTC = schemaComposer.Query;
+  const mutationTC = schemaComposer.Mutation;
+
+  const mongo = (
+    kind: string,
+    extra: Record<string, unknown> = {},
+  ): { name: string; args: Record<string, unknown> } => ({
+    name: 'mongo',
+    args: { subgraph: subgraphName, collection, kind, selection, ...extra },
+  });
+
+  queryTC.setField(naming.findByIdField(typeName), {
+    type: typeName,
+    args: { _id: { type: new GraphQLNonNull(GraphQLID) } },
+    directives: [mongo('FIND_ONE', { filter: blockArg('_id: $args._id') })],
+  });
+
+  queryTC.setField(naming.dataLoaderField(typeName), {
+    type: typeName,
+    args: { _id: { type: new GraphQLNonNull(GraphQLID) } },
+    directives: [mongo('FIND_ONE', { filter: blockArg('_id: $args._id') })],
+  });
+
+  queryTC.setField(naming.findByIdsField(typeName), {
+    type: `[${typeName}!]!`,
+    args: {
+      _ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLID))) },
+      limit: { type: GraphQLInt, defaultValue: 100 },
+      sort: { type: sortType },
+    },
+    directives: [
+      mongo('FIND_MANY', {
+        filter: blockArg('_id: $args._ids'),
+        limit: '$args.limit',
+        sort: '$args.sort',
+      }),
+    ],
+  });
+
+  queryTC.setField(naming.dataLoaderManyField(typeName), {
+    type: `[${typeName}]!`,
+    args: {
+      _ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLID))) },
+    },
+    directives: [mongo('FIND_MANY', { filter: blockArg('_id: $args._ids') })],
+  });
+
+  queryTC.setField(naming.findManyField(typeName), {
+    type: `[${typeName}!]!`,
+    args: {
+      filter: { type: filterType },
+      limit: { type: GraphQLInt, defaultValue: 100 },
+      skip: { type: GraphQLInt },
+      sort: { type: sortType },
+    },
+    directives: [
+      mongo('FIND_MANY', {
+        filter: '$args.filter',
+        sort: '$args.sort',
+        limit: '$args.limit',
+        skip: '$args.skip',
+      }),
+    ],
+  });
+
+  queryTC.setField(naming.findOneField(typeName), {
+    type: typeName,
+    args: {
+      filter: { type: filterType },
+      skip: { type: GraphQLInt },
+      sort: { type: sortType },
+    },
+    directives: [
+      mongo('FIND_ONE', {
+        filter: '$args.filter',
+        sort: '$args.sort',
+        skip: '$args.skip',
+      }),
+    ],
+  });
+
+  queryTC.setField(naming.countField(typeName), {
+    type: new GraphQLNonNull(GraphQLInt),
+    args: { filter: { type: filterType } },
+    directives: [mongo('COUNT', { filter: '$args.filter', selection: blockArg('$') })],
+  });
+
+  queryTC.setField(naming.connectionField(typeName), {
+    type: naming.connectionType(typeName),
+    args: {
+      filter: { type: filterType },
+      first: { type: GraphQLInt },
+      after: { type: GraphQLString },
+      sort: { type: sortType },
+    },
+    directives: [
+      mongo('CONNECTION', {
+        filter: '$args.filter',
+        sort: '$args.sort',
+        first: '$args.first',
+        after: '$args.after',
+        selection: blockArg(`
+nodes {
+${indent(selectionForPaths(paths).replace(/^\n/, ''), 1)}
+}
+edges {
+  cursor: $cursor
+  node {
+${indent(selectionForPaths(paths).replace(/^\n/, ''), 2)}
+  }
+}
+pageInfo {
+  hasNextPage: $hasNextPage
+  hasPreviousPage: $hasPreviousPage
+  startCursor: $startCursor
+  endCursor: $endCursor
+}
+totalCount: $totalCount
+`),
+      }),
+    ],
+  });
+
+  queryTC.setField(naming.paginationField(typeName), {
+    type: naming.paginationType(typeName),
+    args: {
+      filter: { type: filterType },
+      page: { type: GraphQLInt },
+      perPage: { type: GraphQLInt, defaultValue: 20 },
+      sort: { type: sortType },
+    },
+    directives: [
+      mongo('PAGINATION', {
+        filter: '$args.filter',
+        sort: '$args.sort',
+        page: '$args.page',
+        perPage: '$args.perPage',
+        selection: blockArg(`
+count: $count
+items {
+${indent(selectionForPaths(paths).replace(/^\n/, ''), 1)}
+}
+pageInfo {
+  currentPage: $currentPage
+  perPage: $perPage
+  pageCount: $pageCount
+  itemCount: $itemCount
+  hasNextPage: $hasNextPage
+  hasPreviousPage: $hasPreviousPage
+}
+`),
+      }),
+    ],
+  });
+
+  const setBlock = blockArg(
+    paths
+      .filter(p => p.name !== '_id' && p.name !== '__v' && !p.name.includes('.'))
+      .map(p => `${p.name}: $args.record.${p.name}`)
+      .join('\n'),
+  );
+  const payloadSelection = blockArg(`
+record {
+${indent(selectionForPaths(paths).replace(/^\n/, ''), 1)}
+}
+recordId: $_id
+`);
+
+  mutationTC.setField(naming.createOneField(typeName), {
+    type: naming.payloadType(typeName),
+    args: { record: { type: `${naming.createInput(typeName)}!` } },
+    directives: [mongo('INSERT_ONE', { set: setBlock, selection: payloadSelection })],
+  });
+
+  mutationTC.setField(naming.createManyField(typeName), {
+    type: naming.payloadType(typeName),
+    args: { records: { type: `[${naming.createInput(typeName)}!]!` } },
+    directives: [
+      mongo('INSERT_MANY', {
+        set: blockArg('records: $args.records'),
+        selection: blockArg(`
+records {
+${indent(selectionForPaths(paths).replace(/^\n/, ''), 1)}
+}
+recordIds: $recordIds
+createdCount: $createdCount
+`),
+      }),
+    ],
+  });
+
+  mutationTC.setField(naming.updateByIdField(typeName), {
+    type: naming.payloadType(typeName),
+    args: {
+      _id: { type: new GraphQLNonNull(GraphQLID) },
+      record: { type: `${naming.updateInput(typeName)}!` },
+    },
+    directives: [
+      mongo('UPDATE_ONE', {
+        filter: blockArg('_id: $args._id'),
+        set: setBlock,
+        selection: payloadSelection,
+      }),
+    ],
+  });
+
+  mutationTC.setField(naming.updateOneField(typeName), {
+    type: naming.payloadType(typeName),
+    args: {
+      filter: { type: filterType },
+      record: { type: `${naming.updateInput(typeName)}!` },
+    },
+    directives: [
+      mongo('UPDATE_ONE', {
+        filter: '$args.filter',
+        set: setBlock,
+        selection: payloadSelection,
+      }),
+    ],
+  });
+
+  mutationTC.setField(naming.updateManyField(typeName), {
+    type: naming.payloadType(typeName),
+    args: {
+      filter: { type: filterType },
+      record: { type: `${naming.updateInput(typeName)}!` },
+    },
+    directives: [
+      mongo('UPDATE_MANY', {
+        filter: '$args.filter',
+        set: setBlock,
+        selection: blockArg(`
+modifiedCount: $modifiedCount
+matchedCount: $matchedCount
+`),
+      }),
+    ],
+  });
+
+  mutationTC.setField(naming.removeByIdField(typeName), {
+    type: naming.payloadType(typeName),
+    args: { _id: { type: new GraphQLNonNull(GraphQLID) } },
+    directives: [
+      mongo('DELETE_ONE', {
+        filter: blockArg('_id: $args._id'),
+        selection: payloadSelection,
+      }),
+    ],
+  });
+
+  mutationTC.setField(naming.removeOneField(typeName), {
+    type: naming.payloadType(typeName),
+    args: { filter: { type: filterType } },
+    directives: [
+      mongo('DELETE_ONE', {
+        filter: '$args.filter',
+        selection: payloadSelection,
+      }),
+    ],
+  });
+
+  mutationTC.setField(naming.removeManyField(typeName), {
+    type: naming.payloadType(typeName),
+    args: { filter: { type: `${filterType}!` } },
+    directives: [
+      mongo('DELETE_MANY', {
+        filter: '$args.filter',
+        selection: blockArg('deletedCount: $deletedCount'),
+      }),
+    ],
+  });
+}
+
+function emitRefFields(
+  schemaComposer: SchemaComposer,
+  opts: {
+    subgraphName: string;
+    typeName: string;
+    schema: MongooseSchema;
+    naming: MongoNaming;
+    knownTypes: Set<string>;
+    collectionsByType: Map<string, string>;
+  },
+) {
+  const paths = introspectPaths(opts.schema);
+  const otc = schemaComposer.getOTC(opts.typeName);
+  for (const path of paths) {
+    if (!path.ref || !opts.knownTypes.has(path.ref)) continue;
+    const refCollection = opts.collectionsByType.get(path.ref);
+    if (!refCollection) continue;
+    const refPaths = introspectPaths(
+      // best-effort: empty selection of id only if we cannot re-introspect
+      opts.schema,
+    );
+    void refPaths;
+    const fieldName = path.isArray ? pluralizeFallback(path.ref) : path.ref[0].toLowerCase() + path.ref.slice(1);
+    // Prefer path name without Id suffix when present (authorId -> author)
+    const pretty =
+      path.name.endsWith('Id') || path.name.endsWith('Ids')
+        ? path.name.replace(/Ids?$/, '')
+        : path.name + 'Doc';
+    const finalName = otc.hasField(pretty) ? fieldName : pretty;
+    if (otc.hasField(finalName) && finalName !== path.name) {
+      // already set
+    }
+    const refSelection = blockArg('id: _id');
+    if (path.isArray) {
+      otc.setField(finalName, {
+        type: `[${path.ref}!]!`,
+        directives: [
+          {
+            name: 'mongo',
+            args: {
+              subgraph: opts.subgraphName,
+              collection: refCollection,
+              kind: 'FIND_MANY',
+              filter: blockArg(`_id: $this.${path.name}`),
+              selection: refSelection,
+            },
+          },
+        ],
+      });
+    } else {
+      otc.setField(finalName, {
+        type: path.ref,
+        directives: [
+          {
+            name: 'mongo',
+            args: {
+              subgraph: opts.subgraphName,
+              collection: refCollection,
+              kind: 'FIND_ONE',
+              filter: blockArg(`_id: $this.${path.name}`),
+              selection: refSelection,
+            },
+          },
+        ],
+      });
+    }
+  }
+}
+
 function mapPathToOutput(path: PathMeta) {
   if (path.enumValues?.length) {
-    // Enums: first slice emits String; loader can grow Enum types later.
     return path.isArray ? new GraphQLList(GraphQLString) : GraphQLString;
+  }
+  if (path.ref) {
+    const idType = GraphQLID;
+    return path.isArray ? new GraphQLList(idType) : idType;
   }
   if (path.isArray && path.instance !== 'Array') {
     return new GraphQLList(mapMongoPathToGraphQL(path.instance));
@@ -293,55 +595,47 @@ function mapPathToOutput(path: PathMeta) {
   return mapMongoPathToGraphQL(path.instance, { asId: path.name === '_id' });
 }
 
-function createWhereAndSort(
+function createFilterSortAndInputs(
   schemaComposer: SchemaComposer,
   naming: MongoNaming,
   typeName: string,
   paths: PathMeta[],
 ) {
-  const whereName = naming.whereInput(typeName);
-  if (!schemaComposer.has(whereName)) {
+  const filterName = naming.filterInput(typeName);
+  if (!schemaComposer.has(filterName)) {
     schemaComposer.createInputTC({
-      name: whereName,
+      name: filterName,
       fields: {
-        AND: { type: `[${whereName}!]` },
-        OR: { type: `[${whereName}!]` },
-        NOT: { type: whereName },
-        id: { type: 'ObjectIDWhere' },
+        AND: { type: `[${filterName}!]` },
+        OR: { type: `[${filterName}!]` },
+        NOT: { type: filterName },
+        id: { type: 'IDFilter' },
         ...Object.fromEntries(
           paths
             .filter(p => p.name !== '_id' && p.name !== '__v' && !p.name.includes('.'))
             .map(p => {
-              let whereType = 'StringWhere';
-              if (p.instance === 'Number' || p.instance === 'Decimal128') {
-                whereType = 'FloatWhere';
-              } else if (p.instance === 'Boolean') {
-                whereType = 'BooleanWhere';
-              } else if (p.instance === 'Date') {
-                whereType = 'DateTimeWhere';
-              } else if (p.instance === 'ObjectID' || p.instance === 'ObjectId') {
-                whereType = 'ObjectIDWhere';
-              }
-              return [p.name, { type: whereType }];
+              let filterType = 'StringFilter';
+              if (p.instance === 'Number' || p.instance === 'Decimal128') filterType = 'FloatFilter';
+              else if (p.instance === 'Boolean') filterType = 'BooleanFilter';
+              else if (p.instance === 'Date') filterType = 'DateTimeFilter';
+              else if (p.ref || p.instance === 'ObjectID' || p.instance === 'ObjectId')
+                filterType = 'IDFilter';
+              return [p.name, { type: filterType }];
             }),
         ),
       },
     });
   }
 
-  const sortName = naming.sortInput(typeName);
-  if (!schemaComposer.has(sortName)) {
+  if (!schemaComposer.has(naming.sortInput(typeName))) {
     if (!schemaComposer.has('SortDirection')) {
       schemaComposer.createEnumTC({
         name: 'SortDirection',
-        values: {
-          ASC: { value: 'ASC' },
-          DESC: { value: 'DESC' },
-        },
+        values: { ASC: { value: 'ASC' }, DESC: { value: 'DESC' } },
       });
     }
     schemaComposer.createInputTC({
-      name: sortName,
+      name: naming.sortInput(typeName),
       fields: {
         id: 'SortDirection',
         ...Object.fromEntries(
@@ -352,24 +646,114 @@ function createWhereAndSort(
       },
     });
   }
+
+  const createFields: Record<string, any> = {};
+  const updateFields: Record<string, any> = {};
+  for (const path of paths) {
+    if (path.name === '_id' || path.name === '__v' || path.name.includes('.')) continue;
+    const gqlType = mapPathToOutput(path);
+    createFields[path.name] = { type: gqlType };
+    updateFields[path.name] = { type: gqlType };
+  }
+  if (!schemaComposer.has(naming.createInput(typeName))) {
+    schemaComposer.createInputTC({ name: naming.createInput(typeName), fields: createFields });
+  }
+  if (!schemaComposer.has(naming.updateInput(typeName))) {
+    schemaComposer.createInputTC({ name: naming.updateInput(typeName), fields: updateFields });
+  }
 }
 
-function ensureSharedWhereInputs(schemaComposer: SchemaComposer) {
-  if (!schemaComposer.has('ObjectIDWhere')) {
-    schemaComposer.createInputTC({
-      name: 'ObjectIDWhere',
+function createConnectionTypes(schemaComposer: SchemaComposer, naming: MongoNaming, typeName: string) {
+  if (!schemaComposer.has(naming.edgeType(typeName))) {
+    schemaComposer.createObjectTC({
+      name: naming.edgeType(typeName),
+      fields: { cursor: 'String!', node: `${typeName}!` },
+    });
+  }
+  if (!schemaComposer.has(naming.connectionType(typeName))) {
+    schemaComposer.createObjectTC({
+      name: naming.connectionType(typeName),
       fields: {
-        eq: GraphQLObjectID,
-        ne: GraphQLObjectID,
-        in: { type: new GraphQLList(new GraphQLNonNull(GraphQLObjectID)) },
-        nin: { type: new GraphQLList(new GraphQLNonNull(GraphQLObjectID)) },
+        edges: `[${naming.edgeType(typeName)}!]!`,
+        nodes: `[${typeName}!]!`,
+        pageInfo: 'PageInfo!',
+        totalCount: 'Int!',
+      },
+    });
+  }
+  if (!schemaComposer.has(naming.paginationType(typeName))) {
+    schemaComposer.createObjectTC({
+      name: naming.paginationType(typeName),
+      fields: {
+        count: 'Int',
+        items: `[${typeName}]`,
+        pageInfo: 'PaginationInfo',
+      },
+    });
+  }
+}
+
+function createPayloadType(schemaComposer: SchemaComposer, naming: MongoNaming, typeName: string) {
+  if (!schemaComposer.has(naming.payloadType(typeName))) {
+    schemaComposer.createObjectTC({
+      name: naming.payloadType(typeName),
+      fields: {
+        record: typeName,
+        recordId: GraphQLID,
+        records: `[${typeName}!]`,
+        recordIds: '[ID!]',
+        createdCount: GraphQLInt,
+        modifiedCount: GraphQLInt,
+        matchedCount: GraphQLInt,
+        deletedCount: GraphQLInt,
+      },
+    });
+  }
+}
+
+function ensurePageInfo(schemaComposer: SchemaComposer) {
+  if (!schemaComposer.has('PageInfo')) {
+    schemaComposer.createObjectTC({
+      name: 'PageInfo',
+      fields: {
+        hasNextPage: 'Boolean!',
+        hasPreviousPage: 'Boolean!',
+        startCursor: 'String',
+        endCursor: 'String',
+      },
+    });
+  }
+  if (!schemaComposer.has('PaginationInfo')) {
+    schemaComposer.createObjectTC({
+      name: 'PaginationInfo',
+      fields: {
+        currentPage: 'Int!',
+        perPage: 'Int!',
+        pageCount: 'Int',
+        itemCount: 'Int',
+        hasNextPage: 'Boolean',
+        hasPreviousPage: 'Boolean',
+      },
+    });
+  }
+}
+
+function ensureSharedFilterInputs(schemaComposer: SchemaComposer) {
+  if (!schemaComposer.has('IDFilter')) {
+    schemaComposer.createInputTC({
+      name: 'IDFilter',
+      fields: {
+        eq: GraphQLID,
+        ne: GraphQLID,
+        in: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
+        nin: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
         exists: 'Boolean',
       },
     });
   }
-  if (!schemaComposer.has('StringWhere')) {
+  if (!schemaComposer.has('StringFilter')) {
     schemaComposer.createInputTC({
-      name: 'StringWhere',
+      name: 'StringFilter',
       fields: {
         eq: GraphQLString,
         ne: GraphQLString,
@@ -380,9 +764,9 @@ function ensureSharedWhereInputs(schemaComposer: SchemaComposer) {
       },
     });
   }
-  if (!schemaComposer.has('FloatWhere')) {
+  if (!schemaComposer.has('FloatFilter')) {
     schemaComposer.createInputTC({
-      name: 'FloatWhere',
+      name: 'FloatFilter',
       fields: {
         eq: GraphQLFloat,
         ne: GraphQLFloat,
@@ -396,19 +780,15 @@ function ensureSharedWhereInputs(schemaComposer: SchemaComposer) {
       },
     });
   }
-  if (!schemaComposer.has('BooleanWhere')) {
+  if (!schemaComposer.has('BooleanFilter')) {
     schemaComposer.createInputTC({
-      name: 'BooleanWhere',
-      fields: {
-        eq: 'Boolean',
-        ne: 'Boolean',
-        exists: 'Boolean',
-      },
+      name: 'BooleanFilter',
+      fields: { eq: 'Boolean', ne: 'Boolean', exists: 'Boolean' },
     });
   }
-  if (!schemaComposer.has('DateTimeWhere')) {
+  if (!schemaComposer.has('DateTimeFilter')) {
     schemaComposer.createInputTC({
-      name: 'DateTimeWhere',
+      name: 'DateTimeFilter',
       fields: {
         eq: 'DateTime',
         ne: 'DateTime',
@@ -433,6 +813,7 @@ function markMongoDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
       for (const arg of directive.arguments) {
         if (arg.value.kind !== 'StringValue') continue;
         if (
+          arg.name.value !== 'filter' &&
           arg.name.value !== 'where' &&
           arg.name.value !== 'set' &&
           arg.name.value !== 'selection' &&
@@ -488,6 +869,14 @@ function blockArg(body: string): string {
     .map(line => (line.length ? `  ${line}` : line))
     .join('\n');
   return indented.includes('\n') ? indented : `\n${indented}`;
+}
+
+function indent(body: string, levels: number): string {
+  const pad = '  '.repeat(levels);
+  return body
+    .split('\n')
+    .map(line => (line.length ? pad + line : line))
+    .join('\n');
 }
 
 function pluralizeFallback(name: string): string {

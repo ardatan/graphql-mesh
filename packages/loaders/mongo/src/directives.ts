@@ -37,8 +37,10 @@ export const MongoDirective = new GraphQLDirective({
     kind: { type: new GraphQLNonNull(MongoKindEnum) },
     /**
      * Equality / join predicates plus Connectors-style spreads
-     * (`_id: $this.id`, `...$args.where`).
+     * (`_id: $this.id`, `...$args.filter`). Mongo-native `filter` naming.
      */
+    filter: { type: GraphQLString },
+    /** @deprecated use `filter` */
     where: { type: GraphQLString },
     /** Sort binder (`$args.sort`). */
     sort: { type: GraphQLString },
@@ -50,10 +52,14 @@ export const MongoDirective = new GraphQLDirective({
     first: { type: GraphQLString },
     /** CONNECTION cursor (`$args.after`). */
     after: { type: GraphQLString },
+    /** PAGINATION page (`$args.page`). */
+    page: { type: GraphQLString },
+    /** PAGINATION page size (`$args.perPage`). */
+    perPage: { type: GraphQLString },
     /** Document values for INSERT / UPDATE. */
     set: { type: GraphQLString },
     selection: { type: GraphQLString },
-    /** Aggregate pipeline sketch (deferred runtime depth). */
+    /** Aggregate pipeline stages (JSON array string or mapping). */
     pipeline: { type: GraphQLString },
   },
 });
