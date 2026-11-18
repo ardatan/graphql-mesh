@@ -373,15 +373,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/subgraph@npm:2.15.1, @apollo/subgraph@npm:^2.15.1":
-  version: 2.15.1
-  resolution: "@apollo/subgraph@npm:2.15.1"
+"@apollo/subgraph@npm:2.16.0":
+  version: 2.16.0
+  resolution: "@apollo/subgraph@npm:2.16.0"
   dependencies:
     "@apollo/cache-control-types": "npm:^1.0.3"
     "@graphql-tools/utils": "npm:^12.0.0"
   peerDependencies:
-    graphql: ^16.11.0
-  checksum: 10c0/e360809d2778d01ec3c751c73d43dd549a833a5ca031892f322f9fbb4fed2c0567ec774b79fcfa164e488168155befe460b19ecd48b8db2fb9f00d1aded19e54
+    graphql: ^16.11.0 || ^17.0.0
+  checksum: 10c0/585a675f343fc78d2451928b3a9e8eacf4c709314a87a6a702de4e04aeb37cc62cfaa7f3af1d2dd73cf199a67b0956fe6da7fd91e8608b8fd37375ecbe09a064
+  languageName: node
+  linkType: hard
+
+"@apollo/subgraph@npm:^2.16.0":
+  version: 2.17.0
+  resolution: "@apollo/subgraph@npm:2.17.0"
+  dependencies:
+    "@apollo/cache-control-types": "npm:^1.0.3"
+    "@graphql-tools/utils": "npm:^12.0.0"
+  peerDependencies:
+    graphql: ^16.11.0 || ^17.0.0
+  checksum: 10c0/e93c4c30fc9ac8bc76d6b8c53c58b265a43f87978c36afc6bb80df91b6ee92909baac9fb849db8f93c260ff00dd43df02a3d9799ded3ef9c37592de524bd73f3
   languageName: node
   linkType: hard
 
@@ -5066,7 +5078,7 @@ __metadata:
   resolution: "@e2e/cache-control@workspace:e2e/cache-control"
   dependencies:
     "@apollo/server": "npm:^5.5.1"
-    "@apollo/subgraph": "npm:^2.15.1"
+    "@apollo/subgraph": "npm:^2.16.0"
     "@graphql-hive/gateway": "npm:^2.15.8"
     "@graphql-mesh/cache-upstash-redis": "npm:^0.4.3"
     "@graphql-mesh/compose-cli": "npm:^1.8.4"
@@ -5153,7 +5165,7 @@ __metadata:
   resolution: "@e2e/federation-mixed@workspace:e2e/federation-mixed"
   dependencies:
     "@apollo/server": "npm:^5.5.1"
-    "@apollo/subgraph": "npm:^2.15.1"
+    "@apollo/subgraph": "npm:^2.16.0"
     "@graphql-hive/gateway": "npm:^2.15.8"
     fets: "npm:^0.8.13"
     graphql: "npm:^16.14.0"
@@ -5307,7 +5319,7 @@ __metadata:
   resolution: "@e2e/odata-entities@workspace:e2e/odata-entities"
   dependencies:
     "@apollo/server": "npm:^5.5.1"
-    "@apollo/subgraph": "npm:^2.15.1"
+    "@apollo/subgraph": "npm:^2.16.0"
     "@graphql-hive/gateway": "npm:^2.15.8"
     graphql: "npm:^16.14.0"
   languageName: unknown
@@ -6514,7 +6526,7 @@ __metadata:
   resolution: "@examples/federation-example-services-accounts-subgraph@workspace:examples/federation-example/services/accounts-subgraph"
   dependencies:
     "@apollo/server": "npm:5.5.1"
-    "@apollo/subgraph": "npm:2.15.1"
+    "@apollo/subgraph": "npm:2.16.0"
     "@types/node": "npm:^26.2.0"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
@@ -6539,7 +6551,7 @@ __metadata:
   resolution: "@examples/federation-example-services-inventory@workspace:examples/federation-example/services/inventory"
   dependencies:
     "@apollo/server": "npm:5.5.1"
-    "@apollo/subgraph": "npm:2.15.1"
+    "@apollo/subgraph": "npm:2.16.0"
     "@types/node": "npm:^26.2.0"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
@@ -6552,7 +6564,7 @@ __metadata:
   resolution: "@examples/federation-example-services-products@workspace:examples/federation-example/services/products"
   dependencies:
     "@apollo/server": "npm:5.5.1"
-    "@apollo/subgraph": "npm:2.15.1"
+    "@apollo/subgraph": "npm:2.16.0"
     "@types/node": "npm:^26.2.0"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
@@ -6565,7 +6577,7 @@ __metadata:
   resolution: "@examples/federation-example-services-reviews@workspace:examples/federation-example/services/reviews"
   dependencies:
     "@apollo/server": "npm:5.5.1"
-    "@apollo/subgraph": "npm:2.15.1"
+    "@apollo/subgraph": "npm:2.16.0"
     "@types/node": "npm:^26.2.0"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
@@ -6907,7 +6919,7 @@ __metadata:
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.14.0"
     micro: "npm:10.0.1"
-    next: "npm:16.4.1"
+    next: "npm:16.4.5"
     react: "npm:19.3.1"
     react-dom: "npm:19.3.1"
     typescript: "npm:^6.0.3"
@@ -6926,7 +6938,7 @@ __metadata:
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.14.0"
     micro: "npm:10.0.1"
-    next: "npm:16.4.1"
+    next: "npm:16.4.5"
     react: "npm:19.3.1"
     react-dom: "npm:19.3.1"
     typescript: "npm:^6.0.3"
@@ -8011,7 +8023,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/gateway-runtime@npm:^2.13.5":
+"@graphql-hive/gateway-runtime@npm:2.13.5":
   version: 2.13.5
   resolution: "@graphql-hive/gateway-runtime@npm:2.13.5"
   dependencies:
@@ -8056,6 +8068,54 @@ __metadata:
   peerDependencies:
     graphql: ^15.9.0 || ^16.9.0
   checksum: 10c0/20e48f18ba984f914570b4c8b10cbcf02e9189b472bd9275dd02cf03e9485024aaaed7bd2b08343811b27a147740a9a0f93ae66256bf7d0c7793cf16abfc6392
+  languageName: node
+  linkType: hard
+
+"@graphql-hive/gateway-runtime@patch:@graphql-hive/gateway-runtime@npm%3A2.13.5#~/.yarn/patches/@graphql-hive-gateway-runtime-npm-2.13.5-be6edfcd35.patch":
+  version: 2.13.5
+  resolution: "@graphql-hive/gateway-runtime@patch:@graphql-hive/gateway-runtime@npm%3A2.13.5#~/.yarn/patches/@graphql-hive-gateway-runtime-npm-2.13.5-be6edfcd35.patch::version=2.13.5&hash=c758ff"
+  dependencies:
+    "@envelop/core": "npm:^5.4.0"
+    "@envelop/disable-introspection": "npm:^9.0.0"
+    "@envelop/generic-auth": "npm:^12.0.0"
+    "@envelop/instrumentation": "npm:^1.0.0"
+    "@graphql-hive/core": "npm:^0.22.1"
+    "@graphql-hive/logger": "npm:^1.1.1"
+    "@graphql-hive/pubsub": "npm:^2.2.1"
+    "@graphql-hive/signal": "npm:^2.1.0"
+    "@graphql-hive/yoga": "npm:^0.48.2"
+    "@graphql-mesh/cross-helpers": "npm:^0.4.16"
+    "@graphql-mesh/fusion-runtime": "npm:^1.13.5"
+    "@graphql-mesh/hmac-upstream-signature": "npm:^2.1.2"
+    "@graphql-mesh/plugin-response-cache": "npm:^0.107.2"
+    "@graphql-mesh/transport-common": "npm:^1.1.2"
+    "@graphql-mesh/types": "npm:^0.107.1"
+    "@graphql-mesh/utils": "npm:^0.107.1"
+    "@graphql-tools/batch-delegate": "npm:^10.1.6"
+    "@graphql-tools/delegate": "npm:^12.3.4"
+    "@graphql-tools/executor-common": "npm:^1.1.1"
+    "@graphql-tools/executor-http": "npm:^3.6.2"
+    "@graphql-tools/federation": "npm:^4.6.5"
+    "@graphql-tools/stitch": "npm:^10.4.4"
+    "@graphql-tools/utils": "npm:^12.1.0"
+    "@graphql-tools/wrap": "npm:^11.2.6"
+    "@graphql-yoga/plugin-apollo-usage-report": "npm:^0.16.0"
+    "@graphql-yoga/plugin-csrf-prevention": "npm:^3.16.2"
+    "@graphql-yoga/plugin-defer-stream": "npm:^3.16.2"
+    "@graphql-yoga/plugin-persisted-operations": "npm:^3.16.2"
+    "@theguild/federation-composition": "npm:^0.26.1"
+    "@types/node": "npm:^25.0.0"
+    "@whatwg-node/disposablestack": "npm:^0.0.6"
+    "@whatwg-node/fetch": "npm:^0.10.13"
+    "@whatwg-node/promise-helpers": "npm:^1.3.2"
+    "@whatwg-node/server": "npm:^0.11.0"
+    "@whatwg-node/server-plugin-cookies": "npm:^1.0.7"
+    graphql-ws: "npm:^6.0.6"
+    graphql-yoga: "npm:^5.21.1"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    graphql: ^15.9.0 || ^16.9.0
+  checksum: 10c0/300416af98cfc5bc34adc5a4d155909c54b488311846dc3ba5f0fff492aa24f7d0cc3ec9fe9ae72597df9201b9d0f9e9e2e5ac2ca0e894900df33fefc12d8492
   languageName: node
   linkType: hard
 
@@ -8592,7 +8652,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-composition@workspace:packages/fusion/composition"
   dependencies:
-    "@graphql-hive/gateway-runtime": "npm:^2.13.5"
+    "@graphql-hive/gateway-runtime": "patch:@graphql-hive/gateway-runtime@npm%3A2.13.5#~/.yarn/patches/@graphql-hive-gateway-runtime-npm-2.13.5-be6edfcd35.patch"
     "@graphql-mesh/fusion-runtime": "patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^12.3.3"
@@ -9064,7 +9124,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-jit@workspace:packages/plugins/jit"
   dependencies:
     "@envelop/core": "npm:^6.0.1"
-    "@graphql-hive/gateway-runtime": "npm:^2.13.5"
+    "@graphql-hive/gateway-runtime": "patch:@graphql-hive/gateway-runtime@npm%3A2.13.5#~/.yarn/patches/@graphql-hive-gateway-runtime-npm-2.13.5-be6edfcd35.patch"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/utils": "npm:^13.2.2"
     graphql: "npm:16.14.0"
@@ -9236,7 +9296,7 @@ __metadata:
   dependencies:
     "@envelop/core": "npm:^6.0.1"
     "@envelop/response-cache": "npm:^10.0.1"
-    "@graphql-hive/gateway-runtime": "npm:^2.13.5"
+    "@graphql-hive/gateway-runtime": "patch:@graphql-hive/gateway-runtime@npm%3A2.13.5#~/.yarn/patches/@graphql-hive-gateway-runtime-npm-2.13.5-be6edfcd35.patch"
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
     "@graphql-mesh/fusion-composition": "npm:^0.11.4"
@@ -9513,7 +9573,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-federation@workspace:packages/legacy/transforms/federation"
   dependencies:
-    "@apollo/subgraph": "npm:^2.15.1"
+    "@apollo/subgraph": "npm:^2.16.0"
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
@@ -9906,7 +9966,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-rest@workspace:packages/transports/rest"
   dependencies:
-    "@apollo/subgraph": "npm:^2.15.1"
+    "@apollo/subgraph": "npm:^2.16.0"
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
@@ -13603,10 +13663,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:16.4.1":
-  version: 16.4.1
-  resolution: "@next/env@npm:16.4.1"
-  checksum: 10c0/cfb055383e1afc530c3114543c43efee24d168f9be5b0d541e5045fe7a56dbfd76b2c288397e9bb73aacbd5023bc3847ee11aef5e5f149eb66e126480b09c62e
+"@next/env@npm:16.4.5":
+  version: 16.4.5
+  resolution: "@next/env@npm:16.4.5"
+  checksum: 10c0/5c93b1fcc7aa2718a6043a043bb3a98213b543a96876f61def80a21ce42c2a150887448be894d3ef47622d2fde7639c01b411a52fae8fee30b67ce85c90b17dd
   languageName: node
   linkType: hard
 
@@ -13627,58 +13687,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-arm64@npm:16.4.1":
-  version: 16.4.1
-  resolution: "@next/swc-darwin-arm64@npm:16.4.1"
+"@next/swc-darwin-arm64@npm:16.4.5":
+  version: 16.4.5
+  resolution: "@next/swc-darwin-arm64@npm:16.4.5"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-x64@npm:16.4.1":
-  version: 16.4.1
-  resolution: "@next/swc-darwin-x64@npm:16.4.1"
+"@next/swc-darwin-x64@npm:16.4.5":
+  version: 16.4.5
+  resolution: "@next/swc-darwin-x64@npm:16.4.5"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-gnu@npm:16.4.1":
-  version: 16.4.1
-  resolution: "@next/swc-linux-arm64-gnu@npm:16.4.1"
+"@next/swc-linux-arm64-gnu@npm:16.4.5":
+  version: 16.4.5
+  resolution: "@next/swc-linux-arm64-gnu@npm:16.4.5"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-musl@npm:16.4.1":
-  version: 16.4.1
-  resolution: "@next/swc-linux-arm64-musl@npm:16.4.1"
+"@next/swc-linux-arm64-musl@npm:16.4.5":
+  version: 16.4.5
+  resolution: "@next/swc-linux-arm64-musl@npm:16.4.5"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-gnu@npm:16.4.1":
-  version: 16.4.1
-  resolution: "@next/swc-linux-x64-gnu@npm:16.4.1"
+"@next/swc-linux-x64-gnu@npm:16.4.5":
+  version: 16.4.5
+  resolution: "@next/swc-linux-x64-gnu@npm:16.4.5"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-musl@npm:16.4.1":
-  version: 16.4.1
-  resolution: "@next/swc-linux-x64-musl@npm:16.4.1"
+"@next/swc-linux-x64-musl@npm:16.4.5":
+  version: 16.4.5
+  resolution: "@next/swc-linux-x64-musl@npm:16.4.5"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-win32-arm64-msvc@npm:16.4.1":
-  version: 16.4.1
-  resolution: "@next/swc-win32-arm64-msvc@npm:16.4.1"
+"@next/swc-win32-arm64-msvc@npm:16.4.5":
+  version: 16.4.5
+  resolution: "@next/swc-win32-arm64-msvc@npm:16.4.5"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-win32-x64-msvc@npm:16.4.1":
-  version: 16.4.1
-  resolution: "@next/swc-win32-x64-msvc@npm:16.4.1"
+"@next/swc-win32-x64-msvc@npm:16.4.5":
+  version: 16.4.5
+  resolution: "@next/swc-win32-x64-msvc@npm:16.4.5"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -35902,19 +35962,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:16.4.1":
-  version: 16.4.1
-  resolution: "next@npm:16.4.1"
+"next@npm:16.4.5":
+  version: 16.4.5
+  resolution: "next@npm:16.4.5"
   dependencies:
-    "@next/env": "npm:16.4.1"
-    "@next/swc-darwin-arm64": "npm:16.4.1"
-    "@next/swc-darwin-x64": "npm:16.4.1"
-    "@next/swc-linux-arm64-gnu": "npm:16.4.1"
-    "@next/swc-linux-arm64-musl": "npm:16.4.1"
-    "@next/swc-linux-x64-gnu": "npm:16.4.1"
-    "@next/swc-linux-x64-musl": "npm:16.4.1"
-    "@next/swc-win32-arm64-msvc": "npm:16.4.1"
-    "@next/swc-win32-x64-msvc": "npm:16.4.1"
+    "@next/env": "npm:16.4.5"
+    "@next/swc-darwin-arm64": "npm:16.4.5"
+    "@next/swc-darwin-x64": "npm:16.4.5"
+    "@next/swc-linux-arm64-gnu": "npm:16.4.5"
+    "@next/swc-linux-arm64-musl": "npm:16.4.5"
+    "@next/swc-linux-x64-gnu": "npm:16.4.5"
+    "@next/swc-linux-x64-musl": "npm:16.4.5"
+    "@next/swc-win32-arm64-msvc": "npm:16.4.5"
+    "@next/swc-win32-x64-msvc": "npm:16.4.5"
     "@swc/helpers": "npm:0.5.23"
     baseline-browser-mapping: "npm:^2.9.19"
     caniuse-lite: "npm:^1.0.30001579"
@@ -35958,7 +36018,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 10c0/9ad2634e8617c087296f33440b30efd4c7a62e1911bdf64d873160c97abbfd52b7540d635e6b517aaa9af153396c9ab61f2cf4425ed0a4a197dcbb566e5f1a87
+  checksum: 10c0/d88fdc4f837f62882cbb31df613a4746371645b231e2e34611e2c99b464c01aef3c9e0272af8d2e1ed60aa15c83aa2b596b379baea28d56bb4caf331b25510c2
   languageName: node
   linkType: hard
 
@@ -44541,7 +44601,7 @@ __metadata:
     cross-env: "npm:10.1.0"
     eslint: "npm:10.8.1"
     eslint-config-next: "npm:16.4.5"
-    next: "npm:16.4.1"
+    next: "npm:16.4.5"
     next-sitemap: "npm:^4.2.3"
     pagefind: "npm:1.6.0"
     postcss: "npm:8.5.26"
