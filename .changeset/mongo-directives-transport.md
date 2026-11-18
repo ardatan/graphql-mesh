@@ -23,7 +23,7 @@ new stack (like mysql/tuql -> SQL).
 - Op directives: `@mongo__findOne` / `@mongo__find` / `@mongo__count` /
   `@mongo__connection` / `@mongo__pagination` / `@mongo__aggregate` /
   `@mongo__insertOne|insertMany` / `@mongo__updateOne|updateMany` / `@mongo__deleteOne|deleteMany`
-  (SDL client API != directive binders; legacy `@mongo(kind:)` still executed)
+  (SDL client API != directive binders)
 - Client args: typed `filter: *FilterInput` (`and` / `or` / `not` + field ops). Binder stays
   `query: "$args.filter"`. Generated filters expose Mongo op names without `$` (`gte`, `in`, …).
   Transport binders / hand-written JSON also accept `_gte` and native `{ $gte }`
@@ -38,7 +38,7 @@ new stack (like mysql/tuql -> SQL).
 - Mutation payloads include typed `error: MongoError` when selected
 - Nested Mongoose paths emit Embedded / DocumentArray object types + enums; `ref` paths emit
   nested `@mongo__findOne` / `@mongo__find` populate fields
-- Mesh composition rewrites `$args` / `$this` in all `mongo__*` (and legacy `mongo`); `$this`
+- Mesh composition rewrites `$args` / `$this` in all `mongo__*` binders; `$this`
   renames are one-shot (no cascade), `#` comments are quote-safe, and selection rewrites skip
   quoted literals
 - Bulk writes reject vacuous `$or` / `not` of match-nothing filters; required fields reject null
