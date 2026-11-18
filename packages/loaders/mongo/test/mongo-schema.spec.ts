@@ -460,4 +460,36 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toMatch(/insertOneCircle[\s\S]*?kind:\s*"Circle"/);
     expect(sdl).toMatch(/insertManyCircles[\s\S]*?kind:\s*"Circle"/);
   });
+
+  it('honors queryAndMutations false toggles and naming overrides', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('ops', {
+      endpoint: 'mongodb://localhost:27017/test',
+      naming: {
+        findManyField: typeName => `list${typeName}s`,
+        createOneField: typeName => `add${typeName}`,
+      },
+      models: [
+        {
+          name: 'Item',
+          schema: new Schema({ title: String }, { collection: 'items' }),
+          collection: 'items',
+          queryAndMutations: {
+            createMany: false,
+            removeMany: false,
+            aggregate: false,
+          },
+        },
+      ],
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toContain('listItems(');
+    expect(sdl).not.toContain('findItems(');
+    expect(sdl).toContain('addItem(');
+    expect(sdl).not.toContain('insertOneItem(');
+    expect(sdl).toContain('findItemById(');
+    expect(sdl).not.toContain('insertManyItems(');
+    expect(sdl).not.toContain('deleteManyItems(');
+    expect(sdl).not.toContain('aggregateItems(');
+    expect(sdl).toContain('updateOneItem(');
+  });
 });

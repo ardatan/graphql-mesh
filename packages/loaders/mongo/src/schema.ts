@@ -32,6 +32,38 @@ export interface MongoDiscriminatorInfo {
   value: string;
 }
 
+/**
+ * Which Query/Mutation roots to emit for a model. Omit or `true` = emit;
+ * `false` = omit. Keys match compose-mongoose resolver names (GraphQL field
+ * names still come from `naming`, e.g. createOne → `insertOneUser`).
+ */
+export type MongoQueryAndMutations = {
+  findById?: boolean;
+  findByIds?: boolean;
+  findOne?: boolean;
+  findMany?: boolean;
+  count?: boolean;
+  aggregate?: boolean;
+  connection?: boolean;
+  pagination?: boolean;
+  createOne?: boolean;
+  createMany?: boolean;
+  updateById?: boolean;
+  updateOne?: boolean;
+  updateMany?: boolean;
+  removeById?: boolean;
+  removeOne?: boolean;
+  removeMany?: boolean;
+};
+
+function isOpEnabled(
+  ops: MongoQueryAndMutations | undefined,
+  key: keyof MongoQueryAndMutations,
+): boolean {
+  if (!ops) return true;
+  return ops[key] !== false;
+}
+
 type MongoModelConfigBase = {
   /** GraphQL type / root-field stem (`User` → `findUserById`, `insertOneUser`, …). */
   name: string;
@@ -39,6 +71,8 @@ type MongoModelConfigBase = {
   collection?: string;
   /** Field restrictions (`only` / `remove` / `required`). */
   fields?: MongoFieldRestrictions;
+  /** Opt out of individual Query/Mutation roots (`false` omits). */
+  queryAndMutations?: MongoQueryAndMutations;
 };
 
 /**
@@ -66,6 +100,8 @@ export interface LoadMongoSubgraphOpts {
   endpoint: string;
   models: MongoModelConfig[];
   cwd?: string;
+  /** Override default GraphQL type / field naming. */
+  naming?: Partial<MongoNaming>;
   importFn?: ImportFn;
 }
 
@@ -73,7 +109,7 @@ export async function loadGraphQLSchemaFromMongo(
   subgraphName: string,
   opts: LoadMongoSubgraphOpts,
 ): Promise<GraphQLSchema> {
-  const naming: MongoNaming = createDefaultNaming();
+  const naming: MongoNaming = { ...createDefaultNaming(), ...opts.naming };
   const cwd = opts.cwd || meshProcess.cwd();
   const importFn = opts.importFn || defaultImportFn;
   const schemaComposer = new SchemaComposer();
@@ -97,6 +133,7 @@ export async function loadGraphQLSchemaFromMongo(
     schema: MongooseSchema;
     paths: PathMeta[];
     fieldRestrictions?: MongoFieldRestrictions;
+    queryAndMutations?: MongoQueryAndMutations;
     placeholderFields?: string[];
     /** True when mongoose `_id` is BSON String (not ObjectId). */
     stringId?: boolean;
@@ -127,6 +164,7 @@ export async function loadGraphQLSchemaFromMongo(
       schema: model.schema,
       paths,
       fieldRestrictions,
+      queryAndMutations: modelConfig.queryAndMutations,
       placeholderFields,
       stringId,
       discriminator,
@@ -157,6 +195,7 @@ export async function loadGraphQLSchemaFromMongo(
       paths: meta.paths,
       naming,
       fieldRestrictions: meta.fieldRestrictions,
+      queryAndMutations: meta.queryAndMutations,
       omitAggregate: omitAggregateSubgraphWide,
       stringId: meta.stringId,
       discriminator: meta.discriminator,
@@ -743,6 +782,7 @@ function emitModelRootFields(
     paths: PathMeta[];
     naming: MongoNaming;
     fieldRestrictions?: MongoFieldRestrictions;
+    queryAndMutations?: MongoQueryAndMutations;
     /** When true, omit raw aggregate for every model in this subgraph. */
     omitAggregate?: boolean;
     stringId?: boolean;
@@ -750,6 +790,7 @@ function emitModelRootFields(
   },
 ) {
   const { subgraphName, typeName, collection, paths, naming } = opts;
+  const ops = opts.queryAndMutations;
   const disc = opts.discriminator;
   const selection = selectionForPaths(paths, { stringId: opts.stringId });
   const queryTC = schemaComposer.Query;
@@ -771,78 +812,88 @@ function emitModelRootFields(
   });
 
   // db.collection.findOne({ _id }) convenience
-  queryTC.setField(naming.findByIdField(typeName), {
-    type: typeName,
-    args: { id: { type: new GraphQLNonNull(idScalar) } },
-    directives: [
-      mongoDir('mongo__findOne', {
-        query: filterWithDiscriminator(blockArg('_id: $args.id'), disc),
-      }),
-    ],
-  });
+  if (isOpEnabled(ops, 'findById')) {
+    queryTC.setField(naming.findByIdField(typeName), {
+      type: typeName,
+      args: { id: { type: new GraphQLNonNull(idScalar) } },
+      directives: [
+        mongoDir('mongo__findOne', {
+          query: filterWithDiscriminator(blockArg('_id: $args.id'), disc),
+        }),
+      ],
+    });
+  }
 
-  queryTC.setField(naming.findByIdsField(typeName), {
-    type: `[${typeName}!]!`,
-    args: {
-      ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(idScalar))) },
-      limit: { type: GraphQLInt, defaultValue: 100 },
-      sort: { type: sortArgType },
-    },
-    directives: [
-      mongoDir('mongo__find', {
-        query: filterWithDiscriminator(blockArg('_id: $args.ids'), disc),
-        limit: '$args.limit',
-        sort: '$args.sort',
-      }),
-    ],
-  });
+  if (isOpEnabled(ops, 'findByIds')) {
+    queryTC.setField(naming.findByIdsField(typeName), {
+      type: `[${typeName}!]!`,
+      args: {
+        ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(idScalar))) },
+        limit: { type: GraphQLInt, defaultValue: 100 },
+        sort: { type: sortArgType },
+      },
+      directives: [
+        mongoDir('mongo__find', {
+          query: filterWithDiscriminator(blockArg('_id: $args.ids'), disc),
+          limit: '$args.limit',
+          sort: '$args.sort',
+        }),
+      ],
+    });
+  }
 
   // db.collection.find(filter, projection via selection, { sort, limit, skip })
-  queryTC.setField(naming.findManyField(typeName), {
-    type: `[${typeName}!]!`,
-    args: {
-      filter: { type: filterType },
-      sort: { type: sortArgType },
-      limit: { type: GraphQLInt, defaultValue: 100 },
-      skip: { type: GraphQLInt },
-    },
-    directives: [
-      mongoDir('mongo__find', {
-        query: argsFilter,
-        sort: '$args.sort',
-        limit: '$args.limit',
-        skip: '$args.skip',
-      }),
-    ],
-  });
+  if (isOpEnabled(ops, 'findMany')) {
+    queryTC.setField(naming.findManyField(typeName), {
+      type: `[${typeName}!]!`,
+      args: {
+        filter: { type: filterType },
+        sort: { type: sortArgType },
+        limit: { type: GraphQLInt, defaultValue: 100 },
+        skip: { type: GraphQLInt },
+      },
+      directives: [
+        mongoDir('mongo__find', {
+          query: argsFilter,
+          sort: '$args.sort',
+          limit: '$args.limit',
+          skip: '$args.skip',
+        }),
+      ],
+    });
+  }
 
   // db.collection.findOne(filter, projection)
-  queryTC.setField(naming.findOneField(typeName), {
-    type: typeName,
-    args: {
-      filter: { type: filterType },
-      sort: { type: sortArgType },
-      skip: { type: GraphQLInt },
-    },
-    directives: [
-      mongoDir('mongo__findOne', {
-        query: argsFilter,
-        sort: '$args.sort',
-        skip: '$args.skip',
-      }),
-    ],
-  });
+  if (isOpEnabled(ops, 'findOne')) {
+    queryTC.setField(naming.findOneField(typeName), {
+      type: typeName,
+      args: {
+        filter: { type: filterType },
+        sort: { type: sortArgType },
+        skip: { type: GraphQLInt },
+      },
+      directives: [
+        mongoDir('mongo__findOne', {
+          query: argsFilter,
+          sort: '$args.sort',
+          skip: '$args.skip',
+        }),
+      ],
+    });
+  }
 
   // db.collection.countDocuments(filter)
-  queryTC.setField(naming.countField(typeName), {
-    type: new GraphQLNonNull(GraphQLInt),
-    args: { filter: { type: filterType } },
-    directives: [mongoDir('mongo__count', { query: argsFilter, selection: blockArg('$') })],
-  });
+  if (isOpEnabled(ops, 'count')) {
+    queryTC.setField(naming.countField(typeName), {
+      type: new GraphQLNonNull(GraphQLInt),
+      args: { filter: { type: filterType } },
+      directives: [mongoDir('mongo__count', { query: argsFilter, selection: blockArg('$') })],
+    });
+  }
 
   // Raw aggregate can `$project` / `$unionWith` into restricted collections — omit
   // subgraph-wide when any model has fields.only/remove.
-  if (!opts.omitAggregate) {
+  if (!opts.omitAggregate && isOpEnabled(ops, 'aggregate')) {
     queryTC.setField(naming.aggregateField(typeName), {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLJSON))),
       args: {
@@ -859,21 +910,22 @@ function emitModelRootFields(
     });
   }
 
-  queryTC.setField(naming.connectionField(typeName), {
-    type: naming.connectionType(typeName),
-    args: {
-      filter: { type: filterType },
-      sort: { type: sortArgType },
-      first: { type: GraphQLInt },
-      after: { type: GraphQLString },
-    },
-    directives: [
-      mongoDir('mongo__connection', {
-        query: argsFilter,
-        sort: '$args.sort',
-        first: '$args.first',
-        after: '$args.after',
-        selection: blockArg(`
+  if (isOpEnabled(ops, 'connection')) {
+    queryTC.setField(naming.connectionField(typeName), {
+      type: naming.connectionType(typeName),
+      args: {
+        filter: { type: filterType },
+        sort: { type: sortArgType },
+        first: { type: GraphQLInt },
+        after: { type: GraphQLString },
+      },
+      directives: [
+        mongoDir('mongo__connection', {
+          query: argsFilter,
+          sort: '$args.sort',
+          first: '$args.first',
+          after: '$args.after',
+          selection: blockArg(`
 nodes {
 ${indent(selection.replace(/^\n/, ''), 1)}
 }
@@ -891,25 +943,27 @@ pageInfo {
 }
 totalCount: $totalCount
 `),
-      }),
-    ],
-  });
+        }),
+      ],
+    });
+  }
 
-  queryTC.setField(naming.paginationField(typeName), {
-    type: naming.paginationType(typeName),
-    args: {
-      filter: { type: filterType },
-      sort: { type: sortArgType },
-      page: { type: GraphQLInt },
-      perPage: { type: GraphQLInt, defaultValue: 20 },
-    },
-    directives: [
-      mongoDir('mongo__pagination', {
-        query: argsFilter,
-        sort: '$args.sort',
-        page: '$args.page',
-        perPage: '$args.perPage',
-        selection: blockArg(`
+  if (isOpEnabled(ops, 'pagination')) {
+    queryTC.setField(naming.paginationField(typeName), {
+      type: naming.paginationType(typeName),
+      args: {
+        filter: { type: filterType },
+        sort: { type: sortArgType },
+        page: { type: GraphQLInt },
+        perPage: { type: GraphQLInt, defaultValue: 20 },
+      },
+      directives: [
+        mongoDir('mongo__pagination', {
+          query: argsFilter,
+          sort: '$args.sort',
+          page: '$args.page',
+          perPage: '$args.perPage',
+          selection: blockArg(`
 count: $count
 items {
 ${indent(selection.replace(/^\n/, ''), 1)}
@@ -923,9 +977,10 @@ pageInfo {
   hasPreviousPage: $hasPreviousPage
 }
 `),
-      }),
-    ],
-  });
+        }),
+      ],
+    });
+  }
 
   const documentFieldBinds = paths
     .filter(p => p.name !== '_id' && p.name !== '__v' && !p.name.includes('.'))
@@ -952,124 +1007,140 @@ recordId: $_id
 `);
 
   // db.collection.insertOne(document)
-  mutationTC.setField(naming.createOneField(typeName), {
-    type: naming.payloadType(typeName),
-    args: { document: { type: `${documentInput}!` } },
-    directives: [
-      mongoDir('mongo__insertOne', { set: documentSetBlock, selection: payloadSelection }),
-    ],
-  });
+  if (isOpEnabled(ops, 'createOne')) {
+    mutationTC.setField(naming.createOneField(typeName), {
+      type: naming.payloadType(typeName),
+      args: { document: { type: `${documentInput}!` } },
+      directives: [
+        mongoDir('mongo__insertOne', { set: documentSetBlock, selection: payloadSelection }),
+      ],
+    });
+  }
 
   // db.collection.insertMany(documents)
-  const insertManySetLines = ['documents: $args.documents'];
-  if (disc) {
-    // Sibling literals are stamped onto each document by the transport.
-    insertManySetLines.push(`${disc.key}: "${escapeMappingLiteral(disc.value)}"`);
-  }
-  mutationTC.setField(naming.createManyField(typeName), {
-    type: naming.payloadType(typeName),
-    args: { documents: { type: `[${documentInput}!]!` } },
-    directives: [
-      mongoDir('mongo__insertMany', {
-        set: blockArg(insertManySetLines.join('\n')),
-        selection: blockArg(`
+  if (isOpEnabled(ops, 'createMany')) {
+    const insertManySetLines = ['documents: $args.documents'];
+    if (disc) {
+      // Sibling literals are stamped onto each document by the transport.
+      insertManySetLines.push(`${disc.key}: "${escapeMappingLiteral(disc.value)}"`);
+    }
+    mutationTC.setField(naming.createManyField(typeName), {
+      type: naming.payloadType(typeName),
+      args: { documents: { type: `[${documentInput}!]!` } },
+      directives: [
+        mongoDir('mongo__insertMany', {
+          set: blockArg(insertManySetLines.join('\n')),
+          selection: blockArg(`
 records {
 ${indent(selection.replace(/^\n/, ''), 1)}
 }
 recordIds: $recordIds
 createdCount: $createdCount
 `),
-      }),
-    ],
-  });
+        }),
+      ],
+    });
+  }
 
   const updateType = naming.updateInput(typeName);
 
   const idArgScalar = opts.stringId ? GraphQLString : GraphQLObjectID;
 
-  mutationTC.setField(naming.updateByIdField(typeName), {
-    type: naming.payloadType(typeName),
-    args: {
-      id: { type: new GraphQLNonNull(idArgScalar) },
-      // Typed update ops without `$` (`set` / `inc` / … → `$set` / `$inc`).
-      update: { type: `${updateType}!` },
-    },
-    directives: [
-      mongoDir('mongo__updateOne', {
-        query: filterWithDiscriminator(blockArg('_id: $args.id'), disc),
-        set: '$args.update',
-        selection: payloadSelection,
-      }),
-    ],
-  });
+  if (isOpEnabled(ops, 'updateById')) {
+    mutationTC.setField(naming.updateByIdField(typeName), {
+      type: naming.payloadType(typeName),
+      args: {
+        id: { type: new GraphQLNonNull(idArgScalar) },
+        // Typed update ops without `$` (`set` / `inc` / … → `$set` / `$inc`).
+        update: { type: `${updateType}!` },
+      },
+      directives: [
+        mongoDir('mongo__updateOne', {
+          query: filterWithDiscriminator(blockArg('_id: $args.id'), disc),
+          set: '$args.update',
+          selection: payloadSelection,
+        }),
+      ],
+    });
+  }
 
   // db.collection.updateOne(filter, update)
-  mutationTC.setField(naming.updateOneField(typeName), {
-    type: naming.payloadType(typeName),
-    args: {
-      filter: { type: `${filterType}!` },
-      update: { type: `${updateType}!` },
-    },
-    directives: [
-      mongoDir('mongo__updateOne', {
-        query: argsFilter,
-        set: '$args.update',
-        selection: payloadSelection,
-      }),
-    ],
-  });
+  if (isOpEnabled(ops, 'updateOne')) {
+    mutationTC.setField(naming.updateOneField(typeName), {
+      type: naming.payloadType(typeName),
+      args: {
+        filter: { type: `${filterType}!` },
+        update: { type: `${updateType}!` },
+      },
+      directives: [
+        mongoDir('mongo__updateOne', {
+          query: argsFilter,
+          set: '$args.update',
+          selection: payloadSelection,
+        }),
+      ],
+    });
+  }
 
-  mutationTC.setField(naming.updateManyField(typeName), {
-    type: naming.payloadType(typeName),
-    args: {
-      filter: { type: `${filterType}!` },
-      update: { type: `${updateType}!` },
-    },
-    directives: [
-      mongoDir('mongo__updateMany', {
-        query: argsFilter,
-        set: '$args.update',
-        selection: blockArg(`
+  if (isOpEnabled(ops, 'updateMany')) {
+    mutationTC.setField(naming.updateManyField(typeName), {
+      type: naming.payloadType(typeName),
+      args: {
+        filter: { type: `${filterType}!` },
+        update: { type: `${updateType}!` },
+      },
+      directives: [
+        mongoDir('mongo__updateMany', {
+          query: argsFilter,
+          set: '$args.update',
+          selection: blockArg(`
 modifiedCount: $modifiedCount
 matchedCount: $matchedCount
 `),
-      }),
-    ],
-  });
+        }),
+      ],
+    });
+  }
 
-  mutationTC.setField(naming.removeByIdField(typeName), {
-    type: naming.payloadType(typeName),
-    args: { id: { type: new GraphQLNonNull(idArgScalar) } },
-    directives: [
-      mongoDir('mongo__deleteOne', {
-        query: filterWithDiscriminator(blockArg('_id: $args.id'), disc),
-        selection: payloadSelection,
-      }),
-    ],
-  });
+  if (isOpEnabled(ops, 'removeById')) {
+    mutationTC.setField(naming.removeByIdField(typeName), {
+      type: naming.payloadType(typeName),
+      args: { id: { type: new GraphQLNonNull(idArgScalar) } },
+      directives: [
+        mongoDir('mongo__deleteOne', {
+          query: filterWithDiscriminator(blockArg('_id: $args.id'), disc),
+          selection: payloadSelection,
+        }),
+      ],
+    });
+  }
 
   // db.collection.deleteOne(filter)
-  mutationTC.setField(naming.removeOneField(typeName), {
-    type: naming.payloadType(typeName),
-    args: { filter: { type: `${filterType}!` } },
-    directives: [
-      mongoDir('mongo__deleteOne', {
-        query: argsFilter,
-        selection: payloadSelection,
-      }),
-    ],
-  });
+  if (isOpEnabled(ops, 'removeOne')) {
+    mutationTC.setField(naming.removeOneField(typeName), {
+      type: naming.payloadType(typeName),
+      args: { filter: { type: `${filterType}!` } },
+      directives: [
+        mongoDir('mongo__deleteOne', {
+          query: argsFilter,
+          selection: payloadSelection,
+        }),
+      ],
+    });
+  }
 
-  mutationTC.setField(naming.removeManyField(typeName), {
-    type: naming.payloadType(typeName),
-    args: { filter: { type: `${filterType}!` } },
-    directives: [
-      mongoDir('mongo__deleteMany', {
-        query: argsFilter,
-        selection: blockArg('deletedCount: $deletedCount'),
-      }),
-    ],
-  });
+  if (isOpEnabled(ops, 'removeMany')) {
+    mutationTC.setField(naming.removeManyField(typeName), {
+      type: naming.payloadType(typeName),
+      args: { filter: { type: `${filterType}!` } },
+      directives: [
+        mongoDir('mongo__deleteMany', {
+          query: argsFilter,
+          selection: blockArg('deletedCount: $deletedCount'),
+        }),
+      ],
+    });
+  }
 }
 
 function emitRefFields(

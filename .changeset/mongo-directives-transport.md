@@ -46,6 +46,9 @@ new stack (like mysql/tuql -> SQL).
 - Connection cursors still reject array-backed sort keys (correct multikey keyset needs `$expr`/`$min`/`$max`, not multikey `$gt`)
 - `MongoModelConfig`: exactly one of `model` | `schema` | `path`; flat `fields` (only/remove/required);
   discriminator subtypes auto-read from `schema.discriminatorMapping`
+- `queryAndMutations`: opt out of individual Query/Mutation roots (`false` omits; keys match
+  compose-mongoose resolver names). Legacy YAML `options.resolvers` maps here.
+- `naming?: Partial<MongoNaming>` on `loadMongoSubgraph` / `loadGraphQLSchemaFromMongo`
 
 ## Consumer migration
 
