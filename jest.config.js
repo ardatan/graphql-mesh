@@ -78,6 +78,7 @@ const ESM_PACKAGES = [
   'auto-bind',
   'commander',
   '@commander-js/extra-typings',
+  'open'
 ];
 
 /** @type {import('jest').Config} */
