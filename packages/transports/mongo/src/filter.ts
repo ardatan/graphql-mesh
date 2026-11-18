@@ -104,7 +104,7 @@ export function filterFromMapping(
 
 /**
  * Merge a filter fragment into `target`. Overlapping field keys become `$and`
- * so fixed binders (e.g. `gender: "female"`) are not overwritten by `$args.query`.
+ * so fixed binders (e.g. `gender: "female"`) are not overwritten by `$args.filter`.
  */
 function mergeFilterFragment(
   target: Record<string, unknown>,

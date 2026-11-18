@@ -88,11 +88,11 @@ type MongoError implements ErrorInterface {
 }
 
 type Mutation {
-  deleteManyUsers(query: UserQueryInput!): UserPayload @mongo__deleteMany(subgraph: "Mongoose", collection: "user_users", selection: """
+  deleteManyUsers(filter: UserFilterInput!): UserPayload @mongo__deleteMany(subgraph: "Mongoose", collection: "user_users", selection: """
   
     deletedCount: $deletedCount
-  """, query: "$args.query")
-  deleteOneUser(query: UserQueryInput!): UserPayload @mongo__deleteOne(subgraph: "Mongoose", collection: "user_users", selection: """
+  """, query: "$args.filter")
+  deleteOneUser(filter: UserFilterInput!): UserPayload @mongo__deleteOne(subgraph: "Mongoose", collection: "user_users", selection: """
     record {
         id: _id
         name: name
@@ -105,7 +105,7 @@ type Mutation {
         contacts: contacts
     }
     recordId: $_id
-  """, query: "$args.query")
+  """, query: "$args.filter")
   deleteUserById(id: ObjectID!): UserPayload @mongo__deleteOne(subgraph: "Mongoose", collection: "user_users", selection: """
     record {
         id: _id
@@ -164,11 +164,11 @@ type Mutation {
     salaryDecimal: $args.document.salaryDecimal
     contacts: $args.document.contacts
   """)
-  updateManyUsers(query: UserQueryInput!, update: UserUpdateInput!): UserPayload @mongo__updateMany(subgraph: "Mongoose", collection: "user_users", selection: """
+  updateManyUsers(filter: UserFilterInput!, update: UserUpdateInput!): UserPayload @mongo__updateMany(subgraph: "Mongoose", collection: "user_users", selection: """
     modifiedCount: $modifiedCount
     matchedCount: $matchedCount
-  """, query: "$args.query", set: "$args.update")
-  updateOneUser(query: UserQueryInput!, update: UserUpdateInput!): UserPayload @mongo__updateOne(subgraph: "Mongoose", collection: "user_users", selection: """
+  """, query: "$args.filter", set: "$args.update")
+  updateOneUser(filter: UserFilterInput!, update: UserUpdateInput!): UserPayload @mongo__updateOne(subgraph: "Mongoose", collection: "user_users", selection: """
     record {
         id: _id
         name: name
@@ -181,7 +181,7 @@ type Mutation {
         contacts: contacts
     }
     recordId: $_id
-  """, query: "$args.query", set: "$args.update")
+  """, query: "$args.filter", set: "$args.update")
   updateUserById(id: ObjectID!, update: UserUpdateInput!): UserPayload @mongo__updateOne(subgraph: "Mongoose", collection: "user_users", selection: """
     record {
         id: _id
@@ -235,15 +235,15 @@ type PaginationInfo {
 }
 
 type Query {
-  aggregateUsers(pipeline: JSON, query: UserQueryInput): [JSON!]! @mongo__aggregate(subgraph: "Mongoose", collection: "user_users", selection: """
+  aggregateUsers(filter: UserFilterInput, pipeline: JSON): [JSON!]! @mongo__aggregate(subgraph: "Mongoose", collection: "user_users", selection: """
   
     $
-  """, query: "$args.query", pipeline: "$args.pipeline")
-  countDocumentsUsers(query: UserQueryInput): Int! @mongo__count(subgraph: "Mongoose", collection: "user_users", selection: """
+  """, query: "$args.filter", pipeline: "$args.pipeline")
+  countDocumentsUsers(filter: UserFilterInput): Int! @mongo__count(subgraph: "Mongoose", collection: "user_users", selection: """
   
     $
-  """, query: "$args.query")
-  findOneUser(query: UserQueryInput, skip: Int, sort: [UserSort!]): User @mongo__findOne(subgraph: "Mongoose", collection: "user_users", selection: """
+  """, query: "$args.filter")
+  findOneUser(filter: UserFilterInput, skip: Int, sort: [UserSort!]): User @mongo__findOne(subgraph: "Mongoose", collection: "user_users", selection: """
     id: _id
     name: name
     age: age
@@ -253,7 +253,7 @@ type Query {
     someMixed: someMixed
     salaryDecimal: salaryDecimal
     contacts: contacts
-  """, query: "$args.query", sort: "$args.sort", skip: "$args.skip")
+  """, query: "$args.filter", sort: "$args.sort", skip: "$args.skip")
   findUserById(id: ObjectID!): User @mongo__findOne(subgraph: "Mongoose", collection: "user_users", selection: """
     id: _id
     name: name
@@ -268,7 +268,7 @@ type Query {
   
     _id: $args.id
   """)
-  findUsers(limit: Int = 100, query: UserQueryInput, skip: Int, sort: [UserSort!]): [User!]! @mongo__find(subgraph: "Mongoose", collection: "user_users", selection: """
+  findUsers(filter: UserFilterInput, limit: Int = 100, skip: Int, sort: [UserSort!]): [User!]! @mongo__find(subgraph: "Mongoose", collection: "user_users", selection: """
     id: _id
     name: name
     age: age
@@ -278,7 +278,7 @@ type Query {
     someMixed: someMixed
     salaryDecimal: salaryDecimal
     contacts: contacts
-  """, query: "$args.query", sort: "$args.sort", limit: "$args.limit", skip: "$args.skip")
+  """, query: "$args.filter", sort: "$args.sort", limit: "$args.limit", skip: "$args.skip")
   findUsersByIds(ids: [ObjectID!]!, limit: Int = 100, sort: [UserSort!]): [User!]! @mongo__find(subgraph: "Mongoose", collection: "user_users", selection: """
     id: _id
     name: name
@@ -293,7 +293,7 @@ type Query {
   
     _id: $args.ids
   """, limit: "$args.limit", sort: "$args.sort")
-  findUsersConnection(after: String, first: Int, query: UserQueryInput, sort: [UserSort!]): UserConnection @mongo__connection(subgraph: "Mongoose", collection: "user_users", selection: """
+  findUsersConnection(after: String, filter: UserFilterInput, first: Int, sort: [UserSort!]): UserConnection @mongo__connection(subgraph: "Mongoose", collection: "user_users", selection: """
     nodes {
         id: _id
         name: name
@@ -326,8 +326,8 @@ type Query {
       endCursor: $endCursor
     }
     totalCount: $totalCount
-  """, query: "$args.query", sort: "$args.sort", first: "$args.first", after: "$args.after")
-  findUsersPagination(page: Int, perPage: Int = 20, query: UserQueryInput, sort: [UserSort!]): UserPagination @mongo__pagination(subgraph: "Mongoose", collection: "user_users", selection: """
+  """, query: "$args.filter", sort: "$args.sort", first: "$args.first", after: "$args.after")
+  findUsersPagination(filter: UserFilterInput, page: Int, perPage: Int = 20, sort: [UserSort!]): UserPagination @mongo__pagination(subgraph: "Mongoose", collection: "user_users", selection: """
     count: $count
     items {
         id: _id
@@ -348,7 +348,7 @@ type Query {
       hasNextPage: $hasNextPage
       hasPreviousPage: $hasPreviousPage
     }
-  """, query: "$args.query", sort: "$args.sort", page: "$args.page", perPage: "$args.perPage")
+  """, query: "$args.filter", sort: "$args.sort", page: "$args.page", perPage: "$args.perPage")
 }
 
 input StringQueryOperators {
@@ -398,19 +398,19 @@ type UserAddress {
   street: String
 }
 
+input UserAddressFilterInput {
+  _id: ObjectIDQueryOperators
+  and: [UserAddressFilterInput!]
+  geo: [Float]
+  not: UserAddressFilterInput
+  or: [UserAddressFilterInput!]
+  street: StringQueryOperators
+}
+
 input UserAddressInput {
   _id: ObjectID
   geo: [Float]
   street: String
-}
-
-input UserAddressQueryInput {
-  _id: ObjectIDQueryOperators
-  and: [UserAddressQueryInput!]
-  geo: [Float]
-  not: UserAddressQueryInput
-  or: [UserAddressQueryInput!]
-  street: StringQueryOperators
 }
 
 type UserConnection {
@@ -425,16 +425,16 @@ type UserContacts {
   phones: [String]
 }
 
-input UserContactsInput {
-  email: String
+input UserContactsFilterInput {
+  and: [UserContactsFilterInput!]
+  email: StringQueryOperators
+  not: UserContactsFilterInput
+  or: [UserContactsFilterInput!]
   phones: [String]
 }
 
-input UserContactsQueryInput {
-  and: [UserContactsQueryInput!]
-  email: StringQueryOperators
-  not: UserContactsQueryInput
-  or: [UserContactsQueryInput!]
+input UserContactsInput {
+  email: String
   phones: [String]
 }
 
@@ -455,22 +455,38 @@ type UserEdge {
   node: User!
 }
 
+input UserFilterInput {
+  address: UserAddressFilterInput
+  age: FloatQueryOperators
+  and: [UserFilterInput!]
+  contacts: UserContactsFilterInput
+  gender: StringQueryOperators
+  id: ObjectIDQueryOperators
+  languages: [UserLanguagesFilterInput]
+  name: StringQueryOperators
+  not: UserFilterInput
+  or: [UserFilterInput!]
+  salaryDecimal: Decimal128QueryOperators
+  """Some dynamic data"""
+  someMixed: JSON
+}
+
 type UserLanguages {
   language: String
   skill: EnumUserLanguagesSkill
 }
 
+input UserLanguagesFilterInput {
+  and: [UserLanguagesFilterInput!]
+  language: StringQueryOperators
+  not: UserLanguagesFilterInput
+  or: [UserLanguagesFilterInput!]
+  skill: StringQueryOperators
+}
+
 input UserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
-}
-
-input UserLanguagesQueryInput {
-  and: [UserLanguagesQueryInput!]
-  language: StringQueryOperators
-  not: UserLanguagesQueryInput
-  or: [UserLanguagesQueryInput!]
-  skill: StringQueryOperators
 }
 
 input UserNumericUpdateInput {
@@ -494,22 +510,6 @@ type UserPayload {
   recordId: ObjectID
   recordIds: [ObjectID!]
   records: [User!]
-}
-
-input UserQueryInput {
-  address: UserAddressQueryInput
-  age: FloatQueryOperators
-  and: [UserQueryInput!]
-  contacts: UserContactsQueryInput
-  gender: StringQueryOperators
-  id: ObjectIDQueryOperators
-  languages: [UserLanguagesQueryInput]
-  name: StringQueryOperators
-  not: UserQueryInput
-  or: [UserQueryInput!]
-  salaryDecimal: Decimal128QueryOperators
-  """Some dynamic data"""
-  someMixed: JSON
 }
 
 input UserSetInput {

@@ -56,32 +56,33 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toContain('input ObjectIDQueryOperators');
     expect(sdl).toContain('id: ObjectID!');
     expect(sdl).not.toContain('input IDQueryOperators');
-    expect(sdl).toContain('findUsers(query:');
-    expect(sdl).toContain('findOneUser(query:');
-    expect(sdl).toContain('countDocumentsUsers(query:');
+    expect(sdl).toContain('findUsers(filter:');
+    expect(sdl).toContain('findOneUser(filter:');
+    expect(sdl).toContain('countDocumentsUsers(filter:');
     expect(sdl).toContain('insertOneUser(document:');
-    expect(sdl).toContain('updateOneUser(query:');
+    expect(sdl).toContain('updateOneUser(filter:');
     expect(sdl).toContain('update: UserUpdateInput!');
     expect(sdl).toContain('input UserUpdateInput');
     expect(sdl).toContain('set: UserSetInput');
     expect(sdl).toContain('input UserSetInput');
     expect(sdl).toContain('inc: UserNumericUpdateInput');
     expect(sdl).not.toContain('update: JSON!');
-    expect(sdl).toContain('deleteOneUser(query:');
-    expect(sdl).toContain('input UserQueryInput');
+    expect(sdl).toContain('deleteOneUser(filter:');
+    expect(sdl).toContain('input UserFilterInput');
     expect(sdl).toContain('enum UserSort');
     expect(sdl).toContain('id_asc');
     expect(sdl).toContain('age_desc');
-    expect(sdl).toContain('and: [UserQueryInput!]');
-    expect(sdl).not.toContain('AND: [UserQueryInput!]');
+    expect(sdl).toContain('and: [UserFilterInput!]');
+    expect(sdl).not.toContain('AND: [UserFilterInput!]');
     expect(sdl).toContain('input FloatQueryOperators');
     expect(sdl).toContain('gte: Float');
-    expect(sdl).toContain('$args.query');
+    expect(sdl).toContain('$args.filter');
     expect(sdl).toContain('$args.sort');
     expect(sdl).toContain('enum EnumUserGender');
     expect(sdl).toContain('type UserAddress');
     expect(sdl).toContain('languages: [UserLanguages]');
     expect(sdl).toContain('Some dynamic data');
+    expect(sdl).not.toContain('query: UserQueryInput');
     expect(sdl).not.toContain('where: UserWhereInput');
     expect(sdl).not.toContain('kind: FIND_ONE');
     expect(sdl).not.toContain('$args.where');
@@ -104,11 +105,9 @@ describe('@omnigraph/mongo schema emit', () => {
             { collection: 'accounts' },
           ),
           collection: 'accounts',
-          options: {
-            fields: {
-              required: ['name', 'status'],
-              remove: ['passwordHash'],
-            },
+          fields: {
+            required: ['name', 'status'],
+            remove: ['passwordHash'],
           },
         },
       ],
@@ -186,7 +185,7 @@ describe('@omnigraph/mongo schema emit', () => {
             { collection: 'posts' },
           ),
           collection: 'posts',
-          options: { fields: { required: ['title'] } },
+          fields: { required: ['title'] },
         },
         {
           name: 'Note',
@@ -263,13 +262,13 @@ describe('@omnigraph/mongo schema emit', () => {
             name: 'TitleView',
             schema: new Schema({ title: String, nickname: String }, { collection: 'accounts' }),
             collection: 'accounts',
-            options: { fields: { required: ['title'] } },
+            fields: { required: ['title'] },
           },
           {
             name: 'NickView',
             schema: new Schema({ title: String, nickname: String }, { collection: 'accounts' }),
             collection: 'accounts',
-            options: { fields: { required: ['nickname'] } },
+            fields: { required: ['nickname'] },
           },
         ],
       }),
@@ -309,7 +308,7 @@ describe('@omnigraph/mongo schema emit', () => {
           name: 'Account',
           schema: new Schema({ name: String, passwordHash: String }, { collection: 'accounts' }),
           collection: 'accounts',
-          options: { fields: { remove: ['passwordHash'] } },
+          fields: { remove: ['passwordHash'] },
         },
         {
           name: 'Note',
@@ -355,7 +354,7 @@ describe('@omnigraph/mongo schema emit', () => {
           name: 'Profile',
           schema: new Schema({ name: String, nickname: String }, { collection: 'profiles' }),
           collection: 'profiles',
-          options: { fields: { required: ['name'] } },
+          fields: { required: ['name'] },
         },
       ],
     });
@@ -445,7 +444,6 @@ describe('@omnigraph/mongo schema emit', () => {
           name: 'Circle',
           schema: base,
           collection: 'shapes',
-          discriminator: { key: 'kind', value: 'Circle' },
         },
       ],
     });

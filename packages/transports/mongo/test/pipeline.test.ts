@@ -82,7 +82,7 @@ describe('AGGREGATE pipeline', () => {
     const result = await execResult(executor, {
       document: parse(`
         query Agg($pipeline: JSON) {
-          aggregateUsers(query: { gender: { eq: "female" } }, pipeline: $pipeline)
+          aggregateUsers(filter: { gender: { eq: "female" } }, pipeline: $pipeline)
         }
       `),
       variables: {
@@ -98,16 +98,16 @@ describe('AGGREGATE pipeline', () => {
     await execResult(executor, {
       document: parse(`
         query Agg($pipeline: JSON) {
-          aggregateUsers(query: { gender: { eq: "female" } }, pipeline: $pipeline)
+          aggregateUsers(filter: { gender: { eq: "female" } }, pipeline: $pipeline)
         }
       `),
       variables: {
-        pipeline: [{ $match: '$args.query' }, { $group: { _id: '$gender', count: { $sum: 1 } } }],
+        pipeline: [{ $match: '$args.filter' }, { $group: { _id: '$gender', count: { $sum: 1 } } }],
       },
     });
     expect(lastPipeline[0]).toEqual({
-      $match: buildMongoFilter(`$args.query`, {
-        args: { query: { gender: { eq: 'female' } } },
+      $match: buildMongoFilter(`$args.filter`, {
+        args: { filter: { gender: { eq: 'female' } } },
       }),
     });
   });

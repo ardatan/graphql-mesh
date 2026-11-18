@@ -104,14 +104,14 @@ describe('getMongoExecutor FIND_* + writes', () => {
     });
 
     const many = await execResult(executor, {
-      document: parse(`query { findUsers(query: { name: { eq: "Alan" } }) { id name } }`),
+      document: parse(`query { findUsers(filter: { name: { eq: "Alan" } }) { id name } }`),
     });
     expect(many.data).toEqual({
       findUsers: [{ id: alanId, name: 'Alan' }],
     });
 
     const count = await execResult(executor, {
-      document: parse(`query { countDocumentsUsers(query: { gender: { eq: "female" } }) }`),
+      document: parse(`query { countDocumentsUsers(filter: { gender: { eq: "female" } }) }`),
     });
     expect(count.data).toEqual({ countDocumentsUsers: 1 });
 
@@ -185,27 +185,27 @@ describe('getMongoExecutor FIND_* + writes', () => {
 
     await execResult(executor, {
       document: parse(
-        `mutation { updateManyUsers(query: ${nestedEmpty}, update: { set: { name: "x" } }) { matchedCount } }`,
+        `mutation { updateManyUsers(filter: ${nestedEmpty}, update: { set: { name: "x" } }) { matchedCount } }`,
       ),
     });
     expect(lastUpdateFilter).toEqual({ $and: [{ $nor: [{}] }] });
 
     await execResult(executor, {
-      document: parse(`mutation { deleteManyUsers(query: ${nestedEmpty}) { deletedCount } }`),
+      document: parse(`mutation { deleteManyUsers(filter: ${nestedEmpty}) { deletedCount } }`),
     });
     expect(lastDeleteFilter).toEqual({ $and: [{ $nor: [{}] }] });
 
     // Vacuous `$or` branch is match-all — bulk guard must neutralize (not prune→Ada-only).
     const vacuousOr = '{ or: [{ and: [] }, { name: { eq: "Ada" } }] }';
     await execResult(executor, {
-      document: parse(`mutation { deleteManyUsers(query: ${vacuousOr}) { deletedCount } }`),
+      document: parse(`mutation { deleteManyUsers(filter: ${vacuousOr}) { deletedCount } }`),
     });
     expect(lastDeleteFilter).toEqual({ $nor: [{}] });
 
     // `not` of vacuous OR must stay match-nothing (pruning would delete non-Ada rows).
     const notVacuousOr = '{ not: { or: [{}, { name: { eq: "Ada" } }] } }';
     await execResult(executor, {
-      document: parse(`mutation { deleteManyUsers(query: ${notVacuousOr}) { deletedCount } }`),
+      document: parse(`mutation { deleteManyUsers(filter: ${notVacuousOr}) { deletedCount } }`),
     });
     // Shape is `$nor: [{ $or: [{}, { name }] }]` — universally matching inner OR → match-nothing.
     expect(lastDeleteFilter).toEqual({
@@ -217,7 +217,7 @@ describe('getMongoExecutor FIND_* + writes', () => {
 
     const notNestedEmpty = '{ not: { and: [{ and: [] }] } }';
     await execResult(executor, {
-      document: parse(`mutation { deleteManyUsers(query: ${notNestedEmpty}) { deletedCount } }`),
+      document: parse(`mutation { deleteManyUsers(filter: ${notNestedEmpty}) { deletedCount } }`),
     });
     expect(lastDeleteFilter).toEqual({ $nor: [{}] });
   });
@@ -422,7 +422,7 @@ describe('getMongoExecutor FIND_* + writes', () => {
           name: 'User',
           schema: userSchema,
           collection: 'user_users',
-          options: { fields: { required: ['title'] } },
+          fields: { required: ['title'] },
         },
       ],
     });
@@ -477,7 +477,7 @@ describe('getMongoExecutor FIND_* + writes', () => {
     const executor = getMongoExecutor({ subgraph: schema, client });
     const result = await execResult(executor, {
       document: parse(
-        `mutation { updateOneUser(query: { title: { eq: "x" } }, update: { set: { title: null } }) { recordId } }`,
+        `mutation { updateOneUser(filter: { title: { eq: "x" } }, update: { set: { title: null } }) { recordId } }`,
       ),
     });
     expect(result.errors).toBeUndefined();

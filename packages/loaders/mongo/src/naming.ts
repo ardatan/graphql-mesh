@@ -2,16 +2,17 @@
  * Default GraphQL naming aligned with MongoDB collection methods
  * (`findOne` / `find` / `insertOne` / `updateMany` / …).
  *
- * Client args mirror shell/driver: `query` / `sort` / `document` / `update`.
- * Query operators use Mongo names without `$` (`gte`, `in`, …) for GraphQL
- * legality + type safety; transport maps them to `$gte` / `$in`.
+ * Client filter args follow compose-mongoose style (`filter: *FilterInput`);
+ * other args mirror the driver (`sort` / `document` / `update`). Field operators
+ * use Mongo names without `$` (`gte`, `in`, …); transport maps them to `$gte` /
+ * `$in`.
  *
  * @see https://www.mongodb.com/docs/manual/reference/method/
  * @see https://www.mongodb.com/docs/manual/reference/mql/query-predicates/
  */
 export interface MongoNaming {
   typeName(modelName: string): string;
-  queryInput(typeName: string): string;
+  filterInput(typeName: string): string;
   /** Client sort enum (`UserSort` with `id_asc` / `name_desc` values). */
   sortEnum(typeName: string): string;
   createInput(typeName: string): string;
@@ -38,11 +39,6 @@ export interface MongoNaming {
   removeManyField(typeName: string): string;
 }
 
-function camel(typeName: string): string {
-  if (!typeName) return typeName;
-  return typeName.charAt(0).toLowerCase() + typeName.slice(1);
-}
-
 function pluralType(typeName: string): string {
   if (!typeName) return typeName;
   if (/[^aeiou]y$/i.test(typeName)) {
@@ -52,14 +48,10 @@ function pluralType(typeName: string): string {
   return `${typeName}s`;
 }
 
-function pluralCamel(typeName: string): string {
-  return camel(pluralType(typeName));
-}
-
 export function createDefaultNaming(): MongoNaming {
   return {
     typeName: name => name,
-    queryInput: typeName => `${typeName}QueryInput`,
+    filterInput: typeName => `${typeName}FilterInput`,
     sortEnum: typeName => `${typeName}Sort`,
     createInput: typeName => `${typeName}DocumentInput`,
     updateInput: typeName => `${typeName}UpdateInput`,

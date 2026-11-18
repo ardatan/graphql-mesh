@@ -21,7 +21,7 @@ it('should compose the appropriate schema', async () => {
   expect(composition.result).toContain('kind: "mongo"');
   expect(composition.result).toContain('findUserById(id:');
   expect(composition.result).toContain('insertOneUser(document:');
-  expect(composition.result).toContain('query: UserQueryInput');
+  expect(composition.result).toContain('filter: UserFilterInput');
   expect(composition.result).toContain('sort: [UserSort!]');
   expect(composition.result).toContain('id: ObjectID!');
   expect(composition.result).toContain('@mongo__findOne');
@@ -60,11 +60,11 @@ it('should create and find users', async () => {
           name
           age
         }
-        findUsers(query: { name: { eq: "Ada" } }) {
+        findUsers(filter: { name: { eq: "Ada" } }) {
           id
           name
         }
-        countDocumentsUsers(query: { gender: { eq: "female" } })
+        countDocumentsUsers(filter: { gender: { eq: "female" } })
       }
     `,
     variables: { id: recordId },
@@ -99,7 +99,7 @@ it('should create and find users', async () => {
   const updatedDecimal = await gw.execute({
     query: /* GraphQL */ `
       mutation UpdateDecimal($id: ObjectID!, $salary: Decimal128!) {
-        updateOneUser(query: { id: { eq: $id } }, update: { set: { salaryDecimal: $salary } }) {
+        updateOneUser(filter: { id: { eq: $id } }, update: { set: { salaryDecimal: $salary } }) {
           record {
             salaryDecimal
           }
@@ -114,7 +114,7 @@ it('should create and find users', async () => {
   const queriedDecimal = await gw.execute({
     query: /* GraphQL */ `
       query FindBySalary($salary: Decimal128!) {
-        findUsers(query: { salaryDecimal: { eq: $salary } }) {
+        findUsers(filter: { salaryDecimal: { eq: $salary } }) {
           id
           salaryDecimal
         }

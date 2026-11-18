@@ -280,7 +280,7 @@ function attachMongoResolver(
             const updateDoc = resolveUpdateDocument(directive.set, ctx, {
               collection: directive.collection,
             });
-            // Empty `{}` (e.g. from `query: { and: [] }`) would match the whole collection.
+            // Empty `{}` (e.g. from `filter: { and: [] }`) would match the whole collection.
             const writeFilter = bulkWriteFilter(filter);
             const result = await client.updateMany(directive.collection, writeFilter, updateDoc);
             return {

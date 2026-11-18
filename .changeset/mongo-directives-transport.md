@@ -24,12 +24,12 @@ new stack (like mysql/tuql -> SQL).
   `@mongo__connection` / `@mongo__pagination` / `@mongo__aggregate` /
   `@mongo__insertOne|insertMany` / `@mongo__updateOne|updateMany` / `@mongo__deleteOne|deleteMany`
   (SDL client API ≠ directive binders; legacy `@mongo(kind:)` still executed)
-- Client args: typed `query: *QueryInput` (`and` / `or` / `not` + field ops) +
-  `sort: [*Sort!]` (`id_asc` / `age_desc`; transport maps to `{ field: 1|-1 }`).
-  Query operators use Mongo names without `$` (`gte`, `in`, `and`, … → `$gte` / `$in` /
+- Client args: typed `filter: *FilterInput` (`and` / `or` / `not` + field ops; compose-mongoose
+  style) + `sort: [*Sort!]` (`id_asc` / `age_desc`; transport maps to `{ field: 1|-1 }`).
+  Field operators use Mongo names without `$` (`gte`, `in`, `and`, … → `$gte` / `$in` /
   `$and`; also accepts native `{ $gte }` and `_gte`)
 - Projection = GraphQL selection set + `@mongo__*(selection:)` (findOne's projection)
-- Directive binders: `query` / `selection` / `sort` / `set` / `pipeline`
+- Directive binders: `query` (← `$args.filter`) / `selection` / `sort` / `set` / `pipeline`
 - `update: *UpdateInput` with Mongo update ops without `$` (`set` / `inc` / `unset` / … →
   `$set` / `$inc` / `$unset`; `_set` aliases + native `$set` still accepted; array mods JSON)
 - `document` / `documents` for insertOne / insertMany
@@ -44,13 +44,15 @@ new stack (like mysql/tuql -> SQL).
 - String `_id` models require `id: String!` on create, keep BSON string inserts/cursors/payloads, and scope empty-input placeholders per collection
 - ObjectId coercion and required-field checks are keyed by collection+path (same bare field name can differ across models)
 - Connection cursors still reject array-backed sort keys (correct multikey keyset needs `$expr`/`$min`/`$max`, not multikey `$gt`)
+- `MongoModelConfig`: exactly one of `model` | `schema` | `path`; flat `fields` (only/remove/required);
+  discriminator subtypes auto-read from `schema.discriminatorMapping`
 
 ## Consumer migration
 
 | Before (v0 mongoose) | After |
 | --- | --- |
 | Runtime `composeWithMongoose` | Same YAML handler or `loadMongoSubgraph` |
-| `User_findById(_id)` / `User_findMany(filter)` | `findUserById(id)` / `findUsers(query)` |
+| `User_findById(_id)` / `User_findMany(filter)` | `findUserById(id)` / `findUsers(filter)` |
 | `User_createOne(record)` | `insertOneUser(document)` |
 | Opaque resolvers | `@mongo__find(query/sort/selection/…)` |
 

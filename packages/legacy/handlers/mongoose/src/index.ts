@@ -17,29 +17,18 @@ import {
 } from '@omnigraph/mongo';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
-function mapLegacyModelConfig(
-  m: YamlConfig.MongooseModel,
-  opts?: { asDiscriminator?: boolean },
-): MongoModelConfig {
+function mapLegacyModelConfig(m: YamlConfig.MongooseModel): MongoModelConfig {
+  const fields = m.options?.fields
+    ? {
+        only: m.options.fields.only,
+        remove: m.options.fields.remove,
+        required: m.options.fields.required,
+      }
+    : undefined;
   return {
     name: m.name,
     path: m.path,
-    // Flag YAML `discriminators:` entries; key/value still auto-read from schema.
-    ...(opts?.asDiscriminator ? { discriminator: { key: '__t', value: m.name } } : {}),
-    options: m.options
-      ? {
-          fields: m.options.fields
-            ? {
-                only: m.options.fields.only,
-                remove: m.options.fields.remove,
-                required: m.options.fields.required,
-              }
-            : undefined,
-          // YAML resolver opts are richer than the boolean/object toggles the loader
-          // consumes; forward as-is — only `false` disables emission.
-          resolvers: m.options.resolvers as NonNullable<MongoModelConfig['options']>['resolvers'],
-        }
-      : undefined,
+    ...(fields ? { fields } : {}),
   };
 }
 
@@ -47,6 +36,7 @@ function mapLegacyModelConfig(
  * Legacy v0 Mongoose handler. Under the hood `@omnigraph/mongo` + `transport-mongo`.
  * YAML entrypoint stays the same (`connectionString` / `models` / `discriminators`);
  * Mongoose is bootstrap-only, runtime is the native MongoDB driver via `@mongo`.
+ * Discriminator subtypes are auto-detected from `schema.discriminatorMapping`.
  */
 export default class MongooseHandler implements MeshHandler {
   private name: string;
@@ -82,10 +72,7 @@ export default class MongooseHandler implements MeshHandler {
 
     const models: MongoModelConfig[] = [
       ...(this.config.models || []).map(m => mapLegacyModelConfig(m)),
-      // Discriminators share the base collection; loader stamps/filters by key.
-      ...(this.config.discriminators || []).map(m =>
-        mapLegacyModelConfig(m, { asDiscriminator: true }),
-      ),
+      ...(this.config.discriminators || []).map(m => mapLegacyModelConfig(m)),
     ];
 
     if (!models.length) {
@@ -121,9 +108,9 @@ export default class MongooseHandler implements MeshHandler {
     };
   }
 
-  [DisposableSymbols.asyncDispose]() {
+  async [DisposableSymbols.asyncDispose]() {
     if (this.disposableResource) {
-      return dispose(this.disposableResource);
+      await dispose(this.disposableResource);
     }
   }
 }
