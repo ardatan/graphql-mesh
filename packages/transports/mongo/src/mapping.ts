@@ -1,4 +1,5 @@
 import type { MongoMappingEntry, MongoMappingValue, ParsedMongoMapping } from './types.js';
+import { mappingStringValue } from './types.js';
 
 /**
  * Parse `@mongo__*` `query` / `set` / `selection` block strings.
@@ -25,16 +26,16 @@ export function resolveMappingValue(
     case 'literal':
       return value.value;
     case 'column':
-      return value.value;
+      return mappingStringValue(value);
     case 'pseudo':
-      return ctx.literals?.[value.value];
+      return ctx.literals?.[mappingStringValue(value)];
     case 'args': {
-      return getPath(ctx.args, value.path || [value.value]);
+      return getPath(ctx.args, value.path || [mappingStringValue(value)]);
     }
     case 'this': {
       return getPath(
         ctx.parent as Record<string, unknown> | undefined,
-        value.path || [value.value],
+        value.path || [mappingStringValue(value)],
       );
     }
     default:
@@ -47,7 +48,7 @@ export function columnMapFromSelection(parsed: ParsedMongoMapping): Map<string, 
   for (const entry of parsed.entries) {
     if (entry.children || entry.spread) continue;
     if (entry.value?.kind === 'column') {
-      map.set(entry.key, entry.value.value);
+      map.set(entry.key, mappingStringValue(entry.value));
     }
   }
   return map;
@@ -68,7 +69,7 @@ function collectProjection(entries: MongoMappingEntry[], out: Record<string, 0 |
       continue;
     }
     if (entry.value?.kind === 'column') {
-      out[entry.value.value] = 1;
+      out[mappingStringValue(entry.value)] = 1;
     }
   }
   collapseOverlappingProjectionPaths(out);
@@ -101,7 +102,9 @@ export function mapDocumentToGraphql(
       continue;
     }
     if (entry.value?.kind === 'column') {
-      out[entry.key] = coerceGraphqlValue(getPath(doc, entry.value.value.split('.')));
+      out[entry.key] = coerceGraphqlValue(
+        getPath(doc, mappingStringValue(entry.value).split('.')),
+      );
     }
   }
   return out;

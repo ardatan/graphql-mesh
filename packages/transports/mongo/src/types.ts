@@ -109,9 +109,17 @@ export interface MongoTransportOptions {
 
 export interface MongoMappingValue {
   kind: 'column' | 'pseudo' | 'args' | 'this' | 'literal';
-  /** String or number (discriminator literals like `kind: 5`). */
+  /**
+   * Column / pseudo / args / this path segment (string), or a literal.
+   * Literals may be number (discriminator binders like `kind: 5`).
+   */
   value: string | number;
   path?: string[];
+}
+
+/** Path / binder keys are always strings; narrow away numeric literals. */
+export function mappingStringValue(value: MongoMappingValue): string {
+  return typeof value.value === 'string' ? value.value : String(value.value);
 }
 
 export interface MongoMappingEntry {

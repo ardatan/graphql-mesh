@@ -788,7 +788,7 @@ export function applyMutationSelection(
       continue;
     }
     if (entry.value?.kind === 'pseudo') {
-      const lit = resolveMutationPseudo(entry.value.value, bag);
+      const lit = resolveMutationPseudo(String(entry.value.value), bag);
       out[entry.key] = lit;
       continue;
     }
