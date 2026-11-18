@@ -5,64 +5,14 @@ import {
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
-import type { SqlKind } from '@graphql-mesh/transport-sql';
 
 /**
- * Arguments for the `@sql` field / object directive (hand-writable SDL or emitted schema).
+ * Shared `@sql` fields present on every kind.
  *
- * FIELD: Query / Mutation / relation resolvers.
- * OBJECT: type-level entity resolver (`$this` keys), Connectors-style.
- *
- * @example
- * ```graphql
- * type Query {
- *   albums(where: AlbumFilter, limit: Int): [Album!]!
- *     @sql(
- *       table: "albums"
- *       kind: ROWS
- *       where: "$args.where"
- *       limit: "$args.limit"
- *       selection: """
- *         id: AlbumId
- *         title: Title
- *         artistId: ArtistId
- *       """
- *     )
- * }
- * ```
- * @example
- * ```graphql
- * type Album {
- *   artist: Artist
- *     @sql(
- *       table: "artists"
- *       kind: ROW
- *       where: "ArtistId: $this.artistId"
- *       selection: "id: ArtistId\nname: Name"
- *     )
- * }
- * ```
- * @example
- * ```graphql
- * # Many-to-many via junction
- * type Playlist {
- *   tracks: [Track!]!
- *     @sql(
- *       table: "tracks"
- *       kind: ROWS
- *       through: """
- *         table: playlist_track
- *         local: PlaylistId
- *         remote: TrackId
- *         parent: $this.id
- *         target: TrackId
- *       """
- *       selection: "id: TrackId\nname: Name"
- *     )
- * }
- * ```
+ * GraphQL still accepts the full arg set on the directive; this TS shape is a
+ * kind-discriminated view for hand-typed mappings / docs (narrow via `kind`).
  */
-export interface SqlDirectiveArgs {
+interface SqlDirectiveArgsBase {
   /**
    * Owning subgraph name when composing federated schemas (optional locally).
    *
@@ -76,15 +26,18 @@ export interface SqlDirectiveArgs {
    */
   table: string;
   /**
-   * Operation shape: reads (`ROW`/`ROWS`/`CONNECTION`/`COUNT`) or writes
-   * (`INSERT`/`UPDATE`/`DELETE`). Relations use `ROW`/`ROWS` with `$this`.
+   * GraphQL field → SQL column (or `$fn.schema.fn`) mapping. Nested blocks wrap
+   * CONNECTION / mutation payloads.
    *
-   * @example 'ROWS'
-   * @example 'INSERT'
+   * @example 'id: AlbumId\ntitle: Title'
+   * @example 'fullName: $fn.public.users_full_name'
    */
-  kind: SqlKind;
+  selection?: string;
+}
+
+/** Equality / join predicates and structured `$args.where` / `$this` binders. */
+interface SqlDirectiveWhere {
   /**
-   * Equality / join predicates and/or structured client filter binders.
    * Fixed keys are SQL columns; `$args.*` / `$this.*` resolve at runtime;
    * `...$args.where` spreads a client `*Filter` object.
    *
@@ -93,52 +46,64 @@ export interface SqlDirectiveArgs {
    * @example 'ArtistId: $this.id\n...$args.where'
    */
   where?: string;
+}
+
+/**
+ * `kind: ROW` — find-one / belongs-to / type-level entity keys.
+ *
+ * @example
+ * ```graphql
+ * artist: Artist
+ *   @sql(
+ *     table: "artists"
+ *     kind: ROW
+ *     where: "ArtistId: $this.artistId"
+ *     selection: "id: ArtistId\nname: Name"
+ *   )
+ * ```
+ */
+export interface SqlDirectiveRowArgs extends SqlDirectiveArgsBase, SqlDirectiveWhere {
+  kind: 'ROW';
+}
+
+/**
+ * `kind: ROWS` — find-many / has-many (optional M2M `through`).
+ *
+ * @example
+ * ```graphql
+ * albums(where: AlbumFilter, limit: Int): [Album!]!
+ *   @sql(
+ *     table: "albums"
+ *     kind: ROWS
+ *     where: "$args.where"
+ *     orderBy: "$args.orderBy"
+ *     limit: "$args.limit"
+ *     selection: "id: AlbumId\ntitle: Title"
+ *   )
+ * ```
+ */
+export interface SqlDirectiveRowsArgs extends SqlDirectiveArgsBase, SqlDirectiveWhere {
+  kind: 'ROWS';
   /**
-   * Order-by binder (typically `$args.orderBy`).
+   * Order-by binder.
    *
    * @example '$args.orderBy'
    */
   orderBy?: string;
   /**
-   * Limit binder (typically `$args.limit`).
+   * Limit binder.
    *
    * @example '$args.limit'
    */
   limit?: string;
   /**
-   * Offset binder (typically `$args.offset`). Prefer keyset `after` for CONNECTION.
+   * Offset binder.
    *
    * @example '$args.offset'
    */
   offset?: string;
   /**
-   * CONNECTION page size binder (typically `$args.first`).
-   *
-   * @example '$args.first'
-   */
-  first?: string;
-  /**
-   * CONNECTION keyset cursor binder (typically `$args.after`).
-   *
-   * @example '$args.after'
-   */
-  after?: string;
-  /**
-   * Column values for INSERT / UPDATE (`SQL_col: $args.input.field`).
-   *
-   * @example 'Title: $args.input.title\nArtistId: $args.input.artistId'
-   */
-  set?: string;
-  /**
-   * GraphQL field → SQL column (or `$fn.schema.fn`) mapping. Nested blocks wrap
-   * CONNECTION / mutation payloads.
-   *
-   * @example 'id: AlbumId\ntitle: Title'
-   * @example 'fullName: $fn.public.users_full_name'
-   */
-  selection?: string;
-  /**
-   * Many-to-many junction block: `table` / `local` / `remote` / `parent: $this…` / `target`.
+   * Many-to-many junction: `table` / `local` / `remote` / `parent: $this…` / `target`.
    *
    * @example
    * ```
@@ -151,6 +116,164 @@ export interface SqlDirectiveArgs {
    */
   through?: string;
 }
+
+/**
+ * `kind: CONNECTION` — Relay connection with keyset cursors (`first` / `after`).
+ *
+ * @example
+ * ```graphql
+ * allAlbums(where: AlbumFilter, first: Int, after: String): AlbumConnection!
+ *   @sql(
+ *     table: "albums"
+ *     kind: CONNECTION
+ *     where: "$args.where"
+ *     orderBy: "$args.orderBy"
+ *     first: "$args.first"
+ *     after: "$args.after"
+ *     selection: """
+ *       nodes { id: AlbumId title: Title }
+ *       edges { cursor: $cursor node { id: AlbumId title: Title } }
+ *       pageInfo { hasNextPage endCursor: $cursor }
+ *     """
+ *   )
+ * ```
+ */
+export interface SqlDirectiveConnectionArgs extends SqlDirectiveArgsBase, SqlDirectiveWhere {
+  kind: 'CONNECTION';
+  /**
+   * Order-by binder (drives keyset cursor columns).
+   *
+   * @example '$args.orderBy'
+   */
+  orderBy?: string;
+  /**
+   * Page size binder.
+   *
+   * @example '$args.first'
+   */
+  first?: string;
+  /**
+   * Keyset cursor binder.
+   *
+   * @example '$args.after'
+   */
+  after?: string;
+}
+
+/**
+ * `kind: COUNT` — aggregate count of matching rows.
+ *
+ * @example
+ * ```graphql
+ * albumsCount(where: AlbumFilter): Int!
+ *   @sql(table: "albums", kind: COUNT, where: "$args.where")
+ * ```
+ */
+export interface SqlDirectiveCountArgs extends SqlDirectiveArgsBase, SqlDirectiveWhere {
+  kind: 'COUNT';
+}
+
+/**
+ * `kind: INSERT` — create; column values via `set`.
+ *
+ * @example
+ * ```graphql
+ * createAlbum(input: CreateAlbumInput!): AlbumPayload!
+ *   @sql(
+ *     table: "albums"
+ *     kind: INSERT
+ *     set: "Title: $args.input.title\nArtistId: $args.input.artistId"
+ *     selection: "album { id: AlbumId title: Title }"
+ *   )
+ * ```
+ */
+export interface SqlDirectiveInsertArgs extends SqlDirectiveArgsBase {
+  kind: 'INSERT';
+  /**
+   * Column values (`SQL_col: $args.input.field`).
+   *
+   * @example 'Title: $args.input.title\nArtistId: $args.input.artistId'
+   */
+  set?: string;
+}
+
+/**
+ * `kind: UPDATE` — update matching rows; requires `set` + usually `where`.
+ *
+ * @example
+ * ```graphql
+ * updateAlbum(input: UpdateAlbumInput!, where: AlbumFilter!): AlbumPayload!
+ *   @sql(
+ *     table: "albums"
+ *     kind: UPDATE
+ *     set: "Title: $args.input.title"
+ *     where: "$args.where"
+ *     selection: "album { id: AlbumId title: Title }"
+ *   )
+ * ```
+ */
+export interface SqlDirectiveUpdateArgs extends SqlDirectiveArgsBase, SqlDirectiveWhere {
+  kind: 'UPDATE';
+  /**
+   * Column values (`SQL_col: $args.input.field`).
+   *
+   * @example 'Title: $args.input.title'
+   */
+  set?: string;
+}
+
+/**
+ * `kind: DELETE` — hard or soft delete of matching rows.
+ *
+ * @example
+ * ```graphql
+ * deleteAlbum(where: AlbumFilter!): DeleteAlbumPayload!
+ *   @sql(table: "albums", kind: DELETE, where: "$args.where")
+ * ```
+ */
+export interface SqlDirectiveDeleteArgs extends SqlDirectiveArgsBase, SqlDirectiveWhere {
+  kind: 'DELETE';
+}
+
+/**
+ * Arguments for the `@sql` field / object directive, discriminated on {@link SqlDirectiveArgs.kind}.
+ *
+ * Narrow with `kind` so CONNECTION-only (`first` / `after`), ROWS-only (`limit` /
+ * `offset` / `through`), and write-only (`set`) fields type-check correctly.
+ * The GraphQL directive definition still lists every arg for SDL flexibility.
+ *
+ * FIELD: Query / Mutation / relation resolvers.
+ * OBJECT: type-level entity resolver (`$this` keys), Connectors-style.
+ *
+ * @example
+ * ```ts
+ * const rows: SqlDirectiveArgs = {
+ *   table: 'albums',
+ *   kind: 'ROWS',
+ *   where: '$args.where',
+ *   limit: '$args.limit',
+ *   selection: 'id: AlbumId\ntitle: Title',
+ * };
+ * ```
+ * @example
+ * ```ts
+ * const conn: SqlDirectiveArgs = {
+ *   table: 'albums',
+ *   kind: 'CONNECTION',
+ *   where: '$args.where',
+ *   first: '$args.first',
+ *   after: '$args.after',
+ * };
+ * ```
+ */
+export type SqlDirectiveArgs =
+  | SqlDirectiveRowArgs
+  | SqlDirectiveRowsArgs
+  | SqlDirectiveConnectionArgs
+  | SqlDirectiveCountArgs
+  | SqlDirectiveInsertArgs
+  | SqlDirectiveUpdateArgs
+  | SqlDirectiveDeleteArgs;
 
 /**
  * Single kind enum for `@sql` (reads, writes, and relation fields via `$this`).
