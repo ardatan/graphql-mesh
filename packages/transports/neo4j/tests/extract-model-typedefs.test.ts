@@ -219,8 +219,19 @@ describe('extractNeo4jModelTypeDefs', () => {
         columnName: String!
       ) on FIELD_DEFINITION
 
+      type PageInfo {
+        hasNextPage: Boolean!
+      }
+
+      type FriendFriendsEdge {
+        cursor: String!
+        node: Friend
+      }
+
       type FriendFriendsConnection {
-        edges: [String]
+        edges: [FriendFriendsEdge!]!
+        totalCount: Int!
+        pageInfo: PageInfo!
       }
 
       type Friend @node(subgraph: "People") {
@@ -319,8 +330,19 @@ describe('extractNeo4jModelTypeDefs', () => {
         columnName: String!
       ) on FIELD_DEFINITION
 
+      type PageInfo {
+        hasNextPage: Boolean!
+      }
+
+      type FriendFriendsEdge {
+        cursor: String!
+        node: Friend
+      }
+
       type FriendFriendsConnection {
-        edges: [Friend!]
+        edges: [FriendFriendsEdge!]!
+        totalCount: Int!
+        pageInfo: PageInfo!
       }
 
       type Friend {
@@ -349,6 +371,45 @@ describe('extractNeo4jModelTypeDefs', () => {
     expect(aggregateSdl).toMatch(/totalAggregate:\s*Int!/);
     expect(aggregateSdl).not.toMatch(/friendsConnection/);
     expect(aggregateSdl).not.toMatch(/FriendFriendsConnection/);
+
+    // Authored connection-shaped name with only `edges` (no Neo4j edge signature) must stay.
+    const authoredSearchPage = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      type Hit {
+        score: Float!
+      }
+
+      type SearchPage {
+        edges: [Hit!]!
+      }
+
+      type Stats {
+        hitsConnection: SearchPage
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        title: String!
+      }
+
+      type Query {
+        stats: Stats
+          @cypher(
+            subgraph: "Movies"
+            statement: "RETURN { hitsConnection: { edges: [] } } AS s"
+            columnName: "s"
+          )
+      }
+    `);
+    const searchPageSdl = print(extractNeo4jModelTypeDefs(authoredSearchPage, 'Movies'));
+    expect(searchPageSdl).toMatch(/hitsConnection:\s*SearchPage/);
+    expect(searchPageSdl).toMatch(/type SearchPage/);
+    expect(searchPageSdl).toMatch(/edges:\s*\[Hit!\]!/);
 
     // Authored object return + Aggregate suffix must not be classified as generated.
     const aggregateObject = parse(/* GraphQL */ `
@@ -591,6 +652,7 @@ describe('extractNeo4jModelTypeDefs', () => {
     expect(ifaceSdl).not.toMatch(/code:/);
 
     // Empty interface projection: drop the interface and implements edges.
+    // Movie validly implements Named before projection (name with foreign @alias).
     const emptyIface = parse(/* GraphQL */ `
       directive @node(subgraph: String, labels: [String!]) on OBJECT
       directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
@@ -604,12 +666,18 @@ describe('extractNeo4jModelTypeDefs', () => {
         name: String! @alias(subgraph: "People", property: "full_name")
       }
 
+      interface Detailed implements Named {
+        name: String! @alias(subgraph: "People", property: "full_name")
+        title: String!
+      }
+
       type Person implements Named {
         name: String! @alias(subgraph: "People", property: "full_name")
         nickname: String!
       }
 
-      type Movie implements Named @node(subgraph: "Movies") {
+      type Movie implements Detailed @node(subgraph: "Movies") {
+        name: String! @alias(subgraph: "People", property: "full_name")
         title: String!
         featured: Person! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
       }
@@ -623,5 +691,48 @@ describe('extractNeo4jModelTypeDefs', () => {
     expect(emptyIfaceSdl).toMatch(/type Person \{/);
     expect(emptyIfaceSdl).not.toMatch(/implements Named/);
     expect(emptyIfaceSdl).toMatch(/nickname:\s*String!/);
+    expect(emptyIfaceSdl).toMatch(/title:\s*String!/);
+    expect(emptyIfaceSdl).not.toMatch(/\bname:/);
+    // Child interface must also drop the edge to omitted Named.
+    expect(emptyIfaceSdl).toMatch(/interface Detailed \{/);
+    expect(emptyIfaceSdl).not.toMatch(/interface Detailed implements Named/);
+    expect(emptyIfaceSdl).toMatch(/type Movie implements Detailed/);
+
+    // Orphaned @relationshipProperties spatial field must not drop authored Point for Query.pin.
+    const orphanedRelPropsPoint = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @relationshipProperties(subgraph: String) on OBJECT
+      directive @relationship(
+        subgraph: String
+        type: String
+        direction: String
+        properties: String
+      ) on FIELD_DEFINITION
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      type Point {
+        latitude: Float!
+        longitude: Float!
+      }
+
+      type RouteProps @relationshipProperties(subgraph: "Movies") {
+        location: Point
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        title: String!
+      }
+
+      type Query {
+        pin: Point @cypher(subgraph: "Movies", statement: "RETURN point() AS p", columnName: "p")
+      }
+    `);
+    const orphanPointSdl = print(extractNeo4jModelTypeDefs(orphanedRelPropsPoint, 'Movies'));
+    expect(orphanPointSdl).toMatch(/\btype Point\b/);
+    expect(orphanPointSdl).toMatch(/pin:\s*Point/);
   });
 });

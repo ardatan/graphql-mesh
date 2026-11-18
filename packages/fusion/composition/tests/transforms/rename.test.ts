@@ -1235,6 +1235,16 @@ WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
         new Map([['any', 'needle']]),
       ),
     ).toBe('MATCH (m:$any\u2003($labels)) RETURN $needle AS n');
+    // Cypher lexer file-separator whitespace (U+001C–U+001F) is trivia too.
+    expect(
+      rewriteCypherParamNames(
+        'MATCH (m:$any\u001C($labels)) RETURN $any AS n',
+        new Map([['any', 'needle']]),
+      ),
+    ).toBe('MATCH (m:$any\u001C($labels)) RETURN $needle AS n');
+    expect(
+      rewriteCypherParamNames('MATCH (m:$\u001Cany) RETURN 1', new Map([['any', 'needle']])),
+    ).toBe('MATCH (m:$\u001Cneedle) RETURN 1');
     // Standalone backtick identifiers are not parameters.
     expect(rewriteCypherParamNames('RETURN `title` AS n', new Map([['title', 'needle']]))).toBe(
       'RETURN `title` AS n',

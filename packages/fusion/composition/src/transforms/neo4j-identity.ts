@@ -26,7 +26,7 @@ const CYPHER_RESERVED_VARS = new Set(['this', 'jwt', 'context']);
  * and after dynamic `ANY`/`ALL` operators so renames do not rewrite operators.
  */
 const CYPHER_WHITESPACE_CHAR = new RegExp(
-  `[ \\t\\r\\n\\f${String.fromCharCode(0x0b)}\\u0085\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]`,
+  `[ \\t\\r\\n\\f${String.fromCharCode(0x0b)}\\u001C-\\u001F\\u0085\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]`,
 );
 
 /** True when the type (or its directives bag) is a Neo4j `@node` model. */

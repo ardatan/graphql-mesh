@@ -351,20 +351,65 @@ export function extractNeo4jModelTypeDefs(
   /** Spatial object types Neo4j regenerates from retained model attributes. */
   const NEO4J_REGENERATED_OBJECT_TYPES = new Set(['Point', 'CartesianPoint']);
 
-  function objectTypeFieldNameSet(typeName: string): Set<string> | undefined {
+  function objectTypeDef(typeName: string): ObjectTypeDefinitionNode | undefined {
     const def = typeDefs.definitions.find(
       d => d.kind === Kind.OBJECT_TYPE_DEFINITION && d.name.value === typeName,
     );
-    if (!def || def.kind !== Kind.OBJECT_TYPE_DEFINITION) {
+    return def && def.kind === Kind.OBJECT_TYPE_DEFINITION ? def : undefined;
+  }
+
+  function objectTypeFieldNameSet(typeName: string): Set<string> | undefined {
+    const def = objectTypeDef(typeName);
+    if (!def) {
       return undefined;
     }
     return new Set((def.fields || []).map(field => field.name.value));
   }
 
+  function getDirectiveStringArg(
+    node: { directives?: readonly ConstDirectiveNode[] },
+    directiveName: string,
+    argName: string,
+  ): string | undefined {
+    const directive = node.directives?.find(d => d.name.value === directiveName);
+    const arg = directive?.arguments?.find(a => a.name.value === argName);
+    if (arg?.value.kind === Kind.STRING) {
+      return arg.value.value;
+    }
+    return undefined;
+  }
+
+  /**
+   * Neo4j Connection edge objects expose `node` + `cursor` (optional `properties`).
+   * An authored `edges: [Hit!]!` list alone is not a generated connection.
+   */
+  function connectionReturnLooksGenerated(returnName: string): boolean {
+    const def = objectTypeDef(returnName);
+    if (!def) {
+      return false;
+    }
+    const returnFields = new Set((def.fields || []).map(field => field.name.value));
+    if (!returnFields.has('edges')) {
+      return false;
+    }
+    // Fully augmented Neo4j Connection: edges + pageInfo / totalCount.
+    if (returnFields.has('pageInfo') || returnFields.has('totalCount')) {
+      return true;
+    }
+    const edgesField = (def.fields || []).find(field => field.name.value === 'edges');
+    const edgeTypeName = edgesField ? namedTypeNameFromTypeNode(edgesField.type) : undefined;
+    if (!edgeTypeName) {
+      return false;
+    }
+    const edgeFields = objectTypeFieldNameSet(edgeTypeName);
+    return Boolean(edgeFields?.has('node') && edgeFields?.has('cursor'));
+  }
+
   /**
    * Generated connection / aggregate object fields Neo4j re-augments from relationships.
-   * Suffix alone is not enough — authored `totalAggregate: Int` and `totalAggregate: Totals`
-   * must stay; drop only relationship-originated siblings or Neo4j Connection/Aggregate shapes.
+   * Suffix / bare `edges` alone is not enough — authored `totalAggregate: Totals` and
+   * `hitsConnection: SearchPage { edges }` must stay; drop relationship-originated siblings
+   * or Neo4j Connection/Aggregate shapes (edge node+cursor, or pageInfo/totalCount).
    */
   function isGeneratedConnectionOrAggregateField(
     field: FieldDefinitionNode,
@@ -399,13 +444,15 @@ export function extractNeo4jModelTypeDefs(
     ) {
       return true;
     }
+    if (
+      (connectionBase || returnName.endsWith('Connection')) &&
+      connectionReturnLooksGenerated(returnName)
+    ) {
+      return true;
+    }
     const returnFields = objectTypeFieldNameSet(returnName);
     if (!returnFields) {
       return false;
-    }
-    // Neo4j Connection objects expose `edges` (plus pageInfo / totalCount when fully augmented).
-    if ((connectionBase || returnName.endsWith('Connection')) && returnFields.has('edges')) {
-      return true;
     }
     // Neo4j Aggregate objects expose `count` with `node` and/or `edge` selections.
     if (
@@ -569,12 +616,46 @@ export function extractNeo4jModelTypeDefs(
     }
   }
 
+  function typeDefByName(typeName: string) {
+    return typeDefs.definitions.find(
+      d =>
+        (d.kind === Kind.OBJECT_TYPE_DEFINITION || d.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
+        d.name.value === typeName,
+    );
+  }
+
+  /** True when a retained `@relationship` field still references this properties type. */
+  function retainedRelationshipUsesProperties(propertiesTypeName: string): boolean {
+    for (const [typeName, fields] of retainedFieldsByType) {
+      const owner = typeDefByName(typeName);
+      if (owner && hasDirective(owner, 'relationshipProperties')) {
+        continue;
+      }
+      for (const field of fields) {
+        if (!hasDirective(field, 'relationship')) {
+          continue;
+        }
+        if (getDirectiveStringArg(field, 'relationship', 'properties') === propertiesTypeName) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   function retainedModelHasSpatialField(spatialName: string): boolean {
-    // Neo4j regenerates Point/CartesianPoint from model / relationship attributes, not root
-    // operation `@cypher` fields (e.g. `Query.pin: Point` alone does not regenerate Point).
+    // Neo4j regenerates Point/CartesianPoint from attributes on retained `@node` models and on
+    // `@relationshipProperties` types that a surviving relationship still uses — not from root
+    // `@cypher` fields or orphaned relationship-properties definitions.
     for (const [typeName, fields] of retainedFieldsByType) {
       if (ROOT_OPERATION_NAMES.has(typeName)) {
         continue;
+      }
+      const owner = typeDefByName(typeName);
+      if (owner && hasDirective(owner, 'relationshipProperties')) {
+        if (!retainedRelationshipUsesProperties(typeName)) {
+          continue;
+        }
       }
       for (const field of fields) {
         if (namedTypeNameFromTypeNode(field.type) === spatialName) {
@@ -846,9 +927,8 @@ export function extractNeo4jModelTypeDefs(
             if (authoredFields.length !== siblings.length) {
               authored = { ...authored, fields: authoredFields };
             }
-            // Interface conformance against the *projected* interface fields extraction emits.
-            // Drop empty interface edges; keep nonempty conformance checks.
-            if (authored.kind === Kind.OBJECT_TYPE_DEFINITION && authored.interfaces?.length) {
+            // Drop implements edges to empty/omitted interfaces; for objects also check conformance.
+            if (authored.interfaces?.length) {
               const projected = new Set(authoredFields.map(field => field.name.value));
               const nextInterfaces = [];
               for (const iface of authored.interfaces) {
@@ -859,17 +939,19 @@ export function extractNeo4jModelTypeDefs(
                 if (!interfaceHasSurvivingFields(ifaceName)) {
                   continue;
                 }
-                const projectedIfaceFields = keepTypeNames.has(ifaceName)
-                  ? retainedFieldsByType.get(ifaceName) || []
-                  : survivingAuthoredFields(ifaceName);
-                const requiredNames = projectedIfaceFields.map(field => field.name.value);
-                const missing = requiredNames.filter(name => !projected.has(name));
-                if (missing.length) {
-                  const refs =
-                    authoredOutputReferrers.get(def.name.value)?.join(', ') || 'unknown field';
-                  throw new Error(
-                    `Neo4j model extract: Cypher return type "${def.name.value}" cannot implement "${ifaceName}" after ownership filtering (missing ${missing.join(', ')}; referenced from ${refs})`,
-                  );
+                if (authored.kind === Kind.OBJECT_TYPE_DEFINITION) {
+                  const projectedIfaceFields = keepTypeNames.has(ifaceName)
+                    ? retainedFieldsByType.get(ifaceName) || []
+                    : survivingAuthoredFields(ifaceName);
+                  const requiredNames = projectedIfaceFields.map(field => field.name.value);
+                  const missing = requiredNames.filter(name => !projected.has(name));
+                  if (missing.length) {
+                    const refs =
+                      authoredOutputReferrers.get(def.name.value)?.join(', ') || 'unknown field';
+                    throw new Error(
+                      `Neo4j model extract: Cypher return type "${def.name.value}" cannot implement "${ifaceName}" after ownership filtering (missing ${missing.join(', ')}; referenced from ${refs})`,
+                    );
+                  }
                 }
                 nextInterfaces.push(iface);
               }
@@ -900,12 +982,16 @@ export function extractNeo4jModelTypeDefs(
             }
             return [{ ...(def as ObjectTypeDefinitionNode), fields: [...fields] }];
           }
-          if (def.kind === Kind.OBJECT_TYPE_DEFINITION && def.interfaces?.length) {
+          if (
+            (def.kind === Kind.OBJECT_TYPE_DEFINITION ||
+              def.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
+            def.interfaces?.length
+          ) {
             const nextInterfaces = def.interfaces.filter(iface =>
               interfaceHasSurvivingFields(iface.name.value),
             );
             if (nextInterfaces.length !== def.interfaces.length) {
-              return [{ ...def, fields: [...fields], interfaces: nextInterfaces }];
+              return [{ ...def, fields: [...fields], interfaces: nextInterfaces } as typeof def];
             }
           }
           return [{ ...def, fields: [...fields] } as typeof def];

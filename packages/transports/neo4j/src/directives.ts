@@ -7,13 +7,7 @@ import { Kind, parse, visit } from 'graphql';
  * (same pattern as `@sql__*` / `@mongo`). Strip `subgraph` before `@neo4j/graphql`.
  */
 export const NEO4J_GRAPHQL_DIRECTIVE_SDL = /* GraphQL */ `
-  directive @node(
-    subgraph: String
-    """
-    Neo4j labels when they differ from the GraphQL type name
-    """
-    labels: [String!]
-  ) on OBJECT
+  directive @node(subgraph: String, labels: [String!]) on OBJECT
   directive @relationshipProperties(subgraph: String) on OBJECT
   directive @relationship(
     subgraph: String
@@ -25,17 +19,10 @@ export const NEO4J_GRAPHQL_DIRECTIVE_SDL = /* GraphQL */ `
     IN
     OUT
   }
-  directive @alias(
-    subgraph: String
-    """
-    Neo4j property name when it differs from the GraphQL field name
-    """
-    property: String!
-  ) on FIELD_DEFINITION
+  directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
   directive @cypher(subgraph: String, statement: String!, columnName: String!) on FIELD_DEFINITION
   directive @plural(subgraph: String, value: String!) on OBJECT | INTERFACE | UNION
 `;
-
 /** Directives that carry Mesh `subgraph:` attribution for Neo4j model surface. */
 export const NEO4J_SUBGRAPH_DIRECTIVES = new Set([
   'node',

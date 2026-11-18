@@ -6,19 +6,11 @@ exports[`Neo4j should generate correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @alias(
-  """Neo4j property name when it differs from the GraphQL field name"""
-  property: String!
-  subgraph: String
-) on FIELD_DEFINITION
+directive @alias(property: String!, subgraph: String) on FIELD_DEFINITION
 
 directive @cypher(columnName: String!, statement: String!, subgraph: String) on FIELD_DEFINITION
 
-directive @node(
-  """Neo4j labels when they differ from the GraphQL type name"""
-  labels: [String!]
-  subgraph: String
-) on OBJECT
+directive @node(labels: [String!], subgraph: String) on OBJECT
 
 directive @plural(subgraph: String, value: String!) on INTERFACE | OBJECT | UNION
 
