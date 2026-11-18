@@ -236,7 +236,8 @@ function attributeForWhereKey(resource: any, key: string): string {
   const attrs = resource?.codec?.attributes ?? resource?.resource?.codec?.attributes;
   if (attrs && key in attrs) return key;
   if (attrs) {
-    for (const gql of Object.keys(attrs)) {
+    // TS 6: Object.keys(any) is Array<string | number | symbol> — assert string names.
+    for (const gql of Object.keys(attrs) as string[]) {
       if (gql.toLowerCase() === key.toLowerCase()) return gql;
     }
   }

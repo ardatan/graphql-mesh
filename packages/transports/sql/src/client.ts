@@ -69,7 +69,7 @@ export function buildBunSqlCtorOptions(opts: CreateSqlClientOptions): Record<str
 export function resolveBunTlsOption(
   tls: boolean | string | undefined,
   ssl?: { rejectUnauthorized?: boolean; ca?: string },
-): boolean | { rejectUnauthorized?: boolean; ca?: string } | undefined {
+): boolean | string | { rejectUnauthorized?: boolean; ca?: string } | undefined {
   const mode = typeof tls === 'string' ? tls.toLowerCase() : undefined;
   if (tls === false || mode === 'disable' || mode === 'false') {
     return undefined;
@@ -85,9 +85,9 @@ export function resolveBunTlsOption(
   if (tls === true || mode === 'true' || mode === 'require') {
     return true;
   }
-  if (tls != null && mode !== 'true') {
-    // Pass through other Bun tls mode strings / objects.
-    return tls === 'true' ? true : tls;
+  // Pass through other Bun tls mode strings (e.g. custom engine names).
+  if (typeof tls === 'string') {
+    return tls;
   }
   return undefined;
 }
