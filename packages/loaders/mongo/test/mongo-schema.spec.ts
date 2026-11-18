@@ -48,7 +48,10 @@ describe('@omnigraph/mongo schema emit', () => {
 
     const sdl = printSchemaWithDirectives(schema);
 
-    expect(sdl).toContain('@mongo(');
+    expect(sdl).toContain('@mongo__findOne');
+    expect(sdl).toContain('@mongo__find');
+    expect(sdl).toContain('@mongo__count');
+    expect(sdl).toContain('@mongo__insertOne');
     expect(sdl).toContain('findUserById(id: ID!)');
     expect(sdl).toContain('findUsers(query:');
     expect(sdl).toContain('findOneUser(query:');
@@ -57,7 +60,9 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toContain('updateOneUser(query:');
     expect(sdl).toContain('deleteOneUser(query:');
     expect(sdl).toContain('input UserQueryInput');
-    expect(sdl).toContain('input UserSortInput');
+    expect(sdl).toContain('enum UserSort');
+    expect(sdl).toContain('id_ASC');
+    expect(sdl).toContain('age_DESC');
     expect(sdl).toContain('input FloatQueryOperators');
     expect(sdl).toContain('gte: Float');
     expect(sdl).toContain('$args.query');
@@ -67,6 +72,7 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toContain('languages: [UserLanguages]');
     expect(sdl).toContain('Some dynamic data');
     expect(sdl).not.toContain('where: UserWhereInput');
+    expect(sdl).not.toContain('kind: FIND_ONE');
     expect(sdl).not.toContain('$args.where');
     expect(sdl).toMatchSnapshot('user-full-slice');
   });

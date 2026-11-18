@@ -1287,8 +1287,32 @@ WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
   });
 });
 
-describe('rewriteConnectArgReferences @mongo', () => {
-  it('rewrites $args in mongo filter/set/selection without requiring @connect', async () => {
+describe('rewriteConnectArgReferences @mongo__*', () => {
+  it('rewrites $args in mongo__find without requiring @connect', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo__find: [
+          {
+            collection: 'users',
+            query: '$args.criteria',
+            sort: '$args.order',
+            selection: 'id: _id\nname: name',
+          },
+        ],
+      },
+      new Map([
+        ['criteria', 'query'],
+        ['order', 'sort'],
+      ]),
+    );
+    const mongo = rewritten!.mongo__find[0];
+    expect(mongo.query).toBe('$args.query');
+    expect(mongo.sort).toBe('$args.sort');
+    expect(mongo.selection).toBe('id: _id\nname: name');
+  });
+
+  it('still rewrites legacy @mongo(kind:)', async () => {
     const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
     const rewritten = rewriteConnectArgReferences(
       {
@@ -1310,24 +1334,22 @@ describe('rewriteConnectArgReferences @mongo', () => {
     const mongo = rewritten!.mongo[0];
     expect(mongo.query).toBe('$args.query');
     expect(mongo.sort).toBe('$args.sort');
-    expect(mongo.selection).toBe('id: _id\nname: name');
   });
 
   it('does not rewrite $args.queryInput when renaming query', async () => {
     const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
     const rewritten = rewriteConnectArgReferences(
       {
-        mongo: [
+        mongo__findOne: [
           {
             collection: 'users',
-            kind: 'FIND_ONE',
             query: '_id: $args.query\nmeta: $args.queryInput',
           },
         ],
       },
       new Map([['query', 'criteria']]),
     );
-    const query = rewritten!.mongo[0].query as string;
+    const query = rewritten!.mongo__findOne[0].query as string;
     expect(query).toContain('$args.criteria');
     expect(query).toContain('$args.queryInput');
     expect(query).not.toMatch(/\$args\.query\b/);
@@ -1337,10 +1359,9 @@ describe('rewriteConnectArgReferences @mongo', () => {
     const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
     const rewritten = rewriteConnectArgReferences(
       {
-        mongo: [
+        mongo__findOne: [
           {
             collection: 'users',
-            kind: 'FIND_ONE',
             query: '_id: $this.authorId',
             selection: 'id: _id',
           },
@@ -1349,6 +1370,6 @@ describe('rewriteConnectArgReferences @mongo', () => {
       new Map(),
       new Map([['authorId', 'writerId']]),
     );
-    expect(rewritten!.mongo[0].query).toBe('_id: $this.writerId');
+    expect(rewritten!.mongo__findOne[0].query).toBe('_id: $this.writerId');
   });
 });

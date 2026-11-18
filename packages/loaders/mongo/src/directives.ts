@@ -1,67 +1,200 @@
 import {
   DirectiveLocation,
   GraphQLDirective,
-  GraphQLEnumType,
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
 
+const subgraphArg = { type: GraphQLString };
+const collectionArg = { type: new GraphQLNonNull(GraphQLString) };
+const selectionArg = { type: GraphQLString };
+const queryArg = { type: GraphQLString };
+const sortArg = { type: GraphQLString };
+
 /**
- * Single kind enum for `@mongo` (reads, writes, aggregates).
+ * Op-specific `@mongo__*` directives (MySQL/Thrift style).
+ * Generated GraphQL SDL (query/sort enums) can differ from these execution binders.
+ *
+ * findOne(query, projection) → `@mongo__findOne(query, selection)`
+ * find(query).sort().limit() → `@mongo__find(query, sort, limit, skip, selection)`
  */
-export const MongoKindEnum = new GraphQLEnumType({
-  name: 'MongoKind',
-  values: {
-    FIND_ONE: { value: 'FIND_ONE' },
-    FIND_MANY: { value: 'FIND_MANY' },
-    COUNT: { value: 'COUNT' },
-    CONNECTION: { value: 'CONNECTION' },
-    PAGINATION: { value: 'PAGINATION' },
-    AGGREGATE: { value: 'AGGREGATE' },
-    INSERT_ONE: { value: 'INSERT_ONE' },
-    INSERT_MANY: { value: 'INSERT_MANY' },
-    UPDATE_ONE: { value: 'UPDATE_ONE' },
-    UPDATE_MANY: { value: 'UPDATE_MANY' },
-    DELETE_ONE: { value: 'DELETE_ONE' },
-    DELETE_MANY: { value: 'DELETE_MANY' },
+export const MongoFindOneDirective = new GraphQLDirective({
+  name: 'mongo__findOne',
+  locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
+  args: {
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    query: queryArg,
+    sort: sortArg,
+    skip: { type: GraphQLString },
+    selection: selectionArg,
   },
 });
 
-export const MongoDirective = new GraphQLDirective({
-  name: 'mongo',
-  // FIELD: Query/Mutation/nested. OBJECT: type-level entity resolver (`$this` keys).
-  locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
+export const MongoFindDirective = new GraphQLDirective({
+  name: 'mongo__find',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
-    subgraph: { type: GraphQLString },
-    collection: { type: new GraphQLNonNull(GraphQLString) },
-    kind: { type: new GraphQLNonNull(MongoKindEnum) },
-    /**
-     * MongoDB query binder (`$args.query`, `_id: $args.id`, …) — findOne's
-     * first argument. Maps to a typed `*QueryInput` or a native filter doc.
-     */
-    query: { type: GraphQLString },
-    /** @deprecated use `query` */
-    filter: { type: GraphQLString },
-    /** MongoDB sort binder (`$args.sort`). */
-    sort: { type: GraphQLString },
-    /** Limit binder (`$args.limit`). */
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    query: queryArg,
+    sort: sortArg,
     limit: { type: GraphQLString },
-    /** Skip binder (`$args.skip`). */
     skip: { type: GraphQLString },
-    /** CONNECTION page size (`$args.first`). */
-    first: { type: GraphQLString },
-    /** CONNECTION cursor (`$args.after`). */
-    after: { type: GraphQLString },
-    /** PAGINATION page (`$args.page`). */
-    page: { type: GraphQLString },
-    /** PAGINATION page size (`$args.perPage`). */
-    perPage: { type: GraphQLString },
-    /** Document values for INSERT, or update doc binder for UPDATE (`$args.update`). */
-    set: { type: GraphQLString },
-    selection: { type: GraphQLString },
-    /** Aggregate pipeline stages (JSON array string or mapping). */
-    pipeline: { type: GraphQLString },
+    selection: selectionArg,
   },
 });
+
+export const MongoCountDirective = new GraphQLDirective({
+  name: 'mongo__count',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    query: queryArg,
+    selection: selectionArg,
+  },
+});
+
+export const MongoConnectionDirective = new GraphQLDirective({
+  name: 'mongo__connection',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    query: queryArg,
+    sort: sortArg,
+    first: { type: GraphQLString },
+    after: { type: GraphQLString },
+    selection: selectionArg,
+  },
+});
+
+export const MongoPaginationDirective = new GraphQLDirective({
+  name: 'mongo__pagination',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    query: queryArg,
+    sort: sortArg,
+    page: { type: GraphQLString },
+    perPage: { type: GraphQLString },
+    selection: selectionArg,
+  },
+});
+
+export const MongoAggregateDirective = new GraphQLDirective({
+  name: 'mongo__aggregate',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    query: queryArg,
+    pipeline: { type: GraphQLString },
+    selection: selectionArg,
+  },
+});
+
+export const MongoInsertOneDirective = new GraphQLDirective({
+  name: 'mongo__insertOne',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    /** Field map into the inserted document (`name: $args.document.name`). */
+    set: { type: GraphQLString },
+    selection: selectionArg,
+  },
+});
+
+export const MongoInsertManyDirective = new GraphQLDirective({
+  name: 'mongo__insertMany',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    set: { type: GraphQLString },
+    selection: selectionArg,
+  },
+});
+
+export const MongoUpdateOneDirective = new GraphQLDirective({
+  name: 'mongo__updateOne',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    query: queryArg,
+    /** Update doc binder (`$args.update` → `{ $set: … }` / native update). */
+    set: { type: GraphQLString },
+    selection: selectionArg,
+  },
+});
+
+export const MongoUpdateManyDirective = new GraphQLDirective({
+  name: 'mongo__updateMany',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    query: queryArg,
+    set: { type: GraphQLString },
+    selection: selectionArg,
+  },
+});
+
+export const MongoDeleteOneDirective = new GraphQLDirective({
+  name: 'mongo__deleteOne',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    query: queryArg,
+    selection: selectionArg,
+  },
+});
+
+export const MongoDeleteManyDirective = new GraphQLDirective({
+  name: 'mongo__deleteMany',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: subgraphArg,
+    collection: collectionArg,
+    query: queryArg,
+    selection: selectionArg,
+  },
+});
+
+/** All op-specific mongo directives for schema registration. */
+export const MongoOpDirectives = [
+  MongoFindOneDirective,
+  MongoFindDirective,
+  MongoCountDirective,
+  MongoConnectionDirective,
+  MongoPaginationDirective,
+  MongoAggregateDirective,
+  MongoInsertOneDirective,
+  MongoInsertManyDirective,
+  MongoUpdateOneDirective,
+  MongoUpdateManyDirective,
+  MongoDeleteOneDirective,
+  MongoDeleteManyDirective,
+] as const;
+
+export const MONGO_DIRECTIVE_KIND: Record<string, string> = {
+  mongo__findOne: 'FIND_ONE',
+  mongo__find: 'FIND_MANY',
+  mongo__count: 'COUNT',
+  mongo__connection: 'CONNECTION',
+  mongo__pagination: 'PAGINATION',
+  mongo__aggregate: 'AGGREGATE',
+  mongo__insertOne: 'INSERT_ONE',
+  mongo__insertMany: 'INSERT_MANY',
+  mongo__updateOne: 'UPDATE_ONE',
+  mongo__updateMany: 'UPDATE_MANY',
+  mongo__deleteOne: 'DELETE_ONE',
+  mongo__deleteMany: 'DELETE_MANY',
+};
 
 export { TransportDirective } from '@graphql-mesh/utils';

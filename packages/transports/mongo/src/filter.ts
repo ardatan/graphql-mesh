@@ -246,24 +246,58 @@ export function buildMongoSort(
   const parsed = parseMongoMapping(sortSource);
   if (parsed.entries.length === 1 && parsed.entries[0].value?.kind === 'args') {
     const val = resolveMappingValue(parsed.entries[0].value, ctx);
-    return graphqlSortToMongo(val as Record<string, unknown> | null | undefined);
+    return graphqlSortToMongo(val as Record<string, unknown> | string[] | null | undefined);
   }
   return undefined;
 }
 
+function sortFieldKey(field: string): string {
+  return field === 'id' ? '_id' : field;
+}
+
+function parseSortToken(token: string): { field: string; dir: 1 | -1 } | undefined {
+  const desc = token.match(/^(.*)_DESC$/i);
+  if (desc) return { field: sortFieldKey(desc[1]), dir: -1 };
+  const asc = token.match(/^(.*)_ASC$/i);
+  if (asc) return { field: sortFieldKey(asc[1]), dir: 1 };
+  return undefined;
+}
+
+/**
+ * Accepts:
+ * - Hasura-style enum list: `['age_DESC', 'name_ASC']` (generated SDL)
+ * - Object map: `{ age: ASC|DESC|-1|1 }` (hand-written directive / legacy)
+ */
 export function graphqlSortToMongo(
-  input: Record<string, unknown> | null | undefined,
+  input: Record<string, unknown> | string[] | null | undefined,
 ): Record<string, 1 | -1> | undefined {
-  if (!input || typeof input !== 'object') return undefined;
+  if (input == null) return undefined;
+
+  if (Array.isArray(input)) {
+    const out: Record<string, 1 | -1> = {};
+    for (const entry of input) {
+      if (entry == null) continue;
+      const parsed = parseSortToken(String(entry));
+      if (parsed) out[parsed.field] = parsed.dir;
+    }
+    return Object.keys(out).length ? out : undefined;
+  }
+
+  if (typeof input !== 'object') return undefined;
   const out: Record<string, 1 | -1> = {};
   for (const [key, dir] of Object.entries(input)) {
     if (dir == null) continue;
-    const mongoKey = key === 'id' ? '_id' : key;
+    const mongoKey = sortFieldKey(key);
     if (typeof dir === 'number') {
       out[mongoKey] = dir < 0 ? -1 : 1;
       continue;
     }
     const d = String(dir).toUpperCase();
+    const fromToken = parseSortToken(d);
+    if (fromToken) {
+      out[fromToken.field] = fromToken.dir;
+      continue;
+    }
     out[mongoKey] = d === 'DESC' || d === '-1' ? -1 : 1;
   }
   return Object.keys(out).length ? out : undefined;

@@ -143,6 +143,7 @@ export interface RewriteProtobufMappingBindsOptions {
 }
 
 /**
+<<<<<<< HEAD
  * Rewrite GraphQL bind path segments in a `@protobuf__rpc` args/selection mapping.
  * Handles `$args.x` / `$this.x` and bare paths after `):` (e.g. `2(int64): year`,
  * `1(message): input.movie {`).
@@ -1440,6 +1441,12 @@ function protobufRpcDirectiveKey(
  * Rewrite Federation Connectors `@connect`, Thrift `@thrift__rpc`, and Mesh
  * `@protobuf__rpc` mappings after GraphQL renames. These skip Mesh `@source` /
  * `@meshSource`; transforms keep directive binds on the public GraphQL names instead.
+=======
+ * Rewrite `$args.<name>` (and related) references after GraphQL argument renames
+ * for Federation `@connect`, Thrift `@thrift__rpc`, and Mesh `@mongo__*`. Mesh stitching
+ * used `@meshSource(name:)` for this; Connectors / thrift compact / mongo mapping bind
+ * args by the GraphQL argument name inside path/body/`args`/`query`/`selection` strings.
+>>>>>>> e8839d9eba (feat(mongo)!: split @mongo into op-specific @mongo__* directives)
  *
  * When `fieldRenameMap` is set, also rewrite selection aliases of the form
  * `newName: oldName` / leading `oldName` field picks so rename/prefix transforms
@@ -1463,6 +1470,13 @@ export function rewriteConnectArgReferences(
   const protobufKey = protobufRpcDirectiveKey(fieldDirectives);
   const hasConnect = Boolean(fieldDirectives?.connect?.length);
   const hasThriftRpc = Boolean(fieldDirectives?.thrift__rpc?.length);
+<<<<<<< HEAD
+=======
+  const mongoDirectiveNames = Object.keys(fieldDirectives || {}).filter(
+    name => name === 'mongo' || name.startsWith('mongo__'),
+  );
+  const hasMongo = mongoDirectiveNames.some(name => Boolean(fieldDirectives?.[name]?.length));
+>>>>>>> e8839d9eba (feat(mongo)!: split @mongo into op-specific @mongo__* directives)
   if (
     (!hasConnect && !hasThriftRpc && !protobufKey) ||
     (argRenameMap.size === 0 &&
@@ -1625,7 +1639,7 @@ export function rewriteConnectArgReferences(
         });
 =======
   if (hasMongo) {
-    // `@mongo(query/selection/sort/set/pipeline/…)` embed `$args.<name>` / `$this.<field>`.
+    // `@mongo__findOne(query/selection/…)` (and legacy `@mongo`) embed `$args` / `$this`.
     const mongoStringArgs = [
       'query',
       'selection',
@@ -1642,12 +1656,15 @@ export function rewriteConnectArgReferences(
       'page',
       'perPage',
     ] as const;
-    next.mongo = fieldDirectives!.mongo.map((mongoArgs: any) => {
-      const rewritten: Record<string, unknown> = { ...mongoArgs };
-      for (const key of mongoStringArgs) {
-        if (typeof mongoArgs?.[key] === 'string') {
-          rewritten[key] = rewriteExpr(mongoArgs[key]);
+    for (const dirName of mongoDirectiveNames) {
+      next[dirName] = fieldDirectives![dirName].map((mongoArgs: any) => {
+        const rewritten: Record<string, unknown> = { ...mongoArgs };
+        for (const key of mongoStringArgs) {
+          if (typeof mongoArgs?.[key] === 'string') {
+            rewritten[key] = rewriteExpr(mongoArgs[key]);
+          }
         }
+<<<<<<< HEAD
 >>>>>>> 32575db820 (feat(mongo)!: align GraphQL API with MongoDB collection methods)
       }
       if (typeof selection === 'string' && selectionMap?.size) {
@@ -1664,6 +1681,10 @@ export function rewriteConnectArgReferences(
         ...nextDirectives,
         [protobufKey]: rewritten,
       };
+=======
+        return rewritten;
+      });
+>>>>>>> e8839d9eba (feat(mongo)!: split @mongo into op-specific @mongo__* directives)
     }
   }
   return nextDirectives;

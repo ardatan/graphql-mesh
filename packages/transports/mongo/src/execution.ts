@@ -53,13 +53,46 @@ interface MongoDirectiveArgs {
   pipeline?: string;
 }
 
+const MONGO_OP_DIRECTIVES: Array<{ name: string; kind: MongoKind }> = [
+  { name: 'mongo__findOne', kind: 'FIND_ONE' },
+  { name: 'mongo__find', kind: 'FIND_MANY' },
+  { name: 'mongo__count', kind: 'COUNT' },
+  { name: 'mongo__connection', kind: 'CONNECTION' },
+  { name: 'mongo__pagination', kind: 'PAGINATION' },
+  { name: 'mongo__aggregate', kind: 'AGGREGATE' },
+  { name: 'mongo__insertOne', kind: 'INSERT_ONE' },
+  { name: 'mongo__insertMany', kind: 'INSERT_MANY' },
+  { name: 'mongo__updateOne', kind: 'UPDATE_ONE' },
+  { name: 'mongo__updateMany', kind: 'UPDATE_MANY' },
+  { name: 'mongo__deleteOne', kind: 'DELETE_ONE' },
+  { name: 'mongo__deleteMany', kind: 'DELETE_MANY' },
+];
+
+function readMongoDirective(
+  subgraph: GraphQLSchema,
+  fieldConfig: GraphQLFieldConfig<any, any>,
+): MongoDirectiveArgs | undefined {
+  for (const { name, kind } of MONGO_OP_DIRECTIVES) {
+    const dirs = getDirective(subgraph, fieldConfig, name) as
+      | Omit<MongoDirectiveArgs, 'kind'>[]
+      | undefined;
+    if (dirs?.length) {
+      return { ...dirs[0], kind };
+    }
+  }
+  // Legacy single `@mongo(kind:)`
+  const legacy = getDirective(subgraph, fieldConfig, 'mongo') as MongoDirectiveArgs[] | undefined;
+  return legacy?.[0];
+}
+
 export function getMongoExecutor({ subgraph, client }: GetMongoExecutorOpts): DisposableExecutor {
   const transportDirectives = getDirective(subgraph, subgraph, 'transport');
   if (!transportDirectives?.length && !client) {
     throw new Error('No @transport directive found on schema definition');
   }
   const transport = transportDirectives?.[0] as
-    { location?: string; options?: MongoTransportOptions } | undefined;
+    | { location?: string; options?: MongoTransportOptions }
+    | undefined;
   const mongoClient =
     client ||
     createMongoClient({
@@ -69,10 +102,9 @@ export function getMongoExecutor({ subgraph, client }: GetMongoExecutorOpts): Di
 
   const executable = mapSchema(subgraph, {
     [MapperKind.OBJECT_FIELD](fieldConfig) {
-      const mongoDirs = getDirective(subgraph, fieldConfig, 'mongo') as
-        MongoDirectiveArgs[] | undefined;
-      if (!mongoDirs?.length) return fieldConfig;
-      return attachMongoResolver(fieldConfig, mongoDirs[0], mongoClient);
+      const directive = readMongoDirective(subgraph, fieldConfig);
+      if (!directive) return fieldConfig;
+      return attachMongoResolver(fieldConfig, directive, mongoClient);
     },
   });
 

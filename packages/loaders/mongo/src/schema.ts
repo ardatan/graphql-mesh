@@ -14,7 +14,7 @@ import type { Model, Schema as MongooseSchema } from 'mongoose';
 import { process as meshProcess } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
 import { defaultImportFn, loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { MongoDirective, MongoKindEnum, TransportDirective } from './directives.js';
+import { MongoOpDirectives, TransportDirective } from './directives.js';
 import { createDefaultNaming, type MongoNaming } from './naming.js';
 import { GraphQLDecimal128 } from './scalars.js';
 import { mapMongoPathToGraphQL } from './type-map.js';
@@ -51,8 +51,9 @@ export async function loadGraphQLSchemaFromMongo(
   schemaComposer.add(GraphQLJSON);
   schemaComposer.add(GraphQLDecimal128);
   schemaComposer.addDirective(TransportDirective);
-  schemaComposer.addDirective(MongoDirective);
-  schemaComposer.add(MongoKindEnum);
+  for (const directive of MongoOpDirectives) {
+    schemaComposer.addDirective(directive);
+  }
 
   ensureSharedQueryOperatorInputs(schemaComposer);
   ensurePageInfo(schemaComposer);
@@ -386,11 +387,10 @@ function emitModelObjectType(
   otc.setDirectives([
     { name: 'key', args: { fields: 'id' } },
     {
-      name: 'mongo',
+      name: 'mongo__findOne',
       args: {
         subgraph: subgraphName,
         collection,
-        kind: 'FIND_ONE',
         query: blockArg('_id: $this.id'),
         selection,
       },
@@ -418,21 +418,22 @@ function emitModelRootFields(
   const mutationTC = schemaComposer.Mutation;
   const documentInput = naming.createInput(typeName);
   const queryType = naming.queryInput(typeName);
-  const sortType = naming.sortInput(typeName);
+  const sortEnum = naming.sortEnum(typeName);
+  const sortArgType = `[${sortEnum}!]`;
 
-  const mongo = (
-    kind: string,
+  const mongoDir = (
+    name: string,
     extra: Record<string, unknown> = {},
   ): { name: string; args: Record<string, unknown> } => ({
-    name: 'mongo',
-    args: { subgraph: subgraphName, collection, kind, selection, ...extra },
+    name,
+    args: { subgraph: subgraphName, collection, selection, ...extra },
   });
 
   // db.collection.findOne({ _id }) convenience
   queryTC.setField(naming.findByIdField(typeName), {
     type: typeName,
     args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-    directives: [mongo('FIND_ONE', { query: blockArg('_id: $args.id') })],
+    directives: [mongoDir('mongo__findOne', { query: blockArg('_id: $args.id') })],
   });
 
   queryTC.setField(naming.findByIdsField(typeName), {
@@ -440,10 +441,10 @@ function emitModelRootFields(
     args: {
       ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLID))) },
       limit: { type: GraphQLInt, defaultValue: 100 },
-      sort: { type: sortType },
+      sort: { type: sortArgType },
     },
     directives: [
-      mongo('FIND_MANY', {
+      mongoDir('mongo__find', {
         query: blockArg('_id: $args.ids'),
         limit: '$args.limit',
         sort: '$args.sort',
@@ -456,12 +457,12 @@ function emitModelRootFields(
     type: `[${typeName}!]!`,
     args: {
       query: { type: queryType },
-      sort: { type: sortType },
+      sort: { type: sortArgType },
       limit: { type: GraphQLInt, defaultValue: 100 },
       skip: { type: GraphQLInt },
     },
     directives: [
-      mongo('FIND_MANY', {
+      mongoDir('mongo__find', {
         query: '$args.query',
         sort: '$args.sort',
         limit: '$args.limit',
@@ -475,11 +476,11 @@ function emitModelRootFields(
     type: typeName,
     args: {
       query: { type: queryType },
-      sort: { type: sortType },
+      sort: { type: sortArgType },
       skip: { type: GraphQLInt },
     },
     directives: [
-      mongo('FIND_ONE', {
+      mongoDir('mongo__findOne', {
         query: '$args.query',
         sort: '$args.sort',
         skip: '$args.skip',
@@ -491,7 +492,7 @@ function emitModelRootFields(
   queryTC.setField(naming.countField(typeName), {
     type: new GraphQLNonNull(GraphQLInt),
     args: { query: { type: queryType } },
-    directives: [mongo('COUNT', { query: '$args.query', selection: blockArg('$') })],
+    directives: [mongoDir('mongo__count', { query: '$args.query', selection: blockArg('$') })],
   });
 
   // db.collection.aggregate(pipeline)
@@ -502,7 +503,7 @@ function emitModelRootFields(
       pipeline: { type: GraphQLJSON },
     },
     directives: [
-      mongo('AGGREGATE', {
+      mongoDir('mongo__aggregate', {
         query: '$args.query',
         pipeline: '$args.pipeline',
         selection: blockArg('$'),
@@ -514,12 +515,12 @@ function emitModelRootFields(
     type: naming.connectionType(typeName),
     args: {
       query: { type: queryType },
-      sort: { type: sortType },
+      sort: { type: sortArgType },
       first: { type: GraphQLInt },
       after: { type: GraphQLString },
     },
     directives: [
-      mongo('CONNECTION', {
+      mongoDir('mongo__connection', {
         query: '$args.query',
         sort: '$args.sort',
         first: '$args.first',
@@ -550,12 +551,12 @@ totalCount: $totalCount
     type: naming.paginationType(typeName),
     args: {
       query: { type: queryType },
-      sort: { type: sortType },
+      sort: { type: sortArgType },
       page: { type: GraphQLInt },
       perPage: { type: GraphQLInt, defaultValue: 20 },
     },
     directives: [
-      mongo('PAGINATION', {
+      mongoDir('mongo__pagination', {
         query: '$args.query',
         sort: '$args.sort',
         page: '$args.page',
@@ -595,7 +596,9 @@ recordId: $_id
   mutationTC.setField(naming.createOneField(typeName), {
     type: naming.payloadType(typeName),
     args: { document: { type: `${documentInput}!` } },
-    directives: [mongo('INSERT_ONE', { set: documentSetBlock, selection: payloadSelection })],
+    directives: [
+      mongoDir('mongo__insertOne', { set: documentSetBlock, selection: payloadSelection }),
+    ],
   });
 
   // db.collection.insertMany(documents)
@@ -603,7 +606,7 @@ recordId: $_id
     type: naming.payloadType(typeName),
     args: { documents: { type: `[${documentInput}!]!` } },
     directives: [
-      mongo('INSERT_MANY', {
+      mongoDir('mongo__insertMany', {
         set: blockArg('documents: $args.documents'),
         selection: blockArg(`
 records {
@@ -624,7 +627,7 @@ createdCount: $createdCount
       update: { type: new GraphQLNonNull(GraphQLJSON) },
     },
     directives: [
-      mongo('UPDATE_ONE', {
+      mongoDir('mongo__updateOne', {
         query: blockArg('_id: $args.id'),
         set: '$args.update',
         selection: payloadSelection,
@@ -640,7 +643,7 @@ createdCount: $createdCount
       update: { type: new GraphQLNonNull(GraphQLJSON) },
     },
     directives: [
-      mongo('UPDATE_ONE', {
+      mongoDir('mongo__updateOne', {
         query: '$args.query',
         set: '$args.update',
         selection: payloadSelection,
@@ -655,7 +658,7 @@ createdCount: $createdCount
       update: { type: new GraphQLNonNull(GraphQLJSON) },
     },
     directives: [
-      mongo('UPDATE_MANY', {
+      mongoDir('mongo__updateMany', {
         query: '$args.query',
         set: '$args.update',
         selection: blockArg(`
@@ -670,7 +673,7 @@ matchedCount: $matchedCount
     type: naming.payloadType(typeName),
     args: { id: { type: new GraphQLNonNull(GraphQLID) } },
     directives: [
-      mongo('DELETE_ONE', {
+      mongoDir('mongo__deleteOne', {
         query: blockArg('_id: $args.id'),
         selection: payloadSelection,
       }),
@@ -682,7 +685,7 @@ matchedCount: $matchedCount
     type: naming.payloadType(typeName),
     args: { query: { type: `${queryType}!` } },
     directives: [
-      mongo('DELETE_ONE', {
+      mongoDir('mongo__deleteOne', {
         query: '$args.query',
         selection: payloadSelection,
       }),
@@ -693,7 +696,7 @@ matchedCount: $matchedCount
     type: naming.payloadType(typeName),
     args: { query: { type: `${queryType}!` } },
     directives: [
-      mongo('DELETE_MANY', {
+      mongoDir('mongo__deleteMany', {
         query: '$args.query',
         selection: blockArg('deletedCount: $deletedCount'),
       }),
@@ -736,11 +739,10 @@ function emitRefFields(
         type: `[${path.ref}!]!`,
         directives: [
           {
-            name: 'mongo',
+            name: 'mongo__find',
             args: {
               subgraph: opts.subgraphName,
               collection: refCollection,
-              kind: 'FIND_MANY',
               query: blockArg(`_id: $this.${path.name}`),
               selection: refSelection,
             },
@@ -752,11 +754,10 @@ function emitRefFields(
         type: path.ref,
         directives: [
           {
-            name: 'mongo',
+            name: 'mongo__findOne',
             args: {
               subgraph: opts.subgraphName,
               collection: refCollection,
-              kind: 'FIND_ONE',
               query: blockArg(`_id: $this.${path.name}`),
               selection: refSelection,
             },
@@ -978,26 +979,19 @@ function createQuerySortAndDocumentInputs(
     });
   }
 
-  const sortName = naming.sortInput(typeName);
-  if (!schemaComposer.has(sortName)) {
-    if (!schemaComposer.has('MongoSort')) {
-      schemaComposer.createEnumTC({
-        name: 'MongoSort',
-        values: {
-          ASC: { value: 1 },
-          DESC: { value: -1 },
-        },
-      });
+  // Client SDL: Hasura-style `id_ASC` / `name_DESC`. Directive binder still
+  // receives `$args.sort` and transport maps enum values → `{ field: 1|-1 }`.
+  const sortEnumName = naming.sortEnum(typeName);
+  if (!schemaComposer.has(sortEnumName)) {
+    const values: Record<string, { value: string }> = {
+      id_ASC: { value: 'id_ASC' },
+      id_DESC: { value: 'id_DESC' },
+    };
+    for (const path of paths.filter(isSortablePath)) {
+      values[`${path.name}_ASC`] = { value: `${path.name}_ASC` };
+      values[`${path.name}_DESC`] = { value: `${path.name}_DESC` };
     }
-    schemaComposer.createInputTC({
-      name: sortName,
-      fields: {
-        id: 'MongoSort',
-        ...Object.fromEntries(
-          paths.filter(isSortablePath).map(p => [p.name, { type: 'MongoSort' }]),
-        ),
-      },
-    });
+    schemaComposer.createEnumTC({ name: sortEnumName, values });
   }
 
   const createFields: Record<string, any> = {};
@@ -1204,16 +1198,21 @@ function markMongoDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
     const directives = astNode?.directives;
     if (!directives) return;
     for (const directive of directives) {
-      if (directive.name.value !== 'mongo' || !directive.arguments) continue;
+      if (!directive.name.value.startsWith('mongo') || !directive.arguments) continue;
       for (const arg of directive.arguments) {
         if (arg.value.kind !== 'StringValue') continue;
         if (
           arg.name.value !== 'query' &&
-          arg.name.value !== 'filter' &&
           arg.name.value !== 'sort' &&
           arg.name.value !== 'set' &&
           arg.name.value !== 'selection' &&
-          arg.name.value !== 'pipeline'
+          arg.name.value !== 'pipeline' &&
+          arg.name.value !== 'limit' &&
+          arg.name.value !== 'skip' &&
+          arg.name.value !== 'first' &&
+          arg.name.value !== 'after' &&
+          arg.name.value !== 'page' &&
+          arg.name.value !== 'perPage'
         ) {
           continue;
         }

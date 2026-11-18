@@ -12,7 +12,8 @@
 export interface MongoNaming {
   typeName(modelName: string): string;
   queryInput(typeName: string): string;
-  sortInput(typeName: string): string;
+  /** Client sort enum (`UserSort` with `id_ASC` / `name_DESC` values). */
+  sortEnum(typeName: string): string;
   createInput(typeName: string): string;
   updateInput(typeName: string): string;
   payloadType(typeName: string): string;
@@ -59,7 +60,7 @@ export function createDefaultNaming(): MongoNaming {
   return {
     typeName: name => name,
     queryInput: typeName => `${typeName}QueryInput`,
-    sortInput: typeName => `${typeName}SortInput`,
+    sortEnum: typeName => `${typeName}Sort`,
     createInput: typeName => `${typeName}DocumentInput`,
     updateInput: typeName => `${typeName}UpdateInput`,
     payloadType: typeName => `${typeName}Payload`,

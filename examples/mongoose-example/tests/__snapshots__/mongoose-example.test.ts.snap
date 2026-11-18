@@ -1,7 +1,29 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Mongoose should generate correct schema 1`] = `
-"directive @mongo(after: String, collection: String!, filter: String, first: String, kind: MongoKind!, limit: String, page: String, perPage: String, pipeline: String, query: String, selection: String, set: String, skip: String, sort: String, subgraph: String) on FIELD_DEFINITION | OBJECT
+"directive @mongo__aggregate(collection: String!, pipeline: String, query: String, selection: String, subgraph: String) on FIELD_DEFINITION
+
+directive @mongo__connection(after: String, collection: String!, first: String, query: String, selection: String, sort: String, subgraph: String) on FIELD_DEFINITION
+
+directive @mongo__count(collection: String!, query: String, selection: String, subgraph: String) on FIELD_DEFINITION
+
+directive @mongo__deleteMany(collection: String!, query: String, selection: String, subgraph: String) on FIELD_DEFINITION
+
+directive @mongo__deleteOne(collection: String!, query: String, selection: String, subgraph: String) on FIELD_DEFINITION
+
+directive @mongo__find(collection: String!, limit: String, query: String, selection: String, skip: String, sort: String, subgraph: String) on FIELD_DEFINITION
+
+directive @mongo__findOne(collection: String!, query: String, selection: String, skip: String, sort: String, subgraph: String) on FIELD_DEFINITION | OBJECT
+
+directive @mongo__insertMany(collection: String!, selection: String, set: String, subgraph: String) on FIELD_DEFINITION
+
+directive @mongo__insertOne(collection: String!, selection: String, set: String, subgraph: String) on FIELD_DEFINITION
+
+directive @mongo__pagination(collection: String!, page: String, perPage: String, query: String, selection: String, sort: String, subgraph: String) on FIELD_DEFINITION
+
+directive @mongo__updateMany(collection: String!, query: String, selection: String, set: String, subgraph: String) on FIELD_DEFINITION
+
+directive @mongo__updateOne(collection: String!, query: String, selection: String, set: String, subgraph: String) on FIELD_DEFINITION
 
 directive @transport(headers: [[String]], kind: String!, location: String, options: TransportOptions, subgraph: String!) repeatable on SCHEMA
 
@@ -72,26 +94,6 @@ type MongoError implements ErrorInterface {
   message: String
 }
 
-enum MongoKind {
-  AGGREGATE
-  CONNECTION
-  COUNT
-  DELETE_MANY
-  DELETE_ONE
-  FIND_MANY
-  FIND_ONE
-  INSERT_MANY
-  INSERT_ONE
-  PAGINATION
-  UPDATE_MANY
-  UPDATE_ONE
-}
-
-enum MongoSort {
-  ASC
-  DESC
-}
-
 type Mutation {
   deleteManyUsers(query: UserQueryInput!): UserPayload
   deleteOneUser(query: UserQueryInput!): UserPayload
@@ -122,12 +124,12 @@ type PaginationInfo {
 type Query {
   aggregateUsers(pipeline: JSON, query: UserQueryInput): [JSON!]!
   countDocumentsUsers(query: UserQueryInput): Int!
-  findOneUser(query: UserQueryInput, skip: Int, sort: UserSortInput): User
+  findOneUser(query: UserQueryInput, skip: Int, sort: [UserSort!]): User
   findUserById(id: ID!): User
-  findUsers(limit: Int = 100, query: UserQueryInput, skip: Int, sort: UserSortInput): [User!]!
-  findUsersByIds(ids: [ID!]!, limit: Int = 100, sort: UserSortInput): [User!]!
-  findUsersConnection(after: String, first: Int, query: UserQueryInput, sort: UserSortInput): UserConnection
-  findUsersPagination(page: Int, perPage: Int = 20, query: UserQueryInput, sort: UserSortInput): UserPagination
+  findUsers(limit: Int = 100, query: UserQueryInput, skip: Int, sort: [UserSort!]): [User!]!
+  findUsersByIds(ids: [ID!]!, limit: Int = 100, sort: [UserSort!]): [User!]!
+  findUsersConnection(after: String, first: Int, query: UserQueryInput, sort: [UserSort!]): UserConnection
+  findUsersPagination(page: Int, perPage: Int = 20, query: UserQueryInput, sort: [UserSort!]): UserPagination
 }
 
 input StringQueryOperators {
@@ -276,11 +278,16 @@ input UserQueryInput {
   someMixed: JSON
 }
 
-input UserSortInput {
-  age: MongoSort
-  gender: MongoSort
-  id: MongoSort
-  name: MongoSort
-  salaryDecimal: MongoSort
+enum UserSort {
+  age_ASC
+  age_DESC
+  gender_ASC
+  gender_DESC
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  salaryDecimal_ASC
+  salaryDecimal_DESC
 }"
 `;

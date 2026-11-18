@@ -1,4 +1,9 @@
-import { buildMongoFilter, graphqlFilterToMongo } from '../src/filter.js';
+import {
+  buildMongoFilter,
+  buildMongoSort,
+  graphqlFilterToMongo,
+  graphqlSortToMongo,
+} from '../src/filter.js';
 
 describe('mongo filter mapping', () => {
   it('builds equality from mapping binders', () => {
@@ -114,5 +119,15 @@ describe('mongo filter mapping', () => {
         { languages: { $elemMatch: { skill: 'basic' } } },
       ],
     });
+  });
+
+  it('maps Hasura-style sort enum list to Mongo sort', () => {
+    expect(graphqlSortToMongo(['age_DESC', 'name_ASC', 'id_DESC'])).toEqual({
+      age: -1,
+      name: 1,
+      _id: -1,
+    });
+    expect(graphqlSortToMongo({ age: 'DESC', id: 'ASC' })).toEqual({ age: -1, _id: 1 });
+    expect(buildMongoSort('$args.sort', { args: { sort: ['age_DESC'] } })).toEqual({ age: -1 });
   });
 });

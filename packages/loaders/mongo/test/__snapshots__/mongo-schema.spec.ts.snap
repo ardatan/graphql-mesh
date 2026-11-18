@@ -8,10 +8,32 @@ exports[`@omnigraph/mongo schema emit emits typed query/sort with Mongo method r
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-directive @mongo(subgraph: String, collection: String!, kind: MongoKind!, query: String, filter: String, sort: String, limit: String, skip: String, first: String, after: String, page: String, perPage: String, set: String, selection: String, pipeline: String) on FIELD_DEFINITION | OBJECT
+directive @mongo__findOne(subgraph: String, collection: String!, query: String, sort: String, skip: String, selection: String) on FIELD_DEFINITION | OBJECT
+
+directive @mongo__find(subgraph: String, collection: String!, query: String, sort: String, limit: String, skip: String, selection: String) on FIELD_DEFINITION
+
+directive @mongo__count(subgraph: String, collection: String!, query: String, selection: String) on FIELD_DEFINITION
+
+directive @mongo__connection(subgraph: String, collection: String!, query: String, sort: String, first: String, after: String, selection: String) on FIELD_DEFINITION
+
+directive @mongo__pagination(subgraph: String, collection: String!, query: String, sort: String, page: String, perPage: String, selection: String) on FIELD_DEFINITION
+
+directive @mongo__aggregate(subgraph: String, collection: String!, query: String, pipeline: String, selection: String) on FIELD_DEFINITION
+
+directive @mongo__insertOne(subgraph: String, collection: String!, set: String, selection: String) on FIELD_DEFINITION
+
+directive @mongo__insertMany(subgraph: String, collection: String!, set: String, selection: String) on FIELD_DEFINITION
+
+directive @mongo__updateOne(subgraph: String, collection: String!, query: String, set: String, selection: String) on FIELD_DEFINITION
+
+directive @mongo__updateMany(subgraph: String, collection: String!, query: String, set: String, selection: String) on FIELD_DEFINITION
+
+directive @mongo__deleteOne(subgraph: String, collection: String!, query: String, selection: String) on FIELD_DEFINITION
+
+directive @mongo__deleteMany(subgraph: String, collection: String!, query: String, selection: String) on FIELD_DEFINITION
 
 type Query {
-  findUserById(id: ID!): User @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, selection: """
+  findUserById(id: ID!): User @mongo__findOne(subgraph: "users", collection: "user_users", selection: """
     id: _id
     name: name
     age: age
@@ -25,7 +47,7 @@ type Query {
   
     _id: $args.id
   """)
-  findUsersByIds(ids: [ID!]!, limit: Int = 100, sort: UserSortInput): [User!]! @mongo(subgraph: "users", collection: "user_users", kind: FIND_MANY, selection: """
+  findUsersByIds(ids: [ID!]!, limit: Int = 100, sort: [UserSort!]): [User!]! @mongo__find(subgraph: "users", collection: "user_users", selection: """
     id: _id
     name: name
     age: age
@@ -39,7 +61,7 @@ type Query {
   
     _id: $args.ids
   """, limit: "$args.limit", sort: "$args.sort")
-  findUsers(query: UserQueryInput, sort: UserSortInput, limit: Int = 100, skip: Int): [User!]! @mongo(subgraph: "users", collection: "user_users", kind: FIND_MANY, selection: """
+  findUsers(query: UserQueryInput, sort: [UserSort!], limit: Int = 100, skip: Int): [User!]! @mongo__find(subgraph: "users", collection: "user_users", selection: """
     id: _id
     name: name
     age: age
@@ -50,7 +72,7 @@ type Query {
     salaryDecimal: salaryDecimal
     contacts: contacts
   """, query: "$args.query", sort: "$args.sort", limit: "$args.limit", skip: "$args.skip")
-  findOneUser(query: UserQueryInput, sort: UserSortInput, skip: Int): User @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, selection: """
+  findOneUser(query: UserQueryInput, sort: [UserSort!], skip: Int): User @mongo__findOne(subgraph: "users", collection: "user_users", selection: """
     id: _id
     name: name
     age: age
@@ -61,15 +83,15 @@ type Query {
     salaryDecimal: salaryDecimal
     contacts: contacts
   """, query: "$args.query", sort: "$args.sort", skip: "$args.skip")
-  countDocumentsUsers(query: UserQueryInput): Int! @mongo(subgraph: "users", collection: "user_users", kind: COUNT, selection: """
+  countDocumentsUsers(query: UserQueryInput): Int! @mongo__count(subgraph: "users", collection: "user_users", selection: """
   
     $
   """, query: "$args.query")
-  aggregateUsers(query: UserQueryInput, pipeline: JSON): [JSON!]! @mongo(subgraph: "users", collection: "user_users", kind: AGGREGATE, selection: """
+  aggregateUsers(query: UserQueryInput, pipeline: JSON): [JSON!]! @mongo__aggregate(subgraph: "users", collection: "user_users", selection: """
   
     $
   """, query: "$args.query", pipeline: "$args.pipeline")
-  findUsersConnection(query: UserQueryInput, sort: UserSortInput, first: Int, after: String): UserConnection @mongo(subgraph: "users", collection: "user_users", kind: CONNECTION, selection: """
+  findUsersConnection(query: UserQueryInput, sort: [UserSort!], first: Int, after: String): UserConnection @mongo__connection(subgraph: "users", collection: "user_users", selection: """
     nodes {
         id: _id
         name: name
@@ -103,7 +125,7 @@ type Query {
     }
     totalCount: $totalCount
   """, query: "$args.query", sort: "$args.sort", first: "$args.first", after: "$args.after")
-  findUsersPagination(query: UserQueryInput, sort: UserSortInput, page: Int, perPage: Int = 20): UserPagination @mongo(subgraph: "users", collection: "user_users", kind: PAGINATION, selection: """
+  findUsersPagination(query: UserQueryInput, sort: [UserSort!], page: Int, perPage: Int = 20): UserPagination @mongo__pagination(subgraph: "users", collection: "user_users", selection: """
     count: $count
     items {
         id: _id
@@ -127,7 +149,7 @@ type Query {
   """, query: "$args.query", sort: "$args.sort", page: "$args.page", perPage: "$args.perPage")
 }
 
-type User @key(fields: "id") @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, query: """
+type User @key(fields: "id") @mongo__findOne(subgraph: "users", collection: "user_users", query: """
 
   _id: $this.id
 """, selection: """
@@ -191,17 +213,17 @@ type UserContacts {
   phones: [String]
 }
 
-input UserSortInput {
-  id: MongoSort
-  name: MongoSort
-  age: MongoSort
-  gender: MongoSort
-  salaryDecimal: MongoSort
-}
-
-enum MongoSort {
-  ASC
-  DESC
+enum UserSort {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  age_ASC
+  age_DESC
+  gender_ASC
+  gender_DESC
+  salaryDecimal_ASC
+  salaryDecimal_DESC
 }
 
 input UserQueryInput {
@@ -329,7 +351,7 @@ type PaginationInfo {
 }
 
 type Mutation {
-  insertOneUser(document: UserDocumentInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: INSERT_ONE, selection: """
+  insertOneUser(document: UserDocumentInput!): UserPayload @mongo__insertOne(subgraph: "users", collection: "user_users", selection: """
     record {
         id: _id
         name: name
@@ -352,7 +374,7 @@ type Mutation {
     salaryDecimal: $args.document.salaryDecimal
     contacts: $args.document.contacts
   """)
-  insertManyUsers(documents: [UserDocumentInput!]!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: INSERT_MANY, selection: """
+  insertManyUsers(documents: [UserDocumentInput!]!): UserPayload @mongo__insertMany(subgraph: "users", collection: "user_users", selection: """
     records {
         id: _id
         name: name
@@ -370,7 +392,7 @@ type Mutation {
   
     documents: $args.documents
   """)
-  updateUserById(id: ID!, update: JSON!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: UPDATE_ONE, selection: """
+  updateUserById(id: ID!, update: JSON!): UserPayload @mongo__updateOne(subgraph: "users", collection: "user_users", selection: """
     record {
         id: _id
         name: name
@@ -387,7 +409,7 @@ type Mutation {
   
     _id: $args.id
   """, set: "$args.update")
-  updateOneUser(query: UserQueryInput!, update: JSON!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: UPDATE_ONE, selection: """
+  updateOneUser(query: UserQueryInput!, update: JSON!): UserPayload @mongo__updateOne(subgraph: "users", collection: "user_users", selection: """
     record {
         id: _id
         name: name
@@ -401,11 +423,11 @@ type Mutation {
     }
     recordId: $_id
   """, query: "$args.query", set: "$args.update")
-  updateManyUsers(query: UserQueryInput!, update: JSON!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: UPDATE_MANY, selection: """
+  updateManyUsers(query: UserQueryInput!, update: JSON!): UserPayload @mongo__updateMany(subgraph: "users", collection: "user_users", selection: """
     modifiedCount: $modifiedCount
     matchedCount: $matchedCount
   """, query: "$args.query", set: "$args.update")
-  deleteUserById(id: ID!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: DELETE_ONE, selection: """
+  deleteUserById(id: ID!): UserPayload @mongo__deleteOne(subgraph: "users", collection: "user_users", selection: """
     record {
         id: _id
         name: name
@@ -422,7 +444,7 @@ type Mutation {
   
     _id: $args.id
   """)
-  deleteOneUser(query: UserQueryInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: DELETE_ONE, selection: """
+  deleteOneUser(query: UserQueryInput!): UserPayload @mongo__deleteOne(subgraph: "users", collection: "user_users", selection: """
     record {
         id: _id
         name: name
@@ -436,7 +458,7 @@ type Mutation {
     }
     recordId: $_id
   """, query: "$args.query")
-  deleteManyUsers(query: UserQueryInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: DELETE_MANY, selection: """
+  deleteManyUsers(query: UserQueryInput!): UserPayload @mongo__deleteMany(subgraph: "users", collection: "user_users", selection: """
   
     deletedCount: $deletedCount
   """, query: "$args.query")
@@ -491,20 +513,5 @@ input UserContactsInput {
   phones: [String]
 }
 
-scalar TransportOptions
-
-enum MongoKind {
-  FIND_ONE
-  FIND_MANY
-  COUNT
-  CONNECTION
-  PAGINATION
-  AGGREGATE
-  INSERT_ONE
-  INSERT_MANY
-  UPDATE_ONE
-  UPDATE_MANY
-  DELETE_ONE
-  DELETE_MANY
-}"
+scalar TransportOptions"
 `;
