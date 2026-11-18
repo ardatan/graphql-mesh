@@ -55,7 +55,7 @@
     "pascal-case": "^3.1.2",
     "qs": "^6.16.1",
     "tslib": "^2.4.0",
-    "url-join": "4.0.1"
+    "url-join": "6.0.0"
   },
   "devDependencies": {
     "@types/http-string-parser": "0.0.33",
