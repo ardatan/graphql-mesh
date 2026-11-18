@@ -335,7 +335,7 @@ describe('getMongoExecutor FIND_* + writes', () => {
 
   it('maps bulk-create GraphQL id to Mongo _id for String _id models', async () => {
     const externalSchema = new Schema(
-      { _id: String, name: String },
+      { _id: String, id: String, name: String },
       { collection: 'external_users' },
     );
     const schema = await loadGraphQLSchemaFromMongo('externals', {
@@ -411,6 +411,20 @@ describe('getMongoExecutor FIND_* + writes', () => {
       { _id: 'bulk-2', name: 'Alan' },
     ]);
     expect(insertedDocs.every(d => d.id === undefined)).toBe(true);
+
+    // storedId: null must still alias to mongoose `id`; explicit BSON `id` is preserved.
+    insertedDocs = [];
+    const nullAlias = await execResult(executor, {
+      document: parse(
+        `mutation {
+          insertManyExternalUsers(documents: [
+            { id: "bulk-3", storedId: null, name: "Nil" }
+          ]) { createdCount }
+        }`,
+      ),
+    });
+    expect(nullAlias.errors).toBeUndefined();
+    expect(insertedDocs).toEqual([{ _id: 'bulk-3', id: null, name: 'Nil' }]);
   });
 
   it('treats present empty requiredFieldsByCollection as authoritative', async () => {

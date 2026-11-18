@@ -62,6 +62,16 @@ function mapLegacyModelConfig(m: YamlConfig.MongooseModel): MongoModelConfig {
       }
     : undefined;
   const queryAndMutations = mapLegacyQueryAndMutations(m.options?.resolvers);
+  // compose-mongoose `options.name` renamed the GraphQL type; the new loader keys
+  // refs off model `name`, so a silent rename would break `ref: 'User'`. Reject.
+  const override = m.options?.name?.trim();
+  if (override && override !== m.name) {
+    throw new Error(
+      `@graphql-mesh/mongoose: model "${m.name}" options.name "${override}" is not supported — ` +
+        `set the model entry name to "${override}" (and keep Mongoose refs in sync) or use ` +
+        `loadMongoSubgraph naming.typeName`,
+    );
+  }
   return {
     name: m.name,
     path: m.path,

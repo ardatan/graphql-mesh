@@ -36,6 +36,11 @@ export interface CoerceFilterOptions {
   asObjectId?: boolean;
   /** Collection for `_id` BSON-type decisions (String `_id` collections skip ObjectId). */
   collection?: string;
+  /**
+   * Dotted BSON path prefix so nested ObjectId policy uses full paths
+   * (e.g. `profile.reviewer` while walking `{ profile: { reviewer } }`).
+   */
+  pathPrefix?: string;
 }
 
 /**
@@ -241,6 +246,7 @@ function coerceExtendedJsonWrapper(value: Record<string, unknown>): unknown | un
 }
 
 export function coerceDeep(value: unknown, opts?: CoerceFilterOptions): unknown {
+  // Array elements share the parent path (document-array / list of nested docs).
   if (Array.isArray(value)) return value.map(v => coerceDeep(v, opts));
   if (isBsonValue(value)) return value;
   if (isPlainObject(value)) {
@@ -248,9 +254,11 @@ export function coerceDeep(value: unknown, opts?: CoerceFilterOptions): unknown 
     if (ext !== undefined) return ext;
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value)) {
+      const fullKey = opts?.pathPrefix ? `${opts.pathPrefix}.${k}` : k;
       out[k] = coerceDeep(v, {
         collection: opts?.collection,
-        asObjectId: opts?.asObjectId || isObjectIdFieldKey(k, opts?.collection),
+        pathPrefix: fullKey,
+        asObjectId: opts?.asObjectId || isObjectIdFieldKey(fullKey, opts?.collection),
       });
     }
     return out;
@@ -460,21 +468,37 @@ export function isUniversallyMatchingFilter(
   return keys.every(k => predicateIsUniversal(k, filter[k]));
 }
 
-/** True when every own key is a known GraphQL filter operator (`eq` / `gt` / …). */
+/**
+ * True when every own key is a known GraphQL filter operator (`eq` / `gt` / …).
+ * Nested fields named `in`/`nin` carry `{ eq: … }` (not a list) — those are nested
+ * filters, not comparison ops.
+ */
 function isOperatorBag(value: Record<string, unknown>): boolean {
   const keys = Object.keys(value);
-  return keys.length > 0 && keys.every(k => FILTER_OP_KEYS.has(k));
+  if (keys.length === 0 || !keys.every(k => FILTER_OP_KEYS.has(k))) return false;
+  for (const k of keys) {
+    const op = normalizeOpKey(k);
+    if ((op === 'in' || op === 'nin') && value[k] != null && !Array.isArray(value[k])) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
  * Legacy Mesh/SQL-style `*WhereInput` → Mongo filter (kept for hand-written `@mongo`).
+ *
+ * @param objectIdPathPrefix When set (document-array `$elemMatch`), ObjectId policy
+ *   uses this prefix + relative keys while output keys stay relative to the element.
  */
 export function graphqlFilterToMongo(
   input: Record<string, unknown>,
   pathPrefix = '',
   collection?: string,
+  objectIdPathPrefix?: string,
 ): Record<string, unknown> {
   const out: Record<string, unknown> = {};
+  const oidBase = objectIdPathPrefix;
 
   for (const [key, value] of Object.entries(input)) {
     if (value == null) continue;
@@ -482,7 +506,7 @@ export function graphqlFilterToMongo(
       const clauses = Array.isArray(value) ? (value as Record<string, unknown>[]) : [];
       // Empty `$and: []` is invalid Mongo; omit and keep sibling predicates.
       if (clauses.length === 0) continue;
-      const mapped = clauses.map(v => graphqlFilterToMongo(v, pathPrefix, collection));
+      const mapped = clauses.map(v => graphqlFilterToMongo(v, pathPrefix, collection, oidBase));
       // Nested `{ and: [{ and: [] }] }` → `[{}]` would match everything; drop vacuous
       // clauses and require MATCH_NOTHING when nothing meaningful remains.
       const meaningful = mapped.filter(c => !isUniversallyMatchingFilter(c));
@@ -501,7 +525,7 @@ export function graphqlFilterToMongo(
         appendAnd(out, [MATCH_NOTHING_FILTER]);
         continue;
       }
-      const mapped = clauses.map(v => graphqlFilterToMongo(v, pathPrefix, collection));
+      const mapped = clauses.map(v => graphqlFilterToMongo(v, pathPrefix, collection, oidBase));
       // Do not prune vacuous branches here: `or: [{}, { name }]` is match-all, and
       // `not: { or: [{}, { name }] }` must stay match-nothing. Bulk writes catch
       // match-all via `isUniversallyMatchingFilter`. All-contradiction ORs → MATCH_NOTHING.
@@ -514,7 +538,9 @@ export function graphqlFilterToMongo(
     }
     if (key === 'NOT' || key === 'not') {
       mergeFilterFragment(out, {
-        $nor: [graphqlFilterToMongo(value as Record<string, unknown>, pathPrefix, collection)],
+        $nor: [
+          graphqlFilterToMongo(value as Record<string, unknown>, pathPrefix, collection, oidBase),
+        ],
       });
       continue;
     }
@@ -526,13 +552,17 @@ export function graphqlFilterToMongo(
         : key === 'storedId' && collection && activeStringIdCollections().has(collection)
           ? 'id'
           : key;
-    const fullKey = pathPrefix ? `${pathPrefix}.${mongoKey}` : mongoKey;
-    // Prefer full BSON path so nested ObjectId fields coerce correctly.
-    const asObjectId = isObjectIdFieldKey(fullKey, collection);
+    const relativeKey = pathPrefix ? `${pathPrefix}.${mongoKey}` : mongoKey;
+    // Prefer full BSON path so nested ObjectId fields coerce correctly (incl. under $elemMatch).
+    const oidPath = oidBase != null ? `${oidBase}.${relativeKey}` : relativeKey;
+    const asObjectId = isObjectIdFieldKey(oidPath, collection);
+    // Flattened output key — relative under $elemMatch, dotted otherwise.
+    const fullKey = relativeKey;
 
     if (Array.isArray(value) && value.length > 0 && value.every(isPlainObject)) {
+      // Keep element-relative keys; pass the array field path for ObjectId policy.
       const elemMatches = (value as Record<string, unknown>[]).map(item => ({
-        $elemMatch: graphqlFilterToMongo(item, '', collection),
+        $elemMatch: graphqlFilterToMongo(item, '', collection, fullKey),
       }));
       if (elemMatches.length === 1) {
         out[fullKey] = elemMatches[0];
@@ -569,7 +599,7 @@ export function graphqlFilterToMongo(
       continue;
     }
 
-    mergeFilterFragment(out, graphqlFilterToMongo(value, fullKey, collection));
+    mergeFilterFragment(out, graphqlFilterToMongo(value, fullKey, collection, oidBase));
   }
 
   return out;
@@ -633,27 +663,34 @@ function applyOperatorBag(
 export function buildMongoSort(
   sortSource: string | null | undefined,
   ctx: { args?: Record<string, unknown> },
+  opts?: { collection?: string },
 ): Record<string, 1 | -1> | undefined {
   if (!sortSource) return undefined;
   const parsed = parseMongoMapping(sortSource);
   if (parsed.entries.length === 1 && parsed.entries[0].value?.kind === 'args') {
     const val = resolveMappingValue(parsed.entries[0].value, ctx);
-    return graphqlSortToMongo(val as Record<string, unknown> | string[] | null | undefined);
+    return graphqlSortToMongo(val as Record<string, unknown> | string[] | null | undefined, opts);
   }
   return undefined;
 }
 
-function sortFieldKey(field: string): string {
+/** `storedId` → mongoose `id` only on String-`_id` collections. */
+function sortFieldKey(field: string, collection?: string): string {
   if (field === 'id') return '_id';
-  if (field === 'storedId') return 'id';
+  if (field === 'storedId' && collection && activeStringIdCollections().has(collection)) {
+    return 'id';
+  }
   return field;
 }
 
-function parseSortToken(token: string): { field: string; dir: 1 | -1 } | undefined {
+function parseSortToken(
+  token: string,
+  collection?: string,
+): { field: string; dir: 1 | -1 } | undefined {
   const desc = token.match(/^(.*)_DESC$/i);
-  if (desc) return { field: sortFieldKey(desc[1]), dir: -1 };
+  if (desc) return { field: sortFieldKey(desc[1], collection), dir: -1 };
   const asc = token.match(/^(.*)_ASC$/i);
-  if (asc) return { field: sortFieldKey(asc[1]), dir: 1 };
+  if (asc) return { field: sortFieldKey(asc[1], collection), dir: 1 };
   return undefined;
 }
 
@@ -664,14 +701,16 @@ function parseSortToken(token: string): { field: string; dir: 1 | -1 } | undefin
  */
 export function graphqlSortToMongo(
   input: Record<string, unknown> | string[] | null | undefined,
+  opts?: { collection?: string },
 ): Record<string, 1 | -1> | undefined {
   if (input == null) return undefined;
+  const collection = opts?.collection;
 
   if (Array.isArray(input)) {
     const out: Record<string, 1 | -1> = {};
     for (const entry of input) {
       if (entry == null) continue;
-      const parsed = parseSortToken(String(entry));
+      const parsed = parseSortToken(String(entry), collection);
       if (parsed) out[parsed.field] = parsed.dir;
     }
     return Object.keys(out).length ? out : undefined;
@@ -681,13 +720,13 @@ export function graphqlSortToMongo(
   const out: Record<string, 1 | -1> = {};
   for (const [key, dir] of Object.entries(input)) {
     if (dir == null) continue;
-    const mongoKey = sortFieldKey(key);
+    const mongoKey = sortFieldKey(key, collection);
     if (typeof dir === 'number') {
       out[mongoKey] = dir < 0 ? -1 : 1;
       continue;
     }
     const d = String(dir).toUpperCase();
-    const fromToken = parseSortToken(d);
+    const fromToken = parseSortToken(d, collection);
     if (fromToken) {
       out[fromToken.field] = fromToken.dir;
       continue;
@@ -712,6 +751,7 @@ export function buildSetDocument(
     if (resolved === undefined) continue;
     const coerced = coerceDeep(resolved, {
       collection,
+      pathPrefix: entry.key,
       asObjectId: isObjectIdFieldKey(entry.key, collection),
     });
     // Same post-coerce required check as `$args.update` / `remapUpdateFields`.
@@ -765,6 +805,7 @@ function remapUpdateFields(value: unknown, collection?: string): unknown {
     const remapped = remapUpdateFieldKey(k, collection);
     const coerced = coerceDeep(v, {
       collection,
+      pathPrefix: remapped,
       asObjectId: isObjectIdFieldKey(remapped, collection) || isObjectIdFieldKey(k, collection),
     });
     // Check GraphQL key and remapped BSON key after coerce (EJSON nulls).

@@ -196,9 +196,12 @@ describe('@omnigraph/mongo schema emit', () => {
       ],
     });
     const transport = (schema.extensions as any)?.directives?.transport;
-    expect(transport?.options?.objectIdFieldsByCollection).toEqual([
-      { collection: 'posts', fields: ['owner'] },
-    ]);
+    expect(transport?.options?.objectIdFieldsByCollection).toEqual(
+      expect.arrayContaining([
+        { collection: 'posts', fields: ['owner'] },
+        { collection: 'notes', fields: [] },
+      ]),
+    );
     expect(transport?.options?.requiredFieldsByCollection).toEqual([
       { collection: 'posts', fields: ['title'] },
     ]);
@@ -470,12 +473,22 @@ describe('@omnigraph/mongo schema emit', () => {
       '';
     expect(typeBody).toMatch(/type Circle/);
     expect(typeBody).not.toMatch(/\bkind\b/);
-    expect(sdl).toMatch(/kind:\s*"Circle"/);
-    const findById = sdl.match(/findCircleById[\s\S]*?@mongo__findOne\([\s\S]*?\)/)?.[0] || '';
-    expect(findById).toMatch(/kind:\s*"Circle"/);
-    const insertOne = sdl.match(/insertOneCircle[\s\S]*?@mongo__insertOne\([\s\S]*?\)/)?.[0] || '';
-    expect(insertOne).toMatch(/kind:\s*"Circle"/);
-    expect(insertOne).not.toMatch(/documents:/);
+    // Per-root directive args — do not regex across roots (false positives if a binder is dropped).
+    const query = schema.getQueryType();
+    const mutation = schema.getMutationType();
+    const findByIdDirs = getDirective(
+      schema,
+      query!.getFields().findCircleById,
+      'mongo__findOne',
+    ) as Array<{ query?: string }> | undefined;
+    expect(findByIdDirs?.[0]?.query).toMatch(/kind:\s*"Circle"/);
+    const insertOneDirs = getDirective(
+      schema,
+      mutation!.getFields().insertOneCircle,
+      'mongo__insertOne',
+    ) as Array<{ set?: string }> | undefined;
+    expect(insertOneDirs?.[0]?.set).toMatch(/kind:\s*"Circle"/);
+    expect(insertOneDirs?.[0]?.set).not.toMatch(/documents:/);
     expect(sdl).not.toContain('rename: JSON');
   });
 

@@ -160,7 +160,10 @@ export function getMongoExecutor({
   };
   const fieldRuntime: MongoFieldRuntime = {
     objectIdFields: new Set(['_id', 'id', ...(transport?.options?.objectIdFields || [])]),
-    objectIdFieldsByCollection: toCollectionMap(transport?.options?.objectIdFieldsByCollection),
+    // Present empty objectIdFieldsByCollection must not fall back to flat objectIdFields.
+    objectIdFieldsByCollection: toCollectionMap(transport?.options?.objectIdFieldsByCollection, {
+      emptyAuthoritative: true,
+    }),
     requiredFields: new Set(transport?.options?.requiredFields || []),
     // Present empty requiredFieldsByCollection must not fall back to flat requiredFields.
     requiredFieldsByCollection: toCollectionMap(transport?.options?.requiredFieldsByCollection, {
@@ -224,7 +227,9 @@ function attachMongoResolver(
           ctx,
           { collection: directive.collection },
         );
-        const sort = buildMongoSort(directive.sort ?? directive.orderBy, ctx);
+        const sort = buildMongoSort(directive.sort ?? directive.orderBy, ctx, {
+          collection: directive.collection,
+        });
         switch (directive.kind) {
           case 'FIND_ONE': {
             const doc = await client.findOne(directive.collection, filter, {
@@ -278,13 +283,19 @@ function attachMongoResolver(
                 collection: directive.collection,
               }) as Record<string, unknown>;
               if (stringId) {
-                // GraphQL `id` → Mongo `_id`; `storedId` → mongoose path `id`.
-                if (coerced.id != null && coerced._id == null) {
+                // GraphQL `id` → Mongo `_id` (include null); keep existing `_id`.
+                if (
+                  Object.prototype.hasOwnProperty.call(coerced, 'id') &&
+                  !Object.prototype.hasOwnProperty.call(coerced, '_id')
+                ) {
                   coerced._id = coerced.id;
                   delete coerced.id;
                 }
-                if (coerced.storedId != null && coerced.id == null) {
-                  coerced.id = coerced.storedId;
+                // GraphQL `storedId` → mongoose path `id` (include null); preserve explicit BSON `id`.
+                if (Object.prototype.hasOwnProperty.call(coerced, 'storedId')) {
+                  if (!Object.prototype.hasOwnProperty.call(coerced, 'id')) {
+                    coerced.id = coerced.storedId;
+                  }
                   delete coerced.storedId;
                 }
               }

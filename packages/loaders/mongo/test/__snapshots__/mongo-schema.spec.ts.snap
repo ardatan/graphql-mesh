@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`@omnigraph/mongo schema emit emits typed query/sort with Mongo method roots: user-full-slice 1`] = `
-"schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test", options: {placeholderFieldsByCollection: [{collection: "user_users", fields: []}]}) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
+"schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test", options: {objectIdFieldsByCollection: [{collection: "user_users", fields: []}], placeholderFieldsByCollection: [{collection: "user_users", fields: []}]}) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
   query: Query
   mutation: Mutation
 }

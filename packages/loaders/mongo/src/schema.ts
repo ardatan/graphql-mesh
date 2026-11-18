@@ -50,7 +50,8 @@ export interface MongoFieldRestrictions {
  */
 export interface MongoDiscriminatorInfo {
   key: string;
-  value: string;
+  /** Original BSON-ish value (string or number); binders preserve the type. */
+  value: string | number;
 }
 
 /**
@@ -221,6 +222,8 @@ export async function loadGraphQLSchemaFromMongo(
   ensureErrorInterface(schemaComposer);
 
   const modelMeta: Array<{
+    /** Original model config `name` (Mongoose `ref` target). */
+    modelName: string;
     typeName: string;
     collection: string;
     schema: MongooseSchema;
@@ -261,7 +264,9 @@ export async function loadGraphQLSchemaFromMongo(
         `Model "${modelConfig.name}": discriminator key "${discriminator.key}" collides with insertMany binder`,
       );
     }
+    assertNoReservedFilterPathNames(paths, modelConfig.name);
     modelMeta.push({
+      modelName: modelConfig.name,
       typeName,
       collection,
       schema: model.schema,
@@ -290,7 +295,10 @@ export async function loadGraphQLSchemaFromMongo(
     m => m.fieldRestrictions?.only?.length || m.fieldRestrictions?.remove?.length,
   );
 
+  // Mongoose `ref: 'User'` must resolve via original model name before GraphQL naming.
+  const typeNameByModelName = new Map(modelMeta.map(m => [m.modelName, m.typeName]));
   const pathsByType = new Map(modelMeta.map(m => [m.typeName, m.paths]));
+  const collectionsByType = new Map(modelMeta.map(m => [m.typeName, m.collection]));
   for (const meta of modelMeta) {
     emitModelRootFields(schemaComposer, {
       subgraphName,
@@ -309,9 +317,22 @@ export async function loadGraphQLSchemaFromMongo(
       typeName: meta.typeName,
       paths: meta.paths,
       naming,
-      knownTypes: new Set(modelMeta.map(m => m.typeName)),
-      collectionsByType: new Map(modelMeta.map(m => [m.typeName, m.collection])),
+      typeNameByModelName,
+      collectionsByType,
       pathsByType,
+    });
+  }
+
+  // GraphQL requires a non-empty Query type — mutation-only configs get a placeholder.
+  if (schemaComposer.Query.getFieldNames().length === 0) {
+    if (schemaComposer.Mutation.getFieldNames().length === 0) {
+      throw new Error(
+        `Mongo subgraph "${subgraphName}": queryAndMutations disabled every Query and Mutation root`,
+      );
+    }
+    schemaComposer.Query.setField('_empty', {
+      type: GraphQLString,
+      resolve: () => null,
     });
   }
 
@@ -337,10 +358,10 @@ export async function loadGraphQLSchemaFromMongo(
       }
       policy.set(field.name, field.isObjectId);
     }
-    const fields = [...policy.entries()].filter(([, isOid]) => isOid).map(([name]) => name);
-    if (fields.length) {
-      objectIdFieldsByCollection[m.collection] = fields;
-    }
+    // Always emit an entry (possibly `[]`) so empty scoped maps stay authoritative.
+    objectIdFieldsByCollection[m.collection] = [...policy.entries()]
+      .filter(([, isOid]) => isOid)
+      .map(([name]) => name);
   }
   const requiredFields = [
     ...new Set(
@@ -385,7 +406,7 @@ export async function loadGraphQLSchemaFromMongo(
     .filter(Boolean);
   const transportOptions: Record<string, unknown> = {};
   if (objectIdFields.length) transportOptions.objectIdFields = objectIdFields;
-  // Encode as entry lists so hyphenated collection names are not GraphQL object keys.
+  // Always encode scoped ObjectId map (incl. empty entries) — no flat fallback at runtime.
   if (Object.keys(objectIdFieldsByCollection).length) {
     transportOptions.objectIdFieldsByCollection = encodeCollectionFieldsMap(
       objectIdFieldsByCollection,
@@ -420,12 +441,52 @@ export async function loadGraphQLSchemaFromMongo(
   return schema;
 }
 
+const RESERVED_FILTER_PATH_NAMES = new Set(['and', 'or', 'not', 'AND', 'OR', 'NOT']);
+
+/** Reject model paths that would overwrite filter logical operators on `*FilterInput`. */
+function assertNoReservedFilterPathNames(paths: PathMeta[], modelName: string): void {
+  const walk = (list: PathMeta[], prefix: string) => {
+    for (const p of list) {
+      if (RESERVED_FILTER_PATH_NAMES.has(p.name)) {
+        const full = prefix ? `${prefix}.${p.name}` : p.name;
+        throw new Error(
+          `Model "${modelName}": path "${full}" collides with filter logical operator`,
+        );
+      }
+      if (p.nested?.length) walk(p.nested, prefix ? `${prefix}.${p.name}` : p.name);
+    }
+  };
+  walk(paths, '');
+}
+
+function assertExactlyOneModelSource(config: MongoModelConfig): void {
+  const hasModel = 'model' in config && config.model != null;
+  const hasSchema = 'schema' in config && config.schema != null;
+  const hasPath = 'path' in config && Boolean(config.path);
+  const count = Number(hasModel) + Number(hasSchema) + Number(hasPath);
+  if (count !== 1) {
+    throw new Error(
+      `Model "${config.name}" needs exactly one of model, schema, or path (got ${count})`,
+    );
+  }
+}
+
+function assertMongooseModelLike(model: unknown, label: string): asserts model is Model<any> {
+  // Mongoose models are functions (`typeof === 'function'`) with a `.schema` property.
+  const schema = model != null ? (model as Model<any>).schema : undefined;
+  if (schema == null || typeof schema !== 'object') {
+    throw new Error(`${label} did not resolve to a Mongoose model (missing schema)`);
+  }
+}
+
 async function resolveModel(
   config: MongoModelConfig,
   cwd: string,
   importFn: ImportFn,
 ): Promise<Model<any>> {
+  assertExactlyOneModelSource(config);
   if ('model' in config && config.model) {
+    assertMongooseModelLike(config.model, `Model "${config.name}"`);
     return config.model;
   }
   if ('schema' in config && config.schema) {
@@ -447,6 +508,7 @@ async function resolveModel(
     if (!model) {
       throw new Error(`Model ${config.name} cannot be imported from ${config.path}`);
     }
+    assertMongooseModelLike(model, `Model "${config.name}" import from ${config.path}`);
     return model;
   }
   throw new Error(`Model ${config.name} needs exactly one of model, schema, or path`);
@@ -492,14 +554,25 @@ function readDiscriminatorMapping(schema: MongooseSchema): MongoDiscriminatorInf
   const mapping = (schema as any)?.discriminatorMapping;
   if (!mapping || mapping.isRoot !== false) return undefined;
   const key = mapping.key != null ? String(mapping.key) : '';
-  const value = mapping.value != null ? String(mapping.value) : '';
-  if (!key || !value) return undefined;
+  if (!key || mapping.value == null || mapping.value === '') return undefined;
+  // Preserve Number discriminators as numbers; stringify only non-number values.
+  const value =
+    typeof mapping.value === 'number' && Number.isFinite(mapping.value)
+      ? mapping.value
+      : String(mapping.value);
+  if (value === '') return undefined;
   return { key, value };
 }
 
-/** Escape a discriminator value for embedding in a Mongo mapping binder string. */
+/** Escape a string discriminator value for embedding in a Mongo mapping binder. */
 function escapeMappingLiteral(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+/** Binder literal for a discriminator value — numbers unquoted, strings quoted. */
+function discriminatorValueLiteral(value: string | number): string {
+  if (typeof value === 'number') return String(value);
+  return `"${escapeMappingLiteral(value)}"`;
 }
 
 /**
@@ -508,7 +581,7 @@ function escapeMappingLiteral(value: string): string {
  */
 function filterWithDiscriminator(filter: string, disc?: MongoDiscriminatorInfo): string {
   if (!disc) return filter;
-  const clause = `${disc.key}: "${escapeMappingLiteral(disc.value)}"`;
+  const clause = `${disc.key}: ${discriminatorValueLiteral(disc.value)}`;
   if (filter === '$args.filter') {
     return blockArg(`${clause}\n$args.filter`);
   }
@@ -1112,7 +1185,7 @@ pageInfo {
   }
   // Stamp discriminator key on create so inserts land as the subtype.
   if (disc) {
-    documentFieldBinds.unshift(`${disc.key}: "${escapeMappingLiteral(disc.value)}"`);
+    documentFieldBinds.unshift(`${disc.key}: ${discriminatorValueLiteral(disc.value)}`);
   }
   const documentSetBlock = blockArg(documentFieldBinds.join('\n'));
   const payloadSelection = blockArg(`
@@ -1138,7 +1211,7 @@ recordId: $_id
     const insertManySetLines = ['documents: $args.documents'];
     if (disc) {
       // Sibling literals are stamped onto each document by the transport.
-      insertManySetLines.push(`${disc.key}: "${escapeMappingLiteral(disc.value)}"`);
+      insertManySetLines.push(`${disc.key}: ${discriminatorValueLiteral(disc.value)}`);
     }
     mutationTC.setField(naming.insertManyField(typeName), {
       type: naming.payloadType(typeName),
@@ -1266,7 +1339,8 @@ function emitRefFields(
     typeName: string;
     paths: PathMeta[];
     naming: MongoNaming;
-    knownTypes: Set<string>;
+    /** Mongoose model name → emitted GraphQL type (naming.typeName). */
+    typeNameByModelName: Map<string, string>;
     collectionsByType: Map<string, string>;
     pathsByType: Map<string, PathMeta[]>;
   },
@@ -1275,12 +1349,15 @@ function emitRefFields(
   const paths = opts.paths;
   const otc = schemaComposer.getOTC(opts.typeName);
   for (const path of paths) {
-    if (!path.ref || !opts.knownTypes.has(path.ref)) continue;
-    const refCollection = opts.collectionsByType.get(path.ref);
+    if (!path.ref) continue;
+    // `ref` is the original Mongoose model name — map to GraphQL type after naming.
+    const refTypeName = opts.typeNameByModelName.get(path.ref);
+    if (!refTypeName) continue;
+    const refCollection = opts.collectionsByType.get(refTypeName);
     if (!refCollection) continue;
     const fieldName = path.isArray
-      ? pluralizeFallback(path.ref)
-      : path.ref[0].toLowerCase() + path.ref.slice(1);
+      ? pluralizeFallback(refTypeName)
+      : refTypeName[0].toLowerCase() + refTypeName.slice(1);
     // Prefer path name without Id suffix when present (authorId -> author)
     const pretty =
       path.name.endsWith('Id') || path.name.endsWith('Ids')
@@ -1294,11 +1371,11 @@ function emitRefFields(
         finalName = `${pretty}Ref${n++}`;
       }
     }
-    const refPaths = opts.pathsByType.get(path.ref) || [];
+    const refPaths = opts.pathsByType.get(refTypeName) || [];
     const refSelection = selectionForPaths(refPaths);
     if (path.isArray) {
       otc.setField(finalName, {
-        type: `[${path.ref}!]!`,
+        type: `[${refTypeName}!]!`,
         directives: [
           {
             name: 'mongo__find',
@@ -1313,7 +1390,7 @@ function emitRefFields(
       });
     } else {
       otc.setField(finalName, {
-        type: path.ref,
+        type: refTypeName,
         directives: [
           {
             name: 'mongo__findOne',

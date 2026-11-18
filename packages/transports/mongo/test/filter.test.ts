@@ -384,6 +384,78 @@ describe('mongo filter mapping', () => {
     expect(buildMongoSort('$args.sort', { args: { sort: ['age_desc'] } })).toEqual({ age: -1 });
   });
 
+  it('aliases storedId→id in sort only for string-ID collections', () => {
+    const runtime = {
+      objectIdFields: new Set(['_id', 'id']),
+      requiredFields: new Set<string>(),
+      placeholderFields: new Set(['_']),
+      stringIdCollections: new Set(['external_users']),
+    };
+    runWithMongoFieldRuntime(runtime, () => {
+      // ObjectId model with a real `storedId` path — do not remap.
+      expect(graphqlSortToMongo(['storedId_asc', 'id_desc'], { collection: 'users' })).toEqual({
+        storedId: 1,
+        _id: -1,
+      });
+      // String `_id` model — GraphQL storedId sorts mongoose `id`.
+      expect(
+        graphqlSortToMongo(['storedId_desc', 'id_asc'], { collection: 'external_users' }),
+      ).toEqual({ id: -1, _id: 1 });
+      expect(
+        buildMongoSort(
+          '$args.sort',
+          { args: { sort: ['storedId_asc'] } },
+          {
+            collection: 'external_users',
+          },
+        ),
+      ).toEqual({ id: 1 });
+    });
+  });
+
+  it('coerces nested ObjectId via full path; $elemMatch keeps relative keys', () => {
+    const hex = '507f1f77bcf86cd799439011';
+    const runtime = {
+      objectIdFields: new Set(['_id', 'id']),
+      objectIdFieldsByCollection: new Map<string, ReadonlySet<string>>([
+        ['posts', new Set(['profile.reviewer', 'tags.owner'])],
+        ['notes', new Set()], // authoritative empty — no flat fallback
+      ]),
+      requiredFields: new Set<string>(),
+      placeholderFields: new Set(['_']),
+      stringIdCollections: new Set<string>(),
+    };
+    runWithMongoFieldRuntime(runtime, () => {
+      const nested = coerceDeep(
+        { profile: { reviewer: hex, label: hex } },
+        { collection: 'posts' },
+      ) as { profile: { reviewer: unknown; label: unknown } };
+      expect(nested.profile.reviewer).toBeInstanceOf(ObjectId);
+      expect(nested.profile.label).toBe(hex); // same-named String elsewhere stays string
+
+      const elem = graphqlFilterToMongo({ tags: [{ owner: hex, name: 'a' }] }, '', 'posts') as {
+        tags: { $elemMatch: { owner: unknown; name: string } };
+      };
+      expect(elem.tags.$elemMatch.owner).toBeInstanceOf(ObjectId);
+      expect(elem.tags.$elemMatch.name).toBe('a');
+      // Relative keys inside $elemMatch (not `tags.owner`).
+      expect(elem.tags.$elemMatch).not.toHaveProperty('tags.owner');
+
+      // Empty scoped map is authoritative — flat objectIdFields must not coerce.
+      expect(graphqlFilterToMongo({ owner: { eq: hex } }, '', 'notes').owner).toBe(hex);
+    });
+  });
+
+  it('treats nested field named in as a nested filter, not $in', () => {
+    expect(
+      graphqlFilterToMongo({
+        profile: { in: { eq: 'staff' } },
+      }),
+    ).toEqual({ 'profile.in': 'staff' });
+    // Genuine `$in` still accepts a list.
+    expect(graphqlFilterToMongo({ age: { in: [1, 2] } })).toEqual({ age: { $in: [1, 2] } });
+  });
+
   it('maps typed update ops (set/inc/unset) to $set/$inc/$unset', () => {
     expect(
       graphqlUpdateToMongo({

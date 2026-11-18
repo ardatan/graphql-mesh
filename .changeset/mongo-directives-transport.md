@@ -26,8 +26,9 @@ new stack (like mysql/tuql -> SQL).
   (SDL client API ≠ directive binders; legacy `@mongo(kind:)` still executed)
 - Client args: typed `filter: *FilterInput` (`and` / `or` / `not` + field ops; compose-mongoose
   style) + `sort: [*Sort!]` (`id_asc` / `age_desc`; transport maps to `{ field: 1|-1 }`).
-  Field operators use Mongo names without `$` (`gte`, `in`, `and`, … → `$gte` / `$in` /
-  `$and`; also accepts native `{ $gte }` and `_gte`)
+  Generated client filters expose Mongo op names without `$` (`gte`, `in`, …). Transport
+  binders / hand-written JSON also accept `_gte` and native `{ $gte }` — those aliases are
+  not GraphQL input fields on typed `*FilterInput`)
 - Projection = GraphQL selection set + `@mongo__*(selection:)` (findOne's projection)
 - Directive binders: `query` (← `$args.filter`) / `selection` / `sort` / `set` / `pipeline`
 - `update: *UpdateInput` with Mongo update ops without `$` (`set` / `inc` / `unset` / … →
