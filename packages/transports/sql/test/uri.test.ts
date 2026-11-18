@@ -1,3 +1,4 @@
+import { resolveSqlitePath } from '../src/adapter.js';
 import {
   inferAdapterFromConnectionString,
   parseSqlUri,
@@ -65,6 +66,14 @@ describe('parseSqlUri', () => {
   it('does not enable ssl for mysql sslmode=disable', () => {
     expect(parseSqlUri('mysql://u@h/db?sslmode=disable').ssl).toBeFalsy();
     expect(parseSqlUri('mysql://u@h/db?sslmode=require').ssl).toBe(true);
+  });
+});
+
+describe('resolveSqlitePath', () => {
+  it('keeps sqlite:// relative paths relative', () => {
+    expect(resolveSqlitePath('sqlite://data/app.db', '/cwd')).toBe('/cwd/data/app.db');
+    expect(resolveSqlitePath('sqlite:///abs/app.db')).toBe('/abs/app.db');
+    expect(resolveSqlitePath('sqlite://:memory:')).toBe(':memory:');
   });
 });
 

@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-nodejs-modules
-import { createPool, type Pool as Mysql2Pool, type Pool } from 'mysql2/promise';
+import { createPool, type Pool } from 'mysql2/promise';
 import { DatabaseSync } from 'node:sqlite';
 import pg from 'pg';
 import type { Pool as PgPool } from 'pg';
@@ -67,7 +67,10 @@ export function createBunSqlClient(opts: CreateSqlClientOptions): SqlClient {
   if (opts.connectionTimeout != null) bunOpts.connectionTimeout = opts.connectionTimeout;
   if (opts.tls != null) bunOpts.tls = opts.tls === 'true' ? true : opts.tls;
 
-  const sql = new BunSQL(opts.location, bunOpts);
+  // Bun resolves relative sqlite paths from process.cwd — honor Mesh `cwd` first.
+  const location =
+    opts.adapter === 'sqlite' ? resolveSqlitePath(opts.location, opts.cwd) : opts.location;
+  const sql = new BunSQL(location, bunOpts);
 
   return {
     adapter: opts.adapter,
@@ -139,13 +142,37 @@ export function wrapMysqlPoolAsSqlClient(pool: {
   end?: (...args: any[]) => any;
   promise?: () => { query: (...args: any[]) => any; end?: (...args: any[]) => any };
 }): SqlClient {
-  // mysql (non-promise) exposes .promise(); mysql2/promise is already thenable
-  const p = typeof pool.promise === 'function' ? pool.promise() : (pool as unknown as Mysql2Pool);
+  // Prefer mysql2 promise API when available.
+  if (typeof pool.promise === 'function') {
+    const p = pool.promise();
+    return {
+      adapter: 'mysql',
+      async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
+        const [result] = await p.query(sql, params);
+        if (Array.isArray(result)) {
+          return { rows: result as T[], rowCount: result.length };
+        }
+        const header = result as { affectedRows?: number };
+        return { rows: [] as T[], rowCount: Number(header.affectedRows ?? 0) };
+      },
+      async dispose() {
+        if (typeof p.end === 'function') {
+          await p.end();
+        }
+      },
+    };
+  }
 
+  // Legacy callback-style `mysql` pool — adapt rather than casting to promise.
   return {
     adapter: 'mysql',
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
-      const [result] = await p.query(sql, params);
+      const result = await new Promise<unknown>((resolve, reject) => {
+        pool.query(sql, params, (err: Error | null, rows: unknown) => {
+          if (err) reject(err);
+          else resolve(rows);
+        });
+      });
       if (Array.isArray(result)) {
         return { rows: result as T[], rowCount: result.length };
       }
@@ -153,9 +180,10 @@ export function wrapMysqlPoolAsSqlClient(pool: {
       return { rows: [] as T[], rowCount: Number(header.affectedRows ?? 0) };
     },
     async dispose() {
-      if (typeof p.end === 'function') {
-        await p.end();
-      }
+      if (typeof pool.end !== 'function') return;
+      await new Promise<void>((resolve, reject) => {
+        pool.end((err?: Error | null) => (err ? reject(err) : resolve()));
+      });
     },
   };
 }

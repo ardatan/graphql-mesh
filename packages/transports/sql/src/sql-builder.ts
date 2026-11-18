@@ -88,7 +88,14 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   const columns = columnMapFromSelection(plan.selection);
   const joins = plan.joins?.length ? plan.joins : undefined;
   const hasMany = plan.hasMany?.length ? plan.hasMany : undefined;
-  const needsAlias = Boolean(joins?.length || hasMany?.length);
+  // Alias root when joins/has-many/relation EXISTS/through/computed $fn need a row ref.
+  const needsAlias = Boolean(
+    joins?.length ||
+    hasMany?.length ||
+    plan.relationFilters?.length ||
+    plan.through ||
+    selectionHasComputedFn(plan.selection),
+  );
   const rootAlias = needsAlias ? 't' : undefined;
   const flatJoins = joins?.length ? flattenJoins(joins) : [];
 
@@ -188,10 +195,10 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   if (plan.kind === 'CONNECTION') {
     const first = Number(resolvePlannerArg(plan, 'first') ?? 10);
     const after = resolvePlannerArg(plan, 'after');
-    // Cursor = offset for phase 1 (opaque base64 of offset)
+    // Cursor encodes the last-seen edge index; `after` starts at the next row.
     let offset = 0;
     if (typeof after === 'string' && after.length) {
-      offset = decodeCursor(after);
+      offset = decodeCursor(after) + 1;
     }
     const limit = Math.max(0, first);
     // fetch one extra to detect hasNextPage
@@ -472,6 +479,7 @@ export function buildUpdate(
   graphqlArgs: Record<string, any>,
   returningColumns: string[],
   softDelete?: SqlSoftDeleteOptions,
+  filterColumns?: Map<string, string>,
 ): BuiltQuery {
   const params: unknown[] = [];
   const sets: string[] = [];
@@ -486,15 +494,7 @@ export function buildUpdate(
     throw new Error(`@sql UPDATE on ${table} has no SET columns`);
   }
   const whereParts: string[] = [];
-  for (const entry of whereMapping.entries) {
-    if (entry.spread || isBareVarPath(entry) || entry.children || PLANNER_KEYS.has(entry.key)) {
-      continue;
-    }
-    const val = resolveMappingValue(entry.value, { args: graphqlArgs });
-    if (val === undefined) continue;
-    params.push(val);
-    whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
-  }
+  appendMutationWhere(adapter, table, whereMapping, graphqlArgs, whereParts, params, filterColumns);
   const softColUpd = softDeleteColumnFor(softDelete, table);
   if (softColUpd) {
     whereParts.push(`${quoteIdent(adapter, softColUpd)} IS NULL`);
@@ -515,18 +515,11 @@ export function buildDelete(
   whereMapping: ParsedSqlMapping,
   graphqlArgs: Record<string, any>,
   softDelete?: SqlSoftDeleteOptions,
+  filterColumns?: Map<string, string>,
 ): BuiltQuery {
   const params: unknown[] = [];
   const whereParts: string[] = [];
-  for (const entry of whereMapping.entries) {
-    if (entry.spread || isBareVarPath(entry) || entry.children || PLANNER_KEYS.has(entry.key)) {
-      continue;
-    }
-    const val = resolveMappingValue(entry.value, { args: graphqlArgs });
-    if (val === undefined) continue;
-    params.push(val);
-    whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
-  }
+  appendMutationWhere(adapter, table, whereMapping, graphqlArgs, whereParts, params, filterColumns);
   const softCol = softDeleteColumnFor(softDelete, table);
   if (softCol) {
     // Soft-delete: UPDATE marker; only touch rows that are still live.
@@ -542,6 +535,46 @@ export function buildDelete(
     sql += ` WHERE ${whereParts.join(' AND ')}`;
   }
   return { sql, params };
+}
+
+/**
+ * Mutation WHERE: column equalities + structured `$args.where` / spreads.
+ * Unresolved binders throw — skipping them would UPDATE/DELETE unconstrained rows.
+ */
+function appendMutationWhere(
+  adapter: SqlAdapter,
+  table: string,
+  whereMapping: ParsedSqlMapping,
+  graphqlArgs: Record<string, any>,
+  whereParts: string[],
+  params: unknown[],
+  filterColumns?: Map<string, string>,
+): void {
+  const columns = filterColumns ?? new Map<string, string>();
+  const ctx = { args: graphqlArgs };
+  for (const entry of whereMapping.entries) {
+    if (entry.children || PLANNER_KEYS.has(entry.key)) continue;
+    if (entry.spread || isBareVarPath(entry)) {
+      const resolved = resolveMappingValue(entry.value, ctx);
+      if (resolved === undefined) {
+        throw new Error(
+          `@sql mutation on ${table}: where binder "${entry.key || entry.value?.value || '?'}" resolved to undefined`,
+        );
+      }
+      if (resolved && typeof resolved === 'object' && !Array.isArray(resolved)) {
+        appendFilter(adapter, resolved as Record<string, any>, columns, whereParts, params);
+      }
+      continue;
+    }
+    const val = resolveMappingValue(entry.value, ctx);
+    if (val === undefined) {
+      throw new Error(
+        `@sql mutation on ${table}: where column "${entry.key}" resolved to undefined`,
+      );
+    }
+    params.push(val);
+    whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
+  }
 }
 
 function resolvePlannerArg(plan: SelectPlan, key: SqlPlannerKey): unknown {
@@ -666,6 +699,10 @@ function computedFnSelects(
     out.push(`${fn}(${rowRef}) AS ${quoteIdent(adapter, entry.key)}`);
   }
   return out;
+}
+
+function selectionHasComputedFn(selection: ParsedSqlMapping): boolean {
+  return selection.entries.some(e => e.value?.kind === 'fn');
 }
 
 function buildOrderBy(

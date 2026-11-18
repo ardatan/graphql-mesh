@@ -43,8 +43,12 @@ export function resolveSqlitePath(location: string, cwd?: string): string {
     path = path.slice(path.indexOf(':') + 1);
   }
   if (path.startsWith('//')) {
-    // file://absolute or file:///absolute
-    path = path.replace(/^\/\/+/, '/');
+    // file:///abs → /abs ; sqlite://rel/path → rel/path (not /rel/path)
+    if (path.startsWith('///')) {
+      path = path.slice(2);
+    } else {
+      path = path.slice(2);
+    }
   }
   const qIdx = path.indexOf('?');
   if (qIdx !== -1) {

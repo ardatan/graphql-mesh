@@ -12,10 +12,15 @@ import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { inferAdapterFromLocation } from './adapter.js';
-import { batchableEqualityColumn, loadBatchedByColumn, resolveEqualityKey } from './batch.js';
+import {
+  batchableEqualityColumn,
+  canBatchByEqualityColumn,
+  loadBatchedByColumn,
+  resolveEqualityKey,
+} from './batch.js';
 import { createSqlClient } from './client.js';
 import { wireSqlEntityResolvers } from './entity.js';
-import { resolveMappingValue } from './mapping.js';
+import { columnMapFromSelection, resolveMappingValue } from './mapping.js';
 import { hasJoinedField, planSelection } from './plan.js';
 import { collectRelationFilters } from './relation-filters.js';
 import {
@@ -186,7 +191,7 @@ async function runSqlSelect(
   // and we are not folding joins / has-many / M2M into this query.
   if (!through && !joins.length && !hasMany.length && (kind === 'ROW' || kind === 'ROWS')) {
     const column = batchableEqualityColumn(whereMapping);
-    if (column) {
+    if (column && canBatchByEqualityColumn(whereMapping, column, kind, graphqlArgs)) {
       const key = resolveEqualityKey(whereMapping, column, graphqlArgs, parent);
       if (key !== undefined) {
         return loadBatchedByColumn(
@@ -357,6 +362,7 @@ export async function getSqlExecutor({
             if (MUTATION_KINDS.has(kind)) {
               const mutationKind = kind as SqlMutationKind;
               fieldConfig.resolve = async function sqlMutationResolver(_root, args) {
+                const filterColumns = columnMapFromSelection(selection);
                 if (mutationKind === 'DELETE') {
                   const query = buildDelete(
                     sqlClient.adapter,
@@ -364,6 +370,7 @@ export async function getSqlExecutor({
                     whereMapping,
                     args,
                     softDelete,
+                    filterColumns,
                   );
                   const result = await sqlClient.query(query.sql, query.params);
                   const affected = result.rowCount;
@@ -385,6 +392,7 @@ export async function getSqlExecutor({
                         args,
                         returningCols,
                         softDelete,
+                        filterColumns,
                       );
 
                 let row: Record<string, unknown> | undefined;

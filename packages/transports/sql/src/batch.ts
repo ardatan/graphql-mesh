@@ -24,10 +24,19 @@ function getLoaderMap(context: any): LoaderMap {
   return context[LOADERS] as LoaderMap;
 }
 
+/** Stable JSON for loader keys — include every arg (custom mapped criteria, etc.). */
 function stableArgsKey(args: Record<string, any> | undefined): string {
   if (!args) return '';
-  const { where, filter, orderBy, limit, offset, first, after } = args;
-  return JSON.stringify({ where, filter, orderBy, limit, offset, first, after });
+  return JSON.stringify(args, (_key, value) => {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      return Object.fromEntries(
+        Object.keys(value as Record<string, unknown>)
+          .sort()
+          .map(k => [k, (value as Record<string, unknown>)[k]]),
+      );
+    }
+    return value;
+  });
 }
 
 const PLANNER_KEYS = new Set([
@@ -60,6 +69,33 @@ export function batchableEqualityColumn(whereMapping: ParsedSqlMapping): string 
     cols.push(entry.key);
   }
   return cols.length === 1 ? cols[0] : undefined;
+}
+
+/**
+ * Batching collapses parents into one `IN (...)` query without a parent row, so
+ * extra `$this` binders / spreads cannot be resolved. Pagination (`limit` etc.)
+ * also cannot be applied per-parent under a single LIMIT.
+ */
+export function canBatchByEqualityColumn(
+  whereMapping: ParsedSqlMapping,
+  equalityColumn: string,
+  kind: 'ROW' | 'ROWS',
+  graphqlArgs?: Record<string, any>,
+): boolean {
+  for (const entry of whereMapping.entries) {
+    if (entry.key === equalityColumn) continue;
+    if (entry.spread || entry.key.startsWith('$')) {
+      if (entry.value?.kind === 'this') return false;
+    } else if (entry.value?.kind === 'this') {
+      return false;
+    }
+  }
+  if (kind === 'ROWS' && graphqlArgs) {
+    for (const key of ['limit', 'offset', 'first', 'after'] as const) {
+      if (graphqlArgs[key] != null) return false;
+    }
+  }
+  return true;
 }
 
 export function resolveEqualityKey(
@@ -99,6 +135,8 @@ export function loadBatchedByColumn(
     opts.table,
     opts.column,
     stableArgsKey(opts.graphqlArgs),
+    JSON.stringify(opts.planners ?? null),
+    JSON.stringify(opts.whereMapping.entries.map(e => [e.key, e.value, e.spread])),
     JSON.stringify(opts.selection.entries.map(e => [e.key, e.value])),
     JSON.stringify(opts.softDelete ?? null),
     JSON.stringify(

@@ -11,10 +11,9 @@ export interface IntrospectSqliteOpts {
 }
 
 export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
-  const dbPath = resolveSqlitePath(
-    opts.db.startsWith('file:') ? opts.db : `file:${opts.db}`,
-    opts.cwd,
-  );
+  // Pass endpoints through as-is (`sqlite:./x.db`, `file:…`, bare paths).
+  // Prefixing `file:` onto a `sqlite:` URI leaves `sqlite:` in the filesystem path.
+  const dbPath = resolveSqlitePath(opts.db, opts.cwd);
   const db = new DatabaseSync(dbPath);
   try {
     const tableRows = db

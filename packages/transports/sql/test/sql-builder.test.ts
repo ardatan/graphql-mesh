@@ -1,7 +1,9 @@
+import { resolveSqlitePath } from '../src/adapter.js';
 import { parseSqlMapping } from '../src/mapping.js';
 import {
   buildDelete,
   buildSelect,
+  buildUpdate,
   escapeSqlStringLiteral,
   mapRowToGraphql,
 } from '../src/sql-builder.js';
@@ -110,7 +112,8 @@ describe('buildSelect', () => {
     });
     expect(sql).toContain('EXISTS (SELECT 1 FROM "artists" AS "_rf"');
     expect(sql).toContain('"_rf"."Name" LIKE ?');
-    expect(sql).toContain('LOWER("Title") LIKE LOWER(?)');
+    expect(sql).toContain('"_rf"."ArtistId" = "t"."ArtistId"');
+    expect(sql).toContain('LOWER("t"."Title") LIKE LOWER(?)');
     expect(params).toEqual(['A%', '%rock%']);
   });
 
@@ -135,8 +138,9 @@ describe('buildSelect', () => {
       through,
     });
     expect(sql).toContain(
-      'EXISTS (SELECT 1 FROM "playlist_track" AS "_m2m" WHERE "_m2m"."PlaylistId" = ? AND "_m2m"."TrackId" = "TrackId"',
+      'EXISTS (SELECT 1 FROM "playlist_track" AS "_m2m" WHERE "_m2m"."PlaylistId" = ? AND "_m2m"."TrackId" = "t"."TrackId"',
     );
+    expect(sql).toContain('FROM "tracks" AS "t"');
     expect(params).toEqual([1]);
   });
 
@@ -151,7 +155,48 @@ describe('buildSelect', () => {
       whereMapping: parseSqlMapping(`id: $args.id`),
       graphqlArgs: { id: 1 },
     });
+    expect(sql).toContain('FROM "users" AS "t"');
     expect(sql).toContain('"public"."users_full_name"("t") AS "fullName"');
+  });
+
+  it('advances CONNECTION offset past the after cursor', () => {
+    const { params } = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'CONNECTION',
+      selection,
+      whereMapping: parseSqlMapping(`$args.where`),
+      planners: { first: '$args.first', after: '$args.after' },
+      graphqlArgs: { where: {}, first: 1, after: Buffer.from('0', 'utf8').toString('base64') },
+    });
+    // first+1 for hasNextPage probe, then offset = decode(after)+1
+    expect(params).toEqual([2, 1]);
+  });
+
+  it('applies structured $args.where on UPDATE and rejects unresolved binders', () => {
+    const cols = new Map([['id', 'AlbumId']]);
+    const upd = buildUpdate(
+      'sqlite',
+      'albums',
+      parseSqlMapping(`Title: $args.input.title`),
+      parseSqlMapping(`$args.where`),
+      { input: { title: 'X' }, where: { id: { eq: 7 } } },
+      ['AlbumId'],
+      undefined,
+      cols,
+    );
+    expect(upd.sql).toContain('"AlbumId" = ?');
+    expect(upd.params).toEqual(['X', 7]);
+
+    expect(() =>
+      buildUpdate(
+        'sqlite',
+        'albums',
+        parseSqlMapping(`Title: $args.input.title`),
+        parseSqlMapping(`AlbumId: $args.id`),
+        { input: { title: 'X' } },
+        ['AlbumId'],
+      ),
+    ).toThrow(/resolved to undefined/);
   });
 
   it('appends soft-delete IS NULL on reads and soft-deletes via UPDATE', () => {
