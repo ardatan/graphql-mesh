@@ -234,8 +234,14 @@ export function createNamingConventionTransform(
         }
       }
       if (newFieldName !== fieldName) {
+        const parentDirs =
+          schema?.getType(typeName) != null
+            ? getDirectiveExtensions(schema.getType(typeName)!)
+            : undefined;
         rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
           isNeo4jModelField: neo4jModelTypeNames.has(typeName),
+          subgraph:
+            parentDirs?.node?.[0]?.subgraph || parentDirs?.relationshipProperties?.[0]?.subgraph,
         });
       }
       if (rewrittenDirectives !== fieldDirectives || newArgs) {

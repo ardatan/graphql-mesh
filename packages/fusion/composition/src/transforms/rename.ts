@@ -325,6 +325,9 @@ export function createRenameTransform(opts: RenameTransformConfig) {
       if (newFieldName !== fieldName) {
         rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
           isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirectives),
+          subgraph:
+            parentDirectives?.node?.[0]?.subgraph ||
+            parentDirectives?.relationshipProperties?.[0]?.subgraph,
         });
       }
       if (rewrittenDirectives !== fieldDirectives || newArgs) {
@@ -694,6 +697,9 @@ export function createRenameFieldTransform(
         const fieldDirectives = getDirectiveExtensions(field, schema);
         const withAlias = ensureNeo4jFieldAlias(fieldDirectives, fieldName, {
           isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirectives),
+          subgraph:
+            parentDirectives?.node?.[0]?.subgraph ||
+            parentDirectives?.relationshipProperties?.[0]?.subgraph,
         });
         if (withAlias === fieldDirectives) {
           return [newFieldName, field];

@@ -212,9 +212,10 @@ describe('Federation Connectors composition', () => {
       ) repeatable on SCHEMA
       scalar TransportOptions
 
-      directive @node(labels: [String!]) on OBJECT
-      directive @alias(property: String!) on FIELD_DEFINITION
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
       directive @relationship(
+        subgraph: String
         type: String
         direction: _RelationDirections
         properties: String
@@ -223,13 +224,18 @@ describe('Federation Connectors composition', () => {
         IN
         OUT
       }
-      directive @cypher(statement: String!, columnName: String!) on FIELD_DEFINITION
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
 
-      type Movie @node {
+      type Movie @node(subgraph: "Movies") {
         title: String
-        actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
+        actors: [Person!]! @relationship(subgraph: "Movies", type: "ACTED_IN", direction: IN)
         similar(title: String!): [Movie!]!
           @cypher(
+            subgraph: "Movies"
             statement: """
             MATCH (this:Movie)
             WHERE this.title CONTAINS $title
@@ -239,7 +245,7 @@ describe('Federation Connectors composition', () => {
           )
       }
 
-      type Person @node {
+      type Person @node(subgraph: "Movies") {
         name: String
       }
 
@@ -271,8 +277,10 @@ describe('Federation Connectors composition', () => {
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).not.toMatch(/@source\(/);
     expect(sdl).not.toMatch(/@meshSource\(/);
-    expect(sdl).toMatch(/type Film[\s\S]*@node\(\s*labels:\s*\["Movie"\]/);
-    expect(sdl).toMatch(/movieTitle:\s*String\s*@alias\(\s*property:\s*"title"\s*\)/);
+    expect(sdl).not.toMatch(/@introspection\b/);
+    expect(sdl).toMatch(/type Film[\s\S]*@node\([^)]*subgraph:\s*"Movies"/);
+    expect(sdl).toMatch(/type Film[\s\S]*@node\([^)]*labels:\s*\["Movie"\]/);
+    expect(sdl).toMatch(/movieTitle:\s*String\s*@alias\([^)]*property:\s*"title"/);
     expect(sdl).toContain('actors:');
     expect(sdl).not.toMatch(/actors:[\s\S]*@alias/);
     expect(sdl).toContain('similar(needle:');

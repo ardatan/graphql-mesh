@@ -7,22 +7,22 @@
 
 ### TL;DR
 
-Neo4j subgraphs stay on **`@neo4j/graphql` directives** (`@node`, `@relationship`, `@cypher`, `@alias`, …). The loader can introspect **or** take author `typeDefs`. Rename / naming-convention transforms use `@node(labels:)` / `@alias(property:)` instead of Mesh `@source` / `@meshSource`.
+Neo4j subgraphs stay on **`@neo4j/graphql` directives** (`@node`, `@relationship`, `@cypher`, `@alias`, …) with Mesh **`subgraph:`** on those directives (no `@introspection`). The loader can introspect **or** take author `typeDefs`. Rename / naming-convention use `@node(labels:)` / `@alias(property:)` instead of Mesh `@source` / `@meshSource`.
 
 ### Why
 
-Neo4j already has a first-class GraphQL mapping dialect. Inventing Mesh `@sql__*` / `@mongo`-style stamps would duplicate `@neo4j/graphql` and break hand-authored SDL. Transforms previously stamped Mesh `@source` for any non-Connectors subgraph with transforms, which Neo4j runtime does not use for property/label identity.
+Neo4j already has a first-class GraphQL mapping dialect. A separate Mesh `@introspection` stamp was only a round-trip filter; multi-Neo4j compose needs subgraph attribution on the real Neo4j directives (same idea as `@sql__*` / `@mongo`). Transforms previously stamped Mesh `@source`, which Neo4j runtime does not use for property/label identity.
 
 ### What changed
 
-- **Loader** (`@omnigraph/neo4j`): optional `typeDefs` (string | DocumentNode). Omitting it keeps `@neo4j/introspector`. Directive defs include `@node(labels:)`, `@alias`, `@cypher`, `@plural`.
-- **Transport**: re-augment keeps `@node` / `@relationshipProperties` model types (not only `@introspection` field stamps). Strips Mesh `@source` / `@meshSource` / `@merge` before `@neo4j/graphql`.
-- **Composition**: `isNeo4jSubgraph` / `skipsMeshSourceStamps` -- Neo4j skips Mesh source stamps. Rename / naming-convention stamp Neo4j identity directives; `@cypher` arg renames rewrite `$argName` (not Connectors `$args.`).
-- **Legacy handler**: `source:` file loads through the same `typeDefs` augment path.
+- **Loader** (`@omnigraph/neo4j`): optional `typeDefs`. Stamps `subgraph:` onto `@node` / `@relationship` / `@cypher` / … when missing. No `@introspection`.
+- **Transport**: re-augment keeps model types by Neo4j directives scoped to `@transport(subgraph:)`. Strips Mesh `subgraph` args (and `@source` / `@meshSource` / `@merge`) before `@neo4j/graphql`.
+- **Composition**: Neo4j skips Mesh source stamps. Rename / naming-convention stamp Neo4j identity directives; `@cypher` arg renames rewrite `$argName`.
+- **Legacy handler**: `source:` goes through the same `typeDefs` path.
 
 ### Migration
 
 1. Recompose Neo4j subgraphs after upgrade.
-2. Hand-authored schemas: pass `typeDefs` (or legacy `source`) using Neo4j GraphQL directives; no Mesh mapping dialect required.
-3. After rename transforms, expect `@node(labels:)` / `@alias(property:)` on Neo4j types/fields -- not `@source` / `@meshSource`.
+2. Drop Mesh `@introspection` from hand-written SDL; use `@node(subgraph:)` (loader stamps if omitted).
+3. After rename transforms, expect `@node(labels:)` / `@alias(property:)` -- not `@source` / `@meshSource`.
 4. Runtime package remains `@graphql-mesh/transport-neo4j`.

@@ -60,7 +60,7 @@ export function ensureNeo4jNodeLabels(
 export function ensureNeo4jFieldAlias(
   fieldDirectives: Record<string, any[]> | undefined,
   originalFieldName: string,
-  opts?: { isNeo4jModelField?: boolean },
+  opts?: { isNeo4jModelField?: boolean; subgraph?: string },
 ): Record<string, any[]> | undefined {
   if (!opts?.isNeo4jModelField) {
     return fieldDirectives;
@@ -74,7 +74,12 @@ export function ensureNeo4jFieldAlias(
       return fieldDirectives;
     }
   }
-  dirs.alias = [{ property: originalFieldName }];
+  dirs.alias = [
+    {
+      ...(opts.subgraph ? { subgraph: opts.subgraph } : {}),
+      property: originalFieldName,
+    },
+  ];
   return dirs;
 }
 

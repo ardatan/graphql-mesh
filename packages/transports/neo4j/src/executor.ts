@@ -1,4 +1,11 @@
-import type { DefinitionNode, DocumentNode, GraphQLSchema } from 'graphql';
+import type {
+  ConstDirectiveNode,
+  DefinitionNode,
+  DocumentNode,
+  FieldDefinitionNode,
+  GraphQLSchema,
+  ObjectTypeDefinitionNode,
+} from 'graphql';
 import { extendSchema, Kind, parse, visit } from 'graphql';
 import type { Driver } from 'neo4j-driver';
 import { type Logger } from '@graphql-hive/logger';
@@ -7,7 +14,12 @@ import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/tr
 import { asArray, getDirectiveExtensions, getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import { getNeo4jDirectiveDefinitions } from './directives.js';
+import {
+  getDirectiveSubgraph,
+  getNeo4jDirectiveDefinitions,
+  NEO4J_SUBGRAPH_DIRECTIVES,
+  stripSubgraphArgsFromNeo4jDirectives,
+} from './directives.js';
 import { getDriverFromOpts } from './driver.js';
 import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
 
@@ -29,11 +41,32 @@ function hasDirective(
   return Boolean(node.directives?.some(directive => directive.name.value === name));
 }
 
-function isNeo4jModelType(node: { directives?: readonly { name: { value: string } }[] }): boolean {
+function belongsToSubgraph(
+  node: { directives?: readonly ConstDirectiveNode[] },
+  directiveName: string,
+  subgraphName: string | undefined,
+): boolean {
+  if (!hasDirective(node, directiveName)) {
+    return false;
+  }
+  const stamped = getDirectiveSubgraph(node, directiveName);
+  // Missing subgraph arg: single-source author SDL; include for this transport.
+  if (stamped == null) {
+    return true;
+  }
+  if (subgraphName == null) {
+    return true;
+  }
+  return stamped === subgraphName;
+}
+
+function isNeo4jModelType(
+  node: { directives?: readonly ConstDirectiveNode[] },
+  subgraphName: string | undefined,
+): boolean {
   return (
-    hasDirective(node, 'node') ||
-    hasDirective(node, 'relationshipProperties') ||
-    hasDirective(node, 'introspection')
+    belongsToSubgraph(node, 'node', subgraphName) ||
+    belongsToSubgraph(node, 'relationshipProperties', subgraphName)
   );
 }
 
@@ -55,6 +88,7 @@ const STRIP_DIRECTIVE_DEFINITIONS = new Set([
   'source',
   'meshSource',
   'merge',
+  'introspection',
 ]);
 const STRIP_TYPE_NAMES = new Set([
   'TransportOptions',
@@ -118,40 +152,56 @@ function namedTypeNameFromTypeNode(typeNode: {
   return undefined;
 }
 
-/**
- * Keep Neo4j author/model types for re-augmentation.
- * Prefers `@node` / `@relationshipProperties` (native dialect); also accepts Mesh
- * `@introspection` stamps from the introspector / loader round-trip.
- * Does not strip fields of kept types (author property fields need no Mesh stamp).
- */
 const ROOT_OPERATION_NAMES = new Set(['Query', 'Mutation', 'Subscription']);
 
-export function extractNeo4jModelTypeDefs(typeDefs: DocumentNode): DocumentNode {
+function fieldBelongsToSubgraph(
+  field: FieldDefinitionNode,
+  subgraphName: string | undefined,
+): boolean {
+  for (const name of NEO4J_SUBGRAPH_DIRECTIVES) {
+    if (belongsToSubgraph(field, name, subgraphName)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Keep Neo4j author/model types for re-augmentation.
+ * Uses `@node` / `@relationshipProperties` / root `@cypher`, scoped by Mesh `subgraph:`
+ * when multiple Neo4j sources are composed. Does not use Mesh `@introspection`.
+ */
+export function extractNeo4jModelTypeDefs(
+  typeDefs: DocumentNode,
+  subgraphName?: string,
+): DocumentNode {
   const modelTypeNames = new Set<string>();
   for (const def of typeDefs.definitions) {
     if (
       (def.kind === Kind.OBJECT_TYPE_DEFINITION || def.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
-      isNeo4jModelType(def)
+      isNeo4jModelType(def, subgraphName)
     ) {
       modelTypeNames.add(def.name.value);
     }
-    // Author root fields with `@cypher` are Neo4j model surface (not CRUD-generated).
     if (
       def.kind === Kind.OBJECT_TYPE_DEFINITION &&
       ROOT_OPERATION_NAMES.has(def.name.value) &&
-      def.fields?.some(field => hasDirective(field, 'cypher'))
+      def.fields?.some(field => belongsToSubgraph(field, 'cypher', subgraphName))
     ) {
       modelTypeNames.add(def.name.value);
     }
   }
-  // Author enums / scalars / unions referenced by model fields must survive re-augment.
   const referenced = new Set<string>();
   for (const def of typeDefs.definitions) {
     if (
       (def.kind === Kind.OBJECT_TYPE_DEFINITION || def.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
       modelTypeNames.has(def.name.value)
     ) {
-      for (const field of def.fields || []) {
+      const fields =
+        ROOT_OPERATION_NAMES.has(def.name.value) && def.kind === Kind.OBJECT_TYPE_DEFINITION
+          ? def.fields?.filter(field => fieldBelongsToSubgraph(field, subgraphName))
+          : def.fields;
+      for (const field of fields || []) {
         const name = namedTypeNameFromTypeNode(field.type);
         if (name) {
           referenced.add(name);
@@ -161,25 +211,41 @@ export function extractNeo4jModelTypeDefs(typeDefs: DocumentNode): DocumentNode 
   }
   return {
     ...typeDefs,
-    definitions: typeDefs.definitions.filter(def => {
+    definitions: typeDefs.definitions.flatMap(def => {
       switch (def.kind) {
         case Kind.OBJECT_TYPE_DEFINITION:
-        case Kind.INTERFACE_TYPE_DEFINITION:
-          return modelTypeNames.has(def.name.value);
+        case Kind.INTERFACE_TYPE_DEFINITION: {
+          if (!modelTypeNames.has(def.name.value)) {
+            return [];
+          }
+          if (
+            def.kind === Kind.OBJECT_TYPE_DEFINITION &&
+            ROOT_OPERATION_NAMES.has(def.name.value)
+          ) {
+            const fields = (def.fields || []).filter(field =>
+              fieldBelongsToSubgraph(field, subgraphName),
+            );
+            if (!fields.length) {
+              return [];
+            }
+            return [{ ...(def as ObjectTypeDefinitionNode), fields }];
+          }
+          return [def];
+        }
         case Kind.ENUM_TYPE_DEFINITION:
         case Kind.SCALAR_TYPE_DEFINITION:
         case Kind.UNION_TYPE_DEFINITION:
-          return hasDirective(def, 'introspection') || referenced.has(def.name.value);
+          return referenced.has(def.name.value) ? [def] : [];
         case Kind.INPUT_OBJECT_TYPE_DEFINITION:
           // Filter/create inputs are regenerated by Neo4jGraphQL.
-          return hasDirective(def, 'introspection');
+          return [];
         case Kind.DIRECTIVE_DEFINITION:
-          return !STRIP_DIRECTIVE_DEFINITIONS.has(def.name.value);
+          return STRIP_DIRECTIVE_DEFINITIONS.has(def.name.value) ? [] : [def];
         case Kind.SCHEMA_DEFINITION:
         case Kind.SCHEMA_EXTENSION:
-          return true;
+          return [def];
         default:
-          return true;
+          return [def];
       }
     }),
   };
@@ -193,6 +259,7 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
       parse(
         /* GraphQL */ `
           directive @relationship(
+            subgraph: String
             type: String
             direction: _RelationDirections
             properties: String
@@ -208,6 +275,7 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
   }
   const {
     location: endpoint,
+    subgraph: transportSubgraph,
     options: { database, auth },
   } = transportDirectives[0];
   let driver = opts.driver;
@@ -219,9 +287,11 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
     });
   }
   let typeDefs = getDocumentNodeFromSchema(opts.schema);
-  typeDefs = extractNeo4jModelTypeDefs(typeDefs);
+  typeDefs = extractNeo4jModelTypeDefs(typeDefs, transportSubgraph);
   typeDefs = stripMeshTransportFromTypeDefs(typeDefs);
+  typeDefs = stripSubgraphArgsFromNeo4jDirectives(typeDefs);
   (typeDefs.definitions as DefinitionNode[]).push(...getNeo4jDirectiveDefinitions());
+  typeDefs = stripSubgraphArgsFromNeo4jDirectives(typeDefs);
   const executableSchema = await getExecutableSchemaFromTypeDefsAndDriver({
     driver,
     pubsub: opts.pubsub,
@@ -267,14 +337,12 @@ export function getExecutableSchemaFromTypeDefsAndDriver({
       },
     };
   }
-  const extendedTypeDefs = asArray(typeDefs).map(defs =>
-    typeof defs === 'string' ? defs : stripMeshTransportFromTypeDefs(defs),
-  );
-  extendedTypeDefs.push(/* GraphQL */ `
-    directive @introspection(
-      subgraph: String
-    ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
-  `);
+  const extendedTypeDefs = asArray(typeDefs).map(defs => {
+    if (typeof defs === 'string') {
+      return defs;
+    }
+    return stripSubgraphArgsFromNeo4jDirectives(stripMeshTransportFromTypeDefs(defs));
+  });
   const neo4jGraphQL = new Neo4jGraphQL({
     typeDefs: extendedTypeDefs,
     driver,

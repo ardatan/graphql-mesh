@@ -41,9 +41,11 @@ export const composeConfig = defineConfig({
 })
 ```
 
-Omit introspection by passing author Neo4j GraphQL SDL (`@node`, `@relationship`, `@cypher`,
-`@alias`, …) as `typeDefs`. Rename transforms keep database identity via those directives (not Mesh
-`@source` / `@meshSource`).
+Omit database introspection by passing author Neo4j GraphQL SDL (`@node`, `@relationship`,
+`@cypher`, `@alias`, …) as `typeDefs`. Prefer `@node(subgraph: "MyNeo4j")` (and the same on other
+Neo4j directives) when you compose multiple Neo4j sources; the loader stamps `subgraph` when it is
+missing. Rename transforms keep database identity via `@node(labels:)` / `@alias(property:)` (not
+Mesh `@source` / `@meshSource`).
 
 <Callout>
   [You can find a working example here](

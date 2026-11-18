@@ -1,5 +1,5 @@
-import type { ASTNode, ConstDirectiveNode, DefinitionNode, DocumentNode } from 'graphql';
-import { Kind, parse, visit } from 'graphql';
+import type { DefinitionNode, DocumentNode } from 'graphql';
+import { parse } from 'graphql';
 import type { Driver } from 'neo4j-driver';
 import neo4j from 'neo4j-driver';
 import { type Logger } from '@graphql-hive/logger';
@@ -9,102 +9,12 @@ import {
   getDriverFromOpts,
   getExecutableSchemaFromTypeDefsAndDriver,
   getNeo4jDirectiveDefinitions,
+  stampSubgraphOnNeo4jDirectives,
 } from '@graphql-mesh/transport-neo4j';
 import { TRANSPORT_DIRECTIVE_SDL } from '@graphql-mesh/utils';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
-
-function createAddIntrospectionDirective(subgraph: string) {
-  return function addIntrospectionDirective<
-    TASTNode extends ASTNode & { directives?: readonly ConstDirectiveNode[] },
-  >(node: TASTNode): TASTNode | void {
-    if (!node.directives?.some(directive => directive.name.value === 'introspection')) {
-      return {
-        ...node,
-        directives: [
-          ...(node.directives || []),
-          {
-            kind: 'Directive',
-            name: {
-              kind: 'Name',
-              value: 'introspection',
-            },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: {
-                  kind: 'Name',
-                  value: 'subgraph',
-                },
-                value: {
-                  kind: 'StringValue',
-                  value: subgraph,
-                },
-              },
-            ],
-          },
-        ],
-      };
-    }
-  };
-}
-
-function hasDirective(node: { directives?: readonly ConstDirectiveNode[] }, name: string): boolean {
-  return Boolean(node.directives?.some(directive => directive.name.value === name));
-}
-
-/**
- * Stamp Mesh `@introspection(subgraph:)` on Neo4j model types so the transport can
- * re-augment without feeding Neo4j-generated Query/Mutation/filter types back in.
- * Author SDL only needs `@node` / `@relationshipProperties`; we still stamp for the
- * round-trip. Mapping stays Neo4j's own directives (`@node`, `@relationship`, …).
- */
-function stampNeo4jModelIntrospection(typeDefs: DocumentNode, subgraph: string): DocumentNode {
-  const addIntrospectionDirective = createAddIntrospectionDirective(subgraph);
-  const rootOperationNames = new Set(['Query', 'Mutation', 'Subscription']);
-  const modelTypeNames = new Set<string>();
-  for (const def of typeDefs.definitions) {
-    if (
-      (def.kind === Kind.OBJECT_TYPE_DEFINITION || def.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
-      (hasDirective(def, 'node') ||
-        hasDirective(def, 'relationshipProperties') ||
-        hasDirective(def, 'introspection'))
-    ) {
-      modelTypeNames.add(def.name.value);
-    }
-    if (
-      def.kind === Kind.OBJECT_TYPE_DEFINITION &&
-      rootOperationNames.has(def.name.value) &&
-      def.fields?.some(field => hasDirective(field, 'cypher'))
-    ) {
-      modelTypeNames.add(def.name.value);
-    }
-  }
-  function stampTypeAndFields<
-    T extends ASTNode & {
-      name: { value: string };
-      directives?: readonly ConstDirectiveNode[];
-      fields?: readonly (ASTNode & { directives?: readonly ConstDirectiveNode[] })[];
-    },
-  >(node: T): T {
-    if (!modelTypeNames.has(node.name.value)) {
-      return node;
-    }
-    const stamped = (addIntrospectionDirective(node) || node) as T;
-    if (!stamped.fields) {
-      return stamped;
-    }
-    return {
-      ...stamped,
-      fields: stamped.fields.map(field => addIntrospectionDirective(field) || field),
-    };
-  }
-  return visit(typeDefs, {
-    ObjectTypeDefinition: stampTypeAndFields,
-    InterfaceTypeDefinition: stampTypeAndFields,
-  });
-}
 
 export interface LoadGraphQLSchemaFromNeo4JOpts {
   endpoint: string;
@@ -116,6 +26,8 @@ export interface LoadGraphQLSchemaFromNeo4JOpts {
   /**
    * Author-written Neo4j GraphQL SDL (`@node`, `@relationship`, `@cypher`, `@alias`, …).
    * When set, skips database introspection via `@neo4j/introspector`.
+   * Prefer `subgraph:` on Neo4j directives when composing multiple Neo4j sources;
+   * the loader stamps it when missing.
    */
   typeDefs?: string | DocumentNode;
 }
@@ -150,7 +62,6 @@ export async function loadGraphQLSchemaFromNeo4J(
   if (typeDefsInput) {
     log?.info('Using author-provided Neo4j GraphQL typeDefs');
     typeDefs = parseTypeDefs(typeDefsInput);
-    typeDefs = stampNeo4jModelIntrospection(typeDefs, subgraphName);
   } else {
     log?.info('Inferring the schema from the database: ', `"${database}"`);
     polyfillStrReplaceAll();
@@ -161,20 +72,11 @@ export async function loadGraphQLSchemaFromNeo4J(
       }),
     );
     typeDefs = parse(typeDefsStr, { noLocation: true });
-    const addIntrospectionDirective = createAddIntrospectionDirective(subgraphName);
-    typeDefs = visit(typeDefs, {
-      EnumTypeDefinition: addIntrospectionDirective,
-      ObjectTypeDefinition: addIntrospectionDirective,
-      InterfaceTypeDefinition: addIntrospectionDirective,
-      UnionTypeDefinition: addIntrospectionDirective,
-      InputObjectTypeDefinition: addIntrospectionDirective,
-      FieldDefinition: addIntrospectionDirective,
-      ScalarTypeDefinition: addIntrospectionDirective,
-      EnumValueDefinition: addIntrospectionDirective,
-      InputValueDefinition: addIntrospectionDirective,
-    });
     revertStrReplaceAllPolyfill();
   }
+
+  // Attribute Neo4j model directives to this Mesh subgraph (multi-Neo4j compose).
+  typeDefs = stampSubgraphOnNeo4jDirectives(typeDefs, subgraphName);
 
   // @transport is included for Mesh merge/output order, but stripped inside
   // getExecutableSchemaFromTypeDefsAndDriver before Neo4jGraphQL 7.6.6+ sees it.
