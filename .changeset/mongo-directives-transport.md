@@ -23,14 +23,12 @@ new stack (like mysql/tuql -> SQL).
 - Op directives: `@mongo__findOne` / `@mongo__find` / `@mongo__count` /
   `@mongo__connection` / `@mongo__pagination` / `@mongo__aggregate` /
   `@mongo__insertOne|insertMany` / `@mongo__updateOne|updateMany` / `@mongo__deleteOne|deleteMany`
-  (SDL client API ≠ directive binders; legacy `@mongo(kind:)` still executed)
-- Client args: typed `filter: *FilterInput` (`and` / `or` / `not` + field ops; compose-mongoose
-  style) + `sort: [*Sort!]` (`id_asc` / `age_desc`; transport maps to `{ field: 1|-1 }`).
-  Generated client filters expose Mongo op names without `$` (`gte`, `in`, …). Transport
-  binders / hand-written JSON also accept `_gte` and native `{ $gte }` — those aliases are
-  not GraphQL input fields on typed `*FilterInput`)
-- Projection = GraphQL selection set + `@mongo__*(selection:)` (findOne's projection)
-- Directive binders: `query` (← `$args.filter`) / `selection` / `sort` / `set` / `pipeline`
+  (SDL client API != directive binders; legacy `@mongo(kind:)` still executed)
+- Client args: typed `filter: *FilterInput` (`and` / `or` / `not` + field ops). Binder stays
+  `query: "$args.filter"`. Generated filters expose Mongo op names without `$` (`gte`, `in`, …).
+  Transport binders / hand-written JSON also accept `_gte` and native `{ $gte }`
+- `sort: [*Sort!]` (`id_asc` / `age_desc`; transport maps to `{ field: 1|-1 }`)
+- Directive binders: `query` / `selection` / `sort` / `set` / `pipeline`
 - `update: *UpdateInput` with Mongo update ops without `$` (`set` / `inc` / `unset` / … →
   `$set` / `$inc` / `$unset`; `_set` aliases + native `$set` still accepted; array mods JSON)
 - `document` / `documents` for insertOne / insertMany
@@ -38,19 +36,28 @@ new stack (like mysql/tuql -> SQL).
   `ObjectID` scalar + `ObjectIDQueryOperators` (not opaque GraphQL `ID`)
 - Scalars: `graphql-scalars` (`ObjectID`, `DateTime`, `Byte`, `JSON`) + local `Decimal128`
 - Mutation payloads include typed `error: MongoError` when selected
-- Nested Mongoose paths emit Embedded / DocumentArray object types + enums + descriptions
-- `ref` paths emit nested `@mongo__findOne` / `@mongo__find` populate fields
-- Fusion `rewriteConnectArgReferences` rewrites `$args` / `$this` in all `mongo__*` (and legacy `mongo`); `$this` renames are one-shot (no cascade), `#` comments are quote-safe, and selection rewrites skip quoted literals
-- Bulk writes reject vacuous `$or` / `not` of match-nothing filters; required fields reject null after BSON coerce, `$unset`, and `$rename`
-- String `_id` models require `id: String!` on create, keep BSON string inserts/cursors/payloads, and scope empty-input placeholders per collection
-- ObjectId coercion and required-field checks are keyed by collection+path (same bare field name can differ across models)
-- Connection cursors still reject array-backed sort keys (correct multikey keyset needs `$expr`/`$min`/`$max`, not multikey `$gt`)
-- `MongoModelConfig`: exactly one of `model` | `schema` | `path`; flat `fields` (only/remove/required);
-  discriminator subtypes auto-read from `schema.discriminatorMapping`
+- Nested Mongoose paths emit Embedded / DocumentArray object types + enums; `ref` paths emit
+  nested `@mongo__findOne` / `@mongo__find` populate fields
+- Mesh composition rewrites `$args` / `$this` in all `mongo__*` (and legacy `mongo`); `$this`
+  renames are one-shot (no cascade), `#` comments are quote-safe, and selection rewrites skip
+  quoted literals
+- Bulk writes reject vacuous `$or` / `not` of match-nothing filters; required fields reject null
+  after BSON coerce, `$unset`, and `$rename`
+- String `_id` models require `id: String!` on create, keep BSON string inserts/cursors/payloads,
+  and scope empty-input placeholders per collection
+- GraphQL `storedId` → mongoose `id` aliases are collection-aware; bulk insert applies them only
+  to GraphQL-shaped docs (no BSON `_id`), so hand-written `{ _id, storedId }` is unchanged
+- ObjectId coercion and required-field checks are keyed by collection+path (same bare field name
+  can differ across models; nested paths via `coerceDeep` / `$elemMatch`)
+- Connection cursors still reject array-backed sort keys (correct multikey keyset needs
+  `$expr`/`$min`/`$max`, not multikey `$gt`)
+- `MongoModelConfig`: exactly one of `model` | `schema` | `path`; flat `fields`
+  (only/remove/required); discriminator subtypes auto-read from `schema.discriminatorMapping`
 - `queryAndMutations`: opt out of individual Query/Mutation roots (`false` omits; keys follow
   Mongo collection methods: `insertOne` / `deleteMany` / `countDocuments` / …)
 - `naming?: Partial<MongoNaming>` on `loadMongoSubgraph` / `loadGraphQLSchemaFromMongo`
-  (`insertOneField` / `deleteManyField` / `countDocumentsField` / …)
+- Raw `aggregate*` omitted subgraph-wide when any model has `fields.only` / `fields.remove`, and
+  omitted on discriminator subtype models (`$unionWith` can bypass a prepended `$match`)
 
 ## Consumer migration
 
@@ -60,5 +67,13 @@ new stack (like mysql/tuql -> SQL).
 | `User_findById(_id)` / `User_findMany(filter)` | `findUserById(id)` / `findUsers(filter)` |
 | `User_createOne(record)` | `insertOneUser(document)` |
 | Opaque resolvers | `@mongo__find(query/sort/selection/…)` |
+
+```graphql
+# Before
+query { User_findMany(filter: { age: { gte: 30 } }) { name } }
+
+# After
+query { findUsers(filter: { age: { gte: 30 } }) { name } }
+```
 
 Website docs deferred. First npm publish of the new packages is required before CI alphas.
