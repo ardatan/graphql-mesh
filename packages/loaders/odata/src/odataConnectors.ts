@@ -1,6 +1,6 @@
 /**
  * OData → Connectors emit helpers: re-export shared `@connect` / `@source` defs
- * from transport-rest, plus OData-only Accept / queryOptions / error constants
+ * from transport-connect, plus OData-only Accept / queryOptions / error constants
  * and the local `@key` shape used only as emit metadata (not schema.addDirective).
  */
 import {
@@ -17,7 +17,7 @@ export {
   FEDERATION_LINK_URL,
   LinkDirective,
   SourceDirective,
-} from '@graphql-mesh/transport-rest';
+} from '@graphql-mesh/transport-connect';
 
 /**
  * Federation `@key` — do **not** `addDirective` this onto the subgraph schema.
@@ -38,7 +38,7 @@ export const KeyDirective = new GraphQLDirective({
 
 /**
  * `minimal` — TripPin’s `/Trips` nav returns 500 with `odata.metadata=full`.
- * transport-rest synthesizes `_odataId` from the request URL when `@odata.id` is omitted.
+ * transport-connect synthesizes `_odataId` from the request URL when `@odata.id` is omitted.
  */
 export const ODATA_ACCEPT_METADATA = 'application/json;odata.metadata=minimal';
 

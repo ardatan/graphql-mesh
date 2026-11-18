@@ -1,7 +1,7 @@
 ---
 '@omnigraph/thrift': minor
 '@graphql-mesh/transport-thrift': minor
-'@graphql-mesh/transport-rest': patch
+'@graphql-mesh/transport-connect': patch
 '@graphql-mesh/fusion-composition': patch
 ---
 
@@ -98,5 +98,5 @@ add(request: AddRequestInput): Int @thrift__rpc(
 
 - `@omnigraph/thrift` — loader emit; `protocol`, `entityMethods`, `ignoreExceptions`, `serviceName`
 - `@graphql-mesh/transport-thrift` — execute compact mapping (incl. `i32->match` coerce), ONEWAY, throws unions
-- `@graphql-mesh/transport-rest` — Connectors helpers for TJSON / `$()` / match wildcards
+- `@graphql-mesh/transport-connect` — Connectors helpers for TJSON / `$()` / match wildcards
 - `@graphql-mesh/fusion-composition` — `$args` rewrite for `@thrift__rpc` and HTTP paths

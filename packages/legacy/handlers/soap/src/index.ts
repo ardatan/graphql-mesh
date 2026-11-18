@@ -84,7 +84,7 @@ export default class SoapHandler implements MeshHandler {
         return soapLoader.buildSchema();
       });
     }
-    // Create executor lazily for faster startup — Connectors via transport-rest.
+    // Create executor lazily for faster startup — Connectors via transport-connect.
     let executor: Executor;
     const log = this.log;
     return {

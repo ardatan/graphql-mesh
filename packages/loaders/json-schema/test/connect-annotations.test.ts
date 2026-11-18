@@ -33,7 +33,7 @@ describe('Federation Connectors annotations', () => {
     expect(sdl).toContain('@connect');
     expect(sdl).toContain('https://specs.apollo.dev/connect/v0.4');
     expect(sdl).not.toContain('@httpOperation');
-    expect(sdl).not.toContain('kind: "rest"');
+    expect(sdl).not.toContain('kind: "connect"');
     expect(sdl).not.toContain('@transport');
 
     const result = await normalizedExecutor({

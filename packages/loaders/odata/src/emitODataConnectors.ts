@@ -600,7 +600,7 @@ export type ODataConnectSchemaMeta = {
 
 /**
  * Rewrite Mesh OData field directives to Federation Connectors `@connect` / `@source`,
- * and switch the subgraph to `transport-rest` (Hive `$select` via Accept odata.metadata).
+ * and switch the subgraph to `transport-connect` (Hive `$select` via Accept odata.metadata).
  *
  * Navigation / bound ops:
  * - Types with an entity set → `/EntitySet/{$this.key}/Nav` (Apollo OData pattern)
@@ -1480,10 +1480,10 @@ export function applyODataConnectSchemaExtensions(
   directiveExtensions.link = [...(directiveExtensions.link || []), ...meta.link];
   // `@source` carries baseURL + Accept. Emit Mesh `@transport` only when Hive needs
   // OData-specific `options.odata` (batch / expandNavProps). Otherwise compose injects
-  // a minimal `kind: rest` entry from `@source` for connectors subgraphs.
+  // a minimal `kind: connect` entry from `@source` for connectors subgraphs.
   if (odataOpts && Object.keys(odataOpts).length) {
     directiveExtensions.transport = {
-      kind: 'rest',
+      kind: 'connect',
       subgraph: subgraphName,
       location: endpoint,
       options: { odata: odataOpts },

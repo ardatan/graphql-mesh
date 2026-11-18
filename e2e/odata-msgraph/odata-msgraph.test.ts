@@ -54,7 +54,7 @@ describe('Microsoft Graph Connectors', () => {
     expect(result).toContain('name: "source"');
     expect(result).toContain('name: "connect"');
     expect(result).toContain('odata.metadata=minimal');
-    expect(result).toContain('kind: "rest"');
+    expect(result).toContain('kind: "connect"');
     // Roots used by v0 example queries
     expect(result).toMatch(/\bme\b/);
     expect(result).toMatch(/\bgroups\b/);

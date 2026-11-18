@@ -130,7 +130,7 @@ type Query
       transport: [
         {
           subgraph: "Wiki"
-          kind: "rest"
+          kind: "connect"
           location: "https://wikimedia.org/api/rest_v1"
           headers: [["user-agent", "my-app/1.0.0"]]
         }

@@ -4,8 +4,8 @@ Vendored GraphQL schemas from
 [apollographql/connectors-community](https://github.com/apollographql/connectors-community)
 (`connectors/` directory).
 
-Used by `packages/transports/rest/tests/connectors-community.test.ts` to smoke-load every community
-connector through Mesh's `@connect` / `@source` executor wiring.
+Used by `packages/transports/connect/tests/connectors-community.test.ts` to smoke-load every
+community connector through Mesh's `@connect` / `@source` executor wiring.
 
 ## Local patches
 
