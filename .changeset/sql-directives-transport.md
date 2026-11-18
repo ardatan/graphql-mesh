@@ -108,7 +108,7 @@ stuffed into `where` keeps working at runtime; new emit does not produce it.
 
 ## What else changed
 
-- Fusion rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql`
+- Mesh rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql`
 - Type-level `@sql` on OBJECT (Connectors-style `$this` keys) wires `resolveReference` + Hive
   `Query._entities` — no Query `entity: true`
 - Transport DataLoader-batches ROW/ROWS equality lookups (`WHERE col IN (...)`)
