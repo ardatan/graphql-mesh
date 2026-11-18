@@ -310,7 +310,7 @@ function parseBlock(
     }
     if (i < text.length && text[i] === '$') {
       const rhs = readPseudoOrPath(text, i);
-      let j = skipWs(text, rhs.next);
+      const j = skipWs(text, rhs.next);
       // Connectors-style `record: $record { id: _id }` — pseudo source + nested picks.
       if (j < text.length && text[j] === '{') {
         const nested = parseBlock(text, j + 1, true);
