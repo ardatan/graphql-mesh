@@ -1,4 +1,5 @@
 import { columnMapFromSelection, parseSqlMapping, resolveMappingValue } from '../src/mapping.js';
+import { parseSqlThrough } from '../src/through.js';
 
 describe('parseSqlMapping', () => {
   it('parses column selection and skips comments', () => {
@@ -59,6 +60,24 @@ describe('parseSqlMapping', () => {
         value: { kind: 'args', value: 'where', path: ['where'] },
       },
     ]);
+  });
+
+  it('parses @sql(through) many-to-many blocks', () => {
+    expect(
+      parseSqlThrough(`
+        table: playlist_track
+        local: PlaylistId
+        remote: TrackId
+        parent: $this.id
+        target: TrackId
+      `),
+    ).toEqual({
+      table: 'playlist_track',
+      localColumn: 'PlaylistId',
+      remoteColumn: 'TrackId',
+      parentPath: ['id'],
+      targetColumn: 'TrackId',
+    });
   });
 
   it('parses $fn computed-column selections', () => {

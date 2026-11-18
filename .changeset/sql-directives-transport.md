@@ -124,3 +124,5 @@ stuffed into `where` keeps working at runtime; new emit does not produce it.
   (`where: { artist: { name: { eq: "X" } } }` → `EXISTS`)
 - Postgres computed columns (PostGraphile-style): `CREATE FUNCTION users_full_name(users)…STABLE`
   → GraphQL `fullName` via `@sql(selection: "fullName: $fn.public.users_full_name")`
+- Many-to-many shortcuts (PostGraphile / `pg-many-to-many` style): junction with two FKs
+  → `Playlist.tracks` / `Track.playlists` via `@sql(through:)` (junction type kept)

@@ -1,16 +1,21 @@
 import {
   getNamedType,
+  isListType,
+  isNonNullType,
   isObjectType,
   type GraphQLSchema,
   type GraphQLObjectType,
+  type GraphQLType,
 } from 'graphql';
 import { getDirective } from '@graphql-tools/utils';
 import { parseSqlMapping } from './mapping.js';
+import { parseSqlThrough } from './through.js';
 import type { SqlRelationFilterMeta } from './types.js';
 
 /**
- * Build belongs-to nested-filter metadata from `@sql` ROW fields on a GraphQL object type.
- * Used for `where: { artist: { name: { eq: "X" } } }` → EXISTS subquery.
+ * Build nested-filter metadata from `@sql` fields on a GraphQL object type.
+ * - Belongs-to ROW: `where: { artist: { name: { eq: "X" } } }` → EXISTS
+ * - M2M ROWS + through: `where: { tracks: { name: { eq: "X" } } }` → junction EXISTS
  */
 export function collectRelationFilters(
   schema: GraphQLSchema,
@@ -25,9 +30,37 @@ export function collectRelationFilters(
   for (const field of Object.values(type.getFields())) {
     const dirs = getDirective(schema, field, 'sql') || [];
     for (const dir of dirs) {
-      if (String(dir.kind || 'ROWS') !== 'ROW') continue;
       const relatedTable = dir.table as string | undefined;
       if (!relatedTable) continue;
+
+      const relatedType = unwrapObjectType(field.type);
+      if (!relatedType) continue;
+      const relatedColumns = columnMapFromObjectType(schema, relatedType);
+
+      const through = parseSqlThrough(dir.through as string | undefined);
+      if (through) {
+        const localColumn =
+          parentColumns.get(through.parentPath[0]) ||
+          // Fallback: sole `$this.id` → PK column named in parent selection
+          parentColumns.get('id');
+        if (!localColumn) continue;
+        out.push({
+          field: field.name,
+          relatedTable,
+          localColumn,
+          refColumn: through.targetColumn,
+          columns: relatedColumns,
+          junction: {
+            table: through.table,
+            localColumn: through.localColumn,
+            remoteColumn: through.remoteColumn,
+            targetColumn: through.targetColumn,
+          },
+        });
+        continue;
+      }
+
+      if (String(dir.kind || 'ROWS') !== 'ROW') continue;
       const where = parseSqlMapping(dir.where as string | undefined);
       const eq = where.entries.find(
         e =>
@@ -41,10 +74,6 @@ export function collectRelationFilters(
       const localColumn = parentColumns.get(localGql);
       if (!localColumn) continue;
 
-      const relatedType = getNamedType(field.type);
-      if (!isObjectType(relatedType)) continue;
-      const relatedColumns = columnMapFromObjectType(schema, relatedType);
-
       out.push({
         field: field.name,
         relatedTable,
@@ -55,6 +84,13 @@ export function collectRelationFilters(
     }
   }
   return out;
+}
+
+function unwrapObjectType(type: GraphQLType): GraphQLObjectType | null {
+  let t: GraphQLType = type;
+  while (isNonNullType(t) || isListType(t)) t = t.ofType;
+  const named = getNamedType(t);
+  return isObjectType(named) ? named : null;
 }
 
 function columnMapFromObjectType(

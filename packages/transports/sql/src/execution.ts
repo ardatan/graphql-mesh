@@ -32,6 +32,7 @@ import {
   parseSqlDirectiveMappings,
   type SqlPlanners,
 } from './sql-builder.js';
+import { parseSqlThrough, type SqlThroughJoin } from './through.js';
 import type {
   ParsedSqlMapping,
   SqlAdapter,
@@ -52,17 +53,19 @@ export interface GetSqlExecutorOpts {
 
 const MUTATION_KINDS = new Set<SqlKind>(['INSERT', 'UPDATE', 'DELETE']);
 
-function printSchemaHasFn(schema: GraphQLSchema): boolean {
+function printSchemaHasPlannerExtras(schema: GraphQLSchema): boolean {
   for (const type of Object.values(schema.getTypeMap())) {
     if (!isObjectType(type) || type.name.startsWith('__')) continue;
     const typeDirs = getDirective(schema, type, 'sql') || [];
     for (const d of typeDirs) {
       if (String(d.selection || '').includes('$fn.')) return true;
+      if (d.through) return true;
     }
     for (const field of Object.values(type.getFields())) {
       const dirs = getDirective(schema, field, 'sql') || [];
       for (const d of dirs) {
         if (String(d.selection || '').includes('$fn.')) return true;
+        if (d.through) return true;
       }
     }
   }
@@ -149,10 +152,21 @@ async function runSqlSelect(
     parent: any;
     context: any;
     softDelete?: SqlSoftDeleteOptions;
+    through?: SqlThroughJoin;
   },
 ) {
-  const { table, kind, selection, whereMapping, planners, graphqlArgs, parent, context, softDelete } =
-    opts;
+  const {
+    table,
+    kind,
+    selection,
+    whereMapping,
+    planners,
+    graphqlArgs,
+    parent,
+    context,
+    softDelete,
+    through,
+  } = opts;
   const fullSelection = kind === 'CONNECTION' ? connectionNodeSelection(selection) : selection;
 
   // Never run a ROW with unresolved equality binders (would pick an arbitrary row).
@@ -169,8 +183,8 @@ async function runSqlSelect(
   const { joins, hasMany } = planned;
 
   // Batch ROW / simple ROWS when there is exactly one equality binder (FK / PK)
-  // and we are not folding joins / has-many into this query.
-  if (!joins.length && !hasMany.length && (kind === 'ROW' || kind === 'ROWS')) {
+  // and we are not folding joins / has-many / M2M into this query.
+  if (!through && !joins.length && !hasMany.length && (kind === 'ROW' || kind === 'ROWS')) {
     const column = batchableEqualityColumn(whereMapping);
     if (column) {
       const key = resolveEqualityKey(whereMapping, column, graphqlArgs, parent);
@@ -218,6 +232,7 @@ async function runSqlSelect(
     hasMany,
     softDelete,
     relationFilters,
+    through,
   });
   const result = await sqlClient.query(query.sql, query.params);
 
@@ -393,6 +408,7 @@ export async function getSqlExecutor({
             }
 
             const queryKind = kind as SqlQueryKind;
+            const through = parseSqlThrough(directive.args.through as string | undefined);
             fieldConfig.resolve = async function sqlQueryResolver(
               root,
               args,
@@ -415,6 +431,7 @@ export async function getSqlExecutor({
                 parent: root,
                 context,
                 softDelete,
+                through,
               });
             };
             break;
@@ -457,7 +474,7 @@ export async function getSqlExecutor({
   // Soft-delete / `$fn` computed columns live on the GraphQL.js planner path.
   // MySQL / SQLite / Bun.SQL keep the GraphQL.js + JOIN planner path.
   // Dynamic import keeps grafast off the static graph (Jest --detectLeaks).
-  const usesPlannerExtras = Boolean(softDelete) || printSchemaHasFn(subgraph);
+  const usesPlannerExtras = Boolean(softDelete) || printSchemaHasPlannerExtras(subgraph);
   if (adapter === 'postgres' && sqlClient.pgPool && !usesPlannerExtras) {
     const { createPostgresGrafastExecutor } = await import('./pg-executor.js');
     const grafastExecutor = createPostgresGrafastExecutor({

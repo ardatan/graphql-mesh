@@ -30,4 +30,22 @@ describe('@omnigraph/sql sqlite chinook', () => {
     expect(sdl).not.toContain('entity: true');
     expect(sdl).toMatchSnapshot('chinook-albums-artists');
   });
+
+  it('emits PostGraphile-style many-to-many shortcuts via through', async () => {
+    const schema = await loadGraphQLSchemaFromSql('chinook', {
+      endpoint: chinookDb,
+      includeTables: ['playlists', 'playlist_track', 'tracks'],
+    });
+    const sdl = printSchemaWithDirectives(schema);
+
+    expect(sdl).toMatch(/type Playlist[\s\S]*tracks\(where: TrackFilter/);
+    expect(sdl).toMatch(/type Track[\s\S]*playlists\(where: PlaylistFilter/);
+    expect(sdl).toContain('through:');
+    expect(sdl).toContain('table: playlist_track');
+    expect(sdl).toContain('local: PlaylistId');
+    expect(sdl).toContain('remote: TrackId');
+    // Junction type kept (payload / explicit access)
+    expect(sdl).toContain('type PlaylistTrack');
+    expect(sdl).toContain('playlistTracks(');
+  });
 });

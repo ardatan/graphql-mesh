@@ -41,7 +41,7 @@ enum join__Graph {
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String, through: String) repeatable on FIELD_DEFINITION | OBJECT
 
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
@@ -142,6 +142,7 @@ unitPrice: UnitPrice
   mediaType: MediaType @sql(subgraph: "chinook", table: "media_types", kind: ROW, where: "\\n  MediaTypeId: $this.mediaTypeId", selection: "  id: MediaTypeId\\n  name: Name")
   genre: Genre @sql(subgraph: "chinook", table: "genres", kind: ROW, where: "\\n  GenreId: $this.genreId", selection: "  id: GenreId\\n  name: Name")
   album: Album @sql(subgraph: "chinook", table: "albums", kind: ROW, where: "\\n  AlbumId: $this.albumId", selection: "  id: AlbumId\\n  title: Title\\n  artistId: ArtistId")
+  playlists(where: PlaylistFilter, orderBy: [PlaylistOrderBy!], limit: Int, offset: Int): [Playlist!]! @sql(subgraph: "chinook", table: "playlists", kind: ROWS, through: "  table: playlist_track\\n  local: TrackId\\n  remote: PlaylistId\\n  parent: $this.id\\n  target: PlaylistId", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: PlaylistId\\n  name: Name")
 }
 
 type InvoiceItem @sql(subgraph: "chinook", table: "invoice_items", kind: ROW, where: """InvoiceLineId: $this.id""", selection: """
@@ -273,6 +274,7 @@ name: Name
   id: ID!
   name: String
   playlistTracks(where: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], limit: Int, offset: Int): [PlaylistTrack!]! @sql(subgraph: "chinook", table: "playlist_track", kind: ROWS, where: "  PlaylistId: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  playlistId: PlaylistId\\n  trackId: TrackId")
+  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @sql(subgraph: "chinook", table: "tracks", kind: ROWS, through: "  table: playlist_track\\n  local: PlaylistId\\n  remote: TrackId\\n  parent: $this.id\\n  target: TrackId", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: TrackId\\n  name: Name\\n  albumId: AlbumId\\n  mediaTypeId: MediaTypeId\\n  genreId: GenreId\\n  composer: Composer\\n  milliseconds: Milliseconds\\n  bytes: Bytes\\n  unitPrice: UnitPrice")
 }
 
 type MediaType @sql(subgraph: "chinook", table: "media_types", kind: ROW, where: """MediaTypeId: $this.id""", selection: """
@@ -738,6 +740,7 @@ input AlbumFilter @join__type(graph: CHINOOK) {
   id: StringFilter
   title: StringFilter
   artistId: IntFilter
+  artist: ArtistFilter
 }
 
 input StringFilter @join__type(graph: CHINOOK) {
@@ -752,6 +755,8 @@ input StringFilter @join__type(graph: CHINOOK) {
   includes: String
   startsWith: String
   endsWith: String
+  like: String
+  ilike: String
   isNull: Boolean
 }
 
@@ -767,6 +772,14 @@ input IntFilter @join__type(graph: CHINOOK) {
   isNull: Boolean
 }
 
+input ArtistFilter @join__type(graph: CHINOOK) {
+  and: [ArtistFilter!]
+  or: [ArtistFilter!]
+  not: ArtistFilter
+  id: StringFilter
+  name: StringFilter
+}
+
 input InvoiceItemFilter @join__type(graph: CHINOOK) {
   and: [InvoiceItemFilter!]
   or: [InvoiceItemFilter!]
@@ -776,6 +789,68 @@ input InvoiceItemFilter @join__type(graph: CHINOOK) {
   trackId: IntFilter
   unitPrice: StringFilter
   quantity: IntFilter
+  track: TrackFilter
+  invoice: InvoiceFilter
+}
+
+input TrackFilter @join__type(graph: CHINOOK) {
+  and: [TrackFilter!]
+  or: [TrackFilter!]
+  not: TrackFilter
+  id: StringFilter
+  name: StringFilter
+  albumId: IntFilter
+  mediaTypeId: IntFilter
+  genreId: IntFilter
+  composer: StringFilter
+  milliseconds: IntFilter
+  bytes: IntFilter
+  unitPrice: StringFilter
+  mediaType: MediaTypeFilter
+  genre: GenreFilter
+  album: AlbumFilter
+  playlists: PlaylistFilter
+}
+
+input MediaTypeFilter @join__type(graph: CHINOOK) {
+  and: [MediaTypeFilter!]
+  or: [MediaTypeFilter!]
+  not: MediaTypeFilter
+  id: StringFilter
+  name: StringFilter
+}
+
+input GenreFilter @join__type(graph: CHINOOK) {
+  and: [GenreFilter!]
+  or: [GenreFilter!]
+  not: GenreFilter
+  id: StringFilter
+  name: StringFilter
+}
+
+input PlaylistFilter @join__type(graph: CHINOOK) {
+  and: [PlaylistFilter!]
+  or: [PlaylistFilter!]
+  not: PlaylistFilter
+  id: StringFilter
+  name: StringFilter
+  tracks: TrackFilter
+}
+
+input InvoiceFilter @join__type(graph: CHINOOK) {
+  and: [InvoiceFilter!]
+  or: [InvoiceFilter!]
+  not: InvoiceFilter
+  id: StringFilter
+  customerId: IntFilter
+  invoiceDate: StringFilter
+  billingAddress: StringFilter
+  billingCity: StringFilter
+  billingState: StringFilter
+  billingCountry: StringFilter
+  billingPostalCode: StringFilter
+  total: StringFilter
+  customer: CustomerFilter
 }
 
 input CustomerFilter @join__type(graph: CHINOOK) {
@@ -795,6 +870,7 @@ input CustomerFilter @join__type(graph: CHINOOK) {
   fax: StringFilter
   email: StringFilter
   supportRepId: IntFilter
+  employee: EmployeeFilter
 }
 
 input EmployeeFilter @join__type(graph: CHINOOK) {
@@ -816,21 +892,7 @@ input EmployeeFilter @join__type(graph: CHINOOK) {
   phone: StringFilter
   fax: StringFilter
   email: StringFilter
-}
-
-input InvoiceFilter @join__type(graph: CHINOOK) {
-  and: [InvoiceFilter!]
-  or: [InvoiceFilter!]
-  not: InvoiceFilter
-  id: StringFilter
-  customerId: IntFilter
-  invoiceDate: StringFilter
-  billingAddress: StringFilter
-  billingCity: StringFilter
-  billingState: StringFilter
-  billingCountry: StringFilter
-  billingPostalCode: StringFilter
-  total: StringFilter
+  employee: EmployeeFilter
 }
 
 input PlaylistTrackFilter @join__type(graph: CHINOOK) {
@@ -839,53 +901,8 @@ input PlaylistTrackFilter @join__type(graph: CHINOOK) {
   not: PlaylistTrackFilter
   playlistId: IntFilter
   trackId: IntFilter
-}
-
-input TrackFilter @join__type(graph: CHINOOK) {
-  and: [TrackFilter!]
-  or: [TrackFilter!]
-  not: TrackFilter
-  id: StringFilter
-  name: StringFilter
-  albumId: IntFilter
-  mediaTypeId: IntFilter
-  genreId: IntFilter
-  composer: StringFilter
-  milliseconds: IntFilter
-  bytes: IntFilter
-  unitPrice: StringFilter
-}
-
-input ArtistFilter @join__type(graph: CHINOOK) {
-  and: [ArtistFilter!]
-  or: [ArtistFilter!]
-  not: ArtistFilter
-  id: StringFilter
-  name: StringFilter
-}
-
-input GenreFilter @join__type(graph: CHINOOK) {
-  and: [GenreFilter!]
-  or: [GenreFilter!]
-  not: GenreFilter
-  id: StringFilter
-  name: StringFilter
-}
-
-input MediaTypeFilter @join__type(graph: CHINOOK) {
-  and: [MediaTypeFilter!]
-  or: [MediaTypeFilter!]
-  not: MediaTypeFilter
-  id: StringFilter
-  name: StringFilter
-}
-
-input PlaylistFilter @join__type(graph: CHINOOK) {
-  and: [PlaylistFilter!]
-  or: [PlaylistFilter!]
-  not: PlaylistFilter
-  id: StringFilter
-  name: StringFilter
+  track: TrackFilter
+  playlist: PlaylistFilter
 }
 
 input CreateAlbumInput @join__type(graph: CHINOOK) {

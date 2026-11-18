@@ -54,6 +54,11 @@ export const SqlDirective = new GraphQLDirective({
     /** Column values for INSERT / UPDATE (`Title: $args.input.title`). */
     set: { type: GraphQLString },
     selection: { type: GraphQLString },
+    /**
+     * Many-to-many junction (PostGraphile-style shortcut):
+     * `table` / `local` / `remote` / `parent: $this.id` / `target`.
+     */
+    through: { type: GraphQLString },
   },
 });
 

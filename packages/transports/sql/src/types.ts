@@ -56,6 +56,16 @@ export interface SqlRelationFilterMeta {
   refColumn: string;
   /** Related table GraphQL field → SQL column */
   columns: Map<string, string>;
+  /**
+   * When set, filter through a junction (M2M) instead of a direct FK:
+   * `EXISTS (junction JOIN related …)`.
+   */
+  junction?: {
+    table: string;
+    localColumn: string;
+    remoteColumn: string;
+    targetColumn: string;
+  };
 }
 
 export interface SqlMappingEntry {

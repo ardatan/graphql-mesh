@@ -5,6 +5,7 @@ import {
   escapeSqlStringLiteral,
   mapRowToGraphql,
 } from '../src/sql-builder.js';
+import { parseSqlThrough } from '../src/through.js';
 
 describe('buildSelect', () => {
   const selection = parseSqlMapping(`
@@ -111,6 +112,32 @@ describe('buildSelect', () => {
     expect(sql).toContain('"_rf"."Name" LIKE ?');
     expect(sql).toContain('LOWER("Title") LIKE LOWER(?)');
     expect(params).toEqual(['A%', '%rock%']);
+  });
+
+  it('filters many-to-many via @sql(through) EXISTS', () => {
+    const through = parseSqlThrough(`
+      table: playlist_track
+      local: PlaylistId
+      remote: TrackId
+      parent: $this.id
+      target: TrackId
+    `);
+    const { sql, params } = buildSelect('sqlite', {
+      table: 'tracks',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`
+        id: TrackId
+        name: Name
+      `),
+      whereMapping: parseSqlMapping(`$args.where`),
+      graphqlArgs: { where: null },
+      parent: { id: 1 },
+      through,
+    });
+    expect(sql).toContain(
+      'EXISTS (SELECT 1 FROM "playlist_track" AS "_m2m" WHERE "_m2m"."PlaylistId" = ? AND "_m2m"."TrackId" = "TrackId"',
+    );
+    expect(params).toEqual([1]);
   });
 
   it('selects postgres $fn computed columns', () => {

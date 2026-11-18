@@ -6,6 +6,10 @@ import {
   type BelongsToJoin,
   type HasManySubselect,
 } from './plan.js';
+import {
+  resolveThroughParentValue,
+  type SqlThroughJoin,
+} from './through.js';
 import type {
   ParsedSqlMapping,
   SqlAdapter,
@@ -67,6 +71,8 @@ export interface SelectPlan {
   softDelete?: SqlSoftDeleteOptions;
   /** Belongs-to nested filters (`where.artist.name`). */
   relationFilters?: SqlRelationFilterMeta[];
+  /** Many-to-many junction (`@sql(through:)`). */
+  through?: SqlThroughJoin;
 }
 
 const PLANNER_KEYS = new Set<string>([
@@ -117,6 +123,13 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
     rootAlias,
     softDelete: plan.softDelete,
   });
+
+  if (plan.through) {
+    appendThroughExists(adapter, plan.through, plan.parent, whereParts, params, {
+      qualifyColumn: qualify,
+      softDelete: plan.softDelete,
+    });
+  }
 
   const softCol = softDeleteColumnFor(plan.softDelete, plan.table);
   if (softCol) {
@@ -740,7 +753,7 @@ function appendFilter(
     if (ops == null || typeof ops !== 'object') continue;
     const o = ops as Record<string, any>;
 
-    // Nested belongs-to: `where: { artist: { name: { eq: "X" } } }`
+    // Nested belongs-to / M2M: `where: { artist: { name: { eq: "X" } } }`
     const rel = opts?.relationFilters?.find(r => r.field === field);
     if (rel && !isScalarFilterOps(o)) {
       const alias = '_rf';
@@ -758,9 +771,21 @@ function appendFilter(
         : opts?.rootAlias
           ? `${quoteIdent(adapter, opts.rootAlias)}.${quoteIdent(adapter, rel.localColumn)}`
           : quoteIdent(adapter, rel.localColumn);
-      whereParts.push(
-        `EXISTS (SELECT 1 FROM ${quoteIdent(adapter, rel.relatedTable)} AS ${quoteIdent(adapter, alias)} WHERE ${quoteIdent(adapter, alias)}.${quoteIdent(adapter, rel.refColumn)} = ${rootCol} AND ${inner.join(' AND ')})`,
-      );
+
+      if (rel.junction) {
+        const jAlias = '_j';
+        const jSoft = softDeleteColumnFor(opts?.softDelete, rel.junction.table);
+        const jSoftSql = jSoft
+          ? ` AND ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, jSoft)} IS NULL`
+          : '';
+        whereParts.push(
+          `EXISTS (SELECT 1 FROM ${quoteIdent(adapter, rel.junction.table)} AS ${quoteIdent(adapter, jAlias)} INNER JOIN ${quoteIdent(adapter, rel.relatedTable)} AS ${quoteIdent(adapter, alias)} ON ${quoteIdent(adapter, alias)}.${quoteIdent(adapter, rel.junction.targetColumn)} = ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, rel.junction.remoteColumn)} WHERE ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, rel.junction.localColumn)} = ${rootCol}${jSoftSql} AND ${inner.join(' AND ')})`,
+        );
+      } else {
+        whereParts.push(
+          `EXISTS (SELECT 1 FROM ${quoteIdent(adapter, rel.relatedTable)} AS ${quoteIdent(adapter, alias)} WHERE ${quoteIdent(adapter, alias)}.${quoteIdent(adapter, rel.refColumn)} = ${rootCol} AND ${inner.join(' AND ')})`,
+        );
+      }
       continue;
     }
 
@@ -833,6 +858,30 @@ function appendFilter(
       whereParts.push(o.isNull ? `${q} IS NULL` : `${q} IS NOT NULL`);
     }
   }
+}
+
+function appendThroughExists(
+  adapter: SqlAdapter,
+  through: SqlThroughJoin,
+  parent: Record<string, any> | undefined,
+  whereParts: string[],
+  params: unknown[],
+  opts: {
+    qualifyColumn: (col: string) => string;
+    softDelete?: SqlSoftDeleteOptions;
+  },
+): void {
+  const parentVal = resolveThroughParentValue(through, parent);
+  if (parentVal === undefined) return;
+  params.push(parentVal);
+  const jAlias = '_m2m';
+  const softCol = softDeleteColumnFor(opts.softDelete, through.table);
+  const softSql = softCol
+    ? ` AND ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, softCol)} IS NULL`
+    : '';
+  whereParts.push(
+    `EXISTS (SELECT 1 FROM ${quoteIdent(adapter, through.table)} AS ${quoteIdent(adapter, jAlias)} WHERE ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, through.localColumn)} = ${placeholder(adapter, params.length)} AND ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, through.remoteColumn)} = ${opts.qualifyColumn(through.targetColumn)}${softSql})`,
+  );
 }
 
 export function encodeCursor(offset: number): string {

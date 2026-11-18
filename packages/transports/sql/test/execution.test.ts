@@ -47,6 +47,39 @@ describe('getSqlExecutor sqlite', () => {
     }
   });
 
+  it('resolves PostGraphile-style many-to-many playlist.tracks', async () => {
+    const schema = await loadGraphQLSchemaFromSql('chinook', {
+      endpoint: dbPath,
+      includeTables: ['playlists', 'playlist_track', 'tracks'],
+    });
+    const executor = await getSqlExecutor({ subgraph: schema });
+    try {
+      const result = (await executor({
+        document: parse(/* GraphQL */ `
+          query {
+            playlist(id: "1") {
+              id
+              name
+              tracks(limit: 3, orderBy: [ID_ASC]) {
+                id
+                name
+              }
+            }
+          }
+        `),
+      })) as ExecutionResult;
+      expect(result.errors).toBeUndefined();
+      const playlist = (result.data as any)?.playlist;
+      expect(playlist?.id).toBe('1');
+      expect(playlist?.tracks?.length).toBe(3);
+      expect(playlist.tracks[0]).toEqual(
+        expect.objectContaining({ id: expect.any(String), name: expect.any(String) }),
+      );
+    } finally {
+      await (executor as any)[Symbol.asyncDispose]?.();
+    }
+  });
+
   it('resolves Federation _entities via type-level @sql', async () => {
     const schema = await loadGraphQLSchemaFromSql('chinook', {
       endpoint: dbPath,

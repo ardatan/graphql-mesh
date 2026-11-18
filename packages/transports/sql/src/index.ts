@@ -11,6 +11,7 @@ export * from './mapping.js';
 export * from './plan.js';
 export * from './relation-filters.js';
 export * from './sql-builder.js';
+export * from './through.js';
 export * from './uri.js';
 export type * from './types.js';
 // pg-executor / pg-registry / pg-plans stay internal: they pull grafast +

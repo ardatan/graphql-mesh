@@ -19,7 +19,12 @@ import { SqlDirective, SqlKindEnum, TransportDirective } from './directives.js';
 import { introspectMysql } from './introspect/mysql.js';
 import { introspectPostgres } from './introspect/postgres.js';
 import { introspectSqlite } from './introspect/sqlite.js';
-import type { SqlColumnMeta, SqlSchemaMeta, SqlTableMeta } from './introspect/types.js';
+import type {
+  SqlColumnMeta,
+  SqlForeignKeyMeta,
+  SqlSchemaMeta,
+  SqlTableMeta,
+} from './introspect/types.js';
 import { createDefaultNaming, type SqlNaming } from './naming.js';
 import { mapSqlTypeToGraphQL } from './type-map.js';
 
@@ -247,6 +252,36 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
         });
       }
     }
+  }
+
+  // Pass 2b: PostGraphile-style many-to-many shortcuts through junction tables
+  for (const edge of findManyToManyEdges(meta.tables)) {
+    emitManyToManyField({
+      schemaComposer,
+      naming,
+      subgraphName,
+      tableByName,
+      typeNameByTable,
+      computedByTable,
+      leftTableName: edge.leftTable,
+      rightTableName: edge.rightTable,
+      junction: edge.junction,
+      leftFk: edge.leftFk,
+      rightFk: edge.rightFk,
+    });
+    emitManyToManyField({
+      schemaComposer,
+      naming,
+      subgraphName,
+      tableByName,
+      typeNameByTable,
+      computedByTable,
+      leftTableName: edge.rightTable,
+      rightTableName: edge.leftTable,
+      junction: edge.junction,
+      leftFk: edge.rightFk,
+      rightFk: edge.leftFk,
+    });
   }
 
   // Pass 3: Query + Mutation roots
@@ -587,6 +622,151 @@ function applyTableFieldsFilter(
       };
     }),
   };
+}
+
+/**
+ * Junction with exactly two single-column FKs to two different tables
+ * (PostGraphile / `@graphile-contrib/pg-many-to-many` style).
+ * Extra payload columns are fine — junction type stays; we still emit shortcuts.
+ */
+function findManyToManyEdges(tables: SqlTableMeta[]): Array<{
+  junction: SqlTableMeta;
+  leftTable: string;
+  rightTable: string;
+  leftFk: SqlForeignKeyMeta;
+  rightFk: SqlForeignKeyMeta;
+}> {
+  const known = new Set(tables.map(t => t.name));
+  const out: Array<{
+    junction: SqlTableMeta;
+    leftTable: string;
+    rightTable: string;
+    leftFk: SqlForeignKeyMeta;
+    rightFk: SqlForeignKeyMeta;
+  }> = [];
+
+  for (const table of tables) {
+    const fks = table.foreignKeys.filter(
+      fk => fk.columns.length === 1 && fk.refColumns.length === 1 && known.has(fk.refTable),
+    );
+    if (fks.length !== 2) continue;
+    const [a, b] = fks;
+    if (a.refTable === b.refTable) continue; // self-M2M: skip short-name shortcuts for now
+
+    // Classic junction / dept_emp: composite PK is exactly the two FK columns
+    // (excludes line-item tables with a surrogate PK like invoice_items).
+    const pkCols = table.columns.filter(c => c.primaryKey).map(c => c.name);
+    const fkColSet = new Set([...a.columns, ...b.columns]);
+    if (pkCols.length !== 2 || pkCols.some(c => !fkColSet.has(c))) continue;
+
+    out.push({
+      junction: table,
+      leftTable: a.refTable,
+      rightTable: b.refTable,
+      leftFk: a,
+      rightFk: b,
+    });
+  }
+  return out;
+}
+
+function emitManyToManyField(opts: {
+  schemaComposer: SchemaComposer;
+  naming: SqlNaming;
+  subgraphName: string;
+  tableByName: Map<string, SqlTableMeta>;
+  typeNameByTable: Map<string, string>;
+  computedByTable: Map<string, NonNullable<SqlSchemaMeta['computedColumns']>>;
+  leftTableName: string;
+  rightTableName: string;
+  junction: SqlTableMeta;
+  leftFk: SqlForeignKeyMeta;
+  rightFk: SqlForeignKeyMeta;
+}) {
+  const {
+    schemaComposer,
+    naming,
+    subgraphName,
+    tableByName,
+    typeNameByTable,
+    computedByTable,
+    leftTableName,
+    rightTableName,
+    junction,
+    leftFk,
+    rightFk,
+  } = opts;
+
+  const leftTable = tableByName.get(leftTableName);
+  const rightTable = tableByName.get(rightTableName);
+  if (!leftTable || !rightTable) return;
+
+  const leftTypeName = typeNameByTable.get(leftTableName)!;
+  const rightTypeName = typeNameByTable.get(rightTableName)!;
+  const junctionTypeName = typeNameByTable.get(junction.name)!;
+  const leftOtc = schemaComposer.getOTC(leftTypeName);
+
+  const leftRefCol = leftFk.refColumns[0];
+  const leftSolePk = leftTable.columns.filter(c => c.primaryKey);
+  const leftPkField =
+    leftSolePk.length === 1 && leftSolePk[0].name === leftRefCol
+      ? naming.pkFieldName(leftRefCol, true)
+      : naming.fieldName(leftRefCol);
+
+  const shortName = naming.pluralField(rightTypeName);
+  const verboseName = naming.fieldName(
+    `${shortName}_by_${junctionTypeName}_${leftFk.columns[0]}_and_${rightFk.columns[0]}`,
+  );
+  const fieldName = leftOtc.hasField(shortName) ? verboseName : shortName;
+  if (leftOtc.hasField(fieldName)) return;
+
+  const through = blockArg(
+    [
+      `table: ${junction.name}`,
+      `local: ${leftFk.columns[0]}`,
+      `remote: ${rightFk.columns[0]}`,
+      `parent: $this.${leftPkField}`,
+      `target: ${rightFk.refColumns[0]}`,
+    ].join('\n'),
+  );
+
+  leftOtc.setField(fieldName, {
+    type: `[${rightTypeName}!]!`,
+    args: {
+      where: naming.filterInput(rightTypeName),
+      orderBy: `[${naming.orderByEnum(rightTypeName)}!]`,
+      limit: 'Int',
+      offset: 'Int',
+    },
+    directives: [
+      {
+        name: 'sql',
+        args: {
+          subgraph: subgraphName,
+          table: rightTableName,
+          kind: 'ROWS',
+          through,
+          where: '$args.where',
+          orderBy: '$args.orderBy',
+          limit: '$args.limit',
+          offset: '$args.offset',
+          selection: selectionBlock(
+            naming,
+            rightTable,
+            computedByTable.get(rightTableName) || [],
+          ),
+        },
+      },
+    ],
+  });
+
+  // Nested M2M filter: PlaylistFilter.tracks → TrackFilter
+  const leftFilter = schemaComposer.getITC(naming.filterInput(leftTypeName));
+  if (!leftFilter.hasField(fieldName)) {
+    leftFilter.setField(fieldName, {
+      type: naming.filterInput(rightTypeName),
+    });
+  }
 }
 
 function ensureSharedFilterInputs(schemaComposer: SchemaComposer) {
