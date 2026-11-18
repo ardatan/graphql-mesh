@@ -61,7 +61,6 @@
 "@graphql-mesh/transform-resolvers-composition": minor
 "@graphql-mesh/transform-transfer-schema": minor
 "@graphql-mesh/transform-type-merging": minor
-"@graphql-mesh/transport-grpc": minor
 "@graphql-mesh/transport-protobuf": minor
 "@graphql-mesh/transport-neo4j": minor
 "@graphql-mesh/transport-connect": minor
