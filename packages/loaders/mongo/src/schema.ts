@@ -1,6 +1,5 @@
 import {
   GraphQLFloat,
-  GraphQLID,
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
@@ -375,7 +374,7 @@ function emitModelObjectType(
   const otc = schemaComposer.createObjectTC({ name: typeName, fields: {} });
   const selection = selectionForPaths(paths);
 
-  otc.setField('id', { type: new GraphQLNonNull(GraphQLID) });
+  otc.setField('id', { type: new GraphQLNonNull(GraphQLObjectID) });
   for (const path of paths) {
     if (path.name === '_id' || path.name === '__v') continue;
     otc.setField(path.name, {
@@ -432,14 +431,14 @@ function emitModelRootFields(
   // db.collection.findOne({ _id }) convenience
   queryTC.setField(naming.findByIdField(typeName), {
     type: typeName,
-    args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+    args: { id: { type: new GraphQLNonNull(GraphQLObjectID) } },
     directives: [mongoDir('mongo__findOne', { query: blockArg('_id: $args.id') })],
   });
 
   queryTC.setField(naming.findByIdsField(typeName), {
     type: `[${typeName}!]!`,
     args: {
-      ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLID))) },
+      ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLObjectID))) },
       limit: { type: GraphQLInt, defaultValue: 100 },
       sort: { type: sortArgType },
     },
@@ -622,7 +621,7 @@ createdCount: $createdCount
   mutationTC.setField(naming.updateByIdField(typeName), {
     type: naming.payloadType(typeName),
     args: {
-      id: { type: new GraphQLNonNull(GraphQLID) },
+      id: { type: new GraphQLNonNull(GraphQLObjectID) },
       // Mongo update doc: `{ $set: { name: "Ada" } }` / `$inc` / …
       update: { type: new GraphQLNonNull(GraphQLJSON) },
     },
@@ -671,7 +670,7 @@ matchedCount: $matchedCount
 
   mutationTC.setField(naming.removeByIdField(typeName), {
     type: naming.payloadType(typeName),
-    args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+    args: { id: { type: new GraphQLNonNull(GraphQLObjectID) } },
     directives: [
       mongoDir('mongo__deleteOne', {
         query: blockArg('_id: $args.id'),
@@ -866,7 +865,7 @@ function queryOperatorTypeForPath(
     if (path.arrayElementInstance === 'Number') return '[Float]';
     if (path.arrayElementInstance === 'Boolean') return '[Boolean]';
     if (path.arrayElementInstance === 'ObjectID' || path.arrayElementInstance === 'ObjectId') {
-      return '[ID]';
+      return '[ObjectID]';
     }
     return '[String]';
   }
@@ -875,7 +874,7 @@ function queryOperatorTypeForPath(
   if (path.instance === 'Boolean') return 'BooleanQueryOperators';
   if (path.instance === 'Date') return 'DateTimeQueryOperators';
   if (path.ref || path.instance === 'ObjectID' || path.instance === 'ObjectId') {
-    return 'IDQueryOperators';
+    return 'ObjectIDQueryOperators';
   }
   if (path.instance === 'Embedded' || path.instance === 'Array' || path.instance === 'Mixed') {
     return 'JSON';
@@ -911,7 +910,7 @@ function mapPathToOutput(
     return path.isArray ? `[${enumName}]` : enumName;
   }
   if (path.ref) {
-    return path.isArray ? new GraphQLList(GraphQLID) : GraphQLID;
+    return path.isArray ? new GraphQLList(GraphQLObjectID) : GraphQLObjectID;
   }
   if (path.isArray) {
     const el = path.arrayElementInstance || path.instance;
@@ -920,7 +919,7 @@ function mapPathToOutput(
     }
     return new GraphQLList(mapMongoPathToGraphQL(el));
   }
-  return mapMongoPathToGraphQL(path.instance, { asId: path.name === '_id' });
+  return mapMongoPathToGraphQL(path.instance);
 }
 
 function mapPathToInput(schemaComposer: SchemaComposer, path: PathMeta, rootTypeName: string): any {
@@ -938,7 +937,7 @@ function mapPathToInput(schemaComposer: SchemaComposer, path: PathMeta, rootType
     return path.isArray ? `[${enumName}]` : enumName;
   }
   if (path.ref) {
-    return path.isArray ? new GraphQLList(GraphQLID) : GraphQLID;
+    return path.isArray ? new GraphQLList(GraphQLObjectID) : GraphQLObjectID;
   }
   if (path.isArray) {
     const el = path.arrayElementInstance || path.instance;
@@ -947,7 +946,7 @@ function mapPathToInput(schemaComposer: SchemaComposer, path: PathMeta, rootType
     }
     return new GraphQLList(mapMongoPathToGraphQL(el));
   }
-  return mapMongoPathToGraphQL(path.instance, { asId: path.name === '_id' });
+  return mapMongoPathToGraphQL(path.instance);
 }
 
 function createQuerySortAndDocumentInputs(
@@ -965,7 +964,7 @@ function createQuerySortAndDocumentInputs(
         and: { type: `[${queryName}!]` },
         or: { type: `[${queryName}!]` },
         not: { type: queryName },
-        id: { type: 'IDQueryOperators' },
+        id: { type: 'ObjectIDQueryOperators' },
         ...Object.fromEntries(
           paths
             .filter(p => p.name !== '_id' && p.name !== '__v')
@@ -1047,9 +1046,9 @@ function createPayloadType(schemaComposer: SchemaComposer, naming: MongoNaming, 
       name: naming.payloadType(typeName),
       fields: {
         record: typeName,
-        recordId: GraphQLID,
+        recordId: GraphQLObjectID,
         records: `[${typeName}!]`,
-        recordIds: '[ID!]',
+        recordIds: '[ObjectID!]',
         createdCount: GraphQLInt,
         modifiedCount: GraphQLInt,
         matchedCount: GraphQLInt,
@@ -1119,8 +1118,8 @@ function ensureSharedQueryOperatorInputs(schemaComposer: SchemaComposer) {
   const comparable = (scalar: any) => ({
     eq: scalar,
     ne: scalar,
-    in: { type: new GraphQLList(new GraphQLNonNull(scalar === GraphQLID ? GraphQLID : scalar)) },
-    nin: { type: new GraphQLList(new GraphQLNonNull(scalar === GraphQLID ? GraphQLID : scalar)) },
+    in: { type: new GraphQLList(new GraphQLNonNull(scalar)) },
+    nin: { type: new GraphQLList(new GraphQLNonNull(scalar)) },
     gt: scalar,
     gte: scalar,
     lt: scalar,
@@ -1128,10 +1127,10 @@ function ensureSharedQueryOperatorInputs(schemaComposer: SchemaComposer) {
     exists: 'Boolean',
   });
 
-  if (!schemaComposer.has('IDQueryOperators')) {
+  if (!schemaComposer.has('ObjectIDQueryOperators')) {
     schemaComposer.createInputTC({
-      name: 'IDQueryOperators',
-      fields: comparable(GraphQLID),
+      name: 'ObjectIDQueryOperators',
+      fields: comparable(GraphQLObjectID),
     });
   }
   if (!schemaComposer.has('StringQueryOperators')) {

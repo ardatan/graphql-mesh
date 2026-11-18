@@ -32,7 +32,8 @@ new stack (like mysql/tuql -> SQL).
 - Directive binders: `query` / `selection` / `sort` / `set` / `pipeline`
 - `update` stays JSON for `$set` / `$inc` / … update operators
 - `document` / `documents` for insertOne / insertMany
-- Sole PK GraphQL type: `ID` (`id` arg convenience for findById)
+- BSON ObjectId (GraphQL field `id` ← `_id`, ById args, refs, `recordId`) uses
+  `ObjectID` scalar + `ObjectIDQueryOperators` (not opaque GraphQL `ID`)
 - Scalars: `graphql-scalars` (`ObjectID`, `DateTime`, `Byte`, `JSON`) + local `Decimal128`
 - Mutation payloads include typed `error: MongoError` when selected
 - Nested Mongoose paths emit Embedded / DocumentArray object types + enums + descriptions

@@ -1,7 +1,6 @@
 import {
   GraphQLBoolean,
   GraphQLFloat,
-  GraphQLID,
   GraphQLInt,
   GraphQLList,
   GraphQLString,
@@ -13,17 +12,10 @@ import { GraphQLDecimal128 } from './scalars.js';
 
 /**
  * Map a Mongoose / BSON path instance type name to a GraphQL output type.
- * Sole document PK (`_id` / asId) uses GraphQL `ID` (federation-friendly).
- * Other ObjectId paths keep graphql-scalars `ObjectID`.
- * Decimal128 uses the local `Decimal128` scalar (string wire format).
+ * BSON ObjectId (including document `_id` exposed as GraphQL `id`) uses
+ * graphql-scalars `ObjectID`. Decimal128 uses the local `Decimal128` scalar.
  */
-export function mapMongoPathToGraphQL(
-  instance: string,
-  opts?: { asId?: boolean },
-): GraphQLOutputType | GraphQLScalarType {
-  if (opts?.asId) {
-    return GraphQLID;
-  }
+export function mapMongoPathToGraphQL(instance: string): GraphQLOutputType | GraphQLScalarType {
   if (instance === 'ObjectID' || instance === 'ObjectId') {
     return GraphQLObjectID;
   }

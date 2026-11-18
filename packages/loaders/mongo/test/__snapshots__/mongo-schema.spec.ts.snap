@@ -33,7 +33,7 @@ directive @mongo__deleteOne(subgraph: String, collection: String!, query: String
 directive @mongo__deleteMany(subgraph: String, collection: String!, query: String, selection: String) on FIELD_DEFINITION
 
 type Query {
-  findUserById(id: ID!): User @mongo__findOne(subgraph: "users", collection: "user_users", selection: """
+  findUserById(id: ObjectID!): User @mongo__findOne(subgraph: "users", collection: "user_users", selection: """
     id: _id
     name: name
     age: age
@@ -47,7 +47,7 @@ type Query {
   
     _id: $args.id
   """)
-  findUsersByIds(ids: [ID!]!, limit: Int = 100, sort: [UserSort!]): [User!]! @mongo__find(subgraph: "users", collection: "user_users", selection: """
+  findUsersByIds(ids: [ObjectID!]!, limit: Int = 100, sort: [UserSort!]): [User!]! @mongo__find(subgraph: "users", collection: "user_users", selection: """
     id: _id
     name: name
     age: age
@@ -163,7 +163,7 @@ type User @key(fields: "id") @mongo__findOne(subgraph: "users", collection: "use
   salaryDecimal: salaryDecimal
   contacts: contacts
 """) {
-  id: ID!
+  id: ObjectID!
   name: String
   age: Float
   languages: [UserLanguages]
@@ -174,6 +174,11 @@ type User @key(fields: "id") @mongo__findOne(subgraph: "users", collection: "use
   salaryDecimal: Decimal128
   contacts: UserContacts
 }
+
+"""
+A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c
+"""
+scalar ObjectID
 
 type UserLanguages {
   language: String
@@ -195,7 +200,7 @@ enum EnumUserGender {
 type UserAddress {
   street: String
   geo: [Float]
-  _id: ID
+  _id: ObjectID
 }
 
 """
@@ -230,7 +235,7 @@ input UserQueryInput {
   and: [UserQueryInput!]
   or: [UserQueryInput!]
   not: UserQueryInput
-  id: IDQueryOperators
+  id: ObjectIDQueryOperators
   name: StringQueryOperators
   age: FloatQueryOperators
   languages: [UserLanguagesQueryInput]
@@ -242,15 +247,15 @@ input UserQueryInput {
   contacts: UserContactsQueryInput
 }
 
-input IDQueryOperators {
-  eq: ID
-  ne: ID
-  in: [ID!]
-  nin: [ID!]
-  gt: ID
-  gte: ID
-  lt: ID
-  lte: ID
+input ObjectIDQueryOperators {
+  eq: ObjectID
+  ne: ObjectID
+  in: [ObjectID!]
+  nin: [ObjectID!]
+  gt: ObjectID
+  gte: ObjectID
+  lt: ObjectID
+  lte: ObjectID
   exists: Boolean
 }
 
@@ -293,7 +298,7 @@ input UserAddressQueryInput {
   not: UserAddressQueryInput
   street: StringQueryOperators
   geo: [Float]
-  _id: IDQueryOperators
+  _id: ObjectIDQueryOperators
 }
 
 input Decimal128QueryOperators {
@@ -392,7 +397,7 @@ type Mutation {
   
     documents: $args.documents
   """)
-  updateUserById(id: ID!, update: JSON!): UserPayload @mongo__updateOne(subgraph: "users", collection: "user_users", selection: """
+  updateUserById(id: ObjectID!, update: JSON!): UserPayload @mongo__updateOne(subgraph: "users", collection: "user_users", selection: """
     record {
         id: _id
         name: name
@@ -427,7 +432,7 @@ type Mutation {
     modifiedCount: $modifiedCount
     matchedCount: $matchedCount
   """, query: "$args.query", set: "$args.update")
-  deleteUserById(id: ID!): UserPayload @mongo__deleteOne(subgraph: "users", collection: "user_users", selection: """
+  deleteUserById(id: ObjectID!): UserPayload @mongo__deleteOne(subgraph: "users", collection: "user_users", selection: """
     record {
         id: _id
         name: name
@@ -466,9 +471,9 @@ type Mutation {
 
 type UserPayload {
   record: User
-  recordId: ID
+  recordId: ObjectID
   records: [User!]
-  recordIds: [ID!]
+  recordIds: [ObjectID!]
   createdCount: Int
   modifiedCount: Int
   matchedCount: Int
@@ -505,7 +510,7 @@ input UserLanguagesInput {
 input UserAddressInput {
   street: String
   geo: [Float]
-  _id: ID
+  _id: ObjectID
 }
 
 input UserContactsInput {

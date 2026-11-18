@@ -72,18 +72,6 @@ input FloatQueryOperators {
   nin: [Float!]
 }
 
-input IDQueryOperators {
-  eq: ID
-  exists: Boolean
-  gt: ID
-  gte: ID
-  in: [ID!]
-  lt: ID
-  lte: ID
-  ne: ID
-  nin: [ID!]
-}
-
 """
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -97,12 +85,29 @@ type MongoError implements ErrorInterface {
 type Mutation {
   deleteManyUsers(query: UserQueryInput!): UserPayload
   deleteOneUser(query: UserQueryInput!): UserPayload
-  deleteUserById(id: ID!): UserPayload
+  deleteUserById(id: ObjectID!): UserPayload
   insertManyUsers(documents: [UserDocumentInput!]!): UserPayload
   insertOneUser(document: UserDocumentInput!): UserPayload
   updateManyUsers(query: UserQueryInput!, update: JSON!): UserPayload
   updateOneUser(query: UserQueryInput!, update: JSON!): UserPayload
-  updateUserById(id: ID!, update: JSON!): UserPayload
+  updateUserById(id: ObjectID!, update: JSON!): UserPayload
+}
+
+"""
+A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c
+"""
+scalar ObjectID
+
+input ObjectIDQueryOperators {
+  eq: ObjectID
+  exists: Boolean
+  gt: ObjectID
+  gte: ObjectID
+  in: [ObjectID!]
+  lt: ObjectID
+  lte: ObjectID
+  ne: ObjectID
+  nin: [ObjectID!]
 }
 
 type PageInfo {
@@ -125,9 +130,9 @@ type Query {
   aggregateUsers(pipeline: JSON, query: UserQueryInput): [JSON!]!
   countDocumentsUsers(query: UserQueryInput): Int!
   findOneUser(query: UserQueryInput, skip: Int, sort: [UserSort!]): User
-  findUserById(id: ID!): User
+  findUserById(id: ObjectID!): User
   findUsers(limit: Int = 100, query: UserQueryInput, skip: Int, sort: [UserSort!]): [User!]!
-  findUsersByIds(ids: [ID!]!, limit: Int = 100, sort: [UserSort!]): [User!]!
+  findUsersByIds(ids: [ObjectID!]!, limit: Int = 100, sort: [UserSort!]): [User!]!
   findUsersConnection(after: String, first: Int, query: UserQueryInput, sort: [UserSort!]): UserConnection
   findUsersPagination(page: Int, perPage: Int = 20, query: UserQueryInput, sort: [UserSort!]): UserPagination
 }
@@ -152,7 +157,7 @@ type User {
   age: Float
   contacts: UserContacts
   gender: EnumUserGender
-  id: ID!
+  id: ObjectID!
   languages: [UserLanguages]
   name: String
   salaryDecimal: Decimal128
@@ -162,19 +167,19 @@ type User {
 }
 
 type UserAddress {
-  _id: ID
+  _id: ObjectID
   geo: [Float]
   street: String
 }
 
 input UserAddressInput {
-  _id: ID
+  _id: ObjectID
   geo: [Float]
   street: String
 }
 
 input UserAddressQueryInput {
-  _id: IDQueryOperators
+  _id: ObjectIDQueryOperators
   and: [UserAddressQueryInput!]
   geo: [Float]
   not: UserAddressQueryInput
@@ -256,8 +261,8 @@ type UserPayload {
   matchedCount: Int
   modifiedCount: Int
   record: User
-  recordId: ID
-  recordIds: [ID!]
+  recordId: ObjectID
+  recordIds: [ObjectID!]
   records: [User!]
 }
 
@@ -267,7 +272,7 @@ input UserQueryInput {
   and: [UserQueryInput!]
   contacts: UserContactsQueryInput
   gender: StringQueryOperators
-  id: IDQueryOperators
+  id: ObjectIDQueryOperators
   languages: [UserLanguagesQueryInput]
   name: StringQueryOperators
   not: UserQueryInput

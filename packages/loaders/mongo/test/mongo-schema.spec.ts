@@ -52,7 +52,10 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toContain('@mongo__find');
     expect(sdl).toContain('@mongo__count');
     expect(sdl).toContain('@mongo__insertOne');
-    expect(sdl).toContain('findUserById(id: ID!)');
+    expect(sdl).toContain('findUserById(id: ObjectID!)');
+    expect(sdl).toContain('input ObjectIDQueryOperators');
+    expect(sdl).toContain('id: ObjectID!');
+    expect(sdl).not.toContain('input IDQueryOperators');
     expect(sdl).toContain('findUsers(query:');
     expect(sdl).toContain('findOneUser(query:');
     expect(sdl).toContain('countDocumentsUsers(query:');
