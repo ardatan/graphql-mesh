@@ -1,5 +1,5 @@
 import pg from 'pg';
-import { parseSqlUri } from '@graphql-mesh/transport-sql';
+import { parseSqlUri, resolveSslOption } from '@graphql-mesh/transport-sql';
 import { createDefaultNaming } from '../naming.js';
 import type {
   SqlColumnMeta,
@@ -15,6 +15,8 @@ export interface IntrospectPostgresOpts {
   excludeTables?: string[];
   /** Defaults to `public` */
   schema?: string;
+  tls?: boolean | string;
+  ssl?: { rejectUnauthorized?: boolean; ca?: string };
 }
 
 export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<SqlSchemaMeta> {
@@ -23,8 +25,10 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
     throw new Error('Postgres introspection requires a postgres(ql)://… URI');
   }
   const schemaName = opts.schema || 'public';
+  const ssl = resolveSslOption(opts.tls, parsed, opts.ssl);
   const pool = new pg.Pool({
     connectionString: opts.connectionString,
+    ssl,
   });
   try {
     const tableRes = await pool.query<{ name: string }>(

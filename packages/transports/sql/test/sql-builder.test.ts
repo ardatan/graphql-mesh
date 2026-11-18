@@ -3,11 +3,14 @@ import { parseSqlMapping } from '../src/mapping.js';
 import {
   buildDelete,
   buildInsert,
+  buildMysqlMutationReadback,
   buildSelect,
+  buildSelectByColumnIn,
   buildUpdate,
   encodeKeysetCursor,
   escapeSqlStringLiteral,
   mapRowToGraphql,
+  mapRowToGraphqlWithJoins,
 } from '../src/sql-builder.js';
 import { parseSqlThrough } from '../src/through.js';
 
@@ -444,5 +447,78 @@ describe('buildSelect', () => {
       hasMany,
     });
     expect(sqlite.sql).toContain(`'${escapeSqlStringLiteral("title\\'x", 'sqlite')}'`);
+  });
+
+  it('returns planner-resolved first for CONNECTION paging', () => {
+    const { resolvedFirst, resolvedAfter, params } = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'CONNECTION',
+      selection,
+      whereMapping: parseSqlMapping(`$args.where`),
+      planners: { first: '$args.pageSize', after: '$args.cursor' },
+      graphqlArgs: { where: {}, pageSize: 5, cursor: 'abc' },
+      columnCatalog: new Map([['id', 'AlbumId']]),
+    });
+    expect(resolvedFirst).toBe(5);
+    expect(resolvedAfter).toBe('abc');
+    // LIMIT first+1
+    expect(params[params.length - 1]).toBe(6);
+  });
+
+  it('defaults batch ORDER BY id ASC like buildSelect', () => {
+    const { sql } = buildSelectByColumnIn('sqlite', {
+      table: 'albums',
+      kind: 'ROWS',
+      selection,
+      whereMapping: parseSqlMapping(`ArtistId: $this.id`),
+      column: 'ArtistId',
+      values: [1, 2],
+      columnCatalog: new Map([
+        ['id', 'AlbumId'],
+        ['title', 'Title'],
+      ]),
+      graphqlArgs: {},
+    });
+    expect(sql).toContain('ORDER BY "AlbumId" ASC');
+  });
+
+  it('preserves null joined computed fields over root same-name columns', () => {
+    const join = {
+      fieldName: 'artist',
+      table: 'artists',
+      alias: 'j0',
+      parentAlias: 't',
+      joinColumn: 'ArtistId',
+      parentColumn: 'ArtistId',
+      selection: {
+        entries: [
+          { key: 'id', value: { kind: 'column' as const, value: 'ArtistId' } },
+          { key: 'fullName', value: { kind: 'fn' as const, value: 'artists_full_name' } },
+        ],
+      },
+      joins: [],
+    };
+    const mapped = mapRowToGraphqlWithJoins(
+      { fullName: 'Parent', j0__ArtistId: 9, j0__fullName: null, AlbumId: 1 },
+      parseSqlMapping(`id: AlbumId\nfullName: Title`),
+      [join],
+    );
+    expect(mapped.artist).toEqual({ id: '9', fullName: null });
+  });
+
+  it('builds MySQL mutation readback from insertId / where', () => {
+    const byId = buildMysqlMutationReadback('albums', ['AlbumId', 'Title'], {
+      insertId: 42,
+      filterColumns: new Map([['id', 'AlbumId']]),
+    });
+    expect(byId?.sql).toContain('SELECT `AlbumId`, `Title` FROM `albums`');
+    expect(byId?.sql).toContain('`AlbumId` = ?');
+    expect(byId?.params).toEqual([42]);
+
+    const byWhere = buildMysqlMutationReadback('albums', ['AlbumId', 'Title'], {
+      whereMapping: parseSqlMapping(`AlbumId: $args.id`),
+      graphqlArgs: { id: 7 },
+    });
+    expect(byWhere?.params).toEqual([7]);
   });
 });

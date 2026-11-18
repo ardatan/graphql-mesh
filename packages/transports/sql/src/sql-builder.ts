@@ -27,6 +27,10 @@ export interface BuiltQuery {
   params: unknown[];
   /** Present for CONNECTION — used to encode keyset edge cursors. */
   orderSpecs?: OrderSpec[];
+  /** CONNECTION: planner-resolved page size (default 10). */
+  resolvedFirst?: number;
+  /** CONNECTION: planner-resolved `after` cursor string. */
+  resolvedAfter?: string;
 }
 
 /** Resolve soft-delete column for a table, or `undefined` if not applicable. */
@@ -240,10 +244,12 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   if (plan.kind === 'CONNECTION') {
     const first = Number(resolvePlannerArg(plan, 'first') ?? 10);
     const limit = Math.max(0, first);
+    const afterRaw = resolvePlannerArg(plan, 'after');
+    const resolvedAfter = typeof afterRaw === 'string' && afterRaw.length ? afterRaw : undefined;
     // fetch one extra to detect hasNextPage
     params.push(limit + 1);
     sql += ` LIMIT ${placeholder(adapter, params.length)}`;
-    return { sql, params, orderSpecs };
+    return { sql, params, orderSpecs, resolvedFirst: limit, resolvedAfter };
   }
 
   const limit = resolvePlannerArg(plan, 'limit');
@@ -494,7 +500,14 @@ export function buildSelectByColumnIn(
   }
 
   const orderBy = resolvePlannerArg(plan, 'orderBy') as string[] | string | undefined;
-  const orderSpecs = resolveOrderSpecs(orderBy, catalog);
+  let orderSpecs = resolveOrderSpecs(orderBy, catalog);
+  // Match buildSelect: stable default so ROW matched[0] / ROWS lists match unbatched ORDER BY.
+  if (!orderSpecs.length) {
+    const idCol = catalog.get('id') || columns.get('id');
+    if (idCol) {
+      orderSpecs = [{ graphqlField: 'id', sqlColumn: idCol, dir: 'ASC' }];
+    }
+  }
   const orderSql = formatOrderBySql(adapter, orderSpecs);
   if (orderSql) {
     sql += ` ORDER BY ${orderSql}`;
@@ -1254,7 +1267,12 @@ function mapJoinedObject(
       continue;
     }
     if (entry.value.kind === 'fn') {
-      const raw = row[`${join.alias}__${entry.key}`] ?? row[entry.key];
+      // Prefer prefixed alias when present (even if null) so a null joined
+      // computed field is not overwritten by a non-null root column of the same name.
+      const prefixed = `${join.alias}__${entry.key}`;
+      const raw = Object.prototype.hasOwnProperty.call(row, prefixed)
+        ? row[prefixed]
+        : row[entry.key];
       if (raw !== undefined && raw !== null) any = true;
       nested[entry.key] = raw;
     }
@@ -1315,6 +1333,52 @@ export function collectReturningColumns(selection: ParsedSqlMapping): string[] {
     }
   }
   return [...columnMapFromSelection(selection).values()];
+}
+
+/**
+ * MySQL lacks RETURNING — build a follow-up SELECT for the written row.
+ * INSERT: prefer `insertId` against an `id` / first returning column.
+ * UPDATE: reuse mutation where equalities.
+ */
+export function buildMysqlMutationReadback(
+  table: string,
+  returningColumns: string[],
+  opts: {
+    insertId?: number | bigint;
+    whereMapping?: ParsedSqlMapping;
+    graphqlArgs?: Record<string, any>;
+    filterColumns?: Map<string, string>;
+  },
+): BuiltQuery | undefined {
+  if (!returningColumns.length) return undefined;
+  const adapter: SqlAdapter = 'mysql';
+  const selectList = returningColumns.map(c => quoteIdent(adapter, c)).join(', ');
+  const params: unknown[] = [];
+  const whereParts: string[] = [];
+
+  if (opts.insertId != null && Number(opts.insertId) !== 0) {
+    const idCol =
+      opts.filterColumns?.get('id') ||
+      returningColumns.find(c => c === 'id' || /Id$/i.test(c)) ||
+      returningColumns[0];
+    params.push(opts.insertId);
+    whereParts.push(`${quoteIdent(adapter, idCol)} = ${placeholder(adapter, params.length)}`);
+  } else if (opts.whereMapping) {
+    appendMutationWhere(
+      adapter,
+      table,
+      opts.whereMapping,
+      opts.graphqlArgs || {},
+      whereParts,
+      params,
+      opts.filterColumns,
+    );
+  }
+  if (!whereParts.length) return undefined;
+  return {
+    sql: `SELECT ${selectList} FROM ${quoteIdent(adapter, table)} WHERE ${whereParts.join(' AND ')} LIMIT 1`,
+    params,
+  };
 }
 
 export function parseSqlDirectiveMappings(opts: {

@@ -26,6 +26,7 @@ import { collectRelationFilters } from './relation-filters.js';
 import {
   buildDelete,
   buildInsert,
+  buildMysqlMutationReadback,
   buildSelect,
   buildUpdate,
   collectReturningColumns,
@@ -298,7 +299,8 @@ async function runSqlSelect(
     return row ? mapSelectRow(row, selectSelection, joins, hasMany) : null;
   }
   if (kind === 'CONNECTION') {
-    const first = Number(graphqlArgs.first ?? 10);
+    // Prefer planner-resolved values from buildSelect (e.g. first: "$args.pageSize").
+    const first = Number(query.resolvedFirst ?? graphqlArgs.first ?? 10);
     const rows = result.rows as Record<string, unknown>[];
     const hasNextPage = rows.length > first;
     const pageRows = hasNextPage ? rows.slice(0, first) : rows;
@@ -336,7 +338,9 @@ async function runSqlSelect(
       totalCount = Number(crow?.count ?? crow?.COUNT ?? Object.values(crow || {})[0] ?? 0);
     }
 
-    const after = typeof graphqlArgs.after === 'string' ? graphqlArgs.after : '';
+    const after =
+      query.resolvedAfter ??
+      (typeof graphqlArgs.after === 'string' ? graphqlArgs.after : '');
     return {
       nodes,
       edges,
@@ -452,11 +456,27 @@ export async function getSqlExecutor({
                       );
 
                 let row: Record<string, unknown> | undefined;
-                if (returningCols.length && (adapter === 'sqlite' || adapter === 'postgres')) {
+                if (
+                  returningCols.length &&
+                  (sqlClient.adapter === 'sqlite' || sqlClient.adapter === 'postgres')
+                ) {
                   const result = await sqlClient.query(query.sql, query.params);
                   row = result.rows[0] as Record<string, unknown> | undefined;
                 } else {
-                  await sqlClient.query(query.sql, query.params);
+                  const result = await sqlClient.query(query.sql, query.params);
+                  // MySQL: no RETURNING — read back the written row for payload mapping.
+                  if (returningCols.length && sqlClient.adapter === 'mysql') {
+                    const readback = buildMysqlMutationReadback(table, returningCols, {
+                      insertId: mutationKind === 'INSERT' ? result.insertId : undefined,
+                      whereMapping: mutationKind === 'UPDATE' ? whereMapping : undefined,
+                      graphqlArgs: args,
+                      filterColumns,
+                    });
+                    if (readback) {
+                      const got = await sqlClient.query(readback.sql, readback.params);
+                      row = got.rows[0] as Record<string, unknown> | undefined;
+                    }
+                  }
                 }
 
                 const payloadKey = selection.entries.find(e => e.children)?.key;

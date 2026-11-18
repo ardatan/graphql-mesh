@@ -140,6 +140,8 @@ function rootWhereNeedsGenericResolver(
 ): boolean {
   if (whereHasClientFilter(where)) return true;
   if (args.filter) return true; // legacy `@sql(filter:)`
+  // Root find() does not apply orderBy binders — keep generic resolve.
+  if (args.orderBy) return true;
   // Fixed literals (`active: true`) and column `$args` binders are not applied by find().
   for (const entry of where.entries) {
     if (entry.spread || entry.children || entry.key.startsWith('$')) continue;

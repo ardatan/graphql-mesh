@@ -534,6 +534,7 @@ async function introspect(
         connectionString: opts.endpoint,
         includeTables: opts.includeTables,
         excludeTables: opts.excludeTables,
+        tls: opts.tls,
         ssl: opts.ssl,
       });
     }
@@ -546,6 +547,8 @@ async function introspect(
         schema: opts.schema,
         includeTables: opts.includeTables,
         excludeTables: opts.excludeTables,
+        tls: opts.tls,
+        ssl: opts.ssl,
       });
     }
     default:

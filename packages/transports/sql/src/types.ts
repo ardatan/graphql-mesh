@@ -98,12 +98,19 @@ export interface ParsedSqlMapping {
   entries: SqlMappingEntry[];
 }
 
+export interface SqlQueryResult<T = Record<string, unknown>> {
+  rows: T[];
+  rowCount: number;
+  /** MySQL ResultSetHeader.insertId after INSERT (auto-increment). */
+  insertId?: number | bigint;
+}
+
 export interface SqlClient {
   readonly adapter: SqlAdapter;
   query<T = Record<string, unknown>>(
     sql: string,
     params?: unknown[],
-  ): Promise<{ rows: T[]; rowCount: number }>;
+  ): Promise<SqlQueryResult<T>>;
   dispose(): void | Promise<void>;
   /**
    * Node `pg.Pool` when using the postgres adapter (required for the

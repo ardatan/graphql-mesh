@@ -1,11 +1,12 @@
 import { createPool, type RowDataPacket } from 'mysql2/promise';
-import { parseSqlUri } from '@graphql-mesh/transport-sql';
+import { parseSqlUri, resolveSslOption } from '@graphql-mesh/transport-sql';
 import type { SqlColumnMeta, SqlForeignKeyMeta, SqlSchemaMeta, SqlTableMeta } from './types.js';
 
 export interface IntrospectMysqlOpts {
   connectionString: string;
   includeTables?: string[];
   excludeTables?: string[];
+  tls?: boolean | string;
   ssl?: { rejectUnauthorized?: boolean; ca?: string };
 }
 
@@ -14,13 +15,7 @@ export async function introspectMysql(opts: IntrospectMysqlOpts): Promise<SqlSch
   if (parsed.adapter !== 'mysql' || !parsed.database) {
     throw new Error('MySQL introspection requires a mysql://…/database URI');
   }
-  const ssl =
-    opts.ssl || parsed.ssl
-      ? {
-          rejectUnauthorized: opts.ssl?.rejectUnauthorized !== false,
-          ...(opts.ssl?.ca ? { ca: opts.ssl.ca } : {}),
-        }
-      : undefined;
+  const ssl = resolveSslOption(opts.tls, parsed, opts.ssl);
   const pool = createPool({
     host: parsed.host,
     port: parsed.port,

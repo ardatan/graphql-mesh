@@ -81,7 +81,7 @@ export function batchableEqualityColumn(whereMapping: ParsedSqlMapping): string 
 export function canBatchByEqualityColumn(
   whereMapping: ParsedSqlMapping,
   equalityColumn: string,
-  kind: 'ROW' | 'ROWS',
+  _kind: 'ROW' | 'ROWS',
   graphqlArgs?: Record<string, any>,
   planners?: SqlPlanners,
 ): boolean {
@@ -105,8 +105,7 @@ export function canBatchByEqualityColumn(
     }
   }
   // ROW still defaults to LIMIT 1 in buildSelect; batching ROWs is fine without
-  // client pagination. kind is retained for callers / future per-kind rules.
-  void kind;
+  // client pagination. `_kind` retained for callers / future per-kind rules.
   return true;
 }
 

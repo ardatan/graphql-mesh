@@ -185,8 +185,14 @@ function mysqlPromiseClient(p: {
       if (Array.isArray(result)) {
         return { rows: result as T[], rowCount: result.length };
       }
-      const header = result as { affectedRows?: number };
-      return { rows: [] as T[], rowCount: Number(header.affectedRows ?? 0) };
+      const header = result as { affectedRows?: number; insertId?: number | bigint };
+      return {
+        rows: [] as T[],
+        rowCount: Number(header.affectedRows ?? 0),
+        ...(header.insertId != null && Number(header.insertId) !== 0
+          ? { insertId: header.insertId }
+          : {}),
+      };
     },
     async dispose() {
       if (typeof p.end === 'function') {
@@ -287,8 +293,9 @@ function createPostgresClient(opts: CreateSqlClientOptions): SqlClient {
  * TLS on by default verifies certificates (`rejectUnauthorized: true`).
  * Opt out explicitly with `tls: "insecure"` / `"no-verify"` or URI `sslmode=no-verify`.
  * `ssl.ca` / `ssl.rejectUnauthorized` are merged when SSL is enabled.
+ * Shared by runtime clients and MySQL/Postgres introspection.
  */
-function resolveSslOption(
+export function resolveSslOption(
   option: boolean | string | undefined,
   parsed: { ssl?: boolean; searchParams?: Record<string, string> },
   sslDetails?: { rejectUnauthorized?: boolean; ca?: string },
