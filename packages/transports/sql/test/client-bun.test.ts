@@ -244,6 +244,7 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
     );
 
     let releaseCount = 0;
+    let selectRan = false;
     let setGate!: () => void;
     const setWait = new Promise<void>(resolve => {
       setGate = resolve;
@@ -259,6 +260,11 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
           }
           throw err;
         }
+        selectRan = true;
+        if (cb) {
+          cb(null, { rows: [] });
+          return;
+        }
         return { rows: [] };
       },
       release: () => {
@@ -270,17 +276,23 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
     };
 
     byEvent.acquire[0](client);
-    // Simulate pg-pool pool.query: wait on SET via patched query, then release once on error.
-    const poolQuery = client.query('SELECT 1').then(
-      () => {
-        client.release();
-      },
-      () => {
-        client.release();
-      },
-    );
+    // Callback overload (pg-pool pool.query style): SET error reaches the callback;
+    // SELECT must not run; checkout released exactly once.
+    const poolQuery = new Promise<void>((resolve, reject) => {
+      client.query('SELECT 1', (err: Error | null) => {
+        try {
+          client.release();
+        } catch (releaseErr) {
+          reject(releaseErr);
+          return;
+        }
+        if (err) resolve();
+        else reject(new Error('expected SET failure via callback'));
+      });
+    });
     setGate();
     await expect(poolQuery).resolves.toBeUndefined();
+    expect(selectRan).toBe(false);
     expect(releaseCount).toBe(1);
   });
 });

@@ -158,12 +158,16 @@ stuffed into `where` keeps working at runtime; new emit does not produce it.
 ## Reliability / review follow-ups (this tip)
 
 - Shared `pg.Pool`: one schema binding per pool (conflicting schema rejected); `SET search_path`
-  fail-closed without double-release under `pool.query`
-- Binary columns map to `GraphQLByte` (Buffer encode at the transport boundary)
-- Batching: reject `$this` pagination binders; omit equality `$args` from loader identity
-- Postgres computed-fn discovery: arity 1, non-set-returning only
-- Legacy mysql `ssl.ca` path → PEM; tuql infile → atomic temp+rename sqlite publish
-- Mutations: reject structured `where` that produces no SQL predicate
-- Nested relation filters keep related-type metadata (`_rf{depth}` aliases)
+  fail-closed without double-release under `pool.query` (callback wait path covered)
+- Binary columns map to `GraphQLByte` by **base type** (not `enum('BINARY',…)` labels); joined /
+  has-many rows encode Buffer; SQLite skips JSON has-many folds that project `Byte`
+- Batching: reject `$this` pagination binders; omit only the equality `$args` leaf (keep sibling
+  filters such as `input.filter` in the loader identity)
+- Postgres: sequence defaults via real `nextval(` (not inside quoted literals); computed functions
+  match argument relation **schema + name**
+- Legacy mysql `ssl.ca` path → PEM; tuql infile → create-if-absent publish (no live-DB overwrite)
+- Mutations: reject structured `where` that is `null` / non-object, or that produces no SQL predicate
+- Nested relation filters keep finite self-referential paths (depth-bounded metadata)
 - Rename/naming: `$this` / through binders + single-pass selection key rewrite; **nested input
-  binder walks and type-scoped flat rename maps remain deferred** (no further rename scope)
+  binder walks, type-scoped flat / through rename maps, and bare inline selection rename walks
+  remain deferred** (no further rename scope)

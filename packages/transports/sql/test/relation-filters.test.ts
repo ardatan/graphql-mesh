@@ -157,4 +157,64 @@ describe('collectRelationFilters', () => {
     expect(artist!.localColumn).toBe('ArtistId');
     expect(artist!.refColumn).toBe('ArtistId');
   });
+
+  it('keeps nested metadata for finite self-referential filters', () => {
+    const empSelection = ['id: id', 'name: name', 'managerId: manager_id'].join('\n');
+    const Employee: GraphQLObjectType = new GraphQLObjectType({
+      name: 'Employee',
+      fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLString },
+        managerId: { type: GraphQLID },
+        manager: {
+          type: Employee,
+          extensions: {
+            directives: {
+              sql: {
+                table: 'employees',
+                kind: 'ROW',
+                where: 'id: $this.managerId',
+                selection: empSelection,
+              },
+            },
+          },
+        },
+      }),
+      extensions: {
+        directives: {
+          sql: {
+            table: 'employees',
+            kind: 'ROW',
+            where: 'id: $this.id',
+            selection: empSelection,
+          },
+        },
+      },
+    });
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          employees: {
+            type: new GraphQLList(Employee),
+            extensions: {
+              directives: {
+                sql: {
+                  table: 'employees',
+                  kind: 'ROWS',
+                  selection: empSelection,
+                },
+              },
+            },
+          },
+        },
+      }),
+      types: [Employee],
+    });
+
+    const filters = collectRelationFilters(schema, 'Employee');
+    const manager = filters.find(f => f.field === 'manager');
+    expect(manager).toBeDefined();
+    expect(manager!.nestedRelationFilters?.some(n => n.field === 'manager')).toBe(true);
+  });
 });

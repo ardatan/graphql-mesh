@@ -57,7 +57,17 @@ export function mapSqlTypeToGraphQL(
   if (t.includes('JSON') || t.includes('JSONB')) {
     return GraphQLJSON as unknown as GraphQLScalarType;
   }
-  if (t.includes('BLOB') || t.includes('BINARY') || t.includes('BYTEA')) {
+  // Match the base type before args / enum labels — `enum('BINARY','TEXT')` is not Byte.
+  const baseType = t.replace(/\s*\([\s\S]*$/, '').trim();
+  if (
+    baseType === 'BYTEA' ||
+    baseType === 'BINARY' ||
+    baseType === 'VARBINARY' ||
+    baseType === 'BLOB' ||
+    baseType === 'TINYBLOB' ||
+    baseType === 'MEDIUMBLOB' ||
+    baseType === 'LONGBLOB'
+  ) {
     // Drivers return Buffer/Uint8Array; GraphQLString cannot serialize those.
     return GraphQLByte as unknown as GraphQLScalarType;
   }

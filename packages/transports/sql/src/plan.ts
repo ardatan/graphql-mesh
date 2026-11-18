@@ -229,6 +229,15 @@ function planChildField(
     if (!isSimpleHasManyFoldable(whereMapping, fieldNode, opts)) return null;
     const limit = readLimitArg(fieldNode);
     const narrowed = narrowSelectionToFieldNodes(relSelection, fieldNode, fragments, childType);
+    const foldSelection = narrowed.entries.length ? narrowed : relSelection;
+    // SQLite `json_object` cannot safely serialize BLOB/Byte columns — keep DataLoader.
+    if (
+      opts?.adapter === 'sqlite' &&
+      childType &&
+      selectionProjectsByte(childType, foldSelection)
+    ) {
+      return null;
+    }
     return {
       kind: 'hasMany',
       parentGraphqlField: thisField,
@@ -238,7 +247,7 @@ function planChildField(
         joinColumn,
         parentGraphqlField: thisField,
         parentColumn,
-        selection: narrowed.entries.length ? narrowed : relSelection,
+        selection: foldSelection,
         limit,
         // Rank from the full relation selection (not client-pruned) so LIMIT folds
         // stay unique even when the client only asks for a non-unique column.
@@ -292,6 +301,20 @@ function isEqualityOnlyThisJoin(whereMapping: ParsedSqlMapping, joinColumn: stri
   if (binders.length !== 1) return false;
   const only = binders[0];
   return only.key === joinColumn && only.value?.kind === 'this';
+}
+
+/** True when the folded projection includes a GraphQL `Byte` field (binary / BLOB). */
+function selectionProjectsByte(
+  childType: GraphQLObjectType,
+  selection: ParsedSqlMapping,
+): boolean {
+  for (const entry of selection.entries) {
+    if (entry.children || !entry.value) continue;
+    const field = childType.getFields()[entry.key];
+    if (!field) continue;
+    if (getNamedType(field.type).name === 'Byte') return true;
+  }
+  return false;
 }
 
 function isSimpleHasManyFoldable(

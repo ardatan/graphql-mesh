@@ -664,7 +664,13 @@ function appendMutationWhere(
           `@sql mutation on ${table}: where binder "${entry.key || entry.value?.value || '?'}" resolved to undefined`,
         );
       }
-      if (resolved && typeof resolved === 'object' && !Array.isArray(resolved)) {
+      // `null` / arrays / scalars bypass object checks and would skip predicates → unscoped write.
+      if (resolved === null || typeof resolved !== 'object' || Array.isArray(resolved)) {
+        throw new Error(
+          `@sql mutation on ${table}: where filter must be a non-null object (refusing unscoped write)`,
+        );
+      }
+      {
         const before = whereParts.length;
         appendFilter(adapter, resolved as Record<string, any>, columns, whereParts, params);
         if (whereParts.length === before) {
@@ -1311,7 +1317,8 @@ function mapJoinedObject(
     if (entry.value.kind === 'column') {
       const raw = row[`${join.alias}__${entry.value.value}`];
       if (raw !== undefined && raw !== null) any = true;
-      nested[entry.key] = raw != null && entry.key === 'id' ? String(raw) : raw;
+      nested[entry.key] =
+        raw != null && entry.key === 'id' ? String(raw) : encodeBinaryForGraphql(raw);
       continue;
     }
     if (entry.value.kind === 'fn') {
@@ -1322,7 +1329,7 @@ function mapJoinedObject(
         ? row[prefixed]
         : row[entry.key];
       if (raw !== undefined && raw !== null) any = true;
-      nested[entry.key] = raw;
+      nested[entry.key] = encodeBinaryForGraphql(raw);
     }
   }
   if (!any) return null;
@@ -1353,11 +1360,12 @@ function parseHasManyJson(raw: unknown, hm: HasManySubselect): Record<string, un
       if (!entry.value) continue;
       if (entry.value.kind === 'column') {
         const v = item[entry.key] ?? item[entry.value.value];
-        out[entry.key] = v != null && entry.key === 'id' ? String(v) : v;
+        out[entry.key] =
+          v != null && entry.key === 'id' ? String(v) : encodeBinaryForGraphql(v);
         continue;
       }
       if (entry.value.kind === 'fn') {
-        out[entry.key] = item[entry.key];
+        out[entry.key] = encodeBinaryForGraphql(item[entry.key]);
       }
     }
     return out;

@@ -54,9 +54,10 @@ function stableArgsKey(args: Record<string, any> | undefined): string {
 }
 
 /**
- * Loader identity must omit the batching equality binder's `$args` root so
+ * Loader identity must omit the batching equality binder's `$args` value so
  * `album(id: 1)` and `album(id: 2)` share one DataLoader (keys go in `IN (...)`).
- * Other predicates / planners stay in the identity.
+ * Sibling predicates under the same root (`input.filter` beside `input.id`) and
+ * other binders stay in the identity.
  */
 function stableArgsKeyExcludingEquality(
   args: Record<string, any> | undefined,
@@ -65,16 +66,36 @@ function stableArgsKeyExcludingEquality(
 ): string {
   if (!args) return '';
   const entry = whereMapping.entries.find(e => e.key === equalityColumn);
-  const omitRoot =
-    entry?.value?.kind === 'args'
-      ? (entry.value.path?.[0] ?? entry.value.value?.split('.')[0])
-      : undefined;
-  if (!omitRoot || !(omitRoot in args)) {
+  if (entry?.value?.kind !== 'args') {
     return stableArgsKey(args);
   }
-  const rest: Record<string, any> = { ...args };
-  delete rest[omitRoot];
-  return stableArgsKey(rest);
+  const path =
+    entry.value.path?.length
+      ? entry.value.path
+      : entry.value.value
+        ? entry.value.value.split('.').filter(Boolean)
+        : [];
+  if (!path.length || !(path[0] in args)) {
+    return stableArgsKey(args);
+  }
+  return stableArgsKey(omitArgsPath(args, path));
+}
+
+/** Shallow-clone along `path`, dropping only the equality leaf (keep siblings). */
+function omitArgsPath(args: Record<string, any>, path: string[]): Record<string, any> {
+  if (path.length === 1) {
+    const rest = { ...args };
+    delete rest[path[0]];
+    return rest;
+  }
+  const [head, ...tail] = path;
+  const child = args[head];
+  if (!child || typeof child !== 'object' || Array.isArray(child)) {
+    const rest = { ...args };
+    delete rest[head];
+    return rest;
+  }
+  return { ...args, [head]: omitArgsPath(child as Record<string, any>, tail) };
 }
 
 const PLANNER_KEYS = new Set([

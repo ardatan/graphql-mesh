@@ -1,6 +1,6 @@
 /* eslint-disable import/no-nodejs-modules */
 import { createHash, randomBytes } from 'node:crypto';
-import { readFileSync, renameSync, statSync, unlinkSync } from 'node:fs';
+import { linkSync, readFileSync, statSync, unlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { isAbsolute, join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
@@ -89,8 +89,8 @@ function materializeInfileToSqlite(infile: string, cwd: string): string {
     // fall through and create
   }
 
-  // Build into a private temp file, then atomically publish — avoids readers
-  // picking up an empty/partial DB if exec fails or the process dies mid-write.
+  // Build into a private temp file, then publish with create-if-absent so a
+  // concurrent materializer cannot overwrite a live DB that already received writes.
   const tmpPath = `${outPath}.${randomBytes(8).toString('hex')}.tmp`;
   try {
     const db = new DatabaseSync(tmpPath);
@@ -99,14 +99,21 @@ function materializeInfileToSqlite(infile: string, cwd: string): string {
     } finally {
       db.close();
     }
-    renameSync(tmpPath, outPath);
-  } catch (err) {
+    try {
+      // Hard-link is atomic and fails with EEXIST if another process won the race.
+      linkSync(tmpPath, outPath);
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'EEXIST') {
+        throw err;
+      }
+      // Winner already published — discard our temp copy and use theirs.
+    }
+  } finally {
     try {
       unlinkSync(tmpPath);
     } catch {
       /* best-effort cleanup */
     }
-    throw err;
   }
   return outPath;
 }

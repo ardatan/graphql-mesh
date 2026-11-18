@@ -375,6 +375,19 @@ describe('buildSelect', () => {
         cols,
       ),
     ).toThrow(/no SQL predicate/);
+
+    expect(() =>
+      buildUpdate(
+        'sqlite',
+        'albums',
+        parseSqlMapping(`Title: $args.input.title`),
+        parseSqlMapping(`$args.where`),
+        { input: { title: 'X' }, where: null },
+        ['AlbumId'],
+        undefined,
+        cols,
+      ),
+    ).toThrow(/non-null object/);
   });
 
   it('appends soft-delete IS NULL on reads and soft-deletes via UPDATE', () => {

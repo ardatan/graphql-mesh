@@ -110,8 +110,8 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
           dataType,
           notNull: String(c.is_nullable).toUpperCase() === 'NO',
           primaryKey: pkCols.has(String(c.name)),
-          // Identity via is_identity; sequences via nextval — do not match DEFAULT 'identity'.
-          autoIncrement: isIdentity || /nextval\(/i.test(def),
+          // Identity via is_identity; sequences via nextval — not nextval inside a quoted literal.
+          autoIncrement: isIdentity || isSequenceDefault(def),
           hasDefault: isIdentity || Boolean(def),
         };
       });
@@ -203,7 +203,9 @@ async function introspectComputedColumns(
      JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
      JOIN pg_catalog.pg_type arg0 ON arg0.oid = p.proargtypes[0]
      JOIN pg_catalog.pg_class t ON t.reltype = arg0.oid
+     JOIN pg_catalog.pg_namespace tn ON tn.oid = t.relnamespace
      WHERE n.nspname = $1
+       AND tn.nspname = $1
        AND p.pronargs = 1
        AND NOT p.proretset
        AND p.prorettype <> 'pg_catalog.void'::pg_catalog.regtype
@@ -229,4 +231,11 @@ async function introspectComputedColumns(
     });
   }
   return out;
+}
+
+/** True when the default expression calls nextval(...), ignoring nextval inside string literals. */
+function isSequenceDefault(def: string): boolean {
+  if (!def) return false;
+  const withoutStrings = def.replace(/'(?:[^']|'')*'/g, "''");
+  return /nextval\s*\(/i.test(withoutStrings);
 }
