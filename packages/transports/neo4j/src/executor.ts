@@ -931,7 +931,8 @@ export function extractNeo4jModelTypeDefs(
             if (authoredFields.length !== siblings.length) {
               authored = { ...authored, fields: authoredFields };
             }
-            // Drop implements edges to empty/omitted interfaces; for objects also check conformance.
+            // Drop implements edges to empty/omitted interfaces; check conformance for
+            // authored-output objects and interfaces (both can keep invalid implements edges).
             if (authored.interfaces?.length) {
               const projected = new Set(authoredFields.map(field => field.name.value));
               const nextInterfaces = [];
@@ -943,19 +944,17 @@ export function extractNeo4jModelTypeDefs(
                 if (!interfaceHasSurvivingFields(ifaceName)) {
                   continue;
                 }
-                if (authored.kind === Kind.OBJECT_TYPE_DEFINITION) {
-                  const projectedIfaceFields = keepTypeNames.has(ifaceName)
-                    ? retainedFieldsByType.get(ifaceName) || []
-                    : survivingAuthoredFields(ifaceName);
-                  const requiredNames = projectedIfaceFields.map(field => field.name.value);
-                  const missing = requiredNames.filter(name => !projected.has(name));
-                  if (missing.length) {
-                    const refs =
-                      authoredOutputReferrers.get(def.name.value)?.join(', ') || 'unknown field';
-                    throw new Error(
-                      `Neo4j model extract: Cypher return type "${def.name.value}" cannot implement "${ifaceName}" after ownership filtering (missing ${missing.join(', ')}; referenced from ${refs})`,
-                    );
-                  }
+                const projectedIfaceFields = keepTypeNames.has(ifaceName)
+                  ? retainedFieldsByType.get(ifaceName) || []
+                  : survivingAuthoredFields(ifaceName);
+                const requiredNames = projectedIfaceFields.map(field => field.name.value);
+                const missing = requiredNames.filter(name => !projected.has(name));
+                if (missing.length) {
+                  const refs =
+                    authoredOutputReferrers.get(def.name.value)?.join(', ') || 'unknown field';
+                  throw new Error(
+                    `Neo4j model extract: Cypher return type "${def.name.value}" cannot implement "${ifaceName}" after ownership filtering (missing ${missing.join(', ')}; referenced from ${refs})`,
+                  );
                 }
                 nextInterfaces.push(iface);
               }

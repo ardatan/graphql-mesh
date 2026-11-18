@@ -727,6 +727,39 @@ describe('extractNeo4jModelTypeDefs', () => {
       /Detailed.*Named|missing name/i,
     );
 
+    // Authored-output interface path: root @cypher returns Detailed; Named survives via a
+    // retained model implementor, but Detailed loses name — must error (not emit invalid SDL).
+    const brokenAuthoredOutputIface = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      interface Named {
+        name: String!
+      }
+
+      interface Detailed implements Named {
+        name: String! @alias(subgraph: "People", property: "full_name")
+        title: String!
+      }
+
+      type Person implements Named @node(subgraph: "Movies") {
+        name: String!
+      }
+
+      type Query {
+        featured: Detailed!
+          @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+    `);
+    expect(() => extractNeo4jModelTypeDefs(brokenAuthoredOutputIface, 'Movies')).toThrow(
+      /Detailed.*Named|missing name/i,
+    );
+
     // Orphaned @relationshipProperties spatial field must not drop authored Point for Query.pin.
     const orphanedRelPropsPoint = parse(/* GraphQL */ `
       directive @node(subgraph: String, labels: [String!]) on OBJECT
