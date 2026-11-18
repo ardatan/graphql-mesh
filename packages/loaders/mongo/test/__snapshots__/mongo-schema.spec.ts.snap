@@ -214,22 +214,22 @@ type UserContacts {
 }
 
 enum UserSort {
-  id_ASC
-  id_DESC
-  name_ASC
-  name_DESC
-  age_ASC
-  age_DESC
-  gender_ASC
-  gender_DESC
-  salaryDecimal_ASC
-  salaryDecimal_DESC
+  id_asc
+  id_desc
+  name_asc
+  name_desc
+  age_asc
+  age_desc
+  gender_asc
+  gender_desc
+  salaryDecimal_asc
+  salaryDecimal_desc
 }
 
 input UserQueryInput {
-  AND: [UserQueryInput!]
-  OR: [UserQueryInput!]
-  NOT: UserQueryInput
+  and: [UserQueryInput!]
+  or: [UserQueryInput!]
+  not: UserQueryInput
   id: IDQueryOperators
   name: StringQueryOperators
   age: FloatQueryOperators
@@ -280,17 +280,17 @@ input FloatQueryOperators {
 }
 
 input UserLanguagesQueryInput {
-  AND: [UserLanguagesQueryInput!]
-  OR: [UserLanguagesQueryInput!]
-  NOT: UserLanguagesQueryInput
+  and: [UserLanguagesQueryInput!]
+  or: [UserLanguagesQueryInput!]
+  not: UserLanguagesQueryInput
   language: StringQueryOperators
   skill: StringQueryOperators
 }
 
 input UserAddressQueryInput {
-  AND: [UserAddressQueryInput!]
-  OR: [UserAddressQueryInput!]
-  NOT: UserAddressQueryInput
+  and: [UserAddressQueryInput!]
+  or: [UserAddressQueryInput!]
+  not: UserAddressQueryInput
   street: StringQueryOperators
   geo: [Float]
   _id: IDQueryOperators
@@ -309,9 +309,9 @@ input Decimal128QueryOperators {
 }
 
 input UserContactsQueryInput {
-  AND: [UserContactsQueryInput!]
-  OR: [UserContactsQueryInput!]
-  NOT: UserContactsQueryInput
+  and: [UserContactsQueryInput!]
+  or: [UserContactsQueryInput!]
+  not: UserContactsQueryInput
   email: StringQueryOperators
   phones: [String]
 }

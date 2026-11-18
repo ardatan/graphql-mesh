@@ -78,8 +78,8 @@ describe('mongo filter mapping', () => {
   it('maps GraphQL where ops to Mongo operators', () => {
     expect(
       graphqlFilterToMongo({
-        AND: [{ name: { regex: '^A' } }, { age: { in: [1, 2] } }],
-        OR: [{ gender: { eq: 'male' } }],
+        and: [{ name: { regex: '^A' } }, { age: { in: [1, 2] } }],
+        or: [{ gender: { eq: 'male' } }],
       }),
     ).toEqual({
       $and: [{ name: { $regex: '^A' } }, { age: { $in: [1, 2] } }],
@@ -121,13 +121,13 @@ describe('mongo filter mapping', () => {
     });
   });
 
-  it('maps field_ASC/field_DESC sort enum list to Mongo sort', () => {
-    expect(graphqlSortToMongo(['age_DESC', 'name_ASC', 'id_DESC'])).toEqual({
+  it('maps field_asc/field_desc sort enum list to Mongo sort', () => {
+    expect(graphqlSortToMongo(['age_desc', 'name_asc', 'id_desc'])).toEqual({
       age: -1,
       name: 1,
       _id: -1,
     });
-    expect(graphqlSortToMongo({ age: 'DESC', id: 'ASC' })).toEqual({ age: -1, _id: 1 });
-    expect(buildMongoSort('$args.sort', { args: { sort: ['age_DESC'] } })).toEqual({ age: -1 });
+    expect(graphqlSortToMongo({ age: 'desc', id: 'asc' })).toEqual({ age: -1, _id: 1 });
+    expect(buildMongoSort('$args.sort', { args: { sort: ['age_desc'] } })).toEqual({ age: -1 });
   });
 });

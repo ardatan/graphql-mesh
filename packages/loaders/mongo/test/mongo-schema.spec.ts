@@ -61,8 +61,10 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toContain('deleteOneUser(query:');
     expect(sdl).toContain('input UserQueryInput');
     expect(sdl).toContain('enum UserSort');
-    expect(sdl).toContain('id_ASC');
-    expect(sdl).toContain('age_DESC');
+    expect(sdl).toContain('id_asc');
+    expect(sdl).toContain('age_desc');
+    expect(sdl).toContain('and: [UserQueryInput!]');
+    expect(sdl).not.toContain('AND: [UserQueryInput!]');
     expect(sdl).toContain('input FloatQueryOperators');
     expect(sdl).toContain('gte: Float');
     expect(sdl).toContain('$args.query');

@@ -828,9 +828,10 @@ function ensureNestedQueryInput(
   const queryName = `${path.nestedTypeName}QueryInput`;
   if (!schemaComposer.has(queryName)) {
     const fields: Record<string, any> = {
-      AND: { type: `[${queryName}!]` },
-      OR: { type: `[${queryName}!]` },
-      NOT: { type: queryName },
+      // Mongo `$and` / `$or` / `$not` without `$` (same rule as `gte`).
+      and: { type: `[${queryName}!]` },
+      or: { type: `[${queryName}!]` },
+      not: { type: queryName },
     };
     for (const child of path.nested || []) {
       if (child.name === '__v') continue;
@@ -960,9 +961,10 @@ function createQuerySortAndDocumentInputs(
     schemaComposer.createInputTC({
       name: queryName,
       fields: {
-        AND: { type: `[${queryName}!]` },
-        OR: { type: `[${queryName}!]` },
-        NOT: { type: queryName },
+        // Mongo `$and` / `$or` / `$not` without `$` (same rule as `gte`).
+        and: { type: `[${queryName}!]` },
+        or: { type: `[${queryName}!]` },
+        not: { type: queryName },
         id: { type: 'IDQueryOperators' },
         ...Object.fromEntries(
           paths
@@ -979,17 +981,17 @@ function createQuerySortAndDocumentInputs(
     });
   }
 
-  // Client SDL: `id_ASC` / `name_DESC` sort enum values. Directive binder still
-  // receives `$args.sort` and transport maps enum values → `{ field: 1|-1 }`.
+  // Client SDL: `id_asc` / `name_desc`. Directive binder still receives
+  // `$args.sort`; transport maps enum values → `{ field: 1|-1 }`.
   const sortEnumName = naming.sortEnum(typeName);
   if (!schemaComposer.has(sortEnumName)) {
     const values: Record<string, { value: string }> = {
-      id_ASC: { value: 'id_ASC' },
-      id_DESC: { value: 'id_DESC' },
+      id_asc: { value: 'id_asc' },
+      id_desc: { value: 'id_desc' },
     };
     for (const path of paths.filter(isSortablePath)) {
-      values[`${path.name}_ASC`] = { value: `${path.name}_ASC` };
-      values[`${path.name}_DESC`] = { value: `${path.name}_DESC` };
+      values[`${path.name}_asc`] = { value: `${path.name}_asc` };
+      values[`${path.name}_desc`] = { value: `${path.name}_desc` };
     }
     schemaComposer.createEnumTC({ name: sortEnumName, values });
   }

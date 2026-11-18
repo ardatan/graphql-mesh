@@ -24,9 +24,10 @@ new stack (like mysql/tuql -> SQL).
   `@mongo__connection` / `@mongo__pagination` / `@mongo__aggregate` /
   `@mongo__insertOne|insertMany` / `@mongo__updateOne|updateMany` / `@mongo__deleteOne|deleteMany`
   (SDL client API ≠ directive binders; legacy `@mongo(kind:)` still executed)
-- Client args: typed `query: *QueryInput` + `sort: [*Sort!]` (`id_ASC` / `age_DESC`;
-  transport maps to `{ field: 1|-1 }`). Query operators use Mongo names without `$`
-  (`gte`, `in`, …; transport maps to `$gte` / `$in`; also accepts native `{ $gte }` and `_gte`)
+- Client args: typed `query: *QueryInput` (`and` / `or` / `not` + field ops) +
+  `sort: [*Sort!]` (`id_asc` / `age_desc`; transport maps to `{ field: 1|-1 }`).
+  Query operators use Mongo names without `$` (`gte`, `in`, `and`, … → `$gte` / `$in` /
+  `$and`; also accepts native `{ $gte }` and `_gte`)
 - Projection = GraphQL selection set + `@mongo__*(selection:)` (findOne's projection)
 - Directive binders: `query` / `selection` / `sort` / `set` / `pipeline`
 - `update` stays JSON for `$set` / `$inc` / … update operators

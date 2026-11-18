@@ -174,11 +174,11 @@ input UserAddressInput {
 }
 
 input UserAddressQueryInput {
-  AND: [UserAddressQueryInput!]
-  NOT: UserAddressQueryInput
-  OR: [UserAddressQueryInput!]
   _id: IDQueryOperators
+  and: [UserAddressQueryInput!]
   geo: [Float]
+  not: UserAddressQueryInput
+  or: [UserAddressQueryInput!]
   street: StringQueryOperators
 }
 
@@ -200,10 +200,10 @@ input UserContactsInput {
 }
 
 input UserContactsQueryInput {
-  AND: [UserContactsQueryInput!]
-  NOT: UserContactsQueryInput
-  OR: [UserContactsQueryInput!]
+  and: [UserContactsQueryInput!]
   email: StringQueryOperators
+  not: UserContactsQueryInput
+  or: [UserContactsQueryInput!]
   phones: [String]
 }
 
@@ -236,10 +236,10 @@ input UserLanguagesInput {
 }
 
 input UserLanguagesQueryInput {
-  AND: [UserLanguagesQueryInput!]
-  NOT: UserLanguagesQueryInput
-  OR: [UserLanguagesQueryInput!]
+  and: [UserLanguagesQueryInput!]
   language: StringQueryOperators
+  not: UserLanguagesQueryInput
+  or: [UserLanguagesQueryInput!]
   skill: StringQueryOperators
 }
 
@@ -262,16 +262,16 @@ type UserPayload {
 }
 
 input UserQueryInput {
-  AND: [UserQueryInput!]
-  NOT: UserQueryInput
-  OR: [UserQueryInput!]
   address: UserAddressQueryInput
   age: FloatQueryOperators
+  and: [UserQueryInput!]
   contacts: UserContactsQueryInput
   gender: StringQueryOperators
   id: IDQueryOperators
   languages: [UserLanguagesQueryInput]
   name: StringQueryOperators
+  not: UserQueryInput
+  or: [UserQueryInput!]
   salaryDecimal: Decimal128QueryOperators
 
   """Some dynamic data"""
@@ -279,15 +279,15 @@ input UserQueryInput {
 }
 
 enum UserSort {
-  age_ASC
-  age_DESC
-  gender_ASC
-  gender_DESC
-  id_ASC
-  id_DESC
-  name_ASC
-  name_DESC
-  salaryDecimal_ASC
-  salaryDecimal_DESC
+  age_asc
+  age_desc
+  gender_asc
+  gender_desc
+  id_asc
+  id_desc
+  name_asc
+  name_desc
+  salaryDecimal_asc
+  salaryDecimal_desc
 }"
 `;

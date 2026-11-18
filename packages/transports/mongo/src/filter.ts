@@ -265,8 +265,8 @@ function parseSortToken(token: string): { field: string; dir: 1 | -1 } | undefin
 
 /**
  * Accepts:
- * - Enum list: `['age_DESC', 'name_ASC']` (generated SDL)
- * - Object map: `{ age: ASC|DESC|-1|1 }` (hand-written directive / legacy)
+ * - Enum list: `['age_desc', 'name_asc']` (generated SDL; case-insensitive)
+ * - Object map: `{ age: asc|desc|-1|1 }` (hand-written directive / legacy)
  */
 export function graphqlSortToMongo(
   input: Record<string, unknown> | string[] | null | undefined,

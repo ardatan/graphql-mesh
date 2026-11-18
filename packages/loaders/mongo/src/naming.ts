@@ -12,7 +12,7 @@
 export interface MongoNaming {
   typeName(modelName: string): string;
   queryInput(typeName: string): string;
-  /** Client sort enum (`UserSort` with `id_ASC` / `name_DESC` values). */
+  /** Client sort enum (`UserSort` with `id_asc` / `name_desc` values). */
   sortEnum(typeName: string): string;
   createInput(typeName: string): string;
   updateInput(typeName: string): string;
