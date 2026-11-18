@@ -1,6 +1,11 @@
 import DataLoader from 'dataloader';
 import { parseSqlMapping, resolveMappingValue } from './mapping.js';
-import { buildSelectByColumnIn, mapRowToGraphql, type SqlPlanners } from './sql-builder.js';
+import {
+  buildSelectByColumnIn,
+  isLegacyPlannerEntry,
+  mapRowToGraphql,
+  type SqlPlanners,
+} from './sql-builder.js';
 import type {
   ParsedSqlMapping,
   SqlClient,
@@ -69,12 +74,11 @@ function stableArgsKeyExcludingEquality(
   if (entry?.value?.kind !== 'args') {
     return stableArgsKey(args);
   }
-  const path =
-    entry.value.path?.length
-      ? entry.value.path
-      : entry.value.value
-        ? entry.value.value.split('.').filter(Boolean)
-        : [];
+  const path = entry.value.path?.length
+    ? entry.value.path
+    : entry.value.value
+      ? entry.value.value.split('.').filter(Boolean)
+      : [];
   if (!path.length || !(path[0] in args)) {
     return stableArgsKey(args);
   }
@@ -98,19 +102,6 @@ function omitArgsPath(args: Record<string, any>, path: string[]): Record<string,
   return { ...args, [head]: omitArgsPath(child as Record<string, any>, tail) };
 }
 
-const PLANNER_KEYS = new Set([
-  'filter',
-  'orderBy',
-  'first',
-  'after',
-  'last',
-  'before',
-  'limit',
-  'offset',
-  'set',
-  'where',
-]);
-
 /**
  * Detect a single equality column binder suitable for `WHERE col IN (...)` batching.
  */
@@ -120,7 +111,7 @@ export function batchableEqualityColumn(whereMapping: ParsedSqlMapping): string 
     if (
       entry.spread ||
       entry.key.startsWith('$') ||
-      PLANNER_KEYS.has(entry.key) ||
+      isLegacyPlannerEntry(entry) ||
       entry.children
     ) {
       continue;

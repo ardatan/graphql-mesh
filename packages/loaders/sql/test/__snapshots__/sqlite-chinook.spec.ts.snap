@@ -8,41 +8,7 @@ exports[`@omnigraph/sql sqlite chinook emits @sql directives and slim @transport
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-"""
-Map a GraphQL field or object type to a SQL table. Use \`$args\` / \`$this\` binders in where/set/selection; optional \`through\` for M2M junctions.
-"""
-directive @sql(
-  """Owning subgraph name when composing federated schemas."""
-  subgraph: String
-  """Physical SQL table or view."""
-  table: String!
-  """ROW | ROWS | CONNECTION | COUNT | INSERT | UPDATE | DELETE."""
-  kind: SqlKind!
-  """
-  Equality/join predicates and structured filters (\`ArtistId: $this.id\`, \`$args.where\`, \`...$args.where\`).
-  """
-  where: String
-  """Order-by binder, e.g. \`$args.orderBy\`."""
-  orderBy: String
-  """Limit binder, e.g. \`$args.limit\`."""
-  limit: String
-  """Offset binder, e.g. \`$args.offset\`."""
-  offset: String
-  """CONNECTION page size, e.g. \`$args.first\`."""
-  first: String
-  """CONNECTION keyset cursor, e.g. \`$args.after\`."""
-  after: String
-  """INSERT/UPDATE column values, e.g. \`Title: $args.input.title\`."""
-  set: String
-  """
-  GraphQL field → SQL column / \`$fn…\` mapping (and nested CONNECTION/payload wrappers).
-  """
-  selection: String
-  """
-  Many-to-many junction block: \`table\` / \`local\` / \`remote\` / \`parent: $this…\` / \`target\`.
-  """
-  through: String
-) on FIELD_DEFINITION | OBJECT
+directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String, through: String) on FIELD_DEFINITION | OBJECT
 
 type Query {
   album(id: ID!): Album @sql(subgraph: "chinook", table: "albums", kind: ROW, where: """
@@ -354,19 +320,12 @@ type DeleteArtistPayload {
 scalar TransportOptions
 
 enum SqlKind {
-  """Single row (belongs-to / find-one)."""
   ROW
-  """List of rows (has-many / find-many)."""
   ROWS
-  """Relay-style connection with keyset cursors."""
   CONNECTION
-  """Aggregate count of matching rows."""
   COUNT
-  """Insert one row."""
   INSERT
-  """Update matching rows."""
   UPDATE
-  """Delete (or soft-delete) matching rows."""
   DELETE
 }"
 `;

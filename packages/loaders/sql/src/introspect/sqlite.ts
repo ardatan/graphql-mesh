@@ -81,9 +81,23 @@ export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
         hasDefault: c.dflt_value != null,
       }));
 
+      const createSql =
+        (
+          db
+            .prepare(`SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?`)
+            .get(name) as { sql?: string } | undefined
+        )?.sql || '';
+      const withoutRowid = /\bWITHOUT\s+ROWID\b/i.test(createSql);
+      // Inline `INTEGER PRIMARY KEY DESC` is not a rowid alias.
+      const descPk = /\bINTEGER\s+PRIMARY\s+KEY\s+DESC\b/i.test(createSql);
       const solePk = columns.filter(c => c.primaryKey);
-      // Only INTEGER PRIMARY KEY is a rowid alias (not INT/BIGINT alone).
-      if (solePk.length === 1 && /^\s*INTEGER\s*$/i.test(solePk[0].dataType)) {
+      // Only INTEGER PRIMARY KEY on a rowid table is a generated alias.
+      if (
+        solePk.length === 1 &&
+        /^\s*INTEGER\s*$/i.test(solePk[0].dataType) &&
+        !withoutRowid &&
+        !descPk
+      ) {
         solePk[0].autoIncrement = true;
         solePk[0].notNull = true;
       }
@@ -115,15 +129,21 @@ export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
     });
 
     // Resolve omitted FK target columns from the referenced table's PK order.
+    // SQLite folds only ASCII letters for identifier matching — keep declared names.
     const byName = new Map(tables.map(t => [t.name, t] as const));
+    const byFolded = new Map(tables.map(t => [asciiFold(t.name), t] as const));
     for (const table of tables) {
       for (const fk of table.foreignKeys) {
-        const ref = byName.get(fk.refTable);
+        const ref = byName.get(fk.refTable) || byFolded.get(asciiFold(fk.refTable));
         if (!ref) continue;
+        fk.refTable = ref.name;
         const refPks = ref.columns.filter(c => c.primaryKey).map(c => c.name);
+        const refByFolded = new Map(ref.columns.map(c => [asciiFold(c.name), c.name]));
         for (let i = 0; i < fk.columns.length; i++) {
           if (fk.refColumns[i] == null || fk.refColumns[i] === '') {
             fk.refColumns[i] = refPks[i] || refPks[0];
+          } else {
+            fk.refColumns[i] = refByFolded.get(asciiFold(fk.refColumns[i])) || fk.refColumns[i];
           }
         }
       }
@@ -133,6 +153,11 @@ export function introspectSqlite(opts: IntrospectSqliteOpts): SqlSchemaMeta {
   } finally {
     db.close();
   }
+}
+
+/** SQLite identifier match folds ASCII letters only (sqlite3_stricmp). */
+function asciiFold(name: string): string {
+  return name.replace(/[A-Z]/g, c => c.toLowerCase());
 }
 
 function quote(name: string): string {

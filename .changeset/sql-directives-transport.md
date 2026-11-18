@@ -165,8 +165,18 @@ stuffed into `where` keeps working at runtime; new emit does not produce it.
   filters such as `input.filter` in the loader identity)
 - Postgres: sequence defaults via real `nextval(` (not inside quoted literals); computed functions
   match argument relation **schema + name**
-- Legacy mysql `ssl.ca` path → PEM; tuql infile → create-if-absent publish (no live-DB overwrite)
-- Mutations: reject structured `where` that is `null` / non-object, or that produces no SQL predicate
+- Legacy mysql `ssl.ca` path → PEM; tuql: blank-path reject, explicit `adapter: 'sqlite'`,
+  dump-bytes cache key under a trusted cache dir, create-if-absent publish (no live-DB overwrite)
+- Mutations: reject structured `where` that is `null` / non-object / empty, or that produces no
+  SQL predicate; soft-delete marker alone is not enough to authorize DELETE/UPDATE
+- Empty `IN ()` → FALSE; empty `nin` is a no-op (not a TRUE tautology)
+- Planner vs column bindings: leaf of `$args.limit` matching a planner key stays planner;
+  `limit: $args.id`-style entries bind as columns
+- LEFT JOIN presence via always-projected join column; cursor encode prefers SQL column keys
+- softDelete: omitted `tables` = all tables; defined `tables` (including `[]`) = allowlist only
+- SQLite introspect: ASCII-fold FK match; INTEGER PK autoIncrement only when not WITHOUT ROWID /
+  DESC PK
+- `@sql` / `SqlKind` GraphQL `description` props stripped (lean SDL); TypeScript comments / TSDoc kept
 - Nested relation filters keep finite self-referential paths (depth-bounded metadata)
 - Rename/naming: `$this` / through binders + single-pass selection key rewrite; **nested input
   binder walks, type-scoped flat / through rename maps, and bare inline selection rename walks

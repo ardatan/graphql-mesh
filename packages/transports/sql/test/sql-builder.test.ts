@@ -388,6 +388,21 @@ describe('buildSelect', () => {
         cols,
       ),
     ).toThrow(/non-null object/);
+
+    expect(() => buildDelete('sqlite', 'albums', parseSqlMapping(``), {})).toThrow(
+      /requires a where predicate/,
+    );
+
+    expect(() =>
+      buildDelete('sqlite', 'albums', parseSqlMapping(``), {}, { column: 'deleted_at' }),
+    ).toThrow(/requires a where predicate/);
+
+    // Column named like a planner key must still bind (not skipped as legacy planner).
+    const byLimitCol = buildDelete('sqlite', 'tickets', parseSqlMapping(`limit: $args.id`), {
+      id: 9,
+    });
+    expect(byLimitCol.sql).toContain('"limit" = ?');
+    expect(byLimitCol.params).toEqual([9]);
   });
 
   it('appends soft-delete IS NULL on reads and soft-deletes via UPDATE', () => {
@@ -424,6 +439,17 @@ describe('buildSelect', () => {
       softDelete: { column: 'deleted_at', tables: ['albums'] },
     });
     expect(skipped.sql).not.toContain('deleted_at');
+
+    // Empty allowlist ≠ omitted: covers no tables.
+    const emptyAllow = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'ROWS',
+      selection,
+      whereMapping: parseSqlMapping(`$args.where`),
+      graphqlArgs: { where: {} },
+      softDelete: { column: 'deleted_at', tables: [] },
+    });
+    expect(emptyAllow.sql).not.toContain('deleted_at');
   });
 
   it('escapes backslash before quotes in SQL string literals', () => {

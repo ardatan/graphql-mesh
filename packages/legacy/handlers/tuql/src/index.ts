@@ -1,7 +1,7 @@
 /* eslint-disable import/no-nodejs-modules */
 import { createHash, randomBytes } from 'node:crypto';
-import { linkSync, readFileSync, statSync, unlinkSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { linkSync, mkdirSync, readFileSync, statSync, unlinkSync } from 'node:fs';
+import { homedir, tmpdir } from 'node:os';
 import { isAbsolute, join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import type { MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
@@ -27,18 +27,22 @@ export default class TuqlHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    if (this.config.db == null && this.config.infile == null) {
+    const db = typeof this.config.db === 'string' ? this.config.db.trim() : this.config.db;
+    const infile =
+      typeof this.config.infile === 'string' ? this.config.infile.trim() : this.config.infile;
+    if ((db == null || db === '') && (infile == null || infile === '')) {
       throw new Error(
         '@graphql-mesh/tuql: provide `db` (SQLite file) or `infile` (SQL dump → sqlite file).',
       );
     }
 
     const dbPath =
-      this.config.infile != null
-        ? materializeInfileToSqlite(this.config.infile, this.baseDir)
-        : this.config.db!;
+      infile != null && infile !== ''
+        ? materializeInfileToSqlite(infile, this.baseDir)
+        : (db as string);
 
     const schema = await loadGraphQLSchemaFromSql(this.name, {
+      adapter: 'sqlite',
       endpoint: dbPath,
       cwd: this.baseDir,
     });
@@ -65,21 +69,28 @@ export default class TuqlHandler implements MeshHandler {
   }
 }
 
+/** Prefer a user-private cache dir over the shared OS temp directory. */
+function tuqlCacheDir(): string {
+  const base =
+    process.env.MESH_TUQL_CACHE_DIR?.trim() ||
+    (typeof homedir === 'function' ? join(homedir(), '.cache', 'graphql-mesh-tuql') : tmpdir());
+  try {
+    mkdirSync(base, { recursive: true, mode: 0o700 });
+  } catch {
+    /* best-effort; fall through if mkdir races */
+  }
+  return base;
+}
+
 /**
  * Convert a SQL dump into a durable sqlite file the core loader can open via `db`.
- * Rebuilt when the dump mtime/size changes (hash in filename keeps compose/serve stable).
+ * Cache key is the dump bytes actually passed to `db.exec` (not mtime/size alone).
  */
 function materializeInfileToSqlite(infile: string, cwd: string): string {
   const dumpAbs = isAbsolute(infile) ? infile : join(cwd, infile);
   const dump = readFileSync(dumpAbs);
-  const st = statSync(dumpAbs);
-  const tag = createHash('sha1')
-    .update(dumpAbs)
-    .update(String(st.mtimeMs))
-    .update(String(st.size))
-    .digest('hex')
-    .slice(0, 12);
-  const outPath = join(tmpdir(), `mesh-tuql-${tag}.sqlite`);
+  const tag = createHash('sha1').update(dump).digest('hex').slice(0, 12);
+  const outPath = join(tuqlCacheDir(), `mesh-tuql-${tag}.sqlite`);
 
   try {
     // Reuse if already built for this dump fingerprint

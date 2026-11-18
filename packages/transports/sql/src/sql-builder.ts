@@ -39,7 +39,8 @@ export function softDeleteColumnFor(
   table: string,
 ): string | undefined {
   if (!softDelete?.column) return undefined;
-  if (softDelete.tables?.length && !softDelete.tables.includes(table)) return undefined;
+  // Omitted `tables` → all tables; defined allowlist (including `[]`) → only listed.
+  if (softDelete.tables != null && !softDelete.tables.includes(table)) return undefined;
   return softDelete.column;
 }
 
@@ -104,7 +105,23 @@ const PLANNER_KEYS = new Set<string>([
   'before',
   'limit',
   'offset',
+  'set',
 ]);
+
+/**
+ * Legacy stuffed planner entry (`limit: $args.limit`) vs a physical column that
+ * happens to share a planner name (`limit: $args.id` for a PK column named `limit`).
+ * Only skip when the binder leaf matches the planner key.
+ */
+export function isLegacyPlannerEntry(entry: SqlMappingEntry): boolean {
+  if (entry.spread || entry.children || entry.key.startsWith('$')) return false;
+  if (!PLANNER_KEYS.has(entry.key)) return false;
+  const v = entry.value;
+  if (!v || (v.kind !== 'args' && v.kind !== 'this')) return false;
+  const path = v.path?.length ? v.path : v.value ? v.value.split('.').filter(Boolean) : [];
+  const leaf = path[path.length - 1];
+  return leaf === entry.key;
+}
 
 export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   const columns = columnMapFromSelection(plan.selection);
@@ -133,14 +150,20 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
 
   // Equality / join predicates from `where` mapping (non-planner, non-spread)
   for (const entry of plan.whereMapping.entries) {
-    if (entry.spread || isBareVarPath(entry) || PLANNER_KEYS.has(entry.key) || entry.children) {
+    if (entry.spread || isBareVarPath(entry) || isLegacyPlannerEntry(entry) || entry.children) {
       continue;
     }
     const resolved = resolveMappingValue(entry.value, {
       args: plan.graphqlArgs,
       parent: plan.parent,
     });
-    if (resolved === undefined) continue;
+    if (resolved === undefined) {
+      // Unresolved `$this` / parent binder must not drop relation scope (would return other parents' rows).
+      if (entry.value?.kind === 'this') {
+        whereParts.push(adapter === 'sqlite' ? '0' : 'FALSE');
+      }
+      continue;
+    }
     params.push(resolved);
     whereParts.push(`${qualify(entry.key)} = ${placeholder(adapter, params.length)}`);
   }
@@ -317,6 +340,17 @@ function buildSelectList(
         );
       }
     }
+    // Always project the join equality column as a presence marker for mapJoinedObject
+    // (matched row with all-NULL selected fields vs unmatched LEFT JOIN).
+    {
+      const key = `${join.alias}:${join.joinColumn}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        cols.push(
+          `${quoteIdent(adapter, join.alias)}.${quoteIdent(adapter, join.joinColumn)} AS ${quoteIdent(adapter, `${join.alias}__${join.joinColumn}`)}`,
+        );
+      }
+    }
     const relCols = columnMapFromSelection(join.selection);
     for (const sqlCol of relCols.values()) {
       const key = `${join.alias}:${sqlCol}`;
@@ -456,7 +490,7 @@ export function buildSelectByColumnIn(
   const whereParts: string[] = [];
 
   for (const entry of plan.whereMapping.entries) {
-    if (entry.spread || isBareVarPath(entry) || PLANNER_KEYS.has(entry.key) || entry.children) {
+    if (entry.spread || isBareVarPath(entry) || isLegacyPlannerEntry(entry) || entry.children) {
       continue;
     }
     if (entry.key === plan.column) continue; // replaced by IN list
@@ -464,7 +498,12 @@ export function buildSelectByColumnIn(
       args: plan.graphqlArgs,
       parent: plan.parent,
     });
-    if (resolved === undefined) continue;
+    if (resolved === undefined) {
+      if (entry.value?.kind === 'this') {
+        whereParts.push(adapter === 'sqlite' ? '0' : 'FALSE');
+      }
+      continue;
+    }
     params.push(resolved);
     whereParts.push(`${qualifyBatch(entry.key)} = ${placeholder(adapter, params.length)}`);
   }
@@ -481,11 +520,15 @@ export function buildSelectByColumnIn(
     whereParts.push(`${qualifyBatch(softColIn)} IS NULL`);
   }
 
-  const inPhs = plan.values.map(v => {
-    params.push(v);
-    return placeholder(adapter, params.length);
-  });
-  whereParts.push(`${qualifyBatch(plan.column)} IN (${inPhs.join(', ')})`);
+  if (!plan.values.length) {
+    whereParts.push(adapter === 'sqlite' ? '0' : 'FALSE');
+  } else {
+    const inPhs = plan.values.map(v => {
+      params.push(v);
+      return placeholder(adapter, params.length);
+    });
+    whereParts.push(`${qualifyBatch(plan.column)} IN (${inPhs.join(', ')})`);
+  }
 
   // Always include the batch column so we can regroup rows by key.
   const batchColSql = quoteIdent(adapter, plan.column);
@@ -598,14 +641,16 @@ export function buildUpdate(
   }
   const whereParts: string[] = [];
   appendMutationWhere(adapter, table, whereMapping, graphqlArgs, whereParts, params, filterColumns);
+  if (!whereParts.length) {
+    throw new Error(
+      `@sql mutation on ${table}: UPDATE requires a where predicate (refusing unscoped write)`,
+    );
+  }
   const softColUpd = softDeleteColumnFor(softDelete, table);
   if (softColUpd) {
     whereParts.push(`${quoteIdent(adapter, softColUpd)} IS NULL`);
   }
-  let sql = `UPDATE ${quoteIdent(adapter, table)} SET ${sets.join(', ')}`;
-  if (whereParts.length) {
-    sql += ` WHERE ${whereParts.join(' AND ')}`;
-  }
+  let sql = `UPDATE ${quoteIdent(adapter, table)} SET ${sets.join(', ')} WHERE ${whereParts.join(' AND ')}`;
   if (returningColumns.length && (adapter === 'postgres' || adapter === 'sqlite')) {
     sql += ` RETURNING ${returningColumns.map(c => quoteIdent(adapter, c)).join(', ')}`;
   }
@@ -623,21 +668,23 @@ export function buildDelete(
   const params: unknown[] = [];
   const whereParts: string[] = [];
   appendMutationWhere(adapter, table, whereMapping, graphqlArgs, whereParts, params, filterColumns);
+  // Soft-delete marker alone must not authorize a write — require real mapping predicates first.
+  if (!whereParts.length) {
+    throw new Error(
+      `@sql mutation on ${table}: DELETE requires a where predicate (refusing unscoped write)`,
+    );
+  }
   const softCol = softDeleteColumnFor(softDelete, table);
   if (softCol) {
     // Soft-delete: UPDATE marker; only touch rows that are still live.
     whereParts.push(`${quoteIdent(adapter, softCol)} IS NULL`);
-    let sql = `UPDATE ${quoteIdent(adapter, table)} SET ${quoteIdent(adapter, softCol)} = ${softDeleteNowSql(adapter)}`;
-    if (whereParts.length) {
-      sql += ` WHERE ${whereParts.join(' AND ')}`;
-    }
+    const sql = `UPDATE ${quoteIdent(adapter, table)} SET ${quoteIdent(adapter, softCol)} = ${softDeleteNowSql(adapter)} WHERE ${whereParts.join(' AND ')}`;
     return { sql, params };
   }
-  let sql = `DELETE FROM ${quoteIdent(adapter, table)}`;
-  if (whereParts.length) {
-    sql += ` WHERE ${whereParts.join(' AND ')}`;
-  }
-  return { sql, params };
+  return {
+    sql: `DELETE FROM ${quoteIdent(adapter, table)} WHERE ${whereParts.join(' AND ')}`,
+    params,
+  };
 }
 
 /**
@@ -656,7 +703,7 @@ function appendMutationWhere(
   const columns = filterColumns ?? new Map<string, string>();
   const ctx = { args: graphqlArgs };
   for (const entry of whereMapping.entries) {
-    if (entry.children || PLANNER_KEYS.has(entry.key)) continue;
+    if (entry.children || isLegacyPlannerEntry(entry)) continue;
     if (entry.spread || isBareVarPath(entry)) {
       const resolved = resolveMappingValue(entry.value, ctx);
       if (resolved === undefined) {
@@ -888,15 +935,26 @@ export interface KeysetCursorPayload {
 
 export function encodeKeysetCursor(specs: OrderSpec[], row: Record<string, unknown>): string {
   const values = specs.map(s => {
-    // Match mapRowToGraphql: folded roots use `t__<sqlCol>` aliases.
-    const raw =
-      row[s.graphqlField] ??
-      row[s.sqlColumn] ??
-      row[`t__${s.sqlColumn}`] ??
-      row[s.sqlColumn.toLowerCase()] ??
-      row[s.sqlColumn.toUpperCase()] ??
-      row[`t__${s.sqlColumn.toLowerCase()}`];
-    return raw === undefined ? null : raw;
+    // Prefer the projected SQL column / folded alias before GraphQL field names
+    // (`id: UserId` + `legacyId: id` must not pick `row.id` when ordering by UserId).
+    const sqlKeys = [
+      s.sqlColumn,
+      `t__${s.sqlColumn}`,
+      s.sqlColumn.toLowerCase(),
+      s.sqlColumn.toUpperCase(),
+      `t__${s.sqlColumn.toLowerCase()}`,
+    ];
+    for (const key of sqlKeys) {
+      if (Object.prototype.hasOwnProperty.call(row, key)) {
+        const raw = row[key];
+        return raw === undefined ? null : raw;
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(row, s.graphqlField)) {
+      const raw = row[s.graphqlField];
+      return raw === undefined ? null : raw;
+    }
+    return null;
   });
   return Buffer.from(JSON.stringify({ v: values } satisfies KeysetCursorPayload), 'utf8').toString(
     'base64url',
@@ -1178,8 +1236,8 @@ function appendFilter(
     }
     if ('nin' in o && Array.isArray(o.nin)) {
       if (o.nin.length === 0) {
-        // Empty NOT IN () is invalid — treat as always true.
-        whereParts.push(adapter === 'sqlite' ? '1' : 'TRUE');
+        // Empty NOT IN () is invalid SQL. Emitting TRUE would count as mutation
+        // scope while matching every row — treat as a no-op (exclude nothing).
       } else {
         const phs = o.nin.map((v: unknown) => {
           params.push(v);
@@ -1311,12 +1369,17 @@ function mapJoinedObject(
   join: BelongsToJoin,
 ): Record<string, unknown> | null {
   const nested: Record<string, unknown> = {};
-  let any = false;
+  // Presence: join equality column (always projected) distinguishes unmatched LEFT JOIN
+  // from a matched row whose selected fields are all SQL NULL.
+  const presenceKey = `${join.alias}__${join.joinColumn}`;
+  const matched =
+    Object.prototype.hasOwnProperty.call(row, presenceKey) &&
+    row[presenceKey] !== undefined &&
+    row[presenceKey] !== null;
   for (const entry of join.selection.entries) {
     if (!entry.value) continue;
     if (entry.value.kind === 'column') {
       const raw = row[`${join.alias}__${entry.value.value}`];
-      if (raw !== undefined && raw !== null) any = true;
       nested[entry.key] =
         raw != null && entry.key === 'id' ? String(raw) : encodeBinaryForGraphql(raw);
       continue;
@@ -1328,11 +1391,10 @@ function mapJoinedObject(
       const raw = Object.prototype.hasOwnProperty.call(row, prefixed)
         ? row[prefixed]
         : row[entry.key];
-      if (raw !== undefined && raw !== null) any = true;
       nested[entry.key] = encodeBinaryForGraphql(raw);
     }
   }
-  if (!any) return null;
+  if (!matched) return null;
   if (join.joins?.length) {
     for (const child of join.joins) {
       nested[child.fieldName] = mapJoinedObject(row, child);
@@ -1360,8 +1422,7 @@ function parseHasManyJson(raw: unknown, hm: HasManySubselect): Record<string, un
       if (!entry.value) continue;
       if (entry.value.kind === 'column') {
         const v = item[entry.key] ?? item[entry.value.value];
-        out[entry.key] =
-          v != null && entry.key === 'id' ? String(v) : encodeBinaryForGraphql(v);
+        out[entry.key] = v != null && entry.key === 'id' ? String(v) : encodeBinaryForGraphql(v);
         continue;
       }
       if (entry.value.kind === 'fn') {

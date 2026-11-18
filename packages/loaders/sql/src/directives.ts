@@ -277,29 +277,27 @@ export type SqlDirectiveArgs =
 
 /**
  * Single kind enum for `@sql` (reads, writes, and relation fields via `$this`).
+ * See {@link SqlDirectiveArgs} for the kind-discriminated TypeScript shape.
+ *
+ * No GraphQL `description` props — those print into SDL; document via TSDoc only.
  */
 export const SqlKindEnum = new GraphQLEnumType({
   name: 'SqlKind',
   values: {
-    ROW: {
-      value: 'ROW',
-      description: 'Single row (belongs-to / find-one).',
-    },
-    ROWS: {
-      value: 'ROWS',
-      description: 'List of rows (has-many / find-many).',
-    },
-    CONNECTION: {
-      value: 'CONNECTION',
-      description: 'Relay-style connection with keyset cursors.',
-    },
-    COUNT: {
-      value: 'COUNT',
-      description: 'Aggregate count of matching rows.',
-    },
-    INSERT: { value: 'INSERT', description: 'Insert one row.' },
-    UPDATE: { value: 'UPDATE', description: 'Update matching rows.' },
-    DELETE: { value: 'DELETE', description: 'Delete (or soft-delete) matching rows.' },
+    /** Single row (belongs-to / find-one). */
+    ROW: { value: 'ROW' },
+    /** List of rows (has-many / find-many). */
+    ROWS: { value: 'ROWS' },
+    /** Relay-style connection with keyset cursors. */
+    CONNECTION: { value: 'CONNECTION' },
+    /** Aggregate count of matching rows. */
+    COUNT: { value: 'COUNT' },
+    /** Insert one row. */
+    INSERT: { value: 'INSERT' },
+    /** Update matching rows. */
+    UPDATE: { value: 'UPDATE' },
+    /** Delete (or soft-delete) matching rows. */
+    DELETE: { value: 'DELETE' },
   },
 });
 
@@ -309,67 +307,41 @@ export const SqlQueryKindEnum = SqlKindEnum;
 export const SqlMutationKindEnum = SqlKindEnum;
 
 /**
- * Mesh SQL mapping directive — see {@link SqlDirectiveArgs}.
+ * Mesh SQL mapping directive — typed args: {@link SqlDirectiveArgs}.
+ *
+ * No GraphQL `description` props on the directive or its args (they clutter printed SDL);
+ * document via this TSDoc, inline arg comments, and {@link SqlDirectiveArgs}.
  */
 export const SqlDirective = new GraphQLDirective({
   name: 'sql',
-  description:
-    'Map a GraphQL field or object type to a SQL table. Use `$args` / `$this` binders in where/set/selection; optional `through` for M2M junctions.',
   // FIELD: Query/Mutation/relations. OBJECT: type-level entity resolver (`$this` keys),
   // same pattern as Connectors type-level `@connect`.
   locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
   args: {
-    subgraph: {
-      type: GraphQLString,
-      description: 'Owning subgraph name when composing federated schemas.',
-    },
-    table: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'Physical SQL table or view.',
-    },
-    kind: {
-      type: new GraphQLNonNull(SqlKindEnum),
-      description: 'ROW | ROWS | CONNECTION | COUNT | INSERT | UPDATE | DELETE.',
-    },
-    where: {
-      type: GraphQLString,
-      description:
-        'Equality/join predicates and structured filters (`ArtistId: $this.id`, `$args.where`, `...$args.where`).',
-    },
-    orderBy: {
-      type: GraphQLString,
-      description: 'Order-by binder, e.g. `$args.orderBy`.',
-    },
-    limit: {
-      type: GraphQLString,
-      description: 'Limit binder, e.g. `$args.limit`.',
-    },
-    offset: {
-      type: GraphQLString,
-      description: 'Offset binder, e.g. `$args.offset`.',
-    },
-    first: {
-      type: GraphQLString,
-      description: 'CONNECTION page size, e.g. `$args.first`.',
-    },
-    after: {
-      type: GraphQLString,
-      description: 'CONNECTION keyset cursor, e.g. `$args.after`.',
-    },
-    set: {
-      type: GraphQLString,
-      description: 'INSERT/UPDATE column values, e.g. `Title: $args.input.title`.',
-    },
-    selection: {
-      type: GraphQLString,
-      description:
-        'GraphQL field → SQL column / `$fn…` mapping (and nested CONNECTION/payload wrappers).',
-    },
-    through: {
-      type: GraphQLString,
-      description:
-        'Many-to-many junction block: `table` / `local` / `remote` / `parent: $this…` / `target`.',
-    },
+    /* Owning subgraph name when composing federated schemas. */
+    subgraph: { type: GraphQLString },
+    /* Physical SQL table or view. */
+    table: { type: new GraphQLNonNull(GraphQLString) },
+    /* ROW | ROWS | CONNECTION | COUNT | INSERT | UPDATE | DELETE. */
+    kind: { type: new GraphQLNonNull(SqlKindEnum) },
+    /* Equality/join predicates and structured filters (`ArtistId: $this.id`, `$args.where`, `...$args.where`). */
+    where: { type: GraphQLString },
+    /* Order-by binder, e.g. `$args.orderBy`. */
+    orderBy: { type: GraphQLString },
+    /* Limit binder, e.g. `$args.limit`. */
+    limit: { type: GraphQLString },
+    /* Offset binder, e.g. `$args.offset`. */
+    offset: { type: GraphQLString },
+    /* CONNECTION page size, e.g. `$args.first`. */
+    first: { type: GraphQLString },
+    /* CONNECTION keyset cursor, e.g. `$args.after`. */
+    after: { type: GraphQLString },
+    /* INSERT/UPDATE column values, e.g. `Title: $args.input.title`. */
+    set: { type: GraphQLString },
+    /* GraphQL field → SQL column / `$fn…` mapping (and nested CONNECTION/payload wrappers). */
+    selection: { type: GraphQLString },
+    /* Many-to-many junction block: `table` / `local` / `remote` / `parent: $this…` / `target`. */
+    through: { type: GraphQLString },
   },
 });
 

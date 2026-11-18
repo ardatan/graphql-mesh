@@ -57,8 +57,8 @@ describe('loadBatchedByColumn loader identity', () => {
     ]);
     // Shared loader identity (equality arg omitted) → one IN query for both keys.
     expect(client.query).toHaveBeenCalledTimes(1);
-    const [, params] = client.query.mock.calls[0];
-    expect(params).toEqual(expect.arrayContaining([1, 2]));
+    const call = client.query.mock.calls[0] as unknown as [string, unknown[]];
+    expect(call[1]).toEqual(expect.arrayContaining([1, 2]));
   });
 
   it('keeps sibling filter args in the loader identity', async () => {

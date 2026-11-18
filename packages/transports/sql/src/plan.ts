@@ -304,10 +304,7 @@ function isEqualityOnlyThisJoin(whereMapping: ParsedSqlMapping, joinColumn: stri
 }
 
 /** True when the folded projection includes a GraphQL `Byte` field (binary / BLOB). */
-function selectionProjectsByte(
-  childType: GraphQLObjectType,
-  selection: ParsedSqlMapping,
-): boolean {
+function selectionProjectsByte(childType: GraphQLObjectType, selection: ParsedSqlMapping): boolean {
   for (const entry of selection.entries) {
     if (entry.children || !entry.value) continue;
     const field = childType.getFields()[entry.key];
