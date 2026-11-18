@@ -13,7 +13,7 @@ import { parseSqlThrough } from './through.js';
 import type { SqlRelationFilterMeta } from './types.js';
 
 /** Bound nesting for self-referential / cyclic relation filters (finite paths). */
-const MAX_RELATION_FILTER_DEPTH = 5;
+export const MAX_RELATION_FILTER_DEPTH = 5;
 
 /**
  * Build nested-filter metadata from `@sql` fields on a GraphQL object type.
@@ -21,8 +21,8 @@ const MAX_RELATION_FILTER_DEPTH = 5;
  * - M2M ROWS + through: `where: { tracks: { name: { eq: "X" } } }` → junction EXISTS
  *
  * Self-referential paths (`employee.employee.name`) keep nested metadata up to
- * {@link MAX_RELATION_FILTER_DEPTH}; deeper nesting is truncated (not silently
- * dropping mid-path predicates via a visited-type guard).
+ * {@link MAX_RELATION_FILTER_DEPTH}. Deeper input paths are rejected at filter
+ * compile time (see sql-builder) rather than silently dropping predicates.
  */
 export function collectRelationFilters(
   schema: GraphQLSchema,

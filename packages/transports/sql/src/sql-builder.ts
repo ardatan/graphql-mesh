@@ -6,6 +6,7 @@ import {
   type BelongsToJoin,
   type HasManySubselect,
 } from './plan.js';
+import { MAX_RELATION_FILTER_DEPTH } from './relation-filters.js';
 import { resolveThroughParentValue, type SqlThroughJoin } from './through.js';
 import type {
   ParsedSqlMapping,
@@ -15,6 +16,32 @@ import type {
   SqlRelationFilterMeta,
   SqlSoftDeleteOptions,
 } from './types.js';
+
+/** Scalar / boolean filter keys — not nested relation field names. */
+const SQL_FILTER_SCALAR_KEYS = new Set([
+  'eq',
+  'ne',
+  'lt',
+  'lte',
+  'gt',
+  'gte',
+  'in',
+  'nin',
+  'includes',
+  'startsWith',
+  'endsWith',
+  'like',
+  'ilike',
+  'isNull',
+  'and',
+  'or',
+  'not',
+]);
+
+function isNestedRelationFilterShape(o: Record<string, any>): boolean {
+  const keys = Object.keys(o);
+  return keys.length > 0 && keys.every(k => !SQL_FILTER_SCALAR_KEYS.has(k));
+}
 
 export interface OrderSpec {
   graphqlField: string;
@@ -1331,7 +1358,16 @@ function appendFilter(
     }
 
     const col = columns.get(field);
-    if (!col) continue;
+    if (!col) {
+      // Nested relation shape without metadata: usually over MAX_RELATION_FILTER_DEPTH
+      // (silent drop would omit predicates and return unfiltered rows).
+      if (isNestedRelationFilterShape(o)) {
+        throw new Error(
+          `SQL relation filter nesting exceeds max depth (${MAX_RELATION_FILTER_DEPTH}) or references unknown relation "${field}"`,
+        );
+      }
+      continue;
+    }
     const q = qualify ? qualify(col) : quoteIdent(adapter, col);
     if ('eq' in o) {
       params.push(o.eq);

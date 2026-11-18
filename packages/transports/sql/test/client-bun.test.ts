@@ -353,6 +353,7 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
     byEvent.acquire[0](client);
     // Callback overload (pg-pool pool.query style): SET error reaches the callback;
     // SELECT must not run; checkout released exactly once.
+    let callbackErr: Error | null = null;
     const poolQuery = new Promise<void>((resolve, reject) => {
       client.query('SELECT 1', (err: Error | null) => {
         try {
@@ -361,12 +362,14 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
           reject(releaseErr);
           return;
         }
+        callbackErr = err;
         if (err) resolve();
         else reject(new Error('expected SET failure via callback'));
       });
     });
     setGate();
     await expect(poolQuery).resolves.toBeUndefined();
+    expect(callbackErr?.message).toMatch(/SET search_path failed under pool\.query/);
     expect(selectRan).toBe(false);
     expect(releaseCount).toBe(1);
   });

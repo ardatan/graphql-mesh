@@ -122,6 +122,45 @@ describe('buildSelect', () => {
     expect(params).toEqual(['A%', '%rock%']);
   });
 
+  it('rejects nested relation filters past max depth instead of dropping them', () => {
+    // Metadata only goes one level; a deeper input path must throw, not silently
+    // omit the inner predicate (which would widen the result set).
+    expect(() =>
+      buildSelect('sqlite', {
+        table: 'employees',
+        kind: 'ROWS',
+        selection: parseSqlMapping(`
+          id: EmployeeId
+          name: LastName
+        `),
+        whereMapping: parseSqlMapping(`$args.where`),
+        graphqlArgs: {
+          where: {
+            manager: {
+              manager: {
+                name: { eq: 'Adams' },
+              },
+            },
+          },
+        },
+        relationFilters: [
+          {
+            field: 'manager',
+            relatedTable: 'employees',
+            localColumn: 'ReportsTo',
+            refColumn: 'EmployeeId',
+            columns: new Map([
+              ['id', 'EmployeeId'],
+              ['name', 'LastName'],
+            ]),
+            // Truncated like collectRelationFilters past MAX_RELATION_FILTER_DEPTH
+            nestedRelationFilters: undefined,
+          },
+        ],
+      }),
+    ).toThrow(/relation filter nesting exceeds max depth/);
+  });
+
   it('filters many-to-many via @sql(through) EXISTS', () => {
     const through = parseSqlThrough(`
       table: playlist_track
