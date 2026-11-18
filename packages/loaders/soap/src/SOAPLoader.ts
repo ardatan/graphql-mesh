@@ -1596,7 +1596,7 @@ export class SOAPLoader {
     const schema = this.schemaComposer.buildSchema();
     const schemaExts: any = (schema.extensions ||= {});
     schemaExts.directives ||= {};
-    // Connect loaders never emit Mesh `@transport` — Gateway infers from @connect / @source.
+    // SOAP connect has no transport options — omit `@transport`; Gateway infers connect.
     // Nested XML prefixes inherit from parent element keys (inheritXmlNamespacePrefixes).
     delete schemaExts.directives.transport;
     delete schemaExts.meshConnectOptions;

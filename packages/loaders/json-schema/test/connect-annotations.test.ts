@@ -10,8 +10,6 @@ describe('Federation Connectors annotations', () => {
   it('emits @source and @connect instead of @httpOperation/@transport', async () => {
     const schema = await loadGraphQLSchemaFromJSONSchemas('pets', {
       endpoint: 'http://localhost:3000',
-      // qs options must not cause loader `@transport` — Compose invents if needed.
-      queryStringOptions: { arrayFormat: 'repeat' },
       operations: [
         {
           type: OperationTypeNode.QUERY,
@@ -35,11 +33,9 @@ describe('Federation Connectors annotations', () => {
     expect(sdl).toContain('@connect');
     expect(sdl).toContain('https://specs.apollo.dev/connect/v0.4');
     expect(sdl).not.toContain('@httpOperation');
+    // Bare connect: no Mesh `@transport` — Gateway infers kind from @connect/@source.
     expect(sdl).not.toContain('kind: "connect"');
     expect(sdl).not.toContain('@transport');
-    expect((schema.extensions as any)?.meshConnectOptions?.queryStringOptions).toEqual({
-      arrayFormat: 'repeat',
-    });
 
     const result = await normalizedExecutor({
       schema,
@@ -60,6 +56,29 @@ describe('Federation Connectors annotations', () => {
         },
       },
     });
+  });
+
+  it('stamps options-only @transport when queryStringOptions are set', async () => {
+    const schema = await loadGraphQLSchemaFromJSONSchemas('pets', {
+      endpoint: 'http://localhost:3000',
+      queryStringOptions: { arrayFormat: 'repeat' },
+      operations: [
+        {
+          type: OperationTypeNode.QUERY,
+          field: 'pet',
+          path: '/pets/{args.id}',
+          method: 'GET',
+          responseSample: { id: '1', name: 'Dune' },
+        },
+      ],
+      async fetch() {
+        return Response.json({ id: '1', name: 'Dune' });
+      },
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toContain('@transport');
+    expect(sdl).toContain('arrayFormat');
+    expect(sdl).toContain('repeat');
   });
 
   it('maps queryParams from queryParamArgMap', async () => {

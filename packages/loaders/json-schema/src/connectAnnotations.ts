@@ -551,8 +551,8 @@ function buildFormExplodeOneOfLines(
  *
  * Remaining plain objects / arrays rely on connect runtime qs defaults
  * (`indices: false` → deepObject brackets + arrayFormat repeat).
- * Schema-level `queryStringOptions` (e.g. indices) flow via `meshConnectOptions`
- * for Compose to invent join transport options if needed — never loader `@transport`.
+ * Schema-level `queryStringOptions` (e.g. indices) flow via options-only
+ * `@transport(options:)` when set; bare connect omits `@transport`.
  */
 export function buildQueryParamsSelection(
   queryParamArgMap?: Record<string, string>,

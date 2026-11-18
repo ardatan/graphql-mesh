@@ -124,7 +124,7 @@ describe('Federation Connectors composition', () => {
     expect(sdl).toContain('@connect');
   });
 
-  it('invents options-only join transport from meshConnectOptions (loaders never stamp @transport)', () => {
+  it('keeps options-only join transport when loader stamped @transport(options:)', () => {
     // Fresh schema — do not share `extensions.directives` with `connectorsSchema`.
     const withOpts = buildSchema(/* GraphQL */ `
       schema
@@ -172,13 +172,21 @@ describe('Federation Connectors composition', () => {
       }
     `);
     (withOpts.extensions as any) = {
-      ...(withOpts.extensions || {}),
-      meshConnectOptions: { queryStringOptions: { arrayFormat: 'repeat' } },
+      directives: {
+        transport: [
+          {
+            subgraph: 'REST',
+            kind: 'connect',
+            location: 'https://api.example.com',
+            options: { queryStringOptions: { arrayFormat: 'repeat' } },
+          },
+        ],
+      },
     };
     const result = composeSubgraphs([{ name: 'REST', schema: withOpts }]);
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
-    // Compose invents join transport args (no kind) from the loader options bag.
+    // Options-only: join transport args without `kind: "connect"` (Gateway infers).
     expect(sdl).toMatch(
       /@join__directive\([^)]*name: "transport"[^)]*options:\s*\{\s*queryStringOptions/,
     );

@@ -8,9 +8,8 @@ import { processDirectives, type ProcessDirectiveArgs } from './directives/proce
 
 /**
  * Options for connect subgraphs (OpenAPI / JSON Schema / RAML / OData / SOAP).
- * Connect loaders never emit `@transport`; Compose/Gateway may invent join
- * transport args from these options when needed. Also accepted on
- * `schema.extensions.meshConnectOptions` and via `processDirectives` args.
+ * Loaders stamp `@transport(options:)` only when these are needed; bare connect
+ * omits transport (Gateway infers). Also accepted via `processDirectives` args.
  *
  * @example
  * ```ts

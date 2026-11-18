@@ -7,8 +7,8 @@ export { TransportDirective };
 
 /**
  * OData connect transport options typing (`kind: "connect"`).
- * Connect loaders never stamp `@transport`; Compose may invent join transport
- * args from `schema.extensions.meshConnectOptions` when these are set.
+ * Loader stamps `@transport` only when `options.odata` is present; otherwise
+ * Gateway infers connect from `@connect` / `@source`.
  *
  * @example
  * ```ts

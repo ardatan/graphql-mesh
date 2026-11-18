@@ -1467,8 +1467,8 @@ export function emitODataPolymorphicUnions(
 export function applyODataConnectSchemaExtensions(
   schema: GraphQLSchema,
   meta: ODataConnectSchemaMeta,
-  _subgraphName: string,
-  _endpoint: string,
+  subgraphName: string,
+  endpoint: string,
   odataOpts?: {
     batch?: 'none' | 'json' | 'multipart';
     expandNavProps?: boolean;
@@ -1478,12 +1478,17 @@ export function applyODataConnectSchemaExtensions(
   const directiveExtensions = (schemaExtensions.directives ||= {});
   directiveExtensions.source = [meta.source];
   directiveExtensions.link = [...(directiveExtensions.link || []), ...meta.link];
-  // Connect loaders never emit Mesh `@transport`. OData runtime options (batch /
-  // expandNavProps) go on a non-directive bag for Compose to invent if needed.
-  delete directiveExtensions.transport;
+  delete schemaExtensions.meshConnectOptions;
+  // Stamp Mesh `@transport` only when OData runtime options exist (batch /
+  // expandNavProps). Otherwise Gateway infers connect from `@connect` / `@source`.
   if (odataOpts && Object.keys(odataOpts).length) {
-    schemaExtensions.meshConnectOptions = { odata: odataOpts };
+    directiveExtensions.transport = {
+      kind: 'connect',
+      subgraph: subgraphName,
+      location: endpoint,
+      options: { odata: odataOpts },
+    };
   } else {
-    delete schemaExtensions.meshConnectOptions;
+    delete directiveExtensions.transport;
   }
 }

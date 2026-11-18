@@ -22,7 +22,11 @@ import type { IStringifyOptions } from 'qs';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { entityKeyFieldsFromHttpPath } from '@graphql-mesh/fusion-composition';
-import { addConnectComposeDirective } from '@graphql-mesh/utils';
+import {
+  addConnectComposeDirective,
+  importMeshDirectives,
+  TransportDirective,
+} from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   bakeEnumRootSelection,
@@ -684,11 +688,16 @@ ${operationConfig.description || ''}
   schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
+  // Only register `@transport` when we will stamp options (avoids bare def in SDL).
+  if (queryStringOptions) {
+    schemaComposer.addDirective(TransportDirective);
+  }
   let schema = schemaComposer.buildSchema();
   const schemaExtensions: any = (schema.extensions = schema.extensions || {});
   schemaExtensions.directives = schemaExtensions.directives || {};
-  // Federation Connectors — connect loaders never emit Mesh `@transport`.
-  delete schemaExtensions.directives.transport;
+  // Federation Connectors: stamp Mesh `@transport` only when real options exist
+  // (qs / …). Bare connect is inferred by Gateway from `@connect` / `@source`.
+  delete schemaExtensions.meshConnectOptions;
   schemaExtensions.directives.source = [
     buildSourceDirectiveArgs({
       name: subgraphName,
@@ -708,11 +717,17 @@ ${operationConfig.description || ''}
     },
   ];
   schemaExtensions.meshHandlerName = handlerName;
-  // Non-directive bag for Compose to invent join transport options if needed.
   if (queryStringOptions) {
-    schemaExtensions.meshConnectOptions = { queryStringOptions };
+    schemaExtensions.directives.transport = [
+      {
+        subgraph: subgraphName,
+        kind: 'connect',
+        location: endpoint,
+        options: { queryStringOptions },
+      },
+    ];
   } else {
-    delete schemaExtensions.meshConnectOptions;
+    delete schemaExtensions.directives.transport;
   }
   // Fix orphaned interfaces; bake Connectors equivalents while `@enum` is still present.
   schema = mapSchema(schema, {
@@ -777,7 +792,11 @@ ${operationConfig.description || ''}
     },
   });
   flushConnectSelectionPassthroughWarnings(selectionLimit);
-  return addConnectComposeDirective(schema);
+  schema = addConnectComposeDirective(schema);
+  if (getDirectiveExtensions(schema)?.transport?.length) {
+    schema = importMeshDirectives(schema, ['@transport']);
+  }
+  return schema;
 }
 
 function finalizeConnectorsField(
