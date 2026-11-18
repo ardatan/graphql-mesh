@@ -618,12 +618,14 @@ createdCount: $createdCount
     ],
   });
 
+  const updateType = naming.updateInput(typeName);
+
   mutationTC.setField(naming.updateByIdField(typeName), {
     type: naming.payloadType(typeName),
     args: {
       id: { type: new GraphQLNonNull(GraphQLObjectID) },
-      // Mongo update doc: `{ $set: { name: "Ada" } }` / `$inc` / …
-      update: { type: new GraphQLNonNull(GraphQLJSON) },
+      // Typed update ops without `$` (`set` / `inc` / … → `$set` / `$inc`).
+      update: { type: `${updateType}!` },
     },
     directives: [
       mongoDir('mongo__updateOne', {
@@ -639,7 +641,7 @@ createdCount: $createdCount
     type: naming.payloadType(typeName),
     args: {
       query: { type: `${queryType}!` },
-      update: { type: new GraphQLNonNull(GraphQLJSON) },
+      update: { type: `${updateType}!` },
     },
     directives: [
       mongoDir('mongo__updateOne', {
@@ -654,7 +656,7 @@ createdCount: $createdCount
     type: naming.payloadType(typeName),
     args: {
       query: { type: `${queryType}!` },
-      update: { type: new GraphQLNonNull(GraphQLJSON) },
+      update: { type: `${updateType}!` },
     },
     directives: [
       mongoDir('mongo__updateMany', {
@@ -1001,8 +1003,72 @@ function createQuerySortAndDocumentInputs(
     const gqlType = mapPathToInput(schemaComposer, path, typeName);
     createFields[path.name] = { type: gqlType, description: path.description };
   }
-  if (!schemaComposer.has(naming.createInput(typeName))) {
-    schemaComposer.createInputTC({ name: naming.createInput(typeName), fields: createFields });
+  const documentInput = naming.createInput(typeName);
+  if (!schemaComposer.has(documentInput)) {
+    schemaComposer.createInputTC({ name: documentInput, fields: createFields });
+  }
+
+  // Update operators use Mongo names without `$` (`set` / `inc` → `$set` / `$inc`).
+  const updateInput = naming.updateInput(typeName);
+  if (!schemaComposer.has(updateInput)) {
+    const unsetName = `${typeName}UnsetInput`;
+    const unsetFields: Record<string, any> = {};
+    for (const path of paths) {
+      if (path.name === '_id' || path.name === '__v') continue;
+      if (path.name.includes('.')) continue;
+      unsetFields[path.name] = { type: 'Boolean', description: path.description };
+    }
+    const unsetType =
+      Object.keys(unsetFields).length > 0
+        ? (() => {
+            if (!schemaComposer.has(unsetName)) {
+              schemaComposer.createInputTC({ name: unsetName, fields: unsetFields });
+            }
+            return unsetName;
+          })()
+        : GraphQLJSON;
+
+    const numericName = `${typeName}NumericUpdateInput`;
+    const numericFields: Record<string, any> = {};
+    for (const path of paths) {
+      if (path.name === '_id' || path.name === '__v') continue;
+      if (path.name.includes('.') || path.isArray || path.nested?.length) continue;
+      if (path.instance === 'Number') {
+        numericFields[path.name] = { type: GraphQLFloat, description: path.description };
+      } else if (path.instance === 'Decimal128') {
+        numericFields[path.name] = { type: 'Decimal128', description: path.description };
+      }
+    }
+    const numericType =
+      Object.keys(numericFields).length > 0
+        ? (() => {
+            if (!schemaComposer.has(numericName)) {
+              schemaComposer.createInputTC({ name: numericName, fields: numericFields });
+            }
+            return numericName;
+          })()
+        : GraphQLJSON;
+
+    schemaComposer.createInputTC({
+      name: updateInput,
+      fields: {
+        set: { type: documentInput },
+        inc: { type: numericType },
+        mul: { type: numericType },
+        min: { type: numericType },
+        max: { type: numericType },
+        unset: { type: unsetType },
+        // Array / specialized modifiers: JSON until field-level typing is needed.
+        push: { type: GraphQLJSON },
+        pull: { type: GraphQLJSON },
+        pullAll: { type: GraphQLJSON },
+        addToSet: { type: GraphQLJSON },
+        pop: { type: GraphQLJSON },
+        rename: { type: GraphQLJSON },
+        currentDate: { type: GraphQLJSON },
+        bit: { type: GraphQLJSON },
+      },
+    });
   }
 }
 

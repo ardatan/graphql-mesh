@@ -321,7 +321,78 @@ export function buildSetDocument(
   return doc;
 }
 
-/** Resolve a Mongo update document from `@mongo(set:)` (`$args.update` or field map). */
+/** Mongo update operators without `$` (GraphQL-legal); transport maps to `$set` / `$inc` / … */
+const UPDATE_OP_KEYS = new Set([
+  'set',
+  'inc',
+  'unset',
+  'push',
+  'pull',
+  'pullAll',
+  'addToSet',
+  'pop',
+  'rename',
+  'min',
+  'max',
+  'mul',
+  'currentDate',
+  'bit',
+]);
+
+function remapUpdateFieldKey(key: string): string {
+  return key === 'id' ? '_id' : key;
+}
+
+function remapUpdateFields(value: unknown): unknown {
+  if (!isPlainObject(value)) return coerceDeep(value);
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(value)) {
+    out[remapUpdateFieldKey(k)] = coerceDeep(v);
+  }
+  return out;
+}
+
+/**
+ * Typed update input (`set` / `inc` / …) → Mongo update doc (`$set` / `$inc` / …).
+ * Also accepts `_set` aliases and native `$set` keys; bare field maps become `$set`.
+ */
+export function graphqlUpdateToMongo(input: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  let sawOp = false;
+
+  for (const [rawKey, value] of Object.entries(input)) {
+    if (value == null) continue;
+
+    if (rawKey.startsWith('$')) {
+      out[rawKey] = remapUpdateFields(value);
+      sawOp = true;
+      continue;
+    }
+
+    const key = rawKey.startsWith('_') ? rawKey.slice(1) : rawKey;
+    if (!UPDATE_OP_KEYS.has(key)) continue;
+
+    sawOp = true;
+    const mongoOp = `$${key}`;
+    if (key === 'unset' && isPlainObject(value)) {
+      const unsetDoc: Record<string, string | number | boolean> = {};
+      for (const [field, flag] of Object.entries(value)) {
+        if (!flag) continue;
+        unsetDoc[remapUpdateFieldKey(field)] = '';
+      }
+      out.$unset = unsetDoc;
+      continue;
+    }
+    out[mongoOp] = remapUpdateFields(value);
+  }
+
+  if (sawOp) return out;
+
+  // Legacy / shorthand: plain field map → `$set`
+  return { $set: remapUpdateFields(input) as Record<string, unknown> };
+}
+
+/** Resolve a Mongo update document from `@mongo__update*(set:)` (`$args.update` or field map). */
 export function resolveUpdateDocument(
   setSource: string | null | undefined,
   ctx: { args?: Record<string, unknown>; parent?: unknown },
@@ -330,11 +401,7 @@ export function resolveUpdateDocument(
   if (trimmed === '$args.update') {
     const update = ctx.args?.update;
     if (update && typeof update === 'object' && !Array.isArray(update)) {
-      const doc = update as Record<string, unknown>;
-      if (Object.keys(doc).some(k => k.startsWith('$'))) {
-        return coerceDeep(doc) as Record<string, unknown>;
-      }
-      return { $set: coerceDeep(doc) as Record<string, unknown> };
+      return graphqlUpdateToMongo(update as Record<string, unknown>);
     }
     return { $set: {} };
   }

@@ -397,7 +397,7 @@ type Mutation {
   
     documents: $args.documents
   """)
-  updateUserById(id: ObjectID!, update: JSON!): UserPayload @mongo__updateOne(subgraph: "users", collection: "user_users", selection: """
+  updateUserById(id: ObjectID!, update: UserUpdateInput!): UserPayload @mongo__updateOne(subgraph: "users", collection: "user_users", selection: """
     record {
         id: _id
         name: name
@@ -414,7 +414,7 @@ type Mutation {
   
     _id: $args.id
   """, set: "$args.update")
-  updateOneUser(query: UserQueryInput!, update: JSON!): UserPayload @mongo__updateOne(subgraph: "users", collection: "user_users", selection: """
+  updateOneUser(query: UserQueryInput!, update: UserUpdateInput!): UserPayload @mongo__updateOne(subgraph: "users", collection: "user_users", selection: """
     record {
         id: _id
         name: name
@@ -428,7 +428,7 @@ type Mutation {
     }
     recordId: $_id
   """, query: "$args.query", set: "$args.update")
-  updateManyUsers(query: UserQueryInput!, update: JSON!): UserPayload @mongo__updateMany(subgraph: "users", collection: "user_users", selection: """
+  updateManyUsers(query: UserQueryInput!, update: UserUpdateInput!): UserPayload @mongo__updateMany(subgraph: "users", collection: "user_users", selection: """
     modifiedCount: $modifiedCount
     matchedCount: $matchedCount
   """, query: "$args.query", set: "$args.update")
@@ -516,6 +516,40 @@ input UserAddressInput {
 input UserContactsInput {
   email: String
   phones: [String]
+}
+
+input UserUpdateInput {
+  set: UserDocumentInput
+  inc: UserNumericUpdateInput
+  mul: UserNumericUpdateInput
+  min: UserNumericUpdateInput
+  max: UserNumericUpdateInput
+  unset: UserUnsetInput
+  push: JSON
+  pull: JSON
+  pullAll: JSON
+  addToSet: JSON
+  pop: JSON
+  rename: JSON
+  currentDate: JSON
+  bit: JSON
+}
+
+input UserNumericUpdateInput {
+  age: Float
+  salaryDecimal: Decimal128
+}
+
+input UserUnsetInput {
+  name: Boolean
+  age: Boolean
+  languages: Boolean
+  gender: Boolean
+  address: Boolean
+  """Some dynamic data"""
+  someMixed: Boolean
+  salaryDecimal: Boolean
+  contacts: Boolean
 }
 
 scalar TransportOptions"

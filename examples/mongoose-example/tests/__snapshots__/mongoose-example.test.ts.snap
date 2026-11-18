@@ -88,9 +88,9 @@ type Mutation {
   deleteUserById(id: ObjectID!): UserPayload
   insertManyUsers(documents: [UserDocumentInput!]!): UserPayload
   insertOneUser(document: UserDocumentInput!): UserPayload
-  updateManyUsers(query: UserQueryInput!, update: JSON!): UserPayload
-  updateOneUser(query: UserQueryInput!, update: JSON!): UserPayload
-  updateUserById(id: ObjectID!, update: JSON!): UserPayload
+  updateManyUsers(query: UserQueryInput!, update: UserUpdateInput!): UserPayload
+  updateOneUser(query: UserQueryInput!, update: UserUpdateInput!): UserPayload
+  updateUserById(id: ObjectID!, update: UserUpdateInput!): UserPayload
 }
 
 """
@@ -248,6 +248,11 @@ input UserLanguagesQueryInput {
   skill: StringQueryOperators
 }
 
+input UserNumericUpdateInput {
+  age: Float
+  salaryDecimal: Decimal128
+}
+
 type UserPagination {
   count: Int
   items: [User]
@@ -294,5 +299,35 @@ enum UserSort {
   name_desc
   salaryDecimal_asc
   salaryDecimal_desc
+}
+
+input UserUnsetInput {
+  address: Boolean
+  age: Boolean
+  contacts: Boolean
+  gender: Boolean
+  languages: Boolean
+  name: Boolean
+  salaryDecimal: Boolean
+
+  """Some dynamic data"""
+  someMixed: Boolean
+}
+
+input UserUpdateInput {
+  addToSet: JSON
+  bit: JSON
+  currentDate: JSON
+  inc: UserNumericUpdateInput
+  max: UserNumericUpdateInput
+  min: UserNumericUpdateInput
+  mul: UserNumericUpdateInput
+  pop: JSON
+  pull: JSON
+  pullAll: JSON
+  push: JSON
+  rename: JSON
+  set: UserDocumentInput
+  unset: UserUnsetInput
 }"
 `;

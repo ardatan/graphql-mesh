@@ -121,7 +121,7 @@ export const MongoUpdateOneDirective = new GraphQLDirective({
     subgraph: subgraphArg,
     collection: collectionArg,
     query: queryArg,
-    /** Update doc binder (`$args.update` → `{ $set: … }` / native update). */
+    /** Update binder (`$args.update` with `set`/`inc`/… → `$set`/`$inc`/…). */
     set: { type: GraphQLString },
     selection: selectionArg,
   },

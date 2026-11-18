@@ -61,6 +61,11 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toContain('countDocumentsUsers(query:');
     expect(sdl).toContain('insertOneUser(document:');
     expect(sdl).toContain('updateOneUser(query:');
+    expect(sdl).toContain('update: UserUpdateInput!');
+    expect(sdl).toContain('input UserUpdateInput');
+    expect(sdl).toContain('set: UserDocumentInput');
+    expect(sdl).toContain('inc: UserNumericUpdateInput');
+    expect(sdl).not.toContain('update: JSON!');
     expect(sdl).toContain('deleteOneUser(query:');
     expect(sdl).toContain('input UserQueryInput');
     expect(sdl).toContain('enum UserSort');

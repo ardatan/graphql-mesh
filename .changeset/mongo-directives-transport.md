@@ -30,7 +30,8 @@ new stack (like mysql/tuql -> SQL).
   `$and`; also accepts native `{ $gte }` and `_gte`)
 - Projection = GraphQL selection set + `@mongo__*(selection:)` (findOne's projection)
 - Directive binders: `query` / `selection` / `sort` / `set` / `pipeline`
-- `update` stays JSON for `$set` / `$inc` / … update operators
+- `update: *UpdateInput` with Mongo update ops without `$` (`set` / `inc` / `unset` / … →
+  `$set` / `$inc` / `$unset`; `_set` aliases + native `$set` still accepted; array mods JSON)
 - `document` / `documents` for insertOne / insertMany
 - BSON ObjectId (GraphQL field `id` ← `_id`, ById args, refs, `recordId`) uses
   `ObjectID` scalar + `ObjectIDQueryOperators` (not opaque GraphQL `ID`)

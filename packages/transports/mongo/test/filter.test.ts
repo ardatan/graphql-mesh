@@ -3,6 +3,7 @@ import {
   buildMongoSort,
   graphqlFilterToMongo,
   graphqlSortToMongo,
+  graphqlUpdateToMongo,
 } from '../src/filter.js';
 
 describe('mongo filter mapping', () => {
@@ -129,5 +130,22 @@ describe('mongo filter mapping', () => {
     });
     expect(graphqlSortToMongo({ age: 'desc', id: 'asc' })).toEqual({ age: -1, _id: 1 });
     expect(buildMongoSort('$args.sort', { args: { sort: ['age_desc'] } })).toEqual({ age: -1 });
+  });
+
+  it('maps typed update ops (set/inc/unset) to $set/$inc/$unset', () => {
+    expect(
+      graphqlUpdateToMongo({
+        set: { name: 'Ada' },
+        inc: { age: 1 },
+        unset: { someMixed: true },
+      }),
+    ).toEqual({
+      $set: { name: 'Ada' },
+      $inc: { age: 1 },
+      $unset: { someMixed: '' },
+    });
+    expect(graphqlUpdateToMongo({ _inc: { age: 2 } })).toEqual({ $inc: { age: 2 } });
+    expect(graphqlUpdateToMongo({ $set: { name: 'Alan' } })).toEqual({ $set: { name: 'Alan' } });
+    expect(graphqlUpdateToMongo({ name: 'Grace' })).toEqual({ $set: { name: 'Grace' } });
   });
 });
