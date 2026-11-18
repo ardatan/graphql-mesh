@@ -174,6 +174,17 @@ describe('mongo filter mapping', () => {
     );
     expect(filter._id).toBe(hex);
     expect(filter._id).not.toBeInstanceOf(ObjectId);
+    // emitRefFields lookup: `_id: $this.authorId` against a String `_id` collection.
+    const refLookup = runWithMongoFieldRuntime(runtime, () =>
+      buildMongoFilter(
+        '_id: $this.authorId',
+        { parent: { authorId: hex, title: 'Hello' } },
+        { collection: 'external_users' },
+      ),
+    );
+    expect(refLookup._id).toBe(hex);
+    expect(typeof refLookup._id).toBe('string');
+    expect(refLookup._id).not.toBeInstanceOf(ObjectId);
     // Default ObjectId collections still coerce.
     const oidFilter = runWithMongoFieldRuntime(runtime, () =>
       buildMongoFilter('_id: $args.id', { args: { id: hex } }, { collection: 'users' }),
