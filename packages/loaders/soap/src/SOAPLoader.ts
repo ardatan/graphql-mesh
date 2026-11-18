@@ -63,38 +63,113 @@ import type {
 import type { SoapAnnotations } from './utils.js';
 import { PARSE_XML_OPTIONS } from './utils.js';
 
+/**
+ * Low-level options for {@link SOAPLoader} (prefer {@link loadSOAPSubgraph} options).
+ *
+ * @example
+ * ```ts
+ * const loader = new SOAPLoader({
+ *   subgraphName: 'weather',
+ *   endpoint: 'https://example.com/soap',
+ *   cwd: process.cwd(),
+ * });
+ * ```
+ */
 export interface SOAPLoaderOptions {
+  /**
+   * Subgraph name stamped on `@source` / `@connect`.
+   *
+   * @example 'weather'
+   */
   subgraphName: string;
+  /** Fetch for WSDL / XSD loading during compose only (not runtime SOAP calls). */
   fetch?: MeshFetch;
+  /** Logger instance. */
   log?: Logger;
+  /**
+   * Headers for nested `<wsdl:import>` / `<xsd:import>` fetches (and for
+   * `loadWSDL` / `fetchWSDL` when callers use this class directly). Not sent
+   * on runtime SOAP calls. Note: `loadSOAPSubgraph`'s root `source` fetch does
+   * not apply these headers - only nested imports go through this factory.
+   *
+   * @example { Authorization: 'Bearer ...' }
+   */
   schemaHeaders?: Record<string, string>;
+  /**
+   * Headers for runtime SOAP calls (baked into `@source` / `@connect`).
+   *
+   * @example { Authorization: 'Bearer {context.token}' }
+   */
   operationHeaders?: Record<string, string>;
+  /**
+   * Extra SOAP Header block injected into the envelope (namespace + alias +
+   * child elements). Distinct from HTTP `operationHeaders`.
+   *
+   * @example { namespace: 'http://example.com/ns', headers: { Token: 'abc' } }
+   */
   soapHeaders?: SOAPHeaders;
+  /**
+   * SOAP HTTP endpoint override when the WSDL port address should not be used
+   * as-is.
+   *
+   * @example 'https://example.com/soap'
+   */
   endpoint?: string;
+  /**
+   * Base directory for relative WSDL / XSD import paths.
+   *
+   * @example process.cwd()
+   */
   cwd?: string;
+  /**
+   * Alias used in the SOAP envelope for body components (XML prefix / wrapper
+   * for the request body). When omitted, emit uses `body`.
+   *
+   * @default 'body'
+   */
   bodyAlias?: string;
+  /**
+   * Present on the options type, but currently unused: the constructor ignores
+   * this field. Detection looks for a `soap12` attribute on the WSDL definition:
+   * when present, SOAP 1.2 (`http://www.w3.org/2003/05/soap-envelope`) is used;
+   * otherwise SOAP 1.1 (`http://schemas.xmlsoap.org/soap/envelope/`) remains.
+   * A SOAP 1.2 WSDL that uses a different prefix therefore stays on the 1.1
+   * envelope namespace.
+   */
   soapNamespace?: string;
 }
 
+/**
+ * SOAP header block configuration for the envelope.
+ *
+ * @example
+ * ```ts
+ * soapHeaders: {
+ *   namespace: 'http://www.example.com/namespace',
+ *   alias: 'sec',
+ *   headers: { Token: '{context.headers.x-token}' },
+ * }
+ * ```
+ */
 export interface SOAPHeaders {
   /**
-   * The namespace of the SOAP Header
+   * Namespace of the SOAP Header element.
    *
-   * @example http://www.example.com/namespace
+   * @example 'http://www.example.com/namespace'
    */
   namespace: string;
   /**
-   * The name of the alias to be used in the envelope
+   * XML alias / prefix for the SOAP Header block in the envelope. When omitted,
+   * emit uses `header`.
    *
-   * @default header
+   * @default 'header'
+   * @example 'sec'
    */
   alias?: string;
   /**
-   * The content of the SOAP Header
+   * Header content object; keys become XML child elements (`{ Token: "x" }` -> `<Token>x</Token>`).
    *
-   * @example { "key": "value" }
-   *
-   * then the content will be `<key>value</key>` in XML
+   * @example { Token: 'abc' }
    */
   headers: unknown;
 }

@@ -6,13 +6,17 @@ exports[`Neo4j should generate correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @introspection(subgraph: String) on ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+directive @alias(property: String!, subgraph: String) on FIELD_DEFINITION
 
-directive @node on OBJECT
+directive @cypher(columnName: String!, statement: String!, subgraph: String) on FIELD_DEFINITION
 
-directive @relationship(direction: _RelationDirections, properties: String, type: String) on FIELD_DEFINITION
+directive @node(labels: [String!], subgraph: String) on OBJECT
 
-directive @relationshipProperties on OBJECT
+directive @plural(subgraph: String, value: String!) on INTERFACE | OBJECT | UNION
+
+directive @relationship(direction: _RelationDirections, properties: String, subgraph: String, type: String) on FIELD_DEFINITION
+
+directive @relationshipProperties(subgraph: String) on OBJECT
 
 directive @transport(headers: [[String]], kind: String!, location: String, options: TransportOptions, subgraph: String!) repeatable on SCHEMA
 
@@ -23,8 +27,8 @@ The edge properties for the following fields:
 * Movie.actor2SActedIn
 * Movie.actorsActedIn
 """
-type ActedInProperties @relationshipProperties @introspection {
-  role: String @introspection
+type ActedInProperties @relationshipProperties(subgraph: "Neo4j") {
+  role: String
 }
 
 input ActedInPropertiesAggregationWhereInput {
@@ -59,7 +63,7 @@ input ActedInPropertiesSort {
 
 input ActedInPropertiesUpdateInput {
   role: StringScalarMutations
-  role_SET: String
+  role_SET: String @deprecated(reason: "Please use the generic mutation 'role: { set: ... } }' instead.")
 }
 
 input ActedInPropertiesWhere {
@@ -74,34 +78,34 @@ input ActedInPropertiesWhere {
   role_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter role: { startsWith: ... }")
 }
 
-type Actor @introspection @node(labels: ["Actor", "Person"]) {
-  actedInMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
+type Actor @node(subgraph: "Neo4j", labels: ["Actor", "Person"]) {
+  actedInMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
   actedInMoviesConnection(after: String, first: Int, sort: [ActorActedInMoviesConnectionSort!], where: ActorActedInMoviesConnectionWhere): ActorActedInMoviesConnection!
-  bio: String @introspection
-  born: Date @introspection
-  bornIn: String @introspection
-  died: Date @introspection
-  imdbId: String @introspection
-  name: String! @introspection
-  poster: String @introspection
-  tmdbId: String! @introspection
-  url: String! @introspection
+  bio: String
+  born: Date
+  bornIn: String
+  died: Date
+  imdbId: String
+  name: String!
+  poster: String
+  tmdbId: String!
+  url: String!
 }
 
-type Actor2 @introspection @node(labels: ["Actor", "Director", "Person"]) {
-  actedInMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
+type Actor2 @node(subgraph: "Neo4j", labels: ["Actor", "Director", "Person"]) {
+  actedInMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
   actedInMoviesConnection(after: String, first: Int, sort: [Actor2ActedInMoviesConnectionSort!], where: Actor2ActedInMoviesConnectionWhere): Actor2ActedInMoviesConnection!
-  bio: String @introspection
-  born: Date @introspection
-  bornIn: String @introspection
-  died: Date @introspection
-  directedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "DIRECTED", direction: OUT, properties: "DirectedProperties")
+  bio: String
+  born: Date
+  bornIn: String
+  died: Date
+  directedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "DIRECTED", direction: OUT, properties: "DirectedProperties")
   directedMoviesConnection(after: String, first: Int, sort: [Actor2DirectedMoviesConnectionSort!], where: Actor2DirectedMoviesConnectionWhere): Actor2DirectedMoviesConnection!
-  imdbId: String @introspection
-  name: String! @introspection
-  poster: String @introspection
-  tmdbId: String! @introspection
-  url: String! @introspection
+  imdbId: String
+  name: String!
+  poster: String
+  tmdbId: String!
+  url: String!
 }
 
 input Actor2ActedInMoviesAggregateInput {
@@ -984,24 +988,24 @@ input Actor2Sort {
 input Actor2UpdateInput {
   actedInMovies: [Actor2ActedInMoviesUpdateFieldInput!]
   bio: StringScalarMutations
-  bio_SET: String
+  bio_SET: String @deprecated(reason: "Please use the generic mutation 'bio: { set: ... } }' instead.")
   born: DateScalarMutations
   bornIn: StringScalarMutations
-  bornIn_SET: String
-  born_SET: Date
+  bornIn_SET: String @deprecated(reason: "Please use the generic mutation 'bornIn: { set: ... } }' instead.")
+  born_SET: Date @deprecated(reason: "Please use the generic mutation 'born: { set: ... } }' instead.")
   died: DateScalarMutations
-  died_SET: Date
+  died_SET: Date @deprecated(reason: "Please use the generic mutation 'died: { set: ... } }' instead.")
   directedMovies: [Actor2DirectedMoviesUpdateFieldInput!]
   imdbId: StringScalarMutations
-  imdbId_SET: String
+  imdbId_SET: String @deprecated(reason: "Please use the generic mutation 'imdbId: { set: ... } }' instead.")
   name: StringScalarMutations
-  name_SET: String
+  name_SET: String @deprecated(reason: "Please use the generic mutation 'name: { set: ... } }' instead.")
   poster: StringScalarMutations
-  poster_SET: String
+  poster_SET: String @deprecated(reason: "Please use the generic mutation 'poster: { set: ... } }' instead.")
   tmdbId: StringScalarMutations
-  tmdbId_SET: String
+  tmdbId_SET: String @deprecated(reason: "Please use the generic mutation 'tmdbId: { set: ... } }' instead.")
   url: StringScalarMutations
-  url_SET: String
+  url_SET: String @deprecated(reason: "Please use the generic mutation 'url: { set: ... } }' instead.")
 }
 
 input Actor2Where {
@@ -1604,23 +1608,23 @@ input ActorSort {
 input ActorUpdateInput {
   actedInMovies: [ActorActedInMoviesUpdateFieldInput!]
   bio: StringScalarMutations
-  bio_SET: String
+  bio_SET: String @deprecated(reason: "Please use the generic mutation 'bio: { set: ... } }' instead.")
   born: DateScalarMutations
   bornIn: StringScalarMutations
-  bornIn_SET: String
-  born_SET: Date
+  bornIn_SET: String @deprecated(reason: "Please use the generic mutation 'bornIn: { set: ... } }' instead.")
+  born_SET: Date @deprecated(reason: "Please use the generic mutation 'born: { set: ... } }' instead.")
   died: DateScalarMutations
-  died_SET: Date
+  died_SET: Date @deprecated(reason: "Please use the generic mutation 'died: { set: ... } }' instead.")
   imdbId: StringScalarMutations
-  imdbId_SET: String
+  imdbId_SET: String @deprecated(reason: "Please use the generic mutation 'imdbId: { set: ... } }' instead.")
   name: StringScalarMutations
-  name_SET: String
+  name_SET: String @deprecated(reason: "Please use the generic mutation 'name: { set: ... } }' instead.")
   poster: StringScalarMutations
-  poster_SET: String
+  poster_SET: String @deprecated(reason: "Please use the generic mutation 'poster: { set: ... } }' instead.")
   tmdbId: StringScalarMutations
-  tmdbId_SET: String
+  tmdbId_SET: String @deprecated(reason: "Please use the generic mutation 'tmdbId: { set: ... } }' instead.")
   url: StringScalarMutations
-  url_SET: String
+  url_SET: String @deprecated(reason: "Please use the generic mutation 'url: { set: ... } }' instead.")
 }
 
 input ActorWhere {
@@ -1851,8 +1855,8 @@ The edge properties for the following fields:
 * Movie.actor2SDirected
 * Movie.directorsDirected
 """
-type DirectedProperties @relationshipProperties @introspection {
-  role: String @introspection
+type DirectedProperties @relationshipProperties(subgraph: "Neo4j") {
+  role: String
 }
 
 input DirectedPropertiesAggregationWhereInput {
@@ -1887,7 +1891,7 @@ input DirectedPropertiesSort {
 
 input DirectedPropertiesUpdateInput {
   role: StringScalarMutations
-  role_SET: String
+  role_SET: String @deprecated(reason: "Please use the generic mutation 'role: { set: ... } }' instead.")
 }
 
 input DirectedPropertiesWhere {
@@ -1902,18 +1906,18 @@ input DirectedPropertiesWhere {
   role_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter role: { startsWith: ... }")
 }
 
-type Director @introspection @node(labels: ["Director", "Person"]) {
-  bio: String @introspection
-  born: Date @introspection
-  bornIn: String @introspection
-  died: Date @introspection
-  directedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "DIRECTED", direction: OUT, properties: "DirectedProperties")
+type Director @node(subgraph: "Neo4j", labels: ["Director", "Person"]) {
+  bio: String
+  born: Date
+  bornIn: String
+  died: Date
+  directedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "DIRECTED", direction: OUT, properties: "DirectedProperties")
   directedMoviesConnection(after: String, first: Int, sort: [DirectorDirectedMoviesConnectionSort!], where: DirectorDirectedMoviesConnectionWhere): DirectorDirectedMoviesConnection!
-  imdbId: String @introspection
-  name: String! @introspection
-  poster: String @introspection
-  tmdbId: String! @introspection
-  url: String! @introspection
+  imdbId: String
+  name: String!
+  poster: String
+  tmdbId: String!
+  url: String!
 }
 
 type DirectorAggregate {
@@ -2392,24 +2396,24 @@ input DirectorSort {
 
 input DirectorUpdateInput {
   bio: StringScalarMutations
-  bio_SET: String
+  bio_SET: String @deprecated(reason: "Please use the generic mutation 'bio: { set: ... } }' instead.")
   born: DateScalarMutations
   bornIn: StringScalarMutations
-  bornIn_SET: String
-  born_SET: Date
+  bornIn_SET: String @deprecated(reason: "Please use the generic mutation 'bornIn: { set: ... } }' instead.")
+  born_SET: Date @deprecated(reason: "Please use the generic mutation 'born: { set: ... } }' instead.")
   died: DateScalarMutations
-  died_SET: Date
+  died_SET: Date @deprecated(reason: "Please use the generic mutation 'died: { set: ... } }' instead.")
   directedMovies: [DirectorDirectedMoviesUpdateFieldInput!]
   imdbId: StringScalarMutations
-  imdbId_SET: String
+  imdbId_SET: String @deprecated(reason: "Please use the generic mutation 'imdbId: { set: ... } }' instead.")
   name: StringScalarMutations
-  name_SET: String
+  name_SET: String @deprecated(reason: "Please use the generic mutation 'name: { set: ... } }' instead.")
   poster: StringScalarMutations
-  poster_SET: String
+  poster_SET: String @deprecated(reason: "Please use the generic mutation 'poster: { set: ... } }' instead.")
   tmdbId: StringScalarMutations
-  tmdbId_SET: String
+  tmdbId_SET: String @deprecated(reason: "Please use the generic mutation 'tmdbId: { set: ... } }' instead.")
   url: StringScalarMutations
-  url_SET: String
+  url_SET: String @deprecated(reason: "Please use the generic mutation 'url: { set: ... } }' instead.")
 }
 
 input DirectorWhere {
@@ -2548,10 +2552,10 @@ input FloatScalarMutations {
   subtract: Float
 }
 
-type Genre @introspection @node {
-  moviesInGenre(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "IN_GENRE", direction: IN)
+type Genre @node(subgraph: "Neo4j") {
+  moviesInGenre(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "IN_GENRE", direction: IN)
   moviesInGenreConnection(after: String, first: Int, sort: [GenreMoviesInGenreConnectionSort!], where: GenreMoviesInGenreConnectionWhere): GenreMoviesInGenreConnection!
-  name: String! @introspection
+  name: String!
 }
 
 type GenreAggregate {
@@ -2996,7 +3000,7 @@ input GenreSort {
 input GenreUpdateInput {
   moviesInGenre: [GenreMoviesInGenreUpdateFieldInput!]
   name: StringScalarMutations
-  name_SET: String
+  name_SET: String @deprecated(reason: "Please use the generic mutation 'name: { set: ... } }' instead.")
 }
 
 input GenreWhere {
@@ -3069,37 +3073,37 @@ input ListStringMutations {
   set: [String!]
 }
 
-type Movie @introspection @node {
-  actor2SActedIn(limit: Int, offset: Int, sort: [Actor2Sort!], where: Actor2Where): [Actor2!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
+type Movie @node(subgraph: "Neo4j") {
+  actor2SActedIn(limit: Int, offset: Int, sort: [Actor2Sort!], where: Actor2Where): [Actor2!]! @relationship(subgraph: "Neo4j", type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
   actor2SActedInConnection(after: String, first: Int, sort: [MovieActor2SActedInConnectionSort!], where: MovieActor2SActedInConnectionWhere): MovieActor2SActedInConnection!
-  actor2SDirected(limit: Int, offset: Int, sort: [Actor2Sort!], where: Actor2Where): [Actor2!]! @introspection @relationship(type: "DIRECTED", direction: IN, properties: "DirectedProperties")
+  actor2SDirected(limit: Int, offset: Int, sort: [Actor2Sort!], where: Actor2Where): [Actor2!]! @relationship(subgraph: "Neo4j", type: "DIRECTED", direction: IN, properties: "DirectedProperties")
   actor2SDirectedConnection(after: String, first: Int, sort: [MovieActor2SDirectedConnectionSort!], where: MovieActor2SDirectedConnectionWhere): MovieActor2SDirectedConnection!
-  actorsActedIn(limit: Int, offset: Int, sort: [ActorSort!], where: ActorWhere): [Actor!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
+  actorsActedIn(limit: Int, offset: Int, sort: [ActorSort!], where: ActorWhere): [Actor!]! @relationship(subgraph: "Neo4j", type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
   actorsActedInConnection(after: String, first: Int, sort: [MovieActorsActedInConnectionSort!], where: MovieActorsActedInConnectionWhere): MovieActorsActedInConnection!
-  budget: BigInt @introspection
-  countries: [String!] @introspection
-  directorsDirected(limit: Int, offset: Int, sort: [DirectorSort!], where: DirectorWhere): [Director!]! @introspection @relationship(type: "DIRECTED", direction: IN, properties: "DirectedProperties")
+  budget: BigInt
+  countries: [String!]
+  directorsDirected(limit: Int, offset: Int, sort: [DirectorSort!], where: DirectorWhere): [Director!]! @relationship(subgraph: "Neo4j", type: "DIRECTED", direction: IN, properties: "DirectedProperties")
   directorsDirectedConnection(after: String, first: Int, sort: [MovieDirectorsDirectedConnectionSort!], where: MovieDirectorsDirectedConnectionWhere): MovieDirectorsDirectedConnection!
-  imdbId: String! @introspection
-  imdbRating: Float @introspection
-  imdbVotes: BigInt @introspection
-  inGenreGenres(limit: Int, offset: Int, sort: [GenreSort!], where: GenreWhere): [Genre!]! @introspection @relationship(type: "IN_GENRE", direction: OUT)
+  imdbId: String!
+  imdbRating: Float
+  imdbVotes: BigInt
+  inGenreGenres(limit: Int, offset: Int, sort: [GenreSort!], where: GenreWhere): [Genre!]! @relationship(subgraph: "Neo4j", type: "IN_GENRE", direction: OUT)
   inGenreGenresConnection(after: String, first: Int, sort: [MovieInGenreGenresConnectionSort!], where: MovieInGenreGenresConnectionWhere): MovieInGenreGenresConnection!
-  languages: [String!] @introspection
-  movieId: String! @introspection
-  plot: String @introspection
-  plotEmbedding: [Float!] @introspection
-  poster: String @introspection
-  posterEmbedding: [Float!] @introspection
-  released: String @introspection
-  revenue: BigInt @introspection
-  runtime: BigInt @introspection
-  title: String! @introspection
-  tmdbId: String @introspection
-  url: String @introspection
-  usersRated(limit: Int, offset: Int, sort: [UserSort!], where: UserWhere): [User!]! @introspection @relationship(type: "RATED", direction: IN, properties: "RatedProperties")
+  languages: [String!]
+  movieId: String!
+  plot: String
+  plotEmbedding: [Float!]
+  poster: String
+  posterEmbedding: [Float!]
+  released: String
+  revenue: BigInt
+  runtime: BigInt
+  title: String!
+  tmdbId: String
+  url: String
+  usersRated(limit: Int, offset: Int, sort: [UserSort!], where: UserWhere): [User!]! @relationship(subgraph: "Neo4j", type: "RATED", direction: IN, properties: "RatedProperties")
   usersRatedConnection(after: String, first: Int, sort: [MovieUsersRatedConnectionSort!], where: MovieUsersRatedConnectionWhere): MovieUsersRatedConnection!
-  year: BigInt @introspection
+  year: BigInt
 }
 
 type MovieActor2Actor2SActedInAggregateSelection {
@@ -4360,64 +4364,64 @@ input MovieUpdateInput {
   budget: BigIntScalarMutations
   budget_DECREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'budget: { decrement: ... } }' instead.")
   budget_INCREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'budget: { increment: ... } }' instead.")
-  budget_SET: BigInt
+  budget_SET: BigInt @deprecated(reason: "Please use the generic mutation 'budget: { set: ... } }' instead.")
   countries: ListStringMutations
   countries_POP: Int @deprecated(reason: "Please use the generic mutation 'countries: { pop: ... } }' instead.")
   countries_PUSH: [String!] @deprecated(reason: "Please use the generic mutation 'countries: { push: ... } }' instead.")
-  countries_SET: [String!]
+  countries_SET: [String!] @deprecated(reason: "Please use the generic mutation 'countries: { set: ... } }' instead.")
   directorsDirected: [MovieDirectorsDirectedUpdateFieldInput!]
   imdbId: StringScalarMutations
-  imdbId_SET: String
+  imdbId_SET: String @deprecated(reason: "Please use the generic mutation 'imdbId: { set: ... } }' instead.")
   imdbRating: FloatScalarMutations
   imdbRating_ADD: Float @deprecated(reason: "Please use the relevant generic mutation 'imdbRating: { add: ... } }' instead.")
   imdbRating_DIVIDE: Float @deprecated(reason: "Please use the relevant generic mutation 'imdbRating: { divide: ... } }' instead.")
   imdbRating_MULTIPLY: Float @deprecated(reason: "Please use the relevant generic mutation 'imdbRating: { multiply: ... } }' instead.")
-  imdbRating_SET: Float
+  imdbRating_SET: Float @deprecated(reason: "Please use the generic mutation 'imdbRating: { set: ... } }' instead.")
   imdbRating_SUBTRACT: Float @deprecated(reason: "Please use the relevant generic mutation 'imdbRating: { subtract: ... } }' instead.")
   imdbVotes: BigIntScalarMutations
   imdbVotes_DECREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'imdbVotes: { decrement: ... } }' instead.")
   imdbVotes_INCREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'imdbVotes: { increment: ... } }' instead.")
-  imdbVotes_SET: BigInt
+  imdbVotes_SET: BigInt @deprecated(reason: "Please use the generic mutation 'imdbVotes: { set: ... } }' instead.")
   inGenreGenres: [MovieInGenreGenresUpdateFieldInput!]
   languages: ListStringMutations
   languages_POP: Int @deprecated(reason: "Please use the generic mutation 'languages: { pop: ... } }' instead.")
   languages_PUSH: [String!] @deprecated(reason: "Please use the generic mutation 'languages: { push: ... } }' instead.")
-  languages_SET: [String!]
+  languages_SET: [String!] @deprecated(reason: "Please use the generic mutation 'languages: { set: ... } }' instead.")
   movieId: StringScalarMutations
-  movieId_SET: String
+  movieId_SET: String @deprecated(reason: "Please use the generic mutation 'movieId: { set: ... } }' instead.")
   plot: StringScalarMutations
   plotEmbedding: ListFloatMutations
   plotEmbedding_POP: Int @deprecated(reason: "Please use the generic mutation 'plotEmbedding: { pop: ... } }' instead.")
   plotEmbedding_PUSH: [Float!] @deprecated(reason: "Please use the generic mutation 'plotEmbedding: { push: ... } }' instead.")
-  plotEmbedding_SET: [Float!]
-  plot_SET: String
+  plotEmbedding_SET: [Float!] @deprecated(reason: "Please use the generic mutation 'plotEmbedding: { set: ... } }' instead.")
+  plot_SET: String @deprecated(reason: "Please use the generic mutation 'plot: { set: ... } }' instead.")
   poster: StringScalarMutations
   posterEmbedding: ListFloatMutations
   posterEmbedding_POP: Int @deprecated(reason: "Please use the generic mutation 'posterEmbedding: { pop: ... } }' instead.")
   posterEmbedding_PUSH: [Float!] @deprecated(reason: "Please use the generic mutation 'posterEmbedding: { push: ... } }' instead.")
-  posterEmbedding_SET: [Float!]
-  poster_SET: String
+  posterEmbedding_SET: [Float!] @deprecated(reason: "Please use the generic mutation 'posterEmbedding: { set: ... } }' instead.")
+  poster_SET: String @deprecated(reason: "Please use the generic mutation 'poster: { set: ... } }' instead.")
   released: StringScalarMutations
-  released_SET: String
+  released_SET: String @deprecated(reason: "Please use the generic mutation 'released: { set: ... } }' instead.")
   revenue: BigIntScalarMutations
   revenue_DECREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'revenue: { decrement: ... } }' instead.")
   revenue_INCREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'revenue: { increment: ... } }' instead.")
-  revenue_SET: BigInt
+  revenue_SET: BigInt @deprecated(reason: "Please use the generic mutation 'revenue: { set: ... } }' instead.")
   runtime: BigIntScalarMutations
   runtime_DECREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'runtime: { decrement: ... } }' instead.")
   runtime_INCREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'runtime: { increment: ... } }' instead.")
-  runtime_SET: BigInt
+  runtime_SET: BigInt @deprecated(reason: "Please use the generic mutation 'runtime: { set: ... } }' instead.")
   title: StringScalarMutations
-  title_SET: String
+  title_SET: String @deprecated(reason: "Please use the generic mutation 'title: { set: ... } }' instead.")
   tmdbId: StringScalarMutations
-  tmdbId_SET: String
+  tmdbId_SET: String @deprecated(reason: "Please use the generic mutation 'tmdbId: { set: ... } }' instead.")
   url: StringScalarMutations
-  url_SET: String
+  url_SET: String @deprecated(reason: "Please use the generic mutation 'url: { set: ... } }' instead.")
   usersRated: [MovieUsersRatedUpdateFieldInput!]
   year: BigIntScalarMutations
   year_DECREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'year: { decrement: ... } }' instead.")
   year_INCREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'year: { increment: ... } }' instead.")
-  year_SET: BigInt
+  year_SET: BigInt @deprecated(reason: "Please use the generic mutation 'year: { set: ... } }' instead.")
 }
 
 type MovieUserUsersRatedAggregateSelection {
@@ -4922,9 +4926,9 @@ The edge properties for the following fields:
 * Movie.usersRated
 * User.ratedMovies
 """
-type RatedProperties @relationshipProperties @introspection {
-  rating: Float! @introspection
-  timestamp: BigInt! @introspection
+type RatedProperties @relationshipProperties(subgraph: "Neo4j") {
+  rating: Float!
+  timestamp: BigInt!
 }
 
 input RatedPropertiesAggregationWhereInput {
@@ -4990,12 +4994,12 @@ input RatedPropertiesUpdateInput {
   rating_ADD: Float @deprecated(reason: "Please use the relevant generic mutation 'rating: { add: ... } }' instead.")
   rating_DIVIDE: Float @deprecated(reason: "Please use the relevant generic mutation 'rating: { divide: ... } }' instead.")
   rating_MULTIPLY: Float @deprecated(reason: "Please use the relevant generic mutation 'rating: { multiply: ... } }' instead.")
-  rating_SET: Float
+  rating_SET: Float @deprecated(reason: "Please use the generic mutation 'rating: { set: ... } }' instead.")
   rating_SUBTRACT: Float @deprecated(reason: "Please use the relevant generic mutation 'rating: { subtract: ... } }' instead.")
   timestamp: BigIntScalarMutations
   timestamp_DECREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'timestamp: { decrement: ... } }' instead.")
   timestamp_INCREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'timestamp: { increment: ... } }' instead.")
-  timestamp_SET: BigInt
+  timestamp_SET: BigInt @deprecated(reason: "Please use the generic mutation 'timestamp: { set: ... } }' instead.")
 }
 
 input RatedPropertiesWhere {
@@ -5110,11 +5114,11 @@ type Update_bloomScenesMutationResponse {
   info: UpdateInfo!
 }
 
-type User @introspection @node {
-  name: String! @introspection
-  ratedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "RATED", direction: OUT, properties: "RatedProperties")
+type User @node(subgraph: "Neo4j") {
+  name: String!
+  ratedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "RATED", direction: OUT, properties: "RatedProperties")
   ratedMoviesConnection(after: String, first: Int, sort: [UserRatedMoviesConnectionSort!], where: UserRatedMoviesConnectionWhere): UserRatedMoviesConnection!
-  userId: String! @introspection
+  userId: String!
 }
 
 type UserAggregate {
@@ -5575,10 +5579,10 @@ input UserSort {
 
 input UserUpdateInput {
   name: StringScalarMutations
-  name_SET: String
+  name_SET: String @deprecated(reason: "Please use the generic mutation 'name: { set: ... } }' instead.")
   ratedMovies: [UserRatedMoviesUpdateFieldInput!]
   userId: StringScalarMutations
-  userId_SET: String
+  userId_SET: String @deprecated(reason: "Please use the generic mutation 'userId: { set: ... } }' instead.")
 }
 
 input UserWhere {
@@ -5633,14 +5637,14 @@ type UsersConnection {
   totalCount: Int!
 }
 
-type _Bloom_Perspective_ @introspection @node {
-  bloomHasSceneBloomSceneS(limit: Int, offset: Int, sort: [_Bloom_Scene_Sort!], where: _Bloom_Scene_Where): [_Bloom_Scene_!]! @introspection @relationship(type: "_Bloom_HAS_SCENE_", direction: OUT)
+type _Bloom_Perspective_ @node(subgraph: "Neo4j") {
+  bloomHasSceneBloomSceneS(limit: Int, offset: Int, sort: [_Bloom_Scene_Sort!], where: _Bloom_Scene_Where): [_Bloom_Scene_!]! @relationship(subgraph: "Neo4j", type: "_Bloom_HAS_SCENE_", direction: OUT)
   bloomHasSceneBloomSceneSConnection(after: String, first: Int, sort: [_Bloom_Perspective_BloomHasSceneBloomSceneSConnectionSort!], where: _Bloom_Perspective_BloomHasSceneBloomSceneSConnectionWhere): _Bloom_Perspective_BloomHasSceneBloomSceneSConnection!
-  data: String! @introspection
-  id: String! @introspection
-  name: String! @introspection
-  roles: [String!]! @introspection
-  version: String! @introspection
+  data: String!
+  id: String!
+  name: String!
+  roles: [String!]!
+  version: String!
 }
 
 type _Bloom_Perspective_Aggregate {
@@ -6087,17 +6091,17 @@ input _Bloom_Perspective_Sort {
 input _Bloom_Perspective_UpdateInput {
   bloomHasSceneBloomSceneS: [_Bloom_Perspective_BloomHasSceneBloomSceneSUpdateFieldInput!]
   data: StringScalarMutations
-  data_SET: String
+  data_SET: String @deprecated(reason: "Please use the generic mutation 'data: { set: ... } }' instead.")
   id: StringScalarMutations
-  id_SET: String
+  id_SET: String @deprecated(reason: "Please use the generic mutation 'id: { set: ... } }' instead.")
   name: StringScalarMutations
-  name_SET: String
+  name_SET: String @deprecated(reason: "Please use the generic mutation 'name: { set: ... } }' instead.")
   roles: ListStringMutations
   roles_POP: Int @deprecated(reason: "Please use the generic mutation 'roles: { pop: ... } }' instead.")
   roles_PUSH: [String!] @deprecated(reason: "Please use the generic mutation 'roles: { push: ... } }' instead.")
-  roles_SET: [String!]
+  roles_SET: [String!] @deprecated(reason: "Please use the generic mutation 'roles: { set: ... } }' instead.")
   version: StringScalarMutations
-  version_SET: String
+  version_SET: String @deprecated(reason: "Please use the generic mutation 'version: { set: ... } }' instead.")
 }
 
 input _Bloom_Perspective_Where {
@@ -6191,25 +6195,25 @@ type _Bloom_Perspective__Bloom_Scene_BloomHasSceneBloomSceneSNodeAggregateSelect
   visualisation: StringAggregateSelection!
 }
 
-type _Bloom_Scene_ @introspection @node {
-  bloomPerspectiveSBloomHasScene(limit: Int, offset: Int, sort: [_Bloom_Perspective_Sort!], where: _Bloom_Perspective_Where): [_Bloom_Perspective_!]! @introspection @relationship(type: "_Bloom_HAS_SCENE_", direction: IN)
+type _Bloom_Scene_ @node(subgraph: "Neo4j") {
+  bloomPerspectiveSBloomHasScene(limit: Int, offset: Int, sort: [_Bloom_Perspective_Sort!], where: _Bloom_Perspective_Where): [_Bloom_Perspective_!]! @relationship(subgraph: "Neo4j", type: "_Bloom_HAS_SCENE_", direction: IN)
   bloomPerspectiveSBloomHasSceneConnection(after: String, first: Int, sort: [_Bloom_Scene_BloomPerspectiveSBloomHasSceneConnectionSort!], where: _Bloom_Scene_BloomPerspectiveSBloomHasSceneConnectionWhere): _Bloom_Scene_BloomPerspectiveSBloomHasSceneConnection!
-  createdAt: BigInt! @introspection
-  createdBy: String! @introspection
-  filters: String! @introspection
-  gds: String! @introspection
-  id: String! @introspection
-  lastModified: BigInt! @introspection
-  name: String! @introspection
-  nodes: String! @introspection
-  numOfNodes: BigInt! @introspection
-  numOfRels: BigInt! @introspection
-  ranges: String! @introspection
-  relationships: String! @introspection
-  roles: [String!]! @introspection
-  style: String! @introspection
-  version: String! @introspection
-  visualisation: String! @introspection
+  createdAt: BigInt!
+  createdBy: String!
+  filters: String!
+  gds: String!
+  id: String!
+  lastModified: BigInt!
+  name: String!
+  nodes: String!
+  numOfNodes: BigInt!
+  numOfRels: BigInt!
+  ranges: String!
+  relationships: String!
+  roles: [String!]!
+  style: String!
+  version: String!
+  visualisation: String!
 }
 
 type _Bloom_Scene_Aggregate {
@@ -6487,45 +6491,45 @@ input _Bloom_Scene_UpdateInput {
   createdAt: BigIntScalarMutations
   createdAt_DECREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'createdAt: { decrement: ... } }' instead.")
   createdAt_INCREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'createdAt: { increment: ... } }' instead.")
-  createdAt_SET: BigInt
+  createdAt_SET: BigInt @deprecated(reason: "Please use the generic mutation 'createdAt: { set: ... } }' instead.")
   createdBy: StringScalarMutations
-  createdBy_SET: String
+  createdBy_SET: String @deprecated(reason: "Please use the generic mutation 'createdBy: { set: ... } }' instead.")
   filters: StringScalarMutations
-  filters_SET: String
+  filters_SET: String @deprecated(reason: "Please use the generic mutation 'filters: { set: ... } }' instead.")
   gds: StringScalarMutations
-  gds_SET: String
+  gds_SET: String @deprecated(reason: "Please use the generic mutation 'gds: { set: ... } }' instead.")
   id: StringScalarMutations
-  id_SET: String
+  id_SET: String @deprecated(reason: "Please use the generic mutation 'id: { set: ... } }' instead.")
   lastModified: BigIntScalarMutations
   lastModified_DECREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'lastModified: { decrement: ... } }' instead.")
   lastModified_INCREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'lastModified: { increment: ... } }' instead.")
-  lastModified_SET: BigInt
+  lastModified_SET: BigInt @deprecated(reason: "Please use the generic mutation 'lastModified: { set: ... } }' instead.")
   name: StringScalarMutations
-  name_SET: String
+  name_SET: String @deprecated(reason: "Please use the generic mutation 'name: { set: ... } }' instead.")
   nodes: StringScalarMutations
-  nodes_SET: String
+  nodes_SET: String @deprecated(reason: "Please use the generic mutation 'nodes: { set: ... } }' instead.")
   numOfNodes: BigIntScalarMutations
   numOfNodes_DECREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'numOfNodes: { decrement: ... } }' instead.")
   numOfNodes_INCREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'numOfNodes: { increment: ... } }' instead.")
-  numOfNodes_SET: BigInt
+  numOfNodes_SET: BigInt @deprecated(reason: "Please use the generic mutation 'numOfNodes: { set: ... } }' instead.")
   numOfRels: BigIntScalarMutations
   numOfRels_DECREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'numOfRels: { decrement: ... } }' instead.")
   numOfRels_INCREMENT: BigInt @deprecated(reason: "Please use the relevant generic mutation 'numOfRels: { increment: ... } }' instead.")
-  numOfRels_SET: BigInt
+  numOfRels_SET: BigInt @deprecated(reason: "Please use the generic mutation 'numOfRels: { set: ... } }' instead.")
   ranges: StringScalarMutations
-  ranges_SET: String
+  ranges_SET: String @deprecated(reason: "Please use the generic mutation 'ranges: { set: ... } }' instead.")
   relationships: StringScalarMutations
-  relationships_SET: String
+  relationships_SET: String @deprecated(reason: "Please use the generic mutation 'relationships: { set: ... } }' instead.")
   roles: ListStringMutations
   roles_POP: Int @deprecated(reason: "Please use the generic mutation 'roles: { pop: ... } }' instead.")
   roles_PUSH: [String!] @deprecated(reason: "Please use the generic mutation 'roles: { push: ... } }' instead.")
-  roles_SET: [String!]
+  roles_SET: [String!] @deprecated(reason: "Please use the generic mutation 'roles: { set: ... } }' instead.")
   style: StringScalarMutations
-  style_SET: String
+  style_SET: String @deprecated(reason: "Please use the generic mutation 'style: { set: ... } }' instead.")
   version: StringScalarMutations
-  version_SET: String
+  version_SET: String @deprecated(reason: "Please use the generic mutation 'version: { set: ... } }' instead.")
   visualisation: StringScalarMutations
-  visualisation_SET: String
+  visualisation_SET: String @deprecated(reason: "Please use the generic mutation 'visualisation: { set: ... } }' instead.")
 }
 
 input _Bloom_Scene_Where {

@@ -1,4 +1,4 @@
-import { buildSchema, print } from 'graphql';
+import { buildSchema, extendSchema, parse, print } from 'graphql';
 import {
   composeSubgraphs,
   entityKeyFieldsFromHttpPath,
@@ -214,6 +214,375 @@ describe('Federation Connectors composition', () => {
     expect(sdl).toContain('add(input:');
     expect(sdl).toMatch(/\$args\.input/);
     expect(sdl).not.toMatch(/\$args\.request\b/);
+  });
+
+  it('Neo4j rename uses @node(labels:)/@plural/@alias without Mesh @source', () => {
+    const neo4jSchema = buildSchema(/* GraphQL */ `
+      schema
+        @transport(
+          subgraph: "Movies"
+          kind: "neo4j"
+          location: "neo4j://localhost"
+          options: { database: "neo4j" }
+        ) {
+        query: Query
+      }
+
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        headers: [[String]]
+        options: TransportOptions
+      ) repeatable on SCHEMA
+      scalar TransportOptions
+
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
+      directive @relationship(
+        subgraph: String
+        type: String
+        direction: _RelationDirections
+        properties: String
+      ) on FIELD_DEFINITION
+      enum _RelationDirections {
+        IN
+        OUT
+      }
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      type Movie @node(subgraph: "Movies") {
+        title: String
+        actors: [Person!]! @relationship(subgraph: "Movies", type: "ACTED_IN", direction: IN)
+        similar(title: String!): [Movie!]!
+          @cypher(
+            subgraph: "Movies"
+            statement: """
+            MATCH (this:Movie)
+            WHERE this.title CONTAINS $title
+            RETURN this AS m
+            """
+            columnName: "m"
+          )
+      }
+
+      type Person @node(subgraph: "Movies") {
+        name: String
+      }
+
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'Movies',
+        schema: neo4jSchema,
+        transforms: [
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => (typeName === 'Movie' ? 'Film' : typeName),
+            fieldRenamer: ({ typeName, fieldName }) =>
+              (typeName === 'Movie' || typeName === 'Film') && fieldName === 'title'
+                ? 'movieTitle'
+                : fieldName,
+            argRenamer: ({ typeName, fieldName, argName }) =>
+              (typeName === 'Movie' || typeName === 'Film') &&
+              fieldName === 'similar' &&
+              argName === 'title'
+                ? 'needle'
+                : argName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).not.toMatch(/@source\(/);
+    expect(sdl).not.toMatch(/@meshSource\(/);
+    expect(sdl).not.toMatch(/@introspection\b/);
+    expect(sdl).toMatch(/type Film[\s\S]*@node\([^)]*subgraph:\s*"Movies"/);
+    expect(sdl).toMatch(/type Film[\s\S]*@node\([^)]*labels:\s*\["Movie"\]/);
+    expect(sdl).toMatch(/type Film[\s\S]*@plural\([^)]*value:\s*"movies"/);
+    expect(sdl).toMatch(/movieTitle:\s*String\s*@alias\([^)]*property:\s*"title"/);
+    expect(sdl).toContain('actors:');
+    expect(sdl).not.toMatch(/actors:[\s\S]*@alias/);
+    expect(sdl).toContain('similar(needle:');
+    expect(sdl).toMatch(/\$needle\b/);
+    expect(sdl).not.toMatch(/\$title\b/);
+    expect(sdl).toMatch(/movies:\s*\[Film!\]!/);
+  });
+
+  it('Neo4j type rename rewrites @relationship(properties:)', () => {
+    const neo4jSchema = buildSchema(/* GraphQL */ `
+      schema
+        @transport(
+          subgraph: "Movies"
+          kind: "neo4j"
+          location: "neo4j://localhost"
+          options: { database: "neo4j" }
+        ) {
+        query: Query
+      }
+
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        headers: [[String]]
+        options: TransportOptions
+      ) repeatable on SCHEMA
+      scalar TransportOptions
+
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @relationshipProperties(subgraph: String) on OBJECT
+      directive @relationship(
+        subgraph: String
+        type: String
+        direction: _RelationDirections
+        properties: String
+      ) on FIELD_DEFINITION
+      enum _RelationDirections {
+        IN
+        OUT
+      }
+
+      type ActedIn @relationshipProperties(subgraph: "Movies") {
+        role: String
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        title: String
+        actors: [Person!]!
+          @relationship(subgraph: "Movies", type: "ACTED_IN", direction: IN, properties: "ActedIn")
+      }
+
+      type Person @node(subgraph: "Movies") {
+        name: String
+      }
+
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'Movies',
+        schema: neo4jSchema,
+        transforms: [
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => (typeName === 'ActedIn' ? 'Credit' : typeName),
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/type Credit[\s\S]*@relationshipProperties/);
+    expect(sdl).toMatch(/@relationship\([^)]*properties:\s*"Credit"/);
+    expect(sdl).toMatch(/@relationship\([^)]*type:\s*"ACTED_IN"/);
+    expect(sdl).not.toMatch(/properties:\s*"ActedIn"/);
+  });
+
+  it('HTTP @node without Neo4j transport does not stamp Neo4j identity directives', () => {
+    const httpSchema = buildSchema(/* GraphQL */ `
+      schema @transport(subgraph: "Articles", kind: "rest", location: "http://localhost/articles") {
+        query: Query
+      }
+
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        headers: [[String]]
+        options: TransportOptions
+      ) repeatable on SCHEMA
+      scalar TransportOptions
+
+      directive @node(idField: String) on OBJECT
+
+      type Article @node(idField: "id") {
+        title: String
+      }
+
+      type Query {
+        articles: [Article!]!
+      }
+    `);
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'Articles',
+        schema: httpSchema,
+        transforms: [
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => (typeName === 'Article' ? 'Story' : typeName),
+            fieldRenamer: ({ typeName, fieldName }) =>
+              (typeName === 'Article' || typeName === 'Story') && fieldName === 'title'
+                ? 'headline'
+                : fieldName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/type Story[\s\S]*@node\(idField:\s*"id"\)/);
+    expect(sdl).not.toMatch(/@plural\b/);
+    expect(sdl).not.toMatch(/labels:\s*\[/);
+    expect(sdl).toContain('headline:');
+    expect(sdl).not.toMatch(/@alias\b/);
+  });
+
+  it('Neo4j type rename strips consumed @node from extensionASTNodes', () => {
+    const base = buildSchema(/* GraphQL */ `
+      schema
+        @transport(
+          subgraph: "Movies"
+          kind: "neo4j"
+          location: "neo4j://localhost"
+          options: { database: "neo4j" }
+        ) {
+        query: Query
+      }
+
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        headers: [[String]]
+        options: TransportOptions
+      ) repeatable on SCHEMA
+      scalar TransportOptions
+
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @plural(subgraph: String, value: String!) on OBJECT
+
+      type Movie {
+        title: String
+      }
+
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const neo4jSchema = extendSchema(
+      base,
+      parse(/* GraphQL */ `
+        extend type Movie @node(subgraph: "Movies") {
+          year: Int
+        }
+      `),
+    );
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'Movies',
+        schema: neo4jSchema,
+        transforms: [
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => (typeName === 'Movie' ? 'Film' : typeName),
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    const filmDefs = annotated[0].typeDefs.definitions.filter(
+      def =>
+        (def.kind === 'ObjectTypeDefinition' || def.kind === 'ObjectTypeExtension') &&
+        def.name.value === 'Film',
+    );
+    const nodeApps = filmDefs.flatMap(
+      def => ('directives' in def && def.directives?.filter(d => d.name.value === 'node')) || [],
+    );
+    expect(nodeApps).toHaveLength(1);
+    expect(sdl).toMatch(/type Film[\s\S]*@node\([^)]*labels:\s*\["Movie"\]/);
+    expect(sdl).toMatch(/type Film[\s\S]*@plural\([^)]*value:\s*"movies"/);
+    expect(sdl).not.toMatch(/extend type Film[\s\S]*@node\b/);
+  });
+
+  it('Neo4j consecutive type renames keep a single @relationship(properties:)', () => {
+    const neo4jSchema = buildSchema(/* GraphQL */ `
+      schema
+        @transport(
+          subgraph: "Movies"
+          kind: "neo4j"
+          location: "neo4j://localhost"
+          options: { database: "neo4j" }
+        ) {
+        query: Query
+      }
+
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        headers: [[String]]
+        options: TransportOptions
+      ) repeatable on SCHEMA
+      scalar TransportOptions
+
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @relationshipProperties(subgraph: String) on OBJECT
+      directive @relationship(
+        subgraph: String
+        type: String
+        direction: _RelationDirections
+        properties: String
+      ) on FIELD_DEFINITION
+      enum _RelationDirections {
+        IN
+        OUT
+      }
+
+      type ActedIn @relationshipProperties(subgraph: "Movies") {
+        role: String
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        title: String
+        actors: [Person!]!
+          @relationship(subgraph: "Movies", type: "ACTED_IN", direction: IN, properties: "ActedIn")
+      }
+
+      type Person @node(subgraph: "Movies") {
+        name: String
+      }
+
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'Movies',
+        schema: neo4jSchema,
+        transforms: [
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => (typeName === 'ActedIn' ? 'Credit' : typeName),
+          }),
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => (typeName === 'Credit' ? 'Role' : typeName),
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/type Role[\s\S]*@relationshipProperties/);
+    expect(sdl).not.toMatch(/properties:\s*"ActedIn"/);
+    expect(sdl).not.toMatch(/properties:\s*"Credit"/);
+    const movie = annotated[0].typeDefs.definitions.find(
+      def => def.kind === 'ObjectTypeDefinition' && def.name.value === 'Movie',
+    );
+    expect(movie && movie.kind === 'ObjectTypeDefinition').toBe(true);
+    if (movie && movie.kind === 'ObjectTypeDefinition') {
+      const actors = movie.fields?.find(field => field.name.value === 'actors');
+      const relationshipDirs =
+        actors?.directives?.filter(directive => directive.name.value === 'relationship') ?? [];
+      expect(relationshipDirs).toHaveLength(1);
+      const properties = relationshipDirs[0].arguments?.find(
+        arg => arg.name.value === 'properties',
+      );
+      expect(properties?.value).toMatchObject({ kind: 'StringValue', value: 'Role' });
+    }
   });
 
   it('lifts transport/source from extras onto schema and drops the wrapper', () => {

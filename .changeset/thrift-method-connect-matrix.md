@@ -12,7 +12,7 @@ If you load Thrift from IDL and **recompose** after upgrading, you are mostly do
 - **Breaking:** `@fieldTypeMap` / `@thrift__method` / `topTypeMap` / `clientAnnotations` are removed (no dual-read). Regenerate composed SDL.
 - **Default:** binary HTTP Thrift via slim `@transport` + per-field `@thrift__rpc` (readable compact `args` / `selection`).
 - **Opt-in:** `protocol: 'json'` emits Federation `@source` / `@connect` (TJSON) for Hive and Apollo Router.
-- **Optional:** `ignoreExceptions`, `entityMethods`, `serviceName`.
+- **Optional:** `ignoreErrorResponses`, `entityMethods`, `serviceName`.
 
 ### Why
 
@@ -50,12 +50,12 @@ Emits `@source` + `@connect` (TJSON) instead of thrift `@transport`:
 - `isSuccess` / `errors` so declared throws and `TApplicationException` are not silent nulls; ONEWAY omits `isSuccess`
 - Bool scalars encode as TJSON integers `0`/`1` (`->match`). Enum args/selections bake name <-> i32 `->match` (root scalars, root list/set, and list/set enum fields inside structs, including union `$({ … })` selections).
 - **Fail at generate** (prefer scalar/struct args, binary, or hand-author `@connect`; Hive Mesh supports `->concat`): `map<*, bool>`, **list/set args**, and maps whose values are struct/list/set/map (Connectors cannot rewrite map values / LitArray has no element spread).
-- Void/ONEWAY `@connect(selection:)` uses `$(null)` (bare `null` is a field path). `ignoreExceptions: false` unions emit a single `$({ … })` selection; void success is `ok: $->get(4)->size->eq(0)`; struct success stamps `field0: $->get(4)->get("0")->ne(null)` and both the loader and REST `processDirectives` resolveType treat that stamp as authoritative when present (Hive may keep `value: { left: undefined }` / `message: undefined` on replies). Declared throws also stamp `__throw_<TypeName>` from the reply field id; shared exception field projections gate on throw-field presence then coalesce with `$(a ?? b)` so an absent throw’s empty `$({…})` projection cannot hide the active exception’s struct/scalar value. Binary still uses `__typename`. Nested enum containers (e.g. `list<list<State>>`) fail at generate on the binary path (same spirit as nested struct containers) until name↔i32 `->match` can be preserved.
+- Void/ONEWAY `@connect(selection:)` uses `$(null)` (bare `null` is a field path). `ignoreErrorResponses: false` unions emit a single `$({ … })` selection; void success is `ok: $->get(4)->size->eq(0)`; struct success stamps `field0: $->get(4)->get("0")->ne(null)` and both the loader and REST `processDirectives` resolveType treat that stamp as authoritative when present (Hive may keep `value: { left: undefined }` / `message: undefined` on replies). Declared throws also stamp `__throw_<TypeName>` from the reply field id; shared exception field projections gate on throw-field presence then coalesce with `$(a ?? b)` so an absent throw’s empty `$({…})` projection cannot hide the active exception’s struct/scalar value. Binary still uses `__typename`. Nested enum containers (e.g. `list<list<State>>`) fail at generate on the binary path (same spirit as nested struct containers) until name↔i32 `->match` can be preserved.
 
 #### Exceptions
 
 1. **`TApplicationException`:** binary throws; JSON uses `isSuccess` / `errors`.
-2. **IDL `throws`:** `ignoreExceptions` defaults to `true`. Set `false` for GraphQL unions + `@thrift__rpc(throws:)`. Union `resolveType` matches exception members on **defined** field values (not key presence alone).
+2. **IDL `throws`:** `ignoreErrorResponses` defaults to `true`. Set `false` for GraphQL unions + `@thrift__rpc(throws:)`. Union `resolveType` matches exception members on **defined** field values (not key presence alone).
 
 #### Transforms / Connectors eval
 
@@ -68,7 +68,7 @@ Emits `@source` + `@connect` (TJSON) instead of thrift `@transport`:
 2. Replace hand-written `@fieldTypeMap` / `@thrift__method` + transport `options` with `@thrift__rpc` or `protocol: 'json'`.
 3. Keep binary `@transport` to `location` + `headers` only.
 4. Single-service: no `service:` required on `@thrift__rpc`. TJSON multiplex: set `serviceName`.
-5. Optional: `ignoreExceptions: false`; `entityMethods: ['getX']` only for Federation entity resolvers.
+5. Optional: `ignoreErrorResponses: false`; `entityMethods: ['getX']` only for Federation entity resolvers.
 6. If IDL uses list/set args or composite/bool map values on the JSON path, switch those RPCs to binary, change the IDL, or hand-author the `@connect` body.
 
 **Before** (old composed field):
@@ -96,7 +96,7 @@ add(request: AddRequestInput): Int @thrift__rpc(
 
 ### Packages
 
-- `@omnigraph/thrift` — loader emit; `protocol`, `entityMethods`, `ignoreExceptions`, `serviceName`
+- `@omnigraph/thrift` — loader emit; `protocol`, `entityMethods`, `ignoreErrorResponses`, `serviceName`
 - `@graphql-mesh/transport-thrift` — execute compact mapping (incl. `i32->match` coerce), ONEWAY, throws unions
 - `@graphql-mesh/transport-connect` — Connectors helpers for TJSON / `$()` / match wildcards
 - `@graphql-mesh/fusion-composition` — `$args` rewrite for `@thrift__rpc` and HTTP paths

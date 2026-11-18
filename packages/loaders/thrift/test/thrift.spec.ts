@@ -126,7 +126,7 @@ describe('thrift', () => {
     expect(sdl).toMatch(/@thrift__rpc\([\s\S]*entity:\s*true/);
   });
 
-  it('ignoreExceptions: false models throws as union', async () => {
+  it('ignoreErrorResponses: false models throws as union', async () => {
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
       subgraphName: 'Twitter',
       source: './fixtures/twitter.thrift',
@@ -134,7 +134,7 @@ describe('thrift', () => {
       endpoint: 'http://localhost:4000/twitter',
       serviceName: 'Twitter',
       protocol: 'binary',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const sdl = printSchemaWithDirectives(schema);
     expect(sdl).toMatch(/type TwitterUnavailable/);
@@ -180,7 +180,7 @@ describe('thrift', () => {
     expect(postTweetConnect.isSuccess).toContain('->get("0")->ne(null)');
   });
 
-  it('void + throws + ignoreExceptions:true requires empty TJSON result', async () => {
+  it('void + throws + ignoreErrorResponses:true requires empty TJSON result', async () => {
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
       subgraphName: 'VoidThrows',
       source: './fixtures/void_throws.thrift',
@@ -192,14 +192,14 @@ describe('thrift', () => {
     expect(connect.isSuccess).toBe('$->get(2)->eq(2)->and($->get(4)->size->eq(0))');
   });
 
-  it('void + throws + ignoreExceptions:false uses ok: Boolean! success member', async () => {
+  it('void + throws + ignoreErrorResponses:false uses ok: Boolean! success member', async () => {
     const binary = await loadNonExecutableGraphQLSchemaFromIDL({
       subgraphName: 'VoidThrows',
       source: './fixtures/void_throws.thrift',
       baseDir: __dirname,
       endpoint: 'http://localhost:4000/void-throws',
       protocol: 'binary',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const binarySdl = printSchemaWithDirectives(binary);
     expect(binarySdl).toMatch(/type FlushSuccess[\s\S]*ok:\s*Boolean!/);
@@ -211,7 +211,7 @@ describe('thrift', () => {
       baseDir: __dirname,
       endpoint: 'http://localhost:4000/void-throws',
       protocol: 'json',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const jsonSdl = printSchemaWithDirectives(json);
     expect(jsonSdl).toMatch(/type FlushSuccess[\s\S]*ok:\s*Boolean!/);
@@ -285,7 +285,7 @@ describe('thrift', () => {
     expect(args).toMatch(/7\(i32\):\s*value/);
   });
 
-  it('TJSON ignoreExceptions:false unions emit $({…}) selection', async () => {
+  it('TJSON ignoreErrorResponses:false unions emit $({…}) selection', async () => {
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
       subgraphName: 'Twitter',
       source: './fixtures/twitter.thrift',
@@ -293,7 +293,7 @@ describe('thrift', () => {
       endpoint: 'http://localhost:4000/twitter',
       serviceName: 'Twitter',
       protocol: 'json',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const postTweet = (schema.getQueryType()!.getFields().postTweet.extensions as any).directives
       .connect.selection as string;
@@ -356,7 +356,7 @@ describe('thrift', () => {
       baseDir: __dirname,
       endpoint: 'http://localhost:4000/enum',
       protocol: 'json',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const selection = (schema.getQueryType()!.getFields().getStatusBagOrThrow.extensions as any)
       .directives.connect.selection as string;
@@ -375,7 +375,7 @@ describe('thrift', () => {
       baseDir: __dirname,
       endpoint: 'http://localhost:4000/shared-throw',
       protocol: 'json',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const go = schema.getQueryType()!.getFields().go;
     const selection = (go.extensions as any).directives.connect.selection as string;
@@ -508,7 +508,7 @@ describe('thrift', () => {
       baseDir: __dirname,
       endpoint: 'http://localhost:4000/shared-throw',
       protocol: 'json',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const selection = (schema.getQueryType()!.getFields().go.extensions as any).directives.connect
       .selection as string;
@@ -544,7 +544,7 @@ describe('thrift', () => {
       baseDir: __dirname,
       endpoint: 'http://localhost:4000/shared-throw-struct',
       protocol: 'json',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const go = schema.getQueryType()!.getFields().go;
     const selection = (go.extensions as any).directives.connect.selection as string;
@@ -604,7 +604,7 @@ describe('thrift', () => {
       baseDir: __dirname,
       endpoint: 'http://localhost:4000/value-collision',
       protocol: 'json',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const go = schema.getQueryType()!.getFields().go;
     const selection = (go.extensions as any).directives.connect.selection as string;
@@ -650,7 +650,7 @@ describe('thrift', () => {
       baseDir: __dirname,
       endpoint: 'http://localhost:4000/list-set-throws',
       protocol: 'json',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const itemsSel = (schema.getQueryType()!.getFields().items.extensions as any).directives.connect
       .selection as string;
@@ -720,7 +720,7 @@ describe('thrift', () => {
       baseDir: __dirname,
       endpoint: 'http://localhost:4000/list-nested-struct-throws',
       protocol: 'json',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const selection = (schema.getQueryType()!.getFields().items.extensions as any).directives
       .connect.selection as string;
@@ -853,7 +853,7 @@ describe('thrift', () => {
       baseDir: __dirname,
       endpoint: 'http://localhost:4000/ok-collision',
       protocol: 'json',
-      ignoreExceptions: false,
+      ignoreErrorResponses: false,
     });
     const flush = schema.getQueryType()!.getFields().flush;
     const selection = (flush.extensions as any).directives.connect.selection as string;

@@ -21,22 +21,31 @@ npm i @omnigraph/neo4j
 
 Then you can import the library in your configuration file, and define your Neo4j source;
 
-```ts filename="mesh.config.ts" {2,7-9}
+```ts filename="mesh.config.ts" {2,7-12}
 import { defineConfig } from '@graphql-mesh/compose-cli'
-import { loadNeo4jSubgraph } from '@omnigraph/neo4j'
+import { loadNeo4JSubgraph } from '@omnigraph/neo4j'
 
 export const composeConfig = defineConfig({
   subgraphs: [
     {
-      sourceHandler: loadNeo4jSubgraph('MyNeo4j', {
-        url: 'neo4j://localhost',
-        username: 'neo4j',
-        password: 'MY_PASSWORD'
+      sourceHandler: loadNeo4JSubgraph('MyNeo4j', {
+        endpoint: 'neo4j://localhost',
+        auth: {
+          type: 'basic',
+          username: 'neo4j',
+          password: 'MY_PASSWORD'
+        }
       })
     }
   ]
 })
 ```
+
+Omit database introspection by passing author Neo4j GraphQL SDL (`@node`, `@relationship`,
+`@cypher`, `@alias`, …) as `typeDefs`. Prefer `@node(subgraph: "MyNeo4j")` (and the same on other
+Neo4j directives) when you compose multiple Neo4j sources; the loader stamps `subgraph` when it is
+missing. Rename transforms keep database identity via `@node(labels:)` / `@alias(property:)` (not
+Mesh `@source` / `@meshSource`).
 
 <Callout>
   [You can find a working example here](
