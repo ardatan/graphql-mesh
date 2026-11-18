@@ -35,14 +35,14 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@envelop/core": "^6.0.0",
+    "@envelop/core": "^6.0.1",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/utils": "^13.2.2",
     "graphql-jit": "^0.8.10",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway-runtime": "^2.13.4",
+    "@graphql-hive/gateway-runtime": "patch:@graphql-hive/gateway-runtime@npm%3A2.13.5#~/.yarn/patches/@graphql-hive-gateway-runtime-npm-2.13.5-be6edfcd35.patch",
     "graphql": "16.14.0"
   },
   "publishConfig": {

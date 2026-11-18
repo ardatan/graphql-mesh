@@ -35,17 +35,17 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@envelop/rate-limiter": "^11.0.0",
+    "@envelop/rate-limiter": "^11.0.1",
     "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/utils": "^13.2.2",
-    "@whatwg-node/promise-helpers": "^2.0.1",
+    "@whatwg-node/promise-helpers": "^2.0.2",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@envelop/core": "^6.0.0",
+    "@envelop/core": "^6.0.1",
     "graphql": "16.14.0"
   },
   "publishConfig": {

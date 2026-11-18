@@ -63,14 +63,14 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway-runtime": "^2.13.4",
+    "@graphql-hive/gateway-runtime": "patch:@graphql-hive/gateway-runtime@npm%3A2.13.5#~/.yarn/patches/@graphql-hive-gateway-runtime-npm-2.13.5-be6edfcd35.patch",
     "@graphql-mesh/fusion-runtime": "patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch",
     "@graphql-tools/delegate": "^12.3.3",
     "@graphql-tools/executor": "4.1.8",
     "@repeaterjs/repeater": "3.1.0",
     "@types/minimatch": "6.0.0",
     "@types/pluralize": "^0.0.33",
-    "@whatwg-node/promise-helpers": "^2.0.1",
+    "@whatwg-node/promise-helpers": "^2.0.2",
     "graphql": "16.14.0"
   },
   "publishConfig": {

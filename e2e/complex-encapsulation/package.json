@@ -3,11 +3,11 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.15.7",
+    "@graphql-hive/gateway": "^2.15.8",
     "@graphql-mesh/compose-cli": "workspace:*",
     "@omnigraph/openapi": "workspace:*",
     "fets": "^0.8.13",
     "graphql": "16.14.0",
-    "graphql-yoga": "^6.0.1"
+    "graphql-yoga": "^6.1.0"
   }
 }

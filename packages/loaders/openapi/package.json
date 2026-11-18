@@ -52,7 +52,7 @@
     "@whatwg-node/fetch": "^0.12.1",
     "fets": "0.8.13",
     "graphql": "16.14.0",
-    "graphql-yoga": "^6.0.1",
+    "graphql-yoga": "^6.1.0",
     "json-bigint-patch": "0.0.9"
   },
   "publishConfig": {

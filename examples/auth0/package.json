@@ -9,8 +9,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@envelop/auth0": "^10.0.0",
-    "@envelop/core": "^6.0.0",
+    "@envelop/auth0": "^10.0.1",
+    "@envelop/core": "^6.0.1",
     "@graphql-mesh/cli": "0.103.4",
     "@graphql-mesh/json-schema": "0.112.6",
     "@graphql-mesh/plugin-operation-field-permissions": "0.107.3",

@@ -47,7 +47,7 @@
     "@graphql-tools/merge": "^10.0.9",
     "@graphql-tools/url-loader": "^10.0.9",
     "@graphql-tools/utils": "^13.2.2",
-    "@whatwg-node/promise-helpers": "^2.0.1",
+    "@whatwg-node/promise-helpers": "^2.0.2",
     "lodash.get": "^4.4.2",
     "tslib": "^2.4.0"
   },

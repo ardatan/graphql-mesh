@@ -35,8 +35,8 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@envelop/core": "^6.0.0",
-    "@envelop/operation-field-permissions": "^10.0.0",
+    "@envelop/core": "^6.0.1",
+    "@envelop/operation-field-permissions": "^10.0.1",
     "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/types": "^0.107.3",
     "tslib": "^2.4.0"
