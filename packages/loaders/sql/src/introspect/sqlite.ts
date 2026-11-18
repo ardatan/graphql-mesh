@@ -20,7 +20,8 @@ export interface IntrospectSqliteOpts {
    */
   db: string;
   /**
-   * Base directory for relative paths.
+   * Base directory for relative paths. When omitted, relative `db` values stay
+   * as given (Node resolves them from the process cwd).
    *
    * @example process.cwd()
    */

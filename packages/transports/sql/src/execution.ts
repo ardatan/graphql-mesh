@@ -77,7 +77,8 @@ export interface GetSqlExecutorOpts {
    */
   subgraph: GraphQLSchema;
   /**
-   * Base directory for relative sqlite `@transport(location)` paths.
+   * Base directory for relative sqlite `@transport(location)` paths. When
+   * omitted, relative locations stay as given (see {@link createSqlClient}).
    *
    * @example process.cwd()
    */

@@ -49,8 +49,9 @@ export interface IntrospectPostgresOpts {
    */
   excludeTables?: string[];
   /**
-   * Postgres schema / `search_path` (default `public`).
+   * Postgres schema / `search_path`.
    *
+   * @default 'public'
    * @example 'app'
    */
   schema?: string;

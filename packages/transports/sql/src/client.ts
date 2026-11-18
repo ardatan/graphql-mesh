@@ -46,14 +46,17 @@ export interface CreateSqlClientOptions extends SqlTransportOptions {
    */
   location: string;
   /**
-   * Base directory for relative sqlite paths.
+   * Base directory for relative sqlite paths. When omitted, relative locations
+   * stay as given (Node/Bun resolve them from the process cwd).
    *
    * @example process.cwd()
    */
   cwd?: string;
   /**
    * Force Node drivers (`pg` / `mysql2` / `node:sqlite`) even when `Bun.SQL` is present.
+   * When omitted / false, prefers `Bun.SQL` if available.
    *
+   * @default false
    * @example true
    */
   preferNode?: boolean;

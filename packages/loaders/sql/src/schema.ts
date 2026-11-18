@@ -114,8 +114,9 @@ export interface LoadSqlSubgraphOpts extends Pick<
    */
   endpoint?: string;
   /**
-   * Base directory for relative sqlite paths (defaults to `process.cwd()`).
+   * Base directory for relative sqlite paths.
    *
+   * @default process.cwd()
    * @example '/app/data'
    */
   cwd?: string;

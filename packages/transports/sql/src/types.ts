@@ -52,7 +52,8 @@ export interface SqlSoftDeleteOptions {
    */
   column: string;
   /**
-   * Limit soft-delete to these SQL table names; omit = every `@sql` table.
+   * Limit soft-delete to these SQL table names. When omitted, every `@sql` table
+   * participates; a defined list (including `[]`) is an allowlist only.
    *
    * @example ['albums', 'tracks']
    */
@@ -69,8 +70,9 @@ export interface SqlSoftDeleteOptions {
  */
 export interface SqlSslOptions {
   /**
-   * Verify TLS certificates (default true when SSL is on).
+   * Verify TLS certificates when SSL is on.
    *
+   * @default true
    * @example false
    */
   rejectUnauthorized?: boolean;
@@ -108,19 +110,22 @@ export interface SqlTransportOptions {
    */
   adapter?: SqlAdapter;
   /**
-   * Max pool size (default 10). Maps to Bun `max`, mysql2 `connectionLimit`, pg `max`.
+   * Max pool size. Maps to Bun `max`, mysql2 `connectionLimit`, pg `max`.
    *
+   * @default 10
    * @example 20
    */
   max?: number;
   /**
    * Idle connection lifetime in seconds (`0` = off). Bun `idleTimeout`.
+   * When omitted, the driver / Bun default applies.
    *
    * @example 30
    */
   idleTimeout?: number;
   /**
-   * Seconds to wait for a new connection (default 30). Bun `connectionTimeout`.
+   * Seconds to wait for a new connection. Bun `connectionTimeout`.
+   * When omitted, the driver / Bun default applies.
    *
    * @example 10
    */
@@ -139,9 +144,10 @@ export interface SqlTransportOptions {
    */
   ssl?: SqlSslOptions;
   /**
-   * Postgres schema / `search_path` (default `public`). Used for introspection
-   * and `@dataplan/pg` table identity (`schema.table`). Shared pools bind one
-   * schema only.
+   * Postgres schema / `search_path`. Used for introspection and `@dataplan/pg`
+   * table identity (`schema.table`). Shared pools bind one schema only.
+   * When omitted, introspection still uses `public`; runtime `SET search_path`
+   * runs only when this option is provided.
    *
    * @example 'app'
    */
