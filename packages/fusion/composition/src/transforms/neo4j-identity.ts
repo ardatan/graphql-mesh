@@ -305,7 +305,11 @@ export function rewriteCypherParamNames(
     if (c === '$') {
       const start = i;
       i++;
-      // `$`title`` — backtick-delimited parameter name.
+      // Cypher allows whitespace between `$` and the parameter name (`$ `title``).
+      while (i < statement.length && /[ \t\r\n\f]/.test(statement[i])) {
+        i++;
+      }
+      // `$`title`` / `$ `title`` — backtick-delimited parameter name.
       if (statement[i] === '`') {
         i++;
         let name = '';

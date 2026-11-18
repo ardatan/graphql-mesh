@@ -1204,6 +1204,13 @@ WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
     expect(rewriteCypherParamNames('RETURN $`title` AS n', new Map([['title', 'needle']]))).toBe(
       'RETURN $needle AS n',
     );
+    expect(rewriteCypherParamNames('RETURN $ `title` AS n', new Map([['title', 'needle']]))).toBe(
+      'RETURN $needle AS n',
+    );
+    // Standalone backtick identifiers are not parameters.
+    expect(rewriteCypherParamNames('RETURN `title` AS n', new Map([['title', 'needle']]))).toBe(
+      'RETURN `title` AS n',
+    );
   });
 
   it('rewrites @relationship(properties:) through type rename map', async () => {

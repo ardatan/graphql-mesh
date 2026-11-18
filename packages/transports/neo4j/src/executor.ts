@@ -402,6 +402,22 @@ export function extractNeo4jModelTypeDefs(
   }
 
   // Expand authored cypher output object graphs (fields → nested objects/enums/inputs).
+  // Only walk fields that survive ownership filtering so foreign unions/members are not kept.
+  const authoredOutputReferrers = new Map<string, string[]>();
+  for (const [typeName, fields] of retainedFieldsByType) {
+    for (const field of fields) {
+      if (!hasDirective(field, 'cypher')) {
+        continue;
+      }
+      const returnName = namedTypeNameFromTypeNode(field.type);
+      if (!returnName || !authoredOutputTypeNames.has(returnName)) {
+        continue;
+      }
+      const refs = authoredOutputReferrers.get(returnName) || [];
+      refs.push(`${typeName}.${field.name.value}`);
+      authoredOutputReferrers.set(returnName, refs);
+    }
+  }
   let authoredGrew = true;
   while (authoredGrew) {
     authoredGrew = false;
@@ -413,6 +429,9 @@ export function extractNeo4jModelTypeDefs(
         continue;
       }
       for (const field of def.fields || []) {
+        if (!fieldOwnedByThisSubgraph(field, subgraphName)) {
+          continue;
+        }
         collectNamedTypesFromField(field, referenced, { includeArgs: true });
         const nested = namedTypeNameFromTypeNode(field.type);
         if (!nested) {
@@ -425,6 +444,9 @@ export function extractNeo4jModelTypeDefs(
           !authoredOutputTypeNames.has(nested)
         ) {
           authoredOutputTypeNames.add(nested);
+          const refs = authoredOutputReferrers.get(nested) || [];
+          refs.push(`${def.name.value}.${field.name.value}`);
+          authoredOutputReferrers.set(nested, refs);
           authoredGrew = true;
         }
       }
@@ -475,6 +497,13 @@ export function extractNeo4jModelTypeDefs(
             const authoredFields = (authored.fields || []).filter(field =>
               fieldOwnedByThisSubgraph(field, subgraphName),
             );
+            if (!authoredFields.length) {
+              const refs =
+                authoredOutputReferrers.get(def.name.value)?.join(', ') || 'unknown field';
+              throw new Error(
+                `Neo4j model extract: Cypher return type "${def.name.value}" has no fields owned by subgraph "${subgraphName ?? ''}" (referenced from ${refs})`,
+              );
+            }
             if (authoredFields.length !== (authored.fields || []).length) {
               authored = { ...authored, fields: authoredFields };
             }

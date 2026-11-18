@@ -25,8 +25,12 @@ describe('extractNeo4jModelTypeDefs', () => {
         needle: String!
       }
 
+      input CountCriteria {
+        min: Int!
+      }
+
       type Stats {
-        count(criteria: SearchCriteria!): Int!
+        count(criteria: CountCriteria!): Int!
       }
 
       type Point {
@@ -67,8 +71,9 @@ describe('extractNeo4jModelTypeDefs', () => {
 
     expect(sdl).toMatch(/interface Production/);
     expect(sdl).toMatch(/input SearchCriteria/);
+    expect(sdl).toMatch(/input CountCriteria/);
     expect(sdl).toMatch(/type Stats/);
-    expect(sdl).toMatch(/count\(criteria: SearchCriteria!\)/);
+    expect(sdl).toMatch(/count\(criteria: CountCriteria!\)/);
     expect(sdl).toMatch(/type Movie implements Production/);
     expect(sdl).toMatch(/location:\s*Point/);
     expect(sdl).toMatch(/similar\(criteria: SearchCriteria!\)/);
@@ -125,6 +130,77 @@ describe('extractNeo4jModelTypeDefs', () => {
     expect(person && person.kind === Kind.OBJECT_TYPE_DEFINITION).toBe(true);
     if (person && person.kind === Kind.OBJECT_TYPE_DEFINITION) {
       expect(person.directives?.some(d => d.name.value === 'node')).toBe(false);
+      const fieldNames = (person.fields || []).map(field => field.name.value);
+      expect(fieldNames).toContain('name');
+      expect(fieldNames).not.toContain('bio');
     }
+  });
+
+  it('drops foreign-only deps on authored outputs; errors when the projection is empty', () => {
+    const withForeignUnion = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      union Credit = Actor | Director
+
+      type Actor @node(subgraph: "People") {
+        name: String!
+      }
+
+      type Director @node(subgraph: "People") {
+        name: String!
+      }
+
+      type Person {
+        name: String!
+        credit: Credit @cypher(subgraph: "People", statement: "RETURN 1", columnName: "x")
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        title: String!
+        featured: Person! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+
+      type Query {
+        movies: [Movie!]! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+    `);
+    const extracted = extractNeo4jModelTypeDefs(withForeignUnion, 'Movies');
+    const sdl = print(extracted);
+    expect(sdl).toMatch(/type Person/);
+    expect(sdl).toMatch(/name:\s*String!/);
+    expect(sdl).not.toMatch(/credit:/);
+    expect(sdl).not.toMatch(/union Credit/);
+    expect(sdl).not.toMatch(/type Actor/);
+    expect(sdl).not.toMatch(/type Director/);
+
+    const emptyProjection = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      type Person {
+        name: String! @alias(subgraph: "People", property: "full_name")
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        featured: Person! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+
+      type Query {
+        movies: [Movie!]! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+    `);
+    expect(() => extractNeo4jModelTypeDefs(emptyProjection, 'Movies')).toThrow(
+      /Movie\.featured.*Person|Person.*Movie\.featured/,
+    );
   });
 });

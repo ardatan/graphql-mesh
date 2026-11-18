@@ -456,4 +456,43 @@ describe('Naming Convention', () => {
     expect(field).toBeDefined();
     expect(getDirectiveExtensions(field)?.alias).toBeUndefined();
   });
+
+  it('keeps Neo4j transport gating when fieldNames nests another transform call', () => {
+    const ordinarySchema = buildSchema(/* GraphQL */ `
+      type Movie {
+        release_year: Int
+      }
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    let nestedOnce = false;
+    const transform = createNamingConventionTransform({
+      fieldNames: name => {
+        // Nested call must not clear Neo4j gating for the outer Neo4j schema.
+        if (!nestedOnce) {
+          nestedOnce = true;
+          transform(ordinarySchema, { name: 'Other', schema: ordinarySchema });
+        }
+        return name === 'release_year' ? 'releaseYear' : name;
+      },
+    });
+    const neo4jSchema = buildSchema(/* GraphQL */ `
+      schema @transport(subgraph: "Movies", kind: "neo4j", location: "neo4j://localhost") {
+        query: Query
+      }
+      directive @transport(subgraph: String!, kind: String!, location: String) repeatable on SCHEMA
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
+      type Movie @node(subgraph: "Movies") {
+        release_year: Int
+      }
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const next = transform(neo4jSchema, { name: 'Movies', schema: neo4jSchema });
+    const field = (next.getType('Movie') as GraphQLObjectType).getFields().releaseYear;
+    expect(getDirectiveExtensions(field)?.alias?.[0]?.property).toBe('release_year');
+  });
 });

@@ -128,174 +128,176 @@ export function createNamingConventionTransform(
       ? NamingConventionMap[config.fieldArgumentNames]
       : config.fieldArgumentNames;
 
-  const schemaMapper: SchemaMapper = {};
-  const typeRenameMap = new Map<string, string>();
-  /** Set each transform invocation from `@transport(kind: "neo4j")`. */
-  let neo4jSubgraph = false;
-  if (typeNamesFn) {
-    schemaMapper[MapperKind.TYPE] = type => {
-      if (
-        isSpecifiedScalarType(type) ||
-        isFromGraphQLScalars(type.name) ||
-        CONNECTORS_INPUT_TYPES.has(type.name) ||
-        CONNECTORS_LINKED_SCALARS.has(type.name)
-      ) {
-        return type;
-      }
-      const typeDirectives = getDirectiveExtensions(type);
-      const newName = typeNamesFn(type.name);
-      if (newName === type.name) {
-        return type;
-      }
-      typeRenameMap.set(type.name, newName);
-      const withNeo4jIdentity = neo4jSubgraph
-        ? ensureNeo4jTypeIdentity(typeDirectives, type.name)
-        : typeDirectives;
-      if (withNeo4jIdentity !== typeDirectives && withNeo4jIdentity) {
-        return new (Object.getPrototypeOf(type).constructor)({
-          ...typeConfigWithDirectiveExtensions(type, withNeo4jIdentity),
-          name: newName,
-        });
-      }
-      return new (Object.getPrototypeOf(type).constructor)({
-        ...type.toConfig(),
-        name: newName,
-      });
-    };
-  }
-  /** Type-scoped field renames so `Movie.GET→get` does not rewrite `ConnectHTTP.GET`. */
-  const fieldRenameMap = new Map<string, Map<string, string>>();
-  /** Public `Type.field` → arg rename map (for root-field `$this` args fallback). */
-  const argRenamesByPublicField = new Map<string, Map<string, string>>();
-  if (fieldNamesFn || fieldArgumentNamesFn || enumValuesFn || typeNamesFn) {
-    schemaMapper[MapperKind.FIELD] = (fieldConfig, fieldName, typeName, schema) => {
-      // Keep Connectors HTTP method / baseURL field names intact.
-      const newFieldName = CONNECTORS_INPUT_TYPES.has(typeName)
-        ? fieldName
-        : fieldNamesFn?.(fieldName) || fieldName;
-      if (newFieldName !== fieldName) {
-        let typeFieldRenameMap = fieldRenameMap.get(typeName);
-        if (!typeFieldRenameMap) {
-          typeFieldRenameMap = new Map();
-          fieldRenameMap.set(typeName, typeFieldRenameMap);
+  return function namingConventionTransform(schema: GraphQLSchema) {
+    // Mapper + rename maps are per invocation so a nested transform call (e.g. from a
+    // custom `fieldNames` callback) cannot flip Neo4j transport gating for the outer call.
+    const neo4jSubgraph = isNeo4jSubgraph(schema);
+    const schemaMapper: SchemaMapper = {};
+    const typeRenameMap = new Map<string, string>();
+    /** Type-scoped field renames so `Movie.GET→get` does not rewrite `ConnectHTTP.GET`. */
+    const fieldRenameMap = new Map<string, Map<string, string>>();
+    /** Public `Type.field` → arg rename map (for root-field `$this` args fallback). */
+    const argRenamesByPublicField = new Map<string, Map<string, string>>();
+
+    if (typeNamesFn) {
+      schemaMapper[MapperKind.TYPE] = type => {
+        if (
+          isSpecifiedScalarType(type) ||
+          isFromGraphQLScalars(type.name) ||
+          CONNECTORS_INPUT_TYPES.has(type.name) ||
+          CONNECTORS_LINKED_SCALARS.has(type.name)
+        ) {
+          return type;
         }
-        typeFieldRenameMap.set(fieldName, newFieldName);
-      }
-      const fieldDirectives = getDirectiveExtensions(fieldConfig);
-      const argRenameMap = new Map<string, string>();
-      let newArgs: GraphQLFieldConfigArgumentMap | undefined;
-      if ('args' in fieldConfig && fieldConfig.args && (fieldArgumentNamesFn || enumValuesFn)) {
-        newArgs = {};
-        for (const argName in fieldConfig.args) {
-          const newArgName = fieldArgumentNamesFn?.(argName) || argName;
-          if (newArgName !== argName) {
-            argRenameMap.set(argName, newArgName);
-          }
-          const argConfig = fieldConfig.args[argName];
-          if (!argConfig.defaultValue || !enumValuesFn) {
-            newArgs[newArgName] = argConfig;
-            continue;
-          }
-          const namedArgType = getNamedType(argConfig.type);
-          if (!isEnumType(namedArgType)) {
-            newArgs[newArgName] = argConfig;
-            continue;
-          }
-          const newDefaultValue = enumValuesFn(argConfig.defaultValue.toString());
-          newArgs[newArgName] = {
-            ...argConfig,
-            defaultValue: newDefaultValue,
-          };
+        const typeDirectives = getDirectiveExtensions(type);
+        const newName = typeNamesFn(type.name);
+        if (newName === type.name) {
+          return type;
         }
-      }
-      if (argRenameMap.size) {
-        const publicType = typeRenameMap.get(typeName) ?? typeName;
-        argRenamesByPublicField.set(`${publicType}.${newFieldName}`, argRenameMap);
-      }
-      // Defer protobuf `$args` rewrites to `applyProtobufFieldRenames` (single pass).
-      // Neo4j (transport-gated) rewrites `@cypher` `$arg` binds and stamps `@alias(property:)`.
-      let rewrittenDirectives = rewriteConnectArgReferences(
-        fieldDirectives,
-        argRenameMap,
-        undefined,
-        typeRenameMap.size ? typeRenameMap : undefined,
-        false,
-      );
-      if (neo4jSubgraph) {
-        rewrittenDirectives = rewriteNeo4jCypherArgReferences(rewrittenDirectives, argRenameMap);
-        rewrittenDirectives = rewriteNeo4jRelationshipPropertiesRefs(
-          rewrittenDirectives,
-          typeRenameMap,
-        );
-        if (newFieldName !== fieldName) {
-          const parentType = schema?.getType(typeName);
-          const parentDirs = parentType ? getDirectiveExtensions(parentType) : undefined;
-          rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
-            isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirs),
-            subgraph:
-              parentDirs?.node?.[0]?.subgraph || parentDirs?.relationshipProperties?.[0]?.subgraph,
+        typeRenameMap.set(type.name, newName);
+        const withNeo4jIdentity = neo4jSubgraph
+          ? ensureNeo4jTypeIdentity(typeDirectives, type.name)
+          : typeDirectives;
+        if (withNeo4jIdentity !== typeDirectives && withNeo4jIdentity) {
+          return new (Object.getPrototypeOf(type).constructor)({
+            ...typeConfigWithDirectiveExtensions(type, withNeo4jIdentity),
+            name: newName,
           });
         }
-      }
-      if (rewrittenDirectives !== fieldDirectives || newArgs) {
-        const fieldExtensions: Record<string, any> = { ...(fieldConfig.extensions || {}) };
-        if (rewrittenDirectives !== fieldDirectives) {
-          fieldExtensions.directives = rewrittenDirectives;
+        return new (Object.getPrototypeOf(type).constructor)({
+          ...type.toConfig(),
+          name: newName,
+        });
+      };
+    }
+    if (fieldNamesFn || fieldArgumentNamesFn || enumValuesFn || typeNamesFn) {
+      schemaMapper[MapperKind.FIELD] = (fieldConfig, fieldName, typeName, fieldSchema) => {
+        // Keep Connectors HTTP method / baseURL field names intact.
+        const newFieldName = CONNECTORS_INPUT_TYPES.has(typeName)
+          ? fieldName
+          : fieldNamesFn?.(fieldName) || fieldName;
+        if (newFieldName !== fieldName) {
+          let typeFieldRenameMap = fieldRenameMap.get(typeName);
+          if (!typeFieldRenameMap) {
+            typeFieldRenameMap = new Map();
+            fieldRenameMap.set(typeName, typeFieldRenameMap);
+          }
+          typeFieldRenameMap.set(fieldName, newFieldName);
         }
-        return [
-          newFieldName,
-          withOriginalKeyFallback(
-            {
-              ...fieldConfig,
-              ...(rewrittenDirectives !== fieldDirectives
-                ? { extensions: fieldExtensions, astNode: undefined }
-                : {}),
-              ...(newArgs ? { args: newArgs } : {}),
-            },
-            fieldName,
+        const fieldDirectives = getDirectiveExtensions(fieldConfig);
+        const argRenameMap = new Map<string, string>();
+        let newArgs: GraphQLFieldConfigArgumentMap | undefined;
+        if ('args' in fieldConfig && fieldConfig.args && (fieldArgumentNamesFn || enumValuesFn)) {
+          newArgs = {};
+          for (const argName in fieldConfig.args) {
+            const newArgName = fieldArgumentNamesFn?.(argName) || argName;
+            if (newArgName !== argName) {
+              argRenameMap.set(argName, newArgName);
+            }
+            const argConfig = fieldConfig.args[argName];
+            if (!argConfig.defaultValue || !enumValuesFn) {
+              newArgs[newArgName] = argConfig;
+              continue;
+            }
+            const namedArgType = getNamedType(argConfig.type);
+            if (!isEnumType(namedArgType)) {
+              newArgs[newArgName] = argConfig;
+              continue;
+            }
+            const newDefaultValue = enumValuesFn(argConfig.defaultValue.toString());
+            newArgs[newArgName] = {
+              ...argConfig,
+              defaultValue: newDefaultValue,
+            };
+          }
+        }
+        if (argRenameMap.size) {
+          const publicType = typeRenameMap.get(typeName) ?? typeName;
+          argRenamesByPublicField.set(`${publicType}.${newFieldName}`, argRenameMap);
+        }
+        // Defer protobuf `$args` rewrites to `applyProtobufFieldRenames` (single pass).
+        // Neo4j (transport-gated) rewrites `@cypher` `$arg` binds and stamps `@alias(property:)`.
+        let rewrittenDirectives = rewriteConnectArgReferences(
+          fieldDirectives,
+          argRenameMap,
+          undefined,
+          typeRenameMap.size ? typeRenameMap : undefined,
+          false,
+        );
+        if (neo4jSubgraph) {
+          rewrittenDirectives = rewriteNeo4jCypherArgReferences(rewrittenDirectives, argRenameMap);
+          rewrittenDirectives = rewriteNeo4jRelationshipPropertiesRefs(
+            rewrittenDirectives,
+            typeRenameMap,
+          );
+          if (newFieldName !== fieldName) {
+            const parentType = fieldSchema?.getType(typeName);
+            const parentDirs = parentType ? getDirectiveExtensions(parentType) : undefined;
+            rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
+              isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirs),
+              subgraph:
+                parentDirs?.node?.[0]?.subgraph ||
+                parentDirs?.relationshipProperties?.[0]?.subgraph,
+            });
+          }
+        }
+        if (rewrittenDirectives !== fieldDirectives || newArgs) {
+          const fieldExtensions: Record<string, any> = { ...(fieldConfig.extensions || {}) };
+          if (rewrittenDirectives !== fieldDirectives) {
+            fieldExtensions.directives = rewrittenDirectives;
+          }
+          return [
             newFieldName,
-          ),
-        ];
-      }
-      return [newFieldName, withOriginalKeyFallback(fieldConfig, fieldName, newFieldName)];
-    };
-  }
-  if (enumValuesFn) {
-    schemaMapper[MapperKind.ENUM_VALUE] = (valueConfig, _typeName, _schema, externalValue) => {
-      const newExternalValue = enumValuesFn(externalValue);
-      if (newExternalValue === externalValue) {
-        return [newExternalValue, valueConfig];
-      }
-      // Keep the original JSON/wire value when the GraphQL enum name changes.
-      const nextValue =
-        valueConfig.value !== undefined && valueConfig.value !== externalValue
-          ? valueConfig.value
-          : externalValue;
-      const existingDirectives = getDirectiveExtensions(valueConfig) || {};
-      // Always stash wire value on `@enum` first; Connectors bake strips it into
-      // `@connect` selections below. Non-connectors keep `@enum` for Mesh runtime.
-      return [
-        newExternalValue,
-        {
-          ...valueConfig,
-          value: nextValue,
-          extensions: {
-            ...valueConfig.extensions,
-            directives: {
-              ...existingDirectives,
-              enum: [{ value: JSON.stringify(nextValue) }],
+            withOriginalKeyFallback(
+              {
+                ...fieldConfig,
+                ...(rewrittenDirectives !== fieldDirectives
+                  ? { extensions: fieldExtensions, astNode: undefined }
+                  : {}),
+                ...(newArgs ? { args: newArgs } : {}),
+              },
+              fieldName,
+              newFieldName,
+            ),
+          ];
+        }
+        return [newFieldName, withOriginalKeyFallback(fieldConfig, fieldName, newFieldName)];
+      };
+    }
+    if (enumValuesFn) {
+      schemaMapper[MapperKind.ENUM_VALUE] = (valueConfig, _typeName, _schema, externalValue) => {
+        const newExternalValue = enumValuesFn(externalValue);
+        if (newExternalValue === externalValue) {
+          return [newExternalValue, valueConfig];
+        }
+        // Keep the original JSON/wire value when the GraphQL enum name changes.
+        const nextValue =
+          valueConfig.value !== undefined && valueConfig.value !== externalValue
+            ? valueConfig.value
+            : externalValue;
+        const existingDirectives = getDirectiveExtensions(valueConfig) || {};
+        // Always stash wire value on `@enum` first; Connectors bake strips it into
+        // `@connect` selections below. Non-connectors keep `@enum` for Mesh runtime.
+        return [
+          newExternalValue,
+          {
+            ...valueConfig,
+            value: nextValue,
+            extensions: {
+              ...valueConfig.extensions,
+              directives: {
+                ...existingDirectives,
+                enum: [{ value: JSON.stringify(nextValue) }],
+              },
             },
+            astNode: undefined,
           },
-          astNode: undefined,
-        },
-      ];
-    };
-  }
-  return function namingConventionTransform(schema: GraphQLSchema) {
-    neo4jSubgraph = isNeo4jSubgraph(schema);
+        ];
+      };
+    }
+
     // Precompute before mapSchema so FIELD rewrites see the full type map
     // (TYPE/FIELD visit order is not guaranteed for `__typename` Connect arms).
-    typeRenameMap.clear();
     if (typeNamesFn) {
       for (const type of Object.values(schema.getTypeMap())) {
         if (type.name.startsWith('__')) continue;
@@ -314,8 +316,6 @@ export function createNamingConventionTransform(
       }
     }
     const connectors = schemaUsesConnect(schema);
-    fieldRenameMap.clear();
-    argRenamesByPublicField.clear();
     let next = mapSchema(schema, schemaMapper);
     if (fieldRenameMap.size && typeRenameMap.size) {
       const rekeyed = new Map<string, Map<string, string>>();
