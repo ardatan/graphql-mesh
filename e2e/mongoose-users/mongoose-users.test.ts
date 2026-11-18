@@ -35,7 +35,7 @@ it('should create and find users', async () => {
   const created = await gw.execute({
     query: /* GraphQL */ `
       mutation CreateUser {
-        insertOneUser(document: { name: "Ada", age: 36, gender: "female" }) {
+        insertOneUser(document: { name: "Ada", age: 36, gender: female }) {
           recordId
           record {
             id
