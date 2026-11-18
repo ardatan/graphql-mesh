@@ -1094,21 +1094,26 @@ describe('Neo4j identity helpers', () => {
     } = await import('../../src/transforms/neo4j-identity.js');
     expect(neo4jDefaultPlural('Movie')).toBe('movies');
     expect(neo4jDefaultPlural('Person')).toBe('people');
+    expect(neo4jDefaultPlural('_Movie')).toBe('_movies');
     expect(ensureNeo4jNodeLabels({ node: [{}] }, 'Movie')).toEqual({
       node: [{ labels: ['Movie'] }],
     });
     expect(ensureNeo4jNodeLabels({ node: [{ labels: ['Film'] }] }, 'Movie')).toEqual({
       node: [{ labels: ['Film'] }],
     });
+    // Singleton string from getDirectiveExtensions without schema coercion.
+    expect(ensureNeo4jNodeLabels({ node: [{ labels: 'Feature' as any }] }, 'Movie')).toEqual({
+      node: [{ labels: ['Feature'] }],
+    });
     expect(ensureNeo4jTypeIdentity({ node: [{ subgraph: 'Movies' }] }, 'Movie')).toEqual({
       node: [{ subgraph: 'Movies', labels: ['Movie'] }],
       plural: [{ subgraph: 'Movies', value: 'movies' }],
     });
-    // Later renames keep labels and derive @plural from the label seed.
+    // Plural follows original GraphQL type name, not DB labels.
     expect(
-      ensureNeo4jPlural({ node: [{ subgraph: 'Movies', labels: ['Movie'] }] }, 'Film'),
+      ensureNeo4jPlural({ node: [{ subgraph: 'Movies', labels: ['Feature'] }] }, 'Movie'),
     ).toEqual({
-      node: [{ subgraph: 'Movies', labels: ['Movie'] }],
+      node: [{ subgraph: 'Movies', labels: ['Feature'] }],
       plural: [{ subgraph: 'Movies', value: 'movies' }],
     });
     expect(
@@ -1179,6 +1184,26 @@ WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
     expect(rewritten!.cypher[0].statement).toContain('$needle');
     expect(rewritten!.cypher[0].statement).toMatch(/\/\* keep \$title here \*\//);
     expect(rewritten!.cypher[0].statement).not.toMatch(/RETURN \$title\b/);
+  });
+
+  it('rewrites @cypher params after CR line comments and backtick params', async () => {
+    const { rewriteNeo4jCypherArgReferences, rewriteCypherParamNames } =
+      await import('../../src/transforms/neo4j-identity.js');
+    const withCr = rewriteNeo4jCypherArgReferences(
+      {
+        cypher: [
+          {
+            statement: '// note\rRETURN $title AS n',
+            columnName: 'n',
+          },
+        ],
+      },
+      new Map([['title', 'needle']]),
+    );
+    expect(withCr!.cypher[0].statement).toBe('// note\rRETURN $needle AS n');
+    expect(rewriteCypherParamNames('RETURN $`title` AS n', new Map([['title', 'needle']]))).toBe(
+      'RETURN $needle AS n',
+    );
   });
 
   it('rewrites @relationship(properties:) through type rename map', async () => {

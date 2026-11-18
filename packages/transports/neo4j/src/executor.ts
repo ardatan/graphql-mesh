@@ -120,6 +120,14 @@ export function stripMeshTransportFromTypeDefs(typeDefs: DocumentNode): Document
         ),
       };
     },
+    Directive(node) {
+      if (
+        STRIP_SCHEMA_DIRECTIVES.has(node.name.value) ||
+        STRIP_DIRECTIVE_DEFINITIONS.has(node.name.value)
+      ) {
+        return null;
+      }
+    },
     DirectiveDefinition(node) {
       if (STRIP_DIRECTIVE_DEFINITIONS.has(node.name.value)) {
         return null;
@@ -164,6 +172,58 @@ function fieldBelongsToSubgraph(
     }
   }
   return false;
+}
+
+/**
+ * Keep unstamped fields and fields stamped for this subgraph; drop fields whose
+ * Neo4j directive `subgraph:` names another source.
+ */
+function fieldOwnedByThisSubgraph(
+  field: FieldDefinitionNode,
+  subgraphName: string | undefined,
+): boolean {
+  for (const name of NEO4J_SUBGRAPH_DIRECTIVES) {
+    if (!hasDirective(field, name)) {
+      continue;
+    }
+    const stamped = getDirectiveSubgraph(field, name);
+    if (stamped != null && subgraphName != null && stamped !== subgraphName) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isForeignOwnedModelType(
+  node: { directives?: readonly ConstDirectiveNode[] },
+  subgraphName: string | undefined,
+): boolean {
+  for (const directiveName of ['node', 'relationshipProperties'] as const) {
+    if (!hasDirective(node, directiveName)) {
+      continue;
+    }
+    const stamped = getDirectiveSubgraph(node, directiveName);
+    if (stamped != null && subgraphName != null && stamped !== subgraphName) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function stripForeignModelOwnershipDirectives<
+  T extends { directives?: readonly ConstDirectiveNode[] },
+>(node: T): T {
+  if (!node.directives?.length) {
+    return node;
+  }
+  const directives = node.directives.filter(
+    directive =>
+      directive.name.value !== 'node' && directive.name.value !== 'relationshipProperties',
+  );
+  if (directives.length === node.directives.length) {
+    return node;
+  }
+  return { ...node, directives };
 }
 
 function collectInterfaceClosure(
@@ -317,7 +377,7 @@ export function extractNeo4jModelTypeDefs(
       const sourceFields =
         ROOT_OPERATION_NAMES.has(def.name.value) && def.kind === Kind.OBJECT_TYPE_DEFINITION
           ? def.fields?.filter(field => fieldBelongsToSubgraph(field, subgraphName))
-          : def.fields;
+          : def.fields?.filter(field => fieldOwnedByThisSubgraph(field, subgraphName));
       const fields: FieldDefinitionNode[] = (sourceFields || [])
         .filter(isRetainedModelField)
         .map(scrubGeneratedArgs);
@@ -353,11 +413,11 @@ export function extractNeo4jModelTypeDefs(
         continue;
       }
       for (const field of def.fields || []) {
+        collectNamedTypesFromField(field, referenced, { includeArgs: true });
         const nested = namedTypeNameFromTypeNode(field.type);
         if (!nested) {
           continue;
         }
-        referenced.add(nested);
         if (
           objectOrInterfaceNames.has(nested) &&
           !keepTypeNames.has(nested) &&
@@ -408,7 +468,17 @@ export function extractNeo4jModelTypeDefs(
         case Kind.OBJECT_TYPE_DEFINITION:
         case Kind.INTERFACE_TYPE_DEFINITION: {
           if (authoredOutputTypeNames.has(def.name.value) && !keepTypeNames.has(def.name.value)) {
-            return [def];
+            // Foreign `@node` / `@relationshipProperties` must not augment as this transport's model.
+            let authored = isForeignOwnedModelType(def, subgraphName)
+              ? stripForeignModelOwnershipDirectives(def)
+              : def;
+            const authoredFields = (authored.fields || []).filter(field =>
+              fieldOwnedByThisSubgraph(field, subgraphName),
+            );
+            if (authoredFields.length !== (authored.fields || []).length) {
+              authored = { ...authored, fields: authoredFields };
+            }
+            return [authored];
           }
           if (!keepTypeNames.has(def.name.value)) {
             return [];

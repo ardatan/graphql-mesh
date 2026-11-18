@@ -129,8 +129,6 @@ export function createNamingConventionTransform(
 
   const schemaMapper: SchemaMapper = {};
   const typeRenameMap = new Map<string, string>();
-  /** Original + renamed names of Neo4j `@node` / `@relationshipProperties` types. */
-  const neo4jModelTypeNames = new Set<string>();
   if (typeNamesFn) {
     schemaMapper[MapperKind.TYPE] = type => {
       if (
@@ -142,17 +140,11 @@ export function createNamingConventionTransform(
         return type;
       }
       const typeDirectives = getDirectiveExtensions(type);
-      if (isNeo4jModelTypeDirectives(typeDirectives)) {
-        neo4jModelTypeNames.add(type.name);
-      }
       const newName = typeNamesFn(type.name);
       if (newName === type.name) {
         return type;
       }
       typeRenameMap.set(type.name, newName);
-      if (isNeo4jModelTypeDirectives(typeDirectives)) {
-        neo4jModelTypeNames.add(newName);
-      }
       const withNeo4jIdentity = ensureNeo4jTypeIdentity(typeDirectives, type.name);
       return new (Object.getPrototypeOf(type).constructor)({
         ...type.toConfig(),
@@ -232,19 +224,11 @@ export function createNamingConventionTransform(
         rewrittenDirectives,
         typeRenameMap,
       );
-      if (!typeNamesFn && schema) {
-        const parentType = schema.getType(typeName);
-        if (parentType && isNeo4jModelTypeDirectives(getDirectiveExtensions(parentType))) {
-          neo4jModelTypeNames.add(typeName);
-        }
-      }
       if (newFieldName !== fieldName) {
-        const parentDirs =
-          schema?.getType(typeName) != null
-            ? getDirectiveExtensions(schema.getType(typeName)!)
-            : undefined;
+        const parentType = schema?.getType(typeName);
+        const parentDirs = parentType ? getDirectiveExtensions(parentType) : undefined;
         rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
-          isNeo4jModelField: neo4jModelTypeNames.has(typeName),
+          isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirs),
           subgraph:
             parentDirs?.node?.[0]?.subgraph || parentDirs?.relationshipProperties?.[0]?.subgraph,
         });
@@ -307,7 +291,6 @@ export function createNamingConventionTransform(
     // Precompute before mapSchema so FIELD rewrites see the full type map
     // (TYPE/FIELD visit order is not guaranteed for `__typename` Connect arms).
     typeRenameMap.clear();
-    neo4jModelTypeNames.clear();
     if (typeNamesFn) {
       for (const type of Object.values(schema.getTypeMap())) {
         if (type.name.startsWith('__')) continue;

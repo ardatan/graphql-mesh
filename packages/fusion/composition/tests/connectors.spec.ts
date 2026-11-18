@@ -428,11 +428,22 @@ describe('Federation Connectors composition', () => {
     ]);
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).toMatch(/type Role[\s\S]*@relationshipProperties/);
-    expect(sdl).toMatch(/actors:[\s\S]*@relationship\([^)]*properties:\s*"Role"/);
     expect(sdl).not.toMatch(/properties:\s*"ActedIn"/);
     expect(sdl).not.toMatch(/properties:\s*"Credit"/);
-    // One field application (directive definition also matches `@relationship(`).
-    expect(sdl.match(/actors:[^\n]*@relationship\(/g)?.length).toBe(1);
+    const movie = annotated[0].typeDefs.definitions.find(
+      def => def.kind === 'ObjectTypeDefinition' && def.name.value === 'Movie',
+    );
+    expect(movie && movie.kind === 'ObjectTypeDefinition').toBe(true);
+    if (movie && movie.kind === 'ObjectTypeDefinition') {
+      const actors = movie.fields?.find(field => field.name.value === 'actors');
+      const relationshipDirs =
+        actors?.directives?.filter(directive => directive.name.value === 'relationship') ?? [];
+      expect(relationshipDirs).toHaveLength(1);
+      const properties = relationshipDirs[0].arguments?.find(
+        arg => arg.name.value === 'properties',
+      );
+      expect(properties?.value).toMatchObject({ kind: 'StringValue', value: 'Role' });
+    }
   });
 
   it('lifts transport/source from extras onto schema and drops the wrapper', () => {

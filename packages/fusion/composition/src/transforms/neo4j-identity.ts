@@ -25,13 +25,36 @@ export function hasNeo4jNodeDirective(typeDirectives: Record<string, any[]> | un
   return Boolean(typeDirectives?.node?.length);
 }
 
+/** Leading underscores Neo4j restores after camelCase/pluralize (`_Movie` → `_movies`). */
+function leadingUnderscores(name: string): string {
+  const match = /^(_+).+/.exec(name);
+  return match?.[1] || '';
+}
+
 /**
- * Match `@neo4j/graphql` root pluralization (`pluralize(camelCase(typeName))`).
+ * Match `@neo4j/graphql` root pluralization (`leadingUnderscores + pluralize(camelCase)`).
  * Used when stamping `@plural(value:)` so generated roots keep the pre-rename family
- * (`Movie` → `movies` / `moviesConnection` / `createMovies`).
+ * (`Movie` → `movies`, `_Movie` → `_movies`).
  */
 export function neo4jDefaultPlural(typeName: string): string {
-  return pluralize(camelCase(typeName));
+  return `${leadingUnderscores(typeName)}${pluralize(camelCase(typeName))}`;
+}
+
+/**
+ * Normalize `@node(labels:)` from getDirectiveExtensions: arrays stay, a singleton
+ * string becomes a one-element list (GraphQL list coercion may be skipped without schema).
+ */
+export function normalizeNeo4jNodeLabels(labels: unknown): string[] | undefined {
+  if (Array.isArray(labels)) {
+    const normalized = labels.filter(
+      (label): label is string => typeof label === 'string' && label.length > 0,
+    );
+    return normalized.length > 0 ? normalized : undefined;
+  }
+  if (typeof labels === 'string' && labels.length > 0) {
+    return [labels];
+  }
+  return undefined;
 }
 
 /**
@@ -46,8 +69,20 @@ export function ensureNeo4jNodeLabels(
     return typeDirectives;
   }
   const existing = typeDirectives.node[0] || {};
-  if (Array.isArray(existing.labels) && existing.labels.length > 0) {
-    return typeDirectives;
+  const normalizedLabels = normalizeNeo4jNodeLabels(existing.labels);
+  if (normalizedLabels) {
+    if (normalizedLabels === existing.labels) {
+      return typeDirectives;
+    }
+    return {
+      ...typeDirectives,
+      node: [
+        {
+          ...existing,
+          labels: normalizedLabels,
+        },
+      ],
+    };
   }
   return {
     ...typeDirectives,
@@ -62,9 +97,8 @@ export function ensureNeo4jNodeLabels(
 
 /**
  * After a GraphQL type rename on `@node`, stamp `@plural(value:)` so Neo4j keeps the
- * original generated root family (`movies*` when `Movie` → `Film`). Prefer the first
- * `@node(labels:)` entry (identity seed) when present; otherwise `originalTypeName`.
- * Leaves an author / prior `@plural` alone.
+ * original generated root family (`movies*` when `Movie` → `Film`). Plural comes from
+ * the original GraphQL type name (not DB labels). Leaves an author / prior `@plural` alone.
  */
 export function ensureNeo4jPlural(
   typeDirectives: Record<string, any[]> | undefined,
@@ -77,14 +111,12 @@ export function ensureNeo4jPlural(
     return typeDirectives;
   }
   const nodeArgs = typeDirectives.node[0] || {};
-  const labels = Array.isArray(nodeArgs.labels) ? nodeArgs.labels : [];
-  const seed = typeof labels[0] === 'string' && labels[0].length > 0 ? labels[0] : originalTypeName;
   return {
     ...typeDirectives,
     plural: [
       {
         ...(typeof nodeArgs.subgraph === 'string' ? { subgraph: nodeArgs.subgraph } : {}),
-        value: neo4jDefaultPlural(seed),
+        value: neo4jDefaultPlural(originalTypeName),
       },
     ],
   };
@@ -139,9 +171,17 @@ export function isNeo4jModelTypeDirectives(
   return Boolean(typeDirectives?.node?.length || typeDirectives?.relationshipProperties?.length);
 }
 
+function cypherParamToken(name: string): string {
+  if (/^[\w]+$/.test(name)) {
+    return `$${name}`;
+  }
+  return '$`' + name.replace(/`/g, '``') + '`';
+}
+
 /**
  * Rewrite `$oldArg` → `$newArg` in a Cypher statement after GraphQL argument renames.
  * Skips string literals and backtick-quoted identifiers so text like `'$title'` is unchanged.
+ * Rewrites `$`title`` parameter forms; leaves standalone `` `ident` `` unchanged.
  */
 export function rewriteCypherParamNames(
   statement: string,
@@ -154,9 +194,9 @@ export function rewriteCypherParamNames(
   let i = 0;
   while (i < statement.length) {
     const c = statement[i];
-    // Line comment: copy through newline without interpreting quotes.
+    // Line comment: ends at `\r` or `\n` (Cypher); preserve the terminator.
     if (c === '/' && statement[i + 1] === '/') {
-      while (i < statement.length && statement[i] !== '\n') {
+      while (i < statement.length && statement[i] !== '\n' && statement[i] !== '\r') {
         out += statement[i++];
       }
       continue;
@@ -237,12 +277,35 @@ export function rewriteCypherParamNames(
     if (c === '$') {
       const start = i;
       i++;
+      // `$`title`` — backtick-delimited parameter name.
+      if (statement[i] === '`') {
+        i++;
+        let name = '';
+        while (i < statement.length) {
+          if (statement[i] === '`' && statement[i + 1] === '`') {
+            name += '`';
+            i += 2;
+            continue;
+          }
+          if (statement[i] === '`') {
+            i++;
+            break;
+          }
+          name += statement[i++];
+        }
+        if (name && !CYPHER_RESERVED_VARS.has(name) && argRenameMap.has(name)) {
+          out += cypherParamToken(argRenameMap.get(name)!);
+        } else {
+          out += statement.slice(start, i);
+        }
+        continue;
+      }
       let name = '';
       while (i < statement.length && /[\w]/.test(statement[i])) {
         name += statement[i++];
       }
       if (name && !CYPHER_RESERVED_VARS.has(name) && argRenameMap.has(name)) {
-        out += `$${argRenameMap.get(name)}`;
+        out += cypherParamToken(argRenameMap.get(name)!);
       } else {
         out += statement.slice(start, i);
       }
