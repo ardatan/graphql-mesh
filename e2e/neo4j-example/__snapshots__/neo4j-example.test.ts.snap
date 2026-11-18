@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@relationshipProperties", "@relationship", "@introspection", "@node", "@transport"]) @transport(kind: "neo4j", subgraph: "Movies", location: "neo4j://localhost:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@node", "@relationshipProperties", "@relationship", "@alias", "@cypher", "@plural", "@transport"]) @transport(kind: "neo4j", subgraph: "Movies", location: "neo4j://localhost:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}) {
   query: Query
   mutation: Mutation
 }
@@ -39,13 +39,17 @@ enum join__Graph {
   MOVIES @join__graph(name: "Movies", url: "neo4j://localhost:<neo4j_port>")
 }
 
-directive @relationshipProperties on OBJECT
+directive @node(labels: [String!], subgraph: String) repeatable on OBJECT
 
-directive @relationship(type: String, direction: _RelationDirections, properties: String) on FIELD_DEFINITION
+directive @relationshipProperties(subgraph: String) repeatable on OBJECT
 
-directive @introspection(subgraph: String) repeatable on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+directive @relationship(type: String, direction: _RelationDirections, properties: String, subgraph: String) repeatable on FIELD_DEFINITION
 
-directive @node on OBJECT
+directive @alias(property: String!, subgraph: String) repeatable on FIELD_DEFINITION
+
+directive @cypher(statement: String!, columnName: String!, subgraph: String) repeatable on FIELD_DEFINITION
+
+directive @plural(value: String!, subgraph: String) repeatable on OBJECT | INTERFACE | UNION
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
@@ -72,8 +76,8 @@ The edge properties for the following fields:
 * Movie.peopleActedIn
 * Person.actedInMovies
 """
-type ActedInProperties @relationshipProperties @introspection @join__type(graph: MOVIES) {
-  roles: String! @introspection
+type ActedInProperties @relationshipProperties(subgraph: "Movies") @join__type(graph: MOVIES) {
+  roles: String!
 }
 
 type Count @join__type(graph: MOVIES) {
@@ -111,19 +115,19 @@ type DeleteInfo @join__type(graph: MOVIES) {
   relationshipsDeleted: Int!
 }
 
-type Movie @introspection @node @join__type(graph: MOVIES) {
-  released: String! @introspection
-  tagline: String @introspection
-  title: String! @introspection
-  peopleActedIn(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
+type Movie @node(subgraph: "Movies") @join__type(graph: MOVIES) {
+  released: String!
+  tagline: String
+  title: String!
+  peopleActedIn(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @relationship(subgraph: "Movies", type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
   peopleActedInConnection(where: MoviePeopleActedInConnectionWhere, first: Int, after: String, sort: [MoviePeopleActedInConnectionSort!]): MoviePeopleActedInConnection!
-  peopleDirected(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "DIRECTED", direction: IN)
+  peopleDirected(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @relationship(subgraph: "Movies", type: "DIRECTED", direction: IN)
   peopleDirectedConnection(where: MoviePeopleDirectedConnectionWhere, first: Int, after: String, sort: [MoviePeopleDirectedConnectionSort!]): MoviePeopleDirectedConnection!
-  peopleProduced(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "PRODUCED", direction: IN)
+  peopleProduced(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @relationship(subgraph: "Movies", type: "PRODUCED", direction: IN)
   peopleProducedConnection(where: MoviePeopleProducedConnectionWhere, first: Int, after: String, sort: [MoviePeopleProducedConnectionSort!]): MoviePeopleProducedConnection!
-  peopleReviewed(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "REVIEWED", direction: IN, properties: "ReviewedProperties")
+  peopleReviewed(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @relationship(subgraph: "Movies", type: "REVIEWED", direction: IN, properties: "ReviewedProperties")
   peopleReviewedConnection(where: MoviePeopleReviewedConnectionWhere, first: Int, after: String, sort: [MoviePeopleReviewedConnectionSort!]): MoviePeopleReviewedConnection!
-  peopleWrote(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "WROTE", direction: IN)
+  peopleWrote(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @relationship(subgraph: "Movies", type: "WROTE", direction: IN)
   peopleWroteConnection(where: MoviePeopleWroteConnectionWhere, first: Int, after: String, sort: [MoviePeopleWroteConnectionSort!]): MoviePeopleWroteConnection!
 }
 
@@ -288,22 +292,22 @@ type PeopleConnection @join__type(graph: MOVIES) {
   aggregate: PersonAggregate!
 }
 
-type Person @introspection @node @join__type(graph: MOVIES) {
-  born: String @introspection
-  name: String! @introspection
-  actedInMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
+type Person @node(subgraph: "Movies") @join__type(graph: MOVIES) {
+  born: String
+  name: String!
+  actedInMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @relationship(subgraph: "Movies", type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
   actedInMoviesConnection(where: PersonActedInMoviesConnectionWhere, first: Int, after: String, sort: [PersonActedInMoviesConnectionSort!]): PersonActedInMoviesConnection!
-  directedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @introspection @relationship(type: "DIRECTED", direction: OUT)
+  directedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @relationship(subgraph: "Movies", type: "DIRECTED", direction: OUT)
   directedMoviesConnection(where: PersonDirectedMoviesConnectionWhere, first: Int, after: String, sort: [PersonDirectedMoviesConnectionSort!]): PersonDirectedMoviesConnection!
-  followsPeople(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "FOLLOWS", direction: OUT)
+  followsPeople(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @relationship(subgraph: "Movies", type: "FOLLOWS", direction: OUT)
   followsPeopleConnection(where: PersonFollowsPeopleConnectionWhere, first: Int, after: String, sort: [PersonFollowsPeopleConnectionSort!]): PersonFollowsPeopleConnection!
-  peopleFollows(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "FOLLOWS", direction: IN)
+  peopleFollows(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @relationship(subgraph: "Movies", type: "FOLLOWS", direction: IN)
   peopleFollowsConnection(where: PersonPeopleFollowsConnectionWhere, first: Int, after: String, sort: [PersonPeopleFollowsConnectionSort!]): PersonPeopleFollowsConnection!
-  producedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @introspection @relationship(type: "PRODUCED", direction: OUT)
+  producedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @relationship(subgraph: "Movies", type: "PRODUCED", direction: OUT)
   producedMoviesConnection(where: PersonProducedMoviesConnectionWhere, first: Int, after: String, sort: [PersonProducedMoviesConnectionSort!]): PersonProducedMoviesConnection!
-  reviewedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @introspection @relationship(type: "REVIEWED", direction: OUT, properties: "ReviewedProperties")
+  reviewedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @relationship(subgraph: "Movies", type: "REVIEWED", direction: OUT, properties: "ReviewedProperties")
   reviewedMoviesConnection(where: PersonReviewedMoviesConnectionWhere, first: Int, after: String, sort: [PersonReviewedMoviesConnectionSort!]): PersonReviewedMoviesConnection!
-  wroteMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @introspection @relationship(type: "WROTE", direction: OUT)
+  wroteMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @relationship(subgraph: "Movies", type: "WROTE", direction: OUT)
   wroteMoviesConnection(where: PersonWroteMoviesConnectionWhere, first: Int, after: String, sort: [PersonWroteMoviesConnectionSort!]): PersonWroteMoviesConnection!
 }
 
@@ -499,9 +503,9 @@ The edge properties for the following fields:
 * Movie.peopleReviewed
 * Person.reviewedMovies
 """
-type ReviewedProperties @relationshipProperties @introspection @join__type(graph: MOVIES) {
-  rating: String! @introspection
-  summary: String! @introspection
+type ReviewedProperties @relationshipProperties(subgraph: "Movies") @join__type(graph: MOVIES) {
+  rating: String!
+  summary: String!
 }
 
 type StringAggregateSelection @join__type(graph: MOVIES) {
@@ -574,7 +578,7 @@ input ActedInPropertiesSort @join__type(graph: MOVIES) {
 
 input ActedInPropertiesUpdateInput @join__type(graph: MOVIES) {
   roles: StringScalarMutations
-  roles_SET: String
+  roles_SET: String @deprecated(reason: "Please use the generic mutation 'roles: { set: ... } }' instead.")
 }
 
 input ActedInPropertiesWhere @join__type(graph: MOVIES) {
@@ -1339,11 +1343,11 @@ input MovieSort @join__type(graph: MOVIES) {
 
 input MovieUpdateInput @join__type(graph: MOVIES) {
   released: StringScalarMutations
-  released_SET: String
+  released_SET: String @deprecated(reason: "Please use the generic mutation 'released: { set: ... } }' instead.")
   tagline: StringScalarMutations
-  tagline_SET: String
+  tagline_SET: String @deprecated(reason: "Please use the generic mutation 'tagline: { set: ... } }' instead.")
   title: StringScalarMutations
-  title_SET: String
+  title_SET: String @deprecated(reason: "Please use the generic mutation 'title: { set: ... } }' instead.")
   peopleActedIn: [MoviePeopleActedInUpdateFieldInput!]
   peopleDirected: [MoviePeopleDirectedUpdateFieldInput!]
   peopleProduced: [MoviePeopleProducedUpdateFieldInput!]
@@ -2435,9 +2439,9 @@ input PersonSort @join__type(graph: MOVIES) {
 
 input PersonUpdateInput @join__type(graph: MOVIES) {
   born: StringScalarMutations
-  born_SET: String
+  born_SET: String @deprecated(reason: "Please use the generic mutation 'born: { set: ... } }' instead.")
   name: StringScalarMutations
-  name_SET: String
+  name_SET: String @deprecated(reason: "Please use the generic mutation 'name: { set: ... } }' instead.")
   actedInMovies: [PersonActedInMoviesUpdateFieldInput!]
   directedMovies: [PersonDirectedMoviesUpdateFieldInput!]
   followsPeople: [PersonFollowsPeopleUpdateFieldInput!]
@@ -2850,9 +2854,9 @@ input ReviewedPropertiesSort @join__type(graph: MOVIES) {
 
 input ReviewedPropertiesUpdateInput @join__type(graph: MOVIES) {
   rating: StringScalarMutations
-  rating_SET: String
+  rating_SET: String @deprecated(reason: "Please use the generic mutation 'rating: { set: ... } }' instead.")
   summary: StringScalarMutations
-  summary_SET: String
+  summary_SET: String @deprecated(reason: "Please use the generic mutation 'summary: { set: ... } }' instead.")
 }
 
 input ReviewedPropertiesWhere @join__type(graph: MOVIES) {

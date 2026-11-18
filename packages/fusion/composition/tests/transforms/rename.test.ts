@@ -1080,3 +1080,209 @@ describe('rewriteConnectArgReferences @thrift__rpc', () => {
     expect(rewritten!.connect[0].http.GET).toBe("/authors/O'Reilly/{$args.input}");
   });
 });
+
+describe('Neo4j identity helpers', () => {
+  it('stamps @node(labels:)/@plural and @alias; rewrites @cypher $args', async () => {
+    const {
+      ensureNeo4jNodeLabels,
+      ensureNeo4jPlural,
+      ensureNeo4jTypeIdentity,
+      ensureNeo4jFieldAlias,
+      neo4jDefaultPlural,
+      rewriteNeo4jCypherArgReferences,
+      rewriteNeo4jRelationshipPropertiesRefs,
+    } = await import('../../src/transforms/neo4j-identity.js');
+    expect(neo4jDefaultPlural('Movie')).toBe('movies');
+    expect(neo4jDefaultPlural('Person')).toBe('people');
+    expect(neo4jDefaultPlural('_Movie')).toBe('_movies');
+    expect(ensureNeo4jNodeLabels({ node: [{}] }, 'Movie')).toEqual({
+      node: [{ labels: ['Movie'] }],
+    });
+    expect(ensureNeo4jNodeLabels({ node: [{ labels: ['Film'] }] }, 'Movie')).toEqual({
+      node: [{ labels: ['Film'] }],
+    });
+    // Singleton string from getDirectiveExtensions without schema coercion.
+    expect(ensureNeo4jNodeLabels({ node: [{ labels: 'Feature' as any }] }, 'Movie')).toEqual({
+      node: [{ labels: ['Feature'] }],
+    });
+    expect(ensureNeo4jTypeIdentity({ node: [{ subgraph: 'Movies' }] }, 'Movie')).toEqual({
+      node: [{ subgraph: 'Movies', labels: ['Movie'] }],
+      plural: [{ subgraph: 'Movies', value: 'movies' }],
+    });
+    // Plural follows original GraphQL type name, not DB labels.
+    expect(
+      ensureNeo4jPlural({ node: [{ subgraph: 'Movies', labels: ['Feature'] }] }, 'Movie'),
+    ).toEqual({
+      node: [{ subgraph: 'Movies', labels: ['Feature'] }],
+      plural: [{ subgraph: 'Movies', value: 'movies' }],
+    });
+    expect(
+      ensureNeo4jPlural({ node: [{ labels: ['Movie'] }], plural: [{ value: 'cinemas' }] }, 'Film'),
+    ).toEqual({
+      node: [{ labels: ['Movie'] }],
+      plural: [{ value: 'cinemas' }],
+    });
+    expect(ensureNeo4jFieldAlias({}, 'title', { isNeo4jModelField: true })?.alias?.[0]).toEqual({
+      property: 'title',
+    });
+    expect(
+      ensureNeo4jFieldAlias({ relationship: [{ type: 'ACTED_IN' }] }, 'actors', {
+        isNeo4jModelField: true,
+      }),
+    ).toEqual({ relationship: [{ type: 'ACTED_IN' }] });
+    const rewritten = rewriteNeo4jCypherArgReferences(
+      {
+        cypher: [
+          {
+            statement:
+              'MATCH (this) WHERE this.title = $title AND $jwt.sub IS NOT NULL RETURN this',
+            columnName: 'this',
+          },
+        ],
+      },
+      new Map([['title', 'needle']]),
+    );
+    expect(rewritten!.cypher[0].statement).toContain('$needle');
+    expect(rewritten!.cypher[0].statement).toContain('$jwt.sub');
+    expect(rewritten!.cypher[0].statement).not.toMatch(/\$title\b/);
+  });
+
+  it('rewrites @cypher params outside string literals only', async () => {
+    const { rewriteNeo4jCypherArgReferences } =
+      await import('../../src/transforms/neo4j-identity.js');
+    const rewritten = rewriteNeo4jCypherArgReferences(
+      {
+        cypher: [
+          {
+            statement: "RETURN CASE WHEN $title = '$title' THEN 1 ELSE 0 END AS n",
+            columnName: 'n',
+          },
+        ],
+      },
+      new Map([['title', 'needle']]),
+    );
+    expect(rewritten!.cypher[0].statement).toBe(
+      "RETURN CASE WHEN $needle = '$title' THEN 1 ELSE 0 END AS n",
+    );
+  });
+
+  it('rewrites @cypher params after escaped quotes and comments', async () => {
+    const { rewriteNeo4jCypherArgReferences } =
+      await import('../../src/transforms/neo4j-identity.js');
+    const rewritten = rewriteNeo4jCypherArgReferences(
+      {
+        cypher: [
+          {
+            statement: `// user's search
+WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
+            columnName: 'n',
+          },
+        ],
+      },
+      new Map([['title', 'needle']]),
+    );
+    expect(rewritten!.cypher[0].statement).toContain('$needle');
+    expect(rewritten!.cypher[0].statement).toMatch(/\/\* keep \$title here \*\//);
+    expect(rewritten!.cypher[0].statement).not.toMatch(/RETURN \$title\b/);
+  });
+
+  it('rewrites @cypher params after CR line comments and backtick params', async () => {
+    const { rewriteNeo4jCypherArgReferences, rewriteCypherParamNames } =
+      await import('../../src/transforms/neo4j-identity.js');
+    const withCr = rewriteNeo4jCypherArgReferences(
+      {
+        cypher: [
+          {
+            statement: '// note\rRETURN $title AS n',
+            columnName: 'n',
+          },
+        ],
+      },
+      new Map([['title', 'needle']]),
+    );
+    expect(withCr!.cypher[0].statement).toBe('// note\rRETURN $needle AS n');
+    expect(rewriteCypherParamNames('RETURN $`title` AS n', new Map([['title', 'needle']]))).toBe(
+      'RETURN $needle AS n',
+    );
+    // Trivia between `$` and the name is preserved when rewriting.
+    expect(rewriteCypherParamNames('RETURN $ `title` AS n', new Map([['title', 'needle']]))).toBe(
+      'RETURN $ needle AS n',
+    );
+    expect(
+      rewriteCypherParamNames('RETURN $\u00A0`title` AS n', new Map([['title', 'needle']])),
+    ).toBe('RETURN $\u00A0needle AS n');
+    expect(
+      rewriteCypherParamNames('RETURN $ /* note */ `title` AS n', new Map([['title', 'needle']])),
+    ).toBe('RETURN $ /* note */ needle AS n');
+    // Dynamic label ANY/ALL after `$` are operators, not parameters.
+    expect(
+      rewriteCypherParamNames(
+        'MATCH (m:$ any($labels)) RETURN count(m) + $any AS n',
+        new Map([['any', 'needle']]),
+      ),
+    ).toBe('MATCH (m:$ any($labels)) RETURN count(m) + $needle AS n');
+    // Comments between ANY/ALL and `(` stay operators (preserve trivia).
+    expect(
+      rewriteCypherParamNames(
+        'MATCH (m:$any /* note */ ($labels)) RETURN $any AS n',
+        new Map([['any', 'needle']]),
+      ),
+    ).toBe('MATCH (m:$any /* note */ ($labels)) RETURN $needle AS n');
+    // Em space (U+2003) after ANY/ALL stays an operator; `$any` param still renames.
+    expect(
+      rewriteCypherParamNames(
+        'MATCH (m:$any\u2003($labels)) RETURN $any AS n',
+        new Map([['any', 'needle']]),
+      ),
+    ).toBe('MATCH (m:$any\u2003($labels)) RETURN $needle AS n');
+    // Cypher lexer file-separator whitespace (U+001C–U+001F) is trivia too.
+    expect(
+      rewriteCypherParamNames(
+        'MATCH (m:$any\u001C($labels)) RETURN $any AS n',
+        new Map([['any', 'needle']]),
+      ),
+    ).toBe('MATCH (m:$any\u001C($labels)) RETURN $needle AS n');
+    expect(rewriteCypherParamNames('RETURN $\u001Cany AS n', new Map([['any', 'needle']]))).toBe(
+      'RETURN $\u001Cneedle AS n',
+    );
+    // Standalone backtick identifiers are not parameters.
+    expect(rewriteCypherParamNames('RETURN `title` AS n', new Map([['title', 'needle']]))).toBe(
+      'RETURN `title` AS n',
+    );
+  });
+
+  it('does not stamp @alias on Neo4j input fields', async () => {
+    const { ensureNeo4jFieldAlias } = await import('../../src/transforms/neo4j-identity.js');
+    expect(
+      ensureNeo4jFieldAlias({}, 'search_term', {
+        allowNonModelPropertyAlias: true,
+        parentIsObjectOrInterface: false,
+      }),
+    ).toEqual({});
+    expect(
+      ensureNeo4jFieldAlias({}, 'total_count', {
+        allowNonModelPropertyAlias: true,
+        parentIsObjectOrInterface: true,
+      })?.alias?.[0]?.property,
+    ).toBe('total_count');
+  });
+
+  it('rewrites @relationship(properties:) through type rename map', async () => {
+    const { rewriteNeo4jRelationshipPropertiesRefs } =
+      await import('../../src/transforms/neo4j-identity.js');
+    const rewritten = rewriteNeo4jRelationshipPropertiesRefs(
+      {
+        relationship: [
+          { type: 'ACTED_IN', direction: 'IN', properties: 'ActedIn', subgraph: 'Movies' },
+        ],
+      },
+      new Map([['ActedIn', 'Credit']]),
+    );
+    expect(rewritten!.relationship[0]).toEqual({
+      type: 'ACTED_IN',
+      direction: 'IN',
+      properties: 'Credit',
+      subgraph: 'Movies',
+    });
+  });
+});

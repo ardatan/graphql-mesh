@@ -1,5 +1,4 @@
 import type { GraphQLSchema } from 'graphql';
-import { buildSchema } from 'graphql';
 import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
@@ -48,33 +47,29 @@ export default class Neo4JHandler implements MeshHandler {
 
   getCachedSchema(driver?: ReturnType<typeof getDriverFromOpts>) {
     return this.schema.getWithSet(async () => {
+      let typeDefs: string | undefined;
       if (this.config.source) {
-        const typeDefs = await readFileOrUrl<string>(this.config.source, {
+        typeDefs = await readFileOrUrl<string>(this.config.source, {
           cwd: this.baseDir,
           allowUnknownExtensions: true,
           importFn: this.importFn,
           fetch: this.fetchFn,
           log: this.log,
         });
-        return buildSchema(typeDefs, {
-          noLocation: true,
-          assumeValid: true,
-          assumeValidSDL: true,
-        });
-      } else {
-        return loadGraphQLSchemaFromNeo4J(this.name, {
-          driver,
-          endpoint: this.config.endpoint,
-          auth: {
-            type: 'basic',
-            username: this.config.username,
-            password: this.config.password,
-          },
-          log: this.log,
-          pubsub: this.pubsub,
-          database: this.config.database,
-        });
       }
+      return loadGraphQLSchemaFromNeo4J(this.name, {
+        driver,
+        endpoint: this.config.endpoint,
+        auth: {
+          type: 'basic',
+          username: this.config.username,
+          password: this.config.password,
+        },
+        log: this.log,
+        pubsub: this.pubsub,
+        database: this.config.database,
+        ...(typeDefs ? { typeDefs } : {}),
+      });
     });
   }
 
