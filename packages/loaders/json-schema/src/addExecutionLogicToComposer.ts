@@ -22,7 +22,11 @@ import type { IStringifyOptions } from 'qs';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { entityKeyFieldsFromHttpPath } from '@graphql-mesh/fusion-composition';
-import { addConnectComposeDirective, importMeshDirectives } from '@graphql-mesh/utils';
+import {
+  addConnectComposeDirective,
+  importMeshDirectives,
+  TransportDirective,
+} from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   bakeEnumRootSelection,
@@ -684,6 +688,7 @@ ${operationConfig.description || ''}
   schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
+  schemaComposer.addDirective(TransportDirective);
   let schema = schemaComposer.buildSchema();
   const schemaExtensions: any = (schema.extensions = schema.extensions || {});
   schemaExtensions.directives = schemaExtensions.directives || {};
@@ -708,19 +713,16 @@ ${operationConfig.description || ''}
   ];
   // Keep handlerName available for debugging without Mesh @transport
   schemaExtensions.meshHandlerName = handlerName;
-  // Schema-level REST transport options (form-urlencoded qs defaults, etc.).
-  // Hive `TransportEntry.options` — compose merges these onto `@transport(options:)`.
-  // Query-string shapes for fields bake into `@connect(http.queryParams:)`.
-  if (queryStringOptions) {
-    schemaExtensions.directives.transport = [
-      {
-        subgraph: subgraphName,
-        kind: 'connect',
-        location: endpoint,
-        options: { queryStringOptions },
-      },
-    ];
-  }
+  // Gateway safety net: always stamp Mesh `@transport` for connect subgraphs.
+  // Schema-level REST options (form-urlencoded qs defaults, etc.) nest under `options`.
+  schemaExtensions.directives.transport = [
+    {
+      subgraph: subgraphName,
+      kind: 'connect',
+      location: endpoint,
+      ...(queryStringOptions ? { options: { queryStringOptions } } : {}),
+    },
+  ];
   // Fix orphaned interfaces; bake Connectors equivalents while `@enum` is still present.
   schema = mapSchema(schema, {
     [MapperKind.TYPE]: type => {

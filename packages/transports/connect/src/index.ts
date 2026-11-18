@@ -1,4 +1,8 @@
 import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-common';
+import {
+  assertSupportedMeshSpecOnSchema,
+  MESH_SUPPORTED_SPEC_VERSIONS,
+} from '@graphql-mesh/utils';
 import { processDirectives, type ProcessDirectiveArgs } from './directives/process.js';
 
 /**
@@ -40,6 +44,13 @@ export interface ConnectTransportOptions {
 
 const transport: Transport<ConnectTransportOptions> = {
   getSubgraphExecutor({ transportEntry, subgraph, fetch, pubsub, log }) {
+    // Connect loaders stamp `@transport` under Mesh core (not a protocol URL).
+    assertSupportedMeshSpecOnSchema(subgraph, {
+      name: 'core',
+      supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
+      required: false, // unified-graph extract may omit @link; validate version when present
+      consumer: '@graphql-mesh/transport-connect',
+    });
     const processDirectiveOpts: ProcessDirectiveArgs = {
       globalFetch: fetch,
       pubsub,

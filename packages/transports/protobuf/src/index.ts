@@ -18,6 +18,10 @@ import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-common';
 import type { MeshFetch } from '@graphql-mesh/types';
+import {
+  assertSupportedMeshSpecOnSchema,
+  MESH_SUPPORTED_SPEC_VERSIONS,
+} from '@graphql-mesh/utils';
 import { getDirectives } from '@graphql-tools/utils';
 import {
   credentials,
@@ -660,6 +664,12 @@ function mergeTransportHeaders(
 
 const transport: Transport<ProtobufTransportOptions> = {
   getSubgraphExecutor({ transportEntry, subgraph, cwd, log, fetch }) {
+    assertSupportedMeshSpecOnSchema(subgraph, {
+      name: 'protobuf',
+      supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
+      required: false, // unified-graph extract may omit @link; validate version when present
+      consumer: '@graphql-mesh/transport-protobuf',
+    });
     const options = transportEntry.options || {};
     const helper = new ProtobufTransportHelper(
       transportEntry.subgraph,

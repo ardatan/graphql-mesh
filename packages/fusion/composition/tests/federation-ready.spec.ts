@@ -8,8 +8,12 @@ import {
 } from 'graphql';
 import {
   addConnectComposeDirective,
+  assertSupportedMeshSpec,
   importMeshDirectives,
+  MESH_GATEWAY_SOURCE_SPEC_URL,
+  MESH_SUPPORTED_SPEC_VERSIONS,
   meshSpecUrl,
+  parseMeshSpecUrl,
 } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, printSchemaWithDirectives } from '@graphql-tools/utils';
 
@@ -20,6 +24,38 @@ describe('importMeshDirectives / addConnectComposeDirective', () => {
     // Long `/` prefix must stay linear-time (CodeQL: no `/^\/+|\/+$/`).
     const many = '/'.repeat(10_000) + 'mongo' + '/'.repeat(10_000);
     expect(meshSpecUrl(many)).toBe('https://specs.graphql-mesh.com/mongo/v0.1');
+  });
+
+  it('parseMeshSpecUrl + assertSupportedMeshSpec enforce the Mesh spec contract', () => {
+    expect(parseMeshSpecUrl(meshSpecUrl('sql'))).toEqual({
+      name: 'sql',
+      version: 'v0.1',
+      url: meshSpecUrl('sql'),
+      legacy: false,
+    });
+    expect(parseMeshSpecUrl(MESH_GATEWAY_SOURCE_SPEC_URL)).toMatchObject({
+      name: 'core',
+      version: 'v1.0',
+      legacy: true,
+    });
+    expect(() =>
+      assertSupportedMeshSpec({
+        name: 'sql',
+        supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
+        links: [{ url: meshSpecUrl('sql', 'v9.9'), import: ['@sql'] }],
+        required: true,
+        consumer: 'test',
+      }),
+    ).toThrow(/unsupported Mesh spec "sql"/);
+    expect(
+      assertSupportedMeshSpec({
+        name: 'core',
+        supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
+        links: [{ url: MESH_GATEWAY_SOURCE_SPEC_URL, import: ['@source'] }],
+        required: true,
+        acceptLegacyCore: true,
+      })?.legacy,
+    ).toBe(true);
   });
 
   it('imports explicit Mesh directives with @composeDirective and Mesh @link', () => {

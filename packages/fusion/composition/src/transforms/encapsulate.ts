@@ -17,7 +17,7 @@ import {
   type SubgraphConfig,
   type SubgraphTransform,
 } from '../compose.js';
-import { importFederationDirectives } from '../federation-utils.js';
+import { importFederationDirectives, importMeshDirectives } from '../federation-utils.js';
 import { addInaccessibleDirective } from './filter-schema.js';
 
 const OPERATION_TYPE_SUFFIX_MAP = {
@@ -204,12 +204,16 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
       directives: newDirectives,
       ...newRootTypes,
     });
+    // Mesh core `@resolveTo` must be explicitly `@link`/`@composeDirective`-imported
+    // (no auto-scan). Without this, Guild composition drops the usages and encapsulate
+    // nests cannot resolve at Gateway runtime.
+    let ready = importMeshDirectives(newSchema, ['@resolveTo']);
     // Always import `@inaccessible` when encapsulate added it. Connectors subgraphs
     // may only have the Apollo connect `@link` at this point (no federation import yet).
     if (inaccessibleDirectiveAdded) {
-      return importFederationDirectives(newSchema, ['@inaccessible']);
+      ready = importFederationDirectives(ready, ['@inaccessible']);
     }
-    return newSchema;
+    return ready;
   };
 }
 

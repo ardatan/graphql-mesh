@@ -1,6 +1,12 @@
 import { GraphQLSchema } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
-import { MESH_SPEC_URL } from './mesh-spec.js';
+import {
+  assertSupportedMeshSpec,
+  MESH_SPEC_URL,
+  type AssertSupportedMeshSpecOptions,
+  type ParsedMeshSpecUrl,
+} from './mesh-spec.js';
+import { TransportDirective } from './transport-directive.js';
 
 /**
  * Patch only the named schema-directive keys on `extensions.directives`.
@@ -129,6 +135,17 @@ export function importMeshDirectives(
   directives: MeshDirectiveImport[],
   options?: ImportMeshDirectivesOptions,
 ) {
+  // Federation `@composeDirective` requires a matching directive definition on the subgraph.
+  if (
+    directives.some(d => meshDirectiveImportKey(d) === '@transport') &&
+    subgraph.getDirective('transport') == null
+  ) {
+    const config = subgraph.toConfig();
+    subgraph = new GraphQLSchema({
+      ...config,
+      directives: [...config.directives, TransportDirective],
+    });
+  }
   const targetUrl = options?.url ?? MESH_SPEC_URL;
   const schemaDirectives = getDirectiveExtensions(subgraph) || {};
   const linkDirectives = (schemaDirectives.link ||= []);
@@ -197,6 +214,18 @@ function schemaHasConnectorsLink(subgraph: GraphQLSchema): boolean {
   }
   const sources = directives?.source || [];
   return sources.some((source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null);
+}
+
+/**
+ * Assert a Mesh `@link` spec is present / supported on `schema` (reads `@link` via
+ * `getDirectiveExtensions`). Used by transports and Compose when reading subgraphs.
+ */
+export function assertSupportedMeshSpecOnSchema(
+  schema: GraphQLSchema,
+  options: Omit<AssertSupportedMeshSpecOptions, 'links'>,
+): ParsedMeshSpecUrl | undefined {
+  const links = getDirectiveExtensions(schema)?.link as AssertSupportedMeshSpecOptions['links'];
+  return assertSupportedMeshSpec({ ...options, links });
 }
 
 /**

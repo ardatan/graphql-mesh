@@ -1,4 +1,8 @@
 import type { Transport } from '@graphql-mesh/transport-common';
+import {
+  assertSupportedMeshSpecOnSchema,
+  MESH_SUPPORTED_SPEC_VERSIONS,
+} from '@graphql-mesh/utils';
 import { getNeo4JExecutor } from './executor.js';
 
 export * from './auth.js';
@@ -15,6 +19,12 @@ export * from './executor.js';
  */
 export default {
   getSubgraphExecutor({ subgraph, pubsub, log }) {
+    assertSupportedMeshSpecOnSchema(subgraph, {
+      name: 'neo4j',
+      supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
+      required: false, // unified-graph extract may omit @link; validate version when present
+      consumer: '@graphql-mesh/transport-neo4j',
+    });
     return getNeo4JExecutor({
       schema: subgraph,
       pubsub,

@@ -1,4 +1,8 @@
 import type { Transport } from '@graphql-mesh/transport-common';
+import {
+  assertSupportedMeshSpecOnSchema,
+  MESH_SUPPORTED_SPEC_VERSIONS,
+} from '@graphql-mesh/utils';
 import { getSqlExecutor } from './execution.js';
 import type { SqlTransportOptions } from './types.js';
 
@@ -19,6 +23,12 @@ export type * from './types.js';
 
 export default {
   getSubgraphExecutor({ subgraph, cwd }) {
+    assertSupportedMeshSpecOnSchema(subgraph, {
+      name: 'sql',
+      supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
+      required: false, // unified-graph extract may omit @link; validate version when present
+      consumer: '@graphql-mesh/transport-sql',
+    });
     return getSqlExecutor({
       subgraph,
       cwd,

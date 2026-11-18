@@ -35,6 +35,12 @@ import {
 } from './connect-entity.js';
 import { finalizeConnectorsSupergraph } from './connectors-supergraph.js';
 import {
+  MESH_GATEWAY_SOURCE_SPEC_URL,
+  MESH_SUPPORTED_SPEC_VERSIONS,
+  TRANSPORT_DIRECTIVE_SDL,
+  assertSupportedMeshSpecOnSchema,
+} from '@graphql-mesh/utils';
+import {
   addConnectComposeDirective,
   convertSubgraphToFederationv2,
   importFederationDirectives,
@@ -43,6 +49,7 @@ import {
   type MeshDirectiveImport,
 } from './federation-utils.js';
 import { liftExtraSchemaDefinitionDirectives } from './lift-extra-schema-directives.js';
+import { finalizeMeshJoinDirectives } from './mesh-join-supergraph.js';
 
 export interface SubgraphConfig {
   name: string;
@@ -524,16 +531,21 @@ export function getAnnotatedSubgraphs(
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
     // Connectors safety net only — Mesh directives come from loaders / hand SDL.
     transformedSubgraph = addConnectComposeDirective(transformedSubgraph);
-    const importedDirectives: MeshDirectiveImport[] = [];
+    // Core Mesh directives (`@merge`, `@hoist`, `@extraSchemaDefinitionDirective`, …)
+    // stamp under `specs.graphql-mesh.com/core/v0.1`. `@source` is special — see below.
+    const importedCoreDirectives: MeshDirectiveImport[] = [];
     if (mergeDirectiveUsed) {
-      importedDirectives.push('@merge');
+      importedCoreDirectives.push('@merge');
     }
+    // `@source` must use the Guild v1.0 URL until Hive Gateway accepts core/v0.1.
+    // TODO(hive-gateway): switch to MESH_CORE_SPEC_URL when Gateway supports it.
+    let sourceImport: MeshDirectiveImport | undefined;
     if (sourceDirectiveUsed) {
       if (aliasMeshSource) {
         // Coexist with Apollo SCHEMA `@source` in mixed compositions.
-        importedDirectives.push({ name: '@source', as: '@meshSource' });
+        sourceImport = { name: '@source', as: '@meshSource' };
       } else {
-        importedDirectives.push('@source');
+        sourceImport = '@source';
       }
     }
     // When Mesh stitching `@source` is also in the composition, drop `@source` from the
@@ -728,13 +740,16 @@ export function getAnnotatedSubgraphs(
         ) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
       `);
     }
+    const composeDirectiveNames = (
+      getDirectiveExtensions(transformedSubgraph)?.composeDirective || []
+    ).map((d: { name?: string }) => d?.name);
 
     const queryType = transformedSubgraph.getQueryType();
     if (queryType) {
       const queryTypeDirectives = getDirectiveExtensions(queryType) || {};
 
       if (extraSchemaDefinitionDirectives) {
-        importedDirectives.push('@extraSchemaDefinitionDirective');
+        importedCoreDirectives.push('@extraSchemaDefinitionDirective');
         importedDirectivesAST.add(/* GraphQL */ `
           scalar _DirectiveExtensions
         `);
@@ -753,8 +768,32 @@ export function getAnnotatedSubgraphs(
       queryTypeExtensions.directives = queryTypeDirectives;
     }
 
-    if (importedDirectives.length) {
-      transformedSubgraph = importMeshDirectives(transformedSubgraph, importedDirectives);
+    if (importedCoreDirectives.length) {
+      transformedSubgraph = importMeshDirectives(transformedSubgraph, importedCoreDirectives);
+    }
+    if (sourceImport) {
+      // Hive Gateway fusion-runtime only resolves Mesh `@source` from this URL today.
+      transformedSubgraph = importMeshDirectives(transformedSubgraph, [sourceImport], {
+        url: MESH_GATEWAY_SOURCE_SPEC_URL,
+      });
+    }
+    // Contract: Compose-stamped core / Guild-source links must be readable by runtimes.
+    if (importedCoreDirectives.length) {
+      assertSupportedMeshSpecOnSchema(transformedSubgraph, {
+        name: 'core',
+        supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
+        required: true,
+        consumer: '@graphql-mesh/fusion-composition',
+      });
+    }
+    if (sourceImport) {
+      assertSupportedMeshSpecOnSchema(transformedSubgraph, {
+        name: 'core',
+        supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
+        required: true,
+        consumer: '@graphql-mesh/fusion-composition(@source)',
+        acceptLegacyCore: true,
+      });
     }
 
     let subgraphAST = getDocumentNodeFromSchema(transformedSubgraph);
@@ -763,6 +802,22 @@ export function getAnnotatedSubgraphs(
         subgraphAST,
         parse([...importedDirectivesAST].join('\n'), { noLocation: true }),
       ]);
+    }
+    // `@transport` often lives only in extensions / extras; printers may omit the
+    // SCHEMA directive definition while `@composeDirective(name: "@transport")` remains.
+    if (composeDirectiveNames.includes('@transport')) {
+      const hasTransportDef = subgraphAST.definitions.some(
+        d => d.kind === 'DirectiveDefinition' && d.name.value === 'transport',
+      );
+      if (!hasTransportDef) {
+        const hasTransportOptions = subgraphAST.definitions.some(
+          d => d.kind === 'ScalarTypeDefinition' && d.name.value === 'TransportOptions',
+        );
+        const transportSdl = hasTransportOptions
+          ? TRANSPORT_DIRECTIVE_SDL.replace(/^\s*scalar TransportOptions\s*/m, '')
+          : TRANSPORT_DIRECTIVE_SDL;
+        subgraphAST = concatAST([subgraphAST, parse(transportSdl, { noLocation: true })]);
+      }
     }
 
     annotatedSubgraphs.push({
@@ -806,12 +861,15 @@ export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[
   // Lift SCHEMA extras, then rewrite Connectors to `@join__directive` metadata
   // so the same Mesh supergraph runs on Hive Gateway and Apollo Router
   // (Hive's REST transport reads join__directive; Router requires it).
+  // Finally GM-41 safe Mesh transport dedupe against `join__Graph` (full Mesh→join
+  // rewrite needs Hive Gateway fusion-runtime — see finalizeMeshJoinDirectives).
   const lifted = rawSupergraphSdl
     ? liftExtraSchemaDefinitionDirectives(rawSupergraphSdl)
     : rawSupergraphSdl;
+  const withConnectors = lifted ? finalizeConnectorsSupergraph(lifted) : lifted;
   return {
     ...composedSupergraphSdl,
-    supergraphSdl: lifted ? finalizeConnectorsSupergraph(lifted) : lifted,
+    supergraphSdl: withConnectors ? finalizeMeshJoinDirectives(withConnectors) : withConnectors,
     annotatedSubgraphs,
   };
 }
