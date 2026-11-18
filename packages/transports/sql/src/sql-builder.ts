@@ -83,6 +83,11 @@ export interface SelectPlan {
    * selection lookahead). Falls back to `selection` when omitted.
    */
   columnCatalog?: Map<string, string>;
+  /**
+   * Stable unique key columns (from Federation `@key` / sole `id`) used as
+   * CONNECTION default order and keyset tie-breakers.
+   */
+  uniqueKeys?: Array<{ graphqlField: string; sqlColumn: string }>;
 }
 
 const PLANNER_KEYS = new Set<string>([
@@ -156,12 +161,14 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   }
 
   const orderBy = resolvePlannerArg(plan, 'orderBy') as string[] | string | undefined;
-  const orderSpecs = resolveOrderSpecs(orderBy, catalog);
-  // Stable pagination / keyset: default to id ASC when unordered.
-  if (!orderSpecs.length) {
+  let orderSpecs = resolveOrderSpecs(orderBy, catalog);
+  if (plan.kind === 'CONNECTION') {
+    orderSpecs = ensureConnectionOrderSpecs(orderSpecs, catalog, columns, plan.uniqueKeys);
+  } else if (!orderSpecs.length) {
+    // ROWS/ROW with limit/offset: keep a stable default so LIMIT is deterministic.
     const idCol = catalog.get('id') || columns.get('id');
     if (idCol) {
-      orderSpecs.push({ graphqlField: 'id', sqlColumn: idCol, dir: 'ASC' });
+      orderSpecs = [{ graphqlField: 'id', sqlColumn: idCol, dir: 'ASC' }];
     }
   }
 
@@ -387,7 +394,9 @@ function buildHasManyJsonSubselect(
       .join(', ');
     let limitPred = '';
     if (hm.limit != null) {
-      const orderCol = relCols[0]?.[1] || hm.joinColumn;
+      // Unique ranking key (PK / id), not the first client-projected column —
+      // duplicate titles would otherwise exclude every sibling.
+      const orderCol = hm.rankColumn || relCols.find(([, c]) => c !== hm.joinColumn)?.[1] || hm.joinColumn;
       const limAlias = '_hmc';
       const limSoft = softCol
         ? ` AND ${quoteIdent(adapter, limAlias)}.${quoteIdent(adapter, softCol)} IS NULL`
@@ -843,12 +852,15 @@ export interface KeysetCursorPayload {
 
 export function encodeKeysetCursor(specs: OrderSpec[], row: Record<string, unknown>): string {
   const values = specs.map(s => {
+    // Match mapRowToGraphql: folded roots use `t__<sqlCol>` aliases.
     const raw =
       row[s.graphqlField] ??
       row[s.sqlColumn] ??
+      row[`t__${s.sqlColumn}`] ??
       row[s.sqlColumn.toLowerCase()] ??
-      row[s.sqlColumn.toUpperCase()];
-    return raw;
+      row[s.sqlColumn.toUpperCase()] ??
+      row[`t__${s.sqlColumn.toLowerCase()}`];
+    return raw === undefined ? null : raw;
   });
   return Buffer.from(JSON.stringify({ v: values } satisfies KeysetCursorPayload), 'utf8').toString(
     'base64url',
@@ -867,8 +879,82 @@ export function decodeKeysetCursor(cursor: string): KeysetCursorPayload | undefi
 }
 
 /**
- * Append `(orderCols) > (cursorVals)` (direction-aware) for keyset pagination.
- * Same-direction tuples use SQL row comparison; mixed dirs expand to OR-of-ANDs.
+ * Default CONNECTION order + unique tie-breaker so non-unique client order
+ * (e.g. TITLE_ASC) cannot skip sibling rows with the same title.
+ */
+export function ensureConnectionOrderSpecs(
+  specs: OrderSpec[],
+  catalog: Map<string, string>,
+  selectionColumns: Map<string, string>,
+  uniqueKeys?: Array<{ graphqlField: string; sqlColumn: string }>,
+): OrderSpec[] {
+  const tieKeys =
+    uniqueKeys?.length
+      ? uniqueKeys
+      : (() => {
+          const idCol = catalog.get('id') || selectionColumns.get('id');
+          return idCol ? [{ graphqlField: 'id', sqlColumn: idCol }] : [];
+        })();
+
+  let out = [...specs];
+  if (!out.length) {
+    out = tieKeys.map(k => ({ graphqlField: k.graphqlField, sqlColumn: k.sqlColumn, dir: 'ASC' }));
+  }
+  const covered = new Set(out.map(s => s.sqlColumn));
+  for (const k of tieKeys) {
+    if (covered.has(k.sqlColumn)) continue;
+    out.push({ graphqlField: k.graphqlField, sqlColumn: k.sqlColumn, dir: 'ASC' });
+    covered.add(k.sqlColumn);
+  }
+  return out;
+}
+
+/** SQLite / MySQL sort NULL before non-NULL in ASC; Postgres defaults to NULLS LAST. */
+function nullsSortFirst(adapter: SqlAdapter): boolean {
+  return adapter !== 'postgres';
+}
+
+function keysetEq(
+  adapter: SqlAdapter,
+  colSql: string,
+  val: unknown,
+  params: unknown[],
+): string {
+  if (val === null || val === undefined) {
+    return `${colSql} IS NULL`;
+  }
+  params.push(val);
+  return `${colSql} = ${placeholder(adapter, params.length)}`;
+}
+
+function keysetCmp(
+  adapter: SqlAdapter,
+  colSql: string,
+  dir: 'ASC' | 'DESC',
+  val: unknown,
+  params: unknown[],
+): string {
+  const asc = dir === 'ASC';
+  // ASC: SQLite/MySQL NULLS FIRST, Postgres NULLS LAST.
+  // DESC flips that (SQLite/MySQL NULLS LAST, Postgres NULLS FIRST).
+  const nullsFirst = asc ? nullsSortFirst(adapter) : !nullsSortFirst(adapter);
+  if (val === null || val === undefined) {
+    // After a NULL cursor: take remaining non-NULLs only when NULLs sorted first.
+    return nullsFirst ? `${colSql} IS NOT NULL` : '1 = 0';
+  }
+  params.push(val);
+  const ph = placeholder(adapter, params.length);
+  if (asc) {
+    // Greater values; when NULLS LAST also include trailing NULLs.
+    return nullsFirst ? `${colSql} > ${ph}` : `(${colSql} > ${ph} OR ${colSql} IS NULL)`;
+  }
+  // DESC: smaller values; when NULLS LAST include trailing NULLs.
+  return nullsFirst ? `${colSql} < ${ph}` : `(${colSql} < ${ph} OR ${colSql} IS NULL)`;
+}
+
+/**
+ * Append direction-aware keyset predicate. Always expands to OR-of-ANDs so NULL
+ * cursor values match adapter NULL ordering (tuple `> NULL` is never true).
  */
 function appendKeysetPredicate(
   adapter: SqlAdapter,
@@ -883,32 +969,15 @@ function appendKeysetPredicate(
   if (!payload || payload.v.length !== specs.length) return;
 
   const q = (col: string) => (qualifyColumn ? qualifyColumn(col) : quoteIdent(adapter, col));
-  const allAsc = specs.every(s => s.dir === 'ASC');
-  const allDesc = specs.every(s => s.dir === 'DESC');
 
-  if (allAsc || allDesc) {
-    const cols = specs.map(s => q(s.sqlColumn)).join(', ');
-    const phs: string[] = [];
-    for (const val of payload.v) {
-      params.push(val);
-      phs.push(placeholder(adapter, params.length));
-    }
-    const op = allAsc ? '>' : '<';
-    whereParts.push(`(${cols}) ${op} (${phs.join(', ')})`);
-    return;
-  }
-
-  // Mixed directions: (c0 ? v0) OR (c0 = v0 AND c1 ? v1) OR …
+  // (c0 ? v0) OR (c0 = v0 AND c1 ? v1) OR …
   const orParts: string[] = [];
   for (let i = 0; i < specs.length; i++) {
     const andParts: string[] = [];
     for (let j = 0; j < i; j++) {
-      params.push(payload.v[j]);
-      andParts.push(`${q(specs[j].sqlColumn)} = ${placeholder(adapter, params.length)}`);
+      andParts.push(keysetEq(adapter, q(specs[j].sqlColumn), payload.v[j], params));
     }
-    params.push(payload.v[i]);
-    const op = specs[i].dir === 'ASC' ? '>' : '<';
-    andParts.push(`${q(specs[i].sqlColumn)} ${op} ${placeholder(adapter, params.length)}`);
+    andParts.push(keysetCmp(adapter, q(specs[i].sqlColumn), specs[i].dir, payload.v[i], params));
     orParts.push(`(${andParts.join(' AND ')})`);
   }
   if (orParts.length) whereParts.push(`(${orParts.join(' OR ')})`);

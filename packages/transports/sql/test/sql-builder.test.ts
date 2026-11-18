@@ -206,9 +206,87 @@ describe('buildSelect', () => {
         ['artistId', 'ArtistId'],
       ]),
     });
-    expect(sql).toContain('("AlbumId") > (?)');
+    // NULL-aware expansion (not SQL row tuples) so null cursors match adapter ordering.
+    expect(sql).toContain('"AlbumId" > ?');
     expect(sql).not.toContain('OFFSET');
     expect(params).toEqual([7, 2]);
+  });
+
+  it('appends unique tie-breaker and defaults order from uniqueKeys', () => {
+    const { sql: titled } = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'CONNECTION',
+      selection,
+      whereMapping: parseSqlMapping(`$args.where`),
+      planners: { first: '$args.first', orderBy: '$args.orderBy' },
+      graphqlArgs: { where: {}, first: 1, orderBy: ['TITLE_ASC'] },
+      columnCatalog: new Map([
+        ['id', 'AlbumId'],
+        ['title', 'Title'],
+      ]),
+      uniqueKeys: [{ graphqlField: 'id', sqlColumn: 'AlbumId' }],
+    });
+    expect(titled).toContain('ORDER BY "Title" ASC, "AlbumId" ASC');
+
+    const { sql: composite } = buildSelect('sqlite', {
+      table: 'playlist_track',
+      kind: 'CONNECTION',
+      selection: parseSqlMapping(`playlistId: PlaylistId\ntrackId: TrackId`),
+      whereMapping: parseSqlMapping(`$args.where`),
+      planners: { first: '$args.first' },
+      graphqlArgs: { where: {}, first: 2 },
+      columnCatalog: new Map([
+        ['playlistId', 'PlaylistId'],
+        ['trackId', 'TrackId'],
+      ]),
+      uniqueKeys: [
+        { graphqlField: 'playlistId', sqlColumn: 'PlaylistId' },
+        { graphqlField: 'trackId', sqlColumn: 'TrackId' },
+      ],
+    });
+    expect(composite).toContain('ORDER BY "PlaylistId" ASC, "TrackId" ASC');
+  });
+
+  it('encodes keyset cursors from t__ aliases and handles NULL after', () => {
+    // Cursor must include the unique tie-breaker that CONNECTION order appends.
+    const specs = [
+      { graphqlField: 'nickname', sqlColumn: 'Nickname', dir: 'ASC' as const },
+      { graphqlField: 'id', sqlColumn: 'UserId', dir: 'ASC' as const },
+    ];
+    const cursor = encodeKeysetCursor(specs, { t__Nickname: null, t__UserId: 3 });
+    const { sql, params } = buildSelect('sqlite', {
+      table: 'users',
+      kind: 'CONNECTION',
+      selection: parseSqlMapping(`nickname: Nickname`),
+      whereMapping: parseSqlMapping(`$args.where`),
+      planners: { first: '$args.first', after: '$args.after', orderBy: '$args.orderBy' },
+      graphqlArgs: { where: {}, first: 1, after: cursor, orderBy: ['NICKNAME_ASC'] },
+      columnCatalog: new Map([
+        ['nickname', 'Nickname'],
+        ['id', 'UserId'],
+      ]),
+      uniqueKeys: [{ graphqlField: 'id', sqlColumn: 'UserId' }],
+    });
+    // SQLite ASC NULLS FIRST: after NULL → remaining non-NULLs (+ unique tie-break).
+    expect(sql).toContain('"Nickname" IS NOT NULL');
+    expect(sql).toContain('"UserId"');
+    expect(params[params.length - 1]).toBe(2);
+
+    const { sql: pgSql } = buildSelect('postgres', {
+      table: 'users',
+      kind: 'CONNECTION',
+      selection: parseSqlMapping(`nickname: Nickname`),
+      whereMapping: parseSqlMapping(`$args.where`),
+      planners: { first: '$args.first', after: '$args.after', orderBy: '$args.orderBy' },
+      graphqlArgs: { where: {}, first: 1, after: cursor, orderBy: ['NICKNAME_ASC'] },
+      columnCatalog: new Map([
+        ['nickname', 'Nickname'],
+        ['id', 'UserId'],
+      ]),
+      uniqueKeys: [{ graphqlField: 'id', sqlColumn: 'UserId' }],
+    });
+    // Postgres ASC NULLS LAST: after a NULL cursor there is nothing left.
+    expect(pgSql).toContain('1 = 0');
   });
 
   it('keeps filter columns when selection is pruned', () => {
@@ -242,13 +320,16 @@ describe('buildSelect', () => {
           joinColumn: 'ArtistId',
           parentGraphqlField: 'id',
           parentColumn: 'ArtistId',
-          selection: parseSqlMapping(`id: AlbumId\ntitle: Title`),
+          selection: parseSqlMapping(`title: Title`),
           limit: 2,
+          // Unique rank independent of client projection (title alone is not unique).
+          rankColumn: 'AlbumId',
         },
       ],
     });
     expect(sql).toContain('json_arrayagg');
     expect(sql).toContain('SELECT COUNT(*)');
+    expect(sql).toContain('`AlbumId`');
     expect(sql).toMatch(/<= 2/);
     expect(sql).not.toMatch(/LIMIT 2\)/);
   });

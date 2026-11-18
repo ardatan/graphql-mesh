@@ -43,8 +43,12 @@ export function wirePostgresSqlPlans(
         const relMeta = meta.relationNames.get(typeName)?.get(fieldName);
 
         if (!isRoot && relMeta && (kind === 'ROW' || kind === 'ROWS')) {
-          // manyRelation / singleRelation do not apply field where/limit/orderBy.
-          if (kind === 'ROWS' && relationHasClientPlanners(sqlDir.args)) {
+          // singleRelation / manyRelation only encode the installed `$this` join —
+          // extra `$args` / fixed predicates / planners must keep the generic resolver.
+          if (
+            relationHasClientPlanners(sqlDir.args) ||
+            relationWhereTooComplexForPlan(where)
+          ) {
             return fieldConfig;
           }
           grafast.plan = makeRelationPlan(kind, fieldName);
@@ -57,8 +61,15 @@ export function wirePostgresSqlPlans(
           return fieldConfig;
         }
 
-        if ((kind === 'ROWS' || kind === 'CONNECTION') && whereHasClientFilter(where)) {
-          // Structured `$args.where` filters are not applied by resource.find() yet.
+        if (
+          (kind === 'ROWS' || kind === 'CONNECTION') &&
+          rootWhereNeedsGenericResolver(where, sqlDir.args)
+        ) {
+          return fieldConfig;
+        }
+
+        // ROW root: only a single `col: $args.x` equality is handled by resource.get.
+        if (kind === 'ROW' && rowWhereTooComplexForGet(where)) {
           return fieldConfig;
         }
 
@@ -87,8 +98,25 @@ export function wirePostgresSqlPlans(
 function relationHasClientPlanners(args: Record<string, unknown>): boolean {
   const where = String(args.where || '');
   if (where.includes('$args')) return true;
-  for (const key of ['orderBy', 'limit', 'offset', 'first', 'after'] as const) {
+  for (const key of ['orderBy', 'limit', 'offset', 'first', 'after', 'filter'] as const) {
     if (args[key]) return true;
+  }
+  return false;
+}
+
+/** Relation plans only apply the `$this` join — anything else drops filters. */
+function relationWhereTooComplexForPlan(where: ReturnType<typeof parseSqlMapping>): boolean {
+  for (const entry of where.entries) {
+    if (entry.spread) return true;
+    if (entry.children) continue;
+    if (entry.key.startsWith('$')) {
+      // bare `$args.where` / `$this.x` whole-value binders
+      if (entry.value?.kind === 'args') return true;
+      continue;
+    }
+    if (entry.value?.kind === 'this') continue;
+    // `tenant_id: $args.tenantId`, fixed literals, etc.
+    return true;
   }
   return false;
 }
@@ -99,8 +127,41 @@ function whereHasClientFilter(where: ReturnType<typeof parseSqlMapping>): boolea
       e.spread ||
       (e.key.startsWith('$') && e.value?.kind === 'args') ||
       (e.value?.kind === 'args' &&
-        (e.value.value === 'where' || e.value.path?.[0] === 'where')),
+        (e.value.value === 'where' ||
+          e.value.value === 'filter' ||
+          e.value.path?.[0] === 'where' ||
+          e.value.path?.[0] === 'filter')),
   );
+}
+
+function rootWhereNeedsGenericResolver(
+  where: ReturnType<typeof parseSqlMapping>,
+  args: Record<string, unknown>,
+): boolean {
+  if (whereHasClientFilter(where)) return true;
+  if (args.filter) return true; // legacy `@sql(filter:)`
+  // Fixed literals (`active: true`) and column `$args` binders are not applied by find().
+  for (const entry of where.entries) {
+    if (entry.spread || entry.children || entry.key.startsWith('$')) continue;
+    if (entry.value?.kind === 'literal') return true;
+    if (entry.value?.kind === 'args') return true;
+  }
+  return false;
+}
+
+function rowWhereTooComplexForGet(where: ReturnType<typeof parseSqlMapping>): boolean {
+  if (whereHasClientFilter(where)) return true;
+  const equality = where.entries.filter(
+    e =>
+      !e.spread &&
+      !e.children &&
+      !e.key.startsWith('$') &&
+      e.value &&
+      (e.value.kind === 'args' || e.value.kind === 'literal' || e.value.kind === 'this'),
+  );
+  // resource.get handles a single args equality only.
+  if (equality.length !== 1) return true;
+  return equality[0].value?.kind !== 'args';
 }
 
 function makeRelationPlan(kind: 'ROW' | 'ROWS', relationName: string) {
@@ -157,7 +218,7 @@ function makeRootPlan(resource: any, kind: SqlKind, where: ReturnType<typeof par
       return $connection;
     }
 
-    // ROWS (no structured `$args.where` — those keep the generic resolver)
+    // ROWS (filters that need generic resolve already bailed above)
     const $rows = resource.find();
     if (typeof $rows.setFirst === 'function') {
       $rows.setFirst(fieldArg(fieldArgs, 'limit'));

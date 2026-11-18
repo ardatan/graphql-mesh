@@ -151,6 +151,11 @@ export function loadBatchedByColumn(
   opts: BatchSelectOpts,
   key: unknown,
 ): Promise<any> {
+  // Include columnCatalog: two directives can share table/args/pruned selection
+  // while mapping the same GraphQL filter field to different SQL columns.
+  const catalogKey = opts.columnCatalog?.size
+    ? JSON.stringify([...opts.columnCatalog.entries()].sort(([a], [b]) => a.localeCompare(b)))
+    : '';
   const loaderKey = [
     opts.kind,
     opts.table,
@@ -159,6 +164,7 @@ export function loadBatchedByColumn(
     JSON.stringify(opts.planners ?? null),
     JSON.stringify(opts.whereMapping.entries.map(e => [e.key, e.value, e.spread])),
     JSON.stringify(opts.selection.entries.map(e => [e.key, e.value])),
+    catalogKey,
     JSON.stringify(opts.softDelete ?? null),
     JSON.stringify(
       (opts.relationFilters || []).map(r => [r.field, r.relatedTable, r.localColumn, r.refColumn]),

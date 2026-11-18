@@ -12,7 +12,7 @@ import {
 } from 'graphql';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { batchableEqualityColumn } from './batch.js';
-import { parseSqlMapping } from './mapping.js';
+import { columnMapFromSelection, parseSqlMapping } from './mapping.js';
 import { parseSqlThrough } from './through.js';
 import type { ParsedSqlMapping, SqlAdapter, SqlKind } from './types.js';
 
@@ -44,6 +44,11 @@ export interface HasManySubselect {
   parentColumn: string;
   selection: ParsedSqlMapping;
   limit?: number;
+  /**
+   * Unique SQL column used to rank children for MySQL LIMIT-via-COUNT folds.
+   * Independent of the client-pruned projection (prefer PK / `id`).
+   */
+  rankColumn?: string;
 }
 
 export interface SelectionPlan {
@@ -91,16 +96,13 @@ export function planSelection(
       opts,
     );
     if (!planned) {
-      // M2M `@sql(through:)` is not folded into JOINs, but the parent path must
-      // stay in the root selection so appendThroughExists can resolve $this.…
+      // Non-foldable relations (has-many with offset/where, through M2M, …) still
+      // need `$this` parent keys in the root projection for the field resolver.
       const field = parentType.getFields()[fieldNode.name.value];
       const sqlArgs = field ? getSqlArgs(schema, field) : null;
-      if (sqlArgs?.through) {
-        try {
-          const through = parseSqlThrough(sqlArgs.through as string);
-          if (through?.parentPath?.[0]) neededRootKeys.add(through.parentPath[0]);
-        } catch {
-          // Invalid through is thrown at resolve time; don't break planning.
+      if (sqlArgs) {
+        for (const key of parentKeysFromSqlArgs(sqlArgs)) {
+          neededRootKeys.add(key);
         }
       }
       continue;
@@ -236,6 +238,9 @@ function planChildField(
         parentColumn,
         selection: narrowed.entries.length ? narrowed : relSelection,
         limit,
+        // Rank from the full relation selection (not client-pruned) so LIMIT folds
+        // stay unique even when the client only asks for a non-unique column.
+        rankColumn: pickRankSqlColumn(relSelection, joinColumn),
       },
     };
   }
@@ -246,6 +251,37 @@ function planChildField(
 function getSqlArgs(schema: GraphQLSchema, field: GraphQLField<any, any>) {
   const sqlDirs = getDefDirectives(schema, field).filter(d => d.name === 'sql');
   return sqlDirs[0]?.args || null;
+}
+
+/** `$this` / through parent GraphQL fields a child resolver needs on the parent row. */
+function parentKeysFromSqlArgs(sqlArgs: Record<string, unknown>): string[] {
+  const keys: string[] = [];
+  const where = parseSqlMapping(sqlArgs.where as string | undefined);
+  for (const entry of where.entries) {
+    if (entry.value?.kind !== 'this') continue;
+    const key = entry.value.path?.[0] || entry.value.value;
+    if (key) keys.push(key);
+  }
+  if (sqlArgs.through) {
+    try {
+      const through = parseSqlThrough(sqlArgs.through as string);
+      if (through?.parentPath?.[0]) keys.push(through.parentPath[0]);
+    } catch {
+      // Invalid through is thrown at resolve time.
+    }
+  }
+  return keys;
+}
+
+/** Prefer sole `id` / first non-FK column from the full relation mapping. */
+function pickRankSqlColumn(relSelection: ParsedSqlMapping, joinColumn: string): string {
+  const cols = columnMapFromSelection(relSelection);
+  const idCol = cols.get('id');
+  if (idCol) return idCol;
+  for (const sqlCol of cols.values()) {
+    if (sqlCol !== joinColumn) return sqlCol;
+  }
+  return joinColumn;
 }
 
 function isSimpleHasManyFoldable(

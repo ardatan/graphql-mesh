@@ -95,6 +95,44 @@ function objectTypeNameFromReturnType(returnType: GraphQLType): string {
   return named.name;
 }
 
+function uniqueKeysFromCatalog(
+  catalog: Map<string, string>,
+): Array<{ graphqlField: string; sqlColumn: string }> {
+  const idCol = catalog.get('id');
+  return idCol ? [{ graphqlField: 'id', sqlColumn: idCol }] : [];
+}
+
+/** Prefer Federation `@key` fields; fall back to sole `id` in the column catalog. */
+function uniqueKeysFromReturnType(
+  schema: GraphQLSchema,
+  returnType: GraphQLType,
+  catalog: Map<string, string>,
+): Array<{ graphqlField: string; sqlColumn: string }> {
+  const typeName = objectTypeNameFromReturnType(returnType);
+  const type = schema.getType(typeName);
+  if (type && isObjectType(type)) {
+    const keyFields: string[] = [];
+    for (const dir of getDefDirectives(schema, type).filter(d => d.name === 'key')) {
+      const fields = String(dir.args.fields || '')
+        .split(/\s+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+      keyFields.push(...fields);
+    }
+    const fromKey: Array<{ graphqlField: string; sqlColumn: string }> = [];
+    const seen = new Set<string>();
+    for (const field of keyFields) {
+      if (seen.has(field)) continue;
+      const sqlColumn = catalog.get(field);
+      if (!sqlColumn) continue;
+      seen.add(field);
+      fromKey.push({ graphqlField: field, sqlColumn });
+    }
+    if (fromKey.length) return fromKey;
+  }
+  return uniqueKeysFromCatalog(catalog);
+}
+
 function connectionNodeSelection(selection: ParsedSqlMapping): ParsedSqlMapping {
   const nodes = nestedSelection(selection, 'nodes');
   if (nodes.entries.length) return nodes;
@@ -227,6 +265,11 @@ async function runSqlSelect(
       ? collectRelationFilters(opts.schema, objectTypeNameFromReturnType(opts.info.returnType))
       : undefined;
 
+  const uniqueKeys =
+    opts.schema && opts.info
+      ? uniqueKeysFromReturnType(opts.schema, opts.info.returnType, columnCatalog)
+      : uniqueKeysFromCatalog(columnCatalog);
+
   const query = buildSelect(sqlClient.adapter, {
     table,
     kind,
@@ -241,6 +284,7 @@ async function runSqlSelect(
     relationFilters,
     through,
     columnCatalog,
+    uniqueKeys,
   });
   const result = await sqlClient.query(query.sql, query.params);
 
@@ -260,7 +304,7 @@ async function runSqlSelect(
     const pageRows = hasNextPage ? rows.slice(0, first) : rows;
     const orderSpecs: OrderSpec[] = query.orderSpecs?.length
       ? query.orderSpecs
-      : [{ graphqlField: 'id', sqlColumn: 'id', dir: 'ASC' }];
+      : uniqueKeys.map(k => ({ ...k, dir: 'ASC' as const }));
     const nodes = pageRows.map(r => mapSelectRow(r, selectSelection, joins, hasMany));
     const edges = nodes.map((node, i) => ({
       cursor: encodeKeysetCursor(orderSpecs, pageRows[i]),
@@ -283,6 +327,7 @@ async function runSqlSelect(
         softDelete,
         relationFilters,
         columnCatalog,
+        uniqueKeys,
         // Junction-scoped connections must count the same membership set.
         through,
       });

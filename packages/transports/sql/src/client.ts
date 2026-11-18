@@ -50,6 +50,49 @@ export function createSqlClient(opts: CreateSqlClientOptions): SqlClient {
 }
 
 /**
+ * Build Bun.SQL constructor options (exported for unit tests under Node).
+ * Forwards `ssl.ca` / `rejectUnauthorized` into Bun's `tls` object.
+ */
+export function buildBunSqlCtorOptions(opts: CreateSqlClientOptions): Record<string, unknown> {
+  const bunOpts: Record<string, unknown> = {
+    adapter: opts.adapter === 'mysql' ? 'mysql' : opts.adapter,
+  };
+  if (opts.max != null) bunOpts.max = opts.max;
+  if (opts.idleTimeout != null) bunOpts.idleTimeout = opts.idleTimeout;
+  if (opts.connectionTimeout != null) bunOpts.connectionTimeout = opts.connectionTimeout;
+  const tls = resolveBunTlsOption(opts.tls, opts.ssl);
+  if (tls != null) bunOpts.tls = tls;
+  return bunOpts;
+}
+
+/** Merge `tls` mode strings with optional `ssl.ca` / `rejectUnauthorized` for Bun.SQL. */
+export function resolveBunTlsOption(
+  tls: boolean | string | undefined,
+  ssl?: { rejectUnauthorized?: boolean; ca?: string },
+): boolean | { rejectUnauthorized?: boolean; ca?: string } | undefined {
+  const mode = typeof tls === 'string' ? tls.toLowerCase() : undefined;
+  if (tls === false || mode === 'disable' || mode === 'false') {
+    return undefined;
+  }
+  const insecure =
+    mode === 'insecure' || mode === 'no-verify' || ssl?.rejectUnauthorized === false;
+  if (ssl?.ca != null || ssl?.rejectUnauthorized != null || insecure) {
+    return {
+      rejectUnauthorized: !insecure,
+      ...(ssl?.ca != null ? { ca: ssl.ca } : {}),
+    };
+  }
+  if (tls === true || mode === 'true' || mode === 'require') {
+    return true;
+  }
+  if (tls != null && mode !== 'true') {
+    // Pass through other Bun tls mode strings / objects.
+    return tls === 'true' ? true : tls;
+  }
+  return undefined;
+}
+
+/**
  * Wrap Bun's native `SQL` client when running under Bun.
  * Uses `sql.unsafe(query, params)` so our adapter placeholders (`$1` / `?`) work as-is.
  */
@@ -59,13 +102,7 @@ export function createBunSqlClient(opts: CreateSqlClientOptions): SqlClient {
     throw new Error('Bun.SQL is not available in this runtime');
   }
 
-  const bunOpts: Record<string, unknown> = {
-    adapter: opts.adapter === 'mysql' ? 'mysql' : opts.adapter,
-  };
-  if (opts.max != null) bunOpts.max = opts.max;
-  if (opts.idleTimeout != null) bunOpts.idleTimeout = opts.idleTimeout;
-  if (opts.connectionTimeout != null) bunOpts.connectionTimeout = opts.connectionTimeout;
-  if (opts.tls != null) bunOpts.tls = opts.tls === 'true' ? true : opts.tls;
+  const bunOpts = buildBunSqlCtorOptions(opts);
 
   // Bun resolves relative sqlite paths from process.cwd — honor Mesh `cwd` first.
   const location =
