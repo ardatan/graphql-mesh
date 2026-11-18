@@ -158,9 +158,7 @@ function introspectPaths(schema: MongooseSchema): PathMeta[] {
     const instance = schemaType.instance || schemaType.constructor?.name || 'Mixed';
     const enumValues = schemaType.enumValues || schemaType.options?.enum;
     const ref =
-      schemaType.options?.ref ||
-      schemaType.caster?.options?.ref ||
-      schemaType.schema?.options?.ref;
+      schemaType.options?.ref || schemaType.caster?.options?.ref || schemaType.schema?.options?.ref;
     out.push({
       name,
       instance: String(instance),
@@ -520,7 +518,9 @@ function emitRefFields(
       opts.schema,
     );
     void refPaths;
-    const fieldName = path.isArray ? pluralizeFallback(path.ref) : path.ref[0].toLowerCase() + path.ref.slice(1);
+    const fieldName = path.isArray
+      ? pluralizeFallback(path.ref)
+      : path.ref[0].toLowerCase() + path.ref.slice(1);
     // Prefer path name without Id suffix when present (authorId -> author)
     const pretty =
       path.name.endsWith('Id') || path.name.endsWith('Ids')
@@ -601,7 +601,8 @@ function createFilterSortAndInputs(
             .filter(p => p.name !== '_id' && p.name !== '__v' && !p.name.includes('.'))
             .map(p => {
               let filterType = 'StringFilter';
-              if (p.instance === 'Number' || p.instance === 'Decimal128') filterType = 'FloatFilter';
+              if (p.instance === 'Number' || p.instance === 'Decimal128')
+                filterType = 'FloatFilter';
               else if (p.instance === 'Boolean') filterType = 'BooleanFilter';
               else if (p.instance === 'Date') filterType = 'DateTimeFilter';
               else if (p.ref || p.instance === 'ObjectID' || p.instance === 'ObjectId')
@@ -650,7 +651,11 @@ function createFilterSortAndInputs(
   }
 }
 
-function createConnectionTypes(schemaComposer: SchemaComposer, naming: MongoNaming, typeName: string) {
+function createConnectionTypes(
+  schemaComposer: SchemaComposer,
+  naming: MongoNaming,
+  typeName: string,
+) {
   if (!schemaComposer.has(naming.edgeType(typeName))) {
     schemaComposer.createObjectTC({
       name: naming.edgeType(typeName),
@@ -841,8 +846,7 @@ function isBareBinder(value: string): boolean {
     if (!okStart) return false;
     for (let i = 1; i < seg.length; i++) {
       const c = seg.charCodeAt(i);
-      const ok =
-        (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c >= 48 && c <= 57) || c === 95;
+      const ok = (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c >= 48 && c <= 57) || c === 95;
       if (!ok) return false;
     }
   }

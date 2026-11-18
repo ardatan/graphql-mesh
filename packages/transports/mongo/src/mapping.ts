@@ -32,7 +32,10 @@ export function resolveMappingValue(
       return getPath(ctx.args, value.path || [value.value]);
     }
     case 'this': {
-      return getPath(ctx.parent as Record<string, unknown> | undefined, value.path || [value.value]);
+      return getPath(
+        ctx.parent as Record<string, unknown> | undefined,
+        value.path || [value.value],
+      );
     }
     default:
       return undefined;
@@ -250,14 +253,22 @@ function readPseudoOrPath(
   if (head === 'args') {
     return {
       raw,
-      value: { kind: 'args', value: segments.slice(1).join('.') || 'args', path: segments.slice(1) },
+      value: {
+        kind: 'args',
+        value: segments.slice(1).join('.') || 'args',
+        path: segments.slice(1),
+      },
       next: path.next,
     };
   }
   if (head === 'this') {
     return {
       raw,
-      value: { kind: 'this', value: segments.slice(1).join('.') || 'this', path: segments.slice(1) },
+      value: {
+        kind: 'this',
+        value: segments.slice(1).join('.') || 'this',
+        path: segments.slice(1),
+      },
       next: path.next,
     };
   }
@@ -323,9 +334,7 @@ function skipWs(text: string, start: number): number {
 
 function isIdentStart(c: string): boolean {
   const code = c.charCodeAt(0);
-  return (
-    (code >= 65 && code <= 90) || (code >= 97 && code <= 122) || code === 95 /* _ */
-  );
+  return (code >= 65 && code <= 90) || (code >= 97 && code <= 122) || code === 95 /* _ */;
 }
 
 function isIdentPart(c: string): boolean {

@@ -52,10 +52,7 @@ export interface MongoClientLike {
     options?: MongoFindOptions,
   ): Promise<Record<string, unknown>[]>;
   count(collection: string, filter: Record<string, unknown>): Promise<number>;
-  insertOne(
-    collection: string,
-    doc: Record<string, unknown>,
-  ): Promise<{ insertedId: unknown }>;
+  insertOne(collection: string, doc: Record<string, unknown>): Promise<{ insertedId: unknown }>;
   insertMany(
     collection: string,
     docs: Record<string, unknown>[],
@@ -70,10 +67,7 @@ export interface MongoClientLike {
     filter: Record<string, unknown>,
     update: Record<string, unknown>,
   ): Promise<{ matchedCount: number; modifiedCount: number }>;
-  deleteOne(
-    collection: string,
-    filter: Record<string, unknown>,
-  ): Promise<{ deletedCount: number }>;
+  deleteOne(collection: string, filter: Record<string, unknown>): Promise<{ deletedCount: number }>;
   deleteMany(
     collection: string,
     filter: Record<string, unknown>,

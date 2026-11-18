@@ -1,5 +1,5 @@
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Schema } from 'mongoose';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromMongo } from '../src/index.js';
 
 describe('@omnigraph/mongo schema emit', () => {

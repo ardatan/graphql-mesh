@@ -3,12 +3,7 @@ import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/tr
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { createMongoClient } from './client.js';
-import {
-  buildMongoFilter,
-  buildMongoSort,
-  buildSetDocument,
-  coerceFilterValue,
-} from './filter.js';
+import { buildMongoFilter, buildMongoSort, buildSetDocument, coerceFilterValue } from './filter.js';
 import {
   mapDocumentToGraphql,
   parseMongoMapping,
@@ -45,8 +40,7 @@ export function getMongoExecutor({ subgraph, client }: GetMongoExecutorOpts): Di
     throw new Error('No @transport directive found on schema definition');
   }
   const transport = transportDirectives?.[0] as
-    | { location?: string; options?: MongoTransportOptions }
-    | undefined;
+    { location?: string; options?: MongoTransportOptions } | undefined;
   const mongoClient =
     client ||
     createMongoClient({
@@ -57,8 +51,7 @@ export function getMongoExecutor({ subgraph, client }: GetMongoExecutorOpts): Di
   const executable = mapSchema(subgraph, {
     [MapperKind.OBJECT_FIELD](fieldConfig) {
       const mongoDirs = getDirective(subgraph, fieldConfig, 'mongo') as
-        | MongoDirectiveArgs[]
-        | undefined;
+        MongoDirectiveArgs[] | undefined;
       if (!mongoDirs?.length) return fieldConfig;
       return attachMongoResolver(fieldConfig, mongoDirs[0], mongoClient);
     },

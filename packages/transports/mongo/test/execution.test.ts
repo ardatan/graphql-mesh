@@ -1,6 +1,6 @@
 import { parse } from 'graphql';
-import { loadGraphQLSchemaFromMongo } from '@omnigraph/mongo';
 import { Schema } from 'mongoose';
+import { loadGraphQLSchemaFromMongo } from '@omnigraph/mongo';
 import { getMongoExecutor } from '../src/execution.js';
 import type { MongoClientLike } from '../src/types.js';
 

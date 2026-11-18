@@ -80,10 +80,7 @@ describe('parseMongoMapping', () => {
       'address.street': 1,
     });
     expect(
-      mapDocumentToGraphql(
-        { _id: 'abc', name: 'Ada', address: { street: 'Main' } },
-        parsed,
-      ),
+      mapDocumentToGraphql({ _id: 'abc', name: 'Ada', address: { street: 'Main' } }, parsed),
     ).toEqual({
       id: 'abc',
       name: 'Ada',
