@@ -142,11 +142,31 @@ const EXTENDED_JSON_WRAPPER_KEYS = new Set([
  * Convert Extended JSON leaves (`{ $numberDecimal }`, `{ $oid }`, …) to BSON
  * *before* recursing — otherwise the `$…` key is treated as a nested document.
  */
+/** Always-false predicate; safe inside `$elemMatch` (unlike `_id: { $exists: false }`). */
+export const MATCH_NOTHING_FILTER: Record<string, unknown> = { $nor: [{}] };
+
+function deserializeExtendedJson(value: Record<string, unknown>): unknown {
+  // Canonical mode preserves `$numberLong` beyond JS safe-integer as BSON Long.
+  return BSON.EJSON.deserialize(value, { relaxed: false });
+}
+
 function coerceExtendedJsonWrapper(value: Record<string, unknown>): unknown | undefined {
   const keys = Object.keys(value);
   if (keys.length === 1 && EXTENDED_JSON_WRAPPER_KEYS.has(keys[0]!)) {
     try {
-      return BSON.EJSON.deserialize(value);
+      return deserializeExtendedJson(value);
+    } catch {
+      return undefined;
+    }
+  }
+  // Canonical binary: `{ $binary: { base64: "…", subType: "00" } }`
+  if (
+    keys.length === 1 &&
+    keys[0] === '$binary' &&
+    isPlainObject(value.$binary as Record<string, unknown>)
+  ) {
+    try {
+      return deserializeExtendedJson(value);
     } catch {
       return undefined;
     }
@@ -154,7 +174,7 @@ function coerceExtendedJsonWrapper(value: Record<string, unknown>): unknown | un
   // Legacy binary: `{ $binary: "…", $type: "00" }`
   if (keys.length === 2 && keys.includes('$binary') && keys.includes('$type')) {
     try {
-      return BSON.EJSON.deserialize(value);
+      return deserializeExtendedJson(value);
     } catch {
       return undefined;
     }
@@ -223,6 +243,8 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 
 /** Declared ObjectId field keys from subgraph transport options (plus `id`/`_id`). */
 let declaredObjectIdFields = new Set<string>(['_id', 'id']);
+/** Fields that may be omitted on patch but must not be explicitly set to null. */
+let declaredRequiredFields = new Set<string>();
 
 /** Configure ObjectId coercion from loader-declared BSON ObjectId / ref paths. */
 export function configureObjectIdFields(fields: Iterable<string> | undefined): void {
@@ -230,6 +252,15 @@ export function configureObjectIdFields(fields: Iterable<string> | undefined): v
   if (!fields) return;
   for (const f of fields) {
     if (f) declaredObjectIdFields.add(f);
+  }
+}
+
+/** Configure fields that reject explicit `null` on update `$set` (omit still OK). */
+export function configureRequiredFields(fields: Iterable<string> | undefined): void {
+  declaredRequiredFields = new Set();
+  if (!fields) return;
+  for (const f of fields) {
+    if (f) declaredRequiredFields.add(f);
   }
 }
 
@@ -269,9 +300,10 @@ export function graphqlFilterToMongo(
     }
     if (key === 'OR' || key === 'or') {
       const clauses = Array.isArray(value) ? (value as Record<string, unknown>[]) : [];
-      // Empty `$or: []` is invalid and must not broaden writes — match nothing.
+      // Empty `$or: []` is invalid and must not broaden writes — match nothing
+      // (also inside `$elemMatch`, where `_id: { $exists: false }` can match).
       if (clauses.length === 0) {
-        appendAnd(out, [{ _id: { $exists: false } }]);
+        appendAnd(out, [MATCH_NOTHING_FILTER]);
         continue;
       }
       mergeFilterFragment(out, {
@@ -498,9 +530,21 @@ function remapUpdateFields(value: unknown): unknown {
   if (!isPlainObject(value)) return coerceDeep(value);
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(value)) {
+    // Schema placeholder for id-only GraphQL inputs — never persist.
+    if (k === '_') continue;
+    if (v === null && declaredRequiredFields.has(k)) {
+      throw new Error(`Cannot set required field "${k}" to null`);
+    }
     out[remapUpdateFieldKey(k)] = coerceDeep(v, { asObjectId: isObjectIdFieldKey(k) });
   }
   return out;
+}
+
+/** Drop GraphQL empty-input placeholder `_` before insert/write. */
+export function stripInputPlaceholder(doc: Record<string, unknown>): Record<string, unknown> {
+  if (!Object.prototype.hasOwnProperty.call(doc, '_')) return doc;
+  const { _: _ignored, ...rest } = doc;
+  return rest;
 }
 
 /**

@@ -160,4 +160,23 @@ describe('parseMongoMapping', () => {
       meta: { nested: { _id: 'n1', id: 'n1', label: 'x' } },
     });
   });
+
+  it('recurses plain docs that store a _bsontype field name', () => {
+    const parsed = parseMongoMapping(`
+      id: _id
+      meta: meta
+    `);
+    expect(
+      mapDocumentToGraphql(
+        {
+          _id: 'root',
+          meta: { _bsontype: 'metadata', nested: { _id: 'n1', label: 'x' } },
+        },
+        parsed,
+      ),
+    ).toEqual({
+      id: 'root',
+      meta: { _bsontype: 'metadata', nested: { _id: 'n1', id: 'n1', label: 'x' } },
+    });
+  });
 });

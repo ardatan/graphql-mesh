@@ -114,14 +114,31 @@ describe('@omnigraph/mongo schema emit', () => {
       ],
     });
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toContain('name: String!');
-    expect(sdl).toContain('status: EnumAccountStatus!');
     expect(sdl).not.toContain('passwordHash');
     expect(sdl).toContain('input AccountSetInput');
     expect(sdl).toContain('set: AccountSetInput');
-    // Create requires name; SetInput stays partial (no `name: String!`).
-    expect(sdl).toMatch(/input AccountDocumentInput[\s\S]*name: String!/);
-    expect(sdl).toMatch(/input AccountSetInput[\s\S]*name: String\n/);
+    const typeBody = (kind: 'type' | 'input', name: string) => {
+      const start = sdl.search(new RegExp(`${kind}\\s+${name}\\b`));
+      expect(start).toBeGreaterThanOrEqual(0);
+      const open = sdl.indexOf('{', start);
+      expect(open).toBeGreaterThan(start);
+      let depth = 0;
+      for (let i = open; i < sdl.length; i++) {
+        if (sdl[i] === '{') depth++;
+        else if (sdl[i] === '}') {
+          depth--;
+          if (depth === 0) return sdl.slice(open + 1, i);
+        }
+      }
+      throw new Error(`unclosed ${kind} ${name}`);
+    };
+    expect(typeBody('type', 'Account')).toMatch(/\bname:\s*String!/);
+    expect(typeBody('type', 'Account')).toMatch(/\bstatus:\s*EnumAccountStatus!/);
+    expect(typeBody('input', 'AccountDocumentInput')).toMatch(/\bname:\s*String!/);
+    expect(typeBody('input', 'AccountDocumentInput')).toMatch(/\bstatus:\s*EnumAccountStatus!/);
+    // SetInput stays partial (omit OK) — no `name: String!`.
+    expect(typeBody('input', 'AccountSetInput')).toMatch(/\bname:\s*String\b/);
+    expect(typeBody('input', 'AccountSetInput')).not.toMatch(/\bname:\s*String!/);
     expect(sdl).not.toContain('rename: JSON');
     expect(sdl).not.toContain('push: JSON');
   });

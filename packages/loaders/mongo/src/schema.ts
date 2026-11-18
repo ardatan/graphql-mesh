@@ -158,11 +158,19 @@ export async function loadGraphQLSchemaFromMongo(
   const extensions: Record<string, any> = (schema.extensions ||= {});
   extensions.directives ||= {};
   const objectIdFields = collectObjectIdFieldNames(modelMeta.map(m => m.paths));
+  const requiredFields = [
+    ...new Set(
+      modelMeta.flatMap(m => m.fieldRestrictions?.required || []).filter(Boolean) as string[],
+    ),
+  ];
+  const transportOptions: Record<string, string[]> = {};
+  if (objectIdFields.length) transportOptions.objectIdFields = objectIdFields;
+  if (requiredFields.length) transportOptions.requiredFields = requiredFields;
   extensions.directives.transport = {
     subgraph: subgraphName,
     kind: 'mongo',
     location: opts.endpoint,
-    options: objectIdFields.length ? { objectIdFields } : undefined,
+    options: Object.keys(transportOptions).length ? transportOptions : undefined,
   };
   extensions.directives.link = [
     {
@@ -1242,11 +1250,13 @@ function createQuerySortAndDocumentInputs(
   }
 
   // Partial patch input for `$set` — required applies to create, not update.set.
+  // Id-only models: omit SetInput/`set` rather than exposing placeholder `_` as writable.
   const setInputName = `${typeName}SetInput`;
-  if (!schemaComposer.has(setInputName)) {
+  const hasWritableSetFields = Object.keys(setFields).length > 0;
+  if (hasWritableSetFields && !schemaComposer.has(setInputName)) {
     schemaComposer.createInputTC({
       name: setInputName,
-      fields: Object.keys(setFields).length > 0 ? setFields : emptyInputPlaceholder,
+      fields: setFields,
     });
   }
 
@@ -1273,9 +1283,10 @@ function createQuerySortAndDocumentInputs(
       }
     }
 
-    const updateFields: Record<string, any> = {
-      set: { type: setInputName },
-    };
+    const updateFields: Record<string, any> = {};
+    if (hasWritableSetFields) {
+      updateFields.set = { type: setInputName };
+    }
     // Omit operators with no permitted fields — never fall back to open GraphQLJSON.
     if (Object.keys(numericFields).length > 0) {
       if (!schemaComposer.has(numericName)) {
@@ -1305,7 +1316,15 @@ function createQuerySortAndDocumentInputs(
     }
     schemaComposer.createInputTC({
       name: updateInput,
-      fields: updateFields,
+      fields:
+        Object.keys(updateFields).length > 0
+          ? updateFields
+          : {
+              _: {
+                type: GraphQLJSON,
+                description: 'No writable update operators for this model',
+              },
+            },
     });
   }
 }

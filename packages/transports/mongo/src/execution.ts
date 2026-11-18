@@ -10,9 +10,12 @@ import {
   coerceDeep,
   coerceFilterValue,
   configureObjectIdFields,
+  configureRequiredFields,
   filterFromMapping,
   isObjectIdFieldKey,
+  MATCH_NOTHING_FILTER,
   resolveUpdateDocument,
+  stripInputPlaceholder,
 } from './filter.js';
 import {
   mapDocumentToGraphql,
@@ -101,6 +104,7 @@ export function getMongoExecutor({
   const transport = transportDirectives?.[0] as
     { location?: string; options?: MongoTransportOptions } | undefined;
   configureObjectIdFields(transport?.options?.objectIdFields);
+  configureRequiredFields(transport?.options?.requiredFields);
   const mongoClient =
     client ||
     createMongoClient({
@@ -171,7 +175,7 @@ function attachMongoResolver(
         case 'PAGINATION':
           return await resolvePagination(client, directive, filter, sort, proj, ctx, selection);
         case 'INSERT_ONE': {
-          const doc = buildSetDocument(directive.set, ctx);
+          const doc = stripInputPlaceholder(buildSetDocument(directive.set, ctx));
           const { insertedId } = await client.insertOne(directive.collection, doc);
           const created = await client.findOne(directive.collection, { _id: insertedId });
           return mapPayload(created, insertedId, selection);
@@ -183,8 +187,8 @@ function attachMongoResolver(
             graphqlArgs.documents ||
             graphqlArgs.inputs ||
             []) as Record<string, unknown>[];
-          const records = (Array.isArray(rawRecords) ? rawRecords : []).map(
-            doc => coerceDeep(doc) as Record<string, unknown>,
+          const records = (Array.isArray(rawRecords) ? rawRecords : []).map(doc =>
+            stripInputPlaceholder(coerceDeep(doc) as Record<string, unknown>),
           );
           const { insertedIds, insertedCount } = await client.insertMany(
             directive.collection,
@@ -210,7 +214,9 @@ function attachMongoResolver(
         }
         case 'UPDATE_MANY': {
           const updateDoc = resolveUpdateDocument(directive.set, ctx);
-          const result = await client.updateMany(directive.collection, filter, updateDoc);
+          // Empty `{}` (e.g. from `query: { and: [] }`) would match the whole collection.
+          const writeFilter = bulkWriteFilter(filter);
+          const result = await client.updateMany(directive.collection, writeFilter, updateDoc);
           return {
             matchedCount: result.matchedCount,
             modifiedCount: result.modifiedCount,
@@ -221,7 +227,8 @@ function attachMongoResolver(
           return mapPayload(existing, existing?._id, selection);
         }
         case 'DELETE_MANY': {
-          const result = await client.deleteMany(directive.collection, filter);
+          const writeFilter = bulkWriteFilter(filter);
+          const result = await client.deleteMany(directive.collection, writeFilter);
           return { deletedCount: result.deletedCount };
         }
         case 'AGGREGATE': {
@@ -420,9 +427,19 @@ function resolveDocPath(doc: Record<string, unknown>, key: string): unknown {
   let cur: unknown = doc;
   for (const seg of key.split('.')) {
     if (cur == null || typeof cur !== 'object') return undefined;
+    if (Array.isArray(cur)) {
+      throw new Error(
+        `@mongo__connection cannot encode array-backed sort key "${key}" for cursors`,
+      );
+    }
     cur = (cur as Record<string, unknown>)[seg];
   }
   return cur;
+}
+
+/** Empty filter matches every document — never use it for bulk writes. */
+function bulkWriteFilter(filter: Record<string, unknown>): Record<string, unknown> {
+  return filter && Object.keys(filter).length > 0 ? filter : MATCH_NOTHING_FILTER;
 }
 
 function encodeConnectionCursor(

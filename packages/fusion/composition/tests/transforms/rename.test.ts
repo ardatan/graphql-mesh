@@ -1391,4 +1391,23 @@ describe('rewriteConnectArgReferences @mongo__*', () => {
     expect(rewritten!.mongo__findOne[0].query).toBe('_id: $this.writerId');
     expect(rewritten!.mongo__findOne[0].selection).toBe('note: "see $this.authorId"');
   });
+
+  it('does not apply selection-pick rewrites inside Mongo query string literals', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo__findOne: [
+          {
+            collection: 'users',
+            query: 'status: " old_name "',
+            selection: 'old_name',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['old_name', 'oldName']]),
+    );
+    expect(rewritten!.mongo__findOne[0].query).toBe('status: " old_name "');
+    expect(rewritten!.mongo__findOne[0].selection).toBe('oldName');
+  });
 });

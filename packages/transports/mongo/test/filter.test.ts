@@ -3,12 +3,15 @@ import {
   buildMongoFilter,
   buildMongoSort,
   buildSetDocument,
+  coerceDeep,
   coerceFilterValue,
   configureObjectIdFields,
+  configureRequiredFields,
   graphqlFilterToMongo,
   graphqlSortToMongo,
   graphqlUpdateToMongo,
   normalizeFilterDoc,
+  stripInputPlaceholder,
 } from '../src/filter.js';
 
 describe('mongo filter mapping', () => {
@@ -125,7 +128,11 @@ describe('mongo filter mapping', () => {
     expect(graphqlFilterToMongo({ and: [], name: { eq: 'Ada' } })).toEqual({ name: 'Ada' });
     expect(graphqlFilterToMongo({ or: [], name: { eq: 'Ada' } })).toEqual({
       name: 'Ada',
-      $and: [{ _id: { $exists: false } }],
+      $and: [{ $nor: [{}] }],
+    });
+    // Empty `or` inside $elemMatch must not match elements lacking `_id`.
+    expect(graphqlFilterToMongo({ languages: [{ or: [] }] })).toEqual({
+      languages: { $elemMatch: { $and: [{ $nor: [{}] }] } },
     });
   });
 
@@ -193,6 +200,19 @@ describe('mongo filter mapping', () => {
     });
     expect(withOid._id).toBeInstanceOf(ObjectId);
     expect(String(withOid._id)).toBe('507f1f77bcf86cd799439011');
+
+    // Canonical `$numberLong` must stay Long (not rounded Number) in non-relaxed mode.
+    const longVal = coerceDeep({ n: { $numberLong: '9007199254740993' } }) as {
+      n: { _bsontype?: string; toString(): string };
+    };
+    expect(longVal.n._bsontype || longVal.n.constructor?.name).toMatch(/Long/);
+    expect(String(longVal.n)).toBe('9007199254740993');
+
+    // Canonical `$binary: { base64, subType }` → BSON Binary.
+    const bin = coerceDeep({
+      blob: { $binary: { base64: 'AQI=', subType: '00' } },
+    }) as { blob: { _bsontype?: string; buffer?: Uint8Array } };
+    expect(bin.blob._bsontype || bin.blob.constructor?.name).toMatch(/Binary/);
   });
 
   it('maps array id binders to $in', () => {
@@ -275,5 +295,16 @@ describe('mongo filter mapping', () => {
     expect(graphqlUpdateToMongo({ _inc: { age: 2 } })).toEqual({ $inc: { age: 2 } });
     expect(graphqlUpdateToMongo({ $set: { name: 'Alan' } })).toEqual({ $set: { name: 'Alan' } });
     expect(graphqlUpdateToMongo({ name: 'Grace' })).toEqual({ $set: { name: 'Grace' } });
+  });
+
+  it('rejects explicit null on required fields but allows omit; strips _ placeholder', () => {
+    configureRequiredFields(['name']);
+    expect(() => graphqlUpdateToMongo({ set: { name: null, age: 1 } })).toThrow(/name/);
+    expect(graphqlUpdateToMongo({ set: { age: 1 } })).toEqual({ $set: { age: 1 } });
+    expect(stripInputPlaceholder({ _: 'x', name: 'Ada' })).toEqual({ name: 'Ada' });
+    expect(graphqlUpdateToMongo({ set: { _: 'x', name: 'Ada' } })).toEqual({
+      $set: { name: 'Ada' },
+    });
+    configureRequiredFields(undefined);
   });
 });

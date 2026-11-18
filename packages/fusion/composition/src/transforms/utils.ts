@@ -1669,15 +1669,42 @@ export function rewriteConnectArgReferences(
       'page',
       'perPage',
     ] as const;
+    // Binders (`query` / `set` / …): rename `$args` / `$this` only — never bare
+    // selection picks (those rewrite quoted literals like `status: " old_name "`).
+    const rewriteMongoBinder = (value: string): string => {
+      let out = value;
+      if (argRenameMap.size) {
+        const names = [...argRenameMap.keys()].map(escapeRegExp).join('|');
+        const re = new RegExp(`\\$args\\.(${names})(?![\\w])`, 'g');
+        out = rewriteOutsideQuotes(out, segment =>
+          segment.replace(re, (_m, name: string) => `$args.${argRenameMap.get(name) ?? name}`),
+        );
+      }
+      if (fieldRenameMap?.size) {
+        for (const [from, to] of fieldRenameMap) {
+          if (from === to) continue;
+          out = rewriteOutsideQuotes(out, segment =>
+            segment.replace(
+              new RegExp(`\\$this\\.${escapeRegExp(from)}(?![\\w])`, 'g'),
+              `$this.${to}`,
+            ),
+          );
+        }
+      }
+      return out;
+    };
     for (const dirName of mongoDirectiveNames) {
       nextDirectives = {
         ...nextDirectives,
         [dirName]: nextDirectives[dirName].map((mongoArgs: any) => {
           const rewritten: Record<string, unknown> = { ...mongoArgs };
           for (const key of mongoStringArgs) {
-            if (typeof mongoArgs?.[key] === 'string') {
-              rewritten[key] = rewriteExpr(mongoArgs[key]);
-            }
+            if (typeof mongoArgs?.[key] !== 'string') continue;
+            // Selection keeps pick rewrites; query/set/… stay binder-only.
+            rewritten[key] =
+              key === 'selection'
+                ? rewriteExpr(mongoArgs[key])
+                : rewriteMongoBinder(mongoArgs[key]);
           }
           return rewritten;
         }),

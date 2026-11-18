@@ -111,6 +111,11 @@ function isScalarLeafObject(value: object): boolean {
   if (value instanceof Date) return true;
   if (typeof Buffer !== 'undefined' && Buffer.isBuffer(value)) return true;
   if (typeof Uint8Array !== 'undefined' && value instanceof Uint8Array) return true;
+  // Plain docs may store a `_bsontype` field — only trust BSON prototypes.
+  const proto = Object.getPrototypeOf(value);
+  if (proto === Object.prototype || proto === null) {
+    return false;
+  }
   const bsontype = (value as { _bsontype?: string })._bsontype;
   if (typeof bsontype === 'string' && bsontype.length > 0) return true;
   const ctor = (value as { constructor?: { name?: string } }).constructor?.name;

@@ -16,6 +16,8 @@ export interface MongoTransportOptions {
   maxPoolSize?: number;
   /** Declared BSON ObjectId / ref field names for hex→ObjectId coercion. */
   objectIdFields?: string[];
+  /** Fields that may be omitted on patch but reject explicit `null` on `$set`. */
+  requiredFields?: string[];
 }
 
 export interface MongoMappingValue {
