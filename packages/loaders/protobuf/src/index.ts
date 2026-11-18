@@ -11,10 +11,6 @@ interface LoaderContext {
  * RPC stack for {@link ProtobufLoaderOptions.type}.
  * Same `.proto` parse for all; day-one emit targets `grpc`. Connect/Twirp HTTP
  * dial works today via an HTTPS `@transport(location)` on hand-authored SDL.
- *
- * @example 'grpc'
- * @example 'connect'
- * @example 'twirp'
  */
 export type ProtobufSourceType = 'grpc' | 'connect' | 'twirp';
 
@@ -65,77 +61,88 @@ export interface ProtobufLoaderOptions extends YamlConfig.GrpcHandler {
    * RPC stack for emit / dial conventions. Same `.proto` parse for all values.
    * Day one: `grpc`. Connect/Twirp loader emit can follow; hand-authored SDL
    * already works over HTTPS locations.
-   *
-   * @example 'grpc'
    */
   type?: ProtobufSourceType;
   /**
    * gRPC host:port (or URI) - becomes `@transport(location)`.
    *
    * @example 'localhost:50051'
-   * @example 'movies.example.com:443'
    */
   endpoint: string;
   /**
    * Local / remote `.proto`, descriptor set path, or `{ file, load }` with include dirs.
    * Omit (or empty) to load the schema via gRPC server reflection.
    *
-   * @example './proto/service.proto'
    * @example { file: './proto/service.proto', load: { includeDirs: ['./proto'], defaults: true } }
    */
   source?: YamlConfig.GrpcHandler['source'];
   /**
-   * Unary / client-stream deadline in milliseconds (default `200000`).
+   * Unary / client-stream deadline in milliseconds.
    * Forwarded to `@transport(options.requestTimeout)`.
+   * When omitted, the protobuf transport applies `200000`.
    *
-   * @example 30_000
+   * @default 200000
+   * @example 5_000
    */
   requestTimeout?: number;
   /**
-   * TLS materials for the gRPC channel (`rootCA` alone, or client cert pair).
-   * Paths are resolved relative to the compose cwd.
+   * TLS materials for the gRPC channel (paths resolved relative to the compose cwd).
+   * When set, takes precedence over {@link ProtobufLoaderOptions.useHTTPS}:
+   * - `rootCA` alone = custom trust store (no client certificate)
+   * - client auth needs both `privateKey` and `certChain` (optional `rootCA` alongside)
+   * Forwarded onto `@transport(options.credentialsSsl)`. When neither
+   * `credentialsSsl` nor `useHTTPS` is set, the channel is insecure.
    *
-   * @example { rootCA: './certs/ca.pem' }
+   * @example { rootCA: './certs/ca.pem', certChain: './certs/client.crt', privateKey: './certs/client.key' }
    */
   credentialsSsl?: YamlConfig.GrpcCredentialsSsl;
   /**
    * Use TLS without custom cert files (`credentials.createSsl()`).
-   *
-   * @example true
+   * Ignored when `credentialsSsl` is set. When both `credentialsSsl` and
+   * `useHTTPS` are omitted, the channel uses an insecure dial.
    */
   useHTTPS?: boolean;
   /**
-   * Per-RPC metadata (string values may use Mesh `{context.*}` / `{env.*}` interpolation).
+   * Per-RPC gRPC metadata forwarded onto `@transport(options.metaData)`.
+   * String values may use Mesh `{context.*}` / `{env.*}` interpolation.
    *
    * @example { authorization: 'Bearer {context.headers.authorization}' }
    */
   metaData?: YamlConfig.GrpcHandler['metaData'];
   /**
-   * Method-name prefixes treated as GraphQL Query (default `get` / `list` / `search`).
+   * Method-name prefixes treated as GraphQL Query. gRPC methods whose names
+   * start with one of these prefixes (case-insensitive) land on Query; other
+   * methods land on Mutation unless overridden by `selectQueryOrMutationField`.
    *
-   * @example ['get', 'list', 'find']
+   * @default ['get', 'list', 'search']
+   * @example ['fetch', 'load']
    */
   prefixQueryMethod?: string[];
   /**
-   * Force Query vs Mutation for matching gRPC method names.
+   * Force Query vs Mutation for matching gRPC method / GraphQL field names,
+   * overriding the `prefixQueryMethod` heuristic for those entries.
    *
    * @example [{ type: 'query', fieldName: 'FetchMovies' }]
    */
   selectQueryOrMutationField?: YamlConfig.SelectQueryOrMutationFieldConfig[];
   /**
-   * HTTP headers when `source` points at a remote SDL / descriptor URL.
+   * HTTP headers when `source` points at a remote `.proto` / SDL / descriptor
+   * URL (compose-time fetch only).
    *
    * @example { Authorization: 'Bearer ...' }
    */
   schemaHeaders?: YamlConfig.GrpcHandler['schemaHeaders'];
   /**
-   * Metadata sent with server-reflection requests (no local `source`).
+   * Metadata sent with gRPC server-reflection requests when there is no local
+   * `source` (schema loaded via reflection). Distinct from runtime `metaData`.
    *
    * @example { authorization: 'Bearer ...' }
    */
   reflectionMetadata?: YamlConfig.GrpcHandler['reflectionMetadata'];
   /**
-   * Channel options for `@grpc/grpc-js` (e.g. message size, keepalive).
+   * Channel options for `@grpc/grpc-js` (message size, keepalive, ...).
+   * Forwarded onto `@transport(options.channelOptions)` (often as entry pairs
+   * for SDL-safe keys like `grpc.max_receive_message_length`).
    *
    * @example { 'grpc.max_receive_message_length': 20_000_000 }
    */

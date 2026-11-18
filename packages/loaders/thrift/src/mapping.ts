@@ -5,7 +5,7 @@ import type { TypeMap, TypeVal } from '@graphql-mesh/transport-thrift';
  * Loader emit switch for the Thrift `protocol` option.
  * Thrift transport runtime is always binary; `json` emits `@source` / `@connect` (TJSON).
  *
- * @example 'binary'
+ * @default 'binary'
  * @example 'json'
  */
 export type ThriftProtocol = 'binary' | 'json';

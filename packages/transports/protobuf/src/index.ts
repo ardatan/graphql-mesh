@@ -69,7 +69,7 @@ function getTypeResolveReference(type: { extensions?: any }): ResolveReferenceFn
 /**
  * Applied when `@transport(options.requestTimeout)` is omitted (ms).
  *
- * @example 200_000
+ * @default 200000
  */
 export const DEFAULT_PROTOBUF_REQUEST_TIMEOUT_MS = 200_000;
 
@@ -105,34 +105,38 @@ export const DEFAULT_PROTOBUF_REQUEST_TIMEOUT_MS = 200_000;
  */
 export interface ProtobufTransportOptions {
   /**
-   * Unary / stream deadline in milliseconds (default {@link DEFAULT_PROTOBUF_REQUEST_TIMEOUT_MS}).
+   * Unary / stream deadline in milliseconds.
    *
-   * @example 30_000
+   * @default 200000
+   * @example 5_000
    */
   requestTimeout?: number;
   /**
-   * TLS materials for the gRPC channel. Paths are resolved relative to the
-   * transport cwd. `rootCA` alone = trust store; client auth needs both
-   * `privateKey` and `certChain`.
+   * TLS materials for the gRPC channel (paths resolved relative to the transport cwd).
+   * When set, takes precedence over {@link ProtobufTransportOptions.useHTTPS}:
+   * - `rootCA` alone = custom trust store (no client certificate)
+   * - client auth needs both `privateKey` and `certChain` (optional `rootCA` alongside)
+   * When neither `credentialsSsl` nor `useHTTPS` is set, the channel is insecure
+   * (`credentials.createInsecure()`).
    *
-   * @example { rootCA: './certs/ca.pem' }
    * @example { rootCA: './certs/ca.pem', certChain: './certs/client.crt', privateKey: './certs/client.key' }
    */
   credentialsSsl?: {
     /**
-     * PEM CA / trust bundle path.
+     * PEM CA / trust bundle path. Alone = CA-only trust; with client certs,
+     * optional custom root alongside `privateKey` + `certChain`.
      *
      * @example './certs/ca.pem'
      */
     rootCA?: string;
     /**
-     * Client certificate chain path (requires `privateKey`).
+     * Client certificate chain path. Requires `privateKey` (and vice versa).
      *
      * @example './certs/client.crt'
      */
     certChain?: string;
     /**
-     * Client private key path (requires `certChain`).
+     * Client private key path. Requires `certChain` (and vice versa).
      *
      * @example './certs/client.key'
      */
@@ -140,8 +144,8 @@ export interface ProtobufTransportOptions {
   };
   /**
    * Use TLS without custom cert files (`credentials.createSsl()`).
-   *
-   * @example true
+   * Ignored when `credentialsSsl` is set. When both `credentialsSsl` and
+   * `useHTTPS` are omitted, the channel uses an insecure dial.
    */
   useHTTPS?: boolean;
   /**
@@ -149,7 +153,6 @@ export interface ProtobufTransportOptions {
    * Mesh `{context.*}` / `{env.*}` interpolation.
    *
    * @example { 'x-tenant': '{context.headers.x-tenant}' }
-   * @example [['authorization', 'Bearer ...']]
    */
   metaData?:
     | {
@@ -160,7 +163,6 @@ export interface ProtobufTransportOptions {
    * Channel options for `@grpc/grpc-js` (object or entry pairs for SDL print).
    *
    * @example { 'grpc.max_receive_message_length': 20_000_000 }
-   * @example [['grpc.keepalive_time_ms', 10_000]]
    */
   channelOptions?: ChannelOptions | [string, string | number][];
   /**
@@ -168,7 +170,6 @@ export interface ProtobufTransportOptions {
    * Merged with `@transport(headers:)`.
    *
    * @example { 'content-type': 'application/proto' }
-   * @example [['authorization', 'Bearer ...']]
    */
   headers?: Record<string, string> | [string, string][];
 }

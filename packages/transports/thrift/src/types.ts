@@ -51,8 +51,6 @@ export type TypeMap = Record<string, TypeVal>;
 export interface GraphQLThriftAnnotations {
   /**
    * Transport kind discriminator (always `"thrift"`).
-   *
-   * @example 'thrift'
    */
   kind: 'thrift';
   /**
@@ -69,8 +67,9 @@ export interface GraphQLThriftAnnotations {
   location: string;
   /**
    * Static or interpolated request headers (`[[name, value], ...]` or a record).
+   * Missing headers are treated as an empty map at client construction.
    *
-   * @example [['x-api-key', '123']]
+   * @default {}
    * @example { Authorization: 'Bearer {context.token}' }
    */
   headers: [string, string][] | Record<string, string>;

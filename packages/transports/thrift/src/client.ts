@@ -48,20 +48,23 @@ export type ThriftRpcBinding = {
    */
   functionName: string;
   /**
-   * Thrift message type (`CALL` default, or `ONEWAY`).
+   * Thrift message type (`CALL` or `ONEWAY`).
    *
+   * @default 'CALL'
    * @example 'ONEWAY'
    */
   messageType?: 'CALL' | 'ONEWAY';
   /**
    * Compact `@thrift__rpc(args:)` mapping string.
    *
+   * @default ''
    * @example '1(struct): $args.request {\n  1(i32): left\n}'
    */
   args?: string;
   /**
    * Compact `@thrift__rpc(selection:)` mapping string.
    *
+   * @default '$(void)'
    * @example '$(i32)'
    */
   selection?: string;

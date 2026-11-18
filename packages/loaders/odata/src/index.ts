@@ -84,13 +84,14 @@ export interface LoadGraphQLSchemaFromODataOpts {
    */
   baseDir: string;
   /**
-   * HTTP headers for metadata fetch only.
+   * HTTP headers for `$metadata` fetch only (not sent on runtime OData calls).
    *
    * @example { Authorization: 'Bearer ...' }
    */
   schemaHeaders?: Record<string, string>;
   /**
-   * HTTP headers for runtime OData calls (`@source` / `@connect`).
+   * HTTP headers for runtime OData calls (baked into `@source` / `@connect`).
+   * Not used for `$metadata` fetch - see `schemaHeaders`.
    *
    * @example { Authorization: 'Bearer {context.headers.authorization}' }
    */
@@ -103,16 +104,20 @@ export interface LoadGraphQLSchemaFromODataOpts {
   importFn: ImportFn;
   /**
    * OData `$batch` mode stored on `@transport(options.odata.batch)`.
+   * `json` / `multipart` coalesce eligible sibling `@connect` calls through
+   * `POST /$batch`; `none` disables batching. When omitted, batching is off
+   * (same runtime path as `'none'`).
    *
+   * @default 'none'
    * @example 'json'
-   * @example 'multipart'
-   * @example 'none'
    */
   batch?: 'none' | 'json' | 'multipart';
   /**
-   * When true, expand navigation properties in emit / Accept headers.
+   * When true, navigation properties are expanded in emit / Accept headers
+   * (embedded nav payloads and `$expand` where applicable). When false/omitted,
+   * nav fields resolve with separate requests.
    *
-   * @example true
+   * @default false
    */
   expandNavProps?: boolean;
 }

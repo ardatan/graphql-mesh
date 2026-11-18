@@ -56,7 +56,6 @@ export interface ProtobufRpcDirectiveArgs {
   /**
    * Protobuf service name (package-qualified or short, as emitted).
    *
-   * @example 'Example'
    * @example 'movies.Movies'
    */
   service?: string;
@@ -81,14 +80,10 @@ export interface ProtobufRpcDirectiveArgs {
   /**
    * When true, the field is a server-streaming RPC (Subscription `subscribe` or
    * Query/Mutation AsyncIterable for `@stream`).
-   *
-   * @example true
    */
   stream?: boolean;
   /**
    * When true on a Query field, wire the return type's `resolveReference` for Mesh `_entities`.
-   *
-   * @example true
    */
   entity?: boolean;
 }

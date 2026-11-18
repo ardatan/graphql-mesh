@@ -11,11 +11,11 @@ import type { BaseLoaderOptions } from '@graphql-tools/utils';
 /**
  * Programmatic limit/rule for `@connect(selection:)` size and depth when a
  * selection cannot be fully expanded. Default `overLimit` is `passthrough`
- * (Mesh-correct `$`). Use `leavesOnly` for scalar/enum leaves only.
- * Where OpenAPI links / entity keys exist, the loader prefers entity stubs
- * (`supplier: { id: supplierId }`) before falling back to either policy.
+ * (Mesh-correct `$` when a selection cannot be fully expanded). Use
+ * `leavesOnly` for scalar/enum leaves only. Where OpenAPI links / entity keys
+ * exist, the loader prefers entity stubs (`supplier: { id: supplierId }`)
+ * before falling back to either policy.
  *
- * @example 'passthrough'
  * @example 'leavesOnly'
  */
 export type ConnectSelectionOverLimit = 'leavesOnly' | 'passthrough';
@@ -25,31 +25,34 @@ export type ConnectSelectionOverLimit = 'leavesOnly' | 'passthrough';
  *
  * @example
  * ```ts
- * connectSelection: { maxLength: 8000, softDepth: 2, overLimit: 'leavesOnly' }
+ * connectSelection: { maxLength: 4000, softDepth: 6, overLimit: 'leavesOnly' }
  * ```
  */
 export interface ConnectSelectionOptions {
   /**
    * Max characters for one `@connect(selection:)` string.
-   * Default: `12000`. Use `0` for no limit.
+   * When the expanded selection would exceed this limit, `overLimit` decides
+   * whether to fall back to `$` or emit leaves only. Use `0` for no limit.
    *
-   * @example 8000
+   * @default 12000
    */
   maxLength?: number;
   /**
    * Nesting depth after which - only when `overLimit: 'leavesOnly'` - object
-   * fields emit scalar/enum leaves only. Ignored for `passthrough` (default).
-   * Default: `2`. Use `-1` to disable.
+   * fields emit scalar/enum leaves only (deeper nests are not expanded).
+   * Ignored when `overLimit` is `passthrough`. Use `-1` to disable the soft
+   * depth switch.
    *
-   * @example 3
+   * @default 2
    */
   softDepth?: number;
   /**
    * When a selection exceeds `maxLength` (or cannot be safely expanded):
-   * - `passthrough` (default): empty selection -> `$` at attach (Mesh-correct;
+   * - `passthrough`: empty selection -> `$` at attach (Mesh-correct;
    *   a warning is logged when object types would need a fuller projection)
    * - `leavesOnly`: scalar/enum leaves (may omit nested objects)
    *
+   * @default 'passthrough'
    * @example 'leavesOnly'
    */
   overLimit?: ConnectSelectionOverLimit;
@@ -86,19 +89,23 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
    */
   endpoint?: string;
   /**
-   * Default headers for runtime calls (record or factory).
+   * Default headers for runtime HTTP calls (record or factory). Merged with
+   * per-operation headers and baked into `@source` / `@connect`. Not used for
+   * compose-time schema / sample fetches - see `schemaHeaders`.
    *
    * @example { Authorization: 'Bearer {context.token}' }
    */
   operationHeaders?: OperationHeadersConfiguration;
   /**
-   * HTTP timeout in milliseconds.
+   * HTTP timeout in milliseconds for runtime calls (forwarded onto
+   * `@transport(options.timeout)` when set).
    *
    * @example 30_000
    */
   timeout?: number;
   /**
-   * Headers for fetching remote schemas / samples during compose.
+   * Headers for fetching remote JSON Schema / samples during compose only
+   * (not sent on runtime operation calls).
    *
    * @example { Authorization: 'Bearer ...' }
    */
@@ -122,19 +129,22 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   /** Fetch implementation. */
   fetch?: MeshFetch;
   /**
-   * When true, non-2xx response schemas are still modeled (not collapsed to errors-only).
-   *
-   * @example true
+   * When true, non-2xx response schemas from the operation config are still
+   * modeled on the GraphQL field. When false/omitted, non-2xx responses are
+   * treated as errors-only (not expanded into success-shaped return types).
    */
   ignoreErrorResponses?: boolean;
   /**
-   * Static query params merged into every request.
+   * Static / interpolated query params merged into every runtime request
+   * (forwarded onto `@transport(options.queryParams)` when set).
    *
    * @example { api_key: '{env.API_KEY}' }
    */
   queryParams?: Record<string, string | number | boolean>;
   /**
-   * Global `qs` stringify options (`arrayFormat`, `allowDots`, `jsonStringify`, ...).
+   * Global `qs` stringify options for query strings and form bodies
+   * (`arrayFormat`, `allowDots`, `jsonStringify`, ...). Per-operation /
+   * per-param options can still override these.
    *
    * @example { arrayFormat: 'brackets', allowDots: true }
    */
@@ -146,9 +156,8 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
    */
   handlerName?: string;
   /**
-   * Bundle remote `$ref`s into the composed schema artifacts.
-   *
-   * @example true
+   * When true, remote `$ref`s are bundled into the composed schema artifacts so
+   * later loads do not need to re-fetch those documents.
    */
   bundle?: boolean;
   /**
@@ -160,7 +169,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   /**
    * Limit/rule for `@connect(selection:)` size and depth.
    *
-   * @example { maxLength: 12000, overLimit: 'passthrough' }
+   * @example { maxLength: 4000, overLimit: 'leavesOnly' }
    */
   connectSelection?: ConnectSelectionOptions;
 }

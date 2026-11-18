@@ -22,7 +22,8 @@ export interface RAMLLoaderOptions extends Partial<JSONSchemaLoaderOptions> {
    */
   source: string;
   /**
-   * Force Query vs Mutation for matching field names.
+   * Force Query vs Mutation for matching GraphQL field names, overriding the
+   * loader's default get/list/... Query heuristic for those entries.
    *
    * @example [{ type: 'query', fieldName: 'getUsers' }]
    */

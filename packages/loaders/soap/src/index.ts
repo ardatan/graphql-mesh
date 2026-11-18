@@ -29,7 +29,7 @@ export { default as getSubgraphExecutor } from '@graphql-mesh/transport-connect'
  * ```ts
  * loadSOAPSubgraph('billing', {
  *   source: 'https://example.com/billing?wsdl',
- *   bodyAlias: 'body',
+ *   bodyAlias: 'req',
  *   soapHeaders: {
  *     namespace: 'http://example.com/security',
  *     alias: 'sec',
@@ -43,7 +43,6 @@ export interface SOAPSubgraphLoaderOptions {
    * URL or path to the WSDL (or pre-generated SDL with annotations).
    *
    * @example './services/weather.wsdl'
-   * @example 'https://example.com/service?wsdl'
    */
   source?: string;
   /**
@@ -53,33 +52,41 @@ export interface SOAPSubgraphLoaderOptions {
    */
   endpoint?: string;
   /**
-   * Headers for WSDL / XSD fetch only (object, or `.js` / `.ts` path exporting the object).
+   * Headers used only while fetching / introspecting the WSDL and nested XSD
+   * imports (not sent on runtime SOAP calls). Pass a plain object, or a `.js` /
+   * `.ts` file path that exports the headers object.
    *
    * @example { Authorization: 'Bearer ...' }
    */
   schemaHeaders?: Record<string, string>;
   /**
-   * Headers for runtime SOAP calls (`@source` / `@connect`).
+   * Headers for runtime SOAP calls (baked into `@source` / `@connect`). Not used
+   * for WSDL / XSD fetch - see `schemaHeaders` for compose-time fetches.
    *
    * @example { Authorization: 'Bearer {context.headers.authorization}' }
    */
   operationHeaders?: Record<string, string>;
   /**
-   * Extra SOAP header block(s) injected into the envelope.
+   * Extra SOAP Header block injected into the envelope (namespace + alias +
+   * child elements). Distinct from HTTP `operationHeaders`.
    *
    * @example { namespace: 'http://example.com/ns', headers: { Token: 'abc' } }
    */
   soapHeaders?: SOAPHeaders;
   /**
-   * Alias for the SOAP body wrapper element (default `body`).
+   * Alias used in the SOAP envelope for body components (XML prefix / wrapper
+   * for the request body). When omitted, emit uses `body`.
    *
-   * @example 'body'
+   * @default 'body'
    */
   bodyAlias?: string;
   /**
-   * SOAP envelope namespace. When omitted, inferred from SOAP 1.1 vs 1.2.
+   * The namespace of the SOAP envelope.
+   * By default, the SOAP loader detects the SOAP version from the WSDL: if SOAP
+   * version is 1.1, it uses `http://schemas.xmlsoap.org/soap/envelope/`; if SOAP
+   * version is 1.2, it uses `http://www.w3.org/2003/05/soap-envelope`. Set this
+   * to force a namespace instead of auto-detection.
    *
-   * @example 'http://schemas.xmlsoap.org/soap/envelope/'
    * @example 'http://www.w3.org/2003/05/soap-envelope'
    */
   soapNamespace?: string;

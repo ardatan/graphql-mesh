@@ -50,31 +50,36 @@ export interface ProcessDirectiveArgs {
   /** Fetch used for `@connect` HTTP calls. */
   globalFetch?: MeshFetch;
   /**
-   * Fallback endpoint when `@source(http.baseURL)` / `@transport(location)` is absent.
+   * Fallback HTTP base URL when `@source(http.baseURL)` /
+   * `@transport(location)` is absent on the schema.
    *
    * @example 'https://api.example.com'
    */
   endpoint?: string;
   /**
-   * HTTP timeout in milliseconds.
+   * HTTP timeout in milliseconds. Applied as `AbortSignal.timeout` on
+   * `@connect` fetches when set; omitted means no processDirectives-level timeout.
    *
    * @example 30_000
    */
   timeout?: number;
   /**
-   * Default operation headers (merged with `@source` / `@connect` headers).
+   * Default operation headers merged under `@source` / `@connect` headers
+   * (directive headers win on conflict).
    *
    * @example { Authorization: 'Bearer {context.token}' }
    */
   operationHeaders?: Record<string, string>;
   /**
-   * Default query params merged into every request.
+   * Default query params merged into every `@connect` request (in addition to
+   * `@source` / per-field query params).
    *
    * @example { api_key: '{env.API_KEY}' }
    */
   queryParams?: Record<string, any>;
   /**
-   * `qs` stringify options (form-urlencoded bodies / query strings).
+   * `qs` stringify options for form-urlencoded bodies and query strings
+   * (`arrayFormat`, `allowDots`, ...). Field-level options can still override.
    *
    * @example { arrayFormat: 'repeat' }
    */

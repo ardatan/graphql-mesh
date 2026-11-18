@@ -80,27 +80,35 @@ function pickRequestContentKey(
  */
 export interface HATEOASConfig {
   /**
-   * Property name inside each link object that holds the relation name (default `rel`).
+   * Property name inside each link object that holds the relation name.
+   * Used when `HATEOAS: true` or when a partial config omits this field.
    *
-   * @example 'rel'
+   * @default 'rel'
+   * @example 'relation'
    */
   linkNameIdentifier: string;
   /**
-   * Property name inside each link object that holds the URL (default `href`).
+   * Property name inside each link object that holds the URL.
+   * Used when `HATEOAS: true` or when a partial config omits this field.
    *
-   * @example 'href'
+   * @default 'href'
+   * @example 'url'
    */
   linkPathIdentifier: string;
   /**
-   * Response field that holds the links map (default `_links`).
+   * Response field that holds the links map.
+   * Used when `HATEOAS: true` or when a partial config omits this field.
    *
-   * @example '_links'
+   * @default '_links'
+   * @example 'links'
    */
   linkObjectIdentifier: string;
   /**
-   * OpenAPI extension name for declared links (default `x-links`).
+   * OpenAPI extension name for declared links.
+   * Used when `HATEOAS: true` or when a partial config omits this field.
    *
-   * @example 'x-links'
+   * @default 'x-links'
+   * @example 'x-hateoas-links'
    */
   linkObjectExtensionIdentifier: string;
 }

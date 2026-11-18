@@ -87,43 +87,51 @@ export interface SOAPLoaderOptions {
   /** Logger instance. */
   log?: Logger;
   /**
-   * Headers for WSDL / XSD fetch only.
+   * Headers used only while fetching / introspecting the WSDL and nested XSD
+   * imports (not sent on runtime SOAP calls).
    *
    * @example { Authorization: 'Bearer ...' }
    */
   schemaHeaders?: Record<string, string>;
   /**
-   * Headers for runtime SOAP calls.
+   * Headers for runtime SOAP calls (baked into `@source` / `@connect`).
    *
    * @example { Authorization: 'Bearer {context.token}' }
    */
   operationHeaders?: Record<string, string>;
   /**
-   * Extra SOAP header block injected into the envelope.
+   * Extra SOAP Header block injected into the envelope (namespace + alias +
+   * child elements). Distinct from HTTP `operationHeaders`.
    *
    * @example { namespace: 'http://example.com/ns', headers: { Token: 'abc' } }
    */
   soapHeaders?: SOAPHeaders;
   /**
-   * SOAP HTTP endpoint override.
+   * SOAP HTTP endpoint override when the WSDL port address should not be used
+   * as-is.
    *
    * @example 'https://example.com/soap'
    */
   endpoint?: string;
   /**
-   * Base directory for relative WSDL imports.
+   * Base directory for relative WSDL / XSD import paths.
    *
    * @example process.cwd()
    */
   cwd?: string;
   /**
-   * Alias for the SOAP body wrapper (default `body`).
+   * Alias used in the SOAP envelope for body components (XML prefix / wrapper
+   * for the request body). When omitted, emit uses `body`.
    *
-   * @example 'body'
+   * @default 'body'
    */
   bodyAlias?: string;
   /**
-   * SOAP envelope namespace override.
+   * The namespace of the SOAP envelope.
+   * By default, the SOAP loader detects the SOAP version from the WSDL: if SOAP
+   * version is 1.1, it uses `http://schemas.xmlsoap.org/soap/envelope/`; if SOAP
+   * version is 1.2, it uses `http://www.w3.org/2003/05/soap-envelope`. Set this
+   * to force a namespace instead of auto-detection.
    *
    * @example 'http://www.w3.org/2003/05/soap-envelope'
    */
@@ -150,8 +158,10 @@ export interface SOAPHeaders {
    */
   namespace: string;
   /**
-   * Alias used in the envelope (default `header`).
+   * XML alias / prefix for the SOAP Header block in the envelope. When omitted,
+   * emit uses `header`.
    *
+   * @default 'header'
    * @example 'sec'
    */
   alias?: string;

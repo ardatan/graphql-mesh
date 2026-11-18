@@ -29,32 +29,35 @@ export interface OpenAPILoaderOptions extends Partial<JSONSchemaLoaderOptions> {
    * URL or filesystem path to the OpenAPI / Swagger document.
    *
    * @example './openapi.yaml'
-   * @example 'https://petstore.example.com/openapi.json'
    */
   source: string;
   /**
-   * Force Query vs Mutation for matching operation / field names.
+   * Force Query vs Mutation for matching operation / GraphQL field names,
+   * overriding the loader's default get/list/... Query heuristic for those
+   * entries.
    *
    * @example [{ type: 'query', fieldName: 'listPets' }]
    */
   selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
   /**
-   * Force document parse format when the URL/path has no clear extension.
+   * Force document parse format when the URL/path has no clear extension
+   * (for example a bare URL without `.yaml` / `.json`).
    *
    * @example 'yaml'
    */
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   /**
-   * Enable JSON:API-style field handling when the document uses it.
-   *
-   * @example true
+   * Enable JSON:API-style field handling when the OpenAPI document uses
+   * JSON:API response shapes / sparse fieldsets.
    */
   jsonApi?: boolean;
   /**
-   * HATEOAS `_links` / `x-links` handling (`true` = defaults, or custom identifiers).
+   * HATEOAS `_links` / `x-links` handling.
+   * `true` applies defaults (`rel` / `href` / `_links` / `x-links`);
+   * a partial object merges over those defaults. When omitted or `false`,
+   * HATEOAS link resolution is off.
    *
-   * @example true
-   * @example { linkObjectIdentifier: '_links', linkNameIdentifier: 'rel' }
+   * @example { linkObjectIdentifier: 'links', linkNameIdentifier: 'relation' }
    */
   HATEOAS?: HATEOASConfig | boolean;
 }
@@ -68,7 +71,6 @@ export interface SelectQueryOrMutationFieldConfig {
   /**
    * Target root type.
    *
-   * @example 'query'
    * @example 'Mutation'
    */
   type: 'query' | 'mutation' | 'Query' | 'Mutation';

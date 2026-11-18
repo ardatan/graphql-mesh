@@ -17,19 +17,22 @@ import { processDirectives, type ProcessDirectiveArgs } from './directives/proce
  */
 export interface ConnectTransportOptions {
   /**
-   * HTTP request timeout in milliseconds.
+   * HTTP request timeout in milliseconds. Applied as `AbortSignal.timeout` on
+   * `@connect` fetches when set; omitted means no transport-level timeout.
    *
    * @example 30_000
    */
   timeout?: number;
   /**
-   * Static / interpolated query params merged into every request.
+   * Static / interpolated query params merged into every `@connect` request
+   * (in addition to `@source` / per-field query params).
    *
    * @example { api_key: '{env.API_KEY}' }
    */
   queryParams?: Record<string, string>;
   /**
-   * `qs` stringify options for form / query encoding (`arrayFormat`, `allowDots`, ...).
+   * `qs` stringify options for form-urlencoded bodies and query strings
+   * (`arrayFormat`, `allowDots`, ...). Field-level options can still override.
    *
    * @example { arrayFormat: 'brackets', allowDots: true }
    */

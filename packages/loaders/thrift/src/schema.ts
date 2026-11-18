@@ -115,23 +115,25 @@ export interface GraphQLThriftLoaderOptions {
    */
   endpoint: string;
   /**
-   * Headers sent on every RPC call (binary `@transport(headers:)` / json `@source` headers).
+   * Headers sent on every RPC call (binary `@transport(headers:)` / json
+   * `@source` headers). Not used for remote IDL fetch - see `schemaHeaders`.
    *
+   * @default {}
    * @example { 'x-api-key': '123' }
    */
   operationHeaders?: Record<string, string>;
   /**
    * Thrift service name - optional for single-service endpoints. With `protocol: 'json'`,
-   * sets `@connect(http.POST: "/<service>")`; omitted → `POST: "/"`.
+   * sets `@connect(http.POST: "/<service>")`; omitted -> `POST: "/"`.
    *
    * @example 'Calculator'
    */
   serviceName?: string;
   /**
-   * Emit switch: `binary` (default) uses thrift `@transport` + `@thrift__rpc`;
+   * Emit switch: `binary` uses thrift `@transport` + `@thrift__rpc`;
    * `json` emits `@source` / `@connect` (TJSON over HTTP).
    *
-   * @example 'binary'
+   * @default 'binary'
    * @example 'json'
    */
   protocol?: ThriftProtocol;
@@ -139,39 +141,49 @@ export interface GraphQLThriftLoaderOptions {
    * Function names that should emit `entity: true` on `@thrift__rpc` / `@connect`
    * (Query entity resolvers for Mesh `_entities`).
    *
+   * @default []
    * @example ['getUser', 'getTweet']
    */
   entityMethods?: string[];
   /**
-   * When true (default), IDL `throws` are not modeled in the GraphQL return type.
+   * When true, IDL `throws` are not modeled in the GraphQL return type.
    * Set false to emit exception object types + a union return (`Success | Throws...`).
    *
-   * @example false
+   * @default true
    */
   ignoreExceptions?: boolean;
 
   /**
-   * Base directory for relative IDL paths (defaults to `process.cwd()`).
+   * Base directory for relative IDL paths.
    *
+   * @default process.cwd()
    * @example '/app/idl'
    */
   baseDir?: string;
   /**
-   * HTTP headers when `source` is a remote IDL URL.
+   * HTTP headers when `source` (or an include) is a remote IDL URL. Used only
+   * during compose-time IDL fetch, not on runtime RPC calls.
    *
+   * @default {}
    * @example { Authorization: 'Bearer ...' }
    */
   schemaHeaders?: Record<string, string>;
   /**
-   * Custom fetch for remote IDL / includes.
+   * Custom fetch for remote IDL / includes during compose.
+   *
+   * @default defaultFetch from `@whatwg-node/fetch`
    */
   fetchFn?: MeshFetch;
   /**
-   * Logger instance (defaults to a `Thrift`-prefixed Hive logger).
+   * Logger instance for IDL load / emit diagnostics.
+   *
+   * @default new Logger({ prefix: 'Thrift' })
    */
   log?: Logger;
   /**
-   * Custom `import()` helper for Mesh file loading.
+   * Custom `import()` helper for Mesh file loading (local IDL / config modules).
+   *
+   * @default defaultImportFn
    */
   importFn?: ImportFn;
 }
@@ -240,7 +252,6 @@ export interface ThriftRpcDirectiveArgs {
   /**
    * Compact Thrift result → GraphQL field mapping (`field: id(wire)` or `$(wire)`).
    *
-   * @example '$(i32)'
    * @example 'id: 1(i64)\ntext: 2(string)'
    */
   selection: string;
@@ -252,16 +263,14 @@ export interface ThriftRpcDirectiveArgs {
    */
   throws?: string;
   /**
-   * Thrift message type: `CALL` (default, expects reply) or `ONEWAY` (fire-and-forget).
+   * Thrift message type: `CALL` (expects reply) or `ONEWAY` (fire-and-forget).
    *
-   * @example 'CALL'
+   * @default 'CALL'
    * @example 'ONEWAY'
    */
   messageType?: 'CALL' | 'ONEWAY';
   /**
    * When true, this Query field is an entity resolver for Mesh `_entities`.
-   *
-   * @example true
    */
   entity?: boolean;
 }
@@ -294,7 +303,7 @@ export const thriftRpcDirective = new GraphQLDirective({
     selection: { type: new GraphQLNonNull(GraphQLString) },
     /** Compact IDL throws mapping when exceptions are modeled. */
     throws: { type: GraphQLString },
-    /** `CALL` (default) or `ONEWAY`. */
+    /** `CALL` or `ONEWAY`. @default 'CALL' */
     messageType: { type: ThriftMessageTypeEnum, defaultValue: 'CALL' },
     /** Mark this Query field as an entity resolver for Mesh `_entities`. */
     entity: { type: GraphQLBoolean },
