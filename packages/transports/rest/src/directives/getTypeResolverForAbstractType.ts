@@ -101,7 +101,7 @@ export function getTypeResolverForAbstractType({
     const hasThrowStamps =
       data != null &&
       typeof data === 'object' &&
-      Object.keys(data).some(k => k.startsWith('__throw_'));
+      Object.keys(data).some(k => typeof k === 'string' && k.startsWith('__throw_'));
     const thriftField0Stamp =
       data != null &&
       typeof data === 'object' &&
