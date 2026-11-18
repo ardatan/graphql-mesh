@@ -194,10 +194,10 @@ export function getAnnotatedSubgraphs(
       (source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null,
     );
     // Strip Mesh `@transport` from printed subgraph SDL when redundant.
-    // Connectors: never invent `@transport(kind: "connect")` — Gateway infers connect
-    // from `@join__directive` connect/source. Keep a transport entry only when the
-    // loader stamped real `options` / `headers` (qs / odata / …); GM-41 rewrites those
-    // to `@join__directive(name: "transport", args: { options })` without `kind`.
+    // Connectors: loaders never stamp `@transport`. Composition invents an entry
+    // only from `meshConnectOptions` (qs / odata / …); GM-41 rewrites those to
+    // `@join__directive(name: "transport", args: { options })` without `kind`.
+    // Gateway infers `kind: "connect"` from join connect/source otherwise.
     let removeTransportDirectiveDefinition = false;
     let removeTransportFromExtras = false;
     if (isConnectorsSubgraph) {
@@ -231,27 +231,28 @@ export function getAnnotatedSubgraphs(
     if (isConnectorsSubgraph) {
       const extensions: Record<string, any> = (normalizedSchema.extensions ||= {});
       extensions.directives = extensions.directives || {};
-      // Compose-only owner stamp for lifting SCHEMA `@source` → `@join__directive`
-      // without inventing `@transport(kind: "connect")`. Stripped in lift (not printed).
+      // Compose-only owner stamp for lifting SCHEMA `@source` → `@join__directive`.
+      // Stripped in lift (not printed). Connect loaders never stamp `@transport`.
       extensions.directives.meshComposeSubgraph = [{ name: subgraphName }];
-      const existingTransport = (extensions.directives.transport || [])[0] || {};
-      const mergedOptions = { ...(existingTransport.options || {}) };
-      const hasOptions = Object.keys(mergedOptions).length > 0;
-      const hasHeaders = existingTransport.headers != null;
-      if (hasOptions || hasHeaders) {
-        // Options-only connect transport (qs / odata / …) — GM-41 rewrites to join
-        // args without `kind: "connect"` (Gateway infers kind).
+      // Loaders may pass qs/odata options via non-directive `meshConnectOptions`.
+      // Composition invents a transport entry only when those options exist; GM-41
+      // rewrites to join args without `kind: "connect"` (Gateway infers kind).
+      const connectOpts =
+        extensions.meshConnectOptions && typeof extensions.meshConnectOptions === 'object'
+          ? { ...extensions.meshConnectOptions }
+          : {};
+      delete extensions.meshConnectOptions;
+      delete extensions.directives.transport;
+      if (Object.keys(connectOpts).length > 0) {
         extensions.directives.transport = [
           {
-            ...existingTransport,
             subgraph: subgraphName,
             kind: 'connect',
-            location: url || apolloSource?.http?.baseURL || existingTransport.location || '',
-            ...(hasOptions ? { options: mergedOptions } : {}),
+            location: url || apolloSource?.http?.baseURL || '',
+            options: connectOpts,
           },
         ];
       } else {
-        delete extensions.directives.transport;
         removeTransportFromExtras = true;
       }
     } else if (

@@ -1596,9 +1596,10 @@ export class SOAPLoader {
     const schema = this.schemaComposer.buildSchema();
     const schemaExts: any = (schema.extensions ||= {});
     schemaExts.directives ||= {};
-    // Connectors subgraph: Gateway infers transport-connect from @connect / @source.
+    // Connect loaders never emit Mesh `@transport` — Gateway infers from @connect / @source.
     // Nested XML prefixes inherit from parent element keys (inheritXmlNamespacePrefixes).
     delete schemaExts.directives.transport;
+    delete schemaExts.meshConnectOptions;
     // One `@source` per distinct port origin (multi-port WSDLs must not collapse hosts).
     const sourceEntries =
       this.sourcesByOrigin.size > 0

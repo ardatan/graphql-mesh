@@ -124,6 +124,69 @@ describe('Federation Connectors composition', () => {
     expect(sdl).toContain('@connect');
   });
 
+  it('invents options-only join transport from meshConnectOptions (loaders never stamp @transport)', () => {
+    // Fresh schema — do not share `extensions.directives` with `connectorsSchema`.
+    const withOpts = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "rest", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      input ConnectHTTP {
+        GET: String
+        headers: [HTTPHeaderMapping!]
+        queryParams: String
+        body: String
+      }
+
+      input SourceHTTP {
+        baseURL: String!
+        headers: [HTTPHeaderMapping!]
+        queryParams: String
+      }
+
+      input HTTPHeaderMapping {
+        name: String!
+        value: String
+        from: String
+      }
+
+      type Query {
+        user(id: ID!): User
+          @connect(source: "rest", http: { GET: "/users/{$args.id}" }, selection: "id name")
+      }
+
+      type User {
+        id: ID!
+        name: String
+      }
+    `);
+    (withOpts.extensions as any) = {
+      ...(withOpts.extensions || {}),
+      meshConnectOptions: { queryStringOptions: { arrayFormat: 'repeat' } },
+    };
+    const result = composeSubgraphs([{ name: 'REST', schema: withOpts }]);
+    expect(result.errors).toBeUndefined();
+    const sdl = result.supergraphSdl!;
+    // Compose invents join transport args (no kind) from the loader options bag.
+    expect(sdl).toMatch(
+      /@join__directive\([^)]*name: "transport"[^)]*options:\s*\{\s*queryStringOptions/,
+    );
+    expect(sdl).toContain('arrayFormat');
+    expect(sdl).toContain('repeat');
+    expect(sdl).not.toMatch(/kind:\s*"connect"/);
+  });
+
   it('keeps Apollo @source on schema extensions path', () => {
     const annotated = getAnnotatedSubgraphs([
       {

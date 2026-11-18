@@ -10,6 +10,8 @@ describe('Federation Connectors annotations', () => {
   it('emits @source and @connect instead of @httpOperation/@transport', async () => {
     const schema = await loadGraphQLSchemaFromJSONSchemas('pets', {
       endpoint: 'http://localhost:3000',
+      // qs options must not cause loader `@transport` — Compose invents if needed.
+      queryStringOptions: { arrayFormat: 'repeat' },
       operations: [
         {
           type: OperationTypeNode.QUERY,
@@ -35,6 +37,9 @@ describe('Federation Connectors annotations', () => {
     expect(sdl).not.toContain('@httpOperation');
     expect(sdl).not.toContain('kind: "connect"');
     expect(sdl).not.toContain('@transport');
+    expect((schema.extensions as any)?.meshConnectOptions?.queryStringOptions).toEqual({
+      arrayFormat: 'repeat',
+    });
 
     const result = await normalizedExecutor({
       schema,

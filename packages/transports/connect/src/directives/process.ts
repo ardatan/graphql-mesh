@@ -118,20 +118,30 @@ export function processDirectives(
         ]),
       )
     : undefined;
-  // Kind-specific REST opts live under `@transport(options:)` (Hive TransportEntry).
+  // Connect loaders never stamp `@transport`. Options may arrive via:
+  // - join / Mesh `@transport(options:)` (Compose invents when needed)
+  // - non-directive `schema.extensions.meshConnectOptions` (loader bag)
+  // - `extraGlobalOptions` from getSubgraphExecutor / loadGraphQLSchema*
   const transportOpts = getTransportOptions<ConnectTransportDirectiveOptions>(currDirective);
+  const meshConnectOptions =
+    (schema.extensions as { meshConnectOptions?: ConnectTransportDirectiveOptions } | undefined)
+      ?.meshConnectOptions || {};
+  const mergedTransportOpts: ConnectTransportDirectiveOptions = {
+    ...meshConnectOptions,
+    ...transportOpts,
+  };
   const globalOptions = {
     endpoint: sourceDirective?.http?.baseURL ?? currDirective?.location,
     operationHeaders: sourceHeaders ?? currDirective?.headers,
-    queryParams: transportOpts.queryParams,
-    queryStringOptions: transportOpts.queryStringOptions,
-    timeout: transportOpts.timeout,
+    queryParams: mergedTransportOpts.queryParams,
+    queryStringOptions: mergedTransportOpts.queryStringOptions,
+    timeout: mergedTransportOpts.timeout,
     ...extraGlobalOptions,
   };
   // Wire @connect resolvers (Federation Connectors).
   // HTTP headers come from `@source` / `@connect` only (WSDL emit already bakes yaml
   // operationHeaders into `@source`); no separate runtime header bag.
-  const odataOpts = transportOpts.odata;
+  const odataOpts = mergedTransportOpts.odata;
   processConnectDirectives(schema, {
     globalFetch,
     log,

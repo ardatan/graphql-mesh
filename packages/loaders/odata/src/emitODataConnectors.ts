@@ -1467,8 +1467,8 @@ export function emitODataPolymorphicUnions(
 export function applyODataConnectSchemaExtensions(
   schema: GraphQLSchema,
   meta: ODataConnectSchemaMeta,
-  subgraphName: string,
-  endpoint: string,
+  _subgraphName: string,
+  _endpoint: string,
   odataOpts?: {
     batch?: 'none' | 'json' | 'multipart';
     expandNavProps?: boolean;
@@ -1478,15 +1478,12 @@ export function applyODataConnectSchemaExtensions(
   const directiveExtensions = (schemaExtensions.directives ||= {});
   directiveExtensions.source = [meta.source];
   directiveExtensions.link = [...(directiveExtensions.link || []), ...meta.link];
-  // `@source` carries baseURL + Accept. Emit Mesh `@transport` only when Hive needs
-  // OData-specific `options.odata` (batch / expandNavProps). Otherwise compose injects
-  // a minimal `kind: connect` entry from `@source` for connectors subgraphs.
+  // Connect loaders never emit Mesh `@transport`. OData runtime options (batch /
+  // expandNavProps) go on a non-directive bag for Compose to invent if needed.
+  delete directiveExtensions.transport;
   if (odataOpts && Object.keys(odataOpts).length) {
-    directiveExtensions.transport = {
-      kind: 'connect',
-      subgraph: subgraphName,
-      location: endpoint,
-      options: { odata: odataOpts },
-    };
+    schemaExtensions.meshConnectOptions = { odata: odataOpts };
+  } else {
+    delete schemaExtensions.meshConnectOptions;
   }
 }

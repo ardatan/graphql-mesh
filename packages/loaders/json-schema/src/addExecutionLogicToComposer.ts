@@ -22,11 +22,7 @@ import type { IStringifyOptions } from 'qs';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { entityKeyFieldsFromHttpPath } from '@graphql-mesh/fusion-composition';
-import {
-  addConnectComposeDirective,
-  importMeshDirectives,
-  TransportDirective,
-} from '@graphql-mesh/utils';
+import { addConnectComposeDirective } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   bakeEnumRootSelection,
@@ -688,11 +684,11 @@ ${operationConfig.description || ''}
   schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
-  schemaComposer.addDirective(TransportDirective);
   let schema = schemaComposer.buildSchema();
   const schemaExtensions: any = (schema.extensions = schema.extensions || {});
   schemaExtensions.directives = schemaExtensions.directives || {};
-  // Federation Connectors source — replaces Mesh @transport for REST subgraphs
+  // Federation Connectors — connect loaders never emit Mesh `@transport`.
+  delete schemaExtensions.directives.transport;
   schemaExtensions.directives.source = [
     buildSourceDirectiveArgs({
       name: subgraphName,
@@ -711,21 +707,12 @@ ${operationConfig.description || ''}
       import: ['@connect', '@source'],
     },
   ];
-  // Keep handlerName available for debugging without Mesh @transport
   schemaExtensions.meshHandlerName = handlerName;
-  // Only stamp Mesh `@transport` when there are connect transport options.
-  // Otherwise Gateway infers `kind: "connect"` from `@connect` / `@source`.
+  // Non-directive bag for Compose to invent join transport options if needed.
   if (queryStringOptions) {
-    schemaExtensions.directives.transport = [
-      {
-        subgraph: subgraphName,
-        kind: 'connect',
-        location: endpoint,
-        options: { queryStringOptions },
-      },
-    ];
+    schemaExtensions.meshConnectOptions = { queryStringOptions };
   } else {
-    delete schemaExtensions.directives.transport;
+    delete schemaExtensions.meshConnectOptions;
   }
   // Fix orphaned interfaces; bake Connectors equivalents while `@enum` is still present.
   schema = mapSchema(schema, {
@@ -790,11 +777,7 @@ ${operationConfig.description || ''}
     },
   });
   flushConnectSelectionPassthroughWarnings(selectionLimit);
-  schema = addConnectComposeDirective(schema);
-  if (getDirectiveExtensions(schema)?.transport?.length) {
-    schema = importMeshDirectives(schema, ['@transport']);
-  }
-  return schema;
+  return addConnectComposeDirective(schema);
 }
 
 function finalizeConnectorsField(

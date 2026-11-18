@@ -7,8 +7,10 @@ import {
 import { processDirectives, type ProcessDirectiveArgs } from './directives/process.js';
 
 /**
- * Options stored on `@transport(kind: "connect", options:)` (OpenAPI / JSON Schema /
- * RAML / OData / SOAP `@connect` subgraphs).
+ * Options for connect subgraphs (OpenAPI / JSON Schema / RAML / OData / SOAP).
+ * Connect loaders never emit `@transport`; Compose/Gateway may invent join
+ * transport args from these options when needed. Also accepted on
+ * `schema.extensions.meshConnectOptions` and via `processDirectives` args.
  *
  * @example
  * ```ts
@@ -45,7 +47,7 @@ export interface ConnectTransportOptions {
 
 const transport: Transport<ConnectTransportOptions> = {
   getSubgraphExecutor({ transportEntry, subgraph, fetch, pubsub, log }) {
-    // Connect loaders stamp `@transport` under Mesh core (not a protocol URL).
+    // Mesh `@link` / directives on connect subgraphs (core, not a protocol URL).
     assertSupportedMeshSpecOnSchema(subgraph, {
       name: 'core',
       supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
