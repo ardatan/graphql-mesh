@@ -71,7 +71,8 @@ function rewriteOutsideQuotes(value: string, fn: (segment: string) => string): s
  * SQL selection bare picks (`name` → `displayName: name`) with colon lookbehind on
  * the full mapping string. Skips quoted spans and `#` comments (same regions as
  * {@link rewriteOutsideQuotes}), but keeps absolute offsets so
- * `key: # comment\\n  name` is not rewritten as a second bare pick.
+ * `key: # comment\\n  name` and `key:\\n  # comment\\n  name` are not rewritten
+ * as a second bare pick.
  */
 function rewriteSqlBarePicks(value: string, reBare: RegExp, lookup: Map<string, string>): string {
   let out = '';
@@ -79,8 +80,10 @@ function rewriteSqlBarePicks(value: string, reBare: RegExp, lookup: Map<string, 
   let segmentStart = 0;
   const apply = (segment: string, base: number): string =>
     segment.replace(reBare, (m, pre: string, ws: string, from: string, offset: number) => {
-      // Skip tokens that continue a prior `key:` / `key: # comment` mapping.
-      if (/:(?:[\t ]*#.*)?\s*$/.test(value.slice(0, base + offset))) {
+      // Skip tokens that continue a prior `key:` mapping. After the colon, only
+      // same-line `#` comments, blank lines, and full-line `#` comments may appear
+      // before the RHS (`key:\n  # c\n  name` must not become a second bare pick).
+      if (/:(?:[ \t]*#.*)?(?:\n[ \t]*(?:#.*)?)*$/.test(value.slice(0, base + offset))) {
         return m;
       }
       return `${pre}${ws}${lookup.get(from) ?? from}: ${from}`;

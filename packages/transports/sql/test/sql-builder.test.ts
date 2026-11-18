@@ -161,6 +161,42 @@ describe('buildSelect', () => {
     ).toThrow(/relation filter nesting exceeds max depth/);
   });
 
+  it('rejects boolean-wrapped nested filters past max depth instead of dropping them', () => {
+    expect(() =>
+      buildSelect('sqlite', {
+        table: 'employees',
+        kind: 'ROWS',
+        selection: parseSqlMapping(`
+          id: EmployeeId
+          name: LastName
+        `),
+        whereMapping: parseSqlMapping(`$args.where`),
+        graphqlArgs: {
+          where: {
+            manager: {
+              manager: {
+                and: [{ name: { eq: 'Adams' } }],
+              },
+            },
+          },
+        },
+        relationFilters: [
+          {
+            field: 'manager',
+            relatedTable: 'employees',
+            localColumn: 'ReportsTo',
+            refColumn: 'EmployeeId',
+            columns: new Map([
+              ['id', 'EmployeeId'],
+              ['name', 'LastName'],
+            ]),
+            nestedRelationFilters: undefined,
+          },
+        ],
+      }),
+    ).toThrow(/relation filter nesting exceeds max depth/);
+  });
+
   it('filters many-to-many via @sql(through) EXISTS', () => {
     const through = parseSqlThrough(`
       table: playlist_track

@@ -17,8 +17,8 @@ import type {
   SqlSoftDeleteOptions,
 } from './types.js';
 
-/** Scalar / boolean filter keys — not nested relation field names. */
-const SQL_FILTER_SCALAR_KEYS = new Set([
+/** Scalar column filter ops — not nested relation field names or boolean groups. */
+const SQL_FILTER_SCALAR_OPS = new Set([
   'eq',
   'ne',
   'lt',
@@ -33,14 +33,19 @@ const SQL_FILTER_SCALAR_KEYS = new Set([
   'like',
   'ilike',
   'isNull',
-  'and',
-  'or',
-  'not',
 ]);
 
+/**
+ * True when `o` is a nested relation filter (field keys and/or `and`/`or`/`not`),
+ * not a scalar column op object. Used to reject over-depth / unknown relations
+ * instead of silently dropping predicates.
+ */
 function isNestedRelationFilterShape(o: Record<string, any>): boolean {
   const keys = Object.keys(o);
-  return keys.length > 0 && keys.every(k => !SQL_FILTER_SCALAR_KEYS.has(k));
+  if (!keys.length) return false;
+  // Boolean-wrapped filters under a relation field are still nested filters.
+  if (keys.some(k => k === 'and' || k === 'or' || k === 'not')) return true;
+  return keys.every(k => !SQL_FILTER_SCALAR_OPS.has(k));
 }
 
 export interface OrderSpec {

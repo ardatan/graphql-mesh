@@ -1161,6 +1161,26 @@ describe('rewriteConnectArgReferences @sql', () => {
     expect(selection).not.toMatch(/displayName:\s*#.*\n\s*displayName:/);
   });
 
+  it('does not treat a bare name after a separate `#` comment line as a bare pick', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [
+          {
+            table: 'users',
+            selection: 'name:\n  # physical column\n  name\nid: id',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['name', 'displayName']]),
+    );
+    const selection = rewritten!.sql[0].selection as string;
+    expect(selection).toContain('displayName:\n  # physical column\n  name');
+    expect(selection).not.toMatch(/displayName:\s*\n\s*#.*\n\s*displayName:/);
+    expect(selection).not.toContain('displayName: name');
+  });
+
   it('does not rewrite __typename text inside SQL where/set literals', async () => {
     const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
     const rewritten = rewriteConnectArgReferences(
