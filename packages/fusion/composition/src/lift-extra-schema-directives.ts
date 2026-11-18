@@ -267,10 +267,19 @@ function collectExtrasFromDirectives(
       continue;
     }
     const blob = value as Record<string, unknown>;
-    const transportList = Array.isArray(blob.transport) ? blob.transport : [];
-    const subgraphFromTransport = readSubgraphFromTransportEntries(transportList);
+    // Prefer Compose-stamped owner (no `@transport(kind: "connect")` required).
+    // Fall back to leftover `@transport(subgraph:)` for older extras blobs.
+    const subgraphOwner =
+      readSubgraphFromMeshComposeEntries(blob.meshComposeSubgraph) ||
+      readSubgraphFromTransportEntries(
+        Array.isArray(blob.transport) ? blob.transport : blob.transport ? [blob.transport] : [],
+      );
 
     for (const [name, occurrences] of Object.entries(blob)) {
+      if (name === 'meshComposeSubgraph') {
+        // Compose-only attribution — do not lift onto the supergraph schema.
+        continue;
+      }
       const list = Array.isArray(occurrences) ? occurrences : [occurrences];
       const bucket = liftedByName.get(name) || [];
       for (const item of list) {
@@ -278,15 +287,29 @@ function collectExtrasFromDirectives(
           continue;
         }
         const occurrence: LiftedOccurrence = { ...(item as Record<string, unknown>) };
-        // Pair SCHEMA `@source` with the subgraph from the same extras blob's `@transport`.
-        if (name === 'source' && subgraphFromTransport) {
-          occurrence.__meshSubgraph = subgraphFromTransport;
+        // Pair SCHEMA `@source` with the owning subgraph from the same extras blob.
+        if (name === 'source' && subgraphOwner) {
+          occurrence.__meshSubgraph = subgraphOwner;
         }
         bucket.push(occurrence);
       }
       liftedByName.set(name, bucket);
     }
   }
+}
+
+function readSubgraphFromMeshComposeEntries(value: unknown): string | undefined {
+  const list = Array.isArray(value) ? value : value ? [value] : [];
+  for (const entry of list) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+      continue;
+    }
+    const name = (entry as Record<string, unknown>).name;
+    if (typeof name === 'string' && name) {
+      return name;
+    }
+  }
+  return undefined;
 }
 
 function readSubgraphFromTransportEntries(transportList: unknown[]): string | undefined {

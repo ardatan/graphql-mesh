@@ -713,16 +713,20 @@ ${operationConfig.description || ''}
   ];
   // Keep handlerName available for debugging without Mesh @transport
   schemaExtensions.meshHandlerName = handlerName;
-  // Gateway safety net: always stamp Mesh `@transport` for connect subgraphs.
-  // Schema-level REST options (form-urlencoded qs defaults, etc.) nest under `options`.
-  schemaExtensions.directives.transport = [
-    {
-      subgraph: subgraphName,
-      kind: 'connect',
-      location: endpoint,
-      ...(queryStringOptions ? { options: { queryStringOptions } } : {}),
-    },
-  ];
+  // Only stamp Mesh `@transport` when there are connect transport options.
+  // Otherwise Gateway infers `kind: "connect"` from `@connect` / `@source`.
+  if (queryStringOptions) {
+    schemaExtensions.directives.transport = [
+      {
+        subgraph: subgraphName,
+        kind: 'connect',
+        location: endpoint,
+        options: { queryStringOptions },
+      },
+    ];
+  } else {
+    delete schemaExtensions.directives.transport;
+  }
   // Fix orphaned interfaces; bake Connectors equivalents while `@enum` is still present.
   schema = mapSchema(schema, {
     [MapperKind.TYPE]: type => {
@@ -786,7 +790,11 @@ ${operationConfig.description || ''}
     },
   });
   flushConnectSelectionPassthroughWarnings(selectionLimit);
-  return addConnectComposeDirective(importMeshDirectives(schema, ['@transport']));
+  schema = addConnectComposeDirective(schema);
+  if (getDirectiveExtensions(schema)?.transport?.length) {
+    schema = importMeshDirectives(schema, ['@transport']);
+  }
+  return schema;
 }
 
 function finalizeConnectorsField(

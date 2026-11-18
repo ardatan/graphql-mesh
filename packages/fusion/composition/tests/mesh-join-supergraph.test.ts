@@ -1,6 +1,6 @@
 import { finalizeMeshJoinDirectives } from '../src/mesh-join-supergraph.js';
 
-describe('finalizeMeshJoinDirectives (GM-41 safe subset)', () => {
+describe('finalizeMeshJoinDirectives (GM-41)', () => {
   it('drops pure http @transport when location matches join__graph url', () => {
     const sdl = /* GraphQL */ `
       schema
@@ -28,11 +28,12 @@ describe('finalizeMeshJoinDirectives (GM-41 safe subset)', () => {
     const out = finalizeMeshJoinDirectives(sdl);
     expect(out).not.toMatch(/@transport\s*\(/);
     expect(out).not.toMatch(/directive @transport/);
+    expect(out).not.toMatch(/name:\s*"transport"/);
     expect(out).not.toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1/);
     expect(out).toMatch(/@join__graph\(name: "users", url: "http:\/\/localhost:4001"\)/);
   });
 
-  it('strips redundant location from non-http @transport but keeps subgraph/kind/options', () => {
+  it('rewrites non-http @transport to @join__directive without matching subgraph/location', () => {
     const sdl = /* GraphQL */ `
       schema
         @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
@@ -62,14 +63,19 @@ describe('finalizeMeshJoinDirectives (GM-41 safe subset)', () => {
       }
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    expect(out).toMatch(/@transport\(/);
-    expect(out).toMatch(/kind:\s*"sql"/);
-    expect(out).toMatch(/subgraph:\s*"chinook"/);
-    expect(out).toMatch(/options:/);
-    expect(out).not.toMatch(/location:\s*"file:chinook\.db"/);
+    expect(out).not.toMatch(/@transport\s*\(/);
+    expect(out).not.toMatch(/directive @transport/);
+    expect(out).not.toMatch(/scalar TransportOptions/);
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[CHINOOK\], name: "transport", args: \{kind: "sql", options: \{pool: 2\}\}\)/,
+    );
+    expect(out).not.toMatch(/subgraph:/);
+    expect(out).not.toMatch(/location:/);
+    expect(out).toMatch(/specs\.apollo\.dev\/join\/v0\.5/);
+    expect(out).toMatch(/directive @join__directive/);
   });
 
-  it('keeps @transport when location differs from join__graph url', () => {
+  it('keeps override location on @join__directive args', () => {
     const sdl = /* GraphQL */ `
       schema
         @transport(subgraph: "api", kind: "http", location: "http://override:9999") {
@@ -85,6 +91,58 @@ describe('finalizeMeshJoinDirectives (GM-41 safe subset)', () => {
       }
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    expect(out).toMatch(/location:\s*"http:\/\/override:9999"/);
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[API\], name: "transport", args: \{kind: "http", location: "http:\/\/override:9999"\}\)/,
+    );
+    expect(out).not.toMatch(/@transport\s*\(/);
+  });
+
+  it('drops empty headers when rewriting', () => {
+    const sdl = /* GraphQL */ `
+      schema
+        @transport(
+          subgraph: "calc"
+          kind: "thrift"
+          location: "http://localhost/thrift"
+          headers: []
+        ) {
+        query: Query
+      }
+
+      enum join__Graph {
+        CALC @join__graph(name: "calc", url: "http://localhost/thrift")
+      }
+
+      type Query {
+        add: Int
+      }
+    `;
+    const out = finalizeMeshJoinDirectives(sdl);
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[CALC\], name: "transport", args: \{kind: "thrift"\}\)/,
+    );
+    expect(out).not.toMatch(/headers:/);
+  });
+
+  it('drops connect @transport without options (Gateway infers)', () => {
+    const sdl = /* GraphQL */ `
+      schema
+        @transport(subgraph: "REST", kind: "connect", location: "https://api.example.com")
+        @join__directive(graphs: [REST], name: "source", args: { name: "rest", http: { baseURL: "https://api.example.com" } }) {
+        query: Query
+      }
+
+      enum join__Graph {
+        REST @join__graph(name: "REST", url: "https://api.example.com")
+      }
+
+      type Query {
+        ok: String
+      }
+    `;
+    const out = finalizeMeshJoinDirectives(sdl);
+    expect(out).not.toMatch(/@transport\s*\(/);
+    expect(out).not.toMatch(/name: "transport"/);
+    expect(out).toMatch(/name: "source"/);
   });
 });

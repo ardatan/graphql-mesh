@@ -1,4 +1,3 @@
-import type { DocumentNode, GraphQLSchema } from 'graphql';
 import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 import {
   resolveSubgraphSchema,
@@ -54,29 +53,3 @@ export function loadSubgraphFromSDL(
     ),
   });
 }
-
-/**
- * @deprecated Use {@link loadSubgraphFromSDL} or `subgraphs: [{ name, schema }]`.
- */
-export function loadSdlSubgraph(
-  subgraphName: string,
-  options: {
-    federationReady?: boolean;
-    composeConnect?: boolean;
-    transport?: ResolveSubgraphSchemaTransport;
-  } & (
-    | { source: string; typeDefs?: never }
-    | { typeDefs: string | DocumentNode; source?: never }
-  ),
-): MeshComposeCLISourceHandlerDef {
-  const schemaInput: GraphQLSchema | DocumentNode | string =
-    'typeDefs' in options && options.typeDefs != null ? options.typeDefs : options.source!;
-  return loadSubgraphFromSDL(subgraphName, schemaInput, {
-    composeConnect: options.composeConnect ?? options.federationReady,
-    transport: options.transport,
-  });
-}
-
-/** @deprecated Use {@link loadSubgraphFromSDL}. */
-export type SdlSubgraphLoaderConfiguration = Parameters<typeof loadSdlSubgraph>[1];
-export type SdlSubgraphTransportConfig = ResolveSubgraphSchemaTransport;

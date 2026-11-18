@@ -27,3 +27,4 @@ export * from './with-filter.js';
 export * from './transport-directive.js';
 export * from './mesh-spec.js';
 export * from './federation-ready.js';
+export * from './validate-mesh-directives.js';

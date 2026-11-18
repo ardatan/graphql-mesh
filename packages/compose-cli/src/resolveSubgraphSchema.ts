@@ -8,9 +8,11 @@ import {
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
   addConnectComposeDirective,
+  importMeshDirectives,
   isUrl,
   readFile,
   TransportDirective as transportDirective,
+  validateMeshDirectives,
 } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, isValidPath } from '@graphql-tools/utils';
 import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
@@ -234,6 +236,32 @@ function finalizeSchema(
   if (options.composeConnect !== false) {
     next = addConnectComposeDirective(next);
   }
+  // Hand SDL with `@transport` but no Mesh core `@link` importing it — stamp before validate.
+  const dirs = getDirectiveExtensions(next);
+  const hasTransport = !!dirs?.transport;
+  const hasCoreTransportLink = (dirs?.link || []).some((l: { url?: string; import?: unknown[] }) => {
+    if (typeof l?.url !== 'string') return false;
+    if (
+      !l.url.includes('specs.graphql-mesh.com/core/') &&
+      !l.url.includes('the-guild.dev/graphql/mesh/spec/') &&
+      !l.url.includes('graphql-mesh.com/spec/')
+    ) {
+      return false;
+    }
+    const imports = l.import || [];
+    return imports.some(
+      i =>
+        i === '@transport' ||
+        (i && typeof i === 'object' && (i as { name?: string }).name === '@transport'),
+    );
+  });
+  if (hasTransport && !hasCoreTransportLink) {
+    next = importMeshDirectives(next, ['@transport']);
+  }
+  // GM-37: hand-written SDL Mesh directive syntax / @link contract.
+  validateMeshDirectives(next, {
+    consumer: `@graphql-mesh/compose-cli(subgraph: ${confirmed})`,
+  });
   return { name: confirmed, schema: next };
 }
 

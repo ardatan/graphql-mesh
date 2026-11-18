@@ -25,13 +25,18 @@ Mesh Compose previously had to invent Mesh-spec `@link` imports and `@composeDir
 - Mesh-spec `@link` URLs start at **`https://specs.graphql-mesh.com/<name>/v0.1`**. Shared Mesh **core** directives (`@transport`, `@merge`, `@hoist`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, `@extraSchemaDefinitionDirective`, …) use **`core/v0.1`**. Protocol loaders use a separate protocol URL (e.g. `sql/v0.1` for `@sql` only) plus `core/v0.1` for `@transport`.
 - **`@source` / `@meshSource`** are still stamped from **`https://the-guild.dev/graphql/mesh/spec/v1.0`** because Hive Gateway (`fusion-runtime`) only resolves Mesh stitching `@source` from that exact URL today (`MESH_GATEWAY_SOURCE_SPEC_URL`). TODO: move `@source` to `core/v0.1` once Gateway accepts it.
 - **Spec contract:** `parseMeshSpecUrl` / `assertSupportedMeshSpec` (/`OnSchema`) — transports validate supported protocol/`core` versions when a matching `@link` is present; Compose asserts after stamping. Hive Gateway can reuse the same helpers later.
-- Hand-written SDL: prefer **`subgraphs: [{ name?, schema }]`** where `schema` is `MaybePromise<GraphQLSchema | DocumentNode | string>` (inline SDL, path, or URL). **`name` is optional** when the schema has `@transport(subgraph: ...)` (conflict if both differ; error if neither). Or use **`loadSubgraphFromSDL(name?, schema, options?)`** (`loadSdlSubgraph` remains a deprecated alias). Mesh `@link` / `@composeDirective` belong in that SDL (or come from a loader).
+- Hand-written SDL: prefer **`subgraphs: [{ name?, schema }]`** where `schema` is `MaybePromise<GraphQLSchema | DocumentNode | string>` (inline SDL, path, or URL). **`name` is optional** when the schema has `@transport(subgraph: ...)` (conflict if both differ; error if neither). Or use **`loadSubgraphFromSDL(name?, schema, options?)`**. Mesh `@link` / `@composeDirective` belong in that SDL (or come from a loader).
+- **GM-41:** after Guild composition, **`finalizeMeshJoinDirectives`** rewrites schema `@transport` to **`@join__directive(graphs:, name: "transport", args:)`**, dropping `subgraph` / `location` when they match `@join__graph`, keeping `kind` / `options` / override `location` / non-empty `headers`. Pure `http` with matching location is dropped. **`@connect` subgraphs never keep `@transport(kind: "connect")`** — Gateway infers connect; options-only join transport args may remain. Unused `@transport` definition / `TransportOptions` / core `@link` import of `@transport` are pruned.
+- **`@source`** stamps under **`core/v0.1`** (Gateway yarn patch accepts core + legacy Guild URL).
+- **GM-37 first slice:** **`validateMeshDirectives`** — Mesh `@link` version contract + `@transport` arg shapes at Compose ingest / hand SDL; soft on transports.
+- **`convertSubgraphToFederationv2`:** skip type-level `@shareable` on `@key` entities; import only used Fed directives (+ `@shareable`).
+- Hive Gateway **`@graphql-mesh/fusion-runtime` yarn patch:** read `join__directive(name: "transport")`, infer `kind: "connect"` from join connect/source, accept `@source` from core URL, reject unsupported Mesh `@link` versions.
 
 Object-level `@shareable` / full Fed v2 conversion remains Compose-time (`convertSubgraphToFederationv2`) — loaders do not blanket-stamp `@shareable`.
 
 ### Migration
 
-Printed loader SDL now includes Mesh `@link` / `@composeDirective` (and Connectors include `@composeDirective(name: "@connect")`). Update snapshots and any consumers that asserted the previous thinner schema extensions.
+Printed loader SDL now includes Mesh `@link` / `@composeDirective` (and Connectors include `@composeDirective(name: "@connect")`). Supergraph SDL carries transports as `@join__directive(name: "transport")` instead of schema `@transport` — update snapshots. Hive Gateway must read that form (fusion-runtime gap until patched).
 
 Hand-written Compose configs can replace custom file loaders:
 
@@ -62,4 +67,4 @@ OpenAPI / RAML emit goes through `@omnigraph/json-schema`, so those subgraphs pi
 
 Connectors-based loaders still emit Mesh `@transport` alongside `@connect` as a Gateway safety net. Once Hive Gateway resolves `@connect` natively, drop `@transport` emit from `@connect`-based loaders (OpenAPI / JSON Schema / RAML / SOAP / OData / Thrift-connect).
 
-**GM-41 (partial in this PR):** Compose runs `finalizeMeshJoinDirectives` after Guild composition — drops pure `kind: "http"` `@transport` when `location` matches `@join__graph(url:)`, and strips redundant `location` from other transports. Full Mesh field/type directive → `@join__directive` rewrite (and dropping `subgraph:` / unused defs) waits on Hive Gateway `fusion-runtime` reading those from `@join__directive` (today it keys transports by `@transport(subgraph:)` and matches `@hoist` / `@source` by name).
+**GM-41 remainder:** Mesh field/type dirs (`@hoist`, `@merge`, `@source`, …) → `@join__directive`, and Hive Gateway `fusion-runtime` must read transports from `@join__directive(name: "transport")` (today it keys schema `@transport(subgraph:)` and matches `@hoist` / `@source` by name).

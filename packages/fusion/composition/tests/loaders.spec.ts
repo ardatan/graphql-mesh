@@ -5,7 +5,7 @@ import { dummyLogger as log } from '../../../testing/dummyLogger';
 import { composeSubgraphs } from '../src/compose';
 
 describe('Loaders', () => {
-  it('works', async () => {
+  it('works (optimized Mesh SDL + Gateway connect infer)', async () => {
     const loadedSubgraph = loadJSONSchemaSubgraph('TEST', {
       endpoint: 'http://localhost/my-test-api',
       operations: [
@@ -34,6 +34,12 @@ describe('Loaders', () => {
       },
     ]);
     expect(errors).toBeUndefined();
+    const sdl = supergraphSdl!;
+    // Optimized: no schema `@transport` / join transport — Gateway infers connect.
+    expect(sdl).not.toMatch(/@transport\s*\(/);
+    expect(sdl).not.toMatch(/name: "transport"/);
+    expect(sdl).toMatch(/@join__directive\([^)]*name: "connect"/);
+
     const mockFetch = jest.fn(async (_url: string) =>
       Response.json({
         id: 1,
@@ -41,7 +47,7 @@ describe('Loaders', () => {
       }),
     );
     const runtime = createGatewayRuntime({
-      supergraph: supergraphSdl!,
+      supergraph: sdl,
       plugins() {
         return [useCustomFetch(mockFetch)];
       },

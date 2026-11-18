@@ -2,6 +2,7 @@ import type { Transport } from '@graphql-mesh/transport-common';
 import {
   assertSupportedMeshSpecOnSchema,
   MESH_SUPPORTED_SPEC_VERSIONS,
+  validateMeshDirectives,
 } from '@graphql-mesh/utils';
 import { getMongoExecutor } from './execution.js';
 import type { MongoTransportOptions } from './types.js';
@@ -19,6 +20,10 @@ export default {
       supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
       required: false, // unified-graph extract may omit @link; validate version when present
       consumer: '@graphql-mesh/transport-mongo',
+    });
+    validateMeshDirectives(subgraph, {
+      consumer: '@graphql-mesh/transport-mongo',
+      soft: true,
     });
     return getMongoExecutor({
       subgraph,

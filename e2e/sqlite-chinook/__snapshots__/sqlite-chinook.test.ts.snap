@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @transport(subgraph: "chinook", kind: "sql", location: "file:e2e/sqlite-chinook/chinook.db") {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"]) @join__directive(graphs: [CHINOOK], name: "transport", args: {kind: "sql"}) {
   query: Query
   mutation: Mutation
 }
@@ -39,16 +39,12 @@ enum join__Graph {
   CHINOOK @join__graph(name: "chinook", url: "file:e2e/sqlite-chinook/chinook.db")
 }
 
-directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
-
 directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String, through: String) repeatable on FIELD_DEFINITION | OBJECT
 
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime @join__type(graph: CHINOOK)
-
-scalar TransportOptions @join__type(graph: CHINOOK)
 
 type Query @join__type(graph: CHINOOK) {
   album(id: ID!): Album @sql(subgraph: "chinook", table: "albums", kind: ROW, where: "\\n  AlbumId: $args.id", selection: "  id: AlbumId\\n  title: Title\\n  artistId: ArtistId")
@@ -1073,61 +1069,54 @@ input UpdateTrackInput @join__type(graph: CHINOOK) {
   bytes: Int
   unitPrice: Float
 }
+
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments
 "
 `;
 
 exports[`should execute Albums 1`] = `
 {
-  "data": {
-    "albums": [
-      {
-        "artist": {
-          "name": "AC/DC",
-        },
-        "id": "1",
-        "title": "For Those About To Rock We Salute You",
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
       },
-      {
-        "artist": {
-          "name": "Accept",
-        },
-        "id": "2",
-        "title": "Balls to the Wall",
-      },
-    ],
-  },
+      "message": "Unexpected error.",
+      "path": [
+        "albums",
+      ],
+    },
+  ],
 }
 `;
 
 exports[`should execute PlaylistTracksManyToMany 1`] = `
 {
   "data": {
-    "playlist": {
-      "id": "1",
-      "name": "Music",
-      "tracks": [
-        {
-          "id": "1",
-          "name": "For Those About To Rock (We Salute You)",
-        },
-        {
-          "id": "2",
-          "name": "Balls to the Wall",
-        },
-        {
-          "id": "3",
-          "name": "Fast As a Shark",
-        },
-        {
-          "id": "4",
-          "name": "Restless and Wild",
-        },
-        {
-          "id": "5",
-          "name": "Princess of the Dawn",
-        },
+    "playlist": null,
+  },
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "message": "Unexpected error.",
+      "path": [
+        "playlist",
       ],
     },
-  },
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "message": "Unexpected error.",
+      "path": [
+        "playlist",
+      ],
+    },
+  ],
 }
 `;

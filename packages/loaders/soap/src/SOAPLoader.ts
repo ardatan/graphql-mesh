@@ -37,7 +37,6 @@ import type { MeshFetch } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   addConnectComposeDirective,
-  importMeshDirectives,
   readFileOrUrl,
   sanitizeNameForGraphQL,
 } from '@graphql-mesh/utils';
@@ -1597,13 +1596,9 @@ export class SOAPLoader {
     const schema = this.schemaComposer.buildSchema();
     const schemaExts: any = (schema.extensions ||= {});
     schemaExts.directives ||= {};
-    // Connectors subgraph: Hive loads transport-connect for @connect / @source.
-    // Nested XML prefixes inherit from parent element keys (inheritXmlNamespacePrefixes);
-    // no typeNamespacesJson bag on @transport.
-    schemaExts.directives.transport = {
-      kind: 'connect',
-      subgraph: this.subgraphName,
-    };
+    // Connectors subgraph: Gateway infers transport-connect from @connect / @source.
+    // Nested XML prefixes inherit from parent element keys (inheritXmlNamespacePrefixes).
+    delete schemaExts.directives.transport;
     // One `@source` per distinct port origin (multi-port WSDLs must not collapse hosts).
     const sourceEntries =
       this.sourcesByOrigin.size > 0
@@ -1625,6 +1620,6 @@ export class SOAPLoader {
       ...existingLinks,
       { url: CONNECT_LINK_URL, import: ['@connect', '@source'] },
     ];
-    return addConnectComposeDirective(importMeshDirectives(schema, ['@transport']));
+    return addConnectComposeDirective(schema);
   }
 }

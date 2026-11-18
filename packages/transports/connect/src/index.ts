@@ -2,6 +2,7 @@ import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-c
 import {
   assertSupportedMeshSpecOnSchema,
   MESH_SUPPORTED_SPEC_VERSIONS,
+  validateMeshDirectives,
 } from '@graphql-mesh/utils';
 import { processDirectives, type ProcessDirectiveArgs } from './directives/process.js';
 
@@ -50,6 +51,10 @@ const transport: Transport<ConnectTransportOptions> = {
       supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
       required: false, // unified-graph extract may omit @link; validate version when present
       consumer: '@graphql-mesh/transport-connect',
+    });
+    validateMeshDirectives(subgraph, {
+      consumer: '@graphql-mesh/transport-connect',
+      soft: true,
     });
     const processDirectiveOpts: ProcessDirectiveArgs = {
       globalFetch: fetch,

@@ -35,10 +35,10 @@ import {
 } from './connect-entity.js';
 import { finalizeConnectorsSupergraph } from './connectors-supergraph.js';
 import {
-  MESH_GATEWAY_SOURCE_SPEC_URL,
   MESH_SUPPORTED_SPEC_VERSIONS,
   TRANSPORT_DIRECTIVE_SDL,
   assertSupportedMeshSpecOnSchema,
+  validateMeshDirectives,
 } from '@graphql-mesh/utils';
 import {
   addConnectComposeDirective,
@@ -112,9 +112,6 @@ export function isFederationConnectorsSubgraph(schema: GraphQLSchema): boolean {
   return sources.some((source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null);
 }
 
-/** @deprecated Use {@link isFederationConnectorsSubgraph}. */
-export const isApolloConnectorsSubgraph = isFederationConnectorsSubgraph;
-
 /**
  * Protobuf RPC subgraphs (`@transport(kind: "protobuf")`) follow the Connectors transform
  * posture: rename/naming-convention rewrite `@protobuf__rpc(args|selection)` binds instead
@@ -172,9 +169,6 @@ export function skipsMeshSourceAnnotations(schema: GraphQLSchema): boolean {
   );
 }
 
-/** @deprecated Use {@link skipsMeshSourceAnnotations}. */
-export const skipsMeshSourceStamps = skipsMeshSourceAnnotations;
-
 export function getAnnotatedSubgraphs(
   subgraphs: SubgraphConfig[],
   options: GetAnnotatedSubgraphsOptions = {},
@@ -199,9 +193,11 @@ export function getAnnotatedSubgraphs(
     const apolloSource = (subgraphSchemaExtensions?.source || []).find(
       (source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null,
     );
-    // Strip Mesh `@transport` from printed subgraph SDL (directive definition / schema AST).
-    // Connectors still keep a connect transport *entry* in schema extensions so Hive Gateway
-    // can resolve `@graphql-mesh/transport-connect` via `@extraSchemaDefinitionDirective`.
+    // Strip Mesh `@transport` from printed subgraph SDL when redundant.
+    // Connectors: never invent `@transport(kind: "connect")` — Gateway infers connect
+    // from `@join__directive` connect/source. Keep a transport entry only when the
+    // loader stamped real `options` / `headers` (qs / odata / …); GM-41 rewrites those
+    // to `@join__directive(name: "transport", args: { options })` without `kind`.
     let removeTransportDirectiveDefinition = false;
     let removeTransportFromExtras = false;
     if (isConnectorsSubgraph) {
@@ -235,19 +231,29 @@ export function getAnnotatedSubgraphs(
     if (isConnectorsSubgraph) {
       const extensions: Record<string, any> = (normalizedSchema.extensions ||= {});
       extensions.directives = extensions.directives || {};
+      // Compose-only owner stamp for lifting SCHEMA `@source` → `@join__directive`
+      // without inventing `@transport(kind: "connect")`. Stripped in lift (not printed).
+      extensions.directives.meshComposeSubgraph = [{ name: subgraphName }];
       const existingTransport = (extensions.directives.transport || [])[0] || {};
-      // Hive execution hint — not part of the Federation Connectors subgraph contract.
-      // Preserve kind-specific `options` from the loader (qs / timeout / …).
       const mergedOptions = { ...(existingTransport.options || {}) };
-      extensions.directives.transport = [
-        {
-          ...existingTransport,
-          subgraph: subgraphName,
-          kind: 'connect',
-          location: url || apolloSource?.http?.baseURL || existingTransport.location || '',
-          ...(Object.keys(mergedOptions).length ? { options: mergedOptions } : {}),
-        },
-      ];
+      const hasOptions = Object.keys(mergedOptions).length > 0;
+      const hasHeaders = existingTransport.headers != null;
+      if (hasOptions || hasHeaders) {
+        // Options-only connect transport (qs / odata / …) — GM-41 rewrites to join
+        // args without `kind: "connect"` (Gateway infers kind).
+        extensions.directives.transport = [
+          {
+            ...existingTransport,
+            subgraph: subgraphName,
+            kind: 'connect',
+            location: url || apolloSource?.http?.baseURL || existingTransport.location || '',
+            ...(hasOptions ? { options: mergedOptions } : {}),
+          },
+        ];
+      } else {
+        delete extensions.directives.transport;
+        removeTransportFromExtras = true;
+      }
     } else if (
       removeTransportFromExtras &&
       (normalizedSchema.extensions?.directives as any)?.transport
@@ -531,14 +537,11 @@ export function getAnnotatedSubgraphs(
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
     // Connectors safety net only — Mesh directives come from loaders / hand SDL.
     transformedSubgraph = addConnectComposeDirective(transformedSubgraph);
-    // Core Mesh directives (`@merge`, `@hoist`, `@extraSchemaDefinitionDirective`, …)
-    // stamp under `specs.graphql-mesh.com/core/v0.1`. `@source` is special — see below.
+    // Core Mesh directives (`@merge`, `@hoist`, `@source`, …) under `core/v0.1`.
     const importedCoreDirectives: MeshDirectiveImport[] = [];
     if (mergeDirectiveUsed) {
       importedCoreDirectives.push('@merge');
     }
-    // `@source` must use the Guild v1.0 URL until Hive Gateway accepts core/v0.1.
-    // TODO(hive-gateway): switch to MESH_CORE_SPEC_URL when Gateway supports it.
     let sourceImport: MeshDirectiveImport | undefined;
     if (sourceDirectiveUsed) {
       if (aliasMeshSource) {
@@ -772,10 +775,8 @@ export function getAnnotatedSubgraphs(
       transformedSubgraph = importMeshDirectives(transformedSubgraph, importedCoreDirectives);
     }
     if (sourceImport) {
-      // Hive Gateway fusion-runtime only resolves Mesh `@source` from this URL today.
-      transformedSubgraph = importMeshDirectives(transformedSubgraph, [sourceImport], {
-        url: MESH_GATEWAY_SOURCE_SPEC_URL,
-      });
+      // `@source` under Mesh core (Gateway patch accepts core + legacy Guild URL).
+      transformedSubgraph = importMeshDirectives(transformedSubgraph, [sourceImport]);
     }
     // Contract: Compose-stamped core / Guild-source links must be readable by runtimes.
     if (importedCoreDirectives.length) {
@@ -795,6 +796,10 @@ export function getAnnotatedSubgraphs(
         acceptLegacyCore: true,
       });
     }
+    // GM-37: after Mesh `@link` stamps — syntax + spec contract.
+    validateMeshDirectives(transformedSubgraph, {
+      consumer: `@graphql-mesh/fusion-composition(subgraph: ${subgraphName})`,
+    });
 
     let subgraphAST = getDocumentNodeFromSchema(transformedSubgraph);
     if (importedDirectivesAST.size) {
@@ -861,8 +866,9 @@ export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[
   // Lift SCHEMA extras, then rewrite Connectors to `@join__directive` metadata
   // so the same Mesh supergraph runs on Hive Gateway and Apollo Router
   // (Hive's REST transport reads join__directive; Router requires it).
-  // Finally GM-41 safe Mesh transport dedupe against `join__Graph` (full Mesh→join
-  // rewrite needs Hive Gateway fusion-runtime — see finalizeMeshJoinDirectives).
+  // Finally GM-41: Mesh `@transport` → `@join__directive(name: "transport")`
+  // (drop matching subgraph/location; drop pure http). Field/type Mesh dirs and
+  // Gateway fusion-runtime transport readers still TBD — see finalizeMeshJoinDirectives.
   const lifted = rawSupergraphSdl
     ? liftExtraSchemaDefinitionDirectives(rawSupergraphSdl)
     : rawSupergraphSdl;

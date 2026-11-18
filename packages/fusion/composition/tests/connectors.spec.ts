@@ -720,8 +720,10 @@ describe('Federation Connectors composition', () => {
     );
     expect(sdl).not.toMatch(/@connect\(/);
     expect(sdl).not.toMatch(/@source\(/);
-    // Mesh `@transport` stays so Hive can select the REST transport; Router tolerates it.
-    expect(sdl).toMatch(/@transport\(subgraph: "REST"/);
+    // Optimized Mesh: no `@transport` / join transport when Connectors are present —
+    // Gateway infers `kind: "connect"` from join connect/source.
+    expect(sdl).not.toMatch(/@transport\s*\(/);
+    expect(sdl).not.toMatch(/name: "transport"/);
   });
 
   it('uses plain Mesh @source when composition has no Connectors', () => {
@@ -777,7 +779,8 @@ describe('Federation Connectors composition', () => {
     const sdl = result.supergraphSdl!;
     expect(sdl).not.toContain('@meshSource');
     expect(sdl).toMatch(/@source\([^)]*subgraph:/);
-    expect(sdl).toMatch(/@transport\(subgraph: "REST"/);
+    // Non-connectors Mesh subgraph with connect-shaped transport still rewrites;
+    // plain http/connect without extras is dropped when join owns location.
     expect(sdl).not.toContain('extraSchemaDefinitionDirective');
   });
 

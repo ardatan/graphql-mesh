@@ -8,8 +8,7 @@ export const MESH_SPECS_ORIGIN = 'https://specs.graphql-mesh.com';
 export const MESH_SUPPORTED_SPEC_VERSIONS = ['v0.1'] as const;
 
 /**
- * Shared Mesh **core** directives stamped under {@link MESH_CORE_SPEC_URL}
- * (except `@source` — see {@link MESH_GATEWAY_SOURCE_SPEC_URL}).
+ * Shared Mesh **core** directives stamped under {@link MESH_CORE_SPEC_URL}.
  */
 export const MESH_CORE_DIRECTIVES = [
   '@transport',
@@ -46,12 +45,10 @@ export function meshSpecUrl(protocol: string, version = 'v0.1'): string {
 
 /**
  * Mesh **core** `@link` for shared directives (`@transport`, `@merge`, `@hoist`,
- * `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, `@extraSchemaDefinitionDirective`, …).
+ * `@source`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`,
+ * `@extraSchemaDefinitionDirective`, …).
  * Protocol loaders use {@link meshSpecUrl} for protocol-only dirs (`sql`, `thrift`, …)
  * and this URL for core dirs.
- *
- * **`@source` exception:** Hive Gateway currently resolves stitching `@source` only from
- * {@link MESH_GATEWAY_SOURCE_SPEC_URL} — stamp `@source` there until Gateway is updated.
  */
 export const MESH_SPEC_URL = meshSpecUrl('core');
 
@@ -59,11 +56,9 @@ export const MESH_SPEC_URL = meshSpecUrl('core');
 export const MESH_CORE_SPEC_URL = MESH_SPEC_URL;
 
 /**
- * Hive Gateway (`@graphql-mesh/fusion-runtime`) currently resolves Mesh stitching
- * `@source` / `@meshSource` **only** when imported from this exact URL.
- *
- * TODO(hive-gateway): once Gateway accepts {@link MESH_CORE_SPEC_URL} for `@source`,
- * stamp `@source` under `core/v0.1` and remove / deprecate this constant.
+ * Legacy Guild Mesh-spec URL. Older supergraphs / Gateway builds may still resolve
+ * stitching `@source` from this URL; Mesh Compose stamps `@source` under
+ * {@link MESH_CORE_SPEC_URL}. Kept for parse/assert + Gateway patch acceptance.
  */
 export const MESH_GATEWAY_SOURCE_SPEC_URL = 'https://the-guild.dev/graphql/mesh/spec/v1.0';
 

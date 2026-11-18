@@ -8,27 +8,36 @@ import type {
 import { Kind, parse, print, visit } from 'graphql';
 import { astFromValueUntyped } from '@graphql-tools/utils';
 
+const JOIN_V05 = 'https://specs.apollo.dev/join/v0.5';
+
+const JOIN_DIRECTIVE_DEFS = /* GraphQL */ `
+  directive @join__directive(
+    graphs: [join__Graph!]
+    name: String!
+    args: join__DirectiveArguments
+  ) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+  scalar join__DirectiveArguments
+`;
+
 /**
- * Mesh Compose post-process (GM-41, safe subset).
+ * Mesh Compose post-process (GM-41) — emit the **most optimized** supergraph.
  *
- * After Guild federation composition:
- * 1. Drop schema `@transport` when it is pure `kind: "http"` (or omitted kind treated as http),
- *    has no `headers` / `options`, and `location` equals that subgraph's `@join__graph(url:)`.
- *    Hive Gateway already seeds `kind: "http"` entries from `join__Graph` — the Mesh
- *    `@transport` would be duplicate data.
- * 2. Otherwise, when `location` matches `@join__graph(url:)` for the same subgraph name,
- *    strip only the redundant `location` arg (keep `subgraph` — Gateway indexes transports
- *    by `transport.subgraph` today).
+ * Gateway / fusion-runtime still accepts every composition path (raw schema
+ * `@transport`, `@join__directive(name: "transport")`, connect infer from
+ * `@connect`/`@source`). Mesh Compose always collapses to the lean form:
  *
- * **Not in this pass (needs Hive Gateway / fusion-runtime):**
- * - Rewrite Mesh field/type directives (`@hoist`, `@merge`, `@source`, …) to
- *   `@join__directive` and drop their definitions / `@link` imports.
- * - Drop `@transport` for non-`http` kinds (`connect`, `sql`, …) or when options remain.
- * - Strip `subgraph:` from field/type Mesh directives (Gateway matches on that arg today).
+ * 1. Drop pure `kind: "http"` when `location` matches `@join__graph(url:)`
+ *    (Gateway seeds http from `join__Graph`).
+ * 2. Drop `kind: "connect"` when there are no `headers` / `options`
+ *    (Gateway infers `connect` from `@join__directive` connect/source).
+ * 3. Otherwise rewrite to `@join__directive(graphs:, name: "transport", args:)`:
+ *    - drop `subgraph` when it matches `@join__graph(name:)`
+ *    - drop `location` when it equals `@join__graph(url:)`
+ *    - keep `kind` / `options` / non-empty `headers` / override `location`
+ * 4. Prune unused `@transport` def / `TransportOptions` / core `@link` import.
  *
- * TODO(hive-gateway / GM-41): teach `getTransportEntryMapUsingFusionAndFederationDirectives`
- * and Mesh directive readers (`hoist`, `source`, …) to consume `@join__directive`, then
- * enable the full rewrite + unused-definition prune here.
+ * Field/type Mesh dirs (`@hoist`, `@merge`, `@source`, …) → `@join__directive`
+ * is a follow-up.
  */
 export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   if (!supergraphSdl?.includes('@transport') && !supergraphSdl?.includes('join__graph')) {
@@ -36,24 +45,31 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   }
 
   const document = parse(supergraphSdl, { noLocation: true });
-  const joinByName = readJoinGraphNameToUrl(document);
-  if (joinByName.size === 0) {
+  const joinInfo = readJoinGraphInfo(document);
+  if (joinInfo.nameToEnum.size === 0) {
     return supergraphSdl;
   }
 
   let changed = false;
+  let emittedJoinTransport = false;
   const nextDoc = visit(document, {
     SchemaDefinition(node) {
-      const result = rewriteSchemaTransports(node.directives, joinByName);
+      const result = rewriteSchemaTransports(node.directives, joinInfo);
       if (result.changed) {
         changed = true;
+      }
+      if (result.emittedJoinTransport) {
+        emittedJoinTransport = true;
       }
       return { ...node, directives: result.directives };
     },
     SchemaExtension(node) {
-      const result = rewriteSchemaTransports(node.directives, joinByName);
+      const result = rewriteSchemaTransports(node.directives, joinInfo);
       if (result.changed) {
         changed = true;
+      }
+      if (result.emittedJoinTransport) {
+        emittedJoinTransport = true;
       }
       return { ...node, directives: result.directives };
     },
@@ -63,12 +79,23 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
     return supergraphSdl;
   }
 
-  // Drop unused `@transport` definition / Mesh `@link` import when no usages remain.
-  return print(pruneUnusedTransportArtifacts(nextDoc)).trim();
+  let finalized = pruneUnusedTransportArtifacts(nextDoc);
+  if (emittedJoinTransport) {
+    finalized = ensureJoinDirectiveSupport(finalized);
+  }
+  return print(finalized).trim();
 }
 
-function readJoinGraphNameToUrl(document: DocumentNode): Map<string, string> {
-  const map = new Map<string, string>();
+type JoinGraphInfo = {
+  /** subgraph name → join__Graph enum value */
+  nameToEnum: Map<string, string>;
+  /** subgraph name → join__graph url */
+  nameToUrl: Map<string, string>;
+};
+
+function readJoinGraphInfo(document: DocumentNode): JoinGraphInfo {
+  const nameToEnum = new Map<string, string>();
+  const nameToUrl = new Map<string, string>();
   for (const def of document.definitions) {
     if (def.kind !== Kind.ENUM_TYPE_DEFINITION || def.name.value !== 'join__Graph') {
       continue;
@@ -80,22 +107,24 @@ function readJoinGraphNameToUrl(document: DocumentNode): Map<string, string> {
       }
       const name = getStringArg(graphDir, 'name') || value.name.value;
       const url = getStringArg(graphDir, 'url');
-      if (name && typeof url === 'string') {
-        map.set(name, url);
+      nameToEnum.set(name, value.name.value);
+      if (typeof url === 'string') {
+        nameToUrl.set(name, url);
       }
     }
   }
-  return map;
+  return { nameToEnum, nameToUrl };
 }
 
 function rewriteSchemaTransports(
   directives: readonly ConstDirectiveNode[] | undefined,
-  joinByName: Map<string, string>,
-): { directives: ConstDirectiveNode[]; changed: boolean } {
+  joinInfo: JoinGraphInfo,
+): { directives: ConstDirectiveNode[]; changed: boolean; emittedJoinTransport: boolean } {
   if (!directives?.length) {
-    return { directives: [], changed: false };
+    return { directives: [], changed: false, emittedJoinTransport: false };
   }
   let changed = false;
+  let emittedJoinTransport = false;
   const next: ConstDirectiveNode[] = [];
   for (const dir of directives) {
     if (dir.name.value !== 'transport') {
@@ -104,35 +133,93 @@ function rewriteSchemaTransports(
     }
     const args = constDirectiveArgsToJs(dir);
     const subgraph = typeof args.subgraph === 'string' ? args.subgraph : undefined;
+    const graphEnum = subgraph ? joinInfo.nameToEnum.get(subgraph) : undefined;
+    if (!subgraph || !graphEnum) {
+      // Cannot attribute to a join graph — leave raw `@transport`.
+      next.push(dir);
+      continue;
+    }
+
     const location = typeof args.location === 'string' ? args.location : undefined;
-    const kind = typeof args.kind === 'string' ? args.kind : 'http';
-    const joinUrl = subgraph ? joinByName.get(subgraph) : undefined;
+    const joinUrl = joinInfo.nameToUrl.get(subgraph);
     const locationMatches =
       typeof location === 'string' && typeof joinUrl === 'string' && location === joinUrl;
-    const hasExtras =
-      args.headers != null ||
-      (args.options != null &&
-        typeof args.options === 'object' &&
-        !Array.isArray(args.options) &&
-        Object.keys(args.options as object).length > 0);
+    const kind = typeof args.kind === 'string' ? args.kind : 'http';
+    const headers = normalizeHeaders(args.headers);
+    const options = normalizeOptions(args.options);
 
-    // Pure http transport duplicated by join__graph → drop entirely.
-    if (kind === 'http' && locationMatches && !hasExtras) {
+    // Pure http duplicated by join__graph → drop entirely.
+    if (kind === 'http' && locationMatches && headers === undefined && options === undefined) {
       changed = true;
       continue;
     }
 
-    // Non-http (or http with extras): strip redundant location only.
-    if (locationMatches && 'location' in args) {
-      const { location: _drop, ...rest } = args;
-      next.push(buildDirective('transport', rest));
+    // Connect: Gateway infers `kind: "connect"` from join connect/source.
+    // Drop entirely when nothing remains; if options/headers/override location,
+    // emit join transport args *without* `kind: "connect"`.
+    if (kind === 'connect') {
+      if (headers === undefined && options === undefined && (locationMatches || location == null)) {
+        changed = true;
+        continue;
+      }
+      const connectArgs: Record<string, unknown> = {};
+      if (typeof location === 'string' && !locationMatches) {
+        connectArgs.location = location;
+      }
+      if (headers !== undefined) {
+        connectArgs.headers = headers;
+      }
+      if (options !== undefined) {
+        connectArgs.options = options;
+      }
+      if (Object.keys(connectArgs).length === 0) {
+        changed = true;
+        continue;
+      }
+      next.push(buildJoinDirective(graphEnum, 'transport', connectArgs));
       changed = true;
+      emittedJoinTransport = true;
       continue;
     }
 
-    next.push(dir);
+    const joinArgs: Record<string, unknown> = { kind };
+    // subgraph matches join__graph(name:) → owned by graphs:, drop.
+    // location matches join__graph(url:) → drop; keep overrides.
+    if (typeof location === 'string' && !locationMatches) {
+      joinArgs.location = location;
+    }
+    if (headers !== undefined) {
+      joinArgs.headers = headers;
+    }
+    if (options !== undefined) {
+      joinArgs.options = options;
+    }
+
+    next.push(buildJoinDirective(graphEnum, 'transport', joinArgs));
+    changed = true;
+    emittedJoinTransport = true;
   }
-  return { directives: next, changed };
+  return { directives: next, changed, emittedJoinTransport };
+}
+
+function normalizeHeaders(value: unknown): unknown | undefined {
+  if (value == null) {
+    return undefined;
+  }
+  if (Array.isArray(value) && value.length === 0) {
+    return undefined;
+  }
+  return value;
+}
+
+function normalizeOptions(value: unknown): unknown | undefined {
+  if (value == null) {
+    return undefined;
+  }
+  if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value as object).length === 0) {
+    return undefined;
+  }
+  return value;
 }
 
 function pruneUnusedTransportArtifacts(document: DocumentNode): DocumentNode {
@@ -156,7 +243,6 @@ function pruneUnusedTransportArtifacts(document: DocumentNode): DocumentNode {
           return false;
         }
         if (def.kind === Kind.SCALAR_TYPE_DEFINITION && def.name.value === 'TransportOptions') {
-          // Keep if another directive still references it — only transport used it.
           return false;
         }
         return true;
@@ -181,6 +267,64 @@ function pruneUnusedTransportArtifacts(document: DocumentNode): DocumentNode {
         return def;
       }),
   };
+}
+
+function ensureJoinDirectiveSupport(document: DocumentNode): DocumentNode {
+  let next = document;
+  // Bump join @link to v0.5 when still on an older join URL.
+  next = visit(next, {
+    SchemaDefinition(node) {
+      return { ...node, directives: bumpJoinLink(node.directives) };
+    },
+    SchemaExtension(node) {
+      return { ...node, directives: bumpJoinLink(node.directives) };
+    },
+  });
+
+  if (
+    !next.definitions.some(
+      d => d.kind === Kind.DIRECTIVE_DEFINITION && d.name.value === 'join__directive',
+    )
+  ) {
+    const extras = parse(JOIN_DIRECTIVE_DEFS, { noLocation: true });
+    next = {
+      ...next,
+      definitions: [...next.definitions, ...extras.definitions],
+    };
+  }
+  return next;
+}
+
+function bumpJoinLink(
+  directives: readonly ConstDirectiveNode[] | undefined,
+): ConstDirectiveNode[] {
+  if (!directives?.length) {
+    return [];
+  }
+  return directives.map(dir => {
+    if (dir.name.value !== 'link') {
+      return dir;
+    }
+    const url = getStringArg(dir, 'url');
+    if (!url?.startsWith('https://specs.apollo.dev/join/')) {
+      return dir;
+    }
+    if (url === JOIN_V05) {
+      return dir;
+    }
+    return {
+      ...dir,
+      arguments: (dir.arguments || []).map(arg =>
+        arg.name.value === 'url'
+          ? {
+              kind: Kind.ARGUMENT,
+              name: { kind: Kind.NAME, value: 'url' },
+              value: { kind: Kind.STRING, value: JOIN_V05 },
+            }
+          : arg,
+      ),
+    };
+  });
 }
 
 function removeImportFromLink(
@@ -235,26 +379,35 @@ function removeImportFromLink(
   };
 }
 
-function buildDirective(name: string, args: Record<string, unknown>): ConstDirectiveNode {
-  const argumentsNode: ConstArgumentNode[] = [];
-  for (const [key, value] of Object.entries(args)) {
-    if (value === undefined) {
-      continue;
-    }
-    const ast = astFromValueUntyped(value) as ConstValueNode | undefined;
-    if (!ast) {
-      continue;
-    }
-    argumentsNode.push({
-      kind: Kind.ARGUMENT,
-      name: { kind: Kind.NAME, value: key },
-      value: ast,
-    });
-  }
+function buildJoinDirective(
+  graphEnum: string,
+  name: string,
+  args: Record<string, unknown>,
+): ConstDirectiveNode {
+  const argsNode = astFromValueUntyped(args) as ConstValueNode;
   return {
     kind: Kind.DIRECTIVE,
-    name: { kind: Kind.NAME, value: name },
-    arguments: argumentsNode,
+    name: { kind: Kind.NAME, value: 'join__directive' },
+    arguments: [
+      {
+        kind: Kind.ARGUMENT,
+        name: { kind: Kind.NAME, value: 'graphs' },
+        value: {
+          kind: Kind.LIST,
+          values: [{ kind: Kind.ENUM, value: graphEnum }],
+        },
+      },
+      {
+        kind: Kind.ARGUMENT,
+        name: { kind: Kind.NAME, value: 'name' },
+        value: { kind: Kind.STRING, value: name },
+      },
+      {
+        kind: Kind.ARGUMENT,
+        name: { kind: Kind.NAME, value: 'args' },
+        value: argsNode,
+      },
+    ],
   };
 }
 

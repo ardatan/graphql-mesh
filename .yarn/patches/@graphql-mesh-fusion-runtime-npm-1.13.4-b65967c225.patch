@@ -1,57 +1,292 @@
 diff --git a/dist/index.cjs b/dist/index.cjs
-index 8c49c18936b173833bc7ba1f81aff5fa273c1970..b7105845738f93aa069f29514e292e3528203a95 100644
+index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e40d59ca884f25a90b8e78af0d49cb1958feffcb 100644
 --- a/dist/index.cjs
 +++ b/dist/index.cjs
-@@ -1149,7 +1149,7 @@ function wrapExecutorWithHooks({
-     let executionRequest = baseExecutionRequest;
-     const onSubgraphExecuteDoneHooks = [];
-     return require$$3.handleMaybePromise(
--      () => utils$1.iterateAsync(
-+      () => require$$3.iterateAsync(
-         onSubgraphExecuteHooks,
-         (onSubgraphExecuteHook) => onSubgraphExecuteHook({
-           get subgraph() {
-@@ -1181,7 +1181,7 @@ function wrapExecutorWithHooks({
-           (currentResult) => {
-             const executeDoneResults = [];
-             return require$$3.handleMaybePromise(
--              () => utils$1.iterateAsync(
-+              () => require$$3.iterateAsync(
-                 onSubgraphExecuteDoneHooks,
-                 (onSubgraphExecuteDoneHook) => onSubgraphExecuteDoneHook({
-                   result: currentResult,
-@@ -1215,7 +1215,7 @@ function wrapExecutorWithHooks({
-                 return require$$3.mapAsyncIterator(
-                   currentResult,
-                   (currentResult2) => require$$3.handleMaybePromise(
--                    () => utils$1.iterateAsync(
-+                    () => require$$3.iterateAsync(
-                       onNextHooks,
-                       (onNext) => onNext({
-                         result: currentResult2,
-@@ -1228,7 +1228,7 @@ function wrapExecutorWithHooks({
-                     () => currentResult2
-                   ),
-                   void 0,
--                  () => onEndHooks.length === 0 ? void 0 : utils$1.iterateAsync(onEndHooks, (onEnd) => onEnd())
-+                  () => onEndHooks.length === 0 ? void 0 : require$$3.iterateAsync(onEndHooks, (onEnd) => onEnd())
-                 );
-               }
-             );
+@@ -103,11 +103,17 @@ function splitPrefixSuffix(input, options = {}) {
+     ];
+ }
+ 
++function isMeshSourceSpecUrl(url) {
++  if (typeof url !== "string") {
++    return false;
++  }
++  return url === "https://the-guild.dev/graphql/mesh/spec/v1.0" || url.startsWith("https://specs.graphql-mesh.com/core/") || url.startsWith("https://graphql-mesh.com/spec/") || url.startsWith("https://spec.graphql-mesh.dev/");
++}
+ function getMeshSourceDirectiveName(schemaExtensions) {
+   const linkDirectives = schemaExtensions?.["directives"]?.link;
+   if (linkDirectives) {
+     for (const linkDirective of linkDirectives) {
+-      if (linkDirective.url === "https://the-guild.dev/graphql/mesh/spec/v1.0") {
++      if (isMeshSourceSpecUrl(linkDirective.url)) {
+         for (const importInfo of linkDirective.import || []) {
+           if (importInfo === "@source") {
+             return "source";
+@@ -1350,14 +1356,33 @@ function millisecondsToStr(milliseconds) {
+ }
+ function getTransportEntryMapUsingFusionAndFederationDirectives(unifiedGraph, transportEntryAdditions) {
+   unifiedGraph = restoreExtraDirectives(unifiedGraph);
++  // Mesh spec contract: reject unsupported specs.graphql-mesh.com versions on @link.
++  {
++    const links = utils.getDirectiveExtensions(unifiedGraph)?.link || [];
++    for (const link of links) {
++      const url = link?.url;
++      if (typeof url !== "string" || !url.startsWith("https://specs.graphql-mesh.com/")) continue;
++      const mm = url.match(/^https:\/\/specs\.graphql-mesh\.com\/([^/]+)\/(v\d+(?:\.\d+)*)\/?$/);
++      if (!mm) {
++        throw new Error(`@graphql-mesh/fusion-runtime: unrecognized Mesh @link URL: ${url}`);
++      }
++      if (mm[2] !== "v0.1") {
++        throw new Error(`@graphql-mesh/fusion-runtime: unsupported Mesh spec "${mm[1]}" version ${mm[2]} (supported: v0.1). Found: ${url}`);
++      }
++    }
++  }
+   const transportEntryMap = {};
+   const joinGraph = unifiedGraph.getType("join__Graph");
+   const schemaDirectives = utils.getDirectiveExtensions(unifiedGraph);
++  const graphEnumToName = {};
+   if (graphql.isEnumType(joinGraph)) {
+     for (const enumValue of joinGraph.getValues()) {
+       const enumValueDirectives = utils.getDirectiveExtensions(enumValue);
+       if (enumValueDirectives?.join__graph?.length) {
+         for (const joinGraphDirective of enumValueDirectives.join__graph) {
++          if (joinGraphDirective.name) {
++            graphEnumToName[enumValue.name] = joinGraphDirective.name;
++          }
+           if (joinGraphDirective.url) {
+             transportEntryMap[joinGraphDirective.name] = {
+               subgraph: joinGraphDirective.name,
+@@ -1371,7 +1396,87 @@ function getTransportEntryMapUsingFusionAndFederationDirectives(unifiedGraph, tr
+   }
+   if (schemaDirectives?.transport?.length) {
+     for (const transportDirective of schemaDirectives.transport) {
+-      transportEntryMap[transportDirective.subgraph] = transportDirective;
++      const existing = transportEntryMap[transportDirective.subgraph] || { subgraph: transportDirective.subgraph, kind: "http" };
++      transportEntryMap[transportDirective.subgraph] = {
++        ...existing,
++        ...transportDirective,
++        subgraph: transportDirective.subgraph,
++        kind: transportDirective.kind ?? existing.kind ?? "http",
++        location: transportDirective.location ?? existing.location
++      };
++    }
++  }
++  // GM-41: Mesh Compose rewrites schema `@transport` → `@join__directive(name: "transport")`.
++  const graphsWithConnect = /* @__PURE__ */ new Set();
++  function rememberGraphs(graphs) {
++    for (const graphEnum of graphs || []) {
++      graphsWithConnect.add(graphEnumToName[graphEnum] || graphEnum);
++    }
++  }
++  function applyJoinTransportDirective(dir) {
++    if (!dir || typeof dir !== "object") {
++      return;
++    }
++    if (dir.name === "transport") {
++      const args = dir.args && typeof dir.args === "object" ? dir.args : {};
++      for (const graphEnum of dir.graphs || []) {
++        const subgraphName = graphEnumToName[graphEnum] || graphEnum;
++        const existing = transportEntryMap[subgraphName] || { subgraph: subgraphName, kind: "http" };
++        transportEntryMap[subgraphName] = {
++          ...existing,
++          ...args,
++          subgraph: subgraphName,
++          kind: args.kind ?? existing.kind ?? "http",
++          location: args.location ?? existing.location
++        };
++      }
++      return;
++    }
++    if (dir.name === "connect" || dir.name === "source") {
++      rememberGraphs(dir.graphs);
++      if (dir.name === "source") {
++        const baseURL = dir.args?.http?.baseURL;
++        if (typeof baseURL === "string") {
++          for (const graphEnum of dir.graphs || []) {
++            const subgraphName = graphEnumToName[graphEnum] || graphEnum;
++            const existing = transportEntryMap[subgraphName];
++            if (existing && !existing.location) {
++              existing.location = baseURL;
++            }
++          }
++        }
++      }
++    }
++  }
++  for (const dir of schemaDirectives?.join__directive || []) {
++    applyJoinTransportDirective(dir);
++  }
++  for (const type of Object.values(unifiedGraph.getTypeMap())) {
++    if (!type || type.name?.startsWith("__")) {
++      continue;
++    }
++    for (const dir of utils.getDirectiveExtensions(type)?.join__directive || []) {
++      applyJoinTransportDirective(dir);
++    }
++    if (graphql.isObjectType(type) || graphql.isInterfaceType(type)) {
++      for (const field of Object.values(type.getFields())) {
++        for (const dir of utils.getDirectiveExtensions(field)?.join__directive || []) {
++          applyJoinTransportDirective(dir);
++        }
++      }
++    }
++  }
++  // Federation Connectors: `@connect` / `@source` imply `kind: "connect"` — no Mesh `@transport` needed.
++  for (const subgraphName of graphsWithConnect) {
++    const entry = transportEntryMap[subgraphName];
++    if (!entry) {
++      continue;
++    }
++    if (!entry.kind || entry.kind === "http") {
++      transportEntryMap[subgraphName] = {
++        ...entry,
++        kind: "connect"
++      };
+     }
+   }
+   if (transportEntryAdditions) {
 diff --git a/dist/index.js b/dist/index.js
-index ce3975285f3be72c6a47897f15ccdd35117eed99..90433178f559fb2e53d8c893cdfbeeb28adf41a8 100644
+index ce3975285f3be72c6a47897f15ccdd35117eed99..9e0740824b398562cbe8fa99246a0c7a789ea8c2 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -1,10 +1,10 @@
- import { getInstrumented } from '@envelop/instrumentation';
- import { LegacyLogger, Logger } from '@graphql-hive/logger';
- import { defaultPrintFn, createDefaultExecutor } from '@graphql-mesh/transport-common';
--import { getResolverForPubSubOperation, getInContextSDK, resolveAdditionalResolversWithoutImport, isDisposable, iterateAsync, dispose, makeAsyncDisposable } from '@graphql-mesh/utils';
-+import { getResolverForPubSubOperation, getInContextSDK, resolveAdditionalResolversWithoutImport, isDisposable, dispose, makeAsyncDisposable } from '@graphql-mesh/utils';
- import { getBatchingExecutor } from '@graphql-tools/batch-execute';
- import { getDirectiveExtensions, mapSchema, MapperKind, astFromField, asArray, getDocumentNodeFromSchema, memoize1, isDocumentNode, printSchemaWithDirectives, mergeDeep, isAsyncIterable, createGraphQLError } from '@graphql-tools/utils';
--import { handleMaybePromise, isPromise, mapAsyncIterator } from '@whatwg-node/promise-helpers';
-+import { handleMaybePromise, isPromise, iterateAsync, mapAsyncIterator } from '@whatwg-node/promise-helpers';
- import { isInterfaceType, Kind, isObjectType, typeFromAST, isOutputType, GraphQLSchema, GraphQLDirective, parseType, visit, GraphQLString, DirectiveLocation, isEnumType, parse, isSchema, buildSchema, buildASTSchema } from 'graphql';
- import { defaultMergedResolver } from '@graphql-tools/delegate';
- import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
+@@ -101,11 +101,17 @@ function splitPrefixSuffix(input, options = {}) {
+     ];
+ }
+ 
++function isMeshSourceSpecUrl(url) {
++  if (typeof url !== "string") {
++    return false;
++  }
++  return url === "https://the-guild.dev/graphql/mesh/spec/v1.0" || url.startsWith("https://specs.graphql-mesh.com/core/") || url.startsWith("https://graphql-mesh.com/spec/") || url.startsWith("https://spec.graphql-mesh.dev/");
++}
+ function getMeshSourceDirectiveName(schemaExtensions) {
+   const linkDirectives = schemaExtensions?.["directives"]?.link;
+   if (linkDirectives) {
+     for (const linkDirective of linkDirectives) {
+-      if (linkDirective.url === "https://the-guild.dev/graphql/mesh/spec/v1.0") {
++      if (isMeshSourceSpecUrl(linkDirective.url)) {
+         for (const importInfo of linkDirective.import || []) {
+           if (importInfo === "@source") {
+             return "source";
+@@ -1348,14 +1354,33 @@ function millisecondsToStr(milliseconds) {
+ }
+ function getTransportEntryMapUsingFusionAndFederationDirectives(unifiedGraph, transportEntryAdditions) {
+   unifiedGraph = restoreExtraDirectives(unifiedGraph);
++  // Mesh spec contract: reject unsupported specs.graphql-mesh.com versions on @link.
++  {
++    const links = getDirectiveExtensions(unifiedGraph)?.link || [];
++    for (const link of links) {
++      const url = link?.url;
++      if (typeof url !== "string" || !url.startsWith("https://specs.graphql-mesh.com/")) continue;
++      const mm = url.match(/^https:\/\/specs\.graphql-mesh\.com\/([^/]+)\/(v\d+(?:\.\d+)*)\/?$/);
++      if (!mm) {
++        throw new Error(`@graphql-mesh/fusion-runtime: unrecognized Mesh @link URL: ${url}`);
++      }
++      if (mm[2] !== "v0.1") {
++        throw new Error(`@graphql-mesh/fusion-runtime: unsupported Mesh spec "${mm[1]}" version ${mm[2]} (supported: v0.1). Found: ${url}`);
++      }
++    }
++  }
+   const transportEntryMap = {};
+   const joinGraph = unifiedGraph.getType("join__Graph");
+   const schemaDirectives = getDirectiveExtensions(unifiedGraph);
++  const graphEnumToName = {};
+   if (isEnumType(joinGraph)) {
+     for (const enumValue of joinGraph.getValues()) {
+       const enumValueDirectives = getDirectiveExtensions(enumValue);
+       if (enumValueDirectives?.join__graph?.length) {
+         for (const joinGraphDirective of enumValueDirectives.join__graph) {
++          if (joinGraphDirective.name) {
++            graphEnumToName[enumValue.name] = joinGraphDirective.name;
++          }
+           if (joinGraphDirective.url) {
+             transportEntryMap[joinGraphDirective.name] = {
+               subgraph: joinGraphDirective.name,
+@@ -1369,7 +1394,87 @@ function getTransportEntryMapUsingFusionAndFederationDirectives(unifiedGraph, tr
+   }
+   if (schemaDirectives?.transport?.length) {
+     for (const transportDirective of schemaDirectives.transport) {
+-      transportEntryMap[transportDirective.subgraph] = transportDirective;
++      const existing = transportEntryMap[transportDirective.subgraph] || { subgraph: transportDirective.subgraph, kind: "http" };
++      transportEntryMap[transportDirective.subgraph] = {
++        ...existing,
++        ...transportDirective,
++        subgraph: transportDirective.subgraph,
++        kind: transportDirective.kind ?? existing.kind ?? "http",
++        location: transportDirective.location ?? existing.location
++      };
++    }
++  }
++  // GM-41: Mesh Compose rewrites schema `@transport` → `@join__directive(name: "transport")`.
++  const graphsWithConnect = /* @__PURE__ */ new Set();
++  function rememberGraphs(graphs) {
++    for (const graphEnum of graphs || []) {
++      graphsWithConnect.add(graphEnumToName[graphEnum] || graphEnum);
++    }
++  }
++  function applyJoinTransportDirective(dir) {
++    if (!dir || typeof dir !== "object") {
++      return;
++    }
++    if (dir.name === "transport") {
++      const args = dir.args && typeof dir.args === "object" ? dir.args : {};
++      for (const graphEnum of dir.graphs || []) {
++        const subgraphName = graphEnumToName[graphEnum] || graphEnum;
++        const existing = transportEntryMap[subgraphName] || { subgraph: subgraphName, kind: "http" };
++        transportEntryMap[subgraphName] = {
++          ...existing,
++          ...args,
++          subgraph: subgraphName,
++          kind: args.kind ?? existing.kind ?? "http",
++          location: args.location ?? existing.location
++        };
++      }
++      return;
++    }
++    if (dir.name === "connect" || dir.name === "source") {
++      rememberGraphs(dir.graphs);
++      if (dir.name === "source") {
++        const baseURL = dir.args?.http?.baseURL;
++        if (typeof baseURL === "string") {
++          for (const graphEnum of dir.graphs || []) {
++            const subgraphName = graphEnumToName[graphEnum] || graphEnum;
++            const existing = transportEntryMap[subgraphName];
++            if (existing && !existing.location) {
++              existing.location = baseURL;
++            }
++          }
++        }
++      }
++    }
++  }
++  for (const dir of schemaDirectives?.join__directive || []) {
++    applyJoinTransportDirective(dir);
++  }
++  for (const type of Object.values(unifiedGraph.getTypeMap())) {
++    if (!type || type.name?.startsWith("__")) {
++      continue;
++    }
++    for (const dir of getDirectiveExtensions(type)?.join__directive || []) {
++      applyJoinTransportDirective(dir);
++    }
++    if (isObjectType(type) || isInterfaceType(type)) {
++      for (const field of Object.values(type.getFields())) {
++        for (const dir of getDirectiveExtensions(field)?.join__directive || []) {
++          applyJoinTransportDirective(dir);
++        }
++      }
++    }
++  }
++  // Federation Connectors: `@connect` / `@source` imply `kind: "connect"` — no Mesh `@transport` needed.
++  for (const subgraphName of graphsWithConnect) {
++    const entry = transportEntryMap[subgraphName];
++    if (!entry) {
++      continue;
++    }
++    if (!entry.kind || entry.kind === "http") {
++      transportEntryMap[subgraphName] = {
++        ...entry,
++        kind: "connect"
++      };
+     }
+   }
+   if (transportEntryAdditions) {

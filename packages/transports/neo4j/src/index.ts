@@ -2,6 +2,7 @@ import type { Transport } from '@graphql-mesh/transport-common';
 import {
   assertSupportedMeshSpecOnSchema,
   MESH_SUPPORTED_SPEC_VERSIONS,
+  validateMeshDirectives,
 } from '@graphql-mesh/utils';
 import { getNeo4JExecutor } from './executor.js';
 
@@ -24,6 +25,10 @@ export default {
       supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
       required: false, // unified-graph extract may omit @link; validate version when present
       consumer: '@graphql-mesh/transport-neo4j',
+    });
+    validateMeshDirectives(subgraph, {
+      consumer: '@graphql-mesh/transport-neo4j',
+      soft: true,
     });
     return getNeo4JExecutor({
       schema: subgraph,

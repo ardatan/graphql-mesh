@@ -44,8 +44,8 @@ function isConnectLinkedScalarName(name: string): boolean {
  * Canonical SDL for connectors runtimes (Hive Gateway and Apollo Router).
  * Raw `@connect` / `@source` are rewritten to join metadata (Router rejects
  * them when the connect `@link` is `for: EXECUTION` without imports). Mesh
- * directives (`@transport`, `@length`, `@meshSource`, …) are kept — Hive
- * needs `@transport` to select the REST transport.
+ * schema `@transport` is rewritten later by `finalizeMeshJoinDirectives`
+ * (GM-41) to `@join__directive(name: "transport")`.
  */
 export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
   if (!supergraphSdl.includes('specs.apollo.dev/connect')) {
@@ -168,38 +168,37 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
   // - Unique pending config for a name: fan out to every graph that referenced
   //   that name via `@connect` (shared identical config).
   // - Duplicate pending configs for the same name (different baseURLs): match
-  //   each `@source` to `@transport(subgraph, location)` by baseURL === location
-  //   so ownership survives compose → lift flattening of extras. Do not
-  //   cross-product mismatched configs onto every referencing graph.
+  //   each `@source` to `@join__graph(url:)` (preferred) or leftover `@transport(location)`
+  //   by baseURL === url/location. Do not invent `@transport(kind: "connect")` for this.
   const pendingSourceNameCounts = new Map<string, number>();
   for (const args of pendingSources) {
     const sourceName = typeof args.name === 'string' ? args.name : undefined;
     if (!sourceName) continue;
     pendingSourceNameCounts.set(sourceName, (pendingSourceNameCounts.get(sourceName) || 0) + 1);
   }
-  const transportsByLocation = readSchemaTransports(nextDoc, nameToGraphEnum);
+  const graphsByLocation = readLocationToGraphs(nextDoc, nameToGraphEnum);
   const schemaJoinDirs: ConstDirectiveNode[] = [];
   for (const args of pendingSources) {
     const sourceName = typeof args.name === 'string' ? args.name : undefined;
     const graphs = new Set<string>();
     const baseURL = getSourceBaseURL(args);
-    const fromTransport = baseURL ? transportsByLocation.get(baseURL) : undefined;
-    if (fromTransport?.size === 1) {
-      // Single transport at this location — authoritative for this config.
+    const fromLocation = baseURL ? graphsByLocation.get(baseURL) : undefined;
+    if (fromLocation?.size === 1) {
+      // Single graph at this location — authoritative for this config.
       // Do not also add nameToGraphEnum(sourceName) (subgraph named `api` case).
-      graphs.add([...fromTransport][0]);
+      graphs.add([...fromLocation][0]);
     } else if (
-      fromTransport &&
-      fromTransport.size > 1 &&
+      fromLocation &&
+      fromLocation.size > 1 &&
       pendingSources.every(
         other => getSourceBaseURL(other) !== baseURL || sourcesDeepEqual(other, args),
       )
     ) {
       // Same location, identical configs — genuinely shared; fan out.
-      for (const g of fromTransport) {
+      for (const g of fromLocation) {
         graphs.add(g);
       }
-    } else if (!fromTransport?.size) {
+    } else if (!fromLocation?.size) {
       const byName = sourceName ? nameToGraphEnum.get(sourceName) : undefined;
       if (byName) {
         graphs.add(byName);
@@ -426,13 +425,37 @@ function sourcesDeepEqual(a: Record<string, unknown>, b: Record<string, unknown>
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-/** Map `@transport(location)` → join graph enums (Mesh pairs location with source baseURL). */
-function readSchemaTransports(
+/**
+ * Map location/url → join graph enums.
+ * Prefer `@join__graph(url:)` (no Mesh `@transport` needed for Connectors).
+ * Fall back to leftover schema `@transport(location)` for older SDL.
+ */
+function readLocationToGraphs(
   document: DocumentNode,
   nameToGraphEnum: Map<string, string>,
 ): Map<string, Set<string>> {
   const byLocation = new Map<string, Set<string>>();
+  const remember = (location: string | undefined, graphEnum: string | undefined) => {
+    if (!location || !graphEnum) {
+      return;
+    }
+    let graphs = byLocation.get(location);
+    if (!graphs) {
+      graphs = new Set();
+      byLocation.set(location, graphs);
+    }
+    graphs.add(graphEnum);
+  };
   for (const def of document.definitions) {
+    if (def.kind === Kind.ENUM_TYPE_DEFINITION && def.name.value === 'join__Graph') {
+      for (const value of def.values || []) {
+        const graphDir = value.directives?.find(d => d.name.value === 'join__graph');
+        if (!graphDir) continue;
+        const name = getStringArg(graphDir, 'name') || value.name.value;
+        remember(getStringArg(graphDir, 'url'), nameToGraphEnum.get(name) || value.name.value);
+      }
+      continue;
+    }
     if (def.kind !== Kind.SCHEMA_DEFINITION && def.kind !== Kind.SCHEMA_EXTENSION) {
       continue;
     }
@@ -445,16 +468,7 @@ function readSchemaTransports(
       if (!location || !subgraph) {
         continue;
       }
-      const graphEnum = nameToGraphEnum.get(subgraph);
-      if (!graphEnum) {
-        continue;
-      }
-      let graphs = byLocation.get(location);
-      if (!graphs) {
-        graphs = new Set();
-        byLocation.set(location, graphs);
-      }
-      graphs.add(graphEnum);
+      remember(location, nameToGraphEnum.get(subgraph));
     }
   }
   return byLocation;

@@ -21,6 +21,7 @@ import type { MeshFetch } from '@graphql-mesh/types';
 import {
   assertSupportedMeshSpecOnSchema,
   MESH_SUPPORTED_SPEC_VERSIONS,
+  validateMeshDirectives,
 } from '@graphql-mesh/utils';
 import { getDirectives } from '@graphql-tools/utils';
 import {
@@ -669,6 +670,10 @@ const transport: Transport<ProtobufTransportOptions> = {
       supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
       required: false, // unified-graph extract may omit @link; validate version when present
       consumer: '@graphql-mesh/transport-protobuf',
+    });
+    validateMeshDirectives(subgraph, {
+      consumer: '@graphql-mesh/transport-protobuf',
+      soft: true,
     });
     const options = transportEntry.options || {};
     const helper = new ProtobufTransportHelper(
