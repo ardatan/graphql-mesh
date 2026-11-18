@@ -39,13 +39,21 @@ enum join__Graph {
   MOVIES @join__graph(name: "Movies", url: "neo4j://localhost:<neo4j_port>")
 }
 
-directive @node(subgraph: String, labels: [String!]) repeatable on OBJECT
+directive @node(
+  subgraph: String
+  """Neo4j labels when they differ from the GraphQL type name"""
+  labels: [String!]
+) repeatable on OBJECT
 
 directive @relationshipProperties(subgraph: String) repeatable on OBJECT
 
 directive @relationship(subgraph: String, type: String, direction: _RelationDirections, properties: String) repeatable on FIELD_DEFINITION
 
-directive @alias(subgraph: String, property: String!) repeatable on FIELD_DEFINITION
+directive @alias(
+  subgraph: String
+  """Neo4j property name when it differs from the GraphQL field name"""
+  property: String!
+) repeatable on FIELD_DEFINITION
 
 directive @cypher(subgraph: String, statement: String!, columnName: String!) repeatable on FIELD_DEFINITION
 
@@ -578,7 +586,7 @@ input ActedInPropertiesSort @join__type(graph: MOVIES) {
 
 input ActedInPropertiesUpdateInput @join__type(graph: MOVIES) {
   roles: StringScalarMutations
-  roles_SET: String
+  roles_SET: String @deprecated(reason: "Please use the generic mutation 'roles: { set: ... } }' instead.")
 }
 
 input ActedInPropertiesWhere @join__type(graph: MOVIES) {
@@ -1343,11 +1351,11 @@ input MovieSort @join__type(graph: MOVIES) {
 
 input MovieUpdateInput @join__type(graph: MOVIES) {
   released: StringScalarMutations
-  released_SET: String
+  released_SET: String @deprecated(reason: "Please use the generic mutation 'released: { set: ... } }' instead.")
   tagline: StringScalarMutations
-  tagline_SET: String
+  tagline_SET: String @deprecated(reason: "Please use the generic mutation 'tagline: { set: ... } }' instead.")
   title: StringScalarMutations
-  title_SET: String
+  title_SET: String @deprecated(reason: "Please use the generic mutation 'title: { set: ... } }' instead.")
   peopleActedIn: [MoviePeopleActedInUpdateFieldInput!]
   peopleDirected: [MoviePeopleDirectedUpdateFieldInput!]
   peopleProduced: [MoviePeopleProducedUpdateFieldInput!]
@@ -2439,9 +2447,9 @@ input PersonSort @join__type(graph: MOVIES) {
 
 input PersonUpdateInput @join__type(graph: MOVIES) {
   born: StringScalarMutations
-  born_SET: String
+  born_SET: String @deprecated(reason: "Please use the generic mutation 'born: { set: ... } }' instead.")
   name: StringScalarMutations
-  name_SET: String
+  name_SET: String @deprecated(reason: "Please use the generic mutation 'name: { set: ... } }' instead.")
   actedInMovies: [PersonActedInMoviesUpdateFieldInput!]
   directedMovies: [PersonDirectedMoviesUpdateFieldInput!]
   followsPeople: [PersonFollowsPeopleUpdateFieldInput!]
@@ -2854,9 +2862,9 @@ input ReviewedPropertiesSort @join__type(graph: MOVIES) {
 
 input ReviewedPropertiesUpdateInput @join__type(graph: MOVIES) {
   rating: StringScalarMutations
-  rating_SET: String
+  rating_SET: String @deprecated(reason: "Please use the generic mutation 'rating: { set: ... } }' instead.")
   summary: StringScalarMutations
-  summary_SET: String
+  summary_SET: String @deprecated(reason: "Please use the generic mutation 'summary: { set: ... } }' instead.")
 }
 
 input ReviewedPropertiesWhere @join__type(graph: MOVIES) {
