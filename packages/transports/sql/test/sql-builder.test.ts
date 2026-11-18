@@ -487,6 +487,21 @@ describe('buildSelect', () => {
     expect(physicalNamedLimit.sql).toContain('"limit" = ?');
     expect(physicalNamedLimit.params).toEqual([9]);
     expect(physicalNamedLimit.sql).not.toMatch(/LIMIT \?$/);
+
+    // Sole PK SQL column named `limit`, GraphQL field `id` (`selection: id: limit`).
+    // Catalog keys are GraphQL names; classification must use physical SQL values.
+    const aliasedPkLimit = buildSelect('sqlite', {
+      table: 'tickets',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: limit`),
+      whereMapping: parseSqlMapping(`limit: $args.id`),
+      graphqlArgs: { id: 42 },
+      columnCatalog: new Map([['id', 'limit']]),
+    });
+    expect(aliasedPkLimit.sql).toContain('"limit" = ?');
+    expect(aliasedPkLimit.params).toEqual([42]);
+    // Must not treat physical `limit` as page-size (no LIMIT clause from the binder).
+    expect(aliasedPkLimit.sql).not.toMatch(/LIMIT \?/);
   });
 
   it('rejects composed OR tautologies on UPDATE/DELETE with mapped columns; allows FALSE no-ops', () => {
@@ -519,8 +534,10 @@ describe('buildSelect', () => {
       ),
     ).toThrow(/no SQL predicate/);
 
-    // AND with empty in (FALSE) is a no-op filter: allowed, matches no rows
-    const falseNoOp = buildDelete(
+    // AND with empty in (FALSE) is a no-op filter: allowed, matches no rows.
+    // Both orders: discarded branches must also drop their bound params
+    // (SQLite rejects leftover params when WHERE is just 0).
+    const falseFirst = buildDelete(
       'sqlite',
       'albums',
       whereSpread,
@@ -528,8 +545,44 @@ describe('buildSelect', () => {
       undefined,
       cols,
     );
-    expect(falseNoOp.sql).toMatch(/WHERE \(?0\)?/);
-    expect(falseNoOp.sql).not.toMatch(/AlbumId/);
+    expect(falseFirst.sql).toMatch(/WHERE \(?0\)?/);
+    expect(falseFirst.sql).not.toMatch(/AlbumId/);
+    expect(falseFirst.params).toEqual([]);
+
+    const falseSecond = buildDelete(
+      'sqlite',
+      'albums',
+      whereSpread,
+      { where: { and: [{ id: { eq: 7 } }, { id: { in: [] } }] } },
+      undefined,
+      cols,
+    );
+    expect(falseSecond.sql).toMatch(/WHERE \(?0\)?/);
+    expect(falseSecond.sql).not.toMatch(/AlbumId/);
+    expect(falseSecond.params).toEqual([]);
+
+    // OR: FALSE identity branches must not leave params; remaining eq binds once.
+    const orFalseFirst = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: AlbumId`),
+      whereMapping: whereSpread,
+      graphqlArgs: { where: { or: [{ id: { in: [] } }, { id: { eq: 7 } }] } },
+      columnCatalog: cols,
+    });
+    expect(orFalseFirst.sql).toContain('"AlbumId" = ?');
+    expect(orFalseFirst.params).toEqual([7]);
+
+    const orFalseSecond = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: AlbumId`),
+      whereMapping: whereSpread,
+      graphqlArgs: { where: { or: [{ id: { eq: 7 } }, { id: { in: [] } }] } },
+      columnCatalog: cols,
+    });
+    expect(orFalseSecond.sql).toContain('"AlbumId" = ?');
+    expect(orFalseSecond.params).toEqual([7]);
   });
 
   it('appends soft-delete IS NULL on reads and soft-deletes via UPDATE', () => {

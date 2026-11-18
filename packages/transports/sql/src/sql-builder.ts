@@ -109,12 +109,29 @@ const PLANNER_KEYS = new Set<string>([
 ]);
 
 /**
+ * `columnCatalog` maps GraphQL field → SQL column (`id` → `limit`). Where /
+ * planner binders use the **physical** SQL name as the entry key, so lookups
+ * must check catalog values (and keys when gql name equals sql name).
+ */
+export function catalogHasPhysicalColumn(
+  catalog: Map<string, string> | undefined,
+  physical: string,
+): boolean {
+  if (!catalog?.size) return false;
+  if (catalog.has(physical)) return true;
+  for (const sql of catalog.values()) {
+    if (sql === physical) return true;
+  }
+  return false;
+}
+
+/**
  * Legacy stuffed planner entry (`limit: $args.limit` / `limit: $args.take`) vs a
  * physical column that shares a planner name (`limit: $args.id` for a column
  * named `limit`).
  *
  * When `columnCatalog` is provided, a planner-named key that exists as a
- * physical column is never treated as a planner. Otherwise any `$args` /
+ * physical SQL column is never treated as a planner. Otherwise any `$args` /
  * `$this` binder on that key is a stuffed planner (so `limit: $args.take`
  * paginates). Without a catalog, only the classic `leaf === key` form counts.
  */
@@ -126,9 +143,9 @@ export function isLegacyPlannerEntry(
   if (!PLANNER_KEYS.has(entry.key)) return false;
   const v = entry.value;
   if (!v || (v.kind !== 'args' && v.kind !== 'this')) return false;
-  if (columnCatalog?.has(entry.key)) return false;
-  if (columnCatalog) {
-    // Catalog known and key is not a column → stuffed planner (e.g. `$args.take`).
+  if (catalogHasPhysicalColumn(columnCatalog, entry.key)) return false;
+  if (columnCatalog?.size) {
+    // Catalog known and key is not a physical column → stuffed planner.
     return true;
   }
   const path = v.path?.length ? v.path : v.value ? v.value.split('.').filter(Boolean) : [];
@@ -790,7 +807,7 @@ function resolvePlannerArg(plan: SelectPlan, key: SqlPlannerKey): unknown {
       !isBareVarPath(e) &&
       !isLegacyPlannerEntry(e, catalog),
   );
-  if (physical && catalog.has(key)) {
+  if (physical && catalogHasPhysicalColumn(catalog, key)) {
     return undefined;
   }
   return plan.graphqlArgs[key];
@@ -867,6 +884,10 @@ function appendStructuredFilters(
         params,
         filterOpts,
       );
+    } else if (entry.value?.kind === 'this') {
+      // Structured `$this` binder with missing parent → fail closed (no rows).
+      // Omitted client `$args.where` stays valid for unfiltered lists.
+      whereParts.push(sqlFalse(adapter));
     }
   }
 
@@ -1152,27 +1173,6 @@ function andTruth(parts: string[]): 'true' | 'false' | 'maybe' {
   return 'maybe';
 }
 
-const SCALAR_FILTER_KEYS = new Set([
-  'eq',
-  'ne',
-  'lt',
-  'lte',
-  'gt',
-  'gte',
-  'in',
-  'nin',
-  'includes',
-  'startsWith',
-  'endsWith',
-  'like',
-  'ilike',
-  'isNull',
-]);
-
-function isScalarFilterOps(ops: Record<string, any>): boolean {
-  return Object.keys(ops).some(k => SCALAR_FILTER_KEYS.has(k));
-}
-
 function appendFilter(
   adapter: SqlAdapter,
   filter: Record<string, any>,
@@ -1188,17 +1188,26 @@ function appendFilter(
     const parts: string[] = [];
     let contradiction = false;
     let sawBranch = false;
+    const groupStart = params.length;
     for (const sub of filter.and) {
+      const branchStart = params.length;
       const inner: string[] = [];
       appendFilter(adapter, sub, columns, inner, params, opts);
-      if (!inner.length) continue;
+      if (!inner.length) {
+        params.length = branchStart;
+        continue;
+      }
       sawBranch = true;
       const truth = andTruth(inner);
       if (truth === 'false') {
+        params.length = groupStart;
         contradiction = true;
         break;
       }
-      if (truth === 'true') continue; // AND-identity
+      if (truth === 'true') {
+        params.length = branchStart; // AND-identity: drop params
+        continue;
+      }
       parts.push(`(${inner.join(' AND ')})`);
     }
     if (contradiction) {
@@ -1214,17 +1223,26 @@ function appendFilter(
     const parts: string[] = [];
     let tautology = false;
     let sawBranch = false;
+    const groupStart = params.length;
     for (const sub of filter.or) {
+      const branchStart = params.length;
       const inner: string[] = [];
       appendFilter(adapter, sub, columns, inner, params, opts);
-      if (!inner.length) continue;
+      if (!inner.length) {
+        params.length = branchStart;
+        continue;
+      }
       sawBranch = true;
       const truth = andTruth(inner);
       if (truth === 'true') {
+        params.length = groupStart; // OR short-circuit: drop all branch params
         tautology = true;
         break;
       }
-      if (truth === 'false') continue; // OR-identity
+      if (truth === 'false') {
+        params.length = branchStart; // OR-identity: drop params
+        continue;
+      }
       parts.push(`(${inner.join(' AND ')})`);
     }
     if (tautology) {
@@ -1237,13 +1255,16 @@ function appendFilter(
     }
   }
   if (filter.not && typeof filter.not === 'object') {
+    const branchStart = params.length;
     const inner: string[] = [];
     appendFilter(adapter, filter.not, columns, inner, params, opts);
     if (inner.length) {
       const truth = andTruth(inner);
       if (truth === 'true') {
+        params.length = branchStart;
         whereParts.push(sqlFalse(adapter));
       } else if (truth === 'false') {
+        params.length = branchStart;
         whereParts.push(sqlTrue(adapter));
       } else {
         whereParts.push(`NOT (${inner.join(' AND ')})`);
@@ -1256,9 +1277,10 @@ function appendFilter(
     if (ops == null || typeof ops !== 'object') continue;
     const o = ops as Record<string, any>;
 
-    // Nested belongs-to / M2M: `where: { artist: { name: { eq: "X" } } }`
+    // Nested belongs-to / M2M: prefer relation metadata before scalar-op heuristics
+    // so related columns named like `eq` / `in` still compile inside EXISTS.
     const rel = opts?.relationFilters?.find(r => r.field === field);
-    if (rel && !isScalarFilterOps(o)) {
+    if (rel) {
       const depth = opts?.relationDepth ?? 0;
       const alias = `_rf${depth}`;
       const inner: string[] = [];

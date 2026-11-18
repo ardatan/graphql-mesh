@@ -64,11 +64,20 @@ describe('Bun.SQL availability (Node / Jest)', () => {
     expect(resolveSslOption(undefined, parsed, undefined)).toEqual({
       rejectUnauthorized: false,
     });
-    expect(resolveSslOption('disable', parsed, { ca: 'PEM' })).toBeUndefined();
+    expect(resolveSslOption('disable', parsed, { ca: 'PEM' })).toBe(false);
     expect(resolveSslOption(true, parseSqlUri('mysql://h/db'), { ca: 'PEM' })).toEqual({
       rejectUnauthorized: true,
       ca: 'PEM',
     });
+  });
+
+  it('pgPoolConfigFromLocation lowercases URI query keys before lookup', () => {
+    const cfg = pgPoolConfigFromLocation(
+      'postgres:///shop?HOST=/var/run/postgresql&Application_Name=mesh',
+    );
+    expect(cfg.host).toBe('/var/run/postgresql');
+    expect(cfg.application_name).toBe('mesh');
+    expect(cfg).not.toHaveProperty('port');
   });
 
   it('pgPoolConfigFromLocation uses discrete fields so URI sslmode cannot override ssl.ca', () => {

@@ -104,14 +104,20 @@ function omitArgsPath(args: Record<string, any>, path: string[]): Record<string,
 
 /**
  * Detect a single equality column binder suitable for `WHERE col IN (...)` batching.
+ * Pass `columnCatalog` (GraphQL → SQL) so planner-named physical columns
+ * (`limit: $args.id`) stay batchable and stuffed planners (`limit: $args.take`)
+ * are excluded.
  */
-export function batchableEqualityColumn(whereMapping: ParsedSqlMapping): string | undefined {
+export function batchableEqualityColumn(
+  whereMapping: ParsedSqlMapping,
+  columnCatalog?: Map<string, string>,
+): string | undefined {
   const cols: string[] = [];
   for (const entry of whereMapping.entries) {
     if (
       entry.spread ||
       entry.key.startsWith('$') ||
-      isLegacyPlannerEntry(entry) ||
+      isLegacyPlannerEntry(entry, columnCatalog) ||
       entry.children
     ) {
       continue;

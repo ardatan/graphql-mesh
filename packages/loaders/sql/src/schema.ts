@@ -103,7 +103,7 @@ const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
  *   pgPool: myPool,
  *   schema: 'app',
  * });
- * const executor = getSqlExecutor({
+ * const executor = await getSqlExecutor({
  *   subgraph,
  *   client: wrapPgPoolAsSqlClient(myPool, { schema: 'app' }),
  * });
@@ -1086,7 +1086,10 @@ function createFilterAndOrder(
           : gql === GraphQLBoolean
             ? 'BooleanFilter'
             : 'StringFilter';
-    filterFields[fieldName] = filterType;
+    // Do not shadow boolean combinators with a column named `and` / `or` / `not`.
+    if (fieldName !== 'and' && fieldName !== 'or' && fieldName !== 'not') {
+      filterFields[fieldName] = filterType;
+    }
     orderValues[naming.orderValue(fieldName, 'ASC')] = {
       value: naming.orderValue(fieldName, 'ASC'),
     };

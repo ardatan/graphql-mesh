@@ -345,7 +345,7 @@ export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string):
 export interface WrapPgPoolAsSqlClientOpts {
   /**
    * Bind `search_path` on every pooled connection (including idle clients
-   * already in a supplied pool). One schema per shared pool — a second wrap
+   * already in a supplied pool). One schema per shared pool; a second wrap
    * with a different schema is rejected. When omitted, Mesh does not issue
    * `SET search_path`.
    *
@@ -353,6 +353,14 @@ export interface WrapPgPoolAsSqlClientOpts {
    * @example 'public'
    */
   schema?: string;
+  /**
+   * When true, `dispose()` calls `pool.end()`. Use for pools this transport
+   * created. Shared/injected pools (Mesh handlers) leave this false so other
+   * consumers keep the pool.
+   *
+   * @default false
+   */
+  endPool?: boolean;
 }
 
 /**
@@ -377,6 +385,7 @@ export function wrapPgPoolAsSqlClient(
   opts?: WrapPgPoolAsSqlClientOpts,
 ): SqlClient {
   applyPgPoolSearchPath(pool, opts?.schema);
+  const endPool = opts?.endPool === true;
   const client: SqlClient = {
     adapter: 'postgres',
     // Expose real pg.Pool when present for `@dataplan/pg`.
@@ -389,7 +398,7 @@ export function wrapPgPoolAsSqlClient(
       };
     },
     async dispose() {
-      if (typeof pool.end === 'function') {
+      if (endPool && typeof pool.end === 'function') {
         await pool.end();
       }
     },
@@ -628,7 +637,7 @@ function createPostgresClient(opts: CreateSqlClientOptions): SqlClient {
     // pg discards the broken client; the next query opens a fresh connection.
   });
   applyPgPoolSearchPath(pool, opts.schema);
-  return wrapPgPoolAsSqlClient(pool);
+  return wrapPgPoolAsSqlClient(pool, { endPool: true });
 }
 
 /** URI query keys consumed by {@link resolveSslOption} — not passed through to `pg.Pool`. */
@@ -658,7 +667,7 @@ const PG_URI_POOL_PARAMS = new Set([
 export function pgPoolConfigFromLocation(
   location: string,
   extras?: {
-    ssl?: { rejectUnauthorized: boolean; ca?: string } | undefined;
+    ssl?: false | { rejectUnauthorized: boolean; ca?: string } | undefined;
     max?: number;
     idleTimeoutMillis?: number;
     connectionTimeoutMillis?: number;
@@ -669,15 +678,21 @@ export function pgPoolConfigFromLocation(
     throw new Error(`Expected postgres URI, got ${parsed.adapter}`);
   }
 
-  const sp = parsed.searchParams || {};
-  for (const key of Object.keys(sp)) {
+  // Lowercase query keys before lookup so `?HOST=` / `?Application_Name=` work
+  // after the same case-insensitive allow-list check.
+  const sp: Record<string, string> = {};
+  for (const [key, value] of Object.entries(parsed.searchParams || {})) {
     const lower = key.toLowerCase();
-    if (PG_URI_SSL_PARAMS.has(lower)) continue;
+    if (PG_URI_SSL_PARAMS.has(lower)) {
+      sp[lower] = value;
+      continue;
+    }
     if (!PG_URI_POOL_PARAMS.has(lower)) {
       throw new Error(
         `Unsupported postgres URI query parameter "${key}". Supported: ${[...PG_URI_POOL_PARAMS].join(', ')} (plus sslmode/ssl/tls).`,
       );
     }
+    sp[lower] = value;
   }
 
   // Query `host` wins (e.g. `postgres:///db?host=/var/run/postgresql`).
@@ -689,8 +704,11 @@ export function pgPoolConfigFromLocation(
     user: parsed.user,
     password: parsed.password,
     database: parsed.database,
-    ssl: extras?.ssl,
   };
+  // Pass `false` through so PGSSLMODE cannot re-enable TLS; omit when undefined.
+  if (extras?.ssl !== undefined) {
+    config.ssl = extras.ssl;
+  }
   if (host) config.host = host;
   if (port != null && !Number.isNaN(port)) config.port = port;
   if (sp.application_name) config.application_name = sp.application_name;
@@ -718,14 +736,15 @@ export function pgPoolConfigFromLocation(
 /**
  * TLS on by default verifies certificates (`rejectUnauthorized: true`).
  * Opt out explicitly with `tls: "insecure"` / `"no-verify"` or URI `sslmode=no-verify`.
- * `ssl.ca` / `ssl.rejectUnauthorized` are merged when SSL is enabled.
+ * Explicit disable returns `false` (not `undefined`) so drivers do not fall back to
+ * env defaults such as `PGSSLMODE`. `ssl.ca` / `ssl.rejectUnauthorized` merge when on.
  * Shared by runtime clients and MySQL/Postgres introspection.
  */
 export function resolveSslOption(
   option: boolean | string | undefined,
   parsed: { ssl?: boolean; searchParams?: Record<string, string> },
   sslDetails?: { rejectUnauthorized?: boolean; ca?: string },
-): { rejectUnauthorized: boolean; ca?: string } | undefined {
+): false | { rejectUnauthorized: boolean; ca?: string } | undefined {
   const mode = typeof option === 'string' ? option.toLowerCase() : undefined;
   const sslmode = String(parsed.searchParams?.sslmode || '').toLowerCase();
   if (
@@ -735,7 +754,7 @@ export function resolveSslOption(
     sslmode === 'disable' ||
     sslmode === 'false'
   ) {
-    return undefined;
+    return false;
   }
   const insecure =
     mode === 'insecure' ||
@@ -743,13 +762,26 @@ export function resolveSslOption(
     sslmode === 'no-verify' ||
     sslmode === 'insecure' ||
     sslDetails?.rejectUnauthorized === false;
+  // URI sslmodes that request TLS (verified or not). `parsed.ssl` alone is not enough
+  // for postgres `sslmode=no-verify` / `verify-full` (parser only flags `require`).
+  const uriWantsTls =
+    sslmode === 'require' ||
+    sslmode === 'verify-ca' ||
+    sslmode === 'verify-full' ||
+    sslmode === 'no-verify' ||
+    sslmode === 'insecure' ||
+    sslmode === 'true';
   const enabled =
     option === true ||
     mode === 'true' ||
     mode === 'require' ||
     mode === 'insecure' ||
     mode === 'no-verify' ||
+    mode === 'verify-ca' ||
+    mode === 'verify-full' ||
     Boolean(parsed.ssl) ||
+    uriWantsTls ||
+    insecure ||
     Boolean(sslDetails?.ca) ||
     sslDetails?.rejectUnauthorized != null;
   if (!enabled) return undefined;

@@ -421,7 +421,15 @@ function makeRootPlan(
 ) {
   return function sqlRootPlan(_$parent: any, fieldArgs: any) {
     if (kind === 'ROW') {
-      const eqCol = batchableEqualityColumn(where);
+      // sqlToAttr is SQL→GraphQL; invert to GraphQL→SQL for planner vs physical checks.
+      let columnCatalog: Map<string, string> | undefined;
+      if (sqlToAttr?.size) {
+        columnCatalog = new Map();
+        for (const [sql, gql] of sqlToAttr) {
+          columnCatalog.set(gql, sql);
+        }
+      }
+      const eqCol = batchableEqualityColumn(where, columnCatalog);
       const binder = eqCol ? where.entries.find(e => e.key === eqCol) : undefined;
       if (binder?.value?.kind === 'args') {
         const path =

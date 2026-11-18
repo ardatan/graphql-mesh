@@ -156,7 +156,10 @@ function planChildField(
   const whereMapping = parseSqlMapping(sqlArgs.where as string | undefined);
   const relSelection = parseSqlMapping(sqlArgs.selection as string | undefined);
 
-  const joinColumn = batchableEqualityColumn(whereMapping);
+  // Parent selection is the GraphQL→SQL catalog for this fold: classify planner
+  // vs physical keys (e.g. sole PK SQL column named `limit`) before batching.
+  const parentCatalog = columnMapFromSelection(parentSelection);
+  const joinColumn = batchableEqualityColumn(whereMapping, parentCatalog);
   if (!joinColumn) return null;
   const binder = whereMapping.entries.find(e => e.key === joinColumn);
   if (!binder?.value || binder.value.kind !== 'this') return null;

@@ -143,11 +143,21 @@ function composePostgresUrlFromEnv(env: EnvLike): string | undefined {
         ? `${encodeURIComponent(user)}:${encodeURIComponent(password)}@`
         : `${encodeURIComponent(user)}@`
       : '';
+  const dbPart = database ? `/${encodeURIComponent(database)}` : '';
+  const qs = new URLSearchParams();
+  // Path-valued PGHOST is a Unix socket; put it in `?host=` (not URL authority).
+  const isSocket = Boolean(host && (host.startsWith('/') || host.startsWith('@')));
+  if (isSocket && host) {
+    qs.set('host', host);
+  }
+  if (sslmode) qs.set('sslmode', sslmode);
+  const q = qs.toString() ? `?${qs.toString()}` : '';
+  if (isSocket) {
+    return `postgres://${auth}${dbPart}${q}`;
+  }
   const hostPart = host || 'localhost';
   const portPart = port ? `:${port}` : '';
-  const dbPart = database ? `/${encodeURIComponent(database)}` : '';
-  const qs = sslmode ? `?sslmode=${encodeURIComponent(sslmode)}` : '';
-  return `postgres://${auth}${hostPart}${portPart}${dbPart}${qs}`;
+  return `postgres://${auth}${hostPart}${portPart}${dbPart}${q}`;
 }
 
 function composeMysqlUrlFromEnv(env: EnvLike): string | undefined {
@@ -207,7 +217,7 @@ export function inferAdapterFromConnectionString(location: string): SqlAdapter {
   if (schemeMatch) {
     const scheme = schemeMatch[1].toLowerCase();
     throw new Error(
-      `Unsupported SQL connection protocol "${scheme}:" in ${location}. Use postgres(ql)://, mysql(2|s)://, mariadb://, sqlite://, or file:.`,
+      `Unsupported SQL connection protocol "${scheme}:". Use postgres(ql)://, mysql(2|s)://, mariadb://, sqlite://, or file:.`,
     );
   }
 
@@ -268,7 +278,7 @@ export function parseSqlUri(location: string): ParsedSqlUri {
     if (qIdx !== -1) {
       const qs = new URLSearchParams(filePath.slice(qIdx + 1));
       qs.forEach((value, key) => {
-        searchParams[key] = value;
+        searchParams[key.toLowerCase()] = value;
       });
       filePath = filePath.slice(0, qIdx);
     }
@@ -290,7 +300,7 @@ export function parseSqlUri(location: string): ParsedSqlUri {
 
   const url = new URL(normalized);
   url.searchParams.forEach((value, key) => {
-    searchParams[key] = value;
+    searchParams[key.toLowerCase()] = value;
   });
   const database = decode(url.pathname.replace(/^\//, '')) || undefined;
 

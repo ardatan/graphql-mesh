@@ -1,5 +1,24 @@
-import { canBatchByEqualityColumn, loadBatchedByColumn } from '../src/batch.js';
+import {
+  batchableEqualityColumn,
+  canBatchByEqualityColumn,
+  loadBatchedByColumn,
+} from '../src/batch.js';
 import { parseSqlMapping } from '../src/mapping.js';
+
+describe('batchableEqualityColumn with catalog', () => {
+  it('batches on physical PK column named limit (gql id → sql limit)', () => {
+    const where = parseSqlMapping('limit: $args.id');
+    // Loader selection aliases sole PK: id: limit
+    const catalog = new Map([['id', 'limit']]);
+    expect(batchableEqualityColumn(where, catalog)).toBe('limit');
+  });
+
+  it('does not batch on stuffed limit: $args.take when catalog has no limit column', () => {
+    const where = parseSqlMapping('limit: $args.take');
+    const catalog = new Map([['id', 'AlbumId']]);
+    expect(batchableEqualityColumn(where, catalog)).toBeUndefined();
+  });
+});
 
 describe('canBatchByEqualityColumn', () => {
   it('rejects parent-dependent pagination binders', () => {

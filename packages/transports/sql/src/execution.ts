@@ -59,7 +59,7 @@ import { resolveConnectionStringFromEnv } from './uri.js';
  * ```ts
  * import { getSqlExecutor } from '@graphql-mesh/transport-sql';
  *
- * const executor = getSqlExecutor({
+ * const executor = await getSqlExecutor({
  *   subgraph: await loadGraphQLSchemaFromSql('shop', {
  *     endpoint: 'postgres://localhost/shop',
  *   }),
@@ -68,7 +68,7 @@ import { resolveConnectionStringFromEnv } from './uri.js';
  * @example
  * ```ts
  * // Reuse a client (e.g. wrapped pg.Pool from the Mesh handler)
- * getSqlExecutor({ subgraph, client: wrapPgPoolAsSqlClient(pool, { schema: 'app' }) })
+ * await getSqlExecutor({ subgraph, client: wrapPgPoolAsSqlClient(pool, { schema: 'app' }) })
  * ```
  */
 export interface GetSqlExecutorOpts {
@@ -266,7 +266,7 @@ async function runSqlSelect(
   // Batch ROW / simple ROWS when there is exactly one equality binder (FK / PK)
   // and we are not folding joins / has-many / M2M into this query.
   if (!through && !joins.length && !hasMany.length && (kind === 'ROW' || kind === 'ROWS')) {
-    const column = batchableEqualityColumn(whereMapping);
+    const column = batchableEqualityColumn(whereMapping, columnCatalog);
     if (column && canBatchByEqualityColumn(whereMapping, column, kind, graphqlArgs, planners)) {
       const key = resolveEqualityKey(whereMapping, column, graphqlArgs, parent);
       if (key !== undefined) {
