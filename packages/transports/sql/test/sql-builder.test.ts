@@ -85,6 +85,48 @@ describe('buildSelect', () => {
     });
   });
 
+  it('supports nested belongs-to filters and like/ilike', () => {
+    const { sql, params } = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'ROWS',
+      selection,
+      whereMapping: parseSqlMapping(`$args.where`),
+      graphqlArgs: {
+        where: {
+          artist: { name: { startsWith: 'A' } },
+          title: { ilike: '%rock%' },
+        },
+      },
+      relationFilters: [
+        {
+          field: 'artist',
+          relatedTable: 'artists',
+          localColumn: 'ArtistId',
+          refColumn: 'ArtistId',
+          columns: new Map([['name', 'Name']]),
+        },
+      ],
+    });
+    expect(sql).toContain('EXISTS (SELECT 1 FROM "artists" AS "_rf"');
+    expect(sql).toContain('"_rf"."Name" LIKE ?');
+    expect(sql).toContain('LOWER("Title") LIKE LOWER(?)');
+    expect(params).toEqual(['A%', '%rock%']);
+  });
+
+  it('selects postgres $fn computed columns', () => {
+    const { sql } = buildSelect('postgres', {
+      table: 'users',
+      kind: 'ROW',
+      selection: parseSqlMapping(`
+        id: id
+        fullName: $fn.public.users_full_name
+      `),
+      whereMapping: parseSqlMapping(`id: $args.id`),
+      graphqlArgs: { id: 1 },
+    });
+    expect(sql).toContain('"public"."users_full_name"("t") AS "fullName"');
+  });
+
   it('appends soft-delete IS NULL on reads and soft-deletes via UPDATE', () => {
     const softDelete = { column: 'deleted_at' };
     const { sql } = buildSelect('sqlite', {

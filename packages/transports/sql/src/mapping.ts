@@ -167,13 +167,22 @@ function readPseudoOrPath(
   let i = start + 1;
   const head = readIdent(text, i);
   i = head.next;
-  if (head.value === 'args' || head.value === 'this') {
+  if (head.value === 'args' || head.value === 'this' || head.value === 'fn') {
     const path: string[] = [];
     while (i < text.length && text[i] === '.') {
       i++;
       const seg = readIdent(text, i);
       path.push(seg.value);
       i = seg.next;
+    }
+    if (head.value === 'fn') {
+      // `$fn.users_full_name` or `$fn.public.users_full_name`
+      const fnName = path.length ? path.join('.') : '';
+      return {
+        raw: `$fn${path.length ? '.' + path.join('.') : ''}`,
+        value: { kind: 'fn', value: fnName, path },
+        next: i,
+      };
     }
     return {
       raw: `$${head.value}${path.length ? '.' + path.join('.') : ''}`,

@@ -1,4 +1,12 @@
-import type { GraphQLResolveInfo, GraphQLSchema } from 'graphql';
+import {
+  getNamedType,
+  isListType,
+  isNonNullType,
+  isObjectType,
+  type GraphQLResolveInfo,
+  type GraphQLSchema,
+  type GraphQLType,
+} from 'graphql';
 import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
@@ -9,6 +17,7 @@ import { createSqlClient } from './client.js';
 import { wireSqlEntityResolvers } from './entity.js';
 import { resolveMappingValue } from './mapping.js';
 import { hasJoinedField, planSelection } from './plan.js';
+import { collectRelationFilters } from './relation-filters.js';
 import {
   buildDelete,
   buildInsert,
@@ -42,6 +51,41 @@ export interface GetSqlExecutorOpts {
 }
 
 const MUTATION_KINDS = new Set<SqlKind>(['INSERT', 'UPDATE', 'DELETE']);
+
+function printSchemaHasFn(schema: GraphQLSchema): boolean {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) || type.name.startsWith('__')) continue;
+    const typeDirs = getDirective(schema, type, 'sql') || [];
+    for (const d of typeDirs) {
+      if (String(d.selection || '').includes('$fn.')) return true;
+    }
+    for (const field of Object.values(type.getFields())) {
+      const dirs = getDirective(schema, field, 'sql') || [];
+      for (const d of dirs) {
+        if (String(d.selection || '').includes('$fn.')) return true;
+      }
+    }
+  }
+  return false;
+}
+
+function objectTypeNameFromReturnType(returnType: GraphQLType): string {
+  let t: GraphQLType = returnType;
+  while (isNonNullType(t) || isListType(t)) {
+    t = t.ofType;
+  }
+  const named = getNamedType(t);
+  // AlbumConnection → Album when possible
+  if (isObjectType(named) && named.name.endsWith('Connection')) {
+    const nodes = named.getFields().nodes;
+    if (nodes) {
+      let nt: GraphQLType = nodes.type;
+      while (isNonNullType(nt) || isListType(nt)) nt = nt.ofType;
+      return getNamedType(nt).name;
+    }
+  }
+  return named.name;
+}
 
 function connectionNodeSelection(selection: ParsedSqlMapping): ParsedSqlMapping {
   const nodes = nestedSelection(selection, 'nodes');
@@ -143,12 +187,24 @@ async function runSqlSelect(
             column,
             graphqlArgs,
             softDelete,
+            relationFilters:
+              opts.schema && opts.info
+                ? collectRelationFilters(
+                    opts.schema,
+                    objectTypeNameFromReturnType(opts.info.returnType),
+                  )
+                : undefined,
           },
           key,
         );
       }
     }
   }
+
+  const relationFilters =
+    opts.schema && opts.info
+      ? collectRelationFilters(opts.schema, objectTypeNameFromReturnType(opts.info.returnType))
+      : undefined;
 
   const query = buildSelect(sqlClient.adapter, {
     table,
@@ -161,6 +217,7 @@ async function runSqlSelect(
     joins,
     hasMany,
     softDelete,
+    relationFilters,
   });
   const result = await sqlClient.query(query.sql, query.params);
 
@@ -199,6 +256,7 @@ async function runSqlSelect(
         graphqlArgs,
         parent,
         softDelete,
+        relationFilters,
       });
       const countRes = await sqlClient.query(countQ.sql, countQ.params);
       const crow = countRes.rows[0] as Record<string, unknown> | undefined;
@@ -396,10 +454,11 @@ export async function getSqlExecutor({
   });
 
   // Postgres + Node pg.Pool → Grafast / `@dataplan/pg` fast path.
-  // Soft-delete is implemented on the GraphQL.js planner path; skip Grafast when enabled.
+  // Soft-delete / `$fn` computed columns live on the GraphQL.js planner path.
   // MySQL / SQLite / Bun.SQL keep the GraphQL.js + JOIN planner path.
   // Dynamic import keeps grafast off the static graph (Jest --detectLeaks).
-  if (adapter === 'postgres' && sqlClient.pgPool && !softDelete) {
+  const usesPlannerExtras = Boolean(softDelete) || printSchemaHasFn(subgraph);
+  if (adapter === 'postgres' && sqlClient.pgPool && !usesPlannerExtras) {
     const { createPostgresGrafastExecutor } = await import('./pg-executor.js');
     const grafastExecutor = createPostgresGrafastExecutor({
       subgraph,

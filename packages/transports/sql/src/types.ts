@@ -40,11 +40,22 @@ export interface SqlTransportOptions {
 }
 
 export interface SqlMappingValue {
-  kind: 'column' | 'pseudo' | 'args' | 'this' | 'literal';
-  /** SQL column name, pseudo token ($cursor), or path after $args / $this */
+  kind: 'column' | 'pseudo' | 'args' | 'this' | 'literal' | 'fn';
+  /** SQL column name, pseudo token ($cursor), path after $args/$this, or function name for `$fn.` */
   value: string;
   /** Nested path segments for $args.input.title -> ['input','title'] */
   path?: string[];
+}
+
+/** Belongs-to nested `where: { artist: { name: { eq: "X" } } }` → EXISTS subquery. */
+export interface SqlRelationFilterMeta {
+  /** GraphQL filter field (e.g. `artist`) */
+  field: string;
+  relatedTable: string;
+  localColumn: string;
+  refColumn: string;
+  /** Related table GraphQL field → SQL column */
+  columns: Map<string, string>;
 }
 
 export interface SqlMappingEntry {

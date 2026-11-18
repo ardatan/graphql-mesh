@@ -61,6 +61,19 @@ describe('parseSqlMapping', () => {
     ]);
   });
 
+  it('parses $fn computed-column selections', () => {
+    const parsed = parseSqlMapping(`
+      id: id
+      fullName: $fn.public.users_full_name
+    `);
+    expect(parsed.entries[1].value).toEqual({
+      kind: 'fn',
+      value: 'public.users_full_name',
+      path: ['public', 'users_full_name'],
+    });
+    expect(columnMapFromSelection(parsed)).toEqual(new Map([['id', 'id']]));
+  });
+
   it('parses connection wrappers and pseudos', () => {
     const parsed = parseSqlMapping(`
       nodes {

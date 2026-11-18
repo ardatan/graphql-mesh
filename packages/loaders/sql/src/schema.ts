@@ -82,12 +82,22 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
 
   const tableByName = new Map(meta.tables.map(t => [t.name, t]));
   const typeNameByTable = new Map(meta.tables.map(t => [t.name, naming.typeName(t.name)] as const));
+  const computedByTable = new Map<string, NonNullable<typeof meta.computedColumns>>();
+  for (const cc of meta.computedColumns || []) {
+    let list = computedByTable.get(cc.table);
+    if (!list) {
+      list = [];
+      computedByTable.set(cc.table, list);
+    }
+    list.push(cc);
+  }
 
   // Pass 1: object types + column fields
   for (const table of meta.tables) {
     const typeName = typeNameByTable.get(table.name)!;
     const pkCols = table.columns.filter(c => c.primaryKey);
     const solePk = pkCols.length === 1 ? pkCols[0] : undefined;
+    const computed = computedByTable.get(table.name) || [];
 
     const otc = schemaComposer.createObjectTC({
       name: typeName,
@@ -121,7 +131,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
           table: table.name,
           kind: 'ROW',
           where: blockArg(keyArgs),
-          selection: selectionBlock(naming, table),
+          selection: selectionBlock(naming, table, computed),
         },
       });
     }
@@ -136,6 +146,13 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       otc.setField(fieldName, {
         type: col.notNull || isSolePkCol ? new GraphQLNonNull(gqlType) : gqlType,
       });
+    }
+
+    // Postgres computed columns (`users_full_name(users)` → `fullName`)
+    for (const cc of computed) {
+      if (otc.hasField(cc.fieldName)) continue;
+      const gqlType = mapSqlTypeToGraphQL(cc.returnType);
+      otc.setField(cc.fieldName, { type: gqlType });
     }
 
     createFilterAndOrder(schemaComposer, naming, typeName, table, solePk);
@@ -180,7 +197,11 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
                 table: fk.refTable,
                 kind: 'ROW',
                 where: blockArg(`${refCol}: $this.${localField}`),
-                selection: selectionBlock(naming, refTable),
+                selection: selectionBlock(
+                  naming,
+                  refTable,
+                  computedByTable.get(refTable.name) || [],
+                ),
               },
             },
           ],
@@ -211,10 +232,18 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
                 orderBy: '$args.orderBy',
                 limit: '$args.limit',
                 offset: '$args.offset',
-                selection: selectionBlock(naming, table),
+                selection: selectionBlock(naming, table, computedByTable.get(table.name) || []),
               },
             },
           ],
+        });
+      }
+
+      // Nested belongs-to filter: AlbumFilter.artist → ArtistFilter
+      const localFilter = schemaComposer.getITC(naming.filterInput(typeName));
+      if (!localFilter.hasField(belongsToName)) {
+        localFilter.setField(belongsToName, {
+          type: naming.filterInput(refTypeName),
         });
       }
     }
@@ -228,7 +257,11 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     const typeName = typeNameByTable.get(table.name)!;
     const pkCols = table.columns.filter(c => c.primaryKey);
     const solePk = pkCols.length === 1 ? pkCols[0] : undefined;
-    const selectionRaw = selectionLines(naming, table);
+    const selectionRaw = selectionLines(
+      naming,
+      table,
+      computedByTable.get(table.name) || [],
+    );
     const selection = blockArg(selectionRaw);
     const plural = naming.pluralField(typeName);
     const singular = naming.singularField(typeName);
@@ -572,6 +605,8 @@ function ensureSharedFilterInputs(schemaComposer: SchemaComposer) {
         includes: 'String',
         startsWith: 'String',
         endsWith: 'String',
+        like: 'String',
+        ilike: 'String',
         isNull: 'Boolean',
       },
     });
@@ -588,6 +623,16 @@ function ensureSharedFilterInputs(schemaComposer: SchemaComposer) {
         lte: 'Int',
         gt: 'Int',
         gte: 'Int',
+        isNull: 'Boolean',
+      },
+    });
+  }
+  if (!schemaComposer.has('BooleanFilter')) {
+    schemaComposer.createInputTC({
+      name: 'BooleanFilter',
+      fields: {
+        eq: 'Boolean',
+        ne: 'Boolean',
         isNull: 'Boolean',
       },
     });
@@ -630,7 +675,7 @@ function createFilterAndOrder(
       gql === GraphQLInt || gql.name === 'Int' || gql.name === 'BigInt'
         ? 'IntFilter'
         : gql === GraphQLBoolean
-          ? 'IntFilter'
+          ? 'BooleanFilter'
           : 'StringFilter';
     filterFields[fieldName] = filterType;
     orderValues[naming.orderValue(fieldName, 'ASC')] = {
@@ -790,23 +835,31 @@ function blockArg(body: string): string {
   return indented.includes('\n') ? indented : `\n${indented}`;
 }
 
-/** Raw column mapping lines (no block wrapping / indent). */
-function selectionLines(naming: SqlNaming, table: SqlTableMeta): string {
+/** Raw column (+ optional Postgres `$fn.…` computed) mapping lines. */
+function selectionLines(
+  naming: SqlNaming,
+  table: SqlTableMeta,
+  computed: import('./introspect/types.js').SqlComputedColumnMeta[] = [],
+): string {
   const pkCols = table.columns.filter(c => c.primaryKey);
   const solePk = pkCols.length === 1 ? pkCols[0] : undefined;
-  return table.columns
-    .map(col => {
-      const isSolePkCol = Boolean(solePk && col.name === solePk.name);
-      const fieldName = isSolePkCol
-        ? naming.pkFieldName(col.name, true)
-        : naming.fieldName(col.name);
-      return `${fieldName}: ${col.name}`;
-    })
-    .join('\n');
+  const colLines = table.columns.map(col => {
+    const isSolePkCol = Boolean(solePk && col.name === solePk.name);
+    const fieldName = isSolePkCol
+      ? naming.pkFieldName(col.name, true)
+      : naming.fieldName(col.name);
+    return `${fieldName}: ${col.name}`;
+  });
+  const fnLines = computed.map(cc => `${cc.fieldName}: $fn.${cc.functionName}`);
+  return [...colLines, ...fnLines].join('\n');
 }
 
-function selectionBlock(naming: SqlNaming, table: SqlTableMeta): string {
-  return blockArg(selectionLines(naming, table));
+function selectionBlock(
+  naming: SqlNaming,
+  table: SqlTableMeta,
+  computed: import('./introspect/types.js').SqlComputedColumnMeta[] = [],
+): string {
+  return blockArg(selectionLines(naming, table, computed));
 }
 
 function insertSetBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlColumnMeta): string {

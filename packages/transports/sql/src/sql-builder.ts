@@ -11,6 +11,7 @@ import type {
   SqlAdapter,
   SqlMappingEntry,
   SqlQueryKind,
+  SqlRelationFilterMeta,
   SqlSoftDeleteOptions,
 } from './types.js';
 
@@ -64,6 +65,8 @@ export interface SelectPlan {
   hasMany?: HasManySubselect[];
   /** Soft-delete config from `@transport(options.softDelete)`. */
   softDelete?: SqlSoftDeleteOptions;
+  /** Belongs-to nested filters (`where.artist.name`). */
+  relationFilters?: SqlRelationFilterMeta[];
 }
 
 const PLANNER_KEYS = new Set<string>([
@@ -110,6 +113,9 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
 
   appendStructuredFilters(adapter, plan, columns, whereParts, params, {
     qualifyColumn: rootAlias ? qualify : undefined,
+    relationFilters: plan.relationFilters,
+    rootAlias,
+    softDelete: plan.softDelete,
   });
 
   const softCol = softDeleteColumnFor(plan.softDelete, plan.table);
@@ -208,10 +214,11 @@ function buildSelectList(
   softDelete?: SqlSoftDeleteOptions,
 ): string[] {
   const columns = columnMapFromSelection(selection);
+  const fnSelects = computedFnSelects(adapter, selection, rootAlias);
   if ((!joins?.length && !hasMany?.length) || !rootAlias) {
-    return columns.size === 0
-      ? ['*']
-      : [...new Set(columns.values())].map(c => quoteIdent(adapter, c));
+    if (columns.size === 0 && !fnSelects.length) return ['*'];
+    const cols = [...new Set(columns.values())].map(c => quoteIdent(adapter, c));
+    return [...cols, ...fnSelects];
   }
 
   const cols: string[] = [];
@@ -224,6 +231,9 @@ function buildSelectList(
     );
   };
   for (const sqlCol of columns.values()) pushRoot(sqlCol);
+  for (const fnSel of computedFnSelects(adapter, selection, rootAlias)) {
+    cols.push(fnSel);
+  }
 
   const flat = flattenJoins(joins || []);
   for (const join of flat) {
@@ -564,28 +574,70 @@ function isBareVarPath(entry: SqlMappingEntry): boolean {
  * - bare whole-value binders (`$args.where`) when where is only the client filter
  * - legacy `@sql(filter:)` / stuffed `filter: $args.filter`
  */
+type AppendFilterOpts = {
+  qualifyColumn?: (col: string) => string;
+  relationFilters?: SqlRelationFilterMeta[];
+  rootAlias?: string;
+  softDelete?: SqlSoftDeleteOptions;
+};
+
 function appendStructuredFilters(
   adapter: SqlAdapter,
   plan: SelectPlan,
   columns: Map<string, string>,
   whereParts: string[],
   params: unknown[],
-  opts?: { qualifyColumn?: (col: string) => string },
+  opts?: AppendFilterOpts,
 ): void {
   const ctx = { args: plan.graphqlArgs, parent: plan.parent };
+  const filterOpts: AppendFilterOpts = {
+    ...opts,
+    relationFilters: opts?.relationFilters ?? plan.relationFilters,
+    softDelete: opts?.softDelete ?? plan.softDelete,
+  };
   for (const entry of plan.whereMapping.entries) {
     if (!entry.spread && !isBareVarPath(entry)) continue;
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved && typeof resolved === 'object' && !Array.isArray(resolved)) {
-      appendFilter(adapter, resolved as Record<string, any>, columns, whereParts, params, opts);
+      appendFilter(adapter, resolved as Record<string, any>, columns, whereParts, params, filterOpts);
     }
   }
 
   // Legacy: `@sql(filter: "$args.filter")` or `filter: $args.filter` stuffed in where.
   const legacyFilter = resolvePlannerArg(plan, 'filter');
   if (legacyFilter && typeof legacyFilter === 'object') {
-    appendFilter(adapter, legacyFilter as Record<string, any>, columns, whereParts, params, opts);
+    appendFilter(
+      adapter,
+      legacyFilter as Record<string, any>,
+      columns,
+      whereParts,
+      params,
+      filterOpts,
+    );
   }
+}
+
+/** Postgres computed-column selects: `fullName: $fn.public.users_full_name` */
+function computedFnSelects(
+  adapter: SqlAdapter,
+  selection: ParsedSqlMapping,
+  rootAlias: string | undefined,
+): string[] {
+  if (adapter !== 'postgres') return [];
+  const out: string[] = [];
+  for (const entry of selection.entries) {
+    if (!entry.value || entry.value.kind !== 'fn' || !entry.value.value) continue;
+    const fn = entry.value.value.includes('.')
+      ? entry.value.value
+          .split('.')
+          .map(p => quoteIdent(adapter, p))
+          .join('.')
+      : quoteIdent(adapter, entry.value.value);
+    const rowRef = rootAlias ? quoteIdent(adapter, rootAlias) : quoteIdent(adapter, 't');
+    // Alias with GraphQL field name so mapRowToGraphql can find it.
+    out.push(`${fn}(${rowRef}) AS ${quoteIdent(adapter, entry.key)}`);
+  }
+  return out;
 }
 
 function buildOrderBy(
@@ -627,13 +679,34 @@ function constToCamel(constant: string): string {
   return lower.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
 }
 
+const SCALAR_FILTER_KEYS = new Set([
+  'eq',
+  'ne',
+  'lt',
+  'lte',
+  'gt',
+  'gte',
+  'in',
+  'nin',
+  'includes',
+  'startsWith',
+  'endsWith',
+  'like',
+  'ilike',
+  'isNull',
+]);
+
+function isScalarFilterOps(ops: Record<string, any>): boolean {
+  return Object.keys(ops).some(k => SCALAR_FILTER_KEYS.has(k));
+}
+
 function appendFilter(
   adapter: SqlAdapter,
   filter: Record<string, any>,
   columns: Map<string, string>,
   whereParts: string[],
   params: unknown[],
-  opts?: { qualifyColumn?: (col: string) => string },
+  opts?: AppendFilterOpts,
 ): void {
   if (!filter || typeof filter !== 'object') return;
   const qualify = opts?.qualifyColumn;
@@ -665,10 +738,35 @@ function appendFilter(
   for (const [field, ops] of Object.entries(filter)) {
     if (field === 'and' || field === 'or' || field === 'not') continue;
     if (ops == null || typeof ops !== 'object') continue;
+    const o = ops as Record<string, any>;
+
+    // Nested belongs-to: `where: { artist: { name: { eq: "X" } } }`
+    const rel = opts?.relationFilters?.find(r => r.field === field);
+    if (rel && !isScalarFilterOps(o)) {
+      const alias = '_rf';
+      const inner: string[] = [];
+      appendFilter(adapter, o, rel.columns, inner, params, {
+        qualifyColumn: col => `${quoteIdent(adapter, alias)}.${quoteIdent(adapter, col)}`,
+      });
+      const softCol = softDeleteColumnFor(opts?.softDelete, rel.relatedTable);
+      if (softCol) {
+        inner.push(`${quoteIdent(adapter, alias)}.${quoteIdent(adapter, softCol)} IS NULL`);
+      }
+      if (!inner.length) continue;
+      const rootCol = opts?.qualifyColumn
+        ? opts.qualifyColumn(rel.localColumn)
+        : opts?.rootAlias
+          ? `${quoteIdent(adapter, opts.rootAlias)}.${quoteIdent(adapter, rel.localColumn)}`
+          : quoteIdent(adapter, rel.localColumn);
+      whereParts.push(
+        `EXISTS (SELECT 1 FROM ${quoteIdent(adapter, rel.relatedTable)} AS ${quoteIdent(adapter, alias)} WHERE ${quoteIdent(adapter, alias)}.${quoteIdent(adapter, rel.refColumn)} = ${rootCol} AND ${inner.join(' AND ')})`,
+      );
+      continue;
+    }
+
     const col = columns.get(field);
     if (!col) continue;
     const q = qualify ? qualify(col) : quoteIdent(adapter, col);
-    const o = ops as Record<string, any>;
     if ('eq' in o) {
       params.push(o.eq);
       whereParts.push(`${q} = ${placeholder(adapter, params.length)}`);
@@ -719,6 +817,18 @@ function appendFilter(
       params.push(`%${o.endsWith}`);
       whereParts.push(`${q} LIKE ${placeholder(adapter, params.length)}`);
     }
+    if ('like' in o) {
+      params.push(o.like);
+      whereParts.push(`${q} LIKE ${placeholder(adapter, params.length)}`);
+    }
+    if ('ilike' in o) {
+      params.push(o.ilike);
+      if (adapter === 'postgres') {
+        whereParts.push(`${q} ILIKE ${placeholder(adapter, params.length)}`);
+      } else {
+        whereParts.push(`LOWER(${q}) LIKE LOWER(${placeholder(adapter, params.length)})`);
+      }
+    }
     if ('isNull' in o) {
       whereParts.push(o.isNull ? `${q} IS NULL` : `${q} IS NOT NULL`);
     }
@@ -741,9 +851,16 @@ export function mapRowToGraphql(
   const out: Record<string, unknown> = {};
   for (const entry of selection.entries) {
     if (entry.children) continue;
-    if (!entry.value || entry.value.kind !== 'column') continue;
-    const raw = row[entry.value.value] ?? row[`t__${entry.value.value}`];
-    out[entry.key] = raw != null && entry.key === 'id' ? String(raw) : raw;
+    if (!entry.value) continue;
+    if (entry.value.kind === 'column') {
+      const raw = row[entry.value.value] ?? row[`t__${entry.value.value}`];
+      out[entry.key] = raw != null && entry.key === 'id' ? String(raw) : raw;
+      continue;
+    }
+    if (entry.value.kind === 'fn') {
+      const raw = row[entry.key] ?? row[entry.key.toLowerCase()];
+      out[entry.key] = raw;
+    }
   }
   return out;
 }

@@ -1,7 +1,13 @@
 import DataLoader from 'dataloader';
 import { resolveMappingValue } from './mapping.js';
 import { buildSelectByColumnIn, mapRowToGraphql, type SqlPlanners } from './sql-builder.js';
-import type { ParsedSqlMapping, SqlClient, SqlQueryKind, SqlSoftDeleteOptions } from './types.js';
+import type {
+  ParsedSqlMapping,
+  SqlClient,
+  SqlQueryKind,
+  SqlRelationFilterMeta,
+  SqlSoftDeleteOptions,
+} from './types.js';
 
 const LOADERS = Symbol.for('mesh.sql.loaders');
 
@@ -77,6 +83,7 @@ export interface BatchSelectOpts {
   column: string;
   graphqlArgs?: Record<string, any>;
   softDelete?: SqlSoftDeleteOptions;
+  relationFilters?: SqlRelationFilterMeta[];
 }
 
 /**
@@ -94,6 +101,9 @@ export function loadBatchedByColumn(
     stableArgsKey(opts.graphqlArgs),
     JSON.stringify(opts.selection.entries.map(e => [e.key, e.value])),
     JSON.stringify(opts.softDelete ?? null),
+    JSON.stringify(
+      (opts.relationFilters || []).map(r => [r.field, r.relatedTable, r.localColumn, r.refColumn]),
+    ),
   ].join('\0');
 
   const map = getLoaderMap(context);
@@ -116,6 +126,7 @@ export function loadBatchedByColumn(
           column: opts.column,
           values: unique,
           softDelete: opts.softDelete,
+          relationFilters: opts.relationFilters,
         });
         const result = await opts.client.query(query.sql, query.params);
         const rows = result.rows as Record<string, unknown>[];

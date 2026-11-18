@@ -120,3 +120,7 @@ stuffed into `where` keeps working at runtime; new emit does not produce it.
   `includeTables` filter)
 - Optional `softDelete: { column, tables? }` on loader / `@transport(options)`: reads add
   `column IS NULL`; `DELETE` becomes `UPDATE … SET column = now` (Grafast path skipped when set)
+- Richer `where` filters: `like` / `ilike`, `BooleanFilter`, nested belongs-to
+  (`where: { artist: { name: { eq: "X" } } }` → `EXISTS`)
+- Postgres computed columns (PostGraphile-style): `CREATE FUNCTION users_full_name(users)…STABLE`
+  → GraphQL `fullName` via `@sql(selection: "fullName: $fn.public.users_full_name")`

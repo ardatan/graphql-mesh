@@ -1,6 +1,13 @@
 import pg from 'pg';
 import { parseSqlUri } from '@graphql-mesh/transport-sql';
-import type { SqlColumnMeta, SqlForeignKeyMeta, SqlSchemaMeta, SqlTableMeta } from './types.js';
+import type {
+  SqlColumnMeta,
+  SqlComputedColumnMeta,
+  SqlForeignKeyMeta,
+  SqlSchemaMeta,
+  SqlTableMeta,
+} from './types.js';
+import { createDefaultNaming } from '../naming.js';
 
 export interface IntrospectPostgresOpts {
   connectionString: string;
@@ -135,8 +142,63 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
       });
     }
 
-    return { adapter: 'postgres', tables };
+    const computedColumns = await introspectComputedColumns(pool, schemaName, tableNames);
+    return { adapter: 'postgres', tables, computedColumns };
   } finally {
     await pool.end();
   }
+}
+
+/**
+ * PostGraphile-compatible computed columns:
+ * `CREATE FUNCTION users_full_name(u users) … STABLE` → `User.fullName`.
+ */
+async function introspectComputedColumns(
+  pool: pg.Pool,
+  schemaName: string,
+  tableNames: string[],
+): Promise<SqlComputedColumnMeta[]> {
+  if (!tableNames.length) return [];
+  const naming = createDefaultNaming();
+  const tableSet = new Set(tableNames);
+  const res = await pool.query<{
+    proname: string;
+    nspname: string;
+    table_name: string;
+    result_type: string;
+  }>(
+    `SELECT
+       p.proname,
+       n.nspname,
+       t.relname AS table_name,
+       pg_catalog.format_type(p.prorettype, NULL) AS result_type
+     FROM pg_catalog.pg_proc p
+     JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+     JOIN pg_catalog.pg_type arg0 ON arg0.oid = p.proargtypes[0]
+     JOIN pg_catalog.pg_class t ON t.reltype = arg0.oid
+     WHERE n.nspname = $1
+       AND p.pronargs >= 1
+       AND p.prorettype <> 'pg_catalog.void'::pg_catalog.regtype
+       AND p.provolatile IN ('s', 'i')
+       AND p.proname LIKE (t.relname || '\\_%') ESCAPE '\\'`,
+    [schemaName],
+  );
+
+  const out: SqlComputedColumnMeta[] = [];
+  for (const row of res.rows) {
+    const table = String(row.table_name);
+    if (!tableSet.has(table)) continue;
+    const proname = String(row.proname);
+    const prefix = `${table}_`;
+    if (!proname.startsWith(prefix)) continue;
+    const suffix = proname.slice(prefix.length);
+    if (!suffix) continue;
+    out.push({
+      table,
+      functionName: `${schemaName}.${proname}`,
+      fieldName: naming.fieldName(suffix),
+      returnType: String(row.result_type || 'text'),
+    });
+  }
+  return out;
 }

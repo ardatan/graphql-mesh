@@ -133,6 +133,7 @@ input AlbumFilter {
   id: StringFilter
   title: StringFilter
   artistId: IntFilter
+  artist: ArtistFilter
 }
 
 input StringFilter {
@@ -147,6 +148,8 @@ input StringFilter {
   includes: String
   startsWith: String
   endsWith: String
+  like: String
+  ilike: String
   isNull: Boolean
 }
 
@@ -160,6 +163,14 @@ input IntFilter {
   gt: Int
   gte: Int
   isNull: Boolean
+}
+
+input ArtistFilter {
+  and: [ArtistFilter!]
+  or: [ArtistFilter!]
+  not: ArtistFilter
+  id: StringFilter
+  name: StringFilter
 }
 
 enum AlbumOrderBy {
@@ -188,14 +199,6 @@ type PageInfo {
   hasPreviousPage: Boolean!
   startCursor: String
   endCursor: String
-}
-
-input ArtistFilter {
-  and: [ArtistFilter!]
-  or: [ArtistFilter!]
-  not: ArtistFilter
-  id: StringFilter
-  name: StringFilter
 }
 
 enum ArtistOrderBy {
