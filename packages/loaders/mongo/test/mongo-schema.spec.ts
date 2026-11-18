@@ -3,7 +3,7 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromMongo } from '../src/index.js';
 
 describe('@omnigraph/mongo schema emit', () => {
-  it('emits @mongo directives with where/orderBy and SQL-style roots', async () => {
+  it('emits @mongo directives with filter/sort and collection-method roots', async () => {
     const languagesSchema = new Schema(
       {
         language: String,
@@ -59,19 +59,21 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toContain('kind: INSERT_ONE');
     expect(sdl).toContain('kind: UPDATE_ONE');
     expect(sdl).toContain('kind: DELETE_ONE');
-    expect(sdl).toContain('user(id: ID!)');
-    expect(sdl).toContain('usersByIds(ids:');
-    expect(sdl).toContain('users(where:');
-    expect(sdl).toContain('allUsers(');
-    expect(sdl).toContain('usersPagination(');
-    expect(sdl).toContain('usersCount(where:');
+    expect(sdl).toContain('findUserById(id: ID!)');
+    expect(sdl).toContain('findUsersByIds(ids:');
+    expect(sdl).toContain('findUsers(filter:');
+    expect(sdl).toContain('findOneUser(filter:');
+    expect(sdl).toContain('findUsersConnection(');
+    expect(sdl).toContain('findUsersPagination(');
+    expect(sdl).toContain('countDocumentsUsers(filter:');
     expect(sdl).toContain('aggregateUsers(');
     expect(sdl).toContain('kind: AGGREGATE');
-    expect(sdl).toContain('createUser(input:');
-    expect(sdl).toContain('where: UserWhereInput');
-    expect(sdl).toContain('orderBy: UserOrderByInput');
-    expect(sdl).toContain('$args.where');
-    expect(sdl).toContain('$args.orderBy');
+    expect(sdl).toContain('insertOneUser(document:');
+    expect(sdl).toContain('insertManyUsers(documents:');
+    expect(sdl).toContain('updateOneUser(filter:');
+    expect(sdl).toContain('deleteOneUser(filter:');
+    expect(sdl).toContain('$args.filter');
+    expect(sdl).toContain('$args.sort');
     expect(sdl).toContain('id: ID!');
     expect(sdl).toContain('error: MongoError');
     expect(sdl).toContain('interface ErrorInterface');
@@ -84,16 +86,14 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toContain('type UserContacts');
     expect(sdl).toContain('address: UserAddress');
     expect(sdl).toContain('languages: [UserLanguages]');
-    expect(sdl).toContain('languages: [UserLanguagesWhereInput]');
     expect(sdl).toContain('contacts: UserContacts');
     expect(sdl).toContain('phones: [String]');
     expect(sdl).toContain('geo: [Float]');
-    expect(sdl).toContain('gt: String');
     expect(sdl).toContain('Some dynamic data');
     expect(sdl).not.toContain('User_findById');
-    expect(sdl).not.toContain('filter: UserFilter');
-    expect(sdl).not.toContain('$args.filter');
-    expect(sdl).not.toContain('sort: String');
+    expect(sdl).not.toContain('where: UserWhereInput');
+    expect(sdl).not.toContain('$args.where');
+    expect(sdl).not.toContain('$args.orderBy');
     expect(sdl).toMatchSnapshot('user-full-slice');
   });
 });

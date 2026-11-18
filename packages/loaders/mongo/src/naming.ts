@@ -1,11 +1,12 @@
 /**
- * Default GraphQL naming aligned with the SQL / PostGraphile-ish Mesh stack
- * (`user` / `users` / `allUsers` / `createUser`, client args `where` / `orderBy`).
+ * Default GraphQL naming aligned with MongoDB collection methods
+ * (`findOne` / `find` / `insertOne` / `updateMany` / …) plus GraphQL arg names
+ * `filter` / `sort` / `document` that mirror the driver/shell API.
+ *
+ * @see https://www.mongodb.com/docs/manual/reference/method/
  */
 export interface MongoNaming {
   typeName(modelName: string): string;
-  whereInput(typeName: string): string;
-  orderByInput(typeName: string): string;
   createInput(typeName: string): string;
   updateInput(typeName: string): string;
   payloadType(typeName: string): string;
@@ -51,29 +52,34 @@ function pluralCamel(typeName: string): string {
 export function createDefaultNaming(): MongoNaming {
   return {
     typeName: name => name,
-    whereInput: typeName => `${typeName}WhereInput`,
-    orderByInput: typeName => `${typeName}OrderByInput`,
-    createInput: typeName => `Create${typeName}Input`,
-    updateInput: typeName => `Update${typeName}Input`,
+    createInput: typeName => `${typeName}DocumentInput`,
+    updateInput: typeName => `${typeName}UpdateInput`,
     payloadType: typeName => `${typeName}Payload`,
     connectionType: typeName => `${typeName}Connection`,
     edgeType: typeName => `${typeName}Edge`,
     paginationType: typeName => `${typeName}Pagination`,
-    findByIdField: typeName => camel(typeName),
-    findByIdsField: typeName => `${pluralCamel(typeName)}ByIds`,
-    findManyField: typeName => pluralCamel(typeName),
-    findOneField: typeName => `find${typeName}`,
-    countField: typeName => `${pluralCamel(typeName)}Count`,
+    // db.collection.findOne / find / find({ _id }) convenience
+    findOneField: typeName => `findOne${typeName}`,
+    findManyField: typeName => `find${pluralType(typeName)}`,
+    findByIdField: typeName => `find${typeName}ById`,
+    findByIdsField: typeName => `find${pluralType(typeName)}ByIds`,
+    // db.collection.countDocuments
+    countField: typeName => `countDocuments${pluralType(typeName)}`,
+    // db.collection.aggregate
     aggregateField: typeName => `aggregate${pluralType(typeName)}`,
-    connectionField: typeName => `all${pluralType(typeName)}`,
-    paginationField: typeName => `${pluralCamel(typeName)}Pagination`,
-    createOneField: typeName => `create${typeName}`,
-    createManyField: typeName => `create${pluralType(typeName)}`,
-    updateByIdField: typeName => `update${typeName}`,
-    updateOneField: typeName => `update${typeName}Where`,
-    updateManyField: typeName => `update${pluralType(typeName)}`,
-    removeByIdField: typeName => `delete${typeName}`,
-    removeOneField: typeName => `delete${typeName}Where`,
-    removeManyField: typeName => `delete${pluralType(typeName)}`,
+    // GraphQL pagination helpers (not shell methods)
+    connectionField: typeName => `find${pluralType(typeName)}Connection`,
+    paginationField: typeName => `find${pluralType(typeName)}Pagination`,
+    // db.collection.insertOne / insertMany
+    createOneField: typeName => `insertOne${typeName}`,
+    createManyField: typeName => `insertMany${pluralType(typeName)}`,
+    // db.collection.updateOne / updateMany (+ ById convenience)
+    updateOneField: typeName => `updateOne${typeName}`,
+    updateManyField: typeName => `updateMany${pluralType(typeName)}`,
+    updateByIdField: typeName => `update${typeName}ById`,
+    // db.collection.deleteOne / deleteMany (+ ById convenience)
+    removeOneField: typeName => `deleteOne${typeName}`,
+    removeManyField: typeName => `deleteMany${pluralType(typeName)}`,
+    removeByIdField: typeName => `delete${typeName}ById`,
   };
 }

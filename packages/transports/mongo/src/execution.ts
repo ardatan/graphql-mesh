@@ -9,6 +9,7 @@ import {
   buildSetDocument,
   coerceFilterValue,
   filterFromMapping,
+  resolveUpdateDocument,
 } from './filter.js';
 import {
   mapDocumentToGraphql,
@@ -33,7 +34,11 @@ export interface GetMongoExecutorOpts {
 interface MongoDirectiveArgs {
   collection: string;
   kind: MongoKind;
+  filter?: string;
+  /** @deprecated legacy binder name; prefer `filter` */
   where?: string;
+  sort?: string;
+  /** @deprecated legacy binder name; prefer `sort` */
   orderBy?: string;
   limit?: string;
   skip?: string;
@@ -91,8 +96,8 @@ function attachMongoResolver(
     info: GraphQLResolveInfo,
   ) {
     const ctx = { args: graphqlArgs, parent };
-    const filter = buildMongoFilter(directive.where, ctx);
-    const sort = buildMongoSort(directive.orderBy, ctx);
+    const filter = buildMongoFilter(directive.filter ?? directive.where, ctx);
+    const sort = buildMongoSort(directive.sort ?? directive.orderBy, ctx);
     const proj = Object.keys(projection).length ? projection : undefined;
     const typedError = wantsTypedError(info);
 
@@ -128,7 +133,10 @@ function attachMongoResolver(
           return mapPayload(created, insertedId, selection);
         }
         case 'INSERT_MANY': {
-          const records = (graphqlArgs.inputs || []) as Record<string, unknown>[];
+          const records = (graphqlArgs.documents || graphqlArgs.inputs || []) as Record<
+            string,
+            unknown
+          >[];
           const { insertedIds, insertedCount } = await client.insertMany(
             directive.collection,
             records,
@@ -143,14 +151,14 @@ function attachMongoResolver(
           };
         }
         case 'UPDATE_ONE': {
-          const setDoc = buildSetDocument(directive.set, ctx);
-          await client.updateOne(directive.collection, filter, { $set: setDoc });
+          const updateDoc = resolveUpdateDocument(directive.set, ctx);
+          await client.updateOne(directive.collection, filter, updateDoc);
           const updated = await client.findOne(directive.collection, filter);
           return mapPayload(updated, updated?._id, selection);
         }
         case 'UPDATE_MANY': {
-          const setDoc = buildSetDocument(directive.set, ctx);
-          const result = await client.updateMany(directive.collection, filter, { $set: setDoc });
+          const updateDoc = resolveUpdateDocument(directive.set, ctx);
+          const result = await client.updateMany(directive.collection, filter, updateDoc);
           return {
             matchedCount: result.matchedCount,
             modifiedCount: result.modifiedCount,

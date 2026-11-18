@@ -1,39 +1,14 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Mongoose should generate correct schema 1`] = `
-"directive @mongo(after: String, collection: String!, first: String, kind: MongoKind!, limit: String, orderBy: String, page: String, perPage: String, pipeline: String, selection: String, set: String, skip: String, subgraph: String, where: String) on FIELD_DEFINITION | OBJECT
+"directive @mongo(after: String, collection: String!, filter: String, first: String, kind: MongoKind!, limit: String, page: String, perPage: String, pipeline: String, selection: String, set: String, skip: String, sort: String, subgraph: String) on FIELD_DEFINITION | OBJECT
 
 directive @transport(headers: [[String]], kind: String!, location: String, options: TransportOptions, subgraph: String!) repeatable on SCHEMA
-
-input CreateUserInput {
-  address: UserAddressInput
-  age: Float
-  contacts: UserContactsInput
-  gender: EnumUserGender
-  languages: [UserLanguagesInput]
-  name: String
-  salaryDecimal: Decimal128
-
-  """Some dynamic data"""
-  someMixed: JSON
-}
 
 """
 BSON Decimal128 (Mongoose-compatible cast). Serialized as a decimal string; accepts string, number, or \`{ "$numberDecimal": "…" }\`.
 """
 scalar Decimal128
-
-input Decimal128Filter {
-  eq: Decimal128
-  exists: Boolean
-  gt: Decimal128
-  gte: Decimal128
-  in: [Decimal128!]
-  lt: Decimal128
-  lte: Decimal128
-  ne: Decimal128
-  nin: [Decimal128!]
-}
 
 enum EnumUserGender {
   female
@@ -49,30 +24,6 @@ enum EnumUserLanguagesSkill {
 
 interface ErrorInterface {
   message: String
-}
-
-input FloatFilter {
-  eq: Float
-  exists: Boolean
-  gt: Float
-  gte: Float
-  in: [Float!]
-  lt: Float
-  lte: Float
-  ne: Float
-  nin: [Float!]
-}
-
-input IDFilter {
-  eq: ID
-  exists: Boolean
-  gt: ID
-  gte: ID
-  in: [ID!]
-  lt: ID
-  lte: ID
-  ne: ID
-  nin: [ID!]
 }
 
 """
@@ -101,14 +52,14 @@ enum MongoKind {
 }
 
 type Mutation {
-  createUser(input: CreateUserInput!): UserPayload
-  createUsers(inputs: [CreateUserInput!]!): UserPayload
-  deleteUser(id: ID!): UserPayload
-  deleteUserWhere(where: UserWhereInput): UserPayload
-  deleteUsers(where: UserWhereInput!): UserPayload
-  updateUser(id: ID!, input: UpdateUserInput!): UserPayload
-  updateUserWhere(input: UpdateUserInput!, where: UserWhereInput): UserPayload
-  updateUsers(input: UpdateUserInput!, where: UserWhereInput): UserPayload
+  deleteManyUsers(filter: JSON!): UserPayload
+  deleteOneUser(filter: JSON!): UserPayload
+  deleteUserById(id: ID!): UserPayload
+  insertManyUsers(documents: [UserDocumentInput!]!): UserPayload
+  insertOneUser(document: UserDocumentInput!): UserPayload
+  updateManyUsers(filter: JSON!, update: JSON!): UserPayload
+  updateOneUser(filter: JSON!, update: JSON!): UserPayload
+  updateUserById(id: ID!, update: JSON!): UserPayload
 }
 
 type PageInfo {
@@ -128,48 +79,17 @@ type PaginationInfo {
 }
 
 type Query {
-  aggregateUsers(pipeline: JSON, where: UserWhereInput): [JSON!]!
-  allUsers(after: String, first: Int, orderBy: UserOrderByInput, where: UserWhereInput): UserConnection
-  findUser(orderBy: UserOrderByInput, skip: Int, where: UserWhereInput): User
-  user(id: ID!): User
-  users(limit: Int = 100, orderBy: UserOrderByInput, skip: Int, where: UserWhereInput): [User!]!
-  usersByIds(ids: [ID!]!, limit: Int = 100, orderBy: UserOrderByInput): [User!]!
-  usersCount(where: UserWhereInput): Int!
-  usersPagination(orderBy: UserOrderByInput, page: Int, perPage: Int = 20, where: UserWhereInput): UserPagination
-}
-
-enum SortDirection {
-  ASC
-  DESC
-}
-
-input StringFilter {
-  eq: String
-  exists: Boolean
-  gt: String
-  gte: String
-  in: [String!]
-  lt: String
-  lte: String
-  ne: String
-  nin: [String!]
-  regex: String
+  aggregateUsers(filter: JSON, pipeline: JSON): [JSON!]!
+  countDocumentsUsers(filter: JSON): Int!
+  findOneUser(filter: JSON, skip: Int, sort: JSON): User
+  findUserById(id: ID!): User
+  findUsers(filter: JSON, limit: Int = 100, skip: Int, sort: JSON): [User!]!
+  findUsersByIds(ids: [ID!]!, limit: Int = 100, sort: JSON): [User!]!
+  findUsersConnection(after: String, filter: JSON, first: Int, sort: JSON): UserConnection
+  findUsersPagination(filter: JSON, page: Int, perPage: Int = 20, sort: JSON): UserPagination
 }
 
 scalar TransportOptions
-
-input UpdateUserInput {
-  address: UserAddressInput
-  age: Float
-  contacts: UserContactsInput
-  gender: EnumUserGender
-  languages: [UserLanguagesInput]
-  name: String
-  salaryDecimal: Decimal128
-
-  """Some dynamic data"""
-  someMixed: JSON
-}
 
 type User {
   address: UserAddress
@@ -197,15 +117,6 @@ input UserAddressInput {
   street: String
 }
 
-input UserAddressWhereInput {
-  AND: [UserAddressWhereInput!]
-  NOT: UserAddressWhereInput
-  OR: [UserAddressWhereInput!]
-  _id: IDFilter
-  geo: [Float]
-  street: StringFilter
-}
-
 type UserConnection {
   edges: [UserEdge!]!
   nodes: [User!]!
@@ -223,12 +134,17 @@ input UserContactsInput {
   phones: [String]
 }
 
-input UserContactsWhereInput {
-  AND: [UserContactsWhereInput!]
-  NOT: UserContactsWhereInput
-  OR: [UserContactsWhereInput!]
-  email: StringFilter
-  phones: [String]
+input UserDocumentInput {
+  address: UserAddressInput
+  age: Float
+  contacts: UserContactsInput
+  gender: EnumUserGender
+  languages: [UserLanguagesInput]
+  name: String
+  salaryDecimal: Decimal128
+
+  """Some dynamic data"""
+  someMixed: JSON
 }
 
 type UserEdge {
@@ -244,22 +160,6 @@ type UserLanguages {
 input UserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
-}
-
-input UserLanguagesWhereInput {
-  AND: [UserLanguagesWhereInput!]
-  NOT: UserLanguagesWhereInput
-  OR: [UserLanguagesWhereInput!]
-  language: StringFilter
-  skill: StringFilter
-}
-
-input UserOrderByInput {
-  age: SortDirection
-  gender: SortDirection
-  id: SortDirection
-  name: SortDirection
-  salaryDecimal: SortDirection
 }
 
 type UserPagination {
@@ -278,22 +178,5 @@ type UserPayload {
   recordId: ID
   recordIds: [ID!]
   records: [User!]
-}
-
-input UserWhereInput {
-  AND: [UserWhereInput!]
-  NOT: UserWhereInput
-  OR: [UserWhereInput!]
-  address: UserAddressWhereInput
-  age: FloatFilter
-  contacts: UserContactsWhereInput
-  gender: StringFilter
-  id: IDFilter
-  languages: [UserLanguagesWhereInput]
-  name: StringFilter
-  salaryDecimal: Decimal128Filter
-
-  """Some dynamic data"""
-  someMixed: JSON
 }"
 `;

@@ -1288,7 +1288,7 @@ WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
 });
 
 describe('rewriteConnectArgReferences @mongo', () => {
-  it('rewrites $args in mongo where/set/selection without requiring @connect', async () => {
+  it('rewrites $args in mongo filter/set/selection without requiring @connect', async () => {
     const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
     const rewritten = rewriteConnectArgReferences(
       {
@@ -1296,24 +1296,24 @@ describe('rewriteConnectArgReferences @mongo', () => {
           {
             collection: 'users',
             kind: 'FIND_MANY',
-            where: '$args.filter',
-            orderBy: '$args.sort',
+            filter: '$args.query',
+            sort: '$args.order',
             selection: 'id: _id\nname: name',
           },
         ],
       },
       new Map([
-        ['filter', 'where'],
-        ['sort', 'orderBy'],
+        ['query', 'filter'],
+        ['order', 'sort'],
       ]),
     );
     const mongo = rewritten!.mongo[0];
-    expect(mongo.where).toBe('$args.where');
-    expect(mongo.orderBy).toBe('$args.orderBy');
+    expect(mongo.filter).toBe('$args.filter');
+    expect(mongo.sort).toBe('$args.sort');
     expect(mongo.selection).toBe('id: _id\nname: name');
   });
 
-  it('does not rewrite $args.whereInput when renaming where', async () => {
+  it('does not rewrite $args.filterInput when renaming filter', async () => {
     const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
     const rewritten = rewriteConnectArgReferences(
       {
@@ -1321,16 +1321,16 @@ describe('rewriteConnectArgReferences @mongo', () => {
           {
             collection: 'users',
             kind: 'FIND_ONE',
-            where: '_id: $args.where\nmeta: $args.whereInput',
+            filter: '_id: $args.filter\nmeta: $args.filterInput',
           },
         ],
       },
-      new Map([['where', 'filter']]),
+      new Map([['filter', 'query']]),
     );
-    const where = rewritten!.mongo[0].where as string;
-    expect(where).toContain('$args.filter');
-    expect(where).toContain('$args.whereInput');
-    expect(where).not.toMatch(/\$args\.where\b/);
+    const filter = rewritten!.mongo[0].filter as string;
+    expect(filter).toContain('$args.query');
+    expect(filter).toContain('$args.filterInput');
+    expect(filter).not.toMatch(/\$args\.filter\b/);
   });
 
   it('rewrites $this field picks via fieldRenameMap', async () => {
@@ -1341,7 +1341,7 @@ describe('rewriteConnectArgReferences @mongo', () => {
           {
             collection: 'users',
             kind: 'FIND_ONE',
-            where: '_id: $this.authorId',
+            filter: '_id: $this.authorId',
             selection: 'id: _id',
           },
         ],
@@ -1349,6 +1349,6 @@ describe('rewriteConnectArgReferences @mongo', () => {
       new Map(),
       new Map([['authorId', 'writerId']]),
     );
-    expect(rewritten!.mongo[0].where).toBe('_id: $this.writerId');
+    expect(rewritten!.mongo[0].filter).toBe('_id: $this.writerId');
   });
 });

@@ -76,33 +76,33 @@ describe('getMongoExecutor FIND_* + writes', () => {
     const executor = getMongoExecutor({ subgraph: schema, client });
 
     const byId = await executor({
-      document: parse(`query { user(id: "${adaId}") { id name age } }`),
+      document: parse(`query { findUserById(id: "${adaId}") { id name age } }`),
     });
     expect(byId.errors).toBeUndefined();
     expect(byId.data).toEqual({
-      user: { id: adaId, name: 'Ada', age: 36 },
+      findUserById: { id: adaId, name: 'Ada', age: 36 },
     });
 
     const many = await executor({
-      document: parse(`query { users(where: { name: { eq: "Alan" } }) { id name } }`),
+      document: parse(`query { findUsers(filter: { name: "Alan" }) { id name } }`),
     });
     expect(many.data).toEqual({
-      users: [{ id: alanId, name: 'Alan' }],
+      findUsers: [{ id: alanId, name: 'Alan' }],
     });
 
     const count = await executor({
-      document: parse(`query { usersCount(where: { gender: { eq: "female" } }) }`),
+      document: parse(`query { countDocumentsUsers(filter: { gender: "female" }) }`),
     });
-    expect(count.data).toEqual({ usersCount: 1 });
+    expect(count.data).toEqual({ countDocumentsUsers: 1 });
 
     const created = await executor({
       document: parse(
-        `mutation { createUser(input: { name: "Grace", age: 45 }) { recordId record { name } } }`,
+        `mutation { insertOneUser(document: { name: "Grace", age: 45 }) { recordId record { name } } }`,
       ),
     });
     expect(created.errors).toBeUndefined();
     expect(created.data).toEqual({
-      createUser: {
+      insertOneUser: {
         recordId: '507f1f77bcf86cd799439099',
         record: { name: 'Grace' },
       },

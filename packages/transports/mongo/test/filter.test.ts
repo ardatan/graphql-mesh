@@ -1,6 +1,6 @@
 import { buildMongoFilter, graphqlFilterToMongo } from '../src/filter.js';
 
-describe('mongo where mapping', () => {
+describe('mongo filter mapping', () => {
   it('builds equality from mapping binders', () => {
     expect(
       buildMongoFilter(
@@ -22,10 +22,21 @@ describe('mongo where mapping', () => {
     ).toBe('507f1f77bcf86cd799439011');
   });
 
-  it('merges structured where via bare binder and spread', () => {
+  it('passes through native Mongo filter docs with $gte', () => {
     expect(
-      buildMongoFilter(`$args.where`, {
-        args: { where: { name: { eq: 'Ada' }, age: { gte: 30 } } },
+      buildMongoFilter(`$args.filter`, {
+        args: { filter: { name: 'Ada', age: { $gte: 30 } } },
+      }),
+    ).toEqual({
+      name: 'Ada',
+      age: { $gte: 30 },
+    });
+  });
+
+  it('merges structured filter via bare binder and spread', () => {
+    expect(
+      buildMongoFilter(`$args.filter`, {
+        args: { filter: { name: { eq: 'Ada' }, age: { gte: 30 } } },
       }),
     ).toEqual({
       name: 'Ada',
@@ -36,9 +47,9 @@ describe('mongo where mapping', () => {
       buildMongoFilter(
         `
           gender: "female"
-          ...$args.where
+          ...$args.filter
         `,
-        { args: { where: { age: { lt: 40 } } } },
+        { args: { filter: { age: { lt: 40 } } } },
       ),
     ).toEqual({
       gender: 'female',

@@ -43,7 +43,7 @@ function stubClient(overrides: Partial<MongoClientLike> = {}): MongoClientLike {
 }
 
 describe('AGGREGATE pipeline', () => {
-  it('runs client pipeline stages and $match: $args.where rewrite', async () => {
+  it('runs client pipeline stages and $match: $args.filter rewrite', async () => {
     const userSchema = new Schema(
       {
         name: String,
@@ -68,11 +68,12 @@ describe('AGGREGATE pipeline', () => {
     const executor = getMongoExecutor({ subgraph: schema, client });
     const result = await executor({
       document: parse(`
-        query Agg($pipeline: JSON) {
-          aggregateUsers(where: { gender: { eq: "female" } }, pipeline: $pipeline)
+        query Agg($filter: JSON, $pipeline: JSON) {
+          aggregateUsers(filter: $filter, pipeline: $pipeline)
         }
       `),
       variables: {
+        filter: { gender: 'female' },
         pipeline: [{ $group: { _id: '$gender', count: { $sum: 1 } } }],
       },
     });
@@ -84,17 +85,18 @@ describe('AGGREGATE pipeline', () => {
 
     await executor({
       document: parse(`
-        query Agg($pipeline: JSON) {
-          aggregateUsers(where: { gender: { eq: "female" } }, pipeline: $pipeline)
+        query Agg($filter: JSON, $pipeline: JSON) {
+          aggregateUsers(filter: $filter, pipeline: $pipeline)
         }
       `),
       variables: {
-        pipeline: [{ $match: '$args.where' }, { $group: { _id: '$gender', count: { $sum: 1 } } }],
+        filter: { gender: 'female' },
+        pipeline: [{ $match: '$args.filter' }, { $group: { _id: '$gender', count: { $sum: 1 } } }],
       },
     });
     expect(lastPipeline[0]).toEqual({
-      $match: buildMongoFilter(`$args.where`, {
-        args: { where: { gender: { eq: 'female' } } },
+      $match: buildMongoFilter(`$args.filter`, {
+        args: { filter: { gender: 'female' } },
       }),
     });
   });
@@ -118,7 +120,7 @@ describe('typed error payload', () => {
     const withError = await executor({
       document: parse(`
         mutation {
-          createUser(input: { name: "Ada" }) {
+          insertOneUser(document: { name: "Ada" }) {
             record { name }
             error { message }
           }
@@ -127,7 +129,7 @@ describe('typed error payload', () => {
     });
     expect(withError.errors).toBeUndefined();
     expect(withError.data).toEqual({
-      createUser: {
+      insertOneUser: {
         record: null,
         error: { message: 'E11000 duplicate key' },
       },
@@ -136,7 +138,7 @@ describe('typed error payload', () => {
     const withoutError = await executor({
       document: parse(`
         mutation {
-          createUser(input: { name: "Ada" }) {
+          insertOneUser(document: { name: "Ada" }) {
             record { name }
           }
         }

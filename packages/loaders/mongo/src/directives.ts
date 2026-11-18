@@ -36,12 +36,12 @@ export const MongoDirective = new GraphQLDirective({
     collection: { type: new GraphQLNonNull(GraphQLString) },
     kind: { type: new GraphQLNonNull(MongoKindEnum) },
     /**
-     * Equality / join predicates plus Connectors-style spreads
-     * (`_id: $this.id`, `...$args.where`). Same posture as `@sql` `where`.
+     * MongoDB filter document binder (`$args.filter`, `_id: $args.id`, …).
+     * Client `filter` values are Mongo filter docs (`{ age: { $gte: 30 } }`).
      */
-    where: { type: GraphQLString },
-    /** Order binder (`$args.orderBy`). Same posture as `@sql` `orderBy`. */
-    orderBy: { type: GraphQLString },
+    filter: { type: GraphQLString },
+    /** MongoDB sort document binder (`$args.sort` → `{ age: -1 }`). */
+    sort: { type: GraphQLString },
     /** Limit binder (`$args.limit`). */
     limit: { type: GraphQLString },
     /** Skip binder (`$args.skip`). */
@@ -54,7 +54,7 @@ export const MongoDirective = new GraphQLDirective({
     page: { type: GraphQLString },
     /** PAGINATION page size (`$args.perPage`). */
     perPage: { type: GraphQLString },
-    /** Document values for INSERT / UPDATE. */
+    /** Document values for INSERT, or update doc binder for UPDATE (`$args.update`). */
     set: { type: GraphQLString },
     selection: { type: GraphQLString },
     /** Aggregate pipeline stages (JSON array string or mapping). */

@@ -1598,6 +1598,7 @@ export function rewriteConnectArgReferences(
       })),
     };
   }
+<<<<<<< HEAD
   const protobufFieldMap =
     protobufNestedFieldRenames && fieldRenameMap?.size ? fieldRenameMap : undefined;
   if (
@@ -1622,6 +1623,31 @@ export function rewriteConnectArgReferences(
         args = rewriteProtobufMappingBinds(args, argRenameMap, {
           nestedRenameMap: protobufFieldMap?.size ? protobufFieldMap : new Map(),
         });
+=======
+  if (hasMongo) {
+    // `@mongo(filter/sort/set/selection/pipeline/…)` embed `$args.<name>` / `$this.<field>`.
+    const mongoStringArgs = [
+      'filter',
+      'sort',
+      'where', // legacy
+      'orderBy', // legacy
+      'set',
+      'selection',
+      'pipeline',
+      'limit',
+      'skip',
+      'first',
+      'after',
+      'page',
+      'perPage',
+    ] as const;
+    next.mongo = fieldDirectives!.mongo.map((mongoArgs: any) => {
+      const rewritten: Record<string, unknown> = { ...mongoArgs };
+      for (const key of mongoStringArgs) {
+        if (typeof mongoArgs?.[key] === 'string') {
+          rewritten[key] = rewriteExpr(mongoArgs[key]);
+        }
+>>>>>>> 32575db820 (feat(mongo)!: align GraphQL API with MongoDB collection methods)
       }
       if (typeof selection === 'string' && selectionMap?.size) {
         selection = rewriteProtobufMappingBinds(selection, selectionMap);

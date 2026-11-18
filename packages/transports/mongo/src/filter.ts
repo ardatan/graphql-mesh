@@ -3,13 +3,13 @@ import { parseMongoMapping, resolveMappingValue } from './mapping.js';
 import type { ParsedMongoMapping } from './types.js';
 
 /**
- * Build a MongoDB filter document from `@mongo(where:)` mapping.
+ * Build a MongoDB filter document from `@mongo(filter:)` mapping.
  */
 export function buildMongoFilter(
-  whereSource: string | null | undefined,
+  filterSource: string | null | undefined,
   ctx: { args?: Record<string, unknown>; parent?: unknown },
 ): Record<string, unknown> {
-  const parsed = parseMongoMapping(whereSource);
+  const parsed = parseMongoMapping(filterSource);
   return filterFromMapping(parsed, ctx);
 }
 
@@ -23,19 +23,19 @@ export function filterFromMapping(
     if (entry.spread && entry.value) {
       const spreadVal = resolveMappingValue(entry.value, ctx);
       if (spreadVal && typeof spreadVal === 'object' && !Array.isArray(spreadVal)) {
-        Object.assign(filter, graphqlFilterToMongo(spreadVal as Record<string, unknown>));
+        Object.assign(filter, normalizeFilterDoc(spreadVal as Record<string, unknown>));
       }
       continue;
     }
 
-    // Bare `$args.where` binder
+    // Bare `$args.filter` (or legacy `$args.where`) binder
     if (
       entry.value?.kind === 'args' &&
       (entry.key.startsWith('$args') || entry.key === `$args.${entry.value.value}`)
     ) {
       const val = resolveMappingValue(entry.value, ctx);
       if (val && typeof val === 'object' && !Array.isArray(val)) {
-        Object.assign(filter, graphqlFilterToMongo(val as Record<string, unknown>));
+        Object.assign(filter, normalizeFilterDoc(val as Record<string, unknown>));
       }
       continue;
     }
@@ -44,7 +44,7 @@ export function filterFromMapping(
 
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved === undefined) continue;
-    // `_id: $args._ids` (array) => `{ _id: { $in: [...] } }`
+    // `_id: $args.ids` (array) => `{ _id: { $in: [...] } }`
     if (Array.isArray(resolved)) {
       filter[entry.key] = { $in: resolved.map(coerceFilterValue) };
     } else {
@@ -53,6 +53,35 @@ export function filterFromMapping(
   }
 
   return filter;
+}
+
+/**
+ * Accept either a native Mongo filter (`{ age: { $gte: 30 } }`) or the older
+ * Mesh op-bag shape (`{ age: { gte: 30 } }` / nested WhereInput).
+ */
+export function normalizeFilterDoc(input: Record<string, unknown>): Record<string, unknown> {
+  if (looksLikeNativeMongoFilter(input)) {
+    return coerceDeep(input) as Record<string, unknown>;
+  }
+  return graphqlFilterToMongo(input);
+}
+
+function looksLikeNativeMongoFilter(input: Record<string, unknown>): boolean {
+  for (const [key, value] of Object.entries(input)) {
+    if (key.startsWith('$')) return true;
+    if (isPlainObject(value) && Object.keys(value).some(k => k.startsWith('$'))) return true;
+  }
+  return false;
+}
+
+function coerceDeep(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(coerceDeep);
+  if (!isPlainObject(value)) return coerceFilterValue(value);
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(value)) {
+    out[k] = coerceDeep(v);
+  }
+  return out;
 }
 
 const FILTER_OP_KEYS = new Set([
@@ -81,12 +110,7 @@ function isOperatorBag(value: Record<string, unknown>): boolean {
 }
 
 /**
- * Map Mesh/SQL-style `*WhereInput` objects to a MongoDB filter document.
- *
- * - Scalar ops: `{ name: { eq: "Ada" }, age: { gte: 30 } }`
- * - Embedded nested where: `{ address: { street: { eq: "Main" } } }` → `{ "address.street": "Main" }`
- * - Document-array where (v0 `languages: [...]`): `{ languages: [{ language: { eq: "en" } }] }`
- *   → `{ languages: { $elemMatch: { language: "en" } } }` (AND of several → `$and` of `$elemMatch`)
+ * Legacy Mesh/SQL-style `*WhereInput` → Mongo filter (kept for hand-written `@mongo`).
  */
 export function graphqlFilterToMongo(
   input: Record<string, unknown>,
@@ -112,7 +136,6 @@ export function graphqlFilterToMongo(
     const mongoKey = key === 'id' ? '_id' : key;
     const fullKey = pathPrefix ? `${pathPrefix}.${mongoKey}` : mongoKey;
 
-    // Document-array filters: list of nested where objects → $elemMatch (v0 languages: [...]).
     if (Array.isArray(value) && value.length > 0 && value.every(isPlainObject)) {
       const elemMatches = (value as Record<string, unknown>[]).map(item => ({
         $elemMatch: graphqlFilterToMongo(item),
@@ -140,7 +163,6 @@ export function graphqlFilterToMongo(
       continue;
     }
 
-    // Embedded / grouped nested WhereInput → flatten with dotted paths.
     Object.assign(out, graphqlFilterToMongo(value, fullKey));
   }
 
@@ -195,18 +217,17 @@ function applyOperatorBag(
   if (!wroteEq && Object.keys(mongoOps).length) {
     out[fullKey] = mongoOps;
   } else if (wroteEq && Object.keys(mongoOps).length) {
-    // Rare: eq + other ops on same field — prefer ops object including $eq.
     out[fullKey] = { $eq: out[fullKey], ...mongoOps };
   }
 }
 
-/** Build Mongo sort from `@mongo(orderBy:)` binder (e.g. `$args.orderBy`). */
+/** Build Mongo sort from `@mongo(sort:)` binder (e.g. `$args.sort`). */
 export function buildMongoSort(
-  orderBySource: string | null | undefined,
+  sortSource: string | null | undefined,
   ctx: { args?: Record<string, unknown> },
 ): Record<string, 1 | -1> | undefined {
-  if (!orderBySource) return undefined;
-  const parsed = parseMongoMapping(orderBySource);
+  if (!sortSource) return undefined;
+  const parsed = parseMongoMapping(sortSource);
   if (parsed.entries.length === 1 && parsed.entries[0].value?.kind === 'args') {
     const val = resolveMappingValue(parsed.entries[0].value, ctx);
     return graphqlSortToMongo(val as Record<string, unknown> | null | undefined);
@@ -222,6 +243,10 @@ export function graphqlSortToMongo(
   for (const [key, dir] of Object.entries(input)) {
     if (dir == null) continue;
     const mongoKey = key === 'id' ? '_id' : key;
+    if (typeof dir === 'number') {
+      out[mongoKey] = dir < 0 ? -1 : 1;
+      continue;
+    }
     const d = String(dir).toUpperCase();
     out[mongoKey] = d === 'DESC' || d === '-1' ? -1 : 1;
   }
@@ -235,7 +260,7 @@ export function buildSetDocument(
   const parsed = parseMongoMapping(setSource);
   const doc: Record<string, unknown> = {};
   for (const entry of parsed.entries) {
-    if (entry.key === 'inputs' && entry.value?.kind === 'args') {
+    if ((entry.key === 'inputs' || entry.key === 'documents') && entry.value?.kind === 'args') {
       continue;
     }
     if (!entry.value) continue;
@@ -244,6 +269,26 @@ export function buildSetDocument(
     doc[entry.key] = resolved;
   }
   return doc;
+}
+
+/** Resolve a Mongo update document from `@mongo(set:)` (`$args.update` or field map). */
+export function resolveUpdateDocument(
+  setSource: string | null | undefined,
+  ctx: { args?: Record<string, unknown>; parent?: unknown },
+): Record<string, unknown> {
+  const trimmed = setSource?.trim();
+  if (trimmed === '$args.update') {
+    const update = ctx.args?.update;
+    if (update && typeof update === 'object' && !Array.isArray(update)) {
+      const doc = update as Record<string, unknown>;
+      if (Object.keys(doc).some(k => k.startsWith('$'))) {
+        return coerceDeep(doc) as Record<string, unknown>;
+      }
+      return { $set: coerceDeep(doc) as Record<string, unknown> };
+    }
+    return { $set: {} };
+  }
+  return { $set: buildSetDocument(setSource, ctx) };
 }
 
 export function coerceFilterValue(value: unknown): unknown {
