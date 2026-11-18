@@ -31,7 +31,7 @@ The old surface stamped opaque `@fieldTypeMap` bags and a large `@transport.opti
 - Slim `@transport(subgraph, kind: "thrift", location, headers)` — no options bag.
 - Per-field `@thrift__rpc(function, args, selection, throws?, messageType, entity?)`.
 - Compact mapping keeps wire types explicit (`1(i32): left`, `$(i16)`, containers, nested maps); multiline values print as `"""`.
-- `map<*, struct>` args expand the value struct field ids (same recursion as list/set-of-struct).
+- `map<*, struct>` args expand the value struct field ids (same recursion as list/set-of-struct). `list/set<map<*, scalar>>` keeps the full nested wire token (e.g. `list<map<string, i32>>`) so binary regenerate does not drop the method.
 - `function` is always the IDL name. Single-service generate **omits** `service:` (path is on `@transport`).
 - `messageType: ONEWAY` does not wait for / decode a reply.
 - `entity: true` only via loader `entityMethods` (Federation entity Query fields).

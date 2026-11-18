@@ -196,7 +196,8 @@ function formatCompactArgField(
       lines.push(`${pad}}`);
       return lines;
     }
-    // list/set of map<*, struct> — keep LIST→MAP→STRUCT descriptors (field ids on map values).
+    // list/set of map — expand struct values; scalar/enum map values keep the full token
+    // (`list<map<string, i32>>`) so binary regenerate does not drop the method.
     if (elem.type === TType.MAP) {
       const val = resolveTypeVal(elem.valType, topTypeMap);
       if (val.type === TType.STRUCT) {
@@ -224,9 +225,7 @@ function formatCompactArgField(
         lines.push(`${pad}}`);
         return lines;
       }
-      throw new Error(
-        `Thrift ${wire} of map arguments with non-struct values cannot be emitted as compact @thrift__rpc args. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
-      );
+      return [`${pad}${id}(${token}): ${level === 0 ? valueExpr : graphqlName}`];
     }
     if (elem.type === TType.LIST || elem.type === TType.SET) {
       throw new Error(

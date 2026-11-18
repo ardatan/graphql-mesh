@@ -77,6 +77,18 @@ export function getTypeResolverForAbstractType({
       }
     }
 
+    // Thrift TJSON / union selections stamp `__throw_<TypeName>: true` from the
+    // reply field id. Prefer that over field-name scoring so shared exception
+    // fields (e.g. `message`) cannot pick the wrong member after SDL rebuild
+    // (closures from the loader do not survive print/processDirectives).
+    if (data != null && typeof data === 'object') {
+      for (const possibleType of possibleTypes) {
+        if (data[`__throw_${possibleType.name}`] === true) {
+          return possibleType.name;
+        }
+      }
+    }
+
     const dataTypeOf = typeof data;
 
     if (dataTypeOf !== 'object') {
@@ -113,8 +125,13 @@ export function getTypeResolverForAbstractType({
     // const validationErrors: Record<string, ErrorObject[]> = {};
     const dataKeys = dataTypeOf
       ? Object.keys(data)
-          // Remove metadata fields used to pass data
-          .filter(property => !property.toString().startsWith('$'))
+          // Remove metadata fields used to pass data / Thrift union discriminators
+          .filter(
+            property =>
+              !property.toString().startsWith('$') &&
+              !property.toString().startsWith('__throw_') &&
+              property !== 'field0',
+          )
       : null;
     const scoreTypeNameMap = new Map<number, string>();
     for (const possibleType of possibleTypes) {

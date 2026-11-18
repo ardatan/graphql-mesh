@@ -478,4 +478,18 @@ describe('thrift', () => {
     expect(args).toMatch(/1\(list<map<string,\s*struct>>\):\s*\$args\.batches\s*\{/);
     expect(args).toMatch(/7\(i32\):\s*value/);
   });
+
+  it('binary list<map<string,i32>> args emit full nested wire token', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'ListMapScalarSvc',
+      source: './fixtures/list_map_scalar_arg.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/list-map-scalar',
+      protocol: 'binary',
+    });
+    const args = (schema.getQueryType()!.getFields().putCounts.extensions as any).directives
+      .thrift__rpc.args as string;
+    expect(args).toMatch(/1\(list<map<string,\s*i32>>\):\s*\$args\.counts/);
+    expect(args).not.toMatch(/cannot be emitted/);
+  });
 });
