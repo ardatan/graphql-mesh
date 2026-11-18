@@ -516,8 +516,8 @@ function emitModelObjectType(
   for (const path of paths) {
     if (path.name === '_id' || path.name === '__v') continue;
     let fieldType = mapPathToOutput(schemaComposer, path, typeName);
-    if (required.has(path.name) && !(fieldType instanceof GraphQLNonNull)) {
-      fieldType = new GraphQLNonNull(fieldType as any);
+    if (required.has(path.name)) {
+      fieldType = asNonNullType(fieldType);
     }
     otc.setField(path.name, {
       type: fieldType,
@@ -541,6 +541,9 @@ function emitModelObjectType(
   createQuerySortAndDocumentInputs(schemaComposer, naming, typeName, paths, {
     requiredFields: opts.fieldRestrictions?.required,
     removedFields: opts.fieldRestrictions?.remove,
+    restrictionsActive: Boolean(
+      opts.fieldRestrictions?.only?.length || opts.fieldRestrictions?.remove?.length,
+    ),
   });
   createConnectionTypes(schemaComposer, naming, typeName);
   createPayloadType(schemaComposer, naming, typeName);
@@ -1148,15 +1151,29 @@ function mapPathToInput(schemaComposer: SchemaComposer, path: PathMeta, rootType
   return mapMongoPathToGraphQL(path.instance);
 }
 
+/** GraphQLNonNull needs a type object; compose-style type-name strings use `Type!`. */
+function asNonNullType(fieldType: unknown): unknown {
+  if (fieldType instanceof GraphQLNonNull) return fieldType;
+  if (typeof fieldType === 'string') {
+    return fieldType.endsWith('!') ? fieldType : `${fieldType}!`;
+  }
+  return new GraphQLNonNull(fieldType as any);
+}
+
 function createQuerySortAndDocumentInputs(
   schemaComposer: SchemaComposer,
   naming: MongoNaming,
   typeName: string,
   paths: PathMeta[],
-  opts?: { requiredFields?: string[]; removedFields?: string[] },
+  opts?: {
+    requiredFields?: string[];
+    removedFields?: string[];
+    /** True when `fields.only` or `fields.remove` was configured (even if paths already filtered). */
+    restrictionsActive?: boolean;
+  },
 ) {
   const required = new Set(opts?.requiredFields || []);
-  const removed = new Set(opts?.removedFields || []);
+  const restrictionsActive = Boolean(opts?.restrictionsActive || opts?.removedFields?.length);
   const queryName = naming.queryInput(typeName);
   if (!schemaComposer.has(queryName)) {
     schemaComposer.createInputTC({
@@ -1198,28 +1215,38 @@ function createQuerySortAndDocumentInputs(
   }
 
   const createFields: Record<string, any> = {};
+  const setFields: Record<string, any> = {};
   for (const path of paths) {
     if (path.name === '_id' || path.name === '__v') continue;
-    let gqlType = mapPathToInput(schemaComposer, path, typeName);
-    if (required.has(path.name) && !(gqlType instanceof GraphQLNonNull)) {
-      gqlType = new GraphQLNonNull(gqlType as any);
+    const baseType = mapPathToInput(schemaComposer, path, typeName);
+    setFields[path.name] = { type: baseType, description: path.description };
+    let createType = baseType;
+    if (required.has(path.name)) {
+      createType = asNonNullType(baseType);
     }
-    createFields[path.name] = { type: gqlType, description: path.description };
+    createFields[path.name] = { type: createType, description: path.description };
   }
   const documentInput = naming.createInput(typeName);
+  const emptyInputPlaceholder = {
+    _: {
+      type: GraphQLJSON,
+      description: 'Placeholder — model has no writable paths beyond id',
+    },
+  };
   if (!schemaComposer.has(documentInput)) {
     // GraphQL forbids empty input objects (id-only models).
     schemaComposer.createInputTC({
       name: documentInput,
-      fields:
-        Object.keys(createFields).length > 0
-          ? createFields
-          : {
-              _: {
-                type: GraphQLJSON,
-                description: 'Placeholder — model has no writable paths beyond id',
-              },
-            },
+      fields: Object.keys(createFields).length > 0 ? createFields : emptyInputPlaceholder,
+    });
+  }
+
+  // Partial patch input for `$set` — required applies to create, not update.set.
+  const setInputName = `${typeName}SetInput`;
+  if (!schemaComposer.has(setInputName)) {
+    schemaComposer.createInputTC({
+      name: setInputName,
+      fields: Object.keys(setFields).length > 0 ? setFields : emptyInputPlaceholder,
     });
   }
 
@@ -1233,15 +1260,6 @@ function createQuerySortAndDocumentInputs(
       if (path.name.includes('.')) continue;
       unsetFields[path.name] = { type: 'Boolean', description: path.description };
     }
-    const unsetType =
-      Object.keys(unsetFields).length > 0
-        ? (() => {
-            if (!schemaComposer.has(unsetName)) {
-              schemaComposer.createInputTC({ name: unsetName, fields: unsetFields });
-            }
-            return unsetName;
-          })()
-        : GraphQLJSON;
 
     const numericName = `${typeName}NumericUpdateInput`;
     const numericFields: Record<string, any> = {};
@@ -1254,27 +1272,28 @@ function createQuerySortAndDocumentInputs(
         numericFields[path.name] = { type: 'Decimal128', description: path.description };
       }
     }
-    const numericType =
-      Object.keys(numericFields).length > 0
-        ? (() => {
-            if (!schemaComposer.has(numericName)) {
-              schemaComposer.createInputTC({ name: numericName, fields: numericFields });
-            }
-            return numericName;
-          })()
-        : GraphQLJSON;
 
     const updateFields: Record<string, any> = {
-      set: { type: documentInput },
-      inc: { type: numericType },
-      mul: { type: numericType },
-      min: { type: numericType },
-      max: { type: numericType },
-      unset: { type: unsetType },
+      set: { type: setInputName },
     };
-    // Freeform JSON modifiers can rename/set removed fields; omit them when
-    // `fields.remove` is configured so restrictions cannot be bypassed.
-    if (!removed.size) {
+    // Omit operators with no permitted fields — never fall back to open GraphQLJSON.
+    if (Object.keys(numericFields).length > 0) {
+      if (!schemaComposer.has(numericName)) {
+        schemaComposer.createInputTC({ name: numericName, fields: numericFields });
+      }
+      updateFields.inc = { type: numericName };
+      updateFields.mul = { type: numericName };
+      updateFields.min = { type: numericName };
+      updateFields.max = { type: numericName };
+    }
+    if (Object.keys(unsetFields).length > 0) {
+      if (!schemaComposer.has(unsetName)) {
+        schemaComposer.createInputTC({ name: unsetName, fields: unsetFields });
+      }
+      updateFields.unset = { type: unsetName };
+    }
+    // Freeform JSON modifiers can bypass `only`/`remove`; omit whenever restrictions apply.
+    if (!restrictionsActive) {
       updateFields.push = { type: GraphQLJSON };
       updateFields.pull = { type: GraphQLJSON };
       updateFields.pullAll = { type: GraphQLJSON };

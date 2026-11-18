@@ -110,6 +110,23 @@ describe('mongo filter mapping', () => {
     ).toEqual({
       $and: [{ $or: [{ active: true }] }, { $or: [{ 'address.city': 'Paris' }] }],
     });
+    // Nested `$or` first must not be replaced by a later root `or`.
+    expect(
+      graphqlFilterToMongo({
+        address: { or: [{ city: { eq: 'Paris' } }] },
+        or: [{ active: { eq: true } }],
+      }),
+    ).toEqual({
+      $and: [{ $or: [{ 'address.city': 'Paris' }] }, { $or: [{ active: true }] }],
+    });
+  });
+
+  it('handles empty and/or without emitting invalid Mongo predicates', () => {
+    expect(graphqlFilterToMongo({ and: [], name: { eq: 'Ada' } })).toEqual({ name: 'Ada' });
+    expect(graphqlFilterToMongo({ or: [], name: { eq: 'Ada' } })).toEqual({
+      name: 'Ada',
+      $and: [{ _id: { $exists: false } }],
+    });
   });
 
   it('converts ObjectId only for declared id/_id/objectId fields', () => {
@@ -162,6 +179,13 @@ describe('mongo filter mapping', () => {
       salaryDecimal: { eq: { $numberDecimal: '12.50' } },
     });
     expect(queried.salaryDecimal).toBeInstanceOf(Decimal128);
+
+    // Nested-only Extended JSON (no top-level `$`) must convert before flatten.
+    const nestedOnly = graphqlFilterToMongo({
+      nested: { amount: { $numberDecimal: '1.00' } },
+    });
+    expect(nestedOnly['nested.amount']).toBeInstanceOf(Decimal128);
+    expect(nestedOnly).not.toHaveProperty('nested.amount.$numberDecimal');
 
     // Similar Extended JSON wrappers (`$oid`) also convert before recurse.
     const withOid = normalizeFilterDoc({

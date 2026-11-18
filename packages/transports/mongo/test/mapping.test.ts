@@ -137,4 +137,27 @@ describe('parseMongoMapping', () => {
       address: { _id: 'addr1', id: 'addr1', street: 'Main' },
     });
   });
+
+  it('preserves Date scalars and recurses wrappers without _id', () => {
+    const parsed = parseMongoMapping(`
+      id: _id
+      createdAt: createdAt
+      meta: meta
+    `);
+    const createdAt = new Date('2020-01-02T03:04:05.000Z');
+    expect(
+      mapDocumentToGraphql(
+        {
+          _id: 'root',
+          createdAt,
+          meta: { nested: { _id: 'n1', label: 'x' } },
+        },
+        parsed,
+      ),
+    ).toEqual({
+      id: 'root',
+      createdAt,
+      meta: { nested: { _id: 'n1', id: 'n1', label: 'x' } },
+    });
+  });
 });

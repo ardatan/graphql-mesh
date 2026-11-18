@@ -63,7 +63,8 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toContain('updateOneUser(query:');
     expect(sdl).toContain('update: UserUpdateInput!');
     expect(sdl).toContain('input UserUpdateInput');
-    expect(sdl).toContain('set: UserDocumentInput');
+    expect(sdl).toContain('set: UserSetInput');
+    expect(sdl).toContain('input UserSetInput');
     expect(sdl).toContain('inc: UserNumericUpdateInput');
     expect(sdl).not.toContain('update: JSON!');
     expect(sdl).toContain('deleteOneUser(query:');
@@ -85,5 +86,43 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).not.toContain('kind: FIND_ONE');
     expect(sdl).not.toContain('$args.where');
     expect(sdl).toMatchSnapshot('user-full-slice');
+  });
+
+  it('applies fields.required / remove without JSON update bypasses', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('restricted', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'Account',
+          schema: new Schema(
+            {
+              name: String,
+              status: { type: String, enum: ['active', 'closed'] },
+              passwordHash: String,
+              age: Number,
+            },
+            { collection: 'accounts' },
+          ),
+          collection: 'accounts',
+          options: {
+            fields: {
+              required: ['name', 'status'],
+              remove: ['passwordHash'],
+            },
+          },
+        },
+      ],
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toContain('name: String!');
+    expect(sdl).toContain('status: EnumAccountStatus!');
+    expect(sdl).not.toContain('passwordHash');
+    expect(sdl).toContain('input AccountSetInput');
+    expect(sdl).toContain('set: AccountSetInput');
+    // Create requires name; SetInput stays partial (no `name: String!`).
+    expect(sdl).toMatch(/input AccountDocumentInput[\s\S]*name: String!/);
+    expect(sdl).toMatch(/input AccountSetInput[\s\S]*name: String\n/);
+    expect(sdl).not.toContain('rename: JSON');
+    expect(sdl).not.toContain('push: JSON');
   });
 });

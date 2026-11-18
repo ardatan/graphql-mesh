@@ -519,7 +519,7 @@ input UserContactsInput {
 }
 
 input UserUpdateInput {
-  set: UserDocumentInput
+  set: UserSetInput
   inc: UserNumericUpdateInput
   mul: UserNumericUpdateInput
   min: UserNumericUpdateInput
@@ -533,6 +533,18 @@ input UserUpdateInput {
   rename: JSON
   currentDate: JSON
   bit: JSON
+}
+
+input UserSetInput {
+  name: String
+  age: Float
+  languages: [UserLanguagesInput]
+  gender: EnumUserGender
+  address: UserAddressInput
+  """Some dynamic data"""
+  someMixed: JSON
+  salaryDecimal: Decimal128
+  contacts: UserContactsInput
 }
 
 input UserNumericUpdateInput {

@@ -258,18 +258,31 @@ export function graphqlFilterToMongo(
   for (const [key, value] of Object.entries(input)) {
     if (value == null) continue;
     if (key === 'AND' || key === 'and') {
+      const clauses = Array.isArray(value) ? (value as Record<string, unknown>[]) : [];
+      // Empty `$and: []` is invalid Mongo; omit and keep sibling predicates.
+      if (clauses.length === 0) continue;
       appendAnd(
         out,
-        (value as Record<string, unknown>[]).map(v => graphqlFilterToMongo(v, pathPrefix)),
+        clauses.map(v => graphqlFilterToMongo(v, pathPrefix)),
       );
       continue;
     }
     if (key === 'OR' || key === 'or') {
-      out.$or = (value as Record<string, unknown>[]).map(v => graphqlFilterToMongo(v, pathPrefix));
+      const clauses = Array.isArray(value) ? (value as Record<string, unknown>[]) : [];
+      // Empty `$or: []` is invalid and must not broaden writes — match nothing.
+      if (clauses.length === 0) {
+        appendAnd(out, [{ _id: { $exists: false } }]);
+        continue;
+      }
+      mergeFilterFragment(out, {
+        $or: clauses.map(v => graphqlFilterToMongo(v, pathPrefix)),
+      });
       continue;
     }
     if (key === 'NOT' || key === 'not') {
-      out.$nor = [graphqlFilterToMongo(value as Record<string, unknown>, pathPrefix)];
+      mergeFilterFragment(out, {
+        $nor: [graphqlFilterToMongo(value as Record<string, unknown>, pathPrefix)],
+      });
       continue;
     }
 
@@ -301,6 +314,13 @@ export function graphqlFilterToMongo(
 
     if (!isPlainObject(value)) {
       out[fullKey] = coerceFilterValue(value, { asObjectId });
+      continue;
+    }
+
+    // Extended JSON leaves (`{ $numberDecimal }`) before flatten/operator walk.
+    const ext = coerceExtendedJsonWrapper(value);
+    if (ext !== undefined) {
+      out[fullKey] = ext;
       continue;
     }
 

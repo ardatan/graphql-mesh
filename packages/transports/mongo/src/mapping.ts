@@ -107,6 +107,22 @@ export function mapDocumentToGraphql(
   return out;
 }
 
+function isScalarLeafObject(value: object): boolean {
+  if (value instanceof Date) return true;
+  if (typeof Buffer !== 'undefined' && Buffer.isBuffer(value)) return true;
+  if (typeof Uint8Array !== 'undefined' && value instanceof Uint8Array) return true;
+  const bsontype = (value as { _bsontype?: string })._bsontype;
+  if (typeof bsontype === 'string' && bsontype.length > 0) return true;
+  const ctor = (value as { constructor?: { name?: string } }).constructor?.name;
+  return (
+    ctor === 'Decimal128' ||
+    ctor === 'Long' ||
+    ctor === 'Timestamp' ||
+    ctor === 'MinKey' ||
+    ctor === 'MaxKey'
+  );
+}
+
 /** graphql-scalars ObjectID serialize expects a 24-char hex string, not a driver ObjectId. */
 function coerceGraphqlValue(value: unknown): unknown {
   if (value == null) return value;
@@ -134,6 +150,10 @@ function coerceGraphqlValue(value: unknown): unknown {
         return value;
       }
     }
+  }
+  // Preserve Date / BSON scalars — Object.entries(Date) yields `{}`.
+  if (isScalarLeafObject(value)) {
+    return value;
   }
   // Documents: recurse fields. Keep embedded `_id` and alias `id` when absent so
   // recursive root-typed nodes resolve `id` without stripping Address._id.

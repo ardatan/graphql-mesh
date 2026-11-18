@@ -288,6 +288,19 @@ input UserQueryInput {
   someMixed: JSON
 }
 
+input UserSetInput {
+  address: UserAddressInput
+  age: Float
+  contacts: UserContactsInput
+  gender: EnumUserGender
+  languages: [UserLanguagesInput]
+  name: String
+  salaryDecimal: Decimal128
+
+  """Some dynamic data"""
+  someMixed: JSON
+}
+
 enum UserSort {
   age_asc
   age_desc
@@ -327,7 +340,7 @@ input UserUpdateInput {
   pullAll: JSON
   push: JSON
   rename: JSON
-  set: UserDocumentInput
+  set: UserSetInput
   unset: UserUnsetInput
 }"
 `;

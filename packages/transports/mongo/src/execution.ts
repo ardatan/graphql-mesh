@@ -347,6 +347,26 @@ function projectionWithSortKeys(
   for (const key of Object.keys(sort)) {
     out[key] = 1;
   }
+  return collapseOverlappingProjection(out);
+}
+
+/**
+ * Mongo rejects projections that include both a path and a descendant
+ * (`address` + `address.city`). Prefer the ancestor (covers sort-key needs).
+ */
+function collapseOverlappingProjection(projection: Record<string, 0 | 1>): Record<string, 0 | 1> {
+  const included = Object.keys(projection).filter(k => projection[k] === 1);
+  const out = { ...projection };
+  for (const key of included) {
+    const parts = key.split('.');
+    for (let i = 1; i < parts.length; i++) {
+      const parent = parts.slice(0, i).join('.');
+      if (out[parent] === 1) {
+        delete out[key];
+        break;
+      }
+    }
+  }
   return out;
 }
 
@@ -394,13 +414,24 @@ function decodeCursorValue(value: unknown): unknown {
   return value;
 }
 
+function resolveDocPath(doc: Record<string, unknown>, key: string): unknown {
+  if (key === '_id') return doc._id;
+  if (!key.includes('.')) return doc[key];
+  let cur: unknown = doc;
+  for (const seg of key.split('.')) {
+    if (cur == null || typeof cur !== 'object') return undefined;
+    cur = (cur as Record<string, unknown>)[seg];
+  }
+  return cur;
+}
+
 function encodeConnectionCursor(
   doc: Record<string, unknown>,
   sort: Record<string, 1 | -1>,
 ): string {
   const values: unknown[] = [];
   for (const key of Object.keys(sort)) {
-    values.push(encodeCursorValue(key === '_id' ? doc._id : doc[key]));
+    values.push(encodeCursorValue(resolveDocPath(doc, key)));
   }
   return Buffer.from(JSON.stringify(values), 'utf8').toString('base64url');
 }
