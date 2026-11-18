@@ -154,3 +154,16 @@ stuffed into `where` keeps working at runtime; new emit does not produce it.
 - Filters / `orderBy` use a full column catalog so selection pruning cannot drop predicates
 - Sole-PK → `id` alias skips when another column already camelCases to `id`
 - MySQL has-many JSON subselects cap children before `JSON_ARRAYAGG` (correlated rank)
+
+## Reliability / review follow-ups (this tip)
+
+- Shared `pg.Pool`: one schema binding per pool (conflicting schema rejected); `SET search_path`
+  fail-closed without double-release under `pool.query`
+- Binary columns map to `GraphQLByte` (Buffer encode at the transport boundary)
+- Batching: reject `$this` pagination binders; omit equality `$args` from loader identity
+- Postgres computed-fn discovery: arity 1, non-set-returning only
+- Legacy mysql `ssl.ca` path → PEM; tuql infile → atomic temp+rename sqlite publish
+- Mutations: reject structured `where` that produces no SQL predicate
+- Nested relation filters keep related-type metadata (`_rf{depth}` aliases)
+- Rename/naming: `$this` / through binders + single-pass selection key rewrite; **nested input
+  binder walks and type-scoped flat rename maps remain deferred** (no further rename scope)
