@@ -570,4 +570,73 @@ describe('wirePostgresSqlPlans relation bailouts', () => {
     expect(typeof countryFields.city.resolve).toBe('undefined');
     expect(typeof (countryFields.city.extensions as any)?.grafast?.plan).toBe('function');
   });
+
+  it('attribute plan dual-paths Pg .get and entity hydrator for plain stubs', async () => {
+    const { MESH_ENTITY_HYDRATOR } = await import('../src/entity.js');
+    let hydrateParent: any;
+    const hydrator = (parent: any) => {
+      hydrateParent = parent;
+      if (parent != null && Object.prototype.hasOwnProperty.call(parent, 'name')) {
+        return parent.name;
+      }
+      return Promise.resolve('from-hydrator');
+    };
+    (hydrator as any)[MESH_ENTITY_HYDRATOR] = true;
+
+    const Artist = new GraphQLObjectType({
+      name: 'Artist',
+      fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        name: {
+          type: GraphQLString,
+          resolve: hydrator,
+        },
+      }),
+      extensions: {
+        directives: {
+          sql: {
+            table: 'artists',
+            selection: artistSelection,
+          },
+        },
+      },
+    });
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          artist: fieldSql(
+            {
+              table: 'artists',
+              kind: 'ROW',
+              where: 'ArtistId: $args.id',
+              selection: artistSelection,
+            },
+            undefined,
+            Artist,
+          ),
+        },
+      }),
+      types: [Artist],
+    });
+    const { registry, tableByType, relationNames, installedRelations, sqlToAttrByTable } =
+      buildPgRegistryFromSqlSchema(schema);
+    const wired = wirePostgresSqlPlans(schema, registry, {
+      relationNames,
+      tableByType,
+      installedRelations,
+      sqlToAttrByTable,
+    });
+    const nameField = (wired.getType('Artist') as GraphQLObjectType).getFields().name;
+    // Hydrator resolve is replaced by a dual-path plan (Pg .get + lambda hydrator).
+    expect(nameField.resolve).toBeUndefined();
+    const plan = (nameField.extensions as any)?.grafast?.plan as (row: any) => any;
+    expect(typeof plan).toBe('function');
+    // Plan source must keep the hydrator closed over for plain-object stubs.
+    expect(Function.prototype.toString.call(plan)).toMatch(/hydratorResolve|lambda/);
+
+    // Pg-shaped parent: use .get (hydrator not involved; safe outside grafast lifecycle).
+    expect(plan({ get: (k: string) => `pg:${k}` })).toBe('pg:name');
+    expect(hydrateParent).toBeUndefined();
+  });
 });

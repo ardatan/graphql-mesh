@@ -1,9 +1,10 @@
-import { access, connection } from 'grafast';
+import { access, connection, context, lambda } from 'grafast';
 import type { GraphQLFieldConfig, GraphQLSchema } from 'graphql';
 import { getNamedType, isObjectType } from 'graphql';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import { batchableEqualityColumn } from './batch.js';
+import { MESH_ENTITY_HYDRATOR } from './entity.js';
 import { parseSqlMapping } from './mapping.js';
 import type { MeshPgRegistry } from './pg-registry.js';
 import type { SqlKind, SqlMappingEntry } from './types.js';
@@ -111,12 +112,14 @@ export function wirePostgresSqlPlans(
       // Keep custom resolvers / plans (no `@sql` on the field). Entity stub
       // hydrators from `wireSqlEntityResolvers` are tagged and still get attribute
       // plans — otherwise Pg parents stay tuples and hydrators cannot read keys.
-      if (
+      // For tagged hydrators, the plan dual-paths: Pg `.get` vs lambda that still
+      // runs the hydrator so plain-object federation stubs fill missing fields.
+      const hydratorResolve =
         typeof fieldConfig.resolve === 'function' &&
-        !(fieldConfig.resolve as unknown as Record<symbol, unknown>)[
-          Symbol.for('mesh.sql.entityHydrator')
-        ]
-      ) {
+        (fieldConfig.resolve as unknown as Record<symbol, unknown>)[MESH_ENTITY_HYDRATOR]
+          ? fieldConfig.resolve
+          : undefined;
+      if (typeof fieldConfig.resolve === 'function' && !hydratorResolve) {
         return fieldConfig;
       }
       if ((fieldConfig.extensions as any)?.grafast?.plan) return fieldConfig;
@@ -128,6 +131,11 @@ export function wirePostgresSqlPlans(
 
       grafast.plan = function sqlAttributePlan($row: any) {
         if ($row && typeof $row.get === 'function') return $row.get(fieldName);
+        if (hydratorResolve) {
+          return lambda([$row, context()], ([parent, ctx]: [any, any]) =>
+            (hydratorResolve as any)(parent, {}, ctx, null),
+          );
+        }
         return access($row, fieldName);
       };
       delete (fieldConfig as GraphQLFieldConfig<any, any>).resolve;

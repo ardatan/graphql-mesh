@@ -137,4 +137,40 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
     await Promise.resolve();
     expect(queries2[0]).toMatch(/SET search_path TO "public"/);
   });
+
+  it('rejects callers when search_path SET fails and retries on next acquire', async () => {
+    const { applyPgPoolSearchPath } = await import('../src/client.js');
+    const byEvent: Record<string, Array<(client: any) => void>> = { connect: [], acquire: [] };
+    applyPgPoolSearchPath(
+      {
+        on: (event: string, listener: (client: any) => void) => {
+          (byEvent[event] ||= []).push(listener);
+        },
+      },
+      'app',
+    );
+
+    let setShouldFail = true;
+    const queries: string[] = [];
+    const client = {
+      query: async (q: string) => {
+        queries.push(q);
+        if (q.startsWith('SET ') && setShouldFail) {
+          throw new Error('SET search_path failed');
+        }
+        return { rows: [] };
+      },
+    };
+
+    byEvent.acquire[0](client);
+    await expect(client.query('SELECT 1')).rejects.toThrow(/SET search_path failed/);
+    // Fail-closed: further queries reject without running user SQL.
+    await expect(client.query('SELECT 2')).rejects.toThrow(/SET search_path failed/);
+    expect(queries.filter(q => q.startsWith('SELECT'))).toEqual([]);
+
+    setShouldFail = false;
+    byEvent.acquire[0](client); // retry SET on next acquire
+    await expect(client.query('SELECT 3')).resolves.toEqual({ rows: [] });
+    expect(queries.filter(q => q === 'SELECT 3')).toEqual(['SELECT 3']);
+  });
 });

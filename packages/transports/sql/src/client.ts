@@ -188,6 +188,7 @@ export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string):
   const sql = `SET search_path TO ${ident}`;
   const seen = new WeakSet<object>();
   const pending = new WeakMap<object, Promise<void>>();
+  const failed = new WeakMap<object, unknown>();
   const origQueryByClient = new WeakMap<object, (...args: any[]) => any>();
 
   const patchClient = (client: { query: (...args: any[]) => any }) => {
@@ -195,8 +196,26 @@ export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string):
     const origQuery = client.query.bind(client);
     origQueryByClient.set(client, origQuery);
     client.query = ((...args: any[]) => {
+      const fail = failed.get(client);
+      if (fail !== undefined) {
+        const cb = typeof args[args.length - 1] === 'function' ? args[args.length - 1] : undefined;
+        if (cb) {
+          queueMicrotask(() => cb(fail));
+          return;
+        }
+        return Promise.reject(fail);
+      }
       const wait = pending.get(client);
       if (wait) {
+        const cb = typeof args[args.length - 1] === 'function' ? args[args.length - 1] : undefined;
+        if (cb) {
+          // Promise-style SET wait; invoke callback-form caller after setup.
+          wait.then(
+            () => origQuery(...args),
+            err => cb(err),
+          );
+          return;
+        }
         return wait.then(() => origQuery(...args));
       }
       return origQuery(...args);
@@ -207,16 +226,20 @@ export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string):
     if (seen.has(client)) return;
     patchClient(client as { query: (...args: any[]) => any });
     if (pending.has(client)) return;
+    // Retry SET after a prior failure on this idle client.
+    failed.delete(client);
     const orig = origQueryByClient.get(client)!;
     const p = Promise.resolve(orig(sql)).then(
       () => {
         seen.add(client);
         pending.delete(client);
       },
-      () => {
-        // Leave unseen so the next acquire retries. Drop pending so callers
-        // are not blocked on a failed SET forever.
+      (err: unknown) => {
+        // Fail closed: waiters reject; further queries reject until next acquire
+        // retries SET. Leave unseen so a later checkout can recover.
+        failed.set(client, err);
         pending.delete(client);
+        throw err;
       },
     );
     pending.set(client, p);
