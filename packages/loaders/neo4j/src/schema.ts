@@ -11,7 +11,7 @@ import {
   getNeo4jDirectiveDefinitions,
   stampSubgraphOnNeo4jDirectives,
 } from '@graphql-mesh/transport-neo4j';
-import { ensureFederationReadySubgraph, TRANSPORT_DIRECTIVE_SDL } from '@graphql-mesh/utils';
+import { importMeshDirectives, TRANSPORT_DIRECTIVE_SDL } from '@graphql-mesh/utils';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
@@ -182,12 +182,21 @@ export async function loadGraphQLSchemaFromNeo4J(
       },
     },
   ];
-  return ensureFederationReadySubgraph(
+  return importMeshDirectives(
     mergeSchemas({
       schemas: [schema],
       typeDefs,
       assumeValid: true,
       assumeValidSDL: true,
     }),
+    [
+      '@node',
+      '@relationship',
+      '@relationshipProperties',
+      '@alias',
+      '@cypher',
+      '@plural',
+      '@transport',
+    ],
   );
 }

@@ -8,6 +8,7 @@ import type {
   StringValueNode,
 } from 'graphql';
 import { Kind, parse, print, visit } from 'graphql';
+import { isMeshSpecLinkUrl } from '@graphql-mesh/utils';
 import { astFromValueUntyped } from '@graphql-tools/utils';
 
 type LiftedOccurrence = Record<string, unknown> & {
@@ -24,7 +25,6 @@ const JOIN_DIRECTIVE_DEFS = /* GraphQL */ `
   scalar join__DirectiveArguments
 `;
 
-const MESH_SPEC_PREFIX = 'https://the-guild.dev/graphql/mesh/spec/';
 const CONNECT_SPEC_PREFIX = 'https://specs.apollo.dev/connect';
 
 // Shared Mesh `@transport` — kind-specific fields live under `options`.
@@ -405,7 +405,7 @@ function rewriteSchemaLinks<T extends { directives?: readonly ConstDirectiveNode
       if (!url) {
         return directive;
       }
-      if (url.startsWith(MESH_SPEC_PREFIX)) {
+      if (isMeshSpecLinkUrl(url)) {
         return rewriteMeshLink(directive, opts);
       }
       if (url.startsWith(CONNECT_SPEC_PREFIX) && opts.liftedSource) {

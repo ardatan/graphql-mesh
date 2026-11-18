@@ -654,7 +654,7 @@ describe('Federation Connectors composition', () => {
         @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
         @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"])
         @link(
-          url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+          url: "https://graphql-mesh.com/spec/v2.0"
           import: ["@extraSchemaDefinitionDirective"]
         ) {
         query: Query
@@ -702,7 +702,7 @@ describe('Federation Connectors composition', () => {
     expect(lifted).toContain('directive @source');
     expect(lifted).toContain('directive @transport');
     expect(lifted).toMatch(/connect\/v0\.4", import: \["@connect", "@source"\]/);
-    expect(lifted).toMatch(/mesh\/spec\/v1\.0".*import: \["@transport"\]/);
+    expect(lifted).toMatch(/graphql-mesh\.com\/spec\/v2\.0".*import: \["@transport"\]/);
     expect(() => buildSchema(lifted, { assumeValidSDL: true })).not.toThrow();
   });
 

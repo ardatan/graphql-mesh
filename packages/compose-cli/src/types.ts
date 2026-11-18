@@ -4,6 +4,10 @@ import type { ComposeSubgraphsOptions } from '@graphql-mesh/fusion-composition';
 import type { MeshFetch } from '@graphql-mesh/types';
 import type { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import type {
+  ResolveSubgraphSchemaTransport,
+  SubgraphSchemaInput,
+} from './resolveSubgraphSchema.js';
 
 export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
   /**
@@ -22,10 +26,51 @@ export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
   cwd?: string;
 }
 
-export interface MeshComposeCLISubgraphConfig {
-  sourceHandler: MeshComposeCLISourceHandlerDef;
+export type MeshComposeCLISubgraphConfig = {
   transforms?: MeshComposeCLITransformConfig[];
-}
+} & (
+  | {
+      /**
+       * Lazy loader (OpenAPI, SQL, HTTP introspection, …).
+       */
+      sourceHandler: MeshComposeCLISourceHandlerDef;
+      name?: never;
+      schema?: never;
+      composeConnect?: never;
+      transport?: never;
+    }
+  | {
+      /**
+       * Subgraph name when supplying {@link schema} directly (hand-written SDL).
+       */
+      name: string;
+      /**
+       * Hand-written or in-memory subgraph SDL / schema.
+       *
+       * - `GraphQLSchema`: used as-is
+       * - `DocumentNode`: built with `assumeValidSDL`
+       * - `string`: inline SDL, or a path / URL to an `.graphql` file
+       * - `Promise` of any of the above
+       *
+       * Mesh `@link` / `@composeDirective` applications belong in the SDL itself
+       * (or come from a loader via `importMeshDirectives`). Compose does not invent
+       * Mesh directive imports.
+       */
+      schema: MaybePromise<SubgraphSchemaInput>;
+      /**
+       * When true (default), stamp `@composeDirective(name: "@connect")` if the
+       * schema already links Federation Connectors.
+       *
+       * @default true
+       */
+      composeConnect?: boolean;
+      /**
+       * Optional `@transport` stamp when the SDL does not already declare one.
+       */
+      transport?: ResolveSubgraphSchemaTransport;
+      sourceHandler?: never;
+    }
+);
 
 export type MeshComposeCLISourceHandlerDef = (ctx: LoaderContext) => {
   name: string;

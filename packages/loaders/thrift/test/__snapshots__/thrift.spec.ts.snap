@@ -78,7 +78,7 @@ input SourceHTTP {
 `;
 
 exports[`thrift Calc: Calc-schema 1`] = `
-"schema @transport(subgraph: "Calc", kind: "thrift", location: "http://localhost:4000/thrift-with-imports", headers: [["x-api-key", "123"]]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@thrift__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@thrift__rpc") {
+"schema @transport(subgraph: "Calc", kind: "thrift", location: "http://localhost:4000/thrift-with-imports", headers: [["x-api-key", "123"]]) @link(url: "https://graphql-mesh.com/spec/v2.0", import: ["@thrift__rpc", "@transport"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@thrift__rpc") @composeDirective(name: "@transport") {
   query: Query
 }
 
@@ -109,7 +109,7 @@ input AddRequestInput {
 `;
 
 exports[`thrift Twitter: Twitter-schema 1`] = `
-"schema @transport(subgraph: "Twitter", kind: "thrift", location: "http://localhost:4000/twitter", headers: [["x-api-key", "123"]]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@thrift__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@thrift__rpc") {
+"schema @transport(subgraph: "Twitter", kind: "thrift", location: "http://localhost:4000/twitter", headers: [["x-api-key", "123"]]) @link(url: "https://graphql-mesh.com/spec/v2.0", import: ["@thrift__rpc", "@transport"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@thrift__rpc") @composeDirective(name: "@transport") {
   query: Query
 }
 

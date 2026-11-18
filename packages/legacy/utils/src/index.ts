@@ -25,4 +25,5 @@ export { iterateAsync } from '@whatwg-node/promise-helpers';
 export * from './in-context-sdk.js';
 export * from './with-filter.js';
 export * from './transport-directive.js';
+export * from './mesh-spec.js';
 export * from './federation-ready.js';

@@ -35,8 +35,8 @@ import {
 } from './connect-entity.js';
 import { finalizeConnectorsSupergraph } from './connectors-supergraph.js';
 import {
+  addConnectComposeDirective,
   convertSubgraphToFederationv2,
-  ensureFederationReadySubgraph,
   importFederationDirectives,
   importMeshDirectives,
   normalizeDirectiveExtensions,
@@ -522,10 +522,8 @@ export function getAnnotatedSubgraphs(
       transformedSubgraph = ensureNonResolvableKeysForEntityStubs(transformedSubgraph);
     }
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
-    // Loaders should already emit Mesh `@link` / `@composeDirective` (and Connect
-    // `@composeDirective`); this call stays as an idempotent safety net for older
-    // loaders and hand-written SDL that skipped `ensureFederationReadySubgraph`.
-    transformedSubgraph = ensureFederationReadySubgraph(transformedSubgraph);
+    // Connectors safety net only — Mesh directives come from loaders / hand SDL.
+    transformedSubgraph = addConnectComposeDirective(transformedSubgraph);
     const importedDirectives: MeshDirectiveImport[] = [];
     if (mergeDirectiveUsed) {
       importedDirectives.push('@merge');

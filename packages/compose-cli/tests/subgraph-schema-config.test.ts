@@ -1,0 +1,72 @@
+/* eslint-disable import/no-nodejs-modules */
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { getDirectiveExtensions, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { dummyLogger as log } from '../../testing/dummyLogger';
+import { getComposedResultFromConfig } from '../src/getComposedSchemaFromConfig.js';
+import { resolveSubgraphSchema } from '../src/resolveSubgraphSchema.js';
+
+describe('subgraphs[].schema config', () => {
+  it('loads inline SDL that already carries Mesh @link / @composeDirective', async () => {
+    const schema = await resolveSubgraphSchema(
+      { cwd: process.cwd(), fetch: globalThis.fetch, log },
+      {
+        subgraphName: 'shop',
+        schema: /* GraphQL */ `
+          extend schema
+            @link(
+              url: "https://graphql-mesh.com/spec/v2.0"
+              import: ["@sql", "@transport"]
+            )
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+            @composeDirective(name: "@sql")
+            @composeDirective(name: "@transport")
+
+          directive @link(url: String!, import: [String]) repeatable on SCHEMA
+          directive @composeDirective(name: String!) repeatable on SCHEMA
+          directive @sql(table: String) repeatable on FIELD_DEFINITION
+          type Query {
+            albums: String @sql(table: "albums")
+          }
+        `,
+        transport: { kind: 'sql', location: 'file:chinook.db' },
+      },
+    );
+    const dirs = getDirectiveExtensions(schema);
+    expect(dirs?.composeDirective).toEqual(
+      expect.arrayContaining([{ name: '@sql' }, { name: '@transport' }]),
+    );
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toContain('https://graphql-mesh.com/spec/');
+    expect(sdl).toContain('@composeDirective');
+  });
+
+  it('composes a subgraph supplied via name + schema', async () => {
+    const dir = join(tmpdir(), `mesh-schema-config-${Date.now()}`);
+    mkdirSync(dir, { recursive: true });
+    const file = join(dir, 'hello.graphql');
+    writeFileSync(
+      file,
+      /* GraphQL */ `
+        type Query {
+          hello: String
+        }
+      `,
+      'utf8',
+    );
+    const { supergraphSdl } = await getComposedResultFromConfig(
+      {
+        subgraphs: [
+          {
+            name: 'hello',
+            schema: file,
+          },
+        ],
+      },
+      log,
+    );
+    expect(supergraphSdl).toContain('hello');
+    expect(supergraphSdl).toContain('type Query');
+  });
+});

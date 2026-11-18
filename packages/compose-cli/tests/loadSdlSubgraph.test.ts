@@ -4,23 +4,37 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { getDirectiveExtensions, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { dummyLogger as log } from '../../testing/dummyLogger';
-import { loadSdlSubgraph } from '../src/loadSdlSubgraph.js';
+import { loadSubgraphFromSDL } from '../src/loadSubgraphFromSDL.js';
 
-describe('loadSdlSubgraph', () => {
-  it('loads inline typeDefs and makes Mesh directives federation-ready', async () => {
-    const handler = loadSdlSubgraph('shop', {
-      typeDefs: /* GraphQL */ `
+describe('loadSubgraphFromSDL', () => {
+  it('loads inline SDL and stamps optional @transport', async () => {
+    const handler = loadSubgraphFromSDL(
+      'shop',
+      /* GraphQL */ `
+        extend schema
+          @link(
+            url: "https://graphql-mesh.com/spec/v2.0"
+            import: ["@sql", "@transport"]
+          )
+          @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+          @composeDirective(name: "@sql")
+          @composeDirective(name: "@transport")
+
+        directive @link(url: String!, import: [String]) repeatable on SCHEMA
+        directive @composeDirective(name: String!) repeatable on SCHEMA
         directive @sql(table: String) repeatable on FIELD_DEFINITION
         directive @transport(kind: String, subgraph: String, location: String) on SCHEMA
         type Query {
           albums: String @sql(table: "albums")
         }
       `,
-      transport: {
-        kind: 'sql',
-        location: 'file:chinook.db',
+      {
+        transport: {
+          kind: 'sql',
+          location: 'file:chinook.db',
+        },
       },
-    });
+    );
     const { name, schema$ } = handler({
       cwd: process.cwd(),
       fetch: globalThis.fetch,
@@ -37,17 +51,28 @@ describe('loadSdlSubgraph', () => {
       expect.arrayContaining([{ name: '@sql' }, { name: '@transport' }]),
     );
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toContain('https://the-guild.dev/graphql/mesh/spec/');
+    expect(sdl).toContain('https://graphql-mesh.com/spec/');
     expect(sdl).toContain('@composeDirective');
   });
 
-  it('loads SDL from a file path', async () => {
+  it('loads SDL from a file path and accepts Promise schema input', async () => {
     const dir = join(tmpdir(), `mesh-load-sdl-${Date.now()}`);
     mkdirSync(dir, { recursive: true });
     const file = join(dir, 'movies.graphql');
     writeFileSync(
       file,
       /* GraphQL */ `
+        extend schema
+          @link(
+            url: "https://graphql-mesh.com/spec/v2.0"
+            import: ["@protobuf__rpc", "@transport"]
+          )
+          @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+          @composeDirective(name: "@protobuf__rpc")
+          @composeDirective(name: "@transport")
+
+        directive @link(url: String!, import: [String]) repeatable on SCHEMA
+        directive @composeDirective(name: String!) repeatable on SCHEMA
         directive @protobuf__rpc(method: String) on FIELD_DEFINITION
         type Query {
           movies: String @protobuf__rpc(method: "List")
@@ -55,8 +80,7 @@ describe('loadSdlSubgraph', () => {
       `,
       'utf8',
     );
-    const { schema$ } = loadSdlSubgraph('movies', {
-      source: file,
+    const { schema$ } = loadSubgraphFromSDL('movies', Promise.resolve(file), {
       transport: { kind: 'protobuf', location: 'http://localhost:50051' },
     })({
       cwd: dir,
@@ -70,16 +94,17 @@ describe('loadSdlSubgraph', () => {
     );
   });
 
-  it('skips federationReady when federationReady: false', async () => {
-    const { schema$ } = loadSdlSubgraph('shop', {
-      federationReady: false,
-      typeDefs: /* GraphQL */ `
+  it('skips composeConnect when composeConnect: false', async () => {
+    const { schema$ } = loadSubgraphFromSDL(
+      'shop',
+      /* GraphQL */ `
         directive @sql(table: String) on FIELD_DEFINITION
         type Query {
           albums: String @sql(table: "albums")
         }
       `,
-    })({
+      { composeConnect: false },
+    )({
       cwd: process.cwd(),
       fetch: globalThis.fetch,
       log,

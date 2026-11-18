@@ -22,6 +22,8 @@ import { mergeSchemas } from '@graphql-tools/schema';
 import { getDocumentNodeFromSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import { resolveSubgraphSchema } from './resolveSubgraphSchema.js';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
 const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(globalThis.process?.env?.DEBUG));
@@ -50,7 +52,21 @@ export async function getComposedResultFromConfig(
   };
   const subgraphConfigsForComposition: SubgraphConfig[] = await Promise.all(
     config.subgraphs.map(async subgraphCLIConfig => {
-      const { name: subgraphName, schema$ } = subgraphCLIConfig.sourceHandler(ctx);
+      let subgraphName: string;
+      let schema$: MaybePromise<GraphQLSchema>;
+      if ('schema' in subgraphCLIConfig && subgraphCLIConfig.schema != null) {
+        subgraphName = subgraphCLIConfig.name;
+        schema$ = resolveSubgraphSchema(ctx, {
+          subgraphName,
+          schema: subgraphCLIConfig.schema,
+          composeConnect: subgraphCLIConfig.composeConnect,
+          transport: subgraphCLIConfig.transport,
+        });
+      } else {
+        const loaded = subgraphCLIConfig.sourceHandler(ctx);
+        subgraphName = loaded.name;
+        schema$ = loaded.schema$;
+      }
       const subgraphLog = log.child({ subgraph: subgraphName });
       subgraphLog.debug(`Loading subgraph`);
       let subgraphSchema: GraphQLSchema;

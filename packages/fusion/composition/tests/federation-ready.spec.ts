@@ -6,11 +6,11 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
-import { ensureFederationReadySubgraph } from '@graphql-mesh/utils';
+import { addConnectComposeDirective, importMeshDirectives } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, printSchemaWithDirectives } from '@graphql-tools/utils';
 
-describe('ensureFederationReadySubgraph', () => {
-  it('imports Mesh directives with @composeDirective and Mesh @link', () => {
+describe('importMeshDirectives / addConnectComposeDirective', () => {
+  it('imports explicit Mesh directives with @composeDirective and Mesh @link', () => {
     const sqlDirective = new GraphQLDirective({
       name: 'sql',
       locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
@@ -50,11 +50,13 @@ describe('ensureFederationReadySubgraph', () => {
       },
     });
 
-    schema = ensureFederationReadySubgraph(schema);
+    schema = importMeshDirectives(schema, ['@sql', '@transport']);
     const dirs = getDirectiveExtensions(schema);
-    expect(dirs?.link?.some((l: { url?: string }) => l.url?.includes('/mesh/spec/'))).toBe(true);
+    expect(
+      dirs?.link?.some((l: { url?: string }) => l.url?.startsWith('https://graphql-mesh.com/spec/')),
+    ).toBe(true);
     const meshImport = dirs?.link?.find((l: { url?: string }) =>
-      l.url?.startsWith('https://the-guild.dev/graphql/mesh/spec/'),
+      l.url?.startsWith('https://graphql-mesh.com/spec/'),
     );
     expect(meshImport?.import).toEqual(expect.arrayContaining(['@sql', '@transport']));
     expect(dirs?.composeDirective).toEqual(
@@ -69,12 +71,12 @@ describe('ensureFederationReadySubgraph', () => {
     ).toBe(true);
 
     // Idempotent
-    const again = ensureFederationReadySubgraph(schema);
+    const again = importMeshDirectives(schema, ['@sql', '@transport']);
     expect(getDirectiveExtensions(again)?.composeDirective).toEqual(dirs?.composeDirective);
   });
 
   it('registers @composeDirective for @connect on Connectors subgraphs', () => {
-    const schema = ensureFederationReadySubgraph(
+    const schema = addConnectComposeDirective(
       buildSchema(
         /* GraphQL */ `
           schema

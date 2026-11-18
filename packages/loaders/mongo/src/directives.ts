@@ -39,6 +39,7 @@ const sortArg = { type: GraphQLString };
 export const MongoFindOneDirective = new GraphQLDirective({
   name: 'mongo__findOne',
   locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
@@ -53,6 +54,7 @@ export const MongoFindOneDirective = new GraphQLDirective({
 export const MongoFindDirective = new GraphQLDirective({
   name: 'mongo__find',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
@@ -67,6 +69,7 @@ export const MongoFindDirective = new GraphQLDirective({
 export const MongoCountDirective = new GraphQLDirective({
   name: 'mongo__count',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
@@ -78,6 +81,7 @@ export const MongoCountDirective = new GraphQLDirective({
 export const MongoConnectionDirective = new GraphQLDirective({
   name: 'mongo__connection',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
@@ -92,6 +96,7 @@ export const MongoConnectionDirective = new GraphQLDirective({
 export const MongoPaginationDirective = new GraphQLDirective({
   name: 'mongo__pagination',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
@@ -106,6 +111,7 @@ export const MongoPaginationDirective = new GraphQLDirective({
 export const MongoAggregateDirective = new GraphQLDirective({
   name: 'mongo__aggregate',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
@@ -118,6 +124,7 @@ export const MongoAggregateDirective = new GraphQLDirective({
 export const MongoInsertOneDirective = new GraphQLDirective({
   name: 'mongo__insertOne',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
@@ -130,6 +137,7 @@ export const MongoInsertOneDirective = new GraphQLDirective({
 export const MongoInsertManyDirective = new GraphQLDirective({
   name: 'mongo__insertMany',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
@@ -147,6 +155,7 @@ export const MongoInsertManyDirective = new GraphQLDirective({
 export const MongoUpdateOneDirective = new GraphQLDirective({
   name: 'mongo__updateOne',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
@@ -160,6 +169,7 @@ export const MongoUpdateOneDirective = new GraphQLDirective({
 export const MongoUpdateManyDirective = new GraphQLDirective({
   name: 'mongo__updateMany',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
@@ -172,6 +182,7 @@ export const MongoUpdateManyDirective = new GraphQLDirective({
 export const MongoDeleteOneDirective = new GraphQLDirective({
   name: 'mongo__deleteOne',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
@@ -183,6 +194,7 @@ export const MongoDeleteOneDirective = new GraphQLDirective({
 export const MongoDeleteManyDirective = new GraphQLDirective({
   name: 'mongo__deleteMany',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,

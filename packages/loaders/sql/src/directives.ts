@@ -317,6 +317,7 @@ export const SqlDirective = new GraphQLDirective({
   // FIELD: Query/Mutation/relations. OBJECT: type-level entity resolver (`$this` keys),
   // same pattern as Connectors type-level `@connect`.
   locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
+  isRepeatable: true,
   args: {
     /* Owning subgraph name when composing federated schemas. */
     subgraph: { type: GraphQLString },

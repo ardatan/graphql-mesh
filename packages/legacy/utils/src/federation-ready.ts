@@ -1,5 +1,6 @@
-import { GraphQLDirective, GraphQLSchema, isSpecifiedDirective } from 'graphql';
-import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { GraphQLSchema } from 'graphql';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
+import { isMeshSpecLinkUrl, MESH_SPEC_URL } from './mesh-spec.js';
 
 /**
  * Patch only the named schema-directive keys on `extensions.directives`.
@@ -107,16 +108,18 @@ function meshDirectiveImportsEqual(a: unknown, b: MeshDirectiveImport): boolean 
 /**
  * Import Mesh-spec directives (optionally aliased, e.g. `{ name: '@source', as: '@meshSource' }`)
  * and register them with `@composeDirective` under the *local* name.
+ *
+ * Loaders call this with the directives they emit — there is no auto-scan helper.
  */
 export function importMeshDirectives(subgraph: GraphQLSchema, directives: MeshDirectiveImport[]) {
   const schemaDirectives = getDirectiveExtensions(subgraph) || {};
   const linkDirectives = (schemaDirectives.link ||= []);
   let importStatement = linkDirectives.find(linkDirectiveArgs =>
-    linkDirectiveArgs.url?.startsWith('https://the-guild.dev/graphql/mesh/spec/'),
+    isMeshSpecLinkUrl(linkDirectiveArgs.url),
   );
   if (!importStatement) {
     importStatement = {
-      url: 'https://the-guild.dev/graphql/mesh/spec/v1.0',
+      url: MESH_SPEC_URL,
       import: [],
     };
     linkDirectives.push(importStatement);
@@ -161,51 +164,6 @@ const FEDERATION_V1_DIRECTIVES = [
 /** Federation v1 directive names imported when converting a subgraph to Federation v2. */
 export { FEDERATION_V1_DIRECTIVES };
 
-export function detectAndAddMeshDirectives(subgraph: GraphQLSchema) {
-  const meshDirectives: string[] = [];
-  const existingAdditionalDirectives: string[] = [];
-  const existingDirectiveExtensionsOnSchema = getDirectiveExtensions(subgraph);
-  if (existingDirectiveExtensionsOnSchema?.link) {
-    const linkDirectives = existingDirectiveExtensionsOnSchema.link;
-    for (const linkDirective of linkDirectives) {
-      if (
-        linkDirective.url != null &&
-        !linkDirective.url.startsWith('https://the-guild.dev/graphql/mesh/spec/')
-      ) {
-        if (linkDirective.import) {
-          existingAdditionalDirectives.push(...linkDirective.import);
-        }
-      }
-    }
-  }
-  subgraph = mapSchema(subgraph, {
-    [MapperKind.DIRECTIVE]: directive => {
-      const directiveName = `@${directive.name}`;
-      if (
-        !isSpecifiedDirective(directive) &&
-        !FEDERATION_V1_DIRECTIVES.includes(directiveName) &&
-        !directiveName.startsWith('@federation__') &&
-        directiveName !== '@stream' &&
-        directiveName !== '@link' &&
-        !existingAdditionalDirectives.includes(directiveName)
-      ) {
-        meshDirectives.push(directiveName);
-        if (!directive.isRepeatable && directive.args.some(arg => arg.name === 'subgraph')) {
-          return new GraphQLDirective({
-            ...directive.toConfig(),
-            isRepeatable: true,
-          });
-        }
-      }
-      return directive;
-    },
-  });
-  if (meshDirectives.length > 0) {
-    subgraph = importMeshDirectives(subgraph, meshDirectives);
-  }
-  return subgraph;
-}
-
 function schemaHasConnectorsLink(subgraph: GraphQLSchema): boolean {
   const directives = getDirectiveExtensions(subgraph);
   const links = directives?.link || [];
@@ -222,30 +180,21 @@ function schemaHasConnectorsLink(subgraph: GraphQLSchema): boolean {
 }
 
 /**
- * Make a subgraph federation-ready for Mesh Compose and schema registries.
- *
- * - Imports Mesh-spec directives via `@link(.../mesh/spec/...)` + `@composeDirective`
- * - For Federation Connectors subgraphs, also registers `@composeDirective(name: "@connect")`
- *
- * Idempotent: safe to call again during composition. Does **not** stamp `@shareable` on
- * every object type; that remains Compose's Federation v2 conversion step.
- *
- * Lives in `@graphql-mesh/utils` so protocol loaders can call it without depending on
- * `@graphql-mesh/fusion-composition`.
+ * Register `@composeDirective(name: "@connect")` when the subgraph already links the
+ * Federation Connectors spec. Idempotent.
  */
-export function ensureFederationReadySubgraph(subgraph: GraphQLSchema): GraphQLSchema {
-  subgraph = detectAndAddMeshDirectives(subgraph);
-  if (schemaHasConnectorsLink(subgraph)) {
-    const schemaDirectives = getDirectiveExtensions(subgraph) || {};
-    const composeDirectives = (schemaDirectives.composeDirective =
-      schemaDirectives.composeDirective?.filter(Boolean) || []);
-    if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
-      composeDirectives.push({ name: '@connect' });
-    }
-    patchSchemaDirectiveExtensions(subgraph, {
-      composeDirective: composeDirectives,
-    });
-    subgraph = importFederationDirectives(subgraph, ['@composeDirective']);
+export function addConnectComposeDirective(subgraph: GraphQLSchema): GraphQLSchema {
+  if (!schemaHasConnectorsLink(subgraph)) {
+    return subgraph;
   }
-  return subgraph;
+  const schemaDirectives = getDirectiveExtensions(subgraph) || {};
+  const composeDirectives = (schemaDirectives.composeDirective =
+    schemaDirectives.composeDirective?.filter(Boolean) || []);
+  if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
+    composeDirectives.push({ name: '@connect' });
+  }
+  patchSchemaDirectiveExtensions(subgraph, {
+    composeDirective: composeDirectives,
+  });
+  return importFederationDirectives(subgraph, ['@composeDirective']);
 }

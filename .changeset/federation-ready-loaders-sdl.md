@@ -20,12 +20,12 @@ Mesh Compose previously had to invent Mesh-spec `@link` imports and `@composeDir
 
 ### What changed
 
-- **`ensureFederationReadySubgraph(schema)`** (and related Mesh `@link` / `@composeDirective` helpers) live in **`@graphql-mesh/utils`** so protocol loaders do not depend on `@graphql-mesh/fusion-composition`. Fusion composition re-exports them for Compose.
-- Protocol loaders call it on emit: SQL, Mongo, Thrift, Protobuf, Neo4j, SOAP, OData, OpenAPI / JSON Schema / RAML.
-- Compose still calls the same helper as a safety net for older loaders / raw SDL.
-- **`loadSdlSubgraph(name, { source | typeDefs, transport?, federationReady? })`** in `@graphql-mesh/compose-cli` for hand-written or generated-then-edited SDL (default `federationReady: true`).
+- **`importMeshDirectives`** / **`addConnectComposeDirective`** live in **`@graphql-mesh/utils`** so protocol loaders do not depend on `@graphql-mesh/fusion-composition`. Fusion composition re-exports them for Compose.
+- Loaders stamp Mesh `@link` + `@composeDirective` themselves via `importMeshDirectives([...])` with an **explicit** directive list (no auto-scan). Connectors loaders also call `addConnectComposeDirective`.
+- Mesh-spec `@link` URL is now **`https://graphql-mesh.com/spec/v2.0`** (Federation composition requires `vX.Y`; legacy Guild / `spec.graphql-mesh.dev` links are still recognized).
+- Hand-written SDL: prefer **`subgraphs: [{ name, schema }]`** where `schema` is `MaybePromise<GraphQLSchema | DocumentNode | string>` (inline SDL, path, or URL). Or use **`loadSubgraphFromSDL(name, schema, options?)`** (`loadSdlSubgraph` remains a deprecated alias). Mesh `@link` / `@composeDirective` belong in that SDL (or come from a loader).
 
-Object-level `@shareable` / full Fed v2 conversion remains Compose-time (`convertSubgraphToFederationv2`).
+Object-level `@shareable` / full Fed v2 conversion remains Compose-time (`convertSubgraphToFederationv2`) — loaders do not blanket-stamp `@shareable`.
 
 ### Migration
 
@@ -44,13 +44,18 @@ sourceHandler: () => ({
 })
 
 // After
-import { loadSdlSubgraph } from '@graphql-mesh/compose-cli'
-
-sourceHandler: loadSdlSubgraph('movies', {
-  source: './movies.graphql',
-})
+subgraphs: [
+  {
+    name: 'movies',
+    schema: './movies.graphql', // or inline SDL / DocumentNode / GraphQLSchema / Promise
+  },
+]
 ```
 
-For registry publish, prefer `mesh-compose --subgraph <name>` (still adds `@shareable` / full Fed v2 object conversion) then Hive / GraphOS publish. Loader and `loadSdlSubgraph` output already carry Mesh `@link` / `@composeDirective` applications so Compose does not invent them. Include directive definitions in hand-written SDL (or start from loader emit) so Mesh can register `@composeDirective` for those directives.
+For registry publish, prefer `mesh-compose --subgraph <name>` (still adds `@shareable` / full Fed v2 object conversion) then Hive / GraphOS publish. Loader and hand-written SDL already carry Mesh `@link` / `@composeDirective` so Compose does not invent them.
 
 OpenAPI / RAML emit goes through `@omnigraph/json-schema`, so those subgraphs pick up the same federation-ready behavior without separate package bumps in this changeset.
+
+### Follow-up (not in this PR)
+
+Connectors-based loaders still emit Mesh `@transport` alongside `@connect` as a Gateway safety net. Once Hive Gateway resolves `@connect` natively, drop `@transport` emit from `@connect`-based loaders (OpenAPI / JSON Schema / RAML / SOAP / OData / Thrift-connect).

@@ -49,7 +49,12 @@ import type {
   TypeVal,
 } from '@graphql-mesh/transport-thrift';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn, ensureFederationReadySubgraph, readFileOrUrl } from '@graphql-mesh/utils';
+import {
+  addConnectComposeDirective,
+  defaultImportFn,
+  importMeshDirectives,
+  readFileOrUrl,
+} from '@graphql-mesh/utils';
 import { getDirectivesInExtensions } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import {
@@ -307,6 +312,7 @@ export const ThriftMessageTypeEnum = new GraphQLEnumType({
 export const thriftRpcDirective = new GraphQLDirective({
   name: 'thrift__rpc',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     /** Owning subgraph name when composing federated schemas. */
     subgraph: { type: GraphQLString },
@@ -846,7 +852,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
         },
       },
     });
-    return ensureFederationReadySubgraph(preferMultilineDirectiveBlockStrings(schema));
+    return addConnectComposeDirective(preferMultilineDirectiveBlockStrings(schema));
   }
 
   const graphQLThriftAnnotations: GraphQLThriftAnnotations = {
@@ -858,9 +864,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     headers: Object.entries(headers),
   };
 
-  // Do not `@link` `@thrift__rpc` on a custom URL - `ensureFederationReadySubgraph`
-  // imports unknown directives via Mesh spec (`@composeDirective`). A separate
-  // thrift `@link` would exclude it from that path.
+  // Do not `@link` `@thrift__rpc` on a custom URL — Mesh-spec `@link` +
+  // `@composeDirective` are stamped below via `importMeshDirectives`.
   const schema = new GraphQLSchema({
     query: queryObjectType,
     types: [ThriftMessageTypeEnum, ...exceptionTypeMap.values()],
@@ -872,7 +877,10 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     },
   });
 
-  return ensureFederationReadySubgraph(preferMultilineDirectiveBlockStrings(schema));
+  return importMeshDirectives(preferMultilineDirectiveBlockStrings(schema), [
+    '@thrift__rpc',
+    '@transport',
+  ]);
 }
 
 /**

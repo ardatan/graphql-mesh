@@ -36,7 +36,8 @@ import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolatio
 import type { MeshFetch } from '@graphql-mesh/types';
 import {
   defaultImportFn,
-  ensureFederationReadySubgraph,
+  addConnectComposeDirective,
+  importMeshDirectives,
   readFileOrUrl,
   sanitizeNameForGraphQL,
 } from '@graphql-mesh/utils';
@@ -1624,6 +1625,6 @@ export class SOAPLoader {
       ...existingLinks,
       { url: CONNECT_LINK_URL, import: ['@connect', '@source'] },
     ];
-    return ensureFederationReadySubgraph(schema);
+    return addConnectComposeDirective(importMeshDirectives(schema, ['@transport']));
   }
 }

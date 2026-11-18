@@ -14,7 +14,7 @@ import { process as meshProcess } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
 import {
   defaultImportFn,
-  ensureFederationReadySubgraph,
+  importMeshDirectives,
   loadFromModuleExportExpression,
 } from '@graphql-mesh/utils';
 import { MongoOpDirectives, TransportDirective } from './directives.js';
@@ -500,7 +500,21 @@ export async function loadGraphQLSchemaFromMongo(
     },
   ];
   markMongoDirectiveStringsAsBlocks(schema);
-  return ensureFederationReadySubgraph(schema);
+  return importMeshDirectives(schema, [
+    '@mongo__findOne',
+    '@mongo__find',
+    '@mongo__count',
+    '@mongo__connection',
+    '@mongo__pagination',
+    '@mongo__aggregate',
+    '@mongo__insertOne',
+    '@mongo__insertMany',
+    '@mongo__updateOne',
+    '@mongo__updateMany',
+    '@mongo__deleteOne',
+    '@mongo__deleteMany',
+    '@transport',
+  ]);
 }
 
 const RESERVED_FILTER_PATH_NAMES = new Set(['and', 'or', 'not', 'AND', 'OR', 'NOT']);
