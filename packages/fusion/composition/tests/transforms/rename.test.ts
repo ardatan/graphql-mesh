@@ -1286,3 +1286,69 @@ WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
     });
   });
 });
+
+describe('rewriteConnectArgReferences @mongo', () => {
+  it('rewrites $args in mongo where/set/selection without requiring @connect', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo: [
+          {
+            collection: 'users',
+            kind: 'FIND_MANY',
+            where: '$args.filter',
+            orderBy: '$args.sort',
+            selection: 'id: _id\nname: name',
+          },
+        ],
+      },
+      new Map([
+        ['filter', 'where'],
+        ['sort', 'orderBy'],
+      ]),
+    );
+    const mongo = rewritten!.mongo[0];
+    expect(mongo.where).toBe('$args.where');
+    expect(mongo.orderBy).toBe('$args.orderBy');
+    expect(mongo.selection).toBe('id: _id\nname: name');
+  });
+
+  it('does not rewrite $args.whereInput when renaming where', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo: [
+          {
+            collection: 'users',
+            kind: 'FIND_ONE',
+            where: '_id: $args.where\nmeta: $args.whereInput',
+          },
+        ],
+      },
+      new Map([['where', 'filter']]),
+    );
+    const where = rewritten!.mongo[0].where as string;
+    expect(where).toContain('$args.filter');
+    expect(where).toContain('$args.whereInput');
+    expect(where).not.toMatch(/\$args\.where\b/);
+  });
+
+  it('rewrites $this field picks via fieldRenameMap', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo: [
+          {
+            collection: 'users',
+            kind: 'FIND_ONE',
+            where: '_id: $this.authorId',
+            selection: 'id: _id',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['authorId', 'writerId']]),
+    );
+    expect(rewritten!.mongo[0].where).toBe('_id: $this.writerId');
+  });
+});
