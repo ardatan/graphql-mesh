@@ -7,6 +7,12 @@ export * from './driver.js';
 export * from './eventEmitterForPubSub.js';
 export * from './executor.js';
 
+/**
+ * Mesh transport entry for Neo4j subgraphs (`@transport(kind: "neo4j")`).
+ *
+ * Builds a disposable executor via {@link getNeo4JExecutor} using the composed subgraph
+ * schema (endpoint / database / auth come from the transport directive written by the loader).
+ */
 export default {
   getSubgraphExecutor({ subgraph, pubsub, log }) {
     return getNeo4JExecutor({

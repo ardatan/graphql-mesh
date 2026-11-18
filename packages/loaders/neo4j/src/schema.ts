@@ -16,18 +16,78 @@ import { mergeSchemas } from '@graphql-tools/schema';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
 
+/**
+ * Options for {@link loadGraphQLSchemaFromNeo4J} / {@link loadNeo4JSubgraph}.
+ *
+ * Either introspects the target database (`@neo4j/introspector`) or uses author
+ * Neo4j GraphQL SDL via {@link LoadGraphQLSchemaFromNeo4JOpts.typeDefs}. The loader
+ * stamps `subgraph:` on Neo4j directives and writes `@transport(kind: "neo4j")` so the
+ * runtime transport can reconnect with the same endpoint / database / auth.
+ *
+ * @example
+ * ```ts
+ * import { loadNeo4JSubgraph } from '@omnigraph/neo4j'
+ *
+ * loadNeo4JSubgraph('Movies', {
+ *   endpoint: 'neo4j+s://xxxx.databases.neo4j.io',
+ *   database: 'neo4j',
+ *   auth: { type: 'basic', username: 'neo4j', password: process.env.NEO4J_PASSWORD! },
+ * })
+ * ```
+ */
 export interface LoadGraphQLSchemaFromNeo4JOpts {
+  /**
+   * Bolt URL for the Neo4j instance (stored on `@transport.location` for the executor).
+   *
+   * @example 'neo4j://localhost:7687'
+   * @example 'neo4j+s://xxxx.databases.neo4j.io'
+   */
   endpoint: string;
+  /**
+   * Database name used for introspection sessions and runtime `sessionConfig`.
+   * Defaults to `"neo4j"`.
+   *
+   * @default 'neo4j'
+   * @example 'movies'
+   */
   database?: string;
+  /**
+   * Driver authentication. Also embedded under `@transport.options.auth` for runtime.
+   *
+   * @example { type: 'basic', username: 'neo4j', password: 'secret' }
+   */
   auth?: Neo4JAuthOpts;
+  /**
+   * Mesh PubSub. When provided with a caller-supplied {@link driver}, the loader keeps
+   * that driver open so subscription features can share it; otherwise a temporary
+   * introspect driver is closed after schema load.
+   */
   pubsub?: PubSub;
+  /**
+   * Optional logger (compose CLI injects one via {@link loadNeo4JSubgraph}).
+   */
   log?: Logger;
+  /**
+   * Optional existing Neo4j driver. When omitted, one is created from {@link endpoint}
+   * and {@link auth} for introspection / schema build.
+   *
+   * @example sharedDriver
+   */
   driver?: Driver;
   /**
    * Author-written Neo4j GraphQL SDL (`@node`, `@relationship`, `@cypher`, `@alias`, …).
    * When set, skips database introspection via `@neo4j/introspector`.
    * Prefer `subgraph:` on Neo4j directives when composing multiple Neo4j sources;
    * the loader stamps it when missing.
+   *
+   * @example
+   * ```graphql
+   * type Movie @node {
+   *   title: String!
+   *   actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
+   * }
+   * type Person @node { name: String! }
+   * ```
    */
   typeDefs?: string | DocumentNode;
 }
@@ -36,6 +96,12 @@ function parseTypeDefs(typeDefs: string | DocumentNode): DocumentNode {
   return typeof typeDefs === 'string' ? parse(typeDefs, { noLocation: true }) : typeDefs;
 }
 
+/**
+ * Load a GraphQL schema for one Neo4j Mesh subgraph (introspect or author SDL).
+ *
+ * @param subgraphName - Mesh subgraph name; stamped onto Neo4j directives and `@transport`.
+ * @param opts - Connection and schema options ({@link LoadGraphQLSchemaFromNeo4JOpts}).
+ */
 export async function loadGraphQLSchemaFromNeo4J(
   subgraphName: string,
   {

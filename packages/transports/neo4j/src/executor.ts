@@ -27,10 +27,43 @@ import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
 // import type { Neo4jFeaturesSettings } from '@neo4j/graphql/dist/types/index.js';
 type Neo4jFeaturesSettings = any;
 
+/**
+ * Runtime options for {@link getNeo4JExecutor}.
+ *
+ * Mesh’s Neo4j transport entry calls this with the composed subgraph schema plus
+ * gateway `pubsub` / `log`. Endpoint, database, and auth are read from the schema’s
+ * `@transport(kind: "neo4j", …)` extension (written by the Neo4j loader).
+ *
+ * @example
+ * ```ts
+ * const executor = await getNeo4JExecutor({
+ *   schema: moviesSubgraphSchema,
+ *   pubsub,
+ *   log,
+ * })
+ * ```
+ */
 export interface Neo4JExecutorOpts {
+  /**
+   * Composed Neo4j subgraph schema that carries `@transport` (location, database, auth)
+   * and Neo4j model directives (`@node`, `@relationship`, `@cypher`, …).
+   */
   schema: GraphQLSchema;
+  /**
+   * Optional shared driver. When omitted, a driver is created from `@transport` location/auth
+   * and closed when the executor is disposed.
+   *
+   * @example driverFromPool
+   */
   driver?: Driver;
+  /**
+   * Mesh PubSub used to wire Neo4j GraphQL subscriptions (CDC / reactive features).
+   * Omit when the gateway does not need Neo4j subscriptions.
+   */
   pubsub?: PubSub;
+  /**
+   * Optional logger for driver construction and transport diagnostics.
+   */
   log?: Logger;
 }
 
@@ -911,6 +944,15 @@ export function extractNeo4jModelTypeDefs(
   };
 }
 
+/**
+ * Create a disposable Neo4j subgraph executor for Mesh.
+ *
+ * Extracts Neo4j model SDL for this transport’s subgraph, rebuilds an executable
+ * schema with `@neo4j/graphql`, and runs operations with `sessionConfig.database`
+ * from `@transport.options`.
+ *
+ * @param opts - {@link Neo4JExecutorOpts}
+ */
 export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<DisposableExecutor> {
   const schemaDirectives = getDirectiveExtensions(opts.schema);
   if (!opts.schema.getDirective('relationship')) {
@@ -975,12 +1017,40 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
   return neo4JExecutor as DisposableExecutor;
 }
 
-interface GetExecutableSchemaFromTypeDefs {
+/**
+ * Options for building an executable schema via `@neo4j/graphql` from SDL + a driver.
+ * Used by the Neo4j loader (compose time) and {@link getNeo4JExecutor} (runtime rebuild).
+ *
+ * @example
+ * ```ts
+ * const schema = await getExecutableSchemaFromTypeDefsAndDriver({
+ *   driver,
+ *   pubsub,
+ *   typeDefs: 'type Movie @node { title: String! }',
+ * })
+ * ```
+ */
+export interface GetExecutableSchemaFromTypeDefs {
+  /**
+   * Connected Neo4j driver passed to `Neo4jGraphQL`.
+   */
   driver: Driver;
+  /**
+   * When set, enables Neo4j GraphQL subscription features backed by Mesh PubSub.
+   */
   pubsub?: PubSub;
+  /**
+   * Neo4j GraphQL type definitions (string or DocumentNode). Mesh `@transport` / subgraph
+   * args are stripped before Neo4j validates the SDL.
+   *
+   * @example 'type Movie @node { title: String! }'
+   */
   typeDefs?: string | DocumentNode;
 }
 
+/**
+ * Build an executable GraphQL schema with `@neo4j/graphql` from typeDefs and a driver.
+ */
 export function getExecutableSchemaFromTypeDefsAndDriver({
   driver,
   pubsub: meshOrPubSub,
