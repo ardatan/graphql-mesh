@@ -720,7 +720,7 @@ function resolvePipeline(
   const parsed = parseMongoMapping(pipelineSource);
   const stageEntries = parsed.entries.filter(e => e.key.startsWith('$') && !e.spread);
   if (stageEntries.length) {
-    return stageEntries.map(entry => mappingEntryToStage(entry, ctx, filter));
+    return stageEntries.map(entry => mappingEntryToStage(entry, ctx, filter, collection));
   }
 
   // Single match binder / structured where — honor collection-scoped ObjectId/required.
@@ -757,6 +757,7 @@ function mappingEntryToStage(
   entry: MongoMappingEntry,
   ctx: { args?: Record<string, unknown>; parent?: unknown },
   filter: Record<string, unknown>,
+  collection?: string,
 ): Record<string, unknown> {
   if (entry.key === '$match') {
     if (
@@ -766,7 +767,7 @@ function mappingEntryToStage(
       return { $match: filter };
     }
     if (entry.children?.length) {
-      return { $match: filterFromMapping({ entries: entry.children }, ctx) };
+      return { $match: filterFromMapping({ entries: entry.children }, ctx, { collection }) };
     }
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved && typeof resolved === 'object' && !Array.isArray(resolved)) {

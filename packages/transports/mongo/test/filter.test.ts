@@ -192,12 +192,12 @@ describe('mongo filter mapping', () => {
       objectIdFields: new Set(['_id', 'id', 'owner']),
       objectIdFieldsByCollection: new Map<string, ReadonlySet<string>>([
         ['posts', new Set(['owner'])],
-        ['notes', new Set<string>()],
+        // `notes` omitted — loader skips collections with no scoped ObjectId fields.
       ]),
       requiredFields: new Set(['title']),
       requiredFieldsByCollection: new Map<string, ReadonlySet<string>>([
         ['posts', new Set(['title'])],
-        ['notes', new Set<string>()],
+        // `notes` omitted — missing key falls back to empty scoped set, not flat required.
       ]),
       placeholderFields: new Set(['_']),
       stringIdCollections: new Set<string>(),
