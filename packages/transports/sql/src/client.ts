@@ -384,9 +384,7 @@ export function wrapPgPoolAsSqlClient(
   return client;
 }
 
-/**
- * Wrap an existing `mysql` / `mysql2` pool (legacy handler `pool` config) as SqlClient.
- */
+/** `mysql2/promise` (or `.promise()`) pool wrapper. */
 function mysqlPromiseClient(p: {
   query: (...args: any[]) => any;
   end?: (...args: any[]) => any;
@@ -455,6 +453,18 @@ function mysqlCallbackClient(pool: {
   };
 }
 
+/**
+ * Wrap an existing `mysql` / `mysql2` pool (legacy handler `pool` config) as SqlClient.
+ *
+ * @example
+ * ```ts
+ * import { createPool } from 'mysql2/promise';
+ * import { wrapMysqlPoolAsSqlClient } from '@graphql-mesh/transport-sql';
+ *
+ * const pool = createPool(process.env.MYSQL_URL!);
+ * const client = wrapMysqlPoolAsSqlClient(pool);
+ * ```
+ */
 export function wrapMysqlPoolAsSqlClient(pool: {
   query: (...args: any[]) => any;
   end?: (...args: any[]) => any;
