@@ -102,9 +102,7 @@ export function mapDocumentToGraphql(
       continue;
     }
     if (entry.value?.kind === 'column') {
-      out[entry.key] = coerceGraphqlValue(
-        getPath(doc, mappingStringValue(entry.value).split('.')),
-      );
+      out[entry.key] = coerceGraphqlValue(getPath(doc, mappingStringValue(entry.value).split('.')));
     }
   }
   return out;
