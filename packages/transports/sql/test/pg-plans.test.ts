@@ -572,14 +572,23 @@ describe('wirePostgresSqlPlans relation bailouts', () => {
   });
 
   it('attribute plan dual-paths Pg .get and entity hydrator for plain stubs', async () => {
+    const { execute } = await import('grafast');
+    const { parse } = await import('graphql');
     const { MESH_ENTITY_HYDRATOR } = await import('../src/entity.js');
     let hydrateParent: any;
-    const hydrator = (parent: any) => {
+    let hydrateInfo: any;
+    const hydrator = (parent: any, _args: any, _ctx: any, info: any) => {
       hydrateParent = parent;
+      hydrateInfo = info;
       if (parent != null && Object.prototype.hasOwnProperty.call(parent, 'name')) {
         return parent.name;
       }
-      return Promise.resolve('from-hydrator');
+      return Promise.resolve('from-hydrator').then(name => {
+        if (parent && typeof parent === 'object') {
+          Object.assign(parent, { name });
+        }
+        return name;
+      });
     };
     (hydrator as any)[MESH_ENTITY_HYDRATOR] = true;
 
@@ -615,6 +624,11 @@ describe('wirePostgresSqlPlans relation bailouts', () => {
             undefined,
             Artist,
           ),
+          // Plain-object stub parent (missing `name`) — exercises hydrator plan path.
+          artistStub: {
+            type: Artist,
+            resolve: () => ({ id: 7 }),
+          },
         },
       }),
       types: [Artist],
@@ -638,5 +652,17 @@ describe('wirePostgresSqlPlans relation bailouts', () => {
     // Pg-shaped parent: use .get (hydrator not involved; safe outside grafast lifecycle).
     expect(plan({ get: (k: string) => `pg:${k}` })).toBe('pg:name');
     expect(hydrateParent).toBeUndefined();
+
+    // Execution-level: plain stub missing `name` runs hydrator with real field info.
+    const result = await execute({
+      schema: wired,
+      document: parse(`{ artistStub { id name } }`),
+      contextValue: {},
+    } as any);
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ artistStub: { id: 7, name: 'from-hydrator' } });
+    expect(hydrateParent).toEqual({ id: 7, name: 'from-hydrator' });
+    expect(hydrateInfo?.fieldName).toBe('name');
+    expect(hydrateInfo?.parentType?.name).toBe('Artist');
   });
 });

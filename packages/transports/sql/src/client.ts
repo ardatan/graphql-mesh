@@ -239,9 +239,21 @@ export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string):
         // retries SET. Leave unseen so a later checkout can recover.
         failed.set(client, err);
         pending.delete(client);
+        // Discard a broken checkout (node-pg: release(err) destroys the client).
+        const release = (client as { release?: (destroy?: Error | boolean) => void }).release;
+        if (typeof release === 'function') {
+          try {
+            release(err instanceof Error ? err : true);
+          } catch {
+            /* already released */
+          }
+        }
         throw err;
       },
     );
+    // Swallow when SET fails before any caller attaches to `pending` (avoids
+    // unhandledRejection). Later `.then` / query waiters still see the error.
+    p.catch(() => undefined);
     pending.set(client, p);
   };
   pool.on('acquire', ensure);

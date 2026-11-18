@@ -129,11 +129,40 @@ export function wirePostgresSqlPlans(
       const attrs = parentResource?.codec?.attributes;
       if (!attrs || !(fieldName in attrs)) return fieldConfig;
 
-      grafast.plan = function sqlAttributePlan($row: any) {
+      grafast.plan = function sqlAttributePlan($row: any, _fieldArgs?: any, fieldInfo?: any) {
         if ($row && typeof $row.get === 'function') return $row.get(fieldName);
         if (hydratorResolve) {
+          // Preserve planning-time FieldInfo for resolveReference (fieldName /
+          // parentType / schema / fieldNodes). path / variableValues / rootValue
+          // are filled at GraphQL resolve time when available; here we pass the
+          // plan-time base so custom resolvers that read `info` still work.
+          const resolveInfo = fieldInfo
+            ? {
+                fieldName: fieldInfo.fieldName ?? fieldName,
+                fieldNodes: fieldInfo.fieldNodes ?? [],
+                returnType: fieldInfo.field?.type,
+                parentType: fieldInfo.parentType,
+                schema: fieldInfo.schema,
+                fragments: Object.create(null),
+                rootValue: undefined,
+                operation: undefined,
+                variableValues: Object.create(null),
+                path: { prev: undefined, key: fieldInfo.fieldName ?? fieldName },
+              }
+            : {
+                fieldName,
+                fieldNodes: [],
+                returnType: undefined,
+                parentType: undefined,
+                schema: undefined,
+                fragments: Object.create(null),
+                rootValue: undefined,
+                operation: undefined,
+                variableValues: Object.create(null),
+                path: { prev: undefined, key: fieldName },
+              };
           return lambda([$row, context()], ([parent, ctx]: [any, any]) =>
-            (hydratorResolve as any)(parent, {}, ctx, null),
+            (hydratorResolve as any)(parent, {}, ctx, resolveInfo),
           );
         }
         return access($row, fieldName);

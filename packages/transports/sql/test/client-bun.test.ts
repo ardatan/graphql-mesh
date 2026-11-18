@@ -173,4 +173,49 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
     await expect(client.query('SELECT 3')).resolves.toEqual({ rows: [] });
     expect(queries.filter(q => q === 'SELECT 3')).toEqual(['SELECT 3']);
   });
+
+  it('handles SET failure before any query without unhandled rejection and discards client', async () => {
+    const { applyPgPoolSearchPath } = await import('../src/client.js');
+    const byEvent: Record<string, Array<(client: any) => void>> = { connect: [], acquire: [] };
+    applyPgPoolSearchPath(
+      {
+        on: (event: string, listener: (client: any) => void) => {
+          (byEvent[event] ||= []).push(listener);
+        },
+      },
+      'app',
+    );
+
+    const unhandled: unknown[] = [];
+    const onUnhandled = (reason: unknown) => {
+      unhandled.push(reason);
+    };
+    process.on('unhandledRejection', onUnhandled);
+
+    let releaseArg: unknown;
+    const client = {
+      query: async (q: string) => {
+        if (q.startsWith('SET ')) {
+          throw new Error('SET search_path failed before query');
+        }
+        return { rows: [] };
+      },
+      release: (destroy?: Error | boolean) => {
+        releaseArg = destroy;
+      },
+    };
+
+    try {
+      byEvent.acquire[0](client);
+      // Let SET settle with no caller query attached yet.
+      await new Promise<void>(resolve => setImmediate(resolve));
+      await new Promise<void>(resolve => setImmediate(resolve));
+      expect(unhandled).toEqual([]);
+      expect(releaseArg).toBeInstanceOf(Error);
+      expect((releaseArg as Error).message).toMatch(/SET search_path failed before query/);
+      await expect(client.query('SELECT 1')).rejects.toThrow(/SET search_path failed before query/);
+    } finally {
+      process.off('unhandledRejection', onUnhandled);
+    }
+  });
 });
