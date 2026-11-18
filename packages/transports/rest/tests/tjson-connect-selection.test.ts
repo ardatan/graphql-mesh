@@ -65,6 +65,10 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
     ).toEqual(['other']);
   });
 
+  it('rewrites element @ inside ordinary lit arrays (not match arms)', () => {
+    expect(applySelection('$.items->map(@->[@])', { items: [7] }, extras)).toEqual([[7]]);
+  });
+
   it('struct union field0 is false when reply has no success field', () => {
     const sel = `$({
   field0: $->get(4)->get("0")->ne(null),

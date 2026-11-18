@@ -295,4 +295,32 @@ describe('thrift', () => {
     expect(postTweet).not.toMatch(/^ok:\s*true$/m);
     expect(postTweet).not.toMatch(/^value:\s*\$->get/m);
   });
+
+  it('forward typedef resolves after named types register', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'ForwardTypedef',
+      source: './fixtures/forward_typedef.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/forward',
+      protocol: 'binary',
+    });
+    const getDigits = schema.getQueryType()!.getFields().getDigits;
+    expect(getDigits.type.toString()).toMatch(/Later/);
+  });
+
+  it('TJSON root and list enum selections map i32 to member names', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'EnumReturn',
+      source: './fixtures/enum_return.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/enum',
+      protocol: 'json',
+    });
+    const getState = (schema.getQueryType()!.getFields().getState.extensions as any).directives
+      .connect.selection as string;
+    expect(getState).toMatch(/->match\(\[7,\s*"READY"\].*\[@,\s*@\]\)/);
+    const listStates = (schema.getQueryType()!.getFields().listStates.extensions as any).directives
+      .connect.selection as string;
+    expect(listStates).toMatch(/->map\(@->match\(\[7,\s*"READY"\].*\[@,\s*@\]\)\)/);
+  });
 });

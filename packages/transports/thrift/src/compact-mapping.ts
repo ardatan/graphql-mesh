@@ -130,6 +130,26 @@ function argFieldToTypeVal(field: ArgField): TypeVal {
         },
       };
     }
+    // map<*, struct> { field descriptors } — keep MAP wire type; children describe valType.
+    if (base.type === TType.MAP) {
+      const fields: TypeMap = {};
+      for (const child of field.children) {
+        fields[graphqlKeyFromValuePath(child.valuePath)] = argFieldToTypeVal(child);
+      }
+      const valBase = base.valType;
+      const valName =
+        valBase && valBase.type === TType.STRUCT && valBase.name ? valBase.name : 'Anon';
+      return {
+        ...base,
+        keyType: base.keyType,
+        valType: {
+          type: TType.STRUCT,
+          name: valName,
+          fields,
+          id: (valBase && 'id' in valBase ? valBase.id : undefined) ?? field.id,
+        },
+      };
+    }
     const fields: TypeMap = {};
     for (const child of field.children) {
       fields[graphqlKeyFromValuePath(child.valuePath)] = argFieldToTypeVal(child);

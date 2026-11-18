@@ -529,11 +529,29 @@ export function buildTJSONConnectSelection(
         .join('\n  ');
       return `${base} {\n  ${nested}\n}`;
     }
+    // JSON-mode enums use member names as GraphQL values — map wire i32 → name.
+    if (
+      elemResolved.type === TType.ENUM &&
+      elemResolved.values &&
+      Object.keys(elemResolved.values).length
+    ) {
+      const arms = Object.entries(elemResolved.values)
+        .map(([name, n]) => `[${n}, "${name}"]`)
+        .join(', ');
+      return `${base}->map(@->match(${arms}, [@, @]))`;
+    }
     return base;
   }
   if (resolved.type === TType.MAP) {
     const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
     return `$->get(4)->get("0")->get("${tag}")->get(3)`;
+  }
+  if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
+    const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
+    const arms = Object.entries(resolved.values)
+      .map(([name, n]) => `[${n}, "${name}"]`)
+      .join(', ');
+    return `$->get(4)->get("0")->get("${tag}")->match(${arms}, [@, @])`;
   }
   if (resolved.type !== TType.STRUCT) {
     const tag = tjsonTypeTag(returnTypeVal, topTypeMap);

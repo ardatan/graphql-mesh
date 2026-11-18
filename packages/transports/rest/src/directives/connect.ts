@@ -1101,14 +1101,17 @@ function rewriteAtToDollar(expr: string): string {
       continue;
     }
     if (c === '@') {
-      // Match-arm wildcard: `[` / `,` … `@` … `,` / `]` (not `@.x` / `@->`).
+      // Preserve bare `@` only in real match arms (`[@, "other"]`, `[@, @]`), not
+      // ordinary lit arrays like `[@]` / `@->[@]` where `@` is the element root.
       let prev = out.length - 1;
       while (prev >= 0 && /\s/.test(out[prev])) prev--;
       let next = i + 1;
       while (next < expr.length && /\s/.test(expr[next])) next++;
-      const prevOk = prev < 0 || out[prev] === '[' || out[prev] === ',';
-      const nextOk = next >= expr.length || expr[next] === ',' || expr[next] === ']';
-      if (prevOk && nextOk) {
+      const prevCh = prev >= 0 ? out[prev] : '';
+      const nextCh = next < expr.length ? expr[next] : '';
+      const matchArmFirst = prevCh === '[' && nextCh === ',';
+      const matchArmRest = prevCh === ',' && (nextCh === ',' || nextCh === ']' || nextCh === '');
+      if (matchArmFirst || matchArmRest) {
         out += '@';
         i++;
         continue;

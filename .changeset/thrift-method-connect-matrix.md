@@ -35,8 +35,8 @@ The old surface stamped opaque `@fieldTypeMap` bags and a large `@transport.opti
 - `function` is always the IDL name. Single-service generate **omits** `service:` (path is on `@transport`).
 - `messageType: ONEWAY` does not wait for / decode a reply.
 - `entity: true` only via loader `entityMethods` (Federation entity Query fields).
-- Transport executes `@thrift__rpc` by field id (no `topTypeMap`).
-- Service mappings are generated only after every named type is registered (forward refs resolve correctly).
+- Transport executes `@thrift__rpc` by field id (no `topTypeMap`). Compact parse keeps `map<*, struct>` as MAP (`keyType` + `valType.fields`), not STRUCT.
+- Service mappings and typedef aliases resolve only after every named type is registered (forward refs resolve correctly).
 - GraphQL enum members keep Thrift **i32** wire values via `@enum(value:)` through SDL print/compose; the thrift executor restores them. Recursive struct **arguments** fail at generate (no silent empty truncation).
 
 #### JSON — `protocol: 'json'`
@@ -58,7 +58,7 @@ Emits `@source` + `@connect` (TJSON) instead of thrift `@transport`:
 
 #### Transforms / Connectors eval
 
-- Fusion rename / naming-convention rewrite `$args…` inside `@thrift__rpc(args/selection/throws)` the same way as `@connect`. HTTP path templates still rename `$args` when the literal path contains apostrophes. No `@merge` / `@meshSource` for thrift.
+- Mesh rename / naming-convention rewrite `$args…` inside `@thrift__rpc(args/selection/throws)` the same way as `@connect`. HTTP path templates still rename `$args` when the literal path contains apostrophes. No `@merge` / `@meshSource` for thrift.
 - Mesh Connectors eval: trailing NamedSelection after `$()` stays on the subselection path; `->map` / `->filter` preserve bare `@` match-arm wildcards (`[@, "other"]`).
 
 ### Migration

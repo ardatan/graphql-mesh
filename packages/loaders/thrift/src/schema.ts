@@ -263,6 +263,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   let currentId = 0;
   // Defer service mapping until every named type is in topTypeMap (forward refs).
   const pendingServices: Array<{ statement: any }> = [];
+  // Typedefs can forward-ref structs/enums declared later — resolve after named types.
+  const pendingTypedefs: Array<{ statement: any; typeName: string }> = [];
 
   for (const namespace of Object.keys(namespaceASTMap).reverse()) {
     const thriftAST = namespaceASTMap[namespace];
@@ -390,22 +392,26 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           pendingServices.push({ statement });
           break;
         case SyntaxType.TypedefDefinition: {
-          const { inputType, outputType, typeVal } = getGraphQLFunctionType({
-            id: currentId++,
-            functionType: statement.definitionType,
-            enumTypeMap,
-            inputTypeMap,
-            outputTypeMap,
-            topTypeMap,
-          });
-          inputTypeMap.set(typeName, inputType);
-          outputTypeMap.set(typeName, outputType);
-          // So compact/TJSON mapping can resolve `typedef` refs (e.g. digit → i32).
-          topTypeMap[typeName] = typeVal;
+          pendingTypedefs.push({ statement, typeName: typeName! });
           break;
         }
       }
     }
+  }
+
+  for (const { statement, typeName: typedefName } of pendingTypedefs) {
+    const { inputType, outputType, typeVal } = getGraphQLFunctionType({
+      id: currentId++,
+      functionType: statement.definitionType,
+      enumTypeMap,
+      inputTypeMap,
+      outputTypeMap,
+      topTypeMap,
+    });
+    inputTypeMap.set(typedefName, inputType);
+    outputTypeMap.set(typedefName, outputType);
+    // So compact/TJSON mapping can resolve `typedef` refs (e.g. digit → i32).
+    topTypeMap[typedefName] = typeVal;
   }
 
   for (const { statement } of pendingServices) {
