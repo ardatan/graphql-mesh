@@ -17,6 +17,7 @@ const WIRE_TYPE_TOKEN: Partial<Record<TType, string>> = {
   [TType.SET]: 'set',
   [TType.MAP]: 'map',
   [TType.VOID]: 'void',
+  // ENUM without a name↔i32 table falls back to plain i32 (legacy / untyped).
   [TType.ENUM]: 'i32',
 };
 
@@ -36,6 +37,21 @@ const TJSON_TYPE_TAG: Partial<Record<TType, string>> = {
   [TType.ENUM]: 'i32',
 };
 
+/**
+ * Compact `@thrift__rpc` GraphQL-name → wire-i32 match (same shape as `@connect` / TJSON).
+ * `[@, 0]` keeps unknown names from writing garbage.
+ */
+export function formatEnumNameToWireMatch(values: Record<string, number>): string {
+  const arms = Object.entries(values).map(([name, n]) => `["${name}", ${n}]`);
+  return `->match(${arms.join(', ')}, [@, 0])`;
+}
+
+/** Compact selection wire-i32 → GraphQL-name match. */
+export function formatEnumWireToNameMatch(values: Record<string, number>): string {
+  const arms = Object.entries(values).map(([name, n]) => `[${n}, "${name}"]`);
+  return `->match(${arms.join(', ')}, [@, @])`;
+}
+
 export function wireTypeToken(typeVal: TypeVal, topTypeMap: TypeMap): string {
   if (typeVal.type === 'ref') {
     const resolved = topTypeMap[typeVal.name];
@@ -44,6 +60,10 @@ export function wireTypeToken(typeVal: TypeVal, topTypeMap: TypeMap): string {
       return 'i32';
     }
     return wireTypeToken(resolved, topTypeMap);
+  }
+  // Enums are i32 on the wire; name↔i32 lives in `->match` on the value / selection.
+  if (typeVal.type === TType.ENUM) {
+    return 'i32';
   }
   if (typeVal.type === TType.LIST) {
     const elem = wireTypeToken(typeVal.elementType, topTypeMap);
@@ -144,6 +164,12 @@ function formatCompactArgField(
   if (resolved.type === TType.LIST || resolved.type === TType.SET) {
     const elem = resolveTypeVal(resolved.elementType, topTypeMap);
     const wire = resolved.type === TType.SET ? 'set' : 'list';
+    if (elem.type === TType.ENUM && elem.values && Object.keys(elem.values).length) {
+      const base = level === 0 ? valueExpr : graphqlName;
+      return [
+        `${pad}${id}(${wire}): ${base}->map(@${formatEnumNameToWireMatch(elem.values)})`,
+      ];
+    }
     if (elem.type === TType.STRUCT) {
       const elemName = elem.name || 'Anon';
       if (seenStructs.has(elemName)) {
@@ -236,6 +262,11 @@ function formatCompactArgField(
     return lines;
   }
 
+  if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
+    const base = level === 0 ? valueExpr : graphqlName;
+    return [`${pad}${id}(i32): ${base}${formatEnumNameToWireMatch(resolved.values)}`];
+  }
+
   return [`${pad}${id}(${token}): ${level === 0 ? valueExpr : graphqlName}`];
 }
 
@@ -263,7 +294,13 @@ export function buildCompactSelection(
       }
       return lines.join('\n');
     }
+    if (elem.type === TType.ENUM && elem.values && Object.keys(elem.values).length) {
+      return `$(list)->map(@${formatEnumWireToNameMatch(elem.values)})`;
+    }
     return `$(${wireTypeToken(returnTypeVal, topTypeMap)})`;
+  }
+  if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
+    return `$(i32)${formatEnumWireToNameMatch(resolved.values)}`;
   }
   if (resolved.type !== TType.STRUCT) {
     return `$(${wireTypeToken(returnTypeVal, topTypeMap)})`;
@@ -304,35 +341,42 @@ function formatCompactSelectionField(
     return lines;
   }
 
-  if (
-    (resolved.type === TType.LIST || resolved.type === TType.SET) &&
-    resolveTypeVal(resolved.elementType, topTypeMap).type === TType.STRUCT
-  ) {
-    const elem = resolveTypeVal(resolved.elementType, topTypeMap) as Extract<
-      TypeVal,
-      { type: TType.STRUCT }
-    >;
-    const elemName = elem.name || 'Anon';
+  if (resolved.type === TType.LIST || resolved.type === TType.SET) {
+    const elem = resolveTypeVal(resolved.elementType, topTypeMap);
     const wire = resolved.type === TType.SET ? 'set' : 'list';
-    const lines = [`${pad}${graphqlName}: ${id}(${wire}) {`];
-    if (seenStructs.has(elemName)) {
-      // Cycle: retain element field metadata as leaves (ids + wire tokens).
-      for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
-        const fid = fieldType.id ?? 1;
-        const tok = wireTypeToken(fieldType, topTypeMap);
-        lines.push(`${indent(level + 1)}${fieldName}: ${fid}(${tok})`);
-      }
-    } else {
-      const nextSeen = new Set(seenStructs);
-      nextSeen.add(elemName);
-      for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
-        lines.push(
-          ...formatCompactSelectionField(fieldName, fieldType, topTypeMap, level + 1, nextSeen),
-        );
-      }
+    if (elem.type === TType.ENUM && elem.values && Object.keys(elem.values).length) {
+      return [
+        `${pad}${graphqlName}: ${id}(${wire})->map(@${formatEnumWireToNameMatch(elem.values)})`,
+      ];
     }
-    lines.push(`${pad}}`);
-    return lines;
+    if (elem.type === TType.STRUCT) {
+      const elemName = elem.name || 'Anon';
+      const lines = [`${pad}${graphqlName}: ${id}(${wire}) {`];
+      if (seenStructs.has(elemName)) {
+        // Cycle: retain element field metadata as leaves (ids + wire tokens).
+        for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
+          const fid = fieldType.id ?? 1;
+          const tok = wireTypeToken(fieldType, topTypeMap);
+          lines.push(`${indent(level + 1)}${fieldName}: ${fid}(${tok})`);
+        }
+      } else {
+        const nextSeen = new Set(seenStructs);
+        nextSeen.add(elemName);
+        for (const [fieldName, fieldType] of Object.entries(elem.fields)) {
+          lines.push(
+            ...formatCompactSelectionField(fieldName, fieldType, topTypeMap, level + 1, nextSeen),
+          );
+        }
+      }
+      lines.push(`${pad}}`);
+      return lines;
+    }
+  }
+
+  if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
+    return [
+      `${pad}${graphqlName}: ${id}(i32)${formatEnumWireToNameMatch(resolved.values)}`,
+    ];
   }
 
   return [`${pad}${graphqlName}: ${id}(${token})`];

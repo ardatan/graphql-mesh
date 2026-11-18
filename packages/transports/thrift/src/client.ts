@@ -18,6 +18,7 @@ import {
 } from '@creditkarma/thrift-server-core';
 import {
   applyCompactSelection,
+  enumNameToWire,
   parseCompactArgsToTypeMap,
   parseCompactSelection,
   parseCompactThrows,
@@ -53,6 +54,10 @@ export function createGraphQLThriftClient<Context = any>({
 
   function getActualType(typeVal: TypeVal): TType {
     if (typeVal.type === 'ref') {
+      return TType.I32;
+    }
+    // Thrift binary has no distinct enum type byte — enums are i32 on the wire.
+    if (typeVal.type === TType.ENUM) {
       return TType.I32;
     }
     return typeVal.type as TType;
@@ -111,7 +116,8 @@ export function createGraphQLThriftClient<Context = any>({
           break;
         }
         case TType.ENUM:
-          output.writeI32(typeof value === 'number' ? value : 0);
+          // GraphQL carries member names; compact args embed `enum<Name=n,…>` for i32.
+          output.writeI32(enumNameToWire(value, typeVal.values));
           break;
         case TType.MAP: {
           const keys = Object.keys(value);

@@ -122,16 +122,6 @@ export const thriftRpcDirective = new GraphQLDirective({
   },
 });
 
-/** Preserve Thrift i32 wire values across SDL print / compose / restore (Mesh `@enum`). */
-export const thriftEnumDirective = new GraphQLDirective({
-  name: 'enum',
-  locations: [DirectiveLocation.ENUM_VALUE],
-  args: {
-    subgraph: { type: GraphQLString },
-    value: { type: GraphQLString },
-  },
-});
-
 export async function loadNonExecutableGraphQLSchemaFromIDL({
   subgraphName,
   source,
@@ -275,9 +265,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
       }
       switch (statement.type) {
         case SyntaxType.EnumDefinition: {
-          // GraphQL enum internal values must be the Thrift i32 wire values so
-          // writeI32 / readI32 round-trip. SDL print drops `.value`, so stamp `@enum`
-          // and restore in the thrift executor (and TJSON bakes name↔i32 `->match`).
+          // GraphQL always uses member names. Wire i32 tables live in:
+          // - binary: compact `@thrift__rpc` `i32` + `->match` on args/selection
+          // - json: `@connect` `->match` arms baked from the same table
           let nextEnumValue = 0;
           const wireValues: Record<string, number> = {};
           const enumValues = statement.members.reduce((prev, curr) => {
@@ -293,13 +283,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               ...prev,
               [curr.name.value]: {
                 description: processComments(curr.comments),
-                // Connect/Router selections return member names; binary keeps wire ints.
-                value: emitConnect ? curr.name.value : value,
-                extensions: {
-                  directives: {
-                    enum: [{ subgraph: subgraphName, value: JSON.stringify(value) }],
-                  },
-                },
+                value: curr.name.value,
               },
             };
           }, {} as GraphQLEnumValueConfigMap);
@@ -615,20 +599,11 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     fields: rootFields,
   });
 
-  // Only declare `@enum` when the IDL has enums — binary needs it after SDL
-  // print/compose restore; JSON wire mapping lives in `@connect` `->match`.
-  const hasEnums = enumTypeMap.size > 0;
-
   if (emitConnect) {
     const headerEntries = Object.entries(headers).map(([name, value]) => ({ name, value }));
     const schema = new GraphQLSchema({
       query: queryObjectType,
-      directives: [
-        ConnectDirective,
-        SourceDirective,
-        LinkDirective,
-        ...(hasEnums ? [thriftEnumDirective] : []),
-      ],
+      directives: [ConnectDirective, SourceDirective, LinkDirective],
       extensions: {
         directives: {
           link: [
@@ -667,7 +642,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   const schema = new GraphQLSchema({
     query: queryObjectType,
     types: [ThriftMessageTypeEnum, ...exceptionTypeMap.values()],
-    directives: [thriftRpcDirective, ...(hasEnums ? [thriftEnumDirective] : [])],
+    directives: [thriftRpcDirective],
     extensions: {
       directives: {
         transport: graphQLThriftAnnotations,

@@ -19,7 +19,11 @@ export type MapTypeVal = { id?: number; type: TType.MAP; keyType: TypeVal; valTy
 export type EnumTypeVal = {
   id?: number;
   type: TType.ENUM;
-  /** Thrift enum member name → i32 wire value (survives via `@enum` after SDL print). */
+  /**
+   * Thrift enum member name → i32 wire value.
+   * Survives SDL print via compact `@thrift__rpc` `->match` on `i32` args/selection
+   * (same shape as TJSON `@connect`).
+   */
   values?: Record<string, number>;
 };
 export type StructTypeVal = { id?: number; type: TType.STRUCT; name: string; fields: TypeMap };

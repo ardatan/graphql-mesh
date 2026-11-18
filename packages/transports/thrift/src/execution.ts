@@ -1,5 +1,4 @@
 import type { GraphQLError, GraphQLSchema } from 'graphql';
-import { isEnumType } from 'graphql';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import type { Executor } from '@graphql-mesh/transport-common';
 import {
@@ -8,36 +7,12 @@ import {
   projectResultBySelectionSet,
 } from '@graphql-mesh/utils';
 import {
-  getDirective,
   getDirectiveExtensions,
   getRootTypeMap,
   type ExecutionResult,
 } from '@graphql-tools/utils';
 import { createGraphQLThriftClient, type ThriftRpcBinding } from './client.js';
 import type { GraphQLThriftAnnotations } from './types.js';
-
-/** Re-apply Thrift i32 wire values from `@enum` after SDL print / compose / restore. */
-function restoreThriftEnumValues(schema: GraphQLSchema): void {
-  for (const type of Object.values(schema.getTypeMap())) {
-    if (!isEnumType(type) || type.name.startsWith('__')) continue;
-    for (const value of type.getValues()) {
-      const enumAnnotations = getDirective(schema, value, 'enum');
-      if (!enumAnnotations?.length) continue;
-      for (const enumAnnotation of enumAnnotations) {
-        const raw = enumAnnotation?.value;
-        if (raw == null) continue;
-        const serializedValue = typeof raw === 'string' ? JSON.parse(raw) : raw;
-        value.value = serializedValue;
-        let valueLookup = (type as any)._valueLookup as Map<any, any> | undefined;
-        if (!valueLookup) {
-          valueLookup = new Map(type.getValues().map(enumValue => [enumValue.value, enumValue]));
-          (type as any)._valueLookup = valueLookup;
-        }
-        valueLookup.set(serializedValue, value);
-      }
-    }
-  }
-}
 
 export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
   const schemaDefDirectives = getDirectiveExtensions<{
@@ -47,7 +22,7 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
   if (!transportDirectives?.length) {
     throw new Error('No @transport directive found on schema definition');
   }
-  restoreThriftEnumValues(subgraph);
+  // Enum name↔i32 lives in `@thrift__rpc` `i32` + `->match` — no `@enum` restore.
   const graphqlAnnotations = transportDirectives[0];
   const client = createGraphQLThriftClient(graphqlAnnotations);
   let headers: Record<string, string> | undefined;

@@ -115,8 +115,6 @@ exports[`thrift Twitter: Twitter-schema 1`] = `
 
 directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 enum ThriftMessageType {
   CALL
   ONEWAY
@@ -137,7 +135,7 @@ type Query {
       1(double): latitude
       2(double): longitude
     }
-    5(i32): tweetType
+    5(i32): tweetType->match(["TWEET", 0], ["RETWEET", 2], ["DM", 10], ["REPLY", 11], [@, 0])
     16(string): language
   }
   """, selection: "$(bool)", messageType: CALL)
@@ -150,7 +148,7 @@ type Query {
       latitude: 1(double)
       longitude: 2(double)
     }
-    tweetType: 5(i32)
+    tweetType: 5(i32)->match([0, "TWEET"], [2, "RETWEET"], [10, "DM"], [11, "REPLY"], [@, @])
     language: 16(string)
   }
   """, messageType: CALL)
@@ -175,10 +173,10 @@ input LocationInput {
 }
 
 enum TweetType {
-  TWEET @enum(subgraph: "Twitter", value: "0")
-  RETWEET @enum(subgraph: "Twitter", value: "2")
-  DM @enum(subgraph: "Twitter", value: "10")
-  REPLY @enum(subgraph: "Twitter", value: "11")
+  TWEET
+  RETWEET
+  DM
+  REPLY
 }
 
 type TweetSearchResult {

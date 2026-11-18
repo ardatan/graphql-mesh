@@ -71,7 +71,7 @@ describe('thrift', () => {
     ).rejects.toThrow(/recursive in RPC arguments/);
   });
 
-  it('GraphQL enum internal values are Thrift integers', async () => {
+  it('GraphQL enums use member names; compact i32 leaves use ->match', async () => {
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
       subgraphName: 'Twitter',
       source: './fixtures/twitter.thrift',
@@ -82,15 +82,21 @@ describe('thrift', () => {
     });
     const tweetType = schema.getType('TweetType') as import('graphql').GraphQLEnumType;
     const values = tweetType.getValues();
-    expect(values.find(v => v.name === 'TWEET')?.value).toBe(0);
-    expect(values.find(v => v.name === 'RETWEET')?.value).toBe(2);
-    expect(values.find(v => v.name === 'DM')?.value).toBe(0xa);
-    expect(values.find(v => v.name === 'REPLY')?.value).toBe(0xb);
+    expect(values.find(v => v.name === 'TWEET')?.value).toBe('TWEET');
+    expect(values.find(v => v.name === 'RETWEET')?.value).toBe('RETWEET');
+    expect(values.find(v => v.name === 'DM')?.value).toBe('DM');
+    expect(values.find(v => v.name === 'REPLY')?.value).toBe('REPLY');
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toMatch(/RETWEET\s+@enum\([^)]*value:\s*"2"/);
+    expect(sdl).not.toMatch(/@enum\(/);
+    expect(sdl).toMatch(
+      /5\(i32\):\s*tweetType->match\(\["TWEET", 0\], \["RETWEET", 2\], \["DM", 10\], \["REPLY", 11\], \[@, 0\]\)/,
+    );
+    expect(sdl).toMatch(
+      /tweetType:\s*5\(i32\)->match\(\[0, "TWEET"\], \[2, "RETWEET"\], \[10, "DM"\], \[11, "REPLY"\], \[@, @\]\)/,
+    );
   });
 
-  it('stamps @enum wire integers on enum values for SDL restore', async () => {
+  it('does not stamp Mesh @enum on thrift enum values', async () => {
     const { getDirectiveExtensions } = await import('@graphql-tools/utils');
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
       subgraphName: 'Twitter',
@@ -102,8 +108,8 @@ describe('thrift', () => {
     });
     const tweetType = schema.getType('TweetType') as import('graphql').GraphQLEnumType;
     const retweet = tweetType.getValues().find(v => v.name === 'RETWEET')!;
-    expect(retweet.value).toBe(2);
-    expect(getDirectiveExtensions(retweet)?.enum?.[0]?.value).toBe('2');
+    expect(retweet.value).toBe('RETWEET');
+    expect(getDirectiveExtensions(retweet)?.enum).toBeUndefined();
   });
 
   it('entityMethods stamps entity: true', async () => {
@@ -403,9 +409,15 @@ describe('thrift', () => {
     ).toBe('GoSuccess');
   });
 
-  it('restores non-zero enum wire ints after SDL print/rebuild (binary)', async () => {
+  it('keeps i32->match name↔i32 table in @thrift__rpc after SDL print/rebuild', async () => {
     const { buildSchema } = await import('graphql');
-    const { getThriftExecutor } = await import('@graphql-mesh/transport-thrift');
+    const { getDirectiveExtensions } = await import('@graphql-tools/utils');
+    const { TType } = await import('@creditkarma/thrift-server-core');
+    const {
+      parseCompactArgsToTypeMap,
+      parseCompactSelection,
+      applyCompactSelection,
+    } = await import('../../../transports/thrift/src/compact-mapping.js');
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
       subgraphName: 'Twitter',
       source: './fixtures/twitter.thrift',
@@ -415,22 +427,42 @@ describe('thrift', () => {
       protocol: 'binary',
     });
     const sdl = printSchemaWithDirectives(schema);
-    // Mesh directives (@transport / @thrift__rpc / @enum) are present in SDL.
     const rebuilt = buildSchema(sdl, { assumeValidSDL: true });
-    const before = (rebuilt.getType('TweetType') as import('graphql').GraphQLEnumType)
+    const retweet = (rebuilt.getType('TweetType') as import('graphql').GraphQLEnumType)
       .getValues()
       .find(v => v.name === 'RETWEET')!;
-    // SDL print drops numeric .value — rebuild sees the member name until restore.
-    expect(before.value).toBe('RETWEET');
-    getThriftExecutor(rebuilt);
-    const after = (rebuilt.getType('TweetType') as import('graphql').GraphQLEnumType)
-      .getValues()
-      .find(v => v.name === 'RETWEET')!;
-    expect(after.value).toBe(2);
-    const dm = (rebuilt.getType('TweetType') as import('graphql').GraphQLEnumType)
-      .getValues()
-      .find(v => v.name === 'DM')!;
-    expect(dm.value).toBe(0xa);
+    // GraphQL stays on member names; wire ints live in compact ->match arms.
+    expect(retweet.value).toBe('RETWEET');
+    const postTweet = rebuilt.getQueryType()!.getFields().postTweet;
+    const rpc = getDirectiveExtensions(postTweet)?.thrift__rpc?.[0];
+    expect(rpc?.args).toMatch(
+      /tweetType->match\(\["TWEET", 0\], \["RETWEET", 2\], \["DM", 10\], \["REPLY", 11\], \[@, 0\]\)/,
+    );
+    const argsMap = parseCompactArgsToTypeMap(rpc.args);
+    const tweet = argsMap.tweet;
+    expect(tweet.type).toBe(TType.STRUCT);
+    if (tweet.type !== TType.STRUCT) throw new Error('expected STRUCT');
+    const tweetTypeField = tweet.fields.tweetType;
+    expect(tweetTypeField.type).toBe(TType.ENUM);
+    expect((tweetTypeField as any).values).toEqual({
+      TWEET: 0,
+      RETWEET: 2,
+      DM: 10,
+      REPLY: 11,
+    });
+    // selection leaf: wire i32 → GraphQL name via the same ->match shape.
+    const searchRpc = getDirectiveExtensions(
+      rebuilt.getQueryType()!.getFields().searchTweets,
+    )?.thrift__rpc?.[0];
+    expect(searchRpc?.selection).toMatch(
+      /tweetType:\s*5\(i32\)->match\(\[0, "TWEET"\], \[2, "RETWEET"\]/,
+    );
+    const leaf = parseCompactSelection(
+      'tweetType: 5(i32)->match([0, "TWEET"], [2, "RETWEET"], [10, "DM"], [11, "REPLY"], [@, @])',
+    );
+    expect(applyCompactSelection(leaf, new Map([[5, 2]]))).toEqual({
+      tweetType: 'RETWEET',
+    });
   });
 
   it('binary list<map<string,struct>> args keep MAP value field descriptors', async () => {

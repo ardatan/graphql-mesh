@@ -38,7 +38,7 @@ The old surface stamped opaque `@fieldTypeMap` bags and a large `@transport.opti
 - Transport executes `@thrift__rpc` by field id (no `topTypeMap`). Compact parse keeps `map<*, struct>` as MAP (`keyType` + `valType.fields`), not STRUCT, and `list/set<map<*, struct>>` as LIST/SET → MAP → STRUCT so value field ids (e.g. `7: value`) survive.
 - Example/e2e calculator codegen runs `scripts/patch-thrift-oneway-zip.mjs` after `@creditkarma/thrift-typescript` so oneway `process_zip` keeps an empty body (upstream 3.7.6 still emits REPLY/EXCEPTION).
 - Service mappings and typedef aliases resolve only after every named type is registered (forward refs resolve correctly).
-- When the IDL declares enums, GraphQL members keep Thrift **i32** wire values via `@enum(value:)` through SDL print/compose; the thrift executor restores them (required on binary after rebuild). Schemas with no enums omit the directive. JSON selections still bake name <-> i32 `->match` independently. Recursive struct **arguments** fail at generate (no silent empty truncation).
+- GraphQL enum members always use **names**. Binary uses plain `i32` leaves with Connectors-style `->match` on `@thrift__rpc` args/selection (same shape as TJSON `@connect`); no Mesh `@enum` on thrift. Recursive struct **arguments** fail at generate (no silent empty truncation).
 
 #### JSON — `protocol: 'json'`
 
@@ -97,6 +97,6 @@ add(request: AddRequestInput): Int @thrift__rpc(
 ### Packages
 
 - `@omnigraph/thrift` — loader emit; `protocol`, `entityMethods`, `ignoreExceptions`, `serviceName`
-- `@graphql-mesh/transport-thrift` — execute compact mapping, ONEWAY, throws unions, `@enum` restore
+- `@graphql-mesh/transport-thrift` — execute compact mapping (incl. `i32->match` coerce), ONEWAY, throws unions
 - `@graphql-mesh/transport-rest` — Connectors helpers for TJSON / `$()` / match wildcards
 - `@graphql-mesh/fusion-composition` — `$args` rewrite for `@thrift__rpc` and HTTP paths
