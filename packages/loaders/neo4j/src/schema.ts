@@ -52,32 +52,40 @@ export interface LoadGraphQLSchemaFromNeo4JOpts {
    */
   database?: string;
   /**
-   * Driver authentication. Also embedded under `@transport.options.auth` for runtime.
+   * Driver authentication. Also embedded under `@transport.options.auth` for runtime so the
+   * executor reconnects with the same credentials. Supports basic, Kerberos, bearer, and custom
+   * schemes via {@link Neo4JAuthOpts}.
    *
+   * @default unauthenticated (`scheme: "none"`) when omitted
    * @example { type: 'basic', username: 'neo4j', password: 'secret' }
    */
   auth?: Neo4JAuthOpts;
   /**
-   * Mesh PubSub. When provided with a caller-supplied {@link driver}, the loader keeps
-   * that driver open so subscription features can share it; otherwise a temporary
-   * introspect driver is closed after schema load.
+   * Mesh PubSub used at load time. When provided together with a caller-supplied {@link driver},
+   * the loader keeps that driver open so Neo4j GraphQL subscription features (CDC / reactive)
+   * can share it across compose and runtime. Without pubsub, a temporary introspect driver is
+   * closed after schema load. Omit when load-time Neo4j subscription wiring is not needed.
    */
   pubsub?: PubSub;
   /**
-   * Optional logger (compose CLI injects one via {@link loadNeo4JSubgraph}).
+   * Optional logger for driver construction and compose-time diagnostics. The compose CLI
+   * injects one via {@link loadNeo4JSubgraph}; when set, driver logs are forwarded at matching
+   * levels through {@link getDriverFromOpts}.
    */
   log?: Logger;
   /**
-   * Optional existing Neo4j driver. When omitted, one is created from {@link endpoint}
-   * and {@link auth} for introspection / schema build.
+   * Optional existing Neo4j driver reused for introspection / schema build (for example a
+   * process-wide pool shared with the runtime executor). When omitted, one is created from
+   * {@link endpoint} and {@link auth} and closed after load unless {@link pubsub} keeps it open.
    *
-   * @example sharedDriver
+   * @default created from endpoint/auth when omitted
    */
   driver?: Driver;
   /**
    * Author-written Neo4j GraphQL SDL (`@node`, `@relationship`, `@cypher`, `@alias`, …).
-   * When set, skips database introspection via `@neo4j/introspector`.
-   * Prefer `subgraph:` on Neo4j directives when composing multiple Neo4j sources;
+   * When set, skips database introspection via `@neo4j/introspector` and builds the executable
+   * schema from these definitions instead. When omitted, the loader introspects the connected
+   * database. Prefer `subgraph:` on Neo4j directives when composing multiple Neo4j sources;
    * the loader stamps it when missing.
    *
    * @example

@@ -676,7 +676,7 @@ describe('extractNeo4jModelTypeDefs', () => {
         nickname: String!
       }
 
-      type Movie implements Detailed @node(subgraph: "Movies") {
+      type Movie implements Detailed & Named @node(subgraph: "Movies") {
         name: String! @alias(subgraph: "People", property: "full_name")
         title: String!
         featured: Person! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
@@ -696,7 +696,36 @@ describe('extractNeo4jModelTypeDefs', () => {
     // Child interface must also drop the edge to omitted Named.
     expect(emptyIfaceSdl).toMatch(/interface Detailed \{/);
     expect(emptyIfaceSdl).not.toMatch(/interface Detailed implements Named/);
-    expect(emptyIfaceSdl).toMatch(/type Movie implements Detailed/);
+    // Spec requires Movie to declare Named with Detailed; after empty Named projection both edges drop.
+    expect(emptyIfaceSdl).toMatch(/type Movie implements Detailed(?! &)/);
+    expect(emptyIfaceSdl).not.toMatch(/type Movie implements[^{]*\bNamed\b/);
+
+    // Retained interface must still conform to surviving parent fields after projection.
+    const brokenChildIface = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
+
+      interface Named {
+        name: String!
+      }
+
+      interface Detailed implements Named {
+        name: String! @alias(subgraph: "People", property: "full_name")
+        title: String!
+      }
+
+      type Movie implements Detailed & Named @node(subgraph: "Movies") {
+        name: String!
+        title: String!
+      }
+
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    expect(() => extractNeo4jModelTypeDefs(brokenChildIface, 'Movies')).toThrow(
+      /Detailed.*Named|missing name/i,
+    );
 
     // Orphaned @relationshipProperties spatial field must not drop authored Point for Query.pin.
     const orphanedRelPropsPoint = parse(/* GraphQL */ `

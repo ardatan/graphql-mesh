@@ -24,13 +24,17 @@ export interface Neo4JDriverOpts {
    */
   endpoint: string;
   /**
-   * Driver authentication. Omit for unauthenticated local setups.
+   * Driver authentication. Omit for unauthenticated local setups (for example a local Neo4j
+   * without credentials). Maps through {@link getAuthFromOpts} to a `neo4j-driver` auth token.
    *
+   * @default unauthenticated (`scheme: "none"`) when omitted
    * @example { type: 'basic', username: 'neo4j', password: 'secret' }
    */
   auth?: Neo4JAuthOpts;
   /**
-   * Optional Mesh/Hive logger; when set, driver logs are forwarded at matching levels.
+   * Optional Mesh/Hive logger. When set, `neo4j-driver` logging is bridged so driver messages
+   * are emitted at matching logger levels (`debug` / `info` / `warn` / `error`). When omitted,
+   * the driver is created without a logging bridge.
    */
   log?: Logger;
 }

@@ -4,8 +4,8 @@ import neo4j, { type AuthToken } from 'neo4j-driver';
  * Neo4j driver authentication for Mesh loaders and the Neo4j transport.
  *
  * Maps to `neo4j-driver` auth tokens (`neo4j.auth.basic`, `.kerberos`, `.bearer`, `.custom`).
- * When omitted, the driver uses an unauthenticated (`scheme: "none"`) token.
  *
+ * @default unauthenticated (`scheme: "none"`) when omitted at the driver/loader boundary
  * @example
  * ```ts
  * const auth: Neo4JAuthOpts = {
@@ -50,7 +50,8 @@ export interface Neo4JBasicAuth {
    */
   password: string;
   /**
-   * Optional auth realm (passed through to the driver).
+   * Optional auth realm forwarded to `neo4j.auth.basic` (for example `"native"` or an LDAP realm).
+   * Omit when the Neo4j auth provider does not require a realm.
    *
    * @example 'native'
    */
@@ -156,7 +157,9 @@ export interface Neo4JCustomAuth {
    */
   scheme: string;
   /**
-   * Optional scheme-specific parameters forwarded to the driver.
+   * Optional scheme-specific parameters forwarded to `neo4j.auth.custom` (for example LDAP DN
+   * attributes or plugin-specific key/value pairs). Omit when the custom scheme needs only
+   * principal, credentials, realm, and scheme.
    *
    * @example { dn: 'cn=mesh,dc=example,dc=com' }
    */

@@ -51,18 +51,22 @@ export interface Neo4JExecutorOpts {
   schema: GraphQLSchema;
   /**
    * Optional shared driver. When omitted, a driver is created from `@transport` location/auth
-   * and closed when the executor is disposed.
+   * and closed when the executor is disposed. Caller-supplied drivers are left open for their
+   * owner to dispose so multiple executors (or compose + runtime) can share one pool safely.
    *
-   * @example driverFromPool
+   * @default created from `@transport` location/auth when omitted
    */
   driver?: Driver;
   /**
-   * Mesh PubSub used to wire Neo4j GraphQL subscriptions (CDC / reactive features).
-   * Omit when the gateway does not need Neo4j subscriptions.
+   * Mesh PubSub used to wire Neo4j GraphQL subscriptions (CDC / reactive features) into the
+   * rebuilt `@neo4j/graphql` schema. Omit when the gateway does not need Neo4j subscriptions;
+   * the executor then builds the schema without subscription features.
    */
   pubsub?: PubSub;
   /**
-   * Optional logger for driver construction and transport diagnostics.
+   * Optional logger for driver construction and transport diagnostics. When the executor creates
+   * its own driver, this logger is passed through {@link getDriverFromOpts} so driver logs are
+   * forwarded at matching levels.
    */
   log?: Logger;
 }
@@ -987,9 +991,26 @@ export function extractNeo4jModelTypeDefs(
               def.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
             def.interfaces?.length
           ) {
-            const nextInterfaces = def.interfaces.filter(iface =>
-              interfaceHasSurvivingFields(iface.name.value),
-            );
+            const projected = new Set(fields.map(field => field.name.value));
+            const nextInterfaces = [];
+            for (const iface of def.interfaces) {
+              const ifaceName = iface.name.value;
+              if (!interfaceHasSurvivingFields(ifaceName)) {
+                continue;
+              }
+              const projectedIfaceFields = keepTypeNames.has(ifaceName)
+                ? retainedFieldsByType.get(ifaceName) || []
+                : survivingAuthoredFields(ifaceName);
+              const missing = projectedIfaceFields
+                .map(field => field.name.value)
+                .filter(name => !projected.has(name));
+              if (missing.length) {
+                throw new Error(
+                  `Neo4j model extract: type "${def.name.value}" cannot implement "${ifaceName}" after ownership filtering (missing ${missing.join(', ')})`,
+                );
+              }
+              nextInterfaces.push(iface);
+            }
             if (nextInterfaces.length !== def.interfaces.length) {
               return [{ ...def, fields: [...fields], interfaces: nextInterfaces } as typeof def];
             }
@@ -1067,6 +1088,7 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
     options: { database, auth },
   } = transportDirectives[0];
   let driver = opts.driver;
+  const closeDriverOnDispose = !driver;
   if (!driver) {
     driver = getDriverFromOpts({
       endpoint,
@@ -1099,7 +1121,8 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
       },
     });
   }
-  neo4JExecutor[DisposableSymbols.asyncDispose] = () => driver.close();
+  neo4JExecutor[DisposableSymbols.asyncDispose] = () =>
+    closeDriverOnDispose ? driver.close() : Promise.resolve();
   return neo4JExecutor as DisposableExecutor;
 }
 
@@ -1118,16 +1141,20 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
  */
 export interface GetExecutableSchemaFromTypeDefs {
   /**
-   * Connected Neo4j driver passed to `Neo4jGraphQL`.
+   * Connected Neo4j driver passed to `Neo4jGraphQL` for query execution and (when enabled)
+   * subscription features.
    */
   driver: Driver;
   /**
-   * When set, enables Neo4j GraphQL subscription features backed by Mesh PubSub.
+   * When set, enables Neo4j GraphQL subscription features (CDC / reactive) backed by Mesh PubSub
+   * event emit / publish adapters. Omit to leave subscriptions disabled in the built schema.
    */
   pubsub?: PubSub;
   /**
-   * Neo4j GraphQL type definitions (string or DocumentNode). Mesh `@transport` / subgraph
-   * args are stripped before Neo4j validates the SDL.
+   * Neo4j GraphQL type definitions (string or DocumentNode) fed to `Neo4jGraphQL`.
+   * Mesh `@transport` / `subgraph:` args are stripped only for `DocumentNode` input; string SDL
+   * is passed through unchanged. Supply stamped Mesh directives as a `DocumentNode` (or normalize
+   * strings before calling) so Neo4j does not see Mesh-only arguments.
    *
    * @example 'type Movie @node { title: String! }'
    */
