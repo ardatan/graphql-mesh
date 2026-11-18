@@ -1,0 +1,314 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`gRPC Example fetches movies by cast as a subscription correctly: 0 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": {
+      "cast": [
+        "Tom Cruise",
+        "Simon Pegg",
+        "Jeremy Renner",
+      ],
+      "name": "Mission: Impossible Rogue Nation",
+      "rating": 0.9700000286102295,
+      "year": 2015,
+    },
+  },
+}
+`;
+
+exports[`gRPC Example fetches movies by cast as a subscription correctly: 1 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": {
+      "cast": [
+        "Tom Cruise",
+        "Simon Pegg",
+        "Henry Cavill",
+      ],
+      "name": "Mission: Impossible - Fallout",
+      "rating": 0.9300000071525574,
+      "year": 2018,
+    },
+  },
+}
+`;
+
+exports[`gRPC Example generates the correct schema 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@protobuf__rpc", "@transport"]) @transport(subgraph: "movies", kind: "protobuf", location: "localhost:<movies_port>", options: {metaData: [["someKey", "someValue"], ["connection-type", "{context.headers.connection}"]]}) {
+  query: Query
+  subscription: Subscription
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+scalar join__FieldSet
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  MOVIES @join__graph(name: "movies", url: "localhost:<movies_port>")
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+directive @stream(if: Boolean! = true, label: String, initialCount: Int = 0) on FIELD
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt @join__type(graph: MOVIES)
+
+scalar TransportOptions @join__type(graph: MOVIES)
+
+type Query @join__type(graph: MOVIES) {
+  """get all movies"""
+  exampleGetMovies(input: MovieRequest_Input): MoviesResult @protobuf__rpc(subgraph: "movies", service: "Example", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@Movie {\\n  1(string): name\\n  2(int64): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@Movie {\\n  1(string): name\\n  2(int64): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@Movie): result\\n", stream: false)
+  """search movies by the name of the cast"""
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie] @protobuf__rpc(subgraph: "movies", service: "Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int64): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """get all movies"""
+  anotherExampleGetMovies(input: MovieRequest_Input): MoviesResult @protobuf__rpc(subgraph: "movies", service: "AnotherExample", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@Movie {\\n  1(string): name\\n  2(int64): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@Movie {\\n  1(string): name\\n  2(int64): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@Movie): result\\n", stream: false)
+  """search movies by the name of the cast"""
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie] @protobuf__rpc(subgraph: "movies", service: "AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int64): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+"""movie result message, contains list of movies"""
+type MoviesResult @join__type(graph: MOVIES) {
+  """list of movies"""
+  result: [Movie]
+}
+
+"""movie message payload"""
+type Movie @join__type(graph: MOVIES) {
+  name: String
+  year: BigInt
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp
+  genre: Genre
+}
+
+type google__protobuf__Timestamp @join__type(graph: MOVIES) {
+  seconds: BigInt
+  nanos: Int
+}
+
+type Subscription @join__type(graph: MOVIES) {
+  """search movies by the name of the cast"""
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie @protobuf__rpc(subgraph: "movies", service: "Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int64): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """search movies by the name of the cast"""
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie @protobuf__rpc(subgraph: "movies", service: "AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int64): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+enum Genre @join__type(graph: MOVIES) {
+  UNSPECIFIED @join__enumValue(graph: MOVIES)
+  ACTION @join__enumValue(graph: MOVIES)
+  DRAMA @join__enumValue(graph: MOVIES)
+}
+
+input MovieRequest_Input @join__type(graph: MOVIES) {
+  movie: Movie_Input
+}
+
+"""movie message payload"""
+input Movie_Input @join__type(graph: MOVIES) {
+  name: String
+  year: BigInt
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp_Input
+  genre: Genre
+}
+
+input google__protobuf__Timestamp_Input @join__type(graph: MOVIES) {
+  seconds: BigInt
+  nanos: Int
+}
+
+input SearchByCastRequest_Input @join__type(graph: MOVIES) {
+  castName: String
+}
+"
+`;
+
+exports[`gRPC Example gets empty movies correctly: get-empty-movies-grpc-example-result 1`] = `
+{
+  "data": {
+    "exampleGetMovies": {
+      "result": [],
+    },
+  },
+}
+`;
+
+exports[`gRPC Example gets movies correctly: get-movies-grpc-example-result 1`] = `
+{
+  "data": {
+    "exampleGetMovies": {
+      "result": [
+        {
+          "cast": [
+            "Leonardo DiCaprio",
+            "Jonah Hill",
+            "Margot Robbie",
+          ],
+          "name": "The Wolf of Wall Street",
+          "rating": 0.7799999713897705,
+          "time": {
+            "seconds": 1608422400000,
+          },
+          "year": 2013,
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 0 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [],
+  },
+  "hasNext": true,
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 1 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 2015,
+      },
+    ],
+  },
+  "hasNext": true,
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 2 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 2015,
+      },
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Henry Cavill",
+        ],
+        "name": "Mission: Impossible - Fallout",
+        "rating": 0.9300000071525574,
+        "year": 2018,
+      },
+    ],
+  },
+  "hasNext": true,
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 3 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 2015,
+      },
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Henry Cavill",
+        ],
+        "name": "Mission: Impossible - Fallout",
+        "rating": 0.9300000071525574,
+        "year": 2018,
+      },
+      null,
+    ],
+  },
+  "hasNext": true,
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 4 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 2015,
+      },
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Henry Cavill",
+        ],
+        "name": "Mission: Impossible - Fallout",
+        "rating": 0.9300000071525574,
+        "year": 2018,
+      },
+      null,
+    ],
+  },
+  "hasNext": false,
+}
+`;

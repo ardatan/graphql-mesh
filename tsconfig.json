@@ -44,6 +44,8 @@
       "@graphql-mesh/fusion-composition": ["./packages/fusion/composition/src/index.ts"],
       "@graphql-mesh/compose-cli": ["./packages/compose-cli/src/index.ts"],
       "@graphql-mesh/transport-*": ["./packages/transports/*/src/index.ts"],
+      "@graphql-mesh/transport-protobuf": ["./packages/transports/protobuf/src/index.ts"],
+      "@omnigraph/protobuf": ["./packages/loaders/protobuf/src/index.ts"],
       "@graphql-mesh/graphql": ["./packages/legacy/handlers/graphql/src/index.ts"],
       "@graphql-mesh/grpc": ["./packages/legacy/handlers/grpc/src/index.ts"],
       "@graphql-mesh/json-schema": ["./packages/legacy/handlers/json-schema/src/index.ts"],

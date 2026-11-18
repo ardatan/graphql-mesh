@@ -62,20 +62,23 @@
 "@graphql-mesh/transform-transfer-schema": minor
 "@graphql-mesh/transform-type-merging": minor
 "@graphql-mesh/transport-grpc": minor
+"@graphql-mesh/transport-protobuf": minor
 "@graphql-mesh/transport-neo4j": minor
 "@graphql-mesh/transport-connect": minor
+"@graphql-mesh/transport-sql": minor
 "@graphql-mesh/transport-thrift": minor
 "@graphql-mesh/tuql": minor
 "@graphql-mesh/types": minor
 "@graphql-mesh/urql-exchange": minor
 "@graphql-mesh/utils": minor
-"@omnigraph/grpc": minor
+"@omnigraph/protobuf": minor
 "@omnigraph/json-schema": minor
 "@omnigraph/neo4j": minor
 "@omnigraph/odata": minor
 "@omnigraph/openapi": minor
 "@omnigraph/raml": minor
 "@omnigraph/soap": minor
+"@omnigraph/sql": minor
 "@omnigraph/thrift": minor
 "json-machete": minor
 ---

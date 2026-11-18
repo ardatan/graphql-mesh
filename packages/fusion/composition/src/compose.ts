@@ -1,18 +1,19 @@
 import {
   concatAST,
   getNamedType,
+  getNullableType,
   GraphQLError,
   GraphQLSchema,
+  isListType,
   isNonNullType,
   isObjectType,
   isSpecifiedScalarType,
   parse,
-} from 'graphql';
-import type {
-  DirectiveNode,
-  GraphQLArgumentConfig,
-  GraphQLFieldConfig,
-  GraphQLFieldConfigArgumentMap,
+  type DirectiveNode,
+  type GraphQLArgumentConfig,
+  type GraphQLFieldConfig,
+  type GraphQLFieldConfigArgumentMap,
+  type GraphQLType,
 } from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
@@ -30,6 +31,7 @@ import {
   ensureNonResolvableKeysForEntityStubs,
   hasEquivalentTypeConnect,
   toTypeLevelEntityConnect,
+  toTypeLevelEntityProtobufRpc,
 } from './connect-entity.js';
 import { finalizeConnectorsSupergraph } from './connectors-supergraph.js';
 import {
@@ -106,6 +108,24 @@ export function isFederationConnectorsSubgraph(schema: GraphQLSchema): boolean {
 /** @deprecated Use {@link isFederationConnectorsSubgraph}. */
 export const isApolloConnectorsSubgraph = isFederationConnectorsSubgraph;
 
+/**
+ * Protobuf RPC subgraphs (`@transport(kind: "protobuf")`) follow the Connectors transform
+ * posture: rename/naming-convention rewrite `@protobuf__rpc(args|selection)` binds instead
+ * of stamping Mesh `@source` / `@meshSource`, and semantic conventions use `@key` +
+ * `entity: true` instead of Mesh `@merge`.
+ */
+export function isProtobufRpcSubgraph(schema: GraphQLSchema): boolean {
+  const transports = getDirectiveExtensions(schema)?.transport || [];
+  return transports.some(
+    (transport: { kind?: string }) => transport?.kind === 'protobuf' || transport?.kind === 'grpc',
+  );
+}
+
+/** True when transforms should rewrite directive mappings instead of Mesh `@source`. */
+export function skipsMeshSourceAnnotations(schema: GraphQLSchema): boolean {
+  return isFederationConnectorsSubgraph(schema) || isProtobufRpcSubgraph(schema);
+}
+
 export function getAnnotatedSubgraphs(
   subgraphs: SubgraphConfig[],
   options: GetAnnotatedSubgraphsOptions = {},
@@ -116,7 +136,7 @@ export function getAnnotatedSubgraphs(
     isFederationConnectorsSubgraph(schema),
   );
   const compositionHasMeshStitchingSource = subgraphs.some(
-    ({ schema, transforms }) => !isFederationConnectorsSubgraph(schema) && !!transforms?.length,
+    ({ schema, transforms }) => !skipsMeshSourceAnnotations(schema) && !!transforms?.length,
   );
 
   const annotatedSubgraphs: ServiceDefinition[] = [];
@@ -154,9 +174,9 @@ export function getAnnotatedSubgraphs(
     }
 
     let mergeDirectiveUsed = false;
-    // Stitching source is only for non-connectors transforms. Connectors transforms
-    // rewrite `@connect` selection/http instead of adding Mesh source annotations.
-    const sourceDirectiveUsed = !isConnectorsSubgraph && transforms?.length > 0;
+    // Stitching source is only for subgraphs that do not rewrite directive mappings
+    // (Connectors `@connect`, protobuf `@protobuf__rpc`). Those skip Mesh `@source`.
+    const sourceDirectiveUsed = !skipsMeshSourceAnnotations(schema) && transforms?.length > 0;
     // When Connectors are in the same composition, alias to `@meshSource` so Guild
     // does not treat Mesh + Apollo `@source` as one composed directive.
     const aliasMeshSource = sourceDirectiveUsed && compositionHasConnectors;
@@ -425,8 +445,8 @@ export function getAnnotatedSubgraphs(
           );
         }
       }
-      // Semantic conventions (ById/ByIds) after transforms — including connectors.
-      // Connectors with `entity: true` skip Mesh `@merge` inside the helper; `@key` still lands.
+      // Semantic conventions (ById/ByIds) after transforms — including connectors / protobuf.
+      // `@connect` / `@protobuf__rpc` with `entity: true` skip Mesh `@merge`; `@key` still lands.
       transformedSubgraph = mapSchema(transformedSubgraph, {
         [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
           const directiveExtensions = getDirectiveExtensions(fieldConfig);
@@ -815,16 +835,28 @@ function addAnnotationsForSemanticConventions({
       const pluralTypeName = pluralize(type.name);
       if (arg) {
         const typeDirectives = getDirectiveExtensions(type);
-        const ensureKey = () => {
+        const ensureKey = (opts?: { resolvable?: boolean }) => {
           typeDirectives.key ||= [];
-          if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
+          const existing = typeDirectives.key.find((key: any) => key.fields === fieldName);
+          if (!existing) {
             typeDirectives.key.push({
               fields: fieldName,
+              ...(opts?.resolvable === false ? { resolvable: false } : {}),
             });
-            const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
-            typeExtensions.directives = typeDirectives;
+          } else if (opts?.resolvable !== false && existing.resolvable === false) {
+            // Singular entity resolver exists — upgrade a previously batch-stamped non-resolvable key.
+            delete existing.resolvable;
           }
+          const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
+          typeExtensions.directives = typeDirectives;
         };
+        // Non-resolvable @key is only for Connectors/protobuf batch RPCs that lack a singular
+        // entity resolver. Ordinary Mesh `@merge` batch fields keep the default resolvable key.
+        const isConnectOrProtobufField = !!(
+          directiveExtensions.connect?.length ||
+          directiveExtensions.protobuf__rpc?.length ||
+          directiveExtensions.protobufRpc?.length
+        );
         // Connectors entity patterns
         // (https://www.apollographql.com/docs/graphos/connectors/entities/patterns):
         // - arg name === key field → Query `@connect(entity: true)`
@@ -832,18 +864,38 @@ function addAnnotationsForSemanticConventions({
         //   `$this.<keyField>` (entity:true would be invalid / ENTITY_RESOLVER_ARGUMENT_MISMATCH)
         // Hive resolves these via REST transport `Query._entities` → resolveReference;
         // no Mesh `@merge` needed for Connectors subgraphs.
-        const markConnectEntityOrMerge = () => {
+        /** True when this call stamped `entity: true` or a type-level entity resolver. */
+        const markConnectEntityOrMerge = (): boolean => {
+          // Batch list args (e.g. `id: [ID!]!` / `ids: [ID!]!`) must not get
+          // `entity: true` or `$this.<scalarKey>` — resolveReference supplies a scalar.
+          const batchListArg = isBatchListArgType(arg.type);
           if (directiveExtensions.connect?.length) {
             const alreadyEntity = directiveExtensions.connect.some((c: any) => c?.entity === true);
             if (alreadyEntity) {
-              return;
+              return true;
             }
+            if (batchListArg) {
+              return false;
+            }
+            // Entity representation only carries key fields. Require every non-null arg
+            // to be that key (id-only). Extra required args (e.g. locale) cannot be filled.
+            const requiredArgNames = argEntries
+              .filter(([, a]) => isNonNullType(a.type))
+              .map(([name]) => name);
+            const requiredArgsAreKeyOnly =
+              requiredArgNames.length > 0 && requiredArgNames.every(name => name === argName);
             if (argName === fieldName) {
+              if (!requiredArgsAreKeyOnly) {
+                return false;
+              }
               directiveExtensions.connect = directiveExtensions.connect.map((c: any) => ({
                 ...c,
                 entity: true,
               }));
-              return;
+              return true;
+            }
+            if (!requiredArgsAreKeyOnly) {
+              return false;
             }
             // Type-level entity connector: `/pet/{$args.petId}` → `/pet/{$this.id}`
             const typeConnects = directiveExtensions.connect.map((c: any) =>
@@ -857,15 +909,75 @@ function addAnnotationsForSemanticConventions({
             }
             const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
             typeExtensions.directives = typeDirectives;
-            return;
+            return true;
           }
-          // Non-Connectors subgraphs still use Mesh `@merge` for type merging.
+          const protobufKey = directiveExtensions.protobuf__rpc?.length
+            ? 'protobuf__rpc'
+            : directiveExtensions.protobufRpc?.length
+              ? 'protobufRpc'
+              : undefined;
+          if (protobufKey) {
+            const alreadyEntity = directiveExtensions[protobufKey].some(
+              (c: any) => c?.entity === true,
+            );
+            if (alreadyEntity) {
+              return true;
+            }
+            if (batchListArg) {
+              return false;
+            }
+            // Entity representation only carries key fields. Require every non-null arg
+            // to be that key (id-only). Extra required args (e.g. locale) cannot be filled.
+            const requiredArgNames = argEntries
+              .filter(([, a]) => isNonNullType(a.type))
+              .map(([name]) => name);
+            const requiredArgsAreKeyOnly =
+              requiredArgNames.length > 0 && requiredArgNames.every(name => name === argName);
+            if (argName === fieldName) {
+              if (requiredArgsAreKeyOnly) {
+                directiveExtensions[protobufKey] = directiveExtensions[protobufKey].map(
+                  (c: any) => ({
+                    ...c,
+                    entity: true,
+                  }),
+                );
+                return true;
+              }
+              // Extra required args: leave field-level RPC as-is (no entity: true / type-level).
+              return false;
+            }
+            if (!requiredArgsAreKeyOnly) {
+              return false;
+            }
+            // Type-level entity RPC: rewrite key arg binds → `$this.<keyField>`.
+            const typeRpcs = directiveExtensions[protobufKey].map((c: any) =>
+              toTypeLevelEntityProtobufRpc(c, argName, fieldName),
+            );
+            typeDirectives[protobufKey] ||= [];
+            for (const tr of typeRpcs) {
+              if (
+                !typeDirectives[protobufKey].some(
+                  (existing: any) =>
+                    existing?.service === tr?.service &&
+                    existing?.method === tr?.method &&
+                    existing?.args === tr?.args,
+                )
+              ) {
+                typeDirectives[protobufKey].push(tr);
+              }
+            }
+            const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
+            typeExtensions.directives = typeDirectives;
+            return true;
+          }
+          // Other non-Connectors subgraphs still use Mesh `@merge` for type merging.
           directiveExtensions.merge ||= [];
           directiveExtensions.merge.push({
             subgraph: subgraphName,
             keyField: fieldName,
             keyArg: argName,
           });
+          return true;
         };
         switch (queryFieldNameSnakeCase) {
           case snakeCase(type.name):
@@ -875,8 +987,16 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(`get_${type.name}_by_${fieldName}`):
           case snakeCase(`${type.name}_by_${fieldName}`): {
             if (isNonNullType(arg.type)) {
-              markConnectEntityOrMerge();
-              ensureKey();
+              const batchListArg = isBatchListArgType(arg.type);
+              const hasSingularEntity = markConnectEntityOrMerge();
+              // Only advertise a resolvable @key when a singular entity resolver exists.
+              // Batch keys and protobuf/Connect fields that could not become entity stay
+              // non-resolvable so `_entities` is not claimed without a usable resolver.
+              ensureKey(
+                isConnectOrProtobufField && (batchListArg || !hasSingularEntity)
+                  ? { resolvable: false }
+                  : undefined,
+              );
             }
             break;
           }
@@ -886,8 +1006,16 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(`get_${pluralTypeName}_by_${pluralFieldName}`):
           case snakeCase(`${pluralTypeName}_by_${pluralFieldName}`):
           case snakeCase(`${pluralTypeName}_by_${pluralFieldName}_list`): {
-            markConnectEntityOrMerge();
-            ensureKey();
+            const batchListArg = isBatchListArgType(arg.type);
+            const hasSingularEntity = markConnectEntityOrMerge();
+            // Batch Connectors/protobuf Query fields keep field-level RPC only; a resolvable
+            // @key would claim a missing singular entity resolver for `_entities`. Mesh `@merge`
+            // batch fields still use the default resolvable key.
+            ensureKey(
+              isConnectOrProtobufField && (batchListArg || !hasSingularEntity)
+                ? { resolvable: false }
+                : undefined,
+            );
             break;
           }
         }
@@ -934,4 +1062,8 @@ function addAnnotationsForSemanticConventions({
       */
     }
   }
+}
+
+function isBatchListArgType(argType: GraphQLType): boolean {
+  return isListType(getNullableType(argType));
 }

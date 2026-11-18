@@ -1,0 +1,156 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`gRPC Multiple composes 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@protobuf__rpc", "@transport"]) @transport(subgraph: "Pets", kind: "protobuf", location: "localhost:<Pets_port>") @transport(subgraph: "Stores", kind: "protobuf", location: "localhost:<Stores_port>") {
+  query: Query
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+scalar join__FieldSet
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  PETS @join__graph(name: "Pets", url: "localhost:<Pets_port>")
+  STORES @join__graph(name: "Stores", url: "localhost:<Stores_port>")
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+directive @stream(if: Boolean! = true, label: String, initialCount: Int = 0) on FIELD
+
+"""Request to get all pet stores"""
+scalar pets__Empty_Input @join__type(graph: PETS) @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+scalar TransportOptions @join__type(graph: PETS) @join__type(graph: STORES)
+
+"""Request to get all pet stores"""
+scalar petstore__Empty_Input @join__type(graph: STORES) @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type Query @join__type(graph: PETS) @join__type(graph: STORES) {
+  GetAllPets(input: pets__Empty_Input): pets__Pets @protobuf__rpc(subgraph: "Pets", service: "pets.PetService", method: "GetAllPets", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@pets_Pet {\\n  1(int32): id\\n  2(string): name\\n}\\n  1(repeated message@pets_Pet): pets\\n", stream: false) @join__field(graph: PETS)
+  GetAllPetStores(input: petstore__Empty_Input): petstore__PetStoreList @protobuf__rpc(subgraph: "Stores", service: "petstore.PetStoreService", method: "GetAllPetStores", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@petstore_PetStore {\\n  1(int32): id\\n  2(string): name\\n  3(int32): location\\n  4(repeated int32): petsForSale\\n}\\n  1(repeated message@petstore_PetStore): petStores\\n", stream: false) @join__field(graph: STORES)
+  GetPetStorePets(input: petstore__PetStore_Input): petstore__PetStore @protobuf__rpc(subgraph: "Stores", service: "petstore.PetStoreService", method: "GetPetStorePets", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(int32): input.id\\n  2(string): input.name\\n  3(int32): input.location\\n  4(repeated int32): input.petsForSale\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n  1(int32): id\\n  2(string): name\\n  3(int32): location\\n  4(repeated int32): petsForSale\\n", stream: false) @join__field(graph: STORES)
+}
+
+"""Response with a list of pet stores"""
+type pets__Pets @join__type(graph: PETS) {
+  pets: [pets__Pet]
+}
+
+"""Message for pet store information"""
+type pets__Pet @join__type(graph: PETS) {
+  id: Int
+  name: String
+}
+
+"""Response with a list of pet stores"""
+type petstore__PetStoreList @join__type(graph: STORES) {
+  petStores: [petstore__PetStore]
+}
+
+"""Message for pet store information"""
+type petstore__PetStore @join__type(graph: STORES) {
+  id: Int
+  name: String
+  location: Int
+  petsForSale: [Int]
+}
+
+"""Message for pet store information"""
+input petstore__PetStore_Input @join__type(graph: STORES) {
+  id: Int
+  name: String
+  location: Int
+  petsForSale: [Int]
+}
+"
+`;
+
+exports[`gRPC Multiple works: GetAllPetStores 1`] = `
+{
+  "data": {
+    "GetAllPetStores": {
+      "petStores": [
+        {
+          "id": 1,
+          "name": "Happy Paws Pet Store",
+        },
+        {
+          "id": 2,
+          "name": "Pet Paradise",
+        },
+        {
+          "id": 3,
+          "name": "Furry Friends",
+        },
+        {
+          "id": 4,
+          "name": "Paws and Claws",
+        },
+        {
+          "id": 5,
+          "name": "The Pet Shop",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`gRPC Multiple works: GetAllPets 1`] = `
+{
+  "data": {
+    "GetAllPets": {
+      "pets": [
+        {
+          "id": 1,
+          "name": "Pet1",
+        },
+        {
+          "id": 2,
+          "name": "Pet2",
+        },
+        {
+          "id": 3,
+          "name": "Pet3",
+        },
+        {
+          "id": 4,
+          "name": "Pet4",
+        },
+        {
+          "id": 5,
+          "name": "Pet5",
+        },
+      ],
+    },
+  },
+}
+`;

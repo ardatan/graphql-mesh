@@ -1,5 +1,5 @@
 ---
-"@graphql-mesh/transport-grpc": minor
+"@graphql-mesh/transport-protobuf": minor
 ---
 
 See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, promise helpers).
@@ -18,7 +18,7 @@ If you construct helpers manually, `disposables.use(helper)`.
 
 #### Example
 ```ts
-import { GrpcTransportHelper } from '@graphql-mesh/transport-grpc'
+import { GrpcTransportHelper } from '@graphql-mesh/transport-protobuf'
 
 const helper = new GrpcTransportHelper({ /* endpoint, credentials */ })
 disposables.use(helper)
