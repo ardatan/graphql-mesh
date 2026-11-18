@@ -1,3 +1,5 @@
+import type { Pool as PgPool } from 'pg';
+
 export type SqlAdapter = 'postgres' | 'mysql' | 'sqlite';
 
 export type SqlQueryKind = 'ROW' | 'ROWS' | 'CONNECTION' | 'COUNT';
@@ -59,5 +61,5 @@ export interface SqlClient {
    * Node `pg.Pool` when using the postgres adapter (required for the
    * Grafast / `@dataplan/pg` fast path). Absent for Bun.SQL / mysql / sqlite.
    */
-  pgPool?: import('pg').Pool;
+  pgPool?: PgPool;
 }

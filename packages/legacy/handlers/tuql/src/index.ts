@@ -1,3 +1,4 @@
+/* eslint-disable import/no-nodejs-modules */
 import { createHash } from 'node:crypto';
 import { readFileSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';

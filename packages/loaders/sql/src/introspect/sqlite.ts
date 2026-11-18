@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-nodejs-modules
 import { DatabaseSync } from 'node:sqlite';
 import { resolveSqlitePath } from '@graphql-mesh/transport-sql';
 import type { SqlColumnMeta, SqlForeignKeyMeta, SqlSchemaMeta, SqlTableMeta } from './types.js';

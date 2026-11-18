@@ -53,8 +53,11 @@ export function createPostgresGrafastExecutor(
   };
 
   executor[DisposableSymbols.dispose] = () => {
-    void withPgClient.release?.();
-    void opts.disposeClient();
+    withPgClient.release?.();
+    const disposed = opts.disposeClient();
+    if (disposed != null && typeof (disposed as Promise<void>).then === 'function') {
+      (disposed as Promise<void>).catch(() => undefined);
+    }
   };
   executor[DisposableSymbols.asyncDispose] = async () => {
     await withPgClient.release?.();

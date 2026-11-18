@@ -1,6 +1,8 @@
+// eslint-disable-next-line import/no-nodejs-modules
 import { DatabaseSync } from 'node:sqlite';
 import { createPool, type Pool as Mysql2Pool, type Pool } from 'mysql2/promise';
 import pg from 'pg';
+import type { Pool as PgPool } from 'pg';
 import { resolveSqlitePath } from './adapter.js';
 import type { SqlAdapter, SqlClient, SqlTransportOptions } from './types.js';
 import { parseSqlUri } from './uri.js';
@@ -112,7 +114,7 @@ export function wrapPgPoolAsSqlClient(pool: {
   const client: SqlClient = {
     adapter: 'postgres',
     // Expose real pg.Pool when present for `@dataplan/pg`.
-    pgPool: 'connect' in pool ? (pool as import('pg').Pool) : undefined,
+    pgPool: 'connect' in pool ? (pool as PgPool) : undefined,
     async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
       const result = await pool.query(sql, params);
       return {

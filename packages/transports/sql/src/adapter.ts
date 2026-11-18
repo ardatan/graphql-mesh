@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-nodejs-modules
 import { isAbsolute as pathIsAbsolute, join as pathJoin } from 'node:path';
 import type { SqlAdapter } from './types.js';
 import { inferAdapterFromConnectionString } from './uri.js';
