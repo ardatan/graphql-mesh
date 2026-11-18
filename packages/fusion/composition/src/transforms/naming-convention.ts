@@ -30,6 +30,12 @@ import {
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
 import { bakeConnectEnumsInTransform } from './connect-enum-bake.js';
+import {
+  ensureNeo4jFieldAlias,
+  ensureNeo4jNodeLabels,
+  isNeo4jModelTypeDirectives,
+  rewriteNeo4jCypherArgReferences,
+} from './neo4j-identity.js';
 import { applyProtobufFieldRenames, applyProtobufTypeRenames } from './rename.js';
 import { rewriteConnectArgReferences, withOriginalKeyFallback } from './utils.js';
 
@@ -122,6 +128,8 @@ export function createNamingConventionTransform(
 
   const schemaMapper: SchemaMapper = {};
   const typeRenameMap = new Map<string, string>();
+  /** Original + renamed names of Neo4j `@node` / `@relationshipProperties` types. */
+  const neo4jModelTypeNames = new Set<string>();
   if (typeNamesFn) {
     schemaMapper[MapperKind.TYPE] = type => {
       if (
@@ -132,13 +140,31 @@ export function createNamingConventionTransform(
       ) {
         return type;
       }
-      const newName = typeNamesFn(type.name);
-      if (newName !== type.name) {
-        typeRenameMap.set(type.name, newName);
+      const typeDirectives = getDirectiveExtensions(type);
+      if (isNeo4jModelTypeDirectives(typeDirectives)) {
+        neo4jModelTypeNames.add(type.name);
       }
+      const newName = typeNamesFn(type.name);
+      if (newName === type.name) {
+        return type;
+      }
+      typeRenameMap.set(type.name, newName);
+      if (isNeo4jModelTypeDirectives(typeDirectives)) {
+        neo4jModelTypeNames.add(newName);
+      }
+      const withNeo4jLabels = ensureNeo4jNodeLabels(typeDirectives, type.name);
       return new (Object.getPrototypeOf(type).constructor)({
         ...type.toConfig(),
         name: newName,
+        ...(withNeo4jLabels !== typeDirectives
+          ? {
+              extensions: {
+                ...(type.extensions || {}),
+                directives: withNeo4jLabels,
+              },
+              astNode: undefined,
+            }
+          : {}),
       });
     };
   }
@@ -147,7 +173,7 @@ export function createNamingConventionTransform(
   /** Public `Type.field` → arg rename map (for root-field `$this` args fallback). */
   const argRenamesByPublicField = new Map<string, Map<string, string>>();
   if (fieldNamesFn || fieldArgumentNamesFn || enumValuesFn || typeNamesFn) {
-    schemaMapper[MapperKind.FIELD] = (fieldConfig, fieldName, typeName) => {
+    schemaMapper[MapperKind.FIELD] = (fieldConfig, fieldName, typeName, schema) => {
       // Keep Connectors HTTP method / baseURL field names intact.
       const newFieldName = CONNECTORS_INPUT_TYPES.has(typeName)
         ? fieldName
@@ -192,13 +218,26 @@ export function createNamingConventionTransform(
         argRenamesByPublicField.set(`${publicType}.${newFieldName}`, argRenameMap);
       }
       // Defer protobuf `$args` rewrites to `applyProtobufFieldRenames` (single pass).
-      const rewrittenDirectives = rewriteConnectArgReferences(
+      // Neo4j then rewrites `@cypher` `$arg` binds and stamps `@alias(property:)`.
+      let rewrittenDirectives = rewriteConnectArgReferences(
         fieldDirectives,
         argRenameMap,
         undefined,
         typeRenameMap.size ? typeRenameMap : undefined,
         false,
       );
+      rewrittenDirectives = rewriteNeo4jCypherArgReferences(rewrittenDirectives, argRenameMap);
+      if (!typeNamesFn && schema) {
+        const parentType = schema.getType(typeName);
+        if (parentType && isNeo4jModelTypeDirectives(getDirectiveExtensions(parentType))) {
+          neo4jModelTypeNames.add(typeName);
+        }
+      }
+      if (newFieldName !== fieldName) {
+        rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
+          isNeo4jModelField: neo4jModelTypeNames.has(typeName),
+        });
+      }
       if (rewrittenDirectives !== fieldDirectives || newArgs) {
         const fieldExtensions: Record<string, any> = { ...(fieldConfig.extensions || {}) };
         if (rewrittenDirectives !== fieldDirectives) {

@@ -20,6 +20,12 @@ import {
 } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import {
+  ensureNeo4jFieldAlias,
+  ensureNeo4jNodeLabels,
+  isNeo4jModelTypeDirectives,
+  rewriteNeo4jCypherArgReferences,
+} from './neo4j-identity.js';
+import {
   rewriteConnectArgReferences,
   rewriteProtobufMappingBindsTypeScoped,
   rewriteProtobufThisBindsDual,
@@ -217,9 +223,20 @@ export function createRenameTransform(opts: RenameTransformConfig) {
         }
         if (newTypeName !== type.name) {
           typeRenameMap.set(type.name, newTypeName);
+          const typeDirectives = getDirectiveExtensions(type);
+          const withNeo4jLabels = ensureNeo4jNodeLabels(typeDirectives, type.name);
           return new (Object.getPrototypeOf(type).constructor)({
             ...type.toConfig(),
             name: newTypeName,
+            ...(withNeo4jLabels !== typeDirectives
+              ? {
+                  extensions: {
+                    ...(type.extensions || {}),
+                    directives: withNeo4jLabels,
+                  },
+                  astNode: undefined,
+                }
+              : {}),
           });
         }
         return type;
@@ -294,13 +311,22 @@ export function createRenameTransform(opts: RenameTransformConfig) {
       }
       // Connectors skip Mesh `@source`; rewrite `$args.*` / `__typename` here.
       // Protobuf `$args` / nested binds wait for `applyProtobufFieldRenames` (one pass).
-      const rewrittenDirectives = rewriteConnectArgReferences(
+      // Neo4j then rewrites `@cypher` `$arg` binds and stamps `@alias(property:)`.
+      let rewrittenDirectives = rewriteConnectArgReferences(
         fieldDirectives,
         argRenameMap,
         undefined,
         typeRenameMap.size ? typeRenameMap : undefined,
         false,
       );
+      rewrittenDirectives = rewriteNeo4jCypherArgReferences(rewrittenDirectives, argRenameMap);
+      const parentType = schema.getType(typeName);
+      const parentDirectives = parentType ? getDirectiveExtensions(parentType, schema) : undefined;
+      if (newFieldName !== fieldName) {
+        rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
+          isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirectives),
+        });
+      }
       if (rewrittenDirectives !== fieldDirectives || newArgs) {
         const fieldExtensions: Record<string, any> = { ...(field.extensions || {}) };
         if (rewrittenDirectives !== fieldDirectives) {
@@ -557,9 +583,16 @@ export function createRenameTypeTransform(
           return type;
         }
         renamedTypeMap.set(type.name, newName);
+        const typeDirectives = getDirectiveExtensions(type, schema);
+        const withNeo4jLabels = ensureNeo4jNodeLabels(typeDirectives, type.name);
+        const extensions: Record<string, any> = { ...(type.extensions || {}) };
+        if (withNeo4jLabels !== typeDirectives) {
+          extensions.directives = withNeo4jLabels;
+        }
         return new (Object.getPrototypeOf(type).constructor)({
           ...type.toConfig(),
           name: newName,
+          ...(withNeo4jLabels !== typeDirectives ? { extensions, astNode: undefined } : {}),
         });
       },
     });
@@ -651,7 +684,31 @@ export function createRenameFieldTransform(
           fieldRenameMap.set(typeName, typeFieldRenameMap);
         }
         typeFieldRenameMap.set(fieldName, newFieldName);
-        return [newFieldName, field];
+        if (newFieldName === fieldName) {
+          return [newFieldName, field];
+        }
+        const parentType = schema.getType(typeName);
+        const parentDirectives = parentType
+          ? getDirectiveExtensions(parentType, schema)
+          : undefined;
+        const fieldDirectives = getDirectiveExtensions(field, schema);
+        const withAlias = ensureNeo4jFieldAlias(fieldDirectives, fieldName, {
+          isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirectives),
+        });
+        if (withAlias === fieldDirectives) {
+          return [newFieldName, field];
+        }
+        return [
+          newFieldName,
+          {
+            ...field,
+            extensions: {
+              ...(field.extensions || {}),
+              directives: withAlias,
+            },
+            astNode: undefined,
+          },
+        ];
       },
     };
     const resolverUpdaterMapper = {

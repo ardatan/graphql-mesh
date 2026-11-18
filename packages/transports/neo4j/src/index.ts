@@ -2,6 +2,7 @@ import type { Transport } from '@graphql-mesh/transport-common';
 import { getNeo4JExecutor } from './executor.js';
 
 export * from './auth.js';
+export * from './directives.js';
 export * from './driver.js';
 export * from './eventEmitterForPubSub.js';
 export * from './executor.js';

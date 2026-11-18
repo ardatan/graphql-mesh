@@ -121,10 +121,30 @@ export function isProtobufRpcSubgraph(schema: GraphQLSchema): boolean {
   );
 }
 
-/** True when transforms should rewrite directive mappings instead of Mesh `@source`. */
-export function skipsMeshSourceAnnotations(schema: GraphQLSchema): boolean {
-  return isFederationConnectorsSubgraph(schema) || isProtobufRpcSubgraph(schema);
+/**
+ * Neo4j subgraphs use `@neo4j/graphql` identity directives (`@node(labels:)`,
+ * `@alias(property:)`, `@plural`) instead of Mesh `@source` / `@meshSource` for
+ * rename / naming-convention transforms. Detect via `@transport(kind: "neo4j")`.
+ */
+export function isNeo4jSubgraph(schema: GraphQLSchema): boolean {
+  const transports = getDirectiveExtensions(schema)?.transport || [];
+  return transports.some((transport: { kind?: string }) => transport?.kind === 'neo4j');
 }
+
+/**
+ * True when transforms should rewrite directive mappings instead of Mesh `@source`
+ * (Connectors `@connect`, protobuf `@protobuf__rpc`, Neo4j `@node` / `@alias` / `@plural`).
+ */
+export function skipsMeshSourceAnnotations(schema: GraphQLSchema): boolean {
+  return (
+    isFederationConnectorsSubgraph(schema) ||
+    isProtobufRpcSubgraph(schema) ||
+    isNeo4jSubgraph(schema)
+  );
+}
+
+/** @deprecated Use {@link skipsMeshSourceAnnotations}. */
+export const skipsMeshSourceStamps = skipsMeshSourceAnnotations;
 
 export function getAnnotatedSubgraphs(
   subgraphs: SubgraphConfig[],
@@ -175,7 +195,7 @@ export function getAnnotatedSubgraphs(
 
     let mergeDirectiveUsed = false;
     // Stitching source is only for subgraphs that do not rewrite directive mappings
-    // (Connectors `@connect`, protobuf `@protobuf__rpc`). Those skip Mesh `@source`.
+    // (Connectors `@connect`, protobuf `@protobuf__rpc`, Neo4j `@node` / `@alias`).
     const sourceDirectiveUsed = !skipsMeshSourceAnnotations(schema) && transforms?.length > 0;
     // When Connectors are in the same composition, alias to `@meshSource` so Guild
     // does not treat Mesh + Apollo `@source` as one composed directive.

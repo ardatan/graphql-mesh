@@ -1080,3 +1080,39 @@ describe('rewriteConnectArgReferences @thrift__rpc', () => {
     expect(rewritten!.connect[0].http.GET).toBe("/authors/O'Reilly/{$args.input}");
   });
 });
+
+describe('Neo4j identity helpers', () => {
+  it('stamps @node(labels:) and @alias; rewrites @cypher $args', async () => {
+    const { ensureNeo4jNodeLabels, ensureNeo4jFieldAlias, rewriteNeo4jCypherArgReferences } =
+      await import('../../src/transforms/neo4j-identity.js');
+    expect(ensureNeo4jNodeLabels({ node: [{}] }, 'Movie')).toEqual({
+      node: [{ labels: ['Movie'] }],
+    });
+    expect(ensureNeo4jNodeLabels({ node: [{ labels: ['Film'] }] }, 'Movie')).toEqual({
+      node: [{ labels: ['Film'] }],
+    });
+    expect(ensureNeo4jFieldAlias({}, 'title', { isNeo4jModelField: true })?.alias?.[0]).toEqual({
+      property: 'title',
+    });
+    expect(
+      ensureNeo4jFieldAlias({ relationship: [{ type: 'ACTED_IN' }] }, 'actors', {
+        isNeo4jModelField: true,
+      }),
+    ).toEqual({ relationship: [{ type: 'ACTED_IN' }] });
+    const rewritten = rewriteNeo4jCypherArgReferences(
+      {
+        cypher: [
+          {
+            statement:
+              'MATCH (this) WHERE this.title = $title AND $jwt.sub IS NOT NULL RETURN this',
+            columnName: 'this',
+          },
+        ],
+      },
+      new Map([['title', 'needle']]),
+    );
+    expect(rewritten!.cypher[0].statement).toContain('$needle');
+    expect(rewritten!.cypher[0].statement).toContain('$jwt.sub');
+    expect(rewritten!.cypher[0].statement).not.toMatch(/\$title\b/);
+  });
+});

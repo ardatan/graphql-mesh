@@ -191,6 +191,95 @@ describe('Federation Connectors composition', () => {
     expect(sdl).not.toMatch(/\$args\.request\b/);
   });
 
+  it('Neo4j rename uses @node(labels:)/@alias without Mesh @source', () => {
+    const neo4jSchema = buildSchema(/* GraphQL */ `
+      schema
+        @transport(
+          subgraph: "Movies"
+          kind: "neo4j"
+          location: "neo4j://localhost"
+          options: { database: "neo4j" }
+        ) {
+        query: Query
+      }
+
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        headers: [[String]]
+        options: TransportOptions
+      ) repeatable on SCHEMA
+      scalar TransportOptions
+
+      directive @node(labels: [String!]) on OBJECT
+      directive @alias(property: String!) on FIELD_DEFINITION
+      directive @relationship(
+        type: String
+        direction: _RelationDirections
+        properties: String
+      ) on FIELD_DEFINITION
+      enum _RelationDirections {
+        IN
+        OUT
+      }
+      directive @cypher(statement: String!, columnName: String!) on FIELD_DEFINITION
+
+      type Movie @node {
+        title: String
+        actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
+        similar(title: String!): [Movie!]!
+          @cypher(
+            statement: """
+            MATCH (this:Movie)
+            WHERE this.title CONTAINS $title
+            RETURN this AS m
+            """
+            columnName: "m"
+          )
+      }
+
+      type Person @node {
+        name: String
+      }
+
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'Movies',
+        schema: neo4jSchema,
+        transforms: [
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => (typeName === 'Movie' ? 'Film' : typeName),
+            fieldRenamer: ({ typeName, fieldName }) =>
+              (typeName === 'Movie' || typeName === 'Film') && fieldName === 'title'
+                ? 'movieTitle'
+                : fieldName,
+            argRenamer: ({ typeName, fieldName, argName }) =>
+              (typeName === 'Movie' || typeName === 'Film') &&
+              fieldName === 'similar' &&
+              argName === 'title'
+                ? 'needle'
+                : argName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).not.toMatch(/@source\(/);
+    expect(sdl).not.toMatch(/@meshSource\(/);
+    expect(sdl).toMatch(/type Film[\s\S]*@node\(\s*labels:\s*\["Movie"\]/);
+    expect(sdl).toMatch(/movieTitle:\s*String\s*@alias\(\s*property:\s*"title"\s*\)/);
+    expect(sdl).toContain('actors:');
+    expect(sdl).not.toMatch(/actors:[\s\S]*@alias/);
+    expect(sdl).toContain('similar(needle:');
+    expect(sdl).toMatch(/\$needle\b/);
+    expect(sdl).not.toMatch(/\$title\b/);
+  });
+
   it('lifts transport/source from extras onto schema and drops the wrapper', () => {
     const sdl = /* GraphQL */ `
       schema
