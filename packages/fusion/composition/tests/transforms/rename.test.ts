@@ -1122,6 +1122,26 @@ describe('rewriteConnectArgReferences @sql', () => {
     expect(sql.filter).toBe('$args.where');
   });
 
+  it('does not treat a multiline selection RHS as a bare pick', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [
+          {
+            table: 'users',
+            selection: 'name:\n  name\nid: id',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['name', 'displayName']]),
+    );
+    const selection = rewritten!.sql[0].selection as string;
+    expect(selection).toContain('displayName:\n  name');
+    expect(selection).not.toContain('displayName: name');
+    expect(selection).not.toMatch(/displayName:\s*\n\s*displayName:/);
+  });
+
   it('applies parent $this renames in one pass (no a→b→c chaining)', async () => {
     const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
     const rewritten = rewriteConnectArgReferences(

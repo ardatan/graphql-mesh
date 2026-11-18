@@ -1605,9 +1605,18 @@ export function rewriteConnectArgReferences(
               return `${pre}${lookup.get(from) ?? from}${suf}`;
             })
             // Bare identity picks only → keep the SQL column name on the RHS.
-            .replace(reBare, (_m, pre: string, ws: string, from: string) => {
-              return `${pre}${ws}${lookup.get(from) ?? from}: ${from}`;
-            }),
+            // Skip tokens that continue a prior `key:` mapping across newlines
+            // (`name:\n  name` must stay `displayName:\n  name`, not become
+            // `displayName:\n  displayName: name`).
+            .replace(
+              reBare,
+              (m, pre: string, ws: string, from: string, offset: number, str: string) => {
+                if (/:\s*$/.test(str.slice(0, offset))) {
+                  return m;
+                }
+                return `${pre}${ws}${lookup.get(from) ?? from}: ${from}`;
+              },
+            ),
         );
       }
     }
