@@ -705,6 +705,35 @@ function tjsonEnumWireToNameSuffix(
 }
 
 /**
+ * list/set success selection as a pure expression (safe inside `match` arms).
+ * Struct elements use `->map(@->{ … })` instead of trailing NamedSelection braces.
+ */
+function buildTJSONListSetSelectionExpr(returnTypeVal: TypeVal, topTypeMap: TypeMap): string {
+  const resolved = resolveTypeVal(returnTypeVal, topTypeMap);
+  if (resolved.type !== TType.LIST && resolved.type !== TType.SET) {
+    throw new Error('buildTJSONListSetSelectionExpr requires LIST or SET');
+  }
+  const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
+  const elemResolved = resolveTypeVal(resolved.elementType, topTypeMap);
+  const base = `$->get(4)->get("0")->get("${tag}")->slice(2)`;
+  if (elemResolved.type === TType.STRUCT) {
+    const nested = Object.entries(elemResolved.fields)
+      .map(([fieldName, fieldType]) =>
+        formatTJSONLitProperty(fieldName, fieldType, topTypeMap, '@->get("rec")'),
+      )
+      .join(',\n    ');
+    return `${base}->map(@->{\n    ${nested}\n  })`;
+  }
+  if (elemResolved.type === TType.ENUM) {
+    const suffix = tjsonEnumWireToNameSuffix(elemResolved, true);
+    if (suffix) {
+      return `${base}${suffix}`;
+    }
+  }
+  return base;
+}
+
+/**
  * TJSON `@connect(selection:)` — peel message envelope index 4, success field `"0"`.
  */
 export function buildTJSONConnectSelection(
@@ -806,6 +835,10 @@ export function buildTJSONUnionConnectSelection(
       .map(([n, t]) => formatTJSONLitProperty(n, t, topTypeMap, '$->get(4)->get("0")->get("rec")'))
       .join(',\n    ');
     pushField('value', gateOnField0(`$({\n    ${nested}\n  })`));
+  } else if (resolvedReturn.type === TType.LIST || resolvedReturn.type === TType.SET) {
+    // Match arms go through evalPath — trailing NamedSelection `{ … }` after
+    // slice(2) is not a method call, so emit element projection as `->map(...)`.
+    pushField('value', gateOnField0(buildTJSONListSetSelectionExpr(returnTypeVal!, topTypeMap)));
   } else {
     pushField('value', gateOnField0(buildTJSONConnectSelection(returnTypeVal, topTypeMap)));
   }

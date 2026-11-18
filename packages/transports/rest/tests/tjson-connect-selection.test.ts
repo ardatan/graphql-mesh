@@ -164,6 +164,41 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
     });
   });
 
+  it('list/set success inside match uses ->map expression, not trailing braces', () => {
+    const reply = [
+      1,
+      'items',
+      2,
+      1,
+      {
+        '0': {
+          lst: [
+            'rec',
+            2,
+            { rec: { '1': { i32: 1 }, '2': { str: 'a' } } },
+            { rec: { '1': { i32: 2 }, '2': { str: 'b' } } },
+          ],
+        },
+      },
+    ];
+    const gatedMap = `$({
+  value: $($->get(4)->get("0")->ne(null)->match([true, $->get(4)->get("0")->get("lst")->slice(2)->map(@->{ left: @->get("rec")->get("1")->get("i32"), text: @->get("rec")->get("2")->get("str") })], [@, null])),
+  __throw_Boom: $->get(4)->get("1")->ne(null)
+})`;
+    expect(applySelection(gatedMap, reply, extras)).toEqual({
+      value: [
+        { left: 1, text: 'a' },
+        { left: 2, text: 'b' },
+      ],
+      __throw_Boom: false,
+    });
+    // Trailing NamedSelection braces inside match do not project list elements.
+    const gatedBraced = `$({
+  value: $($->get(4)->get("0")->ne(null)->match([true, $->get(4)->get("0")->get("lst")->slice(2) { left: $->get("1")->get("i32") }], [@, null]))
+})`;
+    expect(applySelection(gatedBraced, reply, extras)).toEqual({});
+  });
+
   it('gates success value/ok so exception fields with the same name cannot clobber', () => {
     // Success + exception both emit `value` / `ok` — one LitObject key, gated then `??`.
     const valueSel = `$({

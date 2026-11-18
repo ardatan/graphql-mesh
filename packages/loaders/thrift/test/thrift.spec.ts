@@ -636,6 +636,75 @@ describe('thrift', () => {
     expect(resolveType(boomData, null as any, { schema: rebuilt } as any, union)).toBe('ValueBoom');
   });
 
+  it('TJSON list/set unions gate success via ->map expression, not trailing braces', async () => {
+    const { buildSchema } = await import('graphql');
+    const { applySelection } = await import('../../../transports/rest/src/directives/connect.js');
+    const { processDirectives } =
+      await import('../../../transports/rest/src/directives/process.js');
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'ListSetThrowsSvc',
+      source: './fixtures/list_set_throws.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/list-set-throws',
+      protocol: 'json',
+      ignoreExceptions: false,
+    });
+    const itemsSel = (schema.getQueryType()!.getFields().items.extensions as any).directives.connect
+      .selection as string;
+    const uniqueSel = (schema.getQueryType()!.getFields().uniqueItems.extensions as any).directives
+      .connect.selection as string;
+    // Match-arm-safe: slice(2)->map(@->{…}), not slice(2) { … }.
+    expect(itemsSel).toMatch(
+      /value:\s*\$->get\(4\)->get\("0"\)->ne\(null\)->match\(\[true,\s*\$->get\(4\)->get\("0"\)->get\("lst"\)->slice\(2\)->map\(@->\{/,
+    );
+    expect(itemsSel).not.toMatch(/slice\(2\)\s*\{/);
+    expect(uniqueSel).toMatch(/get\("set"\)->slice\(2\)->map\(@->\{/);
+    expect(uniqueSel).not.toMatch(/slice\(2\)\s*\{/);
+
+    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const union = rebuilt.getType('ItemsResult') as GraphQLUnionType;
+    const resolveType = union.resolveType!;
+    const extras = {
+      status: 200,
+      vars: { args: {}, thisValue: undefined, env: {}, context: {} },
+    };
+    const successReply = [
+      1,
+      'items',
+      2,
+      1,
+      {
+        '0': {
+          lst: [
+            'rec',
+            2,
+            { rec: { '1': { i32: 1 }, '2': { str: 'a' } } },
+            { rec: { '1': { i32: 2 }, '2': { str: 'b' } } },
+          ],
+        },
+      },
+    ];
+    const successData = applySelection(itemsSel, successReply, extras);
+    expect(successData.value).toEqual([
+      { left: 1, text: 'a' },
+      { left: 2, text: 'b' },
+    ]);
+    expect(successData.__throw_Boom).toBe(false);
+    expect(resolveType(successData, null as any, { schema: rebuilt } as any, union)).toBe(
+      'ItemsSuccess',
+    );
+
+    const boomData = applySelection(
+      itemsSel,
+      [1, 'items', 2, 1, { '1': { rec: { '1': { str: 'boom' } } } }],
+      extras,
+    );
+    expect(boomData.value).toBeNull();
+    expect(boomData.message).toBe('boom');
+    expect(boomData.__throw_Boom).toBe(true);
+    expect(resolveType(boomData, null as any, { schema: rebuilt } as any, union)).toBe('Boom');
+  });
+
   it('TJSON void union keeps success ok when an exception also declares ok', async () => {
     const { buildSchema } = await import('graphql');
     const { applySelection } = await import('../../../transports/rest/src/directives/connect.js');

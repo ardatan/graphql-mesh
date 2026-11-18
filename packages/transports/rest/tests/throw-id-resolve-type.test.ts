@@ -94,6 +94,21 @@ describe('abstract resolveType __throw_* discriminators', () => {
     ).toBe('Boom');
   });
 
+  it('prefers success when Thrift __throw_* stamps are all false', () => {
+    const resolveType = getTypeResolverForAbstractType({
+      possibleTypes: [GoSuccess, First, Second],
+    });
+    // Leftover null exception fields must not beat `value` via scoring ties.
+    expect(
+      resolveType(
+        { value: 'ok', message: null, __throw_First: false, __throw_Second: false },
+        null as any,
+        null as any,
+        null as any,
+      ),
+    ).toBe('GoSuccess');
+  });
+
   it('does not skip value members for ordinary REST field0:false payloads', () => {
     // Without `__throw_*` stamps, boolean field0 is not a Thrift union signal —
     // `{ field0: false, value: "ok" }` must still resolve to Value.
