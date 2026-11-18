@@ -167,9 +167,37 @@ describe('@omnigraph/mongo schema emit', () => {
     const objectIdFields: string[] = transport?.options?.objectIdFields || [];
     expect(objectIdFields).toContain('owner');
     expect(objectIdFields).not.toContain('authorId');
+    expect(transport?.options?.objectIdFieldsByCollection).toEqual({ posts: ['owner'] });
     const sdl = printSchemaWithDirectives(schema);
     expect(sdl).toMatch(/authorId:\s*String/);
     expect(sdl).toMatch(/owner:\s*ObjectID/);
+  });
+
+  it('scopes objectId and required fields by collection across models', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('scoped', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'Post',
+          schema: new Schema(
+            { title: String, owner: { type: Schema.Types.ObjectId, ref: 'User' } },
+            { collection: 'posts' },
+          ),
+          collection: 'posts',
+          options: { fields: { required: ['title'] } },
+        },
+        {
+          name: 'Note',
+          schema: new Schema({ title: String, owner: String }, { collection: 'notes' }),
+          collection: 'notes',
+        },
+      ],
+    });
+    const transport = (schema.extensions as any)?.directives?.transport;
+    expect(transport?.options?.objectIdFieldsByCollection).toEqual({ posts: ['owner'] });
+    expect(transport?.options?.objectIdFieldsByCollection?.notes).toBeUndefined();
+    expect(transport?.options?.requiredFieldsByCollection).toEqual({ posts: ['title'] });
+    expect(transport?.options?.requiredFieldsByCollection?.notes).toBeUndefined();
   });
 
   it('omits raw aggregate subgraph-wide when any model is restricted', async () => {

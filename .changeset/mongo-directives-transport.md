@@ -42,6 +42,8 @@ new stack (like mysql/tuql -> SQL).
 - Fusion `rewriteConnectArgReferences` rewrites `$args` / `$this` in all `mongo__*` (and legacy `mongo`); `$this` renames are one-shot (no cascade), `#` comments are quote-safe, and selection rewrites skip quoted literals
 - Bulk writes reject vacuous `$or` / `not` of match-nothing filters; required fields reject null after BSON coerce, `$unset`, and `$rename`
 - String `_id` models require `id: String!` on create, keep BSON string inserts/cursors/payloads, and scope empty-input placeholders per collection
+- ObjectId coercion and required-field checks are keyed by collection+path (same bare field name can differ across models)
+- Connection cursors still reject array-backed sort keys (correct multikey keyset needs `$expr`/`$min`/`$max`, not multikey `$gt`)
 
 ## Consumer migration
 

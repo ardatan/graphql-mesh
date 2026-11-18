@@ -16,8 +16,18 @@ export interface MongoTransportOptions {
   maxPoolSize?: number;
   /** Declared BSON ObjectId field names for hex→ObjectId coercion (not String refs). */
   objectIdFields?: string[];
+  /**
+   * ObjectId paths keyed by collection so the same bare field name can be ObjectId
+   * on one model and String on another in the same subgraph.
+   */
+  objectIdFieldsByCollection?: Record<string, string[]>;
   /** Fields that may be omitted on patch but reject explicit `null` on `$set`. */
   requiredFields?: string[];
+  /**
+   * Required fields keyed by collection — avoids cross-model bleed of `required`
+   * when two models share a field name.
+   */
+  requiredFieldsByCollection?: Record<string, string[]>;
   /** Empty-input placeholder keys (e.g. `_`) — stripped on write; not real paths. */
   placeholderFields?: string[];
   /**

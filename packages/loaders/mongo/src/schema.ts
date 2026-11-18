@@ -174,11 +174,24 @@ export async function loadGraphQLSchemaFromMongo(
   const extensions: Record<string, any> = (schema.extensions ||= {});
   extensions.directives ||= {};
   const objectIdFields = collectObjectIdFieldNames(modelMeta.map(m => m.paths));
+  const objectIdFieldsByCollection: Record<string, string[]> = {};
+  for (const m of modelMeta) {
+    if (!m.collection) continue;
+    const fields = collectObjectIdFieldNames([m.paths]);
+    if (fields.length) objectIdFieldsByCollection[m.collection] = fields;
+  }
   const requiredFields = [
     ...new Set(
       modelMeta.flatMap(m => m.fieldRestrictions?.required || []).filter(Boolean) as string[],
     ),
   ];
+  const requiredFieldsByCollection: Record<string, string[]> = {};
+  for (const m of modelMeta) {
+    const req = (m.fieldRestrictions?.required || []).filter(Boolean) as string[];
+    if (m.collection && req.length) {
+      requiredFieldsByCollection[m.collection] = [...new Set(req)];
+    }
+  }
   const placeholderFields = [
     ...new Set(modelMeta.flatMap(m => m.placeholderFields || []).filter(Boolean) as string[]),
   ];
@@ -194,7 +207,13 @@ export async function loadGraphQLSchemaFromMongo(
     .filter(Boolean);
   const transportOptions: Record<string, unknown> = {};
   if (objectIdFields.length) transportOptions.objectIdFields = objectIdFields;
+  if (Object.keys(objectIdFieldsByCollection).length) {
+    transportOptions.objectIdFieldsByCollection = objectIdFieldsByCollection;
+  }
   if (requiredFields.length) transportOptions.requiredFields = requiredFields;
+  if (Object.keys(requiredFieldsByCollection).length) {
+    transportOptions.requiredFieldsByCollection = requiredFieldsByCollection;
+  }
   if (placeholderFields.length) transportOptions.placeholderFields = placeholderFields;
   if (Object.keys(placeholderFieldsByCollection).length) {
     transportOptions.placeholderFieldsByCollection = placeholderFieldsByCollection;

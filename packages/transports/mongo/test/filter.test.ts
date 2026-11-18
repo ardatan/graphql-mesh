@@ -173,6 +173,36 @@ describe('mongo filter mapping', () => {
     configureObjectIdFields(undefined);
   });
 
+  it('scopes ObjectId and required fields by collection', () => {
+    const hex = '507f1f77bcf86cd799439011';
+    const runtime = {
+      objectIdFields: new Set(['_id', 'id', 'owner']),
+      objectIdFieldsByCollection: new Map<string, ReadonlySet<string>>([
+        ['posts', new Set(['owner'])],
+        ['notes', new Set<string>()],
+      ]),
+      requiredFields: new Set(['title']),
+      requiredFieldsByCollection: new Map<string, ReadonlySet<string>>([
+        ['posts', new Set(['title'])],
+        ['notes', new Set<string>()],
+      ]),
+      placeholderFields: new Set(['_']),
+      stringIdCollections: new Set<string>(),
+    };
+    runWithMongoFieldRuntime(runtime, () => {
+      expect(graphqlFilterToMongo({ owner: { eq: hex } }, '', 'posts').owner).toBeInstanceOf(
+        ObjectId,
+      );
+      expect(graphqlFilterToMongo({ owner: { eq: hex } }, '', 'notes').owner).toBe(hex);
+      expect(() => graphqlUpdateToMongo({ set: { title: null } }, { collection: 'posts' })).toThrow(
+        /title/,
+      );
+      expect(graphqlUpdateToMongo({ set: { title: null } }, { collection: 'notes' })).toEqual({
+        $set: { title: null },
+      });
+    });
+  });
+
   it('keeps _id as string for stringIdCollections (String _id models)', () => {
     const hex = '507f1f77bcf86cd799439011';
     const runtime = {

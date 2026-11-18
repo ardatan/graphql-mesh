@@ -104,18 +104,23 @@ export function getMongoExecutor({
   }
   const transport = transportDirectives?.[0] as
     { location?: string; options?: MongoTransportOptions } | undefined;
-  const byCollectionEntries = Object.entries(
-    transport?.options?.placeholderFieldsByCollection || {},
-  ).map(([collection, fields]) => [collection, new Set(fields)] as [string, ReadonlySet<string>]);
+  const toCollectionMap = (raw?: Record<string, string[]>) => {
+    const entries = Object.entries(raw || {}).map(
+      ([collection, fields]) => [collection, new Set(fields)] as [string, ReadonlySet<string>],
+    );
+    return entries.length ? new Map(entries) : undefined;
+  };
   const fieldRuntime: MongoFieldRuntime = {
     objectIdFields: new Set(['_id', 'id', ...(transport?.options?.objectIdFields || [])]),
+    objectIdFieldsByCollection: toCollectionMap(transport?.options?.objectIdFieldsByCollection),
     requiredFields: new Set(transport?.options?.requiredFields || []),
+    requiredFieldsByCollection: toCollectionMap(transport?.options?.requiredFieldsByCollection),
     placeholderFields: new Set(
       transport?.options?.placeholderFields?.length ? transport.options.placeholderFields : ['_'],
     ),
-    placeholderFieldsByCollection: byCollectionEntries.length
-      ? new Map(byCollectionEntries)
-      : undefined,
+    placeholderFieldsByCollection: toCollectionMap(
+      transport?.options?.placeholderFieldsByCollection,
+    ),
     stringIdCollections: new Set(transport?.options?.stringIdCollections || []),
   };
   const mongoClient =

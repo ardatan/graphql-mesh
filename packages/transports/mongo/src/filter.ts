@@ -7,7 +7,11 @@ import type { ParsedMongoMapping } from './types.js';
 /** Per-executor field metadata (avoids module-global clobber across subgraphs). */
 export type MongoFieldRuntime = {
   objectIdFields: ReadonlySet<string>;
+  /** ObjectId paths keyed by collection (preferred over flat `objectIdFields`). */
+  objectIdFieldsByCollection?: ReadonlyMap<string, ReadonlySet<string>>;
   requiredFields: ReadonlySet<string>;
+  /** Required fields keyed by collection (preferred over flat `requiredFields`). */
+  requiredFieldsByCollection?: ReadonlyMap<string, ReadonlySet<string>>;
   /** GraphQL empty-input placeholder keys (e.g. `_`) — not real model paths. */
   placeholderFields: ReadonlySet<string>;
   /**
@@ -316,12 +320,22 @@ export function configurePlaceholderFields(fields: Iterable<string> | undefined)
   }
 }
 
-function activeObjectIdFields(): ReadonlySet<string> {
-  return fieldRuntimeAls.getStore()?.objectIdFields ?? declaredObjectIdFields;
+const EMPTY_STRING_SET: ReadonlySet<string> = new Set();
+
+function activeObjectIdFields(collection?: string): ReadonlySet<string> {
+  const store = fieldRuntimeAls.getStore();
+  if (store?.objectIdFieldsByCollection && collection) {
+    return store.objectIdFieldsByCollection.get(collection) ?? EMPTY_STRING_SET;
+  }
+  return store?.objectIdFields ?? declaredObjectIdFields;
 }
 
-function activeRequiredFields(): ReadonlySet<string> {
-  return fieldRuntimeAls.getStore()?.requiredFields ?? declaredRequiredFields;
+function activeRequiredFields(collection?: string): ReadonlySet<string> {
+  const store = fieldRuntimeAls.getStore();
+  if (store?.requiredFieldsByCollection && collection) {
+    return store.requiredFieldsByCollection.get(collection) ?? EMPTY_STRING_SET;
+  }
+  return store?.requiredFields ?? declaredRequiredFields;
 }
 
 function activePlaceholderFields(collection?: string): ReadonlySet<string> {
@@ -331,8 +345,6 @@ function activePlaceholderFields(collection?: string): ReadonlySet<string> {
   }
   return store?.placeholderFields ?? declaredPlaceholderFields;
 }
-
-const EMPTY_STRING_SET: ReadonlySet<string> = new Set();
 
 function activeStringIdCollections(): ReadonlySet<string> {
   return fieldRuntimeAls.getStore()?.stringIdCollections ?? EMPTY_STRING_SET;
@@ -347,7 +359,12 @@ export function isObjectIdFieldKey(key: string, collection?: string): boolean {
     if (collection && activeStringIdCollections().has(collection)) return false;
     return true;
   }
-  return activeObjectIdFields().has(key);
+  return activeObjectIdFields(collection).has(key);
+}
+
+/** Required-field set for the active collection (or flat fallback). */
+export function getActiveRequiredFields(collection?: string): ReadonlySet<string> {
+  return activeRequiredFields(collection);
 }
 
 /** True when a filter matches no documents (`{ $nor: [{}] }` or `$and` of those). */
@@ -695,7 +712,7 @@ function remapUpdateFieldKey(key: string): string {
 function remapUpdateFields(value: unknown, collection?: string): unknown {
   if (!isPlainObject(value)) return coerceDeep(value, { collection });
   const placeholders = activePlaceholderFields(collection);
-  const required = activeRequiredFields();
+  const required = activeRequiredFields(collection);
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(value)) {
     // Only strip configured empty-input placeholders — never a real `_` path.
@@ -743,7 +760,7 @@ export function graphqlUpdateToMongo(
   const collection = opts?.collection;
   const out: Record<string, unknown> = {};
   let sawOp = false;
-  const required = activeRequiredFields();
+  const required = activeRequiredFields(collection);
 
   for (const [rawKey, value] of Object.entries(input)) {
     if (value == null) continue;
