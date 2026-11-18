@@ -11,9 +11,12 @@ import { SchemaComposer } from 'graphql-compose';
 import { GraphQLDateTime, GraphQLJSON, GraphQLObjectID } from 'graphql-scalars';
 import type { Model, Schema as MongooseSchema } from 'mongoose';
 import { process as meshProcess } from '@graphql-mesh/cross-helpers';
-import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import type { ImportFn } from '@graphql-mesh/types';
-import { defaultImportFn, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import {
+  defaultImportFn,
+  ensureFederationReadySubgraph,
+  loadFromModuleExportExpression,
+} from '@graphql-mesh/utils';
 import { MongoOpDirectives, TransportDirective } from './directives.js';
 import { createDefaultNaming, type MongoNaming } from './naming.js';
 import { GraphQLDecimal128 } from './scalars.js';

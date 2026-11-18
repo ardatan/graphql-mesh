@@ -31,11 +31,15 @@ import {
 } from 'graphql-scalars';
 import { Logger } from '@graphql-hive/logger';
 import { path, process } from '@graphql-mesh/cross-helpers';
-import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import {
+  defaultImportFn,
+  ensureFederationReadySubgraph,
+  readFileOrUrl,
+  sanitizeNameForGraphQL,
+} from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import {
   buildSoapConnectDirectiveArgs,

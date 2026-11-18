@@ -5,9 +5,13 @@ import {
   type DocumentNode,
   type GraphQLDirective,
 } from 'graphql';
-import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { isUrl, readFile, TransportDirective as transportDirective } from '@graphql-mesh/utils';
+import {
+  ensureFederationReadySubgraph,
+  isUrl,
+  readFile,
+  TransportDirective as transportDirective,
+} from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
 import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 import type { LoaderContext, MeshComposeCLISourceHandlerDef } from './types.js';

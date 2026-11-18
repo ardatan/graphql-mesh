@@ -18,9 +18,9 @@ import descriptor, { type IFileDescriptorSet } from 'protobufjs/ext/descriptor.j
 import { Client } from '@ardatan/grpc-reflection-js';
 import { type Logger } from '@graphql-hive/logger';
 import { fs, path } from '@graphql-mesh/cross-helpers';
-import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { YamlConfig } from '@graphql-mesh/types';
+import { ensureFederationReadySubgraph } from '@graphql-mesh/utils';
 import { matchFiles } from '@graphql-tools/load-files';
 import { GraphQLStreamDirective, type Constructor } from '@graphql-tools/utils';
 import {

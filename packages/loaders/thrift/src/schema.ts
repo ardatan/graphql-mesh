@@ -36,7 +36,6 @@ import { parse, SyntaxType } from '@creditkarma/thrift-parser';
 import { TType } from '@creditkarma/thrift-server-core';
 import { Logger } from '@graphql-hive/logger';
 import { path } from '@graphql-mesh/cross-helpers';
-import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import {
   CONNECT_LINK_URL,
   ConnectDirective,
@@ -50,7 +49,7 @@ import type {
   TypeVal,
 } from '@graphql-mesh/transport-thrift';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
+import { defaultImportFn, ensureFederationReadySubgraph, readFileOrUrl } from '@graphql-mesh/utils';
 import { getDirectivesInExtensions } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import {

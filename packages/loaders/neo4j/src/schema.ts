@@ -4,7 +4,6 @@ import type { Driver } from 'neo4j-driver';
 import neo4j from 'neo4j-driver';
 import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
-import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import type { Neo4JAuthOpts } from '@graphql-mesh/transport-neo4j';
 import {
   getDriverFromOpts,
@@ -12,7 +11,7 @@ import {
   getNeo4jDirectiveDefinitions,
   stampSubgraphOnNeo4jDirectives,
 } from '@graphql-mesh/transport-neo4j';
-import { TRANSPORT_DIRECTIVE_SDL } from '@graphql-mesh/utils';
+import { ensureFederationReadySubgraph, TRANSPORT_DIRECTIVE_SDL } from '@graphql-mesh/utils';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';

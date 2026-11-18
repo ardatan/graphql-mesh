@@ -39,7 +39,6 @@
     "@creditkarma/thrift-server-core": "^1.0.4",
     "@graphql-hive/logger": "^1.1.1",
     "@graphql-mesh/cross-helpers": "^0.4.18",
-    "@graphql-mesh/fusion-composition": "^0.11.4",
     "@graphql-mesh/transport-connect": "^0.12.4",
     "@graphql-mesh/transport-thrift": "^0.12.3",
     "@graphql-mesh/types": "^0.107.3",

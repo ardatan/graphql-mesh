@@ -6,8 +6,8 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
+import { ensureFederationReadySubgraph } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, printSchemaWithDirectives } from '@graphql-tools/utils';
-import { ensureFederationReadySubgraph } from '../src/federation-utils.js';
 
 describe('ensureFederationReadySubgraph', () => {
   it('imports Mesh directives with @composeDirective and Mesh @link', () => {

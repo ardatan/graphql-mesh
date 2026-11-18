@@ -21,10 +21,8 @@ import { GraphQLJSON } from 'graphql-compose';
 import type { IStringifyOptions } from 'qs';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
-import {
-  ensureFederationReadySubgraph,
-  entityKeyFieldsFromHttpPath,
-} from '@graphql-mesh/fusion-composition';
+import { entityKeyFieldsFromHttpPath } from '@graphql-mesh/fusion-composition';
+import { ensureFederationReadySubgraph } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   bakeEnumRootSelection,

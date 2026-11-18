@@ -24,12 +24,11 @@ import { pascalCase } from 'pascal-case';
 import urljoin from 'url-join';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
-import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
 import transportConnect, { type ConnectTransportOptions } from '@graphql-mesh/transport-connect';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
+import { defaultImportFn, ensureFederationReadySubgraph, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   applyODataConnectSchemaExtensions,
   emitODataConnectors,

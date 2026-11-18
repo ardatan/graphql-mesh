@@ -16,13 +16,13 @@ import {
 } from 'graphql-scalars';
 import type { Pool as PgPool } from 'pg';
 import { path as pathHelper } from '@graphql-mesh/cross-helpers';
-import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import {
   inferAdapterFromConnectionString,
   resolveConnectionStringFromEnv,
   type SqlAdapter,
   type SqlTransportOptions,
 } from '@graphql-mesh/transport-sql';
+import { ensureFederationReadySubgraph } from '@graphql-mesh/utils';
 import { SqlDirective, SqlKindEnum, TransportDirective } from './directives.js';
 import { graphqlFieldNameForColumn } from './field-names.js';
 import { introspectMysql } from './introspect/mysql.js';

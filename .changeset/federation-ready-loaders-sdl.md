@@ -1,4 +1,5 @@
 ---
+'@graphql-mesh/utils': minor
 '@graphql-mesh/fusion-composition': minor
 '@graphql-mesh/compose-cli': minor
 '@omnigraph/sql': minor
@@ -19,7 +20,7 @@ Mesh Compose previously had to invent Mesh-spec `@link` imports and `@composeDir
 
 ### What changed
 
-- **`ensureFederationReadySubgraph(schema)`** in `@graphql-mesh/fusion-composition` (idempotent): Mesh-spec `@link` + `@composeDirective` for Mesh directives; Connectors also get `@composeDirective(name: "@connect")`.
+- **`ensureFederationReadySubgraph(schema)`** (and related Mesh `@link` / `@composeDirective` helpers) live in **`@graphql-mesh/utils`** so protocol loaders do not depend on `@graphql-mesh/fusion-composition`. Fusion composition re-exports them for Compose.
 - Protocol loaders call it on emit: SQL, Mongo, Thrift, Protobuf, Neo4j, SOAP, OData, OpenAPI / JSON Schema / RAML.
 - Compose still calls the same helper as a safety net for older loaders / raw SDL.
 - **`loadSdlSubgraph(name, { source | typeDefs, transport?, federationReady? })`** in `@graphql-mesh/compose-cli` for hand-written or generated-then-edited SDL (default `federationReady: true`).
