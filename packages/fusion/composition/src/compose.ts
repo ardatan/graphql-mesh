@@ -874,7 +874,7 @@ export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[
  * returned to callers keep those directives on `schema` (no extras wrapper).
  *
  * When Federation Connectors `@source(http.baseURL)` is present without Mesh
- * `@transport` (stripped from annotated SDL), synthesize rest transport for Hive.
+ * `@transport` (stripped from annotated SDL), synthesize connect transport for Hive.
  */
 function packSchemaDirectivesIntoExtrasForGuild(
   typeDefs: DocumentNode,
