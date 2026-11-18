@@ -88,6 +88,28 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).not.toContain('kind: FIND_ONE');
     expect(sdl).not.toContain('$args.where');
     expect(sdl).toMatchSnapshot('user-full-slice');
+    expect(sdl).toContain('graphqlDocumentInputs: true');
+    expect(sdl).toMatch(/insertOneUser\(document: UserDocumentInput!\): User\b/);
+    expect(sdl).toMatch(/insertManyUsers\(documents: \[UserDocumentInput!\]!\): \[User!\]!/);
+  });
+
+  it('emits $record payload selections when returnDocumentOnlyInMutationResult is false', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('users', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'User',
+          schema: new Schema({ name: String }, { collection: 'user_users' }),
+          collection: 'user_users',
+        },
+      ],
+      returnDocumentOnlyInMutationResult: false,
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toMatch(/insertOneUser\(document: UserDocumentInput!\): UserPayload\b/);
+    expect(sdl).toMatch(/record:\s*\$record\s*\{/);
+    expect(sdl).toMatch(/records:\s*\$records\s*\{/);
+    expect(sdl).toContain('recordId: $_id');
   });
 
   it('applies fields.required / remove without JSON update bypasses', async () => {

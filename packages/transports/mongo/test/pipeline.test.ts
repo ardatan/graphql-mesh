@@ -147,7 +147,7 @@ describe('write failures', () => {
       document: parse(`
         mutation {
           insertOneUser(document: { name: "Ada" }) {
-            record { name }
+            name
           }
         }
       `),

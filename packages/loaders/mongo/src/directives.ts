@@ -1,4 +1,10 @@
-import { DirectiveLocation, GraphQLDirective, GraphQLNonNull, GraphQLString } from 'graphql';
+import {
+  DirectiveLocation,
+  GraphQLBoolean,
+  GraphQLDirective,
+  GraphQLNonNull,
+  GraphQLString,
+} from 'graphql';
 
 const subgraphArg = { type: GraphQLString };
 const collectionArg = { type: new GraphQLNonNull(GraphQLString) };
@@ -129,6 +135,12 @@ export const MongoInsertManyDirective = new GraphQLDirective({
     collection: collectionArg,
     set: { type: GraphQLString },
     selection: selectionArg,
+    /**
+     * When true, each bulk document uses generated GraphQL DocumentInput aliases
+     * (`id` → `_id`, `storedId` → `id`) for String-`_id` collections. Omit on
+     * hand-written binders that already supply BSON field names.
+     */
+    graphqlDocumentInputs: { type: GraphQLBoolean },
   },
 });
 

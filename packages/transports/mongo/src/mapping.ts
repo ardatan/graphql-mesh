@@ -310,8 +310,16 @@ function parseBlock(
     }
     if (i < text.length && text[i] === '$') {
       const rhs = readPseudoOrPath(text, i);
+      let j = skipWs(text, rhs.next);
+      // Connectors-style `record: $record { id: _id }` — pseudo source + nested picks.
+      if (j < text.length && text[j] === '{') {
+        const nested = parseBlock(text, j + 1, true);
+        entries.push({ key: key.value, value: rhs.value, children: nested.entries });
+        i = skipWs(text, nested.next);
+        continue;
+      }
       entries.push({ key: key.value, value: rhs.value });
-      i = skipWs(text, rhs.next);
+      i = j;
       continue;
     }
     if (i < text.length && (text[i] === '"' || text[i] === "'")) {

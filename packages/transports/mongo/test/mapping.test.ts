@@ -23,6 +23,23 @@ describe('parseMongoMapping', () => {
     );
   });
 
+  it('parses Connectors-style $record { … } nested picks', () => {
+    const parsed = parseMongoMapping(`
+      record: $record {
+        id: _id
+        name: name
+      }
+      recordId: $_id
+    `);
+    const record = parsed.entries.find(e => e.key === 'record');
+    expect(record?.value).toEqual({ kind: 'pseudo', value: 'record' });
+    expect(record?.children?.map(c => c.key)).toEqual(['id', 'name']);
+    expect(parsed.entries.find(e => e.key === 'recordId')?.value).toEqual({
+      kind: 'pseudo',
+      value: '_id',
+    });
+  });
+
   it('parses $args / $this, spreads, and nested blocks', () => {
     const parsed = parseMongoMapping(`
       _id: $this.id

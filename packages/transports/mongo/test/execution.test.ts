@@ -117,7 +117,67 @@ describe('getMongoExecutor FIND_* + writes', () => {
 
     const created = await execResult(executor, {
       document: parse(
-        `mutation { insertOneUser(document: { name: "Grace", age: 45 }) { recordId record { name } } }`,
+        `mutation { insertOneUser(document: { name: "Grace", age: 45 }) { id name } }`,
+      ),
+    });
+    expect(created.errors).toBeUndefined();
+    expect(created.data).toEqual({
+      insertOneUser: { id: '507f1f77bcf86cd799439099', name: 'Grace' },
+    });
+  });
+
+  it('returns payload detail when returnDocumentOnlyInMutationResult is false', async () => {
+    const userSchema = new Schema({ name: String }, { collection: 'user_users' });
+    const schema = await loadGraphQLSchemaFromMongo('users', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [{ name: 'User', schema: userSchema, collection: 'user_users' }],
+      returnDocumentOnlyInMutationResult: false,
+    });
+
+    const client: MongoClientLike = {
+      async findOne() {
+        return { _id: '507f1f77bcf86cd799439099', name: 'Grace' };
+      },
+      async findMany() {
+        return [];
+      },
+      async count() {
+        return 0;
+      },
+      async insertOne() {
+        return { insertedId: '507f1f77bcf86cd799439099' };
+      },
+      async insertMany() {
+        return { insertedIds: [], insertedCount: 0 };
+      },
+      async updateOne() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async updateMany() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async findOneAndUpdate() {
+        return { value: null, matchedCount: 0, modifiedCount: 0 };
+      },
+      async deleteOne() {
+        return { deletedCount: 0 };
+      },
+      async deleteMany() {
+        return { deletedCount: 0 };
+      },
+      async findOneAndDelete() {
+        return { value: null, deletedCount: 0 };
+      },
+      async aggregate() {
+        return [];
+      },
+      dispose() {},
+    };
+
+    const executor = getMongoExecutor({ subgraph: schema, client });
+    const created = await execResult(executor, {
+      document: parse(
+        `mutation { insertOneUser(document: { name: "Grace" }) { recordId record { name } } }`,
       ),
     });
     expect(created.errors).toBeUndefined();
@@ -299,17 +359,14 @@ describe('getMongoExecutor FIND_* + writes', () => {
     const executor = getMongoExecutor({ subgraph: schema, client });
     const created = await execResult(executor, {
       document: parse(
-        `mutation { insertOneExternalUser(document: { id: "507f1f77bcf86cd799439099", name: "Lin" }) { recordId record { id name } } }`,
+        `mutation { insertOneExternalUser(document: { id: "507f1f77bcf86cd799439099", name: "Lin" }) { id name } }`,
       ),
     });
     expect(created.errors).toBeUndefined();
     expect(typeof inserted?._id).toBe('string');
     expect(inserted?._id).toBe('507f1f77bcf86cd799439099');
     expect(created.data).toEqual({
-      insertOneExternalUser: {
-        recordId: '507f1f77bcf86cd799439099',
-        record: { id: '507f1f77bcf86cd799439099', name: 'Lin' },
-      },
+      insertOneExternalUser: { id: '507f1f77bcf86cd799439099', name: 'Lin' },
     });
 
     const page1 = await execResult(executor, {
@@ -401,7 +458,7 @@ describe('getMongoExecutor FIND_* + writes', () => {
           insertManyExternalUsers(documents: [
             { id: "bulk-1", name: "Ada" }
             { id: "bulk-2", name: "Alan" }
-          ]) { createdCount recordIds }
+          ]) { id name }
         }`,
       ),
     });
@@ -412,14 +469,14 @@ describe('getMongoExecutor FIND_* + writes', () => {
     ]);
     expect(insertedDocs.every(d => d.id === undefined)).toBe(true);
 
-    // storedId: null must still alias to mongoose `id`; explicit BSON `id` is preserved.
+    // storedId: null must still alias to mongoose `id` on generated GraphQL inputs.
     insertedDocs = [];
     const nullAlias = await execResult(executor, {
       document: parse(
         `mutation {
           insertManyExternalUsers(documents: [
             { id: "bulk-3", storedId: null, name: "Nil" }
-          ]) { createdCount }
+          ]) { id }
         }`,
       ),
     });
@@ -427,8 +484,7 @@ describe('getMongoExecutor FIND_* + writes', () => {
     expect(insertedDocs).toEqual([{ _id: 'bulk-3', id: null, name: 'Nil' }]);
   });
 
-  it('does not rewrite storedId on hand-written BSON bulk docs', () => {
-    // GraphQL DocumentInput shape — alias both keys.
+  it('aliases GraphQL DocumentInput keys via applyGraphqlStringIdInsertAliases', () => {
     const graphqlDoc: Record<string, unknown> = {
       id: 'g-1',
       storedId: 'legacy',
@@ -436,22 +492,128 @@ describe('getMongoExecutor FIND_* + writes', () => {
     };
     applyGraphqlStringIdInsertAliases(graphqlDoc);
     expect(graphqlDoc).toEqual({ _id: 'g-1', id: 'legacy', name: 'G' });
+  });
 
-    // Hand-written BSON already has `_id` — keep a real `storedId` path.
-    const bsonDoc: Record<string, unknown> = {
-      _id: 'b-1',
-      storedId: 'real-field',
-      name: 'B',
+  it('preserves storedId on hand-written BSON insertMany (stamped and unstamped)', async () => {
+    const { SchemaComposer } = await import('graphql-compose');
+    const { GraphQLJSON } = await import('graphql-scalars');
+    const { MongoInsertManyDirective, TransportDirective } = await import('@omnigraph/mongo');
+    // Hand-written binder: omit graphqlDocumentInputs. stringIdCollections is set so a
+    // wrong `_id`-presence heuristic would still rewrite — explicit flag must prevent that.
+    const sc = new SchemaComposer();
+    sc.add(GraphQLJSON);
+    sc.addDirective(TransportDirective);
+    sc.addDirective(MongoInsertManyDirective);
+    sc.Query.setField('_empty', { type: 'String' });
+    const docSel = `
+id: _id
+storedId: storedId
+name: name
+`;
+    sc.Mutation.setField('bulkBson', {
+      type: '[JSON!]!',
+      args: { documents: { type: '[JSON!]!' } },
+      directives: [
+        {
+          name: 'mongo__insertMany',
+          args: {
+            collection: 'external_users',
+            set: 'documents: $args.documents',
+            selection: docSel,
+          },
+        },
+      ],
+    });
+    sc.Mutation.setField('bulkBsonStamped', {
+      type: '[JSON!]!',
+      args: { documents: { type: '[JSON!]!' } },
+      directives: [
+        {
+          name: 'mongo__insertMany',
+          args: {
+            collection: 'external_users',
+            set: 'documents: $args.documents\n_id: "stamped-id"',
+            selection: docSel,
+          },
+        },
+      ],
+    });
+    const schema = sc.buildSchema();
+    const extensions: Record<string, any> = (schema.extensions ||= {});
+    extensions.directives ||= {};
+    extensions.directives.transport = {
+      kind: 'mongo',
+      location: 'mongodb://localhost:27017/test',
+      options: { stringIdCollections: ['external_users'] },
     };
-    applyGraphqlStringIdInsertAliases(bsonDoc);
-    expect(bsonDoc).toEqual({ _id: 'b-1', storedId: 'real-field', name: 'B' });
 
-    // Binder stamp supplies `_id` (sibling in `set`) — treat as hand-written BSON.
-    const stamped: Record<string, unknown> = { storedId: 'value', name: 'S' };
-    applyGraphqlStringIdInsertAliases(stamped, { treatAsGraphqlInput: false });
-    expect(stamped).toEqual({ storedId: 'value', name: 'S' });
-    const merged = { ...stamped, _id: 'x' };
-    expect(merged).toEqual({ storedId: 'value', name: 'S', _id: 'x' });
+    let insertedDocs: Record<string, unknown>[] = [];
+    const client: MongoClientLike = {
+      async findOne() {
+        return null;
+      },
+      async findMany(_c, filter) {
+        const ids = (filter as any)._id?.$in || [];
+        return insertedDocs.filter(d => ids.map(String).includes(String(d._id)));
+      },
+      async count() {
+        return 0;
+      },
+      async insertOne() {
+        return { insertedId: 'x' };
+      },
+      async insertMany(_c, docs) {
+        insertedDocs = docs as Record<string, unknown>[];
+        return {
+          insertedIds: docs.map((d, i) => d._id ?? `auto-${i}`),
+          insertedCount: docs.length,
+        };
+      },
+      async updateOne() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async updateMany() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async findOneAndUpdate() {
+        return { value: null, matchedCount: 0, modifiedCount: 0 };
+      },
+      async deleteOne() {
+        return { deletedCount: 0 };
+      },
+      async deleteMany() {
+        return { deletedCount: 0 };
+      },
+      async findOneAndDelete() {
+        return { value: null, deletedCount: 0 };
+      },
+      async aggregate() {
+        return [];
+      },
+      dispose() {},
+    };
+
+    const executor = getMongoExecutor({ subgraph: schema, client });
+
+    // Unstamped BSON: `{ storedId }` must NOT become `{ id }` (no `_id` heuristic).
+    insertedDocs = [];
+    const unstamped = await execResult(executor, {
+      document: parse(
+        `mutation { bulkBson(documents: [{ storedId: "value", name: "U" }]) }`,
+      ),
+    });
+    expect(unstamped.errors).toBeUndefined();
+    expect(insertedDocs).toEqual([{ storedId: 'value', name: 'U' }]);
+
+    // Stamped BSON: sibling `_id` in set + real `storedId` field preserved.
+    insertedDocs = [];
+    const stamped = await execResult(executor, {
+      document: parse(
+        `mutation { bulkBsonStamped(documents: [{ storedId: "keep", name: "S" }]) }`,
+      ),
+    });
+    expect(stamped.errors).toBeUndefined();
+    expect(insertedDocs).toEqual([{ storedId: 'keep', name: 'S', _id: 'stamped-id' }]);
   });
 
   it('treats present empty requiredFieldsByCollection as authoritative', async () => {
@@ -518,7 +680,7 @@ describe('getMongoExecutor FIND_* + writes', () => {
     const executor = getMongoExecutor({ subgraph: schema, client });
     const result = await execResult(executor, {
       document: parse(
-        `mutation { updateOneUser(filter: { title: { eq: "x" } }, update: { set: { title: null } }) { recordId } }`,
+        `mutation { updateOneUser(filter: { title: { eq: "x" } }, update: { set: { title: null } }) { id } }`,
       ),
     });
     expect(result.errors).toBeUndefined();

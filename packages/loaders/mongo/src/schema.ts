@@ -215,6 +215,14 @@ export interface LoadMongoSubgraphOpts {
    * @default Mesh `defaultImportFn`
    */
   importFn?: ImportFn;
+  /**
+   * When `true` (default), single-document mutations return the entity type
+   * (`User`) and `insertMany` returns `[User!]!`. Set `false` for Connectors-style
+   * `*Payload` results (`record: $record { … }`, `recordId: $_id`, counts, …).
+   * `updateMany` / `deleteMany` always use the payload (counts only).
+   * @default true
+   */
+  returnDocumentOnlyInMutationResult?: boolean;
 }
 
 /**
@@ -335,6 +343,7 @@ export async function loadGraphQLSchemaFromMongo(
       omitAggregate,
       stringId: meta.stringId,
       discriminator: meta.discriminator,
+      returnDocumentOnlyInMutationResult: opts.returnDocumentOnlyInMutationResult,
     });
     emitRefFields(schemaComposer, {
       subgraphName,
@@ -983,7 +992,6 @@ function emitModelObjectType(
     omitRename: Boolean(opts.discriminator),
   });
   createConnectionTypes(schemaComposer, naming, typeName);
-  createPayloadType(schemaComposer, naming, typeName, opts.stringId);
 }
 
 function emitModelRootFields(
@@ -1000,11 +1008,14 @@ function emitModelRootFields(
     omitAggregate?: boolean;
     stringId?: boolean;
     discriminator?: MongoDiscriminatorInfo;
+    /** @default true — see {@link LoadMongoSubgraphOpts.returnDocumentOnlyInMutationResult} */
+    returnDocumentOnlyInMutationResult?: boolean;
   },
 ) {
   const { subgraphName, typeName, collection, paths, naming } = opts;
   const ops = opts.queryAndMutations;
   const disc = opts.discriminator;
+  const documentOnly = opts.returnDocumentOnlyInMutationResult !== false;
   const selection = selectionForPaths(paths, { stringId: opts.stringId });
   const queryTC = schemaComposer.Query;
   const mutationTC = schemaComposer.Mutation;
@@ -1213,20 +1224,40 @@ pageInfo {
     documentFieldBinds.unshift(`${disc.key}: ${discriminatorValueLiteral(disc.value)}`);
   }
   const documentSetBlock = blockArg(documentFieldBinds.join('\n'));
+  // Connectors-style `$record` / `$_id` when returning a payload envelope.
   const payloadSelection = blockArg(`
-record {
+record: $record {
 ${indent(selection.replace(/^\n/, ''), 1)}
 }
 recordId: $_id
 `);
+  const insertManyPayloadSelection = blockArg(`
+records: $records {
+${indent(selection.replace(/^\n/, ''), 1)}
+}
+recordIds: $recordIds
+createdCount: $createdCount
+`);
+  // Payload for detail mode, and always for count-only updateMany/deleteMany.
+  if (!documentOnly || isOpEnabled(ops, 'updateMany') || isOpEnabled(ops, 'deleteMany')) {
+    createPayloadType(schemaComposer, naming, typeName, opts.stringId);
+  }
+
+  const singleMutationType = documentOnly ? typeName : naming.payloadType(typeName);
+  const singleMutationSelection = documentOnly ? selection : payloadSelection;
+  const insertManyType = documentOnly ? `[${typeName}!]!` : naming.payloadType(typeName);
+  const insertManySelection = documentOnly ? selection : insertManyPayloadSelection;
 
   // db.collection.insertOne(document)
   if (isOpEnabled(ops, 'insertOne')) {
     mutationTC.setField(naming.insertOneField(typeName), {
-      type: naming.payloadType(typeName),
+      type: singleMutationType,
       args: { document: { type: `${documentInput}!` } },
       directives: [
-        mongoDir('mongo__insertOne', { set: documentSetBlock, selection: payloadSelection }),
+        mongoDir('mongo__insertOne', {
+          set: documentSetBlock,
+          selection: singleMutationSelection,
+        }),
       ],
     });
   }
@@ -1239,18 +1270,14 @@ recordId: $_id
       insertManySetLines.push(`${disc.key}: ${discriminatorValueLiteral(disc.value)}`);
     }
     mutationTC.setField(naming.insertManyField(typeName), {
-      type: naming.payloadType(typeName),
+      type: insertManyType,
       args: { documents: { type: `[${documentInput}!]!` } },
       directives: [
         mongoDir('mongo__insertMany', {
           set: blockArg(insertManySetLines.join('\n')),
-          selection: blockArg(`
-records {
-${indent(selection.replace(/^\n/, ''), 1)}
-}
-recordIds: $recordIds
-createdCount: $createdCount
-`),
+          selection: insertManySelection,
+          // Explicit: generated DocumentInput aliases (`id`/`storedId`), not BSON.
+          graphqlDocumentInputs: true,
         }),
       ],
     });
@@ -1262,7 +1289,7 @@ createdCount: $createdCount
 
   if (isOpEnabled(ops, 'updateById')) {
     mutationTC.setField(naming.updateByIdField(typeName), {
-      type: naming.payloadType(typeName),
+      type: singleMutationType,
       args: {
         id: { type: new GraphQLNonNull(idArgScalar) },
         // Typed update ops: bare names (`set` / `inc` / … → `$set` / `$inc`).
@@ -1272,7 +1299,7 @@ createdCount: $createdCount
         mongoDir('mongo__updateOne', {
           query: filterWithDiscriminator(blockArg('_id: $args.id'), disc),
           set: '$args.update',
-          selection: payloadSelection,
+          selection: singleMutationSelection,
         }),
       ],
     });
@@ -1281,7 +1308,7 @@ createdCount: $createdCount
   // db.collection.updateOne(filter, update)
   if (isOpEnabled(ops, 'updateOne')) {
     mutationTC.setField(naming.updateOneField(typeName), {
-      type: naming.payloadType(typeName),
+      type: singleMutationType,
       args: {
         filter: { type: `${filterType}!` },
         update: { type: `${updateType}!` },
@@ -1290,7 +1317,7 @@ createdCount: $createdCount
         mongoDir('mongo__updateOne', {
           query: argsFilter,
           set: '$args.update',
-          selection: payloadSelection,
+          selection: singleMutationSelection,
         }),
       ],
     });
@@ -1318,12 +1345,12 @@ matchedCount: $matchedCount
 
   if (isOpEnabled(ops, 'deleteById')) {
     mutationTC.setField(naming.deleteByIdField(typeName), {
-      type: naming.payloadType(typeName),
+      type: singleMutationType,
       args: { id: { type: new GraphQLNonNull(idArgScalar) } },
       directives: [
         mongoDir('mongo__deleteOne', {
           query: filterWithDiscriminator(blockArg('_id: $args.id'), disc),
-          selection: payloadSelection,
+          selection: singleMutationSelection,
         }),
       ],
     });
@@ -1332,12 +1359,12 @@ matchedCount: $matchedCount
   // db.collection.deleteOne(filter)
   if (isOpEnabled(ops, 'deleteOne')) {
     mutationTC.setField(naming.deleteOneField(typeName), {
-      type: naming.payloadType(typeName),
+      type: singleMutationType,
       args: { filter: { type: `${filterType}!` } },
       directives: [
         mongoDir('mongo__deleteOne', {
           query: argsFilter,
-          selection: payloadSelection,
+          selection: singleMutationSelection,
         }),
       ],
     });

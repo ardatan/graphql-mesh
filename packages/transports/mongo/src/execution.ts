@@ -92,6 +92,11 @@ interface MongoDirectiveArgs {
   selection?: string;
   set?: string;
   pipeline?: string;
+  /**
+   * Explicit opt-in from generated `@mongo__insertMany`: documents use GraphQL
+   * DocumentInput aliases (`id` / `storedId`). Hand-written binders omit this.
+   */
+  graphqlDocumentInputs?: boolean;
 }
 
 const MONGO_OP_DIRECTIVES: Array<{ name: string; kind: MongoKind }> = [
@@ -261,7 +266,10 @@ function attachMongoResolver(
             );
             const { insertedId } = await client.insertOne(directive.collection, doc);
             const created = await client.findOne(directive.collection, { _id: insertedId });
-            return mapPayload(created, insertedId, selection);
+            return applyMutationSelection(selection, {
+              record: created,
+              _id: insertedId,
+            });
           }
           case 'INSERT_MANY': {
             const fromSet = buildSetDocument(directive.set, ctx, {
@@ -278,16 +286,14 @@ function attachMongoResolver(
             delete stamp.documents;
             delete stamp.inputs;
             const stringId = fieldRuntime.stringIdCollections.has(directive.collection);
-            // Binder sibling `_id` (hand-written BSON) means docs are not GraphQL DocumentInput.
-            const stampSuppliesBsonId = Object.prototype.hasOwnProperty.call(stamp, '_id');
+            // Only when the loader/hand-written SDL sets `graphqlDocumentInputs: true`.
+            const aliasGraphqlInputs = Boolean(directive.graphqlDocumentInputs) && stringId;
             const records = (Array.isArray(rawRecords) ? rawRecords : []).map(doc => {
               const coerced = coerceDeep(doc, {
                 collection: directive.collection,
               }) as Record<string, unknown>;
-              if (stringId) {
-                applyGraphqlStringIdInsertAliases(coerced, {
-                  treatAsGraphqlInput: !stampSuppliesBsonId,
-                });
+              if (aliasGraphqlInputs) {
+                applyGraphqlStringIdInsertAliases(coerced);
               }
               return stripInputPlaceholder({ ...coerced, ...stamp }, directive.collection);
             });
@@ -298,13 +304,11 @@ function attachMongoResolver(
             const docs = await client.findMany(directive.collection, {
               _id: { $in: insertedIds },
             });
-            return {
-              records: docs.map(d =>
-                mapDocumentToGraphql(d, nestedSelection(selection, 'records')),
-              ),
+            return applyMutationSelection(selection, {
+              records: docs,
               recordIds: insertedIds.map(id => String(id)),
               createdCount: insertedCount,
-            };
+            });
           }
           case 'UPDATE_ONE': {
             const updateDoc = resolveUpdateDocument(directive.set, ctx, {
@@ -315,7 +319,10 @@ function attachMongoResolver(
               filter,
               updateDoc,
             );
-            return mapPayload(updated, updated?._id, selection);
+            return applyMutationSelection(selection, {
+              record: updated,
+              _id: updated?._id,
+            });
           }
           case 'UPDATE_MANY': {
             const updateDoc = resolveUpdateDocument(directive.set, ctx, {
@@ -324,19 +331,24 @@ function attachMongoResolver(
             // Empty `{}` (e.g. from `filter: { and: [] }`) would match the whole collection.
             const writeFilter = bulkWriteFilter(filter);
             const result = await client.updateMany(directive.collection, writeFilter, updateDoc);
-            return {
+            return applyMutationSelection(selection, {
               matchedCount: result.matchedCount,
               modifiedCount: result.modifiedCount,
-            };
+            });
           }
           case 'DELETE_ONE': {
             const { value: existing } = await client.findOneAndDelete(directive.collection, filter);
-            return mapPayload(existing, existing?._id, selection);
+            return applyMutationSelection(selection, {
+              record: existing,
+              _id: existing?._id,
+            });
           }
           case 'DELETE_MANY': {
             const writeFilter = bulkWriteFilter(filter);
             const result = await client.deleteMany(directive.collection, writeFilter);
-            return { deletedCount: result.deletedCount };
+            return applyMutationSelection(selection, {
+              deletedCount: result.deletedCount,
+            });
           }
           case 'AGGREGATE': {
             const pipeline = resolvePipeline(directive.pipeline, ctx, filter, directive.collection);
@@ -361,18 +373,15 @@ function attachMongoResolver(
 
 /**
  * Map GraphQL String-`_id` DocumentInput aliases onto BSON keys for bulk insert.
- * Applies only to generated GraphQL shapes. Skip when the doc already has BSON
- * `_id`, or when a hand-written binder stamp supplies `_id` (sibling in `set`).
+ * Call only when `@mongo__insertMany(graphqlDocumentInputs: true)` — never infer
+ * GraphQL vs BSON from `_id` presence alone.
  */
-export function applyGraphqlStringIdInsertAliases(
-  doc: Record<string, unknown>,
-  opts?: { treatAsGraphqlInput?: boolean },
-): void {
-  if (opts?.treatAsGraphqlInput === false) return;
-  // BSON already named — leave keys alone (incl. a real `storedId` field).
-  if (Object.prototype.hasOwnProperty.call(doc, '_id')) return;
-  // GraphQL `id` → Mongo `_id` (include null).
-  if (Object.prototype.hasOwnProperty.call(doc, 'id')) {
+export function applyGraphqlStringIdInsertAliases(doc: Record<string, unknown>): void {
+  // GraphQL `id` → Mongo `_id` (include null). If `_id` already set, leave it.
+  if (
+    Object.prototype.hasOwnProperty.call(doc, 'id') &&
+    !Object.prototype.hasOwnProperty.call(doc, '_id')
+  ) {
     doc._id = doc.id;
     delete doc.id;
   }
@@ -697,24 +706,109 @@ async function resolvePagination(
   };
 }
 
-function mapPayload(
-  doc: Record<string, unknown> | null | undefined,
-  id: unknown,
-  selection: ReturnType<typeof parseMongoMapping>,
-) {
-  const recordSel = nestedSelection(selection, 'record');
-  return {
-    record: mapDocumentToGraphql(doc, recordSel.entries.length ? recordSel : selection),
-    recordId: id != null ? String(id) : null,
-  };
-}
-
 function nestedSelection(
   selection: ReturnType<typeof parseMongoMapping>,
   key: string,
 ): ReturnType<typeof parseMongoMapping> {
   const entry = selection.entries.find(e => e.key === key);
   return { entries: entry?.children || [] };
+}
+
+/**
+ * Mutation `selection` result bag (Connectors-style `$record` / `$_id` / `$createdCount`).
+ */
+export type MutationSelectionBag = {
+  record?: Record<string, unknown> | null;
+  records?: Array<Record<string, unknown> | null | undefined>;
+  _id?: unknown;
+  recordIds?: string[];
+  createdCount?: number;
+  matchedCount?: number;
+  modifiedCount?: number;
+  deletedCount?: number;
+};
+
+/**
+ * Apply mutation `selection` against a result bag.
+ * - `record: $record { … }` / legacy `record { … }` maps the document
+ * - `recordId: $_id`, `createdCount: $createdCount`, …
+ * - Flat entity selection (no envelope keys) returns the mapped document (or list)
+ */
+export function applyMutationSelection(
+  selection: ReturnType<typeof parseMongoMapping>,
+  bag: MutationSelectionBag,
+): unknown {
+  const hasEnvelope = selection.entries.some(
+    e =>
+      e.key === 'record' ||
+      e.key === 'records' ||
+      e.key === 'recordId' ||
+      e.key === 'recordIds' ||
+      e.key === 'createdCount' ||
+      e.key === 'matchedCount' ||
+      e.key === 'modifiedCount' ||
+      e.key === 'deletedCount',
+  );
+  // Document-only generated mutations: selection is the entity field map.
+  if (!hasEnvelope) {
+    if (bag.records) {
+      return bag.records.map(d => mapDocumentToGraphql(d, selection));
+    }
+    return mapDocumentToGraphql(bag.record, selection);
+  }
+
+  const out: Record<string, unknown> = {};
+  for (const entry of selection.entries) {
+    if (entry.spread) continue;
+    if (entry.children?.length) {
+      const sourceKey =
+        entry.value?.kind === 'pseudo'
+          ? entry.value.value
+          : entry.key === 'records'
+            ? 'records'
+            : 'record';
+      if (sourceKey === 'records') {
+        out[entry.key] = (bag.records || []).map(d =>
+          mapDocumentToGraphql(d, { entries: entry.children! }),
+        );
+      } else {
+        out[entry.key] = mapDocumentToGraphql(bag.record, { entries: entry.children });
+      }
+      continue;
+    }
+    if (entry.value?.kind === 'pseudo') {
+      const lit = resolveMutationPseudo(entry.value.value, bag);
+      out[entry.key] = lit;
+      continue;
+    }
+    if (entry.value?.kind === 'column' && bag.record) {
+      out[entry.key] = mapDocumentToGraphql(bag.record, { entries: [entry] })?.[entry.key];
+    }
+  }
+  return out;
+}
+
+function resolveMutationPseudo(name: string, bag: MutationSelectionBag): unknown {
+  switch (name) {
+    case '_id':
+      return bag._id != null ? String(bag._id) : null;
+    case 'recordIds':
+      return bag.recordIds ?? null;
+    case 'createdCount':
+      return bag.createdCount ?? null;
+    case 'matchedCount':
+      return bag.matchedCount ?? null;
+    case 'modifiedCount':
+      return bag.modifiedCount ?? null;
+    case 'deletedCount':
+      return bag.deletedCount ?? null;
+    case 'record':
+      return bag.record ?? null;
+    case 'records':
+      return bag.records ?? null;
+    default:
+      return null;
+  }
 }
 
 function assertNoWriteAggregateStages(pipeline: Record<string, unknown>[]): void {

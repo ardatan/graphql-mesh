@@ -37,6 +37,10 @@ new stack (like mysql/tuql -> SQL).
   `ObjectID` scalar + `ObjectIDQueryOperators` (not opaque GraphQL `ID`)
 - Scalars: `graphql-scalars` (`ObjectID`, `DateTime`, `Byte`, `JSON`) + local `Decimal128`
 - Mutation write failures always surface as GraphQL `errors` (`DOWNSTREAM_SERVICE_ERROR`); generated payloads do not emit `error` / `MongoError` (handwritten may map from the error variable via `selection`)
+- Generated mutations default to document-only results (`User` / `[User!]!`) via
+  `returnDocumentOnlyInMutationResult` (default `true`). Set `false` for Connectors-style
+  `*Payload` (`record: $record { … }`, `recordId: $_id`, counts). `updateMany` /
+  `deleteMany` always return the payload (counts)
 - Nested Mongoose paths emit Embedded / DocumentArray object types + enums; `ref` paths emit
   nested `@mongo__findOne` / `@mongo__find` populate fields
 - Mesh composition rewrites `$args` / `$this` in all `mongo__*` binders; `$this`
@@ -47,8 +51,9 @@ new stack (like mysql/tuql -> SQL).
 - String `_id` models require `id: String!` on create, keep BSON string inserts/cursors/payloads,
   and scope empty-input placeholders per collection
 - GraphQL `storedId` → mongoose `id` aliases are collection-aware; bulk insert applies them only
-  to GraphQL-shaped docs (no BSON `_id` on the doc and no binder-stamp `_id`), so hand-written
-  `{ _id, storedId }` / `set` sibling `_id` keep a real `storedId` path
+  when `@mongo__insertMany(graphqlDocumentInputs: true)` (loader sets this on generated
+  DocumentInput roots). Hand-written binders omit the flag so BSON `storedId` is never
+  inferred from `_id` presence
 - ObjectId coercion and required-field checks are keyed by collection+path (same bare field name
   can differ across models; nested paths via `coerceDeep` / `$elemMatch`)
 - Connection cursors still reject array-backed sort keys (correct multikey keyset needs
@@ -70,6 +75,7 @@ new stack (like mysql/tuql -> SQL).
 | `User_createOne(record)` | `insertOneUser(document)` |
 | Opaque resolvers | `@mongo__find(query/sort/selection/…)` |
 | Select `error { message }` on `*Payload` | GraphQL `errors` (`DOWNSTREAM_SERVICE_ERROR`) |
+| `createOne` → `*Payload { record }` | `insertOneUser` → `User` (payload via `returnDocumentOnlyInMutationResult: false`) |
 
 ```graphql
 # Before
