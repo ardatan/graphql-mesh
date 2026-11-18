@@ -41,16 +41,79 @@ import { QUERY_OPTIONS_FIELDS } from './utils/QueryOptionsFields.js';
 /** Context bag type for field configs (Connectors path; no Mesh DataLoader). */
 type FieldContext = Record<string, unknown>;
 
+/**
+ * Options for {@link loadODataSubgraph} / {@link loadNonExecutableGraphQLSchemaFromOData}.
+ * Emits `@connect` / `@source` (kind `connect`) against the OData service.
+ *
+ * @example
+ * ```ts
+ * import { loadODataSubgraph } from '@omnigraph/odata';
+ *
+ * loadODataSubgraph('trippin', {
+ *   endpoint: 'https://services.odata.org/TripPinRESTierService/',
+ *   batch: 'json',
+ *   expandNavProps: true,
+ * })
+ * ```
+ * @example
+ * ```ts
+ * // Local $metadata file instead of fetching `{endpoint}/$metadata`
+ * loadODataSubgraph('northwind', {
+ *   endpoint: 'https://example.com/odata/',
+ *   source: './metadata.xml',
+ * })
+ * ```
+ */
 export interface LoadGraphQLSchemaFromODataOpts {
+  /**
+   * OData service root URL (becomes `@source(http.baseURL)` / `@transport(location)`).
+   *
+   * @example 'https://services.odata.org/TripPinRESTierService/'
+   */
   endpoint: string;
+  /**
+   * Path or URL to `$metadata` XML. When omitted, fetched from `{endpoint}/$metadata`.
+   *
+   * @example './metadata.xml'
+   */
   source?: string;
+  /**
+   * Base directory for relative `source` paths.
+   *
+   * @example process.cwd()
+   */
   baseDir: string;
+  /**
+   * HTTP headers for metadata fetch only.
+   *
+   * @example { Authorization: 'Bearer ...' }
+   */
   schemaHeaders?: Record<string, string>;
+  /**
+   * HTTP headers for runtime OData calls (`@source` / `@connect`).
+   *
+   * @example { Authorization: 'Bearer {context.headers.authorization}' }
+   */
   operationHeaders?: Record<string, string>;
+  /** Fetch implementation for metadata + runtime. */
   fetchFn: MeshFetch;
+  /** Logger instance. */
   log: Logger;
+  /** Custom `import()` helper for Mesh file loading. */
   importFn: ImportFn;
+  /**
+   * OData `$batch` mode stored on `@transport(options.odata.batch)`.
+   *
+   * @example 'json'
+   * @example 'multipart'
+   * @example 'none'
+   */
   batch?: 'none' | 'json' | 'multipart';
+  /**
+   * When true, expand navigation properties in emit / Accept headers.
+   *
+   * @example true
+   */
   expandNavProps?: boolean;
 }
 
@@ -1054,6 +1117,22 @@ export const getSubgraphExecutor: TransportGetSubgraphExecutor<ConnectTransportO
   return transportConnect.getSubgraphExecutor(opts);
 };
 
+/**
+ * Mesh compose helper: load OData `$metadata` and emit an `@connect` subgraph.
+ *
+ * @example
+ * ```ts
+ * import { loadODataSubgraph } from '@omnigraph/odata';
+ *
+ * const trippin = loadODataSubgraph('trippin', {
+ *   endpoint: 'https://services.odata.org/TripPinRESTierService/',
+ *   batch: 'json',
+ * });
+ * ```
+ *
+ * @param name Subgraph name (also `@source(name:)`).
+ * @param options See {@link LoadGraphQLSchemaFromODataOpts}.
+ */
 export function loadODataSubgraph(
   name: string,
   options: Omit<LoadGraphQLSchemaFromODataOpts, 'log' | 'fetchFn' | 'baseDir' | 'importFn'>,

@@ -27,15 +27,57 @@ import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
 import { coerceXmlLeafForGraphQLType, unwrapXmlScalarLeaf } from './xmlCodec.js';
 
+/**
+ * Options for {@link processDirectives} - wire `@connect` / `@source` (and legacy
+ * Mesh annotations) into executable field resolvers.
+ *
+ * @example
+ * ```ts
+ * import { processDirectives } from '@graphql-mesh/transport-connect';
+ *
+ * const executable = processDirectives(schema, {
+ *   globalFetch: fetch,
+ *   timeout: 30_000,
+ *   operationHeaders: { Authorization: 'Bearer {context.token}' },
+ * });
+ * ```
+ */
 export interface ProcessDirectiveArgs {
+  /** PubSub for `@pubsubOperation` / subscription topics. */
   pubsub?: PubSub;
+  /** Logger instance. */
   log?: Logger;
+  /** Fetch used for `@connect` HTTP calls. */
   globalFetch?: MeshFetch;
+  /**
+   * Fallback endpoint when `@source(http.baseURL)` / `@transport(location)` is absent.
+   *
+   * @example 'https://api.example.com'
+   */
   endpoint?: string;
+  /**
+   * HTTP timeout in milliseconds.
+   *
+   * @example 30_000
+   */
   timeout?: number;
+  /**
+   * Default operation headers (merged with `@source` / `@connect` headers).
+   *
+   * @example { Authorization: 'Bearer {context.token}' }
+   */
   operationHeaders?: Record<string, string>;
+  /**
+   * Default query params merged into every request.
+   *
+   * @example { api_key: '{env.API_KEY}' }
+   */
   queryParams?: Record<string, any>;
-  /** qs stringify options (form-urlencoded bodies). */
+  /**
+   * `qs` stringify options (form-urlencoded bodies / query strings).
+   *
+   * @example { arrayFormat: 'repeat' }
+   */
   queryStringOptions?: any;
 }
 

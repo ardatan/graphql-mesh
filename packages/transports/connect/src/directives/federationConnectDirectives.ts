@@ -84,37 +84,53 @@ export const ConnectorErrorsInput = new GraphQLInputObjectType({
   },
 });
 
+/** Mesh `@connect` field/object mapping - HTTP + JSONSelection. */
 export const ConnectDirective = new GraphQLDirective({
   name: 'connect',
+  // FIELD: Query/Mutation/Subscription resolvers. OBJECT: type-level entity fill.
   locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
   args: {
+    /** `@source(name:)` this connect belongs to. */
     source: { type: GraphQLString },
+    /** HTTP method/path/body/headers mapping. */
     http: { type: ConnectHTTPInput },
+    /** JSONSelection projecting the response into GraphQL fields. */
     selection: { type: new GraphQLNonNull(JSONSelectionScalar) },
+    /** Mark as entity resolver for Mesh `_entities`. */
     entity: { type: GraphQLBoolean },
+    /** Error message/extensions selection. */
     errors: { type: ConnectorErrorsInput },
+    /** Selection that must be truthy for a successful response. */
     isSuccess: { type: JSONSelectionScalar },
   },
   isRepeatable: true,
 });
 
+/** Schema-level HTTP source (`baseURL` + default headers). */
 export const SourceDirective = new GraphQLDirective({
   name: 'source',
   locations: [DirectiveLocation.SCHEMA],
   args: {
+    /** Source name referenced by `@connect(source:)`. */
     name: { type: new GraphQLNonNull(GraphQLString) },
+    /** HTTP base URL + default headers / queryParams. */
     http: { type: new GraphQLNonNull(SourceHTTPInput) },
+    /** Default error mapping for this source. */
     errors: { type: ConnectorErrorsInput },
+    /** Default success predicate for this source. */
     isSuccess: { type: JSONSelectionScalar },
   },
   isRepeatable: true,
 });
 
+/** Schema `@link` import for connect/federation specs. */
 export const LinkDirective = new GraphQLDirective({
   name: 'link',
   locations: [DirectiveLocation.SCHEMA],
   args: {
+    /** Spec URL. */
     url: { type: new GraphQLNonNull(GraphQLString) },
+    /** Imported directive/type names. */
     import: { type: new GraphQLList(GraphQLString) },
   },
   isRepeatable: true,

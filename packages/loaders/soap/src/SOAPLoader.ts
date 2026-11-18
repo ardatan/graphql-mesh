@@ -63,38 +63,102 @@ import type {
 import type { SoapAnnotations } from './utils.js';
 import { PARSE_XML_OPTIONS } from './utils.js';
 
+/**
+ * Low-level options for {@link SOAPLoader} (prefer {@link loadSOAPSubgraph} options).
+ *
+ * @example
+ * ```ts
+ * const loader = new SOAPLoader({
+ *   subgraphName: 'weather',
+ *   endpoint: 'https://example.com/soap',
+ *   cwd: process.cwd(),
+ * });
+ * ```
+ */
 export interface SOAPLoaderOptions {
+  /**
+   * Subgraph name stamped on `@source` / `@connect`.
+   *
+   * @example 'weather'
+   */
   subgraphName: string;
+  /** Fetch for WSDL / XSD / runtime. */
   fetch?: MeshFetch;
+  /** Logger instance. */
   log?: Logger;
+  /**
+   * Headers for WSDL / XSD fetch only.
+   *
+   * @example { Authorization: 'Bearer ...' }
+   */
   schemaHeaders?: Record<string, string>;
+  /**
+   * Headers for runtime SOAP calls.
+   *
+   * @example { Authorization: 'Bearer {context.token}' }
+   */
   operationHeaders?: Record<string, string>;
+  /**
+   * Extra SOAP header block injected into the envelope.
+   *
+   * @example { namespace: 'http://example.com/ns', headers: { Token: 'abc' } }
+   */
   soapHeaders?: SOAPHeaders;
+  /**
+   * SOAP HTTP endpoint override.
+   *
+   * @example 'https://example.com/soap'
+   */
   endpoint?: string;
+  /**
+   * Base directory for relative WSDL imports.
+   *
+   * @example process.cwd()
+   */
   cwd?: string;
+  /**
+   * Alias for the SOAP body wrapper (default `body`).
+   *
+   * @example 'body'
+   */
   bodyAlias?: string;
+  /**
+   * SOAP envelope namespace override.
+   *
+   * @example 'http://www.w3.org/2003/05/soap-envelope'
+   */
   soapNamespace?: string;
 }
 
+/**
+ * SOAP header block configuration for the envelope.
+ *
+ * @example
+ * ```ts
+ * soapHeaders: {
+ *   namespace: 'http://www.example.com/namespace',
+ *   alias: 'sec',
+ *   headers: { Token: '{context.headers.x-token}' },
+ * }
+ * ```
+ */
 export interface SOAPHeaders {
   /**
-   * The namespace of the SOAP Header
+   * Namespace of the SOAP Header element.
    *
-   * @example http://www.example.com/namespace
+   * @example 'http://www.example.com/namespace'
    */
   namespace: string;
   /**
-   * The name of the alias to be used in the envelope
+   * Alias used in the envelope (default `header`).
    *
-   * @default header
+   * @example 'sec'
    */
   alias?: string;
   /**
-   * The content of the SOAP Header
+   * Header content object; keys become XML child elements (`{ Token: "x" }` -> `<Token>x</Token>`).
    *
-   * @example { "key": "value" }
-   *
-   * then the content will be `<key>value</key>` in XML
+   * @example { Token: 'abc' }
    */
   headers: unknown;
 }

@@ -47,33 +47,44 @@ const SourceHTTPInput = new GraphQLInputObjectType({
   },
 });
 
+/** SOAP emit `@connect` (subset of transport-connect args). */
 export const ConnectDirective = new GraphQLDirective({
   name: 'connect',
   locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
   args: {
+    /** `@source(name:)` this connect belongs to. */
     source: { type: GraphQLString },
+    /** HTTP method/path/body/headers mapping. */
     http: { type: ConnectHTTPInput },
+    /** JSONSelection / XML selection projecting the response. */
     selection: { type: new GraphQLNonNull(JSONSelectionScalar) },
+    /** Mark as entity resolver for Mesh `_entities`. */
     entity: { type: GraphQLBoolean },
   },
   isRepeatable: true,
 });
 
+/** SOAP emit schema-level `@source`. */
 export const SourceDirective = new GraphQLDirective({
   name: 'source',
   locations: [DirectiveLocation.SCHEMA],
   args: {
+    /** Source name referenced by `@connect(source:)`. */
     name: { type: new GraphQLNonNull(GraphQLString) },
+    /** HTTP base URL + default headers. */
     http: { type: new GraphQLNonNull(SourceHTTPInput) },
   },
   isRepeatable: true,
 });
 
+/** SOAP emit schema `@link`. */
 export const LinkDirective = new GraphQLDirective({
   name: 'link',
   locations: [DirectiveLocation.SCHEMA],
   args: {
+    /** Spec URL. */
     url: { type: new GraphQLNonNull(GraphQLString) },
+    /** Imported directive/type names. */
     import: { type: new GraphQLList(GraphQLString) },
   },
   isRepeatable: true,
