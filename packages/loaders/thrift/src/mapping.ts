@@ -717,9 +717,11 @@ function buildTJSONListSetSelectionExpr(returnTypeVal: TypeVal, topTypeMap: Type
   const elemResolved = resolveTypeVal(resolved.elementType, topTypeMap);
   const base = `$->get(4)->get("0")->get("${tag}")->slice(2)`;
   if (elemResolved.type === TType.STRUCT) {
+    // TJSON list/set of structs: ["rec", n, { "1":… }, …] — elements are bare
+    // field maps (no per-element `rec` wrapper). Project from `@` directly.
     const nested = Object.entries(elemResolved.fields)
       .map(([fieldName, fieldType]) =>
-        formatTJSONLitProperty(fieldName, fieldType, topTypeMap, '@->get("rec")'),
+        formatTJSONLitProperty(fieldName, fieldType, topTypeMap, '@'),
       )
       .join(',\n    ');
     return `${base}->map(@->{\n    ${nested}\n  })`;
@@ -907,6 +909,15 @@ function formatTJSONLitProperty(
   if (resolved.type === TType.LIST || resolved.type === TType.SET) {
     const listPath = `${fieldPath}->get("${tag}")->slice(2)`;
     const elemResolved = resolveTypeVal(resolved.elementType, topTypeMap);
+    if (elemResolved.type === TType.STRUCT) {
+      // Nested list/set of structs: elements are bare field maps — map from `@`.
+      const nested = Object.entries(elemResolved.fields)
+        .map(([childName, childType]) =>
+          formatTJSONLitProperty(childName, childType, topTypeMap, '@', seenStructs),
+        )
+        .join(',\n    ');
+      return `${graphqlName}: ${listPath}->map(@->{\n    ${nested}\n  })`;
+    }
     if (elemResolved.type === TType.ENUM) {
       const suffix = tjsonEnumWireToNameSuffix(elemResolved, true);
       if (suffix) {

@@ -658,6 +658,8 @@ describe('thrift', () => {
       /value:\s*\$->get\(4\)->get\("0"\)->ne\(null\)->match\(\[true,\s*\$->get\(4\)->get\("0"\)->get\("lst"\)->slice\(2\)->map\(@->\{/,
     );
     expect(itemsSel).not.toMatch(/slice\(2\)\s*\{/);
+    expect(itemsSel).toMatch(/left:\s*@->get\("1"\)->get\("i32"\)/);
+    expect(itemsSel).not.toMatch(/@->get\("rec"\)/);
     expect(uniqueSel).toMatch(/get\("set"\)->slice\(2\)->map\(@->\{/);
     expect(uniqueSel).not.toMatch(/slice\(2\)\s*\{/);
 
@@ -668,6 +670,7 @@ describe('thrift', () => {
       status: 200,
       vars: { args: {}, thisValue: undefined, env: {}, context: {} },
     };
+    // Apache TJSON: list elems are bare field maps after ["rec", n, …] — no per-element `rec`.
     const successReply = [
       1,
       'items',
@@ -678,8 +681,8 @@ describe('thrift', () => {
           lst: [
             'rec',
             2,
-            { rec: { '1': { i32: 1 }, '2': { str: 'a' } } },
-            { rec: { '1': { i32: 2 }, '2': { str: 'b' } } },
+            { '1': { i32: 1 }, '2': { str: 'a' } },
+            { '1': { i32: 2 }, '2': { str: 'b' } },
           ],
         },
       },
@@ -703,6 +706,51 @@ describe('thrift', () => {
     expect(boomData.message).toBe('boom');
     expect(boomData.__throw_Boom).toBe(true);
     expect(resolveType(boomData, null as any, { schema: rebuilt } as any, union)).toBe('Boom');
+  });
+
+  it('TJSON list unions recursively project nested struct collections', async () => {
+    const { applySelection } = await import('../../../transports/rest/src/directives/connect.js');
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'ListNestedStructThrowsSvc',
+      source: './fixtures/list_nested_struct_throws.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/list-nested-struct-throws',
+      protocol: 'json',
+      ignoreExceptions: false,
+    });
+    const selection = (schema.getQueryType()!.getFields().items.extensions as any).directives
+      .connect.selection as string;
+    expect(selection).toMatch(
+      /children:\s*@->get\("2"\)->get\("lst"\)->slice\(2\)->map\(@->\{\s*n:\s*@->get\("1"\)->get\("i32"\)/,
+    );
+    expect(selection).toMatch(/left:\s*@->get\("1"\)->get\("i32"\)/);
+    expect(selection).not.toMatch(/@->get\("rec"\)/);
+
+    const extras = {
+      status: 200,
+      vars: { args: {}, thisValue: undefined, env: {}, context: {} },
+    };
+    const successReply = [
+      1,
+      'items',
+      2,
+      1,
+      {
+        '0': {
+          lst: [
+            'rec',
+            1,
+            {
+              '1': { i32: 10 },
+              '2': { lst: ['rec', 2, { '1': { i32: 7 } }, { '1': { i32: 9 } }] },
+            },
+          ],
+        },
+      },
+    ];
+    const successData = applySelection(selection, successReply, extras);
+    expect(successData.value).toEqual([{ left: 10, children: [{ n: 7 }, { n: 9 }] }]);
+    expect(successData.__throw_Boom).toBe(false);
   });
 
   it('TJSON void union keeps success ok when an exception also declares ok', async () => {

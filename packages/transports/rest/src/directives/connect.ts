@@ -998,20 +998,25 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
       return left.includes(parseConnectorsLiteralArg(rawArgs));
     }
     // `$->map(@->match(...))` / `$->map(@.id)` / `$->map(@->{ ... })` — element transform.
+    // Nested maps: outer `rewriteAtToDollar` turns inner `@->{…}` into `$->{…}`; accept both.
     if (method === 'map') {
       if (!Array.isArray(left)) return left;
       const elementExpr = rawArgs.trim();
       return left.map(item => {
-        if (elementExpr === '@') return item;
-        if (elementExpr.startsWith('@')) {
-          const afterAt = elementExpr.slice(1);
-          // `@->{ ... }` / `@->[ ... ]` — lit object/array with `@` as the element.
-          if (afterAt.startsWith('->{') || afterAt.startsWith('->[')) {
-            const lit = afterAt.slice(2);
+        if (elementExpr === '@' || elementExpr === '$') return item;
+        if (
+          elementExpr.startsWith('@') ||
+          elementExpr.startsWith('$->{') ||
+          elementExpr.startsWith('$->[')
+        ) {
+          const afterSigil = elementExpr.slice(1);
+          // `@->{ ... }` / `$->{ ... }` / `@->[ ... ]` — lit with element as root.
+          if (afterSigil.startsWith('->{') || afterSigil.startsWith('->[')) {
+            const lit = afterSigil.slice(2);
             return evalConnectorsLitExpr(rewriteAtToDollar(lit), item, extras);
           }
-          if (afterAt.startsWith('{') || afterAt.startsWith('[')) {
-            return evalConnectorsLitExpr(rewriteAtToDollar(afterAt), item, extras);
+          if (afterSigil.startsWith('{') || afterSigil.startsWith('[')) {
+            return evalConnectorsLitExpr(rewriteAtToDollar(afterSigil), item, extras);
           }
           // `@->match(...)` / `@.id` — treat `@` as the element root.
           return evalPath(rewriteAtToDollar(elementExpr), item, extras);

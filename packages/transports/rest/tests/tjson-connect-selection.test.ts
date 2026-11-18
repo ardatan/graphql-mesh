@@ -165,6 +165,7 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
   });
 
   it('list/set success inside match uses ->map expression, not trailing braces', () => {
+    // Apache TJSON list-of-struct: elements are bare field maps (no per-element `rec`).
     const reply = [
       1,
       'items',
@@ -175,14 +176,14 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
           lst: [
             'rec',
             2,
-            { rec: { '1': { i32: 1 }, '2': { str: 'a' } } },
-            { rec: { '1': { i32: 2 }, '2': { str: 'b' } } },
+            { '1': { i32: 1 }, '2': { str: 'a' } },
+            { '1': { i32: 2 }, '2': { str: 'b' } },
           ],
         },
       },
     ];
     const gatedMap = `$({
-  value: $($->get(4)->get("0")->ne(null)->match([true, $->get(4)->get("0")->get("lst")->slice(2)->map(@->{ left: @->get("rec")->get("1")->get("i32"), text: @->get("rec")->get("2")->get("str") })], [@, null])),
+  value: $($->get(4)->get("0")->ne(null)->match([true, $->get(4)->get("0")->get("lst")->slice(2)->map(@->{ left: @->get("1")->get("i32"), text: @->get("2")->get("str") })], [@, null])),
   __throw_Boom: $->get(4)->get("1")->ne(null)
 })`;
     expect(applySelection(gatedMap, reply, extras)).toEqual({
@@ -197,6 +198,33 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
   value: $($->get(4)->get("0")->ne(null)->match([true, $->get(4)->get("0")->get("lst")->slice(2) { left: $->get("1")->get("i32") }], [@, null]))
 })`;
     expect(applySelection(gatedBraced, reply, extras)).toEqual({});
+  });
+
+  it('nested list-of-struct fields project via ->map from @', () => {
+    const reply = [
+      1,
+      'items',
+      2,
+      1,
+      {
+        '0': {
+          lst: [
+            'rec',
+            1,
+            {
+              '1': { i32: 10 },
+              '2': { lst: ['rec', 2, { '1': { i32: 7 } }, { '1': { i32: 9 } }] },
+            },
+          ],
+        },
+      },
+    ];
+    const sel = `$({
+  value: $($->get(4)->get("0")->ne(null)->match([true, $->get(4)->get("0")->get("lst")->slice(2)->map(@->{ left: @->get("1")->get("i32"), children: @->get("2")->get("lst")->slice(2)->map(@->{ n: @->get("1")->get("i32") }) })], [@, null]))
+})`;
+    expect(applySelection(sel, reply, extras)).toEqual({
+      value: [{ left: 10, children: [{ n: 7 }, { n: 9 }] }],
+    });
   });
 
   it('gates success value/ok so exception fields with the same name cannot clobber', () => {
