@@ -745,7 +745,29 @@ function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
 /** `$args.where` / `$this.id` — single path, not a multi-entry mapping block. */
 function isBareSqlBinder(value: string): boolean {
   const trimmed = value.trim();
-  return /^\$[A-Za-z_][\w.]*(?:\.[A-Za-z_][\w.]*)*$/.test(trimmed) && !trimmed.includes('\n');
+  // Reject mapping bodies / spreads without a backtracking regex (CodeQL).
+  if (
+    !trimmed.startsWith('$') ||
+    trimmed.includes('\n') ||
+    trimmed.includes(':') ||
+    trimmed.includes(' ')
+  ) {
+    return false;
+  }
+  if (trimmed.includes('...')) return false;
+  const segments = trimmed.slice(1).split('.');
+  if (!segments.length || segments.some(s => !s)) return false;
+  for (const seg of segments) {
+    const c0 = seg.charCodeAt(0);
+    const okStart = (c0 >= 65 && c0 <= 90) || (c0 >= 97 && c0 <= 122) || c0 === 95; /* A-Z a-z _ */
+    if (!okStart) return false;
+    for (let i = 1; i < seg.length; i++) {
+      const c = seg.charCodeAt(i);
+      const ok = (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c >= 48 && c <= 57) || c === 95;
+      if (!ok) return false;
+    }
+  }
+  return true;
 }
 
 /**
