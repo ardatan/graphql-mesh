@@ -254,11 +254,22 @@ export function coerceDeep(value: unknown, opts?: CoerceFilterOptions): unknown 
     if (ext !== undefined) return ext;
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value)) {
-      const fullKey = opts?.pathPrefix ? `${opts.pathPrefix}.${k}` : k;
+      // Native Mongo operators (`$or` / `$and` / …) are not BSON field path segments.
+      const nextPrefix = k.startsWith('$')
+        ? opts?.pathPrefix
+        : opts?.pathPrefix
+          ? `${opts.pathPrefix}.${k}`
+          : k;
+      const asObjectId =
+        opts?.asObjectId ||
+        (!k.startsWith('$') &&
+          nextPrefix != null &&
+          nextPrefix !== '' &&
+          isObjectIdFieldKey(nextPrefix, opts?.collection));
       out[k] = coerceDeep(v, {
         collection: opts?.collection,
-        pathPrefix: fullKey,
-        asObjectId: opts?.asObjectId || isObjectIdFieldKey(fullKey, opts?.collection),
+        pathPrefix: nextPrefix,
+        asObjectId,
       });
     }
     return out;
@@ -300,6 +311,11 @@ function isBsonValue(value: unknown): boolean {
     return true;
   if (typeof Buffer !== 'undefined' && Buffer.isBuffer(value)) return true;
   if (typeof Uint8Array !== 'undefined' && value instanceof Uint8Array) return true;
+  // Trust `_bsontype` only on non-plain objects (real BSON / cross-package instances).
+  // A plain `{ _bsontype: "…" }` document field must still be walked by coerceDeep.
+  if (Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null) {
+    return false;
+  }
   const bsontype = (value as { _bsontype?: string })._bsontype;
   return typeof bsontype === 'string' && bsontype.length > 0;
 }
@@ -402,28 +418,39 @@ function isPlainFilterObject(c: unknown): c is Record<string, unknown> {
 export function isMatchNothingFilter(filter: Record<string, unknown> | null | undefined): boolean {
   if (!filter) return false;
   const keys = Object.keys(filter);
-  if (keys.length === 1 && keys[0] === '$nor' && Array.isArray(filter.$nor)) {
-    const clauses = filter.$nor as unknown[];
-    return (
-      clauses.length === 1 && isUniversallyMatchingFilter(clauses[0] as Record<string, unknown>)
-    );
+  if (keys.length === 0) return false;
+
+  const singleKeyIsMatchNothing = (key: string, value: unknown): boolean => {
+    if (key === '$nor' && Array.isArray(value)) {
+      const clauses = value as unknown[];
+      return (
+        clauses.length === 1 && isUniversallyMatchingFilter(clauses[0] as Record<string, unknown>)
+      );
+    }
+    // One impossible `$and` clause makes the whole `$and` match-nothing.
+    if (key === '$and' && Array.isArray(value)) {
+      const clauses = value as Record<string, unknown>[];
+      return (
+        clauses.length > 0 && clauses.some(c => isPlainFilterObject(c) && isMatchNothingFilter(c))
+      );
+    }
+    // Nonempty `$or` of only match-nothing branches is still match-nothing
+    // (`not` of that becomes match-all and must be caught by the bulk guard).
+    if (key === '$or' && Array.isArray(value)) {
+      const clauses = value as Record<string, unknown>[];
+      return (
+        clauses.length > 0 && clauses.every(c => isPlainFilterObject(c) && isMatchNothingFilter(c))
+      );
+    }
+    return false;
+  };
+
+  if (keys.length === 1) {
+    return singleKeyIsMatchNothing(keys[0]!, filter[keys[0]!]);
   }
-  // One impossible `$and` clause makes the whole conjunction match-nothing.
-  if (keys.length === 1 && keys[0] === '$and' && Array.isArray(filter.$and)) {
-    const clauses = filter.$and as Record<string, unknown>[];
-    return (
-      clauses.length > 0 && clauses.some(c => isPlainFilterObject(c) && isMatchNothingFilter(c))
-    );
-  }
-  // Nonempty `$or` of only match-nothing branches is still match-nothing
-  // (`not` of that becomes match-all and must be caught by the bulk guard).
-  if (keys.length === 1 && keys[0] === '$or' && Array.isArray(filter.$or)) {
-    const clauses = filter.$or as Record<string, unknown>[];
-    return (
-      clauses.length > 0 && clauses.every(c => isPlainFilterObject(c) && isMatchNothingFilter(c))
-    );
-  }
-  return false;
+  // Multi-key documents are a conjunction: any impossible sibling makes the whole
+  // filter match-nothing (`{ name, $and: [MATCH_NOTHING] }` → nothing).
+  return keys.some(k => singleKeyIsMatchNothing(k, filter[k]));
 }
 
 /**
@@ -507,14 +534,15 @@ export function graphqlFilterToMongo(
       // Empty `$and: []` is invalid Mongo; omit and keep sibling predicates.
       if (clauses.length === 0) continue;
       const mapped = clauses.map(v => graphqlFilterToMongo(v, pathPrefix, collection, oidBase));
-      // Nested `{ and: [{ and: [] }] }` → `[{}]` would match everything; drop vacuous
-      // clauses and require MATCH_NOTHING when nothing meaningful remains.
+      // Vacuous nested conjunctions (`and: [{ and: [] }]`) stay universal (`{}`), not
+      // MATCH_NOTHING: `not` of a neutral conjunction must be match-nothing (safe for
+      // reads / UPDATE_ONE / DELETE_ONE). Drop vacuous clauses; when nothing remains,
+      // leave an empty object (bulk guard still neutralizes bare match-all writes).
       const meaningful = mapped.filter(c => !isUniversallyMatchingFilter(c));
-      if (meaningful.length === 0) {
-        appendAnd(out, [MATCH_NOTHING_FILTER]);
-      } else {
+      if (meaningful.length > 0) {
         appendAnd(out, meaningful);
       }
+      // else: vacuous conjunction stays neutral (`{}` / omit) — do not invent MATCH_NOTHING.
       continue;
     }
     if (key === 'OR' || key === 'or') {
@@ -545,9 +573,11 @@ export function graphqlFilterToMongo(
       continue;
     }
 
-    // GraphQL `id` → Mongo `_id`; `storedId` → mongoose path `id` only on String `_id` models.
+    // GraphQL `id` → Mongo `_id` only at model root (not embedded `profile.id`).
+    // Under `$elemMatch`, `pathPrefix` is empty but `oidBase` marks the nested scope.
+    const atModelRoot = !pathPrefix && oidBase == null;
     const mongoKey =
-      key === 'id'
+      key === 'id' && atModelRoot
         ? '_id'
         : key === 'storedId' && collection && activeStringIdCollections().has(collection)
           ? 'id'
@@ -560,9 +590,9 @@ export function graphqlFilterToMongo(
     const fullKey = relativeKey;
 
     if (Array.isArray(value) && value.length > 0 && value.every(isPlainObject)) {
-      // Keep element-relative keys; pass the array field path for ObjectId policy.
+      // Keep element-relative keys; pass the absolute array path for ObjectId policy.
       const elemMatches = (value as Record<string, unknown>[]).map(item => ({
-        $elemMatch: graphqlFilterToMongo(item, '', collection, fullKey),
+        $elemMatch: graphqlFilterToMongo(item, '', collection, oidPath),
       }));
       if (elemMatches.length === 1) {
         out[fullKey] = elemMatches[0];

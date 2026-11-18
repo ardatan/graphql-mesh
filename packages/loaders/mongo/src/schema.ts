@@ -251,8 +251,10 @@ export async function loadGraphQLSchemaFromMongo(
   ensurePageInfo(schemaComposer);
 
   const modelMeta: Array<{
-    /** Original model config `name` (Mongoose `ref` target). */
+    /** Registered Mongoose model name (`model.modelName`) for `ref` resolution. */
     modelName: string;
+    /** Loader entry `name` (GraphQL naming stem); fallback ref key when distinct. */
+    configName: string;
     typeName: string;
     collection: string;
     schema: MongooseSchema;
@@ -282,6 +284,7 @@ export async function loadGraphQLSchemaFromMongo(
       paths = paths.filter(p => p.name !== discriminator.key);
     }
     const placeholderFields: string[] = [];
+    assertSupportedIdType(model.schema, modelConfig.name);
     const stringId = isStringIdSchema(model.schema);
     if (stringId && paths.some(p => p.name === 'storedId')) {
       throw new Error(
@@ -294,8 +297,15 @@ export async function loadGraphQLSchemaFromMongo(
       );
     }
     assertNoReservedFilterPathNames(paths, modelConfig.name);
+    // Mongoose `ref: 'User'` names the registered model (`model.modelName`), which
+    // may differ from the loader entry `name` used for GraphQL type naming.
+    const registeredModelName =
+      typeof (model as any).modelName === 'string' && (model as any).modelName
+        ? String((model as any).modelName)
+        : modelConfig.name;
     modelMeta.push({
-      modelName: modelConfig.name,
+      modelName: registeredModelName,
+      configName: modelConfig.name,
       typeName,
       collection,
       schema: model.schema,
@@ -324,10 +334,18 @@ export async function loadGraphQLSchemaFromMongo(
     m => m.fieldRestrictions?.only?.length || m.fieldRestrictions?.remove?.length,
   );
 
-  // Mongoose `ref: 'User'` must resolve via original model name before GraphQL naming.
-  const typeNameByModelName = new Map(modelMeta.map(m => [m.modelName, m.typeName]));
+  // Mongoose `ref: 'User'` must resolve via registered model name (and config name fallback).
+  const typeNameByModelName = new Map<string, string>();
+  for (const m of modelMeta) {
+    typeNameByModelName.set(m.modelName, m.typeName);
+    if (m.configName !== m.modelName) {
+      typeNameByModelName.set(m.configName, m.typeName);
+    }
+  }
   const pathsByType = new Map(modelMeta.map(m => [m.typeName, m.paths]));
   const collectionsByType = new Map(modelMeta.map(m => [m.typeName, m.collection]));
+  const stringIdByType = new Map(modelMeta.map(m => [m.typeName, Boolean(m.stringId)]));
+  const rootFieldOwners = new Map<string, string>();
   for (const meta of modelMeta) {
     // Subtypes: prepended `$match` is bypassable via `$unionWith` — omit raw aggregate
     // until the transport can enforce discriminator scope across client stages.
@@ -344,6 +362,8 @@ export async function loadGraphQLSchemaFromMongo(
       stringId: meta.stringId,
       discriminator: meta.discriminator,
       returnDocumentOnlyInMutationResult: opts.returnDocumentOnlyInMutationResult,
+      modelName: meta.configName,
+      rootFieldOwners,
     });
     emitRefFields(schemaComposer, {
       subgraphName,
@@ -353,6 +373,8 @@ export async function loadGraphQLSchemaFromMongo(
       typeNameByModelName,
       collectionsByType,
       pathsByType,
+      stringIdByType,
+      sourceStringId: meta.stringId,
     });
   }
 
@@ -553,7 +575,8 @@ interface PathMeta {
   isArray?: boolean;
   /** Primitive array element BSON/Mongoose instance (String, Number, …). */
   arrayElementInstance?: string;
-  enumValues?: string[];
+  /** Enum members; Numbers stay numeric so writes/filters keep BSON Number. */
+  enumValues?: Array<string | number>;
   /** GraphQL enum type name, e.g. EnumUserGender / EnumUserLanguagesSkill. */
   enumName?: string;
   ref?: string;
@@ -580,6 +603,29 @@ function isStringIdSchema(schema: MongooseSchema): boolean {
   const idPath = (schema as any)?.paths?._id;
   const instance = idPath?.instance || idPath?.caster?.instance;
   return instance === 'String';
+}
+
+/** Only default ObjectId and explicit String `_id` are supported. */
+function assertSupportedIdType(schema: MongooseSchema, modelName: string): void {
+  const idPath = (schema as any)?.paths?._id;
+  if (!idPath) return;
+  const instance = idPath?.instance || idPath?.caster?.instance;
+  if (
+    instance == null ||
+    instance === 'ObjectID' ||
+    instance === 'ObjectId' ||
+    instance === 'String'
+  ) {
+    return;
+  }
+  throw new Error(
+    `Model "${modelName}": unsupported _id type "${instance}" (only ObjectId and String are supported)`,
+  );
+}
+
+/** Keep finite numbers; stringify everything else for GraphQL enum names/values. */
+function normalizeEnumValues(raw: unknown[]): Array<string | number> {
+  return raw.map(v => (typeof v === 'number' && Number.isFinite(v) ? v : String(v)));
 }
 
 /** Subtype models expose `discriminatorMapping.isRoot === false`. */
@@ -840,7 +886,8 @@ function toPathMeta(
     const el = schemaType.embeddedSchemaType || schemaType.caster;
     const elInstance = el?.instance || 'Mixed';
     const enumRaw = el?.enumValues || el?.options?.enum;
-    const enumValues = Array.isArray(enumRaw) && enumRaw.length ? enumRaw.map(String) : undefined;
+    const enumValues =
+      Array.isArray(enumRaw) && enumRaw.length ? normalizeEnumValues(enumRaw) : undefined;
     const ref =
       schemaType.options?.ref || el?.options?.ref || schemaType.caster?.options?.ref || undefined;
     return {
@@ -857,7 +904,8 @@ function toPathMeta(
 
   const instance = schemaType.instance || schemaType.constructor?.name || 'Mixed';
   const enumRaw = schemaType.enumValues || schemaType.options?.enum;
-  const enumValues = Array.isArray(enumRaw) && enumRaw.length ? enumRaw.map(String) : undefined;
+  const enumValues =
+    Array.isArray(enumRaw) && enumRaw.length ? normalizeEnumValues(enumRaw) : undefined;
   const ref =
     schemaType.options?.ref ||
     schemaType.caster?.options?.ref ||
@@ -1010,6 +1058,10 @@ function emitModelRootFields(
     discriminator?: MongoDiscriminatorInfo;
     /** @default true — see {@link LoadMongoSubgraphOpts.returnDocumentOnlyInMutationResult} */
     returnDocumentOnlyInMutationResult?: boolean;
+    /** Loader entry name — for root collision diagnostics. */
+    modelName: string;
+    /** Shared Query/Mutation field → model owner map. */
+    rootFieldOwners: Map<string, string>;
   },
 ) {
   const { subgraphName, typeName, collection, paths, naming } = opts;
@@ -1019,6 +1071,22 @@ function emitModelRootFields(
   const selection = selectionForPaths(paths, { stringId: opts.stringId });
   const queryTC = schemaComposer.Query;
   const mutationTC = schemaComposer.Mutation;
+  const claimRoot = (
+    root: 'Query' | 'Mutation',
+    fieldName: string,
+    config: Record<string, unknown>,
+  ) => {
+    const key = `${root}.${fieldName}`;
+    const prev = opts.rootFieldOwners.get(key);
+    const tc = root === 'Query' ? queryTC : mutationTC;
+    if ((prev && prev !== opts.modelName) || (!prev && tc.hasField(fieldName))) {
+      throw new Error(
+        `Mongo: ${root} field "${fieldName}" collides between models "${prev || '(existing)'}" and "${opts.modelName}"`,
+      );
+    }
+    opts.rootFieldOwners.set(key, opts.modelName);
+    tc.setField(fieldName, config as any);
+  };
   const documentInput = naming.documentInput(typeName);
   const filterType = naming.filterInput(typeName);
   const sortEnum = naming.sortEnum(typeName);
@@ -1037,7 +1105,7 @@ function emitModelRootFields(
 
   // db.collection.findOne({ _id }) convenience
   if (isOpEnabled(ops, 'findById')) {
-    queryTC.setField(naming.findByIdField(typeName), {
+    claimRoot('Query', naming.findByIdField(typeName), {
       type: typeName,
       args: { id: { type: new GraphQLNonNull(idScalar) } },
       directives: [
@@ -1049,7 +1117,7 @@ function emitModelRootFields(
   }
 
   if (isOpEnabled(ops, 'findByIds')) {
-    queryTC.setField(naming.findByIdsField(typeName), {
+    claimRoot('Query', naming.findByIdsField(typeName), {
       type: `[${typeName}!]!`,
       args: {
         ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(idScalar))) },
@@ -1068,7 +1136,7 @@ function emitModelRootFields(
 
   // db.collection.find(filter, projection via selection, { sort, limit, skip })
   if (isOpEnabled(ops, 'findMany')) {
-    queryTC.setField(naming.findManyField(typeName), {
+    claimRoot('Query', naming.findManyField(typeName), {
       type: `[${typeName}!]!`,
       args: {
         filter: { type: filterType },
@@ -1089,7 +1157,7 @@ function emitModelRootFields(
 
   // db.collection.findOne(filter, projection)
   if (isOpEnabled(ops, 'findOne')) {
-    queryTC.setField(naming.findOneField(typeName), {
+    claimRoot('Query', naming.findOneField(typeName), {
       type: typeName,
       args: {
         filter: { type: filterType },
@@ -1108,7 +1176,7 @@ function emitModelRootFields(
 
   // db.collection.countDocuments(filter)
   if (isOpEnabled(ops, 'countDocuments')) {
-    queryTC.setField(naming.countDocumentsField(typeName), {
+    claimRoot('Query', naming.countDocumentsField(typeName), {
       type: new GraphQLNonNull(GraphQLInt),
       args: { filter: { type: filterType } },
       directives: [mongoDir('mongo__count', { query: argsFilter, selection: blockArg('$') })],
@@ -1119,7 +1187,7 @@ function emitModelRootFields(
   // prepended subtype `$match` — omitted when `omitAggregate` (restricted subgraph
   // and/or discriminator subtype models).
   if (!opts.omitAggregate && isOpEnabled(ops, 'aggregate')) {
-    queryTC.setField(naming.aggregateField(typeName), {
+    claimRoot('Query', naming.aggregateField(typeName), {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLJSON))),
       args: {
         filter: { type: filterType },
@@ -1136,7 +1204,7 @@ function emitModelRootFields(
   }
 
   if (isOpEnabled(ops, 'connection')) {
-    queryTC.setField(naming.connectionField(typeName), {
+    claimRoot('Query', naming.connectionField(typeName), {
       type: naming.connectionType(typeName),
       args: {
         filter: { type: filterType },
@@ -1174,7 +1242,7 @@ totalCount: $totalCount
   }
 
   if (isOpEnabled(ops, 'pagination')) {
-    queryTC.setField(naming.paginationField(typeName), {
+    claimRoot('Query', naming.paginationField(typeName), {
       type: naming.paginationType(typeName),
       args: {
         filter: { type: filterType },
@@ -1250,7 +1318,7 @@ createdCount: $createdCount
 
   // db.collection.insertOne(document)
   if (isOpEnabled(ops, 'insertOne')) {
-    mutationTC.setField(naming.insertOneField(typeName), {
+    claimRoot('Mutation', naming.insertOneField(typeName), {
       type: singleMutationType,
       args: { document: { type: `${documentInput}!` } },
       directives: [
@@ -1269,7 +1337,7 @@ createdCount: $createdCount
       // Sibling literals are stamped onto each document by the transport.
       insertManySetLines.push(`${disc.key}: ${discriminatorValueLiteral(disc.value)}`);
     }
-    mutationTC.setField(naming.insertManyField(typeName), {
+    claimRoot('Mutation', naming.insertManyField(typeName), {
       type: insertManyType,
       args: { documents: { type: `[${documentInput}!]!` } },
       directives: [
@@ -1288,7 +1356,7 @@ createdCount: $createdCount
   const idArgScalar = opts.stringId ? GraphQLString : GraphQLObjectID;
 
   if (isOpEnabled(ops, 'updateById')) {
-    mutationTC.setField(naming.updateByIdField(typeName), {
+    claimRoot('Mutation', naming.updateByIdField(typeName), {
       type: singleMutationType,
       args: {
         id: { type: new GraphQLNonNull(idArgScalar) },
@@ -1307,7 +1375,7 @@ createdCount: $createdCount
 
   // db.collection.updateOne(filter, update)
   if (isOpEnabled(ops, 'updateOne')) {
-    mutationTC.setField(naming.updateOneField(typeName), {
+    claimRoot('Mutation', naming.updateOneField(typeName), {
       type: singleMutationType,
       args: {
         filter: { type: `${filterType}!` },
@@ -1324,7 +1392,7 @@ createdCount: $createdCount
   }
 
   if (isOpEnabled(ops, 'updateMany')) {
-    mutationTC.setField(naming.updateManyField(typeName), {
+    claimRoot('Mutation', naming.updateManyField(typeName), {
       type: naming.payloadType(typeName),
       args: {
         filter: { type: `${filterType}!` },
@@ -1344,7 +1412,7 @@ matchedCount: $matchedCount
   }
 
   if (isOpEnabled(ops, 'deleteById')) {
-    mutationTC.setField(naming.deleteByIdField(typeName), {
+    claimRoot('Mutation', naming.deleteByIdField(typeName), {
       type: singleMutationType,
       args: { id: { type: new GraphQLNonNull(idArgScalar) } },
       directives: [
@@ -1358,7 +1426,7 @@ matchedCount: $matchedCount
 
   // db.collection.deleteOne(filter)
   if (isOpEnabled(ops, 'deleteOne')) {
-    mutationTC.setField(naming.deleteOneField(typeName), {
+    claimRoot('Mutation', naming.deleteOneField(typeName), {
       type: singleMutationType,
       args: { filter: { type: `${filterType}!` } },
       directives: [
@@ -1371,7 +1439,7 @@ matchedCount: $matchedCount
   }
 
   if (isOpEnabled(ops, 'deleteMany')) {
-    mutationTC.setField(naming.deleteManyField(typeName), {
+    claimRoot('Mutation', naming.deleteManyField(typeName), {
       type: naming.payloadType(typeName),
       args: { filter: { type: `${filterType}!` } },
       directives: [
@@ -1395,6 +1463,9 @@ function emitRefFields(
     typeNameByModelName: Map<string, string>;
     collectionsByType: Map<string, string>;
     pathsByType: Map<string, PathMeta[]>;
+    stringIdByType: Map<string, boolean>;
+    /** Source model uses String `_id` (GraphQL `id` / `storedId` aliases). */
+    sourceStringId?: boolean;
   },
 ) {
   // Use restricted model paths so removed source fields do not keep ref resolvers.
@@ -1424,7 +1495,10 @@ function emitRefFields(
       }
     }
     const refPaths = opts.pathsByType.get(refTypeName) || [];
-    const refSelection = selectionForPaths(refPaths);
+    const targetStringId = opts.stringIdByType.get(refTypeName);
+    const refSelection = selectionForPaths(refPaths, { stringId: targetStringId });
+    // String-_id sources expose mongoose `id` as `storedId` on the parent selection.
+    const thisField = opts.sourceStringId && path.name === 'id' ? 'storedId' : path.name;
     if (path.isArray) {
       otc.setField(finalName, {
         type: `[${refTypeName}!]!`,
@@ -1434,7 +1508,7 @@ function emitRefFields(
             args: {
               subgraph: opts.subgraphName,
               collection: refCollection,
-              query: blockArg(`_id: $this.${path.name}`),
+              query: blockArg(`_id: $this.${thisField}`),
               selection: refSelection,
             },
           },
@@ -1449,7 +1523,7 @@ function emitRefFields(
             args: {
               subgraph: opts.subgraphName,
               collection: refCollection,
-              query: blockArg(`_id: $this.${path.name}`),
+              query: blockArg(`_id: $this.${thisField}`),
               selection: refSelection,
             },
           },
@@ -1479,7 +1553,7 @@ function safeEnumValueName(value: string, used: Set<string>): string {
 function ensureEnumType(
   schemaComposer: SchemaComposer,
   enumName: string,
-  values: string[],
+  values: Array<string | number>,
 ): string {
   if (!schemaComposer.has(enumName)) {
     const used = new Set<string>();
@@ -1568,6 +1642,10 @@ function filterOperatorTypeForPath(
       path.enumName || `Enum${rootTypeName}${pascalCase(path.name)}`,
       path.enumValues,
     );
+    // Number enums keep numeric filter operands (not stringified enum names).
+    if (path.instance === 'Number' || path.arrayElementInstance === 'Number') {
+      return 'FloatQueryOperators';
+    }
     return 'StringQueryOperators';
   }
   if (path.isArray && path.arrayElementInstance) {
@@ -1827,6 +1905,14 @@ function createQuerySortAndDocumentInputs(
       if (path.name === '_id' || path.name === '__v') continue;
       if (path.name.includes('.')) continue;
       if (required.has(path.name)) continue;
+      // Match SetInput: String-_id models expose mongoose `id` as `storedId`.
+      if (opts?.stringId && path.name === 'id') {
+        unsetFields.storedId = {
+          type: 'Boolean',
+          description: path.description || 'Stored `id` path (GraphQL `id` is reserved for `_id`)',
+        };
+        continue;
+      }
       unsetFields[path.name] = { type: 'Boolean', description: path.description };
     }
 

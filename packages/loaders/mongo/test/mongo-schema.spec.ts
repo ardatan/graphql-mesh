@@ -547,4 +547,51 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).not.toContain('aggregateItems(');
     expect(sdl).toContain('updateOneItem(');
   });
+
+  it('rejects colliding list roots from Category vs Categories', async () => {
+    await expect(
+      loadGraphQLSchemaFromMongo('collide', {
+        endpoint: 'mongodb://localhost:27017/test',
+        models: [
+          { name: 'Category', schema: new Schema({ name: String }, { collection: 'cats' }) },
+          { name: 'Categories', schema: new Schema({ title: String }, { collection: 'cats2' }) },
+        ],
+      }),
+    ).rejects.toThrow(/collides between models/);
+  });
+
+  it('rejects unsupported Number _id types', async () => {
+    await expect(
+      loadGraphQLSchemaFromMongo('num-id', {
+        endpoint: 'mongodb://localhost:27017/test',
+        models: [
+          {
+            name: 'Counter',
+            schema: new Schema({ _id: Number, name: String }, { collection: 'counters' }),
+          },
+        ],
+      }),
+    ).rejects.toThrow(/unsupported _id type/);
+  });
+
+  it('preserves numeric enum values and exposes UnsetInput storedId', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('enums', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'Ranked',
+          schema: new Schema(
+            { _id: String, id: String, level: { type: Number, enum: [1, 2] } },
+            { collection: 'ranked' },
+          ),
+          collection: 'ranked',
+        },
+      ],
+    });
+    const levelEnum = schema.getType('EnumRankedLevel') as any;
+    expect(levelEnum.getValue('_1')?.value ?? levelEnum.getValue('1')?.value).toBe(1);
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toMatch(/input RankedUnsetInput[\s\S]*?\bstoredId:\s*Boolean/);
+    expect(sdl).not.toMatch(/input RankedUnsetInput[\s\S]*?\bid:\s*Boolean/);
+  });
 });

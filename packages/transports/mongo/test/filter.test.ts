@@ -139,10 +139,10 @@ describe('mongo filter mapping', () => {
     expect(graphqlFilterToMongo({ languages: [{ or: [] }] })).toEqual({
       languages: { $elemMatch: { $and: [{ $nor: [{}] }] } },
     });
-    // Nested empty `and` must not become `$and: [{}]` (matches all).
+    // Nested empty `and` stays neutral/universal (not MATCH_NOTHING).
     const nestedEmptyAnd = graphqlFilterToMongo({ and: [{ and: [] }] });
-    expect(isUniversallyMatchingFilter(nestedEmptyAnd)).toBe(false);
-    expect(nestedEmptyAnd).toEqual({ $and: [MATCH_NOTHING_FILTER] });
+    expect(isUniversallyMatchingFilter(nestedEmptyAnd)).toBe(true);
+    expect(nestedEmptyAnd).toEqual({});
     // Vacuous `$or` branch matches all — keep it (do not prune before `not`).
     expect(isUniversallyMatchingFilter({ $or: [{}] })).toBe(true);
     expect(graphqlFilterToMongo({ or: [{ and: [] }] })).toEqual({ $or: [{}] });
@@ -159,18 +159,38 @@ describe('mongo filter mapping', () => {
     expect(isUniversallyMatchingFilter(notVacuousOr)).toBe(false);
     // All-contradiction OR is match-nothing; negating it is match-all (bulk guard).
     expect(isMatchNothingFilter({ $or: [MATCH_NOTHING_FILTER, MATCH_NOTHING_FILTER] })).toBe(true);
-    const notAllFalseOr = graphqlFilterToMongo({
+    // `or: [empty-or, vacuous-and]` is universal; negating it is match-nothing.
+    const notVacuousOrWithEmptyAnd = graphqlFilterToMongo({
       not: { or: [{ or: [] }, { and: [{ and: [] }] }] },
     });
-    expect(isUniversallyMatchingFilter(notAllFalseOr)).toBe(true);
-    // `not` of match-nothing is match-all — bulk guard must detect it.
+    expect(isMatchNothingFilter(notVacuousOrWithEmptyAnd)).toBe(true);
+    expect(isUniversallyMatchingFilter(notVacuousOrWithEmptyAnd)).toBe(false);
+    // `not` of neutral nested empty `and` is match-nothing (safe for reads / UPDATE_ONE).
     const notNestedEmpty = graphqlFilterToMongo({ not: { and: [{ and: [] }] } });
-    expect(isUniversallyMatchingFilter(notNestedEmpty)).toBe(true);
+    expect(isMatchNothingFilter(notNestedEmpty)).toBe(true);
+    expect(isUniversallyMatchingFilter(notNestedEmpty)).toBe(false);
+    // Normal negated predicate stays restrictive (not universal).
+    const notName = graphqlFilterToMongo({ not: { name: { eq: 'Ada' } } });
+    expect(isUniversallyMatchingFilter(notName)).toBe(false);
+    expect(isMatchNothingFilter(notName)).toBe(false);
+    expect(notName).toEqual({ $nor: [{ name: 'Ada' }] });
     expect(isUniversallyMatchingFilter(graphqlFilterToMongo({ not: { or: [] } }))).toBe(true);
     // One impossible `$and` clause → match-nothing (even with a sibling predicate).
     expect(
       isMatchNothingFilter({
         $and: [MATCH_NOTHING_FILTER, { name: 'Ada' }],
+      }),
+    ).toBe(true);
+    // Multi-key: field sibling + impossible `$and` is still match-nothing.
+    expect(
+      isMatchNothingFilter({
+        name: 'Ada',
+        $and: [MATCH_NOTHING_FILTER],
+      }),
+    ).toBe(true);
+    expect(
+      isUniversallyMatchingFilter({
+        $nor: [{ name: 'Ada', $and: [MATCH_NOTHING_FILTER] }],
       }),
     ).toBe(true);
     // Multi-key top-level: vacuous OR + restrictive sibling is NOT universal.
@@ -418,7 +438,7 @@ describe('mongo filter mapping', () => {
     const runtime = {
       objectIdFields: new Set(['_id', 'id']),
       objectIdFieldsByCollection: new Map<string, ReadonlySet<string>>([
-        ['posts', new Set(['profile.reviewer', 'tags.owner'])],
+        ['posts', new Set(['profile.reviewer', 'tags.owner', 'groups.people.owner'])],
         ['notes', new Set()], // authoritative empty — no flat fallback
       ]),
       requiredFields: new Set<string>(),
@@ -433,6 +453,27 @@ describe('mongo filter mapping', () => {
       expect(nested.profile.reviewer).toBeInstanceOf(ObjectId);
       expect(nested.profile.label).toBe(hex); // same-named String elsewhere stays string
 
+      // Plain docs with a `_bsontype` string field are still walked.
+      const plain = coerceDeep(
+        { profile: { _bsontype: 'ObjectID', reviewer: hex } },
+        { collection: 'posts' },
+      ) as { profile: { _bsontype: string; reviewer: unknown } };
+      expect(plain.profile._bsontype).toBe('ObjectID');
+      expect(plain.profile.reviewer).toBeInstanceOf(ObjectId);
+
+      // Native `$or` must not poison the BSON path (`$or.owner`).
+      const underOr = normalizeFilterDoc({ $or: [{ owner: hex }] }, 'posts') as {
+        $or: Array<{ owner: unknown }>;
+      };
+      // `owner` alone is not in the scoped set; use tags.owner via elemMatch below.
+      expect(underOr.$or[0]!.owner).toBe(hex);
+
+      const underOrOwner = coerceDeep(
+        { $or: [{ 'profile.reviewer': hex }] },
+        { collection: 'posts' },
+      ) as { $or: Array<{ 'profile.reviewer': unknown }> };
+      expect(underOrOwner.$or[0]!['profile.reviewer']).toBeInstanceOf(ObjectId);
+
       const elem = graphqlFilterToMongo({ tags: [{ owner: hex, name: 'a' }] }, '', 'posts') as {
         tags: { $elemMatch: { owner: unknown; name: string } };
       };
@@ -440,6 +481,21 @@ describe('mongo filter mapping', () => {
       expect(elem.tags.$elemMatch.name).toBe('a');
       // Relative keys inside $elemMatch (not `tags.owner`).
       expect(elem.tags.$elemMatch).not.toHaveProperty('tags.owner');
+
+      // Nested document arrays keep the absolute ObjectId policy path.
+      const nestedElem = graphqlFilterToMongo(
+        { groups: [{ people: [{ owner: hex }] }] },
+        '',
+        'posts',
+      ) as {
+        groups: { $elemMatch: { people: { $elemMatch: { owner: unknown } } } };
+      };
+      expect(nestedElem.groups.$elemMatch.people.$elemMatch.owner).toBeInstanceOf(ObjectId);
+
+      // Embedded `profile.id` stays `profile.id` (root `id` → `_id` only at model root).
+      expect(graphqlFilterToMongo({ profile: { id: { eq: 'legacy' } } }, '', 'posts')).toEqual({
+        'profile.id': 'legacy',
+      });
 
       // Empty scoped map is authoritative — flat objectIdFields must not coerce.
       expect(graphqlFilterToMongo({ owner: { eq: hex } }, '', 'notes').owner).toBe(hex);

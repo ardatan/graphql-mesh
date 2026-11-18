@@ -196,4 +196,18 @@ describe('parseMongoMapping', () => {
       meta: { _bsontype: 'metadata', nested: { _id: 'n1', id: 'n1', label: 'x' } },
     });
   });
+
+  it('parses numeric discriminator literals', () => {
+    const parsed = parseMongoMapping(`kind: 5\nname: name`);
+    expect(parsed.entries[0]).toEqual({
+      key: 'kind',
+      value: { kind: 'literal', value: 5 },
+    });
+  });
+
+  it('preserves # inside multiline quoted binders when stripping comments', () => {
+    const parsed = parseMongoMapping(`label: "north\n#2"\nname: name`);
+    expect(parsed.entries[0]?.value).toEqual({ kind: 'literal', value: 'north\n#2' });
+    expect(parsed.entries[1]?.key).toBe('name');
+  });
 });

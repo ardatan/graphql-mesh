@@ -109,7 +109,8 @@ export interface MongoTransportOptions {
 
 export interface MongoMappingValue {
   kind: 'column' | 'pseudo' | 'args' | 'this' | 'literal';
-  value: string;
+  /** String or number (discriminator literals like `kind: 5`). */
+  value: string | number;
   path?: string[];
 }
 

@@ -36,7 +36,8 @@ new stack (like mysql/tuql -> SQL).
 - BSON ObjectId (GraphQL field `id` ← `_id`, ById args, refs, `recordId`) uses
   `ObjectID` scalar + `ObjectIDQueryOperators` (not opaque GraphQL `ID`)
 - Scalars: `graphql-scalars` (`ObjectID`, `DateTime`, `Byte`, `JSON`) + local `Decimal128`
-- Mutation write failures always surface as GraphQL `errors` (`DOWNSTREAM_SERVICE_ERROR`); generated payloads do not emit `error` / `MongoError` (handwritten may map from the error variable via `selection`)
+- Mutation write failures always surface as GraphQL `errors` (`DOWNSTREAM_SERVICE_ERROR`);
+  generated and handwritten mutations both throw before applying `selection` (no error-payload mapping)
 - Generated mutations default to document-only results (`User` / `[User!]!`) via
   `returnDocumentOnlyInMutationResult` (default `true`). Set `false` for Connectors-style
   `*Payload` (`record: $record { … }`, `recordId: $_id`, counts). `updateMany` /

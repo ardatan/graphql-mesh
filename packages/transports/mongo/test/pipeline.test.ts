@@ -98,7 +98,8 @@ describe('AGGREGATE pipeline', () => {
       { $group: { _id: '$gender', count: { $sum: 1 } } },
     ]);
 
-    await execResult(executor, {
+    lastPipeline = [];
+    const rewritten = await execResult(executor, {
       document: parse(`
         query Agg($pipeline: JSON) {
           aggregateUsers(filter: { gender: { eq: "female" } }, pipeline: $pipeline)
@@ -108,11 +109,15 @@ describe('AGGREGATE pipeline', () => {
         pipeline: [{ $match: '$args.filter' }, { $group: { _id: '$gender', count: { $sum: 1 } } }],
       },
     });
-    expect(lastPipeline[0]).toEqual({
-      $match: buildMongoFilter(`$args.filter`, {
-        args: { filter: { gender: { eq: 'female' } } },
-      }),
-    });
+    expect(rewritten.errors).toBeUndefined();
+    expect(lastPipeline).toEqual([
+      {
+        $match: buildMongoFilter(`$args.filter`, {
+          args: { filter: { gender: { eq: 'female' } } },
+        }),
+      },
+      { $group: { _id: '$gender', count: { $sum: 1 } } },
+    ]);
 
     const rejected = await execResult(executor, {
       document: parse(`

@@ -177,31 +177,35 @@ function coerceGraphqlValue(value: unknown): unknown {
 }
 
 function stripComments(source: string): string {
-  return source
-    .split('\n')
-    .map(line => {
-      let inQuote: '"' | "'" | null = null;
-      for (let i = 0; i < line.length; i++) {
-        const c = line[i];
-        if (inQuote) {
-          if (c === '\\') {
-            i++;
-            continue;
-          }
-          if (c === inQuote) inQuote = null;
+  // Keep quote state across lines so multiline quoted binders (e.g. a
+  // discriminator containing a newline + `#`) are not truncated mid-literal.
+  let inQuote: '"' | "'" | null = null;
+  const lines = source.split('\n');
+  const out: string[] = [];
+  for (const line of lines) {
+    let cutAt = line.length;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i]!;
+      if (inQuote) {
+        if (c === '\\') {
+          i++;
           continue;
         }
-        if (c === '"' || c === "'") {
-          inQuote = c;
-          continue;
-        }
-        if (c === '#') {
-          return line.slice(0, i);
-        }
+        if (c === inQuote) inQuote = null;
+        continue;
       }
-      return line;
-    })
-    .join('\n');
+      if (c === '"' || c === "'") {
+        inQuote = c;
+        continue;
+      }
+      if (c === '#') {
+        cutAt = i;
+        break;
+      }
+    }
+    out.push(line.slice(0, cutAt));
+  }
+  return out.join('\n');
 }
 
 function parseBlock(
@@ -271,6 +275,14 @@ function parseBlock(
           i = skipWs(text, lit.next);
           continue;
         }
+        if (j < text.length && (text[j] === '-' || (text[j]! >= '0' && text[j]! <= '9'))) {
+          const num = readNumberLiteral(text, j);
+          if (num) {
+            entries.push({ key: rawKey, value: { kind: 'literal', value: num.value } });
+            i = skipWs(text, num.next);
+            continue;
+          }
+        }
         const col = readPathIdent(text, j);
         entries.push({ key: rawKey, value: { kind: 'column', value: col.value } });
         i = skipWs(text, col.next);
@@ -330,6 +342,18 @@ function parseBlock(
       });
       i = skipWs(text, lit.next);
       continue;
+    }
+    // Numeric literals (discriminator `kind: 5`) — do not send digits to readPathIdent.
+    if (i < text.length && (text[i] === '-' || (text[i]! >= '0' && text[i]! <= '9'))) {
+      const num = readNumberLiteral(text, i);
+      if (num) {
+        entries.push({
+          key: key.value,
+          value: { kind: 'literal', value: num.value },
+        });
+        i = skipWs(text, num.next);
+        continue;
+      }
     }
     const col = readPathIdent(text, i);
     entries.push({
@@ -416,6 +440,25 @@ function readDottedPath(text: string, start: number): { value: string; next: num
     value += `.${next.value}`;
     i = next.next;
   }
+  return { value, next: i };
+}
+
+/** Parse a JSON-like number (`5`, `-2`, `3.14`); returns null when not a number token. */
+function readNumberLiteral(text: string, start: number): { value: number; next: number } | null {
+  let i = start;
+  if (text[i] === '-') i++;
+  if (i >= text.length || text[i]! < '0' || text[i]! > '9') return null;
+  while (i < text.length && text[i]! >= '0' && text[i]! <= '9') i++;
+  if (i < text.length && text[i] === '.') {
+    i++;
+    if (i >= text.length || text[i]! < '0' || text[i]! > '9') return null;
+    while (i < text.length && text[i]! >= '0' && text[i]! <= '9') i++;
+  }
+  // Reject identifiers that merely start with digits (`2xx`).
+  if (i < text.length && isIdentPart(text[i]!)) return null;
+  const raw = text.slice(start, i);
+  const value = Number(raw);
+  if (!Number.isFinite(value)) return null;
   return { value, next: i };
 }
 

@@ -1,7 +1,12 @@
 import { parse, type ExecutionResult } from 'graphql';
 import { Schema } from 'mongoose';
 import { loadGraphQLSchemaFromMongo } from '@omnigraph/mongo';
-import { applyGraphqlStringIdInsertAliases, getMongoExecutor } from '../src/execution.js';
+import {
+  applyGraphqlStringIdInsertAliases,
+  applyMutationSelection,
+  getMongoExecutor,
+} from '../src/execution.js';
+import { parseMongoMapping } from '../src/mapping.js';
 import type { MongoClientLike } from '../src/types.js';
 
 async function execResult(
@@ -248,12 +253,13 @@ describe('getMongoExecutor FIND_* + writes', () => {
         `mutation { updateManyUsers(filter: ${nestedEmpty}, update: { set: { name: "x" } }) { matchedCount } }`,
       ),
     });
-    expect(lastUpdateFilter).toEqual({ $and: [{ $nor: [{}] }] });
+    // Vacuous nested `and` is universal; bulk guard still neutralizes.
+    expect(lastUpdateFilter).toEqual({ $nor: [{}] });
 
     await execResult(executor, {
       document: parse(`mutation { deleteManyUsers(filter: ${nestedEmpty}) { deletedCount } }`),
     });
-    expect(lastDeleteFilter).toEqual({ $and: [{ $nor: [{}] }] });
+    expect(lastDeleteFilter).toEqual({ $nor: [{}] });
 
     // Vacuous `$or` branch is match-all — bulk guard must neutralize (not prune→Ada-only).
     const vacuousOr = '{ or: [{ and: [] }, { name: { eq: "Ada" } }] }';
@@ -280,6 +286,29 @@ describe('getMongoExecutor FIND_* + writes', () => {
       document: parse(`mutation { deleteManyUsers(filter: ${notNestedEmpty}) { deletedCount } }`),
     });
     expect(lastDeleteFilter).toEqual({ $nor: [{}] });
+
+    // Non-bulk: `not` of neutral nested empty `and` is match-nothing (not match-all).
+    let lastUpdateOneFilter: Record<string, unknown> | undefined;
+    const clientOne: MongoClientLike = {
+      ...client,
+      async updateOne(_c, filter) {
+        lastUpdateOneFilter = filter as Record<string, unknown>;
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async findOneAndUpdate(_c, filter) {
+        lastUpdateOneFilter = filter as Record<string, unknown>;
+        return { value: null, matchedCount: 0, modifiedCount: 0 };
+      },
+    };
+    const executorOne = getMongoExecutor({ subgraph: schema, client: clientOne });
+    await execResult(executorOne, {
+      document: parse(
+        `mutation { updateOneUser(filter: ${notNestedEmpty}, update: { set: { name: "x" } }) { id } }`,
+      ),
+    });
+    expect(lastUpdateOneFilter).toEqual({ $nor: [{}] });
+    const { isMatchNothingFilter: isMN } = await import('../src/filter.js');
+    expect(isMN(lastUpdateOneFilter!)).toBe(true);
   });
 
   it('inserts String _id as string and pages connection cursors without ObjectId coerce', async () => {
@@ -706,5 +735,111 @@ describe('connection cursor sort keys', () => {
     expect(
       resolveSortKeyValueForCursor({ address: { city: 'Boston' }, _id: '2' }, 'address.city'),
     ).toBe('Boston');
+  });
+});
+
+describe('mutation selection + placeholder map', () => {
+  it('does not treat a stored record column as mutation envelope', () => {
+    const selection = parseMongoMapping(`
+      id: _id
+      record: record
+      name: name
+    `);
+    const out = applyMutationSelection(selection, {
+      records: [
+        { _id: '1', record: 'note', name: 'Ada' },
+        { _id: '2', record: 'memo', name: 'Alan' },
+      ],
+    });
+    expect(out).toEqual([
+      { id: '1', record: 'note', name: 'Ada' },
+      { id: '2', record: 'memo', name: 'Alan' },
+    ]);
+  });
+
+  it('treats empty placeholderFieldsByCollection as authoritative', async () => {
+    const { SchemaComposer } = await import('graphql-compose');
+    const { GraphQLJSON } = await import('graphql-scalars');
+    const { MongoInsertOneDirective, TransportDirective } = await import('@omnigraph/mongo');
+    const sc = new SchemaComposer();
+    sc.add(GraphQLJSON);
+    sc.addDirective(TransportDirective);
+    sc.addDirective(MongoInsertOneDirective);
+    sc.Query.setField('_empty', { type: 'String' });
+    sc.Mutation.setField('insertNote', {
+      type: 'JSON',
+      args: { document: { type: 'JSON!' } },
+      directives: [
+        {
+          name: 'mongo__insertOne',
+          args: {
+            collection: 'notes',
+            set: '_: $args.document._\nname: $args.document.name',
+            selection: 'id: _id\nname: name\n_: _',
+          },
+        },
+      ],
+    });
+    const schema = sc.buildSchema();
+    (schema.extensions as any) = {
+      directives: {
+        transport: {
+          kind: 'mongo',
+          location: 'mongodb://localhost:27017/test',
+          options: {
+            placeholderFields: ['_'],
+            // Explicit empty map: do not fall back to global `_` strip.
+            placeholderFieldsByCollection: [],
+          },
+        },
+      },
+    };
+    let inserted: Record<string, unknown> | undefined;
+    const client: MongoClientLike = {
+      async findOne() {
+        return null;
+      },
+      async findMany() {
+        return [];
+      },
+      async count() {
+        return 0;
+      },
+      async insertOne(_c, doc) {
+        inserted = doc as Record<string, unknown>;
+        return { insertedId: 'n1' };
+      },
+      async insertMany() {
+        return { insertedIds: [], insertedCount: 0 };
+      },
+      async updateOne() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async updateMany() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async findOneAndUpdate() {
+        return { value: null, matchedCount: 0, modifiedCount: 0 };
+      },
+      async deleteOne() {
+        return { deletedCount: 0 };
+      },
+      async deleteMany() {
+        return { deletedCount: 0 };
+      },
+      async findOneAndDelete() {
+        return { value: null, deletedCount: 0 };
+      },
+      async aggregate() {
+        return [];
+      },
+      dispose() {},
+    };
+    const executor = getMongoExecutor({ subgraph: schema, client });
+    const result = await execResult(executor, {
+      document: parse(`mutation { insertNote(document: { _: "keep", name: "Ada" }) }`),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(inserted).toEqual({ _: 'keep', name: 'Ada' });
   });
 });

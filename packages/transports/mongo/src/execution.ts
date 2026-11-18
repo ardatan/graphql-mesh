@@ -180,8 +180,10 @@ export function getMongoExecutor({
     placeholderFields: new Set(
       transport?.options?.placeholderFields?.length ? transport.options.placeholderFields : ['_'],
     ),
+    // Present empty placeholderFieldsByCollection must not fall back to global `_`.
     placeholderFieldsByCollection: toCollectionMap(
       transport?.options?.placeholderFieldsByCollection,
+      { emptyAuthoritative: true },
     ),
     stringIdCollections: new Set(transport?.options?.stringIdCollections || []),
   };
@@ -738,17 +740,26 @@ export function applyMutationSelection(
   selection: ReturnType<typeof parseMongoMapping>,
   bag: MutationSelectionBag,
 ): unknown {
-  const hasEnvelope = selection.entries.some(
-    e =>
-      e.key === 'record' ||
-      e.key === 'records' ||
+  // Payload markers only — a stored BSON field named `record` / `records` (column
+  // pick `record: record`) must not flip document-only mutations into envelope mode.
+  const hasEnvelope = selection.entries.some(e => {
+    if (
       e.key === 'recordId' ||
       e.key === 'recordIds' ||
       e.key === 'createdCount' ||
       e.key === 'matchedCount' ||
       e.key === 'modifiedCount' ||
-      e.key === 'deletedCount',
-  );
+      e.key === 'deletedCount'
+    ) {
+      return true;
+    }
+    if (e.key === 'record' || e.key === 'records') {
+      if (e.children?.length) return true;
+      if (e.value?.kind === 'pseudo') return true;
+      return false;
+    }
+    return false;
+  });
   // Document-only generated mutations: selection is the entity field map.
   if (!hasEnvelope) {
     if (bag.records) {
@@ -827,6 +838,17 @@ function withEnforcedMatch(
 ): Record<string, unknown>[] {
   if (!Object.keys(filter).length) return stages;
   const first = stages[0];
+  // `$geoNear` must stay first — fold the binder filter into its `query`.
+  if (first && typeof first === 'object' && first.$geoNear && isPlainObject(first.$geoNear)) {
+    const geoNear = { ...(first.$geoNear as Record<string, unknown>) };
+    const existing = geoNear.query;
+    if (existing != null && typeof existing === 'object' && !Array.isArray(existing)) {
+      geoNear.query = { $and: [existing as Record<string, unknown>, filter] };
+    } else {
+      geoNear.query = filter;
+    }
+    return [{ $geoNear: geoNear }, ...stages.slice(1)];
+  }
   if (
     first &&
     typeof first === 'object' &&
@@ -836,6 +858,10 @@ function withEnforcedMatch(
     return stages;
   }
   return [{ $match: filter }, ...stages];
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return value != null && typeof value === 'object' && !Array.isArray(value);
 }
 
 function resolvePipeline(
