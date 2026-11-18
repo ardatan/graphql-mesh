@@ -10,6 +10,8 @@ export type MongoFieldRuntime = {
   requiredFields: ReadonlySet<string>;
   /** GraphQL empty-input placeholder keys (e.g. `_`) — not real model paths. */
   placeholderFields: ReadonlySet<string>;
+  /** Collections whose `_id` is BSON String — do not coerce `_id`/`id` to ObjectId. */
+  stringIdCollections: ReadonlySet<string>;
 };
 
 const fieldRuntimeAls = new AsyncLocalStorage<MongoFieldRuntime>();
@@ -22,6 +24,8 @@ export function runWithMongoFieldRuntime<T>(runtime: MongoFieldRuntime, fn: () =
 export interface CoerceFilterOptions {
   /** Convert 24-char hex strings to ObjectId (only for known ObjectId fields). */
   asObjectId?: boolean;
+  /** Collection for `_id` BSON-type decisions (String `_id` collections skip ObjectId). */
+  collection?: string;
 }
 
 /**
@@ -30,22 +34,28 @@ export interface CoerceFilterOptions {
 export function buildMongoFilter(
   filterSource: string | null | undefined,
   ctx: { args?: Record<string, unknown>; parent?: unknown },
+  opts?: { collection?: string },
 ): Record<string, unknown> {
   const parsed = parseMongoMapping(filterSource);
-  return filterFromMapping(parsed, ctx);
+  return filterFromMapping(parsed, ctx, opts);
 }
 
 export function filterFromMapping(
   parsed: ParsedMongoMapping,
   ctx: { args?: Record<string, unknown>; parent?: unknown },
+  opts?: { collection?: string },
 ): Record<string, unknown> {
   const filter: Record<string, unknown> = {};
+  const collection = opts?.collection;
 
   for (const entry of parsed.entries) {
     if (entry.spread && entry.value) {
       const spreadVal = resolveMappingValue(entry.value, ctx);
       if (spreadVal && typeof spreadVal === 'object' && !Array.isArray(spreadVal)) {
-        mergeFilterFragment(filter, normalizeFilterDoc(spreadVal as Record<string, unknown>));
+        mergeFilterFragment(
+          filter,
+          normalizeFilterDoc(spreadVal as Record<string, unknown>, collection),
+        );
       }
       continue;
     }
@@ -57,7 +67,7 @@ export function filterFromMapping(
     ) {
       const val = resolveMappingValue(entry.value, ctx);
       if (val && typeof val === 'object' && !Array.isArray(val)) {
-        mergeFilterFragment(filter, normalizeFilterDoc(val as Record<string, unknown>));
+        mergeFilterFragment(filter, normalizeFilterDoc(val as Record<string, unknown>, collection));
       }
       continue;
     }
@@ -66,7 +76,7 @@ export function filterFromMapping(
 
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved === undefined) continue;
-    const asObjectId = isObjectIdFieldKey(entry.key);
+    const asObjectId = isObjectIdFieldKey(entry.key, collection);
     // `_id: $args.ids` (array) => `{ _id: { $in: [...] } }`
     if (Array.isArray(resolved)) {
       const next = {
@@ -126,11 +136,14 @@ function appendAnd(out: Record<string, unknown>, clauses: Record<string, unknown
  * Accept either a native Mongo filter (`{ age: { $gte: 30 } }`) or the older
  * Mesh op-bag shape (`{ age: { gte: 30 } }` / nested WhereInput).
  */
-export function normalizeFilterDoc(input: Record<string, unknown>): Record<string, unknown> {
+export function normalizeFilterDoc(
+  input: Record<string, unknown>,
+  collection?: string,
+): Record<string, unknown> {
   if (looksLikeNativeMongoFilter(input)) {
-    return coerceDeep(input) as Record<string, unknown>;
+    return coerceDeep(input, { collection }) as Record<string, unknown>;
   }
-  return graphqlFilterToMongo(input);
+  return graphqlFilterToMongo(input, '', collection);
 }
 
 function looksLikeNativeMongoFilter(input: Record<string, unknown>): boolean {
@@ -207,7 +220,10 @@ export function coerceDeep(value: unknown, opts?: CoerceFilterOptions): unknown 
     if (ext !== undefined) return ext;
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value)) {
-      out[k] = coerceDeep(v, { asObjectId: opts?.asObjectId || isObjectIdFieldKey(k) });
+      out[k] = coerceDeep(v, {
+        collection: opts?.collection,
+        asObjectId: opts?.asObjectId || isObjectIdFieldKey(k, opts?.collection),
+      });
     }
     return out;
   }
@@ -313,12 +329,22 @@ function activePlaceholderFields(): Set<string> {
     : declaredPlaceholderFields;
 }
 
-export function isObjectIdFieldKey(key: string): boolean {
-  const fields = activeObjectIdFields();
-  if (fields.has(key)) return true;
-  // GraphQL `id` binders map to Mongo `_id`.
-  if (key === 'id' || key === '_id') return true;
-  return false;
+function activeStringIdCollections(): Set<string> {
+  return fieldRuntimeAls.getStore()?.stringIdCollections
+    ? new Set(fieldRuntimeAls.getStore()!.stringIdCollections)
+    : new Set();
+}
+
+/**
+ * Whether a field key should coerce hex strings to ObjectId.
+ * `_id`/`id` default to ObjectId unless the target collection uses a String `_id`.
+ */
+export function isObjectIdFieldKey(key: string, collection?: string): boolean {
+  if (key === 'id' || key === '_id') {
+    if (collection && activeStringIdCollections().has(collection)) return false;
+    return true;
+  }
+  return activeObjectIdFields().has(key);
 }
 
 /**
@@ -357,6 +383,7 @@ function isOperatorBag(value: Record<string, unknown>): boolean {
 export function graphqlFilterToMongo(
   input: Record<string, unknown>,
   pathPrefix = '',
+  collection?: string,
 ): Record<string, unknown> {
   const out: Record<string, unknown> = {};
 
@@ -366,7 +393,7 @@ export function graphqlFilterToMongo(
       const clauses = Array.isArray(value) ? (value as Record<string, unknown>[]) : [];
       // Empty `$and: []` is invalid Mongo; omit and keep sibling predicates.
       if (clauses.length === 0) continue;
-      const mapped = clauses.map(v => graphqlFilterToMongo(v, pathPrefix));
+      const mapped = clauses.map(v => graphqlFilterToMongo(v, pathPrefix, collection));
       // Nested `{ and: [{ and: [] }] }` → `[{}]` would match everything; drop vacuous
       // clauses and require MATCH_NOTHING when nothing meaningful remains.
       const meaningful = mapped.filter(c => !isUniversallyMatchingFilter(c));
@@ -386,24 +413,24 @@ export function graphqlFilterToMongo(
         continue;
       }
       mergeFilterFragment(out, {
-        $or: clauses.map(v => graphqlFilterToMongo(v, pathPrefix)),
+        $or: clauses.map(v => graphqlFilterToMongo(v, pathPrefix, collection)),
       });
       continue;
     }
     if (key === 'NOT' || key === 'not') {
       mergeFilterFragment(out, {
-        $nor: [graphqlFilterToMongo(value as Record<string, unknown>, pathPrefix)],
+        $nor: [graphqlFilterToMongo(value as Record<string, unknown>, pathPrefix, collection)],
       });
       continue;
     }
 
     const mongoKey = key === 'id' ? '_id' : key;
     const fullKey = pathPrefix ? `${pathPrefix}.${mongoKey}` : mongoKey;
-    const asObjectId = isObjectIdFieldKey(mongoKey);
+    const asObjectId = isObjectIdFieldKey(mongoKey, collection);
 
     if (Array.isArray(value) && value.length > 0 && value.every(isPlainObject)) {
       const elemMatches = (value as Record<string, unknown>[]).map(item => ({
-        $elemMatch: graphqlFilterToMongo(item),
+        $elemMatch: graphqlFilterToMongo(item, '', collection),
       }));
       if (elemMatches.length === 1) {
         out[fullKey] = elemMatches[0];
@@ -440,7 +467,7 @@ export function graphqlFilterToMongo(
       continue;
     }
 
-    mergeFilterFragment(out, graphqlFilterToMongo(value, fullKey));
+    mergeFilterFragment(out, graphqlFilterToMongo(value, fullKey, collection));
   }
 
   return out;

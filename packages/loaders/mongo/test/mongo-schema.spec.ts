@@ -171,4 +171,44 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toMatch(/authorId:\s*String/);
     expect(sdl).toMatch(/owner:\s*ObjectID/);
   });
+
+  it('omits raw aggregate subgraph-wide when any model is restricted', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('mixed', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'Account',
+          schema: new Schema({ name: String, passwordHash: String }, { collection: 'accounts' }),
+          collection: 'accounts',
+          options: { fields: { remove: ['passwordHash'] } },
+        },
+        {
+          name: 'Note',
+          schema: new Schema({ body: String }, { collection: 'notes' }),
+          collection: 'notes',
+        },
+      ],
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    // Unrestricted Note must not keep aggregate (could $unionWith accounts).
+    expect(sdl).not.toMatch(/\baggregateNotes\b/);
+    expect(sdl).not.toMatch(/\baggregateAccounts\b/);
+  });
+
+  it('declares stringIdCollections for String _id models', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('externals', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'ExternalUser',
+          schema: new Schema({ _id: String, name: String }, { collection: 'external_users' }),
+          collection: 'external_users',
+        },
+      ],
+    });
+    const transport = (schema.extensions as any)?.directives?.transport;
+    expect(transport?.options?.stringIdCollections).toEqual(['external_users']);
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toMatch(/findExternalUserById\(id: String!\)/);
+  });
 });

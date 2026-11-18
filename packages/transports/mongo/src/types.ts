@@ -20,6 +20,8 @@ export interface MongoTransportOptions {
   requiredFields?: string[];
   /** Empty-input placeholder keys (e.g. `_`) — stripped on write; not real paths. */
   placeholderFields?: string[];
+  /** Collections whose `_id` is BSON String (not ObjectId) — keep hex as string. */
+  stringIdCollections?: string[];
 }
 
 export interface MongoMappingValue {

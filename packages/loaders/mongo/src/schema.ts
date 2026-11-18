@@ -100,6 +100,8 @@ export async function loadGraphQLSchemaFromMongo(
     resolvers?: NonNullable<MongoModelConfig['options']>['resolvers'];
     fieldRestrictions?: MongoFieldRestrictions;
     placeholderFields?: string[];
+    /** True when mongoose `_id` is BSON String (not ObjectId). */
+    stringId?: boolean;
   }> = [];
 
   for (const modelConfig of opts.models) {
@@ -116,6 +118,7 @@ export async function loadGraphQLSchemaFromMongo(
       fieldRestrictions,
     );
     const placeholderFields: string[] = [];
+    const stringId = isStringIdSchema(model.schema);
     modelMeta.push({
       typeName,
       collection,
@@ -124,6 +127,7 @@ export async function loadGraphQLSchemaFromMongo(
       resolvers: modelConfig.options?.resolvers,
       fieldRestrictions,
       placeholderFields,
+      stringId,
     });
     emitModelObjectType(schemaComposer, {
       subgraphName,
@@ -133,8 +137,14 @@ export async function loadGraphQLSchemaFromMongo(
       naming,
       fieldRestrictions,
       placeholderFieldsOut: placeholderFields,
+      stringId,
     });
   }
+
+  // Any model with only/remove → omit raw aggregate subgraph-wide (blocks $unionWith leaks).
+  const omitAggregateSubgraphWide = modelMeta.some(
+    m => m.fieldRestrictions?.only?.length || m.fieldRestrictions?.remove?.length,
+  );
 
   const pathsByType = new Map(modelMeta.map(m => [m.typeName, m.paths]));
   for (const meta of modelMeta) {
@@ -146,6 +156,8 @@ export async function loadGraphQLSchemaFromMongo(
       naming,
       resolvers: meta.resolvers,
       fieldRestrictions: meta.fieldRestrictions,
+      omitAggregate: omitAggregateSubgraphWide,
+      stringId: meta.stringId,
     });
     emitRefFields(schemaComposer, {
       subgraphName,
@@ -170,10 +182,15 @@ export async function loadGraphQLSchemaFromMongo(
   const placeholderFields = [
     ...new Set(modelMeta.flatMap(m => m.placeholderFields || []).filter(Boolean) as string[]),
   ];
+  const stringIdCollections = modelMeta
+    .filter(m => m.stringId)
+    .map(m => m.collection)
+    .filter(Boolean);
   const transportOptions: Record<string, string[]> = {};
   if (objectIdFields.length) transportOptions.objectIdFields = objectIdFields;
   if (requiredFields.length) transportOptions.requiredFields = requiredFields;
   if (placeholderFields.length) transportOptions.placeholderFields = placeholderFields;
+  if (stringIdCollections.length) transportOptions.stringIdCollections = stringIdCollections;
   extensions.directives.transport = {
     subgraph: subgraphName,
     kind: 'mongo',
@@ -246,6 +263,13 @@ function isBsonObjectIdPath(path: PathMeta): boolean {
     path.arrayElementInstance === 'ObjectID' ||
     path.arrayElementInstance === 'ObjectId'
   );
+}
+
+/** Mongoose models with `_id: String` (or equivalent) — not BSON ObjectId. */
+function isStringIdSchema(schema: MongooseSchema): boolean {
+  const idPath = (schema as any)?.paths?._id;
+  const instance = idPath?.instance || idPath?.caster?.instance;
+  return instance === 'String';
 }
 
 /** Only BSON ObjectId paths — String refs with 24-hex must stay strings. */
@@ -526,6 +550,7 @@ function emitModelObjectType(
     naming: MongoNaming;
     fieldRestrictions?: MongoFieldRestrictions;
     placeholderFieldsOut?: string[];
+    stringId?: boolean;
   },
 ) {
   const { subgraphName, typeName, collection, paths, naming } = opts;
@@ -533,7 +558,10 @@ function emitModelObjectType(
   const otc = schemaComposer.createObjectTC({ name: typeName, fields: {} });
   const selection = selectionForPaths(paths);
 
-  otc.setField('id', { type: new GraphQLNonNull(GraphQLObjectID) });
+  // String `_id` models keep GraphQL String ids so lookups do not coerce hex→ObjectId.
+  otc.setField('id', {
+    type: new GraphQLNonNull(opts.stringId ? GraphQLString : GraphQLObjectID),
+  });
   for (const path of paths) {
     if (path.name === '_id' || path.name === '__v') continue;
     let fieldType = mapPathToOutput(schemaComposer, path, typeName);
@@ -566,6 +594,7 @@ function emitModelObjectType(
       opts.fieldRestrictions?.only?.length || opts.fieldRestrictions?.remove?.length,
     ),
     placeholderFieldsOut: opts.placeholderFieldsOut,
+    stringId: opts.stringId,
   });
   createConnectionTypes(schemaComposer, naming, typeName);
   createPayloadType(schemaComposer, naming, typeName);
@@ -581,6 +610,9 @@ function emitModelRootFields(
     naming: MongoNaming;
     resolvers?: NonNullable<MongoModelConfig['options']>['resolvers'];
     fieldRestrictions?: MongoFieldRestrictions;
+    /** When true, omit raw aggregate for every model in this subgraph. */
+    omitAggregate?: boolean;
+    stringId?: boolean;
   },
 ) {
   const { subgraphName, typeName, collection, paths, naming, resolvers } = opts;
@@ -591,6 +623,7 @@ function emitModelRootFields(
   const queryType = naming.queryInput(typeName);
   const sortEnum = naming.sortEnum(typeName);
   const sortArgType = `[${sortEnum}!]`;
+  const idScalar = opts.stringId ? GraphQLString : GraphQLObjectID;
 
   const mongoDir = (
     name: string,
@@ -603,14 +636,14 @@ function emitModelRootFields(
   // db.collection.findOne({ _id }) convenience
   queryTC.setField(naming.findByIdField(typeName), {
     type: typeName,
-    args: { id: { type: new GraphQLNonNull(GraphQLObjectID) } },
+    args: { id: { type: new GraphQLNonNull(idScalar) } },
     directives: [mongoDir('mongo__findOne', { query: blockArg('_id: $args.id') })],
   });
 
   queryTC.setField(naming.findByIdsField(typeName), {
     type: `[${typeName}!]!`,
     args: {
-      ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLObjectID))) },
+      ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(idScalar))) },
       limit: { type: GraphQLInt, defaultValue: 100 },
       sort: { type: sortArgType },
     },
@@ -666,11 +699,9 @@ function emitModelRootFields(
     directives: [mongoDir('mongo__count', { query: '$args.query', selection: blockArg('$') })],
   });
 
-  // Raw aggregate can `$project` removed fields — omit for restricted models.
-  const restrictionsActive = Boolean(
-    opts.fieldRestrictions?.only?.length || opts.fieldRestrictions?.remove?.length,
-  );
-  if (!restrictionsActive) {
+  // Raw aggregate can `$project` / `$unionWith` into restricted collections — omit
+  // subgraph-wide when any model has fields.only/remove.
+  if (!opts.omitAggregate) {
     queryTC.setField(naming.aggregateField(typeName), {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLJSON))),
       args: {
@@ -1202,6 +1233,7 @@ function createQuerySortAndDocumentInputs(
     /** True when `fields.only` or `fields.remove` was configured (even if paths already filtered). */
     restrictionsActive?: boolean;
     placeholderFieldsOut?: string[];
+    stringId?: boolean;
   },
 ) {
   const required = new Set(opts?.requiredFields || []);
@@ -1215,7 +1247,7 @@ function createQuerySortAndDocumentInputs(
         and: { type: `[${queryName}!]` },
         or: { type: `[${queryName}!]` },
         not: { type: queryName },
-        id: { type: 'ObjectIDQueryOperators' },
+        id: { type: opts?.stringId ? 'StringQueryOperators' : 'ObjectIDQueryOperators' },
         ...Object.fromEntries(
           paths
             .filter(p => p.name !== '_id' && p.name !== '__v')

@@ -110,6 +110,7 @@ export function getMongoExecutor({
     placeholderFields: new Set(
       transport?.options?.placeholderFields?.length ? transport.options.placeholderFields : ['_'],
     ),
+    stringIdCollections: new Set(transport?.options?.stringIdCollections || []),
   };
   const mongoClient =
     client ||
@@ -159,6 +160,7 @@ function attachMongoResolver(
         const filter = buildMongoFilter(
           directive.query ?? directive.filter ?? directive.where,
           ctx,
+          { collection: directive.collection },
         );
         const sort = buildMongoSort(directive.sort ?? directive.orderBy, ctx);
         switch (directive.kind) {

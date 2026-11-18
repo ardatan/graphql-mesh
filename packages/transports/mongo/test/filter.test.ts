@@ -14,6 +14,7 @@ import {
   isUniversallyMatchingFilter,
   MATCH_NOTHING_FILTER,
   normalizeFilterDoc,
+  runWithMongoFieldRuntime,
   stripInputPlaceholder,
 } from '../src/filter.js';
 
@@ -158,6 +159,26 @@ describe('mongo filter mapping', () => {
     // Undeclared *Id-looking keys stay strings.
     expect(graphqlFilterToMongo({ otherId: { eq: hex } }).otherId).toBe(hex);
     configureObjectIdFields(undefined);
+  });
+
+  it('keeps _id as string for stringIdCollections (String _id models)', () => {
+    const hex = '507f1f77bcf86cd799439011';
+    const runtime = {
+      objectIdFields: new Set(['_id', 'id']),
+      requiredFields: new Set<string>(),
+      placeholderFields: new Set(['_']),
+      stringIdCollections: new Set(['external_users']),
+    };
+    const filter = runWithMongoFieldRuntime(runtime, () =>
+      buildMongoFilter('_id: $args.id', { args: { id: hex } }, { collection: 'external_users' }),
+    );
+    expect(filter._id).toBe(hex);
+    expect(filter._id).not.toBeInstanceOf(ObjectId);
+    // Default ObjectId collections still coerce.
+    const oidFilter = runWithMongoFieldRuntime(runtime, () =>
+      buildMongoFilter('_id: $args.id', { args: { id: hex } }, { collection: 'users' }),
+    );
+    expect(oidFilter._id).toBeInstanceOf(ObjectId);
   });
 
   it('preserves Decimal128 instances and Extended JSON, not numeric-looking strings', () => {
