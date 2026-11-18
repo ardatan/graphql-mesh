@@ -1142,6 +1142,48 @@ describe('rewriteConnectArgReferences @sql', () => {
     expect(selection).not.toMatch(/displayName:\s*\n\s*displayName:/);
   });
 
+  it('does not treat a bare name after `key: # comment` as a bare pick', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [
+          {
+            table: 'users',
+            selection: 'name: # physical column\n  name\nid: id',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['name', 'displayName']]),
+    );
+    const selection = rewritten!.sql[0].selection as string;
+    expect(selection).toContain('displayName: # physical column\n  name');
+    expect(selection).not.toMatch(/displayName:\s*#.*\n\s*displayName:/);
+  });
+
+  it('does not rewrite __typename text inside SQL where/set literals', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [
+          {
+            table: 'users',
+            where: `note: '__typename: "User"'`,
+            set: `note: '__typename: "User"'`,
+            selection: '__typename: "User"\nid: id',
+          },
+        ],
+      },
+      new Map(),
+      undefined,
+      new Map([['User', 'Member']]),
+    );
+    const sql = rewritten!.sql[0];
+    expect(sql.where).toBe(`note: '__typename: "User"'`);
+    expect(sql.set).toBe(`note: '__typename: "User"'`);
+    expect(sql.selection).toContain('__typename: "Member"');
+  });
+
   it('applies parent $this renames in one pass (no a→b→c chaining)', async () => {
     const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
     const rewritten = rewriteConnectArgReferences(

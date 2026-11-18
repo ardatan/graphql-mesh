@@ -68,6 +68,61 @@ function rewriteOutsideQuotes(value: string, fn: (segment: string) => string): s
 }
 
 /**
+ * SQL selection bare picks (`name` → `displayName: name`) with colon lookbehind on
+ * the full mapping string. Skips quoted spans and `#` comments (same regions as
+ * {@link rewriteOutsideQuotes}), but keeps absolute offsets so
+ * `key: # comment\\n  name` is not rewritten as a second bare pick.
+ */
+function rewriteSqlBarePicks(value: string, reBare: RegExp, lookup: Map<string, string>): string {
+  let out = '';
+  let i = 0;
+  let segmentStart = 0;
+  const apply = (segment: string, base: number): string =>
+    segment.replace(reBare, (m, pre: string, ws: string, from: string, offset: number) => {
+      // Skip tokens that continue a prior `key:` / `key: # comment` mapping.
+      if (/:(?:[\t ]*#.*)?\s*$/.test(value.slice(0, base + offset))) {
+        return m;
+      }
+      return `${pre}${ws}${lookup.get(from) ?? from}: ${from}`;
+    });
+  while (i < value.length) {
+    const c = value[i];
+    if (c === '#') {
+      out += apply(value.slice(segmentStart, i), segmentStart);
+      const eol = value.indexOf('\n', i);
+      if (eol === -1) {
+        out += value.slice(i);
+        return out;
+      }
+      out += value.slice(i, eol + 1);
+      i = eol + 1;
+      segmentStart = i;
+      continue;
+    }
+    if (c === '"' || c === "'") {
+      out += apply(value.slice(segmentStart, i), segmentStart);
+      const q = c;
+      out += c;
+      i++;
+      while (i < value.length && value[i] !== q) {
+        if (value[i] === '\\') {
+          out += value[i++];
+          if (i < value.length) out += value[i++];
+          continue;
+        }
+        out += value[i++];
+      }
+      if (i < value.length) out += value[i++];
+      segmentStart = i;
+      continue;
+    }
+    i++;
+  }
+  out += apply(value.slice(segmentStart), segmentStart);
+  return out;
+}
+
+/**
  * Remove top-level field picks / aliases from a Connectors `selection` string.
  * Used after filter/prune marks fields inaccessible so upstream JSON isn't over-fetched.
  */
@@ -1499,7 +1554,8 @@ export function rewriteConnectArgReferences(
   ) {
     return fieldDirectives;
   }
-  const rewriteBindersAndTypenames = (value: string): string => {
+  /** `$args` / `$this` binders only (no `__typename` rewrites). */
+  const rewriteBindersOnly = (value: string): string => {
     let out = value;
     // Single-pass, whole-name matches so `id` does not rewrite `$args.identifier`
     // and `a→b` + `b→c` does not chain into `$args.c`. Skip quoted spans so
@@ -1525,6 +1581,10 @@ export function rewriteConnectArgReferences(
         );
       }
     }
+    return out;
+  };
+  const rewriteBindersAndTypenames = (value: string): string => {
+    let out = rewriteBindersOnly(value);
     if (typeRenameMap?.size) {
       // One pass with a lookup: `FooBar→Foo` then `Foo→Bar` must not rewrite the
       // already-replaced `Foo` again. Longer names win the alternation first.
@@ -1563,17 +1623,16 @@ export function rewriteConnectArgReferences(
         const fieldLookup = new Map(fieldEntries);
         const fieldNames = fieldEntries.map(([from]) => escapeRegExp(from)).join('|');
         // Quote-aware pick rewrites: leave `note: " old_name "` literals alone.
+        // One replacement against the original segment so a renamed alias/bare
+        // pick is not matched again by a later mapping (`a→b` then `b→c`).
         out = rewriteOutsideQuotes(out, segment =>
-          segment
-            .replace(
-              new RegExp(`(^|[\\n\\s])(${fieldNames})(\\s*[:{])`, 'g'),
-              (_m, pre: string, name: string, trail: string) =>
-                `${pre}${fieldLookup.get(name) ?? name}${trail}`,
-            )
-            .replace(
-              new RegExp(`(^|[\\n\\s])(${fieldNames})(?=\\s|$)`, 'g'),
-              (_m, pre: string, name: string) => `${pre}${fieldLookup.get(name) ?? name}`,
-            ),
+          segment.replace(
+            new RegExp(`(^|[\\n\\s])(${fieldNames})(?:(\\s*[:{])|(?=\\s|$))`, 'g'),
+            (_m, pre: string, name: string, trail?: string) => {
+              const next = fieldLookup.get(name) ?? name;
+              return trail != null ? `${pre}${next}${trail}` : `${pre}${next}`;
+            },
+          ),
         );
       }
     }
@@ -1599,38 +1658,30 @@ export function rewriteConnectArgReferences(
         const names = entries.map(([from]) => escapeRegExp(from)).join('|');
         const reKey = new RegExp(`(^|[\\n\\s])(${names})(\\s*[:{])`, 'g');
         const reBare = new RegExp(`(^|[\\n])([\\t ]*)(${names})(?=[\\t ]*(?:#.*)?$)`, 'gm');
+        // Key renames stay quote/comment-aware via rewriteOutsideQuotes.
         out = rewriteOutsideQuotes(out, segment =>
-          segment
-            .replace(reKey, (_m, pre: string, from: string, suf: string) => {
-              return `${pre}${lookup.get(from) ?? from}${suf}`;
-            })
-            // Bare identity picks only → keep the SQL column name on the RHS.
-            // Skip tokens that continue a prior `key:` mapping across newlines
-            // (`name:\n  name` must stay `displayName:\n  name`, not become
-            // `displayName:\n  displayName: name`).
-            .replace(
-              reBare,
-              (m, pre: string, ws: string, from: string, offset: number, str: string) => {
-                if (/:\s*$/.test(str.slice(0, offset))) {
-                  return m;
-                }
-                return `${pre}${ws}${lookup.get(from) ?? from}: ${from}`;
-              },
-            ),
+          segment.replace(reKey, (_m, pre: string, from: string, suf: string) => {
+            return `${pre}${lookup.get(from) ?? from}${suf}`;
+          }),
         );
+        // Bare identity picks → `newKey: oldKey`. Run with absolute offsets on the
+        // full string so lookbehind still sees `key: # comment` when
+        // rewriteOutsideQuotes splits the segment at `#`.
+        out = rewriteSqlBarePicks(out, reBare, lookup);
       }
     }
     return rewriteBindersAndTypenames(out);
   };
   /**
    * SQL `@sql(where/set:)`: left-hand keys are physical columns — do not apply
-   * GraphQL field renames to them. Only rewrite `$args` / `$this` binders.
+   * GraphQL field renames to them. Only rewrite `$args` / `$this` binders (never
+   * `__typename` text inside string literals used as SQL values).
    */
   const rewriteSqlWhereOrSet = (value: unknown): unknown => {
     if (typeof value !== 'string') {
       return value;
     }
-    return rewriteBindersAndTypenames(value);
+    return rewriteBindersOnly(value);
   };
   /** HTTP path templates: rewrite `$args` even when the literal path has `'` / `"` (e.g. `/O'Reilly/{$args.id}`). Quote-skipping is only for expression strings (`->get("$args.x")`). */
   const rewriteHttpPath = (value: string): string => {
@@ -1725,7 +1776,7 @@ export function rewriteConnectArgReferences(
         // Junction `through:` parent binders (`parent: $this.playlistKey`) need `$this` rewrites.
         through:
           typeof sqlArgs?.through === 'string'
-            ? rewriteBindersAndTypenames(sqlArgs.through)
+            ? rewriteBindersOnly(sqlArgs.through)
             : sqlArgs?.through,
         selection:
           typeof sqlArgs?.selection === 'string'
@@ -1733,36 +1784,27 @@ export function rewriteConnectArgReferences(
             : sqlArgs?.selection,
         orderBy:
           typeof sqlArgs?.orderBy === 'string'
-            ? rewriteBindersAndTypenames(sqlArgs.orderBy)
+            ? rewriteBindersOnly(sqlArgs.orderBy)
             : sqlArgs?.orderBy,
         limit:
-          typeof sqlArgs?.limit === 'string'
-            ? rewriteBindersAndTypenames(sqlArgs.limit)
-            : sqlArgs?.limit,
+          typeof sqlArgs?.limit === 'string' ? rewriteBindersOnly(sqlArgs.limit) : sqlArgs?.limit,
         offset:
           typeof sqlArgs?.offset === 'string'
-            ? rewriteBindersAndTypenames(sqlArgs.offset)
+            ? rewriteBindersOnly(sqlArgs.offset)
             : sqlArgs?.offset,
         first:
-          typeof sqlArgs?.first === 'string'
-            ? rewriteBindersAndTypenames(sqlArgs.first)
-            : sqlArgs?.first,
+          typeof sqlArgs?.first === 'string' ? rewriteBindersOnly(sqlArgs.first) : sqlArgs?.first,
         after:
-          typeof sqlArgs?.after === 'string'
-            ? rewriteBindersAndTypenames(sqlArgs.after)
-            : sqlArgs?.after,
-        last:
-          typeof sqlArgs?.last === 'string'
-            ? rewriteBindersAndTypenames(sqlArgs.last)
-            : sqlArgs?.last,
+          typeof sqlArgs?.after === 'string' ? rewriteBindersOnly(sqlArgs.after) : sqlArgs?.after,
+        last: typeof sqlArgs?.last === 'string' ? rewriteBindersOnly(sqlArgs.last) : sqlArgs?.last,
         before:
           typeof sqlArgs?.before === 'string'
-            ? rewriteBindersAndTypenames(sqlArgs.before)
+            ? rewriteBindersOnly(sqlArgs.before)
             : sqlArgs?.before,
         // Legacy `@sql(filter:)` binder (still read by the executor).
         filter:
           typeof sqlArgs?.filter === 'string'
-            ? rewriteBindersAndTypenames(sqlArgs.filter)
+            ? rewriteBindersOnly(sqlArgs.filter)
             : sqlArgs?.filter,
       })),
     };
