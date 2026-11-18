@@ -1,7 +1,7 @@
 ---
-'@omnigraph/mongo': major
-'@graphql-mesh/transport-mongo': major
-'@graphql-mesh/mongoose': major
+'@omnigraph/mongo': minor
+'@graphql-mesh/transport-mongo': minor
+'@graphql-mesh/mongoose': minor
 '@graphql-mesh/fusion-composition': patch
 ---
 
