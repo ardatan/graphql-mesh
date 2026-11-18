@@ -102,7 +102,10 @@ export interface GraphQLThriftLoaderOptions {
   subgraphName: string;
 
   /**
-   * Path or URL to the `.thrift` IDL (includes are resolved relative to this file).
+   * Path or URL to the `.thrift` IDL. Local `include` paths are resolved on the
+   * filesystem relative to this file. Remote IDLs can be fetched as the root
+   * `source`, but remote `include` resolution is not supported (includes are
+   * still resolved with filesystem `path.resolve`).
    *
    * @example './services/calculator/calculator.thrift'
    */
@@ -161,15 +164,16 @@ export interface GraphQLThriftLoaderOptions {
    */
   baseDir?: string;
   /**
-   * HTTP headers when `source` (or an include) is a remote IDL URL. Used only
-   * during compose-time IDL fetch, not on runtime RPC calls.
+   * HTTP headers when `source` is a remote IDL URL. Used only during
+   * compose-time fetch of that root IDL, not on runtime RPC calls. Does not
+   * enable remote `include` resolution (see `source`).
    *
    * @default {}
    * @example { Authorization: 'Bearer ...' }
    */
   schemaHeaders?: Record<string, string>;
   /**
-   * Custom fetch for remote IDL / includes during compose.
+   * Custom fetch for a remote root IDL during compose (not for remote includes).
    *
    * @default defaultFetch from `@whatwg-node/fetch`
    */
@@ -231,8 +235,10 @@ export interface ThriftRpcDirectiveArgs {
    */
   subgraph?: string;
   /**
-   * Thrift service name for multi-service HTTP paths (hand-authored SDL).
-   * Loader emit omits this for single-service binary endpoints.
+   * Optional Thrift service name for documentation / tooling on hand-authored
+   * SDL. The binary thrift executor does not use this arg to select an HTTP
+   * path - configure the full endpoint with `@transport(location:)` instead.
+   * (JSON/`@connect` emit uses loader `serviceName` for `POST /<service>`.)
    *
    * @example 'Calculator'
    */
@@ -293,7 +299,7 @@ export const thriftRpcDirective = new GraphQLDirective({
   args: {
     /** Owning subgraph name when composing federated schemas. */
     subgraph: { type: GraphQLString },
-    /** Thrift service name for multi-service endpoints (hand-authored SDL). */
+    /** Optional service name on hand-authored SDL (not used for binary HTTP path). */
     service: { type: GraphQLString },
     /** IDL function name invoked on the wire. */
     function: { type: new GraphQLNonNull(GraphQLString) },

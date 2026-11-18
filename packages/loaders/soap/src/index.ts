@@ -40,7 +40,8 @@ export { default as getSubgraphExecutor } from '@graphql-mesh/transport-connect'
  */
 export interface SOAPSubgraphLoaderOptions {
   /**
-   * URL or path to the WSDL (or pre-generated SDL with annotations).
+   * URL or filesystem path to a WSDL document (and nested XSD imports).
+   * Annotated GraphQL SDL is not accepted here - pass WSDL only.
    *
    * @example './services/weather.wsdl'
    */
@@ -53,8 +54,8 @@ export interface SOAPSubgraphLoaderOptions {
   endpoint?: string;
   /**
    * Headers used only while fetching / introspecting the WSDL and nested XSD
-   * imports (not sent on runtime SOAP calls). Pass a plain object, or a `.js` /
-   * `.ts` file path that exports the headers object.
+   * imports (not sent on runtime SOAP calls). Pass a plain `Record` object
+   * (import a module yourself if headers live in a `.js` / `.ts` file).
    *
    * @example { Authorization: 'Bearer ...' }
    */
@@ -81,13 +82,11 @@ export interface SOAPSubgraphLoaderOptions {
    */
   bodyAlias?: string;
   /**
-   * The namespace of the SOAP envelope.
-   * By default, the SOAP loader detects the SOAP version from the WSDL: if SOAP
-   * version is 1.1, it uses `http://schemas.xmlsoap.org/soap/envelope/`; if SOAP
-   * version is 1.2, it uses `http://www.w3.org/2003/05/soap-envelope`. Set this
-   * to force a namespace instead of auto-detection.
-   *
-   * @example 'http://www.w3.org/2003/05/soap-envelope'
+   * Present for compatibility, but currently unused: `loadSOAPSubgraph` does
+   * not forward this field, and the loader always auto-detects the envelope
+   * namespace from the WSDL. SOAP 1.1 uses
+   * `http://schemas.xmlsoap.org/soap/envelope/`; SOAP 1.2 uses
+   * `http://www.w3.org/2003/05/soap-envelope`.
    */
   soapNamespace?: string;
 }

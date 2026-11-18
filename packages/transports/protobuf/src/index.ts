@@ -68,6 +68,8 @@ function getTypeResolveReference(type: { extensions?: any }): ResolveReferenceFn
 
 /**
  * Applied when `@transport(options.requestTimeout)` is omitted (ms).
+ * Used for unary RPCs and Query/Mutation server streams; Subscription streams
+ * omit the deadline.
  *
  * @default 200000
  */
@@ -105,7 +107,9 @@ export const DEFAULT_PROTOBUF_REQUEST_TIMEOUT_MS = 200_000;
  */
 export interface ProtobufTransportOptions {
   /**
-   * Unary / stream deadline in milliseconds.
+   * RPC deadline in milliseconds for unary calls and for server-streaming
+   * Query/Mutation fields. Long-lived Subscription streams omit this deadline
+   * so they are not killed by a unary-style timeout.
    *
    * @default 200000
    * @example 5_000

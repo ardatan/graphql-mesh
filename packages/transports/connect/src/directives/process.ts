@@ -35,10 +35,11 @@ import { coerceXmlLeafForGraphQLType, unwrapXmlScalarLeaf } from './xmlCodec.js'
  * ```ts
  * import { processDirectives } from '@graphql-mesh/transport-connect';
  *
+ * // HTTP base URL / headers / query come from `@source` / `@connect` on the schema.
+ * // processDirectives forwards timeout + queryStringOptions (+ odata opts) only.
  * const executable = processDirectives(schema, {
  *   globalFetch: fetch,
  *   timeout: 30_000,
- *   operationHeaders: { Authorization: 'Bearer {context.token}' },
  * });
  * ```
  */
@@ -50,10 +51,9 @@ export interface ProcessDirectiveArgs {
   /** Fetch used for `@connect` HTTP calls. */
   globalFetch?: MeshFetch;
   /**
-   * Fallback HTTP base URL when `@source(http.baseURL)` /
-   * `@transport(location)` is absent on the schema.
-   *
-   * @example 'https://api.example.com'
+   * Accepted for compatibility, but not forwarded into `@connect` resolvers
+   * today. Put the HTTP base URL on `@source(http.baseURL)` /
+   * `@transport(location)` instead.
    */
   endpoint?: string;
   /**
@@ -64,17 +64,13 @@ export interface ProcessDirectiveArgs {
    */
   timeout?: number;
   /**
-   * Default operation headers merged under `@source` / `@connect` headers
-   * (directive headers win on conflict).
-   *
-   * @example { Authorization: 'Bearer {context.token}' }
+   * Accepted for compatibility, but not forwarded into `@connect` resolvers
+   * today. Bake headers into `@source` / `@connect` instead.
    */
   operationHeaders?: Record<string, string>;
   /**
-   * Default query params merged into every `@connect` request (in addition to
-   * `@source` / per-field query params).
-   *
-   * @example { api_key: '{env.API_KEY}' }
+   * Accepted for compatibility, but not forwarded into `@connect` resolvers
+   * today. Put static query params on `@source` / per-field mappings instead.
    */
   queryParams?: Record<string, any>;
   /**

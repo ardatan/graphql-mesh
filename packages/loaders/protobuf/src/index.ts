@@ -70,16 +70,19 @@ export interface ProtobufLoaderOptions extends YamlConfig.GrpcHandler {
    */
   endpoint: string;
   /**
-   * Local / remote `.proto`, descriptor set path, or `{ file, load }` with include dirs.
+   * Local `.proto`, descriptor set path, or `{ file, load }` with include dirs.
    * Omit (or empty) to load the schema via gRPC server reflection.
+   * Remote HTTP fetch of `.proto` / SDL via `schemaHeaders` is not implemented
+   * by this loader.
    *
    * @example { file: './proto/service.proto', load: { includeDirs: ['./proto'], defaults: true } }
    */
   source?: YamlConfig.GrpcHandler['source'];
   /**
-   * Unary / client-stream deadline in milliseconds.
-   * Forwarded to `@transport(options.requestTimeout)`.
-   * When omitted, the protobuf transport applies `200000`.
+   * RPC deadline in milliseconds, forwarded to `@transport(options.requestTimeout)`.
+   * Applied to unary calls and to server-streaming Query/Mutation fields.
+   * Long-lived Subscription streams omit the deadline so they are not killed by
+   * a unary-style timeout. When omitted, the transport applies `200000`.
    *
    * @default 200000
    * @example 5_000
@@ -119,17 +122,18 @@ export interface ProtobufLoaderOptions extends YamlConfig.GrpcHandler {
    */
   prefixQueryMethod?: string[];
   /**
-   * Force Query vs Mutation for matching gRPC method / GraphQL field names,
-   * overriding the `prefixQueryMethod` heuristic for those entries.
+   * Force Query vs Mutation for matching generated GraphQL field names
+   * (typically `ServiceName_MethodName`), overriding the `prefixQueryMethod`
+   * heuristic for those entries. `fieldName` is matched with micromatch against
+   * the generated root field, not the raw gRPC method name alone.
    *
-   * @example [{ type: 'query', fieldName: 'FetchMovies' }]
+   * @example [{ type: 'query', fieldName: 'Example_FetchMovies' }]
    */
   selectQueryOrMutationField?: YamlConfig.SelectQueryOrMutationFieldConfig[];
   /**
-   * HTTP headers when `source` points at a remote `.proto` / SDL / descriptor
-   * URL (compose-time fetch only).
-   *
-   * @example { Authorization: 'Bearer ...' }
+   * Present on the shared gRPC handler shape, but unused by this protobuf
+   * loader today (no remote schema HTTP fetch path). Prefer local `source`
+   * files or gRPC reflection with `reflectionMetadata`.
    */
   schemaHeaders?: YamlConfig.GrpcHandler['schemaHeaders'];
   /**

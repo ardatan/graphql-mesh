@@ -72,7 +72,7 @@ export interface ConnectSelectionOptions {
  *     {
  *       type: 'Query',
  *       field: 'user',
- *       path: '/users/{id}',
+ *       path: '/users/{args.id}',
  *       method: 'GET',
  *       responseSchema: './schemas/user.json',
  *     },
@@ -129,9 +129,9 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   /** Fetch implementation. */
   fetch?: MeshFetch;
   /**
-   * When true, non-2xx response schemas from the operation config are still
-   * modeled on the GraphQL field. When false/omitted, non-2xx responses are
-   * treated as errors-only (not expanded into success-shaped return types).
+   * When true, skip non-2xx entries in `responseByStatusCode` so those error
+   * schemas are not modeled on the GraphQL field. When false/omitted, non-2xx
+   * response schemas are still included in the field's return shape.
    */
   ignoreErrorResponses?: boolean;
   /**

@@ -113,9 +113,11 @@ export interface LoadGraphQLSchemaFromODataOpts {
    */
   batch?: 'none' | 'json' | 'multipart';
   /**
-   * When true, navigation properties are expanded in emit / Accept headers
-   * (embedded nav payloads and `$expand` where applicable). When false/omitted,
-   * nav fields resolve with separate requests.
+   * When true, the connect runtime prefers embedded navigation payloads
+   * (Accept / `$expand` handling in transport-connect). Emit may still bake a
+   * literal `$expand` into some plural-navigation `@connect` HTTP mappings even
+   * when this option is false/omitted - it does not mean every nav field is
+   * always a separate round-trip.
    *
    * @default false
    */

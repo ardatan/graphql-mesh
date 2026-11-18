@@ -53,11 +53,17 @@ export interface OpenAPILoaderOptions extends Partial<JSONSchemaLoaderOptions> {
   jsonApi?: boolean;
   /**
    * HATEOAS `_links` / `x-links` handling.
-   * `true` applies defaults (`rel` / `href` / `_links` / `x-links`);
-   * a partial object merges over those defaults. When omitted or `false`,
-   * HATEOAS link resolution is off.
+   * `true` applies defaults (`rel` / `href` / `_links` / `x-links`).
+   * A full {@link HATEOASConfig} object replaces those identifiers.
+   * When omitted, the same defaults are used (link processing stays on).
+   * Pass `false` to disable HATEOAS link resolution.
    *
-   * @example { linkObjectIdentifier: 'links', linkNameIdentifier: 'relation' }
+   * @example {
+   *   linkNameIdentifier: 'relation',
+   *   linkPathIdentifier: 'url',
+   *   linkObjectIdentifier: 'links',
+   *   linkObjectExtensionIdentifier: 'x-hateoas-links',
+   * }
    */
   HATEOAS?: HATEOASConfig | boolean;
 }

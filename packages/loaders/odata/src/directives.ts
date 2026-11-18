@@ -36,9 +36,10 @@ export type TransportDirectiveArgs = SharedTransportDirectiveArgs<{
      */
     batch?: 'none' | 'json' | 'multipart';
     /**
-     * When true, navigation properties are expanded in Accept / emit (embedded
-     * nav payloads and `$expand` where applicable). When false/omitted, nav
-     * fields resolve with separate requests.
+     * When true, the connect runtime prefers embedded navigation payloads
+     * (Accept / `$expand` handling). Emit may still bake a literal `$expand`
+     * into some plural-navigation `@connect` mappings even when this is
+     * false/omitted.
      *
      * @default false
      */

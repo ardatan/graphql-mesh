@@ -82,7 +82,7 @@ export interface SOAPLoaderOptions {
    * @example 'weather'
    */
   subgraphName: string;
-  /** Fetch for WSDL / XSD / runtime. */
+  /** Fetch for WSDL / XSD loading during compose only (not runtime SOAP calls). */
   fetch?: MeshFetch;
   /** Logger instance. */
   log?: Logger;
@@ -127,13 +127,10 @@ export interface SOAPLoaderOptions {
    */
   bodyAlias?: string;
   /**
-   * The namespace of the SOAP envelope.
-   * By default, the SOAP loader detects the SOAP version from the WSDL: if SOAP
-   * version is 1.1, it uses `http://schemas.xmlsoap.org/soap/envelope/`; if SOAP
-   * version is 1.2, it uses `http://www.w3.org/2003/05/soap-envelope`. Set this
-   * to force a namespace instead of auto-detection.
-   *
-   * @example 'http://www.w3.org/2003/05/soap-envelope'
+   * Present on the options type, but currently unused: the constructor ignores
+   * this field and always auto-detects the envelope namespace from the WSDL.
+   * SOAP 1.1 uses `http://schemas.xmlsoap.org/soap/envelope/`; SOAP 1.2 uses
+   * `http://www.w3.org/2003/05/soap-envelope`.
    */
   soapNamespace?: string;
 }

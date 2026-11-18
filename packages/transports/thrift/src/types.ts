@@ -66,11 +66,14 @@ export interface GraphQLThriftAnnotations {
    */
   location: string;
   /**
-   * Static or interpolated request headers (`[[name, value], ...]` or a record).
-   * Missing headers are treated as an empty map at client construction.
+   * Request headers for the binary Thrift client. Missing headers are treated
+   * as an empty map at client construction. Mesh `{context.*}` / `{env.*}`
+   * interpolation is applied when headers are supplied as `[[name, value], ...]`
+   * tuples (or a JSON string of that shape). A plain record is accepted by the
+   * type but is not passed through the interpolator today.
    *
    * @default {}
-   * @example { Authorization: 'Bearer {context.token}' }
+   * @example [['Authorization', 'Bearer {context.token}']]
    */
   headers: [string, string][] | Record<string, string>;
 }

@@ -7,10 +7,10 @@ import { processDirectives, type ProcessDirectiveArgs } from './directives/proce
  *
  * @example
  * ```ts
- * // Forwarded from loadOpenAPISubgraph / loadJSONSchemaSubgraph onto `@transport(options:)`
+ * // timeout + queryStringOptions reach `@connect` resolvers via processDirectives.
+ * // Prefer baking query params into `@source` / field mappings; see `queryParams`.
  * {
  *   timeout: 30_000,
- *   queryParams: { api_key: '{env.API_KEY}' },
  *   queryStringOptions: { arrayFormat: 'repeat' },
  * }
  * ```
@@ -24,10 +24,9 @@ export interface ConnectTransportOptions {
    */
   timeout?: number;
   /**
-   * Static / interpolated query params merged into every `@connect` request
-   * (in addition to `@source` / per-field query params).
-   *
-   * @example { api_key: '{env.API_KEY}' }
+   * Present on `@transport(options:)`, but not forwarded into `@connect`
+   * resolvers by processDirectives today. Put static / interpolated query
+   * params on `@source` or per-field `@connect` mappings instead.
    */
   queryParams?: Record<string, string>;
   /**
