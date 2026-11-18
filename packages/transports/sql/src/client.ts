@@ -1,5 +1,5 @@
-import { createPool, type Pool as Mysql2Pool, type Pool } from 'mysql2/promise';
 import { DatabaseSync } from 'node:sqlite';
+import { createPool, type Pool as Mysql2Pool, type Pool } from 'mysql2/promise';
 import pg from 'pg';
 import { resolveSqlitePath } from './adapter.js';
 import type { SqlAdapter, SqlClient, SqlTransportOptions } from './types.js';
