@@ -1,10 +1,14 @@
 /* eslint-disable import/no-nodejs-modules */
 import { createHash, randomBytes } from 'node:crypto';
 import {
-  chmodSync,
+  closeSync,
+  fchmodSync,
+  constants as fsConstants,
+  fstatSync,
   linkSync,
   lstatSync,
   mkdirSync,
+  openSync,
   readFileSync,
   statSync,
   unlinkSync,
@@ -83,7 +87,7 @@ export default class TuqlHandler implements MeshHandler {
 
 /**
  * Prefer a user-private cache dir. Before reuse, reject symlinks, foreign
- * ownership, and group/world-writable modes. Fallback is per-uid under tmp —
+ * ownership, and group/world-writable modes. Fallback is per-uid under tmp;
  * never a shared `/tmp/graphql-mesh-tuql` that another user could pre-create.
  */
 function tuqlCacheDir(baseDir?: string): string {
@@ -109,32 +113,61 @@ function perUserTmpTuqlCacheDir(): string {
   return join(tmpdir(), `graphql-mesh-tuql-${uid}`);
 }
 
-function ensurePrivateTuqlCacheDir(dir: string): string {
-  mkdirSync(dir, { recursive: true, mode: 0o700 });
-  // Existing dirs keep prior mode; tighten when we own them.
+/**
+ * Create (if needed) and harden a tuql cache directory.
+ * Validates via `lstat` / `O_NOFOLLOW` open before any mode change so a symlink
+ * cannot have its target permissions rewritten, then `fchmod`s the opened inode.
+ */
+export function ensurePrivateTuqlCacheDir(dir: string): string {
   try {
-    chmodSync(dir, 0o700);
-  } catch {
-    // ignore — assert below rejects unsafe modes we cannot fix
+    mkdirSync(dir, { recursive: true, mode: 0o700 });
+  } catch (err: any) {
+    // Existing non-directory (file) at path: fall through to lstat rejection.
+    if (err?.code !== 'EEXIST') throw err;
   }
-  assertPrivateTuqlCacheDir(dir);
-  return dir;
-}
 
-function assertPrivateTuqlCacheDir(dir: string): void {
-  const st = lstatSync(dir);
-  if (st.isSymbolicLink()) {
+  // Reject symlinks before any permission change (path-based chmod follows links).
+  const pre = lstatSync(dir);
+  if (pre.isSymbolicLink()) {
     throw new Error(`@graphql-mesh/tuql: cache dir must not be a symlink (${dir})`);
   }
-  if (!st.isDirectory()) {
+  if (!pre.isDirectory()) {
     throw new Error(`@graphql-mesh/tuql: cache path is not a directory (${dir})`);
   }
-  if (typeof process.getuid === 'function' && st.uid !== process.getuid()) {
+  if (typeof process.getuid === 'function' && pre.uid !== process.getuid()) {
     throw new Error(`@graphql-mesh/tuql: cache dir not owned by current user (${dir})`);
   }
-  if ((st.mode & 0o022) !== 0) {
-    throw new Error(`@graphql-mesh/tuql: cache dir has unsafe group/world write bits (${dir})`);
+
+  // Descriptor-based ops: O_NOFOLLOW avoids a path-swap race after lstat.
+  const flags =
+    fsConstants.O_RDONLY | (fsConstants.O_DIRECTORY ?? 0) | (fsConstants.O_NOFOLLOW ?? 0);
+  let fd: number;
+  try {
+    fd = openSync(dir, flags);
+  } catch (err: any) {
+    if (err?.code === 'ELOOP' || err?.code === 'EMLINK') {
+      throw new Error(`@graphql-mesh/tuql: cache dir must not be a symlink (${dir})`);
+    }
+    throw err;
   }
+  try {
+    const st = fstatSync(fd);
+    if (typeof process.getuid === 'function' && st.uid !== process.getuid()) {
+      throw new Error(`@graphql-mesh/tuql: cache dir not owned by current user (${dir})`);
+    }
+    try {
+      fchmodSync(fd, 0o700);
+    } catch {
+      // ignore; reject below if still group/world-writable
+    }
+    const after = fstatSync(fd);
+    if ((after.mode & 0o022) !== 0) {
+      throw new Error(`@graphql-mesh/tuql: cache dir has unsafe group/world write bits (${dir})`);
+    }
+  } finally {
+    closeSync(fd);
+  }
+  return dir;
 }
 
 /**
