@@ -1,7 +1,3 @@
-// eslint-disable-next-line import/no-nodejs-modules -- sync lazy load for Node SQLite only
-import { createRequire } from 'node:module';
-// eslint-disable-next-line import/no-nodejs-modules -- resolve anchor for createRequire (no import.meta; Jest CJS)
-import { join } from 'node:path';
 import { createPool, type Pool } from 'mysql2/promise';
 import pg from 'pg';
 import type { Pool as PgPool, PoolConfig as PgPoolConfig } from 'pg';
@@ -23,21 +19,22 @@ type NodeSqliteDatabaseSync = new (path: string) => NodeSqliteDatabase;
 
 /**
  * Load `node:sqlite` only when the Node SQLite client path is selected.
- * A static import would fail on runtimes without that builtin (e.g. older Bun)
- * even for MySQL / Postgres / Bun.SQL. Anchor `createRequire` on cwd (not
- * `import.meta.url`) so Jest's CJS transform can still load this module.
+ * `process.getBuiltinModule` avoids a static import (and `createRequire`) so
+ * MySQL / Postgres / Bun.SQL can load on runtimes without that builtin.
  */
 function loadNodeSqliteDatabaseSync(): NodeSqliteDatabaseSync {
-  try {
-    const req = createRequire(join(process.cwd(), 'package.json'));
-    const mod = req('node:sqlite') as { DatabaseSync: NodeSqliteDatabaseSync };
-    return mod.DatabaseSync;
-  } catch (err) {
+  const getBuiltin = (
+    process as NodeJS.Process & {
+      getBuiltinModule?: (id: string) => { DatabaseSync?: NodeSqliteDatabaseSync } | undefined;
+    }
+  ).getBuiltinModule;
+  const mod = typeof getBuiltin === 'function' ? getBuiltin('node:sqlite') : undefined;
+  if (typeof mod?.DatabaseSync !== 'function') {
     throw new Error(
       'node:sqlite is not available in this runtime. Use Bun.SQL (omit preferNode) or Node >= 22.18.',
-      { cause: err },
     );
   }
+  return mod.DatabaseSync;
 }
 
 /**
