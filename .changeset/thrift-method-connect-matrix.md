@@ -31,11 +31,13 @@ The old surface stamped opaque `@fieldTypeMap` bags and a large `@transport.opti
 - Slim `@transport(subgraph, kind: "thrift", location, headers)` — no options bag.
 - Per-field `@thrift__rpc(function, args, selection, throws?, messageType, entity?)`.
 - Compact mapping keeps wire types explicit (`1(i32): left`, `$(i16)`, containers, nested maps); multiline values print as `"""`.
+- `map<*, struct>` args expand the value struct field ids (same recursion as list/set-of-struct).
 - `function` is always the IDL name. Single-service generate **omits** `service:` (path is on `@transport`).
 - `messageType: ONEWAY` does not wait for / decode a reply.
 - `entity: true` only via loader `entityMethods` (Federation entity Query fields).
 - Transport executes `@thrift__rpc` by field id (no `topTypeMap`).
-- GraphQL enum values are Thrift i32 integers. Recursive struct **arguments** fail at generate (no silent empty truncation).
+- Service mappings are generated only after every named type is registered (forward refs resolve correctly).
+- GraphQL enum members keep Thrift **i32** wire values via `@enum(value:)` through SDL print/compose; the thrift executor restores them. Recursive struct **arguments** fail at generate (no silent empty truncation).
 
 #### JSON — `protocol: 'json'`
 
@@ -45,17 +47,19 @@ Emits `@source` + `@connect` (TJSON) instead of thrift `@transport`:
 - Path `/`, or `/<service>` when `serviceName` is set
 - Body message types CALL=`1`, ONEWAY=`4`
 - `isSuccess` / `errors` so declared throws and `TApplicationException` are not silent nulls; ONEWAY omits `isSuccess`
-- Bool scalars encode as TJSON integers `0`/`1`. `map<*, bool>` and **list/set args** **fail at generate** (Connectors LitArray has no element spread / no public Router-safe concat to build `[type, size, …elements]`); prefer scalar/struct args, binary protocol, or hand-author `@connect` (Hive Mesh supports `->concat`)
-- Void/ONEWAY `@connect(selection:)` uses `$(null)` (bare `null` is a field path). `ignoreExceptions: false` unions emit a single `$({ … })` selection so TJSON array envelopes are not mapped per element; void `ok` is `$->get(4)->size->eq(0)`
+- Bool scalars encode as TJSON integers `0`/`1` (`->match`). Enum args/selections bake name <-> i32 `->match`.
+- **Fail at generate** (prefer scalar/struct args, binary, or hand-author `@connect`; Hive Mesh supports `->concat`): `map<*, bool>`, **list/set args**, and maps whose values are struct/list/set/map (Connectors cannot rewrite map values / LitArray has no element spread).
+- Void/ONEWAY `@connect(selection:)` uses `$(null)` (bare `null` is a field path). `ignoreExceptions: false` unions emit a single `$({ … })` selection; void success is `ok: $->get(4)->size->eq(0)`; struct success stamps `field0: $->get(4)->get("0")->ne(null)` so empty `{}` projections from exception replies are not treated as success.
 
 #### Exceptions
 
 1. **`TApplicationException`:** binary throws; JSON uses `isSuccess` / `errors`.
-2. **IDL `throws`:** `ignoreExceptions` defaults to `true`. Set `false` for GraphQL unions + `@thrift__rpc(throws:)`.
+2. **IDL `throws`:** `ignoreExceptions` defaults to `true`. Set `false` for GraphQL unions + `@thrift__rpc(throws:)`. Union `resolveType` matches exception members on **defined** field values (not key presence alone).
 
-#### Transforms
+#### Transforms / Connectors eval
 
-Fusion rename / naming-convention rewrite `$args…` inside `@thrift__rpc(args/selection/throws)` the same way as `@connect`. No `@merge` / `@meshSource` for thrift.
+- Fusion rename / naming-convention rewrite `$args…` inside `@thrift__rpc(args/selection/throws)` the same way as `@connect`. HTTP path templates still rename `$args` when the literal path contains apostrophes. No `@merge` / `@meshSource` for thrift.
+- Mesh Connectors eval: trailing NamedSelection after `$()` stays on the subselection path; `->map` / `->filter` preserve bare `@` match-arm wildcards (`[@, "other"]`).
 
 ### Migration
 
@@ -64,13 +68,20 @@ Fusion rename / naming-convention rewrite `$args…` inside `@thrift__rpc(args/s
 3. Keep binary `@transport` to `location` + `headers` only.
 4. Single-service: no `service:` required on `@thrift__rpc`. TJSON multiplex: set `serviceName`.
 5. Optional: `ignoreExceptions: false`; `entityMethods: ['getX']` only for Federation entity resolvers.
+6. If IDL uses list/set args or composite/bool map values on the JSON path, switch those RPCs to binary, change the IDL, or hand-author the `@connect` body.
 
-Example (binary) after generate:
+**Before** (old composed field):
+
+```graphql
+add(request: AddRequestInput): Int @fieldTypeMap(…)
+# wire layout lived in @transport(options: { topTypeMap, clientAnnotations })
+```
+
+**After** (binary generate):
 
 ```graphql
 add(request: AddRequestInput): Int @thrift__rpc(
   function: "add"
-  # Add left and right from the request struct.
   args: """
   1(struct): $args.request {
     1(i32): left
@@ -85,6 +96,6 @@ add(request: AddRequestInput): Int @thrift__rpc(
 ### Packages
 
 - `@omnigraph/thrift` — loader emit; `protocol`, `entityMethods`, `ignoreExceptions`, `serviceName`
-- `@graphql-mesh/transport-thrift` — execute compact mapping, ONEWAY, throws unions
-- `@graphql-mesh/transport-rest` — Connectors helpers for TJSON
-- `@graphql-mesh/fusion-composition` — `$args` rewrite for `@thrift__rpc` as well as `@connect`
+- `@graphql-mesh/transport-thrift` — execute compact mapping, ONEWAY, throws unions, `@enum` restore
+- `@graphql-mesh/transport-rest` — Connectors helpers for TJSON / `$()` / match wildcards
+- `@graphql-mesh/fusion-composition` — `$args` rewrite for `@thrift__rpc` and HTTP paths

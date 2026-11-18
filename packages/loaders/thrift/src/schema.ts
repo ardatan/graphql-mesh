@@ -411,192 +411,188 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   for (const { statement } of pendingServices) {
     if (statement.type !== SyntaxType.ServiceDefinition) continue;
     for (const fnIndex in statement.functions) {
+      const fn = statement.functions[fnIndex];
+      const fnName = fn.name.value;
+      const { outputType: returnType, typeVal: returnTypeVal } = getGraphQLFunctionType({
+        functionType: fn.returnType,
+        id: Number(fnIndex) + 1,
+        enumTypeMap,
+        inputTypeMap,
+        outputTypeMap,
+        topTypeMap,
+      });
+      const args: GraphQLFieldConfigArgumentMap = {};
+      const fieldTypeMap: TypeMap = {};
+      for (const field of fn.fields) {
+        const fieldName = field.name.value;
+        const fieldDescription = processComments(field.comments);
+        let { inputType: fieldType, typeVal } = getGraphQLFunctionType({
+          functionType: field.fieldType,
+          id: field.fieldID?.value,
+          enumTypeMap,
+          inputTypeMap,
+          outputTypeMap,
+          topTypeMap,
+        });
+        if (field.requiredness === 'required') {
+          fieldType = new GraphQLNonNull(fieldType);
+        }
+        args[fieldName] = {
+          type: fieldType,
+          description: fieldDescription,
+        };
+        fieldTypeMap[fieldName] = typeVal;
+      }
+      const isEntity = entityMethodSet.has(fnName);
+      const isOneway = Boolean(fn.oneway);
+      const messageType = isOneway ? 'ONEWAY' : 'CALL';
+      const throwsMeta = (fn.throws || []).map(t => ({
+        id: t.fieldID?.value ?? 0,
+        name: t.name.value,
+        typeName: 'value' in t.fieldType ? String(t.fieldType.value).replace('.', '_') : 'unknown',
+      }));
 
-            const fn = statement.functions[fnIndex];
-            const fnName = fn.name.value;
-            const { outputType: returnType, typeVal: returnTypeVal } = getGraphQLFunctionType({
-              functionType: fn.returnType,
-              id: Number(fnIndex) + 1,
-              enumTypeMap,
-              inputTypeMap,
-              outputTypeMap,
-              topTypeMap,
-            });
-            const args: GraphQLFieldConfigArgumentMap = {};
-            const fieldTypeMap: TypeMap = {};
-            for (const field of fn.fields) {
-              const fieldName = field.name.value;
-              const fieldDescription = processComments(field.comments);
-              let { inputType: fieldType, typeVal } = getGraphQLFunctionType({
-                functionType: field.fieldType,
-                id: field.fieldID?.value,
-                enumTypeMap,
-                inputTypeMap,
-                outputTypeMap,
-                topTypeMap,
-              });
-              if (field.requiredness === 'required') {
-                fieldType = new GraphQLNonNull(fieldType);
+      const successTypeName = `${fnName[0].toUpperCase()}${fnName.slice(1)}Success`;
+      let fieldReturnType: GraphQLOutputType = returnType;
+      let modelThrows = false;
+      if (!ignoreExceptions && throwsMeta.length > 0) {
+        const isVoidSuccess = returnTypeVal?.type === TType.VOID;
+        // Void! cannot hold a successful null — use `ok: Boolean!` for void RPC
+        // success members; non-void keeps `value: <Return>!`.
+        const successType = new GraphQLObjectType({
+          name: successTypeName,
+          fields: isVoidSuccess
+            ? { ok: { type: new GraphQLNonNull(GraphQLBoolean) } }
+            : { value: { type: new GraphQLNonNull(returnType as any) } },
+        });
+        const exceptionTypes = throwsMeta
+          .map(
+            t =>
+              exceptionTypeMap.get(t.typeName) ||
+              (outputTypeMap.get(t.typeName) as GraphQLObjectType),
+          )
+          .filter(Boolean) as GraphQLObjectType[];
+        if (exceptionTypes.length) {
+          modelThrows = true;
+          fieldReturnType = new GraphQLUnionType({
+            name: `${fnName[0].toUpperCase()}${fnName.slice(1)}Result`,
+            types: [successType, ...exceptionTypes],
+            resolveType: value => {
+              if (value && typeof value === 'object' && value.__typename) {
+                return value.__typename;
               }
-              args[fieldName] = {
-                type: fieldType,
-                description: fieldDescription,
-              };
-              fieldTypeMap[fieldName] = typeVal;
-            }
-            const isEntity = entityMethodSet.has(fnName);
-            const isOneway = Boolean(fn.oneway);
-            const messageType = isOneway ? 'ONEWAY' : 'CALL';
-            const throwsMeta = (fn.throws || []).map(t => ({
-              id: t.fieldID?.value ?? 0,
-              name: t.name.value,
-              typeName:
-                'value' in t.fieldType ? String(t.fieldType.value).replace('.', '_') : 'unknown',
-            }));
-
-            const successTypeName = `${fnName[0].toUpperCase()}${fnName.slice(1)}Success`;
-            let fieldReturnType: GraphQLOutputType = returnType;
-            let modelThrows = false;
-            if (!ignoreExceptions && throwsMeta.length > 0) {
-              const isVoidSuccess = returnTypeVal?.type === TType.VOID;
-              // Void! cannot hold a successful null — use `ok: Boolean!` for void RPC
-              // success members; non-void keeps `value: <Return>!`.
-              const successType = new GraphQLObjectType({
-                name: successTypeName,
-                fields: isVoidSuccess
-                  ? { ok: { type: new GraphQLNonNull(GraphQLBoolean) } }
-                  : { value: { type: new GraphQLNonNull(returnType as any) } },
-              });
-              const exceptionTypes = throwsMeta
-                .map(
-                  t =>
-                    exceptionTypeMap.get(t.typeName) ||
-                    (outputTypeMap.get(t.typeName) as GraphQLObjectType),
-                )
-                .filter(Boolean) as GraphQLObjectType[];
-              if (exceptionTypes.length) {
-                modelThrows = true;
-                fieldReturnType = new GraphQLUnionType({
-                  name: `${fnName[0].toUpperCase()}${fnName.slice(1)}Result`,
-                  types: [successType, ...exceptionTypes],
-                  resolveType: value => {
-                    if (value && typeof value === 'object' && value.__typename) {
-                      return value.__typename;
-                    }
-                    // Prefer success when `ok` / field0 / non-empty `value` is present —
-                    // TJSON union selection may also project exception keys as undefined.
-                    if (value && typeof value === 'object') {
-                      if (value.ok === true) {
-                        return successTypeName;
-                      }
-                      // Struct success stamps `field0` when reply field "0" exists.
-                      if (value.field0 === true) {
-                        return successTypeName;
-                      }
-                      if (value.value !== undefined && value.value !== null) {
-                        const v = value.value;
-                        const emptyObj =
-                          typeof v === 'object' &&
-                          v !== null &&
-                          !Array.isArray(v) &&
-                          Object.keys(v).length === 0;
-                        if (!emptyObj) {
-                          return successTypeName;
-                        }
-                      }
-                    }
-                    for (const ex of exceptionTypes) {
-                      const fields = Object.keys(ex.getFields());
-                      // Require a defined field value — `in` is true for keys set to undefined.
-                      if (fields.some(f => (value || {})[f] !== undefined)) return ex.name;
-                    }
+              // Prefer success when `ok` / field0 / non-empty `value` is present —
+              // TJSON union selection may also project exception keys as undefined.
+              if (value && typeof value === 'object') {
+                if (value.ok === true) {
+                  return successTypeName;
+                }
+                // Struct success stamps `field0` when reply field "0" exists.
+                if (value.field0 === true) {
+                  return successTypeName;
+                }
+                if (value.value !== undefined && value.value !== null) {
+                  const v = value.value;
+                  const emptyObj =
+                    typeof v === 'object' &&
+                    v !== null &&
+                    !Array.isArray(v) &&
+                    Object.keys(v).length === 0;
+                  if (!emptyObj) {
                     return successTypeName;
-                  },
-                });
+                  }
+                }
               }
-            }
+              for (const ex of exceptionTypes) {
+                const fields = Object.keys(ex.getFields());
+                // Require a defined field value — `in` is true for keys set to undefined.
+                if (fields.some(f => (value || {})[f] !== undefined)) return ex.name;
+              }
+              return successTypeName;
+            },
+          });
+        }
+      }
 
-            // Mapping bodies only — no `#` dumps inside string values and no GraphQL
-            // field description dumps. Hand-authored SDL may put a GraphQL `#` comment
-            // immediately above `args:` / `selection:` (AST print cannot re-emit those;
-            // parser still strips `#` lines if present inside the string values).
-            const compactArgs = buildCompactArgs(fieldTypeMap, topTypeMap);
-            const compactSelection = buildCompactSelection(returnTypeVal, topTypeMap);
-            const compactThrows =
-              modelThrows && throwsMeta.length
-                ? buildCompactThrows(throwsMeta, topTypeMap)
-                : undefined;
+      // Mapping bodies only — no `#` dumps inside string values and no GraphQL
+      // field description dumps. Hand-authored SDL may put a GraphQL `#` comment
+      // immediately above `args:` / `selection:` (AST print cannot re-emit those;
+      // parser still strips `#` lines if present inside the string values).
+      const compactArgs = buildCompactArgs(fieldTypeMap, topTypeMap);
+      const compactSelection = buildCompactSelection(returnTypeVal, topTypeMap);
+      const compactThrows =
+        modelThrows && throwsMeta.length ? buildCompactThrows(throwsMeta, topTypeMap) : undefined;
 
-            const isVoidReturn = returnTypeVal?.type === TType.VOID;
+      const isVoidReturn = returnTypeVal?.type === TType.VOID;
 
-            if (emitConnect) {
-              // Single-service: path `/`. Explicit serviceName: `/<service>`.
-              // Do not embed `#` IDL comments in Connectors `selection` — Apollo
-              // JSONSelection does not skip hash comments (unlike compact thrift mapping).
-              const connectPath = serviceName ? `/${serviceName}` : '/';
-              let selection = buildTJSONConnectSelection(returnTypeVal, topTypeMap);
-              if (modelThrows) {
-                // Union shape: success under `value`; exception fields projected beside it.
-                selection = buildTJSONUnionConnectSelection(returnTypeVal, throwsMeta, topTypeMap);
-              }
-              const connectDir: Record<string, unknown> = {
-                source: subgraphName,
-                http: {
-                  POST: connectPath,
-                  body: buildTJSONConnectBody(fnName, fieldTypeMap, topTypeMap, messageType),
-                },
-                selection,
-                ...(isEntity ? { entity: true } : {}),
-              };
-              // ONEWAY: no reply envelope — HTTP status alone; void mapping must not wait.
-              if (!isOneway) {
-                // ignoreExceptions:false → declared throws arrive as REPLY data (still msg type 2).
-                // Void + throws + ignoreExceptions:true → REPLY with non-empty result (no "0");
-                // require empty result struct so declared throws are not silent null.
-                // Non-void CALL: require success field "0".
-                const voidWithThrows = isVoidReturn && !modelThrows && throwsMeta.length > 0;
-                connectDir.isSuccess = voidWithThrows
-                  ? TJSON_IS_SUCCESS_VOID_WITH_THROWS
-                  : modelThrows || isVoidReturn
-                    ? TJSON_IS_SUCCESS_VOID
-                    : TJSON_IS_SUCCESS;
-                connectDir.errors = TJSON_ERRORS;
-              }
-              rootFields[fnName] = {
-                type: fieldReturnType,
-                args,
-                extensions: {
-                  directives: {
-                    connect: connectDir,
-                  },
-                },
-              };
-            } else {
-              const thriftRpcArgs: Record<string, unknown> = {
-                subgraph: subgraphName,
-                function: fnName,
-                args: compactArgs,
-                selection: compactSelection,
-                messageType,
-              };
-              if (compactThrows) {
-                thriftRpcArgs.throws = compactThrows;
-              }
-              // Binary HTTP path is `@transport(location:)` — omit `service:` for
-              // single-service generate. Directive arg remains for hand-authored SDL.
-              if (isEntity) {
-                thriftRpcArgs.entity = true;
-              }
-              rootFields[fnName] = {
-                type: fieldReturnType,
-                args,
-                extensions: {
-                  directives: {
-                    thrift__rpc: thriftRpcArgs,
-                  },
-                },
-              };
-            }
+      if (emitConnect) {
+        // Single-service: path `/`. Explicit serviceName: `/<service>`.
+        // Do not embed `#` IDL comments in Connectors `selection` — Apollo
+        // JSONSelection does not skip hash comments (unlike compact thrift mapping).
+        const connectPath = serviceName ? `/${serviceName}` : '/';
+        let selection = buildTJSONConnectSelection(returnTypeVal, topTypeMap);
+        if (modelThrows) {
+          // Union shape: success under `value`; exception fields projected beside it.
+          selection = buildTJSONUnionConnectSelection(returnTypeVal, throwsMeta, topTypeMap);
+        }
+        const connectDir: Record<string, unknown> = {
+          source: subgraphName,
+          http: {
+            POST: connectPath,
+            body: buildTJSONConnectBody(fnName, fieldTypeMap, topTypeMap, messageType),
+          },
+          selection,
+          ...(isEntity ? { entity: true } : {}),
+        };
+        // ONEWAY: no reply envelope — HTTP status alone; void mapping must not wait.
+        if (!isOneway) {
+          // ignoreExceptions:false → declared throws arrive as REPLY data (still msg type 2).
+          // Void + throws + ignoreExceptions:true → REPLY with non-empty result (no "0");
+          // require empty result struct so declared throws are not silent null.
+          // Non-void CALL: require success field "0".
+          const voidWithThrows = isVoidReturn && !modelThrows && throwsMeta.length > 0;
+          connectDir.isSuccess = voidWithThrows
+            ? TJSON_IS_SUCCESS_VOID_WITH_THROWS
+            : modelThrows || isVoidReturn
+              ? TJSON_IS_SUCCESS_VOID
+              : TJSON_IS_SUCCESS;
+          connectDir.errors = TJSON_ERRORS;
+        }
+        rootFields[fnName] = {
+          type: fieldReturnType,
+          args,
+          extensions: {
+            directives: {
+              connect: connectDir,
+            },
+          },
+        };
+      } else {
+        const thriftRpcArgs: Record<string, unknown> = {
+          subgraph: subgraphName,
+          function: fnName,
+          args: compactArgs,
+          selection: compactSelection,
+          messageType,
+        };
+        if (compactThrows) {
+          thriftRpcArgs.throws = compactThrows;
+        }
+        // Binary HTTP path is `@transport(location:)` — omit `service:` for
+        // single-service generate. Directive arg remains for hand-authored SDL.
+        if (isEntity) {
+          thriftRpcArgs.entity = true;
+        }
+        rootFields[fnName] = {
+          type: fieldReturnType,
+          args,
+          extensions: {
+            directives: {
+              thrift__rpc: thriftRpcArgs,
+            },
+          },
+        };
+      }
     }
   }
 
