@@ -13,7 +13,7 @@ import {
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { batchableEqualityColumn } from './batch.js';
 import { parseSqlMapping } from './mapping.js';
-import type { ParsedSqlMapping, SqlKind } from './types.js';
+import type { ParsedSqlMapping, SqlAdapter, SqlKind } from './types.js';
 
 /** Parent objects stamped with GraphQL field names already satisfied by a JOIN. */
 export const SQL_JOINED_FIELDS = Symbol.for('mesh.sql.joinedFields');
@@ -62,6 +62,7 @@ export function planSelection(
   schema: GraphQLSchema,
   info: GraphQLResolveInfo,
   fullSelection: ParsedSqlMapping,
+  opts?: { adapter?: SqlAdapter },
 ): SelectionPlan {
   const parentType = resolveNodeObjectType(info.returnType);
   if (!parentType) {
@@ -86,6 +87,7 @@ export function planSelection(
       't',
       aliasCounter,
       0,
+      opts,
     );
     if (!planned) continue;
     if (planned.kind === 'belongsTo') {
@@ -124,6 +126,7 @@ function planChildField(
   parentAlias: string,
   aliasCounter: { n: number },
   depth: number,
+  opts?: { adapter?: SqlAdapter },
 ): PlannedChild | null {
   if (depth > 8) return null;
   const fieldName = fieldNode.name.value;
@@ -169,6 +172,7 @@ function planChildField(
           alias,
           aliasCounter,
           depth + 1,
+          opts,
         );
         if (nested?.kind === 'belongsTo') {
           nestedJoins.push(nested.join);
@@ -202,8 +206,8 @@ function planChildField(
 
   if (kind === 'ROWS') {
     // Only fold when the only non-planner binder is `$this` equality and args are
-    // limited to limit/offset (no where/orderBy — those stay on DataLoader).
-    if (!isSimpleHasManyFoldable(whereMapping, fieldNode)) return null;
+    // limited to limit (no where/orderBy/offset — those stay on DataLoader).
+    if (!isSimpleHasManyFoldable(whereMapping, fieldNode, opts)) return null;
     const limit = readLimitArg(fieldNode);
     const narrowed = narrowSelectionToFieldNodes(relSelection, fieldNode, fragments, childType);
     return {
@@ -229,12 +233,17 @@ function getSqlArgs(schema: GraphQLSchema, field: GraphQLField<any, any>) {
   return sqlDirs[0]?.args || null;
 }
 
-function isSimpleHasManyFoldable(_whereMapping: ParsedSqlMapping, fieldNode: FieldNode): boolean {
+function isSimpleHasManyFoldable(
+  _whereMapping: ParsedSqlMapping,
+  fieldNode: FieldNode,
+  opts?: { adapter?: SqlAdapter },
+): boolean {
   // Loader emits where/orderBy binders; fold only when the operation does not
-  // pass those args (limit/offset alone are fine).
+  // pass those args. Offset is not applied in JSON subselects — keep DataLoader.
   if (fieldNode.arguments?.length) {
     for (const arg of fieldNode.arguments) {
-      if (arg.name.value !== 'limit' && arg.name.value !== 'offset') return false;
+      if (arg.name.value === 'offset') return false;
+      if (arg.name.value !== 'limit') return false;
     }
   }
   return true;

@@ -29,12 +29,12 @@ import {
   buildSelect,
   buildUpdate,
   collectReturningColumns,
-  decodeCursor,
-  encodeCursor,
+  encodeKeysetCursor,
   mapRowToGraphql,
   mapRowToGraphqlWithJoins,
   nestedSelection,
   parseSqlDirectiveMappings,
+  type OrderSpec,
   type SqlPlanners,
 } from './sql-builder.js';
 import { parseSqlThrough, type SqlThroughJoin } from './through.js';
@@ -181,11 +181,12 @@ async function runSqlSelect(
 
   const planned =
     opts.schema && opts.info && kind !== 'COUNT'
-      ? planSelection(opts.schema, opts.info, fullSelection)
+      ? planSelection(opts.schema, opts.info, fullSelection, { adapter: sqlClient.adapter })
       : { selection: fullSelection, joins: [], hasMany: [] };
 
   const selectSelection = planned.selection.entries.length ? planned.selection : fullSelection;
   const { joins, hasMany } = planned;
+  const columnCatalog = columnMapFromSelection(fullSelection);
 
   // Batch ROW / simple ROWS when there is exactly one equality binder (FK / PK)
   // and we are not folding joins / has-many / M2M into this query.
@@ -206,6 +207,7 @@ async function runSqlSelect(
             column,
             graphqlArgs,
             softDelete,
+            columnCatalog,
             relationFilters:
               opts.schema && opts.info
                 ? collectRelationFilters(
@@ -238,6 +240,7 @@ async function runSqlSelect(
     softDelete,
     relationFilters,
     through,
+    columnCatalog,
   });
   const result = await sqlClient.query(query.sql, query.params);
 
@@ -252,20 +255,21 @@ async function runSqlSelect(
   }
   if (kind === 'CONNECTION') {
     const first = Number(graphqlArgs.first ?? 10);
-    const after = typeof graphqlArgs.after === 'string' ? graphqlArgs.after : '';
-    const offset = after ? decodeCursor(after) : 0;
     const rows = result.rows as Record<string, unknown>[];
     const hasNextPage = rows.length > first;
     const pageRows = hasNextPage ? rows.slice(0, first) : rows;
+    const orderSpecs: OrderSpec[] = query.orderSpecs?.length
+      ? query.orderSpecs
+      : [{ graphqlField: 'id', sqlColumn: 'id', dir: 'ASC' }];
     const nodes = pageRows.map(r => mapSelectRow(r, selectSelection, joins, hasMany));
     const edges = nodes.map((node, i) => ({
-      cursor: encodeCursor(offset + i),
+      cursor: encodeKeysetCursor(orderSpecs, pageRows[i]),
       node,
     }));
     const endCursor = edges.length ? edges[edges.length - 1].cursor : null;
     const startCursor = edges.length ? edges[0].cursor : null;
 
-    let totalCount = offset + pageRows.length + (hasNextPage ? 1 : 0);
+    let totalCount = pageRows.length + (hasNextPage ? 1 : 0);
     if (selection.entries.some(e => e.key === 'totalCount')) {
       const countQ = buildSelect(sqlClient.adapter, {
         table,
@@ -273,22 +277,25 @@ async function runSqlSelect(
         selection: selectSelection,
         whereMapping,
         planners,
-        graphqlArgs,
+        // COUNT must ignore `after` — total is unpaginated.
+        graphqlArgs: { ...graphqlArgs, after: undefined },
         parent,
         softDelete,
         relationFilters,
+        columnCatalog,
       });
       const countRes = await sqlClient.query(countQ.sql, countQ.params);
       const crow = countRes.rows[0] as Record<string, unknown> | undefined;
       totalCount = Number(crow?.count ?? crow?.COUNT ?? Object.values(crow || {})[0] ?? 0);
     }
 
+    const after = typeof graphqlArgs.after === 'string' ? graphqlArgs.after : '';
     return {
       nodes,
       edges,
       pageInfo: {
         hasNextPage,
-        hasPreviousPage: offset > 0,
+        hasPreviousPage: Boolean(after),
         startCursor,
         endCursor,
       },

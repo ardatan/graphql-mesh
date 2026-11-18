@@ -16,6 +16,7 @@ import {
   type SqlTransportOptions,
 } from '@graphql-mesh/transport-sql';
 import { SqlDirective, SqlKindEnum, TransportDirective } from './directives.js';
+import { graphqlFieldNameForColumn } from './field-names.js';
 import { introspectMysql } from './introspect/mysql.js';
 import { introspectPostgres } from './introspect/postgres.js';
 import { introspectSqlite } from './introspect/sqlite.js';
@@ -27,6 +28,30 @@ import type {
 } from './introspect/types.js';
 import { createDefaultNaming, type SqlNaming } from './naming.js';
 import { mapSqlTypeToGraphQL } from './type-map.js';
+
+function colFieldName(
+  naming: SqlNaming,
+  col: SqlColumnMeta,
+  solePk: SqlColumnMeta | undefined,
+  table: SqlTableMeta,
+): string {
+  return graphqlFieldNameForColumn(naming, col, solePk, table.columns);
+}
+
+function colFieldNameBySql(
+  naming: SqlNaming,
+  sqlCol: string,
+  solePk: SqlColumnMeta | undefined,
+  table: SqlTableMeta,
+): string {
+  const col = table.columns.find(c => c.name === sqlCol);
+  if (!col) {
+    return solePk && sqlCol === solePk.name
+      ? graphqlFieldNameForColumn(naming, solePk, solePk, table.columns)
+      : naming.fieldName(sqlCol);
+  }
+  return colFieldName(naming, col, solePk, table);
+}
 
 const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
 
@@ -113,8 +138,8 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
         name: 'key',
         args: {
           fields: solePk
-            ? naming.pkFieldName(solePk.name, true)
-            : pkCols.map(c => naming.fieldName(c.name)).join(' '),
+            ? colFieldName(naming, solePk, solePk, table)
+            : pkCols.map(c => colFieldName(naming, c, undefined, table)).join(' '),
         },
       },
     ];
@@ -122,10 +147,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     if (pkCols.length) {
       const keyArgs = pkCols
         .map(col => {
-          const field =
-            solePk && col.name === solePk.name
-              ? naming.pkFieldName(col.name, true)
-              : naming.fieldName(col.name);
+          const field = colFieldName(naming, col, solePk, table);
           return `${col.name}: $this.${field}`;
         })
         .join('\n');
@@ -144,9 +166,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
 
     for (const col of table.columns) {
       const isSolePkCol = Boolean(solePk && col.name === solePk.name);
-      const fieldName = isSolePkCol
-        ? naming.pkFieldName(col.name, true)
-        : naming.fieldName(col.name);
+      const fieldName = colFieldName(naming, col, solePk, table);
       const gqlType = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
       otc.setField(fieldName, {
         type: col.notNull || isSolePkCol ? new GraphQLNonNull(gqlType) : gqlType,
@@ -179,15 +199,10 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       const refTypeName = typeNameByTable.get(fk.refTable)!;
       const localCol = fk.columns[0];
       const refCol = fk.refColumns[0];
-      const localField =
-        solePkCol && localCol === solePkCol.name
-          ? naming.pkFieldName(localCol, true)
-          : naming.fieldName(localCol);
+      const localField = colFieldNameBySql(naming, localCol, solePkCol, table);
       const refSolePk = refTable.columns.filter(c => c.primaryKey);
-      const refField =
-        refSolePk.length === 1 && refCol === refSolePk[0].name
-          ? naming.pkFieldName(refCol, true)
-          : naming.fieldName(refCol);
+      const refSolePkCol = refSolePk.length === 1 ? refSolePk[0] : undefined;
+      const refField = colFieldNameBySql(naming, refCol, refSolePkCol, refTable);
 
       // belongsTo on local table
       const belongsToName = naming.singularField(refTypeName);
@@ -298,7 +313,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     const singular = naming.singularField(typeName);
 
     if (solePk) {
-      const pkField = naming.pkFieldName(solePk.name, true);
+      const pkField = colFieldName(naming, solePk, solePk, table);
       queryTC.setField(singular, {
         type: typeName,
         args: {
@@ -430,7 +445,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     });
 
     if (solePk) {
-      const pkField = naming.pkFieldName(solePk.name, true);
+      const pkField = colFieldName(naming, solePk, solePk, table);
       mutationTC.setField(`update${typeName}`, {
         type: `${naming.payloadType(typeName)}!`,
         args: {
@@ -711,10 +726,8 @@ function emitManyToManyField(opts: {
 
   const leftRefCol = leftFk.refColumns[0];
   const leftSolePk = leftTable.columns.filter(c => c.primaryKey);
-  const leftPkField =
-    leftSolePk.length === 1 && leftSolePk[0].name === leftRefCol
-      ? naming.pkFieldName(leftRefCol, true)
-      : naming.fieldName(leftRefCol);
+  const leftSolePkCol = leftSolePk.length === 1 ? leftSolePk[0] : undefined;
+  const leftPkField = colFieldNameBySql(naming, leftRefCol, leftSolePkCol, leftTable);
 
   const shortName = naming.pluralField(rightTypeName);
   const verboseName = naming.fieldName(
@@ -848,7 +861,7 @@ function createFilterAndOrder(
 
   for (const col of table.columns) {
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
-    const fieldName = isSolePkCol ? naming.pkFieldName(col.name, true) : naming.fieldName(col.name);
+    const fieldName = colFieldName(naming, col, solePk, table);
     const gql = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
     const filterType =
       gql === GraphQLInt || gql.name === 'Int' || gql.name === 'BigInt'
@@ -910,7 +923,7 @@ function createMutationInputs(
   for (const col of table.columns) {
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
     if (isSolePkCol && col.autoIncrement) continue;
-    const fieldName = isSolePkCol ? naming.pkFieldName(col.name, true) : naming.fieldName(col.name);
+    const fieldName = colFieldName(naming, col, solePk, table);
     const gqlType = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
     createFields[fieldName] = {
       type:
@@ -1026,8 +1039,7 @@ function selectionLines(
   const pkCols = table.columns.filter(c => c.primaryKey);
   const solePk = pkCols.length === 1 ? pkCols[0] : undefined;
   const colLines = table.columns.map(col => {
-    const isSolePkCol = Boolean(solePk && col.name === solePk.name);
-    const fieldName = isSolePkCol ? naming.pkFieldName(col.name, true) : naming.fieldName(col.name);
+    const fieldName = colFieldName(naming, col, solePk, table);
     return `${fieldName}: ${col.name}`;
   });
   const fnLines = computed.map(cc => `${cc.fieldName}: $fn.${cc.functionName}`);
@@ -1047,7 +1059,7 @@ function insertSetBlock(naming: SqlNaming, table: SqlTableMeta, solePk?: SqlColu
   for (const col of table.columns) {
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
     if (isSolePkCol && col.autoIncrement) continue;
-    const fieldName = isSolePkCol ? naming.pkFieldName(col.name, true) : naming.fieldName(col.name);
+    const fieldName = colFieldName(naming, col, solePk, table);
     lines.push(`${col.name}: $args.input.${fieldName}`);
   }
   return blockArg(lines.join('\n'));

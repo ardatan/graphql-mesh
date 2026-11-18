@@ -1,8 +1,33 @@
 import { join } from 'node:path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { graphqlFieldNameForColumn } from '../src/field-names.js';
 import { loadGraphQLSchemaFromSql } from '../src/index.js';
+import type { SqlColumnMeta } from '../src/introspect/types.js';
+import { createDefaultNaming } from '../src/naming.js';
 
 const chinookDb = join(__dirname, '../../../../e2e/sqlite-chinook/chinook.db');
+
+describe('graphqlFieldNameForColumn', () => {
+  const naming = createDefaultNaming();
+  const col = (name: string, pk = false): SqlColumnMeta => ({
+    name,
+    dataType: 'TEXT',
+    notNull: false,
+    primaryKey: pk,
+    autoIncrement: false,
+  });
+
+  it('aliases sole PK to id when no collision', () => {
+    const columns = [col('user_id', true), col('email')];
+    expect(graphqlFieldNameForColumn(naming, columns[0], columns[0], columns)).toBe('id');
+  });
+
+  it('keeps natural PK name when another column already maps to id', () => {
+    const columns = [col('user_id', true), col('id')];
+    expect(graphqlFieldNameForColumn(naming, columns[0], columns[0], columns)).toBe('userId');
+    expect(graphqlFieldNameForColumn(naming, columns[1], columns[0], columns)).toBe('id');
+  });
+});
 
 describe('@omnigraph/sql sqlite chinook', () => {
   it('emits @sql directives and slim @transport(kind: sql)', async () => {

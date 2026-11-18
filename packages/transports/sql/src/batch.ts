@@ -116,6 +116,7 @@ export interface BatchSelectOpts {
   selection: ParsedSqlMapping;
   whereMapping: ParsedSqlMapping;
   planners?: SqlPlanners;
+  columnCatalog?: Map<string, string>;
   column: string;
   graphqlArgs?: Record<string, any>;
   softDelete?: SqlSoftDeleteOptions;
@@ -165,6 +166,7 @@ export function loadBatchedByColumn(
           values: unique,
           softDelete: opts.softDelete,
           relationFilters: opts.relationFilters,
+          columnCatalog: opts.columnCatalog,
         });
         const result = await opts.client.query(query.sql, query.params);
         const rows = result.rows as Record<string, unknown>[];

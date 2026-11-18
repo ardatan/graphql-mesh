@@ -4,6 +4,7 @@ import {
   buildDelete,
   buildSelect,
   buildUpdate,
+  encodeKeysetCursor,
   escapeSqlStringLiteral,
   mapRowToGraphql,
 } from '../src/sql-builder.js';
@@ -159,17 +160,68 @@ describe('buildSelect', () => {
     expect(sql).toContain('"public"."users_full_name"("t") AS "fullName"');
   });
 
-  it('advances CONNECTION offset past the after cursor', () => {
-    const { params } = buildSelect('sqlite', {
+  it('applies keyset after cursor for CONNECTION (no OFFSET)', () => {
+    const after = encodeKeysetCursor([{ graphqlField: 'id', sqlColumn: 'AlbumId', dir: 'ASC' }], {
+      id: 7,
+    });
+    const { sql, params } = buildSelect('sqlite', {
       table: 'albums',
       kind: 'CONNECTION',
       selection,
       whereMapping: parseSqlMapping(`$args.where`),
-      planners: { first: '$args.first', after: '$args.after' },
-      graphqlArgs: { where: {}, first: 1, after: Buffer.from('0', 'utf8').toString('base64') },
+      planners: { first: '$args.first', after: '$args.after', orderBy: '$args.orderBy' },
+      graphqlArgs: { where: {}, first: 1, after, orderBy: ['ID_ASC'] },
+      columnCatalog: new Map([
+        ['id', 'AlbumId'],
+        ['title', 'Title'],
+        ['artistId', 'ArtistId'],
+      ]),
     });
-    // first+1 for hasNextPage probe, then offset = decode(after)+1
-    expect(params).toEqual([2, 1]);
+    expect(sql).toContain('("AlbumId") > (?)');
+    expect(sql).not.toContain('OFFSET');
+    expect(params).toEqual([7, 2]);
+  });
+
+  it('keeps filter columns when selection is pruned', () => {
+    const { sql, params } = buildSelect('sqlite', {
+      table: 'albums',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: AlbumId`),
+      whereMapping: parseSqlMapping(`$args.where`),
+      planners: { limit: '$args.limit' },
+      graphqlArgs: { where: { title: { eq: 'X' } }, limit: 5 },
+      columnCatalog: new Map([
+        ['id', 'AlbumId'],
+        ['title', 'Title'],
+      ]),
+    });
+    expect(sql).toContain('"Title" = ?');
+    expect(params[0]).toBe('X');
+  });
+
+  it('limits MySQL has-many JSON children before aggregation', () => {
+    const { sql } = buildSelect('mysql', {
+      table: 'artists',
+      kind: 'ROWS',
+      selection: parseSqlMapping(`id: ArtistId`),
+      whereMapping: parseSqlMapping(`$args.where`),
+      graphqlArgs: { where: {} },
+      hasMany: [
+        {
+          fieldName: 'albums',
+          table: 'albums',
+          joinColumn: 'ArtistId',
+          parentGraphqlField: 'id',
+          parentColumn: 'ArtistId',
+          selection: parseSqlMapping(`id: AlbumId\ntitle: Title`),
+          limit: 2,
+        },
+      ],
+    });
+    expect(sql).toContain('json_arrayagg');
+    expect(sql).toContain('SELECT COUNT(*)');
+    expect(sql).toMatch(/<= 2/);
+    expect(sql).not.toMatch(/LIMIT 2\)/);
   });
 
   it('applies structured $args.where on UPDATE and rejects unresolved binders', () => {

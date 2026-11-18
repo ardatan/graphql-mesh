@@ -16,9 +16,17 @@ import type {
   SqlSoftDeleteOptions,
 } from './types.js';
 
+export interface OrderSpec {
+  graphqlField: string;
+  sqlColumn: string;
+  dir: 'ASC' | 'DESC';
+}
+
 export interface BuiltQuery {
   sql: string;
   params: unknown[];
+  /** Present for CONNECTION — used to encode keyset edge cursors. */
+  orderSpecs?: OrderSpec[];
 }
 
 /** Resolve soft-delete column for a table, or `undefined` if not applicable. */
@@ -70,6 +78,11 @@ export interface SelectPlan {
   relationFilters?: SqlRelationFilterMeta[];
   /** Many-to-many junction (`@sql(through:)`). */
   through?: SqlThroughJoin;
+  /**
+   * Full GraphQL field → SQL column map for filters / orderBy (not pruned by
+   * selection lookahead). Falls back to `selection` when omitted.
+   */
+  columnCatalog?: Map<string, string>;
 }
 
 const PLANNER_KEYS = new Set<string>([
@@ -86,6 +99,8 @@ const PLANNER_KEYS = new Set<string>([
 
 export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   const columns = columnMapFromSelection(plan.selection);
+  // Filters / orderBy must see the full catalog — selection may be pruned.
+  const catalog = plan.columnCatalog?.size ? plan.columnCatalog : columns;
   const joins = plan.joins?.length ? plan.joins : undefined;
   const hasMany = plan.hasMany?.length ? plan.hasMany : undefined;
   // Alias root when joins/has-many/relation EXISTS/through/computed $fn need a row ref.
@@ -121,7 +136,7 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
     whereParts.push(`${qualify(entry.key)} = ${placeholder(adapter, params.length)}`);
   }
 
-  appendStructuredFilters(adapter, plan, columns, whereParts, params, {
+  appendStructuredFilters(adapter, plan, catalog, whereParts, params, {
     qualifyColumn: rootAlias ? qualify : undefined,
     relationFilters: plan.relationFilters,
     rootAlias,
@@ -140,9 +155,40 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
     whereParts.push(`${qualify(softCol)} IS NULL`);
   }
 
+  const orderBy = resolvePlannerArg(plan, 'orderBy') as string[] | string | undefined;
+  const orderSpecs = resolveOrderSpecs(orderBy, catalog);
+  // Stable pagination / keyset: default to id ASC when unordered.
+  if (!orderSpecs.length) {
+    const idCol = catalog.get('id') || columns.get('id');
+    if (idCol) {
+      orderSpecs.push({ graphqlField: 'id', sqlColumn: idCol, dir: 'ASC' });
+    }
+  }
+
+  if (plan.kind === 'CONNECTION') {
+    const after = resolvePlannerArg(plan, 'after');
+    if (typeof after === 'string' && after.length) {
+      appendKeysetPredicate(
+        adapter,
+        orderSpecs,
+        after,
+        whereParts,
+        params,
+        rootAlias ? qualify : undefined,
+      );
+    }
+  }
+
+  // Keyset cursors need order columns present on each row even if the client
+  // did not select them (encode from SQL aliases / GraphQL field names).
+  let selectionForSelect = plan.selection;
+  if (plan.kind === 'CONNECTION' && orderSpecs.length) {
+    selectionForSelect = ensureOrderColumnsInSelection(plan.selection, orderSpecs);
+  }
+
   const selectCols = buildSelectList(
     adapter,
-    plan.selection,
+    selectionForSelect,
     joins,
     hasMany,
     rootAlias,
@@ -179,34 +225,18 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
     return { sql, params };
   }
 
-  const orderBy = resolvePlannerArg(plan, 'orderBy') as string[] | string | undefined;
-  let orderSql = buildOrderBy(adapter, orderBy, columns, rootAlias ? qualify : undefined);
-  // Stable pagination: JOINs / JSON subselects can reshuffle unordered LIMIT results.
-  if (!orderSql) {
-    const idCol = columns.get('id');
-    if (idCol) {
-      orderSql = rootAlias ? qualify(idCol) : quoteIdent(adapter, idCol);
-    }
-  }
+  const orderSql = formatOrderBySql(adapter, orderSpecs, rootAlias ? qualify : undefined);
   if (orderSql) {
     sql += ` ORDER BY ${orderSql}`;
   }
 
   if (plan.kind === 'CONNECTION') {
     const first = Number(resolvePlannerArg(plan, 'first') ?? 10);
-    const after = resolvePlannerArg(plan, 'after');
-    // Cursor encodes the last-seen edge index; `after` starts at the next row.
-    let offset = 0;
-    if (typeof after === 'string' && after.length) {
-      offset = decodeCursor(after) + 1;
-    }
     const limit = Math.max(0, first);
     // fetch one extra to detect hasNextPage
     params.push(limit + 1);
     sql += ` LIMIT ${placeholder(adapter, params.length)}`;
-    params.push(offset);
-    sql += ` OFFSET ${placeholder(adapter, params.length)}`;
-    return { sql, params };
+    return { sql, params, orderSpecs };
   }
 
   const limit = resolvePlannerArg(plan, 'limit');
@@ -343,17 +373,25 @@ function buildHasManyJsonSubselect(
   }
 
   if (adapter === 'mysql') {
-    // MySQL rejects outer-refs inside derived tables in the SELECT list, so do not
-    // wrap the scan in `(SELECT … LIMIT n) AS hm`. Correlate directly; LIMIT (when
-    // present) applies to the aggregate subquery as a whole — prefer client-side
-    // limits on has-many args when strict row caps are required.
+    // MySQL rejects outer-refs in derived tables in the SELECT list, so we cannot
+    // `FROM (SELECT … LIMIT n)`. Cap children before JSON_ARRAYAGG with a correlated
+    // rank predicate (ORDER BY first projected col / join col).
     const objArgs = relCols
       .flatMap(([gql, sqlCol]) => [
         `'${escapeSqlStringLiteral(gql, 'mysql')}'`,
         `${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, sqlCol)}`,
       ])
       .join(', ');
-    return `(SELECT COALESCE(json_arrayagg(json_object(${objArgs})), json_array()) FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${whereSql}${limitSql})`;
+    let limitPred = '';
+    if (hm.limit != null) {
+      const orderCol = relCols[0]?.[1] || hm.joinColumn;
+      const limAlias = '_hmc';
+      const limSoft = softCol
+        ? ` AND ${quoteIdent(adapter, limAlias)}.${quoteIdent(adapter, softCol)} IS NULL`
+        : '';
+      limitPred = ` AND (SELECT COUNT(*) FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, limAlias)} WHERE ${quoteIdent(adapter, limAlias)}.${quoteIdent(adapter, hm.joinColumn)} = ${quoteIdent(adapter, rootAlias)}.${quoteIdent(adapter, hm.parentColumn)}${limSoft} AND ${quoteIdent(adapter, limAlias)}.${quoteIdent(adapter, orderCol)} <= ${quoteIdent(adapter, innerAlias)}.${quoteIdent(adapter, orderCol)}) <= ${Number(hm.limit)}`;
+    }
+    return `(SELECT COALESCE(json_arrayagg(json_object(${objArgs})), json_array()) FROM ${quoteIdent(adapter, hm.table)} AS ${quoteIdent(adapter, innerAlias)} WHERE ${whereSql}${limitPred})`;
   }
 
   // sqlite — aggregate over a limited inner select; json_object reads projected column names.
@@ -376,6 +414,7 @@ export function buildSelectByColumnIn(
   plan: SelectPlan & { column: string; values: unknown[] },
 ): BuiltQuery {
   const columns = columnMapFromSelection(plan.selection);
+  const catalog = plan.columnCatalog?.size ? plan.columnCatalog : columns;
   const selectCols =
     columns.size === 0 ? ['*'] : [...new Set(columns.values())].map(c => quoteIdent(adapter, c));
 
@@ -396,7 +435,7 @@ export function buildSelectByColumnIn(
     whereParts.push(`${quoteIdent(adapter, entry.key)} = ${placeholder(adapter, params.length)}`);
   }
 
-  appendStructuredFilters(adapter, plan, columns, whereParts, params);
+  appendStructuredFilters(adapter, plan, catalog, whereParts, params);
 
   const softColIn = softDeleteColumnFor(plan.softDelete, plan.table);
   if (softColIn) {
@@ -421,7 +460,8 @@ export function buildSelectByColumnIn(
   }
 
   const orderBy = resolvePlannerArg(plan, 'orderBy') as string[] | string | undefined;
-  const orderSql = buildOrderBy(adapter, orderBy, columns);
+  const orderSpecs = resolveOrderSpecs(orderBy, catalog);
+  const orderSql = formatOrderBySql(adapter, orderSpecs);
   if (orderSql) {
     sql += ` ORDER BY ${orderSql}`;
   }
@@ -705,15 +745,28 @@ function selectionHasComputedFn(selection: ParsedSqlMapping): boolean {
   return selection.entries.some(e => e.value?.kind === 'fn');
 }
 
-function buildOrderBy(
-  adapter: SqlAdapter,
+function ensureOrderColumnsInSelection(
+  selection: ParsedSqlMapping,
+  orderSpecs: OrderSpec[],
+): ParsedSqlMapping {
+  const have = new Set(selection.entries.map(e => e.key));
+  const extra = orderSpecs
+    .filter(s => !have.has(s.graphqlField))
+    .map(s => ({
+      key: s.graphqlField,
+      value: { kind: 'column' as const, value: s.sqlColumn },
+    }));
+  if (!extra.length) return selection;
+  return { entries: [...selection.entries, ...extra] };
+}
+
+export function resolveOrderSpecs(
   orderBy: string[] | string | undefined,
   columns: Map<string, string>,
-  qualifyColumn?: (col: string) => string,
-): string {
-  if (!orderBy) return '';
+): OrderSpec[] {
+  if (!orderBy) return [];
   const list = Array.isArray(orderBy) ? orderBy : [orderBy];
-  const parts: string[] = [];
+  const specs: OrderSpec[] = [];
   for (const item of list) {
     if (typeof item !== 'string') continue;
     const desc = item.endsWith('_DESC');
@@ -721,27 +774,121 @@ function buildOrderBy(
     if (!asc && !desc) continue;
     const fieldConst = item.replace(/_DESC$|_ASC$/, '');
     const graphqlField = constToCamel(fieldConst);
-    const col = columns.get(graphqlField) || columns.get(fieldConst.toLowerCase());
-    if (!col) {
-      // fall back: try id
-      if (graphqlField === 'id') {
-        const idCol = columns.get('id');
-        if (idCol) {
-          const q = qualifyColumn ? qualifyColumn(idCol) : quoteIdent(adapter, idCol);
-          parts.push(`${q} ${desc ? 'DESC' : 'ASC'}`);
-        }
-      }
-      continue;
-    }
-    const q = qualifyColumn ? qualifyColumn(col) : quoteIdent(adapter, col);
-    parts.push(`${q} ${desc ? 'DESC' : 'ASC'}`);
+    const col =
+      columns.get(graphqlField) ||
+      columns.get(fieldConst.toLowerCase()) ||
+      (graphqlField === 'id' ? columns.get('id') : undefined);
+    if (!col) continue;
+    specs.push({ graphqlField, sqlColumn: col, dir: desc ? 'DESC' : 'ASC' });
   }
-  return parts.join(', ');
+  return specs;
+}
+
+function formatOrderBySql(
+  adapter: SqlAdapter,
+  specs: OrderSpec[],
+  qualifyColumn?: (col: string) => string,
+): string {
+  return specs
+    .map(s => {
+      const q = qualifyColumn ? qualifyColumn(s.sqlColumn) : quoteIdent(adapter, s.sqlColumn);
+      return `${q} ${s.dir}`;
+    })
+    .join(', ');
 }
 
 function constToCamel(constant: string): string {
   const lower = constant.toLowerCase();
   return lower.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
+}
+
+/** Keyset cursor payload: ordered values matching `orderSpecs`. */
+export interface KeysetCursorPayload {
+  v: unknown[];
+}
+
+export function encodeKeysetCursor(specs: OrderSpec[], row: Record<string, unknown>): string {
+  const values = specs.map(s => {
+    const raw =
+      row[s.graphqlField] ??
+      row[s.sqlColumn] ??
+      row[s.sqlColumn.toLowerCase()] ??
+      row[s.sqlColumn.toUpperCase()];
+    return raw;
+  });
+  return Buffer.from(JSON.stringify({ v: values } satisfies KeysetCursorPayload), 'utf8').toString(
+    'base64url',
+  );
+}
+
+export function decodeKeysetCursor(cursor: string): KeysetCursorPayload | undefined {
+  try {
+    const raw = Buffer.from(cursor, 'base64url').toString('utf8');
+    const parsed = JSON.parse(raw) as KeysetCursorPayload;
+    if (!parsed || !Array.isArray(parsed.v)) return undefined;
+    return parsed;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Append `(orderCols) > (cursorVals)` (direction-aware) for keyset pagination.
+ * Same-direction tuples use SQL row comparison; mixed dirs expand to OR-of-ANDs.
+ */
+function appendKeysetPredicate(
+  adapter: SqlAdapter,
+  specs: OrderSpec[],
+  cursor: string,
+  whereParts: string[],
+  params: unknown[],
+  qualifyColumn?: (col: string) => string,
+): void {
+  if (!specs.length) return;
+  const payload = decodeKeysetCursor(cursor);
+  if (!payload || payload.v.length !== specs.length) return;
+
+  const q = (col: string) => (qualifyColumn ? qualifyColumn(col) : quoteIdent(adapter, col));
+  const allAsc = specs.every(s => s.dir === 'ASC');
+  const allDesc = specs.every(s => s.dir === 'DESC');
+
+  if (allAsc || allDesc) {
+    const cols = specs.map(s => q(s.sqlColumn)).join(', ');
+    const phs: string[] = [];
+    for (const val of payload.v) {
+      params.push(val);
+      phs.push(placeholder(adapter, params.length));
+    }
+    const op = allAsc ? '>' : '<';
+    whereParts.push(`(${cols}) ${op} (${phs.join(', ')})`);
+    return;
+  }
+
+  // Mixed directions: (c0 ? v0) OR (c0 = v0 AND c1 ? v1) OR …
+  const orParts: string[] = [];
+  for (let i = 0; i < specs.length; i++) {
+    const andParts: string[] = [];
+    for (let j = 0; j < i; j++) {
+      params.push(payload.v[j]);
+      andParts.push(`${q(specs[j].sqlColumn)} = ${placeholder(adapter, params.length)}`);
+    }
+    params.push(payload.v[i]);
+    const op = specs[i].dir === 'ASC' ? '>' : '<';
+    andParts.push(`${q(specs[i].sqlColumn)} ${op} ${placeholder(adapter, params.length)}`);
+    orParts.push(`(${andParts.join(' AND ')})`);
+  }
+  if (orParts.length) whereParts.push(`(${orParts.join(' OR ')})`);
+}
+
+/** @deprecated Prefer encodeKeysetCursor — kept for tests that still pass numeric offsets. */
+export function encodeCursor(offset: number): string {
+  return Buffer.from(String(offset), 'utf8').toString('base64');
+}
+
+/** @deprecated Prefer decodeKeysetCursor. */
+export function decodeCursor(cursor: string): number {
+  const n = Number(Buffer.from(cursor, 'base64').toString('utf8'));
+  return Number.isFinite(n) ? n : 0;
 }
 
 const SCALAR_FILTER_KEYS = new Set([
@@ -934,15 +1081,6 @@ function appendThroughExists(
   whereParts.push(
     `EXISTS (SELECT 1 FROM ${quoteIdent(adapter, through.table)} AS ${quoteIdent(adapter, jAlias)} WHERE ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, through.localColumn)} = ${placeholder(adapter, params.length)} AND ${quoteIdent(adapter, jAlias)}.${quoteIdent(adapter, through.remoteColumn)} = ${opts.qualifyColumn(through.targetColumn)}${softSql})`,
   );
-}
-
-export function encodeCursor(offset: number): string {
-  return Buffer.from(String(offset), 'utf8').toString('base64');
-}
-
-export function decodeCursor(cursor: string): number {
-  const n = Number(Buffer.from(cursor, 'base64').toString('utf8'));
-  return Number.isFinite(n) ? n : 0;
 }
 
 export function mapRowToGraphql(

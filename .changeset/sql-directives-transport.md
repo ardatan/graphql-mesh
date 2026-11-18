@@ -126,3 +126,8 @@ stuffed into `where` keeps working at runtime; new emit does not produce it.
   → GraphQL `fullName` via `@sql(selection: "fullName: $fn.public.users_full_name")`
 - Many-to-many shortcuts (PostGraphile / `pg-many-to-many` style): junction with two FKs
   → `Playlist.tracks` / `Track.playlists` via `@sql(through:)` (junction type kept)
+- `CONNECTION` pagination uses **keyset** cursors (`after` = opaque order-column values), not
+  SQL `OFFSET`
+- Filters / `orderBy` use a full column catalog so selection pruning cannot drop predicates
+- Sole-PK → `id` alias skips when another column already camelCases to `id`
+- MySQL has-many JSON subselects cap children before `JSON_ARRAYAGG` (correlated rank)
