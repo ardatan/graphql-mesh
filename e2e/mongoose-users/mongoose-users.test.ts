@@ -75,4 +75,55 @@ it('should create and find users', async () => {
     findUsers: [{ id: recordId, name: 'Ada' }],
     countDocumentsUsers: 1,
   });
+
+  // Decimal128 through composed gateway (scalar parseValue + transport coerce).
+  const withDecimal = await gw.execute({
+    query: /* GraphQL */ `
+      mutation InsertDecimal($salary: Decimal128!) {
+        insertOneUser(
+          document: { name: "Grace", age: 40, gender: female, salaryDecimal: $salary }
+        ) {
+          record {
+            id
+            salaryDecimal
+          }
+        }
+      }
+    `,
+    variables: { salary: '12.50' },
+  });
+  expect(withDecimal.errors).toBeUndefined();
+  const graceId = (withDecimal.data as any).insertOneUser.record.id as string;
+  expect((withDecimal.data as any).insertOneUser.record.salaryDecimal).toBe('12.50');
+
+  const updatedDecimal = await gw.execute({
+    query: /* GraphQL */ `
+      mutation UpdateDecimal($id: ObjectID!, $salary: Decimal128!) {
+        updateOneUser(query: { id: { eq: $id } }, update: { set: { salaryDecimal: $salary } }) {
+          record {
+            salaryDecimal
+          }
+        }
+      }
+    `,
+    variables: { id: graceId, salary: '99.01' },
+  });
+  expect(updatedDecimal.errors).toBeUndefined();
+  expect((updatedDecimal.data as any).updateOneUser.record.salaryDecimal).toBe('99.01');
+
+  const queriedDecimal = await gw.execute({
+    query: /* GraphQL */ `
+      query FindBySalary($salary: Decimal128!) {
+        findUsers(query: { salaryDecimal: { eq: $salary } }) {
+          id
+          salaryDecimal
+        }
+      }
+    `,
+    variables: { salary: '99.01' },
+  });
+  expect(queriedDecimal.errors).toBeUndefined();
+  expect(queriedDecimal.data).toMatchObject({
+    findUsers: [{ id: graceId, salaryDecimal: '99.01' }],
+  });
 }, 120_000);

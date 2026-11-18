@@ -1,4 +1,4 @@
-import { Decimal128, ObjectId } from 'mongodb';
+import { BSON, Decimal128, ObjectId } from 'mongodb';
 import { parseMongoMapping, resolveMappingValue } from './mapping.js';
 import type { ParsedMongoMapping } from './types.js';
 
@@ -124,23 +124,57 @@ function looksLikeNativeMongoFilter(input: Record<string, unknown>): boolean {
   return false;
 }
 
+/** Canonical Extended JSON type wrappers (single-key) that must not be walked as filters. */
+const EXTENDED_JSON_WRAPPER_KEYS = new Set([
+  '$numberDecimal',
+  '$oid',
+  '$date',
+  '$numberLong',
+  '$numberInt',
+  '$numberDouble',
+  '$timestamp',
+  '$minKey',
+  '$maxKey',
+  '$undefined',
+]);
+
+/**
+ * Convert Extended JSON leaves (`{ $numberDecimal }`, `{ $oid }`, …) to BSON
+ * *before* recursing — otherwise the `$…` key is treated as a nested document.
+ */
+function coerceExtendedJsonWrapper(value: Record<string, unknown>): unknown | undefined {
+  const keys = Object.keys(value);
+  if (keys.length === 1 && EXTENDED_JSON_WRAPPER_KEYS.has(keys[0]!)) {
+    try {
+      return BSON.EJSON.deserialize(value);
+    } catch {
+      return undefined;
+    }
+  }
+  // Legacy binary: `{ $binary: "…", $type: "00" }`
+  if (keys.length === 2 && keys.includes('$binary') && keys.includes('$type')) {
+    try {
+      return BSON.EJSON.deserialize(value);
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
+}
+
 export function coerceDeep(value: unknown, opts?: CoerceFilterOptions): unknown {
   if (Array.isArray(value)) return value.map(v => coerceDeep(v, opts));
   if (isBsonValue(value)) return value;
-  // Extended JSON wrappers (`{ $numberDecimal }`) must convert before plain-object walk.
-  if (
-    isPlainObject(value) &&
-    typeof (value as { $numberDecimal?: unknown }).$numberDecimal === 'string' &&
-    Object.keys(value).length === 1
-  ) {
-    return coerceFilterValue(value, opts);
+  if (isPlainObject(value)) {
+    const ext = coerceExtendedJsonWrapper(value);
+    if (ext !== undefined) return ext;
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value)) {
+      out[k] = coerceDeep(v, { asObjectId: opts?.asObjectId || isObjectIdFieldKey(k) });
+    }
+    return out;
   }
-  if (!isPlainObject(value)) return coerceFilterValue(value, opts);
-  const out: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(value)) {
-    out[k] = coerceDeep(v, { asObjectId: opts?.asObjectId || isObjectIdFieldKey(k) });
-  }
-  return out;
+  return coerceFilterValue(value, opts);
 }
 
 const FILTER_OP_KEYS = new Set([

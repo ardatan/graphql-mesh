@@ -24,13 +24,11 @@ describe('mongo filter mapping', () => {
     ).toMatchObject({
       gender: 'male',
     });
-    expect(
-      String(
-        buildMongoFilter(`_id: $args.id`, {
-          args: { id: '507f1f77bcf86cd799439011' },
-        })._id,
-      ),
-    ).toBe('507f1f77bcf86cd799439011');
+    const byId = buildMongoFilter(`_id: $args.id`, {
+      args: { id: '507f1f77bcf86cd799439011' },
+    });
+    expect(byId._id).toBeInstanceOf(ObjectId);
+    expect(String(byId._id)).toBe('507f1f77bcf86cd799439011');
   });
 
   it('passes through native Mongo filter docs with $gte', () => {
@@ -164,13 +162,22 @@ describe('mongo filter mapping', () => {
       salaryDecimal: { eq: { $numberDecimal: '12.50' } },
     });
     expect(queried.salaryDecimal).toBeInstanceOf(Decimal128);
+
+    // Similar Extended JSON wrappers (`$oid`) also convert before recurse.
+    const withOid = normalizeFilterDoc({
+      _id: { $oid: '507f1f77bcf86cd799439011' },
+    });
+    expect(withOid._id).toBeInstanceOf(ObjectId);
+    expect(String(withOid._id)).toBe('507f1f77bcf86cd799439011');
   });
 
   it('maps array id binders to $in', () => {
     const ids = ['507f1f77bcf86cd799439011', '507f1f77bcf86cd799439012'];
     const filter = buildMongoFilter(`_id: $args.ids`, { args: { ids } });
     expect(filter._id).toMatchObject({ $in: expect.any(Array) });
-    expect((filter._id as any).$in.map(String)).toEqual(ids);
+    const inIds = (filter._id as { $in: unknown[] }).$in;
+    expect(inIds.every(v => v instanceof ObjectId)).toBe(true);
+    expect(inIds.map(String)).toEqual(ids);
   });
 
   it('maps GraphQL where ops to Mongo operators', () => {

@@ -138,12 +138,14 @@ function attachMongoResolver(
     info: GraphQLResolveInfo,
   ) {
     const ctx = { args: graphqlArgs, parent };
-    const filter = buildMongoFilter(directive.query ?? directive.filter ?? directive.where, ctx);
-    const sort = buildMongoSort(directive.sort ?? directive.orderBy, ctx);
     const proj = Object.keys(projection).length ? projection : undefined;
     const typedError = wantsTypedError(info);
 
     try {
+      // Binder/filter conversion lives inside try so typed mutation payloads
+      // catch invalid ObjectId/Decimal inputs the same way as driver errors.
+      const filter = buildMongoFilter(directive.query ?? directive.filter ?? directive.where, ctx);
+      const sort = buildMongoSort(directive.sort ?? directive.orderBy, ctx);
       switch (directive.kind) {
         case 'FIND_ONE': {
           const doc = await client.findOne(directive.collection, filter, {

@@ -77,7 +77,8 @@ export interface MongoClientLike {
   ): Promise<{
     value: Record<string, unknown> | null;
     matchedCount: number;
-    modifiedCount: number;
+    /** Omitted when the driver post-image path cannot measure modification. */
+    modifiedCount?: number;
   }>;
   deleteOne(collection: string, filter: Record<string, unknown>): Promise<{ deletedCount: number }>;
   deleteMany(

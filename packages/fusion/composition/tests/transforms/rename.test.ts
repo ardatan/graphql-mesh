@@ -1372,4 +1372,23 @@ describe('rewriteConnectArgReferences @mongo__*', () => {
     );
     expect(rewritten!.mongo__findOne[0].query).toBe('_id: $this.writerId');
   });
+
+  it('does not rewrite $this picks inside quoted string literals', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo__findOne: [
+          {
+            collection: 'users',
+            query: '_id: $this.authorId',
+            selection: 'note: "see $this.authorId"',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['authorId', 'writerId']]),
+    );
+    expect(rewritten!.mongo__findOne[0].query).toBe('_id: $this.writerId');
+    expect(rewritten!.mongo__findOne[0].selection).toBe('note: "see $this.authorId"');
+  });
 });

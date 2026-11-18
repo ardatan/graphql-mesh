@@ -83,10 +83,11 @@ export function createMongoClient(opts: CreateMongoClientOptions): MongoClientLi
         returnDocument: 'after',
         includeResultMetadata: false,
       })) as Record<string, unknown> | null;
+      // With includeResultMetadata:false we only know whether a post-image exists;
+      // do not invent modifiedCount (noop updates still return the document).
       return {
         value,
         matchedCount: value ? 1 : 0,
-        modifiedCount: value ? 1 : 0,
       };
     },
     async deleteOne(collection, filter) {

@@ -1499,8 +1499,14 @@ export function rewriteConnectArgReferences(
         if (from === to) continue;
         out = out
           .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
-          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`)
-          .replace(new RegExp(`\\$this\\.${escapeRegExp(from)}(?![\\w])`, 'g'), `$this.${to}`);
+          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`);
+        // Quote-aware: do not rewrite `$this.x` inside string literals.
+        out = rewriteOutsideQuotes(out, segment =>
+          segment.replace(
+            new RegExp(`\\$this\\.${escapeRegExp(from)}(?![\\w])`, 'g'),
+            `$this.${to}`,
+          ),
+        );
       }
     }
     if (typeRenameMap?.size) {
