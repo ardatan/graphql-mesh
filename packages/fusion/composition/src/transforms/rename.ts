@@ -21,7 +21,7 @@ import {
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import {
   ensureNeo4jFieldAlias,
-  ensureNeo4jNodeLabels,
+  ensureNeo4jTypeIdentity,
   isNeo4jModelTypeDirectives,
   rewriteNeo4jCypherArgReferences,
   rewriteNeo4jRelationshipPropertiesRefs,
@@ -225,15 +225,15 @@ export function createRenameTransform(opts: RenameTransformConfig) {
         if (newTypeName !== type.name) {
           typeRenameMap.set(type.name, newTypeName);
           const typeDirectives = getDirectiveExtensions(type);
-          const withNeo4jLabels = ensureNeo4jNodeLabels(typeDirectives, type.name);
+          const withNeo4jIdentity = ensureNeo4jTypeIdentity(typeDirectives, type.name);
           return new (Object.getPrototypeOf(type).constructor)({
             ...type.toConfig(),
             name: newTypeName,
-            ...(withNeo4jLabels !== typeDirectives
+            ...(withNeo4jIdentity !== typeDirectives
               ? {
                   extensions: {
                     ...(type.extensions || {}),
-                    directives: withNeo4jLabels,
+                    directives: withNeo4jIdentity,
                   },
                   astNode: undefined,
                 }
@@ -592,15 +592,15 @@ export function createRenameTypeTransform(
         }
         renamedTypeMap.set(type.name, newName);
         const typeDirectives = getDirectiveExtensions(type, schema);
-        const withNeo4jLabels = ensureNeo4jNodeLabels(typeDirectives, type.name);
+        const withNeo4jIdentity = ensureNeo4jTypeIdentity(typeDirectives, type.name);
         const extensions: Record<string, any> = { ...(type.extensions || {}) };
-        if (withNeo4jLabels !== typeDirectives) {
-          extensions.directives = withNeo4jLabels;
+        if (withNeo4jIdentity !== typeDirectives) {
+          extensions.directives = withNeo4jIdentity;
         }
         return new (Object.getPrototypeOf(type).constructor)({
           ...type.toConfig(),
           name: newName,
-          ...(withNeo4jLabels !== typeDirectives ? { extensions, astNode: undefined } : {}),
+          ...(withNeo4jIdentity !== typeDirectives ? { extensions, astNode: undefined } : {}),
         });
       },
     });

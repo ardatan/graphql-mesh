@@ -32,7 +32,7 @@ import type { SubgraphTransform } from '../compose.js';
 import { bakeConnectEnumsInTransform } from './connect-enum-bake.js';
 import {
   ensureNeo4jFieldAlias,
-  ensureNeo4jNodeLabels,
+  ensureNeo4jTypeIdentity,
   isNeo4jModelTypeDirectives,
   rewriteNeo4jCypherArgReferences,
   rewriteNeo4jRelationshipPropertiesRefs,
@@ -153,15 +153,15 @@ export function createNamingConventionTransform(
       if (isNeo4jModelTypeDirectives(typeDirectives)) {
         neo4jModelTypeNames.add(newName);
       }
-      const withNeo4jLabels = ensureNeo4jNodeLabels(typeDirectives, type.name);
+      const withNeo4jIdentity = ensureNeo4jTypeIdentity(typeDirectives, type.name);
       return new (Object.getPrototypeOf(type).constructor)({
         ...type.toConfig(),
         name: newName,
-        ...(withNeo4jLabels !== typeDirectives
+        ...(withNeo4jIdentity !== typeDirectives
           ? {
               extensions: {
                 ...(type.extensions || {}),
-                directives: withNeo4jLabels,
+                directives: withNeo4jIdentity,
               },
               astNode: undefined,
             }

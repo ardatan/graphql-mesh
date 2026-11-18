@@ -1082,18 +1082,40 @@ describe('rewriteConnectArgReferences @thrift__rpc', () => {
 });
 
 describe('Neo4j identity helpers', () => {
-  it('stamps @node(labels:) and @alias; rewrites @cypher $args', async () => {
+  it('stamps @node(labels:)/@plural and @alias; rewrites @cypher $args', async () => {
     const {
       ensureNeo4jNodeLabels,
+      ensureNeo4jPlural,
+      ensureNeo4jTypeIdentity,
       ensureNeo4jFieldAlias,
+      neo4jDefaultPlural,
       rewriteNeo4jCypherArgReferences,
       rewriteNeo4jRelationshipPropertiesRefs,
     } = await import('../../src/transforms/neo4j-identity.js');
+    expect(neo4jDefaultPlural('Movie')).toBe('movies');
+    expect(neo4jDefaultPlural('Person')).toBe('people');
     expect(ensureNeo4jNodeLabels({ node: [{}] }, 'Movie')).toEqual({
       node: [{ labels: ['Movie'] }],
     });
     expect(ensureNeo4jNodeLabels({ node: [{ labels: ['Film'] }] }, 'Movie')).toEqual({
       node: [{ labels: ['Film'] }],
+    });
+    expect(ensureNeo4jTypeIdentity({ node: [{ subgraph: 'Movies' }] }, 'Movie')).toEqual({
+      node: [{ subgraph: 'Movies', labels: ['Movie'] }],
+      plural: [{ subgraph: 'Movies', value: 'movies' }],
+    });
+    // Later renames keep labels and derive @plural from the label seed.
+    expect(
+      ensureNeo4jPlural({ node: [{ subgraph: 'Movies', labels: ['Movie'] }] }, 'Film'),
+    ).toEqual({
+      node: [{ subgraph: 'Movies', labels: ['Movie'] }],
+      plural: [{ subgraph: 'Movies', value: 'movies' }],
+    });
+    expect(
+      ensureNeo4jPlural({ node: [{ labels: ['Movie'] }], plural: [{ value: 'cinemas' }] }, 'Film'),
+    ).toEqual({
+      node: [{ labels: ['Movie'] }],
+      plural: [{ value: 'cinemas' }],
     });
     expect(ensureNeo4jFieldAlias({}, 'title', { isNeo4jModelField: true })?.alias?.[0]).toEqual({
       property: 'title',

@@ -1,3 +1,6 @@
+import { camelCase } from 'change-case';
+import pluralize from 'pluralize';
+
 /**
  * Neo4j GraphQL maps GraphQL names to the database via its own directives
  * (`@node(labels:)`, `@alias(property:)`, `@plural`), not Mesh `@source` /
@@ -20,6 +23,15 @@ const CYPHER_RESERVED_VARS = new Set(['this', 'jwt', 'context']);
 /** True when the type (or its directives bag) is a Neo4j `@node` model. */
 export function hasNeo4jNodeDirective(typeDirectives: Record<string, any[]> | undefined): boolean {
   return Boolean(typeDirectives?.node?.length);
+}
+
+/**
+ * Match `@neo4j/graphql` root pluralization (`pluralize(camelCase(typeName))`).
+ * Used when stamping `@plural(value:)` so generated roots keep the pre-rename family
+ * (`Movie` → `movies` / `moviesConnection` / `createMovies`).
+ */
+export function neo4jDefaultPlural(typeName: string): string {
+  return pluralize(camelCase(typeName));
 }
 
 /**
@@ -46,6 +58,47 @@ export function ensureNeo4jNodeLabels(
       },
     ],
   };
+}
+
+/**
+ * After a GraphQL type rename on `@node`, stamp `@plural(value:)` so Neo4j keeps the
+ * original generated root family (`movies*` when `Movie` → `Film`). Prefer the first
+ * `@node(labels:)` entry (identity seed) when present; otherwise `originalTypeName`.
+ * Leaves an author / prior `@plural` alone.
+ */
+export function ensureNeo4jPlural(
+  typeDirectives: Record<string, any[]> | undefined,
+  originalTypeName: string,
+): Record<string, any[]> | undefined {
+  if (!typeDirectives?.node?.length) {
+    return typeDirectives;
+  }
+  if (typeDirectives.plural?.length) {
+    return typeDirectives;
+  }
+  const nodeArgs = typeDirectives.node[0] || {};
+  const labels = Array.isArray(nodeArgs.labels) ? nodeArgs.labels : [];
+  const seed = typeof labels[0] === 'string' && labels[0].length > 0 ? labels[0] : originalTypeName;
+  return {
+    ...typeDirectives,
+    plural: [
+      {
+        ...(typeof nodeArgs.subgraph === 'string' ? { subgraph: nodeArgs.subgraph } : {}),
+        value: neo4jDefaultPlural(seed),
+      },
+    ],
+  };
+}
+
+/** `@node(labels:)` then `@plural(value:)` for a renamed Neo4j node type. */
+export function ensureNeo4jTypeIdentity(
+  typeDirectives: Record<string, any[]> | undefined,
+  originalTypeName: string,
+): Record<string, any[]> | undefined {
+  return ensureNeo4jPlural(
+    ensureNeo4jNodeLabels(typeDirectives, originalTypeName),
+    originalTypeName,
+  );
 }
 
 /**

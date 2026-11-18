@@ -191,7 +191,7 @@ describe('Federation Connectors composition', () => {
     expect(sdl).not.toMatch(/\$args\.request\b/);
   });
 
-  it('Neo4j rename uses @node(labels:)/@alias without Mesh @source', () => {
+  it('Neo4j rename uses @node(labels:)/@plural/@alias without Mesh @source', () => {
     const neo4jSchema = buildSchema(/* GraphQL */ `
       schema
         @transport(
@@ -280,12 +280,14 @@ describe('Federation Connectors composition', () => {
     expect(sdl).not.toMatch(/@introspection\b/);
     expect(sdl).toMatch(/type Film[\s\S]*@node\([^)]*subgraph:\s*"Movies"/);
     expect(sdl).toMatch(/type Film[\s\S]*@node\([^)]*labels:\s*\["Movie"\]/);
+    expect(sdl).toMatch(/type Film[\s\S]*@plural\([^)]*value:\s*"movies"/);
     expect(sdl).toMatch(/movieTitle:\s*String\s*@alias\([^)]*property:\s*"title"/);
     expect(sdl).toContain('actors:');
     expect(sdl).not.toMatch(/actors:[\s\S]*@alias/);
     expect(sdl).toContain('similar(needle:');
     expect(sdl).toMatch(/\$needle\b/);
     expect(sdl).not.toMatch(/\$title\b/);
+    expect(sdl).toMatch(/movies:\s*\[Film!\]!/);
   });
 
   it('Neo4j type rename rewrites @relationship(properties:)', () => {
