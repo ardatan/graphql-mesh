@@ -101,10 +101,36 @@ export function rewriteCypherParamNames(
   let i = 0;
   while (i < statement.length) {
     const c = statement[i];
+    // Line comment: copy through newline without interpreting quotes.
+    if (c === '/' && statement[i + 1] === '/') {
+      while (i < statement.length && statement[i] !== '\n') {
+        out += statement[i++];
+      }
+      continue;
+    }
+    // Block comment: copy through terminator.
+    if (c === '/' && statement[i + 1] === '*') {
+      out += statement[i++];
+      out += statement[i++];
+      while (i < statement.length) {
+        if (statement[i] === '*' && statement[i + 1] === '/') {
+          out += '*/';
+          i += 2;
+          break;
+        }
+        out += statement[i++];
+      }
+      continue;
+    }
     if (c === "'") {
       out += c;
       i++;
       while (i < statement.length) {
+        if (statement[i] === '\\' && i + 1 < statement.length) {
+          out += statement[i] + statement[i + 1];
+          i += 2;
+          continue;
+        }
         if (statement[i] === "'" && statement[i + 1] === "'") {
           out += "''";
           i += 2;

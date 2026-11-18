@@ -1139,6 +1139,26 @@ describe('Neo4j identity helpers', () => {
     );
   });
 
+  it('rewrites @cypher params after escaped quotes and comments', async () => {
+    const { rewriteNeo4jCypherArgReferences } =
+      await import('../../src/transforms/neo4j-identity.js');
+    const rewritten = rewriteNeo4jCypherArgReferences(
+      {
+        cypher: [
+          {
+            statement: `// user's search
+WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
+            columnName: 'n',
+          },
+        ],
+      },
+      new Map([['title', 'needle']]),
+    );
+    expect(rewritten!.cypher[0].statement).toContain('$needle');
+    expect(rewritten!.cypher[0].statement).toMatch(/\/\* keep \$title here \*\//);
+    expect(rewritten!.cypher[0].statement).not.toMatch(/RETURN \$title\b/);
+  });
+
   it('rewrites @relationship(properties:) through type rename map', async () => {
     const { rewriteNeo4jRelationshipPropertiesRefs } =
       await import('../../src/transforms/neo4j-identity.js');

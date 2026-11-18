@@ -625,9 +625,22 @@ export function createRenameTypeTransform(
           rewrittenDirectives,
           renamedTypeMap,
         );
-        const fieldExtensions: any = (field.extensions ||= {});
-        fieldExtensions.directives = rewrittenDirectives || fieldDirectives;
-        return field;
+        if (rewrittenDirectives === fieldDirectives) {
+          if (fieldDirectives?.resolveTo) {
+            const fieldExtensions: any = (field.extensions ||= {});
+            fieldExtensions.directives = fieldDirectives;
+          }
+          return field;
+        }
+        // Drop stale AST so a later rename pass does not merge old `@relationship(properties:)`.
+        return {
+          ...field,
+          extensions: {
+            ...(field.extensions || {}),
+            directives: rewrittenDirectives,
+          },
+          astNode: undefined,
+        };
       },
       // Type-level `@connect(entity: true)` selections keep `__typename: $("Old")`
       // unless rewritten here (field pass does not see object directives).

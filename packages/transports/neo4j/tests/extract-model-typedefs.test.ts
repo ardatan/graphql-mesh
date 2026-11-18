@@ -2,7 +2,7 @@ import { Kind, parse, print } from 'graphql';
 import { extractNeo4jModelTypeDefs } from '../src/executor.js';
 
 describe('extractNeo4jModelTypeDefs', () => {
-  it('keeps implemented interfaces and authored cypher arg inputs; drops generated fields', () => {
+  it('keeps interfaces, cypher outputs/inputs, Point fields; drops generated connections', () => {
     const doc = parse(/* GraphQL */ `
       directive @node(subgraph: String, labels: [String!]) on OBJECT
       directive @relationship(
@@ -25,6 +25,15 @@ describe('extractNeo4jModelTypeDefs', () => {
         needle: String!
       }
 
+      type Stats {
+        count: Int!
+      }
+
+      type Point {
+        latitude: Float!
+        longitude: Float!
+      }
+
       type MovieActorsConnection {
         edges: [String]
       }
@@ -35,6 +44,7 @@ describe('extractNeo4jModelTypeDefs', () => {
 
       type Movie implements Production @node(subgraph: "Movies") {
         title: String!
+        location: Point
         actors: [Person!]! @relationship(subgraph: "Movies", type: "ACTED_IN", direction: "IN")
         actorsConnection(where: MovieWhere): MovieActorsConnection
         similar(criteria: SearchCriteria!): [Movie!]!
@@ -47,6 +57,8 @@ describe('extractNeo4jModelTypeDefs', () => {
 
       type Query {
         movies: [Movie!]!
+        stats: Stats
+          @cypher(subgraph: "Movies", statement: "RETURN { count: 1 } AS s", columnName: "s")
       }
     `);
 
@@ -55,8 +67,11 @@ describe('extractNeo4jModelTypeDefs', () => {
 
     expect(sdl).toMatch(/interface Production/);
     expect(sdl).toMatch(/input SearchCriteria/);
+    expect(sdl).toMatch(/type Stats/);
     expect(sdl).toMatch(/type Movie implements Production/);
+    expect(sdl).toMatch(/location:\s*Point/);
     expect(sdl).toMatch(/similar\(criteria: SearchCriteria!\)/);
+    expect(sdl).toMatch(/stats:\s*Stats/);
     expect(sdl).toMatch(/actors:\s*\[Person!\]!/);
     expect(sdl).not.toMatch(/actorsConnection/);
     expect(sdl).not.toMatch(/MovieActorsConnection/);

@@ -248,10 +248,16 @@ export function extractNeo4jModelTypeDefs(
     collectInterfaceClosure(modelName, interfaceImplements, keepTypeNames);
   }
 
+  /** Spatial object types Neo4j regenerates from retained attributes. */
+  const NEO4J_REGENERATED_OBJECT_TYPES = new Set(['Point', 'CartesianPoint']);
+
   function isRetainedModelField(field: FieldDefinitionNode): boolean {
-    if (hasDirective(field, 'relationship') || hasDirective(field, 'cypher')) {
+    // Authored `@cypher` may return non-`@node` object types (e.g. `Stats`); keep the field.
+    if (hasDirective(field, 'cypher')) {
+      return true;
+    }
+    if (hasDirective(field, 'relationship')) {
       const returnName = namedTypeNameFromTypeNode(field.type);
-      // Relationship / cypher must target a kept model (or scalar for cypher).
       if (!returnName) {
         return true;
       }
@@ -262,6 +268,9 @@ export function extractNeo4jModelTypeDefs(
     }
     const returnName = namedTypeNameFromTypeNode(field.type);
     if (!returnName) {
+      return true;
+    }
+    if (NEO4J_REGENERATED_OBJECT_TYPES.has(returnName)) {
       return true;
     }
     // Drop generated connection / aggregate object fields not in the model set.
@@ -296,23 +305,68 @@ export function extractNeo4jModelTypeDefs(
   }
 
   const referenced = new Set<string>();
-  const retainedFieldsByType = new Map<string, FieldDefinitionNode[]>();
+  const retainedFieldsByType = new Map<string, readonly FieldDefinitionNode[]>();
+  /** Non-`@node` object/interface outputs reachable from retained `@cypher` fields. */
+  const authoredOutputTypeNames = new Set<string>();
 
   for (const def of typeDefs.definitions) {
     if (
       (def.kind === Kind.OBJECT_TYPE_DEFINITION || def.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
       keepTypeNames.has(def.name.value)
     ) {
-      let fields =
+      const sourceFields =
         ROOT_OPERATION_NAMES.has(def.name.value) && def.kind === Kind.OBJECT_TYPE_DEFINITION
           ? def.fields?.filter(field => fieldBelongsToSubgraph(field, subgraphName))
           : def.fields;
-      fields = (fields || []).filter(isRetainedModelField).map(scrubGeneratedArgs);
+      const fields: FieldDefinitionNode[] = (sourceFields || [])
+        .filter(isRetainedModelField)
+        .map(scrubGeneratedArgs);
       retainedFieldsByType.set(def.name.value, fields);
       for (const field of fields) {
         collectNamedTypesFromField(field, referenced, {
           includeArgs: hasDirective(field, 'cypher') || !hasDirective(field, 'relationship'),
         });
+        if (hasDirective(field, 'cypher')) {
+          const returnName = namedTypeNameFromTypeNode(field.type);
+          if (
+            returnName &&
+            objectOrInterfaceNames.has(returnName) &&
+            !keepTypeNames.has(returnName) &&
+            !NEO4J_REGENERATED_OBJECT_TYPES.has(returnName)
+          ) {
+            authoredOutputTypeNames.add(returnName);
+          }
+        }
+      }
+    }
+  }
+
+  // Expand authored cypher output object graphs (fields → nested objects/enums/inputs).
+  let authoredGrew = true;
+  while (authoredGrew) {
+    authoredGrew = false;
+    for (const def of typeDefs.definitions) {
+      if (
+        (def.kind !== Kind.OBJECT_TYPE_DEFINITION && def.kind !== Kind.INTERFACE_TYPE_DEFINITION) ||
+        !authoredOutputTypeNames.has(def.name.value)
+      ) {
+        continue;
+      }
+      for (const field of def.fields || []) {
+        const nested = namedTypeNameFromTypeNode(field.type);
+        if (!nested) {
+          continue;
+        }
+        referenced.add(nested);
+        if (
+          objectOrInterfaceNames.has(nested) &&
+          !keepTypeNames.has(nested) &&
+          !NEO4J_REGENERATED_OBJECT_TYPES.has(nested) &&
+          !authoredOutputTypeNames.has(nested)
+        ) {
+          authoredOutputTypeNames.add(nested);
+          authoredGrew = true;
+        }
       }
     }
   }
@@ -353,6 +407,9 @@ export function extractNeo4jModelTypeDefs(
       switch (def.kind) {
         case Kind.OBJECT_TYPE_DEFINITION:
         case Kind.INTERFACE_TYPE_DEFINITION: {
+          if (authoredOutputTypeNames.has(def.name.value) && !keepTypeNames.has(def.name.value)) {
+            return [def];
+          }
           if (!keepTypeNames.has(def.name.value)) {
             return [];
           }
@@ -364,9 +421,9 @@ export function extractNeo4jModelTypeDefs(
             if (!fields.length) {
               return [];
             }
-            return [{ ...(def as ObjectTypeDefinitionNode), fields }];
+            return [{ ...(def as ObjectTypeDefinitionNode), fields: [...fields] }];
           }
-          return [{ ...def, fields } as typeof def];
+          return [{ ...def, fields: [...fields] } as typeof def];
         }
         case Kind.ENUM_TYPE_DEFINITION:
         case Kind.SCALAR_TYPE_DEFINITION:
