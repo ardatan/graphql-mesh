@@ -67,61 +67,283 @@ import {
   type ThriftProtocol,
 } from './mapping.js';
 
+/**
+ * Options for {@link loadThriftSubgraph} / {@link loadNonExecutableGraphQLSchemaFromIDL}.
+ * IDL path + HTTP endpoint become `@transport(kind: "thrift")` (binary) or
+ * `@source` / `@connect` (json / TJSON).
+ *
+ * @example
+ * ```ts
+ * import { loadThriftSubgraph } from '@omnigraph/thrift';
+ *
+ * loadThriftSubgraph('calculator', {
+ *   source: './calculator.thrift',
+ *   endpoint: 'http://localhost:8080/thrift',
+ *   serviceName: 'Calculator',
+ *   protocol: 'binary',
+ * });
+ * ```
+ * @example
+ * ```ts
+ * // TJSON over HTTP via `@connect` (no thrift transport)
+ * loadThriftSubgraph('calc', {
+ *   source: './calc.thrift',
+ *   endpoint: 'http://localhost:4000/thrift-json',
+ *   protocol: 'json',
+ * });
+ * ```
+ */
 export interface GraphQLThriftLoaderOptions {
+  /**
+   * Subgraph name (also default `@thrift__rpc(subgraph:)` / `@source(name:)`).
+   *
+   * @example 'calculator'
+   */
   subgraphName: string;
 
+  /**
+   * Path or URL to the `.thrift` IDL. Local `include` paths are resolved on the
+   * filesystem relative to this file. Remote IDLs can be fetched as the root
+   * `source`, but remote `include` resolution is not supported (includes are
+   * still resolved with filesystem `path.resolve`).
+   *
+   * @example './services/calculator/calculator.thrift'
+   */
   source: string;
+  /**
+   * HTTP base URL for the Thrift endpoint - becomes `@transport(location)` (binary)
+   * or `@source(http.baseURL)` (json).
+   *
+   * @example 'http://localhost:8080/thrift'
+   */
   endpoint: string;
+  /**
+   * Headers sent on every RPC call (binary `@transport(headers:)` / json
+   * `@source` headers). Not used for remote IDL fetch - see `schemaHeaders`.
+   *
+   * @default {}
+   * @example { 'x-api-key': '123' }
+   */
   operationHeaders?: Record<string, string>;
-  /** Thrift service name — optional for single-service endpoints. */
+  /**
+   * Thrift service name - optional for single-service endpoints. With `protocol: 'json'`,
+   * sets `@connect(http.POST: "/<service>")`; omitted -> `POST: "/"`.
+   *
+   * @example 'Calculator'
+   */
   serviceName?: string;
   /**
-   * Emit switch: `binary` (default) uses thrift `@transport` + `@thrift__rpc`;
-   * `json` emits `@source` / `@connect` (TJSON, Apollo Router–compatible).
+   * Emit switch: `binary` uses thrift `@transport` + `@thrift__rpc`;
+   * `json` emits `@source` / `@connect` (TJSON over HTTP).
+   *
+   * @default 'binary'
+   * @example 'json'
    */
   protocol?: ThriftProtocol;
   /**
    * Function names that should emit `entity: true` on `@thrift__rpc` / `@connect`
-   * (Query entity resolvers).
+   * (Query entity resolvers for Mesh `_entities`).
+   *
+   * @default []
+   * @example ['getUser', 'getTweet']
    */
   entityMethods?: string[];
   /**
-   * When true (default), IDL `throws` are not modeled in the GraphQL return type.
-   * Set false to emit exception object types + a union return (`Success | Throws…`).
+   * Controls whether IDL `throws` are modeled on the GraphQL field return type
+   * (same polarity as OpenAPI / JSON Schema / RAML `ignoreErrorResponses`).
+   *
+   * - `true` (default): do not emit exception object types / Result unions.
+   *   Declared throws fail the throw-gate (GraphQL `errors[]`) - binary
+   *   `doRequest` rejects unmatched exception maps; TJSON `@connect` uses
+   *   `isSuccess` / `errors` so non-REPLY / unexpected result maps throw.
+   * - `false`: emit exception types + a union return (`Success | Throws...`)
+   *   with `@thrift__rpc(throws:)` / TJSON selection so matched throws stay in
+   *   GraphQL `data` for the client to select.
+   *
+   * (Formerly `ignoreExceptions`; that name is removed with no alias.)
+   *
+   * @default true
+   * @example false
    */
-  ignoreExceptions?: boolean;
+  ignoreErrorResponses?: boolean;
 
+  /**
+   * Base directory for relative IDL paths.
+   *
+   * @default process.cwd()
+   * @example '/app/idl'
+   */
   baseDir?: string;
+  /**
+   * HTTP headers when `source` is a remote IDL URL. Used only during
+   * compose-time fetch of that root IDL, not on runtime RPC calls. Does not
+   * enable remote `include` resolution (see `source`).
+   *
+   * @default {}
+   * @example { Authorization: 'Bearer ...' }
+   */
   schemaHeaders?: Record<string, string>;
+  /**
+   * Custom fetch for a remote root IDL during compose (not for remote includes).
+   *
+   * @default defaultFetch from `@whatwg-node/fetch`
+   */
   fetchFn?: MeshFetch;
+  /**
+   * Logger instance for IDL load / emit diagnostics.
+   *
+   * @default new Logger({ prefix: 'Thrift' })
+   */
   log?: Logger;
+  /**
+   * Custom `import()` helper for Mesh file loading (local IDL / config modules).
+   *
+   * @default defaultImportFn
+   */
   importFn?: ImportFn;
 }
 
+/**
+ * Arguments for the `@thrift__rpc` field directive (binary protocol emit / hand-authored SDL).
+ *
+ * @example
+ * ```graphql
+ * type Query {
+ *   add(request: AddRequestInput): Int
+ *     @thrift__rpc(
+ *       subgraph: "Calc"
+ *       function: "add"
+ *       args: """
+ *         1(struct): $args.request {
+ *           1(i32): left
+ *           2(i32): right
+ *         }
+ *       """
+ *       selection: "$(i32)"
+ *       messageType: CALL
+ *     )
+ * }
+ * ```
+ * @example
+ * ```graphql
+ * # ONEWAY void - no reply body
+ * type Query {
+ *   zip: Void
+ *     @thrift__rpc(
+ *       function: "zip"
+ *       args: ""
+ *       selection: "$(void)"
+ *       messageType: ONEWAY
+ *     )
+ * }
+ * ```
+ */
+export interface ThriftRpcDirectiveArgs {
+  /**
+   * Owning subgraph name when composing federated schemas (optional locally).
+   *
+   * @example 'calculator'
+   */
+  subgraph?: string;
+  /**
+   * Optional Thrift service name for documentation / tooling on hand-authored
+   * SDL. The binary thrift executor does not use this arg to select an HTTP
+   * path - configure the full endpoint with `@transport(location:)` instead.
+   * (JSON/`@connect` emit uses loader `serviceName` for `POST /<service>`.)
+   *
+   * @example 'Calculator'
+   */
+  service?: string;
+  /**
+   * IDL function / method name invoked on the wire.
+   *
+   * @example 'add'
+   */
+  function: string;
+  /**
+   * Compact GraphQL-arg → Thrift field-id mapping (`id(wire): $args...`).
+   *
+   * @example '1(i32): $args.left\n2(i32): $args.right'
+   */
+  args: string;
+  /**
+   * Compact Thrift result → GraphQL field mapping (`field: id(wire)` or `$(wire)`).
+   *
+   * @example 'id: 1(i64)\ntext: 2(string)'
+   */
+  selection: string;
+  /**
+   * Compact IDL `throws` mapping when `ignoreErrorResponses: false`
+   * (`TypeName: <resultFieldId> { field: id(wire) }`).
+   *
+   * @example 'InvalidRequest: 1 {\n  message: 1(string)\n}'
+   */
+  throws?: string;
+  /**
+   * Thrift message type: `CALL` (expects reply) or `ONEWAY` (fire-and-forget).
+   *
+   * @default 'CALL'
+   * @example 'ONEWAY'
+   */
+  messageType?: 'CALL' | 'ONEWAY';
+  /**
+   * When true, this Query field is an entity resolver for Mesh `_entities`.
+   */
+  entity?: boolean;
+}
+
+/** Thrift binary message type for `@thrift__rpc(messageType:)` (`CALL` | `ONEWAY`). */
 export const ThriftMessageTypeEnum = new GraphQLEnumType({
   name: 'ThriftMessageType',
   values: {
+    /** Normal RPC call; wait for and decode a reply. */
     CALL: { value: 'CALL' },
+    /** Fire-and-forget; no reply body is expected. */
     ONEWAY: { value: 'ONEWAY' },
   },
 });
 
+/** Mesh Thrift binary RPC mapping directive - see {@link ThriftRpcDirectiveArgs}. */
 export const thriftRpcDirective = new GraphQLDirective({
   name: 'thrift__rpc',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
+    /** Owning subgraph name when composing federated schemas. */
     subgraph: { type: GraphQLString },
+    /** Optional service name on hand-authored SDL (not used for binary HTTP path). */
     service: { type: GraphQLString },
+    /** IDL function name invoked on the wire. */
     function: { type: new GraphQLNonNull(GraphQLString) },
+    /** Compact GraphQL-arg -> Thrift field-id mapping (`id(wire): $args...`). */
     args: { type: new GraphQLNonNull(GraphQLString) },
+    /** Compact Thrift result -> GraphQL field mapping (`field: id(wire)` or `$(wire)`). */
     selection: { type: new GraphQLNonNull(GraphQLString) },
-    /** Compact IDL `throws` mapping when `ignoreExceptions: false`. */
+    /** Compact IDL throws mapping when exceptions are modeled. */
     throws: { type: GraphQLString },
+    /** `CALL` or `ONEWAY`. @default 'CALL' */
     messageType: { type: ThriftMessageTypeEnum, defaultValue: 'CALL' },
+    /** Mark this Query field as an entity resolver for Mesh `_entities`. */
     entity: { type: GraphQLBoolean },
   },
 });
 
+/**
+ * Introspect a `.thrift` IDL and emit a non-executable GraphQL schema with
+ * `@thrift__rpc` (binary) or `@connect` (json) mappings.
+ *
+ * Prefer {@link loadThriftSubgraph} from Mesh compose; call this directly when you
+ * need the schema object (tests, custom executors).
+ *
+ * @example
+ * ```ts
+ * const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+ *   subgraphName: 'Calc',
+ *   source: './calc.thrift',
+ *   endpoint: 'http://localhost:4000/thrift',
+ *   protocol: 'binary',
+ * });
+ * ```
+ */
 export async function loadNonExecutableGraphQLSchemaFromIDL({
   subgraphName,
   source,
@@ -130,7 +352,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
   serviceName,
   protocol = 'binary',
   entityMethods = [],
-  ignoreExceptions = true,
+  ignoreErrorResponses = true,
 
   baseDir = globalThis.process?.cwd?.(),
   schemaHeaders = {},
@@ -158,7 +380,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
     serviceName,
     protocol,
     entityMethods,
-    ignoreExceptions,
+    ignoreErrorResponses,
   });
 }
 
@@ -230,7 +452,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   serviceName,
   protocol = 'binary',
   entityMethods = [],
-  ignoreExceptions = true,
+  ignoreErrorResponses = true,
 }: {
   subgraphName: string;
   baseNamespace: string;
@@ -240,7 +462,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   serviceName?: string;
   protocol?: ThriftProtocol;
   entityMethods?: string[];
-  ignoreExceptions?: boolean;
+  ignoreErrorResponses?: boolean;
 }) {
   const enumTypeMap = new Map<string, GraphQLEnumType>();
   const outputTypeMap = new Map<string, GraphQLOutputType>();
@@ -253,7 +475,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   let currentId = 0;
   // Defer service mapping until every named type is in topTypeMap (forward refs).
   const pendingServices: Array<{ statement: any }> = [];
-  // Typedefs can forward-ref structs/enums declared later — resolve after named types.
+  // Typedefs can forward-ref structs/enums declared later - resolve after named types.
   const pendingTypedefs: Array<{ statement: any; typeName: string }> = [];
 
   for (const namespace of Object.keys(namespaceASTMap).reverse()) {
@@ -445,9 +667,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
       const successTypeName = `${fnName[0].toUpperCase()}${fnName.slice(1)}Success`;
       let fieldReturnType: GraphQLOutputType = returnType;
       let modelThrows = false;
-      if (!ignoreExceptions && throwsMeta.length > 0) {
+      if (!ignoreErrorResponses && throwsMeta.length > 0) {
         const isVoidSuccess = returnTypeVal?.type === TType.VOID;
-        // Void! cannot hold a successful null — use `ok: Boolean!` for void RPC
+        // Void! cannot hold a successful null - use `ok: Boolean!` for void RPC
         // success members; non-void keeps `value: <Return>!`.
         const successType = new GraphQLObjectType({
           name: successTypeName,
@@ -512,7 +734,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
         }
       }
 
-      // Mapping bodies only — no `#` dumps inside string values and no GraphQL
+      // Mapping bodies only - no `#` dumps inside string values and no GraphQL
       // field description dumps. Hand-authored SDL may put a GraphQL `#` comment
       // immediately above `args:` / `selection:` (AST print cannot re-emit those;
       // parser still strips `#` lines if present inside the string values).
@@ -525,7 +747,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
 
       if (emitConnect) {
         // Single-service: path `/`. Explicit serviceName: `/<service>`.
-        // Do not embed `#` IDL comments in Connectors `selection` — Apollo
+        // Do not embed `#` IDL comments in Connectors `selection` - Apollo
         // JSONSelection does not skip hash comments (unlike compact thrift mapping).
         const connectPath = serviceName ? `/${serviceName}` : '/';
         let selection = buildTJSONConnectSelection(returnTypeVal, topTypeMap);
@@ -542,10 +764,10 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           selection,
           ...(isEntity ? { entity: true } : {}),
         };
-        // ONEWAY: no reply envelope — HTTP status alone; void mapping must not wait.
+        // ONEWAY: no reply envelope - HTTP status alone; void mapping must not wait.
         if (!isOneway) {
-          // ignoreExceptions:false → declared throws arrive as REPLY data (still msg type 2).
-          // Void + throws + ignoreExceptions:true → REPLY with non-empty result (no "0");
+          // ignoreErrorResponses:false → declared throws arrive as REPLY data (still msg type 2).
+          // Void + throws + ignoreErrorResponses:true → REPLY with non-empty result (no "0");
           // require empty result struct so declared throws are not silent null.
           // Non-void CALL: require success field "0".
           const voidWithThrows = isVoidReturn && !modelThrows && throwsMeta.length > 0;
@@ -576,7 +798,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
         if (compactThrows) {
           thriftRpcArgs.throws = compactThrows;
         }
-        // Binary HTTP path is `@transport(location:)` — omit `service:` for
+        // Binary HTTP path is `@transport(location:)` - omit `service:` for
         // single-service generate. Directive arg remains for hand-authored SDL.
         if (isEntity) {
           thriftRpcArgs.entity = true;
@@ -636,7 +858,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     headers: Object.entries(headers),
   };
 
-  // Do not `@link` `@thrift__rpc` on a custom URL — composition's
+  // Do not `@link` `@thrift__rpc` on a custom URL - composition's
   // `detectAndAddMeshDirectives` imports unknown directives via Mesh spec
   // (`@composeDirective`). A separate thrift `@link` would exclude it from that path.
   const schema = new GraphQLSchema({
@@ -708,7 +930,7 @@ function constValueNodePreferBlockString(argName: string, value: unknown): Const
     };
   }
   if (typeof value === 'string') {
-    // `@thrift__rpc(messageType:)` is an enum — print bare CALL/ONEWAY.
+    // `@thrift__rpc(messageType:)` is an enum - print bare CALL/ONEWAY.
     if (argName === 'messageType') {
       return { kind: Kind.ENUM, value };
     }

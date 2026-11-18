@@ -1,7 +1,13 @@
 import { TType } from '@creditkarma/thrift-server-core';
 import type { TypeMap, TypeVal } from '@graphql-mesh/transport-thrift';
 
-/** Loader emit switch: thrift transport is always binary; `json` emits `@connect`. */
+/**
+ * Loader emit switch for the Thrift `protocol` option.
+ * Thrift transport runtime is always binary; `json` emits `@source` / `@connect` (TJSON).
+ *
+ * @default 'binary'
+ * @example 'json'
+ */
 export type ThriftProtocol = 'binary' | 'json';
 
 const WIRE_TYPE_TOKEN: Partial<Record<TType, string>> = {
@@ -496,7 +502,7 @@ export const TJSON_IS_SUCCESS = '$->get(2)->eq(2)->and($->get(4)->get("0")->ne(n
 export const TJSON_IS_SUCCESS_VOID = '$->get(2)->eq(2)';
 
 /**
- * Void CALL with IDL `throws` when `ignoreExceptions: true` (errors path, no union).
+ * Void CALL with IDL `throws` when `ignoreErrorResponses: true` (errors path, no union).
  * Declared throws arrive as REPLY with a non-empty result struct (no field `"0"`).
  * Require REPLY + empty result so those are not silent null.
  */
@@ -799,7 +805,7 @@ export function buildTJSONConnectSelection(
 }
 
 /**
- * TJSON selection for `ignoreExceptions: false` unions — success under `value`,
+ * TJSON selection for `ignoreErrorResponses: false` unions — success under `value`,
  * plus declared throw struct fields projected from their result field ids.
  *
  * Emitted as a single `$({ … })` literal so Hive/Mesh does not treat the TJSON

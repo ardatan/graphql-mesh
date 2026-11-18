@@ -27,15 +27,59 @@ import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
 import { coerceXmlLeafForGraphQLType, unwrapXmlScalarLeaf } from './xmlCodec.js';
 
+/**
+ * Options for {@link processDirectives} - wire `@connect` / `@source` (and legacy
+ * Mesh annotations) into executable field resolvers.
+ *
+ * @example
+ * ```ts
+ * import { processDirectives } from '@graphql-mesh/transport-connect';
+ *
+ * // HTTP base URL / headers / query come from `@source` / `@connect` on the schema.
+ * // processDirectives forwards timeout + queryStringOptions (+ odata opts) only.
+ * const executable = processDirectives(schema, {
+ *   globalFetch: fetch,
+ *   timeout: 30_000,
+ * });
+ * ```
+ */
 export interface ProcessDirectiveArgs {
+  /** PubSub for `@pubsubOperation` / subscription topics. */
   pubsub?: PubSub;
+  /** Logger instance. */
   log?: Logger;
+  /** Fetch used for `@connect` HTTP calls. */
   globalFetch?: MeshFetch;
+  /**
+   * Accepted for compatibility, but not forwarded into `@connect` resolvers
+   * today. Put the HTTP base URL on `@source(http.baseURL)` - `@connect`
+   * joins relative connector URLs from that source only; `@transport(location)`
+   * is not used as a base URL fallback.
+   */
   endpoint?: string;
+  /**
+   * HTTP timeout in milliseconds. Applied as `AbortSignal.timeout` on
+   * `@connect` fetches when set; omitted means no processDirectives-level timeout.
+   *
+   * @example 30_000
+   */
   timeout?: number;
+  /**
+   * Accepted for compatibility, but not forwarded into `@connect` resolvers
+   * today. Bake headers into `@source` / `@connect` instead.
+   */
   operationHeaders?: Record<string, string>;
+  /**
+   * Accepted for compatibility, but not forwarded into `@connect` resolvers
+   * today. Put static query params on `@source` / per-field mappings instead.
+   */
   queryParams?: Record<string, any>;
-  /** qs stringify options (form-urlencoded bodies). */
+  /**
+   * `qs` stringify options for form-urlencoded bodies and query strings
+   * (`arrayFormat`, `allowDots`, ...). Field-level options can still override.
+   *
+   * @example { arrayFormat: 'repeat' }
+   */
   queryStringOptions?: any;
 }
 

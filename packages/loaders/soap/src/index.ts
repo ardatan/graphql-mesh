@@ -7,47 +7,110 @@ import { SOAPLoader, type SOAPHeaders } from './SOAPLoader.js';
 export * from './SOAPLoader.js';
 export type * from './types.js';
 export * from './connectEmit.js';
-// SOAP WSDL subgraphs emit `@connect` / `@source` — Hive executes via transport-connect.
+// SOAP WSDL subgraphs emit `@connect` / `@source` - Hive executes via transport-connect.
 export { processDirectives } from '@graphql-mesh/transport-connect';
 export { default as getSubgraphExecutor } from '@graphql-mesh/transport-connect';
 
+/**
+ * Options for {@link loadSOAPSubgraph}.
+ * Loads a WSDL and emits `@connect` / `@source` mappings (executed by transport-connect).
+ *
+ * @example
+ * ```ts
+ * import { loadSOAPSubgraph } from '@omnigraph/soap';
+ *
+ * loadSOAPSubgraph('weather', {
+ *   source: './weather.wsdl',
+ *   endpoint: 'https://example.com/soap',
+ *   operationHeaders: { Authorization: 'Bearer {context.token}' },
+ * })
+ * ```
+ * @example
+ * ```ts
+ * loadSOAPSubgraph('billing', {
+ *   source: 'https://example.com/billing?wsdl',
+ *   bodyAlias: 'req',
+ *   soapHeaders: {
+ *     namespace: 'http://example.com/security',
+ *     alias: 'sec',
+ *     headers: { Token: '{context.headers.x-token}' },
+ *   },
+ * })
+ * ```
+ */
 export interface SOAPSubgraphLoaderOptions {
   /**
-   * A url to your WSDL or generated SDL with annotations
+   * URL or filesystem path to a WSDL document (and nested XSD imports).
+   * Annotated GraphQL SDL is not accepted here - pass WSDL only.
+   *
+   * @example './services/weather.wsdl'
    */
   source?: string;
   /**
-   * SOAP endpoint to use for the API calls
+   * SOAP HTTP endpoint override (when WSDL port address should not be used as-is).
+   *
+   * @example 'https://example.com/soap'
    */
   endpoint?: string;
   /**
-   * JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
-   * You can also provide `.js` or `.ts` file path that exports schemaHeaders as an object
+   * Headers for nested `<wsdl:import>` / `<xsd:import>` fetches inside
+   * `SOAPLoader` (not sent on runtime SOAP calls). The root `source` WSDL
+   * request from `loadSOAPSubgraph` does not pass these headers - authenticate
+   * that fetch separately (custom compose `fetch`) if needed. Pass a plain
+   * `Record` object (import a module yourself if headers live in a `.js` /
+   * `.ts` file).
+   *
+   * @example { Authorization: 'Bearer ...' }
    */
   schemaHeaders?: Record<string, string>;
   /**
-   * JSON object representing the Headers to add to the runtime of the API calls only for operation calls
+   * Headers for runtime SOAP calls (baked into `@source` / `@connect`). Not used
+   * for WSDL / XSD fetch - see `schemaHeaders` for compose-time fetches.
+   *
+   * @example { Authorization: 'Bearer {context.headers.authorization}' }
    */
   operationHeaders?: Record<string, string>;
   /**
-   * SOAP Headers configuration
+   * Extra SOAP Header block injected into the envelope (namespace + alias +
+   * child elements). Distinct from HTTP `operationHeaders`.
+   *
+   * @example { namespace: 'http://example.com/ns', headers: { Token: 'abc' } }
    */
   soapHeaders?: SOAPHeaders;
   /**
-   * The name of the alias to be used in the envelope for body components
-
-   * @default body
+   * Alias used in the SOAP envelope for body components (XML prefix / wrapper
+   * for the request body). When omitted, emit uses `body`.
+   *
+   * @default 'body'
    */
   bodyAlias?: string;
   /**
-   * The namespace of the SOAP envelope
-   * By default, SOAP handler detects the SOAP version and if SOAP version is 1.1,
-   * it uses `http://schemas.xmlsoap.org/soap/envelope/` namespace
-   * If SOAP version is 1.2, it uses `http://www.w3.org/2003/05/soap-envelope` namespace
+   * Present for compatibility, but currently unused: `loadSOAPSubgraph` does
+   * not forward this field. Envelope namespace detection looks for a `soap12`
+   * attribute on the WSDL definition: when present, SOAP 1.2
+   * (`http://www.w3.org/2003/05/soap-envelope`) is used; otherwise SOAP 1.1
+   * (`http://schemas.xmlsoap.org/soap/envelope/`) remains. A SOAP 1.2 WSDL that
+   * uses a different prefix therefore stays on the 1.1 envelope namespace.
    */
   soapNamespace?: string;
 }
 
+/**
+ * Mesh compose helper: load a WSDL and emit a SOAP `@connect` subgraph.
+ *
+ * @example
+ * ```ts
+ * import { loadSOAPSubgraph } from '@omnigraph/soap';
+ *
+ * const weather = loadSOAPSubgraph('weather', {
+ *   source: './weather.wsdl',
+ *   endpoint: 'https://example.com/soap',
+ * });
+ * ```
+ *
+ * @param subgraphName Subgraph name (also `@source(name:)`).
+ * @param options See {@link SOAPSubgraphLoaderOptions}.
+ */
 export function loadSOAPSubgraph(subgraphName: string, options: SOAPSubgraphLoaderOptions) {
   return ({ cwd, fetch, log }: { cwd: string; fetch: MeshFetch; log: Logger }) => {
     const soapLoader = new SOAPLoader({

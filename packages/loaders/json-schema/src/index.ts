@@ -26,6 +26,30 @@ export {
 } from './entityRefs.js';
 export type * from './types.js';
 
+/**
+ * Mesh compose helper: build an `@connect` subgraph from JSON Schema operations.
+ *
+ * @example
+ * ```ts
+ * import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
+ *
+ * const api = loadJSONSchemaSubgraph('api', {
+ *   endpoint: 'https://api.example.com',
+ *   operations: [
+ *     {
+ *       type: 'Query',
+ *       field: 'user',
+ *       path: '/users/{args.id}',
+ *       method: 'GET',
+ *       responseSchema: './user.json',
+ *     },
+ *   ],
+ * });
+ * ```
+ *
+ * @param name Subgraph name.
+ * @param options See {@link JSONSchemaLoaderOptions}.
+ */
 export function loadJSONSchemaSubgraph(name: string, options: JSONSchemaLoaderOptions) {
   return (ctx: { fetch: MeshFetch; cwd: string; log: Logger }) => ({
     name,

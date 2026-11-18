@@ -65,21 +65,50 @@ function pickRequestContentKey(
   return jsonKey ?? keys[0];
 }
 
+/**
+ * HATEOAS link object field names for OpenAPI emit (`HATEOAS: true` uses defaults).
+ *
+ * @example
+ * ```ts
+ * HATEOAS: {
+ *   linkObjectIdentifier: '_links',
+ *   linkNameIdentifier: 'rel',
+ *   linkPathIdentifier: 'href',
+ *   linkObjectExtensionIdentifier: 'x-links',
+ * }
+ * ```
+ */
 export interface HATEOASConfig {
   /**
-   * @default "rel"
+   * Property name inside each link object that holds the relation name.
+   * Used when `HATEOAS: true` or when a partial config omits this field.
+   *
+   * @default 'rel'
+   * @example 'relation'
    */
   linkNameIdentifier: string;
   /**
-   * @default "href"
+   * Property name inside each link object that holds the URL.
+   * Used when `HATEOAS: true` or when a partial config omits this field.
+   *
+   * @default 'href'
+   * @example 'url'
    */
   linkPathIdentifier: string;
   /**
-   * @default "_links"
+   * Response field that holds the links map.
+   * Used when `HATEOAS: true` or when a partial config omits this field.
+   *
+   * @default '_links'
+   * @example 'links'
    */
   linkObjectIdentifier: string;
   /**
-   * @default "x-links"
+   * OpenAPI extension name for declared links.
+   * Used when `HATEOAS: true` or when a partial config omits this field.
+   *
+   * @default 'x-links'
+   * @example 'x-hateoas-links'
    */
   linkObjectExtensionIdentifier: string;
 }
