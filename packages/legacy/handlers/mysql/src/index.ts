@@ -58,8 +58,8 @@ export default class MySQLHandler implements MeshHandler {
       if (this.config.ssl) {
         endpointUrl.protocol = 'mysqls:';
       }
+      // Protocol on the endpoint (`mysql://` / `mysqls://`) already selects the adapter.
       return loadGraphQLSchemaFromSql(this.name, {
-        adapter: 'mysql',
         endpoint: endpointUrl.toString(),
         includeTables: this.config.tables,
         tableFields: this.config.tableFields,

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`MySQL Employees should generate correct schema: schema 1`] = `
-"schema @transport(subgraph: "Employees", kind: "sql", location: "mysql://root:passwd@localhost:33306/employees", options: {adapter: "mysql"}) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
+"schema @transport(subgraph: "Employees", kind: "sql", location: "mysql://root:passwd@localhost:33306/employees") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
   query: Query
   mutation: Mutation
 }

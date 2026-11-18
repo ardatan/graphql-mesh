@@ -8,7 +8,6 @@ export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadSqlSubgraph('Geo', {
-        adapter: 'postgres',
         endpoint: `postgres://postgres:docker@localhost:${opts.getServicePort('geodb')}/postgres`,
       }),
     },

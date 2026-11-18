@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SQLite Chinook should generate correct schema: sqlite-chinook-schema 1`] = `
-"schema @transport(subgraph: "Chinook", kind: "sql", location: "file:<chinook.db>", options: {adapter: "sqlite"}) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
+"schema @transport(subgraph: "Chinook", kind: "sql", location: "file:<chinook.db>") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
   query: Query
   mutation: Mutation
 }

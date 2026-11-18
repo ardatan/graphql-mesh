@@ -52,7 +52,6 @@ describe('mysql', () => {
 
     expect(schema).toBe(graphQLSchemaMock);
     expect(loadGraphQLSchemaFromSql).toHaveBeenCalledWith('test', {
-      adapter: 'mysql',
       endpoint: 'mysqls://localhost:3306/testdb',
       includeTables: configMock.tables,
       tableFields: configMock.tableFields,

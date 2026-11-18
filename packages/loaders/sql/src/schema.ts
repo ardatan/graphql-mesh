@@ -476,11 +476,14 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
   const schema = schemaComposer.buildSchema();
   const extensions: any = (schema.extensions ||= {});
   extensions.directives ||= {};
+  // Use caller opts (not `resolved`) so inferred adapter is not stamped into
+  // `@transport(options)` when `location` already implies the dialect.
+  const transportOptions = buildTransportOptions(withEndpoint, adapter);
   extensions.directives.transport = {
     subgraph: subgraphName,
     kind: 'sql',
     location,
-    options: buildTransportOptions(resolved, adapter),
+    ...(Object.keys(transportOptions).length ? { options: transportOptions } : {}),
   };
   extensions.directives.link = [
     {
@@ -566,7 +569,10 @@ function buildTransportOptions(
   opts: LoadSqlSubgraphOpts,
   adapter: SqlAdapter,
 ): SqlTransportOptions {
-  const options: SqlTransportOptions = { adapter };
+  // Only stamp `adapter` when the caller set it explicitly. Runtime already
+  // infers from `@transport(location)` (`postgres://`, `mysql://`, `file:…`, …).
+  const options: SqlTransportOptions = {};
+  if (opts.adapter) options.adapter = adapter;
   if (opts.max != null) options.max = opts.max;
   if (opts.idleTimeout != null) options.idleTimeout = opts.idleTimeout;
   if (opts.connectionTimeout != null) options.connectionTimeout = opts.connectionTimeout;

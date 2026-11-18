@@ -18,7 +18,8 @@ describe('@omnigraph/sql sqlite chinook', () => {
     );
     expect(sdl).toContain('@transport');
     expect(sdl).toContain('kind: "sql"');
-    expect(sdl).toContain('adapter: "sqlite"');
+    // Adapter inferred from location — do not emit redundant options.adapter
+    expect(sdl).not.toContain('adapter:');
     expect(sdl).toContain('@sql(');
     expect(sdl).toContain('kind: INSERT');
     expect(sdl).toContain('kind: ROW');
