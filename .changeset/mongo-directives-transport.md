@@ -20,11 +20,11 @@ new stack (like mysql/tuql -> SQL).
 - GraphQL roots mirror MongoDB collection methods: `findOneUser` / `findUsers` /
   `countDocumentsUsers` / `insertOneUser` / `updateOneUser` / `deleteManyUsers` / `aggregateUsers`
   ([method reference](https://www.mongodb.com/docs/manual/reference/method/))
-- Op directives (MySQL/Thrift style): `@mongo__findOne` / `@mongo__find` / `@mongo__count` /
+- Op directives: `@mongo__findOne` / `@mongo__find` / `@mongo__count` /
   `@mongo__connection` / `@mongo__pagination` / `@mongo__aggregate` /
   `@mongo__insertOne|insertMany` / `@mongo__updateOne|updateMany` / `@mongo__deleteOne|deleteMany`
   (SDL client API ≠ directive binders; legacy `@mongo(kind:)` still executed)
-- Client args: typed `query: *QueryInput` + Hasura-style `sort: [*Sort!]` (`id_ASC` / `age_DESC`;
+- Client args: typed `query: *QueryInput` + `sort: [*Sort!]` (`id_ASC` / `age_DESC`;
   transport maps to `{ field: 1|-1 }`). Query operators use Mongo names without `$`
   (`gte`, `in`, …; transport maps to `$gte` / `$in`; also accepts native `{ $gte }` and `_gte`)
 - Projection = GraphQL selection set + `@mongo__*(selection:)` (findOne's projection)

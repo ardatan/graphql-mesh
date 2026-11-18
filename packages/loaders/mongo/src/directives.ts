@@ -12,7 +12,7 @@ const queryArg = { type: GraphQLString };
 const sortArg = { type: GraphQLString };
 
 /**
- * Op-specific `@mongo__*` directives (MySQL/Thrift style).
+ * Op-specific `@mongo__*` directives.
  * Generated GraphQL SDL (query/sort enums) can differ from these execution binders.
  *
  * findOne(query, projection) → `@mongo__findOne(query, selection)`

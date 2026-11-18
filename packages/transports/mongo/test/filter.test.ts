@@ -121,7 +121,7 @@ describe('mongo filter mapping', () => {
     });
   });
 
-  it('maps Hasura-style sort enum list to Mongo sort', () => {
+  it('maps field_ASC/field_DESC sort enum list to Mongo sort', () => {
     expect(graphqlSortToMongo(['age_DESC', 'name_ASC', 'id_DESC'])).toEqual({
       age: -1,
       name: 1,

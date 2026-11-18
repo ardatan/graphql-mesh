@@ -979,7 +979,7 @@ function createQuerySortAndDocumentInputs(
     });
   }
 
-  // Client SDL: Hasura-style `id_ASC` / `name_DESC`. Directive binder still
+  // Client SDL: `id_ASC` / `name_DESC` sort enum values. Directive binder still
   // receives `$args.sort` and transport maps enum values → `{ field: 1|-1 }`.
   const sortEnumName = naming.sortEnum(typeName);
   if (!schemaComposer.has(sortEnumName)) {
