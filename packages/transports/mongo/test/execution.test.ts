@@ -128,4 +128,96 @@ describe('getMongoExecutor FIND_* + writes', () => {
       },
     });
   });
+
+  it('neutralizes nested empty and on UPDATE_MANY / DELETE_MANY', async () => {
+    const userSchema = new Schema({ name: String }, { collection: 'user_users' });
+    const schema = await loadGraphQLSchemaFromMongo('users', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [{ name: 'User', schema: userSchema, collection: 'user_users' }],
+    });
+
+    let lastUpdateFilter: Record<string, unknown> | undefined;
+    let lastDeleteFilter: Record<string, unknown> | undefined;
+    const client: MongoClientLike = {
+      async findOne() {
+        return null;
+      },
+      async findMany() {
+        return [];
+      },
+      async count() {
+        return 0;
+      },
+      async insertOne() {
+        return { insertedId: 'x' };
+      },
+      async insertMany() {
+        return { insertedIds: [], insertedCount: 0 };
+      },
+      async updateOne() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async updateMany(_c, filter) {
+        lastUpdateFilter = filter as Record<string, unknown>;
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async findOneAndUpdate() {
+        return { value: null, matchedCount: 0, modifiedCount: 0 };
+      },
+      async deleteOne() {
+        return { deletedCount: 0 };
+      },
+      async deleteMany(_c, filter) {
+        lastDeleteFilter = filter as Record<string, unknown>;
+        return { deletedCount: 0 };
+      },
+      async findOneAndDelete() {
+        return { value: null, deletedCount: 0 };
+      },
+      async aggregate() {
+        return [];
+      },
+      dispose() {},
+    };
+
+    const executor = getMongoExecutor({ subgraph: schema, client });
+    const nestedEmpty = '{ and: [{ and: [] }] }';
+
+    await execResult(executor, {
+      document: parse(
+        `mutation { updateManyUsers(query: ${nestedEmpty}, update: { set: { name: "x" } }) { matchedCount } }`,
+      ),
+    });
+    expect(lastUpdateFilter).toEqual({ $and: [{ $nor: [{}] }] });
+
+    await execResult(executor, {
+      document: parse(`mutation { deleteManyUsers(query: ${nestedEmpty}) { deletedCount } }`),
+    });
+    expect(lastDeleteFilter).toEqual({ $and: [{ $nor: [{}] }] });
+  });
+});
+
+describe('connection cursor sort keys', () => {
+  it('rejects array-backed sort keys including final-segment arrays', async () => {
+    const { resolveSortKeyValueForCursor } = await import('../src/execution.js');
+    expect(() => resolveSortKeyValueForCursor({ tags: ['a', 'b'] }, 'tags')).toThrow(
+      /array-backed/,
+    );
+    expect(() =>
+      resolveSortKeyValueForCursor({ items: { price: [10, 20] } }, 'items.price'),
+    ).toThrow(/array-backed/);
+    expect(() => resolveSortKeyValueForCursor({ items: [{ price: 10 }] }, 'items.price')).toThrow(
+      /array-backed/,
+    );
+  });
+
+  it('encodes scalar dotted-path sort values for multi-page cursors', async () => {
+    const { resolveSortKeyValueForCursor } = await import('../src/execution.js');
+    expect(resolveSortKeyValueForCursor({ address: { city: 'Austin' } }, 'address.city')).toBe(
+      'Austin',
+    );
+    expect(
+      resolveSortKeyValueForCursor({ address: { city: 'Boston' }, _id: '2' }, 'address.city'),
+    ).toBe('Boston');
+  });
 });

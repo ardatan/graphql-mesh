@@ -6,10 +6,13 @@ import {
   coerceDeep,
   coerceFilterValue,
   configureObjectIdFields,
+  configurePlaceholderFields,
   configureRequiredFields,
   graphqlFilterToMongo,
   graphqlSortToMongo,
   graphqlUpdateToMongo,
+  isUniversallyMatchingFilter,
+  MATCH_NOTHING_FILTER,
   normalizeFilterDoc,
   stripInputPlaceholder,
 } from '../src/filter.js';
@@ -134,6 +137,10 @@ describe('mongo filter mapping', () => {
     expect(graphqlFilterToMongo({ languages: [{ or: [] }] })).toEqual({
       languages: { $elemMatch: { $and: [{ $nor: [{}] }] } },
     });
+    // Nested empty `and` must not become `$and: [{}]` (matches all).
+    const nestedEmptyAnd = graphqlFilterToMongo({ and: [{ and: [] }] });
+    expect(isUniversallyMatchingFilter(nestedEmptyAnd)).toBe(false);
+    expect(nestedEmptyAnd).toEqual({ $and: [MATCH_NOTHING_FILTER] });
   });
 
   it('converts ObjectId only for declared id/_id/objectId fields', () => {
@@ -299,6 +306,7 @@ describe('mongo filter mapping', () => {
 
   it('rejects explicit null on required fields but allows omit; strips _ placeholder', () => {
     configureRequiredFields(['name']);
+    configurePlaceholderFields(['_']);
     expect(() => graphqlUpdateToMongo({ set: { name: null, age: 1 } })).toThrow(/name/);
     expect(graphqlUpdateToMongo({ set: { age: 1 } })).toEqual({ $set: { age: 1 } });
     expect(stripInputPlaceholder({ _: 'x', name: 'Ada' })).toEqual({ name: 'Ada' });
@@ -306,5 +314,18 @@ describe('mongo filter mapping', () => {
       $set: { name: 'Ada' },
     });
     configureRequiredFields(undefined);
+    configurePlaceholderFields(undefined);
+  });
+
+  it('preserves a real writable _ field when it is not a placeholder', () => {
+    configurePlaceholderFields([]); // no placeholders registered
+    expect(stripInputPlaceholder({ _: 'keep-me', name: 'Ada' })).toEqual({
+      _: 'keep-me',
+      name: 'Ada',
+    });
+    expect(graphqlUpdateToMongo({ set: { _: 'keep-me', name: 'Ada' } })).toEqual({
+      $set: { _: 'keep-me', name: 'Ada' },
+    });
+    configurePlaceholderFields(undefined);
   });
 });

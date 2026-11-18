@@ -99,6 +99,7 @@ export async function loadGraphQLSchemaFromMongo(
     paths: PathMeta[];
     resolvers?: NonNullable<MongoModelConfig['options']>['resolvers'];
     fieldRestrictions?: MongoFieldRestrictions;
+    placeholderFields?: string[];
   }> = [];
 
   for (const modelConfig of opts.models) {
@@ -114,6 +115,7 @@ export async function loadGraphQLSchemaFromMongo(
       introspectPaths(model.schema, typeName),
       fieldRestrictions,
     );
+    const placeholderFields: string[] = [];
     modelMeta.push({
       typeName,
       collection,
@@ -121,6 +123,7 @@ export async function loadGraphQLSchemaFromMongo(
       paths,
       resolvers: modelConfig.options?.resolvers,
       fieldRestrictions,
+      placeholderFields,
     });
     emitModelObjectType(schemaComposer, {
       subgraphName,
@@ -129,6 +132,7 @@ export async function loadGraphQLSchemaFromMongo(
       paths,
       naming,
       fieldRestrictions,
+      placeholderFieldsOut: placeholderFields,
     });
   }
 
@@ -163,9 +167,13 @@ export async function loadGraphQLSchemaFromMongo(
       modelMeta.flatMap(m => m.fieldRestrictions?.required || []).filter(Boolean) as string[],
     ),
   ];
+  const placeholderFields = [
+    ...new Set(modelMeta.flatMap(m => m.placeholderFields || []).filter(Boolean) as string[]),
+  ];
   const transportOptions: Record<string, string[]> = {};
   if (objectIdFields.length) transportOptions.objectIdFields = objectIdFields;
   if (requiredFields.length) transportOptions.requiredFields = requiredFields;
+  if (placeholderFields.length) transportOptions.placeholderFields = placeholderFields;
   extensions.directives.transport = {
     subgraph: subgraphName,
     kind: 'mongo',
@@ -231,18 +239,22 @@ interface PathMeta {
   selfRef?: boolean;
 }
 
+function isBsonObjectIdPath(path: PathMeta): boolean {
+  return (
+    path.instance === 'ObjectID' ||
+    path.instance === 'ObjectId' ||
+    path.arrayElementInstance === 'ObjectID' ||
+    path.arrayElementInstance === 'ObjectId'
+  );
+}
+
+/** Only BSON ObjectId paths — String refs with 24-hex must stay strings. */
 function collectObjectIdFieldNames(pathLists: PathMeta[][]): string[] {
   const out = new Set<string>();
   const walk = (paths: PathMeta[]) => {
     for (const path of paths) {
       if (path.name === '_id' || path.name === 'id') continue;
-      if (
-        path.ref ||
-        path.instance === 'ObjectID' ||
-        path.instance === 'ObjectId' ||
-        path.arrayElementInstance === 'ObjectID' ||
-        path.arrayElementInstance === 'ObjectId'
-      ) {
+      if (isBsonObjectIdPath(path)) {
         out.add(path.name);
       }
       if (path.nested?.length) walk(path.nested);
@@ -513,6 +525,7 @@ function emitModelObjectType(
     paths: PathMeta[];
     naming: MongoNaming;
     fieldRestrictions?: MongoFieldRestrictions;
+    placeholderFieldsOut?: string[];
   },
 ) {
   const { subgraphName, typeName, collection, paths, naming } = opts;
@@ -552,6 +565,7 @@ function emitModelObjectType(
     restrictionsActive: Boolean(
       opts.fieldRestrictions?.only?.length || opts.fieldRestrictions?.remove?.length,
     ),
+    placeholderFieldsOut: opts.placeholderFieldsOut,
   });
   createConnectionTypes(schemaComposer, naming, typeName);
   createPayloadType(schemaComposer, naming, typeName);
@@ -652,21 +666,26 @@ function emitModelRootFields(
     directives: [mongoDir('mongo__count', { query: '$args.query', selection: blockArg('$') })],
   });
 
-  // db.collection.aggregate(pipeline)
-  queryTC.setField(naming.aggregateField(typeName), {
-    type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLJSON))),
-    args: {
-      query: { type: queryType },
-      pipeline: { type: GraphQLJSON },
-    },
-    directives: [
-      mongoDir('mongo__aggregate', {
-        query: '$args.query',
-        pipeline: '$args.pipeline',
-        selection: blockArg('$'),
-      }),
-    ],
-  });
+  // Raw aggregate can `$project` removed fields — omit for restricted models.
+  const restrictionsActive = Boolean(
+    opts.fieldRestrictions?.only?.length || opts.fieldRestrictions?.remove?.length,
+  );
+  if (!restrictionsActive) {
+    queryTC.setField(naming.aggregateField(typeName), {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLJSON))),
+      args: {
+        query: { type: queryType },
+        pipeline: { type: GraphQLJSON },
+      },
+      directives: [
+        mongoDir('mongo__aggregate', {
+          query: '$args.query',
+          pipeline: '$args.pipeline',
+          selection: blockArg('$'),
+        }),
+      ],
+    });
+  }
 
   queryTC.setField(naming.connectionField(typeName), {
     type: naming.connectionType(typeName),
@@ -1075,8 +1094,12 @@ function queryOperatorTypeForPath(
   if (path.instance === 'Decimal128') return 'Decimal128QueryOperators';
   if (path.instance === 'Boolean') return 'BooleanQueryOperators';
   if (path.instance === 'Date') return 'DateTimeQueryOperators';
-  if (path.ref || path.instance === 'ObjectID' || path.instance === 'ObjectId') {
+  if (isBsonObjectIdPath(path)) {
     return 'ObjectIDQueryOperators';
+  }
+  if (path.ref) {
+    // String (or non-ObjectId) refs use string operators — keep 24-hex as strings.
+    return 'StringQueryOperators';
   }
   if (path.instance === 'Embedded' || path.instance === 'Array' || path.instance === 'Mixed') {
     return 'JSON';
@@ -1115,7 +1138,7 @@ function mapPathToOutput(
     );
     return path.isArray ? `[${enumName}]` : enumName;
   }
-  if (path.ref) {
+  if (path.ref && isBsonObjectIdPath(path)) {
     return path.isArray ? new GraphQLList(GraphQLObjectID) : GraphQLObjectID;
   }
   if (path.isArray) {
@@ -1146,7 +1169,7 @@ function mapPathToInput(schemaComposer: SchemaComposer, path: PathMeta, rootType
     );
     return path.isArray ? `[${enumName}]` : enumName;
   }
-  if (path.ref) {
+  if (path.ref && isBsonObjectIdPath(path)) {
     return path.isArray ? new GraphQLList(GraphQLObjectID) : GraphQLObjectID;
   }
   if (path.isArray) {
@@ -1178,6 +1201,7 @@ function createQuerySortAndDocumentInputs(
     removedFields?: string[];
     /** True when `fields.only` or `fields.remove` was configured (even if paths already filtered). */
     restrictionsActive?: boolean;
+    placeholderFieldsOut?: string[];
   },
 ) {
   const required = new Set(opts?.requiredFields || []);
@@ -1235,18 +1259,28 @@ function createQuerySortAndDocumentInputs(
     createFields[path.name] = { type: createType, description: path.description };
   }
   const documentInput = naming.createInput(typeName);
+  // Prefer `_` as placeholder unless the model already has a writable `_` path.
+  const placeholderKey = paths.some(p => p.name === '_') ? '__empty' : '_';
   const emptyInputPlaceholder = {
-    _: {
+    [placeholderKey]: {
       type: GraphQLJSON,
       description: 'Placeholder — model has no writable paths beyond id',
     },
   };
   if (!schemaComposer.has(documentInput)) {
     // GraphQL forbids empty input objects (id-only models).
-    schemaComposer.createInputTC({
-      name: documentInput,
-      fields: Object.keys(createFields).length > 0 ? createFields : emptyInputPlaceholder,
-    });
+    if (Object.keys(createFields).length > 0) {
+      schemaComposer.createInputTC({
+        name: documentInput,
+        fields: createFields,
+      });
+    } else {
+      schemaComposer.createInputTC({
+        name: documentInput,
+        fields: emptyInputPlaceholder,
+      });
+      opts?.placeholderFieldsOut?.push(placeholderKey);
+    }
   }
 
   // Partial patch input for `$set` — required applies to create, not update.set.
@@ -1314,18 +1348,25 @@ function createQuerySortAndDocumentInputs(
       updateFields.currentDate = { type: GraphQLJSON };
       updateFields.bit = { type: GraphQLJSON };
     }
-    schemaComposer.createInputTC({
-      name: updateInput,
-      fields:
-        Object.keys(updateFields).length > 0
-          ? updateFields
-          : {
-              _: {
-                type: GraphQLJSON,
-                description: 'No writable update operators for this model',
-              },
-            },
-    });
+    if (Object.keys(updateFields).length > 0) {
+      schemaComposer.createInputTC({
+        name: updateInput,
+        fields: updateFields,
+      });
+    } else {
+      schemaComposer.createInputTC({
+        name: updateInput,
+        fields: {
+          [placeholderKey]: {
+            type: GraphQLJSON,
+            description: 'No writable update operators for this model',
+          },
+        },
+      });
+      if (!opts?.placeholderFieldsOut?.includes(placeholderKey)) {
+        opts?.placeholderFieldsOut?.push(placeholderKey);
+      }
+    }
   }
 }
 

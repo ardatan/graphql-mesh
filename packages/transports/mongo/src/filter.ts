@@ -1,6 +1,23 @@
+// eslint-disable-next-line import/no-nodejs-modules -- per-executor field runtime isolation
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { BSON, Decimal128, ObjectId } from 'mongodb';
 import { parseMongoMapping, resolveMappingValue } from './mapping.js';
 import type { ParsedMongoMapping } from './types.js';
+
+/** Per-executor field metadata (avoids module-global clobber across subgraphs). */
+export type MongoFieldRuntime = {
+  objectIdFields: ReadonlySet<string>;
+  requiredFields: ReadonlySet<string>;
+  /** GraphQL empty-input placeholder keys (e.g. `_`) — not real model paths. */
+  placeholderFields: ReadonlySet<string>;
+};
+
+const fieldRuntimeAls = new AsyncLocalStorage<MongoFieldRuntime>();
+
+/** Run Mongo coerce/filter/update work under an executor-local field runtime. */
+export function runWithMongoFieldRuntime<T>(runtime: MongoFieldRuntime, fn: () => T): T {
+  return fieldRuntimeAls.run(runtime, fn);
+}
 
 export interface CoerceFilterOptions {
   /** Convert 24-char hex strings to ObjectId (only for known ObjectId fields). */
@@ -245,8 +262,10 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 let declaredObjectIdFields = new Set<string>(['_id', 'id']);
 /** Fields that may be omitted on patch but must not be explicitly set to null. */
 let declaredRequiredFields = new Set<string>();
+/** Default empty-input placeholder keys when no executor runtime is active. */
+let declaredPlaceholderFields = new Set<string>(['_']);
 
-/** Configure ObjectId coercion from loader-declared BSON ObjectId / ref paths. */
+/** Configure ObjectId coercion from loader-declared BSON ObjectId paths (tests / fallback). */
 export function configureObjectIdFields(fields: Iterable<string> | undefined): void {
   declaredObjectIdFields = new Set(['_id', 'id']);
   if (!fields) return;
@@ -264,10 +283,65 @@ export function configureRequiredFields(fields: Iterable<string> | undefined): v
   }
 }
 
+/** Configure empty-input placeholder keys that must not be persisted. */
+export function configurePlaceholderFields(fields: Iterable<string> | undefined): void {
+  declaredPlaceholderFields = new Set();
+  if (!fields) {
+    declaredPlaceholderFields.add('_');
+    return;
+  }
+  for (const f of fields) {
+    if (f) declaredPlaceholderFields.add(f);
+  }
+}
+
+function activeObjectIdFields(): Set<string> {
+  return fieldRuntimeAls.getStore()?.objectIdFields
+    ? new Set(fieldRuntimeAls.getStore()!.objectIdFields)
+    : declaredObjectIdFields;
+}
+
+function activeRequiredFields(): Set<string> {
+  return fieldRuntimeAls.getStore()?.requiredFields
+    ? new Set(fieldRuntimeAls.getStore()!.requiredFields)
+    : declaredRequiredFields;
+}
+
+function activePlaceholderFields(): Set<string> {
+  return fieldRuntimeAls.getStore()?.placeholderFields
+    ? new Set(fieldRuntimeAls.getStore()!.placeholderFields)
+    : declaredPlaceholderFields;
+}
+
 export function isObjectIdFieldKey(key: string): boolean {
-  if (declaredObjectIdFields.has(key)) return true;
+  const fields = activeObjectIdFields();
+  if (fields.has(key)) return true;
   // GraphQL `id` binders map to Mongo `_id`.
   if (key === 'id' || key === '_id') return true;
+  return false;
+}
+
+/**
+ * True when a filter matches every document (`{}` or `$and` of vacuous clauses).
+ * Used to neutralize nested empty `and` before bulk writes.
+ */
+export function isUniversallyMatchingFilter(
+  filter: Record<string, unknown> | null | undefined,
+): boolean {
+  if (!filter) return true;
+  const keys = Object.keys(filter);
+  if (keys.length === 0) return true;
+  if (keys.length === 1 && keys[0] === '$and' && Array.isArray(filter.$and)) {
+    const clauses = filter.$and as Record<string, unknown>[];
+    if (clauses.length === 0) return true;
+    return clauses.every(
+      c =>
+        c != null &&
+        typeof c === 'object' &&
+        !Array.isArray(c) &&
+        isUniversallyMatchingFilter(c as Record<string, unknown>),
+    );
+  }
   return false;
 }
 
@@ -292,10 +366,15 @@ export function graphqlFilterToMongo(
       const clauses = Array.isArray(value) ? (value as Record<string, unknown>[]) : [];
       // Empty `$and: []` is invalid Mongo; omit and keep sibling predicates.
       if (clauses.length === 0) continue;
-      appendAnd(
-        out,
-        clauses.map(v => graphqlFilterToMongo(v, pathPrefix)),
-      );
+      const mapped = clauses.map(v => graphqlFilterToMongo(v, pathPrefix));
+      // Nested `{ and: [{ and: [] }] }` → `[{}]` would match everything; drop vacuous
+      // clauses and require MATCH_NOTHING when nothing meaningful remains.
+      const meaningful = mapped.filter(c => !isUniversallyMatchingFilter(c));
+      if (meaningful.length === 0) {
+        appendAnd(out, [MATCH_NOTHING_FILTER]);
+      } else {
+        appendAnd(out, meaningful);
+      }
       continue;
     }
     if (key === 'OR' || key === 'or') {
@@ -528,11 +607,13 @@ function remapUpdateFieldKey(key: string): string {
 
 function remapUpdateFields(value: unknown): unknown {
   if (!isPlainObject(value)) return coerceDeep(value);
+  const placeholders = activePlaceholderFields();
+  const required = activeRequiredFields();
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(value)) {
-    // Schema placeholder for id-only GraphQL inputs — never persist.
-    if (k === '_') continue;
-    if (v === null && declaredRequiredFields.has(k)) {
+    // Only strip configured empty-input placeholders — never a real `_` path.
+    if (placeholders.has(k)) continue;
+    if (v === null && required.has(k)) {
       throw new Error(`Cannot set required field "${k}" to null`);
     }
     out[remapUpdateFieldKey(k)] = coerceDeep(v, { asObjectId: isObjectIdFieldKey(k) });
@@ -540,11 +621,20 @@ function remapUpdateFields(value: unknown): unknown {
   return out;
 }
 
-/** Drop GraphQL empty-input placeholder `_` before insert/write. */
+/** Drop GraphQL empty-input placeholder keys before insert/write. */
 export function stripInputPlaceholder(doc: Record<string, unknown>): Record<string, unknown> {
-  if (!Object.prototype.hasOwnProperty.call(doc, '_')) return doc;
-  const { _: _ignored, ...rest } = doc;
-  return rest;
+  const placeholders = activePlaceholderFields();
+  if (!placeholders.size) return doc;
+  let changed = false;
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(doc)) {
+    if (placeholders.has(k)) {
+      changed = true;
+      continue;
+    }
+    out[k] = v;
+  }
+  return changed ? out : doc;
 }
 
 /**

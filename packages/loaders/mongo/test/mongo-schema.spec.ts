@@ -141,5 +141,34 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(typeBody('input', 'AccountSetInput')).not.toMatch(/\bname:\s*String!/);
     expect(sdl).not.toContain('rename: JSON');
     expect(sdl).not.toContain('push: JSON');
+    // Raw aggregate would bypass fields.remove — omit for restricted models.
+    expect(sdl).not.toMatch(/\baggregateAccounts\b/);
+  });
+
+  it('does not register String refs as ObjectId coercion fields', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('posts', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'Post',
+          schema: new Schema(
+            {
+              title: String,
+              authorId: { type: String, ref: 'User' },
+              owner: { type: Schema.Types.ObjectId, ref: 'User' },
+            },
+            { collection: 'posts' },
+          ),
+          collection: 'posts',
+        },
+      ],
+    });
+    const transport = (schema.extensions as any)?.directives?.transport;
+    const objectIdFields: string[] = transport?.options?.objectIdFields || [];
+    expect(objectIdFields).toContain('owner');
+    expect(objectIdFields).not.toContain('authorId');
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toMatch(/authorId:\s*String/);
+    expect(sdl).toMatch(/owner:\s*ObjectID/);
   });
 });

@@ -9,13 +9,14 @@ import {
   buildSetDocument,
   coerceDeep,
   coerceFilterValue,
-  configureObjectIdFields,
-  configureRequiredFields,
   filterFromMapping,
   isObjectIdFieldKey,
+  isUniversallyMatchingFilter,
   MATCH_NOTHING_FILTER,
   resolveUpdateDocument,
+  runWithMongoFieldRuntime,
   stripInputPlaceholder,
+  type MongoFieldRuntime,
 } from './filter.js';
 import {
   mapDocumentToGraphql,
@@ -103,8 +104,13 @@ export function getMongoExecutor({
   }
   const transport = transportDirectives?.[0] as
     { location?: string; options?: MongoTransportOptions } | undefined;
-  configureObjectIdFields(transport?.options?.objectIdFields);
-  configureRequiredFields(transport?.options?.requiredFields);
+  const fieldRuntime: MongoFieldRuntime = {
+    objectIdFields: new Set(['_id', 'id', ...(transport?.options?.objectIdFields || [])]),
+    requiredFields: new Set(transport?.options?.requiredFields || []),
+    placeholderFields: new Set(
+      transport?.options?.placeholderFields?.length ? transport.options.placeholderFields : ['_'],
+    ),
+  };
   const mongoClient =
     client ||
     createMongoClient({
@@ -116,7 +122,7 @@ export function getMongoExecutor({
     [MapperKind.OBJECT_FIELD](fieldConfig) {
       const directive = readMongoDirective(subgraph, fieldConfig);
       if (!directive) return fieldConfig;
-      return attachMongoResolver(fieldConfig, directive, mongoClient);
+      return attachMongoResolver(fieldConfig, directive, mongoClient, fieldRuntime);
     },
   });
 
@@ -132,6 +138,7 @@ function attachMongoResolver(
   fieldConfig: GraphQLFieldConfig<any, any>,
   directive: MongoDirectiveArgs,
   client: MongoClientLike,
+  fieldRuntime: MongoFieldRuntime,
 ): GraphQLFieldConfig<any, any> {
   const selection = parseMongoMapping(directive.selection);
   const projection = projectionFromSelection(selection);
@@ -141,123 +148,130 @@ function attachMongoResolver(
     _context,
     info: GraphQLResolveInfo,
   ) {
-    const ctx = { args: graphqlArgs, parent };
-    const proj = Object.keys(projection).length ? projection : undefined;
-    const typedError = wantsTypedError(info);
+    return runWithMongoFieldRuntime(fieldRuntime, async () => {
+      const ctx = { args: graphqlArgs, parent };
+      const proj = Object.keys(projection).length ? projection : undefined;
+      const typedError = wantsTypedError(info);
 
-    try {
-      // Binder/filter conversion lives inside try so typed mutation payloads
-      // catch invalid ObjectId/Decimal inputs the same way as driver errors.
-      const filter = buildMongoFilter(directive.query ?? directive.filter ?? directive.where, ctx);
-      const sort = buildMongoSort(directive.sort ?? directive.orderBy, ctx);
-      switch (directive.kind) {
-        case 'FIND_ONE': {
-          const doc = await client.findOne(directive.collection, filter, {
-            projection: proj,
-            sort,
-            skip: resolveBinderNumber(directive.skip, ctx),
-          });
-          return mapDocumentToGraphql(doc, selection);
-        }
-        case 'FIND_MANY': {
-          const docs = await client.findMany(directive.collection, filter, {
-            projection: proj,
-            sort,
-            limit: resolveBinderNumber(directive.limit, ctx),
-            skip: resolveBinderNumber(directive.skip, ctx),
-          });
-          return docs.map(doc => mapDocumentToGraphql(doc, selection));
-        }
-        case 'COUNT':
-          return await client.count(directive.collection, filter);
-        case 'CONNECTION':
-          return await resolveConnection(client, directive, filter, sort, proj, ctx, selection);
-        case 'PAGINATION':
-          return await resolvePagination(client, directive, filter, sort, proj, ctx, selection);
-        case 'INSERT_ONE': {
-          const doc = stripInputPlaceholder(buildSetDocument(directive.set, ctx));
-          const { insertedId } = await client.insertOne(directive.collection, doc);
-          const created = await client.findOne(directive.collection, { _id: insertedId });
-          return mapPayload(created, insertedId, selection);
-        }
-        case 'INSERT_MANY': {
-          const fromSet = buildSetDocument(directive.set, ctx);
-          const rawRecords = (fromSet.documents ||
-            fromSet.inputs ||
-            graphqlArgs.documents ||
-            graphqlArgs.inputs ||
-            []) as Record<string, unknown>[];
-          const records = (Array.isArray(rawRecords) ? rawRecords : []).map(doc =>
-            stripInputPlaceholder(coerceDeep(doc) as Record<string, unknown>),
-          );
-          const { insertedIds, insertedCount } = await client.insertMany(
-            directive.collection,
-            records,
-          );
-          const docs = await client.findMany(directive.collection, {
-            _id: { $in: insertedIds },
-          });
-          return {
-            records: docs.map(d => mapDocumentToGraphql(d, nestedSelection(selection, 'records'))),
-            recordIds: insertedIds.map(id => String(id)),
-            createdCount: insertedCount,
-          };
-        }
-        case 'UPDATE_ONE': {
-          const updateDoc = resolveUpdateDocument(directive.set, ctx);
-          const { value: updated } = await client.findOneAndUpdate(
-            directive.collection,
-            filter,
-            updateDoc,
-          );
-          return mapPayload(updated, updated?._id, selection);
-        }
-        case 'UPDATE_MANY': {
-          const updateDoc = resolveUpdateDocument(directive.set, ctx);
-          // Empty `{}` (e.g. from `query: { and: [] }`) would match the whole collection.
-          const writeFilter = bulkWriteFilter(filter);
-          const result = await client.updateMany(directive.collection, writeFilter, updateDoc);
-          return {
-            matchedCount: result.matchedCount,
-            modifiedCount: result.modifiedCount,
-          };
-        }
-        case 'DELETE_ONE': {
-          const { value: existing } = await client.findOneAndDelete(directive.collection, filter);
-          return mapPayload(existing, existing?._id, selection);
-        }
-        case 'DELETE_MANY': {
-          const writeFilter = bulkWriteFilter(filter);
-          const result = await client.deleteMany(directive.collection, writeFilter);
-          return { deletedCount: result.deletedCount };
-        }
-        case 'AGGREGATE': {
-          const pipeline = resolvePipeline(directive.pipeline, ctx, filter);
-          const rows = await client.aggregate(directive.collection, pipeline);
-          if (isRawSelection(selection)) {
-            return rows.map(doc => coerceAggregateRow(doc));
+      try {
+        // Binder/filter conversion lives inside try so typed mutation payloads
+        // catch invalid ObjectId/Decimal inputs the same way as driver errors.
+        const filter = buildMongoFilter(
+          directive.query ?? directive.filter ?? directive.where,
+          ctx,
+        );
+        const sort = buildMongoSort(directive.sort ?? directive.orderBy, ctx);
+        switch (directive.kind) {
+          case 'FIND_ONE': {
+            const doc = await client.findOne(directive.collection, filter, {
+              projection: proj,
+              sort,
+              skip: resolveBinderNumber(directive.skip, ctx),
+            });
+            return mapDocumentToGraphql(doc, selection);
           }
-          return rows.map(doc => mapDocumentToGraphql(doc, selection));
+          case 'FIND_MANY': {
+            const docs = await client.findMany(directive.collection, filter, {
+              projection: proj,
+              sort,
+              limit: resolveBinderNumber(directive.limit, ctx),
+              skip: resolveBinderNumber(directive.skip, ctx),
+            });
+            return docs.map(doc => mapDocumentToGraphql(doc, selection));
+          }
+          case 'COUNT':
+            return await client.count(directive.collection, filter);
+          case 'CONNECTION':
+            return await resolveConnection(client, directive, filter, sort, proj, ctx, selection);
+          case 'PAGINATION':
+            return await resolvePagination(client, directive, filter, sort, proj, ctx, selection);
+          case 'INSERT_ONE': {
+            const doc = stripInputPlaceholder(buildSetDocument(directive.set, ctx));
+            const { insertedId } = await client.insertOne(directive.collection, doc);
+            const created = await client.findOne(directive.collection, { _id: insertedId });
+            return mapPayload(created, insertedId, selection);
+          }
+          case 'INSERT_MANY': {
+            const fromSet = buildSetDocument(directive.set, ctx);
+            const rawRecords = (fromSet.documents ||
+              fromSet.inputs ||
+              graphqlArgs.documents ||
+              graphqlArgs.inputs ||
+              []) as Record<string, unknown>[];
+            const records = (Array.isArray(rawRecords) ? rawRecords : []).map(doc =>
+              stripInputPlaceholder(coerceDeep(doc) as Record<string, unknown>),
+            );
+            const { insertedIds, insertedCount } = await client.insertMany(
+              directive.collection,
+              records,
+            );
+            const docs = await client.findMany(directive.collection, {
+              _id: { $in: insertedIds },
+            });
+            return {
+              records: docs.map(d =>
+                mapDocumentToGraphql(d, nestedSelection(selection, 'records')),
+              ),
+              recordIds: insertedIds.map(id => String(id)),
+              createdCount: insertedCount,
+            };
+          }
+          case 'UPDATE_ONE': {
+            const updateDoc = resolveUpdateDocument(directive.set, ctx);
+            const { value: updated } = await client.findOneAndUpdate(
+              directive.collection,
+              filter,
+              updateDoc,
+            );
+            return mapPayload(updated, updated?._id, selection);
+          }
+          case 'UPDATE_MANY': {
+            const updateDoc = resolveUpdateDocument(directive.set, ctx);
+            // Empty `{}` (e.g. from `query: { and: [] }`) would match the whole collection.
+            const writeFilter = bulkWriteFilter(filter);
+            const result = await client.updateMany(directive.collection, writeFilter, updateDoc);
+            return {
+              matchedCount: result.matchedCount,
+              modifiedCount: result.modifiedCount,
+            };
+          }
+          case 'DELETE_ONE': {
+            const { value: existing } = await client.findOneAndDelete(directive.collection, filter);
+            return mapPayload(existing, existing?._id, selection);
+          }
+          case 'DELETE_MANY': {
+            const writeFilter = bulkWriteFilter(filter);
+            const result = await client.deleteMany(directive.collection, writeFilter);
+            return { deletedCount: result.deletedCount };
+          }
+          case 'AGGREGATE': {
+            const pipeline = resolvePipeline(directive.pipeline, ctx, filter);
+            const rows = await client.aggregate(directive.collection, pipeline);
+            if (isRawSelection(selection)) {
+              return rows.map(doc => coerceAggregateRow(doc));
+            }
+            return rows.map(doc => mapDocumentToGraphql(doc, selection));
+          }
+          default:
+            throw new Error(`@mongo kind ${directive.kind as string} is not implemented`);
         }
-        default:
-          throw new Error(`@mongo kind ${directive.kind as string} is not implemented`);
+      } catch (err) {
+        if (typedError && isWriteKind(directive.kind)) {
+          return {
+            record: null,
+            recordId: null,
+            records: null,
+            recordIds: null,
+            createdCount: null,
+            modifiedCount: null,
+            matchedCount: null,
+            deletedCount: null,
+            error: toMongoError(err),
+          };
+        }
+        throw err;
       }
-    } catch (err) {
-      if (typedError && isWriteKind(directive.kind)) {
-        return {
-          record: null,
-          recordId: null,
-          records: null,
-          recordIds: null,
-          createdCount: null,
-          modifiedCount: null,
-          matchedCount: null,
-          deletedCount: null,
-          error: toMongoError(err),
-        };
-      }
-      throw err;
-    }
+    });
   };
 
   return fieldConfig;
@@ -421,9 +435,12 @@ function decodeCursorValue(value: unknown): unknown {
   return value;
 }
 
-function resolveDocPath(doc: Record<string, unknown>, key: string): unknown {
-  if (key === '_id') return doc._id;
-  if (!key.includes('.')) return doc[key];
+/** Resolve a sort key for cursor encoding; reject array-backed values at any depth. */
+export function resolveSortKeyValueForCursor(doc: Record<string, unknown>, key: string): unknown {
+  if (key === '_id') return assertScalarSortValue(doc._id, key);
+  if (!key.includes('.')) {
+    return assertScalarSortValue(doc[key], key);
+  }
   let cur: unknown = doc;
   for (const seg of key.split('.')) {
     if (cur == null || typeof cur !== 'object') return undefined;
@@ -434,12 +451,19 @@ function resolveDocPath(doc: Record<string, unknown>, key: string): unknown {
     }
     cur = (cur as Record<string, unknown>)[seg];
   }
-  return cur;
+  return assertScalarSortValue(cur, key);
 }
 
-/** Empty filter matches every document — never use it for bulk writes. */
+function assertScalarSortValue(value: unknown, key: string): unknown {
+  if (Array.isArray(value)) {
+    throw new Error(`@mongo__connection cannot encode array-backed sort key "${key}" for cursors`);
+  }
+  return value;
+}
+
+/** Vacuous / empty filters match every document — never use them for bulk writes. */
 function bulkWriteFilter(filter: Record<string, unknown>): Record<string, unknown> {
-  return filter && Object.keys(filter).length > 0 ? filter : MATCH_NOTHING_FILTER;
+  return isUniversallyMatchingFilter(filter) ? MATCH_NOTHING_FILTER : filter;
 }
 
 function encodeConnectionCursor(
@@ -448,7 +472,7 @@ function encodeConnectionCursor(
 ): string {
   const values: unknown[] = [];
   for (const key of Object.keys(sort)) {
-    values.push(encodeCursorValue(resolveDocPath(doc, key)));
+    values.push(encodeCursorValue(resolveSortKeyValueForCursor(doc, key)));
   }
   return Buffer.from(JSON.stringify(values), 'utf8').toString('base64url');
 }

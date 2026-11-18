@@ -14,10 +14,12 @@ export type MongoKind =
 
 export interface MongoTransportOptions {
   maxPoolSize?: number;
-  /** Declared BSON ObjectId / ref field names for hex→ObjectId coercion. */
+  /** Declared BSON ObjectId field names for hex→ObjectId coercion (not String refs). */
   objectIdFields?: string[];
   /** Fields that may be omitted on patch but reject explicit `null` on `$set`. */
   requiredFields?: string[];
+  /** Empty-input placeholder keys (e.g. `_`) — stripped on write; not real paths. */
+  placeholderFields?: string[];
 }
 
 export interface MongoMappingValue {
