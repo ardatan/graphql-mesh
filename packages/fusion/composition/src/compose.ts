@@ -121,9 +121,20 @@ export function isProtobufRpcSubgraph(schema: GraphQLSchema): boolean {
   );
 }
 
+/**
+ * SQL subgraphs (`@transport(kind: "sql")`) rewrite `@sql` binders under rename /
+ * naming-convention instead of stamping Mesh `@source` / `@meshSource`.
+ */
+export function isSqlSubgraph(schema: GraphQLSchema): boolean {
+  const transports = getDirectiveExtensions(schema)?.transport || [];
+  return transports.some((transport: { kind?: string }) => transport?.kind === 'sql');
+}
+
 /** True when transforms should rewrite directive mappings instead of Mesh `@source`. */
 export function skipsMeshSourceAnnotations(schema: GraphQLSchema): boolean {
-  return isFederationConnectorsSubgraph(schema) || isProtobufRpcSubgraph(schema);
+  return (
+    isFederationConnectorsSubgraph(schema) || isProtobufRpcSubgraph(schema) || isSqlSubgraph(schema)
+  );
 }
 
 export function getAnnotatedSubgraphs(
