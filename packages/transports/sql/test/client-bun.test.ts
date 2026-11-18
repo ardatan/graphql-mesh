@@ -21,6 +21,9 @@ describe('Bun.SQL availability (Node / Jest)', () => {
       rejectUnauthorized: false,
       ca: 'PEM',
     });
+    expect(resolveBunTlsOption(false)).toBe(false);
+    expect(resolveBunTlsOption('disable')).toBe(false);
+    expect(resolveBunTlsOption(undefined)).toBeUndefined();
     expect(
       buildBunSqlCtorOptions({
         adapter: 'mysql',
@@ -29,6 +32,13 @@ describe('Bun.SQL availability (Node / Jest)', () => {
         ssl: { ca: 'someCA', rejectUnauthorized: true },
       }).tls,
     ).toEqual({ rejectUnauthorized: true, ca: 'someCA' });
+    expect(
+      buildBunSqlCtorOptions({
+        adapter: 'mysql',
+        location: 'mysqls://u@h/db',
+        tls: false,
+      }).tls,
+    ).toBe(false);
   });
 
   it('sets Postgres search_path on every Bun pooled connection via connection GUC', () => {
@@ -45,7 +55,7 @@ describe('Bun.SQL availability (Node / Jest)', () => {
         location: 'postgres://u@h/db',
         schema: 'public',
       }).connection,
-    ).toBeUndefined();
+    ).toEqual({ search_path: '"public"' });
   });
 
   it('resolveSslOption treats sslmode=no-verify as insecure (shared with introspect)', () => {
@@ -62,34 +72,44 @@ describe('Bun.SQL availability (Node / Jest)', () => {
 });
 
 describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
-  it('registers connect listener for non-public schema on supplied pools', async () => {
+  it('registers acquire/connect listeners including explicit public schema', async () => {
     const { applyPgPoolSearchPath, wrapPgPoolAsSqlClient } = await import('../src/client.js');
-    const listeners: Array<(client: any) => void> = [];
+    const byEvent: Record<string, Array<(client: any) => void>> = { connect: [], acquire: [] };
     const pool = {
       query: async () => ({ rows: [] }),
       on: (event: string, listener: (client: any) => void) => {
-        if (event === 'connect') listeners.push(listener);
+        (byEvent[event] ||= []).push(listener);
       },
     };
     wrapPgPoolAsSqlClient(pool, { schema: 'app' });
-    expect(listeners).toHaveLength(1);
+    expect(byEvent.acquire.length).toBe(1);
+    expect(byEvent.connect.length).toBe(1);
     const queries: string[] = [];
-    await listeners[0]({
+    const client = {
       query: async (sql: string) => {
         queries.push(sql);
       },
-    });
-    expect(queries[0]).toMatch(/SET search_path TO "app"/);
+    };
+    byEvent.acquire[0](client);
+    byEvent.acquire[0](client); // once per client
+    expect(queries).toEqual(['SET search_path TO "app"']);
 
-    const listeners2: Array<(client: any) => void> = [];
+    const byEvent2: Record<string, Array<(client: any) => void>> = { connect: [], acquire: [] };
     applyPgPoolSearchPath(
       {
         on: (event: string, listener: (client: any) => void) => {
-          if (event === 'connect') listeners2.push(listener);
+          (byEvent2[event] ||= []).push(listener);
         },
       },
       'public',
     );
-    expect(listeners2).toHaveLength(0);
+    expect(byEvent2.acquire.length).toBe(1);
+    const queries2: string[] = [];
+    byEvent2.acquire[0]({
+      query: async (sql: string) => {
+        queries2.push(sql);
+      },
+    });
+    expect(queries2[0]).toMatch(/SET search_path TO "public"/);
   });
 });

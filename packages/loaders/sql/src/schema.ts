@@ -954,16 +954,21 @@ function createMutationInputs(
   const updateFields: Record<string, any> = {};
   for (const col of table.columns) {
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
-    if (isSolePkCol && col.autoIncrement) continue;
     const fieldName = colFieldName(naming, col, solePk, table);
     const gqlType = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
-    createFields[fieldName] = {
-      type:
-        col.notNull && !col.autoIncrement && !col.hasDefault
-          ? new GraphQLNonNull(gqlType)
-          : gqlType,
-    };
-    updateFields[fieldName] = { type: gqlType };
+    // Create: skip generated sole PK (DB assigns it). Non-generated PK stays writable.
+    if (!(isSolePkCol && col.autoIncrement)) {
+      createFields[fieldName] = {
+        type:
+          col.notNull && !col.autoIncrement && !col.hasDefault
+            ? new GraphQLNonNull(gqlType)
+            : gqlType,
+      };
+    }
+    // Update SET mapping never includes the sole PK (identity is the `where` arg).
+    if (!isSolePkCol) {
+      updateFields[fieldName] = { type: gqlType };
+    }
   }
   schemaComposer.createInputTC({
     name: naming.createInput(typeName),

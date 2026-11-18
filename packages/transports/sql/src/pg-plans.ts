@@ -98,6 +98,9 @@ export function wirePostgresSqlPlans(
 
       // Column scalars on table types: `$row.get('id')` for Pg steps, `access` for
       // plain objects from a generic parent resolve (mixed GraphQL.js / Grafast).
+      // Keep custom / existing resolvers and plans (no `@sql` on the field).
+      if (typeof fieldConfig.resolve === 'function') return fieldConfig;
+      if ((fieldConfig.extensions as any)?.grafast?.plan) return fieldConfig;
       const parentTable = meta.tableByType.get(typeName);
       if (!parentTable) return fieldConfig;
       const parentResource = (registry.pgResources as any)[parentTable];
@@ -117,13 +120,40 @@ export function wirePostgresSqlPlans(
 /** Object types returned by Query/Mutation roots that keep a generic resolver. */
 function collectTypesWithGenericRootParents(schema: GraphQLSchema): Set<string> {
   const out = new Set<string>();
+  const addNamedObject = (type: ReturnType<typeof getNamedType>) => {
+    if (isObjectType(type)) out.add(type.name);
+  };
+  const addConnectionNode = (connectionType: ReturnType<typeof getNamedType>) => {
+    if (!isObjectType(connectionType)) return;
+    const nodesField = connectionType.getFields().nodes;
+    if (nodesField) {
+      addNamedObject(getNamedType(nodesField.type));
+      return;
+    }
+    const edgesField = connectionType.getFields().edges;
+    if (edgesField) {
+      const edgeType = getNamedType(edgesField.type);
+      if (isObjectType(edgeType)) {
+        const nodeField = edgeType.getFields().node;
+        if (nodeField) addNamedObject(getNamedType(nodeField.type));
+      }
+    }
+  };
   const query = schema.getQueryType();
   const mutation = schema.getMutationType();
   for (const root of [query, mutation]) {
     if (!root) continue;
     for (const field of Object.values(root.getFields())) {
       const sqlDir = getDefDirectives(schema, field).find(d => d.name === 'sql');
-      if (!sqlDir) continue;
+      const named = getNamedType(field.type);
+      if (!sqlDir) {
+        // Hand-written roots that keep a GraphQL.js resolve still produce plain
+        // object parents — nested `@sql` relations must stay generic.
+        if (typeof field.resolve === 'function') {
+          addNamedObject(named);
+        }
+        continue;
+      }
       const kind = (sqlDir.args.kind || 'ROWS') as SqlKind;
       if (kind === 'INSERT' || kind === 'UPDATE' || kind === 'DELETE' || kind === 'COUNT') {
         continue;
@@ -134,29 +164,11 @@ function collectTypesWithGenericRootParents(schema: GraphQLSchema): Set<string> 
         rootWhereNeedsGenericResolver(where, sqlDir.args as Record<string, unknown>);
       const rowNeedsGeneric = kind === 'ROW' && rowWhereTooComplexForGet(where);
       if (!needsGeneric && !rowNeedsGeneric) continue;
-      const named = getNamedType(field.type);
-      if (!isObjectType(named)) continue;
       if (kind === 'CONNECTION') {
-        const nodesField = named.getFields().nodes;
-        if (nodesField) {
-          const nodeType = getNamedType(nodesField.type);
-          if (isObjectType(nodeType)) out.add(nodeType.name);
-          continue;
-        }
-        const edgesField = named.getFields().edges;
-        if (edgesField) {
-          const edgeType = getNamedType(edgesField.type);
-          if (isObjectType(edgeType)) {
-            const nodeField = edgeType.getFields().node;
-            if (nodeField) {
-              const nodeType = getNamedType(nodeField.type);
-              if (isObjectType(nodeType)) out.add(nodeType.name);
-            }
-          }
-        }
+        addConnectionNode(named);
         continue;
       }
-      out.add(named.name);
+      addNamedObject(named);
     }
   }
   return out;
@@ -171,8 +183,9 @@ function relationHasClientPlanners(args: Record<string, unknown>): boolean {
   return false;
 }
 
-/** Relation plans only apply the `$this` join — anything else drops filters. */
+/** Relation plans only apply a single `$this` join — anything else drops filters. */
 function relationWhereTooComplexForPlan(where: ReturnType<typeof parseSqlMapping>): boolean {
+  let thisEquals = 0;
   for (const entry of where.entries) {
     if (entry.spread) return true;
     if (entry.children) continue;
@@ -181,11 +194,15 @@ function relationWhereTooComplexForPlan(where: ReturnType<typeof parseSqlMapping
       if (entry.value?.kind === 'args') return true;
       continue;
     }
-    if (entry.value?.kind === 'this') continue;
+    if (entry.value?.kind === 'this') {
+      thisEquals += 1;
+      continue;
+    }
     // `tenant_id: $args.tenantId`, fixed literals, etc.
     return true;
   }
-  return false;
+  // Registry installs one local/remote attr pair; multi-predicate joins stay generic.
+  return thisEquals !== 1;
 }
 
 function whereHasClientFilter(where: ReturnType<typeof parseSqlMapping>): boolean {
@@ -340,13 +357,9 @@ function makeRootPlan(
     }
 
     if (kind === 'CONNECTION') {
+      // Pagination must go through `connection()` only — setting `first`/`after` on
+      // the select step first locks them and the connection setter then fails.
       const $rows = resource.find();
-      if (typeof $rows.setFirst === 'function') {
-        $rows.setFirst(fieldArg(fieldArgs, paginationArgs.first || 'first'));
-      }
-      if (typeof $rows.setAfter === 'function') {
-        $rows.setAfter(fieldArg(fieldArgs, paginationArgs.after || 'after'));
-      }
       const $connection = connection($rows);
       if (typeof $connection.setFirst === 'function') {
         $connection.setFirst(fieldArg(fieldArgs, paginationArgs.first || 'first'));

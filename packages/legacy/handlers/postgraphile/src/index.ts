@@ -104,9 +104,14 @@ export default class PostGraphileHandler implements MeshHandler {
   }
 
   [DisposableSymbols.asyncDispose]() {
-    if (this.disposableResource) {
-      return dispose(this.disposableResource);
+    if (!this.disposableResource) return;
+    // Prefer async dispose when both hooks exist — sync dispose on the Grafast
+    // executor starts cleanup without returning the awaitable.
+    const resource = this.disposableResource as Disposable & AsyncDisposable;
+    if (typeof resource[DisposableSymbols.asyncDispose] === 'function') {
+      return resource[DisposableSymbols.asyncDispose]();
     }
+    return dispose(resource);
   }
 }
 

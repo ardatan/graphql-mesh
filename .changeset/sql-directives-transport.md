@@ -41,9 +41,14 @@ Breaking for v0.minor: the handler no longer depends on the `postgraphile` /
 | --- | --- |
 | `connectionString` (env interpolation; optional when `pool` is a real `pg.Pool`) | `appendPlugins` / `skipPlugins` |
 | `schemaName` (first entry only; default `public`) | `options` (opaque library options bag) |
-| `pool` as an existing `pg.Pool` (or module export) — used for introspect + execute | `pool` as plain settings object (use URI / transport opts) |
+| `pool` as an existing `pg.Pool` (or module export) — used for introspect + execute | `pool` as plain settings object |
 | `tables` / `tableFields` (new, mysql-parity) | `subscriptions` / `live` |
 | | `contextOptions` (pgSettings helpers) |
+
+When the old `pool` settings object carried TLS/CA (or other options the URI cannot
+express), export a module that constructs a configured `pg.Pool` and point
+`pool` at that export. This YAML handler does not read compose `@transport`
+options — those apply when migrating to `loadSqlSubgraph`.
 
 Emitted GraphQL is the shared Mesh SQL CRUD / connection / `where` surface
 (`allX` connections, filters, mutations) — not the previous handler’s plugin-shaped

@@ -22,6 +22,10 @@ describe('postgraphile', () => {
       readonly: false,
       validate: false,
     });
+    jest.mocked(getSqlExecutor).mockClear();
+    jest.mocked(createSqlClient).mockClear();
+    jest.mocked(wrapPgPoolAsSqlClient).mockClear();
+    jest.mocked(loadGraphQLSchemaFromSql).mockClear();
     jest.mocked(getSqlExecutor).mockReturnValue({} as any);
     jest.mocked(createSqlClient).mockReturnValue({ adapter: 'postgres' } as any);
     jest
@@ -108,9 +112,10 @@ describe('postgraphile', () => {
       }),
     );
     expect(wrapPgPoolAsSqlClient).toHaveBeenCalledWith(pool, { schema: 'app' });
+    const wrapped = jest.mocked(wrapPgPoolAsSqlClient).mock.results[0]?.value;
     expect(getSqlExecutor).toHaveBeenCalledWith(
       expect.objectContaining({
-        client: expect.anything(),
+        client: wrapped,
       }),
     );
   });
@@ -142,6 +147,12 @@ describe('postgraphile', () => {
       }),
     );
     expect(wrapPgPoolAsSqlClient).toHaveBeenCalledWith(pool, { schema: 'app' });
+    const wrapped = jest.mocked(wrapPgPoolAsSqlClient).mock.results[0]?.value;
+    expect(getSqlExecutor).toHaveBeenCalledWith(
+      expect.objectContaining({
+        client: wrapped,
+      }),
+    );
   });
 
   it('requires connectionString or pool', async () => {

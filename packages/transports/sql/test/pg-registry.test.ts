@@ -92,7 +92,8 @@ describe('buildPgRegistryFromSqlSchema', () => {
       types: [Album, Artist],
     });
 
-    const { registry, tableByType, relationNames } = buildPgRegistryFromSqlSchema(schema);
+    const { registry, tableByType, relationNames, installedRelations } =
+      buildPgRegistryFromSqlSchema(schema);
 
     expect(tableByType.get('Album')).toBe('albums');
     expect(tableByType.get('Artist')).toBe('artists');
@@ -100,6 +101,8 @@ describe('buildPgRegistryFromSqlSchema', () => {
     expect(registry.pgResources.artists).toBeDefined();
     expect(relationNames.get('Album')?.get('artist')?.kind).toBe('ROW');
     expect(relationNames.get('Artist')?.get('albums')?.kind).toBe('ROWS');
+    expect(installedRelations.get('Album')?.has('artist')).toBe(true);
+    expect(installedRelations.get('Artist')?.has('albums')).toBe(true);
   });
 
   it('keeps id unique when @key selects slug, and rejects partial composite keys', () => {
@@ -124,6 +127,9 @@ describe('buildPgRegistryFromSqlSchema', () => {
       name: 'PartialKey',
       fields: {
         tenantId: { type: new GraphQLNonNull(GraphQLString) },
+        // Declared on the GraphQL type but omitted from SQL selection — isolates
+        // the missing mapping the unique-key builder must reject.
+        externalId: { type: new GraphQLNonNull(GraphQLString) },
         id: { type: new GraphQLNonNull(GraphQLID) },
       },
       extensions: {

@@ -64,8 +64,9 @@ export function buildBunSqlCtorOptions(opts: CreateSqlClientOptions): Record<str
   if (tls != null) bunOpts.tls = tls;
   // Per-connection GUC so every pooled Postgres connection gets the schema
   // (one-shot `SET search_path` only affects whichever connection ran it).
+  // Explicit `public` is applied too — Postgres may otherwise prefer `"$user"`.
   const schema = opts.adapter === 'postgres' ? opts.schema?.trim() : undefined;
-  if (schema && schema !== 'public') {
+  if (schema) {
     const ident = `"${schema.replace(/"/g, '""')}"`;
     const prev =
       bunOpts.connection && typeof bunOpts.connection === 'object'
@@ -82,8 +83,10 @@ export function resolveBunTlsOption(
   ssl?: { rejectUnauthorized?: boolean; ca?: string },
 ): boolean | string | { rejectUnauthorized?: boolean; ca?: string } | undefined {
   const mode = typeof tls === 'string' ? tls.toLowerCase() : undefined;
+  // Explicit disable must win over URI `sslmode=require` — omit (`undefined`)
+  // leaves Bun on the URL's TLS mode.
   if (tls === false || mode === 'disable' || mode === 'false') {
-    return undefined;
+    return false;
   }
   const insecure = mode === 'insecure' || mode === 'no-verify' || ssl?.rejectUnauthorized === false;
   if (ssl?.ca != null || ssl?.rejectUnauthorized != null || insecure) {
@@ -162,23 +165,33 @@ function normalizeBunRows<T>(result: any): T[] {
 
 type PgPoolConnectable = {
   on?(
-    event: 'connect',
+    event: 'connect' | 'acquire',
     listener: (client: { query: (sql: string) => Promise<unknown> }) => void,
   ): unknown;
 };
 
 /**
- * Apply Postgres `search_path` on every new pooled connection (not a one-shot SET).
- * Used for both owned pools and caller-supplied pools (e.g. handler `schemaName`).
+ * Apply Postgres `search_path` on pooled connections (including idle clients already
+ * in a supplied pool). Uses `acquire` so introspection that left a session at the
+ * default path still gets the selected schema before the next query. Explicit
+ * `public` is applied too — Postgres may otherwise prefer `"$user"` first.
  */
 export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string): void {
   const trimmed = schema?.trim();
-  if (!trimmed || trimmed === 'public') return;
+  if (!trimmed) return;
   if (typeof pool.on !== 'function') return;
   const ident = `"${trimmed.replace(/"/g, '""')}"`;
-  pool.on('connect', client => {
-    client.query(`SET search_path TO ${ident}`).catch(() => undefined);
-  });
+  const sql = `SET search_path TO ${ident}`;
+  const seen = new WeakSet<object>();
+  const ensure = (client: { query: (q: string) => Promise<unknown> }) => {
+    if (seen.has(client)) return;
+    seen.add(client);
+    // Failure leaves the client unusable for unqualified table names — surface via
+    // the next query rather than silently falling back to another schema.
+    void client.query(sql);
+  };
+  pool.on('acquire', ensure);
+  pool.on('connect', ensure);
 }
 
 /**
@@ -315,7 +328,16 @@ function createSqliteClient(location: string, cwd?: string): SqlClient {
       const bind = params.map(p => (typeof p === 'boolean' ? (p ? 1 : 0) : p)) as Array<
         null | number | bigint | string | Uint8Array
       >;
-      const returnsRows = /^\s*(SELECT|PRAGMA|WITH)\b/i.test(sql) || /\bRETURNING\b/i.test(sql);
+      // Prefer statement metadata over SQL-text heuristics — a table named
+      // `"returning"` must not look like a RETURNING clause.
+      const cols =
+        typeof (stmt as { columns?: () => unknown[] }).columns === 'function'
+          ? (stmt as { columns: () => unknown[] }).columns()
+          : null;
+      const returnsRows =
+        cols != null
+          ? cols.length > 0
+          : /^\s*(SELECT|PRAGMA|WITH)\b/i.test(sql) || /\bRETURNING\b/i.test(sql);
       if (returnsRows) {
         const rows = stmt.all(...bind) as T[];
         return { rows, rowCount: rows.length };

@@ -16,9 +16,10 @@ const artistSelection = ['id: ArtistId', 'name: Name'].join('\n');
 function fieldSql(
   args: Record<string, unknown>,
   resolve: GraphQLFieldConfig<any, any>['resolve'] = () => null,
+  type: GraphQLFieldConfig<any, any>['type'] = GraphQLString as any,
 ): GraphQLFieldConfig<any, any> {
   return {
-    type: GraphQLString as any,
+    type,
     resolve,
     extensions: {
       directives: {
@@ -111,11 +112,15 @@ describe('wirePostgresSqlPlans relation bailouts', () => {
       query: new GraphQLObjectType({
         name: 'Query',
         fields: {
-          artists: fieldSql({
-            table: 'artists',
-            kind: 'ROWS',
-            selection: artistSelection,
-          }),
+          artists: fieldSql(
+            {
+              table: 'artists',
+              kind: 'ROWS',
+              selection: artistSelection,
+            },
+            () => null,
+            new GraphQLList(Artist),
+          ),
         },
       }),
       types: [Album, Artist],
@@ -226,6 +231,89 @@ describe('wirePostgresSqlPlans relation bailouts', () => {
     expect(typeof (queryFields.artists.extensions as any)?.grafast?.plan).toBe('function');
     expect(artistFields.albums.resolve).toBeUndefined();
     expect(typeof (artistFields.albums.extensions as any)?.grafast?.plan).toBe('function');
+
+    // Assert `limit: $args.take` reaches setFirst via the `take` arg (not a hard-coded `limit`).
+    const setFirst = jest.fn();
+    jest.spyOn(registry.pgResources.artists as any, 'find').mockReturnValue({
+      setFirst,
+      setOffset: jest.fn(),
+    });
+    const getRaw = jest.fn((name: string) => (name === 'take' ? 1 : undefined));
+    (queryFields.artists.extensions as any).grafast.plan(null, { getRaw });
+    expect(getRaw).toHaveBeenCalledWith('take');
+    expect(setFirst).toHaveBeenCalled();
+  });
+
+  it('keeps generic resolve for relations with multiple $this predicates', () => {
+    const Profile: GraphQLObjectType = new GraphQLObjectType({
+      name: 'Profile',
+      fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        tenantId: { type: GraphQLInt },
+      }),
+      extensions: {
+        directives: {
+          sql: {
+            table: 'profiles',
+            selection: ['id: id', 'tenantId: tenant_id'].join('\n'),
+          },
+        },
+      },
+    });
+    const User: GraphQLObjectType = new GraphQLObjectType({
+      name: 'User',
+      fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        tenantId: { type: GraphQLInt },
+        profileId: { type: GraphQLInt },
+        profile: {
+          type: Profile,
+          resolve: () => null,
+          extensions: {
+            directives: {
+              sql: {
+                table: 'profiles',
+                kind: 'ROW',
+                where: 'tenant_id: $this.tenantId\nid: $this.profileId',
+                selection: ['id: id', 'tenantId: tenant_id'].join('\n'),
+              },
+            },
+          },
+        },
+      }),
+      extensions: {
+        directives: {
+          sql: {
+            table: 'users',
+            selection: ['id: id', 'tenantId: tenant_id', 'profileId: profile_id'].join('\n'),
+          },
+        },
+      },
+    });
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          users: fieldSql({
+            table: 'users',
+            kind: 'ROWS',
+            selection: ['id: id', 'tenantId: tenant_id', 'profileId: profile_id'].join('\n'),
+          }),
+        },
+      }),
+      types: [User, Profile],
+    });
+    const { registry, tableByType, relationNames, installedRelations, sqlToAttrByTable } =
+      buildPgRegistryFromSqlSchema(schema);
+    const wired = wirePostgresSqlPlans(schema, registry, {
+      relationNames,
+      tableByType,
+      installedRelations,
+      sqlToAttrByTable,
+    });
+    const userFields = (wired.getType('User') as GraphQLObjectType).getFields();
+    expect(typeof userFields.profile.resolve).toBe('function');
+    expect((userFields.profile.extensions as any)?.grafast?.plan).toBeUndefined();
   });
 
   it('keeps nested relation generic resolve when a root bails (e.g. orderBy)', () => {
