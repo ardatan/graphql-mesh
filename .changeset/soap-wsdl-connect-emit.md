@@ -1,5 +1,5 @@
 ---
-'@omnigraph/soap': major
+'@omnigraph/soap': minor
 '@graphql-mesh/transport-connect': minor
 ---
 
