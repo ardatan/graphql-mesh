@@ -31,8 +31,15 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
   value: $->get(4)->get("0")->get("tf"),
   __throw_First: $->get(4)->get("1")->ne(null),
   __throw_Second: $->get(4)->get("2")->ne(null),
-  message: $->get(4)->get("2")->get("rec")->get("1")->get("str")
+  message: $($->get(4)->get("1")->get("rec")->get("1")->get("str") ?? $->get(4)->get("2")->get("rec")->get("1")->get("str"))
 })`;
+    const firstThrown = [1, 'go', 2, 1, { '1': { rec: { '1': { str: 'from-first' } } } }];
+    expect(applySelection(sel, firstThrown, extras)).toEqual({
+      value: undefined,
+      __throw_First: true,
+      __throw_Second: false,
+      message: 'from-first',
+    });
     const secondThrown = [1, 'go', 2, 1, { '2': { rec: { '1': { str: 'from-second' } } } }];
     expect(applySelection(sel, secondThrown, extras)).toEqual({
       value: undefined,

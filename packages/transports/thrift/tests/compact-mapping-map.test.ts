@@ -39,10 +39,8 @@ describe('parseCompactArgsToTypeMap map-of-struct', () => {
 });
 
 describe('compact i32 ->match name↔i32', () => {
-  const nameToWire =
-    '->match(["TWEET", 0], ["RETWEET", 2], ["DM", 10], ["REPLY", 11], [@, 0])';
-  const wireToName =
-    '->match([0, "TWEET"], [2, "RETWEET"], [10, "DM"], [11, "REPLY"], [@, @])';
+  const nameToWire = '->match(["TWEET", 0], ["RETWEET", 2], ["DM", 10], ["REPLY", 11], [@, 0])';
+  const wireToName = '->match([0, "TWEET"], [2, "RETWEET"], [10, "DM"], [11, "REPLY"], [@, @])';
 
   it('parses args i32->match into TypeVal.values', () => {
     const map = parseCompactArgsToTypeMap(`5(i32): $args.tweetType${nameToWire}`);
@@ -75,14 +73,9 @@ describe('compact i32 ->match name↔i32', () => {
   });
 
   it('projects scalar and list enum roots', () => {
+    expect(applyCompactSelection(parseCompactSelection(`$(i32)${wireToName}`), 2)).toBe('RETWEET');
     expect(
-      applyCompactSelection(parseCompactSelection(`$(i32)${wireToName}`), 2),
-    ).toBe('RETWEET');
-    expect(
-      applyCompactSelection(
-        parseCompactSelection(`$(list)->map(@${wireToName})`),
-        [0, 2, 10],
-      ),
+      applyCompactSelection(parseCompactSelection(`$(list)->map(@${wireToName})`), [0, 2, 10]),
     ).toEqual(['TWEET', 'RETWEET', 'DM']);
   });
 });

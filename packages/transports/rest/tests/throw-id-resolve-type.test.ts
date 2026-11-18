@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLString, GraphQLUnionType, buildSchema } from 'graphql';
+import { buildSchema, GraphQLObjectType, GraphQLString, GraphQLUnionType } from 'graphql';
 import { getTypeResolverForAbstractType } from '../src/directives/getTypeResolverForAbstractType.js';
 import { processDirectives } from '../src/directives/process.js';
 
@@ -57,5 +57,40 @@ describe('abstract resolveType __throw_* discriminators', () => {
         union,
       ),
     ).toBe('Second');
+  });
+
+  it('treats Thrift field0 stamp as authoritative after processDirectives', () => {
+    const sdl = `
+      union GetStatusBagOrThrowResult = GetStatusBagOrThrowSuccess | Boom
+      type GetStatusBagOrThrowSuccess { value: StatusBag }
+      type StatusBag { left: Int }
+      type Boom { message: String }
+      type Query { getStatusBagOrThrow: GetStatusBagOrThrowResult }
+    `;
+    const schema = processDirectives(buildSchema(sdl), {});
+    const union = schema.getType('GetStatusBagOrThrowResult') as GraphQLUnionType;
+    const resolveType = union.resolveType!;
+    // Success with leftover message:undefined must not lose to Boom via scoring.
+    expect(
+      resolveType(
+        { field0: true, value: { left: 1 }, message: undefined, __throw_Boom: false },
+        null as any,
+        { schema } as any,
+        union,
+      ),
+    ).toBe('GetStatusBagOrThrowSuccess');
+    expect(
+      resolveType(
+        {
+          field0: false,
+          value: { left: undefined },
+          message: 'boom',
+          __throw_Boom: true,
+        },
+        null as any,
+        { schema } as any,
+        union,
+      ),
+    ).toBe('Boom');
   });
 });

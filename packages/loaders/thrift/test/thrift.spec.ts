@@ -413,11 +413,8 @@ describe('thrift', () => {
     const { buildSchema } = await import('graphql');
     const { getDirectiveExtensions } = await import('@graphql-tools/utils');
     const { TType } = await import('@creditkarma/thrift-server-core');
-    const {
-      parseCompactArgsToTypeMap,
-      parseCompactSelection,
-      applyCompactSelection,
-    } = await import('../../../transports/thrift/src/compact-mapping.js');
+    const { parseCompactArgsToTypeMap, parseCompactSelection, applyCompactSelection } =
+      await import('../../../transports/thrift/src/compact-mapping.js');
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
       subgraphName: 'Twitter',
       source: './fixtures/twitter.thrift',
@@ -451,9 +448,8 @@ describe('thrift', () => {
       REPLY: 11,
     });
     // selection leaf: wire i32 → GraphQL name via the same ->match shape.
-    const searchRpc = getDirectiveExtensions(
-      rebuilt.getQueryType()!.getFields().searchTweets,
-    )?.thrift__rpc?.[0];
+    const searchRpc = getDirectiveExtensions(rebuilt.getQueryType()!.getFields().searchTweets)
+      ?.thrift__rpc?.[0];
     expect(searchRpc?.selection).toMatch(
       /tweetType:\s*5\(i32\)->match\(\[0, "TWEET"\], \[2, "RETWEET"\]/,
     );
@@ -491,5 +487,35 @@ describe('thrift', () => {
       .thrift__rpc.args as string;
     expect(args).toMatch(/1\(list<map<string,\s*i32>>\):\s*\$args\.counts/);
     expect(args).not.toMatch(/cannot be emitted/);
+  });
+
+  it('binary list<map<string,list<Item>>> args fail at generate', async () => {
+    await expect(
+      loadNonExecutableGraphQLSchemaFromIDL({
+        subgraphName: 'ListMapNestedSvc',
+        source: './fixtures/list_map_nested_struct_arg.thrift',
+        baseDir: __dirname,
+        endpoint: 'http://localhost:4000/list-map-nested',
+        protocol: 'binary',
+      }),
+    ).rejects.toThrow(/composite map values cannot be emitted/);
+  });
+
+  it('TJSON union selection coalesces shared exception fields', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'SharedThrowSvc',
+      source: './fixtures/shared_throw_fields.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/shared-throw',
+      protocol: 'json',
+      ignoreExceptions: false,
+    });
+    const selection = (schema.getQueryType()!.getFields().go.extensions as any).directives.connect
+      .selection as string;
+    // One `message` property with `??` — not two keys that clobber at eval time.
+    expect(selection.match(/\bmessage:/g)?.length).toBe(1);
+    expect(selection).toMatch(
+      /message:\s*\$\(\$->get\(4\)->get\("1"\)->get\("rec"\)->get\("1"\)->get\("str"\)\s*\?\?\s*\$->get\(4\)->get\("2"\)->get\("rec"\)->get\("1"\)->get\("str"\)\)/,
+    );
   });
 });

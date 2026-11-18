@@ -100,6 +100,26 @@ function resolveTypeVal(
   return typeVal;
 }
 
+/** True when a type tree contains a STRUCT that needs field-id expansion in compact mapping. */
+function containsStruct(
+  typeVal: TypeVal,
+  topTypeMap: TypeMap,
+  stack: Set<string> = new Set(),
+): boolean {
+  const resolved = resolveTypeVal(typeVal, topTypeMap, stack);
+  if (resolved.type === TType.STRUCT) return true;
+  if (resolved.type === TType.LIST || resolved.type === TType.SET) {
+    return containsStruct(resolved.elementType, topTypeMap, stack);
+  }
+  if (resolved.type === TType.MAP) {
+    return (
+      containsStruct(resolved.keyType, topTypeMap, stack) ||
+      containsStruct(resolved.valType, topTypeMap, stack)
+    );
+  }
+  return false;
+}
+
 function tjsonTypeTag(typeVal: TypeVal, topTypeMap: TypeMap): string {
   const resolved = resolveTypeVal(typeVal, topTypeMap);
   return TJSON_TYPE_TAG[resolved.type as TType] || 'i32';
@@ -166,9 +186,7 @@ function formatCompactArgField(
     const wire = resolved.type === TType.SET ? 'set' : 'list';
     if (elem.type === TType.ENUM && elem.values && Object.keys(elem.values).length) {
       const base = level === 0 ? valueExpr : graphqlName;
-      return [
-        `${pad}${id}(${wire}): ${base}->map(@${formatEnumNameToWireMatch(elem.values)})`,
-      ];
+      return [`${pad}${id}(${wire}): ${base}->map(@${formatEnumNameToWireMatch(elem.values)})`];
     }
     if (elem.type === TType.STRUCT) {
       const elemName = elem.name || 'Anon';
@@ -225,40 +243,60 @@ function formatCompactArgField(
         lines.push(`${pad}}`);
         return lines;
       }
+      // `list<map<string, list<Item>>>` would emit `list<map<string, list>>` and drop
+      // Item field ids — fail until nested descriptors are preserved.
+      if (containsStruct(elem.valType, topTypeMap) || containsStruct(elem.keyType, topTypeMap)) {
+        throw new Error(
+          `Thrift ${wire}<map> arguments with composite map values cannot be emitted as compact @thrift__rpc args without losing nested descriptors. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
+        );
+      }
       return [`${pad}${id}(${token}): ${level === 0 ? valueExpr : graphqlName}`];
     }
     if (elem.type === TType.LIST || elem.type === TType.SET) {
-      throw new Error(
-        `Thrift nested ${wire} arguments cannot be emitted as compact @thrift__rpc args without losing nested descriptors. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
-      );
+      // Nested scalar/enum containers (e.g. list<list<i32>>) keep the full wire token.
+      if (containsStruct(elem, topTypeMap)) {
+        throw new Error(
+          `Thrift nested ${wire} arguments with struct elements cannot be emitted as compact @thrift__rpc args without losing nested descriptors. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
+        );
+      }
+      return [`${pad}${id}(${token}): ${level === 0 ? valueExpr : graphqlName}`];
     }
   }
 
   // map<*, struct> — expand value-struct field ids like list/set-of-struct.
-  if (
-    resolved.type === TType.MAP &&
-    resolveTypeVal(resolved.valType, topTypeMap).type === TType.STRUCT
-  ) {
-    const val = resolveTypeVal(resolved.valType, topTypeMap) as Extract<
-      TypeVal,
-      { type: TType.STRUCT }
-    >;
-    const valName = val.name || 'Anon';
-    if (seenStructs.has(valName)) {
+  if (resolved.type === TType.MAP) {
+    const val = resolveTypeVal(resolved.valType, topTypeMap);
+    if (val.type === TType.STRUCT) {
+      const valName = val.name || 'Anon';
+      if (seenStructs.has(valName)) {
+        throw new Error(
+          `Thrift struct "${valName}" is recursive in RPC map arguments; compact @thrift__rpc args cannot expand cycles without truncating. Restructure the IDL (bounded / non-recursive inputs) or hand-author a depth-limited mapping.`,
+        );
+      }
+      const nextSeen = new Set(seenStructs);
+      nextSeen.add(valName);
+      const lines = [`${pad}${id}(${token}): ${rhs} {`];
+      for (const [fieldName, fieldType] of Object.entries(val.fields)) {
+        lines.push(
+          ...formatCompactArgField(
+            fieldType,
+            fieldName,
+            topTypeMap,
+            level + 1,
+            fieldName,
+            nextSeen,
+          ),
+        );
+      }
+      lines.push(`${pad}}`);
+      return lines;
+    }
+    // map<*, list<Item>> etc. would emit bare `list` without field ids — fail loud.
+    if (containsStruct(val, topTypeMap)) {
       throw new Error(
-        `Thrift struct "${valName}" is recursive in RPC map arguments; compact @thrift__rpc args cannot expand cycles without truncating. Restructure the IDL (bounded / non-recursive inputs) or hand-author a depth-limited mapping.`,
+        `Thrift map arguments with nested struct containers cannot be emitted as compact @thrift__rpc args without losing nested descriptors. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
       );
     }
-    const nextSeen = new Set(seenStructs);
-    nextSeen.add(valName);
-    const lines = [`${pad}${id}(${token}): ${rhs} {`];
-    for (const [fieldName, fieldType] of Object.entries(val.fields)) {
-      lines.push(
-        ...formatCompactArgField(fieldType, fieldName, topTypeMap, level + 1, fieldName, nextSeen),
-      );
-    }
-    lines.push(`${pad}}`);
-    return lines;
   }
 
   if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
@@ -295,6 +333,21 @@ export function buildCompactSelection(
     }
     if (elem.type === TType.ENUM && elem.values && Object.keys(elem.values).length) {
       return `$(list)->map(@${formatEnumWireToNameMatch(elem.values)})`;
+    }
+    // Nested list/set of structs would fall through to a scalar token and leak field-id Maps.
+    if ((elem.type === TType.LIST || elem.type === TType.SET) && containsStruct(elem, topTypeMap)) {
+      throw new Error(
+        `Thrift nested list/set of structs in RPC selection cannot be emitted as compact @thrift__rpc selection without losing field projections. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
+      );
+    }
+    // list<map<string, list<Item>>> → wireTypeToken drops Item descriptors.
+    if (elem.type === TType.MAP && containsStruct(elem, topTypeMap)) {
+      const val = resolveTypeVal(elem.valType, topTypeMap);
+      if (val.type !== TType.STRUCT) {
+        throw new Error(
+          `Thrift list/set of maps with composite map values in RPC selection cannot be emitted as compact @thrift__rpc selection without losing nested descriptors. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
+        );
+      }
     }
     return `$(${wireTypeToken(returnTypeVal, topTypeMap)})`;
   }
@@ -370,12 +423,25 @@ function formatCompactSelectionField(
       lines.push(`${pad}}`);
       return lines;
     }
+    // Nested containers with structs (e.g. list<list<Item>>, list<map<k, list<Item>>>).
+    if (containsStruct(resolved.elementType, topTypeMap)) {
+      throw new Error(
+        `Thrift nested ${wire} of structs in RPC selection cannot be emitted as compact @thrift__rpc selection without losing field projections. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
+      );
+    }
+  }
+
+  if (resolved.type === TType.MAP && containsStruct(resolved, topTypeMap)) {
+    const val = resolveTypeVal(resolved.valType, topTypeMap);
+    if (val.type !== TType.STRUCT) {
+      throw new Error(
+        `Thrift map with composite values in RPC selection cannot be emitted as compact @thrift__rpc selection without losing nested descriptors. Prefer a struct wrapper, hand-author the mapping, or simplify the IDL.`,
+      );
+    }
   }
 
   if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
-    return [
-      `${pad}${graphqlName}: ${id}(i32)${formatEnumWireToNameMatch(resolved.values)}`,
-    ];
+    return [`${pad}${graphqlName}: ${id}(i32)${formatEnumWireToNameMatch(resolved.values)}`];
   }
 
   return [`${pad}${graphqlName}: ${id}(${token})`];
@@ -689,6 +755,14 @@ export function buildTJSONUnionConnectSelection(
   } else {
     props.push(`value: ${buildTJSONConnectSelection(returnTypeVal, topTypeMap)}`);
   }
+  // Exception field projections — merge shared GraphQL names with `??` so a later
+  // throw's missing path does not overwrite an earlier throw's value with undefined.
+  const throwFieldExprs = new Map<string, string[]>();
+  const pushThrowField = (graphqlName: string, expr: string) => {
+    const list = throwFieldExprs.get(graphqlName) || [];
+    list.push(expr);
+    throwFieldExprs.set(graphqlName, list);
+  };
   for (const t of throws) {
     const typeVal = topTypeMap[t.typeName];
     const fid = String(t.id);
@@ -697,11 +771,20 @@ export function buildTJSONUnionConnectSelection(
     props.push(`__throw_${t.typeName}: $->get(4)->get("${fid}")->ne(null)`);
     if (typeVal && typeVal.type === TType.STRUCT) {
       for (const [fieldName, fieldType] of Object.entries(typeVal.fields)) {
-        props.push(formatTJSONLitProperty(fieldName, fieldType, topTypeMap, parent));
+        const lit = formatTJSONLitProperty(fieldName, fieldType, topTypeMap, parent);
+        const colon = lit.indexOf(':');
+        pushThrowField(fieldName, colon >= 0 ? lit.slice(colon + 1).trim() : lit);
       }
     } else {
-      props.push(`message: ${parent}->get("1")->get("str")`);
+      pushThrowField('message', `${parent}->get("1")->get("str")`);
     }
+  }
+  for (const [fieldName, exprs] of throwFieldExprs) {
+    // Wrap multi-source fields in `$()` so `??` runs through Apollo LitExpr /
+    // dollar-paren eval (bare LitObject values do not coalesce).
+    props.push(
+      exprs.length > 1 ? `${fieldName}: $(${exprs.join(' ?? ')})` : `${fieldName}: ${exprs[0]}`,
+    );
   }
   return `$({\n  ${props.join(',\n  ')}\n})`;
 }

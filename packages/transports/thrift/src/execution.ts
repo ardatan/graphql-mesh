@@ -6,11 +6,7 @@ import {
   getRootFieldsWithArgs,
   projectResultBySelectionSet,
 } from '@graphql-mesh/utils';
-import {
-  getDirectiveExtensions,
-  getRootTypeMap,
-  type ExecutionResult,
-} from '@graphql-tools/utils';
+import { getDirectiveExtensions, getRootTypeMap, type ExecutionResult } from '@graphql-tools/utils';
 import { createGraphQLThriftClient, type ThriftRpcBinding } from './client.js';
 import type { GraphQLThriftAnnotations } from './types.js';
 

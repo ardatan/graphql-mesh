@@ -31,7 +31,7 @@ The old surface stamped opaque `@fieldTypeMap` bags and a large `@transport.opti
 - Slim `@transport(subgraph, kind: "thrift", location, headers)` — no options bag.
 - Per-field `@thrift__rpc(function, args, selection, throws?, messageType, entity?)`.
 - Compact mapping keeps wire types explicit (`1(i32): left`, `$(i16)`, containers, nested maps); multiline values print as `"""`.
-- `map<*, struct>` args expand the value struct field ids (same recursion as list/set-of-struct). `list/set<map<*, scalar>>` keeps the full nested wire token (e.g. `list<map<string, i32>>`) so binary regenerate does not drop the method.
+- `map<*, struct>` args expand the value struct field ids (same recursion as list/set-of-struct). `list/set<map<*, scalar>>` keeps the full nested wire token (e.g. `list<map<string, i32>>`) so binary regenerate does not drop the method. Nested scalar containers (e.g. `list<list<i32>>`) keep the full token; nested containers that would drop struct field ids (e.g. `list<map<string, list<Item>>>`) fail at generate until descriptors are preserved.
 - `function` is always the IDL name. Single-service generate **omits** `service:` (path is on `@transport`).
 - `messageType: ONEWAY` does not wait for / decode a reply.
 - `entity: true` only via loader `entityMethods` (Federation entity Query fields).
@@ -50,7 +50,7 @@ Emits `@source` + `@connect` (TJSON) instead of thrift `@transport`:
 - `isSuccess` / `errors` so declared throws and `TApplicationException` are not silent nulls; ONEWAY omits `isSuccess`
 - Bool scalars encode as TJSON integers `0`/`1` (`->match`). Enum args/selections bake name <-> i32 `->match` (root scalars, root list/set, and list/set enum fields inside structs, including union `$({ … })` selections).
 - **Fail at generate** (prefer scalar/struct args, binary, or hand-author `@connect`; Hive Mesh supports `->concat`): `map<*, bool>`, **list/set args**, and maps whose values are struct/list/set/map (Connectors cannot rewrite map values / LitArray has no element spread).
-- Void/ONEWAY `@connect(selection:)` uses `$(null)` (bare `null` is a field path). `ignoreExceptions: false` unions emit a single `$({ … })` selection; void success is `ok: $->get(4)->size->eq(0)`; struct success stamps `field0: $->get(4)->get("0")->ne(null)` and `resolveType` treats `field0` as authoritative when present (Hive may keep `value: { left: undefined }` on exception replies). Declared throws also stamp `__throw_<TypeName>` from the reply field id so shared exception field names (e.g. `message`) do not pick the wrong member; binary still uses `__typename`.
+- Void/ONEWAY `@connect(selection:)` uses `$(null)` (bare `null` is a field path). `ignoreExceptions: false` unions emit a single `$({ … })` selection; void success is `ok: $->get(4)->size->eq(0)`; struct success stamps `field0: $->get(4)->get("0")->ne(null)` and both the loader and REST `processDirectives` resolveType treat that stamp as authoritative when present (Hive may keep `value: { left: undefined }` / `message: undefined` on replies). Declared throws also stamp `__throw_<TypeName>` from the reply field id; shared exception field projections coalesce with `$(a ?? b)` so a later missing throw path does not clobber an earlier value. Binary still uses `__typename`.
 
 #### Exceptions
 

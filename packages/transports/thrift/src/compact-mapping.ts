@@ -104,11 +104,7 @@ export function applyMatch(value: unknown, arms?: MatchArm[]): unknown {
   return value;
 }
 
-export function applyMatchCoerce(
-  raw: unknown,
-  match?: MatchArm[],
-  mapMatch?: MatchArm[],
-): unknown {
+export function applyMatchCoerce(raw: unknown, match?: MatchArm[], mapMatch?: MatchArm[]): unknown {
   if (mapMatch?.length && Array.isArray(raw)) {
     return raw.map(v => applyMatch(v, mapMatch));
   }
@@ -337,7 +333,8 @@ function parseCompactArgFields(src: string): ArgField[] {
 
 function parseArgFieldAt(lines: string[], index: number): { field: ArgField; next: number } {
   const line = lines[index];
-  const m = line.match(/^(\d+)\(([^)]+)\):\s*(.+?)(?:\s*\{)?\s*$/);
+  // Optional leading `-` — @creditkarma/thrift-parser keeps signed field IDs.
+  const m = line.match(/^(-?\d+)\(([^)]+)\):\s*(.+?)(?:\s*\{)?\s*$/);
   if (!m) {
     throw new Error(`Invalid compact thrift args line: ${line}`);
   }
@@ -382,7 +379,8 @@ function parseSelectionFieldAt(
 ): { field: CompactSelectionField; next: number } {
   const line = lines[index];
   // name: 1(i32)->match(...)  OR  name: 1(i32)->get("primary")  OR  name: 1 {
-  const m = line.match(/^([A-Za-z_][\w]*)\s*:\s*(\d+)(?:\(([^)]+)\))?(.*)$/);
+  // Optional leading `-` on field id (signed Thrift field IDs).
+  const m = line.match(/^([A-Za-z_][\w]*)\s*:\s*(-?\d+)(?:\(([^)]+)\))?(.*)$/);
   if (!m) {
     throw new Error(`Invalid compact thrift selection line: ${line}`);
   }
@@ -479,10 +477,7 @@ function parsePipeSuffixes(rest: string): {
   return { mapGet, match, mapMatch };
 }
 
-function extractParenCall(
-  src: string,
-  head: string,
-): { args: string; rest: string } | null {
+function extractParenCall(src: string, head: string): { args: string; rest: string } | null {
   if (!src.startsWith(`${head}(`)) return null;
   let depth = 0;
   for (let i = head.length; i < src.length; i++) {
@@ -521,10 +516,7 @@ function parseMatchAtom(raw: string): MatchAtom {
   if (t === 'true') return true;
   if (t === 'false') return false;
   if (/^-?\d+$/.test(t)) return Number(t);
-  if (
-    (t.startsWith('"') && t.endsWith('"')) ||
-    (t.startsWith("'") && t.endsWith("'"))
-  ) {
+  if ((t.startsWith('"') && t.endsWith('"')) || (t.startsWith("'") && t.endsWith("'"))) {
     try {
       return JSON.parse(t.startsWith("'") ? `"${t.slice(1, -1)}"` : t);
     } catch {
