@@ -47,7 +47,7 @@ Emits `@source` + `@connect` (TJSON) instead of thrift `@transport`:
 - Path `/`, or `/<service>` when `serviceName` is set
 - Body message types CALL=`1`, ONEWAY=`4`
 - `isSuccess` / `errors` so declared throws and `TApplicationException` are not silent nulls; ONEWAY omits `isSuccess`
-- Bool scalars encode as TJSON integers `0`/`1` (`->match`). Enum args/selections bake name <-> i32 `->match`.
+- Bool scalars encode as TJSON integers `0`/`1` (`->match`). Enum args/selections bake name <-> i32 `->match` (root scalars, root list/set, and list/set enum fields inside structs, including union `$({ … })` selections).
 - **Fail at generate** (prefer scalar/struct args, binary, or hand-author `@connect`; Hive Mesh supports `->concat`): `map<*, bool>`, **list/set args**, and maps whose values are struct/list/set/map (Connectors cannot rewrite map values / LitArray has no element spread).
 - Void/ONEWAY `@connect(selection:)` uses `$(null)` (bare `null` is a field path). `ignoreExceptions: false` unions emit a single `$({ … })` selection; void success is `ok: $->get(4)->size->eq(0)`; struct success stamps `field0: $->get(4)->get("0")->ne(null)` so empty `{}` projections from exception replies are not treated as success.
 

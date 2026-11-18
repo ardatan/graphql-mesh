@@ -323,4 +323,41 @@ describe('thrift', () => {
       .connect.selection as string;
     expect(listStates).toMatch(/->map\(@->match\(\[7,\s*"READY"\].*\[@,\s*@\]\)\)/);
   });
+
+  it('TJSON struct list/set enum fields map i32 to member names', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'EnumReturn',
+      source: './fixtures/enum_return.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/enum',
+      protocol: 'json',
+    });
+    const selection = (schema.getQueryType()!.getFields().getStatusBag.extensions as any).directives
+      .connect.selection as string;
+    expect(selection).toMatch(
+      /states:\s*\$->get\(4\)->get\("0"\)->get\("rec"\)->get\("1"\)->get\("lst"\)->slice\(2\)->map\(@->match\(\[7,\s*"READY"\].*\[@,\s*@\]\)\)/,
+    );
+    expect(selection).toMatch(
+      /uniqueStates:\s*\$->get\(4\)->get\("0"\)->get\("rec"\)->get\("2"\)->get\("set"\)->slice\(2\)->map\(@->match\(\[7,\s*"READY"\].*\[@,\s*@\]\)\)/,
+    );
+  });
+
+  it('TJSON union selections map nested list/set enum fields to member names', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'EnumReturn',
+      source: './fixtures/enum_return.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/enum',
+      protocol: 'json',
+      ignoreExceptions: false,
+    });
+    const selection = (schema.getQueryType()!.getFields().getStatusBagOrThrow.extensions as any)
+      .directives.connect.selection as string;
+    expect(selection).toMatch(
+      /states:\s*\$->get\(4\)->get\("0"\)->get\("rec"\)->get\("1"\)->get\("lst"\)->slice\(2\)->map\(@->match\(\[7,\s*"READY"\].*\[@,\s*@\]\)\)/,
+    );
+    expect(selection).toMatch(
+      /uniqueStates:\s*\$->get\(4\)->get\("0"\)->get\("rec"\)->get\("2"\)->get\("set"\)->slice\(2\)->map\(@->match\(\[7,\s*"READY"\].*\[@,\s*@\]\)\)/,
+    );
+  });
 });

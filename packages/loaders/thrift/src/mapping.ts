@@ -500,6 +500,23 @@ function formatTJSONStructFieldsObject(
 }
 
 /**
+ * JSON-mode GraphQL enums use member names — map wire i32 → name in TJSON selection.
+ * `mapOverList` wraps with `->map(...)` for list/set element projections.
+ */
+function tjsonEnumWireToNameSuffix(
+  resolved: Extract<TypeVal, { type: TType.ENUM }>,
+  mapOverList: boolean,
+): string | undefined {
+  if (!resolved.values || !Object.keys(resolved.values).length) {
+    return undefined;
+  }
+  const arms = Object.entries(resolved.values)
+    .map(([name, n]) => `[${n}, "${name}"]`)
+    .join(', ');
+  return mapOverList ? `->map(@->match(${arms}, [@, @]))` : `->match(${arms}, [@, @])`;
+}
+
+/**
  * TJSON `@connect(selection:)` — peel message envelope index 4, success field `"0"`.
  */
 export function buildTJSONConnectSelection(
@@ -529,16 +546,11 @@ export function buildTJSONConnectSelection(
         .join('\n  ');
       return `${base} {\n  ${nested}\n}`;
     }
-    // JSON-mode enums use member names as GraphQL values — map wire i32 → name.
-    if (
-      elemResolved.type === TType.ENUM &&
-      elemResolved.values &&
-      Object.keys(elemResolved.values).length
-    ) {
-      const arms = Object.entries(elemResolved.values)
-        .map(([name, n]) => `[${n}, "${name}"]`)
-        .join(', ');
-      return `${base}->map(@->match(${arms}, [@, @]))`;
+    if (elemResolved.type === TType.ENUM) {
+      const suffix = tjsonEnumWireToNameSuffix(elemResolved, true);
+      if (suffix) {
+        return `${base}${suffix}`;
+      }
     }
     return base;
   }
@@ -546,12 +558,12 @@ export function buildTJSONConnectSelection(
     const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
     return `$->get(4)->get("0")->get("${tag}")->get(3)`;
   }
-  if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
-    const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
-    const arms = Object.entries(resolved.values)
-      .map(([name, n]) => `[${n}, "${name}"]`)
-      .join(', ');
-    return `$->get(4)->get("0")->get("${tag}")->match(${arms}, [@, @])`;
+  if (resolved.type === TType.ENUM) {
+    const suffix = tjsonEnumWireToNameSuffix(resolved, false);
+    if (suffix) {
+      const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
+      return `$->get(4)->get("0")->get("${tag}")${suffix}`;
+    }
   }
   if (resolved.type !== TType.STRUCT) {
     const tag = tjsonTypeTag(returnTypeVal, topTypeMap);
@@ -643,18 +655,26 @@ function formatTJSONLitProperty(
   }
 
   if (resolved.type === TType.LIST || resolved.type === TType.SET) {
-    return `${graphqlName}: ${fieldPath}->get("${tag}")->slice(2)`;
+    const listPath = `${fieldPath}->get("${tag}")->slice(2)`;
+    const elemResolved = resolveTypeVal(resolved.elementType, topTypeMap);
+    if (elemResolved.type === TType.ENUM) {
+      const suffix = tjsonEnumWireToNameSuffix(elemResolved, true);
+      if (suffix) {
+        return `${graphqlName}: ${listPath}${suffix}`;
+      }
+    }
+    return `${graphqlName}: ${listPath}`;
   }
 
   if (resolved.type === TType.MAP) {
     return `${graphqlName}: ${fieldPath}->get("${tag}")->get(3)`;
   }
 
-  if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
-    const arms = Object.entries(resolved.values)
-      .map(([name, n]) => `[${n}, "${name}"]`)
-      .join(', ');
-    return `${graphqlName}: ${fieldPath}->get("${tag}")->match(${arms}, [@, @])`;
+  if (resolved.type === TType.ENUM) {
+    const suffix = tjsonEnumWireToNameSuffix(resolved, false);
+    if (suffix) {
+      return `${graphqlName}: ${fieldPath}->get("${tag}")${suffix}`;
+    }
   }
 
   return `${graphqlName}: ${fieldPath}->get("${tag}")`;
@@ -713,6 +733,12 @@ function formatTJSONSelectionField(
         .join('\n  ');
       return `${graphqlName}: ${listPath} {\n  ${nested}\n}`;
     }
+    if (elemResolved.type === TType.ENUM) {
+      const suffix = tjsonEnumWireToNameSuffix(elemResolved, true);
+      if (suffix) {
+        return `${graphqlName}: ${listPath}${suffix}`;
+      }
+    }
     return `${graphqlName}: ${listPath}`;
   }
 
@@ -720,11 +746,11 @@ function formatTJSONSelectionField(
     return `${graphqlName}: ${fieldPath}->get("${tag}")->get(3)`;
   }
 
-  if (resolved.type === TType.ENUM && resolved.values && Object.keys(resolved.values).length) {
-    const arms = Object.entries(resolved.values)
-      .map(([name, n]) => `[${n}, "${name}"]`)
-      .join(', ');
-    return `${graphqlName}: ${fieldPath}->get("${tag}")->match(${arms}, [@, @])`;
+  if (resolved.type === TType.ENUM) {
+    const suffix = tjsonEnumWireToNameSuffix(resolved, false);
+    if (suffix) {
+      return `${graphqlName}: ${fieldPath}->get("${tag}")${suffix}`;
+    }
   }
 
   return `${graphqlName}: ${fieldPath}->get("${tag}")`;
