@@ -1,5 +1,5 @@
 import type { DocumentNode, GraphQLSchema } from 'graphql';
-import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 import {
   resolveSubgraphSchema,
   type ResolveSubgraphSchemaTransport,
@@ -28,25 +28,30 @@ export interface LoadSubgraphFromSdlOptions {
 /**
  * Load a hand-written subgraph for Compose as a `sourceHandler`.
  *
- * Prefer `defineConfig({ subgraphs: [{ name, schema }] })` when you do not need
+ * Prefer `defineConfig({ subgraphs: [{ name?, schema }] })` when you do not need
  * a `sourceHandler` wrapper.
  *
+ * `name` is optional when the schema already has `@transport(subgraph: ...)`.
  * `schema` accepts a path/URL string, inline SDL string, `DocumentNode`,
  * `GraphQLSchema`, or a Promise of any of those.
  */
 export function loadSubgraphFromSDL(
-  name: string,
+  name: string | undefined,
   schema: SubgraphFromSdlSource,
   options: LoadSubgraphFromSdlOptions = {},
 ): MeshComposeCLISourceHandlerDef {
   return ctx => ({
     name,
-    schema$: resolveSubgraphSchema(ctx, {
-      subgraphName: name,
-      schema,
-      composeConnect: options.composeConnect,
-      transport: options.transport,
-    }),
+    schema$: handleMaybePromise(
+      () =>
+        resolveSubgraphSchema(ctx, {
+          subgraphName: name,
+          schema,
+          composeConnect: options.composeConnect,
+          transport: options.transport,
+        }),
+      resolved => resolved.schema,
+    ),
   });
 }
 

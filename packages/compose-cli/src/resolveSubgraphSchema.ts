@@ -50,7 +50,16 @@ export interface ResolveSubgraphSchemaOptions {
    * Partial `@transport` fields: merge onto an existing stamp, or add one.
    */
   transport?: ResolveSubgraphSchemaTransport;
-  subgraphName: string;
+  /**
+   * Optional subgraph name. When omitted, taken from `@transport(subgraph:)`.
+   * When both are set and differ, a conflict error is thrown.
+   */
+  subgraphName?: string;
+}
+
+export interface ResolvedSubgraphSchema {
+  name: string;
+  schema: GraphQLSchema;
 }
 
 function looksLikeInlineSdl(value: string): boolean {
@@ -80,6 +89,48 @@ function firstTransportArgs(existing: unknown): Record<string, any> | undefined 
     return { ...(existing as Record<string, any>) };
   }
   return undefined;
+}
+
+function readTransportSubgraph(schema: GraphQLSchema): string | undefined {
+  const fromExt = firstTransportArgs(
+    (schema.extensions as any)?.directives?.transport ??
+      getDirectiveExtensions(schema)?.transport,
+  );
+  const value = fromExt?.subgraph;
+  return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
+
+/**
+ * Resolve the subgraph name from config and/or `@transport(subgraph:)`.
+ *
+ * - Config name only → use it
+ * - Transport subgraph only → use it
+ * - Both, equal → use it
+ * - Both, different → throw conflict
+ * - Neither → throw (name required)
+ */
+export function resolveSubgraphName(
+  schema: GraphQLSchema,
+  configName?: string,
+): string {
+  const fromTransport = readTransportSubgraph(schema);
+  if (
+    configName != null &&
+    configName.length > 0 &&
+    fromTransport != null &&
+    configName !== fromTransport
+  ) {
+    throw new Error(
+      `Subgraph name conflict: config name "${configName}" does not match @transport(subgraph: "${fromTransport}")`,
+    );
+  }
+  const name = (configName != null && configName.length > 0 ? configName : undefined) ?? fromTransport;
+  if (name == null || name.length === 0) {
+    throw new Error(
+      'Subgraph name is required: set `subgraphs[].name` or include `@transport(subgraph: ...)` on the schema',
+    );
+  }
+  return name;
 }
 
 function withoutTransportAstDirectives<T extends { directives?: readonly any[] } | null | undefined>(
@@ -171,15 +222,19 @@ function applyTransportOptions(
 }
 
 function finalizeSchema(
-  subgraphName: string,
+  configName: string | undefined,
   schema: GraphQLSchema,
   options: Pick<ResolveSubgraphSchemaOptions, 'composeConnect' | 'transport'>,
-): GraphQLSchema {
-  let next = applyTransportOptions(subgraphName, schema, options.transport);
+): ResolvedSubgraphSchema {
+  // Resolve name from config / existing `@transport` before stamping patches.
+  const name = resolveSubgraphName(schema, configName);
+  let next = applyTransportOptions(name, schema, options.transport);
+  // Re-check after patch (e.g. transport created with subgraph).
+  const confirmed = resolveSubgraphName(next, configName);
   if (options.composeConnect !== false) {
     next = addConnectComposeDirective(next);
   }
-  return next;
+  return { name: confirmed, schema: next };
 }
 
 function buildFromInput(input: SubgraphSchemaInput): GraphQLSchema {
@@ -196,23 +251,24 @@ function buildFromInput(input: SubgraphSchemaInput): GraphQLSchema {
 }
 
 /**
- * Resolve a hand-written / in-memory subgraph `schema` value to a `GraphQLSchema`.
+ * Resolve a hand-written / in-memory subgraph `schema` value to a named schema.
  */
 export function resolveSubgraphSchema(
   ctx: LoaderContext,
   options: ResolveSubgraphSchemaOptions,
-): MaybePromise<GraphQLSchema> {
-  const { subgraphName } = options;
+): MaybePromise<ResolvedSubgraphSchema> {
+  const configName = options.subgraphName;
+  const label = configName ?? '<unnamed>';
   return handleMaybePromise(
     () => options.schema,
     schemaInput => {
       if (schemaInput instanceof GraphQLSchema || typeof schemaInput !== 'string') {
-        return finalizeSchema(subgraphName, buildFromInput(schemaInput), options);
+        return finalizeSchema(configName, buildFromInput(schemaInput), options);
       }
 
       // Inline SDL first (before env interpolation, which can break GraphQL type names).
       if (looksLikeInlineSdl(schemaInput)) {
-        return finalizeSchema(subgraphName, buildFromInput(schemaInput), options);
+        return finalizeSchema(configName, buildFromInput(schemaInput), options);
       }
       const rawSource = stringInterpolator.parse(schemaInput, {
         env: globalThis.process?.env,
@@ -223,12 +279,12 @@ export function resolveSubgraphSchema(
           res => {
             if (!res.ok) {
               throw new Error(
-                `Failed to load subgraph "${subgraphName}" from ${rawSource}: ${res.statusText}`,
+                `Failed to load subgraph "${label}" from ${rawSource}: ${res.statusText}`,
               );
             }
             return handleMaybePromise(
               () => res.text(),
-              text => finalizeSchema(subgraphName, buildFromInput(text), options),
+              text => finalizeSchema(configName, buildFromInput(text), options),
             );
           },
         );
@@ -244,10 +300,10 @@ export function resolveSubgraphSchema(
               log: ctx.log,
             }),
           (text: unknown) =>
-            finalizeSchema(subgraphName, buildFromInput(String(text)), options),
+            finalizeSchema(configName, buildFromInput(String(text)), options),
         );
       }
-      return finalizeSchema(subgraphName, buildFromInput(rawSource), options);
+      return finalizeSchema(configName, buildFromInput(rawSource), options);
     },
   );
 }

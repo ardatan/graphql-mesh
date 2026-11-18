@@ -22,8 +22,7 @@ import { mergeSchemas } from '@graphql-tools/schema';
 import { getDocumentNodeFromSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
-import type { MaybePromise } from '@whatwg-node/promise-helpers';
-import { resolveSubgraphSchema } from './resolveSubgraphSchema.js';
+import { resolveSubgraphName, resolveSubgraphSchema } from './resolveSubgraphSchema.js';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
 const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(globalThis.process?.env?.DEBUG));
@@ -53,25 +52,40 @@ export async function getComposedResultFromConfig(
   const subgraphConfigsForComposition: SubgraphConfig[] = await Promise.all(
     config.subgraphs.map(async subgraphCLIConfig => {
       let subgraphName: string;
-      let schema$: MaybePromise<GraphQLSchema>;
       if ('schema' in subgraphCLIConfig && subgraphCLIConfig.schema != null) {
-        subgraphName = subgraphCLIConfig.name;
-        schema$ = resolveSubgraphSchema(ctx, {
-          subgraphName,
-          schema: subgraphCLIConfig.schema,
-          composeConnect: subgraphCLIConfig.composeConnect,
-          transport: subgraphCLIConfig.transport,
-        });
-      } else {
-        const loaded = subgraphCLIConfig.sourceHandler(ctx);
-        subgraphName = loaded.name;
-        schema$ = loaded.schema$;
+        const label = subgraphCLIConfig.name ?? '<unnamed>';
+        const subgraphLog = log.child({ subgraph: label });
+        subgraphLog.debug(`Loading subgraph`);
+        try {
+          const resolved = await resolveSubgraphSchema(ctx, {
+            subgraphName: subgraphCLIConfig.name,
+            schema: subgraphCLIConfig.schema,
+            composeConnect: subgraphCLIConfig.composeConnect,
+            transport: subgraphCLIConfig.transport,
+          });
+          return {
+            name: resolved.name,
+            schema: resolved.schema,
+            transforms: subgraphCLIConfig.transforms,
+          };
+        } catch (e) {
+          if (isDebug) {
+            subgraphLog.error(`Failed to load subgraph`, e);
+          } else {
+            subgraphLog.error(e instanceof Error ? e.message : String(e));
+            subgraphLog.error(`Failed to load subgraph`);
+          }
+          globalThis.process?.exit(1);
+        }
       }
-      const subgraphLog = log.child({ subgraph: subgraphName });
+      const loaded = subgraphCLIConfig.sourceHandler(ctx);
+      const label = loaded.name ?? '<unnamed>';
+      const subgraphLog = log.child({ subgraph: label });
       subgraphLog.debug(`Loading subgraph`);
       let subgraphSchema: GraphQLSchema;
       try {
-        subgraphSchema = await schema$;
+        subgraphSchema = await loaded.schema$;
+        subgraphName = resolveSubgraphName(subgraphSchema, loaded.name);
       } catch (e) {
         if (isDebug) {
           subgraphLog.error(`Failed to load subgraph`, e);

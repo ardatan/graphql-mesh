@@ -4,11 +4,24 @@
  */
 export const MESH_SPECS_ORIGIN = 'https://specs.graphql-mesh.com';
 
+/** Strip leading/trailing `/` without regex (avoids ReDoS on long `/` runs). */
+function trimSlashes(value: string): string {
+  let start = 0;
+  let end = value.length;
+  while (start < end && value.charCodeAt(start) === 47 /* / */) {
+    start += 1;
+  }
+  while (end > start && value.charCodeAt(end - 1) === 47 /* / */) {
+    end -= 1;
+  }
+  return start === 0 && end === value.length ? value : value.slice(start, end);
+}
+
 /**
  * Build a Mesh-spec `@link` URL, e.g. `https://specs.graphql-mesh.com/thrift/v0.1`.
  */
 export function meshSpecUrl(protocol: string, version = 'v0.1'): string {
-  const name = protocol.replace(/^\/+|\/+$/g, '');
+  const name = trimSlashes(protocol);
   const ver = version.startsWith('v') ? version : `v${version}`;
   return `${MESH_SPECS_ORIGIN}/${name}/${ver}`;
 }

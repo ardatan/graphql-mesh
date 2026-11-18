@@ -5,11 +5,11 @@ import { join } from 'node:path';
 import { getDirectiveExtensions, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { dummyLogger as log } from '../../testing/dummyLogger';
 import { getComposedResultFromConfig } from '../src/getComposedSchemaFromConfig.js';
-import { resolveSubgraphSchema } from '../src/resolveSubgraphSchema.js';
+import { resolveSubgraphName, resolveSubgraphSchema } from '../src/resolveSubgraphSchema.js';
 
 describe('subgraphs[].schema config', () => {
   it('loads inline SDL that already carries Mesh @link / @composeDirective', async () => {
-    const schema = await resolveSubgraphSchema(
+    const { schema } = await resolveSubgraphSchema(
       { cwd: process.cwd(), fetch: globalThis.fetch, log },
       {
         subgraphName: 'shop',
@@ -43,10 +43,9 @@ describe('subgraphs[].schema config', () => {
   });
 
   it('merges transport option fields onto an existing @transport', async () => {
-    const schema = await resolveSubgraphSchema(
+    const { name, schema } = await resolveSubgraphSchema(
       { cwd: process.cwd(), fetch: globalThis.fetch, log },
       {
-        subgraphName: 'shop',
         schema: /* GraphQL */ `
           extend schema
             @transport(subgraph: "shop", kind: "sql", location: "file:old.db")
@@ -67,6 +66,7 @@ describe('subgraphs[].schema config', () => {
         },
       },
     );
+    expect(name).toBe('shop');
     const dirs = getDirectiveExtensions(schema);
     expect(dirs?.transport?.[0] || dirs?.transport).toMatchObject({
       subgraph: 'shop',
@@ -74,6 +74,73 @@ describe('subgraphs[].schema config', () => {
       location: 'file:chinook.db',
       options: { readonly: true },
     });
+  });
+
+  it('takes subgraph name from @transport when config name is omitted', async () => {
+    const { name } = await resolveSubgraphSchema(
+      { cwd: process.cwd(), fetch: globalThis.fetch, log },
+      {
+        schema: /* GraphQL */ `
+          extend schema @transport(subgraph: "from-transport", kind: "sql")
+          directive @transport(subgraph: String!, kind: String!) repeatable on SCHEMA
+          type Query {
+            hello: String
+          }
+        `,
+      },
+    );
+    expect(name).toBe('from-transport');
+  });
+
+  it('throws when config name conflicts with @transport(subgraph:)', () => {
+    expect(() =>
+      resolveSubgraphSchema(
+        { cwd: process.cwd(), fetch: globalThis.fetch, log },
+        {
+          subgraphName: 'config-name',
+          schema: /* GraphQL */ `
+            extend schema @transport(subgraph: "transport-name", kind: "sql")
+            directive @transport(subgraph: String!, kind: String!) repeatable on SCHEMA
+            type Query {
+              hello: String
+            }
+          `,
+        },
+      ),
+    ).toThrow(/Subgraph name conflict/);
+  });
+
+  it('throws when neither config name nor @transport(subgraph:) is set', () => {
+    expect(() =>
+      resolveSubgraphSchema(
+        { cwd: process.cwd(), fetch: globalThis.fetch, log },
+        {
+          schema: /* GraphQL */ `
+            type Query {
+              hello: String
+            }
+          `,
+        },
+      ),
+    ).toThrow(/Subgraph name is required/);
+  });
+
+  it('resolveSubgraphName mirrors conflict / missing rules', async () => {
+    const { schema } = await resolveSubgraphSchema(
+      { cwd: process.cwd(), fetch: globalThis.fetch, log },
+      {
+        subgraphName: 'shop',
+        schema: /* GraphQL */ `
+          extend schema @transport(subgraph: "shop", kind: "sql")
+          directive @transport(subgraph: String!, kind: String!) repeatable on SCHEMA
+          type Query {
+            hello: String
+          }
+        `,
+      },
+    );
+    expect(resolveSubgraphName(schema, 'shop')).toBe('shop');
+    expect(() => resolveSubgraphName(schema, 'other')).toThrow(/conflict/i);
   });
 
   it('composes a subgraph supplied via name + schema', async () => {

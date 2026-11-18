@@ -41,9 +41,13 @@ export type MeshComposeCLISubgraphConfig = {
     }
   | {
       /**
-       * Subgraph name when supplying {@link schema} directly (hand-written SDL).
+       * Optional subgraph name when supplying {@link schema} directly.
+       *
+       * When omitted, the name is taken from `@transport(subgraph: ...)`.
+       * When both are set and differ, Compose throws a conflict error.
+       * When neither is set, Compose throws (name required).
        */
-      name: string;
+      name?: string;
       /**
        * Hand-written or in-memory subgraph SDL / schema.
        *
@@ -73,7 +77,11 @@ export type MeshComposeCLISubgraphConfig = {
 );
 
 export type MeshComposeCLISourceHandlerDef = (ctx: LoaderContext) => {
-  name: string;
+  /**
+   * Optional when the schema already has `@transport(subgraph: ...)`.
+   * Conflict / missing-name rules match {@link MeshComposeCLISubgraphConfig}.
+   */
+  name?: string;
   schema$: MaybePromise<GraphQLSchema>;
 };
 

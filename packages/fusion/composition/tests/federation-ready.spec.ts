@@ -6,10 +6,22 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
-import { addConnectComposeDirective, importMeshDirectives, meshSpecUrl } from '@graphql-mesh/utils';
+import {
+  addConnectComposeDirective,
+  importMeshDirectives,
+  meshSpecUrl,
+} from '@graphql-mesh/utils';
 import { getDirectiveExtensions, printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('importMeshDirectives / addConnectComposeDirective', () => {
+  it('meshSpecUrl trims slashes without regex ReDoS shape', () => {
+    expect(meshSpecUrl('///thrift///')).toBe('https://specs.graphql-mesh.com/thrift/v0.1');
+    expect(meshSpecUrl('/sql/', '0.1')).toBe('https://specs.graphql-mesh.com/sql/v0.1');
+    // Long `/` prefix must stay linear-time (CodeQL: no `/^\/+|\/+$/`).
+    const many = '/'.repeat(10_000) + 'mongo' + '/'.repeat(10_000);
+    expect(meshSpecUrl(many)).toBe('https://specs.graphql-mesh.com/mongo/v0.1');
+  });
+
   it('imports explicit Mesh directives with @composeDirective and Mesh @link', () => {
     const sqlDirective = new GraphQLDirective({
       name: 'sql',
