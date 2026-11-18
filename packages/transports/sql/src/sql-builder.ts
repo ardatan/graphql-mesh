@@ -402,7 +402,8 @@ function buildHasManyJsonSubselect(
     if (hm.limit != null) {
       // Unique ranking key (PK / id), not the first client-projected column —
       // duplicate titles would otherwise exclude every sibling.
-      const orderCol = hm.rankColumn || relCols.find(([, c]) => c !== hm.joinColumn)?.[1] || hm.joinColumn;
+      const orderCol =
+        hm.rankColumn || relCols.find(([, c]) => c !== hm.joinColumn)?.[1] || hm.joinColumn;
       const limAlias = '_hmc';
       const limSoft = softCol
         ? ` AND ${quoteIdent(adapter, limAlias)}.${quoteIdent(adapter, softCol)} IS NULL`
@@ -444,7 +445,9 @@ export function buildSelectByColumnIn(
     columns.size === 0
       ? ['*']
       : [...new Set(columns.values())].map(c =>
-          batchRootAlias ? `${qualifyBatch(c)} AS ${quoteIdent(adapter, c)}` : quoteIdent(adapter, c),
+          batchRootAlias
+            ? `${qualifyBatch(c)} AS ${quoteIdent(adapter, c)}`
+            : quoteIdent(adapter, c),
         );
 
   const params: unknown[] = [];
@@ -487,7 +490,11 @@ export function buildSelectByColumnIn(
   const batchColSelect = batchRootAlias
     ? `${qualifyBatch(plan.column)} AS ${batchColSql}`
     : batchColSql;
-  if (!selectCols.includes(batchColSelect) && !selectCols.includes(batchColSql) && selectCols[0] !== '*') {
+  if (
+    !selectCols.includes(batchColSelect) &&
+    !selectCols.includes(batchColSql) &&
+    selectCols[0] !== '*'
+  ) {
     selectCols.push(batchColSelect);
   }
 
@@ -901,13 +908,12 @@ export function ensureConnectionOrderSpecs(
   selectionColumns: Map<string, string>,
   uniqueKeys?: Array<{ graphqlField: string; sqlColumn: string }>,
 ): OrderSpec[] {
-  const tieKeys =
-    uniqueKeys?.length
-      ? uniqueKeys
-      : (() => {
-          const idCol = catalog.get('id') || selectionColumns.get('id');
-          return idCol ? [{ graphqlField: 'id', sqlColumn: idCol }] : [];
-        })();
+  const tieKeys = uniqueKeys?.length
+    ? uniqueKeys
+    : (() => {
+        const idCol = catalog.get('id') || selectionColumns.get('id');
+        return idCol ? [{ graphqlField: 'id', sqlColumn: idCol }] : [];
+      })();
 
   let out = [...specs];
   if (!out.length) {
@@ -927,12 +933,7 @@ function nullsSortFirst(adapter: SqlAdapter): boolean {
   return adapter !== 'postgres';
 }
 
-function keysetEq(
-  adapter: SqlAdapter,
-  colSql: string,
-  val: unknown,
-  params: unknown[],
-): string {
+function keysetEq(adapter: SqlAdapter, colSql: string, val: unknown, params: unknown[]): string {
   if (val === null || val === undefined) {
     return `${colSql} IS NULL`;
   }

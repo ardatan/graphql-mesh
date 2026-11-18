@@ -74,8 +74,7 @@ export function resolveBunTlsOption(
   if (tls === false || mode === 'disable' || mode === 'false') {
     return undefined;
   }
-  const insecure =
-    mode === 'insecure' || mode === 'no-verify' || ssl?.rejectUnauthorized === false;
+  const insecure = mode === 'insecure' || mode === 'no-verify' || ssl?.rejectUnauthorized === false;
   if (ssl?.ca != null || ssl?.rejectUnauthorized != null || insecure) {
     return {
       rejectUnauthorized: !insecure,

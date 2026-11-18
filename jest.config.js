@@ -37,6 +37,7 @@ if (process.env.LEAK_TEST) {
   testMatch.push('!**/examples/federation-example/tests/polling.test.ts');
   // Imports grafast / @dataplan/pg (process-lifetime handles).
   testMatch.push('!**/packages/transports/sql/test/pg-registry.test.ts');
+  testMatch.push('!**/packages/transports/sql/test/pg-plans.test.ts');
 }
 
 testMatch.push(process.env.INTEGRATION_TEST ? '!**/packages/**' : '!**/examples/**');

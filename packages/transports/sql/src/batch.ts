@@ -4,10 +4,10 @@ import { buildSelectByColumnIn, mapRowToGraphql, type SqlPlanners } from './sql-
 import type {
   ParsedSqlMapping,
   SqlClient,
+  SqlMappingValue,
   SqlQueryKind,
   SqlRelationFilterMeta,
   SqlSoftDeleteOptions,
-  SqlMappingValue,
 } from './types.js';
 
 const LOADERS = Symbol.for('mesh.sql.loaders');
@@ -97,10 +97,9 @@ export function canBatchByEqualityColumn(
     if (graphqlArgs?.[key] != null) return false;
     const binder = planners?.[key];
     if (binder != null && String(binder).trim()) {
-      const resolved = resolveMappingValue(
-        parsePlannerBinderValue(String(binder)),
-        { args: graphqlArgs },
-      );
+      const resolved = resolveMappingValue(parsePlannerBinderValue(String(binder)), {
+        args: graphqlArgs,
+      });
       if (resolved != null) return false;
     }
   }

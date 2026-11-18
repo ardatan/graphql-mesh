@@ -45,10 +45,7 @@ export function wirePostgresSqlPlans(
         if (!isRoot && relMeta && (kind === 'ROW' || kind === 'ROWS')) {
           // singleRelation / manyRelation only encode the installed `$this` join —
           // extra `$args` / fixed predicates / planners must keep the generic resolver.
-          if (
-            relationHasClientPlanners(sqlDir.args) ||
-            relationWhereTooComplexForPlan(where)
-          ) {
+          if (relationHasClientPlanners(sqlDir.args) || relationWhereTooComplexForPlan(where)) {
             return fieldConfig;
           }
           grafast.plan = makeRelationPlan(kind, fieldName);

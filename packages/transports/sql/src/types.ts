@@ -107,10 +107,7 @@ export interface SqlQueryResult<T = Record<string, unknown>> {
 
 export interface SqlClient {
   readonly adapter: SqlAdapter;
-  query<T = Record<string, unknown>>(
-    sql: string,
-    params?: unknown[],
-  ): Promise<SqlQueryResult<T>>;
+  query<T = Record<string, unknown>>(sql: string, params?: unknown[]): Promise<SqlQueryResult<T>>;
   dispose(): void | Promise<void>;
   /**
    * Node `pg.Pool` when using the postgres adapter (required for the

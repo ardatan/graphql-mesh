@@ -7,8 +7,8 @@ import {
   GraphQLString,
   type GraphQLFieldConfig,
 } from 'graphql';
-import { buildPgRegistryFromSqlSchema } from '../src/pg-registry.js';
 import { wirePostgresSqlPlans } from '../src/pg-plans.js';
+import { buildPgRegistryFromSqlSchema } from '../src/pg-registry.js';
 
 const albumSelection = ['id: AlbumId', 'title: Title', 'artistId: ArtistId'].join('\n');
 const artistSelection = ['id: ArtistId', 'name: Name'].join('\n');

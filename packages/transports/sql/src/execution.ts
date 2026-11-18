@@ -339,8 +339,7 @@ async function runSqlSelect(
     }
 
     const after =
-      query.resolvedAfter ??
-      (typeof graphqlArgs.after === 'string' ? graphqlArgs.after : '');
+      query.resolvedAfter ?? (typeof graphqlArgs.after === 'string' ? graphqlArgs.after : '');
     return {
       nodes,
       edges,

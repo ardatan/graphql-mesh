@@ -127,7 +127,7 @@ export function withOriginalKeyFallback<T extends Record<string, any>>(
 
 /**
  * Rewrite `$args.<name>` (and related) references after GraphQL argument renames
-* for Federation `@connect`, Thrift `@thrift__rpc`, and Mesh `@sql`.
+ * for Federation `@connect`, Thrift `@thrift__rpc`, and Mesh `@sql`.
  * Mesh stitching used `@meshSource(name:)` for this; Connectors / thrift / SQL
  * mapping bind args by the GraphQL argument name inside path/body/`args`/`selection`
  * strings.
