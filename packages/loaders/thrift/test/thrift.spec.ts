@@ -534,7 +534,8 @@ describe('thrift', () => {
 
   it('generated TJSON union selection preserves shared struct fields after processDirectives', async () => {
     const { buildSchema } = await import('graphql');
-    const { applySelection } = await import('../../../transports/connect/src/directives/connect.js');
+    const { applySelection } =
+      await import('../../../transports/connect/src/directives/connect.js');
     const { processDirectives } =
       await import('../../../transports/connect/src/directives/process.js');
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
@@ -593,7 +594,8 @@ describe('thrift', () => {
 
   it('TJSON union keeps success value when an exception also declares value', async () => {
     const { buildSchema } = await import('graphql');
-    const { applySelection } = await import('../../../transports/connect/src/directives/connect.js');
+    const { applySelection } =
+      await import('../../../transports/connect/src/directives/connect.js');
     const { processDirectives } =
       await import('../../../transports/connect/src/directives/process.js');
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
@@ -638,7 +640,8 @@ describe('thrift', () => {
 
   it('TJSON list/set unions gate success via ->map expression, not trailing braces', async () => {
     const { buildSchema } = await import('graphql');
-    const { applySelection } = await import('../../../transports/connect/src/directives/connect.js');
+    const { applySelection } =
+      await import('../../../transports/connect/src/directives/connect.js');
     const { processDirectives } =
       await import('../../../transports/connect/src/directives/process.js');
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
@@ -709,7 +712,8 @@ describe('thrift', () => {
   });
 
   it('TJSON list unions recursively project nested struct collections', async () => {
-    const { applySelection } = await import('../../../transports/connect/src/directives/connect.js');
+    const { applySelection } =
+      await import('../../../transports/connect/src/directives/connect.js');
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
       subgraphName: 'ListNestedStructThrowsSvc',
       source: './fixtures/list_nested_struct_throws.thrift',
@@ -759,7 +763,8 @@ describe('thrift', () => {
     // coverage remains in the nested-struct test above).
     const { TType } = await import('@creditkarma/thrift-server-core');
     const { buildTJSONUnionConnectSelection } = await import('../src/mapping.js');
-    const { applySelection } = await import('../../../transports/connect/src/directives/connect.js');
+    const { applySelection } =
+      await import('../../../transports/connect/src/directives/connect.js');
     const topTypeMap = {
       Node: {
         type: TType.STRUCT,
@@ -838,7 +843,8 @@ describe('thrift', () => {
 
   it('TJSON void union keeps success ok when an exception also declares ok', async () => {
     const { buildSchema } = await import('graphql');
-    const { applySelection } = await import('../../../transports/connect/src/directives/connect.js');
+    const { applySelection } =
+      await import('../../../transports/connect/src/directives/connect.js');
     const { processDirectives } =
       await import('../../../transports/connect/src/directives/process.js');
     const schema = await loadNonExecutableGraphQLSchemaFromIDL({
