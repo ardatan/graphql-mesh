@@ -241,7 +241,6 @@ export async function loadGraphQLSchemaFromMongo(
 
   ensureSharedQueryOperatorInputs(schemaComposer);
   ensurePageInfo(schemaComposer);
-  ensureErrorInterface(schemaComposer);
 
   const modelMeta: Array<{
     /** Original model config `name` (Mongoose `ref` target). */
@@ -1924,33 +1923,6 @@ function createPayloadType(
         modifiedCount: GraphQLInt,
         matchedCount: GraphQLInt,
         deletedCount: GraphQLInt,
-        /**
-         * v0 graphql-compose-mongoose parity: if the client selects `error`,
-         * operation failures are returned here instead of GraphQL `errors`.
-         */
-        error: 'MongoError',
-      },
-    });
-  }
-}
-
-function ensureErrorInterface(schemaComposer: SchemaComposer) {
-  if (!schemaComposer.has('ErrorInterface')) {
-    schemaComposer.createInterfaceTC({
-      name: 'ErrorInterface',
-      fields: {
-        message: 'String',
-      },
-      resolveType: () => 'MongoError',
-    });
-  }
-  if (!schemaComposer.has('MongoError')) {
-    schemaComposer.createObjectTC({
-      name: 'MongoError',
-      interfaces: ['ErrorInterface'],
-      fields: {
-        message: 'String',
-        code: 'String',
       },
     });
   }

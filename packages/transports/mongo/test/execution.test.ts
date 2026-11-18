@@ -445,6 +445,13 @@ describe('getMongoExecutor FIND_* + writes', () => {
     };
     applyGraphqlStringIdInsertAliases(bsonDoc);
     expect(bsonDoc).toEqual({ _id: 'b-1', storedId: 'real-field', name: 'B' });
+
+    // Binder stamp supplies `_id` (sibling in `set`) — treat as hand-written BSON.
+    const stamped: Record<string, unknown> = { storedId: 'value', name: 'S' };
+    applyGraphqlStringIdInsertAliases(stamped, { treatAsGraphqlInput: false });
+    expect(stamped).toEqual({ storedId: 'value', name: 'S' });
+    const merged = { ...stamped, _id: 'x' };
+    expect(merged).toEqual({ storedId: 'value', name: 'S', _id: 'x' });
   });
 
   it('treats present empty requiredFieldsByCollection as authoritative', async () => {

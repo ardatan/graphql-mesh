@@ -1,4 +1,9 @@
-import type { GraphQLFieldConfig, GraphQLResolveInfo, GraphQLSchema } from 'graphql';
+import {
+  GraphQLError,
+  type GraphQLFieldConfig,
+  type GraphQLResolveInfo,
+  type GraphQLSchema,
+} from 'graphql';
 import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
@@ -215,11 +220,8 @@ function attachMongoResolver(
     return runWithMongoFieldRuntime(fieldRuntime, async () => {
       const ctx = { args: graphqlArgs, parent };
       const proj = Object.keys(projection).length ? projection : undefined;
-      const typedError = wantsTypedError(info);
 
       try {
-        // Binder/filter conversion lives inside try so typed mutation payloads
-        // catch invalid ObjectId/Decimal inputs the same way as driver errors.
         const filter = buildMongoFilter(
           directive.query ?? directive.filter ?? directive.where,
           ctx,
@@ -276,12 +278,16 @@ function attachMongoResolver(
             delete stamp.documents;
             delete stamp.inputs;
             const stringId = fieldRuntime.stringIdCollections.has(directive.collection);
+            // Binder sibling `_id` (hand-written BSON) means docs are not GraphQL DocumentInput.
+            const stampSuppliesBsonId = Object.prototype.hasOwnProperty.call(stamp, '_id');
             const records = (Array.isArray(rawRecords) ? rawRecords : []).map(doc => {
               const coerced = coerceDeep(doc, {
                 collection: directive.collection,
               }) as Record<string, unknown>;
               if (stringId) {
-                applyGraphqlStringIdInsertAliases(coerced);
+                applyGraphqlStringIdInsertAliases(coerced, {
+                  treatAsGraphqlInput: !stampSuppliesBsonId,
+                });
               }
               return stripInputPlaceholder({ ...coerced, ...stamp }, directive.collection);
             });
@@ -344,20 +350,8 @@ function attachMongoResolver(
             throw new Error(`@mongo kind ${directive.kind as string} is not implemented`);
         }
       } catch (err) {
-        if (typedError && isWriteKind(directive.kind)) {
-          return {
-            record: null,
-            recordId: null,
-            records: null,
-            recordIds: null,
-            createdCount: null,
-            modifiedCount: null,
-            matchedCount: null,
-            deletedCount: null,
-            error: toMongoError(err),
-          };
-        }
-        throw err;
+        // Generated path: always GraphQL errors (no payload `error` catch-fill).
+        throw toMongoGraphQLError(err);
       }
     });
   };
@@ -365,23 +359,16 @@ function attachMongoResolver(
   return fieldConfig;
 }
 
-function isWriteKind(kind: MongoKind): boolean {
-  return (
-    kind === 'INSERT_ONE' ||
-    kind === 'INSERT_MANY' ||
-    kind === 'UPDATE_ONE' ||
-    kind === 'UPDATE_MANY' ||
-    kind === 'DELETE_ONE' ||
-    kind === 'DELETE_MANY'
-  );
-}
-
 /**
  * Map GraphQL String-`_id` DocumentInput aliases onto BSON keys for bulk insert.
- * Applies only to generated GraphQL shapes (no `_id` yet). Hand-written BSON
- * `{ _id, storedId }` keeps a real `storedId` path — do not rewrite to `id`.
+ * Applies only to generated GraphQL shapes. Skip when the doc already has BSON
+ * `_id`, or when a hand-written binder stamp supplies `_id` (sibling in `set`).
  */
-export function applyGraphqlStringIdInsertAliases(doc: Record<string, unknown>): void {
+export function applyGraphqlStringIdInsertAliases(
+  doc: Record<string, unknown>,
+  opts?: { treatAsGraphqlInput?: boolean },
+): void {
+  if (opts?.treatAsGraphqlInput === false) return;
   // BSON already named — leave keys alone (incl. a real `storedId` field).
   if (Object.prototype.hasOwnProperty.call(doc, '_id')) return;
   // GraphQL `id` → Mongo `_id` (include null).
@@ -398,30 +385,18 @@ export function applyGraphqlStringIdInsertAliases(doc: Record<string, unknown>):
   }
 }
 
-/** v0 compose parity: selecting `error` on the payload opts into typed errors. */
-function wantsTypedError(info: GraphQLResolveInfo | undefined): boolean {
-  if (!info?.fieldNodes?.length) return false;
-  for (const fieldNode of info.fieldNodes) {
-    const selections = fieldNode.selectionSet?.selections || [];
-    for (const sel of selections) {
-      if (sel.kind === 'Field' && sel.name.value === 'error') return true;
-      if (sel.kind === 'InlineFragment') {
-        for (const inner of sel.selectionSet?.selections || []) {
-          if (inner.kind === 'Field' && inner.name.value === 'error') return true;
-        }
-      }
-    }
-  }
-  return false;
-}
-
-function toMongoError(err: unknown): { __typename: string; message: string; code?: string } {
+/** Wrap driver / binder failures as GraphQL errors (Connect/Thrift throw default). */
+export function toMongoGraphQLError(err: unknown): GraphQLError {
+  if (err instanceof GraphQLError) return err;
   const message = err instanceof Error ? err.message : String(err);
-  const code =
-    err && typeof err === 'object' && 'code' in err
-      ? String((err as { code: unknown }).code)
-      : undefined;
-  return { __typename: 'MongoError', message, code };
+  const driverCode =
+    err && typeof err === 'object' && 'code' in err ? (err as { code: unknown }).code : undefined;
+  return new GraphQLError(message, {
+    extensions: {
+      code: 'DOWNSTREAM_SERVICE_ERROR',
+      ...(driverCode != null ? { mongo: { code: driverCode } } : {}),
+    },
+  });
 }
 
 async function resolveConnection(

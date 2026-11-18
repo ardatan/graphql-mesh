@@ -61,10 +61,6 @@ enum EnumUserLanguagesSkill {
   native
 }
 
-interface ErrorInterface {
-  message: String
-}
-
 input FloatQueryOperators {
   eq: Float
   exists: Boolean
@@ -81,11 +77,6 @@ input FloatQueryOperators {
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
-
-type MongoError implements ErrorInterface {
-  code: String
-  message: String
-}
 
 type Mutation {
   deleteManyUsers(filter: UserFilterInput!): UserPayload @mongo__deleteMany(subgraph: "Mongoose", collection: "user_users", selection: """
@@ -503,7 +494,6 @@ type UserPagination {
 type UserPayload {
   createdCount: Int
   deletedCount: Int
-  error: MongoError
   matchedCount: Int
   modifiedCount: Int
   record: User

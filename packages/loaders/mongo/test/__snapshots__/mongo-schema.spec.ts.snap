@@ -478,16 +478,6 @@ type UserPayload {
   modifiedCount: Int
   matchedCount: Int
   deletedCount: Int
-  error: MongoError
-}
-
-type MongoError implements ErrorInterface {
-  message: String
-  code: String
-}
-
-interface ErrorInterface {
-  message: String
 }
 
 input UserDocumentInput {

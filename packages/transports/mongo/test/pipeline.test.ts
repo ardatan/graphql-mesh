@@ -128,8 +128,8 @@ describe('AGGREGATE pipeline', () => {
   });
 });
 
-describe('typed error payload', () => {
-  it('returns error on payload when error field is selected', async () => {
+describe('write failures', () => {
+  it('surfaces driver failures as GraphQL errors (no payload error field)', async () => {
     const userSchema = new Schema({ name: String }, { collection: 'user_users' });
     const schema = await loadGraphQLSchemaFromMongo('users', {
       endpoint: 'mongodb://localhost:27017/test',
@@ -143,25 +143,7 @@ describe('typed error payload', () => {
     });
 
     const executor = getMongoExecutor({ subgraph: schema, client });
-    const withError = await execResult(executor, {
-      document: parse(`
-        mutation {
-          insertOneUser(document: { name: "Ada" }) {
-            record { name }
-            error { message }
-          }
-        }
-      `),
-    });
-    expect(withError.errors).toBeUndefined();
-    expect(withError.data).toEqual({
-      insertOneUser: {
-        record: null,
-        error: { message: 'E11000 duplicate key' },
-      },
-    });
-
-    const withoutError = await execResult(executor, {
+    const result = await execResult(executor, {
       document: parse(`
         mutation {
           insertOneUser(document: { name: "Ada" }) {
@@ -170,6 +152,10 @@ describe('typed error payload', () => {
         }
       `),
     });
-    expect(withoutError.errors?.length).toBeGreaterThan(0);
+    expect(result.errors?.length).toBeGreaterThan(0);
+    expect(result.errors?.[0]?.message).toMatch(/E11000/);
+    expect(result.errors?.[0]?.extensions?.code).toBe('DOWNSTREAM_SERVICE_ERROR');
+    expect((result.errors?.[0]?.extensions as any)?.mongo?.code).toBe(11000);
+    expect(result.data?.insertOneUser).toBeNull();
   });
 });
