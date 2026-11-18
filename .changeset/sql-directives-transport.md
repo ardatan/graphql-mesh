@@ -38,9 +38,9 @@ Breaking for v0.minor: the handler no longer depends on `postgraphile` / `postgr
 
 | Still supported | Removed / ignored |
 | --- | --- |
-| `connectionString` (env interpolation) | `appendPlugins` / `skipPlugins` |
+| `connectionString` (env interpolation; optional when `pool` is a real `pg.Pool`) | `appendPlugins` / `skipPlugins` |
 | `schemaName` (first entry only; default `public`) | `options` (Graphile library options) |
-| `pool` as an existing `pg.Pool` (or module export) | `pool` as plain settings object (use URI / transport opts) |
+| `pool` as an existing `pg.Pool` (or module export) — used for introspect + execute | `pool` as plain settings object (use URI / transport opts) |
 | `tables` / `tableFields` (new, mysql-parity) | `subscriptions` / `live` |
 | | `contextOptions` (pgSettings helpers) |
 

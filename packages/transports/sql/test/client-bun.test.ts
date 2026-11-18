@@ -31,6 +31,23 @@ describe('Bun.SQL availability (Node / Jest)', () => {
     ).toEqual({ rejectUnauthorized: true, ca: 'someCA' });
   });
 
+  it('sets Postgres search_path on every Bun pooled connection via connection GUC', () => {
+    expect(
+      buildBunSqlCtorOptions({
+        adapter: 'postgres',
+        location: 'postgres://u@h/db',
+        schema: 'app',
+      }).connection,
+    ).toEqual({ search_path: '"app"' });
+    expect(
+      buildBunSqlCtorOptions({
+        adapter: 'postgres',
+        location: 'postgres://u@h/db',
+        schema: 'public',
+      }).connection,
+    ).toBeUndefined();
+  });
+
   it('resolveSslOption treats sslmode=no-verify as insecure (shared with introspect)', () => {
     const parsed = parseSqlUri('mysql://h/db?sslmode=no-verify');
     expect(resolveSslOption(undefined, parsed, undefined)).toEqual({

@@ -434,9 +434,9 @@ export function buildSelectByColumnIn(
 ): BuiltQuery {
   const columns = columnMapFromSelection(plan.selection);
   const catalog = plan.columnCatalog?.size ? plan.columnCatalog : columns;
-  // Alias the batch root so relation-filter EXISTS correlates on `t.col`, not an
-  // unqualified name that resolves inside the subquery.
-  const batchRootAlias = plan.relationFilters?.length ? 't' : undefined;
+  // Alias the batch root so relation-filter EXISTS / `$fn(t)` correlate on `t`.
+  const batchRootAlias =
+    plan.relationFilters?.length || selectionHasComputedFn(plan.selection) ? 't' : undefined;
   const qualifyBatch = (col: string) =>
     batchRootAlias
       ? `${quoteIdent(adapter, batchRootAlias)}.${quoteIdent(adapter, col)}`
@@ -449,6 +449,8 @@ export function buildSelectByColumnIn(
             ? `${qualifyBatch(c)} AS ${quoteIdent(adapter, c)}`
             : quoteIdent(adapter, c),
         );
+  // Match buildSelect: include Postgres computed `$fn` columns in the batch projection.
+  selectCols.push(...computedFnSelects(adapter, plan.selection, batchRootAlias));
 
   const params: unknown[] = [];
   const whereParts: string[] = [];

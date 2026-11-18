@@ -62,6 +62,17 @@ export function buildBunSqlCtorOptions(opts: CreateSqlClientOptions): Record<str
   if (opts.connectionTimeout != null) bunOpts.connectionTimeout = opts.connectionTimeout;
   const tls = resolveBunTlsOption(opts.tls, opts.ssl);
   if (tls != null) bunOpts.tls = tls;
+  // Per-connection GUC so every pooled Postgres connection gets the schema
+  // (one-shot `SET search_path` only affects whichever connection ran it).
+  const schema = opts.adapter === 'postgres' ? opts.schema?.trim() : undefined;
+  if (schema && schema !== 'public') {
+    const ident = `"${schema.replace(/"/g, '""')}"`;
+    const prev =
+      bunOpts.connection && typeof bunOpts.connection === 'object'
+        ? (bunOpts.connection as Record<string, unknown>)
+        : {};
+    bunOpts.connection = { ...prev, search_path: ident };
+  }
   return bunOpts;
 }
 
@@ -108,24 +119,9 @@ export function createBunSqlClient(opts: CreateSqlClientOptions): SqlClient {
     opts.adapter === 'sqlite' ? resolveSqlitePath(opts.location, opts.cwd) : opts.location;
   const sql = new BunSQL(location, bunOpts);
 
-  const schema = opts.adapter === 'postgres' ? opts.schema?.trim() : undefined;
-  let searchPathReady: Promise<void> | null = null;
-  const ensureSearchPath = async () => {
-    if (!schema || schema === 'public') return;
-    if (!searchPathReady) {
-      const ident = `"${schema.replace(/"/g, '""')}"`;
-      searchPathReady = Promise.resolve(sql.unsafe(`SET search_path TO ${ident}`)).then(
-        () => undefined,
-        () => undefined,
-      );
-    }
-    await searchPathReady;
-  };
-
   return {
     adapter: opts.adapter,
     async query<T = Record<string, unknown>>(query: string, params: unknown[] = []) {
-      await ensureSearchPath();
       const result = await sql.unsafe(query, params);
       const rows = normalizeBunRows<T>(result);
       const rowCount =
@@ -134,7 +130,13 @@ export function createBunSqlClient(opts: CreateSqlClientOptions): SqlClient {
           : typeof result?.affectedRows === 'number'
             ? result.affectedRows
             : rows.length;
-      return { rows, rowCount };
+      // Bun MySQL exposes AUTO_INCREMENT via lastInsertRowid (prototype accessor).
+      const lastId = opts.adapter === 'mysql' ? result?.lastInsertRowid : undefined;
+      return {
+        rows,
+        rowCount,
+        ...(lastId != null && Number(lastId) !== 0 ? { insertId: lastId as number | bigint } : {}),
+      };
     },
     async dispose() {
       if (typeof sql.close === 'function') {
@@ -338,6 +340,10 @@ function createPostgresClient(opts: CreateSqlClientOptions): SqlClient {
     connectionTimeoutMillis:
       opts.connectionTimeout != null ? opts.connectionTimeout * 1000 : undefined,
     ssl,
+  });
+  // Idle-client failures emit `error` on the pool; without a listener Node aborts.
+  pool.on('error', () => {
+    // pg discards the broken client; the next query opens a fresh connection.
   });
   const schema = opts.schema?.trim();
   if (schema && schema !== 'public') {

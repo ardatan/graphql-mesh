@@ -18,6 +18,7 @@ export function loadSqlSubgraph(name: string, opts: LoadSqlSubgraphOpts) {
 }
 
 export {
+  createSqlClient,
   getSqlExecutor,
   wrapMysqlPoolAsSqlClient,
   wrapPgPoolAsSqlClient,

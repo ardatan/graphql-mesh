@@ -12,7 +12,12 @@ import type {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { getSqlExecutor, loadGraphQLSchemaFromSql, wrapPgPoolAsSqlClient } from '@omnigraph/sql';
+import {
+  createSqlClient,
+  getSqlExecutor,
+  loadGraphQLSchemaFromSql,
+  wrapPgPoolAsSqlClient,
+} from '@omnigraph/sql';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 /**
@@ -46,35 +51,44 @@ export default class PostGraphileHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    const connectionString = resolveConnectionString(this.config);
     const schemaName = resolveSchemaName(this.config.schemaName);
+    const pool = await resolvePgPool(this.config, this.baseDir, this.importFn);
+    const connectionString = resolveConnectionString(this.config, pool);
+    if (!pool && !connectionString) {
+      throw new Error(
+        '@graphql-mesh/postgraphile: provide `connectionString` (postgres://… URI) and/or `pool` (pg.Pool / module export).',
+      );
+    }
+
+    // Prefer an explicit URI for `@transport(location)`; pool-only falls back to
+    // pool.options.connectionString or a postgres:// stamp inside the loader.
+    const endpoint =
+      connectionString ||
+      poolConnectionString(pool) ||
+      // Loader accepts pgPool without a real URI for introspection.
+      undefined;
 
     const schema = await this.schemaProxy.getWithSet(() =>
       loadGraphQLSchemaFromSql(this.name, {
-        endpoint: connectionString,
+        endpoint,
         schema: schemaName,
         includeTables: this.config.tables,
         tableFields: this.config.tableFields,
+        pgPool: pool,
         cwd: this.baseDir,
       }),
     );
 
-    let client;
-    if (this.config.pool != null) {
-      const pool =
-        typeof this.config.pool === 'string'
-          ? await loadFromModuleExportExpression(this.config.pool, {
-              cwd: this.baseDir,
-              defaultExportName: 'default',
-              importFn: this.importFn,
-            })
-          : this.config.pool;
-      // Existing `pg.Pool` instance → wrap. Plain settings objects fall through to
-      // getSqlExecutor, which opens its own pool from `@transport(location)`.
-      if (pool && typeof pool === 'object' && 'connect' in pool) {
-        client = wrapPgPoolAsSqlClient(pool as PgPool);
-      }
-    }
+    // Always bind the executor to the *current* pool / URI so a cached schema's
+    // `@transport(location)` cannot point queries at a previous database.
+    const client = pool
+      ? wrapPgPoolAsSqlClient(pool)
+      : createSqlClient({
+          adapter: 'postgres',
+          location: connectionString!,
+          schema: schemaName,
+          cwd: this.baseDir,
+        });
 
     const executor = await getSqlExecutor({
       subgraph: schema,
@@ -99,13 +113,42 @@ export default class PostGraphileHandler implements MeshHandler {
   }
 }
 
-function resolveConnectionString(config: YamlConfig.PostGraphileHandler): string {
-  if (!config.connectionString) {
-    throw new Error(
-      '@graphql-mesh/postgraphile: `connectionString` is required (postgres://… URI).',
-    );
+async function resolvePgPool(
+  config: YamlConfig.PostGraphileHandler,
+  baseDir: string,
+  importFn: ImportFn,
+): Promise<PgPool | undefined> {
+  if (config.pool == null) return undefined;
+  const pool =
+    typeof config.pool === 'string'
+      ? await loadFromModuleExportExpression(config.pool, {
+          cwd: baseDir,
+          defaultExportName: 'default',
+          importFn,
+        })
+      : config.pool;
+  // Existing `pg.Pool` instance → use. Plain settings objects are ignored.
+  if (pool && typeof pool === 'object' && 'connect' in pool) {
+    return pool as PgPool;
   }
-  return stringInterpolator.parse(config.connectionString, { env: process.env });
+  return undefined;
+}
+
+function poolConnectionString(pool: PgPool | undefined): string | undefined {
+  if (!pool) return undefined;
+  const opts = (pool as { options?: { connectionString?: string } }).options;
+  const uri = opts?.connectionString;
+  return uri && String(uri).trim() ? String(uri) : undefined;
+}
+
+function resolveConnectionString(
+  config: YamlConfig.PostGraphileHandler,
+  pool?: PgPool,
+): string | undefined {
+  if (config.connectionString) {
+    return stringInterpolator.parse(config.connectionString, { env: process.env });
+  }
+  return poolConnectionString(pool);
 }
 
 /** Omnigraph SQL introspects a single Postgres schema; arrays take the first entry. */

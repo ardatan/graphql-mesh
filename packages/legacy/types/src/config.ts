@@ -967,6 +967,7 @@ export interface PostGraphileHandler {
   /**
    * A connection string to your Postgres database (`postgres://…` / `postgresql://…`).
    * Supports Mesh env interpolation (e.g. `postgres://{env.PGUSER}:…`).
+   * Optional when `pool` is an existing `pg.Pool` (or module export).
    */
   connectionString?: string;
   /**
@@ -976,7 +977,8 @@ export interface PostGraphileHandler {
   schemaName?: string[];
   /**
    * Existing `pg.Pool` instance, or a module path that exports one (`modulePath#exportName`).
-   * Plain pool *settings* objects are ignored; pass a real Pool or rely on `connectionString`.
+   * Plain pool *settings* objects are ignored. When set, introspection and execution reuse
+   * this pool (including TLS); `connectionString` may be omitted.
    */
   pool?: any;
   /**

@@ -154,6 +154,17 @@ function rootWhereNeedsGenericResolver(
   if (args.filter) return true; // legacy `@sql(filter:)`
   // Root find() does not apply orderBy binders — keep generic resolve.
   if (args.orderBy) return true;
+  // Nested CONNECTION/ROWS with `$this` must not use root `find()` (would drop the join).
+  for (const entry of where.entries) {
+    if (entry.value?.kind === 'this') return true;
+  }
+  // makeRootPlan only reads GraphQL args by exact name; non-`$args.<name>` binders
+  // need the generic path (`resolvePlannerArg` honors directive binders).
+  for (const key of ['limit', 'offset', 'first', 'after', 'last', 'before'] as const) {
+    const raw = args[key];
+    if (raw == null || raw === '') continue;
+    if (String(raw).trim() !== `$args.${key}`) return true;
+  }
   // Fixed literals (`active: true`) and column `$args` binders are not applied by find().
   for (const entry of where.entries) {
     if (entry.spread || entry.children || entry.key.startsWith('$')) continue;

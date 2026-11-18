@@ -8,6 +8,7 @@ import {
 } from 'graphql';
 import { SchemaComposer } from 'graphql-compose';
 import { GraphQLBigInt, GraphQLDate, GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
+import type { Pool as PgPool } from 'pg';
 import { path as pathHelper } from '@graphql-mesh/cross-helpers';
 import {
   inferAdapterFromConnectionString,
@@ -85,6 +86,12 @@ export interface LoadSqlSubgraphOpts extends Pick<
    * the column to now instead of hard `DELETE`. Forwarded to `@transport(options)`.
    */
   softDelete?: SqlTransportOptions['softDelete'];
+  /**
+   * Existing `pg.Pool` for Postgres introspection (TLS / custom dial). When set,
+   * `endpoint` may be omitted for pool-only Mesh configs; `@transport(location)`
+   * still prefers `endpoint` or `pool.options.connectionString`.
+   */
+  pgPool?: PgPool;
 }
 
 export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadSqlSubgraphOpts) {
@@ -540,11 +547,12 @@ async function introspect(
       });
     }
     case 'postgres': {
-      if (!opts.endpoint) {
-        throw new Error(`loadSqlSubgraph postgres requires endpoint (postgres://…)`);
+      if (!opts.endpoint && !opts.pgPool) {
+        throw new Error(`loadSqlSubgraph postgres requires endpoint (postgres://…) or pgPool`);
       }
       return introspectPostgres({
         connectionString: opts.endpoint,
+        pool: opts.pgPool,
         schema: opts.schema,
         includeTables: opts.includeTables,
         excludeTables: opts.excludeTables,
@@ -562,6 +570,18 @@ async function introspect(
  */
 export function resolveOptsEndpoint(opts: LoadSqlSubgraphOpts): LoadSqlSubgraphOpts {
   if (opts.endpoint) return opts;
+  const fromPool =
+    opts.pgPool &&
+    typeof (opts.pgPool as { options?: { connectionString?: string } }).options === 'object'
+      ? (opts.pgPool as { options?: { connectionString?: string } }).options?.connectionString
+      : undefined;
+  if (fromPool) {
+    return { ...opts, endpoint: fromPool };
+  }
+  // Pool-only without a URI on the pool — stamp a postgres location for `@transport`.
+  if (opts.pgPool) {
+    return { ...opts, endpoint: 'postgres://' };
+  }
   const fromEnv = resolveConnectionStringFromEnv(undefined, { adapter: opts.adapter });
   if (!fromEnv) {
     throw new Error(

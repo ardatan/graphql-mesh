@@ -10,7 +10,16 @@ import type {
 } from './types.js';
 
 export interface IntrospectPostgresOpts {
-  connectionString: string;
+  /**
+   * Connection URI. Optional when `pool` is provided (pool-only Mesh configs).
+   * Still used to derive SSL defaults when opening a new pool.
+   */
+  connectionString?: string;
+  /**
+   * Existing `pg.Pool` — reuses its TLS / connection settings for introspection
+   * and is not ended by this function.
+   */
+  pool?: pg.Pool;
   includeTables?: string[];
   excludeTables?: string[];
   /** Defaults to `public` */
@@ -20,16 +29,23 @@ export interface IntrospectPostgresOpts {
 }
 
 export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<SqlSchemaMeta> {
-  const parsed = parseSqlUri(opts.connectionString);
-  if (parsed.adapter !== 'postgres') {
-    throw new Error('Postgres introspection requires a postgres(ql)://… URI');
-  }
   const schemaName = opts.schema || 'public';
-  const ssl = resolveSslOption(opts.tls, parsed, opts.ssl);
-  const pool = new pg.Pool({
-    connectionString: opts.connectionString,
-    ssl,
-  });
+  const ownsPool = !opts.pool;
+  let pool = opts.pool;
+  if (!pool) {
+    if (!opts.connectionString) {
+      throw new Error('Postgres introspection requires connectionString or an existing pg.Pool');
+    }
+    const parsed = parseSqlUri(opts.connectionString);
+    if (parsed.adapter !== 'postgres') {
+      throw new Error('Postgres introspection requires a postgres(ql)://… URI');
+    }
+    const ssl = resolveSslOption(opts.tls, parsed, opts.ssl);
+    pool = new pg.Pool({
+      connectionString: opts.connectionString,
+      ssl,
+    });
+  }
   try {
     const tableRes = await pool.query<{ name: string }>(
       `SELECT table_name AS name
@@ -150,7 +166,9 @@ export async function introspectPostgres(opts: IntrospectPostgresOpts): Promise<
     const computedColumns = await introspectComputedColumns(pool, schemaName, tableNames);
     return { adapter: 'postgres', tables, computedColumns };
   } finally {
-    await pool.end();
+    if (ownsPool) {
+      await pool.end();
+    }
   }
 }
 

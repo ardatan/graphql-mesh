@@ -3063,7 +3063,7 @@
       "properties": {
         "connectionString": {
           "type": "string",
-          "description": "A connection string to your Postgres database (`postgres://…` / `postgresql://…`).\nSupports Mesh env interpolation (e.g. `postgres://{env.PGUSER}:…`)."
+          "description": "A connection string to your Postgres database (`postgres://…` / `postgresql://…`).\nSupports Mesh env interpolation (e.g. `postgres://{env.PGUSER}:…`).\nOptional when `pool` is an existing `pg.Pool` (or module export)."
         },
         "schemaName": {
           "type": "array",
@@ -3087,7 +3087,7 @@
               "additionalItems": true
             }
           ],
-          "description": "Existing `pg.Pool` instance, or a module path that exports one (`modulePath#exportName`).\nPlain pool *settings* objects are ignored; pass a real Pool or rely on `connectionString`."
+          "description": "Existing `pg.Pool` instance, or a module path that exports one (`modulePath#exportName`).\nPlain pool *settings* objects are ignored. When set, introspection and execution reuse\nthis pool (including TLS); `connectionString` may be omitted."
         },
         "tables": {
           "type": "array",

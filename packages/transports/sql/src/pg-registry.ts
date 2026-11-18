@@ -157,17 +157,6 @@ export function buildPgRegistryFromSqlSchema(
     }
   }
 
-  // Ensure at least id columns exist
-  for (const info of tables.values()) {
-    if (!info.columns.has('id')) {
-      info.columns.set('id', {
-        sqlCol: 'id',
-        notNull: true,
-        codec: TYPES.int,
-      });
-    }
-  }
-
   // Align FK endpoint codecs before building record codecs (GraphQL ID→text vs Int FK).
   alignRelationCodecs(schema, tables, tableByType);
 
@@ -176,6 +165,7 @@ export function buildPgRegistryFromSqlSchema(
   const codecByTable = new Map<string, ReturnType<typeof recordCodec>>();
 
   for (const info of tables.values()) {
+    if (!info.columns.size) continue;
     const attributes: Record<string, PgCodecAttribute> = {};
     for (const [gqlField, col] of info.columns) {
       const sqlCol = col.sqlCol;
@@ -199,13 +189,14 @@ export function buildPgRegistryFromSqlSchema(
     codecByTable.set(info.table, codec);
     builder.addCodec(codec);
 
-    const pkAttrs = info.columns.has('id') ? ['id'] : [info.columns.keys().next().value!];
+    // Prefer Federation `@key` fields that exist as attributes — never invent a fake `id`.
+    const pkAttrs = primaryKeyAttrsForTable(schema, info);
     const resourceOpts = pgResourceOptions({
       executor,
       codec,
       from: tableIdent,
       name: info.table,
-      uniques: [{ attributes: pkAttrs, isPrimary: true }],
+      uniques: pkAttrs.length ? [{ attributes: pkAttrs, isPrimary: true }] : [],
     });
     resourceOptionsByTable.set(info.table, resourceOpts);
     builder.addResource(resourceOpts);
@@ -309,6 +300,25 @@ function unwrapConnectionNodeType(connectionType: GraphQLObjectType): GraphQLObj
     if (node) return unwrapObjectType(node.type);
   }
   return null;
+}
+
+/** Federation `@key` fields that exist as codec attributes; else real `id`; else first col. */
+function primaryKeyAttrsForTable(schema: GraphQLSchema, info: TableBuildInfo): string[] {
+  for (const typeName of info.typeNames) {
+    const type = schema.getType(typeName);
+    if (!type || !isObjectType(type)) continue;
+    for (const dir of getDefDirectives(schema, type).filter(d => d.name === 'key')) {
+      const fields = String(dir.args.fields || '')
+        .split(/\s+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+      const existing = fields.filter(f => info.columns.has(f));
+      if (existing.length) return existing;
+    }
+  }
+  if (info.columns.has('id')) return ['id'];
+  const first = info.columns.keys().next().value;
+  return first != null ? [String(first)] : [];
 }
 
 function codecFromGraphqlType(type: GraphQLOutputType | undefined): PgCodec {

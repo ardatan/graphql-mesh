@@ -3,7 +3,12 @@ import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import PostGraphileHandler from '@graphql-mesh/postgraphile';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { YamlConfig } from '@graphql-mesh/types';
-import { getSqlExecutor, loadGraphQLSchemaFromSql } from '@omnigraph/sql';
+import {
+  createSqlClient,
+  getSqlExecutor,
+  loadGraphQLSchemaFromSql,
+  wrapPgPoolAsSqlClient,
+} from '@omnigraph/sql';
 
 jest.mock('@omnigraph/sql');
 
@@ -18,6 +23,10 @@ describe('postgraphile', () => {
       validate: false,
     });
     jest.mocked(getSqlExecutor).mockReturnValue({} as any);
+    jest.mocked(createSqlClient).mockReturnValue({ adapter: 'postgres' } as any);
+    jest
+      .mocked(wrapPgPoolAsSqlClient)
+      .mockImplementation(pool => ({ adapter: 'postgres', pool }) as any);
   });
 
   it('builds schema via loadGraphQLSchemaFromSql after mapping PostGraphile config', async () => {
@@ -53,16 +62,58 @@ describe('postgraphile', () => {
       schema: 'app',
       includeTables: configMock.tables,
       tableFields: configMock.tableFields,
+      pgPool: undefined,
+      cwd: __dirname,
+    });
+    expect(createSqlClient).toHaveBeenCalledWith({
+      adapter: 'postgres',
+      location: 'postgres://localhost:5432/testdb',
+      schema: 'app',
       cwd: __dirname,
     });
     expect(getSqlExecutor).toHaveBeenCalledWith({
       subgraph: graphQLSchemaMock,
       cwd: __dirname,
-      client: undefined,
+      client: { adapter: 'postgres' },
     });
   });
 
-  it('requires connectionString', async () => {
+  it('supports pool-only config without connectionString', async () => {
+    const graphQLSchemaMock: GraphQLSchema = { description: 'poolOnly' } as any;
+    const pool = {
+      connect: () => undefined,
+      options: { connectionString: 'postgres://from-pool/db' },
+    };
+    jest.mocked(loadGraphQLSchemaFromSql).mockResolvedValue(graphQLSchemaMock);
+
+    const handler = new PostGraphileHandler({
+      name: 'test',
+      config: { pool },
+      baseDir: __dirname,
+      cache,
+      pubsub: noOpFunction,
+      store,
+      importFn: noOpFunction,
+      log: noOpFunction,
+    });
+
+    await handler.getMeshSource();
+
+    expect(loadGraphQLSchemaFromSql).toHaveBeenCalledWith(
+      'test',
+      expect.objectContaining({
+        endpoint: 'postgres://from-pool/db',
+        pgPool: pool,
+      }),
+    );
+    expect(getSqlExecutor).toHaveBeenCalledWith(
+      expect.objectContaining({
+        client: expect.anything(),
+      }),
+    );
+  });
+
+  it('requires connectionString or pool', async () => {
     const handler = new PostGraphileHandler({
       name: 'test',
       config: {},
@@ -73,6 +124,6 @@ describe('postgraphile', () => {
       importFn: noOpFunction,
       log: noOpFunction,
     });
-    await expect(handler.getMeshSource()).rejects.toThrow(/connectionString/);
+    await expect(handler.getMeshSource()).rejects.toThrow(/connectionString|pool/);
   });
 });
