@@ -118,3 +118,5 @@ stuffed into `where` keeps working at runtime; new emit does not produce it.
   plans via `singleRelation` / `manyRelation`) when a Node `pg.Pool` is available
 - e2e `sqlite-chinook` and `mysql-employees` use the new stack (full table set; no artificial
   `includeTables` filter)
+- Optional `softDelete: { column, tables? }` on loader / `@transport(options)`: reads add
+  `column IS NULL`; `DELETE` becomes `UPDATE … SET column = now` (Grafast path skipped when set)
