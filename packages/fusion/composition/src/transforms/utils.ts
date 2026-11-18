@@ -17,13 +17,29 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/** Apply `fn` only to spans outside `'…'` / `"…"` (respects `\\` escapes). */
+/**
+ * Apply `fn` only to spans outside `'…'` / `"…"` (respects `\\` escapes).
+ * `#` line comments are copied through unchanged so apostrophes inside comments
+ * (e.g. `# author's ID`) do not leave the scanner in a quoted state.
+ */
 function rewriteOutsideQuotes(value: string, fn: (segment: string) => string): string {
   let out = '';
   let i = 0;
   let segmentStart = 0;
   while (i < value.length) {
     const c = value[i];
+    if (c === '#') {
+      out += fn(value.slice(segmentStart, i));
+      const eol = value.indexOf('\n', i);
+      if (eol === -1) {
+        out += value.slice(i);
+        return out;
+      }
+      out += value.slice(i, eol + 1);
+      i = eol + 1;
+      segmentStart = i;
+      continue;
+    }
     if (c === '"' || c === "'") {
       out += fn(value.slice(segmentStart, i));
       const q = c;
@@ -1495,17 +1511,30 @@ export function rewriteConnectArgReferences(
     // (`name` → `fullName`). Do not pass the connector field's own rename here —
     // that would rewrite response keys incorrectly (e.g. Query.user → person).
     if (fieldRenameMap?.size) {
-      for (const [from, to] of fieldRenameMap) {
-        if (from === to) continue;
-        out = out
-          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
-          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`);
-        // Quote-aware: do not rewrite `$this.x` inside string literals.
+      // One lookup per original name (same as `$args`) — sequential map entries
+      // must not cascade (`primaryId→secondaryId→backupId`).
+      const fieldEntries = [...fieldRenameMap.entries()]
+        .filter(([from, to]) => from && to && from !== to)
+        .sort((a, b) => b[0].length - a[0].length);
+      if (fieldEntries.length) {
+        const fieldLookup = new Map(fieldEntries);
+        const fieldNames = fieldEntries.map(([from]) => escapeRegExp(from)).join('|');
+        // Quote-aware pick rewrites: leave `note: " old_name "` literals alone.
         out = rewriteOutsideQuotes(out, segment =>
-          segment.replace(
-            new RegExp(`\\$this\\.${escapeRegExp(from)}(?![\\w])`, 'g'),
-            `$this.${to}`,
-          ),
+          segment
+            .replace(
+              new RegExp(`(^|[\\n\\s])(${fieldNames})(\\s*[:{])`, 'g'),
+              (_m, pre: string, name: string, trail: string) =>
+                `${pre}${fieldLookup.get(name) ?? name}${trail}`,
+            )
+            .replace(
+              new RegExp(`(^|[\\n\\s])(${fieldNames})(?=\\s|$)`, 'g'),
+              (_m, pre: string, name: string) => `${pre}${fieldLookup.get(name) ?? name}`,
+            )
+            .replace(
+              new RegExp(`\\$this\\.(${fieldNames})(?![\\w])`, 'g'),
+              (_m, name: string) => `$this.${fieldLookup.get(name) ?? name}`,
+            ),
         );
       }
     }
@@ -1681,12 +1710,16 @@ export function rewriteConnectArgReferences(
         );
       }
       if (fieldRenameMap?.size) {
-        for (const [from, to] of fieldRenameMap) {
-          if (from === to) continue;
+        const fieldEntries = [...fieldRenameMap.entries()]
+          .filter(([from, to]) => from && to && from !== to)
+          .sort((a, b) => b[0].length - a[0].length);
+        if (fieldEntries.length) {
+          const fieldLookup = new Map(fieldEntries);
+          const fieldNames = fieldEntries.map(([from]) => escapeRegExp(from)).join('|');
           out = rewriteOutsideQuotes(out, segment =>
             segment.replace(
-              new RegExp(`\\$this\\.${escapeRegExp(from)}(?![\\w])`, 'g'),
-              `$this.${to}`,
+              new RegExp(`\\$this\\.(${fieldNames})(?![\\w])`, 'g'),
+              (_m, name: string) => `$this.${fieldLookup.get(name) ?? name}`,
             ),
           );
         }

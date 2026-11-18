@@ -104,12 +104,18 @@ export function getMongoExecutor({
   }
   const transport = transportDirectives?.[0] as
     { location?: string; options?: MongoTransportOptions } | undefined;
+  const byCollectionEntries = Object.entries(
+    transport?.options?.placeholderFieldsByCollection || {},
+  ).map(([collection, fields]) => [collection, new Set(fields)] as [string, ReadonlySet<string>]);
   const fieldRuntime: MongoFieldRuntime = {
     objectIdFields: new Set(['_id', 'id', ...(transport?.options?.objectIdFields || [])]),
     requiredFields: new Set(transport?.options?.requiredFields || []),
     placeholderFields: new Set(
       transport?.options?.placeholderFields?.length ? transport.options.placeholderFields : ['_'],
     ),
+    placeholderFieldsByCollection: byCollectionEntries.length
+      ? new Map(byCollectionEntries)
+      : undefined,
     stringIdCollections: new Set(transport?.options?.stringIdCollections || []),
   };
   const mongoClient =
@@ -188,20 +194,28 @@ function attachMongoResolver(
           case 'PAGINATION':
             return await resolvePagination(client, directive, filter, sort, proj, ctx, selection);
           case 'INSERT_ONE': {
-            const doc = stripInputPlaceholder(buildSetDocument(directive.set, ctx));
+            const doc = stripInputPlaceholder(
+              buildSetDocument(directive.set, ctx, { collection: directive.collection }),
+              directive.collection,
+            );
             const { insertedId } = await client.insertOne(directive.collection, doc);
             const created = await client.findOne(directive.collection, { _id: insertedId });
             return mapPayload(created, insertedId, selection);
           }
           case 'INSERT_MANY': {
-            const fromSet = buildSetDocument(directive.set, ctx);
+            const fromSet = buildSetDocument(directive.set, ctx, {
+              collection: directive.collection,
+            });
             const rawRecords = (fromSet.documents ||
               fromSet.inputs ||
               graphqlArgs.documents ||
               graphqlArgs.inputs ||
               []) as Record<string, unknown>[];
             const records = (Array.isArray(rawRecords) ? rawRecords : []).map(doc =>
-              stripInputPlaceholder(coerceDeep(doc) as Record<string, unknown>),
+              stripInputPlaceholder(
+                coerceDeep(doc, { collection: directive.collection }) as Record<string, unknown>,
+                directive.collection,
+              ),
             );
             const { insertedIds, insertedCount } = await client.insertMany(
               directive.collection,
@@ -219,7 +233,9 @@ function attachMongoResolver(
             };
           }
           case 'UPDATE_ONE': {
-            const updateDoc = resolveUpdateDocument(directive.set, ctx);
+            const updateDoc = resolveUpdateDocument(directive.set, ctx, {
+              collection: directive.collection,
+            });
             const { value: updated } = await client.findOneAndUpdate(
               directive.collection,
               filter,
@@ -228,7 +244,9 @@ function attachMongoResolver(
             return mapPayload(updated, updated?._id, selection);
           }
           case 'UPDATE_MANY': {
-            const updateDoc = resolveUpdateDocument(directive.set, ctx);
+            const updateDoc = resolveUpdateDocument(directive.set, ctx, {
+              collection: directive.collection,
+            });
             // Empty `{}` (e.g. from `query: { and: [] }`) would match the whole collection.
             const writeFilter = bulkWriteFilter(filter);
             const result = await client.updateMany(directive.collection, writeFilter, updateDoc);
@@ -332,7 +350,9 @@ async function resolveConnection(
   const first = firstRaw;
   const after = resolveBinderString(directive.after, ctx);
   const effectiveSort = ensureIdTiebreaker(sort || { _id: 1 });
-  const connFilter = after ? mergeCursorFilter(filter, after, effectiveSort) : { ...filter };
+  const connFilter = after
+    ? mergeCursorFilter(filter, after, effectiveSort, directive.collection)
+    : { ...filter };
   const connProjection = projectionWithSortKeys(projection, effectiveSort);
   const docs = await client.findMany(directive.collection, connFilter, {
     projection: connProjection,
@@ -498,17 +518,19 @@ function mergeCursorFilter(
   filter: Record<string, unknown>,
   after: string,
   sort: Record<string, 1 | -1>,
+  collection?: string,
 ): Record<string, unknown> {
   const values = decodeConnectionCursor(after);
   const keys = Object.keys(sort);
   if (!values || (values.length !== keys.length && values.length !== 1)) {
     return { ...filter };
   }
+  const idAsObjectId = isObjectIdFieldKey('_id', collection);
   // Legacy single-_id cursor when sort is only `_id` or values length is 1.
   if (values.length === 1 && keys.length === 1 && keys[0] === '_id') {
     const op = sort._id < 0 ? '$lt' : '$gt';
     return andFilters(filter, {
-      _id: { [op]: coerceFilterValue(values[0], { asObjectId: true }) },
+      _id: { [op]: coerceFilterValue(values[0], { asObjectId: idAsObjectId }) },
     });
   }
   if (values.length === 1 && keys.length > 1) {
@@ -516,7 +538,7 @@ function mergeCursorFilter(
     const idDir = sort._id ?? 1;
     const op = idDir < 0 ? '$lt' : '$gt';
     return andFilters(filter, {
-      _id: { [op]: coerceFilterValue(values[0], { asObjectId: true }) },
+      _id: { [op]: coerceFilterValue(values[0], { asObjectId: idAsObjectId }) },
     });
   }
 
@@ -524,9 +546,11 @@ function mergeCursorFilter(
   for (let i = 0; i < keys.length; i++) {
     const prefix: Record<string, unknown> = {};
     for (let j = 0; j < i; j++) {
-      prefix[keys[j]] = coerceCursorValue(keys[j], values[j]);
+      prefix[keys[j]] = coerceCursorValue(keys[j], values[j], collection);
     }
-    orClauses.push(...fieldContinuationClauses(prefix, keys[i], sort[keys[i]], values[i]));
+    orClauses.push(
+      ...fieldContinuationClauses(prefix, keys[i], sort[keys[i]], values[i], collection),
+    );
   }
   return andFilters(filter, { $or: orClauses });
 }
@@ -540,8 +564,9 @@ function fieldContinuationClauses(
   field: string,
   dir: 1 | -1,
   rawValue: unknown,
+  collection?: string,
 ): Record<string, unknown>[] {
-  const value = coerceCursorValue(field, rawValue);
+  const value = coerceCursorValue(field, rawValue, collection);
   if (value == null) {
     // Equal-null rows continue via later sort keys (usually `_id`). For ascending
     // sorts (nulls first), also jump to the first non-null values.
@@ -559,8 +584,8 @@ function fieldContinuationClauses(
   return clauses;
 }
 
-function coerceCursorValue(field: string, value: unknown): unknown {
-  return coerceFilterValue(value, { asObjectId: isObjectIdFieldKey(field) });
+function coerceCursorValue(field: string, value: unknown, collection?: string): unknown {
+  return coerceFilterValue(value, { asObjectId: isObjectIdFieldKey(field, collection) });
 }
 
 function andFilters(

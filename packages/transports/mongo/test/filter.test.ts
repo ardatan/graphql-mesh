@@ -142,6 +142,18 @@ describe('mongo filter mapping', () => {
     const nestedEmptyAnd = graphqlFilterToMongo({ and: [{ and: [] }] });
     expect(isUniversallyMatchingFilter(nestedEmptyAnd)).toBe(false);
     expect(nestedEmptyAnd).toEqual({ $and: [MATCH_NOTHING_FILTER] });
+    // Vacuous `$or` branch would match all documents — drop / match-nothing.
+    expect(isUniversallyMatchingFilter({ $or: [{}] })).toBe(true);
+    expect(graphqlFilterToMongo({ or: [{ and: [] }] })).toEqual({
+      $and: [MATCH_NOTHING_FILTER],
+    });
+    expect(graphqlFilterToMongo({ or: [{ name: { eq: 'Ada' } }, { and: [] }] })).toEqual({
+      $or: [{ name: 'Ada' }],
+    });
+    // `not` of match-nothing is match-all — bulk guard must detect it.
+    const notNestedEmpty = graphqlFilterToMongo({ not: { and: [{ and: [] }] } });
+    expect(isUniversallyMatchingFilter(notNestedEmpty)).toBe(true);
+    expect(isUniversallyMatchingFilter(graphqlFilterToMongo({ not: { or: [] } }))).toBe(true);
   });
 
   it('converts ObjectId only for declared id/_id/objectId fields', () => {
@@ -340,7 +352,13 @@ describe('mongo filter mapping', () => {
     configureRequiredFields(['name']);
     configurePlaceholderFields(['_']);
     expect(() => graphqlUpdateToMongo({ set: { name: null, age: 1 } })).toThrow(/name/);
+    // EJSON `$undefined` becomes null after coerce — still reject.
+    expect(() => graphqlUpdateToMongo({ set: { name: { $undefined: true }, age: 1 } })).toThrow(
+      /name/,
+    );
     expect(graphqlUpdateToMongo({ set: { age: 1 } })).toEqual({ $set: { age: 1 } });
+    expect(() => graphqlUpdateToMongo({ unset: { name: true } })).toThrow(/name/);
+    expect(() => graphqlUpdateToMongo({ rename: { name: 'previousName' } })).toThrow(/name/);
     expect(stripInputPlaceholder({ _: 'x', name: 'Ada' })).toEqual({ name: 'Ada' });
     expect(graphqlUpdateToMongo({ set: { _: 'x', name: 'Ada' } })).toEqual({
       $set: { name: 'Ada' },
@@ -359,5 +377,47 @@ describe('mongo filter mapping', () => {
       $set: { _: 'keep-me', name: 'Ada' },
     });
     configurePlaceholderFields(undefined);
+  });
+
+  it('scopes placeholders by collection so a real _ on another model is preserved', () => {
+    const runtime = {
+      objectIdFields: new Set(['_id', 'id']),
+      requiredFields: new Set<string>(),
+      placeholderFields: new Set(['_']),
+      placeholderFieldsByCollection: new Map<string, ReadonlySet<string>>([
+        ['id_only', new Set(['_'])],
+      ]),
+      stringIdCollections: new Set<string>(),
+    };
+    const stripped = runWithMongoFieldRuntime(runtime, () =>
+      stripInputPlaceholder({ _: 'x', name: 'Ada' }, 'id_only'),
+    );
+    expect(stripped).toEqual({ name: 'Ada' });
+    const kept = runWithMongoFieldRuntime(runtime, () =>
+      stripInputPlaceholder({ _: 'keep-me', name: 'Ada' }, 'notes'),
+    );
+    expect(kept).toEqual({ _: 'keep-me', name: 'Ada' });
+  });
+
+  it('keeps String _id as string in buildSetDocument for stringIdCollections', () => {
+    const hex = '507f1f77bcf86cd799439011';
+    const runtime = {
+      objectIdFields: new Set(['_id', 'id']),
+      requiredFields: new Set<string>(),
+      placeholderFields: new Set(['_']),
+      stringIdCollections: new Set(['external_users']),
+    };
+    const doc = runWithMongoFieldRuntime(runtime, () =>
+      buildSetDocument(
+        '_id: $args.document.id\nname: $args.document.name',
+        {
+          args: { document: { id: hex, name: 'Ada' } },
+        },
+        { collection: 'external_users' },
+      ),
+    );
+    expect(doc._id).toBe(hex);
+    expect(typeof doc._id).toBe('string');
+    expect(doc._id).not.toBeInstanceOf(ObjectId);
   });
 });

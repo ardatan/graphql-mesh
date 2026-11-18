@@ -10,6 +10,11 @@ export type MongoFieldRuntime = {
   requiredFields: ReadonlySet<string>;
   /** GraphQL empty-input placeholder keys (e.g. `_`) — not real model paths. */
   placeholderFields: ReadonlySet<string>;
+  /**
+   * Placeholders scoped by collection so an id-only model's `_` does not strip a
+   * real `_: String` field on another model in the same subgraph.
+   */
+  placeholderFieldsByCollection?: ReadonlyMap<string, ReadonlySet<string>>;
   /** Collections whose `_id` is BSON String — do not coerce `_id`/`id` to ObjectId. */
   stringIdCollections: ReadonlySet<string>;
 };
@@ -311,28 +316,26 @@ export function configurePlaceholderFields(fields: Iterable<string> | undefined)
   }
 }
 
-function activeObjectIdFields(): Set<string> {
-  return fieldRuntimeAls.getStore()?.objectIdFields
-    ? new Set(fieldRuntimeAls.getStore()!.objectIdFields)
-    : declaredObjectIdFields;
+function activeObjectIdFields(): ReadonlySet<string> {
+  return fieldRuntimeAls.getStore()?.objectIdFields ?? declaredObjectIdFields;
 }
 
-function activeRequiredFields(): Set<string> {
-  return fieldRuntimeAls.getStore()?.requiredFields
-    ? new Set(fieldRuntimeAls.getStore()!.requiredFields)
-    : declaredRequiredFields;
+function activeRequiredFields(): ReadonlySet<string> {
+  return fieldRuntimeAls.getStore()?.requiredFields ?? declaredRequiredFields;
 }
 
-function activePlaceholderFields(): Set<string> {
-  return fieldRuntimeAls.getStore()?.placeholderFields
-    ? new Set(fieldRuntimeAls.getStore()!.placeholderFields)
-    : declaredPlaceholderFields;
+function activePlaceholderFields(collection?: string): ReadonlySet<string> {
+  const store = fieldRuntimeAls.getStore();
+  if (store?.placeholderFieldsByCollection && collection) {
+    return store.placeholderFieldsByCollection.get(collection) ?? EMPTY_STRING_SET;
+  }
+  return store?.placeholderFields ?? declaredPlaceholderFields;
 }
 
-function activeStringIdCollections(): Set<string> {
-  return fieldRuntimeAls.getStore()?.stringIdCollections
-    ? new Set(fieldRuntimeAls.getStore()!.stringIdCollections)
-    : new Set();
+const EMPTY_STRING_SET: ReadonlySet<string> = new Set();
+
+function activeStringIdCollections(): ReadonlySet<string> {
+  return fieldRuntimeAls.getStore()?.stringIdCollections ?? EMPTY_STRING_SET;
 }
 
 /**
@@ -347,9 +350,35 @@ export function isObjectIdFieldKey(key: string, collection?: string): boolean {
   return activeObjectIdFields().has(key);
 }
 
+/** True when a filter matches no documents (`{ $nor: [{}] }` or `$and` of those). */
+export function isMatchNothingFilter(filter: Record<string, unknown> | null | undefined): boolean {
+  if (!filter) return false;
+  const keys = Object.keys(filter);
+  if (keys.length === 1 && keys[0] === '$nor' && Array.isArray(filter.$nor)) {
+    const clauses = filter.$nor as unknown[];
+    return (
+      clauses.length === 1 && isUniversallyMatchingFilter(clauses[0] as Record<string, unknown>)
+    );
+  }
+  if (keys.length === 1 && keys[0] === '$and' && Array.isArray(filter.$and)) {
+    const clauses = filter.$and as Record<string, unknown>[];
+    return (
+      clauses.length > 0 &&
+      clauses.every(
+        c =>
+          c != null &&
+          typeof c === 'object' &&
+          !Array.isArray(c) &&
+          isMatchNothingFilter(c as Record<string, unknown>),
+      )
+    );
+  }
+  return false;
+}
+
 /**
- * True when a filter matches every document (`{}` or `$and` of vacuous clauses).
- * Used to neutralize nested empty `and` before bulk writes.
+ * True when a filter matches every document (`{}`, vacuous `$and`, vacuous `$or`,
+ * or `$nor` of a match-nothing predicate). Used to neutralize bulk writes.
  */
 export function isUniversallyMatchingFilter(
   filter: Record<string, unknown> | null | undefined,
@@ -366,6 +395,29 @@ export function isUniversallyMatchingFilter(
         typeof c === 'object' &&
         !Array.isArray(c) &&
         isUniversallyMatchingFilter(c as Record<string, unknown>),
+    );
+  }
+  // One vacuous `$or` branch matches every document.
+  if (keys.length === 1 && keys[0] === '$or' && Array.isArray(filter.$or)) {
+    const clauses = filter.$or as Record<string, unknown>[];
+    if (clauses.length === 0) return true;
+    return clauses.some(
+      c =>
+        c != null &&
+        typeof c === 'object' &&
+        !Array.isArray(c) &&
+        isUniversallyMatchingFilter(c as Record<string, unknown>),
+    );
+  }
+  // `$nor: [match-nothing]` is NOT(false) → match-all (e.g. `not: { and: [{ and: [] }] }`).
+  if (keys.length === 1 && keys[0] === '$nor' && Array.isArray(filter.$nor)) {
+    const clauses = filter.$nor as Record<string, unknown>[];
+    return (
+      clauses.length === 1 &&
+      clauses[0] != null &&
+      typeof clauses[0] === 'object' &&
+      !Array.isArray(clauses[0]) &&
+      isMatchNothingFilter(clauses[0] as Record<string, unknown>)
     );
   }
   return false;
@@ -412,9 +464,14 @@ export function graphqlFilterToMongo(
         appendAnd(out, [MATCH_NOTHING_FILTER]);
         continue;
       }
-      mergeFilterFragment(out, {
-        $or: clauses.map(v => graphqlFilterToMongo(v, pathPrefix, collection)),
-      });
+      const mapped = clauses.map(v => graphqlFilterToMongo(v, pathPrefix, collection));
+      // Drop vacuous branches (`{}` / nested empty `and`) — one of them would match all.
+      const meaningful = mapped.filter(c => !isUniversallyMatchingFilter(c));
+      if (meaningful.length === 0) {
+        appendAnd(out, [MATCH_NOTHING_FILTER]);
+      } else {
+        mergeFilterFragment(out, { $or: meaningful });
+      }
       continue;
     }
     if (key === 'NOT' || key === 'not') {
@@ -596,15 +653,18 @@ export function graphqlSortToMongo(
 export function buildSetDocument(
   setSource: string | null | undefined,
   ctx: { args?: Record<string, unknown>; parent?: unknown },
+  opts?: { collection?: string },
 ): Record<string, unknown> {
   const parsed = parseMongoMapping(setSource);
+  const collection = opts?.collection;
   const doc: Record<string, unknown> = {};
   for (const entry of parsed.entries) {
     if (!entry.value) continue;
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved === undefined) continue;
     doc[entry.key] = coerceDeep(resolved, {
-      asObjectId: isObjectIdFieldKey(entry.key),
+      collection,
+      asObjectId: isObjectIdFieldKey(entry.key, collection),
     });
   }
   return doc as Record<string, unknown>;
@@ -632,25 +692,33 @@ function remapUpdateFieldKey(key: string): string {
   return key === 'id' ? '_id' : key;
 }
 
-function remapUpdateFields(value: unknown): unknown {
-  if (!isPlainObject(value)) return coerceDeep(value);
-  const placeholders = activePlaceholderFields();
+function remapUpdateFields(value: unknown, collection?: string): unknown {
+  if (!isPlainObject(value)) return coerceDeep(value, { collection });
+  const placeholders = activePlaceholderFields(collection);
   const required = activeRequiredFields();
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(value)) {
     // Only strip configured empty-input placeholders — never a real `_` path.
     if (placeholders.has(k)) continue;
-    if (v === null && required.has(k)) {
+    const coerced = coerceDeep(v, {
+      collection,
+      asObjectId: isObjectIdFieldKey(k, collection),
+    });
+    // Check after BSON/EJSON conversion so `{ $undefined: true }` → null is caught.
+    if (coerced === null && required.has(k)) {
       throw new Error(`Cannot set required field "${k}" to null`);
     }
-    out[remapUpdateFieldKey(k)] = coerceDeep(v, { asObjectId: isObjectIdFieldKey(k) });
+    out[remapUpdateFieldKey(k)] = coerced;
   }
   return out;
 }
 
 /** Drop GraphQL empty-input placeholder keys before insert/write. */
-export function stripInputPlaceholder(doc: Record<string, unknown>): Record<string, unknown> {
-  const placeholders = activePlaceholderFields();
+export function stripInputPlaceholder(
+  doc: Record<string, unknown>,
+  collection?: string,
+): Record<string, unknown> {
+  const placeholders = activePlaceholderFields(collection);
   if (!placeholders.size) return doc;
   let changed = false;
   const out: Record<string, unknown> = {};
@@ -668,15 +736,34 @@ export function stripInputPlaceholder(doc: Record<string, unknown>): Record<stri
  * Typed update input (`set` / `inc` / …) → Mongo update doc (`$set` / `$inc` / …).
  * Also accepts `_set` aliases and native `$set` keys; bare field maps become `$set`.
  */
-export function graphqlUpdateToMongo(input: Record<string, unknown>): Record<string, unknown> {
+export function graphqlUpdateToMongo(
+  input: Record<string, unknown>,
+  opts?: { collection?: string },
+): Record<string, unknown> {
+  const collection = opts?.collection;
   const out: Record<string, unknown> = {};
   let sawOp = false;
+  const required = activeRequiredFields();
 
   for (const [rawKey, value] of Object.entries(input)) {
     if (value == null) continue;
 
     if (rawKey.startsWith('$')) {
-      out[rawKey] = remapUpdateFields(value);
+      if (rawKey === '$rename' && isPlainObject(value)) {
+        for (const src of Object.keys(value)) {
+          if (required.has(src) || required.has(remapUpdateFieldKey(src))) {
+            throw new Error(`Cannot rename required field "${src}"`);
+          }
+        }
+      }
+      if (rawKey === '$unset' && isPlainObject(value)) {
+        for (const field of Object.keys(value)) {
+          if (required.has(field) || required.has(remapUpdateFieldKey(field))) {
+            throw new Error(`Cannot unset required field "${field}"`);
+          }
+        }
+      }
+      out[rawKey] = remapUpdateFields(value, collection);
       sawOp = true;
       continue;
     }
@@ -690,35 +777,46 @@ export function graphqlUpdateToMongo(input: Record<string, unknown>): Record<str
       const unsetDoc: Record<string, string | number | boolean> = {};
       for (const [field, flag] of Object.entries(value)) {
         if (!flag) continue;
+        if (required.has(field) || required.has(remapUpdateFieldKey(field))) {
+          throw new Error(`Cannot unset required field "${field}"`);
+        }
         unsetDoc[remapUpdateFieldKey(field)] = '';
       }
       out.$unset = unsetDoc;
       continue;
     }
-    out[mongoOp] = remapUpdateFields(value);
+    if (key === 'rename' && isPlainObject(value)) {
+      for (const src of Object.keys(value)) {
+        if (required.has(src) || required.has(remapUpdateFieldKey(src))) {
+          throw new Error(`Cannot rename required field "${src}"`);
+        }
+      }
+    }
+    out[mongoOp] = remapUpdateFields(value, collection);
   }
 
   if (sawOp) return out;
 
   // Legacy / shorthand: plain field map → `$set`
-  return { $set: remapUpdateFields(input) as Record<string, unknown> };
+  return { $set: remapUpdateFields(input, collection) as Record<string, unknown> };
 }
 
 /** Resolve a Mongo update document from `@mongo__update*(set:)` (`$args.update` or field map). */
 export function resolveUpdateDocument(
   setSource: string | null | undefined,
   ctx: { args?: Record<string, unknown>; parent?: unknown },
+  opts?: { collection?: string },
 ): Record<string, unknown> {
   const trimmed = setSource?.trim();
   const argsBinder = trimmed?.match(/^\$args\.([\w$]+)$/);
   if (argsBinder) {
     const update = ctx.args?.[argsBinder[1]];
     if (update && typeof update === 'object' && !Array.isArray(update)) {
-      return graphqlUpdateToMongo(update as Record<string, unknown>);
+      return graphqlUpdateToMongo(update as Record<string, unknown>, opts);
     }
     return { $set: {} };
   }
-  return { $set: buildSetDocument(setSource, ctx) };
+  return { $set: buildSetDocument(setSource, ctx, opts) };
 }
 
 export function coerceFilterValue(value: unknown, opts?: CoerceFilterOptions): unknown {

@@ -39,7 +39,9 @@ new stack (like mysql/tuql -> SQL).
 - Mutation payloads include typed `error: MongoError` when selected
 - Nested Mongoose paths emit Embedded / DocumentArray object types + enums + descriptions
 - `ref` paths emit nested `@mongo__findOne` / `@mongo__find` populate fields
-- Fusion `rewriteConnectArgReferences` rewrites `$args` / `$this` in all `mongo__*` (and legacy `mongo`)
+- Fusion `rewriteConnectArgReferences` rewrites `$args` / `$this` in all `mongo__*` (and legacy `mongo`); `$this` renames are one-shot (no cascade), `#` comments are quote-safe, and selection rewrites skip quoted literals
+- Bulk writes reject vacuous `$or` / `not` of match-nothing filters; required fields reject null after BSON coerce, `$unset`, and `$rename`
+- String `_id` models require `id: String!` on create, keep BSON string inserts/cursors/payloads, and scope empty-input placeholders per collection
 
 ## Consumer migration
 

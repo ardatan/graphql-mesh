@@ -20,6 +20,11 @@ export interface MongoTransportOptions {
   requiredFields?: string[];
   /** Empty-input placeholder keys (e.g. `_`) — stripped on write; not real paths. */
   placeholderFields?: string[];
+  /**
+   * Placeholders keyed by collection so an id-only model's `_` does not strip a
+   * real writable `_` on another model in the same subgraph.
+   */
+  placeholderFieldsByCollection?: Record<string, string[]>;
   /** Collections whose `_id` is BSON String (not ObjectId) — keep hex as string. */
   stringIdCollections?: string[];
 }

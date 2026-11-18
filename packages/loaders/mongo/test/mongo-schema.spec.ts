@@ -210,5 +210,68 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(transport?.options?.stringIdCollections).toEqual(['external_users']);
     const sdl = printSchemaWithDirectives(schema);
     expect(sdl).toMatch(/findExternalUserById\(id: String!\)/);
+    expect(sdl).toMatch(/input ExternalUserDocumentInput[\s\S]*?\bid:\s*String!/);
+    expect(sdl).toMatch(/recordId:\s*String/);
+    expect(sdl).toMatch(/recordIds:\s*\[String!\]/);
+    expect(sdl).toMatch(/_id:\s*\$args\.document\.id/);
+    expect(sdl).toMatch(/updateExternalUserById\(id: String!/);
+    expect(sdl).toMatch(/deleteExternalUserById\(id: String!/);
+  });
+
+  it('omits rename JSON when only fields.required is set; excludes required from UnsetInput', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('required-only', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'Profile',
+          schema: new Schema({ name: String, nickname: String }, { collection: 'profiles' }),
+          collection: 'profiles',
+          options: { fields: { required: ['name'] } },
+        },
+      ],
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).not.toContain('rename: JSON');
+    expect(sdl).not.toContain('push: JSON');
+    const unsetStart = sdl.search(/input\s+ProfileUnsetInput\b/);
+    expect(unsetStart).toBeGreaterThanOrEqual(0);
+    const open = sdl.indexOf('{', unsetStart);
+    let depth = 0;
+    let body = '';
+    for (let i = open; i < sdl.length; i++) {
+      if (sdl[i] === '{') depth++;
+      else if (sdl[i] === '}') {
+        depth--;
+        if (depth === 0) {
+          body = sdl.slice(open + 1, i);
+          break;
+        }
+      }
+    }
+    expect(body).not.toMatch(/\bname\b/);
+    expect(body).toMatch(/\bnickname\b/);
+  });
+
+  it('scopes placeholderFieldsByCollection to id-only models', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('placeholders', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'Token',
+          schema: new Schema({}, { collection: 'tokens' }),
+          collection: 'tokens',
+        },
+        {
+          name: 'Note',
+          schema: new Schema({ _: String, body: String }, { collection: 'notes' }),
+          collection: 'notes',
+        },
+      ],
+    });
+    const transport = (schema.extensions as any)?.directives?.transport;
+    expect(transport?.options?.placeholderFieldsByCollection).toEqual({
+      tokens: ['_'],
+    });
+    expect(transport?.options?.placeholderFields).toEqual(['_']);
   });
 });

@@ -194,6 +194,130 @@ describe('getMongoExecutor FIND_* + writes', () => {
       document: parse(`mutation { deleteManyUsers(query: ${nestedEmpty}) { deletedCount } }`),
     });
     expect(lastDeleteFilter).toEqual({ $and: [{ $nor: [{}] }] });
+
+    // Vacuous `$or` branch must not wipe the collection.
+    const vacuousOr = '{ or: [{ and: [] }, { name: { eq: "Ada" } }] }';
+    await execResult(executor, {
+      document: parse(`mutation { deleteManyUsers(query: ${vacuousOr}) { deletedCount } }`),
+    });
+    expect(lastDeleteFilter).toEqual({ $or: [{ name: 'Ada' }] });
+
+    const notNestedEmpty = '{ not: { and: [{ and: [] }] } }';
+    await execResult(executor, {
+      document: parse(`mutation { deleteManyUsers(query: ${notNestedEmpty}) { deletedCount } }`),
+    });
+    expect(lastDeleteFilter).toEqual({ $nor: [{}] });
+  });
+
+  it('inserts String _id as string and pages connection cursors without ObjectId coerce', async () => {
+    const externalSchema = new Schema(
+      { _id: String, name: String },
+      { collection: 'external_users' },
+    );
+    const schema = await loadGraphQLSchemaFromMongo('externals', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'ExternalUser',
+          schema: externalSchema,
+          collection: 'external_users',
+        },
+      ],
+    });
+
+    const docs: Array<Record<string, unknown>> = [
+      { _id: '507f1f77bcf86cd799439011', name: 'Ada' },
+      { _id: '507f1f77bcf86cd799439012', name: 'Alan' },
+      { _id: '507f1f77bcf86cd799439013', name: 'Grace' },
+    ];
+    let inserted: Record<string, unknown> | undefined;
+    let lastFindFilter: Record<string, unknown> | undefined;
+    const client: MongoClientLike = {
+      async findOne(_c, filter) {
+        return docs.find(d => String(d._id) === String((filter as any)._id)) || null;
+      },
+      async findMany(_c, filter, options) {
+        lastFindFilter = filter as Record<string, unknown>;
+        let rows = docs.slice().sort((a, b) => String(a._id).localeCompare(String(b._id)));
+        const idOp = (filter as any)._id;
+        if (idOp && typeof idOp === 'object' && idOp.$gt != null) {
+          expect(typeof idOp.$gt).toBe('string');
+          expect(idOp.$gt).not.toBeInstanceOf((await import('mongodb')).ObjectId);
+          rows = rows.filter(d => String(d._id) > String(idOp.$gt));
+        }
+        if (options?.limit != null) rows = rows.slice(0, options.limit);
+        return rows;
+      },
+      async count() {
+        return docs.length;
+      },
+      async insertOne(_c, doc) {
+        inserted = doc;
+        docs.push(doc);
+        return { insertedId: doc._id };
+      },
+      async insertMany() {
+        return { insertedIds: [], insertedCount: 0 };
+      },
+      async updateOne() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async updateMany() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async findOneAndUpdate() {
+        return { value: null, matchedCount: 0, modifiedCount: 0 };
+      },
+      async deleteOne() {
+        return { deletedCount: 0 };
+      },
+      async deleteMany() {
+        return { deletedCount: 0 };
+      },
+      async findOneAndDelete() {
+        return { value: null, deletedCount: 0 };
+      },
+      async aggregate() {
+        return [];
+      },
+      dispose() {},
+    };
+
+    const executor = getMongoExecutor({ subgraph: schema, client });
+    const created = await execResult(executor, {
+      document: parse(
+        `mutation { insertOneExternalUser(document: { id: "507f1f77bcf86cd799439099", name: "Lin" }) { recordId record { id name } } }`,
+      ),
+    });
+    expect(created.errors).toBeUndefined();
+    expect(typeof inserted?._id).toBe('string');
+    expect(inserted?._id).toBe('507f1f77bcf86cd799439099');
+    expect(created.data).toEqual({
+      insertOneExternalUser: {
+        recordId: '507f1f77bcf86cd799439099',
+        record: { id: '507f1f77bcf86cd799439099', name: 'Lin' },
+      },
+    });
+
+    const page1 = await execResult(executor, {
+      document: parse(
+        `query { findExternalUsersConnection(first: 1, sort: [id_asc]) { edges { cursor node { id } } pageInfo { hasNextPage } } }`,
+      ),
+    });
+    expect(page1.errors).toBeUndefined();
+    const cursor = (page1.data as any).findExternalUsersConnection.edges[0].cursor as string;
+    expect((page1.data as any).findExternalUsersConnection.pageInfo.hasNextPage).toBe(true);
+
+    const page2 = await execResult(executor, {
+      document: parse(
+        `query { findExternalUsersConnection(first: 1, after: "${cursor}", sort: [id_asc]) { edges { node { id } } } }`,
+      ),
+    });
+    expect(page2.errors).toBeUndefined();
+    expect((page2.data as any).findExternalUsersConnection.edges[0].node.id).toBe(
+      '507f1f77bcf86cd799439012',
+    );
+    expect(lastFindFilter).toBeDefined();
   });
 });
 

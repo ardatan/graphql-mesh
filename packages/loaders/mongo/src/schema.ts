@@ -182,14 +182,23 @@ export async function loadGraphQLSchemaFromMongo(
   const placeholderFields = [
     ...new Set(modelMeta.flatMap(m => m.placeholderFields || []).filter(Boolean) as string[]),
   ];
+  const placeholderFieldsByCollection: Record<string, string[]> = {};
+  for (const m of modelMeta) {
+    if (m.placeholderFields?.length && m.collection) {
+      placeholderFieldsByCollection[m.collection] = [...new Set(m.placeholderFields)];
+    }
+  }
   const stringIdCollections = modelMeta
     .filter(m => m.stringId)
     .map(m => m.collection)
     .filter(Boolean);
-  const transportOptions: Record<string, string[]> = {};
+  const transportOptions: Record<string, unknown> = {};
   if (objectIdFields.length) transportOptions.objectIdFields = objectIdFields;
   if (requiredFields.length) transportOptions.requiredFields = requiredFields;
   if (placeholderFields.length) transportOptions.placeholderFields = placeholderFields;
+  if (Object.keys(placeholderFieldsByCollection).length) {
+    transportOptions.placeholderFieldsByCollection = placeholderFieldsByCollection;
+  }
   if (stringIdCollections.length) transportOptions.stringIdCollections = stringIdCollections;
   extensions.directives.transport = {
     subgraph: subgraphName,
@@ -597,7 +606,7 @@ function emitModelObjectType(
     stringId: opts.stringId,
   });
   createConnectionTypes(schemaComposer, naming, typeName);
-  createPayloadType(schemaComposer, naming, typeName);
+  createPayloadType(schemaComposer, naming, typeName, opts.stringId);
 }
 
 function emitModelRootFields(
@@ -786,12 +795,13 @@ pageInfo {
     ],
   });
 
-  const documentSetBlock = blockArg(
-    paths
-      .filter(p => p.name !== '_id' && p.name !== '__v' && !p.name.includes('.'))
-      .map(p => `${p.name}: $args.document.${p.name}`)
-      .join('\n'),
-  );
+  const documentFieldBinds = paths
+    .filter(p => p.name !== '_id' && p.name !== '__v' && !p.name.includes('.'))
+    .map(p => `${p.name}: $args.document.${p.name}`);
+  if (opts.stringId) {
+    documentFieldBinds.unshift('_id: $args.document.id');
+  }
+  const documentSetBlock = blockArg(documentFieldBinds.join('\n'));
   const payloadSelection = blockArg(`
 record {
 ${indent(selectionForPaths(paths).replace(/^\n/, ''), 1)}
@@ -832,11 +842,13 @@ createdCount: $createdCount
 
   const updateType = naming.updateInput(typeName);
 
+  const idArgScalar = opts.stringId ? GraphQLString : GraphQLObjectID;
+
   if (resolverEnabled(resolvers, 'updateById')) {
     mutationTC.setField(naming.updateByIdField(typeName), {
       type: naming.payloadType(typeName),
       args: {
-        id: { type: new GraphQLNonNull(GraphQLObjectID) },
+        id: { type: new GraphQLNonNull(idArgScalar) },
         // Typed update ops without `$` (`set` / `inc` / … → `$set` / `$inc`).
         update: { type: `${updateType}!` },
       },
@@ -891,7 +903,7 @@ matchedCount: $matchedCount
   if (resolverEnabled(resolvers, 'removeById')) {
     mutationTC.setField(naming.removeByIdField(typeName), {
       type: naming.payloadType(typeName),
-      args: { id: { type: new GraphQLNonNull(GraphQLObjectID) } },
+      args: { id: { type: new GraphQLNonNull(idArgScalar) } },
       directives: [
         mongoDir('mongo__deleteOne', {
           query: blockArg('_id: $args.id'),
@@ -1237,7 +1249,10 @@ function createQuerySortAndDocumentInputs(
   },
 ) {
   const required = new Set(opts?.requiredFields || []);
-  const restrictionsActive = Boolean(opts?.restrictionsActive || opts?.removedFields?.length);
+  // Freeform JSON ops (rename/push/…) can bypass required/only/remove — omit them.
+  const restrictionsActive = Boolean(
+    opts?.restrictionsActive || opts?.removedFields?.length || required.size > 0,
+  );
   const queryName = naming.queryInput(typeName);
   if (!schemaComposer.has(queryName)) {
     schemaComposer.createInputTC({
@@ -1280,6 +1295,13 @@ function createQuerySortAndDocumentInputs(
 
   const createFields: Record<string, any> = {};
   const setFields: Record<string, any> = {};
+  // String `_id` models must supply the id on create — Mongo would otherwise insert ObjectId.
+  if (opts?.stringId) {
+    createFields.id = {
+      type: asNonNullType(GraphQLString),
+      description: 'String document id (BSON String `_id`)',
+    };
+  }
   for (const path of paths) {
     if (path.name === '_id' || path.name === '__v') continue;
     const baseType = mapPathToInput(schemaComposer, path, typeName);
@@ -1334,6 +1356,7 @@ function createQuerySortAndDocumentInputs(
     for (const path of paths) {
       if (path.name === '_id' || path.name === '__v') continue;
       if (path.name.includes('.')) continue;
+      if (required.has(path.name)) continue;
       unsetFields[path.name] = { type: 'Boolean', description: path.description };
     }
 
@@ -1436,15 +1459,21 @@ function createConnectionTypes(
   }
 }
 
-function createPayloadType(schemaComposer: SchemaComposer, naming: MongoNaming, typeName: string) {
+function createPayloadType(
+  schemaComposer: SchemaComposer,
+  naming: MongoNaming,
+  typeName: string,
+  stringId?: boolean,
+) {
   if (!schemaComposer.has(naming.payloadType(typeName))) {
+    const idScalar = stringId ? GraphQLString : GraphQLObjectID;
     schemaComposer.createObjectTC({
       name: naming.payloadType(typeName),
       fields: {
         record: typeName,
-        recordId: GraphQLObjectID,
+        recordId: idScalar,
         records: `[${typeName}!]`,
-        recordIds: '[ObjectID!]',
+        recordIds: stringId ? '[String!]' : '[ObjectID!]',
         createdCount: GraphQLInt,
         modifiedCount: GraphQLInt,
         matchedCount: GraphQLInt,
