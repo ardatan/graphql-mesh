@@ -87,8 +87,10 @@ export interface SOAPLoaderOptions {
   /** Logger instance. */
   log?: Logger;
   /**
-   * Headers used only while fetching / introspecting the WSDL and nested XSD
-   * imports (not sent on runtime SOAP calls).
+   * Headers for nested `<wsdl:import>` / `<xsd:import>` fetches (and for
+   * `loadWSDL` / `fetchWSDL` when callers use this class directly). Not sent
+   * on runtime SOAP calls. Note: `loadSOAPSubgraph`'s root `source` fetch does
+   * not apply these headers - only nested imports go through this factory.
    *
    * @example { Authorization: 'Bearer ...' }
    */
@@ -128,9 +130,11 @@ export interface SOAPLoaderOptions {
   bodyAlias?: string;
   /**
    * Present on the options type, but currently unused: the constructor ignores
-   * this field and always auto-detects the envelope namespace from the WSDL.
-   * SOAP 1.1 uses `http://schemas.xmlsoap.org/soap/envelope/`; SOAP 1.2 uses
-   * `http://www.w3.org/2003/05/soap-envelope`.
+   * this field. Detection looks for a `soap12` attribute on the WSDL definition:
+   * when present, SOAP 1.2 (`http://www.w3.org/2003/05/soap-envelope`) is used;
+   * otherwise SOAP 1.1 (`http://schemas.xmlsoap.org/soap/envelope/`) remains.
+   * A SOAP 1.2 WSDL that uses a different prefix therefore stays on the 1.1
+   * envelope namespace.
    */
   soapNamespace?: string;
 }

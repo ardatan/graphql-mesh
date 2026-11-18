@@ -52,8 +52,9 @@ export interface ProcessDirectiveArgs {
   globalFetch?: MeshFetch;
   /**
    * Accepted for compatibility, but not forwarded into `@connect` resolvers
-   * today. Put the HTTP base URL on `@source(http.baseURL)` /
-   * `@transport(location)` instead.
+   * today. Put the HTTP base URL on `@source(http.baseURL)` - `@connect`
+   * joins relative connector URLs from that source only; `@transport(location)`
+   * is not used as a base URL fallback.
    */
   endpoint?: string;
   /**
