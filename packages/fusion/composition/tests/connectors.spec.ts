@@ -7,6 +7,7 @@ import {
   getAnnotatedSubgraphs,
   inferEntityRefFromParentFkNames,
   isFederationConnectorsSubgraph,
+  isMongoSubgraph,
   isSqlSubgraph,
   liftExtraSchemaDefinitionDirectives,
   parseEntityStubTypesFromSelection,
@@ -153,6 +154,67 @@ describe('Federation Connectors composition', () => {
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).not.toMatch(/@source\([^)]*subgraph:/);
     expect(sdl).toContain('user(userId:');
+    expect(sdl).toMatch(/\$args\.userId/);
+    expect(sdl).not.toMatch(/\$args\.id\b/);
+  });
+
+  it('detects mongo subgraphs and skips Mesh @source on rename', () => {
+    const mongoSchema = buildSchema(
+      /* GraphQL */ `
+        directive @transport(
+          subgraph: String!
+          kind: String!
+          location: String
+          headers: [[String]]
+        ) repeatable on SCHEMA
+
+        directive @mongo__findOne(
+          subgraph: String
+          collection: String
+          query: String
+          selection: String
+        ) on FIELD_DEFINITION
+
+        schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost/test") {
+          query: Query
+        }
+
+        type Query {
+          findUserById(id: ID!): User
+            @mongo__findOne(
+              collection: "users"
+              query: "_id: $args.id"
+              selection: "id: _id\\nname: name"
+            )
+        }
+
+        type User {
+          id: ID!
+          name: String
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
+
+    expect(isMongoSubgraph(mongoSchema)).toBe(true);
+    expect(skipsMeshSourceAnnotations(mongoSchema)).toBe(true);
+
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'users',
+        schema: mongoSchema,
+        transforms: [
+          createRenameTransform({
+            argRenamer: ({ argName, fieldName }) =>
+              fieldName === 'findUserById' && argName === 'id' ? 'userId' : argName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).not.toMatch(/@source\([^)]*subgraph:/);
+    expect(sdl).not.toMatch(/@meshSource\b/);
+    expect(sdl).toContain('findUserById(userId:');
     expect(sdl).toMatch(/\$args\.userId/);
     expect(sdl).not.toMatch(/\$args\.id\b/);
   });

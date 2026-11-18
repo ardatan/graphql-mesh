@@ -36,16 +36,12 @@
     "mongoose": "*"
   },
   "dependencies": {
-    "@graphql-hive/logger": "^1.1.1",
-    "@graphql-hive/pubsub": "^2.2.1",
+    "@graphql-mesh/store": "^0.107.3",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
+    "@omnigraph/mongo": "0.1.0",
     "@whatwg-node/disposablestack": "^0.1.0",
-    "graphql-compose": "^9.3.0",
-    "graphql-compose-connection": "^8.2.1",
-    "graphql-compose-mongoose": "^10.1.0",
-    "graphql-compose-pagination": "^8.3.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

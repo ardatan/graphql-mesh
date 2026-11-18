@@ -1,7 +1,8 @@
 import { join } from 'path';
-import { lexicographicSortSchema, printSchema } from 'graphql';
+import { lexicographicSortSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('Mongoose', () => {
   let mesh: MeshInstance;
@@ -12,7 +13,8 @@ describe('Mongoose', () => {
     mesh = await getMesh(config);
   });
   it('should generate correct schema', async () => {
-    expect(printSchema(lexicographicSortSchema(mesh.schema))).toMatchSnapshot();
+    // printSchema omits field/schema directive applications; keep @mongo__* / @transport visible.
+    expect(printSchemaWithDirectives(lexicographicSortSchema(mesh.schema))).toMatchSnapshot();
   });
   afterAll(() => {
     mesh?.destroy();

@@ -1393,3 +1393,160 @@ WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
     });
   });
 });
+
+describe('rewriteConnectArgReferences @mongo__*', () => {
+  it('rewrites $args in mongo__find without requiring @connect', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo__find: [
+          {
+            collection: 'users',
+            query: '$args.criteria',
+            sort: '$args.order',
+            selection: 'id: _id\nname: name',
+          },
+        ],
+      },
+      new Map([
+        ['criteria', 'query'],
+        ['order', 'sort'],
+      ]),
+    );
+    const mongo = rewritten!.mongo__find[0];
+    expect(mongo.query).toBe('$args.query');
+    expect(mongo.sort).toBe('$args.sort');
+    expect(mongo.selection).toBe('id: _id\nname: name');
+  });
+
+  it('does not rewrite $args.queryInput when renaming query', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo__findOne: [
+          {
+            collection: 'users',
+            query: '_id: $args.query\nmeta: $args.queryInput',
+          },
+        ],
+      },
+      new Map([['query', 'criteria']]),
+    );
+    const query = rewritten!.mongo__findOne[0].query as string;
+    expect(query).toContain('$args.criteria');
+    expect(query).toContain('$args.queryInput');
+    expect(query).not.toMatch(/\$args\.query\b/);
+  });
+
+  it('rewrites $this field picks via fieldRenameMap', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo__findOne: [
+          {
+            collection: 'users',
+            query: '_id: $this.authorId',
+            selection: 'id: _id',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['authorId', 'writerId']]),
+    );
+    expect(rewritten!.mongo__findOne[0].query).toBe('_id: $this.writerId');
+  });
+
+  it('applies each $this rename once without cascading map entries', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo__findOne: [
+          {
+            collection: 'users',
+            query: '_id: $this.primaryId',
+            selection: 'primaryId',
+          },
+        ],
+      },
+      new Map(),
+      new Map([
+        ['primaryId', 'secondaryId'],
+        ['secondaryId', 'backupId'],
+      ]),
+    );
+    expect(rewritten!.mongo__findOne[0].query).toBe('_id: $this.secondaryId');
+    expect(rewritten!.mongo__findOne[0].selection).toBe('secondaryId');
+  });
+
+  it('rewrites $this after # comments that contain apostrophes', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo__findOne: [
+          {
+            collection: 'users',
+            query: "# author's ID\n_id: $this.author_id",
+          },
+        ],
+      },
+      new Map(),
+      new Map([['author_id', 'authorId']]),
+    );
+    expect(rewritten!.mongo__findOne[0].query).toBe("# author's ID\n_id: $this.authorId");
+  });
+
+  it('does not rewrite $this picks inside quoted string literals', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo__findOne: [
+          {
+            collection: 'users',
+            query: '_id: $this.authorId',
+            selection: 'note: "see $this.authorId"',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['authorId', 'writerId']]),
+    );
+    expect(rewritten!.mongo__findOne[0].query).toBe('_id: $this.writerId');
+    expect(rewritten!.mongo__findOne[0].selection).toBe('note: "see $this.authorId"');
+  });
+
+  it('does not apply selection-pick rewrites inside Mongo query string literals', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo__findOne: [
+          {
+            collection: 'users',
+            query: 'status: " old_name "',
+            selection: 'old_name',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['old_name', 'oldName']]),
+    );
+    expect(rewritten!.mongo__findOne[0].query).toBe('status: " old_name "');
+    expect(rewritten!.mongo__findOne[0].selection).toBe('oldName');
+  });
+
+  it('preserves quoted literals inside Mongo selection while renaming bare picks', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        mongo__findOne: [
+          {
+            collection: 'users',
+            selection: 'old_name\nnote: " old_name "',
+          },
+        ],
+      },
+      new Map(),
+      new Map([['old_name', 'oldName']]),
+    );
+    expect(rewritten!.mongo__findOne[0].selection).toBe('oldName\nnote: " old_name "');
+  });
+});

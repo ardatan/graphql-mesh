@@ -21,13 +21,29 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/** Apply `fn` only to spans outside `'…'` / `"…"` (respects `\\` escapes). */
+/**
+ * Apply `fn` only to spans outside `'…'` / `"…"` (respects `\\` escapes).
+ * `#` line comments are copied through unchanged so apostrophes inside comments
+ * (e.g. `# author's ID`) do not leave the scanner in a quoted state.
+ */
 function rewriteOutsideQuotes(value: string, fn: (segment: string) => string): string {
   let out = '';
   let i = 0;
   let segmentStart = 0;
   while (i < value.length) {
     const c = value[i];
+    if (c === '#') {
+      out += fn(value.slice(segmentStart, i));
+      const eol = value.indexOf('\n', i);
+      if (eol === -1) {
+        out += value.slice(i);
+        return out;
+      }
+      out += value.slice(i, eol + 1);
+      i = eol + 1;
+      segmentStart = i;
+      continue;
+    }
     if (c === '"' || c === "'") {
       out += fn(value.slice(segmentStart, i));
       const q = c;
@@ -1442,14 +1458,14 @@ function protobufRpcDirectiveKey(
 
 /**
  * Rewrite Federation Connectors `@connect`, Thrift `@thrift__rpc`, Mesh
- * `@protobuf__rpc`, and Mesh `@sql` mappings after GraphQL renames. These skip Mesh
- * `@source` / `@meshSource`; transforms keep directive binds on the public GraphQL
- * names instead.
+ * `@protobuf__rpc`, Mesh `@sql`, and Mesh `@mongo__*` mappings after GraphQL
+ * renames. These skip Mesh `@source` / `@meshSource`; transforms keep directive
+ * binds on the public GraphQL names instead.
  *
  * When `fieldRenameMap` is set, also rewrite selection aliases of the form
  * `newName: oldName` / leading `oldName` field picks so rename/prefix transforms
- * keep Connectors (and thrift/protobuf/SQL compact) selection in sync with GraphQL
- * field names. SQL also rewrites `$this.<field>` parent picks.
+ * keep Connectors (and thrift/protobuf/SQL/Mongo compact) selection in sync with
+ * GraphQL field names. SQL and Mongo also rewrite `$this.<field>` parent picks.
  *
  * When `typeRenameMap` is set, rewrite `__typename: "Old"` / `__typename: $("Old")`
  * in selections so prefix/rename/naming-convention keep polymorphic Connect arms valid.
@@ -1462,7 +1478,7 @@ export function rewriteConnectArgReferences(
   /**
    * When false, skip all `@protobuf__rpc` rewrites here (caller uses type-scoped
    * `applyProtobufFieldRenames` instead). Avoids a second `$args` rename pass that
-   * would chain `a→b` then `b→c`. Connect / thrift / SQL selection still uses the maps above.
+   * would chain `a→b` then `b→c`. Connect / thrift / SQL / Mongo selection still uses the maps above.
    */
   protobufNestedFieldRenames: boolean = true,
 ): Record<string, any[]> | undefined {
@@ -1471,8 +1487,12 @@ export function rewriteConnectArgReferences(
   const hasThriftRpc = Boolean(fieldDirectives?.thrift__rpc?.length);
   const sqlDirectiveNames = ['sql'] as const;
   const hasSql = sqlDirectiveNames.some(name => Boolean(fieldDirectives?.[name]?.length));
+  const mongoDirectiveNames = Object.keys(fieldDirectives || {}).filter(name =>
+    name.startsWith('mongo__'),
+  );
+  const hasMongo = mongoDirectiveNames.some(name => Boolean(fieldDirectives?.[name]?.length));
   if (
-    (!hasConnect && !hasThriftRpc && !protobufKey && !hasSql) ||
+    (!hasConnect && !hasThriftRpc && !protobufKey && !hasSql && !hasMongo) ||
     (argRenameMap.size === 0 &&
       (!fieldRenameMap || fieldRenameMap.size === 0) &&
       (!typeRenameMap || typeRenameMap.size === 0))
@@ -1527,20 +1547,33 @@ export function rewriteConnectArgReferences(
     }
     return out;
   };
-  /** Connect / thrift: rename response picks on both sides of `name: name`. */
+  /** Connect / thrift / Mongo selection: rename response picks on both sides of `name: name`. */
   const rewriteExpr = (value: unknown): unknown => {
     if (typeof value !== 'string') {
       return value;
     }
     let out = value;
     if (fieldRenameMap?.size) {
-      for (const [from, to] of fieldRenameMap) {
-        if (from === to) continue;
-        // Skip quoted literals (same guard as `$this` / `$args` rewrites).
+      // One lookup per original name so sequential map entries do not cascade
+      // (`primaryId→secondaryId→backupId`).
+      const fieldEntries = [...fieldRenameMap.entries()]
+        .filter(([from, to]) => from && to && from !== to)
+        .sort((a, b) => b[0].length - a[0].length);
+      if (fieldEntries.length) {
+        const fieldLookup = new Map(fieldEntries);
+        const fieldNames = fieldEntries.map(([from]) => escapeRegExp(from)).join('|');
+        // Quote-aware pick rewrites: leave `note: " old_name "` literals alone.
         out = rewriteOutsideQuotes(out, segment =>
           segment
-            .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
-            .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`),
+            .replace(
+              new RegExp(`(^|[\\n\\s])(${fieldNames})(\\s*[:{])`, 'g'),
+              (_m, pre: string, name: string, trail: string) =>
+                `${pre}${fieldLookup.get(name) ?? name}${trail}`,
+            )
+            .replace(
+              new RegExp(`(^|[\\n\\s])(${fieldNames})(?=\\s|$)`, 'g'),
+              (_m, pre: string, name: string) => `${pre}${fieldLookup.get(name) ?? name}`,
+            ),
         );
       }
     }
@@ -1766,13 +1799,70 @@ export function rewriteConnectArgReferences(
       };
     }
   }
+  if (hasMongo) {
+    // `@mongo__findOne(query/selection/…)` embed `$args` / `$this`.
+    const mongoStringArgs = [
+      'query',
+      'selection',
+      'sort',
+      'set',
+      'pipeline',
+      'limit',
+      'skip',
+      'first',
+      'after',
+      'page',
+      'perPage',
+    ] as const;
+    // Binders (`query` / `set` / …): rename `$args` / `$this` only — never bare
+    // selection picks (those rewrite quoted literals like `status: " old_name "`).
+    const rewriteMongoBinder = (value: string): string => {
+      let out = value;
+      if (argRenameMap.size) {
+        const names = [...argRenameMap.keys()].map(escapeRegExp).join('|');
+        const re = new RegExp(`\\$args\\.(${names})(?![\\w])`, 'g');
+        out = rewriteOutsideQuotes(out, segment =>
+          segment.replace(re, (_m, name: string) => `$args.${argRenameMap.get(name) ?? name}`),
+        );
+      }
+      if (fieldRenameMap?.size) {
+        const fieldEntries = [...fieldRenameMap.entries()]
+          .filter(([from, to]) => from && to && from !== to)
+          .sort((a, b) => b[0].length - a[0].length);
+        if (fieldEntries.length) {
+          const fieldLookup = new Map(fieldEntries);
+          const fieldNames = fieldEntries.map(([from]) => escapeRegExp(from)).join('|');
+          out = rewriteOutsideQuotes(out, segment =>
+            segment.replace(
+              new RegExp(`\\$this\\.(${fieldNames})(?![\\w])`, 'g'),
+              (_m, name: string) => `$this.${fieldLookup.get(name) ?? name}`,
+            ),
+          );
+        }
+      }
+      return out;
+    };
+    for (const dirName of mongoDirectiveNames) {
+      nextDirectives = {
+        ...nextDirectives,
+        [dirName]: nextDirectives[dirName].map((mongoArgs: any) => {
+          const rewritten: Record<string, unknown> = { ...mongoArgs };
+          for (const key of mongoStringArgs) {
+            if (typeof mongoArgs?.[key] !== 'string') continue;
+            // Selection keeps pick rewrites; query/set/… stay binder-only.
+            rewritten[key] =
+              key === 'selection'
+                ? rewriteExpr(mongoArgs[key])
+                : rewriteMongoBinder(mongoArgs[key]);
+          }
+          return rewritten;
+        }),
+      };
+    }
+  }
   return nextDirectives;
 }
 
-/**
- * Rewrite Connect / thrift / SQL directive mappings on a field using a flat
- * GraphQL field rename map (Connect-style). No-op when nothing changes.
- */
 export function applyFlatDirectiveFieldRenames(
   field: GraphQLFieldConfig<any, any>,
   flatFieldRenameMap: Map<string, string>,
