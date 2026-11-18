@@ -16,7 +16,12 @@ describe('SQLite Chinook', () => {
     mesh = await getMesh(config);
   });
   it('should generate correct schema', async () => {
-    expect(printSchemaWithDirectives(mesh.schema)).toMatchSnapshot('sqlite-chinook-schema');
+    // Absolute file: paths differ per machine/CI — keep the snapshot portable.
+    const sdl = printSchemaWithDirectives(mesh.schema).replace(
+      /location: "file:[^"]+"/,
+      'location: "file:<chinook.db>"',
+    );
+    expect(sdl).toMatchSnapshot('sqlite-chinook-schema');
   });
   it('should give correct response for example queries', async () => {
     for (const source of config.documents || []) {
