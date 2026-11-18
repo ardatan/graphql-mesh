@@ -41,7 +41,7 @@ enum join__Graph {
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String, through: String) repeatable on FIELD_DEFINITION | OBJECT
 
 """
 A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
@@ -81,6 +81,8 @@ deptName: dept_name
   deptName: String!
   deptEmps(where: DeptEmpFilter, orderBy: [DeptEmpOrderBy!], limit: Int, offset: Int): [DeptEmp!]! @sql(subgraph: "Employees", table: "dept_emp", kind: ROWS, where: "  dept_no: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date")
   deptManagers(where: DeptManagerFilter, orderBy: [DeptManagerOrderBy!], limit: Int, offset: Int): [DeptManager!]! @sql(subgraph: "Employees", table: "dept_manager", kind: ROWS, where: "  dept_no: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date")
+  employees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int, offset: Int): [Employee!]! @sql(subgraph: "Employees", table: "employees", kind: ROWS, through: "  table: dept_emp\\n  local: dept_no\\n  remote: emp_no\\n  parent: $this.id\\n  target: emp_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date")
+  employeesByDeptManagerDeptNoAndEmpNo(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int, offset: Int): [Employee!]! @sql(subgraph: "Employees", table: "employees", kind: ROWS, through: "  table: dept_manager\\n  local: dept_no\\n  remote: emp_no\\n  parent: $this.id\\n  target: emp_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date")
 }
 
 type DeptEmp @sql(subgraph: "Employees", table: "dept_emp", kind: ROW, where: """
@@ -118,6 +120,8 @@ hireDate: hire_date
   deptManagers(where: DeptManagerFilter, orderBy: [DeptManagerOrderBy!], limit: Int, offset: Int): [DeptManager!]! @sql(subgraph: "Employees", table: "dept_manager", kind: ROWS, where: "  emp_no: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date")
   salaries(where: SalaryFilter, orderBy: [SalaryOrderBy!], limit: Int, offset: Int): [Salary!]! @sql(subgraph: "Employees", table: "salaries", kind: ROWS, where: "  emp_no: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  salary: salary\\n  fromDate: from_date\\n  toDate: to_date")
   titles(where: TitleFilter, orderBy: [TitleOrderBy!], limit: Int, offset: Int): [Title!]! @sql(subgraph: "Employees", table: "titles", kind: ROWS, where: "  emp_no: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  title: title\\n  fromDate: from_date\\n  toDate: to_date")
+  departments(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], limit: Int, offset: Int): [Department!]! @sql(subgraph: "Employees", table: "departments", kind: ROWS, through: "  table: dept_emp\\n  local: emp_no\\n  remote: dept_no\\n  parent: $this.id\\n  target: dept_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: dept_no\\n  deptName: dept_name")
+  departmentsByDeptManagerEmpNoAndDeptNo(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], limit: Int, offset: Int): [Department!]! @sql(subgraph: "Employees", table: "departments", kind: ROWS, through: "  table: dept_manager\\n  local: emp_no\\n  remote: dept_no\\n  parent: $this.id\\n  target: dept_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: dept_no\\n  deptName: dept_name")
 }
 
 type DeptManager @sql(subgraph: "Employees", table: "dept_manager", kind: ROW, where: """
@@ -380,6 +384,8 @@ input DeptEmpFilter @join__type(graph: EMPLOYEES) {
   deptNo: StringFilter
   fromDate: StringFilter
   toDate: StringFilter
+  employee: EmployeeFilter
+  department: DepartmentFilter
 }
 
 input IntFilter @join__type(graph: EMPLOYEES) {
@@ -406,45 +412,9 @@ input StringFilter @join__type(graph: EMPLOYEES) {
   includes: String
   startsWith: String
   endsWith: String
+  like: String
+  ilike: String
   isNull: Boolean
-}
-
-input DeptManagerFilter @join__type(graph: EMPLOYEES) {
-  and: [DeptManagerFilter!]
-  or: [DeptManagerFilter!]
-  not: DeptManagerFilter
-  empNo: IntFilter
-  deptNo: StringFilter
-  fromDate: StringFilter
-  toDate: StringFilter
-}
-
-input SalaryFilter @join__type(graph: EMPLOYEES) {
-  and: [SalaryFilter!]
-  or: [SalaryFilter!]
-  not: SalaryFilter
-  empNo: IntFilter
-  salary: IntFilter
-  fromDate: StringFilter
-  toDate: StringFilter
-}
-
-input TitleFilter @join__type(graph: EMPLOYEES) {
-  and: [TitleFilter!]
-  or: [TitleFilter!]
-  not: TitleFilter
-  empNo: IntFilter
-  title: StringFilter
-  fromDate: StringFilter
-  toDate: StringFilter
-}
-
-input DepartmentFilter @join__type(graph: EMPLOYEES) {
-  and: [DepartmentFilter!]
-  or: [DepartmentFilter!]
-  not: DepartmentFilter
-  id: StringFilter
-  deptName: StringFilter
 }
 
 input EmployeeFilter @join__type(graph: EMPLOYEES) {
@@ -457,6 +427,52 @@ input EmployeeFilter @join__type(graph: EMPLOYEES) {
   lastName: StringFilter
   gender: StringFilter
   hireDate: StringFilter
+  departments: DepartmentFilter
+  departmentsByDeptManagerEmpNoAndDeptNo: DepartmentFilter
+}
+
+input DepartmentFilter @join__type(graph: EMPLOYEES) {
+  and: [DepartmentFilter!]
+  or: [DepartmentFilter!]
+  not: DepartmentFilter
+  id: StringFilter
+  deptName: StringFilter
+  employees: EmployeeFilter
+  employeesByDeptManagerDeptNoAndEmpNo: EmployeeFilter
+}
+
+input DeptManagerFilter @join__type(graph: EMPLOYEES) {
+  and: [DeptManagerFilter!]
+  or: [DeptManagerFilter!]
+  not: DeptManagerFilter
+  empNo: IntFilter
+  deptNo: StringFilter
+  fromDate: StringFilter
+  toDate: StringFilter
+  employee: EmployeeFilter
+  department: DepartmentFilter
+}
+
+input SalaryFilter @join__type(graph: EMPLOYEES) {
+  and: [SalaryFilter!]
+  or: [SalaryFilter!]
+  not: SalaryFilter
+  empNo: IntFilter
+  salary: IntFilter
+  fromDate: StringFilter
+  toDate: StringFilter
+  employee: EmployeeFilter
+}
+
+input TitleFilter @join__type(graph: EMPLOYEES) {
+  and: [TitleFilter!]
+  or: [TitleFilter!]
+  not: TitleFilter
+  empNo: IntFilter
+  title: StringFilter
+  fromDate: StringFilter
+  toDate: StringFilter
+  employee: EmployeeFilter
 }
 
 input CreateDepartmentInput @join__type(graph: EMPLOYEES) {

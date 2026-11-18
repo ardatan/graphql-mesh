@@ -22,6 +22,21 @@ it.concurrent.each([
       }
     `,
   },
+  {
+    name: 'PlaylistTracksManyToMany',
+    query: /* GraphQL */ `
+      query PlaylistTracksManyToMany {
+        playlist(id: "9") {
+          id
+          name
+          tracks(limit: 5, orderBy: [ID_ASC]) {
+            id
+            name
+          }
+        }
+      }
+    `,
+  },
 ])('should execute $name', async ({ query }) => {
   const { output } = await compose({ output: 'graphql' });
 
