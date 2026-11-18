@@ -1,5 +1,5 @@
 import type { GraphQLSchema } from 'graphql';
-import pg from 'pg';
+import type { Pool as PgPool } from 'pg';
 import { process } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
@@ -72,7 +72,7 @@ export default class PostGraphileHandler implements MeshHandler {
       // Existing `pg.Pool` instance → wrap. Plain settings objects fall through to
       // getSqlExecutor, which opens its own pool from `@transport(location)`.
       if (pool && typeof pool === 'object' && 'connect' in pool) {
-        client = wrapPgPoolAsSqlClient(pool as pg.Pool);
+        client = wrapPgPoolAsSqlClient(pool as PgPool);
       }
     }
 
