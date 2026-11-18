@@ -55,79 +55,149 @@ export function filterFromMapping(
   return filter;
 }
 
-export function graphqlFilterToMongo(input: Record<string, unknown>): Record<string, unknown> {
+const FILTER_OP_KEYS = new Set([
+  'eq',
+  'ne',
+  'in',
+  'nin',
+  'gt',
+  'gte',
+  'lt',
+  'lte',
+  'regex',
+  'exists',
+]);
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return (
+    typeof value === 'object' && value !== null && !Array.isArray(value) && !(value instanceof Date)
+  );
+}
+
+/** True when every own key is a known GraphQL filter operator (`eq` / `gt` / …). */
+function isOperatorBag(value: Record<string, unknown>): boolean {
+  const keys = Object.keys(value);
+  return keys.length > 0 && keys.every(k => FILTER_OP_KEYS.has(k));
+}
+
+/**
+ * Map Mesh/SQL-style `*WhereInput` objects to a MongoDB filter document.
+ *
+ * - Scalar ops: `{ name: { eq: "Ada" }, age: { gte: 30 } }`
+ * - Embedded nested where: `{ address: { street: { eq: "Main" } } }` → `{ "address.street": "Main" }`
+ * - Document-array where (v0 `languages: [...]`): `{ languages: [{ language: { eq: "en" } }] }`
+ *   → `{ languages: { $elemMatch: { language: "en" } } }` (AND of several → `$and` of `$elemMatch`)
+ */
+export function graphqlFilterToMongo(
+  input: Record<string, unknown>,
+  pathPrefix = '',
+): Record<string, unknown> {
   const out: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(input)) {
     if (value == null) continue;
     if (key === 'AND' || key === 'and') {
-      out.$and = (value as Record<string, unknown>[]).map(graphqlFilterToMongo);
+      out.$and = (value as Record<string, unknown>[]).map(v => graphqlFilterToMongo(v, pathPrefix));
       continue;
     }
     if (key === 'OR' || key === 'or') {
-      out.$or = (value as Record<string, unknown>[]).map(graphqlFilterToMongo);
+      out.$or = (value as Record<string, unknown>[]).map(v => graphqlFilterToMongo(v, pathPrefix));
       continue;
     }
     if (key === 'NOT' || key === 'not') {
-      out.$nor = [graphqlFilterToMongo(value as Record<string, unknown>)];
+      out.$nor = [graphqlFilterToMongo(value as Record<string, unknown>, pathPrefix)];
       continue;
     }
 
     const mongoKey = key === 'id' ? '_id' : key;
-    if (typeof value !== 'object' || Array.isArray(value) || value instanceof Date) {
-      out[mongoKey] = coerceFilterValue(value);
+    const fullKey = pathPrefix ? `${pathPrefix}.${mongoKey}` : mongoKey;
+
+    // Document-array filters: list of nested where objects → $elemMatch (v0 languages: [...]).
+    if (Array.isArray(value) && value.length > 0 && value.every(isPlainObject)) {
+      const elemMatches = (value as Record<string, unknown>[]).map(item => ({
+        $elemMatch: graphqlFilterToMongo(item),
+      }));
+      if (elemMatches.length === 1) {
+        out[fullKey] = elemMatches[0];
+      } else {
+        out.$and = elemMatches.map(em => ({ [fullKey]: em }));
+      }
       continue;
     }
 
-    const ops = value as Record<string, unknown>;
-    const mongoOps: Record<string, unknown> = {};
-    let hasOps = false;
-    for (const [op, opVal] of Object.entries(ops)) {
-      if (opVal === undefined) continue;
-      hasOps = true;
-      switch (op) {
-        case 'eq':
-          out[mongoKey] = coerceFilterValue(opVal);
-          hasOps = false;
-          break;
-        case 'ne':
-          mongoOps.$ne = coerceFilterValue(opVal);
-          break;
-        case 'in':
-          mongoOps.$in = (opVal as unknown[]).map(coerceFilterValue);
-          break;
-        case 'nin':
-          mongoOps.$nin = (opVal as unknown[]).map(coerceFilterValue);
-          break;
-        case 'gt':
-          mongoOps.$gt = coerceFilterValue(opVal);
-          break;
-        case 'gte':
-          mongoOps.$gte = coerceFilterValue(opVal);
-          break;
-        case 'lt':
-          mongoOps.$lt = coerceFilterValue(opVal);
-          break;
-        case 'lte':
-          mongoOps.$lte = coerceFilterValue(opVal);
-          break;
-        case 'regex':
-          mongoOps.$regex = opVal;
-          break;
-        case 'exists':
-          mongoOps.$exists = opVal;
-          break;
-        default:
-          break;
-      }
-      if (!hasOps && op === 'eq') break;
+    if (typeof value !== 'object' || Array.isArray(value) || value instanceof Date) {
+      out[fullKey] = Array.isArray(value) ? value.map(coerceFilterValue) : coerceFilterValue(value);
+      continue;
     }
-    if (hasOps && Object.keys(mongoOps).length) {
-      out[mongoKey] = mongoOps;
+
+    if (!isPlainObject(value)) {
+      out[fullKey] = coerceFilterValue(value);
+      continue;
     }
+
+    if (isOperatorBag(value)) {
+      applyOperatorBag(out, fullKey, value);
+      continue;
+    }
+
+    // Embedded / grouped nested WhereInput → flatten with dotted paths.
+    Object.assign(out, graphqlFilterToMongo(value, fullKey));
   }
 
   return out;
+}
+
+function applyOperatorBag(
+  out: Record<string, unknown>,
+  fullKey: string,
+  ops: Record<string, unknown>,
+): void {
+  const mongoOps: Record<string, unknown> = {};
+  let wroteEq = false;
+  for (const [op, opVal] of Object.entries(ops)) {
+    if (opVal === undefined) continue;
+    switch (op) {
+      case 'eq':
+        out[fullKey] = coerceFilterValue(opVal);
+        wroteEq = true;
+        break;
+      case 'ne':
+        mongoOps.$ne = coerceFilterValue(opVal);
+        break;
+      case 'in':
+        mongoOps.$in = (opVal as unknown[]).map(coerceFilterValue);
+        break;
+      case 'nin':
+        mongoOps.$nin = (opVal as unknown[]).map(coerceFilterValue);
+        break;
+      case 'gt':
+        mongoOps.$gt = coerceFilterValue(opVal);
+        break;
+      case 'gte':
+        mongoOps.$gte = coerceFilterValue(opVal);
+        break;
+      case 'lt':
+        mongoOps.$lt = coerceFilterValue(opVal);
+        break;
+      case 'lte':
+        mongoOps.$lte = coerceFilterValue(opVal);
+        break;
+      case 'regex':
+        mongoOps.$regex = opVal;
+        break;
+      case 'exists':
+        mongoOps.$exists = opVal;
+        break;
+      default:
+        break;
+    }
+  }
+  if (!wroteEq && Object.keys(mongoOps).length) {
+    out[fullKey] = mongoOps;
+  } else if (wroteEq && Object.keys(mongoOps).length) {
+    // Rare: eq + other ops on same field — prefer ops object including $eq.
+    out[fullKey] = { $eq: out[fullKey], ...mongoOps };
+  }
 }
 
 /** Build Mongo sort from `@mongo(orderBy:)` binder (e.g. `$args.orderBy`). */

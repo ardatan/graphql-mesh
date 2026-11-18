@@ -896,7 +896,9 @@ function whereFilterTypeForPath(
   rootTypeName: string,
 ): string {
   if (path.nested?.length) {
-    return ensureNestedWhereInput(schemaComposer, path, rootTypeName);
+    const whereName = ensureNestedWhereInput(schemaComposer, path, rootTypeName);
+    // DocumentArray (v0 `languages: [Filter*LanguagesInput]`) → list of elem filters.
+    return path.isArray ? `[${whereName}]` : whereName;
   }
   if (path.enumValues?.length) {
     // Keep operator filters (eq/in/…) via StringFilter; output/create still use the enum type.
@@ -1116,6 +1118,10 @@ function ensureSharedFilterInputs(schemaComposer: SchemaComposer) {
         ne: GraphQLID,
         in: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
         nin: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
+        gt: GraphQLID,
+        gte: GraphQLID,
+        lt: GraphQLID,
+        lte: GraphQLID,
         exists: 'Boolean',
       },
     });
@@ -1128,6 +1134,10 @@ function ensureSharedFilterInputs(schemaComposer: SchemaComposer) {
         ne: GraphQLString,
         in: { type: '[String!]' },
         nin: { type: '[String!]' },
+        gt: GraphQLString,
+        gte: GraphQLString,
+        lt: GraphQLString,
+        lte: GraphQLString,
         regex: GraphQLString,
         exists: 'Boolean',
       },

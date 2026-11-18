@@ -211,7 +211,7 @@ input UserWhereInput {
   id: IDFilter
   name: StringFilter
   age: FloatFilter
-  languages: UserLanguagesWhereInput
+  languages: [UserLanguagesWhereInput]
   gender: StringFilter
   address: UserAddressWhereInput
   """Some dynamic data"""
@@ -225,6 +225,10 @@ input IDFilter {
   ne: ID
   in: [ID!]
   nin: [ID!]
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
   exists: Boolean
 }
 
@@ -233,6 +237,10 @@ input StringFilter {
   ne: String
   in: [String!]
   nin: [String!]
+  gt: String
+  gte: String
+  lt: String
+  lte: String
   regex: String
   exists: Boolean
 }

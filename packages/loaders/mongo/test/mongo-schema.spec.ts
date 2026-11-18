@@ -84,9 +84,11 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(sdl).toContain('type UserContacts');
     expect(sdl).toContain('address: UserAddress');
     expect(sdl).toContain('languages: [UserLanguages]');
+    expect(sdl).toContain('languages: [UserLanguagesWhereInput]');
     expect(sdl).toContain('contacts: UserContacts');
     expect(sdl).toContain('phones: [String]');
     expect(sdl).toContain('geo: [Float]');
+    expect(sdl).toContain('gt: String');
     expect(sdl).toContain('Some dynamic data');
     expect(sdl).not.toContain('User_findById');
     expect(sdl).not.toContain('filter: UserFilter');

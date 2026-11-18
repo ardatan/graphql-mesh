@@ -66,7 +66,11 @@ input FloatFilter {
 input IDFilter {
   eq: ID
   exists: Boolean
+  gt: ID
+  gte: ID
   in: [ID!]
+  lt: ID
+  lte: ID
   ne: ID
   nin: [ID!]
 }
@@ -142,7 +146,11 @@ enum SortDirection {
 input StringFilter {
   eq: String
   exists: Boolean
+  gt: String
+  gte: String
   in: [String!]
+  lt: String
+  lte: String
   ne: String
   nin: [String!]
   regex: String
@@ -281,7 +289,7 @@ input UserWhereInput {
   contacts: UserContactsWhereInput
   gender: StringFilter
   id: IDFilter
-  languages: UserLanguagesWhereInput
+  languages: [UserLanguagesWhereInput]
   name: StringFilter
   salaryDecimal: Decimal128Filter
 

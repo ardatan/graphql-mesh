@@ -64,4 +64,38 @@ describe('mongo where mapping', () => {
       $or: [{ gender: 'male' }],
     });
   });
+
+  it('flattens embedded nested WhereInput to dotted paths', () => {
+    expect(
+      graphqlFilterToMongo({
+        address: { street: { eq: 'Main' }, geo: [1.1, 2.2] },
+        contacts: { email: { regex: '@example.com$' } },
+      }),
+    ).toEqual({
+      'address.street': 'Main',
+      'address.geo': [1.1, 2.2],
+      'contacts.email': { $regex: '@example.com$' },
+    });
+  });
+
+  it('maps document-array WhereInput lists to $elemMatch', () => {
+    expect(
+      graphqlFilterToMongo({
+        languages: [{ language: { eq: 'en' }, skill: { eq: 'fluent' } }],
+      }),
+    ).toEqual({
+      languages: { $elemMatch: { language: 'en', skill: 'fluent' } },
+    });
+
+    expect(
+      graphqlFilterToMongo({
+        languages: [{ language: { eq: 'en' } }, { skill: { eq: 'basic' } }],
+      }),
+    ).toEqual({
+      $and: [
+        { languages: { $elemMatch: { language: 'en' } } },
+        { languages: { $elemMatch: { skill: 'basic' } } },
+      ],
+    });
+  });
 });
