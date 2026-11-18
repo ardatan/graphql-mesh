@@ -177,7 +177,8 @@ type PgPoolConnectable = {
  * `public` is applied too — Postgres may otherwise prefer `"$user"` first.
  *
  * Patches `client.query` so callers (including `@dataplan/pg`) await an in-flight
- * SET before issuing SQL — pool `connect`/`acquire` listeners cannot block checkout.
+ * SET before issuing SQL. Pool `connect`/`acquire` listeners cannot block checkout,
+ * so this query wrapper is the await barrier.
  */
 export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string): void {
   const trimmed = schema?.trim();
