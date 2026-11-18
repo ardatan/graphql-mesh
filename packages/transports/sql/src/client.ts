@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-nodejs-modules
-import { DatabaseSync } from 'node:sqlite';
 import { createPool, type Pool } from 'mysql2/promise';
+import { DatabaseSync } from 'node:sqlite';
 import pg from 'pg';
 import type { Pool as PgPool } from 'pg';
 import { resolveSqlitePath } from './adapter.js';
@@ -175,6 +175,9 @@ type PgPoolConnectable = {
  * in a supplied pool). Uses `acquire` so introspection that left a session at the
  * default path still gets the selected schema before the next query. Explicit
  * `public` is applied too — Postgres may otherwise prefer `"$user"` first.
+ *
+ * Patches `client.query` so callers (including `@dataplan/pg`) await an in-flight
+ * SET before issuing SQL — pool `connect`/`acquire` listeners cannot block checkout.
  */
 export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string): void {
   const trimmed = schema?.trim();
@@ -183,20 +186,39 @@ export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string):
   const ident = `"${trimmed.replace(/"/g, '""')}"`;
   const sql = `SET search_path TO ${ident}`;
   const seen = new WeakSet<object>();
+  const pending = new WeakMap<object, Promise<void>>();
+  const origQueryByClient = new WeakMap<object, (...args: any[]) => any>();
+
+  const patchClient = (client: { query: (...args: any[]) => any }) => {
+    if (origQueryByClient.has(client)) return;
+    const origQuery = client.query.bind(client);
+    origQueryByClient.set(client, origQuery);
+    client.query = ((...args: any[]) => {
+      const wait = pending.get(client);
+      if (wait) {
+        return wait.then(() => origQuery(...args));
+      }
+      return origQuery(...args);
+    }) as typeof client.query;
+  };
+
   const ensure = (client: { query: (q: string) => Promise<unknown> }) => {
     if (seen.has(client)) return;
-    // Mark initialized only after SET succeeds so a failed setup can retry on
-    // the next acquire. Pool event listeners cannot block checkout — full
-    // await-before-query needs a connection barrier (deferred).
-    client.query(sql).then(
+    patchClient(client as { query: (...args: any[]) => any });
+    if (pending.has(client)) return;
+    const orig = origQueryByClient.get(client)!;
+    const p = Promise.resolve(orig(sql)).then(
       () => {
         seen.add(client);
+        pending.delete(client);
       },
       () => {
-        // Leave unseen; the next acquire retries. A failed SET leaves the
-        // session on the prior path until then.
+        // Leave unseen so the next acquire retries. Drop pending so callers
+        // are not blocked on a failed SET forever.
+        pending.delete(client);
       },
     );
+    pending.set(client, p);
   };
   pool.on('acquire', ensure);
   pool.on('connect', ensure);

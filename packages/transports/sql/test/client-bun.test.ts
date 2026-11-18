@@ -95,6 +95,29 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
     byEvent.acquire[0](client); // once per client
     expect(queries).toEqual(['SET search_path TO "app"']);
 
+    // Concurrent caller query waits for in-flight SET (no double-query race).
+    let releaseSet!: () => void;
+    const setGate = new Promise<void>(resolve => {
+      releaseSet = resolve;
+    });
+    const ordered: string[] = [];
+    const slowClient = {
+      query: async (q: string) => {
+        if (q.startsWith('SET ')) {
+          ordered.push('set-start');
+          await setGate;
+          ordered.push('set-done');
+          return;
+        }
+        ordered.push(`query:${q}`);
+      },
+    };
+    byEvent.connect[0](slowClient);
+    const caller = slowClient.query('SELECT 1');
+    releaseSet();
+    await caller;
+    expect(ordered).toEqual(['set-start', 'set-done', 'query:SELECT 1']);
+
     const byEvent2: Record<string, Array<(client: any) => void>> = { connect: [], acquire: [] };
     applyPgPoolSearchPath(
       {
