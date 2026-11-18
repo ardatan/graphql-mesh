@@ -17,6 +17,27 @@ import {
 } from '@omnigraph/mongo';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
+function mapLegacyModelConfig(m: YamlConfig.MongooseModel): MongoModelConfig {
+  return {
+    name: m.name,
+    path: m.path,
+    options: m.options
+      ? {
+          fields: m.options.fields
+            ? {
+                only: m.options.fields.only,
+                remove: m.options.fields.remove,
+                required: m.options.fields.required,
+              }
+            : undefined,
+          // YAML resolver opts are richer than the boolean/object toggles the loader
+          // consumes; forward as-is — only `false` disables emission.
+          resolvers: m.options.resolvers as NonNullable<MongoModelConfig['options']>['resolvers'],
+        }
+      : undefined,
+  };
+}
+
 /**
  * Legacy v0 Mongoose handler. Under the hood `@omnigraph/mongo` + `transport-mongo`.
  * YAML entrypoint stays the same (`connectionString` / `models` / `discriminators`);
@@ -55,38 +76,10 @@ export default class MongooseHandler implements MeshHandler {
       : 'mongodb://localhost:27017/test';
 
     const models: MongoModelConfig[] = [
-      ...(this.config.models || []).map(m => ({
-        name: m.name,
-        path: m.path,
-        options: m.options
-          ? {
-              fields: m.options.fields
-                ? {
-                    only: m.options.fields.only,
-                    remove: m.options.fields.remove,
-                    required: m.options.fields.required,
-                  }
-                : undefined,
-            }
-          : undefined,
-      })),
+      ...(this.config.models || []).map(m => mapLegacyModelConfig(m)),
       // Discriminators currently bootstrap like ordinary models (schema emit).
       // Discriminator-key filtering / subtype compose is a follow-up.
-      ...(this.config.discriminators || []).map(m => ({
-        name: m.name,
-        path: m.path,
-        options: m.options
-          ? {
-              fields: m.options.fields
-                ? {
-                    only: m.options.fields.only,
-                    remove: m.options.fields.remove,
-                    required: m.options.fields.required,
-                  }
-                : undefined,
-            }
-          : undefined,
-      })),
+      ...(this.config.discriminators || []).map(m => mapLegacyModelConfig(m)),
     ];
 
     if (!models.length) {

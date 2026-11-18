@@ -35,7 +35,31 @@ export interface MongoModelConfig {
   /** Optional compose-style field restrictions (legacy mongoose handler `options.fields`). */
   options?: {
     fields?: MongoFieldRestrictions;
+    /** Legacy compose resolver toggles; `false` omits the matching root field. */
+    resolvers?: {
+      removeMany?: boolean | Record<string, unknown>;
+      removeOne?: boolean | Record<string, unknown>;
+      removeById?: boolean | Record<string, unknown>;
+      createOne?: boolean | Record<string, unknown>;
+      createMany?: boolean | Record<string, unknown>;
+      updateOne?: boolean | Record<string, unknown>;
+      updateById?: boolean | Record<string, unknown>;
+      updateMany?: boolean | Record<string, unknown>;
+    };
   };
+}
+
+function resolverEnabled(
+  resolvers: MongoModelConfig['options'] extends infer O
+    ? O extends { resolvers?: infer R }
+      ? R
+      : undefined
+    : undefined,
+  key: keyof NonNullable<NonNullable<MongoModelConfig['options']>['resolvers']>,
+): boolean {
+  if (!resolvers) return true;
+  const flag = resolvers[key];
+  return flag !== false;
 }
 
 export interface LoadMongoSubgraphOpts {
@@ -73,6 +97,7 @@ export async function loadGraphQLSchemaFromMongo(
     collection: string;
     schema: MongooseSchema;
     paths: PathMeta[];
+    resolvers?: NonNullable<MongoModelConfig['options']>['resolvers'];
   }> = [];
 
   for (const modelConfig of opts.models) {
@@ -87,7 +112,13 @@ export async function loadGraphQLSchemaFromMongo(
       introspectPaths(model.schema, typeName),
       modelConfig.options?.fields,
     );
-    modelMeta.push({ typeName, collection, schema: model.schema, paths });
+    modelMeta.push({
+      typeName,
+      collection,
+      schema: model.schema,
+      paths,
+      resolvers: modelConfig.options?.resolvers,
+    });
     emitModelObjectType(schemaComposer, {
       subgraphName,
       typeName,
@@ -105,11 +136,12 @@ export async function loadGraphQLSchemaFromMongo(
       collection: meta.collection,
       paths: meta.paths,
       naming,
+      resolvers: meta.resolvers,
     });
     emitRefFields(schemaComposer, {
       subgraphName,
       typeName: meta.typeName,
-      schema: meta.schema,
+      paths: meta.paths,
       naming,
       knownTypes: new Set(modelMeta.map(m => m.typeName)),
       collectionsByType: new Map(modelMeta.map(m => [m.typeName, m.collection])),
@@ -199,19 +231,16 @@ function applyFieldRestrictions(paths: PathMeta[], fields?: MongoFieldRestrictio
 }
 
 function introspectPaths(schema: MongooseSchema, typeName: string): PathMeta[] {
-  return collectPaths(schema as any, typeName, [], new WeakSet());
+  const root = schema as any;
+  return collectPaths(root, typeName, [], root ? [root] : []);
 }
 
 function collectPaths(
   schema: any,
   rootTypeName: string,
   nameStack: string[],
-  visited: WeakSet<object>,
+  ancestors: object[],
 ): PathMeta[] {
-  if (schema && typeof schema === 'object') {
-    if (visited.has(schema)) return [];
-    visited.add(schema);
-  }
   const pathsObj = (schema?.paths || {}) as Record<string, any>;
   const direct = new Map<string, any>();
   const dottedGroups = new Map<string, Map<string, any>>();
@@ -233,7 +262,7 @@ function collectPaths(
 
   const out: PathMeta[] = [];
   for (const [name, schemaType] of direct) {
-    out.push(toPathMeta(name, schemaType, rootTypeName, [...nameStack, name], visited));
+    out.push(toPathMeta(name, schemaType, rootTypeName, [...nameStack, name], ancestors));
   }
   for (const [groupName, tails] of dottedGroups) {
     if (direct.has(groupName)) continue;
@@ -243,7 +272,7 @@ function collectPaths(
       name: groupName,
       instance: 'Embedded',
       nestedTypeName: `${parentPrefix}${pascalCase(groupName)}`,
-      nested: pathsFromDottedTails(tails, rootTypeName, nestedStack, visited),
+      nested: pathsFromDottedTails(tails, rootTypeName, nestedStack, ancestors),
     });
   }
   return out;
@@ -253,7 +282,7 @@ function pathsFromDottedTails(
   tails: Map<string, any>,
   rootTypeName: string,
   nameStack: string[],
-  visited: WeakSet<object>,
+  ancestors: object[],
 ): PathMeta[] {
   const direct = new Map<string, any>();
   const groups = new Map<string, Map<string, any>>();
@@ -270,7 +299,7 @@ function pathsFromDottedTails(
   }
   const out: PathMeta[] = [];
   for (const [name, schemaType] of direct) {
-    out.push(toPathMeta(name, schemaType, rootTypeName, [...nameStack, name], visited));
+    out.push(toPathMeta(name, schemaType, rootTypeName, [...nameStack, name], ancestors));
   }
   for (const [groupName, sub] of groups) {
     const nestedStack = [...nameStack, groupName];
@@ -279,7 +308,7 @@ function pathsFromDottedTails(
       name: groupName,
       instance: 'Embedded',
       nestedTypeName: `${parentPrefix}${pascalCase(groupName)}`,
-      nested: pathsFromDottedTails(sub, rootTypeName, nestedStack, visited),
+      nested: pathsFromDottedTails(sub, rootTypeName, nestedStack, ancestors),
     });
   }
   return out;
@@ -290,7 +319,7 @@ function toPathMeta(
   schemaType: any,
   rootTypeName: string,
   nameStack: string[],
-  visited: WeakSet<object>,
+  ancestors: object[],
 ): PathMeta {
   const description = schemaType.options?.description
     ? String(schemaType.options.description)
@@ -300,7 +329,8 @@ function toPathMeta(
   const enumName = `Enum${rootTypeName}${nameStack.map(pascalCase).join('')}`;
 
   if (isEmbedded(schemaType)) {
-    if (schemaType.schema && visited.has(schemaType.schema)) {
+    // Ancestor stack distinguishes true recursion from sibling reuse of one child schema.
+    if (schemaType.schema && ancestors.includes(schemaType.schema)) {
       return {
         name,
         instance: 'Embedded',
@@ -309,17 +339,21 @@ function toPathMeta(
         selfRef: true,
       };
     }
+    const nextAncestors =
+      schemaType.schema && typeof schemaType.schema === 'object'
+        ? [...ancestors, schemaType.schema]
+        : ancestors;
     return {
       name,
       instance: 'Embedded',
       description,
       nestedTypeName,
-      nested: collectPaths(schemaType.schema, rootTypeName, nameStack, visited),
+      nested: collectPaths(schemaType.schema, rootTypeName, nameStack, nextAncestors),
     };
   }
 
   if (isDocumentArray(schemaType)) {
-    if (schemaType.schema && visited.has(schemaType.schema)) {
+    if (schemaType.schema && ancestors.includes(schemaType.schema)) {
       return {
         name,
         instance: 'Array',
@@ -329,13 +363,17 @@ function toPathMeta(
         selfRef: true,
       };
     }
+    const nextAncestors =
+      schemaType.schema && typeof schemaType.schema === 'object'
+        ? [...ancestors, schemaType.schema]
+        : ancestors;
     return {
       name,
       instance: 'Array',
       isArray: true,
       description,
       nestedTypeName,
-      nested: collectPaths(schemaType.schema, rootTypeName, nameStack, visited),
+      nested: collectPaths(schemaType.schema, rootTypeName, nameStack, nextAncestors),
     };
   }
 
@@ -474,9 +512,10 @@ function emitModelRootFields(
     collection: string;
     paths: PathMeta[];
     naming: MongoNaming;
+    resolvers?: NonNullable<MongoModelConfig['options']>['resolvers'];
   },
 ) {
-  const { subgraphName, typeName, collection, paths, naming } = opts;
+  const { subgraphName, typeName, collection, paths, naming, resolvers } = opts;
   const selection = selectionForPaths(paths);
   const queryTC = schemaComposer.Query;
   const mutationTC = schemaComposer.Mutation;
@@ -657,117 +696,133 @@ recordId: $_id
 `);
 
   // db.collection.insertOne(document)
-  mutationTC.setField(naming.createOneField(typeName), {
-    type: naming.payloadType(typeName),
-    args: { document: { type: `${documentInput}!` } },
-    directives: [
-      mongoDir('mongo__insertOne', { set: documentSetBlock, selection: payloadSelection }),
-    ],
-  });
+  if (resolverEnabled(resolvers, 'createOne')) {
+    mutationTC.setField(naming.createOneField(typeName), {
+      type: naming.payloadType(typeName),
+      args: { document: { type: `${documentInput}!` } },
+      directives: [
+        mongoDir('mongo__insertOne', { set: documentSetBlock, selection: payloadSelection }),
+      ],
+    });
+  }
 
   // db.collection.insertMany(documents)
-  mutationTC.setField(naming.createManyField(typeName), {
-    type: naming.payloadType(typeName),
-    args: { documents: { type: `[${documentInput}!]!` } },
-    directives: [
-      mongoDir('mongo__insertMany', {
-        set: blockArg('documents: $args.documents'),
-        selection: blockArg(`
+  if (resolverEnabled(resolvers, 'createMany')) {
+    mutationTC.setField(naming.createManyField(typeName), {
+      type: naming.payloadType(typeName),
+      args: { documents: { type: `[${documentInput}!]!` } },
+      directives: [
+        mongoDir('mongo__insertMany', {
+          set: blockArg('documents: $args.documents'),
+          selection: blockArg(`
 records {
 ${indent(selectionForPaths(paths).replace(/^\n/, ''), 1)}
 }
 recordIds: $recordIds
 createdCount: $createdCount
 `),
-      }),
-    ],
-  });
+        }),
+      ],
+    });
+  }
 
   const updateType = naming.updateInput(typeName);
 
-  mutationTC.setField(naming.updateByIdField(typeName), {
-    type: naming.payloadType(typeName),
-    args: {
-      id: { type: new GraphQLNonNull(GraphQLObjectID) },
-      // Typed update ops without `$` (`set` / `inc` / … → `$set` / `$inc`).
-      update: { type: `${updateType}!` },
-    },
-    directives: [
-      mongoDir('mongo__updateOne', {
-        query: blockArg('_id: $args.id'),
-        set: '$args.update',
-        selection: payloadSelection,
-      }),
-    ],
-  });
+  if (resolverEnabled(resolvers, 'updateById')) {
+    mutationTC.setField(naming.updateByIdField(typeName), {
+      type: naming.payloadType(typeName),
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLObjectID) },
+        // Typed update ops without `$` (`set` / `inc` / … → `$set` / `$inc`).
+        update: { type: `${updateType}!` },
+      },
+      directives: [
+        mongoDir('mongo__updateOne', {
+          query: blockArg('_id: $args.id'),
+          set: '$args.update',
+          selection: payloadSelection,
+        }),
+      ],
+    });
+  }
 
   // db.collection.updateOne(query, update)
-  mutationTC.setField(naming.updateOneField(typeName), {
-    type: naming.payloadType(typeName),
-    args: {
-      query: { type: `${queryType}!` },
-      update: { type: `${updateType}!` },
-    },
-    directives: [
-      mongoDir('mongo__updateOne', {
-        query: '$args.query',
-        set: '$args.update',
-        selection: payloadSelection,
-      }),
-    ],
-  });
+  if (resolverEnabled(resolvers, 'updateOne')) {
+    mutationTC.setField(naming.updateOneField(typeName), {
+      type: naming.payloadType(typeName),
+      args: {
+        query: { type: `${queryType}!` },
+        update: { type: `${updateType}!` },
+      },
+      directives: [
+        mongoDir('mongo__updateOne', {
+          query: '$args.query',
+          set: '$args.update',
+          selection: payloadSelection,
+        }),
+      ],
+    });
+  }
 
-  mutationTC.setField(naming.updateManyField(typeName), {
-    type: naming.payloadType(typeName),
-    args: {
-      query: { type: `${queryType}!` },
-      update: { type: `${updateType}!` },
-    },
-    directives: [
-      mongoDir('mongo__updateMany', {
-        query: '$args.query',
-        set: '$args.update',
-        selection: blockArg(`
+  if (resolverEnabled(resolvers, 'updateMany')) {
+    mutationTC.setField(naming.updateManyField(typeName), {
+      type: naming.payloadType(typeName),
+      args: {
+        query: { type: `${queryType}!` },
+        update: { type: `${updateType}!` },
+      },
+      directives: [
+        mongoDir('mongo__updateMany', {
+          query: '$args.query',
+          set: '$args.update',
+          selection: blockArg(`
 modifiedCount: $modifiedCount
 matchedCount: $matchedCount
 `),
-      }),
-    ],
-  });
+        }),
+      ],
+    });
+  }
 
-  mutationTC.setField(naming.removeByIdField(typeName), {
-    type: naming.payloadType(typeName),
-    args: { id: { type: new GraphQLNonNull(GraphQLObjectID) } },
-    directives: [
-      mongoDir('mongo__deleteOne', {
-        query: blockArg('_id: $args.id'),
-        selection: payloadSelection,
-      }),
-    ],
-  });
+  if (resolverEnabled(resolvers, 'removeById')) {
+    mutationTC.setField(naming.removeByIdField(typeName), {
+      type: naming.payloadType(typeName),
+      args: { id: { type: new GraphQLNonNull(GraphQLObjectID) } },
+      directives: [
+        mongoDir('mongo__deleteOne', {
+          query: blockArg('_id: $args.id'),
+          selection: payloadSelection,
+        }),
+      ],
+    });
+  }
 
   // db.collection.deleteOne(query)
-  mutationTC.setField(naming.removeOneField(typeName), {
-    type: naming.payloadType(typeName),
-    args: { query: { type: `${queryType}!` } },
-    directives: [
-      mongoDir('mongo__deleteOne', {
-        query: '$args.query',
-        selection: payloadSelection,
-      }),
-    ],
-  });
+  if (resolverEnabled(resolvers, 'removeOne')) {
+    mutationTC.setField(naming.removeOneField(typeName), {
+      type: naming.payloadType(typeName),
+      args: { query: { type: `${queryType}!` } },
+      directives: [
+        mongoDir('mongo__deleteOne', {
+          query: '$args.query',
+          selection: payloadSelection,
+        }),
+      ],
+    });
+  }
 
-  mutationTC.setField(naming.removeManyField(typeName), {
-    type: naming.payloadType(typeName),
-    args: { query: { type: `${queryType}!` } },
-    directives: [
-      mongoDir('mongo__deleteMany', {
-        query: '$args.query',
-        selection: blockArg('deletedCount: $deletedCount'),
-      }),
-    ],
-  });
+  if (resolverEnabled(resolvers, 'removeMany')) {
+    mutationTC.setField(naming.removeManyField(typeName), {
+      type: naming.payloadType(typeName),
+      args: { query: { type: `${queryType}!` } },
+      directives: [
+        mongoDir('mongo__deleteMany', {
+          query: '$args.query',
+          selection: blockArg('deletedCount: $deletedCount'),
+        }),
+      ],
+    });
+  }
 }
 
 function emitRefFields(
@@ -775,14 +830,15 @@ function emitRefFields(
   opts: {
     subgraphName: string;
     typeName: string;
-    schema: MongooseSchema;
+    paths: PathMeta[];
     naming: MongoNaming;
     knownTypes: Set<string>;
     collectionsByType: Map<string, string>;
     pathsByType: Map<string, PathMeta[]>;
   },
 ) {
-  const paths = introspectPaths(opts.schema, opts.typeName);
+  // Use restricted model paths so removed source fields do not keep ref resolvers.
+  const paths = opts.paths;
   const otc = schemaComposer.getOTC(opts.typeName);
   for (const path of paths) {
     if (!path.ref || !opts.knownTypes.has(path.ref)) continue;

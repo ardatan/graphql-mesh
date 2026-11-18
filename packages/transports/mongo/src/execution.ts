@@ -9,6 +9,7 @@ import {
   buildSetDocument,
   coerceFilterValue,
   filterFromMapping,
+  isObjectIdFieldKey,
   resolveUpdateDocument,
 } from './filter.js';
 import {
@@ -327,13 +328,52 @@ function ensureIdTiebreaker(sort: Record<string, 1 | -1>): Record<string, 1 | -1
   return { ...sort, _id: 1 };
 }
 
+function encodeCursorValue(value: unknown): unknown {
+  if (value instanceof Date) {
+    return { __mongoCursor: 'date', value: value.toISOString() };
+  }
+  if (
+    value &&
+    typeof value === 'object' &&
+    typeof (value as { toHexString?: () => string }).toHexString === 'function'
+  ) {
+    return {
+      __mongoCursor: 'objectId',
+      value: (value as { toHexString: () => string }).toHexString(),
+    };
+  }
+  return value ?? null;
+}
+
+function decodeCursorValue(value: unknown): unknown {
+  if (
+    value &&
+    typeof value === 'object' &&
+    !Array.isArray(value) &&
+    (value as { __mongoCursor?: string }).__mongoCursor === 'date' &&
+    typeof (value as { value?: unknown }).value === 'string'
+  ) {
+    return new Date((value as { value: string }).value);
+  }
+  if (
+    value &&
+    typeof value === 'object' &&
+    !Array.isArray(value) &&
+    (value as { __mongoCursor?: string }).__mongoCursor === 'objectId' &&
+    typeof (value as { value?: unknown }).value === 'string'
+  ) {
+    return coerceFilterValue((value as { value: string }).value, { asObjectId: true });
+  }
+  return value;
+}
+
 function encodeConnectionCursor(
   doc: Record<string, unknown>,
   sort: Record<string, 1 | -1>,
 ): string {
   const values: unknown[] = [];
   for (const key of Object.keys(sort)) {
-    values.push(key === '_id' ? String(doc._id) : doc[key]);
+    values.push(encodeCursorValue(key === '_id' ? doc._id : doc[key]));
   }
   return Buffer.from(JSON.stringify(values), 'utf8').toString('base64url');
 }
@@ -342,7 +382,7 @@ function decodeConnectionCursor(cursor: string): unknown[] | null {
   try {
     const raw = Buffer.from(cursor, 'base64url').toString('utf8');
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : null;
+    return Array.isArray(parsed) ? parsed.map(decodeCursorValue) : null;
   } catch {
     // Legacy cursors were plain `_id` strings.
     return [cursor];
@@ -381,20 +421,40 @@ function mergeCursorFilter(
 
   const orClauses: Record<string, unknown>[] = [];
   for (let i = 0; i < keys.length; i++) {
-    const clause: Record<string, unknown> = {};
+    const prefix: Record<string, unknown> = {};
     for (let j = 0; j < i; j++) {
-      clause[keys[j]] = coerceCursorValue(keys[j], values[j]);
+      prefix[keys[j]] = coerceCursorValue(keys[j], values[j]);
     }
-    const dir = sort[keys[i]];
-    const op = dir < 0 ? '$lt' : '$gt';
-    clause[keys[i]] = { [op]: coerceCursorValue(keys[i], values[i]) };
-    orClauses.push(clause);
+    orClauses.push(...fieldContinuationClauses(prefix, keys[i], sort[keys[i]], values[i]));
   }
   return andFilters(filter, { $or: orClauses });
 }
 
+/**
+ * Build continuation clause(s) for one sort field. Null/missing cannot use `$gt: null`
+ * (BSON type brackets); ascending continues into non-null values, descending stays on nulls.
+ */
+function fieldContinuationClauses(
+  prefix: Record<string, unknown>,
+  field: string,
+  dir: 1 | -1,
+  rawValue: unknown,
+): Record<string, unknown>[] {
+  const value = coerceCursorValue(field, rawValue);
+  if (value == null) {
+    // Equal-null rows continue via later sort keys (usually `_id`). For ascending
+    // sorts (nulls first), also jump to the first non-null values.
+    if (dir > 0) {
+      return [{ ...prefix, [field]: { $exists: true, $nin: [null] } }];
+    }
+    return [];
+  }
+  const op = dir < 0 ? '$lt' : '$gt';
+  return [{ ...prefix, [field]: { [op]: value } }];
+}
+
 function coerceCursorValue(field: string, value: unknown): unknown {
-  return coerceFilterValue(value, { asObjectId: field === '_id' || field === 'id' });
+  return coerceFilterValue(value, { asObjectId: isObjectIdFieldKey(field) });
 }
 
 function andFilters(
@@ -403,11 +463,8 @@ function andFilters(
 ): Record<string, unknown> {
   if (!base || Object.keys(base).length === 0) return { ...extra };
   if (!extra || Object.keys(extra).length === 0) return { ...base };
-  const and = [
-    ...(Array.isArray(base.$and) ? (base.$and as Record<string, unknown>[]) : [base]),
-    extra,
-  ];
-  return { $and: and };
+  // Keep the full base document (including siblings beside `$and`).
+  return { $and: [base, extra] };
 }
 
 async function resolvePagination(

@@ -78,13 +78,11 @@ export function createMongoClient(opts: CreateMongoClientOptions): MongoClientLi
     },
     async findOneAndUpdate(collection, filter, update) {
       const db = await getDb();
-      const result = await db.collection(collection).findOneAndUpdate(filter, update, {
+      // Driver 7 returns the document directly when includeResultMetadata is false.
+      const value = (await db.collection(collection).findOneAndUpdate(filter, update, {
         returnDocument: 'after',
-      });
-      const value =
-        result && typeof result === 'object' && 'value' in result
-          ? ((result as { value: Record<string, unknown> | null }).value ?? null)
-          : ((result as Record<string, unknown> | null) ?? null);
+        includeResultMetadata: false,
+      })) as Record<string, unknown> | null;
       return {
         value,
         matchedCount: value ? 1 : 0,
@@ -103,11 +101,9 @@ export function createMongoClient(opts: CreateMongoClientOptions): MongoClientLi
     },
     async findOneAndDelete(collection, filter) {
       const db = await getDb();
-      const result = await db.collection(collection).findOneAndDelete(filter);
-      const value =
-        result && typeof result === 'object' && 'value' in result
-          ? ((result as { value: Record<string, unknown> | null }).value ?? null)
-          : ((result as Record<string, unknown> | null) ?? null);
+      const value = (await db.collection(collection).findOneAndDelete(filter, {
+        includeResultMetadata: false,
+      })) as Record<string, unknown> | null;
       return {
         value,
         deletedCount: value ? 1 : 0,

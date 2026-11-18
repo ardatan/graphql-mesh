@@ -100,20 +100,26 @@ describe('mongo filter mapping', () => {
     });
   });
 
-  it('converts ObjectId only for id/_id fields', () => {
+  it('converts ObjectId for id/_id/*Id fields, not plain strings', () => {
     const hex = '507f1f77bcf86cd799439011';
     expect(coerceFilterValue(hex, { asObjectId: true })).toBeInstanceOf(ObjectId);
     expect(coerceFilterValue(hex)).toBe(hex);
     expect(graphqlFilterToMongo({ token: { eq: hex } })).toEqual({ token: hex });
     expect(graphqlFilterToMongo({ id: { eq: hex } })._id).toBeInstanceOf(ObjectId);
+    expect(graphqlFilterToMongo({ authorId: { eq: hex } }).authorId).toBeInstanceOf(ObjectId);
+    const friendIds = graphqlFilterToMongo({ friendIds: { in: [hex] } }).friendIds as {
+      $in: unknown[];
+    };
+    expect(friendIds.$in[0]).toBeInstanceOf(ObjectId);
   });
 
-  it('preserves Decimal128 instances through update coerce', () => {
+  it('preserves Decimal128 instances and Extended JSON, not numeric-looking strings', () => {
     const d = Decimal128.fromString('12.50');
     expect(graphqlUpdateToMongo({ set: { salaryDecimal: d } })).toEqual({
       $set: { salaryDecimal: d },
     });
-    expect(coerceFilterValue('12.50')).toBeInstanceOf(Decimal128);
+    expect(coerceFilterValue('12.50')).toBe('12.50');
+    expect(coerceFilterValue({ $numberDecimal: '12.50' })).toBeInstanceOf(Decimal128);
   });
 
   it('maps array id binders to $in', () => {

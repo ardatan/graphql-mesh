@@ -110,6 +110,22 @@ function coerceGraphqlValue(value: unknown): unknown {
       return value;
     }
   }
+  // Recursive / embedded docs still carry BSON `_id`; GraphQL root types expose `id`.
+  if (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.prototype.hasOwnProperty.call(value, '_id') &&
+    !Object.prototype.hasOwnProperty.call(value, 'id')
+  ) {
+    const doc = value as Record<string, unknown>;
+    const out: Record<string, unknown> = { id: coerceGraphqlValue(doc._id) };
+    for (const [k, v] of Object.entries(doc)) {
+      if (k === '_id') continue;
+      out[k] = coerceGraphqlValue(v);
+    }
+    return out;
+  }
   return value;
 }
 

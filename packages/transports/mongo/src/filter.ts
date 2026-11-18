@@ -179,8 +179,11 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   );
 }
 
-function isObjectIdFieldKey(key: string): boolean {
-  return key === '_id' || key === 'id';
+/** Heuristic for GraphQL ObjectID paths when schema BSON metadata is not available. */
+export function isObjectIdFieldKey(key: string): boolean {
+  // Declared ObjectId paths are typically `id` / `_id` / `*Id` / `*Ids` (GraphQL ObjectID).
+  // Plain String fields that happen to hold 24-hex stay strings.
+  return key === '_id' || key === 'id' || /Ids?$/.test(key);
 }
 
 /** True when every own key is a known GraphQL filter operator (`eq` / `gt` / …). */
@@ -512,16 +515,9 @@ export function coerceFilterValue(value: unknown, opts?: CoerceFilterOptions): u
         return value;
       }
     }
-    // Gateway-rebuilt Decimal128 scalars arrive as plain strings (no parseValue).
-    // Only cast decimal-looking strings (require a fractional part) to avoid
-    // turning ordinary String fields like "12" into Decimal128.
-    if (/^-?\d+\.\d+$/.test(value) || /^-?\d+[eE][+-]?\d+$/.test(value)) {
-      try {
-        return Decimal128.fromString(value);
-      } catch {
-        return value;
-      }
-    }
+    // Do not infer Decimal128 from numeric-looking strings — that breaks String
+    // fields. Accept Extended JSON / BSON instances above; gateway rebuilds should
+    // keep Decimal128 parseValue or pass `{ $numberDecimal }`.
   }
   return value;
 }

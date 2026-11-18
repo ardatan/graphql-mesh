@@ -143,7 +143,6 @@ export interface RewriteProtobufMappingBindsOptions {
 }
 
 /**
-<<<<<<< HEAD
  * Rewrite GraphQL bind path segments in a `@protobuf__rpc` args/selection mapping.
  * Handles `$args.x` / `$this.x` and bare paths after `):` (e.g. `2(int64): year`,
  * `1(message): input.movie {`).
@@ -1438,19 +1437,14 @@ function protobufRpcDirectiveKey(
 }
 
 /**
- * Rewrite Federation Connectors `@connect`, Thrift `@thrift__rpc`, and Mesh
- * `@protobuf__rpc` mappings after GraphQL renames. These skip Mesh `@source` /
+ * Rewrite Federation `@connect`, Thrift `@thrift__rpc`, Mesh `@protobuf__rpc`,
+ * and Mesh `@mongo__*` mappings after GraphQL renames. These skip Mesh `@source` /
  * `@meshSource`; transforms keep directive binds on the public GraphQL names instead.
-=======
- * Rewrite `$args.<name>` (and related) references after GraphQL argument renames
- * for Federation `@connect`, Thrift `@thrift__rpc`, and Mesh `@mongo__*`. Mesh stitching
- * used `@meshSource(name:)` for this; Connectors / thrift compact / mongo mapping bind
- * args by the GraphQL argument name inside path/body/`args`/`query`/`selection` strings.
->>>>>>> e8839d9eba (feat(mongo)!: split @mongo into op-specific @mongo__* directives)
  *
  * When `fieldRenameMap` is set, also rewrite selection aliases of the form
  * `newName: oldName` / leading `oldName` field picks so rename/prefix transforms
- * keep Connectors (and thrift/protobuf compact) selection in sync with GraphQL field names.
+ * keep compact selection in sync with GraphQL field names.
+ * Mongo (and SQL) also rewrite `$this.<field>` parent picks.
  *
  * When `typeRenameMap` is set, rewrite `__typename: "Old"` / `__typename: $("Old")`
  * in selections so prefix/rename/naming-convention keep polymorphic Connect arms valid.
@@ -1470,15 +1464,12 @@ export function rewriteConnectArgReferences(
   const protobufKey = protobufRpcDirectiveKey(fieldDirectives);
   const hasConnect = Boolean(fieldDirectives?.connect?.length);
   const hasThriftRpc = Boolean(fieldDirectives?.thrift__rpc?.length);
-<<<<<<< HEAD
-=======
   const mongoDirectiveNames = Object.keys(fieldDirectives || {}).filter(
     name => name === 'mongo' || name.startsWith('mongo__'),
   );
   const hasMongo = mongoDirectiveNames.some(name => Boolean(fieldDirectives?.[name]?.length));
->>>>>>> e8839d9eba (feat(mongo)!: split @mongo into op-specific @mongo__* directives)
   if (
-    (!hasConnect && !hasThriftRpc && !protobufKey) ||
+    (!hasConnect && !hasThriftRpc && !protobufKey && !hasMongo) ||
     (argRenameMap.size === 0 &&
       (!fieldRenameMap || fieldRenameMap.size === 0) &&
       (!typeRenameMap || typeRenameMap.size === 0))
@@ -1508,7 +1499,8 @@ export function rewriteConnectArgReferences(
         if (from === to) continue;
         out = out
           .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
-          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`);
+          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`)
+          .replace(new RegExp(`\\$this\\.${escapeRegExp(from)}(?![\\w])`, 'g'), `$this.${to}`);
       }
     }
     if (typeRenameMap?.size) {
@@ -1612,7 +1604,6 @@ export function rewriteConnectArgReferences(
       })),
     };
   }
-<<<<<<< HEAD
   const protobufFieldMap =
     protobufNestedFieldRenames && fieldRenameMap?.size ? fieldRenameMap : undefined;
   if (
@@ -1637,7 +1628,23 @@ export function rewriteConnectArgReferences(
         args = rewriteProtobufMappingBinds(args, argRenameMap, {
           nestedRenameMap: protobufFieldMap?.size ? protobufFieldMap : new Map(),
         });
-=======
+      }
+      if (typeof selection === 'string' && selectionMap?.size) {
+        selection = rewriteProtobufMappingBinds(selection, selectionMap);
+      }
+      if (args === rpcArgs?.args && selection === rpcArgs?.selection) {
+        return rpcArgs;
+      }
+      protobufChanged = true;
+      return { ...rpcArgs, args, selection };
+    });
+    if (protobufChanged) {
+      nextDirectives = {
+        ...nextDirectives,
+        [protobufKey]: rewritten,
+      };
+    }
+  }
   if (hasMongo) {
     // `@mongo__findOne(query/selection/…)` (and legacy `@mongo`) embed `$args` / `$this`.
     const mongoStringArgs = [
@@ -1657,34 +1664,18 @@ export function rewriteConnectArgReferences(
       'perPage',
     ] as const;
     for (const dirName of mongoDirectiveNames) {
-      next[dirName] = fieldDirectives![dirName].map((mongoArgs: any) => {
-        const rewritten: Record<string, unknown> = { ...mongoArgs };
-        for (const key of mongoStringArgs) {
-          if (typeof mongoArgs?.[key] === 'string') {
-            rewritten[key] = rewriteExpr(mongoArgs[key]);
-          }
-        }
-<<<<<<< HEAD
->>>>>>> 32575db820 (feat(mongo)!: align GraphQL API with MongoDB collection methods)
-      }
-      if (typeof selection === 'string' && selectionMap?.size) {
-        selection = rewriteProtobufMappingBinds(selection, selectionMap);
-      }
-      if (args === rpcArgs?.args && selection === rpcArgs?.selection) {
-        return rpcArgs;
-      }
-      protobufChanged = true;
-      return { ...rpcArgs, args, selection };
-    });
-    if (protobufChanged) {
       nextDirectives = {
         ...nextDirectives,
-        [protobufKey]: rewritten,
+        [dirName]: nextDirectives[dirName].map((mongoArgs: any) => {
+          const rewritten: Record<string, unknown> = { ...mongoArgs };
+          for (const key of mongoStringArgs) {
+            if (typeof mongoArgs?.[key] === 'string') {
+              rewritten[key] = rewriteExpr(mongoArgs[key]);
+            }
+          }
+          return rewritten;
+        }),
       };
-=======
-        return rewritten;
-      });
->>>>>>> e8839d9eba (feat(mongo)!: split @mongo into op-specific @mongo__* directives)
     }
   }
   return nextDirectives;

@@ -103,4 +103,34 @@ describe('parseMongoMapping', () => {
       friendIds: ['507f1f77bcf86cd799439011', '507f1f77bcf86cd799439011'],
     });
   });
+
+  it('maps nested / recursive documents from _id to id', () => {
+    const parsed = parseMongoMapping(`
+      id: _id
+      children: children
+    `);
+    const childOid = {
+      toHexString() {
+        return '507f1f77bcf86cd799439011';
+      },
+    };
+    expect(
+      mapDocumentToGraphql(
+        {
+          _id: 'root',
+          children: [{ _id: childOid, name: 'kid', children: [{ _id: 'grand', name: 'g' }] }],
+        },
+        parsed,
+      ),
+    ).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: '507f1f77bcf86cd799439011',
+          name: 'kid',
+          children: [{ id: 'grand', name: 'g' }],
+        },
+      ],
+    });
+  });
 });
