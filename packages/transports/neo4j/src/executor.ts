@@ -318,15 +318,25 @@ export function extractNeo4jModelTypeDefs(
   /** Spatial object types Neo4j regenerates from retained model attributes. */
   const NEO4J_REGENERATED_OBJECT_TYPES = new Set(['Point', 'CartesianPoint']);
 
-  /** Generated connection / aggregate fields Neo4j re-augments on `@node` models. */
+  /**
+   * Generated connection / aggregate object fields Neo4j re-augments on `@node` models.
+   * Do not classify by field-name suffix alone — authored `totalAggregate: Int` must stay.
+   */
   function isGeneratedConnectionOrAggregateField(field: FieldDefinitionNode): boolean {
-    const fieldName = field.name.value;
-    if (fieldName.endsWith('Connection') || fieldName.endsWith('Aggregate')) {
-      return true;
-    }
     const returnName = namedTypeNameFromTypeNode(field.type);
-    return Boolean(
-      returnName && (returnName.endsWith('Connection') || returnName.endsWith('Aggregate')),
+    if (!returnName) {
+      return false;
+    }
+    // Scalars / enums / inputs are never generated Connection/Aggregate objects.
+    if (!objectOrInterfaceNames.has(returnName) && !unionNames.has(returnName)) {
+      return false;
+    }
+    const fieldName = field.name.value;
+    return (
+      fieldName.endsWith('Connection') ||
+      fieldName.endsWith('Aggregate') ||
+      returnName.endsWith('Connection') ||
+      returnName.endsWith('Aggregate')
     );
   }
 
@@ -518,26 +528,71 @@ export function extractNeo4jModelTypeDefs(
     );
   }
 
-  // Drop nested authored types that would emit empty (do not abort the whole transport).
-  for (const name of [...authoredOutputTypeNames]) {
-    if (directCypherReturnTypes.has(name)) {
-      continue;
+  /**
+   * Whether a named type will be available after extract (definition emitted or Neo4j-regenerated).
+   * Spatial types stay available when referenced even if a retained model regenerates them
+   * (so authored `Person.location: Point` is kept while the Point def may be omitted).
+   */
+  function typeAvailableInExtract(name: string): boolean {
+    if (keepTypeNames.has(name) || authoredOutputTypeNames.has(name)) {
+      return true;
     }
-    const owned = authoredOutputOwnedFields(name);
-    if (owned && owned.length === 0) {
-      authoredOutputTypeNames.delete(name);
+    if (NEO4J_REGENERATED_OBJECT_TYPES.has(name)) {
+      return referenced.has(name);
+    }
+    if (unionNames.has(name) && referenced.has(name)) {
+      const def = typeDefs.definitions.find(
+        d => d.kind === Kind.UNION_TYPE_DEFINITION && d.name.value === name,
+      );
+      if (def && def.kind === Kind.UNION_TYPE_DEFINITION) {
+        return (def.types || []).some(member => typeAvailableInExtract(member.name.value));
+      }
+    }
+    return false;
+  }
+
+  function survivingAuthoredFields(typeName: string): FieldDefinitionNode[] {
+    return (authoredOutputOwnedFields(typeName) || []).filter(field => {
+      const nested = namedTypeNameFromTypeNode(field.type);
+      if (!nested) {
+        return true;
+      }
+      if (
+        objectOrInterfaceNames.has(nested) ||
+        unionNames.has(nested) ||
+        NEO4J_REGENERATED_OBJECT_TYPES.has(nested)
+      ) {
+        return typeAvailableInExtract(nested);
+      }
+      return true;
+    });
+  }
+
+  // Iteratively drop nested authored types that would emit empty after nested availability.
+  let prunedAuthored = true;
+  while (prunedAuthored) {
+    prunedAuthored = false;
+    for (const name of [...authoredOutputTypeNames]) {
+      if (directCypherReturnTypes.has(name)) {
+        continue;
+      }
+      if (survivingAuthoredFields(name).length === 0) {
+        authoredOutputTypeNames.delete(name);
+        prunedAuthored = true;
+      }
     }
   }
 
   function typeEmittedInExtract(name: string): boolean {
-    if (keepTypeNames.has(name)) {
+    if (keepTypeNames.has(name) || authoredOutputTypeNames.has(name)) {
       return true;
     }
-    if (authoredOutputTypeNames.has(name)) {
-      return true;
-    }
+    // Emit Point/CartesianPoint defs only when referenced and no retained model regenerates them.
     if (NEO4J_REGENERATED_OBJECT_TYPES.has(name)) {
       return referenced.has(name) && !retainedModelHasSpatialField(name);
+    }
+    if (unionNames.has(name) && referenced.has(name)) {
+      return typeAvailableInExtract(name);
     }
     return false;
   }
@@ -619,8 +674,10 @@ export function extractNeo4jModelTypeDefs(
               const nested = namedTypeNameFromTypeNode(field.type);
               if (
                 nested &&
-                (objectOrInterfaceNames.has(nested) || unionNames.has(nested)) &&
-                !typeEmittedInExtract(nested)
+                (objectOrInterfaceNames.has(nested) ||
+                  unionNames.has(nested) ||
+                  NEO4J_REGENERATED_OBJECT_TYPES.has(nested)) &&
+                !typeAvailableInExtract(nested)
               ) {
                 return false;
               }
@@ -640,7 +697,7 @@ export function extractNeo4jModelTypeDefs(
             if (authoredFields.length !== (authored.fields || []).length) {
               authored = { ...authored, fields: authoredFields };
             }
-            // Interface conformance: projection must include each required interface field.
+            // Interface conformance against the *projected* interface fields extraction emits.
             if (authored.kind === Kind.OBJECT_TYPE_DEFINITION && authored.interfaces?.length) {
               const projected = new Set(authoredFields.map(field => field.name.value));
               const nextInterfaces = [];
@@ -649,9 +706,15 @@ export function extractNeo4jModelTypeDefs(
                 if (!keepTypeNames.has(ifaceName) && !authoredOutputTypeNames.has(ifaceName)) {
                   continue;
                 }
-                const missing = (interfaceFieldsByName.get(ifaceName) || [])
-                  .map(field => field.name.value)
-                  .filter(name => !projected.has(name));
+                const projectedIfaceFields = keepTypeNames.has(ifaceName)
+                  ? retainedFieldsByType.get(ifaceName) || []
+                  : survivingAuthoredFields(ifaceName);
+                const requiredNames = projectedIfaceFields.length
+                  ? projectedIfaceFields.map(field => field.name.value)
+                  : (interfaceFieldsByName.get(ifaceName) || [])
+                      .filter(field => fieldOwnedByThisSubgraph(field, subgraphName))
+                      .map(field => field.name.value);
+                const missing = requiredNames.filter(name => !projected.has(name));
                 if (missing.length) {
                   const refs =
                     authoredOutputReferrers.get(def.name.value)?.join(', ') || 'unknown field';

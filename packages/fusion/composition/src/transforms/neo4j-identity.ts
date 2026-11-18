@@ -171,12 +171,16 @@ export function ensureNeo4jFieldAlias(
   originalFieldName: string,
   opts?: {
     isNeo4jModelField?: boolean;
-    /** Stamp `@alias` on non-`@node` types (authored Cypher return objects). */
+    /** Stamp `@alias` on non-`@node` object/interface fields (authored Cypher returns). */
     allowNonModelPropertyAlias?: boolean;
+    /** Parent must be OBJECT or INTERFACE — never INPUT_OBJECT (`@alias` is FIELD_DEFINITION). */
+    parentIsObjectOrInterface?: boolean;
     subgraph?: string;
   },
 ): Record<string, any[]> | undefined {
-  if (!opts?.isNeo4jModelField && !opts?.allowNonModelPropertyAlias) {
+  // `@alias` is only valid on FIELD_DEFINITION (output object/interface fields).
+  const allowNonModel = Boolean(opts?.allowNonModelPropertyAlias && opts.parentIsObjectOrInterface);
+  if (!opts?.isNeo4jModelField && !allowNonModel) {
     return fieldDirectives;
   }
   const dirs: Record<string, any[]> = { ...(fieldDirectives || {}) };
@@ -340,12 +344,41 @@ export function rewriteCypherParamNames(
         }
         break;
       }
-      // Dynamic label / type operators: `:$any(...)` / `:$ all(...)` — not parameters.
-      const dynOp = /^(any|all)(?=\s*\()/i.exec(statement.slice(i));
+      // Dynamic label / type operators: `:$any(...)` / `:$ all /* note */ (...)` — not parameters.
+      // Skip Cypher trivia between the operator and `(`.
+      const dynOp = /^(any|all)\b/i.exec(statement.slice(i));
       if (dynOp) {
-        out += statement.slice(start, i + dynOp[0].length);
-        i += dynOp[0].length;
-        continue;
+        let j = i + dynOp[0].length;
+        while (j < statement.length) {
+          const ch = statement[j];
+          if (/[ \t\r\n\f\u00A0]/.test(ch)) {
+            j++;
+            continue;
+          }
+          if (ch === '/' && statement[j + 1] === '/') {
+            while (j < statement.length && statement[j] !== '\n' && statement[j] !== '\r') {
+              j++;
+            }
+            continue;
+          }
+          if (ch === '/' && statement[j + 1] === '*') {
+            j += 2;
+            while (j < statement.length) {
+              if (statement[j] === '*' && statement[j + 1] === '/') {
+                j += 2;
+                break;
+              }
+              j++;
+            }
+            continue;
+          }
+          break;
+        }
+        if (statement[j] === '(') {
+          out += statement.slice(start, j);
+          i = j;
+          continue;
+        }
       }
       // `$`title`` / `$ /* note */ `title`` — backtick-delimited parameter name.
       if (statement[i] === '`') {

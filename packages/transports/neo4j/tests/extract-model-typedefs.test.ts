@@ -309,4 +309,175 @@ describe('extractNeo4jModelTypeDefs', () => {
       /Person.*Named|missing name/i,
     );
   });
+
+  it('keeps authored Aggregate scalars, union fields, spatial refs; prunes empty nests; projected ifaces', () => {
+    const aggregateScalar = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      type FriendFriendsConnection {
+        edges: [String]
+      }
+
+      type Stats {
+        totalAggregate: Int!
+        friendsConnection: FriendFriendsConnection
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        title: String!
+      }
+
+      type Query {
+        stats: Stats
+          @cypher(
+            subgraph: "Movies"
+            statement: "RETURN { totalAggregate: 1 } AS s"
+            columnName: "s"
+          )
+      }
+    `);
+    const aggregateSdl = print(extractNeo4jModelTypeDefs(aggregateScalar, 'Movies'));
+    expect(aggregateSdl).toMatch(/totalAggregate:\s*Int!/);
+    expect(aggregateSdl).not.toMatch(/friendsConnection/);
+
+    const unionField = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      union Credit = Actor | Director
+
+      type Actor @node(subgraph: "Movies") {
+        name: String!
+      }
+
+      type Director @node(subgraph: "Movies") {
+        name: String!
+      }
+
+      type Stats {
+        credit: Credit
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        title: String!
+      }
+
+      type Query {
+        stats: Stats @cypher(subgraph: "Movies", statement: "RETURN 1 AS s", columnName: "s")
+      }
+    `);
+    const unionSdl = print(extractNeo4jModelTypeDefs(unionField, 'Movies'));
+    expect(unionSdl).toMatch(/credit:\s*Credit/);
+    expect(unionSdl).toMatch(/union Credit/);
+
+    const spatialWithModel = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      type Point {
+        latitude: Float!
+        longitude: Float!
+      }
+
+      type Person @node(subgraph: "People") {
+        location: Point
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        location: Point
+        featured: Person! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const spatialSdl = print(extractNeo4jModelTypeDefs(spatialWithModel, 'Movies'));
+    expect(spatialSdl).toMatch(/type Person/);
+    expect(spatialSdl).toMatch(/location:\s*Point/);
+    // Movie regenerates Point — definition may be omitted, but Person.location stays.
+    expect(spatialSdl).not.toMatch(/type Person[^\n]*@node/);
+
+    const pruneNested = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      type Address {
+        line: String @cypher(subgraph: "People", statement: "RETURN 1", columnName: "x")
+      }
+
+      type Profile {
+        address: Address
+      }
+
+      type Stats {
+        count: Int!
+        profile: Profile
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        title: String!
+      }
+
+      type Query {
+        stats: Stats
+          @cypher(subgraph: "Movies", statement: "RETURN { count: 1 } AS s", columnName: "s")
+      }
+    `);
+    const pruneSdl = print(extractNeo4jModelTypeDefs(pruneNested, 'Movies'));
+    expect(pruneSdl).toMatch(/count:\s*Int!/);
+    expect(pruneSdl).not.toMatch(/profile:/);
+    expect(pruneSdl).not.toMatch(/type Profile/);
+    expect(pruneSdl).not.toMatch(/type Address/);
+
+    const projectedIface = parse(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+
+      interface Named {
+        name: String!
+        code: String! @cypher(subgraph: "People", statement: "RETURN 1", columnName: "x")
+      }
+
+      type Person implements Named {
+        name: String!
+        code: String! @cypher(subgraph: "People", statement: "RETURN 1", columnName: "x")
+      }
+
+      type Movie implements Named @node(subgraph: "Movies") {
+        name: String!
+        code: String! @cypher(subgraph: "People", statement: "RETURN 1", columnName: "x")
+        featured: Person! @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const ifaceSdl = print(extractNeo4jModelTypeDefs(projectedIface, 'Movies'));
+    expect(ifaceSdl).toMatch(/type Person implements Named/);
+    expect(ifaceSdl).toMatch(/name:\s*String!/);
+    expect(ifaceSdl).not.toMatch(/code:/);
+  });
 });

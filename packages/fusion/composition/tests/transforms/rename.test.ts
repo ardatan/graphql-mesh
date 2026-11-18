@@ -1221,10 +1221,33 @@ WITH 'it\\'s' AS text /* keep $title here */ RETURN $title AS n`,
         new Map([['any', 'needle']]),
       ),
     ).toBe('MATCH (m:$ any($labels)) RETURN count(m) + $needle AS n');
+    // Comments between ANY/ALL and `(` stay operators (preserve trivia).
+    expect(
+      rewriteCypherParamNames(
+        'MATCH (m:$any /* note */ ($labels)) RETURN $any AS n',
+        new Map([['any', 'needle']]),
+      ),
+    ).toBe('MATCH (m:$any /* note */ ($labels)) RETURN $needle AS n');
     // Standalone backtick identifiers are not parameters.
     expect(rewriteCypherParamNames('RETURN `title` AS n', new Map([['title', 'needle']]))).toBe(
       'RETURN `title` AS n',
     );
+  });
+
+  it('does not stamp @alias on Neo4j input fields', async () => {
+    const { ensureNeo4jFieldAlias } = await import('../../src/transforms/neo4j-identity.js');
+    expect(
+      ensureNeo4jFieldAlias({}, 'search_term', {
+        allowNonModelPropertyAlias: true,
+        parentIsObjectOrInterface: false,
+      }),
+    ).toEqual({});
+    expect(
+      ensureNeo4jFieldAlias({}, 'total_count', {
+        allowNonModelPropertyAlias: true,
+        parentIsObjectOrInterface: true,
+      })?.alias?.[0]?.property,
+    ).toBe('total_count');
   });
 
   it('rewrites @relationship(properties:) through type rename map', async () => {

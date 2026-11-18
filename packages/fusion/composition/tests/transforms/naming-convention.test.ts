@@ -496,6 +496,40 @@ describe('Naming Convention', () => {
     expect(getDirectiveExtensions(field)?.alias?.[0]?.property).toBe('release_year');
   });
 
+  it('Neo4j: does not stamp @alias on input object fields', () => {
+    const transform = createNamingConventionTransform({
+      fieldNames: 'camelCase',
+    });
+    const neo4jSchema = buildSchema(/* GraphQL */ `
+      schema @transport(subgraph: "Movies", kind: "neo4j", location: "neo4j://localhost") {
+        query: Query
+      }
+      directive @transport(subgraph: String!, kind: String!, location: String) repeatable on SCHEMA
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
+      directive @cypher(
+        subgraph: String
+        statement: String!
+        columnName: String!
+      ) on FIELD_DEFINITION
+      input SearchInput {
+        search_term: String!
+      }
+      type Movie @node(subgraph: "Movies") {
+        title: String
+      }
+      type Query {
+        movies(input: SearchInput): [Movie!]!
+          @cypher(subgraph: "Movies", statement: "RETURN this", columnName: "this")
+      }
+    `);
+    const next = transform(neo4jSchema, { name: 'Movies', schema: neo4jSchema });
+    const searchInput = next.getType('SearchInput') as any;
+    expect(searchInput.getFields().searchTerm).toBeDefined();
+    // Input fields rename but must not get `@alias` (invalid on INPUT_FIELD_DEFINITION).
+    expect(getDirectiveExtensions(searchInput.getFields().searchTerm)?.alias).toBeUndefined();
+  });
+
   it('Neo4j: aliases Cypher output fields; leaves relationship args unrenamed', () => {
     const transform = createNamingConventionTransform({
       fieldNames: 'camelCase',

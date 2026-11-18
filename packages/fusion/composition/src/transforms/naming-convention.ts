@@ -18,6 +18,9 @@ import {
   GraphQLSchema,
   GraphQLString,
   isEnumType,
+  isInputObjectType,
+  isInterfaceType,
+  isObjectType,
   isSpecifiedScalarType,
   type GraphQLFieldConfigArgumentMap,
 } from 'graphql';
@@ -242,14 +245,19 @@ export function createNamingConventionTransform(
             const parentDirs = parentType ? getDirectiveExtensions(parentType) : undefined;
             const isRootParent =
               typeName === 'Query' || typeName === 'Mutation' || typeName === 'Subscription';
-            rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
-              isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirs),
-              // Authored Cypher return objects need `@alias` so map keys survive fieldNames renames.
-              allowNonModelPropertyAlias: !isRootParent,
-              subgraph:
-                parentDirs?.node?.[0]?.subgraph ||
-                parentDirs?.relationshipProperties?.[0]?.subgraph,
-            });
+            // Never stamp `@alias` on input fields (`@alias` is FIELD_DEFINITION only).
+            if (!isRootParent && !isInputObjectType(parentType as any)) {
+              rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
+                isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirs),
+                // Authored Cypher return objects need `@alias` so map keys survive fieldNames renames.
+                allowNonModelPropertyAlias: true,
+                parentIsObjectOrInterface:
+                  isObjectType(parentType as any) || isInterfaceType(parentType as any),
+                subgraph:
+                  parentDirs?.node?.[0]?.subgraph ||
+                  parentDirs?.relationshipProperties?.[0]?.subgraph,
+              });
+            }
           }
         }
         if (rewrittenDirectives !== fieldDirectives || newArgs) {

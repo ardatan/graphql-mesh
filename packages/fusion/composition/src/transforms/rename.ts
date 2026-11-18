@@ -1,6 +1,7 @@
 import {
   getNamedType,
   GraphQLObjectType,
+  isInputObjectType,
   isInterfaceType,
   isObjectType,
   isSpecifiedScalarType,
@@ -338,13 +339,18 @@ export function createRenameTransform(opts: RenameTransformConfig) {
             : undefined;
           const isRootParent =
             typeName === 'Query' || typeName === 'Mutation' || typeName === 'Subscription';
-          rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
-            isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirectives),
-            allowNonModelPropertyAlias: !isRootParent,
-            subgraph:
-              parentDirectives?.node?.[0]?.subgraph ||
-              parentDirectives?.relationshipProperties?.[0]?.subgraph,
-          });
+          // Never stamp `@alias` on input fields (`@alias` is FIELD_DEFINITION only).
+          if (!isRootParent && !isInputObjectType(parentType as any)) {
+            rewrittenDirectives = ensureNeo4jFieldAlias(rewrittenDirectives, fieldName, {
+              isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirectives),
+              allowNonModelPropertyAlias: true,
+              parentIsObjectOrInterface:
+                isObjectType(parentType as any) || isInterfaceType(parentType as any),
+              subgraph:
+                parentDirectives?.node?.[0]?.subgraph ||
+                parentDirectives?.relationshipProperties?.[0]?.subgraph,
+            });
+          }
         }
       }
       if (rewrittenDirectives !== fieldDirectives || newArgs) {
@@ -736,9 +742,14 @@ export function createRenameFieldTransform(
         const fieldDirectives = getDirectiveExtensions(field, schema);
         const isRootParent =
           typeName === 'Query' || typeName === 'Mutation' || typeName === 'Subscription';
+        if (isRootParent || isInputObjectType(parentType as any)) {
+          return [newFieldName, field];
+        }
         const withAlias = ensureNeo4jFieldAlias(fieldDirectives, fieldName, {
           isNeo4jModelField: isNeo4jModelTypeDirectives(parentDirectives),
-          allowNonModelPropertyAlias: !isRootParent,
+          allowNonModelPropertyAlias: true,
+          parentIsObjectOrInterface:
+            isObjectType(parentType as any) || isInterfaceType(parentType as any),
           subgraph:
             parentDirectives?.node?.[0]?.subgraph ||
             parentDirectives?.relationshipProperties?.[0]?.subgraph,
