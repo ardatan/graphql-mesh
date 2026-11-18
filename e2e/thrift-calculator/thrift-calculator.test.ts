@@ -126,7 +126,7 @@ describe('binary (@thrift__rpc)', () => {
     expect(boom.data?.divide ?? null).toBeNull();
     expect(boom.errors?.length).toBeGreaterThan(0);
     const text = String(boom.errors?.[0]?.message || '');
-    // Binary ignoreExceptions:true → doRequest "unknown result" (declared throw field).
+    // Binary ignoreErrorResponses:true → doRequest "unknown result" (declared throw field).
     expect(text.length).toBeGreaterThan(0);
   });
 

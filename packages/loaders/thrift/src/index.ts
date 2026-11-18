@@ -24,7 +24,7 @@ import { loadNonExecutableGraphQLSchemaFromIDL } from './schema.js';
  *   source: './twitter.thrift',
  *   endpoint: 'http://localhost:4000/thrift',
  *   entityMethods: ['getTweet'],
- *   ignoreExceptions: false,
+ *   ignoreErrorResponses: false,
  * })
  * ```
  *

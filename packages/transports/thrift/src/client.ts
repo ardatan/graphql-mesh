@@ -337,7 +337,7 @@ export function createGraphQLThriftClient<Context = any>({
             }
           }
           // Non-oneway void success: empty result struct only (no field 0).
-          // Nonempty unmatched maps are declared throws with ignoreExceptions:true -
+          // Nonempty unmatched maps are declared throws with ignoreErrorResponses:true -
           // must not look like success.
           if (selection.kind === 'scalar' && selection.wire === 'void' && result.size === 0) {
             if (throws.length > 0) {

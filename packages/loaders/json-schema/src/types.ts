@@ -129,9 +129,22 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   /** Fetch implementation. */
   fetch?: MeshFetch;
   /**
-   * When true, skip non-2xx entries in `responseByStatusCode` so those error
-   * schemas are not modeled on the GraphQL field. When false/omitted, non-2xx
-   * response schemas are still included in the field's return shape.
+   * Controls whether non-2xx response schemas from the operation / OpenAPI /
+   * RAML document are modeled on the GraphQL field return type.
+   *
+   * - `true`: skip non-2xx schemas so they are not part of the GraphQL result
+   *   shape. Runtime `@connect` then treats non-2xx as a failed throw-gate
+   *   (GraphQL `errors[]`), unless the field overrides `isSuccess`.
+   * - `false` / omitted: keep non-2xx schemas in the field return (often a
+   *   status union) and emit `isSuccess: true` for mapped codes so those
+   *   bodies stay in GraphQL `data` for the client to select.
+   *
+   * This option only affects generated emit. Handwritten SDL sets
+   * `@connect` / `@source` `isSuccess` and `errors` directly; selecting a
+   * payload `error` field never flips throw vs data by itself.
+   *
+   * @default false
+   * @example true
    */
   ignoreErrorResponses?: boolean;
   /**

@@ -149,12 +149,23 @@ export interface GraphQLThriftLoaderOptions {
    */
   entityMethods?: string[];
   /**
-   * When true, IDL `throws` are not modeled in the GraphQL return type.
-   * Set false to emit exception object types + a union return (`Success | Throws...`).
+   * Controls whether IDL `throws` are modeled on the GraphQL field return type
+   * (same polarity as OpenAPI / JSON Schema / RAML `ignoreErrorResponses`).
+   *
+   * - `true` (default): do not emit exception object types / Result unions.
+   *   Declared throws fail the throw-gate (GraphQL `errors[]`) - binary
+   *   `doRequest` rejects unmatched exception maps; TJSON `@connect` uses
+   *   `isSuccess` / `errors` so non-REPLY / unexpected result maps throw.
+   * - `false`: emit exception types + a union return (`Success | Throws...`)
+   *   with `@thrift__rpc(throws:)` / TJSON selection so matched throws stay in
+   *   GraphQL `data` for the client to select.
+   *
+   * (Formerly `ignoreExceptions`; that name is removed with no alias.)
    *
    * @default true
+   * @example false
    */
-  ignoreExceptions?: boolean;
+  ignoreErrorResponses?: boolean;
 
   /**
    * Base directory for relative IDL paths.
@@ -262,7 +273,7 @@ export interface ThriftRpcDirectiveArgs {
    */
   selection: string;
   /**
-   * Compact IDL `throws` mapping when `ignoreExceptions: false`
+   * Compact IDL `throws` mapping when `ignoreErrorResponses: false`
    * (`TypeName: <resultFieldId> { field: id(wire) }`).
    *
    * @example 'InvalidRequest: 1 {\n  message: 1(string)\n}'
@@ -341,7 +352,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
   serviceName,
   protocol = 'binary',
   entityMethods = [],
-  ignoreExceptions = true,
+  ignoreErrorResponses = true,
 
   baseDir = globalThis.process?.cwd?.(),
   schemaHeaders = {},
@@ -369,7 +380,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
     serviceName,
     protocol,
     entityMethods,
-    ignoreExceptions,
+    ignoreErrorResponses,
   });
 }
 
@@ -441,7 +452,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   serviceName,
   protocol = 'binary',
   entityMethods = [],
-  ignoreExceptions = true,
+  ignoreErrorResponses = true,
 }: {
   subgraphName: string;
   baseNamespace: string;
@@ -451,7 +462,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   serviceName?: string;
   protocol?: ThriftProtocol;
   entityMethods?: string[];
-  ignoreExceptions?: boolean;
+  ignoreErrorResponses?: boolean;
 }) {
   const enumTypeMap = new Map<string, GraphQLEnumType>();
   const outputTypeMap = new Map<string, GraphQLOutputType>();
@@ -656,7 +667,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
       const successTypeName = `${fnName[0].toUpperCase()}${fnName.slice(1)}Success`;
       let fieldReturnType: GraphQLOutputType = returnType;
       let modelThrows = false;
-      if (!ignoreExceptions && throwsMeta.length > 0) {
+      if (!ignoreErrorResponses && throwsMeta.length > 0) {
         const isVoidSuccess = returnTypeVal?.type === TType.VOID;
         // Void! cannot hold a successful null - use `ok: Boolean!` for void RPC
         // success members; non-void keeps `value: <Return>!`.
@@ -755,8 +766,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
         };
         // ONEWAY: no reply envelope - HTTP status alone; void mapping must not wait.
         if (!isOneway) {
-          // ignoreExceptions:false → declared throws arrive as REPLY data (still msg type 2).
-          // Void + throws + ignoreExceptions:true → REPLY with non-empty result (no "0");
+          // ignoreErrorResponses:false → declared throws arrive as REPLY data (still msg type 2).
+          // Void + throws + ignoreErrorResponses:true → REPLY with non-empty result (no "0");
           // require empty result struct so declared throws are not silent null.
           // Non-void CALL: require success field "0".
           const voidWithThrows = isVoidReturn && !modelThrows && throwsMeta.length > 0;
