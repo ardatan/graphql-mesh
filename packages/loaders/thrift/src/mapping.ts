@@ -778,10 +778,26 @@ export function buildTJSONUnionConnectSelection(
 ): string {
   const resolvedReturn = returnTypeVal ? resolveTypeVal(returnTypeVal, topTypeMap) : undefined;
   const props: string[] = [];
+  // One LitObject key per GraphQL name. Success + exception sources that share
+  // names (`value`, `ok`, `message`, …) are gated then coalesced with `??` so a
+  // later inactive projection cannot overwrite an active one with null/empty.
+  const fieldExprs = new Map<string, string[]>();
+  const pushField = (graphqlName: string, expr: string) => {
+    const list = fieldExprs.get(graphqlName) || [];
+    list.push(expr);
+    fieldExprs.set(graphqlName, list);
+  };
+  const gateOnThrow = (fid: string, expr: string): string =>
+    `$->get(4)->get("${fid}")->ne(null)->match([true, ${expr}], [@, null])`;
+  // Inactive success must yield null (not false / empty object) so `??` can fall through.
+  const gateOnField0 = (expr: string): string =>
+    `$->get(4)->get("0")->ne(null)->match([true, ${expr}], [@, null])`;
+  const gateOnVoidSuccess = (expr: string): string =>
+    `$->get(4)->size->eq(0)->match([true, ${expr}], [@, null])`;
+
   if (!resolvedReturn || resolvedReturn.type === TType.VOID) {
     // Void success member is `ok: Boolean!` (not `value: Void!`).
-    // True only for empty result map; declared throws use non-0 field ids.
-    props.push('ok: $->get(4)->size->eq(0)');
+    pushField('ok', gateOnVoidSuccess('true'));
   } else if (resolvedReturn.type === TType.STRUCT) {
     // Stamp field-0 presence so resolveType does not treat an empty `{}` value
     // projection (exception reply: no "0") as success.
@@ -789,22 +805,11 @@ export function buildTJSONUnionConnectSelection(
     const nested = Object.entries(resolvedReturn.fields)
       .map(([n, t]) => formatTJSONLitProperty(n, t, topTypeMap, '$->get(4)->get("0")->get("rec")'))
       .join(',\n    ');
-    props.push(`value: $({\n    ${nested}\n  })`);
+    pushField('value', gateOnField0(`$({\n    ${nested}\n  })`));
   } else {
-    props.push(`value: ${buildTJSONConnectSelection(returnTypeVal, topTypeMap)}`);
+    pushField('value', gateOnField0(buildTJSONConnectSelection(returnTypeVal, topTypeMap)));
   }
-  // Exception field projections — merge shared GraphQL names with `??`.
-  // Gate each source on throw-field presence first: struct `$({…})` projections are
-  // non-nullish even when nested paths are undefined, so bare `??` would hide the
-  // active exception's struct behind an empty projection from an absent throw.
-  const throwFieldExprs = new Map<string, string[]>();
-  const pushThrowField = (graphqlName: string, expr: string) => {
-    const list = throwFieldExprs.get(graphqlName) || [];
-    list.push(expr);
-    throwFieldExprs.set(graphqlName, list);
-  };
-  const gateOnThrow = (fid: string, expr: string): string =>
-    `$->get(4)->get("${fid}")->ne(null)->match([true, ${expr}], [@, null])`;
+
   for (const t of throws) {
     const typeVal = topTypeMap[t.typeName];
     const fid = String(t.id);
@@ -816,13 +821,13 @@ export function buildTJSONUnionConnectSelection(
         const lit = formatTJSONLitProperty(fieldName, fieldType, topTypeMap, parent);
         const colon = lit.indexOf(':');
         const raw = colon >= 0 ? lit.slice(colon + 1).trim() : lit;
-        pushThrowField(fieldName, gateOnThrow(fid, raw));
+        pushField(fieldName, gateOnThrow(fid, raw));
       }
     } else {
-      pushThrowField('message', gateOnThrow(fid, `${parent}->get("1")->get("str")`));
+      pushField('message', gateOnThrow(fid, `${parent}->get("1")->get("str")`));
     }
   }
-  for (const [fieldName, exprs] of throwFieldExprs) {
+  for (const [fieldName, exprs] of fieldExprs) {
     // Wrap multi-source fields in `$()` so `??` runs through Apollo LitExpr /
     // dollar-paren eval (bare LitObject values do not coalesce).
     props.push(

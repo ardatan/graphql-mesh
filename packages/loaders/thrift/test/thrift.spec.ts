@@ -590,4 +590,94 @@ describe('thrift', () => {
     expect(secondData.detail).toEqual({ text: 'from-second', code: 9 });
     expect(resolveType(secondData, null as any, { schema: rebuilt } as any, union)).toBe('Second');
   });
+
+  it('TJSON union keeps success value when an exception also declares value', async () => {
+    const { buildSchema } = await import('graphql');
+    const { applySelection } = await import('../../../transports/rest/src/directives/connect.js');
+    const { processDirectives } =
+      await import('../../../transports/rest/src/directives/process.js');
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'ValueCollisionSvc',
+      source: './fixtures/value_field_collision.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/value-collision',
+      protocol: 'json',
+      ignoreExceptions: false,
+    });
+    const go = schema.getQueryType()!.getFields().go;
+    const selection = (go.extensions as any).directives.connect.selection as string;
+    // One `value` property: gated success ?? gated exception — not two LitObject keys.
+    expect(selection.match(/\bvalue:/g)?.length).toBe(1);
+    expect(selection).toMatch(/value:\s*\$\(\$->get\(4\)->get\("0"\)->ne\(null\)->match\(\[true,/);
+    expect(selection).toMatch(/\?\?\s*\$->get\(4\)->get\("1"\)->ne\(null\)->match\(\[true,/);
+
+    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const union = rebuilt.getType('GoResult') as GraphQLUnionType;
+    const resolveType = union.resolveType!;
+    const extras = {
+      status: 200,
+      vars: { args: {}, thisValue: undefined, env: {}, context: {} },
+    };
+
+    const successReply = [1, 'go', 2, 1, { '0': { rec: { '1': { i32: 42 } } } }];
+    const successData = applySelection(selection, successReply, extras);
+    expect(successData.field0).toBe(true);
+    expect(successData.value).toEqual({ left: 42 });
+    expect(successData.__throw_ValueBoom).toBe(false);
+    expect(resolveType(successData, null as any, { schema: rebuilt } as any, union)).toBe(
+      'GoSuccess',
+    );
+
+    const boomReply = [1, 'go', 2, 1, { '1': { rec: { '1': { str: 'from-boom' } } } }];
+    const boomData = applySelection(selection, boomReply, extras);
+    expect(boomData.field0).toBe(false);
+    expect(boomData.value).toBe('from-boom');
+    expect(boomData.__throw_ValueBoom).toBe(true);
+    expect(resolveType(boomData, null as any, { schema: rebuilt } as any, union)).toBe('ValueBoom');
+  });
+
+  it('TJSON void union keeps success ok when an exception also declares ok', async () => {
+    const { buildSchema } = await import('graphql');
+    const { applySelection } = await import('../../../transports/rest/src/directives/connect.js');
+    const { processDirectives } =
+      await import('../../../transports/rest/src/directives/process.js');
+    const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+      subgraphName: 'OkCollisionSvc',
+      source: './fixtures/ok_field_collision.thrift',
+      baseDir: __dirname,
+      endpoint: 'http://localhost:4000/ok-collision',
+      protocol: 'json',
+      ignoreExceptions: false,
+    });
+    const flush = schema.getQueryType()!.getFields().flush;
+    const selection = (flush.extensions as any).directives.connect.selection as string;
+    expect(selection.match(/\bok:/g)?.length).toBe(1);
+    expect(selection).toMatch(/ok:\s*\$\(\$->get\(4\)->size->eq\(0\)->match\(\[true,\s*true\],/);
+    expect(selection).toMatch(/\?\?\s*\$->get\(4\)->get\("1"\)->ne\(null\)->match\(\[true,/);
+
+    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const union = rebuilt.getType('FlushResult') as GraphQLUnionType;
+    const resolveType = union.resolveType!;
+    const extras = {
+      status: 200,
+      vars: { args: {}, thisValue: undefined, env: {}, context: {} },
+    };
+
+    const successData = applySelection(selection, [1, 'flush', 2, 1, {}], extras);
+    expect(successData.ok).toBe(true);
+    expect(successData.__throw_OkBoom).toBe(false);
+    expect(resolveType(successData, null as any, { schema: rebuilt } as any, union)).toBe(
+      'FlushSuccess',
+    );
+
+    const boomData = applySelection(
+      selection,
+      [1, 'flush', 2, 1, { '1': { rec: { '1': { tf: 1 } } } }],
+      extras,
+    );
+    // Inactive void success yields null so exception `ok` wins via `??`.
+    expect(boomData.ok).toBe(1);
+    expect(boomData.__throw_OkBoom).toBe(true);
+    expect(resolveType(boomData, null as any, { schema: rebuilt } as any, union)).toBe('OkBoom');
+  });
 });

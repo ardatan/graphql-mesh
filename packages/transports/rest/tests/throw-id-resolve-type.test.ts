@@ -93,4 +93,21 @@ describe('abstract resolveType __throw_* discriminators', () => {
       ),
     ).toBe('Boom');
   });
+
+  it('does not skip value members for ordinary REST field0:false payloads', () => {
+    // Without `__throw_*` stamps, boolean field0 is not a Thrift union signal —
+    // `{ field0: false, value: "ok" }` must still resolve to Value.
+    const sdl = `
+      union Result = Value | Other
+      type Value { value: String }
+      type Other { other: String }
+      type Query { r: Result }
+    `;
+    const schema = processDirectives(buildSchema(sdl), {});
+    const union = schema.getType('Result') as GraphQLUnionType;
+    const resolveType = union.resolveType!;
+    expect(resolveType({ field0: false, value: 'ok' }, null as any, { schema } as any, union)).toBe(
+      'Value',
+    );
+  });
 });

@@ -164,6 +164,50 @@ describe('TJSON @connect selection (Hive Mesh eval)', () => {
     });
   });
 
+  it('gates success value/ok so exception fields with the same name cannot clobber', () => {
+    // Success + exception both emit `value` / `ok` — one LitObject key, gated then `??`.
+    const valueSel = `$({
+  field0: $->get(4)->get("0")->ne(null),
+  value: $($->get(4)->get("0")->ne(null)->match([true, $({
+    left: $->get(4)->get("0")->get("rec")->get("1")->get("i32")
+  })], [@, null]) ?? $->get(4)->get("1")->ne(null)->match([true, $->get(4)->get("1")->get("rec")->get("1")->get("str")], [@, null])),
+  __throw_ValueBoom: $->get(4)->get("1")->ne(null)
+})`;
+    expect(
+      applySelection(valueSel, [1, 'go', 2, 1, { '0': { rec: { '1': { i32: 42 } } } }], extras),
+    ).toEqual({
+      field0: true,
+      value: { left: 42 },
+      __throw_ValueBoom: false,
+    });
+    expect(
+      applySelection(
+        valueSel,
+        [1, 'go', 2, 1, { '1': { rec: { '1': { str: 'from-boom' } } } }],
+        extras,
+      ),
+    ).toEqual({
+      field0: false,
+      value: 'from-boom',
+      __throw_ValueBoom: true,
+    });
+
+    const okSel = `$({
+  ok: $($->get(4)->size->eq(0)->match([true, true], [@, null]) ?? $->get(4)->get("1")->ne(null)->match([true, $->get(4)->get("1")->get("rec")->get("1")->get("tf")], [@, null])),
+  __throw_OkBoom: $->get(4)->get("1")->ne(null)
+})`;
+    expect(applySelection(okSel, [1, 'flush', 2, 1, {}], extras)).toEqual({
+      ok: true,
+      __throw_OkBoom: false,
+    });
+    expect(
+      applySelection(okSel, [1, 'flush', 2, 1, { '1': { rec: { '1': { tf: 1 } } } }], extras),
+    ).toEqual({
+      ok: 1,
+      __throw_OkBoom: true,
+    });
+  });
+
   it('void+throws isSuccess: empty result succeeds; declared throw fails', () => {
     const isSuccess = '$->get(2)->eq(2)->and($->get(4)->size->eq(0))';
     expect(applySelection(isSuccess, [1, 'flush', 2, 1, {}], extras)).toBe(true);

@@ -92,15 +92,22 @@ export function getTypeResolverForAbstractType({
     // Thrift struct-success unions stamp boolean `field0` (presence of result field
     // id 0). When no GraphQL member declares `field0`, treat the stamp as
     // authoritative — leftover `message: undefined` must not beat success via scoring.
+    // Require `__throw_*` keys so ordinary REST payloads with a boolean `field0`
+    // keep normal member scoring (do not skip `value`/`ok` members on field0:false).
     const anyDeclaresField0 =
       data != null && typeof data === 'object'
         ? possibleTypes.some(t => 'field0' in t.getFields())
         : false;
+    const hasThrowStamps =
+      data != null &&
+      typeof data === 'object' &&
+      Object.keys(data).some(k => k.startsWith('__throw_'));
     const thriftField0Stamp =
       data != null &&
       typeof data === 'object' &&
       typeof data.field0 === 'boolean' &&
-      !anyDeclaresField0;
+      !anyDeclaresField0 &&
+      hasThrowStamps;
     if (thriftField0Stamp && data.field0 === true) {
       const success = possibleTypes.find(t => {
         const fields = t.getFields();
