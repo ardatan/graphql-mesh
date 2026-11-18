@@ -36,21 +36,18 @@ it('should create and find users', async () => {
     query: /* GraphQL */ `
       mutation CreateUser {
         insertOneUser(document: { name: "Ada", age: 36, gender: female }) {
-          recordId
-          record {
-            id
-            name
-            age
-            gender
-          }
+          id
+          name
+          age
+          gender
         }
       }
     `,
   });
   expect(created.errors).toBeUndefined();
-  const recordId = (created.data as any).insertOneUser.recordId as string;
+  const recordId = (created.data as any).insertOneUser.id as string;
   expect(recordId).toBeTruthy();
-  expect((created.data as any).insertOneUser.record.name).toBe('Ada');
+  expect((created.data as any).insertOneUser.name).toBe('Ada');
 
   const found = await gw.execute({
     query: /* GraphQL */ `
@@ -83,33 +80,29 @@ it('should create and find users', async () => {
         insertOneUser(
           document: { name: "Grace", age: 40, gender: female, salaryDecimal: $salary }
         ) {
-          record {
-            id
-            salaryDecimal
-          }
+          id
+          salaryDecimal
         }
       }
     `,
     variables: { salary: '12.50' },
   });
   expect(withDecimal.errors).toBeUndefined();
-  const graceId = (withDecimal.data as any).insertOneUser.record.id as string;
-  expect((withDecimal.data as any).insertOneUser.record.salaryDecimal).toBe('12.50');
+  const graceId = (withDecimal.data as any).insertOneUser.id as string;
+  expect((withDecimal.data as any).insertOneUser.salaryDecimal).toBe('12.50');
 
   const updatedDecimal = await gw.execute({
     query: /* GraphQL */ `
       mutation UpdateDecimal($id: ObjectID!, $salary: Decimal128!) {
         updateOneUser(filter: { id: { eq: $id } }, update: { set: { salaryDecimal: $salary } }) {
-          record {
-            salaryDecimal
-          }
+          salaryDecimal
         }
       }
     `,
     variables: { id: graceId, salary: '99.01' },
   });
   expect(updatedDecimal.errors).toBeUndefined();
-  expect((updatedDecimal.data as any).updateOneUser.record.salaryDecimal).toBe('99.01');
+  expect((updatedDecimal.data as any).updateOneUser.salaryDecimal).toBe('99.01');
 
   const queriedDecimal = await gw.execute({
     query: /* GraphQL */ `

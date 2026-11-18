@@ -20,7 +20,7 @@ directive @mongo__find(collection: String!, limit: String, query: String, select
 
 directive @mongo__findOne(collection: String!, query: String, selection: String, skip: String, sort: String, subgraph: String) on FIELD_DEFINITION | OBJECT
 
-directive @mongo__insertMany(collection: String!, selection: String, set: String, subgraph: String) on FIELD_DEFINITION
+directive @mongo__insertMany(collection: String!, graphqlDocumentInputs: Boolean, selection: String, set: String, subgraph: String) on FIELD_DEFINITION
 
 directive @mongo__insertOne(collection: String!, selection: String, set: String, subgraph: String) on FIELD_DEFINITION
 
@@ -83,68 +83,55 @@ type Mutation {
   
     deletedCount: $deletedCount
   """, query: "$args.filter")
-  deleteOneUser(filter: UserFilterInput!): UserPayload @mongo__deleteOne(subgraph: "Mongoose", collection: "user_users", selection: """
-    record {
-        id: _id
-        name: name
-        age: age
-        languages: languages
-        gender: gender
-        address: address
-        someMixed: someMixed
-        salaryDecimal: salaryDecimal
-        contacts: contacts
-    }
-    recordId: $_id
+  deleteOneUser(filter: UserFilterInput!): User @mongo__deleteOne(subgraph: "Mongoose", collection: "user_users", selection: """
+    id: _id
+    name: name
+    age: age
+    languages: languages
+    gender: gender
+    address: address
+    someMixed: someMixed
+    salaryDecimal: salaryDecimal
+    contacts: contacts
   """, query: "$args.filter")
-  deleteUserById(id: ObjectID!): UserPayload @mongo__deleteOne(subgraph: "Mongoose", collection: "user_users", selection: """
-    record {
-        id: _id
-        name: name
-        age: age
-        languages: languages
-        gender: gender
-        address: address
-        someMixed: someMixed
-        salaryDecimal: salaryDecimal
-        contacts: contacts
-    }
-    recordId: $_id
+  deleteUserById(id: ObjectID!): User @mongo__deleteOne(subgraph: "Mongoose", collection: "user_users", selection: """
+    id: _id
+    name: name
+    age: age
+    languages: languages
+    gender: gender
+    address: address
+    someMixed: someMixed
+    salaryDecimal: salaryDecimal
+    contacts: contacts
   """, query: """
   
     _id: $args.id
   """)
-  insertManyUsers(documents: [UserDocumentInput!]!): UserPayload @mongo__insertMany(subgraph: "Mongoose", collection: "user_users", selection: """
-    records {
-        id: _id
-        name: name
-        age: age
-        languages: languages
-        gender: gender
-        address: address
-        someMixed: someMixed
-        salaryDecimal: salaryDecimal
-        contacts: contacts
-    }
-    recordIds: $recordIds
-    createdCount: $createdCount
+  insertManyUsers(documents: [UserDocumentInput!]!): [User!]! @mongo__insertMany(subgraph: "Mongoose", collection: "user_users", selection: """
+    id: _id
+    name: name
+    age: age
+    languages: languages
+    gender: gender
+    address: address
+    someMixed: someMixed
+    salaryDecimal: salaryDecimal
+    contacts: contacts
   """, set: """
   
     documents: $args.documents
-  """)
-  insertOneUser(document: UserDocumentInput!): UserPayload @mongo__insertOne(subgraph: "Mongoose", collection: "user_users", selection: """
-    record {
-        id: _id
-        name: name
-        age: age
-        languages: languages
-        gender: gender
-        address: address
-        someMixed: someMixed
-        salaryDecimal: salaryDecimal
-        contacts: contacts
-    }
-    recordId: $_id
+  """, graphqlDocumentInputs: true)
+  insertOneUser(document: UserDocumentInput!): User @mongo__insertOne(subgraph: "Mongoose", collection: "user_users", selection: """
+    id: _id
+    name: name
+    age: age
+    languages: languages
+    gender: gender
+    address: address
+    someMixed: someMixed
+    salaryDecimal: salaryDecimal
+    contacts: contacts
   """, set: """
     name: $args.document.name
     age: $args.document.age
@@ -159,33 +146,27 @@ type Mutation {
     modifiedCount: $modifiedCount
     matchedCount: $matchedCount
   """, query: "$args.filter", set: "$args.update")
-  updateOneUser(filter: UserFilterInput!, update: UserUpdateInput!): UserPayload @mongo__updateOne(subgraph: "Mongoose", collection: "user_users", selection: """
-    record {
-        id: _id
-        name: name
-        age: age
-        languages: languages
-        gender: gender
-        address: address
-        someMixed: someMixed
-        salaryDecimal: salaryDecimal
-        contacts: contacts
-    }
-    recordId: $_id
+  updateOneUser(filter: UserFilterInput!, update: UserUpdateInput!): User @mongo__updateOne(subgraph: "Mongoose", collection: "user_users", selection: """
+    id: _id
+    name: name
+    age: age
+    languages: languages
+    gender: gender
+    address: address
+    someMixed: someMixed
+    salaryDecimal: salaryDecimal
+    contacts: contacts
   """, query: "$args.filter", set: "$args.update")
-  updateUserById(id: ObjectID!, update: UserUpdateInput!): UserPayload @mongo__updateOne(subgraph: "Mongoose", collection: "user_users", selection: """
-    record {
-        id: _id
-        name: name
-        age: age
-        languages: languages
-        gender: gender
-        address: address
-        someMixed: someMixed
-        salaryDecimal: salaryDecimal
-        contacts: contacts
-    }
-    recordId: $_id
+  updateUserById(id: ObjectID!, update: UserUpdateInput!): User @mongo__updateOne(subgraph: "Mongoose", collection: "user_users", selection: """
+    id: _id
+    name: name
+    age: age
+    languages: languages
+    gender: gender
+    address: address
+    someMixed: someMixed
+    salaryDecimal: salaryDecimal
+    contacts: contacts
   """, query: """
   
     _id: $args.id

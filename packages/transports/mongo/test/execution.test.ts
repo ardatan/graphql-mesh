@@ -598,9 +598,7 @@ name: name
     // Unstamped BSON: `{ storedId }` must NOT become `{ id }` (no `_id` heuristic).
     insertedDocs = [];
     const unstamped = await execResult(executor, {
-      document: parse(
-        `mutation { bulkBson(documents: [{ storedId: "value", name: "U" }]) }`,
-      ),
+      document: parse(`mutation { bulkBson(documents: [{ storedId: "value", name: "U" }]) }`),
     });
     expect(unstamped.errors).toBeUndefined();
     expect(insertedDocs).toEqual([{ storedId: 'value', name: 'U' }]);
@@ -608,9 +606,7 @@ name: name
     // Stamped BSON: sibling `_id` in set + real `storedId` field preserved.
     insertedDocs = [];
     const stamped = await execResult(executor, {
-      document: parse(
-        `mutation { bulkBsonStamped(documents: [{ storedId: "keep", name: "S" }]) }`,
-      ),
+      document: parse(`mutation { bulkBsonStamped(documents: [{ storedId: "keep", name: "S" }]) }`),
     });
     expect(stamped.errors).toBeUndefined();
     expect(insertedDocs).toEqual([{ storedId: 'keep', name: 'S', _id: 'stamped-id' }]);

@@ -9,21 +9,19 @@ mutation CreateUser {
       address: { street: "Not Existed St." }
     }
   ) {
-    record {
-      name
-      age
-      languages {
-        language
-        skill
-      }
-      contacts {
-        email
-        phones
-      }
-      gender
-      address {
-        street
-      }
+    name
+    age
+    languages {
+      language
+      skill
+    }
+    contacts {
+      email
+      phones
+    }
+    gender
+    address {
+      street
     }
   }
 }
