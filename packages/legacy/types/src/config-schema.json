@@ -615,6 +615,9 @@
         "mongoose": {
           "$ref": "#/definitions/MongooseHandler"
         },
+        "mysql": {
+          "$ref": "#/definitions/MySQLHandler"
+        },
         "neo4j": {
           "$ref": "#/definitions/Neo4jHandler",
           "description": "Handler for Neo4j"
@@ -626,6 +629,10 @@
         "openapi": {
           "$ref": "#/definitions/OpenapiHandler",
           "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
+        },
+        "postgraphile": {
+          "$ref": "#/definitions/PostGraphileHandler",
+          "description": "Handler for Postgres databases. Under the hood uses `@omnigraph/sql` + `transport-sql`\n(not the PostGraphile runtime). Emitted schema is `@sql`-based CRUD/relay surface."
         },
         "raml": {
           "$ref": "#/definitions/RAMLHandler"
@@ -640,13 +647,6 @@
         "thrift": {
           "$ref": "#/definitions/ThriftHandler",
           "description": "Handler for OData"
-        },
-        "mysql": {
-          "$ref": "#/definitions/MySQLHandler"
-        },
-        "postgraphile": {
-          "$ref": "#/definitions/PostGraphileHandler",
-          "description": "Handler for Postgres database, based on `postgraphile`"
         },
         "tuql": {
           "$ref": "#/definitions/TuqlHandler",
@@ -1962,6 +1962,106 @@
         }
       }
     },
+    "MySQLHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MySQLHandler",
+      "properties": {
+        "host": {
+          "type": "string",
+          "description": "The hostname of the database you are connecting to. (Default: localhost)"
+        },
+        "port": {
+          "type": "integer",
+          "description": "The port number to connect to. (Default: 3306)"
+        },
+        "localAddress": {
+          "type": "string",
+          "description": "The source IP address to use for TCP connection"
+        },
+        "user": {
+          "type": "string",
+          "description": "The MySQL user to authenticate as"
+        },
+        "password": {
+          "type": "string",
+          "description": "The password of that MySQL user"
+        },
+        "database": {
+          "type": "string",
+          "description": "Name of the database to use for this connection"
+        },
+        "ssl": {
+          "$ref": "#/definitions/MySQLSSLOptions",
+          "description": "SSL Options for your MySQL connection"
+        },
+        "pool": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Use existing `Pool` instance\nFormat: modulePath#exportName"
+        },
+        "tables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Use specific tables for your schema"
+        },
+        "tableFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TableField"
+          },
+          "additionalItems": false,
+          "description": "Use specific fields of specific tables"
+        }
+      }
+    },
+    "TableField": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "TableField",
+      "properties": {
+        "table": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["table", "fields"]
+    },
+    "MySQLSSLOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MySQLSSLOptions",
+      "properties": {
+        "rejectUnauthorized": {
+          "type": "boolean",
+          "description": "Default: true"
+        },
+        "ca": {
+          "type": "string",
+          "description": "Path to your CA"
+        }
+      }
+    },
     "Neo4jHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -2955,6 +3055,75 @@
         }
       },
       "required": ["buffer"]
+    },
+    "PostGraphileHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PostGraphileHandler",
+      "properties": {
+        "connectionString": {
+          "type": "string",
+          "description": "A connection string to your Postgres database (`postgres://…` / `postgresql://…`).\nSupports Mesh env interpolation (e.g. `postgres://{env.PGUSER}:…`)."
+        },
+        "schemaName": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "PostgreSQL schema(s) to introspect (default: public). Only the first entry is used —\nmulti-schema PostGraphile setups are not supported on this path."
+        },
+        "pool": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Existing `pg.Pool` instance, or a module path that exports one (`modulePath#exportName`).\nPlain pool *settings* objects are ignored; pass a real Pool or rely on `connectionString`."
+        },
+        "tables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Use specific tables for your schema"
+        },
+        "tableFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PostGraphileTableField"
+          },
+          "additionalItems": false,
+          "description": "Use specific fields of specific tables"
+        }
+      }
+    },
+    "PostGraphileTableField": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PostGraphileTableField",
+      "properties": {
+        "table": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["table", "fields"]
     },
     "RAMLHandler": {
       "additionalProperties": false,
@@ -4184,193 +4353,6 @@
         }
       },
       "required": ["selectionSet"]
-    },
-    "MySQLHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MySQLHandler",
-      "properties": {
-        "host": {
-          "type": "string",
-          "description": "The hostname of the database you are connecting to. (Default: localhost)"
-        },
-        "port": {
-          "type": "integer",
-          "description": "The port number to connect to. (Default: 3306)"
-        },
-        "localAddress": {
-          "type": "string",
-          "description": "The source IP address to use for TCP connection"
-        },
-        "user": {
-          "type": "string",
-          "description": "The MySQL user to authenticate as"
-        },
-        "password": {
-          "type": "string",
-          "description": "The password of that MySQL user"
-        },
-        "database": {
-          "type": "string",
-          "description": "Name of the database to use for this connection"
-        },
-        "ssl": {
-          "$ref": "#/definitions/MySQLSSLOptions",
-          "description": "SSL Options for your MySQL connection"
-        },
-        "pool": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "Use existing `Pool` instance\nFormat: modulePath#exportName"
-        },
-        "tables": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false,
-          "description": "Use specific tables for your schema"
-        },
-        "tableFields": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/TableField"
-          },
-          "additionalItems": false,
-          "description": "Use specific fields of specific tables"
-        }
-      }
-    },
-    "TableField": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "TableField",
-      "properties": {
-        "table": {
-          "type": "string"
-        },
-        "fields": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        }
-      },
-      "required": ["table", "fields"]
-    },
-    "MySQLSSLOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MySQLSSLOptions",
-      "properties": {
-        "rejectUnauthorized": {
-          "type": "boolean",
-          "description": "Default: true"
-        },
-        "ca": {
-          "type": "string",
-          "description": "Path to your CA"
-        }
-      }
-    },
-    "PostGraphileHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "PostGraphileHandler",
-      "properties": {
-        "connectionString": {
-          "type": "string",
-          "description": "A connection string to your Postgres database"
-        },
-        "schemaName": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false,
-          "description": "An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema."
-        },
-        "pool": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "Connection Pool instance or settings or you can provide the path of a code file that exports any of those"
-        },
-        "appendPlugins": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false,
-          "description": "Extra Postgraphile Plugins to append"
-        },
-        "skipPlugins": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false,
-          "description": "Postgraphile Plugins to skip (e.g. \"graphile-build#NodePlugin\")"
-        },
-        "options": {
-          "description": "Extra Postgraphile options that will be added to the postgraphile constructor. It can either be an object or a string pointing to the object's path (e.g. \"./my-config#options\"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-library/) for more information. (Any of: JSON, String)",
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {}
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "subscriptions": {
-          "type": "boolean",
-          "description": "Enable GraphQL websocket transport support for subscriptions (default: true)"
-        },
-        "live": {
-          "type": "boolean",
-          "description": "Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)"
-        },
-        "contextOptions": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. \"./my-function#pgSettings\"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information."
-        }
-      }
     },
     "TuqlHandler": {
       "additionalProperties": false,

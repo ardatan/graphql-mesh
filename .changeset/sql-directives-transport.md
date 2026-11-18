@@ -4,7 +4,7 @@
 '@graphql-mesh/fusion-composition': minor
 '@graphql-mesh/mysql': major
 '@graphql-mesh/tuql': major
-'@graphql-mesh/postgraphile': patch
+'@graphql-mesh/postgraphile': major
 ---
 
 ## TL;DR (breaking)
@@ -21,16 +21,32 @@ Relations use the same `@sql` with `$this` binders in `where`.
 - `@omnigraph/mysql`, `@omnigraph/sqlite`
 - `@graphql-mesh/transport-mysql`, `@graphql-mesh/transport-sqlite`
 
-**Legacy v0 handlers:**
+**Legacy v0 handlers** (same YAML entrypoints, now call `@omnigraph/sql` + `transport-sql`):
 
-- `@graphql-mesh/postgraphile` — unchanged PostGraphile runtime
-- `@graphql-mesh/mysql` / `@graphql-mesh/tuql` — same YAML entrypoints, now call `@omnigraph/sql` +
-  `transport-sql` under the hood (`pool` / `tableFields` supported; tuql `infile` is materialized
-  to a sqlite file inside the legacy handler — not a core loader/transport feature)
+- `@graphql-mesh/mysql` — `pool` / `tableFields` supported
+- `@graphql-mesh/tuql` — `infile` is materialized to a sqlite file inside the legacy handler
+  (not a core loader/transport feature)
+- `@graphql-mesh/postgraphile` — **no longer embeds the PostGraphile runtime**. Schema emit and
+  execution use `@sql` / `transport-sql`. See migration notes below.
 
 Adapters are `postgres` | `mysql` | `sqlite` via loader `adapter` / URI / `options.adapter`. All
-three are end-to-end on the new stack. Legacy PostGraphile handler remains for the full
-PostGraphile runtime.
+three are end-to-end on the new stack.
+
+## Migration (`@graphql-mesh/postgraphile`)
+
+Breaking for v0.minor: the handler no longer depends on `postgraphile` / `postgraphile-core`.
+
+| Still supported | Removed / ignored |
+| --- | --- |
+| `connectionString` (env interpolation) | `appendPlugins` / `skipPlugins` |
+| `schemaName` (first entry only; default `public`) | `options` (Graphile library options) |
+| `pool` as an existing `pg.Pool` (or module export) | `pool` as plain settings object (use URI / transport opts) |
+| `tables` / `tableFields` (new, mysql-parity) | `subscriptions` / `live` |
+| | `contextOptions` (pgSettings helpers) |
+
+Emitted GraphQL is the shared SQL CRUD/relay surface (`allX` connections, `where` filters,
+mutations), not PostGraphile’s default Relay/`Node` plugin shape. Recompose and update clients.
+Prefer compose `loadSqlSubgraph` for new work; keep this handler only as a v0 YAML bridge.
 
 ## Migration (compose)
 

@@ -1,47 +1,38 @@
 extend type Handler {
   """
-  Handler for Postgres database, based on `postgraphile`
+  Handler for Postgres databases. Under the hood uses `@omnigraph/sql` + `transport-sql`
+  (not the PostGraphile runtime). Emitted schema is `@sql`-based CRUD/relay surface.
   """
   postgraphile: PostGraphileHandler
 }
 
 type PostGraphileHandler @md {
   """
-  A connection string to your Postgres database
+  A connection string to your Postgres database (`postgres://…` / `postgresql://…`).
+  Supports Mesh env interpolation (e.g. `postgres://{env.PGUSER}:…`).
   """
   connectionString: String
   """
-  An array of strings which specifies the PostgreSQL schemas that PostGraphile will use to create a GraphQL schema. The default schema is the public schema.
+  PostgreSQL schema(s) to introspect (default: public). Only the first entry is used —
+  multi-schema PostGraphile setups are not supported on this path.
   """
   schemaName: [String!]
   """
-  Connection Pool instance or settings or you can provide the path of a code file that exports any of those
+  Existing `pg.Pool` instance, or a module path that exports one (`modulePath#exportName`).
+  Plain pool *settings* objects are ignored; pass a real Pool or rely on `connectionString`.
   """
   pool: Any
   """
-  Extra Postgraphile Plugins to append
+  Use specific tables for your schema
   """
-  appendPlugins: [String]
+  tables: [String!]
   """
-  Postgraphile Plugins to skip (e.g. "graphile-build#NodePlugin")
+  Use specific fields of specific tables
   """
-  skipPlugins: [String]
-  """
-  Extra Postgraphile options that will be added to the postgraphile constructor. It can either be an object or a string pointing to the object's path (e.g. "./my-config#options"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-library/) for more information.
-  """
-  options: PostgraphileExternalOptions
-  """
-  Enable GraphQL websocket transport support for subscriptions (default: true)
-  """
-  subscriptions: Boolean
-  """
-  Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
-  """
-  live: Boolean
-  """
-  A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. "./my-function#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information.
-  """
-  contextOptions: Any
+  tableFields: [PostGraphileTableField!]
 }
 
-union PostgraphileExternalOptions = JSON | String
+type PostGraphileTableField {
+  table: String!
+  fields: [String!]!
+}
