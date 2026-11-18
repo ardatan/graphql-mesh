@@ -6,7 +6,7 @@ Mesh auto type-merging for GraphQL ById fields now dual-emits Mesh `@merge` and 
 
 **Migration**
 
-- No config flag. Recompose subgraphs that rely on semantic ById / auto `@merge` (for example `book(id:)`, `petById(id:)`).
+- No config flag. Recompose with Mesh composition for subgraphs that rely on semantic ById / auto `@merge` (for example `book(id:)`, `petById(id:)`).
 - Expect annotated SDL to gain `connect/v0.4` `@link` and `@connect(selection: "…", entity: true)` next to existing `@merge` on Mesh-only entity lookups.
 - Types that already had Federation `@key` / `@interfaceObject` (or federation-transform keys) keep `@merge` + `@key` only — they do **not** get virtual `@connect` (avoids flipping a GraphQL subgraph into Connectors-only Rover mode).
 - When a connect `@link` is present, Mesh stitching `@source` is imported/aliased as `@meshSource` so Apollo Router does not treat Mesh `@source` as Connectors `@source`.
