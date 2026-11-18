@@ -2,10 +2,13 @@ import { Decimal128, ObjectId } from 'mongodb';
 import {
   buildMongoFilter,
   buildMongoSort,
+  buildSetDocument,
   coerceFilterValue,
+  configureObjectIdFields,
   graphqlFilterToMongo,
   graphqlSortToMongo,
   graphqlUpdateToMongo,
+  normalizeFilterDoc,
 } from '../src/filter.js';
 
 describe('mongo filter mapping', () => {
@@ -100,8 +103,20 @@ describe('mongo filter mapping', () => {
     });
   });
 
-  it('converts ObjectId for id/_id/*Id fields, not plain strings', () => {
+  it('merges nested logical filters instead of Object.assign-replacing $or/$and', () => {
+    expect(
+      graphqlFilterToMongo({
+        or: [{ active: { eq: true } }],
+        address: { or: [{ city: { eq: 'Paris' } }] },
+      }),
+    ).toEqual({
+      $and: [{ $or: [{ active: true }] }, { $or: [{ 'address.city': 'Paris' }] }],
+    });
+  });
+
+  it('converts ObjectId only for declared id/_id/objectId fields', () => {
     const hex = '507f1f77bcf86cd799439011';
+    configureObjectIdFields(['authorId', 'friendIds']);
     expect(coerceFilterValue(hex, { asObjectId: true })).toBeInstanceOf(ObjectId);
     expect(coerceFilterValue(hex)).toBe(hex);
     expect(graphqlFilterToMongo({ token: { eq: hex } })).toEqual({ token: hex });
@@ -111,6 +126,9 @@ describe('mongo filter mapping', () => {
       $in: unknown[];
     };
     expect(friendIds.$in[0]).toBeInstanceOf(ObjectId);
+    // Undeclared *Id-looking keys stay strings.
+    expect(graphqlFilterToMongo({ otherId: { eq: hex } }).otherId).toBe(hex);
+    configureObjectIdFields(undefined);
   });
 
   it('preserves Decimal128 instances and Extended JSON, not numeric-looking strings', () => {
@@ -120,6 +138,32 @@ describe('mongo filter mapping', () => {
     });
     expect(coerceFilterValue('12.50')).toBe('12.50');
     expect(coerceFilterValue({ $numberDecimal: '12.50' })).toBeInstanceOf(Decimal128);
+  });
+
+  it('converts Extended JSON $numberDecimal before object recursion on update/insert/query', () => {
+    const updated = graphqlUpdateToMongo({
+      set: { salaryDecimal: { $numberDecimal: '12.50' } },
+    });
+    const setDoc = updated.$set as Record<string, unknown>;
+    expect(setDoc.salaryDecimal).toBeInstanceOf(Decimal128);
+    expect(String(setDoc.salaryDecimal)).toBe('12.50');
+
+    const inserted = buildSetDocument('salaryDecimal: $args.document.salaryDecimal', {
+      args: { document: { salaryDecimal: { $numberDecimal: '12.50' } } },
+    });
+    expect(inserted.salaryDecimal).toBeInstanceOf(Decimal128);
+
+    const native = normalizeFilterDoc({
+      salaryDecimal: { $numberDecimal: '12.50' },
+      nested: { amount: { $numberDecimal: '1.00' } },
+    });
+    expect(native.salaryDecimal).toBeInstanceOf(Decimal128);
+    expect((native.nested as { amount: unknown }).amount).toBeInstanceOf(Decimal128);
+
+    const queried = graphqlFilterToMongo({
+      salaryDecimal: { eq: { $numberDecimal: '12.50' } },
+    });
+    expect(queried.salaryDecimal).toBeInstanceOf(Decimal128);
   });
 
   it('maps array id binders to $in', () => {

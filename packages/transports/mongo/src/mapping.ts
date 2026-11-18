@@ -71,6 +71,16 @@ function collectProjection(entries: MongoMappingEntry[], out: Record<string, 0 |
       out[entry.value.value] = 1;
     }
   }
+  collapseOverlappingProjectionPaths(out);
+}
+
+/** Prefer parent path `address` over `address.street` — Mongo rejects both. */
+function collapseOverlappingProjectionPaths(out: Record<string, 0 | 1>): void {
+  const keys = Object.keys(out);
+  for (const key of keys) {
+    const dominated = keys.some(parent => parent !== key && key.startsWith(`${parent}.`));
+    if (dominated) delete out[key];
+  }
 }
 
 /**
@@ -103,30 +113,42 @@ function coerceGraphqlValue(value: unknown): unknown {
   if (Array.isArray(value)) {
     return value.map(coerceGraphqlValue);
   }
-  if (typeof value === 'object' && value !== null && 'toHexString' in value) {
-    try {
-      return (value as { toHexString: () => string }).toHexString();
-    } catch {
-      return value;
-    }
+  if (typeof value !== 'object' || value === null) {
+    return value;
   }
-  // Recursive / embedded docs still carry BSON `_id`; GraphQL root types expose `id`.
+  // ObjectId leaves (not document wrappers): hex-stringify.
   if (
-    typeof value === 'object' &&
-    value !== null &&
-    !Array.isArray(value) &&
-    Object.prototype.hasOwnProperty.call(value, '_id') &&
-    !Object.prototype.hasOwnProperty.call(value, 'id')
+    typeof (value as { toHexString?: () => string }).toHexString === 'function' &&
+    !Object.prototype.hasOwnProperty.call(value, '_id')
   ) {
-    const doc = value as Record<string, unknown>;
-    const out: Record<string, unknown> = { id: coerceGraphqlValue(doc._id) };
-    for (const [k, v] of Object.entries(doc)) {
-      if (k === '_id') continue;
-      out[k] = coerceGraphqlValue(v);
+    const dataKeys = Object.keys(value).filter(
+      k => typeof (value as Record<string, unknown>)[k] !== 'function',
+    );
+    const looksLikeObjectId =
+      dataKeys.length === 0 ||
+      dataKeys.every(k => ['id', 'buffer', '_bsontype', 'generationTime'].includes(k));
+    if (looksLikeObjectId) {
+      try {
+        return (value as { toHexString: () => string }).toHexString();
+      } catch {
+        return value;
+      }
     }
-    return out;
   }
-  return value;
+  // Documents: recurse fields. Keep embedded `_id` and alias `id` when absent so
+  // recursive root-typed nodes resolve `id` without stripping Address._id.
+  const doc = value as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(doc)) {
+    out[k] = coerceGraphqlValue(v);
+  }
+  if (
+    Object.prototype.hasOwnProperty.call(doc, '_id') &&
+    !Object.prototype.hasOwnProperty.call(doc, 'id')
+  ) {
+    out.id = out._id;
+  }
+  return out;
 }
 
 function stripComments(source: string): string {
@@ -191,6 +213,45 @@ function parseBlock(
     }
 
     if (text[i] === '$') {
+      // Bare `$` (aggregate root) — no stage name.
+      if (i + 1 >= text.length || !isIdentStart(text[i + 1]!)) {
+        const pseudo = readPseudoOrPath(text, i);
+        entries.push({
+          key: pseudo.raw,
+          value: pseudo.value,
+        });
+        i = skipWs(text, pseudo.next);
+        continue;
+      }
+      const stageKey = readDottedPath(text, i + 1);
+      const rawKey = `$${stageKey.value}`;
+      let j = skipWs(text, stageKey.next);
+      if (j < text.length && text[j] === ':') {
+        j = skipWs(text, j + 1);
+        if (j < text.length && text[j] === '{') {
+          const nested = parseBlock(text, j + 1, true);
+          entries.push({ key: rawKey, children: nested.entries });
+          i = skipWs(text, nested.next);
+          continue;
+        }
+        if (j < text.length && text[j] === '$') {
+          const rhs = readPseudoOrPath(text, j);
+          entries.push({ key: rawKey, value: rhs.value });
+          i = skipWs(text, rhs.next);
+          continue;
+        }
+        if (j < text.length && (text[j] === '"' || text[j] === "'")) {
+          const lit = readQuoted(text, j);
+          entries.push({ key: rawKey, value: { kind: 'literal', value: lit.value } });
+          i = skipWs(text, lit.next);
+          continue;
+        }
+        const col = readPathIdent(text, j);
+        entries.push({ key: rawKey, value: { kind: 'column', value: col.value } });
+        i = skipWs(text, col.next);
+        continue;
+      }
+      // Bare `$` / `$args.x` / `$this.x` / `$pseudo` whole-value binder.
       const pseudo = readPseudoOrPath(text, i);
       entries.push({
         key: pseudo.raw,

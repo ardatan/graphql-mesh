@@ -98,6 +98,7 @@ export async function loadGraphQLSchemaFromMongo(
     schema: MongooseSchema;
     paths: PathMeta[];
     resolvers?: NonNullable<MongoModelConfig['options']>['resolvers'];
+    fieldRestrictions?: MongoFieldRestrictions;
   }> = [];
 
   for (const modelConfig of opts.models) {
@@ -108,9 +109,10 @@ export async function loadGraphQLSchemaFromMongo(
       model.schema?.get('collection') ||
       pluralizeFallback(modelConfig.name);
     const typeName = naming.typeName(modelConfig.name);
+    const fieldRestrictions = modelConfig.options?.fields;
     const paths = applyFieldRestrictions(
       introspectPaths(model.schema, typeName),
-      modelConfig.options?.fields,
+      fieldRestrictions,
     );
     modelMeta.push({
       typeName,
@@ -118,6 +120,7 @@ export async function loadGraphQLSchemaFromMongo(
       schema: model.schema,
       paths,
       resolvers: modelConfig.options?.resolvers,
+      fieldRestrictions,
     });
     emitModelObjectType(schemaComposer, {
       subgraphName,
@@ -125,6 +128,7 @@ export async function loadGraphQLSchemaFromMongo(
       collection,
       paths,
       naming,
+      fieldRestrictions,
     });
   }
 
@@ -137,6 +141,7 @@ export async function loadGraphQLSchemaFromMongo(
       paths: meta.paths,
       naming,
       resolvers: meta.resolvers,
+      fieldRestrictions: meta.fieldRestrictions,
     });
     emitRefFields(schemaComposer, {
       subgraphName,
@@ -152,10 +157,12 @@ export async function loadGraphQLSchemaFromMongo(
   const schema = schemaComposer.buildSchema();
   const extensions: Record<string, any> = (schema.extensions ||= {});
   extensions.directives ||= {};
+  const objectIdFields = collectObjectIdFieldNames(modelMeta.map(m => m.paths));
   extensions.directives.transport = {
     subgraph: subgraphName,
     kind: 'mongo',
     location: opts.endpoint,
+    options: objectIdFields.length ? { objectIdFields } : undefined,
   };
   extensions.directives.link = [
     {
@@ -212,8 +219,29 @@ interface PathMeta {
   nested?: PathMeta[];
   /** GraphQL object type for nested / grouped paths, e.g. UserAddress. */
   nestedTypeName?: string;
-  /** Nested schema equals an ancestor — GraphQL type is `rootTypeName` (self-ref). */
+  /** Nested schema equals an ancestor — GraphQL type is that ancestor (`nestedTypeName`). */
   selfRef?: boolean;
+}
+
+function collectObjectIdFieldNames(pathLists: PathMeta[][]): string[] {
+  const out = new Set<string>();
+  const walk = (paths: PathMeta[]) => {
+    for (const path of paths) {
+      if (path.name === '_id' || path.name === 'id') continue;
+      if (
+        path.ref ||
+        path.instance === 'ObjectID' ||
+        path.instance === 'ObjectId' ||
+        path.arrayElementInstance === 'ObjectID' ||
+        path.arrayElementInstance === 'ObjectId'
+      ) {
+        out.add(path.name);
+      }
+      if (path.nested?.length) walk(path.nested);
+    }
+  };
+  for (const paths of pathLists) walk(paths);
+  return [...out];
 }
 
 function applyFieldRestrictions(paths: PathMeta[], fields?: MongoFieldRestrictions): PathMeta[] {
@@ -230,16 +258,19 @@ function applyFieldRestrictions(paths: PathMeta[], fields?: MongoFieldRestrictio
   return out;
 }
 
+type SchemaAncestor = { schema: object; typeName: string };
+
 function introspectPaths(schema: MongooseSchema, typeName: string): PathMeta[] {
   const root = schema as any;
-  return collectPaths(root, typeName, [], root ? [root] : []);
+  const ancestors: SchemaAncestor[] = root ? [{ schema: root, typeName }] : [];
+  return collectPaths(root, typeName, [], ancestors);
 }
 
 function collectPaths(
   schema: any,
   rootTypeName: string,
   nameStack: string[],
-  ancestors: object[],
+  ancestors: SchemaAncestor[],
 ): PathMeta[] {
   const pathsObj = (schema?.paths || {}) as Record<string, any>;
   const direct = new Map<string, any>();
@@ -282,7 +313,7 @@ function pathsFromDottedTails(
   tails: Map<string, any>,
   rootTypeName: string,
   nameStack: string[],
-  ancestors: object[],
+  ancestors: SchemaAncestor[],
 ): PathMeta[] {
   const direct = new Map<string, any>();
   const groups = new Map<string, Map<string, any>>();
@@ -319,7 +350,7 @@ function toPathMeta(
   schemaType: any,
   rootTypeName: string,
   nameStack: string[],
-  ancestors: object[],
+  ancestors: SchemaAncestor[],
 ): PathMeta {
   const description = schemaType.options?.description
     ? String(schemaType.options.description)
@@ -330,18 +361,19 @@ function toPathMeta(
 
   if (isEmbedded(schemaType)) {
     // Ancestor stack distinguishes true recursion from sibling reuse of one child schema.
-    if (schemaType.schema && ancestors.includes(schemaType.schema)) {
+    const hit = schemaType.schema && ancestors.find(a => a.schema === schemaType.schema);
+    if (hit) {
       return {
         name,
         instance: 'Embedded',
         description,
-        nestedTypeName: rootTypeName,
+        nestedTypeName: hit.typeName,
         selfRef: true,
       };
     }
     const nextAncestors =
       schemaType.schema && typeof schemaType.schema === 'object'
-        ? [...ancestors, schemaType.schema]
+        ? [...ancestors, { schema: schemaType.schema, typeName: nestedTypeName }]
         : ancestors;
     return {
       name,
@@ -353,19 +385,20 @@ function toPathMeta(
   }
 
   if (isDocumentArray(schemaType)) {
-    if (schemaType.schema && ancestors.includes(schemaType.schema)) {
+    const hit = schemaType.schema && ancestors.find(a => a.schema === schemaType.schema);
+    if (hit) {
       return {
         name,
         instance: 'Array',
         isArray: true,
         description,
-        nestedTypeName: rootTypeName,
+        nestedTypeName: hit.typeName,
         selfRef: true,
       };
     }
     const nextAncestors =
       schemaType.schema && typeof schemaType.schema === 'object'
-        ? [...ancestors, schemaType.schema]
+        ? [...ancestors, { schema: schemaType.schema, typeName: nestedTypeName }]
         : ancestors;
     return {
       name,
@@ -471,17 +504,23 @@ function emitModelObjectType(
     collection: string;
     paths: PathMeta[];
     naming: MongoNaming;
+    fieldRestrictions?: MongoFieldRestrictions;
   },
 ) {
   const { subgraphName, typeName, collection, paths, naming } = opts;
+  const required = new Set(opts.fieldRestrictions?.required || []);
   const otc = schemaComposer.createObjectTC({ name: typeName, fields: {} });
   const selection = selectionForPaths(paths);
 
   otc.setField('id', { type: new GraphQLNonNull(GraphQLObjectID) });
   for (const path of paths) {
     if (path.name === '_id' || path.name === '__v') continue;
+    let fieldType = mapPathToOutput(schemaComposer, path, typeName);
+    if (required.has(path.name) && !(fieldType instanceof GraphQLNonNull)) {
+      fieldType = new GraphQLNonNull(fieldType as any);
+    }
     otc.setField(path.name, {
-      type: mapPathToOutput(schemaComposer, path, typeName),
+      type: fieldType,
       description: path.description,
     });
   }
@@ -499,7 +538,10 @@ function emitModelObjectType(
     },
   ]);
 
-  createQuerySortAndDocumentInputs(schemaComposer, naming, typeName, paths);
+  createQuerySortAndDocumentInputs(schemaComposer, naming, typeName, paths, {
+    requiredFields: opts.fieldRestrictions?.required,
+    removedFields: opts.fieldRestrictions?.remove,
+  });
   createConnectionTypes(schemaComposer, naming, typeName);
   createPayloadType(schemaComposer, naming, typeName);
 }
@@ -513,6 +555,7 @@ function emitModelRootFields(
     paths: PathMeta[];
     naming: MongoNaming;
     resolvers?: NonNullable<MongoModelConfig['options']>['resolvers'];
+    fieldRestrictions?: MongoFieldRestrictions;
   },
 ) {
   const { subgraphName, typeName, collection, paths, naming, resolvers } = opts;
@@ -899,9 +942,10 @@ function emitRefFields(
 function safeEnumValueName(value: string, used: Set<string>): string {
   let raw = String(value).replace(/[^_A-Za-z0-9]/g, '_');
   if (!/^[_A-Za-z]/.test(raw)) raw = `_${raw}`;
-  // GraphQL forbids enum names true/false/null and treats __ as reserved.
+  // GraphQL forbids enum names true/false/null and treats names starting with __ as reserved.
+  // Prefix with a letter so `__foo` → `E__foo` (not `___foo`, which is still reserved).
   if (raw === 'true' || raw === 'false' || raw === 'null' || raw.startsWith('__')) {
-    raw = `_${raw}`;
+    raw = `E${raw}`;
   }
   let candidate = raw;
   let i = 2;
@@ -1014,7 +1058,9 @@ function queryOperatorTypeForPath(
     }
     return '[String]';
   }
-  if (path.instance === 'Number') return 'FloatQueryOperators';
+  if (path.instance === 'Number' || path.instance === 'Int32' || path.instance === 'Double') {
+    return 'FloatQueryOperators';
+  }
   if (path.instance === 'Decimal128') return 'Decimal128QueryOperators';
   if (path.instance === 'Boolean') return 'BooleanQueryOperators';
   if (path.instance === 'Date') return 'DateTimeQueryOperators';
@@ -1043,7 +1089,8 @@ function mapPathToOutput(
   rootTypeName: string,
 ): any {
   if (path.selfRef) {
-    return path.isArray ? `[${rootTypeName}]` : rootTypeName;
+    const t = path.nestedTypeName || rootTypeName;
+    return path.isArray ? `[${t}]` : t;
   }
   if (path.nested?.length) {
     const nestedName = ensureNestedObjectTypes(schemaComposer, path, rootTypeName);
@@ -1106,7 +1153,10 @@ function createQuerySortAndDocumentInputs(
   naming: MongoNaming,
   typeName: string,
   paths: PathMeta[],
+  opts?: { requiredFields?: string[]; removedFields?: string[] },
 ) {
+  const required = new Set(opts?.requiredFields || []);
+  const removed = new Set(opts?.removedFields || []);
   const queryName = naming.queryInput(typeName);
   if (!schemaComposer.has(queryName)) {
     schemaComposer.createInputTC({
@@ -1150,7 +1200,10 @@ function createQuerySortAndDocumentInputs(
   const createFields: Record<string, any> = {};
   for (const path of paths) {
     if (path.name === '_id' || path.name === '__v') continue;
-    const gqlType = mapPathToInput(schemaComposer, path, typeName);
+    let gqlType = mapPathToInput(schemaComposer, path, typeName);
+    if (required.has(path.name) && !(gqlType instanceof GraphQLNonNull)) {
+      gqlType = new GraphQLNonNull(gqlType as any);
+    }
     createFields[path.name] = { type: gqlType, description: path.description };
   }
   const documentInput = naming.createInput(typeName);
@@ -1211,25 +1264,29 @@ function createQuerySortAndDocumentInputs(
           })()
         : GraphQLJSON;
 
+    const updateFields: Record<string, any> = {
+      set: { type: documentInput },
+      inc: { type: numericType },
+      mul: { type: numericType },
+      min: { type: numericType },
+      max: { type: numericType },
+      unset: { type: unsetType },
+    };
+    // Freeform JSON modifiers can rename/set removed fields; omit them when
+    // `fields.remove` is configured so restrictions cannot be bypassed.
+    if (!removed.size) {
+      updateFields.push = { type: GraphQLJSON };
+      updateFields.pull = { type: GraphQLJSON };
+      updateFields.pullAll = { type: GraphQLJSON };
+      updateFields.addToSet = { type: GraphQLJSON };
+      updateFields.pop = { type: GraphQLJSON };
+      updateFields.rename = { type: GraphQLJSON };
+      updateFields.currentDate = { type: GraphQLJSON };
+      updateFields.bit = { type: GraphQLJSON };
+    }
     schemaComposer.createInputTC({
       name: updateInput,
-      fields: {
-        set: { type: documentInput },
-        inc: { type: numericType },
-        mul: { type: numericType },
-        min: { type: numericType },
-        max: { type: numericType },
-        unset: { type: unsetType },
-        // Array / specialized modifiers: JSON until field-level typing is needed.
-        push: { type: GraphQLJSON },
-        pull: { type: GraphQLJSON },
-        pullAll: { type: GraphQLJSON },
-        addToSet: { type: GraphQLJSON },
-        pop: { type: GraphQLJSON },
-        rename: { type: GraphQLJSON },
-        currentDate: { type: GraphQLJSON },
-        bit: { type: GraphQLJSON },
-      },
+      fields: updateFields,
     });
   }
 }

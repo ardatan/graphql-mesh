@@ -7,7 +7,9 @@ import {
   buildMongoFilter,
   buildMongoSort,
   buildSetDocument,
+  coerceDeep,
   coerceFilterValue,
+  configureObjectIdFields,
   filterFromMapping,
   isObjectIdFieldKey,
   resolveUpdateDocument,
@@ -98,6 +100,7 @@ export function getMongoExecutor({
   }
   const transport = transportDirectives?.[0] as
     { location?: string; options?: MongoTransportOptions } | undefined;
+  configureObjectIdFields(transport?.options?.objectIdFields);
   const mongoClient =
     client ||
     createMongoClient({
@@ -172,10 +175,15 @@ function attachMongoResolver(
           return mapPayload(created, insertedId, selection);
         }
         case 'INSERT_MANY': {
-          const records = (graphqlArgs.documents || graphqlArgs.inputs || []) as Record<
-            string,
-            unknown
-          >[];
+          const fromSet = buildSetDocument(directive.set, ctx);
+          const rawRecords = (fromSet.documents ||
+            fromSet.inputs ||
+            graphqlArgs.documents ||
+            graphqlArgs.inputs ||
+            []) as Record<string, unknown>[];
+          const records = (Array.isArray(rawRecords) ? rawRecords : []).map(
+            doc => coerceDeep(doc) as Record<string, unknown>,
+          );
           const { insertedIds, insertedCount } = await client.insertMany(
             directive.collection,
             records,
@@ -292,12 +300,17 @@ async function resolveConnection(
   ctx: { args?: Record<string, unknown>; parent?: unknown },
   selection: ReturnType<typeof parseMongoMapping>,
 ) {
-  const first = resolveBinderNumber(directive.first, ctx) ?? 10;
+  const firstRaw = resolveBinderNumber(directive.first, ctx) ?? 10;
+  if (firstRaw < 0) {
+    throw new Error('@mongo__connection first must be >= 0');
+  }
+  const first = firstRaw;
   const after = resolveBinderString(directive.after, ctx);
   const effectiveSort = ensureIdTiebreaker(sort || { _id: 1 });
   const connFilter = after ? mergeCursorFilter(filter, after, effectiveSort) : { ...filter };
+  const connProjection = projectionWithSortKeys(projection, effectiveSort);
   const docs = await client.findMany(directive.collection, connFilter, {
-    projection,
+    projection: connProjection,
     sort: effectiveSort,
     limit: first + 1,
   });
@@ -321,6 +334,18 @@ async function resolveConnection(
     },
     totalCount,
   };
+}
+
+function projectionWithSortKeys(
+  projection: Record<string, 0 | 1> | undefined,
+  sort: Record<string, 1 | -1>,
+): Record<string, 0 | 1> | undefined {
+  if (!projection || Object.keys(projection).length === 0) return projection;
+  const out = { ...projection };
+  for (const key of Object.keys(sort)) {
+    out[key] = 1;
+  }
+  return out;
 }
 
 function ensureIdTiebreaker(sort: Record<string, 1 | -1>): Record<string, 1 | -1> {
@@ -450,7 +475,12 @@ function fieldContinuationClauses(
     return [];
   }
   const op = dir < 0 ? '$lt' : '$gt';
-  return [{ ...prefix, [field]: { [op]: value } }];
+  const clauses: Record<string, unknown>[] = [{ ...prefix, [field]: { [op]: value } }];
+  // Descending sorts place null/missing after numbers; `$lt` alone cannot cross BSON types.
+  if (dir < 0) {
+    clauses.push({ ...prefix, [field]: null });
+  }
+  return clauses;
 }
 
 function coerceCursorValue(field: string, value: unknown): unknown {

@@ -124,9 +124,17 @@ function looksLikeNativeMongoFilter(input: Record<string, unknown>): boolean {
   return false;
 }
 
-function coerceDeep(value: unknown, opts?: CoerceFilterOptions): unknown {
+export function coerceDeep(value: unknown, opts?: CoerceFilterOptions): unknown {
   if (Array.isArray(value)) return value.map(v => coerceDeep(v, opts));
   if (isBsonValue(value)) return value;
+  // Extended JSON wrappers (`{ $numberDecimal }`) must convert before plain-object walk.
+  if (
+    isPlainObject(value) &&
+    typeof (value as { $numberDecimal?: unknown }).$numberDecimal === 'string' &&
+    Object.keys(value).length === 1
+  ) {
+    return coerceFilterValue(value, opts);
+  }
   if (!isPlainObject(value)) return coerceFilterValue(value, opts);
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(value)) {
@@ -179,11 +187,23 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   );
 }
 
-/** Heuristic for GraphQL ObjectID paths when schema BSON metadata is not available. */
+/** Declared ObjectId field keys from subgraph transport options (plus `id`/`_id`). */
+let declaredObjectIdFields = new Set<string>(['_id', 'id']);
+
+/** Configure ObjectId coercion from loader-declared BSON ObjectId / ref paths. */
+export function configureObjectIdFields(fields: Iterable<string> | undefined): void {
+  declaredObjectIdFields = new Set(['_id', 'id']);
+  if (!fields) return;
+  for (const f of fields) {
+    if (f) declaredObjectIdFields.add(f);
+  }
+}
+
 export function isObjectIdFieldKey(key: string): boolean {
-  // Declared ObjectId paths are typically `id` / `_id` / `*Id` / `*Ids` (GraphQL ObjectID).
-  // Plain String fields that happen to hold 24-hex stay strings.
-  return key === '_id' || key === 'id' || /Ids?$/.test(key);
+  if (declaredObjectIdFields.has(key)) return true;
+  // GraphQL `id` binders map to Mongo `_id`.
+  if (key === 'id' || key === '_id') return true;
+  return false;
 }
 
 /** True when every own key is a known GraphQL filter operator (`eq` / `gt` / …). */
@@ -255,7 +275,7 @@ export function graphqlFilterToMongo(
       continue;
     }
 
-    Object.assign(out, graphqlFilterToMongo(value, fullKey));
+    mergeFilterFragment(out, graphqlFilterToMongo(value, fullKey));
   }
 
   return out;
@@ -388,9 +408,6 @@ export function buildSetDocument(
   const parsed = parseMongoMapping(setSource);
   const doc: Record<string, unknown> = {};
   for (const entry of parsed.entries) {
-    if ((entry.key === 'inputs' || entry.key === 'documents') && entry.value?.kind === 'args') {
-      continue;
-    }
     if (!entry.value) continue;
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved === undefined) continue;
@@ -478,8 +495,9 @@ export function resolveUpdateDocument(
   ctx: { args?: Record<string, unknown>; parent?: unknown },
 ): Record<string, unknown> {
   const trimmed = setSource?.trim();
-  if (trimmed === '$args.update') {
-    const update = ctx.args?.update;
+  const argsBinder = trimmed?.match(/^\$args\.([\w$]+)$/);
+  if (argsBinder) {
+    const update = ctx.args?.[argsBinder[1]];
     if (update && typeof update === 'object' && !Array.isArray(update)) {
       return graphqlUpdateToMongo(update as Record<string, unknown>);
     }

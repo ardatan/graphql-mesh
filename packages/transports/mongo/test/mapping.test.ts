@@ -104,10 +104,11 @@ describe('parseMongoMapping', () => {
     });
   });
 
-  it('maps nested / recursive documents from _id to id', () => {
+  it('aliases id for recursive docs while keeping embedded _id', () => {
     const parsed = parseMongoMapping(`
       id: _id
       children: children
+      address: address
     `);
     const childOid = {
       toHexString() {
@@ -119,6 +120,7 @@ describe('parseMongoMapping', () => {
         {
           _id: 'root',
           children: [{ _id: childOid, name: 'kid', children: [{ _id: 'grand', name: 'g' }] }],
+          address: { _id: 'addr1', street: 'Main' },
         },
         parsed,
       ),
@@ -126,11 +128,13 @@ describe('parseMongoMapping', () => {
       id: 'root',
       children: [
         {
+          _id: '507f1f77bcf86cd799439011',
           id: '507f1f77bcf86cd799439011',
           name: 'kid',
-          children: [{ id: 'grand', name: 'g' }],
+          children: [{ _id: 'grand', id: 'grand', name: 'g' }],
         },
       ],
+      address: { _id: 'addr1', id: 'addr1', street: 'Main' },
     });
   });
 });

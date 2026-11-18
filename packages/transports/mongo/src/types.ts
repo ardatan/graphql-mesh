@@ -14,6 +14,8 @@ export type MongoKind =
 
 export interface MongoTransportOptions {
   maxPoolSize?: number;
+  /** Declared BSON ObjectId / ref field names for hex→ObjectId coercion. */
+  objectIdFields?: string[];
 }
 
 export interface MongoMappingValue {
