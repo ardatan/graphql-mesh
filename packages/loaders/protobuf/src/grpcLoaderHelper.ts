@@ -18,6 +18,7 @@ import descriptor, { type IFileDescriptorSet } from 'protobufjs/ext/descriptor.j
 import { Client } from '@ardatan/grpc-reflection-js';
 import { type Logger } from '@graphql-hive/logger';
 import { fs, path } from '@graphql-mesh/cross-helpers';
+import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { matchFiles } from '@graphql-tools/load-files';
@@ -162,7 +163,7 @@ export class GrpcLoaderHelper extends DisposableStack {
       location: this.config.endpoint,
       ...(Object.keys(transportOptions).length > 0 ? { options: transportOptions } : {}),
     };
-    return schema;
+    return ensureFederationReadySubgraph(schema);
   }
 
   private processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {

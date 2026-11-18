@@ -36,6 +36,7 @@ import { parse, SyntaxType } from '@creditkarma/thrift-parser';
 import { TType } from '@creditkarma/thrift-server-core';
 import { Logger } from '@graphql-hive/logger';
 import { path } from '@graphql-mesh/cross-helpers';
+import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import {
   CONNECT_LINK_URL,
   ConnectDirective,
@@ -846,7 +847,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
         },
       },
     });
-    return preferMultilineDirectiveBlockStrings(schema);
+    return ensureFederationReadySubgraph(preferMultilineDirectiveBlockStrings(schema));
   }
 
   const graphQLThriftAnnotations: GraphQLThriftAnnotations = {
@@ -858,9 +859,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     headers: Object.entries(headers),
   };
 
-  // Do not `@link` `@thrift__rpc` on a custom URL - composition's
-  // `detectAndAddMeshDirectives` imports unknown directives via Mesh spec
-  // (`@composeDirective`). A separate thrift `@link` would exclude it from that path.
+  // Do not `@link` `@thrift__rpc` on a custom URL - `ensureFederationReadySubgraph`
+  // imports unknown directives via Mesh spec (`@composeDirective`). A separate
+  // thrift `@link` would exclude it from that path.
   const schema = new GraphQLSchema({
     query: queryObjectType,
     types: [ThriftMessageTypeEnum, ...exceptionTypeMap.values()],
@@ -872,7 +873,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     },
   });
 
-  return preferMultilineDirectiveBlockStrings(schema);
+  return ensureFederationReadySubgraph(preferMultilineDirectiveBlockStrings(schema));
 }
 
 /**

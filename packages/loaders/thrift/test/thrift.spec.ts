@@ -551,7 +551,10 @@ describe('thrift', () => {
     expect(selection).toMatch(/detail:\s*\$\(\$->get\(4\)->get\("1"\)->ne\(null\)->match/);
     expect(selection.match(/\bdetail:/g)?.length).toBe(1);
 
-    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const rebuilt = processDirectives(
+      buildSchema(printSchemaWithDirectives(schema), { assumeValidSDL: true, assumeValid: true }),
+      {},
+    );
     const union = rebuilt.getType('GoResult') as GraphQLUnionType;
     const resolveType = union.resolveType!;
     const extras = {
@@ -613,7 +616,10 @@ describe('thrift', () => {
     expect(selection).toMatch(/value:\s*\$\(\$->get\(4\)->get\("0"\)->ne\(null\)->match\(\[true,/);
     expect(selection).toMatch(/\?\?\s*\$->get\(4\)->get\("1"\)->ne\(null\)->match\(\[true,/);
 
-    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const rebuilt = processDirectives(
+      buildSchema(printSchemaWithDirectives(schema), { assumeValidSDL: true, assumeValid: true }),
+      {},
+    );
     const union = rebuilt.getType('GoResult') as GraphQLUnionType;
     const resolveType = union.resolveType!;
     const extras = {
@@ -666,7 +672,10 @@ describe('thrift', () => {
     expect(uniqueSel).toMatch(/get\("set"\)->slice\(2\)->map\(@->\{/);
     expect(uniqueSel).not.toMatch(/slice\(2\)\s*\{/);
 
-    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const rebuilt = processDirectives(
+      buildSchema(printSchemaWithDirectives(schema), { assumeValidSDL: true, assumeValid: true }),
+      {},
+    );
     const union = rebuilt.getType('ItemsResult') as GraphQLUnionType;
     const resolveType = union.resolveType!;
     const extras = {
@@ -861,7 +870,10 @@ describe('thrift', () => {
     expect(selection).toMatch(/ok:\s*\$\(\$->get\(4\)->size->eq\(0\)->match\(\[true,\s*true\],/);
     expect(selection).toMatch(/\?\?\s*\$->get\(4\)->get\("1"\)->ne\(null\)->match\(\[true,/);
 
-    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const rebuilt = processDirectives(
+      buildSchema(printSchemaWithDirectives(schema), { assumeValidSDL: true, assumeValid: true }),
+      {},
+    );
     const union = rebuilt.getType('FlushResult') as GraphQLUnionType;
     const resolveType = union.resolveType!;
     const extras = {

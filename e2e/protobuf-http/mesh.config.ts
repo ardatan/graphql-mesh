@@ -1,11 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { buildASTSchema, parse } from 'graphql';
 import { Opts } from '@e2e/opts';
 import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import {
   createRenameTransform,
   defineConfig as defineComposeConfig,
+  loadSdlSubgraph,
+  type MeshComposeCLISourceHandlerDef,
 } from '@graphql-mesh/compose-cli';
 
 const opts = Opts(process.argv);
@@ -16,8 +17,11 @@ const servicePort = opts.getServicePort(style);
 const location =
   style === 'twirp' ? `http://localhost:${servicePort}/twirp` : `http://localhost:${servicePort}`;
 
-function loadHandProtobufSubgraph(name: string, relativeSdlPath: string) {
-  return () => {
+function loadHandProtobufSubgraph(
+  name: string,
+  relativeSdlPath: string,
+): MeshComposeCLISourceHandlerDef {
+  return ctx => {
     let sdl = readFileSync(join(import.meta.dirname, relativeSdlPath), 'utf8').replaceAll(
       '__LOCATION__',
       location,
@@ -30,13 +34,7 @@ function loadHandProtobufSubgraph(name: string, relativeSdlPath: string) {
     } else {
       sdl = sdl.replace(/\n\s*# __TRANSPORT_HEADERS__/, '');
     }
-    return {
-      name,
-      schema$: buildASTSchema(parse(sdl), {
-        assumeValidSDL: true,
-        assumeValid: true,
-      }),
-    };
+    return loadSdlSubgraph(name, { typeDefs: sdl })(ctx);
   };
 }
 

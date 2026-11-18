@@ -43,6 +43,10 @@ describe('@omnigraph/sql sqlite chinook', () => {
     );
     expect(sdl).toContain('@transport');
     expect(sdl).toContain('kind: "sql"');
+    // Federation-ready from the loader: Mesh imports + @composeDirective
+    expect(sdl).toContain('https://the-guild.dev/graphql/mesh/spec/');
+    expect(sdl).toContain('@composeDirective');
+    expect(sdl).toContain('@sql');
     // Adapter inferred from location — do not emit redundant options.adapter
     expect(sdl).not.toContain('adapter:');
     expect(sdl).toContain('@sql(');

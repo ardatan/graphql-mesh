@@ -21,7 +21,10 @@ import { GraphQLJSON } from 'graphql-compose';
 import type { IStringifyOptions } from 'qs';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
-import { entityKeyFieldsFromHttpPath } from '@graphql-mesh/fusion-composition';
+import {
+  ensureFederationReadySubgraph,
+  entityKeyFieldsFromHttpPath,
+} from '@graphql-mesh/fusion-composition';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   bakeEnumRootSelection,
@@ -783,7 +786,7 @@ ${operationConfig.description || ''}
     },
   });
   flushConnectSelectionPassthroughWarnings(selectionLimit);
-  return schema;
+  return ensureFederationReadySubgraph(schema);
 }
 
 function finalizeConnectorsField(

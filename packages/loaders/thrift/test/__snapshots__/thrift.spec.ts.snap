@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`thrift Calc json protocol emits @connect with isSuccess/errors: Calc-json-connect-schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @source(name: "Calc", http: {baseURL: "http://localhost:4000/thrift-json", headers: [{name: "Content-Type", value: "application/vnd.apache.thrift.json"}, {name: "Accept", value: "application/vnd.apache.thrift.json"}]}) {
+"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @source(name: "Calc", http: {baseURL: "http://localhost:4000/thrift-json", headers: [{name: "Content-Type", value: "application/vnd.apache.thrift.json"}, {name: "Accept", value: "application/vnd.apache.thrift.json"}]}) @composeDirective(name: "@connect") {
   query: Query
 }
 
@@ -78,11 +78,11 @@ input SourceHTTP {
 `;
 
 exports[`thrift Calc: Calc-schema 1`] = `
-"schema @transport(subgraph: "Calc", kind: "thrift", location: "http://localhost:4000/thrift-with-imports", headers: [["x-api-key", "123"]]) {
+"schema @transport(subgraph: "Calc", kind: "thrift", location: "http://localhost:4000/thrift-with-imports", headers: [["x-api-key", "123"]]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@thrift__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@thrift__rpc") {
   query: Query
 }
 
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
 
 enum ThriftMessageType {
   CALL
@@ -109,11 +109,11 @@ input AddRequestInput {
 `;
 
 exports[`thrift Twitter: Twitter-schema 1`] = `
-"schema @transport(subgraph: "Twitter", kind: "thrift", location: "http://localhost:4000/twitter", headers: [["x-api-key", "123"]]) {
+"schema @transport(subgraph: "Twitter", kind: "thrift", location: "http://localhost:4000/twitter", headers: [["x-api-key", "123"]]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@thrift__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@thrift__rpc") {
   query: Query
 }
 
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
 
 enum ThriftMessageType {
   CALL

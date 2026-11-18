@@ -36,7 +36,7 @@ import {
 import { finalizeConnectorsSupergraph } from './connectors-supergraph.js';
 import {
   convertSubgraphToFederationv2,
-  detectAndAddMeshDirectives,
+  ensureFederationReadySubgraph,
   importFederationDirectives,
   importMeshDirectives,
   normalizeDirectiveExtensions,
@@ -522,7 +522,10 @@ export function getAnnotatedSubgraphs(
       transformedSubgraph = ensureNonResolvableKeysForEntityStubs(transformedSubgraph);
     }
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
-    transformedSubgraph = detectAndAddMeshDirectives(transformedSubgraph);
+    // Loaders should already emit Mesh `@link` / `@composeDirective` (and Connect
+    // `@composeDirective`); this call stays as an idempotent safety net for older
+    // loaders and hand-written SDL that skipped `ensureFederationReadySubgraph`.
+    transformedSubgraph = ensureFederationReadySubgraph(transformedSubgraph);
     const importedDirectives: MeshDirectiveImport[] = [];
     if (mergeDirectiveUsed) {
       importedDirectives.push('@merge');
@@ -535,18 +538,12 @@ export function getAnnotatedSubgraphs(
         importedDirectives.push('@source');
       }
     }
-    // Preserve Apollo `@connect` through federation via `@composeDirective`.
     // When Mesh stitching `@source` is also in the composition, drop `@source` from the
     // connect `@link` import so Guild does not clash (args stay in extras; post-process
     // restores `@source` on the connect `@link` after lifting SCHEMA directives).
-    if (isConnectorsSubgraph) {
+    if (isConnectorsSubgraph && compositionHasMeshStitchingSource) {
       const schemaDirectives = getDirectiveExtensions(transformedSubgraph) || {};
-      const composeDirectives = (schemaDirectives.composeDirective =
-        schemaDirectives.composeDirective?.filter(Boolean) || []);
-      if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
-        composeDirectives.push({ name: '@connect' });
-      }
-      if (compositionHasMeshStitchingSource && Array.isArray(schemaDirectives.link)) {
+      if (Array.isArray(schemaDirectives.link)) {
         schemaDirectives.link = schemaDirectives.link.map(
           (link: { url?: string; import?: any[] }) => {
             if (
@@ -571,10 +568,9 @@ export function getAnnotatedSubgraphs(
             return link;
           },
         );
+        const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
+        extensions.directives = schemaDirectives;
       }
-      const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
-      extensions.directives = schemaDirectives;
-      transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@composeDirective']);
     }
     const fieldMapper: FieldMapper = (fieldConfig, fieldName) => {
       const fieldDirectives = getDirectiveExtensions(fieldConfig);

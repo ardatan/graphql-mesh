@@ -4,6 +4,7 @@ import type { Driver } from 'neo4j-driver';
 import neo4j from 'neo4j-driver';
 import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
+import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import type { Neo4JAuthOpts } from '@graphql-mesh/transport-neo4j';
 import {
   getDriverFromOpts,
@@ -182,10 +183,12 @@ export async function loadGraphQLSchemaFromNeo4J(
       },
     },
   ];
-  return mergeSchemas({
-    schemas: [schema],
-    typeDefs,
-    assumeValid: true,
-    assumeValidSDL: true,
-  });
+  return ensureFederationReadySubgraph(
+    mergeSchemas({
+      schemas: [schema],
+      typeDefs,
+      assumeValid: true,
+      assumeValidSDL: true,
+    }),
+  );
 }

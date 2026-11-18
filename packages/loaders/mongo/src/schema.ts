@@ -11,6 +11,7 @@ import { SchemaComposer } from 'graphql-compose';
 import { GraphQLDateTime, GraphQLJSON, GraphQLObjectID } from 'graphql-scalars';
 import type { Model, Schema as MongooseSchema } from 'mongoose';
 import { process as meshProcess } from '@graphql-mesh/cross-helpers';
+import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import type { ImportFn } from '@graphql-mesh/types';
 import { defaultImportFn, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { MongoOpDirectives, TransportDirective } from './directives.js';
@@ -496,7 +497,7 @@ export async function loadGraphQLSchemaFromMongo(
     },
   ];
   markMongoDirectiveStringsAsBlocks(schema);
-  return schema;
+  return ensureFederationReadySubgraph(schema);
 }
 
 const RESERVED_FILTER_PATH_NAMES = new Set(['and', 'or', 'not', 'AND', 'OR', 'NOT']);

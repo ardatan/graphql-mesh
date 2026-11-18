@@ -16,6 +16,7 @@ import {
 } from 'graphql-scalars';
 import type { Pool as PgPool } from 'pg';
 import { path as pathHelper } from '@graphql-mesh/cross-helpers';
+import { ensureFederationReadySubgraph } from '@graphql-mesh/fusion-composition';
 import {
   inferAdapterFromConnectionString,
   resolveConnectionStringFromEnv,
@@ -650,7 +651,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
   // graphql-compose emits StringValue without `block: true`, so printers escape
   // newlines as `\n`. Mark @sql args/selection as block strings for readable """ SDL.
   markSqlDirectiveStringsAsBlocks(schema);
-  return schema;
+  return ensureFederationReadySubgraph(schema);
 }
 
 async function introspect(

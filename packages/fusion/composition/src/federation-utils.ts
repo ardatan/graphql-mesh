@@ -1,6 +1,25 @@
 import { GraphQLDirective, GraphQLSchema, isSpecifiedDirective } from 'graphql';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 
+/**
+ * Patch only the named schema-directive keys on `extensions.directives`.
+ * Preserves loader-stamped shapes for other keys (e.g. object `@transport` vs array).
+ */
+function patchSchemaDirectiveExtensions(
+  subgraph: GraphQLSchema,
+  patch: Record<string, unknown>,
+): void {
+  const extensions: Record<string, any> = (subgraph.extensions ||= {});
+  const existing =
+    extensions.directives && typeof extensions.directives === 'object'
+      ? { ...extensions.directives }
+      : {};
+  for (const [key, value] of Object.entries(patch)) {
+    existing[key] = value;
+  }
+  extensions.directives = existing;
+}
+
 export function addFederation2DirectivesToSubgraph(subgraph: GraphQLSchema) {
   const schemaDirectives = getDirectiveExtensions(subgraph);
   const linkDirectives = (schemaDirectives.link ||= []);
@@ -23,8 +42,7 @@ export function addFederation2DirectivesToSubgraph(subgraph: GraphQLSchema) {
       import: [],
     });
   }
-  const extensions: Record<string, unknown> = (subgraph.extensions ||= {});
-  extensions.directives = schemaDirectives;
+  patchSchemaDirectiveExtensions(subgraph, { link: linkDirectives });
   return subgraph;
 }
 
@@ -52,8 +70,7 @@ export function importFederationDirectives(subgraph: GraphQLSchema, directives: 
     }
   }
   importStatement.import = [...new Set([...(importStatement.import || []), ...directives])];
-  const extensions: Record<string, unknown> = (subgraph.extensions ||= {});
-  extensions.directives = schemaDirectives;
+  patchSchemaDirectiveExtensions(subgraph, { link: linkDirectives });
   return subgraph;
 }
 
@@ -122,8 +139,10 @@ export function importMeshDirectives(subgraph: GraphQLSchema, directives: MeshDi
       });
     }
   }
-  const extensions: Record<string, unknown> = (subgraph.extensions ||= {});
-  extensions.directives = schemaDirectives;
+  patchSchemaDirectiveExtensions(subgraph, {
+    link: linkDirectives,
+    composeDirective: composeDirectives,
+  });
   subgraph = importFederationDirectives(subgraph, ['@composeDirective']);
   return subgraph;
 }
@@ -180,6 +199,47 @@ export function detectAndAddMeshDirectives(subgraph: GraphQLSchema) {
   });
   if (meshDirectives.length > 0) {
     subgraph = importMeshDirectives(subgraph, meshDirectives);
+  }
+  return subgraph;
+}
+
+function schemaHasConnectorsLink(subgraph: GraphQLSchema): boolean {
+  const directives = getDirectiveExtensions(subgraph);
+  const links = directives?.link || [];
+  if (
+    links.some(
+      (link: { url?: string }) =>
+        typeof link?.url === 'string' && link.url.startsWith('https://specs.apollo.dev/connect'),
+    )
+  ) {
+    return true;
+  }
+  const sources = directives?.source || [];
+  return sources.some((source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null);
+}
+
+/**
+ * Make a subgraph federation-ready for Mesh Compose and schema registries.
+ *
+ * - Imports Mesh-spec directives via `@link(.../mesh/spec/...)` + `@composeDirective`
+ * - For Federation Connectors subgraphs, also registers `@composeDirective(name: "@connect")`
+ *
+ * Idempotent: safe to call again during composition. Does **not** stamp `@shareable` on
+ * every object type; that remains composition's {@link convertSubgraphToFederationv2} step.
+ */
+export function ensureFederationReadySubgraph(subgraph: GraphQLSchema): GraphQLSchema {
+  subgraph = detectAndAddMeshDirectives(subgraph);
+  if (schemaHasConnectorsLink(subgraph)) {
+    const schemaDirectives = getDirectiveExtensions(subgraph) || {};
+    const composeDirectives = (schemaDirectives.composeDirective =
+      schemaDirectives.composeDirective?.filter(Boolean) || []);
+    if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
+      composeDirectives.push({ name: '@connect' });
+    }
+    patchSchemaDirectiveExtensions(subgraph, {
+      composeDirective: composeDirectives,
+    });
+    subgraph = importFederationDirectives(subgraph, ['@composeDirective']);
   }
   return subgraph;
 }

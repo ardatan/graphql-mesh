@@ -14124,6 +14124,7 @@ __metadata:
   resolution: "@omnigraph/mongo@workspace:packages/loaders/mongo"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
+    "@graphql-mesh/fusion-composition": "npm:^0.11.4"
     "@graphql-mesh/transport-mongo": "npm:0.1.0"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
@@ -14145,6 +14146,7 @@ __metadata:
   dependencies:
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-hive/pubsub": "npm:^2.2.1"
+    "@graphql-mesh/fusion-composition": "npm:^0.11.4"
     "@graphql-mesh/transport-neo4j": "npm:^0.13.3"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
@@ -14165,6 +14167,7 @@ __metadata:
   dependencies:
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
+    "@graphql-mesh/fusion-composition": "npm:^0.11.4"
     "@graphql-mesh/store": "npm:^0.107.3"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/transport-common": "npm:^1.1.2"
@@ -14221,6 +14224,7 @@ __metadata:
     "@ardatan/grpc-reflection-js": "npm:^0.0.2"
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
+    "@graphql-mesh/fusion-composition": "npm:^0.11.4"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/transport-common": "npm:^1.1.2"
     "@graphql-mesh/utils": "npm:^0.107.3"
@@ -14269,6 +14273,7 @@ __metadata:
   dependencies:
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
+    "@graphql-mesh/fusion-composition": "npm:^0.11.4"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/transport-common": "npm:^1.1.2"
     "@graphql-mesh/transport-connect": "npm:^0.12.4"
@@ -14292,6 +14297,7 @@ __metadata:
   resolution: "@omnigraph/sql@workspace:packages/loaders/sql"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
+    "@graphql-mesh/fusion-composition": "npm:^0.11.4"
     "@graphql-mesh/transport-sql": "npm:0.1.0"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
@@ -14318,6 +14324,7 @@ __metadata:
     "@creditkarma/thrift-server-core": "npm:^1.0.4"
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
+    "@graphql-mesh/fusion-composition": "npm:^0.11.4"
     "@graphql-mesh/transport-connect": "npm:^0.12.4"
     "@graphql-mesh/transport-thrift": "npm:^0.12.3"
     "@graphql-mesh/types": "npm:^0.107.3"

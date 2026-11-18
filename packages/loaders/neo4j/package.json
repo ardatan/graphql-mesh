@@ -37,6 +37,7 @@
   "dependencies": {
     "@graphql-hive/logger": "^1.1.1",
     "@graphql-hive/pubsub": "^2.2.1",
+    "@graphql-mesh/fusion-composition": "^0.11.4",
     "@graphql-mesh/transport-neo4j": "^0.13.3",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
