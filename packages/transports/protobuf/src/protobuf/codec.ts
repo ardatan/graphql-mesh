@@ -1,0 +1,792 @@
+import {
+  parseThisBind,
+  resolveBind,
+  resolveThisMessageBind,
+  type DualArmPrefer,
+  type MappingField,
+  type ProtoType,
+} from './mapping.js';
+
+const WIRE_VARINT = 0;
+const WIRE_64 = 1;
+const WIRE_LEN = 2;
+const WIRE_32 = 5;
+
+export function encodeMessage(
+  fields: MappingField[],
+  args: Record<string, any>,
+  localRoot: Record<string, any> = args,
+  thisRoot?: Record<string, any>,
+  dualPrefer?: DualArmPrefer,
+): Uint8Array {
+  const chunks: Uint8Array[] = [];
+  for (const field of fields) {
+    writeField(chunks, field, args, localRoot, thisRoot, dualPrefer);
+  }
+  return concat(chunks);
+}
+
+function resolveFieldValue(
+  bind: string | undefined,
+  args: Record<string, any>,
+  localRoot: Record<string, any>,
+  thisRoot?: Record<string, any>,
+  dualPrefer?: DualArmPrefer,
+): any {
+  if (bind == null || bind === '') return undefined;
+  if (bind.startsWith('$args') || bind.startsWith('$this')) {
+    return resolveBind(bind, args, thisRoot, dualPrefer);
+  }
+  return resolveBind(bind, localRoot, thisRoot, dualPrefer);
+}
+
+function writeField(
+  chunks: Uint8Array[],
+  field: MappingField,
+  args: Record<string, any>,
+  localRoot: Record<string, any>,
+  thisRoot?: Record<string, any>,
+  dualPrefer?: DualArmPrefer,
+) {
+  const type = field.type;
+  if (type.kind === 'message') {
+    let childRoot = localRoot;
+    let boundPresent = false;
+    let childPrefer = dualPrefer;
+    if (field.bind != null) {
+      if (parseThisBind(field.bind)) {
+        const resolved = resolveThisMessageBind(field.bind, args, thisRoot);
+        if (resolved.value != null && typeof resolved.value === 'object') {
+          childRoot = resolved.value;
+          boundPresent = true;
+          childPrefer = resolved.dualPrefer;
+        } else if (resolved.value == null) {
+          return;
+        }
+      } else {
+        const bound = resolveFieldValue(field.bind, args, localRoot, thisRoot, dualPrefer);
+        if (bound != null && typeof bound === 'object') {
+          childRoot = bound;
+          boundPresent = true;
+        } else if (bound == null) {
+          // Explicit bind resolved to null/undefined — omit the message.
+          return;
+        }
+      }
+    }
+    const nestedFields = field.fields ?? type.fields;
+    const nested = encodeMessage(nestedFields, args, childRoot, thisRoot, childPrefer);
+    // Proto3: omit empty messages unless the bind resolved to an explicit object (`{}`
+    // still has presence and must be encoded as a zero-length length-delimited field).
+    if (nested.length === 0 && !boundPresent) return;
+    writeTag(chunks, field.id, WIRE_LEN);
+    writeVarint(chunks, nested.length);
+    chunks.push(nested);
+    return;
+  }
+
+  if (type.kind === 'repeated') {
+    let listPrefer = dualPrefer;
+    let list: any;
+    if (field.bind != null && parseThisBind(field.bind)) {
+      const resolved = resolveThisMessageBind(field.bind, args, thisRoot);
+      list = resolved.value;
+      listPrefer = resolved.dualPrefer;
+    } else {
+      list = resolveFieldValue(field.bind, args, localRoot, thisRoot, dualPrefer);
+    }
+    if (!Array.isArray(list)) return;
+    const elementType: ProtoType =
+      type.element.kind === 'message' && field.fields?.length
+        ? { kind: 'message', fields: field.fields }
+        : type.element;
+    for (const item of list) {
+      writeValue(chunks, field.id, elementType, item, listPrefer);
+    }
+    return;
+  }
+
+  let valuePrefer = dualPrefer;
+  let value: any;
+  if (field.bind != null && parseThisBind(field.bind)) {
+    const resolved = resolveThisMessageBind(field.bind, args, thisRoot);
+    value = resolved.value;
+    valuePrefer = resolved.dualPrefer;
+  } else {
+    value = resolveFieldValue(field.bind, args, localRoot, thisRoot, dualPrefer);
+  }
+  if (value === undefined || value === null) return;
+  // Map fields may carry nested message fields on `field.fields` (same as repeated).
+  if (type.kind === 'map' && type.value.kind === 'message' && field.fields?.length) {
+    writeValue(
+      chunks,
+      field.id,
+      { kind: 'map', key: type.key, value: { kind: 'message', fields: field.fields } },
+      value,
+      valuePrefer,
+    );
+    return;
+  }
+  writeValue(chunks, field.id, type, value, valuePrefer);
+}
+
+function writeValue(
+  chunks: Uint8Array[],
+  id: number,
+  type: ProtoType,
+  value: any,
+  dualPrefer?: DualArmPrefer,
+) {
+  if (type.kind === 'scalar') {
+    switch (type.name) {
+      case 'bool':
+        writeTag(chunks, id, WIRE_VARINT);
+        writeVarint(chunks, value ? 1 : 0);
+        return;
+      case 'int32':
+      case 'uint32':
+      case 'int64':
+      case 'uint64':
+        writeTag(chunks, id, WIRE_VARINT);
+        writeVarint(chunks, toLongish(value));
+        return;
+      case 'sint32':
+        writeTag(chunks, id, WIRE_VARINT);
+        writeVarint(chunks, zigzag32(Number(value)));
+        return;
+      case 'sint64':
+        writeTag(chunks, id, WIRE_VARINT);
+        writeVarint(chunks, zigzag64(toLongish(value)));
+        return;
+      case 'fixed32':
+      case 'sfixed32':
+        writeTag(chunks, id, WIRE_32);
+        writeFixed32(chunks, Number(value) >>> 0);
+        return;
+      case 'fixed64':
+      case 'sfixed64':
+        writeTag(chunks, id, WIRE_64);
+        writeFixed64(chunks, toLongish(value));
+        return;
+      case 'float':
+        writeTag(chunks, id, WIRE_32);
+        writeFloat32(chunks, Number(value));
+        return;
+      case 'double':
+        writeTag(chunks, id, WIRE_64);
+        writeFloat64(chunks, Number(value));
+        return;
+      case 'string': {
+        const bytes = new TextEncoder().encode(String(value));
+        writeTag(chunks, id, WIRE_LEN);
+        writeVarint(chunks, bytes.length);
+        chunks.push(bytes);
+        return;
+      }
+      case 'bytes': {
+        const bytes =
+          value instanceof Uint8Array
+            ? value
+            : typeof value === 'string'
+              ? new TextEncoder().encode(value)
+              : new Uint8Array(value);
+        writeTag(chunks, id, WIRE_LEN);
+        writeVarint(chunks, bytes.length);
+        chunks.push(bytes);
+        return;
+      }
+      default: {
+        // All ProtoScalar cases are listed above; `default` is a runtime guard for
+        // hand-written mappings and narrows to `never` under --strict.
+        const scalarName = String((type as { name?: unknown }).name);
+        throw new Error(`Unsupported scalar ${scalarName}`);
+      }
+    }
+  }
+  if (type.kind === 'enum') {
+    const num =
+      typeof value === 'number'
+        ? value
+        : (type.values[String(value)] ?? type.values[String(value).toUpperCase()]);
+    if (num == null) {
+      throw new Error(`Unknown enum value ${value}`);
+    }
+    writeTag(chunks, id, WIRE_VARINT);
+    writeVarint(chunks, num);
+    return;
+  }
+  if (type.kind === 'message') {
+    const nested = encodeMessage(type.fields, value ?? {}, value ?? {}, undefined, dualPrefer);
+    writeTag(chunks, id, WIRE_LEN);
+    writeVarint(chunks, nested.length);
+    chunks.push(nested);
+    return;
+  }
+  if (type.kind === 'map') {
+    // value should be object; each entry is a synthetic message key=1 value=2
+    const obj = value ?? {};
+    for (const [k, v] of Object.entries(obj)) {
+      const entry = encodeMessage(
+        [
+          { id: 1, type: type.key, bind: 'key' },
+          { id: 2, type: type.value, bind: 'value' },
+        ],
+        { key: coerceMapKey(type.key, k), value: v },
+        undefined,
+        undefined,
+        dualPrefer,
+      );
+      writeTag(chunks, id, WIRE_LEN);
+      writeVarint(chunks, entry.length);
+      chunks.push(entry);
+    }
+  }
+}
+
+/** `Object.entries` stringifies keys — restore bool/integral map keys for scalar encoding. */
+function coerceMapKey(keyType: ProtoType, key: string): any {
+  if (keyType.kind === 'scalar' && keyType.name === 'bool') {
+    return key === 'true' || key === '1';
+  }
+  if (
+    keyType.kind === 'scalar' &&
+    (keyType.name === 'int32' ||
+      keyType.name === 'uint32' ||
+      keyType.name === 'sint32' ||
+      keyType.name === 'fixed32' ||
+      keyType.name === 'sfixed32' ||
+      keyType.name === 'int64' ||
+      keyType.name === 'uint64' ||
+      keyType.name === 'sint64' ||
+      keyType.name === 'fixed64' ||
+      keyType.name === 'sfixed64')
+  ) {
+    try {
+      return keyType.name.includes('64') ? BigInt(key) : Number(key);
+    } catch {
+      return key;
+    }
+  }
+  if (keyType.kind === 'enum') {
+    const asNum = Number(key);
+    return Number.isFinite(asNum) ? asNum : key;
+  }
+  return key;
+}
+
+export function decodeMessage(fields: MappingField[], data: Uint8Array): Record<string, any> {
+  return decodeMessageInner(fields, data, true);
+}
+
+/**
+ * Decode wire fields into `out`. Nested message occurrences merge into shared state
+ * without materializing proto3 defaults first — defaults apply once at the outermost call
+ * so an explicit encoded `0`/`false` last-value-wins over an earlier value.
+ */
+function decodeMessageInner(
+  fields: MappingField[],
+  data: Uint8Array,
+  applyDefaults: boolean,
+): Record<string, any> {
+  const byId = new Map(fields.map(f => [f.id, f]));
+  const out: Record<string, any> = {};
+  // Only empty collections are pre-created. Implicit-presence scalars/enums stay absent
+  // until after the wire loop (and after singular-message merges) so presence is exact.
+  for (const field of fields) {
+    const key = field.bind && !field.bind.startsWith('$') ? field.bind : `_${field.id}`;
+    if (field.type.kind === 'repeated') out[key] = [];
+    else if (field.type.kind === 'map') out[key] = Object.create(null);
+  }
+  let i = 0;
+  while (i < data.length) {
+    const tag = readVarint(data, i);
+    i = tag.next;
+    const tagNum = Number(tag.value);
+    const id = tagNum >>> 3;
+    const wire = tagNum & 7;
+    const field = byId.get(id);
+    if (!field) {
+      i = skipWire(data, i, wire);
+      continue;
+    }
+    let typeForRead: ProtoType = field.type;
+    if (field.type.kind === 'message' && field.fields?.length) {
+      typeForRead = { kind: 'message', fields: field.fields };
+    } else if (
+      field.type.kind === 'repeated' &&
+      field.type.element.kind === 'message' &&
+      field.fields?.length
+    ) {
+      typeForRead = {
+        kind: 'repeated',
+        element: { kind: 'message', fields: field.fields },
+      };
+    }
+    const key = field.bind && !field.bind.startsWith('$') ? field.bind : `_${id}`;
+    if (field.type.kind === 'repeated' && wire === WIRE_LEN && isPackable(field.type.element)) {
+      // Packed repeated scalars/enums: one length-delimited blob of concatenated elements.
+      const len = readVarint(data, i);
+      const end = len.next + Number(len.value);
+      if (end > data.length) {
+        throw new Error(
+          `Truncated packed repeated field ${field.id}: end ${end} exceeds buffer ${data.length}`,
+        );
+      }
+      let p = len.next;
+      out[key] = out[key] ?? [];
+      while (p < end) {
+        const el = readValue(data, p, packedElementWire(field.type.element), field.type.element);
+        if (el.next <= p || el.next > end) {
+          throw new Error(
+            `Invalid packed repeated field ${field.id}: element did not advance within payload`,
+          );
+        }
+        p = el.next;
+        out[key].push(el.value);
+      }
+      i = end;
+      continue;
+    }
+    const decoded = readValue(data, i, wire, typeForRead);
+    i = decoded.next;
+    if (field.type.kind === 'map') {
+      const entry = decoded.value as { key: any; value: any };
+      out[key] = out[key] ?? Object.create(null);
+      out[key][entry.key] = entry.value;
+    } else if (field.type.kind === 'repeated') {
+      out[key] = out[key] ?? [];
+      out[key].push(decoded.value);
+    } else if (field.type.kind === 'message') {
+      if (isMergeableObject(out[key]) && isMergeableObject(decoded.value)) {
+        out[key] = mergeMessage(out[key], decoded.value, field.fields);
+      } else {
+        out[key] = decoded.value;
+      }
+    } else {
+      out[key] = decoded.value;
+    }
+  }
+  if (applyDefaults) {
+    applyImplicitPresenceDefaults(fields, out);
+  }
+  // Map enum numbers back to names when bind keys used
+  for (const field of fields) {
+    const key = field.bind && !field.bind.startsWith('$') ? field.bind : `_${field.id}`;
+    if (field.type.kind === 'enum' && out[key] != null && typeof out[key] === 'number') {
+      const name = Object.entries(field.type.values).find(([, n]) => n === out[key])?.[0];
+      if (name) out[key] = name;
+    }
+    if (
+      field.type.kind === 'repeated' &&
+      field.type.element.kind === 'enum' &&
+      Array.isArray(out[key])
+    ) {
+      const enumValues = field.type.element.values;
+      out[key] = out[key].map((n: any) => {
+        if (typeof n !== 'number') return n;
+        return Object.entries(enumValues).find(([, v]) => v === n)?.[0] ?? n;
+      });
+    }
+  }
+  return out;
+}
+
+/** Message / map dictionaries only — not arrays, Buffers, or typed arrays. */
+function isMergeableObject(v: unknown): v is Record<string, any> {
+  return (
+    v != null &&
+    typeof v === 'object' &&
+    !Array.isArray(v) &&
+    !(typeof Buffer !== 'undefined' && Buffer.isBuffer(v)) &&
+    !(v instanceof Uint8Array)
+  );
+}
+
+/** Materialize implicit-presence defaults only for keys still absent after the wire merge. */
+function applyImplicitPresenceDefaults(fields: MappingField[], out: Record<string, any>): void {
+  for (const field of fields) {
+    const key = field.bind && !field.bind.startsWith('$') ? field.bind : `_${field.id}`;
+    if (field.type.kind === 'message' && field.fields?.length && isMergeableObject(out[key])) {
+      applyImplicitPresenceDefaults(field.fields, out[key]);
+      continue;
+    }
+    // Nested message decode uses applyDefaults=false; walk repeated elements and map values.
+    if (
+      field.type.kind === 'repeated' &&
+      field.type.element.kind === 'message' &&
+      field.fields?.length
+    ) {
+      if (Array.isArray(out[key])) {
+        for (const el of out[key]) {
+          if (isMergeableObject(el)) {
+            applyImplicitPresenceDefaults(field.fields, el);
+          }
+        }
+      }
+      continue;
+    }
+    if (field.type.kind === 'map' && field.type.value.kind === 'message' && field.fields?.length) {
+      if (isMergeableObject(out[key])) {
+        for (const v of Object.values(out[key])) {
+          if (isMergeableObject(v)) {
+            applyImplicitPresenceDefaults(field.fields, v);
+          }
+        }
+      }
+      continue;
+    }
+    if (out[key] !== undefined) {
+      continue;
+    }
+    if (field.type.kind === 'scalar' && field.presence !== 'explicit') {
+      out[key] = proto3ScalarDefault(field.type.name);
+    } else if (field.type.kind === 'enum' && field.presence !== 'explicit') {
+      const zero = Object.entries(field.type.values).find(([, n]) => n === 0)?.[0];
+      out[key] = zero ?? 0;
+    }
+  }
+}
+
+/**
+ * Merge singular message occurrences (protobuf encoding). Later wire values win for
+ * scalars/bytes; nested messages recurse; maps union keys with last-wins values (no
+ * recursive merge of duplicate map message values). Repeated fields concatenate.
+ * Null-prototype accumulator keeps map keys like `__proto__` as own data.
+ */
+function mergeMessage(
+  a: Record<string, any>,
+  b: Record<string, any>,
+  fields?: MappingField[],
+): Record<string, any> {
+  const out = Object.create(null) as Record<string, any>;
+  for (const k of Object.keys(a)) {
+    out[k] = a[k];
+  }
+  const byBind = new Map<string, MappingField>();
+  if (fields?.length) {
+    for (const f of fields) {
+      const bindKey = f.bind && !f.bind.startsWith('$') ? f.bind : `_${f.id}`;
+      byBind.set(bindKey, f);
+    }
+  }
+  for (const k of Object.keys(b)) {
+    const field = byBind.get(k);
+    if (field?.type.kind === 'map' && isMergeableObject(out[k]) && isMergeableObject(b[k])) {
+      // Protobuf maps: duplicate keys last-win; replace the entire value (do not merge messages).
+      const merged = Object.create(null) as Record<string, any>;
+      for (const mk of Object.keys(out[k])) {
+        merged[mk] = out[k][mk];
+      }
+      for (const mk of Object.keys(b[k])) {
+        merged[mk] = b[k][mk];
+      }
+      out[k] = merged;
+    } else if (
+      field?.type.kind === 'message' &&
+      isMergeableObject(out[k]) &&
+      isMergeableObject(b[k])
+    ) {
+      out[k] = mergeMessage(out[k], b[k], field.fields);
+    } else if (Array.isArray(out[k]) && Array.isArray(b[k])) {
+      // Singular-message merges concatenate repeated fields (empty later arrays must not wipe).
+      out[k] = out[k].concat(b[k]);
+    } else if (!field && isMergeableObject(out[k]) && isMergeableObject(b[k])) {
+      // Untyped fallback (no field list): treat as nested message.
+      out[k] = mergeMessage(out[k], b[k]);
+    } else {
+      out[k] = b[k];
+    }
+  }
+  return out;
+}
+
+function assertLengthDelimitedEnd(end: number, data: Uint8Array, label?: string): void {
+  if (end > data.length) {
+    const detail = label ? ` ${label}` : '';
+    throw new Error(
+      `Truncated length-delimited field${detail}: end ${end} exceeds buffer ${data.length}`,
+    );
+  }
+}
+
+function assertFixedWidthAvailable(data: Uint8Array, i: number, width: number): void {
+  if (i + width > data.length) {
+    throw new Error(
+      `Truncated fixed${width * 8} field: need ${width} bytes at ${i}, buffer length ${data.length}`,
+    );
+  }
+}
+
+function proto3ScalarDefault(name: string): any {
+  switch (name) {
+    case 'bool':
+      return false;
+    case 'string':
+      return '';
+    case 'bytes':
+      return Buffer.alloc(0);
+    case 'float':
+    case 'double':
+      return 0;
+    case 'int32':
+    case 'sint32':
+    case 'uint32':
+    case 'fixed32':
+    case 'sfixed32':
+      return 0;
+    case 'int64':
+    case 'sint64':
+    case 'uint64':
+    case 'fixed64':
+    case 'sfixed64':
+      return 0;
+    default:
+      return null;
+  }
+}
+
+function isPackable(type: ProtoType): boolean {
+  if (type.kind === 'enum') return true;
+  if (type.kind !== 'scalar') return false;
+  return type.name !== 'string' && type.name !== 'bytes';
+}
+
+function packedElementWire(type: ProtoType): number {
+  if (type.kind === 'enum') return WIRE_VARINT;
+  if (type.kind !== 'scalar') return WIRE_VARINT;
+  switch (type.name) {
+    case 'float':
+    case 'fixed32':
+    case 'sfixed32':
+      return WIRE_32;
+    case 'double':
+    case 'fixed64':
+    case 'sfixed64':
+      return WIRE_64;
+    default:
+      return WIRE_VARINT;
+  }
+}
+
+function readValue(
+  data: Uint8Array,
+  i: number,
+  wire: number,
+  type: ProtoType,
+): { value: any; next: number; raw?: Uint8Array } {
+  if (type.kind === 'repeated') {
+    // element fields carried on parent MappingField are applied by caller via typeForRead
+    return readValue(data, i, wire, type.element);
+  }
+  if (type.kind === 'map') {
+    const len = readVarint(data, i);
+    const end = len.next + Number(len.value);
+    assertLengthDelimitedEnd(end, data, 'map entry');
+    const raw = data.subarray(len.next, end);
+    const entry = decodeMessage(
+      [
+        { id: 1, type: type.key, bind: 'key' },
+        { id: 2, type: type.value, bind: 'value' },
+      ],
+      raw,
+    );
+    return { value: entry, next: end, raw };
+  }
+  if (
+    type.kind === 'message' ||
+    (type.kind === 'scalar' && (type.name === 'string' || type.name === 'bytes'))
+  ) {
+    const len = readVarint(data, i);
+    const end = len.next + Number(len.value);
+    assertLengthDelimitedEnd(end, data);
+    const raw = data.subarray(len.next, end);
+    if (type.kind === 'scalar' && type.name === 'string') {
+      return { value: new TextDecoder().decode(raw), next: end, raw };
+    }
+    if (type.kind === 'scalar' && type.name === 'bytes') {
+      // graphql-scalars `Byte` validates `Buffer` instances (not bare Uint8Array).
+      return { value: Buffer.from(raw), next: end, raw };
+    }
+    if (type.kind !== 'message') {
+      throw new Error('Expected message type after length-delimited scalar branch');
+    }
+    // Nested occurrences stay wire-only; the outermost decode applies defaults after merge.
+    return { value: decodeMessageInner(type.fields, raw, false), next: end, raw };
+  }
+  if (wire === WIRE_VARINT) {
+    const v = readVarint(data, i);
+    let value: number | bigint | boolean = v.value;
+    if (type.kind === 'scalar' && type.name === 'sint32') value = unzigzag32(Number(v.value));
+    else if (type.kind === 'scalar' && type.name === 'sint64') value = unzigzag64(v.value);
+    else if (type.kind === 'scalar' && type.name === 'bool') value = Number(v.value) !== 0;
+    else if (type.kind === 'enum') {
+      // Proto enums are int32 on the wire — signed interpretation so -1 matches enum maps.
+      value = Number(BigInt.asIntN(32, v.value));
+    } else if (type.kind === 'scalar' && type.name === 'int32') {
+      value = Number(BigInt.asIntN(32, v.value));
+    } else if (type.kind === 'scalar' && type.name === 'uint32') {
+      value = Number(BigInt.asUintN(32, v.value));
+    } else if (type.kind === 'scalar' && type.name === 'int64') {
+      const signed = BigInt.asIntN(64, v.value);
+      const asNum = Number(signed);
+      value = BigInt(asNum) === signed && Number.isSafeInteger(asNum) ? asNum : signed;
+    } else if (type.kind === 'scalar' && type.name === 'uint64') {
+      const unsigned = BigInt.asUintN(64, v.value);
+      const asNum = Number(unsigned);
+      value = BigInt(asNum) === unsigned && Number.isSafeInteger(asNum) ? asNum : unsigned;
+    }
+    return { value, next: v.next };
+  }
+  if (wire === WIRE_32) {
+    assertFixedWidthAvailable(data, i, 4);
+    const view = new DataView(data.buffer, data.byteOffset + i, 4);
+    let value: number;
+    if (type.kind === 'scalar' && type.name === 'float') value = view.getFloat32(0, true);
+    else if (type.kind === 'scalar' && type.name === 'sfixed32') value = view.getInt32(0, true);
+    else value = view.getUint32(0, true);
+    return { value, next: i + 4 };
+  }
+  if (wire === WIRE_64) {
+    assertFixedWidthAvailable(data, i, 8);
+    const view = new DataView(data.buffer, data.byteOffset + i, 8);
+    let value: number | bigint;
+    if (type.kind === 'scalar' && type.name === 'double') value = view.getFloat64(0, true);
+    else if (type.kind === 'scalar' && type.name === 'sfixed64') {
+      const signed = view.getBigInt64(0, true);
+      const asNum = Number(signed);
+      value = BigInt(asNum) === signed && Number.isSafeInteger(asNum) ? asNum : signed;
+    } else value = view.getBigUint64(0, true);
+    return { value, next: i + 8 };
+  }
+  if (wire === WIRE_LEN) {
+    const len = readVarint(data, i);
+    const n = Number(len.value);
+    const end = len.next + n;
+    assertLengthDelimitedEnd(end, data);
+    return { value: data.subarray(len.next, end), next: end };
+  }
+  throw new Error(`Unsupported wire type ${wire}`);
+}
+
+function skipWire(data: Uint8Array, i: number, wire: number): number {
+  if (wire === WIRE_VARINT) return readVarint(data, i).next;
+  if (wire === WIRE_64) {
+    assertFixedWidthAvailable(data, i, 8);
+    return i + 8;
+  }
+  if (wire === WIRE_32) {
+    assertFixedWidthAvailable(data, i, 4);
+    return i + 4;
+  }
+  if (wire === WIRE_LEN) {
+    const len = readVarint(data, i);
+    const end = len.next + Number(len.value);
+    assertLengthDelimitedEnd(end, data);
+    return end;
+  }
+  throw new Error(`Cannot skip wire type ${wire}`);
+}
+
+function writeTag(chunks: Uint8Array[], id: number, wire: number) {
+  writeVarint(chunks, ((id << 3) | wire) >>> 0);
+}
+
+function writeVarint(chunks: Uint8Array[], value: number | bigint) {
+  let n = typeof value === 'bigint' ? value : BigInt(Math.trunc(Number(value)));
+  if (n < 0n) {
+    n = (1n << 64n) + n;
+  }
+  const out: number[] = [];
+  while (n > 0x7fn) {
+    out.push(Number((n & 0x7fn) | 0x80n));
+    n >>= 7n;
+  }
+  out.push(Number(n));
+  chunks.push(Uint8Array.from(out));
+}
+
+function readVarint(data: Uint8Array, i: number): { value: bigint; next: number } {
+  // Protobuf varints are at most 10 bytes for a 64-bit value (7*9 + 1 bits of payload).
+  let result = 0n;
+  let shift = 0n;
+  let pos = i;
+  for (let n = 0; n < 10; n++) {
+    if (pos >= data.length) {
+      throw new Error(`Truncated varint: buffer ended at ${pos} before terminating byte`);
+    }
+    const b = data[pos++];
+    if (n === 9) {
+      // Tenth byte may only carry the final bit of a 64-bit value (payload 0 or 1).
+      if ((b & 0x80) !== 0 || (b & 0x7f) > 1) {
+        throw new Error(`Invalid varint: tenth byte 0x${b.toString(16)} exceeds 64-bit range`);
+      }
+      result |= BigInt(b & 0x7f) << shift;
+      return { value: result, next: pos };
+    }
+    result |= BigInt(b & 0x7f) << shift;
+    if ((b & 0x80) === 0) {
+      return { value: result, next: pos };
+    }
+    shift += 7n;
+  }
+  throw new Error('Invalid varint: unterminated after 10 bytes');
+}
+
+function writeFixed32(chunks: Uint8Array[], value: number) {
+  const buf = new Uint8Array(4);
+  new DataView(buf.buffer).setUint32(0, value, true);
+  chunks.push(buf);
+}
+
+function writeFixed64(chunks: Uint8Array[], value: number | bigint) {
+  const buf = new Uint8Array(8);
+  new DataView(buf.buffer).setBigUint64(0, BigInt(value), true);
+  chunks.push(buf);
+}
+
+function writeFloat32(chunks: Uint8Array[], value: number) {
+  const buf = new Uint8Array(4);
+  new DataView(buf.buffer).setFloat32(0, value, true);
+  chunks.push(buf);
+}
+
+function writeFloat64(chunks: Uint8Array[], value: number) {
+  const buf = new Uint8Array(8);
+  new DataView(buf.buffer).setFloat64(0, value, true);
+  chunks.push(buf);
+}
+
+function zigzag32(n: number): number {
+  // Force uint32 so the varint encoder sees an unsigned ZigZag payload.
+  return ((n << 1) ^ (n >> 31)) >>> 0;
+}
+
+function zigzag64(n: number | bigint): bigint {
+  const v = BigInt(n);
+  return (v << 1n) ^ (v >> 63n);
+}
+
+function unzigzag32(n: number): number {
+  return (n >>> 1) ^ -(n & 1);
+}
+
+function unzigzag64(n: bigint): bigint {
+  return (n >> 1n) ^ -(n & 1n);
+}
+
+function toLongish(value: any): number | bigint {
+  if (typeof value === 'bigint') return value;
+  if (typeof value === 'string') return BigInt(value);
+  return Math.trunc(Number(value));
+}
+
+function concat(chunks: Uint8Array[]): Uint8Array {
+  const len = chunks.reduce((a, c) => a + c.length, 0);
+  const out = new Uint8Array(len);
+  let o = 0;
+  for (const c of chunks) {
+    out.set(c, o);
+    o += c.length;
+  }
+  return out;
+}

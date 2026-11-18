@@ -425,6 +425,29 @@ describe('migrateLegacyConfig', () => {
     expect(result.code).not.toContain('ru');
   });
 
+  it('adds protobuf transport when migrating grpc handlers', async () => {
+    const result = await migrate({
+      sources: [
+        {
+          name: 'Movies',
+          handler: {
+            grpc: {
+              endpoint: 'localhost:50051',
+              source: './movies.proto',
+            },
+          },
+        },
+      ],
+    });
+
+    expect(result.fatal).toBe(false);
+    expect(result.code).toContain('loadProtobufSubgraph');
+    expect(result.addedPackages).toEqual(
+      expect.arrayContaining(['@omnigraph/protobuf', '@graphql-mesh/transport-protobuf']),
+    );
+    expect(result.removedPackages).toEqual(expect.arrayContaining(['@graphql-mesh/grpc']));
+  });
+
   it('emits named imports before skipSSLValidation assignment', async () => {
     const result = await migrate({
       sources: [

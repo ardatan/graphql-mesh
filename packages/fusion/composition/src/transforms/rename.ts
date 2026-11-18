@@ -1,5 +1,8 @@
 import {
+  getNamedType,
   GraphQLObjectType,
+  isInterfaceType,
+  isObjectType,
   isSpecifiedScalarType,
   type GraphQLFieldConfig,
   type GraphQLFieldConfigArgumentMap,
@@ -16,7 +19,12 @@ import {
   type SchemaMapper,
 } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
-import { rewriteConnectArgReferences, withOriginalKeyFallback } from './utils.js';
+import {
+  rewriteConnectArgReferences,
+  rewriteProtobufMappingBindsTypeScoped,
+  rewriteProtobufThisBindsDual,
+  withOriginalKeyFallback,
+} from './utils.js';
 
 export const ignoreList = [
   'Int',
@@ -218,6 +226,8 @@ export function createRenameTransform(opts: RenameTransformConfig) {
       };
     }
     const fieldRenameMap = new Map<string, Map<string, string>>();
+    /** Public `Type.field` → arg rename map (for root-field `$this` args fallback). */
+    const argRenamesByPublicField = new Map<string, Map<string, string>>();
     schemaMapper[MapperKind.FIELD] = (field, fieldName, typeName, schema) => {
       let newFieldName = fieldName;
       if (fieldRenamers.length) {
@@ -278,11 +288,18 @@ export function createRenameTransform(opts: RenameTransformConfig) {
           newArgs[newArgName] = field.args[argName];
         }
       }
+      if (argRenameMap.size) {
+        const publicType = typeRenameMap.get(typeName) ?? typeName;
+        argRenamesByPublicField.set(`${publicType}.${newFieldName}`, argRenameMap);
+      }
+      // Connectors skip Mesh `@source`; rewrite `$args.*` / `__typename` here.
+      // Protobuf `$args` / nested binds wait for `applyProtobufFieldRenames` (one pass).
       const rewrittenDirectives = rewriteConnectArgReferences(
         fieldDirectives,
         argRenameMap,
         undefined,
         typeRenameMap.size ? typeRenameMap : undefined,
+        false,
       );
       if (rewrittenDirectives !== fieldDirectives || newArgs) {
         const fieldExtensions: Record<string, any> = { ...(field.extensions || {}) };
@@ -306,8 +323,206 @@ export function createRenameTransform(opts: RenameTransformConfig) {
       }
       return [newFieldName, withOriginalKeyFallback(field, fieldName, newFieldName)];
     };
-    return mapSchema(schema, schemaMapper);
+    let nextSchema = mapSchema(schema, schemaMapper);
+    // Object/input field renames: rewrite `@protobuf__rpc` args/selection path segments
+    // across the subgraph (Connect-like; no Mesh `@source` fallback).
+    // Keep renames type-scoped so `Review.year→publicationYear` does not rewrite `Movie.year`.
+    // Also rewrite object-level entity RPCs (type directives), not only field-level.
+    // Field mappers record renames under the pre-rename type name; rekey to the public
+    // type name so object-level `$this.*` / selection lookups hit after type rename.
+    // Build a fresh map so chained type renames (Pet→Animal, Animal→Creature) each
+    // apply once from the original key and do not depend on iteration order.
+    if (fieldRenameMap.size && typeRenameMap.size) {
+      const rekeyed = new Map<string, Map<string, string>>();
+      for (const [originalName, fields] of fieldRenameMap) {
+        const publicName = typeRenameMap.get(originalName) ?? originalName;
+        let dest = rekeyed.get(publicName);
+        if (!dest) {
+          dest = new Map();
+          rekeyed.set(publicName, dest);
+        }
+        for (const [oldField, newField] of fields) {
+          dest.set(oldField, newField);
+        }
+      }
+      fieldRenameMap.clear();
+      for (const [typeName, fields] of rekeyed) {
+        fieldRenameMap.set(typeName, fields);
+      }
+    }
+    if (fieldRenameMap.size || argRenamesByPublicField.size) {
+      nextSchema = mapSchema(nextSchema, {
+        [MapperKind.ROOT_FIELD]: (field, fieldName, typeName, s) =>
+          applyProtobufFieldRenames(
+            field,
+            fieldRenameMap,
+            s,
+            typeName,
+            argRenamesByPublicField.get(`${typeName}.${fieldName}`),
+          ),
+        [MapperKind.OBJECT_FIELD]: (field, fieldName, typeName, s) =>
+          applyProtobufFieldRenames(
+            field,
+            fieldRenameMap,
+            s,
+            typeName,
+            argRenamesByPublicField.get(`${typeName}.${fieldName}`),
+          ),
+        [MapperKind.OBJECT_TYPE]: (type, s) => applyProtobufTypeRenames(type, fieldRenameMap, s),
+      });
+    }
+    return nextSchema;
   };
+}
+
+export function applyProtobufFieldRenames(
+  field: GraphQLFieldConfig<any, any>,
+  fieldRenameMap: Map<string, Map<string, string>>,
+  schema: GraphQLSchema,
+  parentTypeName?: string,
+  argRenameMap?: Map<string, string>,
+): GraphQLFieldConfig<any, any> {
+  if (!fieldRenameMap.size && !argRenameMap?.size) {
+    return field;
+  }
+  const fieldDirectives = getDirectiveExtensions(field, schema);
+  const protobufKey = fieldDirectives?.protobuf__rpc?.length
+    ? 'protobuf__rpc'
+    : fieldDirectives?.protobufRpc?.length
+      ? 'protobufRpc'
+      : undefined;
+  if (!protobufKey) {
+    return field;
+  }
+
+  const returnType = getNamedType(field.type);
+  const argTypes = new Map<string, GraphQLNamedType>();
+  if (field.args) {
+    for (const [argName, arg] of Object.entries(field.args)) {
+      argTypes.set(argName, getNamedType(arg.type));
+    }
+  }
+  const parentType = parentTypeName ? schema.getType(parentTypeName) : undefined;
+  const rootTypes = getRootTypes(schema);
+  const parentIsRoot = Boolean(parentType && rootTypes.has(parentType as any));
+  // Non-root owner supplies parent field renames for `$this` dual binds.
+  const thisOwnerType =
+    parentType && !parentIsRoot && (isObjectType(parentType) || isInterfaceType(parentType))
+      ? parentType
+      : undefined;
+  const parentFieldRenames = thisOwnerType ? fieldRenameMap.get(thisOwnerType.name) : undefined;
+
+  let protobufChanged = false;
+  const rewrittenRpc = fieldDirectives[protobufKey].map((rpcArgs: any) => {
+    let args = rpcArgs?.args;
+    let selection = rpcArgs?.selection;
+    if (typeof args === 'string') {
+      // Nested input / relative binds; leave `$this` paths for the dual-bind pass.
+      // Pass parent owner so `$this.<field>` nested renames use the parent field type;
+      // `argTypes` remains the fallback when there is no parent (root fields).
+      if (fieldRenameMap.size || argRenameMap?.size || argTypes.size) {
+        args = rewriteProtobufMappingBindsTypeScoped(args, fieldRenameMap, {
+          argTypes,
+          argRenameMap,
+          skipThisBinds: true,
+          rootType: thisOwnerType,
+        });
+      }
+      // Dual `$this.<parent>|$args.<arg>` when parent field and arg renames diverge.
+      // Nested parent paths walk owning GraphQL types (e.g. `$this.address.street_name`).
+      if (
+        parentFieldRenames?.size ||
+        argRenameMap?.size ||
+        (thisOwnerType && fieldRenameMap.size) ||
+        (fieldRenameMap.size && argTypes.size)
+      ) {
+        args = rewriteProtobufThisBindsDual(args, {
+          parentRenames: parentFieldRenames,
+          argRenames: argRenameMap,
+          fieldRenameMap,
+          ownerType: thisOwnerType ?? null,
+          argTypes,
+        });
+      }
+    }
+    if (typeof selection === 'string' && returnType && fieldRenameMap.size) {
+      selection = rewriteProtobufMappingBindsTypeScoped(selection, fieldRenameMap, {
+        rootType: returnType,
+      });
+    }
+    if (args === rpcArgs?.args && selection === rpcArgs?.selection) {
+      return rpcArgs;
+    }
+    protobufChanged = true;
+    return { ...rpcArgs, args, selection };
+  });
+  if (!protobufChanged) {
+    return field;
+  }
+  return {
+    ...field,
+    extensions: {
+      ...(field.extensions || {}),
+      directives: {
+        ...fieldDirectives,
+        [protobufKey]: rewrittenRpc,
+      },
+    },
+    astNode: undefined,
+  };
+}
+
+/** Object-level `@protobuf__rpc` (entity / type-level) — rewrite selection + `$this` against the owning type. */
+export function applyProtobufTypeRenames(
+  type: GraphQLObjectType,
+  fieldRenameMap: Map<string, Map<string, string>>,
+  schema: GraphQLSchema,
+): GraphQLObjectType {
+  if (!fieldRenameMap.size) {
+    return type;
+  }
+  const typeDirectives = getDirectiveExtensions(type, schema);
+  const protobufKey = typeDirectives?.protobuf__rpc?.length
+    ? 'protobuf__rpc'
+    : typeDirectives?.protobufRpc?.length
+      ? 'protobufRpc'
+      : undefined;
+  if (!protobufKey) {
+    return type;
+  }
+
+  let protobufChanged = false;
+  const rewrittenRpc = typeDirectives[protobufKey].map((rpcArgs: any) => {
+    let args = rpcArgs?.args;
+    let selection = rpcArgs?.selection;
+    if (typeof args === 'string') {
+      args = rewriteProtobufMappingBindsTypeScoped(args, fieldRenameMap, { rootType: type });
+    }
+    if (typeof selection === 'string') {
+      selection = rewriteProtobufMappingBindsTypeScoped(selection, fieldRenameMap, {
+        rootType: type,
+      });
+    }
+    if (args === rpcArgs?.args && selection === rpcArgs?.selection) {
+      return rpcArgs;
+    }
+    protobufChanged = true;
+    return { ...rpcArgs, args, selection };
+  });
+  if (!protobufChanged) {
+    return type;
+  }
+  return new GraphQLObjectType({
+    ...type.toConfig(),
+    extensions: {
+      ...(type.extensions || {}),
+      directives: {
+        ...typeDirectives,
+        [protobufKey]: rewrittenRpc,
+      },
+    },
+    astNode: undefined,
+  });
 }
 
 type MapperTypeKind =
@@ -467,6 +682,17 @@ export function createRenameFieldTransform(
       fieldExtensions.directives = fieldDirectives;
       return field;
     }
-    return mapSchema(mapSchema(schema, fieldRenameMapper), resolverUpdaterMapper);
+    let nextSchema = mapSchema(mapSchema(schema, fieldRenameMapper), resolverUpdaterMapper);
+    // Same type-scoped protobuf bind rewrite as `createRenameTransform`.
+    if (fieldRenameMap.size) {
+      nextSchema = mapSchema(nextSchema, {
+        [MapperKind.ROOT_FIELD]: (field, _n, typeName, s) =>
+          applyProtobufFieldRenames(field, fieldRenameMap, s, typeName),
+        [MapperKind.OBJECT_FIELD]: (field, _n, typeName, s) =>
+          applyProtobufFieldRenames(field, fieldRenameMap, s, typeName),
+        [MapperKind.OBJECT_TYPE]: (type, s) => applyProtobufTypeRenames(type, fieldRenameMap, s),
+      });
+    }
+    return nextSchema;
   };
 }

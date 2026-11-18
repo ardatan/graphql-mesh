@@ -64,6 +64,10 @@ export async function migrateLegacyConfig(
     addImport(importMap, handlerInfo.packageName, handlerInfo.importName);
     removedPackages.add(handlerInfo.oldPackageName);
     addedPackages.add(handlerInfo.packageName);
+    // Protobuf loader does not depend on the transport; gateways need both packages.
+    if (handlerName === 'grpc') {
+      addedPackages.add('@graphql-mesh/transport-protobuf');
+    }
 
     const mappedHandler = mapHandlerConfig(
       handlerName,
@@ -395,7 +399,22 @@ function mapHandlerConfig(
   handlerConfig: any,
   messages: MigrationMessage[],
 ): unknown | undefined {
-  if (handlerName !== 'graphql' || handlerConfig == null || typeof handlerConfig !== 'object') {
+  if (handlerConfig == null || typeof handlerConfig !== 'object') {
+    return handlerConfig;
+  }
+  if (handlerName === 'grpc') {
+    const source = typeof handlerConfig.source === 'string' ? handlerConfig.source : undefined;
+    if (source?.endsWith('.graphql') || source?.endsWith('.gql')) {
+      messages.push({
+        level: 'error',
+        message:
+          'grpc handler "source" pointing at a .graphql/.gql SDL file cannot be migrated to loadProtobufSubgraph (that loader expects .proto / reflection). Recompose the subgraph from protobuf descriptors so @protobuf__rpc mappings are emitted, or point source at a .proto / proto file set.',
+      });
+      return undefined;
+    }
+    return handlerConfig;
+  }
+  if (handlerName !== 'graphql') {
     return handlerConfig;
   }
   if ('sources' in handlerConfig) {
@@ -423,9 +442,9 @@ const handlerInfoMap: Record<
     importName: 'loadGraphQLHTTPSubgraph',
   },
   grpc: {
-    packageName: '@omnigraph/grpc',
+    packageName: '@omnigraph/protobuf',
     oldPackageName: '@graphql-mesh/grpc',
-    importName: 'loadGRPCSubgraph',
+    importName: 'loadProtobufSubgraph',
   },
   jsonSchema: {
     packageName: '@omnigraph/json-schema',

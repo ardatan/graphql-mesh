@@ -1,0 +1,42 @@
+import { Opts } from '@e2e/opts';
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
+import {
+  createNamingConventionTransform,
+  defineConfig as defineComposeConfig,
+} from '@graphql-mesh/compose-cli';
+import { loadProtobufSubgraph } from '@omnigraph/protobuf';
+
+const opts = Opts(process.argv);
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadProtobufSubgraph('movies', {
+        type: 'grpc',
+        endpoint: 'localhost:' + opts.getServicePort('movies'),
+        metaData: {
+          someKey: 'someValue',
+          'connection-type': '{context.headers.connection}',
+        },
+        source: {
+          file: './services/movies/proto/service.proto',
+          load: {
+            defaults: true,
+          },
+        },
+      }),
+      transforms: [
+        createNamingConventionTransform({
+          fieldNames: 'camelCase',
+        }),
+      ],
+    },
+  ],
+});
+
+export const gatewayConfig = defineGatewayConfig({
+  deferStream: true,
+  transports: {
+    protobuf: import('@graphql-mesh/transport-protobuf'),
+  },
+});

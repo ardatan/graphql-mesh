@@ -30,6 +30,7 @@ import {
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
 import { bakeConnectEnumsInTransform } from './connect-enum-bake.js';
+import { applyProtobufFieldRenames, applyProtobufTypeRenames } from './rename.js';
 import { rewriteConnectArgReferences, withOriginalKeyFallback } from './utils.js';
 
 const EnumValueDirective = new GraphQLDirective({
@@ -141,12 +142,24 @@ export function createNamingConventionTransform(
       });
     };
   }
+  /** Type-scoped field renames so `Movie.GET→get` does not rewrite `ConnectHTTP.GET`. */
+  const fieldRenameMap = new Map<string, Map<string, string>>();
+  /** Public `Type.field` → arg rename map (for root-field `$this` args fallback). */
+  const argRenamesByPublicField = new Map<string, Map<string, string>>();
   if (fieldNamesFn || fieldArgumentNamesFn || enumValuesFn || typeNamesFn) {
     schemaMapper[MapperKind.FIELD] = (fieldConfig, fieldName, typeName) => {
       // Keep Connectors HTTP method / baseURL field names intact.
       const newFieldName = CONNECTORS_INPUT_TYPES.has(typeName)
         ? fieldName
         : fieldNamesFn?.(fieldName) || fieldName;
+      if (newFieldName !== fieldName) {
+        let typeFieldRenameMap = fieldRenameMap.get(typeName);
+        if (!typeFieldRenameMap) {
+          typeFieldRenameMap = new Map();
+          fieldRenameMap.set(typeName, typeFieldRenameMap);
+        }
+        typeFieldRenameMap.set(fieldName, newFieldName);
+      }
       const fieldDirectives = getDirectiveExtensions(fieldConfig);
       const argRenameMap = new Map<string, string>();
       let newArgs: GraphQLFieldConfigArgumentMap | undefined;
@@ -174,11 +187,17 @@ export function createNamingConventionTransform(
           };
         }
       }
+      if (argRenameMap.size) {
+        const publicType = typeRenameMap.get(typeName) ?? typeName;
+        argRenamesByPublicField.set(`${publicType}.${newFieldName}`, argRenameMap);
+      }
+      // Defer protobuf `$args` rewrites to `applyProtobufFieldRenames` (single pass).
       const rewrittenDirectives = rewriteConnectArgReferences(
         fieldDirectives,
         argRenameMap,
         undefined,
         typeRenameMap.size ? typeRenameMap : undefined,
+        false,
       );
       if (rewrittenDirectives !== fieldDirectives || newArgs) {
         const fieldExtensions: Record<string, any> = { ...(fieldConfig.extensions || {}) };
@@ -256,7 +275,101 @@ export function createNamingConventionTransform(
       }
     }
     const connectors = schemaUsesConnect(schema);
+    fieldRenameMap.clear();
+    argRenamesByPublicField.clear();
     let next = mapSchema(schema, schemaMapper);
+    if (fieldRenameMap.size && typeRenameMap.size) {
+      const rekeyed = new Map<string, Map<string, string>>();
+      for (const [originalName, fields] of fieldRenameMap) {
+        const publicName = typeRenameMap.get(originalName) ?? originalName;
+        let dest = rekeyed.get(publicName);
+        if (!dest) {
+          dest = new Map();
+          rekeyed.set(publicName, dest);
+        }
+        for (const [oldField, newField] of fields) {
+          dest.set(oldField, newField);
+        }
+      }
+      fieldRenameMap.clear();
+      for (const [typeName, fields] of rekeyed) {
+        fieldRenameMap.set(typeName, fields);
+      }
+    }
+    // Protobuf binds even when only args rename (no field renames): dual `$this|$args`.
+    if (fieldRenameMap.size || argRenamesByPublicField.size) {
+      // Type-scoped so ConnectHTTP.GET is not rewritten by Movie.GET→get.
+      next = mapSchema(next, {
+        [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName, typeName, s) =>
+          applyProtobufFieldRenames(
+            fieldConfig,
+            fieldRenameMap,
+            s,
+            typeName,
+            argRenamesByPublicField.get(`${typeName}.${fieldName}`),
+          ),
+        [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName, s) =>
+          applyProtobufFieldRenames(
+            fieldConfig,
+            fieldRenameMap,
+            s,
+            typeName,
+            argRenamesByPublicField.get(`${typeName}.${fieldName}`),
+          ),
+        [MapperKind.OBJECT_TYPE]: (type, s) => applyProtobufTypeRenames(type, fieldRenameMap, s),
+      });
+    }
+    if (fieldRenameMap.size) {
+      // Connect selection picks still use a flat name map; skip flat protobuf nested renames.
+      const flatFieldRenameMap = new Map<string, string>();
+      for (const fields of fieldRenameMap.values()) {
+        for (const [from, to] of fields) {
+          if (!flatFieldRenameMap.has(from)) {
+            flatFieldRenameMap.set(from, to);
+          }
+        }
+      }
+      if (flatFieldRenameMap.size) {
+        next = mapSchema(next, {
+          [MapperKind.ROOT_FIELD]: (fieldConfig, _n, _t, s) => {
+            const fieldDirectives = getDirectiveExtensions(fieldConfig, s);
+            const rewritten = rewriteConnectArgReferences(
+              fieldDirectives,
+              new Map(),
+              flatFieldRenameMap,
+              undefined,
+              false,
+            );
+            if (!rewritten || rewritten === fieldDirectives) {
+              return fieldConfig;
+            }
+            return {
+              ...fieldConfig,
+              extensions: { ...(fieldConfig.extensions || {}), directives: rewritten },
+              astNode: undefined,
+            };
+          },
+          [MapperKind.OBJECT_FIELD]: (fieldConfig, _n, _t, s) => {
+            const fieldDirectives = getDirectiveExtensions(fieldConfig, s);
+            const rewritten = rewriteConnectArgReferences(
+              fieldDirectives,
+              new Map(),
+              flatFieldRenameMap,
+              undefined,
+              false,
+            );
+            if (!rewritten || rewritten === fieldDirectives) {
+              return fieldConfig;
+            }
+            return {
+              ...fieldConfig,
+              extensions: { ...(fieldConfig.extensions || {}), directives: rewritten },
+              astNode: undefined,
+            };
+          },
+        });
+      }
+    }
     if (enumValuesFn && !connectors && !next.getDirective('enum')) {
       const config = next.toConfig();
       next = new GraphQLSchema({

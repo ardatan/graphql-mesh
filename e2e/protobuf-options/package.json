@@ -1,0 +1,15 @@
+{
+  "name": "@e2e/protobuf-options",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@graphql-hive/gateway": "^2.15.8",
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/transport-protobuf": "workspace:*",
+    "@grpc/grpc-js": "^1.14.5",
+    "@grpc/proto-loader": "^0.8.1",
+    "@grpc/reflection": "^1.0.4",
+    "@omnigraph/protobuf": "workspace:*",
+    "graphql": "16.14.0"
+  }
+}
