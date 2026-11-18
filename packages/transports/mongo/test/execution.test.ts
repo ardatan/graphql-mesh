@@ -248,31 +248,39 @@ describe('getMongoExecutor FIND_* + writes', () => {
     const executor = getMongoExecutor({ subgraph: schema, client });
     const nestedEmpty = '{ and: [{ and: [] }] }';
 
-    await execResult(executor, {
+    lastUpdateFilter = undefined;
+    const updateManyRes = await execResult(executor, {
       document: parse(
         `mutation { updateManyUsers(filter: ${nestedEmpty}, update: { set: { name: "x" } }) { matchedCount } }`,
       ),
     });
+    expect(updateManyRes.errors).toBeUndefined();
     // Vacuous nested `and` is universal; bulk guard still neutralizes.
     expect(lastUpdateFilter).toEqual({ $nor: [{}] });
 
-    await execResult(executor, {
+    lastDeleteFilter = undefined;
+    const deleteNested = await execResult(executor, {
       document: parse(`mutation { deleteManyUsers(filter: ${nestedEmpty}) { deletedCount } }`),
     });
+    expect(deleteNested.errors).toBeUndefined();
     expect(lastDeleteFilter).toEqual({ $nor: [{}] });
 
     // Vacuous `$or` branch is match-all — bulk guard must neutralize (not prune→Ada-only).
     const vacuousOr = '{ or: [{ and: [] }, { name: { eq: "Ada" } }] }';
-    await execResult(executor, {
+    lastDeleteFilter = undefined;
+    const deleteVacuousOr = await execResult(executor, {
       document: parse(`mutation { deleteManyUsers(filter: ${vacuousOr}) { deletedCount } }`),
     });
+    expect(deleteVacuousOr.errors).toBeUndefined();
     expect(lastDeleteFilter).toEqual({ $nor: [{}] });
 
     // `not` of vacuous OR must stay match-nothing (pruning would delete non-Ada rows).
     const notVacuousOr = '{ not: { or: [{}, { name: { eq: "Ada" } }] } }';
-    await execResult(executor, {
+    lastDeleteFilter = undefined;
+    const deleteNotVacuousOr = await execResult(executor, {
       document: parse(`mutation { deleteManyUsers(filter: ${notVacuousOr}) { deletedCount } }`),
     });
+    expect(deleteNotVacuousOr.errors).toBeUndefined();
     // Shape is `$nor: [{ $or: [{}, { name }] }]` — universally matching inner OR → match-nothing.
     expect(lastDeleteFilter).toEqual({
       $nor: [{ $or: [{}, { name: 'Ada' }] }],
@@ -282,9 +290,11 @@ describe('getMongoExecutor FIND_* + writes', () => {
     expect(isUniversallyMatchingFilter(lastDeleteFilter!)).toBe(false);
 
     const notNestedEmpty = '{ not: { and: [{ and: [] }] } }';
-    await execResult(executor, {
+    lastDeleteFilter = undefined;
+    const deleteNotNested = await execResult(executor, {
       document: parse(`mutation { deleteManyUsers(filter: ${notNestedEmpty}) { deletedCount } }`),
     });
+    expect(deleteNotNested.errors).toBeUndefined();
     expect(lastDeleteFilter).toEqual({ $nor: [{}] });
 
     // Non-bulk: `not` of neutral nested empty `and` is match-nothing (not match-all).
@@ -301,11 +311,13 @@ describe('getMongoExecutor FIND_* + writes', () => {
       },
     };
     const executorOne = getMongoExecutor({ subgraph: schema, client: clientOne });
-    await execResult(executorOne, {
+    lastUpdateOneFilter = undefined;
+    const updateOneRes = await execResult(executorOne, {
       document: parse(
         `mutation { updateOneUser(filter: ${notNestedEmpty}, update: { set: { name: "x" } }) { id } }`,
       ),
     });
+    expect(updateOneRes.errors).toBeUndefined();
     expect(lastUpdateOneFilter).toEqual({ $nor: [{}] });
     const { isMatchNothingFilter: isMN } = await import('../src/filter.js');
     expect(isMN(lastUpdateOneFilter!)).toBe(true);

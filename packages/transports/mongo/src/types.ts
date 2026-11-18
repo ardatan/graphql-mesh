@@ -107,19 +107,20 @@ export interface MongoTransportOptions {
   stringIdCollections?: string[];
 }
 
-export interface MongoMappingValue {
-  kind: 'column' | 'pseudo' | 'args' | 'this' | 'literal';
-  /**
-   * Column / pseudo / args / this path segment (string), or a literal.
-   * Literals may be number (discriminator binders like `kind: 5`).
-   */
-  value: string | number;
-  path?: string[];
-}
+/**
+ * Discriminated mapping binder. Only `literal` may carry a number
+ * (discriminator values like `kind: 5` / `1e-7`); path kinds are always strings.
+ */
+export type MongoMappingValue =
+  | { kind: 'column'; value: string }
+  | { kind: 'pseudo'; value: string }
+  | { kind: 'args'; value: string; path?: string[] }
+  | { kind: 'this'; value: string; path?: string[] }
+  | { kind: 'literal'; value: string | number };
 
-/** Path / binder keys are always strings; narrow away numeric literals. */
-export function mappingStringValue(value: MongoMappingValue): string {
-  return typeof value.value === 'string' ? value.value : String(value.value);
+/** Path / binder keys are always strings (non-literal kinds). */
+export function mappingStringValue(value: Exclude<MongoMappingValue, { kind: 'literal' }>): string {
+  return value.value;
 }
 
 export interface MongoMappingEntry {

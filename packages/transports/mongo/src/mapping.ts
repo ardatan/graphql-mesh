@@ -444,7 +444,7 @@ function readDottedPath(text: string, start: number): { value: string; next: num
   return { value, next: i };
 }
 
-/** Parse a JSON-like number (`5`, `-2`, `3.14`); returns null when not a number token. */
+/** Parse a JSON-like number (`5`, `-2`, `3.14`, `1e-7`); returns null when not a number token. */
 function readNumberLiteral(text: string, start: number): { value: number; next: number } | null {
   let i = start;
   if (text[i] === '-') i++;
@@ -452,6 +452,13 @@ function readNumberLiteral(text: string, start: number): { value: number; next: 
   while (i < text.length && text[i]! >= '0' && text[i]! <= '9') i++;
   if (i < text.length && text[i] === '.') {
     i++;
+    if (i >= text.length || text[i]! < '0' || text[i]! > '9') return null;
+    while (i < text.length && text[i]! >= '0' && text[i]! <= '9') i++;
+  }
+  // Optional exponent (`1e-7`) — Number.toString emits this for small discriminator values.
+  if (i < text.length && (text[i] === 'e' || text[i] === 'E')) {
+    i++;
+    if (i < text.length && (text[i] === '+' || text[i] === '-')) i++;
     if (i >= text.length || text[i]! < '0' || text[i]! > '9') return null;
     while (i < text.length && text[i]! >= '0' && text[i]! <= '9') i++;
   }

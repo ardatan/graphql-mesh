@@ -335,10 +335,13 @@ export async function loadGraphQLSchemaFromMongo(
   );
 
   // Mongoose `ref: 'User'` must resolve via registered model name (and config name fallback).
+  // Register every `model.modelName` first so a later config-name alias cannot overwrite it.
   const typeNameByModelName = new Map<string, string>();
   for (const m of modelMeta) {
     typeNameByModelName.set(m.modelName, m.typeName);
-    if (m.configName !== m.modelName) {
+  }
+  for (const m of modelMeta) {
+    if (m.configName !== m.modelName && !typeNameByModelName.has(m.configName)) {
       typeNameByModelName.set(m.configName, m.typeName);
     }
   }
@@ -1921,10 +1924,16 @@ function createQuerySortAndDocumentInputs(
     for (const path of paths) {
       if (path.name === '_id' || path.name === '__v') continue;
       if (path.name.includes('.') || path.isArray || path.nested?.length) continue;
+      // Match SetInput/UnsetInput: String-_id models expose mongoose `id` as `storedId`.
+      const fieldName = opts?.stringId && path.name === 'id' ? 'storedId' : path.name;
+      const fieldDesc =
+        fieldName === 'storedId'
+          ? path.description || 'Stored `id` path (GraphQL `id` is reserved for `_id`)'
+          : path.description;
       if (path.instance === 'Number') {
-        numericFields[path.name] = { type: GraphQLFloat, description: path.description };
+        numericFields[fieldName] = { type: GraphQLFloat, description: fieldDesc };
       } else if (path.instance === 'Decimal128') {
-        numericFields[path.name] = { type: 'Decimal128', description: path.description };
+        numericFields[fieldName] = { type: 'Decimal128', description: fieldDesc };
       }
     }
 
