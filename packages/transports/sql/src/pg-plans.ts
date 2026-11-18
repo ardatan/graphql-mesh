@@ -103,7 +103,9 @@ export function wirePostgresSqlPlans(
       // plans — otherwise Pg parents stay tuples and hydrators cannot read keys.
       if (
         typeof fieldConfig.resolve === 'function' &&
-        !(fieldConfig.resolve as { [k: symbol]: unknown })[Symbol.for('mesh.sql.entityHydrator')]
+        !(fieldConfig.resolve as unknown as Record<symbol, unknown>)[
+          Symbol.for('mesh.sql.entityHydrator')
+        ]
       ) {
         return fieldConfig;
       }

@@ -437,13 +437,13 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     const hasCreateInput = Object.keys(createFields).length > 0;
     const hasUpdateInput = Object.keys(updateFields).length > 0;
     // Always emit create — empty writable set uses DEFAULT VALUES / `() VALUES ()`.
+    const createArgs: Record<string, string> = {};
+    if (hasCreateInput) {
+      createArgs.input = `${naming.createInput(typeName)}!`;
+    }
     mutationTC.setField(`create${typeName}`, {
       type: `${naming.payloadType(typeName)}!`,
-      args: hasCreateInput
-        ? {
-            input: `${naming.createInput(typeName)}!`,
-          }
-        : {},
+      args: createArgs,
       directives: [
         {
           name: 'sql',
