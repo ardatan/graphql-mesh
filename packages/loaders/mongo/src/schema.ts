@@ -20,40 +20,71 @@ import { mapMongoPathToGraphQL } from './type-map.js';
 
 const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
 
+/**
+ * Compose-style field policy for one model’s GraphQL surface.
+ *
+ * @example
+ * ```ts
+ * fields: {
+ *   only: ['name', 'email'],      // whitelist paths
+ *   remove: ['passwordHash'],     // or blacklist
+ *   required: ['email'],          // non-null on create; reject null `$set`
+ * }
+ * ```
+ */
 export interface MongoFieldRestrictions {
+  /** When set, only these path names are emitted (plus `_id`). */
   only?: string[];
+  /** Path names omitted from the GraphQL type / inputs. */
   remove?: string[];
+  /**
+   * Paths that stay optional on patch but reject explicit `null` on `$set`
+   * (and `$unset` / `$rename` of the path). Marked non-null on create input.
+   */
   required?: string[];
 }
 
-/** Discriminator key/value from `schema.discriminatorMapping` (`isRoot: false`). */
+/**
+ * Discriminator subtype stamp/filter (`schema.discriminatorMapping`, `isRoot: false`).
+ * Auto-read by the loader — not a user config field.
+ */
 export interface MongoDiscriminatorInfo {
   key: string;
   value: string;
 }
 
 /**
- * Which Query/Mutation roots to emit for a model. Omit or `true` = emit;
- * `false` = omit. Keys match compose-mongoose resolver names (GraphQL field
- * names still come from `naming`, e.g. createOne → `insertOneUser`).
+ * Opt out of individual Query/Mutation roots. Omit or `true` = emit; `false` = omit.
+ * Keys follow MongoDB collection method names (plus ById / connection helpers).
+ * GraphQL field names still come from {@link MongoNaming}
+ * (e.g. `insertOne: false` drops `insertOneUser`).
+ *
+ * @example
+ * ```ts
+ * queryAndMutations: {
+ *   aggregate: false,
+ *   deleteMany: false,
+ *   insertMany: false,
+ * }
+ * ```
  */
 export type MongoQueryAndMutations = {
   findById?: boolean;
   findByIds?: boolean;
   findOne?: boolean;
   findMany?: boolean;
-  count?: boolean;
+  countDocuments?: boolean;
   aggregate?: boolean;
   connection?: boolean;
   pagination?: boolean;
-  createOne?: boolean;
-  createMany?: boolean;
+  insertOne?: boolean;
+  insertMany?: boolean;
   updateById?: boolean;
   updateOne?: boolean;
   updateMany?: boolean;
-  removeById?: boolean;
-  removeOne?: boolean;
-  removeMany?: boolean;
+  deleteById?: boolean;
+  deleteOne?: boolean;
+  deleteMany?: boolean;
 };
 
 function isOpEnabled(
@@ -65,46 +96,108 @@ function isOpEnabled(
 }
 
 type MongoModelConfigBase = {
-  /** GraphQL type / root-field stem (`User` → `findUserById`, `insertOneUser`, …). */
+  /**
+   * GraphQL type / root-field stem.
+   * @example `"User"` → `findUserById`, `insertOneUser`, `UserFilterInput`, …
+   */
   name: string;
-  /** Mongo collection override (else model/schema collection or pluralized `name`). */
+  /**
+   * Mongo collection name. Defaults to the Mongoose model/schema collection, else
+   * a pluralized {@link name}.
+   */
   collection?: string;
-  /** Field restrictions (`only` / `remove` / `required`). */
+  /** Field whitelist / blacklist / required policy. */
   fields?: MongoFieldRestrictions;
-  /** Opt out of individual Query/Mutation roots (`false` omits). */
+  /** Which Query/Mutation roots to emit (`false` omits). */
   queryAndMutations?: MongoQueryAndMutations;
 };
 
 /**
- * Exactly one of `model` | `schema` | `path` supplies the Mongoose shape.
- * Prefer `model` or `schema` for programmatic DX; `path` is for module import.
+ * One Mongoose model in the subgraph. Supply **exactly one** of `model` | `schema` |
+ * `path` for the shape; shared options live on every variant.
+ *
+ * Emitted roots use client arg `filter: *FilterInput`; directive binders keep
+ * `query: "$args.filter"` (Mongo find filter). Discriminator subtypes are
+ * auto-detected from `schema.discriminatorMapping`.
+ *
+ * @example With a live Mongoose model
+ * ```ts
+ * { name: 'User', model: UserModel, fields: { required: ['email'] } }
+ * ```
+ *
+ * @example With a schema only (no connection needed at compose time)
+ * ```ts
+ * {
+ *   name: 'Post',
+ *   schema: new Schema({ title: String }, { collection: 'posts' }),
+ *   collection: 'posts',
+ *   queryAndMutations: { aggregate: false },
+ * }
+ * ```
+ *
+ * @example With a module path (lazy import)
+ * ```ts
+ * { name: 'User', path: './models#User' }
+ * ```
  */
 export type MongoModelConfig =
   | (MongoModelConfigBase & {
+      /** Live Mongoose model instance. */
       model: Model<any>;
       schema?: never;
       path?: never;
     })
   | (MongoModelConfigBase & {
+      /** Mongoose schema (model is synthesized with {@link collection}). */
       schema: MongooseSchema;
       model?: never;
       path?: never;
     })
   | (MongoModelConfigBase & {
+      /**
+       * Module export expression loaded via Mesh `importFn`
+       * (e.g. `./models#User` or `./models.js`).
+       */
       path: string;
       model?: never;
       schema?: never;
     });
 
+/**
+ * Options for {@link loadGraphQLSchemaFromMongo} / {@link loadMongoSubgraph}.
+ *
+ * @example
+ * ```ts
+ * await loadGraphQLSchemaFromMongo('users', {
+ *   endpoint: 'mongodb://localhost:27017/app',
+ *   models: [{ name: 'User', model: UserModel }],
+ *   naming: { findManyField: t => `list${t}s` },
+ * });
+ * ```
+ */
 export interface LoadMongoSubgraphOpts {
+  /**
+   * Mongo connection string written to `@transport(location:)` and used when the
+   * executor opens a driver client.
+   */
   endpoint: string;
+  /** One entry per GraphQL object type / collection slice. */
   models: MongoModelConfig[];
+  /** Base directory for `path` model imports. Defaults to `process.cwd()`. */
   cwd?: string;
-  /** Override default GraphQL type / field naming. */
+  /**
+   * Override default GraphQL type / field naming ({@link createDefaultNaming}).
+   * Partial merge — only replace the helpers you need.
+   */
   naming?: Partial<MongoNaming>;
+  /** Custom module loader for `path` models (tests / non-Node runtimes). */
   importFn?: ImportFn;
 }
 
+/**
+ * Build a subgraph SDL from Mongoose models: object types, `*FilterInput`,
+ * `@mongo__*` binders, and `@transport(kind: "mongo")`.
+ */
 export async function loadGraphQLSchemaFromMongo(
   subgraphName: string,
   opts: LoadMongoSubgraphOpts,
@@ -158,6 +251,16 @@ export async function loadGraphQLSchemaFromMongo(
     }
     const placeholderFields: string[] = [];
     const stringId = isStringIdSchema(model.schema);
+    if (stringId && paths.some(p => p.name === 'storedId')) {
+      throw new Error(
+        `Model "${modelConfig.name}": path "storedId" collides with the String-_id alias for mongoose "id"`,
+      );
+    }
+    if (discriminator && (discriminator.key === 'documents' || discriminator.key === 'inputs')) {
+      throw new Error(
+        `Model "${modelConfig.name}": discriminator key "${discriminator.key}" collides with insertMany binder`,
+      );
+    }
     modelMeta.push({
       typeName,
       collection,
@@ -178,6 +281,7 @@ export async function loadGraphQLSchemaFromMongo(
       fieldRestrictions,
       placeholderFieldsOut: placeholderFields,
       stringId,
+      discriminator,
     });
   }
 
@@ -224,7 +328,7 @@ export async function loadGraphQLSchemaFromMongo(
     const policy =
       objectIdPolicyByCollection[m.collection] ||
       (objectIdPolicyByCollection[m.collection] = new Map());
-    for (const field of collectTopLevelFieldObjectIdFlags(m.paths)) {
+    for (const field of collectFieldObjectIdFlags(m.paths)) {
       const prev = policy.get(field.name);
       if (prev != null && prev !== field.isObjectId) {
         throw new Error(
@@ -413,31 +517,40 @@ function filterWithDiscriminator(filter: string, disc?: MongoDiscriminatorInfo):
   return blockArg(`${clause}\n${body}`);
 }
 
-/** Only BSON ObjectId paths — String refs with 24-hex must stay strings. */
+/** Full BSON ObjectId paths (incl. nested `profile.reviewer`) — String refs stay strings. */
 function collectObjectIdFieldNames(pathLists: PathMeta[][]): string[] {
   const out = new Set<string>();
-  const walk = (paths: PathMeta[]) => {
+  const walk = (paths: PathMeta[], prefix: string) => {
     for (const path of paths) {
-      if (path.name === '_id' || path.name === 'id') continue;
-      if (isBsonObjectIdPath(path)) {
-        out.add(path.name);
+      const full = prefix ? `${prefix}.${path.name}` : path.name;
+      if (path.name !== '_id' && path.name !== 'id' && isBsonObjectIdPath(path)) {
+        out.add(full);
       }
-      if (path.nested?.length) walk(path.nested);
+      if (path.nested?.length) walk(path.nested, full);
     }
   };
-  for (const paths of pathLists) walk(paths);
+  for (const paths of pathLists) walk(paths, '');
   return [...out];
 }
 
-/** Top-level fields with ObjectId vs other BSON flags (for multi-view conflict checks). */
-function collectTopLevelFieldObjectIdFlags(
+/**
+ * ObjectId vs non-ObjectId flags keyed by full BSON path (for multi-view conflict checks).
+ * Nested paths use dotted names so `profile.reviewer` ≠ a top-level `reviewer`.
+ */
+function collectFieldObjectIdFlags(
   paths: PathMeta[],
 ): Array<{ name: string; isObjectId: boolean }> {
   const out: Array<{ name: string; isObjectId: boolean }> = [];
-  for (const path of paths) {
-    if (path.name === '_id' || path.name === 'id' || path.name.includes('.')) continue;
-    out.push({ name: path.name, isObjectId: isBsonObjectIdPath(path) });
-  }
+  const walk = (list: PathMeta[], prefix: string) => {
+    for (const path of list) {
+      const full = prefix ? `${prefix}.${path.name}` : path.name;
+      if (path.name !== '_id' && path.name !== 'id') {
+        out.push({ name: full, isObjectId: isBsonObjectIdPath(path) });
+      }
+      if (path.nested?.length) walk(path.nested, full);
+    }
+  };
+  walk(paths, '');
   return out;
 }
 
@@ -719,6 +832,7 @@ function emitModelObjectType(
     fieldRestrictions?: MongoFieldRestrictions;
     placeholderFieldsOut?: string[];
     stringId?: boolean;
+    discriminator?: MongoDiscriminatorInfo;
   },
 ) {
   const { subgraphName, typeName, collection, paths, naming } = opts;
@@ -768,6 +882,8 @@ function emitModelObjectType(
     ),
     placeholderFieldsOut: opts.placeholderFieldsOut,
     stringId: opts.stringId,
+    // Subtype updates must not `$rename` the discriminator key.
+    omitRename: Boolean(opts.discriminator),
   });
   createConnectionTypes(schemaComposer, naming, typeName);
   createPayloadType(schemaComposer, naming, typeName, opts.stringId);
@@ -795,7 +911,7 @@ function emitModelRootFields(
   const selection = selectionForPaths(paths, { stringId: opts.stringId });
   const queryTC = schemaComposer.Query;
   const mutationTC = schemaComposer.Mutation;
-  const documentInput = naming.createInput(typeName);
+  const documentInput = naming.documentInput(typeName);
   const filterType = naming.filterInput(typeName);
   const sortEnum = naming.sortEnum(typeName);
   const sortArgType = `[${sortEnum}!]`;
@@ -883,8 +999,8 @@ function emitModelRootFields(
   }
 
   // db.collection.countDocuments(filter)
-  if (isOpEnabled(ops, 'count')) {
-    queryTC.setField(naming.countField(typeName), {
+  if (isOpEnabled(ops, 'countDocuments')) {
+    queryTC.setField(naming.countDocumentsField(typeName), {
       type: new GraphQLNonNull(GraphQLInt),
       args: { filter: { type: filterType } },
       directives: [mongoDir('mongo__count', { query: argsFilter, selection: blockArg('$') })],
@@ -1007,8 +1123,8 @@ recordId: $_id
 `);
 
   // db.collection.insertOne(document)
-  if (isOpEnabled(ops, 'createOne')) {
-    mutationTC.setField(naming.createOneField(typeName), {
+  if (isOpEnabled(ops, 'insertOne')) {
+    mutationTC.setField(naming.insertOneField(typeName), {
       type: naming.payloadType(typeName),
       args: { document: { type: `${documentInput}!` } },
       directives: [
@@ -1018,13 +1134,13 @@ recordId: $_id
   }
 
   // db.collection.insertMany(documents)
-  if (isOpEnabled(ops, 'createMany')) {
+  if (isOpEnabled(ops, 'insertMany')) {
     const insertManySetLines = ['documents: $args.documents'];
     if (disc) {
       // Sibling literals are stamped onto each document by the transport.
       insertManySetLines.push(`${disc.key}: "${escapeMappingLiteral(disc.value)}"`);
     }
-    mutationTC.setField(naming.createManyField(typeName), {
+    mutationTC.setField(naming.insertManyField(typeName), {
       type: naming.payloadType(typeName),
       args: { documents: { type: `[${documentInput}!]!` } },
       directives: [
@@ -1102,8 +1218,8 @@ matchedCount: $matchedCount
     });
   }
 
-  if (isOpEnabled(ops, 'removeById')) {
-    mutationTC.setField(naming.removeByIdField(typeName), {
+  if (isOpEnabled(ops, 'deleteById')) {
+    mutationTC.setField(naming.deleteByIdField(typeName), {
       type: naming.payloadType(typeName),
       args: { id: { type: new GraphQLNonNull(idArgScalar) } },
       directives: [
@@ -1116,8 +1232,8 @@ matchedCount: $matchedCount
   }
 
   // db.collection.deleteOne(filter)
-  if (isOpEnabled(ops, 'removeOne')) {
-    mutationTC.setField(naming.removeOneField(typeName), {
+  if (isOpEnabled(ops, 'deleteOne')) {
+    mutationTC.setField(naming.deleteOneField(typeName), {
       type: naming.payloadType(typeName),
       args: { filter: { type: `${filterType}!` } },
       directives: [
@@ -1129,8 +1245,8 @@ matchedCount: $matchedCount
     });
   }
 
-  if (isOpEnabled(ops, 'removeMany')) {
-    mutationTC.setField(naming.removeManyField(typeName), {
+  if (isOpEnabled(ops, 'deleteMany')) {
+    mutationTC.setField(naming.deleteManyField(typeName), {
       type: naming.payloadType(typeName),
       args: { filter: { type: `${filterType}!` } },
       directives: [
@@ -1448,6 +1564,8 @@ function createQuerySortAndDocumentInputs(
     restrictionsActive?: boolean;
     placeholderFieldsOut?: string[];
     stringId?: boolean;
+    /** Discriminator subtypes: omit freeform `rename` so the key cannot move. */
+    omitRename?: boolean;
   },
 ) {
   const required = new Set(opts?.requiredFields || []);
@@ -1535,7 +1653,7 @@ function createQuerySortAndDocumentInputs(
     }
     createFields[path.name] = { type: createType, description: path.description };
   }
-  const documentInput = naming.createInput(typeName);
+  const documentInput = naming.documentInput(typeName);
   // Prefer `_` as placeholder unless the model already has a writable `_` path.
   const placeholderKey = paths.some(p => p.name === '_') ? '__empty' : '_';
   const emptyInputPlaceholder = {
@@ -1622,7 +1740,9 @@ function createQuerySortAndDocumentInputs(
       updateFields.pullAll = { type: GraphQLJSON };
       updateFields.addToSet = { type: GraphQLJSON };
       updateFields.pop = { type: GraphQLJSON };
-      updateFields.rename = { type: GraphQLJSON };
+      if (!opts?.omitRename) {
+        updateFields.rename = { type: GraphQLJSON };
+      }
       updateFields.currentDate = { type: GraphQLJSON };
       updateFields.bit = { type: GraphQLJSON };
     }

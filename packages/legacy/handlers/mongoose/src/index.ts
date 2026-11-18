@@ -18,34 +18,35 @@ import {
 } from '@omnigraph/mongo';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
-const QUERY_AND_MUTATION_KEYS = [
-  'findById',
-  'findByIds',
-  'findOne',
-  'findMany',
-  'count',
-  'connection',
-  'pagination',
-  'createOne',
-  'createMany',
-  'updateById',
-  'updateOne',
-  'updateMany',
-  'removeById',
-  'removeOne',
-  'removeMany',
-] as const satisfies readonly (keyof MongoQueryAndMutations)[];
+/** Compose-mongoose `options.resolvers` key → Mongo-style `queryAndMutations` key. */
+const LEGACY_RESOLVER_TO_OP: Record<string, keyof MongoQueryAndMutations> = {
+  findById: 'findById',
+  findByIds: 'findByIds',
+  findOne: 'findOne',
+  findMany: 'findMany',
+  count: 'countDocuments',
+  connection: 'connection',
+  pagination: 'pagination',
+  createOne: 'insertOne',
+  createMany: 'insertMany',
+  updateById: 'updateById',
+  updateOne: 'updateOne',
+  updateMany: 'updateMany',
+  removeById: 'deleteById',
+  removeOne: 'deleteOne',
+  removeMany: 'deleteMany',
+};
 
-/** YAML `options.resolvers` → `queryAndMutations`; only `false` disables emission. */
+/** Map compose `resolvers` flags; only `false` disables emission. */
 function mapLegacyQueryAndMutations(
   resolvers?: YamlConfig.TypeConverterResolversOpts1,
 ): MongoQueryAndMutations | undefined {
   if (!resolvers) return undefined;
   const out: MongoQueryAndMutations = {};
   let any = false;
-  for (const key of QUERY_AND_MUTATION_KEYS) {
-    if ((resolvers as Record<string, unknown>)[key] === false) {
-      out[key] = false;
+  for (const [legacyKey, opKey] of Object.entries(LEGACY_RESOLVER_TO_OP)) {
+    if ((resolvers as Record<string, unknown>)[legacyKey] === false) {
+      out[opKey] = false;
       any = true;
     }
   }

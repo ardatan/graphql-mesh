@@ -1,5 +1,6 @@
+import { buildASTSchema, parse as parseGraphql } from 'graphql';
 import { Schema } from 'mongoose';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { getDirective, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromMongo } from '../src/index.js';
 
 describe('@omnigraph/mongo schema emit', () => {
@@ -276,7 +277,6 @@ describe('@omnigraph/mongo schema emit', () => {
   });
 
   it('prints hyphenated collection ObjectId maps that round-trip through SDL', async () => {
-    const { parse } = await import('graphql');
     const schema = await loadGraphQLSchemaFromMongo('hyphen', {
       endpoint: 'mongodb://localhost:27017/test',
       models: [
@@ -297,7 +297,22 @@ describe('@omnigraph/mongo schema emit', () => {
     // Entry-list encoding: hyphenated name is a string value, not an object key.
     expect(sdl).toMatch(/collection:\s*"account-records"/);
     expect(sdl).not.toMatch(/objectIdFieldsByCollection:\s*\{[^}]*account-records\s*:/);
-    expect(() => parse(sdl)).not.toThrow();
+    expect(() => parseGraphql(sdl)).not.toThrow();
+    // Round-trip: re-parse SDL and read @transport options from the new schema.
+    const roundTripped = buildASTSchema(parseGraphql(sdl), {
+      assumeValid: true,
+      assumeValidSDL: true,
+    });
+    const transportDirs = getDirective(roundTripped, roundTripped, 'transport') as
+      | Array<{
+          options?: {
+            objectIdFieldsByCollection?: Array<{ collection: string; fields: string[] }>;
+          };
+        }>
+      | undefined;
+    expect(transportDirs?.[0]?.options?.objectIdFieldsByCollection).toEqual([
+      { collection: 'account-records', fields: ['owner'] },
+    ]);
   });
 
   it('omits raw aggregate subgraph-wide when any model is restricted', async () => {
@@ -456,9 +471,12 @@ describe('@omnigraph/mongo schema emit', () => {
     expect(typeBody).toMatch(/type Circle/);
     expect(typeBody).not.toMatch(/\bkind\b/);
     expect(sdl).toMatch(/kind:\s*"Circle"/);
-    expect(sdl).toMatch(/findCircleById[\s\S]*?kind:\s*"Circle"/);
-    expect(sdl).toMatch(/insertOneCircle[\s\S]*?kind:\s*"Circle"/);
-    expect(sdl).toMatch(/insertManyCircles[\s\S]*?kind:\s*"Circle"/);
+    const findById = sdl.match(/findCircleById[\s\S]*?@mongo__findOne\([\s\S]*?\)/)?.[0] || '';
+    expect(findById).toMatch(/kind:\s*"Circle"/);
+    const insertOne = sdl.match(/insertOneCircle[\s\S]*?@mongo__insertOne\([\s\S]*?\)/)?.[0] || '';
+    expect(insertOne).toMatch(/kind:\s*"Circle"/);
+    expect(insertOne).not.toMatch(/documents:/);
+    expect(sdl).not.toContain('rename: JSON');
   });
 
   it('honors queryAndMutations false toggles and naming overrides', async () => {
@@ -466,7 +484,7 @@ describe('@omnigraph/mongo schema emit', () => {
       endpoint: 'mongodb://localhost:27017/test',
       naming: {
         findManyField: typeName => `list${typeName}s`,
-        createOneField: typeName => `add${typeName}`,
+        insertOneField: typeName => `add${typeName}`,
       },
       models: [
         {
@@ -474,8 +492,8 @@ describe('@omnigraph/mongo schema emit', () => {
           schema: new Schema({ title: String }, { collection: 'items' }),
           collection: 'items',
           queryAndMutations: {
-            createMany: false,
-            removeMany: false,
+            insertMany: false,
+            deleteMany: false,
             aggregate: false,
           },
         },

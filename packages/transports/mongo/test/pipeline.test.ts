@@ -93,7 +93,10 @@ describe('AGGREGATE pipeline', () => {
     expect(result.data).toEqual({
       aggregateUsers: [{ _id: 'female', count: 2 }],
     });
-    expect(lastPipeline).toEqual([{ $group: { _id: '$gender', count: { $sum: 1 } } }]);
+    expect(lastPipeline).toEqual([
+      { $match: { gender: 'female' } },
+      { $group: { _id: '$gender', count: { $sum: 1 } } },
+    ]);
 
     await execResult(executor, {
       document: parse(`
@@ -110,6 +113,18 @@ describe('AGGREGATE pipeline', () => {
         args: { filter: { gender: { eq: 'female' } } },
       }),
     });
+
+    const rejected = await execResult(executor, {
+      document: parse(`
+        query Agg($pipeline: JSON) {
+          aggregateUsers(pipeline: $pipeline)
+        }
+      `),
+      variables: {
+        pipeline: [{ $merge: { into: 'other' } }],
+      },
+    });
+    expect(rejected.errors?.[0]?.message).toMatch(/\$merge|\$out/);
   });
 });
 

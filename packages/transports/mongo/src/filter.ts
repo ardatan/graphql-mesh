@@ -30,6 +30,7 @@ export function runWithMongoFieldRuntime<T>(runtime: MongoFieldRuntime, fn: () =
   return fieldRuntimeAls.run(runtime, fn);
 }
 
+/** Options for BSON coerce during filter / update builds. */
 export interface CoerceFilterOptions {
   /** Convert 24-char hex strings to ObjectId (only for known ObjectId fields). */
   asObjectId?: boolean;
@@ -38,7 +39,25 @@ export interface CoerceFilterOptions {
 }
 
 /**
- * Build a MongoDB filter document from `@mongo(filter:)` mapping.
+ * Build a MongoDB filter document from a directive binder string
+ * (`@mongo__find(query: …)` / legacy `@mongo(filter:)`).
+ *
+ * Spreads `$args.filter` (or `$args.query` / `$args.where`) and merges fixed
+ * clauses. GraphQL ops without `$` (`eq`, `gte`, `and`, …) map to `$eq` / `$gte` /
+ * `$and`.
+ *
+ * @example
+ * ```ts
+ * buildMongoFilter('$args.filter', {
+ *   args: { filter: { name: { eq: 'Ada' }, age: { gte: 30 } } },
+ * });
+ * // → { name: 'Ada', age: { $gte: 30 } }
+ *
+ * buildMongoFilter('kind: "Circle"\n$args.filter', {
+ *   args: { filter: { name: { eq: 'Ada' } } },
+ * });
+ * // → { kind: 'Circle', name: 'Ada' }
+ * ```
  */
 export function buildMongoFilter(
   filterSource: string | null | undefined,
@@ -367,6 +386,10 @@ export function getActiveRequiredFields(collection?: string): ReadonlySet<string
   return activeRequiredFields(collection);
 }
 
+function isPlainFilterObject(c: unknown): c is Record<string, unknown> {
+  return c != null && typeof c === 'object' && !Array.isArray(c);
+}
+
 /** True when a filter matches no documents (`{ $nor: [{}] }` or `$and`/`$or` of those). */
 export function isMatchNothingFilter(filter: Record<string, unknown> | null | undefined): boolean {
   if (!filter) return false;
@@ -377,17 +400,11 @@ export function isMatchNothingFilter(filter: Record<string, unknown> | null | un
       clauses.length === 1 && isUniversallyMatchingFilter(clauses[0] as Record<string, unknown>)
     );
   }
+  // One impossible `$and` clause makes the whole conjunction match-nothing.
   if (keys.length === 1 && keys[0] === '$and' && Array.isArray(filter.$and)) {
     const clauses = filter.$and as Record<string, unknown>[];
     return (
-      clauses.length > 0 &&
-      clauses.every(
-        c =>
-          c != null &&
-          typeof c === 'object' &&
-          !Array.isArray(c) &&
-          isMatchNothingFilter(c as Record<string, unknown>),
-      )
+      clauses.length > 0 && clauses.some(c => isPlainFilterObject(c) && isMatchNothingFilter(c))
     );
   }
   // Nonempty `$or` of only match-nothing branches is still match-nothing
@@ -395,14 +412,7 @@ export function isMatchNothingFilter(filter: Record<string, unknown> | null | un
   if (keys.length === 1 && keys[0] === '$or' && Array.isArray(filter.$or)) {
     const clauses = filter.$or as Record<string, unknown>[];
     return (
-      clauses.length > 0 &&
-      clauses.every(
-        c =>
-          c != null &&
-          typeof c === 'object' &&
-          !Array.isArray(c) &&
-          isMatchNothingFilter(c as Record<string, unknown>),
-      )
+      clauses.length > 0 && clauses.every(c => isPlainFilterObject(c) && isMatchNothingFilter(c))
     );
   }
   return false;
@@ -411,6 +421,9 @@ export function isMatchNothingFilter(filter: Record<string, unknown> | null | un
 /**
  * True when a filter matches every document (`{}`, vacuous `$and`, vacuous `$or`,
  * or `$nor` of a match-nothing predicate). Used to neutralize bulk writes.
+ *
+ * Multi-key filters are a conjunction: universal only when every sibling
+ * predicate is universal (a restrictive sibling keeps the write safe).
  */
 export function isUniversallyMatchingFilter(
   filter: Record<string, unknown> | null | undefined,
@@ -418,41 +431,33 @@ export function isUniversallyMatchingFilter(
   if (!filter) return true;
   const keys = Object.keys(filter);
   if (keys.length === 0) return true;
-  if (keys.length === 1 && keys[0] === '$and' && Array.isArray(filter.$and)) {
-    const clauses = filter.$and as Record<string, unknown>[];
-    if (clauses.length === 0) return true;
-    return clauses.every(
-      c =>
-        c != null &&
-        typeof c === 'object' &&
-        !Array.isArray(c) &&
-        isUniversallyMatchingFilter(c as Record<string, unknown>),
-    );
+
+  const predicateIsUniversal = (key: string, value: unknown): boolean => {
+    if (key === '$and' && Array.isArray(value)) {
+      const clauses = value as Record<string, unknown>[];
+      if (clauses.length === 0) return true;
+      return clauses.every(c => isPlainFilterObject(c) && isUniversallyMatchingFilter(c));
+    }
+    if (key === '$or' && Array.isArray(value)) {
+      const clauses = value as Record<string, unknown>[];
+      if (clauses.length === 0) return true;
+      return clauses.some(c => isPlainFilterObject(c) && isUniversallyMatchingFilter(c));
+    }
+    if (key === '$nor' && Array.isArray(value)) {
+      const clauses = value as Record<string, unknown>[];
+      return (
+        clauses.length === 1 && isPlainFilterObject(clauses[0]) && isMatchNothingFilter(clauses[0])
+      );
+    }
+    // Non-logical field predicates restrict the match set.
+    return false;
+  };
+
+  if (keys.length === 1) {
+    return predicateIsUniversal(keys[0], filter[keys[0]]);
   }
-  // One vacuous `$or` branch matches every document.
-  if (keys.length === 1 && keys[0] === '$or' && Array.isArray(filter.$or)) {
-    const clauses = filter.$or as Record<string, unknown>[];
-    if (clauses.length === 0) return true;
-    return clauses.some(
-      c =>
-        c != null &&
-        typeof c === 'object' &&
-        !Array.isArray(c) &&
-        isUniversallyMatchingFilter(c as Record<string, unknown>),
-    );
-  }
-  // `$nor: [match-nothing]` is NOT(false) → match-all (e.g. `not: { and: [{ and: [] }] }`).
-  if (keys.length === 1 && keys[0] === '$nor' && Array.isArray(filter.$nor)) {
-    const clauses = filter.$nor as Record<string, unknown>[];
-    return (
-      clauses.length === 1 &&
-      clauses[0] != null &&
-      typeof clauses[0] === 'object' &&
-      !Array.isArray(clauses[0]) &&
-      isMatchNothingFilter(clauses[0] as Record<string, unknown>)
-    );
-  }
-  return false;
+  // Top-level conjunction of several keys — all must be universal.
+  return keys.every(k => predicateIsUniversal(k, filter[k]));
 }
 
 /** True when every own key is a known GraphQL filter operator (`eq` / `gt` / …). */
@@ -514,10 +519,16 @@ export function graphqlFilterToMongo(
       continue;
     }
 
-    // GraphQL `id` → Mongo `_id`; `storedId` → mongoose path `id` (String `_id` models).
-    const mongoKey = key === 'id' ? '_id' : key === 'storedId' ? 'id' : key;
+    // GraphQL `id` → Mongo `_id`; `storedId` → mongoose path `id` only on String `_id` models.
+    const mongoKey =
+      key === 'id'
+        ? '_id'
+        : key === 'storedId' && collection && activeStringIdCollections().has(collection)
+          ? 'id'
+          : key;
     const fullKey = pathPrefix ? `${pathPrefix}.${mongoKey}` : mongoKey;
-    const asObjectId = isObjectIdFieldKey(mongoKey, collection);
+    // Prefer full BSON path so nested ObjectId fields coerce correctly.
+    const asObjectId = isObjectIdFieldKey(fullKey, collection);
 
     if (Array.isArray(value) && value.length > 0 && value.every(isPlainObject)) {
       const elemMatches = (value as Record<string, unknown>[]).map(item => ({
@@ -735,9 +746,11 @@ const UPDATE_OP_KEYS = new Set([
   'bit',
 ]);
 
-function remapUpdateFieldKey(key: string): string {
+function remapUpdateFieldKey(key: string, collection?: string): string {
   if (key === 'id') return '_id';
-  if (key === 'storedId') return 'id';
+  if (key === 'storedId' && collection && activeStringIdCollections().has(collection)) {
+    return 'id';
+  }
   return key;
 }
 
@@ -749,15 +762,16 @@ function remapUpdateFields(value: unknown, collection?: string): unknown {
   for (const [k, v] of Object.entries(value)) {
     // Only strip configured empty-input placeholders — never a real `_` path.
     if (placeholders.has(k)) continue;
+    const remapped = remapUpdateFieldKey(k, collection);
     const coerced = coerceDeep(v, {
       collection,
-      asObjectId: isObjectIdFieldKey(k, collection),
+      asObjectId: isObjectIdFieldKey(remapped, collection) || isObjectIdFieldKey(k, collection),
     });
-    // Check after BSON/EJSON conversion so `{ $undefined: true }` → null is caught.
-    if (coerced === null && required.has(k)) {
+    // Check GraphQL key and remapped BSON key after coerce (EJSON nulls).
+    if (coerced === null && (required.has(k) || required.has(remapped))) {
       throw new Error(`Cannot set required field "${k}" to null`);
     }
-    out[remapUpdateFieldKey(k)] = coerced;
+    out[remapped] = coerced;
   }
   return out;
 }
@@ -800,14 +814,14 @@ export function graphqlUpdateToMongo(
     if (rawKey.startsWith('$')) {
       if (rawKey === '$rename' && isPlainObject(value)) {
         for (const src of Object.keys(value)) {
-          if (required.has(src) || required.has(remapUpdateFieldKey(src))) {
+          if (required.has(src) || required.has(remapUpdateFieldKey(src, collection))) {
             throw new Error(`Cannot rename required field "${src}"`);
           }
         }
       }
       if (rawKey === '$unset' && isPlainObject(value)) {
         for (const field of Object.keys(value)) {
-          if (required.has(field) || required.has(remapUpdateFieldKey(field))) {
+          if (required.has(field) || required.has(remapUpdateFieldKey(field, collection))) {
             throw new Error(`Cannot unset required field "${field}"`);
           }
         }
@@ -826,17 +840,17 @@ export function graphqlUpdateToMongo(
       const unsetDoc: Record<string, string | number | boolean> = {};
       for (const [field, flag] of Object.entries(value)) {
         if (!flag) continue;
-        if (required.has(field) || required.has(remapUpdateFieldKey(field))) {
+        if (required.has(field) || required.has(remapUpdateFieldKey(field, collection))) {
           throw new Error(`Cannot unset required field "${field}"`);
         }
-        unsetDoc[remapUpdateFieldKey(field)] = '';
+        unsetDoc[remapUpdateFieldKey(field, collection)] = '';
       }
       out.$unset = unsetDoc;
       continue;
     }
     if (key === 'rename' && isPlainObject(value)) {
       for (const src of Object.keys(value)) {
-        if (required.has(src) || required.has(remapUpdateFieldKey(src))) {
+        if (required.has(src) || required.has(remapUpdateFieldKey(src, collection))) {
           throw new Error(`Cannot rename required field "${src}"`);
         }
       }

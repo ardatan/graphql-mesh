@@ -167,6 +167,16 @@ describe('mongo filter mapping', () => {
     const notNestedEmpty = graphqlFilterToMongo({ not: { and: [{ and: [] }] } });
     expect(isUniversallyMatchingFilter(notNestedEmpty)).toBe(true);
     expect(isUniversallyMatchingFilter(graphqlFilterToMongo({ not: { or: [] } }))).toBe(true);
+    // One impossible `$and` clause → match-nothing (even with a sibling predicate).
+    expect(
+      isMatchNothingFilter({
+        $and: [MATCH_NOTHING_FILTER, { name: 'Ada' }],
+      }),
+    ).toBe(true);
+    // Multi-key top-level: vacuous OR + restrictive sibling is NOT universal.
+    expect(isUniversallyMatchingFilter({ $or: [{}], name: 'Ada' })).toBe(false);
+    // Multi-key top-level: all siblings universal → universal (bulk guard).
+    expect(isUniversallyMatchingFilter({ $or: [{}], $and: [] })).toBe(true);
   });
 
   it('converts ObjectId only for declared id/_id/objectId fields', () => {

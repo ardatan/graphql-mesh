@@ -1,10 +1,25 @@
 import { MongoClient, type Db } from 'mongodb';
 import type { MongoClientLike, MongoTransportOptions } from './types.js';
 
+/**
+ * Driver client factory options: connection string plus
+ * {@link MongoTransportOptions} (pool size, field policy maps).
+ *
+ * @example
+ * ```ts
+ * const client = createMongoClient({
+ *   location: 'mongodb://localhost:27017/app',
+ *   maxPoolSize: 20,
+ *   stringIdCollections: ['legacy_keys'],
+ * });
+ * ```
+ */
 export interface CreateMongoClientOptions extends MongoTransportOptions {
+  /** MongoDB connection URI (`mongodb://…` / `mongodb+srv://…`). */
   location: string;
 }
 
+/** Open a pooled native MongoDB client implementing {@link MongoClientLike}. */
 export function createMongoClient(opts: CreateMongoClientOptions): MongoClientLike {
   const client = new MongoClient(opts.location, {
     maxPoolSize: opts.maxPoolSize,

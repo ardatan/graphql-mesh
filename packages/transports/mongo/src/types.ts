@@ -1,3 +1,7 @@
+/**
+ * Operation kinds for legacy `@mongo(kind:)` and internal executor dispatch.
+ * Prefer op-specific `@mongo__find` / `@mongo__updateOne` / … directives.
+ */
 export type MongoKind =
   | 'FIND_ONE'
   | 'FIND_MANY'
@@ -12,35 +16,79 @@ export type MongoKind =
   | 'DELETE_ONE'
   | 'DELETE_MANY';
 
-/** One collection’s field list — used so hyphenated names are not GraphQL object keys. */
+/**
+ * One collection’s field list — encoded as entries so hyphenated collection
+ * names survive printed GraphQL SDL (object keys cannot hold `-`).
+ *
+ * @example
+ * ```ts
+ * { collection: 'user-accounts', fields: ['ownerId', 'orgId'] }
+ * ```
+ */
 export interface MongoCollectionFieldsEntry {
   collection: string;
   fields: string[];
 }
 
+/**
+ * `@transport(kind: "mongo", options: { … })` / {@link createMongoClient} options.
+ *
+ * The loader writes these from model introspection. Hand-written SDL can set them
+ * the same way. Client GraphQL still uses `filter: *FilterInput`; binders pass
+ * `$args.filter` into the directive `query:` argument.
+ *
+ * @example
+ * ```graphql
+ * schema @transport(
+ *   kind: "mongo"
+ *   location: "mongodb://localhost:27017/app"
+ *   options: {
+ *     maxPoolSize: 10
+ *     objectIdFieldsByCollection: [
+ *       { collection: "users", fields: ["orgId"] }
+ *     ]
+ *     stringIdCollections: ["external_ids"]
+ *   }
+ * ) { query: Query mutation: Mutation }
+ * ```
+ */
 export interface MongoTransportOptions {
+  /** MongoDB driver pool size for {@link createMongoClient}. */
   maxPoolSize?: number;
-  /** Declared BSON ObjectId field names for hex→ObjectId coercion (not String refs). */
+  /**
+   * Declared BSON ObjectId field names for hex→ObjectId coercion (flat /
+   * subgraph-wide). Prefer {@link objectIdFieldsByCollection} when the same
+   * bare field name differs across collections.
+   */
   objectIdFields?: string[];
   /**
-   * ObjectId paths per collection (encoded as entries so hyphenated collection
-   * names survive printed SDL). Legacy `Record<collection, fields>` is still accepted.
+   * ObjectId paths per collection (entry list encoding; legacy
+   * `Record<collection, fields>` still accepted at runtime).
    */
   objectIdFieldsByCollection?: MongoCollectionFieldsEntry[] | Record<string, string[]>;
-  /** Fields that may be omitted on patch but reject explicit `null` on `$set`. */
+  /**
+   * Fields that may be omitted on patch but reject explicit `null` on `$set`
+   * (flat / subgraph-wide). Prefer {@link requiredFieldsByCollection}.
+   */
   requiredFields?: string[];
   /**
    * Required fields per collection (entry list encoding; legacy Record accepted).
    * A present empty list is authoritative (no flat `requiredFields` fallback).
    */
   requiredFieldsByCollection?: MongoCollectionFieldsEntry[] | Record<string, string[]>;
-  /** Empty-input placeholder keys (e.g. `_`) — stripped on write; not real paths. */
+  /**
+   * Empty-input placeholder keys (e.g. `_`) — stripped on write; not real paths.
+   * Flat / subgraph-wide; prefer {@link placeholderFieldsByCollection}.
+   */
   placeholderFields?: string[];
   /**
    * Placeholders per collection (entry list encoding; legacy Record accepted).
    */
   placeholderFieldsByCollection?: MongoCollectionFieldsEntry[] | Record<string, string[]>;
-  /** Collections whose `_id` is BSON String (not ObjectId) — keep hex as string. */
+  /**
+   * Collections whose `_id` is BSON String (not ObjectId) — keep 24-hex as string
+   * for inserts, filters, cursors, and payload `recordId`.
+   */
   stringIdCollections?: string[];
 }
 
@@ -68,6 +116,10 @@ export interface MongoFindOptions {
   skip?: number;
 }
 
+/**
+ * Minimal Mongo driver surface used by the transport executor.
+ * {@link createMongoClient} returns this; tests inject stubs.
+ */
 export interface MongoClientLike {
   findOne(
     collection: string,

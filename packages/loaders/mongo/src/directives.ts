@@ -7,8 +7,25 @@ const queryArg = { type: GraphQLString };
 const sortArg = { type: GraphQLString };
 
 /**
- * Op-specific `@mongo__*` directives.
- * Generated GraphQL SDL (query/sort enums) can differ from these execution binders.
+ * Op-specific `@mongo__*` directives (execution binders).
+ *
+ * Client GraphQL can differ from binder arg names: generated roots use
+ * `filter: *FilterInput` while binders keep Mongo-style `query: "$args.filter"`.
+ *
+ * @example Generated findMany binder
+ * ```graphql
+ * findUsers(filter: UserFilterInput, sort: [UserSort!]): [User!]!
+ *   @mongo__find(
+ *     subgraph: "users"
+ *     collection: "users"
+ *     query: "$args.filter"
+ *     sort: "$args.sort"
+ *     selection: """
+ *     id: $_id
+ *     name
+ *     """
+ *   )
+ * ```
  *
  * findOne(query, projection) → `@mongo__findOne(query, selection)`
  * find(query).sort().limit() → `@mongo__find(query, sort, limit, skip, selection)`
@@ -19,6 +36,7 @@ export const MongoFindOneDirective = new GraphQLDirective({
   args: {
     subgraph: subgraphArg,
     collection: collectionArg,
+    /** Mongo filter binder (`$args.filter`, `_id: $args.id`, or a block merge). */
     query: queryArg,
     sort: sortArg,
     skip: { type: GraphQLString },

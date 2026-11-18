@@ -10,6 +10,7 @@ import {
   coerceDeep,
   coerceFilterValue,
   filterFromMapping,
+  graphqlFilterToMongo,
   isObjectIdFieldKey,
   isUniversallyMatchingFilter,
   MATCH_NOTHING_FILTER,
@@ -32,11 +33,37 @@ import type {
   ParsedMongoMapping,
 } from './types.js';
 
+/**
+ * Options for {@link getMongoExecutor}.
+ *
+ * @example Default — open a driver client from `@transport(location:)`
+ * ```ts
+ * const executor = getMongoExecutor({ subgraph });
+ * ```
+ *
+ * @example Inject a stub client (unit tests)
+ * ```ts
+ * const executor = getMongoExecutor({ subgraph, client: stubMongoClient });
+ * ```
+ *
+ * @example Override connection string (legacy handler cache)
+ * ```ts
+ * const executor = getMongoExecutor({
+ *   subgraph,
+ *   location: process.env.MONGO_URL,
+ * });
+ * ```
+ */
 export interface GetMongoExecutorOpts {
+  /** Subgraph schema with `@mongo__*` / `@transport(kind: "mongo")`. */
   subgraph: GraphQLSchema;
+  /** When set, skip opening a real Mongo client. */
   client?: MongoClientLike;
   cwd?: string;
-  /** Override `@transport(location:)` (e.g. current handler connectionString). */
+  /**
+   * Override `@transport(location:)` — e.g. current handler `connectionString`
+   * when the cached schema still carries a stale location.
+   */
   location?: string;
 }
 
@@ -93,6 +120,13 @@ function readMongoDirective(
   return legacy?.[0];
 }
 
+/**
+ * Build a Mesh executor for a mongo subgraph. Reads `@transport` options and
+ * wraps fields that carry `@mongo__*` (or legacy `@mongo(kind:)`) binders.
+ *
+ * Filter binders typically use `query: "$args.filter"` so client GraphQL
+ * `filter: { name: { eq: "Ada" } }` becomes a Mongo filter document.
+ */
 export function getMongoExecutor({
   subgraph,
   client,
@@ -243,10 +277,16 @@ function attachMongoResolver(
               const coerced = coerceDeep(doc, {
                 collection: directive.collection,
               }) as Record<string, unknown>;
-              // Generated String-ID create inputs use GraphQL `id` → Mongo `_id`.
-              if (stringId && coerced.id != null && coerced._id == null) {
-                coerced._id = coerced.id;
-                delete coerced.id;
+              if (stringId) {
+                // GraphQL `id` → Mongo `_id`; `storedId` → mongoose path `id`.
+                if (coerced.id != null && coerced._id == null) {
+                  coerced._id = coerced.id;
+                  delete coerced.id;
+                }
+                if (coerced.storedId != null && coerced.id == null) {
+                  coerced.id = coerced.storedId;
+                  delete coerced.storedId;
+                }
               }
               return stripInputPlaceholder({ ...coerced, ...stamp }, directive.collection);
             });
@@ -685,7 +725,45 @@ function nestedSelection(
   return { entries: entry?.children || [] };
 }
 
+function assertNoWriteAggregateStages(pipeline: Record<string, unknown>[]): void {
+  for (const stage of pipeline) {
+    if (!stage || typeof stage !== 'object') continue;
+    if ('$merge' in stage || '$out' in stage) {
+      throw new Error('@mongo__aggregate rejects client $merge / $out stages');
+    }
+  }
+}
+
+/** Prepend binder filter (incl. discriminator) when the client supplies stages. */
+function withEnforcedMatch(
+  stages: Record<string, unknown>[],
+  filter: Record<string, unknown>,
+): Record<string, unknown>[] {
+  if (!Object.keys(filter).length) return stages;
+  const first = stages[0];
+  if (
+    first &&
+    typeof first === 'object' &&
+    first.$match &&
+    JSON.stringify(first.$match) === JSON.stringify(filter)
+  ) {
+    return stages;
+  }
+  return [{ $match: filter }, ...stages];
+}
+
 function resolvePipeline(
+  pipelineSource: string | undefined,
+  ctx: { args?: Record<string, unknown>; parent?: unknown },
+  filter: Record<string, unknown>,
+  collection?: string,
+): Record<string, unknown>[] {
+  const pipeline = buildPipelineStages(pipelineSource, ctx, filter, collection);
+  assertNoWriteAggregateStages(pipeline);
+  return pipeline;
+}
+
+function buildPipelineStages(
   pipelineSource: string | undefined,
   ctx: { args?: Record<string, unknown>; parent?: unknown },
   filter: Record<string, unknown>,
@@ -695,10 +773,10 @@ function resolvePipeline(
   if (pipelineSource?.trim() === '$args.pipeline' || pipelineSource?.trim() === '$pipeline') {
     const fromArgs = ctx.args?.pipeline;
     if (Array.isArray(fromArgs) && fromArgs.length) {
-      return fromArgs.map(stage => rewritePipelineStage(stage, filter)) as Record<
-        string,
-        unknown
-      >[];
+      return withEnforcedMatch(
+        fromArgs.map(stage => rewritePipelineStage(stage, filter)) as Record<string, unknown>[],
+        filter,
+      );
     }
     return Object.keys(filter).length ? [{ $match: filter }] : [];
   }
@@ -711,7 +789,10 @@ function resolvePipeline(
   if (trimmed.startsWith('[')) {
     try {
       const parsed = JSON.parse(trimmed) as unknown[];
-      return parsed.map(stage => rewritePipelineStage(stage, filter)) as Record<string, unknown>[];
+      return withEnforcedMatch(
+        parsed.map(stage => rewritePipelineStage(stage, filter)) as Record<string, unknown>[],
+        filter,
+      );
     } catch {
       // fall through to mapping dialect
     }
@@ -720,7 +801,10 @@ function resolvePipeline(
   const parsed = parseMongoMapping(pipelineSource);
   const stageEntries = parsed.entries.filter(e => e.key.startsWith('$') && !e.spread);
   if (stageEntries.length) {
-    return stageEntries.map(entry => mappingEntryToStage(entry, ctx, filter, collection));
+    return withEnforcedMatch(
+      stageEntries.map(entry => mappingEntryToStage(entry, ctx, filter, collection)),
+      filter,
+    );
   }
 
   // Single match binder / structured where — honor collection-scoped ObjectId/required.
@@ -762,8 +846,11 @@ function mappingEntryToStage(
   if (entry.key === '$match') {
     if (
       entry.value?.kind === 'args' &&
-      (entry.value.value === 'where' || entry.value.value === 'filter')
+      (entry.value.value === 'where' ||
+        entry.value.value === 'filter' ||
+        entry.value.value === 'query')
     ) {
+      // Prefer the already-built directive filter (coercion + discriminator).
       return { $match: filter };
     }
     if (entry.children?.length) {
@@ -771,7 +858,10 @@ function mappingEntryToStage(
     }
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved && typeof resolved === 'object' && !Array.isArray(resolved)) {
-      return { $match: resolved as Record<string, unknown> };
+      // Raw GraphQL filter input — normalize operators + ObjectId coerce.
+      return {
+        $match: graphqlFilterToMongo(resolved as Record<string, unknown>, '', collection),
+      };
     }
     return { $match: filter };
   }
