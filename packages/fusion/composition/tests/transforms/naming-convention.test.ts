@@ -1,6 +1,7 @@
 import { buildSchema, GraphQLEnumType, GraphQLObjectType, GraphQLUnionType } from 'graphql';
 import { createNamingConventionTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { composeAndGetExecutor, composeAndGetPublicSchema, expectTheSchemaSDLToBe } from './utils';
 
 describe('Naming Convention', () => {
@@ -403,5 +404,36 @@ describe('Naming Convention', () => {
     expect(data.cartGetCart).toBeDefined();
     expect(data.cartGetCart).not.toBeNull();
     expect(data.cartGetCart.id).toBe('asdf');
+  });
+
+  it('resets Neo4j model membership between schema invocations', () => {
+    const transform = createNamingConventionTransform({
+      fieldNames: 'camelCase',
+    });
+    const neo4jSchema = buildSchema(/* GraphQL */ `
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      type Movie @node(subgraph: "Movies") {
+        release_year: Int
+      }
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const ordinarySchema = buildSchema(/* GraphQL */ `
+      type Movie {
+        release_year: Int
+      }
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const moviesCfg = { name: 'Movies', schema: neo4jSchema };
+    const otherCfg = { name: 'Other', schema: ordinarySchema };
+    transform(neo4jSchema, moviesCfg);
+    const next = transform(ordinarySchema, otherCfg);
+    const movie = next.getType('Movie') as GraphQLObjectType;
+    const field = movie.getFields().releaseYear;
+    expect(field).toBeDefined();
+    expect(getDirectiveExtensions(field)?.alias).toBeUndefined();
   });
 });

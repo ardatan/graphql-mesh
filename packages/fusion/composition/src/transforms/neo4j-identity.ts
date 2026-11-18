@@ -17,10 +17,6 @@ const NEO4J_NON_PROPERTY_FIELD_DIRECTIVES = new Set([
 
 const CYPHER_RESERVED_VARS = new Set(['this', 'jwt', 'context']);
 
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
 /** True when the type (or its directives bag) is a Neo4j `@node` model. */
 export function hasNeo4jNodeDirective(typeDirectives: Record<string, any[]> | undefined): boolean {
   return Boolean(typeDirectives?.node?.length);
@@ -91,6 +87,95 @@ export function isNeo4jModelTypeDirectives(
 }
 
 /**
+ * Rewrite `$oldArg` → `$newArg` in a Cypher statement after GraphQL argument renames.
+ * Skips string literals and backtick-quoted identifiers so text like `'$title'` is unchanged.
+ */
+export function rewriteCypherParamNames(
+  statement: string,
+  argRenameMap: Map<string, string>,
+): string {
+  if (!statement || argRenameMap.size === 0) {
+    return statement;
+  }
+  let out = '';
+  let i = 0;
+  while (i < statement.length) {
+    const c = statement[i];
+    if (c === "'") {
+      out += c;
+      i++;
+      while (i < statement.length) {
+        if (statement[i] === "'" && statement[i + 1] === "'") {
+          out += "''";
+          i += 2;
+          continue;
+        }
+        out += statement[i];
+        if (statement[i] === "'") {
+          i++;
+          break;
+        }
+        i++;
+      }
+      continue;
+    }
+    if (c === '"') {
+      out += c;
+      i++;
+      while (i < statement.length) {
+        if (statement[i] === '\\' && i + 1 < statement.length) {
+          out += statement[i] + statement[i + 1];
+          i += 2;
+          continue;
+        }
+        out += statement[i];
+        if (statement[i] === '"') {
+          i++;
+          break;
+        }
+        i++;
+      }
+      continue;
+    }
+    if (c === '`') {
+      out += c;
+      i++;
+      while (i < statement.length) {
+        if (statement[i] === '`' && statement[i + 1] === '`') {
+          out += '``';
+          i += 2;
+          continue;
+        }
+        out += statement[i];
+        if (statement[i] === '`') {
+          i++;
+          break;
+        }
+        i++;
+      }
+      continue;
+    }
+    if (c === '$') {
+      const start = i;
+      i++;
+      let name = '';
+      while (i < statement.length && /[\w]/.test(statement[i])) {
+        name += statement[i++];
+      }
+      if (name && !CYPHER_RESERVED_VARS.has(name) && argRenameMap.has(name)) {
+        out += `$${argRenameMap.get(name)}`;
+      } else {
+        out += statement.slice(start, i);
+      }
+      continue;
+    }
+    out += c;
+    i++;
+  }
+  return out;
+}
+
+/**
  * Rewrite `$oldArg` → `$newArg` inside `@cypher(statement:)` after argument renames.
  * Does not use the Connectors `$args.` rewrite registry.
  */
@@ -101,27 +186,55 @@ export function rewriteNeo4jCypherArgReferences(
   if (!fieldDirectives?.cypher?.length || argRenameMap.size === 0) {
     return fieldDirectives;
   }
-  const names = [...argRenameMap.keys()]
-    .filter(name => name && !CYPHER_RESERVED_VARS.has(name))
-    .map(escapeRegExp);
-  if (!names.length) {
+  const hasRewritable = [...argRenameMap.keys()].some(
+    name => name && !CYPHER_RESERVED_VARS.has(name),
+  );
+  if (!hasRewritable) {
     return fieldDirectives;
   }
-  const re = new RegExp(`\\$(${names.join('|')})(?![\\w])`, 'g');
   const nextCypher = fieldDirectives.cypher.map((cypherArgs: any) => {
     if (typeof cypherArgs?.statement !== 'string') {
       return cypherArgs;
     }
     return {
       ...cypherArgs,
-      statement: cypherArgs.statement.replace(
-        re,
-        (_m: string, name: string) => `$${argRenameMap.get(name) ?? name}`,
-      ),
+      statement: rewriteCypherParamNames(cypherArgs.statement, argRenameMap),
     };
   });
   return {
     ...fieldDirectives,
     cypher: nextCypher,
+  };
+}
+
+/**
+ * After a GraphQL type rename, rewrite `@relationship(properties: "OldName")` to the
+ * new relationship-properties type name. Leaves `@relationship(type:)` (DB type) alone.
+ */
+export function rewriteNeo4jRelationshipPropertiesRefs(
+  fieldDirectives: Record<string, any[]> | undefined,
+  typeRenameMap: Map<string, string>,
+): Record<string, any[]> | undefined {
+  if (!fieldDirectives?.relationship?.length || typeRenameMap.size === 0) {
+    return fieldDirectives;
+  }
+  let changed = false;
+  const nextRelationship = fieldDirectives.relationship.map((relArgs: any) => {
+    const properties = relArgs?.properties;
+    if (typeof properties !== 'string' || !typeRenameMap.has(properties)) {
+      return relArgs;
+    }
+    changed = true;
+    return {
+      ...relArgs,
+      properties: typeRenameMap.get(properties),
+    };
+  });
+  if (!changed) {
+    return fieldDirectives;
+  }
+  return {
+    ...fieldDirectives,
+    relationship: nextRelationship,
   };
 }

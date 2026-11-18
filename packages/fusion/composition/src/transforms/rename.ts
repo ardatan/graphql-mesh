@@ -24,6 +24,7 @@ import {
   ensureNeo4jNodeLabels,
   isNeo4jModelTypeDirectives,
   rewriteNeo4jCypherArgReferences,
+  rewriteNeo4jRelationshipPropertiesRefs,
 } from './neo4j-identity.js';
 import {
   rewriteConnectArgReferences,
@@ -320,6 +321,10 @@ export function createRenameTransform(opts: RenameTransformConfig) {
         false,
       );
       rewrittenDirectives = rewriteNeo4jCypherArgReferences(rewrittenDirectives, argRenameMap);
+      rewrittenDirectives = rewriteNeo4jRelationshipPropertiesRefs(
+        rewrittenDirectives,
+        typeRenameMap,
+      );
       const parentType = schema.getType(typeName);
       const parentDirectives = parentType ? getDirectiveExtensions(parentType, schema) : undefined;
       if (newFieldName !== fieldName) {
@@ -610,11 +615,15 @@ export function createRenameTypeTransform(
               renamedTypeMap.get(resolveTo.sourceTypeName) || resolveTo.sourceTypeName,
           }));
         }
-        const rewrittenDirectives = rewriteConnectArgReferences(
+        let rewrittenDirectives = rewriteConnectArgReferences(
           fieldDirectives,
           new Map(),
           undefined,
           typeRenameForConnect,
+        );
+        rewrittenDirectives = rewriteNeo4jRelationshipPropertiesRefs(
+          rewrittenDirectives,
+          renamedTypeMap,
         );
         const fieldExtensions: any = (field.extensions ||= {});
         fieldExtensions.directives = rewrittenDirectives || fieldDirectives;

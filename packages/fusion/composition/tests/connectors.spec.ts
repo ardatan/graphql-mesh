@@ -288,6 +288,76 @@ describe('Federation Connectors composition', () => {
     expect(sdl).not.toMatch(/\$title\b/);
   });
 
+  it('Neo4j type rename rewrites @relationship(properties:)', () => {
+    const neo4jSchema = buildSchema(/* GraphQL */ `
+      schema
+        @transport(
+          subgraph: "Movies"
+          kind: "neo4j"
+          location: "neo4j://localhost"
+          options: { database: "neo4j" }
+        ) {
+        query: Query
+      }
+
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        headers: [[String]]
+        options: TransportOptions
+      ) repeatable on SCHEMA
+      scalar TransportOptions
+
+      directive @node(subgraph: String, labels: [String!]) on OBJECT
+      directive @relationshipProperties(subgraph: String) on OBJECT
+      directive @relationship(
+        subgraph: String
+        type: String
+        direction: _RelationDirections
+        properties: String
+      ) on FIELD_DEFINITION
+      enum _RelationDirections {
+        IN
+        OUT
+      }
+
+      type ActedIn @relationshipProperties(subgraph: "Movies") {
+        role: String
+      }
+
+      type Movie @node(subgraph: "Movies") {
+        title: String
+        actors: [Person!]!
+          @relationship(subgraph: "Movies", type: "ACTED_IN", direction: IN, properties: "ActedIn")
+      }
+
+      type Person @node(subgraph: "Movies") {
+        name: String
+      }
+
+      type Query {
+        movies: [Movie!]!
+      }
+    `);
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'Movies',
+        schema: neo4jSchema,
+        transforms: [
+          createRenameTransform({
+            typeRenamer: ({ typeName }) => (typeName === 'ActedIn' ? 'Credit' : typeName),
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/type Credit[\s\S]*@relationshipProperties/);
+    expect(sdl).toMatch(/@relationship\([^)]*properties:\s*"Credit"/);
+    expect(sdl).toMatch(/@relationship\([^)]*type:\s*"ACTED_IN"/);
+    expect(sdl).not.toMatch(/properties:\s*"ActedIn"/);
+  });
+
   it('lifts transport/source from extras onto schema and drops the wrapper', () => {
     const sdl = /* GraphQL */ `
       schema

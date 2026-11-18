@@ -166,22 +166,70 @@ function fieldBelongsToSubgraph(
   return false;
 }
 
+function collectInterfaceClosure(
+  typeName: string,
+  interfaceImplements: Map<string, string[]>,
+  into: Set<string>,
+): void {
+  for (const iface of interfaceImplements.get(typeName) || []) {
+    if (into.has(iface)) {
+      continue;
+    }
+    into.add(iface);
+    collectInterfaceClosure(iface, interfaceImplements, into);
+  }
+}
+
+function collectNamedTypesFromField(
+  field: FieldDefinitionNode,
+  into: Set<string>,
+  opts?: { includeArgs?: boolean },
+): void {
+  const returnName = namedTypeNameFromTypeNode(field.type);
+  if (returnName) {
+    into.add(returnName);
+  }
+  if (opts?.includeArgs === false) {
+    return;
+  }
+  for (const arg of field.arguments || []) {
+    const argName = namedTypeNameFromTypeNode(arg.type);
+    if (argName) {
+      into.add(argName);
+    }
+  }
+}
+
 /**
  * Keep Neo4j author/model types for re-augmentation.
  * Uses `@node` / `@relationshipProperties` / root `@cypher`, scoped by Mesh `subgraph:`
  * when multiple Neo4j sources are composed. Does not use Mesh `@introspection`.
+ *
+ * Drops generated connection fields / filter args that reference types omitted from the
+ * rebuild, while retaining authored properties, relationships, `@cypher` fields, and
+ * interfaces required by selected models (including transitive implements).
  */
 export function extractNeo4jModelTypeDefs(
   typeDefs: DocumentNode,
   subgraphName?: string,
 ): DocumentNode {
   const modelTypeNames = new Set<string>();
+  const interfaceImplements = new Map<string, string[]>();
+  const objectOrInterfaceNames = new Set<string>();
+  const inputObjectNames = new Set<string>();
+
   for (const def of typeDefs.definitions) {
-    if (
-      (def.kind === Kind.OBJECT_TYPE_DEFINITION || def.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
-      isNeo4jModelType(def, subgraphName)
-    ) {
-      modelTypeNames.add(def.name.value);
+    if (def.kind === Kind.OBJECT_TYPE_DEFINITION || def.kind === Kind.INTERFACE_TYPE_DEFINITION) {
+      objectOrInterfaceNames.add(def.name.value);
+      if (def.interfaces?.length) {
+        interfaceImplements.set(
+          def.name.value,
+          def.interfaces.map(iface => iface.name.value),
+        );
+      }
+      if (isNeo4jModelType(def, subgraphName)) {
+        modelTypeNames.add(def.name.value);
+      }
     }
     if (
       def.kind === Kind.OBJECT_TYPE_DEFINITION &&
@@ -190,55 +238,142 @@ export function extractNeo4jModelTypeDefs(
     ) {
       modelTypeNames.add(def.name.value);
     }
+    if (def.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION) {
+      inputObjectNames.add(def.name.value);
+    }
   }
+
+  const keepTypeNames = new Set(modelTypeNames);
+  for (const modelName of modelTypeNames) {
+    collectInterfaceClosure(modelName, interfaceImplements, keepTypeNames);
+  }
+
+  function isRetainedModelField(field: FieldDefinitionNode): boolean {
+    if (hasDirective(field, 'relationship') || hasDirective(field, 'cypher')) {
+      const returnName = namedTypeNameFromTypeNode(field.type);
+      // Relationship / cypher must target a kept model (or scalar for cypher).
+      if (!returnName) {
+        return true;
+      }
+      if (objectOrInterfaceNames.has(returnName)) {
+        return keepTypeNames.has(returnName);
+      }
+      return true;
+    }
+    const returnName = namedTypeNameFromTypeNode(field.type);
+    if (!returnName) {
+      return true;
+    }
+    // Drop generated connection / aggregate object fields not in the model set.
+    if (objectOrInterfaceNames.has(returnName) && !keepTypeNames.has(returnName)) {
+      return false;
+    }
+    return true;
+  }
+
+  function scrubGeneratedArgs(field: FieldDefinitionNode): FieldDefinitionNode {
+    if (!field.arguments?.length) {
+      return field;
+    }
+    // Relationship filter/pagination args are regenerated; keep authored `@cypher` args.
+    if (hasDirective(field, 'relationship')) {
+      return { ...field, arguments: [] };
+    }
+    if (!hasDirective(field, 'cypher')) {
+      // Property fields: drop args that point at input objects we will not keep unless referenced.
+      const arguments_ = field.arguments.filter(arg => {
+        const argType = namedTypeNameFromTypeNode(arg.type);
+        if (!argType || !inputObjectNames.has(argType)) {
+          return true;
+        }
+        return false;
+      });
+      return arguments_.length === field.arguments.length
+        ? field
+        : { ...field, arguments: arguments_ };
+    }
+    return field;
+  }
+
   const referenced = new Set<string>();
+  const retainedFieldsByType = new Map<string, FieldDefinitionNode[]>();
+
   for (const def of typeDefs.definitions) {
     if (
       (def.kind === Kind.OBJECT_TYPE_DEFINITION || def.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
-      modelTypeNames.has(def.name.value)
+      keepTypeNames.has(def.name.value)
     ) {
-      const fields =
+      let fields =
         ROOT_OPERATION_NAMES.has(def.name.value) && def.kind === Kind.OBJECT_TYPE_DEFINITION
           ? def.fields?.filter(field => fieldBelongsToSubgraph(field, subgraphName))
           : def.fields;
-      for (const field of fields || []) {
-        const name = namedTypeNameFromTypeNode(field.type);
-        if (name) {
-          referenced.add(name);
+      fields = (fields || []).filter(isRetainedModelField).map(scrubGeneratedArgs);
+      retainedFieldsByType.set(def.name.value, fields);
+      for (const field of fields) {
+        collectNamedTypesFromField(field, referenced, {
+          includeArgs: hasDirective(field, 'cypher') || !hasDirective(field, 'relationship'),
+        });
+      }
+    }
+  }
+
+  // Authored inputs / enums / scalars reachable from retained fields (incl. `@cypher` args).
+  // Generated filter inputs are typically only reachable from scrubbed relationship args.
+  const keepInputs = new Set<string>();
+  for (const name of referenced) {
+    if (inputObjectNames.has(name)) {
+      keepInputs.add(name);
+    }
+  }
+  // Nested fields of retained authored inputs.
+  let inputGrew = true;
+  while (inputGrew) {
+    inputGrew = false;
+    for (const def of typeDefs.definitions) {
+      if (def.kind !== Kind.INPUT_OBJECT_TYPE_DEFINITION || !keepInputs.has(def.name.value)) {
+        continue;
+      }
+      for (const field of def.fields || []) {
+        const nested = namedTypeNameFromTypeNode(field.type);
+        if (!nested) {
+          continue;
+        }
+        referenced.add(nested);
+        if (inputObjectNames.has(nested) && !keepInputs.has(nested)) {
+          keepInputs.add(nested);
+          inputGrew = true;
         }
       }
     }
   }
+
   return {
     ...typeDefs,
     definitions: typeDefs.definitions.flatMap((def): DefinitionNode[] => {
       switch (def.kind) {
         case Kind.OBJECT_TYPE_DEFINITION:
         case Kind.INTERFACE_TYPE_DEFINITION: {
-          if (!modelTypeNames.has(def.name.value)) {
+          if (!keepTypeNames.has(def.name.value)) {
             return [];
           }
+          const fields = retainedFieldsByType.get(def.name.value) || [];
           if (
             def.kind === Kind.OBJECT_TYPE_DEFINITION &&
             ROOT_OPERATION_NAMES.has(def.name.value)
           ) {
-            const fields = (def.fields || []).filter(field =>
-              fieldBelongsToSubgraph(field, subgraphName),
-            );
             if (!fields.length) {
               return [];
             }
             return [{ ...(def as ObjectTypeDefinitionNode), fields }];
           }
-          return [def];
+          return [{ ...def, fields } as typeof def];
         }
         case Kind.ENUM_TYPE_DEFINITION:
         case Kind.SCALAR_TYPE_DEFINITION:
         case Kind.UNION_TYPE_DEFINITION:
           return referenced.has(def.name.value) ? [def] : [];
         case Kind.INPUT_OBJECT_TYPE_DEFINITION:
-          // Filter/create inputs are regenerated by Neo4jGraphQL.
-          return [];
+          return keepInputs.has(def.name.value) ? [def] : [];
         case Kind.DIRECTIVE_DEFINITION:
           return STRIP_DIRECTIVE_DEFINITIONS.has(def.name.value) ? [] : [def];
         case Kind.SCHEMA_DEFINITION:

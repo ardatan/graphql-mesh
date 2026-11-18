@@ -1083,8 +1083,12 @@ describe('rewriteConnectArgReferences @thrift__rpc', () => {
 
 describe('Neo4j identity helpers', () => {
   it('stamps @node(labels:) and @alias; rewrites @cypher $args', async () => {
-    const { ensureNeo4jNodeLabels, ensureNeo4jFieldAlias, rewriteNeo4jCypherArgReferences } =
-      await import('../../src/transforms/neo4j-identity.js');
+    const {
+      ensureNeo4jNodeLabels,
+      ensureNeo4jFieldAlias,
+      rewriteNeo4jCypherArgReferences,
+      rewriteNeo4jRelationshipPropertiesRefs,
+    } = await import('../../src/transforms/neo4j-identity.js');
     expect(ensureNeo4jNodeLabels({ node: [{}] }, 'Movie')).toEqual({
       node: [{ labels: ['Movie'] }],
     });
@@ -1114,5 +1118,43 @@ describe('Neo4j identity helpers', () => {
     expect(rewritten!.cypher[0].statement).toContain('$needle');
     expect(rewritten!.cypher[0].statement).toContain('$jwt.sub');
     expect(rewritten!.cypher[0].statement).not.toMatch(/\$title\b/);
+  });
+
+  it('rewrites @cypher params outside string literals only', async () => {
+    const { rewriteNeo4jCypherArgReferences } =
+      await import('../../src/transforms/neo4j-identity.js');
+    const rewritten = rewriteNeo4jCypherArgReferences(
+      {
+        cypher: [
+          {
+            statement: "RETURN CASE WHEN $title = '$title' THEN 1 ELSE 0 END AS n",
+            columnName: 'n',
+          },
+        ],
+      },
+      new Map([['title', 'needle']]),
+    );
+    expect(rewritten!.cypher[0].statement).toBe(
+      "RETURN CASE WHEN $needle = '$title' THEN 1 ELSE 0 END AS n",
+    );
+  });
+
+  it('rewrites @relationship(properties:) through type rename map', async () => {
+    const { rewriteNeo4jRelationshipPropertiesRefs } =
+      await import('../../src/transforms/neo4j-identity.js');
+    const rewritten = rewriteNeo4jRelationshipPropertiesRefs(
+      {
+        relationship: [
+          { type: 'ACTED_IN', direction: 'IN', properties: 'ActedIn', subgraph: 'Movies' },
+        ],
+      },
+      new Map([['ActedIn', 'Credit']]),
+    );
+    expect(rewritten!.relationship[0]).toEqual({
+      type: 'ACTED_IN',
+      direction: 'IN',
+      properties: 'Credit',
+      subgraph: 'Movies',
+    });
   });
 });

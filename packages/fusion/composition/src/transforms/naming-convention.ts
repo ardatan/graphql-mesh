@@ -35,6 +35,7 @@ import {
   ensureNeo4jNodeLabels,
   isNeo4jModelTypeDirectives,
   rewriteNeo4jCypherArgReferences,
+  rewriteNeo4jRelationshipPropertiesRefs,
 } from './neo4j-identity.js';
 import { applyProtobufFieldRenames, applyProtobufTypeRenames } from './rename.js';
 import { rewriteConnectArgReferences, withOriginalKeyFallback } from './utils.js';
@@ -227,6 +228,10 @@ export function createNamingConventionTransform(
         false,
       );
       rewrittenDirectives = rewriteNeo4jCypherArgReferences(rewrittenDirectives, argRenameMap);
+      rewrittenDirectives = rewriteNeo4jRelationshipPropertiesRefs(
+        rewrittenDirectives,
+        typeRenameMap,
+      );
       if (!typeNamesFn && schema) {
         const parentType = schema.getType(typeName);
         if (parentType && isNeo4jModelTypeDirectives(getDirectiveExtensions(parentType))) {
@@ -302,6 +307,7 @@ export function createNamingConventionTransform(
     // Precompute before mapSchema so FIELD rewrites see the full type map
     // (TYPE/FIELD visit order is not guaranteed for `__typename` Connect arms).
     typeRenameMap.clear();
+    neo4jModelTypeNames.clear();
     if (typeNamesFn) {
       for (const type of Object.values(schema.getTypeMap())) {
         if (type.name.startsWith('__')) continue;
