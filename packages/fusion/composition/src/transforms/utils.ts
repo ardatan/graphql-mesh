@@ -1492,14 +1492,16 @@ export function rewriteConnectArgReferences(
       );
     }
     if (fieldRenameMap?.size) {
-      for (const [from, to] of fieldRenameMap) {
-        if (from === to) continue;
-        // Parent binders only — leave `$this.…` text inside SQL string literals alone.
+      // Single pass so `a→b` then `b→c` does not rewrite `$this.a` into `$this.c`.
+      const entries = [...fieldRenameMap.entries()]
+        .filter(([from, to]) => from && to && from !== to)
+        .sort((a, b) => b[0].length - a[0].length);
+      if (entries.length) {
+        const lookup = new Map(entries);
+        const names = entries.map(([from]) => escapeRegExp(from)).join('|');
+        const re = new RegExp(`\\$this\\.(${names})(?![\\w])`, 'g');
         out = rewriteOutsideQuotes(out, segment =>
-          segment.replace(
-            new RegExp(`\\$this\\.${escapeRegExp(from)}(?![\\w])`, 'g'),
-            `$this.${to}`,
-          ),
+          segment.replace(re, (_m, name: string) => `$this.${lookup.get(name) ?? name}`),
         );
       }
     }
@@ -1534,9 +1536,12 @@ export function rewriteConnectArgReferences(
     if (fieldRenameMap?.size) {
       for (const [from, to] of fieldRenameMap) {
         if (from === to) continue;
-        out = out
-          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
-          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`);
+        // Skip quoted literals (same guard as `$this` / `$args` rewrites).
+        out = rewriteOutsideQuotes(out, segment =>
+          segment
+            .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
+            .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`),
+        );
       }
     }
     return rewriteBindersAndTypenames(out);
@@ -1554,14 +1559,14 @@ export function rewriteConnectArgReferences(
     if (fieldRenameMap?.size) {
       for (const [from, to] of fieldRenameMap) {
         if (from === to) continue;
-        out = out.replace(
-          new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'),
-          `$1${to}$2`,
-        );
-        // Bare identity picks only (line is just the key) → keep the SQL column name.
-        out = out.replace(
-          new RegExp(`(^|[\\n])([\\t ]*)${escapeRegExp(from)}(?=[\\t ]*(?:#.*)?$)`, 'gm'),
-          `$1$2${to}: ${from}`,
+        out = rewriteOutsideQuotes(out, segment =>
+          segment
+            .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
+            // Bare identity picks only (line is just the key) → keep the SQL column name.
+            .replace(
+              new RegExp(`(^|[\\n])([\\t ]*)${escapeRegExp(from)}(?=[\\t ]*(?:#.*)?$)`, 'gm'),
+              `$1$2${to}: ${from}`,
+            ),
         );
       }
     }
@@ -1683,6 +1688,27 @@ export function rewriteConnectArgReferences(
           typeof sqlArgs?.offset === 'string'
             ? rewriteBindersAndTypenames(sqlArgs.offset)
             : sqlArgs?.offset,
+        first:
+          typeof sqlArgs?.first === 'string'
+            ? rewriteBindersAndTypenames(sqlArgs.first)
+            : sqlArgs?.first,
+        after:
+          typeof sqlArgs?.after === 'string'
+            ? rewriteBindersAndTypenames(sqlArgs.after)
+            : sqlArgs?.after,
+        last:
+          typeof sqlArgs?.last === 'string'
+            ? rewriteBindersAndTypenames(sqlArgs.last)
+            : sqlArgs?.last,
+        before:
+          typeof sqlArgs?.before === 'string'
+            ? rewriteBindersAndTypenames(sqlArgs.before)
+            : sqlArgs?.before,
+        // Legacy `@sql(filter:)` binder (still read by the executor).
+        filter:
+          typeof sqlArgs?.filter === 'string'
+            ? rewriteBindersAndTypenames(sqlArgs.filter)
+            : sqlArgs?.filter,
       })),
     };
   }

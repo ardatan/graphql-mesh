@@ -77,6 +77,8 @@ export function getSqlDirectiveArgs(
 }
 
 const MESH_ENTITY_FILL = Symbol.for('mesh.sql.entityFill');
+/** Marks stub hydrators so Postgres Grafast attribute plans can still install. */
+export const MESH_ENTITY_HYDRATOR = Symbol.for('mesh.sql.entityHydrator');
 
 /**
  * For types with `resolveReference`, resolve missing fields by fetching the entity
@@ -97,7 +99,7 @@ function hydrateEntityStubFieldResolvers(schema: GraphQLSchema) {
       if (typeof field.resolve === 'function') {
         continue;
       }
-      field.resolve = (parent, _args, context, info) => {
+      const resolve = (parent: any, _args: any, context: any, info: any) => {
         if (parent == null || typeof parent !== 'object') {
           return parent?.[fieldName];
         }
@@ -116,6 +118,8 @@ function hydrateEntityStubFieldResolvers(schema: GraphQLSchema) {
         }
         return fill.then((full: any) => full?.[fieldName]);
       };
+      (resolve as any)[MESH_ENTITY_HYDRATOR] = true;
+      field.resolve = resolve;
     }
   }
 }

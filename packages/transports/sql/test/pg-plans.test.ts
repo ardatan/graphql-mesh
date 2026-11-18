@@ -241,7 +241,77 @@ describe('wirePostgresSqlPlans relation bailouts', () => {
     const getRaw = jest.fn((name: string) => (name === 'take' ? 1 : undefined));
     (queryFields.artists.extensions as any).grafast.plan(null, { getRaw });
     expect(getRaw).toHaveBeenCalledWith('take');
-    expect(setFirst).toHaveBeenCalled();
+    expect(setFirst).toHaveBeenCalledWith(1);
+  });
+
+  it('keeps generic resolve for multi-segment $this paths', () => {
+    const Profile: GraphQLObjectType = new GraphQLObjectType({
+      name: 'Profile',
+      fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+      }),
+      extensions: {
+        directives: {
+          sql: {
+            table: 'profiles',
+            selection: 'id: id',
+          },
+        },
+      },
+    });
+    const User: GraphQLObjectType = new GraphQLObjectType({
+      name: 'User',
+      fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        metadata: { type: GraphQLString },
+        profile: {
+          type: Profile,
+          resolve: () => null,
+          extensions: {
+            directives: {
+              sql: {
+                table: 'profiles',
+                kind: 'ROW',
+                where: 'profile_id: $this.metadata.profileId',
+                selection: 'id: id',
+              },
+            },
+          },
+        },
+      }),
+      extensions: {
+        directives: {
+          sql: {
+            table: 'users',
+            selection: 'id: id\nmetadata: metadata',
+          },
+        },
+      },
+    });
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          users: fieldSql({
+            table: 'users',
+            kind: 'ROWS',
+            selection: 'id: id\nmetadata: metadata',
+          }),
+        },
+      }),
+      types: [User, Profile],
+    });
+    const { registry, tableByType, relationNames, installedRelations, sqlToAttrByTable } =
+      buildPgRegistryFromSqlSchema(schema);
+    const wired = wirePostgresSqlPlans(schema, registry, {
+      relationNames,
+      tableByType,
+      installedRelations,
+      sqlToAttrByTable,
+    });
+    const userFields = (wired.getType('User') as GraphQLObjectType).getFields();
+    expect(typeof userFields.profile.resolve).toBe('function');
+    expect((userFields.profile.extensions as any)?.grafast?.plan).toBeUndefined();
   });
 
   it('keeps generic resolve for relations with multiple $this predicates', () => {

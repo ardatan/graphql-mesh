@@ -91,6 +91,7 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
       },
     };
     byEvent.acquire[0](client);
+    await Promise.resolve(); // seen only after SET resolves
     byEvent.acquire[0](client); // once per client
     expect(queries).toEqual(['SET search_path TO "app"']);
 
@@ -110,6 +111,7 @@ describe('applyPgPoolSearchPath / wrapPgPoolAsSqlClient', () => {
         queries2.push(sql);
       },
     });
+    await Promise.resolve();
     expect(queries2[0]).toMatch(/SET search_path TO "public"/);
   });
 });

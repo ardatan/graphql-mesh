@@ -1092,10 +1092,17 @@ describe('rewriteConnectArgReferences @sql', () => {
             selection: 'first_name: first_name\nlast_name: last_name\nfirst_name',
             where: 'first_name: $this.first_name',
             set: 'first_name: $args.input.first_name',
+            first: '$args.pageSize',
+            after: '$args.cursor',
+            filter: '$args.filter',
           },
         ],
       },
-      new Map(),
+      new Map([
+        ['pageSize', 'size'],
+        ['cursor', 'nextCursor'],
+        ['filter', 'where'],
+      ]),
       new Map([
         ['first_name', 'firstName'],
         ['last_name', 'lastName'],
@@ -1110,6 +1117,37 @@ describe('rewriteConnectArgReferences @sql', () => {
     // where/set left keys stay physical; $this binders rename
     expect(sql.where).toBe('first_name: $this.firstName');
     expect(sql.set).toBe('first_name: $args.input.first_name');
+    expect(sql.first).toBe('$args.size');
+    expect(sql.after).toBe('$args.nextCursor');
+    expect(sql.filter).toBe('$args.where');
+  });
+
+  it('applies parent $this renames in one pass (no a→b→c chaining)', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        sql: [{ where: 'col: $this.a', selection: 'id: id' }],
+      },
+      new Map(),
+      new Map([
+        ['a', 'b'],
+        ['b', 'c'],
+      ]),
+    );
+    expect(rewritten!.sql[0].where).toBe('col: $this.b');
+  });
+
+  it('does not rewrite field names inside quoted SQL literals', async () => {
+    const { rewriteConnectArgReferences } = await import('../../src/transforms/utils.js');
+    const rewritten = rewriteConnectArgReferences(
+      {
+        connect: [{ selection: `status: "display name: legacy"\nname` }],
+      },
+      new Map(),
+      new Map([['name', 'fullName']]),
+    );
+    expect(rewritten!.connect[0].selection).toContain('"display name: legacy"');
+    expect(rewritten!.connect[0].selection).toMatch(/(^|\n)fullName(\n|$)/);
   });
 
   it('rewrites type-level @sql selection keys via applySqlTypeFieldRenames', async () => {

@@ -433,11 +433,17 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
 
     // Mutations
     const payloadKey = singular;
+    const { createFields, updateFields } = mutationWritableColumns(naming, table, solePk);
+    const hasCreateInput = Object.keys(createFields).length > 0;
+    const hasUpdateInput = Object.keys(updateFields).length > 0;
+    // Always emit create — empty writable set uses DEFAULT VALUES / `() VALUES ()`.
     mutationTC.setField(`create${typeName}`, {
       type: `${naming.payloadType(typeName)}!`,
-      args: {
-        input: `${naming.createInput(typeName)}!`,
-      },
+      args: hasCreateInput
+        ? {
+            input: `${naming.createInput(typeName)}!`,
+          }
+        : {},
       directives: [
         {
           name: 'sql',
@@ -445,7 +451,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
             subgraph: subgraphName,
             table: table.name,
             kind: 'INSERT',
-            set: insertSetBlock(naming, table, solePk),
+            set: hasCreateInput ? insertSetBlock(naming, table, solePk) : blockArg(''),
             selection: blockArg(`${payloadKey} {\n${indent(selectionRaw)}\n}`),
           },
         },
@@ -454,26 +460,29 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
 
     if (solePk) {
       const pkField = colFieldName(naming, solePk, solePk, table);
-      mutationTC.setField(`update${typeName}`, {
-        type: `${naming.payloadType(typeName)}!`,
-        args: {
-          [pkField]: 'ID!',
-          input: `${naming.updateInput(typeName)}!`,
-        },
-        directives: [
-          {
-            name: 'sql',
-            args: {
-              subgraph: subgraphName,
-              table: table.name,
-              kind: 'UPDATE',
-              set: blockArg(updateSetBlock(naming, table, solePk)),
-              where: blockArg(`${solePk.name}: $args.${pkField}`),
-              selection: blockArg(`${payloadKey} {\n${indent(selectionRaw)}\n}`),
-            },
+      // No writable columns → no update (would reference an empty input type).
+      if (hasUpdateInput) {
+        mutationTC.setField(`update${typeName}`, {
+          type: `${naming.payloadType(typeName)}!`,
+          args: {
+            [pkField]: 'ID!',
+            input: `${naming.updateInput(typeName)}!`,
           },
-        ],
-      });
+          directives: [
+            {
+              name: 'sql',
+              args: {
+                subgraph: subgraphName,
+                table: table.name,
+                kind: 'UPDATE',
+                set: blockArg(updateSetBlock(naming, table, solePk)),
+                where: blockArg(`${solePk.name}: $args.${pkField}`),
+                selection: blockArg(`${payloadKey} {\n${indent(selectionRaw)}\n}`),
+              },
+            },
+          ],
+        });
+      }
 
       mutationTC.setField(`delete${typeName}`, {
         type: `${naming.deletePayloadType(typeName)}!`,
@@ -943,13 +952,11 @@ function createConnectionTypes(schemaComposer: SchemaComposer, typeName: string)
   }
 }
 
-function createMutationInputs(
-  schemaComposer: SchemaComposer,
+function mutationWritableColumns(
   naming: SqlNaming,
-  typeName: string,
   table: SqlTableMeta,
   solePk?: SqlColumnMeta,
-) {
+): { createFields: Record<string, any>; updateFields: Record<string, any> } {
   const createFields: Record<string, any> = {};
   const updateFields: Record<string, any> = {};
   for (const col of table.columns) {
@@ -970,14 +977,30 @@ function createMutationInputs(
       updateFields[fieldName] = { type: gqlType };
     }
   }
-  schemaComposer.createInputTC({
-    name: naming.createInput(typeName),
-    fields: createFields,
-  });
-  schemaComposer.createInputTC({
-    name: naming.updateInput(typeName),
-    fields: updateFields,
-  });
+  return { createFields, updateFields };
+}
+
+function createMutationInputs(
+  schemaComposer: SchemaComposer,
+  naming: SqlNaming,
+  typeName: string,
+  table: SqlTableMeta,
+  solePk?: SqlColumnMeta,
+) {
+  const { createFields, updateFields } = mutationWritableColumns(naming, table, solePk);
+  // Skip empty input types — GraphQL rejects schemas that reference them.
+  if (Object.keys(createFields).length) {
+    schemaComposer.createInputTC({
+      name: naming.createInput(typeName),
+      fields: createFields,
+    });
+  }
+  if (Object.keys(updateFields).length) {
+    schemaComposer.createInputTC({
+      name: naming.updateInput(typeName),
+      fields: updateFields,
+    });
+  }
   const singular = naming.singularField(typeName);
   schemaComposer.createObjectTC({
     name: naming.payloadType(typeName),

@@ -185,10 +185,18 @@ export function applyPgPoolSearchPath(pool: PgPoolConnectable, schema?: string):
   const seen = new WeakSet<object>();
   const ensure = (client: { query: (q: string) => Promise<unknown> }) => {
     if (seen.has(client)) return;
-    seen.add(client);
-    // Failure leaves the client unusable for unqualified table names — surface via
-    // the next query rather than silently falling back to another schema.
-    void client.query(sql);
+    // Mark initialized only after SET succeeds so a failed setup can retry on
+    // the next acquire. Pool event listeners cannot block checkout — full
+    // await-before-query needs a connection barrier (deferred).
+    client.query(sql).then(
+      () => {
+        seen.add(client);
+      },
+      () => {
+        // Leave unseen; the next acquire retries. A failed SET leaves the
+        // session on the prior path until then.
+      },
+    );
   };
   pool.on('acquire', ensure);
   pool.on('connect', ensure);

@@ -98,8 +98,15 @@ export function wirePostgresSqlPlans(
 
       // Column scalars on table types: `$row.get('id')` for Pg steps, `access` for
       // plain objects from a generic parent resolve (mixed GraphQL.js / Grafast).
-      // Keep custom / existing resolvers and plans (no `@sql` on the field).
-      if (typeof fieldConfig.resolve === 'function') return fieldConfig;
+      // Keep custom resolvers / plans (no `@sql` on the field). Entity stub
+      // hydrators from `wireSqlEntityResolvers` are tagged and still get attribute
+      // plans — otherwise Pg parents stay tuples and hydrators cannot read keys.
+      if (
+        typeof fieldConfig.resolve === 'function' &&
+        !(fieldConfig.resolve as { [k: symbol]: unknown })[Symbol.for('mesh.sql.entityHydrator')]
+      ) {
+        return fieldConfig;
+      }
       if ((fieldConfig.extensions as any)?.grafast?.plan) return fieldConfig;
       const parentTable = meta.tableByType.get(typeName);
       if (!parentTable) return fieldConfig;
@@ -195,6 +202,14 @@ function relationWhereTooComplexForPlan(where: ReturnType<typeof parseSqlMapping
       continue;
     }
     if (entry.value?.kind === 'this') {
+      // Registry installs one attr pair from the first path segment only —
+      // `$this.metadata.profileId` cannot be represented; keep generic.
+      const segs = entry.value.path?.length
+        ? entry.value.path
+        : entry.value.value
+          ? [entry.value.value]
+          : [];
+      if (segs.length !== 1) return true;
       thisEquals += 1;
       continue;
     }
