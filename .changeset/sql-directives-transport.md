@@ -13,8 +13,8 @@ New SQL subgraph stack: `@omnigraph/sql` + `@graphql-mesh/transport-sql` with ha
 `@sql` and one transport `kind: "sql"`.
 
 One field directive `@sql` covers reads and writes via `kind`
-(`ROW` | `ROWS` | `CONNECTION` | `COUNT` | `INSERT` | `UPDATE` | `DELETE`). Relations stay on
-Relations use the same `@sql` with `$this` in `args`.
+(`ROW` | `ROWS` | `CONNECTION` | `COUNT` | `INSERT` | `UPDATE` | `DELETE`).
+Relations use the same `@sql` with `$this` binders in `where`.
 
 **Removed from the monorepo** (compose loaders / transports):
 
@@ -52,12 +52,63 @@ recompose and update client queries.
 
 `mesh-migrate-config` and public website docs are intentionally unchanged here.
 
+## Migration (`@sql` / client args)
+
+Directive mapping no longer uses a catch-all `args` bag or a separate `@sql(filter:)` binder.
+
+| Surface | Before (early drafts / old packs) | After |
+| --- | --- | --- |
+| Client list/count arg | `filter: AlbumFilter` | `where: AlbumFilter` (input type still `*Filter`) |
+| Equality / joins | `@sql(args: """AlbumId: $args.id""")` | `@sql(where: """AlbumId: $args.id""")` |
+| Structured filter alone | `@sql(filter: "$args.filter")` | `@sql(where: "$args.where")` |
+| Join + client filter | stuffed into `args` / separate `filter` | `@sql(where: """ArtistId: $this.id\n...$args.where""")` |
+| Pagination / sort binders | inside `args` or under `where` | separate `@sql(orderBy/limit/offset/first/after: "$args.…")` |
+| Mutations | values in `args` | `@sql(set: …)` + `where` for UPDATE/DELETE |
+
+Connectors-style object spread (`...$args.where`) is only needed when merging fixed predicates
+with the client `where` input. When the binder stands alone, use bare `$args.where`.
+
+```graphql
+# sole filter
+albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]!
+  @sql(
+    table: "albums"
+    kind: ROWS
+    where: "$args.where"
+    orderBy: "$args.orderBy"
+    limit: "$args.limit"
+    offset: "$args.offset"
+    selection: """
+      id: AlbumId
+      title: Title
+    """
+  )
+
+# join + client where
+albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]!
+  @sql(
+    table: "albums"
+    kind: ROWS
+    where: """
+      ArtistId: $this.id
+      ...$args.where
+    """
+    orderBy: "$args.orderBy"
+    limit: "$args.limit"
+    offset: "$args.offset"
+    selection: """
+      id: AlbumId
+      title: Title
+    """
+  )
+```
+
+Hand-authored SDL that still has `@sql(filter: "$args.filter")` or `filter: $args.filter`
+stuffed into `where` keeps working at runtime; new emit does not produce it.
+
 ## What else changed
 
-- `@sql` uses `where` (predicates) / `filter` / `orderBy` / `limit` / `offset` /
-  `first` / `after` / `set` / `selection` (not a catch-all `args` bag)
 - Fusion rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql`
-
 - Type-level `@sql` on OBJECT (Connectors-style `$this` keys) wires `resolveReference` + Hive
   `Query._entities` — no Query `entity: true`
 - Transport DataLoader-batches ROW/ROWS equality lookups (`WHERE col IN (...)`)
