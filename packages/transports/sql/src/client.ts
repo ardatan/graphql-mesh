@@ -108,9 +108,24 @@ export function createBunSqlClient(opts: CreateSqlClientOptions): SqlClient {
     opts.adapter === 'sqlite' ? resolveSqlitePath(opts.location, opts.cwd) : opts.location;
   const sql = new BunSQL(location, bunOpts);
 
+  const schema = opts.adapter === 'postgres' ? opts.schema?.trim() : undefined;
+  let searchPathReady: Promise<void> | null = null;
+  const ensureSearchPath = async () => {
+    if (!schema || schema === 'public') return;
+    if (!searchPathReady) {
+      const ident = `"${schema.replace(/"/g, '""')}"`;
+      searchPathReady = Promise.resolve(sql.unsafe(`SET search_path TO ${ident}`)).then(
+        () => undefined,
+        () => undefined,
+      );
+    }
+    await searchPathReady;
+  };
+
   return {
     adapter: opts.adapter,
     async query<T = Record<string, unknown>>(query: string, params: unknown[] = []) {
+      await ensureSearchPath();
       const result = await sql.unsafe(query, params);
       const rows = normalizeBunRows<T>(result);
       const rowCount =
@@ -201,14 +216,60 @@ function mysqlPromiseClient(p: {
   };
 }
 
+/** Classic `mysql` callback pool — `query`/`end` take node-style callbacks. */
+function mysqlCallbackClient(pool: {
+  query: (...args: any[]) => any;
+  end?: (...args: any[]) => any;
+}): SqlClient {
+  return {
+    adapter: 'mysql',
+    query<T = Record<string, unknown>>(sql: string, params: unknown[] = []) {
+      return new Promise<{ rows: T[]; rowCount: number; insertId?: number | bigint }>(
+        (resolve, reject) => {
+          pool.query(sql, params, (err: Error | null, result: any) => {
+            if (err) {
+              reject(err);
+              return;
+            }
+            if (Array.isArray(result)) {
+              resolve({ rows: result as T[], rowCount: result.length });
+              return;
+            }
+            const header = result as { affectedRows?: number; insertId?: number | bigint };
+            resolve({
+              rows: [] as T[],
+              rowCount: Number(header?.affectedRows ?? 0),
+              ...(header?.insertId != null && Number(header.insertId) !== 0
+                ? { insertId: header.insertId }
+                : {}),
+            });
+          });
+        },
+      );
+    },
+    dispose() {
+      if (typeof pool.end !== 'function') return;
+      return new Promise<void>((resolve, reject) => {
+        pool.end((err: Error | null) => (err ? reject(err) : resolve()));
+      });
+    },
+  };
+}
+
 export function wrapMysqlPoolAsSqlClient(pool: {
   query: (...args: any[]) => any;
   end?: (...args: any[]) => any;
   promise?: () => { query: (...args: any[]) => any; end?: (...args: any[]) => any };
+  execute?: (...args: any[]) => any;
 }): SqlClient {
   // mysql2 callback pool exposes `.promise()`; mysql2/promise createPool does not.
   if (typeof pool.promise === 'function') {
     return mysqlPromiseClient(pool.promise());
+  }
+  // Classic `mysql` has no `execute` (prepared statements); mysql2 (promise or
+  // callback-via-promise()) does. Select by API shape — never probe with a query.
+  if (typeof pool.execute !== 'function') {
+    return mysqlCallbackClient(pool);
   }
   // Already-promisified pool (`mysql2/promise` or handler-injected promise pool).
   return mysqlPromiseClient(pool);

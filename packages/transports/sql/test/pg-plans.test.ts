@@ -121,8 +121,14 @@ describe('wirePostgresSqlPlans relation bailouts', () => {
       types: [Album, Artist],
     });
 
-    const { registry, tableByType, relationNames } = buildPgRegistryFromSqlSchema(schema);
-    const wired = wirePostgresSqlPlans(schema, registry, { relationNames, tableByType });
+    const { registry, tableByType, relationNames, installedRelations, sqlToAttrByTable } =
+      buildPgRegistryFromSqlSchema(schema);
+    const wired = wirePostgresSqlPlans(schema, registry, {
+      relationNames,
+      tableByType,
+      installedRelations,
+      sqlToAttrByTable,
+    });
     const artistFields = (wired.getType('Artist') as GraphQLObjectType).getFields();
 
     expect(artistFields.album.resolve).toBeUndefined();

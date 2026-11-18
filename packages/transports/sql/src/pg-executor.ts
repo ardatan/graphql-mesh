@@ -28,10 +28,16 @@ export function createPostgresGrafastExecutor(
   const pool = opts.sqlClient.pgPool;
   if (!pool) return null;
 
-  const { registry, relationNames, tableByType } = buildPgRegistryFromSqlSchema(opts.subgraph, {
-    pgSchema: opts.pgSchema,
+  const { registry, relationNames, tableByType, installedRelations, sqlToAttrByTable } =
+    buildPgRegistryFromSqlSchema(opts.subgraph, {
+      pgSchema: opts.pgSchema,
+    });
+  const schema = wirePostgresSqlPlans(opts.subgraph, registry, {
+    relationNames,
+    tableByType,
+    installedRelations,
+    sqlToAttrByTable,
   });
-  const schema = wirePostgresSqlPlans(opts.subgraph, registry, { relationNames, tableByType });
   const withPgClient = makePgAdaptorWithPgClient(pool);
 
   const executor: DisposableExecutor = async function postgresGrafastExecutor(executionRequest) {

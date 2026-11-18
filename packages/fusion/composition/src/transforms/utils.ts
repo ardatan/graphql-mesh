@@ -9,13 +9,29 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/** Apply `fn` only to spans outside `'…'` / `"…"` (respects `\\` escapes). */
+/**
+ * Apply `fn` only to spans outside `'…'` / `"…"` (respects `\\` escapes).
+ * SQL `# …` line comments are copied through unchanged so a `# … " …` does not
+ * poison quote detection for later `$args` rewrites.
+ */
 function rewriteOutsideQuotes(value: string, fn: (segment: string) => string): string {
   let out = '';
   let i = 0;
   let segmentStart = 0;
   while (i < value.length) {
     const c = value[i];
+    if (c === '#') {
+      out += fn(value.slice(segmentStart, i));
+      const eol = value.indexOf('\n', i);
+      if (eol < 0) {
+        out += value.slice(i);
+        return out;
+      }
+      out += value.slice(i, eol + 1);
+      i = eol + 1;
+      segmentStart = i;
+      continue;
+    }
     if (c === '"' || c === "'") {
       out += fn(value.slice(segmentStart, i));
       const q = c;
@@ -291,6 +307,10 @@ export function rewriteConnectArgReferences(
         typeof sqlArgs?.selection === 'string'
           ? rewriteExpr(sqlArgs.selection)
           : sqlArgs?.selection,
+      orderBy:
+        typeof sqlArgs?.orderBy === 'string' ? rewriteExpr(sqlArgs.orderBy) : sqlArgs?.orderBy,
+      limit: typeof sqlArgs?.limit === 'string' ? rewriteExpr(sqlArgs.limit) : sqlArgs?.limit,
+      offset: typeof sqlArgs?.offset === 'string' ? rewriteExpr(sqlArgs.offset) : sqlArgs?.offset,
     }));
   }
   return next;

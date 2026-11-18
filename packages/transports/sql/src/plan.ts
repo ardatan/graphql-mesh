@@ -171,6 +171,8 @@ function planChildField(
   const childType = unwrapToObjectType(field.type);
 
   if (kind === 'ROW') {
+    // Fold only equality-only `$this` joins — spreads / extra predicates would be dropped.
+    if (!isEqualityOnlyThisJoin(whereMapping, joinColumn)) return null;
     const alias = `j${aliasCounter.n++}`;
     const narrowed = narrowSelectionToFieldNodes(relSelection, fieldNode, fragments, childType);
     const nestedJoins: BelongsToJoin[] = [];
@@ -284,6 +286,14 @@ function pickRankSqlColumn(relSelection: ParsedSqlMapping, joinColumn: string): 
   return joinColumn;
 }
 
+function isEqualityOnlyThisJoin(whereMapping: ParsedSqlMapping, joinColumn: string): boolean {
+  if (whereMapping.entries.some(e => e.spread)) return false;
+  const binders = whereMapping.entries.filter(e => !e.children);
+  if (binders.length !== 1) return false;
+  const only = binders[0];
+  return only.key === joinColumn && only.value?.kind === 'this';
+}
+
 function isSimpleHasManyFoldable(
   _whereMapping: ParsedSqlMapping,
   fieldNode: FieldNode,
@@ -291,10 +301,12 @@ function isSimpleHasManyFoldable(
 ): boolean {
   // Loader emits where/orderBy binders; fold only when the operation does not
   // pass those args. Offset is not applied in JSON subselects — keep DataLoader.
+  // Variable / non-literal limits cannot be resolved into the JSON subselect.
   if (fieldNode.arguments?.length) {
     for (const arg of fieldNode.arguments) {
       if (arg.name.value === 'offset') return false;
       if (arg.name.value !== 'limit') return false;
+      if (arg.value.kind !== Kind.INT) return false;
     }
   }
   return true;

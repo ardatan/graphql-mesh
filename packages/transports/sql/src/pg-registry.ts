@@ -45,6 +45,10 @@ export function buildPgRegistryFromSqlSchema(
   executor: PgExecutor;
   tableByType: Map<string, string>;
   relationNames: Map<string, Map<string, { remoteTable: string; kind: 'ROW' | 'ROWS' }>>;
+  /** Relations successfully passed to `addRelation` (may be a subset of `relationNames`). */
+  installedRelations: Map<string, Set<string>>;
+  /** table → SQL column → GraphQL attribute name (from `@sql(selection:)`). */
+  sqlToAttrByTable: Map<string, Map<string, string>>;
 } {
   const pgSchema = opts?.pgSchema?.trim() || 'public';
   const executor = new PgExecutor({
@@ -64,6 +68,7 @@ export function buildPgRegistryFromSqlSchema(
     string,
     Map<string, { remoteTable: string; kind: 'ROW' | 'ROWS' }>
   >();
+  const installedRelations = new Map<string, Set<string>>();
 
   const ensureTable = (table: string): TableBuildInfo => {
     let info = tables.get(table);
@@ -254,6 +259,12 @@ export function buildPgRegistryFromSqlSchema(
             isUnique: kind === 'ROW',
             isReferencee: kind === 'ROWS',
           });
+          let installed = installedRelations.get(type.name);
+          if (!installed) {
+            installed = new Set();
+            installedRelations.set(type.name, installed);
+          }
+          installed.add(relationName);
         } catch {
           // Duplicate / incompatible relations — skip
         }
@@ -261,8 +272,26 @@ export function buildPgRegistryFromSqlSchema(
     }
   }
 
+  const sqlToAttrByTable = new Map<string, Map<string, string>>();
+  for (const [table, info] of tables) {
+    const map = new Map<string, string>();
+    for (const [gql, col] of info.columns) {
+      // Prefer first GraphQL attr for a given SQL column; exact gql==sql also recorded.
+      if (!map.has(col.sqlCol)) map.set(col.sqlCol, gql);
+      if (!map.has(gql)) map.set(gql, gql);
+    }
+    sqlToAttrByTable.set(table, map);
+  }
+
   const registry = makeRegistry(builder.getRegistryConfig());
-  return { registry, executor, tableByType, relationNames };
+  return {
+    registry,
+    executor,
+    tableByType,
+    relationNames,
+    installedRelations,
+    sqlToAttrByTable,
+  };
 }
 
 function unwrapObjectType(type: GraphQLOutputType): GraphQLObjectType | null {

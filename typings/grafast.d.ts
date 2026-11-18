@@ -2,5 +2,6 @@
 export declare function context(): any;
 export declare function object(spec: Record<string, any>): any;
 export declare function connection(...args: any[]): any;
+export declare function access(...args: any[]): any;
 export declare function execute(opts: any): any;
 export type Step<T = any> = any;

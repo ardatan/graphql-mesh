@@ -260,8 +260,8 @@ export function buildSelect(adapter: SqlAdapter, plan: SelectPlan): BuiltQuery {
   } else if (plan.kind === 'ROW') {
     params.push(1);
     sql += ` LIMIT ${placeholder(adapter, params.length)}`;
-  } else if (offset != null && adapter === 'mysql') {
-    // MySQL rejects OFFSET without LIMIT.
+  } else if (offset != null && (adapter === 'mysql' || adapter === 'sqlite')) {
+    // MySQL rejects OFFSET without LIMIT; SQLite needs a LIMIT before OFFSET too.
     params.push(Number.MAX_SAFE_INTEGER);
     sql += ` LIMIT ${placeholder(adapter, params.length)}`;
   }
@@ -525,7 +525,7 @@ export function buildSelectByColumnIn(
   if (limit != null) {
     params.push(Number(limit));
     sql += ` LIMIT ${placeholder(adapter, params.length)}`;
-  } else if (offset != null && adapter === 'mysql') {
+  } else if (offset != null && (adapter === 'mysql' || adapter === 'sqlite')) {
     params.push(Number.MAX_SAFE_INTEGER);
     sql += ` LIMIT ${placeholder(adapter, params.length)}`;
   }
@@ -1133,18 +1133,28 @@ function appendFilter(
       whereParts.push(`${q} >= ${placeholder(adapter, params.length)}`);
     }
     if ('in' in o && Array.isArray(o.in)) {
-      const phs = o.in.map((v: unknown) => {
-        params.push(v);
-        return placeholder(adapter, params.length);
-      });
-      whereParts.push(`${q} IN (${phs.join(', ')})`);
+      if (o.in.length === 0) {
+        // Empty IN () is invalid SQL — force no rows.
+        whereParts.push(adapter === 'sqlite' ? '0' : 'FALSE');
+      } else {
+        const phs = o.in.map((v: unknown) => {
+          params.push(v);
+          return placeholder(adapter, params.length);
+        });
+        whereParts.push(`${q} IN (${phs.join(', ')})`);
+      }
     }
     if ('nin' in o && Array.isArray(o.nin)) {
-      const phs = o.nin.map((v: unknown) => {
-        params.push(v);
-        return placeholder(adapter, params.length);
-      });
-      whereParts.push(`${q} NOT IN (${phs.join(', ')})`);
+      if (o.nin.length === 0) {
+        // Empty NOT IN () is invalid — treat as always true.
+        whereParts.push(adapter === 'sqlite' ? '1' : 'TRUE');
+      } else {
+        const phs = o.nin.map((v: unknown) => {
+          params.push(v);
+          return placeholder(adapter, params.length);
+        });
+        whereParts.push(`${q} NOT IN (${phs.join(', ')})`);
+      }
     }
     if ('includes' in o) {
       params.push(`%${o.includes}%`);

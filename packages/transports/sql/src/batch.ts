@@ -25,10 +25,23 @@ function getLoaderMap(context: any): LoaderMap {
   return context[LOADERS] as LoaderMap;
 }
 
+const CLIENT_ID = Symbol.for('mesh.sql.clientId');
+let nextClientId = 0;
+
+/** Stable per-process id for a SqlClient instance (loader cache affinity). */
+function clientCacheKey(client: SqlClient): string {
+  const c = client as SqlClient & { [CLIENT_ID]?: string };
+  if (!c[CLIENT_ID]) {
+    c[CLIENT_ID] = `c${++nextClientId}`;
+  }
+  return c[CLIENT_ID]!;
+}
+
 /** Stable JSON for loader keys — include every arg (custom mapped criteria, etc.). */
 function stableArgsKey(args: Record<string, any> | undefined): string {
   if (!args) return '';
   return JSON.stringify(args, (_key, value) => {
+    if (typeof value === 'bigint') return value.toString();
     if (value && typeof value === 'object' && !Array.isArray(value)) {
       return Object.fromEntries(
         Object.keys(value as Record<string, unknown>)
@@ -155,6 +168,7 @@ export function loadBatchedByColumn(
     ? JSON.stringify([...opts.columnCatalog.entries()].sort(([a], [b]) => a.localeCompare(b)))
     : '';
   const loaderKey = [
+    clientCacheKey(opts.client),
     opts.kind,
     opts.table,
     opts.column,
@@ -165,7 +179,21 @@ export function loadBatchedByColumn(
     catalogKey,
     JSON.stringify(opts.softDelete ?? null),
     JSON.stringify(
-      (opts.relationFilters || []).map(r => [r.field, r.relatedTable, r.localColumn, r.refColumn]),
+      (opts.relationFilters || []).map(r => [
+        r.field,
+        r.relatedTable,
+        r.localColumn,
+        r.refColumn,
+        r.columns?.size ? [...r.columns.entries()].sort(([a], [b]) => a.localeCompare(b)) : null,
+        r.junction
+          ? [
+              r.junction.table,
+              r.junction.localColumn,
+              r.junction.remoteColumn,
+              r.junction.targetColumn,
+            ]
+          : null,
+      ]),
     ),
   ].join('\0');
 

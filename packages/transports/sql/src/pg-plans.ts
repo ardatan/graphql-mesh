@@ -1,4 +1,4 @@
-import { connection } from 'grafast';
+import { access, connection } from 'grafast';
 import type { GraphQLFieldConfig, GraphQLSchema } from 'graphql';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
@@ -20,6 +20,10 @@ export function wirePostgresSqlPlans(
   meta: {
     relationNames: Map<string, Map<string, { remoteTable: string; kind: 'ROW' | 'ROWS' }>>;
     tableByType: Map<string, string>;
+    /** Relations that `addRelation` actually installed (subset of relationNames). */
+    installedRelations?: Map<string, Set<string>>;
+    /** table → SQL column / gql key → GraphQL attribute name */
+    sqlToAttrByTable?: Map<string, Map<string, string>>;
   },
 ): GraphQLSchema {
   return mapSchema(schema, {
@@ -48,6 +52,15 @@ export function wirePostgresSqlPlans(
           if (relationHasClientPlanners(sqlDir.args) || relationWhereTooComplexForPlan(where)) {
             return fieldConfig;
           }
+          // Discovery metadata alone is not enough — addRelation may have been skipped
+          // when there was no `$this` binder.
+          if (!meta.installedRelations?.get(typeName)?.has(fieldName)) {
+            return fieldConfig;
+          }
+          // Note: when a root for this parent type keeps a generic resolver, nested
+          // relation plans still apply for *planned* parents (e.g. `country { city }`).
+          // Plain-object parents from a bailed root need the generic child resolve —
+          // that mixed path remains a known limitation (prefer planned roots).
           grafast.plan = makeRelationPlan(kind, fieldName);
           delete (fieldConfig as GraphQLFieldConfig<any, any>).resolve;
           return fieldConfig;
@@ -70,12 +83,14 @@ export function wirePostgresSqlPlans(
           return fieldConfig;
         }
 
-        grafast.plan = makeRootPlan(resource, kind, where);
+        const sqlToAttr = meta.sqlToAttrByTable?.get(table);
+        grafast.plan = makeRootPlan(resource, kind, where, sqlToAttr);
         delete (fieldConfig as GraphQLFieldConfig<any, any>).resolve;
         return fieldConfig;
       }
 
-      // Column scalars on table types: `$row.get('id')` etc. (no @sql on the field)
+      // Column scalars on table types: `$row.get('id')` for Pg steps, `access` for
+      // plain objects from a generic parent resolve (mixed GraphQL.js / Grafast).
       const parentTable = meta.tableByType.get(typeName);
       if (!parentTable) return fieldConfig;
       const parentResource = (registry.pgResources as any)[parentTable];
@@ -84,7 +99,7 @@ export function wirePostgresSqlPlans(
 
       grafast.plan = function sqlAttributePlan($row: any) {
         if ($row && typeof $row.get === 'function') return $row.get(fieldName);
-        return null;
+        return access($row, fieldName);
       };
       delete (fieldConfig as GraphQLFieldConfig<any, any>).resolve;
       return fieldConfig;
@@ -176,23 +191,41 @@ function makeRelationPlan(kind: 'ROW' | 'ROWS', relationName: string) {
   };
 }
 
-function fieldArg(fieldArgs: any, name: string): any {
+function fieldArg(fieldArgs: any, nameOrPath: string | readonly string[]): any {
   if (!fieldArgs) return undefined;
-  if (typeof fieldArgs.getRaw === 'function') return fieldArgs.getRaw(name);
-  if (typeof fieldArgs.get === 'function') return fieldArgs.get(name);
+  const path = Array.isArray(nameOrPath)
+    ? nameOrPath
+    : typeof nameOrPath === 'string'
+      ? [nameOrPath]
+      : [...nameOrPath];
+  if (typeof fieldArgs.getRaw === 'function') {
+    // grafast FieldArgs.getRaw accepts a path array for nested input fields.
+    return path.length === 1 ? fieldArgs.getRaw(path[0]) : fieldArgs.getRaw(path);
+  }
+  if (typeof fieldArgs.get === 'function') {
+    return path.length === 1 ? fieldArgs.get(path[0]) : fieldArgs.get(path);
+  }
   return undefined;
 }
 
-function makeRootPlan(resource: any, kind: SqlKind, where: ReturnType<typeof parseSqlMapping>) {
+function makeRootPlan(
+  resource: any,
+  kind: SqlKind,
+  where: ReturnType<typeof parseSqlMapping>,
+  sqlToAttr?: Map<string, string>,
+) {
   return function sqlRootPlan(_$parent: any, fieldArgs: any) {
     if (kind === 'ROW') {
       const eqCol = batchableEqualityColumn(where);
       const binder = eqCol ? where.entries.find(e => e.key === eqCol) : undefined;
       if (binder?.value?.kind === 'args') {
-        const argName = binder.value.path?.[0] || binder.value.value;
-        const $arg = fieldArg(fieldArgs, argName);
+        const path =
+          binder.value.path && binder.value.path.length
+            ? binder.value.path
+            : [binder.value.value].filter(Boolean);
+        const $arg = fieldArg(fieldArgs, path as string[]);
         // Use the mapped where key (GraphQL attr / SQL binder), not always PK `id`.
-        const attr = attributeForWhereKey(resource, eqCol!);
+        const attr = attributeForWhereKey(resource, eqCol!, sqlToAttr);
         return resource.get({ [attr]: $arg });
       }
       const $rows = resource.find();
@@ -229,7 +262,14 @@ function makeRootPlan(resource: any, kind: SqlKind, where: ReturnType<typeof par
   };
 }
 
-function attributeForWhereKey(resource: any, key: string): string {
+function attributeForWhereKey(resource: any, key: string, sqlToAttr?: Map<string, string>): string {
+  if (sqlToAttr) {
+    const mapped = sqlToAttr.get(key);
+    if (mapped) return mapped;
+    for (const [sqlCol, gql] of sqlToAttr) {
+      if (sqlCol.toLowerCase() === key.toLowerCase()) return gql;
+    }
+  }
   const attrs = resource?.codec?.attributes ?? resource?.resource?.codec?.attributes;
   if (attrs && key in attrs) return key;
   if (attrs) {
