@@ -1,6 +1,5 @@
 ---
 '@omnigraph/thrift': minor
-'@omnigraph/json-schema': patch
 ---
 
 ### Why
@@ -10,7 +9,7 @@ Loader error modeling shares one flag name and polarity across protocols: `ignor
 ### What
 
 - **`@omnigraph/thrift`:** rename loader option `ignoreExceptions` -> `ignoreErrorResponses` (same polarity). Default stays `true`. No alias for the old name.
-- **`@omnigraph/json-schema` (also OpenAPI / RAML options):** richer TSDoc for `ignoreErrorResponses`. **Defaults unchanged** (`false` / omitted still models non-2xx in the result).
+- OpenAPI / JSON Schema / RAML: TSDoc-only polarity clarification on the existing `ignoreErrorResponses` option (defaults unchanged). No package bump.
 
 ### Migration
 
@@ -40,4 +39,4 @@ Omit the option (or set `true`) for the previous default throw behavior.
 
 **OpenAPI / JSON Schema / RAML**
 
-No config migration. Unset still models non-2xx response schemas. Set `ignoreErrorResponses: true` only when you want throw-only emit (skip non-2xx schemas).
+No config migration. Unset still models non-2xx response schemas.
