@@ -1,31 +1,31 @@
 import { buildMongoFilter, graphqlFilterToMongo } from '../src/filter.js';
 
-describe('mongo filter', () => {
+describe('mongo where mapping', () => {
   it('builds equality from mapping binders', () => {
     expect(
       buildMongoFilter(
         `
-          _id: $args._id
+          _id: $args.id
           gender: "male"
         `,
-        { args: { _id: '507f1f77bcf86cd799439011' } },
+        { args: { id: '507f1f77bcf86cd799439011' } },
       ),
     ).toMatchObject({
       gender: 'male',
     });
     expect(
       String(
-        buildMongoFilter(`_id: $args._id`, {
-          args: { _id: '507f1f77bcf86cd799439011' },
+        buildMongoFilter(`_id: $args.id`, {
+          args: { id: '507f1f77bcf86cd799439011' },
         })._id,
       ),
     ).toBe('507f1f77bcf86cd799439011');
   });
 
-  it('merges structured filter via bare binder and spread', () => {
+  it('merges structured where via bare binder and spread', () => {
     expect(
-      buildMongoFilter(`$args.filter`, {
-        args: { filter: { name: { eq: 'Ada' }, age: { gte: 30 } } },
+      buildMongoFilter(`$args.where`, {
+        args: { where: { name: { eq: 'Ada' }, age: { gte: 30 } } },
       }),
     ).toEqual({
       name: 'Ada',
@@ -36,9 +36,9 @@ describe('mongo filter', () => {
       buildMongoFilter(
         `
           gender: "female"
-          ...$args.filter
+          ...$args.where
         `,
-        { args: { filter: { age: { lt: 40 } } } },
+        { args: { where: { age: { lt: 40 } } } },
       ),
     ).toEqual({
       gender: 'female',
@@ -48,12 +48,12 @@ describe('mongo filter', () => {
 
   it('maps array id binders to $in', () => {
     const ids = ['507f1f77bcf86cd799439011', '507f1f77bcf86cd799439012'];
-    const filter = buildMongoFilter(`_id: $args._ids`, { args: { _ids: ids } });
+    const filter = buildMongoFilter(`_id: $args.ids`, { args: { ids } });
     expect(filter._id).toMatchObject({ $in: expect.any(Array) });
     expect((filter._id as any).$in.map(String)).toEqual(ids);
   });
 
-  it('maps GraphQL filter ops to Mongo operators', () => {
+  it('maps GraphQL where ops to Mongo operators', () => {
     expect(
       graphqlFilterToMongo({
         AND: [{ name: { regex: '^A' } }, { age: { in: [1, 2] } }],

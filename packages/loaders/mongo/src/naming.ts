@@ -1,7 +1,11 @@
+/**
+ * Default GraphQL naming aligned with the SQL / PostGraphile-ish Mesh stack
+ * (`user` / `users` / `allUsers` / `createUser`, client args `where` / `orderBy`).
+ */
 export interface MongoNaming {
   typeName(modelName: string): string;
-  filterInput(typeName: string): string;
-  sortInput(typeName: string): string;
+  whereInput(typeName: string): string;
+  orderByInput(typeName: string): string;
   createInput(typeName: string): string;
   updateInput(typeName: string): string;
   payloadType(typeName: string): string;
@@ -15,8 +19,6 @@ export interface MongoNaming {
   countField(typeName: string): string;
   connectionField(typeName: string): string;
   paginationField(typeName: string): string;
-  dataLoaderField(typeName: string): string;
-  dataLoaderManyField(typeName: string): string;
   createOneField(typeName: string): string;
   createManyField(typeName: string): string;
   updateByIdField(typeName: string): string;
@@ -27,33 +29,49 @@ export interface MongoNaming {
   removeManyField(typeName: string): string;
 }
 
+function camel(typeName: string): string {
+  if (!typeName) return typeName;
+  return typeName.charAt(0).toLowerCase() + typeName.slice(1);
+}
+
+function pluralType(typeName: string): string {
+  if (!typeName) return typeName;
+  if (/[^aeiou]y$/i.test(typeName)) {
+    return `${typeName.slice(0, -1)}ies`;
+  }
+  if (/s$/i.test(typeName)) return typeName;
+  return `${typeName}s`;
+}
+
+function pluralCamel(typeName: string): string {
+  return camel(pluralType(typeName));
+}
+
 export function createDefaultNaming(): MongoNaming {
   return {
     typeName: name => name,
-    filterInput: typeName => `${typeName}Filter`,
-    sortInput: typeName => `${typeName}Sort`,
-    createInput: typeName => `CreateOne${typeName}Input`,
-    updateInput: typeName => `UpdateById${typeName}Input`,
+    whereInput: typeName => `${typeName}WhereInput`,
+    orderByInput: typeName => `${typeName}OrderByInput`,
+    createInput: typeName => `Create${typeName}Input`,
+    updateInput: typeName => `Update${typeName}Input`,
     payloadType: typeName => `${typeName}Payload`,
     connectionType: typeName => `${typeName}Connection`,
     edgeType: typeName => `${typeName}Edge`,
     paginationType: typeName => `${typeName}Pagination`,
-    findByIdField: typeName => `${typeName}_findById`,
-    findByIdsField: typeName => `${typeName}_findByIds`,
-    findManyField: typeName => `${typeName}_findMany`,
-    findOneField: typeName => `${typeName}_findOne`,
-    countField: typeName => `${typeName}_count`,
-    connectionField: typeName => `${typeName}_connection`,
-    paginationField: typeName => `${typeName}_pagination`,
-    dataLoaderField: typeName => `${typeName}_dataLoader`,
-    dataLoaderManyField: typeName => `${typeName}_dataLoaderMany`,
-    createOneField: typeName => `${typeName}_createOne`,
-    createManyField: typeName => `${typeName}_createMany`,
-    updateByIdField: typeName => `${typeName}_updateById`,
-    updateOneField: typeName => `${typeName}_updateOne`,
-    updateManyField: typeName => `${typeName}_updateMany`,
-    removeByIdField: typeName => `${typeName}_removeById`,
-    removeOneField: typeName => `${typeName}_removeOne`,
-    removeManyField: typeName => `${typeName}_removeMany`,
+    findByIdField: typeName => camel(typeName),
+    findByIdsField: typeName => `${pluralCamel(typeName)}ByIds`,
+    findManyField: typeName => pluralCamel(typeName),
+    findOneField: typeName => `find${typeName}`,
+    countField: typeName => `${pluralCamel(typeName)}Count`,
+    connectionField: typeName => `all${pluralType(typeName)}`,
+    paginationField: typeName => `${pluralCamel(typeName)}Pagination`,
+    createOneField: typeName => `create${typeName}`,
+    createManyField: typeName => `create${pluralType(typeName)}`,
+    updateByIdField: typeName => `update${typeName}`,
+    updateOneField: typeName => `update${typeName}Where`,
+    updateManyField: typeName => `update${pluralType(typeName)}`,
+    removeByIdField: typeName => `delete${typeName}`,
+    removeOneField: typeName => `delete${typeName}Where`,
+    removeManyField: typeName => `delete${pluralType(typeName)}`,
   };
 }

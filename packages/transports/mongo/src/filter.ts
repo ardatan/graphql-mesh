@@ -3,13 +3,13 @@ import { parseMongoMapping, resolveMappingValue } from './mapping.js';
 import type { ParsedMongoMapping } from './types.js';
 
 /**
- * Build a MongoDB filter document from `@mongo(filter:)` (or legacy `where:`) mapping.
+ * Build a MongoDB filter document from `@mongo(where:)` mapping.
  */
 export function buildMongoFilter(
-  filterSource: string | null | undefined,
+  whereSource: string | null | undefined,
   ctx: { args?: Record<string, unknown>; parent?: unknown },
 ): Record<string, unknown> {
-  const parsed = parseMongoMapping(filterSource);
+  const parsed = parseMongoMapping(whereSource);
   return filterFromMapping(parsed, ctx);
 }
 
@@ -28,7 +28,7 @@ export function filterFromMapping(
       continue;
     }
 
-    // Bare `$args.filter` / `$args.where` binder
+    // Bare `$args.where` binder
     if (
       entry.value?.kind === 'args' &&
       (entry.key.startsWith('$args') || entry.key === `$args.${entry.value.value}`)
@@ -54,9 +54,6 @@ export function filterFromMapping(
 
   return filter;
 }
-
-/** @deprecated alias */
-export const graphqlWhereToMongo = graphqlFilterToMongo;
 
 export function graphqlFilterToMongo(input: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = {};
@@ -133,12 +130,13 @@ export function graphqlFilterToMongo(input: Record<string, unknown>): Record<str
   return out;
 }
 
+/** Build Mongo sort from `@mongo(orderBy:)` binder (e.g. `$args.orderBy`). */
 export function buildMongoSort(
-  sortSource: string | null | undefined,
+  orderBySource: string | null | undefined,
   ctx: { args?: Record<string, unknown> },
 ): Record<string, 1 | -1> | undefined {
-  if (!sortSource) return undefined;
-  const parsed = parseMongoMapping(sortSource);
+  if (!orderBySource) return undefined;
+  const parsed = parseMongoMapping(orderBySource);
   if (parsed.entries.length === 1 && parsed.entries[0].value?.kind === 'args') {
     const val = resolveMappingValue(parsed.entries[0].value, ctx);
     return graphqlSortToMongo(val as Record<string, unknown> | null | undefined);
@@ -167,7 +165,7 @@ export function buildSetDocument(
   const parsed = parseMongoMapping(setSource);
   const doc: Record<string, unknown> = {};
   for (const entry of parsed.entries) {
-    if (entry.key === 'records' && entry.value?.kind === 'args') {
+    if (entry.key === 'inputs' && entry.value?.kind === 'args') {
       continue;
     }
     if (!entry.value) continue;

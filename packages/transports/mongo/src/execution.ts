@@ -26,9 +26,8 @@ export interface GetMongoExecutorOpts {
 interface MongoDirectiveArgs {
   collection: string;
   kind: MongoKind;
-  filter?: string;
   where?: string;
-  sort?: string;
+  orderBy?: string;
   limit?: string;
   skip?: string;
   first?: string;
@@ -80,12 +79,10 @@ function attachMongoResolver(
 ): GraphQLFieldConfig<any, any> {
   const selection = parseMongoMapping(directive.selection);
   const projection = projectionFromSelection(selection);
-  const filterSource = directive.filter ?? directive.where;
-
   fieldConfig.resolve = async function mongoResolver(parent, graphqlArgs) {
     const ctx = { args: graphqlArgs, parent };
-    const filter = buildMongoFilter(filterSource, ctx);
-    const sort = buildMongoSort(directive.sort, ctx);
+    const filter = buildMongoFilter(directive.where, ctx);
+    const sort = buildMongoSort(directive.orderBy, ctx);
     const proj = Object.keys(projection).length ? projection : undefined;
 
     switch (directive.kind) {
@@ -119,7 +116,7 @@ function attachMongoResolver(
         return mapPayload(created, insertedId, selection);
       }
       case 'INSERT_MANY': {
-        const records = (graphqlArgs.records || []) as Record<string, unknown>[];
+        const records = (graphqlArgs.inputs || []) as Record<string, unknown>[];
         const { insertedIds, insertedCount } = await client.insertMany(
           directive.collection,
           records,
@@ -281,7 +278,7 @@ function resolvePipeline(
     try {
       const parsed = JSON.parse(trimmed) as Record<string, unknown>[];
       return parsed.map(stage => {
-        if (stage.$match === '$args.filter' || stage.$match === '$filter') {
+        if (stage.$match === '$args.where' || stage.$match === '$where') {
           return { $match: filter };
         }
         return stage;

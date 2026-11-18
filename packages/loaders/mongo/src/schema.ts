@@ -214,7 +214,7 @@ function emitModelObjectType(
         subgraph: subgraphName,
         collection,
         kind: 'FIND_ONE',
-        filter: blockArg('_id: $this.id'),
+        where: blockArg('_id: $this.id'),
         selection,
       },
     },
@@ -237,8 +237,8 @@ function emitModelRootFields(
 ) {
   const { subgraphName, typeName, collection, paths, naming } = opts;
   const selection = selectionForPaths(paths);
-  const filterType = naming.filterInput(typeName);
-  const sortType = naming.sortInput(typeName);
+  const whereType = naming.whereInput(typeName);
+  const orderByType = naming.orderByInput(typeName);
   const queryTC = schemaComposer.Query;
   const mutationTC = schemaComposer.Mutation;
 
@@ -252,52 +252,38 @@ function emitModelRootFields(
 
   queryTC.setField(naming.findByIdField(typeName), {
     type: typeName,
-    args: { _id: { type: new GraphQLNonNull(GraphQLID) } },
-    directives: [mongo('FIND_ONE', { filter: blockArg('_id: $args._id') })],
-  });
-
-  queryTC.setField(naming.dataLoaderField(typeName), {
-    type: typeName,
-    args: { _id: { type: new GraphQLNonNull(GraphQLID) } },
-    directives: [mongo('FIND_ONE', { filter: blockArg('_id: $args._id') })],
+    args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+    directives: [mongo('FIND_ONE', { where: blockArg('_id: $args.id') })],
   });
 
   queryTC.setField(naming.findByIdsField(typeName), {
     type: `[${typeName}!]!`,
     args: {
-      _ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLID))) },
+      ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLID))) },
       limit: { type: GraphQLInt, defaultValue: 100 },
-      sort: { type: sortType },
+      orderBy: { type: orderByType },
     },
     directives: [
       mongo('FIND_MANY', {
-        filter: blockArg('_id: $args._ids'),
+        where: blockArg('_id: $args.ids'),
         limit: '$args.limit',
-        sort: '$args.sort',
+        orderBy: '$args.orderBy',
       }),
     ],
-  });
-
-  queryTC.setField(naming.dataLoaderManyField(typeName), {
-    type: `[${typeName}]!`,
-    args: {
-      _ids: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLID))) },
-    },
-    directives: [mongo('FIND_MANY', { filter: blockArg('_id: $args._ids') })],
   });
 
   queryTC.setField(naming.findManyField(typeName), {
     type: `[${typeName}!]!`,
     args: {
-      filter: { type: filterType },
+      where: { type: whereType },
       limit: { type: GraphQLInt, defaultValue: 100 },
       skip: { type: GraphQLInt },
-      sort: { type: sortType },
+      orderBy: { type: orderByType },
     },
     directives: [
       mongo('FIND_MANY', {
-        filter: '$args.filter',
-        sort: '$args.sort',
+        where: '$args.where',
+        orderBy: '$args.orderBy',
         limit: '$args.limit',
         skip: '$args.skip',
       }),
@@ -307,14 +293,14 @@ function emitModelRootFields(
   queryTC.setField(naming.findOneField(typeName), {
     type: typeName,
     args: {
-      filter: { type: filterType },
+      where: { type: whereType },
       skip: { type: GraphQLInt },
-      sort: { type: sortType },
+      orderBy: { type: orderByType },
     },
     directives: [
       mongo('FIND_ONE', {
-        filter: '$args.filter',
-        sort: '$args.sort',
+        where: '$args.where',
+        orderBy: '$args.orderBy',
         skip: '$args.skip',
       }),
     ],
@@ -322,22 +308,22 @@ function emitModelRootFields(
 
   queryTC.setField(naming.countField(typeName), {
     type: new GraphQLNonNull(GraphQLInt),
-    args: { filter: { type: filterType } },
-    directives: [mongo('COUNT', { filter: '$args.filter', selection: blockArg('$') })],
+    args: { where: { type: whereType } },
+    directives: [mongo('COUNT', { where: '$args.where', selection: blockArg('$') })],
   });
 
   queryTC.setField(naming.connectionField(typeName), {
     type: naming.connectionType(typeName),
     args: {
-      filter: { type: filterType },
+      where: { type: whereType },
       first: { type: GraphQLInt },
       after: { type: GraphQLString },
-      sort: { type: sortType },
+      orderBy: { type: orderByType },
     },
     directives: [
       mongo('CONNECTION', {
-        filter: '$args.filter',
-        sort: '$args.sort',
+        where: '$args.where',
+        orderBy: '$args.orderBy',
         first: '$args.first',
         after: '$args.after',
         selection: blockArg(`
@@ -365,15 +351,15 @@ totalCount: $totalCount
   queryTC.setField(naming.paginationField(typeName), {
     type: naming.paginationType(typeName),
     args: {
-      filter: { type: filterType },
+      where: { type: whereType },
       page: { type: GraphQLInt },
       perPage: { type: GraphQLInt, defaultValue: 20 },
-      sort: { type: sortType },
+      orderBy: { type: orderByType },
     },
     directives: [
       mongo('PAGINATION', {
-        filter: '$args.filter',
-        sort: '$args.sort',
+        where: '$args.where',
+        orderBy: '$args.orderBy',
         page: '$args.page',
         perPage: '$args.perPage',
         selection: blockArg(`
@@ -397,7 +383,7 @@ pageInfo {
   const setBlock = blockArg(
     paths
       .filter(p => p.name !== '_id' && p.name !== '__v' && !p.name.includes('.'))
-      .map(p => `${p.name}: $args.record.${p.name}`)
+      .map(p => `${p.name}: $args.input.${p.name}`)
       .join('\n'),
   );
   const payloadSelection = blockArg(`
@@ -409,16 +395,16 @@ recordId: $_id
 
   mutationTC.setField(naming.createOneField(typeName), {
     type: naming.payloadType(typeName),
-    args: { record: { type: `${naming.createInput(typeName)}!` } },
+    args: { input: { type: `${naming.createInput(typeName)}!` } },
     directives: [mongo('INSERT_ONE', { set: setBlock, selection: payloadSelection })],
   });
 
   mutationTC.setField(naming.createManyField(typeName), {
     type: naming.payloadType(typeName),
-    args: { records: { type: `[${naming.createInput(typeName)}!]!` } },
+    args: { inputs: { type: `[${naming.createInput(typeName)}!]!` } },
     directives: [
       mongo('INSERT_MANY', {
-        set: blockArg('records: $args.records'),
+        set: blockArg('inputs: $args.inputs'),
         selection: blockArg(`
 records {
 ${indent(selectionForPaths(paths).replace(/^\n/, ''), 1)}
@@ -433,12 +419,12 @@ createdCount: $createdCount
   mutationTC.setField(naming.updateByIdField(typeName), {
     type: naming.payloadType(typeName),
     args: {
-      _id: { type: new GraphQLNonNull(GraphQLID) },
-      record: { type: `${naming.updateInput(typeName)}!` },
+      id: { type: new GraphQLNonNull(GraphQLID) },
+      input: { type: `${naming.updateInput(typeName)}!` },
     },
     directives: [
       mongo('UPDATE_ONE', {
-        filter: blockArg('_id: $args._id'),
+        where: blockArg('_id: $args.id'),
         set: setBlock,
         selection: payloadSelection,
       }),
@@ -448,12 +434,12 @@ createdCount: $createdCount
   mutationTC.setField(naming.updateOneField(typeName), {
     type: naming.payloadType(typeName),
     args: {
-      filter: { type: filterType },
-      record: { type: `${naming.updateInput(typeName)}!` },
+      where: { type: whereType },
+      input: { type: `${naming.updateInput(typeName)}!` },
     },
     directives: [
       mongo('UPDATE_ONE', {
-        filter: '$args.filter',
+        where: '$args.where',
         set: setBlock,
         selection: payloadSelection,
       }),
@@ -463,12 +449,12 @@ createdCount: $createdCount
   mutationTC.setField(naming.updateManyField(typeName), {
     type: naming.payloadType(typeName),
     args: {
-      filter: { type: filterType },
-      record: { type: `${naming.updateInput(typeName)}!` },
+      where: { type: whereType },
+      input: { type: `${naming.updateInput(typeName)}!` },
     },
     directives: [
       mongo('UPDATE_MANY', {
-        filter: '$args.filter',
+        where: '$args.where',
         set: setBlock,
         selection: blockArg(`
 modifiedCount: $modifiedCount
@@ -480,10 +466,10 @@ matchedCount: $matchedCount
 
   mutationTC.setField(naming.removeByIdField(typeName), {
     type: naming.payloadType(typeName),
-    args: { _id: { type: new GraphQLNonNull(GraphQLID) } },
+    args: { id: { type: new GraphQLNonNull(GraphQLID) } },
     directives: [
       mongo('DELETE_ONE', {
-        filter: blockArg('_id: $args._id'),
+        where: blockArg('_id: $args.id'),
         selection: payloadSelection,
       }),
     ],
@@ -491,10 +477,10 @@ matchedCount: $matchedCount
 
   mutationTC.setField(naming.removeOneField(typeName), {
     type: naming.payloadType(typeName),
-    args: { filter: { type: filterType } },
+    args: { where: { type: whereType } },
     directives: [
       mongo('DELETE_ONE', {
-        filter: '$args.filter',
+        where: '$args.where',
         selection: payloadSelection,
       }),
     ],
@@ -502,10 +488,10 @@ matchedCount: $matchedCount
 
   mutationTC.setField(naming.removeManyField(typeName), {
     type: naming.payloadType(typeName),
-    args: { filter: { type: `${filterType}!` } },
+    args: { where: { type: `${whereType}!` } },
     directives: [
       mongo('DELETE_MANY', {
-        filter: '$args.filter',
+        where: '$args.where',
         selection: blockArg('deletedCount: $deletedCount'),
       }),
     ],
@@ -555,7 +541,7 @@ function emitRefFields(
               subgraph: opts.subgraphName,
               collection: refCollection,
               kind: 'FIND_MANY',
-              filter: blockArg(`_id: $this.${path.name}`),
+              where: blockArg(`_id: $this.${path.name}`),
               selection: refSelection,
             },
           },
@@ -571,7 +557,7 @@ function emitRefFields(
               subgraph: opts.subgraphName,
               collection: refCollection,
               kind: 'FIND_ONE',
-              filter: blockArg(`_id: $this.${path.name}`),
+              where: blockArg(`_id: $this.${path.name}`),
               selection: refSelection,
             },
           },
@@ -601,14 +587,14 @@ function createFilterSortAndInputs(
   typeName: string,
   paths: PathMeta[],
 ) {
-  const filterName = naming.filterInput(typeName);
-  if (!schemaComposer.has(filterName)) {
+  const whereName = naming.whereInput(typeName);
+  if (!schemaComposer.has(whereName)) {
     schemaComposer.createInputTC({
-      name: filterName,
+      name: whereName,
       fields: {
-        AND: { type: `[${filterName}!]` },
-        OR: { type: `[${filterName}!]` },
-        NOT: { type: filterName },
+        AND: { type: `[${whereName}!]` },
+        OR: { type: `[${whereName}!]` },
+        NOT: { type: whereName },
         id: { type: 'IDFilter' },
         ...Object.fromEntries(
           paths
@@ -627,7 +613,8 @@ function createFilterSortAndInputs(
     });
   }
 
-  if (!schemaComposer.has(naming.sortInput(typeName))) {
+  const orderByName = naming.orderByInput(typeName);
+  if (!schemaComposer.has(orderByName)) {
     if (!schemaComposer.has('SortDirection')) {
       schemaComposer.createEnumTC({
         name: 'SortDirection',
@@ -635,7 +622,7 @@ function createFilterSortAndInputs(
       });
     }
     schemaComposer.createInputTC({
-      name: naming.sortInput(typeName),
+      name: orderByName,
       fields: {
         id: 'SortDirection',
         ...Object.fromEntries(
@@ -813,8 +800,8 @@ function markMongoDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
       for (const arg of directive.arguments) {
         if (arg.value.kind !== 'StringValue') continue;
         if (
-          arg.name.value !== 'filter' &&
           arg.name.value !== 'where' &&
+          arg.name.value !== 'orderBy' &&
           arg.name.value !== 'set' &&
           arg.name.value !== 'selection' &&
           arg.name.value !== 'pipeline'

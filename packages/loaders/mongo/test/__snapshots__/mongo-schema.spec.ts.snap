@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`@omnigraph/mongo schema emit emits @mongo directives with filter binders and v0-style roots: user-full-slice 1`] = `
+exports[`@omnigraph/mongo schema emit emits @mongo directives with where/orderBy and SQL-style roots: user-full-slice 1`] = `
 "schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
   query: Query
   mutation: Mutation
@@ -8,68 +8,48 @@ exports[`@omnigraph/mongo schema emit emits @mongo directives with filter binder
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-directive @mongo(subgraph: String, collection: String!, kind: MongoKind!, filter: String, where: String, sort: String, limit: String, skip: String, first: String, after: String, page: String, perPage: String, set: String, selection: String, pipeline: String) on FIELD_DEFINITION | OBJECT
+directive @mongo(subgraph: String, collection: String!, kind: MongoKind!, where: String, orderBy: String, limit: String, skip: String, first: String, after: String, page: String, perPage: String, set: String, selection: String, pipeline: String) on FIELD_DEFINITION | OBJECT
 
 type Query {
-  User_findById(_id: ID!): User @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, selection: """
+  user(id: ID!): User @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, selection: """
     id: _id
     name: name
     age: age
     gender: gender
     someMixed: someMixed
-  """, filter: """
+  """, where: """
   
-    _id: $args._id
+    _id: $args.id
   """)
-  User_dataLoader(_id: ID!): User @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, selection: """
+  usersByIds(ids: [ID!]!, limit: Int = 100, orderBy: UserOrderByInput): [User!]! @mongo(subgraph: "users", collection: "user_users", kind: FIND_MANY, selection: """
     id: _id
     name: name
     age: age
     gender: gender
     someMixed: someMixed
-  """, filter: """
+  """, where: """
   
-    _id: $args._id
-  """)
-  User_findByIds(_ids: [ID!]!, limit: Int = 100, sort: UserSort): [User!]! @mongo(subgraph: "users", collection: "user_users", kind: FIND_MANY, selection: """
+    _id: $args.ids
+  """, limit: "$args.limit", orderBy: "$args.orderBy")
+  users(where: UserWhereInput, limit: Int = 100, skip: Int, orderBy: UserOrderByInput): [User!]! @mongo(subgraph: "users", collection: "user_users", kind: FIND_MANY, selection: """
     id: _id
     name: name
     age: age
     gender: gender
     someMixed: someMixed
-  """, filter: """
-  
-    _id: $args._ids
-  """, limit: "$args.limit", sort: "$args.sort")
-  User_dataLoaderMany(_ids: [ID!]!): [User]! @mongo(subgraph: "users", collection: "user_users", kind: FIND_MANY, selection: """
+  """, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", skip: "$args.skip")
+  findUser(where: UserWhereInput, skip: Int, orderBy: UserOrderByInput): User @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, selection: """
     id: _id
     name: name
     age: age
     gender: gender
     someMixed: someMixed
-  """, filter: """
-  
-    _id: $args._ids
-  """)
-  User_findMany(filter: UserFilter, limit: Int = 100, skip: Int, sort: UserSort): [User!]! @mongo(subgraph: "users", collection: "user_users", kind: FIND_MANY, selection: """
-    id: _id
-    name: name
-    age: age
-    gender: gender
-    someMixed: someMixed
-  """, filter: "$args.filter", sort: "$args.sort", limit: "$args.limit", skip: "$args.skip")
-  User_findOne(filter: UserFilter, skip: Int, sort: UserSort): User @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, selection: """
-    id: _id
-    name: name
-    age: age
-    gender: gender
-    someMixed: someMixed
-  """, filter: "$args.filter", sort: "$args.sort", skip: "$args.skip")
-  User_count(filter: UserFilter): Int! @mongo(subgraph: "users", collection: "user_users", kind: COUNT, selection: """
+  """, where: "$args.where", orderBy: "$args.orderBy", skip: "$args.skip")
+  usersCount(where: UserWhereInput): Int! @mongo(subgraph: "users", collection: "user_users", kind: COUNT, selection: """
   
     $
-  """, filter: "$args.filter")
-  User_connection(filter: UserFilter, first: Int, after: String, sort: UserSort): UserConnection @mongo(subgraph: "users", collection: "user_users", kind: CONNECTION, selection: """
+  """, where: "$args.where")
+  allUsers(where: UserWhereInput, first: Int, after: String, orderBy: UserOrderByInput): UserConnection @mongo(subgraph: "users", collection: "user_users", kind: CONNECTION, selection: """
     nodes {
         id: _id
         name: name
@@ -94,8 +74,8 @@ type Query {
       endCursor: $endCursor
     }
     totalCount: $totalCount
-  """, filter: "$args.filter", sort: "$args.sort", first: "$args.first", after: "$args.after")
-  User_pagination(filter: UserFilter, page: Int, perPage: Int = 20, sort: UserSort): UserPagination @mongo(subgraph: "users", collection: "user_users", kind: PAGINATION, selection: """
+  """, where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after")
+  usersPagination(where: UserWhereInput, page: Int, perPage: Int = 20, orderBy: UserOrderByInput): UserPagination @mongo(subgraph: "users", collection: "user_users", kind: PAGINATION, selection: """
     count: $count
     items {
         id: _id
@@ -112,10 +92,10 @@ type Query {
       hasNextPage: $hasNextPage
       hasPreviousPage: $hasPreviousPage
     }
-  """, filter: "$args.filter", sort: "$args.sort", page: "$args.page", perPage: "$args.perPage")
+  """, where: "$args.where", orderBy: "$args.orderBy", page: "$args.page", perPage: "$args.perPage")
 }
 
-type User @key(fields: "id") @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, filter: """
+type User @key(fields: "id") @mongo(subgraph: "users", collection: "user_users", kind: FIND_ONE, where: """
 
   _id: $this.id
 """, selection: """
@@ -137,7 +117,7 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-input UserSort {
+input UserOrderByInput {
   id: SortDirection
   name: SortDirection
   age: SortDirection
@@ -150,10 +130,10 @@ enum SortDirection {
   DESC
 }
 
-input UserFilter {
-  AND: [UserFilter!]
-  OR: [UserFilter!]
-  NOT: UserFilter
+input UserWhereInput {
+  AND: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  NOT: UserWhereInput
   id: IDFilter
   name: StringFilter
   age: FloatFilter
@@ -225,7 +205,7 @@ type PaginationInfo {
 }
 
 type Mutation {
-  User_createOne(record: CreateOneUserInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: INSERT_ONE, selection: """
+  createUser(input: CreateUserInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: INSERT_ONE, selection: """
     record {
         id: _id
         name: name
@@ -235,12 +215,12 @@ type Mutation {
     }
     recordId: $_id
   """, set: """
-    name: $args.record.name
-    age: $args.record.age
-    gender: $args.record.gender
-    someMixed: $args.record.someMixed
+    name: $args.input.name
+    age: $args.input.age
+    gender: $args.input.gender
+    someMixed: $args.input.someMixed
   """)
-  User_createMany(records: [CreateOneUserInput!]!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: INSERT_MANY, selection: """
+  createUsers(inputs: [CreateUserInput!]!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: INSERT_MANY, selection: """
     records {
         id: _id
         name: name
@@ -252,9 +232,9 @@ type Mutation {
     createdCount: $createdCount
   """, set: """
   
-    records: $args.records
+    inputs: $args.inputs
   """)
-  User_updateById(_id: ID!, record: UpdateByIdUserInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: UPDATE_ONE, selection: """
+  updateUser(id: ID!, input: UpdateUserInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: UPDATE_ONE, selection: """
     record {
         id: _id
         name: name
@@ -263,16 +243,16 @@ type Mutation {
         someMixed: someMixed
     }
     recordId: $_id
-  """, filter: """
+  """, where: """
   
-    _id: $args._id
+    _id: $args.id
   """, set: """
-    name: $args.record.name
-    age: $args.record.age
-    gender: $args.record.gender
-    someMixed: $args.record.someMixed
+    name: $args.input.name
+    age: $args.input.age
+    gender: $args.input.gender
+    someMixed: $args.input.someMixed
   """)
-  User_updateOne(filter: UserFilter, record: UpdateByIdUserInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: UPDATE_ONE, selection: """
+  updateUserWhere(where: UserWhereInput, input: UpdateUserInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: UPDATE_ONE, selection: """
     record {
         id: _id
         name: name
@@ -281,22 +261,22 @@ type Mutation {
         someMixed: someMixed
     }
     recordId: $_id
-  """, filter: "$args.filter", set: """
-    name: $args.record.name
-    age: $args.record.age
-    gender: $args.record.gender
-    someMixed: $args.record.someMixed
+  """, where: "$args.where", set: """
+    name: $args.input.name
+    age: $args.input.age
+    gender: $args.input.gender
+    someMixed: $args.input.someMixed
   """)
-  User_updateMany(filter: UserFilter, record: UpdateByIdUserInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: UPDATE_MANY, selection: """
+  updateUsers(where: UserWhereInput, input: UpdateUserInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: UPDATE_MANY, selection: """
     modifiedCount: $modifiedCount
     matchedCount: $matchedCount
-  """, filter: "$args.filter", set: """
-    name: $args.record.name
-    age: $args.record.age
-    gender: $args.record.gender
-    someMixed: $args.record.someMixed
+  """, where: "$args.where", set: """
+    name: $args.input.name
+    age: $args.input.age
+    gender: $args.input.gender
+    someMixed: $args.input.someMixed
   """)
-  User_removeById(_id: ID!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: DELETE_ONE, selection: """
+  deleteUser(id: ID!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: DELETE_ONE, selection: """
     record {
         id: _id
         name: name
@@ -305,11 +285,11 @@ type Mutation {
         someMixed: someMixed
     }
     recordId: $_id
-  """, filter: """
+  """, where: """
   
-    _id: $args._id
+    _id: $args.id
   """)
-  User_removeOne(filter: UserFilter): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: DELETE_ONE, selection: """
+  deleteUserWhere(where: UserWhereInput): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: DELETE_ONE, selection: """
     record {
         id: _id
         name: name
@@ -318,11 +298,11 @@ type Mutation {
         someMixed: someMixed
     }
     recordId: $_id
-  """, filter: "$args.filter")
-  User_removeMany(filter: UserFilter!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: DELETE_MANY, selection: """
+  """, where: "$args.where")
+  deleteUsers(where: UserWhereInput!): UserPayload @mongo(subgraph: "users", collection: "user_users", kind: DELETE_MANY, selection: """
   
     deletedCount: $deletedCount
-  """, filter: "$args.filter")
+  """, where: "$args.where")
 }
 
 type UserPayload {
@@ -336,14 +316,14 @@ type UserPayload {
   deletedCount: Int
 }
 
-input CreateOneUserInput {
+input CreateUserInput {
   name: String
   age: Float
   gender: String
   someMixed: JSON
 }
 
-input UpdateByIdUserInput {
+input UpdateUserInput {
   name: String
   age: Float
   gender: String

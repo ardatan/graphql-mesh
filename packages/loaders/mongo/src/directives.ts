@@ -37,13 +37,11 @@ export const MongoDirective = new GraphQLDirective({
     kind: { type: new GraphQLNonNull(MongoKindEnum) },
     /**
      * Equality / join predicates plus Connectors-style spreads
-     * (`_id: $this.id`, `...$args.filter`). Mongo-native `filter` naming.
+     * (`_id: $this.id`, `...$args.where`). Same posture as `@sql` `where`.
      */
-    filter: { type: GraphQLString },
-    /** @deprecated use `filter` */
     where: { type: GraphQLString },
-    /** Sort binder (`$args.sort`). */
-    sort: { type: GraphQLString },
+    /** Order binder (`$args.orderBy`). Same posture as `@sql` `orderBy`. */
+    orderBy: { type: GraphQLString },
     /** Limit binder (`$args.limit`). */
     limit: { type: GraphQLString },
     /** Skip binder (`$args.skip`). */
