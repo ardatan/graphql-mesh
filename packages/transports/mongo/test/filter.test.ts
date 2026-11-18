@@ -11,6 +11,7 @@ import {
   graphqlFilterToMongo,
   graphqlSortToMongo,
   graphqlUpdateToMongo,
+  isMatchNothingFilter,
   isUniversallyMatchingFilter,
   MATCH_NOTHING_FILTER,
   normalizeFilterDoc,
@@ -142,14 +143,26 @@ describe('mongo filter mapping', () => {
     const nestedEmptyAnd = graphqlFilterToMongo({ and: [{ and: [] }] });
     expect(isUniversallyMatchingFilter(nestedEmptyAnd)).toBe(false);
     expect(nestedEmptyAnd).toEqual({ $and: [MATCH_NOTHING_FILTER] });
-    // Vacuous `$or` branch would match all documents — drop / match-nothing.
+    // Vacuous `$or` branch matches all — keep it (do not prune before `not`).
     expect(isUniversallyMatchingFilter({ $or: [{}] })).toBe(true);
-    expect(graphqlFilterToMongo({ or: [{ and: [] }] })).toEqual({
-      $and: [MATCH_NOTHING_FILTER],
+    expect(graphqlFilterToMongo({ or: [{ and: [] }] })).toEqual({ $or: [{}] });
+    expect(
+      isUniversallyMatchingFilter(
+        graphqlFilterToMongo({ or: [{ name: { eq: 'Ada' } }, { and: [] }] }),
+      ),
+    ).toBe(true);
+    // `not` of match-all (vacuous OR branch) must stay match-nothing.
+    const notVacuousOr = graphqlFilterToMongo({
+      not: { or: [{}, { name: { eq: 'Ada' } }] },
     });
-    expect(graphqlFilterToMongo({ or: [{ name: { eq: 'Ada' } }, { and: [] }] })).toEqual({
-      $or: [{ name: 'Ada' }],
+    expect(isMatchNothingFilter(notVacuousOr)).toBe(true);
+    expect(isUniversallyMatchingFilter(notVacuousOr)).toBe(false);
+    // All-contradiction OR is match-nothing; negating it is match-all (bulk guard).
+    expect(isMatchNothingFilter({ $or: [MATCH_NOTHING_FILTER, MATCH_NOTHING_FILTER] })).toBe(true);
+    const notAllFalseOr = graphqlFilterToMongo({
+      not: { or: [{ or: [] }, { and: [{ and: [] }] }] },
     });
+    expect(isUniversallyMatchingFilter(notAllFalseOr)).toBe(true);
     // `not` of match-nothing is match-all — bulk guard must detect it.
     const notNestedEmpty = graphqlFilterToMongo({ not: { and: [{ and: [] }] } });
     expect(isUniversallyMatchingFilter(notNestedEmpty)).toBe(true);
@@ -416,6 +429,8 @@ describe('mongo filter mapping', () => {
       placeholderFields: new Set(['_']),
       placeholderFieldsByCollection: new Map<string, ReadonlySet<string>>([
         ['id_only', new Set(['_'])],
+        // Empty scoped entry: strip nothing (do not fall back to global `_`).
+        ['notes', new Set()],
       ]),
       stringIdCollections: new Set<string>(),
     };
@@ -427,6 +442,21 @@ describe('mongo filter mapping', () => {
       stripInputPlaceholder({ _: 'keep-me', name: 'Ada' }, 'notes'),
     );
     expect(kept).toEqual({ _: 'keep-me', name: 'Ada' });
+  });
+
+  it('rejects null on required fields in mapped $set binders', () => {
+    configureRequiredFields(['name']);
+    expect(() =>
+      buildSetDocument('name: $args.name\nage: $args.age', {
+        args: { name: null, age: 1 },
+      }),
+    ).toThrow(/name/);
+    expect(
+      buildSetDocument('age: $args.age', {
+        args: { age: 1 },
+      }),
+    ).toEqual({ age: 1 });
+    configureRequiredFields(undefined);
   });
 
   it('keeps String _id as string in buildSetDocument for stringIdCollections', () => {

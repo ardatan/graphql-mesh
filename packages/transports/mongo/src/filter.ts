@@ -367,7 +367,7 @@ export function getActiveRequiredFields(collection?: string): ReadonlySet<string
   return activeRequiredFields(collection);
 }
 
-/** True when a filter matches no documents (`{ $nor: [{}] }` or `$and` of those). */
+/** True when a filter matches no documents (`{ $nor: [{}] }` or `$and`/`$or` of those). */
 export function isMatchNothingFilter(filter: Record<string, unknown> | null | undefined): boolean {
   if (!filter) return false;
   const keys = Object.keys(filter);
@@ -379,6 +379,21 @@ export function isMatchNothingFilter(filter: Record<string, unknown> | null | un
   }
   if (keys.length === 1 && keys[0] === '$and' && Array.isArray(filter.$and)) {
     const clauses = filter.$and as Record<string, unknown>[];
+    return (
+      clauses.length > 0 &&
+      clauses.every(
+        c =>
+          c != null &&
+          typeof c === 'object' &&
+          !Array.isArray(c) &&
+          isMatchNothingFilter(c as Record<string, unknown>),
+      )
+    );
+  }
+  // Nonempty `$or` of only match-nothing branches is still match-nothing
+  // (`not` of that becomes match-all and must be caught by the bulk guard).
+  if (keys.length === 1 && keys[0] === '$or' && Array.isArray(filter.$or)) {
+    const clauses = filter.$or as Record<string, unknown>[];
     return (
       clauses.length > 0 &&
       clauses.every(
@@ -482,12 +497,13 @@ export function graphqlFilterToMongo(
         continue;
       }
       const mapped = clauses.map(v => graphqlFilterToMongo(v, pathPrefix, collection));
-      // Drop vacuous branches (`{}` / nested empty `and`) — one of them would match all.
-      const meaningful = mapped.filter(c => !isUniversallyMatchingFilter(c));
-      if (meaningful.length === 0) {
+      // Do not prune vacuous branches here: `or: [{}, { name }]` is match-all, and
+      // `not: { or: [{}, { name }] }` must stay match-nothing. Bulk writes catch
+      // match-all via `isUniversallyMatchingFilter`. All-contradiction ORs → MATCH_NOTHING.
+      if (mapped.length > 0 && mapped.every(c => isMatchNothingFilter(c))) {
         appendAnd(out, [MATCH_NOTHING_FILTER]);
       } else {
-        mergeFilterFragment(out, { $or: meaningful });
+        mergeFilterFragment(out, { $or: mapped });
       }
       continue;
     }
@@ -498,7 +514,8 @@ export function graphqlFilterToMongo(
       continue;
     }
 
-    const mongoKey = key === 'id' ? '_id' : key;
+    // GraphQL `id` → Mongo `_id`; `storedId` → mongoose path `id` (String `_id` models).
+    const mongoKey = key === 'id' ? '_id' : key === 'storedId' ? 'id' : key;
     const fullKey = pathPrefix ? `${pathPrefix}.${mongoKey}` : mongoKey;
     const asObjectId = isObjectIdFieldKey(mongoKey, collection);
 
@@ -616,7 +633,9 @@ export function buildMongoSort(
 }
 
 function sortFieldKey(field: string): string {
-  return field === 'id' ? '_id' : field;
+  if (field === 'id') return '_id';
+  if (field === 'storedId') return 'id';
+  return field;
 }
 
 function parseSortToken(token: string): { field: string; dir: 1 | -1 } | undefined {
@@ -674,15 +693,26 @@ export function buildSetDocument(
 ): Record<string, unknown> {
   const parsed = parseMongoMapping(setSource);
   const collection = opts?.collection;
+  const required = activeRequiredFields(collection);
   const doc: Record<string, unknown> = {};
   for (const entry of parsed.entries) {
     if (!entry.value) continue;
     const resolved = resolveMappingValue(entry.value, ctx);
     if (resolved === undefined) continue;
-    doc[entry.key] = coerceDeep(resolved, {
+    const coerced = coerceDeep(resolved, {
       collection,
       asObjectId: isObjectIdFieldKey(entry.key, collection),
     });
+    // Same post-coerce required check as `$args.update` / `remapUpdateFields`.
+    if (coerced === null && required.has(entry.key === '_id' ? 'id' : entry.key)) {
+      throw new Error(
+        `Cannot set required field "${entry.key === '_id' ? 'id' : entry.key}" to null`,
+      );
+    }
+    if (coerced === null && required.has(entry.key)) {
+      throw new Error(`Cannot set required field "${entry.key}" to null`);
+    }
+    doc[entry.key] = coerced;
   }
   return doc as Record<string, unknown>;
 }
@@ -706,7 +736,9 @@ const UPDATE_OP_KEYS = new Set([
 ]);
 
 function remapUpdateFieldKey(key: string): string {
-  return key === 'id' ? '_id' : key;
+  if (key === 'id') return '_id';
+  if (key === 'storedId') return 'id';
+  return key;
 }
 
 function remapUpdateFields(value: unknown, collection?: string): unknown {

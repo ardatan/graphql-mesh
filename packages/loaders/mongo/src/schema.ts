@@ -26,12 +26,23 @@ export interface MongoFieldRestrictions {
   required?: string[];
 }
 
+/** Mongoose discriminator subtype — roots filter/stamp `key: value` on the shared collection. */
+export interface MongoDiscriminatorInfo {
+  key: string;
+  value: string;
+}
+
 export interface MongoModelConfig {
   name: string;
   path?: string;
   model?: Model<any>;
   schema?: MongooseSchema;
   collection?: string;
+  /**
+   * Discriminator subtype metadata. When omitted, auto-detected from
+   * `schema.discriminatorMapping` (`isRoot: false`).
+   */
+  discriminator?: MongoDiscriminatorInfo;
   /** Optional compose-style field restrictions (legacy mongoose handler `options.fields`). */
   options?: {
     fields?: MongoFieldRestrictions;
@@ -102,6 +113,7 @@ export async function loadGraphQLSchemaFromMongo(
     placeholderFields?: string[];
     /** True when mongoose `_id` is BSON String (not ObjectId). */
     stringId?: boolean;
+    discriminator?: MongoDiscriminatorInfo;
   }> = [];
 
   for (const modelConfig of opts.models) {
@@ -113,10 +125,12 @@ export async function loadGraphQLSchemaFromMongo(
       pluralizeFallback(modelConfig.name);
     const typeName = naming.typeName(modelConfig.name);
     const fieldRestrictions = modelConfig.options?.fields;
-    const paths = applyFieldRestrictions(
-      introspectPaths(model.schema, typeName),
-      fieldRestrictions,
-    );
+    const discriminator = modelConfig.discriminator || readDiscriminatorMapping(model.schema);
+    let paths = applyFieldRestrictions(introspectPaths(model.schema, typeName), fieldRestrictions);
+    // Discriminator key is stamped by binders — not a client-writable GraphQL field.
+    if (discriminator?.key) {
+      paths = paths.filter(p => p.name !== discriminator.key);
+    }
     const placeholderFields: string[] = [];
     const stringId = isStringIdSchema(model.schema);
     modelMeta.push({
@@ -128,6 +142,7 @@ export async function loadGraphQLSchemaFromMongo(
       fieldRestrictions,
       placeholderFields,
       stringId,
+      discriminator,
     });
     emitModelObjectType(schemaComposer, {
       subgraphName,
@@ -158,6 +173,7 @@ export async function loadGraphQLSchemaFromMongo(
       fieldRestrictions: meta.fieldRestrictions,
       omitAggregate: omitAggregateSubgraphWide,
       stringId: meta.stringId,
+      discriminator: meta.discriminator,
     });
     emitRefFields(schemaComposer, {
       subgraphName,
@@ -174,32 +190,42 @@ export async function loadGraphQLSchemaFromMongo(
   const extensions: Record<string, any> = (schema.extensions ||= {});
   extensions.directives ||= {};
   const objectIdFields = collectObjectIdFieldNames(modelMeta.map(m => m.paths));
-  const objectIdFieldsByCollection: Record<string, string[]> = {};
+  // Null-prototype maps so collection names like `__proto__` stay own keys.
+  const objectIdFieldsByCollection: Record<string, string[]> = Object.create(null);
   for (const m of modelMeta) {
     if (!m.collection) continue;
     const fields = collectObjectIdFieldNames([m.paths]);
-    if (fields.length) objectIdFieldsByCollection[m.collection] = fields;
+    if (!fields.length) continue;
+    objectIdFieldsByCollection[m.collection] = [
+      ...new Set([...(objectIdFieldsByCollection[m.collection] || []), ...fields]),
+    ];
   }
   const requiredFields = [
     ...new Set(
       modelMeta.flatMap(m => m.fieldRestrictions?.required || []).filter(Boolean) as string[],
     ),
   ];
-  const requiredFieldsByCollection: Record<string, string[]> = {};
+  const requiredFieldsByCollection: Record<string, string[]> = Object.create(null);
   for (const m of modelMeta) {
     const req = (m.fieldRestrictions?.required || []).filter(Boolean) as string[];
     if (m.collection && req.length) {
-      requiredFieldsByCollection[m.collection] = [...new Set(req)];
+      requiredFieldsByCollection[m.collection] = [
+        ...new Set([...(requiredFieldsByCollection[m.collection] || []), ...req]),
+      ];
     }
   }
   const placeholderFields = [
     ...new Set(modelMeta.flatMap(m => m.placeholderFields || []).filter(Boolean) as string[]),
   ];
-  const placeholderFieldsByCollection: Record<string, string[]> = {};
+  // Always emit an entry per collection (possibly `[]`) so the executor does not
+  // fall back to a global `_` strip for models that never registered a placeholder.
+  const placeholderFieldsByCollection: Record<string, string[]> = Object.create(null);
   for (const m of modelMeta) {
-    if (m.placeholderFields?.length && m.collection) {
-      placeholderFieldsByCollection[m.collection] = [...new Set(m.placeholderFields)];
-    }
+    if (!m.collection) continue;
+    const existing = placeholderFieldsByCollection[m.collection] || [];
+    placeholderFieldsByCollection[m.collection] = [
+      ...new Set([...existing, ...(m.placeholderFields || [])]),
+    ];
   }
   const stringIdCollections = modelMeta
     .filter(m => m.stringId)
@@ -298,6 +324,36 @@ function isStringIdSchema(schema: MongooseSchema): boolean {
   const idPath = (schema as any)?.paths?._id;
   const instance = idPath?.instance || idPath?.caster?.instance;
   return instance === 'String';
+}
+
+/** Subtype models expose `discriminatorMapping.isRoot === false`. */
+function readDiscriminatorMapping(schema: MongooseSchema): MongoDiscriminatorInfo | undefined {
+  const mapping = (schema as any)?.discriminatorMapping;
+  if (!mapping || mapping.isRoot !== false) return undefined;
+  const key = mapping.key != null ? String(mapping.key) : '';
+  const value = mapping.value != null ? String(mapping.value) : '';
+  if (!key || !value) return undefined;
+  return { key, value };
+}
+
+/** Escape a discriminator value for embedding in a Mongo mapping binder string. */
+function escapeMappingLiteral(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+/**
+ * Prefix a query binder with a fixed discriminator clause.
+ * `$args.query` and `_id: $args.id` both merge via transport `mergeFilterFragment`.
+ */
+function queryWithDiscriminator(query: string, disc?: MongoDiscriminatorInfo): string {
+  if (!disc) return query;
+  const clause = `${disc.key}: "${escapeMappingLiteral(disc.value)}"`;
+  if (query === '$args.query') {
+    return blockArg(`${clause}\n$args.query`);
+  }
+  // Already a block / multi-line binder body.
+  const body = query.replace(/^\n+|\n+$/g, '').replace(/^ {2}/gm, '');
+  return blockArg(`${clause}\n${body}`);
 }
 
 /** Only BSON ObjectId paths — String refs with 24-hex must stay strings. */
@@ -557,10 +613,15 @@ function pascalCase(value: string): string {
     .replace(/[^A-Za-z0-9]/g, '');
 }
 
-function selectionForPaths(paths: PathMeta[]): string {
+function selectionForPaths(paths: PathMeta[], opts?: { stringId?: boolean }): string {
   const lines = ['id: _id'];
   for (const path of paths) {
     if (path.name === '_id' || path.name === '__v') continue;
+    // GraphQL `id` is `_id`; a stored mongoose `id` path is exposed as `storedId`.
+    if (opts?.stringId && path.name === 'id') {
+      lines.push('storedId: id');
+      continue;
+    }
     // Nested subdocs / document arrays / grouped dotted objects pass through as a whole
     // column so GraphQL default field resolution reads matching keys on the sub-object.
     lines.push(`${path.name}: ${path.name}`);
@@ -584,7 +645,7 @@ function emitModelObjectType(
   const { subgraphName, typeName, collection, paths, naming } = opts;
   const required = new Set(opts.fieldRestrictions?.required || []);
   const otc = schemaComposer.createObjectTC({ name: typeName, fields: {} });
-  const selection = selectionForPaths(paths);
+  const selection = selectionForPaths(paths, { stringId: opts.stringId });
 
   // String `_id` models keep GraphQL String ids so lookups do not coerce hex→ObjectId.
   otc.setField('id', {
@@ -596,9 +657,14 @@ function emitModelObjectType(
     if (required.has(path.name)) {
       fieldType = asNonNullType(fieldType);
     }
-    otc.setField(path.name, {
+    // Reserve GraphQL `id` for `_id` — expose a stored mongoose `id` as `storedId`.
+    const fieldName = opts.stringId && path.name === 'id' ? 'storedId' : path.name;
+    otc.setField(fieldName, {
       type: fieldType,
-      description: path.description,
+      description:
+        fieldName === 'storedId'
+          ? path.description || 'Stored `id` path (GraphQL `id` is reserved for `_id`)'
+          : path.description,
     });
   }
 
@@ -641,10 +707,12 @@ function emitModelRootFields(
     /** When true, omit raw aggregate for every model in this subgraph. */
     omitAggregate?: boolean;
     stringId?: boolean;
+    discriminator?: MongoDiscriminatorInfo;
   },
 ) {
   const { subgraphName, typeName, collection, paths, naming, resolvers } = opts;
-  const selection = selectionForPaths(paths);
+  const disc = opts.discriminator;
+  const selection = selectionForPaths(paths, { stringId: opts.stringId });
   const queryTC = schemaComposer.Query;
   const mutationTC = schemaComposer.Mutation;
   const documentInput = naming.createInput(typeName);
@@ -652,6 +720,7 @@ function emitModelRootFields(
   const sortEnum = naming.sortEnum(typeName);
   const sortArgType = `[${sortEnum}!]`;
   const idScalar = opts.stringId ? GraphQLString : GraphQLObjectID;
+  const argsQuery = queryWithDiscriminator('$args.query', disc);
 
   const mongoDir = (
     name: string,
@@ -665,7 +734,11 @@ function emitModelRootFields(
   queryTC.setField(naming.findByIdField(typeName), {
     type: typeName,
     args: { id: { type: new GraphQLNonNull(idScalar) } },
-    directives: [mongoDir('mongo__findOne', { query: blockArg('_id: $args.id') })],
+    directives: [
+      mongoDir('mongo__findOne', {
+        query: queryWithDiscriminator(blockArg('_id: $args.id'), disc),
+      }),
+    ],
   });
 
   queryTC.setField(naming.findByIdsField(typeName), {
@@ -677,7 +750,7 @@ function emitModelRootFields(
     },
     directives: [
       mongoDir('mongo__find', {
-        query: blockArg('_id: $args.ids'),
+        query: queryWithDiscriminator(blockArg('_id: $args.ids'), disc),
         limit: '$args.limit',
         sort: '$args.sort',
       }),
@@ -695,7 +768,7 @@ function emitModelRootFields(
     },
     directives: [
       mongoDir('mongo__find', {
-        query: '$args.query',
+        query: argsQuery,
         sort: '$args.sort',
         limit: '$args.limit',
         skip: '$args.skip',
@@ -713,7 +786,7 @@ function emitModelRootFields(
     },
     directives: [
       mongoDir('mongo__findOne', {
-        query: '$args.query',
+        query: argsQuery,
         sort: '$args.sort',
         skip: '$args.skip',
       }),
@@ -724,7 +797,7 @@ function emitModelRootFields(
   queryTC.setField(naming.countField(typeName), {
     type: new GraphQLNonNull(GraphQLInt),
     args: { query: { type: queryType } },
-    directives: [mongoDir('mongo__count', { query: '$args.query', selection: blockArg('$') })],
+    directives: [mongoDir('mongo__count', { query: argsQuery, selection: blockArg('$') })],
   });
 
   // Raw aggregate can `$project` / `$unionWith` into restricted collections — omit
@@ -738,7 +811,7 @@ function emitModelRootFields(
       },
       directives: [
         mongoDir('mongo__aggregate', {
-          query: '$args.query',
+          query: argsQuery,
           pipeline: '$args.pipeline',
           selection: blockArg('$'),
         }),
@@ -756,18 +829,18 @@ function emitModelRootFields(
     },
     directives: [
       mongoDir('mongo__connection', {
-        query: '$args.query',
+        query: argsQuery,
         sort: '$args.sort',
         first: '$args.first',
         after: '$args.after',
         selection: blockArg(`
 nodes {
-${indent(selectionForPaths(paths).replace(/^\n/, ''), 1)}
+${indent(selection.replace(/^\n/, ''), 1)}
 }
 edges {
   cursor: $cursor
   node {
-${indent(selectionForPaths(paths).replace(/^\n/, ''), 2)}
+${indent(selection.replace(/^\n/, ''), 2)}
   }
 }
 pageInfo {
@@ -792,14 +865,14 @@ totalCount: $totalCount
     },
     directives: [
       mongoDir('mongo__pagination', {
-        query: '$args.query',
+        query: argsQuery,
         sort: '$args.sort',
         page: '$args.page',
         perPage: '$args.perPage',
         selection: blockArg(`
 count: $count
 items {
-${indent(selectionForPaths(paths).replace(/^\n/, ''), 1)}
+${indent(selection.replace(/^\n/, ''), 1)}
 }
 pageInfo {
   currentPage: $currentPage
@@ -816,14 +889,24 @@ pageInfo {
 
   const documentFieldBinds = paths
     .filter(p => p.name !== '_id' && p.name !== '__v' && !p.name.includes('.'))
-    .map(p => `${p.name}: $args.document.${p.name}`);
+    .map(p => {
+      // GraphQL `id` is reserved for String `_id`; stored mongoose `id` → `storedId`.
+      if (opts.stringId && p.name === 'id') {
+        return `id: $args.document.storedId`;
+      }
+      return `${p.name}: $args.document.${p.name}`;
+    });
   if (opts.stringId) {
     documentFieldBinds.unshift('_id: $args.document.id');
+  }
+  // Stamp discriminator key on create so inserts land as the subtype.
+  if (disc) {
+    documentFieldBinds.unshift(`${disc.key}: "${escapeMappingLiteral(disc.value)}"`);
   }
   const documentSetBlock = blockArg(documentFieldBinds.join('\n'));
   const payloadSelection = blockArg(`
 record {
-${indent(selectionForPaths(paths).replace(/^\n/, ''), 1)}
+${indent(selection.replace(/^\n/, ''), 1)}
 }
 recordId: $_id
 `);
@@ -841,15 +924,20 @@ recordId: $_id
 
   // db.collection.insertMany(documents)
   if (resolverEnabled(resolvers, 'createMany')) {
+    const insertManySetLines = ['documents: $args.documents'];
+    if (disc) {
+      // Sibling literals are stamped onto each document by the transport.
+      insertManySetLines.push(`${disc.key}: "${escapeMappingLiteral(disc.value)}"`);
+    }
     mutationTC.setField(naming.createManyField(typeName), {
       type: naming.payloadType(typeName),
       args: { documents: { type: `[${documentInput}!]!` } },
       directives: [
         mongoDir('mongo__insertMany', {
-          set: blockArg('documents: $args.documents'),
+          set: blockArg(insertManySetLines.join('\n')),
           selection: blockArg(`
 records {
-${indent(selectionForPaths(paths).replace(/^\n/, ''), 1)}
+${indent(selection.replace(/^\n/, ''), 1)}
 }
 recordIds: $recordIds
 createdCount: $createdCount
@@ -873,7 +961,7 @@ createdCount: $createdCount
       },
       directives: [
         mongoDir('mongo__updateOne', {
-          query: blockArg('_id: $args.id'),
+          query: queryWithDiscriminator(blockArg('_id: $args.id'), disc),
           set: '$args.update',
           selection: payloadSelection,
         }),
@@ -891,7 +979,7 @@ createdCount: $createdCount
       },
       directives: [
         mongoDir('mongo__updateOne', {
-          query: '$args.query',
+          query: argsQuery,
           set: '$args.update',
           selection: payloadSelection,
         }),
@@ -908,7 +996,7 @@ createdCount: $createdCount
       },
       directives: [
         mongoDir('mongo__updateMany', {
-          query: '$args.query',
+          query: argsQuery,
           set: '$args.update',
           selection: blockArg(`
 modifiedCount: $modifiedCount
@@ -925,7 +1013,7 @@ matchedCount: $matchedCount
       args: { id: { type: new GraphQLNonNull(idArgScalar) } },
       directives: [
         mongoDir('mongo__deleteOne', {
-          query: blockArg('_id: $args.id'),
+          query: queryWithDiscriminator(blockArg('_id: $args.id'), disc),
           selection: payloadSelection,
         }),
       ],
@@ -939,7 +1027,7 @@ matchedCount: $matchedCount
       args: { query: { type: `${queryType}!` } },
       directives: [
         mongoDir('mongo__deleteOne', {
-          query: '$args.query',
+          query: argsQuery,
           selection: payloadSelection,
         }),
       ],
@@ -952,7 +1040,7 @@ matchedCount: $matchedCount
       args: { query: { type: `${queryType}!` } },
       directives: [
         mongoDir('mongo__deleteMany', {
-          query: '$args.query',
+          query: argsQuery,
           selection: blockArg('deletedCount: $deletedCount'),
         }),
       ],
@@ -1285,13 +1373,19 @@ function createQuerySortAndDocumentInputs(
         ...Object.fromEntries(
           paths
             .filter(p => p.name !== '_id' && p.name !== '__v')
-            .map(p => [
-              p.name,
-              {
-                type: queryOperatorTypeForPath(schemaComposer, p, typeName),
-                description: p.description,
-              },
-            ]),
+            .map(p => {
+              const fieldName = opts?.stringId && p.name === 'id' ? 'storedId' : p.name;
+              return [
+                fieldName,
+                {
+                  type: queryOperatorTypeForPath(schemaComposer, p, typeName),
+                  description:
+                    fieldName === 'storedId'
+                      ? p.description || 'Stored `id` path (GraphQL `id` is reserved for `_id`)'
+                      : p.description,
+                },
+              ];
+            }),
         ),
       },
     });
@@ -1306,8 +1400,10 @@ function createQuerySortAndDocumentInputs(
       id_desc: { value: 'id_desc' },
     };
     for (const path of paths.filter(isSortablePath)) {
-      values[`${path.name}_asc`] = { value: `${path.name}_asc` };
-      values[`${path.name}_desc`] = { value: `${path.name}_desc` };
+      // GraphQL sort enums use `storedId_*` for a reserved mongoose `id` path.
+      const sortName = opts?.stringId && path.name === 'id' ? 'storedId' : path.name;
+      values[`${sortName}_asc`] = { value: `${sortName}_asc` };
+      values[`${sortName}_desc`] = { value: `${sortName}_desc` };
     }
     schemaComposer.createEnumTC({ name: sortEnumName, values });
   }
@@ -1323,6 +1419,19 @@ function createQuerySortAndDocumentInputs(
   }
   for (const path of paths) {
     if (path.name === '_id' || path.name === '__v') continue;
+    // Reserve GraphQL `id` for `_id` — a stored mongoose `id` path must not overwrite it.
+    if (opts?.stringId && path.name === 'id') {
+      const baseType = mapPathToInput(schemaComposer, path, typeName);
+      const storedDesc =
+        path.description || 'Stored `id` path (GraphQL `id` is reserved for `_id`)';
+      setFields.storedId = { type: baseType, description: storedDesc };
+      let createType = baseType;
+      if (required.has(path.name)) {
+        createType = asNonNullType(baseType);
+      }
+      createFields.storedId = { type: createType, description: storedDesc };
+      continue;
+    }
     const baseType = mapPathToInput(schemaComposer, path, typeName);
     setFields[path.name] = { type: baseType, description: path.description };
     let createType = baseType;

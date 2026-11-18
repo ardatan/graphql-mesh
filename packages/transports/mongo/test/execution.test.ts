@@ -195,12 +195,25 @@ describe('getMongoExecutor FIND_* + writes', () => {
     });
     expect(lastDeleteFilter).toEqual({ $and: [{ $nor: [{}] }] });
 
-    // Vacuous `$or` branch must not wipe the collection.
+    // Vacuous `$or` branch is match-all — bulk guard must neutralize (not prune→Ada-only).
     const vacuousOr = '{ or: [{ and: [] }, { name: { eq: "Ada" } }] }';
     await execResult(executor, {
       document: parse(`mutation { deleteManyUsers(query: ${vacuousOr}) { deletedCount } }`),
     });
-    expect(lastDeleteFilter).toEqual({ $or: [{ name: 'Ada' }] });
+    expect(lastDeleteFilter).toEqual({ $nor: [{}] });
+
+    // `not` of vacuous OR must stay match-nothing (pruning would delete non-Ada rows).
+    const notVacuousOr = '{ not: { or: [{}, { name: { eq: "Ada" } }] } }';
+    await execResult(executor, {
+      document: parse(`mutation { deleteManyUsers(query: ${notVacuousOr}) { deletedCount } }`),
+    });
+    // Shape is `$nor: [{ $or: [{}, { name }] }]` — universally matching inner OR → match-nothing.
+    expect(lastDeleteFilter).toEqual({
+      $nor: [{ $or: [{}, { name: 'Ada' }] }],
+    });
+    const { isMatchNothingFilter, isUniversallyMatchingFilter } = await import('../src/filter.js');
+    expect(isMatchNothingFilter(lastDeleteFilter!)).toBe(true);
+    expect(isUniversallyMatchingFilter(lastDeleteFilter!)).toBe(false);
 
     const notNestedEmpty = '{ not: { and: [{ and: [] }] } }';
     await execResult(executor, {
@@ -318,6 +331,86 @@ describe('getMongoExecutor FIND_* + writes', () => {
       '507f1f77bcf86cd799439012',
     );
     expect(lastFindFilter).toBeDefined();
+  });
+
+  it('maps bulk-create GraphQL id to Mongo _id for String _id models', async () => {
+    const externalSchema = new Schema(
+      { _id: String, name: String },
+      { collection: 'external_users' },
+    );
+    const schema = await loadGraphQLSchemaFromMongo('externals', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'ExternalUser',
+          schema: externalSchema,
+          collection: 'external_users',
+        },
+      ],
+    });
+
+    let insertedDocs: Record<string, unknown>[] = [];
+    const client: MongoClientLike = {
+      async findOne() {
+        return null;
+      },
+      async findMany() {
+        return [];
+      },
+      async count() {
+        return 0;
+      },
+      async insertOne() {
+        return { insertedId: 'x' };
+      },
+      async insertMany(_c, docs) {
+        insertedDocs = docs as Record<string, unknown>[];
+        return {
+          insertedIds: docs.map(d => d._id),
+          insertedCount: docs.length,
+        };
+      },
+      async updateOne() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async updateMany() {
+        return { matchedCount: 0, modifiedCount: 0 };
+      },
+      async findOneAndUpdate() {
+        return { value: null, matchedCount: 0, modifiedCount: 0 };
+      },
+      async deleteOne() {
+        return { deletedCount: 0 };
+      },
+      async deleteMany() {
+        return { deletedCount: 0 };
+      },
+      async findOneAndDelete() {
+        return { value: null, deletedCount: 0 };
+      },
+      async aggregate() {
+        return [];
+      },
+      dispose() {},
+    };
+
+    const executor = getMongoExecutor({ subgraph: schema, client });
+    const result = await execResult(executor, {
+      document: parse(
+        `mutation {
+          insertManyExternalUsers(documents: [
+            { id: "bulk-1", name: "Ada" }
+            { id: "bulk-2", name: "Alan" }
+          ]) { createdCount recordIds }
+        }`,
+      ),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(insertedDocs).toEqual([
+      { _id: 'bulk-1', name: 'Ada' },
+      { _id: 'bulk-2', name: 'Alan' },
+    ]);
+    expect(insertedDocs.every(d => d.id === undefined)).toBe(true);
   });
 });
 

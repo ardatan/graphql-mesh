@@ -17,10 +17,15 @@ import {
 } from '@omnigraph/mongo';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
-function mapLegacyModelConfig(m: YamlConfig.MongooseModel): MongoModelConfig {
+function mapLegacyModelConfig(
+  m: YamlConfig.MongooseModel,
+  opts?: { asDiscriminator?: boolean },
+): MongoModelConfig {
   return {
     name: m.name,
     path: m.path,
+    // Flag YAML `discriminators:` entries; key/value still auto-read from schema.
+    ...(opts?.asDiscriminator ? { discriminator: { key: '__t', value: m.name } } : {}),
     options: m.options
       ? {
           fields: m.options.fields
@@ -77,9 +82,10 @@ export default class MongooseHandler implements MeshHandler {
 
     const models: MongoModelConfig[] = [
       ...(this.config.models || []).map(m => mapLegacyModelConfig(m)),
-      // Discriminators currently bootstrap like ordinary models (schema emit).
-      // Discriminator-key filtering / subtype compose is a follow-up.
-      ...(this.config.discriminators || []).map(m => mapLegacyModelConfig(m)),
+      // Discriminators share the base collection; loader stamps/filters by key.
+      ...(this.config.discriminators || []).map(m =>
+        mapLegacyModelConfig(m, { asDiscriminator: true }),
+      ),
     ];
 
     if (!models.length) {

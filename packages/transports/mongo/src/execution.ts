@@ -216,12 +216,23 @@ function attachMongoResolver(
               graphqlArgs.documents ||
               graphqlArgs.inputs ||
               []) as Record<string, unknown>[];
-            const records = (Array.isArray(rawRecords) ? rawRecords : []).map(doc =>
-              stripInputPlaceholder(
-                coerceDeep(doc, { collection: directive.collection }) as Record<string, unknown>,
-                directive.collection,
-              ),
-            );
+            // Sibling literals beside `documents:` (e.g. discriminator `__t: "Link"`)
+            // are stamped onto every inserted doc — stamp wins over client values.
+            const stamp: Record<string, unknown> = { ...fromSet };
+            delete stamp.documents;
+            delete stamp.inputs;
+            const stringId = fieldRuntime.stringIdCollections.has(directive.collection);
+            const records = (Array.isArray(rawRecords) ? rawRecords : []).map(doc => {
+              const coerced = coerceDeep(doc, {
+                collection: directive.collection,
+              }) as Record<string, unknown>;
+              // Generated String-ID create inputs use GraphQL `id` → Mongo `_id`.
+              if (stringId && coerced.id != null && coerced._id == null) {
+                coerced._id = coerced.id;
+                delete coerced.id;
+              }
+              return stripInputPlaceholder({ ...coerced, ...stamp }, directive.collection);
+            });
             const { insertedIds, insertedCount } = await client.insertMany(
               directive.collection,
               records,

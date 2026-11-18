@@ -297,9 +297,68 @@ describe('@omnigraph/mongo schema emit', () => {
       ],
     });
     const transport = (schema.extensions as any)?.directives?.transport;
+    // Empty scoped entry for notes so the executor does not fall back to global `_`.
     expect(transport?.options?.placeholderFieldsByCollection).toEqual({
       tokens: ['_'],
+      notes: [],
     });
     expect(transport?.options?.placeholderFields).toEqual(['_']);
+  });
+
+  it('reserves GraphQL id for String _id when a stored id path exists', async () => {
+    const schema = await loadGraphQLSchemaFromMongo('id-collision', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'External',
+          schema: new Schema(
+            { _id: String, id: String, name: String },
+            { collection: 'externals' },
+          ),
+          collection: 'externals',
+        },
+      ],
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toMatch(/input ExternalDocumentInput[\s\S]*?\bid:\s*String!/);
+    expect(sdl).toMatch(/storedId:\s*String/);
+    expect(sdl).toMatch(/id:\s*\$args\.document\.storedId/);
+    expect(sdl).toMatch(/_id:\s*\$args\.document\.id/);
+  });
+
+  it('stamps discriminator key on subtype roots and omits it from fields', async () => {
+    const base = new Schema(
+      { name: String, kind: { type: String, default: 'base' } },
+      { collection: 'shapes', discriminatorKey: 'kind' },
+    );
+    // Mimic mongoose discriminatorMapping without a live connection.
+    (base as any).discriminatorMapping = {
+      key: 'kind',
+      value: 'Circle',
+      isRoot: false,
+    };
+    const schema = await loadGraphQLSchemaFromMongo('shapes', {
+      endpoint: 'mongodb://localhost:27017/test',
+      models: [
+        {
+          name: 'Circle',
+          schema: base,
+          collection: 'shapes',
+          discriminator: { key: 'kind', value: 'Circle' },
+        },
+      ],
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    // Object fields omit discriminator key; binders still stamp it.
+    const typeBody =
+      sdl.match(/type Circle implements[\s\S]*?^}/m)?.[0] ||
+      sdl.match(/type Circle [\s\S]*?^}/m)?.[0] ||
+      '';
+    expect(typeBody).toMatch(/type Circle/);
+    expect(typeBody).not.toMatch(/\bkind\b/);
+    expect(sdl).toMatch(/kind:\s*"Circle"/);
+    expect(sdl).toMatch(/findCircleById[\s\S]*?kind:\s*"Circle"/);
+    expect(sdl).toMatch(/insertOneCircle[\s\S]*?kind:\s*"Circle"/);
+    expect(sdl).toMatch(/insertManyCircles[\s\S]*?kind:\s*"Circle"/);
   });
 });
