@@ -211,7 +211,7 @@ export function extractNeo4jModelTypeDefs(
   }
   return {
     ...typeDefs,
-    definitions: typeDefs.definitions.flatMap(def => {
+    definitions: typeDefs.definitions.flatMap((def): DefinitionNode[] => {
       switch (def.kind) {
         case Kind.OBJECT_TYPE_DEFINITION:
         case Kind.INTERFACE_TYPE_DEFINITION: {

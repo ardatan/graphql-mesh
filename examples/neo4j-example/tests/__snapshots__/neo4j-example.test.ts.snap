@@ -6,13 +6,18 @@ exports[`Neo4j should generate correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @introspection(subgraph: String) on ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
-directive @node on OBJECT
+directive @alias(property: String!, subgraph: String) on FIELD_DEFINITION
 
-directive @relationship(direction: _RelationDirections, properties: String, type: String) on FIELD_DEFINITION
+directive @cypher(columnName: String!, statement: String!, subgraph: String) on FIELD_DEFINITION
 
-directive @relationshipProperties on OBJECT
+directive @node(labels: [String!], subgraph: String) on OBJECT
+
+directive @plural(subgraph: String, value: String!) on OBJECT | INTERFACE | UNION
+
+directive @relationship(direction: _RelationDirections, properties: String, subgraph: String, type: String) on FIELD_DEFINITION
+
+directive @relationshipProperties(subgraph: String) on OBJECT
 
 directive @transport(headers: [[String]], kind: String!, location: String, options: TransportOptions, subgraph: String!) repeatable on SCHEMA
 
@@ -23,8 +28,8 @@ The edge properties for the following fields:
 * Movie.actor2SActedIn
 * Movie.actorsActedIn
 """
-type ActedInProperties @relationshipProperties @introspection {
-  role: String @introspection
+type ActedInProperties @relationshipProperties(subgraph: "Neo4j") {
+  role: String
 }
 
 input ActedInPropertiesAggregationWhereInput {
@@ -74,34 +79,34 @@ input ActedInPropertiesWhere {
   role_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter role: { startsWith: ... }")
 }
 
-type Actor @introspection @node(labels: ["Actor", "Person"]) {
-  actedInMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
+type Actor @node(subgraph: "Neo4j", labels: ["Actor", "Person"]) {
+  actedInMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
   actedInMoviesConnection(after: String, first: Int, sort: [ActorActedInMoviesConnectionSort!], where: ActorActedInMoviesConnectionWhere): ActorActedInMoviesConnection!
-  bio: String @introspection
-  born: Date @introspection
-  bornIn: String @introspection
-  died: Date @introspection
-  imdbId: String @introspection
-  name: String! @introspection
-  poster: String @introspection
-  tmdbId: String! @introspection
-  url: String! @introspection
+  bio: String
+  born: Date
+  bornIn: String
+  died: Date
+  imdbId: String
+  name: String!
+  poster: String
+  tmdbId: String!
+  url: String!
 }
 
-type Actor2 @introspection @node(labels: ["Actor", "Director", "Person"]) {
-  actedInMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
+type Actor2 @node(subgraph: "Neo4j", labels: ["Actor", "Director", "Person"]) {
+  actedInMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
   actedInMoviesConnection(after: String, first: Int, sort: [Actor2ActedInMoviesConnectionSort!], where: Actor2ActedInMoviesConnectionWhere): Actor2ActedInMoviesConnection!
-  bio: String @introspection
-  born: Date @introspection
-  bornIn: String @introspection
-  died: Date @introspection
-  directedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "DIRECTED", direction: OUT, properties: "DirectedProperties")
+  bio: String
+  born: Date
+  bornIn: String
+  died: Date
+  directedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "DIRECTED", direction: OUT, properties: "DirectedProperties")
   directedMoviesConnection(after: String, first: Int, sort: [Actor2DirectedMoviesConnectionSort!], where: Actor2DirectedMoviesConnectionWhere): Actor2DirectedMoviesConnection!
-  imdbId: String @introspection
-  name: String! @introspection
-  poster: String @introspection
-  tmdbId: String! @introspection
-  url: String! @introspection
+  imdbId: String
+  name: String!
+  poster: String
+  tmdbId: String!
+  url: String!
 }
 
 input Actor2ActedInMoviesAggregateInput {
@@ -1851,8 +1856,8 @@ The edge properties for the following fields:
 * Movie.actor2SDirected
 * Movie.directorsDirected
 """
-type DirectedProperties @relationshipProperties @introspection {
-  role: String @introspection
+type DirectedProperties @relationshipProperties(subgraph: "Neo4j") {
+  role: String
 }
 
 input DirectedPropertiesAggregationWhereInput {
@@ -1902,18 +1907,18 @@ input DirectedPropertiesWhere {
   role_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter role: { startsWith: ... }")
 }
 
-type Director @introspection @node(labels: ["Director", "Person"]) {
-  bio: String @introspection
-  born: Date @introspection
-  bornIn: String @introspection
-  died: Date @introspection
-  directedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "DIRECTED", direction: OUT, properties: "DirectedProperties")
+type Director @node(subgraph: "Neo4j", labels: ["Director", "Person"]) {
+  bio: String
+  born: Date
+  bornIn: String
+  died: Date
+  directedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "DIRECTED", direction: OUT, properties: "DirectedProperties")
   directedMoviesConnection(after: String, first: Int, sort: [DirectorDirectedMoviesConnectionSort!], where: DirectorDirectedMoviesConnectionWhere): DirectorDirectedMoviesConnection!
-  imdbId: String @introspection
-  name: String! @introspection
-  poster: String @introspection
-  tmdbId: String! @introspection
-  url: String! @introspection
+  imdbId: String
+  name: String!
+  poster: String
+  tmdbId: String!
+  url: String!
 }
 
 type DirectorAggregate {
@@ -2548,10 +2553,10 @@ input FloatScalarMutations {
   subtract: Float
 }
 
-type Genre @introspection @node {
-  moviesInGenre(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "IN_GENRE", direction: IN)
+type Genre @node(subgraph: "Neo4j") {
+  moviesInGenre(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "IN_GENRE", direction: IN)
   moviesInGenreConnection(after: String, first: Int, sort: [GenreMoviesInGenreConnectionSort!], where: GenreMoviesInGenreConnectionWhere): GenreMoviesInGenreConnection!
-  name: String! @introspection
+  name: String!
 }
 
 type GenreAggregate {
@@ -3069,37 +3074,37 @@ input ListStringMutations {
   set: [String!]
 }
 
-type Movie @introspection @node {
-  actor2SActedIn(limit: Int, offset: Int, sort: [Actor2Sort!], where: Actor2Where): [Actor2!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
+type Movie @node(subgraph: "Neo4j") {
+  actor2SActedIn(limit: Int, offset: Int, sort: [Actor2Sort!], where: Actor2Where): [Actor2!]! @relationship(subgraph: "Neo4j", type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
   actor2SActedInConnection(after: String, first: Int, sort: [MovieActor2SActedInConnectionSort!], where: MovieActor2SActedInConnectionWhere): MovieActor2SActedInConnection!
-  actor2SDirected(limit: Int, offset: Int, sort: [Actor2Sort!], where: Actor2Where): [Actor2!]! @introspection @relationship(type: "DIRECTED", direction: IN, properties: "DirectedProperties")
+  actor2SDirected(limit: Int, offset: Int, sort: [Actor2Sort!], where: Actor2Where): [Actor2!]! @relationship(subgraph: "Neo4j", type: "DIRECTED", direction: IN, properties: "DirectedProperties")
   actor2SDirectedConnection(after: String, first: Int, sort: [MovieActor2SDirectedConnectionSort!], where: MovieActor2SDirectedConnectionWhere): MovieActor2SDirectedConnection!
-  actorsActedIn(limit: Int, offset: Int, sort: [ActorSort!], where: ActorWhere): [Actor!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
+  actorsActedIn(limit: Int, offset: Int, sort: [ActorSort!], where: ActorWhere): [Actor!]! @relationship(subgraph: "Neo4j", type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
   actorsActedInConnection(after: String, first: Int, sort: [MovieActorsActedInConnectionSort!], where: MovieActorsActedInConnectionWhere): MovieActorsActedInConnection!
-  budget: BigInt @introspection
-  countries: [String!] @introspection
-  directorsDirected(limit: Int, offset: Int, sort: [DirectorSort!], where: DirectorWhere): [Director!]! @introspection @relationship(type: "DIRECTED", direction: IN, properties: "DirectedProperties")
+  budget: BigInt
+  countries: [String!]
+  directorsDirected(limit: Int, offset: Int, sort: [DirectorSort!], where: DirectorWhere): [Director!]! @relationship(subgraph: "Neo4j", type: "DIRECTED", direction: IN, properties: "DirectedProperties")
   directorsDirectedConnection(after: String, first: Int, sort: [MovieDirectorsDirectedConnectionSort!], where: MovieDirectorsDirectedConnectionWhere): MovieDirectorsDirectedConnection!
-  imdbId: String! @introspection
-  imdbRating: Float @introspection
-  imdbVotes: BigInt @introspection
-  inGenreGenres(limit: Int, offset: Int, sort: [GenreSort!], where: GenreWhere): [Genre!]! @introspection @relationship(type: "IN_GENRE", direction: OUT)
+  imdbId: String!
+  imdbRating: Float
+  imdbVotes: BigInt
+  inGenreGenres(limit: Int, offset: Int, sort: [GenreSort!], where: GenreWhere): [Genre!]! @relationship(subgraph: "Neo4j", type: "IN_GENRE", direction: OUT)
   inGenreGenresConnection(after: String, first: Int, sort: [MovieInGenreGenresConnectionSort!], where: MovieInGenreGenresConnectionWhere): MovieInGenreGenresConnection!
-  languages: [String!] @introspection
-  movieId: String! @introspection
-  plot: String @introspection
-  plotEmbedding: [Float!] @introspection
-  poster: String @introspection
-  posterEmbedding: [Float!] @introspection
-  released: String @introspection
-  revenue: BigInt @introspection
-  runtime: BigInt @introspection
-  title: String! @introspection
-  tmdbId: String @introspection
-  url: String @introspection
-  usersRated(limit: Int, offset: Int, sort: [UserSort!], where: UserWhere): [User!]! @introspection @relationship(type: "RATED", direction: IN, properties: "RatedProperties")
+  languages: [String!]
+  movieId: String!
+  plot: String
+  plotEmbedding: [Float!]
+  poster: String
+  posterEmbedding: [Float!]
+  released: String
+  revenue: BigInt
+  runtime: BigInt
+  title: String!
+  tmdbId: String
+  url: String
+  usersRated(limit: Int, offset: Int, sort: [UserSort!], where: UserWhere): [User!]! @relationship(subgraph: "Neo4j", type: "RATED", direction: IN, properties: "RatedProperties")
   usersRatedConnection(after: String, first: Int, sort: [MovieUsersRatedConnectionSort!], where: MovieUsersRatedConnectionWhere): MovieUsersRatedConnection!
-  year: BigInt @introspection
+  year: BigInt
 }
 
 type MovieActor2Actor2SActedInAggregateSelection {
@@ -4922,9 +4927,9 @@ The edge properties for the following fields:
 * Movie.usersRated
 * User.ratedMovies
 """
-type RatedProperties @relationshipProperties @introspection {
-  rating: Float! @introspection
-  timestamp: BigInt! @introspection
+type RatedProperties @relationshipProperties(subgraph: "Neo4j") {
+  rating: Float!
+  timestamp: BigInt!
 }
 
 input RatedPropertiesAggregationWhereInput {
@@ -5110,11 +5115,11 @@ type Update_bloomScenesMutationResponse {
   info: UpdateInfo!
 }
 
-type User @introspection @node {
-  name: String! @introspection
-  ratedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "RATED", direction: OUT, properties: "RatedProperties")
+type User @node(subgraph: "Neo4j") {
+  name: String!
+  ratedMovies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]! @relationship(subgraph: "Neo4j", type: "RATED", direction: OUT, properties: "RatedProperties")
   ratedMoviesConnection(after: String, first: Int, sort: [UserRatedMoviesConnectionSort!], where: UserRatedMoviesConnectionWhere): UserRatedMoviesConnection!
-  userId: String! @introspection
+  userId: String!
 }
 
 type UserAggregate {
@@ -5633,14 +5638,14 @@ type UsersConnection {
   totalCount: Int!
 }
 
-type _Bloom_Perspective_ @introspection @node {
-  bloomHasSceneBloomSceneS(limit: Int, offset: Int, sort: [_Bloom_Scene_Sort!], where: _Bloom_Scene_Where): [_Bloom_Scene_!]! @introspection @relationship(type: "_Bloom_HAS_SCENE_", direction: OUT)
+type _Bloom_Perspective_ @node(subgraph: "Neo4j") {
+  bloomHasSceneBloomSceneS(limit: Int, offset: Int, sort: [_Bloom_Scene_Sort!], where: _Bloom_Scene_Where): [_Bloom_Scene_!]! @relationship(subgraph: "Neo4j", type: "_Bloom_HAS_SCENE_", direction: OUT)
   bloomHasSceneBloomSceneSConnection(after: String, first: Int, sort: [_Bloom_Perspective_BloomHasSceneBloomSceneSConnectionSort!], where: _Bloom_Perspective_BloomHasSceneBloomSceneSConnectionWhere): _Bloom_Perspective_BloomHasSceneBloomSceneSConnection!
-  data: String! @introspection
-  id: String! @introspection
-  name: String! @introspection
-  roles: [String!]! @introspection
-  version: String! @introspection
+  data: String!
+  id: String!
+  name: String!
+  roles: [String!]!
+  version: String!
 }
 
 type _Bloom_Perspective_Aggregate {
@@ -6191,25 +6196,25 @@ type _Bloom_Perspective__Bloom_Scene_BloomHasSceneBloomSceneSNodeAggregateSelect
   visualisation: StringAggregateSelection!
 }
 
-type _Bloom_Scene_ @introspection @node {
-  bloomPerspectiveSBloomHasScene(limit: Int, offset: Int, sort: [_Bloom_Perspective_Sort!], where: _Bloom_Perspective_Where): [_Bloom_Perspective_!]! @introspection @relationship(type: "_Bloom_HAS_SCENE_", direction: IN)
+type _Bloom_Scene_ @node(subgraph: "Neo4j") {
+  bloomPerspectiveSBloomHasScene(limit: Int, offset: Int, sort: [_Bloom_Perspective_Sort!], where: _Bloom_Perspective_Where): [_Bloom_Perspective_!]! @relationship(subgraph: "Neo4j", type: "_Bloom_HAS_SCENE_", direction: IN)
   bloomPerspectiveSBloomHasSceneConnection(after: String, first: Int, sort: [_Bloom_Scene_BloomPerspectiveSBloomHasSceneConnectionSort!], where: _Bloom_Scene_BloomPerspectiveSBloomHasSceneConnectionWhere): _Bloom_Scene_BloomPerspectiveSBloomHasSceneConnection!
-  createdAt: BigInt! @introspection
-  createdBy: String! @introspection
-  filters: String! @introspection
-  gds: String! @introspection
-  id: String! @introspection
-  lastModified: BigInt! @introspection
-  name: String! @introspection
-  nodes: String! @introspection
-  numOfNodes: BigInt! @introspection
-  numOfRels: BigInt! @introspection
-  ranges: String! @introspection
-  relationships: String! @introspection
-  roles: [String!]! @introspection
-  style: String! @introspection
-  version: String! @introspection
-  visualisation: String! @introspection
+  createdAt: BigInt!
+  createdBy: String!
+  filters: String!
+  gds: String!
+  id: String!
+  lastModified: BigInt!
+  name: String!
+  nodes: String!
+  numOfNodes: BigInt!
+  numOfRels: BigInt!
+  ranges: String!
+  relationships: String!
+  roles: [String!]!
+  style: String!
+  version: String!
+  visualisation: String!
 }
 
 type _Bloom_Scene_Aggregate {
