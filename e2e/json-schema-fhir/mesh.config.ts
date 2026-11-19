@@ -43,6 +43,7 @@ export const composeConfig = defineComposeConfig({
             path: '/Patient/{args.id}?_format=application/json',
             requiredArgs: ['id'],
             responseSchema: `${fhirSchema}#/definitions/Patient`,
+            // @connect(selection:) runtime map only — emit surface is `include` above
             selection: `
               id
               gender
@@ -71,6 +72,7 @@ export const composeConfig = defineComposeConfig({
             path: '/Observation/{args.id}?_format=application/json',
             requiredArgs: ['id'],
             responseSchema: `${fhirSchema}#/definitions/Observation`,
+            // @connect(selection:) runtime map only — emit surface is `include` above
             selection: `
               id
               status
