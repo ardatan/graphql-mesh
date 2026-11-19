@@ -34,8 +34,9 @@ const fhirScalarMap = {
  *
  * - Opt-in `scalarMap` (force-mapped)
  * - Full emit (no include / hard filter / compose snap) — hive + Router execution
- * - Operation `selection` = runtime `@connect` map only (not an emit filter)
- * - `referenceResource` Apollo-style hand SDL (`@link` + `@key`/`@connect` apps only)
+ * - Auto `@connect(selection:)` (no hand selection); loader leavesOnly-rebuilds
+ *   when passthrough would truncate mid-type under visit budget / maxLength
+ * - `./reference-resource.graphql` Apollo-style join-only hand SDL (no Query)
  */
 export const composeConfig = defineComposeConfig({
   subgraphs: [
@@ -51,14 +52,6 @@ export const composeConfig = defineComposeConfig({
             path: '/Patient/{args.id}?_format=application/json',
             requiredArgs: ['id'],
             responseSchema: './fhir.schema.json#/definitions/Patient',
-            selection: `
-              id
-              gender
-              name {
-                family
-                given
-              }
-            `,
           },
         ],
       }),
@@ -75,20 +68,13 @@ export const composeConfig = defineComposeConfig({
             path: '/Observation/{args.id}?_format=application/json',
             requiredArgs: ['id'],
             responseSchema: './fhir.schema.json#/definitions/Observation',
-            selection: `
-              id
-              status
-              subject {
-                reference
-              }
-            `,
           },
         ],
       }),
     },
     {
       name: 'referenceResource',
-      schema: './subgraphs/reference-resource.graphql',
+      schema: './reference-resource.graphql',
     },
   ],
 });

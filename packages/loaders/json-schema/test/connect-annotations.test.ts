@@ -145,7 +145,7 @@ describe('Federation Connectors annotations', () => {
     });
   });
 
-  it('connectSelection.overLimit passthrough emits $ when over maxLength', async () => {
+  it('connectSelection.overLimit passthrough prefers leavesOnly rebuild before $', async () => {
     const deepSample: Record<string, unknown> = { id: '1', name: 'n' };
     // Enough nested object fields to exceed a tiny maxLength when expanded.
     for (let i = 0; i < 40; i++) {
@@ -168,7 +168,39 @@ describe('Federation Connectors annotations', () => {
       },
     });
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toMatch(/thing[^\n]*selection: "\$"/);
+    // leavesOnly keeps root scalars under the cap (Router-safe); `$` only if that fails.
+    expect(sdl).not.toMatch(/thing[^\n]*selection: "\$"/);
+    expect(sdl).toMatch(/selection: """[\s\S]*?\bid\b/);
+    expect(sdl).toMatch(/selection: """[\s\S]*?\bname\b/);
+  });
+
+  it('passthrough visit-budget truncate rebuilds leavesOnly so sibling objects survive', () => {
+    // Simulate FHIR-like: deep nest burns the visit budget before a later object field.
+    const schema = buildSchema(/* GraphQL */ `
+      type Deep {
+        a: String
+        b: String
+        nest: Deep
+      }
+      type Name {
+        family: String
+        given: String
+      }
+      type Patient {
+        id: String
+        meta: Deep
+        name: Name
+        gender: String
+      }
+    `);
+    const limit = resolveConnectSelectionLimit({ overLimit: 'passthrough', maxLength: 50_000 });
+    // Tiny budget: Deep recursion exhausts visits before `name`.
+    limit.passthroughVisitBudget = 3;
+    const sel = buildSelectionForType(schema.getType('Patient') as any, { limit });
+    expect(sel).toMatch(/\bname\b/);
+    expect(sel).toMatch(/\bfamily\b/);
+    expect(sel).toMatch(/\bgender\b/);
+    expect(sel).not.toBe('');
   });
 
   it('connectSelection.overLimit leavesOnly keeps scalar leaves under maxLength', async () => {

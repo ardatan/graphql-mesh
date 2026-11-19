@@ -1034,6 +1034,14 @@ export function buildSelectionForType(
     }
   }
   const lines: string[] = [];
+  /**
+   * True when an object/interface/union field was omitted because nested
+   * expansion returned empty (visit budget / cycle / unresolved). Under
+   * default `passthrough` that yields a mid-type truncated map (e.g. FHIR
+   * `Patient.meta.extension…` burns the budget before `name`) — prefer a
+   * `leavesOnly` rebuild over shipping the partial selection.
+   */
+  let omittedObjectFields = false;
   // Non-interface (or no disc) object types may still carry @discriminator — emit spread first.
   if (!discInfo) {
     const discTypename = buildDiscriminatorTypenameSelection(named);
@@ -1178,8 +1186,11 @@ export function buildSelectionForType(
       if (nested) {
         lines.push(wrapFieldSubselection(aliasPrefix, nested));
       } else if (isObjectLike) {
-        // Empty object/interface/union expansion (cycle / unresolved union): omit —
+        // Empty object/interface/union expansion (cycle / budget / unresolved): omit —
         // a bare object name is invalid Connectors selection on Router.
+        if (!leavesOnly) {
+          omittedObjectFields = true;
+        }
       } else {
         // List of scalars/enums — emit the field with no subselection.
         lines.push(aliasPrefix);
@@ -1197,8 +1208,38 @@ export function buildSelectionForType(
   // Newlines + indent for readable SDL `"""` blocks (Connectors accepts spaces too).
   // Prefer-block AST attach (loaders) avoids `\n` escapes in `printSchemaWithDirectives`.
   const joined = lines.join('\n');
+  if (
+    omittedObjectFields &&
+    !leavesOnly &&
+    limit.overLimit === 'passthrough' &&
+    depth === 0
+  ) {
+    // Mid-type truncate under passthrough (visit budget burned on deep nests).
+    // Rebuild with soft-depth leavesOnly so sibling scalars/objects (FHIR `name`)
+    // survive; `$` only when that also yields nothing.
+    return rebuildSelectionLeavesOnly(type, {
+      skipFields,
+      implementations,
+      limit,
+      visited,
+      depth,
+    });
+  }
   if (compactSelectionLength(joined) > limit.maxLength) {
     if (limit.overLimit === 'passthrough') {
+      // Prefer leavesOnly rebuild before `$` so Router keeps scalar leaf maps.
+      if (!leavesOnly) {
+        const leafSel = rebuildSelectionLeavesOnly(type, {
+          skipFields,
+          implementations,
+          limit,
+          visited,
+          depth,
+        });
+        if (leafSel) {
+          return leafSel;
+        }
+      }
       // Caller attaches `$` — Hive raw JSON; not Router-safe for object types.
       warnConnectSelectionPassthrough(limit, named.name);
       return '';
@@ -1218,6 +1259,53 @@ export function buildSelectionForType(
     return '';
   }
   return joined;
+}
+
+/**
+ * Retry selection expand with `overLimit: 'leavesOnly'` after passthrough
+ * truncated mid-type. Uses softDepth 0 so immediate child objects keep their
+ * scalar leaves (FHIR `name { family given }`) while deeper nests are skipped —
+ * softDepth ≥ 1 still expands `meta.extension…` enough to blow maxLength and
+ * fall through to root-scalar-only (dropping `name` / `subject`).
+ */
+function rebuildSelectionLeavesOnly(
+  type: GraphQLOutputType,
+  opts: {
+    skipFields: Set<string>;
+    implementations: ReadonlyArray<GraphQLOutputType>;
+    limit: ResolvedConnectSelectionLimit;
+    visited: ReadonlySet<string>;
+    depth: number;
+  },
+): string {
+  const prevOverLimit = opts.limit.overLimit;
+  const prevVisits = opts.limit.passthroughVisits;
+  const prevSoftDepth = opts.limit.softDepth;
+  opts.limit.overLimit = 'leavesOnly';
+  opts.limit.passthroughVisits = 0;
+  opts.limit.softDepth = 0;
+  try {
+    const leafSel = buildSelectionForType(type, {
+      skipFields: opts.skipFields,
+      implementations: opts.implementations,
+      limit: opts.limit,
+      visited: opts.visited,
+      depth: opts.depth,
+      leavesOnly: false,
+    });
+    if (leafSel) {
+      return leafSel;
+    }
+    const named = unwrapType(type);
+    if (isObjectType(named) || isInterfaceType(named) || isUnionType(named)) {
+      warnConnectSelectionPassthrough(opts.limit, named.name);
+    }
+    return '';
+  } finally {
+    opts.limit.overLimit = prevOverLimit;
+    opts.limit.passthroughVisits = prevVisits;
+    opts.limit.softDepth = prevSoftDepth;
+  }
 }
 
 /**
