@@ -18,8 +18,9 @@ export {
 /**
  * Directives that must never be auto-imported as Mesh compose features:
  * - GraphQL / Federation builtins
- * - Connectors `@connect` / SCHEMA `@source` (Apollo alignment — Guild gets those
- *   only via `prepareConnectorsBeforeGuild`)
+ * - Connectors `@connect` / SCHEMA `@source` (loaders keep defs for valid print;
+ *   `@composeDirective(name: "@connect")` is Guild-only via
+ *   `prepareConnectorsBeforeGuild`)
  * - Mesh core dirs (loaders / Compose stamp them via `importMeshDirectives`)
  */
 const NEVER_AUTO_MESH_COMPOSE_DIRECTIVE = new Set<string>([

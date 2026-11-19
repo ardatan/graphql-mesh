@@ -36,7 +36,12 @@ import { parse, SyntaxType } from '@creditkarma/thrift-parser';
 import { TType } from '@creditkarma/thrift-server-core';
 import { Logger } from '@graphql-hive/logger';
 import { path } from '@graphql-mesh/cross-helpers';
-import { CONNECT_LINK_URL, LinkDirective, SourceDirective } from '@graphql-mesh/transport-connect';
+import {
+  CONNECT_LINK_URL,
+  ConnectDirective,
+  LinkDirective,
+  SourceDirective,
+} from '@graphql-mesh/transport-connect';
 import type {
   GraphQLThriftAnnotations,
   StructTypeVal,
@@ -826,7 +831,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     const headerEntries = Object.entries(headers).map(([name, value]) => ({ name, value }));
     const schema = new GraphQLSchema({
       query: queryObjectType,
-      directives: [SourceDirective, LinkDirective],
+      // Full `@connect` / `@source` defs for GraphQL.js-valid printed subgraph SDL.
+      // `@composeDirective(name: "@connect")` stays Guild-only.
+      directives: [ConnectDirective, SourceDirective, LinkDirective],
       extensions: {
         directives: {
           link: [

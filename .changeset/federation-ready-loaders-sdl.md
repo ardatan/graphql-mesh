@@ -21,7 +21,7 @@ Mesh Compose previously had to invent Mesh-spec `@link` imports and `@composeDir
 ### What changed
 
 - **`importMeshDirectives`** lives in **`@graphql-mesh/utils`** so protocol loaders do not depend on `@graphql-mesh/fusion-composition`. Fusion composition re-exports it for Compose.
-- Loaders stamp Mesh `@link` + `@composeDirective` via `importMeshDirectives([...])` (explicit list). **Connectors loaders do not stamp `@composeDirective(name: "@connect")` or `directive @connect` defs** (Apollo-like). Mesh Compose stamps those **only on Guild input** (`prepareConnectorsBeforeGuild`), then `finalizeConnectorsSupergraph` emits `@join__directive` and drops composeDirective / connect defs / connect input scalars.
+- Loaders stamp Mesh `@link` + `@composeDirective` via `importMeshDirectives([...])` (explicit list). **Connectors loaders keep full `directive @connect` / `@source` defs** so printed subgraph SDL is GraphQL.js-valid, but **do not stamp `@composeDirective(name: "@connect")`**. Mesh Compose stamps composeDirective (+ any missing connect defs) **only on Guild input** (`prepareConnectorsBeforeGuild`), then `finalizeConnectorsSupergraph` emits `@join__directive` and drops composeDirective / native connect defs from the final supergraph.
 - Mesh-spec `@link` URLs start at **`https://specs.graphql-mesh.com/<name>/v0.1`**. Shared Mesh **core** directives (`@transport`, `@merge`, `@hoist`, `@source`/`@meshSource`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, `@extraSchemaDefinitionDirective`, …) use **`core/v0.1`**. Protocol loaders use a separate protocol URL (e.g. `sql/v0.1` for `@sql` only) plus `core/v0.1` for `@transport`. Legacy Guild URL (`the-guild.dev/.../spec/v1.0`) is accepted when reading old supergraphs only — never stamped.
 - **Spec contract:** `parseMeshSpecUrl` / `assertSupportedMeshSpec` (/`OnSchema`) — transports validate supported protocol/`core` versions when a matching `@link` is present; Compose asserts after stamping. Hive Gateway can reuse the same helpers later.
 - Hand-written SDL: prefer **`subgraphs: [{ name?, schema }]`** where `schema` is `MaybePromise<GraphQLSchema | DocumentNode | string>` (inline SDL, path, or URL). **`name` is optional** when the schema has `@transport(subgraph: ...)` (conflict if both differ; error if neither). Or use **`loadSubgraphFromSDL(name?, schema, options?)`**. Mesh `@link` / `@composeDirective` belong in that SDL (or come from a loader).
@@ -34,7 +34,7 @@ Object-level `@shareable` / full Fed v2 conversion remains Compose-time (`conver
 
 ### Migration
 
-Printed loader SDL now includes Mesh `@link` / `@composeDirective` for Mesh directives only — **not** `@composeDirective(name: "@connect")`. Supergraph SDL carries transports as `@join__directive(name: "transport")` instead of schema `@transport` — update snapshots. Hive Gateway must read that form (fusion-runtime gap until patched).
+Printed loader SDL includes Mesh `@link` / `@composeDirective` for Mesh directives, plus full Connectors `@connect` / `@source` defs — **not** `@composeDirective(name: "@connect")`. Supergraph SDL carries transports as `@join__directive(name: "transport")` instead of schema `@transport` — update snapshots. Hive Gateway must read that form (fusion-runtime gap until patched).
 
 Hand-written Compose configs can replace custom file loaders:
 

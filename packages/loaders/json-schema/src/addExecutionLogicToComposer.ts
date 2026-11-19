@@ -32,6 +32,7 @@ import {
   buildSourceDirectiveArgs,
   buildStatusUnionConnectExtras,
   CONNECT_LINK_URL,
+  ConnectDirective,
   flushConnectSelectionPassthroughWarnings,
   inferBodySelection,
   LinkDirective,
@@ -676,6 +677,10 @@ ${operationConfig.description || ''}
     });
   }
 
+  // Full Connectors defs so `printSchemaWithDirectives` / GraphQL.js see a valid
+  // schema (apps + definitions). `@composeDirective(name: "@connect")` stays
+  // Guild-only via `prepareConnectorsBeforeGuild`.
+  schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
   // Only register `@transport` when we will stamp options (avoids bare def in SDL).

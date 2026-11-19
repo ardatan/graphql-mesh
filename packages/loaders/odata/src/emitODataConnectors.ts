@@ -9,6 +9,7 @@ import type {
 import type { Logger } from '@graphql-hive/logger';
 import {
   CONNECT_LINK_URL,
+  ConnectDirective,
   FEDERATION_LINK_URL,
   LinkDirective,
   ODATA_ACCEPT_METADATA,
@@ -614,6 +615,9 @@ export function emitODataConnectors(
     operationHeaders?: Record<string, string>;
   },
 ): ODataConnectSchemaMeta {
+  // Full `@connect` / `@source` defs for GraphQL.js-valid printed subgraph SDL.
+  // `@composeDirective(name: "@connect")` stays Guild-only.
+  schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
   // Do not register a local `@key` / `@inaccessible` directive def — federation `@link` owns them.

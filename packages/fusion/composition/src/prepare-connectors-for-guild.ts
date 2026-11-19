@@ -17,11 +17,12 @@ import type { ServiceDefinition } from '@theguild/federation-composition';
  * Guild federation composition does not preserve `@connect` like Apollo.
  * Mesh Compose, **immediately before** `composeServices`, ensures each
  * Connectors subgraph has:
- * - `directive @connect(...)` (+ input/scalar deps) — loaders omit these defs
+ * - `directive @connect(...)` (+ input/scalar deps) — loaders usually already
+ *   register these for GraphQL.js-valid printed schemas; stamp if missing
  * - `@composeDirective(name: "@connect")` + federation `@link` import
  *
- * Guild-only input stamps. Final supergraph drops them via
- * `finalizeConnectorsSupergraph` → `@join__directive`.
+ * `@composeDirective` is Guild-only. Final supergraph drops native connect
+ * via `finalizeConnectorsSupergraph` → `@join__directive`.
  */
 export function prepareConnectorsBeforeGuild(
   annotatedSubgraphs: ServiceDefinition[],

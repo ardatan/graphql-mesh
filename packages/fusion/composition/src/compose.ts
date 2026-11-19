@@ -540,8 +540,9 @@ export function getAnnotatedSubgraphs(
     }
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
     // Core Mesh directives (`@merge`, `@hoist`, `@source`, …) under `core/v0.1`.
-    // Connectors: loaders omit `@composeDirective(name: "@connect")` / connect
-    // defs; `prepareConnectorsBeforeGuild` stamps them only for Guild input.
+    // Connectors: loaders keep `directive @connect` defs (GraphQL.js-valid print)
+    // but omit `@composeDirective(name: "@connect")`; Guild gets that stamp via
+    // `prepareConnectorsBeforeGuild` only.
     const importedCoreDirectives: MeshDirectiveImport[] = [];
     if (mergeDirectiveUsed) {
       importedCoreDirectives.push('@merge');
@@ -854,8 +855,8 @@ export function composeSubgraphs(
 }
 
 export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[]) {
-  // Guild needs `@composeDirective(name: "@connect")` (+ connect def). Loaders
-  // omit those (Apollo-like); stamp only on the Guild input, then finalize to join.
+  // Guild needs `@composeDirective(name: "@connect")` (+ connect def if missing).
+  // Loaders already print connect defs; composeDirective is Guild-only.
   const guildSubgraphs = prepareConnectorsBeforeGuild(annotatedSubgraphs);
   const composedSupergraphSdl = composeServices(guildSubgraphs);
   const rawSupergraphSdl = composedSupergraphSdl.supergraphSdl?.trim();

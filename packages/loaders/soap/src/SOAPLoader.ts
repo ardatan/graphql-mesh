@@ -40,6 +40,7 @@ import {
   buildSoapConnectDirectiveArgs,
   buildSoapSourceDirectiveArgs,
   CONNECT_LINK_URL,
+  ConnectDirective,
   LinkDirective,
   SourceDirective,
   splitSoapEndpoint,
@@ -331,6 +332,9 @@ export class SOAPLoader {
     this.log = options.log || new Logger({ prefix: options.subgraphName });
     this.subgraphName = options.subgraphName;
     this.loadXMLSchemaNamespace();
+    // Full `@connect` / `@source` defs for GraphQL.js-valid printed subgraph SDL.
+    // `@composeDirective(name: "@connect")` stays Guild-only.
+    this.schemaComposer.addDirective(ConnectDirective);
     this.schemaComposer.addDirective(SourceDirective);
     this.schemaComposer.addDirective(LinkDirective);
     this.schemaHeadersFactory = getInterpolatedHeadersFactory(options.schemaHeaders || {});
