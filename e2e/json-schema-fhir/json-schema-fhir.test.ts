@@ -23,12 +23,15 @@ it('composes official fhir.schema.json + rename + mini Reference.resource SDL', 
   // After scalarMap + hard filter, observations often has nothing left to prefix
   // (shared `code`/`uri`/`Reference`); patients still renames HumanName.
   expect(result).toMatch(/patients_/);
-  // Opt-in scalarMap (pattern-compatible): string→String — no custom `string` scalar.
-  // FHIR Patient.id is `#/definitions/string` (not `id`), so it stays String.
+  // Force scalarMap: string→String (Patient.id is `#/definitions/string`).
   expect(result).not.toMatch(/\bscalar string\b/);
+  expect(result).not.toMatch(/\bscalar uri\b/);
   expect(result).toMatch(/type Patient[\s\S]*?\bid:\s*String\b/);
+  // Reference.type is FHIR `uri` → graphql-scalars URL.
+  expect(result).toMatch(/\btype:\s*URL\b/);
   // Shared FHIR `code` stays as `@regexp` (not in scalarMap).
   expect(result).toMatch(/\bscalar code\b/);
+  expect(result).not.toMatch(/\bscalar oid\b/);
 });
 
 describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {

@@ -17,7 +17,7 @@ const hapiBase = 'https://hapi.fhir.org/baseR4';
  */
 const fhirSchema = join(import.meta.dirname, './fhir.schema.json');
 
-/** Pattern-compatible subset of the locked FHIR scalarMap (see fhir-scalar-map.ts). */
+/** Locked FHIR scalarMap (force-applied; see fhir-scalar-map.ts for mismatch notes). */
 const fhirScalarMap = buildFhirScalarMap();
 
 /**
@@ -88,9 +88,9 @@ function createHardFieldFilterTransform(
  * - `observations`: keep `Observation`, `Reference`, `code`, `uri`
  * - `referenceResource` mini SDL (file path): `Reference.resource` → Patient stub
  *
- * Opt-in `scalarMap` (pattern-checked): `string`→`String`, `id`→`ID`,
- * `instant`→`DateTime`. Incompatible candidates (`date`/`dateTime`/`uri`/`url`/
- * `canonical`/`uuid`) stay as FHIR `@regexp` scalars — see fhir-scalar-map.ts.
+ * Opt-in `scalarMap` (force-mapped despite some pattern mismatches):
+ * date→Date, dateTime|instant→DateTime, uri|url|canonical→URL, uuid→UUID,
+ * string→String, id|oid→ID. `code`/`markdown`/… stay `@regexp` — see fhir-scalar-map.ts.
  */
 export const composeConfig = defineComposeConfig({
   subgraphs: [
@@ -121,9 +121,9 @@ export const composeConfig = defineComposeConfig({
         createHardFieldFilterTransform(keepField),
         createPrefixTransform({
           value: 'patients_',
-          // `string`/`id` become builtins via scalarMap; share `code` across subgraphs.
+          // scalarMap → String/ID/Date/DateTime/URL/UUID; share `code` across subgraphs.
           ignore: ['Patient', 'code'],
-          force: ['Duration', 'date', 'Date', 'DateTime', 'Time', 'JSON', 'JSONObject'],
+          force: ['Duration', 'Time', 'JSON', 'JSONObject'],
         }),
         createPruneTransform(),
       ],
@@ -156,8 +156,9 @@ export const composeConfig = defineComposeConfig({
         createHardFieldFilterTransform(keepField),
         createPrefixTransform({
           value: 'observations_',
-          ignore: ['Observation', 'Reference', 'code', 'uri'],
-          force: ['Duration', 'date', 'Date', 'DateTime', 'Time', 'JSON', 'JSONObject'],
+          // `uri`→URL via scalarMap (shared); keep `code` unprefixed for merge.
+          ignore: ['Observation', 'Reference', 'code'],
+          force: ['Duration', 'Time', 'JSON', 'JSONObject'],
         }),
         createPruneTransform(),
       ],
