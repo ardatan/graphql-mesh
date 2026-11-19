@@ -52,8 +52,8 @@ A field whose value conforms to the standard URL format as specified in RFC3986:
 scalar URL @join__type(graph: OBSERVATIONS)
 
 type Query @join__type(graph: OBSERVATIONS) @join__type(graph: PATIENTS) @join__type(graph: REFERENCE_RESOURCE) {
-  observationById(id: String!): Observation @join__field(graph: OBSERVATIONS) @join__directive(graphs: [OBSERVATIONS], name: "connect", args: {source: "observations", http: {GET: "/Observation/{$args.id}?_format=application/json"}, selection: "id\\n              status\\n              subject {\\n                reference\\n                type\\n                display\\n              }", entity: true})
-  patient(id: String!): Patient @join__field(graph: PATIENTS) @join__directive(graphs: [PATIENTS], name: "connect", args: {source: "patients", http: {GET: "/Patient/{$args.id}?_format=application/json"}, selection: "id\\n              gender\\n              name {\\n                family\\n                given\\n              }", entity: true})
+  observationById(id: String!): Observation @join__field(graph: OBSERVATIONS) @join__directive(graphs: [OBSERVATIONS], name: "connect", args: {source: "observations", http: {GET: "/Observation/{$args.id}?_format=application/json"}, selection: "id\\nstatus\\nsubject {\\n  reference\\n  type\\n  display\\n}", entity: true})
+  patient(id: String!): Patient @join__field(graph: PATIENTS) @join__directive(graphs: [PATIENTS], name: "connect", args: {source: "patients", http: {GET: "/Patient/{$args.id}?_format=application/json"}, selection: "id\\nname {\\n  family\\n  given\\n}\\ngender", entity: true})
   """Placeholder so Compose accepts a join-only subgraph."""
   _referenceResource: String @join__field(graph: REFERENCE_RESOURCE)
 }

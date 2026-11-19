@@ -21,9 +21,10 @@ const fhirScalarMap = buildFhirScalarMap();
  * - Opt-in `scalarMap` (force-mapped): date→Date, dateTime|instant→DateTime,
  *   uri|url|canonical→URL, uuid→UUID, string→String, id|oid→ID
  * - `json-machete` stable titles under `$resolvedRef` (no blanket prefix)
- * - Explicit `include` limits GraphQL emit (Connect `selection` = runtime map only);
- *   no post-hoc prune transform needed
- * - `referenceResource` mini SDL: `Reference.resource` → generic `Resource` interface
+ * - Explicit `include` limits GraphQL emit; loader auto-expands `@connect(selection:)`
+ *   for identity maps (no hand-written selection on patient / observationById)
+ * - `referenceResource` mini SDL: `Reference.resource` → generic `Resource` with
+ *   Connectors `->match` stub (non-identity — kept there)
  */
 export const composeConfig = defineComposeConfig({
   subgraphs: [
@@ -43,15 +44,6 @@ export const composeConfig = defineComposeConfig({
             path: '/Patient/{args.id}?_format=application/json',
             requiredArgs: ['id'],
             responseSchema: `${fhirSchema}#/definitions/Patient`,
-            // @connect(selection:) runtime map only — emit surface is `include` above
-            selection: `
-              id
-              gender
-              name {
-                family
-                given
-              }
-            `,
           },
         ],
       }),
@@ -72,16 +64,6 @@ export const composeConfig = defineComposeConfig({
             path: '/Observation/{args.id}?_format=application/json',
             requiredArgs: ['id'],
             responseSchema: `${fhirSchema}#/definitions/Observation`,
-            // @connect(selection:) runtime map only — emit surface is `include` above
-            selection: `
-              id
-              status
-              subject {
-                reference
-                type
-                display
-              }
-            `,
           },
         ],
       }),
