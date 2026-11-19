@@ -22,6 +22,7 @@ import {
   MESH_SUPPORTED_SPEC_VERSIONS,
   TRANSPORT_DIRECTIVE_SDL,
   validateMeshDirectives,
+  validateTransportArgs,
 } from '@graphql-mesh/utils';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
@@ -187,6 +188,12 @@ export function getAnnotatedSubgraphs(
     const { name: subgraphName, schema, transforms } = subgraphConfig;
     let url: string = subgraphConfig.url;
     const subgraphSchemaExtensions = getDirectiveExtensions(schema);
+    // Snapshot before transforms: encapsulate may import Fed `@inaccessible`
+    // via `@link` before convertSubgraphToFederationv2 runs.
+    const hadExplicitFederationLink = !!subgraphSchemaExtensions?.link?.some(
+      (linkDirectiveArgs: { url?: string }) =>
+        linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/'),
+    );
     const isConnectorsSubgraph = isFederationConnectorsSubgraph(schema);
     const transportDirectives = subgraphSchemaExtensions?.transport;
     const transportDirective = transportDirectives?.[0];
@@ -538,7 +545,9 @@ export function getAnnotatedSubgraphs(
     if (isConnectorsSubgraph && !options.ignoreSemanticConventions) {
       transformedSubgraph = ensureNonResolvableKeysForEntityStubs(transformedSubgraph);
     }
-    transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
+    transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph, {
+      hadExplicitFederationLink,
+    });
     // Core Mesh directives (`@merge`, `@hoist`, `@source`, …) under `core/v0.1`.
     // Connectors: loaders keep `directive @connect` defs (GraphQL.js-valid print)
     // but omit `@composeDirective(name: "@connect")`; Guild gets that stamp via
@@ -700,6 +709,20 @@ export function getAnnotatedSubgraphs(
     // Workaround to keep directives on unsupported nodes since not all of them are supported by the composition library
     let extraSchemaDefinitionDirectives: Record<string, any> | undefined;
     const schemaDirectiveExtensions = getDirectiveExtensions(transformedSubgraph);
+    // Validate retained `@transport` before moving into Query extras — after the
+    // move, validateMeshDirectives only sees schema-level apps (already stripped).
+    if (!removeTransportFromExtras && schemaDirectiveExtensions?.transport) {
+      const transports = Array.isArray(schemaDirectiveExtensions.transport)
+        ? schemaDirectiveExtensions.transport
+        : [schemaDirectiveExtensions.transport];
+      for (const transport of transports) {
+        validateTransportArgs(transport, (message, directive) => {
+          throw new GraphQLError(
+            `${message} (subgraph: ${subgraphName}${directive ? `, directive: @${directive}` : ''})`,
+          );
+        });
+      }
+    }
     if (schemaDirectiveExtensions) {
       const schemaDirectiveExtensionsEntries = Object.entries(schemaDirectiveExtensions);
       const schemaDirectiveExtraEntries = schemaDirectiveExtensionsEntries.filter(

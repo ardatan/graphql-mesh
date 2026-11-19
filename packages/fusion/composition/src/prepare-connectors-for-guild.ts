@@ -63,39 +63,65 @@ export function prepareConnectorsBeforeGuild(
       return false;
     });
 
+    // Guild counts federation `@link` across all schema nodes — add it at most once.
+    let documentHasFedLink = false;
+    visit(doc, {
+      SchemaDefinition(node) {
+        if (schemaNodeHasFederationLink(node.directives)) {
+          documentHasFedLink = true;
+        }
+      },
+      SchemaExtension(node) {
+        if (schemaNodeHasFederationLink(node.directives)) {
+          documentHasFedLink = true;
+        }
+      },
+    });
+    let fedLinkAdded = documentHasFedLink;
+
     let schemaTouched = false;
     const nextDoc = visit(doc, {
       SchemaDefinition(node) {
         schemaTouched = true;
-        return { ...node, directives: ensureConnectComposeDirectives(node.directives) };
+        const addFed = !fedLinkAdded;
+        if (addFed) {
+          fedLinkAdded = true;
+        }
+        return {
+          ...node,
+          directives: ensureConnectComposeDirectives(node.directives, {
+            addFederationLink: addFed,
+          }),
+        };
       },
       SchemaExtension(node) {
         schemaTouched = true;
-        return { ...node, directives: ensureConnectComposeDirectives(node.directives) };
+        const addFed = !fedLinkAdded;
+        if (addFed) {
+          fedLinkAdded = true;
+        }
+        return {
+          ...node,
+          directives: ensureConnectComposeDirectives(node.directives, {
+            addFederationLink: addFed,
+          }),
+        };
       },
     });
 
     let definitions = [...nextDoc.definitions, ...extras];
     if (!schemaTouched) {
-      const schemaDef = parse(
-        /* GraphQL */ `
-          schema {
-            query: Query
-          }
-        `,
+      // Prefer a schema *extension* so implicit Mutation/Subscription roots stay
+      // visible to Guild (an explicit `schema { query: Query }` would drop them).
+      definitions = [
         {
-          noLocation: true,
+          kind: Kind.SCHEMA_EXTENSION,
+          directives: ensureConnectComposeDirectives(undefined, {
+            addFederationLink: !fedLinkAdded,
+          }),
         },
-      ).definitions[0];
-      if (schemaDef?.kind === Kind.SCHEMA_DEFINITION) {
-        definitions = [
-          {
-            ...schemaDef,
-            directives: ensureConnectComposeDirectives(undefined),
-          },
-          ...definitions,
-        ];
-      }
+        ...definitions,
+      ];
     }
 
     return {
@@ -172,8 +198,19 @@ function hasHttpArg(directive: ConstDirectiveNode): boolean {
   return (directive.arguments || []).some(a => a.name.value === 'http');
 }
 
+function schemaNodeHasFederationLink(
+  directives: readonly ConstDirectiveNode[] | undefined,
+): boolean {
+  return (directives || []).some(
+    d =>
+      d.name.value === 'link' &&
+      (getStringArg(d, 'url') || '').startsWith('https://specs.apollo.dev/federation/'),
+  );
+}
+
 function ensureConnectComposeDirectives(
   directives: readonly ConstDirectiveNode[] | undefined,
+  opts: { addFederationLink: boolean },
 ): ConstDirectiveNode[] {
   const next = [...(directives || [])];
   const hasComposeConnect = next.some(
@@ -199,6 +236,9 @@ function ensureConnectComposeDirectives(
       (getStringArg(d, 'url') || '').startsWith('https://specs.apollo.dev/federation/'),
   );
   if (fedIdx < 0) {
+    if (!opts.addFederationLink) {
+      return next;
+    }
     next.push({
       kind: Kind.DIRECTIVE,
       name: { kind: Kind.NAME, value: 'link' },

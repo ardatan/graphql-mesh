@@ -50,6 +50,9 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     };
     const newRootTypes: Record<string, GraphQLObjectType> = {};
     let inaccessibleDirectiveAdded = false;
+    // Track whether any field actually receives `@resolveTo` (mixed Connector +
+    // plain fields still need the def/import even when `isConnectors` is true).
+    let emittedResolveTo = false;
     for (const opTypeString in applyToMap) {
       const operationType = opTypeString as OperationTypeNode;
       const originalType = schema.getRootType(operationType);
@@ -70,6 +73,9 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
           // instead of re-pointing them at an SDK field that does not exist (#4962).
           if (originalDirectives.resolveTo?.[0]?.sourceFieldName === '__typename') {
             wrappedFieldMap[fieldName] = originalFieldConfig;
+            if (originalDirectives.resolveTo?.length) {
+              emittedResolveTo = true;
+            }
             continue;
           }
           // Federation Connectors: move `@connect` onto the namespaced type field.
@@ -95,6 +101,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             }
           }
           const wrappedFieldName = `_encapsulated_${groupName}_${fieldName}`;
+          emittedResolveTo = true;
           wrappedFieldMap[fieldName] = {
             ...originalFieldConfig,
             extensions: {
@@ -155,6 +162,9 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
                 ],
               },
             };
+        if (!isConnectors) {
+          emittedResolveTo = true;
+        }
         newRootTypes[operationType] = new GraphQLObjectType({
           ...originalTypeConfig,
           fields: {
@@ -171,8 +181,8 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     }
     const schemaConfig = schema.toConfig();
     const newDirectives = [...schemaConfig.directives];
-    // Connectors encapsulate uses `@connect` on the namespace root — no `@resolveTo`.
-    const needsResolveTo = !isConnectors;
+    // Gate def/import on whether `@resolveTo` was actually emitted (mixed schemas).
+    const needsResolveTo = emittedResolveTo;
     if (needsResolveTo && !newDirectives.some(directive => directive.name === 'resolveTo')) {
       newDirectives.push(resolveToDirective);
     }

@@ -525,6 +525,10 @@ ${operationConfig.description || ''}
         httpMethod,
         path: operationConfig.path,
         headers: operationConfig.headers,
+        sourceHeaders:
+          typeof operationHeaders === 'object' && operationHeaders
+            ? (operationHeaders as Record<string, string>)
+            : undefined,
         queryParamArgMap: operationConfig.queryParamArgMap,
         queryStringOptionsByParam: operationConfig.queryStringOptionsByParam as
           | Record<

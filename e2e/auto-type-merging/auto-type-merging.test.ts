@@ -1,3 +1,4 @@
+import { Kind, parse } from 'graphql';
 import { createTenv, type Container } from '@e2e/tenv';
 
 const { compose, service, serve, container } = createTenv(__dirname);
@@ -30,9 +31,30 @@ it('should compose the appropriate schema', async () => {
   expect(getPetByIdField).not.toContain('@merge');
   // GraphQL vaccination subgraph still uses Mesh `@merge` (auto-type-merging intent),
   // carried on the final SG as `@join__directive` (graphs: owns attribution).
-  expect(result).toMatch(
-    /petById\([\s\S]*@join__directive\(graphs: \[VACCINATION\], name: "merge"/,
+  const doc = parse(result, { noLocation: true });
+  const queryType = doc.definitions.find(
+    d => d.kind === Kind.OBJECT_TYPE_DEFINITION && d.name.value === 'Query',
   );
+  expect(queryType?.kind).toBe(Kind.OBJECT_TYPE_DEFINITION);
+  const petById =
+    queryType?.kind === Kind.OBJECT_TYPE_DEFINITION
+      ? queryType.fields?.find(f => f.name.value === 'petById')
+      : undefined;
+  expect(petById).toBeTruthy();
+  const mergeJoin = (petById?.directives || []).find(dir => {
+    if (dir.name.value !== 'join__directive') return false;
+    const nameArg = dir.arguments?.find(a => a.name.value === 'name');
+    return nameArg?.value.kind === Kind.STRING && nameArg.value.value === 'merge';
+  });
+  expect(mergeJoin).toBeTruthy();
+  const graphsArg = mergeJoin?.arguments?.find(a => a.name.value === 'graphs');
+  expect(graphsArg?.value.kind).toBe(Kind.LIST);
+  if (graphsArg?.value.kind === Kind.LIST) {
+    const graphNames = graphsArg.value.values
+      .filter(v => v.kind === Kind.ENUM)
+      .map(v => (v.kind === Kind.ENUM ? v.value : ''));
+    expect(graphNames).toEqual(['VACCINATION']);
+  }
 });
 
 // Hive-only: vaccination is a plain GraphQL schema merged via Mesh `@merge`.

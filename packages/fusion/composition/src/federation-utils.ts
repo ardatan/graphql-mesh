@@ -144,6 +144,9 @@ export function importCustomDirectivesForComposition(subgraph: GraphQLSchema) {
     if (typeof d?.name === 'string') alreadyImported.add(d.name);
   }
 
+  const federationNamespacePrefixes = (schemaDirectives.link || [])
+    .filter(link => link?.url?.startsWith('https://specs.apollo.dev/federation/'))
+    .map(link => `@${link.as || 'federation'}__`);
   const toImport: string[] = [];
   for (const directive of subgraph.getDirectives()) {
     if (isSpecifiedDirective(directive)) {
@@ -153,6 +156,7 @@ export function importCustomDirectivesForComposition(subgraph: GraphQLSchema) {
     if (
       NEVER_AUTO_MESH_COMPOSE_DIRECTIVE.has(name) ||
       name.startsWith('@federation__') ||
+      federationNamespacePrefixes.some(prefix => name.startsWith(prefix)) ||
       name.startsWith('@join__') ||
       alreadyImported.has(name)
     ) {
@@ -166,15 +170,30 @@ export function importCustomDirectivesForComposition(subgraph: GraphQLSchema) {
   return importMeshDirectives(subgraph, toImport);
 }
 
+export interface ConvertSubgraphToFederationv2Options {
+  /**
+   * When true, the **input** subgraph already declared a Federation `@link`
+   * (before Mesh transforms). Skip object-level `@shareable` so explicit
+   * field-ownership rules stay intact. Transforms such as encapsulate may
+   * import `@inaccessible` via Fed `@link` before this runs — that must not
+   * count as an explicit user link (pass the pre-transform snapshot here).
+   */
+  hadExplicitFederationLink?: boolean;
+}
+
 /**
  * Ensure the subgraph is Federation v2-ready for Guild composition.
  *
  * - Missing federation `@link` → stamp Fed v2.6
- * - Object types without `@key` get `@shareable` (value-type merge)
+ * - Object types without `@key` get `@shareable` (value-type merge), unless the
+ *   input already had an explicit Federation `@link`
  * - Import only federation directives that are actually used (+ `@shareable`)
  * - Custom non-Mesh directives → Mesh `@link` + `@composeDirective` (Guild + Apollo Fed)
  */
-export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
+export function convertSubgraphToFederationv2(
+  subgraph: GraphQLSchema,
+  opts: ConvertSubgraphToFederationv2Options = {},
+) {
   const schemaDirectives = getDirectiveExtensions(subgraph);
   // Only treat as "already v2" when Federation itself is linked. Federation Connectors
   // `@link` also uses specs.apollo.dev but does not imply `@shareable`.
@@ -184,7 +203,11 @@ export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
   if (!hasFederationLink) {
     subgraph = addFederation2DirectivesToSubgraph(subgraph);
   }
-  subgraph = ensureObjectTypesShareable(subgraph);
+  // Object-level `@shareable` only for Mesh-owned Fed readiness — not when the
+  // caller already linked Federation (preserves field-ownership rules).
+  if (!opts.hadExplicitFederationLink) {
+    subgraph = ensureObjectTypesShareable(subgraph);
+  }
   subgraph = importFederationDirectives(subgraph, usedFederationDirectiveImports(subgraph));
   subgraph = importCustomDirectivesForComposition(subgraph);
   return subgraph;

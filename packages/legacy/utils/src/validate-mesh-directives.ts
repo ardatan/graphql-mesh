@@ -122,6 +122,11 @@ export function validateMeshDirectives(
           fail(`@transport is SCHEMA-only; found on type "${type.name}"`, 'transport');
         }
       }
+      for (const src of asArray(dirs.source)) {
+        if (isMeshStitchingSourceArgs(src)) {
+          sawCoreUsage = true;
+        }
+      }
       return type;
     },
     [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName) => {
@@ -132,6 +137,11 @@ export function validateMeshDirectives(
         }
         if (name === 'transport') {
           fail(`@transport is SCHEMA-only; found on field "${typeName}.${fieldName}"`, 'transport');
+        }
+      }
+      for (const src of asArray(dirs.source)) {
+        if (isMeshStitchingSourceArgs(src)) {
+          sawCoreUsage = true;
         }
       }
       // Validate `@hoist(pathConfig:)` when present (arg is `pathConfig`, not `path`).
@@ -181,7 +191,7 @@ export function validateMeshDirectives(
   return issues;
 }
 
-function validateTransportArgs(
+export function validateTransportArgs(
   transport: Record<string, unknown> | null | undefined,
   fail: (message: string, directive?: string) => void,
 ) {

@@ -73,7 +73,6 @@ describe('gRPC Handler', () => {
       const loadedFromPrintedSDL = buildSchema(printedSDL, {
         noLocation: true,
         assumeValidSDL: true,
-        assumeValid: true,
       });
       expect(validateSchema(loadedFromPrintedSDL)).toHaveLength(0);
     });

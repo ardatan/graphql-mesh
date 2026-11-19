@@ -484,6 +484,7 @@ export function isDefaultJsonHttpHeader(name: string, value: string | undefined 
 
 export function headersToConnectMappings(
   headers?: Record<string, string> | [string, string][],
+  sourceHeaders?: Record<string, string> | [string, string][],
 ): Array<{ name: string; value?: string; from?: string }> | undefined {
   if (!headers) {
     return undefined;
@@ -492,6 +493,14 @@ export function headersToConnectMappings(
   if (!entries.length) {
     return undefined;
   }
+  const sourceEntries = sourceHeaders
+    ? Array.isArray(sourceHeaders)
+      ? sourceHeaders
+      : Object.entries(sourceHeaders)
+    : [];
+  const sourceByName = new Map(
+    sourceEntries.map(([name, value]) => [name.toLowerCase(), String(value)]),
+  );
   const mapped: Array<{ name: string; value?: string; from?: string }> = [];
   for (const [name, value] of entries) {
     const interpolated = toConnectPathTemplate(String(value));
@@ -502,6 +511,12 @@ export function headersToConnectMappings(
       continue;
     }
     if (isDefaultJsonHttpHeader(name, interpolated)) {
+      // Keep an explicit operation default when it overrides a conflicting
+      // source-level Content-Type / Accept (operation must win).
+      const sourceRaw = sourceByName.get(name.toLowerCase());
+      if (sourceRaw != null && !isDefaultJsonHttpHeader(name, toConnectPathTemplate(sourceRaw))) {
+        mapped.push({ name, value: interpolated });
+      }
       continue;
     }
     mapped.push({ name, value: interpolated });
@@ -1239,6 +1254,8 @@ export function buildConnectHttpArgs(opts: {
   httpMethod: string;
   path: string;
   headers?: Record<string, string> | [string, string][];
+  /** Loader-wide / source-level headers — used to keep conflicting JSON defaults. */
+  sourceHeaders?: Record<string, string> | [string, string][];
   queryParamArgMap?: Record<string, string>;
   queryStringOptionsByParam?: Record<
     string,
@@ -1253,7 +1270,7 @@ export function buildConnectHttpArgs(opts: {
   const http: Record<string, unknown> = {
     [method]: toConnectPathTemplate(opts.path),
   };
-  const headers = headersToConnectMappings(opts.headers);
+  const headers = headersToConnectMappings(opts.headers, opts.sourceHeaders);
   if (headers) {
     http.headers = headers;
   }

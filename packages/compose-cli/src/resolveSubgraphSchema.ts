@@ -58,6 +58,11 @@ function looksLikeInlineSdl(value: string): boolean {
   if (!trimmed) {
     return false;
   }
+  // Filenames like `schema.graphql` / `type.graphql` start with a GraphQL keyword
+  // then `.` — `\b` matches before the dot, so reject path-like keyword prefixes.
+  if (/^(type|schema|extend|directive|scalar|enum|input|union|interface)\.[^\s{#]/m.test(trimmed)) {
+    return false;
+  }
   return /^(type|schema|extend|directive|scalar|enum|input|union|interface)\b/m.test(trimmed);
 }
 
@@ -163,16 +168,19 @@ function applyTransportOptions(
   const existingRaw = existingDirectives.transport ?? getDirectiveExtensions(schema)?.transport;
   const existing = firstTransportArgs(existingRaw);
   const kind = transport.kind ?? existing?.kind;
-  if (kind == null) {
+  if (kind == null && !existing) {
     // Creating a new `@transport` requires `kind`; ignore empty/partial patches.
+    // Options-only existing stamps (accepted by validation) still receive patches.
     return schema;
   }
 
   const next: Record<string, any> = {
     ...(existing || {}),
     subgraph: existing?.subgraph ?? subgraphName,
-    kind,
   };
+  if (kind != null) {
+    next.kind = kind;
+  }
   if (transport.location != null) {
     next.location = transport.location;
   }

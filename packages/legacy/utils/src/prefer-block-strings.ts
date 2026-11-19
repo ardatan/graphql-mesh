@@ -3,11 +3,25 @@ import { isObjectType, Kind } from 'graphql';
 import { astFromType, getDirectivesInExtensions } from '@graphql-tools/utils';
 
 /**
- * Prefer GraphQL `"""` only for real multiline values. Single-line strings
- * (even with embedded `"`) stay as normal `"…"` — no fake multiline blocks.
+ * Prefer GraphQL `"""` only for real multiline values that round-trip losslessly.
+ * Single-line strings (even with embedded `"`) stay as normal `"…"` — no fake
+ * multiline blocks. Values with `\r` line endings or leading/trailing blank lines
+ * are normalized by GraphQL block-string print/parse, so keep escaped `"…"`.
  */
 export function stringValuePrefersBlock(value: string): boolean {
-  return value.includes('\n') || value.includes('\r');
+  if (!value.includes('\n') && !value.includes('\r')) {
+    return false;
+  }
+  // Block-string parsing normalizes `\r\n` / `\r` → `\n`.
+  if (value.includes('\r')) {
+    return false;
+  }
+  // Block-string dedent strips leading/trailing blank lines.
+  const lines = value.split('\n');
+  if (lines[0] === '' || lines[lines.length - 1] === '') {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -62,7 +76,12 @@ function attachBlockStringDirectiveAst(field: GraphQLField<any, any>): void {
 }
 
 function constValueNodePreferBlockString(argName: string, value: unknown): ConstValueNode | null {
-  if (value == null) return null;
+  if (value === null) {
+    return { kind: Kind.NULL };
+  }
+  if (value === undefined) {
+    return null;
+  }
   if (typeof value === 'boolean') {
     return { kind: Kind.BOOLEAN, value };
   }

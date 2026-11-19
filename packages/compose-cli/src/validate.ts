@@ -74,7 +74,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
     validateResolveToDirectives({
       errors,
       locationLabel: `type ${typeName}`,
-      resolveToDirectives: (typeDirectives?.resolveTo || []) as ResolveToLike[],
+      resolveToDirectives: collectResolveToLike(typeDirectives),
       subgraphs,
       astNode: type.astNode,
     });
@@ -100,7 +100,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
       validateResolveToDirectives({
         errors,
         locationLabel: `field ${typeName}.${fieldName}`,
-        resolveToDirectives: (fieldDirectives?.resolveTo || []) as ResolveToLike[],
+        resolveToDirectives: collectResolveToLike(fieldDirectives),
         subgraphs,
         astNode: field.astNode,
       });
@@ -108,6 +108,33 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
   }
 
   return errors;
+}
+
+function collectResolveToLike(
+  directives: Record<string, Array<Record<string, unknown>>> | undefined,
+): ResolveToLike[] {
+  const out: ResolveToLike[] = [];
+  for (const d of directives?.resolveTo || []) {
+    out.push(d as ResolveToLike);
+  }
+  // Finalized Mesh Compose: `@join__directive(name: "resolveTo", args:)`
+  for (const d of directives?.join__directive || []) {
+    if (d?.name === 'resolveTo') {
+      const args = (d.args && typeof d.args === 'object' ? d.args : {}) as Record<string, unknown>;
+      out.push({
+        sourceName: typeof args.sourceName === 'string' ? args.sourceName : undefined,
+        sourceTypeName: typeof args.sourceTypeName === 'string' ? args.sourceTypeName : undefined,
+        sourceFieldName:
+          typeof args.sourceFieldName === 'string' ? args.sourceFieldName : undefined,
+        sourceArgs:
+          args.sourceArgs && typeof args.sourceArgs === 'object'
+            ? (args.sourceArgs as Record<string, unknown>)
+            : undefined,
+        pubsubTopic: typeof args.pubsubTopic === 'string' ? args.pubsubTopic : undefined,
+      });
+    }
+  }
+  return out;
 }
 
 function collectMergeLike(

@@ -408,8 +408,9 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
 
     const args = constDirectiveArgsToJs(dir);
     const subgraph = typeof args.subgraph === 'string' ? args.subgraph : undefined;
-    const ownerGraphEnum =
-      (subgraph ? joinInfo.nameToEnum.get(subgraph) : undefined) || fallbackGraph;
+    // Explicit `subgraph:` must resolve via join map — never fall back to a
+    // sibling field/type graph (that would re-attribute ownership).
+    const ownerGraphEnum = subgraph ? joinInfo.nameToEnum.get(subgraph) : fallbackGraph;
 
     if (!ownerGraphEnum) {
       // Cannot attribute — leave native so Gateway / Router can still see it.
@@ -568,6 +569,10 @@ function pruneUnusedTransportArtifacts(document: DocumentNode): DocumentNode {
     return document;
   }
 
+  const transportOptionsReferenced = documentReferencesTypeName(document, 'TransportOptions', {
+    ignoreDirectiveDefs: ['transport'],
+  });
+
   return {
     ...document,
     definitions: document.definitions
@@ -576,7 +581,8 @@ function pruneUnusedTransportArtifacts(document: DocumentNode): DocumentNode {
           return false;
         }
         if (def.kind === Kind.SCALAR_TYPE_DEFINITION && def.name.value === 'TransportOptions') {
-          return false;
+          // Keep when application types still reference the scalar (e.g. Query.settings).
+          return transportOptionsReferenced;
         }
         return true;
       })
@@ -595,6 +601,50 @@ function pruneUnusedTransportArtifacts(document: DocumentNode): DocumentNode {
         return { ...def, directives: dirs };
       }),
   };
+}
+
+/**
+ * True when any NamedType in the document still references `typeName`.
+ * Optionally skip directive definition subtrees that are about to be dropped
+ * (their arg types must not keep companion scalars alive).
+ */
+function documentReferencesTypeName(
+  document: DocumentNode,
+  typeName: string,
+  opts?: { ignoreDirectiveDefs?: Iterable<string> },
+): boolean {
+  const ignore = new Set(opts?.ignoreDirectiveDefs || []);
+  let referenced = false;
+  visit(document, {
+    DirectiveDefinition: {
+      enter(node) {
+        if (ignore.has(node.name.value)) {
+          return false;
+        }
+      },
+    },
+    // Also ignore the type's own definition (scalar/enum self-name is not a use).
+    ScalarTypeDefinition: {
+      enter(node) {
+        if (node.name.value === typeName) {
+          return false;
+        }
+      },
+    },
+    EnumTypeDefinition: {
+      enter(node) {
+        if (node.name.value === typeName) {
+          return false;
+        }
+      },
+    },
+    NamedType(node) {
+      if (node.name.value === typeName) {
+        referenced = true;
+      }
+    },
+  });
+  return referenced;
 }
 
 /**
@@ -663,19 +713,22 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
   const dropCompanionTypes = new Set<string>();
   for (const name of dropDefs) {
     for (const companion of MESH_PROTOCOL_COMPANION_TYPES[name] || []) {
-      dropCompanionTypes.add(companion);
+      // Keep companions still referenced by retained application types.
+      if (!documentReferencesTypeName(document, companion, { ignoreDirectiveDefs: dropDefs })) {
+        dropCompanionTypes.add(companion);
+      }
     }
   }
 
   // Imports stay when join apps still name the directive. Aliased Mesh
   // stitching source (`{name: "@source", as: "@meshSource"}`) is keyed by
-  // join name `meshSource` — do not strip `@source` while that join lives.
+  // join name `meshSource` — do not strip `@source` while that join / native lives.
   const importNamesToStrip = new Set(
     MESH_ORPHAN_DIRECTIVE_NAMES.filter(name => {
       if (usedNative.has(name) || joinCarried.has(name)) {
         return false;
       }
-      if (name === 'source' && joinCarried.has('meshSource')) {
+      if (name === 'source' && (joinCarried.has('meshSource') || usedNative.has('meshSource'))) {
         return false;
       }
       return true;
@@ -774,7 +827,9 @@ function pruneRewrittenMeshArtifacts(
   const dropCompanionTypes = new Set<string>();
   for (const name of dropDefs) {
     for (const companion of MESH_PROTOCOL_COMPANION_TYPES[name] || []) {
-      dropCompanionTypes.add(companion);
+      if (!documentReferencesTypeName(document, companion, { ignoreDirectiveDefs: dropDefs })) {
+        dropCompanionTypes.add(companion);
+      }
     }
   }
 
@@ -895,28 +950,34 @@ function ensureJoinDirectiveSupport(
     },
   });
 
-  if (
-    !next.definitions.some(
-      d => d.kind === Kind.DIRECTIVE_DEFINITION && d.name.value === 'join__directive',
-    )
-  ) {
+  const hasDirective = next.definitions.some(
+    d => d.kind === Kind.DIRECTIVE_DEFINITION && d.name.value === 'join__directive',
+  );
+  const hasArgsScalar = next.definitions.some(
+    d => d.kind === Kind.SCALAR_TYPE_DEFINITION && d.name.value === 'join__DirectiveArguments',
+  );
+  if (!hasDirective || !hasArgsScalar) {
+    // Add only missing pieces — avoid duplicating join__DirectiveArguments when
+    // the scalar already exists but the directive def does not (or vice versa).
     const extras = parse(JOIN_DIRECTIVE_DEFS, { noLocation: true });
-    next = {
-      ...next,
-      definitions: [...next.definitions, ...extras.definitions],
-    };
-  } else if (
-    opts.expandLocations &&
-    !next.definitions.some(
-      d => d.kind === Kind.SCALAR_TYPE_DEFINITION && d.name.value === 'join__DirectiveArguments',
-    )
-  ) {
-    // join__directive may already exist without the args scalar — add it.
-    const scalarOnly = parse(`scalar join__DirectiveArguments`, { noLocation: true });
-    next = {
-      ...next,
-      definitions: [...next.definitions, ...scalarOnly.definitions],
-    };
+    const toAdd = extras.definitions.filter(def => {
+      if (def.kind === Kind.DIRECTIVE_DEFINITION && def.name.value === 'join__directive') {
+        return !hasDirective;
+      }
+      if (
+        def.kind === Kind.SCALAR_TYPE_DEFINITION &&
+        def.name.value === 'join__DirectiveArguments'
+      ) {
+        return !hasArgsScalar;
+      }
+      return false;
+    });
+    if (toAdd.length) {
+      next = {
+        ...next,
+        definitions: [...next.definitions, ...toAdd],
+      };
+    }
   }
   return next;
 }

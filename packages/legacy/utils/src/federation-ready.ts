@@ -90,25 +90,28 @@ function meshDirectiveImportKey(directive: MeshDirectiveImport): string {
   return directive.as || directive.name;
 }
 
+function normalizeMeshDirectiveImport(value: unknown): { name: string; local: string } | null {
+  if (typeof value === 'string') {
+    return { name: value, local: value };
+  }
+  if (value && typeof value === 'object' && 'name' in (value as object)) {
+    const obj = value as { name?: string; as?: string };
+    if (typeof obj.name !== 'string') {
+      return null;
+    }
+    return { name: obj.name, local: obj.as || obj.name };
+  }
+  return null;
+}
+
 function meshDirectiveImportsEqual(a: unknown, b: MeshDirectiveImport): boolean {
-  if (typeof b === 'string') {
-    if (typeof a === 'string') {
-      return a === b;
-    }
-    if (a && typeof a === 'object' && 'name' in (a as object)) {
-      const obj = a as { name?: string; as?: string };
-      return obj.name === b || obj.as === b;
-    }
+  const left = normalizeMeshDirectiveImport(a);
+  const right = normalizeMeshDirectiveImport(b);
+  if (!left || !right) {
     return false;
   }
-  if (typeof a === 'string') {
-    return a === b.name || a === b.as;
-  }
-  if (a && typeof a === 'object' && 'name' in (a as object)) {
-    const obj = a as { name?: string; as?: string };
-    return obj.name === b.name && (obj.as || undefined) === (b.as || undefined);
-  }
-  return false;
+  // Deduplicate only when both the imported name and effective local name match.
+  return left.name === right.name && left.local === right.local;
 }
 
 export interface ImportMeshDirectivesOptions {

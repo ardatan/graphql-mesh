@@ -166,39 +166,59 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
     const graphs = new Set<string>();
     const baseURL = getSourceBaseURL(args);
     const fromLocation = baseURL ? graphsByLocation.get(baseURL) : undefined;
-    if (fromLocation?.size === 1) {
-      // Single graph at this location — authoritative for this config.
-      // Do not also add nameToGraphEnum(sourceName) (subgraph named `api` case).
-      graphs.add([...fromLocation][0]);
-    } else if (
-      fromLocation &&
+    const fromConnect = sourceName ? sourceNameToGraphs.get(sourceName) : undefined;
+    const uniquePending = sourceName ? pendingSourceNameCounts.get(sourceName) === 1 : false;
+    const identicalAtLocation =
+      !!fromLocation &&
       fromLocation.size > 1 &&
       pendingSources.every(
         other => getSourceBaseURL(other) !== baseURL || sourcesDeepEqual(other, args),
-      )
-    ) {
-      // Same location, identical configs — genuinely shared; fan out.
-      for (const g of fromLocation) {
-        graphs.add(g);
-      }
-    } else if (!fromLocation?.size) {
-      const byName = sourceName ? nameToGraphEnum.get(sourceName) : undefined;
-      if (byName) {
-        graphs.add(byName);
-      }
-      const fromConnect = sourceName ? sourceNameToGraphs.get(sourceName) : undefined;
-      const uniquePending = sourceName ? pendingSourceNameCounts.get(sourceName) === 1 : false;
+      );
+
+    if (fromLocation?.size === 1) {
+      // Location disambiguates competing source defs; still keep every graph that
+      // already referenced this uniquely-named shared source via `@connect`.
+      graphs.add([...fromLocation][0]);
       if (fromConnect && uniquePending) {
         for (const g of fromConnect) {
           graphs.add(g);
         }
       }
-      // Duplicate-name configs without a transport match: do not guess a graph.
+    } else if (identicalAtLocation) {
+      // Same location, identical configs — genuinely shared; fan out.
+      for (const g of fromLocation) {
+        graphs.add(g);
+      }
+    } else {
+      // No unique location match, or multi-graph URL with competing configs —
+      // resolve by unique name / Connector references (do not let a shared
+      // baseURL block ownership).
+      const byName = sourceName ? nameToGraphEnum.get(sourceName) : undefined;
+      if (byName) {
+        graphs.add(byName);
+      }
+      if (fromConnect && uniquePending) {
+        for (const g of fromConnect) {
+          graphs.add(g);
+        }
+      }
       if (!graphs.size && uniquePending && singleGraphEnum) {
         graphs.add(singleGraphEnum);
       }
       if (!graphs.size && uniquePending && graphsWithConnect.size === 1) {
         graphs.add([...graphsWithConnect][0]);
+      }
+      if (!graphs.size && sourceName && (pendingSourceNameCounts.get(sourceName) || 0) > 1) {
+        throw new Error(
+          `Ambiguous @source ownership for "${sourceName}"` +
+            (baseURL ? ` at baseURL ${baseURL}` : '') +
+            ': multiple source configs share this name without a unique graph match',
+        );
+      }
+      if (!graphs.size && fromLocation && fromLocation.size > 1 && baseURL) {
+        throw new Error(
+          `Ambiguous @source ownership for baseURL ${baseURL}: multiple graphs share this URL with distinct source configs`,
+        );
       }
     }
     for (const graphEnum of graphs) {

@@ -8,7 +8,7 @@ import type {
   StringValueNode,
 } from 'graphql';
 import { Kind, parse, print, visit } from 'graphql';
-import { isMeshSpecLinkUrl } from '@graphql-mesh/utils';
+import { isMeshSpecLinkUrl, MESH_CORE_SPEC_URL, parseMeshSpecUrl } from '@graphql-mesh/utils';
 import { astFromValueUntyped } from '@graphql-tools/utils';
 import { prepareJoinDirectiveArgs } from './ast-from-value-block.js';
 
@@ -430,7 +430,13 @@ function rewriteSchemaLinks<T extends { directives?: readonly ConstDirectiveNode
         return directive;
       }
       if (isMeshSpecLinkUrl(url)) {
-        return rewriteMeshLink(directive, opts);
+        // `@transport` lives on the core Mesh link only — never on protocol links
+        // (thrift/sql/…). Also rewrite core links for `@extraSchemaDefinitionDirective`.
+        const parsed = parseMeshSpecUrl(url);
+        if (parsed?.name === 'core' || url === MESH_CORE_SPEC_URL) {
+          return rewriteMeshLink(directive, opts);
+        }
+        return directive;
       }
       if (url.startsWith(CONNECT_SPEC_PREFIX) && opts.liftedSource) {
         return ensureImport(directive, '@source');

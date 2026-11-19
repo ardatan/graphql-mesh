@@ -1125,16 +1125,30 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
       ),
     );
   }
+  // Merge field-by-field: native > join > transportEntry. Lean join may omit
+  // `location` when it matches the graph URL — fill from transportEntry.
+  const fromNative = asArray(schemaDirectives?.transport)[0] as
+    { location?: string; subgraph?: string; options?: Record<string, unknown> } | undefined;
+  const fromJoin = readJoinTransportArgs(schemaDirectives);
+  const fromEntry = opts.transportEntry
+    ? {
+        location: opts.transportEntry.location,
+        subgraph: opts.transportEntry.subgraph,
+        options: opts.transportEntry.options || {},
+      }
+    : undefined;
   const transport =
-    asArray(schemaDirectives?.transport)[0] ||
-    readJoinTransportArgs(schemaDirectives) ||
-    (opts.transportEntry
+    fromNative || fromJoin || fromEntry
       ? {
-          location: opts.transportEntry.location,
-          subgraph: opts.transportEntry.subgraph,
-          options: opts.transportEntry.options || {},
+          location: fromNative?.location ?? fromJoin?.location ?? fromEntry?.location,
+          subgraph: fromNative?.subgraph ?? fromJoin?.subgraph ?? fromEntry?.subgraph,
+          options: {
+            ...(fromEntry?.options || {}),
+            ...(fromJoin?.options || {}),
+            ...(fromNative?.options || {}),
+          },
         }
-      : undefined);
+      : undefined;
   if (!transport?.location) {
     throw new Error('No transport directive found on the schema!');
   }

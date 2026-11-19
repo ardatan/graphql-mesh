@@ -459,7 +459,6 @@ describe('getMesh', () => {
     // defs (Apollo-like loader SDL). Round-trip with assumeValidSDL.
     const parsedSchema = buildSchema(printedSchema, {
       assumeValidSDL: true,
-      assumeValid: true,
     });
     const validatedErrors = validateSchema(parsedSchema);
     expect(validatedErrors).toHaveLength(0);
