@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`binary (@thrift__rpc) composes schema with @thrift__rpc 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"]) @join__directive(graphs: [CALCULATOR], name: "transport", args: {kind: "thrift", location: "http://localhost:<calculator_port>/thrift"}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1") @join__directive(graphs: [CALCULATOR], name: "transport", args: {kind: "thrift", location: "http://localhost:<calculator_port>/thrift"}) {
   query: Query
 }
 
@@ -38,8 +38,6 @@ enum join__Graph {
   CALCULATOR @join__graph(name: "calculator", url: "http://localhost:<calculator_port>/thrift")
 }
 
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
-
 """Represents NULL values"""
 scalar Void @join__type(graph: CALCULATOR)
 
@@ -52,11 +50,6 @@ type Query @join__type(graph: CALCULATOR) {
   subtract(left: Int, right: Int): Int @join__directive(graphs: [CALCULATOR], name: "thrift__rpc", args: {function: "subtract", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: "CALL"})
   divide(left: Int, right: Int): Int @join__directive(graphs: [CALCULATOR], name: "thrift__rpc", args: {function: "divide", args: "1(i32): $args.left\\n2(i32): $args.right", selection: "$(i32)", messageType: "CALL"})
   zip: Void @join__directive(graphs: [CALCULATOR], name: "thrift__rpc", args: {function: "zip", args: "", selection: "$(void)", messageType: "ONEWAY"})
-}
-
-enum ThriftMessageType @join__type(graph: CALCULATOR) {
-  CALL @join__enumValue(graph: CALCULATOR)
-  ONEWAY @join__enumValue(graph: CALCULATOR)
 }
 
 input AddRequestInput @join__type(graph: CALCULATOR) {

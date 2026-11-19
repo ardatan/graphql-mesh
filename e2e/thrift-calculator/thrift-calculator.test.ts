@@ -68,9 +68,10 @@ describe('binary (@thrift__rpc)', () => {
     expect(result).toMatch(/name:\s*"thrift__rpc"/);
     expect(result).toMatch(/name:\s*"transport"/);
     expect(result).toMatch(/kind:\s*"thrift"/);
-    // Apps are join; `directive @thrift__rpc(...)` def stays for extract.
+    // Lean SG: apps are join only — no native `directive @thrift__rpc` / enum.
     expect(result).not.toMatch(/:\s*\w+ @thrift__rpc\s*\(/);
-    expect(result).toMatch(/directive @thrift__rpc\(/);
+    expect(result).not.toMatch(/directive @thrift__rpc\(/);
+    expect(result).not.toMatch(/ThriftMessageType/);
     expect(result).not.toMatch(/@transport\s*\(/);
     expect(result).toMatch(/function:\s*"add"/);
     expect(result).toMatch(/1\(struct\):\s*\$args\.request/);

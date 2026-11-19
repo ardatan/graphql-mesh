@@ -74,12 +74,15 @@ const MESH_TO_JOIN = new Set([
 ]);
 
 /**
- * Protocol field dirs keep their `directive @…` definitions on the final SG so
- * federation extract can reconstitute native apps for transports that still
- * read `@thrift__rpc` / `@sql` / … (not join__directive). Apps still become
- * `@join__directive`; imports stay. Core Mesh dirs (`@merge`, …) drop defs.
+ * Enums / scalars that exist only to type protocol directive args. When the
+ * native `directive @…` def is dropped (apps live as `@join__directive`), these
+ * become unused on the lean SG — federation extract reconstitutes apps from
+ * join args without needing the def or companion enum.
  */
-const MESH_JOIN_KEEP_DEFS = new Set(['thrift__rpc', 'sql', 'protobuf__rpc']);
+const MESH_PROTOCOL_COMPANION_TYPES: Readonly<Record<string, readonly string[]>> = {
+  thrift__rpc: ['ThriftMessageType'],
+  sql: ['SqlKind'],
+};
 
 /**
  * Mesh Compose post-process (GM-41) — emit the **most optimized** supergraph.
@@ -102,7 +105,9 @@ const MESH_JOIN_KEEP_DEFS = new Set(['thrift__rpc', 'sql', 'protobuf__rpc']);
  *    (graphs: owns attribution). When Connectors `@source` is also present,
  *    Compose aliases Mesh stitching source as `@meshSource` and join uses
  *    `name: "meshSource"`. Mesh `@link` **imports** for those names stay
- *    (join apps still reference them); native defs / composeDirective drop.
+ *    (join apps still reference them); native defs / composeDirective / companion
+ *    enums (`ThriftMessageType`, `SqlKind`) drop. Federation extract reconstitutes
+ *    native apps onto subgraph schemas without needing those defs on the SG.
  * 6. Leave `@resolveTo` / `@additionalField` native (not subgraph-owned).
  * 7. Always prune orphan Mesh artifacts loaders leave when nothing was
  *    rewritten (unused `TransportOptions`, unused `@source` def/`@link` import
@@ -119,6 +124,8 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
     !supergraphSdl?.includes('@sql') &&
     !supergraphSdl?.includes('@protobuf__rpc') &&
     !supergraphSdl?.includes('TransportOptions') &&
+    !supergraphSdl?.includes('ThriftMessageType') &&
+    !supergraphSdl?.includes('SqlKind') &&
     !supergraphSdl?.includes('directive @source')
   ) {
     return supergraphSdl;
@@ -629,19 +636,22 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
   });
   const joinCarried = collectJoinCarriedMeshNames(document);
 
-  // Drop unused defs unless join-carried protocol dirs that must keep defs
-  // for federation extract → transport readers.
+  // Drop unused native defs — join-carried protocol dirs keep `@link` imports
+  // only; federation extract reconstitutes apps from `@join__directive`.
   const dropDefs = new Set(
     MESH_ORPHAN_DIRECTIVE_NAMES.filter(name => {
       if (usedNative.has(name)) {
         return false;
       }
-      if (joinCarried.has(name) && MESH_JOIN_KEEP_DEFS.has(name)) {
-        return false;
-      }
       return true;
     }),
   );
+  const dropCompanionTypes = new Set<string>();
+  for (const name of dropDefs) {
+    for (const companion of MESH_PROTOCOL_COMPANION_TYPES[name] || []) {
+      dropCompanionTypes.add(companion);
+    }
+  }
 
   // Imports stay when join apps still name the directive. Aliased Mesh
   // stitching source (`{name: "@source", as: "@meshSource"}`) is keyed by
@@ -657,7 +667,7 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
       return true;
     }).map(name => `@${name}`),
   );
-  if (dropDefs.size === 0 && importNamesToStrip.size === 0) {
+  if (dropDefs.size === 0 && importNamesToStrip.size === 0 && dropCompanionTypes.size === 0) {
     return document;
   }
 
@@ -666,6 +676,12 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
     definitions: document.definitions
       .filter(def => {
         if (def.kind === Kind.DIRECTIVE_DEFINITION && dropDefs.has(def.name.value)) {
+          return false;
+        }
+        if (
+          (def.kind === Kind.ENUM_TYPE_DEFINITION || def.kind === Kind.SCALAR_TYPE_DEFINITION) &&
+          dropCompanionTypes.has(def.name.value)
+        ) {
           return false;
         }
         return true;
@@ -740,15 +756,25 @@ function pruneRewrittenMeshArtifacts(
     },
   });
 
-  const dropDefs = new Set(
-    [...rewrittenNames].filter(name => !stillNative.has(name) && !MESH_JOIN_KEEP_DEFS.has(name)),
-  );
+  const dropDefs = new Set([...rewrittenNames].filter(name => !stillNative.has(name)));
+  const dropCompanionTypes = new Set<string>();
+  for (const name of dropDefs) {
+    for (const companion of MESH_PROTOCOL_COMPANION_TYPES[name] || []) {
+      dropCompanionTypes.add(companion);
+    }
+  }
 
   return {
     ...document,
     definitions: document.definitions
       .filter(def => {
         if (def.kind === Kind.DIRECTIVE_DEFINITION && dropDefs.has(def.name.value)) {
+          return false;
+        }
+        if (
+          (def.kind === Kind.ENUM_TYPE_DEFINITION || def.kind === Kind.SCALAR_TYPE_DEFINITION) &&
+          dropCompanionTypes.has(def.name.value)
+        ) {
           return false;
         }
         return true;
@@ -935,16 +961,9 @@ function removeImportFromLink(
   if (values.length === importArg.value.values.length) {
     return directive;
   }
-  // Drop the whole Mesh/core @link when import list becomes empty.
+  // Empty import list → keep `@link(url:)` without `import:` (matches Guild
+  // composition output for Mesh core after `@transport` is join-ified/dropped).
   if (values.length === 0) {
-    const url = getStringArg(directive, 'url');
-    if (
-      url?.includes('specs.graphql-mesh.com/core/') ||
-      url?.includes('the-guild.dev/graphql/mesh/spec/') ||
-      url?.includes('graphql-mesh.com/spec/')
-    ) {
-      return null;
-    }
     return {
       ...directive,
       arguments: (directive.arguments || []).filter(a => a.name.value !== 'import'),

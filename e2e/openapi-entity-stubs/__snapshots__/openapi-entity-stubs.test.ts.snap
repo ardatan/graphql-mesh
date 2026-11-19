@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI entity stubs (FK + getById) composes with entity stub selection and entity:true on getCustomer 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @transport(subgraph: "Billing", kind: "connect", location: "http://localhost:<API_port>") @join__directive(graphs: [BILLING], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [BILLING], name: "source", args: {name: "Billing", http: {baseURL: "http://localhost:<API_port>"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1") @join__directive(graphs: [BILLING], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [BILLING], name: "source", args: {name: "Billing", http: {baseURL: "http://localhost:<API_port>"}}) {
   query: Query
 }
 
@@ -39,8 +39,8 @@ enum join__Graph {
 }
 
 type Query @join__type(graph: BILLING) {
-  getCustomer(id: String!): Customer @join__directive(graphs: [BILLING], name: "connect", args: {source: "Billing", http: {GET: "/customers/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name", entity: true})
-  getInvoice(id: String!): Invoice @join__directive(graphs: [BILLING], name: "connect", args: {source: "Billing", http: {GET: "/invoices/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id total customerId customer: { __typename: $(\\"Customer\\") id: customerId }", entity: true})
+  getCustomer(id: String!): Customer @join__directive(graphs: [BILLING], name: "connect", args: {source: "Billing", http: {GET: "/customers/{\$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name", entity: true})
+  getInvoice(id: String!): Invoice @join__directive(graphs: [BILLING], name: "connect", args: {source: "Billing", http: {GET: "/invoices/{\$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id total customerId customer: { __typename: \$(\\"Customer\\") id: customerId }", entity: true})
 }
 
 type Customer @join__type(graph: BILLING, key: "id") {
@@ -54,10 +54,6 @@ type Invoice @join__type(graph: BILLING, key: "id") {
   customerId: String!
   customer: Customer
 }
-
-scalar TransportOptions
-
-directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 

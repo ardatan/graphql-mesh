@@ -25,7 +25,9 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/@transport\s*\(/);
     expect(out).not.toMatch(/directive @transport/);
     expect(out).not.toMatch(/name:\s*"transport"/);
-    expect(out).not.toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1/);
+    // Empty Mesh core `@link(url:)` stays (import list cleared); no `@transport` import.
+    expect(out).toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1"/);
+    expect(out).not.toMatch(/import: \["@transport"\]/);
     expect(out).toMatch(/@join__graph\(name: "users", url: "http:\/\/localhost:4001"\)/);
   });
 
@@ -218,7 +220,9 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     const out = finalizeMeshJoinDirectives(sdl);
     expect(out).not.toMatch(/TransportOptions/);
     expect(out).not.toMatch(/directive @source/);
-    expect(out).not.toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1/);
+    expect(out).not.toMatch(/import: \["@source"\]/);
+    // Core `@link(url:)` without imports remains after orphan import strip.
+    expect(out).toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1"/);
     expect(out).toMatch(/type Query/);
   });
 
@@ -326,10 +330,11 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       ) repeatable on SCHEMA
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    // Apps are join; keep `directive @thrift__rpc` def for federation extract.
+    // Lean SG: apps are join only — no native protocol def / companion enum.
     expect(out).not.toMatch(/:\s*\w+ @thrift__rpc\s*\(/);
     expect(out).not.toMatch(/@transport\s*\(/);
-    expect(out).toMatch(/directive @thrift__rpc\(/);
+    expect(out).not.toMatch(/directive @thrift__rpc\(/);
+    expect(out).not.toMatch(/ThriftMessageType/);
     expect(out).not.toMatch(/TransportOptions/);
     expect(out).toMatch(
       /@join__directive\(graphs: \[CALCULATOR\], name: "transport", args: \{kind: "thrift", location: "http:\/\/localhost\/thrift"\}/,

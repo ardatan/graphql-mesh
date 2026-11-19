@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI HATEOAS should compose 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @transport(subgraph: "Products", kind: "connect", location: "http://localhost:<OASService_port>") @transport(subgraph: "Suppliers", kind: "connect", location: "http://localhost:<OASService_port>") @join__directive(graphs: [SUPPLIERS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PRODUCTS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PRODUCTS], name: "source", args: {name: "Products", http: {baseURL: "http://localhost:<OASService_port>"}}) @join__directive(graphs: [SUPPLIERS], name: "source", args: {name: "Suppliers", http: {baseURL: "http://localhost:<OASService_port>"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1") @join__directive(graphs: [SUPPLIERS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PRODUCTS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PRODUCTS], name: "source", args: {name: "Products", http: {baseURL: "http://localhost:<OASService_port>"}}) @join__directive(graphs: [SUPPLIERS], name: "source", args: {name: "Suppliers", http: {baseURL: "http://localhost:<OASService_port>"}}) {
   query: Query
 }
 
@@ -49,7 +49,7 @@ type Electronics implements Product @join__type(graph: PRODUCTS) @join__implemen
   supplierId: Int
   supplier: Supplier
   """Get a product by ID"""
-  self: Product @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "_links { supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } ... $._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\", warranty }], [\\"CLOTHING\\", { __typename: \\"Clothing\\", material }])"})
+  self: Product @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{\$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "_links { supplier { href } } _type id name price supplierId supplier: { __typename: \$(\\"Supplier\\") id: supplierId } ... \$._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\", warranty }], [\\"CLOTHING\\", { __typename: \\"Clothing\\", material }])"})
 }
 
 type ProductLinks @join__type(graph: PRODUCTS) {
@@ -61,7 +61,7 @@ type Link @join__type(graph: PRODUCTS) {
   href: String!
 }
 
-type Supplier @join__type(graph: PRODUCTS, key: "id") @join__type(graph: SUPPLIERS, key: "id") @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/suppliers/{$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name address"}) {
+type Supplier @join__type(graph: PRODUCTS, key: "id") @join__type(graph: SUPPLIERS, key: "id") @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/suppliers/{\$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name address"}) {
   id: Int
   name: String
   address: String
@@ -77,22 +77,22 @@ type Clothing implements Product @join__type(graph: PRODUCTS) @join__implements(
   supplierId: Int
   supplier: Supplier
   """Get a product by ID"""
-  self: Product @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "_links { supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } ... $._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\", warranty }], [\\"CLOTHING\\", { __typename: \\"Clothing\\", material }])"})
+  self: Product @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{\$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "_links { supplier { href } } _type id name price supplierId supplier: { __typename: \$(\\"Supplier\\") id: supplierId } ... \$._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\", warranty }], [\\"CLOTHING\\", { __typename: \\"Clothing\\", material }])"})
 }
 
 type Query @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS) {
   """Get all the products"""
-  getProducts: ProductList @join__field(graph: PRODUCTS) @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/", headers: [{name: "accept", value: "application/json"}]}, selection: "items { _links { self { href } supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } ... $._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\" }], [\\"CLOTHING\\", { __typename: \\"Clothing\\" }]) }"})
+  getProducts: ProductList @join__field(graph: PRODUCTS) @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/", headers: [{name: "accept", value: "application/json"}]}, selection: "items { _links { self { href } supplier { href } } _type id name price supplierId supplier: { __typename: \$(\\"Supplier\\") id: supplierId } ... \$._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\" }], [\\"CLOTHING\\", { __typename: \\"Clothing\\" }]) }"})
   """Get a product by ID"""
   getProductById(
     """The product ID"""
     id: Int!
-  ): Product @join__field(graph: PRODUCTS) @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "_links { supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } ... $._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\", warranty }], [\\"CLOTHING\\", { __typename: \\"Clothing\\", material }])"})
+  ): Product @join__field(graph: PRODUCTS) @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{\$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "_links { supplier { href } } _type id name price supplierId supplier: { __typename: \$(\\"Supplier\\") id: supplierId } ... \$._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\", warranty }], [\\"CLOTHING\\", { __typename: \\"Clothing\\", material }])"})
   """Get a supplier by ID"""
   getSupplierById(
     """The supplier ID"""
     id: Int!
-  ): Supplier @join__field(graph: SUPPLIERS) @join__directive(graphs: [SUPPLIERS], name: "connect", args: {source: "Suppliers", http: {GET: "/suppliers/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name address", entity: true})
+  ): Supplier @join__field(graph: SUPPLIERS) @join__directive(graphs: [SUPPLIERS], name: "connect", args: {source: "Suppliers", http: {GET: "/suppliers/{\$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name address", entity: true})
 }
 
 type ProductList @join__type(graph: PRODUCTS) {
@@ -108,10 +108,6 @@ interface Product @join__type(graph: PRODUCTS) {
   supplierId: Int
   supplier: Supplier
 }
-
-scalar TransportOptions
-
-directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
