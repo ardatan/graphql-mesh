@@ -25,9 +25,8 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/@transport\s*\(/);
     expect(out).not.toMatch(/directive @transport/);
     expect(out).not.toMatch(/name:\s*"transport"/);
-    // Empty Mesh core `@link(url:)` stays (import list cleared); no `@transport` import.
-    expect(out).toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1"/);
-    expect(out).not.toMatch(/import: \["@transport"\]/);
+    // Empty Mesh core `@link` (no imports left) is dropped from the lean SG.
+    expect(out).not.toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1/);
     expect(out).toMatch(/@join__graph\(name: "users", url: "http:\/\/localhost:4001"\)/);
   });
 
@@ -221,8 +220,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/TransportOptions/);
     expect(out).not.toMatch(/directive @source/);
     expect(out).not.toMatch(/import: \["@source"\]/);
-    // Core `@link(url:)` without imports remains after orphan import strip.
-    expect(out).toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1"/);
+    expect(out).not.toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1/);
     expect(out).toMatch(/type Query/);
   });
 

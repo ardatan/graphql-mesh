@@ -245,6 +245,8 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
     finalized = pruneRewrittenMeshArtifacts(finalized, rewrittenMeshNames);
     finalized = relaxSubgraphArgOnMeshDefs(finalized, rewrittenMeshNames);
   }
+  // Drop Mesh `@link(url:)` with no imports (e.g. core left after `@transport` strip).
+  finalized = pruneEmptyMeshLinks(finalized);
   if (emittedJoinTransport || emittedMeshJoin) {
     finalized = ensureJoinDirectiveSupport(finalized, { expandLocations: emittedMeshJoin });
   }
@@ -937,6 +939,53 @@ function bumpJoinLink(directives: readonly ConstDirectiveNode[] | undefined): Co
   });
 }
 
+function isMeshSpecLinkUrl(url: string | undefined): boolean {
+  if (!url) {
+    return false;
+  }
+  return (
+    url.includes('specs.graphql-mesh.com/') ||
+    url.includes('the-guild.dev/graphql/mesh/spec/') ||
+    url.includes('graphql-mesh.com/spec/')
+  );
+}
+
+/**
+ * Drop Mesh `@link(url: …)` with no `import:` (or an empty import list). These
+ * are leftovers after transport/orphan import strip and carry no meaning on the
+ * lean final SG.
+ */
+function pruneEmptyMeshLinks(document: DocumentNode): DocumentNode {
+  return {
+    ...document,
+    definitions: document.definitions.map(def => {
+      if (def.kind !== Kind.SCHEMA_DEFINITION && def.kind !== Kind.SCHEMA_EXTENSION) {
+        return def;
+      }
+      if (!def.directives?.length) {
+        return def;
+      }
+      const dirs = def.directives.filter(dir => {
+        if (dir.name.value !== 'link') {
+          return true;
+        }
+        if (!isMeshSpecLinkUrl(getStringArg(dir, 'url'))) {
+          return true;
+        }
+        const importArg = dir.arguments?.find(a => a.name.value === 'import');
+        if (!importArg) {
+          return false;
+        }
+        if (importArg.value.kind === Kind.LIST && importArg.value.values.length === 0) {
+          return false;
+        }
+        return true;
+      });
+      return dirs.length === def.directives.length ? def : { ...def, directives: dirs };
+    }),
+  };
+}
+
 function removeImportFromLink(
   directive: ConstDirectiveNode,
   importName: string,
@@ -961,9 +1010,12 @@ function removeImportFromLink(
   if (values.length === importArg.value.values.length) {
     return directive;
   }
-  // Empty import list → keep `@link(url:)` without `import:` (matches Guild
-  // composition output for Mesh core after `@transport` is join-ified/dropped).
+  // Empty import list → drop Mesh `@link` entirely (orphan url-only core/protocol
+  // links are noise on the lean SG). Non-Mesh links keep url-only form.
   if (values.length === 0) {
+    if (isMeshSpecLinkUrl(getStringArg(directive, 'url'))) {
+      return null;
+    }
     return {
       ...directive,
       arguments: (directive.arguments || []).filter(a => a.name.value !== 'import'),

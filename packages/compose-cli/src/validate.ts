@@ -2,13 +2,13 @@ import {
   buildSchema,
   GraphQLError,
   isEnumType,
-  isObjectType,
   isInterfaceType,
+  isObjectType,
   type ASTNode,
   type FieldDefinitionNode,
   type GraphQLField,
-  type GraphQLObjectType,
   type GraphQLInterfaceType,
+  type GraphQLObjectType,
 } from 'graphql';
 import { suggestionList } from '@graphql-mesh/fusion-composition';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
