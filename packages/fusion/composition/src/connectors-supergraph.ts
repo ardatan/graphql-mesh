@@ -365,10 +365,7 @@ function getJoinTypeGraph(
 function getPreferredTypeJoinGraph(
   directives: readonly ConstDirectiveNode[] | undefined,
 ): string | undefined {
-  const byGraph = new Map<
-    string,
-    { extension: boolean; resolvable: boolean; hasKey: boolean }
-  >();
+  const byGraph = new Map<string, { extension: boolean; resolvable: boolean; hasKey: boolean }>();
   for (const dir of directives || []) {
     if (dir.name.value !== 'join__type') {
       continue;

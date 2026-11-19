@@ -4161,9 +4161,6 @@ type Query {
   context {
     type
     href
-    external_urls {
-      spotify
-    }
     uri
   }
   timestamp
@@ -4341,7 +4338,7 @@ type Query {
 
 """An album"""
 type AlbumObject {
-  album_type: query_get_an_album_allOf_0_album_type!
+  album_type: AlbumBase_album_type!
   """The number of tracks in the album."""
   total_tracks: Int!
   """
@@ -4363,9 +4360,9 @@ type AlbumObject {
   name: String!
   """The date the album was first released."""
   release_date: String!
-  release_date_precision: query_get_an_album_allOf_0_release_date_precision!
+  release_date_precision: AlbumBase_release_date_precision!
   restrictions: AlbumRestrictionObject
-  type: album_const!
+  type: AlbumBase_type!
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the album.
   """
@@ -4391,7 +4388,7 @@ type AlbumObject {
 }
 
 """The type of the album."""
-enum query_get_an_album_allOf_0_album_type {
+enum AlbumBase_album_type {
   album
   single
   compilation
@@ -4414,7 +4411,7 @@ type ImageObject {
 }
 
 """The precision with which \`release_date\` value is known."""
-enum query_get_an_album_allOf_0_release_date_precision {
+enum AlbumBase_release_date_precision {
   year
   month
   day
@@ -4434,7 +4431,7 @@ enum query_get_an_album_allOf_0_restrictions_reason {
   explicit
 }
 
-enum album_const @typescript(subgraph: "test", type: "\\"album\\"") @example(subgraph: "test", value: "album") {
+enum AlbumBase_type @typescript(subgraph: "test", type: "\\"album\\"") @example(subgraph: "test", value: "album") {
   album
 }
 
@@ -4489,7 +4486,7 @@ type ArtistObject {
   The popularity of the artist. The value will be between 0 and 100, with 100 being the most popular. The artist's popularity is calculated from the popularity of all the artist's tracks.
   """
   popularity: Int
-  type: artist_const
+  type: ArtistObject_type
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the artist.
   """
@@ -4505,7 +4502,7 @@ type FollowersObject {
   total: Int
 }
 
-enum artist_const @typescript(subgraph: "test", type: "\\"artist\\"") @example(subgraph: "test", value: "artist") {
+enum ArtistObject_type @typescript(subgraph: "test", type: "\\"artist\\"") @example(subgraph: "test", value: "artist") {
   artist
 }
 
@@ -4590,11 +4587,15 @@ type SimplifiedArtistObject {
   id: String
   """The name of the artist."""
   name: String
-  type: artist_const
+  type: SimplifiedArtistObject_type
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the artist.
   """
   uri: String
+}
+
+enum SimplifiedArtistObject_type @typescript(subgraph: "test", type: "\\"artist\\"") @example(subgraph: "test", value: "artist") {
+  artist
 }
 
 type LinkedTrackObject {
@@ -4661,7 +4662,7 @@ type PagingSimplifiedAlbumObject {
 }
 
 type SimplifiedAlbumObject {
-  album_type: query_get_an_album_allOf_0_album_type!
+  album_type: AlbumBase_album_type!
   """The number of tracks in the album."""
   total_tracks: Int!
   """
@@ -4683,9 +4684,9 @@ type SimplifiedAlbumObject {
   name: String!
   """The date the album was first released."""
   release_date: String!
-  release_date_precision: query_get_an_album_allOf_0_release_date_precision!
+  release_date_precision: AlbumBase_release_date_precision!
   restrictions: AlbumRestrictionObject
-  type: album_const!
+  type: AlbumBase_type!
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the album.
   """
@@ -4772,7 +4773,7 @@ type TrackObject {
   The number of the track. If an album has several discs, the track number is the number on the specified disc.
   """
   track_number: Int
-  type: track_const
+  type: TrackObject_type
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the track.
   """
@@ -4786,7 +4787,7 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-enum track_const @typescript(subgraph: "test", type: "\\"track\\"") @example(subgraph: "test", value: "track") {
+enum TrackObject_type @typescript(subgraph: "test", type: "\\"track\\"") @example(subgraph: "test", value: "track") {
   track
 }
 
@@ -4831,7 +4832,7 @@ type ShowObject {
   name: String!
   """The publisher of the show."""
   publisher: String!
-  type: show_const!
+  type: ShowBase_type!
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the show.
   """
@@ -4841,7 +4842,7 @@ type ShowObject {
   episodes: PagingSimplifiedEpisodeObject!
 }
 
-enum show_const @typescript(subgraph: "test", type: "\\"show\\"") @example(subgraph: "test", value: "show") {
+enum ShowBase_type @typescript(subgraph: "test", type: "\\"show\\"") @example(subgraph: "test", value: "show") {
   show
 }
 
@@ -4910,9 +4911,9 @@ type SimplifiedEpisodeObject {
   The date the episode was first released, for example \`"1981-12-15"\`. Depending on the precision, it might be shown as \`"1981"\` or \`"1981-12"\`.
   """
   release_date: Date!
-  release_date_precision: query_get_a_show_allOf_1_episodes_allOf_1_items_items_allOf_0_release_date_precision!
+  release_date_precision: EpisodeBase_release_date_precision!
   resume_point: ResumePointObject!
-  type: episode_const!
+  type: EpisodeBase_type!
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the episode.
   """
@@ -4925,7 +4926,7 @@ type SimplifiedEpisodeObject {
 scalar Date
 
 """The precision with which \`release_date\` value is known."""
-enum query_get_a_show_allOf_1_episodes_allOf_1_items_items_allOf_0_release_date_precision {
+enum EpisodeBase_release_date_precision {
   year
   month
   day
@@ -4938,7 +4939,7 @@ type ResumePointObject {
   resume_position_ms: Int
 }
 
-enum episode_const @typescript(subgraph: "test", type: "\\"episode\\"") @example(subgraph: "test", value: "episode") {
+enum EpisodeBase_type @typescript(subgraph: "test", type: "\\"episode\\"") @example(subgraph: "test", value: "episode") {
   episode
 }
 
@@ -5000,7 +5001,7 @@ type SimplifiedShowObject {
   name: String!
   """The publisher of the show."""
   publisher: String!
-  type: show_const!
+  type: ShowBase_type!
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the show.
   """
@@ -5055,9 +5056,9 @@ type EpisodeObject {
   The date the episode was first released, for example \`"1981-12-15"\`. Depending on the precision, it might be shown as \`"1981"\` or \`"1981-12"\`.
   """
   release_date: Date!
-  release_date_precision: query_get_a_show_allOf_1_episodes_allOf_1_items_items_allOf_0_release_date_precision!
+  release_date_precision: EpisodeBase_release_date_precision!
   resume_point: ResumePointObject!
-  type: episode_const!
+  type: EpisodeBase_type!
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the episode.
   """
@@ -5116,7 +5117,7 @@ type AudiobookObject {
   narrators: [NarratorObject]!
   """The publisher of the audiobook."""
   publisher: String!
-  type: audiobook_const!
+  type: AudiobookBase_type!
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the audiobook.
   """
@@ -5136,7 +5137,7 @@ type NarratorObject {
   name: String
 }
 
-enum audiobook_const @typescript(subgraph: "test", type: "\\"audiobook\\"") @example(subgraph: "test", value: "audiobook") {
+enum AudiobookBase_type @typescript(subgraph: "test", type: "\\"audiobook\\"") @example(subgraph: "test", value: "audiobook") {
   audiobook
 }
 
@@ -5205,9 +5206,9 @@ type SimplifiedChapterObject {
   The date the episode was first released, for example \`"1981-12-15"\`. Depending on the precision, it might be shown as \`"1981"\` or \`"1981-12"\`.
   """
   release_date: Date!
-  release_date_precision: query_get_an_audiobook_allOf_1_chapters_allOf_1_items_items_allOf_0_release_date_precision!
+  release_date_precision: ChapterBase_release_date_precision!
   resume_point: ResumePointObject!
-  type: episode_const!
+  type: ChapterBase_type!
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the episode.
   """
@@ -5217,10 +5218,14 @@ type SimplifiedChapterObject {
 }
 
 """The precision with which \`release_date\` value is known."""
-enum query_get_an_audiobook_allOf_1_chapters_allOf_1_items_items_allOf_0_release_date_precision {
+enum ChapterBase_release_date_precision {
   year
   month
   day
+}
+
+enum ChapterBase_type @typescript(subgraph: "test", type: "\\"episode\\"") @example(subgraph: "test", value: "episode") {
+  episode
 }
 
 type ChapterRestrictionObject {
@@ -5307,7 +5312,7 @@ type SimplifiedAudiobookObject {
   narrators: [NarratorObject]!
   """The publisher of the audiobook."""
   publisher: String!
-  type: audiobook_const!
+  type: AudiobookBase_type!
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the audiobook.
   """
@@ -5362,9 +5367,9 @@ type ChapterObject {
   The date the episode was first released, for example \`"1981-12-15"\`. Depending on the precision, it might be shown as \`"1981"\` or \`"1981-12"\`.
   """
   release_date: Date!
-  release_date_precision: query_get_an_audiobook_allOf_1_chapters_allOf_1_items_items_allOf_0_release_date_precision!
+  release_date_precision: ChapterBase_release_date_precision!
   resume_point: ResumePointObject!
-  type: episode_const!
+  type: ChapterBase_type!
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for the episode.
   """
@@ -5499,7 +5504,7 @@ type PlaylistOwnerObject {
   The [Spotify user ID](/documentation/web-api/concepts/spotify-uris-ids) for this user.
   """
   id: String
-  type: user_const
+  type: PlaylistUserObject_type
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for this user.
   """
@@ -5508,7 +5513,7 @@ type PlaylistOwnerObject {
   display_name: String
 }
 
-enum user_const @typescript(subgraph: "test", type: "\\"user\\"") @example(subgraph: "test", value: "user") {
+enum PlaylistUserObject_type @typescript(subgraph: "test", type: "\\"user\\"") @example(subgraph: "test", value: "user") {
   user
 }
 
@@ -5692,7 +5697,7 @@ type PlaylistUserObject {
   The [Spotify user ID](/documentation/web-api/concepts/spotify-uris-ids) for this user.
   """
   id: String
-  type: user_const
+  type: PlaylistUserObject_type
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for this user.
   """
@@ -5869,11 +5874,15 @@ type PublicUserObject {
   id: String
   """The user's profile image."""
   images: [ImageObject]
-  type: user_const
+  type: PublicUserObject_type
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for this user.
   """
   uri: String
+}
+
+enum PublicUserObject_type @typescript(subgraph: "test", type: "\\"user\\"") @example(subgraph: "test", value: "user") {
+  user
 }
 
 """A paged set of playlists"""
@@ -6026,7 +6035,7 @@ type AudioFeaturesObject {
   time_signature: PositiveInt
   """A link to the Web API endpoint providing full details of the track."""
   track_href: String
-  type: audio_features_const
+  type: AudioFeaturesObject_type
   """The Spotify URI for the track."""
   uri: URL
   """
@@ -6038,7 +6047,7 @@ type AudioFeaturesObject {
 """Integers that will have a value greater than 0."""
 scalar PositiveInt
 
-enum audio_features_const @typescript(subgraph: "test", type: "\\"audio_features\\"") @example(subgraph: "test", value: "audio_features") {
+enum AudioFeaturesObject_type @typescript(subgraph: "test", type: "\\"audio_features\\"") @example(subgraph: "test", value: "audio_features") {
   audio_features
 }
 
@@ -6221,7 +6230,7 @@ type SectionObject {
   The confidence, from 0.0 to 1.0, of the reliability of the key. Songs with many key changes may correspond to low values in this field.
   """
   key_confidence: NonNegativeFloat
-  mode: query_get_audio_analysis_sections_items_mode
+  mode: SectionObject_mode
   """The confidence, from 0.0 to 1.0, of the reliability of the \`mode\`."""
   mode_confidence: NonNegativeFloat
   """
@@ -6237,7 +6246,7 @@ type SectionObject {
 """
 Indicates the modality (major or minor) of a section, the type of scale from which its melodic content is derived. This field will contain a 0 for "minor", a 1 for "major", or a -1 for no result. Note that the major key (e.g. C major) could more likely be confused with the minor key at 3 semitones lower (e.g. A minor) as both keys carry the same pitches.
 """
-enum query_get_audio_analysis_sections_items_mode {
+enum SectionObject_mode {
   NEGATIVE_1
   _0
   _1

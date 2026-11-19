@@ -1668,7 +1668,7 @@ type Mutation @join__type(graph: WIKI) {
   
   Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
   """
-  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): JSON @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {POST: "/media/math/check/{$args.type->match([\\"inline_tex\\", \\"inline-tex\\"], [@, $args.type])}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "$"})
+  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): JSON @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {POST: "/media/math/check/{$args.type->match([\\"inline_tex\\", \\"inline-tex\\"], [@, $args.type])}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}], body: "{\\n  q: $args.q\\n}"}, selection: "$"})
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -1681,7 +1681,7 @@ type Mutation @join__type(graph: WIKI) {
     """The target language code"""
     to_lang: String!
     html: JSON!
-  ): cx_mt @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "contents"})
+  ): cx_mt @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}], body: "{\\n  html: $args.html\\n}"}, selection: "contents"})
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -1695,7 +1695,7 @@ type Mutation @join__type(graph: WIKI) {
     to_lang: String!
     provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider!
     html: JSON!
-  ): cx_mt @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}/{$args.provider}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "contents"})
+  ): cx_mt @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}/{$args.provider}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}], body: "{\\n  html: $args.html\\n}"}, selection: "contents"})
 }
 
 type cx_mt @join__type(graph: WIKI) {

@@ -15,7 +15,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Admin implements User {
   """The Name."""
-  name: query_getAdmin_allOf_0_name
+  name: User_name
   """The type"""
   type: String!
   """The admin"""
@@ -24,17 +24,17 @@ type Admin implements User {
 
 interface User {
   """The Name."""
-  name: query_getAdmin_allOf_0_name
+  name: User_name
   """The type"""
   type: String!
 }
 
 """The Name."""
-scalar query_getAdmin_allOf_0_name @length(subgraph: "test", max: 100)
+scalar User_name @length(subgraph: "test", max: 100)
 
 type Editor implements User {
   """The Name."""
-  name: query_getAdmin_allOf_0_name
+  name: User_name
   """The type"""
   type: String!
 }

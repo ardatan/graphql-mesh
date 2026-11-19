@@ -867,9 +867,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               const effectiveConsumes = methodConsumes ?? docConsumes;
               const formConsume = effectiveConsumes?.find(c => {
                 const m = mimeType(c);
-                return (
-                  m === 'multipart/form-data' || m === 'application/x-www-form-urlencoded'
-                );
+                return m === 'multipart/form-data' || m === 'application/x-www-form-urlencoded';
               });
               operationConfig.headers['Content-Type'] = formConsume
                 ? formConsume

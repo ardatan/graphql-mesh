@@ -318,8 +318,7 @@ describe('Connectors non-JSON responses (Apollo parity)', () => {
           query: Query
         }
         type Query {
-          patientId(ref: String!): String
-            @connect(selection: "$args.ref->split(\\"/\\")->get(1)")
+          patientId(ref: String!): String @connect(selection: "$args.ref->split(\\"/\\")->get(1)")
         }
       `),
     );
@@ -662,7 +661,11 @@ describe('Connectors non-JSON responses (Apollo parity)', () => {
           resource: Patient
             @connect(
               source: "fhir"
-              http: { GET: """/Patient/{$this.reference->split("/")->get(1)}""" }
+              http: {
+                GET: """
+                /Patient/{$this.reference->split("/")->get(1)}
+                """
+              }
               selection: """
               id
               """

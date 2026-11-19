@@ -12162,7 +12162,7 @@ type Alert {
   Filters coming from the dashboard that are applied. Example \`[{ "filter_title": "Name", "field_name": "distribution_centers.name", "filter_value": "Los Angeles CA" }]\`
   """
   applied_dashboard_filters: [AlertAppliedDashboardFilter]
-  comparison_type: mutation_update_alert_field_comparison_type!
+  comparison_type: Alert_comparison_type!
   """
   Vixie-Style crontab specification when to run. At minumum, it has to be longer than 15 minute intervals
   """
@@ -12202,7 +12202,7 @@ type Alert {
   disabled_reason: String
   """Whether or not the alert is public"""
   is_public: Boolean!
-  investigative_content_type: dashboard_const
+  investigative_content_type: Alert_investigative_content_type
   """
   The ID of the investigative content. For dashboards, this will be the dashboard ID
   """
@@ -12244,7 +12244,7 @@ type AlertAppliedDashboardFilter {
 """
 This property informs the check what kind of comparison we are performing. Only certain condition types are valid for time series alerts. For details, refer to [Setting Alert Conditions](https://cloud.google.com/looker/docs/sharing-and-publishing/creating-alerts#setting_alert_conditions) Valid values are: "EQUAL_TO", "GREATER_THAN", "GREATER_THAN_OR_EQUAL_TO", "LESS_THAN", "LESS_THAN_OR_EQUAL_TO", "INCREASES_BY", "DECREASES_BY", "CHANGES_BY".
 """
-enum mutation_update_alert_field_comparison_type {
+enum Alert_comparison_type {
   EQUAL_TO
   GREATER_THAN
   GREATER_THAN_OR_EQUAL_TO
@@ -12256,7 +12256,7 @@ enum mutation_update_alert_field_comparison_type {
 }
 
 type AlertDestination {
-  destination_type: mutation_update_alert_field_destinations_items_destination_type!
+  destination_type: AlertDestination_destination_type!
   """Email address for the 'email' type"""
   email_address: String
   """
@@ -12272,7 +12272,7 @@ type AlertDestination {
 """
 Type of destination that the alert will be sent to Valid values are: "EMAIL", "ACTION_HUB".
 """
-enum mutation_update_alert_field_destinations_items_destination_type {
+enum AlertDestination_destination_type {
   EMAIL
   ACTION_HUB
 }
@@ -12305,7 +12305,7 @@ type AlertFieldFilter {
   filter_value: String
 }
 
-enum dashboard_const @typescript(subgraph: "test", type: "\\"dashboard\\"") @example(subgraph: "test", value: "dashboard") {
+enum Alert_investigative_content_type @typescript(subgraph: "test", type: "\\"dashboard\\"") @example(subgraph: "test", value: "dashboard") {
   dashboard
 }
 
@@ -12606,7 +12606,7 @@ type ContentMetaGroupUser {
   id: String!
   """Id of associated Content Metadata"""
   content_metadata_id: String
-  permission_type: mutation_create_content_metadata_access_permission_type
+  permission_type: ContentMetaGroupUser_permission_type
   """ID of associated group"""
   group_id: String
   """ID of associated user"""
@@ -12614,7 +12614,7 @@ type ContentMetaGroupUser {
 }
 
 """Type of permission: "view" or "edit" Valid values are: "view", "edit"."""
-enum mutation_create_content_metadata_access_permission_type {
+enum ContentMetaGroupUser_permission_type {
   view
   edit
 }
@@ -14971,10 +14971,10 @@ type LookmlModelExploreFieldset {
 }
 
 type LookmlModelExploreField {
-  align: query_lookml_model_explore_fields_dimensions_items_align!
+  align: LookmlModelExploreField_align!
   """Whether it's possible to filter on this field."""
   can_filter: Boolean!
-  category: query_lookml_model_explore_fields_dimensions_items_category
+  category: LookmlModelExploreField_category
   """
   The default value that this field uses when filtering. Null if there is no default value.
   """
@@ -15001,7 +15001,7 @@ type LookmlModelExploreField {
   When presented in a field group via field_group_label, a shorter name of the field to be displayed in that context.
   """
   field_group_variant: String
-  fill_style: query_lookml_model_explore_fields_dimensions_items_fill_style
+  fill_style: LookmlModelExploreField_fill_style
   """
   An offset (in months) from the calendar start month to the fiscal start month defined in the LookML model this field belongs to.
   """
@@ -15104,7 +15104,7 @@ type LookmlModelExploreField {
   Whether this field was specified in "dynamic_fields" and is not part of the model.
   """
   dynamic: Boolean!
-  week_start_day: query_lookml_model_explore_fields_dimensions_items_week_start_day!
+  week_start_day: LookmlModelExploreField_week_start_day!
   """The number of times this field has been used in queries"""
   times_used: BigInt!
   """
@@ -15116,7 +15116,7 @@ type LookmlModelExploreField {
 """
 The appropriate horizontal text alignment the values of this field should be displayed in. Valid values are: "left", "right".
 """
-enum query_lookml_model_explore_fields_dimensions_items_align {
+enum LookmlModelExploreField_align {
   left
   right
 }
@@ -15124,7 +15124,7 @@ enum query_lookml_model_explore_fields_dimensions_items_align {
 """
 Field category Valid values are: "parameter", "filter", "measure", "dimension".
 """
-enum query_lookml_model_explore_fields_dimensions_items_category {
+enum LookmlModelExploreField_category {
   parameter
   filter
   measure
@@ -15141,13 +15141,13 @@ type LookmlModelExploreFieldEnumeration {
 """
 The style of dimension fill that is possible for this field. Null if no dimension fill is possible. Valid values are: "enumeration", "range".
 """
-enum query_lookml_model_explore_fields_dimensions_items_fill_style {
+enum LookmlModelExploreField_fill_style {
   enumeration
   range
 }
 
 type LookmlModelExploreFieldTimeInterval {
-  name: query_lookml_model_explore_fields_dimensions_items_time_interval_name!
+  name: LookmlModelExploreFieldTimeInterval_name!
   """The number of intervals this field represents a grouping of."""
   count: BigInt!
 }
@@ -15155,7 +15155,7 @@ type LookmlModelExploreFieldTimeInterval {
 """
 The type of time interval this field represents a grouping of. Valid values are: "day", "hour", "minute", "second", "millisecond", "microsecond", "week", "month", "quarter", "year".
 """
-enum query_lookml_model_explore_fields_dimensions_items_time_interval_name {
+enum LookmlModelExploreFieldTimeInterval_name {
   day
   hour
   minute
@@ -15189,7 +15189,7 @@ type LookmlModelExploreFieldMapLayer {
   The preferred geographic projection of the map layer when displayed in a visualization that supports multiple geographic projections.
   """
   projection: String
-  format: query_lookml_model_explore_fields_dimensions_items_map_layer_format!
+  format: LookmlModelExploreFieldMapLayer_format!
   """
   Specifies the URL to a JSON file that defines the geographic extents of each region available in the map layer. This data is used to automatically center the map on the available data for visualization purposes. The JSON file must be a JSON object where the keys are the mapping value of the feature (as specified by property_key) and the values are arrays of four numbers representing the west longitude, south latitude, east longitude, and north latitude extents of the region. The object must include a key for every possible value of property_key.
   """
@@ -15207,7 +15207,7 @@ type LookmlModelExploreFieldMapLayer {
 """
 Specifies the data format of the region information. Valid values are: "topojson", "vector_tile_region".
 """
-enum query_lookml_model_explore_fields_dimensions_items_map_layer_format {
+enum LookmlModelExploreFieldMapLayer_format {
   topojson
   vector_tile_region
 }
@@ -15229,7 +15229,7 @@ type LookmlModelExploreFieldMeasureFilters {
 """
 The name of the starting day of the week. Valid values are: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday".
 """
-enum query_lookml_model_explore_fields_dimensions_items_week_start_day {
+enum LookmlModelExploreField_week_start_day {
   monday
   tuesday
   wednesday
@@ -15732,7 +15732,7 @@ type Project {
   (Write-Only) When true, unsets the deploy secret to allow unauthenticated access to the webhook deploy endpoint.
   """
   unset_deploy_secret: Boolean!
-  pull_request_mode: mutation_create_project_pull_request_mode!
+  pull_request_mode: Project_pull_request_mode!
   """
   Validation policy: If true, the project must pass validation checks before project changes can be committed to the git repository
   """
@@ -15752,7 +15752,7 @@ type Project {
 """
 The git pull request policy for this project. Valid values are: "off", "links", "recommended", "required".
 """
-enum mutation_create_project_pull_request_mode {
+enum Project_pull_request_mode {
   off
   links
   recommended
@@ -15862,7 +15862,7 @@ type ProjectWorkspace {
   git_status: String
   """Git head revision name"""
   git_head: String
-  dependency_status: query_project_workspace_dependency_status
+  dependency_status: ProjectWorkspace_dependency_status
   git_branch: GitBranch
   """The lookml syntax used by all files in this project"""
   lookml_type: String
@@ -15871,7 +15871,7 @@ type ProjectWorkspace {
 """
 Status of the dependencies in your project. Valid values are: "lock_optional", "lock_required", "lock_error", "install_none".
 """
-enum query_project_workspace_dependency_status {
+enum ProjectWorkspace_dependency_status {
   lock_optional
   lock_required
   lock_error
@@ -25721,7 +25721,7 @@ input CreateQueryTask_Input {
   can: JSON
   """Id of query to run"""
   query_id: String
-  result_format: mutationInput_create_query_task_input_result_format
+  result_format: CreateQueryTask_result_format
   """Source of query task"""
   source: String
   """Create the task but defer execution"""
@@ -25735,7 +25735,7 @@ input CreateQueryTask_Input {
 """
 Desired async query result format. Valid values are: "inline_json", "json", "json_detail", "json_fe", "csv", "html", "md", "txt", "xlsx", "gsxml".
 """
-enum mutationInput_create_query_task_input_result_format {
+enum CreateQueryTask_result_format {
   inline_json
   json
   json_detail
@@ -25840,7 +25840,7 @@ input Alert_Input {
   Filters coming from the dashboard that are applied. Example \`[{ "filter_title": "Name", "field_name": "distribution_centers.name", "filter_value": "Los Angeles CA" }]\`
   """
   applied_dashboard_filters: [AlertAppliedDashboardFilter_Input]
-  comparison_type: mutation_update_alert_field_comparison_type!
+  comparison_type: Alert_comparison_type!
   """
   Vixie-Style crontab specification when to run. At minumum, it has to be longer than 15 minute intervals
   """
@@ -25880,7 +25880,7 @@ input Alert_Input {
   disabled_reason: String
   """Whether or not the alert is public"""
   is_public: Boolean!
-  investigative_content_type: dashboard_const
+  investigative_content_type: Alert_investigative_content_type
   """
   The ID of the investigative content. For dashboards, this will be the dashboard ID
   """
@@ -25920,7 +25920,7 @@ input AlertAppliedDashboardFilter_Input {
 }
 
 input AlertDestination_Input {
-  destination_type: mutation_update_alert_field_destinations_items_destination_type!
+  destination_type: AlertDestination_destination_type!
   """Email address for the 'email' type"""
   email_address: String
   """
@@ -26191,7 +26191,7 @@ input ContentMetaGroupUser_Input {
   id: String
   """Id of associated Content Metadata"""
   content_metadata_id: String
-  permission_type: mutation_create_content_metadata_access_permission_type
+  permission_type: ContentMetaGroupUser_permission_type
   """ID of associated group"""
   group_id: String
   """ID of associated user"""
@@ -27026,13 +27026,13 @@ type EmbedSecret {
   secret: String
   """Id of user who created this secret"""
   user_id: String
-  secret_type: mutation_create_embed_secret_secret_type!
+  secret_type: EmbedSecret_secret_type!
 }
 
 """
 Field to distinguish between SSO secrets and JWT secrets Valid values are: "SSO", "JWT".
 """
-enum mutation_create_embed_secret_secret_type {
+enum EmbedSecret_secret_type {
   SSO
   JWT
 }
@@ -27052,7 +27052,7 @@ input EmbedSecret_Input {
   secret: String
   """Id of user who created this secret"""
   user_id: String
-  secret_type: mutation_create_embed_secret_secret_type!
+  secret_type: EmbedSecret_secret_type!
 }
 
 type EmbedUrlResponse {
@@ -28089,11 +28089,11 @@ type MobileToken {
   id: String!
   """Specifies the device token"""
   device_token: String!
-  device_type: mutation_register_mobile_device_device_type!
+  device_type: MobileToken_device_type!
 }
 
 """Specifies type of device. Valid values are: "android", "ios"."""
-enum mutation_register_mobile_device_device_type {
+enum MobileToken_device_type {
   android
   ios
 }
@@ -28103,7 +28103,7 @@ input MobileToken_Input {
   id: String
   """Specifies the device token"""
   device_token: String!
-  device_type: mutation_register_mobile_device_device_type!
+  device_type: MobileToken_device_type!
 }
 
 input OauthClientApp_Input {
@@ -28365,7 +28365,7 @@ input Project_Input {
   (Write-Only) When true, unsets the deploy secret to allow unauthenticated access to the webhook deploy endpoint.
   """
   unset_deploy_secret: Boolean!
-  pull_request_mode: mutation_create_project_pull_request_mode!
+  pull_request_mode: Project_pull_request_mode!
   """
   Validation policy: If true, the project must pass validation checks before project changes can be committed to the git repository
   """
@@ -28902,13 +28902,13 @@ input SmtpSettings_Input {
   port: BigInt!
   """Is TLS encryption enabled?"""
   enable_starttls_auto: Boolean!
-  ssl_version: mutationInput_set_smtp_settings_input_ssl_version
+  ssl_version: SmtpSettings_ssl_version
   """Whether to enable built-in Looker SMTP"""
   default_smtp: Boolean
 }
 
 """TLS version selected Valid values are: "TLSv1_1", "SSLv23", "TLSv1_2"."""
-enum mutationInput_set_smtp_settings_input_ssl_version {
+enum SmtpSettings_ssl_version {
   TLSv1_1
   SSLv23
   TLSv1_2

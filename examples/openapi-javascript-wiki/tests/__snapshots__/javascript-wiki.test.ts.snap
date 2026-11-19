@@ -2496,7 +2496,11 @@ type Mutation {
   Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
   
   """
-  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): problem @connect(source: "Wiki", http: {POST: "/media/math/check/{$args.type->match([\\"inline_tex\\", \\"inline-tex\\"], [@, $args.type])}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): problem @connect(source: "Wiki", http: {POST: "/media/math/check/{$args.type->match([\\"inline_tex\\", \\"inline-tex\\"], [@, $args.type])}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}], body: """
+  {
+    q: $args.q
+  }
+  """}, selection: """
   detail
   method
   status
@@ -2517,7 +2521,11 @@ type Mutation {
     """The target language code"""
     to_lang: String!
     html: JSON!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}], body: """
+  {
+    html: $args.html
+  }
+  """}, selection: """
   __typename: $status->match([200, "cx_mt"], [@, "problem"])
   contents
   detail
@@ -2541,7 +2549,11 @@ type Mutation {
     to_lang: String!
     provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider!
     html: JSON!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}/{$args.provider}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}/{$args.provider}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}], body: """
+  {
+    html: $args.html
+  }
+  """}, selection: """
   __typename: $status->match([200, "cx_mt"], [@, "problem"])
   contents
   detail

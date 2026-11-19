@@ -113,7 +113,7 @@ type Pet @join__type(graph: PETSTORE, key: "id") @join__type(graph: VACCINATION,
   category: Category @join__field(graph: PETSTORE)
   photoUrls: [String]! @join__field(graph: PETSTORE)
   tags: [Tag] @join__field(graph: PETSTORE)
-  status: mutation_updatePet_status @join__field(graph: PETSTORE)
+  status: Pet_status @join__field(graph: PETSTORE)
   vaccinated: Boolean! @join__field(graph: VACCINATION)
 }
 
@@ -132,7 +132,7 @@ type Order @join__type(graph: PETSTORE, key: "id") @inaccessible @join__directiv
   petId: BigInt
   quantity: Int
   shipDate: DateTime
-  status: mutation_placeOrder_status
+  status: Order_status
   complete: Boolean
 }
 
@@ -216,14 +216,14 @@ enum queryInput_findPetsByStatus_status @join__type(graph: PETSTORE) {
 }
 
 """pet status in the store"""
-enum mutation_updatePet_status @join__type(graph: PETSTORE) {
+enum Pet_status @join__type(graph: PETSTORE) {
   available @join__enumValue(graph: PETSTORE)
   pending @join__enumValue(graph: PETSTORE)
   sold @join__enumValue(graph: PETSTORE)
 }
 
 """Order Status"""
-enum mutation_placeOrder_status @join__type(graph: PETSTORE) {
+enum Order_status @join__type(graph: PETSTORE) {
   placed @join__enumValue(graph: PETSTORE)
   approved @join__enumValue(graph: PETSTORE)
   delivered @join__enumValue(graph: PETSTORE)
@@ -236,7 +236,7 @@ input Pet_Input @join__type(graph: PETSTORE) @inaccessible {
   category: Category_Input
   photoUrls: [String]!
   tags: [Tag_Input]
-  status: mutation_updatePet_status
+  status: Pet_status
 }
 
 input Category_Input @join__type(graph: PETSTORE) @inaccessible {
@@ -254,7 +254,7 @@ input Order_Input @join__type(graph: PETSTORE) @inaccessible {
   petId: BigInt
   quantity: Int
   shipDate: DateTime
-  status: mutation_placeOrder_status
+  status: Order_status
   complete: Boolean
 }
 

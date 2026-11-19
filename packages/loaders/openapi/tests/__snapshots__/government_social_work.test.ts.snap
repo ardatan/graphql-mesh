@@ -1490,14 +1490,14 @@ type getAssessmentTypes_200_response {
 warnings and errors from backend systems.  Message is for debug only, app should lookup localized message from local based on id
 """
 type Error {
-  id: query_getAssessmentTypes_oneOf_0_errors_items_id
+  id: Error_id
   """message for debug only, not to be displayed"""
   message: String
-  level: query_getAssessmentTypes_oneOf_0_errors_items_level
+  level: Error_level
 }
 
 """server-generated error code"""
-enum query_getAssessmentTypes_oneOf_0_errors_items_id {
+enum Error_id {
   NO_RESULTS_FOUND
   SAVE_FAILED
   ADD_FAILED
@@ -1507,7 +1507,7 @@ enum query_getAssessmentTypes_oneOf_0_errors_items_id {
 }
 
 """message level"""
-enum query_getAssessmentTypes_oneOf_0_errors_items_level {
+enum Error_level {
   INFO
   WARNING
   ERROR
@@ -1535,11 +1535,11 @@ type AssessmentFactorQuestionTemplate {
   questionId: String
   """Assessment Factor Question Text."""
   questionText: String
-  answerType: query_getAssessmentTypes_oneOf_0_data_items_factorsTemplate_items_factorQuestionsTemplate_items_answerType
+  answerType: AssessmentFactorQuestionTemplate_answerType
 }
 
 """Assessment Factor Question Type."""
-enum query_getAssessmentTypes_oneOf_0_data_items_factorsTemplate_items_factorQuestionsTemplate_items_answerType {
+enum AssessmentFactorQuestionTemplate_answerType {
   Yes
   No
   N_A
@@ -1674,7 +1674,7 @@ type Person {
   personId: String
   """Person's ethnicity"""
   ethnicity: String
-  gender: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_person_gender
+  gender: Person_gender
   """Person Location Latitude."""
   lat: String
   """Person location longitude."""
@@ -1701,7 +1701,7 @@ type Person {
 }
 
 """Person Gender."""
-enum query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_person_gender {
+enum Person_gender {
   Male
   Female
 }
@@ -1724,7 +1724,7 @@ type File_ {
 type ClientRelationship {
   """Participant's Id"""
   participantId: String
-  status: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_status
+  status: ClientRelationship_status
   role: Roles
   """
   Participant's person Id - an object should exist in the Person entity for this participant
@@ -1736,7 +1736,7 @@ type ClientRelationship {
 }
 
 """Realtionship active/deleted status"""
-enum query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_status {
+enum ClientRelationship_status {
   Active
   Deleted
 }
@@ -1755,11 +1755,11 @@ type ClientRelationshipType {
   relationId: String
   """Name of relationship."""
   relationName: String
-  category: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_relationshipType_category
+  category: ClientRelationshipType_category
 }
 
 """Household/Non-household grouping"""
-enum query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_relationshipType_category {
+enum ClientRelationshipType_category {
   Household
   Non_household
 }
@@ -1829,19 +1829,19 @@ type ClientContact {
   contactId: String
   contactDescription: String
   emailId: String
-  phoneType: query_getClientContacts_oneOf_0_data_items_phoneType
+  phoneType: ClientContact_phoneType
   phoneNumber: String
-  status: query_getClientContacts_oneOf_0_data_items_status
+  status: ClientContact_status
 }
 
-enum query_getClientContacts_oneOf_0_data_items_phoneType {
+enum ClientContact_phoneType {
   Cell
   Home
   Work
 }
 
 """Client contact status"""
-enum query_getClientContacts_oneOf_0_data_items_status {
+enum ClientContact_status {
   Active
   Deleted
 }
@@ -1864,11 +1864,11 @@ type ClientSchool {
   city: String
   state: String
   zip: String
-  status: query_getClientSchools_oneOf_0_data_items_status
+  status: ClientSchool_status
 }
 
 """Client school status"""
-enum query_getClientSchools_oneOf_0_data_items_status {
+enum ClientSchool_status {
   Active
   Deleted
 }
@@ -1894,11 +1894,11 @@ type ClientPhysician {
   zip: String
   emailId: String
   phone: String
-  status: query_getClientPhysicians_oneOf_0_data_items_status
+  status: ClientPhysician_status
 }
 
 """Client Physician status"""
-enum query_getClientPhysicians_oneOf_0_data_items_status {
+enum ClientPhysician_status {
   Active
   Deleted
 }
@@ -1968,7 +1968,7 @@ type getMedia_200_response {
 
 """Media Entity."""
 type Media {
-  status: query_getMedia_oneOf_0_data_items_status
+  status: Media_status
   """Date Media was created."""
   date: String
   """Media Id."""
@@ -1982,7 +1982,7 @@ type Media {
 }
 
 """Status"""
-enum query_getMedia_oneOf_0_data_items_status {
+enum Media_status {
   Submitted
   Deleted
 }
@@ -2009,7 +2009,7 @@ type CaseAssessment {
   assessmentId: String
   """Worker's signature upon submitting the assessment"""
   assessmentSignature: String
-  status: query_getCaseAssessments_oneOf_0_data_items_status
+  status: CaseAssessment_status
   """id of the worker that performed this case assessment"""
   worker: String
   """case id"""
@@ -2020,7 +2020,7 @@ type CaseAssessment {
 }
 
 """Case assesement status"""
-enum query_getCaseAssessments_oneOf_0_data_items_status {
+enum CaseAssessment_status {
   Submitted
   Deleted
 }
@@ -2059,11 +2059,11 @@ type Recommendation {
   recommendationId: String
   """Recommendation Description"""
   recommendationDsec: String
-  recommendationSelection: query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommendation_items_recommendationSelection
+  recommendationSelection: Recommendation_recommendationSelection
 }
 
 """Recommendation Selection"""
-enum query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommendation_items_recommendationSelection {
+enum Recommendation_recommendationSelection {
   Yes
   No
 }
@@ -2085,7 +2085,7 @@ input CaseAssessment_Input {
   assessmentId: String
   """Worker's signature upon submitting the assessment"""
   assessmentSignature: String
-  status: query_getCaseAssessments_oneOf_0_data_items_status
+  status: CaseAssessment_status
   """id of the worker that performed this case assessment"""
   worker: String
   """case id"""
@@ -2129,7 +2129,7 @@ input Recommendation_Input {
   recommendationId: String
   """Recommendation Description"""
   recommendationDsec: String
-  recommendationSelection: query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommendation_items_recommendationSelection
+  recommendationSelection: Recommendation_recommendationSelection
 }
 
 union getCaseNoteTypes_response = getCaseNoteTypes_200_response | Error
@@ -2156,7 +2156,7 @@ type getCaseNotes_200_response {
 }
 
 type Notes {
-  status: query_getCaseNotes_oneOf_0_data_items_status
+  status: Notes_status
   noteId: String
   date: String
   note: String
@@ -2168,7 +2168,7 @@ type Notes {
 }
 
 """Status"""
-enum query_getCaseNotes_oneOf_0_data_items_status {
+enum Notes_status {
   Submitted
   Deleted
 }
@@ -2929,7 +2929,7 @@ input Person_Input {
   personId: String
   """Person's ethnicity"""
   ethnicity: String
-  gender: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_person_gender
+  gender: Person_gender
   """Person Location Latitude."""
   lat: String
   """Person location longitude."""
@@ -3032,7 +3032,7 @@ input Case_Input {
 input ClientRelationship_Input {
   """Participant's Id"""
   participantId: String
-  status: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_status
+  status: ClientRelationship_status
   role: Roles_Input
   """
   Participant's person Id - an object should exist in the Person entity for this participant
@@ -3057,7 +3057,7 @@ input ClientRelationshipType_Input {
   relationId: String
   """Name of relationship."""
   relationName: String
-  category: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_relationshipType_category
+  category: ClientRelationshipType_category
 }
 
 union addClientRelationship_response = addClientRelationship_200_response | Error
@@ -3090,9 +3090,9 @@ input ClientContact_Input {
   contactId: String
   contactDescription: String
   emailId: String
-  phoneType: query_getClientContacts_oneOf_0_data_items_phoneType
+  phoneType: ClientContact_phoneType
   phoneNumber: String
-  status: query_getClientContacts_oneOf_0_data_items_status
+  status: ClientContact_status
 }
 
 union updateClientContact_response = updateClientContact_200_response | Error
@@ -3121,7 +3121,7 @@ input ClientSchool_Input {
   city: String
   state: String
   zip: String
-  status: query_getClientSchools_oneOf_0_data_items_status
+  status: ClientSchool_status
 }
 
 union updateClientSchool_response = updateClientSchool_200_response | Error
@@ -3153,7 +3153,7 @@ input ClientPhysician_Input {
   zip: String
   emailId: String
   phone: String
-  status: query_getClientPhysicians_oneOf_0_data_items_status
+  status: ClientPhysician_status
 }
 
 union updateClientPhysician_response = updateClientPhysician_200_response | Error
@@ -3191,7 +3191,7 @@ type addMedia_200_response {
 
 """Media Entity."""
 input Media_Input {
-  status: query_getMedia_oneOf_0_data_items_status
+  status: Media_status
   """Date Media was created."""
   date: String
   """Media Id."""
@@ -3227,7 +3227,7 @@ type addCaseNotes_200_response {
 }
 
 input Notes_Input {
-  status: query_getCaseNotes_oneOf_0_data_items_status
+  status: Notes_status
   noteId: String
   date: String
   note: String

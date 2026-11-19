@@ -2758,8 +2758,22 @@ export function addConnectFieldResolver(
           }
         }
       } else if (isPlainTextResponse) {
-        // Apollo: `$` is the literal response text (do not JSON.parse).
-        responseData = text;
+        // Node `new Response(string)` defaults to `text/plain;charset=UTF-8` even when
+        // Content-Type was omitted — sniff `<?xml` before treating as Apollo plain text.
+        if (looksLikeXml(text)) {
+          try {
+            responseData = xmlToJsObject(text);
+          } catch (xmlError) {
+            if (isScalarType(returnNamedGraphQLType)) {
+              responseData = text;
+            } else {
+              throw buildConnectorError(text, xmlError);
+            }
+          }
+        } else {
+          // Apollo: `$` is the literal response text (do not JSON.parse).
+          responseData = text;
+        }
       } else {
         try {
           responseData = JSON.parse(text);

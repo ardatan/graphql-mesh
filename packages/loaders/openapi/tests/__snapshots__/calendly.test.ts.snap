@@ -1116,7 +1116,7 @@ type Invitee {
   last_name: String
   """The invitee’s name (in human-readable format)"""
   name: String!
-  status: query_getInvitees_oneOf_0_collection_items_status!
+  status: Invitee_status!
   """
   A collection of the invitee's responses to questions on the event booking confirmation form
   """
@@ -1171,7 +1171,7 @@ scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/in
 """
 Indicates if the invitee is "active" or "canceled"
 """
-enum query_getInvitees_oneOf_0_collection_items_status {
+enum Invitee_status {
   active
   canceled
 }
@@ -1217,10 +1217,10 @@ type Cancellation {
   canceled_by: String!
   """Reason that the cancellation occurred"""
   reason: String
-  canceler_type: query_getInvitees_oneOf_0_collection_items_cancellation_canceler_type!
+  canceler_type: Cancellation_canceler_type!
 }
 
-enum query_getInvitees_oneOf_0_collection_items_cancellation_canceler_type {
+enum Cancellation_canceler_type {
   host
   invitee
 }
@@ -1409,7 +1409,7 @@ type Event {
   uri: URL!
   """The event name"""
   name: String
-  status: query_getScheduledEvents_oneOf_0_collection_items_status!
+  status: Event_status!
   """
   The moment the event was scheduled to start in UTC time (e.g. "2020-01-02T03:04:05.678123Z").
   """
@@ -1440,7 +1440,7 @@ type Event {
 """
 Indicates if the event is "active" or "canceled"
 """
-enum query_getScheduledEvents_oneOf_0_collection_items_status {
+enum Event_status {
   active
   canceled
 }
@@ -1450,38 +1450,38 @@ union Location = In_Person_Meeting | Outbound_Call | Inbound_Call | Google_Confe
 
 """Information about the physical (in-person) event location"""
 type In_Person_Meeting {
-  type: physical_const!
+  type: InPersonMeeting_type!
   """The physical location specified by the event host (publisher)"""
   location: String!
 }
 
-enum physical_const @typescript(subgraph: "calendly", type: "\\"physical\\"") @example(subgraph: "calendly", value: "physical") {
+enum InPersonMeeting_type @typescript(subgraph: "calendly", type: "\\"physical\\"") @example(subgraph: "calendly", value: "physical") {
   physical
 }
 
 """Meeting publisher will call the Invitee"""
 type Outbound_Call {
-  type: outbound_call_const!
+  type: OutboundCall_type!
   """
   The phone number the event host (publisher) will use to call the invitee
   """
   location: String
 }
 
-enum outbound_call_const @typescript(subgraph: "calendly", type: "\\"outbound_call\\"") @example(subgraph: "calendly", value: "outbound_call") {
+enum OutboundCall_type @typescript(subgraph: "calendly", type: "\\"outbound_call\\"") @example(subgraph: "calendly", value: "outbound_call") {
   outbound_call
 }
 
 """Invitee will call meeting publisher at the specified phone number"""
 type Inbound_Call {
-  type: inbound_call_const!
+  type: InboundCall_type!
   """
   The phone number the invitee will use to call the event host (publisher)
   """
   location: String!
 }
 
-enum inbound_call_const @typescript(subgraph: "calendly", type: "\\"inbound_call\\"") @example(subgraph: "calendly", value: "inbound_call") {
+enum InboundCall_type @typescript(subgraph: "calendly", type: "\\"inbound_call\\"") @example(subgraph: "calendly", value: "inbound_call") {
   inbound_call
 }
 
@@ -1489,18 +1489,18 @@ enum inbound_call_const @typescript(subgraph: "calendly", type: "\\"inbound_call
 Details about an Event that will take place using a Google Meet / Hangout conference
 """
 type Google_Conference {
-  type: google_conference_const!
-  status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_3_status!
+  type: GoogleConference_type!
+  status: GoogleConference_status!
   """Google conference meeting url"""
   join_url: URL
 }
 
-enum google_conference_const @typescript(subgraph: "calendly", type: "\\"google_conference\\"") @example(subgraph: "calendly", value: "google_conference") {
+enum GoogleConference_type @typescript(subgraph: "calendly", type: "\\"google_conference\\"") @example(subgraph: "calendly", value: "google_conference") {
   google_conference
 }
 
 """Indicates the current status of the Google conference"""
-enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_3_status {
+enum GoogleConference_status {
   initiated
   processing
   pushed
@@ -1509,19 +1509,19 @@ enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_3_status {
 
 """Meeting will take place in a Zoom conference"""
 type Zoom_Conference {
-  type: zoom_conference_const!
-  status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_status!
+  type: ZoomConference_type!
+  status: ZoomConference_status!
   """Zoom meeting url"""
   join_url: URL
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data
 }
 
-enum zoom_conference_const @typescript(subgraph: "calendly", type: "\\"zoom_conference\\"") @example(subgraph: "calendly", value: "zoom_conference") {
+enum ZoomConference_type @typescript(subgraph: "calendly", type: "\\"zoom_conference\\"") @example(subgraph: "calendly", value: "zoom_conference") {
   zoom_conference
 }
 
 """Indicates the current status of the Zoom conference"""
-enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_status {
+enum ZoomConference_status {
   initiated
   processing
   pushed
@@ -1561,19 +1561,19 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_ext
 Details about an Event that will take place using a GotoMeeting conference
 """
 type GoToMeeting_Conference {
-  type: gotomeeting_const!
-  status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_status!
+  type: GotoMeetingConference_type!
+  status: GotoMeetingConference_status!
   """GoToMeeting conference meeting url"""
   join_url: URL
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_data
 }
 
-enum gotomeeting_const @typescript(subgraph: "calendly", type: "\\"gotomeeting\\"") @example(subgraph: "calendly", value: "gotomeeting") {
+enum GotoMeetingConference_type @typescript(subgraph: "calendly", type: "\\"gotomeeting\\"") @example(subgraph: "calendly", value: "gotomeeting") {
   gotomeeting
 }
 
 """Indicates the current status of the GoToMeeting conference"""
-enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_status {
+enum GotoMeetingConference_status {
   initiated
   processing
   pushed
@@ -1589,19 +1589,19 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_data {
 
 """Meeting will take place in a Microsoft Teams conference"""
 type Microsoft_Teams_Conference {
-  type: microsoft_teams_conference_const!
-  status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_status!
+  type: MicrosoftTeamsConference_type!
+  status: MicrosoftTeamsConference_status!
   """Microsoft Teams meeting url"""
   join_url: URL
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data
 }
 
-enum microsoft_teams_conference_const @typescript(subgraph: "calendly", type: "\\"microsoft_teams_conference\\"") @example(subgraph: "calendly", value: "microsoft_teams_conference") {
+enum MicrosoftTeamsConference_type @typescript(subgraph: "calendly", type: "\\"microsoft_teams_conference\\"") @example(subgraph: "calendly", value: "microsoft_teams_conference") {
   microsoft_teams_conference
 }
 
 """Indicates the current status of the Microsoft Teams conference"""
-enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_status {
+enum MicrosoftTeamsConference_status {
   initiated
   processing
   pushed
@@ -1623,41 +1623,41 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data_aud
 
 """Use this to describe an existing Calendly-supported event location."""
 type Custom_Location {
-  type: custom_const!
+  type: CustomLocation_type!
   """The location description provided by the event host (publisher)"""
   location: String
 }
 
-enum custom_const @typescript(subgraph: "calendly", type: "\\"custom\\"") @example(subgraph: "calendly", value: "custom") {
+enum CustomLocation_type @typescript(subgraph: "calendly", type: "\\"custom\\"") @example(subgraph: "calendly", value: "custom") {
   custom
 }
 
 """Information about an event location that’s specified by the invitee."""
 type Invitee_Specified_Location {
-  type: ask_invitee_const!
+  type: InviteeSpecifiedLocation_type!
   """The event location description provided by the invitee"""
   location: String!
 }
 
-enum ask_invitee_const @typescript(subgraph: "calendly", type: "\\"ask_invitee\\"") @example(subgraph: "calendly", value: "ask_invitee") {
+enum InviteeSpecifiedLocation_type @typescript(subgraph: "calendly", type: "\\"ask_invitee\\"") @example(subgraph: "calendly", value: "ask_invitee") {
   ask_invitee
 }
 
 """Details about an Event that will take place using a WebEx conference"""
 type WebEx_Conference {
-  type: webex_conference_const!
-  status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_status!
+  type: WebExConference_type!
+  status: WebExConference_status!
   """WebEx conference meeting url"""
   join_url: URL
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data
 }
 
-enum webex_conference_const @typescript(subgraph: "calendly", type: "\\"webex_conference\\"") @example(subgraph: "calendly", value: "webex_conference") {
+enum WebExConference_type @typescript(subgraph: "calendly", type: "\\"webex_conference\\"") @example(subgraph: "calendly", value: "webex_conference") {
   webex_conference
 }
 
 """Indicates the current status of the WebEx conference"""
-enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_status {
+enum WebExConference_status {
   initiated
   processing
   pushed
@@ -1737,10 +1737,10 @@ type Event_Type {
   scheduling_url: URL!
   """The length of sessions booked with this event type"""
   duration: Float!
-  kind: query_getEventTypes_oneOf_0_collection_items_kind!
-  pooling_type: query_getEventTypes_oneOf_0_collection_items_pooling_type
-  type: query_getEventTypes_oneOf_0_collection_items_type!
-  color: query_getEventTypes_oneOf_0_collection_items_color!
+  kind: EventType_kind!
+  pooling_type: EventType_pooling_type
+  type: EventType_type!
+  color: EventType_color!
   """
   The moment the event type was created (e.g. "2020-01-02T03:04:05.678123Z")
   """
@@ -1760,7 +1760,7 @@ type Event_Type {
   Indicates if the event type is hidden on the owner's main scheduling page
   """
   secret: Boolean!
-  booking_method: query_getEventTypes_oneOf_0_collection_items_booking_method!
+  booking_method: EventType_booking_method!
   custom_questions: [EventTypeCustomQuestion]!
   """
   The moment the event type was deleted (e.g. "2020-01-02T03:04:05.678123Z"). Since event types can be deleted but their scheduled events remain it's useful to fetch a deleted event type when you still require event type data for a scheduled event.
@@ -1771,7 +1771,7 @@ type Event_Type {
 """
 Indicates if the event type is "solo" (belongs to an individual user) or "group"
 """
-enum query_getEventTypes_oneOf_0_collection_items_kind {
+enum EventType_kind {
   solo
   group
 }
@@ -1779,7 +1779,7 @@ enum query_getEventTypes_oneOf_0_collection_items_kind {
 """
 Indicates if the event type is "round robin" (alternates between hosts) or "collective" (invitees pick a time when all participants are available) or "null" (the event type doesn’t consider the availability of a group participants)
 """
-enum query_getEventTypes_oneOf_0_collection_items_pooling_type {
+enum EventType_pooling_type {
   round_robin
   collective
 }
@@ -1787,18 +1787,18 @@ enum query_getEventTypes_oneOf_0_collection_items_pooling_type {
 """
 Indicates if the event type is "AdhocEventType" (ad hoc event) or "StandardEventType" (standard event type)
 """
-enum query_getEventTypes_oneOf_0_collection_items_type {
+enum EventType_type {
   StandardEventType
   AdhocEventType
 }
 
-scalar query_getEventTypes_oneOf_0_collection_items_color @regexp(subgraph: "calendly", pattern: "^#[a-f\\\\d]{6}$") @typescript(subgraph: "calendly", type: "string")
+scalar EventType_color @regexp(subgraph: "calendly", pattern: "^#[a-f\\\\d]{6}$") @typescript(subgraph: "calendly", type: "string")
 
 """
 The publicly visible profile of a User or a Team that's associated with the Event Type (note: some Event Types don't have profiles)
 """
 type Profile {
-  type: query_getEventTypes_oneOf_0_collection_items_profile_type!
+  type: Profile_type!
   """
   Human-readable name for the profile of the user that's associated with the event type
   """
@@ -1810,13 +1810,13 @@ type Profile {
 """
 Indicates if the profile belongs to a "user" (individual) or "team"
 """
-enum query_getEventTypes_oneOf_0_collection_items_profile_type {
+enum Profile_type {
   User
   Team
 }
 
 """Indicates if the event type is for a poll or an instant booking"""
-enum query_getEventTypes_oneOf_0_collection_items_booking_method {
+enum EventType_booking_method {
   instant
   poll
 }
@@ -1824,7 +1824,7 @@ enum query_getEventTypes_oneOf_0_collection_items_booking_method {
 type EventTypeCustomQuestion {
   """The custom question that the host created for the event type."""
   name: String!
-  type: query_getEventTypes_oneOf_0_collection_items_custom_questions_items_type!
+  type: EventTypeCustomQuestion_type!
   """
   The numerical position of the question on the event booking page after the name and email address fields.
   """
@@ -1850,7 +1850,7 @@ type EventTypeCustomQuestion {
 """
 The type of response that the invitee provides to the custom question; can be one or multiple lines of text, a phone number, or single- or multiple-select.
 """
-enum query_getEventTypes_oneOf_0_collection_items_custom_questions_items_type {
+enum EventTypeCustomQuestion_type {
   string
   text
   phone_number
@@ -1948,7 +1948,7 @@ type Organization_Invitation {
   The email address of the person who was invited to join the organization
   """
   email: EmailAddress!
-  status: query_get_organizations_uuid_invitations_oneOf_0_collection_items_status!
+  status: OrganizationInvitation_status!
   """
   The moment the invitation was created (e.g. “2020-01-02T03:04:05.678123Z")
   """
@@ -1968,7 +1968,7 @@ type Organization_Invitation {
 }
 
 """The status of the invitation ("pending", "accepted", or "declined")"""
-enum query_get_organizations_uuid_invitations_oneOf_0_collection_items_status {
+enum OrganizationInvitation_status {
   pending
   accepted
   declined
@@ -1998,7 +1998,7 @@ type get_organizations_uuid_memberships_200_response {
 type Organization_Membership {
   """Canonical reference (unique identifier) for the membership"""
   uri: URL!
-  role: query_get_organizations_uuid_memberships_oneOf_0_resource_role!
+  role: OrganizationMembership_role!
   user: query_get_organizations_uuid_memberships_oneOf_0_resource_user!
   """A unique reference to the organization"""
   organization: URL!
@@ -2013,7 +2013,7 @@ type Organization_Membership {
 }
 
 """The user's role in the organization"""
-enum query_get_organizations_uuid_memberships_oneOf_0_resource_role {
+enum OrganizationMembership_role {
   user
   admin
   owner
@@ -2080,10 +2080,10 @@ type Webhook_Subscription {
   updated_at: DateTime!
   """The date and time the webhook subscription is retried"""
   retry_started_at: DateTime
-  state: query_get_webhooks_oneOf_0_collection_items_state!
+  state: WebhookSubscription_state!
   """A list of events to which the webhook is subscribed"""
-  events: [query_get_webhooks_oneOf_0_collection_items_events_items]!
-  scope: query_get_webhooks_oneOf_0_collection_items_scope!
+  events: [WebhookSubscription_events_items]!
+  scope: WebhookSubscription_scope!
   """
   The URI of the organization that's associated with the webhook subscription
   """
@@ -2097,19 +2097,19 @@ type Webhook_Subscription {
 """
 Indicates if the webhook subscription is "active" or "disabled"
 """
-enum query_get_webhooks_oneOf_0_collection_items_state {
+enum WebhookSubscription_state {
   active
   disabled
 }
 
-enum query_get_webhooks_oneOf_0_collection_items_events_items {
+enum WebhookSubscription_events_items {
   invitee_created
   invitee_canceled
   routing_form_submission_created
 }
 
 """The scope of the webhook subscription"""
-enum query_get_webhooks_oneOf_0_collection_items_scope {
+enum WebhookSubscription_scope {
   user
   organization
 }
@@ -2157,7 +2157,7 @@ type Routing_Form {
   organization: URL!
   """The routing form name (in human-readable format)."""
   name: String!
-  status: query_get_routing_forms_oneOf_0_collection_items_status!
+  status: RoutingForm_status!
   """An ordered collection of Routing Form non-deleted questions."""
   questions: [Routing_Form_Question]!
   """The moment the routing form was created."""
@@ -2167,7 +2167,7 @@ type Routing_Form {
 }
 
 """Indicates if the form is in "draft" or "published" status."""
-enum query_get_routing_forms_oneOf_0_collection_items_status {
+enum RoutingForm_status {
   draft
   published
 }
@@ -2178,7 +2178,7 @@ type Routing_Form_Question {
   uuid: UUID!
   """Question name (in human-readable format)."""
   name: String!
-  type: query_get_routing_forms_oneOf_0_collection_items_questions_items_type!
+  type: Question_type!
   """
   true if an answer to the question is required for respondents to submit the routing form; false if not required.
   """
@@ -2197,7 +2197,7 @@ scalar UUID
 """
 Question type: name, text input, email, phone, textarea input, dropdown list or radio button list.
 """
-enum query_get_routing_forms_oneOf_0_collection_items_questions_items_type {
+enum Question_type {
   name
   text
   email
@@ -2236,7 +2236,7 @@ type Routing_Form_Submission {
   The reference to the Invitee resource when routing form submission results in a scheduled meeting.
   """
   submitter: URL
-  submitter_type: Invitee_const
+  submitter_type: RoutingFormSubmission_submitter_type
   """The moment the routing form was submitted."""
   created_at: DateTime!
   """The moment when the routing form submission was last updated."""
@@ -2280,33 +2280,33 @@ union Routing_Form_Submission_Result = Routing_Form_Submission_Event_Type_Result
 
 """Information about the event type Routing Form Submission result."""
 type Routing_Form_Submission_Event_Type_Result {
-  type: event_type_const!
+  type: SubmissionEventTypeResult_type!
   """A reference to the event type resource."""
   value: URL!
 }
 
-enum event_type_const @typescript(subgraph: "calendly", type: "\\"event_type\\"") @example(subgraph: "calendly", value: "event_type") {
+enum SubmissionEventTypeResult_type @typescript(subgraph: "calendly", type: "\\"event_type\\"") @example(subgraph: "calendly", value: "event_type") {
   event_type
 }
 
 """Information about the external URL Routing Form Submission result."""
 type Routing_Form_Submission_External_URL_Result {
-  type: external_url_const!
+  type: SubmissionExternalUrlResult_type!
   """The external URL the respondent were redirected to."""
   value: URL!
 }
 
-enum external_url_const @typescript(subgraph: "calendly", type: "\\"external_url\\"") @example(subgraph: "calendly", value: "external_url") {
+enum SubmissionExternalUrlResult_type @typescript(subgraph: "calendly", type: "\\"external_url\\"") @example(subgraph: "calendly", value: "external_url") {
   external_url
 }
 
 """Information about the custom message Routing Form Submission result."""
 type Routing_Form_Submission_Custom_Message_Result {
-  type: custom_message_const!
+  type: SubmissionCustomMessageResult_type!
   value: query_get_routing_form_submissions_oneOf_0_collection_items_result_oneOf_2_value!
 }
 
-enum custom_message_const @typescript(subgraph: "calendly", type: "\\"custom_message\\"") @example(subgraph: "calendly", value: "custom_message") {
+enum SubmissionCustomMessageResult_type @typescript(subgraph: "calendly", type: "\\"custom_message\\"") @example(subgraph: "calendly", value: "custom_message") {
   custom_message
 }
 
@@ -2318,7 +2318,7 @@ type query_get_routing_form_submissions_oneOf_0_collection_items_result_oneOf_2_
   body: String!
 }
 
-enum Invitee_const @typescript(subgraph: "calendly", type: "\\"Invitee\\"") @example(subgraph: "calendly", value: "Invitee") {
+enum RoutingFormSubmission_submitter_type @typescript(subgraph: "calendly", type: "\\"Invitee\\"") @example(subgraph: "calendly", value: "Invitee") {
   Invitee
 }
 
@@ -2379,10 +2379,10 @@ type Activity_Log_Entry {
   occurred_at: DateTime!
   actor: Activity_Log_Actor
   details: JSON!
-  fully_qualified_name: query_activityLog_oneOf_0_collection_items_fully_qualified_name!
+  fully_qualified_name: Entry_fully_qualified_name!
   uri: URL!
-  namespace: query_activityLog_oneOf_0_collection_items_namespace!
-  action: query_activityLog_oneOf_0_collection_items_action!
+  namespace: Entry_namespace!
+  action: Entry_action!
   organization: URL!
 }
 
@@ -2460,11 +2460,11 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-scalar query_activityLog_oneOf_0_collection_items_fully_qualified_name @regexp(subgraph: "calendly", pattern: "^[A-Za-z0-9\\\\-_]+\\\\.[A-Za-z0-9\\\\-_]+$") @typescript(subgraph: "calendly", type: "string")
+scalar Entry_fully_qualified_name @regexp(subgraph: "calendly", pattern: "^[A-Za-z0-9\\\\-_]+\\\\.[A-Za-z0-9\\\\-_]+$") @typescript(subgraph: "calendly", type: "string")
 
-scalar query_activityLog_oneOf_0_collection_items_namespace @regexp(subgraph: "calendly", pattern: "^[A-Za-z0-9\\\\-_]+$") @typescript(subgraph: "calendly", type: "string")
+scalar Entry_namespace @regexp(subgraph: "calendly", pattern: "^[A-Za-z0-9\\\\-_]+$") @typescript(subgraph: "calendly", type: "string")
 
-scalar query_activityLog_oneOf_0_collection_items_action @regexp(subgraph: "calendly", pattern: "^[A-Za-z0-9\\\\-_]+$") @typescript(subgraph: "calendly", type: "string")
+scalar Entry_action @regexp(subgraph: "calendly", pattern: "^[A-Za-z0-9\\\\-_]+$") @typescript(subgraph: "calendly", type: "string")
 
 """Integers that will have a value of 0 or more."""
 scalar NonNegativeInt

@@ -59,7 +59,7 @@ type Pet @connect(source: "petstore", selection: "id\\nname\\ncategory {\\n  id\
   category: Category
   photoUrls: [String]!
   tags: [Tag]
-  status: mutation_updatePet_status
+  status: Pet_status
 }
 
 """
@@ -78,7 +78,7 @@ type Tag @shareable {
 }
 
 """pet status in the store"""
-enum mutation_updatePet_status {
+enum Pet_status {
   available
   pending
   sold
@@ -101,7 +101,7 @@ type Order @connect(source: "petstore", selection: "id\\npetId\\nquantity\\nship
   petId: BigInt
   quantity: Int
   shipDate: DateTime
-  status: mutation_placeOrder_status
+  status: Order_status
   complete: Boolean
 }
 
@@ -111,7 +111,7 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`da
 scalar DateTime
 
 """Order Status"""
-enum mutation_placeOrder_status {
+enum Order_status {
   placed
   approved
   delivered
@@ -195,7 +195,7 @@ input Pet_Input {
   category: Category_Input
   photoUrls: [String]!
   tags: [Tag_Input]
-  status: mutation_updatePet_status
+  status: Pet_status
 }
 
 input Category_Input {
@@ -222,7 +222,7 @@ input Order_Input {
   petId: BigInt
   quantity: Int
   shipDate: DateTime
-  status: mutation_placeOrder_status
+  status: Order_status
   complete: Boolean
 }
 

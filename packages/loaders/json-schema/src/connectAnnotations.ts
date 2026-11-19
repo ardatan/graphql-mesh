@@ -1208,12 +1208,7 @@ export function buildSelectionForType(
   // Newlines + indent for readable SDL `"""` blocks (Connectors accepts spaces too).
   // Prefer-block AST attach (loaders) avoids `\n` escapes in `printSchemaWithDirectives`.
   const joined = lines.join('\n');
-  if (
-    omittedObjectFields &&
-    !leavesOnly &&
-    limit.overLimit === 'passthrough' &&
-    depth === 0
-  ) {
+  if (omittedObjectFields && !leavesOnly && limit.overLimit === 'passthrough' && depth === 0) {
     // Mid-type truncate under passthrough (visit budget burned on deep nests).
     // Rebuild with soft-depth leavesOnly so sibling scalars/objects (FHIR `name`)
     // survive; `$` only when that also yields nothing.
