@@ -29,7 +29,7 @@ Mesh Compose previously had to invent Mesh-spec `@link` imports and `@composeDir
 - **SDL print (loaders/compose):** subgraph `@connect` / selection use GraphQL `"""` only when the value has newlines; omit empty thrift `args`; omit default `Accept` / `Content-Type: application/json` from connect header mappings (runtime still defaults Accept when unset). Supergraph join args stay dense (escaped `\n`, no prefer-`"""`).
 - **GM-37 first slice:** **`validateMeshDirectives`** — Mesh `@link` version contract + `@transport` arg shapes at Compose ingest / hand SDL; soft on transports.
 - **`convertSubgraphToFederationv2`:** skip type-level `@shareable` on `@key` entities; import only used Fed directives (+ `@shareable`).
-- Hive Gateway **`@graphql-mesh/fusion-runtime` yarn patch:** read `join__directive(name: "transport")`, infer `kind: "connect"` from join connect/source, accept `@source` from core URL, reject unsupported Mesh `@link` versions.
+- Hive Gateway **`@graphql-mesh/fusion-runtime` yarn patch:** read `join__directive(name: "transport")`, infer `kind: "connect"` from join connect/source (including selection-only / virtual connectors with empty `join__graph(url:)` and no SCHEMA `@source`), accept `@source` from core URL, reject unsupported Mesh `@link` versions.
 
 Object-level `@shareable` / full Fed v2 conversion remains Compose-time (`convertSubgraphToFederationv2`) — loaders do not blanket-stamp `@shareable`.
 

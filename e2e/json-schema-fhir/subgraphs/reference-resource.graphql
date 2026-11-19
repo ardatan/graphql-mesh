@@ -1,27 +1,21 @@
 """
-Mini Connectors subgraph: join field only.
+Mini Connectors subgraph: virtual `Reference.resource` join only.
 
 JSON Schema loaders own Patient / Observation / Reference scalars+fields.
 This subgraph adds `Reference.resource` as a Patient entity stub so Hive/Router
-can `_entities`-resolve into `patients` without magic in the loader config.
+can `_entities`-resolve into `patients` — no HTTP `@source` / `@transport`
+(selection-only `@connect`).
 
 Field types match the opt-in FHIR `scalarMap` (`string`→`String`, `id`→`ID`).
 """
 schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@shareable"])
-  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
-  @source(name: "fhir", http: { baseURL: "https://hapi.fhir.org/baseR4" }) {
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) {
   query: Query
 }
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-directive @source(
-  name: String!
-  http: SourceHTTP!
-  errors: ConnectorErrors
-  isSuccess: JSONSelection
-) repeatable on SCHEMA
 directive @connect(
   source: String
   http: ConnectHTTP
@@ -33,7 +27,8 @@ directive @connect(
 directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT
 directive @shareable repeatable on OBJECT | FIELD_DEFINITION
 
-# Match loader-stamped Connectors companion types (Fed value-type merge).
+# Companion types required by the standard `@connect` directive signature
+# (even though applications here only set `selection`).
 scalar JSONSelection
 scalar URLPathTemplate
 
@@ -46,12 +41,6 @@ input ConnectHTTP {
   DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
   body: JSONSelection
-  queryParams: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
   queryParams: JSONSelection
 }
 

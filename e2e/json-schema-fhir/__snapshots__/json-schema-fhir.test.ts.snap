@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`composes official fhir.schema.json + mini Reference.resource SDL 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@regexp", "@typescript"]) @join__directive(graphs: [REFERENCE_RESOURCE], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PATIENTS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [OBSERVATIONS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [OBSERVATIONS], name: "source", args: {name: "observations", http: {baseURL: "https://hapi.fhir.org/baseR4"}}) @join__directive(graphs: [PATIENTS], name: "source", args: {name: "patients", http: {baseURL: "https://hapi.fhir.org/baseR4"}}) @join__directive(graphs: [REFERENCE_RESOURCE], name: "source", args: {name: "fhir", http: {baseURL: "https://hapi.fhir.org/baseR4"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@regexp", "@typescript"]) @join__directive(graphs: [REFERENCE_RESOURCE], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PATIENTS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [OBSERVATIONS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [OBSERVATIONS], name: "source", args: {name: "observations", http: {baseURL: "https://hapi.fhir.org/baseR4"}}) @join__directive(graphs: [PATIENTS], name: "source", args: {name: "patients", http: {baseURL: "https://hapi.fhir.org/baseR4"}}) {
   query: Query
 }
 
@@ -37,7 +37,7 @@ enum link__Purpose {
 enum join__Graph {
   OBSERVATIONS @join__graph(name: "observations", url: "https://hapi.fhir.org/baseR4")
   PATIENTS @join__graph(name: "patients", url: "https://hapi.fhir.org/baseR4")
-  REFERENCE_RESOURCE @join__graph(name: "referenceResource", url: "https://hapi.fhir.org/baseR4")
+  REFERENCE_RESOURCE @join__graph(name: "referenceResource", url: "")
 }
 
 directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
