@@ -1,13 +1,5 @@
-import {
-  buildSchema,
-  execute,
-  extendSchema,
-  GraphQLScalarType,
-  parse,
-  print,
-} from 'graphql';
-import { processDirectives, processScalarType } from '@graphql-mesh/transport-connect';
-import { Response } from '@whatwg-node/fetch';
+import { buildSchema, extendSchema, parse, print } from 'graphql';
+import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway-runtime';
 import {
   composeSubgraphs,
   entityKeyFieldsFromHttpPath,
@@ -2089,7 +2081,10 @@ describe('Federation Connectors composition', () => {
     expect(sdl).toMatch(/directive @regexp\b/);
   });
 
-  it('post-compose @regexp survives finalize and Connect execute match/reject', async () => {
+  it('post-compose @regexp survives finalize and Gateway execute match/reject', async () => {
+    // Like loaders.spec: compose → createGatewayRuntime(supergraph) → execute.
+    // No handwritten schema / manual processScalarType - Gateway extract + Connect
+    // must apply the lean-SG `@regexp` themselves.
     const codeSdl = /* GraphQL */ `
       directive @link(url: String!, import: [String]) repeatable on SCHEMA
       directive @composeDirective(name: String!) repeatable on SCHEMA
@@ -2136,48 +2131,30 @@ describe('Federation Connectors composition', () => {
     expect(composed.errors ?? []).toEqual([]);
     const sg = composed.supergraphSdl!;
     expect(sg).toMatch(/scalar Code[\s\S]*@regexp\(/);
-    const regexpMatch = sg.match(/scalar Code\b[\s\S]*?@regexp\([^)]*pattern:\s*"([^"]+)"/);
-    expect(regexpMatch?.[1]).toBeTruthy();
-    const composedPattern = JSON.parse(`"${regexpMatch![1]}"`) as string;
+    expect(sg).toMatch(/@join__directive\([^)]*name: "connect"/);
 
-    const wire = (body: string) => {
-      // Executable Connect subgraph stamped with the *composed* @regexp pattern.
-      const schema = processDirectives(
-        buildSchema(/* GraphQL */ `
-          directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-          directive @connect(
-            source: String
-            http: ConnectHTTP
-            selection: String!
-          ) repeatable on FIELD_DEFINITION
-          directive @regexp(pattern: String!) on SCALAR
-          input ConnectHTTP {
-            GET: String
-          }
-          input SourceHTTP {
-            baseURL: String!
-          }
-          schema @source(name: "api", http: { baseURL: "https://api.example.com" }) {
-            query: Query
-          }
-          scalar Code @regexp(pattern: ${JSON.stringify(composedPattern)})
-          type Query {
-            code: Code @connect(source: "api", http: { GET: "/code" }, selection: "$")
-          }
-        `),
-        { globalFetch: (async () => Response.json(body)) as any },
-      );
-      // Mirror Gateway: ensure composed @regexp is applied (processDirectives also does this).
-      processScalarType(schema.getType('Code') as GraphQLScalarType);
-      return schema;
+    const run = async (body: string) => {
+      const mockFetch = jest.fn(async () => Response.json(body));
+      const runtime = createGatewayRuntime({
+        supergraph: sg,
+        plugins() {
+          return [useCustomFetch(mockFetch)];
+        },
+        maskedErrors: false,
+        logging: !!globalThis.process?.env?.DEBUG,
+      });
+      const res = await runtime.fetch('/graphql', {
+        method: 'POST',
+        body: JSON.stringify({ query: `{ code }` }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      return res.json() as Promise<{ data?: { code?: string }; errors?: { message: string }[] }>;
     };
 
-    const ok = await execute({ schema: wire('AB'), document: parse(`{ code }`) });
-    expect(ok.errors).toBeUndefined();
-    expect(ok.data).toEqual({ code: 'AB' });
+    await expect(run('AB')).resolves.toMatchObject({ data: { code: 'AB' } });
 
-    const bad = await execute({ schema: wire('abc'), document: parse(`{ code }`) });
-    expect(bad.errors?.length).toBeGreaterThan(0);
-    expect(bad.errors![0].message).toMatch(/must match/);
+    const bad = await run('abc');
+    expect(bad.data?.code ?? null).toBeNull();
+    expect(bad.errors?.some(e => /must match/i.test(e.message))).toBe(true);
   });
 });
