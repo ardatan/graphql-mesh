@@ -262,8 +262,8 @@ describe('Connectors non-JSON responses (Apollo parity)', () => {
       `),
     });
     expect(result.errors).toBeUndefined();
-    // JS String.split(sep, limit): at most `limit` segments (`a` | `b,c,d`).
-    expect(result.data).toEqual({ parts: ['a', 'b,c,d'] });
+    // Apollo / JS String.split(sep, limit): at most `limit` pieces; remainder omitted.
+    expect(result.data).toEqual({ parts: ['a', 'b'] });
   });
 
   it('encodes FHIR Type/id path segments separately (literal / between)', async () => {
