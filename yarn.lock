@@ -9126,7 +9126,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^13.2.2"
     "@omnigraph/sql": "npm:0.1.0"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
-    "@whatwg-node/promise-helpers": "npm:^2.0.1"
+    "@whatwg-node/promise-helpers": "npm:^2.0.2"
     graphql: "npm:16.14.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -10138,7 +10138,7 @@ __metadata:
     "@omnigraph/sql": "workspace:*"
     "@types/pg": "npm:^8.15.4"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
-    "@whatwg-node/promise-helpers": "npm:^2.0.1"
+    "@whatwg-node/promise-helpers": "npm:^2.0.2"
     dataloader: "npm:^2.2.2"
     grafast: "npm:^1.2.0"
     graphile-config: "npm:^0.0.1-beta.14"
