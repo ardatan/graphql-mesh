@@ -5,6 +5,7 @@ import {
   finalizeConnectorsSupergraph,
   formatEntityStubSelection,
   getAnnotatedSubgraphs,
+  importMeshDirectives,
   inferEntityRefFromParentFkNames,
   isFederationConnectorsSubgraph,
   isMongoSubgraph,
@@ -1969,6 +1970,7 @@ describe('Federation Connectors composition', () => {
     // but keeps `@regexp` for Connect `processScalarType` runtime validation.
     const sharedScalarSdl = /* GraphQL */ `
       directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @composeDirective(name: String!) repeatable on SCHEMA
       directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
       directive @connect(
         source: String
@@ -1999,64 +2001,68 @@ describe('Federation Connectors composition', () => {
       }
     `;
 
-    const patients = buildSchema(
-      /* GraphQL */ `
-        schema
-          @link(url: "https://specs.apollo.dev/link/v1.0")
-          @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
-          @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
-          @link(
-            url: "https://specs.graphql-mesh.com/core/v0.1"
-            import: ["@typescript", "@regexp", "@example"]
-          )
-          @source(name: "fhir", http: { baseURL: "https://hapi.fhir.org/baseR4" }) {
-          query: Query
-        }
-        ${sharedScalarSdl.replaceAll('SUBGRAPH', 'patients')}
-        type Query {
-          patient(id: string!): Patient
-            @connect(
-              source: "fhir"
-              http: { GET: "/Patient/{$args.id}" }
-              selection: "id"
-              entity: true
+    const patients = importMeshDirectives(
+      buildSchema(
+        /* GraphQL */ `
+          schema
+            @link(url: "https://specs.apollo.dev/link/v1.0")
+            @link(
+              url: "https://specs.apollo.dev/federation/v2.6"
+              import: ["@key", "@composeDirective"]
             )
-        }
-        type Patient @key(fields: "id") {
-          id: string!
-          resourceType: Resource_const
-        }
-      `,
-      { assumeValidSDL: true, assumeValid: true },
+            @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+            @source(name: "fhir", http: { baseURL: "https://hapi.fhir.org/baseR4" }) {
+            query: Query
+          }
+          ${sharedScalarSdl.replaceAll('SUBGRAPH', 'patients')}
+          type Query {
+            patient(id: string!): Patient
+              @connect(
+                source: "fhir"
+                http: { GET: "/Patient/{$args.id}" }
+                selection: "id"
+                entity: true
+              )
+          }
+          type Patient @key(fields: "id") {
+            id: string!
+            resourceType: Resource_const
+          }
+        `,
+        { assumeValidSDL: true, assumeValid: true },
+      ),
+      ['@regexp', '@typescript', '@example'],
     );
 
-    const observations = buildSchema(
-      /* GraphQL */ `
-        schema
-          @link(url: "https://specs.apollo.dev/link/v1.0")
-          @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
-          @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
-          @link(
-            url: "https://specs.graphql-mesh.com/core/v0.1"
-            import: ["@typescript", "@regexp", "@example"]
-          )
-          @source(name: "fhir", http: { baseURL: "https://hapi.fhir.org/baseR4" }) {
-          query: Query
-        }
-        ${sharedScalarSdl.replaceAll('SUBGRAPH', 'observations')}
-        type Query {
-          observationById(id: string!): Observation
-            @connect(source: "fhir", http: { GET: "/Observation/{$args.id}" }, selection: "id")
-        }
-        type Observation {
-          id: string!
-          resourceType: Resource_const
-        }
-        type Patient @key(fields: "id", resolvable: false) {
-          id: string!
-        }
-      `,
-      { assumeValidSDL: true, assumeValid: true },
+    const observations = importMeshDirectives(
+      buildSchema(
+        /* GraphQL */ `
+          schema
+            @link(url: "https://specs.apollo.dev/link/v1.0")
+            @link(
+              url: "https://specs.apollo.dev/federation/v2.6"
+              import: ["@key", "@composeDirective"]
+            )
+            @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+            @source(name: "fhir", http: { baseURL: "https://hapi.fhir.org/baseR4" }) {
+            query: Query
+          }
+          ${sharedScalarSdl.replaceAll('SUBGRAPH', 'observations')}
+          type Query {
+            observationById(id: string!): Observation
+              @connect(source: "fhir", http: { GET: "/Observation/{$args.id}" }, selection: "id")
+          }
+          type Observation {
+            id: string!
+            resourceType: Resource_const
+          }
+          type Patient @key(fields: "id", resolvable: false) {
+            id: string!
+          }
+        `,
+        { assumeValidSDL: true, assumeValid: true },
+      ),
+      ['@regexp', '@typescript', '@example'],
     );
 
     const result = composeSubgraphs([
