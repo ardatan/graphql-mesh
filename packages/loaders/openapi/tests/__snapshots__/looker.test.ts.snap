@@ -19891,9 +19891,7 @@ type Mutation {
   {
     fields: $args.fields
   }
-  """}, selection: """
-  __typename: $status->match([200, "String_container"], [204, "Void_container"], [@, "String_container"])
-  """, isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  """}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Update the setting for enabling/disabling digest emails
   
@@ -21969,9 +21967,7 @@ type Mutation {
   {
     fields: $args.fields
   }
-  """}, selection: """
-  __typename: $status->match([200, "String_container"], [204, "Void_container"], [@, "String_container"])
-  """, isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  """}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Deactivate an app for a user
   
@@ -22370,9 +22366,7 @@ type Mutation {
     branch: $args.branch
     ref: $args.ref
   }
-  """}, selection: """
-  __typename: $status->match([200, "String_container"], [204, "Void_container"], [@, "String_container"])
-  """, isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  """}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Deploy LookML from this Development Mode Project to Production
   
@@ -22392,9 +22386,7 @@ type Mutation {
   deploy_to_production(
     """Id of project"""
     project_id: String!
-  ): deploy_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/deploy_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: """
-  __typename: $status->match([200, "String_container"], [204, "Void_container"], [@, "String_container"])
-  """, isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): deploy_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/deploy_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Reset a project to the revision of the project that is in production.
   
@@ -22404,9 +22396,7 @@ type Mutation {
   reset_project_to_production(
     """Id of project"""
     project_id: String!
-  ): reset_project_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: """
-  __typename: $status->match([200, "String_container"], [204, "Void_container"], [@, "String_container"])
-  """, isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): reset_project_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Reset a project development branch to the revision of the project that is on the remote.
   
@@ -22416,9 +22406,7 @@ type Mutation {
   reset_project_to_remote(
     """Id of project"""
     project_id: String!
-  ): reset_project_to_remote_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_remote", headers: [{name: "accept", value: "application/json"}]}, selection: """
-  __typename: $status->match([200, "String_container"], [204, "Void_container"], [@, "String_container"])
-  """, isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): reset_project_to_remote_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_remote", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Create A Project
   

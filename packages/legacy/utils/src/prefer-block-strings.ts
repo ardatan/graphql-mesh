@@ -2,9 +2,12 @@ import type { ConstValueNode, GraphQLField, GraphQLSchema } from 'graphql';
 import { isObjectType, Kind } from 'graphql';
 import { astFromType, getDirectivesInExtensions } from '@graphql-tools/utils';
 
-/** Prefer GraphQL `"""` when the string has newlines or embedded `"`. */
+/**
+ * Prefer GraphQL `"""` only for real multiline values. Single-line strings
+ * (even with embedded `"`) stay as normal `"…"` — no fake multiline blocks.
+ */
 export function stringValuePrefersBlock(value: string): boolean {
-  return value.includes('\n') || value.includes('\r') || value.includes('"');
+  return value.includes('\n') || value.includes('\r');
 }
 
 /**

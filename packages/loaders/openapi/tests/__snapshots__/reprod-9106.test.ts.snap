@@ -59,7 +59,7 @@ enum mutationInput_post_token_input_oneOf_0_allOf_0_grant_type {
 }
 
 type Query {
-  dummy: String @connect(selection: """$("dummy")""")
+  dummy: String @connect(selection: "$(\\"dummy\\")")
 }
 
 type Mutation {

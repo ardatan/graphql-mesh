@@ -142,9 +142,7 @@ type Query {
   }
   """)
   """Used to test cookies."""
-  getCookie(cookie_type: queryInput_getCookie_cookie_type!, cookie_size: queryInput_getCookie_cookie_size!): String @connect(source: "example_api", http: {GET: "/cookie", headers: [{name: "cookie", value: """
-  cookie_type={$args.cookie_type->match(["chocolate_chip", "chocolate chip"], ["oatmeal_raisin", "oatmeal raisin"], [@, $args.cookie_type])}; cookie_size={$args.cookie_size->match(["bite_sized", "bite-sized"], ["mega_sized", "mega-sized"], [@, $args.cookie_size])};
-  """}, {name: "accept", value: "text/plain"}]}, selection: "$")
+  getCookie(cookie_type: queryInput_getCookie_cookie_type!, cookie_size: queryInput_getCookie_cookie_size!): String @connect(source: "example_api", http: {GET: "/cookie", headers: [{name: "cookie", value: "cookie_type={$args.cookie_type->match([\\"chocolate_chip\\", \\"chocolate chip\\"], [\\"oatmeal_raisin\\", \\"oatmeal raisin\\"], [@, $args.cookie_type])}; cookie_size={$args.cookie_size->match([\\"bite_sized\\", \\"bite-sized\\"], [\\"mega_sized\\", \\"mega-sized\\"], [@, $args.cookie_size])};"}, {name: "accept", value: "text/plain"}]}, selection: "$")
   """
   Used to find the nearest coffee machine based on the user's coordinates. Used to test the content field in parameter objects.
   """

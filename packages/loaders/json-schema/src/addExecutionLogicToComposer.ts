@@ -43,6 +43,7 @@ import {
   resolveConnectSelectionLimit,
   rewriteConnectPathEnumArgs,
   SourceDirective,
+  connectorsPathSegmentFromLinkExpr,
   toConnectLinkExpression,
   warnConnectSelectionPassthrough,
   wrapArgExprWithEnumMatch,
@@ -253,9 +254,11 @@ export function addExecutionDirectivesToComposer(
       }
       if (pathTemplate && Object.keys(linkArgExprs).length) {
         for (const [argName, connectExpr] of Object.entries(linkArgExprs)) {
-          pathTemplate = pathTemplate.replaceAll(`{$args.${argName}}`, connectExpr);
+          // Hardcoded link params → plain path segments (`/…/Charles`), not `$("Charles")`.
+          const pathSeg = connectorsPathSegmentFromLinkExpr(connectExpr);
+          pathTemplate = pathTemplate.replaceAll(`{$args.${argName}}`, pathSeg);
           // Also support unconverted Mesh `{args.x}` left in some paths
-          pathTemplate = pathTemplate.replaceAll(`{args.${argName}}`, connectExpr);
+          pathTemplate = pathTemplate.replaceAll(`{args.${argName}}`, pathSeg);
         }
       }
       const linkHttp: Record<string, unknown> = targetHttp

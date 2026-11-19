@@ -356,11 +356,13 @@ export function buildDiscriminatorTypenameSelection(type: {
 }
 
 /**
- * Convert Mesh/OpenAPI link parameter interpolations into Connectors path expressions.
+ * Convert Mesh/OpenAPI link parameter interpolations into Connectors expressions.
  * Examples:
  * - `{root.$response.body#/employerId}` → `{$this.employerId}`
  * - `{root.$request.path.username}` → `{$this.username}`
- * - `acme` → `$("acme")`
+ * - `acme` → `$("acme")` (header/query/body); path substitution uses
+ *   {@link connectorsPathSegmentFromLinkExpr} so hardcoded path params become
+ *   plain segments (`/…/acme`), not `/…/$("acme")`.
  */
 export function toConnectLinkExpression(interpolation: unknown): string {
   if (interpolation == null) {
@@ -432,6 +434,35 @@ export function toConnectLinkExpression(interpolation: unknown): string {
       return `{$this.${sanitizeNameForGraphQL(key)}}`;
     })
     .replace(/\{root\.([A-Za-z_][\w]*)\}/g, '{$this.$1}');
+}
+
+/**
+ * Bake a link expression into a Connectors `http.GET`/`POST`/… path template.
+ * Hardcoded `$("Charles")` → path segment `Charles` (URL-encoded). Dynamic
+ * `{$this.id}` / `{…}` interpolations are kept as-is.
+ */
+export function connectorsPathSegmentFromLinkExpr(connectExpr: string): string {
+  const trimmed = connectExpr.trim();
+  // `$("lit")` / `$(42)` / `$(true)` — static path segment, not a runtime expr.
+  if (trimmed.startsWith('$(') && trimmed.endsWith(')')) {
+    const inner = trimmed.slice(2, -1).trim();
+    try {
+      const value = JSON.parse(inner);
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        return encodeURIComponent(String(value));
+      }
+    } catch {
+      // Not a JSON literal inside `$()` — fall through.
+    }
+  }
+  if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+    return trimmed;
+  }
+  // Bare `$this…` / `$args…` paths need `{…}` for Connectors path interpolations.
+  if (trimmed.startsWith('$')) {
+    return `{${trimmed}}`;
+  }
+  return trimmed;
 }
 
 export function headersToConnectMappings(
