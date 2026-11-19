@@ -850,9 +850,32 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               paramObj.schema?.format === 'binary';
             if (!operationConfig.headers?.['Content-Type']) {
               operationConfig.headers = operationConfig.headers || {};
-              operationConfig.headers['Content-Type'] = isFile
-                ? 'multipart/form-data'
-                : 'application/x-www-form-urlencoded';
+              // Swagger 2: method.consumes overrides document.consumes; only then
+              // fall back to file-presence inference (multipart vs urlencoded).
+              const methodConsumes =
+                'consumes' in methodObj &&
+                Array.isArray(methodObj.consumes) &&
+                methodObj.consumes.length
+                  ? methodObj.consumes.map(String)
+                  : undefined;
+              const docConsumes =
+                'consumes' in oasOrSwagger &&
+                Array.isArray((oasOrSwagger as OpenAPIV2.Document).consumes) &&
+                (oasOrSwagger as OpenAPIV2.Document).consumes!.length
+                  ? (oasOrSwagger as OpenAPIV2.Document).consumes!.map(String)
+                  : undefined;
+              const effectiveConsumes = methodConsumes ?? docConsumes;
+              const formConsume = effectiveConsumes?.find(c => {
+                const m = mimeType(c);
+                return (
+                  m === 'multipart/form-data' || m === 'application/x-www-form-urlencoded'
+                );
+              });
+              operationConfig.headers['Content-Type'] = formConsume
+                ? formConsume
+                : isFile
+                  ? 'multipart/form-data'
+                  : 'application/x-www-form-urlencoded';
             } else if (
               isFile &&
               mimeType(operationConfig.headers['Content-Type']) ===

@@ -27,7 +27,7 @@ additionalTypeDefs: |
   extend type Reference {
     resource: ResourceList @connect(
       source: "FHIR"
-      http: { GET: "/{$this.reference}?_format=application/json" }
+      http: { GET: "/{$this.reference->split(\"/\")->get(0)}/{$this.reference->split(\"/\")->get(1)}?_format=application/json" }
       selection: "$"
     )
   }

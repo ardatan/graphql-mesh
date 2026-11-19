@@ -17,6 +17,19 @@ describe('Swagger 2 formData → @connect http.body', () => {
     expect(sdl).toContain('checkMath');
   });
 
+  it('honors document-level consumes multipart for string formData', async () => {
+    const schema = await loadGraphQLSchemaFromOpenAPI('upload', {
+      source: './fixtures/swagger2-formdata-doc-consumes.yml',
+      endpoint: 'http://localhost:3000',
+      cwd: __dirname,
+      fetch: (async () => Response.json({ ok: true })) as any,
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toContain('multipart/form-data');
+    expect(sdl).toContain('note: $args.note');
+    expect(sdl).not.toContain('application/x-www-form-urlencoded');
+  });
+
   it('POSTs form fields in the request body', async () => {
     let seenContentType: string | null = null;
     let seenBody = '';

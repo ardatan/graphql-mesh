@@ -17,8 +17,6 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-directive @resolveTo(requiredSelectionSet: String, sourceName: String, sourceTypeName: String, sourceFieldName: String, sourceSelectionSet: String, sourceArgs: ResolveToSourceArgs, keyField: String, keysArg: String, valueKeyField: String, pubsubTopic: String, filterBy: String, additionalArgs: ResolveToSourceArgs, result: String, resultType: String) on FIELD_DEFINITION
-
 type Query {
   resourceById(resourceType: String, id: String): ResourceList @connect(source: "FHIR", http: {GET: "/{$args.resourceType}/{$args.id}?_format=application/json"}, selection: "$")
   resourceByName(resourceType: String, name: String): Bundle @connect(source: "FHIR", http: {GET: "/{$args.resourceType}/?name={$args.name}?_format=application/json"}, selection: """
@@ -1355,7 +1353,7 @@ type Reference {
   identifier: Identifier
   display: string
   _display: Element
-  resource: ResourceList @resolveTo(sourceName: "FHIR", sourceTypeName: "Query", sourceFieldName: "resourceById", sourceArgs: {resourceType: "{root.reference}"})
+  resource: ResourceList @connect(source: "FHIR", http: {GET: "/{$this.reference->split(\\"/\\")->get(0)}/{$this.reference->split(\\"/\\")->get(1)}?_format=application/json"}, selection: "$")
 }
 
 """
@@ -26889,7 +26887,5 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: JSONSelection
-}
-
-scalar ResolveToSourceArgs"
+}"
 `;

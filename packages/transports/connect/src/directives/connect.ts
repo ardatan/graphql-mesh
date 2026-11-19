@@ -224,7 +224,19 @@ function resolveTemplate(
     if (!exprPath.includes('->') && !exprPath.includes('[')) {
       return full;
     }
-    const value = evalConnectorsVarExpr(`$${exprPath}`, vars);
+    // Method chains (`->split` / `->get`) need the full evaluator — var-only
+    // lookup ignores method suffixes and would leave `Patient/id` as one segment.
+    const value = exprPath.includes('->')
+      ? evalPath(`$${exprPath}`, vars.thisValue ?? {}, {
+          vars: {
+            args: vars.args,
+            thisValue: vars.thisValue,
+            env: vars.env,
+            context: vars.context,
+            config: vars.config || {},
+          },
+        })
+      : evalConnectorsVarExpr(`$${exprPath}`, vars);
     if (value == null || value === '') {
       if (defaultValue != null) {
         if (!options.encodeValues || shouldSkipPathEncode(exprPath, options.skipEncode)) {
@@ -947,7 +959,8 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
     // Apollo Connectors string `->split(sep, limit?)` (Router 2.15+ / connect mapping).
     if (method === 'split') {
       if (typeof left !== 'string') return left;
-      const parts = rawArgs.split(',').map(s => s.trim());
+      // Keep quoted commas inside the separator (`","`) via lit-aware split.
+      const parts = splitConnectorsLitItems(rawArgs);
       const sep = String(parseConnectorsLiteralArg(parts[0] ?? '""'));
       const limit =
         parts[1] != null && parts[1] !== ''
@@ -2337,7 +2350,9 @@ export function addConnectFieldResolver(
         /^\$((args|this|env|context|batch|config)\b|\()/.test(trimmedSel) &&
         !/^[A-Za-z_][\w]*\s*:/.test(trimmedSel) &&
         !trimmedSel.includes('\n');
-      if (isSingleVarExpr) {
+      // Method chains (`$args.ref->split("/")->get(1)`) need evalPath; var-only
+      // lookup would return the raw arg and ignore `->split` / `->get`.
+      if (isSingleVarExpr && !trimmedSel.includes('->')) {
         return evalConnectorsVarExpr(trimmedSel, vars);
       }
       return applySelection(selection, root || {}, { vars });
@@ -2460,14 +2475,23 @@ export function addConnectFieldResolver(
         requestBody = requestInit.body;
       } else if (contentType?.includes('multipart/form-data')) {
         // Multipart needs the live File/Blob values from args (not JSON round-trip).
+        // Honor `@connect(http.body:)` maps so OpenAPI form param names (`user-file`)
+        // win over GraphQL arg names (`user_file`), and path args stay out of parts.
         delete headers['content-type'];
         delete headers['Content-Type'];
-        const input =
-          connectArgs.http?.body === '$args.input' ||
-          connectArgs.http?.body?.startsWith('$args.input')
-            ? rawArgs.input
-            : rawArgs;
         const formData = new FormData();
+        const bodySelection = connectArgs.http?.body;
+        const mappedBody =
+          bodySelection != null && String(bodySelection).trim() !== ''
+            ? evaluateConnectBodySelection(bodySelection, vars, { schema, field })
+            : undefined;
+        const input =
+          mappedBody && typeof mappedBody === 'object' && !Array.isArray(mappedBody)
+            ? mappedBody
+            : connectArgs.http?.body === '$args.input' ||
+                connectArgs.http?.body?.startsWith('$args.input')
+              ? rawArgs.input
+              : rawArgs;
         if (input && typeof input === 'object') {
           for (const key of Object.keys(input)) {
             const inputValue = input[key];
@@ -2648,12 +2672,19 @@ export function addConnectFieldResolver(
 
     if (!isJsonLikeResponse && !isPlainTextResponse && !isXmlResponse) {
       // Drain without `response.text()` so binary bodies stay binary-safe.
+      // Empty unsupported MIME (e.g. 204 + text/html) keeps legacy scalar `""` /
+      // object `{}` so `String!` connectors do not null-error; nonempty PNG → null.
+      let drained: ArrayBuffer | undefined;
       try {
-        await response.arrayBuffer();
+        drained = await response.arrayBuffer();
       } catch {
         /* ignore drain errors */
       }
-      responseData = null;
+      if (!drained || drained.byteLength === 0) {
+        responseData = isScalarType(returnNamedGraphQLType) ? '' : {};
+      } else {
+        responseData = null;
+      }
     } else {
       const text = await response.text();
       if (!text) {

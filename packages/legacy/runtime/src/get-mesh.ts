@@ -13,6 +13,7 @@ import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core';
 import { Logger } from '@graphql-hive/logger';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { process } from '@graphql-mesh/cross-helpers';
+import { processDirectives } from '@graphql-mesh/transport-connect';
 import type {
   GraphQLOperation,
   KeyValueCache,
@@ -279,6 +280,17 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   if (unifiedSubschema.executor != null || unifiedSubschema.transforms?.length) {
     schema = wrapSchema(unifiedSubschema);
+  }
+
+  // `additionalTypeDefs` may add fields with `@connect` after source handlers already
+  // ran `processDirectives`. Re-process so those fields get HTTP resolvers while
+  // preserving existing root connect resolvers (idempotent install).
+  if (additionalTypeDefs?.length) {
+    schema = processDirectives(schema, {
+      globalFetch: wrappedFetchFn,
+      pubsub,
+      log: getMeshLogger,
+    });
   }
 
   const plugins = [

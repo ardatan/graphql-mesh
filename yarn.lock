@@ -9515,6 +9515,7 @@ __metadata:
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
+    "@graphql-mesh/transport-connect": "npm:^0.12.4"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/batch-delegate": "npm:^10.1.5"
