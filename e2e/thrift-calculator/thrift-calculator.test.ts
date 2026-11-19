@@ -69,7 +69,7 @@ describe('binary (@thrift__rpc)', () => {
     expect(result).toMatch(/name:\s*"thrift__rpc"/);
     expect(result).toMatch(/name:\s*"transport"/);
     expect(result).toMatch(/kind:\s*"thrift"/);
-    // Lean SG: apps are join only — no native `directive @thrift__rpc` / enum.
+    // Lean SG: apps are join only - no native `directive @thrift__rpc` / enum.
     // Join-carried `@transport` keeps its directive def (+ TransportOptions/@link).
     expect(result).not.toMatch(/:\s*\w+ @thrift__rpc\s*\(/);
     expect(result).not.toMatch(/directive @thrift__rpc\(/);

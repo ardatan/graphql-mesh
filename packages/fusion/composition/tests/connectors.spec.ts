@@ -106,7 +106,7 @@ describe('Federation Connectors composition', () => {
         schema: connectorsSchema,
         transforms: [
           schema =>
-            // noop transform — still must not inject stitching @source
+            // noop transform - still must not inject stitching @source
             schema,
         ],
       },
@@ -125,7 +125,7 @@ describe('Federation Connectors composition', () => {
   });
 
   it('keeps options-only join transport when loader stamped @transport(options:)', () => {
-    // Fresh schema — do not share `extensions.directives` with `connectorsSchema`.
+    // Fresh schema - do not share `extensions.directives` with `connectorsSchema`.
     const withOpts = buildSchema(/* GraphQL */ `
       schema
         @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
@@ -781,7 +781,7 @@ describe('Federation Connectors composition', () => {
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
     expect(sdl).not.toContain('extraSchemaDefinitionDirective');
-    // Canonical Mesh connectors SG — same SDL for Hive Gateway + Apollo Router.
+    // Canonical Mesh connectors SG - same SDL for Hive Gateway + Apollo Router.
     expect(sdl).toMatch(/@join__directive\([^)]*name: "source"/);
     expect(sdl).toMatch(/@join__directive\([^)]*name: "connect"/);
     expect(sdl).toContain('specs.apollo.dev/join/v0.5');
@@ -790,7 +790,7 @@ describe('Federation Connectors composition', () => {
     );
     expect(sdl).not.toMatch(/@connect\(/);
     expect(sdl).not.toMatch(/@source\(/);
-    // Optimized Mesh: no `@transport` / join transport when Connectors are present —
+    // Optimized Mesh: no `@transport` / join transport when Connectors are present -
     // Gateway infers `kind: "connect"` from join connect/source.
     expect(sdl).not.toMatch(/@transport\s*\(/);
     expect(sdl).not.toMatch(/name: "transport"/);
@@ -849,7 +849,7 @@ describe('Federation Connectors composition', () => {
     const sdl = result.supergraphSdl!;
     expect(sdl).not.toContain('@meshSource');
     // Field-level Mesh `@source` → `@join__directive` on the final SG (arg-level
-    // Mesh `@source` may remain native — federation extract skips those locs).
+    // Mesh `@source` may remain native - federation extract skips those locs).
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "source"/);
     expect(sdl).not.toMatch(/@source\([^)]*subgraph:/);
     // Non-connectors Mesh subgraph with connect-shaped transport still rewrites;
@@ -926,7 +926,7 @@ describe('Federation Connectors composition', () => {
     const meshSdl = result.supergraphSdl!;
     expect(meshSdl).toMatch(/@join__directive\([^)]*name: "connect"/);
     const again = finalizeConnectorsSupergraph(meshSdl);
-    // Already finalized — early-return when no raw @connect remains
+    // Already finalized - early-return when no raw @connect remains
     expect(again).toBe(meshSdl);
   });
 
@@ -1071,7 +1071,7 @@ describe('Federation Connectors composition', () => {
   });
 
   it('emits type-level @connect with $this when keyArg !== keyField (Apollo entity pattern)', () => {
-    // OpenAPI-style: getUserById(userId) → User.id — entity:true would be invalid.
+    // OpenAPI-style: getUserById(userId) → User.id - entity:true would be invalid.
     const schema = buildSchema(/* GraphQL */ `
       schema
         @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
@@ -1377,7 +1377,7 @@ describe('Federation Connectors composition', () => {
     `;
 
     const out = finalizeConnectorsSupergraph(before);
-    // Scope to the Airline type — Query.AirlinesByAirlineCode also has connect.
+    // Scope to the Airline type - Query.AirlinesByAirlineCode also has connect.
     expect(out).toMatch(
       /type Airline[\s\S]*@join__directive\(graphs: \[TRIPPIN\], name: "connect", args: \{source: "Trippin"[\s\S]*entity: true\}/,
     );
@@ -1442,7 +1442,7 @@ describe('Federation Connectors composition', () => {
 
       type Query @join__type(graph: PRODUCTS) @join__type(graph: INVENTORY) {
         # stock first so the shared source cache holds INVENTORY before Product's
-        # type-level @connect is attributed — exercises preferSoleJoinType.
+        # type-level @connect is attributed - exercises preferSoleJoinType.
         stock(id: ID!): Stock
           @join__field(graph: INVENTORY)
           @connect(source: "api", http: { GET: "/stock/{$args.id}" }, selection: "id qty")
@@ -1716,7 +1716,7 @@ describe('Federation Connectors composition', () => {
     // Two hand-supplied connector subgraphs both declare `@source(name: "api")`
     // with different baseURLs. Compose lifts extras onto schema (losing graph),
     // but Mesh `@transport(subgraph, location)` still pairs each baseURL with
-    // its owning subgraph — finalize must emit each source only for that graph.
+    // its owning subgraph - finalize must emit each source only for that graph.
     const common = /* GraphQL */ `
       directive @link(url: String!, import: [String]) repeatable on SCHEMA
       directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA

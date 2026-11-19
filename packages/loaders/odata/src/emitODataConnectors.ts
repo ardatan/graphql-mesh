@@ -80,7 +80,7 @@ function toConnectorsCommaObjectBody(selection: string): string {
   while (i < s.length) {
     while (i < s.length && /\s/.test(s[i])) i++;
     if (i >= s.length) break;
-    // Abstract spread: `... $->get("…")->match([…], …)` — keep as one part (already
+    // Abstract spread: `... $->get("…")->match([…], …)` - keep as one part (already
     // comma-safe inside match arrays; do not rewrite).
     if (s.startsWith('...', i)) {
       const start = i;
@@ -172,7 +172,7 @@ function toConnectorsCommaObjectBody(selection: string): string {
 
 /**
  * Build one union/interface match arm object with the **full** field bag from the
- * same HTTP JSON (old OData transport style — no key-stub re-fetch).
+ * same HTTP JSON (old OData transport style - no key-stub re-fetch).
  *
  * Apollo can still type-merge via `@key` + type-level `@connect(entity: true)` when
  * a payload is only a reference; Hive transport should likewise avoid extra hops
@@ -213,7 +213,7 @@ function odataAbstractTypenameSpread(
   schemaComposer: SchemaComposer,
   memberTypeNames: string[],
   defaultTypeName?: string,
-  /** Shared cycle history — arms must not reset (Tree → ITree → Tree). */
+  /** Shared cycle history - arms must not reset (Tree → ITree → Tree). */
   visited: Set<string> = new Set(),
 ): string {
   const arms: string[] = [];
@@ -246,7 +246,7 @@ function odataAbstractTypenameSpread(
 /**
  * Connectors JSONSelection for an OData entity/complex type.
  * Apollo Router requires object/list fields to use `{ … }` groups (bare names fail).
- * Skip fields with arguments (bound ops / queryOptions nav) — those get their own `@connect`.
+ * Skip fields with arguments (bound ops / queryOptions nav) - those get their own `@connect`.
  */
 function entitySelection(
   schemaComposer: SchemaComposer,
@@ -254,7 +254,7 @@ function entitySelection(
   visited: Set<string> = new Set(),
 ): string {
   const typeName = entityTC.getTypeName();
-  // Cycle detection only — do not truncate acyclic complex property chains
+  // Cycle detection only - do not truncate acyclic complex property chains
   // (depth limits drop nested scalars with no lazy-fetch fallback).
   if (visited.has(typeName)) {
     return '';
@@ -287,7 +287,7 @@ function entitySelection(
     const fieldOData = ((field.extensions as any)?.odata || {}) as ODataFieldEmit;
     const fieldDirs = ((field.extensions as any)?.directives || {}) as Record<string, unknown>;
     // Bound/unbound ops and navigation properties get field-level `@connect`
-    // (Apollo OData connector pattern) — not inlined into the parent selection.
+    // (Apollo OData connector pattern) - not inlined into the parent selection.
     if (
       fieldOData.boundFunction ||
       fieldOData.boundAction ||
@@ -330,7 +330,7 @@ function entitySelection(
         nested = '';
       }
       if (!nested) {
-        // Empty object expansion (cycle / only-arg fields) — omit; bare name is invalid.
+        // Empty object expansion (cycle / only-arg fields) - omit; bare name is invalid.
         continue;
       }
       lines.push(`${fieldName} { ${nested} }`);
@@ -378,7 +378,7 @@ function selectionAndParamsForPluralNav(
           (navSet.has(fn) ? fn : undefined);
         if (!navName) continue;
         const inner = selectionForFieldReturnType(schemaComposer, f);
-        // Expanded nav is a bare array/entity — strip `$.value { … }` wrapper.
+        // Expanded nav is a bare array/entity - strip `$.value { … }` wrapper.
         const bare = inner.startsWith('$.value {')
           ? inner.replace(/^\$\.value\s*\{\s*/, '').replace(/\s*\}$/, '')
           : inner.startsWith('$.value')
@@ -428,7 +428,7 @@ function selectionForFieldReturnType(
   const isList = typeName.includes('[');
   const named = typeName.replace(/[[\]!]/g, '');
   // JSON / complex: whole body. Primitive scalars (and lists of them) are wrapped
-  // as `{"value": …}` in OData JSON — unwrap with `$.value`.
+  // as `{"value": …}` in OData JSON - unwrap with `$.value`.
   if (named === 'JSON') {
     return '$';
   }
@@ -500,7 +500,7 @@ function isInputObjectArgType(schemaComposer: SchemaComposer, argTypeName: strin
     if (schemaComposer.isEnumType(argTypeName) || schemaComposer.isScalarType(argTypeName)) {
       return false;
     }
-    // SchemaComposer has no `isInputType` — resolve via InputTypeComposer.
+    // SchemaComposer has no `isInputType` - resolve via InputTypeComposer.
     schemaComposer.getITC(argTypeName);
     return true;
   } catch {
@@ -527,7 +527,7 @@ function odataCallArgsParts(
     if (name === 'queryOptions') continue;
     if (bindingParameterName && name === bindingParameterName) continue;
     const argTypeName = argTypeNameOf(argConfig);
-    // Collection(Edm.String) / [String] — keep list via alias; bare unwrap loses [].
+    // Collection(Edm.String) / [String] - keep list via alias; bare unwrap loses [].
     // Runtime JSON-encodes `@…` query values (one `@colors=["red","blue"]`, not repeats).
     if (isListArgType(argConfig) || isInputObjectArgType(schemaComposer, argTypeName)) {
       // Alias: Function(colors=@colors)?@colors={$args.colors}
@@ -576,7 +576,7 @@ function connectArgs(opts: {
   selection: string;
   entity?: boolean;
 }) {
-  // Shared `errors` / headers live on `@source` — Connectors inherit them
+  // Shared `errors` / headers live on `@source` - Connectors inherit them
   // (Hive: `connect.errors || source.errors`; Apollo Router same).
   return {
     source: opts.source,
@@ -620,7 +620,7 @@ export function emitODataConnectors(
   schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
-  // Do not register a local `@key` / `@inaccessible` directive def — federation `@link` owns them.
+  // Do not register a local `@key` / `@inaccessible` directive def - federation `@link` owns them.
 
   const sourceName = opts.name;
 
@@ -664,7 +664,7 @@ export function emitODataConnectors(
     } as any);
   };
 
-  /** Drop emit-time odata hints from interface fields — objects own the `@connect`. */
+  /** Drop emit-time odata hints from interface fields - objects own the `@connect`. */
   const clearODataFieldEmit = (
     parent: ObjectTypeComposer | InterfaceTypeComposer,
     fieldName: string,
@@ -733,7 +733,7 @@ export function emitODataConnectors(
             },
             selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$',
             // Apollo Router rejects `entity: true` on Mutation (`ENTITY_NOT_ON_ROOT_QUERY`).
-            // Unions have no key fields — `entity: true` on `IPerson` etc. fails resolvable-key creation.
+            // Unions have no key fields - `entity: true` on `IPerson` etc. fails resolvable-key creation.
             entity:
               rootName === 'Query' &&
               Boolean(returnTypeName) &&
@@ -754,7 +754,7 @@ export function emitODataConnectors(
               GET: `/${entitySetName}/$count`,
               queryParams: ODATA_QUERY_OPTIONS_QUERY_PARAMS,
             },
-            // `$count` returns a raw integer body — selection is the root value.
+            // `$count` returns a raw integer body - selection is the root value.
             selection: '$',
           }),
         );
@@ -788,7 +788,7 @@ export function emitODataConnectors(
             http: {
               DELETE: `/${entitySetName}/{$args.${identifierFieldName}}/`,
             },
-            // DELETE has an empty/non-JSON body — literal root is intentional.
+            // DELETE has an empty/non-JSON body - literal root is intentional.
             selection: '$',
           }),
         );
@@ -892,7 +892,7 @@ export function emitODataConnectors(
       }
     };
     setOnce(typeName);
-    // PeopleByUserName returns `IPerson` — stamp concrete members (Person/Manager/…).
+    // PeopleByUserName returns `IPerson` - stamp concrete members (Person/Manager/…).
     if (schemaComposer.isUnionType(typeName)) {
       try {
         const members = schemaComposer.getUTC(typeName).getTypes?.() || [];
@@ -931,7 +931,7 @@ export function emitODataConnectors(
     const returnName = qField.type.getTypeName().replace(/[[\]!]/g, '');
     const getPath = connect?.http?.GET as string | undefined;
     // Entity-set by-id only (`/People/{$args.UserName}/`). Do not stamp singletons
-    // like `/Me` or bare `/FunctionImport` — those are not entity-set origins and
+    // like `/Me` or bare `/FunctionImport` - those are not entity-set origins and
     // would falsely mark Person as ambiguous (People vs Me).
     if (getPath) {
       const byId = getPath.match(/^\/([^/]+)\/\{\$args\./);
@@ -1120,7 +1120,7 @@ export function emitODataConnectors(
       // Entity-set-backed types get a resolvable `@key` + type-level `@connect(entity: true)`
       // so Hive `Query._entities` / Router entity fill work without Mesh `@merge`.
       // Nested-only or ambiguous entity sets keep `@key` (Hive `$expand` heuristics) but
-      // mark `resolvable: false` — no type-level connect means this subgraph cannot own
+      // mark `resolvable: false` - no type-level connect means this subgraph cannot own
       // `_entities` resolution (Connectors-native; mirrors stub-only `resolvable: false`).
       existing.push({
         name: 'key',
@@ -1241,7 +1241,7 @@ export function emitODataConnectors(
     });
     if (!applicable.length) return;
     const existing = Array.isArray(connect.http.headers) ? connect.http.headers : [];
-    // Root Query/Mutation are also visited as object composers — replace same-name
+    // Root Query/Mutation are also visited as object composers - replace same-name
     // headers case-insensitively instead of appending duplicates.
     const next = [...existing];
     for (const header of applicable) {
@@ -1393,7 +1393,7 @@ export function emitODataPolymorphicUnions(
       members.push(base);
     }
     for (const d of [...descendants].sort()) {
-      // Abstract descendants are still object composers here — exclude them so the
+      // Abstract descendants are still object composers here - exclude them so the
       // union only lists concrete members (graphql-compose would otherwise keep them).
       if (abstractTypeNames.has(d)) continue;
       if (schemaComposer.isObjectType(d) && !members.includes(d)) {

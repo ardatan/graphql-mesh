@@ -80,7 +80,7 @@ const DEFAULT_CONNECT_SELECTION_SOFT_DEPTH = 2;
 /** Stop expanding after this many type visits (Hive `$` is fine; Router needs leavesOnly). */
 const DEFAULT_PASSTHROUGH_VISIT_BUDGET = 250;
 
-export const CONNECT_SELECTION_PASSTHROUGH_ROUTER_WARNING = `connect(selection: "$") was used because the response mapping could not be fully expanded under connectSelection limits. Hive Gateway will pass through the raw JSON. Apollo Router requires explicit scalar leaf mappings for object types — set connectSelection: { overLimit: "leavesOnly" } (and/or raise maxLength) or model foreign keys as entity stubs to run this subgraph on Router.`;
+export const CONNECT_SELECTION_PASSTHROUGH_ROUTER_WARNING = `connect(selection: "$") was used because the response mapping could not be fully expanded under connectSelection limits. Hive Gateway will pass through the raw JSON. Apollo Router requires explicit scalar leaf mappings for object types - set connectSelection: { overLimit: "leavesOnly" } (and/or raise maxLength) or model foreign keys as entity stubs to run this subgraph on Router.`;
 
 /**
  * Resolve programmatic `connectSelection` limit options with defaults.
@@ -252,7 +252,7 @@ export function rewriteConnectPathEnumArgs(
 /**
  * Path to a JSON property in Connectors selection/mapping language.
  * Safe idents stay bare (`foo` / `$.foo`); reserved/hyphenated keys use
- * `$->get("…")` — Apollo Router's selection parser hits `Eof` on `$["…"]`.
+ * `$->get("…")` - Apollo Router's selection parser hits `Eof` on `$["…"]`.
  */
 export function connectorsJsonKeyPath(jsonName: string, opts?: { rootDollar?: boolean }): string {
   if (/^[A-Za-z_][\w]*$/.test(jsonName)) {
@@ -303,7 +303,7 @@ export function getDiscriminatorInfo(type: {
 
 /**
  * Property-discriminator match that yields GraphQL type *names* (string arms).
- * Used when embedding into `$status->match` defaults — not for abstract field selections.
+ * Used when embedding into `$status->match` defaults - not for abstract field selections.
  */
 export function buildDiscriminatorStringMatchExpr(type: {
   getFields?: () => Record<string, unknown>;
@@ -449,7 +449,7 @@ export function toConnectLinkExpression(interpolation: unknown): string {
  */
 export function connectorsPathSegmentFromLinkExpr(connectExpr: string): string {
   const trimmed = connectExpr.trim();
-  // `$("lit")` / `$(42)` / `$(true)` — static path segment, not a runtime expr.
+  // `$("lit")` / `$(42)` / `$(true)` - static path segment, not a runtime expr.
   if (trimmed.startsWith('$(') && trimmed.endsWith(')')) {
     const inner = trimmed.slice(2, -1).trim();
     try {
@@ -458,7 +458,7 @@ export function connectorsPathSegmentFromLinkExpr(connectExpr: string): string {
         return encodeURIComponent(String(value));
       }
     } catch {
-      // Not a JSON literal inside `$()` — fall through.
+      // Not a JSON literal inside `$()` - fall through.
     }
   }
   if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
@@ -473,7 +473,7 @@ export function connectorsPathSegmentFromLinkExpr(connectExpr: string): string {
 
 /**
  * Connectors / Hive already default to JSON request/response bodies. Stamping
- * bare `Accept` / `Content-Type: application/json` only adds SDL noise — keep
+ * bare `Accept` / `Content-Type: application/json` only adds SDL noise - keep
  * versioned, vendor, multi-value, or odata.metadata Accepts (and non-JSON types).
  */
 export function isDefaultJsonHttpHeader(name: string, value: string | undefined | null): boolean {
@@ -557,7 +557,7 @@ function formatQueryParamKey(queryParam: string): string {
 }
 
 /**
- * GraphQL `@oneOf` input field name for a JSON Schema branch — matches
+ * GraphQL `@oneOf` input field name for a JSON Schema branch - matches
  * `getValidTypeName({ isInput: true })` (`sanitize(title + '_Input')`).
  */
 function oneOfBranchInputFieldName(branch: { title?: string } | undefined): string | undefined {
@@ -799,7 +799,7 @@ export function buildStatusUnionConnectExtras(
     if (memberNames.has(typeName)) {
       return JSON.stringify(typeName);
     }
-    // Abstract / discriminator parent — prefer property match over the interface name.
+    // Abstract / discriminator parent - prefer property match over the interface name.
     const abstractType =
       schemaTypes?.get(typeName) ||
       unionType.getTypes().find(t => t.name === typeName) ||
@@ -869,7 +869,7 @@ export function buildSelectionForType(
     /** Resolved size/depth/over-limit rule (defaults applied if omitted). */
     limit?: ResolvedConnectSelectionLimit;
     /**
-     * Types already being expanded on this path — breaks OpenAPI cycles
+     * Types already being expanded on this path - breaks OpenAPI cycles
      * (`Volume` → `VolumeSource` → … → `Volume`) when softDepth is inactive.
      */
     visited?: ReadonlySet<string>;
@@ -926,7 +926,7 @@ export function buildSelectionForType(
       return buildSelectionForType(members[0], { ...nestedOpts, depth: depth + 1 });
     }
     // Status-code unions: emit `__typename: $status->match(...)` + flattened member fields.
-    // Only walk members when status mappings exist — otherwise getFields() during emit can
+    // Only walk members when status mappings exist - otherwise getFields() during emit can
     // finalize graphql-compose object types before pending link fields are attached.
     const statusExtras = buildStatusUnionConnectExtras(named);
     const discTypename = buildDiscriminatorTypenameSelection(named);
@@ -1045,11 +1045,11 @@ export function buildSelectionForType(
    * True when an object/interface/union field was omitted because nested
    * expansion returned empty (visit budget / cycle / unresolved). Under
    * default `passthrough` that yields a mid-type truncated map (e.g. FHIR
-   * `Patient.meta.extension…` burns the budget before `name`) — prefer a
+   * `Patient.meta.extension…` burns the budget before `name`) - prefer a
    * `leavesOnly` rebuild over shipping the partial selection.
    */
   let omittedObjectFields = false;
-  // Non-interface (or no disc) object types may still carry @discriminator — emit spread first.
+  // Non-interface (or no disc) object types may still carry @discriminator - emit spread first.
   if (!discInfo) {
     const discTypename = buildDiscriminatorTypenameSelection(named);
     if (discTypename) {
@@ -1193,13 +1193,13 @@ export function buildSelectionForType(
       if (nested) {
         lines.push(wrapFieldSubselection(aliasPrefix, nested));
       } else if (isObjectLike) {
-        // Empty object/interface/union expansion (cycle / budget / unresolved): omit —
+        // Empty object/interface/union expansion (cycle / budget / unresolved): omit -
         // a bare object name is invalid Connectors selection on Router.
         if (!leavesOnly) {
           omittedObjectFields = true;
         }
       } else {
-        // List of scalars/enums — emit the field with no subselection.
+        // List of scalars/enums - emit the field with no subselection.
         lines.push(aliasPrefix);
       }
     } else {
@@ -1251,7 +1251,7 @@ export function buildSelectionForType(
           return leafSel;
         }
       }
-      // Caller attaches `$` — Hive raw JSON; not Router-safe for object types.
+      // Caller attaches `$` - Hive raw JSON; not Router-safe for object types.
       warnConnectSelectionPassthrough(limit, named.name);
       return '';
     }
@@ -1275,7 +1275,7 @@ export function buildSelectionForType(
 /**
  * Retry selection expand with `overLimit: 'leavesOnly'` after passthrough
  * truncated mid-type. Uses softDepth 0 so immediate child objects keep their
- * scalar leaves (FHIR `name { family given }`) while deeper nests are skipped —
+ * scalar leaves (FHIR `name { family given }`) while deeper nests are skipped -
  * softDepth ≥ 1 still expands `meta.extension…` enough to blow maxLength and
  * fall through to root-scalar-only (dropping `name` / `subject`).
  */
@@ -1353,7 +1353,7 @@ export function buildConnectHttpArgs(opts: {
   httpMethod: string;
   path: string;
   headers?: Record<string, string> | [string, string][];
-  /** Loader-wide / source-level headers — used to keep conflicting JSON defaults. */
+  /** Loader-wide / source-level headers - used to keep conflicting JSON defaults. */
   sourceHeaders?: Record<string, string> | [string, string][];
   queryParamArgMap?: Record<string, string>;
   queryStringOptionsByParam?: Record<
@@ -1575,7 +1575,7 @@ export function bakeInputBodySelection(
   const inputArg = argList.find(a => a.name === 'input');
   if (!inputArg) return body;
 
-  // `{ base… ...$args.input }` from inferBodySelection — expand remapped input fields.
+  // `{ base… ...$args.input }` from inferBodySelection - expand remapped input fields.
   if (trimmed.includes('...$args.input')) {
     const entries = buildRemappedInputObjectEntries(inputArg.type);
     if (!entries?.length) return body;
@@ -1585,7 +1585,7 @@ export function bakeInputBodySelection(
   if (trimmed !== '$args.input' && !trimmed.startsWith('$args.input {')) {
     return body;
   }
-  // Already has an explicit subselection — leave it.
+  // Already has an explicit subselection - leave it.
   if (trimmed.includes('{')) return body;
   const sub = buildInputBodySelection(inputArg.type);
   if (!sub) return body;

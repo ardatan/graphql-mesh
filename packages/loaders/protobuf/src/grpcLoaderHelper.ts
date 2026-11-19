@@ -139,7 +139,7 @@ export class GrpcLoaderHelper extends DisposableStack {
     const schema = this.schemaComposer.buildSchema();
     const schemaExtensions: Record<string, any> = (schema.extensions = schema.extensions || {});
     const directiveExtensions = (schemaExtensions.directives = schemaExtensions.directives || {});
-    // Default requestTimeout lives in the transport — only stamp an override when configured.
+    // Default requestTimeout lives in the transport - only stamp an override when configured.
     const transportOptions: Record<string, unknown> = {};
     if (this.config.requestTimeout != null) {
       transportOptions.requestTimeout = this.config.requestTimeout;

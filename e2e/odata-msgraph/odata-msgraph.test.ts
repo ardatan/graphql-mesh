@@ -28,7 +28,7 @@ function stabilizeExecuteResult(result: unknown, services: Service[]): unknown {
   for (const subgraph of services) {
     const port = String(subgraph.port);
     const esc = port.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // `http://host:PORT/...` or `http://host:PORT` — not bare digits elsewhere.
+    // `http://host:PORT/...` or `http://host:PORT` - not bare digits elsewhere.
     text = text.replace(
       new RegExp(`(https?:\\/\\/[^\\s"'\\\\]*?:)${esc}(?=[/?"'#\\\\]|$)`, 'g'),
       `$1<${subgraph.name}_port>`,

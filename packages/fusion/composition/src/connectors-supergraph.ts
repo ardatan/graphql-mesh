@@ -30,7 +30,7 @@ const CONNECT_INPUT_TYPES = new Set([
 ]);
 
 /**
- * Owned by `@link(url: connect/v0.4)` — must not remain as `scalar X @join__type`.
+ * Owned by `@link(url: connect/v0.4)` - must not remain as `scalar X @join__type`.
  * Prefix/rename transforms ignore these names (like String/ID), so only the exact
  * link scalars appear; application scalars such as `AuditJSONSelection` stay.
  */
@@ -127,14 +127,14 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
       return node;
     },
     ScalarTypeDefinition(node) {
-      // Drop linked connect scalars — Router resolves them via `@link(connect/v0.4)`.
+      // Drop linked connect scalars - Router resolves them via `@link(connect/v0.4)`.
       if (isConnectLinkedScalarName(node.name.value)) {
         return null;
       }
       return node;
     },
     DirectiveDefinition(node) {
-      // Drop Apollo connect/source + Guild-only composeDirective defs —
+      // Drop Apollo connect/source + Guild-only composeDirective defs -
       // execution uses join__directive metadata.
       if (
         node.name.value === 'connect' ||
@@ -185,7 +185,7 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
         }
       }
     } else if (identicalAtLocation) {
-      // Same location, identical configs — genuinely shared; fan out.
+      // Same location, identical configs - genuinely shared; fan out.
       // Also keep Connector graphs that reference this uniquely-named source
       // even when their graph URL differs from the source baseURL.
       for (const g of fromLocation) {
@@ -197,7 +197,7 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
         }
       }
     } else {
-      // No unique location match, or multi-graph URL with competing configs —
+      // No unique location match, or multi-graph URL with competing configs -
       // resolve by unique name / Connector references (do not let a shared
       // baseURL block ownership).
       const byName = sourceName ? nameToGraphEnum.get(sourceName) : undefined;
@@ -359,7 +359,7 @@ function getJoinTypeGraph(
  * Preferred graph for type-level `@connect` when source name does not match a
  * subgraph name: sole distinct `@join__type` graph (multiple keys on one graph
  * still count as one), else the single graph that declares a `@key` on the type
- * (entity owner — not a value-type sibling join), else the single non-extension /
+ * (entity owner - not a value-type sibling join), else the single non-extension /
  * resolvable owner join when a stub join is also present.
  */
 function getPreferredTypeJoinGraph(
@@ -390,7 +390,7 @@ function getPreferredTypeJoinGraph(
   if (byGraph.size === 1) {
     return byGraph.keys().next().value;
   }
-  // Type-level `@connect` is an entity resolver — prefer the sole keyed graph when
+  // Type-level `@connect` is an entity resolver - prefer the sole keyed graph when
   // another subgraph only contributes the type as a value-type sibling (no key).
   const keyed: string[] = [];
   for (const [graph, meta] of byGraph) {
@@ -417,12 +417,12 @@ function rewriteSchemaDirectivesForConnectors(
   const kept: ConstDirectiveNode[] = [];
   for (const dir of directives || []) {
     if (dir.name.value === 'source') {
-      // Apollo SCHEMA `@source` — rewrite later to `@join__directive`
+      // Apollo SCHEMA `@source` - rewrite later to `@join__directive`
       pendingSources.push(constDirectiveArgsToJs(dir));
       continue;
     }
     if (dir.name.value === 'composeDirective') {
-      // Guild-only / Mesh loader stamps — not on the optimized supergraph.
+      // Guild-only / Mesh loader stamps - not on the optimized supergraph.
       continue;
     }
     if (dir.name.value === 'link') {
@@ -432,7 +432,7 @@ function rewriteSchemaDirectivesForConnectors(
         continue;
       }
       if (url?.startsWith('https://specs.apollo.dev/connect')) {
-        // Connectors EXECUTION link — no import list (join__directive carries defs)
+        // Connectors EXECUTION link - no import list (join__directive carries defs)
         kept.push({
           kind: Kind.DIRECTIVE,
           name: { kind: Kind.NAME, value: 'link' },
@@ -479,7 +479,7 @@ function removeImportFromLink(
     return directive;
   }
   if (values.length === 0) {
-    // Federation link with only @composeDirective — drop entirely from final SG.
+    // Federation link with only @composeDirective - drop entirely from final SG.
     return null;
   }
   return {
@@ -635,7 +635,7 @@ function rewriteConnectDirectivesOnNode<
     const args = constDirectiveArgsToJs(connectDir);
     const sourceName = typeof args.source === 'string' ? args.source : undefined;
     // Field-level: prefer explicit `@join__field(graph:)` before source→subgraph
-    // name match — a subgraph named `api` must not steal inventory's
+    // name match - a subgraph named `api` must not steal inventory's
     // `@connect(source: "api")` when the field is owned by INVENTORY.
     // Type-level: prefer sole/owner `@join__type` before source→subgraph name
     // match so Product/Airline stay on the Connectors owner (not a stub, and not

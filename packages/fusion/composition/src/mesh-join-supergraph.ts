@@ -58,12 +58,12 @@ const JOIN_SAFE_MESH_LOCATIONS = new Set<MeshJoinLocation>([
  * Subgraph-owned Mesh dirs → `@join__directive` on the final supergraph.
  *
  * NOT join-ified (not subgraph-owned / not final-SG metadata):
- * - `@resolveTo` / `@additionalField` — gateway/virtual field wiring
- * - `@extraSchemaDefinitionDirective` — SCHEMA-usage composition workaround; lifted
+ * - `@resolveTo` / `@additionalField` - gateway/virtual field wiring
+ * - `@extraSchemaDefinitionDirective` - SCHEMA-usage composition workaround; lifted
  *   away before this pass (`liftExtraSchemaDefinitionDirectives`)
  *
  * Protocol field dirs (`@thrift__rpc`, `@sql`, `@protobuf__rpc`, …) join the same
- * way as `@merge` — `graphs:` owns attribution; drop redundant `subgraph:`.
+ * way as `@merge` - `graphs:` owns attribution; drop redundant `subgraph:`.
  */
 const MESH_TO_JOIN = new Set([
   'merge',
@@ -78,7 +78,7 @@ const MESH_TO_JOIN = new Set([
 /**
  * Enums / scalars that exist only to type protocol directive args. When the
  * native `directive @…` def is dropped (apps live as `@join__directive`), these
- * become unused on the lean SG — federation extract reconstitutes apps from
+ * become unused on the lean SG - federation extract reconstitutes apps from
  * join args without needing the def or companion enum.
  */
 const MESH_PROTOCOL_COMPANION_TYPES: Readonly<Record<string, readonly string[]>> = {
@@ -87,7 +87,7 @@ const MESH_PROTOCOL_COMPANION_TYPES: Readonly<Record<string, readonly string[]>>
 };
 
 /**
- * Mesh Compose post-process (GM-41) — emit the **most optimized** supergraph.
+ * Mesh Compose post-process (GM-41) - emit the **most optimized** supergraph.
  *
  * Gateway / fusion-runtime still accepts every composition path (raw schema
  * `@transport`, `@join__directive(name: "transport")`, connect infer from
@@ -221,7 +221,7 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
           return rewriteTypeNode(node, 'INTERFACE');
         },
         // INPUT_OBJECT / UNION / ENUM / SCALAR: extract does not reconstitute join
-        // on these the same way — leave Mesh dirs native (still subgraph-scoped).
+        // on these the same way - leave Mesh dirs native (still subgraph-scoped).
         FieldDefinition(node) {
           const mesh = rewriteMeshDirectivesOnNode(node, joinInfo, {
             location: 'FIELD_DEFINITION',
@@ -239,7 +239,7 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
       })
     : document;
 
-  // Always prune orphans — even when no transport/mesh rewrite ran (e.g. filter-only
+  // Always prune orphans - even when no transport/mesh rewrite ran (e.g. filter-only
   // subgraphs leave unused `@source` def + `TransportOptions` scalar).
   let finalized = pruneUnusedTransportArtifacts(nextDoc);
   finalized = pruneUnusedMeshDirectiveArtifacts(finalized);
@@ -345,7 +345,7 @@ function rewriteSchemaTransports(
     const subgraph = typeof args.subgraph === 'string' ? args.subgraph : undefined;
     const graphEnum = subgraph ? joinInfo.nameToEnum.get(subgraph) : undefined;
     if (!subgraph || !graphEnum) {
-      // Cannot attribute to a join graph — leave raw `@transport`.
+      // Cannot attribute to a join graph - leave raw `@transport`.
       next.push(dir);
       continue;
     }
@@ -369,7 +369,7 @@ function rewriteSchemaTransports(
     // headers/override location remain, keep a *native* `@transport` with the
     // def-required `kind` + `subgraph` (Apollo Router validates Mesh `@transport`
     // apps against the directive def). Do **not** join-carry Mesh `@transport`
-    // on Connect SGs — Apollo reconstitutes join transport and rejects it.
+    // on Connect SGs - Apollo reconstitutes join transport and rejects it.
     if (kind === 'connect') {
       if (headers === undefined && options === undefined && (locationMatches || location == null)) {
         changed = true;
@@ -396,7 +396,7 @@ function rewriteSchemaTransports(
     const joinArgs: Record<string, unknown> = { kind };
     // subgraph matches join__graph(name:) → owned by graphs:, drop.
     // For http, matching location is omitted (Gateway seeds from join__graph).
-    // Protocol kinds (thrift / sql / …) keep location — transports call `new URL(location)`
+    // Protocol kinds (thrift / sql / …) keep location - transports call `new URL(location)`
     // and must not depend solely on join__graph seeding.
     if (typeof location === 'string' && (kind !== 'http' || !locationMatches)) {
       joinArgs.location = location;
@@ -447,7 +447,7 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
     }
 
     const args = constDirectiveArgsToJs(dir);
-    // Explicit `subgraph:` (including empty string) must resolve via join map —
+    // Explicit `subgraph:` (including empty string) must resolve via join map -
     // never fall back to a sibling field/type graph (that would re-attribute).
     // Only omit/missing `subgraph` may use the field/type graph fallback.
     const hasExplicitSubgraph = typeof args.subgraph === 'string';
@@ -457,7 +457,7 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
       : fallbackGraph;
 
     if (!ownerGraphEnum) {
-      // Cannot attribute — leave native so Gateway / Router can still see it.
+      // Cannot attribute - leave native so Gateway / Router can still see it.
       next.push(dir);
       continue;
     }
@@ -466,7 +466,7 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
       // Stitching `@source` / `@meshSource`: federation extract used to copy
       // *native* apps onto every subgraph, then Gateway filtered by `subgraph:`.
       // Emit join for each join__type/join__field graph on the node (or all
-      // graphs when none — e.g. shared root without `@join__field`), keep
+      // graphs when none - e.g. shared root without `@join__field`), keep
       // `subgraph` in args, keep name `source` or `meshSource` (Compose alias
       // when Connectors `@source` is also in the composition).
       const siblingGraphs = allJoinGraphsOnNode(node.directives);
@@ -479,7 +479,7 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
       continue;
     }
 
-    // `@merge` / `@hoist` / …: drop redundant subgraph — graphs: is enough.
+    // `@merge` / `@hoist` / …: drop redundant subgraph - graphs: is enough.
     const joinArgs = { ...args };
     delete joinArgs.subgraph;
     next.push(buildJoinDirective(ownerGraphEnum, dir.name.value, joinArgs));
@@ -737,7 +737,7 @@ function collectJoinCarriedMeshNames(document: DocumentNode): Set<string> {
 /**
  * Drop unused Mesh directive defs when no native apps remain. Drop `@link`
  * imports only when neither native apps nor `@join__directive(name:)` carry
- * the directive — join-carried Mesh dirs still need the Mesh `@link` import.
+ * the directive - join-carried Mesh dirs still need the Mesh `@link` import.
  */
 function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode {
   const usedNative = new Set<string>();
@@ -748,7 +748,7 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
   });
   const joinCarried = collectJoinCarriedMeshNames(document);
 
-  // Drop unused native defs — join-carried protocol dirs keep `@link` imports
+  // Drop unused native defs - join-carried protocol dirs keep `@link` imports
   // only; federation extract reconstitutes apps from `@join__directive`.
   const dropDefs = new Set(
     MESH_ORPHAN_DIRECTIVE_NAMES.filter(name => {
@@ -770,7 +770,7 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
 
   // Imports stay when join apps still name the directive. Aliased Mesh
   // stitching source (`{name: "@source", as: "@meshSource"}`) is keyed by
-  // join name `meshSource` — do not strip `@source` while that join / native lives.
+  // join name `meshSource` - do not strip `@source` while that join / native lives.
   const importNamesToStrip = new Set(
     MESH_ORPHAN_DIRECTIVE_NAMES.filter(name => {
       if (usedNative.has(name) || joinCarried.has(name)) {
@@ -850,7 +850,7 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
 
 /**
  * Drop Mesh directive defs / composeDirective for dirs now carried only as
- * `@join__directive`. Keep Mesh `@link` imports — join apps still name them.
+ * `@join__directive`. Keep Mesh `@link` imports - join apps still name them.
  */
 function pruneRewrittenMeshArtifacts(
   document: DocumentNode,
@@ -861,7 +861,7 @@ function pruneRewrittenMeshArtifacts(
   }
 
   // Keep defs for any Mesh dir that still has native apps
-  // (e.g. `@source` on ARGUMENT_DEFINITION — extract does not reconstitute those).
+  // (e.g. `@source` on ARGUMENT_DEFINITION - extract does not reconstitute those).
   const stillNative = new Set<string>();
   visit(document, {
     Directive(node) {
@@ -1005,7 +1005,7 @@ function ensureJoinDirectiveSupport(
     d => d.kind === Kind.SCALAR_TYPE_DEFINITION && d.name.value === 'join__DirectiveArguments',
   );
   if (!hasDirective || !hasArgsScalar) {
-    // Add only missing pieces — avoid duplicating join__DirectiveArguments when
+    // Add only missing pieces - avoid duplicating join__DirectiveArguments when
     // the scalar already exists but the directive def does not (or vice versa).
     const extras = parse(JOIN_DIRECTIVE_DEFS, { noLocation: true });
     const toAdd = extras.definitions.filter(def => {

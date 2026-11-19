@@ -121,7 +121,7 @@ function isNeo4jModelType(
 // 7.6.6+ keeps SCHEMA_DEFINITION directives when augmenting; leftover Mesh
 // `@transport` / Apollo `@link` usages then fail validation (e.g. unknown
 // `url`/`import` on `@link` after helper scalars were filtered out).
-// Also strip `@composeDirective` — Mesh `importMeshDirectives` stamps it with
+// Also strip `@composeDirective` - Mesh `importMeshDirectives` stamps it with
 // Fed `@link`, but Neo4jGraphQL augment does not know that federation directive.
 const STRIP_SCHEMA_DIRECTIVES = new Set([
   'transport',
@@ -431,7 +431,7 @@ export function extractNeo4jModelTypeDefs(
 
   /**
    * Generated connection / aggregate object fields Neo4j re-augments from relationships.
-   * Suffix / bare `edges` alone is not enough — authored `totalAggregate: Totals` and
+   * Suffix / bare `edges` alone is not enough - authored `totalAggregate: Totals` and
    * `hitsConnection: SearchPage { edges }` must stay; drop relationship-originated siblings
    * or Neo4j Connection/Aggregate shapes (edge node+cursor, or pageInfo/totalCount).
    */
@@ -669,7 +669,7 @@ export function extractNeo4jModelTypeDefs(
 
   function retainedModelHasSpatialField(spatialName: string): boolean {
     // Neo4j regenerates Point/CartesianPoint from attributes on retained `@node` models and on
-    // `@relationshipProperties` types that a surviving relationship still uses — not from root
+    // `@relationshipProperties` types that a surviving relationship still uses - not from root
     // `@cypher` fields or orphaned relationship-properties definitions.
     for (const [typeName, fields] of retainedFieldsByType) {
       if (ROOT_OPERATION_NAMES.has(typeName)) {
@@ -765,7 +765,7 @@ export function extractNeo4jModelTypeDefs(
     }
   }
 
-  // Unions collected while walking pruned paths must not stay in `referenced` — otherwise
+  // Unions collected while walking pruned paths must not stay in `referenced` - otherwise
   // emission throws on memberless foreign unions even when surviving fields (e.g. Stats.count) are fine.
   for (const unionName of unionNames) {
     if (!referenced.has(unionName)) {
@@ -945,7 +945,7 @@ export function extractNeo4jModelTypeDefs(
                   `Neo4j model extract: Cypher return type "${def.name.value}" has no fields owned by subgraph "${subgraphName ?? ''}" (referenced from ${refs})`,
                 );
               }
-              // Nested type reached only via dropped paths — omit rather than abort the transport.
+              // Nested type reached only via dropped paths - omit rather than abort the transport.
               return [];
             }
             if (authoredFields.length !== siblings.length) {
@@ -1126,7 +1126,7 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
     );
   }
   // Merge field-by-field: native > join > transportEntry. Lean join may omit
-  // `location` when it matches the graph URL — fill from transportEntry.
+  // `location` when it matches the graph URL - fill from transportEntry.
   const fromNative = asArray(schemaDirectives?.transport)[0] as
     { location?: string; subgraph?: string; options?: Record<string, unknown> } | undefined;
   const fromJoin = readJoinTransportArgs(schemaDirectives);

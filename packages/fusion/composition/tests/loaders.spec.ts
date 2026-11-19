@@ -35,7 +35,7 @@ describe('Loaders', () => {
     ]);
     expect(errors).toBeUndefined();
     const sdl = supergraphSdl!;
-    // Optimized: no schema `@transport` / join transport — Gateway infers connect.
+    // Optimized: no schema `@transport` / join transport - Gateway infers connect.
     expect(sdl).not.toMatch(/@transport\s*\(/);
     expect(sdl).not.toMatch(/name: "transport"/);
     expect(sdl).toMatch(/@join__directive\([^)]*name: "connect"/);

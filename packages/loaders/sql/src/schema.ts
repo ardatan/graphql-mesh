@@ -123,7 +123,7 @@ export interface LoadSqlSubgraphOpts extends Pick<
    */
   adapter?: SqlAdapter;
   /**
-   * Connection URI / path — becomes `@transport(location)`.
+   * Connection URI / path - becomes `@transport(location)`.
    * When omitted, resolved from env URLs (`DATABASE_URL`, `POSTGRES_URL` / `PGURL`,
    * `MYSQL_URL`, `SQLITE_URL`, …) or `PG*` / `MYSQL_*` fields.
    * Sqlite: `file:…`, `sqlite:…`, `:memory:`, or a `*.db` path.
@@ -289,7 +289,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
       const isSolePkCol = Boolean(solePk && col.name === solePk.name);
       const fieldName = colFieldName(naming, col, solePk, table);
       const gqlType = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
-      // Output nullability follows the database column — do not force sole PK non-null.
+      // Output nullability follows the database column - do not force sole PK non-null.
       otc.setField(fieldName, {
         type: col.notNull ? new GraphQLNonNull(gqlType) : gqlType,
       });
@@ -561,7 +561,7 @@ export async function loadGraphQLSchemaFromSql(subgraphName: string, opts: LoadS
     const { createFields, updateFields } = mutationWritableColumns(naming, table, solePk);
     const hasCreateInput = Object.keys(createFields).length > 0;
     const hasUpdateInput = Object.keys(updateFields).length > 0;
-    // Always emit create — empty writable set uses DEFAULT VALUES / `() VALUES ()`.
+    // Always emit create - empty writable set uses DEFAULT VALUES / `() VALUES ()`.
     const createArgs: Record<string, string> = {};
     if (hasCreateInput) {
       createArgs.input = `${naming.createInput(typeName)}!`;
@@ -723,7 +723,7 @@ export function resolveOptsEndpoint(opts: LoadSqlSubgraphOpts): LoadSqlSubgraphO
   }
   // Pool-only without a URI: keep endpoint unset. Callers that inject an execution
   // client do not need `@transport(location)`. Do not stamp a placeholder
-  // `postgres://` — the standard transport would dial wrong.
+  // `postgres://` - the standard transport would dial wrong.
   if (opts.pgPool) {
     return opts;
   }
@@ -795,7 +795,7 @@ function resolveLocation(opts: LoadSqlSubgraphOpts): string | undefined {
       return `file:${abs}`;
     }
   } catch {
-    // non-sqlite / unknown — return as given
+    // non-sqlite / unknown - return as given
   }
   return raw;
 }
@@ -847,7 +847,7 @@ function applyTableFieldsFilter(
 
 /**
  * Junction with exactly two single-column FKs to two different tables.
- * Extra payload columns are fine — junction type stays; we still emit shortcuts.
+ * Extra payload columns are fine - junction type stays; we still emit shortcuts.
  */
 function findManyToManyEdges(tables: SqlTableMeta[]): Array<{
   junction: SqlTableMeta;
@@ -1145,7 +1145,7 @@ function mutationWritableColumns(
     const isSolePkCol = Boolean(solePk && col.name === solePk.name);
     const fieldName = colFieldName(naming, col, solePk, table);
     const gqlType = mapSqlTypeToGraphQL(col.dataType, { asId: isSolePkCol });
-    // Generated columns are DB-assigned — omit from create/update inputs.
+    // Generated columns are DB-assigned - omit from create/update inputs.
     if (col.generated) continue;
     // Create: skip auto-increment sole PK (DB assigns it). Non-generated PK stays writable.
     if (!(isSolePkCol && col.autoIncrement)) {
@@ -1172,7 +1172,7 @@ function createMutationInputs(
   solePk?: SqlColumnMeta,
 ) {
   const { createFields, updateFields } = mutationWritableColumns(naming, table, solePk);
-  // Skip empty input types — GraphQL rejects schemas that reference them.
+  // Skip empty input types - GraphQL rejects schemas that reference them.
   if (Object.keys(createFields).length) {
     schemaComposer.createInputTC({
       name: naming.createInput(typeName),
@@ -1232,7 +1232,7 @@ function markSqlDirectiveStringsAsBlocks(schema: GraphQLSchema): void {
   }
 }
 
-/** `$args.where` / `$this.id` — single path, not a multi-entry mapping block. */
+/** `$args.where` / `$this.id` - single path, not a multi-entry mapping block. */
 function isBareSqlBinder(value: string): boolean {
   const trimmed = value.trim();
   // Reject mapping bodies / spreads without a backtracking regex (CodeQL).

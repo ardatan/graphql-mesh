@@ -49,7 +49,7 @@ interface SqlDirectiveWhere {
 }
 
 /**
- * `kind: ROW` — find-one / belongs-to / type-level entity keys.
+ * `kind: ROW` - find-one / belongs-to / type-level entity keys.
  *
  * @example
  * ```graphql
@@ -67,7 +67,7 @@ export interface SqlDirectiveRowArgs extends SqlDirectiveArgsBase, SqlDirectiveW
 }
 
 /**
- * `kind: ROWS` — find-many / has-many (optional M2M `through`).
+ * `kind: ROWS` - find-many / has-many (optional M2M `through`).
  *
  * @example
  * ```graphql
@@ -118,7 +118,7 @@ export interface SqlDirectiveRowsArgs extends SqlDirectiveArgsBase, SqlDirective
 }
 
 /**
- * `kind: CONNECTION` — Relay connection with keyset cursors (`first` / `after`).
+ * `kind: CONNECTION` - Relay connection with keyset cursors (`first` / `after`).
  *
  * @example
  * ```graphql
@@ -161,7 +161,7 @@ export interface SqlDirectiveConnectionArgs extends SqlDirectiveArgsBase, SqlDir
 }
 
 /**
- * `kind: COUNT` — aggregate count of matching rows.
+ * `kind: COUNT` - aggregate count of matching rows.
  *
  * @example
  * ```graphql
@@ -174,7 +174,7 @@ export interface SqlDirectiveCountArgs extends SqlDirectiveArgsBase, SqlDirectiv
 }
 
 /**
- * `kind: INSERT` — create; column values via `set`.
+ * `kind: INSERT` - create; column values via `set`.
  *
  * @example
  * ```graphql
@@ -198,7 +198,7 @@ export interface SqlDirectiveInsertArgs extends SqlDirectiveArgsBase {
 }
 
 /**
- * `kind: UPDATE` — update matching rows; requires `set` + usually `where`.
+ * `kind: UPDATE` - update matching rows; requires `set` + usually `where`.
  *
  * @example
  * ```graphql
@@ -223,7 +223,7 @@ export interface SqlDirectiveUpdateArgs extends SqlDirectiveArgsBase, SqlDirecti
 }
 
 /**
- * `kind: DELETE` — hard or soft delete of matching rows.
+ * `kind: DELETE` - hard or soft delete of matching rows.
  *
  * @example
  * ```graphql
@@ -279,7 +279,7 @@ export type SqlDirectiveArgs =
  * Single kind enum for `@sql` (reads, writes, and relation fields via `$this`).
  * See {@link SqlDirectiveArgs} for the kind-discriminated TypeScript shape.
  *
- * No GraphQL `description` props — those print into SDL; document via TSDoc only.
+ * No GraphQL `description` props - those print into SDL; document via TSDoc only.
  */
 export const SqlKindEnum = new GraphQLEnumType({
   name: 'SqlKind',
@@ -307,7 +307,7 @@ export const SqlQueryKindEnum = SqlKindEnum;
 export const SqlMutationKindEnum = SqlKindEnum;
 
 /**
- * Mesh SQL mapping directive — typed args: {@link SqlDirectiveArgs}.
+ * Mesh SQL mapping directive - typed args: {@link SqlDirectiveArgs}.
  *
  * No GraphQL `description` props on the directive or its args (they clutter printed SDL);
  * document via this TSDoc, inline arg comments, and {@link SqlDirectiveArgs}.

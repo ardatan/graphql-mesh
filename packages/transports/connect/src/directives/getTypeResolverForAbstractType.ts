@@ -68,7 +68,7 @@ export function getTypeResolverForAbstractType({
     if (data.__typename) {
       const hinted = info.schema.getType(data.__typename);
       // Connectors/`$status->match` may emit an interface name when OpenAPI maps a
-      // status onto a discriminator parent — finish via that abstract type's resolver.
+      // status onto a discriminator parent - finish via that abstract type's resolver.
       if (isAbstractType(hinted)) {
         const resolved = hinted.resolveType?.(data, _ctx, info, hinted);
         if (resolved) {
@@ -93,7 +93,7 @@ export function getTypeResolverForAbstractType({
       if (match) {
         return match.name;
       }
-      // Do not fall back to schema-wide `getType(shortName)` — an unmatched
+      // Do not fall back to schema-wide `getType(shortName)` - an unmatched
       // `@odata.type` (e.g. `#Service.Error`) must not pick an unrelated type
       // outside `possibleTypes` (GraphQL rejects that result).
     }
@@ -132,7 +132,7 @@ export function getTypeResolverForAbstractType({
           return possibleType.name;
         }
       }
-      // No active throw — prefer success even when leftover `message: null` would
+      // No active throw - prefer success even when leftover `message: null` would
       // tie-break scoring toward an exception member (list/set/scalar successes
       // do not always stamp `field0`).
       const success = possibleTypes.find(t => {
@@ -146,7 +146,7 @@ export function getTypeResolverForAbstractType({
 
     // Thrift struct-success unions stamp boolean `field0` (presence of result field
     // id 0). When no GraphQL member declares `field0`, treat the stamp as
-    // authoritative — leftover `message: undefined` must not beat success via scoring.
+    // authoritative - leftover `message: undefined` must not beat success via scoring.
     const anyDeclaresField0 =
       data != null && typeof data === 'object'
         ? possibleTypes.some(t => 'field0' in t.getFields())

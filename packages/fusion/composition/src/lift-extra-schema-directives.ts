@@ -28,7 +28,7 @@ const JOIN_DIRECTIVE_DEFS = /* GraphQL */ `
 
 const CONNECT_SPEC_PREFIX = 'https://specs.apollo.dev/connect';
 
-// Shared Mesh `@transport` — kind-specific fields live under `options`.
+// Shared Mesh `@transport` - kind-specific fields live under `options`.
 const DEFAULT_TRANSPORT_DIRECTIVE_SDL = /* GraphQL */ `
   scalar TransportOptions
   directive @transport(
@@ -278,7 +278,7 @@ function collectExtrasFromDirectives(
 
     for (const [name, occurrences] of Object.entries(blob)) {
       if (name === 'meshComposeSubgraph') {
-        // Compose-only attribution — do not lift onto the supergraph schema.
+        // Compose-only attribution - do not lift onto the supergraph schema.
         continue;
       }
       const list = Array.isArray(occurrences) ? occurrences : [occurrences];
@@ -430,7 +430,7 @@ function rewriteSchemaLinks<T extends { directives?: readonly ConstDirectiveNode
         return directive;
       }
       if (isMeshSpecLinkUrl(url)) {
-        // `@transport` lives on the core Mesh link only — never on protocol links
+        // `@transport` lives on the core Mesh link only - never on protocol links
         // (thrift/sql/…). Also rewrite core links for `@extraSchemaDefinitionDirective`.
         const parsed = parseMeshSpecUrl(url);
         if (parsed?.name === 'core' || url === MESH_CORE_SPEC_URL) {

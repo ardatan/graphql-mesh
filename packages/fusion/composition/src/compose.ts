@@ -96,7 +96,7 @@ function isEmptyObject(obj: any) {
 /**
  * Federation Connectors subgraphs use `@link(url: "https://specs.apollo.dev/connect/...")`
  * and/or schema `@source(http: { baseURL })`. They must not get Mesh `@transport`
- * or stitching `@meshSource(subgraph:)` annotations — transforms rewrite connect SDL instead.
+ * or stitching `@meshSource(subgraph:)` annotations - transforms rewrite connect SDL instead.
  */
 export function isFederationConnectorsSubgraph(schema: GraphQLSchema): boolean {
   const directives = getDirectiveExtensions(schema);
@@ -202,7 +202,7 @@ export function getAnnotatedSubgraphs(
     );
     // Strip Mesh `@transport` from printed subgraph SDL when redundant.
     // Connectors: keep transport only when loaders stamped real `options` /
-    // `headers` (qs / odata / …). Bare connect is omitted — Gateway infers
+    // `headers` (qs / odata / …). Bare connect is omitted - Gateway infers
     // `kind: "connect"` from join connect/source. GM-41 rewrites kept entries
     // to `@join__directive(name: "transport", args: { options })` without `kind`.
     let removeTransportDirectiveDefinition = false;
@@ -512,7 +512,7 @@ export function getAnnotatedSubgraphs(
           );
         }
       }
-      // Semantic conventions (ById/ByIds) after transforms — including connectors / protobuf.
+      // Semantic conventions (ById/ByIds) after transforms - including connectors / protobuf.
       // `@connect` / `@protobuf__rpc` with `entity: true` skip Mesh `@merge`; `@key` still lands.
       transformedSubgraph = mapSchema(transformedSubgraph, {
         [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
@@ -709,7 +709,7 @@ export function getAnnotatedSubgraphs(
     // Workaround to keep directives on unsupported nodes since not all of them are supported by the composition library
     let extraSchemaDefinitionDirectives: Record<string, any> | undefined;
     const schemaDirectiveExtensions = getDirectiveExtensions(transformedSubgraph);
-    // Validate retained `@transport` before moving into Query extras — after the
+    // Validate retained `@transport` before moving into Query extras - after the
     // move, validateMeshDirectives only sees schema-level apps (already stripped).
     if (!removeTransportFromExtras && schemaDirectiveExtensions?.transport) {
       const transports = Array.isArray(schemaDirectiveExtensions.transport)
@@ -813,7 +813,7 @@ export function getAnnotatedSubgraphs(
         consumer: '@graphql-mesh/fusion-composition',
       });
     }
-    // GM-37: after Mesh `@link` stamps — syntax + spec contract.
+    // GM-37: after Mesh `@link` stamps - syntax + spec contract.
     validateMeshDirectives(transformedSubgraph, {
       consumer: `@graphql-mesh/fusion-composition(subgraph: ${subgraphName})`,
     });
@@ -938,7 +938,7 @@ function addAnnotationsForSemanticConventions({
         const argType = getNamedType(onlyArg.type);
         // Prefer identical GraphQL type names (`ID`/`ID`). Also accept same arg/field
         // name for Mesh JSON-Schema path args (`String`) when the key field is a
-        // stringly scalar (`string` pattern title, or `ID` via `scalarMap`) — otherwise
+        // stringly scalar (`string` pattern title, or `ID` via `scalarMap`) - otherwise
         // FHIR `Patient.id: ID` + `/Patient/{args.id}` never get `@connect(entity: true)` /
         // `@key`. Do not name-match Int/ID (etc.) mismatches: entity reps may carry
         // string IDs that an `Int!` arg cannot accept.
@@ -973,7 +973,7 @@ function addAnnotationsForSemanticConventions({
               ...(opts?.resolvable === false ? { resolvable: false } : {}),
             });
           } else if (opts?.resolvable !== false && existing.resolvable === false) {
-            // Singular entity resolver exists — upgrade a previously batch-stamped non-resolvable key.
+            // Singular entity resolver exists - upgrade a previously batch-stamped non-resolvable key.
             delete existing.resolvable;
           }
           const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
@@ -996,7 +996,7 @@ function addAnnotationsForSemanticConventions({
         /** True when this call stamped `entity: true` or a type-level entity resolver. */
         const markConnectEntityOrMerge = (): boolean => {
           // Batch list args (e.g. `id: [ID!]!` / `ids: [ID!]!`) must not get
-          // `entity: true` or `$this.<scalarKey>` — resolveReference supplies a scalar.
+          // `entity: true` or `$this.<scalarKey>` - resolveReference supplies a scalar.
           const batchListArg = isBatchListArgType(arg.type);
           if (directiveExtensions.connect?.length) {
             const alreadyEntity = directiveExtensions.connect.some((c: any) => c?.entity === true);
@@ -1110,7 +1110,7 @@ function addAnnotationsForSemanticConventions({
         };
         switch (queryFieldNameSnakeCase) {
           case snakeCase(type.name):
-          // `getCustomer(id:)` — single key-typed arg already matched above; no `_by_id` suffix required.
+          // `getCustomer(id:)` - single key-typed arg already matched above; no `_by_id` suffix required.
           // falls through
           case snakeCase(`get_${type.name}`):
           case snakeCase(`get_${type.name}_by_${fieldName}`):

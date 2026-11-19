@@ -86,7 +86,7 @@ export function validateMeshDirectives(
     if (typeof url !== 'string') continue;
     const parsed = parseMeshSpecUrl(url);
     if (!parsed) {
-      // Non-Mesh links (Apollo federation/connect/join) — ignore.
+      // Non-Mesh links (Apollo federation/connect/join) - ignore.
       continue;
     }
     try {

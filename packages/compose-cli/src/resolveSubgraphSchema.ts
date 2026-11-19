@@ -59,7 +59,7 @@ function looksLikeInlineSdl(value: string): boolean {
     return false;
   }
   // Filenames like `schema.graphql` / `type.graphql` start with a GraphQL keyword
-  // then `.` — `\b` matches before the dot, so reject path-like keyword prefixes.
+  // then `.` - `\b` matches before the dot, so reject path-like keyword prefixes.
   if (/^(type|schema|extend|directive|scalar|enum|input|union|interface)\.[^\s{#]/m.test(trimmed)) {
     return false;
   }
@@ -226,7 +226,7 @@ function finalizeSchema(
   let next = applyTransportOptions(name, schema, options.transport);
   // Re-check after patch (e.g. transport created with subgraph).
   const confirmed = resolveSubgraphName(next, configName);
-  // Hand SDL with `@transport` but no Mesh core `@link` importing it — stamp before validate.
+  // Hand SDL with `@transport` but no Mesh core `@link` importing it - stamp before validate.
   const dirs = getDirectiveExtensions(next);
   const hasTransport = !!dirs?.transport;
   const hasCoreTransportLink = (dirs?.link || []).some(

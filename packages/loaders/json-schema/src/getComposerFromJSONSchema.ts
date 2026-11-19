@@ -535,7 +535,7 @@ export function getComposerFromJSONSchema({
       // wrappers do not mint a second regexp scalar (Slack Bot_User_ID / #9637 CI).
       //
       // Exception: status-code response unions encode HTTP 204 (no body) as `{ type: 'null' }`.
-      // Those arms are success outcomes (Void), not nullability markers — skip the strip (#9641).
+      // Those arms are success outcomes (Void), not nullability markers - skip the strip (#9641).
       const isStatusCodeResponseUnion = subSchema.$comment?.startsWith('statusCodeOneOfIndexMap:');
       for (const unionKey of ['anyOf', 'oneOf'] as const) {
         if (
@@ -1483,7 +1483,7 @@ export function getComposerFromJSONSchema({
                 });
               }
               // Former `@flatten`: list-of-scalar coercion is installed at transport
-              // process time for `[Scalar]` fields (no directive — Connectors has no flatten).
+              // process time for `[Scalar]` fields (no directive - Connectors has no flatten).
               fieldMap[fieldName] = {
                 type: () => {
                   const typeComposers = subSchemaAndTypeComposers.properties[propertyName];

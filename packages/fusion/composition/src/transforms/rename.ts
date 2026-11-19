@@ -57,10 +57,10 @@ export const ignoreList = [
   'SourceHTTP',
   'HTTPHeaderMapping',
   'ConnectorErrors',
-  // Connect `@link` scalars — must stay unprefixed so finalize can drop exact names
+  // Connect `@link` scalars - must stay unprefixed so finalize can drop exact names
   'JSONSelection',
   'URLPathTemplate',
-  // Mesh `@resolveTo` arg scalar — shared across subgraphs; prefixing yields
+  // Mesh `@resolveTo` arg scalar - shared across subgraphs; prefixing yields
   // duplicate `SubgraphXResolveToSourceArgs` on the supergraph.
   'ResolveToSourceArgs',
   ...Object.keys(scalarsResolversMap),
@@ -289,7 +289,7 @@ export function createRenameTransform(opts: RenameTransformConfig) {
         const fieldExtensions: Record<string, any> = (field.extensions ||= {});
         fieldExtensions.directives = fieldDirectives;
       }
-      // Do not rewrite `@connect(selection:)` with the connector field's own rename —
+      // Do not rewrite `@connect(selection:)` with the connector field's own rename -
       // selection keys are response JSON paths, not GraphQL field names.
       // Do rewrite `$args.*` (arg renames) and `__typename` literals (type renames).
       const argRenameMap = new Map<string, string>();
@@ -428,7 +428,7 @@ export function createRenameTransform(opts: RenameTransformConfig) {
         [MapperKind.OBJECT_TYPE]: (type, s) => applyProtobufTypeRenames(type, fieldRenameMap, s),
       });
     }
-    // Connect / SQL skip Mesh `@source` — rewrite selection keys (and type-level `@sql`)
+    // Connect / SQL skip Mesh `@source` - rewrite selection keys (and type-level `@sql`)
     // the same way naming-convention does after field renames.
     if (fieldRenameMap.size) {
       const flatFieldRenameMap = new Map<string, string>();
@@ -551,7 +551,7 @@ export function applyProtobufFieldRenames(
   };
 }
 
-/** Object-level `@protobuf__rpc` (entity / type-level) — rewrite selection + `$this` against the owning type. */
+/** Object-level `@protobuf__rpc` (entity / type-level) - rewrite selection + `$this` against the owning type. */
 export function applyProtobufTypeRenames(
   type: GraphQLObjectType,
   fieldRenameMap: Map<string, Map<string, string>>,

@@ -31,7 +31,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e16d9f69d49a03d52e497d5e70e46d4e
 +    return false;
 +  }
 +  // After Mesh Compose rewrites to join__directive (no subgraph arg), federation
-+  // extract reconstitutes native apps onto a subgraph-scoped schema — missing
++  // extract reconstitutes native apps onto a subgraph-scoped schema - missing
 +  // subgraph means "this subgraph".
 +  if (directive.subgraph == null || directive.subgraph === "") {
 +    return true;
@@ -222,7 +222,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e16d9f69d49a03d52e497d5e70e46d4e
 +    }
 +    // Apollo Connectors SCHEMA `@source` carries `http.baseURL`. Mesh stitching
 +    // `@source` / `@meshSource` (rename) is also join-ified as name "source" /
-+    // "meshSource" on types/fields — those must NOT flip transport to connect.
++    // "meshSource" on types/fields - those must NOT flip transport to connect.
 +    if (dir.name === "source") {
 +      const baseURL = dir.args?.http?.baseURL;
 +      if (typeof baseURL !== "string") {
@@ -256,9 +256,9 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e16d9f69d49a03d52e497d5e70e46d4e
 +      }
 +    }
 +  }
-+  // Federation Connectors: `@connect` / `@source` imply `kind: "connect"` — no Mesh `@transport` needed.
++  // Federation Connectors: `@connect` / `@source` imply `kind: "connect"` - no Mesh `@transport` needed.
 +  // Selection-only / virtual connectors may have empty `join__graph(url:)` (no SCHEMA
-+  // `@source`), so they never get a join-url seed entry — still create connect transport.
++  // `@source`), so they never get a join-url seed entry - still create connect transport.
 +  for (const subgraphName of graphsWithConnect) {
 +    const entry = transportEntryMap[subgraphName] || { subgraph: subgraphName };
 +    if (!entry.kind || entry.kind === "http") {
@@ -303,7 +303,7 @@ index ce3975285f3be72c6a47897f15ccdd35117eed99..e3c0d5b2b48d8dffb14b67619eede800
 +    return false;
 +  }
 +  // After Mesh Compose rewrites to join__directive (no subgraph arg), federation
-+  // extract reconstitutes native apps onto a subgraph-scoped schema — missing
++  // extract reconstitutes native apps onto a subgraph-scoped schema - missing
 +  // subgraph means "this subgraph".
 +  if (directive.subgraph == null || directive.subgraph === "") {
 +    return true;
@@ -494,7 +494,7 @@ index ce3975285f3be72c6a47897f15ccdd35117eed99..e3c0d5b2b48d8dffb14b67619eede800
 +    }
 +    // Apollo Connectors SCHEMA `@source` carries `http.baseURL`. Mesh stitching
 +    // `@source` / `@meshSource` (rename) is also join-ified as name "source" /
-+    // "meshSource" on types/fields — those must NOT flip transport to connect.
++    // "meshSource" on types/fields - those must NOT flip transport to connect.
 +    if (dir.name === "source") {
 +      const baseURL = dir.args?.http?.baseURL;
 +      if (typeof baseURL !== "string") {
@@ -528,9 +528,9 @@ index ce3975285f3be72c6a47897f15ccdd35117eed99..e3c0d5b2b48d8dffb14b67619eede800
 +      }
 +    }
 +  }
-+  // Federation Connectors: `@connect` / `@source` imply `kind: "connect"` — no Mesh `@transport` needed.
++  // Federation Connectors: `@connect` / `@source` imply `kind: "connect"` - no Mesh `@transport` needed.
 +  // Selection-only / virtual connectors may have empty `join__graph(url:)` (no SCHEMA
-+  // `@source`), so they never get a join-url seed entry — still create connect transport.
++  // `@source`), so they never get a join-url seed entry - still create connect transport.
 +  for (const subgraphName of graphsWithConnect) {
 +    const entry = transportEntryMap[subgraphName] || { subgraph: subgraphName };
 +    if (!entry.kind || entry.kind === "http") {

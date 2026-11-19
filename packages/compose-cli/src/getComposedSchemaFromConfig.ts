@@ -182,7 +182,7 @@ export async function getComposedResultFromConfig(
     globalThis.process?.exit(1);
   }
   let composedSchema: GraphQLSchema;
-  // Cross-subgraph HATEOAS uses Connectors entity stubs + `@connect(entity: true)` —
+  // Cross-subgraph HATEOAS uses Connectors entity stubs + `@connect(entity: true)` -
   // not Mesh `@resolveTo` / futureAdditions.
   if (additionalTypeDefs?.length /* TODO || config.transforms?.length */) {
     composedSchema ||= buildSchema(result.supergraphSdl, {

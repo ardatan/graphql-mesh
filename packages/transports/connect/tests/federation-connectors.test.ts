@@ -96,7 +96,7 @@ function buildConnectorsSchema(exampleSdl: string, fetchImpl: typeof fetch): Gra
   return processConnectDirectives(schema, { globalFetch: fetchImpl as any });
 }
 
-describe('Federation Connectors — Apollo community examples (executor)', () => {
+describe('Federation Connectors - Apollo community examples (executor)', () => {
   it('runs apollo-ecomm-simple against a mocked ecommerce API', async () => {
     const example = loadApolloExample('ecomm-simple.graphql');
     const fetchImpl = async (url: string) => {
@@ -326,9 +326,9 @@ describe('Federation Connectors error shape', () => {
       request: { method: 'GET' },
       response: { status: 500, body: { message: 'boom' } },
     });
-    // Default shape uses `response.status` only — no duplicate top-level `status`.
+    // Default shape uses `response.status` only - no duplicate top-level `status`.
     expect((err.extensions as any).status).toBeUndefined();
-    // Yoga promotes `extensions.http.status` to the gateway HTTP status — omit it.
+    // Yoga promotes `extensions.http.status` to the gateway HTTP status - omit it.
     expect((err.extensions as any).http?.status).toBeUndefined();
     expect((err.extensions as any).service).toBeUndefined();
     expect((err.extensions as any).request.url).toContain('/products');
@@ -355,7 +355,7 @@ describe('Federation Connectors error shape', () => {
       serviceName: 'ecomm',
       connector: { coordinate: 'ecomm:Query.users@connect[0]' },
       response: { status: 404 },
-      // Mapped via `@connect(errors.extensions:)` — kept, not invented by default.
+      // Mapped via `@connect(errors.extensions:)` - kept, not invented by default.
       status: 404,
     });
     expect((result.errors![0].extensions as any).http?.status).toBeUndefined();
@@ -473,7 +473,7 @@ describe('Federation Connectors queryParams / qs bake', () => {
       `),
     });
     expect(result.errors).toBeUndefined();
-    // Decoded: ids[]=a&ids[]=b — not ids[][] / ids[][0]
+    // Decoded: ids[]=a&ids[]=b - not ids[][] / ids[][0]
     expect(urls[0]).toContain('ids%5B%5D=a');
     expect(urls[0]).toContain('ids%5B%5D=b');
     expect(urls[0]).not.toContain('ids%5B%5D%5B%5D');
@@ -969,7 +969,7 @@ describe('Federation Connectors HTTP / templates', () => {
   });
 
   it('repairs bare Federation-extracted Query._entities (Hive subgraph path)', async () => {
-    // Hive extracts subgraph SDL from the supergraph — Query already has `_entities`
+    // Hive extracts subgraph SDL from the supergraph - Query already has `_entities`
     // with no resolver. processConnectDirectives must install resolveReference dispatch
     // instead of early-returning (otherwise defaultFieldResolver → null → NonNull error).
     const urls: string[] = [];

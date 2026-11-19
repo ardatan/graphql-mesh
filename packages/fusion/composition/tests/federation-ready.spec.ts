@@ -128,7 +128,7 @@ describe('importMeshDirectives / Connectors compose', () => {
     expect(getDirectiveExtensions(again)?.composeDirective).toEqual(dirs?.composeDirective);
   });
 
-  it('does not emit @composeDirective(name: "@connect") — Apollo Connectors alignment', () => {
+  it('does not emit @composeDirective(name: "@connect") - Apollo Connectors alignment', () => {
     const schema = buildSchema(
       /* GraphQL */ `
         schema

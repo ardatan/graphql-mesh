@@ -3,7 +3,7 @@ sources:
     handler:
       jsonSchema:
         # Handler already emits Connectors `@connect` for operations (v0 default).
-        # Follow-up fetch stays Mesh `@resolveTo` — no hand `@connect` in additionalTypeDefs.
+        # Follow-up fetch stays Mesh `@resolveTo` - no hand `@connect` in additionalTypeDefs.
         endpoint: '{env.FHIR_BASE}'
         operations:
           - type: Query

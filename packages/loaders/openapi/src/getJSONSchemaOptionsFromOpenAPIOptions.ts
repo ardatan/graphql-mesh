@@ -1181,7 +1181,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                             meshEntityRef[keyField] = sanitizeNameForGraphQL(from);
                           }
                           // Prefer Mesh operation path (`/suppliers/{args.id}`); fall back to
-                          // OpenAPI path (`/suppliers/{id}`) — normalize both to `$this.<key>`
+                          // OpenAPI path (`/suppliers/{id}`) - normalize both to `$this.<key>`
                           // without relying on methodObjFieldMap identity (Promise.all races).
                           const linkOperationConfig =
                             possibleMethodObjFieldMap.get(actualOperation);
@@ -1221,7 +1221,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                               source: name,
                               http: {
                                 GET: typeConnectPath,
-                                // Bare Accept: application/json is Connectors default — omit.
+                                // Bare Accept: application/json is Connectors default - omit.
                               },
                               selection: leafNames.length ? leafNames.join(' ') : 'id',
                             });

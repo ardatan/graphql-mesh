@@ -796,7 +796,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           selection: compactSelection,
           messageType,
         };
-        // Omit empty `args: ""` — no GraphQL inputs means no wire-arg mapping.
+        // Omit empty `args: ""` - no GraphQL inputs means no wire-arg mapping.
         if (compactArgs) {
           thriftRpcArgs.args = compactArgs;
         }
@@ -865,7 +865,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     headers: Object.entries(headers),
   };
 
-  // Do not `@link` `@thrift__rpc` on a custom URL — Mesh-spec `@link` +
+  // Do not `@link` `@thrift__rpc` on a custom URL - Mesh-spec `@link` +
   // `@composeDirective` are stamped below via `importMeshDirectives`.
   const schema = new GraphQLSchema({
     query: queryObjectType,

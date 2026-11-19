@@ -79,7 +79,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             continue;
           }
           // Federation Connectors: move `@connect` onto the namespaced type field.
-          // No `@resolveTo` / inaccessible root copies — namespace root is a virtual connector.
+          // No `@resolveTo` / inaccessible root copies - namespace root is a virtual connector.
           if (isConnectors && originalDirectives.connect?.length) {
             wrappedFieldMap[fieldName] = {
               ...originalFieldConfig,

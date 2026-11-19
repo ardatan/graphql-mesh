@@ -302,7 +302,7 @@ export function addExecutionDirectivesToComposer(
         linkHttp.queryParams = rewriteArgsExpr(String(linkHttp.queryParams));
       }
       // Only strip leftover `$args` when the link mapped some args (unmapped remainders).
-      // Links with no args mapping expose target args to the caller — keep selections.
+      // Links with no args mapping expose target args to the caller - keep selections.
       if (
         linkObj.args &&
         typeof linkHttp.queryParams === 'string' &&
@@ -439,7 +439,7 @@ ${operationConfig.description || ''}
           skipFields.add(linkName);
         }
       }
-      // `_response` is baked into selection below — never expand as a normal JSON field.
+      // `_response` is baked into selection below - never expand as a normal JSON field.
       skipFields.add('_response');
       if ('responseByStatusCode' in operationConfig) {
         for (const statusCode in operationConfig.responseByStatusCode) {
@@ -640,7 +640,7 @@ ${operationConfig.description || ''}
     handleLinkMap(linkMap, typeTC);
   }
 
-  // Pass 2b: cross-schema HATEOAS — type-level `@connect` on entity stub targets
+  // Pass 2b: cross-schema HATEOAS - type-level `@connect` on entity stub targets
   // so Hive hydrateEntityStub works inside this subgraph (no Mesh `@resolveTo`).
   for (const tc of schemaComposer.types.values()) {
     if (!('getTypeName' in tc) || typeof (tc as any).getDirectives !== 'function') {
@@ -827,7 +827,7 @@ function finalizeConnectorsField(
 ): GraphQLFieldConfig<any, any> {
   let next = fieldConfig;
   const ext = (next.extensions || {}) as { directives?: Record<string, any[]> };
-  // After `schemaComposer.buildSchema()`, directives often live on `astNode` only —
+  // After `schemaComposer.buildSchema()`, directives often live on `astNode` only -
   // `getDirectiveExtensions` merges AST + extensions (extensions alone miss `@connect`).
   const directives = {
     ...(getDirectiveExtensions(next) || {}),

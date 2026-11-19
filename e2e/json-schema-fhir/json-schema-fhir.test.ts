@@ -3,7 +3,7 @@ import { ensureFhirSchema } from './ensure-fhir-schema';
 
 const { compose, serve } = createTenv(__dirname);
 
-/** Live HAPI R4 base — compose reads `process.env.FHIR_BASE` from mesh.config. */
+/** Live HAPI R4 base - compose reads `process.env.FHIR_BASE` from mesh.config. */
 const fhirEnv = {
   FHIR_BASE: process.env.FHIR_BASE || 'https://hapi.fhir.org/baseR4',
 };

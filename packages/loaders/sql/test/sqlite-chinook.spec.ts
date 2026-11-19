@@ -47,7 +47,7 @@ describe('@omnigraph/sql sqlite chinook', () => {
     expect(sdl).toContain('https://specs.graphql-mesh.com/sql/');
     expect(sdl).toContain('@composeDirective');
     expect(sdl).toContain('@sql');
-    // Adapter inferred from location — do not emit redundant options.adapter
+    // Adapter inferred from location - do not emit redundant options.adapter
     expect(sdl).not.toContain('adapter:');
     expect(sdl).toContain('@sql(');
     expect(sdl).toContain('kind: INSERT');

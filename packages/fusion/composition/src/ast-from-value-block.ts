@@ -3,7 +3,7 @@
  *
  * Subgraph SDL keeps multiline / indented Connectors & thrift mappings for humans.
  * Supergraph `@join__directive(args:)` uses normal quoted strings (GraphQL escapes
- * embedded newlines as `\\n`) so the SG stays denser than `"""` blocks — thrift
+ * embedded newlines as `\\n`) so the SG stays denser than `"""` blocks - thrift
  * compact-mapping still receives real newlines after parse (do not collapse
  * whitespace: thrift args are line-oriented).
  */

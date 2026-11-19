@@ -674,7 +674,7 @@ describe('Connectors non-JSON responses (Apollo parity)', () => {
       `),
     );
 
-    // Second pass — must keep the root wrapper and install Reference.resource.
+    // Second pass - must keep the root wrapper and install Reference.resource.
     schema = processDirectives(schema, {
       preserveExistingFieldResolvers: true,
       globalFetch: async (url: string) => {

@@ -50,13 +50,13 @@ export function normalizeDirectiveExtensions(subgraph: GraphQLSchema) {
  * Stamp object-level `@shareable` for value-type / multi-subgraph field merge.
  * Never leave `@shareable` on interfaces. (Entities with `@key` still need
  * type-level `@shareable` when the same fields are resolved from multiple
- * subgraphs — Guild composition errors otherwise.)
+ * subgraphs - Guild composition errors otherwise.)
  */
 function ensureObjectTypesShareable(subgraph: GraphQLSchema) {
   return mapSchema(subgraph, {
     [MapperKind.OBJECT_TYPE]: type => {
       const typeDirectives = getDirectiveExtensions(type);
-      // Prefer mutating extensions in place — recreating GraphQLObjectType breaks
+      // Prefer mutating extensions in place - recreating GraphQLObjectType breaks
       // interface identity (OpenAPI HATEOAS / federation-mixed e2es). Clone the
       // directives bag so a shared interface/object bag cannot get `@shareable`
       // stamped onto an INTERFACE (invalid in Federation).
@@ -179,7 +179,7 @@ export interface ConvertSubgraphToFederationv2Options {
    * When true, the **input** subgraph already declared a Federation `@link`
    * (before Mesh transforms). Skip object-level `@shareable` so explicit
    * field-ownership rules stay intact. Transforms such as encapsulate may
-   * import `@inaccessible` via Fed `@link` before this runs — that must not
+   * import `@inaccessible` via Fed `@link` before this runs - that must not
    * count as an explicit user link (pass the pre-transform snapshot here).
    */
   hadExplicitFederationLink?: boolean;
@@ -207,7 +207,7 @@ export function convertSubgraphToFederationv2(
   if (!hasFederationLink) {
     subgraph = addFederation2DirectivesToSubgraph(subgraph);
   }
-  // Object-level `@shareable` only for Mesh-owned Fed readiness — not when the
+  // Object-level `@shareable` only for Mesh-owned Fed readiness - not when the
   // caller already linked Federation (preserves field-ownership rules).
   if (!opts.hadExplicitFederationLink) {
     subgraph = ensureObjectTypesShareable(subgraph);

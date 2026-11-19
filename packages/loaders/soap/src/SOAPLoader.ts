@@ -193,7 +193,7 @@ function isQueryOperationName(operationName: string) {
 
 // Matches any RFC-3986 scheme (2+ chars to avoid mistaking Windows drive
 // letters like "C:" for URI schemes). The scheme isn't required to be
-// followed by "//" — `file:/tmp/x`, `urn:isbn:1234`, etc. are valid
+// followed by "//" - `file:/tmp/x`, `urn:isbn:1234`, etc. are valid
 // absolute URIs.
 const URI_SCHEME_RE = /^[a-zA-Z][a-zA-Z0-9+.-]+:/;
 
@@ -210,7 +210,7 @@ function resolveLocation(base: string | undefined, location: string): string {
   if (URI_SCHEME_RE.test(location)) return location;
   if (!base) return location;
   if (URI_SCHEME_RE.test(base)) {
-    // base is a URI — let URL handle "../" and root-relative ("/foo") paths.
+    // base is a URI - let URL handle "../" and root-relative ("/foo") paths.
     return new URL(location, base).href;
   }
   // base is a filesystem path. A filesystem-absolute location passes through;
@@ -474,7 +474,7 @@ export class SOAPLoader {
     baseUrl?: string,
   ) {
     // A bare <xsd:schema> wrapper that only contains imports (no targetNamespace,
-    // no type definitions) is a valid pattern — it lets a WSDL pull external
+    // no type definitions) is a valid pattern - it lets a WSDL pull external
     // schemas into its <wsdl:types> without redefining anything itself. Process
     // its imports here. A "chameleon" schema (no targetNamespace + own type
     // definitions) is a different, larger case the loader doesn't yet support;
@@ -811,7 +811,7 @@ export class SOAPLoader {
                 const partName = part.attributes.name;
                 const argName = sanitizeNameForGraphQL(partName);
                 // For RPC-style <wsdl:part name="X" type="ns:T"/>, the element
-                // wrapper QName is the part name in the binding's namespace —
+                // wrapper QName is the part name in the binding's namespace -
                 // the type's namespace describes the value type, not the
                 // accessor element. Always use bindingNamespace here, never
                 // part@type's namespace.
@@ -916,7 +916,7 @@ export class SOAPLoader {
     }
     // Anchor a relative filesystem baseUrl against this.cwd. Without this, a
     // caller passing a relative source (e.g. "./wsdl/foo.wsdl") would have
-    // path.resolve fall back to process.cwd() — which can differ from the
+    // path.resolve fall back to process.cwd() - which can differ from the
     // loader's working directory in monorepos / containers, sending nested
     // imports to the wrong absolute paths.
     let resolvedBase = baseUrl;
@@ -1018,7 +1018,7 @@ export class SOAPLoader {
     typeName: string;
     typeNamespace: string;
   }) {
-    // Check element aliases first — consistent with the eager path that overwrites the type map
+    // Check element aliases first - consistent with the eager path that overwrites the type map
     const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
     if (elementRef) {
       return this.getInputTypeForTypeNameInNamespace(elementRef);
@@ -1522,7 +1522,7 @@ export class SOAPLoader {
     typeName: string;
     typeNamespace: string;
   }) {
-    // Check element aliases first — consistent with the eager path that overwrites the type map
+    // Check element aliases first - consistent with the eager path that overwrites the type map
     const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
     if (elementRef) {
       return this.getOutputTypeForTypeNameInNamespace(elementRef);
@@ -1593,7 +1593,7 @@ export class SOAPLoader {
     const schema = this.schemaComposer.buildSchema();
     const schemaExts: any = (schema.extensions ||= {});
     schemaExts.directives ||= {};
-    // SOAP connect has no transport options — omit `@transport`; Gateway infers connect.
+    // SOAP connect has no transport options - omit `@transport`; Gateway infers connect.
     // Nested XML prefixes inherit from parent element keys (inheritXmlNamespacePrefixes).
     delete schemaExts.directives.transport;
     delete schemaExts.meshConnectOptions;

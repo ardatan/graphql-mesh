@@ -1,6 +1,6 @@
-# Apollo-style join-only hand SDL: @link + @key/@connect apps only (no Query —
+# Apollo-style join-only hand SDL: @link + @key/@connect apps only (no Query -
 # other subgraphs own root fields; Mesh compose injects directive defs).
-# Virtual Reference.resource: Resource — FHIR Type/id → entity stub (no @source).
+# Virtual Reference.resource: Resource - FHIR Type/id → entity stub (no @source).
 extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])

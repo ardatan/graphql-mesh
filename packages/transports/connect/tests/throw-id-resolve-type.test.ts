@@ -121,7 +121,7 @@ describe('abstract resolveType __throw_* discriminators', () => {
   });
 
   it('does not skip value members for ordinary REST field0:false payloads', () => {
-    // Without `__throw_*` stamps, boolean field0 is not a Thrift union signal —
+    // Without `__throw_*` stamps, boolean field0 is not a Thrift union signal -
     // `{ field0: false, value: "ok" }` must still resolve to Value.
     const sdl = `
       union Result = Value | Other

@@ -4,7 +4,7 @@ import { astFromType, getDirectivesInExtensions } from '@graphql-tools/utils';
 
 /**
  * Prefer GraphQL `"""` only for real multiline values that round-trip losslessly.
- * Single-line strings (even with embedded `"`) stay as normal `"…"` — no fake
+ * Single-line strings (even with embedded `"`) stay as normal `"…"` - no fake
  * multiline blocks. Values with `\r` line endings or leading/trailing blank lines
  * are normalized by GraphQL block-string print/parse, so keep escaped `"…"`.
  */
@@ -58,7 +58,7 @@ function attachBlockStringDirectiveAst(field: GraphQLField<any, any>): void {
       ];
     }),
   }));
-  // Preserve existing type/args AST — a placeholder `String` type broke compose
+  // Preserve existing type/args AST - a placeholder `String` type broke compose
   // (`getDirectiveExtensions` WeakMap on bad nodes from graphql-compose fields).
   if (field.astNode) {
     field.astNode = {
@@ -93,7 +93,7 @@ function constValueNodePreferBlockString(argName: string, value: unknown): Const
     };
   }
   if (typeof value === 'string') {
-    // `@thrift__rpc(messageType:)` is an enum — print bare CALL/ONEWAY.
+    // `@thrift__rpc(messageType:)` is an enum - print bare CALL/ONEWAY.
     if (argName === 'messageType') {
       return { kind: Kind.ENUM, value };
     }

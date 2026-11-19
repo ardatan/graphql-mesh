@@ -215,7 +215,7 @@ export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): 
             directives: [...withConnectAliases.toConfig().directives, hoistDirective],
           })
         : withConnectAliases;
-    // Mesh core `@hoist` — same `core/v0.1` bucket as `@merge` / `@transport`.
+    // Mesh core `@hoist` - same `core/v0.1` bucket as `@merge` / `@transport`.
     return importMeshDirectives(withHoistDef, ['@hoist']);
   };
 }

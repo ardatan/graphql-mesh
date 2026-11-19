@@ -2204,7 +2204,7 @@ describe('example_api', () => {
     const OFFSET = 0;
     const requestedUrls: string[] = [];
 
-    // Mock has `/offices/:id` only — list `/offices` may 404. Capture the connect URL
+    // Mock has `/offices/:id` only - list `/offices` may 404. Capture the connect URL
     // via fetch so we assert query-param formatting without relying on error extensions.
     const schema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       endpoint,

@@ -102,7 +102,7 @@ export const PubSubOperationDirective = new GraphQLDirective({
 export const TypeScriptDirective = new GraphQLDirective({
   name: 'typescript',
   locations: [DirectiveLocation.SCALAR, DirectiveLocation.ENUM],
-  // Pair of `@regexp` — same scalar/const-enum name across subgraphs.
+  // Pair of `@regexp` - same scalar/const-enum name across subgraphs.
   isRepeatable: true,
   args: {
     subgraph: {

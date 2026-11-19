@@ -33,7 +33,7 @@ describe('Federation Connectors annotations', () => {
     expect(sdl).toContain('@connect');
     expect(sdl).toContain('https://specs.apollo.dev/connect/v0.4');
     expect(sdl).not.toContain('@httpOperation');
-    // Bare connect: no Mesh `@transport` — Gateway infers kind from @connect/@source.
+    // Bare connect: no Mesh `@transport` - Gateway infers kind from @connect/@source.
     expect(sdl).not.toContain('kind: "connect"');
     expect(sdl).not.toContain('@transport');
 
@@ -303,7 +303,7 @@ describe('Federation Connectors annotations', () => {
 
     const sdl = printSchemaWithDirectives(schema);
     expect(sdl).toContain('_response:');
-    // Block string — embedded `"` prints as-is (not `\"`).
+    // Block string - embedded `"` prints as-is (not `\"`).
     expect(sdl).toMatch(/method: \$\("GET"\)/);
     expect(sdl).toContain('status: $status');
     expect(sdl).toContain('body: $');

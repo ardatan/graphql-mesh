@@ -27,7 +27,7 @@ const fhirScalarMap = {
  *
  * - Endpoint from `process.env.FHIR_BASE` at compose time (e2e sets it)
  * - Opt-in `scalarMap` (force-mapped)
- * - Full emit (no include / hard filter / compose snap) — hive + Router execution
+ * - Full emit (no include / hard filter / compose snap) - hive + Router execution
  * - Auto `@connect(selection:)` (no hand selection); loader leavesOnly-rebuilds
  *   when passthrough would truncate mid-type under visit budget / maxLength
  * - `./reference-resource.graphql` Apollo-style join-only hand SDL (no Query)

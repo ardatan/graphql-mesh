@@ -17,7 +17,7 @@ import type { ServiceDefinition } from '@theguild/federation-composition';
  * Guild federation composition does not preserve `@connect` like Apollo.
  * Mesh Compose, **immediately before** `composeServices`, ensures each
  * Connectors subgraph has:
- * - `directive @connect(...)` (+ input/scalar deps) — loaders usually already
+ * - `directive @connect(...)` (+ input/scalar deps) - loaders usually already
  *   register these for GraphQL.js-valid printed schemas; stamp if missing
  * - `@composeDirective(name: "@connect")` + federation `@link` import
  *
@@ -63,7 +63,7 @@ export function prepareConnectorsBeforeGuild(
       return false;
     });
 
-    // Guild counts federation `@link` across all schema nodes — add it at most once.
+    // Guild counts federation `@link` across all schema nodes - add it at most once.
     let documentHasFedLink = false;
     visit(doc, {
       SchemaDefinition(node) {
@@ -281,7 +281,7 @@ function ensureConnectComposeDirectives(
     return next;
   }
 
-  // GraphQL list inputs may be a singleton value (`import: "@key"`) — normalize
+  // GraphQL list inputs may be a singleton value (`import: "@key"`) - normalize
   // to a list so we append `@composeDirective` without dropping existing imports.
   const existingImportValues =
     importArg.value.kind === Kind.LIST ? [...importArg.value.values] : [importArg.value];
@@ -307,7 +307,7 @@ function ensureConnectComposeDirectives(
       ),
     };
   } else if (importArg.value.kind !== Kind.LIST) {
-    // Already has compose via singleton string — still normalize to a list.
+    // Already has compose via singleton string - still normalize to a list.
     next[fedIdx] = {
       ...fed,
       arguments: (fed.arguments || []).map(arg =>

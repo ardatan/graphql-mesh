@@ -60,7 +60,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       }
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    // No native SCHEMA `@transport` apps — only the def (Apollo reconstitution) + join.
+    // No native SCHEMA `@transport` apps - only the def (Apollo reconstitution) + join.
     expect(out).not.toMatch(/(?<!directive )@transport\s*\(/);
     expect(out).toMatch(/directive @transport/);
     expect(out).toMatch(/scalar TransportOptions/);
@@ -183,7 +183,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       }
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    // Native `@transport` with def-required kind/subgraph — not join-carried
+    // Native `@transport` with def-required kind/subgraph - not join-carried
     // (Apollo Connectors reject Mesh join transport reconstitution).
     expect(out).toMatch(
       /@transport\(kind: "connect", subgraph: "MicrosoftGraph", location: "http:\/\/127\.0\.0\.1:4000", options: \{odata: \{batch: "json"\}\}\)/,
@@ -308,7 +308,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       }
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    // Empty explicit owner must not be rewritten onto LIVE — leave native.
+    // Empty explicit owner must not be rewritten onto LIVE - leave native.
     expect(out).toMatch(/@merge\(subgraph: "", keyField: "id", keyArg: "id"\)/);
     expect(out).not.toMatch(/name:\s*"merge"/);
   });
@@ -363,7 +363,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       ) repeatable on SCHEMA
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    // Lean SG: apps are join only — `@transport` def stays for Apollo reconstitution.
+    // Lean SG: apps are join only - `@transport` def stays for Apollo reconstitution.
     expect(out).not.toMatch(/:\s*\w+ @thrift__rpc\s*\(/);
     expect(out).not.toMatch(/(?<!directive )@transport\s*\(/);
     expect(out).not.toMatch(/directive @thrift__rpc\(/);
@@ -376,7 +376,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).toMatch(
       /@join__directive\(graphs: \[CALCULATOR\], name: "thrift__rpc", args: \{function: "add"/,
     );
-    // Supergraph: no `"""` blocks — newlines stay as `\n` escapes inside `"…"`.
+    // Supergraph: no `"""` blocks - newlines stay as `\n` escapes inside `"…"`.
     // Subgraph SDL may still print thrift args as multiline `"""`.
     expect(out).toMatch(/args: "1\(i32\): \$args\.left\\n2\(i32\): \$args\.right"/);
     expect(out).not.toMatch(/args: """/);

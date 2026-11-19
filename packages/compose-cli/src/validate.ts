@@ -37,7 +37,7 @@ type ResolveToLike = {
   sourceTypeName?: string;
   sourceFieldName?: string;
   sourceArgs?: Record<string, unknown>;
-  /** PubSub / webhook subscription wiring — no subgraph sourceName required. */
+  /** PubSub / webhook subscription wiring - no subgraph sourceName required. */
   pubsubTopic?: string;
 };
 
@@ -273,7 +273,7 @@ function validateResolveToDirectives(opts: {
         );
         continue;
       }
-      // `__typename` is a virtual resolve target used by encapsulate — skip field lookup.
+      // `__typename` is a virtual resolve target used by encapsulate - skip field lookup.
       if (resolveToDirective.sourceFieldName === '__typename') {
         continue;
       }

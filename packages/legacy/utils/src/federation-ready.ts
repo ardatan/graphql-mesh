@@ -128,7 +128,7 @@ export interface ImportMeshDirectivesOptions {
  * Import Mesh-spec directives (optionally aliased, e.g. `{ name: '@source', as: '@meshSource' }`)
  * and register them with `@composeDirective` under the *local* name.
  *
- * Loaders call this with the directives they emit — there is no auto-scan helper.
+ * Loaders call this with the directives they emit - there is no auto-scan helper.
  * Shared Mesh core directives default to {@link MESH_SPEC_URL} (`core/v0.1`).
  * Protocol-only imports pass {@link ImportMeshDirectivesOptions.url}
  * (e.g. `meshSpecUrl('sql')`) so each loader can version independently.
