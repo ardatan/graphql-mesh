@@ -1491,6 +1491,87 @@ describe('Federation Connectors composition', () => {
     );
   });
 
+  it('attributes source-less type-level @connect to the sole keyed join (value-type sibling)', () => {
+    // FHIR-like: Observation contributes Reference as a value type (no key), while a
+    // mini Connectors subgraph owns Reference @key + type-level @connect for resolveReference.
+    const before = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+        query: Query
+      }
+
+      directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+      directive @join__type(
+        graph: join__Graph!
+        key: join__FieldSet
+        extension: Boolean! = false
+        resolvable: Boolean! = true
+      ) repeatable on OBJECT
+      directive @join__field(graph: join__Graph) on FIELD_DEFINITION
+      directive @join__directive(
+        graphs: [join__Graph!]
+        name: String!
+        args: join__DirectiveArguments
+      ) repeatable on FIELD_DEFINITION | OBJECT | SCHEMA
+      directive @link(url: String!, import: [link__Import], for: link__Purpose) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      scalar join__FieldSet
+      scalar join__DirectiveArguments
+      scalar link__Import
+      enum link__Purpose {
+        SECURITY
+        EXECUTION
+      }
+      enum join__Graph {
+        OBSERVATIONS @join__graph(name: "observations", url: "http://localhost:4001")
+        REFERENCE_RESOURCE
+          @join__graph(name: "referenceResource", url: "http://localhost:4002")
+      }
+      input ConnectHTTP {
+        GET: String
+      }
+
+      type Query @join__type(graph: OBSERVATIONS) @join__type(graph: REFERENCE_RESOURCE) {
+        observationById(id: ID!): Observation @join__field(graph: OBSERVATIONS)
+        _referenceResource: String @join__field(graph: REFERENCE_RESOURCE)
+      }
+
+      type Observation @join__type(graph: OBSERVATIONS) {
+        id: ID!
+        subject: Reference
+      }
+
+      type Reference
+        @join__type(graph: OBSERVATIONS)
+        @join__type(graph: REFERENCE_RESOURCE, key: "reference")
+        @connect(selection: "reference: $this.reference") {
+        reference: String!
+        resource: Patient @join__field(graph: REFERENCE_RESOURCE)
+      }
+
+      type Patient @join__type(graph: REFERENCE_RESOURCE, key: "id", resolvable: false) {
+        id: ID!
+      }
+    `;
+
+    const out = finalizeConnectorsSupergraph(before);
+    const referenceType = out.match(/type Reference[^\n]*/)?.[0] ?? '';
+    expect(referenceType).toMatch(
+      /@join__directive\(graphs: \[REFERENCE_RESOURCE\], name: "connect"/,
+    );
+    expect(referenceType).not.toMatch(/@join__directive\(graphs: \[OBSERVATIONS\], name: "connect"/);
+    // Must not leave native @connect (Router rejects it on the Supergraph).
+    expect(out).not.toMatch(/type Reference[\s\S]*@connect\(/);
+  });
+
   it('attributes source-less type-level @connect to the owner join, not the stub', () => {
     const before = /* GraphQL */ `
       schema

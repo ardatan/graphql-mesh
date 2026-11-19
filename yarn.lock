@@ -5316,6 +5316,8 @@ __metadata:
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/json-schema": "workspace:*"
     graphql: "npm:16.14.0"
+    tsx: "npm:^4.20.3"
+    unzip-stream: "npm:0.3.4"
   languageName: unknown
   linkType: soft
 
@@ -43053,7 +43055,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:4.23.15, tsx@npm:^4.23.15":
+"tsx@npm:4.23.15, tsx@npm:^4.20.3, tsx@npm:^4.23.15":
   version: 4.23.15
   resolution: "tsx@npm:4.23.15"
   dependencies:

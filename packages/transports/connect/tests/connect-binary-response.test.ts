@@ -1,4 +1,4 @@
-import { buildSchema, execute, parse } from 'graphql';
+import { buildSchema, execute, extendSchema, parse } from 'graphql';
 import { Response } from '@whatwg-node/fetch';
 import { processDirectives } from '../src/directives/process.js';
 
@@ -335,6 +335,136 @@ describe('Connectors non-JSON responses (Apollo parity)', () => {
     expect(result.data).toEqual({ patientId: 'nhanes-112200' });
   });
 
+  it('multipart File arg named input is not stolen by raw-binary branch', async () => {
+    let seenUrl = '';
+    let seenPartNames: string[] = [];
+    let seenFileBytes: number | null = null;
+    let bodyWasFormData = false;
+    const schema = processDirectives(
+      buildSchema(/* GraphQL */ `
+        ${CONNECTOR_DIRECTIVES}
+        schema @source(name: "api", http: { baseURL: "http://localhost" }) {
+          query: Query
+          mutation: Mutation
+        }
+        scalar Upload
+        type Query {
+          noop: String
+        }
+        type Mutation {
+          upload(id: String!, input: Upload!): String
+            @connect(
+              source: "api"
+              http: {
+                POST: "/upload/{$args.id}"
+                body: """
+                {
+                  "file": $args.input
+                }
+                """
+                headers: [{ name: "Content-Type", value: "multipart/form-data" }]
+              }
+              selection: "$"
+            )
+        }
+      `),
+      {
+        globalFetch: async (url: string, init?: RequestInit) => {
+          seenUrl = String(url);
+          bodyWasFormData = init?.body instanceof FormData;
+          const body = init?.body as FormData;
+          seenPartNames = body ? [...body.keys()] : [];
+          const file = body?.get('file') as File | null;
+          seenFileBytes = file ? (await file.arrayBuffer()).byteLength : null;
+          return new Response('ok', {
+            status: 200,
+            headers: { 'content-type': 'text/plain' },
+          });
+        },
+      },
+    );
+
+    const file = new File([new Uint8Array([1, 2, 3, 4, 5])], 'input-named.bin', {
+      type: 'application/octet-stream',
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        mutation ($id: String!, $input: Upload!) {
+          upload(id: $id, input: $input)
+        }
+      `),
+      variableValues: { id: 'path-1', input: file },
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ upload: 'ok' });
+    expect(seenUrl).toContain('/upload/path-1');
+    // Prefer duck-typing: `@whatwg-node/fetch` FormData may not be `instanceof` global FormData.
+    expect(bodyWasFormData || seenPartNames.length > 0).toBe(true);
+    expect(seenPartNames).toEqual(['file']);
+    expect(seenFileBytes).toBe(5);
+  });
+
+  it('multipart $args.input nested File is not structuredClone-destroyed', async () => {
+    let seenFileBytes: number | null = null;
+    const schema = processDirectives(
+      buildSchema(/* GraphQL */ `
+        ${CONNECTOR_DIRECTIVES}
+        schema @source(name: "api", http: { baseURL: "http://localhost" }) {
+          query: Query
+          mutation: Mutation
+        }
+        scalar Upload
+        input UploadInput {
+          note: String
+          file: Upload!
+        }
+        type Query {
+          noop: String
+        }
+        type Mutation {
+          upload(input: UploadInput!): String
+            @connect(
+              source: "api"
+              http: {
+                POST: "/upload"
+                body: "$args.input"
+                headers: [{ name: "Content-Type", value: "multipart/form-data" }]
+              }
+              selection: "$"
+            )
+        }
+      `),
+      {
+        globalFetch: async (_url: string, init?: RequestInit) => {
+          const body = init?.body as FormData;
+          const file = body.get('file') as File;
+          seenFileBytes = file ? (await file.arrayBuffer()).byteLength : null;
+          return new Response('ok', {
+            status: 200,
+            headers: { 'content-type': 'text/plain' },
+          });
+        },
+      },
+    );
+
+    const file = new File([new Uint8Array([9, 8, 7])], 'nested.bin', {
+      type: 'application/octet-stream',
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        mutation ($input: UploadInput!) {
+          upload(input: $input)
+        }
+      `),
+      variableValues: { input: { note: 'hi', file } },
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ upload: 'ok' });
+    expect(seenFileBytes).toBe(3);
+  });
+
   it('multipart form parts honor http.body map keys and live file values', async () => {
     let seenPartNames: string[] = [];
     let seenFileBytes: number | null = null;
@@ -396,5 +526,131 @@ describe('Connectors non-JSON responses (Apollo parity)', () => {
     expect(result.data).toEqual({ upload: 'uploaded' });
     expect(seenPartNames).toEqual(['user-file']);
     expect(seenFileBytes).toBe(4);
+  });
+
+  it('reprocess preserves root @connect wrapper and still wires Reference.resource', async () => {
+    const urls: string[] = [];
+    const schemaSdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "fhir", http: { baseURL: "http://localhost" }) {
+        query: Query
+      }
+      type Query {
+        observationById(id: String!): Observation
+          @connect(
+            source: "fhir"
+            http: { GET: "/Observation/{$args.id}" }
+            selection: """
+            id
+            subject {
+              reference
+            }
+            """
+            entity: true
+          )
+      }
+      type Observation {
+        id: String
+        subject: Reference
+      }
+      type Reference {
+        reference: String
+      }
+      type Patient {
+        id: String
+        family: String
+      }
+    `;
+    let schema = processDirectives(buildSchema(schemaSdl), {
+      globalFetch: async (url: string) => {
+        urls.push(String(url));
+        if (String(url).includes('/Observation/')) {
+          return Response.json(
+            { id: 'obs-1', subject: { reference: 'Patient/p-1' } },
+            { status: 200 },
+          );
+        }
+        if (String(url).includes('/Patient/')) {
+          return Response.json({ id: 'p-1', name: [{ family: 'Doe' }] }, { status: 200 });
+        }
+        return new Response('not found', { status: 404 });
+      },
+    });
+
+    // Simulate wrapSchema / rename proxy on the root connector.
+    const query = schema.getQueryType()!;
+    const rootField = query.getFields().observationById;
+    const originalRootResolve = rootField.resolve!;
+    let wrapperHits = 0;
+    rootField.resolve = (root, args, context, info) => {
+      wrapperHits++;
+      // Rename proxy would map public arg → source name; here just pass through.
+      return originalRootResolve(root, args, context, info);
+    };
+
+    // Merge-style additionalTypeDefs: Reference.resource @connect (legacy Mesh path).
+    schema = extendSchema(
+      schema,
+      parse(/* GraphQL */ `
+        extend type Reference {
+          resource: Patient
+            @connect(
+              source: "fhir"
+              http: { GET: """/Patient/{$this.reference->split("/")->get(1)}""" }
+              selection: """
+              id
+              """
+            )
+        }
+      `),
+    );
+
+    // Second pass — must keep the root wrapper and install Reference.resource.
+    schema = processDirectives(schema, {
+      preserveExistingFieldResolvers: true,
+      globalFetch: async (url: string) => {
+        urls.push(String(url));
+        if (String(url).includes('/Observation/')) {
+          return Response.json(
+            { id: 'obs-1', subject: { reference: 'Patient/p-1' } },
+            { status: 200 },
+          );
+        }
+        if (String(url).includes('/Patient/')) {
+          return Response.json({ id: 'p-1' }, { status: 200 });
+        }
+        return new Response('not found', { status: 404 });
+      },
+    });
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        query {
+          observationById(id: "obs-1") {
+            id
+            subject {
+              reference
+              resource {
+                id
+              }
+            }
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(wrapperHits).toBeGreaterThan(0);
+    expect(result.data).toEqual({
+      observationById: {
+        id: 'obs-1',
+        subject: {
+          reference: 'Patient/p-1',
+          resource: { id: 'p-1' },
+        },
+      },
+    });
+    expect(urls.some(u => u.includes('/Observation/obs-1'))).toBe(true);
+    expect(urls.some(u => u.includes('/Patient/p-1'))).toBe(true);
   });
 });

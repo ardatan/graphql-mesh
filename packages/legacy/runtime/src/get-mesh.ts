@@ -283,13 +283,15 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   }
 
   // `additionalTypeDefs` may add fields with `@connect` after source handlers already
-  // ran `processDirectives`. Re-process so those fields get HTTP resolvers while
-  // preserving existing root connect resolvers (idempotent install).
+  // ran `processDirectives` and wrapSchema installed rename proxies. Re-process so
+  // *new* fields get HTTP resolvers; do not replace proxies on already-wired fields
+  // (those translate renamed `$args` back to source names).
   if (additionalTypeDefs?.length) {
     schema = processDirectives(schema, {
       globalFetch: wrappedFetchFn,
       pubsub,
       log: getMeshLogger,
+      preserveExistingFieldResolvers: true,
     });
   }
 

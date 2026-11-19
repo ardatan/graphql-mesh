@@ -1,35 +1,88 @@
+import { join } from 'node:path';
+import { OperationTypeNode, type GraphQLSchema } from 'graphql';
 import {
-  GraphQLNonNull,
-  GraphQLObjectType,
-  GraphQLSchema,
-  GraphQLString,
-  isObjectType,
-  isScalarType,
-  OperationTypeNode,
-} from 'graphql';
-import type { Logger } from '@graphql-hive/logger';
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
-import type { MeshFetch } from '@graphql-mesh/types';
-import { MapperKind, mapSchema } from '@graphql-tools/utils';
-import {
-  loadJSONSchemaSubgraph,
-  loadNonExecutableGraphQLSchemaFromJSONSchemas,
-} from '@omnigraph/json-schema';
+  createPrefixTransform,
+  createPruneTransform,
+  defineConfig as defineComposeConfig,
+} from '@graphql-mesh/compose-cli';
+import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
+import { MapperKind, mapSchema, pruneSchema } from '@graphql-tools/utils';
 
 const hapiBase = 'https://hapi.fhir.org/baseR4';
+/**
+ * Official HL7 FHIR R4 JSON Schema, downloaded into this e2e package
+ * (`yarn download-fhir-schema` / test `beforeAll`). Same source as
+ * `examples/json-schema-fhir` — do not cross-import that package's file.
+ */
+const fhirSchema = join(import.meta.dirname, './fhir.schema.json');
 
 /**
- * FHIR e2e via JSON Schema loader (not hand-written Connectors SDL).
+ * Keep only the fields this e2e exercises. Official `#/definitions/Patient|Observation`
+ * still supply types/scalars; hard-remove + prune drops ResourceList/Extension explosion
+ * so Apollo Router can load the Supergraph.
  *
- * Field sets follow `examples/json-schema-fhir/fhir.schema.json`. We cannot load
- * full `#/definitions/Patient` + `#/definitions/Observation` in two subgraphs:
- * both pull `contained` → `ResourceList` / `Extension` and emit incompatible
- * shared type names. `./schemas/*.json` keep the FHIR shapes without that
- * explosion, and intentionally share a pattern-constrained `string` scalar so
- * `@regexp`/`@typescript` (repeatable) survive Fed merge on Apollo Router.
+ * Note: `createFilterTransform` marks filtered fields `@inaccessible` (Fed-friendly)
+ * rather than deleting them — that still leaves thousands of scalars for Router.
+ * This transform actually removes fields.
+ */
+const keepFieldsByType: Record<string, ReadonlySet<string>> = {
+  // Omit resourceType — JSON Schema emits a `*_const` enum + `@typescript` that
+  // Apollo Router 2.19 rejects when carrying Mesh directives ("already exists").
+  Patient: new Set(['id', 'gender', 'name']),
+  Observation: new Set(['id', 'status', 'subject']),
+  HumanName: new Set(['family', 'given']),
+  Reference: new Set(['reference', 'type', 'display']),
+};
+
+const fhirNoiseFields = new Set([
+  'contained',
+  'extension',
+  'modifierExtension',
+  'text',
+  'meta',
+]);
+
+function keepField(typeName: string, fieldName: string): boolean {
+  const keep = keepFieldsByType[typeName];
+  if (keep) {
+    return keep.has(fieldName);
+  }
+  if (fhirNoiseFields.has(fieldName)) {
+    return false;
+  }
+  if (fieldName.startsWith('_') && fhirNoiseFields.has(fieldName.slice(1))) {
+    return false;
+  }
+  return true;
+}
+
+function createHardFieldFilterTransform(
+  filter: (typeName: string, fieldName: string) => boolean,
+): (schema: GraphQLSchema) => GraphQLSchema {
+  return (schema: GraphQLSchema) => {
+    const filtered = mapSchema(schema, {
+      [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName) =>
+        filter(typeName, fieldName) ? fieldConfig : null,
+      [MapperKind.INPUT_OBJECT_FIELD]: (fieldConfig, fieldName, typeName) =>
+        filter(typeName, fieldName) ? fieldConfig : null,
+      [MapperKind.INTERFACE_FIELD]: (fieldConfig, fieldName, typeName) =>
+        filter(typeName, fieldName) ? fieldConfig : null,
+    });
+    return pruneSchema(filtered);
+  };
+}
+
+/**
+ * FHIR e2e via JSON Schema loader + official `fhir.schema.json` definition pointers.
  *
- * - `patients` owns Patient + `patient(id:)` (`entity: true`)
- * - `observations` owns Observation; `Reference.resource` is a Patient stub
+ * Loading `#/definitions/Patient` and `#/definitions/Observation` in two subgraphs
+ * pulls shared FHIR value types that share GraphQL names but not identical field
+ * types. Rename collisions per subgraph via `createPrefixTransform`, keeping the
+ * intentionally shared merge targets unprefixed:
+ *
+ * - `patients`: keep `Patient` + `string` (entity + pattern scalar)
+ * - `observations`: keep `Observation`, `Reference`, `string`
+ * - `referenceResource` mini SDL (file path): `Reference.resource` → Patient stub
  */
 export const composeConfig = defineComposeConfig({
   subgraphs: [
@@ -43,98 +96,65 @@ export const composeConfig = defineComposeConfig({
             method: 'GET',
             path: '/Patient/{args.id}?_format=application/json',
             requiredArgs: ['id'],
-            responseSchema: './schemas/patient.json',
+            responseSchema: `${fhirSchema}#/definitions/Patient`,
+            selection: `
+              id
+              gender
+              name {
+                family
+                given
+              }
+            `,
           },
         ],
       }),
+      transforms: [
+        createHardFieldFilterTransform(keepField),
+        createPrefixTransform({
+          value: 'patients_',
+          ignore: ['Patient', 'string'],
+          force: ['Duration', 'date', 'Date', 'DateTime', 'Time', 'JSON', 'JSONObject'],
+        }),
+        createPruneTransform(),
+      ],
     },
     {
-      sourceHandler: (ctx: { fetch: MeshFetch; cwd: string; log: Logger }) => ({
-        name: 'observations',
-        schema$: loadNonExecutableGraphQLSchemaFromJSONSchemas('observations', {
-          endpoint: hapiBase,
-          fetch: ctx.fetch,
-          cwd: ctx.cwd,
-          log: ctx.log,
-          operations: [
-            {
-              type: OperationTypeNode.QUERY,
-              field: 'observationById',
-              method: 'GET',
-              path: '/Observation/{args.id}?_format=application/json',
-              requiredArgs: ['id'],
-              responseSchema: './schemas/observation.json',
-              selection: `
-id
-status
-subject {
-  reference
-  resource: {
-    __typename: $("Patient")
-    id: reference->split("/")->get(1)
-  }
-}
-`,
-            },
-          ],
-        }).then(addReferenceResourceField),
+      sourceHandler: loadJSONSchemaSubgraph('observations', {
+        endpoint: hapiBase,
+        operations: [
+          {
+            type: OperationTypeNode.QUERY,
+            field: 'observationById',
+            method: 'GET',
+            path: '/Observation/{args.id}?_format=application/json',
+            requiredArgs: ['id'],
+            responseSchema: `${fhirSchema}#/definitions/Observation`,
+            selection: `
+              id
+              status
+              subject {
+                reference
+                type
+                display
+              }
+            `,
+          },
+        ],
       }),
+      transforms: [
+        createHardFieldFilterTransform(keepField),
+        createPrefixTransform({
+          value: 'observations_',
+          ignore: ['Observation', 'Reference', 'string'],
+          force: ['Duration', 'date', 'Date', 'DateTime', 'Time', 'JSON', 'JSONObject'],
+        }),
+        createPruneTransform(),
+      ],
+    },
+    {
+      name: 'referenceResource',
+      // Compose accepts a path string — no readFileSync (see resolveSubgraphSchema).
+      schema: join(import.meta.dirname, './subgraphs/reference-resource.graphql'),
     },
   ],
 });
-
-/**
- * FHIR `Reference` has no `resource` field in the JSON Schema; the Mesh example
- * used `@resolveTo` / `@connect`. Add `resource: Patient` so Observation
- * `@connect(selection:)` can emit an entity stub (Apollo across-subgraphs style).
- */
-function addReferenceResourceField(schema: GraphQLSchema): GraphQLSchema {
-  const reference = schema.getType('Reference');
-  if (!isObjectType(reference)) {
-    throw new Error('FHIR observations subgraph: expected Reference type');
-  }
-  if (reference.getFields().resource) {
-    return schema;
-  }
-
-  // Prefer the FHIR-like `string` scalar stamped by the JSON Schema loader so
-  // the Patient stub's `id` matches the patients subgraph (Fed field-type merge).
-  const idScalar = schema.getType('string');
-  const idType = new GraphQLNonNull(
-    isScalarType(idScalar) ? idScalar : GraphQLString,
-  );
-
-  let patient = schema.getType('Patient');
-  if (!isObjectType(patient)) {
-    patient = new GraphQLObjectType({
-      name: 'Patient',
-      fields: {
-        id: { type: idType },
-      },
-    });
-    schema = new GraphQLSchema({
-      ...schema.toConfig(),
-      types: [...schema.toConfig().types, patient],
-    });
-  }
-
-  const patientType = patient;
-  return mapSchema(schema, {
-    [MapperKind.OBJECT_TYPE]: type => {
-      if (type.name !== 'Reference') {
-        return type;
-      }
-      const config = type.toConfig();
-      return new GraphQLObjectType({
-        ...config,
-        fields: {
-          ...config.fields,
-          resource: {
-            type: patientType,
-            description: 'Resolved target of Reference.reference (Patient entity stub).',
-          },
-        },
-      });
-    },
-  });
-}

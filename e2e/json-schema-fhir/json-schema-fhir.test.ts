@@ -1,10 +1,15 @@
 import { createTenv, type ServeRunner } from '@e2e/tenv';
+import { ensureFhirSchema } from './ensure-fhir-schema';
 
 const { compose, serve } = createTenv(__dirname);
 
 jest.setTimeout(300_000);
 
-it('composes JSON Schema patients + observations from fhir.schema.json', async () => {
+beforeAll(async () => {
+  await ensureFhirSchema();
+}, 120_000);
+
+it('composes official fhir.schema.json + rename + mini Reference.resource SDL', async () => {
   const { result } = await compose();
   expect(result).not.toContain('@resolveTo');
   expect(result).toMatch(/subject:\s*Reference/);
@@ -12,6 +17,11 @@ it('composes JSON Schema patients + observations from fhir.schema.json', async (
   expect(result).toMatch(/->split\(/);
   expect(result).toMatch(/patient\(/);
   expect(result).toMatch(/entity:\s*true/);
+  // Join field comes from the mini SDL subgraph, not loader magic.
+  expect(result).toMatch(/referenceResource|REFERENCE_RESOURCE/i);
+  // Colliding FHIR value types renamed per subgraph (prefix transform).
+  expect(result).toMatch(/patients_/);
+  expect(result).toMatch(/observations_/);
 });
 
 describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {

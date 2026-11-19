@@ -1797,8 +1797,25 @@ function pickHttp(http: ConnectHttp | undefined): { method: string; path: string
 /**
  * Detect raw binary request bodies (stream / Blob / Buffer / non-JSON Content-Type).
  * Prefer the runtime value shape and Content-Type — not GraphQL scalar names.
+ *
+ * Structured Content-Types (including `multipart/form-data`) win over value shape:
+ * a File/Blob arg named `input` must not steal the raw-binary branch when the
+ * connector asks for multipart form parts.
  */
 function isRawBinaryConnectBody(input: unknown, contentType: string | undefined): boolean {
+  if (contentType) {
+    const ct = contentType.toLowerCase();
+    // Structured body encodings keep the JSON / form / multipart paths below.
+    if (
+      ct.includes('json') ||
+      ct.includes('xml') ||
+      ct.startsWith('text/') ||
+      ct.includes('form-urlencoded') ||
+      ct.includes('multipart/form-data')
+    ) {
+      return false;
+    }
+  }
   // Value shape: graphql-upload streams, Blob/File, Buffer — not GraphQL type names.
   if (isFileUpload(input)) {
     return true;
@@ -1812,19 +1829,35 @@ function isRawBinaryConnectBody(input: unknown, contentType: string | undefined)
   if (!contentType) {
     return false;
   }
-  const ct = contentType.toLowerCase();
-  // Structured body encodings keep the JSON / form paths below.
-  if (
-    ct.includes('json') ||
-    ct.includes('xml') ||
-    ct.startsWith('text/') ||
-    ct.includes('form-urlencoded') ||
-    ct.includes('multipart/form-data')
-  ) {
-    return false;
-  }
   // Any other explicit Content-Type (octet-stream, image/*, …) → raw body.
   return true;
+}
+
+/**
+ * Deep-clone plain JSON-like values for union-input recovery, but keep File /
+ * Blob / graphql-upload (`createReadStream`) values by reference — `structuredClone`
+ * throws `DataCloneError` on those and would break multipart `$args.input` bodies.
+ */
+function clonePreservingUploads(value: any): any {
+  if (value == null || typeof value !== 'object') {
+    return value;
+  }
+  if (
+    isFileUpload(value) ||
+    typeof (value as { arrayBuffer?: unknown }).arrayBuffer === 'function' ||
+    (typeof Blob !== 'undefined' && value instanceof Blob)
+  ) {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map(clonePreservingUploads);
+  }
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([k, v]) => [
+      k,
+      clonePreservingUploads(v),
+    ]),
+  );
 }
 
 /**
@@ -1858,8 +1891,10 @@ function evaluateConnectBodySelection(
     if (!argDef) {
       return value;
     }
+    // Do not structuredClone uploads (`createReadStream` / File / Blob) — they are
+    // not structured-cloneable and must stay live for multipart body parts.
     return resolveDataByUnionInputType(
-      value && typeof value === 'object' ? structuredClone(value) : value,
+      value && typeof value === 'object' ? clonePreservingUploads(value) : value,
       argDef.type,
       opts.schema,
     );
@@ -1966,6 +2001,12 @@ export type ConnectFieldResolverOptions = {
   timeout?: number;
   queryStringOptions?: MeshQsOptions;
   odata?: ConnectODataOptions;
+  /**
+   * When true, skip installing `@connect` resolvers on fields that already have
+   * a `resolve` function (e.g. wrapSchema rename proxies). Used by the
+   * `additionalTypeDefs` reprocess pass in legacy `get-mesh`.
+   */
+  preserveExistingFieldResolvers?: boolean;
 };
 
 /**
@@ -2235,6 +2276,11 @@ export function addConnectFieldResolver(
   connectArgs: ConnectArgs,
   opts: ConnectFieldResolverOptions = {},
 ) {
+  // Second pass after `additionalTypeDefs` / wrapSchema: keep rename proxies and any
+  // already-wired connect resolver — never assign `field.resolve` again.
+  if (opts.preserveExistingFieldResolvers && typeof field.resolve === 'function') {
+    return;
+  }
   const log = opts.log || new Logger({ prefix: 'connect' });
   const sources = getSourceMap(schema);
   const source = connectArgs.source ? sources.get(connectArgs.source) : undefined;
@@ -2460,20 +2506,9 @@ export function addConnectFieldResolver(
       const contentType = Object.entries(headers).find(
         ([k]) => k.toLowerCase() === 'content-type',
       )?.[1];
-      // Raw binary upload: stream/Blob/Buffer value or non-structured Content-Type.
-      const binaryUpload = rawArgs.input !== undefined ? await rawArgs.input : undefined;
-      if (isRawBinaryConnectBody(binaryUpload, contentType)) {
-        if (isFileUpload(binaryUpload)) {
-          requestInit.body = binaryUpload.createReadStream() as any;
-          const hasContentType = Object.keys(headers).some(k => k.toLowerCase() === 'content-type');
-          if (!hasContentType) {
-            headers['content-type'] = binaryUpload.mimetype;
-          }
-        } else {
-          requestInit.body = binaryUpload;
-        }
-        requestBody = requestInit.body;
-      } else if (contentType?.includes('multipart/form-data')) {
+      // Multipart before raw-binary: a File/Blob arg named `input` must not steal
+      // the octet-stream branch when Content-Type asks for form parts.
+      if (contentType?.includes('multipart/form-data')) {
         // Multipart needs the live File/Blob values from args (not JSON round-trip).
         // Honor `@connect(http.body:)` maps so OpenAPI form param names (`user-file`)
         // win over GraphQL arg names (`user_file`), and path args stay out of parts.
@@ -2524,48 +2559,66 @@ export function addConnectFieldResolver(
         }
         requestBody = formData;
         requestInit.body = formData;
-      } else if (isXmlContentType(contentType)) {
-        // Mesh-specific: JSONSelection → FXP object → XML (SOAP is just document shape).
-        const bodyValue = evaluateConnectBodySelection(connectArgs.http?.body, vars, {
-          schema,
-          field,
-        });
-        if (bodyValue !== undefined) {
-          requestBody = jsObjectToXml(bodyValue);
-          requestInit.body = requestBody;
-        }
       } else {
-        const bodyJson = buildBody(connectArgs.http?.body, vars, {
-          schema,
-          field,
-          odataOpenTypes: isODataMetadataAccept(headers),
-        });
-        if (bodyJson != null) {
-          if (contentType?.includes('application/x-www-form-urlencoded')) {
-            try {
-              requestBody = qsStringify(JSON.parse(bodyJson), {
-                ...defaultQsOptions,
-                ...queryStringOptions,
-              });
-            } catch {
-              requestBody = bodyJson;
-            }
-          } else if (contentType?.startsWith('text/')) {
-            // text/plain (and other text/*): send the raw scalar, not a JSON-encoded string
-            // (text/xml is handled above via isXmlContentType).
-            try {
-              const parsed = JSON.parse(bodyJson);
-              requestBody = typeof parsed === 'string' ? parsed : bodyJson;
-            } catch {
-              requestBody = bodyJson;
+        // Raw binary upload: stream/Blob/Buffer value or non-structured Content-Type.
+        // Checked after multipart so a File arg named `input` does not steal form posts.
+        const binaryUpload = rawArgs.input !== undefined ? await rawArgs.input : undefined;
+        if (isRawBinaryConnectBody(binaryUpload, contentType)) {
+          if (isFileUpload(binaryUpload)) {
+            requestInit.body = binaryUpload.createReadStream() as any;
+            const hasContentType = Object.keys(headers).some(
+              k => k.toLowerCase() === 'content-type',
+            );
+            if (!hasContentType) {
+              headers['content-type'] = binaryUpload.mimetype;
             }
           } else {
-            requestBody = bodyJson;
-            if (!contentType) {
-              headers['content-type'] = 'application/json';
-            }
+            requestInit.body = binaryUpload;
           }
-          requestInit.body = requestBody;
+          requestBody = requestInit.body;
+        } else if (isXmlContentType(contentType)) {
+          // Mesh-specific: JSONSelection → FXP object → XML (SOAP is just document shape).
+          const bodyValue = evaluateConnectBodySelection(connectArgs.http?.body, vars, {
+            schema,
+            field,
+          });
+          if (bodyValue !== undefined) {
+            requestBody = jsObjectToXml(bodyValue);
+            requestInit.body = requestBody;
+          }
+        } else {
+          const bodyJson = buildBody(connectArgs.http?.body, vars, {
+            schema,
+            field,
+            odataOpenTypes: isODataMetadataAccept(headers),
+          });
+          if (bodyJson != null) {
+            if (contentType?.includes('application/x-www-form-urlencoded')) {
+              try {
+                requestBody = qsStringify(JSON.parse(bodyJson), {
+                  ...defaultQsOptions,
+                  ...queryStringOptions,
+                });
+              } catch {
+                requestBody = bodyJson;
+              }
+            } else if (contentType?.startsWith('text/')) {
+              // text/plain (and other text/*): send the raw scalar, not a JSON-encoded string
+              // (text/xml is handled above via isXmlContentType).
+              try {
+                const parsed = JSON.parse(bodyJson);
+                requestBody = typeof parsed === 'string' ? parsed : bodyJson;
+              } catch {
+                requestBody = bodyJson;
+              }
+            } else {
+              requestBody = bodyJson;
+              if (!contentType) {
+                headers['content-type'] = 'application/json';
+              }
+            }
+            requestInit.body = requestBody;
+          }
         }
       }
     }
@@ -2674,13 +2727,9 @@ export function addConnectFieldResolver(
       // Drain without `response.text()` so binary bodies stay binary-safe.
       // Empty unsupported MIME (e.g. 204 + text/html) keeps legacy scalar `""` /
       // object `{}` so `String!` connectors do not null-error; nonempty PNG → null.
-      let drained: ArrayBuffer | undefined;
-      try {
-        drained = await response.arrayBuffer();
-      } catch {
-        /* ignore drain errors */
-      }
-      if (!drained || drained.byteLength === 0) {
+      // Propagate read failures — only treat a successful 0-byte drain as empty.
+      const drained = await response.arrayBuffer();
+      if (drained.byteLength === 0) {
         responseData = isScalarType(returnNamedGraphQLType) ? '' : {};
       } else {
         responseData = null;
@@ -3032,19 +3081,24 @@ export function processConnectDirectives(
     // Type-level `@connect` / `@join__directive(name: "connect")` → resolveReference.
     const typeDirectives = getConnectArgsFromNode(type as any);
     if (typeDirectives?.length) {
-      const connectArgs = typeDirectives[0];
-      const syntheticField = {
-        name: '__resolveReference',
-        type: type as any,
-        args: [],
-        extensions: {},
-      } as unknown as GraphQLField<any, any>;
-      addConnectFieldResolver(schema, syntheticField, connectArgs, fieldOpts);
-      const resolve = syntheticField.resolve;
-      if (resolve) {
-        setTypeResolveReference(type, (reference, context, info) =>
-          resolve(reference, {}, context, info),
-        );
+      // Reprocess pass: keep an already-wired resolveReference (wrapper / first pass).
+      const skipTypeConnect =
+        fieldOpts.preserveExistingFieldResolvers && getTypeResolveReference(type);
+      if (!skipTypeConnect) {
+        const connectArgs = typeDirectives[0];
+        const syntheticField = {
+          name: '__resolveReference',
+          type: type as any,
+          args: [],
+          extensions: {},
+        } as unknown as GraphQLField<any, any>;
+        addConnectFieldResolver(schema, syntheticField, connectArgs, fieldOpts);
+        const resolve = syntheticField.resolve;
+        if (resolve) {
+          setTypeResolveReference(type, (reference, context, info) =>
+            resolve(reference, {}, context, info),
+          );
+        }
       }
     }
     if (!('getFields' in type)) continue;
@@ -3053,6 +3107,14 @@ export function processConnectDirectives(
       const field = fields[fieldName];
       const directives = getConnectArgsFromNode(field as any);
       if (!directives?.length) continue;
+      // Keep wrapSchema / rename proxies — only wire fields that still lack a resolver
+      // (typically fields added via `additionalTypeDefs` after the first pass).
+      if (
+        fieldOpts.preserveExistingFieldResolvers &&
+        typeof (field as GraphQLField<any, any>).resolve === 'function'
+      ) {
+        continue;
+      }
       // First connect wins for execution (repeatable for schema merge cases)
       const connectArgs = directives[0];
       addConnectFieldResolver(schema, field as GraphQLField<any, any>, connectArgs, fieldOpts);

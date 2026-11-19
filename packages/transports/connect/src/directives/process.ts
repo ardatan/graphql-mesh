@@ -51,6 +51,12 @@ export interface ProcessDirectiveArgs {
   /** Fetch used for `@connect` HTTP calls. */
   globalFetch?: MeshFetch;
   /**
+   * When true (legacy `get-mesh` reprocess after `additionalTypeDefs`):
+   * - skip `@connect` install on fields that already have a resolver (wrap proxies)
+   * - keep existing abstract `resolveType` callbacks instead of replacing them
+   */
+  preserveExistingFieldResolvers?: boolean;
+  /**
    * Accepted for compatibility, but not forwarded into `@connect` resolvers
    * today. Put the HTTP base URL on `@source(http.baseURL)` - `@connect`
    * joins relative connector URLs from that source only; `@transport(location)`
@@ -85,7 +91,13 @@ export interface ProcessDirectiveArgs {
 
 export function processDirectives(
   schema: GraphQLSchema,
-  { globalFetch, log, pubsub, ...extraGlobalOptions }: ProcessDirectiveArgs = {},
+  {
+    globalFetch,
+    log,
+    pubsub,
+    preserveExistingFieldResolvers,
+    ...extraGlobalOptions
+  }: ProcessDirectiveArgs = {},
 ) {
   const nonExecutableObjMapScalar = schema.getType('ObjMap');
   if (nonExecutableObjMapScalar && isScalarType(nonExecutableObjMapScalar)) {
@@ -138,6 +150,7 @@ export function processDirectives(
     log,
     timeout: globalOptions.timeout,
     queryStringOptions: globalOptions.queryStringOptions,
+    preserveExistingFieldResolvers,
     // Mirror `@transport(options: { odata: … })` under connect opts.
     // Batch root URL comes from `@source` http.baseURL (see processConnectDirectives).
     odata: {
@@ -182,10 +195,13 @@ export function processDirectives(
     // scalar fallback. OpenAPI `@discriminator` is baked into `@connect(selection:)`
     // and stripped — no Mesh `@abstractType` directive.
     if (isInterfaceType(type) || isUnionType(type)) {
-      type.resolveType = getTypeResolverForAbstractType({
-        possibleTypes: isUnionType(type) ? type.getTypes() : schema.getPossibleTypes(type),
-        serviceName: currDirective?.subgraph,
-      });
+      // Reprocess after additionalTypeDefs: keep app / stitch custom resolveType.
+      if (!(preserveExistingFieldResolvers && type.resolveType)) {
+        type.resolveType = getTypeResolverForAbstractType({
+          possibleTypes: isUnionType(type) ? type.getTypes() : schema.getPossibleTypes(type),
+          serviceName: currDirective?.subgraph,
+        });
+      }
     }
     if (isEnumType(type)) {
       const directiveAnnotations = getDefDirectives(schema, type);

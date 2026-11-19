@@ -937,10 +937,16 @@ function addAnnotationsForSemanticConventions({
         const [onlyArgName, onlyArg] = argEntries[0];
         const argType = getNamedType(onlyArg.type);
         // Prefer identical GraphQL type names (`ID`/`ID`). Also accept same arg/field
-        // name when the return key is a Mesh JSON-Schema scalar (`string`) while the
-        // path arg stayed a built-in `String` — otherwise FHIR-like keys never get
-        // `@connect(entity: true)` / `@key`.
-        if (argType.name === objectFieldType.name || onlyArgName === fieldName) {
+        // name only for the Mesh JSON-Schema pairing (`String` path arg + `string`
+        // key scalar) — otherwise FHIR-like keys never get `@connect(entity: true)` /
+        // `@key`. Do not name-match Int/ID (etc.) mismatches: entity reps may carry
+        // string IDs that an `Int!` arg cannot accept.
+        if (
+          argType.name === objectFieldType.name ||
+          (onlyArgName === fieldName &&
+            argType.name === 'String' &&
+            objectFieldType.name === 'string')
+        ) {
           argName = onlyArgName;
           arg = onlyArg;
         }

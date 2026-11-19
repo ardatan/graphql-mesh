@@ -358,13 +358,17 @@ function getJoinTypeGraph(
 /**
  * Preferred graph for type-level `@connect` when source name does not match a
  * subgraph name: sole distinct `@join__type` graph (multiple keys on one graph
- * still count as one), else the single non-extension / resolvable owner join
- * when a stub join is also present.
+ * still count as one), else the single graph that declares a `@key` on the type
+ * (entity owner — not a value-type sibling join), else the single non-extension /
+ * resolvable owner join when a stub join is also present.
  */
 function getPreferredTypeJoinGraph(
   directives: readonly ConstDirectiveNode[] | undefined,
 ): string | undefined {
-  const byGraph = new Map<string, { extension: boolean; resolvable: boolean }>();
+  const byGraph = new Map<
+    string,
+    { extension: boolean; resolvable: boolean; hasKey: boolean }
+  >();
   for (const dir of directives || []) {
     if (dir.name.value !== 'join__type') {
       continue;
@@ -376,16 +380,29 @@ function getPreferredTypeJoinGraph(
     const graph = graphArg.value.value;
     const extension = getBooleanArg(dir, 'extension') === true;
     const resolvable = getBooleanArg(dir, 'resolvable') !== false;
+    const hasKey = Boolean(getStringArg(dir, 'key'));
     const prev = byGraph.get(graph);
     byGraph.set(graph, {
       // An extension entry sticks for that graph. Any resolvable key keeps it eligible
       // (Federation allows repeatable `@key` with per-key `resolvable` flags).
       extension: Boolean(prev?.extension || extension),
       resolvable: prev ? prev.resolvable || resolvable : resolvable,
+      hasKey: Boolean(prev?.hasKey || hasKey),
     });
   }
   if (byGraph.size === 1) {
     return byGraph.keys().next().value;
+  }
+  // Type-level `@connect` is an entity resolver — prefer the sole keyed graph when
+  // another subgraph only contributes the type as a value-type sibling (no key).
+  const keyed: string[] = [];
+  for (const [graph, meta] of byGraph) {
+    if (meta.hasKey) {
+      keyed.push(graph);
+    }
+  }
+  if (keyed.length === 1) {
+    return keyed[0];
   }
   const owners: string[] = [];
   for (const [graph, meta] of byGraph) {
