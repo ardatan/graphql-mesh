@@ -283,6 +283,36 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/name: "merge", args: \{[^}]*subgraph:/);
   });
 
+  it('keeps native @merge when subgraph is empty string (no sibling-graph fallback)', () => {
+    const sdl = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@merge"]) {
+        query: Query
+      }
+
+      directive @merge(
+        subgraph: String
+        keyArg: String
+        keyField: String
+      ) repeatable on FIELD_DEFINITION
+
+      enum join__Graph {
+        LIVE @join__graph(name: "live", url: "http://localhost/live")
+      }
+
+      type Query @join__type(graph: LIVE) {
+        byId(id: ID!): String
+          @merge(subgraph: "", keyField: "id", keyArg: "id")
+          @join__field(graph: LIVE)
+      }
+    `;
+    const out = finalizeMeshJoinDirectives(sdl);
+    // Empty explicit owner must not be rewritten onto LIVE — leave native.
+    expect(out).toMatch(/@merge\(subgraph: "", keyField: "id", keyArg: "id"\)/);
+    expect(out).not.toMatch(/name:\s*"merge"/);
+  });
+
   it('rewrites @thrift__rpc and thrift @transport to join__directive', () => {
     const sdl = /* GraphQL */ `
       schema

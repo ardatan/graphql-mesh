@@ -407,10 +407,14 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
     }
 
     const args = constDirectiveArgsToJs(dir);
-    const subgraph = typeof args.subgraph === 'string' ? args.subgraph : undefined;
-    // Explicit `subgraph:` must resolve via join map — never fall back to a
-    // sibling field/type graph (that would re-attribute ownership).
-    const ownerGraphEnum = subgraph ? joinInfo.nameToEnum.get(subgraph) : fallbackGraph;
+    // Explicit `subgraph:` (including empty string) must resolve via join map —
+    // never fall back to a sibling field/type graph (that would re-attribute).
+    // Only omit/missing `subgraph` may use the field/type graph fallback.
+    const hasExplicitSubgraph = typeof args.subgraph === 'string';
+    const subgraph = hasExplicitSubgraph ? args.subgraph : undefined;
+    const ownerGraphEnum = hasExplicitSubgraph
+      ? joinInfo.nameToEnum.get(subgraph as string)
+      : fallbackGraph;
 
     if (!ownerGraphEnum) {
       // Cannot attribute — leave native so Gateway / Router can still see it.
