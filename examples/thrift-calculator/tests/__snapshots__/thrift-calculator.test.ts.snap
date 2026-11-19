@@ -19,20 +19,20 @@ type CalcError {
 }
 
 type Query {
-  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "Calculator", function: "add", args: """
+  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "Calculator", function: "add", selection: "$(i32)", messageType: CALL, args: """
   1(struct): $args.request {
     1(i32): left
     2(i32): right
   }
-  """, selection: "$(i32)", messageType: CALL)
-  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calculator", function: "subtract", args: """
+  """)
+  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calculator", function: "subtract", selection: "$(i32)", messageType: CALL, args: """
   1(i32): $args.left
   2(i32): $args.right
-  """, selection: "$(i32)", messageType: CALL)
-  divide(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calculator", function: "divide", args: """
+  """)
+  divide(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calculator", function: "divide", selection: "$(i32)", messageType: CALL, args: """
   1(i32): $args.left
   2(i32): $args.right
-  """, selection: "$(i32)", messageType: CALL)
+  """)
   zip: Void @thrift__rpc(subgraph: "Calculator", function: "zip", selection: "$(void)", messageType: ONEWAY)
 }
 

@@ -5,6 +5,8 @@ exports[`Examples should generate schema for any-simple-type: any-simple-type 1`
   query: Query
 }
 
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -26,9 +28,15 @@ input AnySimpleType_GetAttributes_Input {
   filter: String
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -36,6 +44,12 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;
 
@@ -44,6 +58,8 @@ exports[`Examples should generate schema for any-wildcard-namespace: any-wildcar
   query: Query
   mutation: Mutation
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -76,9 +92,15 @@ input AnyWildcardNamespace_WildcardContainer_Input {
   name: String
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -86,6 +108,12 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;
 
@@ -94,6 +122,8 @@ exports[`Examples should generate schema for axis: axis 1`] = `
   query: Query
   mutation: Mutation
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -214,9 +244,15 @@ input impl_weekDays_Input {
   option: [impl_weekday]
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -224,6 +260,12 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;
 
@@ -232,6 +274,8 @@ exports[`Examples should generate schema for empty-complextype: empty-complextyp
   query: Query
   mutation: Mutation
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -269,9 +313,15 @@ input EmptyComplexType_Container_Input {
   extensions: [JSON]
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -279,6 +329,12 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;
 
@@ -287,6 +343,8 @@ exports[`Examples should generate schema for example1: example1 1`] = `
   query: Query
   mutation: Mutation
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -416,9 +474,15 @@ type TodoService_FailGetTodoResponse {
   FailGetTodoResult: String
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -426,6 +490,12 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;
 
@@ -434,6 +504,8 @@ exports[`Examples should generate schema for example2: example2 1`] = `
   query: Query
   mutation: Mutation
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -661,9 +733,15 @@ input AdminServiceType_DeleteEntityClass_Input {
   entityclassIntID: BigInt
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -671,6 +749,12 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;
 
@@ -679,6 +763,8 @@ exports[`Examples should generate schema for forward-ref-elements: forward-ref-e
   query: Query
   mutation: Mutation
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -707,9 +793,15 @@ input undefined_ServiceRequest_Input {
   id: String
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -717,6 +809,12 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;
 
@@ -725,6 +823,8 @@ exports[`Examples should generate schema for greeting: greeting 1`] = `
   query: Query
   mutation: Mutation
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -763,9 +863,15 @@ input NumberConversion_NumberToDollars_Input {
   dNum: Float
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -773,6 +879,12 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;
 
@@ -780,6 +892,8 @@ exports[`Examples should generate schema for illegal-gql-names: illegal-gql-name
 "schema @source(name: "illegal-gql-names", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -816,9 +930,15 @@ input IllegalGqlNames_X721_Type_Input {
   code: String
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -826,6 +946,12 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;
 
@@ -833,6 +959,8 @@ exports[`Examples should generate schema for inline-type-collision: inline-type-
 "schema @source(name: "inline-type-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -891,9 +1019,15 @@ input InlineTypeCollision_TypeB_details_Input {
   valueB: Int
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -901,6 +1035,12 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;
 
@@ -908,6 +1048,8 @@ exports[`Examples should generate schema for prefix-collision: prefix-collision 
 "schema @source(name: "prefix-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -944,9 +1086,15 @@ input PrefixCollision_GetNs2Items_Input {
   filter: String
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -954,6 +1102,12 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;
 
@@ -962,6 +1116,8 @@ exports[`Examples should generate schema for tempconvert: tempconvert 1`] = `
   query: Query
   mutation: Mutation
 }
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -999,9 +1155,15 @@ input tns_CelsiusToFahrenheit_Input {
   Celsius: String
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -1009,5 +1171,11 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;

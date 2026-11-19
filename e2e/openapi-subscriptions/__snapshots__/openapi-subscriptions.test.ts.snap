@@ -51,12 +51,12 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`da
 scalar DateTime @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)
 
 type Query @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
-  dummy: String @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "connect", args: {selection: "\$(\\"dummy\\")"})
+  dummy: String @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "connect", args: {selection: "$(\\"dummy\\")"})
 }
 
 type Mutation @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
   """subscribes a client to receive out-of-band data"""
-  post_streams(input: post_streams_request_Input): SubscriptionInfo @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "connect", args: {source: "OpenAPICallbackExample", http: {POST: "/streams", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "\$args.input"}, selection: "subscriptionId"})
+  post_streams(input: post_streams_request_Input): SubscriptionInfo @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "connect", args: {source: "OpenAPICallbackExample", http: {POST: "/streams", body: "$args.input"}, selection: "subscriptionId"})
 }
 
 """subscription information"""
@@ -67,7 +67,7 @@ type SubscriptionInfo @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
 
 type Subscription @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
   """PubSub Topic: webhook:post:/callback/{args.subscriptionId}"""
-  onData(subscriptionId: String): SubscriptionPayload @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "pubsubOperation", args: {pubsubTopic: "webhook:post:/callback/{args.subscriptionId}"})
+  onData(subscriptionId: String): SubscriptionPayload
 }
 
 type SubscriptionPayload @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
@@ -85,5 +85,6 @@ input post_streams_request_Input @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
-scalar join__DirectiveArguments"
+scalar join__DirectiveArguments
+"
 `;

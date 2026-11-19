@@ -964,9 +964,9 @@ enum join__Graph {
 }
 
 type Query @join__type(graph: ACCOUNTS) @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS) {
-  me: User @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/me", headers: [{name: "accept", value: "application/json"}]}, selection: "id name username"})
-  user(id: String!): User @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/users/{\$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name username", entity: true})
-  users: [User] @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/users", headers: [{name: "accept", value: "application/json"}]}, selection: "id name username"})
+  me: User @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/me"}, selection: "id\\nname\\nusername"})
+  user(id: String!): User @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/users/{$args.id}"}, selection: "id\\nname\\nusername", entity: true})
+  users: [User] @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/users"}, selection: "id\\nname\\nusername"})
   topProducts(first: Int = 5): [Product] @join__field(graph: PRODUCTS)
 }
 
@@ -996,5 +996,6 @@ type Review @join__type(graph: REVIEWS, key: "id") {
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
-scalar join__DirectiveArguments"
+scalar join__DirectiveArguments
+"
 `;

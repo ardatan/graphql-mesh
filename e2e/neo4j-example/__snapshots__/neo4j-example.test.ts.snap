@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/neo4j/v0.1", import: ["@node", "@relationshipProperties", "@relationship", "@alias", "@cypher", "@plural"]) @join__directive(graphs: [MOVIES], name: "transport", args: {kind: "neo4j", location: "neo4j://localhost:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/neo4j/v0.1", import: ["@node", "@relationship", "@relationshipProperties", "@alias", "@cypher", "@plural"]) @join__directive(graphs: [MOVIES], name: "transport", args: {kind: "neo4j", location: "neo4j://localhost:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}) {
   query: Query
   mutation: Mutation
 }
@@ -39,17 +39,17 @@ enum join__Graph {
   MOVIES @join__graph(name: "Movies", url: "neo4j://localhost:<neo4j_port>")
 }
 
-directive @node(labels: [String!], subgraph: String) repeatable on OBJECT
+directive @node(labels: [String!], subgraph: String) on OBJECT
 
-directive @relationshipProperties(subgraph: String) repeatable on OBJECT
+directive @relationship(type: String, direction: _RelationDirections, properties: String, subgraph: String) on FIELD_DEFINITION
 
-directive @relationship(type: String, direction: _RelationDirections, properties: String, subgraph: String) repeatable on FIELD_DEFINITION
+directive @relationshipProperties(subgraph: String) on OBJECT
 
-directive @alias(property: String!, subgraph: String) repeatable on FIELD_DEFINITION
+directive @alias(property: String!, subgraph: String) on FIELD_DEFINITION
 
-directive @cypher(statement: String!, columnName: String!, subgraph: String) repeatable on FIELD_DEFINITION
+directive @cypher(statement: String!, columnName: String!, subgraph: String) on FIELD_DEFINITION
 
-directive @plural(value: String!, subgraph: String) repeatable on OBJECT | INTERFACE | UNION
+directive @plural(value: String!, subgraph: String) on OBJECT | INTERFACE | UNION
 
 type Query @join__type(graph: MOVIES) {
   moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort!]): MoviesConnection!
@@ -2896,5 +2896,6 @@ input StringScalarMutations @join__type(graph: MOVIES) {
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
-scalar join__DirectiveArguments"
+scalar join__DirectiveArguments
+"
 `;

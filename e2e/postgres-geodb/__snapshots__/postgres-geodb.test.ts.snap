@@ -40,227 +40,29 @@ enum join__Graph {
 }
 
 type Query @join__type(graph: GEO) {
-  city(id: ID!): City @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "ROW", where: """
-  
-    id: \$args.id
-  """, selection: """
-    id: id
-    name: name
-    countrycode: countrycode
-    district: district
-    population: population
-  """})
-  cities(where: CityFilter, orderBy: [CityOrderBy!], limit: Int = 10, offset: Int = 0): [City!]! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "ROWS", where: "\$args.where", orderBy: "\$args.orderBy", limit: "\$args.limit", offset: "\$args.offset", selection: """
-    id: id
-    name: name
-    countrycode: countrycode
-    district: district
-    population: population
-  """})
-  allCities(where: CityFilter, orderBy: [CityOrderBy!], first: Int, after: String): CityConnection! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "CONNECTION", where: "\$args.where", orderBy: "\$args.orderBy", first: "\$args.first", after: "\$args.after", selection: """
-    nodes {
-      id: id
-      name: name
-      countrycode: countrycode
-      district: district
-      population: population
-    }
-    edges {
-      cursor: \$cursor
-      node {
-        id: id
-        name: name
-        countrycode: countrycode
-        district: district
-        population: population
-      }
-    }
-    pageInfo {
-      hasNextPage: \$hasNextPage
-      hasPreviousPage: \$hasPreviousPage
-      startCursor: \$startCursor
-      endCursor: \$endCursor
-    }
-    totalCount: \$totalCount
-  """})
-  citiesCount(where: CityFilter): Int! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "COUNT", where: "\$args.where", selection: """
-  
-    \$
-  """})
-  country(id: ID!): Country @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "ROW", where: """
-  
-    code: \$args.id
-  """, selection: """
-    id: code
-    name: name
-    continent: continent
-    region: region
-    surfacearea: surfacearea
-    indepyear: indepyear
-    population: population
-    lifeexpectancy: lifeexpectancy
-    gnp: gnp
-    gnpold: gnpold
-    localname: localname
-    governmentform: governmentform
-    headofstate: headofstate
-    capital: capital
-    code2: code2
-  """})
-  countries(where: CountryFilter, orderBy: [CountryOrderBy!], limit: Int = 10, offset: Int = 0): [Country!]! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "ROWS", where: "\$args.where", orderBy: "\$args.orderBy", limit: "\$args.limit", offset: "\$args.offset", selection: """
-    id: code
-    name: name
-    continent: continent
-    region: region
-    surfacearea: surfacearea
-    indepyear: indepyear
-    population: population
-    lifeexpectancy: lifeexpectancy
-    gnp: gnp
-    gnpold: gnpold
-    localname: localname
-    governmentform: governmentform
-    headofstate: headofstate
-    capital: capital
-    code2: code2
-  """})
-  allCountries(where: CountryFilter, orderBy: [CountryOrderBy!], first: Int, after: String): CountryConnection! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "CONNECTION", where: "\$args.where", orderBy: "\$args.orderBy", first: "\$args.first", after: "\$args.after", selection: """
-    nodes {
-      id: code
-      name: name
-      continent: continent
-      region: region
-      surfacearea: surfacearea
-      indepyear: indepyear
-      population: population
-      lifeexpectancy: lifeexpectancy
-      gnp: gnp
-      gnpold: gnpold
-      localname: localname
-      governmentform: governmentform
-      headofstate: headofstate
-      capital: capital
-      code2: code2
-    }
-    edges {
-      cursor: \$cursor
-      node {
-        id: code
-        name: name
-        continent: continent
-        region: region
-        surfacearea: surfacearea
-        indepyear: indepyear
-        population: population
-        lifeexpectancy: lifeexpectancy
-        gnp: gnp
-        gnpold: gnpold
-        localname: localname
-        governmentform: governmentform
-        headofstate: headofstate
-        capital: capital
-        code2: code2
-      }
-    }
-    pageInfo {
-      hasNextPage: \$hasNextPage
-      hasPreviousPage: \$hasPreviousPage
-      startCursor: \$startCursor
-      endCursor: \$endCursor
-    }
-    totalCount: \$totalCount
-  """})
-  countriesCount(where: CountryFilter): Int! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "COUNT", where: "\$args.where", selection: """
-  
-    \$
-  """})
-  countrylanguages(where: CountrylanguageFilter, orderBy: [CountrylanguageOrderBy!], limit: Int = 10, offset: Int = 0): [Countrylanguage!]! @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "ROWS", where: "\$args.where", orderBy: "\$args.orderBy", limit: "\$args.limit", offset: "\$args.offset", selection: """
-    countrycode: countrycode
-    language: language
-    isofficial: isofficial
-    percentage: percentage
-  """})
-  allCountrylanguages(where: CountrylanguageFilter, orderBy: [CountrylanguageOrderBy!], first: Int, after: String): CountrylanguageConnection! @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "CONNECTION", where: "\$args.where", orderBy: "\$args.orderBy", first: "\$args.first", after: "\$args.after", selection: """
-    nodes {
-      countrycode: countrycode
-      language: language
-      isofficial: isofficial
-      percentage: percentage
-    }
-    edges {
-      cursor: \$cursor
-      node {
-        countrycode: countrycode
-        language: language
-        isofficial: isofficial
-        percentage: percentage
-      }
-    }
-    pageInfo {
-      hasNextPage: \$hasNextPage
-      hasPreviousPage: \$hasPreviousPage
-      startCursor: \$startCursor
-      endCursor: \$endCursor
-    }
-    totalCount: \$totalCount
-  """})
-  countrylanguagesCount(where: CountrylanguageFilter): Int! @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "COUNT", where: "\$args.where", selection: """
-  
-    \$
-  """})
+  city(id: ID!): City @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "ROW", where: "\\n  id: $args.id", selection: "  id: id\\n  name: name\\n  countrycode: countrycode\\n  district: district\\n  population: population"})
+  cities(where: CityFilter, orderBy: [CityOrderBy!], limit: Int = 10, offset: Int = 0): [City!]! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: id\\n  name: name\\n  countrycode: countrycode\\n  district: district\\n  population: population"})
+  allCities(where: CityFilter, orderBy: [CityOrderBy!], first: Int, after: String): CityConnection! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: id\\n    name: name\\n    countrycode: countrycode\\n    district: district\\n    population: population\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: id\\n      name: name\\n      countrycode: countrycode\\n      district: district\\n      population: population\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
+  citiesCount(where: CityFilter): Int! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
+  country(id: ID!): Country @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "ROW", where: "\\n  code: $args.id", selection: "  id: code\\n  name: name\\n  continent: continent\\n  region: region\\n  surfacearea: surfacearea\\n  indepyear: indepyear\\n  population: population\\n  lifeexpectancy: lifeexpectancy\\n  gnp: gnp\\n  gnpold: gnpold\\n  localname: localname\\n  governmentform: governmentform\\n  headofstate: headofstate\\n  capital: capital\\n  code2: code2"})
+  countries(where: CountryFilter, orderBy: [CountryOrderBy!], limit: Int = 10, offset: Int = 0): [Country!]! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: code\\n  name: name\\n  continent: continent\\n  region: region\\n  surfacearea: surfacearea\\n  indepyear: indepyear\\n  population: population\\n  lifeexpectancy: lifeexpectancy\\n  gnp: gnp\\n  gnpold: gnpold\\n  localname: localname\\n  governmentform: governmentform\\n  headofstate: headofstate\\n  capital: capital\\n  code2: code2"})
+  allCountries(where: CountryFilter, orderBy: [CountryOrderBy!], first: Int, after: String): CountryConnection! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: code\\n    name: name\\n    continent: continent\\n    region: region\\n    surfacearea: surfacearea\\n    indepyear: indepyear\\n    population: population\\n    lifeexpectancy: lifeexpectancy\\n    gnp: gnp\\n    gnpold: gnpold\\n    localname: localname\\n    governmentform: governmentform\\n    headofstate: headofstate\\n    capital: capital\\n    code2: code2\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: code\\n      name: name\\n      continent: continent\\n      region: region\\n      surfacearea: surfacearea\\n      indepyear: indepyear\\n      population: population\\n      lifeexpectancy: lifeexpectancy\\n      gnp: gnp\\n      gnpold: gnpold\\n      localname: localname\\n      governmentform: governmentform\\n      headofstate: headofstate\\n      capital: capital\\n      code2: code2\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
+  countriesCount(where: CountryFilter): Int! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
+  countrylanguages(where: CountrylanguageFilter, orderBy: [CountrylanguageOrderBy!], limit: Int = 10, offset: Int = 0): [Countrylanguage!]! @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  countrycode: countrycode\\n  language: language\\n  isofficial: isofficial\\n  percentage: percentage"})
+  allCountrylanguages(where: CountrylanguageFilter, orderBy: [CountrylanguageOrderBy!], first: Int, after: String): CountrylanguageConnection! @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    countrycode: countrycode\\n    language: language\\n    isofficial: isofficial\\n    percentage: percentage\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      countrycode: countrycode\\n      language: language\\n      isofficial: isofficial\\n      percentage: percentage\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
+  countrylanguagesCount(where: CountrylanguageFilter): Int! @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
 }
 
-type City @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "ROW", where: "id: \$this.id", selection: """
-id: id
-name: name
-countrycode: countrycode
-district: district
-population: population
-"""}) @join__type(graph: GEO, key: "id") {
+type City @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "ROW", where: "id: $this.id", selection: "id: id\\nname: name\\ncountrycode: countrycode\\ndistrict: district\\npopulation: population"}) @join__type(graph: GEO, key: "id") {
   id: ID!
   name: String!
   countrycode: String!
   district: String!
   population: Int!
-  countries(where: CountryFilter, orderBy: [CountryOrderBy!], limit: Int, offset: Int): [Country!]! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "ROWS", where: """
-    capital: \$this.id
-    ...\$args.where
-  """, orderBy: "\$args.orderBy", limit: "\$args.limit", offset: "\$args.offset", selection: """
-    id: code
-    name: name
-    continent: continent
-    region: region
-    surfacearea: surfacearea
-    indepyear: indepyear
-    population: population
-    lifeexpectancy: lifeexpectancy
-    gnp: gnp
-    gnpold: gnpold
-    localname: localname
-    governmentform: governmentform
-    headofstate: headofstate
-    capital: capital
-    code2: code2
-  """})
+  countries(where: CountryFilter, orderBy: [CountryOrderBy!], limit: Int, offset: Int): [Country!]! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "ROWS", where: "  capital: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: code\\n  name: name\\n  continent: continent\\n  region: region\\n  surfacearea: surfacearea\\n  indepyear: indepyear\\n  population: population\\n  lifeexpectancy: lifeexpectancy\\n  gnp: gnp\\n  gnpold: gnpold\\n  localname: localname\\n  governmentform: governmentform\\n  headofstate: headofstate\\n  capital: capital\\n  code2: code2"})
 }
 
-type Country @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "ROW", where: "code: \$this.id", selection: """
-id: code
-name: name
-continent: continent
-region: region
-surfacearea: surfacearea
-indepyear: indepyear
-population: population
-lifeexpectancy: lifeexpectancy
-gnp: gnp
-gnpold: gnpold
-localname: localname
-governmentform: governmentform
-headofstate: headofstate
-capital: capital
-code2: code2
-"""}) @join__type(graph: GEO, key: "id") {
+type Country @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "ROW", where: "code: $this.id", selection: "id: code\\nname: name\\ncontinent: continent\\nregion: region\\nsurfacearea: surfacearea\\nindepyear: indepyear\\npopulation: population\\nlifeexpectancy: lifeexpectancy\\ngnp: gnp\\ngnpold: gnpold\\nlocalname: localname\\ngovernmentform: governmentform\\nheadofstate: headofstate\\ncapital: capital\\ncode2: code2"}) @join__type(graph: GEO, key: "id") {
   id: ID!
   name: String!
   continent: String!
@@ -276,60 +78,16 @@ code2: code2
   headofstate: String
   capital: Int
   code2: String!
-  city: City @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "ROW", where: """
-  
-    id: \$this.capital
-  """, selection: """
-    id: id
-    name: name
-    countrycode: countrycode
-    district: district
-    population: population
-  """})
-  countrylanguages(where: CountrylanguageFilter, orderBy: [CountrylanguageOrderBy!], limit: Int, offset: Int): [Countrylanguage!]! @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "ROWS", where: """
-    countrycode: \$this.id
-    ...\$args.where
-  """, orderBy: "\$args.orderBy", limit: "\$args.limit", offset: "\$args.offset", selection: """
-    countrycode: countrycode
-    language: language
-    isofficial: isofficial
-    percentage: percentage
-  """})
+  city: City @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "ROW", where: "\\n  id: $this.capital", selection: "  id: id\\n  name: name\\n  countrycode: countrycode\\n  district: district\\n  population: population"})
+  countrylanguages(where: CountrylanguageFilter, orderBy: [CountrylanguageOrderBy!], limit: Int, offset: Int): [Countrylanguage!]! @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "ROWS", where: "  countrycode: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  countrycode: countrycode\\n  language: language\\n  isofficial: isofficial\\n  percentage: percentage"})
 }
 
-type Countrylanguage @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "ROW", where: """
-countrycode: \$this.countrycode
-language: \$this.language
-""", selection: """
-countrycode: countrycode
-language: language
-isofficial: isofficial
-percentage: percentage
-"""}) @join__type(graph: GEO, key: "countrycode language") {
+type Countrylanguage @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "ROW", where: "countrycode: $this.countrycode\\nlanguage: $this.language", selection: "countrycode: countrycode\\nlanguage: language\\nisofficial: isofficial\\npercentage: percentage"}) @join__type(graph: GEO, key: "countrycode language") {
   countrycode: String!
   language: String!
   isofficial: Boolean!
   percentage: Float!
-  country: Country @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "ROW", where: """
-  
-    code: \$this.countrycode
-  """, selection: """
-    id: code
-    name: name
-    continent: continent
-    region: region
-    surfacearea: surfacearea
-    indepyear: indepyear
-    population: population
-    lifeexpectancy: lifeexpectancy
-    gnp: gnp
-    gnpold: gnpold
-    localname: localname
-    governmentform: governmentform
-    headofstate: headofstate
-    capital: capital
-    code2: code2
-  """})
+  country: Country @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "ROW", where: "\\n  code: $this.countrycode", selection: "  id: code\\n  name: name\\n  continent: continent\\n  region: region\\n  surfacearea: surfacearea\\n  indepyear: indepyear\\n  population: population\\n  lifeexpectancy: lifeexpectancy\\n  gnp: gnp\\n  gnpold: gnpold\\n  localname: localname\\n  governmentform: governmentform\\n  headofstate: headofstate\\n  capital: capital\\n  code2: code2"})
 }
 
 type CityConnection @join__type(graph: GEO) {
@@ -376,137 +134,13 @@ type CountrylanguageEdge @join__type(graph: GEO) {
 }
 
 type Mutation @join__type(graph: GEO) {
-  createCity(input: CreateCityInput!): CityPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "INSERT", set: """
-    id: \$args.input.id
-    name: \$args.input.name
-    countrycode: \$args.input.countrycode
-    district: \$args.input.district
-    population: \$args.input.population
-  """, selection: """
-    city {
-      id: id
-      name: name
-      countrycode: countrycode
-      district: district
-      population: population
-    }
-  """})
-  updateCity(id: ID!, input: UpdateCityInput!): CityPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "UPDATE", set: """
-    name: \$args.input.name
-    countrycode: \$args.input.countrycode
-    district: \$args.input.district
-    population: \$args.input.population
-  """, where: """
-  
-    id: \$args.id
-  """, selection: """
-    city {
-      id: id
-      name: name
-      countrycode: countrycode
-      district: district
-      population: population
-    }
-  """})
-  deleteCity(id: ID!): DeleteCityPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "DELETE", where: """
-  
-    id: \$args.id
-  """, selection: """
-    ok: \$affectedRows
-    affectedRows: \$affectedRows
-  """})
-  createCountry(input: CreateCountryInput!): CountryPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "INSERT", set: """
-    code: \$args.input.id
-    name: \$args.input.name
-    continent: \$args.input.continent
-    region: \$args.input.region
-    surfacearea: \$args.input.surfacearea
-    indepyear: \$args.input.indepyear
-    population: \$args.input.population
-    lifeexpectancy: \$args.input.lifeexpectancy
-    gnp: \$args.input.gnp
-    gnpold: \$args.input.gnpold
-    localname: \$args.input.localname
-    governmentform: \$args.input.governmentform
-    headofstate: \$args.input.headofstate
-    capital: \$args.input.capital
-    code2: \$args.input.code2
-  """, selection: """
-    country {
-      id: code
-      name: name
-      continent: continent
-      region: region
-      surfacearea: surfacearea
-      indepyear: indepyear
-      population: population
-      lifeexpectancy: lifeexpectancy
-      gnp: gnp
-      gnpold: gnpold
-      localname: localname
-      governmentform: governmentform
-      headofstate: headofstate
-      capital: capital
-      code2: code2
-    }
-  """})
-  updateCountry(id: ID!, input: UpdateCountryInput!): CountryPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "UPDATE", set: """
-    name: \$args.input.name
-    continent: \$args.input.continent
-    region: \$args.input.region
-    surfacearea: \$args.input.surfacearea
-    indepyear: \$args.input.indepyear
-    population: \$args.input.population
-    lifeexpectancy: \$args.input.lifeexpectancy
-    gnp: \$args.input.gnp
-    gnpold: \$args.input.gnpold
-    localname: \$args.input.localname
-    governmentform: \$args.input.governmentform
-    headofstate: \$args.input.headofstate
-    capital: \$args.input.capital
-    code2: \$args.input.code2
-  """, where: """
-  
-    code: \$args.id
-  """, selection: """
-    country {
-      id: code
-      name: name
-      continent: continent
-      region: region
-      surfacearea: surfacearea
-      indepyear: indepyear
-      population: population
-      lifeexpectancy: lifeexpectancy
-      gnp: gnp
-      gnpold: gnpold
-      localname: localname
-      governmentform: governmentform
-      headofstate: headofstate
-      capital: capital
-      code2: code2
-    }
-  """})
-  deleteCountry(id: ID!): DeleteCountryPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "DELETE", where: """
-  
-    code: \$args.id
-  """, selection: """
-    ok: \$affectedRows
-    affectedRows: \$affectedRows
-  """})
-  createCountrylanguage(input: CreateCountrylanguageInput!): CountrylanguagePayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "INSERT", set: """
-    countrycode: \$args.input.countrycode
-    language: \$args.input.language
-    isofficial: \$args.input.isofficial
-    percentage: \$args.input.percentage
-  """, selection: """
-    countrylanguage {
-      countrycode: countrycode
-      language: language
-      isofficial: isofficial
-      percentage: percentage
-    }
-  """})
+  createCity(input: CreateCityInput!): CityPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "INSERT", set: "  id: $args.input.id\\n  name: $args.input.name\\n  countrycode: $args.input.countrycode\\n  district: $args.input.district\\n  population: $args.input.population", selection: "  city {\\n    id: id\\n    name: name\\n    countrycode: countrycode\\n    district: district\\n    population: population\\n  }"})
+  updateCity(id: ID!, input: UpdateCityInput!): CityPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "UPDATE", set: "  name: $args.input.name\\n  countrycode: $args.input.countrycode\\n  district: $args.input.district\\n  population: $args.input.population", where: "\\n  id: $args.id", selection: "  city {\\n    id: id\\n    name: name\\n    countrycode: countrycode\\n    district: district\\n    population: population\\n  }"})
+  deleteCity(id: ID!): DeleteCityPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "DELETE", where: "\\n  id: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
+  createCountry(input: CreateCountryInput!): CountryPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "INSERT", set: "  code: $args.input.id\\n  name: $args.input.name\\n  continent: $args.input.continent\\n  region: $args.input.region\\n  surfacearea: $args.input.surfacearea\\n  indepyear: $args.input.indepyear\\n  population: $args.input.population\\n  lifeexpectancy: $args.input.lifeexpectancy\\n  gnp: $args.input.gnp\\n  gnpold: $args.input.gnpold\\n  localname: $args.input.localname\\n  governmentform: $args.input.governmentform\\n  headofstate: $args.input.headofstate\\n  capital: $args.input.capital\\n  code2: $args.input.code2", selection: "  country {\\n    id: code\\n    name: name\\n    continent: continent\\n    region: region\\n    surfacearea: surfacearea\\n    indepyear: indepyear\\n    population: population\\n    lifeexpectancy: lifeexpectancy\\n    gnp: gnp\\n    gnpold: gnpold\\n    localname: localname\\n    governmentform: governmentform\\n    headofstate: headofstate\\n    capital: capital\\n    code2: code2\\n  }"})
+  updateCountry(id: ID!, input: UpdateCountryInput!): CountryPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "UPDATE", set: "  name: $args.input.name\\n  continent: $args.input.continent\\n  region: $args.input.region\\n  surfacearea: $args.input.surfacearea\\n  indepyear: $args.input.indepyear\\n  population: $args.input.population\\n  lifeexpectancy: $args.input.lifeexpectancy\\n  gnp: $args.input.gnp\\n  gnpold: $args.input.gnpold\\n  localname: $args.input.localname\\n  governmentform: $args.input.governmentform\\n  headofstate: $args.input.headofstate\\n  capital: $args.input.capital\\n  code2: $args.input.code2", where: "\\n  code: $args.id", selection: "  country {\\n    id: code\\n    name: name\\n    continent: continent\\n    region: region\\n    surfacearea: surfacearea\\n    indepyear: indepyear\\n    population: population\\n    lifeexpectancy: lifeexpectancy\\n    gnp: gnp\\n    gnpold: gnpold\\n    localname: localname\\n    governmentform: governmentform\\n    headofstate: headofstate\\n    capital: capital\\n    code2: code2\\n  }"})
+  deleteCountry(id: ID!): DeleteCountryPayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "country", kind: "DELETE", where: "\\n  code: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
+  createCountrylanguage(input: CreateCountrylanguageInput!): CountrylanguagePayload! @join__directive(graphs: [GEO], name: "sql", args: {table: "countrylanguage", kind: "INSERT", set: "  countrycode: $args.input.countrycode\\n  language: $args.input.language\\n  isofficial: $args.input.isofficial\\n  percentage: $args.input.percentage", selection: "  countrylanguage {\\n    countrycode: countrycode\\n    language: language\\n    isofficial: isofficial\\n    percentage: percentage\\n  }"})
 }
 
 type CityPayload @join__type(graph: GEO) {
@@ -726,7 +360,8 @@ input CreateCountrylanguageInput @join__type(graph: GEO) {
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
-scalar join__DirectiveArguments"
+scalar join__DirectiveArguments
+"
 `;
 
 exports[`should execute cities and country capital 1`] = `

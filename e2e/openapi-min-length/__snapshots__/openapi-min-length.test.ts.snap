@@ -38,12 +38,12 @@ enum join__Graph {
   WIKI @join__graph(name: "Wiki", url: "https://api.chucknorris.io")
 }
 
-directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
 scalar Category @length(subgraph: "Wiki", max: 100) @join__type(graph: WIKI)
 
 type Query @join__type(graph: WIKI) {
-  jokes_categories: [Category] @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/jokes/categories", headers: [{name: "accept", value: "application/json"}]}, selection: "\$"})
+  jokes_categories: [Category] @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/jokes/categories"}, selection: "$"})
 }
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION

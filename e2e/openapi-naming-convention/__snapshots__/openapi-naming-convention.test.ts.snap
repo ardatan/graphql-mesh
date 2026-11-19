@@ -39,7 +39,7 @@ enum join__Graph {
 }
 
 type Query @join__type(graph: WIKI) {
-  jokes_categories: [Category] @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/jokes/categories", headers: [{name: "accept", value: "application/json"}]}, selection: "\$->map(@->match([\\"animal\\", \\"ANIMAL\\"], [\\"career\\", \\"CAREER\\"], [\\"celebrity\\", \\"CELEBRITY\\"], [\\"dev\\", \\"DEV\\"], [\\"explicit\\", \\"EXPLICIT\\"], [\\"fashion\\", \\"FASHION\\"], [\\"food\\", \\"FOOD\\"], [\\"history\\", \\"HISTORY\\"], [\\"money\\", \\"MONEY\\"], [\\"movie\\", \\"MOVIE\\"], [\\"music\\", \\"MUSIC\\"], [\\"political\\", \\"POLITICAL\\"], [\\"religion\\", \\"RELIGION\\"], [\\"science\\", \\"SCIENCE\\"], [\\"sport\\", \\"SPORT\\"], [\\"travel\\", \\"TRAVEL\\"], [@, @]))"})
+  jokes_categories: [Category] @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/jokes/categories"}, selection: "$->map(@->match([\\"animal\\", \\"ANIMAL\\"], [\\"career\\", \\"CAREER\\"], [\\"celebrity\\", \\"CELEBRITY\\"], [\\"dev\\", \\"DEV\\"], [\\"explicit\\", \\"EXPLICIT\\"], [\\"fashion\\", \\"FASHION\\"], [\\"food\\", \\"FOOD\\"], [\\"history\\", \\"HISTORY\\"], [\\"money\\", \\"MONEY\\"], [\\"movie\\", \\"MOVIE\\"], [\\"music\\", \\"MUSIC\\"], [\\"political\\", \\"POLITICAL\\"], [\\"religion\\", \\"RELIGION\\"], [\\"science\\", \\"SCIENCE\\"], [\\"sport\\", \\"SPORT\\"], [\\"travel\\", \\"TRAVEL\\"], [@, @]))"})
 }
 
 enum Category @join__type(graph: WIKI) {

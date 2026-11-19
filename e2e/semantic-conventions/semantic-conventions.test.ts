@@ -1,7 +1,8 @@
 import { createTenv } from '@e2e/tenv';
 
 const { compose, fs } = createTenv(__dirname);
-const regExp = /@merge\(.*\)/;
+// Mesh `@merge` may be lifted into lean federation `@join__directive(..., name: "merge", ...)`.
+const regExp = /@(?:merge\(|join__directive\([^)]*name:\s*"merge")/;
 
 it('should generate merge directives', async () => {
   const { output } = await compose({

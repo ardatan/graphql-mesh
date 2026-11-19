@@ -5,6 +5,8 @@ exports[`SOAP Headers should pass headers to the executor: soap-with-headers 1`]
   query: Query
 }
 
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -37,9 +39,15 @@ input tns_GetCitiesByCountry_Input {
   CountryName: String
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
   headers: [HTTPHeaderMapping!]
+  body: String
   queryParams: String
 }
 
@@ -47,5 +55,11 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;

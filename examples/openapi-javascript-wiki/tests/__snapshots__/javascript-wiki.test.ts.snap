@@ -19,7 +19,20 @@ type Query {
   Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
   
   """
-  feed_availability: feed_availability_response @connect(source: "Wiki", http: {GET: "/feed/availability", headers: [{name: "Accept", value: "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"}]}, selection: "__typename: $status->match([200, \\"availability\\"], [@, \\"problem\\"]) in_the_news most_read on_this_day picture_of_the_day todays_featured_article detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  feed_availability: feed_availability_response @connect(source: "Wiki", http: {GET: "/feed/availability", headers: [{name: "Accept", value: "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "availability"], [@, "problem"])
+  in_the_news
+  most_read
+  on_this_day
+  picture_of_the_day
+  todays_featured_article
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Returns the previously-stored formula via \`/media/math/check/{type}\` for
   the given hash.
@@ -30,7 +43,14 @@ type Query {
   media_math_formula_by_hash(
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): problem @connect(source: "Wiki", http: {GET: "/media/math/formula/{$args.hash}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "detail method status title type uri")
+  ): problem @connect(source: "Wiki", http: {GET: "/media/math/formula/{$args.hash}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """)
   """
   Given a request hash, renders a TeX formula into its mathematic
   representation in the given format. When a request is issued to the
@@ -45,7 +65,14 @@ type Query {
     format: queryInput_media_math_render_by_format_by_hash_format!
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): problem @connect(source: "Wiki", http: {GET: "/media/math/render/{$args.format}/{$args.hash}", headers: [{name: "Accept", value: "image/svg+xml, application/mathml+xml, image/png, application/problem+json"}]}, selection: "detail method status title type uri")
+  ): problem @connect(source: "Wiki", http: {GET: "/media/math/render/{$args.format}/{$args.hash}", headers: [{name: "Accept", value: "image/svg+xml, application/mathml+xml, image/png, application/problem+json"}]}, selection: """
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """)
   """
   Given a Mediawiki project and a date range, returns a timeseries of absolute bytes
   difference sums. You can filter by editors-type (all-editor-types, anonymous, group-bot,
@@ -75,7 +102,25 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"absolute_bytes_difference\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { abs_bytes_diff timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "absolute_bytes_difference"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      abs_bytes_diff
+      timestamp
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project, a page-title prefixed with canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
@@ -108,7 +153,25 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/per-page/{$args.project}/{$args.page_title}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"absolute_bytes_difference_per_page\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_title: $->get(\\"page-title\\") project results { abs_bytes_diff timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/per-page/{$args.project}/{$args.page_title}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "absolute_bytes_difference_per_page"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_title: $->get("page-title")
+    project
+    results {
+      abs_bytes_diff
+      timestamp
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of bytes difference net
   sums. You can filter by editors-type (all-editor-types, anonymous, group-bot, name-bot,
@@ -138,7 +201,25 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/net/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"net_bytes_difference\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { net_bytes_diff timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/net/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "net_bytes_difference"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      net_bytes_diff
+      timestamp
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project, a page-title prefixed with canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
@@ -171,7 +252,25 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/net/per-page/{$args.project}/{$args.page_title}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"net_bytes_difference_per_page\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_title: $->get(\\"page-title\\") project results { net_bytes_diff timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/net/per-page/{$args.project}/{$args.page_title}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "net_bytes_difference_per_page"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_title: $->get("page-title")
+    project
+    results {
+      net_bytes_diff
+      timestamp
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its edited-pages counts.
   You can filter by editor-type (all-editor-types, anonymous, group-bot, name-bot, user),
@@ -202,7 +301,26 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.activity_level->match([\\"all_activity_levels\\", \\"all-activity-levels\\"], [\\"_1__4_edits\\", \\"1..4-edits\\"], [\\"_5__24_edits\\", \\"5..24-edits\\"], [\\"_25__99_edits\\", \\"25..99-edits\\"], [\\"_100___edits\\", \\"100..-edits\\"], [@, $args.activity_level])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"edited_pages\\"], [@, \\"problem\\"]) items { activity_level: $->get(\\"activity-level\\") editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { edited_pages timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.activity_level->match([\\"all_activity_levels\\", \\"all-activity-levels\\"], [\\"_1__4_edits\\", \\"1..4-edits\\"], [\\"_5__24_edits\\", \\"5..24-edits\\"], [\\"_25__99_edits\\", \\"25..99-edits\\"], [\\"_100___edits\\", \\"100..-edits\\"], [@, $args.activity_level])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "edited_pages"], [@, "problem"])
+  items {
+    activity_level: $->get("activity-level")
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      edited_pages
+      timestamp
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its new pages counts.
   You can filter by editor type (all-editor-types, anonymous, group-bot, name-bot, user)
@@ -232,7 +350,25 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/new/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"new_pages\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { new_pages timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/new/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "new_pages"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      new_pages
+      timestamp
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   edited-pages by absolute bytes-difference. You can filter by editor-type (all-editor-types,
@@ -267,7 +403,29 @@ type Query {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_edited_pages_by_abs_bytes_diff\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { abs_bytes_diff page_title rank } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "top_edited_pages_by_abs_bytes_diff"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      timestamp
+      top {
+        abs_bytes_diff
+        page_title
+        rank
+      }
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
   100 edited-pages by edits count. You can filter by editor-type (all-editor-types,
@@ -303,7 +461,29 @@ type Query {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-edits/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_edited_pages_by_edits\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { edits page_title rank } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-edits/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "top_edited_pages_by_edits"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      timestamp
+      top {
+        edits
+        page_title
+        rank
+      }
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   edited-pages by net bytes-difference. You can filter by editor-type (all-editor-types,
@@ -338,7 +518,29 @@ type Query {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-net-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_edited_pages_by_net_bytes_diff\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { net_bytes_diff page_title rank } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-net-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "top_edited_pages_by_net_bytes_diff"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      timestamp
+      top {
+        net_bytes_diff
+        page_title
+        rank
+      }
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its editors counts.
   You can filter by editory-type (all-editor-types, anonymous, group-bot, name-bot, user),
@@ -369,7 +571,26 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/editors/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.activity_level->match([\\"all_activity_levels\\", \\"all-activity-levels\\"], [\\"_1__4_edits\\", \\"1..4-edits\\"], [\\"_5__24_edits\\", \\"5..24-edits\\"], [\\"_25__99_edits\\", \\"25..99-edits\\"], [\\"_100___edits\\", \\"100..-edits\\"], [@, $args.activity_level])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"editors\\"], [@, \\"problem\\"]) items { activity_level: $->get(\\"activity-level\\") editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { editors timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/editors/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.activity_level->match([\\"all_activity_levels\\", \\"all-activity-levels\\"], [\\"_1__4_edits\\", \\"1..4-edits\\"], [\\"_5__24_edits\\", \\"5..24-edits\\"], [\\"_25__99_edits\\", \\"25..99-edits\\"], [\\"_100___edits\\", \\"100..-edits\\"], [@, $args.activity_level])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "editors"], [@, "problem"])
+  items {
+    activity_level: $->get("activity-level")
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      editors
+      timestamp
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   editors by absolute bytes-difference. You can filter by editor-type (all-editor-types,
@@ -406,7 +627,29 @@ type Query {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_editors_by_abs_bytes_diff\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { abs_bytes_diff rank user_text } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "top_editors_by_abs_bytes_diff"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      timestamp
+      top {
+        abs_bytes_diff
+        rank
+        user_text
+      }
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
   100 editors by edits count. You can filter by editor-type (all-editor-types,
@@ -443,7 +686,29 @@ type Query {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-edits/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_editors_by_edits\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { edits rank user_text } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-edits/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "top_editors_by_edits"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      timestamp
+      top {
+        edits
+        rank
+        user_text
+      }
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   editors by net bytes-difference. You can filter by editor-type (all-editor-types, anonymous,
@@ -480,7 +745,29 @@ type Query {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-net-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_editors_by_net_bytes_diff\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { net_bytes_diff rank user_text } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-net-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "top_editors_by_net_bytes_diff"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      timestamp
+      top {
+        net_bytes_diff
+        rank
+        user_text
+      }
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of edits counts.
   You can filter by editors-type (all-editor-types, anonymous, bot, registered) and
@@ -510,7 +797,25 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edits/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"edits\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { edits timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edits/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "edits"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_type: $->get("page-type")
+    project
+    results {
+      edits
+      timestamp
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project, a page-title prefixed with its canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of edit counts.
@@ -543,7 +848,25 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edits/per-page/{$args.project}/{$args.page_title}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"edits_per_page\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_title: $->get(\\"page-title\\") project results { edits timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edits/per-page/{$args.project}/{$args.page_title}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "edits_per_page"], [@, "problem"])
+  items {
+    editor_type: $->get("editor-type")
+    granularity
+    page_title: $->get("page-title")
+    project
+    results {
+      edits
+      timestamp
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a project and a date range, returns a timeseries of pagecounts.
   You can filter by access site (mobile or desktop) and you can choose between monthly,
@@ -574,7 +897,22 @@ type Query {
     this value is exclusive.
     """
     end: String!
-  ): metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/legacy/pagecounts/aggregate/{$args.project}/{$args.access_site->match([\\"all_sites\\", \\"all-sites\\"], [\\"desktop_site\\", \\"desktop-site\\"], [\\"mobile_site\\", \\"mobile-site\\"], [@, $args.access_site])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pagecounts_project\\"], [@, \\"problem\\"]) items { access_site: $->get(\\"access-site\\") count granularity project timestamp } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/legacy/pagecounts/aggregate/{$args.project}/{$args.access_site->match([\\"all_sites\\", \\"all-sites\\"], [\\"desktop_site\\", \\"desktop-site\\"], [\\"mobile_site\\", \\"mobile-site\\"], [@, $args.access_site])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "pagecounts_project"], [@, "problem"])
+  items {
+    access_site: $->get("access-site")
+    count
+    granularity
+    project
+    timestamp
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a date range, returns a timeseries of pageview counts. You can filter by project,
   access method and/or agent type. You can choose between daily and hourly granularity
@@ -604,7 +942,23 @@ type Query {
     The timestamp of the last hour/day/month to include, in YYYYMMDDHH format
     """
     end: String!
-  ): metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/aggregate/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.agent->match([\\"all_agents\\", \\"all-agents\\"], [@, $args.agent])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pageview_project\\"], [@, \\"problem\\"]) items { access agent granularity project timestamp views } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/aggregate/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.agent->match([\\"all_agents\\", \\"all-agents\\"], [@, $args.agent])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "pageview_project"], [@, "problem"])
+  items {
+    access
+    agent
+    granularity
+    project
+    timestamp
+    views
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki article and a date range, returns a daily timeseries of its pageview
   counts. You can also filter by access method and/or agent type.
@@ -634,7 +988,24 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD or YYYYMMDDHH format"""
     end: String!
-  ): metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/per-article/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.agent->match([\\"all_agents\\", \\"all-agents\\"], [@, $args.agent])}/{$args.article}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pageview_article\\"], [@, \\"problem\\"]) items { access agent article granularity project timestamp views } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/per-article/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.agent->match([\\"all_agents\\", \\"all-agents\\"], [@, $args.agent])}/{$args.article}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "pageview_article"], [@, "problem"])
+  items {
+    access
+    agent
+    article
+    granularity
+    project
+    timestamp
+    views
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Lists the pageviews to this project, split by country of origin for a given month.
   Because of privacy reasons, pageviews are given in a bucketed format, and countries
@@ -660,7 +1031,26 @@ type Query {
     The month of the date for which to retrieve top countries, in MM format.
     """
     month: String!
-  ): metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/top-by-country/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.year}/{$args.month}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"by_country\\"], [@, \\"problem\\"]) items { access countries { country rank views } month project year } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/top-by-country/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.year}/{$args.month}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "by_country"], [@, "problem"])
+  items {
+    access
+    countries {
+      country
+      rank
+      views
+    }
+    month
+    project
+    year
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Lists the 1000 most viewed articles for a given project and timespan (month or day).
   You can filter by access method.
@@ -689,7 +1079,27 @@ type Query {
     month: String!
     """The day of the date for which to retrieve top articles, in DD format."""
     day: String!
-  ): metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/top/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pageview_tops\\"], [@, \\"problem\\"]) items { access articles { article rank views } day month project year } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/top/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "pageview_tops"], [@, "problem"])
+  items {
+    access
+    articles {
+      article
+      rank
+      views
+    }
+    day
+    month
+    project
+    year
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its newly registered
   users counts. You can choose between daily and monthly granularity. The newly registered
@@ -716,7 +1126,23 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/registered-users/new/{$args.project}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"new_registered_users\\"], [@, \\"problem\\"]) items { granularity project results { new_registered_users timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/registered-users/new/{$args.project}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "new_registered_users"], [@, "problem"])
+  items {
+    granularity
+    project
+    results {
+      new_registered_users
+      timestamp
+    }
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a project and a date range, returns a timeseries of unique devices counts.
   You need to specify a project, and can filter by accessed site (mobile or desktop).
@@ -740,14 +1166,32 @@ type Query {
     start: String!
     """The timestamp of the last day/month to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/unique-devices/{$args.project}/{$args.access_site->match([\\"all_sites\\", \\"all-sites\\"], [\\"desktop_site\\", \\"desktop-site\\"], [\\"mobile_site\\", \\"mobile-site\\"], [@, $args.access_site])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"unique_devices\\"], [@, \\"problem\\"]) items { access_site: $->get(\\"access-site\\") devices granularity project timestamp } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/unique-devices/{$args.project}/{$args.access_site->match([\\"all_sites\\", \\"all-sites\\"], [\\"desktop_site\\", \\"desktop-site\\"], [\\"mobile_site\\", \\"mobile-site\\"], [@, $args.access_site])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "unique_devices"], [@, "problem"])
+  items {
+    access_site: $->get("access-site")
+    devices
+    granularity
+    project
+    timestamp
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of language pairs the back-end service can translate
   
   Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
   
   """
-  transform_list_languagepairs: cx_languagepairs @connect(source: "Wiki", http: {GET: "/transform/list/languagepairs/", headers: [{name: "Accept", value: "application/json"}]}, selection: "source target")
+  transform_list_languagepairs: cx_languagepairs @connect(source: "Wiki", http: {GET: "/transform/list/languagepairs/"}, selection: """
+  source
+  target
+  """)
   """
   Fetches the list of tools that are available for the given pair of languages.
   
@@ -759,14 +1203,31 @@ type Query {
     from: String!
     """The target language code"""
     to: String!
-  ): transform_list_pair_by_from_by_to_response @connect(source: "Wiki", http: {GET: "/transform/list/pair/{$args.from}/{$args.to}/", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_list_tools\\"], [@, \\"problem\\"]) tools detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): transform_list_pair_by_from_by_to_response @connect(source: "Wiki", http: {GET: "/transform/list/pair/{$args.from}/{$args.to}/", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "cx_list_tools"], [@, "problem"])
+  tools
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of tools and all of the language pairs it can translate
   
   Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
   
   """
-  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool!): transform_list_tool_by_tool_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"JSON_container\\"], [@, \\"problem\\"]) detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool!): transform_list_tool_by_tool_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "JSON_container"], [@, "problem"])
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of tools and all of the language pairs it can translate
   
@@ -777,7 +1238,15 @@ type Query {
     tool: queryInput_transform_list_tool_by_tool_by_from_tool!
     """The source language code"""
     from: String!
-  ): transform_list_tool_by_tool_by_from_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"JSON_container\\"], [@, \\"problem\\"]) detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): transform_list_tool_by_tool_by_from_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "JSON_container"], [@, "problem"])
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of tools and all of the language pairs it can translate
   
@@ -790,7 +1259,15 @@ type Query {
     from: String!
     """The target language code"""
     to: String!
-  ): transform_list_tool_by_tool_by_from_by_to_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}/{$args.to}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"JSON_container\\"], [@, \\"problem\\"]) detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): transform_list_tool_by_tool_by_from_by_to_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}/{$args.to}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "JSON_container"], [@, "problem"])
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the dictionary meaning of a word from a language and displays
   it in the target language.
@@ -805,7 +1282,21 @@ type Query {
     to_lang: String!
     """The word to lookup"""
     word: String!
-  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_response @connect(source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_dict\\"], [@, \\"problem\\"]) source translations { info phrase sources } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_response @connect(source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "cx_dict"], [@, "problem"])
+  source
+  translations {
+    info
+    phrase
+    sources
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the dictionary meaning of a word from a language and displays
   it in the target language.
@@ -821,7 +1312,21 @@ type Query {
     """The word to lookup"""
     word: String!
     provider: queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider!
-  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_response @connect(source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}/{$args.provider}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_dict\\"], [@, \\"problem\\"]) source translations { info phrase sources } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_response @connect(source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}/{$args.provider}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "cx_dict"], [@, "problem"])
+  source
+  translations {
+    info
+    phrase
+    sources
+  }
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   viewsInPastMonth(project: String!): Int!
 }
 
@@ -1991,7 +2496,14 @@ type Mutation {
   Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
   
   """
-  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): problem @connect(source: "Wiki", http: {POST: "/media/math/check/{$args.type->match([\\"inline_tex\\", \\"inline-tex\\"], [@, $args.type])}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "detail method status title type uri")
+  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): problem @connect(source: "Wiki", http: {POST: "/media/math/check/{$args.type->match([\\"inline_tex\\", \\"inline-tex\\"], [@, $args.type])}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """)
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -2005,7 +2517,16 @@ type Mutation {
     """The target language code"""
     to_lang: String!
     html: JSON!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_mt\\"], [@, \\"problem\\"]) contents detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "cx_mt"], [@, "problem"])
+  contents
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -2020,7 +2541,16 @@ type Mutation {
     to_lang: String!
     provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider!
     html: JSON!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}/{$args.provider}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_mt\\"], [@, \\"problem\\"]) contents detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}/{$args.provider}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  __typename: $status->match([200, "cx_mt"], [@, "problem"])
+  contents
+  detail
+  method
+  status
+  title
+  type
+  uri
+  """, isSuccess: "$status->match([200, true], [@, true])")
 }
 
 """The input type of the given formula; can be tex or inline-tex"""

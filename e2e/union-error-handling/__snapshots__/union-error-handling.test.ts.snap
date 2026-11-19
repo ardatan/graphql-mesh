@@ -40,13 +40,13 @@ enum join__Graph {
 
 type Query @join__type(graph: ERROR_API) {
   """Get user - direct response type without error handling"""
-  getUserNoErrorHandling: User @join__directive(graphs: [ERROR_API], name: "connect", args: {source: "ErrorAPI", http: {GET: "/userNoErrorHandling", headers: [{name: "accept", value: "application/json"}]}, selection: "id name email"})
+  getUserNoErrorHandling: User @join__directive(graphs: [ERROR_API], name: "connect", args: {source: "ErrorAPI", http: {GET: "/userNoErrorHandling"}, selection: "id\\nname\\nemail"})
   """Get user - union response type without error handling"""
-  getUserUnionNoErrorHandling: getUserUnionNoErrorHandling_response @join__directive(graphs: [ERROR_API], name: "connect", args: {source: "ErrorAPI", http: {GET: "/userUnionNoErrorHandling", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: \$status->match([200, \\"User\\"], [202, \\"AsyncJob\\"], [@, \\"User\\"]) id name email asynchronous_job_id status estimated_completion", isSuccess: "\$status->match([200, true], [202, true], [@, false])"})
+  getUserUnionNoErrorHandling: getUserUnionNoErrorHandling_response @join__directive(graphs: [ERROR_API], name: "connect", args: {source: "ErrorAPI", http: {GET: "/userUnionNoErrorHandling"}, selection: "__typename: $status->match([200, \\"User\\"], [202, \\"AsyncJob\\"], [@, \\"User\\"])\\nid\\nname\\nemail\\nasynchronous_job_id\\nstatus\\nestimated_completion", isSuccess: "$status->match([200, true], [202, true], [@, false])"})
   """Get user - direct response type with error handling"""
-  getUserErrorHandling: getUserErrorHandling_response @join__directive(graphs: [ERROR_API], name: "connect", args: {source: "ErrorAPI", http: {GET: "/userErrorHandling", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: \$status->match([200, \\"User\\"], [400, \\"Error\\"], [@, \\"User\\"]) id name email error code", isSuccess: "\$status->match([200, true], [400, true], [@, false])"})
+  getUserErrorHandling: getUserErrorHandling_response @join__directive(graphs: [ERROR_API], name: "connect", args: {source: "ErrorAPI", http: {GET: "/userErrorHandling"}, selection: "__typename: $status->match([200, \\"User\\"], [400, \\"Error\\"], [@, \\"User\\"])\\nid\\nname\\nemail\\nerror\\ncode", isSuccess: "$status->match([200, true], [400, true], [@, false])"})
   """Get user - union response type with error handling"""
-  getUserUnionErrorHandling: getUserUnionErrorHandling_response @join__directive(graphs: [ERROR_API], name: "connect", args: {source: "ErrorAPI", http: {GET: "/userUnionErrorHandling", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: \$status->match([200, \\"User\\"], [202, \\"AsyncJob\\"], [400, \\"Error\\"], [@, \\"User\\"]) id name email asynchronous_job_id status estimated_completion error code", isSuccess: "\$status->match([200, true], [202, true], [400, true], [@, false])"})
+  getUserUnionErrorHandling: getUserUnionErrorHandling_response @join__directive(graphs: [ERROR_API], name: "connect", args: {source: "ErrorAPI", http: {GET: "/userUnionErrorHandling"}, selection: "__typename: $status->match([200, \\"User\\"], [202, \\"AsyncJob\\"], [400, \\"Error\\"], [@, \\"User\\"])\\nid\\nname\\nemail\\nasynchronous_job_id\\nstatus\\nestimated_completion\\nerror\\ncode", isSuccess: "$status->match([200, true], [202, true], [400, true], [@, false])"})
 }
 
 type User @join__type(graph: ERROR_API) {

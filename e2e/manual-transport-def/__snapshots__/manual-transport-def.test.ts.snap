@@ -40,7 +40,7 @@ enum join__Graph {
 }
 
 type Query @join__type(graph: GREETINGS) @join__type(graph: HELLOER) {
-  greet(name: String!): greet_200_response @join__field(graph: GREETINGS) @join__directive(graphs: [GREETINGS], name: "connect", args: {source: "greetings", http: {GET: "/greet/{$args.name}", headers: [{name: "accept", value: "application/json"}]}, selection: "greeting"})
+  greet(name: String!): greet_200_response @join__field(graph: GREETINGS) @join__directive(graphs: [GREETINGS], name: "connect", args: {source: "greetings", http: {GET: "/greet/{$args.name}"}, selection: "greeting"})
   hello: String! @join__field(graph: HELLOER)
 }
 

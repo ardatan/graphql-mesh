@@ -41,8 +41,6 @@ enum join__Graph {
   VENDURE @join__graph(name: "vendure", url: "http://localhost:<vendure_port>/graphql")
 }
 
-scalar TransportOptions @join__type(graph: STRAPI) @join__type(graph: VENDURE)
-
 type Query @join__type(graph: STRAPI) @join__type(graph: VENDURE) {
   products(filters: ProductFiltersInput): [Product!]! @join__field(graph: STRAPI)
   search: [SearchResult!]! @join__field(graph: VENDURE)
