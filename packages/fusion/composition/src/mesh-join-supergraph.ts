@@ -5,6 +5,7 @@ import type {
   EnumTypeDefinitionNode,
 } from 'graphql';
 import { Kind, parse, print, visit } from 'graphql';
+import { isMeshSpecLinkUrl } from '@graphql-mesh/utils';
 import { astFromValueUntyped } from '@graphql-tools/utils';
 
 const JOIN_V05 = 'https://specs.apollo.dev/join/v0.5';
@@ -937,17 +938,6 @@ function bumpJoinLink(directives: readonly ConstDirectiveNode[] | undefined): Co
       ),
     };
   });
-}
-
-function isMeshSpecLinkUrl(url: string | undefined): boolean {
-  if (!url) {
-    return false;
-  }
-  return (
-    url.includes('specs.graphql-mesh.com/') ||
-    url.includes('the-guild.dev/graphql/mesh/spec/') ||
-    url.includes('graphql-mesh.com/spec/')
-  );
 }
 
 /**
