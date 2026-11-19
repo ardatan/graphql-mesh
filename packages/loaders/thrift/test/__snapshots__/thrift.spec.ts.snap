@@ -1,11 +1,9 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`thrift Calc json protocol emits @connect with isSuccess/errors: Calc-json-connect-schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @source(name: "Calc", http: {baseURL: "http://localhost:4000/thrift-json", headers: [{name: "Content-Type", value: "application/vnd.apache.thrift.json"}, {name: "Accept", value: "application/vnd.apache.thrift.json"}]}) @composeDirective(name: "@connect") {
+"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @source(name: "Calc", http: {baseURL: "http://localhost:4000/thrift-json", headers: [{name: "Content-Type", value: "application/vnd.apache.thrift.json"}, {name: "Accept", value: "application/vnd.apache.thrift.json"}]}) {
   query: Query
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
@@ -39,22 +37,11 @@ input AddRequestInput {
   right: Int!
 }
 
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
   queryParams: JSONSelection
 }
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
-scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -68,12 +55,6 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
 }"
 `;
 
@@ -83,6 +64,8 @@ exports[`thrift Calc: Calc-schema 1`] = `
 }
 
 directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 enum ThriftMessageType {
   CALL
@@ -105,7 +88,9 @@ type Query {
 input AddRequestInput {
   left: Int!
   right: Int!
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`thrift Twitter: Twitter-schema 1`] = `
@@ -114,6 +99,8 @@ exports[`thrift Twitter: Twitter-schema 1`] = `
 }
 
 directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 enum ThriftMessageType {
   CALL
@@ -195,5 +182,7 @@ type Tweet {
 type Location {
   latitude: Float!
   longitude: Float!
-}"
+}
+
+scalar TransportOptions"
 `;

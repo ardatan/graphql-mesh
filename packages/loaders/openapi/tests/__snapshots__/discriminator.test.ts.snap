@@ -5,8 +5,6 @@ exports[`Discriminator Mapping should generate correct schema: discriminator-map
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -27,22 +25,11 @@ type DogDifferent {
   dog_exclusive: String
 }
 
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
   queryParams: JSONSelection
 }
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
-scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -56,12 +43,6 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
 }"
 `;
 
@@ -70,8 +51,6 @@ exports[`Inline Discriminator Mapping (request body) should generate correct sch
   query: Query
   mutation: Mutation
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
@@ -108,22 +87,11 @@ input CreateDogInput_Input {
   bark: String
 }
 
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
   queryParams: JSONSelection
 }
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
-scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -137,12 +105,6 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
 }"
 `;
 
@@ -150,8 +112,6 @@ exports[`Inline Discriminator Mapping should generate correct schema: discrimina
 "schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
@@ -182,22 +142,11 @@ type Dog {
   data: JSON
 }
 
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
   queryParams: JSONSelection
 }
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
-scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -211,11 +160,5 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
 }"
 `;

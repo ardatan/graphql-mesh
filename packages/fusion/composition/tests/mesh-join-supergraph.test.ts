@@ -145,4 +145,6 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/name: "transport"/);
     expect(out).toMatch(/name: "source"/);
   });
+
+
 });

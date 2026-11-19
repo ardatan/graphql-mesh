@@ -10,8 +10,6 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -3414,7 +3412,7 @@ type Mutation {
     """
     uris: URL
     input: add_tracks_to_playlist_request_Input
-  ): PlaylistSnapshotId_response @connect(source: "test", http: {POST: "/playlists/{$args.playlist_id}/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  position: $args.position\\n  uris: $args.uris\\n}"}, selection: "snapshot_id")
+  ): PlaylistSnapshotId_response @connect(source: "test", http: {POST: "/playlists/{$args.playlist_id}/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  position: $args.position\\n  uris: $args.uris\\n}", body: "$args.input"}, selection: "snapshot_id")
   """
   Either reorder or replace items in a playlist depending on the request's parameters.
   To reorder items, include \`range_start\`, \`insert_before\`, \`range_length\` and \`snapshot_id\` in the request's body.
@@ -3435,7 +3433,7 @@ type Mutation {
     """
     uris: String
     input: reorder_or_replace_playlists_tracks_request_Input
-  ): PlaylistSnapshotId_response @connect(source: "test", http: {PUT: "/playlists/{$args.playlist_id}/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  uris: $args.uris\\n}"}, selection: "snapshot_id")
+  ): PlaylistSnapshotId_response @connect(source: "test", http: {PUT: "/playlists/{$args.playlist_id}/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  uris: $args.uris\\n}", body: "$args.input"}, selection: "snapshot_id")
   """
   Remove one or more items from a user's playlist.
   
@@ -3457,7 +3455,7 @@ type Mutation {
     """
     ids: String!
     input: save_albums_user_request_Input
-  ): JSON @connect(source: "test", http: {PUT: "/me/albums", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  ids: $args.ids\\n}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {PUT: "/me/albums", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n}", body: "$args.input"}, selection: "$")
   """
   Remove one or more albums from the current user's 'Your Music' library.
   
@@ -3468,7 +3466,7 @@ type Mutation {
     """
     ids: String!
     input: remove_albums_user_request_Input
-  ): JSON @connect(source: "test", http: {DELETE: "/me/albums", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  ids: $args.ids\\n}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {DELETE: "/me/albums", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n}", body: "$args.input"}, selection: "$")
   """
   Save one or more tracks to the current user's 'Your Music' library.
   
@@ -3479,7 +3477,7 @@ type Mutation {
     """
     ids: String!
     input: save_tracks_user_request_Input
-  ): JSON @connect(source: "test", http: {PUT: "/me/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  ids: $args.ids\\n}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {PUT: "/me/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n}", body: "$args.input"}, selection: "$")
   """
   Remove one or more tracks from the current user's 'Your Music' library.
   
@@ -3490,7 +3488,7 @@ type Mutation {
     """
     ids: String!
     input: remove_tracks_user_request_Input
-  ): JSON @connect(source: "test", http: {DELETE: "/me/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  ids: $args.ids\\n}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {DELETE: "/me/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n}", body: "$args.input"}, selection: "$")
   """
   Save one or more episodes to the current user's library.<br/>
   This API endpoint is in __beta__ and could change without warning. Please share any feedback that you have, or issues that you discover, in our [developer community forum](https://community.spotify.com/t5/Spotify-for-Developers/bd-p/Spotify_Developer).
@@ -3502,7 +3500,7 @@ type Mutation {
     """
     ids: String!
     input: save_episodes_user_request_Input
-  ): JSON @connect(source: "test", http: {PUT: "/me/episodes", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  ids: $args.ids\\n}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {PUT: "/me/episodes", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n}", body: "$args.input"}, selection: "$")
   """
   Remove one or more episodes from the current user's library.<br/>
   This API endpoint is in __beta__ and could change without warning. Please share any feedback that you have, or issues that you discover, in our [developer community forum](https://community.spotify.com/t5/Spotify-for-Developers/bd-p/Spotify_Developer).
@@ -3514,7 +3512,7 @@ type Mutation {
     """
     ids: String!
     input: remove_episodes_user_request_Input
-  ): JSON @connect(source: "test", http: {DELETE: "/me/episodes", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  ids: $args.ids\\n}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {DELETE: "/me/episodes", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n}", body: "$args.input"}, selection: "$")
   """
   Save one or more shows to current Spotify user's library.
   
@@ -3599,7 +3597,7 @@ type Mutation {
     """
     ids: String!
     input: follow_artists_users_request_Input
-  ): Void @connect(source: "test", http: {PUT: "/me/following", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  type: $args.type\\n  ids: $args.ids\\n}"}, selection: "$")
+  ): Void @connect(source: "test", http: {PUT: "/me/following", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  type: $args.type\\n  ids: $args.ids\\n}", body: "$args.input"}, selection: "$")
   """
   Remove the current user as a follower of one or more artists or other Spotify users.
   
@@ -3611,7 +3609,7 @@ type Mutation {
     """
     ids: String!
     input: unfollow_artists_users_request_Input
-  ): JSON @connect(source: "test", http: {DELETE: "/me/following", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  type: $args.type\\n  ids: $args.ids\\n}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {DELETE: "/me/following", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  type: $args.type\\n  ids: $args.ids\\n}", body: "$args.input"}, selection: "$")
   """
   Transfer playback to a new device and determine if it should start playing.
   
@@ -3627,7 +3625,7 @@ type Mutation {
     """
     device_id: String
     input: start_a_users_playback_request_Input
-  ): Void @connect(source: "test", http: {PUT: "/me/player/play", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  device_id: $args.device_id\\n}"}, selection: "$")
+  ): Void @connect(source: "test", http: {PUT: "/me/player/play", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  device_id: $args.device_id\\n}", body: "$args.input"}, selection: "$")
   """
   Pause playback on the user's account.
   
@@ -3939,22 +3937,11 @@ input start_a_users_playback_request_Input {
 
 scalar ObjMap
 
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
   queryParams: JSONSelection
 }
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
-scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -3968,11 +3955,5 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
 }"
 `;

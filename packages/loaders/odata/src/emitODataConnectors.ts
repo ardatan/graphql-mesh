@@ -4,18 +4,17 @@ import type {
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfig,
   SchemaComposer,
-  UnionTypeComposer,
+  UnionTypeComposer
 } from 'graphql-compose';
 import type { Logger } from '@graphql-hive/logger';
 import {
   CONNECT_LINK_URL,
-  ConnectDirective,
   FEDERATION_LINK_URL,
   LinkDirective,
   ODATA_ACCEPT_METADATA,
   ODATA_ERROR_MAPPING,
   ODATA_QUERY_OPTIONS_QUERY_PARAMS,
-  SourceDirective,
+  SourceDirective
 } from './odataConnectors.js';
 import type { ODataFieldEmit } from './types.js';
 
@@ -36,8 +35,8 @@ function headersToConnectMappings(
   if (!entries.length) return undefined;
   return entries.map(([name, value]) => ({
     name,
-    value: toConnectHeaderValue(String(value)),
-  }));
+    value: toConnectHeaderValue(String(value))
+}));
 }
 
 /**
@@ -546,8 +545,8 @@ function odataCallArgsParts(
   if (!parts.length) return { suffix: '' };
   return {
     suffix: `(${parts.join(',')})`,
-    ...(Object.keys(aliasQueryParams).length ? { aliasQueryParams } : {}),
-  };
+    ...(Object.keys(aliasQueryParams).length ? { aliasQueryParams } : {})
+};
 }
 
 /** Append OData parameter-alias entries into a Connectors `queryParams` selection object. */
@@ -582,8 +581,8 @@ function connectArgs(opts: {
     source: opts.source,
     http: opts.http,
     selection: opts.selection,
-    ...(opts.entity ? { entity: true } : {}),
-  };
+    ...(opts.entity ? { entity: true } : {})
+};
 }
 
 /** Internal GraphQL field holding OData `@odata.id` for nested `@connect` absolute URLs. */
@@ -615,8 +614,7 @@ export function emitODataConnectors(
     operationHeaders?: Record<string, string>;
   },
 ): ODataConnectSchemaMeta {
-  schemaComposer.addDirective(ConnectDirective);
-  schemaComposer.addDirective(SourceDirective);
+    schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
   // Do not register a local `@key` / `@inaccessible` directive def — federation `@link` owns them.
 
@@ -639,10 +637,10 @@ export function emitODataConnectors(
         type: 'String',
         description: 'OData @odata.id (inaccessible; absolute URL for nested @connect paths)',
         extensions: {
-          directives: { inaccessible: true },
-        },
-      } as any,
-    });
+          directives: { inaccessible: true }
+}
+} as any
+});
   }
   const setConnect = (
     parent: ObjectTypeComposer | InterfaceTypeComposer | typeof schemaComposer.Query,
@@ -657,9 +655,9 @@ export function emitODataConnectors(
       description: field.description,
       deprecationReason: field.deprecationReason,
       extensions: {
-        directives: { connect: args },
-      },
-    } as any);
+        directives: { connect: args }
+}
+} as any);
   };
 
   /** Drop emit-time odata hints from interface fields — objects own the `@connect`. */
@@ -684,8 +682,8 @@ export function emitODataConnectors(
       args: field.args,
       description: field.description,
       deprecationReason: field.deprecationReason,
-      extensions: dirs.connect ? { directives: { connect: dirs.connect } } : {},
-    } as any);
+      extensions: dirs.connect ? { directives: { connect: dirs.connect } } : {}
+} as any);
   };
 
   const rewriteRoot = (rootName: 'Query' | 'Mutation') => {
@@ -710,10 +708,10 @@ export function emitODataConnectors(
             source: sourceName,
             http: {
               GET: `/${entitySetName}`,
-              queryParams: ODATA_QUERY_OPTIONS_QUERY_PARAMS,
-            },
-            selection: entityTC ? listSelection(schemaComposer, entityTC) : '$.value',
-          }),
+              queryParams: ODATA_QUERY_OPTIONS_QUERY_PARAMS
+},
+            selection: entityTC ? listSelection(schemaComposer, entityTC) : '$.value'
+}),
         );
         continue;
       }
@@ -727,16 +725,16 @@ export function emitODataConnectors(
             source: sourceName,
             http: {
               // Trailing slash matches historical Mesh OData URL shape / TripPin mocks.
-              GET: `/${entitySetName}/{$args.${identifierFieldName}}/`,
-            },
+              GET: `/${entitySetName}/{$args.${identifierFieldName}}/`
+},
             selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$',
             // Apollo Router rejects `entity: true` on Mutation (`ENTITY_NOT_ON_ROOT_QUERY`).
             // Unions have no key fields — `entity: true` on `IPerson` etc. fails resolvable-key creation.
             entity:
               rootName === 'Query' &&
               Boolean(returnTypeName) &&
-              schemaComposer.isObjectType(returnTypeName),
-          }),
+              schemaComposer.isObjectType(returnTypeName)
+}),
         );
         continue;
       }
@@ -750,11 +748,11 @@ export function emitODataConnectors(
             source: sourceName,
             http: {
               GET: `/${entitySetName}/$count`,
-              queryParams: ODATA_QUERY_OPTIONS_QUERY_PARAMS,
-            },
+              queryParams: ODATA_QUERY_OPTIONS_QUERY_PARAMS
+},
             // `$count` returns a raw integer body — selection is the root value.
-            selection: '$',
-          }),
+            selection: '$'
+}),
         );
         continue;
       }
@@ -768,10 +766,10 @@ export function emitODataConnectors(
             source: sourceName,
             http: {
               POST: `/${entitySetName}`,
-              body: '$args.input',
-            },
-            selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$',
-          }),
+              body: '$args.input'
+},
+            selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$'
+}),
         );
         continue;
       }
@@ -784,11 +782,11 @@ export function emitODataConnectors(
           connectArgs({
             source: sourceName,
             http: {
-              DELETE: `/${entitySetName}/{$args.${identifierFieldName}}/`,
-            },
+              DELETE: `/${entitySetName}/{$args.${identifierFieldName}}/`
+},
             // DELETE has an empty/non-JSON body — literal root is intentional.
-            selection: '$',
-          }),
+            selection: '$'
+}),
         );
         continue;
       }
@@ -802,10 +800,10 @@ export function emitODataConnectors(
             source: sourceName,
             http: {
               PATCH: `/${entitySetName}/{$args.${identifierFieldName}}/`,
-              body: '$args.input',
-            },
-            selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$',
-          }),
+              body: '$args.input'
+},
+            selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$'
+}),
         );
         continue;
       }
@@ -818,8 +816,8 @@ export function emitODataConnectors(
           connectArgs({
             source: sourceName,
             http: { GET: `/${singletonName}` },
-            selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$',
-          }),
+            selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$'
+}),
         );
         continue;
       }
@@ -839,10 +837,10 @@ export function emitODataConnectors(
             source: sourceName,
             http: {
               GET: `/${functionName}${callArgs.suffix}`,
-              ...(queryParams ? { queryParams } : {}),
-            },
-            selection: selectionForFieldReturnType(schemaComposer, field),
-          }),
+              ...(queryParams ? { queryParams } : {})
+},
+            selection: selectionForFieldReturnType(schemaComposer, field)
+}),
         );
         continue;
       }
@@ -856,10 +854,10 @@ export function emitODataConnectors(
             source: sourceName,
             http: {
               POST: `/${actionName}`,
-              body: '$args',
-            },
-            selection: selectionForFieldReturnType(schemaComposer, field),
-          }),
+              body: '$args'
+},
+            selection: selectionForFieldReturnType(schemaComposer, field)
+}),
         );
         continue;
       }
@@ -1012,10 +1010,10 @@ export function emitODataConnectors(
               source: sourceName,
               http: {
                 GET: `${basePath}/${navName}`,
-                queryParams,
-              },
-              selection,
-            }),
+                queryParams
+},
+              selection
+}),
           );
           continue;
         }
@@ -1027,8 +1025,8 @@ export function emitODataConnectors(
             connectArgs({
               source: sourceName,
               http: { GET: `${basePath}/${navName}` },
-              selection: selectionForFieldReturnType(schemaComposer, field),
-            }),
+              selection: selectionForFieldReturnType(schemaComposer, field)
+}),
           );
           continue;
         }
@@ -1040,8 +1038,8 @@ export function emitODataConnectors(
             connectArgs({
               source: sourceName,
               http: { GET: `${basePath}/${navName}/{$args.id}/` },
-              selection: selectionForFieldReturnType(schemaComposer, field),
-            }),
+              selection: selectionForFieldReturnType(schemaComposer, field)
+}),
           );
           continue;
         }
@@ -1062,10 +1060,10 @@ export function emitODataConnectors(
               source: sourceName,
               http: {
                 GET: `${basePath}/${functionRef}${callArgs.suffix}`,
-                ...(queryParams ? { queryParams } : {}),
-              },
-              selection: selectionForFieldReturnType(schemaComposer, field),
-            }),
+                ...(queryParams ? { queryParams } : {})
+},
+              selection: selectionForFieldReturnType(schemaComposer, field)
+}),
           );
           continue;
         }
@@ -1094,10 +1092,10 @@ export function emitODataConnectors(
               source: sourceName,
               http: {
                 POST: `${basePath}/${actionRef}`,
-                body,
-              },
-              selection: selectionForFieldReturnType(schemaComposer, field),
-            }),
+                body
+},
+              selection: selectionForFieldReturnType(schemaComposer, field)
+}),
           );
         }
       }
@@ -1124,9 +1122,9 @@ export function emitODataConnectors(
         name: 'key',
         args: {
           fields: identifierFieldName,
-          ...(entitySetName ? {} : { resolvable: false }),
-        },
-      });
+          ...(entitySetName ? {} : { resolvable: false })
+}
+});
     }
 
     // `@connect` is OBJECT-only (Federation Connectors).
@@ -1137,12 +1135,12 @@ export function emitODataConnectors(
         args: connectArgs({
           source: sourceName,
           http: {
-            GET: `/${entitySetName}/{$this.${identifierFieldName}}/`,
-          },
+            GET: `/${entitySetName}/{$this.${identifierFieldName}}/`
+},
           selection: entitySelection(schemaComposer, otc as any) || '$',
-          entity: true,
-        }),
-      });
+          entity: true
+})
+});
     }
     otc.setDirectives(existing);
   }
@@ -1186,8 +1184,8 @@ export function emitODataConnectors(
               args: field.args,
               description: field.description,
               deprecationReason: field.deprecationReason,
-              extensions: next,
-            });
+              extensions: next
+});
           }
         }
       }
@@ -1196,8 +1194,8 @@ export function emitODataConnectors(
 
   const mergedHeaders = {
     Accept: ODATA_ACCEPT_METADATA,
-    ...(opts.operationHeaders || {}),
-  };
+    ...(opts.operationHeaders || {})
+};
   // Apollo Router source headers cannot see `$args` - keep those on field `@connect`.
   const sourceHeaderEntries: Record<string, string> = {};
   const argHeaderEntries: Record<string, string> = {};
@@ -1258,10 +1256,10 @@ export function emitODataConnectors(
         ...(field.extensions || {}),
         directives: {
           ...((field.extensions as any)?.directives || {}),
-          connect,
-        },
-      },
-    });
+          connect
+}
+}
+});
   };
 
   if (fieldArgHeaderMappings?.length) {
@@ -1297,21 +1295,21 @@ export function emitODataConnectors(
       name: sourceName,
       http: {
         baseURL: opts.endpoint,
-        ...(headerMappings ? { headers: headerMappings } : {}),
-      },
-      errors: ODATA_ERROR_MAPPING,
-    },
+        ...(headerMappings ? { headers: headerMappings } : {})
+},
+      errors: ODATA_ERROR_MAPPING
+},
     link: [
       {
         url: CONNECT_LINK_URL,
-        import: ['@connect', '@source'],
-      },
+        import: ['@connect', '@source']
+},
       {
         url: FEDERATION_LINK_URL,
-        import: ['@key', '@inaccessible'],
-      },
-    ],
-  };
+        import: ['@key', '@inaccessible']
+},
+    ]
+};
 }
 
 /**
@@ -1374,8 +1372,8 @@ export function emitODataPolymorphicUnions(
         // replacing an abstract object with a same-named union).
         otc.setField(fieldName, {
           ...field,
-          type: rewriteTypeName(typeStr, fromType, toType),
-        });
+          type: rewriteTypeName(typeStr, fromType, toType)
+});
       }
     }
   }
@@ -1433,9 +1431,9 @@ export function emitODataPolymorphicUnions(
         ? `OData abstract type ${base} (union of concrete implementations)`
         : `OData polymorphic ${base} (union of ${base} and subtypes)`,
       extensions: {
-        odata: { defaultTypename },
-      },
-    });
+        odata: { defaultTypename }
+}
+});
 
     if (abstractOrphan) {
       rewriteOutputFields(abstractOrphan, unionName);
@@ -1486,8 +1484,8 @@ export function applyODataConnectSchemaExtensions(
       kind: 'connect',
       subgraph: subgraphName,
       location: endpoint,
-      options: { odata: odataOpts },
-    };
+      options: { odata: odataOpts }
+};
   } else {
     delete directiveExtensions.transport;
   }

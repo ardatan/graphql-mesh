@@ -1,11 +1,9 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Examples should generate schema for any-simple-type: any-simple-type 1`] = `
-"schema @source(name: "any-simple-type", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "any-simple-type", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -28,15 +26,9 @@ input AnySimpleType_GetAttributes_Input {
   filter: String
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -44,22 +36,14 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;
 
 exports[`Examples should generate schema for any-wildcard-namespace: any-wildcard-namespace 1`] = `
-"schema @source(name: "any-wildcard-namespace", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "any-wildcard-namespace", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -92,15 +76,9 @@ input AnyWildcardNamespace_WildcardContainer_Input {
   name: String
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -108,22 +86,14 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;
 
 exports[`Examples should generate schema for axis: axis 1`] = `
-"schema @source(name: "axis", http: {baseURL: "http://the-guild.dev", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "axis", http: {baseURL: "http://the-guild.dev", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -244,15 +214,9 @@ input impl_weekDays_Input {
   option: [impl_weekday]
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -260,22 +224,14 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;
 
 exports[`Examples should generate schema for empty-complextype: empty-complextype 1`] = `
-"schema @source(name: "empty-complextype", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "empty-complextype", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -313,15 +269,9 @@ input EmptyComplexType_Container_Input {
   extensions: [JSON]
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -329,22 +279,14 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;
 
 exports[`Examples should generate schema for example1: example1 1`] = `
-"schema @source(name: "example1", http: {baseURL: "http://localhost:8088", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "example1", http: {baseURL: "http://localhost:8088", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -474,15 +416,9 @@ type TodoService_FailGetTodoResponse {
   FailGetTodoResult: String
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -490,22 +426,14 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;
 
 exports[`Examples should generate schema for example2: example2 1`] = `
-"schema @source(name: "example2", http: {baseURL: "http://[::]", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "example2", http: {baseURL: "http://[::]", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -733,15 +661,9 @@ input AdminServiceType_DeleteEntityClass_Input {
   entityclassIntID: BigInt
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -749,22 +671,14 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;
 
 exports[`Examples should generate schema for forward-ref-elements: forward-ref-elements 1`] = `
-"schema @source(name: "forward-ref-elements", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "forward-ref-elements", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -793,15 +707,9 @@ input undefined_ServiceRequest_Input {
   id: String
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -809,22 +717,14 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;
 
 exports[`Examples should generate schema for greeting: greeting 1`] = `
-"schema @source(name: "greeting", http: {baseURL: "https://www.dataaccess.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "greeting", http: {baseURL: "https://www.dataaccess.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -863,15 +763,9 @@ input NumberConversion_NumberToDollars_Input {
   dNum: Float
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -879,21 +773,13 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;
 
 exports[`Examples should generate schema for illegal-gql-names: illegal-gql-names 1`] = `
-"schema @source(name: "illegal-gql-names", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "illegal-gql-names", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -930,15 +816,9 @@ input IllegalGqlNames_X721_Type_Input {
   code: String
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -946,21 +826,13 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;
 
 exports[`Examples should generate schema for inline-type-collision: inline-type-collision 1`] = `
-"schema @source(name: "inline-type-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "inline-type-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -1019,15 +891,9 @@ input InlineTypeCollision_TypeB_details_Input {
   valueB: Int
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -1035,21 +901,13 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;
 
 exports[`Examples should generate schema for prefix-collision: prefix-collision 1`] = `
-"schema @source(name: "prefix-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "prefix-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -1086,15 +944,9 @@ input PrefixCollision_GetNs2Items_Input {
   filter: String
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -1102,22 +954,14 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;
 
 exports[`Examples should generate schema for tempconvert: tempconvert 1`] = `
-"schema @source(name: "tempconvert", http: {baseURL: "http://www.w3schools.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "tempconvert", http: {baseURL: "http://www.w3schools.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -1155,15 +999,9 @@ input tns_CelsiusToFahrenheit_Input {
   Celsius: String
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -1171,11 +1009,5 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;

@@ -201,21 +201,6 @@ const FEDERATION_V1_DIRECTIVES = [
 /** Federation v1 directive names imported when converting a subgraph to Federation v2. */
 export { FEDERATION_V1_DIRECTIVES };
 
-function schemaHasConnectorsLink(subgraph: GraphQLSchema): boolean {
-  const directives = getDirectiveExtensions(subgraph);
-  const links = directives?.link || [];
-  if (
-    links.some(
-      (link: { url?: string }) =>
-        typeof link?.url === 'string' && link.url.startsWith('https://specs.apollo.dev/connect'),
-    )
-  ) {
-    return true;
-  }
-  const sources = directives?.source || [];
-  return sources.some((source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null);
-}
-
 /**
  * Assert a Mesh `@link` spec is present / supported on `schema` (reads `@link` via
  * `getDirectiveExtensions`). Used by transports and Compose when reading subgraphs.
@@ -226,24 +211,4 @@ export function assertSupportedMeshSpecOnSchema(
 ): ParsedMeshSpecUrl | undefined {
   const links = getDirectiveExtensions(schema)?.link as AssertSupportedMeshSpecOptions['links'];
   return assertSupportedMeshSpec({ ...options, links });
-}
-
-/**
- * Register `@composeDirective(name: "@connect")` when the subgraph already links the
- * Federation Connectors spec. Idempotent.
- */
-export function addConnectComposeDirective(subgraph: GraphQLSchema): GraphQLSchema {
-  if (!schemaHasConnectorsLink(subgraph)) {
-    return subgraph;
-  }
-  const schemaDirectives = getDirectiveExtensions(subgraph) || {};
-  const composeDirectives = (schemaDirectives.composeDirective =
-    schemaDirectives.composeDirective?.filter(Boolean) || []);
-  if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
-    composeDirectives.push({ name: '@connect' });
-  }
-  patchSchemaDirectiveExtensions(subgraph, {
-    composeDirective: composeDirectives,
-  });
-  return importFederationDirectives(subgraph, ['@composeDirective']);
 }

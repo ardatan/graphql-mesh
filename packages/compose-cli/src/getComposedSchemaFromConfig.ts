@@ -60,7 +60,6 @@ export async function getComposedResultFromConfig(
           const resolved = await resolveSubgraphSchema(ctx, {
             subgraphName: subgraphCLIConfig.name,
             schema: subgraphCLIConfig.schema,
-            composeConnect: subgraphCLIConfig.composeConnect,
             transport: subgraphCLIConfig.transport,
           });
           return {

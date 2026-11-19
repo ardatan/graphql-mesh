@@ -1,5 +1,5 @@
 diff --git a/dist/index.cjs b/dist/index.cjs
-index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e40d59ca884f25a90b8e78af0d49cb1958feffcb 100644
+index 8c49c18936b173833bc7ba1f81aff5fa273c1970..1d5a4dab883950ad54ae54a872986ef434915079 100644
 --- a/dist/index.cjs
 +++ b/dist/index.cjs
 @@ -103,11 +103,17 @@ function splitPrefixSuffix(input, options = {}) {
@@ -21,7 +21,15 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e40d59ca884f25a90b8e78af0d49cb19
          for (const importInfo of linkDirective.import || []) {
            if (importInfo === "@source") {
              return "source";
-@@ -1350,14 +1356,33 @@ function millisecondsToStr(milliseconds) {
+@@ -244,6 +250,7 @@ function handleFederationSubschema({
+       }
+       const hoistDirectives = fieldDirectives.hoist;
+       if (hoistDirectives?.length) {
++
+         for (const hoistDirective of hoistDirectives) {
+           if (hoistDirective.subgraph === subgraphName) {
+             const pathConfig = hoistDirective.pathConfig.map((annotation) => {
+@@ -1350,14 +1357,33 @@ function millisecondsToStr(milliseconds) {
  }
  function getTransportEntryMapUsingFusionAndFederationDirectives(unifiedGraph, transportEntryAdditions) {
    unifiedGraph = restoreExtraDirectives(unifiedGraph);
@@ -55,7 +63,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e40d59ca884f25a90b8e78af0d49cb19
            if (joinGraphDirective.url) {
              transportEntryMap[joinGraphDirective.name] = {
                subgraph: joinGraphDirective.name,
-@@ -1371,7 +1396,87 @@ function getTransportEntryMapUsingFusionAndFederationDirectives(unifiedGraph, tr
+@@ -1371,7 +1397,87 @@ function getTransportEntryMapUsingFusionAndFederationDirectives(unifiedGraph, tr
    }
    if (schemaDirectives?.transport?.length) {
      for (const transportDirective of schemaDirectives.transport) {
@@ -145,7 +153,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e40d59ca884f25a90b8e78af0d49cb19
    }
    if (transportEntryAdditions) {
 diff --git a/dist/index.js b/dist/index.js
-index ce3975285f3be72c6a47897f15ccdd35117eed99..9e0740824b398562cbe8fa99246a0c7a789ea8c2 100644
+index ce3975285f3be72c6a47897f15ccdd35117eed99..c6d39f824b385fe95f14449fe9ba155484e4cee3 100644
 --- a/dist/index.js
 +++ b/dist/index.js
 @@ -101,11 +101,17 @@ function splitPrefixSuffix(input, options = {}) {
@@ -167,7 +175,15 @@ index ce3975285f3be72c6a47897f15ccdd35117eed99..9e0740824b398562cbe8fa99246a0c7a
          for (const importInfo of linkDirective.import || []) {
            if (importInfo === "@source") {
              return "source";
-@@ -1348,14 +1354,33 @@ function millisecondsToStr(milliseconds) {
+@@ -242,6 +248,7 @@ function handleFederationSubschema({
+       }
+       const hoistDirectives = fieldDirectives.hoist;
+       if (hoistDirectives?.length) {
++
+         for (const hoistDirective of hoistDirectives) {
+           if (hoistDirective.subgraph === subgraphName) {
+             const pathConfig = hoistDirective.pathConfig.map((annotation) => {
+@@ -1348,14 +1355,33 @@ function millisecondsToStr(milliseconds) {
  }
  function getTransportEntryMapUsingFusionAndFederationDirectives(unifiedGraph, transportEntryAdditions) {
    unifiedGraph = restoreExtraDirectives(unifiedGraph);
@@ -201,7 +217,7 @@ index ce3975285f3be72c6a47897f15ccdd35117eed99..9e0740824b398562cbe8fa99246a0c7a
            if (joinGraphDirective.url) {
              transportEntryMap[joinGraphDirective.name] = {
                subgraph: joinGraphDirective.name,
-@@ -1369,7 +1394,87 @@ function getTransportEntryMapUsingFusionAndFederationDirectives(unifiedGraph, tr
+@@ -1369,7 +1395,87 @@ function getTransportEntryMapUsingFusionAndFederationDirectives(unifiedGraph, tr
    }
    if (schemaDirectives?.transport?.length) {
      for (const transportDirective of schemaDirectives.transport) {

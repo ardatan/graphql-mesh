@@ -6,7 +6,7 @@ import type {
   GraphQLFieldConfigMap,
   GraphQLInputType,
   GraphQLOutputType,
-  GraphQLSchema as GraphQLSchemaType,
+  GraphQLSchema as GraphQLSchemaType
 } from 'graphql';
 import {
   DirectiveLocation,
@@ -23,14 +23,14 @@ import {
   GraphQLString,
   GraphQLUnionType,
   isObjectType,
-  Kind,
+  Kind
 } from 'graphql';
 import { GraphQLBigInt, GraphQLByte, GraphQLJSON, GraphQLVoid } from 'graphql-scalars';
 import type {
   Comment,
   FunctionType,
   IncludeDefinition,
-  ThriftDocument,
+  ThriftDocument
 } from '@creditkarma/thrift-parser';
 import { parse, SyntaxType } from '@creditkarma/thrift-parser';
 import { TType } from '@creditkarma/thrift-server-core';
@@ -38,23 +38,21 @@ import { Logger } from '@graphql-hive/logger';
 import { path } from '@graphql-mesh/cross-helpers';
 import {
   CONNECT_LINK_URL,
-  ConnectDirective,
   LinkDirective,
-  SourceDirective,
+  SourceDirective
 } from '@graphql-mesh/transport-connect';
 import type {
   GraphQLThriftAnnotations,
   StructTypeVal,
   TypeMap,
-  TypeVal,
+  TypeVal
 } from '@graphql-mesh/transport-thrift';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import {
-  addConnectComposeDirective,
   defaultImportFn,
   importMeshDirectives,
   meshSpecUrl,
-  readFileOrUrl,
+  readFileOrUrl
 } from '@graphql-mesh/utils';
 import { getDirectivesInExtensions } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
@@ -70,7 +68,7 @@ import {
   TJSON_IS_SUCCESS,
   TJSON_IS_SUCCESS_VOID,
   TJSON_IS_SUCCESS_VOID_WITH_THROWS,
-  type ThriftProtocol,
+  type ThriftProtocol
 } from './mapping.js';
 
 /**
@@ -305,8 +303,8 @@ export const ThriftMessageTypeEnum = new GraphQLEnumType({
     /** Normal RPC call; wait for and decode a reply. */
     CALL: { value: 'CALL' },
     /** Fire-and-forget; no reply body is expected. */
-    ONEWAY: { value: 'ONEWAY' },
-  },
+    ONEWAY: { value: 'ONEWAY' }
+}
 });
 
 /** Mesh Thrift binary RPC mapping directive - see {@link ThriftRpcDirectiveArgs}. */
@@ -330,8 +328,8 @@ export const thriftRpcDirective = new GraphQLDirective({
     /** `CALL` or `ONEWAY`. @default 'CALL' */
     messageType: { type: ThriftMessageTypeEnum, defaultValue: 'CALL' },
     /** Mark this Query field as an entity resolver for Mesh `_entities`. */
-    entity: { type: GraphQLBoolean },
-  },
+    entity: { type: GraphQLBoolean }
+}
 });
 
 /**
@@ -365,7 +363,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
   schemaHeaders = {},
   fetchFn = defaultFetch,
   log = new Logger({ prefix: 'Thrift' }),
-  importFn = defaultImportFn,
+  importFn = defaultImportFn
 }: GraphQLThriftLoaderOptions) {
   const namespaceASTMap: Record<string, ThriftDocument> = {};
   await parseWithIncludes({
@@ -375,8 +373,8 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
     schemaHeaders,
     fetchFn,
     log,
-    importFn,
-  });
+    importFn
+});
   const baseNamespace = path.basename(source, '.thrift');
   return loadNonExecutableGraphQLSchemaFromThriftDocument({
     subgraphName,
@@ -387,8 +385,8 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
     serviceName,
     protocol,
     entityMethods,
-    ignoreErrorResponses,
-  });
+    ignoreErrorResponses
+});
 }
 
 interface ParseWithIncludesOpts {
@@ -408,7 +406,7 @@ async function parseWithIncludes({
   schemaHeaders,
   fetchFn,
   log,
-  importFn,
+  importFn
 }: ParseWithIncludesOpts): Promise<Record<string, ThriftDocument>> {
   const rawThrift = await readFileOrUrl<string>(idlFilePath, {
     allowUnknownExtensions: true,
@@ -416,8 +414,8 @@ async function parseWithIncludes({
     headers: schemaHeaders,
     fetch: fetchFn,
     log,
-    importFn,
-  });
+    importFn
+});
   const parseResult = parse(rawThrift, { organize: false });
   const idlNamespace = path.basename(idlFilePath).split('.')[0];
   if (parseResult.type === SyntaxType.ThriftErrors) {
@@ -443,8 +441,8 @@ async function parseWithIncludes({
         schemaHeaders,
         fetchFn,
         log,
-        importFn,
-      });
+        importFn
+});
     }),
   );
   return includesMap;
@@ -459,7 +457,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   serviceName,
   protocol = 'binary',
   entityMethods = [],
-  ignoreErrorResponses = true,
+  ignoreErrorResponses = true
 }: {
   subgraphName: string;
   baseNamespace: string;
@@ -512,17 +510,17 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               ...prev,
               [curr.name.value]: {
                 description: processComments(curr.comments),
-                value: curr.name.value,
-              },
-            };
+                value: curr.name.value
+}
+};
           }, {} as GraphQLEnumValueConfigMap);
           enumTypeMap.set(
             typeName,
             new GraphQLEnumType({
               name: typeName,
               description: processComments(statement.comments),
-              values: enumValues,
-            }),
+              values: enumValues
+}),
           );
           topTypeMap[typeName] = { type: TType.ENUM, values: wireValues };
           break;
@@ -535,8 +533,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
             id: currentId++,
             name: typeName,
             type: TType.STRUCT,
-            fields: {},
-          };
+            fields: {}
+};
           topTypeMap[typeName] = structTypeVal;
           const structFieldTypeMap = structTypeVal.fields;
           const fields: any[] = [];
@@ -548,8 +546,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               enumTypeMap,
               inputTypeMap,
               outputTypeMap,
-              topTypeMap,
-            });
+              topTypeMap
+});
             structFieldTypeMap[field.name.value] = typeVal;
           }
 
@@ -557,8 +555,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
             Object.fromEntries(
               fields.map(entry => {
                 const {
-                  field: { fieldType, fieldID, name, requiredness },
-                } = entry;
+                  field: { fieldType, fieldID, name, requiredness }
+} = entry;
                 if (!entry.type) {
                   entry.type = getGraphQLFunctionType({
                     functionType: fieldType,
@@ -566,16 +564,16 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                     enumTypeMap,
                     inputTypeMap,
                     outputTypeMap,
-                    topTypeMap,
-                  });
+                    topTypeMap
+});
                 }
                 const { [typeKind]: type } = entry.type;
                 return [
                   name.value,
                   {
                     type: requiredness === 'required' ? new GraphQLNonNull(type) : type,
-                    description: entry.description,
-                  },
+                    description: entry.description
+},
                 ];
               }),
             );
@@ -584,8 +582,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           const objectType = new GraphQLObjectType({
             name: typeName,
             description,
-            fields: () => getFieldsMap('outputType'),
-          });
+            fields: () => getFieldsMap('outputType')
+});
           outputTypeMap.set(typeName, objectType);
           if (isException) {
             exceptionTypeMap.set(typeName, objectType);
@@ -595,8 +593,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               new GraphQLInputObjectType({
                 name: typeName + 'Input',
                 description,
-                fields: () => getFieldsMap('inputType'),
-              }),
+                fields: () => getFieldsMap('inputType')
+}),
             );
           }
           break;
@@ -619,8 +617,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
       enumTypeMap,
       inputTypeMap,
       outputTypeMap,
-      topTypeMap,
-    });
+      topTypeMap
+});
     inputTypeMap.set(typedefName, inputType);
     outputTypeMap.set(typedefName, outputType);
     // So compact/TJSON mapping can resolve `typedef` refs (e.g. digit → i32).
@@ -638,8 +636,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
         enumTypeMap,
         inputTypeMap,
         outputTypeMap,
-        topTypeMap,
-      });
+        topTypeMap
+});
       const args: GraphQLFieldConfigArgumentMap = {};
       const fieldTypeMap: TypeMap = {};
       for (const field of fn.fields) {
@@ -651,15 +649,15 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           enumTypeMap,
           inputTypeMap,
           outputTypeMap,
-          topTypeMap,
-        });
+          topTypeMap
+});
         if (field.requiredness === 'required') {
           fieldType = new GraphQLNonNull(fieldType);
         }
         args[fieldName] = {
           type: fieldType,
-          description: fieldDescription,
-        };
+          description: fieldDescription
+};
         fieldTypeMap[fieldName] = typeVal;
       }
       const isEntity = entityMethodSet.has(fnName);
@@ -668,8 +666,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
       const throwsMeta = (fn.throws || []).map(t => ({
         id: t.fieldID?.value ?? 0,
         name: t.name.value,
-        typeName: 'value' in t.fieldType ? String(t.fieldType.value).replace('.', '_') : 'unknown',
-      }));
+        typeName: 'value' in t.fieldType ? String(t.fieldType.value).replace('.', '_') : 'unknown'
+}));
 
       const successTypeName = `${fnName[0].toUpperCase()}${fnName.slice(1)}Success`;
       let fieldReturnType: GraphQLOutputType = returnType;
@@ -682,8 +680,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           name: successTypeName,
           fields: isVoidSuccess
             ? { ok: { type: new GraphQLNonNull(GraphQLBoolean) } }
-            : { value: { type: new GraphQLNonNull(returnType as any) } },
-        });
+            : { value: { type: new GraphQLNonNull(returnType as any) } }
+});
         const exceptionTypes = throwsMeta
           .map(
             t =>
@@ -736,8 +734,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
                 if (fields.some(f => (value || {})[f] !== undefined)) return ex.name;
               }
               return successTypeName;
-            },
-          });
+            }
+});
         }
       }
 
@@ -766,11 +764,11 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           source: subgraphName,
           http: {
             POST: connectPath,
-            body: buildTJSONConnectBody(fnName, fieldTypeMap, topTypeMap, messageType),
-          },
+            body: buildTJSONConnectBody(fnName, fieldTypeMap, topTypeMap, messageType)
+},
           selection,
-          ...(isEntity ? { entity: true } : {}),
-        };
+          ...(isEntity ? { entity: true } : {})
+};
         // ONEWAY: no reply envelope - HTTP status alone; void mapping must not wait.
         if (!isOneway) {
           // ignoreErrorResponses:false → declared throws arrive as REPLY data (still msg type 2).
@@ -790,18 +788,18 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           args,
           extensions: {
             directives: {
-              connect: connectDir,
-            },
-          },
-        };
+              connect: connectDir
+}
+}
+};
       } else {
         const thriftRpcArgs: Record<string, unknown> = {
           subgraph: subgraphName,
           function: fnName,
           args: compactArgs,
           selection: compactSelection,
-          messageType,
-        };
+          messageType
+};
         if (compactThrows) {
           thriftRpcArgs.throws = compactThrows;
         }
@@ -815,45 +813,45 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           args,
           extensions: {
             directives: {
-              thrift__rpc: thriftRpcArgs,
-            },
-          },
-        };
+              thrift__rpc: thriftRpcArgs
+}
+}
+};
       }
     }
   }
 
   const queryObjectType = new GraphQLObjectType({
     name: 'Query',
-    fields: rootFields,
-  });
+    fields: rootFields
+});
 
   if (emitConnect) {
     const headerEntries = Object.entries(headers).map(([name, value]) => ({ name, value }));
     const schema = new GraphQLSchema({
       query: queryObjectType,
-      directives: [ConnectDirective, SourceDirective, LinkDirective],
+      directives: [SourceDirective, LinkDirective],
       extensions: {
         directives: {
           link: [
             {
               url: CONNECT_LINK_URL,
-              import: ['@connect', '@source'],
-            },
+              import: ['@connect', '@source']
+},
           ],
           source: [
             {
               name: subgraphName,
               http: {
                 baseURL: location,
-                headers: [...thriftJsonContentTypeHeaders(), ...headerEntries],
-              },
-            },
-          ],
-        },
-      },
-    });
-    return addConnectComposeDirective(preferMultilineDirectiveBlockStrings(schema));
+                headers: [...thriftJsonContentTypeHeaders(), ...headerEntries]
+}
+},
+          ]
+}
+}
+});
+    return preferMultilineDirectiveBlockStrings(schema);
   }
 
   const graphQLThriftAnnotations: GraphQLThriftAnnotations = {
@@ -862,8 +860,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     location,
     // Match shared `@transport(headers: [[String]])` / HTTP+OData loaders.
     // Wire layout lives in `@thrift__rpc(args/selection)`; thrift HTTP is binary.
-    headers: Object.entries(headers),
-  };
+    headers: Object.entries(headers)
+};
 
   // Do not `@link` `@thrift__rpc` on a custom URL — Mesh-spec `@link` +
   // `@composeDirective` are stamped below via `importMeshDirectives`.
@@ -873,10 +871,10 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     directives: [thriftRpcDirective],
     extensions: {
       directives: {
-        transport: graphQLThriftAnnotations,
-      },
-    },
-  });
+        transport: graphQLThriftAnnotations
+}
+}
+});
 
   return importMeshDirectives(
     importMeshDirectives(
@@ -917,17 +915,17 @@ function attachBlockStringDirectiveAst(field: GraphQLField<any, any>): void {
         {
           kind: Kind.ARGUMENT as const,
           name: { kind: Kind.NAME as const, value: argName },
-          value,
-        },
+          value
+},
       ];
-    }),
-  }));
+    })
+}));
   field.astNode = {
     kind: Kind.FIELD_DEFINITION,
     name: { kind: Kind.NAME, value: field.name },
     type: { kind: Kind.NAMED_TYPE, name: { kind: Kind.NAME, value: 'String' } },
-    directives: directiveNodes,
-  };
+    directives: directiveNodes
+};
 }
 
 function constValueNodePreferBlockString(argName: string, value: unknown): ConstValueNode | null {
@@ -939,8 +937,8 @@ function constValueNodePreferBlockString(argName: string, value: unknown): Const
     const asInt = Number.isInteger(value);
     return {
       kind: asInt ? Kind.INT : Kind.FLOAT,
-      value: String(value),
-    };
+      value: String(value)
+};
   }
   if (typeof value === 'string') {
     // `@thrift__rpc(messageType:)` is an enum - print bare CALL/ONEWAY.
@@ -958,8 +956,8 @@ function constValueNodePreferBlockString(argName: string, value: unknown): Const
       kind: Kind.LIST,
       values: value
         .map(item => constValueNodePreferBlockString('', item))
-        .filter((v): v is ConstValueNode => v != null),
-    };
+        .filter((v): v is ConstValueNode => v != null)
+};
   }
   if (typeof value === 'object') {
     // Nested inputs e.g. `@connect(http: { POST, body })` / `errors: { message }`.
@@ -972,11 +970,11 @@ function constValueNodePreferBlockString(argName: string, value: unknown): Const
           {
             kind: Kind.OBJECT_FIELD as const,
             name: { kind: Kind.NAME as const, value: key },
-            value: childNode,
-          },
+            value: childNode
+},
         ];
-      }),
-    };
+      })
+};
   }
   return null;
 }
@@ -1005,7 +1003,7 @@ function getGraphQLFunctionType({
   enumTypeMap,
   inputTypeMap,
   outputTypeMap,
-  topTypeMap,
+  topTypeMap
 }: GetGraphQLFunctionTypeOpts): {
   outputType: GraphQLOutputType;
   inputType: GraphQLInputType;
@@ -1068,8 +1066,8 @@ function getGraphQLFunctionType({
         enumTypeMap,
         inputTypeMap,
         outputTypeMap,
-        topTypeMap,
-      });
+        topTypeMap
+});
       inputType = new GraphQLList(ofTypeList.inputType);
       outputType = new GraphQLList(ofTypeList.outputType);
       typeVal = typeVal! || { type: TType.LIST, elementType: ofTypeList.typeVal };
@@ -1082,8 +1080,8 @@ function getGraphQLFunctionType({
         enumTypeMap,
         inputTypeMap,
         outputTypeMap,
-        topTypeMap,
-      });
+        topTypeMap
+});
       inputType = new GraphQLList(ofSetType.inputType);
       outputType = new GraphQLList(ofSetType.outputType);
       typeVal = typeVal! || { type: TType.SET, elementType: ofSetType.typeVal };
@@ -1098,21 +1096,21 @@ function getGraphQLFunctionType({
         enumTypeMap,
         inputTypeMap,
         outputTypeMap,
-        topTypeMap,
-      });
+        topTypeMap
+});
       const ofTypeValue = getGraphQLFunctionType({
         functionType: functionType.valueType,
         id,
         enumTypeMap,
         inputTypeMap,
         outputTypeMap,
-        topTypeMap,
-      });
+        topTypeMap
+});
       typeVal = typeVal! || {
         type: TType.MAP,
         keyType: ofTypeKey.typeVal,
-        valType: ofTypeValue.typeVal,
-      };
+        valType: ofTypeValue.typeVal
+};
       break;
     }
     case SyntaxType.Identifier: {
@@ -1136,8 +1134,8 @@ function getGraphQLFunctionType({
       }
       typeVal = {
         name: typeName,
-        type: 'ref',
-      };
+        type: 'ref'
+};
       break;
     }
     default:
@@ -1148,7 +1146,7 @@ function getGraphQLFunctionType({
     outputType: outputType!,
     typeVal: {
       ...typeVal!,
-      id,
-    },
-  };
+      id
+}
+};
 }

@@ -34,6 +34,7 @@ import {
   toTypeLevelEntityProtobufRpc,
 } from './connect-entity.js';
 import { finalizeConnectorsSupergraph } from './connectors-supergraph.js';
+import { prepareConnectorsBeforeGuild } from './prepare-connectors-for-guild.js';
 import {
   MESH_SUPPORTED_SPEC_VERSIONS,
   TRANSPORT_DIRECTIVE_SDL,
@@ -41,7 +42,6 @@ import {
   validateMeshDirectives,
 } from '@graphql-mesh/utils';
 import {
-  addConnectComposeDirective,
   convertSubgraphToFederationv2,
   importFederationDirectives,
   importMeshDirectives,
@@ -539,9 +539,9 @@ export function getAnnotatedSubgraphs(
       transformedSubgraph = ensureNonResolvableKeysForEntityStubs(transformedSubgraph);
     }
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
-    // Connectors safety net only — Mesh directives come from loaders / hand SDL.
-    transformedSubgraph = addConnectComposeDirective(transformedSubgraph);
     // Core Mesh directives (`@merge`, `@hoist`, `@source`, …) under `core/v0.1`.
+    // Connectors: loaders omit `@composeDirective(name: "@connect")` / connect
+    // defs; `prepareConnectorsBeforeGuild` stamps them only for Guild input.
     const importedCoreDirectives: MeshDirectiveImport[] = [];
     if (mergeDirectiveUsed) {
       importedCoreDirectives.push('@merge');
@@ -865,14 +865,12 @@ export function composeSubgraphs(
 }
 
 export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[]) {
-  const composedSupergraphSdl = composeServices(annotatedSubgraphs);
+  // Guild needs `@composeDirective(name: "@connect")` (+ connect def). Loaders
+  // omit those (Apollo-like); stamp only on the Guild input, then finalize to join.
+  const guildSubgraphs = prepareConnectorsBeforeGuild(annotatedSubgraphs);
+  const composedSupergraphSdl = composeServices(guildSubgraphs);
   const rawSupergraphSdl = composedSupergraphSdl.supergraphSdl?.trim();
-  // Lift SCHEMA extras, then rewrite Connectors to `@join__directive` metadata
-  // so the same Mesh supergraph runs on Hive Gateway and Apollo Router
-  // (Hive's REST transport reads join__directive; Router requires it).
-  // Finally GM-41: Mesh `@transport` → `@join__directive(name: "transport")`
-  // (drop matching subgraph/location; drop pure http). Field/type Mesh dirs and
-  // Gateway fusion-runtime transport readers still TBD — see finalizeMeshJoinDirectives.
+  // Lift SCHEMA extras → Connectors `@join__directive` → GM-41 transport join.
   const lifted = rawSupergraphSdl
     ? liftExtraSchemaDefinitionDirectives(rawSupergraphSdl)
     : rawSupergraphSdl;

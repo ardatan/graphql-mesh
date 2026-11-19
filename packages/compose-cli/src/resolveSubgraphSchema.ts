@@ -7,7 +7,6 @@ import {
 } from 'graphql';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
-  addConnectComposeDirective,
   importMeshDirectives,
   isUrl,
   readFile,
@@ -38,16 +37,6 @@ export interface ResolveSubgraphSchemaOptions {
    * (or a Promise of any of those).
    */
   schema: MaybePromise<SubgraphSchemaInput>;
-  /**
-   * When true (default), stamp `@composeDirective(name: "@connect")` if the
-   * schema already links the Federation Connectors spec.
-   *
-   * Mesh `@link` / `@composeDirective` for Mesh directives must already be in
-   * the SDL (or come from a loader via `importMeshDirectives`).
-   *
-   * @default true
-   */
-  composeConnect?: boolean;
   /**
    * Partial `@transport` fields: merge onto an existing stamp, or add one.
    */
@@ -226,16 +215,13 @@ function applyTransportOptions(
 function finalizeSchema(
   configName: string | undefined,
   schema: GraphQLSchema,
-  options: Pick<ResolveSubgraphSchemaOptions, 'composeConnect' | 'transport'>,
+  options: Pick<ResolveSubgraphSchemaOptions, 'transport'>,
 ): ResolvedSubgraphSchema {
   // Resolve name from config / existing `@transport` before stamping patches.
   const name = resolveSubgraphName(schema, configName);
   let next = applyTransportOptions(name, schema, options.transport);
   // Re-check after patch (e.g. transport created with subgraph).
   const confirmed = resolveSubgraphName(next, configName);
-  if (options.composeConnect !== false) {
-    next = addConnectComposeDirective(next);
-  }
   // Hand SDL with `@transport` but no Mesh core `@link` importing it — stamp before validate.
   const dirs = getDirectiveExtensions(next);
   const hasTransport = !!dirs?.transport;

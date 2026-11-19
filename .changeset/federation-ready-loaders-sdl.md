@@ -16,12 +16,12 @@ Loader-generated subgraphs are federation-ready at load time, and hand-written S
 
 ### Why
 
-Mesh Compose previously had to invent Mesh-spec `@link` imports and `@composeDirective` for every loader subgraph (and for Connectors, `@composeDirective(name: "@connect")`). That made loader/hand SDL incomplete for schema registries until after a Compose pass, and forced hand-written flows to copy-paste `buildASTSchema(parse(readFileSync(...)))`.
+Mesh Compose previously had to invent Mesh-spec `@link` imports and `@composeDirective` for every loader subgraph. That made loader/hand SDL incomplete for schema registries until after a Compose pass, and forced hand-written flows to copy-paste `buildASTSchema(parse(readFileSync(...)))`.
 
 ### What changed
 
-- **`importMeshDirectives`** / **`addConnectComposeDirective`** live in **`@graphql-mesh/utils`** so protocol loaders do not depend on `@graphql-mesh/fusion-composition`. Fusion composition re-exports them for Compose.
-- Loaders stamp Mesh `@link` + `@composeDirective` themselves via `importMeshDirectives([...])` with an **explicit** directive list (no auto-scan). Connectors loaders also call `addConnectComposeDirective`.
+- **`importMeshDirectives`** lives in **`@graphql-mesh/utils`** so protocol loaders do not depend on `@graphql-mesh/fusion-composition`. Fusion composition re-exports it for Compose.
+- Loaders stamp Mesh `@link` + `@composeDirective` via `importMeshDirectives([...])` (explicit list). **Connectors loaders do not stamp `@composeDirective(name: "@connect")` or `directive @connect` defs** (Apollo-like). Mesh Compose stamps those **only on Guild input** (`prepareConnectorsBeforeGuild`), then `finalizeConnectorsSupergraph` emits `@join__directive` and drops composeDirective / connect defs / connect input scalars.
 - Mesh-spec `@link` URLs start at **`https://specs.graphql-mesh.com/<name>/v0.1`**. Shared Mesh **core** directives (`@transport`, `@merge`, `@hoist`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, `@extraSchemaDefinitionDirective`, …) use **`core/v0.1`**. Protocol loaders use a separate protocol URL (e.g. `sql/v0.1` for `@sql` only) plus `core/v0.1` for `@transport`.
 - **`@source` / `@meshSource`** are still stamped from **`https://the-guild.dev/graphql/mesh/spec/v1.0`** because Hive Gateway (`fusion-runtime`) only resolves Mesh stitching `@source` from that exact URL today (`MESH_GATEWAY_SOURCE_SPEC_URL`). TODO: move `@source` to `core/v0.1` once Gateway accepts it.
 - **Spec contract:** `parseMeshSpecUrl` / `assertSupportedMeshSpec` (/`OnSchema`) — transports validate supported protocol/`core` versions when a matching `@link` is present; Compose asserts after stamping. Hive Gateway can reuse the same helpers later.
@@ -36,7 +36,7 @@ Object-level `@shareable` / full Fed v2 conversion remains Compose-time (`conver
 
 ### Migration
 
-Printed loader SDL now includes Mesh `@link` / `@composeDirective` (and Connectors include `@composeDirective(name: "@connect")`). Supergraph SDL carries transports as `@join__directive(name: "transport")` instead of schema `@transport` — update snapshots. Hive Gateway must read that form (fusion-runtime gap until patched).
+Printed loader SDL now includes Mesh `@link` / `@composeDirective` for Mesh directives only — **not** `@composeDirective(name: "@connect")`. Supergraph SDL carries transports as `@join__directive(name: "transport")` instead of schema `@transport` — update snapshots. Hive Gateway must read that form (fusion-runtime gap until patched).
 
 Hand-written Compose configs can replace custom file loaders:
 

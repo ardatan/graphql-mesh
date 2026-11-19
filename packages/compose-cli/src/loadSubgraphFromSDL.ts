@@ -12,13 +12,6 @@ export type SubgraphFromSdlSource = MaybePromise<SubgraphSchemaInput>;
 
 export interface LoadSubgraphFromSdlOptions {
   /**
-   * When true (default), stamp `@composeDirective(name: "@connect")` if the
-   * schema already links Federation Connectors.
-   *
-   * @default true
-   */
-  composeConnect?: boolean;
-  /**
    * Partial `@transport` fields: merge onto an existing stamp, or add one.
    */
   transport?: ResolveSubgraphSchemaTransport;
@@ -46,7 +39,6 @@ export function loadSubgraphFromSDL(
         resolveSubgraphSchema(ctx, {
           subgraphName: name,
           schema,
-          composeConnect: options.composeConnect,
           transport: options.transport,
         }),
       resolved => resolved.schema,

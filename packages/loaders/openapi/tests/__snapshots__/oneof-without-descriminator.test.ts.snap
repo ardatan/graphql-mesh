@@ -10,8 +10,6 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -55,22 +53,11 @@ input mutation_test_endpoint_oneOf_1_Input {
 
 scalar ObjMap
 
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
   queryParams: JSONSelection
 }
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
-scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -84,11 +71,5 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
 }"
 `;

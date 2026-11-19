@@ -36,7 +36,6 @@ export type MeshComposeCLISubgraphConfig = {
       sourceHandler: MeshComposeCLISourceHandlerDef;
       name?: never;
       schema?: never;
-      composeConnect?: never;
       transport?: never;
     }
   | {
@@ -61,13 +60,6 @@ export type MeshComposeCLISubgraphConfig = {
        * Mesh directive imports.
        */
       schema: MaybePromise<SubgraphSchemaInput>;
-      /**
-       * When true (default), stamp `@composeDirective(name: "@connect")` if the
-       * schema already links Federation Connectors.
-       *
-       * @default true
-       */
-      composeConnect?: boolean;
       /**
        * Partial `@transport` fields: merge onto an existing stamp, or add one.
        */

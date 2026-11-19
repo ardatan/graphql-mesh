@@ -90,16 +90,25 @@ describe('loadSubgraphFromSDL', () => {
     );
   });
 
-  it('skips composeConnect when composeConnect: false', async () => {
+  it('does not stamp @composeDirective(name: "@connect") (Apollo Connectors alignment)', async () => {
     const { schema$ } = loadSubgraphFromSDL(
       'shop',
       /* GraphQL */ `
-        directive @sql(table: String) on FIELD_DEFINITION
+        schema
+          @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+          @source(name: "rest", http: { baseURL: "https://api.example.com" }) {
+          query: Query
+        }
+        directive @link(url: String!, import: [String]) repeatable on SCHEMA
+        directive @connect(selection: String) on FIELD_DEFINITION
+        directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+        input SourceHTTP {
+          baseURL: String!
+        }
         type Query {
-          albums: String @sql(table: "albums")
+          hello: String @connect(selection: "hello")
         }
       `,
-      { composeConnect: false },
     )({
       cwd: process.cwd(),
       fetch: globalThis.fetch,
@@ -107,6 +116,6 @@ describe('loadSubgraphFromSDL', () => {
     });
     const schema = await schema$;
     const dirs = getDirectiveExtensions(schema);
-    expect(dirs?.composeDirective).toBeUndefined();
+    expect(dirs?.composeDirective?.some((d: { name?: string }) => d.name === '@connect')).toBeFalsy();
   });
 });

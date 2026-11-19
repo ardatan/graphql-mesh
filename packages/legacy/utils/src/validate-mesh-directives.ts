@@ -115,7 +115,7 @@ export function validateMeshDirectives(
   mapSchema(schema, {
     [MapperKind.OBJECT_TYPE]: type => {
       const dirs = getDirectiveExtensions(type) || {};
-      for (const name of Object.keys(dirs)) {
+      for (const name of Object.keys(dirs) as string[]) {
         if (MESH_CORE_USAGE_NAMES.has(name)) {
           sawCoreUsage = true;
         }
@@ -127,7 +127,7 @@ export function validateMeshDirectives(
     },
     [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName) => {
       const dirs = getDirectiveExtensions(fieldConfig) || {};
-      for (const name of Object.keys(dirs)) {
+      for (const name of Object.keys(dirs) as string[]) {
         if (MESH_CORE_USAGE_NAMES.has(name)) {
           sawCoreUsage = true;
         }
@@ -154,7 +154,7 @@ export function validateMeshDirectives(
   });
 
   // Schema-level Mesh dirs also count as usage
-  for (const name of Object.keys(schemaDirs)) {
+  for (const name of Object.keys(schemaDirs) as string[]) {
     if (MESH_CORE_USAGE_NAMES.has(name)) {
       sawCoreUsage = true;
     }

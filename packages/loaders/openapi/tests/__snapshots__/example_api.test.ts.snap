@@ -6,8 +6,6 @@ exports[`example_api should generate the schema correctly 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -357,9 +355,9 @@ type Mutation {
   """An endpoint to test authenticated POST requests."""
   post_project_with_id(input: project_with_id_Input): project_with_id @connect(source: "example_api", http: {POST: "/projects", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input { \\"project-id\\": project_id \\"lead-id\\": lead_id active patentId }"}, selection: "project_id: $->get(\\"project-id\\") lead_id: $->get(\\"lead-id\\") active patentId")
   """Used to test link parameters with variables"""
-  postScanner(path: String!, query: String, input: String): postScanner_200_response @connect(source: "example_api", http: {POST: "/scanner/{$args.path}", headers: [{name: "Content-Type", value: "text/plain"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  postScanner(path: String!, query: String, input: String): postScanner_200_response @connect(source: "example_api", http: {POST: "/scanner/{$args.path}", headers: [{name: "Content-Type", value: "text/plain"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}", body: "$args.input"}, selection: "body")
   """Endpoint to test placeholder objects to wrap response objects."""
-  post_status(globalquery: String!, input: post_status_request_Input): String @connect(source: "example_api", http: {POST: "/status", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "text/plain"}], body: "$args.input", queryParams: "{\\n  globalquery: $args.globalquery\\n}"}, selection: "$")
+  post_status(globalquery: String!, input: post_status_request_Input): String @connect(source: "example_api", http: {POST: "/status", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "text/plain"}], queryParams: "{\\n  globalquery: $args.globalquery\\n}", body: "$args.input"}, selection: "$")
   """Add new contents to the trashcan of a specific owner"""
   postOfficeTrashCan(
     """Identifier of a user."""
@@ -445,22 +443,11 @@ input post_status_request_Input {
   hello: String
 }
 
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
   queryParams: JSONSelection
 }
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
-scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -474,11 +461,5 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
 }"
 `;

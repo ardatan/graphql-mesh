@@ -71,39 +71,16 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
 
   let nextDoc = visit(document, {
     SchemaDefinition(node) {
-      const kept: ConstDirectiveNode[] = [];
-      for (const dir of node.directives || []) {
-        if (dir.name.value === 'source') {
-          // Apollo SCHEMA `@source` — rewrite later to `@join__directive`
-          pendingSources.push(constDirectiveArgsToJs(dir));
-          continue;
-        }
-        if (dir.name.value === 'link') {
-          const url = getStringArg(dir, 'url');
-          if (url?.startsWith('https://specs.apollo.dev/join/')) {
-            kept.push(replaceLinkUrl(dir, JOIN_V05));
-            continue;
-          }
-          if (url?.startsWith('https://specs.apollo.dev/connect')) {
-            // Connectors EXECUTION link — no import list (join__directive carries defs)
-            kept.push({
-              kind: Kind.DIRECTIVE,
-              name: { kind: Kind.NAME, value: 'link' },
-              arguments: [
-                stringArg('url', CONNECT_SPEC),
-                {
-                  kind: Kind.ARGUMENT,
-                  name: { kind: Kind.NAME, value: 'for' },
-                  value: { kind: Kind.ENUM, value: 'EXECUTION' },
-                },
-              ],
-            });
-            continue;
-          }
-        }
-        kept.push(dir);
-      }
-      return { ...node, directives: kept };
+      return {
+        ...node,
+        directives: rewriteSchemaDirectivesForConnectors(node.directives, pendingSources),
+      };
+    },
+    SchemaExtension(node) {
+      return {
+        ...node,
+        directives: rewriteSchemaDirectivesForConnectors(node.directives, pendingSources),
+      };
     },
     FieldDefinition(node) {
       return rewriteConnectDirectivesOnNode(node, {
@@ -156,8 +133,13 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
       return node;
     },
     DirectiveDefinition(node) {
-      // Drop Apollo connect/source defs — execution uses join__directive metadata.
-      if (node.name.value === 'connect' || node.name.value === 'source') {
+      // Drop Apollo connect/source + Guild-only composeDirective defs —
+      // execution uses join__directive metadata.
+      if (
+        node.name.value === 'connect' ||
+        node.name.value === 'source' ||
+        node.name.value === 'composeDirective'
+      ) {
         return null;
       }
       return node;
@@ -384,6 +366,88 @@ function getPreferredTypeJoinGraph(
     }
   }
   return owners.length === 1 ? owners[0] : undefined;
+}
+
+function rewriteSchemaDirectivesForConnectors(
+  directives: readonly ConstDirectiveNode[] | undefined,
+  pendingSources: Array<Record<string, unknown>>,
+): ConstDirectiveNode[] {
+  const kept: ConstDirectiveNode[] = [];
+  for (const dir of directives || []) {
+    if (dir.name.value === 'source') {
+      // Apollo SCHEMA `@source` — rewrite later to `@join__directive`
+      pendingSources.push(constDirectiveArgsToJs(dir));
+      continue;
+    }
+    if (dir.name.value === 'composeDirective') {
+      // Guild-only / Mesh loader stamps — not on the optimized supergraph.
+      continue;
+    }
+    if (dir.name.value === 'link') {
+      const url = getStringArg(dir, 'url');
+      if (url?.startsWith('https://specs.apollo.dev/join/')) {
+        kept.push(replaceLinkUrl(dir, JOIN_V05));
+        continue;
+      }
+      if (url?.startsWith('https://specs.apollo.dev/connect')) {
+        // Connectors EXECUTION link — no import list (join__directive carries defs)
+        kept.push({
+          kind: Kind.DIRECTIVE,
+          name: { kind: Kind.NAME, value: 'link' },
+          arguments: [
+            stringArg('url', CONNECT_SPEC),
+            {
+              kind: Kind.ARGUMENT,
+              name: { kind: Kind.NAME, value: 'for' },
+              value: { kind: Kind.ENUM, value: 'EXECUTION' },
+            },
+          ],
+        });
+        continue;
+      }
+      if (url?.startsWith('https://specs.apollo.dev/federation/')) {
+        const stripped = removeImportFromLink(dir, '@composeDirective');
+        if (stripped) {
+          kept.push(stripped);
+        }
+        continue;
+      }
+    }
+    kept.push(dir);
+  }
+  return kept;
+}
+
+/** Drop one import name from `@link(import:)`; drop the whole link if import empties. */
+function removeImportFromLink(
+  directive: ConstDirectiveNode,
+  importName: string,
+): ConstDirectiveNode | null {
+  const importArg = directive.arguments?.find(a => a.name.value === 'import');
+  if (!importArg || importArg.value.kind !== Kind.LIST) {
+    return directive;
+  }
+  const values = importArg.value.values.filter(v => {
+    if (v.kind === Kind.STRING) {
+      return v.value !== importName;
+    }
+    return true;
+  });
+  if (values.length === importArg.value.values.length) {
+    return directive;
+  }
+  if (values.length === 0) {
+    // Federation link with only @composeDirective — drop entirely from final SG.
+    return null;
+  }
+  return {
+    ...directive,
+    arguments: (directive.arguments || []).map(arg =>
+      arg.name.value === 'import'
+        ? { ...arg, value: { kind: Kind.LIST, values } }
+        : arg,
+    ),
+  };
 }
 
 function getBooleanArg(dir: ConstDirectiveNode, name: string): boolean | undefined {

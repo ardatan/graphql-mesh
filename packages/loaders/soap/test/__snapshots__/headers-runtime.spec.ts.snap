@@ -1,11 +1,9 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SOAP Headers should pass headers to the executor: soap-with-headers 1`] = `
-"schema @source(name: "Test", http: {baseURL: "http://www.webservicex.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@connect") {
+"schema @source(name: "Test", http: {baseURL: "http://www.webservicex.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
@@ -39,15 +37,9 @@ input tns_GetCitiesByCountry_Input {
   CountryName: String
 }
 
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: String
   queryParams: String
 }
 
@@ -55,11 +47,5 @@ input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
 }"
 `;

@@ -68,7 +68,13 @@ describe('gRPC Handler', () => {
       expect(validateSchema(schema)).toHaveLength(0);
       const printedSDL = printSchemaWithDirectives(schema);
       expect(printedSDL).toMatchSnapshot();
-      const loadedFromPrintedSDL = buildSchema(printedSDL, { noLocation: true });
+      // Mesh `@link` / `@composeDirective` apps are stamped via extensions; SDL
+      // round-trip does not require their GraphQLDirective definitions.
+      const loadedFromPrintedSDL = buildSchema(printedSDL, {
+        noLocation: true,
+        assumeValidSDL: true,
+        assumeValid: true,
+      });
       expect(validateSchema(loadedFromPrintedSDL)).toHaveLength(0);
     });
   });

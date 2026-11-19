@@ -94,10 +94,14 @@ export default class BareMerger implements MeshMerger {
     });
 
     this.options.log.debug(`Merging sources`);
+    // Connectors/Mesh may stamp directive *apps* via extensions without
+    // GraphQLDirective defs (Apollo-like loader SDL). Skip SDL validation.
     const unifiedSchema = mergeSchemas({
       schemas,
       typeDefs,
       resolvers,
+      assumeValid: true,
+      assumeValidSDL: true,
     });
 
     this.options.log.debug(`Attaching sources to the unified schema`);

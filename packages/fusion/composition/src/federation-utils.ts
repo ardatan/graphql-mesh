@@ -7,7 +7,6 @@ import {
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 
 export {
-  addConnectComposeDirective,
   addFederation2DirectivesToSubgraph,
   importFederationDirectives,
   importMeshDirectives,

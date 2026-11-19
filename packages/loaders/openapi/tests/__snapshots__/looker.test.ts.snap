@@ -10,8 +10,6 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -8653,7 +8651,7 @@ type Mutation {
     """Requested fields"""
     fields: String
     input: CreateQueryTask_Input
-  ): QueryTask @connect(source: "test", http: {POST: "/query_tasks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  limit: $args.limit\\n  apply_formatting: $args.apply_formatting\\n  apply_vis: $args.apply_vis\\n  cache: $args.cache\\n  generate_drill_links: $args.generate_drill_links\\n  force_production: $args.force_production\\n  cache_only: $args.cache_only\\n  path_prefix: $args.path_prefix\\n  rebuild_pdts: $args.rebuild_pdts\\n  server_table_calcs: $args.server_table_calcs\\n  image_width: $args.image_width\\n  image_height: $args.image_height\\n  fields: $args.fields\\n}"}, selection: "can id query_id query: { __typename: $(\\"Query_\\") slug: query_id } generate_links force_production path_prefix cache server_table_calcs cache_only cache_key status source runtime rebuild_pdts result_source look_id dashboard_id result_format")
+  ): QueryTask @connect(source: "test", http: {POST: "/query_tasks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  apply_formatting: $args.apply_formatting\\n  apply_vis: $args.apply_vis\\n  cache: $args.cache\\n  generate_drill_links: $args.generate_drill_links\\n  force_production: $args.force_production\\n  cache_only: $args.cache_only\\n  path_prefix: $args.path_prefix\\n  rebuild_pdts: $args.rebuild_pdts\\n  server_table_calcs: $args.server_table_calcs\\n  image_width: $args.image_width\\n  image_height: $args.image_height\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id query_id query: { __typename: $(\\"Query_\\") slug: query_id } generate_links force_production path_prefix cache server_table_calcs cache_only cache_key status source runtime rebuild_pdts result_source look_id dashboard_id result_format")
   """
   ### Create a query.
   
@@ -8670,7 +8668,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: Query__Input
-  ): Query_ @connect(source: "test", http: {POST: "/queries", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id model view fields pivots fill_fields filters filter_expression sorts limit column_limit total row_total subtotals vis_config filter_config visible_ui_sections slug dynamic_fields client_id share_url expanded_share_url url query_timezone has_table_calculations")
+  ): Query_ @connect(source: "test", http: {POST: "/queries", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id model view fields pivots fill_fields filters filter_expression sorts limit column_limit total row_total subtotals vis_config filter_config visible_ui_sections slug dynamic_fields client_id share_url expanded_share_url url query_timezone has_table_calculations")
   """
   ### Run the query that is specified inline in the posted body.
   
@@ -8756,7 +8754,7 @@ type Mutation {
     """Perform table calculations on query results"""
     server_table_calcs: Boolean
     input: Query__Input
-  ): String @connect(source: "test", http: {POST: "/queries/run/{$args.result_format}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  limit: $args.limit\\n  apply_formatting: $args.apply_formatting\\n  apply_vis: $args.apply_vis\\n  cache: $args.cache\\n  image_width: $args.image_width\\n  image_height: $args.image_height\\n  generate_drill_links: $args.generate_drill_links\\n  force_production: $args.force_production\\n  cache_only: $args.cache_only\\n  path_prefix: $args.path_prefix\\n  rebuild_pdts: $args.rebuild_pdts\\n  server_table_calcs: $args.server_table_calcs\\n}"}, selection: "$")
+  ): String @connect(source: "test", http: {POST: "/queries/run/{$args.result_format}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  apply_formatting: $args.apply_formatting\\n  apply_vis: $args.apply_vis\\n  cache: $args.cache\\n  image_width: $args.image_width\\n  image_height: $args.image_height\\n  generate_drill_links: $args.generate_drill_links\\n  force_production: $args.force_production\\n  cache_only: $args.cache_only\\n  path_prefix: $args.path_prefix\\n  rebuild_pdts: $args.rebuild_pdts\\n  server_table_calcs: $args.server_table_calcs\\n}", body: "$args.input"}, selection: "$")
   """
   ### Present client credentials to obtain an authorization token
   
@@ -8990,7 +8988,7 @@ type Mutation {
     """
     fields: String
     input: [UpdateArtifact_Input]
-  ): [Artifact] @connect(source: "test", http: {PUT: "/artifacts/{$args.namespace}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "key value content_type version namespace created_at updated_at value_size created_by_userid updated_by_userid")
+  ): [Artifact] @connect(source: "test", http: {PUT: "/artifacts/{$args.namespace}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "key value content_type version namespace created_at updated_at value_size created_by_userid updated_by_userid")
   """
   Update the current Cloud Storage Configuration.
   
@@ -9073,7 +9071,7 @@ type Mutation {
     """Optionally sends notification email when granting access to a board."""
     send_boards_notification_email: Boolean
     input: ContentMetaGroupUser_Input
-  ): ContentMetaGroupUser @connect(source: "test", http: {POST: "/content_metadata_access", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  send_boards_notification_email: $args.send_boards_notification_email\\n}"}, selection: "can id content_metadata_id permission_type group_id user_id")
+  ): ContentMetaGroupUser @connect(source: "test", http: {POST: "/content_metadata_access", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  send_boards_notification_email: $args.send_boards_notification_email\\n}", body: "$args.input"}, selection: "can id content_metadata_id permission_type group_id user_id")
   """
   ### Update type of access for content metadata.
   
@@ -9101,7 +9099,7 @@ type Mutation {
     """
     send_test_welcome_email: Boolean
     input: CustomWelcomeEmail_Input
-  ): CustomWelcomeEmail @connect(source: "test", http: {PATCH: "/custom_welcome_email", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  send_test_welcome_email: $args.send_test_welcome_email\\n}"}, selection: "enabled content subject header") @deprecated(reason: "deprecated")
+  ): CustomWelcomeEmail @connect(source: "test", http: {PATCH: "/custom_welcome_email", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  send_test_welcome_email: $args.send_test_welcome_email\\n}", body: "$args.input"}, selection: "enabled content subject header") @deprecated(reason: "deprecated")
   """
   Requests to this endpoint will send a welcome email with the custom content provided in the body to the currently logged in user.
   
@@ -9150,7 +9148,7 @@ type Mutation {
     """
     raw_locale: Boolean
     input: Dashboard_Input
-  ): Dashboard @connect(source: "test", http: {POST: "/dashboards/{$args.lookml_dashboard_id}/import/{$args.space_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  raw_locale: $args.raw_locale\\n}"}, selection: "can content_favorite_id content_metadata_id description hidden id model { id label } query_timezone readonly refresh_interval refresh_interval_to_i folder { name parent_id id content_metadata_id created_at creator_id child_count external_id is_embed is_embed_shared_root is_embed_users_root is_personal is_personal_descendant is_shared_root is_users_root can } title user_id slug preferred_viewer alert_sync_with_dashboard_filter_enabled background_color created_at crossfilter_enabled dashboard_elements { can body_text body_text_as_html dashboard_id edit_uri id look: { __typename: $(\\"LookWithQuery\\") folder_id: look_id } look_id lookml_link_id merge_result_id note_display note_state note_text note_text_as_html query: { __typename: $(\\"Query_\\") slug: query_id } query_id refresh_interval refresh_interval_to_i result_maker { id dynamic_fields filterables { model view name listen { dashboard_filter_name field } } sorts merge_result_id total query_id sql_query_id query: { __typename: $(\\"Query_\\") slug: query_id } vis_config } result_maker_id subtitle_text title title_hidden title_text type alert_count rich_content_json title_text_as_html subtitle_text_as_html extension_id } dashboard_filters { can id dashboard_id name title type default_value model explore dimension field row listens_to_filters allow_multiple_values required ui_config } dashboard_layouts { can id dashboard_id type active column_width width deleted dashboard_title dashboard_layout_components { can id dashboard_layout_id dashboard_element_id row column width height deleted element_title element_title_hidden vis_type } } deleted deleted_at deleter_id edit_uri enable_viz_full_screen favorite_count filters_bar_collapsed filters_location_top last_accessed_at last_viewed_at updated_at last_updater_id last_updater_name user_name load_configuration lookml_link_id show_filters_bar show_title folder_id text_tile_text_color tile_background_color tile_text_color title_color view_count appearance { page_side_margins page_background_color tile_title_alignment tile_space_between tile_background_color tile_shadow key_color } url")
+  ): Dashboard @connect(source: "test", http: {POST: "/dashboards/{$args.lookml_dashboard_id}/import/{$args.space_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  raw_locale: $args.raw_locale\\n}", body: "$args.input"}, selection: "can content_favorite_id content_metadata_id description hidden id model { id label } query_timezone readonly refresh_interval refresh_interval_to_i folder { name parent_id id content_metadata_id created_at creator_id child_count external_id is_embed is_embed_shared_root is_embed_users_root is_personal is_personal_descendant is_shared_root is_users_root can } title user_id slug preferred_viewer alert_sync_with_dashboard_filter_enabled background_color created_at crossfilter_enabled dashboard_elements { can body_text body_text_as_html dashboard_id edit_uri id look: { __typename: $(\\"LookWithQuery\\") folder_id: look_id } look_id lookml_link_id merge_result_id note_display note_state note_text note_text_as_html query: { __typename: $(\\"Query_\\") slug: query_id } query_id refresh_interval refresh_interval_to_i result_maker { id dynamic_fields filterables { model view name listen { dashboard_filter_name field } } sorts merge_result_id total query_id sql_query_id query: { __typename: $(\\"Query_\\") slug: query_id } vis_config } result_maker_id subtitle_text title title_hidden title_text type alert_count rich_content_json title_text_as_html subtitle_text_as_html extension_id } dashboard_filters { can id dashboard_id name title type default_value model explore dimension field row listens_to_filters allow_multiple_values required ui_config } dashboard_layouts { can id dashboard_id type active column_width width deleted dashboard_title dashboard_layout_components { can id dashboard_layout_id dashboard_element_id row column width height deleted element_title element_title_hidden vis_type } } deleted deleted_at deleter_id edit_uri enable_viz_full_screen favorite_count filters_bar_collapsed filters_location_top last_accessed_at last_viewed_at updated_at last_updater_id last_updater_name user_name load_configuration lookml_link_id show_filters_bar show_title folder_id text_tile_text_color tile_background_color tile_text_color title_color view_count appearance { page_side_margins page_background_color tile_title_alignment tile_space_between tile_background_color tile_shadow key_color } url")
   """
   ### Update all linked dashboards to match the specified LookML dashboard.
   
@@ -9171,7 +9169,7 @@ type Mutation {
     """
     raw_locale: Boolean
     input: Dashboard_Input
-  ): [BigInt] @connect(source: "test", http: {PATCH: "/dashboards/{$args.lookml_dashboard_id}/sync", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  raw_locale: $args.raw_locale\\n}"}, selection: "$")
+  ): [BigInt] @connect(source: "test", http: {PATCH: "/dashboards/{$args.lookml_dashboard_id}/sync", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  raw_locale: $args.raw_locale\\n}", body: "$args.input"}, selection: "$")
   """
   ### Delete the dashboard with the specified id
   
@@ -9273,7 +9271,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: DashboardElement_Input
-  ): DashboardElement @connect(source: "test", http: {PATCH: "/dashboard_elements/{$args.dashboard_element_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can body_text body_text_as_html dashboard_id edit_uri id look: { __typename: $(\\"LookWithQuery\\") folder_id: look_id } look_id lookml_link_id merge_result_id note_display note_state note_text note_text_as_html query: { __typename: $(\\"Query_\\") slug: query_id } query_id refresh_interval refresh_interval_to_i result_maker { id dynamic_fields filterables { model view name listen { dashboard_filter_name field } } sorts merge_result_id total query_id sql_query_id query: { __typename: $(\\"Query_\\") slug: query_id } vis_config } result_maker_id subtitle_text title title_hidden title_text type alert_count rich_content_json title_text_as_html subtitle_text_as_html extension_id")
+  ): DashboardElement @connect(source: "test", http: {PATCH: "/dashboard_elements/{$args.dashboard_element_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can body_text body_text_as_html dashboard_id edit_uri id look: { __typename: $(\\"LookWithQuery\\") folder_id: look_id } look_id lookml_link_id merge_result_id note_display note_state note_text note_text_as_html query: { __typename: $(\\"Query_\\") slug: query_id } query_id refresh_interval refresh_interval_to_i result_maker { id dynamic_fields filterables { model view name listen { dashboard_filter_name field } } sorts merge_result_id total query_id sql_query_id query: { __typename: $(\\"Query_\\") slug: query_id } vis_config } result_maker_id subtitle_text title title_hidden title_text type alert_count rich_content_json title_text_as_html subtitle_text_as_html extension_id")
   """### Create a dashboard element on the dashboard with a specific id."""
   create_dashboard_element(
     """Requested fields."""
@@ -9281,7 +9279,7 @@ type Mutation {
     """Apply relevant filters on dashboard to this tile"""
     apply_filters: Boolean
     input: DashboardElement_Input
-  ): DashboardElement @connect(source: "test", http: {POST: "/dashboard_elements", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n  apply_filters: $args.apply_filters\\n}"}, selection: "can body_text body_text_as_html dashboard_id edit_uri id look: { __typename: $(\\"LookWithQuery\\") folder_id: look_id } look_id lookml_link_id merge_result_id note_display note_state note_text note_text_as_html query: { __typename: $(\\"Query_\\") slug: query_id } query_id refresh_interval refresh_interval_to_i result_maker { id dynamic_fields filterables { model view name listen { dashboard_filter_name field } } sorts merge_result_id total query_id sql_query_id query: { __typename: $(\\"Query_\\") slug: query_id } vis_config } result_maker_id subtitle_text title title_hidden title_text type alert_count rich_content_json title_text_as_html subtitle_text_as_html extension_id")
+  ): DashboardElement @connect(source: "test", http: {POST: "/dashboard_elements", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n  apply_filters: $args.apply_filters\\n}", body: "$args.input"}, selection: "can body_text body_text_as_html dashboard_id edit_uri id look: { __typename: $(\\"LookWithQuery\\") folder_id: look_id } look_id lookml_link_id merge_result_id note_display note_state note_text note_text_as_html query: { __typename: $(\\"Query_\\") slug: query_id } query_id refresh_interval refresh_interval_to_i result_maker { id dynamic_fields filterables { model view name listen { dashboard_filter_name field } } sorts merge_result_id total query_id sql_query_id query: { __typename: $(\\"Query_\\") slug: query_id } vis_config } result_maker_id subtitle_text title title_hidden title_text type alert_count rich_content_json title_text_as_html subtitle_text_as_html extension_id")
   """### Delete a dashboard filter with a specific id."""
   delete_dashboard_filter(
     """Id of dashboard filter"""
@@ -9294,13 +9292,13 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: DashboardFilter_Input
-  ): DashboardFilter @connect(source: "test", http: {PATCH: "/dashboard_filters/{$args.dashboard_filter_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id dashboard_id name title type default_value model explore dimension field row listens_to_filters allow_multiple_values required ui_config")
+  ): DashboardFilter @connect(source: "test", http: {PATCH: "/dashboard_filters/{$args.dashboard_filter_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id dashboard_id name title type default_value model explore dimension field row listens_to_filters allow_multiple_values required ui_config")
   """### Create a dashboard filter on the dashboard with a specific id."""
   create_dashboard_filter(
     """Requested fields"""
     fields: String
     input: CreateDashboardFilter_Input
-  ): DashboardFilter @connect(source: "test", http: {POST: "/dashboard_filters", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id dashboard_id name title type default_value model explore dimension field row listens_to_filters allow_multiple_values required ui_config")
+  ): DashboardFilter @connect(source: "test", http: {POST: "/dashboard_filters", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id dashboard_id name title type default_value model explore dimension field row listens_to_filters allow_multiple_values required ui_config")
   """### Update the dashboard element with a specific id."""
   update_dashboard_layout_component(
     """Id of dashboard layout component"""
@@ -9308,7 +9306,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: DashboardLayoutComponent_Input
-  ): DashboardLayoutComponent @connect(source: "test", http: {PATCH: "/dashboard_layout_components/{$args.dashboard_layout_component_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id dashboard_layout_id dashboard_element_id row column width height deleted element_title element_title_hidden vis_type")
+  ): DashboardLayoutComponent @connect(source: "test", http: {PATCH: "/dashboard_layout_components/{$args.dashboard_layout_component_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id dashboard_layout_id dashboard_element_id row column width height deleted element_title element_title_hidden vis_type")
   """### Delete a dashboard layout with a specific id."""
   delete_dashboard_layout(
     """Id of dashboard layout"""
@@ -9321,13 +9319,13 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: DashboardLayout_Input
-  ): DashboardLayout @connect(source: "test", http: {PATCH: "/dashboard_layouts/{$args.dashboard_layout_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id dashboard_id type active column_width width deleted dashboard_title dashboard_layout_components { can id dashboard_layout_id dashboard_element_id row column width height deleted element_title element_title_hidden vis_type }")
+  ): DashboardLayout @connect(source: "test", http: {PATCH: "/dashboard_layouts/{$args.dashboard_layout_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id dashboard_id type active column_width width deleted dashboard_title dashboard_layout_components { can id dashboard_layout_id dashboard_element_id row column width height deleted element_title element_title_hidden vis_type }")
   """### Create a dashboard layout on the dashboard with a specific id."""
   create_dashboard_layout(
     """Requested fields."""
     fields: String
     input: DashboardLayout_Input
-  ): DashboardLayout @connect(source: "test", http: {POST: "/dashboard_layouts", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id dashboard_id type active column_width width deleted dashboard_title dashboard_layout_components { can id dashboard_layout_id dashboard_element_id row column width height deleted element_title element_title_hidden vis_type }")
+  ): DashboardLayout @connect(source: "test", http: {POST: "/dashboard_layouts", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id dashboard_id type active column_width width deleted dashboard_title dashboard_layout_components { can id dashboard_layout_id dashboard_element_id row column width height deleted element_title element_title_hidden vis_type }")
   """
   Perform a data action. The data action object can be obtained from query results, and used to perform an arbitrary action.
   """
@@ -9409,7 +9407,7 @@ type Mutation {
     """Array of names of tests to run"""
     tests: [String]
     input: DBConnection_Input
-  ): [DBConnectionTestResult] @connect(source: "test", http: {PUT: "/connections/test", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  tests: $args.tests->joinNotNull(\\",\\")\\n}"}, selection: "can connection_string message name status")
+  ): [DBConnectionTestResult] @connect(source: "test", http: {PUT: "/connections/test", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  tests: $args.tests->joinNotNull(\\",\\")\\n}", body: "$args.input"}, selection: "can connection_string message name status")
   """
         ### Generate Lockfile for All LookML Dependencies
   
@@ -9644,7 +9642,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: Group_Input
-  ): Group @connect(source: "test", http: {POST: "/groups", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can can_add_to_content_metadata contains_current_user external_group_id externally_managed id include_by_default name user_count")
+  ): Group @connect(source: "test", http: {POST: "/groups", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can can_add_to_content_metadata contains_current_user external_group_id externally_managed id include_by_default name user_count")
   """### Updates the a group (admin only)."""
   update_group(
     """Id of group"""
@@ -9652,7 +9650,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: Group_Input
-  ): Group @connect(source: "test", http: {PATCH: "/groups/{$args.group_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can can_add_to_content_metadata contains_current_user external_group_id externally_managed id include_by_default name user_count")
+  ): Group @connect(source: "test", http: {PATCH: "/groups/{$args.group_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can can_add_to_content_metadata contains_current_user external_group_id externally_managed id include_by_default name user_count")
   """
   ### Deletes a group (admin only).
   
@@ -9730,7 +9728,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: Board_Input
-  ): Board @connect(source: "test", http: {POST: "/boards", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can content_metadata_id created_at deleted_at description board_sections { can created_at deleted_at description board_id board_items { can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image } id item_order visible_item_order title updated_at } id section_order title updated_at user_id primary_homepage")
+  ): Board @connect(source: "test", http: {POST: "/boards", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can content_metadata_id created_at deleted_at description board_sections { can created_at deleted_at description board_id board_items { can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image } id item_order visible_item_order title updated_at } id section_order title updated_at user_id primary_homepage")
   """
   ### Update a board definition.
   
@@ -9741,7 +9739,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: Board_Input
-  ): Board @connect(source: "test", http: {PATCH: "/boards/{$args.board_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can content_metadata_id created_at deleted_at description board_sections { can created_at deleted_at description board_id board_items { can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image } id item_order visible_item_order title updated_at } id section_order title updated_at user_id primary_homepage")
+  ): Board @connect(source: "test", http: {PATCH: "/boards/{$args.board_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can content_metadata_id created_at deleted_at description board_sections { can created_at deleted_at description board_id board_items { can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image } id item_order visible_item_order title updated_at } id section_order title updated_at user_id primary_homepage")
   """
   ### Delete a board.
   
@@ -9758,7 +9756,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: BoardItem_Input
-  ): BoardItem @connect(source: "test", http: {POST: "/board_items", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image")
+  ): BoardItem @connect(source: "test", http: {POST: "/board_items", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image")
   """
   ### Update a board item definition.
   
@@ -9769,7 +9767,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: BoardItem_Input
-  ): BoardItem @connect(source: "test", http: {PATCH: "/board_items/{$args.board_item_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image")
+  ): BoardItem @connect(source: "test", http: {PATCH: "/board_items/{$args.board_item_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image")
   """
   ### Delete a board item.
   
@@ -9786,7 +9784,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: BoardSection_Input
-  ): BoardSection @connect(source: "test", http: {POST: "/board_sections", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can created_at deleted_at description board_id board_items { can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image } id item_order visible_item_order title updated_at")
+  ): BoardSection @connect(source: "test", http: {POST: "/board_sections", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can created_at deleted_at description board_id board_items { can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image } id item_order visible_item_order title updated_at")
   """
   ### Update a board section definition.
   
@@ -9797,7 +9795,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: BoardSection_Input
-  ): BoardSection @connect(source: "test", http: {PATCH: "/board_sections/{$args.board_section_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can created_at deleted_at description board_id board_items { can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image } id item_order visible_item_order title updated_at")
+  ): BoardSection @connect(source: "test", http: {PATCH: "/board_sections/{$args.board_section_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can created_at deleted_at description board_id board_items { can content_created_by content_favorite_id content_metadata_id content_updated_at custom_description custom_title custom_url dashboard_id description favorite_count board_section_id id image_url location look_id lookml_dashboard_id order title url use_custom_description use_custom_title use_custom_url view_count custom_image_data_base64 custom_image_url use_custom_image } id item_order visible_item_order title updated_at")
   """
   ### Delete a board section.
   
@@ -9816,7 +9814,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: IntegrationHub_Input
-  ): IntegrationHub @connect(source: "test", http: {POST: "/integration_hubs", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id url label official fetch_error_message authorization_token has_authorization_token legal_agreement_signed legal_agreement_required legal_agreement_text")
+  ): IntegrationHub @connect(source: "test", http: {POST: "/integration_hubs", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id url label official fetch_error_message authorization_token has_authorization_token legal_agreement_signed legal_agreement_required legal_agreement_text")
   """
   ### Update a Integration Hub definition.
   
@@ -9829,7 +9827,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: IntegrationHub_Input
-  ): IntegrationHub @connect(source: "test", http: {PATCH: "/integration_hubs/{$args.integration_hub_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id url label official fetch_error_message authorization_token has_authorization_token legal_agreement_signed legal_agreement_required legal_agreement_text")
+  ): IntegrationHub @connect(source: "test", http: {PATCH: "/integration_hubs/{$args.integration_hub_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id url label official fetch_error_message authorization_token has_authorization_token legal_agreement_signed legal_agreement_required legal_agreement_text")
   """
   ### Delete a Integration Hub.
   
@@ -9855,7 +9853,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: Integration_Input
-  ): Integration @connect(source: "test", http: {PATCH: "/integrations/{$args.integration_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id integration_hub_id label description enabled params { name label description required has_value value user_attribute_name sensitive per_user delegate_oauth_url } supported_formats supported_action_types supported_formattings supported_visualization_formattings supported_download_settings icon_url uses_oauth required_fields { tag any_tag all_tags } privacy_link delegate_oauth installed_delegate_oauth_targets")
+  ): Integration @connect(source: "test", http: {PATCH: "/integrations/{$args.integration_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id integration_hub_id label description enabled params { name label description required has_value value user_attribute_name sensitive per_user delegate_oauth_url } supported_formats supported_action_types supported_formattings supported_visualization_formattings supported_download_settings icon_url uses_oauth required_fields { tag any_tag all_tags } privacy_link delegate_oauth installed_delegate_oauth_targets")
   """Returns the Integration form for presentation to the user."""
   fetch_integration_form(
     """Id of integration"""
@@ -9999,7 +9997,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: LookWithQuery_Input
-  ): LookWithQuery @connect(source: "test", http: {POST: "/looks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can content_metadata_id id title user_id content_favorite_id created_at deleted deleted_at deleter_id description embed_url excel_file_url favorite_count google_spreadsheet_formula image_embed_url is_run_on_load last_accessed_at last_updater_id last_viewed_at model { id label } public public_slug public_url query_id short_url folder { name parent_id id content_metadata_id created_at creator_id child_count external_id is_embed is_embed_shared_root is_embed_users_root is_personal is_personal_descendant is_shared_root is_users_root can } folder_id updated_at view_count query: { __typename: $(\\"Query_\\") slug: query_id } url")
+  ): LookWithQuery @connect(source: "test", http: {POST: "/looks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can content_metadata_id id title user_id content_favorite_id created_at deleted deleted_at deleter_id description embed_url excel_file_url favorite_count google_spreadsheet_formula image_embed_url is_run_on_load last_accessed_at last_updater_id last_viewed_at model { id label } public public_slug public_url query_id short_url folder { name parent_id id content_metadata_id created_at creator_id child_count external_id is_embed is_embed_shared_root is_embed_users_root is_personal is_personal_descendant is_shared_root is_users_root can } folder_id updated_at view_count query: { __typename: $(\\"Query_\\") slug: query_id } url")
   """
   ### Modify a Look
   
@@ -10029,7 +10027,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: LookWithQuery_Input
-  ): LookWithQuery @connect(source: "test", http: {PATCH: "/looks/{$args.look_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can content_metadata_id id title user_id content_favorite_id created_at deleted deleted_at deleter_id description embed_url excel_file_url favorite_count google_spreadsheet_formula image_embed_url is_run_on_load last_accessed_at last_updater_id last_viewed_at model { id label } public public_slug public_url query_id short_url folder { name parent_id id content_metadata_id created_at creator_id child_count external_id is_embed is_embed_shared_root is_embed_users_root is_personal is_personal_descendant is_shared_root is_users_root can } folder_id updated_at view_count query: { __typename: $(\\"Query_\\") slug: query_id } url")
+  ): LookWithQuery @connect(source: "test", http: {PATCH: "/looks/{$args.look_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can content_metadata_id id title user_id content_favorite_id created_at deleted deleted_at deleter_id description embed_url excel_file_url favorite_count google_spreadsheet_formula image_embed_url is_run_on_load last_accessed_at last_updater_id last_viewed_at model { id label } public public_slug public_url query_id short_url folder { name parent_id id content_metadata_id created_at creator_id child_count external_id is_embed is_embed_shared_root is_embed_users_root is_personal is_personal_descendant is_shared_root is_users_root can } folder_id updated_at view_count query: { __typename: $(\\"Query_\\") slug: query_id } url")
   """
   ### Permanently Delete a Look
   
@@ -10121,7 +10119,7 @@ type Mutation {
     """Requested fields"""
     fields: String
     input: MergeQuery_Input
-  ): MergeQuery @connect(source: "test", http: {POST: "/merge_queries", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can column_limit dynamic_fields id pivots result_maker_id sorts source_queries { merge_fields { field_name source_field_name } name query_id } total vis_config")
+  ): MergeQuery @connect(source: "test", http: {POST: "/merge_queries", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can column_limit dynamic_fields id pivots result_maker_id sorts source_queries { merge_fields { field_name source_field_name } name query_id } total vis_config")
   """
   ### Connection cost estimating
   
@@ -10136,7 +10134,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: CreateCostEstimate_Input
-  ): CostEstimate @connect(source: "test", http: {POST: "/connections/{$args.connection_name}/cost_estimate", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "cost cache_hit cost_unit message")
+  ): CostEstimate @connect(source: "test", http: {POST: "/connections/{$args.connection_name}/cost_estimate", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "cost cache_hit cost_unit message")
   """
   ### Registers a mobile device.
   # Required fields: [:device_token, :device_type]
@@ -10212,7 +10210,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: OauthClientApp_Input
-  ): OauthClientApp @connect(source: "test", http: {POST: "/oauth_client_apps/{$args.client_guid}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can client_guid redirect_uri display_name description enabled group_id tokens_invalid_before activated_users { can id first_name last_name display_name avatar_url url }")
+  ): OauthClientApp @connect(source: "test", http: {POST: "/oauth_client_apps/{$args.client_guid}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can client_guid redirect_uri display_name description enabled group_id tokens_invalid_before activated_users { can id first_name last_name display_name avatar_url url }")
   """
   ### Update OAuth2 Client App Details
   
@@ -10225,7 +10223,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: OauthClientApp_Input
-  ): OauthClientApp @connect(source: "test", http: {PATCH: "/oauth_client_apps/{$args.client_guid}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can client_guid redirect_uri display_name description enabled group_id tokens_invalid_before activated_users { can id first_name last_name display_name avatar_url url }")
+  ): OauthClientApp @connect(source: "test", http: {PATCH: "/oauth_client_apps/{$args.client_guid}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can client_guid redirect_uri display_name description enabled group_id tokens_invalid_before activated_users { can id first_name last_name display_name avatar_url url }")
   """
   ### Invalidate All Issued Tokens
   
@@ -10449,7 +10447,7 @@ type Mutation {
     """Requested fields"""
     fields: String
     input: Project_Input
-  ): Project @connect(source: "test", http: {PATCH: "/projects/{$args.project_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id name uses_git git_remote_url git_username git_password git_production_branch_name use_git_cookie_auth git_username_user_attribute git_password_user_attribute git_service_name git_application_server_http_port git_application_server_http_scheme deploy_secret unset_deploy_secret pull_request_mode validation_required git_release_mgmt_enabled allow_warnings is_example dependency_status")
+  ): Project @connect(source: "test", http: {PATCH: "/projects/{$args.project_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id name uses_git git_remote_url git_username git_password git_production_branch_name use_git_cookie_auth git_username_user_attribute git_password_user_attribute git_service_name git_application_server_http_port git_application_server_http_scheme deploy_secret unset_deploy_secret pull_request_mode validation_required git_release_mgmt_enabled allow_warnings is_example dependency_status")
   """
   ### Create Git Deploy Key
   
@@ -10500,7 +10498,7 @@ type Mutation {
     """(Optional): Tag Message"""
     tag_message: String
     input: Project_Input
-  ): tag_ref_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/tag", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  commit_sha: $args.commit_sha\\n  tag_name: $args.tag_name\\n  tag_message: $args.tag_message\\n}"}, selection: "__typename: $status->match([200, \\"Project\\"], [204, \\"Void_container\\"], [@, \\"Project\\"]) can id name uses_git git_remote_url git_username git_password git_production_branch_name use_git_cookie_auth git_username_user_attribute git_password_user_attribute git_service_name git_application_server_http_port git_application_server_http_scheme deploy_secret unset_deploy_secret pull_request_mode validation_required git_release_mgmt_enabled allow_warnings is_example dependency_status", isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): tag_ref_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/tag", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  commit_sha: $args.commit_sha\\n  tag_name: $args.tag_name\\n  tag_message: $args.tag_message\\n}", body: "$args.input"}, selection: "__typename: $status->match([200, \\"Project\\"], [204, \\"Void_container\\"], [@, \\"Project\\"]) can id name uses_git git_remote_url git_username git_password git_production_branch_name use_git_cookie_auth git_username_user_attribute git_password_user_attribute git_service_name git_application_server_http_port git_application_server_http_scheme deploy_secret unset_deploy_secret pull_request_mode validation_required git_release_mgmt_enabled allow_warnings is_example dependency_status", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Create a new task to render a look to an image.
   
@@ -10572,7 +10570,7 @@ type Mutation {
     """Whether or not to expand table vis to full length"""
     long_tables: Boolean
     input: CreateDashboardRenderTask_Input
-  ): RenderTask @connect(source: "test", http: {POST: "/render_tasks/dashboards/{$args.dashboard_id}/{$args.result_format}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  width: $args.width\\n  height: $args.height\\n  fields: $args.fields\\n  pdf_paper_size: $args.pdf_paper_size\\n  pdf_landscape: $args.pdf_landscape\\n  long_tables: $args.long_tables\\n}"}, selection: "can created_at dashboard_filters dashboard_id dashboard_style finalized_at height id look_id lookml_dashboard_id query_id dashboard_element_id query_runtime render_runtime result_format runtime status status_detail user_id width")
+  ): RenderTask @connect(source: "test", http: {POST: "/render_tasks/dashboards/{$args.dashboard_id}/{$args.result_format}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  width: $args.width\\n  height: $args.height\\n  fields: $args.fields\\n  pdf_paper_size: $args.pdf_paper_size\\n  pdf_landscape: $args.pdf_landscape\\n  long_tables: $args.long_tables\\n}", body: "$args.input"}, selection: "can created_at dashboard_filters dashboard_id dashboard_style finalized_at height id look_id lookml_dashboard_id query_id dashboard_element_id query_runtime render_runtime result_format runtime status status_detail user_id width")
   """
   ### Create a new task to render a dashboard element to an image.
   
@@ -11007,7 +11005,7 @@ type Mutation {
     """Requested fields"""
     fields: String
     input: Setting_Input
-  ): Setting @connect(source: "test", http: {PATCH: "/setting", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "extension_framework_enabled extension_load_url_enabled marketplace_auto_install_enabled marketplace_enabled privatelabel_configuration { logo_file logo_url favicon_file favicon_url default_title show_help_menu show_docs show_email_sub_options allow_looker_mentions allow_looker_links custom_welcome_email_advanced setup_mentions alerts_logo alerts_links folders_mentions } custom_welcome_email { enabled content subject header } onboarding_enabled timezone allow_user_timezones data_connector_default_enabled host_url override_warnings email_domain_allowlist embed_cookieless_v2")
+  ): Setting @connect(source: "test", http: {PATCH: "/setting", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "extension_framework_enabled extension_load_url_enabled marketplace_auto_install_enabled marketplace_enabled privatelabel_configuration { logo_file logo_url favicon_file favicon_url default_title show_help_menu show_docs show_email_sub_options allow_looker_mentions allow_looker_links custom_welcome_email_advanced setup_mentions alerts_logo alerts_links folders_mentions } custom_welcome_email { enabled content subject header } onboarding_enabled timezone allow_user_timezones data_connector_default_enabled host_url override_warnings email_domain_allowlist embed_cookieless_v2")
   """
   ### Configure SMTP Settings
     This API allows users to configure the SMTP settings on the Looker instance.
@@ -11238,7 +11236,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: UserAttribute_Input
-  ): UserAttribute @connect(source: "test", http: {POST: "/user_attributes", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id name label type default_value is_system is_permanent value_is_hidden user_can_view user_can_edit hidden_value_domain_whitelist")
+  ): UserAttribute @connect(source: "test", http: {POST: "/user_attributes", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id name label type default_value is_system is_permanent value_is_hidden user_can_view user_can_edit hidden_value_domain_whitelist")
   """
   ### Update a user attribute definition.
   
@@ -11249,7 +11247,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: UserAttribute_Input
-  ): UserAttribute @connect(source: "test", http: {PATCH: "/user_attributes/{$args.user_attribute_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id name label type default_value is_system is_permanent value_is_hidden user_can_view user_can_edit hidden_value_domain_whitelist")
+  ): UserAttribute @connect(source: "test", http: {PATCH: "/user_attributes/{$args.user_attribute_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id name label type default_value is_system is_permanent value_is_hidden user_can_view user_can_edit hidden_value_domain_whitelist")
   """
   ### Delete a user attribute (admin only).
   
@@ -11302,7 +11300,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: User_Input
-  ): User @connect(source: "test", http: {POST: "/users", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can avatar_url avatar_url_without_sizing credentials_api3 { can id client_id created_at is_disabled type url } credentials_email { can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url } credentials_embed { can created_at external_group_id external_user_id id is_disabled logged_in_at type url } credentials_google { can created_at domain email google_user_id is_disabled logged_in_at type url } credentials_ldap { can created_at email is_disabled ldap_dn ldap_id logged_in_at type url } credentials_looker_openid { can created_at email is_disabled logged_in_at logged_in_ip type url user_url } credentials_oidc { can created_at email is_disabled logged_in_at oidc_user_id type url } credentials_saml { can created_at email is_disabled logged_in_at saml_user_id type url } credentials_totp { can created_at is_disabled type verified url } display_name email embed_group_space_id first_name group_ids home_folder_id id is_disabled last_name locale looker_versions models_dir_validated personal_folder_id presumed_looker_employee role_ids sessions { can id ip_address browser operating_system city state country credentials_type extended_at extended_count sudo_user_id created_at expires_at url } ui_state verified_looker_employee roles_externally_managed allow_direct_roles allow_normal_group_membership allow_roles_from_normal_groups embed_group_folder_id is_iam_admin url")
+  ): User @connect(source: "test", http: {POST: "/users", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can avatar_url avatar_url_without_sizing credentials_api3 { can id client_id created_at is_disabled type url } credentials_email { can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url } credentials_embed { can created_at external_group_id external_user_id id is_disabled logged_in_at type url } credentials_google { can created_at domain email google_user_id is_disabled logged_in_at type url } credentials_ldap { can created_at email is_disabled ldap_dn ldap_id logged_in_at type url } credentials_looker_openid { can created_at email is_disabled logged_in_at logged_in_ip type url user_url } credentials_oidc { can created_at email is_disabled logged_in_at oidc_user_id type url } credentials_saml { can created_at email is_disabled logged_in_at saml_user_id type url } credentials_totp { can created_at is_disabled type verified url } display_name email embed_group_space_id first_name group_ids home_folder_id id is_disabled last_name locale looker_versions models_dir_validated personal_folder_id presumed_looker_employee role_ids sessions { can id ip_address browser operating_system city state country credentials_type extended_at extended_count sudo_user_id created_at expires_at url } ui_state verified_looker_employee roles_externally_managed allow_direct_roles allow_normal_group_membership allow_roles_from_normal_groups embed_group_folder_id is_iam_admin url")
   """
   ### Update information about the user with a specific id.
   
@@ -11313,7 +11311,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: User_Input
-  ): User @connect(source: "test", http: {PATCH: "/users/{$args.user_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can avatar_url avatar_url_without_sizing credentials_api3 { can id client_id created_at is_disabled type url } credentials_email { can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url } credentials_embed { can created_at external_group_id external_user_id id is_disabled logged_in_at type url } credentials_google { can created_at domain email google_user_id is_disabled logged_in_at type url } credentials_ldap { can created_at email is_disabled ldap_dn ldap_id logged_in_at type url } credentials_looker_openid { can created_at email is_disabled logged_in_at logged_in_ip type url user_url } credentials_oidc { can created_at email is_disabled logged_in_at oidc_user_id type url } credentials_saml { can created_at email is_disabled logged_in_at saml_user_id type url } credentials_totp { can created_at is_disabled type verified url } display_name email embed_group_space_id first_name group_ids home_folder_id id is_disabled last_name locale looker_versions models_dir_validated personal_folder_id presumed_looker_employee role_ids sessions { can id ip_address browser operating_system city state country credentials_type extended_at extended_count sudo_user_id created_at expires_at url } ui_state verified_looker_employee roles_externally_managed allow_direct_roles allow_normal_group_membership allow_roles_from_normal_groups embed_group_folder_id is_iam_admin url")
+  ): User @connect(source: "test", http: {PATCH: "/users/{$args.user_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can avatar_url avatar_url_without_sizing credentials_api3 { can id client_id created_at is_disabled type url } credentials_email { can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url } credentials_embed { can created_at external_group_id external_user_id id is_disabled logged_in_at type url } credentials_google { can created_at domain email google_user_id is_disabled logged_in_at type url } credentials_ldap { can created_at email is_disabled ldap_dn ldap_id logged_in_at type url } credentials_looker_openid { can created_at email is_disabled logged_in_at logged_in_ip type url user_url } credentials_oidc { can created_at email is_disabled logged_in_at oidc_user_id type url } credentials_saml { can created_at email is_disabled logged_in_at saml_user_id type url } credentials_totp { can created_at is_disabled type verified url } display_name email embed_group_space_id first_name group_ids home_folder_id id is_disabled last_name locale looker_versions models_dir_validated personal_folder_id presumed_looker_employee role_ids sessions { can id ip_address browser operating_system city state country credentials_type extended_at extended_count sudo_user_id created_at expires_at url } ui_state verified_looker_employee roles_externally_managed allow_direct_roles allow_normal_group_membership allow_roles_from_normal_groups embed_group_folder_id is_iam_admin url")
   """
   ### Delete the user with a specific id.
   
@@ -11335,7 +11333,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: CredentialsEmail_Input
-  ): CredentialsEmail @connect(source: "test", http: {POST: "/users/{$args.user_id}/credentials_email", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url")
+  ): CredentialsEmail @connect(source: "test", http: {POST: "/users/{$args.user_id}/credentials_email", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url")
   """
   ### Email/password login information for the specified user.
   
@@ -11347,7 +11345,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: CredentialsEmail_Input
-  ): CredentialsEmail @connect(source: "test", http: {PATCH: "/users/{$args.user_id}/credentials_email", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url")
+  ): CredentialsEmail @connect(source: "test", http: {PATCH: "/users/{$args.user_id}/credentials_email", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url")
   """
   ### Email/password login information for the specified user.
   
@@ -11368,7 +11366,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: CredentialsTotp_Input
-  ): CredentialsTotp @connect(source: "test", http: {POST: "/users/{$args.user_id}/credentials_totp", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can created_at is_disabled type verified url")
+  ): CredentialsTotp @connect(source: "test", http: {POST: "/users/{$args.user_id}/credentials_totp", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can created_at is_disabled type verified url")
   """
   ### Two-factor login information for the specified user.
   
@@ -11499,7 +11497,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: [String]
-  ): [Role] @connect(source: "test", http: {PUT: "/users/{$args.user_id}/roles", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can id name permission_set { can all_access built_in id name permissions url } permission_set_id model_set { can all_access built_in id models name url } model_set_id url users_url")
+  ): [Role] @connect(source: "test", http: {PUT: "/users/{$args.user_id}/roles", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can id name permission_set { can all_access built_in id name permissions url } permission_set_id model_set { can all_access built_in id models name url } model_set_id url users_url")
   """
   ### Store a custom value for a user attribute in a user's account settings.
   
@@ -11563,7 +11561,7 @@ type Mutation {
     """Requested fields."""
     fields: String
     input: UserEmailOnly_Input
-  ): User @connect(source: "test", http: {POST: "/users/{$args.user_id}/update_emails", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "can avatar_url avatar_url_without_sizing credentials_api3 { can id client_id created_at is_disabled type url } credentials_email { can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url } credentials_embed { can created_at external_group_id external_user_id id is_disabled logged_in_at type url } credentials_google { can created_at domain email google_user_id is_disabled logged_in_at type url } credentials_ldap { can created_at email is_disabled ldap_dn ldap_id logged_in_at type url } credentials_looker_openid { can created_at email is_disabled logged_in_at logged_in_ip type url user_url } credentials_oidc { can created_at email is_disabled logged_in_at oidc_user_id type url } credentials_saml { can created_at email is_disabled logged_in_at saml_user_id type url } credentials_totp { can created_at is_disabled type verified url } display_name email embed_group_space_id first_name group_ids home_folder_id id is_disabled last_name locale looker_versions models_dir_validated personal_folder_id presumed_looker_employee role_ids sessions { can id ip_address browser operating_system city state country credentials_type extended_at extended_count sudo_user_id created_at expires_at url } ui_state verified_looker_employee roles_externally_managed allow_direct_roles allow_normal_group_membership allow_roles_from_normal_groups embed_group_folder_id is_iam_admin url")
+  ): User @connect(source: "test", http: {POST: "/users/{$args.user_id}/update_emails", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}", body: "$args.input"}, selection: "can avatar_url avatar_url_without_sizing credentials_api3 { can id client_id created_at is_disabled type url } credentials_email { can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url } credentials_embed { can created_at external_group_id external_user_id id is_disabled logged_in_at type url } credentials_google { can created_at domain email google_user_id is_disabled logged_in_at type url } credentials_ldap { can created_at email is_disabled ldap_dn ldap_id logged_in_at type url } credentials_looker_openid { can created_at email is_disabled logged_in_at logged_in_ip type url user_url } credentials_oidc { can created_at email is_disabled logged_in_at oidc_user_id type url } credentials_saml { can created_at email is_disabled logged_in_at saml_user_id type url } credentials_totp { can created_at is_disabled type verified url } display_name email embed_group_space_id first_name group_ids home_folder_id id is_disabled last_name locale looker_versions models_dir_validated personal_folder_id presumed_looker_employee role_ids sessions { can id ip_address browser operating_system city state country credentials_type extended_at extended_count sudo_user_id created_at expires_at url } ui_state verified_looker_employee roles_externally_managed allow_direct_roles allow_normal_group_membership allow_roles_from_normal_groups embed_group_folder_id is_iam_admin url")
   """
   Create an embed user from an external user ID
   
@@ -15342,22 +15340,11 @@ input WhitelabelConfiguration_Input {
 
 scalar ObjMap
 
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
+input SourceHTTP {
+  baseURL: String!
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
   queryParams: JSONSelection
 }
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
-scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -15371,11 +15358,5 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
 }"
 `;
