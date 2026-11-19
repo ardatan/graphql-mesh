@@ -1,8 +1,10 @@
-import { createWriteStream, existsSync, readFileSync, unlinkSync } from 'node:fs';
+import { execFile } from 'node:child_process';
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { Readable } from 'node:stream';
-import type { ReadableStream as NodeWebReadableStream } from 'node:stream/web';
-import unzip, { type Entry } from 'unzip-stream';
+import { promisify } from 'node:util';
+
+const execFileAsync = promisify(execFile);
 
 /** Official HL7 FHIR R4 schema path inside this e2e package (downloaded, not examples/). */
 export const fhirSchemaPath = join(__dirname, 'fhir.schema.json');
@@ -25,6 +27,9 @@ function schemaHasIdDefinitionRef(path: string): boolean {
 /**
  * Ensure `fhir.schema.json` exists locally (same zip as examples/json-schema-fhir).
  * Prefer download-in-setup over cross-package relative paths.
+ *
+ * Uses system `unzip` (not `unzip-stream`): Node 26 CI workers SIGSEGV'd while
+ * piping the HL7 zip through unzip-stream in the Jest worker.
  */
 export async function ensureFhirSchema(): Promise<string> {
   if (existsSync(fhirSchemaPath) && schemaHasIdDefinitionRef(fhirSchemaPath)) {
@@ -37,15 +42,18 @@ export async function ensureFhirSchema(): Promise<string> {
   if (!res.ok || !res.body) {
     throw new Error(`Failed to download FHIR schema: ${res.status} ${res.statusText}`);
   }
-  const { promise, resolve, reject } = Promise.withResolvers<void>();
-  Readable.fromWeb(res.body as NodeWebReadableStream)
-    .pipe(unzip.Parse())
-    .on('entry', (entry: Entry) => {
-      entry.pipe(createWriteStream(join(__dirname, entry.path)));
-    })
-    .on('finish', () => resolve())
-    .on('error', reject);
-  await promise;
+  const zipPath = join(tmpdir(), `fhir.schema.json.${process.pid}.${Date.now()}.zip`);
+  try {
+    writeFileSync(zipPath, Buffer.from(await res.arrayBuffer()));
+    // `-j` junk paths; `-o` overwrite; extract only the schema file into this dir.
+    await execFileAsync('unzip', ['-o', '-j', zipPath, 'fhir.schema.json', '-d', __dirname], {
+      maxBuffer: 16 * 1024 * 1024,
+    });
+  } finally {
+    if (existsSync(zipPath)) {
+      unlinkSync(zipPath);
+    }
+  }
   if (!existsSync(fhirSchemaPath)) {
     throw new Error(`Download finished but ${fhirSchemaPath} is missing`);
   }
