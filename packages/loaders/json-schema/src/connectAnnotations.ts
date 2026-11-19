@@ -1217,7 +1217,7 @@ export function buildSelectionForType(
   const joined = lines.join('\n');
   // Only rebuild when the visit budget was exhausted. Cycle-only omission
   // (`Root.recursive: Root`) must keep successful sibling nests (e.g.
-  // `profile.address.city`) — a softDepth-0 leavesOnly rebuild would drop them.
+  // `profile.address.city`) - a softDepth-0 leavesOnly rebuild would drop them.
   if (
     limit.visitBudgetExhausted &&
     omittedObjectFields &&

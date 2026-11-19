@@ -204,7 +204,7 @@ describe('Federation Connectors annotations', () => {
   });
 
   it('cycle-only omission keeps nested sibling expansion (no leavesOnly rebuild)', () => {
-    // Root { id, recursive: Root, profile { address { city } } } — recursive is a
+    // Root { id, recursive: Root, profile { address { city } } } - recursive is a
     // cycle; siblings must keep full nests. A softDepth-0 rebuild would drop city.
     const schema = buildSchema(/* GraphQL */ `
       type Address {

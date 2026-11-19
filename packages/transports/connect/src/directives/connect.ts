@@ -200,7 +200,7 @@ function shouldSkipPathEncode(path: string, skipEncode?: (path: string) => boole
  * Percent-encode a path/query template expression value.
  *
  * Apollo always encodes expression results. Some OpenAPI contracts (e.g. Wiki
- * `Are_You_the_One%3F` article titles) document *pre-encoded* inputs — naive
+ * `Are_You_the_One%3F` article titles) document *pre-encoded* inputs - naive
  * `encodeURIComponent` would yield `%253F`. When the value round-trips as a
  * fully encoded URI component, keep it; otherwise encode (or decode-then-encode
  * once for mixed forms).

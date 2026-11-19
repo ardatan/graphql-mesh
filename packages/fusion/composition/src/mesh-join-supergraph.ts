@@ -252,7 +252,7 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   // Mesh `@typescript` / `@example` are loader codegen metadata.
   // Apollo Router connector carry-over rejects duplicate native `@typescript` on
   // shared SCALAR/ENUM ("already exists") once many FHIR/OpenAPI subgraphs merge
-  // the same pattern scalars — strip those apps on the lean SG (subgraph SDLs keep
+  // the same pattern scalars - strip those apps on the lean SG (subgraph SDLs keep
   // them). Keep `@regexp`: Connect `processScalarType` uses it at runtime for
   // pattern validation / string coercion on composed custom scalars.
   finalized = stripMeshCodegenScalarEnumDirectives(finalized);
@@ -266,7 +266,7 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   return changed || printed !== supergraphSdl.trim() ? printed : supergraphSdl;
 }
 
-/** Codegen-only dirs stripped from the lean SG. `@regexp` is runtime — keep it. */
+/** Codegen-only dirs stripped from the lean SG. `@regexp` is runtime - keep it. */
 const MESH_CODEGEN_SCALAR_ENUM_DIRS = new Set(['typescript', 'example']);
 
 /**
