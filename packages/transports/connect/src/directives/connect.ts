@@ -2409,6 +2409,12 @@ export function addConnectFieldResolver(
     const headers: Record<string, string> = {};
     applyHeaders(headers, source?.http?.headers, vars);
     applyHeaders(headers, connectArgs.http?.headers, vars);
+    // Connectors default to JSON. Subgraph SDL omits bare `Accept: application/json`;
+    // still send it at runtime so content-negotiation / OpenAPI links that read
+    // `$request.header.accept` keep working (lowercase key matches OAS stamp).
+    if (!Object.keys(headers).some(k => k.toLowerCase() === 'accept')) {
+      headers.accept = 'application/json';
+    }
 
     const method = picked.method;
     // OData dual-runtime: `Accept: …;odata.metadata=…` is a normal Connectors header

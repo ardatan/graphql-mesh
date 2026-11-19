@@ -465,6 +465,23 @@ export function connectorsPathSegmentFromLinkExpr(connectExpr: string): string {
   return trimmed;
 }
 
+/**
+ * Connectors / Hive already default to JSON request/response bodies. Stamping
+ * bare `Accept` / `Content-Type: application/json` only adds SDL noise — keep
+ * versioned, vendor, multi-value, or odata.metadata Accepts (and non-JSON types).
+ */
+export function isDefaultJsonHttpHeader(name: string, value: string | undefined | null): boolean {
+  const n = name.toLowerCase();
+  if (n !== 'accept' && n !== 'content-type') {
+    return false;
+  }
+  if (value == null) {
+    return false;
+  }
+  const normalized = String(value).toLowerCase().replace(/\s+/g, '');
+  return normalized === 'application/json' || normalized === 'application/json;charset=utf-8';
+}
+
 export function headersToConnectMappings(
   headers?: Record<string, string> | [string, string][],
 ): Array<{ name: string; value?: string; from?: string }> | undefined {
@@ -475,15 +492,21 @@ export function headersToConnectMappings(
   if (!entries.length) {
     return undefined;
   }
-  return entries.map(([name, value]) => {
+  const mapped: Array<{ name: string; value?: string; from?: string }> = [];
+  for (const [name, value] of entries) {
     const interpolated = toConnectPathTemplate(String(value));
     // `{context.headers.X}` style -> from: "X" when possible
     const fromMatch = interpolated.match(/^\{\$context\.headers\.(.+)\}$/);
     if (fromMatch) {
-      return { name, from: fromMatch[1] };
+      mapped.push({ name, from: fromMatch[1] });
+      continue;
     }
-    return { name, value: interpolated };
-  });
+    if (isDefaultJsonHttpHeader(name, interpolated)) {
+      continue;
+    }
+    mapped.push({ name, value: interpolated });
+  }
+  return mapped.length ? mapped : undefined;
 }
 
 function collectObjectPropertyNames(

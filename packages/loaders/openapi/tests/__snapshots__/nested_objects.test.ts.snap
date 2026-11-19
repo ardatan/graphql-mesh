@@ -19,7 +19,7 @@ type Query {
     """The name of the collection to search for the document under"""
     collectionName: String!
     searchParameters: SearchParameters_Input!
-  ): searchCollection_response @connect(source: "example_api", http: {GET: "/collections/{$args.collectionName}/documents/search", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): searchCollection_response @connect(source: "example_api", http: {GET: "/collections/{$args.collectionName}/documents/search", queryParams: """
   {
     "searchParameters.q": $args.searchParameters.q
     "searchParameters.query_by": $args.searchParameters.query_by

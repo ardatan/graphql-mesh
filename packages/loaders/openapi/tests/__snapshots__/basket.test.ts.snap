@@ -20,7 +20,7 @@ type Query {
   customers_by_customerId(
     """Authentication Token"""
     x_auth_token: String!
-  ): CustomerAttributes @connect(source: "basket", http: {GET: "/customers/{customerId}", headers: [{name: "x-auth-token", value: "{$args.x_auth_token}"}, {name: "accept", value: "application/json"}]}, selection: """
+  ): CustomerAttributes @connect(source: "basket", http: {GET: "/customers/{customerId}", headers: [{name: "x-auth-token", value: "{$args.x_auth_token}"}]}, selection: """
   attributes {
     name
     more
@@ -56,7 +56,7 @@ type CardModel {
 }
 
 type Mutation {
-  post_basket(input: String): [post_basket_response] @connect(source: "basket", http: {POST: "/basket", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  post_basket(input: String): [post_basket_response] @connect(source: "basket", http: {POST: "/basket", body: "$args.input"}, selection: """
   __typename: $status->match([200, "BasketResponse"], [400, "ApiError"], [@, "BasketResponse"])
   code
   description

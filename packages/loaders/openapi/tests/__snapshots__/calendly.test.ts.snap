@@ -37,7 +37,7 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getInvitees_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.uuid}/invitees", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): getInvitees_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.uuid}/invitees", queryParams: """
   {
     status: $args.status
     sort: $args.sort
@@ -159,7 +159,7 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getScheduledEvents_response @connect(source: "calendly", http: {GET: "/scheduled_events", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): getScheduledEvents_response @connect(source: "calendly", http: {GET: "/scheduled_events", queryParams: """
   {
     user: $args.user
     organization: $args.organization
@@ -249,7 +249,7 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getEventTypes_response @connect(source: "calendly", http: {GET: "/event_types", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): getEventTypes_response @connect(source: "calendly", http: {GET: "/event_types", queryParams: """
   {
     active: $args.active
     organization: $args.organization
@@ -312,7 +312,7 @@ type Query {
   getUser(
     """User unique identifier, or the constant "me" to reference the caller"""
     uuid: String!
-  ): getUser_response @connect(source: "calendly", http: {GET: "/users/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): getUser_response @connect(source: "calendly", http: {GET: "/users/{$args.uuid}"}, selection: """
   __typename: $status->match([200, "getUser_200_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "getUser_200_response"])
   resource {
     uri
@@ -334,7 +334,7 @@ type Query {
   }
   """, isSuccess: "$status->match([200, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Returns basic information about your user account."""
-  getMyUserAccount: getMyUserAccount_response @connect(source: "calendly", http: {GET: "/users/me", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  getMyUserAccount: getMyUserAccount_response @connect(source: "calendly", http: {GET: "/users/me"}, selection: """
   __typename: $status->match([200, "getMyUserAccount_200_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "getMyUserAccount_200_response"])
   resource {
     uri
@@ -363,7 +363,7 @@ type Query {
     event_uuid: String!
     """The invitee's unique identifier"""
     invitee_uuid: String!
-  ): get_scheduled_events_event_uuid_invitees_invitee_uuid_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.event_uuid}/invitees/{$args.invitee_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): get_scheduled_events_event_uuid_invitees_invitee_uuid_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.event_uuid}/invitees/{$args.invitee_uuid}"}, selection: """
   __typename: $status->match([200, "get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "Error_Response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response"])
   resource {
     uri
@@ -429,7 +429,7 @@ type Query {
   get_scheduled_events_uuid(
     """The event's unique identifier"""
     uuid: String!
-  ): get_scheduled_events_uuid_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): get_scheduled_events_uuid_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.uuid}"}, selection: """
   __typename: $status->match([200, "get_scheduled_events_uuid_200_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "get_scheduled_events_uuid_200_response"])
   resource {
     uri
@@ -467,7 +467,7 @@ type Query {
   }
   """, isSuccess: "$status->match([200, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Returns information about a specified Event Type."""
-  get_event_types_uuid(uuid: String!): get_event_types_uuid_response @connect(source: "calendly", http: {GET: "/event_types/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  get_event_types_uuid(uuid: String!): get_event_types_uuid_response @connect(source: "calendly", http: {GET: "/event_types/{$args.uuid}"}, selection: """
   __typename: $status->match([200, "get_event_types_uuid_200_response"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "get_event_types_uuid_200_response"])
   resource {
     uri
@@ -529,7 +529,7 @@ type Query {
     """Indicates if the results should be filtered by email address"""
     email: EmailAddress
     status: queryInput_get_organizations_uuid_invitations_status
-  ): get_organizations_uuid_invitations_response @connect(source: "calendly", http: {GET: "/organizations/{$args.uuid}/invitations", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): get_organizations_uuid_invitations_response @connect(source: "calendly", http: {GET: "/organizations/{$args.uuid}/invitations", queryParams: """
   {
     count: $args.count
     page_token: $args.page_token
@@ -571,7 +571,7 @@ type Query {
     org_uuid: String!
     """The organization invitation's unique identifier"""
     uuid: String!
-  ): get_organizations_org_uuid_invitations_uuid_response @connect(source: "calendly", http: {GET: "/organizations/{$args.org_uuid}/invitations/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): get_organizations_org_uuid_invitations_uuid_response @connect(source: "calendly", http: {GET: "/organizations/{$args.org_uuid}/invitations/{$args.uuid}"}, selection: """
   __typename: $status->match([200, "get_organizations_org_uuid_invitations_uuid_200_response"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "get_organizations_org_uuid_invitations_uuid_200_response"])
   resource {
     uri
@@ -594,7 +594,7 @@ type Query {
   get_organizations_uuid_memberships(
     """The organization membership's unique identifier"""
     uuid: String!
-  ): get_organizations_uuid_memberships_response @connect(source: "calendly", http: {GET: "/organization_memberships/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): get_organizations_uuid_memberships_response @connect(source: "calendly", http: {GET: "/organization_memberships/{$args.uuid}"}, selection: """
   __typename: $status->match([200, "get_organizations_uuid_memberships_200_response"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "Error_Response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "get_organizations_uuid_memberships_200_response"])
   resource {
     uri
@@ -643,7 +643,7 @@ type Query {
     organization: URL
     """Indicates if the results should be filtered by user"""
     user: URL
-  ): get_organization_memberships_response @connect(source: "calendly", http: {GET: "/organization_memberships", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): get_organization_memberships_response @connect(source: "calendly", http: {GET: "/organization_memberships", queryParams: """
   {
     page_token: $args.page_token
     count: $args.count
@@ -708,7 +708,7 @@ type Query {
     """
     sort: String
     scope: queryInput_get_webhooks_scope!
-  ): get_webhooks_response @connect(source: "calendly", http: {GET: "/webhook_subscriptions", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): get_webhooks_response @connect(source: "calendly", http: {GET: "/webhook_subscriptions", queryParams: """
   {
     organization: $args.organization
     user: $args.user
@@ -747,7 +747,7 @@ type Query {
   }
   """, isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [@, false])")
   """Get a specified Webhook Subscription."""
-  get_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): get_users_user_uuid_webhooks_webhook_uuid_response @connect(source: "calendly", http: {GET: "/webhook_subscriptions/{$args.webhook_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  get_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): get_users_user_uuid_webhooks_webhook_uuid_response @connect(source: "calendly", http: {GET: "/webhook_subscriptions/{$args.webhook_uuid}"}, selection: """
   __typename: $status->match([200, "get_users_user_uuid_webhooks_webhook_uuid_200_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [@, "get_users_user_uuid_webhooks_webhook_uuid_200_response"])
   resource {
     uri
@@ -770,7 +770,7 @@ type Query {
   }
   """, isSuccess: "$status->match([200, true], [401, true], [403, true], [404, true], [@, false])")
   """Returns information about a specified Invitee No Show."""
-  getInviteeNoShow(uuid: String!): getInviteeNoShow_response @connect(source: "calendly", http: {GET: "/invitee_no_shows/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  getInviteeNoShow(uuid: String!): getInviteeNoShow_response @connect(source: "calendly", http: {GET: "/invitee_no_shows/{$args.uuid}"}, selection: """
   __typename: $status->match([200, "getInviteeNoShow_200_response"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [@, "getInviteeNoShow_200_response"])
   resource {
     uri
@@ -800,7 +800,7 @@ type Query {
     Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.
     """
     sort: String
-  ): get_routing_forms_response @connect(source: "calendly", http: {GET: "/routing_forms", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): get_routing_forms_response @connect(source: "calendly", http: {GET: "/routing_forms", queryParams: """
   {
     organization: $args.organization
     count: $args.count
@@ -839,7 +839,7 @@ type Query {
   }
   """, isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Get a specified Routing Form."""
-  get_routing_forms_uuid(uuid: String!): get_routing_forms_uuid_response @connect(source: "calendly", http: {GET: "/routing_forms/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  get_routing_forms_uuid(uuid: String!): get_routing_forms_uuid_response @connect(source: "calendly", http: {GET: "/routing_forms/{$args.uuid}"}, selection: """
   __typename: $status->match([200, "get_routing_forms_uuid_200_response"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "get_routing_forms_uuid_200_response"])
   resource {
     uri
@@ -877,7 +877,7 @@ type Query {
     Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.
     """
     sort: String
-  ): get_routing_form_submissions_response @connect(source: "calendly", http: {GET: "/routing_form_submissions", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): get_routing_form_submissions_response @connect(source: "calendly", http: {GET: "/routing_form_submissions", queryParams: """
   {
     form: $args.form
     count: $args.count
@@ -922,7 +922,7 @@ type Query {
   }
   """, isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Get a specified Routing Form Submission."""
-  get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response @connect(source: "calendly", http: {GET: "/routing_form_submissions/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response @connect(source: "calendly", http: {GET: "/routing_form_submissions/{$args.uuid}"}, selection: """
   __typename: $status->match([200, "get_routing_form_submissions_uuid_200_response"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "get_routing_form_submissions_uuid_200_response"])
   resource {
     uri
@@ -967,7 +967,7 @@ type Query {
     start_time: String
     """End time of the requested availability range."""
     end_time: String
-  ): getEventTypeAvailableTimes_response @connect(source: "calendly", http: {GET: "/event_type_available_times", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): getEventTypeAvailableTimes_response @connect(source: "calendly", http: {GET: "/event_type_available_times", queryParams: """
   {
     event_type: $args.event_type
     start_time: $args.start_time
@@ -1033,7 +1033,7 @@ type Query {
     namespace: [String]
     """The action(s) associated with the entries"""
     action: [String]
-  ): activityLog_response @connect(source: "calendly", http: {GET: "/activity_log_entries", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): activityLog_response @connect(source: "calendly", http: {GET: "/activity_log_entries", queryParams: """
   {
     organization: $args.organization
     search_term: $args.search_term
@@ -2507,7 +2507,7 @@ type Mutation {
     """The organization's unique identifier"""
     uuid: String!
     input: post_organizations_uuid_invitations_request_Input
-  ): post_organizations_uuid_invitations_response @connect(source: "calendly", http: {POST: "/organizations/{$args.uuid}/invitations", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): post_organizations_uuid_invitations_response @connect(source: "calendly", http: {POST: "/organizations/{$args.uuid}/invitations", body: "$args.input"}, selection: """
   __typename: $status->match([201, "post_organizations_uuid_invitations_201_response"], [400, "Error_Response"], [401, "UNAUTHENTICATED_response"], [403, "post_organizations_uuid_invitations_403_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "post_organizations_uuid_invitations_201_response"])
   resource {
     uri
@@ -2534,7 +2534,7 @@ type Mutation {
     org_uuid: String!
     """The organization invitation's unique identifier"""
     uuid: String!
-  ): revoke_users_organization_invitation_response @connect(source: "calendly", http: {DELETE: "/organizations/{$args.org_uuid}/invitations/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): revoke_users_organization_invitation_response @connect(source: "calendly", http: {DELETE: "/organizations/{$args.org_uuid}/invitations/{$args.uuid}"}, selection: """
   __typename: $status->match([204, "Void_container"], [400, "Error_Response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "Void_container"])
   title
   message
@@ -2555,7 +2555,7 @@ type Mutation {
   delete_organizations_uuid_memberships(
     """The organization membership's unique identifier"""
     uuid: String!
-  ): delete_organizations_uuid_memberships_response @connect(source: "calendly", http: {DELETE: "/organization_memberships/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): delete_organizations_uuid_memberships_response @connect(source: "calendly", http: {DELETE: "/organization_memberships/{$args.uuid}"}, selection: """
   __typename: $status->match([204, "Void_container"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "Error_Response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "Void_container"])
   title: title->match(["Invalid Argument", "Invalid_Argument"], [@, title])
   message: message->match(["The supplied parameters are invalid.", "The_supplied_parameters_are_invalid_"], [@, message])
@@ -2576,7 +2576,7 @@ type Mutation {
   | <pre>invitee.canceled</pre> | \`organization\` \`user\` |
   | <pre>routing_form_submission.created</pre> | \`organization\` <br /> <small>Create separate Webhook Subscriptions for events with different subscription scopes.</small> |
   """
-  post_users_uuid_webhooks(input: post_users_uuid_webhooks_request_Input): post_users_uuid_webhooks_response @connect(source: "calendly", http: {POST: "/webhook_subscriptions", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  post_users_uuid_webhooks(input: post_users_uuid_webhooks_request_Input): post_users_uuid_webhooks_response @connect(source: "calendly", http: {POST: "/webhook_subscriptions", body: "$args.input"}, selection: """
   __typename: $status->match([201, "post_users_uuid_webhooks_201_response"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [409, "post_users_uuid_webhooks_409_response"], [@, "post_users_uuid_webhooks_201_response"])
   resource {
     uri
@@ -2599,7 +2599,7 @@ type Mutation {
   }
   """, isSuccess: "$status->match([201, true], [400, true], [401, true], [403, true], [404, true], [409, true], [@, false])")
   """Delete a Webhook Subscription."""
-  delete_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): delete_users_user_uuid_webhooks_webhook_uuid_response @connect(source: "calendly", http: {DELETE: "/webhook_subscriptions/{$args.webhook_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  delete_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): delete_users_user_uuid_webhooks_webhook_uuid_response @connect(source: "calendly", http: {DELETE: "/webhook_subscriptions/{$args.webhook_uuid}"}, selection: """
   __typename: $status->match([204, "Void_container"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "Void_container"])
   title
   message: message->match(["The access token is invalid", "The_access_token_is_invalid"], ["The access token expired", "The_access_token_expired"], ["The access token was revoked", "The_access_token_was_revoked"], [@, message])
@@ -2609,7 +2609,7 @@ type Mutation {
   }
   """, isSuccess: "$status->match([204, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Creates a single-use scheduling link."""
-  post_scheduling_links(input: post_scheduling_links_request_Input): post_scheduling_links_response @connect(source: "calendly", http: {POST: "/scheduling_links", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  post_scheduling_links(input: post_scheduling_links_request_Input): post_scheduling_links_response @connect(source: "calendly", http: {POST: "/scheduling_links", body: "$args.input"}, selection: """
   __typename: $status->match([201, "post_scheduling_links_201_response"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "post_scheduling_links_201_response"])
   resource {
     booking_url
@@ -2629,7 +2629,7 @@ type Mutation {
   
   To submit a request to remove invitee data from all previously booked events in your organization, use this endpoint. Requests for data deletion can take up to 7 days to complete.
   """
-  post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response @connect(source: "calendly", http: {POST: "/data_compliance/deletion/invitees", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response @connect(source: "calendly", http: {POST: "/data_compliance/deletion/invitees", body: "$args.input"}, selection: """
   __typename: $status->match([202, "JSON_container"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "Error_Response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "JSON_container"])
   title: title->match(["Invalid Argument", "Invalid_Argument"], [@, title])
   message: message->match(["The supplied parameters are invalid.", "The_supplied_parameters_are_invalid_"], [@, message])
@@ -2639,7 +2639,7 @@ type Mutation {
   }
   """, isSuccess: "$status->match([202, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Undoes marking an Invitee as a No Show."""
-  deleteInviteeNoShow(uuid: String!): deleteInviteeNoShow_response @connect(source: "calendly", http: {DELETE: "/invitee_no_shows/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  deleteInviteeNoShow(uuid: String!): deleteInviteeNoShow_response @connect(source: "calendly", http: {DELETE: "/invitee_no_shows/{$args.uuid}"}, selection: """
   __typename: $status->match([204, "Void_container"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "Void_container"])
   title
   message: message->match(["The access token is invalid", "The_access_token_is_invalid"], ["The access token expired", "The_access_token_expired"], ["The access token was revoked", "The_access_token_was_revoked"], [@, message])
@@ -2649,7 +2649,7 @@ type Mutation {
   }
   """, isSuccess: "$status->match([204, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Marks an Invitee as a No Show."""
-  postInviteeNoShow(input: postInviteeNoShow_request_Input): postInviteeNoShow_response @connect(source: "calendly", http: {POST: "/invitee_no_shows", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  postInviteeNoShow(input: postInviteeNoShow_request_Input): postInviteeNoShow_response @connect(source: "calendly", http: {POST: "/invitee_no_shows", body: "$args.input"}, selection: """
   __typename: $status->match([201, "postInviteeNoShow_201_response"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "PERMISSION_DENIED_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "postInviteeNoShow_201_response"])
   resource {
     uri
@@ -2668,7 +2668,7 @@ type Mutation {
     """The event's unique indentifier"""
     uuid: String!
     input: post_scheduled_events_uuid_cancellation_request_Input
-  ): post_scheduled_events_uuid_cancellation_response @connect(source: "calendly", http: {POST: "/scheduled_events/{$args.uuid}/cancellation", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): post_scheduled_events_uuid_cancellation_response @connect(source: "calendly", http: {POST: "/scheduled_events/{$args.uuid}/cancellation", body: "$args.input"}, selection: """
   __typename: $status->match([201, "post_scheduled_events_uuid_cancellation_201_response"], [400, "INVALID_ARGUMENT_response"], [401, "UNAUTHENTICATED_response"], [403, "post_scheduled_events_uuid_cancellation_403_response"], [404, "NOT_FOUND_response"], [500, "UNKNOWN_response"], [@, "post_scheduled_events_uuid_cancellation_201_response"])
   resource {
     canceled_by

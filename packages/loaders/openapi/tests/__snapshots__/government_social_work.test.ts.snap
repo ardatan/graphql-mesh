@@ -27,7 +27,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getAssessmentTypes_response] @connect(source: "example_api", http: {GET: "/assessment_types", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getAssessmentTypes_response] @connect(source: "example_api", http: {GET: "/assessment_types", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -77,7 +77,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """Case Id"""
     caseId: String!
-  ): [getCase_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}]}, selection: """
+  ): [getCase_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}]}, selection: """
   __typename: $status->match([200, "getCase_200_response"], [@, "Error"])
   errors {
     id
@@ -128,7 +128,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getWorkersProfile_response] @connect(source: "example_api", http: {GET: "/social_worker/{$args.userName}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getWorkersProfile_response] @connect(source: "example_api", http: {GET: "/social_worker/{$args.userName}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -278,7 +278,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getWorkersCases_response] @connect(source: "example_api", http: {GET: "/social_worker/{$args.userName}/cases", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getWorkersCases_response] @connect(source: "example_api", http: {GET: "/social_worker/{$args.userName}/cases", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -343,7 +343,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getWorkersFamilies_response] @connect(source: "example_api", http: {GET: "/social_worker/{$args.userName}/families", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getWorkersFamilies_response] @connect(source: "example_api", http: {GET: "/social_worker/{$args.userName}/families", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -466,7 +466,7 @@ type Query {
     caseId: String!
     """Visit Id"""
     visitId: String!
-  ): [getCaseVisit_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/case_visit/{$args.visitId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}]}, selection: """
+  ): [getCaseVisit_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/case_visit/{$args.visitId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}]}, selection: """
   __typename: $status->match([200, "getCaseVisit_200_response"], [@, "Error"])
   errors {
     id
@@ -498,7 +498,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """FamilyId to find family data"""
     familyId: String!
-  ): [getFamily_response] @connect(source: "example_api", http: {GET: "/family/{$args.familyId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}]}, selection: """
+  ): [getFamily_response] @connect(source: "example_api", http: {GET: "/family/{$args.familyId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}]}, selection: """
   __typename: $status->match([200, "getFamily_200_response"], [@, "Error"])
   errors {
     id
@@ -603,7 +603,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """ClientId to find Client"""
     clientId: String!
-  ): [getClient_response] @connect(source: "example_api", http: {GET: "/client/{$args.clientId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}]}, selection: """
+  ): [getClient_response] @connect(source: "example_api", http: {GET: "/client/{$args.clientId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}]}, selection: """
   __typename: $status->match([200, "getClient_200_response"], [@, "Error"])
   errors {
     id
@@ -706,7 +706,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getPersons_response] @connect(source: "example_api", http: {GET: "/persons", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getPersons_response] @connect(source: "example_api", http: {GET: "/persons", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -781,7 +781,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getClientContacts_response] @connect(source: "example_api", http: {GET: "/client/{$args.clientId}/client_contacts", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getClientContacts_response] @connect(source: "example_api", http: {GET: "/client/{$args.clientId}/client_contacts", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -830,7 +830,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getClientSchools_response] @connect(source: "example_api", http: {GET: "/client/{$args.clientId}/client_schools", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getClientSchools_response] @connect(source: "example_api", http: {GET: "/client/{$args.clientId}/client_schools", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -883,7 +883,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getClientPhysicians_response] @connect(source: "example_api", http: {GET: "/client/{$args.clientId}/client_physicians", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getClientPhysicians_response] @connect(source: "example_api", http: {GET: "/client/{$args.clientId}/client_physicians", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -935,7 +935,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getExperts_response] @connect(source: "example_api", http: {GET: "/experts", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getExperts_response] @connect(source: "example_api", http: {GET: "/experts", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -994,7 +994,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """File Id"""
     fileId: String!
-  ): [getFile_response] @connect(source: "example_api", http: {GET: "/file/{$args.fileId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}]}, selection: """
+  ): [getFile_response] @connect(source: "example_api", http: {GET: "/file/{$args.fileId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}]}, selection: """
   __typename: $status->match([200, "getFile_200_response"], [@, "Error"])
   errors {
     id
@@ -1024,7 +1024,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """Manual Id"""
     manualId: String!
-  ): [getManual_response] @connect(source: "example_api", http: {GET: "/manual/{$args.manualId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}]}, selection: """
+  ): [getManual_response] @connect(source: "example_api", http: {GET: "/manual/{$args.manualId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}]}, selection: """
   __typename: $status->match([200, "getManual_200_response"], [@, "Error"])
   errors {
     id
@@ -1054,7 +1054,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """Case Id"""
     caseId: String!
-  ): [getMedia_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/media_files", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}]}, selection: """
+  ): [getMedia_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/media_files", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}]}, selection: """
   __typename: $status->match([200, "getMedia_200_response"], [@, "Error"])
   errors {
     id
@@ -1101,7 +1101,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getCaseAssessments_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/case_assessments", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getCaseAssessments_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/case_assessments", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -1178,7 +1178,7 @@ type Query {
     limit: String!
     """Assessment data"""
     input: [CaseAssessment_Input]
-  ): [getRecommendations_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/caseAssessment/{$args.caseAssessmentId}/assessmentType/{$args.assessmentTypeId}/recommendations", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getRecommendations_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/caseAssessment/{$args.caseAssessmentId}/assessmentType/{$args.assessmentTypeId}/recommendations", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -1247,7 +1247,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getCaseNoteTypes_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/case_note_types", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getCaseNoteTypes_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/case_note_types", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -1292,7 +1292,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getCaseNotes_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/case_notes", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getCaseNotes_response] @connect(source: "example_api", http: {GET: "/case/{$args.caseId}/case_notes", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -1347,7 +1347,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getRelationships_response] @connect(source: "example_api", http: {GET: "/client/{$args.clientId}/client_relationships", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getRelationships_response] @connect(source: "example_api", http: {GET: "/client/{$args.clientId}/client_relationships", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -1401,7 +1401,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getRelationshipTypes_response] @connect(source: "example_api", http: {GET: "/client_relationship_types", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getRelationshipTypes_response] @connect(source: "example_api", http: {GET: "/client_relationship_types", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -1445,7 +1445,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getScoreCategories_response] @connect(source: "example_api", http: {GET: "/score_categories", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: """
+  ): [getScoreCategories_response] @connect(source: "example_api", http: {GET: "/score_categories", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], queryParams: """
   {
     offset: $args.offset
     limit: $args.limit
@@ -2224,7 +2224,7 @@ type Mutation {
     """Case Id"""
     caseId: String!
     input: [CaseVisit_Input]
-  ): [addVisit_response] @connect(source: "example_api", http: {POST: "/case/{$args.caseId}/case_visit", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [addVisit_response] @connect(source: "example_api", http: {POST: "/case/{$args.caseId}/case_visit", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "addVisit_200_response"], [@, "Error"])
   errors {
     id
@@ -2257,7 +2257,7 @@ type Mutation {
     """1.1.0"""
     Api_Version: String! = "1.1.0"
     input: [Person_Input]
-  ): [addPerson_response] @connect(source: "example_api", http: {POST: "/person", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [addPerson_response] @connect(source: "example_api", http: {POST: "/person", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "addPerson_200_response"], [@, "Error"])
   errors {
     id
@@ -2313,7 +2313,7 @@ type Mutation {
     """personId to find Person"""
     personId: String!
     input: [Person_Input]
-  ): [updatePerson_response] @connect(source: "example_api", http: {PATCH: "/person/{$args.personId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [updatePerson_response] @connect(source: "example_api", http: {PATCH: "/person/{$args.personId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "updatePerson_200_response"], [@, "Error"])
   errors {
     id
@@ -2336,7 +2336,7 @@ type Mutation {
     """1.1.0"""
     Api_Version: String! = "1.1.0"
     input: [Client_Input]
-  ): [updateClient_response] @connect(source: "example_api", http: {PATCH: "/client", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [updateClient_response] @connect(source: "example_api", http: {PATCH: "/client", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "updateClient_200_response"], [@, "Error"])
   errors {
     id
@@ -2361,7 +2361,7 @@ type Mutation {
     """ClientId to find Client"""
     clientId: String!
     input: [ClientRelationship_Input]
-  ): [addClientRelationship_response] @connect(source: "example_api", http: {POST: "/client_relationship/{$args.clientId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [addClientRelationship_response] @connect(source: "example_api", http: {POST: "/client_relationship/{$args.clientId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "addClientRelationship_200_response"], [@, "Error"])
   errors {
     id
@@ -2398,7 +2398,7 @@ type Mutation {
     """1.1.0"""
     Api_Version: String! = "1.1.0"
     input: [ClientRelationship_Input]
-  ): [deleteClientRelationship_response] @connect(source: "example_api", http: {PATCH: "/client_relationship", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [deleteClientRelationship_response] @connect(source: "example_api", http: {PATCH: "/client_relationship", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "deleteClientRelationship_200_response"], [@, "Error"])
   errors {
     id
@@ -2421,7 +2421,7 @@ type Mutation {
     """1.1.0"""
     Api_Version: String! = "1.1.0"
     input: [ClientContact_Input]
-  ): [addClientContact_response] @connect(source: "example_api", http: {POST: "/client_contact", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [addClientContact_response] @connect(source: "example_api", http: {POST: "/client_contact", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "addClientContact_200_response"], [@, "Error"])
   errors {
     id
@@ -2453,7 +2453,7 @@ type Mutation {
     """Client's contact's id"""
     contactId: String!
     input: [ClientContact_Input]
-  ): [updateClientContact_response] @connect(source: "example_api", http: {PATCH: "/client_contact/{$args.contactId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [updateClientContact_response] @connect(source: "example_api", http: {PATCH: "/client_contact/{$args.contactId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "updateClientContact_200_response"], [@, "Error"])
   errors {
     id
@@ -2476,7 +2476,7 @@ type Mutation {
     """1.1.0"""
     Api_Version: String! = "1.1.0"
     input: [ClientSchool_Input]
-  ): [addClientSchool_response] @connect(source: "example_api", http: {POST: "/client_school", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [addClientSchool_response] @connect(source: "example_api", http: {POST: "/client_school", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "addClientSchool_200_response"], [@, "Error"])
   errors {
     id
@@ -2510,7 +2510,7 @@ type Mutation {
     """Client's school's id"""
     schoolId: String!
     input: [ClientSchool_Input]
-  ): [updateClientSchool_response] @connect(source: "example_api", http: {PATCH: "/client_school/{$args.schoolId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [updateClientSchool_response] @connect(source: "example_api", http: {PATCH: "/client_school/{$args.schoolId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "updateClientSchool_200_response"], [@, "Error"])
   errors {
     id
@@ -2534,7 +2534,7 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     """Physician data"""
     input: [ClientPhysician_Input]
-  ): [addClientPhysician_response] @connect(source: "example_api", http: {POST: "/client_physician", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [addClientPhysician_response] @connect(source: "example_api", http: {POST: "/client_physician", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "addClientPhysician_200_response"], [@, "Error"])
   errors {
     id
@@ -2572,7 +2572,7 @@ type Mutation {
     physicianId: String!
     """Physician data"""
     input: [ClientPhysician_Input]
-  ): [updateClientPhysician_response] @connect(source: "example_api", http: {PATCH: "/client_physician/{$args.physicianId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [updateClientPhysician_response] @connect(source: "example_api", http: {PATCH: "/client_physician/{$args.physicianId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "updateClientPhysician_200_response"], [@, "Error"])
   errors {
     id
@@ -2600,7 +2600,7 @@ type Mutation {
     fileId: String!
     """File content"""
     input: [File_Input]
-  ): [updateFile_response] @connect(source: "example_api", http: {PATCH: "/file/{$args.fileId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [updateFile_response] @connect(source: "example_api", http: {PATCH: "/file/{$args.fileId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "updateFile_200_response"], [@, "Error"])
   errors {
     id
@@ -2632,7 +2632,7 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     """File content"""
     input: [File_Input]
-  ): [putFile_response] @connect(source: "example_api", http: {POST: "/file", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [putFile_response] @connect(source: "example_api", http: {POST: "/file", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "putFile_200_response"], [@, "Error"])
   errors {
     id
@@ -2663,7 +2663,7 @@ type Mutation {
     """Case Id"""
     caseId: String!
     input: [Media_Input]
-  ): [addMedia_response] @connect(source: "example_api", http: {POST: "/case/{$args.caseId}/media_file", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [addMedia_response] @connect(source: "example_api", http: {POST: "/case/{$args.caseId}/media_file", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "addMedia_200_response"], [@, "Error"])
   errors {
     id
@@ -2709,7 +2709,7 @@ type Mutation {
     """Media Id"""
     mediaId: String!
     input: [Media_Input]
-  ): [deleteMedia_response] @connect(source: "example_api", http: {PATCH: "/case/{$args.caseId}/media/{$args.mediaId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [deleteMedia_response] @connect(source: "example_api", http: {PATCH: "/case/{$args.caseId}/media/{$args.mediaId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "deleteMedia_200_response"], [@, "Error"])
   errors {
     id
@@ -2734,7 +2734,7 @@ type Mutation {
     """Case Id"""
     caseId: String!
     input: [Notes_Input]
-  ): [addCaseNotes_response] @connect(source: "example_api", http: {POST: "/case/{$args.caseId}/case_note", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [addCaseNotes_response] @connect(source: "example_api", http: {POST: "/case/{$args.caseId}/case_note", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "addCaseNotes_200_response"], [@, "Error"])
   errors {
     id
@@ -2772,7 +2772,7 @@ type Mutation {
     """Case Note Id"""
     noteId: String!
     input: [Notes_Input]
-  ): [deleteCaseNote_response] @connect(source: "example_api", http: {PATCH: "/case/{$args.caseId}/case_note/{$args.noteId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [deleteCaseNote_response] @connect(source: "example_api", http: {PATCH: "/case/{$args.caseId}/case_note/{$args.noteId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "deleteCaseNote_200_response"], [@, "Error"])
   errors {
     id
@@ -2800,7 +2800,7 @@ type Mutation {
     caseId: String!
     """Assessment data"""
     input: [CaseAssessment_Input]
-  ): [addCaseAssessment_response] @connect(source: "example_api", http: {POST: "/case/{$args.caseId}/case_assessment", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [addCaseAssessment_response] @connect(source: "example_api", http: {POST: "/case/{$args.caseId}/case_assessment", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "addCaseAssessment_200_response"], [@, "Error"])
   errors {
     id
@@ -2857,7 +2857,7 @@ type Mutation {
     caseAssessmentId: String!
     """Assessment data"""
     input: [CaseAssessment_Input]
-  ): [deleteCaseAssessment_response] @connect(source: "example_api", http: {PATCH: "/case/{$args.caseId}/case_assessment/{$args.caseAssessmentId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): [deleteCaseAssessment_response] @connect(source: "example_api", http: {PATCH: "/case/{$args.caseId}/case_assessment/{$args.caseAssessmentId}", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}], body: "$args.input"}, selection: """
   __typename: $status->match([200, "deleteCaseAssessment_200_response"], [@, "Error"])
   errors {
     id

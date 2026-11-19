@@ -29,7 +29,7 @@ type Cat implements Pet {
 }
 
 type Query {
-  pets_by_id(id: String!): pets_by_id_response @connect(source: "Pet", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  pets_by_id(id: String!): pets_by_id_response @connect(source: "Pet", http: {GET: "/pets/{$args.id}"}, selection: """
   __typename: $status->match([200, $.petType->match(["Dog", "Dog"], ["Cat", "Cat"])], [400, "ApiError"], [@, $.petType->match(["Dog", "Dog"], ["Cat", "Cat"])])
   dog_exclusive
   name

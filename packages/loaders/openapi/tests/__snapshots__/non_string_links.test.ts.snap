@@ -12,13 +12,13 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  test: test_200_response @connect(source: "toto", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
-  testLink: testLink_200_response @connect(source: "toto", http: {GET: "/test-link", headers: [{name: "accept", value: "application/json"}]}, selection: "foo")
+  test: test_200_response @connect(source: "toto", http: {GET: "/test"}, selection: "$")
+  testLink: testLink_200_response @connect(source: "toto", http: {GET: "/test-link"}, selection: "foo")
 }
 
 type test_200_response {
   String: String @connect(selection: "$")
-  testLink: testLink_200_response @connect(source: "toto", http: {GET: "/test-link", headers: [{name: "accept", value: "application/json"}]}, selection: "foo")
+  testLink: testLink_200_response @connect(source: "toto", http: {GET: "/test-link"}, selection: "foo")
 }
 
 type testLink_200_response {

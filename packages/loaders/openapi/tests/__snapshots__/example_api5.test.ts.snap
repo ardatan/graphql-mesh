@@ -13,29 +13,29 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Basic simpleNames option test"""
-  o_d_d___n_a_m_e: o_d_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/o_d_d___n_a_m_e", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
+  o_d_d___n_a_m_e: o_d_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/o_d_d___n_a_m_e"}, selection: "data")
   """Basic simpleNames option test with GraphQL unsafe values"""
-  w_e_i_r_d___n_a_m_e: w_e_i_r_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
+  w_e_i_r_d___n_a_m_e: w_e_i_r_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e"}, selection: "data")
   """Basic simpleNames option test with links with hard-coded parameters"""
-  w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e2/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
+  w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e2/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}"}, selection: "data")
   """Basic simpleNames option test with links with exposed parameters"""
-  w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e3/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
+  w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e3/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}"}, selection: "data")
   """Basic simpleEnumValues option test"""
-  getEnum: getEnum_200_response @connect(source: "example_api", http: {GET: "/getEnum", headers: [{name: "accept", value: "application/json"}]}, selection: "data: data->match([\\"r-e-d\\", \\"r_e_d\\"], [\\"a-m-b-e-r\\", \\"a_m_b_e_r\\"], [\\"g-r-e-e-n\\", \\"g_r_e_e_n\\"], [@, data])")
+  getEnum: getEnum_200_response @connect(source: "example_api", http: {GET: "/getEnum"}, selection: "data: data->match([\\"r-e-d\\", \\"r_e_d\\"], [\\"a-m-b-e-r\\", \\"a_m_b_e_r\\"], [\\"g-r-e-e-n\\", \\"g_r_e_e_n\\"], [@, data])")
   """Basic simpleEnumValues option test on numerical enum"""
-  getNumericalEnum: getNumericalEnum_200_response @connect(source: "example_api", http: {GET: "/getNumericalEnum", headers: [{name: "accept", value: "application/json"}]}, selection: "data: data->match([1, \\"_1\\"], [2, \\"_2\\"], [3, \\"_3\\"], [4, \\"_4\\"], [5, \\"_5\\"], [@, data])")
+  getNumericalEnum: getNumericalEnum_200_response @connect(source: "example_api", http: {GET: "/getNumericalEnum"}, selection: "data: data->match([1, \\"_1\\"], [2, \\"_2\\"], [3, \\"_3\\"], [4, \\"_4\\"], [5, \\"_5\\"], [@, data])")
   """Basic simpleEnumValues option test on object enum"""
-  getObjectEnum: getObjectEnum_200_response @connect(source: "example_api", http: {GET: "/getObjectEnum", headers: [{name: "accept", value: "application/json"}]}, selection: "data: data->match([{\\"goodbye\\":\\"world\\"}, \\"_LEFT_SQUARE_BRACE_object_Object_RIGHT_SQUARE_BRACE_\\"], [@, data])")
+  getObjectEnum: getObjectEnum_200_response @connect(source: "example_api", http: {GET: "/getObjectEnum"}, selection: "data: data->match([{\\"goodbye\\":\\"world\\"}, \\"_LEFT_SQUARE_BRACE_object_Object_RIGHT_SQUARE_BRACE_\\"], [@, data])")
 }
 
 type o_d_d___n_a_m_e_200_response {
   data: String
   """Basic link"""
-  w_e_i_r_d___n_a_m_e___l_i_n_k: w_e_i_r_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
+  w_e_i_r_d___n_a_m_e___l_i_n_k: w_e_i_r_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e"}, selection: "data")
   """Hardcoded link parameter"""
-  w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e2/Charles", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
+  w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e2/Charles"}, selection: "data")
   """Exposed link parameter"""
-  w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e3/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
+  w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e3/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}"}, selection: "data")
 }
 
 type w_e_i_r_d___n_a_m_e_200_response {

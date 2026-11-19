@@ -35,7 +35,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): AlbumObject @connect(source: "test", http: {GET: "/albums/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): AlbumObject @connect(source: "test", http: {GET: "/albums/{$args.id}", queryParams: """
   {
     market: $args.market
   }
@@ -161,7 +161,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ManyAlbums_response @connect(source: "test", http: {GET: "/albums", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): ManyAlbums_response @connect(source: "test", http: {GET: "/albums", queryParams: """
   {
     ids: $args.ids
     market: $args.market
@@ -299,7 +299,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSimplifiedTrackObject @connect(source: "test", http: {GET: "/albums/{$args.id}/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingSimplifiedTrackObject @connect(source: "test", http: {GET: "/albums/{$args.id}/tracks", queryParams: """
   {
     market: $args.market
     limit: $args.limit
@@ -362,7 +362,7 @@ type Query {
     The [Spotify ID](/documentation/web-api/concepts/spotify-uris-ids) of the artist.
     """
     id: String!
-  ): ArtistObject @connect(source: "test", http: {GET: "/artists/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): ArtistObject @connect(source: "test", http: {GET: "/artists/{$args.id}"}, selection: """
   external_urls {
     spotify
   }
@@ -392,7 +392,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) for the artists. Maximum: 50 IDs.
     """
     ids: String!
-  ): ManyArtists_response @connect(source: "test", http: {GET: "/artists", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): ManyArtists_response @connect(source: "test", http: {GET: "/artists", queryParams: """
   {
     ids: $args.ids
   }
@@ -450,7 +450,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSimplifiedAlbumObject @connect(source: "test", http: {GET: "/artists/{$args.id}/albums", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingSimplifiedAlbumObject @connect(source: "test", http: {GET: "/artists/{$args.id}/albums", queryParams: """
   {
     include_groups: $args.include_groups
     market: $args.market
@@ -529,7 +529,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ManyTracks_response @connect(source: "test", http: {GET: "/artists/{$args.id}/top-tracks", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): ManyTracks_response @connect(source: "test", http: {GET: "/artists/{$args.id}/top-tracks", queryParams: """
   {
     market: $args.market
   }
@@ -639,7 +639,7 @@ type Query {
     The [Spotify ID](/documentation/web-api/concepts/spotify-uris-ids) of the artist.
     """
     id: String!
-  ): ManyArtists_response @connect(source: "test", http: {GET: "/artists/{$args.id}/related-artists", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): ManyArtists_response @connect(source: "test", http: {GET: "/artists/{$args.id}/related-artists"}, selection: """
   artists {
     external_urls {
       spotify
@@ -682,7 +682,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ShowObject @connect(source: "test", http: {GET: "/shows/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): ShowObject @connect(source: "test", http: {GET: "/shows/{$args.id}", queryParams: """
   {
     market: $args.market
   }
@@ -773,7 +773,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) for the shows. Maximum: 50 IDs.
     """
     ids: String!
-  ): ManySimplifiedShows_response @connect(source: "test", http: {GET: "/shows", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): ManySimplifiedShows_response @connect(source: "test", http: {GET: "/shows", queryParams: """
   {
     market: $args.market
     ids: $args.ids
@@ -835,7 +835,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSimplifiedEpisodeObject @connect(source: "test", http: {GET: "/shows/{$args.id}/episodes", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingSimplifiedEpisodeObject @connect(source: "test", http: {GET: "/shows/{$args.id}/episodes", queryParams: """
   {
     market: $args.market
     limit: $args.limit
@@ -901,7 +901,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): EpisodeObject @connect(source: "test", http: {GET: "/episodes/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): EpisodeObject @connect(source: "test", http: {GET: "/episodes/{$args.id}", queryParams: """
   {
     market: $args.market
   }
@@ -984,7 +984,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ManyEpisodes_response @connect(source: "test", http: {GET: "/episodes", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): ManyEpisodes_response @connect(source: "test", http: {GET: "/episodes", queryParams: """
   {
     ids: $args.ids
     market: $args.market
@@ -1072,7 +1072,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): AudiobookObject @connect(source: "test", http: {GET: "/audiobooks/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): AudiobookObject @connect(source: "test", http: {GET: "/audiobooks/{$args.id}", queryParams: """
   {
     market: $args.market
   }
@@ -1170,7 +1170,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ManyAudiobooks_response @connect(source: "test", http: {GET: "/audiobooks", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): ManyAudiobooks_response @connect(source: "test", http: {GET: "/audiobooks", queryParams: """
   {
     ids: $args.ids
     market: $args.market
@@ -1280,7 +1280,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSimplifiedChapterObject @connect(source: "test", http: {GET: "/audiobooks/{$args.id}/chapters", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingSimplifiedChapterObject @connect(source: "test", http: {GET: "/audiobooks/{$args.id}/chapters", queryParams: """
   {
     market: $args.market
     limit: $args.limit
@@ -1340,7 +1340,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSimplifiedAudiobookObject @connect(source: "test", http: {GET: "/me/audiobooks", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingSimplifiedAudiobookObject @connect(source: "test", http: {GET: "/me/audiobooks", queryParams: """
   {
     limit: $args.limit
     offset: $args.offset
@@ -1396,7 +1396,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`ids=18yVqkdbdRvS24c0Ilj2ci,1HGw3J3NxZO1TP1BTtVhpZ\`. Maximum: 50 IDs.
     """
     ids: String!
-  ): [Boolean] @connect(source: "test", http: {GET: "/me/audiobooks/contains", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): [Boolean] @connect(source: "test", http: {GET: "/me/audiobooks/contains", queryParams: """
   {
     ids: $args.ids
   }
@@ -1421,7 +1421,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ChapterObject @connect(source: "test", http: {GET: "/chapters/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): ChapterObject @connect(source: "test", http: {GET: "/chapters/{$args.id}", queryParams: """
   {
     market: $args.market
   }
@@ -1511,7 +1511,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ManyChapters_response @connect(source: "test", http: {GET: "/chapters", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): ManyChapters_response @connect(source: "test", http: {GET: "/chapters", queryParams: """
   {
     ids: $args.ids
     market: $args.market
@@ -1605,7 +1605,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): TrackObject @connect(source: "test", http: {GET: "/tracks/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): TrackObject @connect(source: "test", http: {GET: "/tracks/{$args.id}", queryParams: """
   {
     market: $args.market
   }
@@ -1722,7 +1722,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`ids=4iV5W9uYEdYUVa79Axb7Rh,1301WleyT98MSxVHPZCA6M\`. Maximum: 50 IDs.
     """
     ids: String!
-  ): ManyTracks_response @connect(source: "test", http: {GET: "/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): ManyTracks_response @connect(source: "test", http: {GET: "/tracks", queryParams: """
   {
     market: $args.market
     ids: $args.ids
@@ -1866,7 +1866,7 @@ type Query {
     """
     offset: NonNegativeInt
     include_external: Include_External
-  ): SearchItems_response @connect(source: "test", http: {GET: "/search", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): SearchItems_response @connect(source: "test", http: {GET: "/search", queryParams: """
   {
     q: $args.q
     type: $args.type->joinNotNull(",")
@@ -2232,7 +2232,7 @@ type Query {
   current user's username).
   
   """
-  get_current_users_profile: PrivateUserObject @connect(source: "test", http: {GET: "/me", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  get_current_users_profile: PrivateUserObject @connect(source: "test", http: {GET: "/me"}, selection: """
   country
   display_name
   email
@@ -2294,7 +2294,7 @@ type Query {
     In addition to providing this parameter, make sure that your client properly handles cases of new types in the future by checking against the \`type\` field of each object.
     """
     additional_types: String
-  ): PlaylistObject @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PlaylistObject @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}", queryParams: """
   {
     market: $args.market
     fields: $args.fields
@@ -2405,7 +2405,7 @@ type Query {
     In addition to providing this parameter, make sure that your client properly handles cases of new types in the future by checking against the \`type\` field of each object.
     """
     additional_types: String
-  ): PagingPlaylistTrackObject @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingPlaylistTrackObject @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}/tracks", queryParams: """
   {
     market: $args.market
     fields: $args.fields
@@ -2454,7 +2454,7 @@ type Query {
     next set of playlists.'
     """
     offset: Int
-  ): PagingPlaylistObject @connect(source: "test", http: {GET: "/me/playlists", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingPlaylistObject @connect(source: "test", http: {GET: "/me/playlists", queryParams: """
   {
     limit: $args.limit
     offset: $args.offset
@@ -2526,7 +2526,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): PagingSavedAlbumObject @connect(source: "test", http: {GET: "/me/albums", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingSavedAlbumObject @connect(source: "test", http: {GET: "/me/albums", queryParams: """
   {
     limit: $args.limit
     offset: $args.offset
@@ -2656,7 +2656,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) for the albums. Maximum: 20 IDs.
     """
     ids: String!
-  ): [Boolean] @connect(source: "test", http: {GET: "/me/albums/contains", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): [Boolean] @connect(source: "test", http: {GET: "/me/albums/contains", queryParams: """
   {
     ids: $args.ids
   }
@@ -2683,7 +2683,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSavedTrackObject @connect(source: "test", http: {GET: "/me/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingSavedTrackObject @connect(source: "test", http: {GET: "/me/tracks", queryParams: """
   {
     market: $args.market
     limit: $args.limit
@@ -2804,7 +2804,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`ids=4iV5W9uYEdYUVa79Axb7Rh,1301WleyT98MSxVHPZCA6M\`. Maximum: 50 IDs.
     """
     ids: String!
-  ): [Boolean] @connect(source: "test", http: {GET: "/me/tracks/contains", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): [Boolean] @connect(source: "test", http: {GET: "/me/tracks/contains", queryParams: """
   {
     ids: $args.ids
   }
@@ -2832,7 +2832,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSavedEpisodeObject @connect(source: "test", http: {GET: "/me/episodes", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingSavedEpisodeObject @connect(source: "test", http: {GET: "/me/episodes", queryParams: """
   {
     market: $args.market
     limit: $args.limit
@@ -2920,7 +2920,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) for the episodes. Maximum: 50 IDs.
     """
     ids: String!
-  ): [Boolean] @connect(source: "test", http: {GET: "/me/episodes/contains", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): [Boolean] @connect(source: "test", http: {GET: "/me/episodes/contains", queryParams: """
   {
     ids: $args.ids
   }
@@ -2938,7 +2938,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSavedShowObject @connect(source: "test", http: {GET: "/me/shows", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingSavedShowObject @connect(source: "test", http: {GET: "/me/shows", queryParams: """
   {
     limit: $args.limit
     offset: $args.offset
@@ -2991,7 +2991,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) for the shows. Maximum: 50 IDs.
     """
     ids: String!
-  ): [Boolean] @connect(source: "test", http: {GET: "/me/shows/contains", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): [Boolean] @connect(source: "test", http: {GET: "/me/shows/contains", queryParams: """
   {
     ids: $args.ids
   }
@@ -3014,7 +3014,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingArtistOrTrackObject_response @connect(source: "test", http: {GET: "/me/top/{$args.type}", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingArtistOrTrackObject_response @connect(source: "test", http: {GET: "/me/top/{$args.type}", queryParams: """
   {
     time_range: $args.time_range
     limit: $args.limit
@@ -3037,7 +3037,7 @@ type Query {
     The user's [Spotify user ID](/documentation/web-api/concepts/spotify-uris-ids).
     """
     user_id: String!
-  ): PublicUserObject @connect(source: "test", http: {GET: "/users/{$args.user_id}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): PublicUserObject @connect(source: "test", http: {GET: "/users/{$args.user_id}"}, selection: """
   display_name
   external_urls {
     spotify
@@ -3075,7 +3075,7 @@ type Query {
     next set of playlists.
     """
     offset: Int
-  ): PagingPlaylistObject @connect(source: "test", http: {GET: "/users/{$args.user_id}/playlists", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingPlaylistObject @connect(source: "test", http: {GET: "/users/{$args.user_id}/playlists", queryParams: """
   {
     limit: $args.limit
     offset: $args.offset
@@ -3151,7 +3151,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingFeaturedPlaylistObject @connect(source: "test", http: {GET: "/browse/featured-playlists", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingFeaturedPlaylistObject @connect(source: "test", http: {GET: "/browse/featured-playlists", queryParams: """
   {
     country: $args.country
     locale: $args.locale
@@ -3229,7 +3229,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagedCategories_response @connect(source: "test", http: {GET: "/browse/categories", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagedCategories_response @connect(source: "test", http: {GET: "/browse/categories", queryParams: """
   {
     country: $args.country
     locale: $args.locale
@@ -3264,7 +3264,7 @@ type Query {
     The desired language, consisting of an [ISO 639-1](http://en.wikipedia.org/wiki/ISO_639-1) language code and an [ISO 3166-1 alpha-2 country code](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2), joined by an underscore. For example: \`es_MX\`, meaning &quot;Spanish (Mexico)&quot;. Provide this parameter if you want the category strings returned in a particular language.<br/> _**Note**: if \`locale\` is not supplied, or if the specified language is not available, the category strings returned will be in the Spotify default language (American English)._
     """
     locale: String
-  ): CategoryObject @connect(source: "test", http: {GET: "/browse/categories/{$args.category_id}", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): CategoryObject @connect(source: "test", http: {GET: "/browse/categories/{$args.category_id}", queryParams: """
   {
     country: $args.country
     locale: $args.locale
@@ -3300,7 +3300,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingFeaturedPlaylistObject @connect(source: "test", http: {GET: "/browse/categories/{$args.category_id}/playlists", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagingFeaturedPlaylistObject @connect(source: "test", http: {GET: "/browse/categories/{$args.category_id}/playlists", queryParams: """
   {
     country: $args.country
     limit: $args.limit
@@ -3363,7 +3363,7 @@ type Query {
     The [Spotify ID](/documentation/web-api/concepts/spotify-uris-ids) of the playlist.
     """
     playlist_id: String!
-  ): [ImageObject] @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}/images", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): [ImageObject] @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}/images"}, selection: """
   url
   height
   width
@@ -3385,7 +3385,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagedAlbums_response @connect(source: "test", http: {GET: "/browse/new-releases", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): PagedAlbums_response @connect(source: "test", http: {GET: "/browse/new-releases", queryParams: """
   {
     country: $args.country
     limit: $args.limit
@@ -3459,7 +3459,7 @@ type Query {
     The maximum number of items to return. Default: 20\\. Minimum: 1\\. Maximum: 50\\.
     """
     limit: NonNegativeInt = 20
-  ): CursorPagedArtists_response @connect(source: "test", http: {GET: "/me/following", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): CursorPagedArtists_response @connect(source: "test", http: {GET: "/me/following", queryParams: """
   {
     type: $args.type
     after: $args.after
@@ -3508,7 +3508,7 @@ type Query {
     A comma-separated list of the artist or the user [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) to check. For example: \`ids=74ASZWbe4lXaubB36ztrGX,08td7MxkoHQkXnWAYD8d6Q\`. A maximum of 50 IDs can be sent in one request.
     """
     ids: String!
-  ): [Boolean] @connect(source: "test", http: {GET: "/me/following/contains", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): [Boolean] @connect(source: "test", http: {GET: "/me/following/contains", queryParams: """
   {
     type: $args.type
     ids: $args.ids
@@ -3527,7 +3527,7 @@ type Query {
     A comma-separated list of [Spotify User IDs](/documentation/web-api/concepts/spotify-uris-ids) ; the ids of the users that you want to check to see if they follow the playlist. Maximum: 5 ids.
     """
     ids: String!
-  ): [Boolean] @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}/followers/contains", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): [Boolean] @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}/followers/contains", queryParams: """
   {
     ids: $args.ids
   }
@@ -3542,7 +3542,7 @@ type Query {
     for the tracks. Maximum: 100 IDs.
     """
     ids: String!
-  ): ManyAudioFeatures_response @connect(source: "test", http: {GET: "/audio-features", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): ManyAudioFeatures_response @connect(source: "test", http: {GET: "/audio-features", queryParams: """
   {
     ids: $args.ids
   }
@@ -3578,7 +3578,7 @@ type Query {
     The [Spotify ID](/documentation/web-api/concepts/spotify-uris-ids) for the track.
     """
     id: String!
-  ): AudioFeaturesObject @connect(source: "test", http: {GET: "/audio-features/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): AudioFeaturesObject @connect(source: "test", http: {GET: "/audio-features/{$args.id}"}, selection: """
   acousticness
   analysis_url
   danceability
@@ -3608,7 +3608,7 @@ type Query {
     for the track.
     """
     id: String!
-  ): AudioAnalysisObject @connect(source: "test", http: {GET: "/audio-analysis/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  ): AudioAnalysisObject @connect(source: "test", http: {GET: "/audio-analysis/{$args.id}"}, selection: """
   meta {
     analyzer_version
     platform
@@ -3883,7 +3883,7 @@ type Query {
     For each of the tunable track attributes (below) a target value may be provided. Tracks with the attribute values nearest to the target values will be preferred. For example, you might request \`target_energy=0.6\` and \`target_danceability=0.8\`. All target values will be weighed equally in ranking results.
     """
     target_valence: NonNegativeFloat
-  ): RecommendationsObject @connect(source: "test", http: {GET: "/recommendations", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): RecommendationsObject @connect(source: "test", http: {GET: "/recommendations", queryParams: """
   {
     limit: $args.limit
     market: $args.market
@@ -4042,7 +4042,7 @@ type Query {
   Retrieve a list of available genres seed parameter values for [recommendations](/documentation/web-api/reference/get-recommendations).
   
   """
-  get_recommendation_genres: ManyGenres_response @connect(source: "test", http: {GET: "/recommendations/available-genre-seeds", headers: [{name: "accept", value: "application/json"}]}, selection: "genres")
+  get_recommendation_genres: ManyGenres_response @connect(source: "test", http: {GET: "/recommendations/available-genre-seeds"}, selection: "genres")
   """
   Get information about the user’s current playback state, including track or episode, progress, and active device.
   
@@ -4063,7 +4063,7 @@ type Query {
     In addition to providing this parameter, make sure that your client properly handles cases of new types in the future by checking against the \`type\` field of each object.
     """
     additional_types: String
-  ): get_information_about_the_users_current_playback_response @connect(source: "test", http: {GET: "/me/player", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): get_information_about_the_users_current_playback_response @connect(source: "test", http: {GET: "/me/player", queryParams: """
   {
     market: $args.market
     additional_types: $args.additional_types
@@ -4110,7 +4110,7 @@ type Query {
   Get information about a user’s available devices.
   
   """
-  get_a_users_available_devices: ManyDevices_response @connect(source: "test", http: {GET: "/me/player/devices", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  get_a_users_available_devices: ManyDevices_response @connect(source: "test", http: {GET: "/me/player/devices"}, selection: """
   devices {
     id
     is_active
@@ -4141,7 +4141,7 @@ type Query {
     In addition to providing this parameter, make sure that your client properly handles cases of new types in the future by checking against the \`type\` field of each object.
     """
     additional_types: String
-  ): CurrentlyPlayingContextObject @connect(source: "test", http: {GET: "/me/player/currently-playing", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): CurrentlyPlayingContextObject @connect(source: "test", http: {GET: "/me/player/currently-playing", queryParams: """
   {
     market: $args.market
     additional_types: $args.additional_types
@@ -4205,7 +4205,7 @@ type Query {
     \`after\` must not be specified.
     """
     before: Int
-  ): CursorPagingPlayHistoryObject @connect(source: "test", http: {GET: "/me/player/recently-played", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): CursorPagingPlayHistoryObject @connect(source: "test", http: {GET: "/me/player/recently-played", queryParams: """
   {
     limit: $args.limit
     after: $args.after
@@ -4331,12 +4331,12 @@ type Query {
   Get the list of objects that make up the user's queue.
   
   """
-  get_queue: QueueObject @connect(source: "test", http: {GET: "/me/player/queue", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
+  get_queue: QueueObject @connect(source: "test", http: {GET: "/me/player/queue"}, selection: "$")
   """
   Get the list of markets where Spotify is available.
   
   """
-  get_available_markets: get_available_markets_200_response @connect(source: "test", http: {GET: "/markets", headers: [{name: "accept", value: "application/json"}]}, selection: "markets")
+  get_available_markets: get_available_markets_200_response @connect(source: "test", http: {GET: "/markets"}, selection: "markets")
 }
 
 """An album"""
@@ -6471,7 +6471,7 @@ type Mutation {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`ids=18yVqkdbdRvS24c0Ilj2ci,1HGw3J3NxZO1TP1BTtVhpZ\`. Maximum: 50 IDs.
     """
     ids: String!
-  ): JSON @connect(source: "test", http: {PUT: "/me/audiobooks", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): JSON @connect(source: "test", http: {PUT: "/me/audiobooks", queryParams: """
   {
     ids: $args.ids
   }
@@ -6485,7 +6485,7 @@ type Mutation {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`ids=18yVqkdbdRvS24c0Ilj2ci,1HGw3J3NxZO1TP1BTtVhpZ\`. Maximum: 50 IDs.
     """
     ids: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/me/audiobooks", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): JSON @connect(source: "test", http: {DELETE: "/me/audiobooks", queryParams: """
   {
     ids: $args.ids
   }
@@ -6501,7 +6501,7 @@ type Mutation {
     """
     playlist_id: String!
     input: change_playlist_details_request_Input
-  ): JSON @connect(source: "test", http: {PUT: "/playlists/{$args.playlist_id}", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: {PUT: "/playlists/{$args.playlist_id}", body: "$args.input"}, selection: "$")
   """
   Add one or more items to a user's playlist.
   
@@ -6521,7 +6521,7 @@ type Mutation {
     """
     uris: URL
     input: add_tracks_to_playlist_request_Input
-  ): PlaylistSnapshotId_response @connect(source: "test", http: {POST: "/playlists/{$args.playlist_id}/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  ): PlaylistSnapshotId_response @connect(source: "test", http: {POST: "/playlists/{$args.playlist_id}/tracks", body: "$args.input", queryParams: """
   {
     position: $args.position
     uris: $args.uris
@@ -6547,7 +6547,7 @@ type Mutation {
     """
     uris: String
     input: reorder_or_replace_playlists_tracks_request_Input
-  ): PlaylistSnapshotId_response @connect(source: "test", http: {PUT: "/playlists/{$args.playlist_id}/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  ): PlaylistSnapshotId_response @connect(source: "test", http: {PUT: "/playlists/{$args.playlist_id}/tracks", body: "$args.input", queryParams: """
   {
     uris: $args.uris
   }
@@ -6562,7 +6562,7 @@ type Mutation {
     """
     playlist_id: String!
     input: remove_tracks_playlist_request_Input
-  ): PlaylistSnapshotId_response @connect(source: "test", http: {DELETE: "/playlists/{$args.playlist_id}/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "snapshot_id")
+  ): PlaylistSnapshotId_response @connect(source: "test", http: {DELETE: "/playlists/{$args.playlist_id}/tracks", body: "$args.input"}, selection: "snapshot_id")
   """
   Save one or more albums to the current user's 'Your Music' library.
   
@@ -6573,7 +6573,7 @@ type Mutation {
     """
     ids: String!
     input: save_albums_user_request_Input
-  ): JSON @connect(source: "test", http: {PUT: "/me/albums", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  ): JSON @connect(source: "test", http: {PUT: "/me/albums", body: "$args.input", queryParams: """
   {
     ids: $args.ids
   }
@@ -6588,7 +6588,7 @@ type Mutation {
     """
     ids: String!
     input: remove_albums_user_request_Input
-  ): JSON @connect(source: "test", http: {DELETE: "/me/albums", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  ): JSON @connect(source: "test", http: {DELETE: "/me/albums", body: "$args.input", queryParams: """
   {
     ids: $args.ids
   }
@@ -6603,7 +6603,7 @@ type Mutation {
     """
     ids: String!
     input: save_tracks_user_request_Input
-  ): JSON @connect(source: "test", http: {PUT: "/me/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  ): JSON @connect(source: "test", http: {PUT: "/me/tracks", body: "$args.input", queryParams: """
   {
     ids: $args.ids
   }
@@ -6618,7 +6618,7 @@ type Mutation {
     """
     ids: String!
     input: remove_tracks_user_request_Input
-  ): JSON @connect(source: "test", http: {DELETE: "/me/tracks", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  ): JSON @connect(source: "test", http: {DELETE: "/me/tracks", body: "$args.input", queryParams: """
   {
     ids: $args.ids
   }
@@ -6634,7 +6634,7 @@ type Mutation {
     """
     ids: String!
     input: save_episodes_user_request_Input
-  ): JSON @connect(source: "test", http: {PUT: "/me/episodes", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  ): JSON @connect(source: "test", http: {PUT: "/me/episodes", body: "$args.input", queryParams: """
   {
     ids: $args.ids
   }
@@ -6650,7 +6650,7 @@ type Mutation {
     """
     ids: String!
     input: remove_episodes_user_request_Input
-  ): JSON @connect(source: "test", http: {DELETE: "/me/episodes", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  ): JSON @connect(source: "test", http: {DELETE: "/me/episodes", body: "$args.input", queryParams: """
   {
     ids: $args.ids
   }
@@ -6664,7 +6664,7 @@ type Mutation {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) for the shows. Maximum: 50 IDs.
     """
     ids: String!
-  ): JSON @connect(source: "test", http: {PUT: "/me/shows", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): JSON @connect(source: "test", http: {PUT: "/me/shows", queryParams: """
   {
     ids: $args.ids
   }
@@ -6687,7 +6687,7 @@ type Mutation {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): JSON @connect(source: "test", http: {DELETE: "/me/shows", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): JSON @connect(source: "test", http: {DELETE: "/me/shows", queryParams: """
   {
     ids: $args.ids
     market: $args.market
@@ -6704,7 +6704,7 @@ type Mutation {
     """
     user_id: String!
     input: create_playlist_request_Input
-  ): PlaylistObject @connect(source: "test", http: {POST: "/users/{$args.user_id}/playlists", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  ): PlaylistObject @connect(source: "test", http: {POST: "/users/{$args.user_id}/playlists", body: "$args.input"}, selection: """
   collaborative
   description
   external_urls {
@@ -6776,7 +6776,7 @@ type Mutation {
     """
     playlist_id: String!
     input: follow_playlist_request_Input
-  ): JSON @connect(source: "test", http: {PUT: "/playlists/{$args.playlist_id}/followers", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: {PUT: "/playlists/{$args.playlist_id}/followers", body: "$args.input"}, selection: "$")
   """
   Remove the current user as a follower of a playlist.
   
@@ -6786,7 +6786,7 @@ type Mutation {
     The [Spotify ID](/documentation/web-api/concepts/spotify-uris-ids) of the playlist.
     """
     playlist_id: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/playlists/{$args.playlist_id}/followers", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
+  ): JSON @connect(source: "test", http: {DELETE: "/playlists/{$args.playlist_id}/followers"}, selection: "$")
   """
   Replace the image used to represent a specific playlist.
   
@@ -6796,7 +6796,7 @@ type Mutation {
     The [Spotify ID](/documentation/web-api/concepts/spotify-uris-ids) of the playlist.
     """
     playlist_id: String!
-  ): JSON @connect(source: "test", http: {PUT: "/playlists/{$args.playlist_id}/images", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
+  ): JSON @connect(source: "test", http: {PUT: "/playlists/{$args.playlist_id}/images"}, selection: "$")
   """
   Add the current user as a follower of one or more artists or other Spotify users.
   
@@ -6809,7 +6809,7 @@ type Mutation {
     """
     ids: String!
     input: follow_artists_users_request_Input
-  ): Void @connect(source: "test", http: {PUT: "/me/following", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  ): Void @connect(source: "test", http: {PUT: "/me/following", body: "$args.input", queryParams: """
   {
     type: $args.type
     ids: $args.ids
@@ -6826,7 +6826,7 @@ type Mutation {
     """
     ids: String!
     input: unfollow_artists_users_request_Input
-  ): JSON @connect(source: "test", http: {DELETE: "/me/following", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  ): JSON @connect(source: "test", http: {DELETE: "/me/following", body: "$args.input", queryParams: """
   {
     type: $args.type
     ids: $args.ids
@@ -6836,7 +6836,7 @@ type Mutation {
   Transfer playback to a new device and determine if it should start playing.
   
   """
-  transfer_a_users_playback(input: transfer_a_users_playback_request_Input): Void @connect(source: "test", http: {PUT: "/me/player", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
+  transfer_a_users_playback(input: transfer_a_users_playback_request_Input): Void @connect(source: "test", http: {PUT: "/me/player", body: "$args.input"}, selection: "$")
   """
   Start a new context or resume current playback on the user's active device.
   
@@ -6847,7 +6847,7 @@ type Mutation {
     """
     device_id: String
     input: start_a_users_playback_request_Input
-  ): Void @connect(source: "test", http: {PUT: "/me/player/play", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  ): Void @connect(source: "test", http: {PUT: "/me/player/play", body: "$args.input", queryParams: """
   {
     device_id: $args.device_id
   }
@@ -6861,7 +6861,7 @@ type Mutation {
     The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
     """
     device_id: String
-  ): Void @connect(source: "test", http: {PUT: "/me/player/pause", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): Void @connect(source: "test", http: {PUT: "/me/player/pause", queryParams: """
   {
     device_id: $args.device_id
   }
@@ -6875,7 +6875,7 @@ type Mutation {
     The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
     """
     device_id: String
-  ): Void @connect(source: "test", http: {POST: "/me/player/next", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): Void @connect(source: "test", http: {POST: "/me/player/next", queryParams: """
   {
     device_id: $args.device_id
   }
@@ -6890,7 +6890,7 @@ type Mutation {
     not supplied, the user's currently active device is the target.
     """
     device_id: String
-  ): Void @connect(source: "test", http: {POST: "/me/player/previous", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): Void @connect(source: "test", http: {POST: "/me/player/previous", queryParams: """
   {
     device_id: $args.device_id
   }
@@ -6911,7 +6911,7 @@ type Mutation {
     not supplied, the user's currently active device is the target.
     """
     device_id: String
-  ): Void @connect(source: "test", http: {PUT: "/me/player/seek", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): Void @connect(source: "test", http: {PUT: "/me/player/seek", queryParams: """
   {
     position_ms: $args.position_ms
     device_id: $args.device_id
@@ -6935,7 +6935,7 @@ type Mutation {
     not supplied, the user's currently active device is the target.
     """
     device_id: String
-  ): Void @connect(source: "test", http: {PUT: "/me/player/repeat", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): Void @connect(source: "test", http: {PUT: "/me/player/repeat", queryParams: """
   {
     state: $args.state
     device_id: $args.device_id
@@ -6952,7 +6952,7 @@ type Mutation {
     The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
     """
     device_id: String
-  ): Void @connect(source: "test", http: {PUT: "/me/player/volume", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): Void @connect(source: "test", http: {PUT: "/me/player/volume", queryParams: """
   {
     volume_percent: $args.volume_percent
     device_id: $args.device_id
@@ -6973,7 +6973,7 @@ type Mutation {
     not supplied, the user's currently active device is the target.
     """
     device_id: String
-  ): Void @connect(source: "test", http: {PUT: "/me/player/shuffle", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): Void @connect(source: "test", http: {PUT: "/me/player/shuffle", queryParams: """
   {
     state: $args.state
     device_id: $args.device_id
@@ -6993,7 +6993,7 @@ type Mutation {
     not supplied, the user's currently active device is the target.
     """
     device_id: String
-  ): Void @connect(source: "test", http: {POST: "/me/player/queue", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  ): Void @connect(source: "test", http: {POST: "/me/player/queue", queryParams: """
   {
     uri: $args.uri
     device_id: $args.device_id

@@ -14,12 +14,12 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """An arbitrary object"""
-  object: object_200_response @connect(source: "example_api6", http: {GET: "/object", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
+  object: object_200_response @connect(source: "example_api6", http: {GET: "/object"}, selection: "data")
   """Serves as a link of GET /object"""
   getObject2(
     """HTTP headers are case-insensitive"""
     specialheader: String
-  ): getObject2_200_response @connect(source: "example_api6", http: {GET: "/object2", headers: [{name: "specialheader", value: "{$args.specialheader}"}, {name: "accept", value: "application/json"}]}, selection: "data")
+  ): getObject2_200_response @connect(source: "example_api6", http: {GET: "/object2", headers: [{name: "specialheader", value: "{$args.specialheader}"}]}, selection: "data")
   """A particular car"""
   cars_by_id(id: String!): String @connect(source: "example_api6", http: {GET: "/cars/{$args.id}", headers: [{name: "accept", value: "text/html"}]}, selection: "$")
   """A particular cactus"""
@@ -38,9 +38,9 @@ type Query {
   """Return a number from the request header."""
   returnNumber(number: Float!): Float @connect(source: "example_api6", http: {GET: "/returnNumber", headers: [{name: "number", value: "{$args.number}"}, {name: "accept", value: "text/plain"}]}, selection: "$")
   """Test link object with non-string parameter."""
-  testLinkWithNonStringParam: testLinkWithNonStringParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkWithNonStringParam", headers: [{name: "accept", value: "application/json"}]}, selection: "hello")
+  testLinkWithNonStringParam: testLinkWithNonStringParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkWithNonStringParam"}, selection: "hello")
   """Test link object with nested parameter."""
-  testLinkwithNestedParam: testLinkwithNestedParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkwithNestedParam", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  testLinkwithNestedParam: testLinkwithNestedParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkwithNestedParam"}, selection: """
   nesting1 {
     nesting2
   }
@@ -53,7 +53,7 @@ type object_200_response {
   object2Link(
     """HTTP headers are case-insensitive"""
     specialheader: String
-  ): getObject2_200_response @connect(source: "example_api6", http: {GET: "/object2", headers: [{name: "specialheader", value: "{$args.specialheader}"}, {name: "accept", value: "application/json"}]}, selection: "data")
+  ): getObject2_200_response @connect(source: "example_api6", http: {GET: "/object2", headers: [{name: "specialheader", value: "{$args.specialheader}"}]}, selection: "data")
 }
 
 type getObject2_200_response {
@@ -85,7 +85,7 @@ type query_testLinkwithNestedParam_nesting1 {
 
 type Mutation {
   """Basic application/x-www-form-urlencoded test"""
-  post_formUrlEncoded(input: pet_Input): pet @connect(source: "example_api6", http: {POST: "/formUrlEncoded", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  post_formUrlEncoded(input: pet_Input): pet @connect(source: "example_api6", http: {POST: "/formUrlEncoded", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}], body: "$args.input"}, selection: """
   name
   status
   weight
@@ -95,7 +95,7 @@ type Mutation {
   }
   history2
   """)
-  post_inputUnion(input: post_inputUnion_request_Input): String @connect(source: "example_api6", http: {POST: "/inputUnion", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "text/html"}], body: "$args.input"}, selection: "$")
+  post_inputUnion(input: post_inputUnion_request_Input): String @connect(source: "example_api6", http: {POST: "/inputUnion", headers: [{name: "accept", value: "text/html"}], body: "$args.input"}, selection: "$")
 }
 
 type pet {

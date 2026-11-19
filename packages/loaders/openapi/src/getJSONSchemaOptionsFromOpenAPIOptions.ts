@@ -1179,7 +1179,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                               source: name,
                               http: {
                                 GET: typeConnectPath,
-                                headers: [{ name: 'accept', value: 'application/json' }],
+                                // Bare Accept: application/json is Connectors default — omit.
                               },
                               selection: leafNames.length ? leafNames.join(' ') : 'id',
                             });

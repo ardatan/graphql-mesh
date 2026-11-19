@@ -14,7 +14,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Optional extended description in Markdown."""
-  foo_by_id: foo_by_id_response @connect(source: "test", http: {GET: "/{id}", headers: [{name: "Accept", value: "application/json"}]}, selection: """
+  foo_by_id: foo_by_id_response @connect(source: "test", http: {GET: "/{id}"}, selection: """
   __typename: $status->match([200, "Foo"], [500, "Error"], [@, "Foo"])
   id
   message
@@ -35,7 +35,7 @@ type Error {
 
 type Mutation {
   """Optional extended description in Markdown."""
-  post: post_response @connect(source: "test", http: {POST: "/", headers: [{name: "Accept", value: "application/json"}]}, selection: """
+  post: post_response @connect(source: "test", http: {POST: "/"}, selection: """
   __typename: $status->match([204, "Void_container"], [500, "Error"], [@, "Void_container"])
   message
   stack

@@ -12,7 +12,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}"}, selection: """
   ... $.petType->match(["Dog", { __typename: "DogDifferent" }], ["Cat", { __typename: "Cat" }])
   petType
   cat_exclusive
@@ -87,7 +87,7 @@ type Query {
 }
 
 type Mutation {
-  createThing(input: createThing_request_Input): Thing @connect(source: "test", http: {POST: "/things", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  createThing(input: createThing_request_Input): Thing @connect(source: "test", http: {POST: "/things", body: "$args.input"}, selection: """
   id
   type
   name
@@ -167,7 +167,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  things: [query_things_items] @connect(source: "test", http: {GET: "/things", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  things: [query_things_items] @connect(source: "test", http: {GET: "/things"}, selection: """
   ... $.type->match(["cat", { __typename: "Cat" }], ["dog", { __typename: "Dog" }])
   id
   type

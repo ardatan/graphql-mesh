@@ -41,13 +41,13 @@ type Editor implements User {
 
 type Query {
   """Get admin"""
-  getAdmin: Admin @connect(source: "test", http: {GET: "/admin", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  getAdmin: Admin @connect(source: "test", http: {GET: "/admin"}, selection: """
   name
   type
   admin
   """)
   """Get editor"""
-  getEditor: Editor @connect(source: "test", http: {GET: "/editor", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  getEditor: Editor @connect(source: "test", http: {GET: "/editor"}, selection: """
   name
   type
   """)

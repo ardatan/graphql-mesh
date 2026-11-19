@@ -13,7 +13,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Return a user."""
-  user: user @connect(source: "test", http: {GET: "/user", headers: [{name: "accept", value: "application/json"}]}, selection: "name")
+  user: user @connect(source: "test", http: {GET: "/user"}, selection: "name")
 }
 
 """A user represents a natural person"""
