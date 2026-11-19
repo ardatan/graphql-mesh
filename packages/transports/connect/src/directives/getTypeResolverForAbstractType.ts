@@ -8,6 +8,45 @@ import {
 } from 'graphql';
 import { getConnectArgsFromNode } from './connect.js';
 
+/**
+ * Marks Mesh-installed abstract `resolveType` callbacks so
+ * `processDirectives({ preserveExistingFieldResolvers })` can rebuild them when
+ * union/interface members change, while leaving application-provided callbacks alone.
+ */
+export const MESH_GENERATED_RESOLVE_TYPE = Symbol.for(
+  '@graphql-mesh/transport-connect.generatedResolveType',
+);
+
+/** Stable member fingerprint for comparing generated resolveType closures. */
+export function meshResolveTypeMemberKey(possibleTypes: readonly { name: string }[]): string {
+  return possibleTypes
+    .map(t => t.name)
+    .sort()
+    .join('\0');
+}
+
+export function isMeshGeneratedResolveType(resolveType: unknown): boolean {
+  return (
+    typeof resolveType === 'function' && MESH_GENERATED_RESOLVE_TYPE in (resolveType as object)
+  );
+}
+
+export function getMeshGeneratedResolveTypeMemberKey(resolveType: unknown): string | undefined {
+  if (!isMeshGeneratedResolveType(resolveType)) {
+    return undefined;
+  }
+  return (resolveType as { [MESH_GENERATED_RESOLVE_TYPE]?: string })[MESH_GENERATED_RESOLVE_TYPE];
+}
+
+function markMeshGeneratedResolveType(
+  resolveType: GraphQLTypeResolver<any, any>,
+  memberKey: string,
+): GraphQLTypeResolver<any, any> {
+  (resolveType as { [MESH_GENERATED_RESOLVE_TYPE]?: string })[MESH_GENERATED_RESOLVE_TYPE] =
+    memberKey;
+  return resolveType;
+}
+
 export function getTypeResolverForAbstractType({
   possibleTypes,
   discriminatorField,
@@ -24,7 +63,8 @@ export function getTypeResolverForAbstractType({
   const discriminatorMappingObj = Array.isArray(discriminatorMapping)
     ? Object.fromEntries(discriminatorMapping)
     : discriminatorMapping;
-  return function resolveType(data: any, _ctx: any, info: GraphQLResolveInfo) {
+  const memberKey = meshResolveTypeMemberKey(possibleTypes);
+  const resolveType = function resolveType(data: any, _ctx: any, info: GraphQLResolveInfo) {
     if (data.__typename) {
       const hinted = info.schema.getType(data.__typename);
       // Connectors/`$status->match` may emit an interface name when OpenAPI maps a
@@ -241,4 +281,5 @@ export function getTypeResolverForAbstractType({
     return error;
     */
   };
+  return markMeshGeneratedResolveType(resolveType, memberKey);
 }

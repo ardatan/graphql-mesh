@@ -24,3 +24,4 @@ Fix Connectors reprocess / multipart / entity-key edge cases and finalize type-l
 - FHIR e2e: pin schema download to HL7 **R4** zip (`https://hl7.org/fhir/R4/fhir.schema.json.zip`); invalidate cache unless `Patient.id` → `#/definitions/id` **and** `Observation.status` is an inline enum; extract via system `unzip` (avoid `unzip-stream` SIGSEGV on Node 26)
 - FHIR e2e: full emit; `process.env.FHIR_BASE` at compose; inline `scalarMap`; hive + Router HAPI execution. Join-only `./reference-resource.graphql`. Legacy `.meshrc.yml` keeps Mesh `@resolveTo` with `sourceArgs` split via `{root.reference|path_head}` / `{root.reference|path_rest}`; endpoint `{env.FHIR_BASE}`
 - string-interpolation: `path_head` / `path_rest` modifiers for `Type/id` refs in Mesh `sourceArgs`
+- `processDirectives({ preserveExistingFieldResolvers })`: mark Mesh-generated abstract `resolveType` callbacks; rebuild when union/interface members change; leave application-provided callbacks unchanged

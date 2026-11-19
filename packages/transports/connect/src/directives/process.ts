@@ -21,7 +21,12 @@ import {
 } from '@graphql-mesh/utils';
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processConnectDirectives } from './connect.js';
-import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
+import {
+  getMeshGeneratedResolveTypeMemberKey,
+  getTypeResolverForAbstractType,
+  isMeshGeneratedResolveType,
+  meshResolveTypeMemberKey,
+} from './getTypeResolverForAbstractType.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
@@ -53,7 +58,8 @@ export interface ProcessDirectiveArgs {
   /**
    * When true (legacy `get-mesh` reprocess after `additionalTypeDefs`):
    * - skip `@connect` install on fields that already have a resolver (wrap proxies)
-   * - keep existing abstract `resolveType` callbacks instead of replacing them
+   * - keep application-provided abstract `resolveType` callbacks; rebuild
+   *   Mesh-generated ones when union/interface members change
    */
   preserveExistingFieldResolvers?: boolean;
   /**
@@ -195,10 +201,22 @@ export function processDirectives(
     // scalar fallback. OpenAPI `@discriminator` is baked into `@connect(selection:)`
     // and stripped — no Mesh `@abstractType` directive.
     if (isInterfaceType(type) || isUnionType(type)) {
-      // Reprocess after additionalTypeDefs: keep app / stitch custom resolveType.
-      if (!(preserveExistingFieldResolvers && type.resolveType)) {
+      const possibleTypes = isUnionType(type) ? type.getTypes() : schema.getPossibleTypes(type);
+      const memberKey = meshResolveTypeMemberKey(possibleTypes);
+      const existing = type.resolveType;
+      // Reprocess after additionalTypeDefs: keep application / stitch custom
+      // resolveType. Rebuild Mesh-generated callbacks when members change so a
+      // newly added union member without `__typename` still resolves.
+      const keepAppResolveType =
+        preserveExistingFieldResolvers && existing && !isMeshGeneratedResolveType(existing);
+      const keepGeneratedSameMembers =
+        preserveExistingFieldResolvers &&
+        existing &&
+        isMeshGeneratedResolveType(existing) &&
+        getMeshGeneratedResolveTypeMemberKey(existing) === memberKey;
+      if (!keepAppResolveType && !keepGeneratedSameMembers) {
         type.resolveType = getTypeResolverForAbstractType({
-          possibleTypes: isUnionType(type) ? type.getTypes() : schema.getPossibleTypes(type),
+          possibleTypes,
           serviceName: currDirective?.subgraph,
         });
       }
