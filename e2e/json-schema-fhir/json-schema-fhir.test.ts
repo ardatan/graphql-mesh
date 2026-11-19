@@ -3,6 +3,11 @@ import { ensureFhirSchema } from './ensure-fhir-schema';
 
 const { compose, serve } = createTenv(__dirname);
 
+/** Live HAPI R4 base — compose reads `process.env.FHIR_BASE` from mesh.config. */
+const fhirEnv = {
+  FHIR_BASE: process.env.FHIR_BASE || 'https://hapi.fhir.org/baseR4',
+};
+
 jest.setTimeout(300_000);
 
 beforeAll(async () => {
@@ -11,10 +16,11 @@ beforeAll(async () => {
 
 describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {
   it('fetches Patient by id from live HAPI', async () => {
-    const composition = await compose({ output: 'graphql' });
+    const composition = await compose({ output: 'graphql', env: fhirEnv });
     const { execute } = await serve({
       runner,
       supergraph: composition.output,
+      env: fhirEnv,
     });
     const result = await execute({
       query: /* GraphQL */ `
@@ -42,10 +48,11 @@ describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', run
   });
 
   it('hydrates Observation.subject.resource via generic Resource → Patient', async () => {
-    const composition = await compose({ output: 'graphql' });
+    const composition = await compose({ output: 'graphql', env: fhirEnv });
     const { execute } = await serve({
       runner,
       supergraph: composition.output,
+      env: fhirEnv,
     });
     const result = await execute({
       query: /* GraphQL */ `

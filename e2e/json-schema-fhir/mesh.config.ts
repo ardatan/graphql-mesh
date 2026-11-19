@@ -4,13 +4,6 @@ import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 
 /**
- * Live HAPI FHIR base (override with `FHIR_BASE`).
- * Official HL7 FHIR R4 JSON Schema is downloaded beside this config
- * (`yarn download-fhir-schema` / test `beforeAll`).
- */
-const fhirBase = process.env.FHIR_BASE || 'https://hapi.fhir.org/baseR4';
-
-/**
  * Locked FHIR primitive → scalar map (force-apply for cleaner SG).
  * Guild scalars: Date / DateTime / URL / UUID + GraphQL String / ID.
  * Not mapped (stay FHIR `@regexp`): `code` / `markdown` / `base64Binary` / `xhtml`.
@@ -32,6 +25,7 @@ const fhirScalarMap = {
 /**
  * FHIR e2e via JSON Schema loader + official `fhir.schema.json` definition pointers.
  *
+ * - Endpoint from `process.env.FHIR_BASE` at compose time (e2e sets it)
  * - Opt-in `scalarMap` (force-mapped)
  * - Full emit (no include / hard filter / compose snap) — hive + Router execution
  * - Auto `@connect(selection:)` (no hand selection); loader leavesOnly-rebuilds
@@ -42,7 +36,7 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('patients', {
-        endpoint: fhirBase,
+        endpoint: process.env.FHIR_BASE!,
         scalarMap: fhirScalarMap,
         operations: [
           {
@@ -58,7 +52,7 @@ export const composeConfig = defineComposeConfig({
     },
     {
       sourceHandler: loadJSONSchemaSubgraph('observations', {
-        endpoint: fhirBase,
+        endpoint: process.env.FHIR_BASE!,
         scalarMap: fhirScalarMap,
         operations: [
           {
