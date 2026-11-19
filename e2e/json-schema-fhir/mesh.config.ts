@@ -1,9 +1,6 @@
 import { join } from 'node:path';
 import { OperationTypeNode } from 'graphql';
-import {
-  createPruneTransform,
-  defineConfig as defineComposeConfig,
-} from '@graphql-mesh/compose-cli';
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 import { buildFhirScalarMap } from './fhir-scalar-map';
 
@@ -24,7 +21,8 @@ const fhirScalarMap = buildFhirScalarMap();
  * - Opt-in `scalarMap` (force-mapped): date→Date, dateTime|instant→DateTime,
  *   uri|url|canonical→URL, uuid→UUID, string→String, id|oid→ID
  * - `json-machete` stable titles under `$resolvedRef` (no blanket prefix)
- * - Explicit `include` limits GraphQL emit (Connect `selection` = runtime map only)
+ * - Explicit `include` limits GraphQL emit (Connect `selection` = runtime map only);
+ *   no post-hoc prune transform needed
  * - `referenceResource` mini SDL: `Reference.resource` → generic `Resource` interface
  */
 export const composeConfig = defineComposeConfig({
@@ -56,7 +54,6 @@ export const composeConfig = defineComposeConfig({
           },
         ],
       }),
-      transforms: [createPruneTransform()],
     },
     {
       sourceHandler: loadJSONSchemaSubgraph('observations', {
@@ -86,7 +83,6 @@ export const composeConfig = defineComposeConfig({
           },
         ],
       }),
-      transforms: [createPruneTransform()],
     },
     {
       name: 'referenceResource',
