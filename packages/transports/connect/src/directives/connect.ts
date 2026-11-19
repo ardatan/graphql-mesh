@@ -944,6 +944,17 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
       const end = parts[1] != null && parts[1] !== '' ? Number(parts[1]) : undefined;
       return (left as any).slice(start, end);
     }
+    // Apollo Connectors string `->split(sep, limit?)` (Router 2.15+ / connect mapping).
+    if (method === 'split') {
+      if (typeof left !== 'string') return left;
+      const parts = rawArgs.split(',').map(s => s.trim());
+      const sep = String(parseConnectorsLiteralArg(parts[0] ?? '""'));
+      const limit =
+        parts[1] != null && parts[1] !== ''
+          ? Number(parseConnectorsLiteralArg(parts[1]))
+          : undefined;
+      return Number.isFinite(limit) ? left.split(sep, limit) : left.split(sep);
+    }
     if (method === 'match') {
       return evalMatchMethod(left, rawArgs, root, extras);
     }
@@ -2545,7 +2556,6 @@ export function addConnectFieldResolver(
     const response = await fetchFn(fullPath, requestInit, context, info as any);
     const returnNamedGraphQLType = getNamedType(field.type);
     let responseData: any;
-    const text = await response.text();
     const responseHeaderMap = getHeadersObj(response.headers);
     const selectionExtras: ConnectSelectionExtras = {
       status: response.status,
@@ -2624,50 +2634,74 @@ export function addConnectFieldResolver(
       return response.status.toString().startsWith('2');
     };
 
+    // Apollo Connectors non-JSON response mapping:
+    // - blank → `$` null (Mesh keeps legacy empty scalar/object for empty bodies)
+    // - text/plain → `$` is the literal string
+    // - other (image/png, text/html, …) → `$` is null (do not UTF-8-decode binary)
+    // - JSON-like / missing Content-Type → parse as JSON
+    // Mesh additionally keeps XML (`text/xml`, `+xml`, …) for SOAP/OData.
     const responseContentType = response.headers.get('content-type');
+    const responseMime = responseContentType?.split(';')[0]?.trim().toLowerCase() || '';
+    const isJsonLikeResponse = !responseMime || responseMime.includes('json');
+    const isPlainTextResponse = responseMime === 'text/plain';
+    const isXmlResponse = isXmlContentType(responseContentType);
 
-    if (!text) {
-      // Preserve legacy Mesh behavior for empty / 204 responses (e.g. String fields → "")
-      responseData = isScalarType(returnNamedGraphQLType) ? '' : {};
-    } else if (isXmlContentType(responseContentType)) {
+    if (!isJsonLikeResponse && !isPlainTextResponse && !isXmlResponse) {
+      // Drain without `response.text()` so binary bodies stay binary-safe.
       try {
-        responseData = xmlToJsObject(text);
-      } catch (error) {
-        if (isScalarType(returnNamedGraphQLType)) {
-          responseData = text;
-        } else {
-          throw buildConnectorError(text, error);
-        }
+        await response.arrayBuffer();
+      } catch {
+        /* ignore drain errors */
       }
+      responseData = null;
     } else {
-      try {
-        responseData = JSON.parse(text);
-      } catch (error) {
-        // Some SOAP/XML servers omit Content-Type; fall back when the body looks like XML.
-        if (looksLikeXml(text)) {
-          try {
-            responseData = xmlToJsObject(text);
-          } catch (xmlError) {
-            if (isScalarType(returnNamedGraphQLType)) {
-              responseData = text;
-            } else {
-              throw buildConnectorError(text, xmlError);
-            }
+      const text = await response.text();
+      if (!text) {
+        // Preserve legacy Mesh behavior for empty / 204 responses (e.g. String fields → "")
+        responseData = isScalarType(returnNamedGraphQLType) ? '' : {};
+      } else if (isXmlResponse) {
+        try {
+          responseData = xmlToJsObject(text);
+        } catch (error) {
+          if (isScalarType(returnNamedGraphQLType)) {
+            responseData = text;
+          } else {
+            throw buildConnectorError(text, error);
           }
-        } else if (isScalarType(returnNamedGraphQLType)) {
-          responseData = text;
-        } else if (response.status === 204 || (response.status === 200 && text === '')) {
-          responseData = {};
-        } else if (!evaluateIsSuccess(text)) {
-          throw buildConnectorError(text, error);
-        } else if (
-          response.status.toString().startsWith('2') &&
-          !isScalarType(returnNamedGraphQLType)
-        ) {
-          // Successful status but non-JSON body for object/list fields — still a fetch failure.
-          throw buildConnectorError(text, error);
-        } else {
-          responseData = text;
+        }
+      } else if (isPlainTextResponse) {
+        // Apollo: `$` is the literal response text (do not JSON.parse).
+        responseData = text;
+      } else {
+        try {
+          responseData = JSON.parse(text);
+        } catch (error) {
+          // Some SOAP/XML servers omit Content-Type; fall back when the body looks like XML.
+          if (looksLikeXml(text)) {
+            try {
+              responseData = xmlToJsObject(text);
+            } catch (xmlError) {
+              if (isScalarType(returnNamedGraphQLType)) {
+                responseData = text;
+              } else {
+                throw buildConnectorError(text, xmlError);
+              }
+            }
+          } else if (isScalarType(returnNamedGraphQLType)) {
+            responseData = text;
+          } else if (response.status === 204 || (response.status === 200 && text === '')) {
+            responseData = {};
+          } else if (!evaluateIsSuccess(text)) {
+            throw buildConnectorError(text, error);
+          } else if (
+            response.status.toString().startsWith('2') &&
+            !isScalarType(returnNamedGraphQLType)
+          ) {
+            // Successful status but non-JSON body for object/list fields — still a fetch failure.
+            throw buildConnectorError(text, error);
+          } else {
+            responseData = text;
+          }
         }
       }
     }

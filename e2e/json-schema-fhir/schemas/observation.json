@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Observation",
+  "type": "object",
+  "description": "Observation field set from examples/json-schema-fhir/fhir.schema.json (see patient.json for why not full #/definitions/*).",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "subject": {
+      "title": "Reference",
+      "type": "object",
+      "description": "FHIR Reference (reference/type/display). Full #/definitions/Reference pulls Extension.",
+      "properties": {
+        "reference": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "display": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "id"
+  ]
+}

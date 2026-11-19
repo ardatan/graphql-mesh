@@ -231,6 +231,12 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
 
   headers?: Record<string, string>;
   queryParamArgMap?: Record<string, string>;
+  /**
+   * OpenAPI 2 `in: formData` params: original param name → GraphQL arg name.
+   * Emitted as `@connect(http.body:)` field selections (`{ q: $args.q }`) with
+   * `Content-Type: application/x-www-form-urlencoded` (or multipart for files).
+   */
+  formDataArgMap?: Record<string, string>;
   queryStringOptions?: IStringifyOptions & { jsonStringify?: boolean };
   queryStringOptionsByParam?: Record<
     string,
@@ -243,6 +249,13 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
   queryParamsSample?: any;
 
   jsonApiFields?: boolean;
+
+  /**
+   * When set, use this string as `@connect(selection:)` instead of auto-expanding
+   * from the response GraphQL type. Useful for Apollo mapping that the sample
+   * shape cannot express (e.g. FHIR `subject.reference` → Patient entity stub).
+   */
+  selection?: string;
 };
 
 export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &

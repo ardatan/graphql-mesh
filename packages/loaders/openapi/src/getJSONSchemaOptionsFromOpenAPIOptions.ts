@@ -839,6 +839,29 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             }
             continue;
           }
+          case 'formData': {
+            // Swagger 2 form fields stay as flat GraphQL args (not nested `input`).
+            // Collect them for `@connect(http.body:)` + form Content-Type.
+            operationConfig.formDataArgMap = operationConfig.formDataArgMap || {};
+            operationConfig.formDataArgMap[paramObj.name] = argName;
+            const isFile =
+              (paramObj as OpenAPIV2.ParameterObject).type === 'file' ||
+              paramObj.schema?.type === 'file' ||
+              paramObj.schema?.format === 'binary';
+            if (!operationConfig.headers?.['Content-Type']) {
+              operationConfig.headers = operationConfig.headers || {};
+              operationConfig.headers['Content-Type'] = isFile
+                ? 'multipart/form-data'
+                : 'application/x-www-form-urlencoded';
+            } else if (
+              isFile &&
+              mimeType(operationConfig.headers['Content-Type']) ===
+                'application/x-www-form-urlencoded'
+            ) {
+              operationConfig.headers['Content-Type'] = 'multipart/form-data';
+            }
+            break;
+          }
         }
 
         operationArgTypeMap[argName] =

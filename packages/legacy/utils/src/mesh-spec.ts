@@ -63,13 +63,13 @@ export const MESH_CORE_SPEC_URL = MESH_SPEC_URL;
 export const MESH_GATEWAY_SOURCE_SPEC_URL = 'https://the-guild.dev/graphql/mesh/spec/v1.0';
 
 /**
- * Recognized Mesh-spec `@link` URL prefixes (current + prior stamps).
- * Detection accepts all so older printed SDL still federates cleanly.
+ * Recognized Mesh-spec `@link` URL prefixes.
+ * Keep the current `specs.graphql-mesh.com` origin plus the prior guild.dev stamp
+ * still seen on existing supergraphs. Unpublished middle URLs
+ * (`graphql-mesh.com/spec/`, `spec.graphql-mesh.dev/`) are not recognized.
  */
 export const MESH_SPEC_URL_PREFIXES = [
   'https://specs.graphql-mesh.com/',
-  'https://graphql-mesh.com/spec/',
-  'https://spec.graphql-mesh.dev/',
   'https://the-guild.dev/graphql/mesh/spec/',
 ] as const;
 

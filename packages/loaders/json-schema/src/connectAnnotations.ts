@@ -1328,6 +1328,16 @@ export function inferBodySelection(operationConfig: JSONSchemaOperationConfig): 
   if (httpOp.requestBaseBody != null) {
     return `$(${JSON.stringify(httpOp.requestBaseBody)})`;
   }
+  // OpenAPI 2 `in: formData` → flat args + explicit body field map (Wiki math check, …).
+  const formDataArgMap = httpOp.formDataArgMap;
+  if (formDataArgMap && Object.keys(formDataArgMap).length > 0) {
+    const lines: string[] = [];
+    for (const [paramName, argName] of Object.entries(formDataArgMap)) {
+      const keyOut = /^[A-Za-z_][\w]*$/.test(paramName) ? paramName : JSON.stringify(paramName);
+      lines.push(`  ${keyOut}: $args.${argName}`);
+    }
+    return `{\n${lines.join('\n')}\n}`;
+  }
   return undefined;
 }
 

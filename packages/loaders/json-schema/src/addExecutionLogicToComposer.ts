@@ -480,11 +480,16 @@ ${operationConfig.description || ''}
         isUnionType(returnNamedType) && buildStatusUnionConnectExtras(returnNamedType);
       // Fresh visit budget per field so one Stripe op cannot starve the rest.
       selectionLimit.passthroughVisits = 0;
-      const builtSelection = buildSelectionForType(field.type.getType(), {
-        skipFields,
-        implementations: interfaceImplementations,
-        limit: selectionLimit,
-      });
+      const builtSelection =
+        'selection' in operationConfig &&
+        typeof (operationConfig as { selection?: string }).selection === 'string' &&
+        (operationConfig as { selection?: string }).selection!.trim()
+          ? (operationConfig as { selection: string }).selection.trim()
+          : buildSelectionForType(field.type.getType(), {
+              skipFields,
+              implementations: interfaceImplementations,
+              limit: selectionLimit,
+            });
       let selection =
         builtSelection ||
         // Scalar / empty responses still need a non-empty Connectors selection

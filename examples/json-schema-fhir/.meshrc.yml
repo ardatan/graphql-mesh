@@ -2,7 +2,7 @@ sources:
   - name: FHIR
     handler:
       jsonSchema:
-        endpoint: http://hapi.fhir.org/baseR4
+        endpoint: https://hapi.fhir.org/baseR4
         operations:
           - type: Query
             field: resourceById
@@ -20,15 +20,15 @@ sources:
             path: /{args.resourceType}?subject={args.otherResourceType}/{args.otherResourceId}
             responseSchema: ./fhir.schema.json#/definitions/Bundle
 
+# Prefer federation entity stubs across a few related subgraphs when targeting
+# Apollo Router (see e2e/json-schema-fhir). For a single Mesh source, field-level
+# `@connect` replaces Mesh `@resolveTo` → `Query.resourceById` using Type/id paths.
 additionalTypeDefs: |
   extend type Reference {
-    resource: ResourceList @resolveTo(
-      sourceName: "FHIR",
-      sourceTypeName: "Query",
-      sourceFieldName: "resourceById",
-      sourceArgs: {
-        resourceType: "{root.reference}"
-      }
+    resource: ResourceList @connect(
+      source: "FHIR"
+      http: { GET: "/{$this.reference}?_format=application/json" }
+      selection: "$"
     )
   }
 

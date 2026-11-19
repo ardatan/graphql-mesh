@@ -5308,6 +5308,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/json-schema-fhir@workspace:e2e/json-schema-fhir":
+  version: 0.0.0-use.local
+  resolution: "@e2e/json-schema-fhir@workspace:e2e/json-schema-fhir"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^2.15.8"
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@omnigraph/json-schema": "workspace:*"
+    graphql: "npm:16.14.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions":
   version: 0.0.0-use.local
   resolution: "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions"

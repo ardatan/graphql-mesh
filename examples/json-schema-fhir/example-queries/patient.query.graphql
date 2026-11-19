@@ -1,5 +1,5 @@
 query Patient {
-  resourceById(id: "1566443", resourceType: "Patient") {
+  resourceById(id: "16020", resourceType: "Patient") {
     ... on Patient {
       name {
         given

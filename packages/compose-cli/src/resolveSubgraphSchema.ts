@@ -234,8 +234,7 @@ function finalizeSchema(
       if (typeof l?.url !== 'string') return false;
       if (
         !l.url.includes('specs.graphql-mesh.com/core/') &&
-        !l.url.includes('the-guild.dev/graphql/mesh/spec/') &&
-        !l.url.includes('graphql-mesh.com/spec/')
+        !l.url.includes('the-guild.dev/graphql/mesh/spec/')
       ) {
         return false;
       }
