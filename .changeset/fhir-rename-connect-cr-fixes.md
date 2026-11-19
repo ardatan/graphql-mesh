@@ -3,6 +3,7 @@
 '@graphql-mesh/transport-connect': patch
 '@graphql-mesh/runtime': patch
 '@omnigraph/json-schema': patch
+'json-machete': patch
 ---
 
 Fix Connectors reprocess / multipart / entity-key edge cases and finalize type-level `@connect` attribution.
@@ -13,3 +14,5 @@ Fix Connectors reprocess / multipart / entity-key edge cases and finalize type-l
 - Empty unsupported-MIME body fallback only after a successful 0-byte drain
 - Finalize type-level `@connect` prefers the sole keyed `@join__type` when a value-type sibling is present
 - Opt-in JSON Schema `scalarMap` (title → scalar) for pattern scalars; FHIR e2e force-maps date/DateTime/URL/UUID/String/ID (incl. `oid`→`ID`) for a cleaner SG
+- healJSONSchema: untitled enums (and array-item enums) under `$resolvedRef` get `{Definition}_{property}` titles so shared FHIR types (Duration, Extension, Timing_Repeat, …) stay identical across subgraphs — not operation-path names
+- Compose finalize: dedupe native `@typescript`/`@regexp` on SCALAR/ENUM that only differ by `subgraph:` (Apollo Router rejects duplicate `@typescript`)

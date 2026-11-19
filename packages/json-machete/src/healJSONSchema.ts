@@ -5,6 +5,26 @@ import { visitJSONSchema } from './visitJSONSchema.js';
 
 const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
 
+/**
+ * `#/definitions/Duration` / `#/components/schemas/Foo` → `Duration` / `Foo`.
+ * Used so untitled nested enums under a shared `$ref` get stable titles
+ * (`Duration_comparator`) instead of operation-path names that diverge per
+ * subgraph (`query_patient_…_valueDuration_comparator`).
+ */
+function definitionNameFromResolvedRef(resolvedRef: string | undefined): string | undefined {
+  if (!resolvedRef) {
+    return undefined;
+  }
+  const parts = resolvedRef.includes('/components/schemas/')
+    ? resolvedRef.split('/components/schemas/')
+    : resolvedRef.split('/definitions/');
+  if (parts.length < 2) {
+    return undefined;
+  }
+  const rest = parts[parts.length - 1];
+  return rest.split('/').filter(Boolean)[0];
+}
+
 const JSONSchemaStringFormats = [
   'date',
   'hostname',
@@ -101,6 +121,57 @@ export async function healJSONSchema(
                 `${path} has an empty additionalProperties object. So this is invalid. Replacing it with 'true'`,
               );
               subSchema.additionalProperties = true;
+            }
+          }
+          // Shared `$ref` objects (FHIR Duration, HumanName, …) are cloned into
+          // different operation paths. Untitled property enums would otherwise get
+          // path-based titles and break Fed merge of the parent type. Stamp stable
+          // `{Definition}_{property}` titles before children are visited.
+          const resolvedDefinitionName = definitionNameFromResolvedRef(
+            (subSchema as JSONSchemaObject).$resolvedRef as string | undefined,
+          );
+          if (
+            resolvedDefinitionName &&
+            subSchema.properties &&
+            typeof subSchema.properties === 'object'
+          ) {
+            for (const [propName, propSchema] of Object.entries(subSchema.properties)) {
+              if (!propSchema || typeof propSchema !== 'object' || Array.isArray(propSchema)) {
+                continue;
+              }
+              const prop = propSchema as JSONSchemaObject;
+              if (prop.title || prop.$ref) {
+                continue;
+              }
+              const needsStableTitle = (node: JSONSchemaObject) =>
+                !!(
+                  node.enum ||
+                  node.pattern ||
+                  node.const != null ||
+                  node.maxLength != null ||
+                  node.minLength != null
+                );
+              if (needsStableTitle(prop)) {
+                const stableTitle = `${resolvedDefinitionName}_${propName}`;
+                debugLogFn?.(
+                  `${path}/properties/${propName} is under $resolvedRef ${subSchema.$resolvedRef}; setting title to ${stableTitle}`,
+                );
+                prop.title = stableTitle;
+              } else if (
+                prop.items &&
+                typeof prop.items === 'object' &&
+                !Array.isArray(prop.items)
+              ) {
+                // e.g. Timing_Repeat.when: array of untitled enums
+                const items = prop.items as JSONSchemaObject;
+                if (!items.title && !items.$ref && needsStableTitle(items)) {
+                  const stableTitle = `${resolvedDefinitionName}_${propName}_items`;
+                  debugLogFn?.(
+                    `${path}/properties/${propName}/items is under $resolvedRef ${subSchema.$resolvedRef}; setting title to ${stableTitle}`,
+                  );
+                  items.title = stableTitle;
+                }
+              }
             }
           }
           // Really edge case, but we need to support it

@@ -59,4 +59,84 @@ describe('healJSONSchema', () => {
     const healedSchema = (await healJSONSchema(schema)) as JSONSchemaObject;
     expect(healedSchema.properties.foo).toBeDefined();
   });
+
+  it('titles untitled enums under $resolvedRef from the definition name, not the operation path', async () => {
+    // Mimic FHIR Duration cloned under two operation paths — same $resolvedRef.
+    const durationProps = () => ({
+      comparator: {
+        description: 'How the value should be understood',
+        type: 'string' as const,
+        enum: ['<', '<=', '>=', '>'],
+      },
+    });
+    const schema: JSONSchema = {
+      type: 'object',
+      title: 'Query',
+      properties: {
+        patient: {
+          type: 'object',
+          properties: {
+            valueDuration: {
+              type: 'object',
+              title: 'Duration',
+              $resolvedRef: '/definitions/Duration',
+              properties: durationProps(),
+            },
+          },
+        },
+        observationById: {
+          type: 'object',
+          properties: {
+            valueDuration: {
+              type: 'object',
+              title: 'Duration',
+              $resolvedRef: '/definitions/Duration',
+              properties: durationProps(),
+            },
+          },
+        },
+      },
+    };
+    const healed = (await healJSONSchema(schema)) as JSONSchemaObject;
+    const patientCmp = (healed.properties.patient as JSONSchemaObject).properties
+      .valueDuration as JSONSchemaObject;
+    const obsCmp = (healed.properties.observationById as JSONSchemaObject).properties
+      .valueDuration as JSONSchemaObject;
+    expect((patientCmp.properties.comparator as JSONSchemaObject).title).toBe(
+      'Duration_comparator',
+    );
+    expect((obsCmp.properties.comparator as JSONSchemaObject).title).toBe('Duration_comparator');
+  });
+
+  it('titles untitled array-item enums under $resolvedRef from the definition name', async () => {
+    const schema: JSONSchema = {
+      type: 'object',
+      properties: {
+        patient: {
+          type: 'object',
+          properties: {
+            repeat: {
+              type: 'object',
+              title: 'Timing_Repeat',
+              $resolvedRef: '/definitions/Timing_Repeat',
+              properties: {
+                when: {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                    enum: ['MORN', 'AFT'],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const healed = (await healJSONSchema(schema)) as JSONSchemaObject;
+    const when = (
+      (healed.properties.patient as JSONSchemaObject).properties.repeat as JSONSchemaObject
+    ).properties.when as JSONSchemaObject;
+    expect((when.items as JSONSchemaObject).title).toBe('Timing_Repeat_when_items');
+  });
 });

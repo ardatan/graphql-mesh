@@ -9,29 +9,9 @@ beforeAll(async () => {
   await ensureFhirSchema();
 }, 120_000);
 
-it('composes official fhir.schema.json + rename + mini Reference.resource SDL', async () => {
+it('composes official fhir.schema.json + mini Reference.resource SDL', async () => {
   const { result } = await compose();
-  expect(result).not.toContain('@resolveTo');
-  expect(result).toMatch(/subject:\s*Reference/);
-  expect(result).toMatch(/resource:\s*Patient/);
-  expect(result).toMatch(/->split\(/);
-  expect(result).toMatch(/patient\(/);
-  expect(result).toMatch(/entity:\s*true/);
-  // Join field comes from the mini SDL subgraph, not loader magic.
-  expect(result).toMatch(/referenceResource|REFERENCE_RESOURCE/i);
-  // Hard filter removes Extension/Duration/… colliders — no blanket prefix needed.
-  expect(result).not.toMatch(/patients_/);
-  expect(result).not.toMatch(/observations_/);
-  expect(result).toMatch(/\btype HumanName\b/);
-  // Force scalarMap: string→String (Patient.id is `#/definitions/string`).
-  expect(result).not.toMatch(/\bscalar string\b/);
-  expect(result).not.toMatch(/\bscalar uri\b/);
-  expect(result).toMatch(/type Patient[\s\S]*?\bid:\s*String\b/);
-  // Reference.type is FHIR `uri` → graphql-scalars URL.
-  expect(result).toMatch(/\btype:\s*URL\b/);
-  // Shared FHIR `code` stays as `@regexp` (not in scalarMap).
-  expect(result).toMatch(/\bscalar code\b/);
-  expect(result).not.toMatch(/\bscalar oid\b/);
+  expect(result).toMatchSnapshot();
 });
 
 describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {

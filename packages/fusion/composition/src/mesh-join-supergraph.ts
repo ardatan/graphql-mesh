@@ -249,11 +249,57 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   }
   // Drop Mesh `@link(url:)` with no imports (e.g. core left after `@transport` strip).
   finalized = pruneEmptyMeshLinks(finalized);
+  // Shared FHIR/OpenAPI pattern scalars merge with one `@regexp`/`@typescript` per
+  // subgraph; Apollo Router rejects duplicate native `@typescript` on the same
+  // scalar ("already exists"). Keep one app per unique args excluding `subgraph`.
+  finalized = dedupeMeshScalarEnumDirectives(finalized);
   if (emittedJoinTransport || emittedMeshJoin) {
     finalized = ensureJoinDirectiveSupport(finalized, { expandLocations: emittedMeshJoin });
   }
   const printed = print(finalized).trim();
   return changed || printed !== supergraphSdl.trim() ? printed : supergraphSdl;
+}
+
+const MESH_SCALAR_ENUM_DEDUPE = new Set(['typescript', 'regexp']);
+
+/**
+ * Collapse repeatable Mesh scalar/enum dirs that only differ by `subgraph:`
+ * (same `type` / `pattern`) so Router can load the SG.
+ */
+function dedupeMeshScalarEnumDirectives(document: DocumentNode): DocumentNode {
+  return visit(document, {
+    ScalarTypeDefinition(node) {
+      return dedupeDirsOnNode(node);
+    },
+    EnumTypeDefinition(node) {
+      return dedupeDirsOnNode(node);
+    },
+  });
+}
+
+function dedupeDirsOnNode<T extends { directives?: readonly ConstDirectiveNode[] }>(node: T): T {
+  if (!node.directives?.length) {
+    return node;
+  }
+  const seen = new Set<string>();
+  const next: ConstDirectiveNode[] = [];
+  let changed = false;
+  for (const dir of node.directives) {
+    if (!MESH_SCALAR_ENUM_DEDUPE.has(dir.name.value)) {
+      next.push(dir);
+      continue;
+    }
+    const args = constDirectiveArgsToJs(dir);
+    const { subgraph: _subgraph, ...rest } = args;
+    const key = `${dir.name.value}:${JSON.stringify(rest)}`;
+    if (seen.has(key)) {
+      changed = true;
+      continue;
+    }
+    seen.add(key);
+    next.push(dir);
+  }
+  return changed ? { ...node, directives: next } : node;
 }
 
 type JoinGraphInfo = {
