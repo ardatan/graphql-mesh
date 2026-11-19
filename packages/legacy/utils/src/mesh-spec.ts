@@ -56,14 +56,14 @@ export const MESH_SPEC_URL = meshSpecUrl('core');
 export const MESH_CORE_SPEC_URL = MESH_SPEC_URL;
 
 /**
- * Legacy Guild Mesh-spec URL. Older supergraphs / Gateway builds may still resolve
- * stitching `@source` from this URL; Mesh Compose stamps `@source` under
- * {@link MESH_CORE_SPEC_URL}. Kept for parse/assert + Gateway patch acceptance.
+ * Prior Mesh-spec `@link` URL still seen on existing supergraphs.
+ * Compose stamps `@source` under {@link MESH_CORE_SPEC_URL}; this constant is
+ * kept so parse/assert + Gateway still recognize older printed SDL.
  */
 export const MESH_GATEWAY_SOURCE_SPEC_URL = 'https://the-guild.dev/graphql/mesh/spec/v1.0';
 
 /**
- * Recognized Mesh-spec `@link` URL prefixes (current + legacy stamps).
+ * Recognized Mesh-spec `@link` URL prefixes (current + prior stamps).
  * Detection accepts all so older printed SDL still federates cleanly.
  */
 export const MESH_SPEC_URL_PREFIXES = [
@@ -81,12 +81,12 @@ export function isMeshSpecLinkUrl(url: string | null | undefined): boolean {
 }
 
 export interface ParsedMeshSpecUrl {
-  /** Spec name segment (`core`, `sql`, `thrift`, …). Legacy Guild source URL maps to `core`. */
+  /** Spec name segment (`core`, `sql`, `thrift`, …). Older source `@link` URLs map to `core`. */
   name: string;
   /** Version string including leading `v` when present (`v0.1`, `v1.0`). */
   version: string;
   url: string;
-  /** True for Guild / legacy Mesh URLs outside `specs.graphql-mesh.com`. */
+  /** True for Mesh `@link` URLs outside `specs.graphql-mesh.com`. */
   legacy: boolean;
 }
 
@@ -127,7 +127,7 @@ export function parseMeshSpecUrl(url: string | null | undefined): ParsedMeshSpec
       legacy: false,
     };
   }
-  // Legacy Guild / graphql-mesh.com / spec.graphql-mesh.dev → treat as core
+  // Older Mesh `@link` prefixes → treat as core
   const versionMatch = url.match(/\/(v\d+(?:\.\d+)?)\/?$/);
   const version = versionMatch?.[1] || 'v1.0';
   return {

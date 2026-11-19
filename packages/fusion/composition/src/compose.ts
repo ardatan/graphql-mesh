@@ -778,7 +778,7 @@ export function getAnnotatedSubgraphs(
 
     if (sourceImport) {
       // Mesh stitching `@source` / `@meshSource` under core/v0.1 (same link as
-      // `@merge` / `@transport`). Gateway patch still accepts legacy Guild URL.
+      // `@merge` / `@transport`). Gateway still accepts older Mesh `@link` prefixes.
       importedCoreDirectives.push(sourceImport);
     }
     if (importedCoreDirectives.length) {
