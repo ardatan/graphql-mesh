@@ -324,16 +324,22 @@ function rewriteSchemaTransports(
       continue;
     }
 
-    // Connect: Gateway infers `kind: "connect"` from join connect/source.
-    // Drop entirely when nothing remains; if options/headers/override location,
-    // emit join transport args *without* `kind: "connect"`.
+    // Connect: Gateway infers `kind: "connect"` from join connect/source when
+    // transport is absent. Drop entirely when nothing remains. If options/
+    // headers/override location remain, keep a *native* `@transport` with the
+    // def-required `kind` + `subgraph` (Apollo Router validates Mesh `@transport`
+    // apps against the directive def). Do **not** join-carry Mesh `@transport`
+    // on Connect SGs — Apollo reconstitutes join transport and rejects it.
     if (kind === 'connect') {
       if (headers === undefined && options === undefined && (locationMatches || location == null)) {
         changed = true;
         continue;
       }
-      const connectArgs: Record<string, unknown> = {};
-      if (typeof location === 'string' && !locationMatches) {
+      const connectArgs: Record<string, unknown> = {
+        kind: 'connect',
+        subgraph,
+      };
+      if (typeof location === 'string') {
         connectArgs.location = location;
       }
       if (headers !== undefined) {
@@ -342,13 +348,8 @@ function rewriteSchemaTransports(
       if (options !== undefined) {
         connectArgs.options = options;
       }
-      if (Object.keys(connectArgs).length === 0) {
-        changed = true;
-        continue;
-      }
-      next.push(buildJoinDirective(graphEnum, 'transport', connectArgs));
+      next.push(buildNativeTransportDirective(connectArgs));
       changed = true;
-      emittedJoinTransport = true;
       continue;
     }
 
@@ -547,14 +548,23 @@ function normalizeOptions(value: unknown): unknown | undefined {
 
 function pruneUnusedTransportArtifacts(document: DocumentNode): DocumentNode {
   let hasTransportUsage = false;
+  let hasJoinCarriedTransport = false;
   visit(document, {
     Directive(node) {
       if (node.name.value === 'transport') {
         hasTransportUsage = true;
       }
+      if (node.name.value === 'join__directive') {
+        const nameArg = node.arguments?.find(a => a.name.value === 'name');
+        if (nameArg?.value.kind === Kind.STRING && nameArg.value.value === 'transport') {
+          hasJoinCarriedTransport = true;
+        }
+      }
     },
   });
-  if (hasTransportUsage) {
+  // Keep `directive @transport` (+ TransportOptions / @link) when join-carried so
+  // Apollo Router reconstitution of `@join__directive(name: "transport")` has a def.
+  if (hasTransportUsage || hasJoinCarriedTransport) {
     return document;
   }
 
@@ -1022,6 +1032,29 @@ function removeImportFromLink(
           }
         : arg,
     ),
+  };
+}
+
+function buildNativeTransportDirective(args: Record<string, unknown>): ConstDirectiveNode {
+  const argumentNodes: Array<{
+    kind: Kind.ARGUMENT;
+    name: { kind: Kind.NAME; value: string };
+    value: ConstValueNode;
+  }> = [];
+  for (const [key, value] of Object.entries(args)) {
+    if (value === undefined) continue;
+    const valueNode = astFromValueUntyped(value) as ConstValueNode | null;
+    if (valueNode == null) continue;
+    argumentNodes.push({
+      kind: Kind.ARGUMENT,
+      name: { kind: Kind.NAME, value: key },
+      value: valueNode,
+    });
+  }
+  return {
+    kind: Kind.DIRECTIVE,
+    name: { kind: Kind.NAME, value: 'transport' },
+    arguments: argumentNodes,
   };
 }
 

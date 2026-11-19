@@ -35,7 +35,7 @@ exports[`gRPC Example fetches movies by cast as a subscription correctly: 1 1`] 
 `;
 
 exports[`gRPC Example generates the correct schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @join__directive(graphs: [MOVIES], name: "transport", args: {kind: "protobuf", location: "localhost:<movies_port>", options: {metaData: [["someKey", "someValue"], ["connection-type", "{context.headers.connection}"]]}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc", "@transport"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @join__directive(graphs: [MOVIES], name: "transport", args: {kind: "protobuf", location: "localhost:<movies_port>", options: {metaData: [["someKey", "someValue"], ["connection-type", "{context.headers.connection}"]]}}) {
   query: Query
   subscription: Subscription
 }
@@ -73,12 +73,16 @@ enum join__Graph {
   MOVIES @join__graph(name: "movies", url: "localhost:<movies_port>")
 }
 
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
 directive @stream(if: Boolean! = true, label: String, initialCount: Int = 0) on FIELD
 
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
 """
 scalar BigInt @join__type(graph: MOVIES)
+
+scalar TransportOptions @join__type(graph: MOVIES)
 
 type Query @join__type(graph: MOVIES) {
   """get all movies"""

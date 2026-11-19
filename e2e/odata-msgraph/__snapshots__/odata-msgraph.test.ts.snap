@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Microsoft Graph Connectors composes Connectors from fixture $metadata (v0 example surface) 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @join__directive(graphs: [MICROSOFT_GRAPH], name: "transport", args: {options: {odata: {batch: "json", expandNavProps: true}}}) @join__directive(graphs: [MICROSOFT_GRAPH], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [MICROSOFT_GRAPH], name: "source", args: {name: "MicrosoftGraph", http: {baseURL: "http://127.0.0.1:<Graph_port>", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}, {name: "Authorization", value: "Bearer {$env.MSGRAPH_ACCESS_TOKEN}"}]}, errors: {message: "error.message"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @transport(kind: "connect", subgraph: "MicrosoftGraph", location: "http://127.0.0.1:<Graph_port>", options: {odata: {batch: "json", expandNavProps: true}}) @join__directive(graphs: [MICROSOFT_GRAPH], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [MICROSOFT_GRAPH], name: "source", args: {name: "MicrosoftGraph", http: {baseURL: "http://127.0.0.1:<Graph_port>", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}, {name: "Authorization", value: "Bearer {$env.MSGRAPH_ACCESS_TOKEN}"}]}, errors: {message: "error.message"}}) {
   query: Query
   mutation: Mutation
 }
@@ -41,6 +41,8 @@ enum join__Graph {
   MICROSOFT_GRAPH @join__graph(name: "MicrosoftGraph", url: "http://127.0.0.1:<Graph_port>")
 }
 
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
 """
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -55,6 +57,8 @@ scalar BigInt @join__type(graph: MICROSOFT_GRAPH)
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime @join__type(graph: MICROSOFT_GRAPH)
+
+scalar TransportOptions @join__type(graph: MICROSOFT_GRAPH)
 
 type user @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/"}, selection: "mail officeLocation rest: $ id displayName _odataId: $->get(\\"@odata.id\\")", entity: true}) {
   id: String!
@@ -357,74 +361,99 @@ exports[`Microsoft Graph Connectors execute with apollo-router fetchRecentEmails
 exports[`Microsoft Graph Connectors execute with hive fetchFilesFromOneDrive (v0 example-query) 1`] = `
 {
   "data": {
-    "me": null,
-  },
-  "errors": [
-    {
-      "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
-      },
-      "locations": [
+    "me": {
+      "drives": [
         {
-          "column": 3,
-          "line": 2,
+          "quota": {
+            "remaining": 10485760,
+            "used": 1024,
+          },
+          "root": {
+            "children": [
+              {
+                "lastModifiedDateTime": "2024-02-01T12:00:00.000Z",
+                "name": "notes.txt",
+                "size": 42,
+                "webUrl": "https://example.com/drive/notes.txt",
+              },
+              {
+                "lastModifiedDateTime": "2024-02-02T12:00:00.000Z",
+                "name": "diagrams",
+                "size": 0,
+                "webUrl": "https://example.com/drive/diagrams",
+              },
+              {
+                "lastModifiedDateTime": "2024-02-03T12:00:00.000Z",
+                "name": "readme.md",
+                "size": 128,
+                "webUrl": "https://example.com/drive/readme.md",
+              },
+            ],
+          },
         },
       ],
-      "message": "Unexpected error.",
-      "path": [
-        "me",
-      ],
     },
-  ],
+  },
 }
 `;
 
 exports[`Microsoft Graph Connectors execute with hive fetchGroupsAndMembers (v0 example-query) 1`] = `
 {
   "data": {
-    "groups": null,
-  },
-  "errors": [
-    {
-      "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
+    "groups": [
+      {
+        "description": "Natural philosophers",
+        "displayName": "Royal Society",
+        "members": [
+          {
+            "id": "user-ada",
+          },
+          {
+            "id": "user-charles",
+          },
+        ],
       },
-      "locations": [
-        {
-          "column": 3,
-          "line": 2,
-        },
-      ],
-      "message": "Unexpected error.",
-      "path": [
-        "groups",
-      ],
-    },
-  ],
+    ],
+  },
 }
 `;
 
 exports[`Microsoft Graph Connectors execute with hive fetchRecentEmails (v0 example-query) 1`] = `
 {
   "data": {
-    "me": null,
-  },
-  "errors": [
-    {
-      "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
-      },
-      "locations": [
+    "me": {
+      "displayName": "Ada Lovelace",
+      "messages": [
         {
-          "column": 3,
-          "line": 2,
+          "from": {
+            "emailAddress": {
+              "address": "charles@example.com",
+            },
+          },
+          "isRead": false,
+          "subject": "Analytical Engine notes",
+        },
+        {
+          "from": {
+            "emailAddress": {
+              "address": "mary@example.com",
+            },
+          },
+          "isRead": true,
+          "subject": "Punch card revisions",
+        },
+        {
+          "from": {
+            "emailAddress": {
+              "address": "michael@example.com",
+            },
+          },
+          "isRead": true,
+          "subject": "Dinner next week?",
         },
       ],
-      "message": "Unexpected error.",
-      "path": [
-        "me",
-      ],
+      "officeLocation": "London",
     },
-  ],
+  },
 }
 `;

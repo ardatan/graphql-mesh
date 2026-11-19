@@ -19,7 +19,7 @@ export * from './executor.js';
  * schema (endpoint / database / auth come from the transport directive written by the loader).
  */
 export default {
-  getSubgraphExecutor({ subgraph, pubsub, log }) {
+  getSubgraphExecutor({ subgraph, pubsub, log, transportEntry }) {
     assertSupportedMeshSpecOnSchema(subgraph, {
       name: 'neo4j',
       supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
@@ -34,6 +34,7 @@ export default {
       schema: subgraph,
       pubsub,
       log,
+      transportEntry,
     });
   },
 } satisfies Transport;

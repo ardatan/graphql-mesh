@@ -69,10 +69,11 @@ describe('binary (@thrift__rpc)', () => {
     expect(result).toMatch(/name:\s*"transport"/);
     expect(result).toMatch(/kind:\s*"thrift"/);
     // Lean SG: apps are join only — no native `directive @thrift__rpc` / enum.
+    // Join-carried `@transport` keeps its directive def (+ TransportOptions/@link).
     expect(result).not.toMatch(/:\s*\w+ @thrift__rpc\s*\(/);
     expect(result).not.toMatch(/directive @thrift__rpc\(/);
     expect(result).not.toMatch(/ThriftMessageType/);
-    expect(result).not.toMatch(/@transport\s*\(/);
+    expect(result).toMatch(/directive @transport\s*\(/);
     expect(result).toMatch(/function:\s*"add"/);
     expect(result).toMatch(/1\(struct\):\s*\$args\.request/);
     expect(result).toMatch(/\$\(i32\)/);

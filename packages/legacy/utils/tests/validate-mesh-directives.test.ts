@@ -74,6 +74,21 @@ describe('validateMeshDirectives (GM-37)', () => {
     expect(() => validateMeshDirectives(schema)).toThrow(/@transport\.kind is required/);
   });
 
+  it('allows options-only @transport without kind (Gateway-inferred connect)', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        ok: String
+      }
+    `);
+    (schema.extensions as any) = {
+      directives: {
+        link: [{ url: 'https://specs.graphql-mesh.com/core/v0.1', import: ['@transport'] }],
+        transport: [{ options: { odata: { batch: 'json' } } }],
+      },
+    };
+    expect(() => validateMeshDirectives(schema)).not.toThrow();
+  });
+
   it('rejects non-array @hoist.pathConfig', () => {
     const schema = buildSchema(/* GraphQL */ `
       type Query {

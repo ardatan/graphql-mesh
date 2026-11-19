@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "source", args: {name: "OpenAPICallbackExample", http: {baseURL: "http://localhost:<api_port>"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@pubsubOperation"]) @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "source", args: {name: "OpenAPICallbackExample", http: {baseURL: "http://localhost:<api_port>"}}) {
   query: Query
   mutation: Mutation
   subscription: Subscription
@@ -67,7 +67,7 @@ type SubscriptionInfo @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
 
 type Subscription @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
   """PubSub Topic: webhook:post:/callback/{args.subscriptionId}"""
-  onData(subscriptionId: String): SubscriptionPayload
+  onData(subscriptionId: String): SubscriptionPayload @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "pubsubOperation", args: {pubsubTopic: "webhook:post:/callback/{args.subscriptionId}"})
 }
 
 type SubscriptionPayload @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {

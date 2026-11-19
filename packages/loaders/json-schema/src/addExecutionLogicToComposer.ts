@@ -37,13 +37,13 @@ import {
   buildStatusUnionConnectExtras,
   CONNECT_LINK_URL,
   ConnectDirective,
+  connectorsPathSegmentFromLinkExpr,
   flushConnectSelectionPassthroughWarnings,
   inferBodySelection,
   LinkDirective,
   resolveConnectSelectionLimit,
   rewriteConnectPathEnumArgs,
   SourceDirective,
-  connectorsPathSegmentFromLinkExpr,
   toConnectLinkExpression,
   warnConnectSelectionPassthrough,
   wrapArgExprWithEnumMatch,
@@ -794,8 +794,18 @@ ${operationConfig.description || ''}
     },
   });
   flushConnectSelectionPassthroughWarnings(selectionLimit);
-  if (getDirectiveExtensions(schema)?.transport?.length) {
-    schema = importMeshDirectives(schema, ['@transport']);
+  const schemaDirs = getDirectiveExtensions(schema);
+  const meshImports: string[] = [];
+  if (schemaDirs?.transport?.length) {
+    meshImports.push('@transport');
+  }
+  // `@pubsubOperation` is Mesh-core (excluded from importCustomDirectivesForComposition).
+  // Stamp `@composeDirective` so lean join keeps it as `@join__directive` for Gateway.
+  if (schemaHasDirectiveUsage(schema, 'pubsubOperation')) {
+    meshImports.push('@pubsubOperation');
+  }
+  if (meshImports.length) {
+    schema = importMeshDirectives(schema, meshImports);
   }
   // Prefer `"""` for multiline / quote-heavy `@connect` selection/body/queryParams.
   return preferMultilineDirectiveBlockStrings(schema);

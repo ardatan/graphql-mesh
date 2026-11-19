@@ -190,7 +190,12 @@ function validateTransportArgs(
     return;
   }
   if (transport.kind == null || transport.kind === '') {
-    fail('@transport.kind is required', 'transport');
+    // Lean join may emit options/headers-only `@transport` for Connectors;
+    // Gateway infers `kind: "connect"` from join connect/source.
+    const inferredConnect = transport.options != null || transport.headers != null;
+    if (!inferredConnect) {
+      fail('@transport.kind is required', 'transport');
+    }
   } else if (typeof transport.kind !== 'string') {
     fail('@transport.kind must be a string', 'transport');
   }

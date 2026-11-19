@@ -186,13 +186,12 @@ describe('Federation Connectors composition', () => {
     const result = composeSubgraphs([{ name: 'REST', schema: withOpts }]);
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
-    // Options-only: join transport args without `kind: "connect"` (Gateway infers).
-    expect(sdl).toMatch(
-      /@join__directive\([^)]*name: "transport"[^)]*options:\s*\{\s*queryStringOptions/,
-    );
+    // Remaining connect options: native `@transport` (Apollo-safe; not join-carried).
+    expect(sdl).toMatch(/@transport\(kind: "connect", subgraph: "REST"/);
+    expect(sdl).toMatch(/queryStringOptions/);
     expect(sdl).toContain('arrayFormat');
     expect(sdl).toContain('repeat');
-    expect(sdl).not.toMatch(/kind:\s*"connect"/);
+    expect(sdl).not.toMatch(/name: "transport"/);
   });
 
   it('keeps Apollo @source on schema extensions path', () => {

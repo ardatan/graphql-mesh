@@ -37,6 +37,8 @@ type ResolveToLike = {
   sourceTypeName?: string;
   sourceFieldName?: string;
   sourceArgs?: Record<string, unknown>;
+  /** PubSub / webhook subscription wiring — no subgraph sourceName required. */
+  pubsubTopic?: string;
 };
 
 /**
@@ -209,6 +211,10 @@ function validateResolveToDirectives(opts: {
   const { errors, locationLabel, resolveToDirectives, subgraphs, astNode } = opts;
   for (const resolveToDirective of resolveToDirectives) {
     const subgraphName = resolveToDirective.sourceName;
+    // `@resolveTo(pubsubTopic:)` is valid Mesh subscription wiring (no subgraph target).
+    if (!subgraphName && resolveToDirective.pubsubTopic) {
+      continue;
+    }
     const subgraph = subgraphs.find(s => s.name === subgraphName);
     if (!subgraphName) {
       errors.push(

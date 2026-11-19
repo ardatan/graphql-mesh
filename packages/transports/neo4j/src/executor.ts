@@ -69,6 +69,16 @@ export interface Neo4JExecutorOpts {
    * forwarded at matching levels.
    */
   log?: Logger;
+  /**
+   * Gateway transport entry (kind/location/options). Used when the lean SG carries
+   * `@join__directive(name: "transport")` instead of a native `@transport` app.
+   */
+  transportEntry?: {
+    kind?: string;
+    subgraph?: string;
+    location?: string;
+    options?: { database?: string; auth?: any };
+  };
 }
 
 function hasDirective(
@@ -111,7 +121,7 @@ function isNeo4jModelType(
 // 7.6.6+ keeps SCHEMA_DEFINITION directives when augmenting; leftover Mesh
 // `@transport` / Apollo `@link` usages then fail validation (e.g. unknown
 // `url`/`import` on `@link` after helper scalars were filtered out).
-const STRIP_SCHEMA_DIRECTIVES = new Set(['transport', 'link']);
+const STRIP_SCHEMA_DIRECTIVES = new Set(['transport', 'link', 'join__directive']);
 const STRIP_DIRECTIVE_DEFINITIONS = new Set([
   'transport',
   'link',
@@ -122,6 +132,7 @@ const STRIP_DIRECTIVE_DEFINITIONS = new Set([
   'join__implements',
   'join__unionMember',
   'join__enumValue',
+  'join__directive',
   'source',
   'meshSource',
   'merge',
@@ -133,6 +144,7 @@ const STRIP_TYPE_NAMES = new Set([
   'link__Purpose',
   'join__FieldSet',
   'join__Graph',
+  'join__DirectiveArguments',
   '_DirectiveExtensions',
 ]);
 
@@ -1059,6 +1071,34 @@ export function extractNeo4jModelTypeDefs(
  *
  * @param opts - {@link Neo4JExecutorOpts}
  */
+function readJoinTransportArgs(
+  schemaDirectives: ReturnType<typeof getDirectiveExtensions> | undefined,
+):
+  | {
+      location?: string;
+      subgraph?: string;
+      options?: { database?: string; auth?: any };
+    }
+  | undefined {
+  const joins = asArray(schemaDirectives?.join__directive) as Array<{
+    name?: string;
+    args?: Record<string, unknown>;
+  }>;
+  for (const join of joins) {
+    if (join?.name !== 'transport' || !join.args || typeof join.args !== 'object') continue;
+    const args = join.args;
+    return {
+      location: typeof args.location === 'string' ? args.location : undefined,
+      subgraph: typeof args.subgraph === 'string' ? args.subgraph : undefined,
+      options: (args.options && typeof args.options === 'object' ? args.options : {}) as {
+        database?: string;
+        auth?: any;
+      },
+    };
+  }
+  return undefined;
+}
+
 export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<DisposableExecutor> {
   const schemaDirectives = getDirectiveExtensions(opts.schema);
   if (!opts.schema.getDirective('relationship')) {
@@ -1077,15 +1117,25 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
       ),
     );
   }
-  const transportDirectives = schemaDirectives?.transport;
-  if (!transportDirectives?.length) {
+  const transport =
+    asArray(schemaDirectives?.transport)[0] ||
+    readJoinTransportArgs(schemaDirectives) ||
+    (opts.transportEntry
+      ? {
+          location: opts.transportEntry.location,
+          subgraph: opts.transportEntry.subgraph,
+          options: opts.transportEntry.options || {},
+        }
+      : undefined);
+  if (!transport?.location) {
     throw new Error('No transport directive found on the schema!');
   }
-  const {
-    location: endpoint,
-    subgraph: transportSubgraph,
-    options: { database, auth },
-  } = transportDirectives[0];
+  const endpoint = transport.location as string;
+  const transportSubgraph = transport.subgraph as string | undefined;
+  const { database, auth } = (transport.options || {}) as {
+    database?: string;
+    auth?: any;
+  };
   let driver = opts.driver;
   const closeDriverOnDispose = !driver;
   if (!driver) {

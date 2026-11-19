@@ -335,5 +335,42 @@ describe('validateSupergraphSdl', () => {
       const errors = validateSupergraphSdl(supergraphSdl, [subgraph]);
       expect(errors).toHaveLength(0);
     });
+
+    it('returns no errors for pubsubTopic-only @resolveTo (subscription wiring)', () => {
+      const subgraph = makeSubgraph(
+        'API',
+        /* GraphQL */ `
+          type Query {
+            todos: [String]
+          }
+          type Todo {
+            id: ID!
+          }
+        `,
+      );
+      const supergraphSdl = /* GraphQL */ `
+        directive @resolveTo(
+          sourceName: String
+          pubsubTopic: String
+          filterBy: String
+        ) on FIELD_DEFINITION
+        type Todo {
+          id: ID!
+        }
+        type Subscription {
+          todoAdded: Todo @resolveTo(pubsubTopic: "webhook:post:/webhooks/todo_added")
+          todoUpdated(id: ID!): Todo
+            @resolveTo(
+              pubsubTopic: "webhook:post:/webhooks/todo_updated"
+              filterBy: "root.id === args.id"
+            )
+        }
+        type Query {
+          todos: [String]
+        }
+      `;
+      const errors = validateSupergraphSdl(supergraphSdl, [subgraph]);
+      expect(errors).toHaveLength(0);
+    });
   });
 });

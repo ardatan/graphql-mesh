@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`binary (@thrift__rpc) composes schema with @thrift__rpc 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"]) @join__directive(graphs: [CALCULATOR], name: "transport", args: {kind: "thrift", location: "http://localhost:<calculator_port>/thrift"}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc", "@transport"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @join__directive(graphs: [CALCULATOR], name: "transport", args: {kind: "thrift", location: "http://localhost:<calculator_port>/thrift"}) {
   query: Query
 }
 
@@ -38,8 +38,12 @@ enum join__Graph {
   CALCULATOR @join__graph(name: "calculator", url: "http://localhost:<calculator_port>/thrift")
 }
 
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
 """Represents NULL values"""
 scalar Void @join__type(graph: CALCULATOR)
+
+scalar TransportOptions @join__type(graph: CALCULATOR)
 
 type CalcError @join__type(graph: CALCULATOR) {
   message: String

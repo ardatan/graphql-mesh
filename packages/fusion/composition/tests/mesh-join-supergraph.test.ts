@@ -60,13 +60,15 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       }
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    expect(out).not.toMatch(/@transport\s*\(/);
-    expect(out).not.toMatch(/directive @transport/);
-    expect(out).not.toMatch(/scalar TransportOptions/);
+    // No native SCHEMA `@transport` apps — only the def (Apollo reconstitution) + join.
+    expect(out).not.toMatch(/(?<!directive )@transport\s*\(/);
+    expect(out).toMatch(/directive @transport/);
+    expect(out).toMatch(/scalar TransportOptions/);
     expect(out).toMatch(
       /@join__directive\(graphs: \[CHINOOK\], name: "transport", args: \{kind: "sql", location: "file:chinook.db", options: \{pool: 2\}\}\)/,
     );
-    expect(out).not.toMatch(/subgraph:/);
+    // Join transport args omit subgraph (graphs: owns it); def may still declare the arg.
+    expect(out).not.toMatch(/name: "transport", args: \{[^}]*subgraph:/);
     expect(out).toMatch(/specs\.apollo\.dev\/join\/v0\.5/);
     expect(out).toMatch(/directive @join__directive/);
   });
@@ -181,14 +183,14 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       }
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    expect(out).not.toMatch(/@transport\s*\(/);
-    expect(out).not.toMatch(/directive @transport/);
-    expect(out).not.toMatch(/TransportOptions/);
-    expect(out).not.toMatch(/kind:\s*"connect"/);
+    // Native `@transport` with def-required kind/subgraph — not join-carried
+    // (Apollo Connectors reject Mesh join transport reconstitution).
     expect(out).toMatch(
-      /@join__directive\(graphs: \[MICROSOFT_GRAPH\], name: "transport", args: \{options: \{odata: \{batch: "json"\}\}\}\)/,
+      /@transport\(kind: "connect", subgraph: "MicrosoftGraph", location: "http:\/\/127\.0\.0\.1:4000", options: \{odata: \{batch: "json"\}\}\)/,
     );
-    expect(out).not.toMatch(/name: "transport", args: \{[^}]*location:/);
+    expect(out).toMatch(/directive @transport/);
+    expect(out).toMatch(/TransportOptions/);
+    expect(out).not.toMatch(/name: "transport"/);
   });
 
   it('prunes orphan TransportOptions and unused @source def without rewrites', () => {
@@ -331,12 +333,13 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       ) repeatable on SCHEMA
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    // Lean SG: apps are join only — no native protocol def / companion enum.
+    // Lean SG: apps are join only — `@transport` def stays for Apollo reconstitution.
     expect(out).not.toMatch(/:\s*\w+ @thrift__rpc\s*\(/);
-    expect(out).not.toMatch(/@transport\s*\(/);
+    expect(out).not.toMatch(/(?<!directive )@transport\s*\(/);
     expect(out).not.toMatch(/directive @thrift__rpc\(/);
     expect(out).not.toMatch(/ThriftMessageType/);
-    expect(out).not.toMatch(/TransportOptions/);
+    expect(out).toMatch(/directive @transport/);
+    expect(out).toMatch(/TransportOptions/);
     expect(out).toMatch(
       /@join__directive\(graphs: \[CALCULATOR\], name: "transport", args: \{kind: "thrift", location: "http:\/\/localhost\/thrift"\}/,
     );

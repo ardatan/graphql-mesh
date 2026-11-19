@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @join__directive(graphs: [API], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [API], name: "source", args: {name: "API", http: {baseURL: "http://localhost:<api_port>", headers: [{name: "Content-Type", value: "application/json"}]}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@pubsubOperation", "@example"]) @join__directive(graphs: [API], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [API], name: "source", args: {name: "API", http: {baseURL: "http://localhost:<api_port>"}}) {
   query: Query
   mutation: Mutation
   subscription: Subscription
@@ -51,7 +51,7 @@ enum join__Graph {
 scalar ObjMap @join__type(graph: API)
 
 type Query @join__type(graph: API) {
-  todos: [query_todos_items] @join__directive(graphs: [API], name: "connect", args: {source: "API", http: {GET: "/todos"}, selection: "id name content"})
+  todos: [query_todos_items] @join__directive(graphs: [API], name: "connect", args: {source: "API", http: {GET: "/todos"}, selection: "id\\nname\\ncontent"})
 }
 
 type query_todos_items @join__type(graph: API) {
@@ -61,8 +61,8 @@ type query_todos_items @join__type(graph: API) {
 }
 
 type Mutation @join__type(graph: API) {
-  addTodo(input: mutationInput_addTodo_input_Input): Todo @join__directive(graphs: [API], name: "connect", args: {source: "API", http: {PUT: "/todo", body: "\$args.input"}, selection: "id name content"})
-  updateTodo(input: mutationInput_updateTodo_input_Input): mutation_updateTodo @join__directive(graphs: [API], name: "connect", args: {source: "API", http: {PATCH: "/todo", body: "\$args.input"}, selection: "id name content"})
+  addTodo(input: mutationInput_addTodo_input_Input): Todo @join__directive(graphs: [API], name: "connect", args: {source: "API", http: {PUT: "/todo", body: "$args.input"}, selection: "id\\nname\\ncontent"})
+  updateTodo(input: mutationInput_updateTodo_input_Input): mutation_updateTodo @join__directive(graphs: [API], name: "connect", args: {source: "API", http: {PATCH: "/todo", body: "$args.input"}, selection: "id\\nname\\ncontent"})
 }
 
 type Todo @example(subgraph: "API", value: "{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
@@ -101,5 +101,6 @@ input mutationInput_updateTodo_input_Input @example(subgraph: "API", value: "{\\
   content: String
 }
 
-scalar join__DirectiveArguments"
+scalar join__DirectiveArguments
+"
 `;

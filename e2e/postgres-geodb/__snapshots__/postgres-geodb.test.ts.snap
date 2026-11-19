@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"]) @join__directive(graphs: [GEO], name: "transport", args: {kind: "sql", location: "postgres://postgres:docker@localhost:<geodb_port>/postgres"}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql", "@transport"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @join__directive(graphs: [GEO], name: "transport", args: {kind: "sql", location: "postgres://postgres:docker@localhost:<geodb_port>/postgres"}) {
   query: Query
   mutation: Mutation
 }
@@ -38,6 +38,10 @@ enum link__Purpose {
 enum join__Graph {
   GEO @join__graph(name: "Geo", url: "postgres://postgres:docker@localhost:<geodb_port>/postgres")
 }
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+scalar TransportOptions @join__type(graph: GEO)
 
 type Query @join__type(graph: GEO) {
   city(id: ID!): City @join__directive(graphs: [GEO], name: "sql", args: {table: "city", kind: "ROW", where: "\\n  id: $args.id", selection: "  id: id\\n  name: name\\n  countrycode: countrycode\\n  district: district\\n  population: population"})
