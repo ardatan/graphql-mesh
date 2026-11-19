@@ -6,9 +6,9 @@ exports[`Basket should generate the correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @regexp(subgraph: String, pattern: String) on SCALAR
+directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 

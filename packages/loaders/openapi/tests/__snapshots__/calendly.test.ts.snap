@@ -6,13 +6,13 @@ exports[`Calendly should generate the correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @regexp(subgraph: String, pattern: String) on SCALAR
+directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
 
-directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 

@@ -1879,4 +1879,104 @@ describe('Federation Connectors composition', () => {
       /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com", headers: \[\{name: "X-Tenant", value: "products"\}\]\}\}/,
     );
   });
+
+  it('merges shared FHIR-like scalars with repeatable @regexp/@typescript across subgraphs', () => {
+    // Regression: Apollo Router rejected non-repeatable `@typescript` / `@regexp`
+    // when two Connectors subgraphs stamped the same scalar name (FHIR `string`).
+    const sharedScalarSdl = /* GraphQL */ `
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+      directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
+      directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
+      directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
+
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      scalar string
+        @regexp(subgraph: "SUBGRAPH", pattern: "[ \\\\r\\\\n\\\\t\\\\S]+")
+        @typescript(subgraph: "SUBGRAPH", type: "string")
+
+      enum Resource_const @typescript(subgraph: "SUBGRAPH", type: "\\"Resource\\"") {
+        Resource @enum(subgraph: "SUBGRAPH", value: "\\"Resource\\"")
+      }
+    `;
+
+    const patients = buildSchema(
+      /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "fhir", http: { baseURL: "https://hapi.fhir.org/baseR4" }) {
+        query: Query
+      }
+      ${sharedScalarSdl.replaceAll('SUBGRAPH', 'patients')}
+      type Query {
+        patient(id: string!): Patient
+          @connect(
+            source: "fhir"
+            http: { GET: "/Patient/{$args.id}" }
+            selection: "id"
+            entity: true
+          )
+      }
+      type Patient @key(fields: "id") {
+        id: string!
+        resourceType: Resource_const
+      }
+    `,
+      { assumeValidSDL: true, assumeValid: true },
+    );
+
+    const observations = buildSchema(
+      /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "fhir", http: { baseURL: "https://hapi.fhir.org/baseR4" }) {
+        query: Query
+      }
+      ${sharedScalarSdl.replaceAll('SUBGRAPH', 'observations')}
+      type Query {
+        observationById(id: string!): Observation
+          @connect(
+            source: "fhir"
+            http: { GET: "/Observation/{$args.id}" }
+            selection: "id"
+          )
+      }
+      type Observation {
+        id: string!
+        resourceType: Resource_const
+      }
+      type Patient @key(fields: "id", resolvable: false) {
+        id: string!
+      }
+    `,
+      { assumeValidSDL: true, assumeValid: true },
+    );
+
+    const result = composeSubgraphs([
+      { name: 'patients', schema: patients },
+      { name: 'observations', schema: observations },
+    ]);
+    expect(result.errors ?? []).toEqual([]);
+    const sdl = result.supergraphSdl!;
+    // Directive defs stay repeatable so Router can carry both subgraph apps.
+    expect(sdl).toMatch(/directive @regexp\([^)]*\) repeatable on SCALAR/);
+    expect(sdl).toMatch(/directive @typescript\([^)]*\) repeatable on SCALAR/);
+    expect(sdl).toMatch(/\bscalar string\b/);
+  });
 });

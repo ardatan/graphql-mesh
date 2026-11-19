@@ -6,9 +6,9 @@ exports[`Schemas BlockFrost 1`] = `
   mutation: Mutation
 }
 
-directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
@@ -4345,13 +4345,13 @@ exports[`Schemas CloudFlare 1`] = `
   mutation: Mutation
 }
 
-directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @regexp(subgraph: String, pattern: String) on SCALAR
+directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -480994,7 +480994,7 @@ exports[`Schemas DeepL 1`] = `
   mutation: Mutation
 }
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
@@ -481770,7 +481770,7 @@ exports[`Schemas Default Value as Integer 1`] = `
   query: Query
 }
 
-directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -482122,9 +482122,9 @@ exports[`Schemas GitHub 1`] = `
   mutation: Mutation
 }
 
-directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
@@ -494987,7 +494987,7 @@ exports[`Schemas InfiniteRecursion 1`] = `
   mutation: Mutation
 }
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
@@ -497069,7 +497069,7 @@ exports[`Schemas Int64 with Defaults 1`] = `
   query: Query
 }
 
-directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -497160,11 +497160,11 @@ exports[`Schemas Jira 1`] = `
   mutation: Mutation
 }
 
-directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -738549,9 +738549,9 @@ exports[`Schemas MeiliSearch 1`] = `
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
-directive @regexp(subgraph: String, pattern: String) on SCALAR
+directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -741231,9 +741231,9 @@ exports[`Schemas Slack 1`] = `
   mutation: Mutation
 }
 
-directive @regexp(subgraph: String, pattern: String) on SCALAR
+directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
@@ -752013,13 +752013,13 @@ exports[`Schemas Stripe 1`] = `
   mutation: Mutation
 }
 
-directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @regexp(subgraph: String, pattern: String) on SCALAR
+directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -908181,9 +908181,9 @@ exports[`Schemas TeachersTraining 1`] = `
   query: Query
 }
 
-directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
@@ -909876,9 +909876,9 @@ exports[`Schemas Toto 1`] = `
   mutation: Mutation
 }
 
-directive @regexp(subgraph: String, pattern: String) on SCALAR
+directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 

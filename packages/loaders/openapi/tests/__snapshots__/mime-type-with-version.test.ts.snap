@@ -8,7 +8,7 @@ exports[`MIME Type with Version generates the schema correctly 1`] = `
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 

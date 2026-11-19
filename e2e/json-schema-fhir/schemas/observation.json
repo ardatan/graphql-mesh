@@ -2,13 +2,17 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Observation",
   "type": "object",
-  "description": "Observation field set from examples/json-schema-fhir/fhir.schema.json (see patient.json for why not full #/definitions/*).",
+  "description": "Observation field set from examples/json-schema-fhir/fhir.schema.json (see patient.json). Shared FHIR-like `string` scalar with pattern across subgraphs.",
   "properties": {
     "id": {
-      "type": "string"
+      "title": "string",
+      "type": "string",
+      "pattern": "[ \\r\\n\\t\\S]+"
     },
     "status": {
-      "type": "string"
+      "title": "string",
+      "type": "string",
+      "pattern": "[ \\r\\n\\t\\S]+"
     },
     "subject": {
       "title": "Reference",
@@ -16,13 +20,19 @@
       "description": "FHIR Reference (reference/type/display). Full #/definitions/Reference pulls Extension.",
       "properties": {
         "reference": {
-          "type": "string"
+          "title": "string",
+          "type": "string",
+          "pattern": "[ \\r\\n\\t\\S]+"
         },
         "type": {
-          "type": "string"
+          "title": "string",
+          "type": "string",
+          "pattern": "[ \\r\\n\\t\\S]+"
         },
         "display": {
-          "type": "string"
+          "title": "string",
+          "type": "string",
+          "pattern": "[ \\r\\n\\t\\S]+"
         }
       }
     }

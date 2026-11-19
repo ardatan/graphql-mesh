@@ -10,6 +10,8 @@ import { ObjMapScalar } from '@graphql-mesh/transport-common';
 export const LengthDirective = new GraphQLDirective({
   name: 'length',
   locations: [DirectiveLocation.SCALAR],
+  // Per-subgraph apps must survive Fed merge when the same scalar name is shared.
+  isRepeatable: true,
   args: {
     subgraph: {
       type: GraphQLString,
@@ -26,6 +28,8 @@ export const LengthDirective = new GraphQLDirective({
 export const DiscriminatorDirective = new GraphQLDirective({
   name: 'discriminator',
   locations: [DirectiveLocation.INTERFACE, DirectiveLocation.UNION],
+  // Same interface/union name across subgraphs carries one app each.
+  isRepeatable: true,
   args: {
     subgraph: {
       type: GraphQLString,
@@ -69,6 +73,9 @@ export const ResolveRootFieldDirective = new GraphQLDirective({
 export const RegExpDirective = new GraphQLDirective({
   name: 'regexp',
   locations: [DirectiveLocation.SCALAR],
+  // FHIR-like shared scalars stamp `@regexp(subgraph:)` per subgraph; Fed/Router
+  // reject a second non-repeatable app on the merged scalar ("already exists").
+  isRepeatable: true,
   args: {
     subgraph: {
       type: GraphQLString,
@@ -95,6 +102,8 @@ export const PubSubOperationDirective = new GraphQLDirective({
 export const TypeScriptDirective = new GraphQLDirective({
   name: 'typescript',
   locations: [DirectiveLocation.SCALAR, DirectiveLocation.ENUM],
+  // Pair of `@regexp` — same scalar/const-enum name across subgraphs.
+  isRepeatable: true,
   args: {
     subgraph: {
       type: GraphQLString,
@@ -135,6 +144,8 @@ export const StatusCodeTypeNameDirective = new GraphQLDirective({
 export const EnumDirective = new GraphQLDirective({
   name: 'enum',
   locations: [DirectiveLocation.ENUM_VALUE],
+  // Const/enum values stamped per subgraph (e.g. Observation_const) merge by name.
+  isRepeatable: true,
   args: {
     subgraph: {
       type: GraphQLString,

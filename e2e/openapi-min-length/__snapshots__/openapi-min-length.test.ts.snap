@@ -38,7 +38,7 @@ enum join__Graph {
   WIKI @join__graph(name: "Wiki", url: "https://api.chucknorris.io")
 }
 
-directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
 scalar Category @length(subgraph: "Wiki", max: 100) @join__type(graph: WIKI)
 

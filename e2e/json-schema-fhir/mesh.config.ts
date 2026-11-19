@@ -4,6 +4,7 @@ import {
   GraphQLSchema,
   GraphQLString,
   isObjectType,
+  isScalarType,
   OperationTypeNode,
 } from 'graphql';
 import type { Logger } from '@graphql-hive/logger';
@@ -23,9 +24,9 @@ const hapiBase = 'https://hapi.fhir.org/baseR4';
  * Field sets follow `examples/json-schema-fhir/fhir.schema.json`. We cannot load
  * full `#/definitions/Patient` + `#/definitions/Observation` in two subgraphs:
  * both pull `contained` → `ResourceList` / `Extension` and emit incompatible
- * shared type names (and FHIR `string`/`code` scalars duplicate non-repeatable
- * `@regexp`/`@typescript` across subgraphs — Apollo Router rejects that).
- * `./schemas/*.json` keep the FHIR shapes without that explosion.
+ * shared type names. `./schemas/*.json` keep the FHIR shapes without that
+ * explosion, and intentionally share a pattern-constrained `string` scalar so
+ * `@regexp`/`@typescript` (repeatable) survive Fed merge on Apollo Router.
  *
  * - `patients` owns Patient + `patient(id:)` (`entity: true`)
  * - `observations` owns Observation; `Reference.resource` is a Patient stub
@@ -96,12 +97,19 @@ function addReferenceResourceField(schema: GraphQLSchema): GraphQLSchema {
     return schema;
   }
 
+  // Prefer the FHIR-like `string` scalar stamped by the JSON Schema loader so
+  // the Patient stub's `id` matches the patients subgraph (Fed field-type merge).
+  const idScalar = schema.getType('string');
+  const idType = new GraphQLNonNull(
+    isScalarType(idScalar) ? idScalar : GraphQLString,
+  );
+
   let patient = schema.getType('Patient');
   if (!isObjectType(patient)) {
     patient = new GraphQLObjectType({
       name: 'Patient',
       fields: {
-        id: { type: new GraphQLNonNull(GraphQLString) },
+        id: { type: idType },
       },
     });
     schema = new GraphQLSchema({

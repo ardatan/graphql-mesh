@@ -2,13 +2,17 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Patient",
   "type": "object",
-  "description": "Patient field set from examples/json-schema-fhir/fhir.schema.json. Full #/definitions/Patient cannot be loaded in a second subgraph alongside Observation \u2014 contained\u2192ResourceList/Extension produce incompatible shared type names. Plain JSON string avoids duplicate @regexp/@typescript on FHIR scalars across subgraphs (breaks Apollo Router).",
+  "description": "Patient field set from examples/json-schema-fhir/fhir.schema.json. Full #/definitions/Patient cannot be loaded in a second subgraph alongside Observation — contained→ResourceList/Extension produce incompatible shared type names. Shared title `string` + pattern stamps @regexp/@typescript (now repeatable) so Fed/Router merge of identical scalar names succeeds.",
   "properties": {
     "id": {
-      "type": "string"
+      "title": "string",
+      "type": "string",
+      "pattern": "[ \\r\\n\\t\\S]+"
     },
     "gender": {
-      "type": "string"
+      "title": "string",
+      "type": "string",
+      "pattern": "[ \\r\\n\\t\\S]+"
     },
     "name": {
       "type": "array",
@@ -17,12 +21,16 @@
         "type": "object",
         "properties": {
           "family": {
-            "type": "string"
+            "title": "string",
+            "type": "string",
+            "pattern": "[ \\r\\n\\t\\S]+"
           },
           "given": {
             "type": "array",
             "items": {
-              "type": "string"
+              "title": "string",
+              "type": "string",
+              "pattern": "[ \\r\\n\\t\\S]+"
             }
           }
         }
