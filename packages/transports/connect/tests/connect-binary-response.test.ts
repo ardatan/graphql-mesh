@@ -226,6 +226,46 @@ describe('Connectors non-JSON responses (Apollo parity)', () => {
     expect(result.data).toEqual({ parts: ['a', 'b', 'c'] });
   });
 
+  it('supports ->split(",", limit) with a quoted comma separator', async () => {
+    const schema = processDirectives(
+      buildSchema(/* GraphQL */ `
+        ${CONNECTOR_DIRECTIVES}
+        schema @source(name: "api", http: { baseURL: "http://localhost" }) {
+          query: Query
+        }
+        type Query {
+          parts: [String]
+            @connect(
+              source: "api"
+              http: { GET: "/csv" }
+              selection: """
+              $.csv->split(",", 2)
+              """
+            )
+        }
+      `),
+      {
+        globalFetch: async () =>
+          Response.json(
+            { csv: 'a,b,c,d' },
+            { status: 200, headers: { 'content-type': 'application/json' } },
+          ),
+      },
+    );
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          parts
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    // JS String.split(sep, limit): at most `limit` segments (`a` | `b,c,d`).
+    expect(result.data).toEqual({ parts: ['a', 'b,c,d'] });
+  });
+
   it('encodes FHIR Type/id path segments separately (literal / between)', async () => {
     let seenUrl = '';
     const schema = processDirectives(
