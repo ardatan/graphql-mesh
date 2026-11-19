@@ -249,10 +249,12 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   }
   // Drop Mesh `@link(url:)` with no imports (e.g. core left after `@transport` strip).
   finalized = pruneEmptyMeshLinks(finalized);
-  // Mesh `@typescript` / `@regexp` / `@example` are loader codegen metadata.
+  // Mesh `@typescript` / `@example` are loader codegen metadata.
   // Apollo Router connector carry-over rejects duplicate native `@typescript` on
   // shared SCALAR/ENUM ("already exists") once many FHIR/OpenAPI subgraphs merge
-  // the same pattern scalars — strip apps on the lean SG (subgraph SDLs keep them).
+  // the same pattern scalars — strip those apps on the lean SG (subgraph SDLs keep
+  // them). Keep `@regexp`: Connect `processScalarType` uses it at runtime for
+  // pattern validation / string coercion on composed custom scalars.
   finalized = stripMeshCodegenScalarEnumDirectives(finalized);
   // Drop now-orphan codegen defs / Mesh `@link` imports after the strip above.
   finalized = pruneUnusedMeshDirectiveArtifacts(finalized);
@@ -264,14 +266,14 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   return changed || printed !== supergraphSdl.trim() ? printed : supergraphSdl;
 }
 
-/** Loader codegen dirs — not needed on the lean composed SG for Hive/Router. */
-const MESH_CODEGEN_SCALAR_ENUM_DIRS = new Set(['typescript', 'regexp', 'example']);
+/** Codegen-only dirs stripped from the lean SG. `@regexp` is runtime — keep it. */
+const MESH_CODEGEN_SCALAR_ENUM_DIRS = new Set(['typescript', 'example']);
 
 /**
- * Strip Mesh codegen apps (`@typescript` / `@regexp` / `@example`) from
- * SCALAR/ENUM on the final supergraph. Subgraph SDLs keep them for local
- * tooling; Router rejects duplicate `@typescript` when shared pattern scalars
- * merge across Connectors subgraphs.
+ * Strip Mesh codegen apps (`@typescript` / `@example`) from SCALAR/ENUM on the
+ * final supergraph. Subgraph SDLs keep them for local tooling; Router rejects
+ * duplicate `@typescript` when shared pattern scalars merge across Connectors
+ * subgraphs. `@regexp` stays for Connect `processScalarType` validation.
  */
 function stripMeshCodegenScalarEnumDirectives(document: DocumentNode): DocumentNode {
   return visit(document, {

@@ -67,6 +67,12 @@ export interface ResolvedConnectSelectionLimit {
   passthroughVisits?: number;
   /** Max type visits per root build before forcing `$` passthrough. */
   passthroughVisitBudget: number;
+  /**
+   * Set when a nested expand hit `passthroughVisitBudget`. Distinguishes
+   * mid-type truncate (needs leavesOnly rebuild) from cycle-only omission
+   * (keep the original sibling expansion).
+   */
+  visitBudgetExhausted?: boolean;
 }
 
 const DEFAULT_CONNECT_SELECTION_MAX_LENGTH = 12_000;
@@ -893,6 +899,7 @@ export function buildSelectionForType(
   ) {
     limit.passthroughVisits = (limit.passthroughVisits ?? 0) + 1;
     if (limit.passthroughVisits > limit.passthroughVisitBudget) {
+      limit.visitBudgetExhausted = true;
       warnConnectSelectionPassthrough(limit, named.name);
       return '';
     }
@@ -1208,7 +1215,16 @@ export function buildSelectionForType(
   // Newlines + indent for readable SDL `"""` blocks (Connectors accepts spaces too).
   // Prefer-block AST attach (loaders) avoids `\n` escapes in `printSchemaWithDirectives`.
   const joined = lines.join('\n');
-  if (omittedObjectFields && !leavesOnly && limit.overLimit === 'passthrough' && depth === 0) {
+  // Only rebuild when the visit budget was exhausted. Cycle-only omission
+  // (`Root.recursive: Root`) must keep successful sibling nests (e.g.
+  // `profile.address.city`) — a softDepth-0 leavesOnly rebuild would drop them.
+  if (
+    limit.visitBudgetExhausted &&
+    omittedObjectFields &&
+    !leavesOnly &&
+    limit.overLimit === 'passthrough' &&
+    depth === 0
+  ) {
     // Mid-type truncate under passthrough (visit budget burned on deep nests).
     // Rebuild with soft-depth leavesOnly so sibling scalars/objects (FHIR `name`)
     // survive; `$` only when that also yields nothing.

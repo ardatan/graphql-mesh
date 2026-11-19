@@ -15,7 +15,7 @@ describe('FHIR', () => {
     mesh = await getMesh(config);
   });
   afterAll(() => {
-    mesh?.destroy();
+    return mesh?.destroy();
   });
 
   it('should generate correct schema', async () => {

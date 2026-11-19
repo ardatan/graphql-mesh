@@ -4161,6 +4161,9 @@ type Query {
   context {
     type
     href
+    external_urls {
+      spotify
+    }
     uri
   }
   timestamp

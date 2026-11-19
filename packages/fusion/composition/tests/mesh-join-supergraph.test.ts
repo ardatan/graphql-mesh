@@ -383,4 +383,37 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/name: "thrift__rpc", args: \{[^}]*subgraph:/);
     expect(out).toMatch(/thrift\/v0\.1", import: \["@thrift__rpc"\]/);
   });
+
+  it('keeps @regexp on scalars through finalize; strips @typescript / @example', () => {
+    const sdl = /* GraphQL */ `
+      extend schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(
+          url: "https://specs.apollo.dev/join/v0.3"
+          import: ["@join__graph", "@join__type", "@join__field"]
+        )
+        @link(
+          url: "https://specs.graphql-mesh.com/core/v0.1"
+          import: ["@typescript", "@regexp", "@example"]
+        )
+
+      directive @typescript(type: String!) on SCALAR
+      directive @regexp(pattern: String!) on SCALAR
+      directive @example(value: String) on SCALAR
+
+      enum join__Graph {
+        REST @join__graph(name: "REST", url: "https://api.example.com")
+      }
+
+      scalar Code
+        @join__type(graph: REST)
+        @typescript(type: "string")
+        @regexp(pattern: "^[A-Z]{2}$")
+        @example(value: "AB")
+    `;
+    const out = finalizeMeshJoinDirectives(sdl);
+    expect(out).toMatch(/scalar Code[\s\S]*@regexp\(pattern: "\^\[A-Z\]\{2\}\$"\)/);
+    expect(out).not.toMatch(/@typescript\(/);
+    expect(out).not.toMatch(/@example\(/);
+  });
 });

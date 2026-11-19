@@ -3,16 +3,6 @@ import type { InContextSdkMethod } from '@graphql-mesh/types';
 export namespace WikiTypes {
   export type Maybe<T> = T | null;
   export type InputMaybe<T> = Maybe<T>;
-  export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-  export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-    [SubKey in K]?: Maybe<T[SubKey]>;
-  };
-  export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-  export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = {
-    [_ in K]?: never;
-  };
-  export type Incremental<T> =
-    T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
   /** All built-in and custom scalars, mapped to their actual values */
   export type Scalars = {
     ID: { input: string; output: string };
@@ -26,15 +16,11 @@ export namespace WikiTypes {
     JSON: { input: any; output: any };
     /** A string that cannot be passed as an empty value */
     NonEmptyString: { input: string; output: string };
-    ObjMap: { input: any; output: any };
-    _DirectiveExtensions: { input: any; output: any };
-    _Any: { input: any; output: any };
+    _Any: { input: unknown; output: unknown };
   };
 
-  export type HTTPMethod =
-    'CONNECT' | 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'TRACE';
-
   export type Mutation = {
+    __typename: 'Mutation';
     /**
      * Checks the supplied TeX formula for correctness and returns the
      * normalised formula representation as well as information about
@@ -64,21 +50,25 @@ export namespace WikiTypes {
   };
 
   export type Mutationpost_media_math_check_by_typeArgs = {
+    q: Scalars['JSON']['input'];
     type: mutationInput_post_media_math_check_by_type_type;
   };
 
   export type Mutationpost_transform_html_from_by_from_lang_to_by_to_langArgs = {
     from_lang: Scalars['String']['input'];
+    html: Scalars['JSON']['input'];
     to_lang: Scalars['String']['input'];
   };
 
   export type Mutationpost_transform_html_from_by_from_lang_to_by_to_lang_by_providerArgs = {
     from_lang: Scalars['String']['input'];
+    html: Scalars['JSON']['input'];
     provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider;
     to_lang: Scalars['String']['input'];
   };
 
   export type Query = {
+    __typename: 'Query';
     /**
      * Gets availability of featured feed content for the apps by wiki domain.
      *
@@ -661,6 +651,7 @@ export namespace WikiTypes {
   };
 
   export type absolute_bytes_difference = {
+    __typename: 'absolute_bytes_difference';
     items?: Maybe<
       Array<
         Maybe<query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items>
@@ -669,6 +660,7 @@ export namespace WikiTypes {
   };
 
   export type absolute_bytes_difference_per_page = {
+    __typename: 'absolute_bytes_difference_per_page';
     items?: Maybe<
       Array<
         Maybe<query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items>
@@ -677,6 +669,7 @@ export namespace WikiTypes {
   };
 
   export type availability = {
+    __typename: 'availability';
     /** domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project */
     in_the_news: Array<Maybe<Scalars['String']['output']>>;
     /** domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project */
@@ -690,6 +683,7 @@ export namespace WikiTypes {
   };
 
   export type by_country = {
+    __typename: 'by_country';
     items?: Maybe<
       Array<
         Maybe<query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_items_items>
@@ -698,6 +692,7 @@ export namespace WikiTypes {
   };
 
   export type cx_dict = {
+    __typename: 'cx_dict';
     /** the original word to look up */
     source?: Maybe<Scalars['String']['output']>;
     /** the translations found */
@@ -707,6 +702,7 @@ export namespace WikiTypes {
   };
 
   export type cx_languagepairs = {
+    __typename: 'cx_languagepairs';
     /** the list of available source languages */
     source?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
     /** the list of available destination languages */
@@ -714,16 +710,19 @@ export namespace WikiTypes {
   };
 
   export type cx_list_tools = {
+    __typename: 'cx_list_tools';
     /** the list of tools available for the given language pair */
     tools?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   };
 
   export type cx_mt = {
+    __typename: 'cx_mt';
     /** the translated content */
     contents?: Maybe<Scalars['String']['output']>;
   };
 
   export type edited_pages = {
+    __typename: 'edited_pages';
     items?: Maybe<
       Array<
         Maybe<query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items>
@@ -732,6 +731,7 @@ export namespace WikiTypes {
   };
 
   export type editors = {
+    __typename: 'editors';
     items?: Maybe<
       Array<
         Maybe<query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items>
@@ -740,6 +740,7 @@ export namespace WikiTypes {
   };
 
   export type edits = {
+    __typename: 'edits';
     items?: Maybe<
       Array<
         Maybe<query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items>
@@ -748,6 +749,7 @@ export namespace WikiTypes {
   };
 
   export type edits_per_page = {
+    __typename: 'edits_per_page';
     items?: Maybe<
       Array<
         Maybe<query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items>
@@ -763,6 +765,7 @@ export namespace WikiTypes {
     'Apertium' | 'Yandex' | 'Youdao';
 
   export type net_bytes_difference = {
+    __typename: 'net_bytes_difference';
     items?: Maybe<
       Array<
         Maybe<query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items>
@@ -771,6 +774,7 @@ export namespace WikiTypes {
   };
 
   export type net_bytes_difference_per_page = {
+    __typename: 'net_bytes_difference_per_page';
     items?: Maybe<
       Array<
         Maybe<query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items>
@@ -779,6 +783,7 @@ export namespace WikiTypes {
   };
 
   export type new_pages = {
+    __typename: 'new_pages';
     items?: Maybe<
       Array<
         Maybe<query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items>
@@ -787,6 +792,7 @@ export namespace WikiTypes {
   };
 
   export type new_registered_users = {
+    __typename: 'new_registered_users';
     items?: Maybe<
       Array<
         Maybe<query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_items_items>
@@ -795,6 +801,7 @@ export namespace WikiTypes {
   };
 
   export type pagecounts_project = {
+    __typename: 'pagecounts_project';
     items?: Maybe<
       Array<
         Maybe<query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_items_items>
@@ -803,6 +810,7 @@ export namespace WikiTypes {
   };
 
   export type pageview_article = {
+    __typename: 'pageview_article';
     items?: Maybe<
       Array<
         Maybe<query_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_items_items>
@@ -811,6 +819,7 @@ export namespace WikiTypes {
   };
 
   export type pageview_project = {
+    __typename: 'pageview_project';
     items?: Maybe<
       Array<
         Maybe<query_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_items_items>
@@ -819,6 +828,7 @@ export namespace WikiTypes {
   };
 
   export type pageview_tops = {
+    __typename: 'pageview_tops';
     items?: Maybe<
       Array<
         Maybe<query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_items_items>
@@ -1243,6 +1253,7 @@ export namespace WikiTypes {
 
   export type query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_type?: Maybe<Scalars['String']['output']>;
@@ -1256,12 +1267,14 @@ export namespace WikiTypes {
 
   export type query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items =
     {
+      __typename: 'query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items';
       abs_bytes_diff?: Maybe<Scalars['BigInt']['output']>;
       timestamp?: Maybe<Scalars['String']['output']>;
     };
 
   export type query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_title?: Maybe<Scalars['String']['output']>;
@@ -1275,12 +1288,14 @@ export namespace WikiTypes {
 
   export type query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items_results_items =
     {
+      __typename: 'query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items_results_items';
       abs_bytes_diff?: Maybe<Scalars['BigInt']['output']>;
       timestamp?: Maybe<Scalars['String']['output']>;
     };
 
   export type query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_type?: Maybe<Scalars['String']['output']>;
@@ -1294,12 +1309,14 @@ export namespace WikiTypes {
 
   export type query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items =
     {
+      __typename: 'query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items';
       net_bytes_diff?: Maybe<Scalars['BigInt']['output']>;
       timestamp?: Maybe<Scalars['String']['output']>;
     };
 
   export type query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_title?: Maybe<Scalars['String']['output']>;
@@ -1313,12 +1330,14 @@ export namespace WikiTypes {
 
   export type query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items_results_items =
     {
+      __typename: 'query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items_results_items';
       net_bytes_diff?: Maybe<Scalars['BigInt']['output']>;
       timestamp?: Maybe<Scalars['String']['output']>;
     };
 
   export type query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items';
       activity_level?: Maybe<Scalars['String']['output']>;
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
@@ -1333,12 +1352,14 @@ export namespace WikiTypes {
 
   export type query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items_results_items =
     {
+      __typename: 'query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items_results_items';
       edited_pages?: Maybe<Scalars['Int']['output']>;
       timestamp?: Maybe<Scalars['String']['output']>;
     };
 
   export type query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_type?: Maybe<Scalars['String']['output']>;
@@ -1352,12 +1373,14 @@ export namespace WikiTypes {
 
   export type query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items =
     {
+      __typename: 'query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items';
       new_pages?: Maybe<Scalars['Int']['output']>;
       timestamp?: Maybe<Scalars['String']['output']>;
     };
 
   export type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items =
     {
+      __typename: 'query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_type?: Maybe<Scalars['String']['output']>;
@@ -1371,6 +1394,7 @@ export namespace WikiTypes {
 
   export type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items =
     {
+      __typename: 'query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items';
       timestamp?: Maybe<Scalars['String']['output']>;
       top?: Maybe<
         Array<
@@ -1381,6 +1405,7 @@ export namespace WikiTypes {
 
   export type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items =
     {
+      __typename: 'query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items';
       abs_bytes_diff?: Maybe<Scalars['BigInt']['output']>;
       page_title?: Maybe<Scalars['String']['output']>;
       rank?: Maybe<Scalars['Int']['output']>;
@@ -1388,6 +1413,7 @@ export namespace WikiTypes {
 
   export type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items =
     {
+      __typename: 'query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_type?: Maybe<Scalars['String']['output']>;
@@ -1401,6 +1427,7 @@ export namespace WikiTypes {
 
   export type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items =
     {
+      __typename: 'query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items';
       timestamp?: Maybe<Scalars['String']['output']>;
       top?: Maybe<
         Array<
@@ -1411,6 +1438,7 @@ export namespace WikiTypes {
 
   export type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items =
     {
+      __typename: 'query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items';
       edits?: Maybe<Scalars['BigInt']['output']>;
       page_title?: Maybe<Scalars['String']['output']>;
       rank?: Maybe<Scalars['Int']['output']>;
@@ -1418,6 +1446,7 @@ export namespace WikiTypes {
 
   export type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items =
     {
+      __typename: 'query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_type?: Maybe<Scalars['String']['output']>;
@@ -1431,6 +1460,7 @@ export namespace WikiTypes {
 
   export type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items =
     {
+      __typename: 'query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items';
       timestamp?: Maybe<Scalars['String']['output']>;
       top?: Maybe<
         Array<
@@ -1441,6 +1471,7 @@ export namespace WikiTypes {
 
   export type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items =
     {
+      __typename: 'query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items';
       net_bytes_diff?: Maybe<Scalars['BigInt']['output']>;
       page_title?: Maybe<Scalars['String']['output']>;
       rank?: Maybe<Scalars['Int']['output']>;
@@ -1448,6 +1479,7 @@ export namespace WikiTypes {
 
   export type query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items';
       activity_level?: Maybe<Scalars['String']['output']>;
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
@@ -1462,12 +1494,14 @@ export namespace WikiTypes {
 
   export type query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items_results_items =
     {
+      __typename: 'query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items_results_items';
       editors?: Maybe<Scalars['Int']['output']>;
       timestamp?: Maybe<Scalars['String']['output']>;
     };
 
   export type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items =
     {
+      __typename: 'query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_type?: Maybe<Scalars['String']['output']>;
@@ -1481,6 +1515,7 @@ export namespace WikiTypes {
 
   export type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items =
     {
+      __typename: 'query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items';
       timestamp?: Maybe<Scalars['String']['output']>;
       top?: Maybe<
         Array<
@@ -1491,6 +1526,7 @@ export namespace WikiTypes {
 
   export type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items =
     {
+      __typename: 'query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items';
       abs_bytes_diff?: Maybe<Scalars['BigInt']['output']>;
       rank?: Maybe<Scalars['Int']['output']>;
       user_text?: Maybe<Scalars['String']['output']>;
@@ -1498,6 +1534,7 @@ export namespace WikiTypes {
 
   export type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items =
     {
+      __typename: 'query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_type?: Maybe<Scalars['String']['output']>;
@@ -1511,6 +1548,7 @@ export namespace WikiTypes {
 
   export type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items =
     {
+      __typename: 'query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items';
       timestamp?: Maybe<Scalars['String']['output']>;
       top?: Maybe<
         Array<
@@ -1521,6 +1559,7 @@ export namespace WikiTypes {
 
   export type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items =
     {
+      __typename: 'query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items';
       edits?: Maybe<Scalars['BigInt']['output']>;
       rank?: Maybe<Scalars['Int']['output']>;
       user_text?: Maybe<Scalars['String']['output']>;
@@ -1528,6 +1567,7 @@ export namespace WikiTypes {
 
   export type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items =
     {
+      __typename: 'query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_type?: Maybe<Scalars['String']['output']>;
@@ -1541,6 +1581,7 @@ export namespace WikiTypes {
 
   export type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items =
     {
+      __typename: 'query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items';
       timestamp?: Maybe<Scalars['String']['output']>;
       top?: Maybe<
         Array<
@@ -1551,6 +1592,7 @@ export namespace WikiTypes {
 
   export type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items =
     {
+      __typename: 'query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items_top_items';
       net_bytes_diff?: Maybe<Scalars['BigInt']['output']>;
       rank?: Maybe<Scalars['Int']['output']>;
       user_text?: Maybe<Scalars['String']['output']>;
@@ -1558,6 +1600,7 @@ export namespace WikiTypes {
 
   export type query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_type?: Maybe<Scalars['String']['output']>;
@@ -1571,12 +1614,14 @@ export namespace WikiTypes {
 
   export type query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items =
     {
+      __typename: 'query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items';
       edits?: Maybe<Scalars['BigInt']['output']>;
       timestamp?: Maybe<Scalars['String']['output']>;
     };
 
   export type query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items';
       editor_type?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
       page_title?: Maybe<Scalars['String']['output']>;
@@ -1590,12 +1635,14 @@ export namespace WikiTypes {
 
   export type query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items_results_items =
     {
+      __typename: 'query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items_results_items';
       edits?: Maybe<Scalars['BigInt']['output']>;
       timestamp?: Maybe<Scalars['String']['output']>;
     };
 
   export type query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_items_items';
       access_site?: Maybe<Scalars['String']['output']>;
       count?: Maybe<Scalars['BigInt']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
@@ -1605,6 +1652,7 @@ export namespace WikiTypes {
 
   export type query_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_items_items';
       access?: Maybe<Scalars['String']['output']>;
       agent?: Maybe<Scalars['String']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
@@ -1615,6 +1663,7 @@ export namespace WikiTypes {
 
   export type query_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_items_items';
       access?: Maybe<Scalars['String']['output']>;
       agent?: Maybe<Scalars['String']['output']>;
       article?: Maybe<Scalars['String']['output']>;
@@ -1626,6 +1675,7 @@ export namespace WikiTypes {
 
   export type query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_items_items =
     {
+      __typename: 'query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_items_items';
       access?: Maybe<Scalars['String']['output']>;
       countries?: Maybe<
         Array<
@@ -1639,6 +1689,7 @@ export namespace WikiTypes {
 
   export type query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_items_items_countries_items =
     {
+      __typename: 'query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_items_items_countries_items';
       country?: Maybe<Scalars['String']['output']>;
       rank?: Maybe<Scalars['Int']['output']>;
       views?: Maybe<Scalars['BigInt']['output']>;
@@ -1646,6 +1697,7 @@ export namespace WikiTypes {
 
   export type query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_items_items =
     {
+      __typename: 'query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_items_items';
       access?: Maybe<Scalars['String']['output']>;
       articles?: Maybe<
         Array<
@@ -1660,6 +1712,7 @@ export namespace WikiTypes {
 
   export type query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_items_items_articles_items =
     {
+      __typename: 'query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_items_items_articles_items';
       article?: Maybe<Scalars['String']['output']>;
       rank?: Maybe<Scalars['Int']['output']>;
       views?: Maybe<Scalars['BigInt']['output']>;
@@ -1667,6 +1720,7 @@ export namespace WikiTypes {
 
   export type query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_items_items';
       granularity?: Maybe<Scalars['String']['output']>;
       project?: Maybe<Scalars['String']['output']>;
       results?: Maybe<
@@ -1678,12 +1732,14 @@ export namespace WikiTypes {
 
   export type query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_items_items_results_items =
     {
+      __typename: 'query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_items_items_results_items';
       new_registered_users?: Maybe<Scalars['Int']['output']>;
       timestamp?: Maybe<Scalars['String']['output']>;
     };
 
   export type query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_items_items =
     {
+      __typename: 'query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_items_items';
       access_site?: Maybe<Scalars['String']['output']>;
       devices?: Maybe<Scalars['BigInt']['output']>;
       granularity?: Maybe<Scalars['String']['output']>;
@@ -1692,6 +1748,7 @@ export namespace WikiTypes {
     };
 
   export type query_transform_word_from_by_from_lang_to_by_to_lang_by_word_translations_items = {
+    __typename: 'query_transform_word_from_by_from_lang_to_by_to_lang_by_word_translations_items';
     /** extra information about the phrase */
     info?: Maybe<Scalars['String']['output']>;
     /** the translated phrase */
@@ -1701,6 +1758,7 @@ export namespace WikiTypes {
   };
 
   export type top_edited_pages_by_abs_bytes_diff = {
+    __typename: 'top_edited_pages_by_abs_bytes_diff';
     items?: Maybe<
       Array<
         Maybe<query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items>
@@ -1709,6 +1767,7 @@ export namespace WikiTypes {
   };
 
   export type top_edited_pages_by_edits = {
+    __typename: 'top_edited_pages_by_edits';
     items?: Maybe<
       Array<
         Maybe<query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items>
@@ -1717,6 +1776,7 @@ export namespace WikiTypes {
   };
 
   export type top_edited_pages_by_net_bytes_diff = {
+    __typename: 'top_edited_pages_by_net_bytes_diff';
     items?: Maybe<
       Array<
         Maybe<query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items>
@@ -1725,6 +1785,7 @@ export namespace WikiTypes {
   };
 
   export type top_editors_by_abs_bytes_diff = {
+    __typename: 'top_editors_by_abs_bytes_diff';
     items?: Maybe<
       Array<
         Maybe<query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items>
@@ -1733,6 +1794,7 @@ export namespace WikiTypes {
   };
 
   export type top_editors_by_edits = {
+    __typename: 'top_editors_by_edits';
     items?: Maybe<
       Array<
         Maybe<query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items>
@@ -1741,6 +1803,7 @@ export namespace WikiTypes {
   };
 
   export type top_editors_by_net_bytes_diff = {
+    __typename: 'top_editors_by_net_bytes_diff';
     items?: Maybe<
       Array<
         Maybe<query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items>
@@ -1749,6 +1812,7 @@ export namespace WikiTypes {
   };
 
   export type unique_devices = {
+    __typename: 'unique_devices';
     items?: Maybe<
       Array<
         Maybe<query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_items_items>
@@ -1762,11 +1826,13 @@ export namespace WikiTypes {
     /** Gets availability of featured feed content for the apps by wiki domain.
 
 Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental) **/
+
     feed_availability: InContextSdkMethod<Query['feed_availability'], {}, {}>;
     /** Returns the previously-stored formula via `/media/math/check/{type}` for
 the given hash.
 
 Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable). **/
+
     media_math_formula_by_hash: InContextSdkMethod<
       Query['media_math_formula_by_hash'],
       Querymedia_math_formula_by_hashArgs,
@@ -1779,6 +1845,7 @@ representation in the given format. When a request is issued to the
 obtained, this endpoint has to be used to obtain the actual render.
 
 Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable). **/
+
     media_math_render_by_format_by_hash: InContextSdkMethod<
       Query['media_math_render_by_format_by_hash'],
       Querymedia_math_render_by_format_by_hashArgs,
@@ -1793,6 +1860,7 @@ between daily and monthly granularity as well.
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end'],
       Querymetrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_endArgs,
@@ -1807,6 +1875,7 @@ group-bot, name-bot, user). You can choose between daily and monthly granularity
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end'],
       Querymetrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_endArgs,
@@ -1821,6 +1890,7 @@ daily and monthly granularity as well.
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end'],
       Querymetrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_endArgs,
@@ -1835,6 +1905,7 @@ group-bot, name-bot, user). You can choose between daily and monthly granularity
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end'],
       Querymetrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_endArgs,
@@ -1850,6 +1921,7 @@ granularity as well.
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end'],
       Querymetrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_endArgs,
@@ -1864,6 +1936,7 @@ monthly granularity as well.
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end'],
       Querymetrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_endArgs,
@@ -1877,6 +1950,7 @@ anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or n
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day: InContextSdkMethod<
       Query['metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day'],
       Querymetrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_dayArgs,
@@ -1891,6 +1965,7 @@ non-content).
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day: InContextSdkMethod<
       Query['metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day'],
       Querymetrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_dayArgs,
@@ -1904,6 +1979,7 @@ anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or n
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day: InContextSdkMethod<
       Query['metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day'],
       Querymetrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_dayArgs,
@@ -1919,6 +1995,7 @@ granularity as well.
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end'],
       Querymetrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_endArgs,
@@ -1934,6 +2011,7 @@ null if user is anonymous.
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day: InContextSdkMethod<
       Query['metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day'],
       Querymetrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_dayArgs,
@@ -1949,6 +2027,7 @@ registered, or null if user is anonymous.
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day: InContextSdkMethod<
       Query['metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day'],
       Querymetrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_dayArgs,
@@ -1964,6 +2043,7 @@ user_text returned is either the mediawiki user_text if the user is registered, 
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day: InContextSdkMethod<
       Query['metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day'],
       Querymetrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_dayArgs,
@@ -1978,6 +2058,7 @@ monthly granularity as well.
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end'],
       Querymetrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_endArgs,
@@ -1992,6 +2073,7 @@ You can choose between daily and monthly granularity as well.
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end'],
       Querymetrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_endArgs,
@@ -2005,6 +2087,7 @@ daily and hourly granularity as well.
 - Rate limit: 100 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end'],
       Querymetrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_endArgs,
@@ -2018,6 +2101,7 @@ as well.
 - Rate limit: 100 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end'],
       Querymetrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_endArgs,
@@ -2030,6 +2114,7 @@ counts. You can also filter by access method and/or agent type.
 - Rate limit: 100 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end'],
       Querymetrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_endArgs,
@@ -2042,6 +2127,7 @@ Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experime
 - Rate limit: 100 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month: InContextSdkMethod<
       Query['metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month'],
       Querymetrics_pageviews_top_by_country_by_project_by_access_by_year_by_monthArgs,
@@ -2054,6 +2140,7 @@ You can filter by access method.
 - Rate limit: 100 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day: InContextSdkMethod<
       Query['metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day'],
       Querymetrics_pageviews_top_by_project_by_access_by_year_by_month_by_dayArgs,
@@ -2067,6 +2154,7 @@ users value is computed with self-created users only, not auto-login created one
 - Rate limit: 25 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_registered_users_new_by_project_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_registered_users_new_by_project_by_granularity_by_start_by_end'],
       Querymetrics_registered_users_new_by_project_by_granularity_by_start_by_endArgs,
@@ -2080,6 +2168,7 @@ You can choose between daily and hourly granularity as well.
 - Rate limit: 100 req/s
 - License: Data accessible via this endpoint is available under the
   [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/). **/
+
     metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end: InContextSdkMethod<
       Query['metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end'],
       Querymetrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_endArgs,
@@ -2088,10 +2177,12 @@ You can choose between daily and hourly granularity as well.
     /** Fetches the list of language pairs the back-end service can translate
 
 Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **/
+
     transform_list_languagepairs: InContextSdkMethod<Query['transform_list_languagepairs'], {}, {}>;
     /** Fetches the list of tools that are available for the given pair of languages.
 
 Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **/
+
     transform_list_pair_by_from_by_to: InContextSdkMethod<
       Query['transform_list_pair_by_from_by_to'],
       Querytransform_list_pair_by_from_by_toArgs,
@@ -2100,6 +2191,7 @@ Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **
     /** Fetches the list of tools and all of the language pairs it can translate
 
 Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **/
+
     transform_list_tool_by_tool: InContextSdkMethod<
       Query['transform_list_tool_by_tool'],
       Querytransform_list_tool_by_toolArgs,
@@ -2108,6 +2200,7 @@ Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **
     /** Fetches the list of tools and all of the language pairs it can translate
 
 Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **/
+
     transform_list_tool_by_tool_by_from: InContextSdkMethod<
       Query['transform_list_tool_by_tool_by_from'],
       Querytransform_list_tool_by_tool_by_fromArgs,
@@ -2116,6 +2209,7 @@ Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **
     /** Fetches the list of tools and all of the language pairs it can translate
 
 Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **/
+
     transform_list_tool_by_tool_by_from_by_to: InContextSdkMethod<
       Query['transform_list_tool_by_tool_by_from_by_to'],
       Querytransform_list_tool_by_tool_by_from_by_toArgs,
@@ -2125,6 +2219,7 @@ Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **
 it in the target language.
 
 Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **/
+
     transform_word_from_by_from_lang_to_by_to_lang_by_word: InContextSdkMethod<
       Query['transform_word_from_by_from_lang_to_by_to_lang_by_word'],
       Querytransform_word_from_by_from_lang_to_by_to_lang_by_wordArgs,
@@ -2134,6 +2229,7 @@ Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **
 it in the target language.
 
 Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **/
+
     transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider: InContextSdkMethod<
       Query['transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider'],
       Querytransform_word_from_by_from_lang_to_by_to_lang_by_word_by_providerArgs,
@@ -2151,6 +2247,7 @@ formats. Just append the value of the header to `/media/math/{format}/`
 and perform a GET request against that URL.
 
 Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable). **/
+
     post_media_math_check_by_type: InContextSdkMethod<
       Mutation['post_media_math_check_by_type'],
       Mutationpost_media_math_check_by_typeArgs,
@@ -2160,6 +2257,7 @@ Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable). **/
 to the destination language.
 
 Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **/
+
     post_transform_html_from_by_from_lang_to_by_to_lang: InContextSdkMethod<
       Mutation['post_transform_html_from_by_from_lang_to_by_to_lang'],
       Mutationpost_transform_html_from_by_from_lang_to_by_to_langArgs,
@@ -2169,6 +2267,7 @@ Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **
 to the destination language.
 
 Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable) **/
+
     post_transform_html_from_by_from_lang_to_by_to_lang_by_provider: InContextSdkMethod<
       Mutation['post_transform_html_from_by_from_lang_to_by_to_lang_by_provider'],
       Mutationpost_transform_html_from_by_from_lang_to_by_to_lang_by_providerArgs,

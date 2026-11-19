@@ -1,8 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { buildSchema, execute, parse, type GraphQLSchema } from 'graphql';
+import { buildSchema, execute, GraphQLScalarType, parse, type GraphQLSchema } from 'graphql';
 import { Response } from '@whatwg-node/fetch';
 import { processConnectDirectives } from '../src/directives/connect.js';
+import { processScalarType } from '../src/directives/scalars.js';
 
 /**
  * Directive SDL required by graphql-js `buildSchema` for Federation Connectors examples
@@ -564,6 +565,66 @@ describe('Federation Connectors HTTP / templates', () => {
     });
     expect(result.errors).toBeUndefined();
     expect(urls).toEqual(['http://localhost:3000/pet/1%3Fadmin%3Dtrue']);
+  });
+
+  it('does not double-encode already percent-encoded path segments (Wiki titles)', async () => {
+    // Wikimedia OpenAPI documents pre-encoded article titles (`Are_You_the_One%3F`).
+    // Naive encodeURIComponent would yield `%253F`; normalize to a single encode pass.
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "Wiki", http: { baseURL: "http://localhost:3000" }) {
+        query: Query
+      }
+
+      type Query {
+        article(title: String!): String
+          @connect(source: "Wiki", http: { GET: "/page/{$args.title}" }, selection: "$")
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return new Response('ok', { headers: { 'content-type': 'text/plain' } });
+      }) as any,
+    });
+    const preEncoded = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          article(title: "Are_You_the_One%3F")
+        }
+      `),
+    });
+    expect(preEncoded.errors).toBeUndefined();
+    expect(urls[0]).toBe('http://localhost:3000/page/Are_You_the_One%3F');
+
+    urls.length = 0;
+    const raw = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          article(title: "Are_You_the_One?")
+        }
+      `),
+    });
+    expect(raw.errors).toBeUndefined();
+    expect(urls[0]).toBe('http://localhost:3000/page/Are_You_the_One%3F');
+  });
+
+  it('processScalarType enforces @regexp (kept through compose finalize)', () => {
+    // Compose finalize strips @typescript/@example but keeps @regexp for runtime.
+    const schema = buildSchema(/* GraphQL */ `
+      directive @regexp(pattern: String!) on SCALAR
+      scalar Code @regexp(pattern: "^[A-Z]{2}$")
+      type Query {
+        code: Code
+      }
+    `);
+    const Code = schema.getType('Code') as GraphQLScalarType;
+    processScalarType(Code);
+    expect(Code.serialize('AB')).toBe('AB');
+    expect(() => Code.serialize('abc')).toThrow(/must match/);
   });
 
   it('interpolates $context.headers bracket accessors with defaults in baseURL', async () => {

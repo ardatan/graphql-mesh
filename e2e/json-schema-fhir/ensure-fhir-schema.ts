@@ -9,16 +9,32 @@ const execFileAsync = promisify(execFile);
 /** Official HL7 FHIR R4 schema path inside this e2e package (downloaded, not examples/). */
 export const fhirSchemaPath = join(__dirname, 'fhir.schema.json');
 
+/** Permanent R4 download (unversioned `/fhir/fhir.schema.json.zip` tracks current / R5). */
+const FHIR_R4_SCHEMA_ZIP = 'https://hl7.org/fhir/R4/fhir.schema.json.zip';
+
 /**
- * Stale downloads (older HL7 zips) had `Patient.id` → `#/definitions/string`.
- * Current R4 schema refs `#/definitions/id`, which `scalarMap.id → GraphQLID` needs.
+ * Stale / wrong-release downloads:
+ * - older HL7 zips had `Patient.id` → `#/definitions/string`
+ * - unversioned zip is R5-shaped (`Observation.status` → `#/definitions/code`)
+ * Current R4 schema: `Patient.id` → `#/definitions/id`, and `Observation.status`
+ * is an inline enum (tests the R4 enum path; `scalarMap.id → GraphQLID` needs id).
  */
-function schemaHasIdDefinitionRef(path: string): boolean {
+function schemaLooksLikeFhirR4(path: string): boolean {
   try {
     const doc = JSON.parse(readFileSync(path, 'utf8')) as {
-      definitions?: { Patient?: { properties?: { id?: { $ref?: string } } } };
+      definitions?: {
+        Patient?: { properties?: { id?: { $ref?: string } } };
+        Observation?: { properties?: { status?: { enum?: unknown; $ref?: string } } };
+      };
     };
-    return doc.definitions?.Patient?.properties?.id?.$ref === '#/definitions/id';
+    const patientIdRef = doc.definitions?.Patient?.properties?.id?.$ref;
+    const status = doc.definitions?.Observation?.properties?.status;
+    return (
+      patientIdRef === '#/definitions/id' &&
+      Array.isArray(status?.enum) &&
+      status.enum.length > 0 &&
+      status.$ref == null
+    );
   } catch {
     return false;
   }
@@ -32,15 +48,15 @@ function schemaHasIdDefinitionRef(path: string): boolean {
  * piping the HL7 zip through unzip-stream in the Jest worker.
  */
 export async function ensureFhirSchema(): Promise<string> {
-  if (existsSync(fhirSchemaPath) && schemaHasIdDefinitionRef(fhirSchemaPath)) {
+  if (existsSync(fhirSchemaPath) && schemaLooksLikeFhirR4(fhirSchemaPath)) {
     return fhirSchemaPath;
   }
   if (existsSync(fhirSchemaPath)) {
     unlinkSync(fhirSchemaPath);
   }
-  const res = await fetch('https://www.hl7.org/fhir/fhir.schema.json.zip');
+  const res = await fetch(FHIR_R4_SCHEMA_ZIP);
   if (!res.ok || !res.body) {
-    throw new Error(`Failed to download FHIR schema: ${res.status} ${res.statusText}`);
+    throw new Error(`Failed to download FHIR R4 schema: ${res.status} ${res.statusText}`);
   }
   const zipPath = join(tmpdir(), `fhir.schema.json.${process.pid}.${Date.now()}.zip`);
   try {
@@ -57,9 +73,9 @@ export async function ensureFhirSchema(): Promise<string> {
   if (!existsSync(fhirSchemaPath)) {
     throw new Error(`Download finished but ${fhirSchemaPath} is missing`);
   }
-  if (!schemaHasIdDefinitionRef(fhirSchemaPath)) {
+  if (!schemaLooksLikeFhirR4(fhirSchemaPath)) {
     throw new Error(
-      `${fhirSchemaPath} missing Patient.id → #/definitions/id (unexpected HL7 schema shape)`,
+      `${fhirSchemaPath} is not FHIR R4 (need Patient.id → #/definitions/id and Observation.status inline enum)`,
     );
   }
   return fhirSchemaPath;

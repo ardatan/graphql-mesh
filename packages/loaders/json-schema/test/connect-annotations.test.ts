@@ -203,6 +203,31 @@ describe('Federation Connectors annotations', () => {
     expect(sel).not.toBe('');
   });
 
+  it('cycle-only omission keeps nested sibling expansion (no leavesOnly rebuild)', () => {
+    // Root { id, recursive: Root, profile { address { city } } } — recursive is a
+    // cycle; siblings must keep full nests. A softDepth-0 rebuild would drop city.
+    const schema = buildSchema(/* GraphQL */ `
+      type Address {
+        city: String
+      }
+      type Profile {
+        address: Address
+      }
+      type Root {
+        id: String
+        recursive: Root
+        profile: Profile
+      }
+    `);
+    const limit = resolveConnectSelectionLimit({ overLimit: 'passthrough', maxLength: 50_000 });
+    const sel = buildSelectionForType(schema.getType('Root') as any, { limit });
+    expect(sel).toMatch(/\bid\b/);
+    expect(sel).toMatch(/\bprofile\b/);
+    expect(sel).toMatch(/\baddress\b/);
+    expect(sel).toMatch(/\bcity\b/);
+    expect(sel).not.toMatch(/\brecursive\b/);
+  });
+
   it('connectSelection.overLimit leavesOnly keeps scalar leaves under maxLength', async () => {
     const deepSample: Record<string, unknown> = { id: '1', name: 'n' };
     for (let i = 0; i < 40; i++) {

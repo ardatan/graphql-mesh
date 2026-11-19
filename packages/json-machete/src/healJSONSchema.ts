@@ -143,7 +143,11 @@ export async function healJSONSchema(
               if (prop.title || prop.$ref) {
                 continue;
               }
+              // Skip `type: boolean` — stamping a title disables the untitled
+              // boolean cleanup that removes FHIR `pattern: '^true|false$'`,
+              // which would otherwise become a regexp scalar instead of Boolean.
               const needsStableTitle = (node: JSONSchemaObject) =>
+                node.type !== 'boolean' &&
                 !!(
                   node.enum ||
                   node.pattern ||

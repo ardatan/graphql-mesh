@@ -196,6 +196,33 @@ function shouldSkipPathEncode(path: string, skipEncode?: (path: string) => boole
   return /^(this|root)\._odataId\b/.test(path) || /^(this|root)\[['"]_odataId['"]\]/.test(path);
 }
 
+/**
+ * Percent-encode a path/query template expression value.
+ *
+ * Apollo always encodes expression results. Some OpenAPI contracts (e.g. Wiki
+ * `Are_You_the_One%3F` article titles) document *pre-encoded* inputs — naive
+ * `encodeURIComponent` would yield `%253F`. When the value round-trips as a
+ * fully encoded URI component, keep it; otherwise encode (or decode-then-encode
+ * once for mixed forms).
+ */
+export function encodePathTemplateValue(value: string): string {
+  if (!/%[0-9A-Fa-f]{2}/.test(value)) {
+    return encodeURIComponent(value);
+  }
+  try {
+    const decoded = decodeURIComponent(value);
+    const reencoded = encodeURIComponent(decoded);
+    // Already a correct percent-encoded component (Wiki pre-encoded titles).
+    if (reencoded === value) {
+      return value;
+    }
+    // Mixed raw + escapes: normalize to a single encode pass.
+    return reencoded;
+  } catch {
+    return encodeURIComponent(value);
+  }
+}
+
 function resolveTemplate(
   template: string,
   vars: {
@@ -242,14 +269,14 @@ function resolveTemplate(
         if (!options.encodeValues || shouldSkipPathEncode(exprPath, options.skipEncode)) {
           return defaultValue;
         }
-        return encodeURIComponent(defaultValue);
+        return encodePathTemplateValue(defaultValue);
       }
       return '';
     }
     if (!options.encodeValues || shouldSkipPathEncode(exprPath, options.skipEncode)) {
       return String(value);
     }
-    return encodeURIComponent(String(value));
+    return encodePathTemplateValue(String(value));
   });
   // Normalize remaining Connectors `{$args.x|base64}` / `{$context.headers['x-port']:4001}` to Mesh
   // `{args.x|base64}` / `{context.headers['x-port']:4001}` so stringInterpolator modifiers work.
@@ -280,7 +307,7 @@ function resolveTemplate(
     }
     return shouldSkipPathEncode(path, options.skipEncode)
       ? String(value)
-      : encodeURIComponent(String(value));
+      : encodePathTemplateValue(String(value));
   });
 }
 

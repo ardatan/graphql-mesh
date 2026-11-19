@@ -108,6 +108,46 @@ describe('healJSONSchema', () => {
     expect((obsCmp.properties.comparator as JSONSchemaObject).title).toBe('Duration_comparator');
   });
 
+  it('does not stamp stable titles on boolean+pattern props (FHIR deceasedBoolean)', async () => {
+    // FHIR Patient.deceasedBoolean has type boolean + pattern '^true|false$'.
+    // A stable title would skip boolean cleanup and yield a regexp scalar.
+    const schema: JSONSchema = {
+      type: 'object',
+      properties: {
+        patient: {
+          type: 'object',
+          properties: {
+            resource: {
+              type: 'object',
+              title: 'Patient',
+              $resolvedRef: '/definitions/Patient',
+              properties: {
+                deceasedBoolean: {
+                  description: 'Indicates if the individual is deceased or not.',
+                  pattern: '^true|false$',
+                  type: 'boolean',
+                },
+                gender: {
+                  type: 'string',
+                  enum: ['male', 'female', 'other', 'unknown'],
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const healed = (await healJSONSchema(schema)) as JSONSchemaObject;
+    const patient = (
+      (healed.properties.patient as JSONSchemaObject).properties.resource as JSONSchemaObject
+    ).properties;
+    const deceased = patient.deceasedBoolean as JSONSchemaObject;
+    expect(deceased.title).toBeUndefined();
+    expect(deceased.pattern).toBeUndefined();
+    expect(deceased.type).toBe('boolean');
+    expect((patient.gender as JSONSchemaObject).title).toBe('Patient_gender');
+  });
+
   it('titles untitled array-item enums under $resolvedRef from the definition name', async () => {
     const schema: JSONSchema = {
       type: 'object',

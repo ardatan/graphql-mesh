@@ -1883,7 +1883,11 @@ type Mutation @join__type(graph: WIKI) {
         source: "Wiki"
         http: {
           POST: "/media/math/check/{$args.type->match([\"inline_tex\", \"inline-tex\"], [@, $args.type])}"
-          headers: [{ name: "Accept", value: "application/json, application/problem+json" }]
+          headers: [
+            { name: "Content-Type", value: "application/x-www-form-urlencoded" }
+            { name: "Accept", value: "application/json, application/problem+json" }
+          ]
+          body: "{\n  q: $args.q\n}"
         }
         selection: "$"
       }
@@ -1916,6 +1920,7 @@ type Mutation @join__type(graph: WIKI) {
             { name: "Content-Type", value: "application/x-www-form-urlencoded" }
             { name: "Accept", value: "application/json, application/problem+json" }
           ]
+          body: "{\n  html: $args.html\n}"
         }
         selection: "contents"
       }
@@ -1949,6 +1954,7 @@ type Mutation @join__type(graph: WIKI) {
             { name: "Content-Type", value: "application/x-www-form-urlencoded" }
             { name: "Accept", value: "application/json, application/problem+json" }
           ]
+          body: "{\n  html: $args.html\n}"
         }
         selection: "contents"
       }
