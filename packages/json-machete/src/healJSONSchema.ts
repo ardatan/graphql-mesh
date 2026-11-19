@@ -244,7 +244,7 @@ export async function healJSONSchema(
               if (propName === 'resourceType' && singleLiteral) {
                 delete prop.const;
                 delete prop.enum;
-                prop.type = (prop.type as string) || 'string';
+                prop.type = typeof prop.type === 'string' ? prop.type : 'string';
                 debugLogFn?.(
                   `${path}/properties/${propName} is a single-literal FHIR resourceType; using plain string`,
                 );
@@ -266,7 +266,7 @@ export async function healJSONSchema(
                 ) {
                   pattern = FHIR_CODE_PATTERN;
                 }
-                const type = (prop.type as string) || 'string';
+                const type = typeof prop.type === 'string' ? prop.type : 'string';
                 for (const key of Object.keys(prop)) {
                   delete (prop as Record<string, unknown>)[key];
                 }
