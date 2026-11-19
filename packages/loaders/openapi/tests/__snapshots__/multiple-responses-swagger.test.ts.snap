@@ -6,13 +6,20 @@ exports[`Multiple Responses Swagger should create correct response types with 20
   mutation: Mutation
 }
 
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Optional extended description in Markdown."""
-  foo_by_id: foo_by_id_response @connect(source: "test", http: {GET: "/{id}", headers: [{name: "Accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"Foo\\"], [500, \\"Error\\"], [@, \\"Foo\\"]) id message stack", isSuccess: "$status->match([200, true], [500, true], [@, false])")
+  foo_by_id: foo_by_id_response @connect(source: "test", http: {GET: "/{id}", headers: [{name: "Accept", value: "application/json"}]}, selection: """
+  __typename: $status->match([200, "Foo"], [500, "Error"], [@, "Foo"])
+  id
+  message
+  stack
+  """, isSuccess: "$status->match([200, true], [500, true], [@, false])")
 }
 
 union foo_by_id_response = Foo | Error
@@ -28,7 +35,11 @@ type Error {
 
 type Mutation {
   """Optional extended description in Markdown."""
-  post: post_response @connect(source: "test", http: {POST: "/", headers: [{name: "Accept", value: "application/json"}]}, selection: "__typename: $status->match([204, \\"Void_container\\"], [500, \\"Error\\"], [@, \\"Void_container\\"]) message stack", isSuccess: "$status->match([204, true], [500, true], [@, false])")
+  post: post_response @connect(source: "test", http: {POST: "/", headers: [{name: "Accept", value: "application/json"}]}, selection: """
+  __typename: $status->match([204, "Void_container"], [500, "Error"], [@, "Void_container"])
+  message
+  stack
+  """, isSuccess: "$status->match([204, true], [500, true], [@, false])")
 }
 
 union post_response = Void_container | Error
@@ -40,11 +51,22 @@ type Void_container {
 """Represents empty values"""
 scalar Void
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
+  body: JSONSelection
   queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -58,5 +80,11 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: JSONSelection
 }"
 `;

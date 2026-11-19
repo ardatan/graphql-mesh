@@ -10,6 +10,8 @@ directive @regexp(subgraph: String, pattern: String) on SCALAR
 
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -18,7 +20,12 @@ type Query {
   customers_by_customerId(
     """Authentication Token"""
     x_auth_token: String!
-  ): CustomerAttributes @connect(source: "basket", http: {GET: "/customers/{customerId}", headers: [{name: "x-auth-token", value: "{$args.x_auth_token}"}, {name: "accept", value: "application/json"}]}, selection: "attributes { name more }")
+  ): CustomerAttributes @connect(source: "basket", http: {GET: "/customers/{customerId}", headers: [{name: "x-auth-token", value: "{$args.x_auth_token}"}, {name: "accept", value: "application/json"}]}, selection: """
+  attributes {
+    name
+    more
+  }
+  """)
   Locations: [LocationModel] @connect(source: "basket", http: {GET: "/Locations", headers: [{name: "accept", value: "application/json,application/custom-thingy.v3+json"}]}, selection: "email")
   Cards: [CardModel] @connect(source: "basket", http: {GET: "/Cards", headers: [{name: "accept", value: "application/json,application/custom.v3+json"}]}, selection: "id")
 }
@@ -49,7 +56,11 @@ type CardModel {
 }
 
 type Mutation {
-  post_basket(input: String): [post_basket_response] @connect(source: "basket", http: {POST: "/basket", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([200, \\"BasketResponse\\"], [400, \\"ApiError\\"], [@, \\"BasketResponse\\"]) code description", isSuccess: "$status->match([200, true], [400, true], [@, false])")
+  post_basket(input: String): [post_basket_response] @connect(source: "basket", http: {POST: "/basket", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  __typename: $status->match([200, "BasketResponse"], [400, "ApiError"], [@, "BasketResponse"])
+  code
+  description
+  """, isSuccess: "$status->match([200, true], [400, true], [@, false])")
 }
 
 union post_basket_response = BasketResponse | ApiError
@@ -75,11 +86,22 @@ type ApiError {
   description: JSON!
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
+  body: JSONSelection
   queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -93,5 +115,11 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: JSONSelection
 }"
 `;

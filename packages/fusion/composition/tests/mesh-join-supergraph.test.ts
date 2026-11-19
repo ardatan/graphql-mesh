@@ -343,9 +343,10 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).toMatch(
       /@join__directive\(graphs: \[CALCULATOR\], name: "thrift__rpc", args: \{function: "add"/,
     );
-    // Multiline thrift `args` print as GraphQL block strings inside join args.
-    expect(out).toMatch(/args: """[\s\S]*1\(i32\): \$args\.left/);
-    expect(out).not.toMatch(/args: "[^"]*\\n/);
+    // Supergraph: no `"""` blocks — newlines stay as `\n` escapes inside `"…"`.
+    // Subgraph SDL may still print thrift args as multiline `"""`.
+    expect(out).toMatch(/args: "1\(i32\): \$args\.left\\n2\(i32\): \$args\.right"/);
+    expect(out).not.toMatch(/args: """/);
     expect(out).not.toMatch(/name: "thrift__rpc", args: \{[^}]*subgraph:/);
     expect(out).toMatch(/thrift\/v0\.1", import: \["@thrift__rpc"\]/);
   });

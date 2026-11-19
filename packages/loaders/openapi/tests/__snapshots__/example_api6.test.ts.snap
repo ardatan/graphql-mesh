@@ -6,6 +6,8 @@ exports[`example_api6 should generate the schema correctly 1`] = `
   mutation: Mutation
 }
 
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -24,7 +26,11 @@ type Query {
   cacti_by_cactusId(cactusId: String!): String @connect(source: "example_api6", http: {GET: "/cacti/{$args.cactusId}", headers: [{name: "accept", value: "text/html"}]}, selection: "$")
   eateries_by_eatery_breads_by_breadName_dishes_by_dishKey(eatery: String!, breadName: String!, dishKey: String!): String @connect(source: "example_api6", http: {GET: "/eateries/{$args.eatery}/breads/{$args.breadName}/dishes/{$args.dishKey}", headers: [{name: "accept", value: "text/html"}]}, selection: "$")
   """Resolve a nested reference in the parameter schema"""
-  nestedReferenceInParameter(russianDoll: russianDoll_Input): String @connect(source: "example_api6", http: {GET: "/nestedReferenceInParameter", headers: [{name: "accept", value: "text/html"}], queryParams: "{\\n  russianDoll: $args.russianDoll\\n}"}, selection: "$")
+  nestedReferenceInParameter(russianDoll: russianDoll_Input): String @connect(source: "example_api6", http: {GET: "/nestedReferenceInParameter", headers: [{name: "accept", value: "text/html"}], queryParams: """
+  {
+    russianDoll: $args.russianDoll
+  }
+  """}, selection: "$")
   """An arbitrary object"""
   strictGetOperation: String @connect(source: "example_api6", http: {GET: "/strictGetOperation", headers: [{name: "accept", value: "text/plain"}]}, selection: "$")
   """No provided response schema test"""
@@ -34,7 +40,11 @@ type Query {
   """Test link object with non-string parameter."""
   testLinkWithNonStringParam: testLinkWithNonStringParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkWithNonStringParam", headers: [{name: "accept", value: "application/json"}]}, selection: "hello")
   """Test link object with nested parameter."""
-  testLinkwithNestedParam: testLinkwithNestedParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkwithNestedParam", headers: [{name: "accept", value: "application/json"}]}, selection: "nesting1 { nesting2 }")
+  testLinkwithNestedParam: testLinkwithNestedParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkwithNestedParam", headers: [{name: "accept", value: "application/json"}]}, selection: """
+  nesting1 {
+    nesting2
+  }
+  """)
 }
 
 type object_200_response {
@@ -75,7 +85,16 @@ type query_testLinkwithNestedParam_nesting1 {
 
 type Mutation {
   """Basic application/x-www-form-urlencoded test"""
-  post_formUrlEncoded(input: pet_Input): pet @connect(source: "example_api6", http: {POST: "/formUrlEncoded", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "name status weight previous_owner history { data } history2")
+  post_formUrlEncoded(input: pet_Input): pet @connect(source: "example_api6", http: {POST: "/formUrlEncoded", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: """
+  name
+  status
+  weight
+  previous_owner
+  history {
+    data
+  }
+  history2
+  """)
   post_inputUnion(input: post_inputUnion_request_Input): String @connect(source: "example_api6", http: {POST: "/inputUnion", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "text/html"}], body: "$args.input"}, selection: "$")
 }
 
@@ -133,11 +152,22 @@ input mutationInput_post_inputUnion_input_oneOf_1_Input {
   catBreed: String
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
+  body: JSONSelection
   queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -151,5 +181,11 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: JSONSelection
 }"
 `;

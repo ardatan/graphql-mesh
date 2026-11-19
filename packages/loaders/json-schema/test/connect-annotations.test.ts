@@ -193,9 +193,9 @@ describe('Federation Connectors annotations', () => {
       },
     });
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toMatch(/thing[^\n]*selection: "/);
+    expect(sdl).toMatch(/thing[^\n]*selection: """/);
     expect(sdl).not.toMatch(/thing[^\n]*selection: "\$"/);
-    expect(sdl).toMatch(/selection: "[^"]*\bid\b/);
+    expect(sdl).toMatch(/selection: """[\s\S]*?\bid\b/);
   });
 
   it('infers entity stubs from parent FK when target type is resolvable', () => {
@@ -246,7 +246,8 @@ describe('Federation Connectors annotations', () => {
 
     const sdl = printSchemaWithDirectives(schema);
     expect(sdl).toContain('_response:');
-    expect(sdl).toMatch(/method: \$\(\\"GET\\"\)/);
+    // Block string — embedded `"` prints as-is (not `\"`).
+    expect(sdl).toMatch(/method: \$\("GET"\)/);
     expect(sdl).toContain('status: $status');
     expect(sdl).toContain('body: $');
     expect(sdl).not.toContain('$request.url');

@@ -5,7 +5,7 @@ exports[`Thrift Calculator should generate correct schema: thrift-calculator-sch
   query: Query
 }
 
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
@@ -33,7 +33,7 @@ type Query {
   1(i32): $args.left
   2(i32): $args.right
   """, selection: "$(i32)", messageType: CALL)
-  zip: Void @thrift__rpc(subgraph: "Calculator", function: "zip", args: "", selection: "$(void)", messageType: ONEWAY)
+  zip: Void @thrift__rpc(subgraph: "Calculator", function: "zip", selection: "$(void)", messageType: ONEWAY)
 }
 
 input AddRequestInput {

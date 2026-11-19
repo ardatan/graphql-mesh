@@ -5,13 +5,23 @@ exports[`required-ref-param should generate the schema correctly: schema 1`] = `
   query: Query
 }
 
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  getFoo(id: UUID!): getFoo_200_response @connect(source: "TestAPI", http: {GET: "/v1/foo", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  id: $args.id\\n}"}, selection: "result")
-  getBar(id: UUID): getBar_200_response @connect(source: "TestAPI", http: {GET: "/v1/bar", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  id: $args.id\\n}"}, selection: "result")
+  getFoo(id: UUID!): getFoo_200_response @connect(source: "TestAPI", http: {GET: "/v1/foo", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  {
+    id: $args.id
+  }
+  """}, selection: "result")
+  getBar(id: UUID): getBar_200_response @connect(source: "TestAPI", http: {GET: "/v1/bar", headers: [{name: "accept", value: "application/json"}], queryParams: """
+  {
+    id: $args.id
+  }
+  """}, selection: "result")
 }
 
 type getFoo_200_response {
@@ -27,11 +37,22 @@ type getBar_200_response {
   result: String
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
+  body: JSONSelection
   queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -45,5 +66,11 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: JSONSelection
 }"
 `;

@@ -5,6 +5,8 @@ exports[`thrift Calc json protocol emits @connect with isSuccess/errors: Calc-js
   query: Query
 }
 
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -37,11 +39,22 @@ input AddRequestInput {
   right: Int!
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
+  body: JSONSelection
   queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -55,6 +68,12 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: JSONSelection
 }"
 `;
 
@@ -63,7 +82,7 @@ exports[`thrift Calc: Calc-schema 1`] = `
   query: Query
 }
 
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
@@ -73,16 +92,16 @@ enum ThriftMessageType {
 }
 
 type Query {
-  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "Calc", function: "add", args: """
+  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "Calc", function: "add", selection: "$(i32)", messageType: CALL, args: """
   1(struct): $args.request {
     1(i32): left
     2(i32): right
   }
-  """, selection: "$(i32)", messageType: CALL)
-  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calc", function: "subtract", args: """
+  """)
+  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calc", function: "subtract", selection: "$(i32)", messageType: CALL, args: """
   1(i32): $args.left
   2(i32): $args.right
-  """, selection: "$(i32)", messageType: CALL)
+  """)
 }
 
 input AddRequestInput {
@@ -98,7 +117,7 @@ exports[`thrift Twitter: Twitter-schema 1`] = `
   query: Query
 }
 
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
@@ -112,8 +131,8 @@ type TwitterUnavailable {
 }
 
 type Query {
-  ping: Void @thrift__rpc(subgraph: "Twitter", function: "ping", args: "", selection: "$(void)", messageType: CALL)
-  postTweet(tweet: TweetInput): Boolean @thrift__rpc(subgraph: "Twitter", function: "postTweet", args: """
+  ping: Void @thrift__rpc(subgraph: "Twitter", function: "ping", selection: "$(void)", messageType: CALL)
+  postTweet(tweet: TweetInput): Boolean @thrift__rpc(subgraph: "Twitter", function: "postTweet", selection: "$(bool)", messageType: CALL, args: """
   1(struct): $args.tweet {
     1(i32): userId
     2(string): userName
@@ -125,8 +144,8 @@ type Query {
     5(i32): tweetType->match(["TWEET", 0], ["RETWEET", 2], ["DM", 10], ["REPLY", 11], [@, 0])
     16(string): language
   }
-  """, selection: "$(bool)", messageType: CALL)
-  searchTweets(query: String): TweetSearchResult @thrift__rpc(subgraph: "Twitter", function: "searchTweets", args: "1(string): $args.query", selection: """
+  """)
+  searchTweets(query: String): TweetSearchResult @thrift__rpc(subgraph: "Twitter", function: "searchTweets", selection: """
   tweets: 1(list) {
     userId: 1(i32)
     userName: 2(string)
@@ -138,8 +157,8 @@ type Query {
     tweetType: 5(i32)->match([0, "TWEET"], [2, "RETWEET"], [10, "DM"], [11, "REPLY"], [@, @])
     language: 16(string)
   }
-  """, messageType: CALL)
-  zip: Void @thrift__rpc(subgraph: "Twitter", function: "zip", args: "", selection: "$(void)", messageType: ONEWAY)
+  """, messageType: CALL, args: "1(string): $args.query")
+  zip: Void @thrift__rpc(subgraph: "Twitter", function: "zip", selection: "$(void)", messageType: ONEWAY)
 }
 
 """Represents NULL values"""

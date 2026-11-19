@@ -6,17 +6,28 @@ exports[`Cloudfunction should generate correct schema: cloudfunction-schema 1`] 
   mutation: Mutation
 }
 
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  dummy: String @connect(selection: "$(\\"dummy\\")")
+  dummy: String @connect(selection: """$("dummy")""")
 }
 
 type Mutation {
   """Description of the action"""
-  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @connect(source: "test", http: {POST: "/test-action-2", headers: [{name: "Content-Type", value: "application/vnd.experimental+json"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  blocking: $args.blocking\\n  result: $args.result\\n}", body: "$args.input"}, selection: "payload age valid")
+  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @connect(source: "test", http: {POST: "/test-action-2", headers: [{name: "Content-Type", value: "application/vnd.experimental+json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: """
+  {
+    blocking: $args.blocking
+    result: $args.result
+  }
+  """}, selection: """
+  payload
+  age
+  valid
+  """)
 }
 
 type Response {
@@ -29,11 +40,22 @@ input Payload_Input {
   age: Float!
 }
 
-input SourceHTTP {
-  baseURL: String!
+input ConnectHTTP {
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
+  body: JSONSelection
   queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -47,5 +69,11 @@ scalar JSONSelection
 input ConnectorErrors {
   message: JSONSelection
   extensions: JSONSelection
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: JSONSelection
 }"
 `;

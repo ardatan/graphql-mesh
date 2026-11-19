@@ -22,7 +22,11 @@ import type { IStringifyOptions } from 'qs';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { entityKeyFieldsFromHttpPath } from '@graphql-mesh/fusion-composition';
-import { importMeshDirectives, TransportDirective } from '@graphql-mesh/utils';
+import {
+  importMeshDirectives,
+  preferMultilineDirectiveBlockStrings,
+  TransportDirective,
+} from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   bakeEnumRootSelection,
@@ -166,7 +170,7 @@ const responseMetadataType = new GraphQLObjectType({
  */
 function responseMetadataConnectSelection(httpMethod: string): string {
   const methodLiteral = JSON.stringify(String(httpMethod || 'GET').toUpperCase());
-  return `_response: { method: $(${methodLiteral}) status: $status body: $ }`;
+  return `_response: {\n  method: $(${methodLiteral})\n  status: $status\n  body: $\n}`;
 }
 
 export function addExecutionDirectivesToComposer(
@@ -346,7 +350,7 @@ export function addExecutionDirectivesToComposer(
         args: {
           source: subgraphName,
           http: linkHttp,
-          selection: linkSelection,
+          selection: linkSelection || '$',
         },
       };
       const fieldBase = {
@@ -494,7 +498,7 @@ ${operationConfig.description || ''}
         selection !== '$' &&
         !selection.includes('__typename')
       ) {
-        selection = `${statusUnionExtras.typenameSelection} ${selection}`;
+        selection = `${statusUnionExtras.typenameSelection}\n${selection}`;
       }
       if (
         !builtSelection &&
@@ -511,8 +515,8 @@ ${operationConfig.description || ''}
         const metaSelection = responseMetadataConnectSelection(String(httpMethod));
         selection =
           selection === '$' || selection === '$root'
-            ? `$ ${metaSelection}`
-            : `${selection} ${metaSelection}`;
+            ? `$\n${metaSelection}`
+            : `${selection}\n${metaSelection}`;
       }
       const http = buildConnectHttpArgs({
         httpMethod,
@@ -790,7 +794,8 @@ ${operationConfig.description || ''}
   if (getDirectiveExtensions(schema)?.transport?.length) {
     schema = importMeshDirectives(schema, ['@transport']);
   }
-  return schema;
+  // Prefer `"""` for multiline / quote-heavy `@connect` selection/body/queryParams.
+  return preferMultilineDirectiveBlockStrings(schema);
 }
 
 function finalizeConnectorsField(

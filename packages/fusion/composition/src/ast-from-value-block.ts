@@ -1,73 +1,35 @@
-import { Kind, visit, type ConstValueNode, type DocumentNode, type StringValueNode } from 'graphql';
-
-/** Prefer GraphQL `"""` when the string has newlines or embedded `"`. */
-export function stringValuePrefersBlock(value: string): boolean {
-  return value.includes('\n') || value.includes('\r') || value.includes('"');
-}
-
 /**
- * After parse/print round-trips, StringValue nodes lose `block: true`. Remark
- * multiline / quote-heavy strings so the lean SG stays readable.
+ * Join-arg helpers for lean supergraph emit.
+ *
+ * Subgraph SDL keeps multiline / indented Connectors & thrift mappings for humans.
+ * Supergraph `@join__directive(args:)` uses normal quoted strings (GraphQL escapes
+ * embedded newlines as `\\n`) so the SG stays denser than `"""` blocks — thrift
+ * compact-mapping still receives real newlines after parse (do not collapse
+ * whitespace: thrift args are line-oriented).
  */
-export function preferBlockStringsInDocument(document: DocumentNode): DocumentNode {
-  return visit(document, {
-    StringValue(node: StringValueNode): StringValueNode {
-      if (node.block || !stringValuePrefersBlock(node.value)) {
-        return node;
+
+/** Drop empty-string / nullish values (e.g. thrift `args: ""`) from join args. */
+export function omitEmptyDirectiveArgValues(
+  args: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(args)) {
+    if (value == null || value === '') {
+      continue;
+    }
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      const nested = omitEmptyDirectiveArgValues(value as Record<string, unknown>);
+      if (Object.keys(nested).length) {
+        out[key] = nested;
       }
-      return { ...node, block: true };
-    },
-  });
+      continue;
+    }
+    out[key] = value;
+  }
+  return out;
 }
 
-/**
- * Like `astFromValueUntyped`, but marks string values that contain newlines or
- * embedded `"` as GraphQL block strings (`"""…"""`) so `print` stays readable
- * inside `@join__directive(args: { … })` (thrift `args`/`selection`, connect
- * `body`/`selection`, sql mappings, …).
- */
-export function astFromValuePreferBlockStrings(value: unknown): ConstValueNode | null {
-  if (value == null) {
-    return null;
-  }
-  if (typeof value === 'boolean') {
-    return { kind: Kind.BOOLEAN, value };
-  }
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    const asInt = Number.isInteger(value);
-    return {
-      kind: asInt ? Kind.INT : Kind.FLOAT,
-      value: String(value),
-    };
-  }
-  if (typeof value === 'string') {
-    return { kind: Kind.STRING, value, block: stringValuePrefersBlock(value) };
-  }
-  if (Array.isArray(value)) {
-    return {
-      kind: Kind.LIST,
-      values: value
-        .map(item => astFromValuePreferBlockStrings(item))
-        .filter((v): v is ConstValueNode => v != null),
-    };
-  }
-  if (typeof value === 'object') {
-    return {
-      kind: Kind.OBJECT,
-      fields: Object.entries(value as Record<string, unknown>).flatMap(([key, child]) => {
-        const childNode = astFromValuePreferBlockStrings(child);
-        if (childNode == null) {
-          return [];
-        }
-        return [
-          {
-            kind: Kind.OBJECT_FIELD as const,
-            name: { kind: Kind.NAME as const, value: key },
-            value: childNode,
-          },
-        ];
-      }),
-    };
-  }
-  return null;
+/** Prepare join args: omit empty only (preserve newlines for thrift/sql parsers). */
+export function prepareJoinDirectiveArgs(args: Record<string, unknown>): Record<string, unknown> {
+  return omitEmptyDirectiveArgValues(args);
 }

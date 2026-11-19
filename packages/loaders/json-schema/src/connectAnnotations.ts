@@ -639,6 +639,24 @@ function unwrapType(type: GraphQLOutputType): GraphQLNamedOutputType {
   return t;
 }
 
+/** Indent nested selection lines inside `{ … }` for readable SDL `"""` blocks. */
+function indentNestedSelection(nested: string): string {
+  return nested
+    .split('\n')
+    .map(line => (line.length ? `  ${line}` : line))
+    .join('\n');
+}
+
+/** `prefix { nested }` with indented nested body (multiline). */
+function wrapFieldSubselection(prefix: string, nested: string): string {
+  return `${prefix} {\n${indentNestedSelection(nested)}\n}`;
+}
+
+/** Compact length for `maxLength` checks (newlines/indent are SDL sugar only). */
+function compactSelectionLength(selection: string): number {
+  return selection.replace(/\s+/g, ' ').trim().length;
+}
+
 /**
  * Read `@statusCodeTypeName` mappings from a union (AST or extensions).
  */
@@ -854,8 +872,8 @@ export function buildSelectionForType(
     }
     const mergedSelection = [statusExtras?.typenameSelection || discTypename, ...merged.values()]
       .filter(Boolean)
-      .join(' ');
-    if (mergedSelection.length > limit.maxLength) {
+      .join('\n');
+    if (compactSelectionLength(mergedSelection) > limit.maxLength) {
       // Prefer `__typename` bake alone over `$` so status unions stay Connectors-native
       // after `@statusCodeTypeName` is stripped (no Mesh runtime fallback).
       if (limit.overLimit === 'passthrough') {
@@ -880,10 +898,10 @@ export function buildSelectionForType(
           ...leafMerged.values(),
         ]
           .filter(Boolean)
-          .join(' ');
+          .join('\n');
         if (
           leafSelection &&
-          leafSelection.length <= limit.maxLength &&
+          compactSelectionLength(leafSelection) <= limit.maxLength &&
           leafSelection !== (statusExtras?.typenameSelection || discTypename || '')
         ) {
           return leafSelection;
@@ -991,8 +1009,16 @@ export function buildSelectionForType(
           });
         }
       }
-      const valuePart = valueSel ? ` value { ${valueSel} }` : ' value';
-      lines.push(`${fieldName}: $->entries${filters} { key${valuePart} }`);
+      if (valueSel) {
+        lines.push(
+          wrapFieldSubselection(
+            `${fieldName}: $->entries${filters}`,
+            `key\n${wrapFieldSubselection('value', valueSel)}`,
+          ),
+        );
+      } else {
+        lines.push(wrapFieldSubselection(`${fieldName}: $->entries${filters}`, 'key\nvalue'));
+      }
       continue;
     }
     const extDirectiveNames = Object.keys(directiveExt);
@@ -1081,7 +1107,7 @@ export function buildSelectionForType(
       }
       const nested = buildSelectionForType(field.type, { ...nestedOpts, depth: depth + 1 });
       if (nested) {
-        lines.push(`${aliasPrefix} { ${nested} }`);
+        lines.push(wrapFieldSubselection(aliasPrefix, nested));
       } else if (isObjectLike) {
         // Empty object/interface/union expansion (cycle / unresolved union): omit —
         // a bare object name is invalid Connectors selection on Router.
@@ -1099,10 +1125,10 @@ export function buildSelectionForType(
       lines.push(spread);
     }
   }
-  // Spaces are enough for Connectors mapping (newlines are optional sugar).
-  // Avoid `\n` escapes in printed SDL (`selection: "id name"` vs `"id\\nname"`).
-  const joined = lines.join(' ');
-  if (joined.length > limit.maxLength) {
+  // Newlines + indent for readable SDL `"""` blocks (Connectors accepts spaces too).
+  // Prefer-block AST attach (loaders) avoids `\n` escapes in `printSchemaWithDirectives`.
+  const joined = lines.join('\n');
+  if (compactSelectionLength(joined) > limit.maxLength) {
     if (limit.overLimit === 'passthrough') {
       // Caller attaches `$` — Hive raw JSON; not Router-safe for object types.
       warnConnectSelectionPassthrough(limit, named.name);
@@ -1263,19 +1289,19 @@ export function buildInputBodySelection(
       hasRemap = true;
       const lhs = /^[A-Za-z_][\w]*$/.test(jsonName) ? jsonName : JSON.stringify(jsonName);
       if (nested) {
-        lines.push(`${lhs}: ${field.name} { ${nested} }`);
+        lines.push(wrapFieldSubselection(`${lhs}: ${field.name}`, nested));
       } else {
         lines.push(`${lhs}: ${field.name}`);
       }
     } else if (nested) {
       hasRemap = true;
-      lines.push(`${field.name} { ${nested} }`);
+      lines.push(wrapFieldSubselection(field.name, nested));
     } else {
       lines.push(field.name);
     }
   }
   if (!hasRemap) return undefined;
-  return lines.join(' ');
+  return lines.join('\n');
 }
 
 /**
@@ -1337,13 +1363,13 @@ function buildRemappedInputObjectEntries(
       hasRemap = true;
       const lhs = /^[A-Za-z_][\w]*$/.test(jsonName) ? jsonName : JSON.stringify(jsonName);
       if (nested) {
-        lines.push(`${lhs}: ${valuePath} { ${nested} }`);
+        lines.push(wrapFieldSubselection(`${lhs}: ${valuePath}`, nested));
       } else {
         lines.push(`${lhs}: ${valuePath}`);
       }
     } else if (nested) {
       hasRemap = true;
-      lines.push(`${field.name}: ${valuePath} { ${nested} }`);
+      lines.push(wrapFieldSubselection(`${field.name}: ${valuePath}`, nested));
     } else {
       lines.push(`${field.name}: ${valuePath}`);
     }
