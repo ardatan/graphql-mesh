@@ -254,15 +254,13 @@ describe('Federation Connectors annotations', () => {
       }
     `);
     const limit = resolveConnectSelectionLimit({ overLimit: 'passthrough', maxLength: 50_000 });
-    // First op exhausts the shared limit (tiny visit budget).
-    limit.passthroughVisitBudget = 3;
+    // Budget 2: Patient(1) → Deep(2) → nest Deep(3) actually exhausts (assert flag).
+    limit.passthroughVisitBudget = 2;
     buildSelectionForType(deepSchema.getType('Patient') as any, { limit });
-    // Restore a normal budget for the next op but leave the stale exhausted flag
-    // (caller that only cleared passthroughVisits - the pre-fix leak).
+    expect(limit.visitBudgetExhausted).toBe(true);
+    // Next root keeps a normal budget; depth-0 entry must clear the stale flag
+    // (do not assign visitBudgetExhausted manually).
     limit.passthroughVisitBudget = 250;
-    limit.passthroughVisits = 0;
-    limit.visitBudgetExhausted = true;
-    // Cycle-only Root must keep profile.address.city (not a leavesOnly rebuild).
     const sel = buildSelectionForType(rootSchema.getType('Root') as any, { limit });
     expect(sel).toMatch(/\bprofile\b/);
     expect(sel).toMatch(/\baddress\b/);

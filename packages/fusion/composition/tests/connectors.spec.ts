@@ -1,4 +1,13 @@
-import { buildSchema, extendSchema, parse, print } from 'graphql';
+import {
+  buildSchema,
+  execute,
+  extendSchema,
+  GraphQLScalarType,
+  parse,
+  print,
+} from 'graphql';
+import { processDirectives, processScalarType } from '@graphql-mesh/transport-connect';
+import { Response } from '@whatwg-node/fetch';
 import {
   composeSubgraphs,
   entityKeyFieldsFromHttpPath,
@@ -2078,5 +2087,97 @@ describe('Federation Connectors composition', () => {
     // `@regexp` stays for Connect processScalarType (pattern coerce / validate).
     expect(sdl).toMatch(/scalar string[\s\S]*@regexp\(/);
     expect(sdl).toMatch(/directive @regexp\b/);
+  });
+
+  it('post-compose @regexp survives finalize and Connect execute match/reject', async () => {
+    const codeSdl = /* GraphQL */ `
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @composeDirective(name: String!) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+      ) repeatable on FIELD_DEFINITION
+      directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+      scalar Code
+        @regexp(subgraph: "codes", pattern: "^[A-Z]{2}$")
+      type Query {
+        code: Code
+          @connect(source: "api", http: { GET: "/code" }, selection: "$")
+      }
+    `;
+    const subgraph = importMeshDirectives(
+      buildSchema(
+        /* GraphQL */ `
+          schema
+            @link(url: "https://specs.apollo.dev/link/v1.0")
+            @link(
+              url: "https://specs.apollo.dev/federation/v2.6"
+              import: ["@composeDirective"]
+            )
+            @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+            @source(name: "api", http: { baseURL: "https://api.example.com" }) {
+            query: Query
+          }
+          ${codeSdl}
+        `,
+        { assumeValidSDL: true, assumeValid: true },
+      ),
+      ['@regexp'],
+    );
+    const composed = composeSubgraphs([{ name: 'codes', schema: subgraph }]);
+    expect(composed.errors ?? []).toEqual([]);
+    const sg = composed.supergraphSdl!;
+    expect(sg).toMatch(/scalar Code[\s\S]*@regexp\(/);
+    const regexpMatch = sg.match(/scalar Code\b[\s\S]*?@regexp\([^)]*pattern:\s*"([^"]+)"/);
+    expect(regexpMatch?.[1]).toBeTruthy();
+    const composedPattern = JSON.parse(`"${regexpMatch![1]}"`) as string;
+
+    const wire = (body: string) => {
+      // Executable Connect subgraph stamped with the *composed* @regexp pattern.
+      const schema = processDirectives(
+        buildSchema(/* GraphQL */ `
+          directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+          directive @connect(
+            source: String
+            http: ConnectHTTP
+            selection: String!
+          ) repeatable on FIELD_DEFINITION
+          directive @regexp(pattern: String!) on SCALAR
+          input ConnectHTTP {
+            GET: String
+          }
+          input SourceHTTP {
+            baseURL: String!
+          }
+          schema @source(name: "api", http: { baseURL: "https://api.example.com" }) {
+            query: Query
+          }
+          scalar Code @regexp(pattern: ${JSON.stringify(composedPattern)})
+          type Query {
+            code: Code @connect(source: "api", http: { GET: "/code" }, selection: "$")
+          }
+        `),
+        { globalFetch: (async () => Response.json(body)) as any },
+      );
+      // Mirror Gateway: ensure composed @regexp is applied (processDirectives also does this).
+      processScalarType(schema.getType('Code') as GraphQLScalarType);
+      return schema;
+    };
+
+    const ok = await execute({ schema: wire('AB'), document: parse(`{ code }`) });
+    expect(ok.errors).toBeUndefined();
+    expect(ok.data).toEqual({ code: 'AB' });
+
+    const bad = await execute({ schema: wire('abc'), document: parse(`{ code }`) });
+    expect(bad.errors?.length).toBeGreaterThan(0);
+    expect(bad.errors![0].message).toMatch(/must match/);
   });
 });

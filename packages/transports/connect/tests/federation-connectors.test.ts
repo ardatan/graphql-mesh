@@ -301,6 +301,37 @@ describe('Federation Connectors error shape', () => {
     }
   `;
 
+  it('keeps null for list fields when selection yields null (not [null])', async () => {
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "ecomm", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+      type Query {
+        products: [Product]
+          @connect(source: "ecomm", http: { GET: "/products" }, selection: "$")
+      }
+      type Product {
+        id: ID
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async () => Response.json(null, { status: 200 })) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          products {
+            id
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ products: null });
+  });
+
   it('emits Mesh-compatible default extensions on HTTP failure', async () => {
     const schema = processConnectDirectives(buildSchema(errorSchemaSdl), {
       globalFetch: (async () => Response.json({ message: 'boom' }, { status: 500 })) as any,

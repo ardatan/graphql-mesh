@@ -2845,8 +2845,9 @@ export function addConnectFieldResolver(
       selectionText,
     );
     // Normalize after selection so mappings like `$.products { id }` (object → array) work.
+    // Do not wrap a null/undefined selection as `[null]` - GraphQL list fields stay null.
     const isListReturnType = isListTypeOrNonNullListType(field.type);
-    if (isListReturnType && !Array.isArray(selected)) {
+    if (isListReturnType && selected != null && !Array.isArray(selected)) {
       selected = [selected];
     } else if (!isListReturnType && Array.isArray(selected)) {
       selected = selected[0];
