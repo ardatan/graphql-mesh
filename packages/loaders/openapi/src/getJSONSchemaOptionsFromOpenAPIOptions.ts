@@ -869,11 +869,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 const m = mimeType(c);
                 return m === 'multipart/form-data' || m === 'application/x-www-form-urlencoded';
               });
-              operationConfig.headers['Content-Type'] = formConsume
-                ? formConsume
-                : isFile
-                  ? 'multipart/form-data'
-                  : 'application/x-www-form-urlencoded';
+              operationConfig.headers['Content-Type'] =
+                formConsume ??
+                (isFile ? 'multipart/form-data' : 'application/x-www-form-urlencoded');
             } else if (
               isFile &&
               mimeType(operationConfig.headers['Content-Type']) ===

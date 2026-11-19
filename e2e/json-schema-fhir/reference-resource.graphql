@@ -10,16 +10,16 @@ extend schema
 FHIR resource handle resolved from `Reference.reference` (`Type/id`).
 """
 interface Resource {
-  # Loaders emit FHIR `id` as String (pattern scalar / scalarMap); keep entity stubs aligned.
-  id: String
+  # Match json-schema `scalarMap` (`id` → GraphQLID) on patients/observations.
+  id: ID
 }
 
 type Patient implements Resource @key(fields: "id", resolvable: false) {
-  id: String!
+  id: ID!
 }
 
 type Observation implements Resource @key(fields: "id", resolvable: false) {
-  id: String!
+  id: ID!
 }
 
 type Reference
