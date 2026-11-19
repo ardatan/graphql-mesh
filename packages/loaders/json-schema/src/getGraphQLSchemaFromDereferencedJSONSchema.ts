@@ -4,12 +4,15 @@ import type { JSONSchemaObject } from 'json-machete';
 import type { AddExecutionLogicToComposerOptions } from './addExecutionLogicToComposer.js';
 import { addExecutionDirectivesToComposer } from './addExecutionLogicToComposer.js';
 import { getComposerFromJSONSchema } from './getComposerFromJSONSchema.js';
+import { pruneJsonSchemaBySelection } from './pruneJsonSchemaBySelection.js';
+import type { SchemaFieldsMode } from './types.js';
 
 export async function getGraphQLSchemaFromDereferencedJSONSchema(
   subgraphName: string,
   opts: Omit<AddExecutionLogicToComposerOptions, 'schemaComposer'> & {
     fullyDeferencedSchema: JSONSchemaObject;
     handlerName: string;
+    schemaFields?: SchemaFieldsMode;
   },
 ) {
   const {
@@ -22,6 +25,7 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     queryStringOptions,
     handlerName = 'rest',
     connectSelection,
+    schemaFields,
   } = opts;
   log.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
   // Composer mutates shared JSON Schema nodes in place (often circular after
@@ -33,9 +37,15 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
       operation.argTypeMap = structuredClone(operation.argTypeMap);
     }
   }
+  // When operations carry a concrete `selection`, drop unselected object
+  // properties before compose so GraphQL never emits unused fields/types.
+  // Clone first: prune mutates `properties` maps, and inline `responseSchema`
+  // objects / shared `$ref` targets must not leak mutations back to callers.
+  const schemaForCompose = structuredClone(fullyDeferencedSchema);
+  pruneJsonSchemaBySelection(schemaForCompose, operations, schemaFields);
   const visitorResult = await getComposerFromJSONSchema({
     subgraphName,
-    schema: fullyDeferencedSchema,
+    schema: schemaForCompose,
     log: log.child('getComposerFromJSONSchema'),
     getScalarForFormat: opts.getScalarForFormat,
     scalarMap: opts.scalarMap,

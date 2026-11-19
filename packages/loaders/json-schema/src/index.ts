@@ -25,6 +25,10 @@ export {
   type MeshTypeConnectArgs,
 } from './entityRefs.js';
 export type * from './types.js';
+export {
+  parseSelectionFieldTree,
+  pruneJsonSchemaBySelection,
+} from './pruneJsonSchemaBySelection.js';
 
 /**
  * Mesh compose helper: build an `@connect` subgraph from JSON Schema operations.

@@ -21,6 +21,20 @@ import type { BaseLoaderOptions } from '@graphql-tools/utils';
 export type ConnectSelectionOverLimit = 'leavesOnly' | 'passthrough';
 
 /**
+ * Controls which JSON Schema object properties become GraphQL fields.
+ *
+ * - omitted / default: when an operation has a concrete field `selection`,
+ *   only those fields (and nested selections) are emitted; unreferenced
+ *   types are never created
+ * - `'selection'`: always prune to `selection` when a concrete tree exists
+ * - `'all'`: emit the full response schema surface even if `selection` is set
+ *   (escape hatch for rare cases that need the full type graph)
+ *
+ * @example 'all'
+ */
+export type SchemaFieldsMode = 'selection' | 'all';
+
+/**
  * Limit/rule for `@connect(selection:)` size and depth.
  *
  * @example
@@ -195,6 +209,14 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
    * @example { maxLength: 4000, overLimit: 'leavesOnly' }
    */
   connectSelection?: ConnectSelectionOptions;
+  /**
+   * Controls whether GraphQL emit is limited to each operation's `selection`
+   * field tree. Default (omit): prune automatically when a concrete selection
+   * is present. Use `'all'` to keep the full JSON Schema object surface.
+   *
+   * @example 'all'
+   */
+  schemaFields?: SchemaFieldsMode;
 }
 
 export interface JSONSchemaOperationResponseConfig {
@@ -264,8 +286,18 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
    * When set, use this string as `@connect(selection:)` instead of auto-expanding
    * from the response GraphQL type. Useful for Apollo mapping that the sample
    * shape cannot express (e.g. FHIR `subject.reference` → Patient entity stub).
+   *
+   * A concrete field selection also drives GraphQL emit by default (only
+   * selected properties become fields; unreferenced types are omitted). Use
+   * {@link schemaFields} `'all'` to keep the full response schema surface.
    */
   selection?: string;
+  /**
+   * Per-operation override for {@link JSONSchemaLoaderOptions.schemaFields}.
+   *
+   * @example 'all'
+   */
+  schemaFields?: SchemaFieldsMode;
 };
 
 export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &

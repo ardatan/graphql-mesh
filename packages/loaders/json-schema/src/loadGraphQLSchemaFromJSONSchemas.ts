@@ -40,6 +40,7 @@ export async function loadNonExecutableGraphQLSchemaFromJSONSchemas(
     scalarMap: options.scalarMap,
     handlerName: options.handlerName,
     connectSelection: options.connectSelection,
+    schemaFields: options.schemaFields,
   });
 }
 
