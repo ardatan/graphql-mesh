@@ -304,7 +304,9 @@ export function createTenv(cwd: string): Tenv {
             throw err;
           }
           const resBody: ExecutionResult = await res.json();
-          if (resBody?.errors?.some(error => error.message.includes('Unexpected'))) {
+          // Only when debugging: dumping on every "Unexpected error." GraphQL message
+          // floods CI with expected Hive ERR lines from negative e2e paths.
+          if (pipeLogs && resBody?.errors?.some(error => error.message.includes('Unexpected'))) {
             process.stderr.write(proc.getStd('both'));
           }
           return resBody;
@@ -793,7 +795,8 @@ async function serveWithApolloRouter(opts: {
         throw err;
       }
       const resBody: ExecutionResult = await res.json();
-      if (resBody?.errors?.some(error => error.message.includes('Unexpected'))) {
+      // Only when debugging: see Hive path comment (negative e2e must stay quiet in CI).
+      if (pipeLogs && resBody?.errors?.some(error => error.message.includes('Unexpected'))) {
         process.stderr.write(proc.getStd('both'));
       }
       return resBody;
@@ -882,7 +885,15 @@ function spawn(
         mem: parseFloat(mem) * 0.001, // KB to MB
       };
     },
-    [DisposableSymbols.asyncDispose]: () => (child.kill('SIGKILL'), waitForExit),
+    [DisposableSymbols.asyncDispose]: async () => {
+      child.kill('SIGKILL');
+      try {
+        await waitForExit;
+      } catch {
+        // Already exited (including non-zero from intentional negative compose/serve).
+        // Surface those failures at the await site, not again during leftover cleanup.
+      }
+    },
   };
   leftoverStack.use(proc);
 
