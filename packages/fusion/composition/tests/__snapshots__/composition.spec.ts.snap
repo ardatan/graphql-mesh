@@ -167,7 +167,7 @@ input B_FooFilter @source(name: "FooFilter", subgraph: "B") @join__type(graph: B
 `;
 
 exports[`Composition keeps the directives 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@merge"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@merge", "@foo"]) {
   query: Query
 }
 
@@ -229,12 +229,14 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
+directive @foo on FIELD_DEFINITION
+
 type Query @join__type(graph: A) @join__type(graph: B) @join__type(graph: C) {
   myFoo: Foo! @join__field(graph: A)
   foo(id: ID!): Foo! @merge(subgraph: "B", keyField: "id", keyArg: "id") @join__field(graph: B)
   foos(ids: [ID!]!): [Foo!]! @merge(subgraph: "B", keyField: "id", keyArg: "ids") @join__field(graph: B)
   foosByFilter(where: FooFilter!): [Foo!]! @join__field(graph: B)
-  cFoo: Foo! @join__field(graph: C)
+  cFoo: Foo! @foo @join__field(graph: C)
 }
 
 type Foo @join__type(graph: A) @join__type(graph: B, key: "id") @join__type(graph: C) {

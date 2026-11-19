@@ -1,8 +1,10 @@
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema, isSpecifiedDirective } from 'graphql';
 import {
   addFederation2DirectivesToSubgraph,
   FEDERATION_V1_DIRECTIVES,
   importFederationDirectives,
+  importMeshDirectives,
+  MESH_CORE_DIRECTIVES,
 } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 
@@ -12,6 +14,24 @@ export {
   importMeshDirectives,
   type MeshDirectiveImport,
 } from '@graphql-mesh/utils';
+
+/**
+ * Directives that must never be auto-imported as Mesh compose features:
+ * - GraphQL / Federation builtins
+ * - Connectors `@connect` / SCHEMA `@source` (Apollo alignment — Guild gets those
+ *   only via `prepareConnectorsBeforeGuild`)
+ * - Mesh core dirs (loaders / Compose stamp them via `importMeshDirectives`)
+ */
+const NEVER_AUTO_MESH_COMPOSE_DIRECTIVE = new Set<string>([
+  ...FEDERATION_V1_DIRECTIVES,
+  ...MESH_CORE_DIRECTIVES,
+  '@link',
+  '@composeDirective',
+  '@stream',
+  '@connect',
+  '@source',
+  '@meshSource',
+]);
 
 export function normalizeDirectiveExtensions(subgraph: GraphQLSchema) {
   return new GraphQLSchema({
@@ -100,11 +120,58 @@ function usedFederationDirectiveImports(subgraph: GraphQLSchema): string[] {
 }
 
 /**
+ * Import leftover custom directives under Mesh `core/v0.1` + `@composeDirective`
+ * so Guild composition keeps them (core-feature members) and Apollo Fed
+ * compatibility `@custom` gets `@composeDirective`. Connectors stay excluded.
+ */
+export function importCustomDirectivesForComposition(subgraph: GraphQLSchema) {
+  const schemaDirectives = getDirectiveExtensions(subgraph) || {};
+  const alreadyImported = new Set<string>();
+  for (const link of schemaDirectives.link || []) {
+    if (!Array.isArray(link?.import)) continue;
+    for (const item of link.import) {
+      if (typeof item === 'string') {
+        alreadyImported.add(item);
+      } else if (item && typeof item === 'object' && 'name' in item) {
+        const local =
+          (item as { as?: string; name?: string }).as || (item as { name?: string }).name;
+        if (local) alreadyImported.add(local);
+      }
+    }
+  }
+  for (const d of schemaDirectives.composeDirective || []) {
+    if (typeof d?.name === 'string') alreadyImported.add(d.name);
+  }
+
+  const toImport: string[] = [];
+  for (const directive of subgraph.getDirectives()) {
+    if (isSpecifiedDirective(directive)) {
+      continue;
+    }
+    const name = `@${directive.name}`;
+    if (
+      NEVER_AUTO_MESH_COMPOSE_DIRECTIVE.has(name) ||
+      name.startsWith('@federation__') ||
+      name.startsWith('@join__') ||
+      alreadyImported.has(name)
+    ) {
+      continue;
+    }
+    toImport.push(name);
+  }
+  if (!toImport.length) {
+    return subgraph;
+  }
+  return importMeshDirectives(subgraph, toImport);
+}
+
+/**
  * Ensure the subgraph is Federation v2-ready for Guild composition.
  *
  * - Missing federation `@link` → stamp Fed v2.6
  * - Object types without `@key` get `@shareable` (value-type merge)
  * - Import only federation directives that are actually used (+ `@shareable`)
+ * - Custom non-Mesh directives → Mesh `@link` + `@composeDirective` (Guild + Apollo Fed)
  */
 export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
   const schemaDirectives = getDirectiveExtensions(subgraph);
@@ -118,5 +185,6 @@ export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
   }
   subgraph = ensureObjectTypesShareable(subgraph);
   subgraph = importFederationDirectives(subgraph, usedFederationDirectiveImports(subgraph));
+  subgraph = importCustomDirectivesForComposition(subgraph);
   return subgraph;
 }

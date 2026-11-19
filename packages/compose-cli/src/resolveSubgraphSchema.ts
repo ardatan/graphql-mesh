@@ -84,8 +84,7 @@ function firstTransportArgs(existing: unknown): Record<string, any> | undefined 
 
 function readTransportSubgraph(schema: GraphQLSchema): string | undefined {
   const fromExt = firstTransportArgs(
-    (schema.extensions as any)?.directives?.transport ??
-      getDirectiveExtensions(schema)?.transport,
+    (schema.extensions as any)?.directives?.transport ?? getDirectiveExtensions(schema)?.transport,
   );
   const value = fromExt?.subgraph;
   return typeof value === 'string' && value.length > 0 ? value : undefined;
@@ -100,10 +99,7 @@ function readTransportSubgraph(schema: GraphQLSchema): string | undefined {
  * - Both, different → throw conflict
  * - Neither → throw (name required)
  */
-export function resolveSubgraphName(
-  schema: GraphQLSchema,
-  configName?: string,
-): string {
+export function resolveSubgraphName(schema: GraphQLSchema, configName?: string): string {
   const fromTransport = readTransportSubgraph(schema);
   if (
     configName != null &&
@@ -115,7 +111,8 @@ export function resolveSubgraphName(
       `Subgraph name conflict: config name "${configName}" does not match @transport(subgraph: "${fromTransport}")`,
     );
   }
-  const name = (configName != null && configName.length > 0 ? configName : undefined) ?? fromTransport;
+  const name =
+    (configName != null && configName.length > 0 ? configName : undefined) ?? fromTransport;
   if (name == null || name.length === 0) {
     throw new Error(
       'Subgraph name is required: set `subgraphs[].name` or include `@transport(subgraph: ...)` on the schema',
@@ -124,9 +121,9 @@ export function resolveSubgraphName(
   return name;
 }
 
-function withoutTransportAstDirectives<T extends { directives?: readonly any[] } | null | undefined>(
-  node: T,
-): T {
+function withoutTransportAstDirectives<
+  T extends { directives?: readonly any[] } | null | undefined,
+>(node: T): T {
   if (!node?.directives?.length) {
     return node;
   }
@@ -163,8 +160,7 @@ function applyTransportOptions(
     schemaExtensions.directives && typeof schemaExtensions.directives === 'object'
       ? { ...schemaExtensions.directives }
       : {};
-  const existingRaw =
-    existingDirectives.transport ?? getDirectiveExtensions(schema)?.transport;
+  const existingRaw = existingDirectives.transport ?? getDirectiveExtensions(schema)?.transport;
   const existing = firstTransportArgs(existingRaw);
   const kind = transport.kind ?? existing?.kind;
   if (kind == null) {
@@ -225,22 +221,24 @@ function finalizeSchema(
   // Hand SDL with `@transport` but no Mesh core `@link` importing it — stamp before validate.
   const dirs = getDirectiveExtensions(next);
   const hasTransport = !!dirs?.transport;
-  const hasCoreTransportLink = (dirs?.link || []).some((l: { url?: string; import?: unknown[] }) => {
-    if (typeof l?.url !== 'string') return false;
-    if (
-      !l.url.includes('specs.graphql-mesh.com/core/') &&
-      !l.url.includes('the-guild.dev/graphql/mesh/spec/') &&
-      !l.url.includes('graphql-mesh.com/spec/')
-    ) {
-      return false;
-    }
-    const imports = l.import || [];
-    return imports.some(
-      i =>
-        i === '@transport' ||
-        (i && typeof i === 'object' && (i as { name?: string }).name === '@transport'),
-    );
-  });
+  const hasCoreTransportLink = (dirs?.link || []).some(
+    (l: { url?: string; import?: unknown[] }) => {
+      if (typeof l?.url !== 'string') return false;
+      if (
+        !l.url.includes('specs.graphql-mesh.com/core/') &&
+        !l.url.includes('the-guild.dev/graphql/mesh/spec/') &&
+        !l.url.includes('graphql-mesh.com/spec/')
+      ) {
+        return false;
+      }
+      const imports = l.import || [];
+      return imports.some(
+        i =>
+          i === '@transport' ||
+          (i && typeof i === 'object' && (i as { name?: string }).name === '@transport'),
+      );
+    },
+  );
   if (hasTransport && !hasCoreTransportLink) {
     next = importMeshDirectives(next, ['@transport']);
   }
@@ -313,8 +311,7 @@ export function resolveSubgraphSchema(
               importFn: (p: string) => import(p),
               log: ctx.log,
             }),
-          (text: unknown) =>
-            finalizeSchema(configName, buildFromInput(String(text)), options),
+          (text: unknown) => finalizeSchema(configName, buildFromInput(String(text)), options),
         );
       }
       return finalizeSchema(configName, buildFromInput(rawSource), options);

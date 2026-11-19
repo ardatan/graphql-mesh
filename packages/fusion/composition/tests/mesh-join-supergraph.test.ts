@@ -11,11 +11,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
         query: Query
       }
 
-      directive @transport(
-        subgraph: String!
-        kind: String!
-        location: String
-      ) repeatable on SCHEMA
+      directive @transport(subgraph: String!, kind: String!, location: String) repeatable on SCHEMA
 
       enum join__Graph {
         USERS @join__graph(name: "users", url: "http://localhost:4001")
@@ -77,8 +73,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
 
   it('keeps override location on @join__directive args', () => {
     const sdl = /* GraphQL */ `
-      schema
-        @transport(subgraph: "api", kind: "http", location: "http://override:9999") {
+      schema @transport(subgraph: "api", kind: "http", location: "http://override:9999") {
         query: Query
       }
 
@@ -128,7 +123,11 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     const sdl = /* GraphQL */ `
       schema
         @transport(subgraph: "REST", kind: "connect", location: "https://api.example.com")
-        @join__directive(graphs: [REST], name: "source", args: { name: "rest", http: { baseURL: "https://api.example.com" } }) {
+        @join__directive(
+          graphs: [REST]
+          name: "source"
+          args: { name: "rest", http: { baseURL: "https://api.example.com" } }
+        ) {
         query: Query
       }
 
@@ -145,6 +144,4 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/name: "transport"/);
     expect(out).toMatch(/name: "source"/);
   });
-
-
 });

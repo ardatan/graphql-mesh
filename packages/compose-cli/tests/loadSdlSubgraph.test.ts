@@ -116,6 +116,8 @@ describe('loadSubgraphFromSDL', () => {
     });
     const schema = await schema$;
     const dirs = getDirectiveExtensions(schema);
-    expect(dirs?.composeDirective?.some((d: { name?: string }) => d.name === '@connect')).toBeFalsy();
+    expect(
+      dirs?.composeDirective?.some((d: { name?: string }) => d.name === '@connect'),
+    ).toBeFalsy();
   });
 });

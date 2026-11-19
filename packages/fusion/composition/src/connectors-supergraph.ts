@@ -443,9 +443,7 @@ function removeImportFromLink(
   return {
     ...directive,
     arguments: (directive.arguments || []).map(arg =>
-      arg.name.value === 'import'
-        ? { ...arg, value: { kind: Kind.LIST, values } }
-        : arg,
+      arg.name.value === 'import' ? { ...arg, value: { kind: Kind.LIST, values } } : arg,
     ),
   };
 }

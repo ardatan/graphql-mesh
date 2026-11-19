@@ -1,5 +1,5 @@
 import type { GraphQLSchema } from 'graphql';
-import { getDirectiveExtensions, mapSchema, MapperKind } from '@graphql-tools/utils';
+import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   assertSupportedMeshSpec,
   MESH_SUPPORTED_SPEC_VERSIONS,
@@ -68,8 +68,7 @@ export function validateMeshDirectives(
 ): MeshDirectiveValidationIssue[] {
   const consumer = options.consumer || 'Mesh';
   const soft = options.soft === true;
-  const requireCoreLinkForUsages =
-    options.requireCoreLinkForUsages !== false && !soft;
+  const requireCoreLinkForUsages = options.requireCoreLinkForUsages !== false && !soft;
   const issues: MeshDirectiveValidationIssue[] = [];
 
   const fail = (message: string, directive?: string) => {
@@ -132,10 +131,7 @@ export function validateMeshDirectives(
           sawCoreUsage = true;
         }
         if (name === 'transport') {
-          fail(
-            `@transport is SCHEMA-only; found on field "${typeName}.${fieldName}"`,
-            'transport',
-          );
+          fail(`@transport is SCHEMA-only; found on field "${typeName}.${fieldName}"`, 'transport');
         }
       }
       // Validate `@hoist(pathConfig:)` when present (arg is `pathConfig`, not `path`).
@@ -143,10 +139,7 @@ export function validateMeshDirectives(
         if (!hoist || typeof hoist !== 'object') continue;
         if (hoist.pathConfig == null) continue;
         if (!Array.isArray(hoist.pathConfig)) {
-          fail(
-            `@hoist.pathConfig must be an array on ${typeName}.${fieldName}`,
-            'hoist',
-          );
+          fail(`@hoist.pathConfig must be an array on ${typeName}.${fieldName}`, 'hoist');
         }
       }
       return fieldConfig;

@@ -1,12 +1,5 @@
 import type { ConstDirectiveNode, DocumentNode } from 'graphql';
-import {
-  GraphQLObjectType,
-  GraphQLSchema,
-  GraphQLString,
-  Kind,
-  parse,
-  visit,
-} from 'graphql';
+import { GraphQLObjectType, GraphQLSchema, GraphQLString, Kind, parse, visit } from 'graphql';
 import {
   ConnectDirective,
   ConnectHTTPInput,
@@ -83,9 +76,16 @@ export function prepareConnectorsBeforeGuild(
 
     let definitions = [...nextDoc.definitions, ...extras];
     if (!schemaTouched) {
-      const schemaDef = parse(/* GraphQL */ `schema { query: Query }`, {
-        noLocation: true,
-      }).definitions[0];
+      const schemaDef = parse(
+        /* GraphQL */ `
+          schema {
+            query: Query
+          }
+        `,
+        {
+          noLocation: true,
+        },
+      ).definitions[0];
       if (schemaDef?.kind === Kind.SCHEMA_DEFINITION) {
         definitions = [
           {

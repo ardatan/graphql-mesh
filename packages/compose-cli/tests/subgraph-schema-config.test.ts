@@ -45,8 +45,7 @@ describe('subgraphs[].schema config', () => {
       { cwd: process.cwd(), fetch: globalThis.fetch, log },
       {
         schema: /* GraphQL */ `
-          extend schema
-            @transport(subgraph: "shop", kind: "sql", location: "file:old.db")
+          extend schema @transport(subgraph: "shop", kind: "sql", location: "file:old.db")
 
           directive @transport(
             subgraph: String!

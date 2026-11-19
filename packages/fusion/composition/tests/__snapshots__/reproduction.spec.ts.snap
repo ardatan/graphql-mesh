@@ -2,18 +2,20 @@
 
 exports[`Reproductions GW-164 1`] = `
 {
-  "publicSdl": "type Query {
+  "publicSdl": "directive @myDirective(myarg: [MyEnum!]!) on OBJECT
+
+type Query {
   myRootField: MyObject
 }
 
-type MyObject {
+type MyObject @myDirective(myarg: []) {
   myField: String
 }
 
 enum MyEnum {
   MY_ENUM_VALUE
 }",
-  "supergraphSdl": "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) {
+  "supergraphSdl": "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@myDirective"]) {
   query: Query
 }
 
@@ -64,11 +66,13 @@ enum join__Graph {
   A @join__graph(name: "A", url: "")
 }
 
+directive @myDirective(myarg: [MyEnum!]!) on OBJECT
+
 type Query @join__type(graph: A) {
   myRootField: MyObject
 }
 
-type MyObject @join__type(graph: A) {
+type MyObject @myDirective(myarg: []) @join__type(graph: A) {
   myField: String
 }
 

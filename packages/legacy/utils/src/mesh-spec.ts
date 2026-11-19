@@ -202,9 +202,7 @@ export function assertSupportedMeshSpec(
     return undefined;
   }
   // Prefer a modern supported version; otherwise validate whatever we found.
-  const modernSupported = matches.find(
-    m => !m.legacy && supportedVersions.includes(m.version),
-  );
+  const modernSupported = matches.find(m => !m.legacy && supportedVersions.includes(m.version));
   if (modernSupported) {
     return modernSupported;
   }

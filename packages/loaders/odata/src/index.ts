@@ -9,7 +9,7 @@ import type {
   InterfaceTypeComposer,
   ObjectTypeComposer,
   ObjectTypeComposerArgumentConfigMapDefinition,
-  ObjectTypeComposerFieldConfigDefinition
+  ObjectTypeComposerFieldConfigDefinition,
 } from 'graphql-compose';
 import {
   GraphQLBigInt,
@@ -18,7 +18,7 @@ import {
   GraphQLDateTime,
   GraphQLGUID,
   GraphQLISO8601Duration,
-  GraphQLJSON
+  GraphQLJSON,
 } from 'graphql-scalars';
 import { pascalCase } from 'pascal-case';
 import urljoin from 'url-join';
@@ -28,16 +28,12 @@ import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/str
 import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
 import transportConnect, { type ConnectTransportOptions } from '@graphql-mesh/transport-connect';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
-import {
-  defaultImportFn,
-  importMeshDirectives,
-  readFileOrUrl,
-} from '@graphql-mesh/utils';
+import { defaultImportFn, importMeshDirectives, readFileOrUrl } from '@graphql-mesh/utils';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import {
   applyODataConnectSchemaExtensions,
   emitODataConnectors,
-  emitODataPolymorphicUnions
+  emitODataPolymorphicUnions,
 } from './emitODataConnectors.js';
 import type { EntityTypeExtensions } from './types.js';
 import { getTypeNameFromRef } from './utils/getTypeNameFromRef.js';
@@ -141,13 +137,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     baseDir,
     schemaHeaders,
     batch,
-    expandNavProps
-}: LoadGraphQLSchemaFromODataOpts,
+    expandNavProps,
+  }: LoadGraphQLSchemaFromODataOpts,
 ) {
   const eventEmitterSet = new Set<EventEmitter>();
   const endpoint = stringInterpolator.parse(nonInterpolatedBaseUrl, {
-    env: process.env
-});
+    env: process.env,
+  });
 
   const schemaComposer = new SchemaComposer();
   schemaComposer.add(GraphQLBigInt);
@@ -167,8 +163,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     headers: schemaHeaders,
     fetch: fetchFn,
     log,
-    importFn
-});
+    importFn,
+  });
   const xmlParser = new XMLParser({
     attributeNamePrefix: '',
     attributesGroupName: 'attributes',
@@ -177,8 +173,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     removeNSPrefix: true,
     isArray: (_, __, ___, isAttribute) => !isAttribute,
     allowBooleanAttributes: true,
-    preserveOrder: false
-});
+    preserveOrder: false,
+  });
   const metadataJson = await xmlParser.parse(metadataText);
 
   const schemas = metadataJson.Edmx[0].DataServices[0].Schema;
@@ -195,20 +191,20 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       allpages: {
         value: 'allpages',
         description:
-          'The OData MUST include a count of the number of entities in the collection identified by the URI (after applying any $filter System Query Options present on the URI)'
-},
+          'The OData MUST include a count of the number of entities in the collection identified by the URI (after applying any $filter System Query Options present on the URI)',
+      },
       none: {
         value: 'none',
         description:
-          'The OData service MUST NOT include a count in the response. This is equivalence to a URI that does not include a $inlinecount query string parameter.'
-}
-}
-});
+          'The OData service MUST NOT include a count in the response. This is equivalence to a URI that does not include a $inlinecount query string parameter.',
+      },
+    },
+  });
 
   schemaComposer.createInputTC({
     name: 'QueryOptions',
-    fields: QUERY_OPTIONS_FIELDS
-});
+    fields: QUERY_OPTIONS_FIELDS,
+  });
 
   const { args: commonArgs } = parseInterpolationStrings([
     ...Object.values(operationHeaders || {}),
@@ -253,8 +249,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         }
         values[key] = {
           value: rawKey,
-          extensions: { memberObj }
-};
+          extensions: { memberObj },
+        };
       });
       if (!Object.keys(values).length) {
         return;
@@ -263,8 +259,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       schemaComposer.createEnumTC({
         name: enumTypeName,
         values,
-        extensions: { enumObj }
-});
+        extensions: { enumObj },
+      });
     });
 
     const allTypes = (schemaObj.EntityType || []).concat(schemaObj.ComplexType || []);
@@ -289,30 +285,30 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         identifierFieldName: undefined as string | undefined,
         identifierFieldTypeRef: undefined as string | undefined,
         // Full `@odata.type` string Graph returns for this entity (Router `__typename` match).
-        odataTypeName: `#${schemaNamespace}.${typeObj.attributes.Name}` as string | undefined
-};
+        odataTypeName: `#${schemaNamespace}.${typeObj.attributes.Name}` as string | undefined,
+      };
       const outputExtensions: EntityTypeExtensions = {
         odata: {
-          entityInfo
-},
-        eventEmitter
-};
+          entityInfo,
+        },
+        eventEmitter,
+      };
       const inputType = schemaComposer.createInputTC({
         name: entityTypeName + 'Input',
         fields: {},
         extensions: {
           odata: { entityInfo },
-          eventEmitter
-} as any
-});
+          eventEmitter,
+        } as any,
+      });
       // Concrete GraphQL objects first. Polymorphism is restored later as unions
       // (Router Connectors reject `implements` interface expand). BaseType merge
       // copies fields onto subtypes; unions re-link Person→Manager / Location→AirportLocation.
       const outputType = schemaComposer.createObjectTC({
         name: entityTypeName,
         extensions: outputExtensions as any,
-        interfaces: []
-});
+        interfaces: [],
+      });
 
       outputType.setInputTypeComposer(inputType);
 
@@ -338,11 +334,11 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               aliasNamespaceMap,
               namespaces,
               multipleSchemas,
-              isEnumType: typeName => schemaComposer.isEnumType(typeName)
-}),
-            extensions: { propertyObj }
-}
-});
+              isEnumType: typeName => schemaComposer.isEnumType(typeName),
+            }),
+            extensions: { propertyObj },
+          },
+        });
         const field: ObjectTypeComposerFieldConfigDefinition<unknown, FieldContext> = {
           type: getTypeNameFromRef({
             typeRef: propertyTypeRef,
@@ -351,13 +347,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             aliasNamespaceMap,
             namespaces,
             multipleSchemas,
-            isEnumType: typeName => schemaComposer.isEnumType(typeName)
-}),
-          extensions: { propertyObj }
-};
+            isEnumType: typeName => schemaComposer.isEnumType(typeName),
+          }),
+          extensions: { propertyObj },
+        };
         outputType.addFields({
-          [propertyName]: field
-});
+          [propertyName]: field,
+        });
       });
       typeObj.NavigationProperty?.forEach((navigationPropertyObj: any) => {
         const navigationPropertyName = navigationPropertyObj.attributes.Name;
@@ -374,25 +370,25 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               aliasNamespaceMap,
               namespaces,
               multipleSchemas,
-              isEnumType: typeName => schemaComposer.isEnumType(typeName)
-})
+              isEnumType: typeName => schemaComposer.isEnumType(typeName),
+            })
               .replace('[', '')
               .replace(']', ''),
             args: {
               ...commonArgs,
               id: {
-                type: 'ID'
-}
-},
+                type: 'ID',
+              },
+            },
             extensions: {
               navigationPropertyObj,
               odata: {
                 singularNav: {
-                  navigationPropertyName
-}
-} as any
-}
-};
+                  navigationPropertyName,
+                },
+              } as any,
+            },
+          };
           const pluralField: ObjectTypeComposerFieldConfigDefinition<any, FieldContext> = {
             type: getTypeNameFromRef({
               typeRef: navigationPropertyTypeRef,
@@ -401,25 +397,25 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               aliasNamespaceMap,
               namespaces,
               multipleSchemas,
-              isEnumType: typeName => schemaComposer.isEnumType(typeName)
-}),
+              isEnumType: typeName => schemaComposer.isEnumType(typeName),
+            }),
             args: {
               ...commonArgs,
-              queryOptions: { type: 'QueryOptions' }
-},
+              queryOptions: { type: 'QueryOptions' },
+            },
             extensions: {
               navigationPropertyObj,
               odata: {
                 pluralNav: {
-                  navigationPropertyName
-}
-} as any
-}
-};
+                  navigationPropertyName,
+                },
+              } as any,
+            },
+          };
           outputType.addFields({
             [navigationPropertyName]: pluralField,
-            [`${navigationPropertyName}ById`]: singularField
-});
+            [`${navigationPropertyName}ById`]: singularField,
+          });
         } else {
           const field: ObjectTypeComposerFieldConfigDefinition<any, FieldContext> = {
             type: getTypeNameFromRef({
@@ -429,41 +425,41 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               aliasNamespaceMap,
               namespaces,
               multipleSchemas,
-              isEnumType: typeName => schemaComposer.isEnumType(typeName)
-}),
+              isEnumType: typeName => schemaComposer.isEnumType(typeName),
+            }),
             args: {
-              ...commonArgs
-},
+              ...commonArgs,
+            },
             extensions: {
               navigationPropertyObj,
               odata: {
                 navProp: {
-                  navigationPropertyName
-}
-} as any
-}
-};
+                  navigationPropertyName,
+                },
+              } as any,
+            },
+          };
           outputType.addFields({
-            [navigationPropertyName]: field
-});
+            [navigationPropertyName]: field,
+          });
         }
       });
       if (isOpenType || outputType.getFieldNames().length === 0) {
         entityInfo.isOpenType = true;
         inputType.addFields({
           rest: {
-            type: 'JSON'
-}
-});
+            type: 'JSON',
+          },
+        });
         // Open-type catch-all `rest: JSON` — Connectors map via `rest: $` (whole entity).
         // In-process Mesh uses `resolve: root => root` (no `@resolveRoot` directive).
         const restField = {
           type: 'JSON' as const,
-          resolve: (root: unknown) => root
-};
+          resolve: (root: unknown) => root,
+        };
         outputType.addFields({
-          rest: restField
-});
+          rest: restField,
+        });
       }
       const updateInputType = inputType.clone(`${entityTypeName}UpdateInput`);
       // graphql-compose clone() uses getDescription() which coerces missing descriptions to "".
@@ -489,23 +485,23 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         aliasNamespaceMap,
         namespaces,
         multipleSchemas,
-        isEnumType: typeName => schemaComposer.isEnumType(typeName)
-});
+        isEnumType: typeName => schemaComposer.isEnumType(typeName),
+      });
       schemaComposer.Query.addFields({
         [functionName]: {
           type: returnType,
           args: {
-            ...commonArgs
-},
+            ...commonArgs,
+          },
           extensions: {
             odata: {
               unboundFunction: {
-                functionName
-}
-} as any
-}
-}
-});
+                functionName,
+              },
+            } as any,
+          },
+        },
+      });
       unboundFunctionObj.Parameter?.forEach((parameterObj: any) => {
         const parameterName = parameterObj.attributes.Name;
         const parameterTypeRef = parameterObj.attributes.Type;
@@ -517,13 +513,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           aliasNamespaceMap,
           namespaces,
           multipleSchemas,
-          isEnumType: typeName => schemaComposer.isEnumType(typeName)
-});
+          isEnumType: typeName => schemaComposer.isEnumType(typeName),
+        });
         schemaComposer.Query.addFieldArgs(functionName, {
           [parameterName]: {
-            type: parameterType
-}
-});
+            type: parameterType,
+          },
+        });
       });
     };
 
@@ -538,11 +534,11 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         aliasNamespaceMap,
         namespaces,
         multipleSchemas,
-        isEnumType: typeName => schemaComposer.isEnumType(typeName)
-});
+        isEnumType: typeName => schemaComposer.isEnumType(typeName),
+      });
       const args: ObjectTypeComposerArgumentConfigMapDefinition<any> = {
-        ...commonArgs
-};
+        ...commonArgs,
+      };
 
       let entitySetPath = boundFunctionObj.attributes.EntitySetPath?.split('/')[0];
       let field: ObjectTypeComposerFieldConfigDefinition<any, any, any>;
@@ -558,8 +554,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           aliasNamespaceMap,
           namespaces,
           multipleSchemas,
-          isEnumType: typeName => schemaComposer.isEnumType(typeName)
-});
+          isEnumType: typeName => schemaComposer.isEnumType(typeName),
+        });
         // If entitySetPath is not available, take first parameter as entity
         // The first segment of the entity set path must match the binding parameter name
         // (see: http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#_Toc38530388)
@@ -572,8 +568,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             aliasNamespaceMap,
             namespaces,
             multipleSchemas,
-            isEnumType: typeName => schemaComposer.isEnumType(typeName)
-})
+            isEnumType: typeName => schemaComposer.isEnumType(typeName),
+          })
             .replace('[', '')
             .replace(']', '');
           field = {
@@ -584,15 +580,15 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
                 boundFunction: {
                   functionRef,
                   // OData binding parameter name (EntitySetPath / first param) — not "any Input".
-                  bindingParameterName: parameterName
-}
-} as any
-}
-};
+                  bindingParameterName: parameterName,
+                },
+              } as any,
+            },
+          };
         }
         args[parameterName] = {
-          type: parameterTypeName
-};
+          type: parameterTypeName,
+        };
       });
       const boundEntityType = schemaComposer.getAnyTC(boundEntityTypeName) as InterfaceTypeComposer;
       const boundEntityOtherType = getTCByTypeNames(
@@ -600,11 +596,11 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         'T' + boundEntityTypeName,
       ) as InterfaceTypeComposer;
       boundEntityType.addFields({
-        [functionName]: field
-});
+        [functionName]: field,
+      });
       boundEntityOtherType?.addFields({
-        [functionName]: field
-});
+        [functionName]: field,
+      });
     };
 
     schemaObj.Function?.forEach((functionObj: any) => {
@@ -621,17 +617,17 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         [actionName]: {
           type: 'JSON',
           args: {
-            ...commonArgs
-},
+            ...commonArgs,
+          },
           extensions: {
             odata: {
               unboundAction: {
-                actionName
-}
-} as any
-}
-}
-});
+                actionName,
+              },
+            } as any,
+          },
+        },
+      });
 
       unboundActionObj.Parameter?.forEach((parameterObj: any) => {
         const parameterName = parameterObj.attributes.Name;
@@ -644,13 +640,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           aliasNamespaceMap,
           namespaces,
           multipleSchemas,
-          isEnumType: typeName => schemaComposer.isEnumType(typeName)
-});
+          isEnumType: typeName => schemaComposer.isEnumType(typeName),
+        });
         schemaComposer.Mutation.addFieldArgs(actionName, {
           [parameterName]: {
-            type: parameterType
-}
-});
+            type: parameterType,
+          },
+        });
       });
     };
 
@@ -665,8 +661,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         aliasNamespaceMap,
         namespaces,
         multipleSchemas,
-        isEnumType: typeName => schemaComposer.isEnumType(typeName)
-});
+        isEnumType: typeName => schemaComposer.isEnumType(typeName),
+      });
       const boundEntityTypeName = getTypeNameFromRef({
         typeRef: parameterTypeRef,
         isInput: false,
@@ -674,8 +670,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         aliasNamespaceMap,
         namespaces,
         multipleSchemas,
-        isEnumType: typeName => schemaComposer.isEnumType(typeName)
-})
+        isEnumType: typeName => schemaComposer.isEnumType(typeName),
+      })
         .replace('[', '')
         .replace(']', ''); // Todo temp workaround
       return { boundEntityTypeName, argName: parameterName, argType: parameterTypeName };
@@ -689,8 +685,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         aliasNamespaceMap,
         namespaces,
         multipleSchemas,
-        isEnumType: typeName => schemaComposer.isEnumType(typeName)
-});
+        isEnumType: typeName => schemaComposer.isEnumType(typeName),
+      });
 
       const entityOutputTC = getTCByTypeNames('I' + boundEntityTypeName, boundEntityTypeName) as
         InterfaceTypeComposer | ObjectTypeComposer;
@@ -733,15 +729,15 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       const args: ObjectTypeComposerArgumentConfigMapDefinition<any> = {
         ...commonArgs,
         [argName]: {
-          type: argType
-}
-};
+          type: argType,
+        },
+      };
       // add remaining parameters to args:
       boundActionObj.Parameter?.forEach((parameterObj: any) => {
         const { argName, argType } = boundActionEntityParameterDetails(parameterObj);
         args[argName] = {
-          type: argType
-};
+          type: argType,
+        };
       });
 
       const bindingParameterName =
@@ -755,11 +751,11 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             boundAction: {
               actionRef,
               // Filter action body by this name so e.g. `recipient: PersonInput` stays.
-              bindingParameterName
-}
-} as any
-}
-};
+              bindingParameterName,
+            },
+          } as any,
+        },
+      };
       const boundEntityType = getTCByTypeNames(
         boundEntityTypeName,
         `I${boundEntityTypeName}`,
@@ -772,16 +768,16 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         return;
       }
       boundEntityType.addFields({
-        [actionName]: boundField
-});
+        [actionName]: boundField,
+      });
       const otherType = getTCByTypeNames(
         `I${boundEntityTypeName}`,
         `T${boundEntityTypeName}`,
       ) as InterfaceTypeComposer | null;
       if (otherType && otherType !== boundEntityType) {
         otherType.addFields({
-          [actionName]: boundField
-});
+          [actionName]: boundField,
+        });
       }
     };
 
@@ -797,8 +793,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     typesWithBaseType?.forEach((typeObj: any) => {
       const typeName = buildName({
         schemaNamespace,
-        name: typeObj.attributes.Name
-});
+        name: typeObj.attributes.Name,
+      });
       const inputType = getTCByTypeNames(typeName + 'Input') as InputTypeComposer | null;
       const outputType = getTCByTypeNames('T' + typeName, typeName) as ObjectTypeComposer;
       if (!outputType) {
@@ -820,8 +816,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         aliasNamespaceMap,
         namespaces,
         multipleSchemas,
-        isEnumType: typeName => schemaComposer.isEnumType(typeName)
-});
+        isEnumType: typeName => schemaComposer.isEnumType(typeName),
+      });
       // MS Graph (and similar) use Alias in BaseType (`graph.entity`) while Inputs are
       // registered under buildName(); also some abstract bases may be declared later.
       const baseInputType = getTCByTypeNames(
@@ -883,23 +879,23 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           aliasNamespaceMap,
           namespaces,
           multipleSchemas,
-          isEnumType: typeName => schemaComposer.isEnumType(typeName)
-});
+          isEnumType: typeName => schemaComposer.isEnumType(typeName),
+        });
         schemaComposer.Query.addFields({
           [singletonName]: {
             type: singletonTypeName,
             args: {
-              ...commonArgs
-},
+              ...commonArgs,
+            },
             extensions: {
               odata: {
                 singleton: {
-                  singletonName
-}
-} as any
-}
-}
-});
+                  singletonName,
+                },
+              } as any,
+            },
+          },
+        });
       });
 
       entityContainerObj?.EntitySet?.forEach((entitySetObj: any) => {
@@ -912,8 +908,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           aliasNamespaceMap,
           namespaces,
           multipleSchemas,
-          isEnumType: typeName => schemaComposer.isEnumType(typeName)
-});
+          isEnumType: typeName => schemaComposer.isEnumType(typeName),
+        });
         const entityOutputTC = getTCByTypeNames('I' + entityTypeName, entityTypeName) as
           InterfaceTypeComposer | ObjectTypeComposer;
         const entityInfo = (entityOutputTC.getExtensions() as any as EntityTypeExtensions).odata
@@ -930,52 +926,52 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             type: `[${typeName}]`,
             args: {
               ...commonArgs,
-              queryOptions: { type: 'QueryOptions' }
-},
+              queryOptions: { type: 'QueryOptions' },
+            },
             extensions: {
               odata: {
                 entitySet: {
-                  entitySetName
-}
-} as any
-}
-},
+                  entitySetName,
+                },
+              } as any,
+            },
+          },
           [`${entitySetName}By${identifierFieldName}`]: {
             type: typeName,
             args: {
               ...commonArgs,
               [identifierFieldName]: {
-                type: identifierFieldTypeName
-}
-},
+                type: identifierFieldTypeName,
+              },
+            },
             extensions: {
               odata: {
                 entitySetByIdentifier: {
                   entitySetName,
                   identifierFieldName,
-                  identifierFieldTypeRef
-}
-} as any
-}
-}
-};
+                  identifierFieldTypeRef,
+                },
+              } as any,
+            },
+          },
+        };
         schemaComposer.Query.addFields({
           ...commonFields,
           [`${entitySetName}Count`]: {
             type: 'Int',
             args: {
               ...commonArgs,
-              queryOptions: { type: 'QueryOptions' }
-},
+              queryOptions: { type: 'QueryOptions' },
+            },
             extensions: {
               odata: {
                 entitySetCount: {
-                  entitySetName
-}
-} as any
-}
-}
-});
+                  entitySetName,
+                },
+              } as any,
+            },
+          },
+        });
         schemaComposer.Mutation.addFields({
           ...commonFields,
           [`create${entitySetName}`]: {
@@ -983,57 +979,57 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             args: {
               ...commonArgs,
               input: {
-                type: entityTypeName + 'Input'
-}
-},
+                type: entityTypeName + 'Input',
+              },
+            },
             extensions: {
               odata: {
                 createEntitySet: {
-                  entitySetName
-}
-} as any
-}
-},
+                  entitySetName,
+                },
+              } as any,
+            },
+          },
           [`delete${entitySetName}By${identifierFieldName}`]: {
             type: 'JSON',
             args: {
               ...commonArgs,
               [identifierFieldName]: {
-                type: identifierFieldTypeName
-}
-},
+                type: identifierFieldTypeName,
+              },
+            },
             extensions: {
               odata: {
                 deleteEntitySet: {
                   entitySetName,
                   identifierFieldName,
-                  identifierFieldTypeRef
-}
-} as any
-}
-},
+                  identifierFieldTypeRef,
+                },
+              } as any,
+            },
+          },
           [`update${entitySetName}By${identifierFieldName}`]: {
             type: typeName,
             args: {
               ...commonArgs,
               [identifierFieldName]: {
-                type: identifierFieldTypeName
-},
+                type: identifierFieldTypeName,
+              },
               input: {
-                type: entityTypeName + 'UpdateInput'
-}
-},
+                type: entityTypeName + 'UpdateInput',
+              },
+            },
             extensions: {
               odata: {
                 updateEntitySet: {
                   entitySetName,
                   identifierFieldName,
-                  identifierFieldTypeRef
-}
-} as any
-}
-}
-});
+                  identifierFieldTypeRef,
+                },
+              } as any,
+            },
+          },
+        });
       });
     });
   });
@@ -1053,9 +1049,9 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       inputTC.addFields({
         _empty: {
           type: 'Boolean',
-          description: 'Placeholder — upstream OData type has no input fields'
-}
-});
+          description: 'Placeholder — upstream OData type has no input fields',
+        },
+      });
     }
   }
 
@@ -1064,16 +1060,16 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
   emitODataPolymorphicUnions(schemaComposer, {
     abstractTypeNames,
     childrenByBase,
-    log
-});
+    log,
+  });
 
   // Federation Connectors surface — Hive runs via transport-connect (+ odata.metadata $select).
   const connectMeta = emitODataConnectors(schemaComposer, {
     name,
     endpoint,
     operationHeaders:
-      typeof operationHeaders === 'object' && operationHeaders ? operationHeaders : undefined
-});
+      typeof operationHeaders === 'object' && operationHeaders ? operationHeaders : undefined,
+  });
 
   let schema = schemaComposer.buildSchema();
   const odataOpts: { batch?: typeof batch; expandNavProps?: boolean } = {};
@@ -1123,8 +1119,8 @@ export async function loadGraphQLSchemaFromOData(
   const { processDirectives } = await import('@graphql-mesh/transport-connect');
   return processDirectives(schema, {
     globalFetch: opts.fetchFn,
-    log: opts.log
-});
+    log: opts.log,
+  });
 }
 
 export { processDirectives } from '@graphql-mesh/transport-connect';
@@ -1160,7 +1156,7 @@ export function loadODataSubgraph(
       importFn: defaultImportFn,
       log: ctx.log,
       fetchFn: ctx.fetch,
-      baseDir: ctx.cwd
-})
-});
+      baseDir: ctx.cwd,
+    }),
+  });
 }

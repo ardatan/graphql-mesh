@@ -216,7 +216,11 @@ function normalizeOptions(value: unknown): unknown | undefined {
   if (value == null) {
     return undefined;
   }
-  if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value as object).length === 0) {
+  if (
+    typeof value === 'object' &&
+    !Array.isArray(value) &&
+    Object.keys(value as object).length === 0
+  ) {
     return undefined;
   }
   return value;
@@ -295,9 +299,7 @@ function ensureJoinDirectiveSupport(document: DocumentNode): DocumentNode {
   return next;
 }
 
-function bumpJoinLink(
-  directives: readonly ConstDirectiveNode[] | undefined,
-): ConstDirectiveNode[] {
+function bumpJoinLink(directives: readonly ConstDirectiveNode[] | undefined): ConstDirectiveNode[] {
   if (!directives?.length) {
     return [];
   }

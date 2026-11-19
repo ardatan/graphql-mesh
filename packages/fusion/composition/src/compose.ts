@@ -17,6 +17,12 @@ import {
 } from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
+import {
+  assertSupportedMeshSpecOnSchema,
+  MESH_SUPPORTED_SPEC_VERSIONS,
+  TRANSPORT_DIRECTIVE_SDL,
+  validateMeshDirectives,
+} from '@graphql-mesh/utils';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
   getDirectiveExtensions,
@@ -34,13 +40,6 @@ import {
   toTypeLevelEntityProtobufRpc,
 } from './connect-entity.js';
 import { finalizeConnectorsSupergraph } from './connectors-supergraph.js';
-import { prepareConnectorsBeforeGuild } from './prepare-connectors-for-guild.js';
-import {
-  MESH_SUPPORTED_SPEC_VERSIONS,
-  TRANSPORT_DIRECTIVE_SDL,
-  assertSupportedMeshSpecOnSchema,
-  validateMeshDirectives,
-} from '@graphql-mesh/utils';
 import {
   convertSubgraphToFederationv2,
   importFederationDirectives,
@@ -50,6 +49,7 @@ import {
 } from './federation-utils.js';
 import { liftExtraSchemaDefinitionDirectives } from './lift-extra-schema-directives.js';
 import { finalizeMeshJoinDirectives } from './mesh-join-supergraph.js';
+import { prepareConnectorsBeforeGuild } from './prepare-connectors-for-guild.js';
 
 export interface SubgraphConfig {
   name: string;

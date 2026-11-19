@@ -15,8 +15,8 @@ import type { ImportFn } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   importMeshDirectives,
-  meshSpecUrl,
   loadFromModuleExportExpression,
+  meshSpecUrl,
 } from '@graphql-mesh/utils';
 import { MongoOpDirectives, TransportDirective } from './directives.js';
 import { createDefaultNaming, type MongoNaming } from './naming.js';

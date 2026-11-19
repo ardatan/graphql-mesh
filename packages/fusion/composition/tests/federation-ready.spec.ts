@@ -103,12 +103,8 @@ describe('importMeshDirectives / Connectors compose', () => {
       ['@transport'],
     );
     const dirs = getDirectiveExtensions(schema);
-    expect(
-      dirs?.link?.some((l: { url?: string }) => l.url === meshSpecUrl('sql')),
-    ).toBe(true);
-    expect(
-      dirs?.link?.some((l: { url?: string }) => l.url === meshSpecUrl('core')),
-    ).toBe(true);
+    expect(dirs?.link?.some((l: { url?: string }) => l.url === meshSpecUrl('sql'))).toBe(true);
+    expect(dirs?.link?.some((l: { url?: string }) => l.url === meshSpecUrl('core'))).toBe(true);
     const sqlImport = dirs?.link?.find((l: { url?: string }) => l.url === meshSpecUrl('sql'));
     const coreImport = dirs?.link?.find((l: { url?: string }) => l.url === meshSpecUrl('core'));
     expect(sqlImport?.import).toEqual(expect.arrayContaining(['@sql']));

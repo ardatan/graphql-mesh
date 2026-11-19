@@ -9,11 +9,7 @@ describe('validateMeshDirectives (GM-37)', () => {
         @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db")
 
       directive @link(url: String, import: [String]) repeatable on SCHEMA
-      directive @transport(
-        subgraph: String
-        kind: String!
-        location: String
-      ) repeatable on SCHEMA
+      directive @transport(subgraph: String, kind: String!, location: String) repeatable on SCHEMA
 
       type Query {
         ok: String
