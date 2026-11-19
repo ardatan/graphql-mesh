@@ -121,10 +121,18 @@ function isNeo4jModelType(
 // 7.6.6+ keeps SCHEMA_DEFINITION directives when augmenting; leftover Mesh
 // `@transport` / Apollo `@link` usages then fail validation (e.g. unknown
 // `url`/`import` on `@link` after helper scalars were filtered out).
-const STRIP_SCHEMA_DIRECTIVES = new Set(['transport', 'link', 'join__directive']);
+// Also strip `@composeDirective` — Mesh `importMeshDirectives` stamps it with
+// Fed `@link`, but Neo4jGraphQL augment does not know that federation directive.
+const STRIP_SCHEMA_DIRECTIVES = new Set([
+  'transport',
+  'link',
+  'join__directive',
+  'composeDirective',
+]);
 const STRIP_DIRECTIVE_DEFINITIONS = new Set([
   'transport',
   'link',
+  'composeDirective',
   'extraSchemaDefinitionDirective',
   'join__graph',
   'join__field',
