@@ -144,4 +144,58 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/name: "transport"/);
     expect(out).toMatch(/name: "source"/);
   });
+
+  it('rewrites @merge/@meshSource to join__directive without subgraph arg or defs', () => {
+    const sdl = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(
+          url: "https://specs.graphql-mesh.com/core/v0.1"
+          import: ["@merge", { name: "@source", as: "@meshSource" }]
+        ) {
+        query: Query
+      }
+
+      directive @merge(
+        subgraph: String
+        keyArg: String
+        keyField: String
+      ) repeatable on FIELD_DEFINITION
+
+      directive @meshSource(
+        name: String!
+        type: String
+        subgraph: String!
+      ) repeatable on FIELD_DEFINITION
+
+      enum join__Graph {
+        VACCINATION @join__graph(name: "vaccination", url: "http://localhost/graphql")
+      }
+
+      type Query @join__type(graph: VACCINATION) {
+        petById(id: ID!): Pet
+          @meshSource(name: "pet_by_id", type: "Pet", subgraph: "vaccination")
+          @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")
+          @join__field(graph: VACCINATION)
+      }
+
+      type Pet @join__type(graph: VACCINATION, key: "id") {
+        id: ID!
+      }
+    `;
+    const out = finalizeMeshJoinDirectives(sdl);
+    expect(out).not.toMatch(/@merge\s*\(/);
+    expect(out).not.toMatch(/@meshSource\s*\(/);
+    expect(out).not.toMatch(/directive @merge/);
+    expect(out).not.toMatch(/directive @meshSource/);
+    expect(out).not.toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1/);
+    // meshSource keeps subgraph (Gateway rename filter); merge drops it.
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[VACCINATION\], name: "meshSource", args: \{name: "pet_by_id", type: "Pet", subgraph: "vaccination"\}/,
+    );
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[VACCINATION\], name: "merge", args: \{keyField: "id", keyArg: "id"\}/,
+    );
+    expect(out).not.toMatch(/name: "merge", args: \{[^}]*subgraph:/);
+  });
 });

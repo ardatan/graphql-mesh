@@ -63,20 +63,14 @@ describe('Hoist Field', () => {
     expect(fields.users).toBeDefined();
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
-
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
-
-type Query {
+"type Query {
   users(limit: Int!, page: Int): [User!]!
 }
 
 type User {
   id: ID!
   name: String!
-}
-
-scalar _HoistConfig"
+}"
 `);
   });
   it('hoists field with mixed pathConfig array', async () => {
@@ -109,20 +103,14 @@ scalar _HoistConfig"
     expect(fields.users).toBeDefined();
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
-
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
-
-type Query {
+"type Query {
   users(limit: Int!, page: Int): [User!]!
 }
 
 type User {
   id: ID!
   name: String!
-}
-
-scalar _HoistConfig"
+}"
 `);
   });
   it('hoists field and filter args with global flag', async () => {
@@ -153,20 +141,14 @@ scalar _HoistConfig"
     expect(args.length).toEqual(0);
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
-
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
-
-type Query {
+"type Query {
   users: [User!]!
 }
 
 type User {
   id: ID!
   name: String!
-}
-
-scalar _HoistConfig"
+}"
 `);
   });
   it('hoists field and filter individual args via pathConfig', async () => {
@@ -203,20 +185,14 @@ scalar _HoistConfig"
     expect(args[0].name).toEqual('page');
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
-
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
-
-type Query {
+"type Query {
   users(page: Int): [User!]!
 }
 
 type User {
   id: ID!
   name: String!
-}
-
-scalar _HoistConfig"
+}"
 `);
   });
   it('hoists field and filter individual args via pathConfig independent of global flag', async () => {
@@ -256,20 +232,14 @@ scalar _HoistConfig"
     expect(args[0].name).toEqual('page');
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
-
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
-
-type Query {
+"type Query {
   users(page: Int): [User!]!
 }
 
 type User {
   id: ID!
   name: String!
-}
-
-scalar _HoistConfig"
+}"
 `);
   });
   it('executes correctly', async () => {
@@ -337,9 +307,7 @@ scalar _HoistConfig"
     expect(fields.users).toBeDefined();
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
-
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+"directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users(limit: Int!, page: Int): UserSearchResult
@@ -353,9 +321,7 @@ type User {
 
 type UserSearchResult {
   page: Int!
-}
-
-scalar _HoistConfig"
+}"
 `);
   });
   it('executes the new field correctly', async () => {

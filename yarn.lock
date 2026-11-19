@@ -8850,7 +8850,7 @@ __metadata:
 
 "@graphql-mesh/fusion-runtime@patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch":
   version: 1.13.4
-  resolution: "@graphql-mesh/fusion-runtime@patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch::version=1.13.4&hash=57c05f"
+  resolution: "@graphql-mesh/fusion-runtime@patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch::version=1.13.4&hash=1491f5"
   dependencies:
     "@envelop/core": "npm:^5.4.0"
     "@envelop/instrumentation": "npm:^1.0.0"
@@ -8874,7 +8874,7 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/83c40cb8b969557a3ce092038e08fb6cd5597376dc8bbbe4d38456a1a18a28334d40d0497d1a7fe8be5a3a561bfde3008059e2bd9f8526ccb7542a0f9b1468ee
+  checksum: 10c0/1b4909b89c37984d73ee850856fc6646539154f03dbd6b0f856109dbacfb7acbae0e94d578ee6c0ebad08f6da66b831abf78c56fc2715418a10054d482c6893e
   languageName: node
   linkType: hard
 

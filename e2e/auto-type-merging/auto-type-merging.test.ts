@@ -28,8 +28,11 @@ it('should compose the appropriate schema', async () => {
   const getPetByIdField = result.match(/getPetById\([\s\S]*?\):\s*Pet[^\n]*/)?.[0] || '';
   expect(getPetByIdField).toContain('$args.petId');
   expect(getPetByIdField).not.toContain('@merge');
-  // GraphQL vaccination subgraph still uses Mesh `@merge` (auto-type-merging intent).
-  expect(result).toMatch(/petById\([\s\S]*@merge\(subgraph:\s*"vaccination"/);
+  // GraphQL vaccination subgraph still uses Mesh `@merge` (auto-type-merging intent),
+  // carried on the final SG as `@join__directive` (graphs: owns attribution).
+  expect(result).toMatch(
+    /petById\([\s\S]*@join__directive\(graphs: \[VACCINATION\], name: "merge"/,
+  );
 });
 
 // Hive-only: vaccination is a plain GraphQL schema merged via Mesh `@merge`.

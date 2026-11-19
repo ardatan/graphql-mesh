@@ -849,7 +849,10 @@ describe('Federation Connectors composition', () => {
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
     expect(sdl).not.toContain('@meshSource');
-    expect(sdl).toMatch(/@source\([^)]*subgraph:/);
+    // Field-level Mesh `@source` → `@join__directive` on the final SG (arg-level
+    // Mesh `@source` may remain native — federation extract skips those locs).
+    expect(sdl).toMatch(/@join__directive\([\s\S]*name: "source"/);
+    expect(sdl).not.toMatch(/@source\([^)]*subgraph:/);
     // Non-connectors Mesh subgraph with connect-shaped transport still rewrites;
     // plain http/connect without extras is dropped when join owns location.
     expect(sdl).not.toContain('extraSchemaDefinitionDirective');
@@ -906,7 +909,9 @@ describe('Federation Connectors composition', () => {
     ]);
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
-    expect(sdl).toContain('@meshSource');
+    // Annotated subgraphs keep `@meshSource`; final SG uses join__directive.
+    expect(sdl).toMatch(/@join__directive\([\s\S]*name: "meshSource"/);
+    expect(sdl).not.toMatch(/@meshSource\s*\(/);
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "source"[\s\S]*name: "rest"/);
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "connect"/);
     expect(sdl).not.toMatch(/@connect\(/);

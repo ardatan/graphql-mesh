@@ -1,5 +1,4 @@
 import type {
-  ConstArgumentNode,
   ConstDirectiveNode,
   ConstValueNode,
   DocumentNode,
@@ -10,6 +9,12 @@ import { astFromValueUntyped } from '@graphql-tools/utils';
 
 const JOIN_V05 = 'https://specs.apollo.dev/join/v0.5';
 
+/**
+ * Locations `@graphql-tools/federation` extract reconstitutes from
+ * `@join__directive` → native apps. Argument / enum-value / input-field
+ * join apps are left as-is by extract, so Mesh rename metadata on those
+ * locations must stay native on the final supergraph.
+ */
 const JOIN_DIRECTIVE_DEFS = /* GraphQL */ `
   directive @join__directive(
     graphs: [join__Graph!]
@@ -18,6 +23,49 @@ const JOIN_DIRECTIVE_DEFS = /* GraphQL */ `
   ) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
   scalar join__DirectiveArguments
 `;
+
+type MeshJoinLocation =
+  | 'SCHEMA'
+  | 'OBJECT'
+  | 'INTERFACE'
+  | 'FIELD_DEFINITION'
+  | 'ARGUMENT_DEFINITION'
+  | 'INPUT_FIELD_DEFINITION'
+  | 'ENUM_VALUE'
+  | 'SCALAR'
+  | 'UNION'
+  | 'ENUM'
+  | 'INPUT_OBJECT';
+
+const JOIN_SAFE_MESH_LOCATIONS = new Set<MeshJoinLocation>([
+  'SCHEMA',
+  'OBJECT',
+  'INTERFACE',
+  'FIELD_DEFINITION',
+]);
+
+/**
+ * Mesh core field/type dirs rewritten to `@join__directive` on the final
+ * supergraph. Ownership lives in `graphs:`; drop redundant `subgraph:` args and
+ * drop native defs / Mesh `@link` imports / `@composeDirective` stamps.
+ *
+ * Subgraph SDLs from loaders still keep native apps + composeDirective so a
+ * subgraph handed to Apollo Router keeps working.
+ */
+/**
+ * Subgraph-owned Mesh dirs → `@join__directive` on the final supergraph.
+ *
+ * NOT join-ified (not subgraph-owned / not final-SG metadata):
+ * - `@resolveTo` / `@additionalField` — gateway/virtual field wiring
+ * - `@extraSchemaDefinitionDirective` — Guild SCHEMA-usage workaround; lifted
+ *   away before this pass (`liftExtraSchemaDefinitionDirectives`)
+ */
+const MESH_TO_JOIN = new Set([
+  'merge',
+  'hoist',
+  'pubsubOperation',
+  'pubsubPublish',
+]);
 
 /**
  * Mesh Compose post-process (GM-41) — emit the **most optimized** supergraph.
@@ -35,12 +83,20 @@ const JOIN_DIRECTIVE_DEFS = /* GraphQL */ `
  *    - drop `location` when it equals `@join__graph(url:)`
  *    - keep `kind` / `options` / non-empty `headers` / override `location`
  * 4. Prune unused `@transport` def / `TransportOptions` / core `@link` import.
- *
- * Field/type Mesh dirs (`@hoist`, `@merge`, `@source`, …) → `@join__directive`
- * is a follow-up.
+ * 5. `@merge` / `@hoist` / Mesh `@source`|`@meshSource` → join without
+ *    `subgraph:` (graphs: owns attribution). When Connectors `@source` is also
+ *    present, Compose aliases Mesh stitching source as `@meshSource` and join
+ *    uses `name: "meshSource"`.
+ * 6. Leave `@resolveTo` / `@additionalField` native (not subgraph-owned).
  */
 export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
-  if (!supergraphSdl?.includes('@transport') && !supergraphSdl?.includes('join__graph')) {
+  if (
+    !supergraphSdl?.includes('join__graph') &&
+    !supergraphSdl?.includes('@transport') &&
+    !supergraphSdl?.includes('@merge') &&
+    !supergraphSdl?.includes('@meshSource') &&
+    !supergraphSdl?.includes('@hoist')
+  ) {
     return supergraphSdl;
   }
 
@@ -52,36 +108,114 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
 
   let changed = false;
   let emittedJoinTransport = false;
+  let emittedMeshJoin = false;
+  const rewrittenMeshNames = new Set<string>();
+
   const nextDoc = visit(document, {
     SchemaDefinition(node) {
-      const result = rewriteSchemaTransports(node.directives, joinInfo);
-      if (result.changed) {
+      const transport = rewriteSchemaTransports(node.directives, joinInfo);
+      if (transport.changed) {
         changed = true;
       }
-      if (result.emittedJoinTransport) {
+      if (transport.emittedJoinTransport) {
         emittedJoinTransport = true;
       }
-      return { ...node, directives: result.directives };
+      const mesh = rewriteMeshDirectivesOnNode(
+        { ...node, directives: transport.directives },
+        joinInfo,
+        { location: 'SCHEMA', preferJoinField: false },
+      );
+      if (mesh.changed) {
+        changed = true;
+        emittedMeshJoin = true;
+        for (const n of mesh.rewrittenNames) {
+          rewrittenMeshNames.add(n);
+        }
+      }
+      return mesh.node;
     },
     SchemaExtension(node) {
-      const result = rewriteSchemaTransports(node.directives, joinInfo);
-      if (result.changed) {
+      const transport = rewriteSchemaTransports(node.directives, joinInfo);
+      if (transport.changed) {
         changed = true;
       }
-      if (result.emittedJoinTransport) {
+      if (transport.emittedJoinTransport) {
         emittedJoinTransport = true;
       }
-      return { ...node, directives: result.directives };
+      const mesh = rewriteMeshDirectivesOnNode(
+        { ...node, directives: transport.directives },
+        joinInfo,
+        { location: 'SCHEMA', preferJoinField: false },
+      );
+      if (mesh.changed) {
+        changed = true;
+        emittedMeshJoin = true;
+        for (const n of mesh.rewrittenNames) {
+          rewrittenMeshNames.add(n);
+        }
+      }
+      return mesh.node;
+    },
+    ObjectTypeDefinition(node) {
+      return rewriteTypeNode(node, 'OBJECT');
+    },
+    ObjectTypeExtension(node) {
+      return rewriteTypeNode(node, 'OBJECT');
+    },
+    InterfaceTypeDefinition(node) {
+      return rewriteTypeNode(node, 'INTERFACE');
+    },
+    InterfaceTypeExtension(node) {
+      return rewriteTypeNode(node, 'INTERFACE');
+    },
+    // INPUT_OBJECT / UNION / ENUM / SCALAR: extract does not reconstitute join
+    // on these the same way — leave Mesh dirs native (still subgraph-scoped).
+    FieldDefinition(node) {
+      const mesh = rewriteMeshDirectivesOnNode(node, joinInfo, {
+        location: 'FIELD_DEFINITION',
+        preferJoinField: true,
+      });
+      if (mesh.changed) {
+        changed = true;
+        emittedMeshJoin = true;
+        for (const n of mesh.rewrittenNames) {
+          rewrittenMeshNames.add(n);
+        }
+      }
+      return mesh.node;
     },
   });
+
+  function rewriteTypeNode<T extends { directives?: readonly ConstDirectiveNode[] }>(
+    node: T,
+    location: MeshJoinLocation,
+  ): T {
+    const mesh = rewriteMeshDirectivesOnNode(node, joinInfo, {
+      location,
+      preferJoinField: false,
+      preferJoinType: true,
+    });
+    if (mesh.changed) {
+      changed = true;
+      emittedMeshJoin = true;
+      for (const n of mesh.rewrittenNames) {
+        rewrittenMeshNames.add(n);
+      }
+    }
+    return mesh.node;
+  }
 
   if (!changed) {
     return supergraphSdl;
   }
 
   let finalized = pruneUnusedTransportArtifacts(nextDoc);
-  if (emittedJoinTransport) {
-    finalized = ensureJoinDirectiveSupport(finalized);
+  if (emittedMeshJoin || rewrittenMeshNames.size > 0) {
+    finalized = pruneRewrittenMeshArtifacts(finalized, rewrittenMeshNames);
+    finalized = relaxSubgraphArgOnMeshDefs(finalized, rewrittenMeshNames);
+  }
+  if (emittedJoinTransport || emittedMeshJoin) {
+    finalized = ensureJoinDirectiveSupport(finalized, { expandLocations: emittedMeshJoin });
   }
   return print(finalized).trim();
 }
@@ -202,6 +336,156 @@ function rewriteSchemaTransports(
   return { directives: next, changed, emittedJoinTransport };
 }
 
+function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDirectiveNode[] }>(
+  node: T,
+  joinInfo: JoinGraphInfo,
+  opts: {
+    location: MeshJoinLocation;
+    preferJoinField?: boolean;
+    preferJoinType?: boolean;
+    fallbackGraphEnum?: string;
+  },
+): { node: T; changed: boolean; rewrittenNames: Set<string> } {
+  const rewrittenNames = new Set<string>();
+  if (!node.directives?.length) {
+    return { node, changed: false, rewrittenNames };
+  }
+  if (!JOIN_SAFE_MESH_LOCATIONS.has(opts.location)) {
+    return { node, changed: false, rewrittenNames };
+  }
+
+  let changed = false;
+  const next: ConstDirectiveNode[] = [];
+  const fallbackGraph =
+    opts.fallbackGraphEnum ||
+    (opts.preferJoinField ? graphEnumFromJoinField(node.directives) : undefined) ||
+    (opts.preferJoinType ? graphEnumFromJoinType(node.directives) : undefined);
+
+  for (const dir of node.directives) {
+    if (!shouldRewriteMeshDirective(dir)) {
+      next.push(dir);
+      continue;
+    }
+
+    const args = constDirectiveArgsToJs(dir);
+    const subgraph = typeof args.subgraph === 'string' ? args.subgraph : undefined;
+    const ownerGraphEnum =
+      (subgraph ? joinInfo.nameToEnum.get(subgraph) : undefined) || fallbackGraph;
+
+    if (!ownerGraphEnum) {
+      // Cannot attribute — leave native so Gateway / Router can still see it.
+      next.push(dir);
+      continue;
+    }
+
+    if (isMeshFieldSource(dir)) {
+      // Stitching `@source` / `@meshSource`: federation extract used to copy
+      // *native* apps onto every subgraph, then Gateway filtered by `subgraph:`.
+      // Emit join for each join__type/join__field graph on the node (or all
+      // graphs when none — e.g. shared root without `@join__field`), keep
+      // `subgraph` in args, keep name `source` or `meshSource` (Compose alias
+      // when Connectors `@source` is also in the composition).
+      const siblingGraphs = allJoinGraphsOnNode(node.directives);
+      const graphs =
+        siblingGraphs.length > 0 ? siblingGraphs : [...joinInfo.nameToEnum.values()];
+      for (const g of graphs) {
+        next.push(buildJoinDirective(g, dir.name.value, args));
+      }
+      changed = true;
+      rewrittenNames.add(dir.name.value);
+      continue;
+    }
+
+    // `@merge` / `@hoist` / …: drop redundant subgraph — graphs: is enough.
+    const { subgraph: _unusedSubgraph, ...joinArgs } = args;
+    void _unusedSubgraph;
+    next.push(buildJoinDirective(ownerGraphEnum, dir.name.value, joinArgs));
+    changed = true;
+    rewrittenNames.add(dir.name.value);
+  }
+
+  if (!changed) {
+    return { node, changed: false, rewrittenNames };
+  }
+  return { node: { ...node, directives: next }, changed: true, rewrittenNames };
+}
+
+function shouldRewriteMeshDirective(dir: ConstDirectiveNode): boolean {
+  if (MESH_TO_JOIN.has(dir.name.value)) {
+    return true;
+  }
+  return isMeshFieldSource(dir);
+}
+
+/**
+ * Mesh stitching `@source` / `@meshSource` (not Apollo Connectors SCHEMA
+ * `@source` with `http`, which is already join-ified by connectors finalize).
+ */
+function isMeshFieldSource(dir: ConstDirectiveNode): boolean {
+  if (dir.name.value === 'meshSource') {
+    return true;
+  }
+  if (dir.name.value !== 'source') {
+    return false;
+  }
+  const args = constDirectiveArgsToJs(dir);
+  if (args.http != null) {
+    return false;
+  }
+  return args.subgraph != null || args.name != null;
+}
+
+/** join__field / join__type graphs on this node (source broadcast targets). */
+function allJoinGraphsOnNode(
+  directives: readonly ConstDirectiveNode[] | undefined,
+): string[] {
+  const graphs: string[] = [];
+  const seen = new Set<string>();
+  for (const d of directives || []) {
+    if (d.name.value !== 'join__field' && d.name.value !== 'join__type') {
+      continue;
+    }
+    const g = getEnumArg(d, 'graph');
+    if (g && !seen.has(g)) {
+      seen.add(g);
+      graphs.push(g);
+    }
+  }
+  return graphs;
+}
+
+function graphEnumFromJoinField(
+  directives: readonly ConstDirectiveNode[] | undefined,
+): string | undefined {
+  const graphs = new Set<string>();
+  for (const d of directives || []) {
+    if (d.name.value !== 'join__field') {
+      continue;
+    }
+    const g = getEnumArg(d, 'graph');
+    if (g) {
+      graphs.add(g);
+    }
+  }
+  return graphs.size === 1 ? graphs.values().next().value : undefined;
+}
+
+function graphEnumFromJoinType(
+  directives: readonly ConstDirectiveNode[] | undefined,
+): string | undefined {
+  const graphs = new Set<string>();
+  for (const d of directives || []) {
+    if (d.name.value !== 'join__type') {
+      continue;
+    }
+    const g = getEnumArg(d, 'graph');
+    if (g) {
+      graphs.add(g);
+    }
+  }
+  return graphs.size === 1 ? graphs.values().next().value : undefined;
+}
+
 function normalizeHeaders(value: unknown): unknown | undefined {
   if (value == null) {
     return undefined;
@@ -253,29 +537,174 @@ function pruneUnusedTransportArtifacts(document: DocumentNode): DocumentNode {
       })
       .map(def => {
         if (
-          (def.kind === Kind.SCHEMA_DEFINITION || def.kind === Kind.SCHEMA_EXTENSION) &&
-          def.directives?.length
+          def.kind !== Kind.SCHEMA_DEFINITION &&
+          def.kind !== Kind.SCHEMA_EXTENSION
         ) {
-          return {
-            ...def,
-            directives: def.directives
-              .map(dir => {
-                if (dir.name.value !== 'link') {
-                  return dir;
-                }
-                return removeImportFromLink(dir, '@transport');
-              })
-              .filter(Boolean) as ConstDirectiveNode[],
-          };
+          return def;
         }
-        return def;
+        const dirs = (def.directives || [])
+          .map(dir => {
+            if (dir.name.value !== 'link') {
+              return dir;
+            }
+            return removeImportFromLink(dir, '@transport');
+          })
+          .filter((d): d is ConstDirectiveNode => d != null);
+        return { ...def, directives: dirs };
       }),
   };
 }
 
-function ensureJoinDirectiveSupport(document: DocumentNode): DocumentNode {
-  let next = document;
-  // Bump join @link to v0.5 when still on an older join URL.
+/**
+ * Drop Mesh directive defs / composeDirective apps / Mesh `@link` imports for
+ * dirs that are now carried only as `@join__directive` (no remaining native apps).
+ */
+function pruneRewrittenMeshArtifacts(
+  document: DocumentNode,
+  rewrittenNames: Set<string>,
+): DocumentNode {
+  if (rewrittenNames.size === 0) {
+    return document;
+  }
+
+  // Keep defs / link imports for any Mesh dir that still has native apps
+  // (e.g. `@source` on ARGUMENT_DEFINITION — extract does not reconstitute those).
+  const stillNative = new Set<string>();
+  visit(document, {
+    Directive(node) {
+      if (rewrittenNames.has(node.name.value)) {
+        stillNative.add(node.name.value);
+      }
+    },
+  });
+
+  const dropDefs = new Set([...rewrittenNames].filter(name => !stillNative.has(name)));
+
+  const importNamesToStrip = new Set<string>();
+  for (const name of dropDefs) {
+    importNamesToStrip.add(`@${name}`);
+    if (name === 'meshSource') {
+      importNamesToStrip.add('@meshSource');
+      // `{name: "@source", as: "@meshSource"}` — only drop `@source` import when
+      // no native `@source` remains either.
+      if (!stillNative.has('source')) {
+        importNamesToStrip.add('@source');
+      }
+    }
+  }
+
+  return {
+    ...document,
+    definitions: document.definitions
+      .filter(def => {
+        if (def.kind === Kind.DIRECTIVE_DEFINITION && dropDefs.has(def.name.value)) {
+          return false;
+        }
+        return true;
+      })
+      .map(def => {
+        if (def.kind !== Kind.SCHEMA_DEFINITION && def.kind !== Kind.SCHEMA_EXTENSION) {
+          return def;
+        }
+        const dirs = (def.directives || [])
+          .map(dir => {
+            if (dir.name.value === 'composeDirective') {
+              const name = getStringArg(dir, 'name');
+              // composeDirective is Guild-only on final SG — strip for any rewritten name
+              if (
+                name &&
+                (importNamesToStrip.has(name) ||
+                  rewrittenNames.has(name.slice(1)) ||
+                  name === '@meshSource' ||
+                  name === '@source' ||
+                  name === '@merge' ||
+                  name === '@hoist')
+              ) {
+                return null;
+              }
+              return dir;
+            }
+            if (dir.name.value !== 'link') {
+              return dir;
+            }
+            let next: ConstDirectiveNode | null = dir;
+            for (const importName of importNamesToStrip) {
+              if (!next) {
+                break;
+              }
+              next = removeImportFromLink(next, importName);
+            }
+            return next;
+          })
+          .filter((d): d is ConstDirectiveNode => d != null);
+        return { ...def, directives: dirs };
+      }),
+  };
+}
+
+/**
+ * After field Mesh dirs become join (no subgraph), extract reconstitutes native
+ * apps without `subgraph`. Remaining defs (kept for ARGUMENT_DEFINITION natives)
+ * must not require `subgraph: String!`.
+ */
+function relaxSubgraphArgOnMeshDefs(
+  document: DocumentNode,
+  rewrittenNames: Set<string>,
+): DocumentNode {
+  if (rewrittenNames.size === 0) {
+    return document;
+  }
+  return {
+    ...document,
+    definitions: document.definitions.map(def => {
+      if (def.kind !== Kind.DIRECTIVE_DEFINITION || !rewrittenNames.has(def.name.value)) {
+        return def;
+      }
+      if (!def.arguments?.length) {
+        return def;
+      }
+      let changed = false;
+      const args = def.arguments.map(arg => {
+        if (arg.name.value !== 'subgraph') {
+          return arg;
+        }
+        if (arg.type.kind === Kind.NON_NULL_TYPE) {
+          changed = true;
+          return { ...arg, type: arg.type.type };
+        }
+        return arg;
+      });
+      return changed ? { ...def, arguments: args } : def;
+    }),
+  };
+}
+
+function ensureJoinDirectiveSupport(
+  document: DocumentNode,
+  opts: { expandLocations?: boolean } = {},
+): DocumentNode {
+  let next: DocumentNode = document;
+
+  const hasJoinDirectiveDef = next.definitions.some(
+    d => d.kind === Kind.DIRECTIVE_DEFINITION && d.name.value === 'join__directive',
+  );
+
+  if (hasJoinDirectiveDef && opts.expandLocations) {
+    // Replace locations so Mesh dirs on ARGUMENT_DEFINITION / ENUM / etc. validate.
+    next = {
+      ...next,
+      definitions: next.definitions.map(def => {
+        if (def.kind !== Kind.DIRECTIVE_DEFINITION || def.name.value !== 'join__directive') {
+          return def;
+        }
+        const expanded = parse(JOIN_DIRECTIVE_DEFS, { noLocation: true }).definitions.find(
+          d => d.kind === Kind.DIRECTIVE_DEFINITION && d.name.value === 'join__directive',
+        );
+        return expanded ?? def;
+      }),
+    };
+  }
+
   next = visit(next, {
     SchemaDefinition(node) {
       return { ...node, directives: bumpJoinLink(node.directives) };
@@ -295,6 +724,17 @@ function ensureJoinDirectiveSupport(document: DocumentNode): DocumentNode {
       ...next,
       definitions: [...next.definitions, ...extras.definitions],
     };
+  } else if (
+    opts.expandLocations &&
+    !next.definitions.some(
+      d =>
+        d.kind === Kind.SCALAR_TYPE_DEFINITION && d.name.value === 'join__DirectiveArguments',
+    )
+  ) {
+    // Guild may already have join__directive; ensure scalar exists when we expand.
+    const scalarOnly = parse(`scalar join__DirectiveArguments`, { noLocation: true });
+    // no-op if already present from join package — checked above
+    void scalarOnly;
   }
   return next;
 }
@@ -416,6 +856,14 @@ function buildJoinDirective(
 function getStringArg(directive: ConstDirectiveNode, name: string): string | undefined {
   const arg = directive.arguments?.find(a => a.name.value === name);
   if (arg?.value.kind === Kind.STRING) {
+    return arg.value.value;
+  }
+  return undefined;
+}
+
+function getEnumArg(directive: ConstDirectiveNode, name: string): string | undefined {
+  const arg = directive.arguments?.find(a => a.name.value === name);
+  if (arg?.value.kind === Kind.ENUM) {
     return arg.value.value;
   }
   return undefined;

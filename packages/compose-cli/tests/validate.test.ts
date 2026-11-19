@@ -64,6 +64,53 @@ describe('validateSupergraphSdl', () => {
       expect(errors).toHaveLength(1);
       expect(errors[0].message).toContain('references unknown subgraph UnknownSubgraph');
     });
+
+    it('validates @merge on fields and join__directive(name: "merge")', () => {
+      const subgraph = makeSubgraph(
+        'Products',
+        /* GraphQL */ `
+          type Query {
+            product(id: ID!): Product
+          }
+          type Product {
+            id: ID!
+          }
+        `,
+      );
+      const supergraphSdl = /* GraphQL */ `
+        enum join__Graph {
+          PRODUCTS @join__graph(name: "Products", url: "")
+        }
+        directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+        directive @join__directive(
+          graphs: [join__Graph!]
+          name: String!
+          args: join__DirectiveArguments
+        ) repeatable on FIELD_DEFINITION
+        scalar join__DirectiveArguments
+        type Query {
+          product(id: ID!): Product
+            @join__directive(
+              graphs: [PRODUCTS]
+              name: "merge"
+              args: { keyField: "id", keyArg: "id" }
+            )
+          bad(id: ID!): Product
+            @join__directive(
+              graphs: [PRODUCTS]
+              name: "merge"
+              args: { keyField: "id", keyArg: "missingArg" }
+            )
+        }
+        type Product {
+          id: ID!
+        }
+      `;
+      const errors = validateSupergraphSdl(supergraphSdl, [subgraph]);
+      expect(errors.length).toBeGreaterThanOrEqual(1);
+      expect(errors.some(e => e.message.includes('unknown argument missingArg'))).toBe(true);
+      expect(errors.some(e => e.message.includes('field Query.product'))).toBe(false);
+    });
   });
 
   describe('@resolveTo directive', () => {
