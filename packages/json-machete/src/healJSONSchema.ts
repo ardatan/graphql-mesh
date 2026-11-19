@@ -25,6 +25,73 @@ function definitionNameFromResolvedRef(resolvedRef: string | undefined): string 
   return rest.split('/').filter(Boolean)[0];
 }
 
+/**
+ * FHIR R4/R5 primitive definition names (no object properties). Used to prefer
+ * shared titles (`canonical`, `base64Binary`, `id`, `code`) over
+ * `Parent_valueCanonical` / path-prefixed names so Fed merge + scalarMap work.
+ */
+const FHIR_PRIMITIVE_DEFINITION_NAMES = new Set([
+  'base64Binary',
+  'boolean',
+  'canonical',
+  'code',
+  'date',
+  'dateTime',
+  'decimal',
+  'id',
+  'instant',
+  'integer',
+  'markdown',
+  'oid',
+  'positiveInt',
+  'string',
+  'time',
+  'unsignedInt',
+  'uri',
+  'url',
+  'uuid',
+  'xhtml',
+]);
+
+/** FHIR `code` pattern - used when collapsing status-like enums onto shared `code`. */
+const FHIR_CODE_PATTERN = '^[^\\s]+(\\s[^\\s]+)*$';
+
+/**
+ * Prefer a shared FHIR primitive title for an untitled property:
+ * - prop `$resolvedRef` / `$ref` → definition name (`id`, `code`, …)
+ * - `valueCanonical` / `valueBase64Binary` → `canonical` / `base64Binary`
+ * - `status` (+ similar) string enums → `code`
+ */
+function sharedFhirPrimitiveTitle(propName: string, prop: JSONSchemaObject): string | undefined {
+  const fromRef = definitionNameFromResolvedRef(
+    (prop.$resolvedRef as string | undefined) || (prop.$ref as string | undefined),
+  );
+  if (fromRef && FHIR_PRIMITIVE_DEFINITION_NAMES.has(fromRef)) {
+    return fromRef;
+  }
+  if (propName.startsWith('value') && propName.length > 5) {
+    const suffix = propName.slice(5);
+    const defName = suffix.charAt(0).toLowerCase() + suffix.slice(1);
+    if (FHIR_PRIMITIVE_DEFINITION_NAMES.has(defName)) {
+      return defName;
+    }
+  }
+  if (FHIR_PRIMITIVE_DEFINITION_NAMES.has(propName)) {
+    return propName;
+  }
+  // FHIR publication/resource `status` is typically `code` in the meta-model;
+  // R4 often inlines the enum - collapse onto shared `code` instead of Parent_status.
+  if (
+    propName === 'status' &&
+    Array.isArray(prop.enum) &&
+    prop.enum.length > 0 &&
+    (prop.type === 'string' || prop.type == null)
+  ) {
+    return 'code';
+  }
+  return undefined;
+}
+
 const JSONSchemaStringFormats = [
   'date',
   'hostname',
@@ -85,6 +152,21 @@ export async function healJSONSchema(
               const existingSubSchema = schemaByTitle.get(subSchema.title);
               if (existingSubSchema) {
                 if (inspect(subSchema) === inspect(existingSubSchema)) {
+                  return existingSubSchema;
+                } else if (
+                  // FHIR primitives often differ only by description after
+                  // `status`→`code` / `valueCanonical`→`canonical` reuse. Keep one
+                  // shared node so composer does not emit `code2` / `canonical2`.
+                  typeof subSchema.pattern === 'string' &&
+                  subSchema.pattern === existingSubSchema.pattern &&
+                  subSchema.type === existingSubSchema.type &&
+                  !subSchema.enum &&
+                  !existingSubSchema.enum &&
+                  !subSchema.properties &&
+                  !existingSubSchema.properties &&
+                  !subSchema.items &&
+                  !existingSubSchema.items
+                ) {
                   return existingSubSchema;
                 } else {
                   delete subSchema.title;
@@ -155,6 +237,49 @@ export async function healJSONSchema(
                   node.maxLength != null ||
                   node.minLength != null
                 );
+              // FHIR `resourceType: { const: "Patient" }` - plain String, not
+              // `Patient_resourceType` single-member enum noise.
+              const singleLiteral =
+                prop.const != null || (Array.isArray(prop.enum) && prop.enum.length === 1);
+              if (propName === 'resourceType' && singleLiteral) {
+                delete prop.const;
+                delete prop.enum;
+                prop.type = (prop.type as string) || 'string';
+                debugLogFn?.(
+                  `${path}/properties/${propName} is a single-literal FHIR resourceType; using plain string`,
+                );
+                continue;
+              }
+              // Prefer shared FHIR primitive titles (`canonical`, `id`, `code`) over
+              // `Extension_valueCanonical` / `ActivityDefinition_status` / `Patient_id`.
+              const sharedTitle = sharedFhirPrimitiveTitle(propName, prop);
+              if (sharedTitle && prop.type !== 'boolean') {
+                // Normalize to a canonical shape so schemaByTitle can dedupe
+                // identical primitives (description-only diffs must not drop the title
+                // and fall back to path names like `activity_status`).
+                let pattern = typeof prop.pattern === 'string' ? prop.pattern : undefined;
+                if (
+                  Array.isArray(prop.enum) &&
+                  prop.enum.length > 0 &&
+                  !pattern &&
+                  sharedTitle === 'code'
+                ) {
+                  pattern = FHIR_CODE_PATTERN;
+                }
+                const type = (prop.type as string) || 'string';
+                for (const key of Object.keys(prop)) {
+                  delete (prop as Record<string, unknown>)[key];
+                }
+                prop.type = type;
+                if (pattern) {
+                  prop.pattern = pattern;
+                }
+                prop.title = sharedTitle;
+                debugLogFn?.(
+                  `${path}/properties/${propName} prefers shared FHIR primitive title ${sharedTitle}`,
+                );
+                continue;
+              }
               if (needsStableTitle(prop)) {
                 const stableTitle = `${resolvedDefinitionName}_${propName}`;
                 debugLogFn?.(

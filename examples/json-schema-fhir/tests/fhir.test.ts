@@ -23,7 +23,7 @@ describe('FHIR', () => {
   });
 
   it('ops emit @connect by default; Reference.resource stays Mesh @resolveTo', () => {
-    // v0 jsonSchema handler stamps `@connect` for operations — no hand `@connect`
+    // v0 jsonSchema handler stamps `@connect` for operations - no hand `@connect`
     // in .meshrc. Follow-up fetch remains `@resolveTo` (legacy Mesh stitching).
     const sdl = printSchemaWithDirectives(mesh.schema);
     expect(sdl).toMatch(/resourceById\([^)]*\): ResourceList @connect\(/);
