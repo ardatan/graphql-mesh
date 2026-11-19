@@ -263,11 +263,11 @@ function ensureConnectComposeDirectives(
 
   const fed = next[fedIdx];
   const importArg = fed.arguments?.find(a => a.name.value === 'import');
-  if (!importArg || importArg.value.kind !== Kind.LIST) {
+  if (!importArg) {
     next[fedIdx] = {
       ...fed,
       arguments: [
-        ...(fed.arguments || []).filter(a => a.name.value !== 'import'),
+        ...(fed.arguments || []),
         {
           kind: Kind.ARGUMENT,
           name: { kind: Kind.NAME, value: 'import' },
@@ -281,20 +281,40 @@ function ensureConnectComposeDirectives(
     return next;
   }
 
-  const already = importArg.value.values.some(
+  // GraphQL list inputs may be a singleton value (`import: "@key"`) — normalize
+  // to a list so we append `@composeDirective` without dropping existing imports.
+  const existingImportValues =
+    importArg.value.kind === Kind.LIST ? [...importArg.value.values] : [importArg.value];
+  const already = existingImportValues.some(
     v => v.kind === Kind.STRING && v.value === '@composeDirective',
   );
   if (!already) {
     next[fedIdx] = {
       ...fed,
       arguments: (fed.arguments || []).map(arg =>
-        arg.name.value === 'import' && arg.value.kind === Kind.LIST
+        arg.name.value === 'import'
           ? {
               ...arg,
               value: {
                 kind: Kind.LIST,
-                values: [...arg.value.values, { kind: Kind.STRING, value: '@composeDirective' }],
+                values: [
+                  ...existingImportValues,
+                  { kind: Kind.STRING, value: '@composeDirective' },
+                ],
               },
+            }
+          : arg,
+      ),
+    };
+  } else if (importArg.value.kind !== Kind.LIST) {
+    // Already has compose via singleton string — still normalize to a list.
+    next[fedIdx] = {
+      ...fed,
+      arguments: (fed.arguments || []).map(arg =>
+        arg.name.value === 'import'
+          ? {
+              ...arg,
+              value: { kind: Kind.LIST, values: existingImportValues },
             }
           : arg,
       ),

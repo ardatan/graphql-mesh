@@ -116,6 +116,10 @@ function usedFederationDirectiveImports(subgraph: GraphQLSchema): string[] {
       consider(getDirectiveExtensions(enumValueConfig));
       return enumValueConfig;
     },
+    [MapperKind.INPUT_OBJECT_FIELD]: inputFieldConfig => {
+      consider(getDirectiveExtensions(inputFieldConfig));
+      return inputFieldConfig;
+    },
   });
   return [...used];
 }

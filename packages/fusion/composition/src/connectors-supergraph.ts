@@ -186,8 +186,15 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
       }
     } else if (identicalAtLocation) {
       // Same location, identical configs — genuinely shared; fan out.
+      // Also keep Connector graphs that reference this uniquely-named source
+      // even when their graph URL differs from the source baseURL.
       for (const g of fromLocation) {
         graphs.add(g);
+      }
+      if (fromConnect && uniquePending) {
+        for (const g of fromConnect) {
+          graphs.add(g);
+        }
       }
     } else {
       // No unique location match, or multi-graph URL with competing configs —
