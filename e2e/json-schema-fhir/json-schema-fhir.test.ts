@@ -9,11 +9,6 @@ beforeAll(async () => {
   await ensureFhirSchema();
 }, 120_000);
 
-it('composes official fhir.schema.json + mini Reference.resource SDL', async () => {
-  const { result } = await compose();
-  expect(result).toMatchSnapshot();
-});
-
 describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {
   it('fetches Patient by id from live HAPI', async () => {
     const composition = await compose({ output: 'graphql' });

@@ -249,10 +249,14 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   }
   // Drop Mesh `@link(url:)` with no imports (e.g. core left after `@transport` strip).
   finalized = pruneEmptyMeshLinks(finalized);
-  // Shared FHIR/OpenAPI pattern scalars merge with one `@regexp`/`@typescript` per
-  // subgraph; Apollo Router rejects duplicate native `@typescript` on the same
-  // scalar ("already exists"). Keep one app per unique args excluding `subgraph`.
-  finalized = dedupeMeshScalarEnumDirectives(finalized);
+  // Mesh `@typescript` / `@regexp` / `@example` are loader codegen metadata.
+  // Apollo Router connector carry-over rejects duplicate native `@typescript` on
+  // shared SCALAR/ENUM ("already exists") once many FHIR/OpenAPI subgraphs merge
+  // the same pattern scalars — strip apps on the lean SG (subgraph SDLs keep them).
+  finalized = stripMeshCodegenScalarEnumDirectives(finalized);
+  // Drop now-orphan codegen defs / Mesh `@link` imports after the strip above.
+  finalized = pruneUnusedMeshDirectiveArtifacts(finalized);
+  finalized = pruneEmptyMeshLinks(finalized);
   if (emittedJoinTransport || emittedMeshJoin) {
     finalized = ensureJoinDirectiveSupport(finalized, { expandLocations: emittedMeshJoin });
   }
@@ -260,46 +264,34 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   return changed || printed !== supergraphSdl.trim() ? printed : supergraphSdl;
 }
 
-const MESH_SCALAR_ENUM_DEDUPE = new Set(['typescript', 'regexp']);
+/** Loader codegen dirs — not needed on the lean composed SG for Hive/Router. */
+const MESH_CODEGEN_SCALAR_ENUM_DIRS = new Set(['typescript', 'regexp', 'example']);
 
 /**
- * Collapse repeatable Mesh scalar/enum dirs that only differ by `subgraph:`
- * (same `type` / `pattern`) so Router can load the SG.
+ * Strip Mesh codegen apps (`@typescript` / `@regexp` / `@example`) from
+ * SCALAR/ENUM on the final supergraph. Subgraph SDLs keep them for local
+ * tooling; Router rejects duplicate `@typescript` when shared pattern scalars
+ * merge across Connectors subgraphs.
  */
-function dedupeMeshScalarEnumDirectives(document: DocumentNode): DocumentNode {
+function stripMeshCodegenScalarEnumDirectives(document: DocumentNode): DocumentNode {
   return visit(document, {
     ScalarTypeDefinition(node) {
-      return dedupeDirsOnNode(node);
+      return stripCodegenDirsOnNode(node);
     },
     EnumTypeDefinition(node) {
-      return dedupeDirsOnNode(node);
+      return stripCodegenDirsOnNode(node);
     },
   });
 }
 
-function dedupeDirsOnNode<T extends { directives?: readonly ConstDirectiveNode[] }>(node: T): T {
+function stripCodegenDirsOnNode<T extends { directives?: readonly ConstDirectiveNode[] }>(
+  node: T,
+): T {
   if (!node.directives?.length) {
     return node;
   }
-  const seen = new Set<string>();
-  const next: ConstDirectiveNode[] = [];
-  let changed = false;
-  for (const dir of node.directives) {
-    if (!MESH_SCALAR_ENUM_DEDUPE.has(dir.name.value)) {
-      next.push(dir);
-      continue;
-    }
-    const args = constDirectiveArgsToJs(dir);
-    const { subgraph: _subgraph, ...rest } = args;
-    const key = `${dir.name.value}:${JSON.stringify(rest)}`;
-    if (seen.has(key)) {
-      changed = true;
-      continue;
-    }
-    seen.add(key);
-    next.push(dir);
-  }
-  return changed ? { ...node, directives: next } : node;
+  const next = node.directives.filter(dir => !MESH_CODEGEN_SCALAR_ENUM_DIRS.has(dir.name.value));
+  return next.length === node.directives.length ? node : { ...node, directives: next };
 }
 
 type JoinGraphInfo = {
@@ -713,6 +705,10 @@ const MESH_ORPHAN_DIRECTIVE_NAMES: readonly string[] = [
   'thrift__rpc',
   'sql',
   'protobuf__rpc',
+  // Codegen-only; stripped from the lean SG before this orphan pass runs again.
+  'typescript',
+  'regexp',
+  'example',
 ];
 
 /**

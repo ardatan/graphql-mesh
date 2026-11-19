@@ -1,41 +1,48 @@
-import { join } from 'node:path';
-import { OperationTypeNode } from 'graphql';
+import { GraphQLID, GraphQLString, OperationTypeNode } from 'graphql';
+import { GraphQLDate, GraphQLDateTime, GraphQLURL, GraphQLUUID } from 'graphql-scalars';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
-import { buildFhirScalarMap } from './fhir-scalar-map';
 
-const hapiBase = 'https://hapi.fhir.org/baseR4';
 /**
- * Official HL7 FHIR R4 JSON Schema, downloaded into this e2e package
- * (`yarn download-fhir-schema` / test `beforeAll`). Same source as
- * `examples/json-schema-fhir` — do not cross-import that package's file.
+ * Live HAPI FHIR base (override with `FHIR_BASE`).
+ * Official HL7 FHIR R4 JSON Schema is downloaded beside this config
+ * (`yarn download-fhir-schema` / test `beforeAll`).
  */
-const fhirSchema = join(import.meta.dirname, './fhir.schema.json');
+const fhirBase = process.env.FHIR_BASE || 'https://hapi.fhir.org/baseR4';
 
-/** Locked FHIR scalarMap (force-applied; see fhir-scalar-map.ts for mismatch notes). */
-const fhirScalarMap = buildFhirScalarMap();
+/**
+ * Locked FHIR primitive → scalar map (force-apply for cleaner SG).
+ * Guild scalars: Date / DateTime / URL / UUID + GraphQL String / ID.
+ * Not mapped (stay FHIR `@regexp`): `code` / `markdown` / `base64Binary` / `xhtml`.
+ * Known pattern mismatches (force-mapped anyway): date/DateTime/URL/UUID/oid breadth.
+ */
+const fhirScalarMap = {
+  date: GraphQLDate,
+  dateTime: GraphQLDateTime,
+  instant: GraphQLDateTime,
+  uri: GraphQLURL,
+  url: GraphQLURL,
+  canonical: GraphQLURL,
+  uuid: GraphQLUUID,
+  string: GraphQLString,
+  id: GraphQLID,
+  oid: GraphQLID,
+};
 
 /**
  * FHIR e2e via JSON Schema loader + official `fhir.schema.json` definition pointers.
  *
- * - Opt-in `scalarMap` (force-mapped): date→Date, dateTime|instant→DateTime,
- *   uri|url|canonical→URL, uuid→UUID, string→String, id|oid→ID
- * - `json-machete` stable titles under `$resolvedRef` (no blanket prefix)
- * - Explicit `include` limits GraphQL emit; loader auto-expands `@connect(selection:)`
- *   for identity maps (no hand-written selection on patient / observationById)
- * - `referenceResource` mini SDL: `Reference.resource` → generic `Resource` with
- *   Connectors `->match` stub (non-identity — kept there)
+ * - Opt-in `scalarMap` (force-mapped)
+ * - Full emit (no include / hard filter / compose snap) — hive + Router execution
+ * - Operation `selection` = runtime `@connect` map only (not an emit filter)
+ * - `referenceResource` Apollo-style hand SDL (`@link` + `@key`/`@connect` apps only)
  */
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('patients', {
-        endpoint: hapiBase,
+        endpoint: fhirBase,
         scalarMap: fhirScalarMap,
-        include: {
-          Patient: ['id', 'gender', 'name'],
-          HumanName: ['family', 'given'],
-        },
         operations: [
           {
             type: OperationTypeNode.QUERY,
@@ -43,19 +50,23 @@ export const composeConfig = defineComposeConfig({
             method: 'GET',
             path: '/Patient/{args.id}?_format=application/json',
             requiredArgs: ['id'],
-            responseSchema: `${fhirSchema}#/definitions/Patient`,
+            responseSchema: './fhir.schema.json#/definitions/Patient',
+            selection: `
+              id
+              gender
+              name {
+                family
+                given
+              }
+            `,
           },
         ],
       }),
     },
     {
       sourceHandler: loadJSONSchemaSubgraph('observations', {
-        endpoint: hapiBase,
+        endpoint: fhirBase,
         scalarMap: fhirScalarMap,
-        include: {
-          Observation: ['id', 'status', 'subject'],
-          Reference: ['reference', 'type', 'display'],
-        },
         operations: [
           {
             type: OperationTypeNode.QUERY,
@@ -63,14 +74,21 @@ export const composeConfig = defineComposeConfig({
             method: 'GET',
             path: '/Observation/{args.id}?_format=application/json',
             requiredArgs: ['id'],
-            responseSchema: `${fhirSchema}#/definitions/Observation`,
+            responseSchema: './fhir.schema.json#/definitions/Observation',
+            selection: `
+              id
+              status
+              subject {
+                reference
+              }
+            `,
           },
         ],
       }),
     },
     {
       name: 'referenceResource',
-      schema: join(import.meta.dirname, './subgraphs/reference-resource.graphql'),
+      schema: './subgraphs/reference-resource.graphql',
     },
   ],
 });

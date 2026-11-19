@@ -21,17 +21,6 @@ import type { BaseLoaderOptions } from '@graphql-tools/utils';
 export type ConnectSelectionOverLimit = 'leavesOnly' | 'passthrough';
 
 /**
- * Explicit loader emit filter: JSON Schema / GraphQL type title → property names.
- *
- * Used by {@link JSONSchemaLoaderOptions.include} / {@link JSONSchemaLoaderOptions.exclude}
- * to limit which object properties become GraphQL fields (Connect `selection` is
- * runtime mapping only and does not drive emit).
- *
- * @example { Patient: ['id', 'gender', 'name'], HumanName: ['family', 'given'] }
- */
-export type SchemaFieldFilter = Record<string, readonly string[]>;
-
-/**
  * Limit/rule for `@connect(selection:)` size and depth.
  *
  * @example
@@ -206,21 +195,6 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
    * @example { maxLength: 4000, overLimit: 'leavesOnly' }
    */
   connectSelection?: ConnectSelectionOptions;
-  /**
-   * Whitelist GraphQL emit by type title → property names. Types listed here
-   * keep only those properties; unreferenced types are never composed.
-   * Connect `selection` does not affect emit.
-   *
-   * @example { Patient: ['id', 'gender', 'name'], HumanName: ['family', 'given'] }
-   */
-  include?: SchemaFieldFilter;
-  /**
-   * Blacklist GraphQL emit by type title → property names. Ignored for a type
-   * that also appears in {@link include}.
-   *
-   * @example { Patient: ['extension', 'meta', 'contained'] }
-   */
-  exclude?: SchemaFieldFilter;
 }
 
 export interface JSONSchemaOperationResponseConfig {
@@ -288,23 +262,9 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
 
   /**
    * When set, use this string as `@connect(selection:)` instead of auto-expanding
-   * from the response GraphQL type. Runtime mapping only — does not limit which
-   * JSON Schema properties become GraphQL fields (use {@link include} /
-   * {@link exclude} for emit).
+   * from the response GraphQL type. Runtime Connectors mapping only.
    */
   selection?: string;
-  /**
-   * Per-operation whitelist merged with {@link JSONSchemaLoaderOptions.include}.
-   *
-   * @example { Patient: ['id', 'gender', 'name'] }
-   */
-  include?: SchemaFieldFilter;
-  /**
-   * Per-operation blacklist merged with {@link JSONSchemaLoaderOptions.exclude}.
-   *
-   * @example { Patient: ['extension', 'meta'] }
-   */
-  exclude?: SchemaFieldFilter;
 };
 
 export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &

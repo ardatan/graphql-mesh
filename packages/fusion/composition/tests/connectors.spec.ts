@@ -1961,9 +1961,10 @@ describe('Federation Connectors composition', () => {
     );
   });
 
-  it('merges shared FHIR-like scalars with repeatable @regexp/@typescript across subgraphs', () => {
-    // Regression: Apollo Router rejected non-repeatable `@typescript` / `@regexp`
-    // when two Connectors subgraphs stamped the same scalar name (FHIR `string`).
+  it('strips Mesh codegen @regexp/@typescript/@example from lean SG (Router-safe)', () => {
+    // Regression: Apollo Router connector carry-over rejects duplicate native
+    // `@typescript` when shared FHIR/OpenAPI pattern scalars merge across
+    // Connectors subgraphs. Compose strips codegen apps from the lean SG.
     const sharedScalarSdl = /* GraphQL */ `
       directive @link(url: String!, import: [String]) repeatable on SCHEMA
       directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
@@ -1975,6 +1976,7 @@ describe('Federation Connectors composition', () => {
       ) repeatable on FIELD_DEFINITION | OBJECT
       directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
       directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
+      directive @example(subgraph: String, value: String) repeatable on SCALAR | ENUM
       directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
 
       input ConnectHTTP {
@@ -1988,7 +1990,9 @@ describe('Federation Connectors composition', () => {
         @regexp(subgraph: "SUBGRAPH", pattern: "[ \\\\r\\\\n\\\\t\\\\S]+")
         @typescript(subgraph: "SUBGRAPH", type: "string")
 
-      enum Resource_const @typescript(subgraph: "SUBGRAPH", type: "\\"Resource\\"") {
+      enum Resource_const
+        @typescript(subgraph: "SUBGRAPH", type: "\\"Resource\\"")
+        @example(subgraph: "SUBGRAPH", value: "Resource") {
         Resource @enum(subgraph: "SUBGRAPH", value: "\\"Resource\\"")
       }
     `;
@@ -1999,6 +2003,10 @@ describe('Federation Connectors composition', () => {
         @link(url: "https://specs.apollo.dev/link/v1.0")
         @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
         @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @link(
+          url: "https://specs.graphql-mesh.com/core/v0.1"
+          import: ["@typescript", "@regexp", "@example"]
+        )
         @source(name: "fhir", http: { baseURL: "https://hapi.fhir.org/baseR4" }) {
         query: Query
       }
@@ -2026,6 +2034,10 @@ describe('Federation Connectors composition', () => {
         @link(url: "https://specs.apollo.dev/link/v1.0")
         @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
         @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @link(
+          url: "https://specs.graphql-mesh.com/core/v0.1"
+          import: ["@typescript", "@regexp", "@example"]
+        )
         @source(name: "fhir", http: { baseURL: "https://hapi.fhir.org/baseR4" }) {
         query: Query
       }
@@ -2055,9 +2067,11 @@ describe('Federation Connectors composition', () => {
     ]);
     expect(result.errors ?? []).toEqual([]);
     const sdl = result.supergraphSdl!;
-    // Directive defs stay repeatable so Router can carry both subgraph apps.
-    expect(sdl).toMatch(/directive @regexp\([^)]*\) repeatable on SCALAR/);
-    expect(sdl).toMatch(/directive @typescript\([^)]*\) repeatable on SCALAR/);
     expect(sdl).toMatch(/\bscalar string\b/);
+    expect(sdl).not.toMatch(/@typescript\(/);
+    expect(sdl).not.toMatch(/@regexp\(/);
+    expect(sdl).not.toMatch(/@example\(/);
+    expect(sdl).not.toMatch(/directive @typescript\b/);
+    expect(sdl).not.toMatch(/directive @regexp\b/);
   });
 });

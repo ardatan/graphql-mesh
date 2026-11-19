@@ -1,59 +1,9 @@
-"""
-Mini Connectors subgraph: virtual `Reference.resource` join only.
-
-JSON Schema loaders own Patient / Observation / Reference scalars+fields.
-This subgraph adds `Reference.resource: Resource` (generic interface) so
-Hive/Router can `_entities`-resolve into resource subgraphs from a FHIR
-`Type/id` reference string — no HTTP `@source` / `@transport`.
-
-`__typename` comes from the reference type segment (not hard-coded Patient).
-"""
-schema
+# Apollo-style hand SDL: @link imports + apps only (Mesh compose injects defs).
+# Virtual Reference.resource: Resource — FHIR Type/id → entity stub (no @source).
+extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@shareable"])
-  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) {
-  query: Query
-}
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-directive @connect(
-  source: String
-  http: ConnectHTTP
-  selection: JSONSelection!
-  entity: Boolean
-  errors: ConnectorErrors
-  isSuccess: JSONSelection
-) repeatable on FIELD_DEFINITION | OBJECT
-directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT
-directive @shareable repeatable on OBJECT | FIELD_DEFINITION
-
-# Companion types required by the standard `@connect` directive signature
-# (even though applications here only set `selection`).
-scalar JSONSelection
-scalar URLPathTemplate
-
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
-  headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
-}
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"])
 
 type Query {
   """Placeholder so Compose accepts a join-only subgraph."""
@@ -65,8 +15,6 @@ interface Resource {
   id: String
 }
 
-# Entity stubs so the planner can hop into owning subgraphs by `@key`.
-# FHIR `Patient.id` / `Observation.id` are `#/definitions/string` → String.
 type Patient implements Resource @key(fields: "id", resolvable: false) {
   id: String!
 }
@@ -75,9 +23,6 @@ type Observation implements Resource @key(fields: "id", resolvable: false) {
   id: String!
 }
 
-# Entity so the planner can hop from observations' Reference to this subgraph's
-# `resource` field (value-type contribution alone cannot cross subgraphs).
-# Type-level @connect supplies resolveReference for Hive `_entities`.
 type Reference
   @key(fields: "reference")
   @connect(
@@ -86,8 +31,7 @@ type Reference
     """
   ) {
   reference: String!
-  # Connectors abstract types require literal `__typename` per `->match` branch
-  # (Router rejects a dynamic String shape). Discriminator = FHIR type segment.
+  # Connectors abstract types need literal `__typename` per `->match` branch.
   resource: Resource
     @connect(
       selection: """
