@@ -88,6 +88,9 @@ const MESH_TO_JOIN = new Set([
  *    present, Compose aliases Mesh stitching source as `@meshSource` and join
  *    uses `name: "meshSource"`.
  * 6. Leave `@resolveTo` / `@additionalField` native (not subgraph-owned).
+ * 7. Always prune orphan Mesh artifacts Guild/loaders leave when nothing was
+ *    rewritten (unused `TransportOptions`, unused `@source` def/`@link` import
+ *    from filter-only transforms, etc.).
  */
 export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   if (
@@ -95,96 +98,22 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
     !supergraphSdl?.includes('@transport') &&
     !supergraphSdl?.includes('@merge') &&
     !supergraphSdl?.includes('@meshSource') &&
-    !supergraphSdl?.includes('@hoist')
+    !supergraphSdl?.includes('@hoist') &&
+    !supergraphSdl?.includes('TransportOptions') &&
+    !supergraphSdl?.includes('directive @source')
   ) {
     return supergraphSdl;
   }
 
   const document = parse(supergraphSdl, { noLocation: true });
   const joinInfo = readJoinGraphInfo(document);
-  if (joinInfo.nameToEnum.size === 0) {
-    return supergraphSdl;
-  }
+  // Orphan prune still runs when join__Graph is missing (rare) but Mesh leftovers exist.
+  const canRewriteTransports = joinInfo.nameToEnum.size > 0;
 
   let changed = false;
   let emittedJoinTransport = false;
   let emittedMeshJoin = false;
   const rewrittenMeshNames = new Set<string>();
-
-  const nextDoc = visit(document, {
-    SchemaDefinition(node) {
-      const transport = rewriteSchemaTransports(node.directives, joinInfo);
-      if (transport.changed) {
-        changed = true;
-      }
-      if (transport.emittedJoinTransport) {
-        emittedJoinTransport = true;
-      }
-      const mesh = rewriteMeshDirectivesOnNode(
-        { ...node, directives: transport.directives },
-        joinInfo,
-        { location: 'SCHEMA', preferJoinField: false },
-      );
-      if (mesh.changed) {
-        changed = true;
-        emittedMeshJoin = true;
-        for (const n of mesh.rewrittenNames) {
-          rewrittenMeshNames.add(n);
-        }
-      }
-      return mesh.node;
-    },
-    SchemaExtension(node) {
-      const transport = rewriteSchemaTransports(node.directives, joinInfo);
-      if (transport.changed) {
-        changed = true;
-      }
-      if (transport.emittedJoinTransport) {
-        emittedJoinTransport = true;
-      }
-      const mesh = rewriteMeshDirectivesOnNode(
-        { ...node, directives: transport.directives },
-        joinInfo,
-        { location: 'SCHEMA', preferJoinField: false },
-      );
-      if (mesh.changed) {
-        changed = true;
-        emittedMeshJoin = true;
-        for (const n of mesh.rewrittenNames) {
-          rewrittenMeshNames.add(n);
-        }
-      }
-      return mesh.node;
-    },
-    ObjectTypeDefinition(node) {
-      return rewriteTypeNode(node, 'OBJECT');
-    },
-    ObjectTypeExtension(node) {
-      return rewriteTypeNode(node, 'OBJECT');
-    },
-    InterfaceTypeDefinition(node) {
-      return rewriteTypeNode(node, 'INTERFACE');
-    },
-    InterfaceTypeExtension(node) {
-      return rewriteTypeNode(node, 'INTERFACE');
-    },
-    // INPUT_OBJECT / UNION / ENUM / SCALAR: extract does not reconstitute join
-    // on these the same way — leave Mesh dirs native (still subgraph-scoped).
-    FieldDefinition(node) {
-      const mesh = rewriteMeshDirectivesOnNode(node, joinInfo, {
-        location: 'FIELD_DEFINITION',
-        preferJoinField: true,
-      });
-      if (mesh.changed) {
-        changed = true;
-        emittedMeshJoin = true;
-        for (const n of mesh.rewrittenNames) {
-          rewrittenMeshNames.add(n);
-        }
-      }
-      return mesh.node;
-    },
-  });
 
   function rewriteTypeNode<T extends { directives?: readonly ConstDirectiveNode[] }>(
     node: T,
@@ -205,11 +134,87 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
     return mesh.node;
   }
 
-  if (!changed) {
-    return supergraphSdl;
-  }
+  const nextDoc = canRewriteTransports
+    ? visit(document, {
+        SchemaDefinition(node) {
+          const transport = rewriteSchemaTransports(node.directives, joinInfo);
+          if (transport.changed) {
+            changed = true;
+          }
+          if (transport.emittedJoinTransport) {
+            emittedJoinTransport = true;
+          }
+          const mesh = rewriteMeshDirectivesOnNode(
+            { ...node, directives: transport.directives },
+            joinInfo,
+            { location: 'SCHEMA', preferJoinField: false },
+          );
+          if (mesh.changed) {
+            changed = true;
+            emittedMeshJoin = true;
+            for (const n of mesh.rewrittenNames) {
+              rewrittenMeshNames.add(n);
+            }
+          }
+          return mesh.node;
+        },
+        SchemaExtension(node) {
+          const transport = rewriteSchemaTransports(node.directives, joinInfo);
+          if (transport.changed) {
+            changed = true;
+          }
+          if (transport.emittedJoinTransport) {
+            emittedJoinTransport = true;
+          }
+          const mesh = rewriteMeshDirectivesOnNode(
+            { ...node, directives: transport.directives },
+            joinInfo,
+            { location: 'SCHEMA', preferJoinField: false },
+          );
+          if (mesh.changed) {
+            changed = true;
+            emittedMeshJoin = true;
+            for (const n of mesh.rewrittenNames) {
+              rewrittenMeshNames.add(n);
+            }
+          }
+          return mesh.node;
+        },
+        ObjectTypeDefinition(node) {
+          return rewriteTypeNode(node, 'OBJECT');
+        },
+        ObjectTypeExtension(node) {
+          return rewriteTypeNode(node, 'OBJECT');
+        },
+        InterfaceTypeDefinition(node) {
+          return rewriteTypeNode(node, 'INTERFACE');
+        },
+        InterfaceTypeExtension(node) {
+          return rewriteTypeNode(node, 'INTERFACE');
+        },
+        // INPUT_OBJECT / UNION / ENUM / SCALAR: extract does not reconstitute join
+        // on these the same way — leave Mesh dirs native (still subgraph-scoped).
+        FieldDefinition(node) {
+          const mesh = rewriteMeshDirectivesOnNode(node, joinInfo, {
+            location: 'FIELD_DEFINITION',
+            preferJoinField: true,
+          });
+          if (mesh.changed) {
+            changed = true;
+            emittedMeshJoin = true;
+            for (const n of mesh.rewrittenNames) {
+              rewrittenMeshNames.add(n);
+            }
+          }
+          return mesh.node;
+        },
+      })
+    : document;
 
+  // Always prune orphans — even when no transport/mesh rewrite ran (e.g. filter-only
+  // subgraphs leave unused `@source` def + `TransportOptions` scalar).
   let finalized = pruneUnusedTransportArtifacts(nextDoc);
+  finalized = pruneUnusedMeshDirectiveArtifacts(finalized);
   if (emittedMeshJoin || rewrittenMeshNames.size > 0) {
     finalized = pruneRewrittenMeshArtifacts(finalized, rewrittenMeshNames);
     finalized = relaxSubgraphArgOnMeshDefs(finalized, rewrittenMeshNames);
@@ -217,7 +222,8 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   if (emittedJoinTransport || emittedMeshJoin) {
     finalized = ensureJoinDirectiveSupport(finalized, { expandLocations: emittedMeshJoin });
   }
-  return print(finalized).trim();
+  const printed = print(finalized).trim();
+  return changed || printed !== supergraphSdl.trim() ? printed : supergraphSdl;
 }
 
 type JoinGraphInfo = {
@@ -548,6 +554,86 @@ function pruneUnusedTransportArtifacts(document: DocumentNode): DocumentNode {
               return dir;
             }
             return removeImportFromLink(dir, '@transport');
+          })
+          .filter((d): d is ConstDirectiveNode => d != null);
+        return { ...def, directives: dirs };
+      }),
+  };
+}
+
+/**
+ * Mesh directive names that may appear as unused defs/`@link` imports on the
+ * final SG when loaders/transforms stamped them but no native apps remain
+ * (e.g. filter-only subgraph → `@source` import with zero apps; HTTP loader →
+ * `TransportOptions` without `@transport`).
+ */
+const MESH_ORPHAN_DIRECTIVE_NAMES = [
+  'source',
+  'meshSource',
+  'merge',
+  'hoist',
+  'pubsubOperation',
+  'pubsubPublish',
+] as const;
+
+/**
+ * Drop unused Mesh directive defs and Mesh `@link` imports when no native apps
+ * remain. Does not touch `@join__directive(name: "source"|"merge"|…)` — those
+ * are join apps, not native Mesh apps.
+ */
+function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode {
+  const usedNative = new Set<string>();
+  visit(document, {
+    Directive(node) {
+      usedNative.add(node.name.value);
+    },
+  });
+
+  const dropDefs = new Set(
+    MESH_ORPHAN_DIRECTIVE_NAMES.filter(name => !usedNative.has(name)),
+  );
+  if (dropDefs.size === 0) {
+    return document;
+  }
+
+  const importNamesToStrip = new Set([...dropDefs].map(name => `@${name}`));
+  if (dropDefs.has('meshSource') && !usedNative.has('source')) {
+    importNamesToStrip.add('@source');
+  }
+
+  return {
+    ...document,
+    definitions: document.definitions
+      .filter(def => {
+        if (def.kind === Kind.DIRECTIVE_DEFINITION && dropDefs.has(def.name.value)) {
+          return false;
+        }
+        return true;
+      })
+      .map(def => {
+        if (def.kind !== Kind.SCHEMA_DEFINITION && def.kind !== Kind.SCHEMA_EXTENSION) {
+          return def;
+        }
+        const dirs = (def.directives || [])
+          .map(dir => {
+            if (dir.name.value === 'composeDirective') {
+              const name = getStringArg(dir, 'name');
+              if (name && importNamesToStrip.has(name)) {
+                return null;
+              }
+              return dir;
+            }
+            if (dir.name.value !== 'link') {
+              return dir;
+            }
+            let next: ConstDirectiveNode | null = dir;
+            for (const importName of importNamesToStrip) {
+              if (!next) {
+                break;
+              }
+              next = removeImportFromLink(next, importName);
+            }
+            return next;
           })
           .filter((d): d is ConstDirectiveNode => d != null);
         return { ...def, directives: dirs };

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Inaccessible All Mutations should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@source"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) {
   query: Query
   mutation: Mutation
 }
@@ -10,25 +10,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -55,10 +41,6 @@ enum join__Graph {
   SERVICE_A @join__graph(name: "service-a", url: "http://localhost:<service-a_port>/graphql")
   SERVICE_B @join__graph(name: "service-b", url: "http://localhost:<service-b_port>/graphql")
 }
-
-directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
-
-scalar TransportOptions @join__type(graph: SERVICE_A) @join__type(graph: SERVICE_B)
 
 type Query @join__type(graph: SERVICE_A) @join__type(graph: SERVICE_B) {
   todos: [Todo!]! @join__field(graph: SERVICE_A)

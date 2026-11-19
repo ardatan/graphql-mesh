@@ -307,9 +307,7 @@ type User {
     expect(fields.users).toBeDefined();
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
-
-type Query {
+"type Query {
   users(limit: Int!, page: Int): UserSearchResult
   usersResults(limit: Int!, page: Int): [User!]!
 }

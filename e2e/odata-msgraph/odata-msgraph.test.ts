@@ -54,7 +54,12 @@ describe('Microsoft Graph Connectors', () => {
     expect(result).toContain('name: "source"');
     expect(result).toContain('name: "connect"');
     expect(result).toContain('odata.metadata=minimal');
-    expect(result).toContain('kind: "connect"');
+    // Options-only Mesh `@transport` → join transport; matching location / kind dropped.
+    expect(result).toMatch(
+      /@join__directive\(graphs: \[MICROSOFT_GRAPH\], name: "transport", args: \{options: \{odata:/,
+    );
+    expect(result).not.toMatch(/@transport\s*\(/);
+    expect(result).not.toMatch(/kind:\s*"connect"/);
     // Roots used by v0 example queries
     expect(result).toMatch(/\bme\b/);
     expect(result).toMatch(/\bgroups\b/);

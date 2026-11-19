@@ -145,6 +145,84 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).toMatch(/name: "source"/);
   });
 
+  it('rewrites connect @transport with options: drop matching location and kind', () => {
+    const sdl = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+        @transport(
+          kind: "connect"
+          subgraph: "MicrosoftGraph"
+          location: "http://127.0.0.1:4000"
+          options: { odata: { batch: "json" } }
+        )
+        @join__directive(
+          graphs: [MICROSOFT_GRAPH]
+          name: "source"
+          args: { name: "MicrosoftGraph", http: { baseURL: "http://127.0.0.1:4000" } }
+        ) {
+        query: Query
+      }
+
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        options: TransportOptions
+      ) repeatable on SCHEMA
+
+      scalar TransportOptions
+
+      enum join__Graph {
+        MICROSOFT_GRAPH @join__graph(name: "MicrosoftGraph", url: "http://127.0.0.1:4000")
+      }
+
+      type Query {
+        ok: String
+      }
+    `;
+    const out = finalizeMeshJoinDirectives(sdl);
+    expect(out).not.toMatch(/@transport\s*\(/);
+    expect(out).not.toMatch(/directive @transport/);
+    expect(out).not.toMatch(/TransportOptions/);
+    expect(out).not.toMatch(/kind:\s*"connect"/);
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[MICROSOFT_GRAPH\], name: "transport", args: \{options: \{odata: \{batch: "json"\}\}\}\)/,
+    );
+    expect(out).not.toMatch(/name: "transport", args: \{[^}]*location:/);
+  });
+
+  it('prunes orphan TransportOptions and unused @source def without rewrites', () => {
+    const sdl = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@source"]) {
+        query: Query
+      }
+
+      directive @source(
+        name: String!
+        type: String
+        subgraph: String!
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      scalar TransportOptions @join__type(graph: SERVICE_A) @join__type(graph: SERVICE_B)
+
+      enum join__Graph {
+        SERVICE_A @join__graph(name: "service-a", url: "http://localhost:1/graphql")
+        SERVICE_B @join__graph(name: "service-b", url: "http://localhost:2/graphql")
+      }
+
+      type Query @join__type(graph: SERVICE_A) {
+        ok: String @join__field(graph: SERVICE_A)
+      }
+    `;
+    const out = finalizeMeshJoinDirectives(sdl);
+    expect(out).not.toMatch(/TransportOptions/);
+    expect(out).not.toMatch(/directive @source/);
+    expect(out).not.toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1/);
+    expect(out).toMatch(/type Query/);
+  });
+
   it('rewrites @merge/@meshSource to join__directive without subgraph arg or defs', () => {
     const sdl = /* GraphQL */ `
       schema

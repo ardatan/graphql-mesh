@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Microsoft Graph Connectors composes Connectors from fixture $metadata (v0 example surface) 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @transport(kind: "connect", subgraph: "MicrosoftGraph", location: "http://127.0.0.1:<Graph_port>", options: {odata: {batch: "json", expandNavProps: true}}) @join__directive(graphs: [MICROSOFT_GRAPH], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [MICROSOFT_GRAPH], name: "source", args: {name: "MicrosoftGraph", http: {baseURL: "http://127.0.0.1:<Graph_port>", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}, {name: "Authorization", value: "Bearer {$env.MSGRAPH_ACCESS_TOKEN}"}]}, errors: {message: "error.message"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @join__directive(graphs: [MICROSOFT_GRAPH], name: "transport", args: {options: {odata: {batch: "json", expandNavProps: true}}}) @join__directive(graphs: [MICROSOFT_GRAPH], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [MICROSOFT_GRAPH], name: "source", args: {name: "MicrosoftGraph", http: {baseURL: "http://127.0.0.1:<Graph_port>", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}, {name: "Authorization", value: "Bearer {$env.MSGRAPH_ACCESS_TOKEN}"}]}, errors: {message: "error.message"}}) {
   query: Query
   mutation: Mutation
 }
@@ -269,10 +269,6 @@ input messageUpdateInput @join__type(graph: MICROSOFT_GRAPH) {
   isRead: Boolean
   from: recipientInput
 }
-
-scalar TransportOptions
-
-directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
