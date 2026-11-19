@@ -228,6 +228,48 @@ describe('Federation Connectors annotations', () => {
     expect(sel).not.toMatch(/\brecursive\b/);
   });
 
+  it('shared selectionLimit does not leak visitBudgetExhausted into a later cycle-only root', () => {
+    const deepSchema = buildSchema(/* GraphQL */ `
+      type Deep {
+        a: String
+        nest: Deep
+      }
+      type Patient {
+        id: String
+        meta: Deep
+        name: String
+      }
+    `);
+    const rootSchema = buildSchema(/* GraphQL */ `
+      type Address {
+        city: String
+      }
+      type Profile {
+        address: Address
+      }
+      type Root {
+        id: String
+        recursive: Root
+        profile: Profile
+      }
+    `);
+    const limit = resolveConnectSelectionLimit({ overLimit: 'passthrough', maxLength: 50_000 });
+    // First op exhausts the shared limit (tiny visit budget).
+    limit.passthroughVisitBudget = 3;
+    buildSelectionForType(deepSchema.getType('Patient') as any, { limit });
+    // Restore a normal budget for the next op but leave the stale exhausted flag
+    // (caller that only cleared passthroughVisits - the pre-fix leak).
+    limit.passthroughVisitBudget = 250;
+    limit.passthroughVisits = 0;
+    limit.visitBudgetExhausted = true;
+    // Cycle-only Root must keep profile.address.city (not a leavesOnly rebuild).
+    const sel = buildSelectionForType(rootSchema.getType('Root') as any, { limit });
+    expect(sel).toMatch(/\bprofile\b/);
+    expect(sel).toMatch(/\baddress\b/);
+    expect(sel).toMatch(/\bcity\b/);
+    expect(sel).not.toMatch(/\brecursive\b/);
+  });
+
   it('connectSelection.overLimit leavesOnly keeps scalar leaves under maxLength', async () => {
     const deepSample: Record<string, unknown> = { id: '1', name: 'n' };
     for (let i = 0; i < 40; i++) {

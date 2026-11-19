@@ -17,10 +17,20 @@ export const MESH_GENERATED_RESOLVE_TYPE = Symbol.for(
   '@graphql-mesh/transport-connect.generatedResolveType',
 );
 
-/** Stable member fingerprint for comparing generated resolveType closures. */
-export function meshResolveTypeMemberKey(possibleTypes: readonly { name: string }[]): string {
+/**
+ * Stable member fingerprint for comparing generated resolveType closures.
+ * Includes each member's field names so additionalTypeDefs that only add fields
+ * (same type names) still trigger a rebuild under preserveExistingFieldResolvers.
+ */
+export function meshResolveTypeMemberKey(
+  possibleTypes: readonly { name: string; getFields?: () => Record<string, unknown> }[],
+): string {
   return possibleTypes
-    .map(t => t.name)
+    .map(t => {
+      const fields = t.getFields?.();
+      const fieldNames = fields ? Object.keys(fields).sort().join('\u0002') : '';
+      return `${t.name}\u0001${fieldNames}`;
+    })
     .sort()
     .join('\0');
 }

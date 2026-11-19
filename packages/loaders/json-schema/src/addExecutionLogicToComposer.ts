@@ -481,6 +481,7 @@ ${operationConfig.description || ''}
         isUnionType(returnNamedType) && buildStatusUnionConnectExtras(returnNamedType);
       // Fresh visit budget per field so one Stripe op cannot starve the rest.
       selectionLimit.passthroughVisits = 0;
+      selectionLimit.visitBudgetExhausted = false;
       const builtSelection =
         'selection' in operationConfig &&
         typeof (operationConfig as { selection?: string }).selection === 'string' &&

@@ -62,7 +62,7 @@ export interface ResolvedConnectSelectionLimit {
   warnedPassthrough?: Set<string>;
   /**
    * Mutable visit counter for one root `buildSelectionForType` call.
-   * Reset by the caller before each root build. Caps Stripe-scale blowups.
+   * Cleared at each depth-0 entry (and by callers sharing a limit). Caps Stripe-scale blowups.
    */
   passthroughVisits?: number;
   /** Max type visits per root build before forcing `$` passthrough. */
@@ -70,7 +70,8 @@ export interface ResolvedConnectSelectionLimit {
   /**
    * Set when a nested expand hit `passthroughVisitBudget`. Distinguishes
    * mid-type truncate (needs leavesOnly rebuild) from cycle-only omission
-   * (keep the original sibling expansion).
+   * (keep the original sibling expansion). Cleared with `passthroughVisits`
+   * at each depth-0 entry so a prior exhausted op cannot force a later rebuild.
    */
   visitBudgetExhausted?: boolean;
 }
@@ -883,6 +884,12 @@ export function buildSelectionForType(
     leavesOnly = false,
     visited = new Set(),
   } = options;
+  // Fresh traversal state per root build. Shared `selectionLimit` across ops
+  // must not leak `visitBudgetExhausted` from a prior exhausted field.
+  if (depth === 0 && !leavesOnly) {
+    limit.passthroughVisits = 0;
+    limit.visitBudgetExhausted = false;
+  }
   const childOpts = {
     skipFields,
     implementations,
@@ -1291,9 +1298,11 @@ function rebuildSelectionLeavesOnly(
 ): string {
   const prevOverLimit = opts.limit.overLimit;
   const prevVisits = opts.limit.passthroughVisits;
+  const prevExhausted = opts.limit.visitBudgetExhausted;
   const prevSoftDepth = opts.limit.softDepth;
   opts.limit.overLimit = 'leavesOnly';
   opts.limit.passthroughVisits = 0;
+  opts.limit.visitBudgetExhausted = false;
   opts.limit.softDepth = 0;
   try {
     const leafSel = buildSelectionForType(type, {
@@ -1315,6 +1324,7 @@ function rebuildSelectionLeavesOnly(
   } finally {
     opts.limit.overLimit = prevOverLimit;
     opts.limit.passthroughVisits = prevVisits;
+    opts.limit.visitBudgetExhausted = prevExhausted;
     opts.limit.softDepth = prevSoftDepth;
   }
 }
