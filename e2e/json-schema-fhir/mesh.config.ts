@@ -7,6 +7,7 @@ import {
 } from '@graphql-mesh/compose-cli';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 import { MapperKind, mapSchema, pruneSchema } from '@graphql-tools/utils';
+import { buildFhirScalarMap } from './fhir-scalar-map';
 
 const hapiBase = 'https://hapi.fhir.org/baseR4';
 /**
@@ -15,6 +16,9 @@ const hapiBase = 'https://hapi.fhir.org/baseR4';
  * `examples/json-schema-fhir` — do not cross-import that package's file.
  */
 const fhirSchema = join(import.meta.dirname, './fhir.schema.json');
+
+/** Pattern-compatible subset of the locked FHIR scalarMap (see fhir-scalar-map.ts). */
+const fhirScalarMap = buildFhirScalarMap();
 
 /**
  * Keep only the fields this e2e exercises. Official `#/definitions/Patient|Observation`
@@ -80,15 +84,20 @@ function createHardFieldFilterTransform(
  * types. Rename collisions per subgraph via `createPrefixTransform`, keeping the
  * intentionally shared merge targets unprefixed:
  *
- * - `patients`: keep `Patient` + `string` (entity + pattern scalar)
- * - `observations`: keep `Observation`, `Reference`, `string`
+ * - `patients`: keep `Patient` (+ shared `code` when present)
+ * - `observations`: keep `Observation`, `Reference`, `code`, `uri`
  * - `referenceResource` mini SDL (file path): `Reference.resource` → Patient stub
+ *
+ * Opt-in `scalarMap` (pattern-checked): `string`→`String`, `id`→`ID`,
+ * `instant`→`DateTime`. Incompatible candidates (`date`/`dateTime`/`uri`/`url`/
+ * `canonical`/`uuid`) stay as FHIR `@regexp` scalars — see fhir-scalar-map.ts.
  */
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('patients', {
         endpoint: hapiBase,
+        scalarMap: fhirScalarMap,
         operations: [
           {
             type: OperationTypeNode.QUERY,
@@ -112,7 +121,8 @@ export const composeConfig = defineComposeConfig({
         createHardFieldFilterTransform(keepField),
         createPrefixTransform({
           value: 'patients_',
-          ignore: ['Patient', 'string'],
+          // `string`/`id` become builtins via scalarMap; share `code` across subgraphs.
+          ignore: ['Patient', 'code'],
           force: ['Duration', 'date', 'Date', 'DateTime', 'Time', 'JSON', 'JSONObject'],
         }),
         createPruneTransform(),
@@ -121,6 +131,7 @@ export const composeConfig = defineComposeConfig({
     {
       sourceHandler: loadJSONSchemaSubgraph('observations', {
         endpoint: hapiBase,
+        scalarMap: fhirScalarMap,
         operations: [
           {
             type: OperationTypeNode.QUERY,
@@ -145,7 +156,7 @@ export const composeConfig = defineComposeConfig({
         createHardFieldFilterTransform(keepField),
         createPrefixTransform({
           value: 'observations_',
-          ignore: ['Observation', 'Reference', 'string'],
+          ignore: ['Observation', 'Reference', 'code', 'uri'],
           force: ['Duration', 'date', 'Date', 'DateTime', 'Time', 'JSON', 'JSONObject'],
         }),
         createPruneTransform(),

@@ -4,6 +4,8 @@ Mini Connectors subgraph: join field only.
 JSON Schema loaders own Patient / Observation / Reference scalars+fields.
 This subgraph adds `Reference.resource` as a Patient entity stub so Hive/Router
 can `_entities`-resolve into `patients` without magic in the loader config.
+
+Field types match the opt-in FHIR `scalarMap` (`string`→`String`, `id`→`ID`).
 """
 schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
@@ -30,8 +32,6 @@ directive @connect(
 ) repeatable on FIELD_DEFINITION | OBJECT
 directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT
 directive @shareable repeatable on OBJECT | FIELD_DEFINITION
-directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
-directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 # Match loader-stamped Connectors companion types (Fed value-type merge).
 scalar JSONSelection
@@ -66,11 +66,6 @@ input ConnectorErrors {
   extensions: JSONSelection
 }
 
-# Match patients/observations JSON Schema `string` scalar (Fed value-type merge).
-scalar string
-  @regexp(subgraph: "referenceResource", pattern: "^[ \\r\\n\\t\\S]+$")
-  @typescript(subgraph: "referenceResource", type: "string")
-
 type Query {
   """Placeholder so Compose accepts a join-only subgraph."""
   _referenceResource: String @shareable
@@ -86,7 +81,7 @@ type Reference
     reference: $this.reference
     """
   ) {
-  reference: string!
+  reference: String!
   resource: Patient
     @connect(
       selection: """
@@ -96,6 +91,7 @@ type Reference
     )
 }
 
+# FHIR `Patient.id` is `#/definitions/string` (not `id`) — scalarMap → String.
 type Patient @key(fields: "id", resolvable: false) {
-  id: string!
+  id: String!
 }

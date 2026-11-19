@@ -9,6 +9,7 @@
     "@graphql-mesh/compose-cli": "workspace:*",
     "@omnigraph/json-schema": "workspace:*",
     "graphql": "16.14.0",
+    "graphql-scalars": "^2.0.1",
     "unzip-stream": "0.3.4"
   },
   "devDependencies": {

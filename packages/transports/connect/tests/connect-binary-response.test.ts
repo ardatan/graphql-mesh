@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream';
 import { buildSchema, execute, extendSchema, parse } from 'graphql';
 import { Response } from '@whatwg-node/fetch';
 import { processDirectives } from '../src/directives/process.js';
@@ -403,6 +404,71 @@ describe('Connectors non-JSON responses (Apollo parity)', () => {
     expect(bodyWasFormData || seenPartNames.length > 0).toBe(true);
     expect(seenPartNames).toEqual(['file']);
     expect(seenFileBytes).toBe(5);
+  });
+
+  it('multipart $args.input nested createReadStream upload is not structuredClone-destroyed', async () => {
+    let seenMime: string | null = null;
+    let seenBytes: number | null = null;
+    const schema = processDirectives(
+      buildSchema(/* GraphQL */ `
+        ${CONNECTOR_DIRECTIVES}
+        schema @source(name: "api", http: { baseURL: "http://localhost" }) {
+          query: Query
+          mutation: Mutation
+        }
+        scalar Upload
+        input UploadInput {
+          note: String
+          file: Upload!
+        }
+        type Query {
+          noop: String
+        }
+        type Mutation {
+          upload(input: UploadInput!): String
+            @connect(
+              source: "api"
+              http: {
+                POST: "/upload"
+                body: "$args.input"
+                headers: [{ name: "Content-Type", value: "multipart/form-data" }]
+              }
+              selection: "$"
+            )
+        }
+      `),
+      {
+        globalFetch: async (_url: string, init?: RequestInit) => {
+          const body = init?.body as FormData;
+          const file = body.get('file') as File;
+          seenMime = file?.type ?? null;
+          seenBytes = file ? (await file.arrayBuffer()).byteLength : null;
+          return new Response('ok', {
+            status: 200,
+            headers: { 'content-type': 'text/plain' },
+          });
+        },
+      },
+    );
+
+    // graphql-upload style: `createReadStream()` (not a File/Blob).
+    const upload = {
+      mimetype: 'application/octet-stream',
+      createReadStream: () => Readable.from([Buffer.from([4, 5, 6])]),
+    };
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        mutation ($input: UploadInput!) {
+          upload(input: $input)
+        }
+      `),
+      variableValues: { input: { note: 'stream', file: upload } },
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ upload: 'ok' });
+    expect(seenMime).toBe('application/octet-stream');
+    expect(seenBytes).toBe(3);
   });
 
   it('multipart $args.input nested File is not structuredClone-destroyed', async () => {

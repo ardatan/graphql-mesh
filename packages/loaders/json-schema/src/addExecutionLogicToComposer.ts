@@ -148,6 +148,7 @@ export interface AddExecutionLogicToComposerOptions {
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
+  scalarMap?: Record<string, GraphQLScalarType>;
   handlerName?: string;
   connectSelection?: ConnectSelectionOptions;
 }

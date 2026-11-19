@@ -20,8 +20,15 @@ it('composes official fhir.schema.json + rename + mini Reference.resource SDL', 
   // Join field comes from the mini SDL subgraph, not loader magic.
   expect(result).toMatch(/referenceResource|REFERENCE_RESOURCE/i);
   // Colliding FHIR value types renamed per subgraph (prefix transform).
+  // After scalarMap + hard filter, observations often has nothing left to prefix
+  // (shared `code`/`uri`/`Reference`); patients still renames HumanName.
   expect(result).toMatch(/patients_/);
-  expect(result).toMatch(/observations_/);
+  // Opt-in scalarMap (pattern-compatible): string→String — no custom `string` scalar.
+  // FHIR Patient.id is `#/definitions/string` (not `id`), so it stays String.
+  expect(result).not.toMatch(/\bscalar string\b/);
+  expect(result).toMatch(/type Patient[\s\S]*?\bid:\s*String\b/);
+  // Shared FHIR `code` stays as `@regexp` (not in scalarMap).
+  expect(result).toMatch(/\bscalar code\b/);
 });
 
 describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {

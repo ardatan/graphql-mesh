@@ -2536,7 +2536,15 @@ export function addConnectFieldResolver(
               if (inputValue instanceof File) {
                 formDataValue = inputValue;
               } else if (isFileUpload(inputValue)) {
-                formDataValue = new File([inputValue.createReadStream() as any], 'file', {
+                // graphql-upload: buffer the stream — `@whatwg-node/fetch` File cannot
+                // arrayBuffer() a raw Node Readable (ERR_INVALID_ARG_TYPE).
+                const chunks: Buffer[] = [];
+                for await (const chunk of inputValue.createReadStream() as AsyncIterable<
+                  Buffer | Uint8Array | string
+                >) {
+                  chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : Buffer.from(chunk));
+                }
+                formDataValue = new File([Buffer.concat(chunks)], 'file', {
                   type: inputValue.mimetype,
                 });
               } else if (inputValue.name && inputValue instanceof Blob) {

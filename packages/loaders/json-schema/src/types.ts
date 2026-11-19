@@ -180,6 +180,16 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
    */
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
   /**
+   * Opt-in map from JSON Schema `title` (definition name) to a GraphQL scalar.
+   * When a titled schema node would otherwise become a `@regexp` pattern scalar,
+   * the mapped scalar is used instead. Callers should verify pattern compatibility
+   * with the target scalar validators before including an entry (e.g. FHIR
+   * `date` is broader than `graphql-scalars` `Date`).
+   *
+   * @example { string: GraphQLString, id: GraphQLID, instant: GraphQLDateTime }
+   */
+  scalarMap?: Record<string, GraphQLScalarType>;
+  /**
    * Limit/rule for `@connect(selection:)` size and depth.
    *
    * @example { maxLength: 4000, overLimit: 'leavesOnly' }

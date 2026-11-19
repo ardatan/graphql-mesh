@@ -108,6 +108,8 @@ export interface GetComposerFromJSONSchemaOpts {
   schema: JSONSchema;
   log: Logger;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
+  /** Opt-in title → scalar map (loader `scalarMap` option). */
+  scalarMap?: Record<string, GraphQLScalarType>;
 }
 
 const deepMergedInputTypeComposerFields = new WeakMap<
@@ -225,11 +227,14 @@ export function getComposerFromJSONSchema({
   schema,
   log,
   getScalarForFormat,
+  scalarMap,
 }: GetComposerFromJSONSchemaOpts): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
   const formatScalarMap = getJSONSchemaStringFormatScalarMap();
   const getDefaultScalarForFormat = (format: string) =>
     formatScalarMapWithoutAjv[format] || formatScalarMap.get(format);
+  const getScalarForTitle = (title: string | undefined) =>
+    title && scalarMap ? scalarMap[title] : undefined;
 
   const rootInputTypeNameComposerMap: Record<string, () => ObjectTypeComposer<any>> = {
     QueryInput: () => schemaComposer.Query,
@@ -310,6 +315,22 @@ export function getComposerFromJSONSchema({
       }
 
       if (subSchema.pattern) {
+        // Opt-in title → scalar (e.g. FHIR `string` → GraphQLString). Callers must
+        // verify the JSON Schema pattern is compatible with the target validator.
+        const mappedScalar = getScalarForTitle(subSchema.title);
+        if (mappedScalar) {
+          const typeComposer = schemaComposer.getAnyTC(mappedScalar);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+            deprecated: subSchema.deprecated,
+          };
+        }
         // A `$ref` with both `format` and `pattern` takes this branch (named from `title`),
         // while a nullable `anyOf`/`oneOf` wrapper of the same `$ref` takes the format
         // branch after collapse. Reuse the format scalar only when those names would

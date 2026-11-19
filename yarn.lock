@@ -5315,7 +5315,9 @@ __metadata:
     "@graphql-hive/gateway": "npm:^2.15.8"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/json-schema": "workspace:*"
+    "@types/unzip-stream": "npm:0.3.4"
     graphql: "npm:16.14.0"
+    graphql-scalars: "npm:^2.0.1"
     tsx: "npm:^4.20.3"
     unzip-stream: "npm:0.3.4"
   languageName: unknown
