@@ -6,7 +6,10 @@ import type {
   EnumTypeDefinitionNode,
 } from 'graphql';
 import { Kind, parse, print, visit } from 'graphql';
-import { astFromValueUntyped } from '@graphql-tools/utils';
+import {
+  astFromValuePreferBlockStrings,
+  preferBlockStringsInDocument,
+} from './ast-from-value-block.js';
 
 const CONNECT_SPEC = 'https://specs.apollo.dev/connect/v0.4';
 const JOIN_V05 = 'https://specs.apollo.dev/join/v0.5';
@@ -253,7 +256,7 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
     };
   }
 
-  return print(nextDoc).trim();
+  return print(preferBlockStringsInDocument(nextDoc)).trim();
 }
 
 function canonicalizeSchemaDirectives(
@@ -627,7 +630,7 @@ function buildJoinDirective(
   name: string,
   args: Record<string, unknown>,
 ): ConstDirectiveNode {
-  const argsNode = astFromValueUntyped(args) as ConstValueNode;
+  const argsNode = astFromValuePreferBlockStrings(args) as ConstValueNode;
   return {
     kind: Kind.DIRECTIVE,
     name: { kind: Kind.NAME, value: 'join__directive' },

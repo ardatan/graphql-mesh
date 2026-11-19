@@ -6,7 +6,10 @@ import type {
 } from 'graphql';
 import { Kind, parse, print, visit } from 'graphql';
 import { isMeshSpecLinkUrl } from '@graphql-mesh/utils';
-import { astFromValueUntyped } from '@graphql-tools/utils';
+import {
+  astFromValuePreferBlockStrings,
+  preferBlockStringsInDocument,
+} from './ast-from-value-block.js';
 
 const JOIN_V05 = 'https://specs.apollo.dev/join/v0.5';
 
@@ -251,6 +254,8 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   if (emittedJoinTransport || emittedMeshJoin) {
     finalized = ensureJoinDirectiveSupport(finalized, { expandLocations: emittedMeshJoin });
   }
+  // parse() drops `block: true`; re-mark multiline/quote-heavy strings for readable print.
+  finalized = preferBlockStringsInDocument(finalized);
   const printed = print(finalized).trim();
   return changed || printed !== supergraphSdl.trim() ? printed : supergraphSdl;
 }
@@ -1029,7 +1034,9 @@ function buildJoinDirective(
   name: string,
   args: Record<string, unknown>,
 ): ConstDirectiveNode {
-  const argsNode = astFromValueUntyped(args) as ConstValueNode;
+  // Prefer `"""` for multiline / quote-heavy string fields inside join args
+  // (e.g. thrift `args`/`selection`, sql mappings) so the printed SG is readable.
+  const argsNode = astFromValuePreferBlockStrings(args) as ConstValueNode;
   return {
     kind: Kind.DIRECTIVE,
     name: { kind: Kind.NAME, value: 'join__directive' },

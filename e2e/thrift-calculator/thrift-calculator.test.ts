@@ -76,6 +76,9 @@ describe('binary (@thrift__rpc)', () => {
     expect(result).toMatch(/function:\s*"add"/);
     expect(result).toMatch(/1\(struct\):\s*\$args\.request/);
     expect(result).toMatch(/\$\(i32\)/);
+    // Multiline thrift `args` / rich mappings print as `"""` inside join args.
+    expect(result).toMatch(/args:\s*"""/);
+    expect(result).not.toMatch(/args:\s*"[^"]*\\n/);
     // Enum args are serialized as strings inside join__directive args.
     expect(result).toMatch(/messageType:\s*"ONEWAY"/);
     expect(result).toMatch(/function:\s*"divide"/);

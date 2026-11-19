@@ -45,66 +45,612 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`da
 scalar DateTime @join__type(graph: CHINOOK)
 
 type Query @join__type(graph: CHINOOK) {
-  album(id: ID!): Album @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "ROW", where: "\\n  AlbumId: $args.id", selection: "  id: AlbumId\\n  title: Title\\n  artistId: ArtistId"})
-  albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: AlbumId\\n  title: Title\\n  artistId: ArtistId"})
-  allAlbums(where: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: AlbumId\\n    title: Title\\n    artistId: ArtistId\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: AlbumId\\n      title: Title\\n      artistId: ArtistId\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  albumsCount(where: AlbumFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  artist(id: ID!): Artist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "ROW", where: "\\n  ArtistId: $args.id", selection: "  id: ArtistId\\n  name: Name"})
-  artists(where: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: ArtistId\\n  name: Name"})
-  allArtists(where: ArtistFilter, orderBy: [ArtistOrderBy!], first: Int, after: String): ArtistConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: ArtistId\\n    name: Name\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: ArtistId\\n      name: Name\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  artistsCount(where: ArtistFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  customer(id: ID!): Customer @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "ROW", where: "\\n  CustomerId: $args.id", selection: "  id: CustomerId\\n  firstName: FirstName\\n  lastName: LastName\\n  company: Company\\n  address: Address\\n  city: City\\n  state: State\\n  country: Country\\n  postalCode: PostalCode\\n  phone: Phone\\n  fax: Fax\\n  email: Email\\n  supportRepId: SupportRepId"})
-  customers(where: CustomerFilter, orderBy: [CustomerOrderBy!], limit: Int = 10, offset: Int = 0): [Customer!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: CustomerId\\n  firstName: FirstName\\n  lastName: LastName\\n  company: Company\\n  address: Address\\n  city: City\\n  state: State\\n  country: Country\\n  postalCode: PostalCode\\n  phone: Phone\\n  fax: Fax\\n  email: Email\\n  supportRepId: SupportRepId"})
-  allCustomers(where: CustomerFilter, orderBy: [CustomerOrderBy!], first: Int, after: String): CustomerConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: CustomerId\\n    firstName: FirstName\\n    lastName: LastName\\n    company: Company\\n    address: Address\\n    city: City\\n    state: State\\n    country: Country\\n    postalCode: PostalCode\\n    phone: Phone\\n    fax: Fax\\n    email: Email\\n    supportRepId: SupportRepId\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: CustomerId\\n      firstName: FirstName\\n      lastName: LastName\\n      company: Company\\n      address: Address\\n      city: City\\n      state: State\\n      country: Country\\n      postalCode: PostalCode\\n      phone: Phone\\n      fax: Fax\\n      email: Email\\n      supportRepId: SupportRepId\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  customersCount(where: CustomerFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  employee(id: ID!): Employee @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROW", where: "\\n  EmployeeId: $args.id", selection: "  id: EmployeeId\\n  lastName: LastName\\n  firstName: FirstName\\n  title: Title\\n  reportsTo: ReportsTo\\n  birthDate: BirthDate\\n  hireDate: HireDate\\n  address: Address\\n  city: City\\n  state: State\\n  country: Country\\n  postalCode: PostalCode\\n  phone: Phone\\n  fax: Fax\\n  email: Email"})
-  employees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int = 10, offset: Int = 0): [Employee!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: EmployeeId\\n  lastName: LastName\\n  firstName: FirstName\\n  title: Title\\n  reportsTo: ReportsTo\\n  birthDate: BirthDate\\n  hireDate: HireDate\\n  address: Address\\n  city: City\\n  state: State\\n  country: Country\\n  postalCode: PostalCode\\n  phone: Phone\\n  fax: Fax\\n  email: Email"})
-  allEmployees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], first: Int, after: String): EmployeeConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: EmployeeId\\n    lastName: LastName\\n    firstName: FirstName\\n    title: Title\\n    reportsTo: ReportsTo\\n    birthDate: BirthDate\\n    hireDate: HireDate\\n    address: Address\\n    city: City\\n    state: State\\n    country: Country\\n    postalCode: PostalCode\\n    phone: Phone\\n    fax: Fax\\n    email: Email\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: EmployeeId\\n      lastName: LastName\\n      firstName: FirstName\\n      title: Title\\n      reportsTo: ReportsTo\\n      birthDate: BirthDate\\n      hireDate: HireDate\\n      address: Address\\n      city: City\\n      state: State\\n      country: Country\\n      postalCode: PostalCode\\n      phone: Phone\\n      fax: Fax\\n      email: Email\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  employeesCount(where: EmployeeFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  genre(id: ID!): Genre @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "ROW", where: "\\n  GenreId: $args.id", selection: "  id: GenreId\\n  name: Name"})
-  genres(where: GenreFilter, orderBy: [GenreOrderBy!], limit: Int = 10, offset: Int = 0): [Genre!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: GenreId\\n  name: Name"})
-  allGenres(where: GenreFilter, orderBy: [GenreOrderBy!], first: Int, after: String): GenreConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: GenreId\\n    name: Name\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: GenreId\\n      name: Name\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  genresCount(where: GenreFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  invoiceItem(id: ID!): InvoiceItem @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "ROW", where: "\\n  InvoiceLineId: $args.id", selection: "  id: InvoiceLineId\\n  invoiceId: InvoiceId\\n  trackId: TrackId\\n  unitPrice: UnitPrice\\n  quantity: Quantity"})
-  invoiceItems(where: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], limit: Int = 10, offset: Int = 0): [InvoiceItem!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: InvoiceLineId\\n  invoiceId: InvoiceId\\n  trackId: TrackId\\n  unitPrice: UnitPrice\\n  quantity: Quantity"})
-  allInvoiceItems(where: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], first: Int, after: String): InvoiceItemConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: InvoiceLineId\\n    invoiceId: InvoiceId\\n    trackId: TrackId\\n    unitPrice: UnitPrice\\n    quantity: Quantity\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: InvoiceLineId\\n      invoiceId: InvoiceId\\n      trackId: TrackId\\n      unitPrice: UnitPrice\\n      quantity: Quantity\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  invoiceItemsCount(where: InvoiceItemFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  invoice(id: ID!): Invoice @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "ROW", where: "\\n  InvoiceId: $args.id", selection: "  id: InvoiceId\\n  customerId: CustomerId\\n  invoiceDate: InvoiceDate\\n  billingAddress: BillingAddress\\n  billingCity: BillingCity\\n  billingState: BillingState\\n  billingCountry: BillingCountry\\n  billingPostalCode: BillingPostalCode\\n  total: Total"})
-  invoices(where: InvoiceFilter, orderBy: [InvoiceOrderBy!], limit: Int = 10, offset: Int = 0): [Invoice!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: InvoiceId\\n  customerId: CustomerId\\n  invoiceDate: InvoiceDate\\n  billingAddress: BillingAddress\\n  billingCity: BillingCity\\n  billingState: BillingState\\n  billingCountry: BillingCountry\\n  billingPostalCode: BillingPostalCode\\n  total: Total"})
-  allInvoices(where: InvoiceFilter, orderBy: [InvoiceOrderBy!], first: Int, after: String): InvoiceConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: InvoiceId\\n    customerId: CustomerId\\n    invoiceDate: InvoiceDate\\n    billingAddress: BillingAddress\\n    billingCity: BillingCity\\n    billingState: BillingState\\n    billingCountry: BillingCountry\\n    billingPostalCode: BillingPostalCode\\n    total: Total\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: InvoiceId\\n      customerId: CustomerId\\n      invoiceDate: InvoiceDate\\n      billingAddress: BillingAddress\\n      billingCity: BillingCity\\n      billingState: BillingState\\n      billingCountry: BillingCountry\\n      billingPostalCode: BillingPostalCode\\n      total: Total\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  invoicesCount(where: InvoiceFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  mediaType(id: ID!): MediaType @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "ROW", where: "\\n  MediaTypeId: $args.id", selection: "  id: MediaTypeId\\n  name: Name"})
-  mediaTypes(where: MediaTypeFilter, orderBy: [MediaTypeOrderBy!], limit: Int = 10, offset: Int = 0): [MediaType!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: MediaTypeId\\n  name: Name"})
-  allMediaTypes(where: MediaTypeFilter, orderBy: [MediaTypeOrderBy!], first: Int, after: String): MediaTypeConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: MediaTypeId\\n    name: Name\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: MediaTypeId\\n      name: Name\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  mediaTypesCount(where: MediaTypeFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  playlistTracks(where: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], limit: Int = 10, offset: Int = 0): [PlaylistTrack!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  playlistId: PlaylistId\\n  trackId: TrackId"})
-  allPlaylistTracks(where: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], first: Int, after: String): PlaylistTrackConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    playlistId: PlaylistId\\n    trackId: TrackId\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      playlistId: PlaylistId\\n      trackId: TrackId\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  playlistTracksCount(where: PlaylistTrackFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  playlist(id: ID!): Playlist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "ROW", where: "\\n  PlaylistId: $args.id", selection: "  id: PlaylistId\\n  name: Name"})
-  playlists(where: PlaylistFilter, orderBy: [PlaylistOrderBy!], limit: Int = 10, offset: Int = 0): [Playlist!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: PlaylistId\\n  name: Name"})
-  allPlaylists(where: PlaylistFilter, orderBy: [PlaylistOrderBy!], first: Int, after: String): PlaylistConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: PlaylistId\\n    name: Name\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: PlaylistId\\n      name: Name\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  playlistsCount(where: PlaylistFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  track(id: ID!): Track @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROW", where: "\\n  TrackId: $args.id", selection: "  id: TrackId\\n  name: Name\\n  albumId: AlbumId\\n  mediaTypeId: MediaTypeId\\n  genreId: GenreId\\n  composer: Composer\\n  milliseconds: Milliseconds\\n  bytes: Bytes\\n  unitPrice: UnitPrice"})
-  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int = 10, offset: Int = 0): [Track!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: TrackId\\n  name: Name\\n  albumId: AlbumId\\n  mediaTypeId: MediaTypeId\\n  genreId: GenreId\\n  composer: Composer\\n  milliseconds: Milliseconds\\n  bytes: Bytes\\n  unitPrice: UnitPrice"})
-  allTracks(where: TrackFilter, orderBy: [TrackOrderBy!], first: Int, after: String): TrackConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: TrackId\\n    name: Name\\n    albumId: AlbumId\\n    mediaTypeId: MediaTypeId\\n    genreId: GenreId\\n    composer: Composer\\n    milliseconds: Milliseconds\\n    bytes: Bytes\\n    unitPrice: UnitPrice\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: TrackId\\n      name: Name\\n      albumId: AlbumId\\n      mediaTypeId: MediaTypeId\\n      genreId: GenreId\\n      composer: Composer\\n      milliseconds: Milliseconds\\n      bytes: Bytes\\n      unitPrice: UnitPrice\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  tracksCount(where: TrackFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
+  album(id: ID!): Album @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "ROW", where: """
+  
+    AlbumId: $args.id
+  """, selection: """
+    id: AlbumId
+    title: Title
+    artistId: ArtistId
+  """})
+  albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int = 10, offset: Int = 0): [Album!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: AlbumId
+    title: Title
+    artistId: ArtistId
+  """})
+  allAlbums(where: AlbumFilter, orderBy: [AlbumOrderBy!], first: Int, after: String): AlbumConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+    nodes {
+      id: AlbumId
+      title: Title
+      artistId: ArtistId
+    }
+    edges {
+      cursor: $cursor
+      node {
+        id: AlbumId
+        title: Title
+        artistId: ArtistId
+      }
+    }
+    pageInfo {
+      hasNextPage: $hasNextPage
+      hasPreviousPage: $hasPreviousPage
+      startCursor: $startCursor
+      endCursor: $endCursor
+    }
+    totalCount: $totalCount
+  """})
+  albumsCount(where: AlbumFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "COUNT", where: "$args.where", selection: """
+  
+    $
+  """})
+  artist(id: ID!): Artist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "ROW", where: """
+  
+    ArtistId: $args.id
+  """, selection: """
+    id: ArtistId
+    name: Name
+  """})
+  artists(where: ArtistFilter, orderBy: [ArtistOrderBy!], limit: Int = 10, offset: Int = 0): [Artist!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: ArtistId
+    name: Name
+  """})
+  allArtists(where: ArtistFilter, orderBy: [ArtistOrderBy!], first: Int, after: String): ArtistConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+    nodes {
+      id: ArtistId
+      name: Name
+    }
+    edges {
+      cursor: $cursor
+      node {
+        id: ArtistId
+        name: Name
+      }
+    }
+    pageInfo {
+      hasNextPage: $hasNextPage
+      hasPreviousPage: $hasPreviousPage
+      startCursor: $startCursor
+      endCursor: $endCursor
+    }
+    totalCount: $totalCount
+  """})
+  artistsCount(where: ArtistFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "COUNT", where: "$args.where", selection: """
+  
+    $
+  """})
+  customer(id: ID!): Customer @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "ROW", where: """
+  
+    CustomerId: $args.id
+  """, selection: """
+    id: CustomerId
+    firstName: FirstName
+    lastName: LastName
+    company: Company
+    address: Address
+    city: City
+    state: State
+    country: Country
+    postalCode: PostalCode
+    phone: Phone
+    fax: Fax
+    email: Email
+    supportRepId: SupportRepId
+  """})
+  customers(where: CustomerFilter, orderBy: [CustomerOrderBy!], limit: Int = 10, offset: Int = 0): [Customer!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: CustomerId
+    firstName: FirstName
+    lastName: LastName
+    company: Company
+    address: Address
+    city: City
+    state: State
+    country: Country
+    postalCode: PostalCode
+    phone: Phone
+    fax: Fax
+    email: Email
+    supportRepId: SupportRepId
+  """})
+  allCustomers(where: CustomerFilter, orderBy: [CustomerOrderBy!], first: Int, after: String): CustomerConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+    nodes {
+      id: CustomerId
+      firstName: FirstName
+      lastName: LastName
+      company: Company
+      address: Address
+      city: City
+      state: State
+      country: Country
+      postalCode: PostalCode
+      phone: Phone
+      fax: Fax
+      email: Email
+      supportRepId: SupportRepId
+    }
+    edges {
+      cursor: $cursor
+      node {
+        id: CustomerId
+        firstName: FirstName
+        lastName: LastName
+        company: Company
+        address: Address
+        city: City
+        state: State
+        country: Country
+        postalCode: PostalCode
+        phone: Phone
+        fax: Fax
+        email: Email
+        supportRepId: SupportRepId
+      }
+    }
+    pageInfo {
+      hasNextPage: $hasNextPage
+      hasPreviousPage: $hasPreviousPage
+      startCursor: $startCursor
+      endCursor: $endCursor
+    }
+    totalCount: $totalCount
+  """})
+  customersCount(where: CustomerFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "COUNT", where: "$args.where", selection: """
+  
+    $
+  """})
+  employee(id: ID!): Employee @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROW", where: """
+  
+    EmployeeId: $args.id
+  """, selection: """
+    id: EmployeeId
+    lastName: LastName
+    firstName: FirstName
+    title: Title
+    reportsTo: ReportsTo
+    birthDate: BirthDate
+    hireDate: HireDate
+    address: Address
+    city: City
+    state: State
+    country: Country
+    postalCode: PostalCode
+    phone: Phone
+    fax: Fax
+    email: Email
+  """})
+  employees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int = 10, offset: Int = 0): [Employee!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: EmployeeId
+    lastName: LastName
+    firstName: FirstName
+    title: Title
+    reportsTo: ReportsTo
+    birthDate: BirthDate
+    hireDate: HireDate
+    address: Address
+    city: City
+    state: State
+    country: Country
+    postalCode: PostalCode
+    phone: Phone
+    fax: Fax
+    email: Email
+  """})
+  allEmployees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], first: Int, after: String): EmployeeConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+    nodes {
+      id: EmployeeId
+      lastName: LastName
+      firstName: FirstName
+      title: Title
+      reportsTo: ReportsTo
+      birthDate: BirthDate
+      hireDate: HireDate
+      address: Address
+      city: City
+      state: State
+      country: Country
+      postalCode: PostalCode
+      phone: Phone
+      fax: Fax
+      email: Email
+    }
+    edges {
+      cursor: $cursor
+      node {
+        id: EmployeeId
+        lastName: LastName
+        firstName: FirstName
+        title: Title
+        reportsTo: ReportsTo
+        birthDate: BirthDate
+        hireDate: HireDate
+        address: Address
+        city: City
+        state: State
+        country: Country
+        postalCode: PostalCode
+        phone: Phone
+        fax: Fax
+        email: Email
+      }
+    }
+    pageInfo {
+      hasNextPage: $hasNextPage
+      hasPreviousPage: $hasPreviousPage
+      startCursor: $startCursor
+      endCursor: $endCursor
+    }
+    totalCount: $totalCount
+  """})
+  employeesCount(where: EmployeeFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "COUNT", where: "$args.where", selection: """
+  
+    $
+  """})
+  genre(id: ID!): Genre @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "ROW", where: """
+  
+    GenreId: $args.id
+  """, selection: """
+    id: GenreId
+    name: Name
+  """})
+  genres(where: GenreFilter, orderBy: [GenreOrderBy!], limit: Int = 10, offset: Int = 0): [Genre!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: GenreId
+    name: Name
+  """})
+  allGenres(where: GenreFilter, orderBy: [GenreOrderBy!], first: Int, after: String): GenreConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+    nodes {
+      id: GenreId
+      name: Name
+    }
+    edges {
+      cursor: $cursor
+      node {
+        id: GenreId
+        name: Name
+      }
+    }
+    pageInfo {
+      hasNextPage: $hasNextPage
+      hasPreviousPage: $hasPreviousPage
+      startCursor: $startCursor
+      endCursor: $endCursor
+    }
+    totalCount: $totalCount
+  """})
+  genresCount(where: GenreFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "COUNT", where: "$args.where", selection: """
+  
+    $
+  """})
+  invoiceItem(id: ID!): InvoiceItem @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "ROW", where: """
+  
+    InvoiceLineId: $args.id
+  """, selection: """
+    id: InvoiceLineId
+    invoiceId: InvoiceId
+    trackId: TrackId
+    unitPrice: UnitPrice
+    quantity: Quantity
+  """})
+  invoiceItems(where: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], limit: Int = 10, offset: Int = 0): [InvoiceItem!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: InvoiceLineId
+    invoiceId: InvoiceId
+    trackId: TrackId
+    unitPrice: UnitPrice
+    quantity: Quantity
+  """})
+  allInvoiceItems(where: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], first: Int, after: String): InvoiceItemConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+    nodes {
+      id: InvoiceLineId
+      invoiceId: InvoiceId
+      trackId: TrackId
+      unitPrice: UnitPrice
+      quantity: Quantity
+    }
+    edges {
+      cursor: $cursor
+      node {
+        id: InvoiceLineId
+        invoiceId: InvoiceId
+        trackId: TrackId
+        unitPrice: UnitPrice
+        quantity: Quantity
+      }
+    }
+    pageInfo {
+      hasNextPage: $hasNextPage
+      hasPreviousPage: $hasPreviousPage
+      startCursor: $startCursor
+      endCursor: $endCursor
+    }
+    totalCount: $totalCount
+  """})
+  invoiceItemsCount(where: InvoiceItemFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "COUNT", where: "$args.where", selection: """
+  
+    $
+  """})
+  invoice(id: ID!): Invoice @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "ROW", where: """
+  
+    InvoiceId: $args.id
+  """, selection: """
+    id: InvoiceId
+    customerId: CustomerId
+    invoiceDate: InvoiceDate
+    billingAddress: BillingAddress
+    billingCity: BillingCity
+    billingState: BillingState
+    billingCountry: BillingCountry
+    billingPostalCode: BillingPostalCode
+    total: Total
+  """})
+  invoices(where: InvoiceFilter, orderBy: [InvoiceOrderBy!], limit: Int = 10, offset: Int = 0): [Invoice!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: InvoiceId
+    customerId: CustomerId
+    invoiceDate: InvoiceDate
+    billingAddress: BillingAddress
+    billingCity: BillingCity
+    billingState: BillingState
+    billingCountry: BillingCountry
+    billingPostalCode: BillingPostalCode
+    total: Total
+  """})
+  allInvoices(where: InvoiceFilter, orderBy: [InvoiceOrderBy!], first: Int, after: String): InvoiceConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+    nodes {
+      id: InvoiceId
+      customerId: CustomerId
+      invoiceDate: InvoiceDate
+      billingAddress: BillingAddress
+      billingCity: BillingCity
+      billingState: BillingState
+      billingCountry: BillingCountry
+      billingPostalCode: BillingPostalCode
+      total: Total
+    }
+    edges {
+      cursor: $cursor
+      node {
+        id: InvoiceId
+        customerId: CustomerId
+        invoiceDate: InvoiceDate
+        billingAddress: BillingAddress
+        billingCity: BillingCity
+        billingState: BillingState
+        billingCountry: BillingCountry
+        billingPostalCode: BillingPostalCode
+        total: Total
+      }
+    }
+    pageInfo {
+      hasNextPage: $hasNextPage
+      hasPreviousPage: $hasPreviousPage
+      startCursor: $startCursor
+      endCursor: $endCursor
+    }
+    totalCount: $totalCount
+  """})
+  invoicesCount(where: InvoiceFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "COUNT", where: "$args.where", selection: """
+  
+    $
+  """})
+  mediaType(id: ID!): MediaType @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "ROW", where: """
+  
+    MediaTypeId: $args.id
+  """, selection: """
+    id: MediaTypeId
+    name: Name
+  """})
+  mediaTypes(where: MediaTypeFilter, orderBy: [MediaTypeOrderBy!], limit: Int = 10, offset: Int = 0): [MediaType!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: MediaTypeId
+    name: Name
+  """})
+  allMediaTypes(where: MediaTypeFilter, orderBy: [MediaTypeOrderBy!], first: Int, after: String): MediaTypeConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+    nodes {
+      id: MediaTypeId
+      name: Name
+    }
+    edges {
+      cursor: $cursor
+      node {
+        id: MediaTypeId
+        name: Name
+      }
+    }
+    pageInfo {
+      hasNextPage: $hasNextPage
+      hasPreviousPage: $hasPreviousPage
+      startCursor: $startCursor
+      endCursor: $endCursor
+    }
+    totalCount: $totalCount
+  """})
+  mediaTypesCount(where: MediaTypeFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "COUNT", where: "$args.where", selection: """
+  
+    $
+  """})
+  playlistTracks(where: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], limit: Int = 10, offset: Int = 0): [PlaylistTrack!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    playlistId: PlaylistId
+    trackId: TrackId
+  """})
+  allPlaylistTracks(where: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], first: Int, after: String): PlaylistTrackConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+    nodes {
+      playlistId: PlaylistId
+      trackId: TrackId
+    }
+    edges {
+      cursor: $cursor
+      node {
+        playlistId: PlaylistId
+        trackId: TrackId
+      }
+    }
+    pageInfo {
+      hasNextPage: $hasNextPage
+      hasPreviousPage: $hasPreviousPage
+      startCursor: $startCursor
+      endCursor: $endCursor
+    }
+    totalCount: $totalCount
+  """})
+  playlistTracksCount(where: PlaylistTrackFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "COUNT", where: "$args.where", selection: """
+  
+    $
+  """})
+  playlist(id: ID!): Playlist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "ROW", where: """
+  
+    PlaylistId: $args.id
+  """, selection: """
+    id: PlaylistId
+    name: Name
+  """})
+  playlists(where: PlaylistFilter, orderBy: [PlaylistOrderBy!], limit: Int = 10, offset: Int = 0): [Playlist!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: PlaylistId
+    name: Name
+  """})
+  allPlaylists(where: PlaylistFilter, orderBy: [PlaylistOrderBy!], first: Int, after: String): PlaylistConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+    nodes {
+      id: PlaylistId
+      name: Name
+    }
+    edges {
+      cursor: $cursor
+      node {
+        id: PlaylistId
+        name: Name
+      }
+    }
+    pageInfo {
+      hasNextPage: $hasNextPage
+      hasPreviousPage: $hasPreviousPage
+      startCursor: $startCursor
+      endCursor: $endCursor
+    }
+    totalCount: $totalCount
+  """})
+  playlistsCount(where: PlaylistFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "COUNT", where: "$args.where", selection: """
+  
+    $
+  """})
+  track(id: ID!): Track @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROW", where: """
+  
+    TrackId: $args.id
+  """, selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    mediaTypeId: MediaTypeId
+    genreId: GenreId
+    composer: Composer
+    milliseconds: Milliseconds
+    bytes: Bytes
+    unitPrice: UnitPrice
+  """})
+  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int = 10, offset: Int = 0): [Track!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    mediaTypeId: MediaTypeId
+    genreId: GenreId
+    composer: Composer
+    milliseconds: Milliseconds
+    bytes: Bytes
+    unitPrice: UnitPrice
+  """})
+  allTracks(where: TrackFilter, orderBy: [TrackOrderBy!], first: Int, after: String): TrackConnection! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: """
+    nodes {
+      id: TrackId
+      name: Name
+      albumId: AlbumId
+      mediaTypeId: MediaTypeId
+      genreId: GenreId
+      composer: Composer
+      milliseconds: Milliseconds
+      bytes: Bytes
+      unitPrice: UnitPrice
+    }
+    edges {
+      cursor: $cursor
+      node {
+        id: TrackId
+        name: Name
+        albumId: AlbumId
+        mediaTypeId: MediaTypeId
+        genreId: GenreId
+        composer: Composer
+        milliseconds: Milliseconds
+        bytes: Bytes
+        unitPrice: UnitPrice
+      }
+    }
+    pageInfo {
+      hasNextPage: $hasNextPage
+      hasPreviousPage: $hasPreviousPage
+      startCursor: $startCursor
+      endCursor: $endCursor
+    }
+    totalCount: $totalCount
+  """})
+  tracksCount(where: TrackFilter): Int! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "COUNT", where: "$args.where", selection: """
+  
+    $
+  """})
 }
 
-type Album @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "ROW", where: "AlbumId: $this.id", selection: "id: AlbumId\\ntitle: Title\\nartistId: ArtistId"}) @join__type(graph: CHINOOK, key: "id") {
+type Album @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "ROW", where: "AlbumId: $this.id", selection: """
+id: AlbumId
+title: Title
+artistId: ArtistId
+"""}) @join__type(graph: CHINOOK, key: "id") {
   id: ID!
   title: String!
   artistId: Int!
-  artist: Artist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "ROW", where: "\\n  ArtistId: $this.artistId", selection: "  id: ArtistId\\n  name: Name"})
-  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROWS", where: "  AlbumId: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: TrackId\\n  name: Name\\n  albumId: AlbumId\\n  mediaTypeId: MediaTypeId\\n  genreId: GenreId\\n  composer: Composer\\n  milliseconds: Milliseconds\\n  bytes: Bytes\\n  unitPrice: UnitPrice"})
+  artist: Artist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "ROW", where: """
+  
+    ArtistId: $this.artistId
+  """, selection: """
+    id: ArtistId
+    name: Name
+  """})
+  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROWS", where: """
+    AlbumId: $this.id
+    ...$args.where
+  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    mediaTypeId: MediaTypeId
+    genreId: GenreId
+    composer: Composer
+    milliseconds: Milliseconds
+    bytes: Bytes
+    unitPrice: UnitPrice
+  """})
 }
 
-type Artist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "ROW", where: "ArtistId: $this.id", selection: "id: ArtistId\\nname: Name"}) @join__type(graph: CHINOOK, key: "id") {
+type Artist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "ROW", where: "ArtistId: $this.id", selection: """
+id: ArtistId
+name: Name
+"""}) @join__type(graph: CHINOOK, key: "id") {
   id: ID!
   name: String
-  albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "ROWS", where: "  ArtistId: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: AlbumId\\n  title: Title\\n  artistId: ArtistId"})
+  albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "ROWS", where: """
+    ArtistId: $this.id
+    ...$args.where
+  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: AlbumId
+    title: Title
+    artistId: ArtistId
+  """})
 }
 
-type Track @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROW", where: "TrackId: $this.id", selection: "id: TrackId\\nname: Name\\nalbumId: AlbumId\\nmediaTypeId: MediaTypeId\\ngenreId: GenreId\\ncomposer: Composer\\nmilliseconds: Milliseconds\\nbytes: Bytes\\nunitPrice: UnitPrice"}) @join__type(graph: CHINOOK, key: "id") {
+type Track @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROW", where: "TrackId: $this.id", selection: """
+id: TrackId
+name: Name
+albumId: AlbumId
+mediaTypeId: MediaTypeId
+genreId: GenreId
+composer: Composer
+milliseconds: Milliseconds
+bytes: Bytes
+unitPrice: UnitPrice
+"""}) @join__type(graph: CHINOOK, key: "id") {
   id: ID!
   name: String!
   albumId: Int
@@ -114,25 +660,110 @@ type Track @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "track
   milliseconds: Int!
   bytes: Int
   unitPrice: Float!
-  invoiceItems(where: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], limit: Int, offset: Int): [InvoiceItem!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "ROWS", where: "  TrackId: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: InvoiceLineId\\n  invoiceId: InvoiceId\\n  trackId: TrackId\\n  unitPrice: UnitPrice\\n  quantity: Quantity"})
-  playlistTracks(where: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], limit: Int, offset: Int): [PlaylistTrack!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "ROWS", where: "  TrackId: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  playlistId: PlaylistId\\n  trackId: TrackId"})
-  mediaType: MediaType @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "ROW", where: "\\n  MediaTypeId: $this.mediaTypeId", selection: "  id: MediaTypeId\\n  name: Name"})
-  genre: Genre @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "ROW", where: "\\n  GenreId: $this.genreId", selection: "  id: GenreId\\n  name: Name"})
-  album: Album @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "ROW", where: "\\n  AlbumId: $this.albumId", selection: "  id: AlbumId\\n  title: Title\\n  artistId: ArtistId"})
-  playlists(where: PlaylistFilter, orderBy: [PlaylistOrderBy!], limit: Int, offset: Int): [Playlist!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "ROWS", through: "  table: playlist_track\\n  local: TrackId\\n  remote: PlaylistId\\n  parent: $this.id\\n  target: PlaylistId", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: PlaylistId\\n  name: Name"})
+  invoiceItems(where: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], limit: Int, offset: Int): [InvoiceItem!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "ROWS", where: """
+    TrackId: $this.id
+    ...$args.where
+  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: InvoiceLineId
+    invoiceId: InvoiceId
+    trackId: TrackId
+    unitPrice: UnitPrice
+    quantity: Quantity
+  """})
+  playlistTracks(where: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], limit: Int, offset: Int): [PlaylistTrack!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "ROWS", where: """
+    TrackId: $this.id
+    ...$args.where
+  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    playlistId: PlaylistId
+    trackId: TrackId
+  """})
+  mediaType: MediaType @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "ROW", where: """
+  
+    MediaTypeId: $this.mediaTypeId
+  """, selection: """
+    id: MediaTypeId
+    name: Name
+  """})
+  genre: Genre @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "ROW", where: """
+  
+    GenreId: $this.genreId
+  """, selection: """
+    id: GenreId
+    name: Name
+  """})
+  album: Album @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "ROW", where: """
+  
+    AlbumId: $this.albumId
+  """, selection: """
+    id: AlbumId
+    title: Title
+    artistId: ArtistId
+  """})
+  playlists(where: PlaylistFilter, orderBy: [PlaylistOrderBy!], limit: Int, offset: Int): [Playlist!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "ROWS", through: """
+    table: playlist_track
+    local: TrackId
+    remote: PlaylistId
+    parent: $this.id
+    target: PlaylistId
+  """, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: PlaylistId
+    name: Name
+  """})
 }
 
-type InvoiceItem @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "ROW", where: "InvoiceLineId: $this.id", selection: "id: InvoiceLineId\\ninvoiceId: InvoiceId\\ntrackId: TrackId\\nunitPrice: UnitPrice\\nquantity: Quantity"}) @join__type(graph: CHINOOK, key: "id") {
+type InvoiceItem @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "ROW", where: "InvoiceLineId: $this.id", selection: """
+id: InvoiceLineId
+invoiceId: InvoiceId
+trackId: TrackId
+unitPrice: UnitPrice
+quantity: Quantity
+"""}) @join__type(graph: CHINOOK, key: "id") {
   id: ID!
   invoiceId: Int!
   trackId: Int!
   unitPrice: Float!
   quantity: Int!
-  track: Track @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROW", where: "\\n  TrackId: $this.trackId", selection: "  id: TrackId\\n  name: Name\\n  albumId: AlbumId\\n  mediaTypeId: MediaTypeId\\n  genreId: GenreId\\n  composer: Composer\\n  milliseconds: Milliseconds\\n  bytes: Bytes\\n  unitPrice: UnitPrice"})
-  invoice: Invoice @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "ROW", where: "\\n  InvoiceId: $this.invoiceId", selection: "  id: InvoiceId\\n  customerId: CustomerId\\n  invoiceDate: InvoiceDate\\n  billingAddress: BillingAddress\\n  billingCity: BillingCity\\n  billingState: BillingState\\n  billingCountry: BillingCountry\\n  billingPostalCode: BillingPostalCode\\n  total: Total"})
+  track: Track @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROW", where: """
+  
+    TrackId: $this.trackId
+  """, selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    mediaTypeId: MediaTypeId
+    genreId: GenreId
+    composer: Composer
+    milliseconds: Milliseconds
+    bytes: Bytes
+    unitPrice: UnitPrice
+  """})
+  invoice: Invoice @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "ROW", where: """
+  
+    InvoiceId: $this.invoiceId
+  """, selection: """
+    id: InvoiceId
+    customerId: CustomerId
+    invoiceDate: InvoiceDate
+    billingAddress: BillingAddress
+    billingCity: BillingCity
+    billingState: BillingState
+    billingCountry: BillingCountry
+    billingPostalCode: BillingPostalCode
+    total: Total
+  """})
 }
 
-type Invoice @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "ROW", where: "InvoiceId: $this.id", selection: "id: InvoiceId\\ncustomerId: CustomerId\\ninvoiceDate: InvoiceDate\\nbillingAddress: BillingAddress\\nbillingCity: BillingCity\\nbillingState: BillingState\\nbillingCountry: BillingCountry\\nbillingPostalCode: BillingPostalCode\\ntotal: Total"}) @join__type(graph: CHINOOK, key: "id") {
+type Invoice @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "ROW", where: "InvoiceId: $this.id", selection: """
+id: InvoiceId
+customerId: CustomerId
+invoiceDate: InvoiceDate
+billingAddress: BillingAddress
+billingCity: BillingCity
+billingState: BillingState
+billingCountry: BillingCountry
+billingPostalCode: BillingPostalCode
+total: Total
+"""}) @join__type(graph: CHINOOK, key: "id") {
   id: ID!
   customerId: Int!
   invoiceDate: DateTime!
@@ -142,11 +773,51 @@ type Invoice @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "inv
   billingCountry: String
   billingPostalCode: String
   total: Float!
-  invoiceItems(where: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], limit: Int, offset: Int): [InvoiceItem!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "ROWS", where: "  InvoiceId: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: InvoiceLineId\\n  invoiceId: InvoiceId\\n  trackId: TrackId\\n  unitPrice: UnitPrice\\n  quantity: Quantity"})
-  customer: Customer @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "ROW", where: "\\n  CustomerId: $this.customerId", selection: "  id: CustomerId\\n  firstName: FirstName\\n  lastName: LastName\\n  company: Company\\n  address: Address\\n  city: City\\n  state: State\\n  country: Country\\n  postalCode: PostalCode\\n  phone: Phone\\n  fax: Fax\\n  email: Email\\n  supportRepId: SupportRepId"})
+  invoiceItems(where: InvoiceItemFilter, orderBy: [InvoiceItemOrderBy!], limit: Int, offset: Int): [InvoiceItem!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "ROWS", where: """
+    InvoiceId: $this.id
+    ...$args.where
+  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: InvoiceLineId
+    invoiceId: InvoiceId
+    trackId: TrackId
+    unitPrice: UnitPrice
+    quantity: Quantity
+  """})
+  customer: Customer @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "ROW", where: """
+  
+    CustomerId: $this.customerId
+  """, selection: """
+    id: CustomerId
+    firstName: FirstName
+    lastName: LastName
+    company: Company
+    address: Address
+    city: City
+    state: State
+    country: Country
+    postalCode: PostalCode
+    phone: Phone
+    fax: Fax
+    email: Email
+    supportRepId: SupportRepId
+  """})
 }
 
-type Customer @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "ROW", where: "CustomerId: $this.id", selection: "id: CustomerId\\nfirstName: FirstName\\nlastName: LastName\\ncompany: Company\\naddress: Address\\ncity: City\\nstate: State\\ncountry: Country\\npostalCode: PostalCode\\nphone: Phone\\nfax: Fax\\nemail: Email\\nsupportRepId: SupportRepId"}) @join__type(graph: CHINOOK, key: "id") {
+type Customer @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "ROW", where: "CustomerId: $this.id", selection: """
+id: CustomerId
+firstName: FirstName
+lastName: LastName
+company: Company
+address: Address
+city: City
+state: State
+country: Country
+postalCode: PostalCode
+phone: Phone
+fax: Fax
+email: Email
+supportRepId: SupportRepId
+"""}) @join__type(graph: CHINOOK, key: "id") {
   id: ID!
   firstName: String!
   lastName: String!
@@ -160,11 +831,59 @@ type Customer @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "cu
   fax: String
   email: String!
   supportRepId: Int
-  employee: Employee @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROW", where: "\\n  EmployeeId: $this.supportRepId", selection: "  id: EmployeeId\\n  lastName: LastName\\n  firstName: FirstName\\n  title: Title\\n  reportsTo: ReportsTo\\n  birthDate: BirthDate\\n  hireDate: HireDate\\n  address: Address\\n  city: City\\n  state: State\\n  country: Country\\n  postalCode: PostalCode\\n  phone: Phone\\n  fax: Fax\\n  email: Email"})
-  invoices(where: InvoiceFilter, orderBy: [InvoiceOrderBy!], limit: Int, offset: Int): [Invoice!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "ROWS", where: "  CustomerId: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: InvoiceId\\n  customerId: CustomerId\\n  invoiceDate: InvoiceDate\\n  billingAddress: BillingAddress\\n  billingCity: BillingCity\\n  billingState: BillingState\\n  billingCountry: BillingCountry\\n  billingPostalCode: BillingPostalCode\\n  total: Total"})
+  employee: Employee @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROW", where: """
+  
+    EmployeeId: $this.supportRepId
+  """, selection: """
+    id: EmployeeId
+    lastName: LastName
+    firstName: FirstName
+    title: Title
+    reportsTo: ReportsTo
+    birthDate: BirthDate
+    hireDate: HireDate
+    address: Address
+    city: City
+    state: State
+    country: Country
+    postalCode: PostalCode
+    phone: Phone
+    fax: Fax
+    email: Email
+  """})
+  invoices(where: InvoiceFilter, orderBy: [InvoiceOrderBy!], limit: Int, offset: Int): [Invoice!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "ROWS", where: """
+    CustomerId: $this.id
+    ...$args.where
+  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: InvoiceId
+    customerId: CustomerId
+    invoiceDate: InvoiceDate
+    billingAddress: BillingAddress
+    billingCity: BillingCity
+    billingState: BillingState
+    billingCountry: BillingCountry
+    billingPostalCode: BillingPostalCode
+    total: Total
+  """})
 }
 
-type Employee @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROW", where: "EmployeeId: $this.id", selection: "id: EmployeeId\\nlastName: LastName\\nfirstName: FirstName\\ntitle: Title\\nreportsTo: ReportsTo\\nbirthDate: BirthDate\\nhireDate: HireDate\\naddress: Address\\ncity: City\\nstate: State\\ncountry: Country\\npostalCode: PostalCode\\nphone: Phone\\nfax: Fax\\nemail: Email"}) @join__type(graph: CHINOOK, key: "id") {
+type Employee @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROW", where: "EmployeeId: $this.id", selection: """
+id: EmployeeId
+lastName: LastName
+firstName: FirstName
+title: Title
+reportsTo: ReportsTo
+birthDate: BirthDate
+hireDate: HireDate
+address: Address
+city: City
+state: State
+country: Country
+postalCode: PostalCode
+phone: Phone
+fax: Fax
+email: Email
+"""}) @join__type(graph: CHINOOK, key: "id") {
   id: ID!
   lastName: String!
   firstName: String!
@@ -180,35 +899,172 @@ type Employee @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "em
   phone: String
   fax: String
   email: String
-  customers(where: CustomerFilter, orderBy: [CustomerOrderBy!], limit: Int, offset: Int): [Customer!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "ROWS", where: "  SupportRepId: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: CustomerId\\n  firstName: FirstName\\n  lastName: LastName\\n  company: Company\\n  address: Address\\n  city: City\\n  state: State\\n  country: Country\\n  postalCode: PostalCode\\n  phone: Phone\\n  fax: Fax\\n  email: Email\\n  supportRepId: SupportRepId"})
-  employee: Employee @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROW", where: "\\n  EmployeeId: $this.reportsTo", selection: "  id: EmployeeId\\n  lastName: LastName\\n  firstName: FirstName\\n  title: Title\\n  reportsTo: ReportsTo\\n  birthDate: BirthDate\\n  hireDate: HireDate\\n  address: Address\\n  city: City\\n  state: State\\n  country: Country\\n  postalCode: PostalCode\\n  phone: Phone\\n  fax: Fax\\n  email: Email"})
-  employees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int, offset: Int): [Employee!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROWS", where: "  ReportsTo: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: EmployeeId\\n  lastName: LastName\\n  firstName: FirstName\\n  title: Title\\n  reportsTo: ReportsTo\\n  birthDate: BirthDate\\n  hireDate: HireDate\\n  address: Address\\n  city: City\\n  state: State\\n  country: Country\\n  postalCode: PostalCode\\n  phone: Phone\\n  fax: Fax\\n  email: Email"})
+  customers(where: CustomerFilter, orderBy: [CustomerOrderBy!], limit: Int, offset: Int): [Customer!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "ROWS", where: """
+    SupportRepId: $this.id
+    ...$args.where
+  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: CustomerId
+    firstName: FirstName
+    lastName: LastName
+    company: Company
+    address: Address
+    city: City
+    state: State
+    country: Country
+    postalCode: PostalCode
+    phone: Phone
+    fax: Fax
+    email: Email
+    supportRepId: SupportRepId
+  """})
+  employee: Employee @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROW", where: """
+  
+    EmployeeId: $this.reportsTo
+  """, selection: """
+    id: EmployeeId
+    lastName: LastName
+    firstName: FirstName
+    title: Title
+    reportsTo: ReportsTo
+    birthDate: BirthDate
+    hireDate: HireDate
+    address: Address
+    city: City
+    state: State
+    country: Country
+    postalCode: PostalCode
+    phone: Phone
+    fax: Fax
+    email: Email
+  """})
+  employees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int, offset: Int): [Employee!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "ROWS", where: """
+    ReportsTo: $this.id
+    ...$args.where
+  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: EmployeeId
+    lastName: LastName
+    firstName: FirstName
+    title: Title
+    reportsTo: ReportsTo
+    birthDate: BirthDate
+    hireDate: HireDate
+    address: Address
+    city: City
+    state: State
+    country: Country
+    postalCode: PostalCode
+    phone: Phone
+    fax: Fax
+    email: Email
+  """})
 }
 
-type PlaylistTrack @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "ROW", where: "PlaylistId: $this.playlistId\\nTrackId: $this.trackId", selection: "playlistId: PlaylistId\\ntrackId: TrackId"}) @join__type(graph: CHINOOK, key: "playlistId trackId") {
+type PlaylistTrack @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "ROW", where: """
+PlaylistId: $this.playlistId
+TrackId: $this.trackId
+""", selection: """
+playlistId: PlaylistId
+trackId: TrackId
+"""}) @join__type(graph: CHINOOK, key: "playlistId trackId") {
   playlistId: Int!
   trackId: Int!
-  track: Track @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROW", where: "\\n  TrackId: $this.trackId", selection: "  id: TrackId\\n  name: Name\\n  albumId: AlbumId\\n  mediaTypeId: MediaTypeId\\n  genreId: GenreId\\n  composer: Composer\\n  milliseconds: Milliseconds\\n  bytes: Bytes\\n  unitPrice: UnitPrice"})
-  playlist: Playlist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "ROW", where: "\\n  PlaylistId: $this.playlistId", selection: "  id: PlaylistId\\n  name: Name"})
+  track: Track @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROW", where: """
+  
+    TrackId: $this.trackId
+  """, selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    mediaTypeId: MediaTypeId
+    genreId: GenreId
+    composer: Composer
+    milliseconds: Milliseconds
+    bytes: Bytes
+    unitPrice: UnitPrice
+  """})
+  playlist: Playlist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "ROW", where: """
+  
+    PlaylistId: $this.playlistId
+  """, selection: """
+    id: PlaylistId
+    name: Name
+  """})
 }
 
-type Playlist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "ROW", where: "PlaylistId: $this.id", selection: "id: PlaylistId\\nname: Name"}) @join__type(graph: CHINOOK, key: "id") {
+type Playlist @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "ROW", where: "PlaylistId: $this.id", selection: """
+id: PlaylistId
+name: Name
+"""}) @join__type(graph: CHINOOK, key: "id") {
   id: ID!
   name: String
-  playlistTracks(where: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], limit: Int, offset: Int): [PlaylistTrack!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "ROWS", where: "  PlaylistId: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  playlistId: PlaylistId\\n  trackId: TrackId"})
-  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROWS", through: "  table: playlist_track\\n  local: PlaylistId\\n  remote: TrackId\\n  parent: $this.id\\n  target: TrackId", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: TrackId\\n  name: Name\\n  albumId: AlbumId\\n  mediaTypeId: MediaTypeId\\n  genreId: GenreId\\n  composer: Composer\\n  milliseconds: Milliseconds\\n  bytes: Bytes\\n  unitPrice: UnitPrice"})
+  playlistTracks(where: PlaylistTrackFilter, orderBy: [PlaylistTrackOrderBy!], limit: Int, offset: Int): [PlaylistTrack!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "ROWS", where: """
+    PlaylistId: $this.id
+    ...$args.where
+  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    playlistId: PlaylistId
+    trackId: TrackId
+  """})
+  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROWS", through: """
+    table: playlist_track
+    local: PlaylistId
+    remote: TrackId
+    parent: $this.id
+    target: TrackId
+  """, where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    mediaTypeId: MediaTypeId
+    genreId: GenreId
+    composer: Composer
+    milliseconds: Milliseconds
+    bytes: Bytes
+    unitPrice: UnitPrice
+  """})
 }
 
-type MediaType @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "ROW", where: "MediaTypeId: $this.id", selection: "id: MediaTypeId\\nname: Name"}) @join__type(graph: CHINOOK, key: "id") {
+type MediaType @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "ROW", where: "MediaTypeId: $this.id", selection: """
+id: MediaTypeId
+name: Name
+"""}) @join__type(graph: CHINOOK, key: "id") {
   id: ID!
   name: String
-  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROWS", where: "  MediaTypeId: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: TrackId\\n  name: Name\\n  albumId: AlbumId\\n  mediaTypeId: MediaTypeId\\n  genreId: GenreId\\n  composer: Composer\\n  milliseconds: Milliseconds\\n  bytes: Bytes\\n  unitPrice: UnitPrice"})
+  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROWS", where: """
+    MediaTypeId: $this.id
+    ...$args.where
+  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    mediaTypeId: MediaTypeId
+    genreId: GenreId
+    composer: Composer
+    milliseconds: Milliseconds
+    bytes: Bytes
+    unitPrice: UnitPrice
+  """})
 }
 
-type Genre @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "ROW", where: "GenreId: $this.id", selection: "id: GenreId\\nname: Name"}) @join__type(graph: CHINOOK, key: "id") {
+type Genre @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "ROW", where: "GenreId: $this.id", selection: """
+id: GenreId
+name: Name
+"""}) @join__type(graph: CHINOOK, key: "id") {
   id: ID!
   name: String
-  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROWS", where: "  GenreId: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: TrackId\\n  name: Name\\n  albumId: AlbumId\\n  mediaTypeId: MediaTypeId\\n  genreId: GenreId\\n  composer: Composer\\n  milliseconds: Milliseconds\\n  bytes: Bytes\\n  unitPrice: UnitPrice"})
+  tracks(where: TrackFilter, orderBy: [TrackOrderBy!], limit: Int, offset: Int): [Track!]! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "ROWS", where: """
+    GenreId: $this.id
+    ...$args.where
+  """, orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    mediaTypeId: MediaTypeId
+    genreId: GenreId
+    composer: Composer
+    milliseconds: Milliseconds
+    bytes: Bytes
+    unitPrice: UnitPrice
+  """})
 }
 
 type AlbumConnection @join__type(graph: CHINOOK) {
@@ -351,37 +1207,451 @@ type TrackEdge @join__type(graph: CHINOOK) {
 }
 
 type Mutation @join__type(graph: CHINOOK) {
-  createAlbum(input: CreateAlbumInput!): AlbumPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "INSERT", set: "  Title: $args.input.title\\n  ArtistId: $args.input.artistId", selection: "  album {\\n    id: AlbumId\\n    title: Title\\n    artistId: ArtistId\\n  }"})
-  updateAlbum(id: ID!, input: UpdateAlbumInput!): AlbumPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "UPDATE", set: "  Title: $args.input.title\\n  ArtistId: $args.input.artistId", where: "\\n  AlbumId: $args.id", selection: "  album {\\n    id: AlbumId\\n    title: Title\\n    artistId: ArtistId\\n  }"})
-  deleteAlbum(id: ID!): DeleteAlbumPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "DELETE", where: "\\n  AlbumId: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
-  createArtist(input: CreateArtistInput!): ArtistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "INSERT", set: "\\n  Name: $args.input.name", selection: "  artist {\\n    id: ArtistId\\n    name: Name\\n  }"})
-  updateArtist(id: ID!, input: UpdateArtistInput!): ArtistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "UPDATE", set: "\\n  Name: $args.input.name", where: "\\n  ArtistId: $args.id", selection: "  artist {\\n    id: ArtistId\\n    name: Name\\n  }"})
-  deleteArtist(id: ID!): DeleteArtistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "DELETE", where: "\\n  ArtistId: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
-  createCustomer(input: CreateCustomerInput!): CustomerPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "INSERT", set: "  FirstName: $args.input.firstName\\n  LastName: $args.input.lastName\\n  Company: $args.input.company\\n  Address: $args.input.address\\n  City: $args.input.city\\n  State: $args.input.state\\n  Country: $args.input.country\\n  PostalCode: $args.input.postalCode\\n  Phone: $args.input.phone\\n  Fax: $args.input.fax\\n  Email: $args.input.email\\n  SupportRepId: $args.input.supportRepId", selection: "  customer {\\n    id: CustomerId\\n    firstName: FirstName\\n    lastName: LastName\\n    company: Company\\n    address: Address\\n    city: City\\n    state: State\\n    country: Country\\n    postalCode: PostalCode\\n    phone: Phone\\n    fax: Fax\\n    email: Email\\n    supportRepId: SupportRepId\\n  }"})
-  updateCustomer(id: ID!, input: UpdateCustomerInput!): CustomerPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "UPDATE", set: "  FirstName: $args.input.firstName\\n  LastName: $args.input.lastName\\n  Company: $args.input.company\\n  Address: $args.input.address\\n  City: $args.input.city\\n  State: $args.input.state\\n  Country: $args.input.country\\n  PostalCode: $args.input.postalCode\\n  Phone: $args.input.phone\\n  Fax: $args.input.fax\\n  Email: $args.input.email\\n  SupportRepId: $args.input.supportRepId", where: "\\n  CustomerId: $args.id", selection: "  customer {\\n    id: CustomerId\\n    firstName: FirstName\\n    lastName: LastName\\n    company: Company\\n    address: Address\\n    city: City\\n    state: State\\n    country: Country\\n    postalCode: PostalCode\\n    phone: Phone\\n    fax: Fax\\n    email: Email\\n    supportRepId: SupportRepId\\n  }"})
-  deleteCustomer(id: ID!): DeleteCustomerPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "DELETE", where: "\\n  CustomerId: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
-  createEmployee(input: CreateEmployeeInput!): EmployeePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "INSERT", set: "  LastName: $args.input.lastName\\n  FirstName: $args.input.firstName\\n  Title: $args.input.title\\n  ReportsTo: $args.input.reportsTo\\n  BirthDate: $args.input.birthDate\\n  HireDate: $args.input.hireDate\\n  Address: $args.input.address\\n  City: $args.input.city\\n  State: $args.input.state\\n  Country: $args.input.country\\n  PostalCode: $args.input.postalCode\\n  Phone: $args.input.phone\\n  Fax: $args.input.fax\\n  Email: $args.input.email", selection: "  employee {\\n    id: EmployeeId\\n    lastName: LastName\\n    firstName: FirstName\\n    title: Title\\n    reportsTo: ReportsTo\\n    birthDate: BirthDate\\n    hireDate: HireDate\\n    address: Address\\n    city: City\\n    state: State\\n    country: Country\\n    postalCode: PostalCode\\n    phone: Phone\\n    fax: Fax\\n    email: Email\\n  }"})
-  updateEmployee(id: ID!, input: UpdateEmployeeInput!): EmployeePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "UPDATE", set: "  LastName: $args.input.lastName\\n  FirstName: $args.input.firstName\\n  Title: $args.input.title\\n  ReportsTo: $args.input.reportsTo\\n  BirthDate: $args.input.birthDate\\n  HireDate: $args.input.hireDate\\n  Address: $args.input.address\\n  City: $args.input.city\\n  State: $args.input.state\\n  Country: $args.input.country\\n  PostalCode: $args.input.postalCode\\n  Phone: $args.input.phone\\n  Fax: $args.input.fax\\n  Email: $args.input.email", where: "\\n  EmployeeId: $args.id", selection: "  employee {\\n    id: EmployeeId\\n    lastName: LastName\\n    firstName: FirstName\\n    title: Title\\n    reportsTo: ReportsTo\\n    birthDate: BirthDate\\n    hireDate: HireDate\\n    address: Address\\n    city: City\\n    state: State\\n    country: Country\\n    postalCode: PostalCode\\n    phone: Phone\\n    fax: Fax\\n    email: Email\\n  }"})
-  deleteEmployee(id: ID!): DeleteEmployeePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "DELETE", where: "\\n  EmployeeId: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
-  createGenre(input: CreateGenreInput!): GenrePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "INSERT", set: "\\n  Name: $args.input.name", selection: "  genre {\\n    id: GenreId\\n    name: Name\\n  }"})
-  updateGenre(id: ID!, input: UpdateGenreInput!): GenrePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "UPDATE", set: "\\n  Name: $args.input.name", where: "\\n  GenreId: $args.id", selection: "  genre {\\n    id: GenreId\\n    name: Name\\n  }"})
-  deleteGenre(id: ID!): DeleteGenrePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "DELETE", where: "\\n  GenreId: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
-  createInvoiceItem(input: CreateInvoiceItemInput!): InvoiceItemPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "INSERT", set: "  InvoiceId: $args.input.invoiceId\\n  TrackId: $args.input.trackId\\n  UnitPrice: $args.input.unitPrice\\n  Quantity: $args.input.quantity", selection: "  invoiceItem {\\n    id: InvoiceLineId\\n    invoiceId: InvoiceId\\n    trackId: TrackId\\n    unitPrice: UnitPrice\\n    quantity: Quantity\\n  }"})
-  updateInvoiceItem(id: ID!, input: UpdateInvoiceItemInput!): InvoiceItemPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "UPDATE", set: "  InvoiceId: $args.input.invoiceId\\n  TrackId: $args.input.trackId\\n  UnitPrice: $args.input.unitPrice\\n  Quantity: $args.input.quantity", where: "\\n  InvoiceLineId: $args.id", selection: "  invoiceItem {\\n    id: InvoiceLineId\\n    invoiceId: InvoiceId\\n    trackId: TrackId\\n    unitPrice: UnitPrice\\n    quantity: Quantity\\n  }"})
-  deleteInvoiceItem(id: ID!): DeleteInvoiceItemPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "DELETE", where: "\\n  InvoiceLineId: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
-  createInvoice(input: CreateInvoiceInput!): InvoicePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "INSERT", set: "  CustomerId: $args.input.customerId\\n  InvoiceDate: $args.input.invoiceDate\\n  BillingAddress: $args.input.billingAddress\\n  BillingCity: $args.input.billingCity\\n  BillingState: $args.input.billingState\\n  BillingCountry: $args.input.billingCountry\\n  BillingPostalCode: $args.input.billingPostalCode\\n  Total: $args.input.total", selection: "  invoice {\\n    id: InvoiceId\\n    customerId: CustomerId\\n    invoiceDate: InvoiceDate\\n    billingAddress: BillingAddress\\n    billingCity: BillingCity\\n    billingState: BillingState\\n    billingCountry: BillingCountry\\n    billingPostalCode: BillingPostalCode\\n    total: Total\\n  }"})
-  updateInvoice(id: ID!, input: UpdateInvoiceInput!): InvoicePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "UPDATE", set: "  CustomerId: $args.input.customerId\\n  InvoiceDate: $args.input.invoiceDate\\n  BillingAddress: $args.input.billingAddress\\n  BillingCity: $args.input.billingCity\\n  BillingState: $args.input.billingState\\n  BillingCountry: $args.input.billingCountry\\n  BillingPostalCode: $args.input.billingPostalCode\\n  Total: $args.input.total", where: "\\n  InvoiceId: $args.id", selection: "  invoice {\\n    id: InvoiceId\\n    customerId: CustomerId\\n    invoiceDate: InvoiceDate\\n    billingAddress: BillingAddress\\n    billingCity: BillingCity\\n    billingState: BillingState\\n    billingCountry: BillingCountry\\n    billingPostalCode: BillingPostalCode\\n    total: Total\\n  }"})
-  deleteInvoice(id: ID!): DeleteInvoicePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "DELETE", where: "\\n  InvoiceId: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
-  createMediaType(input: CreateMediaTypeInput!): MediaTypePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "INSERT", set: "\\n  Name: $args.input.name", selection: "  mediaType {\\n    id: MediaTypeId\\n    name: Name\\n  }"})
-  updateMediaType(id: ID!, input: UpdateMediaTypeInput!): MediaTypePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "UPDATE", set: "\\n  Name: $args.input.name", where: "\\n  MediaTypeId: $args.id", selection: "  mediaType {\\n    id: MediaTypeId\\n    name: Name\\n  }"})
-  deleteMediaType(id: ID!): DeleteMediaTypePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "DELETE", where: "\\n  MediaTypeId: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
-  createPlaylistTrack(input: CreatePlaylistTrackInput!): PlaylistTrackPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "INSERT", set: "  PlaylistId: $args.input.playlistId\\n  TrackId: $args.input.trackId", selection: "  playlistTrack {\\n    playlistId: PlaylistId\\n    trackId: TrackId\\n  }"})
-  createPlaylist(input: CreatePlaylistInput!): PlaylistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "INSERT", set: "\\n  Name: $args.input.name", selection: "  playlist {\\n    id: PlaylistId\\n    name: Name\\n  }"})
-  updatePlaylist(id: ID!, input: UpdatePlaylistInput!): PlaylistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "UPDATE", set: "\\n  Name: $args.input.name", where: "\\n  PlaylistId: $args.id", selection: "  playlist {\\n    id: PlaylistId\\n    name: Name\\n  }"})
-  deletePlaylist(id: ID!): DeletePlaylistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "DELETE", where: "\\n  PlaylistId: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
-  createTrack(input: CreateTrackInput!): TrackPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "INSERT", set: "  Name: $args.input.name\\n  AlbumId: $args.input.albumId\\n  MediaTypeId: $args.input.mediaTypeId\\n  GenreId: $args.input.genreId\\n  Composer: $args.input.composer\\n  Milliseconds: $args.input.milliseconds\\n  Bytes: $args.input.bytes\\n  UnitPrice: $args.input.unitPrice", selection: "  track {\\n    id: TrackId\\n    name: Name\\n    albumId: AlbumId\\n    mediaTypeId: MediaTypeId\\n    genreId: GenreId\\n    composer: Composer\\n    milliseconds: Milliseconds\\n    bytes: Bytes\\n    unitPrice: UnitPrice\\n  }"})
-  updateTrack(id: ID!, input: UpdateTrackInput!): TrackPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "UPDATE", set: "  Name: $args.input.name\\n  AlbumId: $args.input.albumId\\n  MediaTypeId: $args.input.mediaTypeId\\n  GenreId: $args.input.genreId\\n  Composer: $args.input.composer\\n  Milliseconds: $args.input.milliseconds\\n  Bytes: $args.input.bytes\\n  UnitPrice: $args.input.unitPrice", where: "\\n  TrackId: $args.id", selection: "  track {\\n    id: TrackId\\n    name: Name\\n    albumId: AlbumId\\n    mediaTypeId: MediaTypeId\\n    genreId: GenreId\\n    composer: Composer\\n    milliseconds: Milliseconds\\n    bytes: Bytes\\n    unitPrice: UnitPrice\\n  }"})
-  deleteTrack(id: ID!): DeleteTrackPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "DELETE", where: "\\n  TrackId: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
+  createAlbum(input: CreateAlbumInput!): AlbumPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "INSERT", set: """
+    Title: $args.input.title
+    ArtistId: $args.input.artistId
+  """, selection: """
+    album {
+      id: AlbumId
+      title: Title
+      artistId: ArtistId
+    }
+  """})
+  updateAlbum(id: ID!, input: UpdateAlbumInput!): AlbumPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "UPDATE", set: """
+    Title: $args.input.title
+    ArtistId: $args.input.artistId
+  """, where: """
+  
+    AlbumId: $args.id
+  """, selection: """
+    album {
+      id: AlbumId
+      title: Title
+      artistId: ArtistId
+    }
+  """})
+  deleteAlbum(id: ID!): DeleteAlbumPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "albums", kind: "DELETE", where: """
+  
+    AlbumId: $args.id
+  """, selection: """
+    ok: $affectedRows
+    affectedRows: $affectedRows
+  """})
+  createArtist(input: CreateArtistInput!): ArtistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "INSERT", set: """
+  
+    Name: $args.input.name
+  """, selection: """
+    artist {
+      id: ArtistId
+      name: Name
+    }
+  """})
+  updateArtist(id: ID!, input: UpdateArtistInput!): ArtistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "UPDATE", set: """
+  
+    Name: $args.input.name
+  """, where: """
+  
+    ArtistId: $args.id
+  """, selection: """
+    artist {
+      id: ArtistId
+      name: Name
+    }
+  """})
+  deleteArtist(id: ID!): DeleteArtistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "artists", kind: "DELETE", where: """
+  
+    ArtistId: $args.id
+  """, selection: """
+    ok: $affectedRows
+    affectedRows: $affectedRows
+  """})
+  createCustomer(input: CreateCustomerInput!): CustomerPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "INSERT", set: """
+    FirstName: $args.input.firstName
+    LastName: $args.input.lastName
+    Company: $args.input.company
+    Address: $args.input.address
+    City: $args.input.city
+    State: $args.input.state
+    Country: $args.input.country
+    PostalCode: $args.input.postalCode
+    Phone: $args.input.phone
+    Fax: $args.input.fax
+    Email: $args.input.email
+    SupportRepId: $args.input.supportRepId
+  """, selection: """
+    customer {
+      id: CustomerId
+      firstName: FirstName
+      lastName: LastName
+      company: Company
+      address: Address
+      city: City
+      state: State
+      country: Country
+      postalCode: PostalCode
+      phone: Phone
+      fax: Fax
+      email: Email
+      supportRepId: SupportRepId
+    }
+  """})
+  updateCustomer(id: ID!, input: UpdateCustomerInput!): CustomerPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "UPDATE", set: """
+    FirstName: $args.input.firstName
+    LastName: $args.input.lastName
+    Company: $args.input.company
+    Address: $args.input.address
+    City: $args.input.city
+    State: $args.input.state
+    Country: $args.input.country
+    PostalCode: $args.input.postalCode
+    Phone: $args.input.phone
+    Fax: $args.input.fax
+    Email: $args.input.email
+    SupportRepId: $args.input.supportRepId
+  """, where: """
+  
+    CustomerId: $args.id
+  """, selection: """
+    customer {
+      id: CustomerId
+      firstName: FirstName
+      lastName: LastName
+      company: Company
+      address: Address
+      city: City
+      state: State
+      country: Country
+      postalCode: PostalCode
+      phone: Phone
+      fax: Fax
+      email: Email
+      supportRepId: SupportRepId
+    }
+  """})
+  deleteCustomer(id: ID!): DeleteCustomerPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "customers", kind: "DELETE", where: """
+  
+    CustomerId: $args.id
+  """, selection: """
+    ok: $affectedRows
+    affectedRows: $affectedRows
+  """})
+  createEmployee(input: CreateEmployeeInput!): EmployeePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "INSERT", set: """
+    LastName: $args.input.lastName
+    FirstName: $args.input.firstName
+    Title: $args.input.title
+    ReportsTo: $args.input.reportsTo
+    BirthDate: $args.input.birthDate
+    HireDate: $args.input.hireDate
+    Address: $args.input.address
+    City: $args.input.city
+    State: $args.input.state
+    Country: $args.input.country
+    PostalCode: $args.input.postalCode
+    Phone: $args.input.phone
+    Fax: $args.input.fax
+    Email: $args.input.email
+  """, selection: """
+    employee {
+      id: EmployeeId
+      lastName: LastName
+      firstName: FirstName
+      title: Title
+      reportsTo: ReportsTo
+      birthDate: BirthDate
+      hireDate: HireDate
+      address: Address
+      city: City
+      state: State
+      country: Country
+      postalCode: PostalCode
+      phone: Phone
+      fax: Fax
+      email: Email
+    }
+  """})
+  updateEmployee(id: ID!, input: UpdateEmployeeInput!): EmployeePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "UPDATE", set: """
+    LastName: $args.input.lastName
+    FirstName: $args.input.firstName
+    Title: $args.input.title
+    ReportsTo: $args.input.reportsTo
+    BirthDate: $args.input.birthDate
+    HireDate: $args.input.hireDate
+    Address: $args.input.address
+    City: $args.input.city
+    State: $args.input.state
+    Country: $args.input.country
+    PostalCode: $args.input.postalCode
+    Phone: $args.input.phone
+    Fax: $args.input.fax
+    Email: $args.input.email
+  """, where: """
+  
+    EmployeeId: $args.id
+  """, selection: """
+    employee {
+      id: EmployeeId
+      lastName: LastName
+      firstName: FirstName
+      title: Title
+      reportsTo: ReportsTo
+      birthDate: BirthDate
+      hireDate: HireDate
+      address: Address
+      city: City
+      state: State
+      country: Country
+      postalCode: PostalCode
+      phone: Phone
+      fax: Fax
+      email: Email
+    }
+  """})
+  deleteEmployee(id: ID!): DeleteEmployeePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "employees", kind: "DELETE", where: """
+  
+    EmployeeId: $args.id
+  """, selection: """
+    ok: $affectedRows
+    affectedRows: $affectedRows
+  """})
+  createGenre(input: CreateGenreInput!): GenrePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "INSERT", set: """
+  
+    Name: $args.input.name
+  """, selection: """
+    genre {
+      id: GenreId
+      name: Name
+    }
+  """})
+  updateGenre(id: ID!, input: UpdateGenreInput!): GenrePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "UPDATE", set: """
+  
+    Name: $args.input.name
+  """, where: """
+  
+    GenreId: $args.id
+  """, selection: """
+    genre {
+      id: GenreId
+      name: Name
+    }
+  """})
+  deleteGenre(id: ID!): DeleteGenrePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "genres", kind: "DELETE", where: """
+  
+    GenreId: $args.id
+  """, selection: """
+    ok: $affectedRows
+    affectedRows: $affectedRows
+  """})
+  createInvoiceItem(input: CreateInvoiceItemInput!): InvoiceItemPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "INSERT", set: """
+    InvoiceId: $args.input.invoiceId
+    TrackId: $args.input.trackId
+    UnitPrice: $args.input.unitPrice
+    Quantity: $args.input.quantity
+  """, selection: """
+    invoiceItem {
+      id: InvoiceLineId
+      invoiceId: InvoiceId
+      trackId: TrackId
+      unitPrice: UnitPrice
+      quantity: Quantity
+    }
+  """})
+  updateInvoiceItem(id: ID!, input: UpdateInvoiceItemInput!): InvoiceItemPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "UPDATE", set: """
+    InvoiceId: $args.input.invoiceId
+    TrackId: $args.input.trackId
+    UnitPrice: $args.input.unitPrice
+    Quantity: $args.input.quantity
+  """, where: """
+  
+    InvoiceLineId: $args.id
+  """, selection: """
+    invoiceItem {
+      id: InvoiceLineId
+      invoiceId: InvoiceId
+      trackId: TrackId
+      unitPrice: UnitPrice
+      quantity: Quantity
+    }
+  """})
+  deleteInvoiceItem(id: ID!): DeleteInvoiceItemPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoice_items", kind: "DELETE", where: """
+  
+    InvoiceLineId: $args.id
+  """, selection: """
+    ok: $affectedRows
+    affectedRows: $affectedRows
+  """})
+  createInvoice(input: CreateInvoiceInput!): InvoicePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "INSERT", set: """
+    CustomerId: $args.input.customerId
+    InvoiceDate: $args.input.invoiceDate
+    BillingAddress: $args.input.billingAddress
+    BillingCity: $args.input.billingCity
+    BillingState: $args.input.billingState
+    BillingCountry: $args.input.billingCountry
+    BillingPostalCode: $args.input.billingPostalCode
+    Total: $args.input.total
+  """, selection: """
+    invoice {
+      id: InvoiceId
+      customerId: CustomerId
+      invoiceDate: InvoiceDate
+      billingAddress: BillingAddress
+      billingCity: BillingCity
+      billingState: BillingState
+      billingCountry: BillingCountry
+      billingPostalCode: BillingPostalCode
+      total: Total
+    }
+  """})
+  updateInvoice(id: ID!, input: UpdateInvoiceInput!): InvoicePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "UPDATE", set: """
+    CustomerId: $args.input.customerId
+    InvoiceDate: $args.input.invoiceDate
+    BillingAddress: $args.input.billingAddress
+    BillingCity: $args.input.billingCity
+    BillingState: $args.input.billingState
+    BillingCountry: $args.input.billingCountry
+    BillingPostalCode: $args.input.billingPostalCode
+    Total: $args.input.total
+  """, where: """
+  
+    InvoiceId: $args.id
+  """, selection: """
+    invoice {
+      id: InvoiceId
+      customerId: CustomerId
+      invoiceDate: InvoiceDate
+      billingAddress: BillingAddress
+      billingCity: BillingCity
+      billingState: BillingState
+      billingCountry: BillingCountry
+      billingPostalCode: BillingPostalCode
+      total: Total
+    }
+  """})
+  deleteInvoice(id: ID!): DeleteInvoicePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "invoices", kind: "DELETE", where: """
+  
+    InvoiceId: $args.id
+  """, selection: """
+    ok: $affectedRows
+    affectedRows: $affectedRows
+  """})
+  createMediaType(input: CreateMediaTypeInput!): MediaTypePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "INSERT", set: """
+  
+    Name: $args.input.name
+  """, selection: """
+    mediaType {
+      id: MediaTypeId
+      name: Name
+    }
+  """})
+  updateMediaType(id: ID!, input: UpdateMediaTypeInput!): MediaTypePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "UPDATE", set: """
+  
+    Name: $args.input.name
+  """, where: """
+  
+    MediaTypeId: $args.id
+  """, selection: """
+    mediaType {
+      id: MediaTypeId
+      name: Name
+    }
+  """})
+  deleteMediaType(id: ID!): DeleteMediaTypePayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "media_types", kind: "DELETE", where: """
+  
+    MediaTypeId: $args.id
+  """, selection: """
+    ok: $affectedRows
+    affectedRows: $affectedRows
+  """})
+  createPlaylistTrack(input: CreatePlaylistTrackInput!): PlaylistTrackPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlist_track", kind: "INSERT", set: """
+    PlaylistId: $args.input.playlistId
+    TrackId: $args.input.trackId
+  """, selection: """
+    playlistTrack {
+      playlistId: PlaylistId
+      trackId: TrackId
+    }
+  """})
+  createPlaylist(input: CreatePlaylistInput!): PlaylistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "INSERT", set: """
+  
+    Name: $args.input.name
+  """, selection: """
+    playlist {
+      id: PlaylistId
+      name: Name
+    }
+  """})
+  updatePlaylist(id: ID!, input: UpdatePlaylistInput!): PlaylistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "UPDATE", set: """
+  
+    Name: $args.input.name
+  """, where: """
+  
+    PlaylistId: $args.id
+  """, selection: """
+    playlist {
+      id: PlaylistId
+      name: Name
+    }
+  """})
+  deletePlaylist(id: ID!): DeletePlaylistPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "playlists", kind: "DELETE", where: """
+  
+    PlaylistId: $args.id
+  """, selection: """
+    ok: $affectedRows
+    affectedRows: $affectedRows
+  """})
+  createTrack(input: CreateTrackInput!): TrackPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "INSERT", set: """
+    Name: $args.input.name
+    AlbumId: $args.input.albumId
+    MediaTypeId: $args.input.mediaTypeId
+    GenreId: $args.input.genreId
+    Composer: $args.input.composer
+    Milliseconds: $args.input.milliseconds
+    Bytes: $args.input.bytes
+    UnitPrice: $args.input.unitPrice
+  """, selection: """
+    track {
+      id: TrackId
+      name: Name
+      albumId: AlbumId
+      mediaTypeId: MediaTypeId
+      genreId: GenreId
+      composer: Composer
+      milliseconds: Milliseconds
+      bytes: Bytes
+      unitPrice: UnitPrice
+    }
+  """})
+  updateTrack(id: ID!, input: UpdateTrackInput!): TrackPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "UPDATE", set: """
+    Name: $args.input.name
+    AlbumId: $args.input.albumId
+    MediaTypeId: $args.input.mediaTypeId
+    GenreId: $args.input.genreId
+    Composer: $args.input.composer
+    Milliseconds: $args.input.milliseconds
+    Bytes: $args.input.bytes
+    UnitPrice: $args.input.unitPrice
+  """, where: """
+  
+    TrackId: $args.id
+  """, selection: """
+    track {
+      id: TrackId
+      name: Name
+      albumId: AlbumId
+      mediaTypeId: MediaTypeId
+      genreId: GenreId
+      composer: Composer
+      milliseconds: Milliseconds
+      bytes: Bytes
+      unitPrice: UnitPrice
+    }
+  """})
+  deleteTrack(id: ID!): DeleteTrackPayload! @join__directive(graphs: [CHINOOK], name: "sql", args: {table: "tracks", kind: "DELETE", where: """
+  
+    TrackId: $args.id
+  """, selection: """
+    ok: $affectedRows
+    affectedRows: $affectedRows
+  """})
 }
 
 type AlbumPayload @join__type(graph: CHINOOK) {

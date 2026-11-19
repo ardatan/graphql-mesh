@@ -312,7 +312,10 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
           @thrift__rpc(
             subgraph: "calculator"
             function: "add"
-            args: "1(i32): $args.left"
+            args: """
+            1(i32): $args.left
+            2(i32): $args.right
+            """
             selection: "$(i32)"
           )
           @join__field(graph: CALCULATOR)
@@ -340,6 +343,9 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).toMatch(
       /@join__directive\(graphs: \[CALCULATOR\], name: "thrift__rpc", args: \{function: "add"/,
     );
+    // Multiline thrift `args` print as GraphQL block strings inside join args.
+    expect(out).toMatch(/args: """[\s\S]*1\(i32\): \$args\.left/);
+    expect(out).not.toMatch(/args: "[^"]*\\n/);
     expect(out).not.toMatch(/name: "thrift__rpc", args: \{[^}]*subgraph:/);
     expect(out).toMatch(/thrift\/v0\.1", import: \["@thrift__rpc"\]/);
   });

@@ -9,7 +9,7 @@ import type {
 } from 'graphql';
 import { Kind, parse, print, visit } from 'graphql';
 import { isMeshSpecLinkUrl } from '@graphql-mesh/utils';
-import { astFromValueUntyped } from '@graphql-tools/utils';
+import { astFromValuePreferBlockStrings } from './ast-from-value-block.js';
 
 type LiftedOccurrence = Record<string, unknown> & {
   /** Owning subgraph name from co-located `@transport(subgraph:)` in the same extras blob. */
@@ -367,7 +367,7 @@ function buildJoinDirective(
       {
         kind: Kind.ARGUMENT,
         name: { kind: Kind.NAME, value: 'args' },
-        value: astFromValueUntyped(args) as ConstValueNode,
+        value: astFromValuePreferBlockStrings(args) as ConstValueNode,
       },
     ],
   };
@@ -562,7 +562,7 @@ function buildConstDirective(
       if (argValue === undefined) {
         continue;
       }
-      const valueNode = astFromValueUntyped(argValue) as ConstValueNode | null;
+      const valueNode = astFromValuePreferBlockStrings(argValue);
       if (!valueNode) {
         continue;
       }
