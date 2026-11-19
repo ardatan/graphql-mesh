@@ -24,9 +24,8 @@ const fhirScalarMap = buildFhirScalarMap();
  * - Opt-in `scalarMap` (force-mapped): date→Date, dateTime|instant→DateTime,
  *   uri|url|canonical→URL, uuid→UUID, string→String, id|oid→ID
  * - `json-machete` stable titles under `$resolvedRef` (no blanket prefix)
- * - Selection-driven emit (default): concrete `selection` limits GraphQL fields;
- *   unreferenced FHIR defs are never composed — no hard field whitelist
- * - `referenceResource` mini SDL: `Reference.resource` → Patient stub
+ * - Explicit `include` limits GraphQL emit (Connect `selection` = runtime map only)
+ * - `referenceResource` mini SDL: `Reference.resource` → generic `Resource` interface
  */
 export const composeConfig = defineComposeConfig({
   subgraphs: [
@@ -34,6 +33,10 @@ export const composeConfig = defineComposeConfig({
       sourceHandler: loadJSONSchemaSubgraph('patients', {
         endpoint: hapiBase,
         scalarMap: fhirScalarMap,
+        include: {
+          Patient: ['id', 'gender', 'name'],
+          HumanName: ['family', 'given'],
+        },
         operations: [
           {
             type: OperationTypeNode.QUERY,
@@ -59,6 +62,10 @@ export const composeConfig = defineComposeConfig({
       sourceHandler: loadJSONSchemaSubgraph('observations', {
         endpoint: hapiBase,
         scalarMap: fhirScalarMap,
+        include: {
+          Observation: ['id', 'status', 'subject'],
+          Reference: ['reference', 'type', 'display'],
+        },
         operations: [
           {
             type: OperationTypeNode.QUERY,

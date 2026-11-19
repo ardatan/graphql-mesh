@@ -21,18 +21,15 @@ import type { BaseLoaderOptions } from '@graphql-tools/utils';
 export type ConnectSelectionOverLimit = 'leavesOnly' | 'passthrough';
 
 /**
- * Controls which JSON Schema object properties become GraphQL fields.
+ * Explicit loader emit filter: JSON Schema / GraphQL type title → property names.
  *
- * - omitted / default: when an operation has a concrete field `selection`,
- *   only those fields (and nested selections) are emitted; unreferenced
- *   types are never created
- * - `'selection'`: always prune to `selection` when a concrete tree exists
- * - `'all'`: emit the full response schema surface even if `selection` is set
- *   (escape hatch for rare cases that need the full type graph)
+ * Used by {@link JSONSchemaLoaderOptions.include} / {@link JSONSchemaLoaderOptions.exclude}
+ * to limit which object properties become GraphQL fields (Connect `selection` is
+ * runtime mapping only and does not drive emit).
  *
- * @example 'all'
+ * @example { Patient: ['id', 'gender', 'name'], HumanName: ['family', 'given'] }
  */
-export type SchemaFieldsMode = 'selection' | 'all';
+export type SchemaFieldFilter = Record<string, readonly string[]>;
 
 /**
  * Limit/rule for `@connect(selection:)` size and depth.
@@ -210,13 +207,20 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
    */
   connectSelection?: ConnectSelectionOptions;
   /**
-   * Controls whether GraphQL emit is limited to each operation's `selection`
-   * field tree. Default (omit): prune automatically when a concrete selection
-   * is present. Use `'all'` to keep the full JSON Schema object surface.
+   * Whitelist GraphQL emit by type title → property names. Types listed here
+   * keep only those properties; unreferenced types are never composed.
+   * Connect `selection` does not affect emit.
    *
-   * @example 'all'
+   * @example { Patient: ['id', 'gender', 'name'], HumanName: ['family', 'given'] }
    */
-  schemaFields?: SchemaFieldsMode;
+  include?: SchemaFieldFilter;
+  /**
+   * Blacklist GraphQL emit by type title → property names. Ignored for a type
+   * that also appears in {@link include}.
+   *
+   * @example { Patient: ['extension', 'meta', 'contained'] }
+   */
+  exclude?: SchemaFieldFilter;
 }
 
 export interface JSONSchemaOperationResponseConfig {
@@ -284,20 +288,23 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
 
   /**
    * When set, use this string as `@connect(selection:)` instead of auto-expanding
-   * from the response GraphQL type. Useful for Apollo mapping that the sample
-   * shape cannot express (e.g. FHIR `subject.reference` → Patient entity stub).
-   *
-   * A concrete field selection also drives GraphQL emit by default (only
-   * selected properties become fields; unreferenced types are omitted). Use
-   * {@link schemaFields} `'all'` to keep the full response schema surface.
+   * from the response GraphQL type. Runtime mapping only — does not limit which
+   * JSON Schema properties become GraphQL fields (use {@link include} /
+   * {@link exclude} for emit).
    */
   selection?: string;
   /**
-   * Per-operation override for {@link JSONSchemaLoaderOptions.schemaFields}.
+   * Per-operation whitelist merged with {@link JSONSchemaLoaderOptions.include}.
    *
-   * @example 'all'
+   * @example { Patient: ['id', 'gender', 'name'] }
    */
-  schemaFields?: SchemaFieldsMode;
+  include?: SchemaFieldFilter;
+  /**
+   * Per-operation blacklist merged with {@link JSONSchemaLoaderOptions.exclude}.
+   *
+   * @example { Patient: ['extension', 'meta'] }
+   */
+  exclude?: SchemaFieldFilter;
 };
 
 export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &

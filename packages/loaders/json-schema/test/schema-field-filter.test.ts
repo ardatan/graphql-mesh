@@ -1,32 +1,8 @@
 import { OperationTypeNode, printType } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadNonExecutableGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
-import { parseSelectionFieldTree } from '../src/pruneJsonSchemaBySelection.js';
 
-describe('selection-driven schemaFields emit', () => {
-  it('parseSelectionFieldTree builds nested name trees', () => {
-    const tree = parseSelectionFieldTree(`
-      id
-      gender
-      name {
-        family
-        given
-      }
-    `);
-    expect(tree).not.toBeNull();
-    expect([...tree!.keys()].sort()).toEqual(['gender', 'id', 'name']);
-    expect(tree!.get('id')).toBeNull();
-    const name = tree!.get('name');
-    expect(name).toBeInstanceOf(Map);
-    expect([...(name as Map<string, unknown>).keys()].sort()).toEqual(['family', 'given']);
-  });
-
-  it('returns null for $ / expression-only selections', () => {
-    expect(parseSelectionFieldTree('$')).toBeNull();
-    expect(parseSelectionFieldTree('$root')).toBeNull();
-    expect(parseSelectionFieldTree('')).toBeNull();
-  });
-
+describe('explicit include/exclude schema field filter', () => {
   function createPatientSchema() {
     return {
       type: 'object',
@@ -76,9 +52,13 @@ describe('selection-driven schemaFields emit', () => {
     };
   }
 
-  it('prunes GraphQL emit to selection by default (no Extension/Meta/Period)', async () => {
-    const schema = await loadNonExecutableGraphQLSchemaFromJSONSchemas('patients', {
+  it('include whitelists fields; selection alone does not prune emit', async () => {
+    const withInclude = await loadNonExecutableGraphQLSchemaFromJSONSchemas('patients', {
       endpoint: 'http://localhost',
+      include: {
+        Patient: ['id', 'gender', 'name'],
+        HumanName: ['family', 'given'],
+      },
       operations: [
         {
           type: OperationTypeNode.QUERY,
@@ -97,26 +77,18 @@ describe('selection-driven schemaFields emit', () => {
         },
       ],
     });
-    const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toContain('type Patient');
-    expect(sdl).toContain('type HumanName');
+    const sdl = printSchemaWithDirectives(withInclude);
     expect(sdl).not.toContain('type Extension');
     expect(sdl).not.toContain('type Meta');
     expect(sdl).not.toContain('type Period');
-    const patient = schema.getType('Patient');
-    expect(patient && 'getFields' in patient ? Object.keys(patient.getFields()).sort() : []).toEqual(
-      ['gender', 'id', 'name'],
-    );
-    const humanName = schema.getType('HumanName');
+    const patient = withInclude.getType('Patient');
     expect(
-      humanName && 'getFields' in humanName ? Object.keys(humanName.getFields()).sort() : [],
-    ).toEqual(['family', 'given']);
-  });
+      patient && 'getFields' in patient ? Object.keys(patient.getFields()).sort() : [],
+    ).toEqual(['gender', 'id', 'name']);
 
-  it('schemaFields: all keeps full surface despite selection', async () => {
-    const schema = await loadNonExecutableGraphQLSchemaFromJSONSchemas('patients', {
+    // selection without include/exclude → full emit
+    const selectionOnly = await loadNonExecutableGraphQLSchemaFromJSONSchemas('patients', {
       endpoint: 'http://localhost',
-      schemaFields: 'all',
       operations: [
         {
           type: OperationTypeNode.QUERY,
@@ -124,30 +96,47 @@ describe('selection-driven schemaFields emit', () => {
           path: '/Patient/{args.id}',
           method: 'GET',
           responseSchema: createPatientSchema() as any,
-          selection: `
-            id
-            gender
-            name {
-              family
-              given
-            }
-          `,
+          selection: `id gender`,
         },
       ],
     });
-    const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toContain('type Extension');
-    expect(sdl).toContain('type Meta');
-    expect(sdl).toContain('type Period');
+    expect(printSchemaWithDirectives(selectionOnly)).toContain('type Extension');
+    expect(selectionOnly.getType('Meta')).toBeDefined();
+  });
+
+  it('exclude blacklists fields', async () => {
+    const schema = await loadNonExecutableGraphQLSchemaFromJSONSchemas('patients', {
+      endpoint: 'http://localhost',
+      exclude: {
+        Patient: ['extension', 'meta'],
+        HumanName: ['text', 'period'],
+      },
+      operations: [
+        {
+          type: OperationTypeNode.QUERY,
+          field: 'patient',
+          path: '/Patient/{args.id}',
+          method: 'GET',
+          responseSchema: createPatientSchema() as any,
+        },
+      ],
+    });
+    expect(printSchemaWithDirectives(schema)).not.toContain('type Extension');
+    expect(schema.getType('Meta')).toBeUndefined();
+    expect(schema.getType('Period')).toBeUndefined();
     const patient = schema.getType('Patient');
-    expect(patient && 'getFields' in patient ? Object.keys(patient.getFields()).sort() : []).toEqual(
-      ['extension', 'gender', 'id', 'meta', 'name'],
-    );
+    expect(
+      patient && 'getFields' in patient ? Object.keys(patient.getFields()).sort() : [],
+    ).toEqual(['gender', 'id', 'name']);
+    expect(printType(schema.getType('HumanName')!)).toContain('family');
+    expect(printType(schema.getType('HumanName')!)).not.toContain('period');
   });
 
-  it('omits prune when selection is absent', async () => {
+  it('include wins over exclude for the same type', async () => {
     const schema = await loadNonExecutableGraphQLSchemaFromJSONSchemas('patients', {
       endpoint: 'http://localhost',
+      include: { Patient: ['id', 'name'] },
+      exclude: { Patient: ['id'] },
       operations: [
         {
           type: OperationTypeNode.QUERY,
@@ -158,7 +147,9 @@ describe('selection-driven schemaFields emit', () => {
         },
       ],
     });
-    expect(printType(schema.getType('Extension')!)).toContain('url');
-    expect(schema.getType('Meta')).toBeDefined();
+    const patient = schema.getType('Patient');
+    expect(
+      patient && 'getFields' in patient ? Object.keys(patient.getFields()).sort() : [],
+    ).toEqual(['id', 'name']);
   });
 });

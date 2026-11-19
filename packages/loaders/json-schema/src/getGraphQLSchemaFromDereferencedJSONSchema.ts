@@ -4,15 +4,16 @@ import type { JSONSchemaObject } from 'json-machete';
 import type { AddExecutionLogicToComposerOptions } from './addExecutionLogicToComposer.js';
 import { addExecutionDirectivesToComposer } from './addExecutionLogicToComposer.js';
 import { getComposerFromJSONSchema } from './getComposerFromJSONSchema.js';
-import { pruneJsonSchemaBySelection } from './pruneJsonSchemaBySelection.js';
-import type { SchemaFieldsMode } from './types.js';
+import { pruneJsonSchemaByFieldFilter } from './pruneJsonSchemaByFieldFilter.js';
+import type { SchemaFieldFilter } from './types.js';
 
 export async function getGraphQLSchemaFromDereferencedJSONSchema(
   subgraphName: string,
   opts: Omit<AddExecutionLogicToComposerOptions, 'schemaComposer'> & {
     fullyDeferencedSchema: JSONSchemaObject;
     handlerName: string;
-    schemaFields?: SchemaFieldsMode;
+    include?: SchemaFieldFilter;
+    exclude?: SchemaFieldFilter;
   },
 ) {
   const {
@@ -25,7 +26,8 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     queryStringOptions,
     handlerName = 'rest',
     connectSelection,
-    schemaFields,
+    include,
+    exclude,
   } = opts;
   log.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
   // Composer mutates shared JSON Schema nodes in place (often circular after
@@ -37,12 +39,10 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
       operation.argTypeMap = structuredClone(operation.argTypeMap);
     }
   }
-  // When operations carry a concrete `selection`, drop unselected object
-  // properties before compose so GraphQL never emits unused fields/types.
-  // Clone first: prune mutates `properties` maps, and inline `responseSchema`
-  // objects / shared `$ref` targets must not leak mutations back to callers.
+  // Explicit include/exclude limits emit. Clone first so prune does not mutate
+  // caller-owned inline responseSchema / shared $ref targets.
   const schemaForCompose = structuredClone(fullyDeferencedSchema);
-  pruneJsonSchemaBySelection(schemaForCompose, operations, schemaFields);
+  pruneJsonSchemaByFieldFilter(schemaForCompose, operations, include, exclude);
   const visitorResult = await getComposerFromJSONSchema({
     subgraphName,
     schema: schemaForCompose,

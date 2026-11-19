@@ -61,11 +61,11 @@ type Query @join__type(graph: OBSERVATIONS) @join__type(graph: PATIENTS) @join__
 """
 Measurements and simple assertions made about a patient, device or other subject.
 """
-type Observation @join__type(graph: OBSERVATIONS, key: "id") {
+type Observation implements Resource @join__type(graph: OBSERVATIONS, key: "id") @join__type(graph: REFERENCE_RESOURCE, key: "id", resolvable: false) @join__implements(graph: REFERENCE_RESOURCE, interface: "Resource") {
   """A sequence of Unicode characters"""
-  id: String
-  status: code
-  subject: Reference
+  id: String @join__field(graph: OBSERVATIONS, type: "String") @join__field(graph: REFERENCE_RESOURCE, type: "String!")
+  status: code @join__field(graph: OBSERVATIONS)
+  subject: Reference @join__field(graph: OBSERVATIONS)
 }
 
 """A reference from one resource to another."""
@@ -76,13 +76,13 @@ type Reference @join__type(graph: OBSERVATIONS) @join__type(graph: REFERENCE_RES
   type: URL @join__field(graph: OBSERVATIONS)
   """A sequence of Unicode characters"""
   display: String @join__field(graph: OBSERVATIONS)
-  resource: Patient @join__field(graph: REFERENCE_RESOURCE) @join__directive(graphs: [REFERENCE_RESOURCE], name: "connect", args: {selection: "__typename: $(\\"Patient\\")\\nid: $this.reference->split(\\"/\\")->get(1)"})
+  resource: Resource @join__field(graph: REFERENCE_RESOURCE) @join__directive(graphs: [REFERENCE_RESOURCE], name: "connect", args: {selection: "$this.reference->split(\\"/\\")->get(0)->match(\\n  [\\"Patient\\", {\\n    __typename: $(\\"Patient\\")\\n    id: $this.reference->split(\\"/\\")->get(1)\\n  }],\\n  [\\"Observation\\", {\\n    __typename: $(\\"Observation\\")\\n    id: $this.reference->split(\\"/\\")->get(1)\\n  }],\\n  [@, null]\\n)"})
 }
 
 """
 Demographics and other administrative information about an individual or animal receiving care or other health-related services.
 """
-type Patient @join__type(graph: PATIENTS, key: "id") @join__type(graph: REFERENCE_RESOURCE, key: "id", resolvable: false) {
+type Patient implements Resource @join__type(graph: PATIENTS, key: "id") @join__type(graph: REFERENCE_RESOURCE, key: "id", resolvable: false) @join__implements(graph: REFERENCE_RESOURCE, interface: "Resource") {
   """A sequence of Unicode characters"""
   id: String @join__field(graph: PATIENTS, type: "String") @join__field(graph: REFERENCE_RESOURCE, type: "String!")
   """A name associated with the individual."""
@@ -96,6 +96,11 @@ type HumanName @join__type(graph: PATIENTS) {
   family: String
   """Given name."""
   given: [String]
+}
+
+"""FHIR resource handle resolved from \`Reference.reference\` (\`Type/id\`)."""
+interface Resource @join__type(graph: REFERENCE_RESOURCE) {
+  id: String
 }
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION

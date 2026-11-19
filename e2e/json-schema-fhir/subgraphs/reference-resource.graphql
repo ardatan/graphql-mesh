@@ -2,11 +2,11 @@
 Mini Connectors subgraph: virtual `Reference.resource` join only.
 
 JSON Schema loaders own Patient / Observation / Reference scalars+fields.
-This subgraph adds `Reference.resource` as a Patient entity stub so Hive/Router
-can `_entities`-resolve into `patients` — no HTTP `@source` / `@transport`
-(selection-only `@connect`).
+This subgraph adds `Reference.resource: Resource` (generic interface) so
+Hive/Router can `_entities`-resolve into resource subgraphs from a FHIR
+`Type/id` reference string — no HTTP `@source` / `@transport`.
 
-Field types match the opt-in FHIR `scalarMap` (`string`→`String`, `id`→`ID`).
+`__typename` comes from the reference type segment (not hard-coded Patient).
 """
 schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
@@ -60,6 +60,21 @@ type Query {
   _referenceResource: String @shareable
 }
 
+"""FHIR resource handle resolved from `Reference.reference` (`Type/id`)."""
+interface Resource {
+  id: String
+}
+
+# Entity stubs so the planner can hop into owning subgraphs by `@key`.
+# FHIR `Patient.id` / `Observation.id` are `#/definitions/string` → String.
+type Patient implements Resource @key(fields: "id", resolvable: false) {
+  id: String!
+}
+
+type Observation implements Resource @key(fields: "id", resolvable: false) {
+  id: String!
+}
+
 # Entity so the planner can hop from observations' Reference to this subgraph's
 # `resource` field (value-type contribution alone cannot cross subgraphs).
 # Type-level @connect supplies resolveReference for Hive `_entities`.
@@ -71,16 +86,22 @@ type Reference
     """
   ) {
   reference: String!
-  resource: Patient
+  # Connectors abstract types require literal `__typename` per `->match` branch
+  # (Router rejects a dynamic String shape). Discriminator = FHIR type segment.
+  resource: Resource
     @connect(
       selection: """
-      __typename: $("Patient")
-      id: $this.reference->split("/")->get(1)
+      $this.reference->split("/")->get(0)->match(
+        ["Patient", {
+          __typename: $("Patient")
+          id: $this.reference->split("/")->get(1)
+        }],
+        ["Observation", {
+          __typename: $("Observation")
+          id: $this.reference->split("/")->get(1)
+        }],
+        [@, null]
+      )
       """
     )
-}
-
-# FHIR `Patient.id` is `#/definitions/string` (not `id`) — scalarMap → String.
-type Patient @key(fields: "id", resolvable: false) {
-  id: String!
 }

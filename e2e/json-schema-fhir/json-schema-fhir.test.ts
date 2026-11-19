@@ -46,7 +46,7 @@ describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', run
     });
   });
 
-  it('hydrates Observation.subject.resource via Patient entity subgraph', async () => {
+  it('hydrates Observation.subject.resource via generic Resource → Patient', async () => {
     const composition = await compose({ output: 'graphql' });
     const { execute } = await serve({
       runner,
@@ -61,10 +61,13 @@ describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', run
             subject {
               reference
               resource {
+                __typename
                 id
-                name {
-                  family
-                  given
+                ... on Patient {
+                  name {
+                    family
+                    given
+                  }
                 }
               }
             }
@@ -78,6 +81,7 @@ describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', run
       subject: {
         reference: 'Patient/nhanes-112200',
         resource: {
+          __typename: 'Patient',
           id: 'nhanes-112200',
           name: expect.arrayContaining([
             expect.objectContaining({
