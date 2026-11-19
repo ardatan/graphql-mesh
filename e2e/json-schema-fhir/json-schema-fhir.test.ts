@@ -19,10 +19,10 @@ it('composes official fhir.schema.json + rename + mini Reference.resource SDL', 
   expect(result).toMatch(/entity:\s*true/);
   // Join field comes from the mini SDL subgraph, not loader magic.
   expect(result).toMatch(/referenceResource|REFERENCE_RESOURCE/i);
-  // Colliding FHIR value types renamed per subgraph (prefix transform).
-  // After scalarMap + hard filter, observations often has nothing left to prefix
-  // (shared `code`/`uri`/`Reference`); patients still renames HumanName.
-  expect(result).toMatch(/patients_/);
+  // Hard filter removes Extension/Duration/… colliders — no blanket prefix needed.
+  expect(result).not.toMatch(/patients_/);
+  expect(result).not.toMatch(/observations_/);
+  expect(result).toMatch(/\btype HumanName\b/);
   // Force scalarMap: string→String (Patient.id is `#/definitions/string`).
   expect(result).not.toMatch(/\bscalar string\b/);
   expect(result).not.toMatch(/\bscalar uri\b/);

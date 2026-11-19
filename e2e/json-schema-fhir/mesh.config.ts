@@ -1,7 +1,6 @@
 import { join } from 'node:path';
 import { OperationTypeNode, type GraphQLSchema } from 'graphql';
 import {
-  createPrefixTransform,
   createPruneTransform,
   defineConfig as defineComposeConfig,
 } from '@graphql-mesh/compose-cli';
@@ -28,6 +27,12 @@ const fhirScalarMap = buildFhirScalarMap();
  * Note: `createFilterTransform` marks filtered fields `@inaccessible` (Fed-friendly)
  * rather than deleting them — that still leaves thousands of scalars for Router.
  * This transform actually removes fields.
+ *
+ * After this filter, patients vs observations share only identical types (`code`,
+ * Connectors companions, String/…). No `createPrefixTransform` — blanket prefix was
+ * renaming non-colliders (e.g. `HumanName` → `patients_HumanName`) for no Fed reason.
+ * Pre-filter, ~119 types collide (Extension, Duration, Address, …); hard filter removes
+ * those from the subgraph before compose.
  */
 const keepFieldsByType: Record<string, ReadonlySet<string>> = {
   // Omit resourceType — JSON Schema emits a `*_const` enum + `@typescript` that
@@ -79,18 +84,10 @@ function createHardFieldFilterTransform(
 /**
  * FHIR e2e via JSON Schema loader + official `fhir.schema.json` definition pointers.
  *
- * Loading `#/definitions/Patient` and `#/definitions/Observation` in two subgraphs
- * pulls shared FHIR value types that share GraphQL names but not identical field
- * types. Rename collisions per subgraph via `createPrefixTransform`, keeping the
- * intentionally shared merge targets unprefixed:
- *
- * - `patients`: keep `Patient` (+ shared `code` when present)
- * - `observations`: keep `Observation`, `Reference`, `code`, `uri`
+ * - `patients` / `observations` JSON Schema subgraphs + hard field filter
  * - `referenceResource` mini SDL (file path): `Reference.resource` → Patient stub
- *
- * Opt-in `scalarMap` (force-mapped despite some pattern mismatches):
- * date→Date, dateTime|instant→DateTime, uri|url|canonical→URL, uuid→UUID,
- * string→String, id|oid→ID. `code`/`markdown`/… stay `@regexp` — see fhir-scalar-map.ts.
+ * - Opt-in `scalarMap` (force-mapped): date→Date, dateTime|instant→DateTime,
+ *   uri|url|canonical→URL, uuid→UUID, string→String, id|oid→ID
  */
 export const composeConfig = defineComposeConfig({
   subgraphs: [
@@ -117,16 +114,7 @@ export const composeConfig = defineComposeConfig({
           },
         ],
       }),
-      transforms: [
-        createHardFieldFilterTransform(keepField),
-        createPrefixTransform({
-          value: 'patients_',
-          // scalarMap → String/ID/Date/DateTime/URL/UUID; share `code` across subgraphs.
-          ignore: ['Patient', 'code'],
-          force: ['Duration', 'Time', 'JSON', 'JSONObject'],
-        }),
-        createPruneTransform(),
-      ],
+      transforms: [createHardFieldFilterTransform(keepField), createPruneTransform()],
     },
     {
       sourceHandler: loadJSONSchemaSubgraph('observations', {
@@ -152,16 +140,7 @@ export const composeConfig = defineComposeConfig({
           },
         ],
       }),
-      transforms: [
-        createHardFieldFilterTransform(keepField),
-        createPrefixTransform({
-          value: 'observations_',
-          // `uri`→URL via scalarMap (shared); keep `code` unprefixed for merge.
-          ignore: ['Observation', 'Reference', 'code'],
-          force: ['Duration', 'Time', 'JSON', 'JSONObject'],
-        }),
-        createPruneTransform(),
-      ],
+      transforms: [createHardFieldFilterTransform(keepField), createPruneTransform()],
     },
     {
       name: 'referenceResource',
