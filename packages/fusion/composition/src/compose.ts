@@ -775,29 +775,18 @@ export function getAnnotatedSubgraphs(
       queryTypeExtensions.directives = queryTypeDirectives;
     }
 
+    if (sourceImport) {
+      // Mesh stitching `@source` / `@meshSource` under core/v0.1 (same link as
+      // `@merge` / `@transport`). Gateway patch still accepts legacy Guild URL.
+      importedCoreDirectives.push(sourceImport);
+    }
     if (importedCoreDirectives.length) {
       transformedSubgraph = importMeshDirectives(transformedSubgraph, importedCoreDirectives);
-    }
-    if (sourceImport) {
-      // `@source` under Mesh core (Gateway patch accepts core + legacy Guild URL).
-      transformedSubgraph = importMeshDirectives(transformedSubgraph, [sourceImport]);
-    }
-    // Contract: Compose-stamped core / Guild-source links must be readable by runtimes.
-    if (importedCoreDirectives.length) {
       assertSupportedMeshSpecOnSchema(transformedSubgraph, {
         name: 'core',
         supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
         required: true,
         consumer: '@graphql-mesh/fusion-composition',
-      });
-    }
-    if (sourceImport) {
-      assertSupportedMeshSpecOnSchema(transformedSubgraph, {
-        name: 'core',
-        supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
-        required: true,
-        consumer: '@graphql-mesh/fusion-composition(@source)',
-        acceptLegacyCore: true,
       });
     }
     // GM-37: after Mesh `@link` stamps — syntax + spec contract.
