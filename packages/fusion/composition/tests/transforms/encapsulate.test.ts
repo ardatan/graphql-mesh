@@ -6,8 +6,10 @@ import { Repeater } from '@repeaterjs/repeater';
 import {
   createEncapsulateTransform,
   createFederationTransform,
+  createPrefixTransform,
   createRenameTypeTransform,
 } from '../../src/transforms';
+import { composeSubgraphs } from '../../src/index.js';
 import {
   composeAndGetExecutor,
   composeAndGetPublicSchema,
@@ -456,5 +458,47 @@ describe('encapsulate', () => {
         pets: { heartbeat: 'animals-ok' },
       },
     });
+  });
+
+  it('keeps a single ResolveToSourceArgs after encapsulate + prefix across subgraphs', () => {
+    const a = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          foo: String
+        }
+      `,
+    });
+    const b = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          bar: String
+        }
+      `,
+    });
+    const result = composeSubgraphs([
+      {
+        name: 'subgraph-a',
+        schema: a,
+        transforms: [
+          createEncapsulateTransform({ name: 'SubgraphA' }),
+          createPrefixTransform({ value: 'SubgraphA' }),
+        ],
+      },
+      {
+        name: 'subgraph-b',
+        schema: b,
+        transforms: [
+          createEncapsulateTransform({ name: 'SubgraphB' }),
+          createPrefixTransform({ value: 'SubgraphB' }),
+        ],
+      },
+    ]);
+    expect(result.errors).toBeUndefined();
+    const sdl = result.supergraphSdl!;
+    expect(sdl).toMatch(/\bscalar ResolveToSourceArgs\b/);
+    expect(sdl).not.toMatch(/SubgraphAResolveToSourceArgs|SubgraphBResolveToSourceArgs/);
+    expect(sdl).toMatch(
+      /directive @resolveTo\([^)]*sourceArgs: ResolveToSourceArgs/,
+    );
   });
 });

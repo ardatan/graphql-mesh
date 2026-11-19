@@ -60,6 +60,9 @@ export const ignoreList = [
   // Connect `@link` scalars — must stay unprefixed so finalize can drop exact names
   'JSONSelection',
   'URLPathTemplate',
+  // Mesh `@resolveTo` arg scalar — shared across subgraphs; prefixing yields
+  // duplicate `SubgraphXResolveToSourceArgs` on the supergraph.
+  'ResolveToSourceArgs',
   ...Object.keys(scalarsResolversMap),
 ];
 

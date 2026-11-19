@@ -171,7 +171,12 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     }
     const schemaConfig = schema.toConfig();
     const newDirectives = [...schemaConfig.directives];
-    if (!newDirectives.some(directive => directive.name === 'resolveTo')) {
+    // Connectors encapsulate uses `@connect` on the namespace root — no `@resolveTo`.
+    const needsResolveTo = !isConnectors;
+    if (
+      needsResolveTo &&
+      !newDirectives.some(directive => directive.name === 'resolveTo')
+    ) {
       newDirectives.push(resolveToDirective);
     }
     // `types: undefined` drops types that are not reachable as field return
@@ -205,9 +210,11 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
       ...newRootTypes,
     });
     // Mesh core `@resolveTo` must be explicitly `@link`/`@composeDirective`-imported
-    // (no auto-scan). Without this, Guild composition drops the usages and encapsulate
-    // nests cannot resolve at Gateway runtime.
-    let ready = importMeshDirectives(newSchema, ['@resolveTo']);
+    // (no auto-scan). Without this, composition drops the usages and encapsulate
+    // nests cannot resolve at Gateway runtime. Skip on Connectors (no `@resolveTo`).
+    let ready = needsResolveTo
+      ? importMeshDirectives(newSchema, ['@resolveTo'])
+      : newSchema;
     // Always import `@inaccessible` when encapsulate added it. Connectors subgraphs
     // may only have the Apollo connect `@link` at this point (no federation import yet).
     if (inaccessibleDirectiveAdded) {
