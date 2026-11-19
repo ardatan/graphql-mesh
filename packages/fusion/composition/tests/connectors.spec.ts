@@ -1962,10 +1962,11 @@ describe('Federation Connectors composition', () => {
     );
   });
 
-  it('strips Mesh codegen @regexp/@typescript/@example from lean SG (Router-safe)', () => {
+  it('strips Mesh codegen @typescript/@example from lean SG; keeps @regexp', () => {
     // Regression: Apollo Router connector carry-over rejects duplicate native
     // `@typescript` when shared FHIR/OpenAPI pattern scalars merge across
-    // Connectors subgraphs. Compose strips codegen apps from the lean SG.
+    // Connectors subgraphs. Compose strips codegen-only apps from the lean SG
+    // but keeps `@regexp` for Connect `processScalarType` runtime validation.
     const sharedScalarSdl = /* GraphQL */ `
       directive @link(url: String!, import: [String]) repeatable on SCHEMA
       directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
@@ -2066,9 +2067,10 @@ describe('Federation Connectors composition', () => {
     const sdl = result.supergraphSdl!;
     expect(sdl).toMatch(/\bscalar string\b/);
     expect(sdl).not.toMatch(/@typescript\(/);
-    expect(sdl).not.toMatch(/@regexp\(/);
     expect(sdl).not.toMatch(/@example\(/);
     expect(sdl).not.toMatch(/directive @typescript\b/);
-    expect(sdl).not.toMatch(/directive @regexp\b/);
+    // `@regexp` stays for Connect processScalarType (pattern coerce / validate).
+    expect(sdl).toMatch(/scalar string[\s\S]*@regexp\(/);
+    expect(sdl).toMatch(/directive @regexp\b/);
   });
 });
