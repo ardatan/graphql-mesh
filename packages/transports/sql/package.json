@@ -44,7 +44,7 @@
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/utils": "^13.2.2",
     "@whatwg-node/disposablestack": "^0.1.0",
-    "@whatwg-node/promise-helpers": "^2.0.1",
+    "@whatwg-node/promise-helpers": "^2.0.2",
     "dataloader": "^2.2.2",
     "grafast": "^1.2.0",
     "graphile-config": "^0.0.1-beta.14",
