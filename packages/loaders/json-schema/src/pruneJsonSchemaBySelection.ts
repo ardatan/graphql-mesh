@@ -68,6 +68,69 @@ function mergeTrees(target: SelectionFieldTree, source: SelectionFieldTree): voi
   }
 }
 
+const IDENT_START = /[A-Za-z_]/;
+const IDENT_CONT = /\w/;
+
+/** Linear scan: leading GraphQL/JSON field name, or `null` if none. */
+function readIdentAt(s: string, start: number): { name: string; end: number } | null {
+  if (start >= s.length || !IDENT_START.test(s[start])) {
+    return null;
+  }
+  let i = start + 1;
+  while (i < s.length && IDENT_CONT.test(s[i])) {
+    i++;
+  }
+  return { name: s.slice(start, i), end: i };
+}
+
+function skipSpaces(s: string, start: number): number {
+  let i = start;
+  while (i < s.length && (s[i] === ' ' || s[i] === '\t' || s[i] === '\n' || s[i] === '\r')) {
+    i++;
+  }
+  return i;
+}
+
+/**
+ * `name { ... }` with balanced braces — O(n), no backtracking regex.
+ * Returns nested inner source (may be empty) or `null` if not a brace form.
+ */
+function readIdentBraceBlock(
+  s: string,
+): { name: string; nested: string } | null {
+  const ident = readIdentAt(s, 0);
+  if (!ident) {
+    return null;
+  }
+  let i = skipSpaces(s, ident.end);
+  if (i >= s.length || s[i] !== '{') {
+    return null;
+  }
+  let depth = 0;
+  const open = i;
+  for (; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === '{') {
+      depth++;
+    } else if (ch === '}') {
+      depth--;
+      if (depth === 0) {
+        const after = skipSpaces(s, i + 1);
+        if (after !== s.length) {
+          return null;
+        }
+        return { name: ident.name, nested: s.slice(open + 1, i) };
+      }
+    }
+  }
+  return null;
+}
+
+function isPlainIdent(s: string): boolean {
+  const ident = readIdentAt(s, 0);
+  return ident != null && ident.end === s.length;
+}
+
 function parseSelectionEntry(
   entry: string,
 ): { name: string; nested: string | null } | null {
@@ -75,25 +138,33 @@ function parseSelectionEntry(
   if (!t || t.startsWith('__typename')) {
     return null;
   }
-  const brace = t.match(/^([A-Za-z_][\w]*)\s*\{([\s\S]*)\}\s*$/);
+  const brace = readIdentBraceBlock(t);
   if (brace) {
-    return { name: brace[1], nested: brace[2] };
+    return { name: brace.name, nested: brace.nested };
   }
-  const colon = t.match(/^([A-Za-z_][\w]*)\s*:\s*([\s\S]+)$/);
-  if (colon) {
-    const rhs = colon[2].trim();
-    const rhsBrace = rhs.match(/^([A-Za-z_][\w]*)\s*\{([\s\S]*)\}\s*$/);
-    if (rhsBrace) {
-      return { name: rhsBrace[1], nested: rhsBrace[2] };
+  // `alias: name` / `alias: name { ... }` / `field: $expr` — find first top-level `:`.
+  const ident = readIdentAt(t, 0);
+  if (!ident) {
+    return null;
+  }
+  let i = skipSpaces(t, ident.end);
+  if (i < t.length && t[i] === ':') {
+    const rhs = t.slice(i + 1).trim();
+    if (!rhs) {
+      return null;
     }
-    if (/^[A-Za-z_][\w]*$/.test(rhs)) {
+    const rhsBrace = readIdentBraceBlock(rhs);
+    if (rhsBrace) {
+      return { name: rhsBrace.name, nested: rhsBrace.nested };
+    }
+    if (isPlainIdent(rhs)) {
       return { name: rhs, nested: null };
     }
     // `field: $expr` — GraphQL / JSON field is the LHS.
-    return { name: colon[1], nested: null };
+    return { name: ident.name, nested: null };
   }
-  if (/^[A-Za-z_][\w]*$/.test(t)) {
-    return { name: t, nested: null };
+  if (ident.end === t.length) {
+    return { name: ident.name, nested: null };
   }
   return null;
 }
