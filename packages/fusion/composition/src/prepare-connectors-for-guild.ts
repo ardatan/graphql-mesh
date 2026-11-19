@@ -193,7 +193,7 @@ function ensureConnectComposeDirectives(
     });
   }
 
-  let fedIdx = next.findIndex(
+  const fedIdx = next.findIndex(
     d =>
       d.name.value === 'link' &&
       (getStringArg(d, 'url') || '').startsWith('https://specs.apollo.dev/federation/'),

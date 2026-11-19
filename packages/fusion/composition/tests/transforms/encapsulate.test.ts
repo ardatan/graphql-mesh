@@ -3,13 +3,13 @@ import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import { Repeater } from '@repeaterjs/repeater';
+import { composeSubgraphs } from '../../src/index.js';
 import {
   createEncapsulateTransform,
   createFederationTransform,
   createPrefixTransform,
   createRenameTypeTransform,
 } from '../../src/transforms';
-import { composeSubgraphs } from '../../src/index.js';
 import {
   composeAndGetExecutor,
   composeAndGetPublicSchema,
@@ -497,8 +497,6 @@ describe('encapsulate', () => {
     const sdl = result.supergraphSdl!;
     expect(sdl).toMatch(/\bscalar ResolveToSourceArgs\b/);
     expect(sdl).not.toMatch(/SubgraphAResolveToSourceArgs|SubgraphBResolveToSourceArgs/);
-    expect(sdl).toMatch(
-      /directive @resolveTo\([^)]*sourceArgs: ResolveToSourceArgs/,
-    );
+    expect(sdl).toMatch(/directive @resolveTo\([^)]*sourceArgs: ResolveToSourceArgs/);
   });
 });

@@ -63,10 +63,9 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/directive @transport/);
     expect(out).not.toMatch(/scalar TransportOptions/);
     expect(out).toMatch(
-      /@join__directive\(graphs: \[CHINOOK\], name: "transport", args: \{kind: "sql", options: \{pool: 2\}\}\)/,
+      /@join__directive\(graphs: \[CHINOOK\], name: "transport", args: \{kind: "sql", location: "file:chinook.db", options: \{pool: 2\}\}\)/,
     );
     expect(out).not.toMatch(/subgraph:/);
-    expect(out).not.toMatch(/location:/);
     expect(out).toMatch(/specs\.apollo\.dev\/join\/v0\.5/);
     expect(out).toMatch(/directive @join__directive/);
   });
@@ -114,7 +113,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     `;
     const out = finalizeMeshJoinDirectives(sdl);
     expect(out).toMatch(
-      /@join__directive\(graphs: \[CALC\], name: "transport", args: \{kind: "thrift"\}\)/,
+      /@join__directive\(graphs: \[CALC\], name: "transport", args: \{kind: "thrift", location: "http:\/\/localhost\/thrift"\}\)/,
     );
     expect(out).not.toMatch(/headers:/);
   });
@@ -278,5 +277,67 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       /@join__directive\(graphs: \[VACCINATION\], name: "merge", args: \{keyField: "id", keyArg: "id"\}/,
     );
     expect(out).not.toMatch(/name: "merge", args: \{[^}]*subgraph:/);
+  });
+
+  it('rewrites @thrift__rpc and thrift @transport to join__directive', () => {
+    const sdl = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"])
+        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+        @transport(
+          subgraph: "calculator"
+          kind: "thrift"
+          location: "http://localhost/thrift"
+          headers: []
+        ) {
+        query: Query
+      }
+
+      directive @thrift__rpc(
+        subgraph: String
+        function: String!
+        args: String!
+        selection: String!
+      ) repeatable on FIELD_DEFINITION
+
+      enum join__Graph {
+        CALCULATOR @join__graph(name: "calculator", url: "http://localhost/thrift")
+      }
+
+      type Query @join__type(graph: CALCULATOR) {
+        add(left: Int, right: Int): Int
+          @thrift__rpc(
+            subgraph: "calculator"
+            function: "add"
+            args: "1(i32): $args.left"
+            selection: "$(i32)"
+          )
+          @join__field(graph: CALCULATOR)
+      }
+
+      scalar TransportOptions
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        headers: [[String]]
+        options: TransportOptions
+      ) repeatable on SCHEMA
+    `;
+    const out = finalizeMeshJoinDirectives(sdl);
+    // Apps are join; keep `directive @thrift__rpc` def for federation extract.
+    expect(out).not.toMatch(/:\s*\w+ @thrift__rpc\s*\(/);
+    expect(out).not.toMatch(/@transport\s*\(/);
+    expect(out).toMatch(/directive @thrift__rpc\(/);
+    expect(out).not.toMatch(/TransportOptions/);
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[CALCULATOR\], name: "transport", args: \{kind: "thrift", location: "http:\/\/localhost\/thrift"\}/,
+    );
+    expect(out).toMatch(
+      /@join__directive\(graphs: \[CALCULATOR\], name: "thrift__rpc", args: \{function: "add"/,
+    );
+    expect(out).not.toMatch(/name: "thrift__rpc", args: \{[^}]*subgraph:/);
+    expect(out).toMatch(/thrift\/v0\.1", import: \["@thrift__rpc"\]/);
   });
 });

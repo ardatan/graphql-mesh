@@ -64,13 +64,21 @@ describe('binary (@thrift__rpc)', () => {
       maskServicePorts: true,
     });
     expect(result).toMatchSnapshot();
-    expect(result).toMatch(/@thrift__rpc\(/);
+    // Final SG: `@thrift__rpc` / `@transport` → `@join__directive` (keep Mesh `@link` imports).
+    expect(result).toMatch(/name:\s*"thrift__rpc"/);
+    expect(result).toMatch(/name:\s*"transport"/);
+    expect(result).toMatch(/kind:\s*"thrift"/);
+    // Apps are join; `directive @thrift__rpc(...)` def stays for extract.
+    expect(result).not.toMatch(/:\s*\w+ @thrift__rpc\s*\(/);
+    expect(result).toMatch(/directive @thrift__rpc\(/);
+    expect(result).not.toMatch(/@transport\s*\(/);
     expect(result).toMatch(/function:\s*"add"/);
     expect(result).toMatch(/1\(struct\):\s*\$args\.request/);
     expect(result).toMatch(/\$\(i32\)/);
-    expect(result).toMatch(/messageType:\s*ONEWAY/);
+    // Enum args are serialized as strings inside join__directive args.
+    expect(result).toMatch(/messageType:\s*"ONEWAY"/);
     expect(result).toMatch(/function:\s*"divide"/);
-    // Single-service generate omits per-field `service:` (path is on `@transport`).
+    // Single-service generate omits per-field `service:` (path is on transport).
     expect(result).not.toMatch(/function:\s*"add"[\s\S]*?service:\s*"/);
     expect(result).not.toMatch(/@fieldTypeMap\(/);
     expect(result).not.toMatch(/topTypeMap/);

@@ -57,15 +57,29 @@ const JOIN_SAFE_MESH_LOCATIONS = new Set<MeshJoinLocation>([
  *
  * NOT join-ified (not subgraph-owned / not final-SG metadata):
  * - `@resolveTo` / `@additionalField` — gateway/virtual field wiring
- * - `@extraSchemaDefinitionDirective` — Guild SCHEMA-usage workaround; lifted
+ * - `@extraSchemaDefinitionDirective` — SCHEMA-usage composition workaround; lifted
  *   away before this pass (`liftExtraSchemaDefinitionDirectives`)
+ *
+ * Protocol field dirs (`@thrift__rpc`, `@sql`, `@protobuf__rpc`, …) join the same
+ * way as `@merge` — `graphs:` owns attribution; drop redundant `subgraph:`.
  */
 const MESH_TO_JOIN = new Set([
   'merge',
   'hoist',
   'pubsubOperation',
   'pubsubPublish',
+  'thrift__rpc',
+  'sql',
+  'protobuf__rpc',
 ]);
+
+/**
+ * Protocol field dirs keep their `directive @…` definitions on the final SG so
+ * federation extract can reconstitute native apps for transports that still
+ * read `@thrift__rpc` / `@sql` / … (not join__directive). Apps still become
+ * `@join__directive`; imports stay. Core Mesh dirs (`@merge`, …) drop defs.
+ */
+const MESH_JOIN_KEEP_DEFS = new Set(['thrift__rpc', 'sql', 'protobuf__rpc']);
 
 /**
  * Mesh Compose post-process (GM-41) — emit the **most optimized** supergraph.
@@ -83,10 +97,11 @@ const MESH_TO_JOIN = new Set([
  *    - drop `location` when it equals `@join__graph(url:)`
  *    - keep `kind` / `options` / non-empty `headers` / override `location`
  * 4. Prune unused `@transport` def / `TransportOptions` / core `@link` import.
- * 5. `@merge` / `@hoist` / Mesh `@source`|`@meshSource` → join without
- *    `subgraph:` (graphs: owns attribution). When Connectors `@source` is also
- *    present, Compose aliases Mesh stitching source as `@meshSource` and join
- *    uses `name: "meshSource"`. Core `@link` **imports** for those names stay
+ * 5. `@merge` / `@hoist` / Mesh `@source`|`@meshSource` / protocol field dirs
+ *    (`@thrift__rpc`, `@sql`, `@protobuf__rpc`, …) → join without `subgraph:`
+ *    (graphs: owns attribution). When Connectors `@source` is also present,
+ *    Compose aliases Mesh stitching source as `@meshSource` and join uses
+ *    `name: "meshSource"`. Mesh `@link` **imports** for those names stay
  *    (join apps still reference them); native defs / composeDirective drop.
  * 6. Leave `@resolveTo` / `@additionalField` native (not subgraph-owned).
  * 7. Always prune orphan Mesh artifacts loaders leave when nothing was
@@ -100,6 +115,9 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
     !supergraphSdl?.includes('@merge') &&
     !supergraphSdl?.includes('@meshSource') &&
     !supergraphSdl?.includes('@hoist') &&
+    !supergraphSdl?.includes('@thrift__rpc') &&
+    !supergraphSdl?.includes('@sql') &&
+    !supergraphSdl?.includes('@protobuf__rpc') &&
     !supergraphSdl?.includes('TransportOptions') &&
     !supergraphSdl?.includes('directive @source')
   ) {
@@ -325,8 +343,10 @@ function rewriteSchemaTransports(
 
     const joinArgs: Record<string, unknown> = { kind };
     // subgraph matches join__graph(name:) → owned by graphs:, drop.
-    // location matches join__graph(url:) → drop; keep overrides.
-    if (typeof location === 'string' && !locationMatches) {
+    // For http, matching location is omitted (Gateway seeds from join__graph).
+    // Protocol kinds (thrift / sql / …) keep location — transports call `new URL(location)`
+    // and must not depend solely on join__graph seeding.
+    if (typeof location === 'string' && (kind !== 'http' || !locationMatches)) {
       joinArgs.location = location;
     }
     if (headers !== undefined) {
@@ -393,8 +413,7 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
       // `subgraph` in args, keep name `source` or `meshSource` (Compose alias
       // when Connectors `@source` is also in the composition).
       const siblingGraphs = allJoinGraphsOnNode(node.directives);
-      const graphs =
-        siblingGraphs.length > 0 ? siblingGraphs : [...joinInfo.nameToEnum.values()];
+      const graphs = siblingGraphs.length > 0 ? siblingGraphs : [...joinInfo.nameToEnum.values()];
       for (const g of graphs) {
         next.push(buildJoinDirective(g, dir.name.value, args));
       }
@@ -404,8 +423,8 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
     }
 
     // `@merge` / `@hoist` / …: drop redundant subgraph — graphs: is enough.
-    const { subgraph: _unusedSubgraph, ...joinArgs } = args;
-    void _unusedSubgraph;
+    const joinArgs = { ...args };
+    delete joinArgs.subgraph;
     next.push(buildJoinDirective(ownerGraphEnum, dir.name.value, joinArgs));
     changed = true;
     rewrittenNames.add(dir.name.value);
@@ -443,9 +462,7 @@ function isMeshFieldSource(dir: ConstDirectiveNode): boolean {
 }
 
 /** join__field / join__type graphs on this node (source broadcast targets). */
-function allJoinGraphsOnNode(
-  directives: readonly ConstDirectiveNode[] | undefined,
-): string[] {
+function allJoinGraphsOnNode(directives: readonly ConstDirectiveNode[] | undefined): string[] {
   const graphs: string[] = [];
   const seen = new Set<string>();
   for (const d of directives || []) {
@@ -543,10 +560,7 @@ function pruneUnusedTransportArtifacts(document: DocumentNode): DocumentNode {
         return true;
       })
       .map(def => {
-        if (
-          def.kind !== Kind.SCHEMA_DEFINITION &&
-          def.kind !== Kind.SCHEMA_EXTENSION
-        ) {
+        if (def.kind !== Kind.SCHEMA_DEFINITION && def.kind !== Kind.SCHEMA_EXTENSION) {
           return def;
         }
         const dirs = (def.directives || [])
@@ -568,14 +582,17 @@ function pruneUnusedTransportArtifacts(document: DocumentNode): DocumentNode {
  * (e.g. filter-only subgraph → `@source` import with zero apps; HTTP loader →
  * `TransportOptions` without `@transport`).
  */
-const MESH_ORPHAN_DIRECTIVE_NAMES = [
+const MESH_ORPHAN_DIRECTIVE_NAMES: readonly string[] = [
   'source',
   'meshSource',
   'merge',
   'hoist',
   'pubsubOperation',
   'pubsubPublish',
-] as const;
+  'thrift__rpc',
+  'sql',
+  'protobuf__rpc',
+];
 
 /**
  * Mesh directive names referenced via `@join__directive(name: "…")` on the SG.
@@ -612,29 +629,37 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
   });
   const joinCarried = collectJoinCarriedMeshNames(document);
 
+  // Drop unused defs unless join-carried protocol dirs that must keep defs
+  // for federation extract → transport readers.
   const dropDefs = new Set(
-    MESH_ORPHAN_DIRECTIVE_NAMES.filter(name => !usedNative.has(name)),
+    MESH_ORPHAN_DIRECTIVE_NAMES.filter(name => {
+      if (usedNative.has(name)) {
+        return false;
+      }
+      if (joinCarried.has(name) && MESH_JOIN_KEEP_DEFS.has(name)) {
+        return false;
+      }
+      return true;
+    }),
   );
-  if (dropDefs.size === 0) {
-    return document;
-  }
 
   // Imports stay when join apps still name the directive. Aliased Mesh
   // stitching source (`{name: "@source", as: "@meshSource"}`) is keyed by
   // join name `meshSource` — do not strip `@source` while that join lives.
   const importNamesToStrip = new Set(
-    [...dropDefs]
-      .filter(name => {
-        if (joinCarried.has(name)) {
-          return false;
-        }
-        if (name === 'source' && joinCarried.has('meshSource')) {
-          return false;
-        }
-        return true;
-      })
-      .map(name => `@${name}`),
+    MESH_ORPHAN_DIRECTIVE_NAMES.filter(name => {
+      if (usedNative.has(name) || joinCarried.has(name)) {
+        return false;
+      }
+      if (name === 'source' && joinCarried.has('meshSource')) {
+        return false;
+      }
+      return true;
+    }).map(name => `@${name}`),
   );
+  if (dropDefs.size === 0 && importNamesToStrip.size === 0) {
+    return document;
+  }
 
   return {
     ...document,
@@ -669,10 +694,7 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
           .map(dir => {
             if (dir.name.value === 'composeDirective') {
               const name = getStringArg(dir, 'name');
-              if (
-                name &&
-                (importNamesToStrip.has(name) || dropDefs.has(name.slice(1)))
-              ) {
+              if (name && (importNamesToStrip.has(name) || dropDefs.has(name.slice(1)))) {
                 return null;
               }
               return dir;
@@ -718,10 +740,9 @@ function pruneRewrittenMeshArtifacts(
     },
   });
 
-  const dropDefs = new Set([...rewrittenNames].filter(name => !stillNative.has(name)));
-  if (dropDefs.size === 0) {
-    return document;
-  }
+  const dropDefs = new Set(
+    [...rewrittenNames].filter(name => !stillNative.has(name) && !MESH_JOIN_KEEP_DEFS.has(name)),
+  );
 
   return {
     ...document,
@@ -847,14 +868,15 @@ function ensureJoinDirectiveSupport(
   } else if (
     opts.expandLocations &&
     !next.definitions.some(
-      d =>
-        d.kind === Kind.SCALAR_TYPE_DEFINITION && d.name.value === 'join__DirectiveArguments',
+      d => d.kind === Kind.SCALAR_TYPE_DEFINITION && d.name.value === 'join__DirectiveArguments',
     )
   ) {
-    // Guild may already have join__directive; ensure scalar exists when we expand.
+    // join__directive may already exist without the args scalar — add it.
     const scalarOnly = parse(`scalar join__DirectiveArguments`, { noLocation: true });
-    // no-op if already present from join package — checked above
-    void scalarOnly;
+    next = {
+      ...next,
+      definitions: [...next.definitions, ...scalarOnly.definitions],
+    };
   }
   return next;
 }

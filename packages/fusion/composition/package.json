@@ -50,6 +50,7 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
+    "@graphql-mesh/transport-connect": "^0.12.4",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/schema": "^11.0.9",
     "@graphql-tools/stitching-directives": "^4.1.5",
