@@ -86,9 +86,10 @@ const MESH_TO_JOIN = new Set([
  * 5. `@merge` / `@hoist` / Mesh `@source`|`@meshSource` → join without
  *    `subgraph:` (graphs: owns attribution). When Connectors `@source` is also
  *    present, Compose aliases Mesh stitching source as `@meshSource` and join
- *    uses `name: "meshSource"`.
+ *    uses `name: "meshSource"`. Core `@link` **imports** for those names stay
+ *    (join apps still reference them); native defs / composeDirective drop.
  * 6. Leave `@resolveTo` / `@additionalField` native (not subgraph-owned).
- * 7. Always prune orphan Mesh artifacts Guild/loaders leave when nothing was
+ * 7. Always prune orphan Mesh artifacts loaders leave when nothing was
  *    rewritten (unused `TransportOptions`, unused `@source` def/`@link` import
  *    from filter-only transforms, etc.).
  */
@@ -577,9 +578,30 @@ const MESH_ORPHAN_DIRECTIVE_NAMES = [
 ] as const;
 
 /**
- * Drop unused Mesh directive defs and Mesh `@link` imports when no native apps
- * remain. Does not touch `@join__directive(name: "source"|"merge"|…)` — those
- * are join apps, not native Mesh apps.
+ * Mesh directive names referenced via `@join__directive(name: "…")` on the SG.
+ * Those still need their Mesh `@link` import even when native apps are gone.
+ */
+function collectJoinCarriedMeshNames(document: DocumentNode): Set<string> {
+  const names = new Set<string>();
+  const orphan = new Set<string>(MESH_ORPHAN_DIRECTIVE_NAMES);
+  visit(document, {
+    Directive(node) {
+      if (node.name.value !== 'join__directive') {
+        return;
+      }
+      const nameArg = node.arguments?.find(a => a.name.value === 'name');
+      if (nameArg?.value.kind === Kind.STRING && orphan.has(nameArg.value.value)) {
+        names.add(nameArg.value.value);
+      }
+    },
+  });
+  return names;
+}
+
+/**
+ * Drop unused Mesh directive defs when no native apps remain. Drop `@link`
+ * imports only when neither native apps nor `@join__directive(name:)` carry
+ * the directive — join-carried Mesh dirs still need the Mesh `@link` import.
  */
 function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode {
   const usedNative = new Set<string>();
@@ -588,6 +610,7 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
       usedNative.add(node.name.value);
     },
   });
+  const joinCarried = collectJoinCarriedMeshNames(document);
 
   const dropDefs = new Set(
     MESH_ORPHAN_DIRECTIVE_NAMES.filter(name => !usedNative.has(name)),
@@ -596,10 +619,22 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
     return document;
   }
 
-  const importNamesToStrip = new Set([...dropDefs].map(name => `@${name}`));
-  if (dropDefs.has('meshSource') && !usedNative.has('source')) {
-    importNamesToStrip.add('@source');
-  }
+  // Imports stay when join apps still name the directive. Aliased Mesh
+  // stitching source (`{name: "@source", as: "@meshSource"}`) is keyed by
+  // join name `meshSource` — do not strip `@source` while that join lives.
+  const importNamesToStrip = new Set(
+    [...dropDefs]
+      .filter(name => {
+        if (joinCarried.has(name)) {
+          return false;
+        }
+        if (name === 'source' && joinCarried.has('meshSource')) {
+          return false;
+        }
+        return true;
+      })
+      .map(name => `@${name}`),
+  );
 
   return {
     ...document,
@@ -614,11 +649,30 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
         if (def.kind !== Kind.SCHEMA_DEFINITION && def.kind !== Kind.SCHEMA_EXTENSION) {
           return def;
         }
+        if (importNamesToStrip.size === 0) {
+          // Still drop composeDirective for defs we removed.
+          const dirs = (def.directives || [])
+            .map(dir => {
+              if (dir.name.value !== 'composeDirective') {
+                return dir;
+              }
+              const name = getStringArg(dir, 'name');
+              if (name && dropDefs.has(name.slice(1))) {
+                return null;
+              }
+              return dir;
+            })
+            .filter((d): d is ConstDirectiveNode => d != null);
+          return { ...def, directives: dirs };
+        }
         const dirs = (def.directives || [])
           .map(dir => {
             if (dir.name.value === 'composeDirective') {
               const name = getStringArg(dir, 'name');
-              if (name && importNamesToStrip.has(name)) {
+              if (
+                name &&
+                (importNamesToStrip.has(name) || dropDefs.has(name.slice(1)))
+              ) {
                 return null;
               }
               return dir;
@@ -642,8 +696,8 @@ function pruneUnusedMeshDirectiveArtifacts(document: DocumentNode): DocumentNode
 }
 
 /**
- * Drop Mesh directive defs / composeDirective apps / Mesh `@link` imports for
- * dirs that are now carried only as `@join__directive` (no remaining native apps).
+ * Drop Mesh directive defs / composeDirective for dirs now carried only as
+ * `@join__directive`. Keep Mesh `@link` imports — join apps still name them.
  */
 function pruneRewrittenMeshArtifacts(
   document: DocumentNode,
@@ -653,7 +707,7 @@ function pruneRewrittenMeshArtifacts(
     return document;
   }
 
-  // Keep defs / link imports for any Mesh dir that still has native apps
+  // Keep defs for any Mesh dir that still has native apps
   // (e.g. `@source` on ARGUMENT_DEFINITION — extract does not reconstitute those).
   const stillNative = new Set<string>();
   visit(document, {
@@ -665,18 +719,8 @@ function pruneRewrittenMeshArtifacts(
   });
 
   const dropDefs = new Set([...rewrittenNames].filter(name => !stillNative.has(name)));
-
-  const importNamesToStrip = new Set<string>();
-  for (const name of dropDefs) {
-    importNamesToStrip.add(`@${name}`);
-    if (name === 'meshSource') {
-      importNamesToStrip.add('@meshSource');
-      // `{name: "@source", as: "@meshSource"}` — only drop `@source` import when
-      // no native `@source` remains either.
-      if (!stillNative.has('source')) {
-        importNamesToStrip.add('@source');
-      }
-    }
+  if (dropDefs.size === 0) {
+    return document;
   }
 
   return {
@@ -696,10 +740,10 @@ function pruneRewrittenMeshArtifacts(
           .map(dir => {
             if (dir.name.value === 'composeDirective') {
               const name = getStringArg(dir, 'name');
-              // composeDirective is Guild-only on final SG — strip for any rewritten name
+              // composeDirective is composition-input only on final SG
               if (
                 name &&
-                (importNamesToStrip.has(name) ||
+                (dropDefs.has(name.slice(1)) ||
                   rewrittenNames.has(name.slice(1)) ||
                   name === '@meshSource' ||
                   name === '@source' ||
@@ -710,17 +754,7 @@ function pruneRewrittenMeshArtifacts(
               }
               return dir;
             }
-            if (dir.name.value !== 'link') {
-              return dir;
-            }
-            let next: ConstDirectiveNode | null = dir;
-            for (const importName of importNamesToStrip) {
-              if (!next) {
-                break;
-              }
-              next = removeImportFromLink(next, importName);
-            }
-            return next;
+            return dir;
           })
           .filter((d): d is ConstDirectiveNode => d != null);
         return { ...def, directives: dirs };

@@ -912,6 +912,10 @@ describe('Federation Connectors composition', () => {
     // Annotated subgraphs keep `@meshSource`; final SG uses join__directive.
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "meshSource"/);
     expect(sdl).not.toMatch(/@meshSource\s*\(/);
+    // Join-carried meshSource still keeps the aliased Mesh `@link` import.
+    expect(sdl).toMatch(
+      /specs\.graphql-mesh\.com\/core\/v0\.1", import: \[[^\]]*\{name: "@source", as: "@meshSource"\}/,
+    );
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "source"[\s\S]*name: "rest"/);
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "connect"/);
     expect(sdl).not.toMatch(/@connect\(/);
