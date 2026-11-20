@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@envelop/core": "^6.0.1",
-    "@graphql-hive/logger": "^1.1.1",
+    "@graphql-hive/logger": "^1.2.0",
     "@graphql-hive/pubsub": "^2.2.1",
     "@graphql-mesh/cache-localforage": "^0.108.3",
     "@graphql-mesh/cross-helpers": "^0.4.18",
