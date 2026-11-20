@@ -18,6 +18,7 @@ import {
   loadNonExecutableGraphQLSchemaFromJSONSchemas,
   processDirectives,
 } from '@omnigraph/json-schema';
+import { resolveScalarMap } from './resolveScalarMap.js';
 
 export default class JsonSchemaHandler implements MeshHandler {
   private name: string;
@@ -71,13 +72,14 @@ export default class JsonSchemaHandler implements MeshHandler {
         assumeValid: true,
       });
     }
-    // YAML: `{ id: ID, date: Date }` (type-name strings). Optional module path
-    // still works for custom scalar instances (`scalarMap: ./map.ts`).
-    const scalarMap = await loadFromModuleExportExpression(this.config.scalarMap, {
+    // YAML: `{ id: ID, date: Date }` (type-name strings resolved here). Optional
+    // module path still works for custom scalar instances (`scalarMap: ./map.ts`).
+    const rawScalarMap = await loadFromModuleExportExpression(this.config.scalarMap, {
       cwd: this.baseDir,
       importFn: this.importFn,
       defaultExportName: 'default',
     });
+    const scalarMap = resolveScalarMap(rawScalarMap);
     return this.schemaWithAnnotationsProxy.getWithSet(() => {
       this.log.info(`Generating GraphQL schema from JSON Schemas`);
       return loadNonExecutableGraphQLSchemaFromJSONSchemas(this.name, {

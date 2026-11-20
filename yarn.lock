@@ -8810,7 +8810,6 @@ __metadata:
   dependencies:
     "@graphql-hive/gateway-runtime": "patch:@graphql-hive/gateway-runtime@npm%3A2.13.5#~/.yarn/patches/@graphql-hive-gateway-runtime-npm-2.13.5-be6edfcd35.patch"
     "@graphql-mesh/fusion-runtime": "patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch"
-    "@graphql-mesh/transport-connect": "npm:^0.12.4"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^12.3.3"
     "@graphql-tools/executor": "npm:4.1.8"
@@ -9019,6 +9018,7 @@ __metadata:
     "@omnigraph/json-schema": "npm:^0.112.6"
     graphql: "npm:16.14.0"
     graphql-compose: "npm:^9.3.0"
+    graphql-scalars: "npm:^2.0.1"
     json-machete: "npm:^0.97.8"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -9519,7 +9519,6 @@ __metadata:
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
-    "@graphql-mesh/transport-connect": "npm:^0.12.4"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/batch-delegate": "npm:^10.1.5"

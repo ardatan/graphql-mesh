@@ -1,5 +1,6 @@
 ---
 "@graphql-mesh/fusion-composition": patch
 ---
+
 dependencies updates:
-  - Added dependency [`@graphql-mesh/transport-connect@^0.12.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-connect/v/0.12.4) (to `dependencies`)
+  - Removed dependency on `@graphql-mesh/transport-connect` (inline Connectors v0.4 SDL stubs for Guild prepare)

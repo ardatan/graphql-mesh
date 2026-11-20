@@ -1703,7 +1703,7 @@
               "additionalItems": true
             }
           ],
-          "description": "Opt-in JSON Schema title → GraphQL scalar map.\nPrefer an inline YAML map of title → type name\n(`{ id: ID, oid: ID, date: Date, url: URL }`).\nKnown names: String, ID, Int, Float, Boolean, Date, DateTime, Time,\nTimestamp, URL, UUID, JSON, BigInt, Byte, EmailAddress, File, Void.\nA module path (e.g. `./map.ts`) that default-exports scalar instances\nis still supported for custom scalars."
+          "description": "Opt-in JSON Schema title → GraphQL scalar map.\nPrefer an inline YAML map of title → type name\n(`{ id: ID, oid: ID, date: Date, url: URL }`); the handler resolves names.\nKnown names: String, ID, Int, Float, Boolean, Date, DateTime, Time,\nTimestamp, URL, UUID, JSON, BigInt, Byte, EmailAddress, File, Void.\nA module path (e.g. `./map.ts`) that default-exports scalar instances\nis still supported for custom scalars. mesh.config passes instances directly."
         }
       }
     },

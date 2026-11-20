@@ -1,5 +1,4 @@
 import { buildSchema, extendSchema, parse, print } from 'graphql';
-import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway-runtime';
 import {
   composeSubgraphs,
   entityKeyFieldsFromHttpPath,
@@ -2081,10 +2080,9 @@ describe('Federation Connectors composition', () => {
     expect(sdl).toMatch(/directive @regexp\b/);
   });
 
-  it('post-compose @regexp survives finalize and Gateway execute match/reject', async () => {
-    // Like loaders.spec: compose → createGatewayRuntime(supergraph) → execute.
-    // No handwritten schema / manual processScalarType - Gateway extract + Connect
-    // must apply the lean-SG `@regexp` themselves.
+  it('post-compose @regexp survives finalize on lean SG', () => {
+    // Gateway execute match/reject lives in transport-connect (no composition →
+    // transport-connect dependency). Here we only assert compose keeps `@regexp`.
     const codeSdl = /* GraphQL */ `
       directive @link(url: String!, import: [String]) repeatable on SCHEMA
       directive @composeDirective(name: String!) repeatable on SCHEMA
@@ -2127,29 +2125,5 @@ describe('Federation Connectors composition', () => {
     const sg = composed.supergraphSdl!;
     expect(sg).toMatch(/scalar Code[\s\S]*@regexp\(/);
     expect(sg).toMatch(/@join__directive\([^)]*name: "connect"/);
-
-    const run = async (body: string) => {
-      const mockFetch = jest.fn(async () => Response.json(body));
-      const runtime = createGatewayRuntime({
-        supergraph: sg,
-        plugins() {
-          return [useCustomFetch(mockFetch)];
-        },
-        maskedErrors: false,
-        logging: !!globalThis.process?.env?.DEBUG,
-      });
-      const res = await runtime.fetch('/graphql', {
-        method: 'POST',
-        body: JSON.stringify({ query: `{ code }` }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      return res.json() as Promise<{ data?: { code?: string }; errors?: { message: string }[] }>;
-    };
-
-    await expect(run('AB')).resolves.toMatchObject({ data: { code: 'AB' } });
-
-    const bad = await run('abc');
-    expect(bad.data?.code ?? null).toBeNull();
-    expect(bad.errors?.some(e => /must match/i.test(e.message))).toBe(true);
   });
 });

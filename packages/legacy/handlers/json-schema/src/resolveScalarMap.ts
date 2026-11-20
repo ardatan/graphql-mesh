@@ -3,8 +3,8 @@ import {
   GraphQLFloat,
   GraphQLID,
   GraphQLInt,
+  GraphQLScalarType,
   GraphQLString,
-  type GraphQLScalarType,
 } from 'graphql';
 import {
   GraphQLBigInt,
@@ -18,11 +18,13 @@ import {
   GraphQLURL,
   GraphQLUUID,
 } from 'graphql-scalars';
-import { GraphQLFile, GraphQLVoid } from './scalars.js';
 
 /**
  * Built-in + graphql-scalars names for YAML `scalarMap: { id: ID, date: Date }`.
  * Keys are case-sensitive GraphQL type names.
+ *
+ * Lives in the legacy JSON Schema handler (YAML/.meshrc concern). Omnigraph /
+ * mesh.config pass GraphQL scalar instances directly.
  */
 const NAMED_SCALARS: Record<string, GraphQLScalarType> = {
   String: GraphQLString,
@@ -40,15 +42,22 @@ const NAMED_SCALARS: Record<string, GraphQLScalarType> = {
   BigInt: GraphQLBigInt,
   Byte: GraphQLByte,
   EmailAddress: GraphQLEmailAddress,
-  File: GraphQLFile,
-  Void: GraphQLVoid,
+  File: new GraphQLScalarType({
+    name: 'File',
+    description: 'The `File` scalar type represents a file upload.',
+  }),
+  Void: new GraphQLScalarType({
+    name: 'Void',
+    description: 'Represents empty values',
+    serialize: () => '',
+  }),
 };
 
 export type ScalarMapInput = Record<string, GraphQLScalarType | string> | undefined;
 
 /**
- * Resolve a title → scalar map. Values may be GraphQL scalar instances (JS config)
- * or type-name strings (`ID`, `Date`, `URL`, …) for YAML.
+ * Resolve a title → scalar map. Values may be GraphQL scalar instances (JS config
+ * / module path) or type-name strings (`ID`, `Date`, `URL`, …) for YAML.
  */
 export function resolveScalarMap(
   scalarMap: ScalarMapInput,

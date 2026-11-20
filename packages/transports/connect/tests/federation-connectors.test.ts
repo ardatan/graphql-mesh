@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { buildSchema, execute, GraphQLScalarType, parse, type GraphQLSchema } from 'graphql';
 import { Response } from '@whatwg-node/fetch';
 import { processConnectDirectives } from '../src/directives/connect.js';
+import { processDirectives } from '../src/directives/process.js';
 import { processScalarType } from '../src/directives/scalars.js';
 
 /**
@@ -676,6 +677,7 @@ describe('Federation Connectors HTTP / templates', () => {
 
   it('processScalarType enforces @regexp (kept through compose finalize)', () => {
     // Compose finalize strips @typescript/@example but keeps @regexp for runtime.
+    // (Gateway execute match/reject lives here, not in fusion-composition.)
     const schema = buildSchema(/* GraphQL */ `
       directive @regexp(pattern: String!) on SCALAR
       scalar Code @regexp(pattern: "^[A-Z]{2}$")
@@ -687,6 +689,39 @@ describe('Federation Connectors HTTP / templates', () => {
     processScalarType(Code);
     expect(Code.serialize('AB')).toBe('AB');
     expect(() => Code.serialize('abc')).toThrow(/must match/);
+  });
+
+  it('@regexp via processDirectives match/reject on execute', async () => {
+    // Moved from fusion-composition: composition must not depend on transport-connect /
+    // Gateway. processDirectives applies @regexp then Connect resolvers.
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      directive @regexp(pattern: String!) on SCALAR
+      schema @source(name: "api", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+      scalar Code @regexp(pattern: "^[A-Z]{2}$")
+      type Query {
+        code: Code @connect(source: "api", http: { GET: "/code" }, selection: "$")
+      }
+    `;
+    const run = async (body: string) => {
+      const schema = processDirectives(buildSchema(sdl), {
+        globalFetch: (async () => Response.json(body)) as any,
+      });
+      return execute({
+        schema,
+        document: parse(/* GraphQL */ `
+          {
+            code
+          }
+        `),
+      });
+    };
+    await expect(run('AB')).resolves.toMatchObject({ data: { code: 'AB' } });
+    const bad = await run('abc');
+    expect(bad.data?.code ?? null).toBeNull();
+    expect(bad.errors?.some(e => /must match/i.test(String(e.message)))).toBe(true);
   });
 
   it('interpolates $context.headers bracket accessors with defaults in baseURL', async () => {

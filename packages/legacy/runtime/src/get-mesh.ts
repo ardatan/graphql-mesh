@@ -13,7 +13,6 @@ import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core';
 import { Logger } from '@graphql-hive/logger';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { process } from '@graphql-mesh/cross-helpers';
-import { processDirectives } from '@graphql-mesh/transport-connect';
 import type {
   GraphQLOperation,
   KeyValueCache,
@@ -286,13 +285,26 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   // ran `processDirectives` and wrapSchema installed rename proxies. Re-process so
   // *new* fields get HTTP resolvers; do not replace proxies on already-wired fields
   // (those translate renamed `$args` back to source names).
+  // Optional dynamic import: runtime must not depend on transport-connect; openapi /
+  // json-schema / odata handlers already pull it in when Connect is used.
   if (additionalTypeDefs?.length) {
-    schema = processDirectives(schema, {
-      globalFetch: wrappedFetchFn,
-      pubsub,
-      log: getMeshLogger,
-      preserveExistingFieldResolvers: true,
-    });
+    try {
+      const { processDirectives } = await import('@graphql-mesh/transport-connect');
+      schema = processDirectives(schema, {
+        globalFetch: wrappedFetchFn,
+        pubsub,
+        log: getMeshLogger,
+        preserveExistingFieldResolvers: true,
+      });
+    } catch (err: any) {
+      const code = err?.code;
+      if (code !== 'ERR_MODULE_NOT_FOUND' && code !== 'MODULE_NOT_FOUND') {
+        throw err;
+      }
+      getMeshLogger.debug(
+        `Skipping @connect reprocess after additionalTypeDefs (transport-connect not installed)`,
+      );
+    }
   }
 
   const plugins = [

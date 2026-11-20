@@ -1,16 +1,5 @@
 import type { ConstDirectiveNode, DocumentNode } from 'graphql';
-import { GraphQLObjectType, GraphQLSchema, GraphQLString, Kind, parse, visit } from 'graphql';
-import {
-  ConnectDirective,
-  ConnectHTTPInput,
-  ConnectorErrorsInput,
-  HTTPHeaderMappingInput,
-  JSONSelectionScalar,
-  SourceDirective,
-  SourceHTTPInput,
-  URLPathTemplateScalar,
-} from '@graphql-mesh/transport-connect';
-import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
+import { Kind, parse, visit } from 'graphql';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 
 /**
@@ -23,6 +12,9 @@ import type { ServiceDefinition } from '@theguild/federation-composition';
  *
  * `@composeDirective` is Guild-only. Final supergraph drops native connect
  * via `finalizeConnectorsSupergraph` → `@join__directive`.
+ *
+ * Support SDL is inlined (Apollo Connectors v0.4 shapes) so this package does
+ * not depend on `@graphql-mesh/transport-connect`.
  */
 export function prepareConnectorsBeforeGuild(
   annotatedSubgraphs: ServiceDefinition[],
@@ -133,36 +125,56 @@ export function prepareConnectorsBeforeGuild(
 
 let cachedConnectSupportDefs: DocumentNode['definitions'] | undefined;
 
+/** Apollo Connectors v0.4 directive + input/scalar stubs (SDL only; no runtime). */
+const CONNECT_SUPPORT_SDL = /* GraphQL */ `
+  scalar JSONSelection
+  scalar URLPathTemplate
+  input HTTPHeaderMapping {
+    name: String!
+    value: String
+    from: String
+  }
+  input ConnectHTTP {
+    GET: URLPathTemplate
+    HEAD: URLPathTemplate
+    POST: URLPathTemplate
+    PUT: URLPathTemplate
+    PATCH: URLPathTemplate
+    DELETE: URLPathTemplate
+    headers: [HTTPHeaderMapping!]
+    body: JSONSelection
+    queryParams: JSONSelection
+  }
+  input SourceHTTP {
+    baseURL: String!
+    headers: [HTTPHeaderMapping!]
+    queryParams: JSONSelection
+  }
+  input ConnectorErrors {
+    message: JSONSelection
+    extensions: JSONSelection
+  }
+  directive @connect(
+    source: String
+    http: ConnectHTTP
+    selection: JSONSelection!
+    entity: Boolean
+    errors: ConnectorErrors
+    isSuccess: JSONSelection
+  ) repeatable on FIELD_DEFINITION | OBJECT
+  directive @source(
+    name: String!
+    http: SourceHTTP!
+    errors: ConnectorErrors
+    isSuccess: JSONSelection
+  ) repeatable on SCHEMA
+`;
+
 function getConnectSupportDefinitions(): DocumentNode['definitions'] {
   if (cachedConnectSupportDefs) {
     return cachedConnectSupportDefs;
   }
-  // Minimal schema so we can print the Connectors directive + input/scalar deps.
-  const schema = new GraphQLSchema({
-    query: new GraphQLObjectType({ name: 'Query', fields: { _empty: { type: GraphQLString } } }),
-    directives: [ConnectDirective, SourceDirective],
-    types: [
-      JSONSelectionScalar,
-      URLPathTemplateScalar,
-      ConnectHTTPInput,
-      SourceHTTPInput,
-      ConnectorErrorsInput,
-      HTTPHeaderMappingInput,
-    ],
-  });
-  const doc = getDocumentNodeFromSchema(schema);
-  cachedConnectSupportDefs = doc.definitions.filter(
-    def =>
-      (def.kind === Kind.DIRECTIVE_DEFINITION &&
-        (def.name.value === 'connect' || def.name.value === 'source')) ||
-      (def.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION &&
-        (def.name.value === 'ConnectHTTP' ||
-          def.name.value === 'SourceHTTP' ||
-          def.name.value === 'ConnectorErrors' ||
-          def.name.value === 'HTTPHeaderMapping')) ||
-      (def.kind === Kind.SCALAR_TYPE_DEFINITION &&
-        (def.name.value === 'JSONSelection' || def.name.value === 'URLPathTemplate')),
-  );
+  cachedConnectSupportDefs = parse(CONNECT_SUPPORT_SDL, { noLocation: true }).definitions;
   return cachedConnectSupportDefs;
 }
 

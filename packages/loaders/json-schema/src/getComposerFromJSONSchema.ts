@@ -71,7 +71,6 @@ import {
 import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatScalarMap.js';
 import { getUnionTypeComposers } from './getUnionTypeComposers.js';
 import { getValidTypeName } from './getValidTypeName.js';
-import { resolveScalarMap } from './resolveScalarMap.js';
 import { GraphQLFile, GraphQLVoid } from './scalars.js';
 
 export interface TypeComposers {
@@ -109,11 +108,8 @@ export interface GetComposerFromJSONSchemaOpts {
   schema: JSONSchema;
   log: Logger;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
-  /**
-   * Opt-in title → scalar map (loader `scalarMap` option).
-   * Values may be scalar instances or type-name strings (`ID`, `Date`, …).
-   */
-  scalarMap?: Record<string, GraphQLScalarType | string>;
+  /** Opt-in title → scalar map (loader `scalarMap` option). */
+  scalarMap?: Record<string, GraphQLScalarType>;
 }
 
 const deepMergedInputTypeComposerFields = new WeakMap<
@@ -231,13 +227,12 @@ export function getComposerFromJSONSchema({
   schema,
   log,
   getScalarForFormat,
-  scalarMap: scalarMapInput,
+  scalarMap,
 }: GetComposerFromJSONSchemaOpts): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
   const formatScalarMap = getJSONSchemaStringFormatScalarMap();
   const getDefaultScalarForFormat = (format: string) =>
     formatScalarMapWithoutAjv[format] || formatScalarMap.get(format);
-  const scalarMap = resolveScalarMap(scalarMapInput);
   const getScalarForTitle = (title: string | undefined) =>
     title && scalarMap ? scalarMap[title] : undefined;
 

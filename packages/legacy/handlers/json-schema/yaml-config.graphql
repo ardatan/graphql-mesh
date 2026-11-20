@@ -69,11 +69,11 @@ type JsonSchemaHandler @md {
   """
   Opt-in JSON Schema title → GraphQL scalar map.
   Prefer an inline YAML map of title → type name
-  (`{ id: ID, oid: ID, date: Date, url: URL }`).
+  (`{ id: ID, oid: ID, date: Date, url: URL }`); the handler resolves names.
   Known names: String, ID, Int, Float, Boolean, Date, DateTime, Time,
   Timestamp, URL, UUID, JSON, BigInt, Byte, EmailAddress, File, Void.
   A module path (e.g. `./map.ts`) that default-exports scalar instances
-  is still supported for custom scalars.
+  is still supported for custom scalars. mesh.config passes instances directly.
   """
   scalarMap: Any
 }

@@ -1540,7 +1540,7 @@ ${printType(GraphQLString)}
     expect(output.getFieldNames()).not.toContain('LightningObsGroup2');
     expect(output.schemaComposer.has('LightningObsGroup2')).toBe(false);
   });
-  it('should map titled pattern scalars via string scalarMap names (YAML-friendly)', async () => {
+  it('should map titled pattern scalars via scalarMap instances', async () => {
     const inputSchema: JSONSchema = {
       type: 'object',
       title: 'Resource',
@@ -1567,9 +1567,9 @@ ${printType(GraphQLString)}
       schema: inputSchema,
       log,
       scalarMap: {
-        id: 'ID',
-        date: 'Date',
-        url: 'URL',
+        id: GraphQLID,
+        date: GraphQLDate,
+        url: GraphQLURL,
       },
     });
     const output = result.output as ObjectTypeComposer;
