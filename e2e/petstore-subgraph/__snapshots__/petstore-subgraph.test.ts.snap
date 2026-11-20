@@ -1,10 +1,14 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should generate the subgraph schema correctly 1`] = `
-"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@shareable", "@key", "@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@extraSchemaDefinitionDirective"]) @composeDirective(name: "@extraSchemaDefinitionDirective") {
+"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@shareable", "@key", "@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@regexp", "@typescript", "@extraSchemaDefinitionDirective"]) @composeDirective(name: "@regexp") @composeDirective(name: "@typescript") @composeDirective(name: "@extraSchemaDefinitionDirective") {
   query: Query
   mutation: Mutation
 }
+
+directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
+
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -59,7 +63,7 @@ type Pet @connect(source: "petstore", selection: "id\\nname\\ncategory {\\n  id\
   category: Category
   photoUrls: [String]!
   tags: [Tag]
-  status: Pet_status
+  status: code
 }
 
 """
@@ -77,12 +81,7 @@ type Tag @shareable {
   name: String
 }
 
-"""pet status in the store"""
-enum Pet_status {
-  available
-  pending
-  sold
-}
+scalar code @regexp(subgraph: "petstore", pattern: "^[^\\\\s]+(\\\\s[^\\\\s]+)*$") @typescript(subgraph: "petstore", type: "string")
 
 """Status values that need to be considered for filter"""
 enum queryInput_findPetsByStatus_status {
@@ -101,7 +100,7 @@ type Order @connect(source: "petstore", selection: "id\\npetId\\nquantity\\nship
   petId: BigInt
   quantity: Int
   shipDate: DateTime
-  status: Order_status
+  status: code
   complete: Boolean
 }
 
@@ -109,13 +108,6 @@ type Order @connect(source: "petstore", selection: "id\\npetId\\nquantity\\nship
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
-
-"""Order Status"""
-enum Order_status {
-  placed
-  approved
-  delivered
-}
 
 type User @shareable {
   id: BigInt
@@ -195,7 +187,7 @@ input Pet_Input {
   category: Category_Input
   photoUrls: [String]!
   tags: [Tag_Input]
-  status: Pet_status
+  status: code
 }
 
 input Category_Input {
@@ -222,7 +214,7 @@ input Order_Input {
   petId: BigInt
   quantity: Int
   shipDate: DateTime
-  status: Order_status
+  status: code
   complete: Boolean
 }
 

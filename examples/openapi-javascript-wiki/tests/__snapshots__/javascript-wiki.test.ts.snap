@@ -988,7 +988,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD or YYYYMMDDHH format"""
     end: String!
-  ): metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/per-article/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.agent->match([\\"all_agents\\", \\"all-agents\\"], [@, $args.agent])}/{$args.article}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
+  ): metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/per-article/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.agent->match([\\"all_agents\\", \\"all-agents\\"], [@, $args.agent])}/{$args.article|preEncoded}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: """
   __typename: $status->match([200, "pageview_article"], [@, "problem"])
   items {
     access

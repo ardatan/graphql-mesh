@@ -2126,4 +2126,51 @@ describe('Federation Connectors composition', () => {
     expect(sg).toMatch(/scalar Code[\s\S]*@regexp\(/);
     expect(sg).toMatch(/@join__directive\([^)]*name: "connect"/);
   });
+
+  it('strips Mesh |preEncoded from lean SG connect paths (Apollo URLPathTemplate)', () => {
+    // Subgraph SDL keeps `|preEncoded` for Mesh Connect; lean SG must not — Router
+    // fails connector startup with `could not parse URL template: Eof`.
+    const wikiSdl = /* GraphQL */ `
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @composeDirective(name: String!) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+      ) repeatable on FIELD_DEFINITION
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+      type Query {
+        page(article: String!): String
+          @connect(
+            source: "Wiki"
+            http: { GET: "/page/{$args.article|preEncoded}" }
+            selection: "$"
+          )
+      }
+    `;
+    const subgraph = buildSchema(
+      /* GraphQL */ `
+        schema
+          @link(url: "https://specs.apollo.dev/link/v1.0")
+          @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+          @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+          @source(name: "Wiki", http: { baseURL: "https://wikimedia.org" }) {
+          query: Query
+        }
+        ${wikiSdl}
+      `,
+      { assumeValidSDL: true, assumeValid: true },
+    );
+    const composed = composeSubgraphs([{ name: 'wiki', schema: subgraph }]);
+    expect(composed.errors ?? []).toEqual([]);
+    const sg = composed.supergraphSdl!;
+    expect(sg).toMatch(/\$args\.article\}/);
+    expect(sg).not.toMatch(/\|preEncoded/);
+  });
 });

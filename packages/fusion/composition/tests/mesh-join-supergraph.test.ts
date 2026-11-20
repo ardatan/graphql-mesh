@@ -416,4 +416,44 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/@typescript\(/);
     expect(out).not.toMatch(/@example\(/);
   });
+
+  it('dedupes duplicate @regexp on merged scalars (Apollo Router carry-over)', () => {
+    // FHIR multi-SG merge stamps the same pattern scalar twice; Router rejects
+    // "Directive application @regexp already exists on scalar type …".
+    const sdl = /* GraphQL */ `
+      extend schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(
+          url: "https://specs.apollo.dev/join/v0.3"
+          import: ["@join__graph", "@join__type"]
+        )
+        @link(
+          url: "https://specs.graphql-mesh.com/core/v0.1"
+          import: ["@regexp"]
+        )
+
+      directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
+
+      enum join__Graph {
+        PATIENTS @join__graph(name: "patients", url: "https://hapi.example/patients")
+        OBS @join__graph(name: "observations", url: "https://hapi.example/obs")
+      }
+
+      scalar TriggerDefinition_timingDate
+        @join__type(graph: PATIENTS)
+        @join__type(graph: OBS)
+        @regexp(subgraph: "patients", pattern: "([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)")
+        @regexp(
+          subgraph: "observations"
+          pattern: "([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)"
+        )
+    `;
+    const out = finalizeMeshJoinDirectives(sdl);
+    // Count apps on the scalar only (exclude `directive @regexp(...)` def).
+    const scalarBlock = out.match(/scalar TriggerDefinition_timingDate[^\n]*/)?.[0] ?? '';
+    const regexpApps = scalarBlock.match(/@regexp\(/g) || [];
+    expect(regexpApps).toHaveLength(1);
+    expect(scalarBlock).toMatch(/@regexp\(pattern:/);
+    expect(scalarBlock).not.toMatch(/subgraph:/);
+  });
 });

@@ -632,7 +632,10 @@ function rewriteConnectDirectivesOnNode<
   const joinDirs: ConstDirectiveNode[] = [];
 
   for (const connectDir of connectDirs) {
-    const args = constDirectiveArgsToJs(connectDir);
+    // Strip Mesh-only `|preEncoded` from HTTP path templates before join-ify.
+    // Apollo Router's URLPathTemplate parser rejects `|…` modifiers (Eof); Hive
+    // Connect still accepts `|preEncoded` on subgraph / executable schemas.
+    const args = stripMeshPathModifiersFromConnectArgs(constDirectiveArgsToJs(connectDir));
     const sourceName = typeof args.source === 'string' ? args.source : undefined;
     // Field-level: prefer explicit `@join__field(graph:)` before source→subgraph
     // name match - a subgraph named `api` must not steal inventory's
@@ -720,6 +723,31 @@ function constDirectiveArgsToJs(directive: ConstDirectiveNode): Record<string, u
     out[arg.name.value] = constValueToJs(arg.value);
   }
   return out;
+}
+
+const CONNECT_HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
+
+/**
+ * Remove Mesh path modifiers Apollo Router cannot parse from `@connect(http:)`.
+ * Subgraph SDLs keep `|preEncoded` for Mesh/Hive Connect runtime.
+ */
+function stripMeshPathModifiersFromConnectArgs(
+  args: Record<string, unknown>,
+): Record<string, unknown> {
+  const http = args.http;
+  if (!http || typeof http !== 'object' || Array.isArray(http)) {
+    return args;
+  }
+  const nextHttp: Record<string, unknown> = { ...(http as Record<string, unknown>) };
+  let changed = false;
+  for (const method of CONNECT_HTTP_METHODS) {
+    const value = nextHttp[method];
+    if (typeof value === 'string' && value.includes('|preEncoded')) {
+      nextHttp[method] = value.replace(/\|preEncoded\b/g, '');
+      changed = true;
+    }
+  }
+  return changed ? { ...args, http: nextHttp } : args;
 }
 
 function constValueToJs(value: ConstValueNode): unknown {
