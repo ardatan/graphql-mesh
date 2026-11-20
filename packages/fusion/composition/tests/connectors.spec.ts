@@ -1963,11 +1963,10 @@ describe('Federation Connectors composition', () => {
     );
   });
 
-  it('strips Mesh codegen @typescript/@example from lean SG; keeps @regexp', () => {
-    // Regression: Apollo Router connector carry-over rejects duplicate native
-    // `@typescript` when shared FHIR/OpenAPI pattern scalars merge across
-    // Connectors subgraphs. Compose strips codegen-only apps from the lean SG
-    // but keeps `@regexp` for Connect `processScalarType` runtime validation.
+  it('strips Mesh @typescript/@example/@regexp from lean SG', () => {
+    // Regression: Apollo Router connector carry-over rejects native apps already
+    // printed on the SG when shared FHIR/OpenAPI pattern scalars merge across
+    // Connectors subgraphs. Subgraph SDLs keep `@regexp` for Hive Connect.
     const sharedScalarSdl = /* GraphQL */ `
       directive @link(url: String!, import: [String]) repeatable on SCHEMA
       directive @composeDirective(name: String!) repeatable on SCHEMA
@@ -2074,15 +2073,15 @@ describe('Federation Connectors composition', () => {
     expect(sdl).toMatch(/\bscalar string\b/);
     expect(sdl).not.toMatch(/@typescript\(/);
     expect(sdl).not.toMatch(/@example\(/);
+    expect(sdl).not.toMatch(/@regexp\(/);
     expect(sdl).not.toMatch(/directive @typescript\b/);
-    // `@regexp` stays for Connect processScalarType (pattern coerce / validate).
-    expect(sdl).toMatch(/scalar string[\s\S]*@regexp\(/);
-    expect(sdl).toMatch(/directive @regexp\b/);
+    expect(sdl).not.toMatch(/directive @regexp\b/);
   });
 
-  it('post-compose @regexp survives finalize on lean SG', () => {
-    // Gateway execute match/reject lives in transport-connect (no composition →
-    // transport-connect dependency). Here we only assert compose keeps `@regexp`.
+  it('strips post-compose @regexp from lean SG (subgraph SDL keeps it)', () => {
+    // Gateway execute match/reject lives in transport-connect on subgraph /
+    // executable schemas. Lean SG must not print `@regexp` or Router carry-over
+    // fails with "already exists".
     const codeSdl = /* GraphQL */ `
       directive @link(url: String!, import: [String]) repeatable on SCHEMA
       directive @composeDirective(name: String!) repeatable on SCHEMA
@@ -2123,7 +2122,8 @@ describe('Federation Connectors composition', () => {
     const composed = composeSubgraphs([{ name: 'codes', schema: subgraph }]);
     expect(composed.errors ?? []).toEqual([]);
     const sg = composed.supergraphSdl!;
-    expect(sg).toMatch(/scalar Code[\s\S]*@regexp\(/);
+    expect(sg).toMatch(/\bscalar Code\b/);
+    expect(sg).not.toMatch(/@regexp\(/);
     expect(sg).toMatch(/@join__directive\([^)]*name: "connect"/);
   });
 

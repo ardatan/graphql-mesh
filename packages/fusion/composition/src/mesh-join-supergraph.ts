@@ -249,16 +249,12 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   }
   // Drop Mesh `@link(url:)` with no imports (e.g. core left after `@transport` strip).
   finalized = pruneEmptyMeshLinks(finalized);
-  // Mesh `@typescript` / `@example` are loader codegen metadata.
-  // Apollo Router connector carry-over rejects duplicate native `@typescript` on
-  // shared SCALAR/ENUM ("already exists") once many FHIR/OpenAPI subgraphs merge
-  // the same pattern scalars - strip those apps on the lean SG (subgraph SDLs keep
-  // them). Keep `@regexp`: Connect `processScalarType` uses it at runtime for
-  // pattern validation / string coercion on composed custom scalars - but Router
-  // also rejects *duplicate* `@regexp` on the same scalar (FHIR multi-SG merge),
-  // so collapse to a single pattern app after the codegen strip.
+  // Mesh `@typescript` / `@example` / `@regexp` on SCALAR/ENUM: subgraph SDLs keep
+  // them (Hive Connect `processScalarType` / local tooling). On the lean SG they
+  // must go - Apollo Router connector carry-over re-applies subgraph copies and
+  // rejects "Directive application @… already exists" when the printed SG already
+  // has the same app (FHIR/OpenAPI multi-SG shared pattern scalars).
   finalized = stripMeshCodegenScalarEnumDirectives(finalized);
-  finalized = dedupeRegexpDirectivesOnScalars(finalized);
   // Drop now-orphan codegen defs / Mesh `@link` imports after the strip above.
   finalized = pruneUnusedMeshDirectiveArtifacts(finalized);
   finalized = pruneEmptyMeshLinks(finalized);
@@ -269,14 +265,17 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
   return changed || printed !== supergraphSdl.trim() ? printed : supergraphSdl;
 }
 
-/** Codegen-only dirs stripped from the lean SG. `@regexp` is runtime - keep it. */
-const MESH_CODEGEN_SCALAR_ENUM_DIRS = new Set(['typescript', 'example']);
+/**
+ * Mesh SCALAR/ENUM apps stripped from the lean SG. Subgraph SDLs keep them;
+ * Router connector carry-over re-applies from subgraphs and rejects duplicates
+ * when the printed SG already has the same directive.
+ */
+const MESH_CODEGEN_SCALAR_ENUM_DIRS = new Set(['typescript', 'example', 'regexp']);
 
 /**
- * Strip Mesh codegen apps (`@typescript` / `@example`) from SCALAR/ENUM on the
- * final supergraph. Subgraph SDLs keep them for local tooling; Router rejects
- * duplicate `@typescript` when shared pattern scalars merge across Connectors
- * subgraphs. `@regexp` stays for Connect `processScalarType` validation.
+ * Strip Mesh SCALAR/ENUM apps (`@typescript` / `@example` / `@regexp`) from the
+ * final supergraph. Subgraph SDLs keep them for Hive Connect `processScalarType`
+ * and local tooling.
  */
 function stripMeshCodegenScalarEnumDirectives(document: DocumentNode): DocumentNode {
   return visit(document, {
@@ -297,63 +296,6 @@ function stripCodegenDirsOnNode<T extends { directives?: readonly ConstDirective
   }
   const next = node.directives.filter(dir => !MESH_CODEGEN_SCALAR_ENUM_DIRS.has(dir.name.value));
   return next.length === node.directives.length ? node : { ...node, directives: next };
-}
-
-/**
- * Apollo Router connector carry-over rejects a second `@regexp` on the same
- * scalar ("already exists") when Guild merges shared FHIR/OpenAPI pattern
- * scalars from multiple subgraphs. Keep one app (first unique pattern; drop
- * `subgraph:` so the lean SG is graph-neutral).
- */
-function dedupeRegexpDirectivesOnScalars(document: DocumentNode): DocumentNode {
-  return visit(document, {
-    ScalarTypeDefinition(node) {
-      return dedupeRegexpOnNode(node);
-    },
-  });
-}
-
-function dedupeRegexpOnNode<T extends { directives?: readonly ConstDirectiveNode[] }>(node: T): T {
-  const dirs = node.directives;
-  if (!dirs?.length) {
-    return node;
-  }
-  const regexpDirs = dirs.filter(d => d.name.value === 'regexp');
-  if (regexpDirs.length <= 1) {
-    // Still drop unused `subgraph:` on a lone app for a cleaner lean SG.
-    if (regexpDirs.length === 1 && getDirectiveStringArg(regexpDirs[0], 'subgraph') != null) {
-      const others = dirs.filter(d => d.name.value !== 'regexp');
-      return { ...node, directives: [...others, regexpWithoutSubgraph(regexpDirs[0])] };
-    }
-    return node;
-  }
-  const seenPatterns = new Set<string>();
-  let kept: ConstDirectiveNode | undefined;
-  for (const dir of regexpDirs) {
-    const pattern = getDirectiveStringArg(dir, 'pattern') ?? '';
-    if (seenPatterns.has(pattern)) {
-      continue;
-    }
-    seenPatterns.add(pattern);
-    // Router allows only one `@regexp` per scalar - first pattern wins.
-    kept = regexpWithoutSubgraph(dir);
-    break;
-  }
-  const others = dirs.filter(d => d.name.value !== 'regexp');
-  return kept ? { ...node, directives: [...others, kept] } : { ...node, directives: others };
-}
-
-function regexpWithoutSubgraph(dir: ConstDirectiveNode): ConstDirectiveNode {
-  const args = (dir.arguments || []).filter(a => a.name.value !== 'subgraph');
-  if (args.length === (dir.arguments || []).length) {
-    return dir;
-  }
-  return { ...dir, arguments: args };
-}
-
-function getDirectiveStringArg(directive: ConstDirectiveNode, name: string): string | undefined {
-  const arg = directive.arguments?.find(a => a.name.value === name);
-  return arg?.value.kind === Kind.STRING ? arg.value.value : undefined;
 }
 
 type JoinGraphInfo = {

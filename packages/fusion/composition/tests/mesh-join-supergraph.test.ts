@@ -384,7 +384,9 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).toMatch(/thrift\/v0\.1", import: \["@thrift__rpc"\]/);
   });
 
-  it('keeps @regexp on scalars through finalize; strips @typescript / @example', () => {
+  it('strips @regexp / @typescript / @example from lean SG scalars', () => {
+    // Router connector carry-over re-applies subgraph copies; native apps on the
+    // printed SG → "Directive application @regexp already exists".
     const sdl = /* GraphQL */ `
       extend schema
         @link(url: "https://specs.apollo.dev/link/v1.0")
@@ -412,25 +414,19 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
         @example(value: "AB")
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    expect(out).toMatch(/scalar Code[\s\S]*@regexp\(pattern: "\^\[A-Z\]\{2\}\$"\)/);
+    expect(out).toMatch(/\bscalar Code\b/);
+    expect(out).not.toMatch(/@regexp\(/);
     expect(out).not.toMatch(/@typescript\(/);
     expect(out).not.toMatch(/@example\(/);
+    expect(out).not.toMatch(/directive @regexp\b/);
   });
 
-  it('dedupes duplicate @regexp on merged scalars (Apollo Router carry-over)', () => {
-    // FHIR multi-SG merge stamps the same pattern scalar twice; Router rejects
-    // "Directive application @regexp already exists on scalar type …".
+  it('strips duplicate @regexp on merged FHIR scalars (Apollo Router carry-over)', () => {
     const sdl = /* GraphQL */ `
       extend schema
         @link(url: "https://specs.apollo.dev/link/v1.0")
-        @link(
-          url: "https://specs.apollo.dev/join/v0.3"
-          import: ["@join__graph", "@join__type"]
-        )
-        @link(
-          url: "https://specs.graphql-mesh.com/core/v0.1"
-          import: ["@regexp"]
-        )
+        @link(url: "https://specs.apollo.dev/join/v0.3", import: ["@join__graph", "@join__type"])
+        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@regexp"])
 
       directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
 
@@ -449,11 +445,8 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
         )
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    // Count apps on the scalar only (exclude `directive @regexp(...)` def).
     const scalarBlock = out.match(/scalar TriggerDefinition_timingDate[^\n]*/)?.[0] ?? '';
-    const regexpApps = scalarBlock.match(/@regexp\(/g) || [];
-    expect(regexpApps).toHaveLength(1);
-    expect(scalarBlock).toMatch(/@regexp\(pattern:/);
-    expect(scalarBlock).not.toMatch(/subgraph:/);
+    expect(scalarBlock).not.toMatch(/@regexp\(/);
+    expect(out).not.toMatch(/directive @regexp\b/);
   });
 });

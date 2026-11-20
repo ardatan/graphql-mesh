@@ -675,9 +675,9 @@ describe('Federation Connectors HTTP / templates', () => {
     expect(urls).toEqual(['http://localhost:3000/pet/100%2525']);
   });
 
-  it('processScalarType enforces @regexp (kept through compose finalize)', () => {
-    // Compose finalize strips @typescript/@example but keeps @regexp for runtime.
-    // (Gateway execute match/reject lives here, not in fusion-composition.)
+  it('processScalarType enforces @regexp on executable / subgraph schemas', () => {
+    // Lean SG strips `@regexp` for Apollo Router carry-over; subgraph and
+    // executable schemas keep it for processScalarType (here, not composition).
     const schema = buildSchema(/* GraphQL */ `
       directive @regexp(pattern: String!) on SCALAR
       scalar Code @regexp(pattern: "^[A-Z]{2}$")
