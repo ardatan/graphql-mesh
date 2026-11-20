@@ -2,7 +2,7 @@
   "name": "@e2e/auto-type-merging",
   "private": true,
   "devDependencies": {
-    "@graphql-hive/gateway": "^2.15.8",
+    "@graphql-hive/gateway": "^2.15.9",
     "graphql": "^16.14.0",
     "graphql-yoga": "^6.1.0"
   }
