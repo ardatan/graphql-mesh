@@ -65,6 +65,13 @@ type JsonSchemaHandler @md {
   Timeout for the HTTP request in milliseconds
   """
   timeout: Int
+
+  """
+  Opt-in JSON Schema title → GraphQL scalar map.
+  Pass a module path (e.g. `./fhir-scalar-map.ts`) that default-exports
+  `{ id: GraphQLID, … }`, or an inline map from a JS/TS Mesh config.
+  """
+  scalarMap: Any
 }
 
 enum JsonSchemaOperationType {

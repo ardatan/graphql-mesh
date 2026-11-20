@@ -13,7 +13,7 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { readFileOrUrl } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   loadNonExecutableGraphQLSchemaFromJSONSchemas,
   processDirectives,
@@ -71,10 +71,17 @@ export default class JsonSchemaHandler implements MeshHandler {
         assumeValid: true,
       });
     }
+    // YAML cannot hold GraphQLScalarType instances - allow `scalarMap: ./map.ts`.
+    const scalarMap = await loadFromModuleExportExpression(this.config.scalarMap, {
+      cwd: this.baseDir,
+      importFn: this.importFn,
+      defaultExportName: 'default',
+    });
     return this.schemaWithAnnotationsProxy.getWithSet(() => {
       this.log.info(`Generating GraphQL schema from JSON Schemas`);
       return loadNonExecutableGraphQLSchemaFromJSONSchemas(this.name, {
         ...this.config,
+        scalarMap,
         operations: this.config.operations as any,
         cwd: this.baseDir,
         fetch: this.fetchFn,

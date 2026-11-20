@@ -1,0 +1,41 @@
+sources:
+  - name: FHIR
+    handler:
+      jsonSchema:
+        # Handler already emits Connectors `@connect` for operations (v0 default).
+        # Follow-up fetch stays Mesh `@resolveTo` - no hand `@connect` in additionalTypeDefs.
+        endpoint: '{env.FHIR_BASE}'
+        # Title → GraphQL scalar (loaded from TS); `id`/`oid` → GraphQL ID.
+        scalarMap: ./fhir-scalar-map.ts
+        operations:
+          - type: Query
+            field: resourceById
+            method: GET
+            path: /{args.resourceType}/{args.id}?_format=application/json
+            responseSchema: ./fhir.schema.json#/definitions/ResourceList
+          - type: Query
+            field: resourceByName
+            method: GET
+            path: /{args.resourceType}/?name={args.name}?_format=application/json
+            responseSchema: ./fhir.schema.json#/definitions/Bundle
+          - type: Query
+            field: resourceByOtherResourceId
+            method: GET
+            path: /{args.resourceType}?subject={args.otherResourceType}/{args.otherResourceId}
+            responseSchema: ./fhir.schema.json#/definitions/Bundle
+
+additionalTypeDefs: |
+  extend type Reference {
+    resource: ResourceList @resolveTo(
+      sourceName: "FHIR",
+      sourceTypeName: "Query",
+      sourceFieldName: "resourceById",
+      sourceArgs: {
+        resourceType: "{root.reference|path_head}",
+        id: "{root.reference|path_rest}"
+      }
+    )
+  }
+
+documents:
+  - ./example-queries/*.graphql
