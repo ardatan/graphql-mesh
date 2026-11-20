@@ -621,8 +621,12 @@ export interface JsonSchemaHandler {
   timeout?: number;
   /**
    * Opt-in JSON Schema title → GraphQL scalar map.
-   * Pass a module path (e.g. `./fhir-scalar-map.ts`) that default-exports
-   * `{ id: GraphQLID, … }`, or an inline map from a JS/TS Mesh config.
+   * Prefer an inline YAML map of title → type name
+   * (`{ id: ID, oid: ID, date: Date, url: URL }`).
+   * Known names: String, ID, Int, Float, Boolean, Date, DateTime, Time,
+   * Timestamp, URL, UUID, JSON, BigInt, Byte, EmailAddress, File, Void.
+   * A module path (e.g. `./map.ts`) that default-exports scalar instances
+   * is still supported for custom scalars.
    */
   scalarMap?: any;
 }

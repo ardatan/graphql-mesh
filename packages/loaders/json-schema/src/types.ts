@@ -186,9 +186,13 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
    * with the target scalar validators before including an entry (e.g. FHIR
    * `date` is broader than `graphql-scalars` `Date`).
    *
+   * Values may be scalar instances (JS/TS config) or type-name strings for YAML
+   * (`ID`, `String`, `Date`, `DateTime`, `URL`, `UUID`, …).
+   *
    * @example { string: GraphQLString, id: GraphQLID, instant: GraphQLDateTime }
+   * @example YAML: `{ id: ID, oid: ID, date: Date }`
    */
-  scalarMap?: Record<string, GraphQLScalarType>;
+  scalarMap?: Record<string, GraphQLScalarType | string>;
   /**
    * Limit/rule for `@connect(selection:)` size and depth.
    *

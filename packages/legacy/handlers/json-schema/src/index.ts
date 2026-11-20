@@ -71,7 +71,8 @@ export default class JsonSchemaHandler implements MeshHandler {
         assumeValid: true,
       });
     }
-    // YAML cannot hold GraphQLScalarType instances - allow `scalarMap: ./map.ts`.
+    // YAML: `{ id: ID, date: Date }` (type-name strings). Optional module path
+    // still works for custom scalar instances (`scalarMap: ./map.ts`).
     const scalarMap = await loadFromModuleExportExpression(this.config.scalarMap, {
       cwd: this.baseDir,
       importFn: this.importFn,

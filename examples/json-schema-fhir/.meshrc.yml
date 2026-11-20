@@ -5,8 +5,10 @@ sources:
         # Handler already emits Connectors `@connect` for operations (v0 default).
         # Follow-up fetch stays Mesh `@resolveTo` - no hand `@connect` in additionalTypeDefs.
         endpoint: '{env.FHIR_BASE}'
-        # Title → GraphQL scalar (loaded from TS); `id`/`oid` → GraphQL ID.
-        scalarMap: ./fhir-scalar-map.ts
+        # Title → GraphQL scalar by type name (YAML-friendly).
+        scalarMap:
+          id: ID
+          oid: ID
         operations:
           - type: Query
             field: resourceById
