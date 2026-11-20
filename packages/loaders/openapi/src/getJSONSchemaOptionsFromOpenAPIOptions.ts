@@ -41,11 +41,16 @@ function cleanDescription(description?: string | null): string | undefined {
  * article titles: `Are_You_the_One%3F`). Opt those into Connect `|preEncoded`.
  * Ignore negative phrasing (`not URI-encoded`).
  */
-function isUriEncodedPathParam(paramObj: {
-  description?: string | null;
-  schema?: { description?: string | null };
-}): boolean {
-  const desc = `${paramObj.description ?? ''}\n${paramObj.schema?.description ?? ''}`;
+function isUriEncodedPathParam(
+  paramObj: OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject,
+): boolean {
+  const description = typeof paramObj.description === 'string' ? paramObj.description : '';
+  const schema =
+    'schema' in paramObj && paramObj.schema && typeof paramObj.schema === 'object'
+      ? (paramObj.schema as { description?: unknown })
+      : undefined;
+  const schemaDescription = typeof schema?.description === 'string' ? schema.description : '';
+  const desc = `${description}\n${schemaDescription}`;
   // Wiki: "It also should be URI-encoded, so that…"
   return /(?<!not\s)(?<!non-)(?:should\s+be\s+|must\s+be\s+|already\s+)?(?:URI|percent|pre)[\s-]*encoded/i.test(
     desc,
