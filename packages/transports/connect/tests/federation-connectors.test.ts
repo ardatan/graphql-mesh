@@ -597,9 +597,9 @@ describe('Federation Connectors HTTP / templates', () => {
     expect(urls).toEqual(['http://localhost:3000/pet/1%3Fadmin%3Dtrue']);
   });
 
-  it('does not double-encode already percent-encoded path segments (Wiki titles)', async () => {
-    // Wikimedia OpenAPI documents pre-encoded article titles (`Are_You_the_One%3F`).
-    // Naive encodeURIComponent would yield `%253F`; normalize to a single encode pass.
+  it('does not double-encode already percent-encoded path segments when |preEncoded', async () => {
+    // Opt-in only: Wiki OpenAPI stamps `|preEncoded` for URI-encoded article titles.
+    // Default Apollo encode would turn `%3F` into `%253F`.
     const urls: string[] = [];
     const sdl = /* GraphQL */ `
       ${CONNECTOR_DIRECTIVES}
@@ -609,7 +609,7 @@ describe('Federation Connectors HTTP / templates', () => {
 
       type Query {
         article(title: String!): String
-          @connect(source: "Wiki", http: { GET: "/page/{$args.title}" }, selection: "$")
+          @connect(source: "Wiki", http: { GET: "/page/{$args.title|preEncoded}" }, selection: "$")
       }
     `;
     const schema = processConnectDirectives(buildSchema(sdl), {
@@ -640,6 +640,38 @@ describe('Federation Connectors HTTP / templates', () => {
     });
     expect(raw.errors).toBeUndefined();
     expect(urls[0]).toBe('http://localhost:3000/page/Are_You_the_One%3F');
+  });
+
+  it('encodes literal percent sequences once without |preEncoded (Apollo default)', async () => {
+    // Raw `100%25` must become `100%2525` so upstream decodes back to `100%25`.
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "Pets", http: { baseURL: "http://localhost:3000" }) {
+        query: Query
+      }
+
+      type Query {
+        pet(petId: String!): String
+          @connect(source: "Pets", http: { GET: "/pet/{$args.petId}" }, selection: "$")
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return new Response('ok', { headers: { 'content-type': 'text/plain' } });
+      }) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          pet(petId: "100%25")
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(urls).toEqual(['http://localhost:3000/pet/100%2525']);
   });
 
   it('processScalarType enforces @regexp (kept through compose finalize)', () => {

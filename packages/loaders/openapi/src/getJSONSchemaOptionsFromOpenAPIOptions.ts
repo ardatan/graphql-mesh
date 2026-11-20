@@ -37,6 +37,22 @@ function cleanDescription(description?: string | null): string | undefined {
 }
 
 /**
+ * OpenAPI path params whose docs say the value is already URI-encoded (e.g. Wiki
+ * article titles: `Are_You_the_One%3F`). Opt those into Connect `|preEncoded`.
+ * Ignore negative phrasing (`not URI-encoded`).
+ */
+function isUriEncodedPathParam(paramObj: {
+  description?: string | null;
+  schema?: { description?: string | null };
+}): boolean {
+  const desc = `${paramObj.description ?? ''}\n${paramObj.schema?.description ?? ''}`;
+  // Wiki: "It also should be URI-encoded, so that…"
+  return /(?<!not\s)(?<!non-)(?:should\s+be\s+|must\s+be\s+|already\s+)?(?:URI|percent|pre)[\s-]*encoded/i.test(
+    desc,
+  );
+}
+
+/**
  * Pick a request body content type.
  * Prefer an explicit Content-Type header when it matches the spec.
  * Otherwise keep `application/json` unless `application/x-www-form-urlencoded`
@@ -769,10 +785,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             }
             break;
           case 'path': {
-            // If it is in the path, let JSON Schema handler put it
+            // If it is in the path, let JSON Schema handler put it.
+            // Wiki-style params document URI-encoded input (`Are_You_the_One%3F`) -
+            // stamp `|preEncoded` so Connect keeps valid `%XX` instead of `%253F`.
+            const preEncodedSuffix = isUriEncodedPathParam(paramObj) ? '|preEncoded' : '';
             operationConfig.path = operationConfig.path.replace(
               `{${paramObj.name}}`,
-              `{args.${argName}}`,
+              `{args.${argName}${preEncodedSuffix}}`,
             );
             break;
           }

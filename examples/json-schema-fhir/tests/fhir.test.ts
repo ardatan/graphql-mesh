@@ -32,4 +32,11 @@ describe('FHIR', () => {
     );
     expect(sdl).not.toMatch(/resource: ResourceList @connect\(/);
   });
+
+  it('scalarMap maps FHIR id/oid titles to GraphQL ID', () => {
+    const sdl = printSchemaWithDirectives(mesh.schema);
+    expect(sdl).toMatch(/\bid: ID\b/);
+    expect(sdl).not.toMatch(/^scalar id\b/m);
+    expect(sdl).not.toMatch(/\bid: id\b/);
+  });
 });

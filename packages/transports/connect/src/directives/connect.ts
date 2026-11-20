@@ -196,17 +196,39 @@ function shouldSkipPathEncode(path: string, skipEncode?: (path: string) => boole
   return /^(this|root)\._odataId\b/.test(path) || /^(this|root)\[['"]_odataId['"]\]/.test(path);
 }
 
+/** Mesh / Connectors path modifier: `{args.title|preEncoded}` / `{$args.title|preEncoded}`. */
+export const PATH_PRE_ENCODED_MODIFIER = 'preEncoded';
+
+/**
+ * Strip a trailing `|preEncoded` modifier from a template path expression.
+ * Used so OpenAPI params that document URI-encoded input can opt in without
+ * changing default Apollo-style `encodeURIComponent` for every interpolation.
+ */
+export function splitPathPreEncodedModifier(path: string): {
+  path: string;
+  allowPreEncoded: boolean;
+} {
+  const suffix = `|${PATH_PRE_ENCODED_MODIFIER}`;
+  if (path.endsWith(suffix)) {
+    return { path: path.slice(0, -suffix.length), allowPreEncoded: true };
+  }
+  return { path, allowPreEncoded: false };
+}
+
 /**
  * Percent-encode a path/query template expression value.
  *
- * Apollo always encodes expression results. Some OpenAPI contracts (e.g. Wiki
- * `Are_You_the_One%3F` article titles) document *pre-encoded* inputs - naive
- * `encodeURIComponent` would yield `%253F`. When the value round-trips as a
- * fully encoded URI component, keep it; otherwise encode (or decode-then-encode
- * once for mixed forms).
+ * Default (Apollo): always `encodeURIComponent`, so a raw `%25` stays literal
+ * data (`%2525` on the wire). Opt-in `allowPreEncoded` (Wiki article titles /
+ * `|preEncoded` path modifier): when the value already round-trips as a fully
+ * encoded URI component, keep it to avoid `%253F` double-encode; otherwise
+ * encode (or decode-then-encode once for mixed forms).
  */
-export function encodePathTemplateValue(value: string): string {
-  if (!/%[0-9A-Fa-f]{2}/.test(value)) {
+export function encodePathTemplateValue(
+  value: string,
+  options: { allowPreEncoded?: boolean } = {},
+): string {
+  if (!options.allowPreEncoded || !/%[0-9A-Fa-f]{2}/.test(value)) {
     return encodeURIComponent(value);
   }
   try {
@@ -247,7 +269,8 @@ function resolveTemplate(
   // Mesh `:default` after a path (e.g. `{$context.headers['x-port']:4001}`) is not Connectors
   // syntax; strip it for eval and apply when the looked-up value is empty.
   resolved = resolved.replace(/\{\$([^{}]+)\}/g, (full, expr: string) => {
-    const { path: exprPath, defaultValue } = splitMeshTemplateDefault(expr);
+    const { path: exprWithDefault, defaultValue } = splitMeshTemplateDefault(expr);
+    const { path: exprPath, allowPreEncoded } = splitPathPreEncodedModifier(exprWithDefault);
     if (!exprPath.includes('->') && !exprPath.includes('[')) {
       return full;
     }
@@ -269,14 +292,14 @@ function resolveTemplate(
         if (!options.encodeValues || shouldSkipPathEncode(exprPath, options.skipEncode)) {
           return defaultValue;
         }
-        return encodePathTemplateValue(defaultValue);
+        return encodePathTemplateValue(defaultValue, { allowPreEncoded });
       }
       return '';
     }
     if (!options.encodeValues || shouldSkipPathEncode(exprPath, options.skipEncode)) {
       return String(value);
     }
-    return encodePathTemplateValue(String(value));
+    return encodePathTemplateValue(String(value), { allowPreEncoded });
   });
   // Normalize remaining Connectors `{$args.x|base64}` / `{$context.headers['x-port']:4001}` to Mesh
   // `{args.x|base64}` / `{context.headers['x-port']:4001}` so stringInterpolator modifiers work.
@@ -294,20 +317,27 @@ function resolveTemplate(
     config: vars.config,
   };
   if (!options.encodeValues) {
-    const interpolated = stringInterpolator.parse(meshForm, interpolateArgs);
+    // Drop Mesh `|preEncoded` before interpolator (unknown modifier); encoding is off.
+    const withoutPreEncoded = meshForm.replace(
+      new RegExp(`\\|${PATH_PRE_ENCODED_MODIFIER}(?=[}:]|$)`, 'g'),
+      '',
+    );
+    const interpolated = stringInterpolator.parse(withoutPreEncoded, interpolateArgs);
     return interpolated == null ? '' : String(interpolated);
   }
   // Encode each `{expr}` replacement individually (not the whole URL).
   // Absolute `@odata.id` follow-ups keep `_odataId` as a raw URL segment; other
   // interpolations in the same template (e.g. `{$args.id}`) stay percent-encoded.
+  // `|preEncoded` opts into Wiki-style keep-if-already-encoded; default is Apollo encode.
   return meshForm.replace(/\{([^{}]+)\}/g, (_match, path: string) => {
-    const value = stringInterpolator.parse(`{${path}}`, interpolateArgs);
+    const { path: cleanPath, allowPreEncoded } = splitPathPreEncodedModifier(path);
+    const value = stringInterpolator.parse(`{${cleanPath}}`, interpolateArgs);
     if (value == null || value === '') {
       return '';
     }
-    return shouldSkipPathEncode(path, options.skipEncode)
+    return shouldSkipPathEncode(cleanPath, options.skipEncode)
       ? String(value)
-      : encodePathTemplateValue(String(value));
+      : encodePathTemplateValue(String(value), { allowPreEncoded });
   });
 }
 

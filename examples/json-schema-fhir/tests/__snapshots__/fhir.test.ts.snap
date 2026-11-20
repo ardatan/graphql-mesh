@@ -135,7 +135,10 @@ A financial tool for tracking value accrued for a particular purpose.  In the he
 type Account {
   """This is a Account resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -184,8 +187,6 @@ type Account {
   partOf: Reference
 }
 
-scalar id @regexp(subgraph: "FHIR", pattern: "^[A-Za-z0-9\\\\-\\\\.]{1,64}$") @typescript(subgraph: "FHIR", type: "string")
-
 """
 The metadata about a resource. This is content in the resource that is maintained by the infrastructure. Changes to the content might not always be associated with version changes to the resource.
 """
@@ -195,7 +196,10 @@ type Meta {
   May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension.
   """
   extension: [Extension]
-  versionId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  versionId: ID
   _versionId: Element
   lastUpdated: instant
   _lastUpdated: Element
@@ -243,7 +247,10 @@ type Extension {
   _valueDateTime: Element
   valueDecimal: decimal
   _valueDecimal: Element
-  valueId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  valueId: ID
   _valueId: Element
   valueInstant: instant
   _valueInstant: Element
@@ -251,7 +258,7 @@ type Extension {
   _valueInteger: Element
   valueMarkdown: markdown
   _valueMarkdown: Element
-  valueOid: oid
+  valueOid: ID
   _valueOid: Element
   valuePositiveInt: positiveInt
   _valuePositiveInt: Element
@@ -331,8 +338,6 @@ scalar instant @regexp(subgraph: "FHIR", pattern: "^([0-9]([0-9]([0-9][1-9]|[1-9
 scalar integer @regexp(subgraph: "FHIR", pattern: "^-?([0]|([1-9][0-9]*))$") @typescript(subgraph: "FHIR", type: "number")
 
 scalar markdown @regexp(subgraph: "FHIR", pattern: "^[ \\\\r\\\\n\\\\t\\\\S]+$") @typescript(subgraph: "FHIR", type: "string")
-
-scalar oid @regexp(subgraph: "FHIR", pattern: "^urn:oid:[0-2](\\\\.(0|[1-9][0-9]*))+$") @typescript(subgraph: "FHIR", type: "string")
 
 scalar positiveInt @regexp(subgraph: "FHIR", pattern: "^[1-9][0-9]*$") @typescript(subgraph: "FHIR", type: "number")
 
@@ -1161,7 +1166,10 @@ type Expression {
   extension: [Extension]
   description: string
   _description: Element
-  name: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  name: ID
   _name: Element
   language: Expression_language
   _language: Element
@@ -1427,7 +1435,10 @@ This resource allows for the definition of some activity to be performed, indepe
 type ActivityDefinition {
   """This is a ActivityDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -1623,7 +1634,10 @@ Actual or  potential/avoided event causing unintended physical injury resulting 
 type AdverseEvent {
   """This is a AdverseEvent resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -1739,7 +1753,10 @@ Risk of harmful or undesirable, physiological response which is unique to an ind
 type AllergyIntolerance {
   """This is a AllergyIntolerance resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -1876,7 +1893,10 @@ A booking of a healthcare event among patient(s), practitioner(s), related perso
 type Appointment {
   """This is a Appointment resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -2001,7 +2021,10 @@ A reply to an appointment request for a patient and/or practitioner(s), such as 
 type AppointmentResponse {
   """This is a AppointmentResponse resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -2046,7 +2069,10 @@ A record of an event made for purposes of maintaining a security log. Typical us
 type AuditEvent {
   """This is a AuditEvent resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -2269,7 +2295,10 @@ Basic is used for handling concepts not yet defined in FHIR, narrative-only reso
 type Basic {
   """This is a Basic resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -2307,7 +2336,10 @@ A resource that represents the data of a single raw artifact as digital content 
 type Binary {
   """This is a Binary resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -2327,7 +2359,10 @@ into another (possibly the same) biological entity.
 type BiologicallyDerivedProduct {
   """This is a BiologicallyDerivedProduct resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -2497,7 +2532,10 @@ Record details about an anatomical structure.  This resource may be used when a 
 type BodyStructure {
   """This is a BodyStructure resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -2539,7 +2577,10 @@ type BodyStructure {
 type Bundle {
   """This is a Bundle resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -2713,7 +2754,10 @@ A Capability Statement documents a set of capabilities (behaviors) of a FHIR Ser
 type CapabilityStatement {
   """This is a CapabilityStatement resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -3292,7 +3336,10 @@ Describes the intention of how one or more practitioners intend to deliver care 
 type CarePlan {
   """This is a CarePlan resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -3478,7 +3525,10 @@ The Care Team includes all the people and organizations who plan to participate 
 type CareTeam {
   """This is a CareTeam resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -3562,7 +3612,10 @@ Catalog entries are wrappers that contextualize items included in a catalog.
 type CatalogEntry {
   """This is a CatalogEntry resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -3646,7 +3699,10 @@ The resource ChargeItem describes the provision of healthcare provider products 
 type ChargeItem {
   """This is a ChargeItem resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -3753,7 +3809,10 @@ The ChargeItemDefinition resource provides the properties that apply to the (bil
 type ChargeItemDefinition {
   """This is a ChargeItemDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -3917,7 +3976,10 @@ A provider issued list of professional services and products which have been pro
 type Claim {
   """This is a Claim resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -4357,7 +4419,10 @@ This resource provides the adjudication details from the processing of a Claim r
 type ClaimResponse {
   """This is a ClaimResponse resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -4816,7 +4881,10 @@ A record of a clinical assessment performed to determine what problem(s) may aff
 type ClinicalImpression {
   """This is a ClinicalImpression resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -4935,7 +5003,10 @@ The CodeSystem resource is used to declare the existence of and describe a code 
 type CodeSystem {
   """This is a CodeSystem resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -5202,7 +5273,10 @@ An occurrence of information being transmitted; e.g. an alert that was sent to a
 type Communication {
   """This is a Communication resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -5317,7 +5391,10 @@ A request to convey information; e.g. the CDS system proposes that an alert be s
 type CommunicationRequest {
   """This is a CommunicationRequest resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -5426,7 +5503,10 @@ A compartment definition that defines how resources are accessed on a server.
 type CompartmentDefinition {
   """This is a CompartmentDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -5523,7 +5603,10 @@ A set of healthcare-related information that is assembled together into a single
 type Composition {
   """This is a Composition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -5700,7 +5783,10 @@ A statement of relationships from one set of concepts to one or more other conce
 type ConceptMap {
   """This is a ConceptMap resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -5941,7 +6027,10 @@ A clinical condition, problem, diagnosis, or other event, situation, issue, or c
 type Condition {
   """This is a Condition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -6068,7 +6157,10 @@ A record of a healthcare consumer’s  choices, which permits or denies identifi
 type Consent {
   """This is a Consent resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -6276,7 +6368,10 @@ Legally enforceable, formally recorded unilateral or bilateral directive i.e., a
 type Contract {
   """This is a Contract resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -6899,7 +6994,10 @@ Financial instrument which may be used to reimburse or pay for health care produ
 type Coverage {
   """This is a Coverage resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -7025,7 +7123,10 @@ The CoverageEligibilityRequest provides patient and insurance coverage informati
 type CoverageEligibilityRequest {
   """This is a CoverageEligibilityRequest resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -7196,7 +7297,10 @@ This resource provides eligibility and plan details from the processing of an Co
 type CoverageEligibilityResponse {
   """This is a CoverageEligibilityResponse resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -7396,7 +7500,10 @@ Indicates an actual or potential clinical issue with or between one or more acti
 type DetectedIssue {
   """This is a DetectedIssue resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -7508,7 +7615,10 @@ A type of a manufactured item that is used in the provision of healthcare withou
 type Device {
   """This is a Device resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -7736,7 +7846,10 @@ The characteristics, operational status and capabilities of a medical-related co
 type DeviceDefinition {
   """This is a DeviceDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -8030,7 +8143,10 @@ Describes a measurement, calculation or setting capability of a medical device.
 type DeviceMetric {
   """This is a DeviceMetric resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -8151,7 +8267,10 @@ Represents a request for a patient to employ a medical device. The device may be
 type DeviceRequest {
   """This is a DeviceRequest resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -8266,7 +8385,10 @@ A record of a device being used by a patient where the record is the result of a
 type DeviceUseStatement {
   """This is a DeviceUseStatement resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -8329,7 +8451,10 @@ The findings and interpretation of diagnostic  tests performed on patients, grou
 type DiagnosticReport {
   """This is a DiagnosticReport resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -8428,7 +8553,10 @@ A collection of documents compiled for a purpose together with metadata that app
 type DocumentManifest {
   """This is a DocumentManifest resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -8503,7 +8631,10 @@ A reference to a document of any kind for any purpose. Provides metadata about t
 type DocumentReference {
   """This is a DocumentReference resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -8650,7 +8781,10 @@ The EffectEvidenceSynthesis resource describes the difference in an outcome betw
 type EffectEvidenceSynthesis {
   """This is a EffectEvidenceSynthesis resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -8914,7 +9048,10 @@ An interaction between a patient and healthcare provider(s) for the purpose of p
 type Encounter {
   """This is a Encounter resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -9128,7 +9265,10 @@ The technical details of an endpoint that can be used for electronic services, s
 type Endpoint {
   """This is a Endpoint resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -9188,7 +9328,10 @@ This resource provides the insurance enrollment details to the insurer regarding
 type EnrollmentRequest {
   """This is a EnrollmentRequest resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -9227,7 +9370,10 @@ This resource provides enrollment and plan details from the processing of an Enr
 type EnrollmentResponse {
   """This is a EnrollmentResponse resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -9277,7 +9423,10 @@ An association between a patient and an organization / healthcare provider(s) du
 type EpisodeOfCare {
   """This is a EpisodeOfCare resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -9379,7 +9528,10 @@ The EventDefinition resource provides a reusable description of when a particula
 type EventDefinition {
   """This is a EventDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -9485,7 +9637,10 @@ The Evidence resource describes the conditional state (population and any exposu
 type Evidence {
   """This is a Evidence resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -9594,7 +9749,10 @@ The EvidenceVariable resource describes a "PICO" element that knowledge (evidenc
 type EvidenceVariable {
   """This is a EvidenceVariable resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -9763,7 +9921,10 @@ enum EvidenceVariable_Characteristic_groupMeasure {
 type ExampleScenario {
   """This is a ExampleScenario resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -10033,7 +10194,10 @@ This resource provides: the claim details; adjudication details from the process
 type ExplanationOfBenefit {
   """This is a ExplanationOfBenefit resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -10819,7 +10983,10 @@ Significant health conditions for a person related to the patient relevant in th
 type FamilyMemberHistory {
   """This is a FamilyMemberHistory resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -10952,7 +11119,10 @@ Prospective warnings of potential issues when providing care to the patient.
 type Flag {
   """This is a Flag resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -10996,7 +11166,10 @@ Describes the intended objective(s) for a patient, group or organization care, f
 type Goal {
   """This is a Goal resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -11114,7 +11287,10 @@ A formal computable definition of a graph of resources - that is, a coherent set
 type GraphDefinition {
   """This is a GraphDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -11276,7 +11452,10 @@ Represents a defined collection of entities that may be discussed or acted upon 
 type Group {
   """This is a Group resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -11388,7 +11567,10 @@ A guidance response is the formal response to a guidance request, including any 
 type GuidanceResponse {
   """This is a GuidanceResponse resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -11458,7 +11640,10 @@ scalar GuidanceResponse_moduleCanonical @regexp(subgraph: "FHIR", pattern: "^\\\
 type HealthcareService {
   """This is a HealthcareService resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -11622,7 +11807,10 @@ Representation of the content produced in a DICOM imaging study. A study compris
 type ImagingStudy {
   """This is a ImagingStudy resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -11707,7 +11895,10 @@ type ImagingStudy_Series {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  uid: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  uid: ID
   _uid: Element
   number: unsignedInt
   _number: Element
@@ -11768,7 +11959,10 @@ type ImagingStudy_Instance {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  uid: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  uid: ID
   _uid: Element
   sopClass: Coding!
   number: unsignedInt
@@ -11783,7 +11977,10 @@ Describes the event of a patient being administered a vaccine or a record of an 
 type Immunization {
   """This is a Immunization resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -11979,7 +12176,10 @@ Describes a comparison of an immunization event against published recommendation
 type ImmunizationEvaluation {
   """This is a ImmunizationEvaluation resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -12043,7 +12243,10 @@ A patient's point-in-time set of recommendations (i.e. forecasting) according to
 type ImmunizationRecommendation {
   """This is a ImmunizationRecommendation resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -12157,7 +12360,10 @@ A set of rules of how a particular interoperability or standards problem is solv
 type ImplementationGuide {
   """This is a ImplementationGuide resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -12210,7 +12416,10 @@ type ImplementationGuide {
   jurisdiction: [CodeableConcept]
   copyright: markdown
   _copyright: Element
-  packageId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  packageId: ID
   _packageId: Element
   license: ImplementationGuide_license
   _license: Element
@@ -12625,7 +12834,10 @@ type ImplementationGuide_DependsOn {
   """
   modifierExtension: [Extension]
   uri: canonical!
-  packageId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  packageId: ID
   _packageId: Element
   version: string
   _version: Element
@@ -12735,7 +12947,10 @@ type ImplementationGuide_Resource {
   _exampleBoolean: Element
   exampleCanonical: ImplementationGuide_Resource_exampleCanonical
   _exampleCanonical: Element
-  groupingId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  groupingId: ID
   _groupingId: Element
 }
 
@@ -12957,7 +13172,10 @@ Details of a Health Insurance product/plan provided by an organization.
 type InsurancePlan {
   """This is a InsurancePlan resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -13227,7 +13445,10 @@ Invoice containing collected ChargeItems from an Account with calculated individ
 type Invoice {
   """This is a Invoice resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -13368,7 +13589,10 @@ The Library resource is a general-purpose container for knowledge asset definiti
 type Library {
   """This is a Library resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -13481,7 +13705,10 @@ Identifies two or more records (resource instances) that refer to the same real-
 type Linkage {
   """This is a Linkage resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -13544,7 +13771,10 @@ enum Linkage_Item_type {
 type List {
   """This is a List resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -13625,7 +13855,10 @@ Details and position information for a physical place where services are provide
 type Location {
   """This is a Location resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -13748,7 +13981,10 @@ type Location_HoursOfOperation {
 type Measure {
   """This is a Measure resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -13991,7 +14227,10 @@ The MeasureReport resource contains the results of the calculation of a measure;
 type MeasureReport {
   """This is a MeasureReport resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -14189,7 +14428,10 @@ A photo, video, or audio recording acquired or used in healthcare. The actual co
 type Media {
   """This is a Media resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -14262,7 +14504,10 @@ This resource is primarily used for the identification and definition of a medic
 type Medication {
   """This is a Medication resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -14345,7 +14590,10 @@ Describes the event of a patient consuming or otherwise being administered a med
 type MedicationAdministration {
   """This is a MedicationAdministration resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -14472,7 +14720,10 @@ Indicates that a medication product is to be or has been dispensed for a named p
 type MedicationDispense {
   """This is a MedicationDispense resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -14595,7 +14846,10 @@ type MedicationDispense_Substitution {
 type MedicationKnowledge {
   """This is a MedicationKnowledge resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -14986,7 +15240,10 @@ An order or request for both supply of the medication and the instructions for a
 type MedicationRequest {
   """This is a MedicationRequest resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -15167,7 +15424,10 @@ The primary difference between a medication statement and a medication administr
 type MedicationStatement {
   """This is a MedicationStatement resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -15239,7 +15499,10 @@ Detailed definition of a medicinal product, typically for uses other than direct
 type MedicinalProduct {
   """This is a MedicinalProduct resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -15452,7 +15715,10 @@ type MedicinalProduct_SpecialDesignation {
 type MedicinalProductAuthorization {
   """This is a MedicinalProductAuthorization resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -15553,7 +15819,10 @@ The clinical particulars - indications, contraindications etc. of a medicinal pr
 type MedicinalProductContraindication {
   """This is a MedicinalProductContraindication resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -15636,7 +15905,10 @@ type Population {
 type MedicinalProductIndication {
   """This is a MedicinalProductIndication resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -15699,7 +15971,10 @@ type MedicinalProductIndication_OtherTherapy {
 type MedicinalProductIngredient {
   """This is a MedicinalProductIngredient resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -15826,7 +16101,10 @@ The interactions of the medicinal product with other medicinal products, or othe
 type MedicinalProductInteraction {
   """This is a MedicinalProductInteraction resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -15882,7 +16160,10 @@ type MedicinalProductInteraction_Interactant {
 type MedicinalProductManufactured {
   """This is a MedicinalProductManufactured resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -15921,7 +16202,10 @@ type MedicinalProductManufactured {
 type MedicinalProductPackaged {
   """This is a MedicinalProductPackaged resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -16021,7 +16305,10 @@ A pharmaceutical product described in terms of its composition and dose form.
 type MedicinalProductPharmaceutical {
   """This is a MedicinalProductPharmaceutical resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -16149,7 +16436,10 @@ type MedicinalProductPharmaceutical_WithdrawalPeriod {
 type MedicinalProductUndesirableEffect {
   """This is a MedicinalProductUndesirableEffect resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -16185,7 +16475,10 @@ Defines the characteristics of a message that can be shared between systems, inc
 type MessageDefinition {
   """This is a MessageDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -16341,7 +16634,10 @@ The header for a message exchange that is either requesting or responding to an 
 type MessageHeader {
   """This is a MessageHeader resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -16447,7 +16743,10 @@ type MessageHeader_Response {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  identifier: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  identifier: ID
   _identifier: Element
   code: MessageHeader_Response_code
   _code: Element
@@ -16467,7 +16766,10 @@ enum MessageHeader_Response_code {
 type MolecularSequence {
   """This is a MolecularSequence resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -16812,7 +17114,10 @@ A curated namespace that issues unique symbols within that namespace for the ide
 type NamingSystem {
   """This is a NamingSystem resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -16919,7 +17224,10 @@ A request to supply a diet, formula feeding (enteral) or oral nutritional supple
 type NutritionOrder {
   """This is a NutritionOrder resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -17156,7 +17464,10 @@ Measurements and simple assertions made about a patient, device or other subject
 type Observation {
   """This is a Observation resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -17339,7 +17650,10 @@ Set of definitional characteristics for a kind of observation or measurement pro
 type ObservationDefinition {
   """This is a ObservationDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -17478,7 +17792,10 @@ A formal computable definition of an operation (on the RESTful interface) or a n
 type OperationDefinition {
   """This is a OperationDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -17709,7 +18026,10 @@ A collection of error, warning, or information messages that result from a syste
 type OperationOutcome {
   """This is a OperationOutcome resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -17827,7 +18147,10 @@ A formally or informally recognized grouping of people or organizations formed f
 type Organization {
   """This is a Organization resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -17907,7 +18230,10 @@ Defines an affiliation/assotiation/relationship between 2 distinct oganizations,
 type OrganizationAffiliation {
   """This is a OrganizationAffiliation resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -17967,7 +18293,10 @@ This resource is a non-persisted resource used to pass information into and back
 type Parameters {
   """This is a Parameters resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -18009,7 +18338,10 @@ type Parameters_Parameter {
   _valueDateTime: Element
   valueDecimal: decimal
   _valueDecimal: Element
-  valueId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  valueId: ID
   _valueId: Element
   valueInstant: instant
   _valueInstant: Element
@@ -18017,7 +18349,7 @@ type Parameters_Parameter {
   _valueInteger: Element
   valueMarkdown: markdown
   _valueMarkdown: Element
-  valueOid: oid
+  valueOid: ID
   _valueOid: Element
   valuePositiveInt: positiveInt
   _valuePositiveInt: Element
@@ -18075,7 +18407,10 @@ Demographics and other administrative information about an individual or animal 
 type Patient {
   """This is a Patient resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -18253,7 +18588,10 @@ This resource provides the status of the payment for goods and services rendered
 type PaymentNotice {
   """This is a PaymentNotice resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -18298,7 +18636,10 @@ This resource provides the details including amount of a payment and allocates t
 type PaymentReconciliation {
   """This is a PaymentReconciliation resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -18418,7 +18759,10 @@ Demographics and administrative information about a person independent of a spec
 type Person {
   """This is a Person resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -18505,7 +18849,10 @@ This resource allows for the definition of various types of plans as a sharable,
 type PlanDefinition {
   """This is a PlanDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -18703,7 +19050,7 @@ type PlanDefinition_Action {
   """
   Identifies goals that this action supports. The reference must be to a goal element defined within this plan definition.
   """
-  goalId: [id]
+  goalId: [ID]
   """Extensions for goalId"""
   _goalId: [Element]
   subjectCodeableConcept: CodeableConcept
@@ -18799,7 +19146,10 @@ type PlanDefinition_RelatedAction {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  actionId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  actionId: ID
   _actionId: Element
   relationship: PlanDefinition_RelatedAction_relationship
   _relationship: Element
@@ -18916,7 +19266,10 @@ A person who is directly or indirectly involved in the provisioning of healthcar
 type Practitioner {
   """This is a Practitioner resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -19006,7 +19359,10 @@ A specific set of Roles/Locations/specialties/services that a practitioner may p
 type PractitionerRole {
   """This is a PractitionerRole resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -19119,7 +19475,10 @@ An action that is or was performed on or for a patient. This can be a physical i
 type Procedure {
   """This is a Procedure resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -19271,7 +19630,10 @@ Provenance of a resource is a record that describes entities and processes invol
 type Provenance {
   """This is a Provenance resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -19388,7 +19750,10 @@ A structured set of questions intended to guide the collection of answers from e
 type Questionnaire {
   """This is a Questionnaire resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -19693,7 +20058,10 @@ A structured set of questions and their answers. The questions are ordered and g
 type QuestionnaireResponse {
   """This is a QuestionnaireResponse resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -19813,7 +20181,10 @@ Information about a person that is involved in the care for a patient, but who i
 type RelatedPerson {
   """This is a RelatedPerson resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -19900,7 +20271,10 @@ A group of related requests that can be used to capture intended activities that
 type RequestGroup {
   """This is a RequestGroup resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -20073,7 +20447,10 @@ type RequestGroup_RelatedAction {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  actionId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  actionId: ID
   _actionId: Element
   relationship: code
   _relationship: Element
@@ -20089,7 +20466,10 @@ The ResearchDefinition resource describes the conditional state (population and 
 type ResearchDefinition {
   """This is a ResearchDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -20207,7 +20587,10 @@ The ResearchElementDefinition resource describes a "PICO" element that knowledge
 type ResearchElementDefinition {
   """This is a ResearchElementDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -20426,7 +20809,10 @@ A process where a researcher or organization plans and then executes a series of
 type ResearchStudy {
   """This is a ResearchStudy resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -20563,7 +20949,10 @@ A physical entity which is the primary unit of operational and/or administrative
 type ResearchSubject {
   """This is a ResearchSubject resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -20604,7 +20993,10 @@ An assessment of the likely outcome(s) for a patient or other subject as well as
 type RiskAssessment {
   """This is a RiskAssessment resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -20694,7 +21086,10 @@ The RiskEvidenceSynthesis resource describes the likelihood of an outcome in a p
 type RiskEvidenceSynthesis {
   """This is a RiskEvidenceSynthesis resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -20924,7 +21319,10 @@ A container for slots of time that may be available for booking appointments.
 type Schedule {
   """This is a Schedule resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -20974,7 +21372,10 @@ A search parameter that defines a named search item that can be used to search/f
 type SearchParameter {
   """This is a SearchParameter resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -21147,7 +21548,10 @@ A record of a request for service such as diagnostic investigations, treatments,
 type ServiceRequest {
   """This is a ServiceRequest resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -21277,7 +21681,10 @@ A slot of time on a schedule that may be available for booking appointments.
 type Slot {
   """This is a Slot resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -21330,7 +21737,10 @@ type Slot {
 type Specimen {
   """This is a Specimen resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -21465,7 +21875,10 @@ type Specimen_Container {
 type SpecimenDefinition {
   """This is a SpecimenDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -21613,7 +22026,10 @@ A definition of a FHIR structure. This resource is used to describe the underlyi
 type StructureDefinition {
   """This is a StructureDefinition resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -21746,7 +22162,10 @@ type StructureDefinition_Mapping {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  identity: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  identity: ID
   _identity: Element
   uri: uri
   _uri: Element
@@ -22149,7 +22568,7 @@ type ElementDefinition {
   """
   A reference to an invariant that may make additional statements about the cardinality or value in the instance.
   """
-  condition: [id]
+  condition: [ID]
   """Extensions for condition"""
   _condition: [Element]
   """
@@ -22460,7 +22879,10 @@ type ElementDefinition_Example {
   _valueDateTime: Element
   valueDecimal: decimal
   _valueDecimal: Element
-  valueId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  valueId: ID
   _valueId: Element
   valueInstant: instant
   _valueInstant: Element
@@ -22468,7 +22890,7 @@ type ElementDefinition_Example {
   _valueInteger: Element
   valueMarkdown: markdown
   _valueMarkdown: Element
-  valueOid: oid
+  valueOid: ID
   _valueOid: Element
   valuePositiveInt: positiveInt
   _valuePositiveInt: Element
@@ -22564,7 +22986,10 @@ type ElementDefinition_Constraint {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  key: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  key: ID
   _key: Element
   requirements: string
   _requirements: Element
@@ -22634,7 +23059,10 @@ type ElementDefinition_Mapping {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  identity: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  identity: ID
   _identity: Element
   language: code
   _language: Element
@@ -22669,7 +23097,10 @@ A Map of relationships between 2 structures that can be used to transform data.
 type StructureMap {
   """This is a StructureMap resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -22787,9 +23218,15 @@ type StructureMap_Group {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  name: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  name: ID
   _name: Element
-  extends: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  extends: ID
   _extends: Element
   typeMode: StructureMap_Group_typeMode
   _typeMode: Element
@@ -22827,7 +23264,10 @@ type StructureMap_Input2 {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  name: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  name: ID
   _name: Element
   type: string
   _type: Element
@@ -22858,7 +23298,10 @@ type StructureMap_Rule {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  name: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  name: ID
   _name: Element
   """Source inputs to the mapping."""
   source: [StructureMap_Source]!
@@ -22887,7 +23330,10 @@ type StructureMap_Source {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  context: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  context: ID
   _context: Element
   min: integer
   _min: Element
@@ -22969,7 +23415,10 @@ type StructureMap_Source {
   _element: Element
   listMode: StructureMap_Source_listMode
   _listMode: Element
-  variable: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  variable: ID
   _variable: Element
   condition: string
   _condition: Element
@@ -23039,19 +23488,28 @@ type StructureMap_Target {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  context: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  context: ID
   _context: Element
   contextType: StructureMap_Target_contextType
   _contextType: Element
   element: string
   _element: Element
-  variable: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  variable: ID
   _variable: Element
   """If field is a list, how to manage the list."""
   listMode: [StructureMap_Target_listMode_items]
   """Extensions for listMode"""
   _listMode: [Element]
-  listRuleId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  listRuleId: ID
   _listRuleId: Element
   transform: StructureMap_Target_transform
   _transform: Element
@@ -23108,7 +23566,10 @@ type StructureMap_Parameter {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  valueId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  valueId: ID
   _valueId: Element
   valueString: string
   _valueString: Element
@@ -23136,7 +23597,10 @@ type StructureMap_Dependent {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  name: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  name: ID
   _name: Element
   """Variable to pass to the rule or group."""
   variable: [string]
@@ -23150,7 +23614,10 @@ The subscription resource is used to define a push-based subscription from a ser
 type Subscription_ {
   """This is a Subscription resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -23228,7 +23695,10 @@ enum Subscription_Channel_type {
 type Substance {
   """This is a Substance resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -23311,7 +23781,10 @@ Nucleic acids are defined by three distinct elements: the base, sugar and linkag
 type SubstanceNucleicAcid {
   """This is a SubstanceNucleicAcid resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -23424,7 +23897,10 @@ type SubstanceNucleicAcid_Sugar {
 type SubstancePolymer {
   """This is a SubstancePolymer resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -23630,7 +24106,10 @@ A SubstanceProtein is defined as a single unit of a linear amino acid sequence, 
 type SubstanceProtein {
   """This is a SubstanceProtein resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -23700,7 +24179,10 @@ type SubstanceProtein_Subunit {
 type SubstanceReferenceInformation {
   """This is a SubstanceReferenceInformation resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -23827,7 +24309,10 @@ Source material shall capture information on the taxonomic and anatomical origin
 type SubstanceSourceMaterial {
   """This is a SubstanceSourceMaterial resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -24021,7 +24506,10 @@ The detailed description of a substance, typically at a level beyond what is use
 type SubstanceSpecification {
   """This is a SubstanceSpecification resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -24353,7 +24841,10 @@ scalar SubstanceSpecification_Relationship_amountString @regexp(subgraph: "FHIR"
 type SupplyDelivery {
   """This is a SupplyDelivery resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -24425,7 +24916,10 @@ A record of a request for a medication, substance or device used in the healthca
 type SupplyRequest {
   """This is a SupplyRequest resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -24509,7 +25003,10 @@ scalar SupplyRequest_occurrenceDateTime @regexp(subgraph: "FHIR", pattern: "^([0
 type Task {
   """This is a Task resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -24653,7 +25150,10 @@ type Task_Input2 {
   _valueDateTime: Element
   valueDecimal: decimal
   _valueDecimal: Element
-  valueId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  valueId: ID
   _valueId: Element
   valueInstant: instant
   _valueInstant: Element
@@ -24661,7 +25161,7 @@ type Task_Input2 {
   _valueInteger: Element
   valueMarkdown: markdown
   _valueMarkdown: Element
-  valueOid: oid
+  valueOid: ID
   _valueOid: Element
   valuePositiveInt: positiveInt
   _valuePositiveInt: Element
@@ -24739,7 +25239,10 @@ type Task_Output {
   _valueDateTime: Element
   valueDecimal: decimal
   _valueDecimal: Element
-  valueId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  valueId: ID
   _valueId: Element
   valueInstant: instant
   _valueInstant: Element
@@ -24747,7 +25250,7 @@ type Task_Output {
   _valueInteger: Element
   valueMarkdown: markdown
   _valueMarkdown: Element
-  valueOid: oid
+  valueOid: ID
   _valueOid: Element
   valuePositiveInt: positiveInt
   _valuePositiveInt: Element
@@ -24802,7 +25305,10 @@ A TerminologyCapabilities resource documents a set of capabilities (behaviors) o
 type TerminologyCapabilities {
   """This is a TerminologyCapabilities resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -25116,7 +25622,10 @@ A summary of information based on the results of executing a TestScript.
 type TestReport {
   """This is a TestReport resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -25385,7 +25894,10 @@ A structured set of tests against a FHIR server or client implementation to dete
 type TestScript {
   """This is a TestScript resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -25637,7 +26149,10 @@ type TestScript_Variable {
   _hint: Element
   path: string
   _path: Element
-  sourceId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  sourceId: ID
   _sourceId: Element
 }
 
@@ -25717,13 +26232,25 @@ type TestScript_Operation {
   _params: Element
   """Header elements would be used to set HTTP headers."""
   requestHeader: [TestScript_RequestHeader]
-  requestId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  requestId: ID
   _requestId: Element
-  responseId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  responseId: ID
   _responseId: Element
-  sourceId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  sourceId: ID
   _sourceId: Element
-  targetId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  targetId: ID
   _targetId: Element
   url: string
   _url: Element
@@ -25814,9 +26341,15 @@ type TestScript_Assert {
   _response: Element
   responseCode: string
   _responseCode: Element
-  sourceId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  sourceId: ID
   _sourceId: Element
-  validateProfileId: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  validateProfileId: ID
   _validateProfileId: Element
   value: string
   _value: Element
@@ -25963,7 +26496,10 @@ A ValueSet resource instance specifies a set of codes drawn from one or more cod
 type ValueSet {
   """This is a ValueSet resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -26275,7 +26811,10 @@ Describes validation requirements, source(s), status and dates for one or more e
 type VerificationResult {
   """This is a VerificationResult resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
@@ -26412,7 +26951,10 @@ An authorization for the provision of glasses and/or contact lenses to a patient
 type VisionPrescription {
   """This is a VisionPrescription resource"""
   resourceType: String!
-  id: id
+  """
+  Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.)  Ids are case-insensitive.
+  """
+  id: ID
   meta: Meta
   implicitRules: uri
   _implicitRules: Element
