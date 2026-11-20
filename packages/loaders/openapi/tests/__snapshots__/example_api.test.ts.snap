@@ -6,6 +6,10 @@ exports[`example_api should generate the schema correctly 1`] = `
   mutation: Mutation
 }
 
+directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
+
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
+
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
@@ -272,7 +276,7 @@ type user {
   employerId: String!
   """The hobbies of this user"""
   hobbies: [String]!
-  status: user_status
+  status: code
   nomenclature: query_getUsers_items_nomenclature
   """Allows to fetch the user's employer company."""
   employerCompany: company @connect(source: "example_api", http: {GET: "/companies/{$this.employerId}"}, selection: """
@@ -320,11 +324,7 @@ type address {
   city: String
 }
 
-enum user_status {
-  staff
-  contractor
-  alumni
-}
+scalar code @regexp(subgraph: "example_api", pattern: "^[^\\\\s]+(\\\\s[^\\\\s]+)*$") @typescript(subgraph: "example_api", type: "string")
 
 type query_getUsers_items_nomenclature {
   suborder: String
@@ -805,7 +805,7 @@ input user_Input {
   employerId: String!
   """The hobbies of this user"""
   hobbies: [String]!
-  status: user_status
+  status: code
   nomenclature: query_getUsers_items_nomenclature_Input
 }
 

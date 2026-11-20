@@ -2101,11 +2101,9 @@ describe('Federation Connectors composition', () => {
       input SourceHTTP {
         baseURL: String!
       }
-      scalar Code
-        @regexp(subgraph: "codes", pattern: "^[A-Z]{2}$")
+      scalar Code @regexp(subgraph: "codes", pattern: "^[A-Z]{2}$")
       type Query {
-        code: Code
-          @connect(source: "api", http: { GET: "/code" }, selection: "$")
+        code: Code @connect(source: "api", http: { GET: "/code" }, selection: "$")
       }
     `;
     const subgraph = importMeshDirectives(
@@ -2113,10 +2111,7 @@ describe('Federation Connectors composition', () => {
         /* GraphQL */ `
           schema
             @link(url: "https://specs.apollo.dev/link/v1.0")
-            @link(
-              url: "https://specs.apollo.dev/federation/v2.6"
-              import: ["@composeDirective"]
-            )
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
             @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
             @source(name: "api", http: { baseURL: "https://api.example.com" }) {
             query: Query

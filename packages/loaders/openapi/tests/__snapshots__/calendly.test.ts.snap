@@ -6,11 +6,11 @@ exports[`Calendly should generate the correct schema 1`] = `
   mutation: Mutation
 }
 
+directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
+
 directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
-
-directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
 
 directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
@@ -1116,7 +1116,7 @@ type Invitee {
   last_name: String
   """The invitee’s name (in human-readable format)"""
   name: String!
-  status: Invitee_status!
+  status: code!
   """
   A collection of the invitee's responses to questions on the event booking confirmation form
   """
@@ -1168,13 +1168,7 @@ A field whose value conforms to the standard internet email address format as sp
 """
 scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
-"""
-Indicates if the invitee is "active" or "canceled"
-"""
-enum Invitee_status {
-  active
-  canceled
-}
+scalar code @regexp(subgraph: "calendly", pattern: "^[^\\\\s]+(\\\\s[^\\\\s]+)*$") @typescript(subgraph: "calendly", type: "string")
 
 """A response to a question on a booking page form"""
 type Invitee_Question_and_Answer {
@@ -1409,7 +1403,7 @@ type Event {
   uri: URL!
   """The event name"""
   name: String
-  status: Event_status!
+  status: code!
   """
   The moment the event was scheduled to start in UTC time (e.g. "2020-01-02T03:04:05.678123Z").
   """
@@ -1435,14 +1429,6 @@ type Event {
   """Additional people added to an event by an invitee"""
   event_guests: [Guest]!
   cancellation: Cancellation
-}
-
-"""
-Indicates if the event is "active" or "canceled"
-"""
-enum Event_status {
-  active
-  canceled
 }
 
 """The polymorphic base type for an event location that Calendly supports"""
@@ -1490,7 +1476,7 @@ Details about an Event that will take place using a Google Meet / Hangout confer
 """
 type Google_Conference {
   type: GoogleConference_type!
-  status: GoogleConference_status!
+  status: code!
   """Google conference meeting url"""
   join_url: URL
 }
@@ -1499,18 +1485,10 @@ enum GoogleConference_type @typescript(subgraph: "calendly", type: "\\"google_co
   google_conference
 }
 
-"""Indicates the current status of the Google conference"""
-enum GoogleConference_status {
-  initiated
-  processing
-  pushed
-  failed
-}
-
 """Meeting will take place in a Zoom conference"""
 type Zoom_Conference {
   type: ZoomConference_type!
-  status: ZoomConference_status!
+  status: code!
   """Zoom meeting url"""
   join_url: URL
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data
@@ -1518,14 +1496,6 @@ type Zoom_Conference {
 
 enum ZoomConference_type @typescript(subgraph: "calendly", type: "\\"zoom_conference\\"") @example(subgraph: "calendly", value: "zoom_conference") {
   zoom_conference
-}
-
-"""Indicates the current status of the Zoom conference"""
-enum ZoomConference_status {
-  initiated
-  processing
-  pushed
-  failed
 }
 
 """The conference metadata supplied by Zoom"""
@@ -1562,7 +1532,7 @@ Details about an Event that will take place using a GotoMeeting conference
 """
 type GoToMeeting_Conference {
   type: GotoMeetingConference_type!
-  status: GotoMeetingConference_status!
+  status: code!
   """GoToMeeting conference meeting url"""
   join_url: URL
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_data
@@ -1570,14 +1540,6 @@ type GoToMeeting_Conference {
 
 enum GotoMeetingConference_type @typescript(subgraph: "calendly", type: "\\"gotomeeting\\"") @example(subgraph: "calendly", value: "gotomeeting") {
   gotomeeting
-}
-
-"""Indicates the current status of the GoToMeeting conference"""
-enum GotoMeetingConference_status {
-  initiated
-  processing
-  pushed
-  failed
 }
 
 """The conference metadata supplied by GoToMeeting"""
@@ -1590,7 +1552,7 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_data {
 """Meeting will take place in a Microsoft Teams conference"""
 type Microsoft_Teams_Conference {
   type: MicrosoftTeamsConference_type!
-  status: MicrosoftTeamsConference_status!
+  status: code!
   """Microsoft Teams meeting url"""
   join_url: URL
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data
@@ -1598,14 +1560,6 @@ type Microsoft_Teams_Conference {
 
 enum MicrosoftTeamsConference_type @typescript(subgraph: "calendly", type: "\\"microsoft_teams_conference\\"") @example(subgraph: "calendly", value: "microsoft_teams_conference") {
   microsoft_teams_conference
-}
-
-"""Indicates the current status of the Microsoft Teams conference"""
-enum MicrosoftTeamsConference_status {
-  initiated
-  processing
-  pushed
-  failed
 }
 
 """The conference metadata supplied by Microsoft Teams"""
@@ -1646,7 +1600,7 @@ enum InviteeSpecifiedLocation_type @typescript(subgraph: "calendly", type: "\\"a
 """Details about an Event that will take place using a WebEx conference"""
 type WebEx_Conference {
   type: WebExConference_type!
-  status: WebExConference_status!
+  status: code!
   """WebEx conference meeting url"""
   join_url: URL
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data
@@ -1654,14 +1608,6 @@ type WebEx_Conference {
 
 enum WebExConference_type @typescript(subgraph: "calendly", type: "\\"webex_conference\\"") @example(subgraph: "calendly", value: "webex_conference") {
   webex_conference
-}
-
-"""Indicates the current status of the WebEx conference"""
-enum WebExConference_status {
-  initiated
-  processing
-  pushed
-  failed
 }
 
 """The conference metadata supplied by GoToMeeting"""
@@ -1948,7 +1894,7 @@ type Organization_Invitation {
   The email address of the person who was invited to join the organization
   """
   email: EmailAddress!
-  status: OrganizationInvitation_status!
+  status: code!
   """
   The moment the invitation was created (e.g. “2020-01-02T03:04:05.678123Z")
   """
@@ -1965,13 +1911,6 @@ type Organization_Invitation {
   When the invitation is accepted, a reference to the user who accepted the invitation
   """
   user: URL
-}
-
-"""The status of the invitation ("pending", "accepted", or "declined")"""
-enum OrganizationInvitation_status {
-  pending
-  accepted
-  declined
 }
 
 """
@@ -2157,19 +2096,13 @@ type Routing_Form {
   organization: URL!
   """The routing form name (in human-readable format)."""
   name: String!
-  status: RoutingForm_status!
+  status: code!
   """An ordered collection of Routing Form non-deleted questions."""
   questions: [Routing_Form_Question]!
   """The moment the routing form was created."""
   created_at: DateTime!
   """The moment when the routing form was last updated."""
   updated_at: DateTime!
-}
-
-"""Indicates if the form is in "draft" or "published" status."""
-enum RoutingForm_status {
-  draft
-  published
 }
 
 """Routing form questions."""

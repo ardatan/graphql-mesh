@@ -171,6 +171,45 @@ describe('healJSONSchema', () => {
     expect((activity.id as JSONSchemaObject).title).toBe('id');
   });
 
+  it('does not collapse OpenAPI id/date/code onto FHIR titles (keeps format)', async () => {
+    // Bare prop names must not trigger shared FHIR titles - otherwise
+    // `format: uuid` becomes plain `id` String and Language `code` enums collapse.
+    const schema: JSONSchema = {
+      type: 'object',
+      properties: {
+        company: {
+          type: 'object',
+          title: 'company',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+            },
+            date: {
+              type: 'string',
+              format: 'date',
+            },
+            code: {
+              type: 'string',
+              enum: ['aa', 'ab', 'en'],
+            },
+          },
+        },
+      },
+    };
+    const healed = (await healJSONSchema(schema)) as JSONSchemaObject;
+    const company = (healed.properties.company as JSONSchemaObject).properties;
+    const id = company.id as JSONSchemaObject;
+    expect(id.format).toBe('uuid');
+    expect(id.title).not.toBe('id');
+    const date = company.date as JSONSchemaObject;
+    expect(date.format).toBe('date');
+    expect(date.title).not.toBe('date');
+    const code = company.code as JSONSchemaObject;
+    expect(code.enum).toEqual(['aa', 'ab', 'en']);
+    expect(code.title).not.toBe('code');
+  });
+
   it('does not stamp stable titles on boolean+pattern props (FHIR deceasedBoolean)', async () => {
     // FHIR Patient.deceasedBoolean has type boolean + pattern '^true|false$'.
     // A stable title would skip boolean cleanup and yield a regexp scalar.

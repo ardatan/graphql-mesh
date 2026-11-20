@@ -6,6 +6,10 @@ exports[`openAPI loader: government_social_work should generate the schema corre
   mutation: Mutation
 }
 
+directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
+
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
+
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
@@ -1490,20 +1494,10 @@ type getAssessmentTypes_200_response {
 warnings and errors from backend systems.  Message is for debug only, app should lookup localized message from local based on id
 """
 type Error {
-  id: Error_id
+  id: String
   """message for debug only, not to be displayed"""
   message: String
   level: Error_level
-}
-
-"""server-generated error code"""
-enum Error_id {
-  NO_RESULTS_FOUND
-  SAVE_FAILED
-  ADD_FAILED
-  UPLOAD_FAILED
-  SCAN_FAILED
-  DELETE_FAILED
 }
 
 """message level"""
@@ -1724,7 +1718,7 @@ type File_ {
 type ClientRelationship {
   """Participant's Id"""
   participantId: String
-  status: ClientRelationship_status
+  status: code
   role: Roles
   """
   Participant's person Id - an object should exist in the Person entity for this participant
@@ -1735,11 +1729,7 @@ type ClientRelationship {
   relationshipType: ClientRelationshipType
 }
 
-"""Realtionship active/deleted status"""
-enum ClientRelationship_status {
-  Active
-  Deleted
-}
+scalar code @regexp(subgraph: "example_api", pattern: "^[^\\\\s]+(\\\\s[^\\\\s]+)*$") @typescript(subgraph: "example_api", type: "string")
 
 """Roles Lookup Table."""
 type Roles {
@@ -1831,19 +1821,13 @@ type ClientContact {
   emailId: String
   phoneType: ClientContact_phoneType
   phoneNumber: String
-  status: ClientContact_status
+  status: code
 }
 
 enum ClientContact_phoneType {
   Cell
   Home
   Work
-}
-
-"""Client contact status"""
-enum ClientContact_status {
-  Active
-  Deleted
 }
 
 union getClientSchools_response = getClientSchools_200_response | Error
@@ -1864,13 +1848,7 @@ type ClientSchool {
   city: String
   state: String
   zip: String
-  status: ClientSchool_status
-}
-
-"""Client school status"""
-enum ClientSchool_status {
-  Active
-  Deleted
+  status: code
 }
 
 union getClientPhysicians_response = getClientPhysicians_200_response | Error
@@ -1894,13 +1872,7 @@ type ClientPhysician {
   zip: String
   emailId: String
   phone: String
-  status: ClientPhysician_status
-}
-
-"""Client Physician status"""
-enum ClientPhysician_status {
-  Active
-  Deleted
+  status: code
 }
 
 union getExperts_response = getExperts_200_response | Error
@@ -1968,7 +1940,7 @@ type getMedia_200_response {
 
 """Media Entity."""
 type Media {
-  status: Media_status
+  status: code
   """Date Media was created."""
   date: String
   """Media Id."""
@@ -1979,12 +1951,6 @@ type Media {
   mediaType: MediaTypeName
   """tagged client's client id"""
   taggedClients: [String]
-}
-
-"""Status"""
-enum Media_status {
-  Submitted
-  Deleted
 }
 
 type MediaTypeName {
@@ -2009,7 +1975,7 @@ type CaseAssessment {
   assessmentId: String
   """Worker's signature upon submitting the assessment"""
   assessmentSignature: String
-  status: CaseAssessment_status
+  status: code
   """id of the worker that performed this case assessment"""
   worker: String
   """case id"""
@@ -2017,12 +1983,6 @@ type CaseAssessment {
   assessmentType: [AssessmentType]
   """tagged client's client id"""
   taggedClients: [String]
-}
-
-"""Case assesement status"""
-enum CaseAssessment_status {
-  Submitted
-  Deleted
 }
 
 """Assessment Type"""
@@ -2085,7 +2045,7 @@ input CaseAssessment_Input {
   assessmentId: String
   """Worker's signature upon submitting the assessment"""
   assessmentSignature: String
-  status: CaseAssessment_status
+  status: code
   """id of the worker that performed this case assessment"""
   worker: String
   """case id"""
@@ -2156,7 +2116,7 @@ type getCaseNotes_200_response {
 }
 
 type Notes {
-  status: Notes_status
+  status: code
   noteId: String
   date: String
   note: String
@@ -2165,12 +2125,6 @@ type Notes {
   """case id of the case where this notes belongs"""
   case: String
   notesType: NotesType
-}
-
-"""Status"""
-enum Notes_status {
-  Submitted
-  Deleted
 }
 
 union getRelationships_response = getRelationships_200_response | Error
@@ -3032,7 +2986,7 @@ input Case_Input {
 input ClientRelationship_Input {
   """Participant's Id"""
   participantId: String
-  status: ClientRelationship_status
+  status: code
   role: Roles_Input
   """
   Participant's person Id - an object should exist in the Person entity for this participant
@@ -3092,7 +3046,7 @@ input ClientContact_Input {
   emailId: String
   phoneType: ClientContact_phoneType
   phoneNumber: String
-  status: ClientContact_status
+  status: code
 }
 
 union updateClientContact_response = updateClientContact_200_response | Error
@@ -3121,7 +3075,7 @@ input ClientSchool_Input {
   city: String
   state: String
   zip: String
-  status: ClientSchool_status
+  status: code
 }
 
 union updateClientSchool_response = updateClientSchool_200_response | Error
@@ -3153,7 +3107,7 @@ input ClientPhysician_Input {
   zip: String
   emailId: String
   phone: String
-  status: ClientPhysician_status
+  status: code
 }
 
 union updateClientPhysician_response = updateClientPhysician_200_response | Error
@@ -3191,7 +3145,7 @@ type addMedia_200_response {
 
 """Media Entity."""
 input Media_Input {
-  status: Media_status
+  status: code
   """Date Media was created."""
   date: String
   """Media Id."""
@@ -3227,7 +3181,7 @@ type addCaseNotes_200_response {
 }
 
 input Notes_Input {
-  status: Notes_status
+  status: code
   noteId: String
   date: String
   note: String

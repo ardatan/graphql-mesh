@@ -308,8 +308,7 @@ describe('Federation Connectors error shape', () => {
         query: Query
       }
       type Query {
-        products: [Product]
-          @connect(source: "ecomm", http: { GET: "/products" }, selection: "$")
+        products: [Product] @connect(source: "ecomm", http: { GET: "/products" }, selection: "$")
       }
       type Product {
         id: ID

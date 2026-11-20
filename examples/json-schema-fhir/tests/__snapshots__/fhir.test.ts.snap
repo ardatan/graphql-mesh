@@ -1092,13 +1092,11 @@ type DataRequirement_CodeFilter {
   searchParam: string
   _searchParam: Element
   valueSet: canonical
-  code: [JSON]
+  """
+  The codes for the code filter. If values are given, the filter will return only those data items for which the code-valued attribute specified by the path has a value that is one of the specified codes. If codes are specified in addition to a value set, the filter returns items matching a code in the value set or one of the specified codes.
+  """
+  code: [Coding]
 }
-
-"""
-The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 """
 Describes a required data item for evaluation in terms of the type of data, and optional code or date-based filters of the data.
@@ -1376,6 +1374,11 @@ type Narrative {
   """xhtml - escaped html (see specfication)"""
   div: JSON!
 }
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 """
 A financial tool for tracking value accrued for a particular purpose.  In the healthcare field, used to track charges for a patient, cost centers, etc.
@@ -3035,10 +3038,23 @@ type CapabilityStatement_Interaction {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  code: code
+  code: CapabilityStatement_Interaction_code
   _code: Element
   documentation: markdown
   _documentation: Element
+}
+
+"""Coded identifier of the operation, supported by the system resource."""
+enum CapabilityStatement_Interaction_code {
+  read
+  vread
+  update
+  patch
+  delete
+  history_instance
+  history_type
+  create
+  search_type
 }
 
 """
@@ -3149,10 +3165,18 @@ type CapabilityStatement_Interaction1 {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  code: code
+  code: CapabilityStatement_Interaction1_code
   _code: Element
   documentation: markdown
   _documentation: Element
+}
+
+"""A coded identifier of the operation, supported by the system."""
+enum CapabilityStatement_Interaction1_code {
+  transaction
+  batch
+  search_system
+  history_system
 }
 
 """
@@ -5449,12 +5473,21 @@ type CompartmentDefinition {
   useContext: [UsageContext]
   purpose: markdown
   _purpose: Element
-  code: code
+  code: CompartmentDefinition_code
   _code: Element
   search: boolean
   _search: Element
   """Information about how a resource is related to the compartment."""
   resource: [CompartmentDefinition_Resource]
+}
+
+"""Which compartment this definition describes."""
+enum CompartmentDefinition_code {
+  Patient
+  Encounter
+  RelatedPerson
+  Practitioner
+  Device
 }
 
 """
@@ -5614,7 +5647,10 @@ type Composition_Event {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  code: [JSON]
+  """
+  This list of codes represents the main clinical acts, such as a colonoscopy or an appendectomy, being documented. In some cases, the event is inherent in the typeCode, such as a "History and Physical Report" in which the procedure being documented is necessarily a "History and Physical" act.
+  """
+  code: [CodeableConcept]
   period: Period
   """
   The description and/or reference of the event(s) being documented. For example, this could be used to document such a colonoscopy or an appendectomy.
@@ -6018,7 +6054,10 @@ type Condition_Evidence {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  code: [JSON]
+  """
+  A manifestation or symptom that led to the recording of this condition.
+  """
+  code: [CodeableConcept]
   """Links to other relevant information, including pathology reports."""
   detail: [Reference]
 }
@@ -6163,7 +6202,8 @@ type Consent_Provision {
   The class of information covered by this rule. The type can be a FHIR resource type, a profile on a type, or a CDA document, or some other type that indicates what sort of information the consent relates to.
   """
   class: [Coding]
-  code: [JSON]
+  """If this code is found in an instance, then the rule applies."""
+  code: [CodeableConcept]
   dataPeriod: Period
   """
   The resources controlled by this rule if specific resources are referenced.
@@ -6607,7 +6647,10 @@ type Contract_Context {
   """
   modifierExtension: [Extension]
   reference: Reference
-  code: [JSON]
+  """
+  Coded representation of the context generally or of the Referenced entity, such as the asset holder type or location.
+  """
+  code: [CodeableConcept]
   text: string
   _text: Element
 }
@@ -7430,7 +7473,8 @@ type DetectedIssue_Evidence {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  code: [JSON]
+  """A manifestation that led to the recording of this detected issue."""
+  code: [CodeableConcept]
   """
   Links to resources that constitute evidence for the detected issue such as a GuidanceResponse or MeasureReport.
   """
@@ -8535,9 +8579,17 @@ type DocumentReference_RelatesTo {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  code: code
+  code: DocumentReference_RelatesTo_code
   _code: Element
   target: Reference!
+}
+
+"""The type of relationship that this document has with anther document."""
+enum DocumentReference_RelatesTo_code {
+  replaces
+  transforms
+  signs
+  appends
 }
 
 """
@@ -12765,10 +12817,26 @@ type ImplementationGuide_Parameter {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  code: code
+  code: ImplementationGuide_Parameter_code
   _code: Element
   value: string
   _value: Element
+}
+
+"""
+apply | path-resource | path-pages | path-tx-cache | expansion-parameter | rule-broken-links | generate-xml | generate-json | generate-turtle | html-template.
+"""
+enum ImplementationGuide_Parameter_code {
+  apply
+  path_resource
+  path_pages
+  path_tx_cache
+  expansion_parameter
+  rule_broken_links
+  generate_xml
+  generate_json
+  generate_turtle
+  html_template
 }
 
 """
@@ -14042,7 +14110,8 @@ type MeasureReport_Stratifier {
   Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
   """
   modifierExtension: [Extension]
-  code: [JSON]
+  """The meaning of this stratifier, as defined in the measure definition."""
+  code: [CodeableConcept]
   """
   This element contains the results for a single stratum within the stratifier. For example, when stratifying on administrative gender, there will be four strata, one for each possible gender value.
   """
@@ -16380,9 +16449,18 @@ type MessageHeader_Response {
   modifierExtension: [Extension]
   identifier: id
   _identifier: Element
-  code: code
+  code: MessageHeader_Response_code
   _code: Element
   details: Reference
+}
+
+"""
+Code that identifies the type of response to the message - whether it was successful or not, and whether it should be resent or not.
+"""
+enum MessageHeader_Response_code {
+  ok
+  transient_error
+  fatal_error
 }
 
 """Raw data describing a biological sequence."""
@@ -17675,7 +17753,7 @@ type OperationOutcome_Issue {
   modifierExtension: [Extension]
   severity: OperationOutcome_Issue_severity
   _severity: Element
-  code: code
+  code: OperationOutcome_Issue_code
   _code: Element
   details: CodeableConcept
   diagnostics: string
@@ -17704,6 +17782,43 @@ enum OperationOutcome_Issue_severity {
   error
   warning
   information
+}
+
+"""
+Describes the type of the issue. The system that creates an OperationOutcome SHALL choose the most applicable code from the IssueType value set, and may additional provide its own code for the error in the details element.
+"""
+enum OperationOutcome_Issue_code {
+  invalid
+  structure
+  required
+  value
+  invariant
+  security
+  login
+  unknown
+  expired
+  forbidden
+  suppressed
+  processing
+  not_supported
+  duplicate
+  multiple_matches
+  not_found
+  deleted
+  too_long
+  code_invalid
+  extension
+  too_costly
+  business_rule
+  conflict
+  transient
+  lock_error
+  no_store
+  exception
+  timeout
+  incomplete
+  throttled
+  informational
 }
 
 """
@@ -17824,7 +17939,10 @@ type OrganizationAffiliation {
   Health insurance provider network in which the participatingOrganization provides the role's services (if defined) at the indicated locations (if defined).
   """
   network: [Reference]
-  code: [JSON]
+  """
+  Definition of the role the participatingOrganization plays in the association.
+  """
+  code: [CodeableConcept]
   """
   Specific specialty of the participatingOrganization in the context of the role.
   """
@@ -18572,7 +18690,10 @@ type PlanDefinition_Action {
   _textEquivalent: Element
   priority: code
   _priority: Element
-  code: [JSON]
+  """
+  A code that provides meaning for the action or action group. For example, a section may have a LOINC code for the section of a documentation template.
+  """
+  code: [CodeableConcept]
   """A description of why this action is necessary or appropriate."""
   reason: [CodeableConcept]
   """
@@ -18913,7 +19034,10 @@ type PractitionerRole {
   period: Period
   practitioner: Reference
   organization: Reference
-  code: [JSON]
+  """
+  Roles which this practitioner is authorized to perform for the organization.
+  """
+  code: [CodeableConcept]
   """Specific specialty of the practitioner."""
   specialty: [CodeableConcept]
   """The location(s) at which this practitioner provides care."""
@@ -19336,7 +19460,10 @@ type Questionnaire {
   lastReviewDate: date
   _lastReviewDate: Element
   effectivePeriod: Period
-  code: [JSON]
+  """
+  An identifier for this question or group of questions in a particular terminology such as LOINC.
+  """
+  code: [Coding]
   """
   A particular question, question grouping or display text that is part of the questionnaire.
   """
@@ -19362,7 +19489,10 @@ type Questionnaire_Item {
   _linkId: Element
   definition: uri
   _definition: Element
-  code: [JSON]
+  """
+  A terminology code that corresponds to this group or question (e.g. a code from LOINC, which defines many questions and answers).
+  """
+  code: [Coding]
   prefix: string
   _prefix: Element
   text: string
@@ -19867,7 +19997,10 @@ type RequestGroup_Action {
   _textEquivalent: Element
   priority: code
   _priority: Element
-  code: [JSON]
+  """
+  A code that provides meaning for the action or action group. For example, a section may have a LOINC code for a section of a documentation template.
+  """
+  code: [CodeableConcept]
   """
   Didactic or other informational resources associated with the action that can be provided to the CDS recipient. Information resources can include inline text commentary and links to web resources.
   """
@@ -21715,7 +21848,10 @@ type ElementDefinition {
   _sliceIsConstraining: Element
   label: string
   _label: Element
-  code: [JSON]
+  """
+  A code that has the same meaning as the element in a particular terminology.
+  """
+  code: [Coding]
   slicing: ElementDefinition_Slicing
   short: string
   _short: Element
@@ -23924,7 +24060,8 @@ type SubstanceSpecification {
   property: [SubstanceSpecification_Property]
   referenceInformation: Reference
   structure: SubstanceSpecification_Structure
-  code: [JSON]
+  """Codes associated with the substance."""
+  code: [SubstanceSpecification_Code]
   """Names applicable to this substance."""
   name: [SubstanceSpecification_Name]
   """
@@ -24092,6 +24229,31 @@ type SubstanceSpecification_Representation {
   representation: string
   _representation: Element
   attachment: Attachment
+}
+
+"""
+The detailed description of a substance, typically at a level beyond what is used for prescribing.
+"""
+type SubstanceSpecification_Code {
+  id: string
+  """
+  May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension.
+  """
+  extension: [Extension]
+  """
+  May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+  
+  Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
+  """
+  modifierExtension: [Extension]
+  code: CodeableConcept
+  status: CodeableConcept
+  statusDate: dateTime
+  _statusDate: Element
+  comment: string
+  _comment: Element
+  """Supporting literature."""
+  source: [Reference]
 }
 
 """

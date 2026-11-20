@@ -26495,6 +26495,20 @@ type Mutation {
   bulkEnvelopeStatus {
     batchId
     batchSize
+    bulkEnvelopes {
+      bulkRecipientRow
+      bulkStatus
+      email
+      envelopeId
+      envelopeUri
+      errorDetails {
+        errorCode
+        message
+      }
+      name
+      submittedDateTime
+      transactionId
+    }
     bulkEnvelopesBatchUri
     endPosition
     failed
@@ -26514,6 +26528,10 @@ type Mutation {
   }
   listCustomFieldUpdateResults {
     configurationType
+    errorDetails {
+      errorCode
+      message
+    }
     fieldId
     listItems
     name
@@ -26522,18 +26540,45 @@ type Mutation {
     value
   }
   lockInformation {
+    errorDetails {
+      errorCode
+      message
+    }
     lockDurationInSeconds
     lockToken
     lockType
     lockedByApp
+    lockedByUser {
+      activationAccessCode
+      email
+      errorDetails {
+        errorCode
+        message
+      }
+      loginStatus
+      sendActivationEmail
+      uri
+      userId
+      userName
+      userStatus
+      userType
+    }
     lockedUntilDateTime
     useScratchPad
   }
   recipientUpdateResults {
+    errorDetails {
+      errorCode
+      message
+    }
     recipientId
   }
   textCustomFieldUpdateResults {
     configurationType
+    errorDetails {
+      errorCode
+      message
+    }
     fieldId
     name
     required
@@ -33519,6 +33564,20 @@ type Mutation {
   bulkEnvelopeStatus {
     batchId
     batchSize
+    bulkEnvelopes {
+      bulkRecipientRow
+      bulkStatus
+      email
+      envelopeId
+      envelopeUri
+      errorDetails {
+        errorCode
+        message
+      }
+      name
+      submittedDateTime
+      transactionId
+    }
     bulkEnvelopesBatchUri
     endPosition
     failed
@@ -33538,6 +33597,10 @@ type Mutation {
   }
   listCustomFieldUpdateResults {
     configurationType
+    errorDetails {
+      errorCode
+      message
+    }
     fieldId
     listItems
     name
@@ -33546,18 +33609,45 @@ type Mutation {
     value
   }
   lockInformation {
+    errorDetails {
+      errorCode
+      message
+    }
     lockDurationInSeconds
     lockToken
     lockType
     lockedByApp
+    lockedByUser {
+      activationAccessCode
+      email
+      errorDetails {
+        errorCode
+        message
+      }
+      loginStatus
+      sendActivationEmail
+      uri
+      userId
+      userName
+      userStatus
+      userType
+    }
     lockedUntilDateTime
     useScratchPad
   }
   recipientUpdateResults {
+    errorDetails {
+      errorCode
+      message
+    }
     recipientId
   }
   textCustomFieldUpdateResults {
     configurationType
+    errorDetails {
+      errorCode
+      message
+    }
     fieldId
     name
     required

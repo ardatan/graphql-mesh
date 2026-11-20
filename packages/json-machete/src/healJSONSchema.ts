@@ -77,6 +77,32 @@ function sharedFhirPrimitiveTitle(propName: string, prop: JSONSchemaObject): str
     }
   }
   if (FHIR_PRIMITIVE_DEFINITION_NAMES.has(propName)) {
+    // OpenAPI fields often reuse names like `id`/`date`/`uuid` with a JSON Schema
+    // format. Sharing the FHIR title would wipe `format` and break UUID/Date scalars.
+    if (typeof prop.format === 'string' && prop.format.length > 0) {
+      return undefined;
+    }
+    // OpenAPI Language.code-style enums must not collapse onto shared FHIR `code`.
+    // Keep FHIR `code` when it carries the FHIR code pattern (or use $ref / status).
+    if (
+      propName === 'code' &&
+      Array.isArray(prop.enum) &&
+      prop.enum.length > 0 &&
+      prop.pattern !== FHIR_CODE_PATTERN
+    ) {
+      return undefined;
+    }
+    // Plain `{ type: string }` OpenAPI fields named `code`/`date`/`uri` - no FHIR
+    // constraint signal. Do not strip descriptions onto a shared FHIR title.
+    if (
+      !prop.pattern &&
+      prop.const == null &&
+      !Array.isArray(prop.enum) &&
+      prop.maxLength == null &&
+      prop.minLength == null
+    ) {
+      return undefined;
+    }
     return propName;
   }
   // FHIR publication/resource `status` is typically `code` in the meta-model;
@@ -267,12 +293,18 @@ export async function healJSONSchema(
                   pattern = FHIR_CODE_PATTERN;
                 }
                 const type = typeof prop.type === 'string' ? prop.type : 'string';
+                // Keep JSON Schema formats (uuid/date/uri) so OpenAPI $ref primitives
+                // still map to UUID/Date/URL instead of plain String.
+                const format = typeof prop.format === 'string' ? prop.format : undefined;
                 for (const key of Object.keys(prop)) {
                   delete (prop as Record<string, unknown>)[key];
                 }
                 prop.type = type;
                 if (pattern) {
                   prop.pattern = pattern;
+                }
+                if (format) {
+                  prop.format = format;
                 }
                 prop.title = sharedTitle;
                 debugLogFn?.(
