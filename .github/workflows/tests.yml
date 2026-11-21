@@ -267,6 +267,10 @@ jobs:
 
   apollo-federation-compatibility:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+      pull-requests: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
@@ -293,14 +297,48 @@ jobs:
           failOnWarning: true
           failOnRequired: true
           debug: true
-      # The Apollo action uploads compatibility-results without retention-days;
-      # overwrite with a short retention to avoid storage growth.
+      # Apollo uploads compatibility-results with default retention. overwrite:true
+      # still 409s against that upload, so delete first then re-upload short-lived.
+      # Skip on fork PRs (read-only token). Only replace when this attempt produced results.md.
+      - name: Remove default-retention compatibility-results
+        if: >-
+          ${{
+            !cancelled()
+            && (github.event_name != 'pull_request'
+              || github.event.pull_request.head.repo.full_name == github.repository)
+            && hashFiles('examples/v1-next/apollo-federation-compatibility/results.md') != ''
+          }}
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const artifacts = await github.paginate(
+              github.rest.actions.listWorkflowRunArtifacts,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: context.runId,
+                per_page: 100,
+              },
+            );
+            for (const artifact of artifacts) {
+              if (artifact.name !== 'compatibility-results') continue;
+              await github.rest.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: artifact.id,
+              });
+            }
       - name: Upload compatibility results
-        if: ${{ !cancelled() }}
+        if: >-
+          ${{
+            !cancelled()
+            && (github.event_name != 'pull_request'
+              || github.event.pull_request.head.repo.full_name == github.repository)
+            && hashFiles('examples/v1-next/apollo-federation-compatibility/results.md') != ''
+          }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v5
         with:
           name: compatibility-results
           path: examples/v1-next/apollo-federation-compatibility/results.md
           retention-days: 5
-          overwrite: true
           if-no-files-found: ignore
