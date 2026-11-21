@@ -1,0 +1,62 @@
+name: Cleanup Actions Storage
+
+on:
+  schedule:
+    # Weekly on Sunday at 04:00 UTC
+    - cron: '0 4 * * 0'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+jobs:
+  delete-non-master-caches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Actions caches not on master
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const keepRef = 'refs/heads/master';
+            let kept = 0;
+            let deleted = 0;
+            let failed = 0;
+
+            const caches = await github.paginate(
+              github.rest.actions.getActionsCacheList,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page: 100,
+              },
+            );
+
+            core.info(`Found ${caches.length} cache(s)`);
+
+            for (const cache of caches) {
+              const label = `id=${cache.id} key=${cache.key} ref=${cache.ref}`;
+              if (cache.ref === keepRef) {
+                kept++;
+                core.info(`Keeping ${label}`);
+                continue;
+              }
+
+              try {
+                await github.rest.actions.deleteActionsCacheById({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  cache_id: cache.id,
+                });
+                deleted++;
+                core.info(`Deleted ${label}`);
+              } catch (error) {
+                failed++;
+                core.warning(
+                  `Failed to delete ${label}: ${error instanceof Error ? error.message : String(error)}`,
+                );
+              }
+            }
+
+            core.info(
+              `Summary: total=${caches.length} kept=${kept} deleted=${deleted} failed=${failed}`,
+            );

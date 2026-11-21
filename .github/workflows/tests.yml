@@ -293,3 +293,14 @@ jobs:
           failOnWarning: true
           failOnRequired: true
           debug: true
+      # The Apollo action uploads compatibility-results without retention-days;
+      # overwrite with a short retention to avoid storage growth.
+      - name: Upload compatibility results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v5
+        with:
+          name: compatibility-results
+          path: examples/v1-next/apollo-federation-compatibility/results.md
+          retention-days: 5
+          overwrite: true
+          if-no-files-found: ignore
