@@ -1,5 +1,835 @@
 # @graphql-mesh/fusion-composition
 
+## 0.12.0
+
+### Minor Changes
+
+- [#9807](https://github.com/ardatan/graphql-mesh/pull/9807)
+  [`c472c2f`](https://github.com/ardatan/graphql-mesh/commit/c472c2f0f57655cefcafcd82ec448500895b982c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Breaking (0.x): REST subgraphs emit Federation
+  Connectors `connect/v0.4` (`@source` / `@connect`) instead of Mesh `@transport` /
+  `@httpOperation`. `transport-connect` executes `@connect` for Hive Gateway
+  (path/queryParams/selection, form-urlencoded bodies, Mesh interpolators including `|base64`, Hive
+  qs options). Mesh composition skips Mesh `@transport` and stitching `@source` for Connectors
+  subgraphs.
+
+- [#9745](https://github.com/ardatan/graphql-mesh/pull/9745)
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)
+  Thanks [@ardatan](https://github.com/ardatan)! - See `.changeset/node22-yoga6-shared.md` for the
+  shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub
+  replaced by disposables, promise helpers).
+
+  ## Motivation
+
+  Same ambiguous type-only filter globs as legacy filter-schema . Compose should not silently drop
+  the wrong types.
+
+  ## What changed ()
+  - `createFilterTransform` rejects type-only globs like `!User`; use `Type.!User`
+
+  ## How to migrate
+
+  Update fusion/composition filters the same way as `@graphql-mesh/transform-filter-schema`.
+
+  #### Example
+
+  ```ts
+  import { createFilterTransform } from '@graphql-mesh/fusion-composition'
+
+  createFilterTransform({
+    filters: [
+      // before: '!User'
+      'Type.!User',
+      'Query.user.!pk'
+    ]
+  })
+  ```
+
+- [#9842](https://github.com/ardatan/graphql-mesh/pull/9842)
+  [`f9e5ab0`](https://github.com/ardatan/graphql-mesh/commit/f9e5ab0ef31d21d8973b61e8f25417e763a1fca7)
+  Thanks [@ardatan](https://github.com/ardatan)! - Neo4j subgraphs stay on **`@neo4j/graphql`
+  directives** (`@node`, `@relationship`, `@cypher`, `@alias`, `@plural`, …) with Mesh
+  **`subgraph:`** on those directives (no `@introspection`). The loader can introspect **or** take
+  author `typeDefs`. Rename / naming-convention keep DB identity via `@node(labels:)` /
+  `@plural(value:)` / `@alias(property:)` instead of Mesh `@source` / `@meshSource`.
+
+  ### What changed
+  - **Loader** (`@omnigraph/neo4j`): optional `typeDefs`; stamps `subgraph:` when missing; public
+    option TSDoc with real `@default`s.
+  - **Transport**: subgraph-scoped model extract (ownership, connection/aggregate shape, spatial
+    retention, empty-iface scrub, implements conformance); strips Mesh-only args before
+    `@neo4j/graphql`; closes only self-created drivers on dispose.
+  - **Composition**: Neo4j skips Mesh source stamps; neo4j-identity helpers for labels / plural /
+    property alias / `$argName` rewrite.
+  - **Legacy handler**: `source:` goes through the same `typeDefs` path.
+
+  ### Migration
+  1. Recompose Neo4j subgraphs after upgrade.
+  2. Drop Mesh `@introspection` from hand-written SDL; use `@node(subgraph:)` (loader stamps if
+     omitted).
+  3. After rename transforms, expect `@node(labels:)` / `@plural(value:)` / `@alias(property:)` --
+     not `@source` / `@meshSource`.
+  4. Runtime package remains `@graphql-mesh/transport-neo4j`.
+
+- [#9745](https://github.com/ardatan/graphql-mesh/pull/9745)
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)
+  Thanks [@ardatan](https://github.com/ardatan)! - ## Motivation
+
+  Mesh still had its own logging, pubsub, and teardown model next to Yoga 6 / Hive Gateway:
+
+  - Mesh `DefaultLogger` and Mesh PubSub / `HivePubSub` re-exports beside `@graphql-hive/logger` and
+    `@graphql-hive/pubsub`
+  - Shutdown via `pubsub.publish('destroy')`, with handlers and caches subscribing to that topic
+    (easy to miss, leaks pools/clients/timers)
+  - Node 18/20 engines and loose `graphql` peers that drift from Yoga 6 / GraphQL Tools
+
+  This major aligns Mesh with that shared platform in one release.
+
+  ## Design decisions
+  1. **Node `>=22.18.0`**: matches current Yoga / Hive / WHATWG engines.
+  2. **GraphQL peer `^16 || ^17`**: what Yoga 6 and `@graphql-tools/utils` / `schema` / `merge` /
+     `executor` support (not `*`).
+  3. **Request path prefers context**: use Yoga/Gateway `context.log` / `context.pubsub` when
+     present. Constructor `log` / `pubsub` stay only where init-time wiring is required (for example
+     live-query subscribe, New Relic agent missing).
+  4. **Teardown via Explicit Resource Management**: Mesh tore down with `destroy` pubsub. Now
+     components implement `[DisposableSymbols]` and `getMesh` registers them with
+     `disposables.use(...)`. Handler/transform/plugin/cache constructors never took a `disposables`
+     option; that is unchanged.
+  5. **No Mesh re-exports** for Logger, PubSub, or promise helpers; import Hive/WHATWG packages
+     directly.
+
+  ## Shared platform changes ()
+  - **Node.js `>=22.18.0`** (18/20 dropped).
+  - **`graphql` peer `^16.0.0 || ^17.0.0`**.
+  - **Logging**: Mesh `Logger` / `DefaultLogger` removed. Use `@graphql-hive/logger`. Prefer
+    `context.log` on the request path. Option fields renamed from `logger` to `log` where they
+    remain.
+  - **PubSub**: Mesh PubSub re-exports removed. Use `@graphql-hive/pubsub`. The **`destroy` pubsub
+    lifecycle event is removed**; tear down with the disposable stack / `mesh.destroy()` instead of
+    `pubsub.publish('destroy')`.
+  - **Lifecycle**: `getMesh` owns an `AsyncDisposableStack` and calls `disposables.use(...)` on
+    disposable cache/handler/transform/plugin/pubsub instances. the change is destroy-pubsub
+    subscribers replaced by `[DisposableSymbols]`, not "stop injecting disposables into options"
+    (those options did not exist ).
+  - **Promises**: `handleMaybePromise` / `fakePromise` / `fakeRejectPromise` /
+    `Promise.withResolvers` from `@whatwg-node/promise-helpers` (no Mesh re-exports).
+
+  ## Migration checklist
+
+  ```bash
+  node -v # >= 22.18.0
+  yarn add graphql@^16 @graphql-hive/logger @graphql-hive/pubsub
+  yarn add @whatwg-node/promise-helpers @whatwg-node/disposablestack
+  ```
+
+  ```ts
+  import { Logger } from '@graphql-hive/logger'
+  import { MemPubSub } from '@graphql-hive/pubsub'
+  import { AsyncDisposableStack } from '@whatwg-node/disposablestack'
+  import { fakePromise, handleMaybePromise } from '@whatwg-node/promise-helpers'
+
+  // Before on before:
+  // import { DefaultLogger, PubSub, handleMaybePromise } from '@graphql-mesh/utils'
+  // await pubsub.publish('destroy', undefined)
+
+  const log = new Logger()
+  const pubsub = new MemPubSub()
+  await using disposables = new AsyncDisposableStack()
+  disposables.use(cache)
+  disposables.use(handler)
+  ```
+
+  ### Import map (common breakages)
+
+  | Before                                                | After                                                        |
+  | ----------------------------------------------------- | ------------------------------------------------------------ |
+  | `DefaultLogger` / Mesh `Logger`                       | `Logger` from `@graphql-hive/logger`                         |
+  | Mesh `PubSub` / `MemPubSub` / `HivePubSub`            | `@graphql-hive/pubsub`                                       |
+  | `handleMaybePromise` / `MaybePromise` from Mesh utils | `@whatwg-node/promise-helpers`                               |
+  | `pubsub.publish('destroy')` + destroy subscribers     | `[DisposableSymbols]` + `disposables.use` / `mesh.destroy()` |
+  | cache ctor `pubsub` (destroy subscribe)               | removed; dispose the cache instead                           |
+  | option field `logger`                                 | `log`                                                        |
+
+  Package-specific breaks (filter globs, cache `pubsub`, http-cache logging, Hive/live-query
+  options, OpenAPI `futureLinks`, disposable handlers/transports, ...) are in each package's
+  `*-node22-yoga6.md`.
+
+- [#9818](https://github.com/ardatan/graphql-mesh/pull/9818)
+  [`dc79228`](https://github.com/ardatan/graphql-mesh/commit/dc792289aca741ff81449c996ea38d50a5cb22cf)
+  Thanks [@ardatan](https://github.com/ardatan)! - **Breaking (0.x):** OData subgraphs emit
+  Federation Connectors (`@source` / `@connect` / `@key`) and run on
+  `@graphql-mesh/transport-connect` (`kind: "connect"`). Package `@graphql-mesh/transport-odata` is
+  removed, as are Mesh OData HTTP resolvers and public Mesh OData directives (`@entitySet*`,
+  `@pluralNav`, `@boundFunction`, `@entityInfo`, `@abstractType`, …).
+
+  - `@source` sets `Accept: application/json;odata.metadata=minimal`. Hive appends `$select` /
+    `$expand` from the GraphQL selection; Apollo Router runs the same SDL as plain Connectors.
+  - Entity-set nav: `/EntitySet/{$this.key}/Nav`; nested-only: `{$this._odataId}/Nav` (`_odataId`
+    from `@odata.id`, `@inaccessible`).
+  - Abstract resolveType in `transport-connect` reads `@odata.type` (plus `__typename` / structural
+    fallback).
+  - Loader uses private emit-time `extensions.odata` hints, then drops them after `@connect` emit.
+    `$select` / `$expand` uses `@key` + `@connect` heuristics.
+  - Mesh `@transport` only when `options.odata` is set (`batch` / `expandNavProps`); otherwise
+    `@source` alone and compose injects a minimal `kind: connect` entry.
+  - Shared connect/v0.4 defs (`JSONSelection` / `URLPathTemplate`) live in `transport-connect`;
+    composition strips those scalars from the finalized supergraph.
+  - MS Graph load/compose hardening + `e2e/odata-msgraph`; TripPin e2e covers entity-set nav on Hive
+    and Apollo Router.
+
+- [#9837](https://github.com/ardatan/graphql-mesh/pull/9837)
+  [`bb7fdc4`](https://github.com/ardatan/graphql-mesh/commit/bb7fdc4d4a9dbd188dbb4e0b0a3d42e8b575288b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Breaking cutover: gRPC author/loader/transport
+  surface replaced by a generic protobuf RPC stack that matches Mesh’s other typed-RPC author
+  surfaces.
+
+  ### Why
+
+  Hand-written and AI-authored SDL should describe protobuf RPCs without opaque `roots` /
+  FileDescriptorSet bags on `@transport`. One transport kind covers gRPC dial today and HTTP unary
+  via `http(s)://` locations. Field wire layout lives in typed `args` / `selection` mapping strings
+  (field id + protobuf type), not in embedded descriptors.
+
+  ### Packages / entrypoints
+
+  | Before                                 | After                                          |
+  | -------------------------------------- | ---------------------------------------------- |
+  | `@omnigraph/grpc` / `loadGrpcSubgraph` | `@omnigraph/protobuf` / `loadProtobufSubgraph` |
+  | `@graphql-mesh/transport-grpc`         | `@graphql-mesh/transport-protobuf`             |
+  | `@transport(kind: "grpc")`             | `@transport(kind: "protobuf")`                 |
+
+  Legacy Mesh handler package `@graphql-mesh/grpc` still exists but depends on the new transport
+  name.
+
+  ### Author surface
+  - Directive: `@protobuf__rpc(service, method, args, selection, stream, entity)`
+  - `args` encodes GraphQL field arguments into the request message
+  - `selection` decodes the response message into GraphQL fields
+  - Mapping dialect uses **id + type** (e.g. `2(int64): year`); loader emits indented multiline
+    strings with `#` comments (GraphQL `"""` block strings)
+  - Recursive messages use cycle-aware `message&` / `message&N`; mutual request recursion emits
+    relative binds so nested scopes do not reuse root `input.*` field lists
+  - Package folders are `packages/loaders/protobuf` and `packages/transports/protobuf`
+  - No `@grpcMethod`, `@grpcConnectivityState`, `@enum` stamps, or synthetic connectivity fields
+  - No `options.roots` on `@transport`
+
+  ### Transforms (Mesh composition, `packages/fusion/composition`)
+
+  Rename / naming-convention rewrite `@protobuf__rpc(args|selection)` binds to the public GraphQL
+  names (no Mesh `@source` / `@meshSource`). ById semantic conventions stamp `@key` + `entity: true`
+  instead of Mesh `@merge`.
+
+  - Field renames are **type-scoped** (e.g. `Review.year` does not rewrite `Movie.year`; a root
+    field rename does not rewrite the same name on an unrelated input/object type)
+  - `#` comment lines are ignored while rewriting binds
+  - When a parent field rename and an argument rename diverge, the transform emits dual
+    `$this.<parentPath>|$args.<argsPath>`. Runtime prefers a present parent key, then the explicit
+    args path. Single-form `$this.path` still means parent-or-args with the same path
+  - `createNamingConventionTransform({ fieldArgumentNames })` feeds arg renames into that protobuf
+    pass even when no fields are renamed
+
+  ### Loader config
+
+  ```ts
+  import { loadProtobufSubgraph } from '@omnigraph/protobuf'
+
+  loadProtobufSubgraph('movies', {
+    type: 'grpc', // reserved for future HTTP-oriented emit conventions
+    endpoint: 'localhost:50051',
+    source: { file: './service.proto' }
+  })
+  ```
+
+  Same `.proto` / reflection parse for all `type` values. Day one emit targets gRPC dial
+  (`host:port`). HTTP unary can be hand-authored now via HTTPS `location`; loader emit for
+  additional dial shapes can land later without a new package.
+
+  ### Dial
+  - Non-HTTP `location` (e.g. `localhost:50051`) → gRPC channel + length-prefixed frames
+  - `http(s)://…` → unary HTTP POST to `{location}/{Service}/{Method}`
+  - Default HTTP `Content-Type` is `application/proto`; override via `@transport(headers:)` when a
+    server expects `application/protobuf`
+  - HTTP path uses Mesh fetch: `context.fetch` / transport `fetch` / `@whatwg-node/fetch` (same as
+    REST), not bare global `fetch`
+
+  E2E: `e2e/protobuf-http` runs hand `@protobuf__rpc` SDL against HTTP protobuf upstreams (flat hand
+  args use `$args.*`; loader Input RPCs use `input.<field>`).
+
+  ### Migration
+  1. Replace dependency `@omnigraph/grpc` → `@omnigraph/protobuf` and `@graphql-mesh/transport-grpc`
+     → `@graphql-mesh/transport-protobuf`.
+  2. Replace `loadGrpcSubgraph` with `loadProtobufSubgraph` and set `type: 'grpc'`.
+  3. Recompose: expect `kind: "protobuf"` and `@protobuf__rpc` instead of `kind: "grpc"` /
+     `@grpcMethod` / `@enum` / connectivity fields / `options.roots`.
+  4. Hand-written subgraphs: rewrite field directives to `@protobuf__rpc` with explicit `args` /
+     `selection` mappings; drop connectivity Query fields.
+  5. Flat hand GraphQL args should bind with `$args.<name>` (or `$this…|$args…` after divergent
+     renames). Loader-emitted Input RPCs keep `input.<field>` paths; nested input field renames are
+     type-scoped and do not follow argument rename maps.
+  6. Gateway: register `transports.protobuf` (or rely on `@graphql-mesh/transport-protobuf`
+     resolution by kind).
+  7. Snapshot / e2e updates: composed SDL and any tests asserting old directive names, roots JSON,
+     Mesh `@source` / `@merge` on protobuf RPC, or non-dual `$this` after divergent renames will
+     break on purpose.
+
+  Hand HTTP protobuf SDL examples: `packages/loaders/protobuf/examples/movies-connect.graphql`,
+  `movies-twirp.graphql`.
+
+- [#9827](https://github.com/ardatan/graphql-mesh/pull/9827)
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd)
+  Thanks [@ardatan](https://github.com/ardatan)! - **Breaking (0.x) migration:**
+  `@graphql-mesh/transport-rest` + `@transport(kind: "rest")` → `@graphql-mesh/transport-connect` +
+  `@transport(kind: "connect")`. Cut over package name, imports, and `kind` together (no compat
+  shim).
+
+  Types rename: `RESTTransportOptions` / `RESTTransportDirectiveOptions` → `ConnectTransportOptions`
+  / `ConnectTransportDirectiveOptions`.
+
+  Hive Gateway loads transports as `@graphql-mesh/transport-${kind}`. This package runs Federation
+  Connectors (`@connect` / `@source`, Apollo `connect/v0.4`) for OpenAPI/JSON Schema/RAML, OData,
+  and SOAP, so `connect` matches the Apollo Connect spec name. Apollo Router ignores Mesh
+  `@transport` and only runs `@connect` / `@source`.
+
+  ### Before
+
+  ```ts
+  import rest from '@graphql-mesh/transport-rest'
+
+  defineGatewayConfig({
+    transports: { rest }
+  })
+  ```
+
+  ```graphql
+  schema @transport(subgraph: "API", kind: "rest", location: "https://api.example.com") {
+    query: Query
+  }
+  ```
+
+  ### After
+
+  ```ts
+  import connect from '@graphql-mesh/transport-connect'
+
+  defineGatewayConfig({
+    transports: { connect }
+  })
+  ```
+
+  ```graphql
+  schema @transport(subgraph: "API", kind: "connect", location: "https://api.example.com") {
+    query: Query
+  }
+  ```
+
+- [#9840](https://github.com/ardatan/graphql-mesh/pull/9840)
+  [`5c0e5e3`](https://github.com/ardatan/graphql-mesh/commit/5c0e5e3406618eab41a0515d7f1d12837cca2c45)
+  Thanks [@ardatan](https://github.com/ardatan)! - ## TL;DR (breaking)
+
+  New SQL subgraph stack: `@omnigraph/sql` + `@graphql-mesh/transport-sql` with hand-writable `@sql`
+  and one transport `kind: "sql"`.
+
+  One field directive `@sql` covers reads and writes via `kind` (`ROW` | `ROWS` | `CONNECTION` |
+  `COUNT` | `INSERT` | `UPDATE` | `DELETE`). Relations use the same `@sql` with `$this` binders in
+  `where`.
+
+  **Removed from the monorepo** (compose loaders / transports):
+
+  - `@omnigraph/mysql`, `@omnigraph/sqlite`
+  - `@graphql-mesh/transport-mysql`, `@graphql-mesh/transport-sqlite`
+
+  **Legacy v0 handlers** (same YAML entrypoints, now call `@omnigraph/sql` + `transport-sql`):
+
+  - `@graphql-mesh/mysql` -- `pool` / `tableFields` supported
+  - `@graphql-mesh/tuql` -- `infile` is materialized to a sqlite file inside the legacy handler (not
+    a core loader/transport feature). The cache key is dump path + dump bytes: if the dump is
+    unchanged, a later restart reuses the cached DB including any executor writes (the dump is no
+    longer the sole source of truth once the cache has been mutated).
+  - `@graphql-mesh/postgraphile` -- schema emit and execution use `@sql` / `transport-sql` only (no
+    longer loads the previous embedded runtime). See migration notes below.
+
+  Adapters are `postgres` | `mysql` | `sqlite` via loader `adapter` / URI / `options.adapter`. All
+  three are end-to-end on the new stack.
+
+  ## Migration (`@graphql-mesh/postgraphile`)
+
+  Breaking for v0.minor: the handler no longer depends on the `postgraphile` / `postgraphile-core`
+  packages.
+
+  | Still supported                                                                     | Removed / ignored                      |
+  | ----------------------------------------------------------------------------------- | -------------------------------------- |
+  | `connectionString` (env interpolation; optional when `pool` is a real `pg.Pool`)    | `appendPlugins` / `skipPlugins`        |
+  | `schemaName` (first entry only; default `public`)                                   | `options` (opaque library options bag) |
+  | `pool` as an existing `pg.Pool` (or module export) -- used for introspect + execute | `pool` as plain settings object        |
+  | `tables` / `tableFields` (new, mysql-parity)                                        | `subscriptions` / `live`               |
+  |                                                                                     | `contextOptions` (pgSettings helpers)  |
+
+  When the old `pool` settings object carried TLS/CA (or other options the URI cannot express),
+  export a module that constructs a configured `pg.Pool` and point `pool` at that export. This YAML
+  handler does not read compose `@transport` options -- those apply when migrating to
+  `loadSqlSubgraph`.
+
+  Emitted GraphQL is the shared Mesh SQL CRUD / connection / `where` surface (`allX` connections,
+  filters, mutations) -- not the previous handler's plugin-shaped schema. Recompose and update
+  clients. Prefer compose `loadSqlSubgraph` for new work; keep this handler only as a v0 YAML
+  bridge.
+
+  ## Migration (compose)
+
+  ```ts
+  // before
+  loadSQLiteSubgraph('chinook', { db: 'chinook.db' })
+  loadMySQLSubgraph('employees', { endpoint: 'mysql://…' })
+
+  // after -- adapter from URI protocol (or env URL); `adapter` optional override
+  loadSqlSubgraph('chinook', { endpoint: 'file:chinook.db' })
+  loadSqlSubgraph('employees', { endpoint: 'mysql://…' })
+  loadSqlSubgraph('shop', { endpoint: 'postgres://…' })
+  loadSqlSubgraph('shop', { endpoint: 'localhost:5432/shop' }) // host-style -> postgres
+  loadSqlSubgraph('shop', { adapter: 'postgres' }) // or from DATABASE_URL / PG*
+  ```
+
+  Emitted GraphQL uses the shared Mesh SQL naming. Old raw-table / String-where surfaces are gone --
+  recompose and update client queries.
+
+  `mesh-migrate-config` and public website docs are intentionally unchanged here.
+
+  ## Migration (client args / `@sql`)
+
+  Coming from the previous SQL packs, the client list/count filter arg renames `filter: AlbumFilter`
+  -> `where: AlbumFilter` (input type name still `*Filter`).
+
+  New hand-writable `@sql` binders: `where` (equality/joins and structured client filter), separate
+  `orderBy` / `limit` / `offset` / `first` / `after`, `set` for INSERT/UPDATE, `selection`, and
+  `through` for M2M. Object spread (`...$args.where`) is only needed when merging fixed predicates
+  with the client `where` input; alone, use bare `$args.where`.
+
+  ```graphql
+  # sole client where
+  albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]!
+    @sql(
+      table: "albums"
+      kind: ROWS
+      where: "$args.where"
+      orderBy: "$args.orderBy"
+      limit: "$args.limit"
+      offset: "$args.offset"
+      selection: """
+        id: AlbumId
+        title: Title
+      """
+    )
+
+  # join + client where
+  albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]!
+    @sql(
+      table: "albums"
+      kind: ROWS
+      where: """
+        ArtistId: $this.id
+        ...$args.where
+      """
+      orderBy: "$args.orderBy"
+      limit: "$args.limit"
+      offset: "$args.offset"
+      selection: """
+        id: AlbumId
+        title: Title
+      """
+    )
+  ```
+
+  ## What else changed
+  - Mesh rename / naming-convention transforms rewrite `$args.*` and `$this.*` inside `@sql`
+  - Type-level `@sql` on OBJECT (`$this` keys) wires `resolveReference` + Hive `Query._entities` --
+    no Query `entity: true`
+  - Transport DataLoader-batches ROW/ROWS equality lookups (`WHERE col IN (...)`)
+  - Selection lookahead planner for mysql/sqlite: multi-hop belongs-to `LEFT JOIN`, has-many JSON
+    subselects, column pruning, DataLoader fallback
+  - Postgres plan path when a Node `pg.Pool` is available (registry from `@sql`, relation plans via
+    `singleRelation` / `manyRelation`)
+  - e2e `sqlite-chinook`, `mysql-employees`, and `postgres-geodb` (pinned `world.sql` seed) use the
+    new stack (full table set; no artificial `includeTables` filter)
+  - Optional `softDelete: { column, tables? }` on loader / `@transport(options)`: reads add
+    `column IS NULL`; `DELETE` becomes `UPDATE … SET column = now` (plan path skipped when set).
+    Omitted `tables` = all; defined `tables` (including `[]`) = allowlist only
+  - Richer `where` filters: `like` / `ilike`, `BooleanFilter`, `BigIntFilter`, nested belongs-to
+    (`where: { artist: { name: { eq: "X" } } }` -> `EXISTS`)
+  - Postgres computed columns: `CREATE FUNCTION users_full_name(users)…STABLE` -> GraphQL `fullName`
+    via `@sql(selection: "fullName: $fn.public.users_full_name")`
+  - Many-to-many shortcuts: junction with two FKs -> `Playlist.tracks` / `Track.playlists` via
+    `@sql(through:)` (junction type kept)
+  - `CONNECTION` pagination uses **keyset** cursors (`after` = opaque order-column values), not SQL
+    `OFFSET`
+  - Filters / `orderBy` use a full column catalog so selection pruning cannot drop predicates
+  - Sole-PK -> `id` alias skips when that name collides with another column's field name; sole-PK
+    output nullability follows the database column; `@key` only when a PK exists
+  - Generated columns omitted from create/update inputs and SET mappings
+  - MySQL has-many JSON subselects cap children before `JSON_ARRAYAGG` (correlated rank)
+
+  ## Reliability / review follow-ups (this PR)
+  - Shared `pg.Pool`: one schema binding per pool (conflicting schema rejected); `SET search_path`
+    fail-closed without double-release under `pool.query` (callback wait path covered)
+  - Binary columns map to `GraphQLByte` by **base type** (not `enum('BINARY',…)` labels); wider
+    MySQL `BIT(n)` maps to `Byte`; `BIT(1)` Buffer values coerce to boolean before GraphQL
+    serialize; `int(n) unsigned` keeps UNSIGNED → BigInt; joined / has-many rows encode Buffer;
+    SQLite skips JSON has-many folds that project `Byte`
+  - MySQL generated columns: only `STORED` / `VIRTUAL GENERATED` (not `DEFAULT_GENERATED`)
+  - tuql dump cache: per-uid tmp fallback; reject symlink / foreign owner / group-writable dirs
+  - Batching: reject `$this` pagination binders; omit only the equality `$args` leaf (keep sibling
+    filters such as `input.filter` in the loader identity); planner keys vs column bindings
+    (`limit: $args.id` binds as a column)
+  - Postgres: sequence defaults via real `nextval(` (not inside quoted literals); computed functions
+    match argument relation **schema + name**; PK/FK introspect joins scoped to the source table;
+    `is_generated` columns marked generated; FK introspect via `pg_catalog` (non-owner safe); pool
+    config uses discrete URI fields so `sslmode` cannot override `ssl.ca`
+  - `tableFields`: always keeps PK, FK, and NOT NULL insert-required columns; second FK to the same
+    ref gets a column-stem relation field name instead of being skipped
+  - Legacy mysql `ssl.ca` path -> PEM; MySQL FKs limited to the loaded schema; tuql: blank-path
+    reject, explicit `adapter: 'sqlite'`, dump-bytes cache key under a trusted cache dir,
+    create-if-absent publish (no live-DB overwrite)
+  - Mutations: reject structured `where` that is `null` / non-object / empty, or that produces no
+    SQL predicate; soft-delete marker alone is not enough to authorize DELETE/UPDATE
+  - Empty `IN ()` -> FALSE; empty `nin: []` -> TRUE (so NOT/OR compose); mutations reject pure
+    tautologies
+  - LEFT JOIN presence via always-projected join column; cursor encode prefers SQL column keys
+  - SQLite introspect: ASCII-fold FK match; INTEGER PK autoIncrement only when not WITHOUT ROWID /
+    DESC PK
+  - Nested relation filters keep finite self-referential paths (depth-bounded metadata)
+  - Rename/naming: `$this` / through binders + single-pass selection key rewrite; **nested input
+    binder walks, type-scoped flat / through rename maps, and bare inline selection rename walks
+    remain deferred** (no further rename scope)
+
+### Patch Changes
+
+- [#9716](https://github.com/ardatan/graphql-mesh/pull/9716)
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^12.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.1.0)
+    (from `^12.0.4`, in `dependencies`)
+
+- [#9731](https://github.com/ardatan/graphql-mesh/pull/9731)
+  [`a7d4506`](https://github.com/ardatan/graphql-mesh/commit/a7d4506630217bd9e7ab2b594609698e7e5e1649)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`graphql-scalars@^2.0.1` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/2.0.1) (from
+    `^1.23.0`, in `dependencies`)
+
+- [#9738](https://github.com/ardatan/graphql-mesh/pull/9738)
+  [`f11db6b`](https://github.com/ardatan/graphql-mesh/commit/f11db6b013ae9af4cf3a201d75b3cdc4a3f328be)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`minimatch@^11.0.1` ↗︎](https://www.npmjs.com/package/minimatch/v/11.0.1)
+    (from `^10.2.6`, in `dependencies`)
+
+- [#9745](https://github.com/ardatan/graphql-mesh/pull/9745)
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/schema@^11.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/11.0.8)
+    (from `^10.1.3`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.1.4)
+    (from `^4.1.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^13.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/13.2.1)
+    (from `^12.1.0`, in `dependencies`)
+  - Updated dependency
+    [`graphql@^16.0.0 || ^17.0.0` ↗︎](https://www.npmjs.com/package/graphql/v/16.0.0) (from
+    `^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0`, in `peerDependencies`)
+
+- [#9756](https://github.com/ardatan/graphql-mesh/pull/9756)
+  [`d6ee910`](https://github.com/ardatan/graphql-mesh/commit/d6ee910842f9f80867a69abe9180a081240e2173)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@theguild/federation-composition@^0.27.0` ↗︎](https://www.npmjs.com/package/@theguild/federation-composition/v/0.27.0)
+    (from `^0.22.2`, in `dependencies`)
+
+- [#9804](https://github.com/ardatan/graphql-mesh/pull/9804)
+  [`06a77f4`](https://github.com/ardatan/graphql-mesh/commit/06a77f419a2574fa77b63b7ac84c3b446344d332)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^13.2.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/13.2.2)
+    (from `^13.2.1`, in `dependencies`)
+
+- [#9820](https://github.com/ardatan/graphql-mesh/pull/9820)
+  [`493d5ff`](https://github.com/ardatan/graphql-mesh/commit/493d5ffa5bceeb1fc2ec0b4c6584ba66d8181183)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/schema@^11.0.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/11.0.9)
+    (from `^11.0.8`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.1.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.1.5)
+    (from `^4.1.4`, in `dependencies`)
+
+- [#9841](https://github.com/ardatan/graphql-mesh/pull/9841)
+  [`5c9bcea`](https://github.com/ardatan/graphql-mesh/commit/5c9bceafc25f6a039b26323f64934f22a7cb88f4)
+  Thanks [@ardatan](https://github.com/ardatan)! - ## TL;DR
+
+  New Mongo subgraph stack: `@omnigraph/mongo` + `@graphql-mesh/transport-mongo` with hand-writable
+  op-specific `@mongo__*` directives and transport `kind: "mongo"`.
+
+  Mongoose is compose/bootstrap only. Runtime uses the native MongoDB driver.
+
+  **Legacy v0 handler:** `@graphql-mesh/mongoose` keeps the same YAML entrypoint and shells into the
+  new stack (like mysql/tuql -> SQL).
+
+  ## Decisions
+  - GraphQL roots mirror MongoDB collection methods: `findOneUser` / `findUsers` /
+    `countDocumentsUsers` / `insertOneUser` / `updateOneUser` / `deleteManyUsers` / `aggregateUsers`
+    ([method reference](https://www.mongodb.com/docs/manual/reference/method/))
+  - Op directives: `@mongo__findOne` / `@mongo__find` / `@mongo__count` / `@mongo__connection` /
+    `@mongo__pagination` / `@mongo__aggregate` / `@mongo__insertOne|insertMany` /
+    `@mongo__updateOne|updateMany` / `@mongo__deleteOne|deleteMany` (SDL client API != directive
+    binders)
+  - Client args: typed `filter: *FilterInput` (`and` / `or` / `not` + field ops). Binder stays
+    `query: "$args.filter"`. `$` is illegal in GraphQL names, so generated ops use bare Mongo names
+    (`gte`, `in`, …); transport also accepts `_gte` aliases and native `{ $gte }` in hand-written
+    binders
+  - `sort: [*Sort!]` (`id_asc` / `age_desc`; transport maps to `{ field: 1|-1 }`)
+  - Directive binders: `query` / `selection` / `sort` / `set` / `pipeline`
+  - `update: *UpdateInput`: same rule - bare op names (`set` / `inc` / `unset`) map to `$set` /
+    `$inc` / `$unset`; `_set` aliases + native `$set` still accepted; array mods JSON
+  - `document` / `documents` for insertOne / insertMany
+  - BSON ObjectId (GraphQL field `id` ← `_id`, ById args, refs, `recordId`) uses `ObjectID` scalar +
+    `ObjectIDQueryOperators` (not opaque GraphQL `ID`)
+  - Scalars: `graphql-scalars` (`ObjectID`, `DateTime`, `Byte`, `JSON`) + local `Decimal128`
+  - Mutation write failures always surface as GraphQL `errors` (`DOWNSTREAM_SERVICE_ERROR`);
+    generated and handwritten mutations both throw before applying `selection` (no error-payload
+    mapping)
+  - Generated mutations default to document-only results (`User` / `[User!]!`) via
+    `returnDocumentOnlyInMutationResult` (default `true`). Set `false` for Connectors-style
+    `*Payload` (`record: $record { … }`, `recordId: $_id`, counts). `updateMany` / `deleteMany`
+    always return the payload (counts)
+  - Nested Mongoose paths emit Embedded / DocumentArray object types + enums; `ref` paths emit
+    nested `@mongo__findOne` / `@mongo__find` populate fields
+  - Mesh composition rewrites `$args` / `$this` in all `mongo__*` binders; `$this` renames are
+    one-shot (no cascade), `#` comments are quote-safe, and selection rewrites skip quoted literals
+  - Bulk writes reject vacuous `$or` / `not` of match-nothing filters; required fields reject null
+    after BSON coerce, `$unset`, and `$rename`
+  - String `_id` models require `id: String!` on create, keep BSON string inserts/cursors/payloads,
+    and scope empty-input placeholders per collection
+  - GraphQL `storedId` → mongoose `id` aliases are collection-aware; bulk insert applies them only
+    when `@mongo__insertMany(graphqlDocumentInputs: true)` (loader sets this on generated
+    DocumentInput roots). Hand-written binders omit the flag so BSON `storedId` is never inferred
+    from `_id` presence
+  - ObjectId coercion and required-field checks are keyed by collection+path (same bare field name
+    can differ across models; nested paths via `coerceDeep` / `$elemMatch`)
+  - Connection cursors still reject array-backed sort keys (correct multikey keyset needs
+    `$expr`/`$min`/`$max`, not multikey `$gt`)
+  - `MongoModelConfig`: exactly one of `model` | `schema` | `path`; flat `fields`
+    (only/remove/required); discriminator subtypes auto-read from `schema.discriminatorMapping`
+  - `queryAndMutations`: opt out of individual Query/Mutation roots (`false` omits; keys follow
+    Mongo collection methods: `insertOne` / `deleteMany` / `countDocuments` / …)
+  - `naming?: Partial<MongoNaming>` on `loadMongoSubgraph` / `loadGraphQLSchemaFromMongo`
+  - Raw `aggregate*` omitted subgraph-wide when any model has `fields.only` / `fields.remove`, and
+    omitted on discriminator subtype models (`$unionWith` can bypass a prepended `$match`)
+
+  ## Consumer migration
+
+  | Before (v0 mongoose)                           | After                                                                              |
+  | ---------------------------------------------- | ---------------------------------------------------------------------------------- |
+  | Runtime `composeWithMongoose`                  | Same YAML handler or `loadMongoSubgraph`                                           |
+  | `User_findById(_id)` / `User_findMany(filter)` | `findUserById(id)` / `findUsers(filter)`                                           |
+  | `User_createOne(record)`                       | `insertOneUser(document)`                                                          |
+  | Opaque resolvers                               | `@mongo__find(query/sort/selection/…)`                                             |
+  | Select `error { message }` on `*Payload`       | GraphQL `errors` (`DOWNSTREAM_SERVICE_ERROR`)                                      |
+  | `createOne` → `*Payload { record }`            | `insertOneUser` → `User` (payload via `returnDocumentOnlyInMutationResult: false`) |
+
+  ```graphql
+  # Before
+  query {
+    User_findMany(filter: { age: { gte: 30 } }) {
+      name
+    }
+  }
+
+  # After
+  query {
+    findUsers(filter: { age: { gte: 30 } }) {
+      name
+    }
+  }
+  ```
+
+  Website docs deferred. First npm publish of the new packages is required before CI alphas.
+
+- [#9828](https://github.com/ardatan/graphql-mesh/pull/9828)
+  [`94be224`](https://github.com/ardatan/graphql-mesh/commit/94be224fac53773992df7984057545f3404979d9)
+  Thanks [@ardatan](https://github.com/ardatan)! - OData Federation entity resolution without Mesh
+  `@merge`:
+
+  - Entity-set-backed types keep resolvable `@key` + type-level `@connect(entity: true)` so Hive
+    `Query._entities` and Apollo Router entity fill both work from the same Connectors SDL.
+  - Nested-only (or ambiguous entity-set) types keep `@key` for Hive `$expand` heuristics but emit
+    `@key(fields: "…", resolvable: false)` when there is no type-level entity `@connect`.
+  - `finalizeConnectorsSupergraph` attributes type-level `@connect` by `source` name before the
+    first `@join__type`, so stub/extension graphs listed first no longer steal the owner connector.
+  - `transport-connect` repairs bare Federation-extracted `Query._entities` (no resolver) by
+    installing `@apollo/subgraph`'s `entitiesResolver` (Connectors `resolveReference` recorded on
+    `extensions.apollo.subgraph`). Without this, Hive planned `_entities` against Connectors
+    subgraphs and hit `Cannot return null for non-nullable field Query._entities` whenever another
+    GraphQL Federation subgraph stubbed the entity.
+  - Unit + e2e (`federation-connectors`, composition, OData handler, `e2e/odata-entities`) prove
+    Airline stubs resolve Name across a catalog subgraph on Hive and Apollo Router with no `@merge`.
+
+- [#9836](https://github.com/ardatan/graphql-mesh/pull/9836)
+  [`db730d1`](https://github.com/ardatan/graphql-mesh/commit/db730d1c9d3ecef18e47c879501eac242df486c6)
+  Thanks [@ardatan](https://github.com/ardatan)! - ### TL;DR
+
+  If you load Thrift from IDL and **recompose** after upgrading, you are mostly done.
+
+  - **Breaking:** `@fieldTypeMap` / `@thrift__method` / `topTypeMap` / `clientAnnotations` are
+    removed (no dual-read). Regenerate composed SDL.
+  - **Default:** binary HTTP Thrift via slim `@transport` + per-field `@thrift__rpc` (readable
+    compact `args` / `selection`).
+  - **Opt-in:** `protocol: 'json'` emits Federation `@source` / `@connect` (TJSON) for Hive and
+    Apollo Router.
+  - **Optional:** `ignoreErrorResponses`, `entityMethods`, `serviceName`.
+
+  ### Why
+
+  The old surface stamped opaque `@fieldTypeMap` bags and a large `@transport.options`
+  (`clientAnnotations`, `topTypeMap`). Field ids and exact Thrift types (`i16` vs `i32`) were hard
+  to hand-write or review; GraphQL `Int` cannot carry that distinction. Binary was Mesh-only (no
+  Router-friendly TJSON emit). IDL `throws` / `oneway` were ignored, so JSON throws could become
+  silent `null`.
+
+  ### Breaking
+
+  **Removed / no longer executed:** `@fieldTypeMap`, `@thrift__method` (older draft name),
+  `@transport.options.clientAnnotations` / `topTypeMap`, and any transport path that preferred those
+  bags when the new directive was absent.
+
+  **Required:** recompose / regenerate Thrift subgraphs from IDL. Hand-written `@fieldTypeMap` /
+  `@thrift__method` SDL will not run until rewritten to `@thrift__rpc` (binary) or `@connect`
+  (JSON).
+
+  ### What changed
+
+  #### Binary — `protocol: 'binary'` (default)
+  - Slim `@transport(subgraph, kind: "thrift", location, headers)` — no options bag.
+  - Per-field `@thrift__rpc(function, args, selection, throws?, messageType, entity?)`.
+  - Compact mapping keeps wire types explicit (`1(i32): left`, `$(i16)`, containers, nested maps);
+    multiline values print as `"""`.
+  - `map<*, struct>` args expand the value struct field ids (same recursion as list/set-of-struct).
+    `list/set<map<*, scalar>>` keeps the full nested wire token (e.g. `list<map<string, i32>>`) so
+    binary regenerate does not drop the method. Nested scalar containers (e.g. `list<list<i32>>`)
+    keep the full token; nested containers that would drop struct field ids (e.g.
+    `list<map<string, list<Item>>>`) fail at generate until descriptors are preserved.
+  - `function` is always the IDL name. Single-service generate **omits** `service:` (path is on
+    `@transport`).
+  - `messageType: ONEWAY` does not wait for / decode a reply.
+  - `entity: true` only via loader `entityMethods` (Federation entity Query fields).
+  - Transport executes `@thrift__rpc` by field id (no `topTypeMap`). Compact parse keeps
+    `map<*, struct>` as MAP (`keyType` + `valType.fields`), not STRUCT, and
+    `list/set<map<*, struct>>` as LIST/SET → MAP → STRUCT so value field ids (e.g. `7: value`)
+    survive.
+  - Example/e2e calculator codegen runs `scripts/patch-thrift-oneway-zip.mjs` after
+    `@creditkarma/thrift-typescript` so oneway `process_zip` keeps an empty body (upstream 3.7.6
+    still emits REPLY/EXCEPTION).
+  - Service mappings and typedef aliases resolve only after every named type is registered (forward
+    refs resolve correctly).
+  - GraphQL enum members always use **names**. Binary uses plain `i32` leaves with Connectors-style
+    `->match` on `@thrift__rpc` args/selection (same shape as TJSON `@connect`); no Mesh `@enum` on
+    thrift. Recursive struct **arguments** fail at generate (no silent empty truncation).
+
+  #### JSON — `protocol: 'json'`
+
+  Emits `@source` + `@connect` (TJSON) instead of thrift `@transport`:
+
+  - `Content-Type` / `Accept`: `application/vnd.apache.thrift.json`
+  - Path `/`, or `/<service>` when `serviceName` is set
+  - Body message types CALL=`1`, ONEWAY=`4`
+  - `isSuccess` / `errors` so declared throws and `TApplicationException` are not silent nulls;
+    ONEWAY omits `isSuccess`
+  - Bool scalars encode as TJSON integers `0`/`1` (`->match`). Enum args/selections bake name <->
+    i32 `->match` (root scalars, root list/set, and list/set enum fields inside structs, including
+    union `$({ … })` selections).
+  - **Fail at generate** (prefer scalar/struct args, binary, or hand-author `@connect`; Hive Mesh
+    supports `->concat`): `map<*, bool>`, **list/set args**, and maps whose values are
+    struct/list/set/map (Connectors cannot rewrite map values / LitArray has no element spread).
+  - Void/ONEWAY `@connect(selection:)` uses `$(null)` (bare `null` is a field path).
+    `ignoreErrorResponses: false` unions emit a single `$({ … })` selection; void success is
+    `ok: $->get(4)->size->eq(0)`; struct success stamps `field0: $->get(4)->get("0")->ne(null)` and
+    both the loader and REST `processDirectives` resolveType treat that stamp as authoritative when
+    present (Hive may keep `value: { left: undefined }` / `message: undefined` on replies). Declared
+    throws also stamp `__throw_<TypeName>` from the reply field id; shared exception field
+    projections gate on throw-field presence then coalesce with `$(a ?? b)` so an absent throw’s
+    empty `$({…})` projection cannot hide the active exception’s struct/scalar value. Binary still
+    uses `__typename`. Nested enum containers (e.g. `list<list<State>>`) fail at generate on the
+    binary path (same spirit as nested struct containers) until name↔i32 `->match` can be preserved.
+
+  #### Exceptions
+  1. **`TApplicationException`:** binary throws; JSON uses `isSuccess` / `errors`.
+  2. **IDL `throws`:** `ignoreErrorResponses` defaults to `true`. Set `false` for GraphQL unions +
+     `@thrift__rpc(throws:)`. Union `resolveType` matches exception members on **defined** field
+     values (not key presence alone).
+
+  #### Transforms / Connectors eval
+  - Mesh rename / naming-convention rewrite `$args…` inside `@thrift__rpc(args/selection/throws)`
+    the same way as `@connect`. HTTP path templates still rename `$args` when the literal path
+    contains apostrophes. No `@merge` / `@meshSource` for thrift.
+  - Mesh Connectors eval: trailing NamedSelection after `$()` stays on the subselection path;
+    `->map` / `->filter` preserve bare `@` match-arm wildcards (`[@, "other"]`).
+
+  ### Migration
+  1. Upgrade and **recompose** (prefer regenerate from IDL).
+  2. Replace hand-written `@fieldTypeMap` / `@thrift__method` + transport `options` with
+     `@thrift__rpc` or `protocol: 'json'`.
+  3. Keep binary `@transport` to `location` + `headers` only.
+  4. Single-service: no `service:` required on `@thrift__rpc`. TJSON multiplex: set `serviceName`.
+  5. Optional: `ignoreErrorResponses: false`; `entityMethods: ['getX']` only for Federation entity
+     resolvers.
+  6. If IDL uses list/set args or composite/bool map values on the JSON path, switch those RPCs to
+     binary, change the IDL, or hand-author the `@connect` body.
+
+  **Before** (old composed field):
+
+  ```graphql
+  add(request: AddRequestInput): Int @fieldTypeMap(…)
+  # wire layout lived in @transport(options: { topTypeMap, clientAnnotations })
+  ```
+
+  **After** (binary generate):
+
+  ```graphql
+  add(request: AddRequestInput): Int @thrift__rpc(
+    function: "add"
+    args: """
+    1(struct): $args.request {
+      1(i32): left
+      2(i32): right
+    }
+    """
+    selection: "$(i32)"
+    messageType: CALL
+  )
+  ```
+
+  ### Packages
+  - `@omnigraph/thrift` — loader emit; `protocol`, `entityMethods`, `ignoreErrorResponses`,
+    `serviceName`
+  - `@graphql-mesh/transport-thrift` — execute compact mapping (incl. `i32->match` coerce), ONEWAY,
+    throws unions
+  - `@graphql-mesh/transport-connect` — Connectors helpers for TJSON / `$()` / match wildcards
+  - `@graphql-mesh/fusion-composition` — `$args` rewrite for `@thrift__rpc` and HTTP paths
+
+- Updated dependencies
+  [[`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`d466ccc`](https://github.com/ardatan/graphql-mesh/commit/d466ccc4475c0973c4c8352db27bf1c3b92eb9fc),
+  [`06a77f4`](https://github.com/ardatan/graphql-mesh/commit/06a77f419a2574fa77b63b7ac84c3b446344d332),
+  [`493d5ff`](https://github.com/ardatan/graphql-mesh/commit/493d5ffa5bceeb1fc2ec0b4c6584ba66d8181183),
+  [`20c6601`](https://github.com/ardatan/graphql-mesh/commit/20c6601c4eece0bc0eb99f7416516b3d705026ab),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`dc79228`](https://github.com/ardatan/graphql-mesh/commit/dc792289aca741ff81449c996ea38d50a5cb22cf),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd)]:
+  - @graphql-mesh/utils@0.108.0
+
 ## 0.11.4
 
 ### Patch Changes

@@ -1,7 +1,0 @@
----
-"@omnigraph/thrift": patch
----
-dependencies updates:
-  - Updated dependency [`@whatwg-node/fetch@^0.12.1` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.12.1) (from `^0.10.6`, in `dependencies`)
-  - Added dependency [`@graphql-hive/logger@^1.1.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/logger/v/1.1.1) (to `dependencies`)
-  - Updated dependency [`graphql@^16.0.0 || ^17.0.0` ↗︎](https://www.npmjs.com/package/graphql/v/16.0.0) (from `*`, in `peerDependencies`)
