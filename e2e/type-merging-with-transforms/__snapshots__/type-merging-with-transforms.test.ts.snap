@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@source"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@merge", "@source"]) {
   query: Query
 }
 
@@ -19,9 +19,7 @@ directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on
 
 directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
-
-directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
 directive @additionalField on FIELD_DEFINITION
 
@@ -45,16 +43,14 @@ enum join__Graph {
   BOOKS @join__graph(name: "books", url: "http://localhost:<books_port>/graphql")
 }
 
-scalar TransportOptions @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
-
 type Query @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
-  author(id: ID!): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books") @merge(subgraph: "books", keyField: "id", keyArg: "id")
-  writers(ids: [ID]): [Author] @source(name: "authors", type: "[Author]", subgraph: "authors") @join__field(graph: AUTHORS)
-  book(id: ID!): Book @merge(subgraph: "books", keyField: "id", keyArg: "id") @join__field(graph: BOOKS)
-  books(ids: [ID]): [Book!]! @merge(subgraph: "books", keyField: "id", keyArg: "ids") @join__field(graph: BOOKS)
+  author(id: ID!): Author @join__directive(graphs: [AUTHORS], name: "merge", args: {keyField: "id", keyArg: "id"}) @join__directive(graphs: [AUTHORS], name: "source", args: {name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books"}) @join__directive(graphs: [BOOKS], name: "source", args: {name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books"}) @join__directive(graphs: [BOOKS], name: "merge", args: {keyField: "id", keyArg: "id"})
+  writers(ids: [ID]): [Author] @join__directive(graphs: [AUTHORS], name: "source", args: {name: "authors", type: "[Author]", subgraph: "authors"}) @join__field(graph: AUTHORS)
+  book(id: ID!): Book @join__directive(graphs: [BOOKS], name: "merge", args: {keyField: "id", keyArg: "id"}) @join__field(graph: BOOKS)
+  books(ids: [ID]): [Book!]! @join__directive(graphs: [BOOKS], name: "merge", args: {keyField: "id", keyArg: "ids"}) @join__field(graph: BOOKS)
 }
 
-type Author @source(name: "AuthorWithBooks", subgraph: "books") @join__type(graph: AUTHORS, key: "id") @join__type(graph: BOOKS, key: "id") {
+type Author @join__directive(graphs: [AUTHORS], name: "source", args: {name: "AuthorWithBooks", subgraph: "books"}) @join__directive(graphs: [BOOKS], name: "source", args: {name: "AuthorWithBooks", subgraph: "books"}) @join__type(graph: AUTHORS, key: "id") @join__type(graph: BOOKS, key: "id") {
   id: ID!
   name: String! @join__field(graph: AUTHORS)
   books: [Book!]! @join__field(graph: BOOKS)
@@ -66,6 +62,8 @@ type Book @join__type(graph: BOOKS, key: "id") {
   authorId: ID!
   author: Author @resolveTo(sourceName: "authors", sourceTypeName: "Query", sourceFieldName: "writers", keyField: "authorId", keysArg: "ids") @additionalField
 }
+
+scalar join__DirectiveArguments
 "
 `;
 

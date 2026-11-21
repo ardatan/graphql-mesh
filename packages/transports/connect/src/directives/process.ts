@@ -21,7 +21,12 @@ import {
 } from '@graphql-mesh/utils';
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processConnectDirectives } from './connect.js';
-import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
+import {
+  getMeshGeneratedResolveTypeMemberKey,
+  getTypeResolverForAbstractType,
+  isMeshGeneratedResolveType,
+  meshResolveTypeMemberKey,
+} from './getTypeResolverForAbstractType.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
@@ -50,6 +55,13 @@ export interface ProcessDirectiveArgs {
   log?: Logger;
   /** Fetch used for `@connect` HTTP calls. */
   globalFetch?: MeshFetch;
+  /**
+   * When true (legacy `get-mesh` reprocess after `additionalTypeDefs`):
+   * - skip `@connect` install on fields that already have a resolver (wrap proxies)
+   * - keep application-provided abstract `resolveType` callbacks; rebuild
+   *   Mesh-generated ones when union/interface members change
+   */
+  preserveExistingFieldResolvers?: boolean;
   /**
    * Accepted for compatibility, but not forwarded into `@connect` resolvers
    * today. Put the HTTP base URL on `@source(http.baseURL)` - `@connect`
@@ -85,7 +97,13 @@ export interface ProcessDirectiveArgs {
 
 export function processDirectives(
   schema: GraphQLSchema,
-  { globalFetch, log, pubsub, ...extraGlobalOptions }: ProcessDirectiveArgs = {},
+  {
+    globalFetch,
+    log,
+    pubsub,
+    preserveExistingFieldResolvers,
+    ...extraGlobalOptions
+  }: ProcessDirectiveArgs = {},
 ) {
   const nonExecutableObjMapScalar = schema.getType('ObjMap');
   if (nonExecutableObjMapScalar && isScalarType(nonExecutableObjMapScalar)) {
@@ -118,7 +136,8 @@ export function processDirectives(
         ]),
       )
     : undefined;
-  // Kind-specific REST opts live under `@transport(options:)` (Hive TransportEntry).
+  // Options arrive via join / Mesh `@transport(options:)` or `extraGlobalOptions`
+  // from getSubgraphExecutor / loadGraphQLSchema* (bare connect has no transport).
   const transportOpts = getTransportOptions<ConnectTransportDirectiveOptions>(currDirective);
   const globalOptions = {
     endpoint: sourceDirective?.http?.baseURL ?? currDirective?.location,
@@ -137,6 +156,7 @@ export function processDirectives(
     log,
     timeout: globalOptions.timeout,
     queryStringOptions: globalOptions.queryStringOptions,
+    preserveExistingFieldResolvers,
     // Mirror `@transport(options: { odata: … })` under connect opts.
     // Batch root URL comes from `@source` http.baseURL (see processConnectDirectives).
     odata: {
@@ -179,12 +199,27 @@ export function processDirectives(
     }
     // Abstract resolveType: `__typename`, OData `@odata.type`, then structural /
     // scalar fallback. OpenAPI `@discriminator` is baked into `@connect(selection:)`
-    // and stripped — no Mesh `@abstractType` directive.
+    // and stripped - no Mesh `@abstractType` directive.
     if (isInterfaceType(type) || isUnionType(type)) {
-      type.resolveType = getTypeResolverForAbstractType({
-        possibleTypes: isUnionType(type) ? type.getTypes() : schema.getPossibleTypes(type),
-        serviceName: currDirective?.subgraph,
-      });
+      const possibleTypes = isUnionType(type) ? type.getTypes() : schema.getPossibleTypes(type);
+      const memberKey = meshResolveTypeMemberKey(possibleTypes);
+      const existing = type.resolveType;
+      // Reprocess after additionalTypeDefs: keep application / stitch custom
+      // resolveType. Rebuild Mesh-generated callbacks when members change so a
+      // newly added union member without `__typename` still resolves.
+      const keepAppResolveType =
+        preserveExistingFieldResolvers && existing && !isMeshGeneratedResolveType(existing);
+      const keepGeneratedSameMembers =
+        preserveExistingFieldResolvers &&
+        existing &&
+        isMeshGeneratedResolveType(existing) &&
+        getMeshGeneratedResolveTypeMemberKey(existing) === memberKey;
+      if (!keepAppResolveType && !keepGeneratedSameMembers) {
+        type.resolveType = getTypeResolverForAbstractType({
+          possibleTypes,
+          serviceName: currDirective?.subgraph,
+        });
+      }
     }
     if (isEnumType(type)) {
       const directiveAnnotations = getDefDirectives(schema, type);
@@ -196,7 +231,7 @@ export function processDirectives(
         }
       }
       // `@enum` JSON remaps are baked into `@connect(selection:)` as `->match` /
-      // `$->map(@->match)` and stripped from the SDL — no runtime enum wiring.
+      // `$->map(@->match)` and stripped from the SDL - no runtime enum wiring.
     }
     if ('getFields' in type) {
       const fields = type.getFields();
@@ -239,7 +274,7 @@ function isListTypeOrNonNullListType(type: GraphQLOutputType): boolean {
 /**
  * Nested XML/SOAP list fields: a single unbounded sibling is an object, not an array.
  * Match legacy transport-soap `soapDefaultResolver` wrap (+ OpenAPI `@flatten` for scalar lists).
- * Only list fields — singular Date/String fields use `installXmlScalarUnwrap`.
+ * Only list fields - singular Date/String fields use `installXmlScalarUnwrap`.
  */
 function installXmlListPluralization(field: GraphQLField<any, any>) {
   if (field.resolve && field.resolve.name !== 'defaultFieldResolver') return;

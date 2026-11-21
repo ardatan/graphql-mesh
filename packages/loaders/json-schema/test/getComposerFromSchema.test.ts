@@ -3,6 +3,7 @@ import {
   getNamedType,
   GraphQLBoolean,
   GraphQLFloat,
+  GraphQLID,
   GraphQLInt,
   GraphQLString,
   isEnumType,
@@ -25,6 +26,7 @@ import {
 } from 'graphql-compose';
 import {
   GraphQLBigInt,
+  GraphQLDate,
   GraphQLDateTime,
   GraphQLEmailAddress,
   GraphQLIPv4,
@@ -1537,6 +1539,46 @@ ${printType(GraphQLString)}
     expect(groupType).toBe(maybeGroupType);
     expect(output.getFieldNames()).not.toContain('LightningObsGroup2');
     expect(output.schemaComposer.has('LightningObsGroup2')).toBe(false);
+  });
+  it('should map titled pattern scalars via scalarMap instances', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Resource',
+      properties: {
+        id: {
+          title: 'id',
+          type: 'string',
+          pattern: '[A-Za-z0-9\\-\\.]{1,64}',
+        },
+        when: {
+          title: 'date',
+          type: 'string',
+          pattern: '([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)',
+        },
+        homepage: {
+          title: 'url',
+          type: 'string',
+          pattern: '\\S*',
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+      scalarMap: {
+        id: GraphQLID,
+        date: GraphQLDate,
+        url: GraphQLURL,
+      },
+    });
+    const output = result.output as ObjectTypeComposer;
+    expect(getNamedType(output.getField('id').type.getType())).toBe(GraphQLID);
+    expect(getNamedType(output.getField('when').type.getType())).toBe(GraphQLDate);
+    expect(getNamedType(output.getField('homepage').type.getType())).toBe(GraphQLURL);
+    expect(output.schemaComposer.has('id')).toBe(false);
+    expect(output.schemaComposer.has('date')).toBe(false);
+    expect(output.schemaComposer.has('url')).toBe(false);
   });
   it('should reuse one UUID scalar for a format+pattern $ref and a nullable anyOf of the same $ref (#9637)', async () => {
     const uuidSchema: JSONSchemaObject = {

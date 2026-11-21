@@ -68,4 +68,16 @@ describe('parseInterpolationStrings', () => {
     const result = stringInterpolator.parse('{emptyStr}', context);
     expect(result).toBe(emptyStr);
   });
+
+  it('path_head / path_rest split Type/id references on the first slash', () => {
+    const context = { root: { reference: 'Patient/16020' } };
+    expect(stringInterpolator.parse('{root.reference|path_head}', context)).toBe('Patient');
+    expect(stringInterpolator.parse('{root.reference|path_rest}', context)).toBe('16020');
+    expect(
+      stringInterpolator.parse('{root.reference|path_head}', { root: { reference: 'Device' } }),
+    ).toBe('Device');
+    expect(
+      stringInterpolator.parse('{root.reference|path_rest}', { root: { reference: 'Device' } }),
+    ).toBe('');
+  });
 });

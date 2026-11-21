@@ -40,4 +40,16 @@ describe('inferBodySelection', () => {
       } as any),
     ).toBe('$({"ping":true})');
   });
+
+  it('maps OpenAPI 2 formData args into an explicit body selection', () => {
+    expect(
+      inferBodySelection({
+        type: OperationTypeNode.MUTATION,
+        field: 'post_media_math_check_by_type',
+        path: '/media/math/check/{args.type}',
+        method: 'POST',
+        formDataArgMap: { q: 'q' },
+      } as any),
+    ).toBe('{\n  q: $args.q\n}');
+  });
 });

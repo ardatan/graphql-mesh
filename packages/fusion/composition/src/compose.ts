@@ -17,6 +17,13 @@ import {
 } from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
+import {
+  assertSupportedMeshSpecOnSchema,
+  MESH_SUPPORTED_SPEC_VERSIONS,
+  TRANSPORT_DIRECTIVE_SDL,
+  validateMeshDirectives,
+  validateTransportArgs,
+} from '@graphql-mesh/utils';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
   getDirectiveExtensions,
@@ -36,13 +43,14 @@ import {
 import { finalizeConnectorsSupergraph } from './connectors-supergraph.js';
 import {
   convertSubgraphToFederationv2,
-  detectAndAddMeshDirectives,
   importFederationDirectives,
   importMeshDirectives,
   normalizeDirectiveExtensions,
   type MeshDirectiveImport,
 } from './federation-utils.js';
 import { liftExtraSchemaDefinitionDirectives } from './lift-extra-schema-directives.js';
+import { finalizeMeshJoinDirectives } from './mesh-join-supergraph.js';
+import { prepareConnectorsBeforeGuild } from './prepare-connectors-for-guild.js';
 
 export interface SubgraphConfig {
   name: string;
@@ -88,7 +96,7 @@ function isEmptyObject(obj: any) {
 /**
  * Federation Connectors subgraphs use `@link(url: "https://specs.apollo.dev/connect/...")`
  * and/or schema `@source(http: { baseURL })`. They must not get Mesh `@transport`
- * or stitching `@meshSource(subgraph:)` annotations — transforms rewrite connect SDL instead.
+ * or stitching `@meshSource(subgraph:)` annotations - transforms rewrite connect SDL instead.
  */
 export function isFederationConnectorsSubgraph(schema: GraphQLSchema): boolean {
   const directives = getDirectiveExtensions(schema);
@@ -104,9 +112,6 @@ export function isFederationConnectorsSubgraph(schema: GraphQLSchema): boolean {
   const sources = directives?.source || [];
   return sources.some((source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null);
 }
-
-/** @deprecated Use {@link isFederationConnectorsSubgraph}. */
-export const isApolloConnectorsSubgraph = isFederationConnectorsSubgraph;
 
 /**
  * Protobuf RPC subgraphs (`@transport(kind: "protobuf")`) follow the Connectors transform
@@ -165,9 +170,6 @@ export function skipsMeshSourceAnnotations(schema: GraphQLSchema): boolean {
   );
 }
 
-/** @deprecated Use {@link skipsMeshSourceAnnotations}. */
-export const skipsMeshSourceStamps = skipsMeshSourceAnnotations;
-
 export function getAnnotatedSubgraphs(
   subgraphs: SubgraphConfig[],
   options: GetAnnotatedSubgraphsOptions = {},
@@ -186,15 +188,23 @@ export function getAnnotatedSubgraphs(
     const { name: subgraphName, schema, transforms } = subgraphConfig;
     let url: string = subgraphConfig.url;
     const subgraphSchemaExtensions = getDirectiveExtensions(schema);
+    // Snapshot before transforms: encapsulate may import Fed `@inaccessible`
+    // via `@link` before convertSubgraphToFederationv2 runs.
+    const hadExplicitFederationLink = !!subgraphSchemaExtensions?.link?.some(
+      (linkDirectiveArgs: { url?: string }) =>
+        linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/'),
+    );
     const isConnectorsSubgraph = isFederationConnectorsSubgraph(schema);
     const transportDirectives = subgraphSchemaExtensions?.transport;
     const transportDirective = transportDirectives?.[0];
     const apolloSource = (subgraphSchemaExtensions?.source || []).find(
       (source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null,
     );
-    // Strip Mesh `@transport` from printed subgraph SDL (directive definition / schema AST).
-    // Connectors still keep a connect transport *entry* in schema extensions so Hive Gateway
-    // can resolve `@graphql-mesh/transport-connect` via `@extraSchemaDefinitionDirective`.
+    // Strip Mesh `@transport` from printed subgraph SDL when redundant.
+    // Connectors: keep transport only when loaders stamped real `options` /
+    // `headers` (qs / odata / …). Bare connect is omitted - Gateway infers
+    // `kind: "connect"` from join connect/source. GM-41 rewrites kept entries
+    // to `@join__directive(name: "transport", args: { options })` without `kind`.
     let removeTransportDirectiveDefinition = false;
     let removeTransportFromExtras = false;
     if (isConnectorsSubgraph) {
@@ -228,19 +238,33 @@ export function getAnnotatedSubgraphs(
     if (isConnectorsSubgraph) {
       const extensions: Record<string, any> = (normalizedSchema.extensions ||= {});
       extensions.directives = extensions.directives || {};
+      // Compose-only owner stamp for lifting SCHEMA `@source` → `@join__directive`.
+      // Stripped in lift (not printed).
+      extensions.directives.meshComposeSubgraph = [{ name: subgraphName }];
       const existingTransport = (extensions.directives.transport || [])[0] || {};
-      // Hive execution hint — not part of the Federation Connectors subgraph contract.
-      // Preserve kind-specific `options` from the loader (qs / timeout / …).
-      const mergedOptions = { ...(existingTransport.options || {}) };
-      extensions.directives.transport = [
-        {
-          ...existingTransport,
-          subgraph: subgraphName,
-          kind: 'connect',
-          location: url || apolloSource?.http?.baseURL || existingTransport.location || '',
-          ...(Object.keys(mergedOptions).length ? { options: mergedOptions } : {}),
-        },
-      ];
+      // Legacy bag (pre options-only stamp); prefer stamped `@transport(options:)`.
+      const bagOpts =
+        extensions.meshConnectOptions && typeof extensions.meshConnectOptions === 'object'
+          ? { ...extensions.meshConnectOptions }
+          : {};
+      delete extensions.meshConnectOptions;
+      const mergedOptions = { ...bagOpts, ...(existingTransport.options || {}) };
+      const hasOptions = Object.keys(mergedOptions).length > 0;
+      const hasHeaders = existingTransport.headers != null;
+      if (hasOptions || hasHeaders) {
+        extensions.directives.transport = [
+          {
+            ...existingTransport,
+            subgraph: subgraphName,
+            kind: 'connect',
+            location: url || apolloSource?.http?.baseURL || existingTransport.location || '',
+            ...(hasOptions ? { options: mergedOptions } : {}),
+          },
+        ];
+      } else {
+        delete extensions.directives.transport;
+        removeTransportFromExtras = true;
+      }
     } else if (
       removeTransportFromExtras &&
       (normalizedSchema.extensions?.directives as any)?.transport
@@ -488,7 +512,7 @@ export function getAnnotatedSubgraphs(
           );
         }
       }
-      // Semantic conventions (ById/ByIds) after transforms — including connectors / protobuf.
+      // Semantic conventions (ById/ByIds) after transforms - including connectors / protobuf.
       // `@connect` / `@protobuf__rpc` with `entity: true` skip Mesh `@merge`; `@key` still lands.
       transformedSubgraph = mapSchema(transformedSubgraph, {
         [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
@@ -521,32 +545,32 @@ export function getAnnotatedSubgraphs(
     if (isConnectorsSubgraph && !options.ignoreSemanticConventions) {
       transformedSubgraph = ensureNonResolvableKeysForEntityStubs(transformedSubgraph);
     }
-    transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
-    transformedSubgraph = detectAndAddMeshDirectives(transformedSubgraph);
-    const importedDirectives: MeshDirectiveImport[] = [];
+    transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph, {
+      hadExplicitFederationLink,
+    });
+    // Core Mesh directives (`@merge`, `@hoist`, `@source`, …) under `core/v0.1`.
+    // Connectors: loaders keep `directive @connect` defs (GraphQL.js-valid print)
+    // but omit `@composeDirective(name: "@connect")`; Guild gets that stamp via
+    // `prepareConnectorsBeforeGuild` only.
+    const importedCoreDirectives: MeshDirectiveImport[] = [];
     if (mergeDirectiveUsed) {
-      importedDirectives.push('@merge');
+      importedCoreDirectives.push('@merge');
     }
+    let sourceImport: MeshDirectiveImport | undefined;
     if (sourceDirectiveUsed) {
       if (aliasMeshSource) {
         // Coexist with Apollo SCHEMA `@source` in mixed compositions.
-        importedDirectives.push({ name: '@source', as: '@meshSource' });
+        sourceImport = { name: '@source', as: '@meshSource' };
       } else {
-        importedDirectives.push('@source');
+        sourceImport = '@source';
       }
     }
-    // Preserve Apollo `@connect` through federation via `@composeDirective`.
     // When Mesh stitching `@source` is also in the composition, drop `@source` from the
     // connect `@link` import so Guild does not clash (args stay in extras; post-process
     // restores `@source` on the connect `@link` after lifting SCHEMA directives).
-    if (isConnectorsSubgraph) {
+    if (isConnectorsSubgraph && compositionHasMeshStitchingSource) {
       const schemaDirectives = getDirectiveExtensions(transformedSubgraph) || {};
-      const composeDirectives = (schemaDirectives.composeDirective =
-        schemaDirectives.composeDirective?.filter(Boolean) || []);
-      if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
-        composeDirectives.push({ name: '@connect' });
-      }
-      if (compositionHasMeshStitchingSource && Array.isArray(schemaDirectives.link)) {
+      if (Array.isArray(schemaDirectives.link)) {
         schemaDirectives.link = schemaDirectives.link.map(
           (link: { url?: string; import?: any[] }) => {
             if (
@@ -571,10 +595,9 @@ export function getAnnotatedSubgraphs(
             return link;
           },
         );
+        const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
+        extensions.directives = schemaDirectives;
       }
-      const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
-      extensions.directives = schemaDirectives;
-      transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@composeDirective']);
     }
     const fieldMapper: FieldMapper = (fieldConfig, fieldName) => {
       const fieldDirectives = getDirectiveExtensions(fieldConfig);
@@ -686,6 +709,20 @@ export function getAnnotatedSubgraphs(
     // Workaround to keep directives on unsupported nodes since not all of them are supported by the composition library
     let extraSchemaDefinitionDirectives: Record<string, any> | undefined;
     const schemaDirectiveExtensions = getDirectiveExtensions(transformedSubgraph);
+    // Validate retained `@transport` before moving into Query extras - after the
+    // move, validateMeshDirectives only sees schema-level apps (already stripped).
+    if (!removeTransportFromExtras && schemaDirectiveExtensions?.transport) {
+      const transports = Array.isArray(schemaDirectiveExtensions.transport)
+        ? schemaDirectiveExtensions.transport
+        : [schemaDirectiveExtensions.transport];
+      for (const transport of transports) {
+        validateTransportArgs(transport, (message, directive) => {
+          throw new GraphQLError(
+            `${message} (subgraph: ${subgraphName}${directive ? `, directive: @${directive}` : ''})`,
+          );
+        });
+      }
+    }
     if (schemaDirectiveExtensions) {
       const schemaDirectiveExtensionsEntries = Object.entries(schemaDirectiveExtensions);
       const schemaDirectiveExtraEntries = schemaDirectiveExtensionsEntries.filter(
@@ -734,13 +771,16 @@ export function getAnnotatedSubgraphs(
         ) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
       `);
     }
+    const composeDirectiveNames = (
+      getDirectiveExtensions(transformedSubgraph)?.composeDirective || []
+    ).map((d: { name?: string }) => d?.name);
 
     const queryType = transformedSubgraph.getQueryType();
     if (queryType) {
       const queryTypeDirectives = getDirectiveExtensions(queryType) || {};
 
       if (extraSchemaDefinitionDirectives) {
-        importedDirectives.push('@extraSchemaDefinitionDirective');
+        importedCoreDirectives.push('@extraSchemaDefinitionDirective');
         importedDirectivesAST.add(/* GraphQL */ `
           scalar _DirectiveExtensions
         `);
@@ -759,9 +799,24 @@ export function getAnnotatedSubgraphs(
       queryTypeExtensions.directives = queryTypeDirectives;
     }
 
-    if (importedDirectives.length) {
-      transformedSubgraph = importMeshDirectives(transformedSubgraph, importedDirectives);
+    if (sourceImport) {
+      // Mesh stitching `@source` / `@meshSource` under core/v0.1 (same link as
+      // `@merge` / `@transport`). Gateway still accepts older Mesh `@link` prefixes.
+      importedCoreDirectives.push(sourceImport);
     }
+    if (importedCoreDirectives.length) {
+      transformedSubgraph = importMeshDirectives(transformedSubgraph, importedCoreDirectives);
+      assertSupportedMeshSpecOnSchema(transformedSubgraph, {
+        name: 'core',
+        supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
+        required: true,
+        consumer: '@graphql-mesh/fusion-composition',
+      });
+    }
+    // GM-37: after Mesh `@link` stamps - syntax + spec contract.
+    validateMeshDirectives(transformedSubgraph, {
+      consumer: `@graphql-mesh/fusion-composition(subgraph: ${subgraphName})`,
+    });
 
     let subgraphAST = getDocumentNodeFromSchema(transformedSubgraph);
     if (importedDirectivesAST.size) {
@@ -769,6 +824,22 @@ export function getAnnotatedSubgraphs(
         subgraphAST,
         parse([...importedDirectivesAST].join('\n'), { noLocation: true }),
       ]);
+    }
+    // `@transport` often lives only in extensions / extras; printers may omit the
+    // SCHEMA directive definition while `@composeDirective(name: "@transport")` remains.
+    if (composeDirectiveNames.includes('@transport')) {
+      const hasTransportDef = subgraphAST.definitions.some(
+        d => d.kind === 'DirectiveDefinition' && d.name.value === 'transport',
+      );
+      if (!hasTransportDef) {
+        const hasTransportOptions = subgraphAST.definitions.some(
+          d => d.kind === 'ScalarTypeDefinition' && d.name.value === 'TransportOptions',
+        );
+        const transportSdl = hasTransportOptions
+          ? TRANSPORT_DIRECTIVE_SDL.replace(/^\s*scalar TransportOptions\s*/m, '')
+          : TRANSPORT_DIRECTIVE_SDL;
+        subgraphAST = concatAST([subgraphAST, parse(transportSdl, { noLocation: true })]);
+      }
     }
 
     annotatedSubgraphs.push({
@@ -807,17 +878,19 @@ export function composeSubgraphs(
 }
 
 export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[]) {
-  const composedSupergraphSdl = composeServices(annotatedSubgraphs);
+  // Guild needs `@composeDirective(name: "@connect")` (+ connect def if missing).
+  // Loaders already print connect defs; composeDirective is Guild-only.
+  const guildSubgraphs = prepareConnectorsBeforeGuild(annotatedSubgraphs);
+  const composedSupergraphSdl = composeServices(guildSubgraphs);
   const rawSupergraphSdl = composedSupergraphSdl.supergraphSdl?.trim();
-  // Lift SCHEMA extras, then rewrite Connectors to `@join__directive` metadata
-  // so the same Mesh supergraph runs on Hive Gateway and Apollo Router
-  // (Hive's REST transport reads join__directive; Router requires it).
+  // Lift SCHEMA extras → Connectors `@join__directive` → GM-41 transport join.
   const lifted = rawSupergraphSdl
     ? liftExtraSchemaDefinitionDirectives(rawSupergraphSdl)
     : rawSupergraphSdl;
+  const withConnectors = lifted ? finalizeConnectorsSupergraph(lifted) : lifted;
   return {
     ...composedSupergraphSdl,
-    supergraphSdl: lifted ? finalizeConnectorsSupergraph(lifted) : lifted,
+    supergraphSdl: withConnectors ? finalizeMeshJoinDirectives(withConnectors) : withConnectors,
     annotatedSubgraphs,
   };
 }
@@ -861,9 +934,22 @@ function addAnnotationsForSemanticConventions({
       let argName: string;
       let arg: GraphQLArgumentConfig;
       if (argEntries.length === 1) {
-        const argType = getNamedType(argEntries[0][1].type);
-        if (argType.name === objectFieldType.name) {
-          [argName, arg] = argEntries[0];
+        const [onlyArgName, onlyArg] = argEntries[0];
+        const argType = getNamedType(onlyArg.type);
+        // Prefer identical GraphQL type names (`ID`/`ID`). Also accept same arg/field
+        // name for Mesh JSON-Schema path args (`String`) when the key field is a
+        // stringly scalar (`string` pattern title, or `ID` via `scalarMap`) - otherwise
+        // FHIR `Patient.id: ID` + `/Patient/{args.id}` never get `@connect(entity: true)` /
+        // `@key`. Do not name-match Int/ID (etc.) mismatches: entity reps may carry
+        // string IDs that an `Int!` arg cannot accept.
+        if (
+          argType.name === objectFieldType.name ||
+          (onlyArgName === fieldName &&
+            argType.name === 'String' &&
+            (objectFieldType.name === 'string' || objectFieldType.name === 'ID'))
+        ) {
+          argName = onlyArgName;
+          arg = onlyArg;
         }
       } else {
         for (const [currentArgName, currentArg] of argEntries) {
@@ -887,7 +973,7 @@ function addAnnotationsForSemanticConventions({
               ...(opts?.resolvable === false ? { resolvable: false } : {}),
             });
           } else if (opts?.resolvable !== false && existing.resolvable === false) {
-            // Singular entity resolver exists — upgrade a previously batch-stamped non-resolvable key.
+            // Singular entity resolver exists - upgrade a previously batch-stamped non-resolvable key.
             delete existing.resolvable;
           }
           const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
@@ -910,7 +996,7 @@ function addAnnotationsForSemanticConventions({
         /** True when this call stamped `entity: true` or a type-level entity resolver. */
         const markConnectEntityOrMerge = (): boolean => {
           // Batch list args (e.g. `id: [ID!]!` / `ids: [ID!]!`) must not get
-          // `entity: true` or `$this.<scalarKey>` — resolveReference supplies a scalar.
+          // `entity: true` or `$this.<scalarKey>` - resolveReference supplies a scalar.
           const batchListArg = isBatchListArgType(arg.type);
           if (directiveExtensions.connect?.length) {
             const alreadyEntity = directiveExtensions.connect.some((c: any) => c?.entity === true);
@@ -1024,7 +1110,7 @@ function addAnnotationsForSemanticConventions({
         };
         switch (queryFieldNameSnakeCase) {
           case snakeCase(type.name):
-          // `getCustomer(id:)` — single key-typed arg already matched above; no `_by_id` suffix required.
+          // `getCustomer(id:)` - single key-typed arg already matched above; no `_by_id` suffix required.
           // falls through
           case snakeCase(`get_${type.name}`):
           case snakeCase(`get_${type.name}_by_${fieldName}`):

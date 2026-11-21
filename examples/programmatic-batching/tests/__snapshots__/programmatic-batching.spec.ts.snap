@@ -39,7 +39,12 @@ input HTTPHeaderMapping {
 scalar JSONSelection
 
 type Mutation {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @connect(source: "ExampleAPI", http: {POST: "/users_by_ids", body: "$args.input", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}]}, selection: "results { id name }")
+  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @connect(source: "ExampleAPI", http: {POST: "/users_by_ids", body: "$args.input"}, selection: """
+  results {
+    id
+    name
+  }
+  """)
 }
 
 type Query {

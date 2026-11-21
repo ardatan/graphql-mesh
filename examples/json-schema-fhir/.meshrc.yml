@@ -2,7 +2,13 @@ sources:
   - name: FHIR
     handler:
       jsonSchema:
-        endpoint: http://hapi.fhir.org/baseR4
+        # Handler already emits Connectors `@connect` for operations (v0 default).
+        # Follow-up fetch stays Mesh `@resolveTo` - no hand `@connect` in additionalTypeDefs.
+        endpoint: '{env.FHIR_BASE}'
+        # Title → GraphQL scalar by type name (YAML-friendly).
+        scalarMap:
+          id: ID
+          oid: ID
         operations:
           - type: Query
             field: resourceById
@@ -27,7 +33,8 @@ additionalTypeDefs: |
       sourceTypeName: "Query",
       sourceFieldName: "resourceById",
       sourceArgs: {
-        resourceType: "{root.reference}"
+        resourceType: "{root.reference|path_head}",
+        id: "{root.reference|path_rest}"
       }
     )
   }

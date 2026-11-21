@@ -17,7 +17,7 @@ import {
   type SubgraphConfig,
   type SubgraphTransform,
 } from '../compose.js';
-import { importFederationDirectives } from '../federation-utils.js';
+import { importFederationDirectives, importMeshDirectives } from '../federation-utils.js';
 import { addInaccessibleDirective } from './filter-schema.js';
 
 const OPERATION_TYPE_SUFFIX_MAP = {
@@ -50,6 +50,9 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     };
     const newRootTypes: Record<string, GraphQLObjectType> = {};
     let inaccessibleDirectiveAdded = false;
+    // Track whether any field actually receives `@resolveTo` (mixed Connector +
+    // plain fields still need the def/import even when `isConnectors` is true).
+    let emittedResolveTo = false;
     for (const opTypeString in applyToMap) {
       const operationType = opTypeString as OperationTypeNode;
       const originalType = schema.getRootType(operationType);
@@ -70,10 +73,13 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
           // instead of re-pointing them at an SDK field that does not exist (#4962).
           if (originalDirectives.resolveTo?.[0]?.sourceFieldName === '__typename') {
             wrappedFieldMap[fieldName] = originalFieldConfig;
+            if (originalDirectives.resolveTo?.length) {
+              emittedResolveTo = true;
+            }
             continue;
           }
           // Federation Connectors: move `@connect` onto the namespaced type field.
-          // No `@resolveTo` / inaccessible root copies — namespace root is a virtual connector.
+          // No `@resolveTo` / inaccessible root copies - namespace root is a virtual connector.
           if (isConnectors && originalDirectives.connect?.length) {
             wrappedFieldMap[fieldName] = {
               ...originalFieldConfig,
@@ -95,6 +101,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             }
           }
           const wrappedFieldName = `_encapsulated_${groupName}_${fieldName}`;
+          emittedResolveTo = true;
           wrappedFieldMap[fieldName] = {
             ...originalFieldConfig,
             extensions: {
@@ -155,6 +162,9 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
                 ],
               },
             };
+        if (!isConnectors) {
+          emittedResolveTo = true;
+        }
         newRootTypes[operationType] = new GraphQLObjectType({
           ...originalTypeConfig,
           fields: {
@@ -171,7 +181,9 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     }
     const schemaConfig = schema.toConfig();
     const newDirectives = [...schemaConfig.directives];
-    if (!newDirectives.some(directive => directive.name === 'resolveTo')) {
+    // Gate def/import on whether `@resolveTo` was actually emitted (mixed schemas).
+    const needsResolveTo = emittedResolveTo;
+    if (needsResolveTo && !newDirectives.some(directive => directive.name === 'resolveTo')) {
       newDirectives.push(resolveToDirective);
     }
     // `types: undefined` drops types that are not reachable as field return
@@ -204,12 +216,16 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
       directives: newDirectives,
       ...newRootTypes,
     });
+    // Mesh core `@resolveTo` must be explicitly `@link`/`@composeDirective`-imported
+    // (no auto-scan). Without this, composition drops the usages and encapsulate
+    // nests cannot resolve at Gateway runtime. Skip on Connectors (no `@resolveTo`).
+    let ready = needsResolveTo ? importMeshDirectives(newSchema, ['@resolveTo']) : newSchema;
     // Always import `@inaccessible` when encapsulate added it. Connectors subgraphs
     // may only have the Apollo connect `@link` at this point (no federation import yet).
     if (inaccessibleDirectiveAdded) {
-      return importFederationDirectives(newSchema, ['@inaccessible']);
+      ready = importFederationDirectives(ready, ['@inaccessible']);
     }
-    return newSchema;
+    return ready;
   };
 }
 

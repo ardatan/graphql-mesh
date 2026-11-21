@@ -37,6 +37,7 @@ export async function loadNonExecutableGraphQLSchemaFromJSONSchemas(
     queryParams: options.queryParams,
     queryStringOptions: options.queryStringOptions,
     getScalarForFormat: options.getScalarForFormat,
+    scalarMap: options.scalarMap,
     handlerName: options.handlerName,
     connectSelection: options.connectSelection,
   });

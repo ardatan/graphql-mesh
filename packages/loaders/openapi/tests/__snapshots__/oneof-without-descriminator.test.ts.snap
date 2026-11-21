@@ -6,7 +6,7 @@ exports[`oneOf without discriminator should generate correct schema: discriminat
   mutation: Mutation
 }
 
-directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
@@ -21,7 +21,7 @@ type Query {
 }
 
 type Mutation {
-  test_endpoint(input: TestType_Input): TestType @connect(source: "test", http: {POST: "/test", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
+  test_endpoint(input: TestType_Input): TestType @connect(source: "test", http: {POST: "/test", body: "$args.input"}, selection: "$")
 }
 
 union TestType = A_const_container | mutation_test_endpoint_oneOf_1

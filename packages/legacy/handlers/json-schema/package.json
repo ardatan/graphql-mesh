@@ -45,6 +45,7 @@
     "@json-schema-tools/meta-schema": "^1.7.5",
     "@omnigraph/json-schema": "^0.112.6",
     "graphql-compose": "^9.3.0",
+    "graphql-scalars": "^2.0.1",
     "json-machete": "^0.97.8",
     "tslib": "^2.4.0"
   },

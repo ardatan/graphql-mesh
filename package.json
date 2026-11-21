@@ -124,6 +124,7 @@
     "@graphql-hive/logger": "1.1.1",
     "@graphql-mesh/cross-helpers": "workspace:*",
     "@graphql-mesh/fusion-runtime@npm:^1.13.4": "patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch",
+    "@graphql-mesh/fusion-runtime@npm:^1.13.5": "patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch",
     "@graphql-mesh/transport-http-callback@npm:^1.1.2": "patch:@graphql-mesh/transport-http-callback@npm%3A1.1.2#~/.yarn/patches/@graphql-mesh-transport-http-callback-npm-1.1.2-b1703038a5.patch",
     "@graphql-mesh/transport-http-callback@npm:^1.1.3": "patch:@graphql-mesh/transport-http-callback@npm%3A1.1.3#~/.yarn/patches/@graphql-mesh-transport-http-callback-npm-1.1.3-7818a3c071.patch",
     "@graphql-mesh/utils": "workspace:*",

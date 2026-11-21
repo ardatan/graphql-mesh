@@ -5,6 +5,7 @@ import {
   finalizeConnectorsSupergraph,
   formatEntityStubSelection,
   getAnnotatedSubgraphs,
+  importMeshDirectives,
   inferEntityRefFromParentFkNames,
   isFederationConnectorsSubgraph,
   isMongoSubgraph,
@@ -106,7 +107,7 @@ describe('Federation Connectors composition', () => {
         schema: connectorsSchema,
         transforms: [
           schema =>
-            // noop transform — still must not inject stitching @source
+            // noop transform - still must not inject stitching @source
             schema,
         ],
       },
@@ -122,6 +123,76 @@ describe('Federation Connectors composition', () => {
     expect(sdl).toMatch(/import:\s*\[[^\]]*@source/);
     expect(sdl).toContain('specs.apollo.dev/connect/v0.4');
     expect(sdl).toContain('@connect');
+  });
+
+  it('keeps options-only join transport when loader stamped @transport(options:)', () => {
+    // Fresh schema - do not share `extensions.directives` with `connectorsSchema`.
+    const withOpts = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "rest", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      input ConnectHTTP {
+        GET: String
+        headers: [HTTPHeaderMapping!]
+        queryParams: String
+        body: String
+      }
+
+      input SourceHTTP {
+        baseURL: String!
+        headers: [HTTPHeaderMapping!]
+        queryParams: String
+      }
+
+      input HTTPHeaderMapping {
+        name: String!
+        value: String
+        from: String
+      }
+
+      type Query {
+        user(id: ID!): User
+          @connect(source: "rest", http: { GET: "/users/{$args.id}" }, selection: "id name")
+      }
+
+      type User {
+        id: ID!
+        name: String
+      }
+    `);
+    (withOpts.extensions as any) = {
+      directives: {
+        transport: [
+          {
+            subgraph: 'REST',
+            kind: 'connect',
+            location: 'https://api.example.com',
+            options: { queryStringOptions: { arrayFormat: 'repeat' } },
+          },
+        ],
+      },
+    };
+    const result = composeSubgraphs([{ name: 'REST', schema: withOpts }]);
+    expect(result.errors).toBeUndefined();
+    const sdl = result.supergraphSdl!;
+    // Remaining connect options: native `@transport` (Apollo-safe; not join-carried).
+    expect(sdl).toMatch(/@transport\(kind: "connect", subgraph: "REST"/);
+    expect(sdl).toMatch(/queryStringOptions/);
+    expect(sdl).toContain('arrayFormat');
+    expect(sdl).toContain('repeat');
+    expect(sdl).not.toMatch(/name: "transport"/);
   });
 
   it('keeps Apollo @source on schema extensions path', () => {
@@ -654,7 +725,7 @@ describe('Federation Connectors composition', () => {
         @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
         @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"])
         @link(
-          url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+          url: "https://specs.graphql-mesh.com/core/v0.1"
           import: ["@extraSchemaDefinitionDirective"]
         ) {
         query: Query
@@ -702,7 +773,7 @@ describe('Federation Connectors composition', () => {
     expect(lifted).toContain('directive @source');
     expect(lifted).toContain('directive @transport');
     expect(lifted).toMatch(/connect\/v0\.4", import: \["@connect", "@source"\]/);
-    expect(lifted).toMatch(/mesh\/spec\/v1\.0".*import: \["@transport"\]/);
+    expect(lifted).toMatch(/specs\.graphql-mesh\.com\/.*\/v0\.1".*import: \["@transport"\]/);
     expect(() => buildSchema(lifted, { assumeValidSDL: true })).not.toThrow();
   });
 
@@ -711,7 +782,7 @@ describe('Federation Connectors composition', () => {
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
     expect(sdl).not.toContain('extraSchemaDefinitionDirective');
-    // Canonical Mesh connectors SG — same SDL for Hive Gateway + Apollo Router.
+    // Canonical Mesh connectors SG - same SDL for Hive Gateway + Apollo Router.
     expect(sdl).toMatch(/@join__directive\([^)]*name: "source"/);
     expect(sdl).toMatch(/@join__directive\([^)]*name: "connect"/);
     expect(sdl).toContain('specs.apollo.dev/join/v0.5');
@@ -720,8 +791,10 @@ describe('Federation Connectors composition', () => {
     );
     expect(sdl).not.toMatch(/@connect\(/);
     expect(sdl).not.toMatch(/@source\(/);
-    // Mesh `@transport` stays so Hive can select the REST transport; Router tolerates it.
-    expect(sdl).toMatch(/@transport\(subgraph: "REST"/);
+    // Optimized Mesh: no `@transport` / join transport when Connectors are present -
+    // Gateway infers `kind: "connect"` from join connect/source.
+    expect(sdl).not.toMatch(/@transport\s*\(/);
+    expect(sdl).not.toMatch(/name: "transport"/);
   });
 
   it('uses plain Mesh @source when composition has no Connectors', () => {
@@ -776,8 +849,12 @@ describe('Federation Connectors composition', () => {
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
     expect(sdl).not.toContain('@meshSource');
-    expect(sdl).toMatch(/@source\([^)]*subgraph:/);
-    expect(sdl).toMatch(/@transport\(subgraph: "REST"/);
+    // Field-level Mesh `@source` → `@join__directive` on the final SG (arg-level
+    // Mesh `@source` may remain native - federation extract skips those locs).
+    expect(sdl).toMatch(/@join__directive\([\s\S]*name: "source"/);
+    expect(sdl).not.toMatch(/@source\([^)]*subgraph:/);
+    // Non-connectors Mesh subgraph with connect-shaped transport still rewrites;
+    // plain http/connect without extras is dropped when join owns location.
     expect(sdl).not.toContain('extraSchemaDefinitionDirective');
   });
 
@@ -832,7 +909,13 @@ describe('Federation Connectors composition', () => {
     ]);
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
-    expect(sdl).toContain('@meshSource');
+    // Annotated subgraphs keep `@meshSource`; final SG uses join__directive.
+    expect(sdl).toMatch(/@join__directive\([\s\S]*name: "meshSource"/);
+    expect(sdl).not.toMatch(/@meshSource\s*\(/);
+    // Join-carried meshSource still keeps the aliased Mesh `@link` import.
+    expect(sdl).toMatch(
+      /specs\.graphql-mesh\.com\/core\/v0\.1", import: \[[^\]]*\{name: "@source", as: "@meshSource"\}/,
+    );
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "source"[\s\S]*name: "rest"/);
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "connect"/);
     expect(sdl).not.toMatch(/@connect\(/);
@@ -844,7 +927,7 @@ describe('Federation Connectors composition', () => {
     const meshSdl = result.supergraphSdl!;
     expect(meshSdl).toMatch(/@join__directive\([^)]*name: "connect"/);
     const again = finalizeConnectorsSupergraph(meshSdl);
-    // Already finalized — early-return when no raw @connect remains
+    // Already finalized - early-return when no raw @connect remains
     expect(again).toBe(meshSdl);
   });
 
@@ -989,7 +1072,7 @@ describe('Federation Connectors composition', () => {
   });
 
   it('emits type-level @connect with $this when keyArg !== keyField (Apollo entity pattern)', () => {
-    // OpenAPI-style: getUserById(userId) → User.id — entity:true would be invalid.
+    // OpenAPI-style: getUserById(userId) → User.id - entity:true would be invalid.
     const schema = buildSchema(/* GraphQL */ `
       schema
         @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
@@ -1295,7 +1378,7 @@ describe('Federation Connectors composition', () => {
     `;
 
     const out = finalizeConnectorsSupergraph(before);
-    // Scope to the Airline type — Query.AirlinesByAirlineCode also has connect.
+    // Scope to the Airline type - Query.AirlinesByAirlineCode also has connect.
     expect(out).toMatch(
       /type Airline[\s\S]*@join__directive\(graphs: \[TRIPPIN\], name: "connect", args: \{source: "Trippin"[\s\S]*entity: true\}/,
     );
@@ -1360,7 +1443,7 @@ describe('Federation Connectors composition', () => {
 
       type Query @join__type(graph: PRODUCTS) @join__type(graph: INVENTORY) {
         # stock first so the shared source cache holds INVENTORY before Product's
-        # type-level @connect is attributed — exercises preferSoleJoinType.
+        # type-level @connect is attributed - exercises preferSoleJoinType.
         stock(id: ID!): Stock
           @join__field(graph: INVENTORY)
           @connect(source: "api", http: { GET: "/stock/{$args.id}" }, selection: "id qty")
@@ -1407,6 +1490,88 @@ describe('Federation Connectors composition', () => {
     expect(out).toMatch(
       /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api"/,
     );
+  });
+
+  it('attributes source-less type-level @connect to the sole keyed join (value-type sibling)', () => {
+    // FHIR-like: Observation contributes Reference as a value type (no key), while a
+    // mini Connectors subgraph owns Reference @key + type-level @connect for resolveReference.
+    const before = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/link/v1.0")
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+        query: Query
+      }
+
+      directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+      directive @join__type(
+        graph: join__Graph!
+        key: join__FieldSet
+        extension: Boolean! = false
+        resolvable: Boolean! = true
+      ) repeatable on OBJECT
+      directive @join__field(graph: join__Graph) on FIELD_DEFINITION
+      directive @join__directive(
+        graphs: [join__Graph!]
+        name: String!
+        args: join__DirectiveArguments
+      ) repeatable on FIELD_DEFINITION | OBJECT | SCHEMA
+      directive @link(url: String!, import: [link__Import], for: link__Purpose) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      scalar join__FieldSet
+      scalar join__DirectiveArguments
+      scalar link__Import
+      enum link__Purpose {
+        SECURITY
+        EXECUTION
+      }
+      enum join__Graph {
+        OBSERVATIONS @join__graph(name: "observations", url: "http://localhost:4001")
+        REFERENCE_RESOURCE @join__graph(name: "referenceResource", url: "http://localhost:4002")
+      }
+      input ConnectHTTP {
+        GET: String
+      }
+
+      type Query @join__type(graph: OBSERVATIONS) @join__type(graph: REFERENCE_RESOURCE) {
+        observationById(id: ID!): Observation @join__field(graph: OBSERVATIONS)
+        _referenceResource: String @join__field(graph: REFERENCE_RESOURCE)
+      }
+
+      type Observation @join__type(graph: OBSERVATIONS) {
+        id: ID!
+        subject: Reference
+      }
+
+      type Reference
+        @join__type(graph: OBSERVATIONS)
+        @join__type(graph: REFERENCE_RESOURCE, key: "reference")
+        @connect(selection: "reference: $this.reference") {
+        reference: String!
+        resource: Patient @join__field(graph: REFERENCE_RESOURCE)
+      }
+
+      type Patient @join__type(graph: REFERENCE_RESOURCE, key: "id", resolvable: false) {
+        id: ID!
+      }
+    `;
+
+    const out = finalizeConnectorsSupergraph(before);
+    const referenceType = out.match(/type Reference[^\n]*/)?.[0] ?? '';
+    expect(referenceType).toMatch(
+      /@join__directive\(graphs: \[REFERENCE_RESOURCE\], name: "connect"/,
+    );
+    expect(referenceType).not.toMatch(
+      /@join__directive\(graphs: \[OBSERVATIONS\], name: "connect"/,
+    );
+    // Must not leave native @connect (Router rejects it on the Supergraph).
+    expect(out).not.toMatch(/type Reference[\s\S]*@connect\(/);
   });
 
   it('attributes source-less type-level @connect to the owner join, not the stub', () => {
@@ -1552,7 +1717,7 @@ describe('Federation Connectors composition', () => {
     // Two hand-supplied connector subgraphs both declare `@source(name: "api")`
     // with different baseURLs. Compose lifts extras onto schema (losing graph),
     // but Mesh `@transport(subgraph, location)` still pairs each baseURL with
-    // its owning subgraph — finalize must emit each source only for that graph.
+    // its owning subgraph - finalize must emit each source only for that graph.
     const common = /* GraphQL */ `
       directive @link(url: String!, import: [String]) repeatable on SCHEMA
       directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
@@ -1796,5 +1961,216 @@ describe('Federation Connectors composition', () => {
     expect(out).not.toMatch(
       /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com", headers: \[\{name: "X-Tenant", value: "products"\}\]\}\}/,
     );
+  });
+
+  it('strips Mesh @typescript/@example/@regexp from lean SG', () => {
+    // Regression: Apollo Router connector carry-over rejects native apps already
+    // printed on the SG when shared FHIR/OpenAPI pattern scalars merge across
+    // Connectors subgraphs. Subgraph SDLs keep `@regexp` for Hive Connect.
+    const sharedScalarSdl = /* GraphQL */ `
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @composeDirective(name: String!) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+      directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
+      directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
+      directive @example(subgraph: String, value: String) repeatable on SCALAR | ENUM
+      directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
+
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      scalar string
+        @regexp(subgraph: "SUBGRAPH", pattern: "[ \\\\r\\\\n\\\\t\\\\S]+")
+        @typescript(subgraph: "SUBGRAPH", type: "string")
+
+      enum Resource_const
+        @typescript(subgraph: "SUBGRAPH", type: "\\"Resource\\"")
+        @example(subgraph: "SUBGRAPH", value: "Resource") {
+        Resource @enum(subgraph: "SUBGRAPH", value: "\\"Resource\\"")
+      }
+    `;
+
+    const patients = importMeshDirectives(
+      buildSchema(
+        /* GraphQL */ `
+          schema
+            @link(url: "https://specs.apollo.dev/link/v1.0")
+            @link(
+              url: "https://specs.apollo.dev/federation/v2.6"
+              import: ["@key", "@composeDirective"]
+            )
+            @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+            @source(name: "fhir", http: { baseURL: "https://hapi.fhir.org/baseR4" }) {
+            query: Query
+          }
+          ${sharedScalarSdl.replaceAll('SUBGRAPH', 'patients')}
+          type Query {
+            patient(id: string!): Patient
+              @connect(
+                source: "fhir"
+                http: { GET: "/Patient/{$args.id}" }
+                selection: "id"
+                entity: true
+              )
+          }
+          type Patient @key(fields: "id") {
+            id: string!
+            resourceType: Resource_const
+          }
+        `,
+        { assumeValidSDL: true, assumeValid: true },
+      ),
+      ['@regexp', '@typescript', '@example'],
+    );
+
+    const observations = importMeshDirectives(
+      buildSchema(
+        /* GraphQL */ `
+          schema
+            @link(url: "https://specs.apollo.dev/link/v1.0")
+            @link(
+              url: "https://specs.apollo.dev/federation/v2.6"
+              import: ["@key", "@composeDirective"]
+            )
+            @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+            @source(name: "fhir", http: { baseURL: "https://hapi.fhir.org/baseR4" }) {
+            query: Query
+          }
+          ${sharedScalarSdl.replaceAll('SUBGRAPH', 'observations')}
+          type Query {
+            observationById(id: string!): Observation
+              @connect(source: "fhir", http: { GET: "/Observation/{$args.id}" }, selection: "id")
+          }
+          type Observation {
+            id: string!
+            resourceType: Resource_const
+          }
+          type Patient @key(fields: "id", resolvable: false) {
+            id: string!
+          }
+        `,
+        { assumeValidSDL: true, assumeValid: true },
+      ),
+      ['@regexp', '@typescript', '@example'],
+    );
+
+    const result = composeSubgraphs([
+      { name: 'patients', schema: patients },
+      { name: 'observations', schema: observations },
+    ]);
+    expect(result.errors ?? []).toEqual([]);
+    const sdl = result.supergraphSdl!;
+    expect(sdl).toMatch(/\bscalar string\b/);
+    expect(sdl).not.toMatch(/@typescript\(/);
+    expect(sdl).not.toMatch(/@example\(/);
+    expect(sdl).not.toMatch(/@regexp\(/);
+    expect(sdl).not.toMatch(/directive @typescript\b/);
+    expect(sdl).not.toMatch(/directive @regexp\b/);
+  });
+
+  it('strips post-compose @regexp from lean SG (subgraph SDL keeps it)', () => {
+    // Gateway execute match/reject lives in transport-connect on subgraph /
+    // executable schemas. Lean SG must not print `@regexp` or Router carry-over
+    // fails with "already exists".
+    const codeSdl = /* GraphQL */ `
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @composeDirective(name: String!) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+      ) repeatable on FIELD_DEFINITION
+      directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+      scalar Code @regexp(subgraph: "codes", pattern: "^[A-Z]{2}$")
+      type Query {
+        code: Code @connect(source: "api", http: { GET: "/code" }, selection: "$")
+      }
+    `;
+    const subgraph = importMeshDirectives(
+      buildSchema(
+        /* GraphQL */ `
+          schema
+            @link(url: "https://specs.apollo.dev/link/v1.0")
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+            @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+            @source(name: "api", http: { baseURL: "https://api.example.com" }) {
+            query: Query
+          }
+          ${codeSdl}
+        `,
+        { assumeValidSDL: true, assumeValid: true },
+      ),
+      ['@regexp'],
+    );
+    const composed = composeSubgraphs([{ name: 'codes', schema: subgraph }]);
+    expect(composed.errors ?? []).toEqual([]);
+    const sg = composed.supergraphSdl!;
+    expect(sg).toMatch(/\bscalar Code\b/);
+    expect(sg).not.toMatch(/@regexp\(/);
+    expect(sg).toMatch(/@join__directive\([^)]*name: "connect"/);
+  });
+
+  it('strips Mesh |preEncoded from lean SG connect paths (Apollo URLPathTemplate)', () => {
+    // Subgraph SDL keeps `|preEncoded` for Mesh Connect; lean SG must not — Router
+    // fails connector startup with `could not parse URL template: Eof`.
+    const wikiSdl = /* GraphQL */ `
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @composeDirective(name: String!) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+      ) repeatable on FIELD_DEFINITION
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+      type Query {
+        page(article: String!): String
+          @connect(
+            source: "Wiki"
+            http: { GET: "/page/{$args.article|preEncoded}" }
+            selection: "$"
+          )
+      }
+    `;
+    const subgraph = buildSchema(
+      /* GraphQL */ `
+        schema
+          @link(url: "https://specs.apollo.dev/link/v1.0")
+          @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+          @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+          @source(name: "Wiki", http: { baseURL: "https://wikimedia.org" }) {
+          query: Query
+        }
+        ${wikiSdl}
+      `,
+      { assumeValidSDL: true, assumeValid: true },
+    );
+    const composed = composeSubgraphs([{ name: 'wiki', schema: subgraph }]);
+    expect(composed.errors ?? []).toEqual([]);
+    const sg = composed.supergraphSdl!;
+    expect(sg).toMatch(/\$args\.article\}/);
+    expect(sg).not.toMatch(/\|preEncoded/);
   });
 });

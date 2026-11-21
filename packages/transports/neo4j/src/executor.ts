@@ -69,6 +69,16 @@ export interface Neo4JExecutorOpts {
    * forwarded at matching levels.
    */
   log?: Logger;
+  /**
+   * Gateway transport entry (kind/location/options). Used when the lean SG carries
+   * `@join__directive(name: "transport")` instead of a native `@transport` app.
+   */
+  transportEntry?: {
+    kind?: string;
+    subgraph?: string;
+    location?: string;
+    options?: { database?: string; auth?: any };
+  };
 }
 
 function hasDirective(
@@ -111,10 +121,18 @@ function isNeo4jModelType(
 // 7.6.6+ keeps SCHEMA_DEFINITION directives when augmenting; leftover Mesh
 // `@transport` / Apollo `@link` usages then fail validation (e.g. unknown
 // `url`/`import` on `@link` after helper scalars were filtered out).
-const STRIP_SCHEMA_DIRECTIVES = new Set(['transport', 'link']);
+// Also strip `@composeDirective` - Mesh `importMeshDirectives` stamps it with
+// Fed `@link`, but Neo4jGraphQL augment does not know that federation directive.
+const STRIP_SCHEMA_DIRECTIVES = new Set([
+  'transport',
+  'link',
+  'join__directive',
+  'composeDirective',
+]);
 const STRIP_DIRECTIVE_DEFINITIONS = new Set([
   'transport',
   'link',
+  'composeDirective',
   'extraSchemaDefinitionDirective',
   'join__graph',
   'join__field',
@@ -122,6 +140,7 @@ const STRIP_DIRECTIVE_DEFINITIONS = new Set([
   'join__implements',
   'join__unionMember',
   'join__enumValue',
+  'join__directive',
   'source',
   'meshSource',
   'merge',
@@ -133,6 +152,7 @@ const STRIP_TYPE_NAMES = new Set([
   'link__Purpose',
   'join__FieldSet',
   'join__Graph',
+  'join__DirectiveArguments',
   '_DirectiveExtensions',
 ]);
 
@@ -411,7 +431,7 @@ export function extractNeo4jModelTypeDefs(
 
   /**
    * Generated connection / aggregate object fields Neo4j re-augments from relationships.
-   * Suffix / bare `edges` alone is not enough — authored `totalAggregate: Totals` and
+   * Suffix / bare `edges` alone is not enough - authored `totalAggregate: Totals` and
    * `hitsConnection: SearchPage { edges }` must stay; drop relationship-originated siblings
    * or Neo4j Connection/Aggregate shapes (edge node+cursor, or pageInfo/totalCount).
    */
@@ -649,7 +669,7 @@ export function extractNeo4jModelTypeDefs(
 
   function retainedModelHasSpatialField(spatialName: string): boolean {
     // Neo4j regenerates Point/CartesianPoint from attributes on retained `@node` models and on
-    // `@relationshipProperties` types that a surviving relationship still uses — not from root
+    // `@relationshipProperties` types that a surviving relationship still uses - not from root
     // `@cypher` fields or orphaned relationship-properties definitions.
     for (const [typeName, fields] of retainedFieldsByType) {
       if (ROOT_OPERATION_NAMES.has(typeName)) {
@@ -745,7 +765,7 @@ export function extractNeo4jModelTypeDefs(
     }
   }
 
-  // Unions collected while walking pruned paths must not stay in `referenced` — otherwise
+  // Unions collected while walking pruned paths must not stay in `referenced` - otherwise
   // emission throws on memberless foreign unions even when surviving fields (e.g. Stats.count) are fine.
   for (const unionName of unionNames) {
     if (!referenced.has(unionName)) {
@@ -925,7 +945,7 @@ export function extractNeo4jModelTypeDefs(
                   `Neo4j model extract: Cypher return type "${def.name.value}" has no fields owned by subgraph "${subgraphName ?? ''}" (referenced from ${refs})`,
                 );
               }
-              // Nested type reached only via dropped paths — omit rather than abort the transport.
+              // Nested type reached only via dropped paths - omit rather than abort the transport.
               return [];
             }
             if (authoredFields.length !== siblings.length) {
@@ -1059,6 +1079,34 @@ export function extractNeo4jModelTypeDefs(
  *
  * @param opts - {@link Neo4JExecutorOpts}
  */
+function readJoinTransportArgs(
+  schemaDirectives: ReturnType<typeof getDirectiveExtensions> | undefined,
+):
+  | {
+      location?: string;
+      subgraph?: string;
+      options?: { database?: string; auth?: any };
+    }
+  | undefined {
+  const joins = asArray(schemaDirectives?.join__directive) as Array<{
+    name?: string;
+    args?: Record<string, unknown>;
+  }>;
+  for (const join of joins) {
+    if (join?.name !== 'transport' || !join.args || typeof join.args !== 'object') continue;
+    const args = join.args;
+    return {
+      location: typeof args.location === 'string' ? args.location : undefined,
+      subgraph: typeof args.subgraph === 'string' ? args.subgraph : undefined,
+      options: (args.options && typeof args.options === 'object' ? args.options : {}) as {
+        database?: string;
+        auth?: any;
+      },
+    };
+  }
+  return undefined;
+}
+
 export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<DisposableExecutor> {
   const schemaDirectives = getDirectiveExtensions(opts.schema);
   if (!opts.schema.getDirective('relationship')) {
@@ -1077,15 +1125,39 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
       ),
     );
   }
-  const transportDirectives = schemaDirectives?.transport;
-  if (!transportDirectives?.length) {
+  // Merge field-by-field: native > join > transportEntry. Lean join may omit
+  // `location` when it matches the graph URL - fill from transportEntry.
+  const fromNative = asArray(schemaDirectives?.transport)[0] as
+    { location?: string; subgraph?: string; options?: Record<string, unknown> } | undefined;
+  const fromJoin = readJoinTransportArgs(schemaDirectives);
+  const fromEntry = opts.transportEntry
+    ? {
+        location: opts.transportEntry.location,
+        subgraph: opts.transportEntry.subgraph,
+        options: opts.transportEntry.options || {},
+      }
+    : undefined;
+  const transport =
+    fromNative || fromJoin || fromEntry
+      ? {
+          location: fromNative?.location ?? fromJoin?.location ?? fromEntry?.location,
+          subgraph: fromNative?.subgraph ?? fromJoin?.subgraph ?? fromEntry?.subgraph,
+          options: {
+            ...(fromEntry?.options || {}),
+            ...(fromJoin?.options || {}),
+            ...(fromNative?.options || {}),
+          },
+        }
+      : undefined;
+  if (!transport?.location) {
     throw new Error('No transport directive found on the schema!');
   }
-  const {
-    location: endpoint,
-    subgraph: transportSubgraph,
-    options: { database, auth },
-  } = transportDirectives[0];
+  const endpoint = transport.location as string;
+  const transportSubgraph = transport.subgraph as string | undefined;
+  const { database, auth } = (transport.options || {}) as {
+    database?: string;
+    auth?: any;
+  };
   let driver = opts.driver;
   const closeDriverOnDispose = !driver;
   if (!driver) {

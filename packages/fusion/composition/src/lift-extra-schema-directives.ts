@@ -8,7 +8,9 @@ import type {
   StringValueNode,
 } from 'graphql';
 import { Kind, parse, print, visit } from 'graphql';
+import { isMeshSpecLinkUrl, MESH_CORE_SPEC_URL, parseMeshSpecUrl } from '@graphql-mesh/utils';
 import { astFromValueUntyped } from '@graphql-tools/utils';
+import { prepareJoinDirectiveArgs } from './ast-from-value-block.js';
 
 type LiftedOccurrence = Record<string, unknown> & {
   /** Owning subgraph name from co-located `@transport(subgraph:)` in the same extras blob. */
@@ -24,10 +26,9 @@ const JOIN_DIRECTIVE_DEFS = /* GraphQL */ `
   scalar join__DirectiveArguments
 `;
 
-const MESH_SPEC_PREFIX = 'https://the-guild.dev/graphql/mesh/spec/';
 const CONNECT_SPEC_PREFIX = 'https://specs.apollo.dev/connect';
 
-// Shared Mesh `@transport` — kind-specific fields live under `options`.
+// Shared Mesh `@transport` - kind-specific fields live under `options`.
 const DEFAULT_TRANSPORT_DIRECTIVE_SDL = /* GraphQL */ `
   scalar TransportOptions
   directive @transport(
@@ -267,10 +268,19 @@ function collectExtrasFromDirectives(
       continue;
     }
     const blob = value as Record<string, unknown>;
-    const transportList = Array.isArray(blob.transport) ? blob.transport : [];
-    const subgraphFromTransport = readSubgraphFromTransportEntries(transportList);
+    // Prefer Compose-stamped owner (no `@transport(kind: "connect")` required).
+    // Fall back to leftover `@transport(subgraph:)` for older extras blobs.
+    const subgraphOwner =
+      readSubgraphFromMeshComposeEntries(blob.meshComposeSubgraph) ||
+      readSubgraphFromTransportEntries(
+        Array.isArray(blob.transport) ? blob.transport : blob.transport ? [blob.transport] : [],
+      );
 
     for (const [name, occurrences] of Object.entries(blob)) {
+      if (name === 'meshComposeSubgraph') {
+        // Compose-only attribution - do not lift onto the supergraph schema.
+        continue;
+      }
       const list = Array.isArray(occurrences) ? occurrences : [occurrences];
       const bucket = liftedByName.get(name) || [];
       for (const item of list) {
@@ -278,15 +288,29 @@ function collectExtrasFromDirectives(
           continue;
         }
         const occurrence: LiftedOccurrence = { ...(item as Record<string, unknown>) };
-        // Pair SCHEMA `@source` with the subgraph from the same extras blob's `@transport`.
-        if (name === 'source' && subgraphFromTransport) {
-          occurrence.__meshSubgraph = subgraphFromTransport;
+        // Pair SCHEMA `@source` with the owning subgraph from the same extras blob.
+        if (name === 'source' && subgraphOwner) {
+          occurrence.__meshSubgraph = subgraphOwner;
         }
         bucket.push(occurrence);
       }
       liftedByName.set(name, bucket);
     }
   }
+}
+
+function readSubgraphFromMeshComposeEntries(value: unknown): string | undefined {
+  const list = Array.isArray(value) ? value : value ? [value] : [];
+  for (const entry of list) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+      continue;
+    }
+    const name = (entry as Record<string, unknown>).name;
+    if (typeof name === 'string' && name) {
+      return name;
+    }
+  }
+  return undefined;
 }
 
 function readSubgraphFromTransportEntries(transportList: unknown[]): string | undefined {
@@ -344,7 +368,7 @@ function buildJoinDirective(
       {
         kind: Kind.ARGUMENT,
         name: { kind: Kind.NAME, value: 'args' },
-        value: astFromValueUntyped(args) as ConstValueNode,
+        value: astFromValueUntyped(prepareJoinDirectiveArgs(args)) as ConstValueNode,
       },
     ],
   };
@@ -405,8 +429,14 @@ function rewriteSchemaLinks<T extends { directives?: readonly ConstDirectiveNode
       if (!url) {
         return directive;
       }
-      if (url.startsWith(MESH_SPEC_PREFIX)) {
-        return rewriteMeshLink(directive, opts);
+      if (isMeshSpecLinkUrl(url)) {
+        // `@transport` lives on the core Mesh link only - never on protocol links
+        // (thrift/sql/…). Also rewrite core links for `@extraSchemaDefinitionDirective`.
+        const parsed = parseMeshSpecUrl(url);
+        if (parsed?.name === 'core' || url === MESH_CORE_SPEC_URL) {
+          return rewriteMeshLink(directive, opts);
+        }
+        return directive;
       }
       if (url.startsWith(CONNECT_SPEC_PREFIX) && opts.liftedSource) {
         return ensureImport(directive, '@source');

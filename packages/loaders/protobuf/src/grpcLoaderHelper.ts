@@ -20,6 +20,7 @@ import { type Logger } from '@graphql-hive/logger';
 import { fs, path } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { YamlConfig } from '@graphql-mesh/types';
+import { importMeshDirectives, meshSpecUrl } from '@graphql-mesh/utils';
 import { matchFiles } from '@graphql-tools/load-files';
 import { GraphQLStreamDirective, type Constructor } from '@graphql-tools/utils';
 import {
@@ -138,7 +139,7 @@ export class GrpcLoaderHelper extends DisposableStack {
     const schema = this.schemaComposer.buildSchema();
     const schemaExtensions: Record<string, any> = (schema.extensions = schema.extensions || {});
     const directiveExtensions = (schemaExtensions.directives = schemaExtensions.directives || {});
-    // Default requestTimeout lives in the transport — only stamp an override when configured.
+    // Default requestTimeout lives in the transport - only stamp an override when configured.
     const transportOptions: Record<string, unknown> = {};
     if (this.config.requestTimeout != null) {
       transportOptions.requestTimeout = this.config.requestTimeout;
@@ -162,7 +163,10 @@ export class GrpcLoaderHelper extends DisposableStack {
       location: this.config.endpoint,
       ...(Object.keys(transportOptions).length > 0 ? { options: transportOptions } : {}),
     };
-    return schema;
+    return importMeshDirectives(
+      importMeshDirectives(schema, ['@protobuf__rpc'], { url: meshSpecUrl('protobuf') }),
+      ['@transport'],
+    );
   }
 
   private processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {

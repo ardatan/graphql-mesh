@@ -4,7 +4,8 @@ import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 import { ProcessedConfig } from '../../../packages/legacy/config/dist/typings/process';
 
-jest.setTimeout(30000);
+// Live TripPin OData endpoint; CI node22 has hit 30s beforeAll timeouts.
+jest.setTimeout(120_000);
 
 describe('OData TripPin', () => {
   let config: ProcessedConfig;

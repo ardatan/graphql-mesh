@@ -6,7 +6,9 @@ import {
 export { TransportDirective };
 
 /**
- * OData loader `@transport` typing when `options.odata` is present (`kind: "connect"`).
+ * OData connect transport options typing (`kind: "connect"`).
+ * Loader stamps `@transport` only when `options.odata` is present; otherwise
+ * Gateway infers connect from `@connect` / `@source`.
  *
  * @example
  * ```ts
@@ -26,7 +28,7 @@ export type TransportDirectiveArgs = SharedTransportDirectiveArgs<{
    */
   odata?: {
     /**
-     * `$batch` encoding stored on `@transport(options.odata.batch)`.
+     * `$batch` encoding (`options.odata.batch` on invented join transport).
      * `json` / `multipart` coalesce eligible sibling `@connect` calls through
      * `POST /$batch`; `none` disables batching. When omitted, batching is off
      * (same runtime path as `'none'`).

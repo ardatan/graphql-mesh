@@ -455,7 +455,11 @@ describe('getMesh', () => {
       }),
     });
     const printedSchema = printSchemaWithDirectives(mesh.schema);
-    const parsedSchema = buildSchema(printedSchema);
+    // Connectors apps are stamped via extensions without `directive @connect`
+    // defs (Apollo-like loader SDL). Round-trip with assumeValidSDL.
+    const parsedSchema = buildSchema(printedSchema, {
+      assumeValidSDL: true,
+    });
     const validatedErrors = validateSchema(parsedSchema);
     expect(validatedErrors).toHaveLength(0);
   });

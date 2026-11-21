@@ -5,7 +5,7 @@ exports[`Merge required attributes correctly in allOfs should generate correct s
   query: Query
 }
 
-directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -15,7 +15,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Admin implements User {
   """The Name."""
-  name: query_getAdmin_allOf_0_name
+  name: User_name
   """The type"""
   type: String!
   """The admin"""
@@ -24,26 +24,33 @@ type Admin implements User {
 
 interface User {
   """The Name."""
-  name: query_getAdmin_allOf_0_name
+  name: User_name
   """The type"""
   type: String!
 }
 
 """The Name."""
-scalar query_getAdmin_allOf_0_name @length(subgraph: "test", max: 100)
+scalar User_name @length(subgraph: "test", max: 100)
 
 type Editor implements User {
   """The Name."""
-  name: query_getAdmin_allOf_0_name
+  name: User_name
   """The type"""
   type: String!
 }
 
 type Query {
   """Get admin"""
-  getAdmin: Admin @connect(source: "test", http: {GET: "/admin", headers: [{name: "accept", value: "application/json"}]}, selection: "name type admin")
+  getAdmin: Admin @connect(source: "test", http: {GET: "/admin"}, selection: """
+  name
+  type
+  admin
+  """)
   """Get editor"""
-  getEditor: Editor @connect(source: "test", http: {GET: "/editor", headers: [{name: "accept", value: "application/json"}]}, selection: "name type")
+  getEditor: Editor @connect(source: "test", http: {GET: "/editor"}, selection: """
+  name
+  type
+  """)
 }
 
 input ConnectHTTP {

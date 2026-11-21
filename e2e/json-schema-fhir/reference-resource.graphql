@@ -1,0 +1,50 @@
+# Apollo-style join-only hand SDL: @link + @key/@connect apps only (no Query -
+# other subgraphs own root fields; Mesh compose injects directive defs).
+# Virtual Reference.resource: Resource - FHIR Type/id → entity stub (no @source).
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"])
+
+"""
+FHIR resource handle resolved from `Reference.reference` (`Type/id`).
+"""
+interface Resource {
+  # Match json-schema `scalarMap` (`id` → GraphQLID) on patients/observations.
+  id: ID
+}
+
+type Patient implements Resource @key(fields: "id", resolvable: false) {
+  id: ID!
+}
+
+type Observation implements Resource @key(fields: "id", resolvable: false) {
+  id: ID!
+}
+
+type Reference
+  @key(fields: "reference")
+  @connect(
+    selection: """
+    reference: $this.reference
+    """
+  ) {
+  reference: String!
+  # Connectors abstract types need literal `__typename` per `->match` branch.
+  resource: Resource
+    @connect(
+      selection: """
+      $this.reference->split("/")->get(0)->match(
+        ["Patient", {
+          __typename: $("Patient")
+          id: $this.reference->split("/")->get(1)
+        }],
+        ["Observation", {
+          __typename: $("Observation")
+          id: $this.reference->split("/")->get(1)
+        }],
+        [@, null]
+      )
+      """
+    )
+}

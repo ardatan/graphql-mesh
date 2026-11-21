@@ -1,9 +1,15 @@
 import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-common';
+import {
+  assertSupportedMeshSpecOnSchema,
+  MESH_SUPPORTED_SPEC_VERSIONS,
+  validateMeshDirectives,
+} from '@graphql-mesh/utils';
 import { processDirectives, type ProcessDirectiveArgs } from './directives/process.js';
 
 /**
- * Options stored on `@transport(kind: "connect", options:)` (OpenAPI / JSON Schema /
- * RAML / OData / SOAP `@connect` subgraphs).
+ * Options for connect subgraphs (OpenAPI / JSON Schema / RAML / OData / SOAP).
+ * Loaders stamp `@transport(options:)` only when these are needed; bare connect
+ * omits transport (Gateway infers). Also accepted via `processDirectives` args.
  *
  * @example
  * ```ts
@@ -40,6 +46,17 @@ export interface ConnectTransportOptions {
 
 const transport: Transport<ConnectTransportOptions> = {
   getSubgraphExecutor({ transportEntry, subgraph, fetch, pubsub, log }) {
+    // Mesh `@link` / directives on connect subgraphs (core, not a protocol URL).
+    assertSupportedMeshSpecOnSchema(subgraph, {
+      name: 'core',
+      supportedVersions: MESH_SUPPORTED_SPEC_VERSIONS,
+      required: false, // unified-graph extract may omit @link; validate version when present
+      consumer: '@graphql-mesh/transport-connect',
+    });
+    validateMeshDirectives(subgraph, {
+      consumer: '@graphql-mesh/transport-connect',
+      soft: true,
+    });
     const processDirectiveOpts: ProcessDirectiveArgs = {
       globalFetch: fetch,
       pubsub,

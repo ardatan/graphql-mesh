@@ -8,6 +8,55 @@ import {
 } from 'graphql';
 import { getConnectArgsFromNode } from './connect.js';
 
+/**
+ * Marks Mesh-installed abstract `resolveType` callbacks so
+ * `processDirectives({ preserveExistingFieldResolvers })` can rebuild them when
+ * union/interface members change, while leaving application-provided callbacks alone.
+ */
+export const MESH_GENERATED_RESOLVE_TYPE = Symbol.for(
+  '@graphql-mesh/transport-connect.generatedResolveType',
+);
+
+/**
+ * Stable member fingerprint for comparing generated resolveType closures.
+ * Includes each member's field names so additionalTypeDefs that only add fields
+ * (same type names) still trigger a rebuild under preserveExistingFieldResolvers.
+ */
+export function meshResolveTypeMemberKey(
+  possibleTypes: readonly { name: string; getFields?: () => Record<string, unknown> }[],
+): string {
+  return possibleTypes
+    .map(t => {
+      const fields = t.getFields?.();
+      const fieldNames = fields ? Object.keys(fields).sort().join('\u0002') : '';
+      return `${t.name}\u0001${fieldNames}`;
+    })
+    .sort()
+    .join('\0');
+}
+
+export function isMeshGeneratedResolveType(resolveType: unknown): boolean {
+  return (
+    typeof resolveType === 'function' && MESH_GENERATED_RESOLVE_TYPE in (resolveType as object)
+  );
+}
+
+export function getMeshGeneratedResolveTypeMemberKey(resolveType: unknown): string | undefined {
+  if (!isMeshGeneratedResolveType(resolveType)) {
+    return undefined;
+  }
+  return (resolveType as { [MESH_GENERATED_RESOLVE_TYPE]?: string })[MESH_GENERATED_RESOLVE_TYPE];
+}
+
+function markMeshGeneratedResolveType(
+  resolveType: GraphQLTypeResolver<any, any>,
+  memberKey: string,
+): GraphQLTypeResolver<any, any> {
+  (resolveType as { [MESH_GENERATED_RESOLVE_TYPE]?: string })[MESH_GENERATED_RESOLVE_TYPE] =
+    memberKey;
+  return resolveType;
+}
+
 export function getTypeResolverForAbstractType({
   possibleTypes,
   discriminatorField,
@@ -24,11 +73,12 @@ export function getTypeResolverForAbstractType({
   const discriminatorMappingObj = Array.isArray(discriminatorMapping)
     ? Object.fromEntries(discriminatorMapping)
     : discriminatorMapping;
-  return function resolveType(data: any, _ctx: any, info: GraphQLResolveInfo) {
+  const memberKey = meshResolveTypeMemberKey(possibleTypes);
+  const resolveType = function resolveType(data: any, _ctx: any, info: GraphQLResolveInfo) {
     if (data.__typename) {
       const hinted = info.schema.getType(data.__typename);
       // Connectors/`$status->match` may emit an interface name when OpenAPI maps a
-      // status onto a discriminator parent — finish via that abstract type's resolver.
+      // status onto a discriminator parent - finish via that abstract type's resolver.
       if (isAbstractType(hinted)) {
         const resolved = hinted.resolveType?.(data, _ctx, info, hinted);
         if (resolved) {
@@ -53,7 +103,7 @@ export function getTypeResolverForAbstractType({
       if (match) {
         return match.name;
       }
-      // Do not fall back to schema-wide `getType(shortName)` — an unmatched
+      // Do not fall back to schema-wide `getType(shortName)` - an unmatched
       // `@odata.type` (e.g. `#Service.Error`) must not pick an unrelated type
       // outside `possibleTypes` (GraphQL rejects that result).
     }
@@ -92,7 +142,7 @@ export function getTypeResolverForAbstractType({
           return possibleType.name;
         }
       }
-      // No active throw — prefer success even when leftover `message: null` would
+      // No active throw - prefer success even when leftover `message: null` would
       // tie-break scoring toward an exception member (list/set/scalar successes
       // do not always stamp `field0`).
       const success = possibleTypes.find(t => {
@@ -106,7 +156,7 @@ export function getTypeResolverForAbstractType({
 
     // Thrift struct-success unions stamp boolean `field0` (presence of result field
     // id 0). When no GraphQL member declares `field0`, treat the stamp as
-    // authoritative — leftover `message: undefined` must not beat success via scoring.
+    // authoritative - leftover `message: undefined` must not beat success via scoring.
     const anyDeclaresField0 =
       data != null && typeof data === 'object'
         ? possibleTypes.some(t => 'field0' in t.getFields())
@@ -241,4 +291,5 @@ export function getTypeResolverForAbstractType({
     return error;
     */
   };
+  return markMeshGeneratedResolveType(resolveType, memberKey);
 }

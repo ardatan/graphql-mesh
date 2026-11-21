@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { Kind, parse, type ConstValueNode } from 'graphql';
 import { createTenv, type ServeRunner, type Service } from '@e2e/tenv';
 
 const { compose, service, serve } = createTenv(__dirname);
@@ -64,13 +65,50 @@ describe('binary (@thrift__rpc)', () => {
       maskServicePorts: true,
     });
     expect(result).toMatchSnapshot();
-    expect(result).toMatch(/@thrift__rpc\(/);
+    // Final SG: `@thrift__rpc` / `@transport` → `@join__directive` (keep Mesh `@link` imports).
+    expect(result).toMatch(/name:\s*"thrift__rpc"/);
+    expect(result).toMatch(/name:\s*"transport"/);
+    expect(result).toMatch(/kind:\s*"thrift"/);
+    // Lean SG: apps are join only - no native `directive @thrift__rpc` / enum.
+    // Join-carried `@transport` keeps its directive def (+ TransportOptions/@link).
+    expect(result).not.toMatch(/:\s*\w+ @thrift__rpc\s*\(/);
+    expect(result).not.toMatch(/directive @thrift__rpc\(/);
+    expect(result).not.toMatch(/ThriftMessageType/);
+    expect(result).toMatch(/directive @transport\s*\(/);
     expect(result).toMatch(/function:\s*"add"/);
     expect(result).toMatch(/1\(struct\):\s*\$args\.request/);
     expect(result).toMatch(/\$\(i32\)/);
-    expect(result).toMatch(/messageType:\s*ONEWAY/);
+    // Supergraph join args stay dense quoted strings (`\n` escapes), not `"""`.
+    // Readable multiline `"""` belongs on subgraph SDL.
+    expect(result).not.toMatch(/name:\s*"thrift__rpc"[\s\S]*?args:\s*"""/);
+    const doc = parse(result, { noLocation: true });
+    const queryType = doc.definitions.find(
+      d => d.kind === Kind.OBJECT_TYPE_DEFINITION && d.name.value === 'Query',
+    );
+    const addField =
+      queryType?.kind === Kind.OBJECT_TYPE_DEFINITION
+        ? queryType.fields?.find(f => f.name.value === 'add')
+        : undefined;
+    const thriftJoin = (addField?.directives || []).find(dir => {
+      if (dir.name.value !== 'join__directive') return false;
+      const nameArg = dir.arguments?.find(a => a.name.value === 'name');
+      return nameArg?.value.kind === Kind.STRING && nameArg.value.value === 'thrift__rpc';
+    });
+    expect(thriftJoin).toBeTruthy();
+    const argsArg = thriftJoin?.arguments?.find(a => a.name.value === 'args');
+    expect(argsArg?.value.kind).toBe(Kind.OBJECT);
+    const nestedArgs = (
+      argsArg?.value as Extract<ConstValueNode, { kind: Kind.OBJECT }>
+    ).fields.find(f => f.name.value === 'args');
+    expect(nestedArgs?.value.kind).toBe(Kind.STRING);
+    if (nestedArgs?.value.kind === Kind.STRING) {
+      expect(nestedArgs.value.block).not.toBe(true);
+      expect(nestedArgs.value.value).toContain('\n');
+    }
+    // Enum args are serialized as strings inside join__directive args.
+    expect(result).toMatch(/messageType:\s*"ONEWAY"/);
     expect(result).toMatch(/function:\s*"divide"/);
-    // Single-service generate omits per-field `service:` (path is on `@transport`).
+    // Single-service generate omits per-field `service:` (path is on transport).
     expect(result).not.toMatch(/function:\s*"add"[\s\S]*?service:\s*"/);
     expect(result).not.toMatch(/@fieldTypeMap\(/);
     expect(result).not.toMatch(/topTypeMap/);

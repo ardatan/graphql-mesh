@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Composition composes basic schemas 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@merge"]) {
   query: Query
 }
 
@@ -9,25 +9,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -53,19 +39,10 @@ enum join__Graph {
   B @join__graph(name: "B", url: "")
 }
 
-directive @merge(
-  subgraph: String
-  argsExpr: String
-  keyArg: String
-  keyField: String
-  key: [String!]
-  additionalArgs: String
-) repeatable on FIELD_DEFINITION
-
 type Query @join__type(graph: A) @join__type(graph: B) {
   myFoo: Foo! @join__field(graph: A)
-  foo(id: ID!): Foo! @merge(subgraph: "B", keyField: "id", keyArg: "id") @join__field(graph: B)
-  foos(ids: [ID!]!): [Foo!]! @merge(subgraph: "B", keyField: "id", keyArg: "ids") @join__field(graph: B)
+  foo(id: ID!): Foo! @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "id"}) @join__field(graph: B)
+  foos(ids: [ID!]!): [Foo!]! @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "ids"}) @join__field(graph: B)
   foosByFilter(where: FooFilter!): [Foo!]! @join__field(graph: B)
 }
 
@@ -77,14 +54,15 @@ type Foo @join__type(graph: A) @join__type(graph: B, key: "id") {
 input FooFilter @join__type(graph: B) {
   id: ID
   id_in: [ID!]
-}"
+}
+
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments"
 `;
 
 exports[`Composition composes with transforms 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(
-  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@source", "@merge"]
-) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@source", "@merge"]) {
   query: Query
 }
 
@@ -92,25 +70,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -136,29 +100,20 @@ enum join__Graph {
   B @join__graph(name: "B", url: "")
 }
 
-directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, type: String, subgraph: String) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
-directive @merge(
-  subgraph: String
-  argsExpr: String
-  keyArg: String
-  keyField: String
-  key: [String!]
-  additionalArgs: String
-) repeatable on FIELD_DEFINITION
-
-type Query @source(name: "Query", subgraph: "A") @source(name: "Query", subgraph: "B") @join__type(graph: A) @join__type(graph: B) {
-  A_myFoo: A_Foo! @source(name: "myFoo", type: "Foo!", subgraph: "A") @join__field(graph: A)
-  B_foo(id: ID!): B_Foo! @source(name: "foo", type: "Foo!", subgraph: "B") @merge(subgraph: "B", keyField: "id", keyArg: "id") @join__field(graph: B)
-  B_foos(ids: [ID!]!): [B_Foo!]! @source(name: "foos", type: "[Foo!]!", subgraph: "B") @merge(subgraph: "B", keyField: "id", keyArg: "ids") @join__field(graph: B)
-  B_foosByFilter(where: B_FooFilter! @source(name: "where", type: "FooFilter!", subgraph: "B")): [B_Foo!]! @source(name: "foosByFilter", type: "[Foo!]!", subgraph: "B") @join__field(graph: B)
+type Query @join__directive(graphs: [A], name: "source", args: {name: "Query", subgraph: "A"}) @join__directive(graphs: [B], name: "source", args: {name: "Query", subgraph: "A"}) @join__directive(graphs: [A], name: "source", args: {name: "Query", subgraph: "B"}) @join__directive(graphs: [B], name: "source", args: {name: "Query", subgraph: "B"}) @join__type(graph: A) @join__type(graph: B) {
+  A_myFoo: A_Foo! @join__directive(graphs: [A], name: "source", args: {name: "myFoo", type: "Foo!", subgraph: "A"}) @join__field(graph: A)
+  B_foo(id: ID!): B_Foo! @join__directive(graphs: [B], name: "source", args: {name: "foo", type: "Foo!", subgraph: "B"}) @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "id"}) @join__field(graph: B)
+  B_foos(ids: [ID!]!): [B_Foo!]! @join__directive(graphs: [B], name: "source", args: {name: "foos", type: "[Foo!]!", subgraph: "B"}) @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "ids"}) @join__field(graph: B)
+  B_foosByFilter(where: B_FooFilter! @source(name: "where", type: "FooFilter!", subgraph: "B")): [B_Foo!]! @join__directive(graphs: [B], name: "source", args: {name: "foosByFilter", type: "[Foo!]!", subgraph: "B"}) @join__field(graph: B)
 }
 
-type A_Foo @source(name: "Foo", subgraph: "A") @join__type(graph: A) {
+type A_Foo @join__directive(graphs: [A], name: "source", args: {name: "Foo", subgraph: "A"}) @join__type(graph: A) {
   id: ID!
 }
 
-type B_Foo @source(name: "Foo", subgraph: "B") @join__type(graph: B, key: "id") {
+type B_Foo @join__directive(graphs: [B], name: "source", args: {name: "Foo", subgraph: "B"}) @join__type(graph: B, key: "id") {
   id: ID!
   bar: String!
 }
@@ -166,14 +121,15 @@ type B_Foo @source(name: "Foo", subgraph: "B") @join__type(graph: B, key: "id") 
 input B_FooFilter @source(name: "FooFilter", subgraph: "B") @join__type(graph: B) {
   id: ID
   id_in: [ID!]
-}"
+}
+
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments"
 `;
 
 exports[`Composition keeps the directives 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(
-  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@merge", "@foo"]
-) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@merge", "@foo"]) {
   query: Query
 }
 
@@ -181,25 +137,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -226,21 +168,12 @@ enum join__Graph {
   C @join__graph(name: "C", url: "")
 }
 
-directive @merge(
-  subgraph: String
-  argsExpr: String
-  keyArg: String
-  keyField: String
-  key: [String!]
-  additionalArgs: String
-) repeatable on FIELD_DEFINITION
-
 directive @foo on FIELD_DEFINITION
 
 type Query @join__type(graph: A) @join__type(graph: B) @join__type(graph: C) {
   myFoo: Foo! @join__field(graph: A)
-  foo(id: ID!): Foo! @merge(subgraph: "B", keyField: "id", keyArg: "id") @join__field(graph: B)
-  foos(ids: [ID!]!): [Foo!]! @merge(subgraph: "B", keyField: "id", keyArg: "ids") @join__field(graph: B)
+  foo(id: ID!): Foo! @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "id"}) @join__field(graph: B)
+  foos(ids: [ID!]!): [Foo!]! @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "ids"}) @join__field(graph: B)
   foosByFilter(where: FooFilter!): [Foo!]! @join__field(graph: B)
   cFoo: Foo! @foo @join__field(graph: C)
 }
@@ -253,5 +186,9 @@ type Foo @join__type(graph: A) @join__type(graph: B, key: "id") @join__type(grap
 input FooFilter @join__type(graph: B) {
   id: ID
   id_in: [ID!]
-}"
+}
+
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments"
 `;

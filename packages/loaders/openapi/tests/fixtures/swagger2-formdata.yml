@@ -1,0 +1,32 @@
+swagger: '2.0'
+info:
+  title: FormData API
+  version: 1.0.0
+host: localhost:3000
+basePath: /
+schemes:
+  - http
+paths:
+  /media/math/check/{type}:
+    post:
+      operationId: checkMath
+      parameters:
+        - name: type
+          in: path
+          required: true
+          type: string
+        - name: q
+          in: formData
+          required: true
+          type: string
+          description: The formula to check
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              contentType:
+                type: string
+              body:
+                type: string

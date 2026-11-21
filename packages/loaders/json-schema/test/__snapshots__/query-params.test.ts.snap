@@ -12,7 +12,11 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  test(foo_bar: String): JSON @connect(source: "test", http: {GET: "/test", queryParams: "{\\n  \\"foo:bar\\": $args.foo_bar\\n}"}, selection: "$")
+  test(foo_bar: String): JSON @connect(source: "test", http: {GET: "/test", queryParams: """
+  {
+    "foo:bar": $args.foo_bar
+  }
+  """}, selection: "$")
 }
 
 """

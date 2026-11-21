@@ -1,5 +1,16 @@
-import { buildSchema, GraphQLObjectType, GraphQLString, GraphQLUnionType } from 'graphql';
-import { getTypeResolverForAbstractType } from '../src/directives/getTypeResolverForAbstractType.js';
+import {
+  buildSchema,
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLUnionType,
+  type GraphQLTypeResolver,
+} from 'graphql';
+import {
+  getMeshGeneratedResolveTypeMemberKey,
+  getTypeResolverForAbstractType,
+  isMeshGeneratedResolveType,
+  meshResolveTypeMemberKey,
+} from '../src/directives/getTypeResolverForAbstractType.js';
 import { processDirectives } from '../src/directives/process.js';
 
 describe('abstract resolveType __throw_* discriminators', () => {
@@ -110,7 +121,7 @@ describe('abstract resolveType __throw_* discriminators', () => {
   });
 
   it('does not skip value members for ordinary REST field0:false payloads', () => {
-    // Without `__throw_*` stamps, boolean field0 is not a Thrift union signal —
+    // Without `__throw_*` stamps, boolean field0 is not a Thrift union signal -
     // `{ field0: false, value: "ok" }` must still resolve to Value.
     const sdl = `
       union Result = Value | Other
@@ -124,5 +135,101 @@ describe('abstract resolveType __throw_* discriminators', () => {
     expect(resolveType({ field0: false, value: 'ok' }, null as any, { schema } as any, union)).toBe(
       'Value',
     );
+  });
+
+  it('marks generated resolveType and rebuilds it when members change under preserveExisting', () => {
+    const sdl = `
+      union Result = Alpha | Beta
+      type Alpha { a: String }
+      type Beta { b: String }
+      type Gamma { g: String }
+      type Query { r: Result }
+    `;
+    const schema = processDirectives(buildSchema(sdl), {});
+    const union = schema.getType('Result') as GraphQLUnionType;
+    const Alpha = schema.getType('Alpha') as GraphQLObjectType;
+    const Beta = schema.getType('Beta') as GraphQLObjectType;
+    const first = union.resolveType!;
+    expect(isMeshGeneratedResolveType(first)).toBe(true);
+    expect(getMeshGeneratedResolveTypeMemberKey(first)).toBe(
+      meshResolveTypeMemberKey([Alpha, Beta]),
+    );
+    expect(first({ a: 'x' }, null as any, { schema } as any, union)).toBe('Alpha');
+    expect(first({ g: 'x' }, null as any, { schema } as any, union)).not.toBe('Gamma');
+
+    // Simulate additionalTypeDefs adding a union member (same GraphQLUnionType object).
+    const Gamma = schema.getType('Gamma') as GraphQLObjectType;
+    (union as any).getTypes = () => [Alpha, Beta, Gamma];
+
+    processDirectives(schema, { preserveExistingFieldResolvers: true });
+    const rebuilt = union.resolveType!;
+    expect(rebuilt).not.toBe(first);
+    expect(isMeshGeneratedResolveType(rebuilt)).toBe(true);
+    expect(getMeshGeneratedResolveTypeMemberKey(rebuilt)).toBe(
+      meshResolveTypeMemberKey([Alpha, Beta, Gamma]),
+    );
+    expect(rebuilt({ g: 'x' }, null as any, { schema } as any, union)).toBe('Gamma');
+  });
+
+  it('keeps application resolveType under preserveExisting even when members change', () => {
+    const sdl = `
+      union Result = Alpha | Beta
+      type Alpha { a: String }
+      type Beta { b: String }
+      type Gamma { g: String }
+      type Query { r: Result }
+    `;
+    const schema = processDirectives(buildSchema(sdl), {});
+    const union = schema.getType('Result') as GraphQLUnionType;
+    const appResolveType: GraphQLTypeResolver<any, any> = () => 'Alpha';
+    union.resolveType = appResolveType;
+
+    const Gamma = schema.getType('Gamma') as GraphQLObjectType;
+    (union as any).getTypes = () => [schema.getType('Alpha'), schema.getType('Beta'), Gamma];
+
+    processDirectives(schema, { preserveExistingFieldResolvers: true });
+    expect(union.resolveType).toBe(appResolveType);
+    expect(isMeshGeneratedResolveType(union.resolveType)).toBe(false);
+  });
+
+  it('keeps generated resolveType when members are unchanged under preserveExisting', () => {
+    const sdl = `
+      union Result = Alpha | Beta
+      type Alpha { a: String }
+      type Beta { b: String }
+      type Query { r: Result }
+    `;
+    const schema = processDirectives(buildSchema(sdl), {});
+    const union = schema.getType('Result') as GraphQLUnionType;
+    const first = union.resolveType!;
+    processDirectives(schema, { preserveExistingFieldResolvers: true });
+    expect(union.resolveType).toBe(first);
+  });
+
+  it('rebuilds generated resolveType when a member gains fields under preserveExisting', () => {
+    const sdl = `
+      union Result = Alpha | Beta
+      type Alpha { a: String }
+      type Beta { b: String }
+      type Query { r: Result }
+    `;
+    const schema = processDirectives(buildSchema(sdl), {});
+    const union = schema.getType('Result') as GraphQLUnionType;
+    const first = union.resolveType!;
+    expect(first({ c: 'x' }, null as any, { schema } as any, union)).not.toBe('Alpha');
+
+    // additionalTypeDefs added a field on Alpha (same member names).
+    const Alpha = schema.getType('Alpha') as GraphQLObjectType;
+    const prevFields = Alpha.getFields();
+    (Alpha as any).getFields = () => ({
+      ...prevFields,
+      c: { name: 'c', type: (schema.getType('String') as any) ?? prevFields.a.type },
+    });
+
+    processDirectives(schema, { preserveExistingFieldResolvers: true });
+    const rebuilt = union.resolveType!;
+    expect(rebuilt).not.toBe(first);
+    expect(isMeshGeneratedResolveType(rebuilt)).toBe(true);
+    expect(rebuilt({ c: 'x' }, null as any, { schema } as any, union)).toBe('Alpha');
   });
 });

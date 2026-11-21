@@ -1,0 +1,27 @@
+swagger: '2.0'
+info:
+  title: FormData Document Consumes API
+  version: 1.0.0
+host: localhost:3000
+basePath: /
+schemes:
+  - http
+consumes:
+  - multipart/form-data
+paths:
+  /upload:
+    post:
+      operationId: uploadNote
+      parameters:
+        - name: note
+          in: formData
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              contentType:
+                type: string

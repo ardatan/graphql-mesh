@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`MySQL Employees should generate correct schema: schema 1`] = `
-"schema @transport(subgraph: "Employees", kind: "sql", location: "mysql://root:passwd@localhost:33306/employees") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
+"schema @transport(subgraph: "Employees", kind: "sql", location: "mysql://root:passwd@localhost:33306/employees") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@sql") @composeDirective(name: "@transport") {
   query: Query
   mutation: Mutation
 }
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String, through: String) on FIELD_DEFINITION | OBJECT
+directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String, through: String) repeatable on FIELD_DEFINITION | OBJECT
 
 type Query {
   department(id: ID!): Department @sql(subgraph: "Employees", table: "departments", kind: ROW, where: """

@@ -28,7 +28,8 @@ import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/str
 import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
 import transportConnect, { type ConnectTransportOptions } from '@graphql-mesh/transport-connect';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
+import { defaultImportFn, importMeshDirectives, readFileOrUrl } from '@graphql-mesh/utils';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import {
   applyODataConnectSchemaExtensions,
   emitODataConnectors,
@@ -276,7 +277,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       eventEmitter.setMaxListeners(Infinity);
       eventEmitterSet.add(eventEmitter);
       // Share `entityInfo` + `eventEmitter` across object/input, but give each
-      // TC its own `odata` bag — otherwise object stamps must not leak.
+      // TC its own `odata` bag - otherwise object stamps must not leak.
       const entityInfo = {
         actualFields: [] as string[],
         navigationFields: [] as string[],
@@ -450,7 +451,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             type: 'JSON',
           },
         });
-        // Open-type catch-all `rest: JSON` — Connectors map via `rest: $` (whole entity).
+        // Open-type catch-all `rest: JSON` - Connectors map via `rest: $` (whole entity).
         // In-process Mesh uses `resolve: root => root` (no `@resolveRoot` directive).
         const restField = {
           type: 'JSON' as const,
@@ -578,7 +579,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               odata: {
                 boundFunction: {
                   functionRef,
-                  // OData binding parameter name (EntitySetPath / first param) — not "any Input".
+                  // OData binding parameter name (EntitySetPath / first param) - not "any Input".
                   bindingParameterName: parameterName,
                 },
               } as any,
@@ -851,7 +852,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         entityInfo.identifierFieldTypeRef =
           baseEntityInfo.identifierFieldTypeRef || entityInfo.identifierFieldTypeRef;
         entityInfo.actualFields.unshift(...(baseEntityInfo.actualFields || []));
-        // Field copy only — polymorphism via unions after all merges (not `implements`).
+        // Field copy only - polymorphism via unions after all merges (not `implements`).
         outputType.addFields(baseOutputType.getFields());
         let kids = childrenByBase.get(baseTypeName);
         if (!kids) {
@@ -1048,7 +1049,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       inputTC.addFields({
         _empty: {
           type: 'Boolean',
-          description: 'Placeholder — upstream OData type has no input fields',
+          description: 'Placeholder - upstream OData type has no input fields',
         },
       });
     }
@@ -1062,7 +1063,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     log,
   });
 
-  // Federation Connectors surface — Hive runs via transport-connect (+ odata.metadata $select).
+  // Federation Connectors surface - Hive runs via transport-connect (+ odata.metadata $select).
   const connectMeta = emitODataConnectors(schemaComposer, {
     name,
     endpoint,
@@ -1070,7 +1071,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       typeof operationHeaders === 'object' && operationHeaders ? operationHeaders : undefined,
   });
 
-  const schema = schemaComposer.buildSchema();
+  let schema = schemaComposer.buildSchema();
   const odataOpts: { batch?: typeof batch; expandNavProps?: boolean } = {};
   if (batch != null) odataOpts.batch = batch;
   if (expandNavProps != null) odataOpts.expandNavProps = expandNavProps;
@@ -1102,6 +1103,10 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     }
   }
 
+  // Only link `@transport` when OData-specific options were stamped.
+  if (getDirectiveExtensions(schema)?.transport) {
+    schema = importMeshDirectives(schema, ['@transport']);
+  }
   return schema;
 }
 

@@ -7,6 +7,7 @@ import type {
 } from 'graphql';
 import { Kind, parse, print, visit } from 'graphql';
 import { astFromValueUntyped } from '@graphql-tools/utils';
+import { prepareJoinDirectiveArgs } from './ast-from-value-block.js';
 
 const CONNECT_SPEC = 'https://specs.apollo.dev/connect/v0.4';
 const JOIN_V05 = 'https://specs.apollo.dev/join/v0.5';
@@ -29,7 +30,7 @@ const CONNECT_INPUT_TYPES = new Set([
 ]);
 
 /**
- * Owned by `@link(url: connect/v0.4)` — must not remain as `scalar X @join__type`.
+ * Owned by `@link(url: connect/v0.4)` - must not remain as `scalar X @join__type`.
  * Prefix/rename transforms ignore these names (like String/ID), so only the exact
  * link scalars appear; application scalars such as `AuditJSONSelection` stay.
  */
@@ -44,8 +45,8 @@ function isConnectLinkedScalarName(name: string): boolean {
  * Canonical SDL for connectors runtimes (Hive Gateway and Apollo Router).
  * Raw `@connect` / `@source` are rewritten to join metadata (Router rejects
  * them when the connect `@link` is `for: EXECUTION` without imports). Mesh
- * directives (`@transport`, `@length`, `@meshSource`, …) are kept — Hive
- * needs `@transport` to select the REST transport.
+ * schema `@transport` is rewritten later by `finalizeMeshJoinDirectives`
+ * (GM-41) to `@join__directive(name: "transport")`.
  */
 export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
   if (!supergraphSdl.includes('specs.apollo.dev/connect')) {
@@ -71,39 +72,16 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
 
   let nextDoc = visit(document, {
     SchemaDefinition(node) {
-      const kept: ConstDirectiveNode[] = [];
-      for (const dir of node.directives || []) {
-        if (dir.name.value === 'source') {
-          // Apollo SCHEMA `@source` — rewrite later to `@join__directive`
-          pendingSources.push(constDirectiveArgsToJs(dir));
-          continue;
-        }
-        if (dir.name.value === 'link') {
-          const url = getStringArg(dir, 'url');
-          if (url?.startsWith('https://specs.apollo.dev/join/')) {
-            kept.push(replaceLinkUrl(dir, JOIN_V05));
-            continue;
-          }
-          if (url?.startsWith('https://specs.apollo.dev/connect')) {
-            // Connectors EXECUTION link — no import list (join__directive carries defs)
-            kept.push({
-              kind: Kind.DIRECTIVE,
-              name: { kind: Kind.NAME, value: 'link' },
-              arguments: [
-                stringArg('url', CONNECT_SPEC),
-                {
-                  kind: Kind.ARGUMENT,
-                  name: { kind: Kind.NAME, value: 'for' },
-                  value: { kind: Kind.ENUM, value: 'EXECUTION' },
-                },
-              ],
-            });
-            continue;
-          }
-        }
-        kept.push(dir);
-      }
-      return { ...node, directives: kept };
+      return {
+        ...node,
+        directives: rewriteSchemaDirectivesForConnectors(node.directives, pendingSources),
+      };
+    },
+    SchemaExtension(node) {
+      return {
+        ...node,
+        directives: rewriteSchemaDirectivesForConnectors(node.directives, pendingSources),
+      };
     },
     FieldDefinition(node) {
       return rewriteConnectDirectivesOnNode(node, {
@@ -149,15 +127,20 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
       return node;
     },
     ScalarTypeDefinition(node) {
-      // Drop linked connect scalars — Router resolves them via `@link(connect/v0.4)`.
+      // Drop linked connect scalars - Router resolves them via `@link(connect/v0.4)`.
       if (isConnectLinkedScalarName(node.name.value)) {
         return null;
       }
       return node;
     },
     DirectiveDefinition(node) {
-      // Drop Apollo connect/source defs — execution uses join__directive metadata.
-      if (node.name.value === 'connect' || node.name.value === 'source') {
+      // Drop Apollo connect/source + Guild-only composeDirective defs -
+      // execution uses join__directive metadata.
+      if (
+        node.name.value === 'connect' ||
+        node.name.value === 'source' ||
+        node.name.value === 'composeDirective'
+      ) {
         return null;
       }
       return node;
@@ -168,55 +151,81 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
   // - Unique pending config for a name: fan out to every graph that referenced
   //   that name via `@connect` (shared identical config).
   // - Duplicate pending configs for the same name (different baseURLs): match
-  //   each `@source` to `@transport(subgraph, location)` by baseURL === location
-  //   so ownership survives compose → lift flattening of extras. Do not
-  //   cross-product mismatched configs onto every referencing graph.
+  //   each `@source` to `@join__graph(url:)` (preferred) or leftover `@transport(location)`
+  //   by baseURL === url/location. Do not invent `@transport(kind: "connect")` for this.
   const pendingSourceNameCounts = new Map<string, number>();
   for (const args of pendingSources) {
     const sourceName = typeof args.name === 'string' ? args.name : undefined;
     if (!sourceName) continue;
     pendingSourceNameCounts.set(sourceName, (pendingSourceNameCounts.get(sourceName) || 0) + 1);
   }
-  const transportsByLocation = readSchemaTransports(nextDoc, nameToGraphEnum);
+  const graphsByLocation = readLocationToGraphs(nextDoc, nameToGraphEnum);
   const schemaJoinDirs: ConstDirectiveNode[] = [];
   for (const args of pendingSources) {
     const sourceName = typeof args.name === 'string' ? args.name : undefined;
     const graphs = new Set<string>();
     const baseURL = getSourceBaseURL(args);
-    const fromTransport = baseURL ? transportsByLocation.get(baseURL) : undefined;
-    if (fromTransport?.size === 1) {
-      // Single transport at this location — authoritative for this config.
-      // Do not also add nameToGraphEnum(sourceName) (subgraph named `api` case).
-      graphs.add([...fromTransport][0]);
-    } else if (
-      fromTransport &&
-      fromTransport.size > 1 &&
+    const fromLocation = baseURL ? graphsByLocation.get(baseURL) : undefined;
+    const fromConnect = sourceName ? sourceNameToGraphs.get(sourceName) : undefined;
+    const uniquePending = sourceName ? pendingSourceNameCounts.get(sourceName) === 1 : false;
+    const identicalAtLocation =
+      !!fromLocation &&
+      fromLocation.size > 1 &&
       pendingSources.every(
         other => getSourceBaseURL(other) !== baseURL || sourcesDeepEqual(other, args),
-      )
-    ) {
-      // Same location, identical configs — genuinely shared; fan out.
-      for (const g of fromTransport) {
-        graphs.add(g);
-      }
-    } else if (!fromTransport?.size) {
-      const byName = sourceName ? nameToGraphEnum.get(sourceName) : undefined;
-      if (byName) {
-        graphs.add(byName);
-      }
-      const fromConnect = sourceName ? sourceNameToGraphs.get(sourceName) : undefined;
-      const uniquePending = sourceName ? pendingSourceNameCounts.get(sourceName) === 1 : false;
+      );
+
+    if (fromLocation?.size === 1) {
+      // Location disambiguates competing source defs; still keep every graph that
+      // already referenced this uniquely-named shared source via `@connect`.
+      graphs.add([...fromLocation][0]);
       if (fromConnect && uniquePending) {
         for (const g of fromConnect) {
           graphs.add(g);
         }
       }
-      // Duplicate-name configs without a transport match: do not guess a graph.
+    } else if (identicalAtLocation) {
+      // Same location, identical configs - genuinely shared; fan out.
+      // Also keep Connector graphs that reference this uniquely-named source
+      // even when their graph URL differs from the source baseURL.
+      for (const g of fromLocation) {
+        graphs.add(g);
+      }
+      if (fromConnect && uniquePending) {
+        for (const g of fromConnect) {
+          graphs.add(g);
+        }
+      }
+    } else {
+      // No unique location match, or multi-graph URL with competing configs -
+      // resolve by unique name / Connector references (do not let a shared
+      // baseURL block ownership).
+      const byName = sourceName ? nameToGraphEnum.get(sourceName) : undefined;
+      if (byName) {
+        graphs.add(byName);
+      }
+      if (fromConnect && uniquePending) {
+        for (const g of fromConnect) {
+          graphs.add(g);
+        }
+      }
       if (!graphs.size && uniquePending && singleGraphEnum) {
         graphs.add(singleGraphEnum);
       }
       if (!graphs.size && uniquePending && graphsWithConnect.size === 1) {
         graphs.add([...graphsWithConnect][0]);
+      }
+      if (!graphs.size && sourceName && (pendingSourceNameCounts.get(sourceName) || 0) > 1) {
+        throw new Error(
+          `Ambiguous @source ownership for "${sourceName}"` +
+            (baseURL ? ` at baseURL ${baseURL}` : '') +
+            ': multiple source configs share this name without a unique graph match',
+        );
+      }
+      if (!graphs.size && fromLocation && fromLocation.size > 1 && baseURL) {
+        throw new Error(
+          `Ambiguous @source ownership for baseURL ${baseURL}: multiple graphs share this URL with distinct source configs`,
+        );
       }
     }
     for (const graphEnum of graphs) {
@@ -349,13 +358,14 @@ function getJoinTypeGraph(
 /**
  * Preferred graph for type-level `@connect` when source name does not match a
  * subgraph name: sole distinct `@join__type` graph (multiple keys on one graph
- * still count as one), else the single non-extension / resolvable owner join
- * when a stub join is also present.
+ * still count as one), else the single graph that declares a `@key` on the type
+ * (entity owner - not a value-type sibling join), else the single non-extension /
+ * resolvable owner join when a stub join is also present.
  */
 function getPreferredTypeJoinGraph(
   directives: readonly ConstDirectiveNode[] | undefined,
 ): string | undefined {
-  const byGraph = new Map<string, { extension: boolean; resolvable: boolean }>();
+  const byGraph = new Map<string, { extension: boolean; resolvable: boolean; hasKey: boolean }>();
   for (const dir of directives || []) {
     if (dir.name.value !== 'join__type') {
       continue;
@@ -367,16 +377,29 @@ function getPreferredTypeJoinGraph(
     const graph = graphArg.value.value;
     const extension = getBooleanArg(dir, 'extension') === true;
     const resolvable = getBooleanArg(dir, 'resolvable') !== false;
+    const hasKey = Boolean(getStringArg(dir, 'key'));
     const prev = byGraph.get(graph);
     byGraph.set(graph, {
       // An extension entry sticks for that graph. Any resolvable key keeps it eligible
       // (Federation allows repeatable `@key` with per-key `resolvable` flags).
       extension: Boolean(prev?.extension || extension),
       resolvable: prev ? prev.resolvable || resolvable : resolvable,
+      hasKey: Boolean(prev?.hasKey || hasKey),
     });
   }
   if (byGraph.size === 1) {
     return byGraph.keys().next().value;
+  }
+  // Type-level `@connect` is an entity resolver - prefer the sole keyed graph when
+  // another subgraph only contributes the type as a value-type sibling (no key).
+  const keyed: string[] = [];
+  for (const [graph, meta] of byGraph) {
+    if (meta.hasKey) {
+      keyed.push(graph);
+    }
+  }
+  if (keyed.length === 1) {
+    return keyed[0];
   }
   const owners: string[] = [];
   for (const [graph, meta] of byGraph) {
@@ -385,6 +408,86 @@ function getPreferredTypeJoinGraph(
     }
   }
   return owners.length === 1 ? owners[0] : undefined;
+}
+
+function rewriteSchemaDirectivesForConnectors(
+  directives: readonly ConstDirectiveNode[] | undefined,
+  pendingSources: Array<Record<string, unknown>>,
+): ConstDirectiveNode[] {
+  const kept: ConstDirectiveNode[] = [];
+  for (const dir of directives || []) {
+    if (dir.name.value === 'source') {
+      // Apollo SCHEMA `@source` - rewrite later to `@join__directive`
+      pendingSources.push(constDirectiveArgsToJs(dir));
+      continue;
+    }
+    if (dir.name.value === 'composeDirective') {
+      // Guild-only / Mesh loader stamps - not on the optimized supergraph.
+      continue;
+    }
+    if (dir.name.value === 'link') {
+      const url = getStringArg(dir, 'url');
+      if (url?.startsWith('https://specs.apollo.dev/join/')) {
+        kept.push(replaceLinkUrl(dir, JOIN_V05));
+        continue;
+      }
+      if (url?.startsWith('https://specs.apollo.dev/connect')) {
+        // Connectors EXECUTION link - no import list (join__directive carries defs)
+        kept.push({
+          kind: Kind.DIRECTIVE,
+          name: { kind: Kind.NAME, value: 'link' },
+          arguments: [
+            stringArg('url', CONNECT_SPEC),
+            {
+              kind: Kind.ARGUMENT,
+              name: { kind: Kind.NAME, value: 'for' },
+              value: { kind: Kind.ENUM, value: 'EXECUTION' },
+            },
+          ],
+        });
+        continue;
+      }
+      if (url?.startsWith('https://specs.apollo.dev/federation/')) {
+        const stripped = removeImportFromLink(dir, '@composeDirective');
+        if (stripped) {
+          kept.push(stripped);
+        }
+        continue;
+      }
+    }
+    kept.push(dir);
+  }
+  return kept;
+}
+
+/** Drop one import name from `@link(import:)`; drop the whole link if import empties. */
+function removeImportFromLink(
+  directive: ConstDirectiveNode,
+  importName: string,
+): ConstDirectiveNode | null {
+  const importArg = directive.arguments?.find(a => a.name.value === 'import');
+  if (!importArg || importArg.value.kind !== Kind.LIST) {
+    return directive;
+  }
+  const values = importArg.value.values.filter(v => {
+    if (v.kind === Kind.STRING) {
+      return v.value !== importName;
+    }
+    return true;
+  });
+  if (values.length === importArg.value.values.length) {
+    return directive;
+  }
+  if (values.length === 0) {
+    // Federation link with only @composeDirective - drop entirely from final SG.
+    return null;
+  }
+  return {
+    ...directive,
+    arguments: (directive.arguments || []).map(arg =>
+      arg.name.value === 'import' ? { ...arg, value: { kind: Kind.LIST, values } } : arg,
+    ),
+  };
 }
 
 function getBooleanArg(dir: ConstDirectiveNode, name: string): boolean | undefined {
@@ -426,13 +529,37 @@ function sourcesDeepEqual(a: Record<string, unknown>, b: Record<string, unknown>
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-/** Map `@transport(location)` → join graph enums (Mesh pairs location with source baseURL). */
-function readSchemaTransports(
+/**
+ * Map location/url → join graph enums.
+ * Prefer `@join__graph(url:)` (no Mesh `@transport` needed for Connectors).
+ * Fall back to leftover schema `@transport(location)` for older SDL.
+ */
+function readLocationToGraphs(
   document: DocumentNode,
   nameToGraphEnum: Map<string, string>,
 ): Map<string, Set<string>> {
   const byLocation = new Map<string, Set<string>>();
+  const remember = (location: string | undefined, graphEnum: string | undefined) => {
+    if (!location || !graphEnum) {
+      return;
+    }
+    let graphs = byLocation.get(location);
+    if (!graphs) {
+      graphs = new Set();
+      byLocation.set(location, graphs);
+    }
+    graphs.add(graphEnum);
+  };
   for (const def of document.definitions) {
+    if (def.kind === Kind.ENUM_TYPE_DEFINITION && def.name.value === 'join__Graph') {
+      for (const value of def.values || []) {
+        const graphDir = value.directives?.find(d => d.name.value === 'join__graph');
+        if (!graphDir) continue;
+        const name = getStringArg(graphDir, 'name') || value.name.value;
+        remember(getStringArg(graphDir, 'url'), nameToGraphEnum.get(name) || value.name.value);
+      }
+      continue;
+    }
     if (def.kind !== Kind.SCHEMA_DEFINITION && def.kind !== Kind.SCHEMA_EXTENSION) {
       continue;
     }
@@ -445,16 +572,7 @@ function readSchemaTransports(
       if (!location || !subgraph) {
         continue;
       }
-      const graphEnum = nameToGraphEnum.get(subgraph);
-      if (!graphEnum) {
-        continue;
-      }
-      let graphs = byLocation.get(location);
-      if (!graphs) {
-        graphs = new Set();
-        byLocation.set(location, graphs);
-      }
-      graphs.add(graphEnum);
+      remember(location, nameToGraphEnum.get(subgraph));
     }
   }
   return byLocation;
@@ -514,10 +632,13 @@ function rewriteConnectDirectivesOnNode<
   const joinDirs: ConstDirectiveNode[] = [];
 
   for (const connectDir of connectDirs) {
-    const args = constDirectiveArgsToJs(connectDir);
+    // Strip Mesh-only `|preEncoded` from HTTP path templates before join-ify.
+    // Apollo Router's URLPathTemplate parser rejects `|…` modifiers (Eof); Hive
+    // Connect still accepts `|preEncoded` on subgraph / executable schemas.
+    const args = stripMeshPathModifiersFromConnectArgs(constDirectiveArgsToJs(connectDir));
     const sourceName = typeof args.source === 'string' ? args.source : undefined;
     // Field-level: prefer explicit `@join__field(graph:)` before source→subgraph
-    // name match — a subgraph named `api` must not steal inventory's
+    // name match - a subgraph named `api` must not steal inventory's
     // `@connect(source: "api")` when the field is owned by INVENTORY.
     // Type-level: prefer sole/owner `@join__type` before source→subgraph name
     // match so Product/Airline stay on the Connectors owner (not a stub, and not
@@ -551,7 +672,7 @@ function buildJoinDirective(
   name: string,
   args: Record<string, unknown>,
 ): ConstDirectiveNode {
-  const argsNode = astFromValueUntyped(args) as ConstValueNode;
+  const argsNode = astFromValueUntyped(prepareJoinDirectiveArgs(args)) as ConstValueNode;
   return {
     kind: Kind.DIRECTIVE,
     name: { kind: Kind.NAME, value: 'join__directive' },
@@ -602,6 +723,31 @@ function constDirectiveArgsToJs(directive: ConstDirectiveNode): Record<string, u
     out[arg.name.value] = constValueToJs(arg.value);
   }
   return out;
+}
+
+const CONNECT_HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
+
+/**
+ * Remove Mesh path modifiers Apollo Router cannot parse from `@connect(http:)`.
+ * Subgraph SDLs keep `|preEncoded` for Mesh/Hive Connect runtime.
+ */
+function stripMeshPathModifiersFromConnectArgs(
+  args: Record<string, unknown>,
+): Record<string, unknown> {
+  const http = args.http;
+  if (!http || typeof http !== 'object' || Array.isArray(http)) {
+    return args;
+  }
+  const nextHttp: Record<string, unknown> = { ...(http as Record<string, unknown>) };
+  let changed = false;
+  for (const method of CONNECT_HTTP_METHODS) {
+    const value = nextHttp[method];
+    if (typeof value === 'string' && value.includes('|preEncoded')) {
+      nextHttp[method] = value.replace(/\|preEncoded\b/g, '');
+      changed = true;
+    }
+  }
+  return changed ? { ...args, http: nextHttp } : args;
 }
 
 function constValueToJs(value: ConstValueNode): unknown {
