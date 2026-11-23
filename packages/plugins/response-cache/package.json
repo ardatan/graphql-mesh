@@ -50,7 +50,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway-runtime": "patch:@graphql-hive/gateway-runtime@npm%3A2.13.5#~/.yarn/patches/@graphql-hive-gateway-runtime-npm-2.13.5-be6edfcd35.patch",
+    "@graphql-hive/gateway-runtime": "^2.14.3",
     "@graphql-mesh/fusion-composition": "^0.11.4",
     "graphql": "16.14.0"
   },
