@@ -277,38 +277,6 @@ exports[`gRPC Example streams movies by cast correctly: 3 1`] = `
         "rating": 0.9300000071525574,
         "year": 2018,
       },
-      null,
-    ],
-  },
-  "hasNext": true,
-}
-`;
-
-exports[`gRPC Example streams movies by cast correctly: 4 1`] = `
-{
-  "data": {
-    "exampleSearchMoviesByCast": [
-      {
-        "cast": [
-          "Tom Cruise",
-          "Simon Pegg",
-          "Jeremy Renner",
-        ],
-        "name": "Mission: Impossible Rogue Nation",
-        "rating": 0.9700000286102295,
-        "year": 2015,
-      },
-      {
-        "cast": [
-          "Tom Cruise",
-          "Simon Pegg",
-          "Henry Cavill",
-        ],
-        "name": "Mission: Impossible - Fallout",
-        "rating": 0.9300000071525574,
-        "year": 2018,
-      },
-      null,
     ],
   },
   "hasNext": false,
