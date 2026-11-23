@@ -7,8 +7,8 @@ import { Callout } from '@theguild/components'
 # FHIR (JSON Schema) -- supporting example
 
 <Callout type="info">
-  Supporting narrative alongside the main Mesh v2 docs -- **not** the getting-started kickoff. Prefer
-  [Music store](/v2/tutorials/music-store) for the staged tutorial.
+  Supporting narrative alongside the main Mesh v2 docs -- **not** the getting-started kickoff.
+  Prefer [Music store](/v2/tutorials/music-store) for the staged tutorial.
 </Callout>
 
 Healthcare REST + HL7 R4 `fhir.schema.json`, composed for **Hive Gateway** and **Apollo Router**.
@@ -20,10 +20,11 @@ Repo anchor: `e2e/json-schema-fhir` on `master`.
 1. **Pin FHIR R4** schema (`Patient.id` → `#/definitions/id`).
 2. **`scalarMap`**: force `id` / `oid` → GraphQL `ID` (and date/URL/UUID maps).
 3. **`FHIR_BASE`** env for compose + serve (default public HAPI R4 base).
-4. Generate `patients` / `observations` via `loadJSONSchemaSubgraph` with auto `@connect(selection:)`.
-5. **Join-only hand SDL** (`reference-resource.graphql`): `interface Resource`, **opt-in**
-   `Patient` / `Observation` implementations (`@key(resolvable: false)`), `Reference.resource` via
-   Connect `->match` on `Type/id`.
+4. Generate `patients` / `observations` via `loadJSONSchemaSubgraph` with auto
+   `@connect(selection:)`.
+5. **Join-only hand SDL** (`reference-resource.graphql`): `interface Resource`, **opt-in** `Patient`
+   / `Observation` implementations (`@key(resolvable: false)`), `Reference.resource` via Connect
+   `->match` on `Type/id`.
 
 ## Why Resource implementations are opt-in
 

@@ -11,14 +11,14 @@ learn to recognize the important stamps.
 
 ## What to look for
 
-| Piece | Meaning |
-| --- | --- |
-| `@transport` | Which Mesh transport executes this subgraph at the gateway (kind, location, options). |
-| `@connect` / `@source` | HTTP Connectors-style mapping (Apollo Connectors–compatible when dual-running Router). |
-| Protocol directives | `@sql` / `@sql__*`, `@mongo__*`, `@thrift__rpc`, `@protobuf__rpc`, Neo4j natives, … |
-| `@key` | Federation entity key; often with `resolvable: false` on join stubs. |
-| `selection` / `args` | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs. |
-| `@link` / `@composeDirective` | Spec imports and which directives survive composition. |
+| Piece                         | Meaning                                                                                 |
+| ----------------------------- | --------------------------------------------------------------------------------------- |
+| `@transport`                  | Which Mesh transport executes this subgraph at the gateway (kind, location, options).   |
+| `@connect` / `@source`        | HTTP Connectors-style mapping (Apollo Connectors–compatible when dual-running Router).  |
+| Protocol directives           | `@sql` / `@sql__*`, `@mongo__*`, `@thrift__rpc`, `@protobuf__rpc`, Neo4j natives, …     |
+| `@key`                        | Federation entity key; often with `resolvable: false` on join stubs.                    |
+| `selection` / `args`          | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs. |
+| `@link` / `@composeDirective` | Spec imports and which directives survive composition.                                  |
 
 ## Habits that help
 

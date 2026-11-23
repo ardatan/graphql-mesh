@@ -1,13 +1,14 @@
 ---
-description: Music store tutorial -- Chinook SQL, REST Reviews Connect, gRPC in three pedagogical stages
+description:
+  Music store tutorial -- Chinook SQL, REST Reviews Connect, gRPC in three pedagogical stages
 ---
 
 import { Callout } from '@theguild/components'
 
 # Music store (draft)
 
-First full Mesh v2 tutorial. One music-store supergraph built in **three pedagogical stages**
-across SQL, REST/OpenAPI Connect, and gRPC/Protobuf.
+First full Mesh v2 tutorial. One music-store supergraph built in **three pedagogical stages** across
+SQL, REST/OpenAPI Connect, and gRPC/Protobuf.
 
 <Callout type="info">
   Stage narrative is locked; executable steps and fixtures will fill in as Compose examples land.
@@ -16,22 +17,22 @@ across SQL, REST/OpenAPI Connect, and gRPC/Protobuf.
 
 ## Stages (not service branding)
 
-| Stage | What you do | Recommended protocol |
-| --- | --- | --- |
-| **1. Generate** | Generate subgraph #1; compose; query; read emitted SDL | Chinook **SQL** catalog |
+| Stage                     | What you do                                                      | Recommended protocol                    |
+| ------------------------- | ---------------------------------------------------------------- | --------------------------------------- |
+| **1. Generate**           | Generate subgraph #1; compose; query; read emitted SDL           | Chinook **SQL** catalog                 |
 | **2. Generate-then-edit** | Generate subgraph #2; dislike naming/shape; edit SDL; re-compose | **Reviews** REST / OpenAPI → `@connect` |
-| **3. Hand-write** | Author subgraph #3 SDL into Compose (+ registry) | **gRPC / Protobuf** |
+| **3. Hand-write**         | Author subgraph #3 SDL into Compose (+ registry)                 | **gRPC / Protobuf**                     |
 
 Reviews are a **REST** API (OpenAPI-described). Implementation may use feTS for dogfood; user-facing
 docs say REST / OpenAPI.
 
 ## Gateway matrix
 
-| Slice | Hive Gateway (JS/TS) | Apollo Router |
-| --- | --- | --- |
-| Full multi-protocol graph | Yes | No (non-Connect transports) |
-| Connect Reviews slice | Yes | Yes (dual-run) |
-| gRPC slice | Yes | No |
+| Slice                     | Hive Gateway (JS/TS) | Apollo Router               |
+| ------------------------- | -------------------- | --------------------------- |
+| Full multi-protocol graph | Yes                  | No (non-Connect transports) |
+| Connect Reviews slice     | Yes                  | Yes (dual-run)              |
+| gRPC slice                | Yes                  | No                          |
 
 ## Federation
 
