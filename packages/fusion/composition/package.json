@@ -52,7 +52,7 @@
   "dependencies": {
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/schema": "^11.0.9",
-    "@graphql-tools/stitching-directives": "^4.1.5",
+    "@graphql-tools/stitching-directives": "^4.1.7",
     "@graphql-tools/utils": "^13.2.2",
     "@theguild/federation-composition": "^0.27.0",
     "change-case": "^4.1.2",
