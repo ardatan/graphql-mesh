@@ -5202,7 +5202,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^2.15.12"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/openapi": "workspace:*"
-    fets: "npm:^0.8.13"
+    fets: "npm:^0.8.14"
     graphql: "npm:16.14.0"
     graphql-yoga: "npm:^6.1.0"
   languageName: unknown
@@ -5262,7 +5262,7 @@ __metadata:
     "@apollo/server": "npm:^5.5.1"
     "@apollo/subgraph": "npm:^2.16.0"
     "@graphql-hive/gateway": "npm:^2.15.12"
-    fets: "npm:^0.8.13"
+    fets: "npm:^0.8.14"
     graphql: "npm:^16.14.0"
   languageName: unknown
   linkType: soft
@@ -5328,7 +5328,7 @@ __metadata:
   resolution: "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions"
   dependencies:
     "@graphql-hive/gateway": "npm:^2.15.12"
-    fets: "npm:^0.8.13"
+    fets: "npm:^0.8.14"
     graphql: "npm:16.14.0"
     graphql-sse: "npm:^2.6.3"
   languageName: unknown
@@ -5348,7 +5348,7 @@ __metadata:
   resolution: "@e2e/manual-transport-def@workspace:e2e/manual-transport-def"
   dependencies:
     "@graphql-hive/gateway": "npm:^2.15.12"
-    fets: "npm:0.8.13"
+    fets: "npm:0.8.14"
     graphql: "npm:16.14.0"
   languageName: unknown
   linkType: soft
@@ -5449,7 +5449,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^2.15.12"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/openapi": "workspace:*"
-    fets: "npm:^0.8.13"
+    fets: "npm:^0.8.14"
     graphql: "npm:16.14.0"
   languageName: unknown
   linkType: soft
@@ -5515,7 +5515,7 @@ __metadata:
   resolution: "@e2e/openapi-subscriptions@workspace:e2e/openapi-subscriptions"
   dependencies:
     "@graphql-hive/gateway": "npm:^2.15.12"
-    fets: "npm:^0.8.13"
+    fets: "npm:^0.8.14"
     graphql: "npm:16.14.0"
     graphql-sse: "npm:^2.6.3"
     url-join: "npm:^5.0.0"
@@ -5548,7 +5548,7 @@ __metadata:
   resolution: "@e2e/programmatic-batching-example@workspace:e2e/programmatic-batching"
   dependencies:
     "@graphql-hive/gateway": "npm:^2.15.12"
-    fets: "npm:^0.8.13"
+    fets: "npm:^0.8.14"
     graphql: "npm:16.14.0"
   languageName: unknown
   linkType: soft
@@ -6558,7 +6558,7 @@ __metadata:
     "@graphql-hive/cli": "npm:0.68.5"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/openapi": "workspace:*"
-    fets: "npm:0.8.13"
+    fets: "npm:0.8.14"
     graphql: "npm:16.14.0"
   languageName: unknown
   linkType: soft
@@ -6911,7 +6911,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.103.4"
     "@graphql-mesh/openapi": "npm:0.112.7"
     "@types/node": "npm:^26.2.0"
-    fets: "npm:^0.8.13"
+    fets: "npm:^0.8.14"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
@@ -6926,7 +6926,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.103.4"
     "@graphql-mesh/openapi": "npm:0.112.7"
     "@types/node": "npm:^26.2.0"
-    fets: "npm:^0.8.13"
+    fets: "npm:^0.8.14"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
@@ -6994,7 +6994,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.112.6"
     "@types/node": "npm:^26.2.0"
     concurrently: "npm:10.0.6"
-    fets: "npm:0.8.13"
+    fets: "npm:0.8.14"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
@@ -7011,7 +7011,7 @@ __metadata:
     "@types/node": "npm:^26.2.0"
     "@whatwg-node/fetch": "npm:^0.12.1"
     concurrently: "npm:10.0.6"
-    fets: "npm:0.8.13"
+    fets: "npm:0.8.14"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
@@ -7260,7 +7260,7 @@ __metadata:
     "@types/node": "npm:^26.2.0"
     "@whatwg-node/fetch": "npm:^0.12.1"
     concurrently: "npm:10.0.6"
-    fets: "npm:^0.8.13"
+    fets: "npm:^0.8.14"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
@@ -7334,7 +7334,7 @@ __metadata:
     "@sinclair/typebox": "npm:0.34.52"
     "@types/node": "npm:^26.2.0"
     concurrently: "npm:10.0.6"
-    fets: "npm:0.8.13"
+    fets: "npm:0.8.14"
     graphql: "npm:16.14.0"
     jest: "npm:30.4.2"
     ts-node: "npm:^10.9.2"
@@ -14068,7 +14068,7 @@ __metadata:
     "@omnigraph/json-schema": "npm:^0.112.6"
     "@whatwg-node/fetch": "npm:^0.12.1"
     change-case: "npm:^4.1.2"
-    fets: "npm:0.8.13"
+    fets: "npm:0.8.14"
     graphql: "npm:16.14.0"
     graphql-yoga: "npm:^6.1.0"
     json-bigint-patch: "npm:0.0.9"
@@ -28271,9 +28271,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fets@npm:0.8.13, fets@npm:^0.8.13":
-  version: 0.8.13
-  resolution: "fets@npm:0.8.13"
+"fets@npm:0.8.14, fets@npm:^0.8.14":
+  version: 0.8.14
+  resolution: "fets@npm:0.8.14"
   dependencies:
     "@sinclair/typebox": "npm:^0.34.52"
     "@whatwg-node/cookie-store": "npm:^0.3.0"
@@ -28284,7 +28284,7 @@ __metadata:
     qs: "npm:^6.17.1"
     ts-toolbelt: "npm:^9.6.0"
     tslib: "npm:^2.3.1"
-  checksum: 10c0/76bfe08fc474c8cb4d1b1f551b8bd7d95e8d9b469c8ab3165f2f15dbd3621bb3ddad75ce48a1317faea7e8d64b4787dbf0e45bfd8deb92ae6f19f4e8ddf096c1
+  checksum: 10c0/e94f15f187c9e924a6ba74b5d62a70667635a9a480861dec4952fd233a4160b668071e821037d695814f6b2c05f1f3f863dc1bf58c703e501dcac298322946b7
   languageName: node
   linkType: hard
 
