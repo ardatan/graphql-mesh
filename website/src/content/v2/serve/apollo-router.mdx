@@ -1,0 +1,28 @@
+---
+description: Serve Connect-compatible Mesh supergraphs with Apollo Router
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# Apollo Router
+
+**Apollo Router** is a **peer** to Hive Gateway in the Mesh Serve docs (equal nav weight). Use it
+when your composed SDL is **Connect-compatible** (`@connect` / `@source` on connect/v0.4-style
+emit).
+
+## Honest limits
+
+- Stock Apollo Router does **not** run Mesh `@sql`, `@protobuf__rpc`, SOAP, or other non-Connect Mesh
+  transports.
+- For multi-protocol Music store graphs, run the **full** supergraph on Hive Gateway; dual-run the
+  Connect slice on Apollo Router when demonstrating compatibility.
+
+## Dual-run
+
+Compose once to GraphQL SDL, then execute the same file on Hive Gateway and Apollo Router when the
+schema stays on Connect.
+
+<Cards>
+  <Cards.Card arrow title="Hive Gateway (peer)" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Music store tutorial" href="/v2/tutorials/music-store" />
+</Cards>

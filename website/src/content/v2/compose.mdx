@@ -1,0 +1,41 @@
+---
+description: Mesh Compose -- mesh.config.ts, loaders, hand-written SDL, transforms, registry publish
+---
+
+import { Callout } from '@theguild/components'
+
+# Compose
+
+Mesh Compose turns subgraph definitions into subgraph or supergraph GraphQL SDL.
+
+## Config shape (draft)
+
+Typical `mesh.config.ts` ideas:
+
+- `subgraphs` entries with a `sourceHandler` (loader) **or** a hand-written `schema` file / SDL
+  string.
+- Shared options: transforms, additional type defs, output mode (`graphql` / binary formats as
+  supported).
+
+Generated and hand-written subgraphs share the same compose + registry path.
+
+## Hand-written SDL
+
+```ts
+{
+  name: 'referenceResource',
+  schema: './reference-resource.graphql',
+}
+```
+
+Use this for join-only subgraphs, fully authored Connect SDL, and edited loader output.
+
+## Registry publish
+
+Publish composed **subgraph** SDL to Hive schema registry / GraphOS with the same CLI UX whether
+the SDL came from a loader or a file. Full walkthrough lands with the Music store tutorial.
+
+<Callout type="info">
+  Some first-class Compose + registry helpers landed in recent Mesh releases; tutorial pages will
+  cite the exact APIs as examples are filled in.
+</Callout>

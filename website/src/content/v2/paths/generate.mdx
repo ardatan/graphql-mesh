@@ -1,0 +1,36 @@
+---
+description: Generate a Mesh subgraph from an existing API or database, then read the emitted SDL
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# Generate
+
+Bootstrap a subgraph from an existing source with a Mesh loader (`loadOpenAPISubgraph`,
+`loadSqlSubgraph`, `loadJSONSchemaSubgraph`, `loadMongoSubgraph`, `loadProtobufSubgraph`, and
+others). Compose emits Federation-ready SDL stamped with directives and slim `@transport` where
+needed.
+
+## Flow
+
+1. Pick a loader and point it at your source (OpenAPI URL, SQL connection, JSON Schema, …).
+2. Compose to subgraph or supergraph SDL.
+3. **Read the emitted SDL** -- see [Reading generated SDL](/v2/guides/reading-generated-sdl).
+4. Serve with **Hive Gateway** (JS/TS). Use **Apollo Router** when the SDL is Connect-compatible.
+5. Optionally publish subgraph SDL to a schema registry.
+
+## Success
+
+You get a working query without writing directive args by hand, and you can explain the important
+parts of the emitted SDL.
+
+<Callout type="info">
+  The first full tutorial walks this as **stage 1** of the [Music store](/v2/tutorials/music-store)
+  (recommended: generate the Chinook SQL catalog).
+</Callout>
+
+<Cards>
+  <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
+  <Cards.Card arrow title="Music store tutorial" href="/v2/tutorials/music-store" />
+</Cards>

@@ -1,0 +1,35 @@
+---
+description: Serve Mesh supergraphs with Hive Gateway (JavaScript / TypeScript)
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# Hive Gateway
+
+**Hive Gateway** is the preferred Mesh runtime. In Mesh docs it means the **JavaScript /
+TypeScript** gateway. It executes the full Mesh transport surface (Connect, SQL, Mongo, Protobuf,
+Thrift, Neo4j, …).
+
+## When to use it
+
+- Any Mesh-composed supergraph that uses non-Connect protocol directives.
+- Connect-compatible supergraphs (alongside or instead of Apollo Router).
+- Serving a Mesh subgraph as a Federation subgraph behind another router.
+
+## Related
+
+Hive Gateway product docs live on the Hive site. Mesh docs focus on how Compose output and
+transports plug in.
+
+<Callout type="info">
+  Always say **Hive Gateway** in Mesh docs -- never bare "Hive" when meaning the gateway.
+</Callout>
+
+<Cards>
+  <Cards.Card
+    arrow
+    title="Hive Gateway docs"
+    href="https://the-guild.dev/graphql/hive/docs/gateway"
+  />
+  <Cards.Card arrow title="Apollo Router (peer)" href="/v2/serve/apollo-router" />
+</Cards>

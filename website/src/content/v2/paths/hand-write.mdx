@@ -1,0 +1,40 @@
+---
+description: Hand-write Mesh subgraph SDL for Compose and schema registries (humans and AI)
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# Hand-write
+
+Author committed `.graphql` with `@connect` / `@source` and/or protocol directives (`@sql`,
+`@mongo__*`, `@thrift__rpc`, `@protobuf__rpc`, Neo4j native directives, …), plus Federation `@key` /
+Mesh `@link` / `@composeDirective` as required.
+
+Humans and AI assistants share **one** authoring contract. There is no separate "AI write" path.
+
+## Flow
+
+1. Prefer starting from a **read** of generated SDL when one exists.
+2. Load authored SDL into Mesh Compose through the first-class hand-written input (for example
+   `subgraphs[{ name, schema }]` / `loadSubgraphFromSDL` once available on your Mesh version).
+3. Compose to subgraph and/or supergraph using the same pipeline as generated subgraphs.
+4. Publish subgraph SDL to a schema registry with the same UX as generated subgraphs.
+5. Serve: **Hive Gateway** for full Mesh transports; **Apollo Router** when the SDL is
+   Connect-compatible.
+
+## Success
+
+- A `.graphql` file is the source of truth.
+- Compose accepts it without custom one-off handlers.
+- Registry publish + gateway serve match loader-emitted subgraphs.
+
+<Callout type="info">
+  In the [Music store](/v2/tutorials/music-store) tutorial this is **stage 3** (recommended: hand-write
+  the gRPC / Protobuf slice after generate and generate-then-edit).
+</Callout>
+
+<Cards>
+  <Cards.Card arrow title="Compose" href="/v2/compose" />
+  <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Music store tutorial" href="/v2/tutorials/music-store" />
+</Cards>
