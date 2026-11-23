@@ -25,11 +25,11 @@ Connectors-style directives, composed into a real supergraph.
 
 ## Patterns
 
-| Pattern | When |
-| --- | --- |
-| Dual-run same SDL | Hive Gateway and Apollo Router both execute the same Connect supergraph. |
+| Pattern                     | When                                                                                                |
+| --------------------------- | --------------------------------------------------------------------------------------------------- |
+| Dual-run same SDL           | Hive Gateway and Apollo Router both execute the same Connect supergraph.                            |
 | Hive Gateway subgraph proxy | Non-Connect Mesh subgraphs served by Hive Gateway; a foreign router talks GraphQL to that subgraph. |
-| Registry | Publish Mesh subgraphs (generated or hand-written); gateway pulls the supergraph. |
+| Registry                    | Publish Mesh subgraphs (generated or hand-written); gateway pulls the supergraph.                   |
 
 <Callout type="warning">
   Do not teach ad-hoc e2e-style custom `sourceHandler` copy-paste as the architecture. Prefer
