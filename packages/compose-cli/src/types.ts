@@ -4,6 +4,10 @@ import type { ComposeSubgraphsOptions } from '@graphql-mesh/fusion-composition';
 import type { MeshFetch } from '@graphql-mesh/types';
 import type { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import type {
+  ResolveSubgraphSchemaTransport,
+  SubgraphSchemaInput,
+} from './resolveSubgraphSchema.js';
 
 export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
   /**
@@ -22,13 +26,54 @@ export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
   cwd?: string;
 }
 
-export interface MeshComposeCLISubgraphConfig {
-  sourceHandler: MeshComposeCLISourceHandlerDef;
+export type MeshComposeCLISubgraphConfig = {
   transforms?: MeshComposeCLITransformConfig[];
-}
+} & (
+  | {
+      /**
+       * Lazy loader (OpenAPI, SQL, HTTP introspection, …).
+       */
+      sourceHandler: MeshComposeCLISourceHandlerDef;
+      name?: never;
+      schema?: never;
+      transport?: never;
+    }
+  | {
+      /**
+       * Optional subgraph name when supplying {@link schema} directly.
+       *
+       * When omitted, the name is taken from `@transport(subgraph: ...)`.
+       * When both are set and differ, Compose throws a conflict error.
+       * When neither is set, Compose throws (name required).
+       */
+      name?: string;
+      /**
+       * Hand-written or in-memory subgraph SDL / schema.
+       *
+       * - `GraphQLSchema`: used as-is
+       * - `DocumentNode`: built with `assumeValidSDL`
+       * - `string`: inline SDL, or a path / URL to an `.graphql` file
+       * - `Promise` of any of the above
+       *
+       * Mesh `@link` / `@composeDirective` applications belong in the SDL itself
+       * (or come from a loader via `importMeshDirectives`). Compose does not invent
+       * Mesh directive imports.
+       */
+      schema: MaybePromise<SubgraphSchemaInput>;
+      /**
+       * Partial `@transport` fields: merge onto an existing stamp, or add one.
+       */
+      transport?: ResolveSubgraphSchemaTransport;
+      sourceHandler?: never;
+    }
+);
 
 export type MeshComposeCLISourceHandlerDef = (ctx: LoaderContext) => {
-  name: string;
+  /**
+   * Optional when the schema already has `@transport(subgraph: ...)`.
+   * Conflict / missing-name rules match {@link MeshComposeCLISubgraphConfig}.
+   */
+  name?: string;
   schema$: MaybePromise<GraphQLSchema>;
 };
 

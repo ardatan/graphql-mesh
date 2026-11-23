@@ -26,9 +26,9 @@ The old surface stamped opaque `@fieldTypeMap` bags and a large `@transport.opti
 
 ### What changed
 
-#### Binary — `protocol: 'binary'` (default)
+#### Binary - `protocol: 'binary'` (default)
 
-- Slim `@transport(subgraph, kind: "thrift", location, headers)` — no options bag.
+- Slim `@transport(subgraph, kind: "thrift", location, headers)` - no options bag.
 - Per-field `@thrift__rpc(function, args, selection, throws?, messageType, entity?)`.
 - Compact mapping keeps wire types explicit (`1(i32): left`, `$(i16)`, containers, nested maps); multiline values print as `"""`.
 - `map<*, struct>` args expand the value struct field ids (same recursion as list/set-of-struct). `list/set<map<*, scalar>>` keeps the full nested wire token (e.g. `list<map<string, i32>>`) so binary regenerate does not drop the method. Nested scalar containers (e.g. `list<list<i32>>`) keep the full token; nested containers that would drop struct field ids (e.g. `list<map<string, list<Item>>>`) fail at generate until descriptors are preserved.
@@ -40,7 +40,7 @@ The old surface stamped opaque `@fieldTypeMap` bags and a large `@transport.opti
 - Service mappings and typedef aliases resolve only after every named type is registered (forward refs resolve correctly).
 - GraphQL enum members always use **names**. Binary uses plain `i32` leaves with Connectors-style `->match` on `@thrift__rpc` args/selection (same shape as TJSON `@connect`); no Mesh `@enum` on thrift. Recursive struct **arguments** fail at generate (no silent empty truncation).
 
-#### JSON — `protocol: 'json'`
+#### JSON - `protocol: 'json'`
 
 Emits `@source` + `@connect` (TJSON) instead of thrift `@transport`:
 
@@ -96,7 +96,7 @@ add(request: AddRequestInput): Int @thrift__rpc(
 
 ### Packages
 
-- `@omnigraph/thrift` — loader emit; `protocol`, `entityMethods`, `ignoreErrorResponses`, `serviceName`
-- `@graphql-mesh/transport-thrift` — execute compact mapping (incl. `i32->match` coerce), ONEWAY, throws unions
-- `@graphql-mesh/transport-connect` — Connectors helpers for TJSON / `$()` / match wildcards
-- `@graphql-mesh/fusion-composition` — `$args` rewrite for `@thrift__rpc` and HTTP paths
+- `@omnigraph/thrift` - loader emit; `protocol`, `entityMethods`, `ignoreErrorResponses`, `serviceName`
+- `@graphql-mesh/transport-thrift` - execute compact mapping (incl. `i32->match` coerce), ONEWAY, throws unions
+- `@graphql-mesh/transport-connect` - Connectors helpers for TJSON / `$()` / match wildcards
+- `@graphql-mesh/fusion-composition` - `$args` rewrite for `@thrift__rpc` and HTTP paths

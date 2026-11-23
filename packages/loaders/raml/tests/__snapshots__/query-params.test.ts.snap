@@ -16,7 +16,14 @@ type Query {
   listOfProducts(
     """Get approved products"""
     isApproved: Boolean = true
-  ): [Product] @connect(source: "query-params", http: {GET: "/listOfProducts", queryParams: "{\\n  isApproved: $args.isApproved\\n}"}, selection: "id name")
+  ): [Product] @connect(source: "query-params", http: {GET: "/listOfProducts", queryParams: """
+  {
+    isApproved: $args.isApproved
+  }
+  """}, selection: """
+  id
+  name
+  """)
 }
 
 type Product {

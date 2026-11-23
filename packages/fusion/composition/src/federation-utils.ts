@@ -1,188 +1,38 @@
-import { GraphQLDirective, GraphQLSchema, isSpecifiedDirective } from 'graphql';
+import { GraphQLSchema, isSpecifiedDirective } from 'graphql';
+import {
+  addFederation2DirectivesToSubgraph,
+  FEDERATION_V1_DIRECTIVES,
+  importFederationDirectives,
+  importMeshDirectives,
+  MESH_CORE_DIRECTIVES,
+} from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 
-export function addFederation2DirectivesToSubgraph(subgraph: GraphQLSchema) {
-  const schemaDirectives = getDirectiveExtensions(subgraph);
-  const linkDirectives = (schemaDirectives.link ||= []);
-  if (
-    !linkDirectives.some(linkDirectiveArgs =>
-      linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/link/'),
-    )
-  ) {
-    linkDirectives.push({
-      url: 'https://specs.apollo.dev/link/v1.0',
-    });
-  }
-  if (
-    !linkDirectives.some(linkDirectiveArgs =>
-      linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/'),
-    )
-  ) {
-    linkDirectives.push({
-      url: 'https://specs.apollo.dev/federation/v2.6',
-      import: [],
-    });
-  }
-  const extensions: Record<string, unknown> = (subgraph.extensions ||= {});
-  extensions.directives = schemaDirectives;
-  return subgraph;
-}
-
-export function importFederationDirectives(subgraph: GraphQLSchema, directives: string[]) {
-  const schemaDirectives = getDirectiveExtensions(subgraph);
-  const linkDirectives = (schemaDirectives.link ||= []);
-  let importStatement = linkDirectives.find(linkDirectiveArgs =>
-    linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/'),
-  );
-  if (!importStatement) {
-    importStatement = {
-      url: 'https://specs.apollo.dev/federation/v2.6',
-      import: [],
-    };
-    linkDirectives.push(importStatement);
-  }
-  // v2.0 is not supported so bump to v2.6
-  const match = importStatement.url.match(/\/v(\d+)\.(\d+)(?:$|\/)/);
-  if (match) {
-    const major = Number(match[1]);
-    const minor = Number(match[2]);
-    // Bump only older 2.x (2.0–2.5) to v2.6, leave >=2.6 as-is
-    if (major === 2 && minor < 6) {
-      importStatement.url = 'https://specs.apollo.dev/federation/v2.6';
-    }
-  }
-  importStatement.import = [...new Set([...(importStatement.import || []), ...directives])];
-  const extensions: Record<string, unknown> = (subgraph.extensions ||= {});
-  extensions.directives = schemaDirectives;
-  return subgraph;
-}
-
-export type MeshDirectiveImport = string | { name: string; as?: string };
-
-function meshDirectiveImportKey(directive: MeshDirectiveImport): string {
-  if (typeof directive === 'string') {
-    return directive;
-  }
-  return directive.as || directive.name;
-}
-
-function meshDirectiveImportsEqual(a: unknown, b: MeshDirectiveImport): boolean {
-  if (typeof b === 'string') {
-    if (typeof a === 'string') {
-      return a === b;
-    }
-    if (a && typeof a === 'object' && 'name' in (a as object)) {
-      const obj = a as { name?: string; as?: string };
-      return obj.name === b || obj.as === b;
-    }
-    return false;
-  }
-  if (typeof a === 'string') {
-    return a === b.name || a === b.as;
-  }
-  if (a && typeof a === 'object' && 'name' in (a as object)) {
-    const obj = a as { name?: string; as?: string };
-    return obj.name === b.name && (obj.as || undefined) === (b.as || undefined);
-  }
-  return false;
-}
+export {
+  addFederation2DirectivesToSubgraph,
+  importFederationDirectives,
+  importMeshDirectives,
+  type MeshDirectiveImport,
+} from '@graphql-mesh/utils';
 
 /**
- * Import Mesh-spec directives (optionally aliased, e.g. `{ name: '@source', as: '@meshSource' }`)
- * and register them with `@composeDirective` under the *local* name.
+ * Directives that must never be auto-imported as Mesh compose features:
+ * - GraphQL / Federation builtins
+ * - Connectors `@connect` / SCHEMA `@source` (loaders keep defs for valid print;
+ *   `@composeDirective(name: "@connect")` is Guild-only via
+ *   `prepareConnectorsBeforeGuild`)
+ * - Mesh core dirs (loaders / Compose stamp them via `importMeshDirectives`)
  */
-export function importMeshDirectives(subgraph: GraphQLSchema, directives: MeshDirectiveImport[]) {
-  const schemaDirectives = getDirectiveExtensions(subgraph) || {};
-  const linkDirectives = (schemaDirectives.link ||= []);
-  let importStatement = linkDirectives.find(linkDirectiveArgs =>
-    linkDirectiveArgs.url?.startsWith('https://the-guild.dev/graphql/mesh/spec/'),
-  );
-  if (!importStatement) {
-    importStatement = {
-      url: 'https://the-guild.dev/graphql/mesh/spec/v1.0',
-      import: [],
-    };
-    linkDirectives.push(importStatement);
-  }
-  const existingImports: MeshDirectiveImport[] = [...(importStatement.import || [])];
-  for (const directive of directives) {
-    if (!existingImports.some(existing => meshDirectiveImportsEqual(existing, directive))) {
-      existingImports.push(directive);
-    }
-  }
-  importStatement.import = existingImports;
-  const composeDirectives = (schemaDirectives.composeDirective = schemaDirectives.composeDirective
-    ? schemaDirectives.composeDirective.filter(Boolean)
-    : []);
-  for (const directive of directives) {
-    const localName = meshDirectiveImportKey(directive);
-    if (!composeDirectives.some(dir => dir.name === localName)) {
-      composeDirectives.push({
-        name: localName,
-      });
-    }
-  }
-  const extensions: Record<string, unknown> = (subgraph.extensions ||= {});
-  extensions.directives = schemaDirectives;
-  subgraph = importFederationDirectives(subgraph, ['@composeDirective']);
-  return subgraph;
-}
-
-const FEDERATION_V1_DIRECTIVES = [
-  '@key',
-  '@provides',
-  '@requires',
-  '@external',
-  '@inaccessible',
-  '@shareable',
-  '@extends',
-  '@tag',
-];
-
-export function detectAndAddMeshDirectives(subgraph: GraphQLSchema) {
-  const meshDirectives: string[] = [];
-  const existingAdditionalDirectives: string[] = [];
-  const existingDirectiveExtensionsOnSchema = getDirectiveExtensions(subgraph);
-  if (existingDirectiveExtensionsOnSchema?.link) {
-    const linkDirectives = existingDirectiveExtensionsOnSchema.link;
-    for (const linkDirective of linkDirectives) {
-      if (
-        linkDirective.url != null &&
-        !linkDirective.url.startsWith('https://the-guild.dev/graphql/mesh/spec/')
-      ) {
-        if (linkDirective.import) {
-          existingAdditionalDirectives.push(...linkDirective.import);
-        }
-      }
-    }
-  }
-  subgraph = mapSchema(subgraph, {
-    [MapperKind.DIRECTIVE]: directive => {
-      const directiveName = `@${directive.name}`;
-      if (
-        !isSpecifiedDirective(directive) &&
-        !FEDERATION_V1_DIRECTIVES.includes(directiveName) &&
-        !directiveName.startsWith('@federation__') &&
-        directiveName !== '@stream' &&
-        directiveName !== '@link' &&
-        !existingAdditionalDirectives.includes(directiveName)
-      ) {
-        meshDirectives.push(directiveName);
-        if (!directive.isRepeatable && directive.args.some(arg => arg.name === 'subgraph')) {
-          return new GraphQLDirective({
-            ...directive.toConfig(),
-            isRepeatable: true,
-          });
-        }
-      }
-      return directive;
-    },
-  });
-  if (meshDirectives.length > 0) {
-    subgraph = importMeshDirectives(subgraph, meshDirectives);
-  }
-  return subgraph;
-}
+const NEVER_AUTO_MESH_COMPOSE_DIRECTIVE = new Set<string>([
+  ...FEDERATION_V1_DIRECTIVES,
+  ...MESH_CORE_DIRECTIVES,
+  '@link',
+  '@composeDirective',
+  '@stream',
+  '@connect',
+  '@source',
+  '@meshSource',
+]);
 
 export function normalizeDirectiveExtensions(subgraph: GraphQLSchema) {
   return new GraphQLSchema({
@@ -196,11 +46,17 @@ export function normalizeDirectiveExtensions(subgraph: GraphQLSchema) {
   });
 }
 
+/**
+ * Stamp object-level `@shareable` for value-type / multi-subgraph field merge.
+ * Never leave `@shareable` on interfaces. (Entities with `@key` still need
+ * type-level `@shareable` when the same fields are resolved from multiple
+ * subgraphs - Guild composition errors otherwise.)
+ */
 function ensureObjectTypesShareable(subgraph: GraphQLSchema) {
   return mapSchema(subgraph, {
     [MapperKind.OBJECT_TYPE]: type => {
       const typeDirectives = getDirectiveExtensions(type);
-      // Prefer mutating extensions in place — recreating GraphQLObjectType breaks
+      // Prefer mutating extensions in place - recreating GraphQLObjectType breaks
       // interface identity (OpenAPI HATEOAS / federation-mixed e2es). Clone the
       // directives bag so a shared interface/object bag cannot get `@shareable`
       // stamped onto an INTERFACE (invalid in Federation).
@@ -225,21 +81,138 @@ function ensureObjectTypesShareable(subgraph: GraphQLSchema) {
     },
   });
 }
-export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
+
+/** Collect Fed v1 directive names actually used on the subgraph (plus `@shareable`). */
+function usedFederationDirectiveImports(subgraph: GraphQLSchema): string[] {
+  const used = new Set<string>(['@shareable']);
+  const consider = (dirs: Record<string, unknown> | undefined) => {
+    if (!dirs) return;
+    for (const name of Object.keys(dirs)) {
+      const asImport = name.startsWith('@') ? name : `@${name}`;
+      if ((FEDERATION_V1_DIRECTIVES as readonly string[]).includes(asImport)) {
+        used.add(asImport);
+      }
+    }
+  };
+  consider(getDirectiveExtensions(subgraph));
+  mapSchema(subgraph, {
+    [MapperKind.TYPE]: type => {
+      consider(getDirectiveExtensions(type));
+      return type;
+    },
+    [MapperKind.OBJECT_FIELD]: fieldConfig => {
+      consider(getDirectiveExtensions(fieldConfig));
+      return fieldConfig;
+    },
+    [MapperKind.INTERFACE_FIELD]: fieldConfig => {
+      consider(getDirectiveExtensions(fieldConfig));
+      return fieldConfig;
+    },
+    [MapperKind.ARGUMENT]: argConfig => {
+      consider(getDirectiveExtensions(argConfig));
+      return argConfig;
+    },
+    [MapperKind.ENUM_VALUE]: enumValueConfig => {
+      consider(getDirectiveExtensions(enumValueConfig));
+      return enumValueConfig;
+    },
+    [MapperKind.INPUT_OBJECT_FIELD]: inputFieldConfig => {
+      consider(getDirectiveExtensions(inputFieldConfig));
+      return inputFieldConfig;
+    },
+  });
+  return [...used];
+}
+
+/**
+ * Import leftover custom directives under Mesh `core/v0.1` + `@composeDirective`
+ * so Guild composition keeps them (core-feature members) and Apollo Fed
+ * compatibility `@custom` gets `@composeDirective`. Connectors stay excluded.
+ */
+export function importCustomDirectivesForComposition(subgraph: GraphQLSchema) {
+  const schemaDirectives = getDirectiveExtensions(subgraph) || {};
+  const alreadyImported = new Set<string>();
+  for (const link of schemaDirectives.link || []) {
+    if (!Array.isArray(link?.import)) continue;
+    for (const item of link.import) {
+      if (typeof item === 'string') {
+        alreadyImported.add(item);
+      } else if (item && typeof item === 'object' && 'name' in item) {
+        const local =
+          (item as { as?: string; name?: string }).as || (item as { name?: string }).name;
+        if (local) alreadyImported.add(local);
+      }
+    }
+  }
+  for (const d of schemaDirectives.composeDirective || []) {
+    if (typeof d?.name === 'string') alreadyImported.add(d.name);
+  }
+
+  const federationNamespacePrefixes = (schemaDirectives.link || [])
+    .filter(link => link?.url?.startsWith('https://specs.apollo.dev/federation/'))
+    .map(link => `@${link.as || 'federation'}__`);
+  const toImport: string[] = [];
+  for (const directive of subgraph.getDirectives()) {
+    if (isSpecifiedDirective(directive)) {
+      continue;
+    }
+    const name = `@${directive.name}`;
+    if (
+      NEVER_AUTO_MESH_COMPOSE_DIRECTIVE.has(name) ||
+      name.startsWith('@federation__') ||
+      federationNamespacePrefixes.some(prefix => name.startsWith(prefix)) ||
+      name.startsWith('@join__') ||
+      alreadyImported.has(name)
+    ) {
+      continue;
+    }
+    toImport.push(name);
+  }
+  if (!toImport.length) {
+    return subgraph;
+  }
+  return importMeshDirectives(subgraph, toImport);
+}
+
+export interface ConvertSubgraphToFederationv2Options {
+  /**
+   * When true, the **input** subgraph already declared a Federation `@link`
+   * (before Mesh transforms). Skip object-level `@shareable` so explicit
+   * field-ownership rules stay intact. Transforms such as encapsulate may
+   * import `@inaccessible` via Fed `@link` before this runs - that must not
+   * count as an explicit user link (pass the pre-transform snapshot here).
+   */
+  hadExplicitFederationLink?: boolean;
+}
+
+/**
+ * Ensure the subgraph is Federation v2-ready for Guild composition.
+ *
+ * - Missing federation `@link` → stamp Fed v2.6
+ * - Object types without `@key` get `@shareable` (value-type merge), unless the
+ *   input already had an explicit Federation `@link`
+ * - Import only federation directives that are actually used (+ `@shareable`)
+ * - Custom non-Mesh directives → Mesh `@link` + `@composeDirective` (Guild + Apollo Fed)
+ */
+export function convertSubgraphToFederationv2(
+  subgraph: GraphQLSchema,
+  opts: ConvertSubgraphToFederationv2Options = {},
+) {
   const schemaDirectives = getDirectiveExtensions(subgraph);
   // Only treat as "already v2" when Federation itself is linked. Federation Connectors
   // `@link` also uses specs.apollo.dev but does not imply `@shareable`.
-  // Encapsulate may import federation early for `@inaccessible` — still ensure shareable.
   const hasFederationLink = schemaDirectives?.link?.some(linkDirectiveArgs =>
     linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/'),
   );
-  if (hasFederationLink) {
-    subgraph = ensureObjectTypesShareable(subgraph);
-    subgraph = importFederationDirectives(subgraph, FEDERATION_V1_DIRECTIVES);
-    return subgraph;
+  if (!hasFederationLink) {
+    subgraph = addFederation2DirectivesToSubgraph(subgraph);
   }
-  subgraph = addFederation2DirectivesToSubgraph(subgraph);
-  subgraph = ensureObjectTypesShareable(subgraph);
-  subgraph = importFederationDirectives(subgraph, FEDERATION_V1_DIRECTIVES);
+  // Object-level `@shareable` only for Mesh-owned Fed readiness - not when the
+  // caller already linked Federation (preserves field-ownership rules).
+  if (!opts.hadExplicitFederationLink) {
+    subgraph = ensureObjectTypesShareable(subgraph);
+  }
+  subgraph = importFederationDirectives(subgraph, usedFederationDirectiveImports(subgraph));
+  subgraph = importCustomDirectivesForComposition(subgraph);
   return subgraph;
 }

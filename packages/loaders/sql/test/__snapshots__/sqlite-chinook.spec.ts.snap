@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`@omnigraph/sql sqlite chinook emits @sql directives and slim @transport(kind: sql): chinook-albums-artists 1`] = `
-"schema @transport(subgraph: "chinook", kind: "sql", location: "file:<chinook.db>") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) {
+"schema @transport(subgraph: "chinook", kind: "sql", location: "file:<chinook.db>") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@sql") @composeDirective(name: "@transport") {
   query: Query
   mutation: Mutation
 }
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
-directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String, through: String) on FIELD_DEFINITION | OBJECT
+directive @sql(subgraph: String, table: String!, kind: SqlKind!, where: String, orderBy: String, limit: String, offset: String, first: String, after: String, set: String, selection: String, through: String) repeatable on FIELD_DEFINITION | OBJECT
 
 type Query {
   album(id: ID!): Album @sql(subgraph: "chinook", table: "albums", kind: ROW, where: """

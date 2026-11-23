@@ -92,6 +92,7 @@ export interface ProtobufRpcDirectiveArgs {
 export const protobufRpcDirective = new GraphQLDirective({
   name: 'protobuf__rpc',
   locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
+  isRepeatable: true,
   args: {
     /** Owning subgraph name when composing federated schemas. */
     subgraph: { type: GraphQLString },

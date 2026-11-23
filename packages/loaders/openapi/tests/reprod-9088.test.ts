@@ -15,9 +15,9 @@ describe('Reproduction of #9088', () => {
     const sdl = printSchemaWithDirectives(schema);
     expect(sdl).not.toContain('@discriminator');
     expect(sdl).toContain('$.template->match(');
-    // Printed SDL escapes quotes inside the selection string (`\"categoryListing\"`).
+    // Block-string print keeps embedded `"` unescaped inside `"""…"""`.
     expect(sdl).toMatch(
-      /\$\.template->match\([\s\S]*categoryListing[\s\S]*__typename:\s*\\"CategoryCategoryListing\\"/,
+      /\$\.template->match\([\s\S]*categoryListing[\s\S]*__typename:\s*"CategoryCategoryListing"/,
     );
   });
 });

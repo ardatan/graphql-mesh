@@ -159,7 +159,7 @@ describe('thrift', () => {
     // Unescape printed GraphQL string escapes so body layout is readable.
     const normalized = sdl.replace(/\\n/g, '\n').replace(/\\"/g, '"');
     const zipField = normalized.slice(normalized.indexOf('zip: Void'));
-    // zip is oneway — TJSON body message type 4, no isSuccess (no reply wait).
+    // zip is oneway - TJSON body message type 4, no isSuccess (no reply wait).
     expect(zipField).toContain('zip: Void @connect(');
     expect(zipField).toMatch(/"zip",\s*4,\s*1,/);
     const connect = (schema.getQueryType()!.getFields().zip.extensions as any).directives.connect;
@@ -170,11 +170,11 @@ describe('thrift', () => {
     expect(normalized).toMatch(
       /\$->get\(2\)->eq\(2\)->and\(\$->get\(4\)->get\("0"\)->ne\(null\)\)/,
     );
-    // ping has no throws — REPLY-only isSuccess.
+    // ping has no throws - REPLY-only isSuccess.
     const pingConnect = (schema.getQueryType()!.getFields().ping.extensions as any).directives
       .connect;
     expect(pingConnect.isSuccess).toBe('$->get(2)->eq(2)');
-    // postTweet is bool + throws — require success field "0".
+    // postTweet is bool + throws - require success field "0".
     const postTweetConnect = (schema.getQueryType()!.getFields().postTweet.extensions as any)
       .directives.connect;
     expect(postTweetConnect.isSuccess).toContain('->get("0")->ne(null)');
@@ -390,7 +390,7 @@ describe('thrift', () => {
     expect(
       resolveType({ message: 'x', __throw_First: true }, null as any, null as any, null as any),
     ).toBe('First');
-    // Hive may keep value:{ left: undefined } on exception replies — field0 wins.
+    // Hive may keep value:{ left: undefined } on exception replies - field0 wins.
     expect(
       resolveType(
         { field0: false, value: { left: undefined }, message: 'x', __throw_Second: true },
@@ -512,7 +512,7 @@ describe('thrift', () => {
     });
     const selection = (schema.getQueryType()!.getFields().go.extensions as any).directives.connect
       .selection as string;
-    // One `message` property with throw-gated `??` — not two keys that clobber at eval time.
+    // One `message` property with throw-gated `??` - not two keys that clobber at eval time.
     expect(selection.match(/\bmessage:/g)?.length).toBe(1);
     expect(selection).toMatch(
       /message:\s*\$\(\$->get\(4\)->get\("1"\)->ne\(null\)->match\(\[true,/,
@@ -551,7 +551,10 @@ describe('thrift', () => {
     expect(selection).toMatch(/detail:\s*\$\(\$->get\(4\)->get\("1"\)->ne\(null\)->match/);
     expect(selection.match(/\bdetail:/g)?.length).toBe(1);
 
-    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const rebuilt = processDirectives(
+      buildSchema(printSchemaWithDirectives(schema), { assumeValidSDL: true, assumeValid: true }),
+      {},
+    );
     const union = rebuilt.getType('GoResult') as GraphQLUnionType;
     const resolveType = union.resolveType!;
     const extras = {
@@ -608,12 +611,15 @@ describe('thrift', () => {
     });
     const go = schema.getQueryType()!.getFields().go;
     const selection = (go.extensions as any).directives.connect.selection as string;
-    // One `value` property: gated success ?? gated exception — not two LitObject keys.
+    // One `value` property: gated success ?? gated exception - not two LitObject keys.
     expect(selection.match(/\bvalue:/g)?.length).toBe(1);
     expect(selection).toMatch(/value:\s*\$\(\$->get\(4\)->get\("0"\)->ne\(null\)->match\(\[true,/);
     expect(selection).toMatch(/\?\?\s*\$->get\(4\)->get\("1"\)->ne\(null\)->match\(\[true,/);
 
-    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const rebuilt = processDirectives(
+      buildSchema(printSchemaWithDirectives(schema), { assumeValidSDL: true, assumeValid: true }),
+      {},
+    );
     const union = rebuilt.getType('GoResult') as GraphQLUnionType;
     const resolveType = union.resolveType!;
     const extras = {
@@ -666,14 +672,17 @@ describe('thrift', () => {
     expect(uniqueSel).toMatch(/get\("set"\)->slice\(2\)->map\(@->\{/);
     expect(uniqueSel).not.toMatch(/slice\(2\)\s*\{/);
 
-    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const rebuilt = processDirectives(
+      buildSchema(printSchemaWithDirectives(schema), { assumeValidSDL: true, assumeValid: true }),
+      {},
+    );
     const union = rebuilt.getType('ItemsResult') as GraphQLUnionType;
     const resolveType = union.resolveType!;
     const extras = {
       status: 200,
       vars: { args: {}, thisValue: undefined, env: {}, context: {} },
     };
-    // Apache TJSON: list elems are bare field maps after ["rec", n, …] — no per-element `rec`.
+    // Apache TJSON: list elems are bare field maps after ["rec", n, …] - no per-element `rec`.
     const successReply = [
       1,
       'items',
@@ -861,7 +870,10 @@ describe('thrift', () => {
     expect(selection).toMatch(/ok:\s*\$\(\$->get\(4\)->size->eq\(0\)->match\(\[true,\s*true\],/);
     expect(selection).toMatch(/\?\?\s*\$->get\(4\)->get\("1"\)->ne\(null\)->match\(\[true,/);
 
-    const rebuilt = processDirectives(buildSchema(printSchemaWithDirectives(schema)), {});
+    const rebuilt = processDirectives(
+      buildSchema(printSchemaWithDirectives(schema), { assumeValidSDL: true, assumeValid: true }),
+      {},
+    );
     const union = rebuilt.getType('FlushResult') as GraphQLUnionType;
     const resolveType = union.resolveType!;
     const extras = {

@@ -62,11 +62,18 @@ export interface ResolvedConnectSelectionLimit {
   warnedPassthrough?: Set<string>;
   /**
    * Mutable visit counter for one root `buildSelectionForType` call.
-   * Reset by the caller before each root build. Caps Stripe-scale blowups.
+   * Cleared at each depth-0 entry (and by callers sharing a limit). Caps Stripe-scale blowups.
    */
   passthroughVisits?: number;
   /** Max type visits per root build before forcing `$` passthrough. */
   passthroughVisitBudget: number;
+  /**
+   * Set when a nested expand hit `passthroughVisitBudget`. Distinguishes
+   * mid-type truncate (needs leavesOnly rebuild) from cycle-only omission
+   * (keep the original sibling expansion). Cleared with `passthroughVisits`
+   * at each depth-0 entry so a prior exhausted op cannot force a later rebuild.
+   */
+  visitBudgetExhausted?: boolean;
 }
 
 const DEFAULT_CONNECT_SELECTION_MAX_LENGTH = 12_000;
@@ -74,7 +81,7 @@ const DEFAULT_CONNECT_SELECTION_SOFT_DEPTH = 2;
 /** Stop expanding after this many type visits (Hive `$` is fine; Router needs leavesOnly). */
 const DEFAULT_PASSTHROUGH_VISIT_BUDGET = 250;
 
-export const CONNECT_SELECTION_PASSTHROUGH_ROUTER_WARNING = `connect(selection: "$") was used because the response mapping could not be fully expanded under connectSelection limits. Hive Gateway will pass through the raw JSON. Apollo Router requires explicit scalar leaf mappings for object types — set connectSelection: { overLimit: "leavesOnly" } (and/or raise maxLength) or model foreign keys as entity stubs to run this subgraph on Router.`;
+export const CONNECT_SELECTION_PASSTHROUGH_ROUTER_WARNING = `connect(selection: "$") was used because the response mapping could not be fully expanded under connectSelection limits. Hive Gateway will pass through the raw JSON. Apollo Router requires explicit scalar leaf mappings for object types - set connectSelection: { overLimit: "leavesOnly" } (and/or raise maxLength) or model foreign keys as entity stubs to run this subgraph on Router.`;
 
 /**
  * Resolve programmatic `connectSelection` limit options with defaults.
@@ -246,7 +253,7 @@ export function rewriteConnectPathEnumArgs(
 /**
  * Path to a JSON property in Connectors selection/mapping language.
  * Safe idents stay bare (`foo` / `$.foo`); reserved/hyphenated keys use
- * `$->get("…")` — Apollo Router's selection parser hits `Eof` on `$["…"]`.
+ * `$->get("…")` - Apollo Router's selection parser hits `Eof` on `$["…"]`.
  */
 export function connectorsJsonKeyPath(jsonName: string, opts?: { rootDollar?: boolean }): string {
   if (/^[A-Za-z_][\w]*$/.test(jsonName)) {
@@ -297,7 +304,7 @@ export function getDiscriminatorInfo(type: {
 
 /**
  * Property-discriminator match that yields GraphQL type *names* (string arms).
- * Used when embedding into `$status->match` defaults — not for abstract field selections.
+ * Used when embedding into `$status->match` defaults - not for abstract field selections.
  */
 export function buildDiscriminatorStringMatchExpr(type: {
   getFields?: () => Record<string, unknown>;
@@ -356,11 +363,13 @@ export function buildDiscriminatorTypenameSelection(type: {
 }
 
 /**
- * Convert Mesh/OpenAPI link parameter interpolations into Connectors path expressions.
+ * Convert Mesh/OpenAPI link parameter interpolations into Connectors expressions.
  * Examples:
  * - `{root.$response.body#/employerId}` → `{$this.employerId}`
  * - `{root.$request.path.username}` → `{$this.username}`
- * - `acme` → `$("acme")`
+ * - `acme` → `$("acme")` (header/query/body); path substitution uses
+ *   {@link connectorsPathSegmentFromLinkExpr} so hardcoded path params become
+ *   plain segments (`/…/acme`), not `/…/$("acme")`.
  */
 export function toConnectLinkExpression(interpolation: unknown): string {
   if (interpolation == null) {
@@ -434,8 +443,55 @@ export function toConnectLinkExpression(interpolation: unknown): string {
     .replace(/\{root\.([A-Za-z_][\w]*)\}/g, '{$this.$1}');
 }
 
+/**
+ * Bake a link expression into a Connectors `http.GET`/`POST`/… path template.
+ * Hardcoded `$("Charles")` → path segment `Charles` (URL-encoded). Dynamic
+ * `{$this.id}` / `{…}` interpolations are kept as-is.
+ */
+export function connectorsPathSegmentFromLinkExpr(connectExpr: string): string {
+  const trimmed = connectExpr.trim();
+  // `$("lit")` / `$(42)` / `$(true)` - static path segment, not a runtime expr.
+  if (trimmed.startsWith('$(') && trimmed.endsWith(')')) {
+    const inner = trimmed.slice(2, -1).trim();
+    try {
+      const value = JSON.parse(inner);
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        return encodeURIComponent(String(value));
+      }
+    } catch {
+      // Not a JSON literal inside `$()` - fall through.
+    }
+  }
+  if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+    return trimmed;
+  }
+  // Bare `$this…` / `$args…` paths need `{…}` for Connectors path interpolations.
+  if (trimmed.startsWith('$')) {
+    return `{${trimmed}}`;
+  }
+  return trimmed;
+}
+
+/**
+ * Connectors / Hive already default to JSON request/response bodies. Stamping
+ * bare `Accept` / `Content-Type: application/json` only adds SDL noise - keep
+ * versioned, vendor, multi-value, or odata.metadata Accepts (and non-JSON types).
+ */
+export function isDefaultJsonHttpHeader(name: string, value: string | undefined | null): boolean {
+  const n = name.toLowerCase();
+  if (n !== 'accept' && n !== 'content-type') {
+    return false;
+  }
+  if (value == null) {
+    return false;
+  }
+  const normalized = String(value).toLowerCase().replace(/\s+/g, '');
+  return normalized === 'application/json' || normalized === 'application/json;charset=utf-8';
+}
+
 export function headersToConnectMappings(
   headers?: Record<string, string> | [string, string][],
+  sourceHeaders?: Record<string, string> | [string, string][],
 ): Array<{ name: string; value?: string; from?: string }> | undefined {
   if (!headers) {
     return undefined;
@@ -444,15 +500,35 @@ export function headersToConnectMappings(
   if (!entries.length) {
     return undefined;
   }
-  return entries.map(([name, value]) => {
+  const sourceEntries = sourceHeaders
+    ? Array.isArray(sourceHeaders)
+      ? sourceHeaders
+      : Object.entries(sourceHeaders)
+    : [];
+  const sourceByName = new Map(
+    sourceEntries.map(([name, value]) => [name.toLowerCase(), String(value)]),
+  );
+  const mapped: Array<{ name: string; value?: string; from?: string }> = [];
+  for (const [name, value] of entries) {
     const interpolated = toConnectPathTemplate(String(value));
     // `{context.headers.X}` style -> from: "X" when possible
     const fromMatch = interpolated.match(/^\{\$context\.headers\.(.+)\}$/);
     if (fromMatch) {
-      return { name, from: fromMatch[1] };
+      mapped.push({ name, from: fromMatch[1] });
+      continue;
     }
-    return { name, value: interpolated };
-  });
+    if (isDefaultJsonHttpHeader(name, interpolated)) {
+      // Keep an explicit operation default when it overrides a conflicting
+      // source-level Content-Type / Accept (operation must win).
+      const sourceRaw = sourceByName.get(name.toLowerCase());
+      if (sourceRaw != null && !isDefaultJsonHttpHeader(name, toConnectPathTemplate(sourceRaw))) {
+        mapped.push({ name, value: interpolated });
+      }
+      continue;
+    }
+    mapped.push({ name, value: interpolated });
+  }
+  return mapped.length ? mapped : undefined;
 }
 
 function collectObjectPropertyNames(
@@ -482,7 +558,7 @@ function formatQueryParamKey(queryParam: string): string {
 }
 
 /**
- * GraphQL `@oneOf` input field name for a JSON Schema branch — matches
+ * GraphQL `@oneOf` input field name for a JSON Schema branch - matches
  * `getValidTypeName({ isInput: true })` (`sanitize(title + '_Input')`).
  */
 function oneOfBranchInputFieldName(branch: { title?: string } | undefined): string | undefined {
@@ -551,7 +627,8 @@ function buildFormExplodeOneOfLines(
  *
  * Remaining plain objects / arrays rely on connect runtime qs defaults
  * (`indices: false` → deepObject brackets + arrayFormat repeat).
- * Schema-level `queryStringOptions` (e.g. indices) still flow via `@transport(options:)`.
+ * Schema-level `queryStringOptions` (e.g. indices) flow via options-only
+ * `@transport(options:)` when set; bare connect omits `@transport`.
  */
 export function buildQueryParamsSelection(
   queryParamArgMap?: Record<string, string>,
@@ -638,6 +715,24 @@ function unwrapType(type: GraphQLOutputType): GraphQLNamedOutputType {
   return t;
 }
 
+/** Indent nested selection lines inside `{ … }` for readable SDL `"""` blocks. */
+function indentNestedSelection(nested: string): string {
+  return nested
+    .split('\n')
+    .map(line => (line.length ? `  ${line}` : line))
+    .join('\n');
+}
+
+/** `prefix { nested }` with indented nested body (multiline). */
+function wrapFieldSubselection(prefix: string, nested: string): string {
+  return `${prefix} {\n${indentNestedSelection(nested)}\n}`;
+}
+
+/** Compact length for `maxLength` checks (newlines/indent are SDL sugar only). */
+function compactSelectionLength(selection: string): number {
+  return selection.replace(/\s+/g, ' ').trim().length;
+}
+
 /**
  * Read `@statusCodeTypeName` mappings from a union (AST or extensions).
  */
@@ -705,7 +800,7 @@ export function buildStatusUnionConnectExtras(
     if (memberNames.has(typeName)) {
       return JSON.stringify(typeName);
     }
-    // Abstract / discriminator parent — prefer property match over the interface name.
+    // Abstract / discriminator parent - prefer property match over the interface name.
     const abstractType =
       schemaTypes?.get(typeName) ||
       unionType.getTypes().find(t => t.name === typeName) ||
@@ -775,7 +870,7 @@ export function buildSelectionForType(
     /** Resolved size/depth/over-limit rule (defaults applied if omitted). */
     limit?: ResolvedConnectSelectionLimit;
     /**
-     * Types already being expanded on this path — breaks OpenAPI cycles
+     * Types already being expanded on this path - breaks OpenAPI cycles
      * (`Volume` → `VolumeSource` → … → `Volume`) when softDepth is inactive.
      */
     visited?: ReadonlySet<string>;
@@ -789,6 +884,12 @@ export function buildSelectionForType(
     leavesOnly = false,
     visited = new Set(),
   } = options;
+  // Fresh traversal state per root build. Shared `selectionLimit` across ops
+  // must not leak `visitBudgetExhausted` from a prior exhausted field.
+  if (depth === 0 && !leavesOnly) {
+    limit.passthroughVisits = 0;
+    limit.visitBudgetExhausted = false;
+  }
   const childOpts = {
     skipFields,
     implementations,
@@ -805,6 +906,7 @@ export function buildSelectionForType(
   ) {
     limit.passthroughVisits = (limit.passthroughVisits ?? 0) + 1;
     if (limit.passthroughVisits > limit.passthroughVisitBudget) {
+      limit.visitBudgetExhausted = true;
       warnConnectSelectionPassthrough(limit, named.name);
       return '';
     }
@@ -831,7 +933,7 @@ export function buildSelectionForType(
       return buildSelectionForType(members[0], { ...nestedOpts, depth: depth + 1 });
     }
     // Status-code unions: emit `__typename: $status->match(...)` + flattened member fields.
-    // Only walk members when status mappings exist — otherwise getFields() during emit can
+    // Only walk members when status mappings exist - otherwise getFields() during emit can
     // finalize graphql-compose object types before pending link fields are attached.
     const statusExtras = buildStatusUnionConnectExtras(named);
     const discTypename = buildDiscriminatorTypenameSelection(named);
@@ -853,8 +955,8 @@ export function buildSelectionForType(
     }
     const mergedSelection = [statusExtras?.typenameSelection || discTypename, ...merged.values()]
       .filter(Boolean)
-      .join(' ');
-    if (mergedSelection.length > limit.maxLength) {
+      .join('\n');
+    if (compactSelectionLength(mergedSelection) > limit.maxLength) {
       // Prefer `__typename` bake alone over `$` so status unions stay Connectors-native
       // after `@statusCodeTypeName` is stripped (no Mesh runtime fallback).
       if (limit.overLimit === 'passthrough') {
@@ -879,10 +981,10 @@ export function buildSelectionForType(
           ...leafMerged.values(),
         ]
           .filter(Boolean)
-          .join(' ');
+          .join('\n');
         if (
           leafSelection &&
-          leafSelection.length <= limit.maxLength &&
+          compactSelectionLength(leafSelection) <= limit.maxLength &&
           leafSelection !== (statusExtras?.typenameSelection || discTypename || '')
         ) {
           return leafSelection;
@@ -946,7 +1048,15 @@ export function buildSelectionForType(
     }
   }
   const lines: string[] = [];
-  // Non-interface (or no disc) object types may still carry @discriminator — emit spread first.
+  /**
+   * True when an object/interface/union field was omitted because nested
+   * expansion returned empty (visit budget / cycle / unresolved). Under
+   * default `passthrough` that yields a mid-type truncated map (e.g. FHIR
+   * `Patient.meta.extension…` burns the budget before `name`) - prefer a
+   * `leavesOnly` rebuild over shipping the partial selection.
+   */
+  let omittedObjectFields = false;
+  // Non-interface (or no disc) object types may still carry @discriminator - emit spread first.
   if (!discInfo) {
     const discTypename = buildDiscriminatorTypenameSelection(named);
     if (discTypename) {
@@ -990,8 +1100,16 @@ export function buildSelectionForType(
           });
         }
       }
-      const valuePart = valueSel ? ` value { ${valueSel} }` : ' value';
-      lines.push(`${fieldName}: $->entries${filters} { key${valuePart} }`);
+      if (valueSel) {
+        lines.push(
+          wrapFieldSubselection(
+            `${fieldName}: $->entries${filters}`,
+            `key\n${wrapFieldSubselection('value', valueSel)}`,
+          ),
+        );
+      } else {
+        lines.push(wrapFieldSubselection(`${fieldName}: $->entries${filters}`, 'key\nvalue'));
+      }
       continue;
     }
     const extDirectiveNames = Object.keys(directiveExt);
@@ -1080,12 +1198,15 @@ export function buildSelectionForType(
       }
       const nested = buildSelectionForType(field.type, { ...nestedOpts, depth: depth + 1 });
       if (nested) {
-        lines.push(`${aliasPrefix} { ${nested} }`);
+        lines.push(wrapFieldSubselection(aliasPrefix, nested));
       } else if (isObjectLike) {
-        // Empty object/interface/union expansion (cycle / unresolved union): omit —
+        // Empty object/interface/union expansion (cycle / budget / unresolved): omit -
         // a bare object name is invalid Connectors selection on Router.
+        if (!leavesOnly) {
+          omittedObjectFields = true;
+        }
       } else {
-        // List of scalars/enums — emit the field with no subselection.
+        // List of scalars/enums - emit the field with no subselection.
         lines.push(aliasPrefix);
       }
     } else {
@@ -1098,12 +1219,46 @@ export function buildSelectionForType(
       lines.push(spread);
     }
   }
-  // Spaces are enough for Connectors mapping (newlines are optional sugar).
-  // Avoid `\n` escapes in printed SDL (`selection: "id name"` vs `"id\\nname"`).
-  const joined = lines.join(' ');
-  if (joined.length > limit.maxLength) {
+  // Newlines + indent for readable SDL `"""` blocks (Connectors accepts spaces too).
+  // Prefer-block AST attach (loaders) avoids `\n` escapes in `printSchemaWithDirectives`.
+  const joined = lines.join('\n');
+  // Only rebuild when the visit budget was exhausted. Cycle-only omission
+  // (`Root.recursive: Root`) must keep successful sibling nests (e.g.
+  // `profile.address.city`) - a softDepth-0 leavesOnly rebuild would drop them.
+  if (
+    limit.visitBudgetExhausted &&
+    omittedObjectFields &&
+    !leavesOnly &&
+    limit.overLimit === 'passthrough' &&
+    depth === 0
+  ) {
+    // Mid-type truncate under passthrough (visit budget burned on deep nests).
+    // Rebuild with soft-depth leavesOnly so sibling scalars/objects (FHIR `name`)
+    // survive; `$` only when that also yields nothing.
+    return rebuildSelectionLeavesOnly(type, {
+      skipFields,
+      implementations,
+      limit,
+      visited,
+      depth,
+    });
+  }
+  if (compactSelectionLength(joined) > limit.maxLength) {
     if (limit.overLimit === 'passthrough') {
-      // Caller attaches `$` — Hive raw JSON; not Router-safe for object types.
+      // Prefer leavesOnly rebuild before `$` so Router keeps scalar leaf maps.
+      if (!leavesOnly) {
+        const leafSel = rebuildSelectionLeavesOnly(type, {
+          skipFields,
+          implementations,
+          limit,
+          visited,
+          depth,
+        });
+        if (leafSel) {
+          return leafSel;
+        }
+      }
+      // Caller attaches `$` - Hive raw JSON; not Router-safe for object types.
       warnConnectSelectionPassthrough(limit, named.name);
       return '';
     }
@@ -1122,6 +1277,56 @@ export function buildSelectionForType(
     return '';
   }
   return joined;
+}
+
+/**
+ * Retry selection expand with `overLimit: 'leavesOnly'` after passthrough
+ * truncated mid-type. Uses softDepth 0 so immediate child objects keep their
+ * scalar leaves (FHIR `name { family given }`) while deeper nests are skipped -
+ * softDepth ≥ 1 still expands `meta.extension…` enough to blow maxLength and
+ * fall through to root-scalar-only (dropping `name` / `subject`).
+ */
+function rebuildSelectionLeavesOnly(
+  type: GraphQLOutputType,
+  opts: {
+    skipFields: Set<string>;
+    implementations: ReadonlyArray<GraphQLOutputType>;
+    limit: ResolvedConnectSelectionLimit;
+    visited: ReadonlySet<string>;
+    depth: number;
+  },
+): string {
+  const prevOverLimit = opts.limit.overLimit;
+  const prevVisits = opts.limit.passthroughVisits;
+  const prevExhausted = opts.limit.visitBudgetExhausted;
+  const prevSoftDepth = opts.limit.softDepth;
+  opts.limit.overLimit = 'leavesOnly';
+  opts.limit.passthroughVisits = 0;
+  opts.limit.visitBudgetExhausted = false;
+  opts.limit.softDepth = 0;
+  try {
+    const leafSel = buildSelectionForType(type, {
+      skipFields: opts.skipFields,
+      implementations: opts.implementations,
+      limit: opts.limit,
+      visited: opts.visited,
+      depth: opts.depth,
+      leavesOnly: false,
+    });
+    if (leafSel) {
+      return leafSel;
+    }
+    const named = unwrapType(type);
+    if (isObjectType(named) || isInterfaceType(named) || isUnionType(named)) {
+      warnConnectSelectionPassthrough(opts.limit, named.name);
+    }
+    return '';
+  } finally {
+    opts.limit.overLimit = prevOverLimit;
+    opts.limit.passthroughVisits = prevVisits;
+    opts.limit.visitBudgetExhausted = prevExhausted;
+    opts.limit.softDepth = prevSoftDepth;
+  }
 }
 
 /**
@@ -1158,6 +1363,8 @@ export function buildConnectHttpArgs(opts: {
   httpMethod: string;
   path: string;
   headers?: Record<string, string> | [string, string][];
+  /** Loader-wide / source-level headers - used to keep conflicting JSON defaults. */
+  sourceHeaders?: Record<string, string> | [string, string][];
   queryParamArgMap?: Record<string, string>;
   queryStringOptionsByParam?: Record<
     string,
@@ -1172,7 +1379,7 @@ export function buildConnectHttpArgs(opts: {
   const http: Record<string, unknown> = {
     [method]: toConnectPathTemplate(opts.path),
   };
-  const headers = headersToConnectMappings(opts.headers);
+  const headers = headersToConnectMappings(opts.headers, opts.sourceHeaders);
   if (headers) {
     http.headers = headers;
   }
@@ -1230,6 +1437,16 @@ export function inferBodySelection(operationConfig: JSONSchemaOperationConfig): 
   if (httpOp.requestBaseBody != null) {
     return `$(${JSON.stringify(httpOp.requestBaseBody)})`;
   }
+  // OpenAPI 2 `in: formData` → flat args + explicit body field map (Wiki math check, …).
+  const formDataArgMap = httpOp.formDataArgMap;
+  if (formDataArgMap && Object.keys(formDataArgMap).length > 0) {
+    const lines: string[] = [];
+    for (const [paramName, argName] of Object.entries(formDataArgMap)) {
+      const keyOut = /^[A-Za-z_][\w]*$/.test(paramName) ? paramName : JSON.stringify(paramName);
+      lines.push(`  ${keyOut}: $args.${argName}`);
+    }
+    return `{\n${lines.join('\n')}\n}`;
+  }
   return undefined;
 }
 
@@ -1262,19 +1479,19 @@ export function buildInputBodySelection(
       hasRemap = true;
       const lhs = /^[A-Za-z_][\w]*$/.test(jsonName) ? jsonName : JSON.stringify(jsonName);
       if (nested) {
-        lines.push(`${lhs}: ${field.name} { ${nested} }`);
+        lines.push(wrapFieldSubselection(`${lhs}: ${field.name}`, nested));
       } else {
         lines.push(`${lhs}: ${field.name}`);
       }
     } else if (nested) {
       hasRemap = true;
-      lines.push(`${field.name} { ${nested} }`);
+      lines.push(wrapFieldSubselection(field.name, nested));
     } else {
       lines.push(field.name);
     }
   }
   if (!hasRemap) return undefined;
-  return lines.join(' ');
+  return lines.join('\n');
 }
 
 /**
@@ -1336,13 +1553,13 @@ function buildRemappedInputObjectEntries(
       hasRemap = true;
       const lhs = /^[A-Za-z_][\w]*$/.test(jsonName) ? jsonName : JSON.stringify(jsonName);
       if (nested) {
-        lines.push(`${lhs}: ${valuePath} { ${nested} }`);
+        lines.push(wrapFieldSubselection(`${lhs}: ${valuePath}`, nested));
       } else {
         lines.push(`${lhs}: ${valuePath}`);
       }
     } else if (nested) {
       hasRemap = true;
-      lines.push(`${field.name}: ${valuePath} { ${nested} }`);
+      lines.push(wrapFieldSubselection(`${field.name}: ${valuePath}`, nested));
     } else {
       lines.push(`${field.name}: ${valuePath}`);
     }
@@ -1368,7 +1585,7 @@ export function bakeInputBodySelection(
   const inputArg = argList.find(a => a.name === 'input');
   if (!inputArg) return body;
 
-  // `{ base… ...$args.input }` from inferBodySelection — expand remapped input fields.
+  // `{ base… ...$args.input }` from inferBodySelection - expand remapped input fields.
   if (trimmed.includes('...$args.input')) {
     const entries = buildRemappedInputObjectEntries(inputArg.type);
     if (!entries?.length) return body;
@@ -1378,7 +1595,7 @@ export function bakeInputBodySelection(
   if (trimmed !== '$args.input' && !trimmed.startsWith('$args.input {')) {
     return body;
   }
-  // Already has an explicit subselection — leave it.
+  // Already has an explicit subselection - leave it.
   if (trimmed.includes('{')) return body;
   const sub = buildInputBodySelection(inputArg.type);
   if (!sub) return body;

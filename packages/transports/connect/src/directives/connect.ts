@@ -184,7 +184,7 @@ export function getConnectArgsFromNode(node: {
  * Resolve a Connectors / Mesh `{…}` template.
  *
  * When `encodeValues` is set (path / in-URL query templates), each replaced
- * expression value is percent-encoded — Apollo URLPathTemplate semantics — so
+ * expression value is percent-encoded - Apollo URLPathTemplate semantics - so
  * values like `1?admin=true` cannot break out of a path segment. Leave
  * `encodeValues` off for `@source` baseURL (host/port) and header values.
  */
@@ -192,8 +192,57 @@ function shouldSkipPathEncode(path: string, skipEncode?: (path: string) => boole
   if (skipEncode?.(path)) {
     return true;
   }
-  // `_odataId` holds a full URL / entity id path — must not be percent-encoded.
+  // `_odataId` holds a full URL / entity id path - must not be percent-encoded.
   return /^(this|root)\._odataId\b/.test(path) || /^(this|root)\[['"]_odataId['"]\]/.test(path);
+}
+
+/** Mesh / Connectors path modifier: `{args.title|preEncoded}` / `{$args.title|preEncoded}`. */
+export const PATH_PRE_ENCODED_MODIFIER = 'preEncoded';
+
+/**
+ * Strip a trailing `|preEncoded` modifier from a template path expression.
+ * Used so OpenAPI params that document URI-encoded input can opt in without
+ * changing default Apollo-style `encodeURIComponent` for every interpolation.
+ */
+export function splitPathPreEncodedModifier(path: string): {
+  path: string;
+  allowPreEncoded: boolean;
+} {
+  const suffix = `|${PATH_PRE_ENCODED_MODIFIER}`;
+  if (path.endsWith(suffix)) {
+    return { path: path.slice(0, -suffix.length), allowPreEncoded: true };
+  }
+  return { path, allowPreEncoded: false };
+}
+
+/**
+ * Percent-encode a path/query template expression value.
+ *
+ * Default (Apollo): always `encodeURIComponent`, so a raw `%25` stays literal
+ * data (`%2525` on the wire). Opt-in `allowPreEncoded` (Wiki article titles /
+ * `|preEncoded` path modifier): when the value already round-trips as a fully
+ * encoded URI component, keep it to avoid `%253F` double-encode; otherwise
+ * encode (or decode-then-encode once for mixed forms).
+ */
+export function encodePathTemplateValue(
+  value: string,
+  options: { allowPreEncoded?: boolean } = {},
+): string {
+  if (!options.allowPreEncoded || !/%[0-9A-Fa-f]{2}/.test(value)) {
+    return encodeURIComponent(value);
+  }
+  try {
+    const decoded = decodeURIComponent(value);
+    const reencoded = encodeURIComponent(decoded);
+    // Already a correct percent-encoded component (Wiki pre-encoded titles).
+    if (reencoded === value) {
+      return value;
+    }
+    // Mixed raw + escapes: normalize to a single encode pass.
+    return reencoded;
+  } catch {
+    return encodeURIComponent(value);
+  }
 }
 
 function resolveTemplate(
@@ -216,28 +265,41 @@ function resolveTemplate(
     /\$\(\s*(true|false|null|-?\d+(?:\.\d+)?)\s*\)/g,
     (_, value: string) => value,
   );
-  // `{$args.x->match(...)}` / `{$this["a.b"]}` — evaluate as Connectors exprs (Apollo parity).
+  // `{$args.x->match(...)}` / `{$this["a.b"]}` - evaluate as Connectors exprs (Apollo parity).
   // Mesh `:default` after a path (e.g. `{$context.headers['x-port']:4001}`) is not Connectors
   // syntax; strip it for eval and apply when the looked-up value is empty.
   resolved = resolved.replace(/\{\$([^{}]+)\}/g, (full, expr: string) => {
-    const { path: exprPath, defaultValue } = splitMeshTemplateDefault(expr);
+    const { path: exprWithDefault, defaultValue } = splitMeshTemplateDefault(expr);
+    const { path: exprPath, allowPreEncoded } = splitPathPreEncodedModifier(exprWithDefault);
     if (!exprPath.includes('->') && !exprPath.includes('[')) {
       return full;
     }
-    const value = evalConnectorsVarExpr(`$${exprPath}`, vars);
+    // Method chains (`->split` / `->get`) need the full evaluator - var-only
+    // lookup ignores method suffixes and would leave `Patient/id` as one segment.
+    const value = exprPath.includes('->')
+      ? evalPath(`$${exprPath}`, vars.thisValue ?? {}, {
+          vars: {
+            args: vars.args,
+            thisValue: vars.thisValue,
+            env: vars.env,
+            context: vars.context,
+            config: vars.config || {},
+          },
+        })
+      : evalConnectorsVarExpr(`$${exprPath}`, vars);
     if (value == null || value === '') {
       if (defaultValue != null) {
         if (!options.encodeValues || shouldSkipPathEncode(exprPath, options.skipEncode)) {
           return defaultValue;
         }
-        return encodeURIComponent(defaultValue);
+        return encodePathTemplateValue(defaultValue, { allowPreEncoded });
       }
       return '';
     }
     if (!options.encodeValues || shouldSkipPathEncode(exprPath, options.skipEncode)) {
       return String(value);
     }
-    return encodeURIComponent(String(value));
+    return encodePathTemplateValue(String(value), { allowPreEncoded });
   });
   // Normalize remaining Connectors `{$args.x|base64}` / `{$context.headers['x-port']:4001}` to Mesh
   // `{args.x|base64}` / `{context.headers['x-port']:4001}` so stringInterpolator modifiers work.
@@ -255,20 +317,27 @@ function resolveTemplate(
     config: vars.config,
   };
   if (!options.encodeValues) {
-    const interpolated = stringInterpolator.parse(meshForm, interpolateArgs);
+    // Drop Mesh `|preEncoded` before interpolator (unknown modifier); encoding is off.
+    const withoutPreEncoded = meshForm.replace(
+      new RegExp(`\\|${PATH_PRE_ENCODED_MODIFIER}(?=[}:]|$)`, 'g'),
+      '',
+    );
+    const interpolated = stringInterpolator.parse(withoutPreEncoded, interpolateArgs);
     return interpolated == null ? '' : String(interpolated);
   }
   // Encode each `{expr}` replacement individually (not the whole URL).
   // Absolute `@odata.id` follow-ups keep `_odataId` as a raw URL segment; other
   // interpolations in the same template (e.g. `{$args.id}`) stay percent-encoded.
+  // `|preEncoded` opts into Wiki-style keep-if-already-encoded; default is Apollo encode.
   return meshForm.replace(/\{([^{}]+)\}/g, (_match, path: string) => {
-    const value = stringInterpolator.parse(`{${path}}`, interpolateArgs);
+    const { path: cleanPath, allowPreEncoded } = splitPathPreEncodedModifier(path);
+    const value = stringInterpolator.parse(`{${cleanPath}}`, interpolateArgs);
     if (value == null || value === '') {
       return '';
     }
-    return shouldSkipPathEncode(path, options.skipEncode)
+    return shouldSkipPathEncode(cleanPath, options.skipEncode)
       ? String(value)
-      : encodeURIComponent(String(value));
+      : encodePathTemplateValue(String(value), { allowPreEncoded });
   });
 }
 
@@ -341,7 +410,7 @@ function evalConnectorsVarExpr(
     const rawArgs = methodMatch[3].trim();
     if (method === 'match') {
       // Prefer `$args`/`$this` lookup for match-arm values (e.g. `[@, $args.agent]`).
-      // Do not use `thisValue || args` — an empty `{}` thisValue is truthy and hides args.
+      // Do not use `thisValue || args` - an empty `{}` thisValue is truthy and hides args.
       return evalMatchMethod(left, rawArgs, vars.thisValue ?? {}, {}, vars);
     }
     if (method === 'get') {
@@ -391,7 +460,7 @@ function lookupVar(
       cur = vars.thisValue;
       break;
     case '$batch':
-      // Entity batch keys (Apollo `$batch.id`) — prefer explicit batch, else parent/root.
+      // Entity batch keys (Apollo `$batch.id`) - prefer explicit batch, else parent/root.
       cur = vars.batch ?? vars.thisValue;
       break;
     case '$env':
@@ -469,7 +538,7 @@ type MeshQsOptions = IStringifyOptions & { jsonStringify?: boolean };
  * - `indices: false` → arrays as `a=1&a=2` (repeat-style)
  * - plain objects → `a[b]=1` (deepObject brackets) unless `allowDots`
  * Form-urlencoded bodies reuse the same defaults.
- * Do not set `arrayFormat` here — it would override loader `indices: true`.
+ * Do not set `arrayFormat` here - it would override loader `indices: true`.
  */
 const defaultQsOptions: IStringifyOptions = {
   indices: false,
@@ -483,7 +552,7 @@ const defaultQsOptions: IStringifyOptions = {
  * Null values are omitted. Array/object encoding follows Hive qs options.
  *
  * OpenAPI styles (deepObject / form explode / comma) are baked into
- * `queryParams` at emit time — no per-param runtime options.
+ * `queryParams` at emit time - no per-param runtime options.
  */
 function applyQueryParams(
   fullPath: string,
@@ -510,7 +579,7 @@ function applyQueryParams(
     if (argNameMatch && resolveArg) {
       value = resolveArg(argNameMatch[1], value);
     }
-    // OData parameter aliases (`@colors`, `@address`) must be one JSON value —
+    // OData parameter aliases (`@colors`, `@address`) must be one JSON value -
     // default qs repeat-style would emit `@colors=red&@colors=blue`.
     if (key.startsWith('@') && value != null && typeof value === 'object') {
       value = JSON.stringify(value);
@@ -530,7 +599,7 @@ function applyQueryParams(
     }
   }
   // Keys already baked with a `[]` suffix (per-param arrayFormat:brackets) must
-  // stringify as repeat without indices — otherwise global `arrayFormat:'brackets'`
+  // stringify as repeat without indices - otherwise global `arrayFormat:'brackets'`
   // / `indices:true` produce `ids[][]` or `ids[][0]`.
   const preBracketed: Record<string, any> = {};
   const regular: Record<string, any> = {};
@@ -842,10 +911,10 @@ export function ensureODataIdField(selected: any, raw: any, requestOriginPath: s
  * - `$` / `$root` for root
  * - `$status`
  * - `$response.headers.x` (Apollo multi-value array; use `->first`)
- * - `$ <fields>` — merge root with mapped fields (Mesh `exposeResponseMetadata`)
+ * - `$ <fields>` - merge root with mapped fields (Mesh `exposeResponseMetadata`)
  *
  * Mesh-only `_response` fields (url / statusText / full headers map) are filled after
- * selection — Apollo has no `$request.url` / `$statusText` / whole-headers var.
+ * selection - Apollo has no `$request.url` / `$statusText` / whole-headers var.
  */
 export function applySelection(selection: string, root: any, extras: ConnectSelectionExtras): any {
   const trimmed = selection.trim();
@@ -868,7 +937,7 @@ export function applySelection(selection: string, root: any, extras: ConnectSele
     }
     return evalPath(trimmed, root, extras);
   }
-  // Mesh: `$ _response: { … }` — keep JSON body fields and overlay mapped keys.
+  // Mesh: `$ _response: { … }` - keep JSON body fields and overlay mapped keys.
   // Only when `$` is followed by whitespace (not `$status` / `$.x` / `$->…`).
   if (/^\$\s+\S/.test(trimmed)) {
     const rest = trimmed.replace(/^\$\s+/, '').trim();
@@ -881,7 +950,7 @@ export function applySelection(selection: string, root: any, extras: ConnectSele
   // Connectors literals / single path expressions (not multi-field selections).
   // `$status->match(...)` may contain spaces inside the argument list.
   // Single-line `$.value { a b }` / `$.foo { alias: x }` must still run as a
-  // subselection — otherwise aliases like `_odataId: $->get("@odata.id")` are dropped.
+  // subselection - otherwise aliases like `_odataId: $->get("@odata.id")` are dropped.
   if (
     trimmed.startsWith('$') &&
     !trimmed.includes('\n') &&
@@ -896,7 +965,7 @@ export function applySelection(selection: string, root: any, extras: ConnectSele
 function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any {
   if (path === '$' || path === '$root') return root;
   if (path === '$status') return extras.status;
-  // Bare `$args.x` / `$this.y` (no `->method`) — look up via vars. Method chains like
+  // Bare `$args.x` / `$this.y` (no `->method`) - look up via vars. Method chains like
   // `$args.ids->first` fall through so `first`/`map`/`filter` handlers below still run;
   // their left operand then hits this branch.
   if (
@@ -912,7 +981,7 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
     // Apollo: header vars are always arrays (fetch Headers.get → single joined string).
     return value == null ? undefined : [value];
   }
-  // `$("lit")` / `$(123)` / `$($->get("k") ?? "default")` — expression wrapper.
+  // `$("lit")` / `$(123)` / `$($->get("k") ?? "default")` - expression wrapper.
   // Method chains after `$()` (e.g. `…->match`) are handled via split below.
   if (path.startsWith('$(')) {
     const closed = findBalancedParenClose(path, 1);
@@ -943,6 +1012,18 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
       const start = parts[0] ? Number(parts[0]) : 0;
       const end = parts[1] != null && parts[1] !== '' ? Number(parts[1]) : undefined;
       return (left as any).slice(start, end);
+    }
+    // Apollo Connectors string `->split(sep, limit?)` (Router 2.15+ / connect mapping).
+    if (method === 'split') {
+      if (typeof left !== 'string') return left;
+      // Keep quoted commas inside the separator (`","`) via lit-aware split.
+      const parts = splitConnectorsLitItems(rawArgs);
+      const sep = String(parseConnectorsLiteralArg(parts[0] ?? '""'));
+      const limit =
+        parts[1] != null && parts[1] !== ''
+          ? Number(parseConnectorsLiteralArg(parts[1]))
+          : undefined;
+      return Number.isFinite(limit) ? left.split(sep, limit) : left.split(sep);
     }
     if (method === 'match') {
       return evalMatchMethod(left, rawArgs, root, extras);
@@ -978,13 +1059,13 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
       if (right === null) return left == null;
       return left === right;
     }
-    // `$obj->has("0")` — Mesh helper (Apollo `has` is still future/non-public).
+    // `$obj->has("0")` - Mesh helper (Apollo `has` is still future/non-public).
     if (method === 'has') {
       if (left == null || typeof left !== 'object') return false;
       const key = String(parseConnectorsLiteralArg(rawArgs));
       return Object.prototype.hasOwnProperty.call(left, key) || key in (left as object);
     }
-    // `$->eq(2)->and($->get(4)->get("0")->ne(null))` — combine booleans; arg eval against root.
+    // `$->eq(2)->and($->get(4)->get("0")->ne(null))` - combine booleans; arg eval against root.
     if (method === 'and') {
       let arg = rawArgs.trim();
       if (arg.startsWith('(') && arg.endsWith(')')) {
@@ -992,12 +1073,12 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
       }
       return Boolean(left) && Boolean(evalPath(arg, root, extras));
     }
-    // `$arr->contains("0")` — Apollo-public membership check.
+    // `$arr->contains("0")` - Apollo-public membership check.
     if (method === 'contains') {
       if (!Array.isArray(left)) return false;
       return left.includes(parseConnectorsLiteralArg(rawArgs));
     }
-    // `$->map(@->match(...))` / `$->map(@.id)` / `$->map(@->{ ... })` — element transform.
+    // `$->map(@->match(...))` / `$->map(@.id)` / `$->map(@->{ ... })` - element transform.
     // Nested maps: outer `rewriteAtToDollar` turns inner `@->{…}` into `$->{…}`; accept both.
     if (method === 'map') {
       if (!Array.isArray(left)) return left;
@@ -1010,7 +1091,7 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
           elementExpr.startsWith('$->[')
         ) {
           const afterSigil = elementExpr.slice(1);
-          // `@->{ ... }` / `$->{ ... }` / `@->[ ... ]` — lit with element as root.
+          // `@->{ ... }` / `$->{ ... }` / `@->[ ... ]` - lit with element as root.
           if (afterSigil.startsWith('->{') || afterSigil.startsWith('->[')) {
             const lit = afterSigil.slice(2);
             return evalConnectorsLitExpr(rewriteAtToDollar(lit), item, extras);
@@ -1018,7 +1099,7 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
           if (afterSigil.startsWith('{') || afterSigil.startsWith('[')) {
             return evalConnectorsLitExpr(rewriteAtToDollar(afterSigil), item, extras);
           }
-          // `@->match(...)` / `@.id` — treat `@` as the element root.
+          // `@->match(...)` / `@.id` - treat `@` as the element root.
           return evalPath(rewriteAtToDollar(elementExpr), item, extras);
         }
         return evalPath(elementExpr, item, extras);
@@ -1030,7 +1111,7 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
       const sep = sepMatch ? sepMatch[1] : ',';
       return left.filter(v => v != null).join(sep);
     }
-    // `$([a, b])->concat($args.ids)` — append array elements (TJSON list/set envelopes).
+    // `$([a, b])->concat($args.ids)` - append array elements (TJSON list/set envelopes).
     // Prefer over LitArray `...` spreads (Apollo LitArray grammar has no spread).
     if (method === 'concat') {
       const right = evalConnectorsLitExpr(rawArgs.trim(), root, extras);
@@ -1045,7 +1126,7 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
       return left == null ? '' : String(left);
     }
   }
-  // `$["TLSv1.3"]` / `$.foo["bar"]` — bracket keys (dots / reserved chars in JSON names).
+  // `$["TLSv1.3"]` / `$.foo["bar"]` - bracket keys (dots / reserved chars in JSON names).
   if (/^\$(\.|\[)/.test(path) || path === '$') {
     let rest = path === '$' || path === '$root' ? '' : path.replace(/^\$\.?/, '');
     if (path.startsWith('$[') || path.startsWith('$["') || path.startsWith("$['")) {
@@ -1156,7 +1237,7 @@ function findBalancedParenClose(s: string, openIdx: number): number {
 
 /**
  * Connectors `$()` body: JSON literal, path/`->` expr, or `a ?? b` / `a ?! b`
- * (Apollo nullish coalescing — required before `->match` when `get` may be None).
+ * (Apollo nullish coalescing - required before `->match` when `get` may be None).
  */
 function evalConnectorsDollarParen(inner: string, root: any, extras: ConnectSelectionExtras): any {
   const trimmed = inner.trim();
@@ -1190,7 +1271,7 @@ function evalConnectorsDollarParen(inner: string, root: any, extras: ConnectSele
         if (op === '??') {
           return left == null ? right : left;
         }
-        // `?!` — only missing/None (undefined), not JSON null.
+        // `?!` - only missing/None (undefined), not JSON null.
         return left === undefined ? right : left;
       }
     }
@@ -1443,7 +1524,7 @@ function evalMatchMethod(
   let fallback: any;
   for (const group of groups) {
     const inner = group.slice(1, -1).trim();
-    // [@, value] default arm — `[@, @]` means pass through the unmatched left value.
+    // [@, value] default arm - `[@, @]` means pass through the unmatched left value.
     if (inner.startsWith('@')) {
       const comma = findTopLevelComma(inner);
       const valueRaw = comma >= 0 ? inner.slice(comma + 1).trim() : 'null';
@@ -1620,7 +1701,7 @@ function readSelectionIdent(s: string, start: number): { value: string; end: num
   // `$("literal")` / `$($->get("k") ?? "default")->match(...)` (balanced `$()` + chains).
   if (s[i] === '$') {
     i++;
-    // `$()` — balanced (nested get/match / `??` inside).
+    // `$()` - balanced (nested get/match / `??` inside).
     if (s[i] === '(') {
       const close = findBalancedParenClose(s, i);
       if (close < 0) {
@@ -1721,7 +1802,7 @@ function tokenizeSelection(selection: string): SelectionToken[] {
     if (s[i] === ':') {
       i++;
       while (i < s.length && /\s/.test(s[i])) i++;
-      // Apollo entity-ref / object literal: `supplier: { id: supplierId }` —
+      // Apollo entity-ref / object literal: `supplier: { id: supplierId }` -
       // fields are relative to the *parent* root, not `$.supplier`.
       if (s[i] === '{') {
         source = '$';
@@ -1772,10 +1853,27 @@ function pickHttp(http: ConnectHttp | undefined): { method: string; path: string
 
 /**
  * Detect raw binary request bodies (stream / Blob / Buffer / non-JSON Content-Type).
- * Prefer the runtime value shape and Content-Type — not GraphQL scalar names.
+ * Prefer the runtime value shape and Content-Type - not GraphQL scalar names.
+ *
+ * Structured Content-Types (including `multipart/form-data`) win over value shape:
+ * a File/Blob arg named `input` must not steal the raw-binary branch when the
+ * connector asks for multipart form parts.
  */
 function isRawBinaryConnectBody(input: unknown, contentType: string | undefined): boolean {
-  // Value shape: graphql-upload streams, Blob/File, Buffer — not GraphQL type names.
+  if (contentType) {
+    const ct = contentType.toLowerCase();
+    // Structured body encodings keep the JSON / form / multipart paths below.
+    if (
+      ct.includes('json') ||
+      ct.includes('xml') ||
+      ct.startsWith('text/') ||
+      ct.includes('form-urlencoded') ||
+      ct.includes('multipart/form-data')
+    ) {
+      return false;
+    }
+  }
+  // Value shape: graphql-upload streams, Blob/File, Buffer - not GraphQL type names.
   if (isFileUpload(input)) {
     return true;
   }
@@ -1788,19 +1886,35 @@ function isRawBinaryConnectBody(input: unknown, contentType: string | undefined)
   if (!contentType) {
     return false;
   }
-  const ct = contentType.toLowerCase();
-  // Structured body encodings keep the JSON / form paths below.
-  if (
-    ct.includes('json') ||
-    ct.includes('xml') ||
-    ct.startsWith('text/') ||
-    ct.includes('form-urlencoded') ||
-    ct.includes('multipart/form-data')
-  ) {
-    return false;
-  }
   // Any other explicit Content-Type (octet-stream, image/*, …) → raw body.
   return true;
+}
+
+/**
+ * Deep-clone plain JSON-like values for union-input recovery, but keep File /
+ * Blob / graphql-upload (`createReadStream`) values by reference - `structuredClone`
+ * throws `DataCloneError` on those and would break multipart `$args.input` bodies.
+ */
+function clonePreservingUploads(value: any): any {
+  if (value == null || typeof value !== 'object') {
+    return value;
+  }
+  if (
+    isFileUpload(value) ||
+    typeof (value as { arrayBuffer?: unknown }).arrayBuffer === 'function' ||
+    (typeof Blob !== 'undefined' && value instanceof Blob)
+  ) {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map(clonePreservingUploads);
+  }
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([k, v]) => [
+      k,
+      clonePreservingUploads(v),
+    ]),
+  );
 }
 
 /**
@@ -1834,8 +1948,10 @@ function evaluateConnectBodySelection(
     if (!argDef) {
       return value;
     }
+    // Do not structuredClone uploads (`createReadStream` / File / Blob) - they are
+    // not structured-cloneable and must stay live for multipart body parts.
     return resolveDataByUnionInputType(
-      value && typeof value === 'object' ? structuredClone(value) : value,
+      value && typeof value === 'object' ? clonePreservingUploads(value) : value,
       argDef.type,
       opts.schema,
     );
@@ -1870,7 +1986,7 @@ function evaluateConnectBodySelection(
       ('rest' in args ||
         (args.input != null && typeof args.input === 'object' && 'rest' in args.input));
     if (needsFlatten) {
-      // `vars.args` may be a Proxy (serializeArgumentsForInterpolation) —
+      // `vars.args` may be a Proxy (serializeArgumentsForInterpolation) -
       // structuredClone rejects Proxies, so materialize plain values first.
       const plain: Record<string, unknown> = {};
       for (const key of Object.keys(args as object)) {
@@ -1930,7 +2046,7 @@ export type ConnectODataOptions = {
   expandNavProps?: boolean;
   /** Coalesce sibling `@connect` HTTP into `POST /$batch`. */
   batch?: ODataBatchMode;
-  /** Shared DataLoader fetch — usually created by `processConnectDirectives`. */
+  /** Shared DataLoader fetch - usually created by `processConnectDirectives`. */
   batchFetch?: ReturnType<typeof createODataBatchFetch>;
   /** Extra credential header names for `/$batch` partition / outer forward. */
   securityHeaderNames?: readonly string[];
@@ -1942,6 +2058,12 @@ export type ConnectFieldResolverOptions = {
   timeout?: number;
   queryStringOptions?: MeshQsOptions;
   odata?: ConnectODataOptions;
+  /**
+   * When true, skip installing `@connect` resolvers on fields that already have
+   * a `resolve` function (e.g. wrapSchema rename proxies). Used by the
+   * `additionalTypeDefs` reprocess pass in legacy `get-mesh`.
+   */
+  preserveExistingFieldResolvers?: boolean;
 };
 
 /**
@@ -1966,7 +2088,7 @@ function navArgsRequireDedicatedFetch(args: Record<string, unknown> | null | und
 /** Marks a mapped Connectors selection result so prefer-embedded can skip rematch. */
 const ODATA_SELECTION_APPLIED = Symbol.for('@graphql-mesh/odata.selectionApplied');
 
-/** Identity / bare path — applySelection returns raw; do not tag nested pass-through. */
+/** Identity / bare path - applySelection returns raw; do not tag nested pass-through. */
 function isRawPassThroughSelection(selection: string): boolean {
   const t = selection.trim();
   if (!t || t === '$' || t === '$root') {
@@ -2068,7 +2190,7 @@ function markSelectionApplied(value: unknown, selection = ''): unknown {
 
   const rootBody = dollarRootSelectionBody(trimmed);
   if (Array.isArray(value)) {
-    // `$.value { … }` list mapping — mark each item with the entity body.
+    // `$.value { … }` list mapping - mark each item with the entity body.
     const itemSelection = rootBody ?? trimmed;
     for (const item of value) {
       markSelectionApplied(item, itemSelection);
@@ -2100,7 +2222,7 @@ function markSelectionApplied(value: unknown, selection = ''): unknown {
 /**
  * Body of the primary selection object (`$.value { … }` or first `{ … }`), else
  * the whole string. Nested blocks inside that body are stripped so alias scans
- * stay at this level — `customer: Customer { id: Id }` must not prove the outer
+ * stay at this level - `customer: Customer { id: Id }` must not prove the outer
  * nav value is already mapped.
  */
 function selectionTopLevelAliasScanTarget(selection: string): string {
@@ -2211,6 +2333,11 @@ export function addConnectFieldResolver(
   connectArgs: ConnectArgs,
   opts: ConnectFieldResolverOptions = {},
 ) {
+  // Second pass after `additionalTypeDefs` / wrapSchema: keep rename proxies and any
+  // already-wired connect resolver - never assign `field.resolve` again.
+  if (opts.preserveExistingFieldResolvers && typeof field.resolve === 'function') {
+    return;
+  }
   const log = opts.log || new Logger({ prefix: 'connect' });
   const sources = getSourceMap(schema);
   const source = connectArgs.source ? sources.get(connectArgs.source) : undefined;
@@ -2221,7 +2348,7 @@ export function addConnectFieldResolver(
   const expandNavProps = Boolean(opts.odata?.expandNavProps);
   const odataBatchFetch = opts.odata?.batchFetch;
   // Prefer-embedded: expandNavProps + literal `@source` Accept `odata.metadata=…`.
-  // Schema-static — no per-call header resolve / empty arg stubs.
+  // Schema-static - no per-call header resolve / empty arg stubs.
   const preferEmbeddedNav = expandNavProps && hasODataMetadataAcceptHeader(source?.http?.headers);
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
@@ -2245,7 +2372,7 @@ export function addConnectFieldResolver(
         typeof (root as Record<string, unknown>)._odataId === 'string'
           ? ((root as Record<string, unknown>)._odataId as string)
           : '';
-      // Expanded members need `/People/p/Orders/o`, not `/People/p/o` — use the nav
+      // Expanded members need `/People/p/Orders/o`, not `/People/p/o` - use the nav
       // segment from the connector GET path (fallback: GraphQL field name).
       const navCollectionBase = (() => {
         const base = parentId ? stripTrailingSlash(parentId) : '';
@@ -2269,7 +2396,7 @@ export function addConnectFieldResolver(
       // `$expand` + inline nav). Re-running `->match` on mapped objects loses
       // `@odata.type` and collapses every row to the default union member.
       // Same for `gql: Wire` remaps already applied (e.g. `userName: UserName`).
-      // Still complete `_odataId` — parent ensureODataIdField does not walk nested nav.
+      // Still complete `_odataId` - parent ensureODataIdField does not walk nested nav.
       if (navValueAlreadyMapped(embedded, selection)) {
         return ensureODataIdField(embedded, embedded, navCollectionBase);
       }
@@ -2299,7 +2426,7 @@ export function addConnectFieldResolver(
       );
     }
 
-    // Virtual connector: no http — selection may only use $args / $this / literals.
+    // Virtual connector: no http - selection may only use $args / $this / literals.
     if (!picked) {
       const selection = connectArgs.selection || '$({})';
       if (
@@ -2313,7 +2440,7 @@ export function addConnectFieldResolver(
           { extensions: { code: 'CONNECTOR_VALIDATE' } },
         );
       }
-      // `$this` / `$args` — single expr (`$this["TLSv1.3"]`) or multi-field (`id: $args.id`).
+      // `$this` / `$args` - single expr (`$this["TLSv1.3"]`) or multi-field (`id: $args.id`).
       const vars = {
         args: args || {},
         thisValue: root,
@@ -2326,13 +2453,15 @@ export function addConnectFieldResolver(
         /^\$((args|this|env|context|batch|config)\b|\()/.test(trimmedSel) &&
         !/^[A-Za-z_][\w]*\s*:/.test(trimmedSel) &&
         !trimmedSel.includes('\n');
-      if (isSingleVarExpr) {
+      // Method chains (`$args.ref->split("/")->get(1)`) need evalPath; var-only
+      // lookup would return the raw arg and ignore `->split` / `->get`.
+      if (isSingleVarExpr && !trimmedSel.includes('->')) {
         return evalConnectorsVarExpr(trimmedSel, vars);
       }
       return applySelection(selection, root || {}, { vars });
     }
 
-    // Serialize scalars (DateTime → ISO, etc.) before path/header/query interpolation —
+    // Serialize scalars (DateTime → ISO, etc.) before path/header/query interpolation -
     // same Proxy pattern as Mesh httpOperation.
     const rawArgs = args || {};
     const argsSerializeProxy = new Proxy(rawArgs, {
@@ -2409,6 +2538,12 @@ export function addConnectFieldResolver(
     const headers: Record<string, string> = {};
     applyHeaders(headers, source?.http?.headers, vars);
     applyHeaders(headers, connectArgs.http?.headers, vars);
+    // Connectors default to JSON. Subgraph SDL omits bare `Accept: application/json`;
+    // still send it at runtime so content-negotiation / OpenAPI links that read
+    // `$request.header.accept` keep working (lowercase key matches OAS stamp).
+    if (!Object.keys(headers).some(k => k.toLowerCase() === 'accept')) {
+      headers.accept = 'application/json';
+    }
 
     const method = picked.method;
     // OData dual-runtime: `Accept: …;odata.metadata=…` is a normal Connectors header
@@ -2428,29 +2563,27 @@ export function addConnectFieldResolver(
       const contentType = Object.entries(headers).find(
         ([k]) => k.toLowerCase() === 'content-type',
       )?.[1];
-      // Raw binary upload: stream/Blob/Buffer value or non-structured Content-Type.
-      const binaryUpload = rawArgs.input !== undefined ? await rawArgs.input : undefined;
-      if (isRawBinaryConnectBody(binaryUpload, contentType)) {
-        if (isFileUpload(binaryUpload)) {
-          requestInit.body = binaryUpload.createReadStream() as any;
-          const hasContentType = Object.keys(headers).some(k => k.toLowerCase() === 'content-type');
-          if (!hasContentType) {
-            headers['content-type'] = binaryUpload.mimetype;
-          }
-        } else {
-          requestInit.body = binaryUpload;
-        }
-        requestBody = requestInit.body;
-      } else if (contentType?.includes('multipart/form-data')) {
+      // Multipart before raw-binary: a File/Blob arg named `input` must not steal
+      // the octet-stream branch when Content-Type asks for form parts.
+      if (contentType?.includes('multipart/form-data')) {
         // Multipart needs the live File/Blob values from args (not JSON round-trip).
+        // Honor `@connect(http.body:)` maps so OpenAPI form param names (`user-file`)
+        // win over GraphQL arg names (`user_file`), and path args stay out of parts.
         delete headers['content-type'];
         delete headers['Content-Type'];
-        const input =
-          connectArgs.http?.body === '$args.input' ||
-          connectArgs.http?.body?.startsWith('$args.input')
-            ? rawArgs.input
-            : rawArgs;
         const formData = new FormData();
+        const bodySelection = connectArgs.http?.body;
+        const mappedBody =
+          bodySelection != null && String(bodySelection).trim() !== ''
+            ? evaluateConnectBodySelection(bodySelection, vars, { schema, field })
+            : undefined;
+        const input =
+          mappedBody && typeof mappedBody === 'object' && !Array.isArray(mappedBody)
+            ? mappedBody
+            : connectArgs.http?.body === '$args.input' ||
+                connectArgs.http?.body?.startsWith('$args.input')
+              ? rawArgs.input
+              : rawArgs;
         if (input && typeof input === 'object') {
           for (const key of Object.keys(input)) {
             const inputValue = input[key];
@@ -2460,7 +2593,15 @@ export function addConnectFieldResolver(
               if (inputValue instanceof File) {
                 formDataValue = inputValue;
               } else if (isFileUpload(inputValue)) {
-                formDataValue = new File([inputValue.createReadStream() as any], 'file', {
+                // graphql-upload: buffer the stream - `@whatwg-node/fetch` File cannot
+                // arrayBuffer() a raw Node Readable (ERR_INVALID_ARG_TYPE).
+                const chunks: Buffer[] = [];
+                for await (const chunk of inputValue.createReadStream() as AsyncIterable<
+                  Buffer | Uint8Array | string
+                >) {
+                  chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : Buffer.from(chunk));
+                }
+                formDataValue = new File([Buffer.concat(chunks)], 'file', {
                   type: inputValue.mimetype,
                 });
               } else if (inputValue.name && inputValue instanceof Blob) {
@@ -2483,48 +2624,66 @@ export function addConnectFieldResolver(
         }
         requestBody = formData;
         requestInit.body = formData;
-      } else if (isXmlContentType(contentType)) {
-        // Mesh-specific: JSONSelection → FXP object → XML (SOAP is just document shape).
-        const bodyValue = evaluateConnectBodySelection(connectArgs.http?.body, vars, {
-          schema,
-          field,
-        });
-        if (bodyValue !== undefined) {
-          requestBody = jsObjectToXml(bodyValue);
-          requestInit.body = requestBody;
-        }
       } else {
-        const bodyJson = buildBody(connectArgs.http?.body, vars, {
-          schema,
-          field,
-          odataOpenTypes: isODataMetadataAccept(headers),
-        });
-        if (bodyJson != null) {
-          if (contentType?.includes('application/x-www-form-urlencoded')) {
-            try {
-              requestBody = qsStringify(JSON.parse(bodyJson), {
-                ...defaultQsOptions,
-                ...queryStringOptions,
-              });
-            } catch {
-              requestBody = bodyJson;
-            }
-          } else if (contentType?.startsWith('text/')) {
-            // text/plain (and other text/*): send the raw scalar, not a JSON-encoded string
-            // (text/xml is handled above via isXmlContentType).
-            try {
-              const parsed = JSON.parse(bodyJson);
-              requestBody = typeof parsed === 'string' ? parsed : bodyJson;
-            } catch {
-              requestBody = bodyJson;
+        // Raw binary upload: stream/Blob/Buffer value or non-structured Content-Type.
+        // Checked after multipart so a File arg named `input` does not steal form posts.
+        const binaryUpload = rawArgs.input !== undefined ? await rawArgs.input : undefined;
+        if (isRawBinaryConnectBody(binaryUpload, contentType)) {
+          if (isFileUpload(binaryUpload)) {
+            requestInit.body = binaryUpload.createReadStream() as any;
+            const hasContentType = Object.keys(headers).some(
+              k => k.toLowerCase() === 'content-type',
+            );
+            if (!hasContentType) {
+              headers['content-type'] = binaryUpload.mimetype;
             }
           } else {
-            requestBody = bodyJson;
-            if (!contentType) {
-              headers['content-type'] = 'application/json';
-            }
+            requestInit.body = binaryUpload;
           }
-          requestInit.body = requestBody;
+          requestBody = requestInit.body;
+        } else if (isXmlContentType(contentType)) {
+          // Mesh-specific: JSONSelection → FXP object → XML (SOAP is just document shape).
+          const bodyValue = evaluateConnectBodySelection(connectArgs.http?.body, vars, {
+            schema,
+            field,
+          });
+          if (bodyValue !== undefined) {
+            requestBody = jsObjectToXml(bodyValue);
+            requestInit.body = requestBody;
+          }
+        } else {
+          const bodyJson = buildBody(connectArgs.http?.body, vars, {
+            schema,
+            field,
+            odataOpenTypes: isODataMetadataAccept(headers),
+          });
+          if (bodyJson != null) {
+            if (contentType?.includes('application/x-www-form-urlencoded')) {
+              try {
+                requestBody = qsStringify(JSON.parse(bodyJson), {
+                  ...defaultQsOptions,
+                  ...queryStringOptions,
+                });
+              } catch {
+                requestBody = bodyJson;
+              }
+            } else if (contentType?.startsWith('text/')) {
+              // text/plain (and other text/*): send the raw scalar, not a JSON-encoded string
+              // (text/xml is handled above via isXmlContentType).
+              try {
+                const parsed = JSON.parse(bodyJson);
+                requestBody = typeof parsed === 'string' ? parsed : bodyJson;
+              } catch {
+                requestBody = bodyJson;
+              }
+            } else {
+              requestBody = bodyJson;
+              if (!contentType) {
+                headers['content-type'] = 'application/json';
+              }
+            }
+            requestInit.body = requestBody;
+          }
         }
       }
     }
@@ -2539,7 +2698,6 @@ export function addConnectFieldResolver(
     const response = await fetchFn(fullPath, requestInit, context, info as any);
     const returnNamedGraphQLType = getNamedType(field.type);
     let responseData: any;
-    const text = await response.text();
     const responseHeaderMap = getHeadersObj(response.headers);
     const selectionExtras: ConnectSelectionExtras = {
       status: response.status,
@@ -2573,8 +2731,8 @@ export function addConnectFieldResolver(
       const pathForMessage = picked.path.replace(/\{\$/g, '{');
       const defaultMessage = `Upstream HTTP Error: ${response.status}, Could not invoke operation ${method} ${pathForMessage}`;
       // Spread mapped `@connect(errors.extensions:)` first, then overwrite Mesh
-      // defaults. Do not invent `http.status` here — Yoga would promote it to the
-      // gateway HTTP status — but keep it if the mapping set it explicitly.
+      // defaults. Do not invent `http.status` here - Yoga would promote it to the
+      // gateway HTTP status - but keep it if the mapping set it explicitly.
       return new GraphQLError(
         typeof customMessage === 'string' && customMessage.length ? customMessage : defaultMessage,
         {
@@ -2618,26 +2776,47 @@ export function addConnectFieldResolver(
       return response.status.toString().startsWith('2');
     };
 
+    // Apollo Connectors non-JSON response mapping:
+    // - blank → `$` null (Mesh keeps legacy empty scalar/object for empty bodies)
+    // - text/plain → `$` is the literal string
+    // - other (image/png, text/html, …) → `$` is null (do not UTF-8-decode binary)
+    // - JSON-like / missing Content-Type → parse as JSON
+    // Mesh additionally keeps XML (`text/xml`, `+xml`, …) for SOAP/OData.
     const responseContentType = response.headers.get('content-type');
+    const responseMime = responseContentType?.split(';')[0]?.trim().toLowerCase() || '';
+    const isJsonLikeResponse = !responseMime || responseMime.includes('json');
+    const isPlainTextResponse = responseMime === 'text/plain';
+    const isXmlResponse = isXmlContentType(responseContentType);
 
-    if (!text) {
-      // Preserve legacy Mesh behavior for empty / 204 responses (e.g. String fields → "")
-      responseData = isScalarType(returnNamedGraphQLType) ? '' : {};
-    } else if (isXmlContentType(responseContentType)) {
-      try {
-        responseData = xmlToJsObject(text);
-      } catch (error) {
-        if (isScalarType(returnNamedGraphQLType)) {
-          responseData = text;
-        } else {
-          throw buildConnectorError(text, error);
-        }
+    if (!isJsonLikeResponse && !isPlainTextResponse && !isXmlResponse) {
+      // Drain without `response.text()` so binary bodies stay binary-safe.
+      // Empty unsupported MIME (e.g. 204 + text/html) keeps legacy scalar `""` /
+      // object `{}` so `String!` connectors do not null-error; nonempty PNG → null.
+      // Propagate read failures - only treat a successful 0-byte drain as empty.
+      const drained = await response.arrayBuffer();
+      if (drained.byteLength === 0) {
+        responseData = isScalarType(returnNamedGraphQLType) ? '' : {};
+      } else {
+        responseData = null;
       }
     } else {
-      try {
-        responseData = JSON.parse(text);
-      } catch (error) {
-        // Some SOAP/XML servers omit Content-Type; fall back when the body looks like XML.
+      const text = await response.text();
+      if (!text) {
+        // Preserve legacy Mesh behavior for empty / 204 responses (e.g. String fields → "")
+        responseData = isScalarType(returnNamedGraphQLType) ? '' : {};
+      } else if (isXmlResponse) {
+        try {
+          responseData = xmlToJsObject(text);
+        } catch (error) {
+          if (isScalarType(returnNamedGraphQLType)) {
+            responseData = text;
+          } else {
+            throw buildConnectorError(text, error);
+          }
+        }
+      } else if (isPlainTextResponse) {
+        // Node `new Response(string)` defaults to `text/plain;charset=UTF-8` even when
+        // Content-Type was omitted - sniff `<?xml` before treating as Apollo plain text.
         if (looksLikeXml(text)) {
           try {
             responseData = xmlToJsObject(text);
@@ -2648,20 +2827,40 @@ export function addConnectFieldResolver(
               throw buildConnectorError(text, xmlError);
             }
           }
-        } else if (isScalarType(returnNamedGraphQLType)) {
-          responseData = text;
-        } else if (response.status === 204 || (response.status === 200 && text === '')) {
-          responseData = {};
-        } else if (!evaluateIsSuccess(text)) {
-          throw buildConnectorError(text, error);
-        } else if (
-          response.status.toString().startsWith('2') &&
-          !isScalarType(returnNamedGraphQLType)
-        ) {
-          // Successful status but non-JSON body for object/list fields — still a fetch failure.
-          throw buildConnectorError(text, error);
         } else {
+          // Apollo: `$` is the literal response text (do not JSON.parse).
           responseData = text;
+        }
+      } else {
+        try {
+          responseData = JSON.parse(text);
+        } catch (error) {
+          // Some SOAP/XML servers omit Content-Type; fall back when the body looks like XML.
+          if (looksLikeXml(text)) {
+            try {
+              responseData = xmlToJsObject(text);
+            } catch (xmlError) {
+              if (isScalarType(returnNamedGraphQLType)) {
+                responseData = text;
+              } else {
+                throw buildConnectorError(text, xmlError);
+              }
+            }
+          } else if (isScalarType(returnNamedGraphQLType)) {
+            responseData = text;
+          } else if (response.status === 204 || (response.status === 200 && text === '')) {
+            responseData = {};
+          } else if (!evaluateIsSuccess(text)) {
+            throw buildConnectorError(text, error);
+          } else if (
+            response.status.toString().startsWith('2') &&
+            !isScalarType(returnNamedGraphQLType)
+          ) {
+            // Successful status but non-JSON body for object/list fields - still a fetch failure.
+            throw buildConnectorError(text, error);
+          } else {
+            responseData = text;
+          }
         }
       }
     }
@@ -2676,8 +2875,9 @@ export function addConnectFieldResolver(
       selectionText,
     );
     // Normalize after selection so mappings like `$.products { id }` (object → array) work.
+    // Do not wrap a null/undefined selection as `[null]` - GraphQL list fields stay null.
     const isListReturnType = isListTypeOrNonNullListType(field.type);
-    if (isListReturnType && !Array.isArray(selected)) {
+    if (isListReturnType && selected != null && !Array.isArray(selected)) {
       selected = [selected];
     } else if (!isListReturnType && Array.isArray(selected)) {
       selected = selected[0];
@@ -2694,7 +2894,7 @@ export function addConnectFieldResolver(
     }
     // Scalar / enum returns: unwrap attributed XML leaves, then coerce by type
     // so ID/String keep lexical text (`true`, `00123`). List returns coerce each
-    // item — connector resolvers skip installXmlListPluralization.
+    // item - connector resolvers skip installXmlListPluralization.
     if (isScalarType(returnNamedGraphQLType) || isEnumType(returnNamedGraphQLType)) {
       const leafName = returnNamedGraphQLType.name;
       if (isListReturnType && Array.isArray(selected)) {
@@ -2863,7 +3063,7 @@ function attachResponseMetadata(
       return obj;
     }
     const requestQuery = meta.query || {};
-    // Object.defineProperties defaults enumerable:false — keep Mesh `$…` metadata
+    // Object.defineProperties defaults enumerable:false - keep Mesh `$…` metadata
     // off JSON / Object.keys (OpenAPI "arbitrary JSON" / no _openAPIToGraphQL).
     Object.defineProperties(obj, {
       $url: {
@@ -2937,7 +3137,7 @@ export function processConnectDirectives(
     }
     return undefined;
   })();
-  // Single factory for the whole schema — per-field factories would not coalesce.
+  // Single factory for the whole schema - per-field factories would not coalesce.
   const batchFetch =
     odata?.batchFetch ||
     (batchMode && batchMode !== 'none' && batchEndpoint
@@ -2961,19 +3161,24 @@ export function processConnectDirectives(
     // Type-level `@connect` / `@join__directive(name: "connect")` → resolveReference.
     const typeDirectives = getConnectArgsFromNode(type as any);
     if (typeDirectives?.length) {
-      const connectArgs = typeDirectives[0];
-      const syntheticField = {
-        name: '__resolveReference',
-        type: type as any,
-        args: [],
-        extensions: {},
-      } as unknown as GraphQLField<any, any>;
-      addConnectFieldResolver(schema, syntheticField, connectArgs, fieldOpts);
-      const resolve = syntheticField.resolve;
-      if (resolve) {
-        setTypeResolveReference(type, (reference, context, info) =>
-          resolve(reference, {}, context, info),
-        );
+      // Reprocess pass: keep an already-wired resolveReference (wrapper / first pass).
+      const skipTypeConnect =
+        fieldOpts.preserveExistingFieldResolvers && getTypeResolveReference(type);
+      if (!skipTypeConnect) {
+        const connectArgs = typeDirectives[0];
+        const syntheticField = {
+          name: '__resolveReference',
+          type: type as any,
+          args: [],
+          extensions: {},
+        } as unknown as GraphQLField<any, any>;
+        addConnectFieldResolver(schema, syntheticField, connectArgs, fieldOpts);
+        const resolve = syntheticField.resolve;
+        if (resolve) {
+          setTypeResolveReference(type, (reference, context, info) =>
+            resolve(reference, {}, context, info),
+          );
+        }
       }
     }
     if (!('getFields' in type)) continue;
@@ -2982,6 +3187,14 @@ export function processConnectDirectives(
       const field = fields[fieldName];
       const directives = getConnectArgsFromNode(field as any);
       if (!directives?.length) continue;
+      // Keep wrapSchema / rename proxies - only wire fields that still lack a resolver
+      // (typically fields added via `additionalTypeDefs` after the first pass).
+      if (
+        fieldOpts.preserveExistingFieldResolvers &&
+        typeof (field as GraphQLField<any, any>).resolve === 'function'
+      ) {
+        continue;
+      }
       // First connect wins for execution (repeatable for schema merge cases)
       const connectArgs = directives[0];
       addConnectFieldResolver(schema, field as GraphQLField<any, any>, connectArgs, fieldOpts);
@@ -3002,10 +3215,10 @@ export function processConnectDirectives(
     }
   }
   // Hive stitches `@key` entities via `Query._entities`. Apollo Router uses `@connect`
-  // natively and never calls this field — but without it Hive needed Mesh `@merge`.
+  // natively and never calls this field - but without it Hive needed Mesh `@merge`.
   ensureFederationEntitiesField(schema);
   // Same-subgraph Connectors stubs (`customer: { id: customerId }`) leave a partial
-  // object in Hive — unlike Router, the gateway won't auto `_entities` for missing
+  // object in Hive - unlike Router, the gateway won't auto `_entities` for missing
   // fields on that object. Fill them via `resolveReference` when a field is absent.
   hydrateEntityStubFieldResolvers(schema);
   return schema;
@@ -3060,11 +3273,11 @@ function hydrateEntityStubFieldResolvers(schema: GraphQLSchema) {
  * Add / repair Federation `Query._entities`.
  *
  * Dispatch is `@apollo/subgraph`'s `entitiesResolver` (same as the legacy federation
- * transform) — we only own the Connectors → `resolveReference` wiring and the Hive
+ * transform) - we only own the Connectors → `resolveReference` wiring and the Hive
  * bare-field repair. `@apollo/subgraph` >= 2.15 no longer exports `_Any` / `_Entity`,
  * so those GraphQL types stay local when we have to create the field from scratch.
  *
- * Hive Gateway extracts subgraph schemas from the supergraph SDL — those already
+ * Hive Gateway extracts subgraph schemas from the supergraph SDL - those already
  * carry a bare `Query._entities` for `@key` types, with no resolver. Skipping when
  * the field exists left defaultFieldResolver returning null →
  * `Cannot return null for non-nullable field Query._entities` (DOWNSTREAM_SERVICE_ERROR)
@@ -3088,7 +3301,7 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
   const typeMap = schema.getTypeMap() as Record<string, any>;
   let anyType = typeMap._Any as GraphQLScalarType | undefined;
   if (!anyType) {
-    // Federation `_Any` — representations arrive as variables (parseValue), not literals.
+    // Federation `_Any` - representations arrive as variables (parseValue), not literals.
     anyType = new GraphQLScalarType({
       name: '_Any',
       serialize: value => value,
@@ -3123,7 +3336,7 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
   };
 
   if (queryFields._entities) {
-    // Federation-extracted subgraph: field exists, resolver does not — wire it.
+    // Federation-extracted subgraph: field exists, resolver does not - wire it.
     queryFields._entities.resolve = entitiesResolve;
     return;
   }

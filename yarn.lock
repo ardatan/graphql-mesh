@@ -5308,6 +5308,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/json-schema-fhir@workspace:e2e/json-schema-fhir":
+  version: 0.0.0-use.local
+  resolution: "@e2e/json-schema-fhir@workspace:e2e/json-schema-fhir"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^2.15.8"
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@omnigraph/json-schema": "workspace:*"
+    "@types/unzip-stream": "npm:0.3.4"
+    graphql: "npm:16.14.0"
+    graphql-scalars: "npm:^2.0.1"
+    tsx: "npm:^4.20.3"
+    unzip-stream: "npm:0.3.4"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions":
   version: 0.0.0-use.local
   resolution: "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions"
@@ -8848,39 +8863,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-mesh/fusion-runtime@npm:^1.13.5":
-  version: 1.13.5
-  resolution: "@graphql-mesh/fusion-runtime@npm:1.13.5"
-  dependencies:
-    "@envelop/core": "npm:^5.4.0"
-    "@envelop/instrumentation": "npm:^1.0.0"
-    "@graphql-hive/logger": "npm:^1.1.1"
-    "@graphql-mesh/cross-helpers": "npm:^0.4.16"
-    "@graphql-mesh/transport-common": "npm:^1.1.2"
-    "@graphql-mesh/types": "npm:^0.107.1"
-    "@graphql-mesh/utils": "npm:^0.107.1"
-    "@graphql-tools/batch-execute": "npm:^10.3.2"
-    "@graphql-tools/delegate": "npm:^12.3.4"
-    "@graphql-tools/executor": "npm:^2.0.1"
-    "@graphql-tools/federation": "npm:^4.6.5"
-    "@graphql-tools/merge": "npm:^9.2.4"
-    "@graphql-tools/stitch": "npm:^10.4.4"
-    "@graphql-tools/stitching-directives": "npm:^4.1.6"
-    "@graphql-tools/utils": "npm:^12.1.0"
-    "@graphql-tools/wrap": "npm:^11.2.6"
-    "@whatwg-node/disposablestack": "npm:^0.0.6"
-    "@whatwg-node/promise-helpers": "npm:^1.3.2"
-    graphql-yoga: "npm:^5.21.1"
-    tslib: "npm:^2.8.1"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/35128212589aea640921ece2df685347cefda9ee0187749bdf9ba4bc0ddf7791289b059d7d933281e5b932e043f2fbf048b72c52ddea6e464533f21de694d504
-  languageName: node
-  linkType: hard
-
 "@graphql-mesh/fusion-runtime@patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch":
   version: 1.13.4
-  resolution: "@graphql-mesh/fusion-runtime@patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch::version=1.13.4&hash=928444"
+  resolution: "@graphql-mesh/fusion-runtime@patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch::version=1.13.4&hash=1d6db5"
   dependencies:
     "@envelop/core": "npm:^5.4.0"
     "@envelop/instrumentation": "npm:^1.0.0"
@@ -8904,7 +8889,7 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/58b3a999ceeda14f1df0e88970622f76a15fe09f19ffe6599ac73852b194201a389ae5833b03a0a25f964581582d5c90acb632c430e6ff91726d47b52206de78
+  checksum: 10c0/e1cdac59e763da9d5fbb0aabb6bab2f40358c81217072ac3ab5705c7a4660f5e13eca9dd288300485af7010edafcc3d7a7cf35560628d7b8e13d18c74cd31361
   languageName: node
   linkType: hard
 
@@ -9033,6 +9018,7 @@ __metadata:
     "@omnigraph/json-schema": "npm:^0.112.6"
     graphql: "npm:16.14.0"
     graphql-compose: "npm:^9.3.0"
+    graphql-scalars: "npm:^2.0.1"
     json-machete: "npm:^0.97.8"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -10085,6 +10071,7 @@ __metadata:
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
     "@graphql-mesh/transport-common": "npm:^1.1.2"
     "@graphql-mesh/types": "npm:^0.107.3"
+    "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^12.3.3"
     "@graphql-tools/utils": "npm:^13.2.2"
     "@neo4j/graphql": "npm:^7.6.8"
@@ -11297,7 +11284,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/stitching-directives@npm:^4.1.5, @graphql-tools/stitching-directives@npm:^4.1.6":
+"@graphql-tools/stitching-directives@npm:^4.1.5":
   version: 4.1.6
   resolution: "@graphql-tools/stitching-directives@npm:4.1.6"
   dependencies:
@@ -43069,7 +43056,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:4.23.15, tsx@npm:^4.23.15":
+"tsx@npm:4.23.15, tsx@npm:^4.20.3, tsx@npm:^4.23.15":
   version: 4.23.15
   resolution: "tsx@npm:4.23.15"
   dependencies:

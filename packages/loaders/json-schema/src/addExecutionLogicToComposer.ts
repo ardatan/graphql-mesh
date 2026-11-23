@@ -22,6 +22,11 @@ import type { IStringifyOptions } from 'qs';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { entityKeyFieldsFromHttpPath } from '@graphql-mesh/fusion-composition';
+import {
+  importMeshDirectives,
+  preferMultilineDirectiveBlockStrings,
+  TransportDirective,
+} from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   bakeEnumRootSelection,
@@ -32,6 +37,7 @@ import {
   buildStatusUnionConnectExtras,
   CONNECT_LINK_URL,
   ConnectDirective,
+  connectorsPathSegmentFromLinkExpr,
   flushConnectSelectionPassthroughWarnings,
   inferBodySelection,
   LinkDirective,
@@ -142,6 +148,7 @@ export interface AddExecutionLogicToComposerOptions {
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
+  scalarMap?: Record<string, GraphQLScalarType>;
   handlerName?: string;
   connectSelection?: ConnectSelectionOptions;
 }
@@ -165,7 +172,7 @@ const responseMetadataType = new GraphQLObjectType({
  */
 function responseMetadataConnectSelection(httpMethod: string): string {
   const methodLiteral = JSON.stringify(String(httpMethod || 'GET').toUpperCase());
-  return `_response: { method: $(${methodLiteral}) status: $status body: $ }`;
+  return `_response: {\n  method: $(${methodLiteral})\n  status: $status\n  body: $\n}`;
 }
 
 export function addExecutionDirectivesToComposer(
@@ -228,7 +235,6 @@ export function addExecutionDirectivesToComposer(
       if (!targetField) {
         log.debug(`Field ${linkObj.fieldName} not found in ${subgraphName} for link ${linkName}`);
       }
-      schemaComposer.addDirective(ConnectDirective);
       // Reuse the target field's @connect http config, rewriting args -> $this via link args
       const targetConnect = targetField?.directives?.find(d => d.name === 'connect');
       const targetHttp = targetConnect?.args?.http ? { ...targetConnect.args.http } : undefined;
@@ -249,9 +255,11 @@ export function addExecutionDirectivesToComposer(
       }
       if (pathTemplate && Object.keys(linkArgExprs).length) {
         for (const [argName, connectExpr] of Object.entries(linkArgExprs)) {
-          pathTemplate = pathTemplate.replaceAll(`{$args.${argName}}`, connectExpr);
+          // Hardcoded link params → plain path segments (`/…/Charles`), not `$("Charles")`.
+          const pathSeg = connectorsPathSegmentFromLinkExpr(connectExpr);
+          pathTemplate = pathTemplate.replaceAll(`{$args.${argName}}`, pathSeg);
           // Also support unconverted Mesh `{args.x}` left in some paths
-          pathTemplate = pathTemplate.replaceAll(`{args.${argName}}`, connectExpr);
+          pathTemplate = pathTemplate.replaceAll(`{args.${argName}}`, pathSeg);
         }
       }
       const linkHttp: Record<string, unknown> = targetHttp
@@ -294,7 +302,7 @@ export function addExecutionDirectivesToComposer(
         linkHttp.queryParams = rewriteArgsExpr(String(linkHttp.queryParams));
       }
       // Only strip leftover `$args` when the link mapped some args (unmapped remainders).
-      // Links with no args mapping expose target args to the caller — keep selections.
+      // Links with no args mapping expose target args to the caller - keep selections.
       if (
         linkObj.args &&
         typeof linkHttp.queryParams === 'string' &&
@@ -346,7 +354,7 @@ export function addExecutionDirectivesToComposer(
         args: {
           source: subgraphName,
           http: linkHttp,
-          selection: linkSelection,
+          selection: linkSelection || '$',
         },
       };
       const fieldBase = {
@@ -425,14 +433,13 @@ ${operationConfig.description || ''}
       }
 
       field.directives = field.directives || [];
-      schemaComposer.addDirective(ConnectDirective);
       const skipFields = new Set<string>();
       if ('links' in operationConfig && operationConfig.links) {
         for (const linkName of Object.keys(operationConfig.links)) {
           skipFields.add(linkName);
         }
       }
-      // `_response` is baked into selection below — never expand as a normal JSON field.
+      // `_response` is baked into selection below - never expand as a normal JSON field.
       skipFields.add('_response');
       if ('responseByStatusCode' in operationConfig) {
         for (const statusCode in operationConfig.responseByStatusCode) {
@@ -474,11 +481,17 @@ ${operationConfig.description || ''}
         isUnionType(returnNamedType) && buildStatusUnionConnectExtras(returnNamedType);
       // Fresh visit budget per field so one Stripe op cannot starve the rest.
       selectionLimit.passthroughVisits = 0;
-      const builtSelection = buildSelectionForType(field.type.getType(), {
-        skipFields,
-        implementations: interfaceImplementations,
-        limit: selectionLimit,
-      });
+      selectionLimit.visitBudgetExhausted = false;
+      const builtSelection =
+        'selection' in operationConfig &&
+        typeof (operationConfig as { selection?: string }).selection === 'string' &&
+        (operationConfig as { selection?: string }).selection!.trim()
+          ? (operationConfig as { selection: string }).selection.trim()
+          : buildSelectionForType(field.type.getType(), {
+              skipFields,
+              implementations: interfaceImplementations,
+              limit: selectionLimit,
+            });
       let selection =
         builtSelection ||
         // Scalar / empty responses still need a non-empty Connectors selection
@@ -495,7 +508,7 @@ ${operationConfig.description || ''}
         selection !== '$' &&
         !selection.includes('__typename')
       ) {
-        selection = `${statusUnionExtras.typenameSelection} ${selection}`;
+        selection = `${statusUnionExtras.typenameSelection}\n${selection}`;
       }
       if (
         !builtSelection &&
@@ -512,13 +525,17 @@ ${operationConfig.description || ''}
         const metaSelection = responseMetadataConnectSelection(String(httpMethod));
         selection =
           selection === '$' || selection === '$root'
-            ? `$ ${metaSelection}`
-            : `${selection} ${metaSelection}`;
+            ? `$\n${metaSelection}`
+            : `${selection}\n${metaSelection}`;
       }
       const http = buildConnectHttpArgs({
         httpMethod,
         path: operationConfig.path,
         headers: operationConfig.headers,
+        sourceHeaders:
+          typeof operationHeaders === 'object' && operationHeaders
+            ? (operationHeaders as Record<string, string>)
+            : undefined,
         queryParamArgMap: operationConfig.queryParamArgMap,
         queryStringOptionsByParam: operationConfig.queryStringOptionsByParam as
           | Record<
@@ -624,9 +641,8 @@ ${operationConfig.description || ''}
     handleLinkMap(linkMap, typeTC);
   }
 
-  // Pass 2b: cross-schema HATEOAS — type-level `@connect` on entity stub targets
+  // Pass 2b: cross-schema HATEOAS - type-level `@connect` on entity stub targets
   // so Hive hydrateEntityStub works inside this subgraph (no Mesh `@resolveTo`).
-  schemaComposer.addDirective(ConnectDirective);
   for (const tc of schemaComposer.types.values()) {
     if (!('getTypeName' in tc) || typeof (tc as any).getDirectives !== 'function') {
       continue;
@@ -663,7 +679,6 @@ ${operationConfig.description || ''}
     // field is marked @inaccessible by Apollo Router Connectors (no @connect),
     // which then rejects an empty Query API schema. Emit a virtual connector so
     // the same Mesh SG works on Hive and Router.
-    schemaComposer.addDirective(ConnectDirective);
     schemaComposer.Query.addFields({
       dummy: {
         type: 'String',
@@ -680,13 +695,22 @@ ${operationConfig.description || ''}
     });
   }
 
+  // Full Connectors defs so `printSchemaWithDirectives` / GraphQL.js see a valid
+  // schema (apps + definitions). `@composeDirective(name: "@connect")` stays
+  // Guild-only via `prepareConnectorsBeforeGuild`.
   schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
+  // Only register `@transport` when we will stamp options (avoids bare def in SDL).
+  if (queryStringOptions) {
+    schemaComposer.addDirective(TransportDirective);
+  }
   let schema = schemaComposer.buildSchema();
   const schemaExtensions: any = (schema.extensions = schema.extensions || {});
   schemaExtensions.directives = schemaExtensions.directives || {};
-  // Federation Connectors source — replaces Mesh @transport for REST subgraphs
+  // Federation Connectors: stamp Mesh `@transport` only when real options exist
+  // (qs / …). Bare connect is inferred by Gateway from `@connect` / `@source`.
+  delete schemaExtensions.meshConnectOptions;
   schemaExtensions.directives.source = [
     buildSourceDirectiveArgs({
       name: subgraphName,
@@ -705,11 +729,7 @@ ${operationConfig.description || ''}
       import: ['@connect', '@source'],
     },
   ];
-  // Keep handlerName available for debugging without Mesh @transport
   schemaExtensions.meshHandlerName = handlerName;
-  // Schema-level REST transport options (form-urlencoded qs defaults, etc.).
-  // Hive `TransportEntry.options` — compose merges these onto `@transport(options:)`.
-  // Query-string shapes for fields bake into `@connect(http.queryParams:)`.
   if (queryStringOptions) {
     schemaExtensions.directives.transport = [
       {
@@ -719,6 +739,8 @@ ${operationConfig.description || ''}
         options: { queryStringOptions },
       },
     ];
+  } else {
+    delete schemaExtensions.directives.transport;
   }
   // Fix orphaned interfaces; bake Connectors equivalents while `@enum` is still present.
   schema = mapSchema(schema, {
@@ -783,7 +805,21 @@ ${operationConfig.description || ''}
     },
   });
   flushConnectSelectionPassthroughWarnings(selectionLimit);
-  return schema;
+  const schemaDirs = getDirectiveExtensions(schema);
+  const meshImports: string[] = [];
+  if (schemaDirs?.transport?.length) {
+    meshImports.push('@transport');
+  }
+  // `@pubsubOperation` is Mesh-core (excluded from importCustomDirectivesForComposition).
+  // Stamp `@composeDirective` so lean join keeps it as `@join__directive` for Gateway.
+  if (schemaHasDirectiveUsage(schema, 'pubsubOperation')) {
+    meshImports.push('@pubsubOperation');
+  }
+  if (meshImports.length) {
+    schema = importMeshDirectives(schema, meshImports);
+  }
+  // Prefer `"""` for multiline / quote-heavy `@connect` selection/body/queryParams.
+  return preferMultilineDirectiveBlockStrings(schema);
 }
 
 function finalizeConnectorsField(
@@ -792,7 +828,7 @@ function finalizeConnectorsField(
 ): GraphQLFieldConfig<any, any> {
   let next = fieldConfig;
   const ext = (next.extensions || {}) as { directives?: Record<string, any[]> };
-  // After `schemaComposer.buildSchema()`, directives often live on `astNode` only —
+  // After `schemaComposer.buildSchema()`, directives often live on `astNode` only -
   // `getDirectiveExtensions` merges AST + extensions (extensions alone miss `@connect`).
   const directives = {
     ...(getDirectiveExtensions(next) || {}),

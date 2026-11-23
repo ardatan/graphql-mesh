@@ -13,6 +13,7 @@ import {
   type GraphQLNamedType,
   type GraphQLObjectType,
 } from 'graphql';
+import { importMeshDirectives } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import { applyHoistAliasToConnectSelection, TransformValidationError } from './utils.js';
@@ -66,6 +67,7 @@ function checkTypeWithFields(
 export const hoistDirective = new GraphQLDirective({
   name: 'hoist',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     subgraph: {
       type: GraphQLString,
@@ -206,12 +208,14 @@ export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): 
               };
             },
           });
-    if (withConnectAliases.getDirective('hoist') == null) {
-      return new GraphQLSchema({
-        ...withConnectAliases.toConfig(),
-        directives: [...withConnectAliases.toConfig().directives, hoistDirective],
-      });
-    }
-    return withConnectAliases;
+    const withHoistDef =
+      withConnectAliases.getDirective('hoist') == null
+        ? new GraphQLSchema({
+            ...withConnectAliases.toConfig(),
+            directives: [...withConnectAliases.toConfig().directives, hoistDirective],
+          })
+        : withConnectAliases;
+    // Mesh core `@hoist` - same `core/v0.1` bucket as `@merge` / `@transport`.
+    return importMeshDirectives(withHoistDef, ['@hoist']);
   };
 }

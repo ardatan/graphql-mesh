@@ -12,8 +12,16 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  getFoo(id: UUID!): getFoo_200_response @connect(source: "TestAPI", http: {GET: "/v1/foo", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  id: $args.id\\n}"}, selection: "result")
-  getBar(id: UUID): getBar_200_response @connect(source: "TestAPI", http: {GET: "/v1/bar", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  id: $args.id\\n}"}, selection: "result")
+  getFoo(id: UUID!): getFoo_200_response @connect(source: "TestAPI", http: {GET: "/v1/foo", queryParams: """
+  {
+    id: $args.id
+  }
+  """}, selection: "result")
+  getBar(id: UUID): getBar_200_response @connect(source: "TestAPI", http: {GET: "/v1/bar", queryParams: """
+  {
+    id: $args.id
+  }
+  """}, selection: "result")
 }
 
 type getFoo_200_response {

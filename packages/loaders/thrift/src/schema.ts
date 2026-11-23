@@ -1,7 +1,5 @@
 import type {
-  ConstValueNode,
   GraphQLEnumValueConfigMap,
-  GraphQLField,
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
   GraphQLInputType,
@@ -22,8 +20,6 @@ import {
   GraphQLSchema,
   GraphQLString,
   GraphQLUnionType,
-  isObjectType,
-  Kind,
 } from 'graphql';
 import { GraphQLBigInt, GraphQLByte, GraphQLJSON, GraphQLVoid } from 'graphql-scalars';
 import type {
@@ -49,8 +45,13 @@ import type {
   TypeVal,
 } from '@graphql-mesh/transport-thrift';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
-import { getDirectivesInExtensions } from '@graphql-tools/utils';
+import {
+  defaultImportFn,
+  importMeshDirectives,
+  meshSpecUrl,
+  preferMultilineDirectiveBlockStrings,
+  readFileOrUrl,
+} from '@graphql-mesh/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import {
   buildCompactArgs,
@@ -226,12 +227,11 @@ export interface GraphQLThriftLoaderOptions {
  * ```
  * @example
  * ```graphql
- * # ONEWAY void - no reply body
+ * # ONEWAY void - no reply body; omit `args` when there are none
  * type Query {
  *   zip: Void
  *     @thrift__rpc(
  *       function: "zip"
- *       args: ""
  *       selection: "$(void)"
  *       messageType: ONEWAY
  *     )
@@ -262,10 +262,11 @@ export interface ThriftRpcDirectiveArgs {
   function: string;
   /**
    * Compact GraphQL-arg → Thrift field-id mapping (`id(wire): $args...`).
+   * Omit when the RPC takes no arguments (do not emit `args: ""`).
    *
    * @example '1(i32): $args.left\n2(i32): $args.right'
    */
-  args: string;
+  args?: string;
   /**
    * Compact Thrift result → GraphQL field mapping (`field: id(wire)` or `$(wire)`).
    *
@@ -307,6 +308,7 @@ export const ThriftMessageTypeEnum = new GraphQLEnumType({
 export const thriftRpcDirective = new GraphQLDirective({
   name: 'thrift__rpc',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  isRepeatable: true,
   args: {
     /** Owning subgraph name when composing federated schemas. */
     subgraph: { type: GraphQLString },
@@ -314,8 +316,8 @@ export const thriftRpcDirective = new GraphQLDirective({
     service: { type: GraphQLString },
     /** IDL function name invoked on the wire. */
     function: { type: new GraphQLNonNull(GraphQLString) },
-    /** Compact GraphQL-arg -> Thrift field-id mapping (`id(wire): $args...`). */
-    args: { type: new GraphQLNonNull(GraphQLString) },
+    /** Compact GraphQL-arg → Thrift field-id mapping; omit when empty. */
+    args: { type: GraphQLString },
     /** Compact Thrift result -> GraphQL field mapping (`field: id(wire)` or `$(wire)`). */
     selection: { type: new GraphQLNonNull(GraphQLString) },
     /** Compact IDL throws mapping when exceptions are modeled. */
@@ -791,10 +793,13 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
         const thriftRpcArgs: Record<string, unknown> = {
           subgraph: subgraphName,
           function: fnName,
-          args: compactArgs,
           selection: compactSelection,
           messageType,
         };
+        // Omit empty `args: ""` - no GraphQL inputs means no wire-arg mapping.
+        if (compactArgs) {
+          thriftRpcArgs.args = compactArgs;
+        }
         if (compactThrows) {
           thriftRpcArgs.throws = compactThrows;
         }
@@ -825,6 +830,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     const headerEntries = Object.entries(headers).map(([name, value]) => ({ name, value }));
     const schema = new GraphQLSchema({
       query: queryObjectType,
+      // Full `@connect` / `@source` defs for GraphQL.js-valid printed subgraph SDL.
+      // `@composeDirective(name: "@connect")` stays Guild-only.
       directives: [ConnectDirective, SourceDirective, LinkDirective],
       extensions: {
         directives: {
@@ -858,9 +865,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     headers: Object.entries(headers),
   };
 
-  // Do not `@link` `@thrift__rpc` on a custom URL - composition's
-  // `detectAndAddMeshDirectives` imports unknown directives via Mesh spec
-  // (`@composeDirective`). A separate thrift `@link` would exclude it from that path.
+  // Do not `@link` `@thrift__rpc` on a custom URL - Mesh-spec `@link` +
+  // `@composeDirective` are stamped below via `importMeshDirectives`.
   const schema = new GraphQLSchema({
     query: queryObjectType,
     types: [ThriftMessageTypeEnum, ...exceptionTypeMap.values()],
@@ -872,100 +878,12 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     },
   });
 
-  return preferMultilineDirectiveBlockStrings(schema);
-}
-
-/**
- * `printSchemaWithDirectives` rebuilds directive args via JS and prints strings
- * with escaped `\\n` / `\\"` unless the field `astNode` keeps `StringValue.block: true`.
- * Attach matching AST directive apps so multiline / quote-heavy args (`args`,
- * TJSON `body` / `selection` / `isSuccess` / `errors`) print as GraphQL `"""`.
- */
-function preferMultilineDirectiveBlockStrings(schema: GraphQLSchemaType): GraphQLSchemaType {
-  for (const type of Object.values(schema.getTypeMap())) {
-    if (!isObjectType(type)) continue;
-    for (const field of Object.values(type.getFields())) {
-      attachBlockStringDirectiveAst(field);
-    }
-  }
-  return schema;
-}
-
-function attachBlockStringDirectiveAst(field: GraphQLField<any, any>): void {
-  const dirs = getDirectivesInExtensions(field);
-  if (!dirs?.length) return;
-  const directiveNodes = dirs.map(dir => ({
-    kind: Kind.DIRECTIVE as const,
-    name: { kind: Kind.NAME as const, value: dir.name },
-    arguments: Object.entries(dir.args ?? {}).flatMap(([argName, argValue]) => {
-      const value = constValueNodePreferBlockString(argName, argValue);
-      if (value == null) return [];
-      return [
-        {
-          kind: Kind.ARGUMENT as const,
-          name: { kind: Kind.NAME as const, value: argName },
-          value,
-        },
-      ];
+  return importMeshDirectives(
+    importMeshDirectives(preferMultilineDirectiveBlockStrings(schema), ['@thrift__rpc'], {
+      url: meshSpecUrl('thrift'),
     }),
-  }));
-  field.astNode = {
-    kind: Kind.FIELD_DEFINITION,
-    name: { kind: Kind.NAME, value: field.name },
-    type: { kind: Kind.NAMED_TYPE, name: { kind: Kind.NAME, value: 'String' } },
-    directives: directiveNodes,
-  };
-}
-
-function constValueNodePreferBlockString(argName: string, value: unknown): ConstValueNode | null {
-  if (value == null) return null;
-  if (typeof value === 'boolean') {
-    return { kind: Kind.BOOLEAN, value };
-  }
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    const asInt = Number.isInteger(value);
-    return {
-      kind: asInt ? Kind.INT : Kind.FLOAT,
-      value: String(value),
-    };
-  }
-  if (typeof value === 'string') {
-    // `@thrift__rpc(messageType:)` is an enum - print bare CALL/ONEWAY.
-    if (argName === 'messageType') {
-      return { kind: Kind.ENUM, value };
-    }
-    // Prefer `"""` when the value has newlines **or** embedded `"` so print does
-    // not emit hard-to-read `\"` escapes (common in TJSON `@connect` selection /
-    // isSuccess / errors paths like `$->get("0")`).
-    const preferBlock = value.includes('\n') || value.includes('\r') || value.includes('"');
-    return { kind: Kind.STRING, value, block: preferBlock };
-  }
-  if (Array.isArray(value)) {
-    return {
-      kind: Kind.LIST,
-      values: value
-        .map(item => constValueNodePreferBlockString('', item))
-        .filter((v): v is ConstValueNode => v != null),
-    };
-  }
-  if (typeof value === 'object') {
-    // Nested inputs e.g. `@connect(http: { POST, body })` / `errors: { message }`.
-    return {
-      kind: Kind.OBJECT,
-      fields: Object.entries(value as Record<string, unknown>).flatMap(([key, child]) => {
-        const childNode = constValueNodePreferBlockString(key, child);
-        if (childNode == null) return [];
-        return [
-          {
-            kind: Kind.OBJECT_FIELD as const,
-            name: { kind: Kind.NAME as const, value: key },
-            value: childNode,
-          },
-        ];
-      }),
-    };
-  }
-  return null;
+    ['@transport'],
+  );
 }
 
 function processComments(comments: Comment[]): string | undefined {

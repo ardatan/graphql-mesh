@@ -64,6 +64,53 @@ describe('validateSupergraphSdl', () => {
       expect(errors).toHaveLength(1);
       expect(errors[0].message).toContain('references unknown subgraph UnknownSubgraph');
     });
+
+    it('validates @merge on fields and join__directive(name: "merge")', () => {
+      const subgraph = makeSubgraph(
+        'Products',
+        /* GraphQL */ `
+          type Query {
+            product(id: ID!): Product
+          }
+          type Product {
+            id: ID!
+          }
+        `,
+      );
+      const supergraphSdl = /* GraphQL */ `
+        enum join__Graph {
+          PRODUCTS @join__graph(name: "Products", url: "")
+        }
+        directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+        directive @join__directive(
+          graphs: [join__Graph!]
+          name: String!
+          args: join__DirectiveArguments
+        ) repeatable on FIELD_DEFINITION
+        scalar join__DirectiveArguments
+        type Query {
+          product(id: ID!): Product
+            @join__directive(
+              graphs: [PRODUCTS]
+              name: "merge"
+              args: { keyField: "id", keyArg: "id" }
+            )
+          bad(id: ID!): Product
+            @join__directive(
+              graphs: [PRODUCTS]
+              name: "merge"
+              args: { keyField: "id", keyArg: "missingArg" }
+            )
+        }
+        type Product {
+          id: ID!
+        }
+      `;
+      const errors = validateSupergraphSdl(supergraphSdl, [subgraph]);
+      expect(errors.length).toBeGreaterThanOrEqual(1);
+      expect(errors.some(e => e.message.includes('unknown argument missingArg'))).toBe(true);
+      expect(errors.some(e => e.message.includes('field Query.product'))).toBe(false);
+    });
   });
 
   describe('@resolveTo directive', () => {
@@ -283,6 +330,43 @@ describe('validateSupergraphSdl', () => {
         }
         type Query {
           productById(productId: ID!): Product
+        }
+      `;
+      const errors = validateSupergraphSdl(supergraphSdl, [subgraph]);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('returns no errors for pubsubTopic-only @resolveTo (subscription wiring)', () => {
+      const subgraph = makeSubgraph(
+        'API',
+        /* GraphQL */ `
+          type Query {
+            todos: [String]
+          }
+          type Todo {
+            id: ID!
+          }
+        `,
+      );
+      const supergraphSdl = /* GraphQL */ `
+        directive @resolveTo(
+          sourceName: String
+          pubsubTopic: String
+          filterBy: String
+        ) on FIELD_DEFINITION
+        type Todo {
+          id: ID!
+        }
+        type Subscription {
+          todoAdded: Todo @resolveTo(pubsubTopic: "webhook:post:/webhooks/todo_added")
+          todoUpdated(id: ID!): Todo
+            @resolveTo(
+              pubsubTopic: "webhook:post:/webhooks/todo_updated"
+              filterBy: "root.id === args.id"
+            )
+        }
+        type Query {
+          todos: [String]
         }
       `;
       const errors = validateSupergraphSdl(supergraphSdl, [subgraph]);

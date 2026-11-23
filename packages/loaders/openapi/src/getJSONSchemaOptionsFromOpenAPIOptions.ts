@@ -37,6 +37,27 @@ function cleanDescription(description?: string | null): string | undefined {
 }
 
 /**
+ * OpenAPI path params whose docs say the value is already URI-encoded (e.g. Wiki
+ * article titles: `Are_You_the_One%3F`). Opt those into Connect `|preEncoded`.
+ * Ignore negative phrasing (`not URI-encoded`).
+ */
+function isUriEncodedPathParam(
+  paramObj: OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject,
+): boolean {
+  const description = typeof paramObj.description === 'string' ? paramObj.description : '';
+  const schema =
+    'schema' in paramObj && paramObj.schema && typeof paramObj.schema === 'object'
+      ? (paramObj.schema as { description?: unknown })
+      : undefined;
+  const schemaDescription = typeof schema?.description === 'string' ? schema.description : '';
+  const desc = `${description}\n${schemaDescription}`;
+  // Wiki: "It also should be URI-encoded, so that…"
+  return /(?<!not\s)(?<!non-)(?:should\s+be\s+|must\s+be\s+|already\s+)?(?:URI|percent|pre)[\s-]*encoded/i.test(
+    desc,
+  );
+}
+
+/**
  * Pick a request body content type.
  * Prefer an explicit Content-Type header when it matches the spec.
  * Otherwise keep `application/json` unless `application/x-www-form-urlencoded`
@@ -769,10 +790,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             }
             break;
           case 'path': {
-            // If it is in the path, let JSON Schema handler put it
+            // If it is in the path, let JSON Schema handler put it.
+            // Wiki-style params document URI-encoded input (`Are_You_the_One%3F`) -
+            // stamp `|preEncoded` so Connect keeps valid `%XX` instead of `%253F`.
+            const preEncodedSuffix = isUriEncodedPathParam(paramObj) ? '|preEncoded' : '';
             operationConfig.path = operationConfig.path.replace(
               `{${paramObj.name}}`,
-              `{args.${argName}}`,
+              `{args.${argName}${preEncodedSuffix}}`,
             );
             break;
           }
@@ -838,6 +862,48 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               }
             }
             continue;
+          }
+          case 'formData': {
+            // Swagger 2 form fields stay as flat GraphQL args (not nested `input`).
+            // Collect them for `@connect(http.body:)` + form Content-Type.
+            operationConfig.formDataArgMap = operationConfig.formDataArgMap || {};
+            operationConfig.formDataArgMap[paramObj.name] = argName;
+            const isFile =
+              (paramObj as OpenAPIV2.ParameterObject).type === 'file' ||
+              paramObj.schema?.type === 'file' ||
+              paramObj.schema?.format === 'binary';
+            if (!operationConfig.headers?.['Content-Type']) {
+              operationConfig.headers = operationConfig.headers || {};
+              // Swagger 2: method.consumes overrides document.consumes; only then
+              // fall back to file-presence inference (multipart vs urlencoded).
+              const methodConsumes =
+                'consumes' in methodObj &&
+                Array.isArray(methodObj.consumes) &&
+                methodObj.consumes.length
+                  ? methodObj.consumes.map(String)
+                  : undefined;
+              const docConsumes =
+                'consumes' in oasOrSwagger &&
+                Array.isArray((oasOrSwagger as OpenAPIV2.Document).consumes) &&
+                (oasOrSwagger as OpenAPIV2.Document).consumes!.length
+                  ? (oasOrSwagger as OpenAPIV2.Document).consumes!.map(String)
+                  : undefined;
+              const effectiveConsumes = methodConsumes ?? docConsumes;
+              const formConsume = effectiveConsumes?.find(c => {
+                const m = mimeType(c);
+                return m === 'multipart/form-data' || m === 'application/x-www-form-urlencoded';
+              });
+              operationConfig.headers['Content-Type'] =
+                formConsume ??
+                (isFile ? 'multipart/form-data' : 'application/x-www-form-urlencoded');
+            } else if (
+              isFile &&
+              mimeType(operationConfig.headers['Content-Type']) ===
+                'application/x-www-form-urlencoded'
+            ) {
+              operationConfig.headers['Content-Type'] = 'multipart/form-data';
+            }
+            break;
           }
         }
 
@@ -1139,7 +1205,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                             meshEntityRef[keyField] = sanitizeNameForGraphQL(from);
                           }
                           // Prefer Mesh operation path (`/suppliers/{args.id}`); fall back to
-                          // OpenAPI path (`/suppliers/{id}`) — normalize both to `$this.<key>`
+                          // OpenAPI path (`/suppliers/{id}`) - normalize both to `$this.<key>`
                           // without relying on methodObjFieldMap identity (Promise.all races).
                           const linkOperationConfig =
                             possibleMethodObjFieldMap.get(actualOperation);
@@ -1179,7 +1245,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                               source: name,
                               http: {
                                 GET: typeConnectPath,
-                                headers: [{ name: 'accept', value: 'application/json' }],
+                                // Bare Accept: application/json is Connectors default - omit.
                               },
                               selection: leafNames.length ? leafNames.join(' ') : 'id',
                             });

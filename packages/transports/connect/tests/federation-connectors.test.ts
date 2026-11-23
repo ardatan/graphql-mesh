@@ -1,8 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { buildSchema, execute, parse, type GraphQLSchema } from 'graphql';
+import { buildSchema, execute, GraphQLScalarType, parse, type GraphQLSchema } from 'graphql';
 import { Response } from '@whatwg-node/fetch';
 import { processConnectDirectives } from '../src/directives/connect.js';
+import { processDirectives } from '../src/directives/process.js';
+import { processScalarType } from '../src/directives/scalars.js';
 
 /**
  * Directive SDL required by graphql-js `buildSchema` for Federation Connectors examples
@@ -95,7 +97,7 @@ function buildConnectorsSchema(exampleSdl: string, fetchImpl: typeof fetch): Gra
   return processConnectDirectives(schema, { globalFetch: fetchImpl as any });
 }
 
-describe('Federation Connectors — Apollo community examples (executor)', () => {
+describe('Federation Connectors - Apollo community examples (executor)', () => {
   it('runs apollo-ecomm-simple against a mocked ecommerce API', async () => {
     const example = loadApolloExample('ecomm-simple.graphql');
     const fetchImpl = async (url: string) => {
@@ -300,6 +302,36 @@ describe('Federation Connectors error shape', () => {
     }
   `;
 
+  it('keeps null for list fields when selection yields null (not [null])', async () => {
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "ecomm", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+      type Query {
+        products: [Product] @connect(source: "ecomm", http: { GET: "/products" }, selection: "$")
+      }
+      type Product {
+        id: ID
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async () => Response.json(null, { status: 200 })) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          products {
+            id
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ products: null });
+  });
+
   it('emits Mesh-compatible default extensions on HTTP failure', async () => {
     const schema = processConnectDirectives(buildSchema(errorSchemaSdl), {
       globalFetch: (async () => Response.json({ message: 'boom' }, { status: 500 })) as any,
@@ -325,9 +357,9 @@ describe('Federation Connectors error shape', () => {
       request: { method: 'GET' },
       response: { status: 500, body: { message: 'boom' } },
     });
-    // Default shape uses `response.status` only — no duplicate top-level `status`.
+    // Default shape uses `response.status` only - no duplicate top-level `status`.
     expect((err.extensions as any).status).toBeUndefined();
-    // Yoga promotes `extensions.http.status` to the gateway HTTP status — omit it.
+    // Yoga promotes `extensions.http.status` to the gateway HTTP status - omit it.
     expect((err.extensions as any).http?.status).toBeUndefined();
     expect((err.extensions as any).service).toBeUndefined();
     expect((err.extensions as any).request.url).toContain('/products');
@@ -354,7 +386,7 @@ describe('Federation Connectors error shape', () => {
       serviceName: 'ecomm',
       connector: { coordinate: 'ecomm:Query.users@connect[0]' },
       response: { status: 404 },
-      // Mapped via `@connect(errors.extensions:)` — kept, not invented by default.
+      // Mapped via `@connect(errors.extensions:)` - kept, not invented by default.
       status: 404,
     });
     expect((result.errors![0].extensions as any).http?.status).toBeUndefined();
@@ -472,7 +504,7 @@ describe('Federation Connectors queryParams / qs bake', () => {
       `),
     });
     expect(result.errors).toBeUndefined();
-    // Decoded: ids[]=a&ids[]=b — not ids[][] / ids[][0]
+    // Decoded: ids[]=a&ids[]=b - not ids[][] / ids[][0]
     expect(urls[0]).toContain('ids%5B%5D=a');
     expect(urls[0]).toContain('ids%5B%5D=b');
     expect(urls[0]).not.toContain('ids%5B%5D%5B%5D');
@@ -564,6 +596,132 @@ describe('Federation Connectors HTTP / templates', () => {
     });
     expect(result.errors).toBeUndefined();
     expect(urls).toEqual(['http://localhost:3000/pet/1%3Fadmin%3Dtrue']);
+  });
+
+  it('does not double-encode already percent-encoded path segments when |preEncoded', async () => {
+    // Opt-in only: Wiki OpenAPI stamps `|preEncoded` for URI-encoded article titles.
+    // Default Apollo encode would turn `%3F` into `%253F`.
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "Wiki", http: { baseURL: "http://localhost:3000" }) {
+        query: Query
+      }
+
+      type Query {
+        article(title: String!): String
+          @connect(source: "Wiki", http: { GET: "/page/{$args.title|preEncoded}" }, selection: "$")
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return new Response('ok', { headers: { 'content-type': 'text/plain' } });
+      }) as any,
+    });
+    const preEncoded = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          article(title: "Are_You_the_One%3F")
+        }
+      `),
+    });
+    expect(preEncoded.errors).toBeUndefined();
+    expect(urls[0]).toBe('http://localhost:3000/page/Are_You_the_One%3F');
+
+    urls.length = 0;
+    const raw = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          article(title: "Are_You_the_One?")
+        }
+      `),
+    });
+    expect(raw.errors).toBeUndefined();
+    expect(urls[0]).toBe('http://localhost:3000/page/Are_You_the_One%3F');
+  });
+
+  it('encodes literal percent sequences once without |preEncoded (Apollo default)', async () => {
+    // Raw `100%25` must become `100%2525` so upstream decodes back to `100%25`.
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "Pets", http: { baseURL: "http://localhost:3000" }) {
+        query: Query
+      }
+
+      type Query {
+        pet(petId: String!): String
+          @connect(source: "Pets", http: { GET: "/pet/{$args.petId}" }, selection: "$")
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return new Response('ok', { headers: { 'content-type': 'text/plain' } });
+      }) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          pet(petId: "100%25")
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(urls).toEqual(['http://localhost:3000/pet/100%2525']);
+  });
+
+  it('processScalarType enforces @regexp on executable / subgraph schemas', () => {
+    // Lean SG strips `@regexp` for Apollo Router carry-over; subgraph and
+    // executable schemas keep it for processScalarType (here, not composition).
+    const schema = buildSchema(/* GraphQL */ `
+      directive @regexp(pattern: String!) on SCALAR
+      scalar Code @regexp(pattern: "^[A-Z]{2}$")
+      type Query {
+        code: Code
+      }
+    `);
+    const Code = schema.getType('Code') as GraphQLScalarType;
+    processScalarType(Code);
+    expect(Code.serialize('AB')).toBe('AB');
+    expect(() => Code.serialize('abc')).toThrow(/must match/);
+  });
+
+  it('@regexp via processDirectives match/reject on execute', async () => {
+    // Moved from fusion-composition: composition must not depend on transport-connect /
+    // Gateway. processDirectives applies @regexp then Connect resolvers.
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      directive @regexp(pattern: String!) on SCALAR
+      schema @source(name: "api", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+      scalar Code @regexp(pattern: "^[A-Z]{2}$")
+      type Query {
+        code: Code @connect(source: "api", http: { GET: "/code" }, selection: "$")
+      }
+    `;
+    const run = async (body: string) => {
+      const schema = processDirectives(buildSchema(sdl), {
+        globalFetch: (async () => Response.json(body)) as any,
+      });
+      return execute({
+        schema,
+        document: parse(/* GraphQL */ `
+          {
+            code
+          }
+        `),
+      });
+    };
+    await expect(run('AB')).resolves.toMatchObject({ data: { code: 'AB' } });
+    const bad = await run('abc');
+    expect(bad.data?.code ?? null).toBeNull();
+    expect(bad.errors?.some(e => /must match/i.test(String(e.message)))).toBe(true);
   });
 
   it('interpolates $context.headers bracket accessors with defaults in baseURL', async () => {
@@ -908,7 +1066,7 @@ describe('Federation Connectors HTTP / templates', () => {
   });
 
   it('repairs bare Federation-extracted Query._entities (Hive subgraph path)', async () => {
-    // Hive extracts subgraph SDL from the supergraph — Query already has `_entities`
+    // Hive extracts subgraph SDL from the supergraph - Query already has `_entities`
     // with no resolver. processConnectDirectives must install resolveReference dispatch
     // instead of early-returning (otherwise defaultFieldResolver → null → NonNull error).
     const urls: string[] = [];

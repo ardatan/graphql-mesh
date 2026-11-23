@@ -33,6 +33,7 @@ describe('Federation Connectors annotations', () => {
     expect(sdl).toContain('@connect');
     expect(sdl).toContain('https://specs.apollo.dev/connect/v0.4');
     expect(sdl).not.toContain('@httpOperation');
+    // Bare connect: no Mesh `@transport` - Gateway infers kind from @connect/@source.
     expect(sdl).not.toContain('kind: "connect"');
     expect(sdl).not.toContain('@transport');
 
@@ -55,6 +56,29 @@ describe('Federation Connectors annotations', () => {
         },
       },
     });
+  });
+
+  it('stamps options-only @transport when queryStringOptions are set', async () => {
+    const schema = await loadGraphQLSchemaFromJSONSchemas('pets', {
+      endpoint: 'http://localhost:3000',
+      queryStringOptions: { arrayFormat: 'repeat' },
+      operations: [
+        {
+          type: OperationTypeNode.QUERY,
+          field: 'pet',
+          path: '/pets/{args.id}',
+          method: 'GET',
+          responseSample: { id: '1', name: 'Dune' },
+        },
+      ],
+      async fetch() {
+        return Response.json({ id: '1', name: 'Dune' });
+      },
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toContain('@transport');
+    expect(sdl).toContain('arrayFormat');
+    expect(sdl).toContain('repeat');
   });
 
   it('maps queryParams from queryParamArgMap', async () => {
@@ -121,7 +145,7 @@ describe('Federation Connectors annotations', () => {
     });
   });
 
-  it('connectSelection.overLimit passthrough emits $ when over maxLength', async () => {
+  it('connectSelection.overLimit passthrough prefers leavesOnly rebuild before $', async () => {
     const deepSample: Record<string, unknown> = { id: '1', name: 'n' };
     // Enough nested object fields to exceed a tiny maxLength when expanded.
     for (let i = 0; i < 40; i++) {
@@ -144,7 +168,104 @@ describe('Federation Connectors annotations', () => {
       },
     });
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toMatch(/thing[^\n]*selection: "\$"/);
+    // leavesOnly keeps root scalars under the cap (Router-safe); `$` only if that fails.
+    expect(sdl).not.toMatch(/thing[^\n]*selection: "\$"/);
+    expect(sdl).toMatch(/selection: """[\s\S]*?\bid\b/);
+    expect(sdl).toMatch(/selection: """[\s\S]*?\bname\b/);
+  });
+
+  it('passthrough visit-budget truncate rebuilds leavesOnly so sibling objects survive', () => {
+    // Simulate FHIR-like: deep nest burns the visit budget before a later object field.
+    const schema = buildSchema(/* GraphQL */ `
+      type Deep {
+        a: String
+        b: String
+        nest: Deep
+      }
+      type Name {
+        family: String
+        given: String
+      }
+      type Patient {
+        id: String
+        meta: Deep
+        name: Name
+        gender: String
+      }
+    `);
+    const limit = resolveConnectSelectionLimit({ overLimit: 'passthrough', maxLength: 50_000 });
+    // Tiny budget: Deep recursion exhausts visits before `name`.
+    limit.passthroughVisitBudget = 3;
+    const sel = buildSelectionForType(schema.getType('Patient') as any, { limit });
+    expect(sel).toMatch(/\bname\b/);
+    expect(sel).toMatch(/\bfamily\b/);
+    expect(sel).toMatch(/\bgender\b/);
+    expect(sel).not.toBe('');
+  });
+
+  it('cycle-only omission keeps nested sibling expansion (no leavesOnly rebuild)', () => {
+    // Root { id, recursive: Root, profile { address { city } } } - recursive is a
+    // cycle; siblings must keep full nests. A softDepth-0 rebuild would drop city.
+    const schema = buildSchema(/* GraphQL */ `
+      type Address {
+        city: String
+      }
+      type Profile {
+        address: Address
+      }
+      type Root {
+        id: String
+        recursive: Root
+        profile: Profile
+      }
+    `);
+    const limit = resolveConnectSelectionLimit({ overLimit: 'passthrough', maxLength: 50_000 });
+    const sel = buildSelectionForType(schema.getType('Root') as any, { limit });
+    expect(sel).toMatch(/\bid\b/);
+    expect(sel).toMatch(/\bprofile\b/);
+    expect(sel).toMatch(/\baddress\b/);
+    expect(sel).toMatch(/\bcity\b/);
+    expect(sel).not.toMatch(/\brecursive\b/);
+  });
+
+  it('shared selectionLimit does not leak visitBudgetExhausted into a later cycle-only root', () => {
+    const deepSchema = buildSchema(/* GraphQL */ `
+      type Deep {
+        a: String
+        nest: Deep
+      }
+      type Patient {
+        id: String
+        meta: Deep
+        name: String
+      }
+    `);
+    const rootSchema = buildSchema(/* GraphQL */ `
+      type Address {
+        city: String
+      }
+      type Profile {
+        address: Address
+      }
+      type Root {
+        id: String
+        recursive: Root
+        profile: Profile
+      }
+    `);
+    const limit = resolveConnectSelectionLimit({ overLimit: 'passthrough', maxLength: 50_000 });
+    // Budget 2: Patient(1) → Deep(2) → nest Deep(3) actually exhausts (assert flag).
+    limit.passthroughVisitBudget = 2;
+    buildSelectionForType(deepSchema.getType('Patient') as any, { limit });
+    expect(limit.visitBudgetExhausted).toBe(true);
+    // Next root keeps a normal budget; depth-0 entry must clear the stale flag
+    // (do not assign visitBudgetExhausted manually).
+    limit.passthroughVisitBudget = 250;
+    const sel = buildSelectionForType(rootSchema.getType('Root') as any, { limit });
+    expect(sel).toMatch(/\bprofile\b/);
+    expect(sel).toMatch(/\baddress\b/);
+    expect(sel).toMatch(/\bcity\b/);
+    expect(sel).not.toMatch(/\brecursive\b/);
   });
 
   it('connectSelection.overLimit leavesOnly keeps scalar leaves under maxLength', async () => {
@@ -169,9 +290,9 @@ describe('Federation Connectors annotations', () => {
       },
     });
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toMatch(/thing[^\n]*selection: "/);
+    expect(sdl).toMatch(/thing[^\n]*selection: """/);
     expect(sdl).not.toMatch(/thing[^\n]*selection: "\$"/);
-    expect(sdl).toMatch(/selection: "[^"]*\bid\b/);
+    expect(sdl).toMatch(/selection: """[\s\S]*?\bid\b/);
   });
 
   it('infers entity stubs from parent FK when target type is resolvable', () => {
@@ -222,7 +343,8 @@ describe('Federation Connectors annotations', () => {
 
     const sdl = printSchemaWithDirectives(schema);
     expect(sdl).toContain('_response:');
-    expect(sdl).toMatch(/method: \$\(\\"GET\\"\)/);
+    // Block string - embedded `"` prints as-is (not `\"`).
+    expect(sdl).toMatch(/method: \$\("GET"\)/);
     expect(sdl).toContain('status: $status');
     expect(sdl).toContain('body: $');
     expect(sdl).not.toContain('$request.url');

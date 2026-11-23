@@ -292,6 +292,86 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         ],
         "name": "specifiedBy",
       },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "headers",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "kind",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "location",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "options",
+            "type": {
+              "kind": "SCALAR",
+              "name": "TransportOptions",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "subgraph",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "isRepeatable": true,
+        "locations": [
+          "SCHEMA",
+        ],
+        "name": "transport",
+      },
     ],
     "mutationType": {
       "kind": "OBJECT",
@@ -4580,6 +4660,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "isOneOf": null,
         "kind": "SCALAR",
         "name": "String",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "isOneOf": null,
+        "kind": "SCALAR",
+        "name": "TransportOptions",
         "possibleTypes": null,
         "specifiedByURL": null,
       },

@@ -1,0 +1,19 @@
+{
+  "name": "@e2e/json-schema-fhir",
+  "private": true,
+  "scripts": {
+    "download-fhir-schema": "tsx scripts/download-fhir-schema.ts"
+  },
+  "dependencies": {
+    "@graphql-hive/gateway": "^2.15.8",
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@omnigraph/json-schema": "workspace:*",
+    "graphql": "16.14.0",
+    "graphql-scalars": "^2.0.1",
+    "unzip-stream": "0.3.4"
+  },
+  "devDependencies": {
+    "@types/unzip-stream": "0.3.4",
+    "tsx": "^4.20.3"
+  }
+}

@@ -1,11 +1,13 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Thrift Calculator should generate correct schema: thrift-calculator-schema 1`] = `
-"schema @transport(subgraph: "Calculator", kind: "thrift", location: "http://localhost:9876/thrift", headers: []) {
+"schema @transport(subgraph: "Calculator", kind: "thrift", location: "http://localhost:9876/thrift", headers: []) @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@thrift__rpc") @composeDirective(name: "@transport") {
   query: Query
 }
 
-directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String!, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) on FIELD_DEFINITION
+directive @thrift__rpc(subgraph: String, service: String, function: String!, args: String, selection: String!, throws: String, messageType: ThriftMessageType = CALL, entity: Boolean) repeatable on FIELD_DEFINITION
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 enum ThriftMessageType {
   CALL
@@ -17,21 +19,21 @@ type CalcError {
 }
 
 type Query {
-  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "Calculator", function: "add", args: """
+  add(request: AddRequestInput): Int @thrift__rpc(subgraph: "Calculator", function: "add", selection: "$(i32)", messageType: CALL, args: """
   1(struct): $args.request {
     1(i32): left
     2(i32): right
   }
-  """, selection: "$(i32)", messageType: CALL)
-  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calculator", function: "subtract", args: """
+  """)
+  subtract(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calculator", function: "subtract", selection: "$(i32)", messageType: CALL, args: """
   1(i32): $args.left
   2(i32): $args.right
-  """, selection: "$(i32)", messageType: CALL)
-  divide(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calculator", function: "divide", args: """
+  """)
+  divide(left: Int, right: Int): Int @thrift__rpc(subgraph: "Calculator", function: "divide", selection: "$(i32)", messageType: CALL, args: """
   1(i32): $args.left
   2(i32): $args.right
-  """, selection: "$(i32)", messageType: CALL)
-  zip: Void @thrift__rpc(subgraph: "Calculator", function: "zip", args: "", selection: "$(void)", messageType: ONEWAY)
+  """)
+  zip: Void @thrift__rpc(subgraph: "Calculator", function: "zip", selection: "$(void)", messageType: ONEWAY)
 }
 
 input AddRequestInput {
@@ -40,7 +42,9 @@ input AddRequestInput {
 }
 
 """Represents NULL values"""
-scalar Void"
+scalar Void
+
+scalar TransportOptions"
 `;
 
 exports[`Thrift Calculator should give correct response for example queries: example-query.graphql-thrift-calculator-result 1`] = `

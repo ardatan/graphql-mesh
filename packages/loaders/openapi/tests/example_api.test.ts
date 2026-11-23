@@ -2202,6 +2202,19 @@ describe('example_api', () => {
   it('Format the query params appropriately when style and explode are set to true', async () => {
     const LIMIT = 10;
     const OFFSET = 0;
+    const requestedUrls: string[] = [];
+
+    // Mock has `/offices/:id` only - list `/offices` may 404. Capture the connect URL
+    // via fetch so we assert query-param formatting without relying on error extensions.
+    const schema = await loadGraphQLSchemaFromOpenAPI('example_api', {
+      endpoint,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
+      fetch: (async (url: string, ...args: any[]) => {
+        requestedUrls.push(String(url));
+        return (exampleApi.fetch as any)(url, ...args);
+      }) as any,
+    });
 
     const query = /* GraphQL */ `
       query {
@@ -2213,23 +2226,16 @@ describe('example_api', () => {
         }
       }
     `;
-    const result = await execute({
-      schema: createdSchema,
+    await execute({
+      schema,
       document: parse(query),
     });
 
-    expect(result.errors).toBeDefined();
-
-    result.errors.forEach(error => {
-      const requestDetails: any = error.extensions.request;
-      expect(requestDetails.url).toBeDefined();
-
-      const url = new URL(requestDetails.url);
-
-      expect(url.searchParams.has('limit')).toBe(true);
-      expect(url.searchParams.get('limit')).toBe(String(LIMIT));
-      expect(url.searchParams.has('offset')).toBe(true);
-      expect(url.searchParams.get('offset')).toBe(String(OFFSET));
-    });
+    expect(requestedUrls.length).toBeGreaterThan(0);
+    const url = new URL(requestedUrls[0]!);
+    expect(url.searchParams.has('limit')).toBe(true);
+    expect(url.searchParams.get('limit')).toBe(String(LIMIT));
+    expect(url.searchParams.has('offset')).toBe(true);
+    expect(url.searchParams.get('offset')).toBe(String(OFFSET));
   });
 });

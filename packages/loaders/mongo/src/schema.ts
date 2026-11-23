@@ -12,7 +12,12 @@ import { GraphQLDateTime, GraphQLJSON, GraphQLObjectID } from 'graphql-scalars';
 import type { Model, Schema as MongooseSchema } from 'mongoose';
 import { process as meshProcess } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
-import { defaultImportFn, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import {
+  defaultImportFn,
+  importMeshDirectives,
+  loadFromModuleExportExpression,
+  meshSpecUrl,
+} from '@graphql-mesh/utils';
 import { MongoOpDirectives, TransportDirective } from './directives.js';
 import { createDefaultNaming, type MongoNaming } from './naming.js';
 import { GraphQLDecimal128 } from './scalars.js';
@@ -46,7 +51,7 @@ export interface MongoFieldRestrictions {
 
 /**
  * Discriminator subtype stamp/filter (`schema.discriminatorMapping`, `isRoot: false`).
- * Auto-read by the loader — not a user config field.
+ * Auto-read by the loader - not a user config field.
  */
 export interface MongoDiscriminatorInfo {
   key: string;
@@ -206,7 +211,7 @@ export interface LoadMongoSubgraphOpts {
   cwd?: string;
   /**
    * Override default GraphQL type / field naming ({@link createDefaultNaming}).
-   * Partial merge — only replace the helpers you need (e.g. `findManyField`).
+   * Partial merge - only replace the helpers you need (e.g. `findManyField`).
    * @default {@link createDefaultNaming}()
    */
   naming?: Partial<MongoNaming>;
@@ -279,7 +284,7 @@ export async function loadGraphQLSchemaFromMongo(
     // Subtype models: mongoose sets `discriminatorMapping` (`isRoot: false`).
     const discriminator = readDiscriminatorMapping(model.schema);
     let paths = applyFieldRestrictions(introspectPaths(model.schema, typeName), fieldRestrictions);
-    // Discriminator key is stamped by binders — not a client-writable GraphQL field.
+    // Discriminator key is stamped by binders - not a client-writable GraphQL field.
     if (discriminator?.key) {
       paths = paths.filter(p => p.name !== discriminator.key);
     }
@@ -350,7 +355,7 @@ export async function loadGraphQLSchemaFromMongo(
   const stringIdByType = new Map(modelMeta.map(m => [m.typeName, Boolean(m.stringId)]));
   const rootFieldOwners = new Map<string, string>();
   for (const meta of modelMeta) {
-    // Subtypes: prepended `$match` is bypassable via `$unionWith` — omit raw aggregate
+    // Subtypes: prepended `$match` is bypassable via `$unionWith` - omit raw aggregate
     // until the transport can enforce discriminator scope across client stages.
     const omitAggregate = omitAggregateSubgraphWide || Boolean(meta.discriminator);
     emitModelRootFields(schemaComposer, {
@@ -381,7 +386,7 @@ export async function loadGraphQLSchemaFromMongo(
     });
   }
 
-  // GraphQL requires a non-empty Query type — mutation-only configs get a placeholder.
+  // GraphQL requires a non-empty Query type - mutation-only configs get a placeholder.
   if (schemaComposer.Query.getFieldNames().length === 0) {
     if (schemaComposer.Mutation.getFieldNames().length === 0) {
       throw new Error(
@@ -400,7 +405,7 @@ export async function loadGraphQLSchemaFromMongo(
   const objectIdFields = collectObjectIdFieldNames(modelMeta.map(m => m.paths));
   // Null-prototype maps so collection names like `__proto__` stay own keys.
   const objectIdFieldsByCollection: Record<string, string[]> = Object.create(null);
-  // Field → ObjectId? per collection — reject ObjectId vs non-ObjectId conflicts.
+  // Field → ObjectId? per collection - reject ObjectId vs non-ObjectId conflicts.
   const objectIdPolicyByCollection: Record<string, Map<string, boolean>> = Object.create(null);
   for (const m of modelMeta) {
     if (!m.collection) continue;
@@ -464,7 +469,7 @@ export async function loadGraphQLSchemaFromMongo(
     .filter(Boolean);
   const transportOptions: Record<string, unknown> = {};
   if (objectIdFields.length) transportOptions.objectIdFields = objectIdFields;
-  // Always encode scoped ObjectId map (incl. empty entries) — no flat fallback at runtime.
+  // Always encode scoped ObjectId map (incl. empty entries) - no flat fallback at runtime.
   if (Object.keys(objectIdFieldsByCollection).length) {
     transportOptions.objectIdFieldsByCollection = encodeCollectionFieldsMap(
       objectIdFieldsByCollection,
@@ -496,7 +501,27 @@ export async function loadGraphQLSchemaFromMongo(
     },
   ];
   markMongoDirectiveStringsAsBlocks(schema);
-  return schema;
+  return importMeshDirectives(
+    importMeshDirectives(
+      schema,
+      [
+        '@mongo__findOne',
+        '@mongo__find',
+        '@mongo__count',
+        '@mongo__connection',
+        '@mongo__pagination',
+        '@mongo__aggregate',
+        '@mongo__insertOne',
+        '@mongo__insertMany',
+        '@mongo__updateOne',
+        '@mongo__updateMany',
+        '@mongo__deleteOne',
+        '@mongo__deleteMany',
+      ],
+      { url: meshSpecUrl('mongo') },
+    ),
+    ['@transport'],
+  );
 }
 
 const RESERVED_FILTER_PATH_NAMES = new Set(['and', 'or', 'not', 'AND', 'OR', 'NOT']);
@@ -588,7 +613,7 @@ interface PathMeta {
   nested?: PathMeta[];
   /** GraphQL object type for nested / grouped paths, e.g. UserAddress. */
   nestedTypeName?: string;
-  /** Nested schema equals an ancestor — GraphQL type is that ancestor (`nestedTypeName`). */
+  /** Nested schema equals an ancestor - GraphQL type is that ancestor (`nestedTypeName`). */
   selfRef?: boolean;
 }
 
@@ -601,7 +626,7 @@ function isBsonObjectIdPath(path: PathMeta): boolean {
   );
 }
 
-/** Mongoose models with `_id: String` (or equivalent) — not BSON ObjectId. */
+/** Mongoose models with `_id: String` (or equivalent) - not BSON ObjectId. */
 function isStringIdSchema(schema: MongooseSchema): boolean {
   const idPath = (schema as any)?.paths?._id;
   const instance = idPath?.instance || idPath?.caster?.instance;
@@ -651,7 +676,7 @@ function escapeMappingLiteral(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
-/** Binder literal for a discriminator value — numbers unquoted, strings quoted. */
+/** Binder literal for a discriminator value - numbers unquoted, strings quoted. */
 function discriminatorValueLiteral(value: string | number): string {
   if (typeof value === 'number') return String(value);
   return `"${escapeMappingLiteral(value)}"`;
@@ -672,7 +697,7 @@ function filterWithDiscriminator(filter: string, disc?: MongoDiscriminatorInfo):
   return blockArg(`${clause}\n${body}`);
 }
 
-/** Full BSON ObjectId paths (incl. nested `profile.reviewer`) — String refs stay strings. */
+/** Full BSON ObjectId paths (incl. nested `profile.reviewer`) - String refs stay strings. */
 function collectObjectIdFieldNames(pathLists: PathMeta[][]): string[] {
   const out = new Set<string>();
   const walk = (paths: PathMeta[], prefix: string) => {
@@ -1007,7 +1032,7 @@ function emitModelObjectType(
     if (required.has(path.name)) {
       fieldType = asNonNullType(fieldType);
     }
-    // Reserve GraphQL `id` for `_id` — expose a stored mongoose `id` as `storedId`.
+    // Reserve GraphQL `id` for `_id` - expose a stored mongoose `id` as `storedId`.
     const fieldName = opts.stringId && path.name === 'id' ? 'storedId' : path.name;
     otc.setField(fieldName, {
       type: fieldType,
@@ -1059,9 +1084,9 @@ function emitModelRootFields(
     omitAggregate?: boolean;
     stringId?: boolean;
     discriminator?: MongoDiscriminatorInfo;
-    /** @default true — see {@link LoadMongoSubgraphOpts.returnDocumentOnlyInMutationResult} */
+    /** @default true - see {@link LoadMongoSubgraphOpts.returnDocumentOnlyInMutationResult} */
     returnDocumentOnlyInMutationResult?: boolean;
-    /** Loader entry name — for root collision diagnostics. */
+    /** Loader entry name - for root collision diagnostics. */
     modelName: string;
     /** Shared Query/Mutation field → model owner map. */
     rootFieldOwners: Map<string, string>;
@@ -1187,7 +1212,7 @@ function emitModelRootFields(
   }
 
   // Raw aggregate can `$project` / `$unionWith` past field restrictions or a
-  // prepended subtype `$match` — omitted when `omitAggregate` (restricted subgraph
+  // prepended subtype `$match` - omitted when `omitAggregate` (restricted subgraph
   // and/or discriminator subtype models).
   if (!opts.omitAggregate && isOpEnabled(ops, 'aggregate')) {
     claimRoot('Query', naming.aggregateField(typeName), {
@@ -1476,7 +1501,7 @@ function emitRefFields(
   const otc = schemaComposer.getOTC(opts.typeName);
   for (const path of paths) {
     if (!path.ref) continue;
-    // `ref` is the original Mongoose model name — map to GraphQL type after naming.
+    // `ref` is the original Mongoose model name - map to GraphQL type after naming.
     const refTypeName = opts.typeNameByModelName.get(path.ref);
     if (!refTypeName) continue;
     const refCollection = opts.collectionsByType.get(refTypeName);
@@ -1669,7 +1694,7 @@ function filterOperatorTypeForPath(
     return 'ObjectIDQueryOperators';
   }
   if (path.ref) {
-    // String (or non-ObjectId) refs use string operators — keep 24-hex as strings.
+    // String (or non-ObjectId) refs use string operators - keep 24-hex as strings.
     return 'StringQueryOperators';
   }
   if (path.instance === 'Embedded' || path.instance === 'Array' || path.instance === 'Mixed') {
@@ -1779,7 +1804,7 @@ function createQuerySortAndDocumentInputs(
   },
 ) {
   const required = new Set(opts?.requiredFields || []);
-  // Freeform JSON ops (rename/push/…) can bypass required/only/remove — omit them.
+  // Freeform JSON ops (rename/push/…) can bypass required/only/remove - omit them.
   const restrictionsActive = Boolean(
     opts?.restrictionsActive || opts?.removedFields?.length || required.size > 0,
   );
@@ -1833,7 +1858,7 @@ function createQuerySortAndDocumentInputs(
 
   const createFields: Record<string, any> = {};
   const setFields: Record<string, any> = {};
-  // String `_id` models must supply the id on create — Mongo would otherwise insert ObjectId.
+  // String `_id` models must supply the id on create - Mongo would otherwise insert ObjectId.
   if (opts?.stringId) {
     createFields.id = {
       type: asNonNullType(GraphQLString),
@@ -1842,7 +1867,7 @@ function createQuerySortAndDocumentInputs(
   }
   for (const path of paths) {
     if (path.name === '_id' || path.name === '__v') continue;
-    // Reserve GraphQL `id` for `_id` — a stored mongoose `id` path must not overwrite it.
+    // Reserve GraphQL `id` for `_id` - a stored mongoose `id` path must not overwrite it.
     if (opts?.stringId && path.name === 'id') {
       const baseType = mapPathToInput(schemaComposer, path, typeName);
       const storedDesc =
@@ -1869,7 +1894,7 @@ function createQuerySortAndDocumentInputs(
   const emptyInputPlaceholder = {
     [placeholderKey]: {
       type: GraphQLJSON,
-      description: 'Placeholder — model has no writable paths beyond id',
+      description: 'Placeholder - model has no writable paths beyond id',
     },
   };
   if (!schemaComposer.has(documentInput)) {
@@ -1888,7 +1913,7 @@ function createQuerySortAndDocumentInputs(
     }
   }
 
-  // Partial patch input for `$set` — required applies to create, not update.set.
+  // Partial patch input for `$set` - required applies to create, not update.set.
   // Id-only models: omit SetInput/`set` rather than exposing placeholder `_` as writable.
   const setInputName = `${typeName}SetInput`;
   const hasWritableSetFields = Object.keys(setFields).length > 0;
@@ -1941,7 +1966,7 @@ function createQuerySortAndDocumentInputs(
     if (hasWritableSetFields) {
       updateFields.set = { type: setInputName };
     }
-    // Omit operators with no permitted fields — never fall back to open GraphQLJSON.
+    // Omit operators with no permitted fields - never fall back to open GraphQLJSON.
     if (Object.keys(numericFields).length > 0) {
       if (!schemaComposer.has(numericName)) {
         schemaComposer.createInputTC({ name: numericName, fields: numericFields });
@@ -2078,7 +2103,7 @@ function ensurePageInfo(schemaComposer: SchemaComposer) {
 }
 
 function ensureSharedQueryOperatorInputs(schemaComposer: SchemaComposer) {
-  // `$` is illegal in GraphQL names — generated ops use bare Mongo names (`gte`);
+  // `$` is illegal in GraphQL names - generated ops use bare Mongo names (`gte`);
   // transport maps to `$gte` and also accepts `_gte` aliases at runtime.
   const comparable = (scalar: any) => ({
     eq: scalar,

@@ -28,7 +28,7 @@ function stabilizeExecuteResult(result: unknown, services: Service[]): unknown {
   for (const subgraph of services) {
     const port = String(subgraph.port);
     const esc = port.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // `http://host:PORT/...` or `http://host:PORT` — not bare digits elsewhere.
+    // `http://host:PORT/...` or `http://host:PORT` - not bare digits elsewhere.
     text = text.replace(
       new RegExp(`(https?:\\/\\/[^\\s"'\\\\]*?:)${esc}(?=[/?"'#\\\\]|$)`, 'g'),
       `$1<${subgraph.name}_port>`,
@@ -54,7 +54,12 @@ describe('Microsoft Graph Connectors', () => {
     expect(result).toContain('name: "source"');
     expect(result).toContain('name: "connect"');
     expect(result).toContain('odata.metadata=minimal');
-    expect(result).toContain('kind: "connect"');
+    // Remaining connect options stay native `@transport` (Apollo-safe; not join-carried).
+    expect(result).toMatch(
+      /@transport\(kind: "connect", subgraph: "MicrosoftGraph"[^)]*options: \{odata:/,
+    );
+    expect(result).toMatch(/directive @transport\s*\(/);
+    expect(result).not.toMatch(/name: "transport"/);
     // Roots used by v0 example queries
     expect(result).toMatch(/\bme\b/);
     expect(result).toMatch(/\bgroups\b/);

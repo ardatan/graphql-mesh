@@ -180,6 +180,19 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
    */
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
   /**
+   * Opt-in map from JSON Schema `title` (definition name) to a GraphQL scalar.
+   * When a titled schema node would otherwise become a `@regexp` pattern scalar,
+   * the mapped scalar is used instead. Callers should verify pattern compatibility
+   * with the target scalar validators before including an entry (e.g. FHIR
+   * `date` is broader than `graphql-scalars` `Date`).
+   *
+   * Pass scalar instances (mesh.config / JS). YAML `.meshrc` type-name strings
+   * (`id: ID`) are resolved by the legacy JSON Schema handler.
+   *
+   * @example { string: GraphQLString, id: GraphQLID, instant: GraphQLDateTime }
+   */
+  scalarMap?: Record<string, GraphQLScalarType>;
+  /**
    * Limit/rule for `@connect(selection:)` size and depth.
    *
    * @example { maxLength: 4000, overLimit: 'leavesOnly' }
@@ -231,6 +244,12 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
 
   headers?: Record<string, string>;
   queryParamArgMap?: Record<string, string>;
+  /**
+   * OpenAPI 2 `in: formData` params: original param name → GraphQL arg name.
+   * Emitted as `@connect(http.body:)` field selections (`{ q: $args.q }`) with
+   * `Content-Type: application/x-www-form-urlencoded` (or multipart for files).
+   */
+  formDataArgMap?: Record<string, string>;
   queryStringOptions?: IStringifyOptions & { jsonStringify?: boolean };
   queryStringOptionsByParam?: Record<
     string,
@@ -243,6 +262,12 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
   queryParamsSample?: any;
 
   jsonApiFields?: boolean;
+
+  /**
+   * When set, use this string as `@connect(selection:)` instead of auto-expanding
+   * from the response GraphQL type. Runtime Connectors mapping only.
+   */
+  selection?: string;
 };
 
 export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &

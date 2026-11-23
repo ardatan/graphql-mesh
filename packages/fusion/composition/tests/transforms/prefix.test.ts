@@ -165,6 +165,30 @@ describe('Prefix', () => {
       'T_DateTime',
     );
   });
+  it('does not prefix ResolveToSourceArgs (shared Mesh @resolveTo arg scalar)', async () => {
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        scalar ResolveToSourceArgs
+        directive @resolveTo(sourceArgs: ResolveToSourceArgs) on FIELD_DEFINITION
+        type Query {
+          foo: String @resolveTo(sourceArgs: { id: "1" })
+        }
+      `,
+    });
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        name: 'TEST',
+        schema,
+        transforms: [
+          createPrefixTransform({
+            value: 'T_',
+          }),
+        ],
+      },
+    ]);
+    expect(newSchema.getType('ResolveToSourceArgs')).toBeDefined();
+    expect(newSchema.getType('T_ResolveToSourceArgs')).toBeUndefined();
+  });
   it('does not prefix GraphQL specified scalars even when listed in force', async () => {
     schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `

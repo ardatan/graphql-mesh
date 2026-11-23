@@ -18,9 +18,11 @@ describe('Query Params with POST', () => {
       fetch: server.fetch as any,
       cwd: __dirname,
     });
+    // With a JSON body, transport defaults `Content-Type: application/json`
+    // (bare application/json is omitted from `@connect(http.headers)` SDL).
     const query = /* GraphQL */ `
-      mutation Test {
-        post {
+      mutation Test($input: JSON) {
+        post(input: $input) {
           contentType
         }
       }
@@ -29,6 +31,7 @@ describe('Query Params with POST', () => {
     const result = await execute({
       schema,
       document: parse(query),
+      variableValues: { input: { hello: 'world' } },
     });
 
     expect(result).toEqual({

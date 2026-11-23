@@ -22,6 +22,7 @@ import { mergeSchemas } from '@graphql-tools/schema';
 import { getDocumentNodeFromSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
+import { resolveSubgraphName, resolveSubgraphSchema } from './resolveSubgraphSchema.js';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
 const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(globalThis.process?.env?.DEBUG));
@@ -50,12 +51,40 @@ export async function getComposedResultFromConfig(
   };
   const subgraphConfigsForComposition: SubgraphConfig[] = await Promise.all(
     config.subgraphs.map(async subgraphCLIConfig => {
-      const { name: subgraphName, schema$ } = subgraphCLIConfig.sourceHandler(ctx);
-      const subgraphLog = log.child({ subgraph: subgraphName });
+      let subgraphName: string;
+      if ('schema' in subgraphCLIConfig && subgraphCLIConfig.schema != null) {
+        const label = subgraphCLIConfig.name ?? '<unnamed>';
+        const subgraphLog = log.child({ subgraph: label });
+        subgraphLog.debug(`Loading subgraph`);
+        try {
+          const resolved = await resolveSubgraphSchema(ctx, {
+            subgraphName: subgraphCLIConfig.name,
+            schema: subgraphCLIConfig.schema,
+            transport: subgraphCLIConfig.transport,
+          });
+          return {
+            name: resolved.name,
+            schema: resolved.schema,
+            transforms: subgraphCLIConfig.transforms,
+          };
+        } catch (e) {
+          if (isDebug) {
+            subgraphLog.error(`Failed to load subgraph`, e);
+          } else {
+            subgraphLog.error(e instanceof Error ? e.message : String(e));
+            subgraphLog.error(`Failed to load subgraph`);
+          }
+          globalThis.process?.exit(1);
+        }
+      }
+      const loaded = subgraphCLIConfig.sourceHandler(ctx);
+      const label = loaded.name ?? '<unnamed>';
+      const subgraphLog = log.child({ subgraph: label });
       subgraphLog.debug(`Loading subgraph`);
       let subgraphSchema: GraphQLSchema;
       try {
-        subgraphSchema = await schema$;
+        subgraphSchema = await loaded.schema$;
+        subgraphName = resolveSubgraphName(subgraphSchema, loaded.name);
       } catch (e) {
         if (isDebug) {
           subgraphLog.error(`Failed to load subgraph`, e);
@@ -153,7 +182,7 @@ export async function getComposedResultFromConfig(
     globalThis.process?.exit(1);
   }
   let composedSchema: GraphQLSchema;
-  // Cross-subgraph HATEOAS uses Connectors entity stubs + `@connect(entity: true)` —
+  // Cross-subgraph HATEOAS uses Connectors entity stubs + `@connect(entity: true)` -
   // not Mesh `@resolveTo` / futureAdditions.
   if (additionalTypeDefs?.length /* TODO || config.transforms?.length */) {
     composedSchema ||= buildSchema(result.supergraphSdl, {

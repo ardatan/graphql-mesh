@@ -9,25 +9,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -52,13 +38,8 @@ enum join__Graph {
   SUBGRAPH_A @join__graph(name: "subgraph-a", url: "http://localhost:<subgraph-a_port>/graphql")
 }
 
-scalar TransportOptions @join__type(graph: SUBGRAPH_A)
-
 type Query @join__type(graph: SUBGRAPH_A) {
-  rootField(
-    deprecatedArg: DeprecatedArgEnum @deprecated(reason: "No longer needed")
-    otherArg: Int
-  ): RootFieldReturnType
+  rootField(deprecatedArg: DeprecatedArgEnum @deprecated(reason: "No longer needed"), otherArg: Int): RootFieldReturnType
 }
 
 type RootFieldReturnType @join__type(graph: SUBGRAPH_A) {
