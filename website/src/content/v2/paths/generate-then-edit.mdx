@@ -1,0 +1,33 @@
+---
+description: Generate Mesh SDL, dislike the shape, edit it, and re-compose
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# Generate-then-edit
+
+Generate a subgraph, then **own** the output: rename fields, drop noise, fix selection maps, and
+re-compose through the same SDL path as hand-write.
+
+## Flow
+
+1. Generate with a loader (same as [Generate](/v2/paths/generate)).
+2. [Read the emitted SDL](/v2/guides/reading-generated-sdl) until you can point at what you dislike.
+3. Edit the `.graphql` (or keep a checked-in edited copy).
+4. Re-compose with the hand-written / edited SDL input.
+5. Re-query on Hive Gateway and, when Connect-compatible, Apollo Router.
+
+Transforms (rename, prefix, naming-convention) can rewrite GraphQL names and bake `$args` / `$this`
+mappings into `@connect` / `@source` and protocol directives so dual-run stays valid -- details in
+a later Transforms chapter.
+
+<Callout type="info">
+  In the [Music store](/v2/tutorials/music-store) tutorial this is **stage 2** (recommended: generate
+  Reviews from OpenAPI / REST, then edit the `@connect` SDL).
+</Callout>
+
+<Cards>
+  <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="Music store tutorial" href="/v2/tutorials/music-store" />
+</Cards>

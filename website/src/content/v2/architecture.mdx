@@ -1,0 +1,37 @@
+---
+description: Mesh v2 architecture -- loaders, Compose, registries, Hive Gateway, Apollo Router
+---
+
+import { Callout } from '@theguild/components'
+
+# Architecture
+
+Mesh v2 is **not** a YAML black-box gateway. The product surface is GraphQL SDL with Mesh /
+Connectors-style directives, composed into a real supergraph.
+
+## Layers
+
+1. **Sources** -- REST/OpenAPI, JSON Schema, SQL, Mongo, Neo4j, Thrift, Protobuf/gRPC, GraphQL HTTP,
+   Federation subgraphs, …
+2. **Loaders (optional)** -- Omnigraph loaders emit subgraph SDL. Skip them when you hand-write.
+3. **Mesh Compose** -- combines subgraphs (generated and/or authored) into subgraph or supergraph
+   output.
+4. **Schema registry (optional)** -- Hive schema registry, GraphOS, or equivalents consume Mesh
+   subgraph SDL.
+5. **Gateway** -- **Hive Gateway** (JS/TS) for the full Mesh transport set; **Apollo Router** as a
+   peer for Connect-compatible SDL.
+6. **Transports** -- execute the directives at request time (`transport-connect`, `transport-sql`,
+   …).
+
+## Patterns
+
+| Pattern | When |
+| --- | --- |
+| Dual-run same SDL | Hive Gateway and Apollo Router both execute the same Connect supergraph. |
+| Hive Gateway subgraph proxy | Non-Connect Mesh subgraphs served by Hive Gateway; a foreign router talks GraphQL to that subgraph. |
+| Registry | Publish Mesh subgraphs (generated or hand-written); gateway pulls the supergraph. |
+
+<Callout type="warning">
+  Do not teach ad-hoc e2e-style custom `sourceHandler` copy-paste as the architecture. Prefer
+  loaders and first-class hand SDL into Compose.
+</Callout>

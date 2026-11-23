@@ -1,0 +1,32 @@
+---
+description: How to read Mesh-generated subgraph SDL -- transports, connect, keys, selection
+---
+
+import { Callout } from '@theguild/components'
+
+# Reading generated SDL
+
+Generated Mesh subgraphs are ordinary GraphQL SDL with directives. Before you edit or hand-write,
+learn to recognize the important stamps.
+
+## What to look for
+
+| Piece | Meaning |
+| --- | --- |
+| `@transport` | Which Mesh transport executes this subgraph at the gateway (kind, location, options). |
+| `@connect` / `@source` | HTTP Connectors-style mapping (Apollo Connectors–compatible when dual-running Router). |
+| Protocol directives | `@sql` / `@sql__*`, `@mongo__*`, `@thrift__rpc`, `@protobuf__rpc`, Neo4j natives, … |
+| `@key` | Federation entity key; often with `resolvable: false` on join stubs. |
+| `selection` / `args` | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs. |
+| `@link` / `@composeDirective` | Spec imports and which directives survive composition. |
+
+## Habits that help
+
+1. Start from a **root field** you already queried, then follow its `@connect` / protocol directive.
+2. Trace `$args` and `$this` in `selection` before renaming anything.
+3. Treat emitted SDL as the contract you will either keep, edit, or rewrite by hand.
+
+<Callout type="info">
+  This guide is shared by Generate, Generate-then-edit, and Hand-write. The Music store tutorial
+  practices it on stage 1 output before stage 2 edits.
+</Callout>
