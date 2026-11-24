@@ -68,6 +68,18 @@ export default defineConfig([
         'error',
         { devDependencies: ['**/*.test.ts', '**/*.spec.ts'] },
       ],
+      // GraphQL.js type cloning uses `new (Object.getPrototypeOf(type).constructor)(...)`.
+      // ESLint 10.15+ flags the lowercase `constructor` property under `new-cap`.
+      // Keep `standard`'s `capIsNew: false` so existing `Client.Invoke(...)` call sites stay valid.
+      'new-cap': [
+        'error',
+        {
+          newIsCap: true,
+          newIsCapExceptions: ['constructor'],
+          capIsNew: false,
+          properties: true,
+        },
+      ],
     },
     ignores: ['dist', 'node_modules', 'examples', 'website', 'scripts', '.bob', 'config-schema.ts'],
   },

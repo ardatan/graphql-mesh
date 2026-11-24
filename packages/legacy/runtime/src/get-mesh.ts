@@ -289,6 +289,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   // json-schema / odata handlers already pull it in when Connect is used.
   if (additionalTypeDefs?.length) {
     try {
+      // eslint-disable-next-line import/no-extraneous-dependencies -- optional peer; see comment above
       const { processDirectives } = await import('@graphql-mesh/transport-connect');
       schema = processDirectives(schema, {
         globalFetch: wrappedFetchFn,
