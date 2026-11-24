@@ -2,23 +2,24 @@
 description: How to read Mesh-generated subgraph SDL -- transports, connect, keys, selection
 ---
 
-import { Callout } from '@theguild/components'
+import { Callout, Cards } from '@theguild/components'
 
 # Reading generated SDL
 
 Generated Mesh subgraphs are ordinary GraphQL SDL with directives. Before you edit or hand-write,
-learn to recognize the important stamps.
+learn to recognize the important stamps. This page is a **reading guide**, not a full directive
+catalog -- follow the links when you need the contract.
 
 ## What to look for
 
-| Piece                         | Meaning                                                                                 |
-| ----------------------------- | --------------------------------------------------------------------------------------- |
-| `@transport`                  | Which Mesh transport executes this subgraph at the gateway (kind, location, options).   |
-| `@connect` / `@source`        | HTTP Connectors-style mapping (Apollo Connectors–compatible when dual-running Router).  |
-| Protocol directives           | `@sql` / `@sql__*`, `@mongo__*`, `@thrift__rpc`, `@protobuf__rpc`, Neo4j natives, …     |
-| `@key`                        | Federation entity key; often with `resolvable: false` on join stubs.                    |
-| `selection` / `args`          | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs. |
-| `@link` / `@composeDirective` | Spec imports and which directives survive composition.                                  |
+| Piece                         | Meaning                                                                                 | Dig deeper                                                                                                                                                   |
+| ----------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@transport`                  | Which Mesh transport executes this subgraph at the gateway (kind, location, options).   | [Architecture](/v2/architecture) · [Protocols](/v2/protocols)                                                                                                |
+| `@connect` / `@source`        | HTTP Connectors-style mapping (Apollo Connectors–compatible when dual-running Router).  | [Apollo Connectors directives](https://www.apollographql.com/docs/graphos/connectors/reference/directives) · [Serve: Apollo Router](/v2/serve/apollo-router) |
+| Protocol directives           | `@sql` / `@sql__*`, `@mongo__*`, `@thrift__rpc`, `@protobuf__rpc`, Neo4j natives, …     | [Protocols overview](/v2/protocols) · [Music store](/v2/tutorials/music-store) (SQL + Connect + gRPC stages)                                                 |
+| `@key`                        | Federation entity key; often with `resolvable: false` on join stubs.                    | [Music store](/v2/tutorials/music-store) federation notes · [Architecture](/v2/architecture) patterns                                                        |
+| `selection` / `args`          | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs. | [Apollo JSONSelection / mapping](https://www.apollographql.com/docs/graphos/connectors/mapping) · [Generate-then-edit](/v2/paths/generate-then-edit)         |
+| `@link` / `@composeDirective` | Spec imports and which directives survive composition.                                  | [Compose](/v2/compose)                                                                                                                                       |
 
 ## Habits that help
 
@@ -27,6 +28,20 @@ learn to recognize the important stamps.
 3. Treat emitted SDL as the contract you will either keep, edit, or rewrite by hand.
 
 <Callout type="info">
-  This guide is shared by Generate, Generate-then-edit, and Hand-write. The Music store tutorial
-  practices it on stage 1 output before stage 2 edits.
+  Shared by [Generate](/v2/paths/generate), [Generate-then-edit](/v2/paths/generate-then-edit), and
+  [Hand-write](/v2/paths/hand-write). The [Music store](/v2/tutorials/music-store) tutorial
+  practices this on stage 1 output before stage 2 edits.
 </Callout>
+
+## See also
+
+<Cards>
+  <Cards.Card
+    arrow
+    title="Apollo Connectors directives"
+    href="https://www.apollographql.com/docs/graphos/connectors/reference/directives"
+  />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+  <Cards.Card arrow title="Music store tutorial" href="/v2/tutorials/music-store" />
+  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
+</Cards>

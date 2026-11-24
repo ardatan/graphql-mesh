@@ -1,30 +1,39 @@
 ---
-description: Generate Mesh SDL, dislike the shape, edit it, and re-compose
+description: Edit Mesh-generated subgraph SDL and re-compose -- own the schema
 ---
 
-import { Callout, Cards } from '@theguild/components'
+import { Cards } from '@theguild/components'
 
 # Generate-then-edit
 
-Generate a subgraph, then **own** the output: rename fields, drop noise, fix selection maps, and
-re-compose through the same SDL path as hand-write.
+Generate gets you a working subgraph fast. Generate-then-edit is when you **dislike** the shape --
+names, extras, selection maps -- and take ownership: edit the `.graphql`, re-compose, re-query.
+Compose, schema registry, and gateway treat that edited file the same as hand-written SDL.
 
-## Flow
+```mermaid
+flowchart LR
+  A[Generate] --> B[Read SDL]
+  B --> C[Edit what you dislike]
+  C --> D[Re-compose + query]
+```
 
-1. Generate with a loader (same as [Generate](/v2/paths/generate)).
-2. [Read the emitted SDL](/v2/guides/reading-generated-sdl) until you can point at what you dislike.
-3. Edit the `.graphql` (or keep a checked-in edited copy).
-4. Re-compose with the hand-written / edited SDL input.
-5. Re-query on Hive Gateway and, when Connect-compatible, Apollo Router.
+## In the Music store
 
-Transforms (rename, prefix, naming-convention) can rewrite GraphQL names and bake `$args` / `$this`
-mappings into `@connect` / `@source` and protocol directives so dual-run stays valid -- details in a
-later Transforms chapter.
+Stage 2 of the [Music store](/v2/tutorials/music-store) generates **Reviews** from a REST / OpenAPI
+source (Connect emit), then edits the `@connect` SDL before it joins the catalog.
 
-<Callout type="info">
-  In the [Music store](/v2/tutorials/music-store) tutorial this is **stage 2** (recommended:
-  generate Reviews from OpenAPI / REST, then edit the `@connect` SDL).
-</Callout>
+| Step       | Music store move                                                                                |
+| ---------- | ----------------------------------------------------------------------------------------------- |
+| Generate   | Reviews OpenAPI → Connect subgraph beside Chinook                                               |
+| Dislike    | Naming, selection, or entity wiring that does not match the catalog keys                        |
+| Edit       | Checked-in `.graphql` with the fixes you want                                                   |
+| Re-compose | Same Compose pipeline as hand-write; dual-run Hive Gateway + Apollo Router on the Connect slice |
+
+You practice [Reading generated SDL](/v2/guides/reading-generated-sdl) on stage 1 output before this
+edit. Transforms (rename, prefix, naming-convention) can help keep `$args` / `$this` mappings valid
+for dual-run -- covered in the Transforms chapter later.
+
+Full stage walkthrough: [Music store](/v2/tutorials/music-store).
 
 <Cards>
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
