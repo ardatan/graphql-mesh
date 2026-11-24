@@ -1,37 +1,57 @@
 ---
-description: Hand-write Mesh subgraph SDL for Compose and schema registries (humans and AI)
+description: Author Mesh subgraph SDL for Compose and schema registries -- humans and AI
 ---
 
-import { Callout, Cards } from '@theguild/components'
+import { Cards } from '@theguild/components'
 
 # Hand-write
 
-Author committed `.graphql` with `@connect` / `@source` and/or protocol directives (`@sql`,
-`@mongo__*`, `@thrift__rpc`, `@protobuf__rpc`, Neo4j native directives, …), plus Federation `@key` /
-Mesh `@link` / `@composeDirective` as required.
+Author a committed `.graphql` as the source of truth -- Mesh / Connectors-style directives,
+Federation `@key` where you need entities -- then drop that file into **Compose** and a **schema
+registry** the same way generated subgraphs do. Humans and AI assistants share **one** authoring
+contract; there is no separate "AI write" path.
 
-Humans and AI assistants share **one** authoring contract. There is no separate "AI write" path.
+Prefer starting from a [read of generated SDL](/v2/guides/reading-generated-sdl) when one exists.
+Edited generate output and scratch-authored SDL use the same Compose input.
 
-## Flow
+```mermaid
+flowchart LR
+  A[Author .graphql] --> B[Compose]
+  B --> C[Registry optional]
+  B --> D[Hive Gateway / Apollo Router]
+  C -.-> D
+```
 
-1. Prefer starting from a **read** of generated SDL when one exists.
-2. Load authored SDL into Mesh Compose through the first-class hand-written input (for example
-   `subgraphs[{ name, schema }]` / `loadSubgraphFromSDL` once available on your Mesh version).
-3. Compose to subgraph and/or supergraph using the same pipeline as generated subgraphs.
-4. Publish subgraph SDL to a schema registry with the same UX as generated subgraphs.
-5. Serve: **Hive Gateway** for full Mesh transports; **Apollo Router** when the SDL is
-   Connect-compatible.
+## In the Music store
 
-## Success
+Stage 3 of the [Music store](/v2/tutorials/music-store) hand-writes the **gRPC / Protobuf** slice
+after you have already generated the catalog and edited Reviews Connect. By then the directive
+patterns are familiar; you author the smaller RPC surface into Compose (+ registry) yourself.
 
-- A `.graphql` file is the source of truth.
-- Compose accepts it without custom one-off handlers.
-- Registry publish + gateway serve match loader-emitted subgraphs.
+| What you hand-write | Why it fits stage 3                                        |
+| ------------------- | ---------------------------------------------------------- |
+| gRPC / Protobuf SDL | Smaller authored surface; Hive Gateway only for that slice |
 
-<Callout type="info">
-  In the [Music store](/v2/tutorials/music-store) tutorial this is **stage 3** (recommended:
-  hand-write the gRPC / Protobuf slice after generate and generate-then-edit).
-</Callout>
+```graphql
+# Sketch -- Music store stage 3 idea (protocol SDL, not a full service)
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+
+type Query {
+  recommendation(trackId: ID!): Recommendation
+}
+
+type Recommendation @key(fields: "id") {
+  id: ID!
+  trackId: ID!
+}
+```
+
+Wire the file as a schema subgraph in Compose (same path as join-only / edited SDL). Serve the full
+multi-protocol graph on **Hive Gateway** (JS/TS); use **Apollo Router** only on Connect-compatible
+slices.
+
+Full stage walkthrough: [Music store](/v2/tutorials/music-store). Compose details:
+[Compose](/v2/compose).
 
 <Cards>
   <Cards.Card arrow title="Compose" href="/v2/compose" />
