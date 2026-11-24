@@ -16,8 +16,8 @@ catalog -- follow the links when you need the contract.
 | ----------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `@transport`                  | Which Mesh transport executes this subgraph at the gateway (kind, location, options).   | [Architecture](/v2/architecture) · [Protocols](/v2/protocols)                                                                                                |
 | `@connect` / `@source`        | HTTP Connectors-style mapping (Apollo Connectors–compatible when dual-running Router).  | [Apollo Connectors directives](https://www.apollographql.com/docs/graphos/connectors/reference/directives) · [Serve: Apollo Router](/v2/serve/apollo-router) |
-| Protocol directives           | `@sql` / `@sql__*`, `@mongo__*`, `@thrift__rpc`, `@protobuf__rpc`, Neo4j natives, …     | [Protocols overview](/v2/protocols) · [Music store](/v2/tutorials/music-store) (SQL + Connect + gRPC stages)                                                 |
-| `@key`                        | Federation entity key; often with `resolvable: false` on join stubs.                    | [Music store](/v2/tutorials/music-store) federation notes · [Architecture](/v2/architecture) patterns                                                        |
+| Protocol directives           | `@sql` / `@sql__*`, `@mongo__*`, `@thrift__rpc`, `@protobuf__rpc`, Neo4j natives, …     | [Protocols overview](/v2/protocols) · [Music store](/v2/examples/music-store) (SQL + Connect + gRPC stages)                                                  |
+| `@key`                        | Federation entity key; often with `resolvable: false` on join stubs.                    | [Music store](/v2/examples/music-store) federation notes · [Architecture](/v2/architecture) patterns                                                         |
 | `selection` / `args`          | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs. | [Apollo JSONSelection / mapping](https://www.apollographql.com/docs/graphos/connectors/mapping) · [Generate-then-edit](/v2/paths/generate-then-edit)         |
 | `@link` / `@composeDirective` | Spec imports and which directives survive composition.                                  | [Compose](/v2/compose)                                                                                                                                       |
 
@@ -29,8 +29,8 @@ catalog -- follow the links when you need the contract.
 
 <Callout type="info">
   Shared by [Generate](/v2/paths/generate), [Generate-then-edit](/v2/paths/generate-then-edit), and
-  [Hand-write](/v2/paths/hand-write). The [Music store](/v2/tutorials/music-store) tutorial
-  practices this on stage 1 output before stage 2 edits.
+  [Hand-write](/v2/paths/hand-write). The [Music store](/v2/examples/music-store) tutorial practices
+  this on stage 1 output before stage 2 edits.
 </Callout>
 
 ## See also
@@ -42,6 +42,6 @@ catalog -- follow the links when you need the contract.
     href="https://www.apollographql.com/docs/graphos/connectors/reference/directives"
   />
   <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
-  <Cards.Card arrow title="Music store tutorial" href="/v2/tutorials/music-store" />
+  <Cards.Card arrow title="Music store" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
 </Cards>
