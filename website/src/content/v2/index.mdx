@@ -3,6 +3,7 @@ description: Mesh v2 documentation -- GraphQL SDL, Compose, Hive Gateway, and Ap
 ---
 
 import { Callout, Cards } from '@theguild/components'
+import { V2JourneyCards } from '../../components/v2-journey-cards'
 
 # Mesh v2 (draft)
 
@@ -20,29 +21,27 @@ composed supergraph). Authors work in GraphQL SDL with Mesh / Connectors-style d
 - Composition is flexible: Mesh Compose, Hive composition, Rover, or another Federation-compatible
   composer.
 
-```text
-Sources -> (optional loader) OR authored SDL
-        -> Mesh Compose (subgraph or supergraph)
-        -> Schema registry (optional) and/or gateway
-        -> Hive Gateway and/or Apollo Router (Connect-compatible)
-        -> Protocol transports execute directives
+```mermaid
+flowchart TB
+  S[Sources]
+  L[Optional loader<br/>or authored SDL]
+  C[Mesh Compose<br/>subgraph or supergraph]
+  R[Schema registry<br/>optional]
+  G[Hive Gateway<br/>and/or Apollo Router]
+  T[Protocol transports]
+
+  S --> L --> C
+  C --> R
+  C --> G
+  R -.-> G
+  G --> T
 ```
 
 ## Choose your path
 
 Three equal journeys. No primary funnel.
 
-<Cards>
-  <Cards.Card arrow title="Generate" href="/v2/paths/generate">
-    Bootstrap from OpenAPI, SQL, Mongo, protobuf, and more. Read the emitted SDL.
-  </Cards.Card>
-  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write">
-    Author `.graphql` (human or AI) into Compose and schema registries.
-  </Cards.Card>
-  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit">
-    Generate, dislike the shape, edit the SDL, re-compose.
-  </Cards.Card>
-</Cards>
+<V2JourneyCards />
 
 ## Where to go next
 
