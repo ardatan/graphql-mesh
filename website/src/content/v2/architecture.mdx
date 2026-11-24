@@ -2,26 +2,39 @@
 description: Mesh v2 architecture -- loaders, Compose, registries, Hive Gateway, Apollo Router
 ---
 
-import { Callout } from '@theguild/components'
-
 # Architecture
 
-Mesh v2 is **not** a YAML black-box gateway. The product surface is GraphQL SDL with Mesh /
-Connectors-style directives, composed into a real supergraph.
+The product surface is GraphQL SDL with Mesh / Connectors-style directives, composed into a real
+supergraph. Authors may generate that SDL from a loader or write it by hand; Compose and the gateway
+treat both the same.
 
-## Layers
+## Stack
 
-1. **Sources** -- REST/OpenAPI, JSON Schema, SQL, Mongo, Neo4j, Thrift, Protobuf/gRPC, GraphQL HTTP,
-   Federation subgraphs, …
-2. **Loaders (optional)** -- Omnigraph loaders emit subgraph SDL. Skip them when you hand-write.
-3. **Mesh Compose** -- combines subgraphs (generated and/or authored) into subgraph or supergraph
-   output.
-4. **Schema registry (optional)** -- Hive schema registry, GraphOS, or equivalents consume Mesh
-   subgraph SDL.
-5. **Gateway** -- **Hive Gateway** (JS/TS) for the full Mesh transport set; **Apollo Router** as a
-   peer for Connect-compatible SDL.
-6. **Transports** -- execute the directives at request time (`transport-connect`, `transport-sql`,
-   …).
+```mermaid
+flowchart TB
+  S["Sources<br/>REST / OpenAPI / JSON Schema / SQL / Mongo / Neo4j / Thrift / gRPC / GraphQL …"]
+  L["Loaders optional<br/>Omnigraph emit subgraph SDL — skip when hand-writing"]
+  C["Mesh Compose<br/>subgraph or supergraph output"]
+  R["Schema registry optional<br/>Hive schema registry / GraphOS / equivalents"]
+  G["Gateway peers<br/>Hive Gateway JS/TS · Apollo Router Connect-compatible"]
+  T["Transports<br/>transport-connect · transport-sql · …"]
+
+  S --> L --> C
+  C --> R
+  C --> G
+  R -.-> G
+  G --> T
+```
+
+**Captions**
+
+- **Sources** feed either a loader or authored `.graphql`.
+- **Loaders** are optional; hand-written SDL enters Compose the same way.
+- **Mesh Compose** is the composition step for generated and authored subgraphs.
+- **Schema registry** is optional publish/pull; gateways can also take Compose output directly.
+- **Hive Gateway** (JS/TS) covers the full Mesh transport set; **Apollo Router** is a peer for
+  Connect-compatible SDL.
+- **Transports** execute directives at request time.
 
 ## Patterns
 
@@ -30,8 +43,3 @@ Connectors-style directives, composed into a real supergraph.
 | Dual-run same SDL           | Hive Gateway and Apollo Router both execute the same Connect supergraph.                            |
 | Hive Gateway subgraph proxy | Non-Connect Mesh subgraphs served by Hive Gateway; a foreign router talks GraphQL to that subgraph. |
 | Registry                    | Publish Mesh subgraphs (generated or hand-written); gateway pulls the supergraph.                   |
-
-<Callout type="warning">
-  Do not teach ad-hoc e2e-style custom `sourceHandler` copy-paste as the architecture. Prefer
-  loaders and first-class hand SDL into Compose.
-</Callout>
