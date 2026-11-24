@@ -10,7 +10,7 @@
     "@graphql-hive/cli": "0.68.6",
     "@graphql-mesh/compose-cli": "workspace:*",
     "@omnigraph/openapi": "workspace:*",
-    "fets": "0.8.13",
+    "fets": "0.8.14",
     "graphql": "16.14.0"
   }
 }

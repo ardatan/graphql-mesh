@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "@graphql-hive/gateway": "^2.15.12",
-    "fets": "^0.8.13",
+    "fets": "^0.8.14",
     "graphql": "16.14.0"
   }
 }
