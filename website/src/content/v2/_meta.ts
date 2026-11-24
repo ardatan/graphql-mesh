@@ -4,8 +4,7 @@ export default {
   architecture: 'Architecture',
   compose: 'Compose',
   serve: 'Serve',
-  tutorials: 'Tutorials',
+  examples: 'Examples',
   protocols: 'Protocols',
   guides: 'Guides',
-  examples: 'Examples',
 };

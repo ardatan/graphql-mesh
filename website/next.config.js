@@ -43,6 +43,8 @@ export default withGuildDocs({
       '/v1/serve': 'https://the-guild.dev/graphql/hive/docs/gateway',
       '/v1/serve/:path*': 'https://the-guild.dev/graphql/hive/docs/gateway/:path*',
       '/v1/introduction': '/v1',
+      '/v2/tutorials': '/v2/examples',
+      '/v2/tutorials/music-store': '/v2/examples/music-store',
     }).map(([from, to]) => ({
       destination: to,
       permanent: true,
