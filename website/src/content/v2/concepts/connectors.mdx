@@ -39,9 +39,9 @@ HTTP/REST Connectors are **not** Mesh-only protocol mapping. SQL, Mongo, Protobu
 Neo4j use their own Mesh protocol directives plus `@transport` -- do not call those "Connectors."
 Composition itself is also separate.
 
-**Naming tip:** Spec [Schema Coordinates](/v2/guides/schema-coordinates) name the GraphQL field
-(`Query.review`, `Query.review(id:)`). Apollo **connector coordinates** in error extensions (e.g.
-`ecomm:Query.products@connect[0]`) are a different vocabulary -- see the Schema Coordinates guide.
+Apollo **connector coordinates** in error extensions (e.g. `ecomm:Query.products@connect[0]`) are
+not the same as Spec field names like `Query.review` -- see
+[Schema Coordinates](/v2/guides/schema-coordinates).
 
 ## Short example
 
@@ -67,7 +67,6 @@ Binders: [Selection mapping](/v2/guides/selection-mapping).
 <Cards>
   <Cards.Card arrow title="HTTP / REST protocol" href="/v2/protocols/http-rest" />
   <Cards.Card arrow title="Directives reference" href="/v2/reference/directives#connect" />
-  <Cards.Card arrow title="Schema Coordinates" href="/v2/guides/schema-coordinates" />
   <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
   <Cards.Card
     arrow

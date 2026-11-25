@@ -6,8 +6,8 @@ import { Callout, Cards } from '@theguild/components'
 
 # Schema Coordinates
 
-Mesh names individual schema elements with **Schema Coordinates** from the GraphQL Spec. Prefer
-these forms in docs, config keys that target one element, and diagnostics.
+**Schema Coordinates** are the GraphQL Spec names for one type, field, argument, or directive. Mesh
+docs and configs use these forms when pointing at a single schema element.
 
 **Spec:** [§2.14 Schema Coordinates](https://spec.graphql.org/September2025/#sec-Schema-Coordinates)
 ([PR #794](https://github.com/graphql/graphql-spec/pull/794)). **RFC (merged):**
@@ -43,19 +43,18 @@ Nested field paths (`Query.user.name`), wildcards, union members (`Meal.Breakfas
 
 ## How Mesh uses them today
 
-| Surface                              | Spec forms accepted today    | Notes                                                                              |
-| ------------------------------------ | ---------------------------- | ---------------------------------------------------------------------------------- |
-| Federation transform config keys     | `Type`, `Type.field`         | Prefer Spec keys; args still use nested config objects, not `Type.field(arg:)` yet |
-| Response-cache TTL keys              | `Type`, `Type.field`         | Exact match only -- not `Query.*`                                                  |
-| Mock / resolvers composition (exact) | `Type.field`                 | Globs like `Mutation.*` are **schema selectors**, not Spec                         |
-| Docs / examples in `/v2`             | Prefer full Spec table above | When showing an argument, write `Query.track(id:)`                                 |
+| Surface                              | Spec forms accepted today  | Notes                                                                    |
+| ------------------------------------ | -------------------------- | ------------------------------------------------------------------------ |
+| Federation transform config keys     | `Type`, `Type.field`       | Args still use nested config objects, not `Type.field(arg:)` strings yet |
+| Response-cache TTL keys              | `Type`, `Type.field`       | Exact match only -- not `Query.*`                                        |
+| Mock / resolvers composition (exact) | `Type.field`               | Globs like `Mutation.*` are **schema selectors**, not Spec               |
+| Docs / examples in `/v2`             | Forms from the table above | e.g. `Query.track(id:)` for an argument                                  |
 
 Legacy **schema selectors** (Minimatch / globs on filter-schema and some plugins) stay supported for
-wildcards and negation. Use Spec coordinates when you mean **one** type, field, arg, or directive.
+wildcards and negation; they are not Schema Coordinates.
 
-When reading generated SDL, map what you see back to coordinates: a Query field `track(id: ID!)` is
-`Query.track` and `Query.track(id:)`; `@sql(table: ...)` on that field is still the field coordinate
-plus directive forms `@sql` / `@sql(table:)` when talking about the directive itself.
+A Query field `track(id: ID!)` is `Query.track` and `Query.track(id:)`. Talking about the `@sql`
+directive itself uses `@sql` / `@sql(table:)`.
 
 <Callout type="info">
   Pair with [Reading generated SDL](/v2/guides/reading-generated-sdl) (stamps on the SDL) and

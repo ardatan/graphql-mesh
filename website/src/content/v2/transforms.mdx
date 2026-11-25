@@ -37,9 +37,8 @@ subgraph that owns the names you want to change. See [Composition](/v2/compose).
 
 ## Concrete example
 
-Loader (or hand SDL) exposes `Query.moviesByYear` with argument coordinate
-`Query.moviesByYear(year:)`. Public API should say `releaseYear` without regenerating or
-hand-editing every `@protobuf__rpc(args:)` line:
+Loader (or hand SDL) exposes `Query.moviesByYear(year:)`. Public API should say `releaseYear`
+without regenerating or hand-editing every `@protobuf__rpc(args:)` line:
 
 ```ts
 {
@@ -64,11 +63,11 @@ SDL + rename transform).
 - **Rename / prefix / naming-convention** on output you mostly like (including shaping fields toward
   [semantic ById conventions](/v2/compose#semantic-conventions)).
 - **Federation transform** (`createFederationTransform`) to annotate a non-federated GraphQL source
-  with `@key` + `resolveReference` -- config keys use Spec `Type` / `Type.field` today; see
-  [Entity resolution](/v2/concepts/federation#entity-resolution) and
-  [Schema Coordinates](/v2/guides/schema-coordinates).
+  with `@key` + `resolveReference` -- config keys are `Type` / `Type.field` today; see
+  [Entity resolution](/v2/concepts/federation#entity-resolution).
 - **Filter / wrap** generated noise before a first review. Filter patterns such as `Query.*` or
-  `Type.!User` are Mesh **schema selectors** (globs), not Spec Schema Coordinates.
+  `Type.!User` are Mesh **schema selectors** (globs), not single-element coordinates -- see
+  [Schema Coordinates](/v2/guides/schema-coordinates).
 - Keep dual-run valid when GraphQL names change but directive mappings must follow.
 
 ## When you can skip them
@@ -85,7 +84,6 @@ Individual transform reference today: [v1 Transforms](/v1/transforms) (v2 per-tr
 replace this link).
 
 <Cards>
-  <Cards.Card arrow title="Schema Coordinates" href="/v2/guides/schema-coordinates" />
   <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />

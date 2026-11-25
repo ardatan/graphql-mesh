@@ -11,9 +11,7 @@ Generated <ConceptRef name="mesh">Mesh</ConceptRef> subgraphs are ordinary Graph
 directives. Before you edit or hand-write, learn to recognize the important stamps. This page is a
 **reading guide** -- for arg tables see the [Directives reference](/v2/reference/directives) and
 
-<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> upstream. How we name one type,
-field, arg, or directive: [Schema Coordinates](/v2/guides/schema-coordinates) (Spec `Type.field`,
-`Type.field(arg:)`, ...).
+<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> upstream.
 
 ## What to look for
 
@@ -30,14 +28,11 @@ field, arg, or directive: [Schema Coordinates](/v2/guides/schema-coordinates) (S
 
 ## Conventions that help
 
-1. Start from a **root field** you already queried (coordinate `Query.<field>`), then follow its
-   `@connect` / protocol directive.
+1. Start from a **root field** you already queried (`Query.track`, ...), then follow its `@connect`
+   / protocol directive.
 2. Trace `$args` and `$this` in `selection` before renaming anything -- see
-   [Selection mapping](/v2/guides/selection-mapping). Name the GraphQL arg with Spec form
-   `Type.field(arg:)` when you talk about it outside binders.
+   [Selection mapping](/v2/guides/selection-mapping).
 3. Treat emitted SDL as the contract you will either keep, edit, or rewrite by hand.
-4. Prefer [Schema Coordinates](/v2/guides/schema-coordinates) for unique element ids; keep Mesh
-   **schema selectors** (`Query.*`, filter globs) labeled as selectors, not Spec coordinates.
 
 <Callout type="info">
   Shared by [Generate](/v2/paths/generate), [Generate-then-edit](/v2/paths/generate-then-edit), and

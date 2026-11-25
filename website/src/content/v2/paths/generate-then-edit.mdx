@@ -41,8 +41,8 @@ yourself.
 
 ## What edits usually look like
 
-Loader emit for a ById root (`Query.getCustomer` / `Query.getCustomer(id:)` -- Spec
-[Schema Coordinates](/v2/guides/schema-coordinates); Composition may stamp `entity: true`):
+Loader emit for a ById root (`Query.getCustomer` / `Query.getCustomer(id:)`). Composition may stamp
+`entity: true`:
 
 ```graphql
 type Query {
@@ -59,8 +59,8 @@ type Query {
 }
 ```
 
-After edit -- extend a catalog entity (join stub + field Connect). Name the parent field with Spec
-coordinates when you talk about it (`Track.reviews`); binders stay `$this.id`:
+After edit -- extend a catalog entity (join stub + field Connect). Binders use `$this.id` on
+`Track.reviews`:
 
 ```graphql
 type Track @key(fields: "id", resolvable: false) {
@@ -87,7 +87,6 @@ Full stage walkthrough: [Music Store Example](/v2/examples/music-store).
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Transforms (optional)" href="/v2/transforms" />
-  <Cards.Card arrow title="Schema Coordinates" href="/v2/guides/schema-coordinates" />
   <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>
