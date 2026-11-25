@@ -15,9 +15,9 @@ Federation `@key`, and `@link` / `@transport`. Full `@connect` / `@source` arg t
 [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
 
 Use this page when [reading generated SDL](/v2/guides/reading-generated-sdl) or
-[hand-writing](/v2/paths/hand-write) subgraphs. Each family below leads with **concrete scenarios**
-from repo e2e / composition tests, not just arg lists. Binders:
-[Selection mapping](/v2/guides/selection-mapping). Protocol pages: [Protocols](/v2/protocols).
+[hand-writing](/v2/paths/hand-write) subgraphs. Each family below leads with **concrete scenarios**,
+not just arg lists. Binders: [Selection mapping](/v2/guides/selection-mapping). Protocol pages:
+[Protocols](/v2/protocols).
 
 ## Table of contents
 
@@ -87,8 +87,7 @@ type Track @key(fields: "id", resolvable: false) {
 ### Scenario: ById Query gets `entity: true` (`e2e/openapi-entity-stubs`)
 
 Composition semantic conventions (`get_<Type>` + key-typed arg matching the key field) stamp
-`entity: true` and `@key` -- no Mesh `@merge` on Connect subgraphs (composition test
-`marks getCustomer(id:) with entity: true`):
+`entity: true` and `@key` -- no Mesh `@merge` on Connect subgraphs:
 
 ```graphql
 type Query {
@@ -110,7 +109,7 @@ type Customer @key(fields: "id") {
 }
 ```
 
-### Scenario: arg name differs from key -- type-level `$this` (composition test)
+### Scenario: arg name differs from key -- type-level `$this`
 
 `getUserById(userId:)` cannot use field-level `entity: true` (arg is not `id`). Compose keeps the
 Query as the client entrypoint with `$args.userId` and adds a **type-level** `@connect` with
@@ -527,8 +526,8 @@ In `selection`, the loader maps **original SQL columns to GraphQL fields** (`id:
 
 `@mongo__*`
 
-Op-specific directives. Hive Gateway only. Protocol: <ProtocolRef name="mongo" />. Anchors:
-`e2e/mongoose-users`, loader `mongo-schema` snap.
+Op-specific directives. Hive Gateway only. Protocol: <ProtocolRef name="mongo" />. Anchor:
+`e2e/mongoose-users`.
 
 **Import**
 
@@ -753,23 +752,28 @@ extend schema
 | `messageType` | `CALL` (default) or `ONEWAY`          |
 | `entity`      | Wire `_entities` / `resolveReference` |
 
-### Scenario: binary CALL + ONEWAY (loader snap)
+### Scenario: binary CALL + ONEWAY
+
+Binary Thrift uses `@thrift__rpc` with wire field maps. `CALL` is the default request/response
+shape; `ONEWAY` has no reply payload (`$(void)`):
 
 ```graphql
 type Query {
+  # CALL: request struct in, i32 out
   add(request: AddRequestInput): Int
     @thrift__rpc(
       function: "add"
       args: """
       1(struct): $args.request {
-        1(i32): left
-        2(i32): right
+        1(i32): left # Thrift field 1
+        2(i32): right # Thrift field 2
       }
       """
-      selection: "$(i32)"
+      selection: "$(i32)" # unwrap success i32
       messageType: CALL
     )
 
+  # ONEWAY: fire-and-forget, no response body
   zip: Void @thrift__rpc(function: "zip", selection: "$(void)", messageType: ONEWAY)
 }
 ```
@@ -880,7 +884,7 @@ extend schema
   @composeDirective(name: "@transport")
 ```
 
-Mongo loader snaps also `@composeDirective` every `@mongo__*` op they emit.
+Mongo loaders also `@composeDirective` every `@mongo__*` op they emit.
 
 ---
 

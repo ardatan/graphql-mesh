@@ -186,12 +186,12 @@ column-to-field mapping is the loader concern -- not a separate "rename everythi
 rule. Binders: [Selection mapping](/v2/guides/selection-mapping). Entity / ById:
 [Composition semantic conventions](/v2/compose#semantic-conventions).
 
-## Edge cases
+## Complex Use Cases
 
 ### Cursor connection + count
 
-Beyond offset lists, Chinook emit includes `kind: CONNECTION` (nodes / edges / pageInfo /
-`$totalCount`) and `kind: COUNT`:
+Offset lists (`kind: ROWS`) are not the only list shape. `CONNECTION` builds Relay-style `nodes` /
+`pageInfo` / `$totalCount` from the same table; `COUNT` returns a scalar:
 
 ```graphql
 type Query {
@@ -210,7 +210,7 @@ type Query {
       after: "$args.after"
       selection: """
       nodes {
-        id: AlbumId
+        id: AlbumId # SQL AlbumId -> GraphQL id
         title: Title
       }
       pageInfo {
@@ -221,6 +221,7 @@ type Query {
       """
     )
 
+  # Scalar count with the same where binder
   albumsCount(where: AlbumFilter): Int!
     @sql(table: "albums", kind: COUNT, where: "$args.where", selection: "$")
 }
@@ -228,13 +229,58 @@ type Query {
 
 ### FK `$this` plus client filters
 
-`Artist.albums` merges `ArtistId: $this.id` with `...$args.where` so callers can still filter / page
-the related set (loader snap).
+Related lists pin the parent key with `$this`, then splice in optional client filters via
+`...$args.where` so callers can still page or filter the related set:
+
+```graphql
+type Artist @key(fields: "id") {
+  id: ID!
+  albums(where: AlbumFilter, limit: Int, offset: Int): [Album!]!
+    @sql(
+      table: "albums"
+      kind: ROWS
+      where: """
+      ArtistId: $this.id # always constrain to this artist
+      ...$args.where # optional client filter merged in
+      """
+      limit: "$args.limit"
+      offset: "$args.offset"
+      selection: """
+      id: AlbumId
+      title: Title
+      """
+    )
+}
+```
 
 ### Many-to-many `through`
 
-Playlist -> tracks via `playlist_track` (see FK navigation above) -- `through` carries `local` /
-`remote` / `parent` / `target` when there is no direct FK on the target table.
+When there is no direct FK on the target table, `through` describes the join table. Playlist tracks
+go through `playlist_track`: `local` is the parent column, `remote` / `target` reach `tracks`:
+
+```graphql
+type Playlist {
+  tracks(where: TrackFilter, limit: Int, offset: Int): [Track!]!
+    @sql(
+      table: "tracks"
+      kind: ROWS
+      through: """
+      table: playlist_track
+      local: PlaylistId # column on join table for this Playlist
+      remote: TrackId # column on join table toward tracks
+      parent: $this.id
+      target: TrackId # PK on tracks
+      """
+      where: "$args.where"
+      limit: "$args.limit"
+      offset: "$args.offset"
+      selection: """
+      id: TrackId
+      name: Name
+      """
+    )
+}
+```
 
 Walkthrough: [Music Store Example](/v2/examples/music-store) stage 1.
 

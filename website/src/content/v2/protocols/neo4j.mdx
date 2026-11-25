@@ -91,23 +91,65 @@ schema @transport(subgraph: "Movies", kind: "neo4j", location: "neo4j://localhos
 }
 ```
 
-## Edge cases
+## Complex Use Cases
 
 ### Introspected pluralization + both directions
 
-`e2e/neo4j-example` emit uses Neo4j GraphQL pluralization (`actedInMovies` / `peopleActedIn`) and
-stamps `@relationship` on **both** ends of `ACTED_IN` / `DIRECTED` / `REVIEWED` (IN on `Movie`, OUT
-on `Person`).
+Neo4j GraphQL pluralization names both ends of an edge (`actedInMovies` on `Person`, `peopleActedIn`
+on `Movie`). Emit stamps `@relationship` on **both** directions of `ACTED_IN` / `DIRECTED` /
+`REVIEWED` (IN on `Movie`, OUT on `Person`):
+
+```graphql
+type Person @node {
+  name: String!
+  # OUT: person acted in movies
+  actedInMovies: [Movie!]!
+    @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
+}
+
+type Movie @node {
+  title: String!
+  # IN: people who acted in this movie (same ACTED_IN edge, other end)
+  peopleActedIn: [Person!]!
+    @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
+}
+```
 
 ### Relationship properties
 
-Edges with properties get a `@relationshipProperties` type (e.g. `ActedInProperties.roles`,
-`ReviewedProperties`) referenced from `@relationship(properties: ...)`.
+Edges with properties get a `@relationshipProperties` type. `ACTED_IN` carries `roles`; the
+`properties:` arg on `@relationship` points at that type:
+
+```graphql
+type ActedInProperties @relationshipProperties {
+  roles: [String!] # edge property on ACTED_IN
+}
+
+type Person @node {
+  name: String!
+  actedInMovies: [Movie!]!
+    @relationship(
+      type: "ACTED_IN"
+      direction: OUT
+      properties: "ActedInProperties" # links to ActedInProperties above
+    )
+}
+```
 
 ### Mesh `subgraph:` on natives
 
-Compose may print `@node(subgraph: "Movies")` / `@relationship(subgraph: "Movies", ...)` so
-transports filter by `@transport(subgraph:)` -- still Neo4j GraphQL natives, not a Mesh dialect.
+Compose may print `subgraph:` on Neo4j natives so transports filter by `@transport(subgraph:)`.
+These are still Neo4j GraphQL directives, not a Mesh-only dialect:
+
+```graphql
+type Movie @node(subgraph: "Movies") {
+  title: String!
+  actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, subgraph: "Movies")
+}
+
+# Transport stamp matches the subgraph name on the natives
+extend schema @transport(subgraph: "Movies", kind: "neo4j", location: "bolt://...")
+```
 
 Catalog: [Directives: Neo4j](/v2/reference/directives#neo4j). Serve:
 [Hive Gateway](/v2/serve/hive-gateway).
