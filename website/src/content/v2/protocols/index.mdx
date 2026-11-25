@@ -17,7 +17,7 @@ protocols (SQL, Mongo, Protobuf, ...) as Connectors.
 | Family                                      | When to open it                                  | Transport                            | Apollo Router dual-run   |
 | ------------------------------------------- | ------------------------------------------------ | ------------------------------------ | ------------------------ |
 | REST / OpenAPI / JSON Schema / RAML / OData | HTTP JSON APIs, entity lookups, FHIR             | `transport-connect`                  | Yes (Connect-compatible) |
-| SOAP / WSDL                                 | Legacy SOAP ops as Connect + XML body            | `transport-connect` (+ XML codec)    | No                       |
+| SOAP / WSDL                                 | WSDL ops as Connect + XML body                   | `transport-connect` (+ XML codec)    | No                       |
 | SQL                                         | Tables, FKs, CRUD, Federation entity fill        | `transport-sql`                      | No (Hive Gateway)        |
 | Mongo                                       | Collections, find/filter/CRUD, ObjectId entities | `transport-mongo`                    | No                       |
 | Neo4j                                       | Nodes / relationships via Neo4j GraphQL natives  | `transport-neo4j`                    | No                       |

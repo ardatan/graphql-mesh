@@ -53,7 +53,7 @@ service Calculator {
 }
 ```
 
-Emitted / hand `@thrift__rpc` (loader + composition tests) -- wire types in `args` / `selection`:
+Emitted / hand `@thrift__rpc` -- wire types in `args` / `selection`:
 
 ```graphql
 extend schema
@@ -82,14 +82,12 @@ type Query {
 }
 ```
 
-`throws:` on the directive maps Thrift exceptions into the selection dialect (see Twitter-style
-fixtures in the thrift loader tests). Rename transforms rewrite `$args` inside `@thrift__rpc` the
-same way they rewrite `@connect`.
+`throws:` on the directive maps Thrift exceptions into the selection dialect. Rename transforms
+rewrite `$args` inside `@thrift__rpc` the same way they rewrite `@connect`.
 
 ## Generate (TJSON -> Connect)
 
-Same IDL, `protocol: 'json'`. Emit switches to Connect with a TJSON request array in `http.body`
-(loader snapshot `Calc-json-connect-schema`):
+Same IDL, `protocol: 'json'`. Emit switches to Connect with a TJSON request array in `http.body`:
 
 ```ts
 loadThriftSubgraph('calculator', {
