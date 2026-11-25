@@ -20,15 +20,17 @@ treat both the same.
 **Captions**
 
 - **Sources** feed either a loader or authored `.graphql`.
-- **Subgraph SDL** may come from an Omnigraph loader or a hand-written file -- loaders are optional.
+- **Subgraph SDL** may come from an Omnigraph <ConceptRef name="loaders">loader</ConceptRef> or a
+  hand-written file -- loaders are optional.
 - **Composition** via **Mesh Compose** is the
   <ConceptRef name="composition">composition</ConceptRef> step for generated and authored subgraphs.
 - <ConceptRef name="schema-registry">Schema registry</ConceptRef> is optional publish/pull; gateways
   can also take Compose output directly.
 - <ConceptRef name="gateway">Gateway</ConceptRef> peers: **Hive Gateway** (JS/TS) and **Apollo
   Router** -- full Mesh transports vs Connect-compatible SDL.
-- **Transports** execute directives (<DirectiveRef name="transport" />,
-  <DirectiveRef name="connect" />, protocol directives) at request time.
+- <ConceptRef name="transports">Transports</ConceptRef> execute directives (
+  <DirectiveRef name="transport" />, <DirectiveRef name="connect" />, protocol directives) at
+  request time.
 - Protocol families:
   <ProtocolRef name="http-rest" />, <ProtocolRef name="sql" />, <ProtocolRef name="mongo" />,
   <ProtocolRef name="neo4j" />, <ProtocolRef name="thrift" />, <ProtocolRef name="protobuf" /> --

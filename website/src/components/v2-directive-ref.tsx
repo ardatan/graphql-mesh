@@ -130,6 +130,16 @@ const CONCEPTS = {
     href: '/v2/concepts/mesh',
     description: 'Federation framework: sources or SDL -> subgraphs, composition, transports.',
   },
+  loaders: {
+    label: 'Loaders',
+    href: '/v2/concepts/loaders',
+    description: 'Omnigraph packages that emit subgraph SDL from upstreams (not runtime fetch).',
+  },
+  transports: {
+    label: 'Transports',
+    href: '/v2/concepts/transports',
+    description: 'Gateway runtime packages that execute Mesh / Connect directives upstream.',
+  },
   connectors: {
     label: 'HTTP/REST Connectors',
     href: '/v2/concepts/connectors',

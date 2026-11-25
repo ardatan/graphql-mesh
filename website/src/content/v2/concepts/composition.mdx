@@ -3,7 +3,7 @@ description: What composition is -- combining subgraph SDL into a supergraph
 ---
 
 import { Cards } from '@theguild/components'
-import { ApiRef, ProtocolRef } from '../../../components/v2-directive-ref'
+import { ApiRef, ConceptRef, ProtocolRef } from '../../../components/v2-directive-ref'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Composition
@@ -30,8 +30,11 @@ Hive composition, Rover, or another Federation-compatible composer.
 | Mesh Compose | Default snippets in Mesh docs (`mesh.config.ts`)                        |
 | Outputs      | Supergraph file, subgraph SDL for registry, binary formats as supported |
 
-Composition is **not** serving traffic, **not** executing transports, and **not** the schema
-registry (though you often compose then publish).
+Composition is **not** serving traffic, **not** executing
+
+<ConceptRef name="transports">transports</ConceptRef>, and **not** the schema registry (though you
+often compose then publish). Inputs may come from <ConceptRef name="loaders">loaders</ConceptRef> or
+hand SDL.
 
 ## What Mesh Compose adds
 
