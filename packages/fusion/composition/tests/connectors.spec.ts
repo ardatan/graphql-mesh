@@ -17,6 +17,16 @@ import {
 import { createPrefixTransform } from '../src/transforms/prefix.js';
 import { createRenameTransform } from '../src/transforms/rename.js';
 
+/** Collapse insignificant GraphQL print whitespace (GQL17 spaces inside `{}`). */
+function compactGql(s: string): string {
+  return s
+    .replace(/\s*([{}\[\](),:])\s*/g, '$1')
+    .replace(/\s+/g, ' ')
+    // GQL17 multiline input objects omit commas; restore them for stable asserts.
+    .replace(/((?:"(?:\\.|[^"\\])*"|true|false|null|\d+|\]))\s+(?=[A-Za-z_@])/g, '$1,')
+    .trim();
+}
+
 describe('Federation Connectors composition', () => {
   const connectorsSchema = buildSchema(/* GraphQL */ `
     schema
@@ -120,7 +130,7 @@ describe('Federation Connectors composition', () => {
     expect(sdl).not.toMatch(/@meshSource\b/);
     expect(sdl).not.toMatch(/@source\([^)]*subgraph:/);
     // Connectors-only: keep Apollo `@source` on the connect `@link` import.
-    expect(sdl).toMatch(/import:\s*\[[^\]]*@source/);
+    expect(compactGql(sdl)).toMatch(/import:\s*\[[^\]]*@source/);
     expect(sdl).toContain('specs.apollo.dev/connect/v0.4');
     expect(sdl).toContain('@connect');
   });
@@ -772,8 +782,8 @@ describe('Federation Connectors composition', () => {
     expect(lifted).toMatch(/schema[\s\S]*@transport\(subgraph: "REST"/);
     expect(lifted).toContain('directive @source');
     expect(lifted).toContain('directive @transport');
-    expect(lifted).toMatch(/connect\/v0\.4", import: \["@connect", "@source"\]/);
-    expect(lifted).toMatch(/specs\.graphql-mesh\.com\/.*\/v0\.1".*import: \["@transport"\]/);
+    expect(compactGql(lifted)).toMatch(/connect\/v0\.4",import:\["@connect","@source"\]/);
+    expect(compactGql(lifted)).toMatch(/specs\.graphql-mesh\.com\/.*\/v0\.1".*import:\["@transport"\]/);
     expect(() => buildSchema(lifted, { assumeValidSDL: true })).not.toThrow();
   });
 
@@ -833,7 +843,7 @@ describe('Federation Connectors composition', () => {
     const annotatedSdl = print(annotated[0].typeDefs);
     expect(annotatedSdl).not.toContain('@meshSource');
     expect(annotatedSdl).toMatch(/@source\([^)]*subgraph:/);
-    expect(annotatedSdl).toMatch(/import:\s*\[[^\]]*@source/);
+    expect(compactGql(annotatedSdl)).toMatch(/import:\s*\[[^\]]*@source/);
 
     const result = composeSubgraphs([
       {
@@ -913,9 +923,7 @@ describe('Federation Connectors composition', () => {
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "meshSource"/);
     expect(sdl).not.toMatch(/@meshSource\s*\(/);
     // Join-carried meshSource still keeps the aliased Mesh `@link` import.
-    expect(sdl).toMatch(
-      /specs\.graphql-mesh\.com\/core\/v0\.1", import: \[[^\]]*\{name: "@source", as: "@meshSource"\}/,
-    );
+    expect(compactGql(sdl)).toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1",import:\[[^\]]*\{name:"@source",as:"@meshSource"\}/);
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "source"[\s\S]*name: "rest"/);
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "connect"/);
     expect(sdl).not.toMatch(/@connect\(/);
@@ -1379,8 +1387,8 @@ describe('Federation Connectors composition', () => {
 
     const out = finalizeConnectorsSupergraph(before);
     // Scope to the Airline type - Query.AirlinesByAirlineCode also has connect.
-    expect(out).toMatch(
-      /type Airline[\s\S]*@join__directive\(graphs: \[TRIPPIN\], name: "connect", args: \{source: "Trippin"[\s\S]*entity: true\}/,
+    expect(compactGql(out)).toMatch(
+      /type Airline[\s\S]*@join__directive\(graphs:\[TRIPPIN\],name:"connect",args:\{source:"Trippin"[\s\S]*entity:true\}/,
     );
     expect(out).not.toMatch(
       /type Airline[\s\S]*@join__directive\(graphs: \[CATALOG\], name: "connect"/,
@@ -1484,12 +1492,8 @@ describe('Federation Connectors composition', () => {
     expect(productType).toMatch(/@join__directive\(graphs: \[PRODUCTS\], name: "connect"/);
     expect(productType).not.toMatch(/@join__directive\(graphs: \[INVENTORY\], name: "connect"/);
     // Schema @source emitted for every graph that referenced "api".
-    expect(out).toMatch(
-      /@join__directive\(graphs: \[PRODUCTS\], name: "source", args: \{name: "api"/,
-    );
-    expect(out).toMatch(
-      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api"/,
-    );
+    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[PRODUCTS\],name:"source",args:\{name:"api"/);
+    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[INVENTORY\],name:"source",args:\{name:"api"/);
   });
 
   it('attributes source-less type-level @connect to the sole keyed join (value-type sibling)', () => {
@@ -1772,12 +1776,8 @@ describe('Federation Connectors composition', () => {
     expect(result.errors ?? []).toEqual([]);
     const out = result.supergraphSdl!;
 
-    expect(out).toMatch(
-      /@join__directive\(graphs: \[PRODUCTS\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/products\.example\.com"\}\}/,
-    );
-    expect(out).toMatch(
-      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/inventory\.example\.com"\}\}/,
-    );
+    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[PRODUCTS\],name:"source",args:\{name:"api",http:\{baseURL:"https:\/\/products\.example\.com"\}\}/);
+    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[INVENTORY\],name:"source",args:\{name:"api",http:\{baseURL:"https:\/\/inventory\.example\.com"\}\}/);
     // Must not cross-attach the other graph's baseURL.
     expect(out).not.toMatch(
       /@join__directive\(graphs: \[PRODUCTS\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/inventory\.example\.com"\}\}/,
@@ -1852,12 +1852,8 @@ describe('Federation Connectors composition', () => {
     expect(result.errors ?? []).toEqual([]);
     const out = result.supergraphSdl!;
 
-    expect(out).toMatch(
-      /@join__directive\(graphs: \[API\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com"\}\}/,
-    );
-    expect(out).toMatch(
-      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/inventory\.example\.com"\}\}/,
-    );
+    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[API\],name:"source",args:\{name:"api",http:\{baseURL:"https:\/\/api\.example\.com"\}\}/);
+    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[INVENTORY\],name:"source",args:\{name:"api",http:\{baseURL:"https:\/\/inventory\.example\.com"\}\}/);
     expect(out).not.toMatch(
       /@join__directive\(graphs: \[API\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/inventory\.example\.com"\}\}/,
     );
@@ -1949,12 +1945,8 @@ describe('Federation Connectors composition', () => {
     expect(result.errors ?? []).toEqual([]);
     const out = result.supergraphSdl!;
 
-    expect(out).toMatch(
-      /@join__directive\(graphs: \[PRODUCTS\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com", headers: \[\{name: "X-Tenant", value: "products"\}\]\}\}/,
-    );
-    expect(out).toMatch(
-      /@join__directive\(graphs: \[INVENTORY\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com", headers: \[\{name: "X-Tenant", value: "inventory"\}\]\}\}/,
-    );
+    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[PRODUCTS\],name:"source",args:\{name:"api",http:\{baseURL:"https:\/\/api\.example\.com",headers:\[\{name:"X-Tenant",value:"products"\}\]\}\}/);
+    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[INVENTORY\],name:"source",args:\{name:"api",http:\{baseURL:"https:\/\/api\.example\.com",headers:\[\{name:"X-Tenant",value:"inventory"\}\]\}\}/);
     expect(out).not.toMatch(
       /@join__directive\(graphs: \[PRODUCTS\], name: "source", args: \{name: "api", http: \{baseURL: "https:\/\/api\.example\.com", headers: \[\{name: "X-Tenant", value: "inventory"\}\]\}\}/,
     );

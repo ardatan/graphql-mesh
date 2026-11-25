@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Discriminator Mapping should generate correct schema: discriminator-mapping 1`] = `
-"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "test", http: { baseURL: "" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -12,7 +12,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}"}, selection: """
+  pets_by_id(id: String!): Pet @connect(source: "test", http: { GET: "/pets/{$args.id}" }, selection: """
   ... $.petType->match(["Dog", { __typename: "DogDifferent" }], ["Cat", { __typename: "Cat" }])
   petType
   cat_exclusive
@@ -71,7 +71,7 @@ input SourceHTTP {
 `;
 
 exports[`Inline Discriminator Mapping (request body) should generate correct schema: discriminator-inline-request 1`] = `
-"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "test", http: { baseURL: "" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -87,7 +87,7 @@ type Query {
 }
 
 type Mutation {
-  createThing(input: createThing_request_Input): Thing @connect(source: "test", http: {POST: "/things", body: "$args.input"}, selection: """
+  createThing(input: createThing_request_Input): Thing @connect(source: "test", http: { POST: "/things", body: "$args.input" }, selection: """
   id
   type
   name
@@ -156,7 +156,7 @@ input SourceHTTP {
 `;
 
 exports[`Inline Discriminator Mapping should generate correct schema: discriminator-inline 1`] = `
-"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "test", http: { baseURL: "" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -167,7 +167,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  things: [query_things_items] @connect(source: "test", http: {GET: "/things"}, selection: """
+  things: [query_things_items] @connect(source: "test", http: { GET: "/things" }, selection: """
   ... $.type->match(["cat", { __typename: "Cat" }], ["dog", { __typename: "Dog" }])
   id
   type

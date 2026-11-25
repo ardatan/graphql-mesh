@@ -1,7 +1,23 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`@omnigraph/mongo schema emit emits typed query/sort with Mongo method roots: user-full-slice 1`] = `
-"schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test", options: {objectIdFieldsByCollection: [{collection: "user_users", fields: []}], placeholderFieldsByCollection: [{collection: "user_users", fields: []}]}) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/mongo/v0.1", import: ["@mongo__findOne", "@mongo__find", "@mongo__count", "@mongo__connection", "@mongo__pagination", "@mongo__aggregate", "@mongo__insertOne", "@mongo__insertMany", "@mongo__updateOne", "@mongo__updateMany", "@mongo__deleteOne", "@mongo__deleteMany"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@mongo__findOne") @composeDirective(name: "@mongo__find") @composeDirective(name: "@mongo__count") @composeDirective(name: "@mongo__connection") @composeDirective(name: "@mongo__pagination") @composeDirective(name: "@mongo__aggregate") @composeDirective(name: "@mongo__insertOne") @composeDirective(name: "@mongo__insertMany") @composeDirective(name: "@mongo__updateOne") @composeDirective(name: "@mongo__updateMany") @composeDirective(name: "@mongo__deleteOne") @composeDirective(name: "@mongo__deleteMany") @composeDirective(name: "@transport") {
+"schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test", options: {
+  objectIdFieldsByCollection: [{ collection: "user_users", fields: [] }]
+  placeholderFieldsByCollection: [{ collection: "user_users", fields: [] }]
+}) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/mongo/v0.1", import: [
+  "@mongo__findOne"
+  "@mongo__find"
+  "@mongo__count"
+  "@mongo__connection"
+  "@mongo__pagination"
+  "@mongo__aggregate"
+  "@mongo__insertOne"
+  "@mongo__insertMany"
+  "@mongo__updateOne"
+  "@mongo__updateMany"
+  "@mongo__deleteOne"
+  "@mongo__deleteMany"
+]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@mongo__findOne") @composeDirective(name: "@mongo__find") @composeDirective(name: "@mongo__count") @composeDirective(name: "@mongo__connection") @composeDirective(name: "@mongo__pagination") @composeDirective(name: "@mongo__aggregate") @composeDirective(name: "@mongo__insertOne") @composeDirective(name: "@mongo__insertMany") @composeDirective(name: "@mongo__updateOne") @composeDirective(name: "@mongo__updateMany") @composeDirective(name: "@mongo__deleteOne") @composeDirective(name: "@mongo__deleteMany") @composeDirective(name: "@transport") {
   query: Query
   mutation: Mutation
 }

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Algolia schema with nested one Of should generate the correct schema: schema 1`] = `
-"schema @source(name: "algolia-nested-one-of", http: {baseURL: "https://{$args.appId:myAppId}.algolia.net"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "algolia-nested-one-of", http: { baseURL: "https://{$args.appId:myAppId}.algolia.net" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -14,7 +14,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Retrieve the Rule with the specified objectID."""
-  getRule(appId: String = "myAppId"): rule @connect(source: "algolia-nested-one-of", http: {GET: "/1/indexes/"}, selection: """
+  getRule(appId: String = "myAppId"): rule @connect(source: "algolia-nested-one-of", http: { GET: "/1/indexes/" }, selection: """
   consequence {
     params {
       facetFilters
@@ -39,7 +39,7 @@ type consequenceParams {
 
 type Mutation {
   """Create or update the Rule with the specified objectID."""
-  saveRule(appId: String = "myAppId", input: rule_Input): String @connect(source: "algolia-nested-one-of", http: {PUT: "/1/indexes/", body: "$args.input"}, selection: "$")
+  saveRule(appId: String = "myAppId", input: rule_Input): String @connect(source: "algolia-nested-one-of", http: { PUT: "/1/indexes/", body: "$args.input" }, selection: "$")
 }
 
 """Rule object."""

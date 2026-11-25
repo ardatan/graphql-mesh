@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI loader: Empty upstream 404 response should generate the schema correctly 1`] = `
-"schema @source(name: "test", http: {baseURL: "http://localhost:{$context.port}/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "test", http: { baseURL: "http://localhost:{$context.port}/api" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -13,7 +13,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Return a user."""
-  user: user @connect(source: "test", http: {GET: "/user"}, selection: "name")
+  user: user @connect(source: "test", http: { GET: "/user" }, selection: "name")
 }
 
 """A user represents a natural person"""

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Query Parameters generates correct schema 1`] = `
-"schema @source(name: "query-params", http: {baseURL: "http://localhost:3000"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "query-params", http: { baseURL: "http://localhost:3000" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -16,11 +16,14 @@ type Query {
   listOfProducts(
     """Get approved products"""
     isApproved: Boolean = true
-  ): [Product] @connect(source: "query-params", http: {GET: "/listOfProducts", queryParams: """
-  {
-    isApproved: $args.isApproved
-  }
-  """}, selection: """
+  ): [Product] @connect(source: "query-params", http: {
+    GET: "/listOfProducts"
+    queryParams: """
+    {
+      isApproved: $args.isApproved
+    }
+    """
+  }, selection: """
   id
   name
   """)

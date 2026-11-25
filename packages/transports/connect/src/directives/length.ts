@@ -1,4 +1,4 @@
-import type { GraphQLScalarType } from 'graphql';
+import type { GraphQLScalarType, ValueNode } from 'graphql';
 
 export function processLengthAnnotations(
   scalar: GraphQLScalarType,
@@ -23,12 +23,19 @@ export function processLengthAnnotations(
     }
   }
 
-  scalar.serialize = coerceString;
-  scalar.parseValue = coerceString;
-  scalar.parseLiteral = ast => {
+  function parseLiteral(ast: ValueNode) {
     if ('value' in ast) {
       return coerceString(ast.value);
     }
     return null;
-  };
+  }
+
+  Object.defineProperties(scalar, {
+    serialize: { value: coerceString, configurable: true },
+    parseValue: { value: coerceString, configurable: true },
+    parseLiteral: { value: parseLiteral, configurable: true },
+    coerceOutputValue: { value: coerceString, configurable: true },
+    coerceInputValue: { value: coerceString, configurable: true },
+    coerceInputLiteral: { value: parseLiteral, configurable: true },
+  });
 }

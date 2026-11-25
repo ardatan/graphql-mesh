@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`required-ref-param should generate the schema correctly: schema 1`] = `
-"schema @source(name: "TestAPI", http: {baseURL: "http://localhost:3000"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "TestAPI", http: { baseURL: "http://localhost:3000" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -12,16 +12,16 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  getFoo(id: UUID!): getFoo_200_response @connect(source: "TestAPI", http: {GET: "/v1/foo", queryParams: """
+  getFoo(id: UUID!): getFoo_200_response @connect(source: "TestAPI", http: { GET: "/v1/foo", queryParams: """
   {
     id: $args.id
   }
-  """}, selection: "result")
-  getBar(id: UUID): getBar_200_response @connect(source: "TestAPI", http: {GET: "/v1/bar", queryParams: """
+  """ }, selection: "result")
+  getBar(id: UUID): getBar_200_response @connect(source: "TestAPI", http: { GET: "/v1/bar", queryParams: """
   {
     id: $args.id
   }
-  """}, selection: "result")
+  """ }, selection: "result")
 }
 
 type getFoo_200_response {

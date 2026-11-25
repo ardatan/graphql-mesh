@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Basket should generate the correct schema 1`] = `
-"schema @source(name: "basket", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "basket", http: { baseURL: "" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -20,14 +20,25 @@ type Query {
   customers_by_customerId(
     """Authentication Token"""
     x_auth_token: String!
-  ): CustomerAttributes @connect(source: "basket", http: {GET: "/customers/{customerId}", headers: [{name: "x-auth-token", value: "{$args.x_auth_token}"}]}, selection: """
+  ): CustomerAttributes @connect(source: "basket", http: {
+    GET: "/customers/{customerId}"
+    headers: [{ name: "x-auth-token", value: "{$args.x_auth_token}" }]
+  }, selection: """
   attributes {
     name
     more
   }
   """)
-  Locations: [LocationModel] @connect(source: "basket", http: {GET: "/Locations", headers: [{name: "accept", value: "application/json,application/custom-thingy.v3+json"}]}, selection: "email")
-  Cards: [CardModel] @connect(source: "basket", http: {GET: "/Cards", headers: [{name: "accept", value: "application/json,application/custom.v3+json"}]}, selection: "id")
+  Locations: [LocationModel] @connect(source: "basket", http: {
+    GET: "/Locations"
+    headers: [
+      { name: "accept", value: "application/json,application/custom-thingy.v3+json" }
+    ]
+  }, selection: "email")
+  Cards: [CardModel] @connect(source: "basket", http: {
+    GET: "/Cards"
+    headers: [{ name: "accept", value: "application/json,application/custom.v3+json" }]
+  }, selection: "id")
 }
 
 type CustomerAttributes {
@@ -56,7 +67,7 @@ type CardModel {
 }
 
 type Mutation {
-  post_basket(input: String): [post_basket_response] @connect(source: "basket", http: {POST: "/basket", body: "$args.input"}, selection: """
+  post_basket(input: String): [post_basket_response] @connect(source: "basket", http: { POST: "/basket", body: "$args.input" }, selection: """
   __typename: $status->match([200, "BasketResponse"], [400, "ApiError"], [@, "BasketResponse"])
   code
   description

@@ -1,7 +1,10 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Multi-file WSDL resolves nested <wsdl:import> / <xsd:import> against each document's own location 1`] = `
-"schema @source(name: "multi-file", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "multi-file", http: {
+  baseURL: "http://example.com"
+  headers: [{ name: "Content-Type", value: "text/xml; charset=utf-8" }]
+}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -20,7 +23,11 @@ type Query {
 scalar Void
 
 type Mutation {
-  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @connect(source: "multi-file", http: {POST: "/hello", headers: [{name: "SOAPAction", value: "hello"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:types\\": $(\\"http://example.com/hello/types\\") } \\"soap:Body\\": { \\"types:Hello\\": $args.Hello } }"}, selection: "$.Envelope.Body.HelloResponse")
+  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @connect(source: "multi-file", http: {
+    POST: "/hello"
+    headers: [{ name: "SOAPAction", value: "hello" }]
+    body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:types\\": $(\\"http://example.com/hello/types\\") } \\"soap:Body\\": { \\"types:Hello\\": $args.Hello } }"
+  }, selection: "$.Envelope.Body.HelloResponse")
 }
 
 type tns_HelloResponse {
@@ -62,7 +69,10 @@ input SourceHTTP {
 `;
 
 exports[`Multi-file WSDL resolves relative source against the loader cwd, not globalThis.process?.cwd?.() 1`] = `
-"schema @source(name: "multi-file", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "multi-file", http: {
+  baseURL: "http://example.com"
+  headers: [{ name: "Content-Type", value: "text/xml; charset=utf-8" }]
+}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -81,7 +91,11 @@ type Query {
 scalar Void
 
 type Mutation {
-  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @connect(source: "multi-file", http: {POST: "/hello", headers: [{name: "SOAPAction", value: "hello"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:types\\": $(\\"http://example.com/hello/types\\") } \\"soap:Body\\": { \\"types:Hello\\": $args.Hello } }"}, selection: "$.Envelope.Body.HelloResponse")
+  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @connect(source: "multi-file", http: {
+    POST: "/hello"
+    headers: [{ name: "SOAPAction", value: "hello" }]
+    body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:types\\": $(\\"http://example.com/hello/types\\") } \\"soap:Body\\": { \\"types:Hello\\": $args.Hello } }"
+  }, selection: "$.Envelope.Body.HelloResponse")
 }
 
 type tns_HelloResponse {

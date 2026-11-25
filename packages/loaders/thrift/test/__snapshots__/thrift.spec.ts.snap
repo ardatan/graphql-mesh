@@ -1,7 +1,13 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`thrift Calc json protocol emits @connect with isSuccess/errors: Calc-json-connect-schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @source(name: "Calc", http: {baseURL: "http://localhost:4000/thrift-json", headers: [{name: "Content-Type", value: "application/vnd.apache.thrift.json"}, {name: "Accept", value: "application/vnd.apache.thrift.json"}]}) {
+"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @source(name: "Calc", http: {
+  baseURL: "http://localhost:4000/thrift-json"
+  headers: [
+    { name: "Content-Type", value: "application/vnd.apache.thrift.json" }
+    { name: "Accept", value: "application/vnd.apache.thrift.json" }
+  ]
+}) {
   query: Query
 }
 
@@ -12,22 +18,32 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  add(request: AddRequestInput): Int @connect(source: "Calc", http: {POST: "/", body: """
-  $([1, "add", 1, 1, {
-      "1": {
-        "rec": {
-          "1": { "i32": $args.request.left },
-          "2": { "i32": $args.request.right }
+  add(request: AddRequestInput): Int @connect(source: "Calc", http: {
+    POST: "/"
+    body: """
+    $([1, "add", 1, 1, {
+        "1": {
+          "rec": {
+            "1": { "i32": $args.request.left },
+            "2": { "i32": $args.request.right }
+          }
         }
-      }
-  }])
-  """}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"})
-  subtract(left: Int, right: Int): Int @connect(source: "Calc", http: {POST: "/", body: """
-  $([1, "subtract", 1, 1, {
-      "1": { "i32": $args.left },
-      "2": { "i32": $args.right }
-  }])
-  """}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"})
+    }])
+    """
+  }, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {
+    message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"
+  })
+  subtract(left: Int, right: Int): Int @connect(source: "Calc", http: {
+    POST: "/"
+    body: """
+    $([1, "subtract", 1, 1, {
+        "1": { "i32": $args.left },
+        "2": { "i32": $args.right }
+    }])
+    """
+  }, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {
+    message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"
+  })
 }
 
 input AddRequestInput {

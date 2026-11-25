@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Example API Combined should generate correct schema: example_oas_combined-schema 1`] = `
-"schema @source(name: "example_api_combined", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "example_api_combined", http: { baseURL: "http://localhost:3000/api" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -13,7 +13,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Returns information about all employee cars"""
-  getAllCars: [query_getAllCars_items] @connect(source: "example_api_combined", http: {GET: "/cars"}, selection: """
+  getAllCars: [query_getAllCars_items] @connect(source: "example_api_combined", http: { GET: "/cars" }, selection: """
   model
   color
   features

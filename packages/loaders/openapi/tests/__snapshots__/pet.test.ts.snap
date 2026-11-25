@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Pet should generate the correct schema: schema 1`] = `
-"schema @source(name: "Pet", http: {baseURL: "http://example.com"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "Pet", http: { baseURL: "http://example.com" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -29,7 +29,7 @@ type Cat implements Pet {
 }
 
 type Query {
-  pets_by_id(id: String!): Pet @connect(source: "Pet", http: {GET: "/pets/{$args.id}"}, selection: """
+  pets_by_id(id: String!): Pet @connect(source: "Pet", http: { GET: "/pets/{$args.id}" }, selection: """
   name
   petType
   ... $.petType->match(["Dog", { __typename: "Dog", dog_exclusive }], ["Cat", { __typename: "Cat", cat_exclusive }])

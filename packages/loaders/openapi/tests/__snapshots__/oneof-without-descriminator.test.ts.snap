@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`oneOf without discriminator should generate correct schema: discriminator-mapping 1`] = `
-"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "test", http: { baseURL: "" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -21,7 +21,7 @@ type Query {
 }
 
 type Mutation {
-  test_endpoint(input: TestType_Input): TestType @connect(source: "test", http: {POST: "/test", body: "$args.input"}, selection: "$")
+  test_endpoint(input: TestType_Input): TestType @connect(source: "test", http: { POST: "/test", body: "$args.input" }, selection: "$")
 }
 
 union TestType = A_const_container | mutation_test_endpoint_oneOf_1

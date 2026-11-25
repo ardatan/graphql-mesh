@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Discriminator with invalid key in the mapping should generate correct schema: discriminator-invalid-key 1`] = `
-"schema @source(name: "test", http: {baseURL: "http://localhost"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "test", http: { baseURL: "http://localhost" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -29,7 +29,7 @@ type Dog implements Pet {
 }
 
 type Query {
-  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}"}, selection: """
+  pets_by_id(id: String!): Pet @connect(source: "test", http: { GET: "/pets/{$args.id}" }, selection: """
   name
   petType
   ... $.petType->match(["pet-cat", { __typename: "Cat", color }], ["pet-dog", { __typename: "Dog", age }])

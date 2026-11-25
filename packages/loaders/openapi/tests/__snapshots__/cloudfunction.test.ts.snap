@@ -1,7 +1,10 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI Loader: Cloudfunction should generate correct schema: cloudfunction-schema 1`] = `
-"schema @source(name: "test", http: {baseURL: "https://openwhisk.ng.bluemix.net/api/v1/namespaces/_/actions", headers: [{name: "Authorization", value: "Basic {$args.usernamePassword|base64}"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "test", http: {
+  baseURL: "https://openwhisk.ng.bluemix.net/api/v1/namespaces/_/actions"
+  headers: [{ name: "Authorization", value: "Basic {$args.usernamePassword|base64}" }]
+}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -18,12 +21,16 @@ type Query {
 
 type Mutation {
   """Description of the action"""
-  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @connect(source: "test", http: {POST: "/test-action-2", body: "$args.input", queryParams: """
-  {
-    blocking: $args.blocking
-    result: $args.result
-  }
-  """}, selection: """
+  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @connect(source: "test", http: {
+    POST: "/test-action-2"
+    body: "$args.input"
+    queryParams: """
+    {
+      blocking: $args.blocking
+      result: $args.result
+    }
+    """
+  }, selection: """
   payload
   age
   valid

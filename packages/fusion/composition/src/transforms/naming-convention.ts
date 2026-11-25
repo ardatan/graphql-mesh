@@ -224,11 +224,34 @@ export function createNamingConventionTransform(
               continue;
             }
             const newDefaultValue = enumValuesFn(enumDefault);
+            // GraphQL 16: `defaultValue` string. GraphQL 17: `default.literal` /
+            // AST — rewrite those in place; clearing `default` drops the value.
             newArgs[newArgName] = {
               ...argConfig,
               defaultValue: newDefaultValue,
-              // GraphQL 17: clear uncoerced default so renamed defaultValue is used.
-              default: undefined,
+              ...(argConfig.default?.literal?.kind === 'EnumValue'
+                ? {
+                    default: {
+                      literal: {
+                        ...argConfig.default.literal,
+                        value: newDefaultValue,
+                      },
+                    },
+                  }
+                : argConfig.default != null
+                  ? { default: undefined }
+                  : {}),
+              ...(argConfig.astNode?.defaultValue?.kind === 'EnumValue'
+                ? {
+                    astNode: {
+                      ...argConfig.astNode,
+                      defaultValue: {
+                        ...argConfig.astNode.defaultValue,
+                        value: newDefaultValue,
+                      },
+                    },
+                  }
+                : {}),
             };
           }
         }

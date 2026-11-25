@@ -41,8 +41,8 @@ enum join__Graph {
 
 type Query @join__type(graph: A) @join__type(graph: B) {
   myFoo: Foo! @join__field(graph: A)
-  foo(id: ID!): Foo! @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "id"}) @join__field(graph: B)
-  foos(ids: [ID!]!): [Foo!]! @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "ids"}) @join__field(graph: B)
+  foo(id: ID!): Foo! @join__directive(graphs: [B], name: "merge", args: { keyField: "id", keyArg: "id" }) @join__field(graph: B)
+  foos(ids: [ID!]!): [Foo!]! @join__directive(graphs: [B], name: "merge", args: { keyField: "id", keyArg: "ids" }) @join__field(graph: B)
   foosByFilter(where: FooFilter!): [Foo!]! @join__field(graph: B)
 }
 
@@ -102,18 +102,18 @@ enum join__Graph {
 
 directive @source(name: String!, type: String, subgraph: String) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
-type Query @join__directive(graphs: [A], name: "source", args: {name: "Query", subgraph: "A"}) @join__directive(graphs: [B], name: "source", args: {name: "Query", subgraph: "A"}) @join__directive(graphs: [A], name: "source", args: {name: "Query", subgraph: "B"}) @join__directive(graphs: [B], name: "source", args: {name: "Query", subgraph: "B"}) @join__type(graph: A) @join__type(graph: B) {
-  A_myFoo: A_Foo! @join__directive(graphs: [A], name: "source", args: {name: "myFoo", type: "Foo!", subgraph: "A"}) @join__field(graph: A)
-  B_foo(id: ID!): B_Foo! @join__directive(graphs: [B], name: "source", args: {name: "foo", type: "Foo!", subgraph: "B"}) @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "id"}) @join__field(graph: B)
-  B_foos(ids: [ID!]!): [B_Foo!]! @join__directive(graphs: [B], name: "source", args: {name: "foos", type: "[Foo!]!", subgraph: "B"}) @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "ids"}) @join__field(graph: B)
-  B_foosByFilter(where: B_FooFilter! @source(name: "where", type: "FooFilter!", subgraph: "B")): [B_Foo!]! @join__directive(graphs: [B], name: "source", args: {name: "foosByFilter", type: "[Foo!]!", subgraph: "B"}) @join__field(graph: B)
+type Query @join__directive(graphs: [A], name: "source", args: { name: "Query", subgraph: "A" }) @join__directive(graphs: [B], name: "source", args: { name: "Query", subgraph: "A" }) @join__directive(graphs: [A], name: "source", args: { name: "Query", subgraph: "B" }) @join__directive(graphs: [B], name: "source", args: { name: "Query", subgraph: "B" }) @join__type(graph: A) @join__type(graph: B) {
+  A_myFoo: A_Foo! @join__directive(graphs: [A], name: "source", args: { name: "myFoo", type: "Foo!", subgraph: "A" }) @join__field(graph: A)
+  B_foo(id: ID!): B_Foo! @join__directive(graphs: [B], name: "source", args: { name: "foo", type: "Foo!", subgraph: "B" }) @join__directive(graphs: [B], name: "merge", args: { keyField: "id", keyArg: "id" }) @join__field(graph: B)
+  B_foos(ids: [ID!]!): [B_Foo!]! @join__directive(graphs: [B], name: "source", args: { name: "foos", type: "[Foo!]!", subgraph: "B" }) @join__directive(graphs: [B], name: "merge", args: { keyField: "id", keyArg: "ids" }) @join__field(graph: B)
+  B_foosByFilter(where: B_FooFilter! @source(name: "where", type: "FooFilter!", subgraph: "B")): [B_Foo!]! @join__directive(graphs: [B], name: "source", args: { name: "foosByFilter", type: "[Foo!]!", subgraph: "B" }) @join__field(graph: B)
 }
 
-type A_Foo @join__directive(graphs: [A], name: "source", args: {name: "Foo", subgraph: "A"}) @join__type(graph: A) {
+type A_Foo @join__directive(graphs: [A], name: "source", args: { name: "Foo", subgraph: "A" }) @join__type(graph: A) {
   id: ID!
 }
 
-type B_Foo @join__directive(graphs: [B], name: "source", args: {name: "Foo", subgraph: "B"}) @join__type(graph: B, key: "id") {
+type B_Foo @join__directive(graphs: [B], name: "source", args: { name: "Foo", subgraph: "B" }) @join__type(graph: B, key: "id") {
   id: ID!
   bar: String!
 }
@@ -172,8 +172,8 @@ directive @foo on FIELD_DEFINITION
 
 type Query @join__type(graph: A) @join__type(graph: B) @join__type(graph: C) {
   myFoo: Foo! @join__field(graph: A)
-  foo(id: ID!): Foo! @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "id"}) @join__field(graph: B)
-  foos(ids: [ID!]!): [Foo!]! @join__directive(graphs: [B], name: "merge", args: {keyField: "id", keyArg: "ids"}) @join__field(graph: B)
+  foo(id: ID!): Foo! @join__directive(graphs: [B], name: "merge", args: { keyField: "id", keyArg: "id" }) @join__field(graph: B)
+  foos(ids: [ID!]!): [Foo!]! @join__directive(graphs: [B], name: "merge", args: { keyField: "id", keyArg: "ids" }) @join__field(graph: B)
   foosByFilter(where: FooFilter!): [Foo!]! @join__field(graph: B)
   cFoo: Foo! @foo @join__field(graph: C)
 }

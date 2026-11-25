@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`example_api should generate the schema correctly 1`] = `
-"schema @source(name: "example_api", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "example_api", http: { baseURL: "http://localhost:3000/api" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -21,11 +21,11 @@ type Query {
   getUsers(
     """Limit of the number of users to return."""
     limit: Int!
-  ): [user] @connect(source: "example_api", http: {GET: "/users", queryParams: """
+  ): [user] @connect(source: "example_api", http: { GET: "/users", queryParams: """
   {
     limit: $args.limit
   }
-  """}, selection: """
+  """ }, selection: """
   username
   name
   address {
@@ -55,11 +55,14 @@ type Query {
     username: String!
     """any user input"""
     input: String
-  ): user @connect(source: "example_api", http: {GET: "/users/{$args.username}", queryParams: """
-  {
-    input: $args.input
-  }
-  """}, selection: """
+  ): user @connect(source: "example_api", http: {
+    GET: "/users/{$args.username}"
+    queryParams: """
+    {
+      input: $args.input
+    }
+    """
+  }, selection: """
   username
   name
   address {
@@ -87,7 +90,7 @@ type Query {
   getUserCar(
     """Identifier of a user."""
     username: String!
-  ): car @connect(source: "example_api", http: {GET: "/users/{$args.username}/car"}, selection: """
+  ): car @connect(source: "example_api", http: { GET: "/users/{$args.username}/car" }, selection: """
   model
   color
   features
@@ -99,7 +102,7 @@ type Query {
   getUserFriends(
     """Identifier of a user."""
     username: String!
-  ): [user] @connect(source: "example_api", http: {GET: "/users/{$args.username}/friends"}, selection: """
+  ): [user] @connect(source: "example_api", http: { GET: "/users/{$args.username}/friends" }, selection: """
   username
   name
   address {
@@ -124,9 +127,9 @@ type Query {
   }
   """)
   """Returns all company assets"""
-  getAllAssets(companyId: String!): [query_getAllAssets_items] @connect(source: "example_api", http: {GET: "/assets/{$args.companyId}"}, selection: "$")
+  getAllAssets(companyId: String!): [query_getAllAssets_items] @connect(source: "example_api", http: { GET: "/assets/{$args.companyId}" }, selection: "$")
   """Returns information about all employee cars"""
-  getAllCars: [car] @connect(source: "example_api", http: {GET: "/cars"}, selection: """
+  getAllCars: [car] @connect(source: "example_api", http: { GET: "/cars" }, selection: """
   model
   color
   features
@@ -135,7 +138,7 @@ type Query {
   rating: rating->match([100, "_100"], [101, "_101"], [200, "_200"], [@, rating])
   """)
   """Returns the profile of a company with the given ID."""
-  getCompanyById(id: String!): company @connect(source: "example_api", http: {GET: "/companies/{$args.id}"}, selection: """
+  getCompanyById(id: String!): company @connect(source: "example_api", http: { GET: "/companies/{$args.id}" }, selection: """
   id
   name
   legalForm
@@ -146,38 +149,53 @@ type Query {
   }
   """)
   """Used to test cookies."""
-  getCookie(cookie_type: queryInput_getCookie_cookie_type!, cookie_size: queryInput_getCookie_cookie_size!): String @connect(source: "example_api", http: {GET: "/cookie", headers: [{name: "cookie", value: "cookie_type={$args.cookie_type->match([\\"chocolate_chip\\", \\"chocolate chip\\"], [\\"oatmeal_raisin\\", \\"oatmeal raisin\\"], [@, $args.cookie_type])}; cookie_size={$args.cookie_size->match([\\"bite_sized\\", \\"bite-sized\\"], [\\"mega_sized\\", \\"mega-sized\\"], [@, $args.cookie_size])};"}, {name: "accept", value: "text/plain"}]}, selection: "$")
+  getCookie(cookie_type: queryInput_getCookie_cookie_type!, cookie_size: queryInput_getCookie_cookie_size!): String @connect(source: "example_api", http: {
+    GET: "/cookie"
+    headers: [
+      {
+        name: "cookie"
+        value: "cookie_type={$args.cookie_type->match([\\"chocolate_chip\\", \\"chocolate chip\\"], [\\"oatmeal_raisin\\", \\"oatmeal raisin\\"], [@, $args.cookie_type])}; cookie_size={$args.cookie_size->match([\\"bite_sized\\", \\"bite-sized\\"], [\\"mega_sized\\", \\"mega-sized\\"], [@, $args.cookie_size])};"
+      }
+      { name: "accept", value: "text/plain" }
+    ]
+  }, selection: "$")
   """
   Used to find the nearest coffee machine based on the user's coordinates. Used to test the content field in parameter objects.
   """
-  getNearestCoffeeMachine(lat: Float, long: Float): coordinates @connect(source: "example_api", http: {GET: "/coffeeLocation", queryParams: """
-  {
-    lat: $args.lat
-    long: $args.long
-  }
-  """}, selection: """
+  getNearestCoffeeMachine(lat: Float, long: Float): coordinates @connect(source: "example_api", http: {
+    GET: "/coffeeLocation"
+    queryParams: """
+    {
+      lat: $args.lat
+      long: $args.long
+    }
+    """
+  }, selection: """
   lat
   long
   """)
   """Used to test link parameters with variables"""
-  getCopier(query: String): getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
+  getCopier(query: String): getCopier_200_response @connect(source: "example_api", http: { GET: "/copier", queryParams: """
   {
     query: $args.query
   }
-  """}, selection: "body")
+  """ }, selection: "body")
   """Used to test generation of object types with matching schema."""
-  getNumberOfCleanDesks: String @connect(source: "example_api", http: {GET: "/cleanDesks", headers: [{name: "accept", value: "text/plain"}]}, selection: "$")
+  getNumberOfCleanDesks: String @connect(source: "example_api", http: { GET: "/cleanDesks", headers: [{ name: "accept", value: "text/plain" }] }, selection: "$")
   """Used to test generation of object types with matching schema."""
-  getNumberOfDirtyDesks: String @connect(source: "example_api", http: {GET: "/dirtyDesks", headers: [{name: "accept", value: "text/plain"}]}, selection: "$")
+  getNumberOfDirtyDesks: String @connect(source: "example_api", http: { GET: "/dirtyDesks", headers: [{ name: "accept", value: "text/plain" }] }, selection: "$")
   """Used to test empty responses"""
-  getBonuses: Void @connect(source: "example_api", http: {GET: "/bonuses"}, selection: "$")
+  getBonuses: Void @connect(source: "example_api", http: { GET: "/bonuses" }, selection: "$")
   """Used to test query parameters with form style and explode"""
-  returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office] @connect(source: "example_api", http: {GET: "/offices", queryParams: """
-  {
-    limit: $args.parameters.limit
-    offset: $args.parameters.offset
-  }
-  """}, selection: """
+  returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office] @connect(source: "example_api", http: {
+    GET: "/offices"
+    queryParams: """
+    {
+      limit: $args.parameters.limit
+      offset: $args.parameters.offset
+    }
+    """
+  }, selection: """
   employeeId
   room_number: $->get("room number")
   employerId
@@ -186,67 +204,84 @@ type Query {
   getOffice(
     """Office ID"""
     id: Int!
-  ): office @connect(source: "example_api", http: {GET: "/offices/{$args.id}"}, selection: """
+  ): office @connect(source: "example_api", http: { GET: "/offices/{$args.id}" }, selection: """
   employeeId
   room_number: $->get("room number")
   employerId
   """)
   """Return a list of papers. Endpoint to test 2XX status code."""
-  getPapers: [paper] @connect(source: "example_api", http: {GET: "/papers"}, selection: """
+  getPapers: [paper] @connect(source: "example_api", http: { GET: "/papers" }, selection: """
   name
   published
   """)
   """Another endpoint to test unsanitized parameters and data."""
-  get_product_with_id(product_id: String!, product_tag: String!): product_with_id @connect(source: "example_api", http: {GET: "/products/{$args.product_id}", queryParams: """
-  {
-    "product-tag": $args.product_tag
-  }
-  """}, selection: """
+  get_product_with_id(product_id: String!, product_tag: String!): product_with_id @connect(source: "example_api", http: {
+    GET: "/products/{$args.product_id}"
+    queryParams: """
+    {
+      "product-tag": $args.product_tag
+    }
+    """
+  }, selection: """
   product_name: $->get("product-name")
   product_id: $->get("product-id")
   product_tag: $->get("product-tag")
   """)
   """Obtain reviews for a product."""
-  getProductReviews(id: String!, product_tag: String! = "sport"): [query_getProductReviews_items] @connect(source: "example_api", http: {GET: "/products/{$args.id}/reviews", queryParams: """
-  {
-    "product-tag": $args.product_tag
-  }
-  """}, selection: """
+  getProductReviews(id: String!, product_tag: String! = "sport"): [query_getProductReviews_items] @connect(source: "example_api", http: {
+    GET: "/products/{$args.id}/reviews"
+    queryParams: """
+    {
+      "product-tag": $args.product_tag
+    }
+    """
+  }, selection: """
   text
   timestamp
   """)
   """An endpoint to test authentication."""
-  get_patent_with_id(patent_id: String!): patent_with_id @connect(source: "example_api", http: {GET: "/patents/{$args.patent_id}"}, selection: """
+  get_patent_with_id(patent_id: String!): patent_with_id @connect(source: "example_api", http: { GET: "/patents/{$args.patent_id}" }, selection: """
   patent_id: $->get("patent-id")
   inventor_id: $->get("inventor-id")
   patent_name: $->get("patent-name")
   """)
   """Another endpoint to test authentication."""
-  get_project_with_id(project_id: Int!): project_with_id @connect(source: "example_api", http: {GET: "/projects/{$args.project_id}"}, selection: """
+  get_project_with_id(project_id: Int!): project_with_id @connect(source: "example_api", http: { GET: "/projects/{$args.project_id}" }, selection: """
   project_id: $->get("project-id")
   lead_id: $->get("lead-id")
   active
   patentId
   """)
   """Used to test link parameters with variables"""
-  getScanner(query: String): getScanner_200_response @connect(source: "example_api", http: {GET: "/scanner", queryParams: """
+  getScanner(query: String): getScanner_200_response @connect(source: "example_api", http: { GET: "/scanner", queryParams: """
   {
     query: $args.query
   }
-  """}, selection: "body")
+  """ }, selection: "body")
   """Endpoint to test sending of headers."""
-  getSnack(snack_type: queryInput_getSnack_snack_type! = soda, snack_size: queryInput_getSnack_snack_size! = small): String @connect(source: "example_api", http: {GET: "/snack", headers: [{name: "snack_type", value: "{$args.snack_type:soda}"}, {name: "snack_size", value: "{$args.snack_size:small}"}, {name: "accept", value: "text/plain"}]}, selection: "$")
+  getSnack(snack_type: queryInput_getSnack_snack_type! = soda, snack_size: queryInput_getSnack_snack_size! = small): String @connect(source: "example_api", http: {
+    GET: "/snack"
+    headers: [
+      { name: "snack_type", value: "{$args.snack_type:soda}" }
+      { name: "snack_size", value: "{$args.snack_size:small}" }
+      { name: "accept", value: "text/plain" }
+    ]
+  }, selection: "$")
   """Endpoint to test sending of options."""
-  get_Status(globalquery: String!, limit: Int!): String @connect(source: "example_api", http: {GET: "/status", headers: [{name: "accept", value: "text/plain"}], queryParams: """
-  {
-    globalquery: $args.globalquery
-    limit: $args.limit
-  }
-  """}, selection: "$")
+  get_Status(globalquery: String!, limit: Int!): String @connect(source: "example_api", http: {
+    GET: "/status"
+    headers: [{ name: "accept", value: "text/plain" }]
+    queryParams: """
+    {
+      globalquery: $args.globalquery
+      limit: $args.limit
+    }
+    """
+  }, selection: "$")
   """Used to test OAuth token being present in header."""
-  getSecure: String @connect(source: "example_api", http: {GET: "/secure", headers: [{name: "accept", value: "text/plain"}]}, selection: "$")
+  getSecure: String @connect(source: "example_api", http: { GET: "/secure", headers: [{ name: "accept", value: "text/plain" }] }, selection: "$")
   """Returns the (contents of a) trashcan from a specific office"""
-  getAllTrashCans: [trashcan] @connect(source: "example_api", http: {GET: "/trashcans"}, selection: """
+  getAllTrashCans: [trashcan] @connect(source: "example_api", http: { GET: "/trashcans" }, selection: """
   brand
   contents
   """)
@@ -254,14 +289,14 @@ type Query {
   getOfficeTrashCan(
     """Identifier of a user."""
     username: String!
-  ): trashcan @connect(source: "example_api", http: {GET: "/trashcans/{$args.username}"}, selection: """
+  ): trashcan @connect(source: "example_api", http: { GET: "/trashcans/{$args.username}" }, selection: """
   brand
   contents
   """)
   """It could be anything!"""
-  mystery: mystery_200_response @connect(source: "example_api", http: {GET: "/mystery"}, selection: "$")
+  mystery: mystery_200_response @connect(source: "example_api", http: { GET: "/mystery" }, selection: "$")
   """Returns an arbitrary JSON object"""
-  random: JSON @connect(source: "example_api", http: {GET: "/random"}, selection: "$")
+  random: JSON @connect(source: "example_api", http: { GET: "/random" }, selection: "$")
 }
 
 """A user represents a natural person"""
@@ -279,7 +314,7 @@ type user {
   status: code
   nomenclature: query_getUsers_items_nomenclature
   """Allows to fetch the user's employer company."""
-  employerCompany: company @connect(source: "example_api", http: {GET: "/companies/{$this.employerId}"}, selection: """
+  employerCompany: company @connect(source: "example_api", http: { GET: "/companies/{$this.employerId}" }, selection: """
   id
   name
   legalForm
@@ -290,7 +325,7 @@ type user {
   }
   """)
   """Allows to fetch the user's friends."""
-  friends: [user] @connect(source: "example_api", http: {GET: "/users/{root.$request.path.username}/friends"}, selection: """
+  friends: [user] @connect(source: "example_api", http: { GET: "/users/{root.$request.path.username}/friends" }, selection: """
   username
   name
   address {
@@ -352,7 +387,7 @@ type company {
   """The offices of a company"""
   offices: [address]
   """Allows to fetch the company's CEO user."""
-  ceoUser: user @connect(source: "example_api", http: {GET: "/users/{$this.ceoUsername}"}, selection: """
+  ceoUser: user @connect(source: "example_api", http: { GET: "/users/{$this.ceoUsername}" }, selection: """
   username
   name
   address {
@@ -443,29 +478,38 @@ type coordinates {
 type getCopier_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
-  {
-    query: {root.$request.query.query}
-  }
-  """}, selection: "body")
+  basicLink: getCopier_200_response @connect(source: "example_api", http: {
+    GET: "/copier"
+    queryParams: """
+    {
+      query: {root.$request.query.query}
+    }
+    """
+  }, selection: "body")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
+  constantLink: getCopier_200_response @connect(source: "example_api", http: { GET: "/copier", queryParams: """
   {
     query: $("123")
   }
-  """}, selection: "body")
+  """ }, selection: "body")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
-  {
-    query: _{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123
-  }
-  """}, selection: "body")
+  variableLink: getCopier_200_response @connect(source: "example_api", http: {
+    GET: "/copier"
+    queryParams: """
+    {
+      query: _{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123
+    }
+    """
+  }, selection: "body")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
-  {
-    query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}
-  }
-  """}, selection: "body")
+  everythingLink: getCopier_200_response @connect(source: "example_api", http: {
+    GET: "/copier"
+    queryParams: """
+    {
+      query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}
+    }
+    """
+  }, selection: "body")
 }
 
 """Represents empty values"""
@@ -480,7 +524,7 @@ type office {
   """The identifier of the company a user works for"""
   employerId: String
   """Allows to fetch the user who invented a product."""
-  owner: user @connect(source: "example_api", http: {GET: "/users/{$this.employeeId}"}, selection: """
+  owner: user @connect(source: "example_api", http: { GET: "/users/{$this.employeeId}" }, selection: """
   username
   name
   address {
@@ -505,7 +549,7 @@ type office {
   }
   """)
   """Allows to fetch the user's employer company."""
-  company: company @connect(source: "example_api", http: {GET: "/companies/{$this.employerId}"}, selection: """
+  company: company @connect(source: "example_api", http: { GET: "/companies/{$this.employerId}" }, selection: """
   id
   name
   legalForm
@@ -539,20 +583,26 @@ type product_with_id {
   """A tag associated with the product"""
   product_tag: String
   """Obtain reviews for a product."""
-  reviews: [query_getProductReviews_items] @connect(source: "example_api", http: {GET: "/products/{root.$request.path.product_id}/reviews", queryParams: """
-  {
-    "product-tag": {root.$request.query.product-tag}
-  }
-  """}, selection: """
+  reviews: [query_getProductReviews_items] @connect(source: "example_api", http: {
+    GET: "/products/{root.$request.path.product_id}/reviews"
+    queryParams: """
+    {
+      "product-tag": {root.$request.query.product-tag}
+    }
+    """
+  }, selection: """
   text
   timestamp
   """)
   """Obtain reviews for a product."""
-  reviewsWithOperationRef: [query_getProductReviews_items] @connect(source: "example_api", http: {GET: "/products/{root.$request.path.product_id}/reviews", queryParams: """
-  {
-    "product-tag": {root.$request.query.product-tag}
-  }
-  """}, selection: """
+  reviewsWithOperationRef: [query_getProductReviews_items] @connect(source: "example_api", http: {
+    GET: "/products/{root.$request.path.product_id}/reviews"
+    queryParams: """
+    {
+      "product-tag": {root.$request.query.product-tag}
+    }
+    """
+  }, selection: """
   text
   timestamp
   """)
@@ -576,7 +626,7 @@ type patent_with_id {
   inventor_id: String
   patent_name: JSON!
   """Allows to fetch the user who invented a product."""
-  inventor: user @connect(source: "example_api", http: {GET: "/users/{$this.inventorId}"}, selection: """
+  inventor: user @connect(source: "example_api", http: { GET: "/users/{$this.inventorId}" }, selection: """
   username
   name
   address {
@@ -613,7 +663,7 @@ type project_with_id {
   """The patent associated with a project if applicable"""
   patentId: String
   """Allows to fetch the user leading a project."""
-  ProjectLead: user @connect(source: "example_api", http: {GET: "/users/{$this.leadId}"}, selection: """
+  ProjectLead: user @connect(source: "example_api", http: { GET: "/users/{$this.leadId}" }, selection: """
   username
   name
   address {
@@ -638,7 +688,7 @@ type project_with_id {
   }
   """)
   """Allows to fetch the user leading a project."""
-  projectLead: user @connect(source: "example_api", http: {GET: "/users/{$this.leadId}"}, selection: """
+  projectLead: user @connect(source: "example_api", http: { GET: "/users/{$this.leadId}" }, selection: """
   username
   name
   address {
@@ -663,7 +713,7 @@ type project_with_id {
   }
   """)
   """Allows to fetch a patent."""
-  patent: patent_with_id @connect(source: "example_api", http: {GET: "/patents/{$this.patentId}"}, selection: """
+  patent: patent_with_id @connect(source: "example_api", http: { GET: "/patents/{$this.patentId}" }, selection: """
   patent_id: $->get("patent-id")
   inventor_id: $->get("inventor-id")
   patent_name: $->get("patent-name")
@@ -673,29 +723,38 @@ type project_with_id {
 type getScanner_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
-  {
-    query: {root.$request.query.query}
-  }
-  """}, selection: "body")
+  basicLink: getCopier_200_response @connect(source: "example_api", http: {
+    GET: "/copier"
+    queryParams: """
+    {
+      query: {root.$request.query.query}
+    }
+    """
+  }, selection: "body")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
+  constantLink: getCopier_200_response @connect(source: "example_api", http: { GET: "/copier", queryParams: """
   {
     query: $("123")
   }
-  """}, selection: "body")
+  """ }, selection: "body")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
-  {
-    query: _{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123
-  }
-  """}, selection: "body")
+  variableLink: getCopier_200_response @connect(source: "example_api", http: {
+    GET: "/copier"
+    queryParams: """
+    {
+      query: _{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123
+    }
+    """
+  }, selection: "body")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
-  {
-    query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}
-  }
-  """}, selection: "body")
+  everythingLink: getCopier_200_response @connect(source: "example_api", http: {
+    GET: "/copier"
+    queryParams: """
+    {
+      query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}
+    }
+    """
+  }, selection: "body")
 }
 
 enum queryInput_getSnack_snack_type {
@@ -720,7 +779,7 @@ type query_mystery_oneOf_1 {
 
 type Mutation {
   """Create a new user in the system."""
-  postUser(input: user_Input): user @connect(source: "example_api", http: {POST: "/users", body: "$args.input"}, selection: """
+  postUser(input: user_Input): user @connect(source: "example_api", http: { POST: "/users", body: "$args.input" }, selection: """
   username
   name
   address {
@@ -747,47 +806,70 @@ type Mutation {
   """
   Create a new paper in the system. Endpoint to test non-application/json request and response bodies.
   """
-  postPaper(input: String): String @connect(source: "example_api", http: {POST: "/papers", headers: [{name: "Content-Type", value: "text/plain"}, {name: "accept", value: "text/plain"}], body: "$args.input"}, selection: "$")
+  postPaper(input: String): String @connect(source: "example_api", http: {
+    POST: "/papers"
+    headers: [
+      { name: "Content-Type", value: "text/plain" }
+      { name: "accept", value: "text/plain" }
+    ]
+    body: "$args.input"
+  }, selection: "$")
   """Endpoint to test unsanitized parameters and data."""
-  post_product_with_id(input: product_with_id_Input): product_with_id @connect(source: "example_api", http: {POST: "/products", body: """
-  $args.input { "product-name": product_name
-  "product-id": product_id
-  "product-tag": product_tag }
-  """}, selection: """
+  post_product_with_id(input: product_with_id_Input): product_with_id @connect(source: "example_api", http: {
+    POST: "/products"
+    body: """
+    $args.input { "product-name": product_name
+    "product-id": product_id
+    "product-tag": product_tag }
+    """
+  }, selection: """
   product_name: $->get("product-name")
   product_id: $->get("product-id")
   product_tag: $->get("product-tag")
   """)
   """An endpoint to test authenticated POST requests."""
-  post_project_with_id(input: project_with_id_Input): project_with_id @connect(source: "example_api", http: {POST: "/projects", body: """
-  $args.input { "project-id": project_id
-  "lead-id": lead_id
-  active
-  patentId }
-  """}, selection: """
+  post_project_with_id(input: project_with_id_Input): project_with_id @connect(source: "example_api", http: {
+    POST: "/projects"
+    body: """
+    $args.input { "project-id": project_id
+    "lead-id": lead_id
+    active
+    patentId }
+    """
+  }, selection: """
   project_id: $->get("project-id")
   lead_id: $->get("lead-id")
   active
   patentId
   """)
   """Used to test link parameters with variables"""
-  postScanner(path: String!, query: String, input: String): postScanner_200_response @connect(source: "example_api", http: {POST: "/scanner/{$args.path}", headers: [{name: "Content-Type", value: "text/plain"}], body: "$args.input", queryParams: """
-  {
-    query: $args.query
-  }
-  """}, selection: "body")
+  postScanner(path: String!, query: String, input: String): postScanner_200_response @connect(source: "example_api", http: {
+    POST: "/scanner/{$args.path}"
+    headers: [{ name: "Content-Type", value: "text/plain" }]
+    body: "$args.input"
+    queryParams: """
+    {
+      query: $args.query
+    }
+    """
+  }, selection: "body")
   """Endpoint to test placeholder objects to wrap response objects."""
-  post_status(globalquery: String!, input: post_status_request_Input): String @connect(source: "example_api", http: {POST: "/status", headers: [{name: "accept", value: "text/plain"}], body: "$args.input", queryParams: """
-  {
-    globalquery: $args.globalquery
-  }
-  """}, selection: "$")
+  post_status(globalquery: String!, input: post_status_request_Input): String @connect(source: "example_api", http: {
+    POST: "/status"
+    headers: [{ name: "accept", value: "text/plain" }]
+    body: "$args.input"
+    queryParams: """
+    {
+      globalquery: $args.globalquery
+    }
+    """
+  }, selection: "$")
   """Add new contents to the trashcan of a specific owner"""
   postOfficeTrashCan(
     """Identifier of a user."""
     username: String!
     input: JSON
-  ): trashcan @connect(source: "example_api", http: {POST: "/trashcans/{$args.username}", body: "$args.input"}, selection: """
+  ): trashcan @connect(source: "example_api", http: { POST: "/trashcans/{$args.username}", body: "$args.input" }, selection: """
   brand
   contents
   """)
@@ -855,35 +937,47 @@ input project_with_id_Input {
 type postScanner_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
-  {
-    query: {root.$request.query.query}
-  }
-  """}, selection: "body")
+  basicLink: getCopier_200_response @connect(source: "example_api", http: {
+    GET: "/copier"
+    queryParams: """
+    {
+      query: {root.$request.query.query}
+    }
+    """
+  }, selection: "body")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
+  constantLink: getCopier_200_response @connect(source: "example_api", http: { GET: "/copier", queryParams: """
   {
     query: $("123")
   }
-  """}, selection: "body")
+  """ }, selection: "body")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
-  {
-    query: _{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123
-  }
-  """}, selection: "body")
+  variableLink: getCopier_200_response @connect(source: "example_api", http: {
+    GET: "/copier"
+    queryParams: """
+    {
+      query: _{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123
+    }
+    """
+  }, selection: "body")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
-  {
-    query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}
-  }
-  """}, selection: "body")
+  everythingLink: getCopier_200_response @connect(source: "example_api", http: {
+    GET: "/copier"
+    queryParams: """
+    {
+      query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}
+    }
+    """
+  }, selection: "body")
   """Used to test link parameters with variables"""
-  everythingLink2: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", queryParams: """
-  {
-    query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.body}_{root.$request.query.query}_{root.$request.path.path}_{root.$request.header.accept}_{root.$response.body#/body}_{root.$response.query.query}_{root.$response.path.path}_{root.$response.header.connection}
-  }
-  """}, selection: "body")
+  everythingLink2: getCopier_200_response @connect(source: "example_api", http: {
+    GET: "/copier"
+    queryParams: """
+    {
+      query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.body}_{root.$request.query.query}_{root.$request.path.path}_{root.$request.header.accept}_{root.$response.body#/body}_{root.$response.query.query}_{root.$response.path.path}_{root.$response.header.connection}
+    }
+    """
+  }, selection: "body")
 }
 
 input post_status_request_Input {

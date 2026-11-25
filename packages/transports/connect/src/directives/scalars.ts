@@ -1,5 +1,5 @@
-import type { GraphQLScalarType, ValueNode } from 'graphql';
-import { Kind } from 'graphql';
+import type { ValueNode } from 'graphql';
+import { GraphQLScalarType, Kind } from 'graphql';
 import { resolvers as scalarResolvers } from 'graphql-scalars';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { processLengthAnnotations } from './length.js';
@@ -29,24 +29,41 @@ export function coerceXsdDateString(value: unknown): unknown {
 }
 
 function withXsdDateCoercion(scalar: GraphQLScalarType): GraphQLScalarType {
-  return {
-    ...scalar,
-    serialize(value: unknown) {
-      return scalar.serialize(coerceXsdDateString(value));
-    },
-    parseValue(value: unknown) {
-      return scalar.parseValue(coerceXsdDateString(value));
-    },
-    parseLiteral(ast: ValueNode, variables?: Record<string, unknown> | null) {
-      if (ast.kind === Kind.STRING) {
-        const coerced = coerceXsdDateString(ast.value);
-        if (coerced !== ast.value) {
-          return scalar.parseValue(coerced);
-        }
+  const serialize = (value: unknown) => scalar.serialize(coerceXsdDateString(value));
+  const parseValue = (value: unknown) => scalar.parseValue(coerceXsdDateString(value));
+  const parseLiteral = (ast: ValueNode, variables?: Record<string, unknown> | null) => {
+    if (ast.kind === Kind.STRING) {
+      const coerced = coerceXsdDateString(ast.value);
+      if (coerced !== ast.value) {
+        return scalar.parseValue(coerced);
       }
-      return scalar.parseLiteral(ast, variables);
-    },
-  } as GraphQLScalarType;
+    }
+    return scalar.parseLiteral(ast, variables);
+  };
+  // Prefer GraphQL 17 coerce* when present on the upstream scalar.
+  const coerceOutputValue =
+    typeof (scalar as { coerceOutputValue?: (v: unknown) => unknown }).coerceOutputValue ===
+    'function'
+      ? (value: unknown) =>
+          (scalar as { coerceOutputValue: (v: unknown) => unknown }).coerceOutputValue(
+            coerceXsdDateString(value),
+          )
+      : serialize;
+  const coerceInputValue =
+    typeof (scalar as { coerceInputValue?: (v: unknown) => unknown }).coerceInputValue === 'function'
+      ? (value: unknown) =>
+          (scalar as { coerceInputValue: (v: unknown) => unknown }).coerceInputValue(
+            coerceXsdDateString(value),
+          )
+      : parseValue;
+  return new GraphQLScalarType({
+    ...scalar.toConfig(),
+    serialize,
+    parseValue,
+    parseLiteral,
+    coerceOutputValue,
+    coerceInputValue,
+  } as ConstructorParameters<typeof GraphQLScalarType>[0]);
 }
 
 export function processScalarType(type: GraphQLScalarType) {
@@ -81,21 +98,43 @@ export function addExecutionLogicToScalar(
   nonExecutableScalar: GraphQLScalarType,
   actualScalar: GraphQLScalarType,
 ) {
+  const actual = actualScalar as GraphQLScalarType & {
+    coerceOutputValue?: (value: unknown) => unknown;
+    coerceInputValue?: (value: unknown) => unknown;
+    coerceInputLiteral?: (ast: ValueNode, variables?: Record<string, unknown> | null) => unknown;
+  };
   Object.defineProperties(nonExecutableScalar, {
     serialize: {
       value: actualScalar.serialize,
+      configurable: true,
     },
     parseValue: {
       value: actualScalar.parseValue,
+      configurable: true,
     },
     parseLiteral: {
       value: actualScalar.parseLiteral,
+      configurable: true,
+    },
+    // GraphQL 17 execute uses coerce* (identity by default after buildSchema).
+    coerceOutputValue: {
+      value: actual.coerceOutputValue ?? actualScalar.serialize,
+      configurable: true,
+    },
+    coerceInputValue: {
+      value: actual.coerceInputValue ?? actualScalar.parseValue,
+      configurable: true,
+    },
+    coerceInputLiteral: {
+      value: actual.coerceInputLiteral ?? actualScalar.parseLiteral,
+      configurable: true,
     },
     extensions: {
       value: {
         ...actualScalar.extensions,
         ...nonExecutableScalar.extensions,
       },
+      configurable: true,
     },
   });
 }

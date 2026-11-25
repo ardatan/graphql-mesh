@@ -1,7 +1,10 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SOAP Loader should create executor for a service with mutations and query placeholder 1`] = `
-"schema @source(name: "Test", http: {baseURL: "https://www.dataaccess.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "Test", http: {
+  baseURL: "https://www.dataaccess.com"
+  headers: [{ name: "Content-Type", value: "text/xml; charset=utf-8" }]
+}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -20,8 +23,14 @@ type Query {
 scalar Void
 
 type Mutation {
-  NumberConversion_NumberConversion_NumberConversionSoap_NumberToWords(NumberToWords: NumberConversion_NumberToWords_Input): NumberConversion_NumberToWordsResponse @connect(source: "Test", http: {POST: "/webservicesserver/NumberConversion.wso", body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://www.dataaccess.com/webservicesserver/\\") } \\"soap:Body\\": { \\"body:NumberToWords\\": $args.NumberToWords } }"}, selection: "$.Envelope.Body.NumberToWordsResponse")
-  NumberConversion_NumberConversion_NumberConversionSoap_NumberToDollars(NumberToDollars: NumberConversion_NumberToDollars_Input): NumberConversion_NumberToDollarsResponse @connect(source: "Test", http: {POST: "/webservicesserver/NumberConversion.wso", body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://www.dataaccess.com/webservicesserver/\\") } \\"soap:Body\\": { \\"body:NumberToDollars\\": $args.NumberToDollars } }"}, selection: "$.Envelope.Body.NumberToDollarsResponse")
+  NumberConversion_NumberConversion_NumberConversionSoap_NumberToWords(NumberToWords: NumberConversion_NumberToWords_Input): NumberConversion_NumberToWordsResponse @connect(source: "Test", http: {
+    POST: "/webservicesserver/NumberConversion.wso"
+    body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://www.dataaccess.com/webservicesserver/\\") } \\"soap:Body\\": { \\"body:NumberToWords\\": $args.NumberToWords } }"
+  }, selection: "$.Envelope.Body.NumberToWordsResponse")
+  NumberConversion_NumberConversion_NumberConversionSoap_NumberToDollars(NumberToDollars: NumberConversion_NumberToDollars_Input): NumberConversion_NumberToDollarsResponse @connect(source: "Test", http: {
+    POST: "/webservicesserver/NumberConversion.wso"
+    body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://www.dataaccess.com/webservicesserver/\\") } \\"soap:Body\\": { \\"body:NumberToDollars\\": $args.NumberToDollars } }"
+  }, selection: "$.Envelope.Body.NumberToDollarsResponse")
 }
 
 type NumberConversion_NumberToWordsResponse {

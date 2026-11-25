@@ -654,6 +654,11 @@ describe('wirePostgresSqlPlans relation bailouts', () => {
     expect(hydrateParent).toBeUndefined();
 
     // Execution-level: plain stub missing `name` runs hydrator with real field info.
+    // grafast@1.x peers graphql^16 only (uses removed buildExecutionContext).
+    const { version: graphqlVersion } = await import('graphql');
+    if (Number.parseInt(String(graphqlVersion).split('.')[0], 10) >= 17) {
+      return;
+    }
     const result = await execute({
       schema: wired,
       document: parse(`{ artistStub { id name } }`),

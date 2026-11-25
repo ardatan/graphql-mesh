@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`example_api6 should generate the schema correctly 1`] = `
-"schema @source(name: "example_api6", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "example_api6", http: { baseURL: "http://localhost:3000/api" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -14,33 +14,55 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """An arbitrary object"""
-  object: object_200_response @connect(source: "example_api6", http: {GET: "/object"}, selection: "data")
+  object: object_200_response @connect(source: "example_api6", http: { GET: "/object" }, selection: "data")
   """Serves as a link of GET /object"""
   getObject2(
     """HTTP headers are case-insensitive"""
     specialheader: String
-  ): getObject2_200_response @connect(source: "example_api6", http: {GET: "/object2", headers: [{name: "specialheader", value: "{$args.specialheader}"}]}, selection: "data")
+  ): getObject2_200_response @connect(source: "example_api6", http: {
+    GET: "/object2"
+    headers: [{ name: "specialheader", value: "{$args.specialheader}" }]
+  }, selection: "data")
   """A particular car"""
-  cars_by_id(id: String!): String @connect(source: "example_api6", http: {GET: "/cars/{$args.id}", headers: [{name: "accept", value: "text/html"}]}, selection: "$")
+  cars_by_id(id: String!): String @connect(source: "example_api6", http: { GET: "/cars/{$args.id}", headers: [{ name: "accept", value: "text/html" }] }, selection: "$")
   """A particular cactus"""
-  cacti_by_cactusId(cactusId: String!): String @connect(source: "example_api6", http: {GET: "/cacti/{$args.cactusId}", headers: [{name: "accept", value: "text/html"}]}, selection: "$")
-  eateries_by_eatery_breads_by_breadName_dishes_by_dishKey(eatery: String!, breadName: String!, dishKey: String!): String @connect(source: "example_api6", http: {GET: "/eateries/{$args.eatery}/breads/{$args.breadName}/dishes/{$args.dishKey}", headers: [{name: "accept", value: "text/html"}]}, selection: "$")
+  cacti_by_cactusId(cactusId: String!): String @connect(source: "example_api6", http: {
+    GET: "/cacti/{$args.cactusId}"
+    headers: [{ name: "accept", value: "text/html" }]
+  }, selection: "$")
+  eateries_by_eatery_breads_by_breadName_dishes_by_dishKey(eatery: String!, breadName: String!, dishKey: String!): String @connect(source: "example_api6", http: {
+    GET: "/eateries/{$args.eatery}/breads/{$args.breadName}/dishes/{$args.dishKey}"
+    headers: [{ name: "accept", value: "text/html" }]
+  }, selection: "$")
   """Resolve a nested reference in the parameter schema"""
-  nestedReferenceInParameter(russianDoll: russianDoll_Input): String @connect(source: "example_api6", http: {GET: "/nestedReferenceInParameter", headers: [{name: "accept", value: "text/html"}], queryParams: """
-  {
-    russianDoll: $args.russianDoll
-  }
-  """}, selection: "$")
+  nestedReferenceInParameter(russianDoll: russianDoll_Input): String @connect(source: "example_api6", http: {
+    GET: "/nestedReferenceInParameter"
+    headers: [{ name: "accept", value: "text/html" }]
+    queryParams: """
+    {
+      russianDoll: $args.russianDoll
+    }
+    """
+  }, selection: "$")
   """An arbitrary object"""
-  strictGetOperation: String @connect(source: "example_api6", http: {GET: "/strictGetOperation", headers: [{name: "accept", value: "text/plain"}]}, selection: "$")
+  strictGetOperation: String @connect(source: "example_api6", http: {
+    GET: "/strictGetOperation"
+    headers: [{ name: "accept", value: "text/plain" }]
+  }, selection: "$")
   """No provided response schema test"""
-  noResponseSchema: String @connect(source: "example_api6", http: {GET: "/noResponseSchema", headers: [{name: "accept", value: "text/plain"}]}, selection: "$")
+  noResponseSchema: String @connect(source: "example_api6", http: { GET: "/noResponseSchema", headers: [{ name: "accept", value: "text/plain" }] }, selection: "$")
   """Return a number from the request header."""
-  returnNumber(number: Float!): Float @connect(source: "example_api6", http: {GET: "/returnNumber", headers: [{name: "number", value: "{$args.number}"}, {name: "accept", value: "text/plain"}]}, selection: "$")
+  returnNumber(number: Float!): Float @connect(source: "example_api6", http: {
+    GET: "/returnNumber"
+    headers: [
+      { name: "number", value: "{$args.number}" }
+      { name: "accept", value: "text/plain" }
+    ]
+  }, selection: "$")
   """Test link object with non-string parameter."""
-  testLinkWithNonStringParam: testLinkWithNonStringParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkWithNonStringParam"}, selection: "hello")
+  testLinkWithNonStringParam: testLinkWithNonStringParam_200_response @connect(source: "example_api6", http: { GET: "/testLinkWithNonStringParam" }, selection: "hello")
   """Test link object with nested parameter."""
-  testLinkwithNestedParam: testLinkwithNestedParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkwithNestedParam"}, selection: """
+  testLinkwithNestedParam: testLinkwithNestedParam_200_response @connect(source: "example_api6", http: { GET: "/testLinkwithNestedParam" }, selection: """
   nesting1 {
     nesting2
   }
@@ -53,7 +75,10 @@ type object_200_response {
   object2Link(
     """HTTP headers are case-insensitive"""
     specialheader: String
-  ): getObject2_200_response @connect(source: "example_api6", http: {GET: "/object2", headers: [{name: "specialheader", value: "{$args.specialheader}"}]}, selection: "data")
+  ): getObject2_200_response @connect(source: "example_api6", http: {
+    GET: "/object2"
+    headers: [{ name: "specialheader", value: "{$args.specialheader}" }]
+  }, selection: "data")
 }
 
 type getObject2_200_response {
@@ -70,13 +95,22 @@ input russianDoll_Input {
 type testLinkWithNonStringParam_200_response {
   hello: String
   """Return a number from the request header."""
-  return5: Float @connect(source: "example_api6", http: {GET: "/returnNumber", headers: [{name: "number", value: "$(5)"}, {name: "accept", value: "text/plain"}]}, selection: "$")
+  return5: Float @connect(source: "example_api6", http: {
+    GET: "/returnNumber"
+    headers: [{ name: "number", value: "$(5)" }, { name: "accept", value: "text/plain" }]
+  }, selection: "$")
 }
 
 type testLinkwithNestedParam_200_response {
   nesting1: query_testLinkwithNestedParam_nesting1
   """Return a number from the request header."""
-  returnNestedNumber: Float @connect(source: "example_api6", http: {GET: "/returnNumber", headers: [{name: "number", value: "{$this.nesting1.nesting2}"}, {name: "accept", value: "text/plain"}]}, selection: "$")
+  returnNestedNumber: Float @connect(source: "example_api6", http: {
+    GET: "/returnNumber"
+    headers: [
+      { name: "number", value: "{$this.nesting1.nesting2}" }
+      { name: "accept", value: "text/plain" }
+    ]
+  }, selection: "$")
 }
 
 type query_testLinkwithNestedParam_nesting1 {
@@ -85,7 +119,11 @@ type query_testLinkwithNestedParam_nesting1 {
 
 type Mutation {
   """Basic application/x-www-form-urlencoded test"""
-  post_formUrlEncoded(input: pet_Input): pet @connect(source: "example_api6", http: {POST: "/formUrlEncoded", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}], body: "$args.input"}, selection: """
+  post_formUrlEncoded(input: pet_Input): pet @connect(source: "example_api6", http: {
+    POST: "/formUrlEncoded"
+    headers: [{ name: "Content-Type", value: "application/x-www-form-urlencoded" }]
+    body: "$args.input"
+  }, selection: """
   name
   status
   weight
@@ -95,7 +133,11 @@ type Mutation {
   }
   history2
   """)
-  post_inputUnion(input: post_inputUnion_request_Input): String @connect(source: "example_api6", http: {POST: "/inputUnion", headers: [{name: "accept", value: "text/html"}], body: "$args.input"}, selection: "$")
+  post_inputUnion(input: post_inputUnion_request_Input): String @connect(source: "example_api6", http: {
+    POST: "/inputUnion"
+    headers: [{ name: "accept", value: "text/html" }]
+    body: "$args.input"
+  }, selection: "$")
 }
 
 type pet {

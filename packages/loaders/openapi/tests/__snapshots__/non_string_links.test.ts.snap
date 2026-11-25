@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Links on non-object fields should generate the correct schema 1`] = `
-"schema @source(name: "toto", http: {baseURL: "http://localhost:7777"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "toto", http: { baseURL: "http://localhost:7777" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -12,13 +12,13 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  test: test_200_response @connect(source: "toto", http: {GET: "/test"}, selection: "$")
-  testLink: testLink_200_response @connect(source: "toto", http: {GET: "/test-link"}, selection: "foo")
+  test: test_200_response @connect(source: "toto", http: { GET: "/test" }, selection: "$")
+  testLink: testLink_200_response @connect(source: "toto", http: { GET: "/test-link" }, selection: "foo")
 }
 
 type test_200_response {
   String: String @connect(selection: "$")
-  testLink: testLink_200_response @connect(source: "toto", http: {GET: "/test-link"}, selection: "foo")
+  testLink: testLink_200_response @connect(source: "toto", http: { GET: "/test-link" }, selection: "foo")
 }
 
 type testLink_200_response {

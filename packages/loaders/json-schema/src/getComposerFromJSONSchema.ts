@@ -203,6 +203,41 @@ function asObjectTypeComposer(tc: unknown): ObjectTypeComposer | undefined {
   return current instanceof ObjectTypeComposer ? current : undefined;
 }
 
+/**
+ * Normalize JSON Schema defaults for GraphQL 17 printing:
+ * - Enum wire names are sanitized strings (numeric OpenAPI defaults must become keys).
+ * - Empty-string defaults on URL/email scalars throw in `serialize` during print.
+ */
+function coerceFieldDefaultValue(
+  inputTc: AnyTypeComposer<any> | undefined,
+  defaultValue: unknown,
+): unknown {
+  if (defaultValue == null && defaultValue !== 0 && defaultValue !== false) {
+    return defaultValue;
+  }
+  let tc: AnyTypeComposer<any> | undefined = inputTc;
+  while (tc instanceof NonNullComposer || tc instanceof ListComposer) {
+    tc = tc.ofType as AnyTypeComposer<any>;
+  }
+  if (tc instanceof EnumTypeComposer) {
+    let enumKey = sanitizeNameForGraphQL(String(defaultValue));
+    if (enumKey === 'false' || enumKey === 'true' || enumKey === 'null') {
+      enumKey = enumKey.toUpperCase();
+    }
+    if (enumKey.length === 0) {
+      enumKey = '_';
+    }
+    return tc.hasField(enumKey) ? enumKey : defaultValue;
+  }
+  if (tc instanceof ScalarTypeComposer && defaultValue === '') {
+    const name = tc.getTypeName();
+    if (name === 'URL' || name === 'EmailAddress' || name === 'UUID') {
+      return undefined;
+    }
+  }
+  return defaultValue;
+}
+
 function isJsonPrimitiveSchema(schema: JSONSchemaObject): boolean {
   if (
     schema.properties ||
@@ -1555,10 +1590,12 @@ export function getComposerFromJSONSchema({
                 description:
                   subSchemaAndTypeComposers.properties[propertyName].description ||
                   subSchemaAndTypeComposers.properties[propertyName].input?.description,
-                defaultValue:
-                  subSchemaAndTypeComposers.properties[propertyName]?.default ||
-                  subSchemaAndTypeComposers.properties[propertyName]?.extensions?.default ||
-                  subSchemaAndTypeComposers.properties[propertyName]?.input?.default,
+                defaultValue: coerceFieldDefaultValue(
+                  subSchemaAndTypeComposers.properties[propertyName]?.input,
+                  subSchemaAndTypeComposers.properties[propertyName]?.default ??
+                    subSchemaAndTypeComposers.properties[propertyName]?.extensions?.default ??
+                    subSchemaAndTypeComposers.properties[propertyName]?.input?.default,
+                ),
                 // deprecationReason: subSchemaAndTypeComposers.properties[propertyName].deprecated ? 'deprecated' : undefined,
               };
             }

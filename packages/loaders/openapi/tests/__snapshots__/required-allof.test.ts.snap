@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Merge required attributes correctly in allOfs should generate correct schema: required-allof-schema 1`] = `
-"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "test", http: { baseURL: "" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -41,13 +41,13 @@ type Editor implements User {
 
 type Query {
   """Get admin"""
-  getAdmin: Admin @connect(source: "test", http: {GET: "/admin"}, selection: """
+  getAdmin: Admin @connect(source: "test", http: { GET: "/admin" }, selection: """
   name
   type
   admin
   """)
   """Get editor"""
-  getEditor: Editor @connect(source: "test", http: {GET: "/editor"}, selection: """
+  getEditor: Editor @connect(source: "test", http: { GET: "/editor" }, selection: """
   name
   type
   """)

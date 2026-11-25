@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Escaped Values should generate the correct schema: escaped_values-schema 1`] = `
-"schema @source(name: "escaped_values", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "escaped_values", http: { baseURL: "http://localhost:3000/api" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -12,7 +12,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  test: test_200_response @connect(source: "escaped_values", http: {GET: "/test"}, selection: "test: test->match([-1, \\"NEGATIVE_1\\"], [0, \\"_0\\"], [10, \\"_10\\"], [15, \\"_15\\"], [30, \\"_30\\"], [45, \\"_45\\"], [60, \\"_60\\"], [@, test])")
+  test: test_200_response @connect(source: "escaped_values", http: { GET: "/test" }, selection: "test: test->match([-1, \\"NEGATIVE_1\\"], [0, \\"_0\\"], [10, \\"_10\\"], [15, \\"_15\\"], [30, \\"_30\\"], [45, \\"_45\\"], [60, \\"_60\\"], [@, test])")
 }
 
 type test_200_response {

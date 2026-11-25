@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Docusign should generate correct schema: docusign-schema 1`] = `
-"schema @source(name: "test", http: {baseURL: "https://www.docusign.net/restapi"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "test", http: { baseURL: "https://www.docusign.net/restapi" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -21,7 +21,7 @@ type Query {
   
   You do not need an integrator key to view the REST API versions and resources.
   """
-  ServiceInformation_GetServiceInformation: Services @connect(source: "test", http: {GET: "/service_information"}, selection: """
+  ServiceInformation_GetServiceInformation: Services @connect(source: "test", http: { GET: "/service_information" }, selection: """
   buildBranch
   buildBranchDeployedDateTime
   buildSHA
@@ -43,7 +43,7 @@ type Query {
   
   Example: https://demo.docusign.net/restapi/help lists the REST API operations on the DocuSign Demo system with XML and JSON request and response samples.
   """
-  ServiceInformation_GetResourceInformation: Resources @connect(source: "test", http: {GET: "/v2"}, selection: """
+  ServiceInformation_GetResourceInformation: Resources @connect(source: "test", http: { GET: "/v2" }, selection: """
   resources {
     errorDetails {
       errorCode
@@ -55,7 +55,7 @@ type Query {
   }
   """)
   """Retrieves the account provisioning information for the account."""
-  Accounts_GetProvisioning: provisioningInformation @connect(source: "test", http: {GET: "/v2/accounts/provisioning"}, selection: """
+  Accounts_GetProvisioning: provisioningInformation @connect(source: "test", http: { GET: "/v2/accounts/provisioning" }, selection: """
   defaultConnectionId
   defaultPlanId
   distributorCode
@@ -77,11 +77,14 @@ type Query {
     When set to **true**, includes the account settings for the account in the response.
     """
     include_account_settings: String
-  ): Accounts @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}", queryParams: """
-  {
-    include_account_settings: $args.include_account_settings
-  }
-  """}, selection: """
+  ): Accounts @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}"
+    queryParams: """
+    {
+      include_account_settings: $args.include_account_settings
+    }
+    """
+  }, selection: """
   accountIdGuid
   accountName
   allowTransactionRooms
@@ -130,11 +133,14 @@ type Query {
     * seats
     """
     include_charges: String
-  ): billingChargeResponse @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/billing_charges", queryParams: """
-  {
-    include_charges: $args.include_charges
-  }
-  """}, selection: """
+  ): billingChargeResponse @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/billing_charges"
+    queryParams: """
+    {
+      include_charges: $args.include_charges
+    }
+    """
+  }, selection: """
   billingChargeItems {
     allowedQuantity
     blocked
@@ -175,12 +181,15 @@ type Query {
     Specifies the date/time of the latest invoice in the account to retrieve.
     """
     to_date: String
-  ): billingInvoicesResponse @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/billing_invoices", queryParams: """
-  {
-    from_date: $args.from_date
-    to_date: $args.to_date
-  }
-  """}, selection: """
+  ): billingInvoicesResponse @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/billing_invoices"
+    queryParams: """
+    {
+      from_date: $args.from_date
+      to_date: $args.to_date
+    }
+    """
+  }, selection: """
   billingInvoices {
     amount
     balance
@@ -241,7 +250,7 @@ type Query {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     invoiceId: String!
-  ): Invoices @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/billing_invoices/{$args.invoiceId}"}, selection: """
+  ): Invoices @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/billing_invoices/{$args.invoiceId}" }, selection: """
   amount
   balance
   dueDate
@@ -267,7 +276,7 @@ type Query {
   BillingInvoices_GetBillingInvoicesPastDue(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): billingInvoicesSummary @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/billing_invoices_past_due"}, selection: """
+  ): billingInvoicesSummary @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/billing_invoices_past_due" }, selection: """
   billingInvoices {
     amount
     balance
@@ -305,12 +314,15 @@ type Query {
     Specifies the date/time of the latest payment in the account to retrieve.
     """
     to_date: String
-  ): billingPaymentsResponse @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/billing_payments", queryParams: """
-  {
-    from_date: $args.from_date
-    to_date: $args.to_date
-  }
-  """}, selection: """
+  ): billingPaymentsResponse @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/billing_payments"
+    queryParams: """
+    {
+      from_date: $args.from_date
+      to_date: $args.to_date
+    }
+    """
+  }, selection: """
   billingPayments {
     amount
     description
@@ -330,7 +342,7 @@ type Query {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     paymentId: String!
-  ): Payments @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/billing_payments/{$args.paymentId}"}, selection: """
+  ): Payments @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/billing_payments/{$args.paymentId}" }, selection: """
   amount
   description
   paymentDate
@@ -361,13 +373,16 @@ type Query {
     When set to **true**, excludes successor information from the response.
     """
     include_successor_plans: String
-  ): BillingPlans @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/billing_plan", queryParams: """
-  {
-    include_credit_card_information: $args.include_credit_card_information
-    include_metadata: $args.include_metadata
-    include_successor_plans: $args.include_successor_plans
-  }
-  """}, selection: """
+  ): BillingPlans @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/billing_plan"
+    queryParams: """
+    {
+      include_credit_card_information: $args.include_credit_card_information
+      include_metadata: $args.include_metadata
+      include_successor_plans: $args.include_successor_plans
+    }
+    """
+  }, selection: """
   billingAddress {
     address1
     address2
@@ -543,7 +558,7 @@ type Query {
   BillingPlan_GetCreditCardInfo(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): creditCardInformation @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/billing_plan/credit_card"}, selection: """
+  ): creditCardInformation @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/billing_plan/credit_card" }, selection: """
   address {
     city
     country
@@ -572,12 +587,15 @@ type Query {
     exclude_distributor_brand: String
     """When set to **true**, returns the logos associated with the brand."""
     include_logos: String
-  ): AccountBrands @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/brands", queryParams: """
-  {
-    exclude_distributor_brand: $args.exclude_distributor_brand
-    include_logos: $args.include_logos
-  }
-  """}, selection: """
+  ): AccountBrands @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/brands"
+    queryParams: """
+    {
+      exclude_distributor_brand: $args.exclude_distributor_brand
+      include_logos: $args.include_logos
+    }
+    """
+  }, selection: """
   brands {
     brandCompany
     brandId
@@ -642,12 +660,15 @@ type Query {
     brandId: String!
     include_external_references: String
     include_logos: String
-  ): brand @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}", queryParams: """
-  {
-    include_external_references: $args.include_external_references
-    include_logos: $args.include_logos
-  }
-  """}, selection: """
+  ): brand @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}"
+    queryParams: """
+    {
+      include_external_references: $args.include_external_references
+      include_logos: $args.include_logos
+    }
+    """
+  }, selection: """
   brandCompany
   brandId
   brandName
@@ -706,7 +727,7 @@ type Query {
     accountId: String!
     """The unique identifier of a brand."""
     brandId: String!
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/file"}, selection: "$")
+  ): JSON @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/file" }, selection: "$")
   """Obtains the specified image for a brand."""
   BrandLogo_GetBrandLogo(
     """The external account number (int) or account ID Guid."""
@@ -715,14 +736,16 @@ type Query {
     brandId: String!
     """One of **Primary**, **Secondary** or **Email**."""
     logoType: String!
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/logos/{$args.logoType}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/logos/{$args.logoType}"
+  }, selection: "$")
   """Returns the specified account's list of branding resources (metadata)."""
   BrandResources_GetBrandResourcesList(
     """The external account number (int) or account ID Guid."""
     accountId: String!
     """The unique identifier of a brand."""
     brandId: String!
-  ): brandResourcesList @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/resources"}, selection: """
+  ): brandResourcesList @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/resources" }, selection: """
   resourcesContentTypes {
     createdByUserInfo {
       activationAccessCode
@@ -770,12 +793,15 @@ type Query {
     resourceContentType: String!
     langcode: String
     return_master: String
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/resources/{$args.resourceContentType}", queryParams: """
-  {
-    langcode: $args.langcode
-    return_master: $args.return_master
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/resources/{$args.resourceContentType}"
+    queryParams: """
+    {
+      langcode: $args.langcode
+      return_master: $args.return_master
+    }
+    """
+  }, selection: "$")
   """
   Retrieves status information about all the bulk recipient batches. A bulk recipient batch is the set of envelopes sent from a single bulk recipient file. The response includes general information about each bulk recipient batch. 
   
@@ -801,13 +827,16 @@ type Query {
     The position of the bulk envelope items in the response. This is used for repeated calls, when the number of bulk envelopes returned is too large for one return. The default value is 0.
     """
     start_position: String
-  ): BulkEnvelopes @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/bulk_envelopes", queryParams: """
-  {
-    count: $args.count
-    include: $args.include
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): BulkEnvelopes @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/bulk_envelopes"
+    queryParams: """
+    {
+      count: $args.count
+      include: $args.include
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   bulkEnvelopeStatuses {
     batchId
     batchSize
@@ -866,13 +895,16 @@ type Query {
     include: String
     """Specifies the location in the list of envelopes from which to start."""
     start_position: String
-  ): bulkEnvelopeStatus @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/bulk_envelopes/{$args.batchId}", queryParams: """
-  {
-    count: $args.count
-    include: $args.include
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): bulkEnvelopeStatus @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/bulk_envelopes/{$args.batchId}"
+    queryParams: """
+    {
+      count: $args.count
+      include: $args.include
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   batchId
   batchSize
   bulkEnvelopes {
@@ -910,11 +942,14 @@ type Query {
     A comma-separated list of additional template attributes to include in the response. Valid values are: recipients, folders, documents, custom_fields, and notifications.
     """
     include: String
-  ): ChunkedUploads @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/chunked_uploads/{$args.chunkedUploadId}", queryParams: """
-  {
-    include: $args.include
-  }
-  """}, selection: """
+  ): ChunkedUploads @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/chunked_uploads/{$args.chunkedUploadId}"
+    queryParams: """
+    {
+      include: $args.include
+    }
+    """
+  }, selection: """
   checksum
   chunkedUploadId
   chunkedUploadParts {
@@ -934,7 +969,7 @@ type Query {
   Connect_GetConnectConfigs(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): connectConfigResults @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/connect"}, selection: """
+  ): connectConfigResults @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/connect" }, selection: """
   configurations {
     allUsers
     allowEnvelopePublish
@@ -974,12 +1009,15 @@ type Query {
     End of the search date range. Only returns templates created up to this date/time. If no value is provided, this defaults to the current date.
     """
     to_date: String
-  ): ConnectEvents @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/connect/failures", queryParams: """
-  {
-    from_date: $args.from_date
-    to_date: $args.to_date
-  }
-  """}, selection: """
+  ): ConnectEvents @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/connect/failures"
+    queryParams: """
+    {
+      from_date: $args.from_date
+      to_date: $args.to_date
+    }
+    """
+  }, selection: """
   failures {
     accountId
     configUrl
@@ -1053,12 +1091,15 @@ type Query {
     End of the search date range. Only returns templates created up to this date/time. If no value is provided, this defaults to the current date.
     """
     to_date: String
-  ): ConnectEvents @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/connect/logs", queryParams: """
-  {
-    from_date: $args.from_date
-    to_date: $args.to_date
-  }
-  """}, selection: """
+  ): ConnectEvents @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/connect/logs"
+    queryParams: """
+    {
+      from_date: $args.from_date
+      to_date: $args.to_date
+    }
+    """
+  }, selection: """
   failures {
     accountId
     configUrl
@@ -1130,11 +1171,14 @@ type Query {
     When true, the connectDebugLog information is included in the response.
     """
     additional_info: String
-  ): connectLog @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/connect/logs/{$args.logId}", queryParams: """
-  {
-    additional_info: $args.additional_info
-  }
-  """}, selection: """
+  ): connectLog @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/connect/logs/{$args.logId}"
+    queryParams: """
+    {
+      additional_info: $args.additional_info
+    }
+    """
+  }, selection: """
   accountId
   configUrl
   connectDebugLog {
@@ -1172,7 +1216,7 @@ type Query {
     accountId: String!
     """The ID of the custom Connect configuration being accessed."""
     connectId: String!
-  ): connectConfigResults @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/connect/{$args.connectId}"}, selection: """
+  ): connectConfigResults @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/connect/{$args.connectId}" }, selection: """
   configurations {
     allUsers
     allowEnvelopePublish
@@ -1231,16 +1275,19 @@ type Query {
     Filters the user records returned by the user name or a sub-string of user name.
     """
     user_name_substring: String
-  ): integratedUserInfoList @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/connect/{$args.connectId}/users", queryParams: """
-  {
-    count: $args.count
-    email_substring: $args.email_substring
-    list_included_users: $args.list_included_users
-    start_position: $args.start_position
-    status: $args.status
-    user_name_substring: $args.user_name_substring
-  }
-  """}, selection: """
+  ): integratedUserInfoList @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/connect/{$args.connectId}/users"
+    queryParams: """
+    {
+      count: $args.count
+      email_substring: $args.email_substring
+      list_included_users: $args.list_included_users
+      start_position: $args.start_position
+      status: $args.status
+      user_name_substring: $args.user_name_substring
+    }
+    """
+  }, selection: """
   allUsersSelected
   endPosition
   nextUri
@@ -1276,11 +1323,14 @@ type Query {
     Additionally, the value can be set to \`browser\` to automatically detect the browser language being used by the viewer and display the disclosure in that language.
     """
     langCode: String
-  ): AccountConsumerDisclosures @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/consumer_disclosure", queryParams: """
-  {
-    langCode: $args.langCode
-  }
-  """}, selection: """
+  ): AccountConsumerDisclosures @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/consumer_disclosure"
+    queryParams: """
+    {
+      langCode: $args.langCode
+    }
+    """
+  }, selection: """
   accountEsignId
   allowCDWithdraw
   allowCDWithdrawMetadata {
@@ -1338,7 +1388,7 @@ type Query {
     The simple type enumeration the language used in the response. The supported languages, with the language value shown in parenthesis, are:Arabic (ar), Bulgarian (bg), Czech (cs), Chinese Simplified (zh_CN), Chinese Traditional (zh_TW), Croatian (hr), Danish (da), Dutch (nl), English US (en), English UK (en_GB), Estonian (et), Farsi (fa), Finnish (fi), French (fr), French Canada (fr_CA), German (de), Greek (el), Hebrew (he), Hindi (hi), Hungarian (hu), Bahasa Indonesia (id), Italian (it), Japanese (ja), Korean (ko), Latvian (lv), Lithuanian (lt), Bahasa Melayu (ms), Norwegian (no), Polish (pl), Portuguese (pt), Portuguese Brazil (pt_BR), Romanian (ro), Russian (ru), Serbian (sr), Slovak (sk), Slovenian (sl), Spanish (es),Spanish Latin America (es_MX), Swedish (sv), Thai (th), Turkish (tr), Ukrainian (uk) and Vietnamese (vi). Additionally, the value can be set to "browser" to automatically detect the browser language being used by the viewer and display the disclosure in that language.
     """
     langCode: String!
-  ): AccountConsumerDisclosures @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/consumer_disclosure/{$args.langCode}"}, selection: """
+  ): AccountConsumerDisclosures @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/consumer_disclosure/{$args.langCode}" }, selection: """
   accountEsignId
   allowCDWithdraw
   allowCDWithdrawMetadata {
@@ -1393,11 +1443,14 @@ type Query {
     """The unique identifier of a person in the contacts address book."""
     contactId: String!
     cloud_provider: String
-  ): contactGetResponse @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/contacts/{$args.contactId}", queryParams: """
-  {
-    cloud_provider: $args.cloud_provider
-  }
-  """}, selection: """
+  ): contactGetResponse @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/contacts/{$args.contactId}"
+    queryParams: """
+    {
+      cloud_provider: $args.cloud_provider
+    }
+    """
+  }, selection: """
   contacts {
     contactId
     contactPhoneNumbers {
@@ -1431,7 +1484,7 @@ type Query {
   AccountCustomFields_GetAccountCustomFields(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): AccountCustomFields @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/custom_fields"}, selection: """
+  ): AccountCustomFields @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/custom_fields" }, selection: """
   listCustomFields {
     configurationType
     errorDetails {
@@ -1688,35 +1741,38 @@ type Query {
     must refer to an existing account user.
     """
     user_name: String
-  ): envelopesInformation @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes", queryParams: """
-  {
-    ac_status: $args.ac_status
-    block: $args.block
-    count: $args.count
-    custom_field: $args.custom_field
-    email: $args.email
-    envelope_ids: $args.envelope_ids
-    exclude: $args.exclude
-    folder_ids: $args.folder_ids
-    folder_types: $args.folder_types
-    from_date: $args.from_date
-    from_to_status: $args.from_to_status
-    include: $args.include
-    include_purge_information: $args.include_purge_information
-    intersecting_folder_ids: $args.intersecting_folder_ids
-    order: $args.order
-    order_by: $args.order_by
-    powerformids: $args.powerformids
-    search_text: $args.search_text
-    start_position: $args.start_position
-    status: $args.status
-    to_date: $args.to_date
-    transaction_ids: $args.transaction_ids
-    user_filter: $args.user_filter
-    user_id: $args.user_id
-    user_name: $args.user_name
-  }
-  """}, selection: """
+  ): envelopesInformation @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes"
+    queryParams: """
+    {
+      ac_status: $args.ac_status
+      block: $args.block
+      count: $args.count
+      custom_field: $args.custom_field
+      email: $args.email
+      envelope_ids: $args.envelope_ids
+      exclude: $args.exclude
+      folder_ids: $args.folder_ids
+      folder_types: $args.folder_types
+      from_date: $args.from_date
+      from_to_status: $args.from_to_status
+      include: $args.include
+      include_purge_information: $args.include_purge_information
+      intersecting_folder_ids: $args.intersecting_folder_ids
+      order: $args.order
+      order_by: $args.order_by
+      powerformids: $args.powerformids
+      search_text: $args.search_text
+      start_position: $args.start_position
+      status: $args.status
+      to_date: $args.to_date
+      transaction_ids: $args.transaction_ids
+      user_filter: $args.user_filter
+      user_id: $args.user_id
+      user_name: $args.user_name
+    }
+    """
+  }, selection: """
   endPosition
   envelopeTransactionStatuses {
     envelopeId
@@ -1866,12 +1922,15 @@ type Query {
     advanced_update: String
     """Reserved for DocuSign."""
     include: String
-  ): Envelopes @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}", queryParams: """
-  {
-    advanced_update: $args.advanced_update
-    include: $args.include
-  }
-  """}, selection: """
+  ): Envelopes @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}"
+    queryParams: """
+    {
+      advanced_update: $args.advanced_update
+      include: $args.include
+    }
+    """
+  }, selection: """
   allowMarkup
   allowReassign
   asynchronous
@@ -2000,7 +2059,9 @@ type Query {
     accountId: String!
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
-  ): envelopeAttachmentsResult @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/attachments"}, selection: """
+  ): envelopeAttachmentsResult @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/attachments"
+  }, selection: """
   attachments {
     accessControl
     attachmentId
@@ -2020,14 +2081,18 @@ type Query {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     attachmentId: String!
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/attachments/{$args.attachmentId}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/attachments/{$args.attachmentId}"
+  }, selection: "$")
   """Gets the envelope audit events for the specified envelope."""
   AuditEvents_GetAuditEvents(
     """The external account number (int) or account ID Guid."""
     accountId: String!
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
-  ): envelopeAuditEventResponse @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/audit_events"}, selection: """
+  ): envelopeAuditEventResponse @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/audit_events"
+  }, selection: """
   auditEvents {
     eventFields {
       errorDetails {
@@ -2050,7 +2115,9 @@ type Query {
     accountId: String!
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
-  ): customFieldsEnvelope @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/custom_fields"}, selection: """
+  ): customFieldsEnvelope @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/custom_fields"
+  }, selection: """
   listCustomFields {
     configurationType
     errorDetails {
@@ -2085,11 +2152,14 @@ type Query {
     envelopeId: String!
     """Reserved for DocuSign."""
     include_metadata: String
-  ): EnvelopeDocuments @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents", queryParams: """
-  {
-    include_metadata: $args.include_metadata
-  }
-  """}, selection: """
+  ): EnvelopeDocuments @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents"
+    queryParams: """
+    {
+      include_metadata: $args.include_metadata
+    }
+    """
+  }, selection: """
   envelopeDocuments {
     attachmentTabId
     availableDocumentTypes {
@@ -2163,17 +2233,21 @@ type Query {
     When set to **true**, the account has the watermark feature enabled, and the envelope is not complete, the watermark for the account is added to the PDF documents. This option can remove the watermark.
     """
     watermark: String
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}", headers: [{name: "Accept", value: "application/pdf"}], queryParams: """
-  {
-    certificate: $args.certificate
-    encoding: $args.encoding
-    encrypt: $args.encrypt
-    language: $args.language
-    recipient_id: $args.recipient_id
-    show_changes: $args.show_changes
-    watermark: $args.watermark
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}"
+    headers: [{ name: "Accept", value: "application/pdf" }]
+    queryParams: """
+    {
+      certificate: $args.certificate
+      encoding: $args.encoding
+      encrypt: $args.encrypt
+      language: $args.language
+      recipient_id: $args.recipient_id
+      show_changes: $args.show_changes
+      watermark: $args.watermark
+    }
+    """
+  }, selection: "$")
   """
   Retrieves the custom document field information from an existing envelope document.
   """
@@ -2184,7 +2258,9 @@ type Query {
     envelopeId: String!
     """The ID of the document being accessed."""
     documentId: String!
-  ): EnvelopeDocumentFields @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/fields"}, selection: """
+  ): EnvelopeDocumentFields @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/fields"
+  }, selection: """
   documentFields {
     errorDetails {
       errorCode
@@ -2219,17 +2295,20 @@ type Query {
     The position within the total result set from which to start returning values. The value **thumbnail** may be used to return the page image.
     """
     start_position: String
-  ): pageImages @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/pages", queryParams: """
-  {
-    count: $args.count
-    dpi: $args.dpi
-    max_height: $args.max_height
-    max_width: $args.max_width
-    nocache: $args.nocache
-    show_changes: $args.show_changes
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): pageImages @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/pages"
+    queryParams: """
+    {
+      count: $args.count
+      dpi: $args.dpi
+      max_height: $args.max_height
+      max_width: $args.max_width
+      nocache: $args.nocache
+      show_changes: $args.show_changes
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   endPosition
   nextUri
   pages {
@@ -2271,14 +2350,18 @@ type Query {
     """
     max_width: String
     show_changes: String
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/pages/{$args.pageNumber}/page_image", headers: [{name: "Accept", value: "image/png"}], queryParams: """
-  {
-    dpi: $args.dpi
-    max_height: $args.max_height
-    max_width: $args.max_width
-    show_changes: $args.show_changes
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/pages/{$args.pageNumber}/page_image"
+    headers: [{ name: "Accept", value: "image/png" }]
+    queryParams: """
+    {
+      dpi: $args.dpi
+      max_height: $args.max_height
+      max_width: $args.max_width
+      show_changes: $args.show_changes
+    }
+    """
+  }, selection: "$")
   """Returns tabs on the specified page."""
   Tabs_GetPageTabs(
     """The external account number (int) or account ID Guid."""
@@ -2289,7 +2372,9 @@ type Query {
     documentId: String!
     """The page number being accessed."""
     pageNumber: String!
-  ): EnvelopeDocumentTabs @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/pages/{$args.pageNumber}/tabs"}, selection: """
+  ): EnvelopeDocumentTabs @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/pages/{$args.pageNumber}/tabs"
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -3191,11 +3276,14 @@ type Query {
     """The ID of the document being accessed."""
     documentId: String!
     page_numbers: String
-  ): EnvelopeDocumentTabs @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/tabs", queryParams: """
-  {
-    page_numbers: $args.page_numbers
-  }
-  """}, selection: """
+  ): EnvelopeDocumentTabs @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/tabs"
+    queryParams: """
+    {
+      page_numbers: $args.page_numbers
+    }
+    """
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -4107,11 +4195,14 @@ type Query {
     * matched
     """
     include: String
-  ): EnvelopeTemplates @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/templates", queryParams: """
-  {
-    include: $args.include
-  }
-  """}, selection: """
+  ): EnvelopeTemplates @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/templates"
+    queryParams: """
+    {
+      include: $args.include
+    }
+    """
+  }, selection: """
   templates {
     applied
     documentId
@@ -4132,7 +4223,9 @@ type Query {
     accountId: String!
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
-  ): EnvelopeEmailSettings @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/email_settings"}, selection: """
+  ): EnvelopeEmailSettings @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/email_settings"
+  }, selection: """
   bccEmailAddresses {
     bccEmailAddressId
     email
@@ -4146,7 +4239,7 @@ type Query {
     accountId: String!
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
-  ): EnvelopeFormData @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/form_data"}, selection: """
+  ): EnvelopeFormData @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/form_data" }, selection: """
   emailSubject
   envelopeId
   formData {
@@ -4189,7 +4282,7 @@ type Query {
     accountId: String!
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
-  ): EnvelopeLocks @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/lock"}, selection: """
+  ): EnvelopeLocks @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/lock" }, selection: """
   errorDetails {
     errorCode
     message
@@ -4224,7 +4317,9 @@ type Query {
     accountId: String!
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
-  ): notification @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/notification"}, selection: """
+  ): notification @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/notification"
+  }, selection: """
   expirations {
     expireAfter
     expireEnabled
@@ -4261,14 +4356,17 @@ type Query {
     When set to **true**, the tab information associated with the recipient is included in the response.
     """
     include_tabs: String
-  ): EnvelopeRecipients @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients", queryParams: """
-  {
-    include_anchor_tab_locations: $args.include_anchor_tab_locations
-    include_extended: $args.include_extended
-    include_metadata: $args.include_metadata
-    include_tabs: $args.include_tabs
-  }
-  """}, selection: """
+  ): EnvelopeRecipients @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients"
+    queryParams: """
+    {
+      include_anchor_tab_locations: $args.include_anchor_tab_locations
+      include_extended: $args.include_extended
+      include_metadata: $args.include_metadata
+      include_tabs: $args.include_tabs
+    }
+    """
+  }, selection: """
   agents {
     accessCode
     addAccessCodeToEmail
@@ -4544,12 +4642,15 @@ type Query {
     include_tabs: String
     """Reserved for DocuSign."""
     start_position: String
-  ): EnvelopeBulkRecipients @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/bulk_recipients", queryParams: """
-  {
-    include_tabs: $args.include_tabs
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): EnvelopeBulkRecipients @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/bulk_recipients"
+    queryParams: """
+    {
+      include_tabs: $args.include_tabs
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   bulkRecipients {
     accessCode
     email
@@ -4589,11 +4690,14 @@ type Query {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     langCode: String
-  ): EnvelopeConsumerDisclosures @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/consumer_disclosure", queryParams: """
-  {
-    langCode: $args.langCode
-  }
-  """}, selection: """
+  ): EnvelopeConsumerDisclosures @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/consumer_disclosure"
+    queryParams: """
+    {
+      langCode: $args.langCode
+    }
+    """
+  }, selection: """
   accountEsignId
   allowCDWithdraw
   allowCDWithdrawMetadata {
@@ -4652,11 +4756,14 @@ type Query {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     langCode: String!
-  ): EnvelopeConsumerDisclosures @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/consumer_disclosure/{$args.langCode}", queryParams: """
-  {
-    langCode: $args.langCode
-  }
-  """}, selection: """
+  ): EnvelopeConsumerDisclosures @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/consumer_disclosure/{$args.langCode}"
+    queryParams: """
+    {
+      langCode: $args.langCode
+    }
+    """
+  }, selection: """
   accountEsignId
   allowCDWithdraw
   allowCDWithdrawMetadata {
@@ -4712,7 +4819,9 @@ type Query {
     envelopeId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-  ): EnvelopeDocumentVisibility @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/document_visibility"}, selection: """
+  ): EnvelopeDocumentVisibility @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/document_visibility"
+  }, selection: """
   documentVisibility {
     documentId
     errorDetails {
@@ -4746,11 +4855,15 @@ type Query {
     The added line and identifier around the initial image. Note: Older envelopes might only have chromed images. If getting the non-chromed image fails, try getting the chromed image.
     """
     include_chrome: String
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/initials_image", headers: [{name: "Accept", value: "image/gif"}], queryParams: """
-  {
-    include_chrome: $args.include_chrome
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/initials_image"
+    headers: [{ name: "Accept", value: "image/gif" }]
+    queryParams: """
+    {
+      include_chrome: $args.include_chrome
+    }
+    """
+  }, selection: "$")
   """
   Retrieves signature information for a signer or sign-in-person recipient.
   """
@@ -4761,7 +4874,9 @@ type Query {
     envelopeId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-  ): UserSignatures @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/signature"}, selection: """
+  ): UserSignatures @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/signature"
+  }, selection: """
   adoptedDateTime
   createdDateTime
   dateStampProperties {
@@ -4814,11 +4929,15 @@ type Query {
     When set to **true**, indicates the chromed version of the signature image should be retrieved.
     """
     include_chrome: String
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/signature_image", headers: [{name: "Accept", value: "image/gif"}], queryParams: """
-  {
-    include_chrome: $args.include_chrome
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/signature_image"
+    headers: [{ name: "Accept", value: "image/gif" }]
+    queryParams: """
+    {
+      include_chrome: $args.include_chrome
+    }
+    """
+  }, selection: "$")
   """
   Retrieves information about the tabs associated with a recipient in a draft envelope.
   """
@@ -4835,12 +4954,15 @@ type Query {
     include_anchor_tab_locations: String
     """Reserved for DocuSign."""
     include_metadata: String
-  ): EnvelopeRecipientTabs @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/tabs", queryParams: """
-  {
-    include_anchor_tab_locations: $args.include_anchor_tab_locations
-    include_metadata: $args.include_metadata
-  }
-  """}, selection: """
+  ): EnvelopeRecipientTabs @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/tabs"
+    queryParams: """
+    {
+      include_anchor_tab_locations: $args.include_anchor_tab_locations
+      include_metadata: $args.include_metadata
+    }
+    """
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -5746,11 +5868,14 @@ type Query {
     The possible values are:  matching_applied - This returns template matching information for the template.
     """
     include: String
-  ): EnvelopeTemplates @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/templates", queryParams: """
-  {
-    include: $args.include
-  }
-  """}, selection: """
+  ): EnvelopeTemplates @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/templates"
+    queryParams: """
+    {
+      include: $args.include
+    }
+    """
+  }, selection: """
   templates {
     applied
     documentId
@@ -5785,15 +5910,18 @@ type Query {
     template: String
     """Reserved for DocuSign."""
     user_filter: String
-  ): Folders @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/folders", queryParams: """
-  {
-    include: $args.include
-    include_items: $args.include_items
-    start_position: $args.start_position
-    template: $args.template
-    user_filter: $args.user_filter
-  }
-  """}, selection: """
+  ): Folders @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/folders"
+    queryParams: """
+    {
+      include: $args.include
+      include_items: $args.include_items
+      start_position: $args.start_position
+      template: $args.template
+      user_filter: $args.user_filter
+    }
+    """
+  }, selection: """
   folders {
     errorDetails {
       errorCode
@@ -5856,18 +5984,21 @@ type Query {
     Only return items up to this date. If no value is provided, the default search is to the current date.
     """
     to_date: String
-  ): folderItemsResponse @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/folders/{$args.folderId}", queryParams: """
-  {
-    from_date: $args.from_date
-    include_items: $args.include_items
-    owner_email: $args.owner_email
-    owner_name: $args.owner_name
-    search_text: $args.search_text
-    start_position: $args.start_position
-    status: $args.status
-    to_date: $args.to_date
-  }
-  """}, selection: """
+  ): folderItemsResponse @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/folders/{$args.folderId}"
+    queryParams: """
+    {
+      from_date: $args.from_date
+      include_items: $args.include_items
+      owner_email: $args.owner_email
+      owner_name: $args.owner_name
+      search_text: $args.search_text
+      start_position: $args.start_position
+      status: $args.status
+      to_date: $args.to_date
+    }
+    """
+  }, selection: """
   endPosition
   folderItems {
     completedDateTime
@@ -5925,15 +6056,18 @@ type Query {
     search_text: String
     """Starting value for the list."""
     start_position: String
-  ): Groups @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/groups", queryParams: """
-  {
-    count: $args.count
-    group_name: $args.group_name
-    group_type: $args.group_type
-    search_text: $args.search_text
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): Groups @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/groups"
+    queryParams: """
+    {
+      count: $args.count
+      group_name: $args.group_name
+      group_type: $args.group_type
+      search_text: $args.search_text
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   endPosition
   groups {
     errorDetails {
@@ -5974,7 +6108,7 @@ type Query {
     accountId: String!
     """The ID of the group being accessed."""
     groupId: String!
-  ): GroupBrands @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/brands"}, selection: """
+  ): GroupBrands @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/brands" }, selection: """
   brands {
     brandCompany
     brandId
@@ -6043,12 +6177,15 @@ type Query {
     count: String
     """Starting value for the list."""
     start_position: String
-  ): GroupUsers @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/users", queryParams: """
-  {
-    count: $args.count
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): GroupUsers @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/users"
+    queryParams: """
+    {
+      count: $args.count
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   endPosition
   nextUri
   previousUri
@@ -6075,7 +6212,7 @@ type Query {
   PaymentGatewayAccounts_GetAllPaymentGatewayAccounts(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): paymentGatewayAccountsInfo @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/payment_gateway_accounts"}, selection: """
+  ): paymentGatewayAccountsInfo @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/payment_gateway_accounts" }, selection: """
   paymentGatewayAccounts {
     displayName
     paymentGateway
@@ -6092,11 +6229,14 @@ type Query {
     accountId: String!
     """Reserved for DocuSign."""
     include: String
-  ): permissionProfileInformation @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/permission_profiles", queryParams: """
-  {
-    include: $args.include
-  }
-  """}, selection: """
+  ): permissionProfileInformation @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/permission_profiles"
+    queryParams: """
+    {
+      include: $args.include
+    }
+    """
+  }, selection: """
   permissionProfiles {
     modifiedByUsername
     modifiedDateTime
@@ -6547,11 +6687,14 @@ type Query {
     A comma-separated list of additional template attributes to include in the response. Valid values are: recipients, folders, documents, custom_fields, and notifications.
     """
     include: String
-  ): AccountPermissionProfiles @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/permission_profiles/{$args.permissionProfileId}", queryParams: """
-  {
-    include: $args.include
-  }
-  """}, selection: """
+  ): AccountPermissionProfiles @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/permission_profiles/{$args.permissionProfileId}"
+    queryParams: """
+    {
+      include: $args.include
+    }
+    """
+  }, selection: """
   modifiedByUsername
   modifiedDateTime
   permissionProfileId
@@ -7021,14 +7164,17 @@ type Query {
     End of the search date range. Only returns templates created up to this date/time. If no value is provided, this defaults to the current date.
     """
     to_date: String
-  ): powerFormsResponse @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/powerforms", queryParams: """
-  {
-    from_date: $args.from_date
-    order: $args.order
-    order_by: $args.order_by
-    to_date: $args.to_date
-  }
-  """}, selection: """
+  ): powerFormsResponse @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/powerforms"
+    queryParams: """
+    {
+      from_date: $args.from_date
+      order: $args.order
+      order_by: $args.order_by
+      to_date: $args.to_date
+    }
+    """
+  }, selection: """
   endPosition
   nextUri
   powerForms {
@@ -7190,11 +7336,14 @@ type Query {
     The position within the total result set from which to start returning values. The value **thumbnail** may be used to return the page image.
     """
     start_position: String
-  ): powerFormSendersResponse @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/powerforms/senders", queryParams: """
-  {
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): powerFormSendersResponse @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/powerforms/senders"
+    queryParams: """
+    {
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   endPosition
   nextUri
   powerFormSenders {
@@ -7222,7 +7371,7 @@ type Query {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     powerFormId: String!
-  ): PowerForms @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/powerforms/{$args.powerFormId}"}, selection: """
+  ): PowerForms @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/powerforms/{$args.powerFormId}" }, selection: """
   createdDateTime
   emailBody
   emailSubject
@@ -7321,12 +7470,15 @@ type Query {
     End of the search date range. Only returns templates created up to this date/time. If no value is provided, this defaults to the current date.
     """
     to_date: String
-  ): powerFormsFormDataResponse @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/powerforms/{$args.powerFormId}/form_data", queryParams: """
-  {
-    from_date: $args.from_date
-    to_date: $args.to_date
-  }
-  """}, selection: """
+  ): powerFormsFormDataResponse @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/powerforms/{$args.powerFormId}/form_data"
+    queryParams: """
+    {
+      from_date: $args.from_date
+      to_date: $args.to_date
+    }
+    """
+  }, selection: """
   envelopes {
     envelopeId
     recipients {
@@ -7353,11 +7505,14 @@ type Query {
     accountId: String!
     """The email address for the user"""
     email: String
-  ): recipientNamesResponse @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/recipient_names", queryParams: """
-  {
-    email: $args.email
-  }
-  """}, selection: """
+  ): recipientNamesResponse @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/recipient_names"
+    queryParams: """
+    {
+      email: $args.email
+    }
+    """
+  }, selection: """
   multipleUsers
   recipientNames
   reservedRecipientEmail
@@ -7402,18 +7557,21 @@ type Query {
     start_position: String
     """Specifies the end of the date range to return."""
     to_date: String
-  ): folderItemResponse @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/search_folders/{$args.searchFolderId}", queryParams: """
-  {
-    all: $args.all
-    count: $args.count
-    from_date: $args.from_date
-    include_recipients: $args.include_recipients
-    order: $args.order
-    order_by: $args.order_by
-    start_position: $args.start_position
-    to_date: $args.to_date
-  }
-  """}, selection: """
+  ): folderItemResponse @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/search_folders/{$args.searchFolderId}"
+    queryParams: """
+    {
+      all: $args.all
+      count: $args.count
+      from_date: $args.from_date
+      include_recipients: $args.include_recipients
+      order: $args.order
+      order_by: $args.order_by
+      start_position: $args.start_position
+      to_date: $args.to_date
+    }
+    """
+  }, selection: """
   endPosition
   folderItems {
     completedDateTime
@@ -7450,7 +7608,7 @@ type Query {
   Settings_GetSettings(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): accountSettingsInformation @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/settings"}, selection: """
+  ): accountSettingsInformation @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/settings" }, selection: """
   accountSettings {
     errorDetails {
       errorCode
@@ -7467,7 +7625,7 @@ type Query {
   ENoteConfiguration_GetENoteConfiguration(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): ENoteConfigurations @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/settings/enote_configuration"}, selection: """
+  ): ENoteConfigurations @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/settings/enote_configuration" }, selection: """
   connectConfigured
   eNoteConfigured
   organization
@@ -7478,7 +7636,7 @@ type Query {
   AccountPasswordRules_GetAccountPasswordRules(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): AccountPasswordRules @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/settings/password_rules"}, selection: """
+  ): AccountPasswordRules @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/settings/password_rules" }, selection: """
   expirePassword
   expirePasswordDays
   expirePasswordDaysMetadata {
@@ -7531,7 +7689,7 @@ type Query {
   TabSettings_GetTabSettings(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): AccountTabSettings @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/settings/tabs"}, selection: """
+  ): AccountTabSettings @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/settings/tabs" }, selection: """
   allowTabOrder
   allowTabOrderMetadata {
     is21CFRPart11
@@ -7731,18 +7889,21 @@ type Query {
     start_position: String
     """Reserved:"""
     user_ids: String
-  ): accountSharedAccess @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/shared_access", queryParams: """
-  {
-    count: $args.count
-    envelopes_not_shared_user_status: $args.envelopes_not_shared_user_status
-    folder_ids: $args.folder_ids
-    item_type: $args.item_type
-    search_text: $args.search_text
-    shared: $args.shared
-    start_position: $args.start_position
-    user_ids: $args.user_ids
-  }
-  """}, selection: """
+  ): accountSharedAccess @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/shared_access"
+    queryParams: """
+    {
+      count: $args.count
+      envelopes_not_shared_user_status: $args.envelopes_not_shared_user_status
+      folder_ids: $args.folder_ids
+      item_type: $args.item_type
+      search_text: $args.search_text
+      shared: $args.shared
+      start_position: $args.start_position
+      user_ids: $args.user_ids
+    }
+    """
+  }, selection: """
   accountId
   endPosition
   errorDetails {
@@ -7880,7 +8041,7 @@ type Query {
   AccountSignatureProviders_GetSignatureProviders(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): AccountSignatureProviders @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/signatureProviders"}, selection: """
+  ): AccountSignatureProviders @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/signatureProviders" }, selection: """
   signatureProviders {
     isRequired
     priority
@@ -7905,12 +8066,15 @@ type Query {
     group_type: String
     """When set to **true**, the response includes the signing group members."""
     include_users: String
-  ): signingGroupInformation @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/signing_groups", queryParams: """
-  {
-    group_type: $args.group_type
-    include_users: $args.include_users
-  }
-  """}, selection: """
+  ): signingGroupInformation @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/signing_groups"
+    queryParams: """
+    {
+      group_type: $args.group_type
+      include_users: $args.include_users
+    }
+    """
+  }, selection: """
   groups {
     created
     createdBy
@@ -7941,7 +8105,7 @@ type Query {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     signingGroupId: String!
-  ): SigningGroups @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/signing_groups/{$args.signingGroupId}"}, selection: """
+  ): SigningGroups @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/signing_groups/{$args.signingGroupId}" }, selection: """
   created
   createdBy
   errorDetails {
@@ -7968,7 +8132,9 @@ type Query {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     signingGroupId: String!
-  ): SigningGroupUsers @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/signing_groups/{$args.signingGroupId}/users"}, selection: """
+  ): SigningGroupUsers @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/signing_groups/{$args.signingGroupId}/users"
+  }, selection: """
   users {
     email
     errorDetails {
@@ -7982,7 +8148,7 @@ type Query {
   SupportedLanguages_GetSupportedLanguages(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): supportedLanguages @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/supported_languages"}, selection: """
+  ): supportedLanguages @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/supported_languages" }, selection: """
   languages {
     errorDetails {
       errorCode
@@ -7999,11 +8165,14 @@ type Query {
     accountId: String!
     """When set to **true**, only custom tabs are returned in the response."""
     custom_tab_only: String
-  ): tabMetadataList @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/tab_definitions", queryParams: """
-  {
-    custom_tab_only: $args.custom_tab_only
-  }
-  """}, selection: """
+  ): tabMetadataList @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/tab_definitions"
+    queryParams: """
+    {
+      custom_tab_only: $args.custom_tab_only
+    }
+    """
+  }, selection: """
   tabs {
     anchor
     anchorCaseSensitive
@@ -8064,7 +8233,7 @@ type Query {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     customTabId: String!
-  ): CustomTabs @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/tab_definitions/{$args.customTabId}"}, selection: """
+  ): CustomTabs @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/tab_definitions/{$args.customTabId}" }, selection: """
   anchor
   anchorCaseSensitive
   anchorHorizontalAlignment
@@ -8184,27 +8353,30 @@ type Query {
     """
     user_filter: String
     user_id: String
-  ): envelopeTemplateResults @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates", queryParams: """
-  {
-    count: $args.count
-    folder: $args.folder
-    folder_ids: $args.folder_ids
-    folder_types: $args.folder_types
-    from_date: $args.from_date
-    include: $args.include
-    order: $args.order
-    order_by: $args.order_by
-    search_text: $args.search_text
-    shared: $args.shared
-    shared_by_me: $args.shared_by_me
-    start_position: $args.start_position
-    to_date: $args.to_date
-    used_from_date: $args.used_from_date
-    used_to_date: $args.used_to_date
-    user_filter: $args.user_filter
-    user_id: $args.user_id
-  }
-  """}, selection: """
+  ): envelopeTemplateResults @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates"
+    queryParams: """
+    {
+      count: $args.count
+      folder: $args.folder
+      folder_ids: $args.folder_ids
+      folder_types: $args.folder_types
+      from_date: $args.from_date
+      include: $args.include
+      order: $args.order
+      order_by: $args.order_by
+      search_text: $args.search_text
+      shared: $args.shared
+      shared_by_me: $args.shared_by_me
+      start_position: $args.start_position
+      to_date: $args.to_date
+      used_from_date: $args.used_from_date
+      used_to_date: $args.used_to_date
+      user_filter: $args.user_filter
+      user_id: $args.user_id
+    }
+    """
+  }, selection: """
   endPosition
   envelopeTemplates {
     allowMarkup
@@ -8289,11 +8461,14 @@ type Query {
     A comma-separated list of additional template attributes to include in the response. Valid values are: recipients, folders, documents, custom_fields, and notifications.
     """
     include: String
-  ): Templates @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}", queryParams: """
-  {
-    include: $args.include
-  }
-  """}, selection: """
+  ): Templates @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}"
+    queryParams: """
+    {
+      include: $args.include
+    }
+    """
+  }, selection: """
   allowMarkup
   allowReassign
   asynchronous
@@ -8506,7 +8681,9 @@ type Query {
     accountId: String!
     """The ID of the template being accessed."""
     templateId: String!
-  ): TemplateCustomFields @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/custom_fields"}, selection: """
+  ): TemplateCustomFields @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/custom_fields"
+  }, selection: """
   listCustomFields {
     configurationType
     errorDetails {
@@ -8539,7 +8716,7 @@ type Query {
     accountId: String!
     """The ID of the template being accessed."""
     templateId: String!
-  ): TemplateDocuments @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents"}, selection: """
+  ): TemplateDocuments @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents" }, selection: """
   templateDocuments {
     attachmentTabId
     availableDocumentTypes {
@@ -8587,12 +8764,16 @@ type Query {
     documentId: String!
     encrypt: String
     show_changes: String
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}", headers: [{name: "Accept", value: "application/pdf"}], queryParams: """
-  {
-    encrypt: $args.encrypt
-    show_changes: $args.show_changes
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}"
+    headers: [{ name: "Accept", value: "application/pdf" }]
+    queryParams: """
+    {
+      encrypt: $args.encrypt
+      show_changes: $args.show_changes
+    }
+    """
+  }, selection: "$")
   """
   Retrieves the custom document fields for an existing template document.
   """
@@ -8603,7 +8784,9 @@ type Query {
     templateId: String!
     """The ID of the document being accessed."""
     documentId: String!
-  ): TemplateDocumentFields @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/fields"}, selection: """
+  ): TemplateDocumentFields @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/fields"
+  }, selection: """
   documentFields {
     errorDetails {
       errorCode
@@ -8638,17 +8821,20 @@ type Query {
     The position within the total result set from which to start returning values. The value **thumbnail** may be used to return the page image.
     """
     start_position: String
-  ): pageImages @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/pages", queryParams: """
-  {
-    count: $args.count
-    dpi: $args.dpi
-    max_height: $args.max_height
-    max_width: $args.max_width
-    nocache: $args.nocache
-    show_changes: $args.show_changes
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): pageImages @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/pages"
+    queryParams: """
+    {
+      count: $args.count
+      dpi: $args.dpi
+      max_height: $args.max_height
+      max_width: $args.max_width
+      nocache: $args.nocache
+      show_changes: $args.show_changes
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   endPosition
   nextUri
   pages {
@@ -8688,14 +8874,18 @@ type Query {
     """Sets the maximum width (in pixels) of the returned image."""
     max_width: String
     show_changes: String
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/pages/{$args.pageNumber}/page_image", headers: [{name: "Accept", value: "image/png"}], queryParams: """
-  {
-    dpi: $args.dpi
-    max_height: $args.max_height
-    max_width: $args.max_width
-    show_changes: $args.show_changes
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/pages/{$args.pageNumber}/page_image"
+    headers: [{ name: "Accept", value: "image/png" }]
+    queryParams: """
+    {
+      dpi: $args.dpi
+      max_height: $args.max_height
+      max_width: $args.max_width
+      show_changes: $args.show_changes
+    }
+    """
+  }, selection: "$")
   """Returns tabs on the specified page."""
   Tabs_GetTemplatePageTabs(
     """The external account number (int) or account ID Guid."""
@@ -8706,7 +8896,9 @@ type Query {
     documentId: String!
     """The page number being accessed."""
     pageNumber: String!
-  ): TemplateDocumentTabs @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/pages/{$args.pageNumber}/tabs"}, selection: """
+  ): TemplateDocumentTabs @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/pages/{$args.pageNumber}/tabs"
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -9608,11 +9800,14 @@ type Query {
     """The ID of the document being accessed."""
     documentId: String!
     page_numbers: String
-  ): TemplateDocumentTabs @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/tabs", queryParams: """
-  {
-    page_numbers: $args.page_numbers
-  }
-  """}, selection: """
+  ): TemplateDocumentTabs @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/tabs"
+    queryParams: """
+    {
+      page_numbers: $args.page_numbers
+    }
+    """
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -10515,7 +10710,7 @@ type Query {
     accountId: String!
     """The ID of the template being accessed."""
     templateId: String!
-  ): TemplateLocks @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/lock"}, selection: """
+  ): TemplateLocks @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/lock" }, selection: """
   errorDetails {
     errorCode
     message
@@ -10550,7 +10745,9 @@ type Query {
     accountId: String!
     """The ID of the template being accessed."""
     templateId: String!
-  ): notification @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/notification"}, selection: """
+  ): notification @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/notification"
+  }, selection: """
   expirations {
     expireAfter
     expireEnabled
@@ -10583,13 +10780,16 @@ type Query {
     When set to **true**, the tab information associated with the recipient is included in the response.
     """
     include_tabs: String
-  ): TemplateRecipients @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients", queryParams: """
-  {
-    include_anchor_tab_locations: $args.include_anchor_tab_locations
-    include_extended: $args.include_extended
-    include_tabs: $args.include_tabs
-  }
-  """}, selection: """
+  ): TemplateRecipients @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients"
+    queryParams: """
+    {
+      include_anchor_tab_locations: $args.include_anchor_tab_locations
+      include_extended: $args.include_extended
+      include_tabs: $args.include_tabs
+    }
+    """
+  }, selection: """
   agents {
     accessCode
     addAccessCodeToEmail
@@ -10864,12 +11064,15 @@ type Query {
     include_tabs: String
     """Reserved for DocuSign."""
     start_position: String
-  ): TemplateBulkRecipients @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/bulk_recipients", queryParams: """
-  {
-    include_tabs: $args.include_tabs
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): TemplateBulkRecipients @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/bulk_recipients"
+    queryParams: """
+    {
+      include_tabs: $args.include_tabs
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   bulkRecipients {
     accessCode
     email
@@ -10906,7 +11109,9 @@ type Query {
     templateId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-  ): EnvelopeDocumentVisibility @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/document_visibility"}, selection: """
+  ): EnvelopeDocumentVisibility @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/document_visibility"
+  }, selection: """
   documentVisibility {
     documentId
     errorDetails {
@@ -10934,12 +11139,15 @@ type Query {
     include_anchor_tab_locations: String
     """Reserved for DocuSign."""
     include_metadata: String
-  ): TemplateRecipientTabs @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/tabs", queryParams: """
-  {
-    include_anchor_tab_locations: $args.include_anchor_tab_locations
-    include_metadata: $args.include_metadata
-  }
-  """}, selection: """
+  ): TemplateRecipientTabs @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/tabs"
+    queryParams: """
+    {
+      include_anchor_tab_locations: $args.include_anchor_tab_locations
+      include_metadata: $args.include_metadata
+    }
+    """
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -11838,7 +12046,7 @@ type Query {
   UnsupportedFileTypes_GetUnsupportedFileTypes(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): fileTypeList @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/unsupported_file_types"}, selection: """
+  ): fileTypeList @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/unsupported_file_types" }, selection: """
   fileTypes {
     fileExtension
     mimeType
@@ -11888,21 +12096,24 @@ type Query {
     Filters the user records returned by the user name or a sub-string of user name.
     """
     user_name_substring: String
-  ): userInformationList @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users", queryParams: """
-  {
-    additional_info: $args.additional_info
-    count: $args.count
-    email: $args.email
-    email_substring: $args.email_substring
-    group_id: $args.group_id
-    include_usersettings_for_csv: $args.include_usersettings_for_csv
-    login_status: $args.login_status
-    not_group_id: $args.not_group_id
-    start_position: $args.start_position
-    status: $args.status
-    user_name_substring: $args.user_name_substring
-  }
-  """}, selection: """
+  ): userInformationList @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/users"
+    queryParams: """
+    {
+      additional_info: $args.additional_info
+      count: $args.count
+      email: $args.email
+      email_substring: $args.email_substring
+      group_id: $args.group_id
+      include_usersettings_for_csv: $args.include_usersettings_for_csv
+      login_status: $args.login_status
+      not_group_id: $args.not_group_id
+      start_position: $args.start_position
+      status: $args.status
+      user_name_substring: $args.user_name_substring
+    }
+    """
+  }, selection: """
   endPosition
   nextUri
   previousUri
@@ -12070,12 +12281,15 @@ type Query {
     """
     additional_info: String
     email: String
-  ): Users @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}", queryParams: """
-  {
-    additional_info: $args.additional_info
-    email: $args.email
-  }
-  """}, selection: """
+  ): Users @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}"
+    queryParams: """
+    {
+      additional_info: $args.additional_info
+      email: $args.email
+    }
+    """
+  }, selection: """
   accountManagementGranular {
     canManageAdmins
     canManageAdminsMetadata {
@@ -12235,11 +12449,14 @@ type Query {
     The redirectUrl is restricted to URLs in the docusign.com or docusign.net domains.
     """
     redirectUrl: String
-  ): CloudStorageProviders @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage", queryParams: """
-  {
-    redirectUrl: $args.redirectUrl
-  }
-  """}, selection: """
+  ): CloudStorageProviders @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage"
+    queryParams: """
+    {
+      redirectUrl: $args.redirectUrl
+    }
+    """
+  }, selection: """
   storageProviders {
     authenticationUrl
     errorDetails {
@@ -12273,11 +12490,14 @@ type Query {
     The redirectUrl is restricted to URLs in the docusign.com or docusign.net domains.
     """
     redirectUrl: String
-  ): CloudStorageProviders @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage/{$args.serviceId}", queryParams: """
-  {
-    redirectUrl: $args.redirectUrl
-  }
-  """}, selection: """
+  ): CloudStorageProviders @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage/{$args.serviceId}"
+    queryParams: """
+    {
+      redirectUrl: $args.redirectUrl
+    }
+    """
+  }, selection: """
   storageProviders {
     authenticationUrl
     errorDetails {
@@ -12336,16 +12556,19 @@ type Query {
     Indicates the starting point of the first item included in the response set. It uses a 0-based index. The default setting for this is 0.
     """
     start_position: String
-  ): CloudStorage @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage/{$args.serviceId}/folders", queryParams: """
-  {
-    cloud_storage_folder_path: $args.cloud_storage_folder_path
-    count: $args.count
-    order: $args.order
-    order_by: $args.order_by
-    search_text: $args.search_text
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): CloudStorage @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage/{$args.serviceId}/folders"
+    queryParams: """
+    {
+      cloud_storage_folder_path: $args.cloud_storage_folder_path
+      count: $args.count
+      order: $args.order
+      order_by: $args.order_by
+      search_text: $args.search_text
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   endPosition
   errorDetails {
     authenticationUrl
@@ -12418,16 +12641,19 @@ type Query {
     Indicates the starting point of the first item included in the response set. It uses a 0-based index. The default setting for this is 0.
     """
     start_position: String
-  ): CloudStorage @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage/{$args.serviceId}/folders/{$args.folderId}", queryParams: """
-  {
-    cloud_storage_folder_path: $args.cloud_storage_folder_path
-    count: $args.count
-    order: $args.order
-    order_by: $args.order_by
-    search_text: $args.search_text
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): CloudStorage @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage/{$args.serviceId}/folders/{$args.folderId}"
+    queryParams: """
+    {
+      cloud_storage_folder_path: $args.cloud_storage_folder_path
+      count: $args.count
+      order: $args.order
+      order_by: $args.order_by
+      search_text: $args.search_text
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   endPosition
   errorDetails {
     authenticationUrl
@@ -12474,7 +12700,7 @@ type Query {
     The user ID of the user being accessed. Generally this is the user ID of the authenticated user, but if the authenticated user is an Admin on the account, this may be another user the Admin user is accessing.
     """
     userId: String!
-  ): UserCustomSettings @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/custom_settings"}, selection: """
+  ): UserCustomSettings @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/custom_settings" }, selection: """
   customSettings {
     errorDetails {
       errorCode
@@ -12497,7 +12723,7 @@ type Query {
     The user ID of the user being accessed. Generally this is the user ID of the authenticated user, but if the authenticated user is an Admin on the account, this may be another user the Admin user is accessing.
     """
     userId: String!
-  ): UserProfiles @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/profile"}, selection: """
+  ): UserProfiles @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/profile" }, selection: """
   address {
     address1
     address2
@@ -12687,11 +12913,15 @@ type Query {
     """
     userId: String!
     encoding: String
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/profile/image", headers: [{name: "Accept", value: "image/gif"}], queryParams: """
-  {
-    encoding: $args.encoding
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/profile/image"
+    headers: [{ name: "Accept", value: "image/gif" }]
+    queryParams: """
+    {
+      encoding: $args.encoding
+    }
+    """
+  }, selection: "$")
   """
   Retrieves a list of the account settings and email notification information for the specified user.
   
@@ -12704,7 +12934,7 @@ type Query {
     The user ID of the user being accessed. Generally this is the user ID of the authenticated user, but if the authenticated user is an Admin on the account, this may be another user the Admin user is accessing.
     """
     userId: String!
-  ): userSettingsInformation @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/settings"}, selection: """
+  ): userSettingsInformation @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/settings" }, selection: """
   accountManagementGranular {
     canManageAdmins
     canManageAdminsMetadata {
@@ -12795,11 +13025,14 @@ type Query {
     """
     userId: String!
     stamp_type: String
-  ): userSignaturesInformation @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures", queryParams: """
-  {
-    stamp_type: $args.stamp_type
-  }
-  """}, selection: """
+  ): userSignaturesInformation @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures"
+    queryParams: """
+    {
+      stamp_type: $args.stamp_type
+    }
+    """
+  }, selection: """
   userSignatures {
     adoptedDateTime
     createdDateTime
@@ -12850,7 +13083,9 @@ type Query {
     userId: String!
     """The ID of the signature being accessed."""
     signatureId: String!
-  ): UserSignatures @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}"}, selection: """
+  ): UserSignatures @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}"
+  }, selection: """
   adoptedDateTime
   createdDateTime
   dateStampProperties {
@@ -12902,11 +13137,15 @@ type Query {
     """One of **signature_image** or **initials_image**."""
     imageType: String!
     include_chrome: String
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}/{$args.imageType}", headers: [{name: "Accept", value: "image/gif"}], queryParams: """
-  {
-    include_chrome: $args.include_chrome
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}/{$args.imageType}"
+    headers: [{ name: "Accept", value: "image/gif" }]
+    queryParams: """
+    {
+      include_chrome: $args.include_chrome
+    }
+    """
+  }, selection: "$")
   """Retrieves a list of social accounts linked to a user's account."""
   UserSocialLogin_GetUserSocialLogin(
     """The external account number (int) or account ID Guid."""
@@ -12915,7 +13154,7 @@ type Query {
     The user ID of the user being accessed. Generally this is the user ID of the authenticated user, but if the authenticated user is an Admin on the account, this may be another user the Admin user is accessing.
     """
     userId: String!
-  ): userSocialIdResult @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/social"}, selection: """
+  ): userSocialIdResult @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/users/{$args.userId}/social" }, selection: """
   socialAccountInformation {
     email
     errorDetails {
@@ -12932,7 +13171,7 @@ type Query {
   Watermark_GetWatermark(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): AccountWatermarks @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/watermark"}, selection: """
+  ): AccountWatermarks @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/watermark" }, selection: """
   displayAngle
   enabled
   font
@@ -12947,7 +13186,7 @@ type Query {
   Workspace_GetWorkspaces(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): workspaceList @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/workspaces"}, selection: """
+  ): workspaceList @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/workspaces" }, selection: """
   endPosition
   resultSetSize
   startPosition
@@ -13012,7 +13251,7 @@ type Query {
     accountId: String!
     """Specifies the workspace ID GUID."""
     workspaceId: String!
-  ): Workspaces @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}"}, selection: """
+  ): Workspaces @connect(source: "test", http: { GET: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}" }, selection: """
   billableAccountId
   created
   createdByInformation {
@@ -13101,17 +13340,20 @@ type Query {
     If set, then the results are filtered to those associated with the specified userId.
     """
     workspace_user_id: String
-  ): workspaceFolderContents @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}", queryParams: """
-  {
-    count: $args.count
-    include_files: $args.include_files
-    include_sub_folders: $args.include_sub_folders
-    include_thumbnails: $args.include_thumbnails
-    include_user_detail: $args.include_user_detail
-    start_position: $args.start_position
-    workspace_user_id: $args.workspace_user_id
-  }
-  """}, selection: """
+  ): workspaceFolderContents @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}"
+    queryParams: """
+    {
+      count: $args.count
+      include_files: $args.include_files
+      include_sub_folders: $args.include_sub_folders
+      include_thumbnails: $args.include_thumbnails
+      include_user_detail: $args.include_user_detail
+      start_position: $args.start_position
+      workspace_user_id: $args.workspace_user_id
+    }
+    """
+  }, selection: """
   endPosition
   folder {
     callerAuthorization {
@@ -13422,12 +13664,15 @@ type Query {
     is_download: String
     """When set to **true** the file returned as a PDF."""
     pdf_version: String
-  ): JSON @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}/files/{$args.fileId}", queryParams: """
-  {
-    is_download: $args.is_download
-    pdf_version: $args.pdf_version
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}/files/{$args.fileId}"
+    queryParams: """
+    {
+      is_download: $args.is_download
+      pdf_version: $args.pdf_version
+    }
+    """
+  }, selection: "$")
   """Retrieves a workspace file as rasterized pages."""
   WorkspaceFilePages_GetWorkspaceFilePages(
     """The external account number (int) or account ID Guid."""
@@ -13452,15 +13697,18 @@ type Query {
     The position within the total result set from which to start returning values. The value **thumbnail** may be used to return the page image.
     """
     start_position: String
-  ): pageImages @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}/files/{$args.fileId}/pages", queryParams: """
-  {
-    count: $args.count
-    dpi: $args.dpi
-    max_height: $args.max_height
-    max_width: $args.max_width
-    start_position: $args.start_position
-  }
-  """}, selection: """
+  ): pageImages @connect(source: "test", http: {
+    GET: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}/files/{$args.fileId}/pages"
+    queryParams: """
+    {
+      count: $args.count
+      dpi: $args.dpi
+      max_height: $args.max_height
+      max_width: $args.max_width
+      start_position: $args.start_position
+    }
+    """
+  }, selection: """
   endPosition
   nextUri
   pages {
@@ -13482,7 +13730,7 @@ type Query {
   totalSetSize
   """)
   """Retrieves a list of the billing plans associated with a distributor."""
-  BillingPlans_GetBillingPlans: billingPlansResponse @connect(source: "test", http: {GET: "/v2/billing_plans"}, selection: """
+  BillingPlans_GetBillingPlans: billingPlansResponse @connect(source: "test", http: { GET: "/v2/billing_plans" }, selection: """
   billingPlans {
     appStoreProducts {
       marketPlace
@@ -13537,7 +13785,7 @@ type Query {
   BillingPlans_GetBillingPlan(
     """The ID of the billing plan being accessed."""
     billingPlanId: String!
-  ): billingPlanResponse @connect(source: "test", http: {GET: "/v2/billing_plans/{$args.billingPlanId}"}, selection: """
+  ): billingPlanResponse @connect(source: "test", http: { GET: "/v2/billing_plans/{$args.billingPlanId}" }, selection: """
   billingPlan {
     appStoreProducts {
       marketPlace
@@ -13638,7 +13886,7 @@ type Query {
   }
   """)
   """Get membership account password rules"""
-  PasswordRules_GetPasswordRules: userPasswordRules @connect(source: "test", http: {GET: "/v2/current_user/password_rules"}, selection: """
+  PasswordRules_GetPasswordRules: userPasswordRules @connect(source: "test", http: { GET: "/v2/current_user/password_rules" }, selection: """
   passwordRules {
     expirePassword
     expirePasswordDays
@@ -13697,11 +13945,14 @@ type Query {
   
   If the Accept header is set to \`application/json\` or \`application/xml\`, the response returns list of log entries in either JSON or XML. An example JSON response body is shown below. 
   """
-  APIRequestLog_GetRequestLogs(encoding: String): apiRequestLogsResult @connect(source: "test", http: {GET: "/v2/diagnostics/request_logs", queryParams: """
-  {
-    encoding: $args.encoding
-  }
-  """}, selection: """
+  APIRequestLog_GetRequestLogs(encoding: String): apiRequestLogsResult @connect(source: "test", http: {
+    GET: "/v2/diagnostics/request_logs"
+    queryParams: """
+    {
+      encoding: $args.encoding
+    }
+    """
+  }, selection: """
   apiRequestLogs {
     createdDateTime
     description
@@ -13718,14 +13969,17 @@ type Query {
   **Response**
   If the Content-Transfer-Encoding header was set to base64, the log is returned as a base64 string.
   """
-  APIRequestLog_GetRequestLog(requestLogId: String!): JSON @connect(source: "test", http: {GET: "/v2/diagnostics/request_logs/{$args.requestLogId}", headers: [{name: "Accept", value: "text/plain"}]}, selection: "$")
+  APIRequestLog_GetRequestLog(requestLogId: String!): JSON @connect(source: "test", http: {
+    GET: "/v2/diagnostics/request_logs/{$args.requestLogId}"
+    headers: [{ name: "Accept", value: "text/plain" }]
+  }, selection: "$")
   """
   Retrieves the current API request logging setting for the user and remaining log entries.
   
   **Response**
   The response includes the current API request logging setting for the user, along with the maximum log entries and remaining log entries.
   """
-  APIRequestLog_GetRequestLogSettings: RequestLogs @connect(source: "test", http: {GET: "/v2/diagnostics/settings"}, selection: """
+  APIRequestLog_GetRequestLogSettings: RequestLogs @connect(source: "test", http: { GET: "/v2/diagnostics/settings" }, selection: """
   apiRequestLogMaxEntries
   apiRequestLogRemainingEntries
   apiRequestLogging
@@ -13770,14 +14024,17 @@ type Query {
     * none - no login settings are returned.
     """
     login_settings: String
-  ): Authentication @connect(source: "test", http: {GET: "/v2/login_information", queryParams: """
-  {
-    api_password: $args.api_password
-    embed_account_id_guid: $args.embed_account_id_guid
-    include_account_id_guid: $args.include_account_id_guid
-    login_settings: $args.login_settings
-  }
-  """}, selection: """
+  ): Authentication @connect(source: "test", http: {
+    GET: "/v2/login_information"
+    queryParams: """
+    {
+      api_password: $args.api_password
+      embed_account_id_guid: $args.embed_account_id_guid
+      include_account_id_guid: $args.include_account_id_guid
+      login_settings: $args.login_settings
+    }
+    """
+  }, selection: """
   apiPassword
   loginAccounts {
     accountId
@@ -24750,11 +25007,15 @@ type Mutation {
     """
     preview_billing_plan: String
     input: newAccountDefinition_Input
-  ): newAccountSummary @connect(source: "test", http: {POST: "/v2/accounts", body: "$args.input", queryParams: """
-  {
-    preview_billing_plan: $args.preview_billing_plan
-  }
-  """}, selection: """
+  ): newAccountSummary @connect(source: "test", http: {
+    POST: "/v2/accounts"
+    body: "$args.input"
+    queryParams: """
+    {
+      preview_billing_plan: $args.preview_billing_plan
+    }
+    """
+  }, selection: """
   accountId
   accountIdGuid
   accountName
@@ -24793,7 +25054,7 @@ type Mutation {
   Accounts_DeleteAccount(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}"}, selection: "$")
+  ): JSON @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}" }, selection: "$")
   """
   Posts a payment to a past due invoice. 
   
@@ -24806,7 +25067,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: billingPaymentRequest_Input
-  ): billingPaymentResponse @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/billing_payments", body: "$args.input"}, selection: """
+  ): billingPaymentResponse @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/billing_payments", body: "$args.input" }, selection: """
   billingPayments {
     amount
     invoiceId
@@ -24824,11 +25085,15 @@ type Mutation {
     """
     preview_billing_plan: String
     input: billingPlanInformation_Input
-  ): billingPlanUpdateResponse @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/billing_plan", body: "$args.input", queryParams: """
-  {
-    preview_billing_plan: $args.preview_billing_plan
-  }
-  """}, selection: """
+  ): billingPlanUpdateResponse @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/billing_plan"
+    body: "$args.input"
+    queryParams: """
+    {
+      preview_billing_plan: $args.preview_billing_plan
+    }
+    """
+  }, selection: """
   accountPaymentMethod
   billingPlanPreview {
     currencyCode
@@ -24869,7 +25134,10 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: purchasedEnvelopesInformation_Input
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/billing_plan/purchased_envelopes", body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/billing_plan/purchased_envelopes"
+    body: "$args.input"
+  }, selection: "$")
   """
   Deletes one or more brand profiles from an account. The Account Branding feature (accountSettings properties \`canSelfBrandSend\` and \`canSelfBrandSend\`) must be set to **true** to use this call.
   """
@@ -24877,7 +25145,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: brandsRequest_Input
-  ): AccountBrands @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/brands", body: "$args.input"}, selection: """
+  ): AccountBrands @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/brands", body: "$args.input" }, selection: """
   brands {
     brandCompany
     brandId
@@ -24945,7 +25213,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: brand_Input
-  ): AccountBrands @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/brands", body: "$args.input"}, selection: """
+  ): AccountBrands @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/brands", body: "$args.input" }, selection: """
   brands {
     brandCompany
     brandId
@@ -25008,7 +25276,7 @@ type Mutation {
     accountId: String!
     """The unique identifier of a brand."""
     brandId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}"}, selection: "$")
+  ): JSON @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}" }, selection: "$")
   """Updates an existing brand."""
   Brand_PutBrand(
     """The external account number (int) or account ID Guid."""
@@ -25016,7 +25284,10 @@ type Mutation {
     """The unique identifier of a brand."""
     brandId: String!
     input: brand_Input
-  ): brand @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}", body: "$args.input"}, selection: """
+  ): brand @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}"
+    body: "$args.input"
+  }, selection: """
   brandCompany
   brandId
   brandName
@@ -25077,7 +25348,9 @@ type Mutation {
     brandId: String!
     """One of **Primary**, **Secondary** or **Email**."""
     logoType: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/logos/{$args.logoType}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/logos/{$args.logoType}"
+  }, selection: "$")
   """Put one branding logo."""
   BrandLogo_PutBrandLogo(
     """The external account number (int) or account ID Guid."""
@@ -25086,7 +25359,9 @@ type Mutation {
     brandId: String!
     """One of **Primary**, **Secondary** or **Email**."""
     logoType: String!
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/logos/{$args.logoType}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/logos/{$args.logoType}"
+  }, selection: "$")
   """Uploads a branding resource file."""
   BrandResources_PutBrandResources(
     """The external account number (int) or account ID Guid."""
@@ -25094,7 +25369,9 @@ type Mutation {
     """The unique identifier of a brand."""
     brandId: String!
     resourceContentType: String!
-  ): brandResources @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/resources/{$args.resourceContentType}"}, selection: """
+  ): brandResources @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/brands/{$args.brandId}/resources/{$args.resourceContentType}"
+  }, selection: """
   createdByUserInfo {
     activationAccessCode
     email
@@ -25139,7 +25416,10 @@ type Mutation {
     accountId: String!
     recipientPart: String!
     input: captiveRecipientInformation_Input
-  ): captiveRecipientInformation @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/captive_recipients/{$args.recipientPart}", body: "$args.input"}, selection: """
+  ): captiveRecipientInformation @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/captive_recipients/{$args.recipientPart}"
+    body: "$args.input"
+  }, selection: """
   captiveRecipients {
     clientUserId
     email
@@ -25155,7 +25435,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: chunkedUploadRequest_Input
-  ): ChunkedUploads @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/chunked_uploads", body: "$args.input"}, selection: """
+  ): ChunkedUploads @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/chunked_uploads", body: "$args.input" }, selection: """
   checksum
   chunkedUploadId
   chunkedUploadParts {
@@ -25174,7 +25454,9 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     chunkedUploadId: String!
-  ): ChunkedUploads @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/chunked_uploads/{$args.chunkedUploadId}"}, selection: """
+  ): ChunkedUploads @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/chunked_uploads/{$args.chunkedUploadId}"
+  }, selection: """
   checksum
   chunkedUploadId
   chunkedUploadParts {
@@ -25196,11 +25478,14 @@ type Mutation {
     accountId: String!
     chunkedUploadId: String!
     action: String
-  ): ChunkedUploads @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/chunked_uploads/{$args.chunkedUploadId}", queryParams: """
-  {
-    action: $args.action
-  }
-  """}, selection: """
+  ): ChunkedUploads @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/chunked_uploads/{$args.chunkedUploadId}"
+    queryParams: """
+    {
+      action: $args.action
+    }
+    """
+  }, selection: """
   checksum
   chunkedUploadId
   chunkedUploadParts {
@@ -25221,7 +25506,10 @@ type Mutation {
     chunkedUploadId: String!
     chunkedUploadPartSeq: String!
     input: chunkedUploadRequest_Input
-  ): ChunkedUploads @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/chunked_uploads/{$args.chunkedUploadId}/{$args.chunkedUploadPartSeq}", body: "$args.input"}, selection: """
+  ): ChunkedUploads @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/chunked_uploads/{$args.chunkedUploadId}/{$args.chunkedUploadPartSeq}"
+    body: "$args.input"
+  }, selection: """
   checksum
   chunkedUploadId
   chunkedUploadParts {
@@ -25242,7 +25530,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: ConnectConfigurations_Input
-  ): ConnectConfigurations @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/connect", body: "$args.input"}, selection: """
+  ): ConnectConfigurations @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/connect", body: "$args.input" }, selection: """
   allUsers
   allowEnvelopePublish
   configurationType
@@ -25270,7 +25558,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: ConnectConfigurations_Input
-  ): ConnectConfigurations @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/connect", body: "$args.input"}, selection: """
+  ): ConnectConfigurations @connect(source: "test", http: { PUT: "/v2/accounts/{$args.accountId}/connect", body: "$args.input" }, selection: """
   allUsers
   allowEnvelopePublish
   configurationType
@@ -25300,7 +25588,10 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: connectFailureFilter_Input
-  ): connectFailureResults @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/connect/envelopes/retry_queue", body: "$args.input"}, selection: """
+  ): connectFailureResults @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/connect/envelopes/retry_queue"
+    body: "$args.input"
+  }, selection: """
   retryQueue {
     configId
     configUrl
@@ -25315,7 +25606,9 @@ type Mutation {
     accountId: String!
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
-  ): connectFailureResults @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/connect/envelopes/{$args.envelopeId}/retry_queue"}, selection: """
+  ): connectFailureResults @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/connect/envelopes/{$args.envelopeId}/retry_queue"
+  }, selection: """
   retryQueue {
     configId
     configUrl
@@ -25330,12 +25623,12 @@ type Mutation {
     accountId: String!
     """The ID of the failed connect log entry."""
     failureId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/connect/failures/{$args.failureId}"}, selection: "$")
+  ): JSON @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/connect/failures/{$args.failureId}" }, selection: "$")
   """Retrieves a list of connect log entries for your account."""
   ConnectLog_DeleteConnectLogs(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/connect/logs"}, selection: "$")
+  ): JSON @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/connect/logs" }, selection: "$")
   """
   Deletes a specified entry from the Connect Log.
   
@@ -25345,7 +25638,7 @@ type Mutation {
     accountId: String!
     """The ID of the connect log entry"""
     logId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/connect/logs/{$args.logId}"}, selection: "$")
+  ): JSON @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/connect/logs/{$args.logId}" }, selection: "$")
   """
   Deletes the specified DocuSign Connect configuration.
   
@@ -25358,7 +25651,7 @@ type Mutation {
     accountId: String!
     """The ID of the custom Connect configuration being accessed."""
     connectId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/connect/{$args.connectId}"}, selection: "$")
+  ): JSON @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/connect/{$args.connectId}" }, selection: "$")
   """Update Consumer Disclosure."""
   ConsumerDisclosure_PutConsumerDisclosure(
     """The external account number (int) or account ID Guid."""
@@ -25370,11 +25663,15 @@ type Mutation {
     """Reserved for DocuSign."""
     include_metadata: String
     input: EnvelopeConsumerDisclosures_Input
-  ): EnvelopeConsumerDisclosures @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/consumer_disclosure/{$args.langCode}", body: "$args.input", queryParams: """
-  {
-    include_metadata: $args.include_metadata
-  }
-  """}, selection: """
+  ): EnvelopeConsumerDisclosures @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/consumer_disclosure/{$args.langCode}"
+    body: "$args.input"
+    queryParams: """
+    {
+      include_metadata: $args.include_metadata
+    }
+    """
+  }, selection: """
   accountEsignId
   allowCDWithdraw
   allowCDWithdrawMetadata {
@@ -25427,7 +25724,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: contactModRequest_Input
-  ): contactUpdateResponse @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/contacts", body: "$args.input"}, selection: """
+  ): contactUpdateResponse @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/contacts", body: "$args.input" }, selection: """
   contacts {
     contactId
     contactPhoneNumbers {
@@ -25454,7 +25751,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: contactModRequest_Input
-  ): contactUpdateResponse @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/contacts", body: "$args.input"}, selection: """
+  ): contactUpdateResponse @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/contacts", body: "$args.input" }, selection: """
   contacts {
     contactId
     contactPhoneNumbers {
@@ -25479,7 +25776,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: contactModRequest_Input
-  ): contactUpdateResponse @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/contacts", body: "$args.input"}, selection: """
+  ): contactUpdateResponse @connect(source: "test", http: { PUT: "/v2/accounts/{$args.accountId}/contacts", body: "$args.input" }, selection: """
   contacts {
     contactId
     contactPhoneNumbers {
@@ -25507,7 +25804,7 @@ type Mutation {
     accountId: String!
     """The unique identifier of a person in the contacts address book."""
     contactId: String!
-  ): contactUpdateResponse @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/contacts/{$args.contactId}"}, selection: """
+  ): contactUpdateResponse @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/contacts/{$args.contactId}" }, selection: """
   contacts {
     contactId
     contactPhoneNumbers {
@@ -25533,11 +25830,15 @@ type Mutation {
     accountId: String!
     apply_to_templates: String
     input: customField_Input
-  ): AccountCustomFields @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/custom_fields", body: "$args.input", queryParams: """
-  {
-    apply_to_templates: $args.apply_to_templates
-  }
-  """}, selection: """
+  ): AccountCustomFields @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/custom_fields"
+    body: "$args.input"
+    queryParams: """
+    {
+      apply_to_templates: $args.apply_to_templates
+    }
+    """
+  }, selection: """
   listCustomFields {
     configurationType
     errorDetails {
@@ -25570,11 +25871,14 @@ type Mutation {
     accountId: String!
     customFieldId: String!
     apply_to_templates: String
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/custom_fields/{$args.customFieldId}", queryParams: """
-  {
-    apply_to_templates: $args.apply_to_templates
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/custom_fields/{$args.customFieldId}"
+    queryParams: """
+    {
+      apply_to_templates: $args.apply_to_templates
+    }
+    """
+  }, selection: "$")
   """Updates an existing account custom field."""
   AccountCustomFields_PutAccountCustomFields(
     """The external account number (int) or account ID Guid."""
@@ -25582,11 +25886,15 @@ type Mutation {
     customFieldId: String!
     apply_to_templates: String
     input: customField_Input
-  ): AccountCustomFields @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/custom_fields/{$args.customFieldId}", body: "$args.input", queryParams: """
-  {
-    apply_to_templates: $args.apply_to_templates
-  }
-  """}, selection: """
+  ): AccountCustomFields @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/custom_fields/{$args.customFieldId}"
+    body: "$args.input"
+    queryParams: """
+    {
+      apply_to_templates: $args.apply_to_templates
+    }
+    """
+  }, selection: """
   listCustomFields {
     configurationType
     errorDetails {
@@ -25618,7 +25926,10 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: EMortgageTransactions_Input
-  ): postTransactionsResponse @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/eMortgage/transactions", body: "$args.input"}, selection: """
+  ): postTransactionsResponse @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/eMortgage/transactions"
+    body: "$args.input"
+  }, selection: """
   documentData
   transactionSid
   """)
@@ -26268,13 +26579,17 @@ type Mutation {
     """
     merge_roles_on_draft: String
     input: envelopeDefinition_Input
-  ): envelopeSummary @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes", body: "$args.input", queryParams: """
-  {
-    cdse_mode: $args.cdse_mode
-    completed_documents_only: $args.completed_documents_only
-    merge_roles_on_draft: $args.merge_roles_on_draft
-  }
-  """}, selection: """
+  ): envelopeSummary @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes"
+    body: "$args.input"
+    queryParams: """
+    {
+      cdse_mode: $args.cdse_mode
+      completed_documents_only: $args.completed_documents_only
+      merge_roles_on_draft: $args.merge_roles_on_draft
+    }
+    """
+  }, selection: """
   envelopeId
   status
   statusDateTime
@@ -26303,14 +26618,18 @@ type Mutation {
     """
     to_date: String
     input: envelopeIdsRequest_Input
-  ): envelopesInformation @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/status", body: "$args.input", queryParams: """
-  {
-    email: $args.email
-    from_date: $args.from_date
-    start_position: $args.start_position
-    to_date: $args.to_date
-  }
-  """}, selection: """
+  ): envelopesInformation @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/status"
+    body: "$args.input"
+    queryParams: """
+    {
+      email: $args.email
+      from_date: $args.from_date
+      start_position: $args.start_position
+      to_date: $args.to_date
+    }
+    """
+  }, selection: """
   endPosition
   envelopeTransactionStatuses {
     envelopeId
@@ -26486,12 +26805,16 @@ type Mutation {
     """When set to **true**, sends the specified envelope again."""
     resend_envelope: String
     input: Envelopes_Input
-  ): envelopeUpdateSummary @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}", body: "$args.input", queryParams: """
-  {
-    advanced_update: $args.advanced_update
-    resend_envelope: $args.resend_envelope
-  }
-  """}, selection: """
+  ): envelopeUpdateSummary @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}"
+    body: "$args.input"
+    queryParams: """
+    {
+      advanced_update: $args.advanced_update
+      resend_envelope: $args.resend_envelope
+    }
+    """
+  }, selection: """
   bulkEnvelopeStatus {
     batchId
     batchSize
@@ -26593,7 +26916,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: envelopeAttachmentsRequest_Input
-  ): envelopeAttachmentsResult @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/attachments", body: "$args.input"}, selection: """
+  ): envelopeAttachmentsResult @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/attachments"
+    body: "$args.input"
+  }, selection: """
   attachments {
     accessControl
     attachmentId
@@ -26613,7 +26939,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: envelopeAttachmentsRequest_Input
-  ): envelopeAttachmentsResult @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/attachments", body: "$args.input"}, selection: """
+  ): envelopeAttachmentsResult @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/attachments"
+    body: "$args.input"
+  }, selection: """
   attachments {
     accessControl
     attachmentId
@@ -26634,7 +26963,10 @@ type Mutation {
     envelopeId: String!
     attachmentId: String!
     input: attachment_Input
-  ): envelopeAttachmentsResult @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/attachments/{$args.attachmentId}", body: "$args.input"}, selection: """
+  ): envelopeAttachmentsResult @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/attachments/{$args.attachmentId}"
+    body: "$args.input"
+  }, selection: """
   attachments {
     accessControl
     attachmentId
@@ -26654,7 +26986,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: EnvelopeCustomFields_Input
-  ): EnvelopeCustomFields @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/custom_fields", body: "$args.input"}, selection: """
+  ): EnvelopeCustomFields @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/custom_fields"
+    body: "$args.input"
+  }, selection: """
   listCustomFields {
     configurationType
     errorDetails {
@@ -26692,7 +27027,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: EnvelopeCustomFields_Input
-  ): EnvelopeCustomFields @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/custom_fields", body: "$args.input"}, selection: """
+  ): EnvelopeCustomFields @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/custom_fields"
+    body: "$args.input"
+  }, selection: """
   listCustomFields {
     configurationType
     errorDetails {
@@ -26731,7 +27069,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: EnvelopeCustomFields_Input
-  ): EnvelopeCustomFields @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/custom_fields", body: "$args.input"}, selection: """
+  ): EnvelopeCustomFields @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/custom_fields"
+    body: "$args.input"
+  }, selection: """
   listCustomFields {
     configurationType
     errorDetails {
@@ -26765,7 +27106,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: envelopeDefinition_Input
-  ): EnvelopeDocuments @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents", body: "$args.input"}, selection: """
+  ): EnvelopeDocuments @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents"
+    body: "$args.input"
+  }, selection: """
   envelopeDocuments {
     attachmentTabId
     availableDocumentTypes {
@@ -26812,11 +27156,15 @@ type Mutation {
     """
     apply_document_fields: String
     input: envelopeDefinition_Input
-  ): EnvelopeDocuments @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents", body: "$args.input", queryParams: """
-  {
-    apply_document_fields: $args.apply_document_fields
-  }
-  """}, selection: """
+  ): EnvelopeDocuments @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents"
+    body: "$args.input"
+    queryParams: """
+    {
+      apply_document_fields: $args.apply_document_fields
+    }
+    """
+  }, selection: """
   envelopeDocuments {
     attachmentTabId
     availableDocumentTypes {
@@ -26864,11 +27212,14 @@ type Mutation {
     while adding or modifying envelope documents.
     """
     apply_document_fields: String
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}", queryParams: """
-  {
-    apply_document_fields: $args.apply_document_fields
-  }
-  """}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}"
+    queryParams: """
+    {
+      apply_document_fields: $args.apply_document_fields
+    }
+    """
+  }, selection: "$")
   """Deletes custom document fields from an existing envelope document."""
   DocumentFields_DeleteDocumentFields(
     """The external account number (int) or account ID Guid."""
@@ -26878,7 +27229,10 @@ type Mutation {
     """The ID of the document being accessed."""
     documentId: String!
     input: EnvelopeDocumentFields_Input
-  ): EnvelopeDocumentFields @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/fields", body: "$args.input"}, selection: """
+  ): EnvelopeDocumentFields @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/fields"
+    body: "$args.input"
+  }, selection: """
   documentFields {
     errorDetails {
       errorCode
@@ -26898,7 +27252,10 @@ type Mutation {
     """The ID of the document being accessed."""
     documentId: String!
     input: EnvelopeDocumentFields_Input
-  ): EnvelopeDocumentFields @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/fields", body: "$args.input"}, selection: """
+  ): EnvelopeDocumentFields @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/fields"
+    body: "$args.input"
+  }, selection: """
   documentFields {
     errorDetails {
       errorCode
@@ -26920,7 +27277,10 @@ type Mutation {
     """The ID of the document being accessed."""
     documentId: String!
     input: EnvelopeDocumentFields_Input
-  ): EnvelopeDocumentFields @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/fields", body: "$args.input"}, selection: """
+  ): EnvelopeDocumentFields @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/fields"
+    body: "$args.input"
+  }, selection: """
   documentFields {
     errorDetails {
       errorCode
@@ -26943,7 +27303,9 @@ type Mutation {
     documentId: String!
     """The page number being accessed."""
     pageNumber: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/pages/{$args.pageNumber}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/pages/{$args.pageNumber}"
+  }, selection: "$")
   """
   Rotates page image from an envelope for display. The page image can be rotated to the left or right.
   """
@@ -26957,7 +27319,10 @@ type Mutation {
     """The page number being accessed."""
     pageNumber: String!
     input: pageRequest_Input
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/pages/{$args.pageNumber}/page_image", body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/pages/{$args.pageNumber}/page_image"
+    body: "$args.input"
+  }, selection: "$")
   """Adds templates to a document in the specified envelope."""
   Templates_PostDocumentTemplates(
     """The external account number (int) or account ID Guid."""
@@ -26967,7 +27332,10 @@ type Mutation {
     """The ID of the document being accessed."""
     documentId: String!
     input: documentTemplateList_Input
-  ): documentTemplateList @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/templates", body: "$args.input"}, selection: """
+  ): documentTemplateList @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/templates"
+    body: "$args.input"
+  }, selection: """
   documentTemplates {
     documentEndPage
     documentId
@@ -26991,7 +27359,9 @@ type Mutation {
     documentId: String!
     """The ID of the template being accessed."""
     templateId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/templates/{$args.templateId}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/documents/{$args.documentId}/templates/{$args.templateId}"
+  }, selection: "$")
   """
   Deletes all existing email override settings for the envelope. If you want to delete an individual email override setting, use the PUT and set the value to an empty string. Note that deleting email settings will only affect email communications that occur after the deletion and the normal account email settings are used for future email communications.
   """
@@ -27000,7 +27370,9 @@ type Mutation {
     accountId: String!
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
-  ): EnvelopeEmailSettings @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/email_settings"}, selection: """
+  ): EnvelopeEmailSettings @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/email_settings"
+  }, selection: """
   bccEmailAddresses {
     bccEmailAddressId
     email
@@ -27017,7 +27389,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: EnvelopeEmailSettings_Input
-  ): EnvelopeEmailSettings @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/email_settings", body: "$args.input"}, selection: """
+  ): EnvelopeEmailSettings @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/email_settings"
+    body: "$args.input"
+  }, selection: """
   bccEmailAddresses {
     bccEmailAddressId
     email
@@ -27036,7 +27411,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: EnvelopeEmailSettings_Input
-  ): EnvelopeEmailSettings @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/email_settings", body: "$args.input"}, selection: """
+  ): EnvelopeEmailSettings @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/email_settings"
+    body: "$args.input"
+  }, selection: """
   bccEmailAddresses {
     bccEmailAddressId
     email
@@ -27052,7 +27430,7 @@ type Mutation {
     accountId: String!
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
-  ): EnvelopeLocks @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/lock"}, selection: """
+  ): EnvelopeLocks @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/lock" }, selection: """
   errorDetails {
     errorCode
     message
@@ -27088,7 +27466,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: lockRequest_Input
-  ): EnvelopeLocks @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/lock", body: "$args.input"}, selection: """
+  ): EnvelopeLocks @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/lock"
+    body: "$args.input"
+  }, selection: """
   errorDetails {
     errorCode
     message
@@ -27124,7 +27505,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: lockRequest_Input
-  ): EnvelopeLocks @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/lock", body: "$args.input"}, selection: """
+  ): EnvelopeLocks @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/lock"
+    body: "$args.input"
+  }, selection: """
   errorDetails {
     errorCode
     message
@@ -27160,7 +27544,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: envelopeNotificationRequest_Input
-  ): notification @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/notification", body: "$args.input"}, selection: """
+  ): notification @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/notification"
+    body: "$args.input"
+  }, selection: """
   expirations {
     expireAfter
     expireEnabled
@@ -27184,7 +27571,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: EnvelopeRecipients_Input
-  ): EnvelopeRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients", body: "$args.input"}, selection: """
+  ): EnvelopeRecipients @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients"
+    body: "$args.input"
+  }, selection: """
   agents {
     accessCode
     addAccessCodeToEmail
@@ -27458,11 +27848,15 @@ type Mutation {
     """
     resend_envelope: String
     input: EnvelopeRecipients_Input
-  ): EnvelopeRecipients @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients", body: "$args.input", queryParams: """
-  {
-    resend_envelope: $args.resend_envelope
-  }
-  """}, selection: """
+  ): EnvelopeRecipients @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients"
+    body: "$args.input"
+    queryParams: """
+    {
+      resend_envelope: $args.resend_envelope
+    }
+    """
+  }, selection: """
   agents {
     accessCode
     addAccessCodeToEmail
@@ -27740,11 +28134,15 @@ type Mutation {
     """
     resend_envelope: String
     input: EnvelopeRecipients_Input
-  ): recipientsUpdateSummary @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients", body: "$args.input", queryParams: """
-  {
-    resend_envelope: $args.resend_envelope
-  }
-  """}, selection: """
+  ): recipientsUpdateSummary @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients"
+    body: "$args.input"
+    queryParams: """
+    {
+      resend_envelope: $args.resend_envelope
+    }
+    """
+  }, selection: """
   recipientUpdateResults {
     errorDetails {
       errorCode
@@ -27760,7 +28158,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: EnvelopeDocumentVisibility_Input
-  ): EnvelopeDocumentVisibility @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/document_visibility", body: "$args.input"}, selection: """
+  ): EnvelopeDocumentVisibility @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/document_visibility"
+    body: "$args.input"
+  }, selection: """
   documentVisibility {
     documentId
     errorDetails {
@@ -27784,7 +28185,9 @@ type Mutation {
     envelopeId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-  ): EnvelopeRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}"}, selection: """
+  ): EnvelopeRecipients @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}"
+  }, selection: """
   agents {
     accessCode
     addAccessCodeToEmail
@@ -28055,7 +28458,9 @@ type Mutation {
     envelopeId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-  ): bulkRecipientsUpdateResponse @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/bulk_recipients"}, selection: """
+  ): bulkRecipientsUpdateResponse @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/bulk_recipients"
+  }, selection: """
   signer {
     accessCode
     addAccessCodeToEmail
@@ -28332,7 +28737,10 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: bulkRecipientsRequest_Input
-  ): bulkRecipientsSummaryResponse @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/bulk_recipients", body: "$args.input"}, selection: """
+  ): bulkRecipientsSummaryResponse @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/bulk_recipients"
+    body: "$args.input"
+  }, selection: """
   bulkRecipients {
     accessCode
     email
@@ -28370,7 +28778,10 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: EnvelopeDocumentVisibility_Input
-  ): EnvelopeDocumentVisibility @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/document_visibility", body: "$args.input"}, selection: """
+  ): EnvelopeDocumentVisibility @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/document_visibility"
+    body: "$args.input"
+  }, selection: """
   documentVisibility {
     documentId
     errorDetails {
@@ -28394,7 +28805,9 @@ type Mutation {
     envelopeId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/initials_image"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/initials_image"
+  }, selection: "$")
   """
   Updates the signature image for an accountless signer. The supported image formats for this file are: gif, png, jpeg, and bmp. The file size must be less than 200K.
   
@@ -28407,7 +28820,9 @@ type Mutation {
     envelopeId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/signature_image"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/signature_image"
+  }, selection: "$")
   """
   Deletes one or more tabs associated with a recipient in a draft envelope.
   """
@@ -28419,7 +28834,10 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: EnvelopeRecipientTabs_Input
-  ): EnvelopeRecipientTabs @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/tabs", body: "$args.input"}, selection: """
+  ): EnvelopeRecipientTabs @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/tabs"
+    body: "$args.input"
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -29321,7 +29739,10 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: EnvelopeRecipientTabs_Input
-  ): EnvelopeRecipientTabs @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/tabs", body: "$args.input"}, selection: """
+  ): EnvelopeRecipientTabs @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/tabs"
+    body: "$args.input"
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -30223,7 +30644,10 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: EnvelopeRecipientTabs_Input
-  ): EnvelopeRecipientTabs @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/tabs", body: "$args.input"}, selection: """
+  ): EnvelopeRecipientTabs @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/tabs"
+    body: "$args.input"
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -31123,7 +31547,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: documentTemplateList_Input
-  ): documentTemplateList @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/templates", body: "$args.input"}, selection: """
+  ): documentTemplateList @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/templates"
+    body: "$args.input"
+  }, selection: """
   documentTemplates {
     documentEndPage
     documentId
@@ -31146,7 +31573,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: correctViewRequest_Input
-  ): EnvelopeViews @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/views/correct", body: "$args.input"}, selection: "url")
+  ): EnvelopeViews @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/views/correct"
+    body: "$args.input"
+  }, selection: "url")
   """
   Returns a URL that allows you to embed the edit view of the DocuSign UI in your applications. This is a one-time use login token that allows the user to be placed into the DocuSign editing view. 
   
@@ -31160,7 +31590,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: returnUrlRequest_Input
-  ): EnvelopeViews @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/views/edit", body: "$args.input"}, selection: "url")
+  ): EnvelopeViews @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/views/edit"
+    body: "$args.input"
+  }, selection: "url")
   """
   Returns a URL that enables you to embed the recipient view of the DocuSign UI in your applications. If the recipient is a signer, then the view will provide the signing ceremony.
   
@@ -31185,7 +31618,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: recipientViewRequest_Input
-  ): EnvelopeViews @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/views/recipient", body: "$args.input"}, selection: "url")
+  ): EnvelopeViews @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/views/recipient"
+    body: "$args.input"
+  }, selection: "url")
   """
   Returns a URL that enables you to embed the sender view of the DocuSign UI in your applications. 
   
@@ -31210,7 +31646,10 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: returnUrlRequest_Input
-  ): EnvelopeViews @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/views/sender", body: "$args.input"}, selection: "url")
+  ): EnvelopeViews @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/views/sender"
+    body: "$args.input"
+  }, selection: "url")
   """Moves an envelope from its current folder to the specified folder."""
   Folders_PutFolderById(
     """The external account number (int) or account ID Guid."""
@@ -31218,7 +31657,10 @@ type Mutation {
     """The ID of the folder being accessed."""
     folderId: String!
     input: foldersRequest_Input
-  ): Folders @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/folders/{$args.folderId}", body: "$args.input"}, selection: """
+  ): Folders @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/folders/{$args.folderId}"
+    body: "$args.input"
+  }, selection: """
   folders {
     errorDetails {
       errorCode
@@ -31253,7 +31695,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: Groups_Input
-  ): Groups @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/groups", body: "$args.input"}, selection: """
+  ): Groups @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/groups", body: "$args.input" }, selection: """
   endPosition
   groups {
     errorDetails {
@@ -31295,7 +31737,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: Groups_Input
-  ): Groups @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/groups", body: "$args.input"}, selection: """
+  ): Groups @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/groups", body: "$args.input" }, selection: """
   endPosition
   groups {
     errorDetails {
@@ -31335,7 +31777,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: Groups_Input
-  ): Groups @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/groups", body: "$args.input"}, selection: """
+  ): Groups @connect(source: "test", http: { PUT: "/v2/accounts/{$args.accountId}/groups", body: "$args.input" }, selection: """
   endPosition
   groups {
     errorDetails {
@@ -31375,7 +31817,10 @@ type Mutation {
     """The ID of the group being accessed."""
     groupId: String!
     input: brandsRequest_Input
-  ): GroupBrands @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/brands", body: "$args.input"}, selection: """
+  ): GroupBrands @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/brands"
+    body: "$args.input"
+  }, selection: """
   brands {
     brandCompany
     brandId
@@ -31439,7 +31884,10 @@ type Mutation {
     """The ID of the group being accessed."""
     groupId: String!
     input: brandsRequest_Input
-  ): GroupBrands @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/brands", body: "$args.input"}, selection: """
+  ): GroupBrands @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/brands"
+    body: "$args.input"
+  }, selection: """
   brands {
     brandCompany
     brandId
@@ -31506,7 +31954,10 @@ type Mutation {
     """The ID of the group being accessed."""
     groupId: String!
     input: userInfoList_Input
-  ): GroupUsers @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/users", body: "$args.input"}, selection: """
+  ): GroupUsers @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/users"
+    body: "$args.input"
+  }, selection: """
   endPosition
   nextUri
   previousUri
@@ -31536,7 +31987,10 @@ type Mutation {
     """The ID of the group being accessed."""
     groupId: String!
     input: userInfoList_Input
-  ): GroupUsers @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/users", body: "$args.input"}, selection: """
+  ): GroupUsers @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/groups/{$args.groupId}/users"
+    body: "$args.input"
+  }, selection: """
   endPosition
   nextUri
   previousUri
@@ -31568,11 +32022,15 @@ type Mutation {
     """
     include: String
     input: AccountPermissionProfiles_Input
-  ): AccountPermissionProfiles @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/permission_profiles", body: "$args.input", queryParams: """
-  {
-    include: $args.include
-  }
-  """}, selection: """
+  ): AccountPermissionProfiles @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/permission_profiles"
+    body: "$args.input"
+    queryParams: """
+    {
+      include: $args.include
+    }
+    """
+  }, selection: """
   modifiedByUsername
   modifiedDateTime
   permissionProfileId
@@ -32017,7 +32475,9 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     permissionProfileId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/permission_profiles/{$args.permissionProfileId}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/permission_profiles/{$args.permissionProfileId}"
+  }, selection: "$")
   """Updates a permission profile within the specified account."""
   PermissionProfiles_PutPermissionProfiles(
     """The external account number (int) or account ID Guid."""
@@ -32028,11 +32488,15 @@ type Mutation {
     """
     include: String
     input: AccountPermissionProfiles_Input
-  ): AccountPermissionProfiles @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/permission_profiles/{$args.permissionProfileId}", body: "$args.input", queryParams: """
-  {
-    include: $args.include
-  }
-  """}, selection: """
+  ): AccountPermissionProfiles @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/permission_profiles/{$args.permissionProfileId}"
+    body: "$args.input"
+    queryParams: """
+    {
+      include: $args.include
+    }
+    """
+  }, selection: """
   modifiedByUsername
   modifiedDateTime
   permissionProfileId
@@ -32477,7 +32941,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: powerFormsRequest_Input
-  ): powerFormsResponse @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/powerforms", body: "$args.input"}, selection: """
+  ): powerFormsResponse @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/powerforms", body: "$args.input" }, selection: """
   endPosition
   nextUri
   powerForms {
@@ -32636,7 +33100,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: PowerForms_Input
-  ): PowerForms @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/powerforms", body: "$args.input"}, selection: """
+  ): PowerForms @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/powerforms", body: "$args.input" }, selection: """
   createdDateTime
   emailBody
   emailSubject
@@ -32727,14 +33191,17 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     powerFormId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/powerforms/{$args.powerFormId}"}, selection: "$")
+  ): JSON @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/powerforms/{$args.powerFormId}" }, selection: "$")
   """Creates a new PowerForm."""
   PowerForms_PutPowerForm(
     """The external account number (int) or account ID Guid."""
     accountId: String!
     powerFormId: String!
     input: PowerForms_Input
-  ): PowerForms @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/powerforms/{$args.powerFormId}", body: "$args.input"}, selection: """
+  ): PowerForms @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/powerforms/{$args.powerFormId}"
+    body: "$args.input"
+  }, selection: """
   createdDateTime
   emailBody
   emailSubject
@@ -32825,18 +33292,21 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: accountSettingsInformation_Input
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/settings", body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: { PUT: "/v2/accounts/{$args.accountId}/settings", body: "$args.input" }, selection: "$")
   """Deletes configuration information for the eNote eOriginal integration."""
   ENoteConfiguration_DeleteENoteConfiguration(
     """The external account number (int) or account ID Guid."""
     accountId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/settings/enote_configuration"}, selection: "$")
+  ): JSON @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/settings/enote_configuration" }, selection: "$")
   """Updates configuration information for the eNote eOriginal integration."""
   ENoteConfiguration_PutENoteConfiguration(
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: ENoteConfigurations_Input
-  ): ENoteConfigurations @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/settings/enote_configuration", body: "$args.input"}, selection: """
+  ): ENoteConfigurations @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/settings/enote_configuration"
+    body: "$args.input"
+  }, selection: """
   connectConfigured
   eNoteConfigured
   organization
@@ -32848,7 +33318,10 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: AccountPasswordRules_Input
-  ): AccountPasswordRules @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/settings/password_rules", body: "$args.input"}, selection: """
+  ): AccountPasswordRules @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/settings/password_rules"
+    body: "$args.input"
+  }, selection: """
   expirePassword
   expirePasswordDays
   expirePasswordDaysMetadata {
@@ -32902,7 +33375,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: AccountTabSettings_Input
-  ): AccountTabSettings @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/settings/tabs", body: "$args.input"}, selection: """
+  ): AccountTabSettings @connect(source: "test", http: { PUT: "/v2/accounts/{$args.accountId}/settings/tabs", body: "$args.input" }, selection: """
   allowTabOrder
   allowTabOrderMetadata {
     is21CFRPart11
@@ -33082,12 +33555,16 @@ type Mutation {
     item_type: String
     user_ids: String
     input: accountSharedAccess_Input
-  ): accountSharedAccess @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/shared_access", body: "$args.input", queryParams: """
-  {
-    item_type: $args.item_type
-    user_ids: $args.user_ids
-  }
-  """}, selection: """
+  ): accountSharedAccess @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/shared_access"
+    body: "$args.input"
+    queryParams: """
+    {
+      item_type: $args.item_type
+      user_ids: $args.user_ids
+    }
+    """
+  }, selection: """
   accountId
   endPosition
   errorDetails {
@@ -33226,7 +33703,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: signingGroupInformation_Input
-  ): signingGroupInformation @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/signing_groups", body: "$args.input"}, selection: """
+  ): signingGroupInformation @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/signing_groups", body: "$args.input" }, selection: """
   groups {
     created
     createdBy
@@ -33263,7 +33740,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: signingGroupInformation_Input
-  ): signingGroupInformation @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/signing_groups", body: "$args.input"}, selection: """
+  ): signingGroupInformation @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/signing_groups", body: "$args.input" }, selection: """
   groups {
     created
     createdBy
@@ -33292,7 +33769,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: signingGroupInformation_Input
-  ): signingGroupInformation @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/signing_groups", body: "$args.input"}, selection: """
+  ): signingGroupInformation @connect(source: "test", http: { PUT: "/v2/accounts/{$args.accountId}/signing_groups", body: "$args.input" }, selection: """
   groups {
     created
     createdBy
@@ -33324,7 +33801,10 @@ type Mutation {
     accountId: String!
     signingGroupId: String!
     input: SigningGroups_Input
-  ): SigningGroups @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/signing_groups/{$args.signingGroupId}", body: "$args.input"}, selection: """
+  ): SigningGroups @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/signing_groups/{$args.signingGroupId}"
+    body: "$args.input"
+  }, selection: """
   created
   createdBy
   errorDetails {
@@ -33352,7 +33832,10 @@ type Mutation {
     accountId: String!
     signingGroupId: String!
     input: SigningGroupUsers_Input
-  ): SigningGroupUsers @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/signing_groups/{$args.signingGroupId}/users", body: "$args.input"}, selection: """
+  ): SigningGroupUsers @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/signing_groups/{$args.signingGroupId}/users"
+    body: "$args.input"
+  }, selection: """
   users {
     email
     errorDetails {
@@ -33370,7 +33853,10 @@ type Mutation {
     accountId: String!
     signingGroupId: String!
     input: SigningGroupUsers_Input
-  ): SigningGroupUsers @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/signing_groups/{$args.signingGroupId}/users", body: "$args.input"}, selection: """
+  ): SigningGroupUsers @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/signing_groups/{$args.signingGroupId}/users"
+    body: "$args.input"
+  }, selection: """
   users {
     email
     errorDetails {
@@ -33389,7 +33875,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: CustomTabs_Input
-  ): CustomTabs @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/tab_definitions", body: "$args.input"}, selection: """
+  ): CustomTabs @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/tab_definitions", body: "$args.input" }, selection: """
   anchor
   anchorCaseSensitive
   anchorHorizontalAlignment
@@ -33446,14 +33932,17 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     customTabId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/tab_definitions/{$args.customTabId}"}, selection: "$")
+  ): JSON @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/tab_definitions/{$args.customTabId}" }, selection: "$")
   """Updates the information in a custom tab for the specified account."""
   Tab_PutCustomTab(
     """The external account number (int) or account ID Guid."""
     accountId: String!
     customTabId: String!
     input: CustomTabs_Input
-  ): CustomTabs @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/tab_definitions/{$args.customTabId}", body: "$args.input"}, selection: """
+  ): CustomTabs @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/tab_definitions/{$args.customTabId}"
+    body: "$args.input"
+  }, selection: """
   anchor
   anchorCaseSensitive
   anchorHorizontalAlignment
@@ -33540,7 +34029,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: Templates_Input
-  ): templateSummary @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/templates", body: "$args.input"}, selection: """
+  ): templateSummary @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/templates", body: "$args.input" }, selection: """
   applied
   documentId
   documentName
@@ -33560,7 +34049,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: Templates_Input
-  ): templateUpdateSummary @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}", body: "$args.input"}, selection: """
+  ): templateUpdateSummary @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}"
+    body: "$args.input"
+  }, selection: """
   bulkEnvelopeStatus {
     batchId
     batchSize
@@ -33662,7 +34154,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: templateCustomFields_Input
-  ): TemplateCustomFields @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/custom_fields", body: "$args.input"}, selection: """
+  ): TemplateCustomFields @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/custom_fields"
+    body: "$args.input"
+  }, selection: """
   listCustomFields {
     configurationType
     errorDetails {
@@ -33696,7 +34191,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: templateCustomFields_Input
-  ): TemplateCustomFields @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/custom_fields", body: "$args.input"}, selection: """
+  ): TemplateCustomFields @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/custom_fields"
+    body: "$args.input"
+  }, selection: """
   listCustomFields {
     configurationType
     errorDetails {
@@ -33734,7 +34232,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: templateCustomFields_Input
-  ): TemplateCustomFields @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/custom_fields", body: "$args.input"}, selection: """
+  ): TemplateCustomFields @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/custom_fields"
+    body: "$args.input"
+  }, selection: """
   listCustomFields {
     configurationType
     errorDetails {
@@ -33768,7 +34269,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: envelopeDefinition_Input
-  ): TemplateDocuments @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents", body: "$args.input"}, selection: """
+  ): TemplateDocuments @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents"
+    body: "$args.input"
+  }, selection: """
   templateDocuments {
     attachmentTabId
     availableDocumentTypes {
@@ -33815,11 +34319,15 @@ type Mutation {
     """
     apply_document_fields: String
     input: envelopeDefinition_Input
-  ): TemplateDocuments @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents", body: "$args.input", queryParams: """
-  {
-    apply_document_fields: $args.apply_document_fields
-  }
-  """}, selection: """
+  ): TemplateDocuments @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents"
+    body: "$args.input"
+    queryParams: """
+    {
+      apply_document_fields: $args.apply_document_fields
+    }
+    """
+  }, selection: """
   templateDocuments {
     attachmentTabId
     availableDocumentTypes {
@@ -33869,12 +34377,16 @@ type Mutation {
     apply_document_fields: String
     is_envelope_definition: String
     input: envelopeDefinition_Input
-  ): envelopeDocument @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}", body: "$args.input", queryParams: """
-  {
-    apply_document_fields: $args.apply_document_fields
-    is_envelope_definition: $args.is_envelope_definition
-  }
-  """}, selection: """
+  ): envelopeDocument @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}"
+    body: "$args.input"
+    queryParams: """
+    {
+      apply_document_fields: $args.apply_document_fields
+      is_envelope_definition: $args.is_envelope_definition
+    }
+    """
+  }, selection: """
   attachmentTabId
   availableDocumentTypes {
     isDefault
@@ -33914,7 +34426,10 @@ type Mutation {
     """The ID of the document being accessed."""
     documentId: String!
     input: TemplateDocumentFields_Input
-  ): TemplateDocumentFields @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/fields", body: "$args.input"}, selection: """
+  ): TemplateDocumentFields @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/fields"
+    body: "$args.input"
+  }, selection: """
   documentFields {
     errorDetails {
       errorCode
@@ -33934,7 +34449,10 @@ type Mutation {
     """The ID of the document being accessed."""
     documentId: String!
     input: TemplateDocumentFields_Input
-  ): TemplateDocumentFields @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/fields", body: "$args.input"}, selection: """
+  ): TemplateDocumentFields @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/fields"
+    body: "$args.input"
+  }, selection: """
   documentFields {
     errorDetails {
       errorCode
@@ -33956,7 +34474,10 @@ type Mutation {
     """The ID of the document being accessed."""
     documentId: String!
     input: TemplateDocumentFields_Input
-  ): TemplateDocumentFields @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/fields", body: "$args.input"}, selection: """
+  ): TemplateDocumentFields @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/fields"
+    body: "$args.input"
+  }, selection: """
   documentFields {
     errorDetails {
       errorCode
@@ -33978,7 +34499,10 @@ type Mutation {
     """The page number being accessed."""
     pageNumber: String!
     input: pageRequest_Input
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/pages/{$args.pageNumber}", body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/pages/{$args.pageNumber}"
+    body: "$args.input"
+  }, selection: "$")
   """
   Rotates page image from a template for display. The page image can be rotated to the left or right.
   """
@@ -33992,7 +34516,10 @@ type Mutation {
     """The page number being accessed."""
     pageNumber: String!
     input: pageRequest_Input
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/pages/{$args.pageNumber}/page_image", body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/documents/{$args.documentId}/pages/{$args.pageNumber}/page_image"
+    body: "$args.input"
+  }, selection: "$")
   """
   Deletes the lock from the specified template. The \`X-DocuSign-Edit\` header must be included in the request.
   """
@@ -34002,7 +34529,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: lockRequest_Input
-  ): TemplateLocks @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/lock", body: "$args.input"}, selection: """
+  ): TemplateLocks @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/lock"
+    body: "$args.input"
+  }, selection: """
   errorDetails {
     errorCode
     message
@@ -34038,7 +34568,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: lockRequest_Input
-  ): TemplateLocks @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/lock", body: "$args.input"}, selection: """
+  ): TemplateLocks @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/lock"
+    body: "$args.input"
+  }, selection: """
   errorDetails {
     errorCode
     message
@@ -34074,7 +34607,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: lockRequest_Input
-  ): TemplateLocks @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/lock", body: "$args.input"}, selection: """
+  ): TemplateLocks @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/lock"
+    body: "$args.input"
+  }, selection: """
   errorDetails {
     errorCode
     message
@@ -34110,7 +34646,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: templateNotificationRequest_Input
-  ): notification @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/notification", body: "$args.input"}, selection: """
+  ): notification @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/notification"
+    body: "$args.input"
+  }, selection: """
   expirations {
     expireAfter
     expireEnabled
@@ -34132,7 +34671,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: templateRecipients_Input
-  ): TemplateRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients", body: "$args.input"}, selection: """
+  ): TemplateRecipients @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients"
+    body: "$args.input"
+  }, selection: """
   agents {
     accessCode
     addAccessCodeToEmail
@@ -34402,11 +34944,15 @@ type Mutation {
     """
     resend_envelope: String
     input: templateRecipients_Input
-  ): TemplateRecipients @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients", body: "$args.input", queryParams: """
-  {
-    resend_envelope: $args.resend_envelope
-  }
-  """}, selection: """
+  ): TemplateRecipients @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients"
+    body: "$args.input"
+    queryParams: """
+    {
+      resend_envelope: $args.resend_envelope
+    }
+    """
+  }, selection: """
   agents {
     accessCode
     addAccessCodeToEmail
@@ -34680,11 +35226,15 @@ type Mutation {
     """
     resend_envelope: String
     input: templateRecipients_Input
-  ): recipientsUpdateSummary @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients", body: "$args.input", queryParams: """
-  {
-    resend_envelope: $args.resend_envelope
-  }
-  """}, selection: """
+  ): recipientsUpdateSummary @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients"
+    body: "$args.input"
+    queryParams: """
+    {
+      resend_envelope: $args.resend_envelope
+    }
+    """
+  }, selection: """
   recipientUpdateResults {
     errorDetails {
       errorCode
@@ -34700,7 +35250,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: TemplateDocumentVisibility_Input
-  ): TemplateDocumentVisibility @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/document_visibility", body: "$args.input"}, selection: """
+  ): TemplateDocumentVisibility @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/document_visibility"
+    body: "$args.input"
+  }, selection: """
   documentVisibility {
     documentId
     errorDetails {
@@ -34721,7 +35274,10 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: templateRecipients_Input
-  ): TemplateRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}", body: "$args.input"}, selection: """
+  ): TemplateRecipients @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}"
+    body: "$args.input"
+  }, selection: """
   agents {
     accessCode
     addAccessCodeToEmail
@@ -34988,7 +35544,9 @@ type Mutation {
     templateId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-  ): bulkRecipientsUpdateResponse @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/bulk_recipients"}, selection: """
+  ): bulkRecipientsUpdateResponse @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/bulk_recipients"
+  }, selection: """
   signer {
     accessCode
     addAccessCodeToEmail
@@ -35265,7 +35823,10 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: bulkRecipientsRequest_Input
-  ): bulkRecipientsSummaryResponse @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/bulk_recipients", body: "$args.input"}, selection: """
+  ): bulkRecipientsSummaryResponse @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/bulk_recipients"
+    body: "$args.input"
+  }, selection: """
   bulkRecipients {
     accessCode
     email
@@ -35303,7 +35864,10 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: TemplateDocumentVisibility_Input
-  ): TemplateDocumentVisibility @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/document_visibility", body: "$args.input"}, selection: """
+  ): TemplateDocumentVisibility @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/document_visibility"
+    body: "$args.input"
+  }, selection: """
   documentVisibility {
     documentId
     errorDetails {
@@ -35324,7 +35888,10 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: templateTabs_Input
-  ): TemplateRecipientTabs @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/tabs", body: "$args.input"}, selection: """
+  ): TemplateRecipientTabs @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/tabs"
+    body: "$args.input"
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -36226,7 +36793,10 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: templateTabs_Input
-  ): TemplateRecipientTabs @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/tabs", body: "$args.input"}, selection: """
+  ): TemplateRecipientTabs @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/tabs"
+    body: "$args.input"
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -37128,7 +37698,10 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: templateTabs_Input
-  ): TemplateRecipientTabs @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/tabs", body: "$args.input"}, selection: """
+  ): TemplateRecipientTabs @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/tabs"
+    body: "$args.input"
+  }, selection: """
   approveTabs {
     anchorCaseSensitive
     anchorHorizontalAlignment
@@ -38028,7 +38601,10 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: returnUrlRequest_Input
-  ): TemplateViews @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/views/edit", body: "$args.input"}, selection: "url")
+  ): TemplateViews @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/views/edit"
+    body: "$args.input"
+  }, selection: "url")
   """Removes a member group's sharing permissions for a specified template."""
   Templates_DeleteTemplatePart(
     """The external account number (int) or account ID Guid."""
@@ -38038,7 +38614,10 @@ type Mutation {
     """Currently, the only defined part is **groups**."""
     templatePart: String!
     input: Groups_Input
-  ): Groups @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/{$args.templatePart}", body: "$args.input"}, selection: """
+  ): Groups @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/{$args.templatePart}"
+    body: "$args.input"
+  }, selection: """
   endPosition
   groups {
     errorDetails {
@@ -38080,7 +38659,10 @@ type Mutation {
     """Currently, the only defined part is **groups**."""
     templatePart: String!
     input: Groups_Input
-  ): Groups @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/{$args.templatePart}", body: "$args.input"}, selection: """
+  ): Groups @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/{$args.templatePart}"
+    body: "$args.input"
+  }, selection: """
   endPosition
   groups {
     errorDetails {
@@ -38122,7 +38704,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: userInfoList_Input
-  ): GroupUsers @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/users", body: "$args.input"}, selection: """
+  ): GroupUsers @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/users", body: "$args.input" }, selection: """
   endPosition
   nextUri
   previousUri
@@ -38152,7 +38734,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: newUsersDefinition_Input
-  ): newUsersSummary @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/users", body: "$args.input"}, selection: """
+  ): newUsersSummary @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/users", body: "$args.input" }, selection: """
   newUsers {
     apiPassword
     createdDateTime
@@ -38174,7 +38756,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: userInformationList_Input
-  ): userInformationList @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/users", body: "$args.input"}, selection: """
+  ): userInformationList @connect(source: "test", http: { PUT: "/v2/accounts/{$args.accountId}/users", body: "$args.input" }, selection: """
   endPosition
   nextUri
   previousUri
@@ -38334,7 +38916,10 @@ type Mutation {
     """
     userId: String!
     input: Users_Input
-  ): Users @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}", body: "$args.input"}, selection: """
+  ): Users @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}"
+    body: "$args.input"
+  }, selection: """
   accountManagementGranular {
     canManageAdmins
     canManageAdminsMetadata {
@@ -38488,7 +39073,10 @@ type Mutation {
     """
     userId: String!
     input: CloudStorageProviders_Input
-  ): CloudStorageProviders @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage", body: "$args.input"}, selection: """
+  ): CloudStorageProviders @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage"
+    body: "$args.input"
+  }, selection: """
   storageProviders {
     authenticationUrl
     errorDetails {
@@ -38511,7 +39099,10 @@ type Mutation {
     """
     userId: String!
     input: CloudStorageProviders_Input
-  ): CloudStorageProviders @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage", body: "$args.input"}, selection: """
+  ): CloudStorageProviders @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage"
+    body: "$args.input"
+  }, selection: """
   storageProviders {
     authenticationUrl
     errorDetails {
@@ -38539,7 +39130,9 @@ type Mutation {
     Valid values are the service name ("Box") or the numerical serviceId ("4136").
     """
     serviceId: String!
-  ): CloudStorageProviders @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage/{$args.serviceId}"}, selection: """
+  ): CloudStorageProviders @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/cloud_storage/{$args.serviceId}"
+  }, selection: """
   storageProviders {
     authenticationUrl
     errorDetails {
@@ -38571,7 +39164,10 @@ type Mutation {
     """
     userId: String!
     input: UserCustomSettings_Input
-  ): UserCustomSettings @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/custom_settings", body: "$args.input"}, selection: """
+  ): UserCustomSettings @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/custom_settings"
+    body: "$args.input"
+  }, selection: """
   customSettings {
     errorDetails {
       errorCode
@@ -38611,7 +39207,10 @@ type Mutation {
     """
     userId: String!
     input: UserCustomSettings_Input
-  ): UserCustomSettings @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/custom_settings", body: "$args.input"}, selection: """
+  ): UserCustomSettings @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/custom_settings"
+    body: "$args.input"
+  }, selection: """
   customSettings {
     errorDetails {
       errorCode
@@ -38635,7 +39234,10 @@ type Mutation {
     """
     userId: String!
     input: UserProfiles_Input
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/profile", body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/profile"
+    body: "$args.input"
+  }, selection: "$")
   """
   Deletes the user profile image from the  specified user's profile.
   
@@ -38648,7 +39250,7 @@ type Mutation {
     The user ID of the user being accessed. Generally this is the user ID of the authenticated user, but if the authenticated user is an Admin on the account, this may be another user the Admin user is accessing.
     """
     userId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/profile/image"}, selection: "$")
+  ): JSON @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/profile/image" }, selection: "$")
   """
   Updates the user profile image by uploading an image to the user profile.
   
@@ -38661,7 +39263,7 @@ type Mutation {
     The user ID of the user being accessed. Generally this is the user ID of the authenticated user, but if the authenticated user is an Admin on the account, this may be another user the Admin user is accessing.
     """
     userId: String!
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/profile/image"}, selection: "$")
+  ): JSON @connect(source: "test", http: { PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/profile/image" }, selection: "$")
   """
   Updates the account settings list and email notification types for the specified user.
   """
@@ -38673,7 +39275,10 @@ type Mutation {
     """
     userId: String!
     input: userSettingsInformation_Input
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/settings", body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/settings"
+    body: "$args.input"
+  }, selection: "$")
   """
   Adds a user signature image and/or user initials image to the specified user. 
   
@@ -38703,7 +39308,10 @@ type Mutation {
     """
     userId: String!
     input: userSignaturesInformation_Input
-  ): userSignaturesInformation @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures", body: "$args.input"}, selection: """
+  ): userSignaturesInformation @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures"
+    body: "$args.input"
+  }, selection: """
   userSignatures {
     adoptedDateTime
     createdDateTime
@@ -38745,7 +39353,10 @@ type Mutation {
     """
     userId: String!
     input: userSignaturesInformation_Input
-  ): userSignaturesInformation @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures", body: "$args.input"}, selection: """
+  ): userSignaturesInformation @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures"
+    body: "$args.input"
+  }, selection: """
   userSignatures {
     adoptedDateTime
     createdDateTime
@@ -38796,7 +39407,9 @@ type Mutation {
     userId: String!
     """The ID of the signature being accessed."""
     signatureId: String!
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}"
+  }, selection: "$")
   """
   Creates, or updates, the signature font and initials for the specified user. When creating a signature, you use this resource to create the signature name and then add the signature and initials images into the signature.
   
@@ -38819,11 +39432,15 @@ type Mutation {
     """When set to **true**, closes the current signature."""
     close_existing_signature: String
     input: userSignatureDefinition_Input
-  ): UserSignatures @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}", body: "$args.input", queryParams: """
-  {
-    close_existing_signature: $args.close_existing_signature
-  }
-  """}, selection: """
+  ): UserSignatures @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}"
+    body: "$args.input"
+    queryParams: """
+    {
+      close_existing_signature: $args.close_existing_signature
+    }
+    """
+  }, selection: """
   adoptedDateTime
   createdDateTime
   dateStampProperties {
@@ -38876,7 +39493,9 @@ type Mutation {
     signatureId: String!
     """One of **signature_image** or **initials_image**."""
     imageType: String!
-  ): UserSignatures @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}/{$args.imageType}"}, selection: """
+  ): UserSignatures @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}/{$args.imageType}"
+  }, selection: """
   adoptedDateTime
   createdDateTime
   dateStampProperties {
@@ -38928,7 +39547,9 @@ type Mutation {
     signatureId: String!
     """One of **signature_image** or **initials_image**."""
     imageType: String!
-  ): UserSignatures @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}/{$args.imageType}"}, selection: """
+  ): UserSignatures @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/signatures/{$args.signatureId}/{$args.imageType}"
+  }, selection: """
   adoptedDateTime
   createdDateTime
   dateStampProperties {
@@ -38968,7 +39589,10 @@ type Mutation {
     """
     userId: String!
     input: UserSocialAccountLogins_Input
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/social", body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/users/{$args.userId}/social"
+    body: "$args.input"
+  }, selection: "$")
   """Adds a new social account to a user's account."""
   UserSocialLogin_PutUserSocialLogin(
     """The external account number (int) or account ID Guid."""
@@ -38978,7 +39602,10 @@ type Mutation {
     """
     userId: String!
     input: UserSocialAccountLogins_Input
-  ): JSON @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/social", body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/users/{$args.userId}/social"
+    body: "$args.input"
+  }, selection: "$")
   """
   Returns a URL that allows you to embed the authentication view of the DocuSign UI in your applications.
   """
@@ -38986,13 +39613,13 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: consoleViewRequest_Input
-  ): EnvelopeViews @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/views/console", body: "$args.input"}, selection: "url")
+  ): EnvelopeViews @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/views/console", body: "$args.input" }, selection: "url")
   """Update watermark information."""
   Watermark_PutWatermark(
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: AccountWatermarks_Input
-  ): AccountWatermarks @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/watermark", body: "$args.input"}, selection: """
+  ): AccountWatermarks @connect(source: "test", http: { PUT: "/v2/accounts/{$args.accountId}/watermark", body: "$args.input" }, selection: """
   displayAngle
   enabled
   font
@@ -39008,7 +39635,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: AccountWatermarks_Input
-  ): AccountWatermarks @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/watermark/preview", body: "$args.input"}, selection: """
+  ): AccountWatermarks @connect(source: "test", http: { PUT: "/v2/accounts/{$args.accountId}/watermark/preview", body: "$args.input" }, selection: """
   displayAngle
   enabled
   font
@@ -39024,7 +39651,7 @@ type Mutation {
     """The external account number (int) or account ID Guid."""
     accountId: String!
     input: Workspaces_Input
-  ): Workspaces @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/workspaces", body: "$args.input"}, selection: """
+  ): Workspaces @connect(source: "test", http: { POST: "/v2/accounts/{$args.accountId}/workspaces", body: "$args.input" }, selection: """
   billableAccountId
   created
   createdByInformation {
@@ -39083,7 +39710,7 @@ type Mutation {
     accountId: String!
     """Specifies the workspace ID GUID."""
     workspaceId: String!
-  ): Workspaces @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}"}, selection: """
+  ): Workspaces @connect(source: "test", http: { DELETE: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}" }, selection: """
   billableAccountId
   created
   createdByInformation {
@@ -39143,7 +39770,10 @@ type Mutation {
     """Specifies the workspace ID GUID."""
     workspaceId: String!
     input: Workspaces_Input
-  ): Workspaces @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}", body: "$args.input"}, selection: """
+  ): Workspaces @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}"
+    body: "$args.input"
+  }, selection: """
   billableAccountId
   created
   createdByInformation {
@@ -39207,7 +39837,10 @@ type Mutation {
     """The ID of the folder being accessed."""
     folderId: String!
     input: workspaceItemList_Input
-  ): JSON @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}", body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: {
+    DELETE: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}"
+    body: "$args.input"
+  }, selection: "$")
   """Creates a workspace file."""
   WorkspaceFile_PostWorkspaceFiles(
     """The external account number (int) or account ID Guid."""
@@ -39216,7 +39849,9 @@ type Mutation {
     workspaceId: String!
     """The ID of the folder being accessed."""
     folderId: String!
-  ): WorkspaceItems @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}/files"}, selection: """
+  ): WorkspaceItems @connect(source: "test", http: {
+    POST: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}/files"
+  }, selection: """
   callerAuthorization {
     canDelete
     canMove
@@ -39324,7 +39959,9 @@ type Mutation {
     folderId: String!
     """Specifies the room file ID GUID."""
     fileId: String!
-  ): WorkspaceItems @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}/files/{$args.fileId}"}, selection: """
+  ): WorkspaceItems @connect(source: "test", http: {
+    PUT: "/v2/accounts/{$args.accountId}/workspaces/{$args.workspaceId}/folders/{$args.folderId}/files/{$args.fileId}"
+  }, selection: """
   callerAuthorization {
     canDelete
     canMove
@@ -39421,7 +40058,7 @@ type Mutation {
   uri
   """)
   """Deletes the request log files."""
-  APIRequestLog_DeleteRequestLogs: JSON @connect(source: "test", http: {DELETE: "/v2/diagnostics/request_logs"}, selection: "$")
+  APIRequestLog_DeleteRequestLogs: JSON @connect(source: "test", http: { DELETE: "/v2/diagnostics/request_logs" }, selection: "$")
   """
   Enables or disables API request logging for troubleshooting.
   
@@ -39432,7 +40069,7 @@ type Mutation {
   Private information, such as passwords and integrator key information, which is normally located in the call header is omitted from the request/response log.
   
   """
-  APIRequestLog_PutRequestLogSettings(input: RequestLogs_Input): RequestLogs @connect(source: "test", http: {PUT: "/v2/diagnostics/settings", body: "$args.input"}, selection: """
+  APIRequestLog_PutRequestLogSettings(input: RequestLogs_Input): RequestLogs @connect(source: "test", http: { PUT: "/v2/diagnostics/settings", body: "$args.input" }, selection: """
   apiRequestLogMaxEntries
   apiRequestLogRemainingEntries
   apiRequestLogging
@@ -39442,21 +40079,21 @@ type Mutation {
     """Currently, only the value **password** is supported."""
     loginPart: String!
     input: userPasswordInformation_Input
-  ): JSON @connect(source: "test", http: {PUT: "/v2/login_information/{$args.loginPart}", body: "$args.input"}, selection: "$")
+  ): JSON @connect(source: "test", http: { PUT: "/v2/login_information/{$args.loginPart}", body: "$args.input" }, selection: "$")
   """
   **Deprecated**
   
   Revokes an OAuth2 authorization server token. After the revocation is complete, a caller must re-authenticate to restore access.
   
   """
-  OAuth2_PostRevoke: JSON @connect(source: "test", http: {POST: "/v2/oauth2/revoke"}, selection: "$")
+  OAuth2_PostRevoke: JSON @connect(source: "test", http: { POST: "/v2/oauth2/revoke" }, selection: "$")
   """
   **Deprecated**
   
   Creates an OAuth2 authorization server token endpoint.
   
   """
-  OAuth2_PostToken: oauthAccess @connect(source: "test", http: {POST: "/v2/oauth2/token"}, selection: """
+  OAuth2_PostToken: oauthAccess @connect(source: "test", http: { POST: "/v2/oauth2/token" }, selection: """
   access_token
   data {
     errorDetails {

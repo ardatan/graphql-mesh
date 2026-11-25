@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpanAPI: nested objects should generate the schema correctly 1`] = `
-"schema @source(name: "example_api", http: {baseURL: "http://localhost:3000"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @transport(subgraph: "example_api", kind: "connect", location: "http://localhost:3000", options: {queryStringOptions: {allowDots: true}}) @composeDirective(name: "@transport") {
+"schema @source(name: "example_api", http: { baseURL: "http://localhost:3000" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @transport(subgraph: "example_api", kind: "connect", location: "http://localhost:3000", options: { queryStringOptions: { allowDots: true } }) @composeDirective(name: "@transport") {
   query: Query
 }
 
@@ -19,45 +19,48 @@ type Query {
     """The name of the collection to search for the document under"""
     collectionName: String!
     searchParameters: SearchParameters_Input!
-  ): searchCollection_response @connect(source: "example_api", http: {GET: "/collections/{$args.collectionName}/documents/search", queryParams: """
-  {
-    "searchParameters.q": $args.searchParameters.q
-    "searchParameters.query_by": $args.searchParameters.query_by
-    "searchParameters.query_by_weights": $args.searchParameters.query_by_weights
-    "searchParameters.prefix": $args.searchParameters.prefix
-    "searchParameters.filter_by": $args.searchParameters.filter_by
-    "searchParameters.sort_by": $args.searchParameters.sort_by
-    "searchParameters.facet_by": $args.searchParameters.facet_by
-    "searchParameters.max_facet_values": $args.searchParameters.max_facet_values
-    "searchParameters.facet_query": $args.searchParameters.facet_query
-    "searchParameters.num_typos": $args.searchParameters.num_typos
-    "searchParameters.page": $args.searchParameters.page
-    "searchParameters.per_page": $args.searchParameters.per_page
-    "searchParameters.group_by": $args.searchParameters.group_by
-    "searchParameters.group_limit": $args.searchParameters.group_limit
-    "searchParameters.include_fields": $args.searchParameters.include_fields
-    "searchParameters.exclude_fields": $args.searchParameters.exclude_fields
-    "searchParameters.highlight_full_fields": $args.searchParameters.highlight_full_fields
-    "searchParameters.highlight_affix_num_tokens": $args.searchParameters.highlight_affix_num_tokens
-    "searchParameters.highlight_start_tag": $args.searchParameters.highlight_start_tag
-    "searchParameters.highlight_end_tag": $args.searchParameters.highlight_end_tag
-    "searchParameters.snippet_threshold": $args.searchParameters.snippet_threshold
-    "searchParameters.drop_tokens_threshold": $args.searchParameters.drop_tokens_threshold
-    "searchParameters.typo_tokens_threshold": $args.searchParameters.typo_tokens_threshold
-    "searchParameters.pinned_hits": $args.searchParameters.pinned_hits
-    "searchParameters.hidden_hits": $args.searchParameters.hidden_hits
-    "searchParameters.highlight_fields": $args.searchParameters.highlight_fields
-    "searchParameters.pre_segmented_query": $args.searchParameters.pre_segmented_query
-    "searchParameters.enable_overrides": $args.searchParameters.enable_overrides
-    "searchParameters.prioritize_exact_match": $args.searchParameters.prioritize_exact_match
-    "searchParameters.exhaustive_search": $args.searchParameters.exhaustive_search
-    "searchParameters.search_cutoff_ms": $args.searchParameters.search_cutoff_ms
-    "searchParameters.use_cache": $args.searchParameters.use_cache
-    "searchParameters.cache_ttl": $args.searchParameters.cache_ttl
-    "searchParameters.min_len_1typo": $args.searchParameters.min_len_1typo
-    "searchParameters.min_len_2typo": $args.searchParameters.min_len_2typo
-  }
-  """}, selection: """
+  ): searchCollection_response @connect(source: "example_api", http: {
+    GET: "/collections/{$args.collectionName}/documents/search"
+    queryParams: """
+    {
+      "searchParameters.q": $args.searchParameters.q
+      "searchParameters.query_by": $args.searchParameters.query_by
+      "searchParameters.query_by_weights": $args.searchParameters.query_by_weights
+      "searchParameters.prefix": $args.searchParameters.prefix
+      "searchParameters.filter_by": $args.searchParameters.filter_by
+      "searchParameters.sort_by": $args.searchParameters.sort_by
+      "searchParameters.facet_by": $args.searchParameters.facet_by
+      "searchParameters.max_facet_values": $args.searchParameters.max_facet_values
+      "searchParameters.facet_query": $args.searchParameters.facet_query
+      "searchParameters.num_typos": $args.searchParameters.num_typos
+      "searchParameters.page": $args.searchParameters.page
+      "searchParameters.per_page": $args.searchParameters.per_page
+      "searchParameters.group_by": $args.searchParameters.group_by
+      "searchParameters.group_limit": $args.searchParameters.group_limit
+      "searchParameters.include_fields": $args.searchParameters.include_fields
+      "searchParameters.exclude_fields": $args.searchParameters.exclude_fields
+      "searchParameters.highlight_full_fields": $args.searchParameters.highlight_full_fields
+      "searchParameters.highlight_affix_num_tokens": $args.searchParameters.highlight_affix_num_tokens
+      "searchParameters.highlight_start_tag": $args.searchParameters.highlight_start_tag
+      "searchParameters.highlight_end_tag": $args.searchParameters.highlight_end_tag
+      "searchParameters.snippet_threshold": $args.searchParameters.snippet_threshold
+      "searchParameters.drop_tokens_threshold": $args.searchParameters.drop_tokens_threshold
+      "searchParameters.typo_tokens_threshold": $args.searchParameters.typo_tokens_threshold
+      "searchParameters.pinned_hits": $args.searchParameters.pinned_hits
+      "searchParameters.hidden_hits": $args.searchParameters.hidden_hits
+      "searchParameters.highlight_fields": $args.searchParameters.highlight_fields
+      "searchParameters.pre_segmented_query": $args.searchParameters.pre_segmented_query
+      "searchParameters.enable_overrides": $args.searchParameters.enable_overrides
+      "searchParameters.prioritize_exact_match": $args.searchParameters.prioritize_exact_match
+      "searchParameters.exhaustive_search": $args.searchParameters.exhaustive_search
+      "searchParameters.search_cutoff_ms": $args.searchParameters.search_cutoff_ms
+      "searchParameters.use_cache": $args.searchParameters.use_cache
+      "searchParameters.cache_ttl": $args.searchParameters.cache_ttl
+      "searchParameters.min_len_1typo": $args.searchParameters.min_len_1typo
+      "searchParameters.min_len_2typo": $args.searchParameters.min_len_2typo
+    }
+    """
+  }, selection: """
   __typename: $status->match([200, "SearchResult"], [400, "ApiResponse"], [404, "ApiResponse"], [@, "SearchResult"])
   facet_counts {
     counts {
