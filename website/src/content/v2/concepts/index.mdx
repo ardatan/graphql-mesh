@@ -1,7 +1,7 @@
 ---
 description:
-  Mesh v2 concepts -- Mesh, HTTP/REST Connectors, Federation, Schema Stitching, Gateway,
-  Composition, Schema registry
+  Mesh v2 concepts -- Mesh, Loaders, Transports, HTTP/REST Connectors, Federation, Schema Stitching,
+  Gateway, Composition, Schema registry
 ---
 
 import { Cards } from '@theguild/components'
@@ -25,15 +25,17 @@ Short definitions for terms that show up across Mesh v2 docs. Each page answers:
   ]}
 />
 
-| Concept                  | One line                                                                   | Page                                            |
-| ------------------------ | -------------------------------------------------------------------------- | ----------------------------------------------- |
-| **Mesh**                 | Turns sources + SDL into Federation-ready subgraphs and transports         | [Mesh](/v2/concepts/mesh)                       |
-| **HTTP/REST Connectors** | HTTP/REST `@connect` / `@source` mapping (not Mesh-only protocols)         | [HTTP/REST Connectors](/v2/concepts/connectors) |
-| **Federation**           | Standardized type merging (entities / `@key`) + federation gateway runtime | [Federation](/v2/concepts/federation)           |
-| **Schema Stitching**     | Programmatic type-merging runtime (`stitchSchemas`); can run Federation    | [Schema Stitching](/v2/concepts/stitching)      |
-| **Gateway**              | Runtime that executes the graph (federation gateway peers in Mesh v2)      | [Gateway](/v2/concepts/gateway)                 |
-| **Composition**          | Combining subgraph SDL into a supergraph (Mesh Compose, Hive, Rover, ...)  | [Composition](/v2/concepts/composition)         |
-| **Schema registry**      | Stores and distributes subgraph / supergraph SDL                           | [Schema registry](/v2/concepts/schema-registry) |
+| Concept                  | One line                                                                    | Page                                            |
+| ------------------------ | --------------------------------------------------------------------------- | ----------------------------------------------- |
+| **Mesh**                 | Turns sources + SDL into Federation-ready subgraphs and transports          | [Mesh](/v2/concepts/mesh)                       |
+| **Loaders**              | `@omnigraph/*` packages that emit subgraph SDL (optional; not runtime)      | [Loaders](/v2/concepts/loaders)                 |
+| **Transports**           | `@graphql-mesh/transport-*` packages that execute directives at the gateway | [Transports](/v2/concepts/transports)           |
+| **HTTP/REST Connectors** | HTTP/REST `@connect` / `@source` mapping (not Mesh-only protocols)          | [HTTP/REST Connectors](/v2/concepts/connectors) |
+| **Federation**           | Standardized type merging (entities / `@key`) + federation gateway runtime  | [Federation](/v2/concepts/federation)           |
+| **Schema Stitching**     | Programmatic type-merging runtime (`stitchSchemas`); can run Federation     | [Schema Stitching](/v2/concepts/stitching)      |
+| **Gateway**              | Runtime that executes the graph (federation gateway peers in Mesh v2)       | [Gateway](/v2/concepts/gateway)                 |
+| **Composition**          | Combining subgraph SDL into a supergraph (Mesh Compose, Hive, Rover, ...)   | [Composition](/v2/concepts/composition)         |
+| **Schema registry**      | Stores and distributes subgraph / supergraph SDL                            | [Schema registry](/v2/concepts/schema-registry) |
 
 Protocol families (hover / click): <ProtocolRef name="http-rest" />, <ProtocolRef name="sql" />,
 
@@ -44,6 +46,8 @@ Protocol families (hover / click): <ProtocolRef name="http-rest" />, <ProtocolRe
 
 <Cards>
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="Loaders" href="/v2/concepts/loaders" />
+  <Cards.Card arrow title="Transports" href="/v2/concepts/transports" />
   <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />
   <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
