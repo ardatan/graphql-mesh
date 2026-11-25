@@ -1,0 +1,236 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Discriminator Mapping should generate correct schema: discriminator-mapping 1`] = `
+"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+  query: Query
+}
+
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
+type Query {
+  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}"}, selection: """
+  ... $.petType->match(["Dog", { __typename: "DogDifferent" }], ["Cat", { __typename: "Cat" }])
+  petType
+  cat_exclusive
+  dog_exclusive
+  """)
+}
+
+union Pet = Cat | DogDifferent
+
+type Cat {
+  petType: String
+  cat_exclusive: String
+}
+
+type DogDifferent {
+  petType: String
+  dog_exclusive: String
+}
+
+input ConnectHTTP {
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
+  headers: [HTTPHeaderMapping!]
+  body: JSONSelection
+  queryParams: JSONSelection
+}
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
+input ConnectorErrors {
+  message: JSONSelection
+  extensions: JSONSelection
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: JSONSelection
+}"
+`;
+
+exports[`Inline Discriminator Mapping (request body) should generate correct schema: discriminator-inline-request 1`] = `
+"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+  query: Query
+  mutation: Mutation
+}
+
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
+type Query {
+  dummy: String @connect(selection: "$(\\"dummy\\")")
+}
+
+type Mutation {
+  createThing(input: createThing_request_Input): Thing @connect(source: "test", http: {POST: "/things", body: "$args.input"}, selection: """
+  id
+  type
+  name
+  """)
+}
+
+type Thing {
+  id: String
+  type: String
+  name: String
+}
+
+input createThing_request_Input @oneOf(subgraph: "test") {
+  CreateCatInput_Input: CreateCatInput_Input
+  CreateDogInput_Input: CreateDogInput_Input
+}
+
+input CreateCatInput_Input {
+  type: String!
+  name: String!
+  meow: String
+}
+
+input CreateDogInput_Input {
+  type: String!
+  name: String!
+  bark: String
+}
+
+input ConnectHTTP {
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
+  headers: [HTTPHeaderMapping!]
+  body: JSONSelection
+  queryParams: JSONSelection
+}
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
+input ConnectorErrors {
+  message: JSONSelection
+  extensions: JSONSelection
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: JSONSelection
+}"
+`;
+
+exports[`Inline Discriminator Mapping should generate correct schema: discriminator-inline 1`] = `
+"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+  query: Query
+}
+
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
+type Query {
+  things: [query_things_items] @connect(source: "test", http: {GET: "/things"}, selection: """
+  ... $.type->match(["cat", { __typename: "Cat" }], ["dog", { __typename: "Dog" }])
+  id
+  type
+  name
+  data
+  """)
+}
+
+union query_things_items = Cat | Dog
+
+type Cat {
+  id: String
+  type: String
+  name: String
+  data: JSON
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type Dog {
+  id: String
+  type: String
+  name: String
+  data: JSON
+}
+
+input ConnectHTTP {
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
+  headers: [HTTPHeaderMapping!]
+  body: JSONSelection
+  queryParams: JSONSelection
+}
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
+input ConnectorErrors {
+  message: JSONSelection
+  extensions: JSONSelection
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: JSONSelection
+}"
+`;

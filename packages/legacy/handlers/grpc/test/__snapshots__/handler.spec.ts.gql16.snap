@@ -1,0 +1,1153 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`gRPC Handler Interpreting Protos should load the Comments proto 1`] = `
+"schema @transport(subgraph: "Comments", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  """
+  Comment 2: This is a comment with initial slash star and final star slash (all on one line)
+  """
+  foo_SampleService_GetSample(input: foo__GetSampleRequest_Input): foo__SampleResponse @protobuf__rpc(subgraph: "Comments", service: "foo.SampleService", method: "GetSample", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.sample_id\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n  1(string): sample_id\\n", stream: false)
+}
+
+"""
+Comment 5: This is a comment on one line, delimiters slash star star at beginning of the line. Trailing comment delimiter at beginning of next line after comment.
+"""
+type foo__SampleResponse {
+  sample_id: String
+}
+
+"""
+Comment 7: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is not at the beginning of the line.
+"""
+input foo__GetSampleRequest_Input {
+  """
+  Comment 8: This is a comment with slash star delimiter on the same line as a field definition.
+  """
+  sample_id: String
+}
+
+type Mutation {
+  """Comment 1: This is a comment with two slashes"""
+  foo_SampleService_CreateSample(input: foo__CreateSampleRequest_Input): foo__SampleResponse @protobuf__rpc(subgraph: "Comments", service: "foo.SampleService", method: "CreateSample", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.description\\n  2(string): input.type\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n  1(string): sample_id\\n", stream: false)
+  """
+  Comment 3: This is a comment with initial slash star star and final star slash (all on one line
+  """
+  foo_SampleService_UpdateSample(input: foo__UpdateSampleRequest_Input): foo__SampleResponse @protobuf__rpc(subgraph: "Comments", service: "foo.SampleService", method: "UpdateSample", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.sample_id\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n  1(string): sample_id\\n", stream: false)
+  """
+  Comment 4: This is a comment on multiple lines, initial slash star star
+  at beginning of the line.
+  """
+  foo_SampleService_DeleteSample(input: foo__DeleteSampleRequest_Input): foo__SampleResponse @protobuf__rpc(subgraph: "Comments", service: "foo.SampleService", method: "DeleteSample", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.sample_id\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n  1(string): sample_id\\n", stream: false)
+}
+
+input foo__CreateSampleRequest_Input {
+  """
+  Comment 6: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is at the beginning of the line. Trailing comment delimiter on same line as text.
+  """
+  description: String
+  type: String
+}
+
+input foo__UpdateSampleRequest_Input {
+  """
+  Comment 10: This is a comment with slash star star delimiter on the same line as a field definition.
+  """
+  sample_id: String
+}
+
+input foo__DeleteSampleRequest_Input {
+  """
+  Comment 12: This is a two-slash comment on the same line as a field definition.
+  """
+  sample_id: String
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the Custom Message proto 1`] = `
+"schema @transport(subgraph: "Custom Message", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  foos_BamService_GetW(input: foos__GetBamRequest_Input): foos__GetFoosResponse @protobuf__rpc(subgraph: "Custom Message", service: "foos.BamService", method: "GetW", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@foos_Bam {\\n  1(int64): id\\n}\\n  1(int32): input.id\\n  2(message@foos_Bam): input.abcd\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@foos_Bam {\\n  1(int64): id\\n}\\n  1(message@foos_Bam): abcd\\n", stream: false)
+}
+
+type foos__GetFoosResponse {
+  abcd: foos__Bam
+}
+
+type foos__Bam {
+  id: BigInt
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+input foos__GetBamRequest_Input {
+  id: Int
+  abcd: foos__Bam_Input
+}
+
+input foos__Bam_Input {
+  id: BigInt
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the Custom Message2 proto 1`] = `
+"schema @transport(subgraph: "Custom Message2", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  foo_BamService_GetFOOs(input: foo__GetFOOsRequest_Input): foo__GetFOOsResponse @protobuf__rpc(subgraph: "Custom Message2", service: "foo.BamService", method: "GetFOOs", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(int32): input.id\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@foo_FOO {\\n  1(int64): id\\n}\\n  1(repeated message@foo_FOO): foos\\n", stream: false)
+}
+
+type foo__GetFOOsResponse {
+  foos: [foo__FOO]
+}
+
+type foo__FOO {
+  id: BigInt
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+input foo__GetFOOsRequest_Input {
+  id: Int
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the Empty proto 1`] = `
+"schema @transport(subgraph: "Empty", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+  subscription: Subscription
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  """get all movies"""
+  io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "Empty", service: "io.xtech.Example", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  io_xtech_Example_GetEmpty(input: io__xtech__MovieRequest_Input): io__xtech__EmptyRequest @protobuf__rpc(subgraph: "Empty", service: "io.xtech.Example", method: "GetEmpty", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n", stream: false)
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "Empty", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """get all movies"""
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "Empty", service: "io.xtech.AnotherExample", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "Empty", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+"""movie result message, contains list of movies"""
+type io__xtech__MoviesResult {
+  """list of movies"""
+  result: [io__xtech__Movie]
+}
+
+"""movie message payload"""
+type io__xtech__Movie {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp
+  genre: io__xtech__Genre
+}
+
+type google__protobuf__Timestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+enum io__xtech__Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+
+input io__xtech__MovieRequest_Input {
+  movie: io__xtech__Movie_Input
+}
+
+"""movie message payload"""
+input io__xtech__Movie_Input {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp_Input
+  genre: io__xtech__Genre
+}
+
+input google__protobuf__Timestamp_Input {
+  seconds: BigInt
+  nanos: Int
+}
+
+scalar io__xtech__EmptyRequest @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+input io__xtech__SearchByCastRequest_Input {
+  castName: String
+}
+
+type Subscription {
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "Empty", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "Empty", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the Enums proto 1`] = `
+"schema @transport(subgraph: "Enums", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  io_xtech_OrganizationService_GetOrganization(input: io__xtech__EmptyRequest_Input): io__xtech__OrganizationProto @protobuf__rpc(subgraph: "Enums", service: "io.xtech.OrganizationService", method: "GetOrganization", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n  1(string): id\\n  2(string): owner\\n  3(string): name\\n  4(string): description\\n  5(string): image_url\\n  6(enum{UNKNOWN=0,ACTIVE=1,PENDING_PAYMENT=2,SUSPENDED=3}): state\\n  7(bool): default_org\\n", stream: false)
+}
+
+type io__xtech__OrganizationProto {
+  id: String
+  owner: String
+  name: String
+  description: String
+  image_url: String
+  state: io__xtech__OrganizationStateProto
+  default_org: Boolean
+}
+
+enum io__xtech__OrganizationStateProto {
+  UNKNOWN
+  ACTIVE
+  PENDING_PAYMENT
+  SUSPENDED
+}
+
+scalar io__xtech__EmptyRequest_Input @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the Import Nested proto 1`] = `
+"schema @transport(subgraph: "Import Nested", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  io_xtech_outer_Example_Get(input: io__xtech__TopLevel__Nested_Input): io__xtech__Result @protobuf__rpc(subgraph: "Import Nested", service: "io.xtech.outer.Example", method: "Get", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Item {\\n  1(string): name\\n}\\n  2(message@io_xtech_Item): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Item {\\n  1(string): name\\n}\\n  1(repeated message@io_xtech_Item): result\\n", stream: false)
+  io_xtech_Example_Get(input: io__xtech__TopLevel__Nested_Input): io__xtech__Result @protobuf__rpc(subgraph: "Import Nested", service: "io.xtech.Example", method: "Get", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Item {\\n  1(string): name\\n}\\n  2(message@io_xtech_Item): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Item {\\n  1(string): name\\n}\\n  1(repeated message@io_xtech_Item): result\\n", stream: false)
+}
+
+type io__xtech__Result {
+  result: [io__xtech__Item]
+}
+
+type io__xtech__Item {
+  name: String
+}
+
+input io__xtech__TopLevel__Nested_Input {
+  movie: io__xtech__Item_Input
+}
+
+input io__xtech__Item_Input {
+  name: String
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the Input bug 5880 proto 1`] = `
+"schema @transport(subgraph: "Input bug 5880", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  TestService_Get(input: TestMessage_Input): TestMessage @protobuf__rpc(subgraph: "Input bug 5880", service: "TestService", method: "Get", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@TestMessage_Input {\\n\\n}\\n  1(message@TestMessage_Input): input.input\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@TestMessage_Input {\\n\\n}\\n  1(message@TestMessage_Input): input\\n", stream: false)
+}
+
+type TestMessage {
+  input: TestMessage__Input
+}
+
+scalar TestMessage__Input @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+input TestMessage_Input {
+  input: TestMessage__Input_Input
+}
+
+scalar TestMessage__Input_Input @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the Map proto 1`] = `
+"schema @transport(subgraph: "Map", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  io_xtech_MapService_GetMap(input: io__xtech__MapRequest_Input): io__xtech__MapResponse @protobuf__rpc(subgraph: "Map", service: "io.xtech.MapService", method: "GetMap", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(map<string,string>): input.map\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n  1(map<string,string>): map\\n", stream: false)
+}
+
+type io__xtech__MapResponse {
+  map: JSON
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+input io__xtech__MapRequest_Input {
+  map: JSON
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the Movie proto 1`] = `
+"schema @transport(subgraph: "Movie", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+  subscription: Subscription
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  """get all movies"""
+  io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "Movie", service: "io.xtech.Example", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "Movie", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """get all movies"""
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "Movie", service: "io.xtech.AnotherExample", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "Movie", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+"""movie result message, contains list of movies"""
+type io__xtech__MoviesResult {
+  """list of movies"""
+  result: [io__xtech__Movie]
+}
+
+"""movie message payload"""
+type io__xtech__Movie {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp
+  genre: io__xtech__Genre
+}
+
+type google__protobuf__Timestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+enum io__xtech__Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+
+input io__xtech__MovieRequest_Input {
+  movie: io__xtech__Movie_Input
+}
+
+"""movie message payload"""
+input io__xtech__Movie_Input {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp_Input
+  genre: io__xtech__Genre
+}
+
+input google__protobuf__Timestamp_Input {
+  seconds: BigInt
+  nanos: Int
+}
+
+input io__xtech__SearchByCastRequest_Input {
+  castName: String
+}
+
+type Subscription {
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "Movie", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "Movie", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the Nested proto 1`] = `
+"schema @transport(subgraph: "Nested", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  io_xtech_Example_Get(input: io__xtech__TopLevel__Nested_Input): io__xtech__Result @protobuf__rpc(subgraph: "Nested", service: "io.xtech.Example", method: "Get", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Item {\\n  1(string): name\\n}\\n  2(message@io_xtech_Item): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Item {\\n  1(string): name\\n}\\n  1(repeated message@io_xtech_Item): result\\n", stream: false)
+}
+
+type io__xtech__Result {
+  result: [io__xtech__Item]
+}
+
+type io__xtech__Item {
+  name: String
+}
+
+input io__xtech__TopLevel__Nested_Input {
+  movie: io__xtech__Item_Input
+}
+
+input io__xtech__Item_Input {
+  name: String
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the No Package Nested proto 1`] = `
+"schema @transport(subgraph: "No Package Nested", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  Example_Get(input: TopLevel__Nested_Input): Result @protobuf__rpc(subgraph: "No Package Nested", service: "Example", method: "Get", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@Item {\\n  1(string): name\\n}\\n  2(message@Item): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@Item {\\n  1(string): name\\n}\\n  1(repeated message@Item): result\\n", stream: false)
+}
+
+type Result {
+  result: [Item]
+}
+
+type Item {
+  name: String
+}
+
+input TopLevel__Nested_Input {
+  movie: Item_Input
+}
+
+input Item_Input {
+  name: String
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the Outside proto 1`] = `
+"schema @transport(subgraph: "Outside", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+  subscription: Subscription
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  io_outside_Example_GetMovies(input: io__outside__MovieRequest_Input): io__outside__MoviesResult @protobuf__rpc(subgraph: "Outside", service: "io.outside.Example", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """get all movies"""
+  io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "Outside", service: "io.xtech.Example", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "Outside", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """get all movies"""
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "Outside", service: "io.xtech.AnotherExample", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "Outside", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+type io__outside__MoviesResult {
+  result: [io__xtech__Movie]
+}
+
+"""movie message payload"""
+type io__xtech__Movie {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp
+  genre: io__xtech__Genre
+}
+
+type google__protobuf__Timestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+enum io__xtech__Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+
+input io__outside__MovieRequest_Input {
+  movie: io__xtech__Movie_Input
+}
+
+"""movie message payload"""
+input io__xtech__Movie_Input {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp_Input
+  genre: io__xtech__Genre
+}
+
+input google__protobuf__Timestamp_Input {
+  seconds: BigInt
+  nanos: Int
+}
+
+"""movie result message, contains list of movies"""
+type io__xtech__MoviesResult {
+  """list of movies"""
+  result: [io__xtech__Movie]
+}
+
+input io__xtech__MovieRequest_Input {
+  movie: io__xtech__Movie_Input
+}
+
+input io__xtech__SearchByCastRequest_Input {
+  castName: String
+}
+
+type Subscription {
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "Outside", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "Outside", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the With All Values proto 1`] = `
+"schema @transport(subgraph: "With All Values", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  Example_Get(input: Item_Input): Result @protobuf__rpc(subgraph: "With All Values", service: "Example", method: "Get", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(bool): input.boolean\\n  2(bytes): input.bytesType\\n  3(double): input.doubleNum\\n  4(fixed32): input.fixedint32\\n  5(fixed64): input.fixedint64\\n  6(float): input.floatNum\\n  7(int32): input.integer32\\n  8(int64): input.integer64\\n  9(sfixed32): input.sfixedint32\\n  10(sfixed64): input.sfixedint64\\n  11(sint32): input.sinteger32\\n  12(sint64): input.sinteger64\\n  13(string): input.str\\n  14(uint32): input.uinteger32\\n  15(uint64): input.uinteger64\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@Item {\\n  1(bool): boolean\\n  2(bytes): bytesType\\n  3(double): doubleNum\\n  4(fixed32): fixedint32\\n  5(fixed64): fixedint64\\n  6(float): floatNum\\n  7(int32): integer32\\n  8(int64): integer64\\n  9(sfixed32): sfixedint32\\n  10(sfixed64): sfixedint64\\n  11(sint32): sinteger32\\n  12(sint64): sinteger64\\n  13(string): str\\n  14(uint32): uinteger32\\n  15(uint64): uinteger64\\n}\\n  1(repeated message@Item): result\\n", stream: false)
+}
+
+type Result {
+  result: [Item]
+}
+
+type Item {
+  boolean: Boolean
+  bytesType: Byte
+  doubleNum: Float
+  fixedint32: Int
+  fixedint64: BigInt
+  floatNum: Float
+  integer32: Int
+  integer64: BigInt
+  sfixedint32: Int
+  sfixedint64: BigInt
+  sinteger32: Int
+  sinteger64: BigInt
+  str: String
+  uinteger32: UnsignedInt
+  uinteger64: BigInt
+}
+
+"""The \`Byte\` scalar type represents byte value as a Buffer"""
+scalar Byte
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+"""Integers that will have a value of 0 or more."""
+scalar UnsignedInt
+
+input Item_Input {
+  boolean: Boolean
+  bytesType: Byte
+  doubleNum: Float
+  fixedint32: Int
+  fixedint64: BigInt
+  floatNum: Float
+  integer32: Int
+  integer64: BigInt
+  sfixedint32: Int
+  sfixedint64: BigInt
+  sinteger32: Int
+  sinteger64: BigInt
+  str: String
+  uinteger32: UnsignedInt
+  uinteger64: BigInt
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Interpreting Protos should load the With Underscores proto 1`] = `
+"schema @transport(subgraph: "With Underscores", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+  subscription: Subscription
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  """get all movies"""
+  io_xtech_Example_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "With Underscores", service: "io.xtech.Example", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "With Underscores", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """get all movies"""
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "With Underscores", service: "io.xtech.AnotherExample", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "With Underscores", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+"""movie result message, contains list of movies"""
+type io__xtech__MoviesResult {
+  """list of movies"""
+  result: [io__xtech__Movie]
+}
+
+"""movie message payload"""
+type io__xtech__Movie {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp
+  genre: io__xtech__Genre
+}
+
+type google__protobuf__Timestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+enum io__xtech__Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+
+input io__xtech__movie_request_Input {
+  movie: io__xtech__Movie_Input
+}
+
+"""movie message payload"""
+input io__xtech__Movie_Input {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp_Input
+  genre: io__xtech__Genre
+}
+
+input google__protobuf__Timestamp_Input {
+  seconds: BigInt
+  nanos: Int
+}
+
+input io__xtech__SearchByCastRequest_Input {
+  castName: String
+}
+
+type Subscription {
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "With Underscores", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "With Underscores", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Load proto with prefixQueryMethod and selectQueryOrMutationField should load the retrieve-movie.proto with prefixQueryMethod 1`] = `
+"schema @transport(subgraph: "prefixQueryMethod", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  """get all movies"""
+  io_xtech_Example_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "prefixQueryMethod", service: "io.xtech.Example", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """get movies"""
+  io_xtech_Example_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "prefixQueryMethod", service: "io.xtech.Example", method: "RetrieveMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(repeated string): input.movieIds\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """get all movies"""
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "prefixQueryMethod", service: "io.xtech.AnotherExample", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """get movies"""
+  io_xtech_AnotherExample_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "prefixQueryMethod", service: "io.xtech.AnotherExample", method: "RetrieveMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(repeated string): input.movieIds\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+}
+
+"""movie result message, contains list of movies"""
+type io__xtech__MoviesResult {
+  """list of movies"""
+  result: [io__xtech__Movie]
+}
+
+"""movie message payload"""
+type io__xtech__Movie {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp
+  genre: io__xtech__Genre
+}
+
+type google__protobuf__Timestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+enum io__xtech__Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+
+input io__xtech__movie_request_Input {
+  movie: io__xtech__Movie_Input
+}
+
+"""movie message payload"""
+input io__xtech__Movie_Input {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp_Input
+  genre: io__xtech__Genre
+}
+
+input google__protobuf__Timestamp_Input {
+  seconds: BigInt
+  nanos: Int
+}
+
+input io__xtech__movie_request_by_ids_Input {
+  movieIds: [String]
+}
+
+type Mutation {
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "prefixQueryMethod", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "prefixQueryMethod", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+input io__xtech__SearchByCastRequest_Input {
+  castName: String
+}
+
+type Subscription {
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "prefixQueryMethod", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "prefixQueryMethod", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Load proto with prefixQueryMethod and selectQueryOrMutationField should load the retrieve-movie.proto with selectQueryOrMutationField 1`] = `
+"schema @transport(subgraph: "selectQueryOrMutationField", kind: "protobuf", location: "localhost") @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+  query: Query
+  subscription: Subscription
+}
+
+directive @protobuf__rpc(subgraph: String, service: String, method: String, args: String, selection: String, stream: Boolean, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  """get all movies"""
+  io_xtech_Example_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "selectQueryOrMutationField", service: "io.xtech.Example", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """get movies"""
+  io_xtech_Example_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "selectQueryOrMutationField", service: "io.xtech.Example", method: "RetrieveMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(repeated string): input.movieIds\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "selectQueryOrMutationField", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """get all movies"""
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "selectQueryOrMutationField", service: "io.xtech.AnotherExample", method: "GetMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(message@io_xtech_Movie): input.movie\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """get movies"""
+  io_xtech_AnotherExample_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @protobuf__rpc(subgraph: "selectQueryOrMutationField", service: "io.xtech.AnotherExample", method: "RetrieveMovies", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(repeated string): input.movieIds\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@io_xtech_Movie {\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n}\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(repeated message@io_xtech_Movie): result\\n", stream: false)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @protobuf__rpc(subgraph: "selectQueryOrMutationField", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+"""movie result message, contains list of movies"""
+type io__xtech__MoviesResult {
+  """list of movies"""
+  result: [io__xtech__Movie]
+}
+
+"""movie message payload"""
+type io__xtech__Movie {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp
+  genre: io__xtech__Genre
+}
+
+type google__protobuf__Timestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+enum io__xtech__Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+
+input io__xtech__movie_request_Input {
+  movie: io__xtech__Movie_Input
+}
+
+"""movie message payload"""
+input io__xtech__Movie_Input {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp_Input
+  genre: io__xtech__Genre
+}
+
+input google__protobuf__Timestamp_Input {
+  seconds: BigInt
+  nanos: Int
+}
+
+input io__xtech__movie_request_by_ids_Input {
+  movieIds: [String]
+}
+
+input io__xtech__SearchByCastRequest_Input {
+  castName: String
+}
+
+type Subscription {
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "selectQueryOrMutationField", service: "io.xtech.Example", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @protobuf__rpc(subgraph: "selectQueryOrMutationField", service: "io.xtech.AnotherExample", method: "SearchMoviesByCast", args: "# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string): input.castName\\n", selection: "# Decode the protobuf response message into GraphQL fields.\\n# Each line is fieldId(protoType): graphqlFieldName.\\n@google_protobuf_Timestamp {\\n  1(int64): seconds\\n  2(int32): nanos\\n}\\n  1(string): name\\n  2(int32): year\\n  3(float): rating\\n  4(repeated string): cast\\n  5(message@google_protobuf_Timestamp): time\\n  6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre\\n", stream: true)
+}
+
+scalar TransportOptions"
+`;

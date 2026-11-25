@@ -136,6 +136,7 @@ module.exports = {
   },
   transformIgnorePatterns: [`node_modules/(?!(${ESM_PACKAGES.join('|')})/)`],
   resolver: 'bob-the-bundler/jest-resolver',
+  snapshotResolver: '<rootDir>/jest.graphql-snapshot-resolver.cjs',
   testMatch,
   setupFilesAfterEnv: ['<rootDir>/setup-jest.js'],
 };

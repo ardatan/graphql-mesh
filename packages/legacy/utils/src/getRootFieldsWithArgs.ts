@@ -38,10 +38,14 @@ export function getRootFieldsWithArgs(
     throw new AggregateError(coercedVariables.errors);
   }
   // graphql 16: `{ coerced }`; graphql 17: `{ variableValues: { coerced, sources } }`
+  const coercedResult = coercedVariables as unknown as {
+    variableValues?: { coerced?: Record<string, any> } | null;
+    coerced?: Record<string, any>;
+  };
   const flatVariables = (
-    'variableValues' in coercedVariables && coercedVariables.variableValues != null
-      ? coercedVariables.variableValues.coerced
-      : (coercedVariables as unknown as { coerced: Record<string, any> }).coerced
+    coercedResult.variableValues != null
+      ? coercedResult.variableValues.coerced
+      : coercedResult.coerced
   ) as Record<string, any>;
   const selectionHandlerCtx: SelectionHandlerCtx = {
     rootFieldMap,

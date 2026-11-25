@@ -209,7 +209,9 @@ export function createNamingConventionTransform(
             if (newArgName !== argName) {
               argRenameMap.set(argName, newArgName);
             }
-            const argConfig = fieldConfig.args[argName];
+            const argConfig = fieldConfig.args[argName] as (typeof fieldConfig.args)[string] & {
+              default?: { literal?: { kind?: string; value?: string; [k: string]: unknown } };
+            };
             const namedArgType = getNamedType(argConfig.type);
             const enumDefault =
               typeof argConfig.defaultValue === 'string'

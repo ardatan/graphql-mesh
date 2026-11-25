@@ -192,7 +192,8 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
       args: {
         representations: {
           type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
-          default: undefined,
+          // GraphQL 17 GraphQLArgument shape; ignored on 16.
+          ...({ default: undefined } as object),
           extensions: Object.create(null),
         },
       },

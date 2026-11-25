@@ -41,21 +41,18 @@ function withXsdDateCoercion(scalar: GraphQLScalarType): GraphQLScalarType {
     return scalar.parseLiteral(ast, variables);
   };
   // Prefer GraphQL 17 coerce* when present on the upstream scalar.
+  type CoerceFns = {
+    coerceOutputValue?: (v: unknown) => unknown;
+    coerceInputValue?: (v: unknown) => unknown;
+  };
+  const coerceFns = scalar as unknown as CoerceFns;
   const coerceOutputValue =
-    typeof (scalar as { coerceOutputValue?: (v: unknown) => unknown }).coerceOutputValue ===
-    'function'
-      ? (value: unknown) =>
-          (scalar as { coerceOutputValue: (v: unknown) => unknown }).coerceOutputValue(
-            coerceXsdDateString(value),
-          )
+    typeof coerceFns.coerceOutputValue === 'function'
+      ? (value: unknown) => coerceFns.coerceOutputValue!(coerceXsdDateString(value))
       : serialize;
   const coerceInputValue =
-    typeof (scalar as { coerceInputValue?: (v: unknown) => unknown }).coerceInputValue ===
-    'function'
-      ? (value: unknown) =>
-          (scalar as { coerceInputValue: (v: unknown) => unknown }).coerceInputValue(
-            coerceXsdDateString(value),
-          )
+    typeof coerceFns.coerceInputValue === 'function'
+      ? (value: unknown) => coerceFns.coerceInputValue!(coerceXsdDateString(value))
       : parseValue;
   return new GraphQLScalarType({
     ...scalar.toConfig(),

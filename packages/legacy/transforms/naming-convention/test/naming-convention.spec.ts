@@ -352,12 +352,14 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     const userTypeArg = fieldUsersByType.args[0];
     expect(userTypeArg).toBeDefined();
     // GraphQL 16: defaultValue string; GraphQL 17: default.literal EnumValue
+    const gql17Default = (
+      userTypeArg as unknown as { default?: { literal?: { kind: string; value: string } } }
+    ).default;
     const enumDefault =
       typeof userTypeArg.defaultValue === 'string'
         ? userTypeArg.defaultValue
-        : (userTypeArg as { default?: { literal?: { kind: string; value: string } } }).default
-              ?.literal?.kind === 'EnumValue'
-          ? (userTypeArg as { default: { literal: { value: string } } }).default.literal.value
+        : gql17Default?.literal?.kind === 'EnumValue'
+          ? gql17Default.literal.value
           : undefined;
     expect(enumDefault).toBe('NEWBIE');
   });
