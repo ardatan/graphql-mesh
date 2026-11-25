@@ -5,7 +5,7 @@ export default {
   architecture: 'Architecture',
   compose: 'Compose',
   transforms: 'Transforms',
-  serve: 'Serve',
+  serve: 'Serve API',
   examples: 'Examples',
   protocols: 'Protocols',
   guides: 'Guides',

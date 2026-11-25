@@ -124,7 +124,7 @@ export function V2ArchitectureDiagram() {
             className="fill-current text-[13px] font-semibold"
             textAnchor="middle"
           >
-            Serve (peers)
+            Serve API
           </text>
           <PeerChip x={536} y={64} w={164} label="Hive Gateway (JS/TS)" />
           <PeerChip x={536} y={96} w={164} label="Apollo Router (Connect)" />
