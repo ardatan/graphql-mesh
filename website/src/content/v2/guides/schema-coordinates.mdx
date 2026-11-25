@@ -31,12 +31,12 @@ a value and not `Query.track.id`.
 These Mesh (and related) strings are useful, but they are **different languages**. Do not call them
 Schema Coordinates:
 
-| Docs term                   | Example                                               | Purpose                                          |
-| --------------------------- | ----------------------------------------------------- | ------------------------------------------------ |
-| **Schema selector** (Mesh)  | `Query.*`, `Type.!User`, `Query.user.!name`           | Glob / include-exclude transforms and plugins    |
-| **Live-query identifier**   | `Query.todo(id:"42")`                                 | Invalidate keyed resources (may embed values)    |
-| **Connector coordinate**    | `ecomm:Query.products@connect[0]`                     | Apollo Connectors application identity in errors |
-| **Response / resolve path** | `["stores", 0, "author"]` or `Query.stores[0].author` | Location in an execution result tree             |
+| Docs term                   | Example                                               | Purpose                                       |
+| --------------------------- | ----------------------------------------------------- | --------------------------------------------- |
+| **Schema selector** (Mesh)  | `Query.*`, `Type.!User`, `Query.user.!name`           | Glob / include-exclude transforms and plugins |
+| **Live-query identifier**   | `Query.todo(id:"42")`                                 | Invalidate keyed resources (may embed values) |
+| **Connector coordinate**    | `ecomm:Query.products@connect[0]`                     | Connectors application identity in errors     |
+| **Response / resolve path** | `["stores", 0, "author"]` or `Query.stores[0].author` | Location in an execution result tree          |
 
 Nested field paths (`Query.user.name`), wildcards, union members (`Meal.Breakfast`), and directive
 **applications** (`User.email@private[0]`) are Spec non-goals.
