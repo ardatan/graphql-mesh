@@ -2,7 +2,10 @@ import type { ReactNode } from 'react';
 
 export type V2FlowStep = {
   title: string;
+  /** Short subtitle lines under the title (prefer 1–2). */
   lines?: string[];
+  /** Alias for a single subtitle line. */
+  subtitle?: string;
   accent?: boolean;
 };
 
@@ -15,19 +18,19 @@ type Props = {
   className?: string;
 };
 
-const BOX_W = 140;
-const BOX_H = 88;
-const GAP = 36;
+const BOX_W = 148;
+const BOX_H = 92;
+const GAP = 32;
 const PAD_X = 12;
-const PAD_Y = 28;
+const PAD_Y = 24;
 
 /**
  * Compact horizontal flow diagram matching /v2/architecture SVG aesthetic.
- * Text labels only; scrolls on narrow viewports.
+ * Every step should carry a short subtitle so boxes look even.
  */
 export function V2FlowDiagram({ steps, ariaLabel, caption, footnote, className }: Props) {
   const width = PAD_X * 2 + steps.length * BOX_W + (steps.length - 1) * GAP;
-  const height = footnote ? 168 : 144;
+  const height = footnote ? 172 : 140;
   const midY = PAD_Y + BOX_H / 2;
   const markerId = `v2-flow-arrow-${hashId(ariaLabel)}`;
 
@@ -40,7 +43,7 @@ export function V2FlowDiagram({ steps, ariaLabel, caption, footnote, className }
           role="img"
           aria-label={ariaLabel}
           className="mx-auto h-auto w-full max-w-4xl text-neutral-800 dark:text-neutral-100"
-          style={{ minWidth: Math.min(width, 640) }}
+          style={{ minWidth: Math.min(width, 680) }}
         >
           <title>{ariaLabel}</title>
           <defs>
@@ -61,23 +64,27 @@ export function V2FlowDiagram({ steps, ariaLabel, caption, footnote, className }
             const x = PAD_X + i * (BOX_W + GAP);
             const y = PAD_Y;
             const cx = x + BOX_W / 2;
-            const lineStart = 48;
+            const subtitles = normalizeSubtitles(step);
+            // Reserve title + up to 2 subtitle lines so empty/full boxes align.
+            const blockH = 16 + Math.max(subtitles.length, 1) * 14;
+            const blockTop = y + (BOX_H - blockH) / 2 + 12;
+
             return (
               <g key={`${step.title}-${i}`}>
                 <LayerBox x={x} y={y} w={BOX_W} h={BOX_H} accent={step.accent} />
                 <text
                   x={cx}
-                  y={y + 28}
+                  y={blockTop}
                   className="fill-current text-[12px] font-semibold"
                   textAnchor="middle"
                 >
                   {step.title}
                 </text>
-                {(step.lines ?? []).slice(0, 3).map((line, li) => (
+                {subtitles.slice(0, 2).map((line, li) => (
                   <text
                     key={li}
                     x={cx}
-                    y={y + lineStart + li * 14}
+                    y={blockTop + 16 + li * 14}
                     className="fill-neutral-500 text-[10px] dark:fill-neutral-400"
                     textAnchor="middle"
                   >
@@ -121,6 +128,12 @@ export function V2FlowDiagram({ steps, ariaLabel, caption, footnote, className }
   );
 }
 
+function normalizeSubtitles(step: V2FlowStep): string[] {
+  if (step.lines?.length) return step.lines;
+  if (step.subtitle) return [step.subtitle];
+  return [];
+}
+
 function Footnote({
   steps,
   footnote,
@@ -142,14 +155,14 @@ function Footnote({
   const to = Math.max(0, Math.min(steps.length - 1, footnote.toStep));
   const x1 = padX + from * (boxW + gap) + boxW / 2;
   const x2 = padX + to * (boxW + gap) + boxW / 2;
-  const chipW = 128;
+  const chipW = 132;
   const chipX = (x1 + x2) / 2 - chipW / 2;
-  const y = midY + 44;
+  const y = midY + 46;
 
   return (
     <g>
       <path
-        d={`M${x1} ${midY + BOX_H / 2 - 8} V${y + 14} H${x2} V${midY + 20}`}
+        d={`M${x1} ${midY + BOX_H / 2 - 10} V${y + 14} H${x2} V${midY + 22}`}
         fill="none"
         strokeDasharray="4 3"
         className="stroke-neutral-400 dark:stroke-neutral-500"
