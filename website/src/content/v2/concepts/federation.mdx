@@ -14,10 +14,11 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 <DirectiveRef name="key" /> (and related Federation directives), composition builds a
 **supergraph**, and a **federation gateway** runtime plans queries across subgraphs.
 
-Same underlying idea as [stitching](/v2/concepts/stitching) / type merging -- combine types from
-many schemas -- but with a **shared entity contract** and a **federation gateway** instead of a
-stitch-time merge runtime. For the stitching toolkit itself, see
-[The Guild Schema Stitching](https://the-guild.dev/graphql/stitching). Mesh aims to emit and accept
+Same underlying idea as [stitching](/v2/concepts/stitching) -- combine types across services -- but
+with a **shared entity/`@key` contract** and a **federation gateway** / supergraph, instead of
+programmatic `stitchSchemas` + `SubschemaConfig.merge`. Schema Stitching's core is code-first
+subschemas and type merging; stitching directives are optional helpers (see
+[The Guild Schema Stitching](https://the-guild.dev/graphql/stitching)). Mesh aims to emit and accept
 **Federation-compatible** subgraph SDL (generated or hand-written).
 
 ## Where it lives
@@ -39,16 +40,18 @@ stitch-time merge runtime. For the stitching toolkit itself, see
 | [Composition](/v2/concepts/composition) | Merge subgraphs → supergraph                                      |
 | [Gateway](/v2/concepts/gateway)         | **Federation gateway** runtime (Hive Gateway · Apollo Router)     |
 
-Federation is **not** a stitching / type-merging gateway (see [Stitching](/v2/concepts/stitching)),
-**not** a registry, and **not** a transport.
+Federation is **not** Schema Stitching's `stitchSchemas` / subschema merge runtime (see
+[Stitching](/v2/concepts/stitching)), **not** a registry, and **not** a transport.
 
 ## Vs Stitching
 
-|               | <ConceptRef name="federation" />             | <ConceptRef name="stitching" />              |
-| ------------- | -------------------------------------------- | -------------------------------------------- |
-| Merge model   | Standardized type merging: entities + `@key` | Type-merging runtime (stitch / merge fields) |
-| Runtime       | Federation gateway                           | Stitching gateway                            |
-| Mesh v2 story | Default path                                 | Legacy / orientation                         |
+|               | <ConceptRef name="federation" /> | <ConceptRef name="stitching" />                    |
+| ------------- | -------------------------------- | -------------------------------------------------- |
+| Primary API   | Subgraph SDL + composition       | `stitchSchemas` + `SubschemaConfig` (programmatic) |
+| Merge model   | Standardized entities + `@key`   | Programmatic type merging (`merge`, …)             |
+| Directives    | Core of the contract             | Optional helpers (`stitching-directives`)          |
+| Runtime       | Federation gateway               | Stitched schema + delegation                       |
+| Mesh v2 story | Default path                     | Orient / legacy                                    |
 
 ## Short example
 

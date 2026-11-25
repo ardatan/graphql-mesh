@@ -126,7 +126,7 @@ const CONCEPTS = {
     label: 'Stitching',
     href: '/v2/concepts/stitching',
     description:
-      'Type-merging runtime (stitch / merge fields). See also the-guild.dev/graphql/stitching.',
+      'stitchSchemas + subschemas / programmatic type merging (directives optional). the-guild.dev/graphql/stitching',
   },
   gateway: {
     label: 'Gateway',
