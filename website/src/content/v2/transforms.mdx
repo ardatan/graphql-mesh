@@ -1,0 +1,79 @@
+---
+description: Optional Mesh Compose transforms -- how the SDL pipeline works, when they help
+---
+
+import { Cards } from '@theguild/components'
+
+# Transforms (optional)
+
+Transforms are an **optional** per-subgraph Compose step. They run on subgraph SDL (from a loader or
+a hand-written file) as part of the Compose pipeline -- not a separate gateway plugin. Use them when
+a small, repeatable rewrite is enough; skip them when [Hand-write](/v2/paths/hand-write) or
+[Generate-then-edit](/v2/paths/generate-then-edit) already owns the `.graphql`.
+
+## How they work
+
+```mermaid
+flowchart LR
+  A[Loader emit<br/>or authored .graphql] --> B[Optional transforms]
+  B --> C[Annotated subgraph SDL]
+  C --> D[Compose supergraph]
+```
+
+1. Compose loads each subgraph (generated or `schema:` file).
+2. If that subgraph lists `transforms`, Compose applies them **in order** to that subgraph's schema
+   before / as it is annotated for composition.
+3. Transformed SDL is what joins the supergraph -- including rewritten `$args` / `$this` inside
+   `@connect`, `@source`, and Mesh protocol directives (`@protobuf__rpc`, `@sql`, …) so Hive Gateway
+   and Apollo Router dual-run stay valid.
+
+Root-level (supergraph-wide) transforms are not the default story yet; configure transforms on the
+subgraph that owns the names you want to change. See [Compose](/v2/compose).
+
+## Concrete example
+
+Loader (or hand SDL) exposes `moviesByYear(year: Int!)`. Public API should say `releaseYear` without
+regenerating or hand-editing every `@protobuf__rpc(args:)` line:
+
+```ts
+{
+  name: 'movies',
+  schema: './movies.graphql', // or sourceHandler: load…
+  transforms: [
+    createRenameTransform({
+      argRenamer: ({ fieldName, argName }) =>
+        fieldName === 'moviesByYear' && argName === 'year' ? 'releaseYear' : argName,
+    }),
+  ],
+}
+```
+
+After Compose, clients call `moviesByYear(releaseYear: …)` and the directive `args` mapping tracks
+`$args.releaseYear`. Same idea for OpenAPI / `@connect` emit with `createPrefixTransform` or
+naming-convention. Repo proof: `e2e/protobuf-http` (hand protobuf SDL + rename transform).
+
+## When transforms help
+
+- **Rename / prefix / naming-convention** on output you mostly like.
+- **Filter / wrap** generated noise before a first review.
+- Keep dual-run valid when GraphQL names change but directive mappings must follow.
+
+## When you can skip them
+
+- You are already **editing** emitted SDL ([Generate-then-edit](/v2/paths/generate-then-edit)).
+- You are **hand-writing** protocol SDL with the public names you want
+  ([Hand-write](/v2/paths/hand-write)).
+- Selection shape, entity rules, or join logic need real authorship -- transforms will not replace
+  that.
+
+## Deeper catalog
+
+Individual transform reference today: [v1 Transforms](/v1/transforms) (v2 per-transform pages will
+replace this link).
+
+<Cards>
+  <Cards.Card arrow title="Compose" href="/v2/compose" />
+  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="v1 Transforms reference" href="/v1/transforms" />
+</Cards>

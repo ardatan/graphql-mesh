@@ -30,13 +30,15 @@ source (Connect emit), then edits the `@connect` SDL before it joins the catalog
 | Re-compose | Same Compose pipeline as hand-write; dual-run Hive Gateway + Apollo Router on the Connect slice |
 
 You practice [Reading generated SDL](/v2/guides/reading-generated-sdl) on stage 1 output before this
-edit. Transforms (rename, prefix, naming-convention) can help keep `$args` / `$this` mappings valid
-for dual-run -- covered in the Transforms chapter later.
+edit. When the dislike is mostly naming and you still want the loader emit as the base, optional
+Compose [Transforms](/v2/transforms) can help -- they are not required once you are editing the SDL
+yourself.
 
 Full stage walkthrough: [Music store](/v2/examples/music-store).
 
 <Cards>
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="Transforms (optional)" href="/v2/transforms" />
   <Cards.Card arrow title="Music store" href="/v2/examples/music-store" />
 </Cards>
