@@ -38,7 +38,9 @@ before anything else is authored.
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
-      sourceHandler: loadSqlSubgraph('catalog', {/* Chinook connection + tables */})
+      sourceHandler: loadSqlSubgraph('catalog', {
+        endpoint: 'file:chinook.db'
+      })
     }
   ]
 })
