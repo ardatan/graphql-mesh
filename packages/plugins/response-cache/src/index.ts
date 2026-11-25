@@ -312,16 +312,14 @@ export default function useMeshResponseCache(
   const configuredGlobalTtl =
     'ttl' in options && options.ttl != null ? (options.ttl as number) : Number.POSITIVE_INFINITY;
 
-  // Stored TTL by the context
-  // To be compared with the calculated one later in `onTtl`
-  const ttlByContext = new WeakMap<any, number>();
+  // Selector / coordinate-like TTLs (Mesh globs) vs upstream Cache-Control caps.
+  const selectorTtlByContext = new WeakMap<object, number>();
+  const headerTtlByContext = new WeakMap<object, number>();
 
-  // Checks the TTL stored in the context
-  // Takes the lowest value
-  function checkTtl(context: GatewayContext, ttl: number) {
-    const ttlForThisContext = ttlByContext.get(context);
-    if (ttlForThisContext == null || ttl < ttlForThisContext) {
-      ttlByContext.set(context, ttl);
+  function takeMinTtl(map: WeakMap<object, number>, context: object, ttl: number) {
+    const current = map.get(context);
+    if (current == null || ttl < current) {
+      map.set(context, ttl);
     }
   }
 
@@ -350,18 +348,27 @@ export default function useMeshResponseCache(
     // Envelop constraint", and an explicit exact `0` stays distinguishable from global `0`.
     ttl: Number.POSITIVE_INFINITY,
     onTtl({ ttl, context }) {
-      const meshTtl = ttlByContext.get(context);
+      const selectorTtl = selectorTtlByContext.get(context as object);
+      const headerTtl = headerTtlByContext.get(context as object);
       const envelopHasConstraint = ttl !== Number.POSITIVE_INFINITY;
-      if (meshTtl != null && envelopHasConstraint) {
-        return Math.min(meshTtl, ttl);
+
+      // 1) Resolve coordinate/selector constraint, else configured global.
+      let resolved: number;
+      if (selectorTtl != null && envelopHasConstraint) {
+        resolved = Math.min(selectorTtl, ttl);
+      } else if (selectorTtl != null) {
+        resolved = selectorTtl;
+      } else if (envelopHasConstraint) {
+        resolved = ttl;
+      } else {
+        resolved = configuredGlobalTtl;
       }
-      if (meshTtl != null) {
-        return meshTtl;
+
+      // 2) Upstream Cache-Control may only shorten the resolved TTL.
+      if (headerTtl != null) {
+        return Math.min(resolved, headerTtl);
       }
-      if (envelopHasConstraint) {
-        return ttl;
-      }
-      return configuredGlobalTtl;
+      return resolved;
     },
   });
 
@@ -374,7 +381,7 @@ export default function useMeshResponseCache(
         operationName: payload.args.operationName,
         selectors: meshSchemaSelectors,
         context: payload.args.contextValue as GatewayContext,
-        checkTtl,
+        checkTtl: (ctx, ttl) => takeMinTtl(selectorTtlByContext, ctx as object, ttl),
       });
     }
     return envelopOnExecute?.call(this, payload);
@@ -390,12 +397,12 @@ export default function useMeshResponseCache(
           if (parsedCacheControl['max-age'] != null) {
             const maxAgeInSeconds = parsedCacheControl['max-age'];
             const maxAgeInMs = maxAgeInSeconds * 1000;
-            checkTtl(context as GatewayContext, maxAgeInMs);
+            takeMinTtl(headerTtlByContext, context as object, maxAgeInMs);
           }
           if (parsedCacheControl['s-maxage'] != null) {
             const sMaxAgeInSeconds = parsedCacheControl['s-maxage'];
             const sMaxAgeInMs = sMaxAgeInSeconds * 1000;
-            checkTtl(context as GatewayContext, sMaxAgeInMs);
+            takeMinTtl(headerTtlByContext, context as object, sMaxAgeInMs);
           }
         }
       };
