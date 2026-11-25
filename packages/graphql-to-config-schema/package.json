@@ -1,5 +1,5 @@
 {
-  "name": "@ardatan/graphql-to-config-schema",
+  "name": "@graphql-mesh/config-schema",
   "version": "0.2.0",
   "type": "module",
   "description": "Use GraphQL SDL to define YAML/JSON config schemas for GraphQL Mesh",
@@ -14,7 +14,7 @@
     "node": ">=22.18.0"
   },
   "bin": {
-    "graphql-to-config-schema": "dist/esm/bin.js"
+    "graphql-to-config-schema": "dist/cjs/bin.js"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

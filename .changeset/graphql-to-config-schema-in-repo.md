@@ -1,5 +1,5 @@
 ---
-"@ardatan/graphql-to-config-schema": minor
+"@graphql-mesh/config-schema": minor
 ---
 
-Move `@ardatan/graphql-to-config-schema` into the Mesh monorepo and run it on modern `@graphql-tools/*` with GraphQL 16/17 support (empty AST list handling).
+Add `@graphql-mesh/config-schema` (in-repo successor to `@ardatan/graphql-to-config-schema`) on modern `@graphql-tools/*` with GraphQL 16/17 support. Provides the `graphql-to-config-schema` CLI.
