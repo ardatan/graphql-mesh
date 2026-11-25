@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 /**
  * Reusable Mesh v2 directive / API term link: hover shows a short description,
- * click jumps to `/v2/reference/directives#...` (or another docs page).
+ * click jumps to `/v2/directives#...` (or another docs page).
  */
 
 const DIRECTIVES = {
@@ -92,6 +92,21 @@ const DIRECTIVES = {
     label: '@pubsubPublish',
     anchor: 'pubsub',
     description: 'Publish a field result to a pubsub topic after it resolves.',
+  },
+  skipAuth: {
+    label: '@skipAuth',
+    anchor: 'auth',
+    description: 'Opt out of complete-protection auth on Hive Gateway.',
+  },
+  rateLimit: {
+    label: '@rateLimit',
+    anchor: 'rateLimit',
+    description: 'Field-level rate limit hint enforced by Hive Gateway.',
+  },
+  authenticated: {
+    label: '@authenticated',
+    anchor: 'auth',
+    description: 'Federation auth: require an authenticated viewer.',
   },
 } as const;
 
@@ -280,7 +295,7 @@ export function DirectiveRef({
   const entry = DIRECTIVES[name];
   return (
     <RefLink
-      href={`/v2/reference/directives#${entry.anchor}`}
+      href={`/v2/directives#${entry.anchor}`}
       description={entry.description}
       className={className}
       code

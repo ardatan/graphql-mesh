@@ -1,0 +1,133 @@
+---
+description:
+  Run community HTTP/REST Connectors SDL on Mesh Compose + Hive Gateway / Apollo Router dual-run
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Community Connectors example
+
+<Callout type="info">
+  Supporting example -- **not** the getting-started kickoff. Prefer [Music Store
+  Example](/v2/examples/music-store) for the staged Generate -> edit -> Hand-write tutorial. This
+  page proves stock community <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> SDL
+  runs on Mesh without Rover / GraphOS.
+</Callout>
+
+[connectors-community](https://github.com/apollographql/connectors-community) publishes working
+`@connect` / `@source` schemas (JSONPlaceholder, Stripe, Google Maps, ...). Mesh already vendors
+several under the Connect transport test fixtures. You can drop the same SDL into Mesh Compose and
+dual-run on **Hive Gateway** and **Apollo Router**.
+
+<V2FlowDiagram
+  ariaLabel="Community Connectors on Mesh: community SDL to Composition to dual-run gateways"
+  caption="Community Connect SDL -> Mesh Compose -> Hive Gateway / Apollo Router."
+  steps={[
+    { title: 'Community SDL', lines: ['@connect / @source'] },
+    { title: 'Composition', lines: ['Mesh Compose'], accent: true },
+    { title: 'Serve Supergraph', lines: ['Hive / Apollo Router'], accent: true }
+  ]}
+/>
+
+## What you end up with
+
+| Piece     | Detail                                                               |
+| --------- | -------------------------------------------------------------------- |
+| Source    | Public JSONPlaceholder REST (`https://jsonplaceholder.typicode.com`) |
+| Authoring | Hand-checked community `.graphql` (or copy from the fixture)         |
+| Dual-run  | Hive Gateway **and** Apollo Router (Connect-compatible)              |
+| No Rover  | Mesh Compose + Hive Gateway is enough for local serve                |
+
+## Compose community SDL
+
+Point a subgraph at the `.graphql` file (same hand-write Compose path as Music Store stage 3):
+
+```ts
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      name: 'jsonplaceholder',
+      schema: './jsonplaceholder-users.graphql'
+    }
+  ]
+})
+```
+
+Minimal excerpt (full fixture lives in the Mesh Connect transport tests /
+`JSONPlaceholder/users.graphql`):
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"])
+  @source(name: "JSONPlaceholder", http: { baseURL: "https://jsonplaceholder.typicode.com/" })
+
+type User @key(fields: "id") {
+  id: ID!
+  name: String
+  username: String
+  email: String
+}
+
+type Query {
+  getUser(id: ID!): User
+    @connect(
+      source: "JSONPlaceholder"
+      http: { GET: "/users/{$args.id}" }
+      selection: """
+      id
+      name
+      username
+      email
+      """
+      entity: true
+    )
+}
+```
+
+```bash
+mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+```
+
+Same `supergraph.graphql` can dual-run on [Apollo Router](/v2/serve/apollo-router) when you stay on
+stock Connect (no `@sql` / `@protobuf__rpc` / SOAP beside it).
+
+## Use cases
+
+### Prove dual-run with a public API
+
+JSONPlaceholder needs no API key. Compose, query `getUser(id: "1")` on Hive Gateway, then point
+Apollo Router at the same supergraph file for a Connect-only smoke.
+
+### Bring another community connector
+
+Copy a connectors-community schema (Stripe, USGS, ...), swap secrets into `@source` headers or
+`operationHeaders` via env interpolation, and keep Mesh Compose as the composer. Prefer fixtures
+that use recreatable endpoints -- same bar as the community repo.
+
+### After Music Store Connect slice
+
+When Reviews `@connect` is working, community schemas are optional next steps for richer Connect
+vocabulary -- selection, entity, errors -- without changing Mesh product identity. See
+[Selection mapping](/v2/guides/selection-mapping) and
+[Directives: @connect](/v2/directives#connect).
+
+## Related
+
+Upstream catalog:
+[apollographql/connectors-community](https://github.com/apollographql/connectors-community). Mesh
+vendored copies: Connect transport `connectors-community` fixtures (used in dual-run smoke tests).
+
+<Cards>
+  <Cards.Card arrow title="HTTP / REST" href="/v2/protocols/http-rest" />
+  <Cards.Card arrow title="Directives: @connect" href="/v2/directives#connect" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+</Cards>

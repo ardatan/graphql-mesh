@@ -120,7 +120,7 @@ type Track
 ```
 
 See [Selection mapping](/v2/guides/selection-mapping) for `$this` / `$batch` binders, and
-[Directives](/v2/reference/directives) for `entity` on `@connect` / `@sql` / `@protobuf__rpc`
+[Directives](/v2/directives) for `entity` on `@connect` / `@sql` / `@protobuf__rpc`
 (<ProtocolRef name="http-rest" />, <ProtocolRef name="sql" />,
 
 <ProtocolRef name="protobuf" />
@@ -191,9 +191,8 @@ Semantic ById conventions: [Composition](/v2/compose#semantic-conventions).
 
 Mesh still documents <DirectiveRef name="merge" /> (type-merging on Hive Gateway). It also documents
 
-<DirectiveRef name="resolveTo" /> (field delegation) under
-[Directives](/v2/reference/directives#merge) -- prefer `@key` + HTTP/REST Connect or protocol
-`entity: true` maps for new joins.
+<DirectiveRef name="resolveTo" /> (field delegation) under [Directives](/v2/directives#merge) --
+prefer `@key` + HTTP/REST Connect or protocol `entity: true` maps for new joins.
 
 <Cards>
   <Cards.Card arrow title="Schema Stitching" href="/v2/concepts/stitching" />

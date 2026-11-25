@@ -9,5 +9,5 @@ export default {
   examples: 'Examples',
   protocols: 'Protocols',
   guides: 'Guides',
-  reference: 'Reference',
+  directives: 'Directives',
 };

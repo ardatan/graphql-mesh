@@ -45,6 +45,8 @@ export default withGuildDocs({
       '/v1/introduction': '/v1',
       '/v2/tutorials': '/v2/examples',
       '/v2/tutorials/music-store': '/v2/examples/music-store',
+      '/v2/reference': '/v2/directives',
+      '/v2/reference/directives': '/v2/directives',
     }).map(([from, to]) => ({
       destination: to,
       permanent: true,
