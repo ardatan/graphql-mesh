@@ -1,4 +1,4 @@
-import type { GraphQLSchema } from 'graphql';
+import { getNamedType, isEnumType, type GraphQLSchema } from 'graphql';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
@@ -15,7 +15,13 @@ import {
   TransformEnumValues,
   TransformObjectFields,
 } from '@graphql-tools/wrap';
-import { IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES, NAMING_CONVENTIONS } from './shared.js';
+import {
+  getEnumDefaultName,
+  IGNORED_ROOT_FIELD_NAMES,
+  IGNORED_TYPE_NAMES,
+  NAMING_CONVENTIONS,
+  withRenamedEnumDefault,
+} from './shared.js';
 
 export default class NamingConventionTransform implements MeshTransform {
   private transforms: Transform[] = [];
@@ -36,8 +42,10 @@ export default class NamingConventionTransform implements MeshTransform {
         ? NAMING_CONVENTIONS[options.config.fieldNames]
         : (s: string) => s;
       this.transforms.push(
-        new RenameInputObjectFields(
-          (_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName,
+        new RenameInputObjectFields((typeName, fieldName) =>
+          IGNORED_TYPE_NAMES.includes(typeName)
+            ? fieldName
+            : fieldNamingConventionFn(fieldName) || fieldName,
         ) as any,
         new TransformObjectFields((_, fieldName, fieldConfig) => [
           IGNORED_ROOT_FIELD_NAMES.includes(fieldName)
@@ -67,9 +75,34 @@ export default class NamingConventionTransform implements MeshTransform {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.enumValues];
 
       this.transforms.push(
-        new TransformEnumValues((typeName, externalValue, enumValueConfig) => {
+        new TransformEnumValues((_typeName, externalValue, enumValueConfig) => {
           const newEnumValue = namingConventionFn(externalValue) || externalValue;
           return [newEnumValue, enumValueConfig];
+        }) as any,
+        // GraphQL 17 keeps enum defaults on `default.literal`; rewrite them to the
+        // renamed external values (same as bare mode's MapperKind.ARGUMENT path).
+        new TransformObjectFields((_typeName, fieldName, fieldConfig) => {
+          if (!fieldConfig.args) {
+            return [fieldName, fieldConfig];
+          }
+          let changed = false;
+          const newArgs = { ...fieldConfig.args };
+          for (const [argName, argConfig] of Object.entries(newArgs)) {
+            if (!isEnumType(getNamedType(argConfig.type))) {
+              continue;
+            }
+            const enumDefault = getEnumDefaultName(argConfig);
+            if (!enumDefault) {
+              continue;
+            }
+            const newDefault = namingConventionFn(enumDefault) || enumDefault;
+            if (newDefault === enumDefault && argConfig.defaultValue === newDefault) {
+              continue;
+            }
+            changed = true;
+            newArgs[argName] = withRenamedEnumDefault(argConfig, newDefault);
+          }
+          return [fieldName, changed ? { ...fieldConfig, args: newArgs } : fieldConfig];
         }) as any,
       );
     }

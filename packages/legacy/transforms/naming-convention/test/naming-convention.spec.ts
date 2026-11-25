@@ -416,4 +416,62 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(data.cartGetCart).not.toBeNull();
     expect(data.cartGetCart.id).toBe('asdf');
   });
+
+  it('should preserve Apollo Connectors ConnectHTTP type and HTTP method fields', () => {
+    const connectSchema = buildSchema(/* GraphQL */ `
+      scalar JSONSelection
+      scalar URLPathTemplate
+
+      input HTTPHeaderMapping {
+        name: String!
+        value: String
+        from: String
+      }
+
+      input ConnectHTTP {
+        GET: URLPathTemplate
+        POST: URLPathTemplate
+        PUT: URLPathTemplate
+        headers: [HTTPHeaderMapping!]
+        body: JSONSelection
+      }
+
+      directive @connect(http: ConnectHTTP, selection: JSONSelection!) on FIELD_DEFINITION
+
+      type Query {
+        me: String @connect(http: { GET: "/me" }, selection: "id")
+      }
+    `);
+
+    const newSchema = transformSchema(
+      connectSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          typeNames: 'pascalCase',
+          fieldNames: 'camelCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+
+    expect(newSchema.getType('ConnectHTTP')).toBeDefined();
+    expect(newSchema.getType('ConnectHttp')).toBeUndefined();
+    expect(newSchema.getType('HTTPHeaderMapping')).toBeDefined();
+    expect(newSchema.getType('JSONSelection')).toBeDefined();
+    expect(newSchema.getType('URLPathTemplate')).toBeDefined();
+
+    const connectHttp = newSchema.getType(
+      'ConnectHTTP',
+    ) as import('graphql').GraphQLInputObjectType;
+    expect(Object.keys(connectHttp.getFields())).toEqual(
+      expect.arrayContaining(['GET', 'POST', 'PUT', 'headers', 'body']),
+    );
+    expect(connectHttp.getFields().get).toBeUndefined();
+  });
 });

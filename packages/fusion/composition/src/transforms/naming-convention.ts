@@ -210,19 +210,25 @@ export function createNamingConventionTransform(
               argRenameMap.set(argName, newArgName);
             }
             const argConfig = fieldConfig.args[argName];
-            if (!argConfig.defaultValue || !enumValuesFn) {
-              newArgs[newArgName] = argConfig;
-              continue;
-            }
             const namedArgType = getNamedType(argConfig.type);
-            if (!isEnumType(namedArgType)) {
+            const enumDefault =
+              typeof argConfig.defaultValue === 'string'
+                ? argConfig.defaultValue
+                : argConfig.default?.literal?.kind === 'EnumValue'
+                  ? argConfig.default.literal.value
+                  : argConfig.astNode?.defaultValue?.kind === 'EnumValue'
+                    ? argConfig.astNode.defaultValue.value
+                    : undefined;
+            if (!enumDefault || !enumValuesFn || !isEnumType(namedArgType)) {
               newArgs[newArgName] = argConfig;
               continue;
             }
-            const newDefaultValue = enumValuesFn(argConfig.defaultValue.toString());
+            const newDefaultValue = enumValuesFn(enumDefault);
             newArgs[newArgName] = {
               ...argConfig,
               defaultValue: newDefaultValue,
+              // GraphQL 17: clear uncoerced default so renamed defaultValue is used.
+              default: undefined,
             };
           }
         }

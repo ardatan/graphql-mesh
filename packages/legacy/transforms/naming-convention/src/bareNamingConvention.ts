@@ -11,10 +11,16 @@ import type {
   GraphQLSchema,
   GraphQLUnionType,
 } from 'graphql';
-import { defaultFieldResolver, getNamedType, isEnumType, isInputObjectType, Kind } from 'graphql';
+import { defaultFieldResolver, getNamedType, isEnumType, isInputObjectType } from 'graphql';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
-import { IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES, NAMING_CONVENTIONS } from './shared.js';
+import {
+  getEnumDefaultName,
+  IGNORED_ROOT_FIELD_NAMES,
+  IGNORED_TYPE_NAMES,
+  NAMING_CONVENTIONS,
+  withRenamedEnumDefault,
+} from './shared.js';
 
 export declare type GraphQLTypePointer =
   | GraphQLList<GraphQLOutputType>
@@ -123,14 +129,10 @@ export default class NamingConventionTransform implements MeshTransform {
       }),
       ...(this.config.enumValues && {
         [MapperKind.ARGUMENT]: config => {
-          const shouldRenameEnumDefaultValue =
-            this.config.enumValues &&
-            config.astNode?.defaultValue?.kind === Kind.ENUM &&
-            typeof config.defaultValue === 'string' &&
-            config.defaultValue;
-          if (shouldRenameEnumDefaultValue) {
+          const enumDefault = getEnumDefaultName(config);
+          if (this.config.enumValues && enumDefault) {
             const applyNamingConvention = NAMING_CONVENTIONS[this.config.enumValues];
-            config.defaultValue = applyNamingConvention(config.defaultValue as string);
+            return withRenamedEnumDefault(config, applyNamingConvention(enumDefault));
           }
 
           return config;
@@ -231,7 +233,10 @@ export default class NamingConventionTransform implements MeshTransform {
         },
       }),
       ...(this.config.fieldNames && {
-        [MapperKind.INPUT_OBJECT_FIELD]: (inputFieldConfig, fieldName) => {
+        [MapperKind.INPUT_OBJECT_FIELD]: (inputFieldConfig, fieldName, typeName) => {
+          if (IGNORED_TYPE_NAMES.includes(typeName)) {
+            return undefined;
+          }
           const namingConventionFn =
             this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
           const newName = namingConventionFn(fieldName);
@@ -254,11 +259,13 @@ function generateArgsMapForInput(
   const inputConfig = input.toConfig();
   const inputFields = inputConfig.fields;
   const argsMap: ArgsMap = {};
+  const skipFieldRename = IGNORED_TYPE_NAMES.includes(input.name);
 
   Object.keys(inputFields).forEach(argName => {
     if (typeof argName === 'number') return;
 
-    const newArgName = fieldNamingConventionFn ? fieldNamingConventionFn(argName) : argName;
+    const newArgName =
+      !skipFieldRename && fieldNamingConventionFn ? fieldNamingConventionFn(argName) : argName;
     const argConfig = inputFields[argName];
 
     // Unwind any list / nulls etc
