@@ -151,7 +151,9 @@ export function processDirectives(
   // HTTP headers come from `@source` / `@connect` only (WSDL emit already bakes yaml
   // operationHeaders into `@source`); no separate runtime header bag.
   const odataOpts = transportOpts.odata;
-  processConnectDirectives(schema, {
+  // `processConnectDirectives` may rebuild Query via `mapSchema` when installing
+  // Federation `_entities` — callers must use the returned schema.
+  schema = processConnectDirectives(schema, {
     globalFetch,
     log,
     timeout: globalOptions.timeout,
