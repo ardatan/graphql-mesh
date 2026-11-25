@@ -96,7 +96,9 @@ export function transformTypeToMdFormat(
       type
         .getTypes()
         .map(t => {
-          const content = transformTypeToMdFormat(t, level + 1);
+          // Pass `path` so recursive unions (`Tree.child: TreeOrLeaf` where
+          // `TreeOrLeaf = Tree | Leaf`) still hit the cycle guard above.
+          const content = transformTypeToMdFormat(t, level + 1, path);
           if (isObjectType(t)) {
             return `${indent(level)}* \`object\`: ${content}`;
           }

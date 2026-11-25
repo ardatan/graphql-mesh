@@ -630,7 +630,7 @@ export async function getSqlExecutor({
       Object.keys(pgSettings).length > 0
     ) {
       throw new Error(
-        'context.pgSettings is not applied on the PostgreSQL default executor (only the Grafast/`@dataplan/pg` path applies set_config). Remove pgSettings or use a GraphQL 16 subgraph without soft-delete / planner extras so the Grafast executor is selected.',
+        'context.pgSettings is not applied on the PostgreSQL default executor (only the Grafast/`@dataplan/pg` path applies set_config). Remove pgSettings, or use the Grafast executor (GraphQL 16 + Node pg.Pool, without soft-delete / planner extras).',
       );
     }
     return defaultExecutor({

@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { parse, type ExecutionResult } from 'graphql';
+import { buildSchema, parse, type ExecutionResult } from 'graphql';
 import { loadGraphQLSchemaFromSql } from '@omnigraph/sql';
 import { getSqlExecutor } from '../src/execution.js';
 import type { SqlClient } from '../src/types.js';
@@ -303,6 +303,86 @@ describe('getSqlExecutor sqlite', () => {
           },
         ],
       });
+    } finally {
+      await (executor as any)[Symbol.asyncDispose]?.();
+    }
+  });
+});
+
+describe('getSqlExecutor postgres pgSettings fail-closed', () => {
+  function postgresSchema(optionsBody: string) {
+    return buildSchema(/* GraphQL */ `
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        options: TransportOptions
+      ) on SCHEMA
+
+      input SoftDeleteOptions {
+        column: String
+      }
+
+      input TransportOptions {
+        adapter: String
+        softDelete: SoftDeleteOptions
+      }
+
+      schema
+        @transport(
+          subgraph: "pg"
+          kind: "sql"
+          location: "postgres://localhost/db"
+          options: { ${optionsBody} }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        hello: String
+      }
+    `);
+  }
+
+  const bunStyleClient: SqlClient = {
+    adapter: 'postgres',
+    // No pgPool — Bun.SQL / non-pool postgres path.
+    async query() {
+      return { rows: [] };
+    },
+    dispose() {},
+  };
+
+  it('rejects pgSettings when postgres has no pgPool (Bun.SQL-style)', async () => {
+    const schema = postgresSchema('adapter: "postgres"');
+    const executor = await getSqlExecutor({ subgraph: schema, client: bunStyleClient });
+    try {
+      await expect(
+        executor({
+          document: parse(`query { hello }`),
+          context: { pgSettings: { role: 'app_user' } },
+        }),
+      ).rejects.toThrow(/pgSettings is not applied/);
+    } finally {
+      await (executor as any)[Symbol.asyncDispose]?.();
+    }
+  });
+
+  it('rejects pgSettings when softDelete selects the default executor', async () => {
+    const schema = postgresSchema('adapter: "postgres", softDelete: { column: "deleted_at" }');
+    // Even with a fake pgPool, softDelete forces the GraphQL.js default path.
+    const clientWithPool: SqlClient = {
+      ...bunStyleClient,
+      pgPool: { query: async () => ({ rows: [] }) } as any,
+    };
+    const executor = await getSqlExecutor({ subgraph: schema, client: clientWithPool });
+    try {
+      await expect(
+        executor({
+          document: parse(`query { hello }`),
+          context: { pgSettings: { role: 'app_user' } },
+        }),
+      ).rejects.toThrow(/pgSettings is not applied/);
     } finally {
       await (executor as any)[Symbol.asyncDispose]?.();
     }
