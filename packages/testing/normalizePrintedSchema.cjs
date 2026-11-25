@@ -160,14 +160,16 @@ function normalizePrintedSchema(sdl) {
       const next = j < n ? sdl[j] : '';
       const hadWs = j > i;
       // Keep a separator when stripping commas would glue tokens (`a,b` →
-      // `a b`) or adjacent string delimiters (`["",""]` → `["" ""]`, not
-      // `[""""]`). Leave following whitespace for the ws handler.
+      // `a b`), negative numbers (`[1,-2]` → `[1 -2]`, not `[1-2]`), or
+      // adjacent string delimiters (`["",""]` → `["" ""]`, not `[""""]`).
+      // Leave following whitespace for the ws handler.
       if (
         !hadWs &&
         lastOut &&
         next &&
         lastOut !== ' ' &&
-        ((/[\w.]/.test(lastOut) && /[\w.]/.test(next)) || (lastOut === '"' && next === '"'))
+        ((/[\w.]/.test(lastOut) && (/[\w.]/.test(next) || next === '-')) ||
+          (lastOut === '"' && next === '"'))
       ) {
         parts.push(' ');
         lastOut = ' ';

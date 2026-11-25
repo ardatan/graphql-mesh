@@ -7,7 +7,7 @@ build({
   minify: false,
   bundle: true,
   platform: 'node',
-  target: 'node16',
+  target: 'node22',
 }).catch(e => {
   console.error(e);
   process.exit(1);

@@ -5,7 +5,7 @@ import type {
   GraphQLSchema,
   SelectionNode,
 } from 'graphql';
-import { getArgumentValues, getVariableValues, GraphQLError, Kind } from 'graphql';
+import { getArgumentValues, getVariableValues, GraphQLError, Kind, versionInfo } from 'graphql';
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import {
   asGetArgumentValuesVariables,
@@ -38,17 +38,21 @@ export function getRootFieldsWithArgs(
     operation.variableDefinitions || [],
     variables || {},
   );
-  // Preserve GraphQL 17 `{ coerced, sources }` — dropping `sources` breaks variable
-  // substitution inside complex scalar input literals via getArgumentValues.
+  // coerceGetVariableValuesResult always yields `{ coerced, sources }`. GraphQL 17
+  // getArgumentValues needs that full object (sources matter for complex scalars);
+  // GraphQL 16 only accepts a flat map — passing the wrapper makes required args
+  // look unset.
   const normalized = coerceGetVariableValuesResult(coercedVariables);
   if ('errors' in normalized) {
     throw new AggregateError(normalized.errors);
   }
+  const variableValuesForArgs =
+    versionInfo.major >= 17 ? normalized.variableValues : normalized.variableValues.coerced;
   const selectionHandlerCtx: SelectionHandlerCtx = {
     rootFieldMap,
     rootFieldsWithArgs,
     fragments,
-    variables: normalized.variableValues as Record<string, any>,
+    variables: variableValuesForArgs as Record<string, any>,
   };
   for (const selection of operation.selectionSet.selections) {
     handleSelection(selection, selectionHandlerCtx);
