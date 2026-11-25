@@ -1,22 +1,34 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`JSON Schema Example should generate correct schema 1`] = `
-"schema {
+"schema @source(name: "FakeAPI", http: { baseURL: "https://not-existing-api.com/API" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHttp, selection: JsonSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JsonSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHttp!, errors: ConnectorErrors, isSuccess: JsonSelection) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  me: User @connect(source: "FakeAPI", http: {}, selection: "firstName\\nlastName\\njobTitle\\ncompanyId\\nbirthDate\\nfoos {\\n  id\\n}")
-  company(id: String!): Company @connect(source: "FakeAPI", http: {}, selection: "name\\ntype: type->match([\\"Public Limited\\", \\"Public_Limited\\"], [\\"Private Limited\\", \\"Private_Limited\\"], [\\"One Person\\", \\"One_Person\\"], [@, type])")
+  me: User @connect(source: "FakeAPI", http: { GET: "/me" }, selection: """
+  firstName
+  lastName
+  jobTitle
+  companyId
+  birthDate
+  foos {
+    id
+  }
+  """)
+  company(id: String!): Company @connect(source: "FakeAPI", http: { GET: "/company/{$args.id}" }, selection: """
+  name
+  type: type->match(["Public Limited", "Public_Limited"], ["Private Limited", "Private_Limited"], ["One Person", "One_Person"], [@, type])
+  """)
 }
 
 """Fake User Object"""
@@ -51,9 +63,27 @@ enum CompanyType {
 }
 
 type Mutation {
-  createUser(input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {body: "$args.input"}, selection: "firstName\\nlastName\\njobTitle\\ncompanyId\\nbirthDate\\nfoos {\\n  id\\n}")
-  updateUser(id: String!, input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {body: "$args.input"}, selection: "firstName\\nlastName\\njobTitle\\ncompanyId\\nbirthDate\\nfoos {\\n  id\\n}")
-  deleteUser(id: String!): JSON @connect(source: "FakeAPI", http: {}, selection: "$")
+  createUser(input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: { PUT: "/user", body: "$args.input" }, selection: """
+  firstName
+  lastName
+  jobTitle
+  companyId
+  birthDate
+  foos {
+    id
+  }
+  """)
+  updateUser(id: String!, input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: { POST: "/user/{$args.id}", body: "$args.input" }, selection: """
+  firstName
+  lastName
+  jobTitle
+  companyId
+  birthDate
+  foos {
+    id
+  }
+  """)
+  deleteUser(id: String!): JSON @connect(source: "FakeAPI", http: { DELETE: "/user/{$args.id}" }, selection: "$")
 }
 
 input CreateUpdateUserInput @example(subgraph: "FakeAPI", value: "{\\"firstName\\":\\"John\\",\\"lastName\\":\\"Doe\\",\\"jobTitle\\":\\"Software Developer\\"}") {
@@ -69,40 +99,40 @@ scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/fi
 
 scalar ObjMap
 
-input ConnectHttp {
-  get: UrlPathTemplate
-  head: UrlPathTemplate
-  post: UrlPathTemplate
-  put: UrlPathTemplate
-  patch: UrlPathTemplate
-  delete: UrlPathTemplate
-  headers: [HttpHeaderMapping!]
-  body: JsonSelection
-  queryParams: JsonSelection
+input ConnectHTTP {
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
+  headers: [HTTPHeaderMapping!]
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 """
 A URL path with optional parameters, mapping to GraphQL fields or arguments
 """
-scalar UrlPathTemplate
+scalar URLPathTemplate
 
-input HttpHeaderMapping {
+input HTTPHeaderMapping {
   name: String!
   value: String
   from: String
 }
 
 """A custom syntax for mapping JSON data to GraphQL schema"""
-scalar JsonSelection
+scalar JSONSelection
 
 input ConnectorErrors {
-  message: JsonSelection
-  extensions: JsonSelection
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
-input SourceHttp {
-  baseUrl: String!
-  headers: [HttpHeaderMapping!]
-  queryParams: JsonSelection
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: JSONSelection
 }"
 `;

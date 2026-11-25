@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Batching Example should generate correct schema 1`] = `
-"schema {
+"schema @source(name: "ExampleAPI", http: { baseURL: "http://localhost:4001" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -39,7 +39,7 @@ input HTTPHeaderMapping {
 scalar JSONSelection
 
 type Mutation {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @connect(source: "ExampleAPI", http: {POST: "/users_by_ids", body: "$args.input"}, selection: """
+  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @connect(source: "ExampleAPI", http: { POST: "/users_by_ids", body: "$args.input" }, selection: """
   results {
     id
     name

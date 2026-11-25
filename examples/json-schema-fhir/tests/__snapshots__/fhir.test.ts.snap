@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`FHIR should generate correct schema 1`] = `
-"schema {
+"schema @source(name: "FHIR", http: { baseURL: "{$env.FHIR_BASE}" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -18,8 +18,8 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 directive @resolveTo(requiredSelectionSet: String, sourceName: String, sourceTypeName: String, sourceFieldName: String, sourceSelectionSet: String, sourceArgs: ResolveToSourceArgs, keyField: String, keysArg: String, valueKeyField: String, pubsubTopic: String, filterBy: String, additionalArgs: ResolveToSourceArgs, result: String, resultType: String) on FIELD_DEFINITION
 
 type Query {
-  resourceById(resourceType: String, id: String): ResourceList @connect(source: "FHIR", http: {GET: "/{$args.resourceType}/{$args.id}?_format=application/json"}, selection: "$")
-  resourceByName(resourceType: String, name: String): Bundle @connect(source: "FHIR", http: {GET: "/{$args.resourceType}/?name={$args.name}?_format=application/json"}, selection: """
+  resourceById(resourceType: String, id: String): ResourceList @connect(source: "FHIR", http: { GET: "/{$args.resourceType}/{$args.id}?_format=application/json" }, selection: "$")
+  resourceByName(resourceType: String, name: String): Bundle @connect(source: "FHIR", http: { GET: "/{$args.resourceType}/?name={$args.name}?_format=application/json" }, selection: """
   resourceType
   id
   meta {
@@ -72,7 +72,9 @@ type Query {
     data
   }
   """)
-  resourceByOtherResourceId(resourceType: String, otherResourceType: String, otherResourceId: String): Bundle @connect(source: "FHIR", http: {GET: "/{$args.resourceType}?subject={$args.otherResourceType}/{$args.otherResourceId}"}, selection: """
+  resourceByOtherResourceId(resourceType: String, otherResourceType: String, otherResourceId: String): Bundle @connect(source: "FHIR", http: {
+    GET: "/{$args.resourceType}?subject={$args.otherResourceType}/{$args.otherResourceId}"
+  }, selection: """
   resourceType
   id
   meta {
@@ -477,7 +479,7 @@ type Reference {
   identifier: Identifier
   display: string
   _display: Element
-  resource: ResourceList @resolveTo(sourceName: "FHIR", sourceTypeName: "Query", sourceFieldName: "resourceById", sourceArgs: {resourceType: "{root.reference|path_head}", id: "{root.reference|path_rest}"})
+  resource: ResourceList @resolveTo(sourceName: "FHIR", sourceTypeName: "Query", sourceFieldName: "resourceById", sourceArgs: { resourceType: "{root.reference|path_head}", id: "{root.reference|path_rest}" })
 }
 
 """

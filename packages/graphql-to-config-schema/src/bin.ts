@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable import/no-nodejs-modules -- CLI entry writes generated files to disk */
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { compile } from 'json-schema-to-typescript';

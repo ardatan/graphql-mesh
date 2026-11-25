@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Hello World should generate correct schema 1`] = `
-"schema @source(name: "Hello World", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "Hello World", http: { baseURL: "" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -12,7 +12,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  greeting: String @connect(source: "Hello World", http: {GET: "/"}, selection: "$")
+  greeting: String @connect(source: "Hello World", http: { GET: "/" }, selection: "$")
 }
 
 input ConnectHTTP {

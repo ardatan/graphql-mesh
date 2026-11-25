@@ -102,7 +102,9 @@ exports[`gRPC Example should fetch movies by cast as a subscription correctly: m
 `;
 
 exports[`gRPC Example should generate correct schema: grpc-schema 1`] = `
-"schema @transport(subgraph: "Example", kind: "protobuf", location: "localhost:50051", options: {metaData: [["someKey", "someValue"], ["connection_type", "{context.headers.connection}"]]}) @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
+"schema @transport(subgraph: "Example", kind: "protobuf", location: "localhost:50051", options: {
+  metaData: [["someKey", "someValue"], ["connection_type", "{context.headers.connection}"]]
+}) @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@protobuf__rpc") @composeDirective(name: "@transport") {
   query: Query
   subscription: Subscription
 }

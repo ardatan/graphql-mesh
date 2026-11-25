@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`JSON Schema Subscriptions should generate correct schema 1`] = `
-"schema {
+"schema @source(name: "Example", http: { baseURL: "http://localhost:4002" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@pubsubOperation"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"]) @composeDirective(name: "@pubsubOperation") {
   query: Query
   mutation: Mutation
   subscription: Subscription
@@ -20,7 +20,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 directive @live on QUERY
 
 type Query {
-  todos: [query_todos_items] @connect(source: "Example", http: {GET: "/todos"}, selection: """
+  todos: [query_todos_items] @connect(source: "Example", http: { GET: "/todos" }, selection: """
   id
   name
   content
@@ -34,7 +34,7 @@ type query_todos_items {
 }
 
 type Mutation {
-  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @connect(source: "Example", http: {POST: "/todo", body: "$args.input"}, selection: """
+  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @connect(source: "Example", http: { POST: "/todo", body: "$args.input" }, selection: """
   id
   name
   content

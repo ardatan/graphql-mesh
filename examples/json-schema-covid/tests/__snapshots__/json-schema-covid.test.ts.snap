@@ -2,7 +2,13 @@
 
 exports[`JSON Schema Covid should generate correct schema: json-schema-covid-schema 1`] = `
 """""""
-directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | INTERFACE | OBJECT
+directive @cacheControl(
+  """"""
+  maxAge: Int
+
+  """"""
+  scope: CacheControlScope
+) on FIELD_DEFINITION | INTERFACE | OBJECT
 
 directive @connect(entity: Boolean, errors: ConnectorErrors, http: ConnectHTTP, isSuccess: JSONSelection, selection: JSONSelection!, source: String) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -151,7 +157,10 @@ scalar JSONSelection
 
 type Query {
   """"""
-  case(countryRegion: String): Case
+  case(
+    """"""
+    countryRegion: String
+  ): Case
 
   """"""
   cases: [Case]

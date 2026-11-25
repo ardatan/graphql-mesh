@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SQLite Chinook should generate correct schema: sqlite-chinook-schema 1`] = `
-"schema @transport(subgraph: "Chinook", kind: "sql", location: "file:<chinook.db>", options: {adapter: "sqlite"}) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@sql") @composeDirective(name: "@transport") {
+"schema @transport(subgraph: "Chinook", kind: "sql", location: "file:<chinook.db>", options: { adapter: "sqlite" }) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @composeDirective(name: "@sql") @composeDirective(name: "@transport") {
   query: Query
   mutation: Mutation
 }
