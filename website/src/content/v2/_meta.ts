@@ -3,6 +3,7 @@ export default {
   paths: 'Choose your path',
   architecture: 'Architecture',
   compose: 'Compose',
+  transforms: 'Transforms',
   serve: 'Serve',
   examples: 'Examples',
   protocols: 'Protocols',

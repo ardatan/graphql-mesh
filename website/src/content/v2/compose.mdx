@@ -14,10 +14,11 @@ Typical `mesh.config.ts` ideas:
 
 - `subgraphs` entries with a `sourceHandler` (loader) **or** a hand-written `schema` file / SDL
   string.
-- Shared options: transforms, additional type defs, output mode (`graphql` / binary formats as
-  supported).
+- Shared options: optional [transforms](/v2/transforms), additional type defs, output mode
+  (`graphql` / binary formats as supported).
 
-Generated and hand-written subgraphs share the same compose + registry path.
+Generated and hand-written subgraphs share the same compose + registry path. Transforms are optional
+-- skip them when Hand-write or Generate-then-edit already owns the SDL.
 
 ## Hand-written SDL
 
