@@ -20,13 +20,14 @@ and <ConceptRef name="connectors">Connectors</ConceptRef> upstream.
 | <DirectiveRef name="connect" /> / <DirectiveRef name="source" />        | HTTP Connectors-style mapping (Router dual-run when compatible).                                                                                         | [Directives](/v2/reference/directives#connect) · [Apollo Connectors](https://www.apollographql.com/docs/graphos/connectors/reference/directives) |
 | Protocol directives                                                     | <DirectiveRef name="sql" />, <DirectiveRef name="mongo" />, <DirectiveRef name="thrift__rpc" />, <DirectiveRef name="protobuf__rpc" />, Neo4j natives, … | [Directives](/v2/reference/directives) · [Protocols](/v2/protocols)                                                                              |
 | <DirectiveRef name="key" />                                             | <ConceptRef name="federation">Federation</ConceptRef> entity key; often `resolvable: false` on join stubs.                                               | [Directives](/v2/reference/directives#federation)                                                                                                |
-| `selection` / `args`                                                    | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs.                                                                  | [Apollo mapping](https://www.apollographql.com/docs/graphos/connectors/mapping)                                                                  |
-| <DirectiveRef name="link" /> / <DirectiveRef name="composeDirective" /> | Spec imports and which directives survive <ConceptRef name="composition">composition</ConceptRef>.                                                       | [Directives](/v2/reference/directives#link) · [Compose](/v2/compose)                                                                             |
+| `selection` / `args`                                                    | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs.                                                                  | [Selection mapping](/v2/guides/selection-mapping) · [Apollo mapping](https://www.apollographql.com/docs/graphos/connectors/mapping)              |
+| <DirectiveRef name="link" /> / <DirectiveRef name="composeDirective" /> | Spec imports and which directives survive <ConceptRef name="composition">composition</ConceptRef>.                                                       | [Directives](/v2/reference/directives#link) · [Composition](/v2/compose)                                                                         |
 
 ## Habits that help
 
 1. Start from a **root field** you already queried, then follow its `@connect` / protocol directive.
-2. Trace `$args` and `$this` in `selection` before renaming anything.
+2. Trace `$args` and `$this` in `selection` before renaming anything -- see
+   [Selection mapping](/v2/guides/selection-mapping).
 3. Treat emitted SDL as the contract you will either keep, edit, or rewrite by hand.
 
 <Callout type="info">
@@ -38,6 +39,7 @@ and <ConceptRef name="connectors">Connectors</ConceptRef> upstream.
 ## See also
 
 <Cards>
+  <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
   <Cards.Card arrow title="Directives reference" href="/v2/reference/directives" />
   <Cards.Card arrow title="Concepts" href="/v2/concepts" />
   <Cards.Card

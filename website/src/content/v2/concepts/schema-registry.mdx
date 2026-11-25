@@ -16,11 +16,11 @@ and equivalents. Mesh publishes **Federation-compatible subgraph SDL** -- genera
 ## Where it lives
 
 <V2FlowDiagram
-  ariaLabel="Schema registry beside Compose and gateway"
-  caption="Registry is optional — gateways can also take a Compose file directly."
+  ariaLabel="Schema registry beside Composition and Serve Supergraph"
+  caption="Registry is optional — gateways can also take Composition output directly."
   footnote={{ label: 'or file direct', fromStep: 0, toStep: 2 }}
   steps={[
-    { title: 'Compose', accent: true },
+    { title: 'Composition', accent: true },
     { title: 'Registry', accent: true },
     { title: 'Gateway pull' }
   ]}
@@ -42,10 +42,10 @@ composition in the stack ([Architecture](/v2/architecture)).
 3. Point <ApiRef name="hive-gateway" /> (or Router) at the registry supergraph -- or at a local
    Compose file for local dual-run.
 
-Details expand on [Compose](/v2/compose) (registry publish section).
+Details expand on [Composition](/v2/compose) (registry publish section).
 
 <Cards>
-  <Cards.Card arrow title="Compose" href="/v2/compose" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Gateway" href="/v2/concepts/gateway" />
   <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
 </Cards>

@@ -22,29 +22,29 @@ const DIRECTIVES = {
     description: 'Schema stamp: which Mesh transport Hive Gateway loads.',
   },
   sql__query: {
-    label: '@sql__query',
+    label: '@sql',
     anchor: 'sql',
-    description: 'SQL SELECT mapping (table, kind, args, selection, entity).',
+    description: 'SQL SELECT mapping via @sql(kind: ROW|ROWS|…) (table, where, selection, entity).',
   },
   sql__mutation: {
-    label: '@sql__mutation',
+    label: '@sql',
     anchor: 'sql',
-    description: 'SQL INSERT / UPDATE / DELETE mapping.',
+    description: 'SQL INSERT / UPDATE / DELETE via @sql(kind: INSERT|UPDATE|DELETE).',
   },
   sql__relation: {
-    label: '@sql__relation',
+    label: '@sql',
     anchor: 'sql',
-    description: 'SQL FK / join navigation on object fields.',
+    description: 'SQL FK / join navigation via @sql on object fields.',
   },
   sql: {
     label: '@sql',
     anchor: 'sql',
-    description: 'SQL protocol directives (@sql__* family).',
+    description: 'SQL protocol directive (kind discriminator for query / mutation / relation).',
   },
   mongo: {
-    label: '@mongo',
+    label: '@mongo__*',
     anchor: 'mongo',
-    description: 'MongoDB mapping (collection, kind, where, selection).',
+    description: 'MongoDB op directives (@mongo__findOne, …) with query / selection binders.',
   },
   protobuf__rpc: {
     label: '@protobuf__rpc',
@@ -94,7 +94,8 @@ const API_TERMS = {
   compose: {
     label: 'Mesh Compose',
     href: '/v2/compose',
-    description: 'Compose loaders and hand-written SDL into subgraph / supergraph output.',
+    description:
+      'Composition via Mesh Compose: loaders and hand-written SDL → subgraph / supergraph.',
   },
   'reading-sdl': {
     label: 'Reading generated SDL',
@@ -110,7 +111,7 @@ const CONCEPTS = {
   mesh: {
     label: 'Mesh',
     href: '/v2/concepts/mesh',
-    description: 'Federation framework: sources or SDL → subgraphs, Compose, transports.',
+    description: 'Federation framework: sources or SDL → subgraphs, composition, transports.',
   },
   connectors: {
     label: 'Connectors',

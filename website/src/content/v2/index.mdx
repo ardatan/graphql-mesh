@@ -1,5 +1,5 @@
 ---
-description: Mesh v2 documentation -- GraphQL SDL, Compose, Hive Gateway, and Apollo Router
+description: Mesh v2 documentation -- GraphQL SDL, Composition, Hive Gateway, and Apollo Router
 ---
 
 import { Callout, Cards } from '@theguild/components'
@@ -29,13 +29,13 @@ supergraph). Authors work in GraphQL SDL with Mesh /
   subgraph / supergraph SDL.
 
 <V2FlowDiagram
-  ariaLabel="Mesh v2 stack from sources through Compose to gateway transports"
+  ariaLabel="Mesh v2 stack from sources through Composition to gateway transports"
   caption="Same path for generated or authored SDL."
   footnote={{ label: 'Registry · publish / pull', fromStep: 2, toStep: 3 }}
   steps={[
     { title: 'Sources', lines: ['REST · SQL · gRPC…'] },
     { title: 'SDL', lines: ['Loader or authored'], accent: true },
-    { title: 'Compose', lines: ['Subgraph / supergraph'], accent: true },
+    { title: 'Composition', lines: ['Subgraph / supergraph'], accent: true },
     { title: 'Gateway', lines: ['Hive · Apollo Router'], accent: true },
     { title: 'Transports', lines: ['Execute directives'] }
   ]}
@@ -53,9 +53,9 @@ Three equal journeys. No primary funnel.
   <Cards.Card arrow title="Mesh journey (v0 → v2)" href="/v2/guides/mesh-journey" />
   <Cards.Card arrow title="Concepts" href="/v2/concepts" />
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
-  <Cards.Card arrow title="Compose" href="/v2/compose" />
-  <Cards.Card arrow title="Serve API: Hive Gateway" href="/v2/serve/hive-gateway" />
-  <Cards.Card arrow title="Serve API: Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Serve Supergraph: Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Serve Supergraph: Apollo Router" href="/v2/serve/apollo-router" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
   <Cards.Card arrow title="Directives reference" href="/v2/reference/directives" />

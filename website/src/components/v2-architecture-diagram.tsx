@@ -10,7 +10,7 @@ export function V2ArchitectureDiagram() {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 880 168"
           role="img"
-          aria-label="Mesh stack: Sources to SDL to Mesh Compose to Hive Gateway or Apollo Router to Transports, with optional schema registry"
+          aria-label="Mesh stack: Sources to SDL to Composition to Serve Supergraph (Hive Gateway or Apollo Router) to Transports, with optional schema registry"
           className="mx-auto h-auto w-full min-w-[40rem] max-w-4xl text-neutral-800 dark:text-neutral-100"
         >
           <title>Mesh v2 architecture stack</title>
@@ -102,7 +102,7 @@ export function V2ArchitectureDiagram() {
             className="fill-current text-[13px] font-semibold"
             textAnchor="middle"
           >
-            Mesh Compose
+            Composition
           </text>
           <text
             x={414}
@@ -110,24 +110,32 @@ export function V2ArchitectureDiagram() {
             className="fill-neutral-500 text-[10px] dark:fill-neutral-400"
             textAnchor="middle"
           >
-            subgraph / supergraph
+            Mesh Compose · SDL
           </text>
 
           {/* Compose → Serve */}
           <Arrow x1={480} y1={80} x2={520} y2={80} />
 
           {/* Serve peers */}
-          <LayerBox x={520} y={28} w={196} h={104} accent />
+          <LayerBox x={520} y={20} w={196} h={118} accent />
           <text
             x={618}
             y={52}
             className="fill-current text-[13px] font-semibold"
             textAnchor="middle"
           >
-            Serve API
+            Serve Supergraph
           </text>
-          <PeerChip x={536} y={64} w={164} label="Hive Gateway (JS/TS)" />
-          <PeerChip x={536} y={96} w={164} label="Apollo Router (Connect)" />
+          <text
+            x={618}
+            y={68}
+            className="fill-neutral-500 text-[9px] dark:fill-neutral-400"
+            textAnchor="middle"
+          >
+            Supergraph / subgraph
+          </text>
+          <PeerChip x={536} y={74} w={164} label="Hive Gateway (JS/TS)" />
+          <PeerChip x={536} y={102} w={164} label="Apollo Router (Connect)" />
 
           <Arrow x1={716} y1={80} x2={748} y2={80} />
 
@@ -180,7 +188,7 @@ export function V2ArchitectureDiagram() {
         </svg>
       </div>
       <figcaption className="mt-2 text-center text-sm text-neutral-500 dark:text-neutral-400">
-        Generated or authored SDL enters the same Compose → serve → transport path.
+        Generated or authored SDL enters the same Composition → Serve Supergraph → transport path.
       </figcaption>
     </figure>
   );

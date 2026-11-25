@@ -19,7 +19,7 @@ Compose and the gateway treat both the same.
   ariaLabel="Mesh layers from sources to gateway transports"
   steps={[
     { title: 'Sources', lines: ['or .graphql'] },
-    { title: 'Loaders / Compose', accent: true },
+    { title: 'Loaders / Composition', accent: true },
     { title: 'Subgraph SDL', accent: true },
     { title: 'Gateway', lines: ['+ transports'] }
   ]}
@@ -28,7 +28,7 @@ Compose and the gateway treat both the same.
 | Layer                                    | Mesh role                                                                                                  |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | Loaders (`@omnigraph/*`)                 | Optional: introspect → emit subgraph SDL                                                                   |
-| [Compose](/v2/compose)                   | Subgraph / supergraph output, transforms, registry publish                                                 |
+| [Composition](/v2/compose)               | Subgraph / supergraph output, transforms, registry publish                                                 |
 | Transports (`@graphql-mesh/transport-*`) | Execute directives at request time                                                                         |
 | Gateways                                 | [Hive Gateway](/v2/serve/hive-gateway) (full surface) · [Apollo Router](/v2/serve/apollo-router) (Connect) |
 
@@ -52,6 +52,6 @@ Example](/v2/examples/music-store).
 
 <Cards>
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
-  <Cards.Card arrow title="Compose" href="/v2/compose" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
 </Cards>

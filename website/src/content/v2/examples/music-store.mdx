@@ -16,14 +16,14 @@ OpenAPI → `@connect`, **gRPC / Protobuf** recommendations.
 Path pages teach the skill; this example walks the stages in order, then composes and serves.
 
 <V2FlowDiagram
-  ariaLabel="Music Store Example stages: Generate, edit, hand-write, compose, serve"
+  ariaLabel="Music Store Example stages: Generate, edit, hand-write, Composition, Serve Supergraph"
   caption="Pedagogical order across Chinook SQL, Reviews Connect, and gRPC."
   steps={[
     { title: 'Generate', lines: ['Chinook SQL'], accent: true },
     { title: 'Edit', lines: ['Reviews Connect'], accent: true },
     { title: 'Hand-write', lines: ['gRPC / Protobuf'], accent: true },
-    { title: 'Compose' },
-    { title: 'Serve API', lines: ['Hive · Apollo Router'] }
+    { title: 'Composition' },
+    { title: 'Serve Supergraph', lines: ['Hive · Apollo Router'] }
   ]}
 />
 
@@ -192,9 +192,9 @@ Repo anchors: `e2e/protobuf-http`, `e2e/protobuf-grpc-example`.
 
 ---
 
-## Compose all three, then serve
+## Composition: all three, then serve
 
-Skill: [Compose](/v2/compose) · Serve API: [Hive Gateway](/v2/serve/hive-gateway) ·
+Skill: [Composition](/v2/compose) · Serve Supergraph: [Hive Gateway](/v2/serve/hive-gateway) ·
 [Apollo Router](/v2/serve/apollo-router)
 
 1. List all three subgraphs in one `mesh.config.ts` (catalog + reviews + recommendations).
@@ -221,7 +221,7 @@ Healthcare JSON Schema join story (not this walkthrough): [FHIR](/v2/examples/fh
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
   <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
-  <Cards.Card arrow title="Compose" href="/v2/compose" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
   <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
 </Cards>
