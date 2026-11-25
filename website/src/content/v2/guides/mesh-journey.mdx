@@ -5,7 +5,7 @@ description:
 ---
 
 import { Callout, Cards } from '@theguild/components'
-import { ConceptRef } from '../../../components/v2-directive-ref'
+import { ConceptRef, ProtocolRef } from '../../../components/v2-directive-ref'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Mesh journey (v0 -> v1 -> v2)
@@ -56,8 +56,8 @@ v2 keeps Composition + Hive Gateway, and keeps generate. What shifts is the **au
 - **HTTP/REST Connectors-adapted:** HTTP mapping follows
   <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>
   (`@connect` / `@source`) so the same Connect slice can dual-run on Hive Gateway and Apollo Router;
-  Mesh protocol directives (`@sql`, `@protobuf__rpc`, ...) stay first-class for Hive Gateway (not
-  branded as Connectors).
+  Mesh protocols (<ProtocolRef name="sql" />, <ProtocolRef name="protobuf" />, ...) stay first-class
+  for Hive Gateway (not branded as Connectors).
 - **Hand-authored API as a first-class skill:** humans and AI write (or edit) the same directive
   surface loaders emit -- see [Hand-write](/v2/paths/hand-write),
   [Reading generated SDL](/v2/guides/reading-generated-sdl), and

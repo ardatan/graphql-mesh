@@ -4,7 +4,7 @@ description: Mesh v2 architecture -- loaders, Composition, registries, Hive Gate
 
 import { Cards } from '@theguild/components'
 import { V2ArchitectureDiagram } from '../../components/v2-architecture-diagram'
-import { ConceptRef, DirectiveRef } from '../../components/v2-directive-ref'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../components/v2-directive-ref'
 
 # Architecture
 
@@ -29,6 +29,10 @@ treat both the same.
   Router** -- full Mesh transports vs Connect-compatible SDL.
 - **Transports** execute directives (<DirectiveRef name="transport" />,
   <DirectiveRef name="connect" />, protocol directives) at request time.
+- Protocol families:
+  <ProtocolRef name="http-rest" />, <ProtocolRef name="sql" />, <ProtocolRef name="mongo" />,
+  <ProtocolRef name="neo4j" />, <ProtocolRef name="thrift" />, <ProtocolRef name="protobuf" /> --
+  see [Protocols](/v2/protocols).
 
 ## Patterns
 

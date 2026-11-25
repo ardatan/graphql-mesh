@@ -155,6 +155,45 @@ const CONCEPTS = {
 
 export type ConceptName = keyof typeof CONCEPTS;
 
+/** Protocol families -> `/v2/protocols/{slug}` (hover description, click for page). */
+const PROTOCOLS = {
+  'http-rest': {
+    label: 'HTTP / REST',
+    slug: 'http-rest',
+    description:
+      'HTTP/REST Connectors protocol: OpenAPI, JSON Schema, OData, SOAP-as-Connect (@connect / @source).',
+  },
+  sql: {
+    label: 'SQL',
+    slug: 'sql',
+    description: 'Mesh SQL protocol: @sql kinds (ROW / ROWS / CRUD), transport-sql (Hive Gateway).',
+  },
+  mongo: {
+    label: 'Mongo',
+    slug: 'mongo',
+    description: 'Mesh Mongo protocol: @mongo__* ops, transport-mongo (Hive Gateway).',
+  },
+  neo4j: {
+    label: 'Neo4j',
+    slug: 'neo4j',
+    description:
+      'Neo4j protocol: native @neo4j/graphql @node / @relationship; Mesh stamps transport-neo4j.',
+  },
+  thrift: {
+    label: 'Thrift',
+    slug: 'thrift',
+    description:
+      'Thrift protocol: binary @thrift__rpc or TJSON @connect from the same .thrift IDL.',
+  },
+  protobuf: {
+    label: 'Protobuf / gRPC',
+    slug: 'protobuf',
+    description: 'Protobuf / gRPC protocol: @protobuf__rpc field-number maps, transport-protobuf.',
+  },
+} as const;
+
+export type ProtocolName = keyof typeof PROTOCOLS;
+
 type RefProps = {
   children?: ReactNode;
   /** Override visible label */
@@ -240,6 +279,25 @@ export function ConceptRef({ name, children, label, className }: RefProps & { na
   const entry = CONCEPTS[name];
   return (
     <RefLink href={entry.href} description={entry.description} className={className}>
+      {children ?? label ?? entry.label}
+    </RefLink>
+  );
+}
+
+/** Link a Mesh v2 protocol family to `/v2/protocols/{slug}`. */
+export function ProtocolRef({
+  name,
+  children,
+  label,
+  className,
+}: RefProps & { name: ProtocolName }) {
+  const entry = PROTOCOLS[name];
+  return (
+    <RefLink
+      href={`/v2/protocols/${entry.slug}`}
+      description={entry.description}
+      className={className}
+    >
       {children ?? label ?? entry.label}
     </RefLink>
   );

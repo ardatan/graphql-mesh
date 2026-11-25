@@ -5,7 +5,7 @@ description:
 ---
 
 import { Callout, Cards } from '@theguild/components'
-import { ConceptRef, DirectiveRef } from '../../components/v2-directive-ref'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../components/v2-directive-ref'
 
 # Composition
 
@@ -79,8 +79,9 @@ During composition, Mesh applies **loader / Query semantic conventions** unless 
 the same object type appears across subgraphs and a Query field matches a ById / ByIds naming
 pattern with a key arg that lines up with a key field on that type, Compose stamps Federation entity
 wiring automatically -- `@key` plus Connect/protocol `entity: true` (or type-level `$this` maps),
-instead of Mesh <DirectiveRef name="merge" /> on HTTP/REST Connectors subgraphs. Non-Connect Mesh
-subgraphs may still receive `@merge` for type merging.
+instead of Mesh <DirectiveRef name="merge" /> on HTTP/REST Connectors subgraphs
+(<ProtocolRef name="http-rest" />, <ProtocolRef name="sql" />, ...). Non-Connect Mesh subgraphs may
+still receive `@merge` for type merging.
 
 Naming is matched in snake_case. Typical patterns (key field often `id`):
 

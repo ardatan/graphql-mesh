@@ -4,7 +4,7 @@ description:
 ---
 
 import { Cards } from '@theguild/components'
-import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Federation
@@ -75,7 +75,7 @@ That wires Hive Gateway / Apollo Router `_entities` -> `resolveReference` withou
 | Join-only stub (`resolvable: false`)          | `@key` only -- another subgraph owns the resolver                                |
 | Batch ByIds only                              | Batch field kept; singular `_entities` not claimed without a singular resolver   |
 
-**HTTP/REST Connectors** (`e2e/openapi-entity-stubs` -- `getCustomer` matches
+<ProtocolRef name="http-rest" /> Connectors (`e2e/openapi-entity-stubs` -- `getCustomer` matches
 [ById conventions](/v2/compose#semantic-conventions)):
 
 ```graphql
@@ -98,7 +98,7 @@ type Customer @key(fields: "id") {
 }
 ```
 
-**SQL** type-level entity fill (`e2e/sqlite-chinook` -- `$this.id` on `Track`):
+<ProtocolRef name="sql" /> type-level entity fill (`e2e/sqlite-chinook` -- `$this.id` on `Track`):
 
 ```graphql
 type Track
@@ -120,7 +120,11 @@ type Track
 ```
 
 See [Selection mapping](/v2/guides/selection-mapping) for `$this` / `$batch` binders, and
-[Directives](/v2/reference/directives) for `entity` on `@connect` / `@sql` / `@protobuf__rpc`.
+[Directives](/v2/reference/directives) for `entity` on `@connect` / `@sql` / `@protobuf__rpc`
+(<ProtocolRef name="http-rest" />, <ProtocolRef name="sql" />,
+
+<ProtocolRef name="protobuf" />
+).
 
 ### Loader ById / ByIds conventions
 

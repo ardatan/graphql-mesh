@@ -7,11 +7,13 @@ import { DirectiveRef } from '../../../components/v2-directive-ref'
 
 # Neo4j
 
-Use Neo4j when the graph already lives in **Bolt / Cypher** and you want GraphQL types that mirror
-nodes and relationships (filters, sorts, relationship properties). Mesh does **not** invent a
-`@neo4j__*` dialect: it stamps <DirectiveRef name="transport" /> + a neo4j `@link`, and reuses
-**native** `@neo4j/graphql` directives (`@node`, `@relationship`, ...). Not HTTP/REST Connectors.
-Hive Gateway only.
+Use Neo4j when the graph already lives in **Bolt** and you want GraphQL types that mirror nodes and
+relationships. Mesh does **not** invent a `@neo4j__*` dialect. It stamps
+
+<DirectiveRef name="transport" /> + a neo4j `@link`, and reuses **native** `@neo4j/graphql`
+directives (`@node`, `@relationship`, `@relationshipProperties`). Cypher and schema mapping run
+**under the hood via Neo4j GraphQL** -- Mesh's job is the transport + federation join. Not HTTP/REST
+Connectors. Hive Gateway only.
 
 | Piece      | Detail                                                  |
 | ---------- | ------------------------------------------------------- |
@@ -21,6 +23,9 @@ Hive Gateway only.
 | Spec stamp | `https://specs.graphql-mesh.com/neo4j/v0.1`             |
 | Dual-run   | Hive Gateway only                                       |
 | Anchor     | `e2e/neo4j-example` (Movies dataset)                    |
+
+Upstream type definitions: [Relationships](https://neo4j.com/docs/graphql/current/relationships/) /
+[Database mapping](https://neo4j.com/docs/graphql/current/directives/database-mapping/).
 
 ## Generate
 
@@ -44,9 +49,34 @@ export const composeConfig = defineConfig({
 })
 ```
 
-## What the emit looks like
+## Type definitions (Neo4j GraphQL Movies)
 
-Transport stamp + relationship graph (`e2e/neo4j-example`):
+Author or accept the same SDL Neo4j GraphQL documents for a `Person` / `Movie` graph with `ACTED_IN`
+and edge `roles` (from Neo4j's
+[Relationships](https://neo4j.com/docs/graphql/current/relationships/) guide):
+
+```graphql
+type ActedIn @relationshipProperties {
+  roles: [String!]
+}
+
+type Person @node {
+  name: String!
+  actedIn: [Movie!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
+}
+
+type Movie @node {
+  title: String!
+  released: Int!
+  actors: [Person!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
+}
+```
+
+- `@node` -- this GraphQL type is a Neo4j node (optional `labels` when the DB label differs).
+- `@relationship` -- field is an edge (`type` + `direction`; optional `properties`).
+- `@relationshipProperties` -- object that holds properties on that edge.
+
+Mesh wraps the subgraph with its stamp so Hive Gateway loads `transport-neo4j`:
 
 ```graphql
 extend schema
@@ -59,29 +89,10 @@ extend schema
 schema @transport(subgraph: "Movies", kind: "neo4j", location: "neo4j://localhost:7687") {
   query: Query
 }
-
-type Movie @node {
-  title: String
-  peopleActedIn(where: PersonWhere, limit: Int, offset: Int): [Person!]!
-    @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
-  peopleDirected(where: PersonWhere, limit: Int, offset: Int): [Person!]!
-    @relationship(type: "DIRECTED", direction: IN)
-}
-
-type Person @node {
-  name: String
-  actedInMovies(where: MovieWhere, limit: Int, offset: Int): [Movie!]!
-    @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
-  directedMovies(where: MovieWhere, limit: Int, offset: Int): [Movie!]!
-    @relationship(type: "DIRECTED", direction: OUT)
-}
-
-type ActedInProperties @relationshipProperties {
-  roles: [String!]
-}
 ```
 
-Mesh's job is the transport + federation join; Cypher generation stays with Neo4j GraphQL. Catalog:
+`e2e/neo4j-example` introspects a Movies DB into the same native directives (field names may follow
+Neo4j GraphQL pluralization, e.g. `actedInMovies` / `peopleActedIn`). Catalog:
 [Directives: Neo4j](/v2/reference/directives#neo4j). Serve: [Hive Gateway](/v2/serve/hive-gateway).
 
 <Cards>
