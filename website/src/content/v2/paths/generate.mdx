@@ -52,9 +52,8 @@ export const composeConfig = defineComposeConfig({
 })
 ```
 
-After compose, query a Track (`Query.track` / `Query.track(id:)` in
-[Schema Coordinates](/v2/guides/schema-coordinates)), then open the emitted SDL and find
-`@transport`, `@sql`, and `Track @key(fields: "id")`. Shape to expect:
+After compose, query a Track (`Query.track` / `Query.track(id:)`), then open the emitted SDL and
+find `@transport`, `@sql`, and `Track @key(fields: "id")`. Shape to expect:
 [SQL protocol](/v2/protocols/sql) / [Music Store Example](/v2/examples/music-store) stage 1.
 
 ## What to look for after generate
@@ -86,7 +85,6 @@ FHIR how-we-built (JSON Schema generate + join SDL): [FHIR](/v2/examples/fhir).
 <Cards>
   <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
-  <Cards.Card arrow title="Schema Coordinates" href="/v2/guides/schema-coordinates" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>

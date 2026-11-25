@@ -134,20 +134,17 @@ type-level `$this` maps; other Mesh subgraphs may get `@merge`. Full table and o
 
 When a GraphQL (or other) source is **not** already a federated subgraph, use
 `createFederationTransform` on that subgraph to stamp Federation directives and point `@key`
-`resolveReference` at an existing ById field. Config keys are
-[Schema Coordinates](/v2/guides/schema-coordinates) for **types** and **fields** (`Product`, and
-`Type.field` where the transform addresses fields). Argument targeting still uses nested directive
-config objects today -- not Spec `Type.field(arg:)` strings yet.
+`resolveReference` at an existing ById field. Config keys are types and fields (`Product`,
+`Type.field` where supported). Argument targeting still uses nested directive config objects today.
 
 ```ts
 transforms: [
   createFederationTransform({
-    // Schema Coordinates: Type (and Type.field where supported)
     Product: {
       key: {
         fields: 'id',
         resolveReference: {
-          // Query.productById -- ById field that fills the entity
+          // Query.productById
           fieldName: 'productById'
         }
       }
