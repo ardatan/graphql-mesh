@@ -63,6 +63,7 @@
       "json-machete": ["./packages/json-machete/src/index.ts"],
       "@omnigraph/*": ["./packages/loaders/*/src/index.ts"],
       "@e2e/opts": ["./e2e/utils/opts.ts"],
+      "@e2e/printed-sdl": ["./e2e/utils/printedSdl.ts"],
       "@e2e/tenv": ["./e2e/utils/tenv.ts"],
       "grafast": ["./typings/grafast.d.ts"],
       "@dataplan/pg": ["./typings/dataplan-pg.d.ts"],

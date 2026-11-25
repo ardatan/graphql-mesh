@@ -1,70 +1,29 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`binary (@thrift__rpc) composes schema with @thrift__rpc 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @join__directive(graphs: [CALCULATOR], name: "transport", args: {kind: "thrift", location: "http://localhost:<calculator_port>/thrift"}) {
-  query: Query
-}
-
-directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
-
-directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
-
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.com/thrift/v0.1" import:["@thrift__rpc"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @join__directive(graphs:[CALCULATOR] name:"transport" args:{kind:"thrift" location:"http://localhost:<calculator_port>/thrift"}) {query:Query}
+directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
+directive @join__graph(name:String! url:String!) on ENUM_VALUE
+directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
+type:String external:Boolean override:String usedOverridden:Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__implements(graph:join__Graph!
+interface:String!) repeatable on OBJECT | INTERFACE
+directive @join__type(graph:join__Graph! key:join__FieldSet extension:Boolean! = false resolvable:Boolean! = true isInterfaceObject:Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__unionMember(graph:join__Graph! member:String!) repeatable on UNION
 scalar join__FieldSet
-
-directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
-
+directive @link(url:String as:String for:link__Purpose import:[link__Import]) repeatable on SCHEMA
 scalar link__Import
-
-enum link__Purpose {
-  """
-  \`SECURITY\` features provide metadata necessary to securely resolve fields.
-  """
-  SECURITY
-  """
-  \`EXECUTION\` features provide metadata necessary for operation execution.
-  """
-  EXECUTION
-}
-
-enum join__Graph {
-  CALCULATOR @join__graph(name: "calculator", url: "http://localhost:<calculator_port>/thrift")
-}
-
-directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
-
-"""Represents NULL values"""
-scalar Void @join__type(graph: CALCULATOR)
-
-scalar TransportOptions @join__type(graph: CALCULATOR)
-
-type CalcError @join__type(graph: CALCULATOR) {
-  message: String
-}
-
-type Query @join__type(graph: CALCULATOR) {
-  add(request: AddRequestInput): Int @join__directive(graphs: [CALCULATOR], name: "thrift__rpc", args: {function: "add", selection: "$(i32)", messageType: "CALL", args: "1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}"})
-  subtract(left: Int, right: Int): Int @join__directive(graphs: [CALCULATOR], name: "thrift__rpc", args: {function: "subtract", selection: "$(i32)", messageType: "CALL", args: "1(i32): $args.left\\n2(i32): $args.right"})
-  divide(left: Int, right: Int): Int @join__directive(graphs: [CALCULATOR], name: "thrift__rpc", args: {function: "divide", selection: "$(i32)", messageType: "CALL", args: "1(i32): $args.left\\n2(i32): $args.right"})
-  zip: Void @join__directive(graphs: [CALCULATOR], name: "thrift__rpc", args: {function: "zip", selection: "$(void)", messageType: "ONEWAY"})
-}
-
-input AddRequestInput @join__type(graph: CALCULATOR) {
-  left: Int!
-  right: Int!
-}
-
-directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
-
+enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
+enum join__Graph {CALCULATOR @join__graph(name:"calculator" url:"http://localhost:<calculator_port>/thrift")}
+directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA """Represents NULL values"""
+scalar Void @join__type(graph:CALCULATOR)
+scalar TransportOptions @join__type(graph:CALCULATOR)
+type CalcError @join__type(graph:CALCULATOR) {message:String}
+type Query @join__type(graph:CALCULATOR) {add(request:AddRequestInput):Int @join__directive(graphs:[CALCULATOR] name:"thrift__rpc" args:{function:"add" selection:"$(i32)" messageType:"CALL" args:"1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}"}) subtract(left:Int right:Int):Int @join__directive(graphs:[CALCULATOR] name:"thrift__rpc" args:{function:"subtract" selection:"$(i32)" messageType:"CALL" args:"1(i32): $args.left\\n2(i32): $args.right"}) divide(left:Int right:Int):Int @join__directive(graphs:[CALCULATOR] name:"thrift__rpc" args:{function:"divide" selection:"$(i32)" messageType:"CALL" args:"1(i32): $args.left\\n2(i32): $args.right"}) zip:Void @join__directive(graphs:[CALCULATOR] name:"thrift__rpc" args:{function:"zip" selection:"$(void)" messageType:"ONEWAY"})}
+input AddRequestInput @join__type(graph:CALCULATOR) {left:Int! right:Int!}
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 scalar join__DirectiveArguments
-"
+
 `;
 
 exports[`binary (@thrift__rpc) executes add on hive 1`] = `
@@ -76,60 +35,24 @@ exports[`binary (@thrift__rpc) executes add on hive 1`] = `
 `;
 
 exports[`json (@connect TJSON) composes schema with @connect isSuccess/errors 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @join__directive(graphs: [CALCULATOR], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [CALCULATOR], name: "source", args: {name: "calculator", http: {baseURL: "http://localhost:<calculator_port>/thrift-json", headers: [{name: "Content-Type", value: "application/vnd.apache.thrift.json"}, {name: "Accept", value: "application/vnd.apache.thrift.json"}]}}) {
-  query: Query
-}
-
-directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
-
-directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
-
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.apollo.dev/connect/v0.4" for:EXECUTION) @join__directive(graphs:[CALCULATOR] name:"link" args:{url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]}) @join__directive(graphs:[CALCULATOR] name:"source" args:{name:"calculator" http:{baseURL:"http://localhost:<calculator_port>/thrift-json" headers:[{name:"Content-Type" value:"application/vnd.apache.thrift.json"} {name:"Accept" value:"application/vnd.apache.thrift.json"}]}}) {query:Query}
+directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
+directive @join__graph(name:String! url:String!) on ENUM_VALUE
+directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
+type:String external:Boolean override:String usedOverridden:Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__implements(graph:join__Graph!
+interface:String!) repeatable on OBJECT | INTERFACE
+directive @join__type(graph:join__Graph! key:join__FieldSet extension:Boolean! = false resolvable:Boolean! = true isInterfaceObject:Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__unionMember(graph:join__Graph! member:String!) repeatable on UNION
 scalar join__FieldSet
-
-directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
-
+directive @link(url:String as:String for:link__Purpose import:[link__Import]) repeatable on SCHEMA
 scalar link__Import
-
-enum link__Purpose {
-  """
-  \`SECURITY\` features provide metadata necessary to securely resolve fields.
-  """
-  SECURITY
-  """
-  \`EXECUTION\` features provide metadata necessary for operation execution.
-  """
-  EXECUTION
-}
-
-enum join__Graph {
-  CALCULATOR @join__graph(name: "calculator", url: "http://localhost:<calculator_port>/thrift-json")
-}
-
-"""Represents NULL values"""
-scalar Void @join__type(graph: CALCULATOR)
-
-type Query @join__type(graph: CALCULATOR) {
-  add(request: AddRequestInput): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([1, \\"add\\", 1, 1, {\\n    \\"1\\": {\\n      \\"rec\\": {\\n        \\"1\\": { \\"i32\\": $args.request.left },\\n        \\"2\\": { \\"i32\\": $args.request.right }\\n      }\\n    }\\n}])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"}})
-  subtract(left: Int, right: Int): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([1, \\"subtract\\", 1, 1, {\\n    \\"1\\": { \\"i32\\": $args.left },\\n    \\"2\\": { \\"i32\\": $args.right }\\n}])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"}})
-  divide(left: Int, right: Int): Int @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([1, \\"divide\\", 1, 1, {\\n    \\"1\\": { \\"i32\\": $args.left },\\n    \\"2\\": { \\"i32\\": $args.right }\\n}])"}, selection: "$->get(4)->get(\\"0\\")->get(\\"i32\\")", isSuccess: "$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))", errors: {message: "$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"}})
-  zip: Void @join__directive(graphs: [CALCULATOR], name: "connect", args: {source: "calculator", http: {POST: "/", body: "$([1, \\"zip\\", 4, 1, {\\n\\n}])"}, selection: "$(null)"})
-}
-
-input AddRequestInput @join__type(graph: CALCULATOR) {
-  left: Int!
-  right: Int!
-}
-
-directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
-
+enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
+enum join__Graph {CALCULATOR @join__graph(name:"calculator" url:"http://localhost:<calculator_port>/thrift-json")} """Represents NULL values"""
+scalar Void @join__type(graph:CALCULATOR)
+type Query @join__type(graph:CALCULATOR) {add(request:AddRequestInput):Int @join__directive(graphs:[CALCULATOR] name:"connect" args:{source:"calculator" http:{POST:"/" body:"$([1, \\"add\\", 1, 1, {\\n    \\"1\\": {\\n      \\"rec\\": {\\n        \\"1\\": { \\"i32\\": $args.request.left },\\n        \\"2\\": { \\"i32\\": $args.request.right }\\n      }\\n    }\\n}])"} selection:"$->get(4)->get(\\"0\\")->get(\\"i32\\")" isSuccess:"$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))" errors:{message:"$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"}}) subtract(left:Int right:Int):Int @join__directive(graphs:[CALCULATOR] name:"connect" args:{source:"calculator" http:{POST:"/" body:"$([1, \\"subtract\\", 1, 1, {\\n    \\"1\\": { \\"i32\\": $args.left },\\n    \\"2\\": { \\"i32\\": $args.right }\\n}])"} selection:"$->get(4)->get(\\"0\\")->get(\\"i32\\")" isSuccess:"$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))" errors:{message:"$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"}}) divide(left:Int right:Int):Int @join__directive(graphs:[CALCULATOR] name:"connect" args:{source:"calculator" http:{POST:"/" body:"$([1, \\"divide\\", 1, 1, {\\n    \\"1\\": { \\"i32\\": $args.left },\\n    \\"2\\": { \\"i32\\": $args.right }\\n}])"} selection:"$->get(4)->get(\\"0\\")->get(\\"i32\\")" isSuccess:"$->get(2)->eq(2)->and($->get(4)->get(\\"0\\")->ne(null))" errors:{message:"$([$->get(4)->get(\\"1\\")->get(\\"str\\"), $->get(4)->get(\\"1\\")->get(\\"rec\\")->get(\\"1\\")->get(\\"str\\")])->joinNotNull(\\"\\")"}}) zip:Void @join__directive(graphs:[CALCULATOR] name:"connect" args:{source:"calculator" http:{POST:"/" body:"$([1, \\"zip\\", 4, 1, {\\n\\n}])"} selection:"$(null)"})}
+input AddRequestInput @join__type(graph:CALCULATOR) {left:Int! right:Int!}
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 scalar join__DirectiveArguments
-"
+
 `;

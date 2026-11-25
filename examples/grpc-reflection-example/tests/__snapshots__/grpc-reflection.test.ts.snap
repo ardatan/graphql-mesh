@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`gRPC Reflection Example should generate correct schema: grpc-schema 1`] = `
-schema @transport(subgraph:"gRPC Example" kind:"protobuf" location:"localhost:50052") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"gRPC Example" kind:"protobuf" location:"localhost:<port>") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA

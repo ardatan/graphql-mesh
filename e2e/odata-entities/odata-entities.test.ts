@@ -20,8 +20,10 @@ describe('OData Federation entities without @merge', () => {
     expect(result).toMatch(
       /type Airline[\s\S]*@join__type\(graph: TRIPPIN,\s*key: "AirlineCode"\)/,
     );
+    // GraphQL 17 pretty-prints directive args with newlines after `{`; allow
+    // insignificant whitespace so 16/17 share the same assertion.
     expect(result).toMatch(
-      /@join__directive\(graphs: \[TRIPPIN\], name: "connect", args: \{source: "Trippin"[\s\S]*\$this\.AirlineCode[\s\S]*entity: true/,
+      /@join__directive\(\s*graphs:\s*\[TRIPPIN\],\s*name:\s*"connect",\s*args:\s*\{\s*source:\s*"Trippin"[\s\S]*\$this\.AirlineCode[\s\S]*entity:\s*true/,
     );
     expect(result).not.toMatch(
       /type Airline[\s\S]*@join__directive\(graphs: \[CATALOG\], name: "connect"/,

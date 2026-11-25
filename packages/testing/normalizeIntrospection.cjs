@@ -25,7 +25,7 @@ function canonicalize(node) {
     return node;
   }
 
-  // __DirectiveLocation enum values
+  // __DirectiveLocation enum values (16 vs 17: FRAGMENT_* presence + description copy)
   if (
     node.kind === 'ENUM' &&
     node.name === '__DirectiveLocation' &&
@@ -33,6 +33,7 @@ function canonicalize(node) {
   ) {
     node.enumValues = node.enumValues
       .filter(v => v && v.name !== 'FRAGMENT_VARIABLE_DEFINITION')
+      .map(v => (v && typeof v === 'object' ? { ...v, description: null } : v))
       .sort((a, b) => String(a.name).localeCompare(String(b.name)));
   }
 

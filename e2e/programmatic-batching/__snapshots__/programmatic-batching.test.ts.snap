@@ -1,72 +1,29 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @join__directive(graphs: [API], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [API], name: "source", args: {name: "API", http: {baseURL: "http://localhost:<api_port>"}}) {
-  query: Query
-  mutation: Mutation
-}
-
-directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
-
-directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
-
-directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
-
-directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
-
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.apollo.dev/connect/v0.4" for:EXECUTION) @join__directive(graphs:[API] name:"link" args:{url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]}) @join__directive(graphs:[API] name:"source" args:{name:"API" http:{baseURL:"http://localhost:<api_port>"}}) {query:Query mutation:Mutation}
+directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
+directive @join__graph(name:String! url:String!) on ENUM_VALUE
+directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
+type:String external:Boolean override:String usedOverridden:Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__implements(graph:join__Graph!
+interface:String!) repeatable on OBJECT | INTERFACE
+directive @join__type(graph:join__Graph! key:join__FieldSet extension:Boolean! = false resolvable:Boolean! = true isInterfaceObject:Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__unionMember(graph:join__Graph! member:String!) repeatable on UNION
+directive @link(url:String as:String for:link__Purpose import:[link__Import]) repeatable on SCHEMA
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 directive @additionalField on FIELD_DEFINITION
-
 scalar join__FieldSet
-
 scalar link__Import
-
-enum link__Purpose {
-  """
-  \`SECURITY\` features provide metadata necessary to securely resolve fields.
-  """
-  SECURITY
-  """
-  \`EXECUTION\` features provide metadata necessary for operation execution.
-  """
-  EXECUTION
-}
-
-enum join__Graph {
-  API @join__graph(name: "API", url: "http://localhost:<api_port>")
-}
-
-type Query @join__type(graph: API) {
-  dummy: String @join__directive(graphs: [API], name: "connect", args: {selection: "$(\\"dummy\\")"})
-  user(id: Float!): User @additionalField
-}
-
-type Mutation @join__type(graph: API) {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @join__directive(graphs: [API], name: "connect", args: {source: "API", http: {POST: "/users_by_ids", body: "$args.input"}, selection: "results {\\n  id\\n  name\\n}"})
-}
-
-type UsersByIdResponse @join__type(graph: API) {
-  results: [User]!
-}
-
-type User @join__type(graph: API) {
-  id: Float!
-  name: String!
-}
-
-input UsersByIdRequest_Input @join__type(graph: API) {
-  ids: [Float]!
-}
-
+enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
+enum join__Graph {API @join__graph(name:"API" url:"http://localhost:<api_port>")}
+type Query @join__type(graph:API) {dummy:String @join__directive(graphs:[API] name:"connect" args:{selection:"$(\\"dummy\\")"}) user(id:Float!):User @additionalField}
+type Mutation @join__type(graph:API) {usersByIds(input:UsersByIdRequest_Input):UsersByIdResponse @join__directive(graphs:[API] name:"connect" args:{source:"API" http:{POST:"/users_by_ids" body:"$args.input"} selection:"results {\\n  id\\n  name\\n}"})}
+type UsersByIdResponse @join__type(graph:API) {results:[User]!}
+type User @join__type(graph:API) {id:Float! name:String!}
+input UsersByIdRequest_Input @join__type(graph:API) {ids:[Float]!}
 scalar join__DirectiveArguments
-"
+
 `;
 
 exports[`should execute User 1`] = `

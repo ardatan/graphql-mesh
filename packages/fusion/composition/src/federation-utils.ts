@@ -5,6 +5,7 @@ import {
   importFederationDirectives,
   importMeshDirectives,
   MESH_CORE_DIRECTIVES,
+  omitIntrospectionTypes,
 } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 
@@ -34,9 +35,16 @@ const NEVER_AUTO_MESH_COMPOSE_DIRECTIVE = new Set<string>([
   '@meshSource',
 ]);
 
+/**
+ * Rebuild a schema while stamping directive extensions.
+ * Uses `omitIntrospectionTypes` so GraphQL 17 `toConfig()` + dual-package
+ * rebuilds do not throw `multiple types named "__Schema"`.
+ */
 export function normalizeDirectiveExtensions(subgraph: GraphQLSchema) {
+  const config = subgraph.toConfig();
   return new GraphQLSchema({
-    ...subgraph.toConfig(),
+    ...config,
+    types: omitIntrospectionTypes(config.types),
     extensions: {
       ...subgraph.extensions,
       directives: getDirectiveExtensions(subgraph),

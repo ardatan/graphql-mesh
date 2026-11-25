@@ -55,8 +55,9 @@ describe('Microsoft Graph Connectors', () => {
     expect(result).toContain('name: "connect"');
     expect(result).toContain('odata.metadata=minimal');
     // Remaining connect options stay native `@transport` (Apollo-safe; not join-carried).
+    // GraphQL 17 inserts a space after `{` in options; allow insignificant whitespace.
     expect(result).toMatch(
-      /@transport\(kind: "connect", subgraph: "MicrosoftGraph"[^)]*options: \{odata:/,
+      /@transport\(\s*kind:\s*"connect",\s*subgraph:\s*"MicrosoftGraph"[\s\S]*?options:\s*\{\s*odata:/,
     );
     expect(result).toMatch(/directive @transport\s*\(/);
     expect(result).not.toMatch(/name: "transport"/);

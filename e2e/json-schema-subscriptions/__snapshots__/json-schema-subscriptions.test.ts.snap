@@ -1,106 +1,34 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@pubsubOperation", "@example"]) @join__directive(graphs: [API], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [API], name: "source", args: {name: "API", http: {baseURL: "http://localhost:<api_port>"}}) {
-  query: Query
-  mutation: Mutation
-  subscription: Subscription
-}
-
-directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
-
-directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
-
-directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
-
-directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
-
-directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
-
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.apollo.dev/connect/v0.4" for:EXECUTION) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@pubsubOperation" "@example"]) @join__directive(graphs:[API] name:"link" args:{url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]}) @join__directive(graphs:[API] name:"source" args:{name:"API" http:{baseURL:"http://localhost:<api_port>"}}) {query:Query mutation:Mutation subscription:Subscription}
+directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
+directive @join__graph(name:String! url:String!) on ENUM_VALUE
+directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
+type:String external:Boolean override:String usedOverridden:Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__implements(graph:join__Graph!
+interface:String!) repeatable on OBJECT | INTERFACE
+directive @join__type(graph:join__Graph! key:join__FieldSet extension:Boolean! = false resolvable:Boolean! = true isInterfaceObject:Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__unionMember(graph:join__Graph! member:String!) repeatable on UNION
+directive @link(url:String as:String for:link__Purpose import:[link__Import]) repeatable on SCHEMA
+directive @example(subgraph:String value:ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 directive @additionalField on FIELD_DEFINITION
-
 directive @live on QUERY
-
 scalar join__FieldSet
-
 scalar link__Import
-
-enum link__Purpose {
-  """
-  \`SECURITY\` features provide metadata necessary to securely resolve fields.
-  """
-  SECURITY
-  """
-  \`EXECUTION\` features provide metadata necessary for operation execution.
-  """
-  EXECUTION
-}
-
-enum join__Graph {
-  API @join__graph(name: "API", url: "http://localhost:<api_port>")
-}
-
-scalar ObjMap @join__type(graph: API)
-
-type Query @join__type(graph: API) {
-  todos: [query_todos_items] @join__directive(graphs: [API], name: "connect", args: {source: "API", http: {GET: "/todos"}, selection: "id\\nname\\ncontent"})
-}
-
-type query_todos_items @join__type(graph: API) {
-  id: String
-  name: String
-  content: String
-}
-
-type Mutation @join__type(graph: API) {
-  addTodo(input: mutationInput_addTodo_input_Input): Todo @join__directive(graphs: [API], name: "connect", args: {source: "API", http: {PUT: "/todo", body: "$args.input"}, selection: "id\\nname\\ncontent"})
-  updateTodo(input: mutationInput_updateTodo_input_Input): mutation_updateTodo @join__directive(graphs: [API], name: "connect", args: {source: "API", http: {PATCH: "/todo", body: "$args.input"}, selection: "id\\nname\\ncontent"})
-}
-
-type Todo @example(subgraph: "API", value: "{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
-  id: String
-  name: String
-  content: String
-}
-
-type mutation_updateTodo @example(subgraph: "API", value: "{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
-  id: String
-  name: String
-  content: String
-}
-
-type Subscription @join__type(graph: API) {
-  """PubSub Topic: webhook:post:/webhooks/todo_added"""
-  todoAddedFromSource: subscription_todoAddedFromSource @join__directive(graphs: [API], name: "pubsubOperation", args: {pubsubTopic: "webhook:post:/webhooks/todo_added"})
-  todoAddedFromExtensions: Todo @resolveTo(pubsubTopic: "webhook:post:/webhooks/todo_added") @additionalField
-  todoUpdatedFromExtensions(id: ID!): Todo @resolveTo(pubsubTopic: "webhook:post:/webhooks/todo_updated", filterBy: "root.id === args.id") @additionalField
-}
-
-type subscription_todoAddedFromSource @example(subgraph: "API", value: "{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
-  id: String
-  name: String
-  content: String
-}
-
-input mutationInput_addTodo_input_Input @example(subgraph: "API", value: "{\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
-  name: String
-  content: String
-}
-
-input mutationInput_updateTodo_input_Input @example(subgraph: "API", value: "{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
-  id: String
-  name: String
-  content: String
-}
-
+enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
+enum join__Graph {API @join__graph(name:"API" url:"http://localhost:<api_port>")}
+scalar ObjMap @join__type(graph:API)
+type Query @join__type(graph:API) {todos:[query_todos_items] @join__directive(graphs:[API] name:"connect" args:{source:"API" http:{GET:"/todos"} selection:"id\\nname\\ncontent"})}
+type query_todos_items @join__type(graph:API) {id:String name:String content:String}
+type Mutation @join__type(graph:API) {addTodo(input:mutationInput_addTodo_input_Input):Todo @join__directive(graphs:[API] name:"connect" args:{source:"API" http:{PUT:"/todo" body:"$args.input"} selection:"id\\nname\\ncontent"}) updateTodo(input:mutationInput_updateTodo_input_Input):mutation_updateTodo @join__directive(graphs:[API] name:"connect" args:{source:"API" http:{PATCH:"/todo" body:"$args.input"} selection:"id\\nname\\ncontent"})}
+type Todo @example(subgraph:"API" value:"{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph:API) {id:String name:String content:String}
+type mutation_updateTodo @example(subgraph:"API" value:"{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph:API) {id:String name:String content:String}
+type Subscription @join__type(graph:API) {"""PubSub Topic:webhook:post:/webhooks/todo_added""" todoAddedFromSource:subscription_todoAddedFromSource @join__directive(graphs:[API] name:"pubsubOperation" args:{pubsubTopic:"webhook:post:/webhooks/todo_added"}) todoAddedFromExtensions:Todo @resolveTo(pubsubTopic:"webhook:post:/webhooks/todo_added") @additionalField todoUpdatedFromExtensions(id:ID!):Todo @resolveTo(pubsubTopic:"webhook:post:/webhooks/todo_updated" filterBy:"root.id === args.id") @additionalField}
+type subscription_todoAddedFromSource @example(subgraph:"API" value:"{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph:API) {id:String name:String content:String}
+input mutationInput_addTodo_input_Input @example(subgraph:"API" value:"{\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph:API) {name:String content:String}
+input mutationInput_updateTodo_input_Input @example(subgraph:"API" value:"{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph:API) {id:String name:String content:String}
 scalar join__DirectiveArguments
-"
+
 `;

@@ -1,3 +1,4 @@
+import { matchPrintedFieldBlock } from '@e2e/printed-sdl';
 import { createTenv, type ServeRunner } from '@e2e/tenv';
 
 const { service, serve, compose } = createTenv(__dirname);
@@ -14,9 +15,9 @@ it('should compose the appropriate schema', async () => {
   });
   expect(result).toMatchSnapshot();
 
-  // Connectors entity contract (arg === key → `entity: true`, no Mesh `@merge` on REST):
-  const userField = result.match(/user\(id:\s*String!\):\s*User[^\n]*/)?.[0] || '';
-  expect(userField).toContain('entity: true');
+  // Connectors entity contract (arg === key → `entity: true`, no Mesh `@merge` on REST).
+  const userField = matchPrintedFieldBlock(result, /user\(id:\s*String!\):\s*User/);
+  expect(userField).toMatch(/entity:\s*true/);
   expect(userField).not.toContain('@merge');
 });
 

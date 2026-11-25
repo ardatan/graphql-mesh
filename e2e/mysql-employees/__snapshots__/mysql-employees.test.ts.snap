@@ -1,483 +1,79 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @join__directive(graphs: [EMPLOYEES], name: "transport", args: {kind: "sql", location: "mysql://root:passwd@localhost:<employees_port>/employees"}) {
-  query: Query
-  mutation: Mutation
-}
-
-directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
-
-directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
-
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.com/sql/v0.1" import:["@sql"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @join__directive(graphs:[EMPLOYEES] name:"transport" args:{kind:"sql" location:"mysql://root:passwd@localhost:<employees_port>/employees"}) {query:Query mutation:Mutation}
+directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
+directive @join__graph(name:String! url:String!) on ENUM_VALUE
+directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
+type:String external:Boolean override:String usedOverridden:Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__implements(graph:join__Graph!
+interface:String!) repeatable on OBJECT | INTERFACE
+directive @join__type(graph:join__Graph! key:join__FieldSet extension:Boolean! = false resolvable:Boolean! = true isInterfaceObject:Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__unionMember(graph:join__Graph! member:String!) repeatable on UNION
 scalar join__FieldSet
-
-directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
-
+directive @link(url:String as:String for:link__Purpose import:[link__Import]) repeatable on SCHEMA
 scalar link__Import
-
-enum link__Purpose {
-  """
-  \`SECURITY\` features provide metadata necessary to securely resolve fields.
-  """
-  SECURITY
-  """
-  \`EXECUTION\` features provide metadata necessary for operation execution.
-  """
-  EXECUTION
-}
-
-enum join__Graph {
-  EMPLOYEES @join__graph(name: "Employees", url: "mysql://root:passwd@localhost:<employees_port>/employees")
-}
-
-directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
-
-"""
-A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
-"""
-scalar Date @join__type(graph: EMPLOYEES)
-
-scalar TransportOptions @join__type(graph: EMPLOYEES)
-
-type Query @join__type(graph: EMPLOYEES) {
-  department(id: ID!): Department @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "ROW", where: "\\n  dept_no: $args.id", selection: "  id: dept_no\\n  deptName: dept_name"})
-  departments(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], limit: Int = 10, offset: Int = 0): [Department!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: dept_no\\n  deptName: dept_name"})
-  allDepartments(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], first: Int, after: String): DepartmentConnection! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: dept_no\\n    deptName: dept_name\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: dept_no\\n      deptName: dept_name\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  departmentsCount(where: DepartmentFilter): Int! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  deptEmps(where: DeptEmpFilter, orderBy: [DeptEmpOrderBy!], limit: Int = 10, offset: Int = 0): [DeptEmp!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_emp", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"})
-  allDeptEmps(where: DeptEmpFilter, orderBy: [DeptEmpOrderBy!], first: Int, after: String): DeptEmpConnection! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_emp", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    empNo: emp_no\\n    deptNo: dept_no\\n    fromDate: from_date\\n    toDate: to_date\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      empNo: emp_no\\n      deptNo: dept_no\\n      fromDate: from_date\\n      toDate: to_date\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  deptEmpsCount(where: DeptEmpFilter): Int! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_emp", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  deptManagers(where: DeptManagerFilter, orderBy: [DeptManagerOrderBy!], limit: Int = 10, offset: Int = 0): [DeptManager!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_manager", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"})
-  allDeptManagers(where: DeptManagerFilter, orderBy: [DeptManagerOrderBy!], first: Int, after: String): DeptManagerConnection! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_manager", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    empNo: emp_no\\n    deptNo: dept_no\\n    fromDate: from_date\\n    toDate: to_date\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      empNo: emp_no\\n      deptNo: dept_no\\n      fromDate: from_date\\n      toDate: to_date\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  deptManagersCount(where: DeptManagerFilter): Int! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_manager", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  employee(id: ID!): Employee @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "ROW", where: "\\n  emp_no: $args.id", selection: "  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"})
-  employees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int = 10, offset: Int = 0): [Employee!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"})
-  allEmployees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], first: Int, after: String): EmployeeConnection! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    id: emp_no\\n    birthDate: birth_date\\n    firstName: first_name\\n    lastName: last_name\\n    gender: gender\\n    hireDate: hire_date\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: emp_no\\n      birthDate: birth_date\\n      firstName: first_name\\n      lastName: last_name\\n      gender: gender\\n      hireDate: hire_date\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  employeesCount(where: EmployeeFilter): Int! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  salaries(where: SalaryFilter, orderBy: [SalaryOrderBy!], limit: Int = 10, offset: Int = 0): [Salary!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "salaries", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  salary: salary\\n  fromDate: from_date\\n  toDate: to_date"})
-  allSalaries(where: SalaryFilter, orderBy: [SalaryOrderBy!], first: Int, after: String): SalaryConnection! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "salaries", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    empNo: emp_no\\n    salary: salary\\n    fromDate: from_date\\n    toDate: to_date\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      empNo: emp_no\\n      salary: salary\\n      fromDate: from_date\\n      toDate: to_date\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  salariesCount(where: SalaryFilter): Int! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "salaries", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-  titles(where: TitleFilter, orderBy: [TitleOrderBy!], limit: Int = 10, offset: Int = 0): [Title!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "titles", kind: "ROWS", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  title: title\\n  fromDate: from_date\\n  toDate: to_date"})
-  allTitles(where: TitleFilter, orderBy: [TitleOrderBy!], first: Int, after: String): TitleConnection! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "titles", kind: "CONNECTION", where: "$args.where", orderBy: "$args.orderBy", first: "$args.first", after: "$args.after", selection: "  nodes {\\n    empNo: emp_no\\n    title: title\\n    fromDate: from_date\\n    toDate: to_date\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      empNo: emp_no\\n      title: title\\n      fromDate: from_date\\n      toDate: to_date\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"})
-  titlesCount(where: TitleFilter): Int! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "titles", kind: "COUNT", where: "$args.where", selection: "\\n  $"})
-}
-
-type Department @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "ROW", where: "dept_no: $this.id", selection: "id: dept_no\\ndeptName: dept_name"}) @join__type(graph: EMPLOYEES, key: "id") {
-  id: ID!
-  deptName: String!
-  deptEmps(where: DeptEmpFilter, orderBy: [DeptEmpOrderBy!], limit: Int, offset: Int): [DeptEmp!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_emp", kind: "ROWS", where: "  dept_no: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"})
-  deptManagers(where: DeptManagerFilter, orderBy: [DeptManagerOrderBy!], limit: Int, offset: Int): [DeptManager!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_manager", kind: "ROWS", where: "  dept_no: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"})
-  employees(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int, offset: Int): [Employee!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "ROWS", through: "  table: dept_emp\\n  local: dept_no\\n  remote: emp_no\\n  parent: $this.id\\n  target: emp_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"})
-  employeesByDeptManagerDeptNoAndEmpNo(where: EmployeeFilter, orderBy: [EmployeeOrderBy!], limit: Int, offset: Int): [Employee!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "ROWS", through: "  table: dept_manager\\n  local: dept_no\\n  remote: emp_no\\n  parent: $this.id\\n  target: emp_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"})
-}
-
-type DeptEmp @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_emp", kind: "ROW", where: "emp_no: $this.empNo\\ndept_no: $this.deptNo", selection: "empNo: emp_no\\ndeptNo: dept_no\\nfromDate: from_date\\ntoDate: to_date"}) @join__type(graph: EMPLOYEES, key: "empNo deptNo") {
-  empNo: Int!
-  deptNo: String!
-  fromDate: Date!
-  toDate: Date!
-  employee: Employee @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "ROW", where: "\\n  emp_no: $this.empNo", selection: "  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"})
-  department: Department @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "ROW", where: "\\n  dept_no: $this.deptNo", selection: "  id: dept_no\\n  deptName: dept_name"})
-}
-
-type Employee @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "ROW", where: "emp_no: $this.id", selection: "id: emp_no\\nbirthDate: birth_date\\nfirstName: first_name\\nlastName: last_name\\ngender: gender\\nhireDate: hire_date"}) @join__type(graph: EMPLOYEES, key: "id") {
-  id: ID!
-  birthDate: Date!
-  firstName: String!
-  lastName: String!
-  gender: String!
-  hireDate: Date!
-  deptEmps(where: DeptEmpFilter, orderBy: [DeptEmpOrderBy!], limit: Int, offset: Int): [DeptEmp!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_emp", kind: "ROWS", where: "  emp_no: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"})
-  deptManagers(where: DeptManagerFilter, orderBy: [DeptManagerOrderBy!], limit: Int, offset: Int): [DeptManager!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_manager", kind: "ROWS", where: "  emp_no: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"})
-  salaries(where: SalaryFilter, orderBy: [SalaryOrderBy!], limit: Int, offset: Int): [Salary!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "salaries", kind: "ROWS", where: "  emp_no: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  salary: salary\\n  fromDate: from_date\\n  toDate: to_date"})
-  titles(where: TitleFilter, orderBy: [TitleOrderBy!], limit: Int, offset: Int): [Title!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "titles", kind: "ROWS", where: "  emp_no: $this.id\\n  ...$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  empNo: emp_no\\n  title: title\\n  fromDate: from_date\\n  toDate: to_date"})
-  departments(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], limit: Int, offset: Int): [Department!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "ROWS", through: "  table: dept_emp\\n  local: emp_no\\n  remote: dept_no\\n  parent: $this.id\\n  target: dept_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: dept_no\\n  deptName: dept_name"})
-  departmentsByDeptManagerEmpNoAndDeptNo(where: DepartmentFilter, orderBy: [DepartmentOrderBy!], limit: Int, offset: Int): [Department!]! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "ROWS", through: "  table: dept_manager\\n  local: emp_no\\n  remote: dept_no\\n  parent: $this.id\\n  target: dept_no", where: "$args.where", orderBy: "$args.orderBy", limit: "$args.limit", offset: "$args.offset", selection: "  id: dept_no\\n  deptName: dept_name"})
-}
-
-type DeptManager @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_manager", kind: "ROW", where: "emp_no: $this.empNo\\ndept_no: $this.deptNo", selection: "empNo: emp_no\\ndeptNo: dept_no\\nfromDate: from_date\\ntoDate: to_date"}) @join__type(graph: EMPLOYEES, key: "empNo deptNo") {
-  empNo: Int!
-  deptNo: String!
-  fromDate: Date!
-  toDate: Date!
-  employee: Employee @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "ROW", where: "\\n  emp_no: $this.empNo", selection: "  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"})
-  department: Department @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "ROW", where: "\\n  dept_no: $this.deptNo", selection: "  id: dept_no\\n  deptName: dept_name"})
-}
-
-type Salary @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "salaries", kind: "ROW", where: "emp_no: $this.empNo\\nfrom_date: $this.fromDate", selection: "empNo: emp_no\\nsalary: salary\\nfromDate: from_date\\ntoDate: to_date"}) @join__type(graph: EMPLOYEES, key: "empNo fromDate") {
-  empNo: Int!
-  fromDate: Date!
-  salary: Int!
-  toDate: Date!
-  employee: Employee @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "ROW", where: "\\n  emp_no: $this.empNo", selection: "  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"})
-}
-
-type Title @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "titles", kind: "ROW", where: "emp_no: $this.empNo\\ntitle: $this.title\\nfrom_date: $this.fromDate", selection: "empNo: emp_no\\ntitle: title\\nfromDate: from_date\\ntoDate: to_date"}) @join__type(graph: EMPLOYEES, key: "empNo title fromDate") {
-  empNo: Int!
-  title: String!
-  fromDate: Date!
-  toDate: Date
-  employee: Employee @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "ROW", where: "\\n  emp_no: $this.empNo", selection: "  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"})
-}
-
-type DepartmentConnection @join__type(graph: EMPLOYEES) {
-  edges: [DepartmentEdge!]!
-  pageInfo: PageInfo!
-  nodes: [Department!]!
-  totalCount: Int!
-}
-
-type DepartmentEdge @join__type(graph: EMPLOYEES) {
-  cursor: String!
-  node: Department!
-}
-
-type PageInfo @join__type(graph: EMPLOYEES) {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: String
-  endCursor: String
-}
-
-type DeptEmpConnection @join__type(graph: EMPLOYEES) {
-  edges: [DeptEmpEdge!]!
-  pageInfo: PageInfo!
-  nodes: [DeptEmp!]!
-  totalCount: Int!
-}
-
-type DeptEmpEdge @join__type(graph: EMPLOYEES) {
-  cursor: String!
-  node: DeptEmp!
-}
-
-type DeptManagerConnection @join__type(graph: EMPLOYEES) {
-  edges: [DeptManagerEdge!]!
-  pageInfo: PageInfo!
-  nodes: [DeptManager!]!
-  totalCount: Int!
-}
-
-type DeptManagerEdge @join__type(graph: EMPLOYEES) {
-  cursor: String!
-  node: DeptManager!
-}
-
-type EmployeeConnection @join__type(graph: EMPLOYEES) {
-  edges: [EmployeeEdge!]!
-  pageInfo: PageInfo!
-  nodes: [Employee!]!
-  totalCount: Int!
-}
-
-type EmployeeEdge @join__type(graph: EMPLOYEES) {
-  cursor: String!
-  node: Employee!
-}
-
-type SalaryConnection @join__type(graph: EMPLOYEES) {
-  edges: [SalaryEdge!]!
-  pageInfo: PageInfo!
-  nodes: [Salary!]!
-  totalCount: Int!
-}
-
-type SalaryEdge @join__type(graph: EMPLOYEES) {
-  cursor: String!
-  node: Salary!
-}
-
-type TitleConnection @join__type(graph: EMPLOYEES) {
-  edges: [TitleEdge!]!
-  pageInfo: PageInfo!
-  nodes: [Title!]!
-  totalCount: Int!
-}
-
-type TitleEdge @join__type(graph: EMPLOYEES) {
-  cursor: String!
-  node: Title!
-}
-
-type Mutation @join__type(graph: EMPLOYEES) {
-  createDepartment(input: CreateDepartmentInput!): DepartmentPayload! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "INSERT", set: "  dept_no: $args.input.id\\n  dept_name: $args.input.deptName", selection: "  department {\\n    id: dept_no\\n    deptName: dept_name\\n  }"})
-  updateDepartment(id: ID!, input: UpdateDepartmentInput!): DepartmentPayload! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "UPDATE", set: "\\n  dept_name: $args.input.deptName", where: "\\n  dept_no: $args.id", selection: "  department {\\n    id: dept_no\\n    deptName: dept_name\\n  }"})
-  deleteDepartment(id: ID!): DeleteDepartmentPayload! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "departments", kind: "DELETE", where: "\\n  dept_no: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
-  createDeptEmp(input: CreateDeptEmpInput!): DeptEmpPayload! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_emp", kind: "INSERT", set: "  emp_no: $args.input.empNo\\n  dept_no: $args.input.deptNo\\n  from_date: $args.input.fromDate\\n  to_date: $args.input.toDate", selection: "  deptEmp {\\n    empNo: emp_no\\n    deptNo: dept_no\\n    fromDate: from_date\\n    toDate: to_date\\n  }"})
-  createDeptManager(input: CreateDeptManagerInput!): DeptManagerPayload! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "dept_manager", kind: "INSERT", set: "  emp_no: $args.input.empNo\\n  dept_no: $args.input.deptNo\\n  from_date: $args.input.fromDate\\n  to_date: $args.input.toDate", selection: "  deptManager {\\n    empNo: emp_no\\n    deptNo: dept_no\\n    fromDate: from_date\\n    toDate: to_date\\n  }"})
-  createEmployee(input: CreateEmployeeInput!): EmployeePayload! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "INSERT", set: "  emp_no: $args.input.id\\n  birth_date: $args.input.birthDate\\n  first_name: $args.input.firstName\\n  last_name: $args.input.lastName\\n  gender: $args.input.gender\\n  hire_date: $args.input.hireDate", selection: "  employee {\\n    id: emp_no\\n    birthDate: birth_date\\n    firstName: first_name\\n    lastName: last_name\\n    gender: gender\\n    hireDate: hire_date\\n  }"})
-  updateEmployee(id: ID!, input: UpdateEmployeeInput!): EmployeePayload! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "UPDATE", set: "  birth_date: $args.input.birthDate\\n  first_name: $args.input.firstName\\n  last_name: $args.input.lastName\\n  gender: $args.input.gender\\n  hire_date: $args.input.hireDate", where: "\\n  emp_no: $args.id", selection: "  employee {\\n    id: emp_no\\n    birthDate: birth_date\\n    firstName: first_name\\n    lastName: last_name\\n    gender: gender\\n    hireDate: hire_date\\n  }"})
-  deleteEmployee(id: ID!): DeleteEmployeePayload! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "employees", kind: "DELETE", where: "\\n  emp_no: $args.id", selection: "  ok: $affectedRows\\n  affectedRows: $affectedRows"})
-  createSalary(input: CreateSalaryInput!): SalaryPayload! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "salaries", kind: "INSERT", set: "  emp_no: $args.input.empNo\\n  salary: $args.input.salary\\n  from_date: $args.input.fromDate\\n  to_date: $args.input.toDate", selection: "  salary {\\n    empNo: emp_no\\n    salary: salary\\n    fromDate: from_date\\n    toDate: to_date\\n  }"})
-  createTitle(input: CreateTitleInput!): TitlePayload! @join__directive(graphs: [EMPLOYEES], name: "sql", args: {table: "titles", kind: "INSERT", set: "  emp_no: $args.input.empNo\\n  title: $args.input.title\\n  from_date: $args.input.fromDate\\n  to_date: $args.input.toDate", selection: "  title {\\n    empNo: emp_no\\n    title: title\\n    fromDate: from_date\\n    toDate: to_date\\n  }"})
-}
-
-type DepartmentPayload @join__type(graph: EMPLOYEES) {
-  department: Department
-}
-
-type DeleteDepartmentPayload @join__type(graph: EMPLOYEES) {
-  ok: Boolean!
-  affectedRows: Int!
-}
-
-type DeptEmpPayload @join__type(graph: EMPLOYEES) {
-  deptEmp: DeptEmp
-}
-
-type DeptManagerPayload @join__type(graph: EMPLOYEES) {
-  deptManager: DeptManager
-}
-
-type EmployeePayload @join__type(graph: EMPLOYEES) {
-  employee: Employee
-}
-
-type DeleteEmployeePayload @join__type(graph: EMPLOYEES) {
-  ok: Boolean!
-  affectedRows: Int!
-}
-
-type SalaryPayload @join__type(graph: EMPLOYEES) {
-  salary: Salary
-}
-
-type TitlePayload @join__type(graph: EMPLOYEES) {
-  title: Title
-}
-
-enum DepartmentOrderBy @join__type(graph: EMPLOYEES) {
-  ID_ASC @join__enumValue(graph: EMPLOYEES)
-  ID_DESC @join__enumValue(graph: EMPLOYEES)
-  DEPT_NAME_ASC @join__enumValue(graph: EMPLOYEES)
-  DEPT_NAME_DESC @join__enumValue(graph: EMPLOYEES)
-}
-
-enum DeptEmpOrderBy @join__type(graph: EMPLOYEES) {
-  EMP_NO_ASC @join__enumValue(graph: EMPLOYEES)
-  EMP_NO_DESC @join__enumValue(graph: EMPLOYEES)
-  DEPT_NO_ASC @join__enumValue(graph: EMPLOYEES)
-  DEPT_NO_DESC @join__enumValue(graph: EMPLOYEES)
-  FROM_DATE_ASC @join__enumValue(graph: EMPLOYEES)
-  FROM_DATE_DESC @join__enumValue(graph: EMPLOYEES)
-  TO_DATE_ASC @join__enumValue(graph: EMPLOYEES)
-  TO_DATE_DESC @join__enumValue(graph: EMPLOYEES)
-}
-
-enum DeptManagerOrderBy @join__type(graph: EMPLOYEES) {
-  EMP_NO_ASC @join__enumValue(graph: EMPLOYEES)
-  EMP_NO_DESC @join__enumValue(graph: EMPLOYEES)
-  DEPT_NO_ASC @join__enumValue(graph: EMPLOYEES)
-  DEPT_NO_DESC @join__enumValue(graph: EMPLOYEES)
-  FROM_DATE_ASC @join__enumValue(graph: EMPLOYEES)
-  FROM_DATE_DESC @join__enumValue(graph: EMPLOYEES)
-  TO_DATE_ASC @join__enumValue(graph: EMPLOYEES)
-  TO_DATE_DESC @join__enumValue(graph: EMPLOYEES)
-}
-
-enum EmployeeOrderBy @join__type(graph: EMPLOYEES) {
-  ID_ASC @join__enumValue(graph: EMPLOYEES)
-  ID_DESC @join__enumValue(graph: EMPLOYEES)
-  BIRTH_DATE_ASC @join__enumValue(graph: EMPLOYEES)
-  BIRTH_DATE_DESC @join__enumValue(graph: EMPLOYEES)
-  FIRST_NAME_ASC @join__enumValue(graph: EMPLOYEES)
-  FIRST_NAME_DESC @join__enumValue(graph: EMPLOYEES)
-  LAST_NAME_ASC @join__enumValue(graph: EMPLOYEES)
-  LAST_NAME_DESC @join__enumValue(graph: EMPLOYEES)
-  GENDER_ASC @join__enumValue(graph: EMPLOYEES)
-  GENDER_DESC @join__enumValue(graph: EMPLOYEES)
-  HIRE_DATE_ASC @join__enumValue(graph: EMPLOYEES)
-  HIRE_DATE_DESC @join__enumValue(graph: EMPLOYEES)
-}
-
-enum SalaryOrderBy @join__type(graph: EMPLOYEES) {
-  EMP_NO_ASC @join__enumValue(graph: EMPLOYEES)
-  EMP_NO_DESC @join__enumValue(graph: EMPLOYEES)
-  SALARY_ASC @join__enumValue(graph: EMPLOYEES)
-  SALARY_DESC @join__enumValue(graph: EMPLOYEES)
-  FROM_DATE_ASC @join__enumValue(graph: EMPLOYEES)
-  FROM_DATE_DESC @join__enumValue(graph: EMPLOYEES)
-  TO_DATE_ASC @join__enumValue(graph: EMPLOYEES)
-  TO_DATE_DESC @join__enumValue(graph: EMPLOYEES)
-}
-
-enum TitleOrderBy @join__type(graph: EMPLOYEES) {
-  EMP_NO_ASC @join__enumValue(graph: EMPLOYEES)
-  EMP_NO_DESC @join__enumValue(graph: EMPLOYEES)
-  TITLE_ASC @join__enumValue(graph: EMPLOYEES)
-  TITLE_DESC @join__enumValue(graph: EMPLOYEES)
-  FROM_DATE_ASC @join__enumValue(graph: EMPLOYEES)
-  FROM_DATE_DESC @join__enumValue(graph: EMPLOYEES)
-  TO_DATE_ASC @join__enumValue(graph: EMPLOYEES)
-  TO_DATE_DESC @join__enumValue(graph: EMPLOYEES)
-}
-
-input DeptEmpFilter @join__type(graph: EMPLOYEES) {
-  and: [DeptEmpFilter!]
-  or: [DeptEmpFilter!]
-  not: DeptEmpFilter
-  empNo: IntFilter
-  deptNo: StringFilter
-  fromDate: StringFilter
-  toDate: StringFilter
-  employee: EmployeeFilter
-  department: DepartmentFilter
-}
-
-input IntFilter @join__type(graph: EMPLOYEES) {
-  eq: Int
-  ne: Int
-  in: [Int!]
-  nin: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  isNull: Boolean
-}
-
-input StringFilter @join__type(graph: EMPLOYEES) {
-  eq: String
-  ne: String
-  in: [String!]
-  nin: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  includes: String
-  startsWith: String
-  endsWith: String
-  like: String
-  ilike: String
-  isNull: Boolean
-}
-
-input EmployeeFilter @join__type(graph: EMPLOYEES) {
-  and: [EmployeeFilter!]
-  or: [EmployeeFilter!]
-  not: EmployeeFilter
-  id: StringFilter
-  birthDate: StringFilter
-  firstName: StringFilter
-  lastName: StringFilter
-  gender: StringFilter
-  hireDate: StringFilter
-  departments: DepartmentFilter
-  departmentsByDeptManagerEmpNoAndDeptNo: DepartmentFilter
-}
-
-input DepartmentFilter @join__type(graph: EMPLOYEES) {
-  and: [DepartmentFilter!]
-  or: [DepartmentFilter!]
-  not: DepartmentFilter
-  id: StringFilter
-  deptName: StringFilter
-  employees: EmployeeFilter
-  employeesByDeptManagerDeptNoAndEmpNo: EmployeeFilter
-}
-
-input DeptManagerFilter @join__type(graph: EMPLOYEES) {
-  and: [DeptManagerFilter!]
-  or: [DeptManagerFilter!]
-  not: DeptManagerFilter
-  empNo: IntFilter
-  deptNo: StringFilter
-  fromDate: StringFilter
-  toDate: StringFilter
-  employee: EmployeeFilter
-  department: DepartmentFilter
-}
-
-input SalaryFilter @join__type(graph: EMPLOYEES) {
-  and: [SalaryFilter!]
-  or: [SalaryFilter!]
-  not: SalaryFilter
-  empNo: IntFilter
-  salary: IntFilter
-  fromDate: StringFilter
-  toDate: StringFilter
-  employee: EmployeeFilter
-}
-
-input TitleFilter @join__type(graph: EMPLOYEES) {
-  and: [TitleFilter!]
-  or: [TitleFilter!]
-  not: TitleFilter
-  empNo: IntFilter
-  title: StringFilter
-  fromDate: StringFilter
-  toDate: StringFilter
-  employee: EmployeeFilter
-}
-
-input CreateDepartmentInput @join__type(graph: EMPLOYEES) {
-  id: ID!
-  deptName: String!
-}
-
-input UpdateDepartmentInput @join__type(graph: EMPLOYEES) {
-  deptName: String
-}
-
-input CreateDeptEmpInput @join__type(graph: EMPLOYEES) {
-  empNo: Int!
-  deptNo: String!
-  fromDate: Date!
-  toDate: Date!
-}
-
-input CreateDeptManagerInput @join__type(graph: EMPLOYEES) {
-  empNo: Int!
-  deptNo: String!
-  fromDate: Date!
-  toDate: Date!
-}
-
-input CreateEmployeeInput @join__type(graph: EMPLOYEES) {
-  id: ID!
-  birthDate: Date!
-  firstName: String!
-  lastName: String!
-  gender: String!
-  hireDate: Date!
-}
-
-input UpdateEmployeeInput @join__type(graph: EMPLOYEES) {
-  birthDate: Date
-  firstName: String
-  lastName: String
-  gender: String
-  hireDate: Date
-}
-
-input CreateSalaryInput @join__type(graph: EMPLOYEES) {
-  empNo: Int!
-  salary: Int!
-  fromDate: Date!
-  toDate: Date!
-}
-
-input CreateTitleInput @join__type(graph: EMPLOYEES) {
-  empNo: Int!
-  title: String!
-  fromDate: Date!
-  toDate: Date
-}
-
-directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
-
+enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
+enum join__Graph {EMPLOYEES @join__graph(name:"Employees" url:"mysql://root:passwd@localhost:<employees_port>/employees")}
+directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA """A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
+scalar Date @join__type(graph:EMPLOYEES)
+scalar TransportOptions @join__type(graph:EMPLOYEES)
+type Query @join__type(graph:EMPLOYEES) {department(id:ID!):Department @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"ROW" where:"\\n  dept_no: $args.id" selection:"  id: dept_no\\n  deptName: dept_name"}) departments(where:DepartmentFilter orderBy:[DepartmentOrderBy!] limit:Int = 10 offset:Int = 0):[Department!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"ROWS" where:"$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  id: dept_no\\n  deptName: dept_name"}) allDepartments(where:DepartmentFilter orderBy:[DepartmentOrderBy!] first:Int after:String):DepartmentConnection! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"CONNECTION" where:"$args.where" orderBy:"$args.orderBy" first:"$args.first" after:"$args.after" selection:"  nodes {\\n    id: dept_no\\n    deptName: dept_name\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: dept_no\\n      deptName: dept_name\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"}) departmentsCount(where:DepartmentFilter):Int! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"COUNT" where:"$args.where" selection:"\\n  $"}) deptEmps(where:DeptEmpFilter orderBy:[DeptEmpOrderBy!] limit:Int = 10 offset:Int = 0):[DeptEmp!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_emp" kind:"ROWS" where:"$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"}) allDeptEmps(where:DeptEmpFilter orderBy:[DeptEmpOrderBy!] first:Int after:String):DeptEmpConnection! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_emp" kind:"CONNECTION" where:"$args.where" orderBy:"$args.orderBy" first:"$args.first" after:"$args.after" selection:"  nodes {\\n    empNo: emp_no\\n    deptNo: dept_no\\n    fromDate: from_date\\n    toDate: to_date\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      empNo: emp_no\\n      deptNo: dept_no\\n      fromDate: from_date\\n      toDate: to_date\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"}) deptEmpsCount(where:DeptEmpFilter):Int! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_emp" kind:"COUNT" where:"$args.where" selection:"\\n  $"}) deptManagers(where:DeptManagerFilter orderBy:[DeptManagerOrderBy!] limit:Int = 10 offset:Int = 0):[DeptManager!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_manager" kind:"ROWS" where:"$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"}) allDeptManagers(where:DeptManagerFilter orderBy:[DeptManagerOrderBy!] first:Int after:String):DeptManagerConnection! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_manager" kind:"CONNECTION" where:"$args.where" orderBy:"$args.orderBy" first:"$args.first" after:"$args.after" selection:"  nodes {\\n    empNo: emp_no\\n    deptNo: dept_no\\n    fromDate: from_date\\n    toDate: to_date\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      empNo: emp_no\\n      deptNo: dept_no\\n      fromDate: from_date\\n      toDate: to_date\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"}) deptManagersCount(where:DeptManagerFilter):Int! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_manager" kind:"COUNT" where:"$args.where" selection:"\\n  $"}) employee(id:ID!):Employee @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"ROW" where:"\\n  emp_no: $args.id" selection:"  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"}) employees(where:EmployeeFilter orderBy:[EmployeeOrderBy!] limit:Int = 10 offset:Int = 0):[Employee!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"ROWS" where:"$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"}) allEmployees(where:EmployeeFilter orderBy:[EmployeeOrderBy!] first:Int after:String):EmployeeConnection! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"CONNECTION" where:"$args.where" orderBy:"$args.orderBy" first:"$args.first" after:"$args.after" selection:"  nodes {\\n    id: emp_no\\n    birthDate: birth_date\\n    firstName: first_name\\n    lastName: last_name\\n    gender: gender\\n    hireDate: hire_date\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      id: emp_no\\n      birthDate: birth_date\\n      firstName: first_name\\n      lastName: last_name\\n      gender: gender\\n      hireDate: hire_date\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"}) employeesCount(where:EmployeeFilter):Int! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"COUNT" where:"$args.where" selection:"\\n  $"}) salaries(where:SalaryFilter orderBy:[SalaryOrderBy!] limit:Int = 10 offset:Int = 0):[Salary!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"salaries" kind:"ROWS" where:"$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  empNo: emp_no\\n  salary: salary\\n  fromDate: from_date\\n  toDate: to_date"}) allSalaries(where:SalaryFilter orderBy:[SalaryOrderBy!] first:Int after:String):SalaryConnection! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"salaries" kind:"CONNECTION" where:"$args.where" orderBy:"$args.orderBy" first:"$args.first" after:"$args.after" selection:"  nodes {\\n    empNo: emp_no\\n    salary: salary\\n    fromDate: from_date\\n    toDate: to_date\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      empNo: emp_no\\n      salary: salary\\n      fromDate: from_date\\n      toDate: to_date\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"}) salariesCount(where:SalaryFilter):Int! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"salaries" kind:"COUNT" where:"$args.where" selection:"\\n  $"}) titles(where:TitleFilter orderBy:[TitleOrderBy!] limit:Int = 10 offset:Int = 0):[Title!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"titles" kind:"ROWS" where:"$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  empNo: emp_no\\n  title: title\\n  fromDate: from_date\\n  toDate: to_date"}) allTitles(where:TitleFilter orderBy:[TitleOrderBy!] first:Int after:String):TitleConnection! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"titles" kind:"CONNECTION" where:"$args.where" orderBy:"$args.orderBy" first:"$args.first" after:"$args.after" selection:"  nodes {\\n    empNo: emp_no\\n    title: title\\n    fromDate: from_date\\n    toDate: to_date\\n  }\\n  edges {\\n    cursor: $cursor\\n    node {\\n      empNo: emp_no\\n      title: title\\n      fromDate: from_date\\n      toDate: to_date\\n    }\\n  }\\n  pageInfo {\\n    hasNextPage: $hasNextPage\\n    hasPreviousPage: $hasPreviousPage\\n    startCursor: $startCursor\\n    endCursor: $endCursor\\n  }\\n  totalCount: $totalCount"}) titlesCount(where:TitleFilter):Int! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"titles" kind:"COUNT" where:"$args.where" selection:"\\n  $"})}
+type Department @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"ROW" where:"dept_no: $this.id" selection:"id: dept_no\\ndeptName: dept_name"}) @join__type(graph:EMPLOYEES key:"id") {id:ID! deptName:String! deptEmps(where:DeptEmpFilter orderBy:[DeptEmpOrderBy!] limit:Int offset:Int):[DeptEmp!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_emp" kind:"ROWS" where:"  dept_no: $this.id\\n  ...$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"}) deptManagers(where:DeptManagerFilter orderBy:[DeptManagerOrderBy!] limit:Int offset:Int):[DeptManager!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_manager" kind:"ROWS" where:"  dept_no: $this.id\\n  ...$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"}) employees(where:EmployeeFilter orderBy:[EmployeeOrderBy!] limit:Int offset:Int):[Employee!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"ROWS" through:"  table: dept_emp\\n  local: dept_no\\n  remote: emp_no\\n  parent: $this.id\\n  target: emp_no" where:"$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"}) employeesByDeptManagerDeptNoAndEmpNo(where:EmployeeFilter orderBy:[EmployeeOrderBy!] limit:Int offset:Int):[Employee!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"ROWS" through:"  table: dept_manager\\n  local: dept_no\\n  remote: emp_no\\n  parent: $this.id\\n  target: emp_no" where:"$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"})}
+type DeptEmp @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_emp" kind:"ROW" where:"emp_no: $this.empNo\\ndept_no: $this.deptNo" selection:"empNo: emp_no\\ndeptNo: dept_no\\nfromDate: from_date\\ntoDate: to_date"}) @join__type(graph:EMPLOYEES key:"empNo deptNo") {empNo:Int! deptNo:String! fromDate:Date! toDate:Date! employee:Employee @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"ROW" where:"\\n  emp_no: $this.empNo" selection:"  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"}) department:Department @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"ROW" where:"\\n  dept_no: $this.deptNo" selection:"  id: dept_no\\n  deptName: dept_name"})}
+type Employee @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"ROW" where:"emp_no: $this.id" selection:"id: emp_no\\nbirthDate: birth_date\\nfirstName: first_name\\nlastName: last_name\\ngender: gender\\nhireDate: hire_date"}) @join__type(graph:EMPLOYEES key:"id") {id:ID! birthDate:Date! firstName:String! lastName:String! gender:String! hireDate:Date! deptEmps(where:DeptEmpFilter orderBy:[DeptEmpOrderBy!] limit:Int offset:Int):[DeptEmp!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_emp" kind:"ROWS" where:"  emp_no: $this.id\\n  ...$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"}) deptManagers(where:DeptManagerFilter orderBy:[DeptManagerOrderBy!] limit:Int offset:Int):[DeptManager!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_manager" kind:"ROWS" where:"  emp_no: $this.id\\n  ...$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  empNo: emp_no\\n  deptNo: dept_no\\n  fromDate: from_date\\n  toDate: to_date"}) salaries(where:SalaryFilter orderBy:[SalaryOrderBy!] limit:Int offset:Int):[Salary!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"salaries" kind:"ROWS" where:"  emp_no: $this.id\\n  ...$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  empNo: emp_no\\n  salary: salary\\n  fromDate: from_date\\n  toDate: to_date"}) titles(where:TitleFilter orderBy:[TitleOrderBy!] limit:Int offset:Int):[Title!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"titles" kind:"ROWS" where:"  emp_no: $this.id\\n  ...$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  empNo: emp_no\\n  title: title\\n  fromDate: from_date\\n  toDate: to_date"}) departments(where:DepartmentFilter orderBy:[DepartmentOrderBy!] limit:Int offset:Int):[Department!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"ROWS" through:"  table: dept_emp\\n  local: emp_no\\n  remote: dept_no\\n  parent: $this.id\\n  target: dept_no" where:"$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  id: dept_no\\n  deptName: dept_name"}) departmentsByDeptManagerEmpNoAndDeptNo(where:DepartmentFilter orderBy:[DepartmentOrderBy!] limit:Int offset:Int):[Department!]! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"ROWS" through:"  table: dept_manager\\n  local: emp_no\\n  remote: dept_no\\n  parent: $this.id\\n  target: dept_no" where:"$args.where" orderBy:"$args.orderBy" limit:"$args.limit" offset:"$args.offset" selection:"  id: dept_no\\n  deptName: dept_name"})}
+type DeptManager @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_manager" kind:"ROW" where:"emp_no: $this.empNo\\ndept_no: $this.deptNo" selection:"empNo: emp_no\\ndeptNo: dept_no\\nfromDate: from_date\\ntoDate: to_date"}) @join__type(graph:EMPLOYEES key:"empNo deptNo") {empNo:Int! deptNo:String! fromDate:Date! toDate:Date! employee:Employee @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"ROW" where:"\\n  emp_no: $this.empNo" selection:"  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"}) department:Department @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"ROW" where:"\\n  dept_no: $this.deptNo" selection:"  id: dept_no\\n  deptName: dept_name"})}
+type Salary @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"salaries" kind:"ROW" where:"emp_no: $this.empNo\\nfrom_date: $this.fromDate" selection:"empNo: emp_no\\nsalary: salary\\nfromDate: from_date\\ntoDate: to_date"}) @join__type(graph:EMPLOYEES key:"empNo fromDate") {empNo:Int! fromDate:Date! salary:Int! toDate:Date! employee:Employee @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"ROW" where:"\\n  emp_no: $this.empNo" selection:"  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"})}
+type Title @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"titles" kind:"ROW" where:"emp_no: $this.empNo\\ntitle: $this.title\\nfrom_date: $this.fromDate" selection:"empNo: emp_no\\ntitle: title\\nfromDate: from_date\\ntoDate: to_date"}) @join__type(graph:EMPLOYEES key:"empNo title fromDate") {empNo:Int! title:String! fromDate:Date! toDate:Date employee:Employee @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"ROW" where:"\\n  emp_no: $this.empNo" selection:"  id: emp_no\\n  birthDate: birth_date\\n  firstName: first_name\\n  lastName: last_name\\n  gender: gender\\n  hireDate: hire_date"})}
+type DepartmentConnection @join__type(graph:EMPLOYEES) {edges:[DepartmentEdge!]! pageInfo:PageInfo! nodes:[Department!]! totalCount:Int!}
+type DepartmentEdge @join__type(graph:EMPLOYEES) {cursor:String! node:Department!}
+type PageInfo @join__type(graph:EMPLOYEES) {hasNextPage:Boolean! hasPreviousPage:Boolean! startCursor:String endCursor:String}
+type DeptEmpConnection @join__type(graph:EMPLOYEES) {edges:[DeptEmpEdge!]! pageInfo:PageInfo! nodes:[DeptEmp!]! totalCount:Int!}
+type DeptEmpEdge @join__type(graph:EMPLOYEES) {cursor:String! node:DeptEmp!}
+type DeptManagerConnection @join__type(graph:EMPLOYEES) {edges:[DeptManagerEdge!]! pageInfo:PageInfo! nodes:[DeptManager!]! totalCount:Int!}
+type DeptManagerEdge @join__type(graph:EMPLOYEES) {cursor:String! node:DeptManager!}
+type EmployeeConnection @join__type(graph:EMPLOYEES) {edges:[EmployeeEdge!]! pageInfo:PageInfo! nodes:[Employee!]! totalCount:Int!}
+type EmployeeEdge @join__type(graph:EMPLOYEES) {cursor:String! node:Employee!}
+type SalaryConnection @join__type(graph:EMPLOYEES) {edges:[SalaryEdge!]! pageInfo:PageInfo! nodes:[Salary!]! totalCount:Int!}
+type SalaryEdge @join__type(graph:EMPLOYEES) {cursor:String! node:Salary!}
+type TitleConnection @join__type(graph:EMPLOYEES) {edges:[TitleEdge!]! pageInfo:PageInfo! nodes:[Title!]! totalCount:Int!}
+type TitleEdge @join__type(graph:EMPLOYEES) {cursor:String! node:Title!}
+type Mutation @join__type(graph:EMPLOYEES) {createDepartment(input:CreateDepartmentInput!):DepartmentPayload! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"INSERT" set:"  dept_no: $args.input.id\\n  dept_name: $args.input.deptName" selection:"  department {\\n    id: dept_no\\n    deptName: dept_name\\n  }"}) updateDepartment(id:ID!
+input:UpdateDepartmentInput!):DepartmentPayload! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"UPDATE" set:"\\n  dept_name: $args.input.deptName" where:"\\n  dept_no: $args.id" selection:"  department {\\n    id: dept_no\\n    deptName: dept_name\\n  }"}) deleteDepartment(id:ID!):DeleteDepartmentPayload! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"departments" kind:"DELETE" where:"\\n  dept_no: $args.id" selection:"  ok: $affectedRows\\n  affectedRows: $affectedRows"}) createDeptEmp(input:CreateDeptEmpInput!):DeptEmpPayload! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_emp" kind:"INSERT" set:"  emp_no: $args.input.empNo\\n  dept_no: $args.input.deptNo\\n  from_date: $args.input.fromDate\\n  to_date: $args.input.toDate" selection:"  deptEmp {\\n    empNo: emp_no\\n    deptNo: dept_no\\n    fromDate: from_date\\n    toDate: to_date\\n  }"}) createDeptManager(input:CreateDeptManagerInput!):DeptManagerPayload! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"dept_manager" kind:"INSERT" set:"  emp_no: $args.input.empNo\\n  dept_no: $args.input.deptNo\\n  from_date: $args.input.fromDate\\n  to_date: $args.input.toDate" selection:"  deptManager {\\n    empNo: emp_no\\n    deptNo: dept_no\\n    fromDate: from_date\\n    toDate: to_date\\n  }"}) createEmployee(input:CreateEmployeeInput!):EmployeePayload! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"INSERT" set:"  emp_no: $args.input.id\\n  birth_date: $args.input.birthDate\\n  first_name: $args.input.firstName\\n  last_name: $args.input.lastName\\n  gender: $args.input.gender\\n  hire_date: $args.input.hireDate" selection:"  employee {\\n    id: emp_no\\n    birthDate: birth_date\\n    firstName: first_name\\n    lastName: last_name\\n    gender: gender\\n    hireDate: hire_date\\n  }"}) updateEmployee(id:ID!
+input:UpdateEmployeeInput!):EmployeePayload! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"UPDATE" set:"  birth_date: $args.input.birthDate\\n  first_name: $args.input.firstName\\n  last_name: $args.input.lastName\\n  gender: $args.input.gender\\n  hire_date: $args.input.hireDate" where:"\\n  emp_no: $args.id" selection:"  employee {\\n    id: emp_no\\n    birthDate: birth_date\\n    firstName: first_name\\n    lastName: last_name\\n    gender: gender\\n    hireDate: hire_date\\n  }"}) deleteEmployee(id:ID!):DeleteEmployeePayload! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"employees" kind:"DELETE" where:"\\n  emp_no: $args.id" selection:"  ok: $affectedRows\\n  affectedRows: $affectedRows"}) createSalary(input:CreateSalaryInput!):SalaryPayload! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"salaries" kind:"INSERT" set:"  emp_no: $args.input.empNo\\n  salary: $args.input.salary\\n  from_date: $args.input.fromDate\\n  to_date: $args.input.toDate" selection:"  salary {\\n    empNo: emp_no\\n    salary: salary\\n    fromDate: from_date\\n    toDate: to_date\\n  }"}) createTitle(input:CreateTitleInput!):TitlePayload! @join__directive(graphs:[EMPLOYEES] name:"sql" args:{table:"titles" kind:"INSERT" set:"  emp_no: $args.input.empNo\\n  title: $args.input.title\\n  from_date: $args.input.fromDate\\n  to_date: $args.input.toDate" selection:"  title {\\n    empNo: emp_no\\n    title: title\\n    fromDate: from_date\\n    toDate: to_date\\n  }"})}
+type DepartmentPayload @join__type(graph:EMPLOYEES) {department:Department}
+type DeleteDepartmentPayload @join__type(graph:EMPLOYEES) {ok:Boolean! affectedRows:Int!}
+type DeptEmpPayload @join__type(graph:EMPLOYEES) {deptEmp:DeptEmp}
+type DeptManagerPayload @join__type(graph:EMPLOYEES) {deptManager:DeptManager}
+type EmployeePayload @join__type(graph:EMPLOYEES) {employee:Employee}
+type DeleteEmployeePayload @join__type(graph:EMPLOYEES) {ok:Boolean! affectedRows:Int!}
+type SalaryPayload @join__type(graph:EMPLOYEES) {salary:Salary}
+type TitlePayload @join__type(graph:EMPLOYEES) {title:Title}
+enum DepartmentOrderBy @join__type(graph:EMPLOYEES) {ID_ASC @join__enumValue(graph:EMPLOYEES) ID_DESC @join__enumValue(graph:EMPLOYEES) DEPT_NAME_ASC @join__enumValue(graph:EMPLOYEES) DEPT_NAME_DESC @join__enumValue(graph:EMPLOYEES)}
+enum DeptEmpOrderBy @join__type(graph:EMPLOYEES) {EMP_NO_ASC @join__enumValue(graph:EMPLOYEES) EMP_NO_DESC @join__enumValue(graph:EMPLOYEES) DEPT_NO_ASC @join__enumValue(graph:EMPLOYEES) DEPT_NO_DESC @join__enumValue(graph:EMPLOYEES) FROM_DATE_ASC @join__enumValue(graph:EMPLOYEES) FROM_DATE_DESC @join__enumValue(graph:EMPLOYEES) TO_DATE_ASC @join__enumValue(graph:EMPLOYEES) TO_DATE_DESC @join__enumValue(graph:EMPLOYEES)}
+enum DeptManagerOrderBy @join__type(graph:EMPLOYEES) {EMP_NO_ASC @join__enumValue(graph:EMPLOYEES) EMP_NO_DESC @join__enumValue(graph:EMPLOYEES) DEPT_NO_ASC @join__enumValue(graph:EMPLOYEES) DEPT_NO_DESC @join__enumValue(graph:EMPLOYEES) FROM_DATE_ASC @join__enumValue(graph:EMPLOYEES) FROM_DATE_DESC @join__enumValue(graph:EMPLOYEES) TO_DATE_ASC @join__enumValue(graph:EMPLOYEES) TO_DATE_DESC @join__enumValue(graph:EMPLOYEES)}
+enum EmployeeOrderBy @join__type(graph:EMPLOYEES) {ID_ASC @join__enumValue(graph:EMPLOYEES) ID_DESC @join__enumValue(graph:EMPLOYEES) BIRTH_DATE_ASC @join__enumValue(graph:EMPLOYEES) BIRTH_DATE_DESC @join__enumValue(graph:EMPLOYEES) FIRST_NAME_ASC @join__enumValue(graph:EMPLOYEES) FIRST_NAME_DESC @join__enumValue(graph:EMPLOYEES) LAST_NAME_ASC @join__enumValue(graph:EMPLOYEES) LAST_NAME_DESC @join__enumValue(graph:EMPLOYEES) GENDER_ASC @join__enumValue(graph:EMPLOYEES) GENDER_DESC @join__enumValue(graph:EMPLOYEES) HIRE_DATE_ASC @join__enumValue(graph:EMPLOYEES) HIRE_DATE_DESC @join__enumValue(graph:EMPLOYEES)}
+enum SalaryOrderBy @join__type(graph:EMPLOYEES) {EMP_NO_ASC @join__enumValue(graph:EMPLOYEES) EMP_NO_DESC @join__enumValue(graph:EMPLOYEES) SALARY_ASC @join__enumValue(graph:EMPLOYEES) SALARY_DESC @join__enumValue(graph:EMPLOYEES) FROM_DATE_ASC @join__enumValue(graph:EMPLOYEES) FROM_DATE_DESC @join__enumValue(graph:EMPLOYEES) TO_DATE_ASC @join__enumValue(graph:EMPLOYEES) TO_DATE_DESC @join__enumValue(graph:EMPLOYEES)}
+enum TitleOrderBy @join__type(graph:EMPLOYEES) {EMP_NO_ASC @join__enumValue(graph:EMPLOYEES) EMP_NO_DESC @join__enumValue(graph:EMPLOYEES) TITLE_ASC @join__enumValue(graph:EMPLOYEES) TITLE_DESC @join__enumValue(graph:EMPLOYEES) FROM_DATE_ASC @join__enumValue(graph:EMPLOYEES) FROM_DATE_DESC @join__enumValue(graph:EMPLOYEES) TO_DATE_ASC @join__enumValue(graph:EMPLOYEES) TO_DATE_DESC @join__enumValue(graph:EMPLOYEES)}
+input DeptEmpFilter @join__type(graph:EMPLOYEES) {and:[DeptEmpFilter!] or:[DeptEmpFilter!] not:DeptEmpFilter empNo:IntFilter deptNo:StringFilter fromDate:StringFilter toDate:StringFilter employee:EmployeeFilter department:DepartmentFilter}
+input IntFilter @join__type(graph:EMPLOYEES) {eq:Int ne:Int in:[Int!] nin:[Int!] lt:Int lte:Int gt:Int gte:Int isNull:Boolean}
+input StringFilter @join__type(graph:EMPLOYEES) {eq:String ne:String in:[String!] nin:[String!] lt:String lte:String gt:String gte:String includes:String startsWith:String endsWith:String like:String ilike:String isNull:Boolean}
+input EmployeeFilter @join__type(graph:EMPLOYEES) {and:[EmployeeFilter!] or:[EmployeeFilter!] not:EmployeeFilter id:StringFilter birthDate:StringFilter firstName:StringFilter lastName:StringFilter gender:StringFilter hireDate:StringFilter departments:DepartmentFilter departmentsByDeptManagerEmpNoAndDeptNo:DepartmentFilter}
+input DepartmentFilter @join__type(graph:EMPLOYEES) {and:[DepartmentFilter!] or:[DepartmentFilter!] not:DepartmentFilter id:StringFilter deptName:StringFilter employees:EmployeeFilter employeesByDeptManagerDeptNoAndEmpNo:EmployeeFilter}
+input DeptManagerFilter @join__type(graph:EMPLOYEES) {and:[DeptManagerFilter!] or:[DeptManagerFilter!] not:DeptManagerFilter empNo:IntFilter deptNo:StringFilter fromDate:StringFilter toDate:StringFilter employee:EmployeeFilter department:DepartmentFilter}
+input SalaryFilter @join__type(graph:EMPLOYEES) {and:[SalaryFilter!] or:[SalaryFilter!] not:SalaryFilter empNo:IntFilter salary:IntFilter fromDate:StringFilter toDate:StringFilter employee:EmployeeFilter}
+input TitleFilter @join__type(graph:EMPLOYEES) {and:[TitleFilter!] or:[TitleFilter!] not:TitleFilter empNo:IntFilter title:StringFilter fromDate:StringFilter toDate:StringFilter employee:EmployeeFilter}
+input CreateDepartmentInput @join__type(graph:EMPLOYEES) {id:ID! deptName:String!}
+input UpdateDepartmentInput @join__type(graph:EMPLOYEES) {deptName:String}
+input CreateDeptEmpInput @join__type(graph:EMPLOYEES) {empNo:Int! deptNo:String! fromDate:Date! toDate:Date!}
+input CreateDeptManagerInput @join__type(graph:EMPLOYEES) {empNo:Int! deptNo:String! fromDate:Date! toDate:Date!}
+input CreateEmployeeInput @join__type(graph:EMPLOYEES) {id:ID! birthDate:Date! firstName:String! lastName:String! gender:String! hireDate:Date!}
+input UpdateEmployeeInput @join__type(graph:EMPLOYEES) {birthDate:Date firstName:String lastName:String gender:String hireDate:Date}
+input CreateSalaryInput @join__type(graph:EMPLOYEES) {empNo:Int! salary:Int! fromDate:Date! toDate:Date!}
+input CreateTitleInput @join__type(graph:EMPLOYEES) {empNo:Int! title:String! fromDate:Date! toDate:Date}
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 scalar join__DirectiveArguments
-"
+
 `;
 
 exports[`should execute GetSomeEmployees 1`] = `

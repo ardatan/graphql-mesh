@@ -343,12 +343,15 @@ export function createTenv(cwd: string): Tenv {
         leftoverStack.defer(() => fs.rm(tempDir, { recursive: true }));
         output = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.output}`);
       }
+      // Use the built ESM bin — not `tsx` on source. Under Node 22+, `tsx`
+      // dual-evaluates `graphql` (CJS require vs ESM import of the same
+      // index.mjs), which breaks graphql-compose `instanceof` checks and
+      // GraphQL 17 schema rebuilds (`multiple types named "__Schema"`).
+      // CI already `yarn build`s before e2e; local e2e needs a build too.
       const [proc, waitForExit] = await spawn(
         { cwd, pipeLogs, env },
         'node',
-        '--import',
-        'tsx',
-        path.resolve(__project, 'packages', 'compose-cli', 'src', 'bin.ts'),
+        path.resolve(__project, 'packages', 'compose-cli', 'dist', 'esm', 'bin.js'),
         output && createOpt('output', output),
         ...services.map(({ name, port }) => createServicePortOpt(name, port)),
         ...(subgraph ? ['--subgraph', subgraph] : []),

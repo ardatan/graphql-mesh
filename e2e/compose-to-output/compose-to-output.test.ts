@@ -1,4 +1,5 @@
 import { createTenv } from '@e2e/tenv';
+import { normalizeDocumentAst } from '../../packages/testing/normalizeDocumentAst.cjs';
 
 const { compose, fs } = createTenv(__dirname);
 
@@ -9,7 +10,7 @@ it('should write compose output to supergraph.graphql', async () => {
 
 it('should write compose output to supergraph.json', async () => {
   const { output } = await compose({ output: 'json' });
-  await expect(fs.read(output)).resolves.toMatchSnapshot();
+  await expect(fs.read(output).then(normalizeDocumentAst)).resolves.toMatchSnapshot();
 });
 
 it('should write compose output to supergraph.js', async () => {

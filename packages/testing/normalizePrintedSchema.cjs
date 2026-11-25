@@ -8,6 +8,9 @@
  * insignificant whitespace. Inside block strings, only whitespace is
  * collapsed (commas stay — JSON / selection payloads may need them).
  *
+ * Hot path: openapi `schemas.test.ts` prints multi-MB SDLs. Use charCodeAt +
+ * chunk pushes (not per-char `+=`) so serialization stays under CI budgets.
+ *
  * @param {string} sdl
  * @returns {string}
  */
@@ -16,32 +19,43 @@ function normalizePrintedSchema(sdl) {
     return sdl;
   }
 
-  let out = '';
-  let i = 0;
   const n = sdl.length;
+  /** @type {string[]} */
+  const parts = [];
+  let i = 0;
 
-  const collapseWs = (text, { stripCommas }) => {
-    let local = '';
-    let k = 0;
+  const isWs = c => c === 32 || c === 9 || c === 10 || c === 13 || c === 11 || c === 12;
+
+  const collapseWs = (text, stripCommas) => {
     const m = text.length;
+    /** @type {string[]} */
+    const local = [];
+    let k = 0;
+    let last = '';
     while (k < m) {
-      if (/\s/.test(text[k])) {
+      const code = text.charCodeAt(k);
+      if (isWs(code)) {
         let j = k + 1;
-        while (j < m && /\s/.test(text[j])) j += 1;
-        const prev = local.length ? local[local.length - 1] : '';
+        while (j < m && isWs(text.charCodeAt(j))) j += 1;
         const next = j < m ? text[j] : '';
-        // Keep a space before `@directive` (next==='@'); drop space after `@`.
-        // Inside block strings (stripCommas=false) keep spaces around commas —
-        // description prose like `letters, numerals` must stay readable/stable.
         const skipAround =
-          !prev ||
+          !last ||
           !next ||
-          '{([@'.includes(prev) ||
-          (stripCommas ? '})],'.includes(next) : '})]'.includes(next)) ||
-          prev === ':' ||
+          last === '{' ||
+          last === '(' ||
+          last === '[' ||
+          last === '@' ||
+          next === '}' ||
+          next === ')' ||
+          next === ']' ||
+          (stripCommas && next === ',') ||
+          last === ':' ||
           next === ':' ||
-          (stripCommas && (prev === ',' || next === ','));
-        if (!skipAround) local += ' ';
+          (stripCommas && (last === ',' || next === ','));
+        if (!skipAround) {
+          local.push(' ');
+          last = ' ';
+        }
         k = j;
         continue;
       }
@@ -49,67 +63,86 @@ function normalizePrintedSchema(sdl) {
         k += 1;
         continue;
       }
-      local += text[k];
+      local.push(text[k]);
+      last = text[k];
       k += 1;
     }
-    return local;
+    return local.join('');
   };
 
+  let lastOut = '';
+
   while (i < n) {
-    // Block string """...""" — normalize interior whitespace only.
-    // graphql-js 17 prints empty descriptions as """"""; v16 omits them.
-    if (sdl.startsWith('"""', i)) {
+    // Block string """..."""
+    if (sdl.charCodeAt(i) === 34 && sdl.charCodeAt(i + 1) === 34 && sdl.charCodeAt(i + 2) === 34) {
       let j = i + 3;
-      while (j + 2 < n && !sdl.startsWith('"""', j)) {
+      while (j + 2 < n) {
+        if (
+          sdl.charCodeAt(j) === 34 &&
+          sdl.charCodeAt(j + 1) === 34 &&
+          sdl.charCodeAt(j + 2) === 34
+        ) {
+          break;
+        }
         j += 1;
       }
-      const inner = collapseWs(sdl.slice(i + 3, j), { stripCommas: false }).trim();
+      const inner = collapseWs(sdl.slice(i + 3, j), false).trim();
       const end = Math.min(j + 3, n);
       if (inner.length > 0) {
-        out += '"""' + inner + '"""';
+        const chunk = '"""' + inner + '"""';
+        parts.push(chunk);
+        lastOut = '"';
       }
       i = end;
       continue;
     }
 
-    // Regular string "..." — keep verbatim (URLs, enum wire names, etc.).
-    if (sdl[i] === '"') {
+    // Regular string "..."
+    if (sdl.charCodeAt(i) === 34) {
       let j = i + 1;
       while (j < n) {
-        if (sdl[j] === '\\' && j + 1 < n) {
+        const c = sdl.charCodeAt(j);
+        if (c === 92 && j + 1 < n) {
           j += 2;
           continue;
         }
-        if (sdl[j] === '"') {
+        if (c === 34) {
           j += 1;
           break;
         }
         j += 1;
       }
-      out += sdl.slice(i, j);
+      parts.push(sdl.slice(i, j));
+      lastOut = '"';
       i = j;
       continue;
     }
 
-    if (/\s/.test(sdl[i])) {
+    const code = sdl.charCodeAt(i);
+    if (isWs(code)) {
       let j = i + 1;
-      while (j < n && /\s/.test(sdl[j])) j += 1;
-      const prev = out.length ? out[out.length - 1] : '';
+      while (j < n && isWs(sdl.charCodeAt(j))) j += 1;
       const next = j < n ? sdl[j] : '';
-      // Keep a space before `@directive` (next==='@'); drop space after `@`.
-      // Also skip when `prev` is already a space — empty `""""""` removals
-      // would otherwise leave `PRIVATE  PUBLIC`.
       const skipAround =
-        !prev ||
+        !lastOut ||
         !next ||
-        prev === ' ' ||
-        '{([@'.includes(prev) ||
-        '})],'.includes(next) ||
-        prev === ':' ||
+        lastOut === ' ' ||
+        lastOut === '{' ||
+        lastOut === '(' ||
+        lastOut === '[' ||
+        lastOut === '@' ||
+        next === '}' ||
+        next === ')' ||
+        next === ']' ||
+        next === ',' ||
+        lastOut === ':' ||
         next === ':' ||
-        prev === ',' ||
+        lastOut === ',' ||
         next === ',';
-      if (!skipAround) out += ' ';
+      if (!skipAround) {
+        parts.push(' ');
+        lastOut = ' ';
+      }
       i = j;
       continue;
     }
@@ -119,13 +152,20 @@ function normalizePrintedSchema(sdl) {
       continue;
     }
 
-    out += sdl[i];
-    i += 1;
+    // Push a run of non-special chars for throughput.
+    let j = i + 1;
+    while (j < n) {
+      const c = sdl.charCodeAt(j);
+      if (c === 34 || c === 44 || isWs(c)) break;
+      j += 1;
+    }
+    const run = sdl.slice(i, j);
+    parts.push(run);
+    lastOut = run[run.length - 1];
+    i = j;
   }
 
-  // Re-insert readable newlines before top-level definitions so inline
-  // snapshots stay reviewable while remaining version-stable.
-  let pretty = out.trim();
+  let pretty = parts.join('').trim();
   pretty = pretty.replace(
     /\}(?=(?:schema|type|interface|union|enum|input|scalar|extend|directive)\b)/g,
     '}\n',

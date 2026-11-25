@@ -1,81 +1,35 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@merge", "@resolveTo", {name: "@source", as: "@meshSource"}]) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @join__directive(graphs: [SUBGRAPH_B], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [SUBGRAPH_B], name: "source", args: {name: "subgraph-b", http: {baseURL: "http://localhost:<subgraph-b_port>", headers: [{name: "x-custom-header", value: "{$args.xCustomHeader}"}]}}) {
-  query: Query
-}
-
-directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
-
-directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
-
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.apollo.dev/inaccessible/v0.2" for:SECURITY) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@merge" "@resolveTo" {name:"@source" as:"@meshSource"}]) @link(url:"https://specs.apollo.dev/connect/v0.4" for:EXECUTION) @join__directive(graphs:[SUBGRAPH_B] name:"link" args:{url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]}) @join__directive(graphs:[SUBGRAPH_B] name:"source" args:{name:"subgraph-b" http:{baseURL:"http://localhost:<subgraph-b_port>" headers:[{name:"x-custom-header" value:"{$args.xCustomHeader}"}]}}) {query:Query}
+directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
+directive @join__graph(name:String! url:String!) on ENUM_VALUE
+directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
+type:String external:Boolean override:String usedOverridden:Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__implements(graph:join__Graph!
+interface:String!) repeatable on OBJECT | INTERFACE
+directive @join__type(graph:join__Graph! key:join__FieldSet extension:Boolean! = false resolvable:Boolean! = true isInterfaceObject:Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__unionMember(graph:join__Graph! member:String!) repeatable on UNION
 scalar join__FieldSet
-
-directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
-
+directive @link(url:String as:String for:link__Purpose import:[link__Import]) repeatable on SCHEMA
 scalar link__Import
-
-enum link__Purpose {
-  """
-  \`SECURITY\` features provide metadata necessary to securely resolve fields.
-  """
-  SECURITY
-  """
-  \`EXECUTION\` features provide metadata necessary for operation execution.
-  """
-  EXECUTION
-}
-
+enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ENUM | ENUM_VALUE | SCALAR | INPUT_OBJECT | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
-
-enum join__Graph {
-  SUBGRAPH_A @join__graph(name: "subgraph-a", url: "http://localhost:<subgraph-a_port>/graphql")
-  SUBGRAPH_B @join__graph(name: "subgraph-b", url: "http://localhost:<subgraph-b_port>")
-}
-
-directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
-
-scalar ResolveToSourceArgs @join__type(graph: SUBGRAPH_A)
-
-type Query @join__type(graph: SUBGRAPH_A) @join__type(graph: SUBGRAPH_B) {
-  _encapsulated_SubgraphA_foo(id: ID!): SubgraphAFoo @join__directive(graphs: [SUBGRAPH_A], name: "meshSource", args: {name: "foo", type: "Foo", subgraph: "subgraph-a"}) @join__directive(graphs: [SUBGRAPH_A], name: "merge", args: {keyField: "id", argsExpr: "id: $key.id"}) @join__field(graph: SUBGRAPH_A) @inaccessible
-  _encapsulated_SubgraphA_echoString(argument: String): String @join__directive(graphs: [SUBGRAPH_A], name: "meshSource", args: {name: "echoString", type: "String", subgraph: "subgraph-a"}) @join__field(graph: SUBGRAPH_A) @inaccessible
-  _encapsulated_SubgraphA_echoInt(argument: Int): Int @join__directive(graphs: [SUBGRAPH_A], name: "meshSource", args: {name: "echoInt", type: "Int", subgraph: "subgraph-a"}) @join__field(graph: SUBGRAPH_A) @inaccessible
-  _encapsulated_SubgraphA_echoBoolean(argument: Boolean): Boolean @join__directive(graphs: [SUBGRAPH_A], name: "meshSource", args: {name: "echoBoolean", type: "Boolean", subgraph: "subgraph-a"}) @join__field(graph: SUBGRAPH_A) @inaccessible
-  SubgraphA: SubgraphASubgraphAQuery! @resolveTo(sourceName: "subgraph-a", sourceTypeName: "Query", sourceFieldName: "__typename") @join__field(graph: SUBGRAPH_A)
-  SubgraphB: SubgraphBSubgraphBQuery! @join__field(graph: SUBGRAPH_B) @join__directive(graphs: [SUBGRAPH_B], name: "connect", args: {source: "subgraph-b", selection: "$({})"})
-}
-
-type SubgraphAFoo @join__directive(graphs: [SUBGRAPH_A], name: "meshSource", args: {name: "Foo", subgraph: "subgraph-a"}) @join__type(graph: SUBGRAPH_A, key: "id") {
-  id: ID!
-  name: String
-}
-
-type SubgraphASubgraphAQuery @join__type(graph: SUBGRAPH_A) {
-  foo(id: ID!): SubgraphAFoo @join__directive(graphs: [SUBGRAPH_A], name: "meshSource", args: {name: "foo", type: "Foo", subgraph: "subgraph-a"}) @join__directive(graphs: [SUBGRAPH_B], name: "meshSource", args: {name: "foo", type: "Foo", subgraph: "subgraph-a"}) @join__directive(graphs: [SUBGRAPH_A], name: "merge", args: {keyField: "id", argsExpr: "id: $key.id"}) @resolveTo(sourceName: "subgraph-a", sourceTypeName: "Query", sourceFieldName: "_encapsulated_SubgraphA_foo", sourceArgs: {id: "{args.id}"})
-  echoString(argument: String): String @resolveTo(sourceName: "subgraph-a", sourceTypeName: "Query", sourceFieldName: "_encapsulated_SubgraphA_echoString", sourceArgs: {argument: "{args.argument}"})
-  echoInt(argument: Int): Int @resolveTo(sourceName: "subgraph-a", sourceTypeName: "Query", sourceFieldName: "_encapsulated_SubgraphA_echoInt", sourceArgs: {argument: "{args.argument}"})
-  echoBoolean(argument: Boolean): Boolean @resolveTo(sourceName: "subgraph-a", sourceTypeName: "Query", sourceFieldName: "_encapsulated_SubgraphA_echoBoolean", sourceArgs: {argument: "{args.argument}"})
-}
-
-type SubgraphBSubgraphBQuery @join__type(graph: SUBGRAPH_B) {
-  headers(xCustomHeader: String): SubgraphBheaders_200_response @join__directive(graphs: [SUBGRAPH_B], name: "connect", args: {source: "subgraph-b", http: {GET: "/headers"}, selection: "x_custom_header: $->get(\\"x-custom-header\\")"})
-}
-
-type SubgraphBheaders_200_response @join__type(graph: SUBGRAPH_B) {
-  x_custom_header: String
-}
-
-directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
-
+enum join__Graph {SUBGRAPH_A @join__graph(name:"subgraph-a" url:"http://localhost:<subgraph-a_port>/graphql") SUBGRAPH_B @join__graph(name:"subgraph-b" url:"http://localhost:<subgraph-b_port>")}
+directive @resolveTo(additionalArgs:ResolveToSourceArgs filterBy:String keyField:String keysArg:String pubsubTopic:String requiredSelectionSet:String result:String resultType:String sourceArgs:ResolveToSourceArgs sourceFieldName:String sourceName:String sourceSelectionSet:String sourceTypeName:String valueKeyField:String) on FIELD_DEFINITION
+scalar ResolveToSourceArgs @join__type(graph:SUBGRAPH_A)
+type Query @join__type(graph:SUBGRAPH_A) @join__type(graph:SUBGRAPH_B) {_encapsulated_SubgraphA_foo(id:ID!):SubgraphAFoo @join__directive(graphs:[SUBGRAPH_A] name:"meshSource" args:{name:"foo"
+type:"Foo" subgraph:"subgraph-a"}) @join__directive(graphs:[SUBGRAPH_A] name:"merge" args:{keyField:"id" argsExpr:"id: $key.id"}) @join__field(graph:SUBGRAPH_A) @inaccessible _encapsulated_SubgraphA_echoString(argument:String):String @join__directive(graphs:[SUBGRAPH_A] name:"meshSource" args:{name:"echoString"
+type:"String" subgraph:"subgraph-a"}) @join__field(graph:SUBGRAPH_A) @inaccessible _encapsulated_SubgraphA_echoInt(argument:Int):Int @join__directive(graphs:[SUBGRAPH_A] name:"meshSource" args:{name:"echoInt"
+type:"Int" subgraph:"subgraph-a"}) @join__field(graph:SUBGRAPH_A) @inaccessible _encapsulated_SubgraphA_echoBoolean(argument:Boolean):Boolean @join__directive(graphs:[SUBGRAPH_A] name:"meshSource" args:{name:"echoBoolean"
+type:"Boolean" subgraph:"subgraph-a"}) @join__field(graph:SUBGRAPH_A) @inaccessible SubgraphA:SubgraphASubgraphAQuery! @resolveTo(sourceName:"subgraph-a" sourceTypeName:"Query" sourceFieldName:"__typename") @join__field(graph:SUBGRAPH_A) SubgraphB:SubgraphBSubgraphBQuery! @join__field(graph:SUBGRAPH_B) @join__directive(graphs:[SUBGRAPH_B] name:"connect" args:{source:"subgraph-b" selection:"$({})"})}
+type SubgraphAFoo @join__directive(graphs:[SUBGRAPH_A] name:"meshSource" args:{name:"Foo" subgraph:"subgraph-a"}) @join__type(graph:SUBGRAPH_A key:"id") {id:ID! name:String}
+type SubgraphASubgraphAQuery @join__type(graph:SUBGRAPH_A) {foo(id:ID!):SubgraphAFoo @join__directive(graphs:[SUBGRAPH_A] name:"meshSource" args:{name:"foo"
+type:"Foo" subgraph:"subgraph-a"}) @join__directive(graphs:[SUBGRAPH_B] name:"meshSource" args:{name:"foo"
+type:"Foo" subgraph:"subgraph-a"}) @join__directive(graphs:[SUBGRAPH_A] name:"merge" args:{keyField:"id" argsExpr:"id: $key.id"}) @resolveTo(sourceName:"subgraph-a" sourceTypeName:"Query" sourceFieldName:"_encapsulated_SubgraphA_foo" sourceArgs:{id:"{args.id}"}) echoString(argument:String):String @resolveTo(sourceName:"subgraph-a" sourceTypeName:"Query" sourceFieldName:"_encapsulated_SubgraphA_echoString" sourceArgs:{argument:"{args.argument}"}) echoInt(argument:Int):Int @resolveTo(sourceName:"subgraph-a" sourceTypeName:"Query" sourceFieldName:"_encapsulated_SubgraphA_echoInt" sourceArgs:{argument:"{args.argument}"}) echoBoolean(argument:Boolean):Boolean @resolveTo(sourceName:"subgraph-a" sourceTypeName:"Query" sourceFieldName:"_encapsulated_SubgraphA_echoBoolean" sourceArgs:{argument:"{args.argument}"})}
+type SubgraphBSubgraphBQuery @join__type(graph:SUBGRAPH_B) {headers(xCustomHeader:String):SubgraphBheaders_200_response @join__directive(graphs:[SUBGRAPH_B] name:"connect" args:{source:"subgraph-b" http:{GET:"/headers"} selection:"x_custom_header: $->get(\\"x-custom-header\\")"})}
+type SubgraphBheaders_200_response @join__type(graph:SUBGRAPH_B) {x_custom_header:String}
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 scalar join__DirectiveArguments
-"
+
 `;
