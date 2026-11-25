@@ -48,9 +48,9 @@ when naming one element; keep selectors such as `Query.*` when you need wildcard
 [Schema Coordinates RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md).
 
 <Callout type="info">
-  Spec keys (`Stock`, `Query.rocketCoordinates`) are exact Schema Coordinates. Mesh selectors such as
-  `Query.*` are not Spec coordinates; Mesh still applies them by matching selected fields. More
-  specific Spec keys win when both match (lowest TTL).
+  Use Spec Schema Coordinates (`Stock`, `Query.rocketCoordinates`) for exact elements, or Mesh
+  selectors such as `Query.*` for wildcards. See
+  [Schema Coordinates](/docs/guides/schema-coordinates). When both match, the lowest TTL wins.
 </Callout>
 
 ```yaml filename=".meshrc.yaml"
@@ -60,13 +60,10 @@ plugins:
       # cache operations for 1 hour
       ttl: 60 * 60 * 1000,
       ttlPerCoordinate:
-        # Spec type coordinate: operations that include Stock
         - coordinate: Stock
           ttl: 500
-        # Spec field coordinate: operations that select Query.rocketCoordinates
         - coordinate: Query.rocketCoordinates
           ttl: 100
-        # Mesh schema selector: all selected Query fields (not a Spec coordinate)
         - coordinate: Query.*
           ttl: 60_000
       ignoredTypes:

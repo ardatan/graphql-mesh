@@ -51,8 +51,7 @@ export const composeConfig = defineConfig({
       }),
       transforms: [
         createFederationTransform({
-          // Spec Schema Coordinates: Type or Type.field
-          // https://spec.graphql.org/September2025/#sec-Schema-Coordinates
+          // Schema Coordinates (Type or Type.field)
           Product: {
             // Directive name
             key: {
@@ -64,7 +63,6 @@ export const composeConfig = defineConfig({
               }
             }
           },
-          // Field-level example: Product.price would also be a valid key
           // You can also add other directives
           Query: {
             extends: true

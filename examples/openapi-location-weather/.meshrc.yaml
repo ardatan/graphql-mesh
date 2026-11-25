@@ -32,7 +32,6 @@ sources:
 plugins:
   - responseCache:
       ttlPerCoordinate:
-        # Mesh schema selector (Query.*); Spec Type.field entries below stay exact
         # Geo data doesn't change frequently, so we can cache it forever
         - coordinate: Query.*
           ttl: 0

@@ -34,7 +34,6 @@ self.addEventListener(
         ...ctx,
         ttlPerCoordinate: [
           {
-            // Mesh schema selector (not a Spec Schema Coordinate); expands to Query fields
             coordinate: 'Query.*',
             ttl: 360000,
           },

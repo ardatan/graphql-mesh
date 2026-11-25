@@ -11,10 +11,7 @@ import type { UseResponseCacheParameter } from '@graphql-yoga/plugin-response-ca
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
 import { handleMaybePromise, isPromise } from '@whatwg-node/promise-helpers';
 
-/**
- * Mesh schema selectors (globs such as `Query.*`) are not Spec Schema Coordinates.
- * Spec forms (`Query.users`, `Stock`) are exact; selectors stay supported for TTL maps.
- */
+/** Glob patterns such as `Query.*` in TTL maps (Mesh schema selectors). */
 function isMeshSchemaSelector(coordinate: string): boolean {
   return coordinate.includes('*');
 }
@@ -279,9 +276,8 @@ export type ResponseCacheConfig = Omit<UseResponseCacheParameter, 'cache'> & {
 /**
  * Response cache plugin for GraphQL Mesh / Gateway.
  *
- * `ttlPerCoordinate` / `ttlPerSchemaCoordinate` accept Spec Schema Coordinates (`Type`,
- * `Type.field`) and Mesh schema selectors with `*` (e.g. `Query.*`). Exact Spec keys are passed
- * through to the Yoga/Envelop cache; selectors are applied by Mesh against the operation selection.
+ * `ttlPerCoordinate` accepts Spec Schema Coordinates (`Type`, `Type.field`) and Mesh selectors
+ * with `*` (e.g. `Query.*`). Exact keys go to Yoga/Envelop; selectors are matched by Mesh.
  */
 export default function useMeshResponseCache(
   options: ResponseCacheConfig | (YamlConfig.ResponseCacheConfig & { cache?: KeyValueCache }),
@@ -333,7 +329,6 @@ export default function useMeshResponseCache(
         : options.shouldCacheResult,
     cache: getCacheForResponseCache(options.cache),
     ttlPerType,
-    // Spec Schema Coordinates only; Mesh selectors (Query.*) are handled below
     ttlPerSchemaCoordinate: exactTtlPerSchemaCoordinate,
     // Checks the TTL stored in the context
     // Compares it to the calculated one

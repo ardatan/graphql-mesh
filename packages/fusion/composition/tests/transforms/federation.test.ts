@@ -1,5 +1,6 @@
 import { buildSchema } from 'graphql';
 import { createSchema } from 'graphql-yoga';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { createFederationTransform, type SubgraphConfig } from '@graphql-mesh/fusion-composition';
 import { TransformValidationError } from '../../src/transforms/utils';
 import { composeAndGetExecutor } from './utils';
@@ -189,6 +190,89 @@ describe('Federation', () => {
       expect(() => transform(schema, subgraphConfig)).toThrow(
         /Invalid operation type "invalid" in resolveReference config/,
       );
+    });
+  });
+
+  describe('Schema Coordinates', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        fooById(id: ID!): Foo
+      }
+      type Foo {
+        id: ID!
+        name: String!
+      }
+    `);
+    const subgraphConfig: SubgraphConfig = { name: 'test', schema };
+
+    it('accepts Spec Type coordinates', () => {
+      const transform = createFederationTransform({
+        Foo: {
+          key: {
+            fields: 'id',
+            resolveReference: {
+              fieldName: 'fooById',
+              keyArg: 'id',
+            },
+          },
+        },
+      });
+      expect(() => transform(schema, subgraphConfig)).not.toThrow();
+    });
+
+    it('accepts Spec Type.field MemberCoordinates', () => {
+      const transform = createFederationTransform({
+        Foo: {
+          key: {
+            fields: 'id',
+            resolveReference: {
+              fieldName: 'fooById',
+              keyArg: 'id',
+            },
+          },
+        },
+        'Foo.name': {
+          shareable: true,
+        },
+        'Query.fooById': {
+          shareable: true,
+        },
+      });
+      const result = transform(schema, subgraphConfig);
+      const foo = result.getType('Foo');
+      expect(foo && 'getFields' in foo).toBe(true);
+      if (foo && 'getFields' in foo) {
+        expect(getDirectiveExtensions(foo.getFields().name)?.shareable?.length).toBeGreaterThan(0);
+      }
+      const query = result.getType('Query');
+      expect(query && 'getFields' in query).toBe(true);
+      if (query && 'getFields' in query) {
+        expect(
+          getDirectiveExtensions(query.getFields().fooById)?.shareable?.length,
+        ).toBeGreaterThan(0);
+      }
+    });
+
+    it('rejects Spec ArgumentCoordinates as federation config keys', () => {
+      const transform = createFederationTransform({
+        'Query.fooById(id:)': {
+          shareable: true,
+        },
+      });
+      expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
+      expect(() => transform(schema, subgraphConfig)).toThrow(
+        /Unsupported schema coordinate "Query\.fooById\(id:\)"/,
+      );
+    });
+
+    it('rejects invalid coordinate strings', () => {
+      const transform = createFederationTransform({
+        'Foo..name': {
+          shareable: true,
+        },
+      });
+      expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
+      expect(() => transform(schema, subgraphConfig)).toThrow(/Invalid schema coordinate/);
     });
   });
 });

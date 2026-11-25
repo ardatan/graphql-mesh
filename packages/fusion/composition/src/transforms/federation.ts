@@ -7,7 +7,9 @@ import {
   GraphQLSchema,
   GraphQLString,
   isObjectType,
+  Kind,
   OperationTypeNode,
+  parseSchemaCoordinate,
 } from 'graphql';
 import {
   asArray,
@@ -220,12 +222,36 @@ const federationDirectiveNames = [
   'requires',
 ];
 
+function parseFederationSchemaCoordinate(coordinate: string): {
+  typeName: string;
+  fieldName?: string;
+} {
+  let ast;
+  try {
+    ast = parseSchemaCoordinate(coordinate);
+  } catch {
+    throw new TransformValidationError(
+      `Federation Transform: Invalid schema coordinate: ${coordinate}`,
+    );
+  }
+  switch (ast.kind) {
+    case Kind.TYPE_COORDINATE:
+      return { typeName: ast.name.value };
+    case Kind.MEMBER_COORDINATE:
+      return { typeName: ast.name.value, fieldName: ast.memberName.value };
+    default:
+      throw new TransformValidationError(
+        `Federation Transform: Unsupported schema coordinate "${coordinate}". Use a Type or Type.field Schema Coordinate.`,
+      );
+  }
+}
+
 export function createFederationTransform(config: FederationTransformConfig): SubgraphTransform {
   return function FederationTransform(subgraphSchema, subgraphConfig) {
     const configurationByType = new Map<string, FederationCoordinateConfig>();
     const configurationByField = new Map<string, Map<string, FederationCoordinateConfig>>();
     for (const coordinate in config) {
-      const [typeName, fieldName] = coordinate.split('.');
+      const { typeName, fieldName } = parseFederationSchemaCoordinate(coordinate);
       const typeInSchema = subgraphSchema.getType(typeName);
       if (!typeInSchema) {
         throw new TransformValidationError(

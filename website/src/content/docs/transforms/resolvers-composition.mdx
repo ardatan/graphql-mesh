@@ -30,10 +30,8 @@ transforms:
   - resolversComposition:
       mode: bare | wrap
       compositions:
-        # Spec field coordinate
         - resolver: 'Query.me'
           composer: is-auth#isAuth
-        # Mesh schema selector (glob); not a Spec Schema Coordinate
         - resolver: 'Mutation.*'
           composer: is-admin#isAdmin
 ```

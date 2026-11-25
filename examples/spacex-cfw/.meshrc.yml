@@ -19,7 +19,6 @@ plugins:
       maxDepth: 5
   - responseCache:
       ttlPerCoordinate:
-        # Mesh schema selector (not a Spec Schema Coordinate); expands to Query fields
         - coordinate: Query.*
           ttl: 3600
 
