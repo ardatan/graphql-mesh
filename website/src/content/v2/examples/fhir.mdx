@@ -106,25 +106,23 @@ import { GraphQLDate, GraphQLDateTime, GraphQLURL, GraphQLUUID } from 'graphql-s
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema'
 
-const fhirScalarMap = {
-  date: GraphQLDate,
-  dateTime: GraphQLDateTime,
-  instant: GraphQLDateTime,
-  uri: GraphQLURL,
-  url: GraphQLURL,
-  canonical: GraphQLURL,
-  uuid: GraphQLUUID,
-  string: GraphQLString,
-  id: GraphQLID,
-  oid: GraphQLID
-}
-
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('patients', {
         endpoint: process.env.FHIR_BASE!,
-        scalarMap: fhirScalarMap,
+        scalarMap: {
+          date: GraphQLDate,
+          dateTime: GraphQLDateTime,
+          instant: GraphQLDateTime,
+          uri: GraphQLURL,
+          url: GraphQLURL,
+          canonical: GraphQLURL,
+          uuid: GraphQLUUID,
+          string: GraphQLString,
+          id: GraphQLID,
+          oid: GraphQLID
+        },
         operations: [
           {
             type: OperationTypeNode.QUERY,
@@ -140,7 +138,18 @@ export const composeConfig = defineComposeConfig({
     {
       sourceHandler: loadJSONSchemaSubgraph('observations', {
         endpoint: process.env.FHIR_BASE!,
-        scalarMap: fhirScalarMap,
+        scalarMap: {
+          date: GraphQLDate,
+          dateTime: GraphQLDateTime,
+          instant: GraphQLDateTime,
+          uri: GraphQLURL,
+          url: GraphQLURL,
+          canonical: GraphQLURL,
+          uuid: GraphQLUUID,
+          string: GraphQLString,
+          id: GraphQLID,
+          oid: GraphQLID
+        },
         operations: [
           {
             type: OperationTypeNode.QUERY,

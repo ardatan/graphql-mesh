@@ -15,9 +15,10 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 **supergraph**, and a **federation gateway** runtime plans queries across subgraphs.
 
 Same underlying idea as [stitching](/v2/concepts/stitching) -- combine types across services -- but
-with a **shared entity/`@key` contract** and a **federation gateway** / supergraph, instead of
-programmatic `stitchSchemas` + `SubschemaConfig.merge`. Schema Stitching's core is code-first
-subschemas and type merging; stitching directives are optional helpers (see
+Federation is the **standardized entity/`@key` contract** plus composition into a **supergraph**
+served by a **federation gateway**. `@graphql-tools/stitch` is a separate **type-merging runtime**
+(it can run Federation-shaped merges too, similar in role to Hive Gateway). **Stitching Directives**
+are only one optional SDL config style for that stitch runtime -- not Federation itself (see
 [Schema Stitching](https://the-guild.dev/graphql/stitching)). Mesh aims to emit and accept
 **Federation-compatible** subgraph SDL (generated or hand-written).
 
@@ -40,18 +41,19 @@ subschemas and type merging; stitching directives are optional helpers (see
 | [Composition](/v2/concepts/composition) | Merge subgraphs -> supergraph                                     |
 | [Gateway](/v2/concepts/gateway)         | **Federation gateway** runtime (Hive Gateway / Apollo Router)     |
 
-Federation is **not** Schema Stitching's `stitchSchemas` / subschema merge runtime (see
-[Stitching](/v2/concepts/stitching)), **not** a registry, and **not** a transport.
+Federation is **not** the `@graphql-tools/stitch` package itself, **not** Stitching Directives,
+**not** a registry, and **not** a transport. See [Stitching](/v2/concepts/stitching) for runtime vs
+directives.
 
 ## Vs Stitching
 
-|               | <ConceptRef name="federation" /> | <ConceptRef name="stitching" />                    |
-| ------------- | -------------------------------- | -------------------------------------------------- |
-| Primary API   | Subgraph SDL + composition       | `stitchSchemas` + `SubschemaConfig` (programmatic) |
-| Merge model   | Standardized entities + `@key`   | Programmatic type merging (`merge`, ...)           |
-| Directives    | Core of the contract             | Optional helpers (`stitching-directives`)          |
-| Runtime       | Federation gateway               | Stitched schema + delegation                       |
-| Mesh v2 story | Default path                     | Orient / legacy                                    |
+|                    | <ConceptRef name="federation" />                                  | <ConceptRef name="stitching" />                                                                |
+| ------------------ | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| What it is         | Entity/`@key` **contract** + composition + federation **gateway** | `@graphql-tools/stitch` **type-merging runtime** (`stitchSchemas`)                             |
+| Config             | Federation directives on subgraphs                                | Programmatic `merge`, and/or **Stitching Directives**, and/or Federation SDL mapped into merge |
+| Directives package | Core of the Federation contract                                   | Optional (`@graphql-tools/stitching-directives`) -- config only                                |
+| Runtime peers      | Hive Gateway / Apollo Router (and stitch can also execute merges) | Stitched `GraphQLSchema` + delegation                                                          |
+| Mesh v2 story      | Default path                                                      | Orient / legacy; still a type-merging engine                                                   |
 
 <a id="entity-resolution" />
 
