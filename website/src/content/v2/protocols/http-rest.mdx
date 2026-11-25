@@ -2,7 +2,7 @@
 description: HTTP/REST Connectors protocol -- OpenAPI, JSON Schema, OData, SOAP-as-Connect
 ---
 
-import { Cards } from '@theguild/components'
+import { Callout, Cards } from '@theguild/components'
 import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
 
 # HTTP / REST
@@ -20,8 +20,8 @@ shape.
 | Dual-run  | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when Connect-compatible |
 | Spec      | `https://specs.apollo.dev/connect/v0.4`                                              |
 
-SOAP-as-Connect uses the same directives plus an XML body codec; stock Apollo Router dual-run is
-**not** expected for SOAP envelopes.
+SOAP stays in this HTTP/REST chapter (not a separate Protocols nav entry). Same `@connect` /
+`@source` author API plus a Mesh JSON↔XML codec -- see [SOAP-as-Connect](#soap-as-connect).
 
 ## OpenAPI entity lookup
 
@@ -160,8 +160,14 @@ type Person
 
 ## SOAP-as-Connect
 
-WSDL operations become `POST` Connect fields whose `body` is a SOAP envelope selection string (Hive
-Gateway XML codec). Dual-run on stock Apollo Router is not the goal:
+WSDL operations become `POST` Connect fields whose `body` is a SOAP envelope selection string. Mesh
+owns the JSON↔XML codec on Hive Gateway; the author API is still `@connect` / `@source`.
+
+<Callout type="warning">
+  **Mesh-only / Hive Gateway.** SOAP envelopes are **not** dual-run on stock Apollo Router. Use Hive
+  Gateway for SOAP subgraphs. Placement: under this HTTP/REST Connectors family -- no separate SOAP
+  protocol page.
+</Callout>
 
 ```ts
 import { defineConfig } from '@graphql-mesh/compose-cli'
