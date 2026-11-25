@@ -1,12 +1,12 @@
 import {
   GraphQLList,
   GraphQLNonNull,
-  GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
   isObjectType,
   type GraphQLField,
   type GraphQLNamedType,
+  type GraphQLObjectType,
   type GraphQLResolveInfo,
   type GraphQLSchema,
 } from 'graphql';
