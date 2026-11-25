@@ -5,6 +5,7 @@ description:
 ---
 
 import { Cards } from '@theguild/components'
+import { ProtocolRef } from '../../../components/v2-directive-ref'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Concepts
@@ -34,11 +35,17 @@ Short definitions for terms that show up across Mesh v2 docs. Each page answers:
 | **Composition**          | Combining subgraph SDL into a supergraph (Mesh Compose, Hive, Rover, ...)  | [Composition](/v2/concepts/composition)         |
 | **Schema registry**      | Stores and distributes subgraph / supergraph SDL                           | [Schema registry](/v2/concepts/schema-registry) |
 
+Protocol families (hover / click): <ProtocolRef name="http-rest" />, <ProtocolRef name="sql" />,
+
+<ProtocolRef name="mongo" />, <ProtocolRef name="neo4j" />, <ProtocolRef name="thrift" />,
+<ProtocolRef name="protobuf" /> -- overview at [Protocols](/v2/protocols).
+
 ## Where to go next
 
 <Cards>
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
   <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
   <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
   <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
   <Cards.Card arrow title="Directives reference" href="/v2/reference/directives" />

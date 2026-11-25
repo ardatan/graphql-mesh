@@ -3,7 +3,7 @@ description: What Mesh is -- Federation-ready subgraphs from sources or authored
 ---
 
 import { Cards } from '@theguild/components'
-import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Mesh
@@ -47,7 +47,8 @@ subgraphs: [
 ```
 
 Emitted / authored SDL carries `@transport`, protocol directives, and often `@connect` / `@key`
-(<DirectiveRef name="transport" />, <DirectiveRef name="connect" />, <DirectiveRef name="key" />).
+(<DirectiveRef name="transport" />, <DirectiveRef name="connect" />, <DirectiveRef name="key" />) --
+for example <ProtocolRef name="sql" /> loaders and hand-written <ProtocolRef name="protobuf" />.
 Walkthrough: [Music Store Example](/v2/examples/music-store).
 
 <Cards>

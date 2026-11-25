@@ -3,7 +3,7 @@ description: HTTP/REST Connectors -- @connect / @source mapping (not Mesh-only p
 ---
 
 import { Cards } from '@theguild/components'
-import { DirectiveRef } from '../../../components/v2-directive-ref'
+import { DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # HTTP/REST Connectors
@@ -31,11 +31,13 @@ Dual-run Connect-compatible SDL on Hive Gateway and Apollo Router.
 | Directive contract | [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) (upstream) |
 | Mesh transport     | `@graphql-mesh/transport-connect` on Hive Gateway                                                                       |
 | Dual-run           | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when compatible                                            |
-| Protocol page      | [HTTP / REST](/v2/protocols/http-rest)                                                                                  |
+| Protocol page      | <ProtocolRef name="http-rest" />                                                                                        |
 
-HTTP/REST Connectors are **not** Mesh-only protocol mapping. SQL, Mongo, Protobuf/gRPC, Thrift, and
-Neo4j use their own Mesh protocol directives plus `@transport` -- do not call those "Connectors."
-Composition itself is also separate.
+HTTP/REST Connectors are **not** Mesh-only protocol mapping.
+
+<ProtocolRef name="sql" />, <ProtocolRef name="mongo" />, <ProtocolRef name="protobuf" />,
+<ProtocolRef name="thrift" />, and <ProtocolRef name="neo4j" /> use their own Mesh protocol
+directives plus `@transport` -- do not call those "Connectors." Composition itself is also separate.
 
 **Connector coordinates** in error extensions (e.g. `ecomm:Query.products@connect[0]`) are not the
 same as Spec field names like `Query.review` -- see

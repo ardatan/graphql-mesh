@@ -3,7 +3,7 @@ description: What a GraphQL gateway is -- Hive Gateway and Apollo Router as Mesh
 ---
 
 import { Cards } from '@theguild/components'
-import { ApiRef } from '../../../components/v2-directive-ref'
+import { ApiRef, ProtocolRef } from '../../../components/v2-directive-ref'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Gateway
@@ -39,7 +39,8 @@ SDL), and **not** a loader. It **consumes** composed or registry-sourced supergr
 
 Compose once to a GraphQL supergraph file, then:
 
-- Run the **full** multi-protocol graph on Hive Gateway (SQL + Connect + protobuf, ...).
+- Run the **full** multi-protocol graph on Hive Gateway (<ProtocolRef name="sql" /> + Connect +
+  <ProtocolRef name="protobuf" />, ...).
 - Dual-run a **Connect-only** slice on Apollo Router when demonstrating compatibility.
 
 See [Music Store Example](/v2/examples/music-store) gateway matrix and
