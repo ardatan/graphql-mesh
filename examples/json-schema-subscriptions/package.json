@@ -13,7 +13,7 @@
     "@types/node": "^26.2.0",
     "@whatwg-node/fetch": "^0.12.1",
     "fets": "0.8.14",
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   },
   "devDependencies": {
     "concurrently": "10.0.6",

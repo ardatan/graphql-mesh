@@ -95,23 +95,24 @@ function ensurePathInSelectionSet(
     };
   }
 
-  const newField =
+  const newField = (
     rest.length === 0
       ? {
-          kind: Kind.FIELD as const,
+          kind: Kind.FIELD,
           name: {
-            kind: Kind.NAME as const,
+            kind: Kind.NAME,
             value: head,
           },
         }
       : {
-          kind: Kind.FIELD as const,
+          kind: Kind.FIELD,
           name: {
-            kind: Kind.NAME as const,
+            kind: Kind.NAME,
             value: head,
           },
           selectionSet: ensurePathInSelectionSet(undefined, rest),
-        };
+        }
+  ) as (typeof selections)[number];
 
   return {
     kind: Kind.SELECTION_SET,

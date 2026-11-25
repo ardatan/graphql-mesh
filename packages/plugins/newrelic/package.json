@@ -51,7 +51,7 @@
   "devDependencies": {
     "@newrelic/test-utilities": "9.2.0",
     "@types/newrelic": "9.14.8",
-    "graphql": "16.14.0",
+    "graphql": "17.1.0",
     "graphql-yoga": "^6.1.0",
     "newrelic": "13.19.0"
   },

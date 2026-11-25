@@ -87,7 +87,7 @@
     "@types/rimraf": "4.0.5",
     "@types/ws": "8.18.2",
     "@types/yargs": "17.0.35",
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   },
   "publishConfig": {
     "access": "public",

@@ -19,7 +19,7 @@
     "@types/express": "5.0.6",
     "@types/node": "^26.2.0",
     "express": "5.3.0",
-    "graphql": "16.14.0",
+    "graphql": "17.1.0",
     "thrift": "0.25.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"

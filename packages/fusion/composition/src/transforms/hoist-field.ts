@@ -135,7 +135,7 @@ export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): 
                 // selection alias below so Apollo Router does not need `@hoist`.
                 newFieldConfigMap[mapping.newFieldName] = {
                   ...(existingFieldConfig || {}),
-                  args: argsConfig,
+                  args: argsConfig as any,
                   type: field.type,
                   extensions: {
                     ...existingFieldConfig?.extensions,

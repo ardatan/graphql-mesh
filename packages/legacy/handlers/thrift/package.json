@@ -47,7 +47,7 @@
   "devDependencies": {
     "@types/thrift": "0.10.17",
     "@types/url-join": "4.0.3",
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   },
   "publishConfig": {
     "access": "public",

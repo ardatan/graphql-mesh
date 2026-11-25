@@ -3361,5 +3361,5 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     deprecationReason: undefined,
     extensions: {},
     astNode: undefined,
-  };
+  } as any;
 }

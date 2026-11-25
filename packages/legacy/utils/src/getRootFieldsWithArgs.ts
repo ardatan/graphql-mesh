@@ -7,7 +7,7 @@ import type {
 } from 'graphql';
 import { getArgumentValues, getVariableValues, GraphQLError, Kind } from 'graphql';
 import type { ExecutionRequest } from '@graphql-tools/utils';
-import { getRootTypeMap } from '@graphql-tools/utils';
+import { asGetArgumentValuesVariables, getRootTypeMap } from '@graphql-tools/utils';
 import { getOperationsAndFragments } from './getOperationsAndFragments.js';
 
 export function getRootFieldsWithArgs(
@@ -37,11 +37,17 @@ export function getRootFieldsWithArgs(
   if (coercedVariables.errors) {
     throw new AggregateError(coercedVariables.errors);
   }
+  // graphql 16: `{ coerced }`; graphql 17: `{ variableValues: { coerced, sources } }`
+  const flatVariables = (
+    'variableValues' in coercedVariables && coercedVariables.variableValues != null
+      ? coercedVariables.variableValues.coerced
+      : (coercedVariables as unknown as { coerced: Record<string, any> }).coerced
+  ) as Record<string, any>;
   const selectionHandlerCtx: SelectionHandlerCtx = {
     rootFieldMap,
     rootFieldsWithArgs,
     fragments,
-    variables: coercedVariables.coerced,
+    variables: flatVariables,
   };
   for (const selection of operation.selectionSet.selections) {
     handleSelection(selection, selectionHandlerCtx);
@@ -66,7 +72,11 @@ function handleFieldNode(fieldNode: FieldNode, ctx: SelectionHandlerCtx) {
   if (!rootField) {
     throw new GraphQLError(`No root field found for field ${originalFieldName}`);
   }
-  const args = getArgumentValues(rootField, fieldNode, ctx.variables);
+  const args = getArgumentValues(
+    rootField,
+    fieldNode,
+    asGetArgumentValuesVariables(ctx.variables)!,
+  );
   ctx.rootFieldsWithArgs.set(originalFieldName, args);
 }
 function handleSelection(selection: SelectionNode, ctx: SelectionHandlerCtx) {

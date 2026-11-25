@@ -62,7 +62,8 @@
     "test:integration:leak": "cross-env \"JEST=1\" \"LEAK_TEST=1\" \"INTEGRATION_TEST=true\" jest --detectOpenHandles --detectLeaks --no-watchman",
     "test:leak": "cross-env \"JEST=1\" \"LEAK_TEST=1\" jest --detectOpenHandles --detectLeaks --no-watchman",
     "test:website": "playwright test --config ./website/playwright.config.ts --retries 3",
-    "typecheck": "yarn generate-config-schema && tsc -p tsconfig.json --noEmit"
+    "typecheck": "yarn generate-config-schema && tsc -p tsconfig.json --noEmit",
+    "match-graphql": "node ./scripts/match-graphql.mjs"
   },
   "devDependencies": {
     "@ardatan/graphql-to-config-schema": "patch:@ardatan/graphql-to-config-schema@npm%3A0.1.25#~/.yarn/patches/@ardatan-graphql-to-config-schema-npm-0.1.25-f8c48d384e.patch",
@@ -101,7 +102,7 @@
     "eslint-plugin-promise": "7.3.0",
     "eslint-plugin-standard": "5.0.0",
     "globby": "11.1.0",
-    "graphql": "16.14.0",
+    "graphql": "17.1.0",
     "husky": "9.1.7",
     "jest": "30.4.2",
     "lint-staged": "17.6.0",
@@ -164,7 +165,7 @@
     "fast-xml-parser": ">=5.10.1",
     "fastify": "5.12.7",
     "form-data": "4.0.6",
-    "graphql": "16.14.0",
+    "graphql": "17.1.0",
     "graphql-jit": "patch:graphql-jit@npm%3A0.8.10#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch",
     "graphql-rate-limit": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch",
     "gray-matter@npm:^4.0.3": "patch:gray-matter@npm%3A4.0.3#~/.yarn/patches/gray-matter-npm-4.0.3-852ae4f34c.patch",

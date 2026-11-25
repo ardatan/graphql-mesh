@@ -10,6 +10,6 @@
     "@grpc/proto-loader": "^0.8.1",
     "@grpc/reflection": "^1.0.4",
     "@omnigraph/protobuf": "workspace:*",
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   }
 }

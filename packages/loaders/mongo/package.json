@@ -46,7 +46,7 @@
     "mongodb": "^7.0.0"
   },
   "devDependencies": {
-    "graphql": "16.14.0",
+    "graphql": "17.1.0",
     "mongoose": "^9.0.0"
   },
   "publishConfig": {

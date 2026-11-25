@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@types/http-string-parser": "0.0.33",
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   },
   "publishConfig": {
     "access": "public",

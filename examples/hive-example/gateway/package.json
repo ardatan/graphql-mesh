@@ -10,6 +10,6 @@
     "@graphql-mesh/openapi": "0.112.7",
     "@graphql-mesh/plugin-hive": "0.108.3",
     "@graphql-mesh/transform-hive": "0.107.3",
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   }
 }

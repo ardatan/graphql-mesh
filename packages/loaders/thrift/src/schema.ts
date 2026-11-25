@@ -649,7 +649,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
           topTypeMap,
         });
         if (field.requiredness === 'required') {
-          fieldType = new GraphQLNonNull(fieldType);
+          fieldType = new GraphQLNonNull(fieldType as any) as any;
         }
         args[fieldName] = {
           type: fieldType,

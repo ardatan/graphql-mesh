@@ -52,7 +52,7 @@
     "protobufjs": "^8.8.1"
   },
   "devDependencies": {
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   },
   "publishConfig": {
     "access": "public",

@@ -530,7 +530,7 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     deprecationReason: undefined,
     extensions: {},
     astNode: undefined,
-  } as GraphQLField<any, any>;
+  } as unknown as GraphQLField<any, any>;
 }
 
 function grpcUnary(opts: {

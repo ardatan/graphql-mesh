@@ -116,7 +116,8 @@ export function getInContextSDK(
                   selections: [],
                 },
               },
-              variableValues: {},
+              // graphql 17 expects `{ sources, coerced }`; wrap empty map for both versions
+              variableValues: { sources: Object.create(null), coerced: Object.create(null) },
               // Match @graphql-tools/executor buildResolveInfo helpers (GraphQL 17 / utils v13+).
               getAbortSignal: () => context?.request?.signal,
               getAsyncHelpers: () => ({

@@ -125,7 +125,7 @@ export default class TransferSchemaTransform implements MeshTransform {
           if (!additionalFieldsConfigMap) return undefined;
 
           const newConfig = { ...type.toConfig() };
-          newConfig.fields = { ...newConfig.fields, ...additionalFieldsConfigMap };
+          newConfig.fields = { ...newConfig.fields, ...additionalFieldsConfigMap } as typeof newConfig.fields;
 
           return new GraphQLObjectType(newConfig);
         },
