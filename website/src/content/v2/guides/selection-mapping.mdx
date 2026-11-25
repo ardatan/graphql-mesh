@@ -65,53 +65,120 @@ type Track @key(fields: "id", resolvable: false) {
 - Entity / batch patterns add `$batch` and `entity: true` -- see Apollo's mapping docs and
   [Entity resolution](/v2/concepts/federation#entity-resolution).
 
-Mesh OpenAPI / JSON Schema / OData (and SOAP-as-Connect) loaders emit this shape. Dual-run Connect
-SDL on [Hive Gateway](/v2/serve/hive-gateway) and [Apollo Router](/v2/serve/apollo-router).
-
-## SQL (`where` / `args` + `selection`)
-
-SQL emit uses <DirectiveRef name="sql" /> (kind discriminator: `ROW` / `ROWS` / `CONNECTION` /
-`COUNT` / `INSERT` / `UPDATE` / `DELETE`). Request binders land in `where` / structured `args`;
-column maps land in `selection`:
+ById root with Composition-stamped `entity: true` (`e2e/openapi-entity-stubs`):
 
 ```graphql
 type Query {
-  track(id: ID!): Track
-    @sql(
-      table: "Track"
-      kind: ROW
-      where: """
-      TrackId: $args.id
-      """
+  getCustomer(id: String!): Customer
+    @connect(
+      source: "Billing"
+      http: { GET: "/customers/{$args.id}" }
       selection: """
-      TrackId
-      Name
-      AlbumId
+      id
+      name
       """
       entity: true
     )
 }
 ```
 
-Relations and type-level entity fills use `$this` the same way Connect does (`AlbumId: $this.id`).
-Hive Gateway only -- stock Apollo Router does not execute `@sql`.
+Richer Connect expressions (FHIR `Reference.resource` -- `e2e/json-schema-fhir`):
 
-## Protobuf / gRPC (`args` + `selection`)
+```graphql
+resource: Resource
+  @connect(
+    selection: """
+    $this.reference->split("/")->get(0)->match(
+      ["Patient", {
+        __typename: $("Patient")
+        id: $this.reference->split("/")->get(1)
+      }],
+      ["Observation", {
+        __typename: $("Observation")
+        id: $this.reference->split("/")->get(1)
+      }],
+      [@, null]
+    )
+    """
+  )
+```
 
-<DirectiveRef name="protobuf__rpc" /> uses a **compact field-number** dialect (not JSONSelection):
+Mesh OpenAPI / JSON Schema / OData (and SOAP-as-Connect) loaders emit this shape. Dual-run Connect
+SDL on [Hive Gateway](/v2/serve/hive-gateway) and [Apollo Router](/v2/serve/apollo-router). Protocol
+page: [HTTP / REST](/v2/protocols/http-rest).
+
+## SQL (`where` / `args` + `selection`)
+
+SQL emit uses <DirectiveRef name="sql" /> (kind discriminator: `ROW` / `ROWS` / `CONNECTION` /
+`COUNT` / `INSERT` / `UPDATE` / `DELETE`). Request binders land in `where` / structured `args`;
+column maps land in `selection`. Chinook (`e2e/sqlite-chinook`) aliases SQL columns to GraphQL
+names:
 
 ```graphql
 type Query {
-  recommendation(trackId: ID!): Recommendation!
-    @protobuf__rpc(
-      service: "Recommendations"
-      method: "GetRecommendation"
-      args: """
-      1(string): $args.trackId
+  track(id: ID!): Track
+    @sql(
+      table: "tracks"
+      kind: ROW
+      where: """
+      TrackId: $args.id
       """
       selection: """
-      1(string): id
-      2(string): trackId
+      id: TrackId
+      name: Name
+      albumId: AlbumId
+      """
+    )
+}
+
+type Track
+  @key(fields: "id")
+  @sql(
+    table: "tracks"
+    kind: ROW
+    where: """
+    TrackId: $this.id
+    """
+    selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    """
+  ) {
+  id: ID!
+  name: String!
+  albumId: Int
+}
+```
+
+- Query field: `$args.id` -> `TrackId` predicate.
+- Type-level `@sql`: `$this.id` is the Federation entity fill for `_entities`.
+- Relation fields reuse `$this` (`AlbumId: $this.id`) the same way Connect does.
+
+Hive Gateway only -- stock Apollo Router does not execute `@sql`. Protocol:
+[SQL](/v2/protocols/sql).
+
+## Protobuf / gRPC (`args` + `selection`)
+
+<DirectiveRef name="protobuf__rpc" /> uses a **compact field-number** dialect (not JSONSelection).
+From `e2e/protobuf-http`:
+
+```graphql
+type Query {
+  moviesByYear(year: Int!): MoviesResult!
+    @protobuf__rpc(
+      service: "Example"
+      method: "GetMovies"
+      args: """
+      1(message): {
+        2(int64): $args.year
+      }
+      """
+      selection: """
+      1(repeated message): result {
+        1(string): name
+        2(int64): year
+      }
       """
     )
 }
@@ -120,18 +187,19 @@ type Query {
 - `args`: GraphQL -> protobuf request (`N(type): binder`).
 - `selection`: protobuf response -> GraphQL fields.
 - Nested messages use `{ ... }` blocks; repeated fields use `repeated` in the type slot.
+- Rename transforms rewrite `$args.<name>` inside these strings (same `mesh.config.ts` as emit).
 
 Thrift binary (`@thrift__rpc`) follows the same **args / selection / throws** idea with Thrift
-types. See [Protocols](/v2/protocols).
+types. See [Protobuf / gRPC](/v2/protocols/protobuf) / [Thrift](/v2/protocols/thrift).
 
 ## Mongo and Neo4j
 
 - **Mongo:** op-specific `@mongo__*` binders (`query` / `where` / `set` / `selection`, ...) under
   `https://specs.graphql-mesh.com/mongo/v0.1`. `$args` and `$this` still name GraphQL inputs and
-  parent fields.
+  parent fields. Page: [Mongo](/v2/protocols/mongo).
 - **Neo4j:** native `@neo4j/graphql` directives (not a Mesh `selection` string dialect). Mesh stamps
   `@transport` + a neo4j `@link` for the subgraph; mapping lives in Neo4j's own Cypher / filter
-  args.
+  args. Page: [Neo4j](/v2/protocols/neo4j).
 
 ## Conventions that help
 
@@ -141,6 +209,9 @@ types. See [Protocols](/v2/protocols).
    fits.
 4. After edits, re-compose and re-query -- the same practice as
    [Generate-then-edit](/v2/paths/generate-then-edit).
+5. For entity wiring, match [ById conventions](/v2/compose#semantic-conventions) or stamp
+   `entity: true` / type-level `$this` yourself
+   ([Entity resolution](/v2/concepts/federation#entity-resolution)).
 
 <Callout type="info">
   Walk through [Music Store Example](/v2/examples/music-store) stage 1 (SQL) -> stage 2 (Connect
@@ -154,10 +225,12 @@ types. See [Protocols](/v2/protocols).
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Directives reference" href="/v2/reference/directives" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
   <Cards.Card
     arrow
     title="Apollo's HTTP Connectors mapping"
     href="https://www.apollographql.com/docs/graphos/connectors/mapping"
   />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="FHIR Example" href="/v2/examples/fhir" />
 </Cards>

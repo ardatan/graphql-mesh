@@ -1,0 +1,36 @@
+---
+description: Serve Supergraph -- run Mesh-composed SDL on Hive Gateway or Apollo Router
+---
+
+import { Cards } from '@theguild/components'
+import { ConceptRef } from '../../../components/v2-directive-ref'
+
+# Serve Supergraph
+
+After [Composition](/v2/compose) you have subgraph or supergraph GraphQL SDL. **Serve Supergraph**
+means running that SDL on a <ConceptRef name="gateway">federation gateway</ConceptRef> runtime.
+
+| Runtime                                        | Role in Mesh docs               | What it executes                                                                             |
+| ---------------------------------------------- | ------------------------------- | -------------------------------------------------------------------------------------------- |
+| [Hive Gateway](/v2/serve/hive-gateway) (JS/TS) | Preferred Mesh runtime          | Full Mesh transport surface (HTTP/REST Connectors, SQL, Mongo, Protobuf, Thrift, Neo4j, ...) |
+| [Apollo Router](/v2/serve/apollo-router)       | Peer for Connect-compatible SDL | HTTP/REST Connectors (`@connect` / `@source`) only                                           |
+
+Compose once, then choose the runtime that matches your directive surface:
+
+```bash
+mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+```
+
+For Connect-only slices, the same `supergraph.graphql` can dual-run on Apollo Router. Multi-protocol
+graphs (Music Store SQL + Connect + gRPC) need Hive Gateway for the full supergraph.
+
+Concept overview: [Gateway](/v2/concepts/gateway). Worked example:
+[Music Store Example](/v2/examples/music-store).
+
+<Cards>
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="HTTP/REST Connectors" href="/v2/concepts/connectors" />
+</Cards>

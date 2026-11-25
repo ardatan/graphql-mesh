@@ -1,0 +1,38 @@
+---
+description: Mesh Neo4j protocol -- native @neo4j/graphql directives + transport-neo4j
+---
+
+import { Cards } from '@theguild/components'
+import { DirectiveRef } from '../../../components/v2-directive-ref'
+
+# Neo4j
+
+Neo4j is a **Mesh protocol** that uses **native** `@neo4j/graphql` directives (not a Mesh
+`@neo4j__*` dialect and not HTTP/REST Connectors). Mesh stamps <DirectiveRef name="transport" /> and
+a neo4j `@link`; the Cypher / filter mapping lives in Neo4j GraphQL itself.
+
+| Piece      | Detail                                               |
+| ---------- | ---------------------------------------------------- |
+| Loader     | `@omnigraph/neo4j` (introspect or accept author SDL) |
+| Directives | Native `@neo4j/graphql`                              |
+| Transport  | `@graphql-mesh/transport-neo4j`                      |
+| Spec stamp | `https://specs.graphql-mesh.com/neo4j/v0.1`          |
+| Dual-run   | Hive Gateway only                                    |
+
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/neo4j/v0.1")
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+
+schema @transport(subgraph: "graph", kind: "neo4j", location: "bolt://localhost:7687") {
+  query: Query
+}
+```
+
+See [Directives](/v2/reference/directives#neo4j) and repo e2e `neo4j-example`.
+
+<Cards>
+  <Cards.Card arrow title="Directives: Neo4j" href="/v2/reference/directives#neo4j" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+</Cards>

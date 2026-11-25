@@ -1,0 +1,97 @@
+---
+description: Mesh SQL protocol -- @omnigraph/sql, @sql, transport-sql (Hive Gateway)
+---
+
+import { Cards } from '@theguild/components'
+import { DirectiveRef } from '../../../components/v2-directive-ref'
+
+# SQL
+
+SQL is a **Mesh protocol** (not HTTP/REST Connectors). The SQL loader emits
+<DirectiveRef name="sql" /> with a `kind` discriminator; Hive Gateway runs `transport-sql`. Stock
+Apollo Router does **not** execute `@sql`.
+
+| Piece     | Detail                                                                            |
+| --------- | --------------------------------------------------------------------------------- |
+| Loader    | `@omnigraph/sql` (`loadSqlSubgraph`)                                              |
+| Directive | `@sql` (`ROW` / `ROWS` / `CONNECTION` / `COUNT` / `INSERT` / `UPDATE` / `DELETE`) |
+| Transport | `@graphql-mesh/transport-sql`                                                     |
+| Spec      | `https://specs.graphql-mesh.com/sql/v0.1`                                         |
+| Dual-run  | Hive Gateway only                                                                 |
+
+## Chinook generate (`e2e/sqlite-chinook`)
+
+```ts
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSqlSubgraph('chinook', {
+        endpoint: 'file:chinook.db'
+      })
+    }
+  ]
+})
+```
+
+Emitted Query + type-level entity fill (simplified from the compose snapshot -- GraphQL names are
+camelCase; SQL columns stay in `where` / `selection`):
+
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"])
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+
+schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db") {
+  query: Query
+}
+
+type Query {
+  track(id: ID!): Track
+    @sql(
+      table: "tracks"
+      kind: ROW
+      where: """
+      TrackId: $args.id
+      """
+      selection: """
+      id: TrackId
+      name: Name
+      albumId: AlbumId
+      """
+    )
+}
+
+type Track
+  @key(fields: "id")
+  @sql(
+    table: "tracks"
+    kind: ROW
+    where: """
+    TrackId: $this.id
+    """
+    selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    """
+  ) {
+  id: ID!
+  name: String
+  albumId: ID
+}
+```
+
+`$args` vs `$this`: [Selection mapping](/v2/guides/selection-mapping). Entity / ById stamping:
+[Composition semantic conventions](/v2/compose#semantic-conventions).
+
+Walkthrough: [Music Store Example](/v2/examples/music-store) stage 1.
+
+<Cards>
+  <Cards.Card arrow title="Directives: @sql" href="/v2/reference/directives#sql" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+</Cards>

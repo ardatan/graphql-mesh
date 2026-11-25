@@ -1,0 +1,72 @@
+---
+description: HTTP/REST Connectors protocol -- OpenAPI, JSON Schema, OData, SOAP-as-Connect
+---
+
+import { Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+
+# HTTP / REST
+
+Mesh maps HTTP APIs with <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>
+(<DirectiveRef name="connect" /> / <DirectiveRef name="source" />, connect/v0.4). Loaders for
+OpenAPI, JSON Schema, OData, and SOAP-as-Connect **emit** that shape; authors can hand-write it.
+
+| Piece     | Detail                                                                               |
+| --------- | ------------------------------------------------------------------------------------ |
+| Loaders   | `@omnigraph/openapi`, `@omnigraph/json-schema`, OData, SOAP                          |
+| Transport | `@graphql-mesh/transport-connect` on Hive Gateway                                    |
+| Dual-run  | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when Connect-compatible |
+| Spec      | `https://specs.apollo.dev/connect/v0.4`                                              |
+
+## Loader -> Connect emit (entity lookup)
+
+From `e2e/openapi-entity-stubs` (Billing OpenAPI). Composition stamps `entity: true` when the Query
+arg matches the entity key ([ById conventions](/v2/compose#semantic-conventions)):
+
+```ts
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('Billing', {
+        source: './openapi.yaml',
+        endpoint: 'http://localhost:4001'
+      })
+    }
+  ]
+})
+```
+
+Emitted shape (simplified from the e2e snapshot):
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+  @source(name: "Billing", http: { baseURL: "http://localhost:4001" })
+
+type Query {
+  getCustomer(id: String!): Customer
+    @connect(
+      source: "Billing"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+      id
+      name
+      """
+      entity: true
+    )
+}
+```
+
+FHIR JSON Schema + join SDL: [FHIR](/v2/examples/fhir). Arg / selection dialect:
+[Selection mapping](/v2/guides/selection-mapping). Upstream:
+[Apollo's HTTP Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
+
+<Cards>
+  <Cards.Card arrow title="HTTP/REST Connectors (concept)" href="/v2/concepts/connectors" />
+  <Cards.Card arrow title="Directives: @connect" href="/v2/reference/directives#connect" />
+  <Cards.Card arrow title="Music Store stage 2" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+</Cards>
