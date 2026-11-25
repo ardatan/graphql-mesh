@@ -9,4 +9,6 @@ export default {
   auth: 'Authentication',
   'rate-limit': 'Rate limiting',
   monitoring: 'Monitoring and tracing',
+  'schema-extensions': 'Schema extensions',
+  'error-handling': 'Error handling',
 };

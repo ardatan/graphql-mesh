@@ -17,7 +17,7 @@ discriminator; Hive Gateway runs `transport-sql`. Stock Apollo Router does **not
 | Loader    | `@omnigraph/sql` (`loadSqlSubgraph`)                                              |
 | Directive | `@sql` (`ROW` / `ROWS` / `CONNECTION` / `COUNT` / `INSERT` / `UPDATE` / `DELETE`) |
 | Transport | `@graphql-mesh/transport-sql`                                                     |
-| Spec      | `https://specs.graphql-mesh.com/sql/v0.1`                                         |
+| Spec      | `https://specs.graphql-mesh.dev/sql/v0.1`                                         |
 | Dual-run  | Hive Gateway only                                                                 |
 | Examples  | Chinook (SQLite); Music Store stage 1; MySQL / Postgres                           |
 
@@ -45,8 +45,8 @@ Federation can resolve the entity:
 
 ```graphql
 extend schema
-  @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"])
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/sql/v0.1", import: ["@sql"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 
 schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db") {
   query: Query

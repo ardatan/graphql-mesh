@@ -16,7 +16,7 @@ protocol** (not HTTP/REST Connectors). The loader stamps `@mongo__*` ops; Hive G
 | Loader     | `@omnigraph/mongo` (`loadMongoSubgraph`)     |
 | Directives | `@mongo__findOne`, `@mongo__find`, CRUD, ... |
 | Transport  | `@graphql-mesh/transport-mongo`              |
-| Spec       | `https://specs.graphql-mesh.com/mongo/v0.1`  |
+| Spec       | `https://specs.graphql-mesh.dev/mongo/v0.1`  |
 | Dual-run   | Hive Gateway only                            |
 | Examples   | Mongoose users model                         |
 
@@ -45,10 +45,10 @@ Query `findUserById` uses `$args`; type-level `@mongo__findOne` uses `$this` for
 ```graphql
 extend schema
   @link(
-    url: "https://specs.graphql-mesh.com/mongo/v0.1"
+    url: "https://specs.graphql-mesh.dev/mongo/v0.1"
     import: ["@mongo__findOne", "@mongo__find", "@mongo__insertOne"]
   )
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 
 schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test") {
   query: Query

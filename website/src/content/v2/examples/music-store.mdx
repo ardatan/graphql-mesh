@@ -94,8 +94,8 @@ Emitted shape (GraphQL names are camelCase; SQL columns stay in `where` / `selec
 
 ```graphql
 extend schema
-  @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"])
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/sql/v0.1", import: ["@sql"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 
 schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db") {
   query: Query
@@ -231,8 +231,8 @@ Compact field-number mapping adapted to a recommendation field:
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
-  @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
   @composeDirective(name: "@transport")
   @composeDirective(name: "@protobuf__rpc")
 

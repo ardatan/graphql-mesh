@@ -49,7 +49,7 @@ composition / the gateway will drop it:
 extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
-  @link(url: "https://specs.graphql-mesh.com/auth/v0.1", import: ["@skipAuth"])
+  @link(url: "https://specs.graphql-mesh.dev/auth/v0.1", import: ["@skipAuth"])
   @composeDirective(name: "@skipAuth")
 
 directive @skipAuth on FIELD_DEFINITION | OBJECT | INTERFACE
@@ -61,8 +61,10 @@ type Query {
 }
 ```
 
-`@skipAuth` is **not** part of Mesh `core` (`@transport` / `@merge` / ...). Use the **auth** Mesh
-spec URL above -- same family pattern as `sql` / `rate-limit`.
+`@skipAuth` is **not** part of Mesh `core` (`@transport` / `@merge` / ...). Use the **auth** family
+URL above (`https://specs.graphql-mesh.dev/auth/v0.1`) -- same family pattern as `rate-limit`, not
+`core/v0.1`. Always invent Mesh `@link` URLs on **`specs.graphql-mesh.dev`** (never
+`specs.graphql-mesh.com`).
 
 ## Related
 
