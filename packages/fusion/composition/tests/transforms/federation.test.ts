@@ -1,7 +1,7 @@
 import { buildSchema } from 'graphql';
 import { createSchema } from 'graphql-yoga';
-import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { createFederationTransform, type SubgraphConfig } from '@graphql-mesh/fusion-composition';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { TransformValidationError } from '../../src/transforms/utils';
 import { composeAndGetExecutor } from './utils';
 

@@ -8,8 +8,8 @@ import { Callout } from '@theguild/components'
 
 # Schema Coordinates
 
-**Schema Coordinates** are the GraphQL specification way to name a single schema element. Prefer Spec
-forms when the config targets one type, field, argument, or directive.
+**Schema Coordinates** are the GraphQL specification way to name a single schema element. Prefer
+Spec forms when the config targets one type, field, argument, or directive.
 
 Background:
 [Schema Coordinates RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md)
@@ -24,13 +24,13 @@ on APIs that need them. Selectors are not Spec Schema Coordinates; both vocabula
 A Schema Coordinate is a compact string with **no whitespace**. Each schema element has exactly one
 coordinate.
 
-| Kind | Form | Example |
-| --- | --- | --- |
-| Named type | `Name` | `Business` |
-| Field, input field, or enum value | `Name.Name` | `Business.name`, `SearchCriteria.filter`, `SearchFilter.OPEN_NOW` |
-| Field argument | `Name.Name(Name:)` | `Query.searchBusiness(criteria:)` |
-| Directive | `@Name` | `@deprecated` |
-| Directive argument | `@Name(Name:)` | `@deprecated(reason:)` |
+| Kind                              | Form               | Example                                                           |
+| --------------------------------- | ------------------ | ----------------------------------------------------------------- |
+| Named type                        | `Name`             | `Business`                                                        |
+| Field, input field, or enum value | `Name.Name`        | `Business.name`, `SearchCriteria.filter`, `SearchFilter.OPEN_NOW` |
+| Field argument                    | `Name.Name(Name:)` | `Query.searchBusiness(criteria:)`                                 |
+| Directive                         | `@Name`            | `@deprecated`                                                     |
+| Directive argument                | `@Name(Name:)`     | `@deprecated(reason:)`                                            |
 
 Argument and directive-argument forms use a trailing `:` inside the parentheses. That marks an
 **argument name**, not a value.
@@ -45,11 +45,11 @@ Query.todo(id:"42")      # live-query identifier with a value (not Spec)
 Use selectors when you need wildcards or include/exclude patterns. They remain supported on filter
 schema, resolvers composition, rate limit style APIs, and response-cache TTL maps.
 
-| Mesh term | Example | Use |
-| --- | --- | --- |
-| Schema selector | `Query.*`, `Type.!User`, `Mutation.*`, `Query.user.!name` | Glob / include-exclude transforms and plugins |
-| Live-query identifier | `Todo:123`, `Query.todo(id:"{args.id}")` | Live Query invalidation (may embed values) |
-| Connector coordinate | `ecomm:Query.products@connect[0]` | Connect error identity for a directive application |
+| Mesh term               | Example                                                       | Use                                                |
+| ----------------------- | ------------------------------------------------------------- | -------------------------------------------------- |
+| Schema selector         | `Query.*`, `Type.!User`, `Mutation.*`, `Query.user.!name`     | Glob / include-exclude transforms and plugins      |
+| Live-query identifier   | `Todo:123`, `Query.todo(id:"{args.id}")`                      | Live Query invalidation (may embed values)         |
+| Connector coordinate    | `ecomm:Query.products@connect[0]`                             | Connect error identity for a directive application |
 | Response / resolve path | `["stores", 0, "author"]` or path labels in sequence diagrams | Location in an operation result, not in the schema |
 
 Wildcards, nested paths like `Query.user.name`, union members like `Meal.Breakfast`, and directive

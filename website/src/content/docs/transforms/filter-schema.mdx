@@ -17,11 +17,11 @@ that your integration is not affected when these entities are removed.
 
 <Callout type="info">
   Filter strings such as `Type.!User`, `Query.*.id`, or `Query.user.!name` are Mesh **schema
-  selectors** (globs, negation, brace lists). They are not
-  [Schema Coordinates](/docs/guides/schema-coordinates). Prefer Spec coordinates (`User`,
-  `Query.user`, `Query.user(id:)`) when an API asks for a single schema element; keep selectors here
-  for include/exclude patterns. See the
-  [Schema Coordinates RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md).
+  selectors** (globs, negation, brace lists). They are not [Schema
+  Coordinates](/docs/guides/schema-coordinates). Prefer Spec coordinates (`User`, `Query.user`,
+  `Query.user(id:)`) when an API asks for a single schema element; keep selectors here for
+  include/exclude patterns. See the [Schema Coordinates
+  RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md).
 </Callout>
 
 ## Installation

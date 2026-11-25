@@ -15,8 +15,8 @@ GraphQL Mesh with a few additions in the configuration.
 npm i @graphql-mesh/plugin-live-query
 ```
 
-Mesh live-query config often names fields with
-[Schema Coordinates](/docs/guides/schema-coordinates) such as `Mutation.addTodo` or `Query.todos`
+Mesh live-query config often names fields with [Schema Coordinates](/docs/guides/schema-coordinates)
+such as `Mutation.addTodo` or `Query.todos`
 ([RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md)). Invalidation can
 also use **live-query identifiers** that embed values (for example `Todo:123` or
 `Query.todo(id:"{args.id}")`). Those identifiers are not Spec Schema Coordinates.
