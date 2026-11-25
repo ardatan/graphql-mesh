@@ -7,30 +7,80 @@ import { DirectiveRef } from '../../../components/v2-directive-ref'
 
 # Thrift
 
-Thrift has two Mesh paths:
+Thrift has two Mesh paths. Anchor: `e2e/thrift-calculator` (`.thrift` IDL + binary compose vs JSON
+compose).
 
 | Path            | Directives                                               | Dual-run                              |
 | --------------- | -------------------------------------------------------- | ------------------------------------- |
 | Binary Thrift   | <DirectiveRef name="thrift__rpc" /> + `transport-thrift` | Hive Gateway only                     |
 | TJSON over HTTP | May emit HTTP/REST Connectors `@connect`                 | Apollo Router when Connect-compatible |
 
-**Import** (binary):
+## Generate (binary)
+
+`loadThriftSubgraph` with `protocol: 'binary'` emits `@thrift__rpc` + thrift `@transport`:
+
+```ts
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadThriftSubgraph } from '@omnigraph/thrift'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadThriftSubgraph('calculator', {
+        source: './services/calculator/calculator.thrift',
+        endpoint: 'http://localhost:4001/thrift',
+        serviceName: 'Calculator',
+        protocol: 'binary'
+      })
+    }
+  ]
+})
+```
+
+Compact hand / emitted shape (same idea as the loader docstring and composition tests):
 
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"])
   @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+
+type Query {
+  add(request: AddRequestInput): Int
+    @thrift__rpc(
+      function: "add"
+      args: """
+      1(struct): $args.request {
+        1(i32): left
+        2(i32): right
+      }
+      """
+      selection: "$(i32)"
+      messageType: CALL
+    )
+}
 ```
 
-`@thrift__rpc` uses the same **args / selection / throws** idea as Protobuf (Thrift types instead of
-field numbers). See [Directives](/v2/reference/directives#thrift) and
-[Selection mapping](/v2/guides/selection-mapping).
+`args` / `selection` / `throws` use Thrift wire types (`i32`, `struct`, ...) instead of Protobuf
+field numbers. See [Selection mapping](/v2/guides/selection-mapping) and
+[Directives](/v2/reference/directives#thrift).
 
-Do **not** call binary Thrift "Connectors" -- only the TJSON/`@connect` emit shares the HTTP/REST
-Connectors contract.
+## Generate (TJSON)
+
+Same IDL, `protocol: 'json'` -- emit switches to HTTP/REST Connectors `@source` + `@connect` (Hive
+Gateway and, when Connect-compatible, Apollo Router). Do **not** call binary Thrift "Connectors";
+only the TJSON path shares that contract.
+
+```ts
+loadThriftSubgraph('calculator', {
+  source: './services/calculator/calculator.thrift',
+  endpoint: 'http://localhost:4001/thrift-json',
+  protocol: 'json'
+})
+```
 
 <Cards>
   <Cards.Card arrow title="Directives: Thrift" href="/v2/reference/directives#thrift" />
   <Cards.Card arrow title="HTTP / REST" href="/v2/protocols/http-rest" />
+  <Cards.Card arrow title="Protobuf / gRPC" href="/v2/protocols/protobuf" />
   <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
 </Cards>

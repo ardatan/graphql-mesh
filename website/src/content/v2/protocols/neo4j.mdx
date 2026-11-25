@@ -9,7 +9,7 @@ import { DirectiveRef } from '../../../components/v2-directive-ref'
 
 Neo4j is a **Mesh protocol** that uses **native** `@neo4j/graphql` directives (not a Mesh
 `@neo4j__*` dialect and not HTTP/REST Connectors). Mesh stamps <DirectiveRef name="transport" /> and
-a neo4j `@link`; the Cypher / filter mapping lives in Neo4j GraphQL itself.
+a neo4j `@link`; Cypher / filter mapping lives in Neo4j GraphQL itself. Anchor: `e2e/neo4j-example`.
 
 | Piece      | Detail                                               |
 | ---------- | ---------------------------------------------------- |
@@ -19,20 +19,48 @@ a neo4j `@link`; the Cypher / filter mapping lives in Neo4j GraphQL itself.
 | Spec stamp | `https://specs.graphql-mesh.com/neo4j/v0.1`          |
 | Dual-run   | Hive Gateway only                                    |
 
+## Generate
+
+```ts
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadNeo4JSubgraph } from '@omnigraph/neo4j'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadNeo4JSubgraph('Movies', {
+        endpoint: 'neo4j://localhost:7687',
+        auth: {
+          type: 'basic',
+          username: 'neo4j',
+          password: 'password'
+        }
+      })
+    }
+  ]
+})
+```
+
+Emitted / hand stamp shape:
+
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.com/neo4j/v0.1")
   @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
 
-schema @transport(subgraph: "graph", kind: "neo4j", location: "bolt://localhost:7687") {
+schema @transport(subgraph: "Movies", kind: "neo4j", location: "bolt://localhost:7687") {
   query: Query
 }
 ```
 
-See [Directives](/v2/reference/directives#neo4j) and repo e2e `neo4j-example`.
+Type and field mapping stay on Neo4j GraphQL natives (`@node`, `@relationship`, ...). Mesh only
+marks the subgraph for `transport-neo4j`. See [Directives](/v2/reference/directives#neo4j).
+
+Serve with [Hive Gateway](/v2/serve/hive-gateway) (stock Apollo Router does not run this transport).
 
 <Cards>
   <Cards.Card arrow title="Directives: Neo4j" href="/v2/reference/directives#neo4j" />
   <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Generate path" href="/v2/paths/generate" />
   <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
 </Cards>
