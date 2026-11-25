@@ -32,10 +32,11 @@ Edited generate output and scratch-authored SDL use the same Compose input.
 
 ## Import directive definitions
 
-Hand SDL does not redefine every directive by hand forever. Import them with
-
-<DirectiveRef name="link" /> (Apollo / Mesh spec URLs). Mesh Compose injects matching directive
-definitions when you compose; loaders stamp the same imports on generated subgraphs.
+Hand SDL imports directive names with <DirectiveRef name="link" /> (Apollo / Mesh spec URLs) and
+must also include a local `directive @…` **definition** for each Mesh directive you
+`@composeDirective`. Federation composition looks up that definition by name -- Mesh Compose does
+**not** invent missing defs for you (loaders stamp both the `@link` / `@composeDirective` apps and
+the matching definitions on generated subgraphs).
 
 | Family            | Typical `@link` import                                                          |
 | ----------------- | ------------------------------------------------------------------------------- |
@@ -61,9 +62,30 @@ Sketch -- Music Store Example gRPC / Protobuf slice (field-level `@protobuf__rpc
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
-  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
   @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
   @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
+  @composeDirective(name: "@transport")
+  @composeDirective(name: "@protobuf__rpc")
+
+directive @transport(
+  subgraph: String!
+  kind: String!
+  location: String
+  headers: [[String]]
+  options: TransportOptions
+) repeatable on SCHEMA
+
+directive @protobuf__rpc(
+  service: String
+  method: String
+  args: String
+  selection: String
+  stream: Boolean
+  entity: Boolean
+) on FIELD_DEFINITION
+
+scalar TransportOptions
 
 schema
   @transport(subgraph: "recommendations", kind: "protobuf", location: "http://localhost:50051") {

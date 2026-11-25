@@ -368,7 +368,8 @@ Guide: [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub).
 
 Event-driven subscriptions on **Hive Gateway**. Subscribe a field to a pubsub topic, or publish a
 mutation result onto one. Both are Mesh **core** directives (`core/v0.1`). On Federation subgraphs,
-import them and list each name in `@composeDirective` so they survive into the supergraph.
+import them, list each name in `@composeDirective`, and keep a matching `directive @…` definition
+(composition fails without the defs).
 
 JSON Schema / OpenAPI loaders **emit** `@pubsubOperation` for subscription ops that set
 `pubsubTopic` (including OpenAPI callbacks as `webhook:method:path`). You can also hand-write both
@@ -376,7 +377,7 @@ directives. Guide with serve config: [Subscriptions and pubsub](/v2/guides/subsc
 Hive Gateway product docs:
 [Subscriptions / EDFS](https://the-guild.dev/graphql/hive/docs/gateway/subscriptions).
 
-**Import**
+**Import** (plus definitions -- required with `@composeDirective`)
 
 ```graphql
 extend schema
@@ -387,6 +388,15 @@ extend schema
   )
   @composeDirective(name: "@pubsubOperation")
   @composeDirective(name: "@pubsubPublish")
+
+directive @pubsubOperation(
+  pubsubTopic: String!
+  filterBy: String
+  result: String
+  subgraph: String
+) on FIELD_DEFINITION
+
+directive @pubsubPublish(pubsubTopic: String!) on FIELD_DEFINITION
 ```
 
 | Directive          | Location           | Role                                                              |
@@ -416,6 +426,15 @@ extend schema
   @composeDirective(name: "@pubsubOperation")
   @composeDirective(name: "@pubsubPublish")
 
+directive @pubsubOperation(
+  pubsubTopic: String!
+  filterBy: String
+  result: String
+  subgraph: String
+) on FIELD_DEFINITION
+
+directive @pubsubPublish(pubsubTopic: String!) on FIELD_DEFINITION
+
 type Product @key(fields: "id") {
   id: ID!
   name: String!
@@ -435,11 +454,22 @@ type Subscription {
 
 ### Scenario: loader-emitted webhook subscription
 
-JSON Schema (or OpenAPI callback) subscription ops stamp `@pubsubOperation` with a `webhook:…`
-topic. Serve with `webhooks: true` so Hive Gateway binds HTTP paths to those topics:
+JSON Schema (or OpenAPI callback) subscription ops stamp `@pubsubOperation` with a `webhook:…` topic
+(plus the directive definition and `@composeDirective`). Serve with `webhooks: true` so Hive Gateway
+binds HTTP paths to those topics:
 
 ```graphql
-extend schema @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@pubsubOperation"])
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@pubsubOperation"])
+  @composeDirective(name: "@pubsubOperation")
+
+directive @pubsubOperation(
+  pubsubTopic: String!
+  filterBy: String
+  result: String
+  subgraph: String
+) on FIELD_DEFINITION
 
 type Subscription {
   # Emitted for pubsubTopic: "webhook:post:/webhooks/todo_added"
@@ -458,6 +488,13 @@ type Todo {
 Same topic for many clients; keep only events that match the subscription args:
 
 ```graphql
+directive @pubsubOperation(
+  pubsubTopic: String!
+  filterBy: String
+  result: String
+  subgraph: String
+) on FIELD_DEFINITION
+
 type Subscription {
   todoUpdated(id: ID!): Todo
     @pubsubOperation(
@@ -987,16 +1024,30 @@ Combine with Connect / protocol fields for nested data -- not Mesh `@resolveTo` 
 
 ### Scenario: `@composeDirective` for Mesh transports
 
-After importing Mesh / Connect directives, list each local name that must survive into the
-supergraph (loaders usually stamp this):
+After importing Mesh directives, list each local name that must survive into the supergraph **and**
+keep a matching `directive` definition (loaders stamp both):
 
 ```graphql
 extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
   @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
   @composeDirective(name: "@transport")
+
+# Required: Federation looks up this definition for @composeDirective(name: "@transport")
+directive @transport(
+  subgraph: String!
+  kind: String!
+  location: String
+  headers: [[String]]
+  options: TransportOptions
+) repeatable on SCHEMA
+
+scalar TransportOptions
 ```
 
-Mongo loaders also `@composeDirective` every `@mongo__*` op they emit.
+Without that definition, Mesh Compose reports
+`Could not find matching directive definition for argument to @composeDirective "@transport"`. Mongo
+loaders also `@composeDirective` every `@mongo__*` op they emit (with defs).
 
 ---
 
@@ -1024,8 +1075,10 @@ extend schema @link(url: "https://specs.apollo.dev/link/v1.0")
 | Mesh Thrift       | `https://specs.graphql-mesh.com/thrift/v0.1`   | `@thrift__rpc`                                                                  |
 | Mesh Neo4j        | `https://specs.graphql-mesh.com/neo4j/v0.1`    | `@node`, `@relationship`, ...                                                   |
 
-Mesh Compose injects matching definitions when you compose; loaders stamp the same imports on
-generated subgraphs.
+`@link` names the import; Federation still requires a matching `directive @…` definition on the
+subgraph when you `@composeDirective` that name. Loaders stamp both. Hand SDL must include the
+definitions -- Mesh Compose does not invent them (it only special-cases a few stamps such as
+`@transport` when composing).
 
 ---
 

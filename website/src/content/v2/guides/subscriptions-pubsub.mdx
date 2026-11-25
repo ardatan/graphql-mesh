@@ -37,7 +37,8 @@ Directive catalog: [Directives: pubsub](/v2/reference/directives#pubsub). Upstre
 ### Subgraph EDFS: publish from a mutation, subscribe on a topic
 
 Hand-write (or edit) subgraph SDL so a mutation publishes and a subscription listens. Import Mesh
-core directives and compose them:
+core directives, `@composeDirective` each name, and include the `directive` definitions (composition
+fails without them):
 
 ```graphql
 extend schema
@@ -49,6 +50,15 @@ extend schema
   # Keep both on the supergraph or the gateway never sees them
   @composeDirective(name: "@pubsubOperation")
   @composeDirective(name: "@pubsubPublish")
+
+directive @pubsubOperation(
+  pubsubTopic: String!
+  filterBy: String
+  result: String
+  subgraph: String
+) on FIELD_DEFINITION
+
+directive @pubsubPublish(pubsubTopic: String!) on FIELD_DEFINITION
 
 type Product @key(fields: "id") {
   id: ID!
@@ -117,9 +127,16 @@ export const gatewayConfig = defineGatewayConfig({
 })
 ```
 
-Emitted subscription field:
+Emitted subscription field (loader also stamps the directive definition + `@composeDirective`):
 
 ```graphql
+directive @pubsubOperation(
+  pubsubTopic: String!
+  filterBy: String
+  result: String
+  subgraph: String
+) on FIELD_DEFINITION
+
 type Subscription {
   todoAdded: Todo
     @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added")

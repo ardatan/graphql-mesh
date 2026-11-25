@@ -188,8 +188,10 @@ query PatientById {
 
 Skill: [Hand-write](/v2/paths/hand-write)
 
-File: `reference-resource.graphql`. **No `Query`** -- other subgraphs own roots. Mesh Compose
-injects directive definitions; the file carries `@link` imports and type apps only.
+File: `reference-resource.graphql`. **No `Query`** -- other subgraphs own roots. This join file
+carries `@link` imports and type apps; Connect composition supplies `@connect` machinery. For Mesh
+`@composeDirective` targets (e.g. `@transport`, `@pubsubOperation`), hand SDL must also include the
+matching `directive` definitions -- see [Hand-write](/v2/paths/hand-write).
 
 ```graphql
 extend schema

@@ -48,14 +48,26 @@ composition in the stack ([Architecture](/v2/architecture)).
 Publishing does not change dual-run rules: a registry supergraph that still carries `@sql` or
 `@protobuf__rpc` needs Hive Gateway; Connect-only graphs can pull into Apollo Router.
 
-Mesh / Connect directives must survive composition via `@composeDirective`, or the gateway never
-sees them ([Directives](/v2/reference/directives#federation)):
+Mesh / Connect directives must survive composition via `@composeDirective` **and** a matching
+`directive` definition on the subgraph, or composition fails / the gateway never sees them
+([Directives](/v2/reference/directives#federation)):
 
 ```graphql
 extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
   @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
   # Without this, @transport may be stripped from the published supergraph
   @composeDirective(name: "@transport")
+
+directive @transport(
+  subgraph: String!
+  kind: String!
+  location: String
+  headers: [[String]]
+  options: TransportOptions
+) repeatable on SCHEMA
+
+scalar TransportOptions
 ```
 
 Join-only subgraphs (FHIR `reference-resource.graphql`) are valid registry citizens: `@key` stubs
