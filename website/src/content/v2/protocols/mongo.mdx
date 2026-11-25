@@ -6,37 +6,140 @@ import { Cards } from '@theguild/components'
 
 # Mongo
 
-Mongo is a **Mesh protocol** (not HTTP/REST Connectors). The loader stamps `@mongo__*` ops
-(`@mongo__findOne`, `@mongo__find`, CRUD, ...); Hive Gateway runs `transport-mongo`.
+Use Mongo when collections should become GraphQL types with **find / filter / aggregate / CRUD**
+ops, ObjectId keys, and Federation entity fill -- without inventing a REST facade. This is a **Mesh
+protocol** (not HTTP/REST Connectors). The loader stamps `@mongo__*` ops; Hive Gateway runs
+`transport-mongo`. Stock Apollo Router does **not** execute them.
 
-| Piece      | Detail                                                                            |
-| ---------- | --------------------------------------------------------------------------------- |
-| Loader     | `@omnigraph/mongo`                                                                |
-| Directives | `@mongo__findOne`, `@mongo__find`, `@mongo__connection`, `@mongo__insertOne`, ... |
-| Transport  | `@graphql-mesh/transport-mongo`                                                   |
-| Spec       | `https://specs.graphql-mesh.com/mongo/v0.1`                                       |
-| Dual-run   | Hive Gateway only                                                                 |
+| Piece      | Detail                                           |
+| ---------- | ------------------------------------------------ |
+| Loader     | `@omnigraph/mongo` (`loadMongoSubgraph`)         |
+| Directives | `@mongo__findOne`, `@mongo__find`, CRUD, ...     |
+| Transport  | `@graphql-mesh/transport-mongo`                  |
+| Spec       | `https://specs.graphql-mesh.com/mongo/v0.1`      |
+| Dual-run   | Hive Gateway only                                |
+| Anchors    | `e2e/mongoose-users`; loader `mongo-schema` snap |
 
-**Import** (loaders stamp the ops you emit):
+## Generate from a Mongoose model
+
+```ts
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadMongoSubgraph } from '@omnigraph/mongo'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadMongoSubgraph('Mongoose', {
+        endpoint: 'mongodb://127.0.0.1:27017/mesh_users',
+        models: [{ name: 'User', path: './src/models.js#User' }]
+      })
+    }
+  ]
+})
+```
+
+## Find by id and entity fill
+
+From the mongo loader schema snapshot: Query `findUserById` uses `$args`; type-level
+`@mongo__findOne` uses `$this` for Federation:
 
 ```graphql
 extend schema
   @link(
     url: "https://specs.graphql-mesh.com/mongo/v0.1"
-    import: ["@mongo__findOne", "@mongo__find"]
+    import: ["@mongo__findOne", "@mongo__find", "@mongo__insertOne"]
   )
   @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
 
 schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test") {
   query: Query
 }
+
+type Query {
+  findUserById(id: ObjectID!): User
+    @mongo__findOne(
+      collection: "user_users"
+      query: """
+      _id: $args.id
+      """
+      selection: """
+      id: _id
+      name: name
+      age: age
+      """
+    )
+
+  findUsers(filter: UserFilterInput, sort: [UserSort!], limit: Int = 100, skip: Int): [User!]!
+    @mongo__find(
+      collection: "user_users"
+      query: "$args.filter"
+      sort: "$args.sort"
+      limit: "$args.limit"
+      skip: "$args.skip"
+      selection: """
+      id: _id
+      name: name
+      age: age
+      """
+    )
+}
+
+type User
+  @key(fields: "id")
+  @mongo__findOne(
+    collection: "user_users"
+    query: """
+    _id: $this.id
+    """
+    selection: """
+    id: _id
+    name: name
+    age: age
+    """
+  ) {
+  id: ObjectID!
+  name: String
+  age: Float
+}
 ```
 
-Binders reuse `$args` / `$this` with Mongo `query` / `selection` strings -- see
-[Selection mapping](/v2/guides/selection-mapping) and [Directives](/v2/reference/directives#mongo).
+## Mutations
+
+```graphql
+type Mutation {
+  insertOneUser(document: UserDocumentInput!): User
+    @mongo__insertOne(
+      collection: "user_users"
+      set: "$args.document"
+      selection: """
+      id: _id
+      name: name
+      """
+    )
+
+  updateUserById(id: ObjectID!, update: UserUpdateInput!): User
+    @mongo__updateOne(
+      collection: "user_users"
+      query: """
+      _id: $args.id
+      """
+      set: "$args.update"
+      selection: """
+      id: _id
+      name: name
+      """
+    )
+}
+```
+
+The loader also emits connection / pagination / aggregate / deleteMany variants when the model
+supports them -- same `collection` + `query` / `selection` dialect. Binders:
+[Selection mapping](/v2/guides/selection-mapping). Directives catalog:
+[Mongo](/v2/reference/directives#mongo).
 
 <Cards>
   <Cards.Card arrow title="Directives: Mongo" href="/v2/reference/directives#mongo" />
   <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Generate path" href="/v2/paths/generate" />
   <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
 </Cards>

@@ -7,17 +7,20 @@ import { DirectiveRef } from '../../../components/v2-directive-ref'
 
 # Neo4j
 
-Neo4j is a **Mesh protocol** that uses **native** `@neo4j/graphql` directives (not a Mesh
-`@neo4j__*` dialect and not HTTP/REST Connectors). Mesh stamps <DirectiveRef name="transport" /> and
-a neo4j `@link`; Cypher / filter mapping lives in Neo4j GraphQL itself. Anchor: `e2e/neo4j-example`.
+Use Neo4j when the graph already lives in **Bolt / Cypher** and you want GraphQL types that mirror
+nodes and relationships (filters, sorts, relationship properties). Mesh does **not** invent a
+`@neo4j__*` dialect: it stamps <DirectiveRef name="transport" /> + a neo4j `@link`, and reuses
+**native** `@neo4j/graphql` directives (`@node`, `@relationship`, ...). Not HTTP/REST Connectors.
+Hive Gateway only.
 
-| Piece      | Detail                                               |
-| ---------- | ---------------------------------------------------- |
-| Loader     | `@omnigraph/neo4j` (introspect or accept author SDL) |
-| Directives | Native `@neo4j/graphql`                              |
-| Transport  | `@graphql-mesh/transport-neo4j`                      |
-| Spec stamp | `https://specs.graphql-mesh.com/neo4j/v0.1`          |
-| Dual-run   | Hive Gateway only                                    |
+| Piece      | Detail                                                  |
+| ---------- | ------------------------------------------------------- |
+| Loader     | `@omnigraph/neo4j` (introspect or accept author SDL)    |
+| Directives | Native `@neo4j/graphql` (`@node`, `@relationship`, ...) |
+| Transport  | `@graphql-mesh/transport-neo4j`                         |
+| Spec stamp | `https://specs.graphql-mesh.com/neo4j/v0.1`             |
+| Dual-run   | Hive Gateway only                                       |
+| Anchor     | `e2e/neo4j-example` (Movies dataset)                    |
 
 ## Generate
 
@@ -41,22 +44,45 @@ export const composeConfig = defineConfig({
 })
 ```
 
-Emitted / hand stamp shape:
+## What the emit looks like
+
+Transport stamp + relationship graph (simplified from the neo4j-example compose snapshot):
 
 ```graphql
 extend schema
-  @link(url: "https://specs.graphql-mesh.com/neo4j/v0.1")
+  @link(
+    url: "https://specs.graphql-mesh.com/neo4j/v0.1"
+    import: ["@node", "@relationship", "@relationshipProperties"]
+  )
   @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
 
-schema @transport(subgraph: "Movies", kind: "neo4j", location: "bolt://localhost:7687") {
+schema @transport(subgraph: "Movies", kind: "neo4j", location: "neo4j://localhost:7687") {
   query: Query
+}
+
+type Movie @node {
+  title: String
+  peopleActedIn(where: PersonWhere, limit: Int, offset: Int): [Person!]!
+    @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
+  peopleDirected(where: PersonWhere, limit: Int, offset: Int): [Person!]!
+    @relationship(type: "DIRECTED", direction: IN)
+}
+
+type Person @node {
+  name: String
+  actedInMovies(where: MovieWhere, limit: Int, offset: Int): [Movie!]!
+    @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
+  directedMovies(where: MovieWhere, limit: Int, offset: Int): [Movie!]!
+    @relationship(type: "DIRECTED", direction: OUT)
+}
+
+type ActedInProperties @relationshipProperties {
+  roles: [String!]
 }
 ```
 
-Type and field mapping stay on Neo4j GraphQL natives (`@node`, `@relationship`, ...). Mesh only
-marks the subgraph for `transport-neo4j`. See [Directives](/v2/reference/directives#neo4j).
-
-Serve with [Hive Gateway](/v2/serve/hive-gateway) (stock Apollo Router does not run this transport).
+Mesh's job is the transport + federation join; Cypher generation stays with Neo4j GraphQL. Catalog:
+[Directives: Neo4j](/v2/reference/directives#neo4j). Serve: [Hive Gateway](/v2/serve/hive-gateway).
 
 <Cards>
   <Cards.Card arrow title="Directives: Neo4j" href="/v2/reference/directives#neo4j" />

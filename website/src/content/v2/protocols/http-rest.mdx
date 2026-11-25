@@ -7,9 +7,11 @@ import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
 
 # HTTP / REST
 
-Mesh maps HTTP APIs with <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>
-(<DirectiveRef name="connect" /> / <DirectiveRef name="source" />, connect/v0.4). Loaders for
-OpenAPI, JSON Schema, OData, and SOAP-as-Connect **emit** that shape; authors can hand-write it.
+Use this family when the source speaks **HTTP** and you want GraphQL fields that map to `GET` /
+`POST` / ... with a response `selection`. Mesh loaders for OpenAPI, JSON Schema, OData, and SOAP
+**emit** <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>
+(<DirectiveRef name="connect" /> / <DirectiveRef name="source" />); you can also hand-write the same
+shape.
 
 | Piece     | Detail                                                                               |
 | --------- | ------------------------------------------------------------------------------------ |
@@ -18,10 +20,13 @@ OpenAPI, JSON Schema, OData, and SOAP-as-Connect **emit** that shape; authors ca
 | Dual-run  | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when Connect-compatible |
 | Spec      | `https://specs.apollo.dev/connect/v0.4`                                              |
 
-## Loader -> Connect emit (entity lookup)
+SOAP-as-Connect uses the same directives plus an XML body codec; stock Apollo Router dual-run is
+**not** expected for SOAP envelopes.
 
-From `e2e/openapi-entity-stubs` (Billing OpenAPI). Composition stamps `entity: true` when the Query
-arg matches the entity key ([ById conventions](/v2/compose#semantic-conventions)):
+## OpenAPI entity lookup (`e2e/openapi-entity-stubs`)
+
+Billing OpenAPI: a ById-shaped Query arg becomes `entity: true` so Federation can fill `Customer`
+from its key ([semantic conventions](/v2/compose#semantic-conventions)):
 
 ```ts
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
@@ -60,13 +65,176 @@ type Query {
 }
 ```
 
-FHIR JSON Schema + join SDL: [FHIR](/v2/examples/fhir). Arg / selection dialect:
-[Selection mapping](/v2/guides/selection-mapping). Upstream:
+Music Store stage 2 (Reviews) is the same pattern for REST reviews on tracks.
+
+## JSON Schema / FHIR (`e2e/json-schema-fhir`)
+
+Point operations at JSON Schema definition pointers; the loader emits `@connect` with an auto
+`selection`. FHIR also shows join-only hand SDL beside generated patients / observations:
+
+```ts
+import { OperationTypeNode } from 'graphql'
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadJSONSchemaSubgraph('patients', {
+        endpoint: process.env.FHIR_BASE!,
+        scalarMap: {/* date, dateTime, uri, uuid, ... */},
+        operations: [
+          {
+            type: OperationTypeNode.QUERY,
+            field: 'patient',
+            method: 'GET',
+            path: '/Patient/{args.id}?_format=application/json',
+            requiredArgs: ['id'],
+            responseSchema: './fhir.schema.json#/definitions/Patient'
+          }
+        ]
+      })
+    },
+    {
+      name: 'referenceResource',
+      schema: './reference-resource.graphql'
+    }
+  ]
+})
+```
+
+Walkthrough: [FHIR](/v2/examples/fhir).
+
+## OData TripPin (`e2e/odata-trippin`)
+
+OData becomes Connect with `$this` entity paths and query options. Entity fill for `Person`:
+
+```ts
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadODataSubgraph } from '@omnigraph/odata'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadODataSubgraph('Trippin', {
+        endpoint: 'https://services.odata.org/TripPinRESTierService/(S(...))/',
+        batch: 'multipart',
+        expandNavProps: true
+      })
+    }
+  ]
+})
+```
+
+Simplified emit (real snapshot also maps `@odata.type` unions):
+
+```graphql
+type Person
+  @key(fields: "UserName")
+  @connect(
+    source: "Trippin"
+    http: { GET: "/People/{$this.UserName}/" }
+    selection: """
+    UserName
+    FirstName
+    LastName
+    """
+    entity: true
+  ) {
+  UserName: String!
+  FirstName: String
+  LastName: String
+  FriendsById(id: ID): IPerson
+    @connect(
+      source: "Trippin"
+      http: { GET: "/People/{$this.UserName}/Friends/{$args.id}/" }
+      selection: """
+      UserName
+      FirstName
+      LastName
+      """
+    )
+}
+```
+
+## SOAP-as-Connect (`e2e/soap-demo`)
+
+WSDL operations become `POST` Connect fields whose `body` is a SOAP envelope selection string (Hive
+Gateway XML codec). Dual-run on stock Apollo Router is not the goal:
+
+```ts
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadSOAPSubgraph } from '@omnigraph/soap'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSOAPSubgraph('soap-demo', {
+        source: './SOAP.Demo.cls.wsdl',
+        endpoint: 'http://localhost:4001/csp/samples/SOAP.Demo.cls'
+      })
+    }
+  ]
+})
+```
+
+Conceptual field (names shortened from the e2e join snapshot):
+
+```graphql
+type Query {
+  FindPerson(FindPerson: FindPerson_Input): FindPersonResponse
+    @connect(
+      source: "soap-demo"
+      http: {
+        POST: "/csp/samples/SOAP.Demo.cls"
+        headers: [{ name: "SOAPAction", value: "http://tempuri.org/SOAP.Demo.FindPerson" }]
+        body: """
+        "soap:Envelope": {
+          attributes: {
+            "xmlns:soap": $("http://schemas.xmlsoap.org/soap/envelope/")
+            "xmlns:body": $("http://tempuri.org")
+          }
+          "soap:Body": { "body:FindPerson": $args.FindPerson }
+        }
+        """
+      }
+      selection: "$.Envelope.Body.FindPersonResponse"
+    )
+}
+```
+
+## OpenAPI callbacks / subscriptions (`e2e/openapi-subscriptions`)
+
+Callback-style OpenAPI can emit a mutation that returns subscription info (Hive Gateway
+`webhooks: true` in that e2e):
+
+```graphql
+type Mutation {
+  post_streams(input: post_streams_request_Input): SubscriptionInfo
+    @connect(
+      source: "OpenAPICallbackExample"
+      http: { POST: "/streams", body: "$args.input" }
+      selection: "subscriptionId"
+    )
+}
+```
+
+## Dialect and dual-run
+
+`selection` / `http.body` / path templates: [Selection mapping](/v2/guides/selection-mapping).
+Upstream arg tables:
 [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
+
+| Surface                            | Hive Gateway | Apollo Router               |
+| ---------------------------------- | ------------ | --------------------------- |
+| JSON OpenAPI / JSON Schema Connect | Yes          | Yes when Connect-compatible |
+| OData Connect                      | Yes          | When Connect-compatible     |
+| SOAP envelope Connect              | Yes          | No (expect Hive)            |
 
 <Cards>
   <Cards.Card arrow title="HTTP/REST Connectors (concept)" href="/v2/concepts/connectors" />
   <Cards.Card arrow title="Directives: @connect" href="/v2/reference/directives#connect" />
   <Cards.Card arrow title="Music Store stage 2" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="FHIR" href="/v2/examples/fhir" />
   <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
 </Cards>
