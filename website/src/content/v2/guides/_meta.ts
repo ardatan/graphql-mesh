@@ -3,4 +3,5 @@ export default {
   'reading-generated-sdl': 'Reading generated SDL',
   'schema-coordinates': 'Schema Coordinates',
   'selection-mapping': 'Selection mapping',
+  'subscriptions-pubsub': 'Subscriptions and pubsub',
 };

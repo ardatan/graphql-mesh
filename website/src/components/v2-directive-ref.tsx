@@ -83,6 +83,16 @@ const DIRECTIVES = {
     description:
       'Mesh field delegation / join helper (sourceName, sourceFieldName, ...); prefer @key + HTTP/REST Connect or protocol entity maps for new work.',
   },
+  pubsubOperation: {
+    label: '@pubsubOperation',
+    anchor: 'pubsub',
+    description: 'Subscribe a field to a pubsub topic (EDFS / webhooks on Hive Gateway).',
+  },
+  pubsubPublish: {
+    label: '@pubsubPublish',
+    anchor: 'pubsub',
+    description: 'Publish a field result to a pubsub topic after it resolves.',
+  },
 } as const;
 
 export type DirectiveName = keyof typeof DIRECTIVES;

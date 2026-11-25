@@ -26,6 +26,7 @@ not just arg lists. Binders: [Selection mapping](/v2/guides/selection-mapping). 
 | HTTP/REST Connectors | `@connect`, `@source`                                        | Entity ById, type-level `$this`, nested `$this`, SOAP/OData |
 | Mesh core            | `@transport`                                                 | Kind / location stamp                                       |
 | Mesh join helpers    | `@merge`, `@resolveTo`                                       | Auto-merge, batch keysArg, valueKeyField, pubsubTopic       |
+| Mesh pubsub / EDFS   | `@pubsubOperation`, `@pubsubPublish`                         | Subgraph subscribe / publish; webhooks                      |
 | SQL                  | `@sql`                                                       | ROW/entity, ROWS, through, INSERT/DELETE                    |
 | Mongo                | `@mongo__*`                                                  | findOne/entity, find filter, insert/update                  |
 | Protobuf / gRPC      | `@protobuf__rpc`                                             | Unary hand SDL, streaming SearchMoviesByCast                |
@@ -341,15 +342,128 @@ extend type SearchResult {
 }
 ```
 
-### Scenario: webhook subscription
+### Scenario: webhook subscription via `@resolveTo(pubsubTopic:)`
 
-No subgraph target -- Hive Gateway `webhooks: true` + pubsub topic:
+Gateway-side `additionalTypeDefs` can still wire subscriptions with `@resolveTo(pubsubTopic:)` (Hive
+Gateway `webhooks: true` for `webhook:...` topics). For subgraph-native EDFS, prefer
+[`@pubsubOperation`](#pubsub) / [`@pubsubPublish`](#pubsub) instead:
 
 ```graphql
 type Subscription {
   todoAddedFromExtensions: Todo @resolveTo(pubsubTopic: "webhook:post:/webhooks/todo_added")
   todoUpdatedFromExtensions(id: ID!): Todo
     @resolveTo(pubsubTopic: "webhook:post:/webhooks/todo_updated", filterBy: "root.id === args.id")
+}
+```
+
+Guide: [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub).
+
+---
+
+<a id="pubsub" />
+
+## Mesh `@pubsubOperation` / `@pubsubPublish`
+
+`@pubsubOperation` · `@pubsubPublish`
+
+Event-driven subscriptions on **Hive Gateway**. Subscribe a field to a pubsub topic, or publish a
+mutation result onto one. Both are Mesh **core** directives (`core/v0.1`). On Federation subgraphs,
+import them and list each name in `@composeDirective` so they survive into the supergraph.
+
+JSON Schema / OpenAPI loaders **emit** `@pubsubOperation` for subscription ops that set
+`pubsubTopic` (including OpenAPI callbacks as `webhook:method:path`). You can also hand-write both
+directives. Guide with serve config: [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub).
+Hive Gateway product docs:
+[Subscriptions / EDFS](https://the-guild.dev/graphql/hive/docs/gateway/subscriptions).
+
+**Import**
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  @link(
+    url: "https://specs.graphql-mesh.com/core/v0.1"
+    import: ["@pubsubOperation", "@pubsubPublish"]
+  )
+  @composeDirective(name: "@pubsubOperation")
+  @composeDirective(name: "@pubsubPublish")
+```
+
+| Directive          | Location           | Role                                                              |
+| ------------------ | ------------------ | ----------------------------------------------------------------- |
+| `@pubsubOperation` | `FIELD_DEFINITION` | Subscribe this field to `pubsubTopic` (usually on `Subscription`) |
+| `@pubsubPublish`   | `FIELD_DEFINITION` | After the field resolves, publish its payload to `pubsubTopic`    |
+
+| Arg           | On                 | Meaning                                                          |
+| ------------- | ------------------ | ---------------------------------------------------------------- |
+| `pubsubTopic` | both               | Topic string (e.g. `new_product`, or `webhook:post:/webhooks/…`) |
+| `filterBy`    | `@pubsubOperation` | Optional filter expression over the payload (`root` / `args`)    |
+| `result`      | `@pubsubOperation` | Optional path into the payload before returning it               |
+| `subgraph`    | `@pubsubOperation` | Optional stamp when a loader emits the directive                 |
+
+### Scenario: EDFS subscribe + publish on one subgraph
+
+Mutation publishes the created `Product`; subscription listens on the same topic. Hive Gateway
+hydrates missing fields from the best subgraph for the event payload:
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  @link(
+    url: "https://specs.graphql-mesh.com/core/v0.1"
+    import: ["@pubsubOperation", "@pubsubPublish"]
+  )
+  @composeDirective(name: "@pubsubOperation")
+  @composeDirective(name: "@pubsubPublish")
+
+type Product @key(fields: "id") {
+  id: ID!
+  name: String!
+  price: Float!
+}
+
+type Mutation {
+  # After createProduct resolves, publish the Product to new_product
+  createProduct(name: String!, price: Float!): Product! @pubsubPublish(pubsubTopic: "new_product")
+}
+
+type Subscription {
+  # Clients subscribe here; gateway listens on new_product
+  newProduct: Product! @pubsubOperation(pubsubTopic: "new_product")
+}
+```
+
+### Scenario: loader-emitted webhook subscription
+
+JSON Schema (or OpenAPI callback) subscription ops stamp `@pubsubOperation` with a `webhook:…`
+topic. Serve with `webhooks: true` so Hive Gateway binds HTTP paths to those topics:
+
+```graphql
+extend schema @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@pubsubOperation"])
+
+type Subscription {
+  # Emitted for pubsubTopic: "webhook:post:/webhooks/todo_added"
+  todoAdded: Todo
+    @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added")
+}
+
+type Todo {
+  id: ID!
+  content: String!
+}
+```
+
+### Scenario: filter subscription payloads
+
+Same topic for many clients; keep only events that match the subscription args:
+
+```graphql
+type Subscription {
+  todoUpdated(id: ID!): Todo
+    @pubsubOperation(
+      pubsubTopic: "webhook:post:/webhooks/todo_updated"
+      filterBy: "root.id === args.id" # drop events for other todos
+    )
 }
 ```
 
@@ -899,16 +1013,16 @@ spec:
 extend schema @link(url: "https://specs.apollo.dev/link/v1.0")
 ```
 
-| Family            | Typical URL                                    | Typical `import`                          |
-| ----------------- | ---------------------------------------------- | ----------------------------------------- |
-| HTTP/REST Connect | `https://specs.apollo.dev/connect/v0.4`        | `@connect`, `@source`                     |
-| Federation        | `https://specs.apollo.dev/federation/v2.6`     | `@key`, `@composeDirective`, ...          |
-| Mesh core         | `https://specs.graphql-mesh.com/core/v0.1`     | `@transport`, `@merge`, `@resolveTo`, ... |
-| Mesh SQL          | `https://specs.graphql-mesh.com/sql/v0.1`      | `@sql`                                    |
-| Mesh Mongo        | `https://specs.graphql-mesh.com/mongo/v0.1`    | `@mongo__findOne`, ...                    |
-| Mesh protobuf     | `https://specs.graphql-mesh.com/protobuf/v0.1` | `@protobuf__rpc`                          |
-| Mesh Thrift       | `https://specs.graphql-mesh.com/thrift/v0.1`   | `@thrift__rpc`                            |
-| Mesh Neo4j        | `https://specs.graphql-mesh.com/neo4j/v0.1`    | `@node`, `@relationship`, ...             |
+| Family            | Typical URL                                    | Typical `import`                                                                |
+| ----------------- | ---------------------------------------------- | ------------------------------------------------------------------------------- |
+| HTTP/REST Connect | `https://specs.apollo.dev/connect/v0.4`        | `@connect`, `@source`                                                           |
+| Federation        | `https://specs.apollo.dev/federation/v2.6`     | `@key`, `@composeDirective`, ...                                                |
+| Mesh core         | `https://specs.graphql-mesh.com/core/v0.1`     | `@transport`, `@merge`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, ... |
+| Mesh SQL          | `https://specs.graphql-mesh.com/sql/v0.1`      | `@sql`                                                                          |
+| Mesh Mongo        | `https://specs.graphql-mesh.com/mongo/v0.1`    | `@mongo__findOne`, ...                                                          |
+| Mesh protobuf     | `https://specs.graphql-mesh.com/protobuf/v0.1` | `@protobuf__rpc`                                                                |
+| Mesh Thrift       | `https://specs.graphql-mesh.com/thrift/v0.1`   | `@thrift__rpc`                                                                  |
+| Mesh Neo4j        | `https://specs.graphql-mesh.com/neo4j/v0.1`    | `@node`, `@relationship`, ...                                                   |
 
 Mesh Compose injects matching definitions when you compose; loaders stamp the same imports on
 generated subgraphs.
@@ -919,6 +1033,7 @@ generated subgraphs.
 
 <Cards>
   <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
+  <Cards.Card arrow title="Subscriptions and pubsub" href="/v2/guides/subscriptions-pubsub" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />

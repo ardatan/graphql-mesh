@@ -63,8 +63,9 @@ kinds.
 
 Register only the transports your supergraph actually stamps. A mixed Music Store graph needs SQL
 and protobuf; Connect needs no extra entry. Thrift TJSON is Connect, so it does not load
-`transport-thrift`. OpenAPI callback subscriptions need `webhooks: true` when fields use
-`@resolveTo(pubsubTopic:)`:
+`transport-thrift`. OpenAPI callback / JSON Schema webhook subscriptions need `webhooks: true` when
+fields use `@pubsubOperation` / `@resolveTo` with `webhook:…` topics. For multi-instance EDFS, pass
+a shared `pubsub` broker -- see [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub):
 
 ```ts
 export const gatewayConfig = defineGatewayConfig({
@@ -102,6 +103,7 @@ transports plug in. Concept overview: [Gateway](/v2/concepts/gateway). Serve sec
     href="https://the-guild.dev/graphql/hive/docs/gateway"
   />
   <Cards.Card arrow title="Gateway (concept)" href="/v2/concepts/gateway" />
+  <Cards.Card arrow title="Subscriptions and pubsub" href="/v2/guides/subscriptions-pubsub" />
   <Cards.Card arrow title="Apollo Router (peer)" href="/v2/serve/apollo-router" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />
