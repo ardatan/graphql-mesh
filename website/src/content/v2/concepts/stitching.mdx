@@ -1,44 +1,65 @@
 ---
-description: What schema stitching is -- and why Mesh v2 leads with Federation instead
+description: Stitching as a type-merging runtime -- contrast with Federation
 ---
 
 import { Callout, Cards } from '@theguild/components'
+import { ConceptRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Stitching
 
-**Schema stitching** (and Mesh v0-era **type merging**) combines GraphQL schemas by merging types
-and wiring fields with stitch/merge directives or resolvers -- historically without the Federation
-entity/`@key` planner as the primary contract.
+**Schema stitching** is a **type-merging runtime**: it combines GraphQL schemas by merging types and
+wiring fields (stitch / merge directives or resolvers) at the gateway. You get one unified graph
+without requiring the Federation entity/`@key` contract as the primary join model.
 
-## Where it lives (historically)
+Product docs for the stitch/type-merge toolkit:
+[The Guild Schema Stitching](https://the-guild.dev/graphql/stitching). Mesh v0-era **type merging**
+lives in this family; legacy [`/docs`](/docs) still covers Mesh-specific patterns where needed.
 
-```mermaid
-flowchart LR
-  A[Schema A] --> M[Stitch / type merge]
-  B[Schema B] --> M
-  M --> C[Unified schema]
-  C --> D[Gateway / Mesh v0 serve]
-```
+## Where it lives
 
-In **Mesh v2 docs**, the default product story is **Federation-ready subgraphs** + composition +
-Hive Gateway / Apollo Router -- not stitching as the kickoff path. Legacy v0 `/docs` still documents
-older merge patterns where needed.
+<V2FlowDiagram
+  ariaLabel="Stitching type-merging runtime from schemas to stitching gateway"
+  caption="Type-merging runtime — see The Guild Schema Stitching docs."
+  steps={[
+    { title: 'Schemas', lines: ['A · B · …'] },
+    { title: 'Type merge', lines: ['Stitch runtime'], accent: true },
+    { title: 'Unified schema', accent: true },
+    { title: 'Stitch gateway' }
+  ]}
+/>
+
+| Piece                      | Role                                           |
+| -------------------------- | ---------------------------------------------- |
+| Type merge / stitch config | How overlapping types and fields join          |
+| Stitching gateway runtime  | Plans and executes the merged graph            |
+| Result                     | One schema -- not a Federation supergraph file |
+
+Stitching is **not** [Federation](/v2/concepts/federation) (standardized entities + federation
+gateway), **not** a [schema registry](/v2/concepts/schema-registry), and **not** Mesh Compose's
+default v2 path.
+
+## Vs Federation
+
+Both merge types across services. The difference is **contract + runtime**:
+
+|                 | <ConceptRef name="stitching" />  | <ConceptRef name="federation" />                        |
+| --------------- | -------------------------------- | ------------------------------------------------------- |
+| Merge model     | Type merging / stitch fields     | **Standardized** type merging via entities + `@key`     |
+| Runtime         | Stitching / type-merging gateway | **Federation gateway** (Hive Gateway, Apollo Router, …) |
+| Artifact        | Unified schema from stitch tools | Composed **supergraph** from subgraph SDL               |
+| Mesh v2 default | Orient / legacy                  | Yes -- generate or hand-write Federation subgraphs      |
 
 <Callout type="info">
-  Prefer [Federation](/v2/concepts/federation) + [Compose](/v2/compose) for new Mesh work. Use this
-  page only to orient readers coming from stitching / type-merging docs.
+  Prefer [Federation](/v2/concepts/federation) + [Compose](/v2/compose) + a [federation
+  gateway](/v2/concepts/gateway) for new Mesh work. Use this page when you already know stitching /
+  type merging and need the mapping.
 </Callout>
 
-## Short contrast
-
-|                 | Stitching / type merge      | Federation (Mesh v2 default)                 |
-| --------------- | --------------------------- | -------------------------------------------- |
-| Join model      | Merge types / stitch fields | Entities + `@key`                            |
-| Composition     | Stitch tools / Mesh v0      | Mesh Compose / Hive / Rover                  |
-| Router dual-run | N/A Connect story           | Connect SDL on Apollo Router when compatible |
-
 <Cards>
+  <Cards.Card arrow title="Schema Stitching docs" href="https://the-guild.dev/graphql/stitching" />
   <Cards.Card arrow title="Federation" href="/v2/concepts/federation" />
+  <Cards.Card arrow title="Gateway" href="/v2/concepts/gateway" />
   <Cards.Card arrow title="Compose" href="/v2/compose" />
   <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
 </Cards>

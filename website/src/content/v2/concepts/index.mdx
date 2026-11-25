@@ -4,6 +4,7 @@ description:
 ---
 
 import { Cards } from '@theguild/components'
+import { V2FlowDiagram } from '../../components/v2-flow-diagram'
 
 # Concepts
 
@@ -11,24 +12,26 @@ Short definitions for terms that show up across Mesh v2 docs. Each page answers:
 **where it sits in the stack**, and a **tiny example**. Cross-link [Architecture](/v2/architecture),
 [Compose](/v2/compose), and [Serve](/v2/serve/hive-gateway).
 
-```mermaid
-flowchart LR
-  S[Sources / SDL] --> C[Composition]
-  C --> R[Schema registry]
-  C --> G[Gateway]
-  R -.-> G
-  G --> U[Upstreams]
-```
+<V2FlowDiagram
+  ariaLabel="Concepts stack: sources through composition to gateway"
+  footnote={{ label: 'Schema registry', fromStep: 1, toStep: 2 }}
+  steps={[
+    { title: 'Sources / SDL' },
+    { title: 'Composition', accent: true },
+    { title: 'Gateway', accent: true },
+    { title: 'Upstreams' }
+  ]}
+/>
 
-| Concept             | One line                                                                        | Page                                            |
-| ------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------- |
-| **Mesh**            | Turns sources + SDL into Federation-ready subgraphs and transports              | [Mesh](/v2/concepts/mesh)                       |
-| **Connectors**      | HTTP mapping style (`@connect` / `@source`) Mesh shares with Apollo             | [Connectors](/v2/concepts/connectors)           |
-| **Federation**      | Entity/`@key` model for combining subgraphs into a supergraph                   | [Federation](/v2/concepts/federation)           |
-| **Stitching**       | Older merge style (type merging / schema stitching) -- not the v2 default story | [Stitching](/v2/concepts/stitching)             |
-| **Gateway**         | Runtime that executes the supergraph (Hive Gateway · Apollo Router)             | [Gateway](/v2/concepts/gateway)                 |
-| **Composition**     | Combining subgraph SDL into a supergraph (Mesh Compose, Hive, Rover, …)         | [Composition](/v2/concepts/composition)         |
-| **Schema registry** | Stores and distributes subgraph / supergraph SDL                                | [Schema registry](/v2/concepts/schema-registry) |
+| Concept             | One line                                                                   | Page                                            |
+| ------------------- | -------------------------------------------------------------------------- | ----------------------------------------------- |
+| **Mesh**            | Turns sources + SDL into Federation-ready subgraphs and transports         | [Mesh](/v2/concepts/mesh)                       |
+| **Connectors**      | HTTP mapping style (`@connect` / `@source`) Mesh shares with Apollo        | [Connectors](/v2/concepts/connectors)           |
+| **Federation**      | Standardized type merging (entities / `@key`) + federation gateway runtime | [Federation](/v2/concepts/federation)           |
+| **Stitching**       | Type-merging runtime (stitch / merge fields) -- not the v2 default story   | [Stitching](/v2/concepts/stitching)             |
+| **Gateway**         | Runtime that executes the graph (federation gateway peers in Mesh v2)      | [Gateway](/v2/concepts/gateway)                 |
+| **Composition**     | Combining subgraph SDL into a supergraph (Mesh Compose, Hive, Rover, …)    | [Composition](/v2/concepts/composition)         |
+| **Schema registry** | Stores and distributes subgraph / supergraph SDL                           | [Schema registry](/v2/concepts/schema-registry) |
 
 ## Where to go next
 

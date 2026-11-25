@@ -4,6 +4,7 @@ description: What composition is -- combining subgraph SDL into a supergraph
 
 import { Cards } from '@theguild/components'
 import { ApiRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Composition
 
@@ -13,12 +14,15 @@ Hive composition, Rover, or another Federation-compatible composer.
 
 ## Where it lives
 
-```mermaid
-flowchart LR
-  A[Subgraph SDL] --> B[Composer]
-  B --> C[Supergraph SDL]
-  C --> D[Gateway or registry]
-```
+<V2FlowDiagram
+  ariaLabel="Composition from subgraph SDL to supergraph"
+  steps={[
+    { title: 'Subgraph SDL' },
+    { title: 'Composer', accent: true },
+    { title: 'Supergraph', accent: true },
+    { title: 'Gateway', lines: ['or registry'] }
+  ]}
+/>
 
 | Piece        | Role                                                                    |
 | ------------ | ----------------------------------------------------------------------- |

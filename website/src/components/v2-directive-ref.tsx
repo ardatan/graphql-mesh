@@ -120,17 +120,18 @@ const CONCEPTS = {
   federation: {
     label: 'Federation',
     href: '/v2/concepts/federation',
-    description: 'Subgraphs + @key entities composed into a supergraph.',
+    description: 'Standardized type merging: entities/@key plus a federation gateway runtime.',
   },
   stitching: {
     label: 'Stitching',
     href: '/v2/concepts/stitching',
-    description: 'Older schema merge / type-merging model -- not the v2 default story.',
+    description:
+      'Type-merging runtime (stitch / merge fields). See also the-guild.dev/graphql/stitching.',
   },
   gateway: {
     label: 'Gateway',
     href: '/v2/concepts/gateway',
-    description: 'Runtime that executes the supergraph (Hive Gateway · Apollo Router).',
+    description: 'Runtime that executes the graph (federation gateway peers in Mesh v2).',
   },
   composition: {
     label: 'Composition',

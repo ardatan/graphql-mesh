@@ -4,6 +4,7 @@ description: What a schema registry is -- store and distribute subgraph / superg
 
 import { Cards } from '@theguild/components'
 import { ApiRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Schema registry
 
@@ -14,12 +15,16 @@ and equivalents. Mesh publishes **Federation-compatible subgraph SDL** -- genera
 
 ## Where it lives
 
-```mermaid
-flowchart LR
-  A[Compose] --> B[Schema registry]
-  B --> C[Gateway pull]
-  A --> D[Gateway file]
-```
+<V2FlowDiagram
+  ariaLabel="Schema registry beside Compose and gateway"
+  caption="Registry is optional — gateways can also take a Compose file directly."
+  footnote={{ label: 'or file direct', fromStep: 0, toStep: 2 }}
+  steps={[
+    { title: 'Compose', accent: true },
+    { title: 'Registry', accent: true },
+    { title: 'Gateway pull' }
+  ]}
+/>
 
 | Piece      | Role                                                      |
 | ---------- | --------------------------------------------------------- |

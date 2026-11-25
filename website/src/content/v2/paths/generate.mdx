@@ -4,6 +4,7 @@ description:
 ---
 
 import { Cards } from '@theguild/components'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Generate
 
@@ -15,13 +16,16 @@ working query.
 Emitted SDL is yours. You can always edit it and feed the file back into Compose, a schema registry,
 and the gateway -- that path is [Generate-then-edit](/v2/paths/generate-then-edit).
 
-```mermaid
-flowchart LR
-  A[Existing source] --> B[Generate subgraph SDL]
-  B --> C[Compose + query]
-  C --> D[Read emitted SDL]
-  D -.-> E[Optional: edit and re-compose]
-```
+<V2FlowDiagram
+  ariaLabel="Generate path from source to reading emitted SDL"
+  caption="Optional next step: edit and re-compose (Generate-then-edit)."
+  steps={[
+    { title: 'Source' },
+    { title: 'Generate SDL', accent: true },
+    { title: 'Compose', lines: ['+ query'], accent: true },
+    { title: 'Read SDL', accent: true }
+  ]}
+/>
 
 ## In the Music Store Example
 

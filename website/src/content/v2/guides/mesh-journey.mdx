@@ -4,17 +4,21 @@ description: Mesh product journey -- v0 YAML gateway, v1 Compose generate-first,
 
 import { Callout, Cards } from '@theguild/components'
 import { ConceptRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Mesh journey (v0 → v1 → v2)
 
 How Mesh's docs story evolved. Use this to orient if you know an older Mesh, then jump into
 [v2](/v2).
 
-```mermaid
-flowchart LR
-  A[v0 YAML gateway] --> B[v1 Compose + Hive Gateway]
-  B --> C[v2 SDL journeys]
-```
+<V2FlowDiagram
+  ariaLabel="Mesh product journey from v0 to v2"
+  steps={[
+    { title: 'v0', lines: ['YAML gateway'] },
+    { title: 'v1', lines: ['Compose + Hive'], accent: true },
+    { title: 'v2', lines: ['SDL journeys'], accent: true }
+  ]}
+/>
 
 | Era    | Docs                 | Product shape                                                                                                                                                                                                                                                   |
 | ------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

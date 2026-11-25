@@ -3,6 +3,7 @@ description: Edit Mesh-generated subgraph SDL and re-compose -- own the schema
 ---
 
 import { Cards } from '@theguild/components'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Generate-then-edit
 
@@ -10,12 +11,15 @@ Generate gets you a working subgraph fast. Generate-then-edit is when you **disl
 names, extras, selection maps -- and take ownership: edit the `.graphql`, re-compose, re-query.
 Compose, schema registry, and gateway treat that edited file the same as hand-written SDL.
 
-```mermaid
-flowchart LR
-  A[Generate] --> B[Read SDL]
-  B --> C[Edit what you dislike]
-  C --> D[Re-compose + query]
-```
+<V2FlowDiagram
+  ariaLabel="Generate-then-edit path"
+  steps={[
+    { title: 'Generate' },
+    { title: 'Read SDL', accent: true },
+    { title: 'Edit', lines: ['What you dislike'], accent: true },
+    { title: 'Re-compose', lines: ['+ query'], accent: true }
+  ]}
+/>
 
 ## In the Music Store Example
 
