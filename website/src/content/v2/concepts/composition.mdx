@@ -3,7 +3,7 @@ description: What composition is -- combining subgraph SDL into a supergraph
 ---
 
 import { Cards } from '@theguild/components'
-import { ApiRef } from '../../../components/v2-directive-ref'
+import { ApiRef, ProtocolRef } from '../../../components/v2-directive-ref'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Composition
@@ -33,6 +33,20 @@ Hive composition, Rover, or another Federation-compatible composer.
 Composition is **not** serving traffic, **not** executing transports, and **not** the schema
 registry (though you often compose then publish).
 
+## What Mesh Compose adds
+
+Beyond merging Federation types, Mesh Compose may:
+
+- Stamp **semantic ById / ByIds** entity wiring (`entity: true`, type-level `$this`, or `@merge` on
+  non-Connect subgraphs) -- see [Composition](/v2/compose#semantic-conventions).
+- Rewrite `$args` inside <ProtocolRef name="http-rest" /> `@connect`,
+  <ProtocolRef name="protobuf" /> `@protobuf__rpc`, and <ProtocolRef name="thrift" /> `@thrift__rpc`
+  when rename transforms change GraphQL arg names (`e2e/protobuf-http`, `e2e/openapi-arg-rename`).
+- Inject `@composeDirective` so Mesh / Connect directives survive into the supergraph.
+
+Opt out of conventions with `ignoreSemanticConventions: true` when you need full manual control
+(`e2e/semantic-conventions`).
+
 ## Short example
 
 ```ts
@@ -44,11 +58,15 @@ export const composeConfig = defineComposeConfig({
 })
 ```
 
+Mixed loader + hand SDL is the Music Store / FHIR pattern: generate what you can, author join stubs
+and RPCs you own.
+
 Docs: [Composition](/v2/compose) | worked example in
 [Music Store Example](/v2/examples/music-store).
 
 <Cards>
   <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Schema registry" href="/v2/concepts/schema-registry" />
+  <Cards.Card arrow title="Entity resolution" href="/v2/concepts/federation#entity-resolution" />
   <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
 </Cards>

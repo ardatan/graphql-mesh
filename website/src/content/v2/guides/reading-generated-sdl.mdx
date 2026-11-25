@@ -3,13 +3,14 @@ description: How to read Mesh-generated subgraph SDL -- transports, connect, key
 ---
 
 import { Callout, Cards } from '@theguild/components'
-import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
 
 # Reading generated SDL
 
 Generated <ConceptRef name="mesh">Mesh</ConceptRef> subgraphs are ordinary GraphQL SDL with
 directives. Before you edit or hand-write, learn to recognize the important stamps. This page is a
-**reading guide** -- for arg tables see the [Directives reference](/v2/reference/directives) and
+**reading guide** -- for arg tables and scenarios see the
+[Directives reference](/v2/reference/directives) and
 
 <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> upstream.
 
@@ -26,6 +27,77 @@ directives. Before you edit or hand-write, learn to recognize the important stam
 | `selection` / `args`                                                    | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs.                                                                    | [Selection mapping](/v2/guides/selection-mapping) / [Connectors mapping](https://www.apollographql.com/docs/graphos/connectors/mapping)                       |
 | <DirectiveRef name="link" /> / <DirectiveRef name="composeDirective" /> | Spec imports and which directives survive <ConceptRef name="composition">composition</ConceptRef>.                                                         | [Directives](/v2/reference/directives#link) / [Composition](/v2/compose)                                                                                      |
 
+## Walk a Chinook root field (`e2e/sqlite-chinook`)
+
+Start at `Query.album`, then the type:
+
+1. `@transport(kind: "sql", ...)` -- Hive Gateway will load `transport-sql`
+   (<ProtocolRef name="sql" />).
+2. `@sql(kind: ROW, where: AlbumId: $args.id, selection: id: AlbumId ...)` -- GraphQL `id` is mapped
+   **from** SQL `AlbumId` in `selection`; `where` still uses the SQL column.
+3. `type Album @key(fields: "id") @sql(... $this.id ...)` -- Federation can refill the row when
+   another subgraph contributed fields on `Album`.
+
+```graphql
+schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db") {
+  query: Query
+}
+
+type Query {
+  album(id: ID!): Album
+    @sql(
+      table: "albums"
+      kind: ROW
+      where: """
+      AlbumId: $args.id
+      """
+      selection: """
+      id: AlbumId
+      title: Title
+      """
+    )
+}
+
+type Album
+  @key(fields: "id")
+  @sql(
+    table: "albums"
+    kind: ROW
+    where: """
+    AlbumId: $this.id
+    """
+    selection: """
+    id: AlbumId
+    title: Title
+    """
+  ) {
+  id: ID!
+  title: String!
+}
+```
+
+## Walk a Connect entity field (`e2e/openapi-entity-stubs`)
+
+1. `@source(name: "Billing", http: { baseURL: ... })` names the HTTP base.
+2. `getCustomer(id:)` with `entity: true` -- ById convention matched; no Mesh `@merge` on Connect.
+3. If the arg were `userId` instead of `id`, expect **type-level** `@connect` with `$this.id`
+   instead of field-level `entity: true` ([Directives](/v2/reference/directives#connect)).
+
+```graphql
+type Query {
+  getCustomer(id: String!): Customer
+    @connect(
+      source: "Billing"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+      id
+      name
+      """
+      entity: true
+    )
+}
+```
+
 ## Conventions that help
 
 1. Start from a **root field** you already queried (`Query.track`, ...), then follow its `@connect`
@@ -33,6 +105,8 @@ directives. Before you edit or hand-write, learn to recognize the important stam
 2. Trace `$args` and `$this` in `selection` before renaming anything -- see
    [Selection mapping](/v2/guides/selection-mapping).
 3. Treat emitted SDL as the contract you will either keep, edit, or rewrite by hand.
+4. For edge shapes (M2M `through`, streaming RPC, Thrift `throws`, FHIR `->match`), jump to the
+   protocol **Edge cases** section or the directives scenarios -- not only the happy-path snippet.
 
 <Callout type="info">
   Shared by [Generate](/v2/paths/generate), [Generate-then-edit](/v2/paths/generate-then-edit), and
