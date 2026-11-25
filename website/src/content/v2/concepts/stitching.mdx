@@ -1,7 +1,6 @@
 ---
 description:
-  Schema Stitching -- stitchSchemas, subschemas, and programmatic type merging
-  (@graphql-tools/stitch)
+  Schema Stitching -- @graphql-tools/stitch type-merging runtime vs Stitching Directives config
 ---
 
 import { Callout, Cards } from '@theguild/components'
@@ -10,51 +9,31 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Stitching
 
-**Schema Stitching** (`@graphql-tools/stitch`) is a **programmatic** way to combine GraphQL schemas
-into one executable gateway schema. The primary API is **`stitchSchemas`**: you pass **subschemas**
-(`GraphQLSchema` or `SubschemaConfig`), optional gateway `typeDefs` / resolvers, and
-**type-merging** options. The result is a single stitched `GraphQLSchema` the gateway executes --
-not a Federation supergraph artifact.
+Two different things share the "stitching" name. Keep them separate:
 
-Product docs: [Schema Stitching](https://the-guild.dev/graphql/stitching).
+| Piece                        | Package                                   | What it is                                                                                                                                                                        |
+| ---------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Schema Stitching runtime** | `@graphql-tools/stitch` (`stitchSchemas`) | A **type-merging gateway runtime**: combine subschemas into one executable `GraphQLSchema`, then plan and delegate fields at request time                                         |
+| **Stitching Directives**     | `@graphql-tools/stitching-directives`     | One **configuration style** for type merging -- SDL directives (`@merge`, `@key`, `@computed`, `@canonical`) that compile into the same programmatic `SubschemaConfig.merge` maps |
 
-## What the package actually does
+The runtime is not the directives package. Directives are not required to use `stitchSchemas`.
 
-From `@graphql-tools/stitch` (+ `@graphql-tools/delegate` subschema types):
+Docs: [Schema Stitching](https://the-guild.dev/graphql/stitching) /
+[Type merging](https://the-guild.dev/graphql/stitching/docs/approaches/type-merging) /
+[Directives SDL](https://the-guild.dev/graphql/stitching/docs/approaches/stitching-directives).
 
-| Piece                                | Role                                                                                                                                                              |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `stitchSchemas({ subschemas, ... })` | Build one gateway schema from many schemas                                                                                                                        |
-| `subschemas`                         | Each remote/local schema, often as `SubschemaConfig` (`schema`, `executor`, `transforms`, `merge`, ...)                                                           |
-| Type merging                         | Programmatic `merge` maps on subschemas (`MergedTypeConfig`: selection sets, keys, resolvers, fields) plus `mergeTypes` / `typeMergingOptions` on `stitchSchemas` |
-| Delegation                           | Gateway plans field access across subschemas at runtime                                                                                                           |
+## Runtime: `@graphql-tools/stitch`
 
-**Stitching directives** (`@graphql-tools/stitching-directives`) are an **optional** SDL helper
-layer -- a way to _describe_ merge config in schema language and transform it into the same
-programmatic `SubschemaConfig.merge` shape. They are **not** the core of stitching; most setups are
-configured in code.
+`stitchSchemas` builds a gateway schema from **subschemas** (`GraphQLSchema` or `SubschemaConfig`
+with `schema`, `executor`, `merge`, `transforms`, ...). Overlapping types are unified through **type
+merging** (`merge` / `mergeTypes` / `typeMergingOptions`). At query time the stitched schema
+delegates field selections across subschemas and combines results -- the same job family as a
+federation gateway runtime such as [Hive Gateway](/v2/serve/hive-gateway).
 
-Mesh v0-era **type merging** / stitch mergers live in this family. Legacy [`/docs`](/docs) covers
-Mesh-specific wiring; Mesh v2 defaults to [Federation](/v2/concepts/federation) instead.
-
-## Where it lives
-
-<V2FlowDiagram
-  ariaLabel="Schema Stitching: subschemas through stitchSchemas to a gateway schema"
-  caption="Programmatic stitchSchemas + type merging. Directives are optional helpers."
-  steps={[
-    { title: 'Subschemas', lines: ['schema | executor'] },
-    { title: 'stitchSchemas', lines: ['+ type merge'], accent: true },
-    { title: 'Gateway schema', accent: true },
-    { title: 'Execute', lines: ['Delegate fields'] }
-  ]}
-/>
-
-Stitching is **not** [Federation](/v2/concepts/federation) (entity/`@key` contract + federation
-gateway / supergraph), **not** a [schema registry](/v2/concepts/schema-registry), and **not** Mesh
-Compose's default v2 path.
-
-## Short example (programmatic)
+That means the stitch runtime can also **run Federation-shaped graphs**: Federation entity/`@key`
+SDL can be turned into type-merging `merge` config (Mesh's legacy GraphQL handler does this; the
+directives package exposes `federationToStitchingSDL`). Hive Gateway is Mesh v2's preferred JS/TS
+federation gateway; stitch is another type-merging runtime that can execute similar merges.
 
 ```ts
 import { stitchSchemas } from '@graphql-tools/stitch'
@@ -67,49 +46,94 @@ const gatewaySchema = stitchSchemas({
       merge: {
         User: {
           selectionSet: '{ id }',
-          fieldName: 'user',
+          fieldName: 'userById',
           args: ({ id }) => ({ id })
         }
       }
     },
     {
       schema: postsSchema,
-      executor: postsExecutor
-      // optional merge: { ... } for overlapping types
+      executor: postsExecutor,
+      merge: {
+        User: {
+          selectionSet: '{ id }',
+          fieldName: 'postUserById',
+          args: ({ id }) => ({ id })
+        }
+      }
     }
   ]
-  // mergeTypes / typeMergingOptions as needed
 })
 ```
 
-Overlapping types are merged via that **`merge`** config (and related type-merging options) -- not
-by requiring Federation `@key` SDL. Optional stitching-directive SDLs can _generate_ similar `merge`
-entries; they do not replace `stitchSchemas`.
+## Config: Stitching Directives (optional)
 
-## Vs Federation
+`@graphql-tools/stitching-directives` is a **Federation-like** way to describe type merging in SDL
+instead of (or before) writing `merge` objects in code:
 
-Both can combine types across services. Different **API + artifact + runtime**:
+```graphql
+type User {
+  id: ID!
+  email: String!
+}
 
-|             | <ConceptRef name="stitching" />            | <ConceptRef name="federation" />                          |
-| ----------- | ------------------------------------------ | --------------------------------------------------------- |
-| Primary API | `stitchSchemas` + `SubschemaConfig` (code) | Subgraph SDL + composition                                |
-| Type merge  | Programmatic `merge` / typeMergingOptions  | Standardized entities + `@key`                            |
-| Directives  | Optional (`stitching-directives`)          | Core of the contract                                      |
-| Artifact    | One stitched `GraphQLSchema`               | Composed **supergraph**                                   |
-| Runtime     | Stitched schema / delegation               | **Federation gateway** (Hive Gateway, Apollo Router, ...) |
-| Mesh v2     | Orient / legacy                            | Default path                                              |
+type Query {
+  users(ids: [ID!]!): [User]! @merge(keyField: "id")
+}
+```
+
+A `stitchingDirectivesTransformer` on the gateway reads those directives into
+`SubschemaConfig.merge`. Patterns such as `@merge` / `@key` / `@computed` feel close to Federation
+entity config, but they are **stitching directives**, not Apollo Federation directives, and they
+only configure the stitch type-merging runtime -- they are not a second runtime.
+
+## Where it lives
+
+<V2FlowDiagram
+  ariaLabel="Stitch type-merging runtime from subschemas to execute"
+  caption="Runtime merges subschemas. Stitching Directives are one optional config path into merge."
+  steps={[
+    { title: 'Subschemas', lines: ['schema | executor'] },
+    { title: 'Config', lines: ['merge and/or directives'] },
+    { title: 'stitchSchemas', lines: ['type-merging runtime'], accent: true },
+    { title: 'Execute', lines: ['Delegate + combine'] }
+  ]}
+/>
+
+Stitching is **not** Mesh Compose, **not** a schema registry, and **not** the same thing as
+[Federation](/v2/concepts/federation) the _contract_ (entities / `@key` + composition + supergraph).
+It _is_ a gateway-style **type-merging runtime** that can sit where Hive Gateway sits for execution.
+
+## Vs Federation (contract + gateway)
+
+|                      | Schema Stitching (`@graphql-tools/stitch`)                                                     | <ConceptRef name="federation" />                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| What it primarily is | Type-merging **runtime** (`stitchSchemas`)                                                     | Standardized **contract** + composition + federation **gateway**       |
+| Config               | Programmatic `merge`, and/or **Stitching Directives**, and/or Federation SDL mapped into merge | Federation directives (`@key`, ...) on subgraphs                       |
+| Artifact             | One executable stitched `GraphQLSchema`                                                        | Composed **supergraph** (often served by Hive Gateway / Apollo Router) |
+| Directives package   | Optional (`@graphql-tools/stitching-directives`) -- config only                                | Core of the Federation subgraph contract                               |
+| Mesh v2 default      | Orient / legacy mergers; still useful as a type-merging engine                                 | Default path: Federation-ready SDL + Hive Gateway / Apollo Router      |
 
 <Callout type="info">
-  Prefer [Federation](/v2/concepts/federation) + [Composition](/v2/compose) + a [federation
-  gateway](/v2/concepts/gateway) for new Mesh work. Use Schema Stitching when you need the
-  programmatic subschema / type-merging toolkit -- start at [Schema
-  Stitching](https://the-guild.dev/graphql/stitching).
+  Mesh v2 docs default to [Federation](/v2/concepts/federation) + [Composition](/v2/compose) + [Hive
+  Gateway](/v2/serve/hive-gateway) / [Apollo Router](/v2/serve/apollo-router). Reach for the stitch
+  runtime when you need programmatic type merging (or Stitching Directives as config). Start at
+  [Schema Stitching](https://the-guild.dev/graphql/stitching).
 </Callout>
 
 <Cards>
   <Cards.Card arrow title="Schema Stitching docs" href="https://the-guild.dev/graphql/stitching" />
+  <Cards.Card
+    arrow
+    title="Type merging"
+    href="https://the-guild.dev/graphql/stitching/docs/approaches/type-merging"
+  />
+  <Cards.Card
+    arrow
+    title="Directives SDL"
+    href="https://the-guild.dev/graphql/stitching/docs/approaches/stitching-directives"
+  />
   <Cards.Card arrow title="Federation" href="/v2/concepts/federation" />
   <Cards.Card arrow title="Gateway" href="/v2/concepts/gateway" />
-  <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
 </Cards>

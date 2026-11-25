@@ -135,7 +135,7 @@ const CONCEPTS = {
     label: 'Stitching',
     href: '/v2/concepts/stitching',
     description:
-      'Schema Stitching: stitchSchemas + subschemas / programmatic type merging (directives optional).',
+      '@graphql-tools/stitch type-merging runtime; Stitching Directives are optional SDL config only.',
   },
   gateway: {
     label: 'Gateway',
