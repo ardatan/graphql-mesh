@@ -42,10 +42,10 @@ Mesh protocol map: [Protocols](/v2/protocols).
 
 ## Protocol directives (not only join)
 
-Join-only subgraphs (keys + `Reference.resource`) are one hand-write pattern. Stage 3 of Music store
-is the other: **author the RPC surface** with a Mesh protocol directive.
+Join-only subgraphs (keys + `Reference.resource`) are one hand-write pattern. Stage 3 of Music Store
+Example is the other: **author the RPC surface** with a Mesh protocol directive.
 
-Sketch -- Music store gRPC / Protobuf slice (field-level `@protobuf__rpc`, not only `@key`):
+Sketch -- Music Store Example gRPC / Protobuf slice (field-level `@protobuf__rpc`, not only `@key`):
 
 ```graphql
 extend schema
@@ -83,8 +83,8 @@ type Recommendation @key(fields: "id") {
 Wire the file as a schema subgraph in Compose. Serve the full multi-protocol graph on **Hive
 Gateway** (JS/TS); **Apollo Router** only for Connect-compatible slices.
 
-Repo-shaped protobuf hand SDL: `e2e/protobuf-http/subgraphs/movies.graphql`. Full Music store stage
-storyboard: [Music store](/v2/examples/music-store).
+Repo-shaped protobuf hand SDL: `e2e/protobuf-http/subgraphs/movies.graphql`. Full Music Store
+Example stage storyboard: [Music Store Example](/v2/examples/music-store).
 
 Optional naming / filter passes after authorship live under [Transforms](/v2/transforms) -- not a
 required Hand-write step.
@@ -93,5 +93,5 @@ required Hand-write step.
   <Cards.Card arrow title="Compose" href="/v2/compose" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />
-  <Cards.Card arrow title="Music store" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>

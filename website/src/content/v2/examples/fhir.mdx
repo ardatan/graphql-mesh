@@ -8,7 +8,7 @@ import { Callout, Cards } from '@theguild/components'
 
 <Callout type="info">
   Supporting narrative alongside the main Mesh v2 docs -- **not** the getting-started kickoff.
-  Prefer [Music store](/v2/examples/music-store) for the staged tutorial.
+  Prefer [Music Store Example](/v2/examples/music-store) for the staged tutorial.
 </Callout>
 
 How we built the Mesh FHIR e2e (`e2e/json-schema-fhir` on `master`): generate Patient and
@@ -44,7 +44,8 @@ Two JSON Schema subgraphs, each with one root query against the live FHIR server
 | `observations` | `observationById(id)` | `GET /Observation/{id}` → `#/definitions/Observation` |
 
 The loader emits full types and auto `@connect(selection:)` -- no hand selection on these fields.
-[Read the emitted SDL](/v2/guides/reading-generated-sdl) the same way as Music store stage 1.
+[Read the emitted SDL](/v2/guides/reading-generated-sdl) the same way as Music Store Example
+stage 1.
 
 ## 4. Hand-write the join-only Reference subgraph
 
@@ -80,7 +81,7 @@ path). Example hydration query: `observationById` → `subject.resource` → `..
 - `e2e/json-schema-fhir/json-schema-fhir.test.ts`
 
 <Cards>
-  <Cards.Card arrow title="Music store" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
