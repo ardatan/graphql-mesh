@@ -38,11 +38,13 @@ before anything else is authored.
 | Chinook SQL catalog | Domain starts with catalog; generate-first lesson stays true |
 
 ```ts
-// Sketch -- Music Store Example stage 1
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
-      sourceHandler: loadSqlSubgraph('catalog', {
+      sourceHandler: loadSqlSubgraph('chinook', {
         endpoint: 'file:chinook.db'
       })
     }
@@ -50,17 +52,41 @@ export const composeConfig = defineComposeConfig({
 })
 ```
 
-After compose, query a Track, then open the emitted SDL and find the directives that made the query
-work. Full stage walkthrough: [Music Store Example](/v2/examples/music-store). How to read what you
-got: [Reading generated SDL](/v2/guides/reading-generated-sdl).
+After compose, query a Track (`Query.track` / `Query.track(id:)` in
+[Schema Coordinates](/v2/guides/schema-coordinates)), then open the emitted SDL and find
+`@transport`, `@sql`, and `Track @key(fields: "id")`. Shape to expect:
+[SQL protocol](/v2/protocols/sql) / [Music Store Example](/v2/examples/music-store) stage 1.
+
+## What to look for after generate
+
+1. Root fields you queried (`Query.track`, ...).
+2. Protocol or HTTP/REST Connectors directives that backed them.
+3. Entity stamps (`@key`, `entity: true`, type-level `$this` maps) -- see
+   [Entity resolution](/v2/concepts/federation#entity-resolution).
+4. Binders in `selection` / `where` / `args` -- [Selection mapping](/v2/guides/selection-mapping).
+
+Reading guide: [Reading generated SDL](/v2/guides/reading-generated-sdl).
 
 ## Loaders (reference)
 
-Point a Mesh loader at OpenAPI, SQL, JSON Schema, Mongo, Protobuf, and other sources. The product
-story is the emitted subgraph; loader names are the API you call when configuring Compose.
+Point a Mesh loader at a source; the product story is the emitted subgraph SDL.
+
+| Family                    | Loader / package                | Protocol page                          |
+| ------------------------- | ------------------------------- | -------------------------------------- |
+| SQL                       | `@omnigraph/sql`                | [SQL](/v2/protocols/sql)               |
+| OpenAPI / REST            | `@omnigraph/openapi`            | [HTTP / REST](/v2/protocols/http-rest) |
+| JSON Schema               | `@omnigraph/json-schema`        | [HTTP / REST](/v2/protocols/http-rest) |
+| Mongo                     | `@omnigraph/mongo`              | [Mongo](/v2/protocols/mongo)           |
+| Thrift                    | `@omnigraph/thrift`             | [Thrift](/v2/protocols/thrift)         |
+| Neo4j                     | `@omnigraph/neo4j`              | [Neo4j](/v2/protocols/neo4j)           |
+| Protobuf (often hand SDL) | hand `@protobuf__rpc` or loader | [Protobuf](/v2/protocols/protobuf)     |
+
+FHIR how-we-built (JSON Schema generate + join SDL): [FHIR](/v2/examples/fhir).
 
 <Cards>
   <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Schema Coordinates" href="/v2/guides/schema-coordinates" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>

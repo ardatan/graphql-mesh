@@ -24,7 +24,8 @@ Compose, schema registry, and gateway treat that edited file the same as hand-wr
 ## In the Music Store Example
 
 Stage 2 of the [Music Store Example](/v2/examples/music-store) generates **Reviews** from a REST /
-OpenAPI source (Connect emit), then edits the `@connect` SDL before it joins the catalog.
+OpenAPI source (HTTP/REST Connectors emit), then edits the `@connect` SDL before it joins the
+catalog.
 
 | Step       | Music Store Example move                                                                        |
 | ---------- | ----------------------------------------------------------------------------------------------- |
@@ -38,11 +39,55 @@ edit. When the dislike is mostly naming and you still want the loader emit as th
 Compose [Transforms](/v2/transforms) can help -- they are not required once you are editing the SDL
 yourself.
 
+## What edits usually look like
+
+Loader emit for a ById root (`Query.getCustomer` / `Query.getCustomer(id:)` -- Spec
+[Schema Coordinates](/v2/guides/schema-coordinates); Composition may stamp `entity: true`):
+
+```graphql
+type Query {
+  getCustomer(id: String!): Customer
+    @connect(
+      source: "Billing"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+      id
+      name
+      """
+      entity: true
+    )
+}
+```
+
+After edit -- extend a catalog entity (join stub + field Connect). Name the parent field with Spec
+coordinates when you talk about it (`Track.reviews`); binders stay `$this.id`:
+
+```graphql
+type Track @key(fields: "id", resolvable: false) {
+  id: ID!
+  reviews: [Review!]
+    @connect(
+      source: "reviews"
+      http: { GET: "/reviews?trackId={$this.id}" }
+      selection: """
+      id
+      rating
+      body
+      """
+    )
+}
+```
+
+Trace binders: [Selection mapping](/v2/guides/selection-mapping). Protocol:
+[HTTP / REST](/v2/protocols/http-rest). Repo: `e2e/openapi-entity-stubs`.
+
 Full stage walkthrough: [Music Store Example](/v2/examples/music-store).
 
 <Cards>
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Transforms (optional)" href="/v2/transforms" />
+  <Cards.Card arrow title="Schema Coordinates" href="/v2/guides/schema-coordinates" />
+  <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>

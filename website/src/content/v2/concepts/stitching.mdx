@@ -10,9 +10,9 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Stitching
 
-**Schema Stitching** (The Guild / `@graphql-tools/stitch`) is a **programmatic** way to combine
-GraphQL schemas into one executable gateway schema. The primary API is **`stitchSchemas`**: you pass
-**subschemas** (`GraphQLSchema` or `SubschemaConfig`), optional gateway `typeDefs` / resolvers, and
+**Schema Stitching** (`@graphql-tools/stitch`) is a **programmatic** way to combine GraphQL schemas
+into one executable gateway schema. The primary API is **`stitchSchemas`**: you pass **subschemas**
+(`GraphQLSchema` or `SubschemaConfig`), optional gateway `typeDefs` / resolvers, and
 **type-merging** options. The result is a single stitched `GraphQLSchema` the gateway executes --
 not a Federation supergraph artifact.
 
@@ -102,8 +102,8 @@ Both can combine types across services. Different **API + artifact + runtime**:
 <Callout type="info">
   Prefer [Federation](/v2/concepts/federation) + [Composition](/v2/compose) + a [federation
   gateway](/v2/concepts/gateway) for new Mesh work. Use Schema Stitching when you need the
-  programmatic subschema / type-merging toolkit -- start at
-  [the-guild.dev/graphql/stitching](https://the-guild.dev/graphql/stitching).
+  programmatic subschema / type-merging toolkit -- start at [Schema
+  Stitching](https://the-guild.dev/graphql/stitching).
 </Callout>
 
 <Cards>

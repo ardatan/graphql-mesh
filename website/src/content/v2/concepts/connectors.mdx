@@ -11,11 +11,10 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 # HTTP/REST Connectors
 
 **HTTP/REST Connectors** are an HTTP-mapping style for GraphQL: fields declare how to call REST with
-
-<DirectiveRef name="connect" /> and <DirectiveRef name="source" /> (connect/v0.4), plus `selection`
-/ entity flags. Mesh OpenAPI, JSON Schema, OData, and SOAP-as-Connect loaders **emit** that shape.
-Hand authors can write the same directives. Dual-run Connect-compatible SDL on Hive Gateway and
-Apollo Router.
+`@connect` and `@source` (connect/v0.4), plus `selection` / entity flags
+(<DirectiveRef name="connect" /> / <DirectiveRef name="source" />). Mesh OpenAPI, JSON Schema,
+OData, and SOAP-as-Connect loaders **emit** that shape. Hand authors can write the same directives.
+Dual-run Connect-compatible SDL on Hive Gateway and Apollo Router.
 
 ## Where it lives
 
@@ -34,27 +33,44 @@ Apollo Router.
 | Directive contract | [Apollo's HTTP Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) (upstream) |
 | Mesh transport     | `@graphql-mesh/transport-connect` on Hive Gateway                                                                           |
 | Dual-run           | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when compatible                                                |
+| Protocol page      | [HTTP / REST](/v2/protocols/http-rest)                                                                                      |
 
 HTTP/REST Connectors are **not** Mesh-only protocol mapping. SQL, Mongo, Protobuf/gRPC, Thrift, and
-Neo4j use their own Mesh protocol directives plus <DirectiveRef name="transport" /> -- do not call
-those "Connectors." Composition itself is also separate.
+Neo4j use their own Mesh protocol directives plus `@transport` -- do not call those "Connectors."
+Composition itself is also separate.
+
+**Naming tip:** Spec [Schema Coordinates](/v2/guides/schema-coordinates) name the GraphQL field
+(`Query.review`, `Query.review(id:)`). Apollo **connector coordinates** in error extensions (e.g.
+`ecomm:Query.products@connect[0]`) are a different vocabulary -- see the Schema Coordinates guide.
 
 ## Short example
 
 ```graphql
 type Query {
   review(id: ID!): Review
-    @connect(source: "reviews", http: { GET: "/reviews/{$args.id}" }, selection: "id rating body")
+    @connect(
+      source: "reviews"
+      http: { GET: "/reviews/{$args.id}" }
+      selection: """
+      id
+      rating
+      body
+      """
+    )
 }
 ```
 
 Arg tables: [Directives reference](/v2/reference/directives#connect) /
 [Apollo's HTTP Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
+Binders: [Selection mapping](/v2/guides/selection-mapping).
 
 <Cards>
+  <Cards.Card arrow title="HTTP / REST protocol" href="/v2/protocols/http-rest" />
   <Cards.Card arrow title="Directives reference" href="/v2/reference/directives#connect" />
+  <Cards.Card arrow title="Schema Coordinates" href="/v2/guides/schema-coordinates" />
   <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
   <Cards.Card
+    arrow
     title="Apollo's HTTP Connectors reference"
     href="https://www.apollographql.com/docs/graphos/connectors/reference/directives"
   />
