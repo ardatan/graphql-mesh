@@ -1255,7 +1255,9 @@ export interface Transform {
 }
 export interface CacheTransformConfig {
   /**
-   * The type and field to apply cache to, you can use wild cards as well, for example: `Query.*`
+   * Target field as a Mesh schema selector (`Type.field`, or a glob such as `Query.*`).
+   * Prefer Spec Schema Coordinates (`Query.users`) when naming one field; globs are selectors, not Spec.
+   * See https://spec.graphql.org/September2025/#sec-Schema-Coordinates
    */
   field: string;
   /**
@@ -2440,8 +2442,11 @@ export interface ResponseCacheConfig {
    */
   ttl?: number;
   /**
-   * Overwrite the ttl for query operations whose selection contains a specific schema coordinate (e.g. Query.users).
-   * Useful if the selection of a specific field should reduce the TTL of the query operation.
+   * Overwrite the TTL for query operations whose selection contains a Spec Schema Coordinate
+   * (`Type` or `Type.field`, e.g. `Query.users` or `Stock`). Exact match only; wildcards such as
+   * `Query.*` are not Schema Coordinates and do not apply.
+   * See https://spec.graphql.org/September2025/#sec-Schema-Coordinates and
+   * https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md
    */
   ttlPerCoordinate?: ResponseCacheTTLConfig[];
   /**

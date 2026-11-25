@@ -1,5 +1,6 @@
 export default {
   'extending-unified-schema': 'Extending the Unified Schema',
+  'schema-coordinates': 'Schema Coordinates',
   batching: 'Batching for N+1 Problem',
   'error-handling': 'Error Handling',
   'error-masking': 'Error Masking',

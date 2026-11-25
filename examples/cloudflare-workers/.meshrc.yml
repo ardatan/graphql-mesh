@@ -14,7 +14,8 @@ sources:
 plugins:
   - responseCache:
       ttlPerCoordinate:
-        - coordinate: Query.*
+        # Spec field coordinate (exact match; Query.* is not a Schema Coordinate)
+        - coordinate: Query.breweries
           ttl: 3600
 
 cache:

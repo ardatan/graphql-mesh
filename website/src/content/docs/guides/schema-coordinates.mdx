@@ -1,0 +1,77 @@
+---
+description:
+  Schema Coordinates name GraphQL schema elements (types, fields, arguments, directives) using the
+  GraphQL specification. Prefer Spec forms in Mesh docs and config; Mesh selectors stay for globs.
+---
+
+import { Callout } from '@theguild/components'
+
+# Schema Coordinates
+
+Mesh uses **Schema Coordinates** from the
+[GraphQL specification](https://spec.graphql.org/September2025/#sec-Schema-Coordinates) to name a
+single schema element. Prefer Spec forms in documentation, examples, and config that targets one
+type, field, argument, or directive.
+
+Background and design notes:
+[Schema Coordinates RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md)
+(merged into the Spec as [PR #794](https://github.com/graphql/graphql-spec/pull/794)).
+
+## Spec forms
+
+A Schema Coordinate is a compact string with **no whitespace**. Each schema element has exactly one
+coordinate.
+
+| Kind | Form | Example |
+| --- | --- | --- |
+| Named type | `Name` | `Business` |
+| Field, input field, or enum value | `Name.Name` | `Business.name`, `SearchCriteria.filter`, `SearchFilter.OPEN_NOW` |
+| Field argument | `Name.Name(Name:)` | `Query.searchBusiness(criteria:)` |
+| Directive | `@Name` | `@deprecated` |
+| Directive argument | `@Name(Name:)` | `@deprecated(reason:)` |
+
+Argument and directive-argument forms use a trailing `:` inside the parentheses. That marks an
+**argument name**, not a value.
+
+```text
+Query.user(id:)          # Spec Schema Coordinate (the id argument)
+Query.todo(id:"42")      # not a Schema Coordinate (live-query style identifier with a value)
+```
+
+## What is not a Schema Coordinate
+
+These patterns are useful in Mesh, but they are **not** Spec Schema Coordinates:
+
+| Mesh term | Example | Use |
+| --- | --- | --- |
+| Schema selector | `Query.*`, `Type.!User`, `Mutation.*`, `Query.user.!name` | Glob / include-exclude transforms and some plugins |
+| Live-query identifier | `Todo:123`, `Query.todo(id:"{args.id}")` | Live Query invalidation (may embed values) |
+| Connector coordinate | `ecomm:Query.products@connect[0]` | Connect error identity for a directive application |
+| Response / resolve path | `["stores", 0, "author"]` or `Query.stores[0].author` | Location in an operation result, not in the schema |
+
+Wildcards, nested paths like `Query.user.name`, union members like `Meal.Breakfast`, and directive
+**applications** on a field are Spec non-goals for Schema Coordinates.
+
+## Prefer Spec forms in Mesh
+
+- **Response cache** `ttlPerCoordinate` / `ttlPerSchemaCoordinate`: use `Type` or `Type.field` (exact
+  match). See [Response Caching](/docs/plugins/response-caching).
+- **Federation transform** config keys: `Type` or `Type.field`. See
+  [Federation Transform](/v1/transforms/federation).
+- **Mock** `apply` and exact **resolvers composition** `resolver` entries: prefer `Type.field`.
+
+Where an API still accepts Mesh **selectors** (globs, negation, brace lists), those keep working.
+New examples and docs should show Spec coordinates first, and call selectors out as selectors.
+
+<Callout type="info">
+  Response cache TTL maps match coordinates by exact string. A selector such as `Query.*` is not a
+  Schema Coordinate and does not match any field. Use concrete `Type.field` keys, a type-level
+  `Type` key, or the plugin-level `ttl` option instead.
+</Callout>
+
+## Related Mesh docs
+
+- [Response Caching](/docs/plugins/response-caching)
+- [Live Queries](/docs/plugins/live-queries)
+- [Filter Schema](/docs/transforms/filter-schema) (schema selectors)
+- [Federation Transform](/v1/transforms/federation)

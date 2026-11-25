@@ -42,8 +42,16 @@ plugins:
   - responseCache: {}
 ```
 
-The caching behavior can be fully customized. A TTL can be provided global or more granular per type
-or schema coordinate.
+The caching behavior can be fully customized. A TTL can be provided globally or more granularly per
+[Schema Coordinate](/docs/guides/schema-coordinates) (`Type` or `Type.field`). Prefer Spec forms;
+see the
+[Schema Coordinates RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md).
+
+<Callout type="info">
+  `ttlPerCoordinate` keys are matched exactly. Wildcards such as `Query.*` are Mesh selectors, not
+  Spec Schema Coordinates, and do not apply a TTL. Use a concrete field (`Query.users`), a type name
+  (`Stock`), or the plugin-level `ttl` option.
+</Callout>
 
 ```yaml filename=".meshrc.yaml"
 # ...
@@ -52,10 +60,10 @@ plugins:
       # cache operations for 1 hour
       ttl: 60 * 60 * 1000,
       ttlPerCoordinate:
-        # cache operation containing Stock object type for 500ms
+        # Spec type coordinate: operations that include Stock
         - coordinate: Stock
           ttl: 500
-        # cache operation containing Query.rocketCoordinates selection for 100ms
+        # Spec field coordinate: operations that select Query.rocketCoordinates
         - coordinate: Query.rocketCoordinates
           ttl: 100
       ignoredTypes:

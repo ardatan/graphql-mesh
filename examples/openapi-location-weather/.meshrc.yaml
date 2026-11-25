@@ -32,10 +32,11 @@ sources:
 plugins:
   - responseCache:
       ttlPerCoordinate:
+        # Spec Schema Coordinates (exact Type or Type.field). Wildcards like Query.* do not match.
         # Geo data doesn't change frequently, so we can cache it forever
-        - coordinate: Query.*
+        - coordinate: Query.findCitiesUsingGET
           ttl: 0
-        # Forcast data might change, so we can cache it for 1 hour only
+        # Forecast data might change, so we can cache it for 1 hour only
         - coordinate: PopulatedPlaceSummary.dailyForecast
           ttl: 3600
         - coordinate: PopulatedPlaceSummary.todayForecast
