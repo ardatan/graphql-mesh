@@ -186,6 +186,56 @@ column-to-field mapping is the loader concern -- not a separate "rename everythi
 rule. Binders: [Selection mapping](/v2/guides/selection-mapping). Entity / ById:
 [Composition semantic conventions](/v2/compose#semantic-conventions).
 
+## Edge cases
+
+### Cursor connection + count
+
+Beyond offset lists, Chinook emit includes `kind: CONNECTION` (nodes / edges / pageInfo /
+`$totalCount`) and `kind: COUNT`:
+
+```graphql
+type Query {
+  allAlbums(
+    where: AlbumFilter
+    orderBy: [AlbumOrderBy!]
+    first: Int
+    after: String
+  ): AlbumConnection!
+    @sql(
+      table: "albums"
+      kind: CONNECTION
+      where: "$args.where"
+      orderBy: "$args.orderBy"
+      first: "$args.first"
+      after: "$args.after"
+      selection: """
+      nodes {
+        id: AlbumId
+        title: Title
+      }
+      pageInfo {
+        hasNextPage: $hasNextPage
+        endCursor: $endCursor
+      }
+      totalCount: $totalCount
+      """
+    )
+
+  albumsCount(where: AlbumFilter): Int!
+    @sql(table: "albums", kind: COUNT, where: "$args.where", selection: "$")
+}
+```
+
+### FK `$this` plus client filters
+
+`Artist.albums` merges `ArtistId: $this.id` with `...$args.where` so callers can still filter / page
+the related set (loader snap).
+
+### Many-to-many `through`
+
+Playlist -> tracks via `playlist_track` (see FK navigation above) -- `through` carries `local` /
+`remote` / `parent` / `target` when there is no direct FK on the target table.
+
 Walkthrough: [Music Store Example](/v2/examples/music-store) stage 1.
 
 <Cards>

@@ -219,6 +219,52 @@ type Mutation {
 }
 ```
 
+## Edge cases
+
+### Arg name differs from key -- type-level `$this`
+
+Composition / OpenAPI tests: `getUserById(userId:)` cannot use field-level `entity: true`. The Query
+keeps `$args.userId`; Compose adds a **type-level** `@connect` with `$this.id` for `_entities` (see
+[Directives: @connect](/v2/reference/directives#connect)).
+
+### Join-only FHIR `Reference.resource` (`e2e/json-schema-fhir`)
+
+Hand SDL with no `@source` -- `->split` / `->match` turns `Type/id` strings into abstract `Resource`
+stubs (`resolvable: false` keys on `Patient` / `Observation`):
+
+```graphql
+type Reference @key(fields: "reference") {
+  reference: String!
+  resource: Resource
+    @connect(
+      selection: """
+      $this.reference->split("/")->get(0)->match(
+        ["Patient", {
+          __typename: $("Patient")
+          id: $this.reference->split("/")->get(1)
+        }],
+        ["Observation", {
+          __typename: $("Observation")
+          id: $this.reference->split("/")->get(1)
+        }],
+        [@, null]
+      )
+      """
+    )
+}
+```
+
+### Rename transforms rewrite `$args` in `@connect`
+
+`e2e/openapi-arg-rename`: naming-convention + `argRenamer` rewrite binders inside `@connect` the
+same way composition rewrites `@protobuf__rpc` / `@thrift__rpc` (e.g. `input` -> `requestBody`).
+
+### OData `@odata.type` unions
+
+TripPin emit uses `->match` on `@odata.type` for polymorphic locations / people -- heavy selection
+strings in `e2e/odata-trippin` snapshots; dual-run only when the Connect surface stays
+Router-compatible.
+
 ## Dialect and dual-run
 
 `selection` / `http.body` / path templates: [Selection mapping](/v2/guides/selection-mapping).

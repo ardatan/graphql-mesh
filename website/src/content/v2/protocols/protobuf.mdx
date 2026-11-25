@@ -106,12 +106,49 @@ enum Genre {
 }
 ```
 
-Flat GraphQL args use `$args.*`. Loader-emitted RPCs often wrap an Input type (`input.<field>`).
-`stream: true` marks streaming methods when the proto service declares them. `entity: true` follows
-the same ById idea as Connect / SQL when a method is the entity resolver.
+## Edge cases
 
-Dialect: [Selection mapping](/v2/guides/selection-mapping). Music Store stage 3 uses this pattern
-for recommendations over gRPC.
+### Rename transforms rewrite `@protobuf__rpc(args:)`
+
+`e2e/protobuf-http` renames `moviesByYear(year:)` -> `releaseYear` and proves the compact `args`
+binder updates to `$args.releaseYear` (same rewrite path as `@connect`).
+
+### Server streaming (`e2e/protobuf-grpc-example`)
+
+Loader emit for `SearchMoviesByCast` sets `stream: true` and uses `input.castName` against an Input
+type (not flat `$args.*`):
+
+```graphql
+type Query {
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie]
+    @protobuf__rpc(
+      service: "Example"
+      method: "SearchMoviesByCast"
+      args: """
+      1(string): input.castName
+      """
+      selection: """
+      1(string): name
+      2(int64): year
+      6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+      """
+      stream: true
+    )
+}
+```
+
+### ConnectRPC vs Twirp HTTP
+
+Same hand SDL; e2e swaps `location` and optional `Content-Type: application/protobuf` headers for
+Twirp (`PROTOBUF_HTTP_STYLE=twirp`) vs ConnectRPC unary.
+
+### Nested message / timestamp / enum maps
+
+`protobuf-grpc-example` snaps encode `@Movie` / `@google_protobuf_Timestamp` blocks inside `args` /
+`selection` -- field-number maps for nested messages, not only scalars.
+
+Dialect: [Selection mapping](/v2/guides/selection-mapping). Music Store stage 3 uses unary
+`@protobuf__rpc` for recommendations over gRPC.
 
 <Cards>
   <Cards.Card arrow title="Directives: @protobuf__rpc" href="/v2/reference/directives#protobuf" />
