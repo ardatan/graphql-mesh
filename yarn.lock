@@ -701,7 +701,7 @@ __metadata:
 
 "@ardatan/graphql-to-config-schema@patch:@ardatan/graphql-to-config-schema@npm%3A0.1.25#~/.yarn/patches/@ardatan-graphql-to-config-schema-npm-0.1.25-f8c48d384e.patch":
   version: 0.1.25
-  resolution: "@ardatan/graphql-to-config-schema@patch:@ardatan/graphql-to-config-schema@npm%3A0.1.25#~/.yarn/patches/@ardatan-graphql-to-config-schema-npm-0.1.25-f8c48d384e.patch::version=0.1.25&hash=1e68da"
+  resolution: "@ardatan/graphql-to-config-schema@patch:@ardatan/graphql-to-config-schema@npm%3A0.1.25#~/.yarn/patches/@ardatan-graphql-to-config-schema-npm-0.1.25-f8c48d384e.patch::version=0.1.25&hash=6ae653"
   dependencies:
     "@graphql-tools/graphql-file-loader": "npm:6.1.0"
     "@graphql-tools/json-file-loader": "npm:6.1.0"
@@ -717,7 +717,7 @@ __metadata:
     graphql: "*"
   bin:
     graphql-to-config-schema: dist/bin.js
-  checksum: 10c0/d4cfe7eca3023b45f612d6810276e0adf96355df05738f98d6036787d3feff7a769a5c138d00dbc219284a20102a11c4760af5d236edaa166a8a2f66c8f1841c
+  checksum: 10c0/d95523165ad149f2fcfb2afbf4234499b4b4003d9fefe3e52f76f5ec1a2433c07f51995b6674493d9e493c0913391128a28b40a2f7a72d4e4d81a18fb64f8ec9
   languageName: node
   linkType: hard
 
@@ -10878,6 +10878,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-tools/merge@patch:@graphql-tools/merge@npm%3A6.1.0#~/.yarn/patches/@graphql-tools-merge-npm-6.1.0-0134b78310.patch":
+  version: 6.1.0
+  resolution: "@graphql-tools/merge@patch:@graphql-tools/merge@npm%3A6.1.0#~/.yarn/patches/@graphql-tools-merge-npm-6.1.0-0134b78310.patch::version=6.1.0&hash=5b95a3"
+  dependencies:
+    "@graphql-tools/schema": "npm:6.1.0"
+    "@graphql-tools/utils": "npm:6.1.0"
+    tslib: "npm:~2.0.1"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0
+  checksum: 10c0/2f562d64a7a3d88590ba98018666436e2ace09556cc7f0d2711f6b9327d9f895735eb52e230985337de0408967097a8c0a88e36d1fb99ef02141642207cb9c8f
+  languageName: node
+  linkType: hard
+
 "@graphql-tools/mock@npm:^10.1.4":
   version: 10.1.4
   resolution: "@graphql-tools/mock@npm:10.1.4"
@@ -11349,6 +11362,18 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/37a7bd7e14d28ff1bacc007dca84bc6cef2d7d7af9a547b5dbe52fcd134afddd6d4a7b2148cfbaff5ddba91a868453d597da77bd0457fb0be15928f916901606
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/utils@patch:@graphql-tools/utils@npm%3A6.1.0#~/.yarn/patches/@graphql-tools-utils-npm-6.1.0-261d030946.patch":
+  version: 6.1.0
+  resolution: "@graphql-tools/utils@patch:@graphql-tools/utils@npm%3A6.1.0#~/.yarn/patches/@graphql-tools-utils-npm-6.1.0-261d030946.patch::version=6.1.0&hash=fe951a"
+  dependencies:
+    "@ardatan/aggregate-error": "npm:0.0.1"
+    camel-case: "npm:4.1.1"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0
+  checksum: 10c0/46d032560ef7c2dd477bfbf6911263fb15632a7e30cd1a6d3c0c059942dbaba279c03f901236dd640a6fc3ab7f223686c637611988759e8e7d3785df739982f4
   languageName: node
   linkType: hard
 

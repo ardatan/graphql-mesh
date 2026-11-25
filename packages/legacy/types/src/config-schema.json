@@ -2871,7 +2871,7 @@
             "$ref": "#/definitions/ResponseCacheTTLConfig"
           },
           "additionalItems": false,
-          "description": "Overwrite the TTL for query operations whose selection contains a Spec Schema Coordinate (`Type` or `Type.field`, e.g. `Query.users` or `Stock`) or a Mesh schema selector with `*` (e.g. `Query.*`). Prefer Spec forms for one element; selectors stay supported for wildcards.\nSee https://spec.graphql.org/September2025/#sec-Schema-Coordinates and https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md"
+          "description": "Overwrite the TTL for query operations whose selection contains a Spec Schema Coordinate\n(`Type` or `Type.field`, e.g. `Query.users` or `Stock`) or a Mesh schema selector with `*`\n(e.g. `Query.*`). Prefer Spec forms for one element; selectors stay supported for wildcards.\nSee https://spec.graphql.org/September2025/#sec-Schema-Coordinates and\nhttps://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md"
         },
         "ignoredTypes": {
           "type": "array",
@@ -3429,7 +3429,7 @@
       "properties": {
         "field": {
           "type": "string",
-          "description": "Target field as a Mesh schema selector (`Type.field`, or a glob such as `Query.*`). Prefer Spec Schema Coordinates (`Query.users`) when naming one field; globs are selectors, not Spec. See https://spec.graphql.org/September2025/#sec-Schema-Coordinates"
+          "description": "Target field as a Mesh schema selector (`Type.field`, or a glob such as `Query.*`).\nPrefer Spec Schema Coordinates (`Query.users`) when naming one field; globs are selectors, not Spec.\nSee https://spec.graphql.org/September2025/#sec-Schema-Coordinates"
         },
         "cacheKey": {
           "type": "string",

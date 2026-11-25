@@ -18,7 +18,8 @@ describe('bakeInputBodySelection', () => {
       }
     `);
     const inputType = schema.getType('CreateInput') as GraphQLInputObjectType;
-    const args: GraphQLArgument[] = [
+    // GraphQL 17's GraphQLArgument is a class; tests only need name/type for baking.
+    const args = [
       {
         name: 'input',
         type: new GraphQLNonNull(inputType),
@@ -28,7 +29,7 @@ describe('bakeInputBodySelection', () => {
         extensions: {},
         astNode: undefined,
       },
-    ];
+    ] as unknown as GraphQLArgument[];
     const body = `{
   api_key: $("secret")
   ...$args.input
@@ -50,7 +51,7 @@ describe('bakeInputBodySelection', () => {
       }
     `);
     const inputType = schema.getType('CreateInput') as GraphQLInputObjectType;
-    const args: GraphQLArgument[] = [
+    const args = [
       {
         name: 'input',
         type: inputType,
@@ -60,7 +61,7 @@ describe('bakeInputBodySelection', () => {
         extensions: {},
         astNode: undefined,
       },
-    ];
+    ] as unknown as GraphQLArgument[];
     const body = `{
   api_key: $("secret")
   ...$args.input
@@ -79,7 +80,7 @@ describe('bakeInputBodySelection', () => {
       }
     `);
     const inputType = schema.getType('CreateInput') as GraphQLInputObjectType;
-    const args: GraphQLArgument[] = [
+    const args = [
       {
         name: 'input',
         type: inputType,
@@ -89,7 +90,7 @@ describe('bakeInputBodySelection', () => {
         extensions: {},
         astNode: undefined,
       },
-    ];
+    ] as unknown as GraphQLArgument[];
     expect(bakeInputBodySelection('$args.input', args)).toBe(
       '$args.input { "product-name": product_name }',
     );
