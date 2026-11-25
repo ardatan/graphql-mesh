@@ -36,11 +36,11 @@ Hand-written `.graphql` is the other input to Compose -- same pipeline, no loade
   ]}
 />
 
-| Piece                          | Role                                                       |
-| ------------------------------ | ---------------------------------------------------------- |
+| Piece                            | Role                                                       |
+| -------------------------------- | ---------------------------------------------------------- |
 | `@omnigraph/openapi`, `sql`, ... | Introspect / read source → emit directives + often `@key`  |
 | `sourceHandler: load...`         | Compose config entry that runs a loader                    |
-| Output                         | Subgraph SDL (readable GraphQL -- not a runtime black box) |
+| Output                           | Subgraph SDL (readable GraphQL -- not a runtime black box) |
 
 Loaders are **optional**. Authored SDL and loader emit are peers at Compose time.
 
