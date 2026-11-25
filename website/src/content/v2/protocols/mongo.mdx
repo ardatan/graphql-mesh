@@ -131,9 +131,71 @@ type Mutation {
 }
 ```
 
-The loader also emits connection / pagination / aggregate / deleteMany variants when the model
-supports them -- same `collection` + `query` / `selection` dialect. Binders:
-[Selection mapping](/v2/guides/selection-mapping). Directives catalog:
+## Edge cases
+
+### Batch ByIds
+
+`_id: $args.ids` on `@mongo__find` (loader snap) -- batch entity fill companion to singular
+`findUserById`:
+
+```graphql
+type Query {
+  findUsersByIds(ids: [ObjectID!]!, limit: Int = 100, sort: [UserSort!]): [User!]!
+    @mongo__find(
+      collection: "user_users"
+      query: """
+      _id: $args.ids
+      """
+      limit: "$args.limit"
+      sort: "$args.sort"
+      selection: """
+      id: _id
+      name: name
+      """
+    )
+}
+```
+
+### Aggregate + connection
+
+```graphql
+type Query {
+  aggregateUsers(filter: UserFilterInput, pipeline: JSON): [JSON!]!
+    @mongo__aggregate(
+      collection: "user_users"
+      query: "$args.filter"
+      pipeline: "$args.pipeline"
+      selection: "$"
+    )
+
+  findUsersConnection(
+    filter: UserFilterInput
+    sort: [UserSort!]
+    first: Int
+    after: String
+  ): UserConnection
+    @mongo__connection(
+      collection: "user_users"
+      query: "$args.filter"
+      sort: "$args.sort"
+      first: "$args.first"
+      after: "$args.after"
+      selection: """
+      nodes {
+        id: _id
+        name: name
+      }
+      """
+    )
+}
+```
+
+### ObjectId / Decimal128 / mixed JSON
+
+Emitted schemas use GraphQL scalars such as `ObjectID`, `Decimal128`, and `JSON` for mixed fields --
+transport options may list `objectIdFieldsByCollection`. See loader snap + `e2e/mongoose-users`.
+
+Binders: [Selection mapping](/v2/guides/selection-mapping). Directives catalog:
 [Mongo](/v2/reference/directives#mongo).
 
 <Cards>

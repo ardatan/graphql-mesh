@@ -82,8 +82,22 @@ type Query {
 }
 ```
 
-`throws:` on the directive maps Thrift exceptions into the selection dialect. Rename transforms
-rewrite `$args` inside `@thrift__rpc` the same way they rewrite `@connect`.
+## Edge cases
+
+### `throws` as GraphQL unions (`ignoreErrorResponses: false`)
+
+Thrift loader test (`twitter.thrift`): exceptions become union members (`PostTweetResult` = success
+| `TwitterUnavailable`) and `@thrift__rpc(throws:)` lists wire ids (e.g. `TwitterUnavailable: 1`).
+
+### `entityMethods`
+
+`entityMethods: ['add']` stamps `entity: true` on that `@thrift__rpc` so Federation can use it as an
+entity resolver (binary loader test).
+
+### Rename transforms
+
+Composition rewrites `$args` inside `@thrift__rpc` when you rename GraphQL args -- same path as
+`@connect` / `@protobuf__rpc`.
 
 ## Generate (TJSON -> Connect)
 
@@ -134,6 +148,12 @@ type Query {
     )
 }
 ```
+
+### TJSON `isSuccess` / `errors`
+
+JSON emit attaches Connect `isSuccess` / `errors` selections that inspect the TJSON reply array
+(message type, success slot vs exception slot) -- see loader snap `Calc-json-connect-schema`. ONEWAY
+JSON bodies use message type `4` and void success checks.
 
 Dialect: [Selection mapping](/v2/guides/selection-mapping). Catalog:
 [Directives: Thrift](/v2/reference/directives#thrift).

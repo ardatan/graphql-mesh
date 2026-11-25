@@ -91,9 +91,26 @@ schema @transport(subgraph: "Movies", kind: "neo4j", location: "neo4j://localhos
 }
 ```
 
-`e2e/neo4j-example` introspects a Movies DB into the same native directives (field names may follow
-Neo4j GraphQL pluralization, e.g. `actedInMovies` / `peopleActedIn`). Catalog:
-[Directives: Neo4j](/v2/reference/directives#neo4j). Serve: [Hive Gateway](/v2/serve/hive-gateway).
+## Edge cases
+
+### Introspected pluralization + both directions
+
+`e2e/neo4j-example` emit uses Neo4j GraphQL pluralization (`actedInMovies` / `peopleActedIn`) and
+stamps `@relationship` on **both** ends of `ACTED_IN` / `DIRECTED` / `REVIEWED` (IN on `Movie`, OUT
+on `Person`).
+
+### Relationship properties
+
+Edges with properties get a `@relationshipProperties` type (e.g. `ActedInProperties.roles`,
+`ReviewedProperties`) referenced from `@relationship(properties: ...)`.
+
+### Mesh `subgraph:` on natives
+
+Compose may print `@node(subgraph: "Movies")` / `@relationship(subgraph: "Movies", ...)` so
+transports filter by `@transport(subgraph:)` -- still Neo4j GraphQL natives, not a Mesh dialect.
+
+Catalog: [Directives: Neo4j](/v2/reference/directives#neo4j). Serve:
+[Hive Gateway](/v2/serve/hive-gateway).
 
 <Cards>
   <Cards.Card arrow title="Directives: Neo4j" href="/v2/reference/directives#neo4j" />
