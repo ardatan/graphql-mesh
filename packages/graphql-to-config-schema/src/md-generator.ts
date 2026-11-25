@@ -30,12 +30,23 @@ export function generatedMarkdown(schema: GraphQLSchema): FileOutput[] {
   return result;
 }
 
-export function transformTypeToMdFormat(type: GraphQLOutputType, level = 0): string {
+export function transformTypeToMdFormat(
+  type: GraphQLOutputType,
+  level = 0,
+  path: Set<string> = new Set(),
+): string {
   if (isWrappingType(type)) {
-    return transformTypeToMdFormat(type.ofType, level);
+    return transformTypeToMdFormat(type.ofType, level, path);
   }
 
   if (isObjectType(type) || isInterfaceType(type)) {
+    // Recursive GraphQL types (e.g. `type Tree { child: Tree }`) — emit a finite
+    // reference when the current path already contains this type.
+    if (path.has(type.name)) {
+      return `Object (\`${type.name}\`)`;
+    }
+    const nextPath = new Set(path);
+    nextPath.add(type.name);
     const fields: string[] = [];
 
     for (const [fieldName, field] of Object.entries(type.getFields())) {
@@ -47,7 +58,7 @@ export function transformTypeToMdFormat(type: GraphQLOutputType, level = 0): str
         isNonNullType(field.type) || (isListType(field.type) && isNonNullType(field.type.ofType));
       const isList =
         isListType(field.type) || (isNonNullType(field.type) && isListType(field.type.ofType));
-      const typeToUse = transformTypeToMdFormat(field.type, level + 1);
+      const typeToUse = transformTypeToMdFormat(field.type, level + 1, nextPath);
 
       if (hasChildObject) {
         fields.push(

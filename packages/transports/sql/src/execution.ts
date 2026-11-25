@@ -618,6 +618,21 @@ export async function getSqlExecutor({
       executionRequest.context && typeof executionRequest.context === 'object'
         ? executionRequest.context
         : {};
+    // Grafast/`@dataplan/pg` applies `context.pgSettings` via set_config; that path
+    // peers graphql^16 only. Refuse to silently run under the pool role on GraphQL 17.
+    const pgSettings = (context as { pgSettings?: Record<string, unknown> }).pgSettings;
+    if (
+      graphqlMajor >= 17 &&
+      adapter === 'postgres' &&
+      sqlClient.pgPool &&
+      pgSettings &&
+      typeof pgSettings === 'object' &&
+      Object.keys(pgSettings).length > 0
+    ) {
+      throw new Error(
+        'context.pgSettings is not applied on GraphQL 17 (Grafast PostgreSQL executor peers graphql^16). Remove pgSettings or run on GraphQL 16.',
+      );
+    }
     return defaultExecutor({
       ...executionRequest,
       context,

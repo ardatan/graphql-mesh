@@ -216,8 +216,17 @@ function coerceFieldDefaultValue(
     return defaultValue;
   }
   let tc: AnyTypeComposer<any> | undefined = inputTc;
-  while (tc instanceof NonNullComposer || tc instanceof ListComposer) {
+  // Unwrap NonNull only — List wrappers must stay so array defaults keep structure.
+  while (tc instanceof NonNullComposer) {
     tc = tc.ofType as AnyTypeComposer<any>;
+  }
+  if (tc instanceof ListComposer) {
+    if (!Array.isArray(defaultValue)) {
+      return defaultValue;
+    }
+    return defaultValue.map(item =>
+      coerceFieldDefaultValue(tc.ofType as AnyTypeComposer<any>, item),
+    );
   }
   if (tc instanceof EnumTypeComposer) {
     let enumKey = sanitizeNameForGraphQL(String(defaultValue));

@@ -7,7 +7,11 @@ import type {
 } from 'graphql';
 import { getArgumentValues, getVariableValues, GraphQLError, Kind } from 'graphql';
 import type { ExecutionRequest } from '@graphql-tools/utils';
-import { asGetArgumentValuesVariables, getRootTypeMap } from '@graphql-tools/utils';
+import {
+  asGetArgumentValuesVariables,
+  coerceGetVariableValuesResult,
+  getRootTypeMap,
+} from '@graphql-tools/utils';
 import { getOperationsAndFragments } from './getOperationsAndFragments.js';
 
 export function getRootFieldsWithArgs(
@@ -34,24 +38,17 @@ export function getRootFieldsWithArgs(
     operation.variableDefinitions || [],
     variables || {},
   );
-  if (coercedVariables.errors) {
-    throw new AggregateError(coercedVariables.errors);
+  // Preserve GraphQL 17 `{ coerced, sources }` — dropping `sources` breaks variable
+  // substitution inside complex scalar input literals via getArgumentValues.
+  const normalized = coerceGetVariableValuesResult(coercedVariables);
+  if (normalized.errors) {
+    throw new AggregateError(normalized.errors);
   }
-  // graphql 16: `{ coerced }`; graphql 17: `{ variableValues: { coerced, sources } }`
-  const coercedResult = coercedVariables as unknown as {
-    variableValues?: { coerced?: Record<string, any> } | null;
-    coerced?: Record<string, any>;
-  };
-  const flatVariables = (
-    coercedResult.variableValues != null
-      ? coercedResult.variableValues.coerced
-      : coercedResult.coerced
-  ) as Record<string, any>;
   const selectionHandlerCtx: SelectionHandlerCtx = {
     rootFieldMap,
     rootFieldsWithArgs,
     fragments,
-    variables: flatVariables,
+    variables: normalized.variableValues as Record<string, any>,
   };
   for (const selection of operation.selectionSet.selections) {
     handleSelection(selection, selectionHandlerCtx);

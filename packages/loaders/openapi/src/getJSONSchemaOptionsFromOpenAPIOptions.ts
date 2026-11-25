@@ -1291,6 +1291,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                   // Only arm timeout when the link is still pending and we're not in
                   // batch mode (no context). Avoids leaking timers after Jest finishes.
                   if (!hateoasContext) {
+                    // Keep the timer referenced while we await deferred.promise —
+                    // unref() would let Node exit before the fallback resolves.
                     timeout = setTimeout(() => {
                       log.warn(
                         `Could not find operation for link ${linkName} in ${name} for ${xLinkHref}`,
@@ -1298,7 +1300,6 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                       contextFutureLinks.delete(findActualOperationAndPath);
                       deferred.resolve();
                     }, 5000);
-                    timeout.unref?.();
                   }
                 }
 

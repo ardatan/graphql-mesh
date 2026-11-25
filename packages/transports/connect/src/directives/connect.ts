@@ -25,7 +25,7 @@ import { Logger, type Logger as HiveLogger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
-import { getHeadersObj } from '@graphql-mesh/utils';
+import { getHeadersObj, installQueryField } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
 import { Blob, fetch as defaultFetch, File, FormData } from '@whatwg-node/fetch';
 import { fakePromise } from '@whatwg-node/promise-helpers';
@@ -3289,7 +3289,6 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
   if (!queryType) {
     return;
   }
-  const queryFields = queryType.getFields();
   const entityTypes = Object.values(schema.getTypeMap()).filter(
     (t): t is GraphQLObjectType =>
       isObjectType(t) && !t.name.startsWith('__') && !!getTypeResolveReference(t),
@@ -3335,34 +3334,18 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return entitiesResolver({ representations, context, info });
   };
 
-  if (queryFields._entities) {
-    // Federation-extracted subgraph: field exists, resolver does not - wire it.
-    queryFields._entities.resolve = entitiesResolve;
-    return;
-  }
-
-  // GraphQL 17: `getFields()` must hold `GraphQLField` instances (with `toConfig`).
-  // Rebuild Query from config so the new field is properly wrapped.
-  const queryConfig = queryType.toConfig();
-  queryConfig.fields = {
-    ...queryConfig.fields,
-    _entities: {
-      description:
-        'Federation entity resolver for Connectors REST transport (Hive `_entities` path)',
-      type: new GraphQLNonNull(new GraphQLList(entityUnion)),
-      args: {
-        representations: {
-          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
-          // GraphQL 17 requires `default`; GraphQL 16 only knows `defaultValue`.
-          default: undefined,
-          extensions: Object.create(null),
-        } as any,
-      },
-      resolve: entitiesResolve,
-      extensions: Object.create(null),
+  installQueryField(schema, '_entities', {
+    description: 'Federation entity resolver for Connectors REST transport (Hive `_entities` path)',
+    type: new GraphQLNonNull(new GraphQLList(entityUnion)),
+    args: {
+      representations: {
+        type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
+        // GraphQL 17 requires `default`; GraphQL 16 only knows `defaultValue`.
+        default: undefined,
+        extensions: Object.create(null),
+      } as any,
     },
-  };
-  const newQuery = new GraphQLObjectType(queryConfig);
-  typeMap[newQuery.name] = newQuery;
-  (schema as unknown as { _queryType?: GraphQLObjectType })._queryType = newQuery;
+    resolve: entitiesResolve,
+    extensions: Object.create(null),
+  });
 }

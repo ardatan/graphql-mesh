@@ -86,6 +86,10 @@ function normalizePrintedSchema(sdl) {
         }
         j += 1;
       }
+      // Collapse insignificant whitespace inside block strings for GraphQL 16/17
+      // snap stability (pretty-print indent / newlines). Commas stay — JSON
+      // payloads may need them. Horizontal runs that matter at runtime are
+      // covered by execution tests, not SDL snaps.
       const inner = collapseWs(sdl.slice(i + 3, j), false).trim();
       const end = Math.min(j + 3, n);
       if (inner.length > 0) {
@@ -148,7 +152,24 @@ function normalizePrintedSchema(sdl) {
     }
 
     if (sdl[i] === ',') {
+      // Commas are optional punctuation, but `[1,2]` must not become `[12]`.
+      // Leave following whitespace for the ws handler (keeps `"a", "b"` spaced).
       i += 1;
+      let j = i;
+      while (j < n && isWs(sdl.charCodeAt(j))) j += 1;
+      const next = j < n ? sdl[j] : '';
+      const hadWs = j > i;
+      if (
+        !hadWs &&
+        lastOut &&
+        next &&
+        lastOut !== ' ' &&
+        /[\w.]/.test(lastOut) &&
+        /[\w.]/.test(next)
+      ) {
+        parts.push(' ');
+        lastOut = ' ';
+      }
       continue;
     }
 

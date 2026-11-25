@@ -77,7 +77,15 @@ export default class NamingConventionTransform implements MeshTransform {
       this.transforms.push(
         new TransformEnumValues((_typeName, externalValue, enumValueConfig) => {
           const newEnumValue = namingConventionFn(externalValue) || externalValue;
-          return [newEnumValue, enumValueConfig];
+          // Keep internal value in sync with the renamed external name (same as bare mode)
+          // so rewritten argument defaults match what resolvers receive.
+          return [
+            newEnumValue,
+            {
+              ...enumValueConfig,
+              value: newEnumValue,
+            },
+          ];
         }) as any,
         // GraphQL 17 keeps enum defaults on `default.literal`; rewrite them to the
         // renamed external values (same as bare mode's MapperKind.ARGUMENT path).

@@ -5,8 +5,8 @@
  * A first-line-only match (`[^\n]*`) misses `entity: true`, `$args.*`, etc.
  */
 
-/** End of a field block: next sibling field, next type, or closing brace. */
-const FIELD_BLOCK_END = /(?=\n\s{2}\w+\(|\n\s*type |\n\})/;
+/** End of a field block: next sibling field (with or without args), next type, or `}`. */
+const FIELD_BLOCK_END = /(?=\n\s{2}\w+(?:\(|:)|\n\s*type |\n\})/;
 
 /**
  * Match a field definition including multi-line `@join__directive` / `@connect`

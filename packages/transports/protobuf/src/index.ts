@@ -20,6 +20,7 @@ import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-c
 import type { MeshFetch } from '@graphql-mesh/types';
 import {
   assertSupportedMeshSpecOnSchema,
+  installQueryField,
   MESH_SUPPORTED_SPEC_VERSIONS,
   validateMeshDirectives,
 } from '@graphql-mesh/utils';
@@ -460,7 +461,6 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
   if (!queryType) {
     return;
   }
-  const queryFields = queryType.getFields();
   const entityTypes = Object.values(schema.getTypeMap()).filter(
     (t): t is GraphQLObjectType =>
       isObjectType(t) && !t.name.startsWith('__') && !!getTypeResolveReference(t),
@@ -505,33 +505,20 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return entitiesResolver({ representations, context, info });
   };
 
-  if (queryFields._entities) {
-    queryFields._entities.resolve = entitiesResolve;
-    return;
-  }
-
-  // GraphQL 17: rebuild Query so `_entities` is a real `GraphQLField` (has `toConfig`).
-  const queryConfig = queryType.toConfig();
-  queryConfig.fields = {
-    ...queryConfig.fields,
-    _entities: {
-      description: 'Federation entity resolver for protobuf RPC transport (Hive `_entities` path)',
-      type: new GraphQLNonNull(new GraphQLList(entityUnion)),
-      args: {
-        representations: {
-          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
-          // GraphQL 17 requires `default`; GraphQL 16 only knows `defaultValue`.
-          default: undefined,
-          extensions: Object.create(null),
-        } as any,
-      },
-      resolve: entitiesResolve,
-      extensions: Object.create(null),
+  installQueryField(schema, '_entities', {
+    description: 'Federation entity resolver for protobuf RPC transport (Hive `_entities` path)',
+    type: new GraphQLNonNull(new GraphQLList(entityUnion)),
+    args: {
+      representations: {
+        type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
+        // GraphQL 17 requires `default`; GraphQL 16 only knows `defaultValue`.
+        default: undefined,
+        extensions: Object.create(null),
+      } as any,
     },
-  };
-  const newQuery = new GraphQLObjectType(queryConfig);
-  typeMap[newQuery.name] = newQuery;
-  (schema as unknown as { _queryType?: GraphQLObjectType })._queryType = newQuery;
+    resolve: entitiesResolve,
+    extensions: Object.create(null),
+  });
 }
 
 function grpcUnary(opts: {

@@ -129,6 +129,10 @@ export default class NamingConventionTransform implements MeshTransform {
       }),
       ...(this.config.enumValues && {
         [MapperKind.ARGUMENT]: config => {
+          // Only rewrite defaults on enum args — String/ID/scalar defaults must stay intact.
+          if (!isEnumType(getNamedType(config.type))) {
+            return config;
+          }
           const enumDefault = getEnumDefaultName(config);
           if (this.config.enumValues && enumDefault) {
             const applyNamingConvention = NAMING_CONVENTIONS[this.config.enumValues];
