@@ -135,7 +135,7 @@ const CONCEPTS = {
     label: 'Stitching',
     href: '/v2/concepts/stitching',
     description:
-      'stitchSchemas + subschemas / programmatic type merging (directives optional). the-guild.dev/graphql/stitching',
+      'Schema Stitching: stitchSchemas + subschemas / programmatic type merging (directives optional).',
   },
   gateway: {
     label: 'Gateway',
