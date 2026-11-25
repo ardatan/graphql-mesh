@@ -58,7 +58,8 @@ Federation is **not** Schema Stitching's `stitchSchemas` / subschema merge runti
 ## Entity resolution
 
 Federation needs a way to **fill an entity** from its `@key` when another subgraph contributed
-fields on that type. Mesh covers that in two complementary ways:
+fields on that type. Mesh covers that in two complementary ways, plus loader **ById / ByIds** naming
+conventions during Composition.
 
 ### `entity: true` (and type-level entity maps)
 
@@ -71,9 +72,61 @@ That wires Hive Gateway / Apollo Router `_entities` -> `resolveReference` withou
 | Arg name **matches** key field (`id` -> `id`) | Query field `@connect(entity: true)` (or protocol equivalent)                    |
 | Arg name **differs** (`petId` -> `id`)        | Type-level entity directive with `$this.id` (field-level `entity: true` invalid) |
 | Join-only stub (`resolvable: false`)          | `@key` only -- another subgraph owns the resolver                                |
+| Batch ByIds only                              | Batch field kept; singular `_entities` not claimed without a singular resolver   |
+
+**HTTP/REST Connectors** (`e2e/openapi-entity-stubs` -- `getCustomer` matches
+[ById conventions](/v2/compose#semantic-conventions)):
+
+```graphql
+type Query {
+  getCustomer(id: String!): Customer
+    @connect(
+      source: "Billing"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+      id
+      name
+      """
+      entity: true
+    )
+}
+
+type Customer @key(fields: "id") {
+  id: String!
+  name: String!
+}
+```
+
+**SQL** type-level entity fill (`e2e/sqlite-chinook` -- `$this.id` on `Track`):
+
+```graphql
+type Track
+  @key(fields: "id")
+  @sql(
+    table: "tracks"
+    kind: ROW
+    where: """
+    TrackId: $this.id
+    """
+    selection: """
+    id: TrackId
+    name: Name
+    """
+  ) {
+  id: ID!
+  name: String!
+}
+```
 
 See [Selection mapping](/v2/guides/selection-mapping) for `$this` / `$batch` binders, and
 [Directives](/v2/reference/directives) for `entity` on `@connect` / `@sql` / `@protobuf__rpc`.
+
+### Loader ById / ByIds conventions
+
+Composition recognizes Query names like `bookById`, `getCustomer`, `customersByIds` (snake_case
+match) when the key arg lines up with a key field. Connect / protobuf get `entity: true` or
+type-level `$this` maps; other Mesh subgraphs may get `@merge`. Full table and opt-out:
+[Composition semantic conventions](/v2/compose#semantic-conventions).
 
 ### Federation transform
 
@@ -101,24 +154,31 @@ Federation transform when you need to **annotate** an existing GraphQL schema in
 ## Short example
 
 ```graphql
-# Catalog subgraph
-type Track @key(fields: "TrackId") {
-  TrackId: Int!
-  Name: String
+# Catalog subgraph (SQL hub)
+type Track @key(fields: "id") {
+  id: ID!
+  name: String
 }
 
-# Reviews subgraph -- join stub
+# Reviews subgraph -- join stub + field Connect
 type Track @key(fields: "id", resolvable: false) {
   id: ID!
   reviews: [Review!]
+    @connect(
+      source: "reviews"
+      http: { GET: "/reviews?trackId={$this.id}" }
+      selection: """
+      id
+      rating
+      """
+    )
 }
 ```
 
 See [Music Store Example](/v2/examples/music-store) and [FHIR](/v2/examples/fhir) for entity joins.
 Semantic ById conventions: [Composition](/v2/compose#semantic-conventions).
 
-Mesh still documents <DirectiveRef name="merge" /> (type-merging on Hive Gateway) and
-
+Mesh still documents <DirectiveRef name="merge" /> (type-merging on Hive Gateway). It also documents
 <DirectiveRef name="resolveTo" /> (field delegation) under
 [Directives](/v2/reference/directives#merge) -- prefer `@key` + HTTP/REST Connect or protocol
 `entity: true` maps for new joins.

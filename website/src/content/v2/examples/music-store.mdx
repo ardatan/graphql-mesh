@@ -30,9 +30,9 @@ Path pages teach the skill; this example walks the stages in order, then compose
 <Callout type="info">
   User-facing copy says **REST / OpenAPI** for Reviews. In the walkthrough you can **build that
   Reviews API with [feTS](https://fets.dev/)** (OpenAPI document + HTTP server); feTS is the
-  implementation detail, not the product brand. Snippets below match{' '}
-  <ConceptRef name="composition" label="Mesh Compose" /> shape; wire fixtures from the repo anchors
-  as you expand the runnable example.
+  implementation detail, not the product brand. Snippets below follow{' '}
+  <ConceptRef name="composition" label="Mesh Compose" /> and repo e2e anchors (`sqlite-chinook`,
+  `openapi-entity-stubs`, `protobuf-http`).
 </Callout>
 
 ## What you build
@@ -48,23 +48,22 @@ Federation hub: stage 1 emits Track <DirectiveRef name="key" />. Stages 2-3 exte
 
 ## Gateway matrix
 
-| Slice                     | Hive Gateway (JS/TS) / Apollo Router |
-| ------------------------- | ------------------------------------ | ------------------------------ |
-| Full multi-protocol graph | Yes                                  | No (SQL + protobuf transports) |
-| Connect Reviews slice     | Yes                                  | Yes (dual-run)                 |
-| gRPC slice                | Yes                                  | No                             |
+| Slice                     | Hive Gateway (JS/TS) | Apollo Router                  |
+| ------------------------- | -------------------- | ------------------------------ |
+| Full multi-protocol graph | Yes                  | No (SQL + protobuf transports) |
+| Connect Reviews slice     | Yes                  | Yes (dual-run)                 |
+| gRPC slice                | Yes                  | No                             |
 
 ---
 
 ## Stage 1 -- Generate the Chinook catalog
 
 Skill: [Generate](/v2/paths/generate) | Reading:
-[Reading generated SDL](/v2/guides/reading-generated-sdl)
+[Reading generated SDL](/v2/guides/reading-generated-sdl) | Protocol: [SQL](/v2/protocols/sql)
 
 1. Point Mesh Compose at Chinook (SQLite) with the SQL loader.
 2. Compose and query a Track (and related album/artist fields as emitted).
-3. Open the emitted subgraph SDL. Find `@transport`, `@sql` / `@sql__*`, and
-   `Track @key(fields: "TrackId")` (exact field names follow the loader emit).
+3. Open the emitted subgraph SDL. Find `@transport`, `@sql`, and `Track @key(fields: "id")`.
 4. Keep this subgraph as the federation hub before adding Reviews or gRPC.
 
 ```ts
@@ -74,7 +73,7 @@ import { loadSqlSubgraph } from '@omnigraph/sql'
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
-      sourceHandler: loadSqlSubgraph('catalog', {
+      sourceHandler: loadSqlSubgraph('chinook', {
         endpoint: 'file:chinook.db'
       })
     }
@@ -82,14 +81,57 @@ export const composeConfig = defineComposeConfig({
 })
 ```
 
+Emitted shape (simplified from `e2e/sqlite-chinook` compose snapshot -- GraphQL names are camelCase;
+SQL columns stay in `where` / `selection`):
+
 ```graphql
-# Shape of what to look for in emitted SDL (names follow loader output)
-type Track @key(fields: "TrackId") {
-  TrackId: Int!
-  Name: String
-  # ... AlbumId, Milliseconds, ...
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"])
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+
+schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db") {
+  query: Query
+}
+
+type Query {
+  track(id: ID!): Track
+    @sql(
+      table: "tracks"
+      kind: ROW
+      where: """
+      TrackId: $args.id
+      """
+      selection: """
+      id: TrackId
+      name: Name
+      albumId: AlbumId
+      """
+    )
+}
+
+type Track
+  @key(fields: "id")
+  @sql(
+    table: "tracks"
+    kind: ROW
+    where: """
+    TrackId: $this.id
+    """
+    selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    """
+  ) {
+  id: ID!
+  name: String!
+  albumId: Int
 }
 ```
+
+Type-level `@sql` with `$this.id` is the entity fill for `_entities`. Details:
+[Selection mapping](/v2/guides/selection-mapping) /
+[Entity resolution](/v2/concepts/federation#entity-resolution).
 
 Repo anchor: `e2e/sqlite-chinook`.
 
@@ -97,7 +139,8 @@ Repo anchor: `e2e/sqlite-chinook`.
 
 ## Stage 2 -- Generate Reviews, then edit
 
-Skill: [Generate-then-edit](/v2/paths/generate-then-edit)
+Skill: [Generate-then-edit](/v2/paths/generate-then-edit) | Protocol:
+[HTTP / REST](/v2/protocols/http-rest)
 
 1. Stand up (or reuse) a **REST** Reviews API with an OpenAPI document. For the Mesh dogfood path,
    build it with [feTS](https://fets.dev/) (see [feTS OpenAPI](https://fets.dev/server/openapi) for
@@ -111,6 +154,8 @@ Skill: [Generate-then-edit](/v2/paths/generate-then-edit)
 6. Re-compose. Dual-run the Connect slice on **Hive Gateway** and **Apollo Router**.
 
 ```ts
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
 {
   sourceHandler: loadOpenAPISubgraph('reviews', {
     source: 'http://localhost:4001/openapi.json',
@@ -120,8 +165,31 @@ Skill: [Generate-then-edit](/v2/paths/generate-then-edit)
 }
 ```
 
+Loader emit for a ById root (from `e2e/openapi-entity-stubs` Billing -- Composition stamps
+`entity: true` when the Query matches [semantic conventions](/v2/compose#semantic-conventions)):
+
 ```graphql
-# After edit -- Reviews extend catalog Track (entity: true pattern)
+extend schema
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+  @source(name: "Billing", http: { baseURL: "http://localhost:4001" })
+
+type Query {
+  getCustomer(id: String!): Customer
+    @connect(
+      source: "Billing"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+      id
+      name
+      """
+      entity: true
+    )
+}
+```
+
+After edit -- Reviews extend catalog Track (join stub + field-level Connect):
+
+```graphql
 type Track @key(fields: "id", resolvable: false) {
   id: ID!
   reviews: [Review!]
@@ -137,20 +205,23 @@ type Track @key(fields: "id", resolvable: false) {
 }
 ```
 
-Exact `@connect` args follow connect/v0.4 emit; align `id` / `TrackId` keys with stage 1 when you
-merge. Repo anchors: `e2e/openapi-entity-stubs`, `e2e/petstore-subgraph`.
+Align `id` / stage-1 keys when you merge. Repo anchors: `e2e/openapi-entity-stubs`,
+`e2e/petstore-subgraph`.
 
 ---
 
 ## Stage 3 -- Hand-write gRPC / Protobuf
 
-Skill: [Hand-write](/v2/paths/hand-write)
+Skill: [Hand-write](/v2/paths/hand-write) | Protocol: [Protobuf / gRPC](/v2/protocols/protobuf)
 
 1. Import Mesh / Federation directives with `@link` (Compose injects definitions).
 2. Author Query fields with `@protobuf__rpc` (`service`, `method`, `args`, `selection`).
 3. Add `@transport(kind: "protobuf", ...)` and `@key` where entities join Track.
 4. Load the `.graphql` as a schema subgraph in Compose (same path as edited SDL).
 5. Serve on **Hive Gateway** only for this slice.
+
+Compact field-number mapping (shape from `e2e/protobuf-http/subgraphs/movies.graphql`, adapted to a
+recommendation field):
 
 ```graphql
 extend schema
@@ -191,7 +262,9 @@ type Recommendation @key(fields: "id") {
 }
 ```
 
-Repo anchors: `e2e/protobuf-http`, `e2e/protobuf-grpc-example`.
+Optional rename transforms rewrite `$args` inside `@protobuf__rpc` the same way they rewrite
+`@connect` -- see `e2e/protobuf-http/mesh.config.ts`. Repo anchors: `e2e/protobuf-http`,
+`e2e/protobuf-grpc-example`.
 
 ---
 
@@ -201,19 +274,43 @@ Skill: [Composition](/v2/compose) | Serve Supergraph: [Hive Gateway](/v2/serve/h
 [Apollo Router](/v2/serve/apollo-router)
 
 1. List all three subgraphs in one `mesh.config.ts` (catalog + reviews + recommendations).
-2. Compose to a supergraph GraphQL file.
+2. Compose to a supergraph GraphQL file (`mesh-compose -o supergraph.graphql`).
 3. Run the **full** graph on Hive Gateway (JS/TS) -- SQL + Connect + protobuf transports.
 4. Dual-run the **Connect Reviews** slice on Apollo Router when demonstrating Connect compatibility.
 5. Optional: publish each subgraph SDL to a schema registry with the same UX as generated subgraphs.
 
 ```ts
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
 export const composeConfig = defineComposeConfig({
   subgraphs: [
-    { sourceHandler: loadSqlSubgraph('catalog', { endpoint: 'file:chinook.db' }) },
-    { sourceHandler: loadOpenAPISubgraph('reviews', {/* OpenAPI source + endpoint */}) },
+    {
+      sourceHandler: loadSqlSubgraph('catalog', { endpoint: 'file:chinook.db' })
+    },
+    {
+      sourceHandler: loadOpenAPISubgraph('reviews', {
+        source: 'http://localhost:4001/openapi.json',
+        endpoint: 'http://localhost:4001'
+      })
+    },
     { name: 'recommendations', schema: './recommendations.graphql' }
   ]
 })
+
+export const gatewayConfig = defineGatewayConfig({
+  transports: {
+    sql: import('@graphql-mesh/transport-sql'),
+    protobuf: import('@graphql-mesh/transport-protobuf')
+  }
+})
+```
+
+```bash
+mesh-compose -o supergraph.graphql
+hive-gateway supergraph
 ```
 
 ## Further / what else you can do next
@@ -225,6 +322,8 @@ export const composeConfig = defineComposeConfig({
 - Optional renames without rewriting SDL: [Transforms](/v2/transforms) (including Federation
   transform).
 - Publish subgraph SDL after Composition: [Schema registry](/v2/concepts/schema-registry).
+- Protocol family pages: [SQL](/v2/protocols/sql) / [HTTP / REST](/v2/protocols/http-rest) /
+  [Protobuf](/v2/protocols/protobuf).
 
 <Cards>
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />

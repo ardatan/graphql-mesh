@@ -1,0 +1,36 @@
+---
+description: Mesh Thrift protocol -- @thrift__rpc binary or TJSON @connect
+---
+
+import { Cards } from '@theguild/components'
+import { DirectiveRef } from '../../../components/v2-directive-ref'
+
+# Thrift
+
+Thrift has two Mesh paths:
+
+| Path            | Directives                                               | Dual-run                              |
+| --------------- | -------------------------------------------------------- | ------------------------------------- |
+| Binary Thrift   | <DirectiveRef name="thrift__rpc" /> + `transport-thrift` | Hive Gateway only                     |
+| TJSON over HTTP | May emit HTTP/REST Connectors `@connect`                 | Apollo Router when Connect-compatible |
+
+**Import** (binary):
+
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"])
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+```
+
+`@thrift__rpc` uses the same **args / selection / throws** idea as Protobuf (Thrift types instead of
+field numbers). See [Directives](/v2/reference/directives#thrift) and
+[Selection mapping](/v2/guides/selection-mapping).
+
+Do **not** call binary Thrift "Connectors" -- only the TJSON/`@connect` emit shares the HTTP/REST
+Connectors contract.
+
+<Cards>
+  <Cards.Card arrow title="Directives: Thrift" href="/v2/reference/directives#thrift" />
+  <Cards.Card arrow title="HTTP / REST" href="/v2/protocols/http-rest" />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+</Cards>

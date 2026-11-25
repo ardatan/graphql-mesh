@@ -5,7 +5,7 @@ description:
 ---
 
 import { Callout, Cards } from '@theguild/components'
-import { ConceptRef } from '../../components/v2-directive-ref'
+import { ConceptRef, DirectiveRef } from '../../components/v2-directive-ref'
 
 # Composition
 
@@ -13,19 +13,51 @@ import { ConceptRef } from '../../components/v2-directive-ref'
 definitions into subgraph or supergraph GraphQL SDL -- the same path for loader emit and
 hand-written files.
 
-## Config shape (draft)
+## Config shape
 
-Typical `mesh.config.ts` ideas:
+Typical `mesh.config.ts`:
 
 - `subgraphs` entries with a `sourceHandler` (loader) **or** a hand-written `schema` file / SDL
   string.
 - Shared options: optional [transforms](/v2/transforms), additional type defs, output mode
   (`graphql` / binary formats as supported).
+- Optional `ignoreSemanticConventions` (see below).
 
-Generated and hand-written subgraphs share the same compose +
+```ts
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
 
-<ConceptRef name="schema-registry">schema registry</ConceptRef> path. Transforms are optional --
-skip them when Hand-write or Generate-then-edit already owns the SDL.
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSqlSubgraph('catalog', {
+        endpoint: 'file:chinook.db'
+      })
+    },
+    {
+      sourceHandler: loadOpenAPISubgraph('reviews', {
+        source: './openapi.json',
+        endpoint: 'http://localhost:4001'
+      })
+    },
+    {
+      name: 'referenceResource',
+      schema: './reference-resource.graphql'
+    }
+  ]
+})
+```
+
+Compose to a file, then serve:
+
+```bash
+mesh-compose -o supergraph.graphql
+```
+
+Generated and hand-written subgraphs share the same compose and
+[schema registry](/v2/concepts/schema-registry) path. Transforms are optional -- skip them when
+Hand-write or Generate-then-edit already owns the SDL.
 
 ## Hand-written SDL
 
@@ -36,7 +68,8 @@ skip them when Hand-write or Generate-then-edit already owns the SDL.
 }
 ```
 
-Use this for join-only subgraphs, fully authored Connect SDL, and edited loader output.
+Use this for join-only subgraphs, fully authored Connect SDL, and edited loader output. FHIR's
+`reference-resource.graphql` is the canonical join-only example.
 
 <a id="semantic-conventions" />
 
@@ -46,15 +79,22 @@ During composition, Mesh applies **loader / Query semantic conventions** unless 
 the same object type appears across subgraphs and a Query field matches a ById / ByIds naming
 pattern with a key arg that lines up with a key field on that type, Compose stamps Federation entity
 wiring automatically -- `@key` plus Connect/protocol `entity: true` (or type-level `$this` maps),
-instead of Mesh `@merge` on HTTP/REST Connectors subgraphs.
+instead of Mesh <DirectiveRef name="merge" /> on HTTP/REST Connectors subgraphs. Non-Connect Mesh
+subgraphs may still receive `@merge` for type merging.
 
-Typical patterns:
+Naming is matched in snake_case. Typical patterns (key field often `id`):
 
-| Query shape                         | Intent                   |
-| ----------------------------------- | ------------------------ |
-| `typeById(id: ID!): Type`           | Singular entity lookup   |
-| `getTypeById(id: ID!): Type`        | Same, with `get_` prefix |
-| `typesByIds(ids: [ID!]!): [Type!]!` | Batch lookup             |
+| Query shape (examples)                      | Intent                 | Connect / protocol result                                                               |
+| ------------------------------------------- | ---------------------- | --------------------------------------------------------------------------------------- |
+| `bookById(id: ID!): Book`                   | Singular ById          | `entity: true` (or type-level `$this` / `@merge`)                                       |
+| `getCustomer(id: ID!): Customer`            | `get_<Type>` + key arg | Same (`e2e/openapi-entity-stubs`)                                                       |
+| `getCustomerById(id: ID!): Customer`        | Explicit ById suffix   | Same                                                                                    |
+| `customer(id: ID!): Customer`               | Type name + key arg    | Same                                                                                    |
+| `customersByIds(ids: [ID!]!): [Customer!]!` | Batch ByIds            | Batch merge / batch Connect (no singular `_entities` claim without a singular resolver) |
+| `getFoosByIds(ids: [ID!]!): [Foo!]!`        | Batch with `get_`      | Same                                                                                    |
+
+Repo anchors: `e2e/semantic-conventions` (`bookById`), `e2e/openapi-entity-stubs` (`getCustomer` +
+`entity: true`).
 
 If your schema almost matches but names differ, use a
 [rename / naming-convention transform](/v2/transforms) so the field fits the convention -- or stamp
@@ -62,12 +102,14 @@ entities yourself with `createFederationTransform` (see
 [Federation](/v2/concepts/federation#entity-resolution)).
 
 Disable with `ignoreSemanticConventions: true` on the compose config when you want full manual
-control:
+control (`e2e/semantic-conventions/mesh.config.conventions-disabled.ts`):
 
 ```ts
 export const composeConfig = defineComposeConfig({
-  ignoreSemanticConventions: true
-  // ...
+  ignoreSemanticConventions: true,
+  subgraphs: [
+    // ...
+  ]
 })
 ```
 
@@ -77,7 +119,7 @@ Publish composed **subgraph** SDL to Hive schema registry / GraphOS with the sam
 SDL came from a loader or a file. See [Schema registry](/v2/concepts/schema-registry).
 
 Worked multi-subgraph config: [Music Store Example](/v2/examples/music-store) (catalog + reviews +
-recommendations, then compose all).
+recommendations, then compose all). Serve: [Serve Supergraph](/v2/serve).
 
 <Callout type="info">
   Some first-class Compose + registry helpers landed in recent Mesh releases; example pages cite the
@@ -89,4 +131,5 @@ recommendations, then compose all).
   <Cards.Card arrow title="Schema registry" href="/v2/concepts/schema-registry" />
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
 </Cards>

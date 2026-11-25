@@ -9,9 +9,8 @@ import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
 
 **Apollo Router** is a **peer** <ConceptRef name="gateway">gateway</ConceptRef> to Hive Gateway in
 the Mesh Serve Supergraph section (equal nav weight). Use it when your composed SDL is
-**<ConceptRef name="connectors">Connect</ConceptRef>-compatible** (<DirectiveRef name="connect" /> /
-
-<DirectiveRef name="source" /> on connect/v0.4-style emit).
+**<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>-compatible**
+(<DirectiveRef name="connect" /> / <DirectiveRef name="source" /> on connect/v0.4-style emit).
 
 ## Honest limits
 
@@ -23,12 +22,28 @@ the Mesh Serve Supergraph section (equal nav weight). Use it when your composed 
 ## Dual-run
 
 Compose once to GraphQL SDL, then execute the same file on Hive Gateway and Apollo Router when the
-schema stays on Connect. In the [Music Store Example](/v2/examples/music-store), that is the
-**Reviews** slice after stage 2 -- not the full SQL + gRPC graph.
+schema stays on Connect:
+
+```bash
+mesh-compose -o supergraph.graphql
+# Hive Gateway
+hive-gateway supergraph
+# Apollo Router (Connect-compatible SDL only)
+./router --supergraph supergraph.graphql
+```
+
+FHIR (`e2e/json-schema-fhir`) is a Connect-compatible how-we-built that dual-runs. In the
+[Music Store Example](/v2/examples/music-store), dual-run the **Reviews** slice after stage 2 -- not
+the full SQL + gRPC graph.
+
+Upstream Connect mapping:
+[Apollo's HTTP Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
 
 <Cards>
   <Cards.Card arrow title="Gateway (concept)" href="/v2/concepts/gateway" />
   <Cards.Card arrow title="HTTP/REST Connectors (concept)" href="/v2/concepts/connectors" />
   <Cards.Card arrow title="Hive Gateway (peer)" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="FHIR Example" href="/v2/examples/fhir" />
 </Cards>

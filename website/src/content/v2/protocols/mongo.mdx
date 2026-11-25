@@ -1,0 +1,41 @@
+---
+description: Mesh Mongo protocol -- @mongo__* ops, transport-mongo (Hive Gateway)
+---
+
+import { Cards } from '@theguild/components'
+# Mongo
+
+Mongo is a **Mesh protocol** (not HTTP/REST Connectors). The loader stamps `@mongo__*` ops
+(`@mongo__findOne`, `@mongo__find`, CRUD, ...); Hive Gateway runs `transport-mongo`.
+
+| Piece      | Detail                                                                            |
+| ---------- | --------------------------------------------------------------------------------- |
+| Loader     | `@omnigraph/mongo`                                                                |
+| Directives | `@mongo__findOne`, `@mongo__find`, `@mongo__connection`, `@mongo__insertOne`, ... |
+| Transport  | `@graphql-mesh/transport-mongo`                                                   |
+| Spec       | `https://specs.graphql-mesh.com/mongo/v0.1`                                       |
+| Dual-run   | Hive Gateway only                                                                 |
+
+**Import** (loaders stamp the ops you emit):
+
+```graphql
+extend schema
+  @link(
+    url: "https://specs.graphql-mesh.com/mongo/v0.1"
+    import: ["@mongo__findOne", "@mongo__find"]
+  )
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+
+schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test") {
+  query: Query
+}
+```
+
+Binders reuse `$args` / `$this` with Mongo `query` / `selection` strings -- see
+[Selection mapping](/v2/guides/selection-mapping) and [Directives](/v2/reference/directives#mongo).
+
+<Cards>
+  <Cards.Card arrow title="Directives: Mongo" href="/v2/reference/directives#mongo" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+</Cards>

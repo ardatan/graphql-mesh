@@ -39,8 +39,8 @@ peers).
 | `referenceResource` | Hand-written `.graphql`              | Join-only: `Resource`, opt-in types, `Reference.resource` |
 
 Clients fetch a Patient, fetch an Observation, and follow `Observation.subject.resource` into a
-Patient entity -- Federation `@key` + Connect join, not Mesh <DirectiveRef name="resolveTo" /> /
-<DirectiveRef name="merge" />.
+Patient entity -- Federation `@key` + Connect join, not Mesh `@resolveTo` / `@merge` (see
+[Directives](/v2/reference/directives#merge)).
 
 ---
 
@@ -101,11 +101,23 @@ Skill: [Generate](/v2/paths/generate) | [Reading generated SDL](/v2/guides/readi
 Two JSON Schema subgraphs, each with one root query against the live FHIR server:
 
 ```ts
-import { OperationTypeNode } from 'graphql'
+import { GraphQLID, GraphQLString, OperationTypeNode } from 'graphql'
+import { GraphQLDate, GraphQLDateTime, GraphQLURL, GraphQLUUID } from 'graphql-scalars'
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema'
 
-const fhirScalarMap = {/* date -> Date, id/oid -> ID, ... as above */}
+const fhirScalarMap = {
+  date: GraphQLDate,
+  dateTime: GraphQLDateTime,
+  instant: GraphQLDateTime,
+  uri: GraphQLURL,
+  url: GraphQLURL,
+  canonical: GraphQLURL,
+  uuid: GraphQLUUID,
+  string: GraphQLString,
+  id: GraphQLID,
+  oid: GraphQLID
+}
 
 export const composeConfig = defineComposeConfig({
   subgraphs: [
@@ -147,7 +159,9 @@ export const composeConfig = defineComposeConfig({
 ```
 
 The loader owns full GraphQL types from those definitions and auto `@connect(selection:)` -- no
-hand-written selection on these fields. After compose + serve, query:
+hand-written selection on these fields. `observationById` matches the
+[ById semantic convention](/v2/compose#semantic-conventions) so Composition can stamp entity wiring.
+After compose + serve, query:
 
 ```graphql
 query PatientById {
@@ -287,6 +301,8 @@ from the Patient subgraph.
   implementors + `->match` branches as you need them).
 - Dual-run Connect-compatible SDL on [Apollo Router](/v2/serve/apollo-router); keep non-Connect Mesh
   transports on [Hive Gateway](/v2/serve/hive-gateway).
+- Binders on `Reference.resource`: [Selection mapping](/v2/guides/selection-mapping). Protocol
+  notes: [HTTP / REST](/v2/protocols/http-rest).
 
 ## Repo anchors
 

@@ -1,7 +1,7 @@
 ---
 description:
   Mesh subgraph directive reference -- HTTP/REST Connectors, Mesh protocols, @merge / @resolveTo,
-  Federation join (draft stub)
+  Federation join
 ---
 
 import { Callout, Cards } from '@theguild/components'
@@ -15,33 +15,28 @@ Mesh join helpers (`@merge` / `@resolveTo`), Federation `@key`, and `@link` / `@
 on
 [Apollo's HTTP Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
 
-<Callout type="info">
-  **Draft stub.** TOC + short entries where args are already known from loaders / internal specs.
-  Full per-arg catalog (every protocol family, examples, locations) is a completion-phase item --
-  see the Mesh v2 docs plan.
-</Callout>
-
 Use this page when [reading generated SDL](/v2/guides/reading-generated-sdl) or
 [hand-writing](/v2/paths/hand-write) subgraphs. How `selection` / `args` binders work:
-[Selection mapping](/v2/guides/selection-mapping). Protocol family map: [Protocols](/v2/protocols).
+[Selection mapping](/v2/guides/selection-mapping). Protocol family pages:
+[Protocols](/v2/protocols).
 
 Each entry below includes how to **import** the directive with `@link` (Mesh Compose and loaders
-stamp the same imports).
+stamp the same imports) plus a short real snippet from repo e2e / Music Store shape.
 
 ## Table of contents
 
-| Family               | Directives                                 | Status on this page                        |
-| -------------------- | ------------------------------------------ | ------------------------------------------ |
-| HTTP/REST Connectors | `@connect`, `@source`                      | Point to Apollo; Mesh dual-run notes       |
-| Mesh core            | `@transport`                               | Short entry                                |
-| Mesh join helpers    | `@merge`, `@resolveTo`                     | Short args; prefer Federation entity maps  |
-| SQL                  | `@sql` (kind: query / mutation / relation) | Short args (Mesh protocol, not Connectors) |
-| Mongo                | `@mongo__*`                                | Short args (Mesh protocol, not Connectors) |
-| Protobuf / gRPC      | `@protobuf__rpc`                           | Short args (Mesh protocol, not Connectors) |
-| Thrift               | `@thrift__rpc`                             | Stub pointer                               |
-| Neo4j                | Native `@neo4j/graphql` directives         | Stub pointer                               |
-| Federation / join    | `@key`, `@composeDirective`, ...           | Short notes                                |
-| Spec imports         | `@link`                                    | Short notes                                |
+| Family               | Directives                                 | On this page                                           |
+| -------------------- | ------------------------------------------ | ------------------------------------------------------ |
+| HTTP/REST Connectors | `@connect`, `@source`                      | Import + dual-run notes; Apollo for full arg tables    |
+| Mesh core            | `@transport`                               | Args + schema stamp                                    |
+| Mesh join helpers    | `@merge`, `@resolveTo`                     | Args; prefer Federation entity maps for new joins      |
+| SQL                  | `@sql` (kind: query / mutation / relation) | Args + Chinook snippet (Mesh protocol, not Connectors) |
+| Mongo                | `@mongo__*`                                | Import + findOne shape (Mesh protocol, not Connectors) |
+| Protobuf / gRPC      | `@protobuf__rpc`                           | Args + movies / recommendation snippets                |
+| Thrift               | `@thrift__rpc`                             | Import + args overview; TJSON may use `@connect`       |
+| Neo4j                | Native `@neo4j/graphql` directives         | Mesh `@link` / `@transport` stamp                      |
+| Federation / join    | `@key`, `@composeDirective`, ...           | Join-stub notes                                        |
+| Spec imports         | `@link`                                    | Spec URL table                                         |
 
 ---
 
@@ -188,7 +183,7 @@ extend schema @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@
 | `sourceName`           | Target subgraph name                                              |
 | `sourceTypeName`       | Usually `Query` (or another type that owns the source field)      |
 | `sourceFieldName`      | Field to call on that type                                        |
-| `sourceArgs`           | Map of source args (`{ id: "{root.id}" }`, …)                     |
+| `sourceArgs`           | Map of source args (`{ id: "{root.id}" }`, ...)                   |
 | `requiredSelectionSet` | Parent fields needed before delegation                            |
 | `pubsubTopic`          | Optional; subscription / webhook wiring without a subgraph target |
 
@@ -251,22 +246,41 @@ Shared args (shape):
 type Query {
   track(id: ID!): Track
     @sql(
-      table: "Track"
+      table: "tracks"
       kind: ROW
       where: """
       TrackId: $args.id
       """
       selection: """
-      TrackId
-      Name
+      id: TrackId
+      name: Name
+      albumId: AlbumId
       """
-      entity: true
     )
+}
+
+type Track
+  @key(fields: "id")
+  @sql(
+    table: "tracks"
+    kind: ROW
+    where: """
+    TrackId: $this.id
+    """
+    selection: """
+    id: TrackId
+    name: Name
+    albumId: AlbumId
+    """
+  ) {
+  id: ID!
+  name: String!
+  albumId: Int
 }
 ```
 
-Binder vocabulary: [Selection mapping](/v2/guides/selection-mapping). Details expand with the SQL
-protocol chapter; Music Store Example stage 1 uses Chinook SQL generate.
+Binder vocabulary: [Selection mapping](/v2/guides/selection-mapping). Protocol:
+[SQL](/v2/protocols/sql). Music Store Example stage 1 / `e2e/sqlite-chinook`.
 
 ---
 
@@ -314,7 +328,24 @@ Import the ops you use (loaders stamp the full set). Typical args:
 schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test") {
   query: Query
 }
+
+type Query {
+  userById(id: ID!): User
+    @mongo__findOne(
+      collection: "users"
+      query: """
+      _id: $args.id
+      """
+      selection: """
+      id: _id
+      name
+      email
+      """
+    )
+}
 ```
+
+Protocol: [Mongo](/v2/protocols/mongo). Binders: [Selection mapping](/v2/guides/selection-mapping).
 
 ---
 
@@ -362,7 +393,8 @@ type Query {
 }
 ```
 
-Compact mapping dialect: [Selection mapping](/v2/guides/selection-mapping).
+Compact mapping dialect: [Selection mapping](/v2/guides/selection-mapping). Protocol:
+[Protobuf / gRPC](/v2/protocols/protobuf). Repo: `e2e/protobuf-http`.
 
 ---
 
@@ -372,8 +404,8 @@ Compact mapping dialect: [Selection mapping](/v2/guides/selection-mapping).
 
 `@thrift__rpc`
 
-Binary Thrift path uses `@thrift__rpc` (`args` / `selection` / `throws`, ...). TJSON can emit
-`@connect` instead. Full arg table TBD on this page; see [Protocols](/v2/protocols).
+Binary Thrift path uses `@thrift__rpc`. TJSON over HTTP can emit HTTP/REST Connectors `@connect`
+instead (dual-run when Connect-compatible). Do **not** brand binary Thrift as Connectors.
 
 **Import**
 
@@ -383,6 +415,18 @@ extend schema
   @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
 ```
 
+| Arg         | Meaning                               |
+| ----------- | ------------------------------------- |
+| `subgraph`  | Owning subgraph                       |
+| `service`   | Thrift service name                   |
+| `method`    | RPC method                            |
+| `args`      | GraphQL -> Thrift request binders     |
+| `selection` | Thrift response -> GraphQL fields     |
+| `throws`    | Exception mapping (when emitted)      |
+| `entity`    | Wire `_entities` / `resolveReference` |
+
+Protocol: [Thrift](/v2/protocols/thrift).
+
 ---
 
 <a id="neo4j" />
@@ -390,8 +434,7 @@ extend schema
 ## Neo4j
 
 Mesh uses **native** `@neo4j/graphql` directives (not a Mesh `@neo4j__*` dialect). Loader may
-introspect or accept author SDL; transport filters by `subgraph:` vs `@transport(subgraph:)`. Full
-catalog TBD -- see [Protocols](/v2/protocols).
+introspect or accept author SDL; transport filters by `subgraph:` vs `@transport(subgraph:)`.
 
 **Import** (Mesh stamps)
 
@@ -399,10 +442,14 @@ catalog TBD -- see [Protocols](/v2/protocols).
 extend schema
   @link(url: "https://specs.graphql-mesh.com/neo4j/v0.1")
   @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+
+schema @transport(subgraph: "graph", kind: "neo4j", location: "bolt://localhost:7687") {
+  query: Query
+}
 ```
 
 Neo4j GraphQL directive definitions come from `@neo4j/graphql` itself; the Mesh `@link` marks the
-subgraph for the neo4j transport.
+subgraph for the neo4j transport. Protocol: [Neo4j](/v2/protocols/neo4j).
 
 ---
 

@@ -1,0 +1,93 @@
+---
+description: Mesh Protobuf / gRPC protocol -- @protobuf__rpc, transport-protobuf (Hive Gateway)
+---
+
+import { Cards } from '@theguild/components'
+# Protobuf / gRPC
+
+Protobuf / gRPC is a **Mesh protocol** (not HTTP/REST Connectors). Hand-author or loader-emit
+`@protobuf__rpc`; Hive Gateway runs `transport-protobuf`. Stock Apollo Router does **not** execute
+`@protobuf__rpc`.
+
+| Piece     | Detail                                                                          |
+| --------- | ------------------------------------------------------------------------------- |
+| Directive | `@protobuf__rpc` (`service`, `method`, `args`, `selection`, `stream`, `entity`) |
+| Transport | `@graphql-mesh/transport-protobuf`                                              |
+| Spec      | `https://specs.graphql-mesh.com/protobuf/v0.1`                                  |
+| Dual-run  | Hive Gateway only                                                               |
+
+## Hand SDL (`e2e/protobuf-http`)
+
+Compose loads a checked-in `.graphql` (location filled at compose time). Optional rename transform
+rewrites `$args` inside `@protobuf__rpc` the same way it rewrites `@connect`:
+
+```ts
+import { readFileSync } from 'node:fs'
+import {
+  createRenameTransform,
+  defineConfig as defineComposeConfig
+} from '@graphql-mesh/compose-cli'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      name: 'movies',
+      schema: readFileSync('./subgraphs/movies.graphql', 'utf8'),
+      transforms: [
+        createRenameTransform({
+          argRenamer: ({ fieldName, argName }) =>
+            fieldName === 'moviesByYear' && argName === 'year' ? 'releaseYear' : argName
+        })
+      ]
+    }
+  ]
+})
+
+export const gatewayConfig = defineGatewayConfig({
+  transports: {
+    protobuf: import('@graphql-mesh/transport-protobuf')
+  }
+})
+```
+
+Compact field-number mapping (from `e2e/protobuf-http/subgraphs/movies.graphql`):
+
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
+
+schema @transport(subgraph: "movies", kind: "protobuf", location: "http://localhost:50051") {
+  query: Query
+}
+
+type Query {
+  moviesByYear(year: Int!): MoviesResult!
+    @protobuf__rpc(
+      service: "Example"
+      method: "GetMovies"
+      args: """
+      1(message): {
+        2(int64): $args.year
+      }
+      """
+      selection: """
+      1(repeated message): result {
+        1(string): name
+        2(int64): year
+      }
+      """
+    )
+}
+```
+
+Dialect notes: [Selection mapping](/v2/guides/selection-mapping). Music Store stage 3 uses the same
+pattern for recommendations.
+
+<Cards>
+  <Cards.Card arrow title="Directives: @protobuf__rpc" href="/v2/reference/directives#protobuf" />
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="Transforms" href="/v2/transforms" />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+</Cards>
