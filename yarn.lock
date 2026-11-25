@@ -8999,7 +8999,7 @@ __metadata:
     "@types/lodash.kebabcase": "npm:^4.1.9"
     graphql: "npm:16.14.0"
     lodash.kebabcase: "npm:^4.1.1"
-    prettier: "npm:^3.9.10"
+    prettier: "npm:^3.10.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^16.0.0 || ^17.0.0
@@ -29556,7 +29556,7 @@ __metadata:
     lru-cache: "npm:11.2.6"
     minimatch: "npm:11.0.1"
     node-gyp: "npm:^13.0.1"
-    prettier: "npm:3.9.10"
+    prettier: "npm:3.10.1"
     threads: "npm:^1.7.0"
     ts-jest: "npm:29.4.12"
     tsx: "npm:^4.23.15"
@@ -38493,12 +38493,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.9.10, prettier@npm:^3.9.10":
-  version: 3.9.10
-  resolution: "prettier@npm:3.9.10"
+"prettier@npm:3.10.1, prettier@npm:^3.10.1":
+  version: 3.10.1
+  resolution: "prettier@npm:3.10.1"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/0b3531593aa6fb36ac6baf629cb058bda472c59a6938774f931fe55283a07c62e6f56e621b043a82d8a3e21fc284c08c34f9e539fc70072635f79b7bae1a1067
+  checksum: 10c0/e8c03ea575a30e15afa75a3700e94609050502980d7c906374aea4cf623eef4dce0816100126207e675cc1ed54b7dfce60f02dbee8d61ec27dc69ce5df6c3723
   languageName: node
   linkType: hard
 
