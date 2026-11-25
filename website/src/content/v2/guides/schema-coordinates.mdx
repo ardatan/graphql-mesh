@@ -1,0 +1,81 @@
+---
+description: Spec Schema Coordinates in Mesh -- Type, Type.field, Type.field(arg:), @dir, @dir(arg:)
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# Schema Coordinates
+
+Mesh names individual schema elements with **Schema Coordinates** from the GraphQL Spec. Prefer
+these forms in docs, config keys that target one element, and diagnostics.
+
+**Spec:** [§2.14 Schema Coordinates](https://spec.graphql.org/September2025/#sec-Schema-Coordinates)
+([PR #794](https://github.com/graphql/graphql-spec/pull/794)). **RFC (merged):**
+[SchemaCoordinates.md](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md).
+
+## Forms (no whitespace)
+
+| Kind                             | Form               | Example                                      |
+| -------------------------------- | ------------------ | -------------------------------------------- |
+| Named type                       | `Name`             | `Track`                                      |
+| Field / input field / enum value | `Name.Name`        | `Track.name`, `TrackFilter.id`               |
+| Field argument                   | `Name.Name(Name:)` | `Query.track(id:)`, `Query.getCustomer(id:)` |
+| Directive                        | `@Name`            | `@key`, `@connect`                           |
+| Directive argument               | `@Name(Name:)`     | `@key(fields:)`, `@connect(selection:)`      |
+
+Argument coordinates always use a **trailing `:`** inside the parentheses (`Query.track(id:)`), not
+a value and not `Query.track.id`.
+
+## What is not a Schema Coordinate
+
+These Mesh (and related) strings are useful, but they are **different languages**. Do not call them
+Schema Coordinates:
+
+| Docs term                   | Example                                               | Purpose                                          |
+| --------------------------- | ----------------------------------------------------- | ------------------------------------------------ |
+| **Schema selector** (Mesh)  | `Query.*`, `Type.!User`, `Query.user.!name`           | Glob / include-exclude transforms and plugins    |
+| **Live-query identifier**   | `Query.todo(id:"42")`                                 | Invalidate keyed resources (may embed values)    |
+| **Connector coordinate**    | `ecomm:Query.products@connect[0]`                     | Apollo Connectors application identity in errors |
+| **Response / resolve path** | `["stores", 0, "author"]` or `Query.stores[0].author` | Location in an execution result tree             |
+
+Nested field paths (`Query.user.name`), wildcards, union members (`Meal.Breakfast`), and directive
+**applications** (`User.email@private[0]`) are Spec non-goals.
+
+## How Mesh uses them today
+
+| Surface                              | Spec forms accepted today    | Notes                                                                              |
+| ------------------------------------ | ---------------------------- | ---------------------------------------------------------------------------------- |
+| Federation transform config keys     | `Type`, `Type.field`         | Prefer Spec keys; args still use nested config objects, not `Type.field(arg:)` yet |
+| Response-cache TTL keys              | `Type`, `Type.field`         | Exact match only -- not `Query.*`                                                  |
+| Mock / resolvers composition (exact) | `Type.field`                 | Globs like `Mutation.*` are **schema selectors**, not Spec                         |
+| Docs / examples in `/v2`             | Prefer full Spec table above | When showing an argument, write `Query.track(id:)`                                 |
+
+Legacy **schema selectors** (Minimatch / globs on filter-schema and some plugins) stay supported for
+wildcards and negation. Use Spec coordinates when you mean **one** type, field, arg, or directive.
+
+When reading generated SDL, map what you see back to coordinates: a Query field `track(id: ID!)` is
+`Query.track` and `Query.track(id:)`; `@sql(table: ...)` on that field is still the field coordinate
+plus directive forms `@sql` / `@sql(table:)` when talking about the directive itself.
+
+<Callout type="info">
+  Pair with [Reading generated SDL](/v2/guides/reading-generated-sdl) (stamps on the SDL) and
+  [Selection mapping](/v2/guides/selection-mapping) (`$args` / `$this` binders -- not coordinates).
+</Callout>
+
+## See also
+
+<Cards>
+  <Cards.Card
+    arrow
+    title="GraphQL Spec §2.14"
+    href="https://spec.graphql.org/September2025/#sec-Schema-Coordinates"
+  />
+  <Cards.Card
+    arrow
+    title="WG RFC: SchemaCoordinates"
+    href="https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md"
+  />
+  <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Transforms" href="/v2/transforms" />
+  <Cards.Card arrow title="Entity resolution" href="/v2/concepts/federation#entity-resolution" />
+</Cards>

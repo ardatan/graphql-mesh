@@ -132,15 +132,22 @@ type-level `$this` maps; other Mesh subgraphs may get `@merge`. Full table and o
 
 When a GraphQL (or other) source is **not** already a federated subgraph, use
 `createFederationTransform` on that subgraph to stamp Federation directives and point `@key`
-`resolveReference` at an existing ById field:
+`resolveReference` at an existing ById field. Config keys are
+[Schema Coordinates](/v2/guides/schema-coordinates) for **types** and **fields** (`Product`, and
+`Type.field` where the transform addresses fields). Argument targeting still uses nested directive
+config objects today -- not Spec `Type.field(arg:)` strings yet.
 
 ```ts
 transforms: [
   createFederationTransform({
+    // Schema Coordinates: Type (and Type.field where supported)
     Product: {
       key: {
         fields: 'id',
-        resolveReference: { fieldName: 'productById' }
+        resolveReference: {
+          // Query.productById -- ById field that fills the entity
+          fieldName: 'productById'
+        }
       }
     }
   })
@@ -179,6 +186,7 @@ See [Music Store Example](/v2/examples/music-store) and [FHIR](/v2/examples/fhir
 Semantic ById conventions: [Composition](/v2/compose#semantic-conventions).
 
 Mesh still documents <DirectiveRef name="merge" /> (type-merging on Hive Gateway). It also documents
+
 <DirectiveRef name="resolveTo" /> (field delegation) under
 [Directives](/v2/reference/directives#merge) -- prefer `@key` + HTTP/REST Connect or protocol
 `entity: true` maps for new joins.

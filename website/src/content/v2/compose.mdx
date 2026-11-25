@@ -82,19 +82,20 @@ wiring automatically -- `@key` plus Connect/protocol `entity: true` (or type-lev
 instead of Mesh <DirectiveRef name="merge" /> on HTTP/REST Connectors subgraphs. Non-Connect Mesh
 subgraphs may still receive `@merge` for type merging.
 
-Naming is matched in snake_case. Typical patterns (key field often `id`):
+Naming is matched in snake_case. Typical patterns (key field often `id`). Prefer Spec
+[Schema Coordinates](/v2/guides/schema-coordinates) when naming the field or arg:
 
-| Query shape (examples)                      | Intent                 | Connect / protocol result                                                               |
-| ------------------------------------------- | ---------------------- | --------------------------------------------------------------------------------------- |
-| `bookById(id: ID!): Book`                   | Singular ById          | `entity: true` (or type-level `$this` / `@merge`)                                       |
-| `getCustomer(id: ID!): Customer`            | `get_<Type>` + key arg | Same (`e2e/openapi-entity-stubs`)                                                       |
-| `getCustomerById(id: ID!): Customer`        | Explicit ById suffix   | Same                                                                                    |
-| `customer(id: ID!): Customer`               | Type name + key arg    | Same                                                                                    |
-| `customersByIds(ids: [ID!]!): [Customer!]!` | Batch ByIds            | Batch merge / batch Connect (no singular `_entities` claim without a singular resolver) |
-| `getFoosByIds(ids: [ID!]!): [Foo!]!`        | Batch with `get_`      | Same                                                                                    |
+| Field / arg coordinates (examples)                     | Intent                 | Connect / protocol result                                                               |
+| ------------------------------------------------------ | ---------------------- | --------------------------------------------------------------------------------------- |
+| `Query.bookById` / `Query.bookById(id:)`               | Singular ById          | `entity: true` (or type-level `$this` / `@merge`)                                       |
+| `Query.getCustomer` / `Query.getCustomer(id:)`         | `get_<Type>` + key arg | Same (`e2e/openapi-entity-stubs`)                                                       |
+| `Query.getCustomerById` / `Query.getCustomerById(id:)` | Explicit ById suffix   | Same                                                                                    |
+| `Query.customer` / `Query.customer(id:)`               | Type name + key arg    | Same                                                                                    |
+| `Query.customersByIds` / `Query.customersByIds(ids:)`  | Batch ByIds            | Batch merge / batch Connect (no singular `_entities` claim without a singular resolver) |
+| `Query.getFoosByIds` / `Query.getFoosByIds(ids:)`      | Batch with `get_`      | Same                                                                                    |
 
-Repo anchors: `e2e/semantic-conventions` (`bookById`), `e2e/openapi-entity-stubs` (`getCustomer` +
-`entity: true`).
+Repo anchors: `e2e/semantic-conventions` (`Query.bookById`), `e2e/openapi-entity-stubs`
+(`Query.getCustomer` + `entity: true`).
 
 If your schema almost matches but names differ, use a
 [rename / naming-convention transform](/v2/transforms) so the field fits the convention -- or stamp
@@ -127,6 +128,7 @@ recommendations, then compose all). Serve: [Serve Supergraph](/v2/serve).
 </Callout>
 
 <Cards>
+  <Cards.Card arrow title="Schema Coordinates" href="/v2/guides/schema-coordinates" />
   <Cards.Card arrow title="Composition (concept)" href="/v2/concepts/composition" />
   <Cards.Card arrow title="Schema registry" href="/v2/concepts/schema-registry" />
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
