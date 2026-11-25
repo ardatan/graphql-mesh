@@ -19,7 +19,7 @@ a small, repeatable rewrite is enough; skip them when [Hand-write](/v2/paths/han
   caption="Optional per-subgraph rewrites before the subgraph joins the supergraph."
   steps={[
     { title: 'Input SDL', lines: ['Loader or file'] },
-    { title: 'Transforms', lines: ['Optional · ordered'], accent: true },
+    { title: 'Transforms', lines: ['Optional / ordered'], accent: true },
     { title: 'Annotated SDL', accent: true },
     { title: 'Composition', lines: ['Supergraph'] }
   ]}
@@ -29,8 +29,8 @@ a small, repeatable rewrite is enough; skip them when [Hand-write](/v2/paths/han
 2. If that subgraph lists `transforms`, Compose applies them **in order** to that subgraph's schema
    before / as it is annotated for composition.
 3. Transformed SDL is what joins the supergraph -- including rewritten `$args` / `$this` inside
-   `@connect`, `@source`, and Mesh protocol directives (`@protobuf__rpc`, `@sql`, …) so Hive Gateway
-   and Apollo Router dual-run stay valid.
+   `@connect`, `@source`, and Mesh protocol directives (`@protobuf__rpc`, `@sql`, ...) so Hive
+   Gateway and Apollo Router dual-run stay valid.
 
 Root-level (supergraph-wide) transforms are not the default story yet; configure transforms on the
 subgraph that owns the names you want to change. See [Composition](/v2/compose).
@@ -43,7 +43,7 @@ regenerating or hand-editing every `@protobuf__rpc(args:)` line:
 ```ts
 {
   name: 'movies',
-  schema: './movies.graphql', // or sourceHandler: load…
+  schema: './movies.graphql', // or sourceHandler: load...
   transforms: [
     createRenameTransform({
       argRenamer: ({ fieldName, argName }) =>
@@ -53,13 +53,17 @@ regenerating or hand-editing every `@protobuf__rpc(args:)` line:
 }
 ```
 
-After Compose, clients call `moviesByYear(releaseYear: …)` and the directive `args` mapping tracks
+After Compose, clients call `moviesByYear(releaseYear: ...)` and the directive `args` mapping tracks
 `$args.releaseYear`. Same idea for OpenAPI / `@connect` emit with `createPrefixTransform` or
 naming-convention. Repo proof: `e2e/protobuf-http` (hand protobuf SDL + rename transform).
 
 ## When transforms help
 
-- **Rename / prefix / naming-convention** on output you mostly like.
+- **Rename / prefix / naming-convention** on output you mostly like (including shaping fields toward
+  [semantic ById conventions](/v2/compose#semantic-conventions)).
+- **Federation transform** (`createFederationTransform`) to annotate a non-federated GraphQL source
+  with `@key` + `resolveReference` -- see
+  [Entity resolution](/v2/concepts/federation#entity-resolution).
 - **Filter / wrap** generated noise before a first review.
 - Keep dual-run valid when GraphQL names change but directive mappings must follow.
 

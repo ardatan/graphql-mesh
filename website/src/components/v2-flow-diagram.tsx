@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 export type V2FlowStep = {
   title: string;
-  /** Short subtitle lines under the title (prefer 1–2). */
+  /** Short subtitle lines under the title (prefer 1-2). */
   lines?: string[];
   /** Alias for a single subtitle line. */
   subtitle?: string;

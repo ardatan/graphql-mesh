@@ -8,11 +8,12 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Hand-write
 
-Author a committed `.graphql` as the source of truth -- <ConceptRef name="mesh">Mesh</ConceptRef> /
+Author a committed `.graphql` as the source of truth --
 
-<ConceptRef name="connectors">Connectors</ConceptRef>-style **protocol** directives (and
+<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> (`@connect` / `@source`) and/or Mesh
+**protocol** directives (SQL, Protobuf, ...), plus
 <ConceptRef name="federation">Federation</ConceptRef> <DirectiveRef name="key" /> where you need
-entities) -- then drop that file into **Compose** and a
+entities -- then drop that file into **Compose** and a
 <ConceptRef name="schema-registry">schema registry</ConceptRef> the same way generated subgraphs do.
 Humans and AI assistants share **one** authoring contract; there is no separate "AI write" path.
 
@@ -25,7 +26,7 @@ Edited generate output and scratch-authored SDL use the same Compose input.
   steps={[
     { title: 'Author .graphql', accent: true },
     { title: 'Composition', accent: true },
-    { title: 'Gateway', lines: ['Hive · Apollo Router'] }
+    { title: 'Gateway', lines: ['Hive / Apollo Router'] }
   ]}
 />
 
@@ -36,18 +37,18 @@ Hand SDL does not redefine every directive by hand forever. Import them with
 <DirectiveRef name="link" /> (Apollo / Mesh spec URLs). Mesh Compose injects matching directive
 definitions when you compose; loaders stamp the same imports on generated subgraphs.
 
-| Family            | Typical `@link` import                                                        |
-| ----------------- | ----------------------------------------------------------------------------- |
-| Connect HTTP      | `https://specs.apollo.dev/connect/v0.4` → `@connect`, `@source`               |
-| Federation        | `https://specs.apollo.dev/federation/v2.6` → `@key`, …                        |
-| Mesh core         | `https://specs.graphql-mesh.com/core/v0.1` → `@transport`, …                  |
-| Mesh protobuf     | `https://specs.graphql-mesh.com/protobuf/v0.1` → `@protobuf__rpc`             |
-| Mesh SQL / others | `https://specs.graphql-mesh.com/sql/v0.1`, … (see [Protocols](/v2/protocols)) |
+| Family            | Typical `@link` import                                                          |
+| ----------------- | ------------------------------------------------------------------------------- |
+| Connect HTTP      | `https://specs.apollo.dev/connect/v0.4` -> `@connect`, `@source`                |
+| Federation        | `https://specs.apollo.dev/federation/v2.6` -> `@key`, ...                       |
+| Mesh core         | `https://specs.graphql-mesh.com/core/v0.1` -> `@transport`, ...                 |
+| Mesh protobuf     | `https://specs.graphql-mesh.com/protobuf/v0.1` -> `@protobuf__rpc`              |
+| Mesh SQL / others | `https://specs.graphql-mesh.com/sql/v0.1`, ... (see [Protocols](/v2/protocols)) |
 
 Mesh directive TOC + known args: [Directives reference](/v2/reference/directives) (draft). How
 `selection` / `args` binders work: [Selection mapping](/v2/guides/selection-mapping). Deeper Connect
 arg tables:
-[Apollo Connectors directives](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
+[Apollo's HTTP Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
 Mesh protocol map: [Protocols](/v2/protocols).
 
 ## Protocol directives (not only join)

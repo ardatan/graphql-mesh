@@ -12,13 +12,13 @@ import { V2JourneyCards } from '../../components/v2-journey-cards'
 <Callout type="info">
   This is a **draft** of the Mesh v2 docs IA. Content is incomplete and under review. Prefer [Mesh
   v1](/v1) for production docs until this section ships. Coming from an older Mesh? Read the [Mesh
-  journey (v0 → v1 → v2)](/v2/guides/mesh-journey).
+  journey (v0 -> v1 -> v2)](/v2/guides/mesh-journey).
 </Callout>
 
 <ConceptRef name="mesh">Mesh</ConceptRef> turns GraphQL and non-GraphQL sources into
 <ConceptRef name="federation">Federation</ConceptRef>-ready subgraphs (and optionally a composed
-supergraph). Authors work in GraphQL SDL with Mesh /
-<ConceptRef name="connectors">Connectors</ConceptRef>-style directives.
+supergraph). Authors work in GraphQL SDL with Mesh
+<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> and Mesh protocol directives.
 
 - <ConceptRef name="gateway">Gateway</ConceptRef>: **Hive Gateway** (JavaScript / TypeScript) is the
   preferred runtime for the full Mesh transport surface; **Apollo Router** is a first-class peer for
@@ -31,12 +31,12 @@ supergraph). Authors work in GraphQL SDL with Mesh /
 <V2FlowDiagram
   ariaLabel="Mesh v2 stack from sources through Composition to gateway transports"
   caption="Same path for generated or authored SDL."
-  footnote={{ label: 'Registry · publish / pull', fromStep: 2, toStep: 3 }}
+  footnote={{ label: 'Registry / publish / pull', fromStep: 2, toStep: 3 }}
   steps={[
-    { title: 'Sources', lines: ['REST · SQL · gRPC…'] },
+    { title: 'Sources', lines: ['REST / SQL / gRPC...'] },
     { title: 'SDL', lines: ['Loader or authored'], accent: true },
     { title: 'Composition', lines: ['Subgraph / supergraph'], accent: true },
-    { title: 'Gateway', lines: ['Hive · Apollo Router'], accent: true },
+    { title: 'Gateway', lines: ['Hive / Apollo Router'], accent: true },
     { title: 'Transports', lines: ['Execute directives'] }
   ]}
 />
@@ -50,7 +50,7 @@ Three equal journeys. No primary funnel.
 ## Where to go next
 
 <Cards>
-  <Cards.Card arrow title="Mesh journey (v0 → v2)" href="/v2/guides/mesh-journey" />
+  <Cards.Card arrow title="Mesh journey (v0 -> v2)" href="/v2/guides/mesh-journey" />
   <Cards.Card arrow title="Concepts" href="/v2/concepts" />
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
   <Cards.Card arrow title="Composition" href="/v2/compose" />

@@ -1,7 +1,7 @@
 export default {
   index: 'Overview',
   mesh: 'Mesh',
-  connectors: 'Connectors',
+  connectors: 'HTTP/REST Connectors',
   federation: 'Federation',
   stitching: 'Stitching',
   gateway: 'Gateway',
