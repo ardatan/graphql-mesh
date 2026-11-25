@@ -29,3 +29,4 @@ export * from './mesh-spec.js';
 export * from './federation-ready.js';
 export * from './prefer-block-strings.js';
 export * from './validate-mesh-directives.js';
+export * from './extend-schema.js';

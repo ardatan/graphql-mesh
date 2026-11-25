@@ -57,14 +57,17 @@ function normalizePrintedSchema(sdl) {
 
   while (i < n) {
     // Block string """...""" — normalize interior whitespace only.
+    // graphql-js 17 prints empty descriptions as """"""; v16 omits them.
     if (sdl.startsWith('"""', i)) {
       let j = i + 3;
       while (j + 2 < n && !sdl.startsWith('"""', j)) {
         j += 1;
       }
-      const inner = sdl.slice(i + 3, j);
+      const inner = collapseWs(sdl.slice(i + 3, j), { stripCommas: false }).trim();
       const end = Math.min(j + 3, n);
-      out += '"""' + collapseWs(inner, { stripCommas: false }).trim() + '"""';
+      if (inner.length > 0) {
+        out += '"""' + inner + '"""';
+      }
       i = end;
       continue;
     }
@@ -120,6 +123,8 @@ function normalizePrintedSchema(sdl) {
   // Re-insert readable newlines before top-level definitions so inline
   // snapshots stay reviewable while remaining version-stable.
   let pretty = out.trim();
+  // Dropping empty `""""""` descriptions can leave doubled spaces.
+  pretty = pretty.replace(/ {2,}/g, ' ');
   pretty = pretty.replace(
     /\}(?=(?:schema|type|interface|union|enum|input|scalar|extend|directive)\b)/g,
     '}\n',

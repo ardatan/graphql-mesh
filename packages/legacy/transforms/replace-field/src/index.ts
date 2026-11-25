@@ -1,12 +1,15 @@
 import type { GraphQLFieldConfig, GraphQLFieldResolver, GraphQLSchema } from 'graphql';
-import { defaultFieldResolver, extendSchema } from 'graphql';
+import { defaultFieldResolver } from 'graphql';
 import type {
   ImportFn,
   MeshTransform,
   MeshTransformOptions,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import {
+  extendSchemaPreservingExtensions,
+  loadFromModuleExportExpression,
+} from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefsSync } from '@graphql-tools/load';
@@ -75,7 +78,7 @@ export default class ReplaceFieldTransform implements MeshTransform {
         loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
       });
     const baseSchema = additionalTypeDefs
-      ? extendSchema(schema, additionalTypeDefs[0].document)
+      ? extendSchemaPreservingExtensions(schema, additionalTypeDefs[0].document)
       : schema;
 
     const transformedSchema = mapSchema(baseSchema, {

@@ -1,5 +1,4 @@
 import type { GraphQLSchema } from 'graphql';
-import { extendSchema } from 'graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import type {
   MeshMerger,
@@ -7,7 +6,7 @@ import type {
   MeshMergerOptions,
   RawSourceOutput,
 } from '@graphql-mesh/types';
-import { applySchemaTransforms } from '@graphql-mesh/utils';
+import { applySchemaTransforms, extendSchemaPreservingExtensions } from '@graphql-mesh/utils';
 import { addResolversToSchema, mergeSchemas } from '@graphql-tools/schema';
 import { asArray, mapSchema } from '@graphql-tools/utils';
 
@@ -31,7 +30,8 @@ export default class BareMerger implements MeshMerger {
     let schema = rawSource.schema;
     if (typeDefs.length > 0 || asArray(resolvers).length > 0) {
       for (const typeDef of typeDefs) {
-        schema = extendSchema(schema, typeDef);
+        // graphql@16 extendSchema drops schema.extensions (Connectors @source/@link).
+        schema = extendSchemaPreservingExtensions(schema, typeDef);
       }
       for (const resolversObj of asArray(resolvers)) {
         addResolversToSchema({

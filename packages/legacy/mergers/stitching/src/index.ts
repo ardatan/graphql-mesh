@@ -46,8 +46,26 @@ export default class StitchingMerger implements MeshMerger {
       ...stitchedSchema.toConfig(),
       assumeValid: true,
     });
+    // stitchSchemas replaces extensions with stitchingInfo only — restore schema
+    // directive apps (Connectors `@source` / `@link`) from subschemas.
+    const mergedSchemaDirectives: Record<string, unknown[]> = {
+      ...(((unifiedSchema.extensions as any)?.directives as Record<string, unknown[]>) || {}),
+    };
+    for (const rawSource of rawSources) {
+      const fromSub = (rawSource.schema.extensions as any)?.directives as
+        | Record<string, unknown[]>
+        | undefined;
+      if (!fromSub) continue;
+      for (const [name, vals] of Object.entries(fromSub)) {
+        const list = Array.isArray(vals) ? vals : [vals];
+        mergedSchemaDirectives[name] = [...(mergedSchemaDirectives[name] || []), ...list];
+      }
+    }
     this.log.debug(`sourceMap is being generated and attached to the unified schema`);
     unifiedSchema.extensions = unifiedSchema.extensions || {};
+    if (Object.keys(mergedSchemaDirectives).length) {
+      (unifiedSchema.extensions as any).directives = mergedSchemaDirectives;
+    }
     Object.assign(unifiedSchema.extensions, {
       sourceMap: new Proxy({} as any, {
         get: (_, pKey) => {

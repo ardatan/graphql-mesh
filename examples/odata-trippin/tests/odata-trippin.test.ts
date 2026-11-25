@@ -2,6 +2,7 @@ import { basename, join } from 'path';
 import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
+import { normalizeIntrospection } from '../../../packages/testing/normalizeIntrospection.cjs';
 import { ProcessedConfig } from '../../../packages/legacy/config/dist/typings/process';
 
 // Live TripPin OData endpoint; CI node22 has hit 30s beforeAll timeouts.
@@ -18,11 +19,13 @@ describe('OData TripPin', () => {
   });
   it('should generate correct schema', async () => {
     expect(
-      introspectionFromSchema(lexicographicSortSchema(mesh.schema), {
-        descriptions: false,
-        experimentalDirectiveDeprecation: false,
-        typeDepth: 7,
-      }),
+      normalizeIntrospection(
+        introspectionFromSchema(lexicographicSortSchema(mesh.schema), {
+          descriptions: false,
+          experimentalDirectiveDeprecation: false,
+          typeDepth: 7,
+        }),
+      ),
     ).toMatchSnapshot('odata-trippin-schema');
   });
   it('should give correct response for example queries', async () => {
