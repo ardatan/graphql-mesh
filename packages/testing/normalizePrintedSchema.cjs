@@ -159,13 +159,15 @@ function normalizePrintedSchema(sdl) {
       while (j < n && isWs(sdl.charCodeAt(j))) j += 1;
       const next = j < n ? sdl[j] : '';
       const hadWs = j > i;
+      // Keep a separator when stripping commas would glue tokens (`a,b` →
+      // `a b`) or adjacent string delimiters (`["",""]` → `["" ""]`, not
+      // `[""""]`). Leave following whitespace for the ws handler.
       if (
         !hadWs &&
         lastOut &&
         next &&
         lastOut !== ' ' &&
-        /[\w.]/.test(lastOut) &&
-        /[\w.]/.test(next)
+        ((/[\w.]/.test(lastOut) && /[\w.]/.test(next)) || (lastOut === '"' && next === '"'))
       ) {
         parts.push(' ');
         lastOut = ' ';
