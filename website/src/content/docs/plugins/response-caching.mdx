@@ -60,10 +60,13 @@ plugins:
       # cache operations for 1 hour
       ttl: 60 * 60 * 1000,
       ttlPerCoordinate:
+        # cache operation containing Stock object type for 500ms
         - coordinate: Stock
           ttl: 500
+        # cache operation containing Query.rocketCoordinates selection for 100ms
         - coordinate: Query.rocketCoordinates
           ttl: 100
+        # cache operations selecting any Query field for 60s
         - coordinate: Query.*
           ttl: 60_000
       ignoredTypes:
