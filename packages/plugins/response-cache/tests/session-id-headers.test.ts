@@ -592,9 +592,15 @@ describe('response-cache Schema Coordinates', () => {
       }),
     });
     expect(res.status).toBe(200);
-    const json = await res.json();
-    console.log(JSON.stringify(json, null, 2));
-    expect(json.extensions.responseCache.didCache).toBe(false);
+    await expect(res.json()).resolves.toMatchObject({
+      data: { greeting: 'hello' },
+      extensions: {
+        responseCache: {
+          didCache: false,
+          hit: false,
+        },
+      },
+    });
   });
 
   it('lets selector TTL override a global ttl of 0', async () => {
