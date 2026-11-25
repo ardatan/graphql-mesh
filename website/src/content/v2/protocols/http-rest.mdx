@@ -219,18 +219,51 @@ type Mutation {
 }
 ```
 
-## Edge cases
+## Complex Use Cases
 
 ### Arg name differs from key -- type-level `$this`
 
-Composition / OpenAPI tests: `getUserById(userId:)` cannot use field-level `entity: true`. The Query
-keeps `$args.userId`; Compose adds a **type-level** `@connect` with `$this.id` for `_entities` (see
-[Directives: @connect](/v2/reference/directives#connect)).
+When the Query arg is not the same name as the entity key (e.g. `userId` vs `id`), field-level
+`entity: true` is invalid. Keep the Query as the client entrypoint with `$args.userId`, and put a
+second `@connect` on the **type** that looks the entity up by `$this.id` for Federation `_entities`:
 
-### Join-only FHIR `Reference.resource` (`e2e/json-schema-fhir`)
+```graphql
+type Query {
+  # Client entrypoint -- arg name stays userId; no entity: true here
+  getUserById(userId: ID!): User
+    @connect(
+      source: "rest"
+      http: { GET: "/users/{$args.userId}" }
+      selection: """
+      id
+      name
+      """
+    )
+}
 
-Hand SDL with no `@source` -- `->split` / `->match` turns `Type/id` strings into abstract `Resource`
-stubs (`resolvable: false` keys on `Patient` / `Observation`):
+# Type-level connector: Federation fills User from key id
+type User
+  @key(fields: "id")
+  @connect(
+    source: "rest"
+    http: { GET: "/users/{$this.id}" }
+    selection: """
+    id
+    name
+    """
+  ) {
+  id: ID!
+  name: String
+}
+```
+
+See [Directives: @connect](/v2/reference/directives#connect).
+
+### Join-only FHIR `Reference.resource`
+
+FHIR `Reference.reference` is a string like `Patient/123`. Hand SDL (no `@source`) splits that
+string and `->match`es the type segment onto abstract `Resource` stubs so other subgraphs can own
+`Patient` / `Observation` roots:
 
 ```graphql
 type Reference @key(fields: "reference") {
@@ -238,6 +271,7 @@ type Reference @key(fields: "reference") {
   resource: Resource
     @connect(
       selection: """
+      # "Patient/123" -> typename Patient, id 123
       $this.reference->split("/")->get(0)->match(
         ["Patient", {
           __typename: $("Patient")
@@ -254,16 +288,21 @@ type Reference @key(fields: "reference") {
 }
 ```
 
+`Patient` / `Observation` on that join subgraph are `@key(..., resolvable: false)` stubs -- see
+[FHIR](/v2/examples/fhir) and `e2e/json-schema-fhir`.
+
 ### Rename transforms rewrite `$args` in `@connect`
 
-`e2e/openapi-arg-rename`: naming-convention + `argRenamer` rewrite binders inside `@connect` the
-same way composition rewrites `@protobuf__rpc` / `@thrift__rpc` (e.g. `input` -> `requestBody`).
+If you rename a GraphQL argument (e.g. `input` -> `requestBody`), Compose rewrites binders inside
+`@connect` the same way it rewrites `@protobuf__rpc` / `@thrift__rpc`. After rename, the HTTP body
+must read `$args.requestBody`, not `$args.input` (`e2e/openapi-arg-rename`).
 
 ### OData `@odata.type` unions
 
-TripPin emit uses `->match` on `@odata.type` for polymorphic locations / people -- heavy selection
-strings in `e2e/odata-trippin` snapshots; dual-run only when the Connect surface stays
-Router-compatible.
+OData payloads tag polymorphic values with `@odata.type`. Emit uses `->match` on that tag so a
+single nav field can return `Location` / `AirportLocation` / `EventLocation` (and similar for
+people). Dual-run only when the resulting Connect surface stays Router-compatible -- see
+`e2e/odata-trippin` and the TripPin section above.
 
 ## Dialect and dual-run
 

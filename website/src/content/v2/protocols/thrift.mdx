@@ -82,22 +82,85 @@ type Query {
 }
 ```
 
-## Edge cases
+## Complex Use Cases
 
-### `throws` as GraphQL unions (`ignoreErrorResponses: false`)
+### `throws` as GraphQL unions
 
-Thrift loader test (`twitter.thrift`): exceptions become union members (`PostTweetResult` = success
-| `TwitterUnavailable`) and `@thrift__rpc(throws:)` lists wire ids (e.g. `TwitterUnavailable: 1`).
+When `ignoreErrorResponses` is false, declared Thrift exceptions become GraphQL union members. The
+success type and each exception share a result union; `@thrift__rpc(throws:)` maps exception names
+to wire field ids:
+
+```graphql
+# PostTweetResult = Tweet | TwitterUnavailable (union from throws)
+union PostTweetResult = Tweet | TwitterUnavailable
+
+type Query {
+  postTweet(tweet: TweetInput!): PostTweetResult
+    @thrift__rpc(
+      function: "postTweet"
+      args: """
+      1(struct): $args.tweet {
+        1(string): text
+      }
+      """
+      selection: """
+      # success slot -> Tweet fields
+      0(struct): {
+        1(i32): id
+        2(string): text
+      }
+      """
+      # wire id 1 = TwitterUnavailable exception
+      throws: """
+      TwitterUnavailable: 1
+      """
+      messageType: CALL
+    )
+}
+
+type TwitterUnavailable {
+  message: String
+}
+```
 
 ### `entityMethods`
 
-`entityMethods: ['add']` stamps `entity: true` on that `@thrift__rpc` so Federation can use it as an
-entity resolver (binary loader test).
+Pass `entityMethods: ['add']` (or similar) in the loader options so Compose stamps `entity: true` on
+that `@thrift__rpc`. Federation then uses the field as an entity resolver:
+
+```ts
+loadThriftSubgraph('calculator', {
+  source: './calculator.thrift',
+  endpoint: 'http://localhost:4001/thrift',
+  protocol: 'binary',
+  // Stamp entity: true on add so _entities can call it
+  entityMethods: ['add']
+})
+```
+
+```graphql
+type Query {
+  add(request: AddRequestInput): Int
+    @thrift__rpc(
+      function: "add"
+      args: """
+      1(struct): $args.request {
+        1(i32): left
+        2(i32): right
+      }
+      """
+      selection: "$(i32)"
+      messageType: CALL
+      entity: true # from entityMethods: ['add']
+    )
+}
+```
 
 ### Rename transforms
 
-Composition rewrites `$args` inside `@thrift__rpc` when you rename GraphQL args -- same path as
-`@connect` / `@protobuf__rpc`.
+If you rename a GraphQL argument, Compose rewrites binders inside `@thrift__rpc` the same way as
+`@connect` / `@protobuf__rpc`. After renaming `request` -> `input`, the `args` string must read
+`$args.input`, not `$args.request`.
 
 ## Generate (TJSON -> Connect)
 
@@ -152,8 +215,9 @@ type Query {
 ### TJSON `isSuccess` / `errors`
 
 JSON emit attaches Connect `isSuccess` / `errors` selections that inspect the TJSON reply array
-(message type, success slot vs exception slot) -- see loader snap `Calc-json-connect-schema`. ONEWAY
-JSON bodies use message type `4` and void success checks.
+(message type, success slot vs exception slot). ONEWAY JSON bodies use message type `4` and void
+success checks. The `add` example above shows the request array shape; reply path
+`$->get(4)->get("0")->get("i32")` walks the success slot of that same TJSON layout.
 
 Dialect: [Selection mapping](/v2/guides/selection-mapping). Catalog:
 [Directives: Thrift](/v2/reference/directives#thrift).

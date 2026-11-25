@@ -131,12 +131,12 @@ type Mutation {
 }
 ```
 
-## Edge cases
+## Complex Use Cases
 
 ### Batch ByIds
 
-`_id: $args.ids` on `@mongo__find` (loader snap) -- batch entity fill companion to singular
-`findUserById`:
+Beside singular `findUserById`, batch lookup passes an id list into `_id`. Federation / entity
+batching can use this when many parents need the same collection filled at once:
 
 ```graphql
 type Query {
@@ -144,12 +144,12 @@ type Query {
     @mongo__find(
       collection: "user_users"
       query: """
-      _id: $args.ids
+      _id: $args.ids # list of ObjectIds -> $in-style find
       """
       limit: "$args.limit"
       sort: "$args.sort"
       selection: """
-      id: _id
+      id: _id # Mongo _id -> GraphQL id
       name: name
       """
     )
@@ -158,14 +158,18 @@ type Query {
 
 ### Aggregate + connection
 
+`@mongo__aggregate` forwards a client `pipeline` JSON; `@mongo__connection` is the cursor-style list
+companion to offset `find`:
+
 ```graphql
 type Query {
+  # Pass-through aggregation stages from the client
   aggregateUsers(filter: UserFilterInput, pipeline: JSON): [JSON!]!
     @mongo__aggregate(
       collection: "user_users"
       query: "$args.filter"
       pipeline: "$args.pipeline"
-      selection: "$"
+      selection: "$" # raw aggregate documents
     )
 
   findUsersConnection(
@@ -192,8 +196,10 @@ type Query {
 
 ### ObjectId / Decimal128 / mixed JSON
 
-Emitted schemas use GraphQL scalars such as `ObjectID`, `Decimal128`, and `JSON` for mixed fields --
-transport options may list `objectIdFieldsByCollection`. See loader snap + `e2e/mongoose-users`.
+Models with ObjectId keys, Decimal128 money fields, or schemaless blobs emit GraphQL scalars such as
+`ObjectID`, `Decimal128`, and `JSON`. Transport options may list which collection fields are
+ObjectIds (`objectIdFieldsByCollection`) so the executor coerces correctly -- see
+`e2e/mongoose-users`.
 
 Binders: [Selection mapping](/v2/guides/selection-mapping). Directives catalog:
 [Mongo](/v2/reference/directives#mongo).

@@ -106,17 +106,35 @@ enum Genre {
 }
 ```
 
-## Edge cases
+## Complex Use Cases
 
 ### Rename transforms rewrite `@protobuf__rpc(args:)`
 
-`e2e/protobuf-http` renames `moviesByYear(year:)` -> `releaseYear` and proves the compact `args`
-binder updates to `$args.releaseYear` (same rewrite path as `@connect`).
+If a transform renames `moviesByYear(year:)` to `releaseYear`, Compose rewrites the compact `args`
+binder so the wire field still binds the new GraphQL name (same path as `@connect`):
 
-### Server streaming (`e2e/protobuf-grpc-example`)
+```graphql
+type Query {
+  # After rename: GraphQL arg is releaseYear, binder must follow
+  moviesByYear(releaseYear: Int!): [Movie]
+    @protobuf__rpc(
+      service: "Example"
+      method: "MoviesByYear"
+      args: """
+      1(int32): $args.releaseYear # was $args.year before rename
+      """
+      selection: """
+      1(string): name
+      2(int64): year
+      """
+    )
+}
+```
 
-Loader emit for `SearchMoviesByCast` sets `stream: true` and uses `input.castName` against an Input
-type (not flat `$args.*`):
+### Server streaming
+
+`SearchMoviesByCast` is a server-streaming RPC. Emit sets `stream: true` and binds through an Input
+type (`input.castName`), not flat `$args.*`:
 
 ```graphql
 type Query {
@@ -125,27 +143,54 @@ type Query {
       service: "Example"
       method: "SearchMoviesByCast"
       args: """
+      # Field 1 of the request message = castName on the Input type
       1(string): input.castName
       """
       selection: """
       1(string): name
       2(int64): year
+      # Enum wire values stay in the selection map
       6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
       """
-      stream: true
+      stream: true # server streaming -- list of Movie messages
     )
 }
 ```
 
 ### ConnectRPC vs Twirp HTTP
 
-Same hand SDL; e2e swaps `location` and optional `Content-Type: application/protobuf` headers for
-Twirp (`PROTOBUF_HTTP_STYLE=twirp`) vs ConnectRPC unary.
+The same hand SDL can target ConnectRPC or Twirp by swapping `@transport` `location` and headers.
+Twirp typically needs `Content-Type: application/protobuf`; ConnectRPC uses its own path style. E2e
+toggles this with `PROTOBUF_HTTP_STYLE=twirp` vs the ConnectRPC default -- the `@protobuf__rpc`
+`args` / `selection` stay identical.
 
 ### Nested message / timestamp / enum maps
 
-`protobuf-grpc-example` snaps encode `@Movie` / `@google_protobuf_Timestamp` blocks inside `args` /
-`selection` -- field-number maps for nested messages, not only scalars.
+Nested messages and well-known types are not flat scalars. Field-number maps nest inside `args` /
+`selection` (e.g. `@Movie` blocks, `@google_protobuf_Timestamp`):
+
+```graphql
+type Query {
+  exampleGetMovie(input: GetMovieRequest_Input): Movie
+    @protobuf__rpc(
+      service: "Example"
+      method: "GetMovie"
+      args: """
+      1(string): input.name
+      """
+      selection: """
+      1(string): name
+      2(int64): year
+      # Nested message: field 3 is a Timestamp
+      3(message): released {
+        1(int64): seconds
+        2(int32): nanos
+      }
+      6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+      """
+    )
+}
+```
 
 Dialect: [Selection mapping](/v2/guides/selection-mapping). Music Store stage 3 uses unary
 `@protobuf__rpc` for recommendations over gRPC.
