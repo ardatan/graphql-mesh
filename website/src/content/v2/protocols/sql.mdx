@@ -180,8 +180,10 @@ type Mutation {
 }
 ```
 
-GraphQL field names are camelCase; SQL column names stay in `where` / `set` / `selection`. Binders:
-[Selection mapping](/v2/guides/selection-mapping). Entity / ById:
+In `selection`, the loader maps **original SQL columns to GraphQL fields** (e.g. `id: TrackId`,
+`name: Name`). `where` / `set` keep referring to those SQL columns (`TrackId: $args.id`). That
+column-to-field mapping is the loader concern -- not a separate "rename everything to camelCase"
+rule. Binders: [Selection mapping](/v2/guides/selection-mapping). Entity / ById:
 [Composition semantic conventions](/v2/compose#semantic-conventions).
 
 Walkthrough: [Music Store Example](/v2/examples/music-store) stage 1.
