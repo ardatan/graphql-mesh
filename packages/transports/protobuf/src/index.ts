@@ -3,12 +3,12 @@ import {
   GraphQLError,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
   isObjectType,
   type GraphQLField,
   type GraphQLFieldResolver,
-  type GraphQLObjectType,
   type GraphQLResolveInfo,
   type GraphQLSchema,
 } from 'graphql';
@@ -510,27 +510,27 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return;
   }
 
-  queryFields._entities = {
-    name: '_entities',
-    description: 'Federation entity resolver for protobuf RPC transport (Hive `_entities` path)',
-    type: new GraphQLNonNull(new GraphQLList(entityUnion)),
-    args: [
-      {
-        name: 'representations',
-        description: undefined,
-        type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
-        defaultValue: undefined,
-        deprecationReason: undefined,
-        extensions: {},
-        astNode: undefined,
+  // GraphQL 17: rebuild Query so `_entities` is a real `GraphQLField` (has `toConfig`).
+  const queryConfig = queryType.toConfig();
+  queryConfig.fields = {
+    ...queryConfig.fields,
+    _entities: {
+      description: 'Federation entity resolver for protobuf RPC transport (Hive `_entities` path)',
+      type: new GraphQLNonNull(new GraphQLList(entityUnion)),
+      args: {
+        representations: {
+          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
+          default: undefined,
+          extensions: Object.create(null),
+        },
       },
-    ],
-    resolve: entitiesResolve,
-    subscribe: undefined,
-    deprecationReason: undefined,
-    extensions: {},
-    astNode: undefined,
-  } as unknown as GraphQLField<any, any>;
+      resolve: entitiesResolve,
+      extensions: Object.create(null),
+    },
+  };
+  const newQuery = new GraphQLObjectType(queryConfig);
+  typeMap[newQuery.name] = newQuery;
+  (schema as unknown as { _queryType?: GraphQLObjectType })._queryType = newQuery;
 }
 
 function grpcUnary(opts: {

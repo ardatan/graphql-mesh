@@ -3,6 +3,7 @@ import {
   GraphQLError,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLObjectType,
   GraphQLScalarType,
   GraphQLUnionType,
   isEnumType,
@@ -12,7 +13,6 @@ import {
   isScalarType,
   type GraphQLField,
   type GraphQLNamedType,
-  type GraphQLObjectType,
   type GraphQLOutputType,
   type GraphQLResolveInfo,
   type GraphQLSchema,
@@ -3341,25 +3341,27 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return;
   }
 
-  queryFields._entities = {
-    name: '_entities',
-    description: 'Federation entity resolver for Connectors REST transport (Hive `_entities` path)',
-    type: new GraphQLNonNull(new GraphQLList(entityUnion)),
-    args: [
-      {
-        name: 'representations',
-        description: undefined,
-        type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
-        defaultValue: undefined,
-        deprecationReason: undefined,
-        extensions: {},
-        astNode: undefined,
+  // GraphQL 17: `getFields()` must hold `GraphQLField` instances (with `toConfig`).
+  // Rebuild Query from config so the new field is properly wrapped.
+  const queryConfig = queryType.toConfig();
+  queryConfig.fields = {
+    ...queryConfig.fields,
+    _entities: {
+      description:
+        'Federation entity resolver for Connectors REST transport (Hive `_entities` path)',
+      type: new GraphQLNonNull(new GraphQLList(entityUnion)),
+      args: {
+        representations: {
+          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
+          default: undefined,
+          extensions: Object.create(null),
+        },
       },
-    ],
-    resolve: entitiesResolve,
-    subscribe: undefined,
-    deprecationReason: undefined,
-    extensions: {},
-    astNode: undefined,
-  } as any;
+      resolve: entitiesResolve,
+      extensions: Object.create(null),
+    },
+  };
+  const newQuery = new GraphQLObjectType(queryConfig);
+  typeMap[newQuery.name] = newQuery;
+  (schema as unknown as { _queryType?: GraphQLObjectType })._queryType = newQuery;
 }
