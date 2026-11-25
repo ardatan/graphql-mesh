@@ -10,20 +10,22 @@ import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
 Generated <ConceptRef name="mesh">Mesh</ConceptRef> subgraphs are ordinary GraphQL SDL with
 directives. Before you edit or hand-write, learn to recognize the important stamps. This page is a
 **reading guide** -- for arg tables see the [Directives reference](/v2/reference/directives) (draft)
-and <ConceptRef name="connectors">Connectors</ConceptRef> upstream.
+and <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> upstream.
 
 ## What to look for
 
-| Piece                                                                   | Meaning                                                                                                                                                  | Dig deeper                                                                                                                                       |
-| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| <DirectiveRef name="transport" />                                       | Which Mesh transport executes this subgraph at the gateway.                                                                                              | [Directives](/v2/reference/directives#transport) · [Architecture](/v2/architecture)                                                              |
-| <DirectiveRef name="connect" /> / <DirectiveRef name="source" />        | HTTP Connectors-style mapping (Router dual-run when compatible).                                                                                         | [Directives](/v2/reference/directives#connect) · [Apollo Connectors](https://www.apollographql.com/docs/graphos/connectors/reference/directives) |
-| Protocol directives                                                     | <DirectiveRef name="sql" />, <DirectiveRef name="mongo" />, <DirectiveRef name="thrift__rpc" />, <DirectiveRef name="protobuf__rpc" />, Neo4j natives, … | [Directives](/v2/reference/directives) · [Protocols](/v2/protocols)                                                                              |
-| <DirectiveRef name="key" />                                             | <ConceptRef name="federation">Federation</ConceptRef> entity key; often `resolvable: false` on join stubs.                                               | [Directives](/v2/reference/directives#federation)                                                                                                |
-| `selection` / `args`                                                    | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs.                                                                  | [Selection mapping](/v2/guides/selection-mapping) · [Apollo mapping](https://www.apollographql.com/docs/graphos/connectors/mapping)              |
-| <DirectiveRef name="link" /> / <DirectiveRef name="composeDirective" /> | Spec imports and which directives survive <ConceptRef name="composition">composition</ConceptRef>.                                                       | [Directives](/v2/reference/directives#link) · [Composition](/v2/compose)                                                                         |
+| Piece                                                                   | Meaning                                                                                                                                                    | Dig deeper                                                                                                                                                        |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <DirectiveRef name="transport" />                                       | Which Mesh transport executes this subgraph at the gateway.                                                                                                | [Directives](/v2/reference/directives#transport) / [Architecture](/v2/architecture)                                                                               |
+| <DirectiveRef name="connect" /> / <DirectiveRef name="source" />        | HTTP/REST Connectors-style mapping (Router dual-run when compatible).                                                                                      | [Directives](/v2/reference/directives#connect) / [Apollo's HTTP Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) |
+| Protocol directives                                                     | <DirectiveRef name="sql" />, <DirectiveRef name="mongo" />, <DirectiveRef name="thrift__rpc" />, <DirectiveRef name="protobuf__rpc" />, Neo4j natives, ... | [Directives](/v2/reference/directives) / [Protocols](/v2/protocols)                                                                                               |
+| <DirectiveRef name="key" />                                             | <ConceptRef name="federation">Federation</ConceptRef> entity key; often `resolvable: false` on join stubs.                                                 | [Directives](/v2/reference/directives#federation) / [Entity resolution](/v2/concepts/federation#entity-resolution)                                                |
+| <DirectiveRef name="merge" /> / <DirectiveRef name="resolveTo" />       | Mesh type-merging / field delegation (prefer `@key` + Connect or protocol entity maps for new work).                                                       | [Directives](/v2/reference/directives#merge) / [Directives](/v2/reference/directives#resolveTo)                                                                   |
+| `entity: true` / type-level entity maps                                 | Wires `_entities` / `resolveReference` for Connect or protocol lookups.                                                                                    | [Federation](/v2/concepts/federation#entity-resolution) / [Semantic conventions](/v2/compose#semantic-conventions)                                                |
+| `selection` / `args`                                                    | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs.                                                                    | [Selection mapping](/v2/guides/selection-mapping) / [Apollo mapping](https://www.apollographql.com/docs/graphos/connectors/mapping)                               |
+| <DirectiveRef name="link" /> / <DirectiveRef name="composeDirective" /> | Spec imports and which directives survive <ConceptRef name="composition">composition</ConceptRef>.                                                         | [Directives](/v2/reference/directives#link) / [Composition](/v2/compose)                                                                                          |
 
-## Habits that help
+## Conventions that help
 
 1. Start from a **root field** you already queried, then follow its `@connect` / protocol directive.
 2. Trace `$args` and `$this` in `selection` before renaming anything -- see
@@ -44,7 +46,7 @@ and <ConceptRef name="connectors">Connectors</ConceptRef> upstream.
   <Cards.Card arrow title="Concepts" href="/v2/concepts" />
   <Cards.Card
     arrow
-    title="Apollo Connectors directives"
+    title="Apollo's HTTP Connectors reference"
     href="https://www.apollographql.com/docs/graphos/connectors/reference/directives"
   />
   <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />

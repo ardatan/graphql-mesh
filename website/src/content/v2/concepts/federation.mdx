@@ -27,18 +27,18 @@ subschemas and type merging; stitching directives are optional helpers (see
   ariaLabel="Federation: subgraphs through composition to federation gateway"
   caption="Standardized type merging via entities / @key, then a federation gateway runtime."
   steps={[
-    { title: 'Subgraphs', lines: ['A · B · …'] },
+    { title: 'Subgraphs', lines: ['A / B / ...'] },
     { title: 'Composition', accent: true },
     { title: 'Supergraph', accent: true },
-    { title: 'Fed gateway', lines: ['Hive · Apollo Router'] }
+    { title: 'Fed gateway', lines: ['Hive / Apollo Router'] }
   ]}
 />
 
 | Piece                                   | Role                                                              |
 | --------------------------------------- | ----------------------------------------------------------------- |
 | Subgraph SDL                            | Types, <DirectiveRef name="key" />, Connect / protocol directives |
-| [Composition](/v2/concepts/composition) | Merge subgraphs → supergraph                                      |
-| [Gateway](/v2/concepts/gateway)         | **Federation gateway** runtime (Hive Gateway · Apollo Router)     |
+| [Composition](/v2/concepts/composition) | Merge subgraphs -> supergraph                                     |
+| [Gateway](/v2/concepts/gateway)         | **Federation gateway** runtime (Hive Gateway / Apollo Router)     |
 
 Federation is **not** Schema Stitching's `stitchSchemas` / subschema merge runtime (see
 [Stitching](/v2/concepts/stitching)), **not** a registry, and **not** a transport.
@@ -48,10 +48,55 @@ Federation is **not** Schema Stitching's `stitchSchemas` / subschema merge runti
 |               | <ConceptRef name="federation" /> | <ConceptRef name="stitching" />                    |
 | ------------- | -------------------------------- | -------------------------------------------------- |
 | Primary API   | Subgraph SDL + composition       | `stitchSchemas` + `SubschemaConfig` (programmatic) |
-| Merge model   | Standardized entities + `@key`   | Programmatic type merging (`merge`, …)             |
+| Merge model   | Standardized entities + `@key`   | Programmatic type merging (`merge`, ...)           |
 | Directives    | Core of the contract             | Optional helpers (`stitching-directives`)          |
 | Runtime       | Federation gateway               | Stitched schema + delegation                       |
 | Mesh v2 story | Default path                     | Orient / legacy                                    |
+
+<a id="entity-resolution" />
+
+## Entity resolution
+
+Federation needs a way to **fill an entity** from its `@key` when another subgraph contributed
+fields on that type. Mesh covers that in two complementary ways:
+
+### `entity: true` (and type-level entity maps)
+
+On Connect / protocol Query fields that look up one entity by its key, composition or the loader may
+stamp `entity: true` (or a type-level `@connect` / `@sql` / `@protobuf__rpc` with `$this.<key>`).
+That wires Hive Gateway / Apollo Router `_entities` -> `resolveReference` without Mesh `@merge`.
+
+| Pattern                                       | What you get                                                                     |
+| --------------------------------------------- | -------------------------------------------------------------------------------- |
+| Arg name **matches** key field (`id` -> `id`) | Query field `@connect(entity: true)` (or protocol equivalent)                    |
+| Arg name **differs** (`petId` -> `id`)        | Type-level entity directive with `$this.id` (field-level `entity: true` invalid) |
+| Join-only stub (`resolvable: false`)          | `@key` only -- another subgraph owns the resolver                                |
+
+See [Selection mapping](/v2/guides/selection-mapping) for `$this` / `$batch` binders, and
+[Directives](/v2/reference/directives) for `entity` on `@connect` / `@sql` / `@protobuf__rpc`.
+
+### Federation transform
+
+When a GraphQL (or other) source is **not** already a federated subgraph, use
+`createFederationTransform` on that subgraph to stamp Federation directives and point `@key`
+`resolveReference` at an existing ById field:
+
+```ts
+transforms: [
+  createFederationTransform({
+    Product: {
+      key: {
+        fields: 'id',
+        resolveReference: { fieldName: 'productById' }
+      }
+    }
+  })
+]
+```
+
+Full shape: [v1 Federation transform](/v1/transforms/federation) (same Compose API). Prefer
+loader/composition `entity: true` when Connect / protocol SDL already owns the lookup; use the
+Federation transform when you need to **annotate** an existing GraphQL schema into a subgraph.
 
 ## Short example
 
@@ -70,6 +115,13 @@ type Track @key(fields: "id", resolvable: false) {
 ```
 
 See [Music Store Example](/v2/examples/music-store) and [FHIR](/v2/examples/fhir) for entity joins.
+Semantic ById conventions: [Composition](/v2/compose#semantic-conventions).
+
+Mesh still documents <DirectiveRef name="merge" /> (type-merging on Hive Gateway) and
+
+<DirectiveRef name="resolveTo" /> (field delegation) under
+[Directives](/v2/reference/directives#merge) -- prefer `@key` + HTTP/REST Connect or protocol
+`entity: true` maps for new joins.
 
 <Cards>
   <Cards.Card arrow title="Stitching" href="/v2/concepts/stitching" />

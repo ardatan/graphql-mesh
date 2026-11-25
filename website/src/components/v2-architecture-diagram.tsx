@@ -44,7 +44,7 @@ export function V2ArchitectureDiagram() {
             className="fill-neutral-500 text-[10px] dark:fill-neutral-400"
             textAnchor="middle"
           >
-            REST · OpenAPI · SQL
+            REST / OpenAPI / SQL
           </text>
           <text
             x={72}
@@ -52,7 +52,7 @@ export function V2ArchitectureDiagram() {
             className="fill-neutral-500 text-[10px] dark:fill-neutral-400"
             textAnchor="middle"
           >
-            gRPC · Mongo · …
+            gRPC / Mongo / ...
           </text>
 
           <Arrow x1={136} y1={80} x2={168} y2={80} />
@@ -110,10 +110,10 @@ export function V2ArchitectureDiagram() {
             className="fill-neutral-500 text-[10px] dark:fill-neutral-400"
             textAnchor="middle"
           >
-            Mesh Compose · SDL
+            Mesh Compose / SDL
           </text>
 
-          {/* Compose → Serve */}
+          {/* Compose -> Serve */}
           <Arrow x1={480} y1={80} x2={520} y2={80} />
 
           {/* Serve peers */}
@@ -158,7 +158,7 @@ export function V2ArchitectureDiagram() {
             execute directives
           </text>
 
-          {/* Optional registry — compact under Compose→Serve */}
+          {/* Optional registry -- compact under Compose->Serve */}
           <path
             d="M414 124 V140 H618 V132"
             fill="none"
@@ -188,7 +188,7 @@ export function V2ArchitectureDiagram() {
         </svg>
       </div>
       <figcaption className="mt-2 text-center text-sm text-neutral-500 dark:text-neutral-400">
-        Generated or authored SDL enters the same Composition → Serve Supergraph → transport path.
+        Generated or authored SDL enters the same Composition -> Serve Supergraph -> transport path.
       </figcaption>
     </figure>
   );

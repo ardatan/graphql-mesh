@@ -15,16 +15,16 @@ GraphQL fields. Loaders emit these strings; [Hand-write](/v2/paths/hand-write) a
 
 This guide is the shared mental model. Per-directive args live on the
 [Directives reference](/v2/reference/directives). Deep Connect / JSONSelection syntax is upstream:
-[Apollo Connectors mapping](https://www.apollographql.com/docs/graphos/connectors/mapping).
+[Apollo's HTTP Connectors mapping](https://www.apollographql.com/docs/graphos/connectors/mapping).
 
 ## Two directions
 
-| Direction      | Typical args                      | Meaning                                                               |
-| -------------- | --------------------------------- | --------------------------------------------------------------------- |
-| GraphQL → wire | `args`, `where`, `http`, `set`, … | Field arguments and parent fields become HTTP / SQL / RPC / doc input |
-| Wire → GraphQL | `selection`                       | JSON, rows, protobuf fields, or documents become GraphQL fields       |
+| Direction       | Typical args                        | Meaning                                                               |
+| --------------- | ----------------------------------- | --------------------------------------------------------------------- |
+| GraphQL -> wire | `args`, `where`, `http`, `set`, ... | Field arguments and parent fields become HTTP / SQL / RPC / doc input |
+| Wire -> GraphQL | `selection`                         | JSON, rows, protobuf fields, or documents become GraphQL fields       |
 
-Both sides use the same binder vocabulary (`$args`, `$this`, …). Trace those binders before you
+Both sides use the same binder vocabulary (`$args`, `$this`, ...). Trace those binders before you
 rename fields or rewrite a mapping.
 
 ## Binders you will see
@@ -36,7 +36,7 @@ rename fields or rewrite a mapping.
 | `$batch`   | Batched entity keys (Connect batch / entity resolvers)          |
 | Path forms | `$args.id`, `$this.TrackId`, nested objects / lists per dialect |
 
-Exact operators (`->split`, `->match`, `->get`, …) are part of **Connect JSONSelection**. SQL /
+Exact operators (`->split`, `->match`, `->get`, ...) are part of **Connect JSONSelection**. SQL /
 Mongo / Protobuf dialects reuse `$args` / `$this` but not the full Apollo expression language.
 
 ## Connect HTTP (`selection` + URL / body)
@@ -61,8 +61,9 @@ type Track @key(fields: "id", resolvable: false) {
 ```
 
 - `{$this.id}` in the URL is the **request** side (parent entity key).
-- The `selection` block is the **response** side (JSON keys → GraphQL fields).
-- Entity / batch patterns add `$batch` and `entity: true` -- see Apollo's mapping docs.
+- The `selection` block is the **response** side (JSON keys -> GraphQL fields).
+- Entity / batch patterns add `$batch` and `entity: true` -- see Apollo's mapping docs and
+  [Entity resolution](/v2/concepts/federation#entity-resolution).
 
 Mesh OpenAPI / JSON Schema / OData (and SOAP-as-Connect) loaders emit this shape. Dual-run Connect
 SDL on [Hive Gateway](/v2/serve/hive-gateway) and [Apollo Router](/v2/serve/apollo-router).
@@ -116,34 +117,34 @@ type Query {
 }
 ```
 
-- `args`: GraphQL → protobuf request (`N(type): binder`).
-- `selection`: protobuf response → GraphQL fields.
-- Nested messages use `{ … }` blocks; repeated fields use `repeated` in the type slot.
+- `args`: GraphQL -> protobuf request (`N(type): binder`).
+- `selection`: protobuf response -> GraphQL fields.
+- Nested messages use `{ ... }` blocks; repeated fields use `repeated` in the type slot.
 
 Thrift binary (`@thrift__rpc`) follows the same **args / selection / throws** idea with Thrift
 types. See [Protocols](/v2/protocols).
 
 ## Mongo and Neo4j
 
-- **Mongo:** op-specific `@mongo__*` binders (`query` / `where` / `set` / `selection`, …) under
+- **Mongo:** op-specific `@mongo__*` binders (`query` / `where` / `set` / `selection`, ...) under
   `https://specs.graphql-mesh.com/mongo/v0.1`. `$args` and `$this` still name GraphQL inputs and
   parent fields.
 - **Neo4j:** native `@neo4j/graphql` directives (not a Mesh `selection` string dialect). Mesh stamps
   `@transport` + a neo4j `@link` for the subgraph; mapping lives in Neo4j's own Cypher / filter
   args.
 
-## Habits that help
+## Conventions that help
 
 1. Start from one root field you already queried; read its directive top to bottom.
 2. Circle every `$args` / `$this` (and `$batch`) before renaming GraphQL or wire fields.
 3. Prefer editing `selection` / binders over inventing a new directive when the transport already
    fits.
-4. After edits, re-compose and re-query -- the same habit as
+4. After edits, re-compose and re-query -- the same practice as
    [Generate-then-edit](/v2/paths/generate-then-edit).
 
 <Callout type="info">
-  Practice on [Music Store Example](/v2/examples/music-store) stage 1 (SQL) → stage 2 (Connect
-  `selection`) → stage 3 (protobuf `args` / `selection`). FHIR join SDL shows richer Connect
+  Walk through [Music Store Example](/v2/examples/music-store) stage 1 (SQL) -> stage 2 (Connect
+  `selection`) -> stage 3 (protobuf `args` / `selection`). FHIR join SDL shows richer Connect
   expressions on `Reference.resource`.
 </Callout>
 
@@ -155,7 +156,7 @@ types. See [Protocols](/v2/protocols).
   <Cards.Card arrow title="Directives reference" href="/v2/reference/directives" />
   <Cards.Card
     arrow
-    title="Apollo Connectors mapping"
+    title="Apollo's HTTP Connectors mapping"
     href="https://www.apollographql.com/docs/graphos/connectors/mapping"
   />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />

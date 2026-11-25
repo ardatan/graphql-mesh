@@ -1,6 +1,6 @@
 ---
 description:
-  Music Store Example -- Chinook SQL, Reviews REST/OpenAPI Connect, gRPC in three pedagogical stages
+  Music Store Example -- Chinook SQL, Reviews REST/OpenAPI Connect, gRPC in three teaching stages
 ---
 
 import { Callout, Cards } from '@theguild/components'
@@ -9,27 +9,28 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Music Store Example
 
-Build one music-store supergraph in **three pedagogical stages** (D14): Generate →
-Generate-then-edit → Hand-write. Protocols (D8/D12/D13): **Chinook SQL** catalog, **Reviews** REST /
-OpenAPI → `@connect`, **gRPC / Protobuf** recommendations.
+Build one music-store supergraph in **three teaching stages** (D14): Generate -> Generate-then-edit
+-> Hand-write. Protocols (D8/D12/D13): **Chinook SQL** catalog, **Reviews** REST / OpenAPI ->
+`@connect`, **gRPC / Protobuf** recommendations.
 
 Path pages teach the skill; this example walks the stages in order, then composes and serves.
 
 <V2FlowDiagram
   ariaLabel="Music Store Example stages: Generate, edit, hand-write, Composition, Serve Supergraph"
-  caption="Pedagogical order across Chinook SQL, Reviews Connect, and gRPC."
+  caption="Walkthrough order across Chinook SQL, Reviews Connect, and gRPC."
   steps={[
     { title: 'Generate', lines: ['Chinook SQL'], accent: true },
     { title: 'Edit', lines: ['Reviews Connect'], accent: true },
     { title: 'Hand-write', lines: ['gRPC / Protobuf'], accent: true },
     { title: 'Composition' },
-    { title: 'Serve Supergraph', lines: ['Hive · Apollo Router'] }
+    { title: 'Serve Supergraph', lines: ['Hive / Apollo Router'] }
   ]}
 />
 
 <Callout type="info">
-  User-facing copy says **REST / OpenAPI** for Reviews. feTS may power the OpenAPI server for
-  dogfood; it is not the product brand. Snippets below match{' '}
+  User-facing copy says **REST / OpenAPI** for Reviews. In the walkthrough you can **build that
+  Reviews API with [feTS](https://fets.dev/)** (OpenAPI document + HTTP server); feTS is the
+  implementation detail, not the product brand. Snippets below match{' '}
   <ConceptRef name="composition" label="Mesh Compose" /> shape; wire fixtures from the repo anchors
   as you expand the runnable example.
 </Callout>
@@ -38,26 +39,26 @@ Path pages teach the skill; this example walks the stages in order, then compose
 
 | Stage                     | Skill page                                         | Protocol                   | Authoring                                     |
 | ------------------------- | -------------------------------------------------- | -------------------------- | --------------------------------------------- |
-| **1. Generate**           | [Generate](/v2/paths/generate)                     | Chinook **SQL** (SQLite)   | `loadSqlSubgraph` → read emitted SDL          |
+| **1. Generate**           | [Generate](/v2/paths/generate)                     | Chinook **SQL** (SQLite)   | `loadSqlSubgraph` -> read emitted SDL         |
 | **2. Generate-then-edit** | [Generate-then-edit](/v2/paths/generate-then-edit) | **Reviews** REST / OpenAPI | Generate `@connect`, dislike/edit, re-compose |
 | **3. Hand-write**         | [Hand-write](/v2/paths/hand-write)                 | **gRPC / Protobuf**        | Authored `@protobuf__rpc` + `@link` imports   |
 
-Federation hub: stage 1 emits Track <DirectiveRef name="key" />. Stages 2–3 extend Track
+Federation hub: stage 1 emits Track <DirectiveRef name="key" />. Stages 2-3 extend Track
 (<DirectiveRef name="connect" /> `entity: true` / `@protobuf__rpc` + `@key`).
 
 ## Gateway matrix
 
-| Slice                     | Hive Gateway (JS/TS) | Apollo Router                  |
-| ------------------------- | -------------------- | ------------------------------ |
-| Full multi-protocol graph | Yes                  | No (SQL + protobuf transports) |
-| Connect Reviews slice     | Yes                  | Yes (dual-run)                 |
-| gRPC slice                | Yes                  | No                             |
+| Slice                     | Hive Gateway (JS/TS) / Apollo Router |
+| ------------------------- | ------------------------------------ | ------------------------------ |
+| Full multi-protocol graph | Yes                                  | No (SQL + protobuf transports) |
+| Connect Reviews slice     | Yes                                  | Yes (dual-run)                 |
+| gRPC slice                | Yes                                  | No                             |
 
 ---
 
 ## Stage 1 -- Generate the Chinook catalog
 
-Skill: [Generate](/v2/paths/generate) · Reading:
+Skill: [Generate](/v2/paths/generate) | Reading:
 [Reading generated SDL](/v2/guides/reading-generated-sdl)
 
 1. Point Mesh Compose at Chinook (SQLite) with the SQL loader.
@@ -86,7 +87,7 @@ export const composeConfig = defineComposeConfig({
 type Track @key(fields: "TrackId") {
   TrackId: Int!
   Name: String
-  # … AlbumId, Milliseconds, …
+  # ... AlbumId, Milliseconds, ...
 }
 ```
 
@@ -98,8 +99,10 @@ Repo anchor: `e2e/sqlite-chinook`.
 
 Skill: [Generate-then-edit](/v2/paths/generate-then-edit)
 
-1. Stand up (or reuse) a **REST** Reviews API with an OpenAPI document (feTS OK under the hood).
-2. Generate a Reviews subgraph with the OpenAPI loader → Connect emit.
+1. Stand up (or reuse) a **REST** Reviews API with an OpenAPI document. For the Mesh dogfood path,
+   build it with [feTS](https://fets.dev/) (see [feTS OpenAPI](https://fets.dev/server/openapi) for
+   `/openapi.json`); any OpenAPI server works the same for the loader.
+2. Generate a Reviews subgraph with the OpenAPI loader -> Connect emit.
 3. Query a review; [read the SDL](/v2/guides/reading-generated-sdl) (`@source`, `@connect`,
    `selection`).
 4. **Dislike** something concrete (field names, noisy types, Track join shape).
@@ -113,7 +116,7 @@ Skill: [Generate-then-edit](/v2/paths/generate-then-edit)
     source: 'http://localhost:4001/openapi.json',
     endpoint: 'http://localhost:4001',
   }),
-  // optional: transforms: [createPrefixTransform({ … })]
+  // optional: transforms: [createPrefixTransform({ ... })]
 }
 ```
 
@@ -145,7 +148,7 @@ Skill: [Hand-write](/v2/paths/hand-write)
 
 1. Import Mesh / Federation directives with `@link` (Compose injects definitions).
 2. Author Query fields with `@protobuf__rpc` (`service`, `method`, `args`, `selection`).
-3. Add `@transport(kind: "protobuf", …)` and `@key` where entities join Track.
+3. Add `@transport(kind: "protobuf", ...)` and `@key` where entities join Track.
 4. Load the `.graphql` as a schema subgraph in Compose (same path as edited SDL).
 5. Serve on **Hive Gateway** only for this slice.
 
@@ -194,7 +197,7 @@ Repo anchors: `e2e/protobuf-http`, `e2e/protobuf-grpc-example`.
 
 ## Composition: all three, then serve
 
-Skill: [Composition](/v2/compose) · Serve Supergraph: [Hive Gateway](/v2/serve/hive-gateway) ·
+Skill: [Composition](/v2/compose) | Serve Supergraph: [Hive Gateway](/v2/serve/hive-gateway) |
 [Apollo Router](/v2/serve/apollo-router)
 
 1. List all three subgraphs in one `mesh.config.ts` (catalog + reviews + recommendations).
@@ -213,9 +216,15 @@ export const composeConfig = defineComposeConfig({
 })
 ```
 
-## Supporting example
+## Further / what else you can do next
 
-Healthcare JSON Schema join story (not this walkthrough): [FHIR](/v2/examples/fhir).
+- Supporting how-we-built (JSON Schema + Connect join): [FHIR](/v2/examples/fhir).
+- Dig into binders and entity wiring: [Selection mapping](/v2/guides/selection-mapping) /
+  [Entity resolution](/v2/concepts/federation#entity-resolution) /
+  [Semantic conventions](/v2/compose#semantic-conventions).
+- Optional renames without rewriting SDL: [Transforms](/v2/transforms) (including Federation
+  transform).
+- Publish subgraph SDL after Composition: [Schema registry](/v2/concepts/schema-registry).
 
 <Cards>
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />

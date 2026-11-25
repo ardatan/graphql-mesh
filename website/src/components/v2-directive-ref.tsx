@@ -2,19 +2,24 @@ import type { ReactNode } from 'react';
 
 /**
  * Reusable Mesh v2 directive / API term link: hover shows a short description,
- * click jumps to `/v2/reference/directives#…` (or another docs page).
+ * click jumps to `/v2/reference/directives#...` (or another docs page).
  */
 
 const DIRECTIVES = {
   connect: {
     label: '@connect',
     anchor: 'connect',
-    description: 'HTTP Connectors mapping (source, http, selection, entity).',
+    description: 'HTTP/REST Connectors mapping (source, http, selection, entity).',
   },
   source: {
     label: '@source',
     anchor: 'connect',
-    description: 'Named HTTP source for @connect (Apollo Connectors).',
+    description: 'Named HTTP source for @connect (HTTP/REST Connectors).',
+  },
+  merge: {
+    label: '@merge',
+    anchor: 'merge',
+    description: 'Mesh type-merging helper (keyField / keyArg) on Query or entity fields.',
   },
   transport: {
     label: '@transport',
@@ -24,7 +29,8 @@ const DIRECTIVES = {
   sql__query: {
     label: '@sql',
     anchor: 'sql',
-    description: 'SQL SELECT mapping via @sql(kind: ROW|ROWS|…) (table, where, selection, entity).',
+    description:
+      'SQL SELECT mapping via @sql(kind: ROW|ROWS|...) (table, where, selection, entity).',
   },
   sql__mutation: {
     label: '@sql',
@@ -44,7 +50,7 @@ const DIRECTIVES = {
   mongo: {
     label: '@mongo__*',
     anchor: 'mongo',
-    description: 'MongoDB op directives (@mongo__findOne, …) with query / selection binders.',
+    description: 'MongoDB op directives (@mongo__findOne, ...) with query / selection binders.',
   },
   protobuf__rpc: {
     label: '@protobuf__rpc',
@@ -73,8 +79,9 @@ const DIRECTIVES = {
   },
   resolveTo: {
     label: '@resolveTo',
-    anchor: 'federation',
-    description: 'Legacy Mesh join helper -- prefer @key + Connect/protocol stubs.',
+    anchor: 'resolveTo',
+    description:
+      'Mesh field delegation / join helper (sourceName, sourceFieldName, ...); prefer @key + HTTP/REST Connect or protocol entity maps for new work.',
   },
 } as const;
 
@@ -95,7 +102,7 @@ const API_TERMS = {
     label: 'Mesh Compose',
     href: '/v2/compose',
     description:
-      'Composition via Mesh Compose: loaders and hand-written SDL → subgraph / supergraph.',
+      'Composition via Mesh Compose: loaders and hand-written SDL -> subgraph / supergraph.',
   },
   'reading-sdl': {
     label: 'Reading generated SDL',
@@ -106,17 +113,18 @@ const API_TERMS = {
 
 export type ApiTermName = keyof typeof API_TERMS;
 
-/** Product concepts → `/v2/concepts/*` (hover description, click for page). */
+/** Product concepts -> `/v2/concepts/*` (hover description, click for page). */
 const CONCEPTS = {
   mesh: {
     label: 'Mesh',
     href: '/v2/concepts/mesh',
-    description: 'Federation framework: sources or SDL → subgraphs, composition, transports.',
+    description: 'Federation framework: sources or SDL -> subgraphs, composition, transports.',
   },
   connectors: {
-    label: 'Connectors',
+    label: 'HTTP/REST Connectors',
     href: '/v2/concepts/connectors',
-    description: 'HTTP @connect / @source mapping style Mesh shares with Apollo.',
+    description:
+      'HTTP/REST @connect / @source mapping Mesh shares with Apollo (not Mesh-only protocols).',
   },
   federation: {
     label: 'Federation',
@@ -137,7 +145,7 @@ const CONCEPTS = {
   composition: {
     label: 'Composition',
     href: '/v2/concepts/composition',
-    description: 'Combining subgraph SDL into a supergraph (Mesh Compose, Hive, Rover, …).',
+    description: 'Combining subgraph SDL into a supergraph (Mesh Compose, Hive, Rover, ...).',
   },
   'schema-registry': {
     label: 'Schema registry',
@@ -228,7 +236,7 @@ export function ApiRef({ name, children, label, className }: RefProps & { name: 
   );
 }
 
-/** Link a Mesh v2 concept term to `/v2/concepts/…`. */
+/** Link a Mesh v2 concept term to `/v2/concepts/...`. */
 export function ConceptRef({ name, children, label, className }: RefProps & { name: ConceptName }) {
   const entry = CONCEPTS[name];
   return (

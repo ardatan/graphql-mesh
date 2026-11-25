@@ -1,40 +1,43 @@
 ---
-description: What Connectors are -- HTTP @connect / @source mapping Mesh shares with Apollo
+description:
+  HTTP/REST Connectors -- @connect / @source mapping Mesh shares with Apollo (not Mesh-only
+  protocols)
 ---
 
 import { Cards } from '@theguild/components'
 import { DirectiveRef } from '../../../components/v2-directive-ref'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
-# Connectors
+# HTTP/REST Connectors
 
-**Connectors** (Apollo Connectors) are an HTTP-mapping style for GraphQL: fields declare how to call
-REST with <DirectiveRef name="connect" /> and <DirectiveRef name="source" /> (connect/v0.4), plus
-`selection` / entity flags. Mesh OpenAPI, JSON Schema, OData, and SOAP-as-Connect loaders **emit**
-that shape. Hand authors can write the same directives.
+**HTTP/REST Connectors** are an HTTP-mapping style for GraphQL: fields declare how to call REST with
+
+<DirectiveRef name="connect" /> and <DirectiveRef name="source" /> (connect/v0.4), plus `selection`
+/ entity flags. Mesh OpenAPI, JSON Schema, OData, and SOAP-as-Connect loaders **emit** that shape.
+Hand authors can write the same directives. Dual-run Connect-compatible SDL on Hive Gateway and
+Apollo Router.
 
 ## Where it lives
 
 <V2FlowDiagram
-  ariaLabel="Connectors path from OpenAPI to Connect SDL to gateways"
+  ariaLabel="HTTP/REST Connectors path from OpenAPI to Connect SDL to gateways"
   steps={[
     { title: 'OpenAPI / REST' },
     { title: 'Loader or hand', accent: true },
     { title: '@connect SDL', lines: ['+ @source'], accent: true },
-    { title: 'Gateways', lines: ['Hive · Apollo Router'] }
+    { title: 'Gateways', lines: ['Hive / Apollo Router'] }
   ]}
 />
 
-| Piece              | Role                                                                         |
-| ------------------ | ---------------------------------------------------------------------------- |
-| Directive contract | Apollo Connectors reference (upstream)                                       |
-| Mesh transport     | `@graphql-mesh/transport-connect` on Hive Gateway                            |
-| Dual-run           | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when compatible |
+| Piece              | Role                                                                                                                        |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| Directive contract | [Apollo's HTTP Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) (upstream) |
+| Mesh transport     | `@graphql-mesh/transport-connect` on Hive Gateway                                                                           |
+| Dual-run           | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when compatible                                                |
 
-Connectors are **not** Mesh-only, **not** SQL/gRPC mapping (those use protocol directives +
-
-<DirectiveRef name="transport" />
-), and **not** composition itself.
+HTTP/REST Connectors are **not** Mesh-only protocol mapping. SQL, Mongo, Protobuf/gRPC, Thrift, and
+Neo4j use their own Mesh protocol directives plus <DirectiveRef name="transport" /> -- do not call
+those "Connectors." Composition itself is also separate.
 
 ## Short example
 
@@ -45,11 +48,15 @@ type Query {
 }
 ```
 
-Arg tables: [Directives reference](/v2/reference/directives#connect) ·
-[Apollo Connectors directives](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
+Arg tables: [Directives reference](/v2/reference/directives#connect) /
+[Apollo's HTTP Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
 
 <Cards>
   <Cards.Card arrow title="Directives reference" href="/v2/reference/directives#connect" />
   <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card
+    title="Apollo's HTTP Connectors reference"
+    href="https://www.apollographql.com/docs/graphos/connectors/reference/directives"
+  />
   <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
 </Cards>

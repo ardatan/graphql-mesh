@@ -11,13 +11,13 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 A **schema registry** stores **subgraph** and/or **supergraph** GraphQL SDL, versions it, and lets
 gateways (or CI) pull the schema they should run. Examples: Hive schema registry, Apollo GraphOS,
 and equivalents. Mesh publishes **Federation-compatible subgraph SDL** -- generated or hand-written
--- with the same Compose → publish UX.
+-- with the same Compose -> publish UX.
 
 ## Where it lives
 
 <V2FlowDiagram
   ariaLabel="Schema registry beside Composition and Serve Supergraph"
-  caption="Registry is optional — gateways can also take Composition output directly."
+  caption="Registry is optional -- gateways can also take Composition output directly."
   footnote={{ label: 'or file direct', fromStep: 0, toStep: 2 }}
   steps={[
     { title: 'Composition', accent: true },

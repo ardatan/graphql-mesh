@@ -38,6 +38,39 @@ skip them when Hand-write or Generate-then-edit already owns the SDL.
 
 Use this for join-only subgraphs, fully authored Connect SDL, and edited loader output.
 
+<a id="semantic-conventions" />
+
+## Semantic conventions (ById / ByIds)
+
+During composition, Mesh applies **loader / Query semantic conventions** unless you opt out. When
+the same object type appears across subgraphs and a Query field matches a ById / ByIds naming
+pattern with a key arg that lines up with a key field on that type, Compose stamps Federation entity
+wiring automatically -- `@key` plus Connect/protocol `entity: true` (or type-level `$this` maps),
+instead of Mesh `@merge` on HTTP/REST Connectors subgraphs.
+
+Typical patterns:
+
+| Query shape                         | Intent                   |
+| ----------------------------------- | ------------------------ |
+| `typeById(id: ID!): Type`           | Singular entity lookup   |
+| `getTypeById(id: ID!): Type`        | Same, with `get_` prefix |
+| `typesByIds(ids: [ID!]!): [Type!]!` | Batch lookup             |
+
+If your schema almost matches but names differ, use a
+[rename / naming-convention transform](/v2/transforms) so the field fits the convention -- or stamp
+entities yourself with `createFederationTransform` (see
+[Federation](/v2/concepts/federation#entity-resolution)).
+
+Disable with `ignoreSemanticConventions: true` on the compose config when you want full manual
+control:
+
+```ts
+export const composeConfig = defineComposeConfig({
+  ignoreSemanticConventions: true
+  // ...
+})
+```
+
 ## Registry publish
 
 Publish composed **subgraph** SDL to Hive schema registry / GraphOS with the same CLI UX whether the

@@ -1,14 +1,14 @@
 ---
 description:
   Mesh product journey -- v0 YAML gateway, v1 generate-first Mesh Composition + Hive Gateway, v2
-  SDL-first Connectors-adapted
+  SDL-first / HTTP/REST Connectors-adapted
 ---
 
 import { Callout, Cards } from '@theguild/components'
 import { ConceptRef } from '../../../components/v2-directive-ref'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
-# Mesh journey (v0 → v1 → v2)
+# Mesh journey (v0 -> v1 -> v2)
 
 How Mesh's product and docs story evolved. Use this to orient if you know an older Mesh, then jump
 into [v2](/v2).
@@ -18,19 +18,19 @@ into [v2](/v2).
   steps={[
     { title: 'v0', lines: ['YAML gateway'] },
     { title: 'v1', lines: ['Generate-first', 'Mesh Composition', '+ Hive Gateway'], accent: true },
-    { title: 'v2', lines: ['SDL-first', 'Connectors-adapted'], accent: true }
+    { title: 'v2', lines: ['SDL-first', 'HTTP/REST Connectors'], accent: true }
   ]}
 />
 
-| Era    | Docs                 | Product shape                                                                                                                                                                                                                                                                                                                  |
-| ------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **v0** | [`/docs`](/docs)     | YAML `.meshrc`, built-in serve, handlers / plugins / cache -- config-first gateway                                                                                                                                                                                                                                             |
-| **v1** | [`/v1`](/v1)         | **Generate-first** Mesh-specific <ConceptRef name="composition" label="Composition" /> (Mesh Compose) + <ConceptRef name="gateway" label="Hive Gateway" /> -- loaders emit subgraph / supergraph SDL; serve is a separate runtime                                                                                              |
-| **v2** | [`/v2`](/v2) (draft) | **SDL-first** / <ConceptRef name="connectors">Connectors</ConceptRef>-adapted: equal [Generate](/v2/paths/generate) / [Hand-write](/v2/paths/hand-write) / [Generate-then-edit](/v2/paths/generate-then-edit); Federation-ready subgraphs; Hive Gateway + Apollo Router peers under [Serve Supergraph](/v2/serve/hive-gateway) |
+| Era    | Docs                 | Product shape                                                                                                                                                                                                                                                                                                                            |
+| ------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **v0** | [`/docs`](/docs)     | YAML `.meshrc`, built-in serve, handlers / plugins / cache -- config-first gateway                                                                                                                                                                                                                                                       |
+| **v1** | [`/v1`](/v1)         | **Generate-first** Mesh-specific <ConceptRef name="composition" label="Composition" /> (Mesh Compose) + <ConceptRef name="gateway" label="Hive Gateway" /> -- loaders emit subgraph / supergraph SDL; serve is a separate runtime                                                                                                        |
+| **v2** | [`/v2`](/v2) (draft) | **SDL-first** / <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>-adapted: equal [Generate](/v2/paths/generate) / [Hand-write](/v2/paths/hand-write) / [Generate-then-edit](/v2/paths/generate-then-edit); Federation-ready subgraphs; Hive Gateway + Apollo Router peers under [Serve Supergraph](/v2/serve/hive-gateway) |
 
 ## What changed
 
-### v0 → v1: Mesh meets Federation
+### v0 -> v1: Mesh meets Federation
 
 v0 was one process: configure sources in YAML, Mesh merged and **served** GraphQL itself.
 
@@ -43,20 +43,21 @@ v1 split that into the Federation shape the ecosystem already used:
 - **Hive Gateway** -- a separate federation gateway runtime that executes the composed graph
   (transports, Mesh protocol directives).
 
-The default story stayed **generate-first**: point Mesh at OpenAPI / SQL / gRPC / …, emit SDL,
+The default story stayed **generate-first**: point Mesh at OpenAPI / SQL / gRPC / ..., emit SDL,
 compose, serve. Hand-authored SDL existed but was not the equal path.
 
-### v1 → v2: From generate-first to ecosystem-adapted authoring
+### v1 -> v2: From generate-first to ecosystem-adapted authoring
 
 v2 keeps Composition + Hive Gateway, and keeps generate. What shifts is the **authoring contract**:
 
 - **SDL-first:** generated, edited, and scratch-authored `.graphql` share one path through
   [Composition](/v2/compose), optional [schema registry](/v2/concepts/schema-registry), and
   [Serve Supergraph](/v2/serve/hive-gateway).
-- **Connectors-adapted:** HTTP mapping follows Apollo Connectors-style
-  <ConceptRef name="connectors">`@connect` / `@source`</ConceptRef> so the same Connect slice can
-  dual-run on Hive Gateway and Apollo Router; Mesh protocol directives (`@sql`, `@protobuf__rpc`, …)
-  stay first-class for Hive Gateway.
+- **HTTP/REST Connectors-adapted:** HTTP mapping follows
+  <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>
+  (`@connect` / `@source`) so the same Connect slice can dual-run on Hive Gateway and Apollo Router;
+  Mesh protocol directives (`@sql`, `@protobuf__rpc`, ...) stay first-class for Hive Gateway (not
+  branded as Connectors).
 - **Hand-authored API as a first-class skill:** humans and AI write (or edit) the same directive
   surface loaders emit -- see [Hand-write](/v2/paths/hand-write),
   [Reading generated SDL](/v2/guides/reading-generated-sdl), and
@@ -64,7 +65,7 @@ v2 keeps Composition + Hive Gateway, and keeps generate. What shifts is the **au
   only funnel.
 
 In short: v1 brought Mesh into **Federation composition + gateway**; v2 adapts that stack to an
-**ecosystem SDL / Connectors** authoring model without dropping Mesh-specific transports.
+**ecosystem SDL / HTTP/REST Connectors** authoring model without dropping Mesh-specific transports.
 
 <Callout type="info">
   Production docs remain on [Mesh v1](/v1) until v2 ships. Legacy v0 stays under `/docs`.

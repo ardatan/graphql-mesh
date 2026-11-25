@@ -8,11 +8,11 @@ import { ConceptRef, DirectiveRef } from '../../components/v2-directive-ref'
 
 # Architecture
 
-The product surface is GraphQL SDL with <ConceptRef name="mesh">Mesh</ConceptRef> /
+The product surface is GraphQL SDL with <ConceptRef name="mesh">Mesh</ConceptRef>{' '}
 
-<ConceptRef name="connectors">Connectors</ConceptRef>-style directives, composed into a real
-supergraph. Authors may generate that SDL from a loader or write it by hand; Compose and the gateway
-treat both the same.
+<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> and Mesh protocol directives,
+composed into a real supergraph. Authors may generate that SDL from a loader or write it by hand;
+Compose and the gateway treat both the same.
 
 ## Stack
 
@@ -39,7 +39,7 @@ treat both the same.
 | Hive Gateway subgraph proxy | Non-Connect Mesh subgraphs served by Hive Gateway; a foreign router talks GraphQL to that subgraph. |
 | Registry                    | Publish Mesh subgraphs (generated or hand-written); gateway pulls the supergraph.                   |
 
-See also: [Concepts](/v2/concepts) · [Composition](/v2/compose) ·
+See also: [Concepts](/v2/concepts) | [Composition](/v2/compose) |
 [Serve Supergraph](/v2/serve/hive-gateway).
 
 <Cards>
