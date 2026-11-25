@@ -68,7 +68,7 @@ plugins:
           ttl: 100
         # cache operations selecting any Query field for 60s
         - coordinate: Query.*
-          ttl: 60_000
+          ttl: 60000
       ignoredTypes:
         # never cache responses that include a RefreshToken object type
         - RefreshToken

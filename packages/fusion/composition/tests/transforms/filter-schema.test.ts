@@ -899,6 +899,8 @@ type Query {
           'User.{id, name}',
           // Spec-shaped field args: drop name arg on Query.user
           'Query.user.!name',
+          // Spec-shaped MemberCoordinate: keep Query.user
+          'Query.user',
           // Mesh selector still supported
           'Query.!users',
         ],

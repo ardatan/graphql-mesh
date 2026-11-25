@@ -457,4 +457,145 @@ describe('response-cache Schema Coordinates', () => {
       },
     });
   });
+
+  it('ignores other operations in the document when matching selectors', async () => {
+    const upstreamSchema = createSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          greeting: String!
+          secretValue: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          greeting: () => 'hello',
+          secretValue: () => 'secret',
+        },
+      },
+    });
+    await using upstreamServer = createYoga({
+      schema: upstreamSchema,
+    });
+    const cache = createMemoryCache();
+    await using gw = createGatewayRuntime({
+      supergraph: () =>
+        getUnifiedGraphGracefully([
+          {
+            name: 'upstream',
+            schema: upstreamSchema,
+            url: 'http://localhost:4001/graphql',
+          },
+        ]),
+      plugins: ctx => [
+        useCustomFetch(function (url, options) {
+          if (String(url) === 'http://localhost:4001/graphql') {
+            return upstreamServer.fetch(url, options);
+          }
+          return Response.error();
+        }),
+        useMeshResponseCache({
+          ...ctx,
+          cache,
+          includeExtensionMetadata: true,
+          sessionId: 'op-name',
+          // Only B matches this selector. A must still cache (default infinite TTL).
+          ttlPerCoordinate: [{ coordinate: 'Query.secret*', ttl: 0 }],
+        }),
+      ],
+    });
+
+    const res = await gw.fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        operationName: 'A',
+        query: /* GraphQL */ `
+          query A {
+            greeting
+          }
+          query B {
+            secretValue
+          }
+        `,
+      }),
+    });
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toMatchObject({
+      data: { greeting: 'hello' },
+      extensions: {
+        responseCache: {
+          didCache: true,
+          hit: false,
+        },
+      },
+    });
+  });
+
+  it('lets selector TTL override a global ttl of 0', async () => {
+    const upstreamSchema = createSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          greeting: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          greeting: () => 'hello',
+        },
+      },
+    });
+    await using upstreamServer = createYoga({
+      schema: upstreamSchema,
+    });
+    const cache = createMemoryCache();
+    await using gw = createGatewayRuntime({
+      supergraph: () =>
+        getUnifiedGraphGracefully([
+          {
+            name: 'upstream',
+            schema: upstreamSchema,
+            url: 'http://localhost:4001/graphql',
+          },
+        ]),
+      plugins: ctx => [
+        useCustomFetch(function (url, options) {
+          if (String(url) === 'http://localhost:4001/graphql') {
+            return upstreamServer.fetch(url, options);
+          }
+          return Response.error();
+        }),
+        useMeshResponseCache({
+          ...ctx,
+          cache,
+          includeExtensionMetadata: true,
+          sessionId: 'global-zero',
+          ttl: 0,
+          ttlPerCoordinate: [{ coordinate: 'Query.*', ttl: 12_345 }],
+        }),
+      ],
+    });
+
+    const res = await gw.fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          query {
+            greeting
+          }
+        `,
+      }),
+    });
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toMatchObject({
+      data: { greeting: 'hello' },
+      extensions: {
+        responseCache: {
+          didCache: true,
+          hit: false,
+          ttl: 12_345,
+        },
+      },
+    });
+  });
 });

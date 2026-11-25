@@ -65,11 +65,11 @@ sequenceDiagram
 participant Mesh Gateway
 participant Book.author resolver
 participant Authors API
-Mesh Gateway->>Book.author resolver: path stores/0/bookSells/0/book/0/author
+Mesh Gateway->>Book.author resolver: path stores/0/bookSells/0/book/author
 Book.author resolver->>Authors API: GetAuthor(input: \{ id: "123" \})
-Mesh Gateway->>Book.author resolver: path stores/0/bookSells/0/book/6/author
+Mesh Gateway->>Book.author resolver: path stores/0/bookSells/6/book/author
 Book.author resolver->>Authors API: GetAuthor(input: \{ id: "754" \})
-Mesh Gateway->>Book.author resolver: path stores/0/bookSells/0/book/7/author
+Mesh Gateway->>Book.author resolver: path stores/0/bookSells/7/book/author
 Book.author resolver->>Authors API: GetAuthor(input: \{ id: "332" \})
 ```
 
@@ -154,9 +154,9 @@ sequenceDiagram
 participant Mesh Gateway
 participant Book.author resolver
 participant Authors API
-Mesh Gateway->>Book.author resolver: path stores/0/bookSells/0/book/0/author
-Mesh Gateway->>Book.author resolver: path stores/0/bookSells/0/book/6/author
-Mesh Gateway->>Book.author resolver: path stores/0/bookSells/0/book/7/author
+Mesh Gateway->>Book.author resolver: path stores/0/bookSells/0/book/author
+Mesh Gateway->>Book.author resolver: path stores/0/bookSells/6/book/author
+Mesh Gateway->>Book.author resolver: path stores/0/bookSells/7/book/author
 Book.author resolver->>Authors API: GetAuthors(input: \{ ids: ["123", "754", "332"] \})
 ```
 

@@ -329,7 +329,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                     const targetFieldName = keyConfig.resolveReference.fieldName;
                     if (!targetFieldName) {
                       throw new TransformValidationError(
-                        `Missing resolveReference.fieldName for @key on ${type.name}. Set a root field Schema Coordinate such as Query.<fieldName>.`,
+                        `Missing resolveReference.fieldName for @key on ${type.name}. Set the root field name (e.g. "fooById"), not a Schema Coordinate.`,
                       );
                     }
                     const rootType = getDefinedRootType(subgraphSchema, operationType);

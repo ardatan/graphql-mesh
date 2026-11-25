@@ -1,6 +1,6 @@
 import CacheControlParser from 'cache-control-parser';
 import type { DocumentNode, GraphQLSchema } from 'graphql';
-import { TypeInfo, visit, visitWithTypeInfo } from 'graphql';
+import { getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
 import { defaultBuildResponseCacheKey } from '@envelop/response-cache';
 import type { GatewayContext, GatewayPlugin } from '@graphql-hive/gateway-runtime';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -61,18 +61,29 @@ function partitionTtlCoordinates(ttlPerSchemaCoordinate: Record<string, number>)
 function applyMeshSelectorTtls(params: {
   schema: GraphQLSchema;
   document: DocumentNode;
+  operationName?: string | null;
   selectors: Array<{ coordinate: string; ttl: number }>;
   context: GatewayContext;
   checkTtl: (context: GatewayContext, ttl: number) => void;
 }) {
-  const { schema, document, selectors, context, checkTtl } = params;
+  const { schema, document, operationName, selectors, context, checkTtl } = params;
   if (selectors.length === 0) {
+    return;
+  }
+  const operation = getOperationAST(document, operationName ?? undefined);
+  if (!operation) {
     return;
   }
   const typeInfo = new TypeInfo(schema);
   visit(
     document,
     visitWithTypeInfo(typeInfo, {
+      OperationDefinition(node) {
+        // Only the selected operation may contribute selector TTLs.
+        if (node !== operation) {
+          return false;
+        }
+      },
       Field(node) {
         const parentType = typeInfo.getParentType();
         if (!parentType) {
@@ -297,6 +308,10 @@ export default function useMeshResponseCache(
   const { exact: exactTtlPerSchemaCoordinate, selectors: meshSchemaSelectors } =
     partitionTtlCoordinates(ttlPerSchemaCoordinate);
 
+  // Envelop default when `ttl` is omitted (see @envelop/response-cache).
+  const globalTtl =
+    'ttl' in options && options.ttl != null ? (options.ttl as number) : Number.POSITIVE_INFINITY;
+
   // Stored TTL by the context
   // To be compared with the calculated one later in `onTtl`
   const ttlByContext = new WeakMap<any, number>();
@@ -330,15 +345,18 @@ export default function useMeshResponseCache(
     cache: getCacheForResponseCache(options.cache),
     ttlPerType,
     ttlPerSchemaCoordinate: exactTtlPerSchemaCoordinate,
-    // Checks the TTL stored in the context
-    // Compares it to the calculated one
-    // Then it takes the lowest value
+    // Mesh selectors / upstream Cache-Control are coordinate-like constraints.
+    // When Envelop only applied the global fallback, let those constraints win
+    // (same as exact ttlPerSchemaCoordinate overriding global). Otherwise take min.
     onTtl({ ttl, context }) {
-      const ttlForThisContext = ttlByContext.get(context);
-      if (ttlForThisContext != null && ttlForThisContext < ttl) {
-        return ttlForThisContext;
+      const meshTtl = ttlByContext.get(context);
+      if (meshTtl == null) {
+        return ttl;
       }
-      return ttl;
+      if (ttl === globalTtl) {
+        return meshTtl;
+      }
+      return Math.min(meshTtl, ttl);
     },
   });
 
@@ -348,6 +366,7 @@ export default function useMeshResponseCache(
       applyMeshSelectorTtls({
         schema: payload.args.schema,
         document: payload.args.document,
+        operationName: payload.args.operationName,
         selectors: meshSchemaSelectors,
         context: payload.args.contextValue as GatewayContext,
         checkTtl,
