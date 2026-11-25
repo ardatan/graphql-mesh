@@ -2,11 +2,14 @@
 description: Mesh Compose -- mesh.config.ts, loaders, hand-written SDL, transforms, registry publish
 ---
 
-import { Callout } from '@theguild/components'
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef } from '../../components/v2-directive-ref'
 
 # Compose
 
-Mesh Compose turns subgraph definitions into subgraph or supergraph GraphQL SDL.
+<ConceptRef name="composition">Composition</ConceptRef> via **Mesh Compose** turns subgraph
+definitions into subgraph or supergraph GraphQL SDL -- the same path for loader emit and
+hand-written files.
 
 ## Config shape (draft)
 
@@ -17,8 +20,10 @@ Typical `mesh.config.ts` ideas:
 - Shared options: optional [transforms](/v2/transforms), additional type defs, output mode
   (`graphql` / binary formats as supported).
 
-Generated and hand-written subgraphs share the same compose + registry path. Transforms are optional
--- skip them when Hand-write or Generate-then-edit already owns the SDL.
+Generated and hand-written subgraphs share the same compose +
+
+<ConceptRef name="schema-registry">schema registry</ConceptRef> path. Transforms are optional --
+skip them when Hand-write or Generate-then-edit already owns the SDL.
 
 ## Hand-written SDL
 
@@ -34,7 +39,7 @@ Use this for join-only subgraphs, fully authored Connect SDL, and edited loader 
 ## Registry publish
 
 Publish composed **subgraph** SDL to Hive schema registry / GraphOS with the same CLI UX whether the
-SDL came from a loader or a file.
+SDL came from a loader or a file. See [Schema registry](/v2/concepts/schema-registry).
 
 Worked multi-subgraph config: [Music Store Example](/v2/examples/music-store) (catalog + reviews +
 recommendations, then compose all).
@@ -43,3 +48,10 @@ recommendations, then compose all).
   Some first-class Compose + registry helpers landed in recent Mesh releases; example pages cite the
   APIs as fixtures fill in.
 </Callout>
+
+<Cards>
+  <Cards.Card arrow title="Composition (concept)" href="/v2/concepts/composition" />
+  <Cards.Card arrow title="Schema registry" href="/v2/concepts/schema-registry" />
+  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+</Cards>

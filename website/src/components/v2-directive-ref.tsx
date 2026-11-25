@@ -1,0 +1,237 @@
+import type { ReactNode } from 'react';
+
+/**
+ * Reusable Mesh v2 directive / API term link: hover shows a short description,
+ * click jumps to `/v2/reference/directives#…` (or another docs page).
+ */
+
+const DIRECTIVES = {
+  connect: {
+    label: '@connect',
+    anchor: 'connect',
+    description: 'HTTP Connectors mapping (source, http, selection, entity).',
+  },
+  source: {
+    label: '@source',
+    anchor: 'connect',
+    description: 'Named HTTP source for @connect (Apollo Connectors).',
+  },
+  transport: {
+    label: '@transport',
+    anchor: 'transport',
+    description: 'Schema stamp: which Mesh transport Hive Gateway loads.',
+  },
+  sql__query: {
+    label: '@sql__query',
+    anchor: 'sql',
+    description: 'SQL SELECT mapping (table, kind, args, selection, entity).',
+  },
+  sql__mutation: {
+    label: '@sql__mutation',
+    anchor: 'sql',
+    description: 'SQL INSERT / UPDATE / DELETE mapping.',
+  },
+  sql__relation: {
+    label: '@sql__relation',
+    anchor: 'sql',
+    description: 'SQL FK / join navigation on object fields.',
+  },
+  sql: {
+    label: '@sql',
+    anchor: 'sql',
+    description: 'SQL protocol directives (@sql__* family).',
+  },
+  mongo: {
+    label: '@mongo',
+    anchor: 'mongo',
+    description: 'MongoDB mapping (collection, kind, where, selection).',
+  },
+  protobuf__rpc: {
+    label: '@protobuf__rpc',
+    anchor: 'protobuf',
+    description: 'gRPC / Protobuf RPC mapping (service, method, args, selection).',
+  },
+  thrift__rpc: {
+    label: '@thrift__rpc',
+    anchor: 'thrift',
+    description: 'Thrift binary RPC mapping (args, selection, throws).',
+  },
+  key: {
+    label: '@key',
+    anchor: 'federation',
+    description: 'Federation entity key (often resolvable: false on join stubs).',
+  },
+  composeDirective: {
+    label: '@composeDirective',
+    anchor: 'federation',
+    description: 'Which imported directives survive composition.',
+  },
+  link: {
+    label: '@link',
+    anchor: 'link',
+    description: 'Import directive definitions from a spec URL.',
+  },
+  resolveTo: {
+    label: '@resolveTo',
+    anchor: 'federation',
+    description: 'Legacy Mesh join helper -- prefer @key + Connect/protocol stubs.',
+  },
+} as const;
+
+export type DirectiveName = keyof typeof DIRECTIVES;
+
+const API_TERMS = {
+  'hive-gateway': {
+    label: 'Hive Gateway',
+    href: '/v2/serve/hive-gateway',
+    description: 'Preferred Mesh runtime (JavaScript / TypeScript gateway).',
+  },
+  'apollo-router': {
+    label: 'Apollo Router',
+    href: '/v2/serve/apollo-router',
+    description: 'Peer runtime for Connect-compatible Mesh supergraphs.',
+  },
+  compose: {
+    label: 'Mesh Compose',
+    href: '/v2/compose',
+    description: 'Compose loaders and hand-written SDL into subgraph / supergraph output.',
+  },
+  'reading-sdl': {
+    label: 'Reading generated SDL',
+    href: '/v2/guides/reading-generated-sdl',
+    description: 'How to recognize transports, Connect, keys, and selection on emitted SDL.',
+  },
+} as const;
+
+export type ApiTermName = keyof typeof API_TERMS;
+
+/** Product concepts → `/v2/concepts/*` (hover description, click for page). */
+const CONCEPTS = {
+  mesh: {
+    label: 'Mesh',
+    href: '/v2/concepts/mesh',
+    description: 'Federation framework: sources or SDL → subgraphs, Compose, transports.',
+  },
+  connectors: {
+    label: 'Connectors',
+    href: '/v2/concepts/connectors',
+    description: 'HTTP @connect / @source mapping style Mesh shares with Apollo.',
+  },
+  federation: {
+    label: 'Federation',
+    href: '/v2/concepts/federation',
+    description: 'Subgraphs + @key entities composed into a supergraph.',
+  },
+  stitching: {
+    label: 'Stitching',
+    href: '/v2/concepts/stitching',
+    description: 'Older schema merge / type-merging model -- not the v2 default story.',
+  },
+  gateway: {
+    label: 'Gateway',
+    href: '/v2/concepts/gateway',
+    description: 'Runtime that executes the supergraph (Hive Gateway · Apollo Router).',
+  },
+  composition: {
+    label: 'Composition',
+    href: '/v2/concepts/composition',
+    description: 'Combining subgraph SDL into a supergraph (Mesh Compose, Hive, Rover, …).',
+  },
+  'schema-registry': {
+    label: 'Schema registry',
+    href: '/v2/concepts/schema-registry',
+    description: 'Stores and distributes subgraph / supergraph SDL.',
+  },
+} as const;
+
+export type ConceptName = keyof typeof CONCEPTS;
+
+type RefProps = {
+  children?: ReactNode;
+  /** Override visible label */
+  label?: string;
+  className?: string;
+};
+
+function RefLink({
+  href,
+  description,
+  children,
+  className,
+  code = false,
+}: {
+  href: string;
+  description: string;
+  children: ReactNode;
+  className?: string;
+  code?: boolean;
+}) {
+  const body = code ? (
+    <code className="rounded bg-transparent p-0 font-[inherit] text-[0.95em] text-inherit before:content-none after:content-none">
+      {children}
+    </code>
+  ) : (
+    children
+  );
+
+  return (
+    <a
+      href={href}
+      title={description}
+      className={[
+        'group/ref relative inline rounded-sm font-medium text-sky-700 underline decoration-sky-700/30 underline-offset-2 transition-colors hover:decoration-sky-700 dark:text-sky-300 dark:decoration-sky-300/40 dark:hover:decoration-sky-300',
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {body}
+      <span
+        role="tooltip"
+        className="pointer-events-none absolute bottom-[calc(100%+0.35rem)] left-1/2 z-20 hidden w-max max-w-[16rem] -translate-x-1/2 rounded-md border border-neutral-200 bg-white px-2.5 py-1.5 text-left text-xs font-normal normal-case tracking-normal text-neutral-700 shadow-md group-hover/ref:block dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-200"
+      >
+        {description}
+      </span>
+    </a>
+  );
+}
+
+/** Link a Mesh / Connectors / Federation directive to the reference page. */
+export function DirectiveRef({
+  name,
+  children,
+  label,
+  className,
+}: RefProps & { name: DirectiveName }) {
+  const entry = DIRECTIVES[name];
+  return (
+    <RefLink
+      href={`/v2/reference/directives#${entry.anchor}`}
+      description={entry.description}
+      className={className}
+      code
+    >
+      {children ?? label ?? entry.label}
+    </RefLink>
+  );
+}
+
+/** Link a Mesh v2 API / product term to its docs page. */
+export function ApiRef({ name, children, label, className }: RefProps & { name: ApiTermName }) {
+  const entry = API_TERMS[name];
+  return (
+    <RefLink href={entry.href} description={entry.description} className={className}>
+      {children ?? label ?? entry.label}
+    </RefLink>
+  );
+}
+
+/** Link a Mesh v2 concept term to `/v2/concepts/…`. */
+export function ConceptRef({ name, children, label, className }: RefProps & { name: ConceptName }) {
+  const entry = CONCEPTS[name];
+  return (
+    <RefLink href={entry.href} description={entry.description} className={className}>
+      {children ?? label ?? entry.label}
+    </RefLink>
+  );
+}

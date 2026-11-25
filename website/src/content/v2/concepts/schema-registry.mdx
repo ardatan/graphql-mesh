@@ -1,0 +1,46 @@
+---
+description: What a schema registry is -- store and distribute subgraph / supergraph SDL
+---
+
+import { Cards } from '@theguild/components'
+import { ApiRef } from '../../../components/v2-directive-ref'
+
+# Schema registry
+
+A **schema registry** stores **subgraph** and/or **supergraph** GraphQL SDL, versions it, and lets
+gateways (or CI) pull the schema they should run. Examples: Hive schema registry, Apollo GraphOS,
+and equivalents. Mesh publishes **Federation-compatible subgraph SDL** -- generated or hand-written
+-- with the same Compose → publish UX.
+
+## Where it lives
+
+```mermaid
+flowchart LR
+  A[Compose] --> B[Schema registry]
+  B --> C[Gateway pull]
+  A --> D[Gateway file]
+```
+
+| Piece      | Role                                                      |
+| ---------- | --------------------------------------------------------- |
+| Publish    | Push subgraph SDL after Compose                           |
+| Distribute | Gateway fetches supergraph / subgraph set                 |
+| Optional   | Gateways can also take a Compose output **file** directly |
+
+A registry is **not** a gateway, **not** a transport, and **not** Mesh Compose -- it sits **beside**
+composition in the stack ([Architecture](/v2/architecture)).
+
+## Short example
+
+1. Compose subgraphs (loader + hand SDL).
+2. Publish each subgraph SDL to the registry (same CLI UX for both).
+3. Point <ApiRef name="hive-gateway" /> (or Router) at the registry supergraph -- or at a local
+   Compose file for local dual-run.
+
+Details expand on [Compose](/v2/compose) (registry publish section).
+
+<Cards>
+  <Cards.Card arrow title="Compose" href="/v2/compose" />
+  <Cards.Card arrow title="Gateway" href="/v2/concepts/gateway" />
+  <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
+</Cards>

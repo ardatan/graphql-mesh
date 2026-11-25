@@ -3,6 +3,7 @@ description: How we built the FHIR JSON Schema Mesh example -- generate, join SD
 ---
 
 import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
 
 # FHIR (JSON Schema) -- supporting example
 
@@ -13,7 +14,8 @@ import { Callout, Cards } from '@theguild/components'
 
 How we built the Mesh FHIR e2e (`e2e/json-schema-fhir` on `master`): pin HL7 R4 JSON Schema,
 generate Patient and Observation subgraphs, hand-write a join-only Resource subgraph, compose once,
-serve the same SDL on **Hive Gateway** (JS/TS) and **Apollo Router**.
+serve the same SDL on **Hive Gateway** (JS/TS) and **Apollo Router** (<ConceptRef name="gateway" />
+peers).
 
 ```mermaid
 flowchart LR
@@ -32,7 +34,7 @@ flowchart LR
 | `referenceResource` | Hand-written `.graphql`              | Join-only: `Resource`, opt-in types, `Reference.resource` |
 
 Clients fetch a Patient, fetch an Observation, and follow `Observation.subject.resource` into a
-Patient entity -- no Mesh `@resolveTo`.
+Patient entity -- no Mesh <DirectiveRef name="resolveTo" />.
 
 ---
 
@@ -43,8 +45,8 @@ Patient entity -- no Mesh `@resolveTo`.
 - Two root operations we care about: Patient by id, Observation by id, plus FHIR `Reference`
   (`Type/id` strings) that should hydrate into entities.
 
-Nothing yet: Mesh subgraphs, Federation keys, or a join that turns `Patient/nhanes-112200` into a
-Patient entity.
+Nothing yet: Mesh subgraphs, <ConceptRef name="federation" /> keys, or a join that turns
+`Patient/nhanes-112200` into a Patient entity.
 
 ---
 
