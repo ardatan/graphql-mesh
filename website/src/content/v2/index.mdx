@@ -22,19 +22,13 @@ composed supergraph). Authors work in GraphQL SDL with Mesh / Connectors-style d
   composer.
 
 ```mermaid
-flowchart TB
-  S[Sources]
-  L[Optional loader<br/>or authored SDL]
-  C[Mesh Compose<br/>subgraph or supergraph]
-  R[Schema registry<br/>optional]
-  G[Hive Gateway<br/>and/or Apollo Router]
-  T[Protocol transports]
-
-  S --> L --> C
-  C --> R
-  C --> G
+flowchart LR
+  S[Sources] --> L[Loader or authored SDL]
+  L --> C[Mesh Compose]
+  C --> R[Registry optional]
+  C --> G[Hive Gateway / Apollo Router]
   R -.-> G
-  G --> T
+  G --> T[Transports]
 ```
 
 ## Choose your path
