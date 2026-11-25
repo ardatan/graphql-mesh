@@ -209,7 +209,7 @@ schema directive (not rewritten to `@join__directive` the way `@connect` / `@sou
 **Import**
 
 ```graphql
-extend schema @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+extend schema @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 ```
 
 Shared Mesh core also exports `@merge`, `@hoist`, `@resolveTo`, and pubsub helpers under the same
@@ -263,7 +263,7 @@ subgraph still uses `@merge`).
 **Import**
 
 ```graphql
-extend schema @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@merge"])
+extend schema @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@merge"])
 ```
 
 | Arg        | Meaning                                                    |
@@ -306,7 +306,7 @@ type) field, optionally with batched args. Still valid Mesh core; for new joins 
 **Import**
 
 ```graphql
-extend schema @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@resolveTo"])
+extend schema @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@resolveTo"])
 ```
 
 | Arg                    | Meaning                                                            |
@@ -398,7 +398,7 @@ Hive Gateway product docs:
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
   @link(
-    url: "https://specs.graphql-mesh.com/core/v0.1"
+    url: "https://specs.graphql-mesh.dev/core/v0.1"
     import: ["@pubsubOperation", "@pubsubPublish"]
   )
   @composeDirective(name: "@pubsubOperation")
@@ -435,7 +435,7 @@ hydrates missing fields from the best subgraph for the event payload:
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
   @link(
-    url: "https://specs.graphql-mesh.com/core/v0.1"
+    url: "https://specs.graphql-mesh.dev/core/v0.1"
     import: ["@pubsubOperation", "@pubsubPublish"]
   )
   @composeDirective(name: "@pubsubOperation")
@@ -476,7 +476,7 @@ Gateway binds HTTP paths to those topics:
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@pubsubOperation"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@pubsubOperation"])
   @composeDirective(name: "@pubsubOperation")
 
 directive @pubsubOperation(
@@ -534,8 +534,8 @@ discriminator. Protocol: <ProtocolRef name="sql" />. Examples: Chinook / Music S
 
 ```graphql
 extend schema
-  @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"])
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/sql/v0.1", import: ["@sql"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 ```
 
 | `kind`                                  | Role          |
@@ -698,7 +698,7 @@ Op-specific directives. Hive Gateway only. Protocol: <ProtocolRef name="mongo" /
 ```graphql
 extend schema
   @link(
-    url: "https://specs.graphql-mesh.com/mongo/v0.1"
+    url: "https://specs.graphql-mesh.dev/mongo/v0.1"
     import: [
       "@mongo__findOne"
       "@mongo__find"
@@ -709,7 +709,7 @@ extend schema
       "@mongo__deleteOne"
     ]
   )
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 ```
 
 Import the ops you use (loaders stamp the full set, including pagination / aggregate / Many
@@ -819,8 +819,8 @@ Examples: hand SDL unary RPCs; loader emit with `stream: true` for server stream
 
 ```graphql
 extend schema
-  @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 ```
 
 | Arg         | Meaning                                         |
@@ -903,8 +903,8 @@ Connect-compatible). Do **not** brand binary Thrift as Connectors. Protocol:
 
 ```graphql
 extend schema
-  @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"])
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/thrift/v0.1", import: ["@thrift__rpc"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 ```
 
 | Arg           | Meaning                               |
@@ -978,10 +978,10 @@ Upstream: [Database mapping](https://neo4j.com/docs/graphql/current/directives/d
 ```graphql
 extend schema
   @link(
-    url: "https://specs.graphql-mesh.com/neo4j/v0.1"
+    url: "https://specs.graphql-mesh.dev/neo4j/v0.1"
     import: ["@node", "@relationship", "@relationshipProperties"]
   )
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 
 schema @transport(subgraph: "Movies", kind: "neo4j", location: "neo4j://localhost:7687") {
   query: Query
@@ -1045,7 +1045,7 @@ keep a matching `directive` definition (loaders stamp both):
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
   @composeDirective(name: "@transport")
 
 # Required: Federation looks up this definition for @composeDirective(name: "@transport")
@@ -1098,7 +1098,7 @@ Not Mesh `core` -- use the **auth** family URL (same pattern as `sql` / `rate-li
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
-  @link(url: "https://specs.graphql-mesh.com/auth/v0.1", import: ["@skipAuth"])
+  @link(url: "https://specs.graphql-mesh.dev/auth/v0.1", import: ["@skipAuth"])
   @composeDirective(name: "@skipAuth")
 
 directive @skipAuth on FIELD_DEFINITION | OBJECT | INTERFACE
@@ -1131,7 +1131,7 @@ Not Mesh `core` -- import from the **rate-limit** Mesh spec:
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
-  @link(url: "https://specs.graphql-mesh.com/rate-limit/v0.1", import: ["@rateLimit"])
+  @link(url: "https://specs.graphql-mesh.dev/rate-limit/v0.1", import: ["@rateLimit"])
   @composeDirective(name: "@rateLimit")
 
 directive @rateLimit(
@@ -1176,18 +1176,22 @@ extend schema @link(url: "https://specs.apollo.dev/link/v1.0")
 | ----------------- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
 | HTTP/REST Connect | `https://specs.apollo.dev/connect/v0.4`          | `@connect`, `@source`                                                           |
 | Federation        | `https://specs.apollo.dev/federation/v2.6`       | `@key`, `@composeDirective`, ...                                                |
-| Mesh core         | `https://specs.graphql-mesh.com/core/v0.1`       | `@transport`, `@merge`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, ... |
-| Mesh auth         | `https://specs.graphql-mesh.com/auth/v0.1`       | `@skipAuth` (not Federation `@authenticated`)                                   |
-| Mesh rate-limit   | `https://specs.graphql-mesh.com/rate-limit/v0.1` | `@rateLimit`                                                                    |
-| Mesh SQL          | `https://specs.graphql-mesh.com/sql/v0.1`        | `@sql`                                                                          |
-| Mesh Mongo        | `https://specs.graphql-mesh.com/mongo/v0.1`      | `@mongo__findOne`, ...                                                          |
-| Mesh protobuf     | `https://specs.graphql-mesh.com/protobuf/v0.1`   | `@protobuf__rpc`                                                                |
-| Mesh Thrift       | `https://specs.graphql-mesh.com/thrift/v0.1`     | `@thrift__rpc`                                                                  |
-| Mesh Neo4j        | `https://specs.graphql-mesh.com/neo4j/v0.1`      | `@node`, `@relationship`, ...                                                   |
+| Mesh core         | `https://specs.graphql-mesh.dev/core/v0.1`       | `@transport`, `@merge`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, ... |
+| Mesh auth         | `https://specs.graphql-mesh.dev/auth/v0.1`       | `@skipAuth` (not Federation `@authenticated`)                                   |
+| Mesh rate-limit   | `https://specs.graphql-mesh.dev/rate-limit/v0.1` | `@rateLimit`                                                                    |
+| Mesh SQL          | `https://specs.graphql-mesh.dev/sql/v0.1`        | `@sql`                                                                          |
+| Mesh Mongo        | `https://specs.graphql-mesh.dev/mongo/v0.1`      | `@mongo__findOne`, ...                                                          |
+| Mesh protobuf     | `https://specs.graphql-mesh.dev/protobuf/v0.1`   | `@protobuf__rpc`                                                                |
+| Mesh Thrift       | `https://specs.graphql-mesh.dev/thrift/v0.1`     | `@thrift__rpc`                                                                  |
+| Mesh Neo4j        | `https://specs.graphql-mesh.dev/neo4j/v0.1`      | `@node`, `@relationship`, ...                                                   |
 
-Do **not** import `@skipAuth` or `@rateLimit` from Mesh `core` -- those are separate families. Older
-schemas / Hive snippets may still use `https://the-guild.dev/graphql/mesh/spec/v1.0` as a legacy
-catch-all; prefer the modern `specs.graphql-mesh.com/<family>/v0.1` URLs above.
+Do **not** import `@skipAuth` or `@rateLimit` from Mesh `core` -- those are separate **family**
+specs (`auth`, `rate-limit`), not core.
+
+**Spec host:** Document Mesh `@link` URLs only as **`https://specs.graphql-mesh.dev/<family>/v0.1`**
+(core, sql, auth, rate-limit, …). Do **not** use `specs.graphql-mesh.com` -- that host was never
+published. Older Hive / Mesh v1 snippets may show `https://the-guild.dev/graphql/mesh/spec/v1.0` as
+a legacy catch-all; do not use that for new SDL.
 
 `@link` names the import; Federation still requires a matching `directive @...` definition on the
 subgraph when you `@composeDirective` that name. Loaders stamp both. Hand SDL must include the

@@ -15,7 +15,7 @@ Stock Apollo Router does **not** execute `@protobuf__rpc`.
 | --------- | ------------------------------------------------------------------------------- |
 | Directive | `@protobuf__rpc` (`service`, `method`, `args`, `selection`, `stream`, `entity`) |
 | Transport | `@graphql-mesh/transport-protobuf`                                              |
-| Spec      | `https://specs.graphql-mesh.com/protobuf/v0.1`                                  |
+| Spec      | `https://specs.graphql-mesh.dev/protobuf/v0.1`                                  |
 | Dual-run  | Hive Gateway only                                                               |
 | Examples  | Hand SDL movies subgraph; Music Store recommendations; streaming RPCs           |
 
@@ -58,8 +58,8 @@ Compact field-number mapping:
 
 ```graphql
 extend schema
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
-  @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
 
 schema @transport(subgraph: "movies", kind: "protobuf", location: "http://localhost:50051") {
   query: Query
@@ -168,8 +168,8 @@ ConnectRPC uses the service root and the default `application/proto` content typ
 
 ```graphql
 extend schema
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
-  @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
 
 # ConnectRPC: root location; default Content-Type application/proto
 schema @transport(subgraph: "movies", kind: "protobuf", location: "https://movies.example.com") {
@@ -221,8 +221,8 @@ enum Genre {
 
 ```graphql
 extend schema
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
-  @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
 
 # Twirp: /twirp base path + application/protobuf (not the ConnectRPC default)
 schema

@@ -40,7 +40,7 @@ it:
 extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
-  @link(url: "https://specs.graphql-mesh.com/rate-limit/v0.1", import: ["@rateLimit"])
+  @link(url: "https://specs.graphql-mesh.dev/rate-limit/v0.1", import: ["@rateLimit"])
   @composeDirective(name: "@rateLimit")
 
 directive @rateLimit(
@@ -63,10 +63,11 @@ type Mutation {
 }
 ```
 
-`@rateLimit` is **not** Mesh `core`. Import it from the **rate-limit** Mesh spec
-(`https://specs.graphql-mesh.com/rate-limit/v0.1`), not from `core/v0.1`. Older Hive / Mesh v1
-snippets may still show `https://the-guild.dev/graphql/mesh/spec/v1.0` -- prefer the modern family
-URL in new subgraphs.
+`@rateLimit` is **not** Mesh `core`. Import it from the **rate-limit** family
+(`https://specs.graphql-mesh.dev/rate-limit/v0.1`), not from `core/v0.1`. Always invent Mesh `@link`
+URLs on **`specs.graphql-mesh.dev`** (never `specs.graphql-mesh.com`). Older Hive / Mesh v1 snippets
+may still show `https://the-guild.dev/graphql/mesh/spec/v1.0` -- do not use that catch-all for new
+subgraphs.
 
 | Arg                | Role                                           |
 | ------------------ | ---------------------------------------------- |

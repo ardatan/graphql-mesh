@@ -44,13 +44,14 @@ must also include a local `directive @…` **definition** for each Mesh directiv
 **not** invent missing defs for you (loaders stamp both the `@link` / `@composeDirective` apps and
 the matching definitions on generated subgraphs).
 
-| Family            | Typical `@link` import                                                          |
-| ----------------- | ------------------------------------------------------------------------------- |
-| Connect HTTP      | `https://specs.apollo.dev/connect/v0.4` -> `@connect`, `@source`                |
-| Federation        | `https://specs.apollo.dev/federation/v2.6` -> `@key`, ...                       |
-| Mesh core         | `https://specs.graphql-mesh.com/core/v0.1` -> `@transport`, ...                 |
-| Mesh protobuf     | `https://specs.graphql-mesh.com/protobuf/v0.1` -> `@protobuf__rpc`              |
-| Mesh SQL / others | `https://specs.graphql-mesh.com/sql/v0.1`, ... (see [Protocols](/v2/protocols)) |
+| Family                 | Typical `@link` import                                                             |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| Connect HTTP           | `https://specs.apollo.dev/connect/v0.4` -> `@connect`, `@source`                   |
+| Federation             | `https://specs.apollo.dev/federation/v2.6` -> `@key`, ...                          |
+| Mesh core              | `https://specs.graphql-mesh.dev/core/v0.1` -> `@transport`, ...                    |
+| Mesh protobuf          | `https://specs.graphql-mesh.dev/protobuf/v0.1` -> `@protobuf__rpc`                 |
+| Mesh SQL / others      | `https://specs.graphql-mesh.dev/sql/v0.1`, ... (see [Protocols](/v2/protocols))    |
+| Mesh auth / rate-limit | `https://specs.graphql-mesh.dev/auth/v0.1`, `.../rate-limit/v0.1` (not under core) |
 
 Mesh directive TOC + known args: [Directives reference](/v2/directives) (draft). How `selection` /
 `args` binders work: [Selection mapping](/v2/guides/selection-mapping). Deeper Connect arg tables:
@@ -68,8 +69,8 @@ Sketch -- Music Store Example gRPC / Protobuf slice (field-level `@protobuf__rpc
 extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
-  @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
   @composeDirective(name: "@transport")
   @composeDirective(name: "@protobuf__rpc")
 
