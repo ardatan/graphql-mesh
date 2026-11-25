@@ -1,4 +1,6 @@
 import CacheControlParser from 'cache-control-parser';
+import type { DocumentNode, GraphQLSchema } from 'graphql';
+import { TypeInfo, visit, visitWithTypeInfo } from 'graphql';
 import { defaultBuildResponseCacheKey } from '@envelop/response-cache';
 import type { GatewayContext, GatewayPlugin } from '@graphql-hive/gateway-runtime';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -8,6 +10,87 @@ import { getHeadersObj } from '@graphql-mesh/utils';
 import type { UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
 import { handleMaybePromise, isPromise } from '@whatwg-node/promise-helpers';
+
+/**
+ * Mesh schema selectors (globs such as `Query.*`) are not Spec Schema Coordinates.
+ * Spec forms (`Query.users`, `Stock`) are exact; selectors stay supported for TTL maps.
+ */
+function isMeshSchemaSelector(coordinate: string): boolean {
+  return coordinate.includes('*');
+}
+
+function matchSelectorSegment(pattern: string, value: string): boolean {
+  if (pattern === '*') {
+    return true;
+  }
+  if (!pattern.includes('*')) {
+    return pattern === value;
+  }
+  const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+  return new RegExp(`^${escaped}$`).test(value);
+}
+
+/** Match a Mesh selector (e.g. `Query.*`) against a Spec field coordinate (`Query.users`). */
+export function matchMeshSchemaSelector(selector: string, schemaCoordinate: string): boolean {
+  const selectorParts = selector.split('.');
+  const coordinateParts = schemaCoordinate.split('.');
+  if (selectorParts.length !== coordinateParts.length) {
+    return false;
+  }
+  for (let i = 0; i < selectorParts.length; i++) {
+    if (!matchSelectorSegment(selectorParts[i], coordinateParts[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function partitionTtlCoordinates(ttlPerSchemaCoordinate: Record<string, number>): {
+  exact: Record<string, number>;
+  selectors: Array<{ coordinate: string; ttl: number }>;
+} {
+  const exact: Record<string, number> = {};
+  const selectors: Array<{ coordinate: string; ttl: number }> = [];
+  for (const [coordinate, ttl] of Object.entries(ttlPerSchemaCoordinate)) {
+    if (isMeshSchemaSelector(coordinate)) {
+      selectors.push({ coordinate, ttl });
+    } else {
+      exact[coordinate] = ttl;
+    }
+  }
+  return { exact, selectors };
+}
+
+function applyMeshSelectorTtls(params: {
+  schema: GraphQLSchema;
+  document: DocumentNode;
+  selectors: Array<{ coordinate: string; ttl: number }>;
+  context: GatewayContext;
+  checkTtl: (context: GatewayContext, ttl: number) => void;
+}) {
+  const { schema, document, selectors, context, checkTtl } = params;
+  if (selectors.length === 0) {
+    return;
+  }
+  const typeInfo = new TypeInfo(schema);
+  visit(
+    document,
+    visitWithTypeInfo(typeInfo, {
+      Field(node) {
+        const parentType = typeInfo.getParentType();
+        if (!parentType) {
+          return;
+        }
+        const schemaCoordinate = `${parentType.name}.${node.name.value}`;
+        for (const { coordinate, ttl } of selectors) {
+          if (matchMeshSchemaSelector(coordinate, schemaCoordinate)) {
+            checkTtl(context, ttl);
+          }
+        }
+      },
+    }),
+  );
+}
 
 /**
  * Yoga calls session/enabled as `(request, context)`.
@@ -195,6 +278,10 @@ export type ResponseCacheConfig = Omit<UseResponseCacheParameter, 'cache'> & {
 
 /**
  * Response cache plugin for GraphQL Mesh / Gateway.
+ *
+ * `ttlPerCoordinate` / `ttlPerSchemaCoordinate` accept Spec Schema Coordinates (`Type`,
+ * `Type.field`) and Mesh schema selectors with `*` (e.g. `Query.*`). Exact Spec keys are passed
+ * through to the Yoga/Envelop cache; selectors are applied by Mesh against the operation selection.
  */
 export default function useMeshResponseCache(
   options: ResponseCacheConfig | (YamlConfig.ResponseCacheConfig & { cache?: KeyValueCache }),
@@ -211,9 +298,21 @@ export default function useMeshResponseCache(
     }
   }
 
+  const { exact: exactTtlPerSchemaCoordinate, selectors: meshSchemaSelectors } =
+    partitionTtlCoordinates(ttlPerSchemaCoordinate);
+
   // Stored TTL by the context
   // To be compared with the calculated one later in `onTtl`
   const ttlByContext = new WeakMap<any, number>();
+
+  // Checks the TTL stored in the context
+  // Takes the lowest value
+  function checkTtl(context: GatewayContext, ttl: number) {
+    const ttlForThisContext = ttlByContext.get(context);
+    if (ttlForThisContext == null || ttl < ttlForThisContext) {
+      ttlByContext.set(context, ttl);
+    }
+  }
 
   // @ts-expect-error - GatewayPlugin types
   const plugin: GatewayPlugin = useResponseCache({
@@ -234,7 +333,8 @@ export default function useMeshResponseCache(
         : options.shouldCacheResult,
     cache: getCacheForResponseCache(options.cache),
     ttlPerType,
-    ttlPerSchemaCoordinate,
+    // Spec Schema Coordinates only; Mesh selectors (Query.*) are handled below
+    ttlPerSchemaCoordinate: exactTtlPerSchemaCoordinate,
     // Checks the TTL stored in the context
     // Compares it to the calculated one
     // Then it takes the lowest value
@@ -246,14 +346,21 @@ export default function useMeshResponseCache(
       return ttl;
     },
   });
-  // Checks the TTL stored in the context
-  // Takes the lowest value
-  function checkTtl(context: GatewayContext, ttl: number) {
-    const ttlForThisContext = ttlByContext.get(context);
-    if (ttlForThisContext == null || ttl < ttlForThisContext) {
-      ttlByContext.set(context, ttl);
+
+  const envelopOnExecute = plugin.onExecute;
+  plugin.onExecute = function onExecuteWithMeshSelectors(payload) {
+    if (meshSchemaSelectors.length > 0) {
+      applyMeshSelectorTtls({
+        schema: payload.args.schema,
+        document: payload.args.document,
+        selectors: meshSchemaSelectors,
+        context: payload.args.contextValue as GatewayContext,
+        checkTtl,
+      });
     }
-  }
+    return envelopOnExecute?.call(this, payload);
+  };
+
   plugin.onFetch = function ({ executionRequest, context }) {
     // Only if it is a subgraph request
     if (executionRequest && context) {

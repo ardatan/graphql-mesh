@@ -9,8 +9,8 @@ type ResponseCacheConfig @md {
   ttl: Float
   """
   Overwrite the TTL for query operations whose selection contains a Spec Schema Coordinate
-  (`Type` or `Type.field`, e.g. `Query.users` or `Stock`). Exact match only; wildcards such as
-  `Query.*` are not Schema Coordinates and do not apply.
+  (`Type` or `Type.field`, e.g. `Query.users` or `Stock`) or a Mesh schema selector with `*`
+  (e.g. `Query.*`). Prefer Spec forms for one element; selectors stay supported for wildcards.
   See https://spec.graphql.org/September2025/#sec-Schema-Coordinates and
   https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md
   """

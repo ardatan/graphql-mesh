@@ -43,14 +43,14 @@ plugins:
 ```
 
 The caching behavior can be fully customized. A TTL can be provided globally or more granularly per
-[Schema Coordinate](/docs/guides/schema-coordinates) (`Type` or `Type.field`). Prefer Spec forms;
-see the
+[Schema Coordinate](/docs/guides/schema-coordinates) or Mesh **schema selector**. Prefer Spec forms
+when naming one element; keep selectors such as `Query.*` when you need wildcards. See the
 [Schema Coordinates RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md).
 
 <Callout type="info">
-  `ttlPerCoordinate` keys are matched exactly. Wildcards such as `Query.*` are Mesh selectors, not
-  Spec Schema Coordinates, and do not apply a TTL. Use a concrete field (`Query.users`), a type name
-  (`Stock`), or the plugin-level `ttl` option.
+  Spec keys (`Stock`, `Query.rocketCoordinates`) are exact Schema Coordinates. Mesh selectors such as
+  `Query.*` are not Spec coordinates; Mesh still applies them by matching selected fields. More
+  specific Spec keys win when both match (lowest TTL).
 </Callout>
 
 ```yaml filename=".meshrc.yaml"
@@ -66,6 +66,9 @@ plugins:
         # Spec field coordinate: operations that select Query.rocketCoordinates
         - coordinate: Query.rocketCoordinates
           ttl: 100
+        # Mesh schema selector: all selected Query fields (not a Spec coordinate)
+        - coordinate: Query.*
+          ttl: 60_000
       ignoredTypes:
         # never cache responses that include a RefreshToken object type
         - RefreshToken

@@ -18,9 +18,10 @@ plugins:
   - depthLimit:
       maxDepth: 5
   - responseCache:
-      # Plugin-level TTL (ms). Prefer Spec Schema Coordinates for per-field overrides
-      # (Type or Type.field). Wildcards like Query.* are not Spec coordinates and do not match.
-      ttl: 3600
+      ttlPerCoordinate:
+        # Mesh schema selector (not a Spec Schema Coordinate); expands to Query fields
+        - coordinate: Query.*
+          ttl: 3600
 
 cache:
   cfwKv:

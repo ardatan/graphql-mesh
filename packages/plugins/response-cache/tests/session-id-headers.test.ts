@@ -3,7 +3,7 @@ import { createSchema, createYoga } from 'graphql-yoga';
 import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway-runtime';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import type { KeyValueCache } from '@graphql-mesh/types';
-import useMeshResponseCache from '../src/index';
+import useMeshResponseCache, { matchMeshSchemaSelector } from '../src/index';
 
 function createMemoryCache(): KeyValueCache {
   const map = new Map<string, unknown>();
@@ -307,6 +307,85 @@ describe('response-cache sessionId headers', () => {
       extensions: {
         responseCache: {
           hit: true,
+        },
+      },
+    });
+  });
+});
+
+describe('matchMeshSchemaSelector', () => {
+  it('matches Query.* against Spec field coordinates', () => {
+    expect(matchMeshSchemaSelector('Query.*', 'Query.greeting')).toBe(true);
+    expect(matchMeshSchemaSelector('Query.*', 'Query.withTTL')).toBe(true);
+    expect(matchMeshSchemaSelector('Query.*', 'Mutation.greeting')).toBe(false);
+    expect(matchMeshSchemaSelector('Query.greeting', 'Query.greeting')).toBe(true);
+    expect(matchMeshSchemaSelector('Query.greeting', 'Query.other')).toBe(false);
+  });
+});
+
+describe('response-cache Mesh schema selectors', () => {
+  it('applies Query.* selector TTL when the operation selects a Query field', async () => {
+    const upstreamSchema = createSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          greeting: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          greeting: () => 'hello',
+        },
+      },
+    });
+    await using upstreamServer = createYoga({
+      schema: upstreamSchema,
+    });
+    const cache = createMemoryCache();
+    await using gw = createGatewayRuntime({
+      supergraph: () =>
+        getUnifiedGraphGracefully([
+          {
+            name: 'upstream',
+            schema: upstreamSchema,
+            url: 'http://localhost:4001/graphql',
+          },
+        ]),
+      plugins: ctx => [
+        useCustomFetch(function (url, options) {
+          if (String(url) === 'http://localhost:4001/graphql') {
+            return upstreamServer.fetch(url, options);
+          }
+          return Response.error();
+        }),
+        useMeshResponseCache({
+          ...ctx,
+          cache,
+          includeExtensionMetadata: true,
+          sessionId: 'selector',
+          ttlPerCoordinate: [{ coordinate: 'Query.*', ttl: 12_345 }],
+        }),
+      ],
+    });
+
+    const res = await gw.fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          query {
+            greeting
+          }
+        `,
+      }),
+    });
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toMatchObject({
+      data: { greeting: 'hello' },
+      extensions: {
+        responseCache: {
+          didCache: true,
+          hit: false,
+          ttl: 12_345,
         },
       },
     });

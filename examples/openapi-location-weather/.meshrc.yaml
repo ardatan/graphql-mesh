@@ -32,9 +32,9 @@ sources:
 plugins:
   - responseCache:
       ttlPerCoordinate:
-        # Spec Schema Coordinates (exact Type or Type.field). Wildcards like Query.* do not match.
+        # Mesh schema selector (Query.*); Spec Type.field entries below stay exact
         # Geo data doesn't change frequently, so we can cache it forever
-        - coordinate: Query.findCitiesUsingGET
+        - coordinate: Query.*
           ttl: 0
         # Forecast data might change, so we can cache it for 1 hour only
         - coordinate: PopulatedPlaceSummary.dailyForecast

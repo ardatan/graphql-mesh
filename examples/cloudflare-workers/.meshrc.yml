@@ -14,8 +14,8 @@ sources:
 plugins:
   - responseCache:
       ttlPerCoordinate:
-        # Spec field coordinate (exact match; Query.* is not a Schema Coordinate)
-        - coordinate: Query.breweries
+        # Mesh schema selector (not Spec); use Spec `Query.breweries` when naming one field
+        - coordinate: Query.*
           ttl: 3600
 
 cache:

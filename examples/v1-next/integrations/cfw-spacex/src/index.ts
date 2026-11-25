@@ -32,9 +32,13 @@ self.addEventListener(
       }),
       useMeshResponseCache({
         ...ctx,
-        // Plugin-level TTL (ms). Prefer Spec Schema Coordinates (Type or Type.field) for
-        // per-field overrides. Wildcards like Query.* are not Spec coordinates and do not match.
-        ttl: 360000,
+        ttlPerCoordinate: [
+          {
+            // Mesh schema selector (not a Spec Schema Coordinate); expands to Query fields
+            coordinate: 'Query.*',
+            ttl: 360000,
+          },
+        ],
       }),
     ],
   }),
