@@ -51,7 +51,7 @@ export const composeConfig = defineConfig({
       }),
       transforms: [
         createFederationTransform({
-          // Schema Coordinates
+          // Schema Coordinates (Type or Type.field)
           Product: {
             // Directive name
             key: {
@@ -73,6 +73,14 @@ export const composeConfig = defineConfig({
   ]
 })
 ```
+
+<Callout type="info">
+  Config keys use Spec [Schema Coordinates](/docs/guides/schema-coordinates) for types and fields
+  (`Product`, `Query.productById`). Argument form `Type.field(arg:)` and directive forms `@name` are
+  not keys on this transform today; pass directive options on the type or field entry. See the
+  [Schema Coordinates
+  RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md).
+</Callout>
 
 <Callout type="info">
   [Learn more](https://www.apollographql.com/docs/federation/federated-types/federated-directives/)

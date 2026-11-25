@@ -1,6 +1,7 @@
 import { buildSchema } from 'graphql';
 import { createSchema } from 'graphql-yoga';
 import { createFederationTransform, type SubgraphConfig } from '@graphql-mesh/fusion-composition';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { TransformValidationError } from '../../src/transforms/utils';
 import { composeAndGetExecutor } from './utils';
 
@@ -133,7 +134,7 @@ describe('Federation', () => {
       });
       expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
       expect(() => transform(schema, subgraphConfig)).toThrow(
-        /Missing fieldName in resolveReference config for @key directive on Foo type/,
+        /Missing resolveReference\.fieldName for @key on Foo/,
       );
     });
 
@@ -151,7 +152,7 @@ describe('Federation', () => {
       });
       expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
       expect(() => transform(schema, subgraphConfig)).toThrow(
-        /Field "nonExistentField" not found in root type "Query" for @key directive on Foo type/,
+        /Query\.nonExistentField not found for @key resolveReference on Foo/,
       );
     });
 
@@ -168,7 +169,7 @@ describe('Federation', () => {
         },
       });
       expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
-      expect(() => transform(schema, subgraphConfig)).toThrow(/Did you mean "fooById"/);
+      expect(() => transform(schema, subgraphConfig)).toThrow(/Did you mean "Query\.fooById"/);
     });
 
     it('throws TransformValidationError when operation type is invalid', () => {
@@ -187,8 +188,91 @@ describe('Federation', () => {
       });
       expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
       expect(() => transform(schema, subgraphConfig)).toThrow(
-        /Invalid operation type "invalid" in resolveReference config/,
+        /Invalid operation type "invalid" in resolveReference for @key on Foo/,
       );
+    });
+  });
+
+  describe('Schema Coordinates', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        fooById(id: ID!): Foo
+      }
+      type Foo {
+        id: ID!
+        name: String!
+      }
+    `);
+    const subgraphConfig: SubgraphConfig = { name: 'test', schema };
+
+    it('accepts Spec Type coordinates', () => {
+      const transform = createFederationTransform({
+        Foo: {
+          key: {
+            fields: 'id',
+            resolveReference: {
+              fieldName: 'fooById',
+              keyArg: 'id',
+            },
+          },
+        },
+      });
+      expect(() => transform(schema, subgraphConfig)).not.toThrow();
+    });
+
+    it('accepts Spec Type.field MemberCoordinates', () => {
+      const transform = createFederationTransform({
+        Foo: {
+          key: {
+            fields: 'id',
+            resolveReference: {
+              fieldName: 'fooById',
+              keyArg: 'id',
+            },
+          },
+        },
+        'Foo.name': {
+          shareable: true,
+        },
+        'Query.fooById': {
+          shareable: true,
+        },
+      });
+      const result = transform(schema, subgraphConfig);
+      const foo = result.getType('Foo');
+      expect(foo && 'getFields' in foo).toBe(true);
+      if (foo && 'getFields' in foo) {
+        expect(getDirectiveExtensions(foo.getFields().name)?.shareable?.length).toBeGreaterThan(0);
+      }
+      const query = result.getType('Query');
+      expect(query && 'getFields' in query).toBe(true);
+      if (query && 'getFields' in query) {
+        expect(
+          getDirectiveExtensions(query.getFields().fooById)?.shareable?.length,
+        ).toBeGreaterThan(0);
+      }
+    });
+
+    it('rejects Spec ArgumentCoordinates as federation config keys', () => {
+      const transform = createFederationTransform({
+        'Query.fooById(id:)': {
+          shareable: true,
+        },
+      });
+      expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
+      expect(() => transform(schema, subgraphConfig)).toThrow(
+        /Unsupported schema coordinate "Query\.fooById\(id:\)"/,
+      );
+    });
+
+    it('rejects invalid coordinate strings', () => {
+      const transform = createFederationTransform({
+        'Foo..name': {
+          shareable: true,
+        },
+      });
+      expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
+      expect(() => transform(schema, subgraphConfig)).toThrow(/Invalid schema coordinate/);
     });
   });
 });

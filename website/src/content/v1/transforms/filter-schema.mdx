@@ -15,6 +15,12 @@ types can appear in your calls or which fields can appear in specific types.
 For example, you might want to exclude deprecated queries, mutations, and types from your schema so
 that your integration is not affected when these entities are removed.
 
+When docs or other APIs name a single schema element, prefer Spec
+[Schema Coordinates](/docs/guides/schema-coordinates) (`User`, `Query.countries`). Filter callbacks
+below are programmatic predicates, not coordinate strings. Declarative glob filters (legacy YAML)
+are Mesh **schema selectors**, not Spec coordinates. See the
+[Schema Coordinates RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md).
+
 ## How to use?
 
 In the configuration, you can use regular function to filter the specific types, fields and

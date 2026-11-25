@@ -7,7 +7,9 @@ extend type Transform {
 
 type CacheTransformConfig @md {
   """
-  The type and field to apply cache to, you can use wild cards as well, for example: `Query.*`
+  Target field as a Mesh schema selector (`Type.field`, or a glob such as `Query.*`).
+  Prefer Spec Schema Coordinates (`Query.users`) when naming one field; globs are selectors, not Spec.
+  See https://spec.graphql.org/September2025/#sec-Schema-Coordinates
   """
   field: String!
   """

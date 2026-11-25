@@ -12,6 +12,10 @@ import { Callout } from '@theguild/components'
 
 The `resolversComposition` transform allows adding middleware to your existing resolvers.
 
+`resolver` should prefer a Spec [Schema Coordinate](/docs/guides/schema-coordinates) such as
+`Query.me` ([RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md)). Globs
+such as `Mutation.*` remain supported as Mesh **schema selectors**, not Spec coordinates.
+
 ```sh npm2yarn
 npm i @graphql-mesh/transform-resolvers-composition
 ```

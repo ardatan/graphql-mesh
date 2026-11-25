@@ -878,4 +878,53 @@ type Query {
 `.trim(),
     );
   });
+
+  describe('Schema Coordinates', () => {
+    it('accepts Spec-shaped Type.field filters alongside Mesh selectors', async () => {
+      let schema = buildSchema(/* GraphQL */ `
+        type User {
+          id: ID
+          name: String
+          secret: String
+        }
+
+        type Query {
+          user(id: ID!, name: String): User
+          users: [User]
+        }
+      `);
+      const filterTransform = createFilterTransform({
+        filters: [
+          // Spec-shaped MemberCoordinate: keep only User.id and User.name
+          'User.{id, name}',
+          // Spec-shaped field args: drop name arg on Query.user
+          'Query.user.!name',
+          // Spec-shaped MemberCoordinate: keep Query.user
+          'Query.user',
+          // Mesh selector still supported
+          'Query.!users',
+        ],
+      });
+      schema = await composeAndGetPublicSchema([
+        {
+          name: 'TEST',
+          schema,
+          transforms: [filterTransform],
+        },
+      ]);
+      expectTheSchemaSDLToBe(
+        schema,
+        /* GraphQL */ `
+type User {
+  id: ID
+  name: String
+}
+
+type Query {
+  user(id: ID!): User
+}
+`.trim(),
+      );
+    });
+  });
 });

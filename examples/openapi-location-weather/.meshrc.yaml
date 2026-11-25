@@ -32,10 +32,9 @@ sources:
 plugins:
   - responseCache:
       ttlPerCoordinate:
-        # Geo data doesn't change frequently, so we can cache it forever
-        - coordinate: Query.*
-          ttl: 0
-        # Forcast data might change, so we can cache it for 1 hour only
+        # Forecast data might change, so cache those fields for 1 hour.
+        # Other Query fields keep the default infinite TTL (do not use Query.*: 0;
+        # zero means do not cache and would override these positive TTLs).
         - coordinate: PopulatedPlaceSummary.dailyForecast
           ttl: 3600
         - coordinate: PopulatedPlaceSummary.todayForecast

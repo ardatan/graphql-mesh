@@ -1,0 +1,82 @@
+---
+description:
+  Schema Coordinates name GraphQL schema elements (types, fields, arguments, directives) using the
+  GraphQL specification. Mesh also keeps schema selectors (globs) where APIs need them.
+---
+
+import { Callout } from '@theguild/components'
+
+# Schema Coordinates
+
+**Schema Coordinates** are the GraphQL specification way to name a single schema element. Prefer
+Spec forms when the config targets one type, field, argument, or directive.
+
+Background:
+[Schema Coordinates RFC](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md)
+(merged into the Spec as [PR #794](https://github.com/graphql/graphql-spec/pull/794)),
+[Spec §2.14](https://spec.graphql.org/September2025/#sec-Schema-Coordinates).
+
+Mesh also keeps **schema selectors** (globs such as `Query.*`, filter patterns such as `Type.!User`)
+on APIs that need them. Selectors are not Spec Schema Coordinates; both vocabularies stay in use.
+
+## Spec forms (exact)
+
+A Schema Coordinate is a compact string with **no whitespace**. Each schema element has exactly one
+coordinate.
+
+| Kind                              | Form               | Example                                                           |
+| --------------------------------- | ------------------ | ----------------------------------------------------------------- |
+| Named type                        | `Name`             | `Business`                                                        |
+| Field, input field, or enum value | `Name.Name`        | `Business.name`, `SearchCriteria.filter`, `SearchFilter.OPEN_NOW` |
+| Field argument                    | `Name.Name(Name:)` | `Query.searchBusiness(criteria:)`                                 |
+| Directive                         | `@Name`            | `@deprecated`                                                     |
+| Directive argument                | `@Name(Name:)`     | `@deprecated(reason:)`                                            |
+
+Argument and directive-argument forms use a trailing `:` inside the parentheses. That marks an
+**argument name**, not a value.
+
+```text
+Query.user(id:)          # Spec Schema Coordinate (the id argument)
+Query.todo(id:"42")      # live-query identifier with a value (not Spec)
+```
+
+## Mesh schema selectors (kept)
+
+Use selectors when you need wildcards or include/exclude patterns. They remain supported on filter
+schema, resolvers composition, rate limit style APIs, and response-cache TTL maps.
+
+| Mesh term               | Example                                                       | Use                                                |
+| ----------------------- | ------------------------------------------------------------- | -------------------------------------------------- |
+| Schema selector         | `Query.*`, `Type.!User`, `Mutation.*`, `Query.user.!name`     | Glob / include-exclude transforms and plugins      |
+| Live-query identifier   | `Todo:123`, `Query.todo(id:"{args.id}")`                      | Live Query invalidation (may embed values)         |
+| Connector coordinate    | `ecomm:Query.products@connect[0]`                             | Connect error identity for a directive application |
+| Response / resolve path | `["stores", 0, "author"]` or path labels in sequence diagrams | Location in an operation result, not in the schema |
+
+Wildcards, nested paths like `Query.user.name`, union members like `Meal.Breakfast`, and directive
+**applications** on a field are Spec non-goals for Schema Coordinates. Mesh may still accept
+wildcards as **selectors** on its own APIs.
+
+<Callout type="info">
+  Prefer Spec coordinates when naming one element (`Query.users`, `Stock`). Keep Mesh selectors such
+  as `Query.*` when you intentionally target many fields. Docs and examples should label which
+  vocabulary they use.
+</Callout>
+
+## Where Mesh uses each
+
+- **Response cache** `ttlPerCoordinate`: Spec `Type` / `Type.field`, and Mesh selectors like
+  `Query.*` (Mesh expands selectors against the operation). See
+  [Response Caching](/docs/plugins/response-caching).
+- **Federation transform** config keys: Spec `Type` / `Type.field`. See
+  [Federation Transform](/v1/transforms/federation).
+- **Filter schema**: Mesh selectors (`Type.!User`, `Query.*.id`). See
+  [Filter Schema](/docs/transforms/filter-schema).
+- **Mock** `apply` / exact **resolvers composition** `resolver`: prefer Spec `Type.field`; globs
+  such as `Mutation.*` remain selectors.
+
+## Related Mesh docs
+
+- [Response Caching](/docs/plugins/response-caching)
+- [Live Queries](/docs/plugins/live-queries)
+- [Filter Schema](/docs/transforms/filter-schema)
+- [Federation Transform](/v1/transforms/federation)

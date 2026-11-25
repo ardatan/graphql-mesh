@@ -1,4 +1,6 @@
 import CacheControlParser from 'cache-control-parser';
+import type { DocumentNode, GraphQLSchema } from 'graphql';
+import { getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
 import { defaultBuildResponseCacheKey } from '@envelop/response-cache';
 import type { GatewayContext, GatewayPlugin } from '@graphql-hive/gateway-runtime';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -8,6 +10,95 @@ import { getHeadersObj } from '@graphql-mesh/utils';
 import type { UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
 import { handleMaybePromise, isPromise } from '@whatwg-node/promise-helpers';
+
+/** Glob patterns such as `Query.*` in TTL maps (Mesh schema selectors). */
+function isMeshSchemaSelector(coordinate: string): boolean {
+  return coordinate.includes('*');
+}
+
+function matchSelectorSegment(pattern: string, value: string): boolean {
+  if (pattern === '*') {
+    return true;
+  }
+  if (!pattern.includes('*')) {
+    return pattern === value;
+  }
+  const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+  return new RegExp(`^${escaped}$`).test(value);
+}
+
+/** Match a Mesh selector (e.g. `Query.*`) against a Spec field coordinate (`Query.users`). */
+export function matchMeshSchemaSelector(selector: string, schemaCoordinate: string): boolean {
+  const selectorParts = selector.split('.');
+  const coordinateParts = schemaCoordinate.split('.');
+  if (selectorParts.length !== coordinateParts.length) {
+    return false;
+  }
+  for (let i = 0; i < selectorParts.length; i++) {
+    if (!matchSelectorSegment(selectorParts[i], coordinateParts[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function partitionTtlCoordinates(ttlPerSchemaCoordinate: Record<string, number>): {
+  exact: Record<string, number>;
+  selectors: Array<{ coordinate: string; ttl: number }>;
+} {
+  const exact: Record<string, number> = {};
+  const selectors: Array<{ coordinate: string; ttl: number }> = [];
+  for (const [coordinate, ttl] of Object.entries(ttlPerSchemaCoordinate)) {
+    if (isMeshSchemaSelector(coordinate)) {
+      selectors.push({ coordinate, ttl });
+    } else {
+      exact[coordinate] = ttl;
+    }
+  }
+  return { exact, selectors };
+}
+
+function applyMeshSelectorTtls(params: {
+  schema: GraphQLSchema;
+  document: DocumentNode;
+  operationName?: string | null;
+  selectors: Array<{ coordinate: string; ttl: number }>;
+  context: GatewayContext;
+  checkTtl: (context: GatewayContext, ttl: number) => void;
+}) {
+  const { schema, document, operationName, selectors, context, checkTtl } = params;
+  if (selectors.length === 0) {
+    return;
+  }
+  const operation = getOperationAST(document, operationName ?? undefined);
+  if (!operation) {
+    return;
+  }
+  const typeInfo = new TypeInfo(schema);
+  visit(
+    document,
+    visitWithTypeInfo(typeInfo, {
+      OperationDefinition(node) {
+        // Only the selected operation may contribute selector TTLs.
+        if (node !== operation) {
+          return false;
+        }
+      },
+      Field(node) {
+        const parentType = typeInfo.getParentType();
+        if (!parentType) {
+          return;
+        }
+        const schemaCoordinate = `${parentType.name}.${node.name.value}`;
+        for (const { coordinate, ttl } of selectors) {
+          if (matchMeshSchemaSelector(coordinate, schemaCoordinate)) {
+            checkTtl(context, ttl);
+          }
+        }
+      },
+    }),
+  );
+}
 
 /**
  * Yoga calls session/enabled as `(request, context)`.
@@ -195,6 +286,9 @@ export type ResponseCacheConfig = Omit<UseResponseCacheParameter, 'cache'> & {
 
 /**
  * Response cache plugin for GraphQL Mesh / Gateway.
+ *
+ * `ttlPerCoordinate` accepts Spec Schema Coordinates (`Type`, `Type.field`) and Mesh selectors
+ * with `*` (e.g. `Query.*`). Exact keys go to Yoga/Envelop; selectors are matched by Mesh.
  */
 export default function useMeshResponseCache(
   options: ResponseCacheConfig | (YamlConfig.ResponseCacheConfig & { cache?: KeyValueCache }),
@@ -211,9 +305,23 @@ export default function useMeshResponseCache(
     }
   }
 
-  // Stored TTL by the context
-  // To be compared with the calculated one later in `onTtl`
-  const ttlByContext = new WeakMap<any, number>();
+  const { exact: exactTtlPerSchemaCoordinate, selectors: meshSchemaSelectors } =
+    partitionTtlCoordinates(ttlPerSchemaCoordinate);
+
+  // Envelop default when `ttl` is omitted (see @envelop/response-cache).
+  const configuredGlobalTtl =
+    'ttl' in options && options.ttl != null ? (options.ttl as number) : Number.POSITIVE_INFINITY;
+
+  // Selector / coordinate-like TTLs (Mesh globs) vs upstream Cache-Control caps.
+  const selectorTtlByContext = new WeakMap<object, number>();
+  const headerTtlByContext = new WeakMap<object, number>();
+
+  function takeMinTtl(map: WeakMap<object, number>, context: object, ttl: number) {
+    const current = map.get(context);
+    if (current == null || ttl < current) {
+      map.set(context, ttl);
+    }
+  }
 
   // @ts-expect-error - GatewayPlugin types
   const plugin: GatewayPlugin = useResponseCache({
@@ -234,26 +342,51 @@ export default function useMeshResponseCache(
         : options.shouldCacheResult,
     cache: getCacheForResponseCache(options.cache),
     ttlPerType,
-    ttlPerSchemaCoordinate,
-    // Checks the TTL stored in the context
-    // Compares it to the calculated one
-    // Then it takes the lowest value
+    ttlPerSchemaCoordinate: exactTtlPerSchemaCoordinate,
+    // Pass Infinity so Envelop's `currentTtl ?? globalTtl` never folds the configured
+    // global into `onTtl`'s value. That way `ttl === Infinity` means "no explicit
+    // Envelop constraint", and an explicit exact `0` stays distinguishable from global `0`.
+    ttl: Number.POSITIVE_INFINITY,
     onTtl({ ttl, context }) {
-      const ttlForThisContext = ttlByContext.get(context);
-      if (ttlForThisContext != null && ttlForThisContext < ttl) {
-        return ttlForThisContext;
+      const selectorTtl = selectorTtlByContext.get(context as object);
+      const headerTtl = headerTtlByContext.get(context as object);
+      const envelopHasConstraint = ttl !== Number.POSITIVE_INFINITY;
+
+      // 1) Resolve coordinate/selector constraint, else configured global.
+      let resolved: number;
+      if (selectorTtl != null && envelopHasConstraint) {
+        resolved = Math.min(selectorTtl, ttl);
+      } else if (selectorTtl != null) {
+        resolved = selectorTtl;
+      } else if (envelopHasConstraint) {
+        resolved = ttl;
+      } else {
+        resolved = configuredGlobalTtl;
       }
-      return ttl;
+
+      // 2) Upstream Cache-Control may only shorten the resolved TTL.
+      if (headerTtl != null) {
+        return Math.min(resolved, headerTtl);
+      }
+      return resolved;
     },
   });
-  // Checks the TTL stored in the context
-  // Takes the lowest value
-  function checkTtl(context: GatewayContext, ttl: number) {
-    const ttlForThisContext = ttlByContext.get(context);
-    if (ttlForThisContext == null || ttl < ttlForThisContext) {
-      ttlByContext.set(context, ttl);
+
+  const envelopOnExecute = plugin.onExecute;
+  plugin.onExecute = function onExecuteWithMeshSelectors(payload) {
+    if (meshSchemaSelectors.length > 0) {
+      applyMeshSelectorTtls({
+        schema: payload.args.schema,
+        document: payload.args.document,
+        operationName: payload.args.operationName,
+        selectors: meshSchemaSelectors,
+        context: payload.args.contextValue as GatewayContext,
+        checkTtl: (ctx, ttl) => takeMinTtl(selectorTtlByContext, ctx as object, ttl),
+      });
     }
-  }
+    return envelopOnExecute?.call(this, payload);
+  };
+
   plugin.onFetch = function ({ executionRequest, context }) {
     // Only if it is a subgraph request
     if (executionRequest && context) {
@@ -264,12 +397,12 @@ export default function useMeshResponseCache(
           if (parsedCacheControl['max-age'] != null) {
             const maxAgeInSeconds = parsedCacheControl['max-age'];
             const maxAgeInMs = maxAgeInSeconds * 1000;
-            checkTtl(context as GatewayContext, maxAgeInMs);
+            takeMinTtl(headerTtlByContext, context as object, maxAgeInMs);
           }
           if (parsedCacheControl['s-maxage'] != null) {
             const sMaxAgeInSeconds = parsedCacheControl['s-maxage'];
             const sMaxAgeInMs = sMaxAgeInSeconds * 1000;
-            checkTtl(context as GatewayContext, sMaxAgeInMs);
+            takeMinTtl(headerTtlByContext, context as object, sMaxAgeInMs);
           }
         }
       };

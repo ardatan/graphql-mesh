@@ -7,7 +7,9 @@ import {
   GraphQLSchema,
   GraphQLString,
   isObjectType,
+  Kind,
   OperationTypeNode,
+  parseSchemaCoordinate,
 } from 'graphql';
 import {
   asArray,
@@ -220,28 +222,52 @@ const federationDirectiveNames = [
   'requires',
 ];
 
+function parseFederationSchemaCoordinate(coordinate: string): {
+  typeName: string;
+  fieldName?: string;
+} {
+  let ast;
+  try {
+    ast = parseSchemaCoordinate(coordinate);
+  } catch {
+    throw new TransformValidationError(
+      `Federation Transform: Invalid schema coordinate: ${coordinate}`,
+    );
+  }
+  switch (ast.kind) {
+    case Kind.TYPE_COORDINATE:
+      return { typeName: ast.name.value };
+    case Kind.MEMBER_COORDINATE:
+      return { typeName: ast.name.value, fieldName: ast.memberName.value };
+    default:
+      throw new TransformValidationError(
+        `Federation Transform: Unsupported schema coordinate "${coordinate}". Use a Type or Type.field Schema Coordinate.`,
+      );
+  }
+}
+
 export function createFederationTransform(config: FederationTransformConfig): SubgraphTransform {
   return function FederationTransform(subgraphSchema, subgraphConfig) {
     const configurationByType = new Map<string, FederationCoordinateConfig>();
     const configurationByField = new Map<string, Map<string, FederationCoordinateConfig>>();
     for (const coordinate in config) {
-      const [typeName, fieldName] = coordinate.split('.');
+      const { typeName, fieldName } = parseFederationSchemaCoordinate(coordinate);
       const typeInSchema = subgraphSchema.getType(typeName);
       if (!typeInSchema) {
         throw new TransformValidationError(
-          `Federation Transform: Type ${typeName} not found in schema for the coordinate: ${coordinate}`,
+          `Federation Transform: ${coordinate} not found in schema`,
         );
       }
       if (fieldName) {
         if (!('getFields' in typeInSchema)) {
           throw new TransformValidationError(
-            `Federation Transform: Type ${typeName} is not an object type in schema for the coordinate: ${coordinate}`,
+            `Federation Transform: ${coordinate} is invalid; ${typeName} is not an object, interface, input, or enum type`,
           );
         }
         const fieldsInType = typeInSchema.getFields();
         if (!fieldsInType[fieldName]) {
           throw new TransformValidationError(
-            `Federation Transform: Field ${fieldName} not found in type ${typeName} for the coordinate: ${coordinate}`,
+            `Federation Transform: ${coordinate} not found in schema`,
           );
         }
         const fieldConfig = config[coordinate];
@@ -297,32 +323,33 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                       operationType !== 'subscription'
                     ) {
                       throw new TransformValidationError(
-                        `Invalid operation type "${operationType}" in resolveReference config for @key directive on ${type.name} type. Expected "query", "mutation" or "subscription".`,
+                        `Invalid operation type "${operationType}" in resolveReference for @key on ${type.name}. Expected "query", "mutation" or "subscription".`,
                       );
                     }
                     const targetFieldName = keyConfig.resolveReference.fieldName;
                     if (!targetFieldName) {
                       throw new TransformValidationError(
-                        `Missing fieldName in resolveReference config for @key directive on ${type.name} type.`,
+                        `Missing resolveReference.fieldName for @key on ${type.name}. Set the root field name (e.g. "fooById"), not a Schema Coordinate.`,
                       );
                     }
                     const rootType = getDefinedRootType(subgraphSchema, operationType);
                     if (!rootType) {
                       throw new TransformValidationError(
-                        `Root type for operation "${operationType}" not found in schema for @key directive on ${type.name} type.`,
+                        `Root type for operation "${operationType}" not found for @key on ${type.name}.`,
                       );
                     }
                     const rootTypeFields = rootType.getFields();
                     if (!rootTypeFields[targetFieldName]) {
+                      const resolveCoordinate = `${rootType.name}.${targetFieldName}`;
                       const suggestions = suggestionList(
                         targetFieldName,
                         Object.keys(rootTypeFields) as string[],
                       );
                       const suggestionStr = suggestions.length
-                        ? ` Did you mean "${suggestions.join(' or ')}"?`
+                        ? ` Did you mean "${suggestions.map(s => `${rootType.name}.${s}`).join(' or ')}"?`
                         : '';
                       throw new TransformValidationError(
-                        `Field "${targetFieldName}" not found in root type "${rootType.name}" for @key directive on ${type.name} type. ${suggestionStr}`,
+                        `${resolveCoordinate} not found for @key resolveReference on ${type.name}.${suggestionStr}`,
                       );
                     }
                     operationMergeDirectiveConfig.set(targetFieldName, {
