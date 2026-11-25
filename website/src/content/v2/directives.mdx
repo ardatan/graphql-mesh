@@ -1091,12 +1091,14 @@ type Query {
 }
 ```
 
-**`@skipAuth` (Mesh; needs definition + `@composeDirective`)**
+**`@skipAuth` (Mesh auth spec; needs definition + `@composeDirective`)**
+
+Not Mesh `core` -- use the **auth** family URL (same pattern as `sql` / `rate-limit`):
 
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
-  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@skipAuth"])
+  @link(url: "https://specs.graphql-mesh.com/auth/v0.1", import: ["@skipAuth"])
   @composeDirective(name: "@skipAuth")
 
 directive @skipAuth on FIELD_DEFINITION | OBJECT | INTERFACE
@@ -1124,10 +1126,12 @@ type Query {
 Field-level budgets on subgraph SDL. Enable `rateLimiting: true` (or programmatic rules) on Hive
 Gateway. Guide: [Rate limiting](/v2/guides/rate-limit).
 
+Not Mesh `core` -- import from the **rate-limit** Mesh spec:
+
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
-  @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@rateLimit"])
+  @link(url: "https://specs.graphql-mesh.com/rate-limit/v0.1", import: ["@rateLimit"])
   @composeDirective(name: "@rateLimit")
 
 directive @rateLimit(
@@ -1168,16 +1172,22 @@ spec:
 extend schema @link(url: "https://specs.apollo.dev/link/v1.0")
 ```
 
-| Family            | Typical URL                                    | Typical `import`                                                                |
-| ----------------- | ---------------------------------------------- | ------------------------------------------------------------------------------- |
-| HTTP/REST Connect | `https://specs.apollo.dev/connect/v0.4`        | `@connect`, `@source`                                                           |
-| Federation        | `https://specs.apollo.dev/federation/v2.6`     | `@key`, `@composeDirective`, ...                                                |
-| Mesh core         | `https://specs.graphql-mesh.com/core/v0.1`     | `@transport`, `@merge`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, ... |
-| Mesh SQL          | `https://specs.graphql-mesh.com/sql/v0.1`      | `@sql`                                                                          |
-| Mesh Mongo        | `https://specs.graphql-mesh.com/mongo/v0.1`    | `@mongo__findOne`, ...                                                          |
-| Mesh protobuf     | `https://specs.graphql-mesh.com/protobuf/v0.1` | `@protobuf__rpc`                                                                |
-| Mesh Thrift       | `https://specs.graphql-mesh.com/thrift/v0.1`   | `@thrift__rpc`                                                                  |
-| Mesh Neo4j        | `https://specs.graphql-mesh.com/neo4j/v0.1`    | `@node`, `@relationship`, ...                                                   |
+| Family            | Typical URL                                      | Typical `import`                                                                |
+| ----------------- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
+| HTTP/REST Connect | `https://specs.apollo.dev/connect/v0.4`          | `@connect`, `@source`                                                           |
+| Federation        | `https://specs.apollo.dev/federation/v2.6`       | `@key`, `@composeDirective`, ...                                                |
+| Mesh core         | `https://specs.graphql-mesh.com/core/v0.1`       | `@transport`, `@merge`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, ... |
+| Mesh auth         | `https://specs.graphql-mesh.com/auth/v0.1`       | `@skipAuth` (not Federation `@authenticated`)                                   |
+| Mesh rate-limit   | `https://specs.graphql-mesh.com/rate-limit/v0.1` | `@rateLimit`                                                                    |
+| Mesh SQL          | `https://specs.graphql-mesh.com/sql/v0.1`        | `@sql`                                                                          |
+| Mesh Mongo        | `https://specs.graphql-mesh.com/mongo/v0.1`      | `@mongo__findOne`, ...                                                          |
+| Mesh protobuf     | `https://specs.graphql-mesh.com/protobuf/v0.1`   | `@protobuf__rpc`                                                                |
+| Mesh Thrift       | `https://specs.graphql-mesh.com/thrift/v0.1`     | `@thrift__rpc`                                                                  |
+| Mesh Neo4j        | `https://specs.graphql-mesh.com/neo4j/v0.1`      | `@node`, `@relationship`, ...                                                   |
+
+Do **not** import `@skipAuth` or `@rateLimit` from Mesh `core` -- those are separate families. Older
+schemas / Hive snippets may still use `https://the-guild.dev/graphql/mesh/spec/v1.0` as a legacy
+catch-all; prefer the modern `specs.graphql-mesh.com/<family>/v0.1` URLs above.
 
 `@link` names the import; Federation still requires a matching `directive @...` definition on the
 subgraph when you `@composeDirective` that name. Loaders stamp both. Hand SDL must include the
