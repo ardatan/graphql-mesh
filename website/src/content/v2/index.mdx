@@ -4,6 +4,7 @@ description: Mesh v2 documentation -- GraphQL SDL, Compose, Hive Gateway, and Ap
 
 import { Callout, Cards } from '@theguild/components'
 import { ConceptRef } from '../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../components/v2-flow-diagram'
 import { V2JourneyCards } from '../../components/v2-journey-cards'
 
 # Mesh v2 (draft)
@@ -27,15 +28,18 @@ supergraph). Authors work in GraphQL SDL with Mesh /
 - <ConceptRef name="schema-registry">Schema registry</ConceptRef> (optional) stores and distributes
   subgraph / supergraph SDL.
 
-```mermaid
-flowchart LR
-  S[Sources] --> L[Loader or authored SDL]
-  L --> C[Mesh Compose]
-  C --> R[Registry optional]
-  C --> G[Hive Gateway / Apollo Router]
-  R -.-> G
-  G --> T[Transports]
-```
+<V2FlowDiagram
+  ariaLabel="Mesh v2 stack from sources through Compose to gateway transports"
+  caption="Same path for generated or authored SDL."
+  footnote={{ label: 'Registry (optional)', fromStep: 2, toStep: 3 }}
+  steps={[
+    { title: 'Sources' },
+    { title: 'SDL', lines: ['Loader or authored'], accent: true },
+    { title: 'Mesh Compose', accent: true },
+    { title: 'Gateway', lines: ['Hive · Apollo Router'], accent: true },
+    { title: 'Transports', lines: ['Execute directives'] }
+  ]}
+/>
 
 ## Choose your path
 

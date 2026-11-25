@@ -5,6 +5,7 @@ description:
 
 import { Callout, Cards } from '@theguild/components'
 import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Music Store Example
 
@@ -14,13 +15,17 @@ OpenAPI → `@connect`, **gRPC / Protobuf** recommendations.
 
 Path pages teach the skill; this example walks the stages in order, then composes and serves.
 
-```mermaid
-flowchart LR
-  A[Generate Chinook SQL] --> B[Generate-then-edit Reviews]
-  B --> C[Hand-write gRPC]
-  C --> D[Compose]
-  D --> E[Hive Gateway / Apollo Router]
-```
+<V2FlowDiagram
+  ariaLabel="Music Store Example stages: Generate, edit, hand-write, compose, serve"
+  caption="Pedagogical order across Chinook SQL, Reviews Connect, and gRPC."
+  steps={[
+    { title: 'Generate', lines: ['Chinook SQL'], accent: true },
+    { title: 'Edit', lines: ['Reviews Connect'], accent: true },
+    { title: 'Hand-write', lines: ['gRPC / Protobuf'], accent: true },
+    { title: 'Compose' },
+    { title: 'Serve', lines: ['Hive · Apollo Router'] }
+  ]}
+/>
 
 <Callout type="info">
   User-facing copy says **REST / OpenAPI** for Reviews. feTS may power the OpenAPI server for

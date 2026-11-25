@@ -4,6 +4,7 @@ description: What Mesh is -- Federation-ready subgraphs from sources or authored
 
 import { Cards } from '@theguild/components'
 import { DirectiveRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Mesh
 
@@ -14,12 +15,15 @@ Compose and the gateway treat both the same.
 
 ## Where it lives
 
-```mermaid
-flowchart LR
-  A[Sources or .graphql] --> B[Mesh loaders / Compose]
-  B --> C[Subgraph SDL]
-  C --> D[Gateway + transports]
-```
+<V2FlowDiagram
+  ariaLabel="Mesh layers from sources to gateway transports"
+  steps={[
+    { title: 'Sources', lines: ['or .graphql'] },
+    { title: 'Loaders / Compose', accent: true },
+    { title: 'Subgraph SDL', accent: true },
+    { title: 'Gateway', lines: ['+ transports'] }
+  ]}
+/>
 
 | Layer                                    | Mesh role                                                                                                  |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- |

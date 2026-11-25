@@ -3,6 +3,7 @@ description: Optional Mesh Compose transforms -- how the SDL pipeline works, whe
 ---
 
 import { Cards } from '@theguild/components'
+import { V2FlowDiagram } from '../../components/v2-flow-diagram'
 
 # Transforms (optional)
 
@@ -13,12 +14,16 @@ a small, repeatable rewrite is enough; skip them when [Hand-write](/v2/paths/han
 
 ## How they work
 
-```mermaid
-flowchart LR
-  A[Loader emit<br/>or authored .graphql] --> B[Optional transforms]
-  B --> C[Annotated subgraph SDL]
-  C --> D[Compose supergraph]
-```
+<V2FlowDiagram
+  ariaLabel="Transforms pipeline inside Mesh Compose"
+  caption="Optional per-subgraph rewrites before the subgraph joins the supergraph."
+  steps={[
+    { title: 'Input SDL', lines: ['Loader or file'] },
+    { title: 'Transforms', lines: ['Optional · ordered'], accent: true },
+    { title: 'Annotated SDL', accent: true },
+    { title: 'Compose', lines: ['Supergraph'] }
+  ]}
+/>
 
 1. Compose loads each subgraph (generated or `schema:` file).
 2. If that subgraph lists `transforms`, Compose applies them **in order** to that subgraph's schema

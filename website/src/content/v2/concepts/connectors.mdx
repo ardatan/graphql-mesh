@@ -4,6 +4,7 @@ description: What Connectors are -- HTTP @connect / @source mapping Mesh shares 
 
 import { Cards } from '@theguild/components'
 import { DirectiveRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Connectors
 
@@ -14,12 +15,15 @@ that shape. Hand authors can write the same directives.
 
 ## Where it lives
 
-```mermaid
-flowchart LR
-  A[OpenAPI / REST] --> B[Loader or hand SDL]
-  B --> C["@connect / @source SDL"]
-  C --> D[Hive Gateway or Apollo Router]
-```
+<V2FlowDiagram
+  ariaLabel="Connectors path from OpenAPI to Connect SDL to gateways"
+  steps={[
+    { title: 'OpenAPI / REST' },
+    { title: 'Loader or hand', accent: true },
+    { title: '@connect SDL', lines: ['+ @source'], accent: true },
+    { title: 'Gateways', lines: ['Hive · Apollo Router'] }
+  ]}
+/>
 
 | Piece              | Role                                                                         |
 | ------------------ | ---------------------------------------------------------------------------- |

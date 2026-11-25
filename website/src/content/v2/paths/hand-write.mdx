@@ -4,6 +4,7 @@ description: Author Mesh subgraph SDL for Compose and schema registries -- human
 
 import { Cards } from '@theguild/components'
 import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Hand-write
 
@@ -18,13 +19,15 @@ Humans and AI assistants share **one** authoring contract; there is no separate 
 Prefer starting from a [read of generated SDL](/v2/guides/reading-generated-sdl) when one exists.
 Edited generate output and scratch-authored SDL use the same Compose input.
 
-```mermaid
-flowchart LR
-  A[Author .graphql] --> B[Compose]
-  B --> C[Registry optional]
-  B --> D[Hive Gateway / Apollo Router]
-  C -.-> D
-```
+<V2FlowDiagram
+  ariaLabel="Hand-write path from authored SDL to gateway"
+  footnote={{ label: 'Registry (optional)', fromStep: 1, toStep: 2 }}
+  steps={[
+    { title: 'Author .graphql', accent: true },
+    { title: 'Compose', accent: true },
+    { title: 'Gateway', lines: ['Hive · Apollo Router'] }
+  ]}
+/>
 
 ## Import directive definitions
 
