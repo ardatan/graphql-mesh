@@ -7,56 +7,212 @@ import { Callout, Cards } from '@theguild/components'
 # FHIR (JSON Schema) -- supporting example
 
 <Callout type="info">
-  Supporting narrative alongside the main Mesh v2 docs -- **not** the getting-started kickoff.
-  Prefer [Music Store Example](/v2/examples/music-store) for the staged tutorial.
+  Supporting how-we-built narrative -- **not** the getting-started kickoff. Prefer [Music Store
+  Example](/v2/examples/music-store) for the staged Generate → edit → Hand-write tutorial.
 </Callout>
 
-How we built the Mesh FHIR e2e (`e2e/json-schema-fhir` on `master`): generate Patient and
-Observation from HL7 R4 JSON Schema, hand-write a join-only Resource subgraph, compose once, serve
-on **Hive Gateway** (JS/TS) and **Apollo Router**.
+How we built the Mesh FHIR e2e (`e2e/json-schema-fhir` on `master`): pin HL7 R4 JSON Schema,
+generate Patient and Observation subgraphs, hand-write a join-only Resource subgraph, compose once,
+serve the same SDL on **Hive Gateway** (JS/TS) and **Apollo Router**.
 
 ```mermaid
-flowchart TB
-  A[Pin FHIR R4 JSON Schema] --> B[Generate patients + observations]
-  B --> C[Hand SDL join<br/>Resource + Reference.resource]
-  C --> D[Mesh Compose]
-  D --> E[Hive Gateway and/or Apollo Router]
+flowchart LR
+  A[What existed<br/>FHIR R4 REST + schema] --> B[Generate<br/>patients + observations]
+  B --> C[Hand-write join<br/>Resource + Reference]
+  C --> D[Compose]
+  D --> E[Hive Gateway<br/>+ Apollo Router]
 ```
+
+## What you end up with
+
+| Subgraph            | How authored                         | Role                                                      |
+| ------------------- | ------------------------------------ | --------------------------------------------------------- |
+| `patients`          | Generated (`loadJSONSchemaSubgraph`) | `Query.patient(id)` → `GET /Patient/{id}`                 |
+| `observations`      | Generated (`loadJSONSchemaSubgraph`) | `Query.observationById(id)` → `GET /Observation/{id}`     |
+| `referenceResource` | Hand-written `.graphql`              | Join-only: `Resource`, opt-in types, `Reference.resource` |
+
+Clients fetch a Patient, fetch an Observation, and follow `Observation.subject.resource` into a
+Patient entity -- no Mesh `@resolveTo`.
+
+---
+
+## What existed
+
+- A live **FHIR R4 REST** server (e2e default: HAPI `https://hapi.fhir.org/baseR4`).
+- Official HL7 **`fhir.schema.json`** (hundreds of resource definitions).
+- Two root operations we care about: Patient by id, Observation by id, plus FHIR `Reference`
+  (`Type/id` strings) that should hydrate into entities.
+
+Nothing yet: Mesh subgraphs, Federation keys, or a join that turns `Patient/nhanes-112200` into a
+Patient entity.
+
+---
 
 ## 1. Pin the R4 schema
 
-Download HL7 R4 `fhir.schema.json` (not a floating "latest" zip). Reject R5-shaped or stale files:
-`Patient.id` must point at `#/definitions/id`, and `Observation.status` must be an inline enum.
+Do not point the loader at a floating "latest" HL7 zip -- R4 and R5 shapes differ.
+
+The e2e helper `ensure-fhir-schema.ts`:
+
+1. Downloads `https://hl7.org/fhir/R4/fhir.schema.json.zip` when needed.
+2. Extracts `fhir.schema.json` next to the e2e package.
+3. Rejects non-R4 files: requires `Patient.id` → `#/definitions/id` and an **inline enum** on
+   `Observation.status`.
+
+That pin matters for `scalarMap.id → GraphQL ID` and for stable Connect emit.
 
 ## 2. Map primitives, set the base URL
 
-Force a shared scalar map so both generated subgraphs agree -- especially **`id` / `oid` → GraphQL
-`ID`**. Drive the REST base from `FHIR_BASE` at compose and serve time (e2e default:
-`https://hapi.fhir.org/baseR4`).
+Share one force-applied `scalarMap` across both JSON Schema subgraphs so they agree on keys:
 
-## 3. Generate the Patient and Observation subgraphs
+| FHIR primitive            | GraphQL scalar |
+| ------------------------- | -------------- |
+| `date`                    | `Date`         |
+| `dateTime`, `instant`     | `DateTime`     |
+| `uri`, `url`, `canonical` | `URL`          |
+| `uuid`                    | `UUID`         |
+| `string`                  | `String`       |
+| **`id`**, **`oid`**       | **`ID`**       |
+
+Leave `code` / `markdown` / `base64Binary` / `xhtml` on FHIR `@regexp` emit.
+
+Why `id` / `oid` → `ID`: Federation `@key(fields: "id")` and Connect entity stubs expect GraphQL
+`ID`.
+
+Drive the REST base from env at compose and serve time:
+
+```ts
+endpoint: process.env.FHIR_BASE!
+// e2e default: https://hapi.fhir.org/baseR4
+```
+
+## 3. Generate what already existed as REST
+
+Skill: [Generate](/v2/paths/generate) · [Reading generated SDL](/v2/guides/reading-generated-sdl)
 
 Two JSON Schema subgraphs, each with one root query against the live FHIR server:
 
-| Subgraph       | Root field            | Upstream                                              |
-| -------------- | --------------------- | ----------------------------------------------------- |
-| `patients`     | `patient(id)`         | `GET /Patient/{id}` → `#/definitions/Patient`         |
-| `observations` | `observationById(id)` | `GET /Observation/{id}` → `#/definitions/Observation` |
+```ts
+import { OperationTypeNode } from 'graphql'
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema'
 
-The loader emits full types and auto `@connect(selection:)` -- no hand selection on these fields.
-[Read the emitted SDL](/v2/guides/reading-generated-sdl) the same way as Music Store Example
-stage 1.
+const fhirScalarMap = {/* date → Date, id/oid → ID, … as above */}
 
-## 4. Hand-write the join-only Reference subgraph
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadJSONSchemaSubgraph('patients', {
+        endpoint: process.env.FHIR_BASE!,
+        scalarMap: fhirScalarMap,
+        operations: [
+          {
+            type: OperationTypeNode.QUERY,
+            field: 'patient',
+            method: 'GET',
+            path: '/Patient/{args.id}?_format=application/json',
+            requiredArgs: ['id'],
+            responseSchema: './fhir.schema.json#/definitions/Patient'
+          }
+        ]
+      })
+    },
+    {
+      sourceHandler: loadJSONSchemaSubgraph('observations', {
+        endpoint: process.env.FHIR_BASE!,
+        scalarMap: fhirScalarMap,
+        operations: [
+          {
+            type: OperationTypeNode.QUERY,
+            field: 'observationById',
+            method: 'GET',
+            path: '/Observation/{args.id}?_format=application/json',
+            requiredArgs: ['id'],
+            responseSchema: './fhir.schema.json#/definitions/Observation'
+          }
+        ]
+      })
+    }
+    // join subgraph added in the next section
+  ]
+})
+```
 
-File: `reference-resource.graphql`. **No `Query`** -- other subgraphs own roots.
+The loader owns full GraphQL types from those definitions and auto `@connect(selection:)` -- no
+hand-written selection on these fields. After compose + serve, query:
 
-- `interface Resource { id: ID }`
-- **Opt-in** `Patient` / `Observation` `implements Resource` with
-  `@key(fields: "id", resolvable: false)`
-- `Reference.resource` via Connect `->match` on `Type/id` (for example `Patient/nhanes-112200`)
+```graphql
+query PatientById {
+  patient(id: "16020") {
+    id
+    gender
+    name {
+      family
+      given
+    }
+  }
+}
+```
 
-Wire it as a schema file subgraph in Compose:
+## 4. What we authored -- join-only Reference subgraph
+
+Skill: [Hand-write](/v2/paths/hand-write)
+
+File: `reference-resource.graphql`. **No `Query`** -- other subgraphs own roots. Mesh Compose
+injects directive definitions; the file carries `@link` imports and type apps only.
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"])
+
+interface Resource {
+  id: ID
+}
+
+type Patient implements Resource @key(fields: "id", resolvable: false) {
+  id: ID!
+}
+
+type Observation implements Resource @key(fields: "id", resolvable: false) {
+  id: ID!
+}
+
+type Reference
+  @key(fields: "reference")
+  @connect(
+    selection: """
+    reference: $this.reference
+    """
+  ) {
+  reference: String!
+  resource: Resource
+    @connect(
+      selection: """
+      $this.reference->split("/")->get(0)->match(
+        ["Patient", {
+          __typename: $("Patient")
+          id: $this.reference->split("/")->get(1)
+        }],
+        ["Observation", {
+          __typename: $("Observation")
+          id: $this.reference->split("/")->get(1)
+        }],
+        [@, null]
+      )
+      """
+    )
+}
+```
+
+Pattern:
+
+1. FHIR `Reference.reference` is `Type/id` (example: `Patient/nhanes-112200`).
+2. Split on `/`; match type name; emit a stub with literal `__typename` and `id`.
+3. `@key(resolvable: false)` lets the planner hydrate fields from `patients` / `observations`.
+
+Wire it as a schema file subgraph:
 
 ```ts
 {
@@ -66,12 +222,59 @@ Wire it as a schema file subgraph in Compose:
 ```
 
 **Why not auto-derive every Resource?** Official FHIR JSON Schema defines hundreds of resources.
-Opt-in stubs match only the types you federate.
+Opt-in stubs document only the federation surface you query. Add `DiagnosticReport`, `Encounter`,
+etc. when a query needs them -- extend the hand SDL (implementor + `->match` branch), do not ask the
+loader to invent all Resource types.
 
 ## 5. Compose once, serve twice
 
-Compose to GraphQL SDL, then execute the **same** file on Hive Gateway and Apollo Router (Connect
-path). Example hydration query: `observationById` → `subject.resource` → `... on Patient { name }`.
+Skill: [Compose](/v2/compose) · [Hive Gateway](/v2/serve/hive-gateway) ·
+[Apollo Router](/v2/serve/apollo-router)
+
+Compose to GraphQL SDL, then execute the **same** file on Hive Gateway and Apollo Router (this
+example stays Connect-compatible). Hydration query from the e2e:
+
+```graphql
+query ObservationSubject {
+  observationById(id: "nhanes-112200-1742-6") {
+    id
+    status
+    subject {
+      reference
+      resource {
+        __typename
+        id
+        ... on Patient {
+          name {
+            family
+            given
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Expect `subject.reference: "Patient/nhanes-112200"` and `resource.__typename: "Patient"` with names
+from the Patient subgraph.
+
+## Checklist (your own copy)
+
+1. Download and validate **FHIR R4** `fhir.schema.json` (same checks as `ensure-fhir-schema.ts`).
+2. Define shared **`scalarMap`** with **`id` / `oid` → `ID`**.
+3. Set **`FHIR_BASE`** for compose and serve.
+4. Generate JSON Schema subgraphs for each root operation (start with Patient + Observation).
+5. Add **`reference-resource.graphql`**: `Resource` + only the implementations you federate +
+   `Reference.resource` `->match` branches.
+6. Compose; dual-run Hive Gateway and Apollo Router when the SDL is Connect-compatible.
+
+## What this example is not
+
+- Not the [Music Store Example](/v2/examples/music-store) multi-protocol tutorial (SQL + gRPC).
+- Not a revive of v0 `.meshrc.yml` as the primary path (use Compose `mesh.config.ts`).
+- Not "generate every FHIR resource into GraphQL."
+- Not Apollo Router for non-Connect Mesh transports -- this path stays on Connect for dual-run.
 
 ## Repo anchors
 
@@ -85,4 +288,7 @@ path). Example hydration query: `observationById` → `subject.resource` → `..
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Compose" href="/v2/compose" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
 </Cards>
