@@ -1,5 +1,5 @@
 ---
-description: Mesh v2 architecture -- loaders, Compose, registries, Hive Gateway, Apollo Router
+description: Mesh v2 architecture -- loaders, Composition, registries, Hive Gateway, Apollo Router
 ---
 
 import { Cards } from '@theguild/components'
@@ -22,8 +22,9 @@ treat both the same.
 
 - **Sources** feed either a loader or authored `.graphql`.
 - **Subgraph SDL** may come from an Omnigraph loader or a hand-written file -- loaders are optional.
-- **Mesh Compose** is the <ConceptRef name="composition">composition</ConceptRef> step for generated
-  and authored subgraphs.
+- **Composition** via **Mesh Compose** is the
+  <ConceptRef name="composition">composition</ConceptRef> step for generated and authored
+  subgraphs.
 - <ConceptRef name="schema-registry">Schema registry</ConceptRef> is optional publish/pull; gateways
   can also take Compose output directly.
 - <ConceptRef name="gateway">Gateway</ConceptRef> peers: **Hive Gateway** (JS/TS) and **Apollo
@@ -39,11 +40,12 @@ treat both the same.
 | Hive Gateway subgraph proxy | Non-Connect Mesh subgraphs served by Hive Gateway; a foreign router talks GraphQL to that subgraph. |
 | Registry                    | Publish Mesh subgraphs (generated or hand-written); gateway pulls the supergraph.                   |
 
-See also: [Concepts](/v2/concepts) · [Compose](/v2/compose) · [Serve API](/v2/serve/hive-gateway).
+See also: [Concepts](/v2/concepts) · [Composition](/v2/compose) ·
+[Serve Supergraph](/v2/serve/hive-gateway).
 
 <Cards>
   <Cards.Card arrow title="Concepts" href="/v2/concepts" />
-  <Cards.Card arrow title="Compose" href="/v2/compose" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
   <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
 </Cards>

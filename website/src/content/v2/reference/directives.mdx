@@ -1,6 +1,7 @@
 ---
 description:
-  Mesh / Connectors / protocol / join directive reference -- TOC and known args (draft stub)
+  Mesh / Connectors / protocol / join directive reference -- TOC, imports, and known args (draft
+  stub)
 ---
 
 import { Callout, Cards } from '@theguild/components'
@@ -18,21 +19,25 @@ directives, Federation join/`@key`, and `@link` / `@transport`. Modeled on
 </Callout>
 
 Use this page when [reading generated SDL](/v2/guides/reading-generated-sdl) or
-[hand-writing](/v2/paths/hand-write) subgraphs. Protocol family map: [Protocols](/v2/protocols).
+[hand-writing](/v2/paths/hand-write) subgraphs. How `selection` / `args` binders work:
+[Selection mapping](/v2/guides/selection-mapping). Protocol family map: [Protocols](/v2/protocols).
+
+Each entry below includes how to **import** the directive with `@link` (Mesh Compose and loaders
+stamp the same imports).
 
 ## Table of contents
 
-| Family            | Directives                                                                   | Status on this page                  |
-| ----------------- | ---------------------------------------------------------------------------- | ------------------------------------ |
-| Connect (HTTP)    | `@connect`, `@source`                                                        | Point to Apollo; Mesh dual-run notes |
-| Mesh core         | `@transport`                                                                 | Short entry                          |
-| SQL               | `@sql__query`, `@sql__mutation`, `@sql__relation` (and related `@sql` forms) | Short args                           |
-| Mongo             | `@mongo`                                                                     | Short args                           |
-| Protobuf / gRPC   | `@protobuf__rpc`                                                             | Short args                           |
-| Thrift            | `@thrift__rpc`                                                               | Stub pointer                         |
-| Neo4j             | Native `@neo4j/graphql` directives                                           | Stub pointer                         |
-| Federation / join | `@key`, `@composeDirective`, …                                               | Short notes                          |
-| Spec imports      | `@link`                                                                      | Short notes                          |
+| Family            | Directives                                 | Status on this page                  |
+| ----------------- | ------------------------------------------ | ------------------------------------ |
+| Connect (HTTP)    | `@connect`, `@source`                      | Point to Apollo; Mesh dual-run notes |
+| Mesh core         | `@transport`                               | Short entry                          |
+| SQL               | `@sql` (kind: query / mutation / relation) | Short args                           |
+| Mongo             | `@mongo__*`                                | Short args                           |
+| Protobuf / gRPC   | `@protobuf__rpc`                           | Short args                           |
+| Thrift            | `@thrift__rpc`                             | Stub pointer                         |
+| Neo4j             | Native `@neo4j/graphql` directives         | Stub pointer                         |
+| Federation / join | `@key`, `@composeDirective`, …             | Short notes                          |
+| Spec imports      | `@link`                                    | Short notes                          |
 
 ---
 
@@ -45,7 +50,16 @@ Use this page when [reading generated SDL](/v2/guides/reading-generated-sdl) or
 Apollo Connectors–compatible HTTP mapping. Full arg tables live upstream:
 
 - [Apollo Connectors directives](https://www.apollographql.com/docs/graphos/connectors/reference/directives)
-- [JSONSelection / mapping](https://www.apollographql.com/docs/graphos/connectors/mapping)
+- [JSONSelection / mapping](https://www.apollographql.com/docs/graphos/connectors/mapping) · Mesh:
+  [Selection mapping](/v2/guides/selection-mapping)
+
+**Import**
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+```
 
 Mesh notes:
 
@@ -79,6 +93,15 @@ type Track @key(fields: "id", resolvable: false) {
 
 Slim schema-level stamp: which Mesh transport Hive Gateway loads for this subgraph.
 
+**Import**
+
+```graphql
+extend schema @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+```
+
+Shared Mesh core also exports `@merge`, `@hoist`, `@source` (Mesh), `@resolveTo`, and pubsub helpers
+under the same `core/v0.1` URL when needed.
+
 | Arg        | Meaning                                          |
 | ---------- | ------------------------------------------------ |
 | `subgraph` | Subgraph name                                    |
@@ -102,35 +125,45 @@ rewritten to `@join__directive` the way `@connect` / `@source` are.
 
 ## SQL
 
-`@sql__query` / `@sql__mutation` / `@sql__relation`
+`@sql`
 
 Emitted by `@omnigraph/sql`; executed by `transport-sql`. Hive Gateway only (not stock Apollo
-Router).
+Router). One directive + `kind` discriminator covers query, mutation, and relation shapes (older
+docs may show `@sql__*` aliases -- prefer `@sql`).
 
-| Directive        | On              | Role                                             |
-| ---------------- | --------------- | ------------------------------------------------ |
-| `@sql__query`    | Query fields    | SELECT (`ROW` / `ROWS` / `CONNECTION` / `COUNT`) |
-| `@sql__mutation` | Mutation fields | `INSERT` / `UPDATE` / `DELETE`                   |
-| `@sql__relation` | Object fields   | FK / join navigation                             |
+**Import**
+
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"])
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+```
+
+| `kind`                                  | Role                                  |
+| --------------------------------------- | ------------------------------------- |
+| `ROW` / `ROWS` / `CONNECTION` / `COUNT` | SELECT shapes                         |
+| `INSERT` / `UPDATE` / `DELETE`          | Mutations                             |
+| (field on object / type-level `@sql`)   | FK / join navigation and entity fills |
 
 Shared args (shape):
 
-| Arg         | Meaning                                              |
-| ----------- | ---------------------------------------------------- |
-| `subgraph`  | Owning subgraph (optional locally)                   |
-| `table`     | SQL table name                                       |
-| `kind`      | Query or mutation kind enum                          |
-| `args`      | GraphQL args → WHERE / ORDER / LIMIT / column values |
-| `selection` | Columns / payload → GraphQL fields                   |
-| `entity`    | On ById query: Federation entity resolver            |
+| Arg         | Meaning                                          |
+| ----------- | ------------------------------------------------ |
+| `subgraph`  | Owning subgraph (optional locally)               |
+| `table`     | SQL table name                                   |
+| `kind`      | Query or mutation kind enum                      |
+| `where`     | Equality / join predicates (`TrackId: $args.id`) |
+| `args`      | Structured binders (filters, order, limit, …)    |
+| `selection` | Columns / payload → GraphQL fields               |
+| `entity`    | On ById query: Federation entity resolver        |
 
 ```graphql
 type Query {
   track(id: ID!): Track
-    @sql__query(
+    @sql(
       table: "Track"
       kind: ROW
-      args: """
+      where: """
       TrackId: $args.id
       """
       selection: """
@@ -142,7 +175,8 @@ type Query {
 }
 ```
 
-Details expand with the SQL protocol chapter; Music Store Example stage 1 uses Chinook SQL generate.
+Binder vocabulary: [Selection mapping](/v2/guides/selection-mapping). Details expand with the SQL
+protocol chapter; Music Store Example stage 1 uses Chinook SQL generate.
 
 ---
 
@@ -150,20 +184,41 @@ Details expand with the SQL protocol chapter; Music Store Example stage 1 uses C
 
 ## Mongo
 
-`@mongo`
+`@mongo__*`
 
-Single directive + `kind` discriminator (find / connection / CRUD / …). Hive Gateway only.
+Op-specific directives (`@mongo__findOne`, `@mongo__find`, `@mongo__connection`, CRUD, …). Hive
+Gateway only.
 
-| Arg                                              | Meaning                                   |
-| ------------------------------------------------ | ----------------------------------------- |
-| `subgraph`                                       | Owning subgraph                           |
-| `collection`                                     | Mongo collection                          |
-| `kind`                                           | Operation kind                            |
-| `where`                                          | Filter binder (`$args.where`, `$this`, …) |
-| `orderBy` / `limit` / `skip` / `first` / `after` | List / connection binders                 |
-| `set`                                            | Document values for writes                |
-| `selection`                                      | Document → GraphQL fields                 |
-| `pipeline`                                       | Aggregate stages (deferred depth)         |
+**Import**
+
+```graphql
+extend schema
+  @link(
+    url: "https://specs.graphql-mesh.com/mongo/v0.1"
+    import: [
+      "@mongo__findOne"
+      "@mongo__find"
+      "@mongo__count"
+      "@mongo__connection"
+      "@mongo__insertOne"
+      "@mongo__updateOne"
+      "@mongo__deleteOne"
+    ]
+  )
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+```
+
+Import the ops you use (loaders stamp the full set). Typical args:
+
+| Arg                                           | Meaning                                   |
+| --------------------------------------------- | ----------------------------------------- |
+| `subgraph`                                    | Owning subgraph                           |
+| `collection`                                  | Mongo collection                          |
+| `query` / `where`                             | Filter binder (`$args.where`, `$this`, …) |
+| `sort` / `limit` / `skip` / `first` / `after` | List / connection binders                 |
+| `set`                                         | Document values for writes                |
+| `selection`                                   | Document → GraphQL fields                 |
+| `pipeline`                                    | Aggregate stages (deferred depth)         |
 
 ```graphql
 schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test") {
@@ -181,6 +236,14 @@ schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localho
 
 Field or object directive for unary / server-streaming RPC. Hive Gateway only. Music Store Example
 stage 3 hand-writes this family.
+
+**Import**
+
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+```
 
 | Arg         | Meaning                                         |
 | ----------- | ----------------------------------------------- |
@@ -209,7 +272,7 @@ type Query {
 }
 ```
 
-`@link`: `https://specs.graphql-mesh.com/protobuf/v0.1` → `@protobuf__rpc`.
+Compact mapping dialect: [Selection mapping](/v2/guides/selection-mapping).
 
 ---
 
@@ -222,6 +285,14 @@ type Query {
 Binary Thrift path uses `@thrift__rpc` (`args` / `selection` / `throws`, …). TJSON can emit
 `@connect` instead. Full arg table TBD on this page; see [Protocols](/v2/protocols).
 
+**Import**
+
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"])
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+```
+
 ---
 
 <a id="neo4j" />
@@ -232,6 +303,17 @@ Mesh uses **native** `@neo4j/graphql` directives (not a Mesh `@neo4j__*` dialect
 introspect or accept author SDL; transport filters by `subgraph:` vs `@transport(subgraph:)`. Full
 catalog TBD -- see [Protocols](/v2/protocols).
 
+**Import** (Mesh stamps)
+
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/neo4j/v0.1")
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+```
+
+Neo4j GraphQL directive definitions come from `@neo4j/graphql` itself; the Mesh `@link` marks the
+subgraph for the neo4j transport.
+
 ---
 
 <a id="federation" />
@@ -239,6 +321,14 @@ catalog TBD -- see [Protocols](/v2/protocols).
 ## Federation / join
 
 `@key` / `@composeDirective`
+
+**Import**
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+```
 
 | Directive           | Role                                                              |
 | ------------------- | ----------------------------------------------------------------- |
@@ -248,6 +338,16 @@ catalog TBD -- see [Protocols](/v2/protocols).
 Join-only hand SDL (FHIR `Reference.resource`, Music Store entity stubs) typically combines `@key`
 with Connect or protocol directives -- not Mesh `@resolveTo`.
 
+After importing Mesh / Connect directives, list each local name you need in the supergraph:
+
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @composeDirective(name: "@transport")
+```
+
+Mesh Compose / loaders usually stamp `@composeDirective` for you.
+
 ---
 
 <a id="link" />
@@ -256,15 +356,23 @@ with Connect or protocol directives -- not Mesh `@resolveTo`.
 
 `@link`
 
-Import directive definitions instead of pasting them:
+Import directive definitions instead of pasting them. `@link` itself comes from the Apollo link
+spec:
 
-| Family        | Typical URL                                                               |
-| ------------- | ------------------------------------------------------------------------- |
-| Connect       | `https://specs.apollo.dev/connect/v0.4`                                   |
-| Federation    | `https://specs.apollo.dev/federation/v2.6`                                |
-| Mesh core     | `https://specs.graphql-mesh.com/core/v0.1`                                |
-| Mesh protobuf | `https://specs.graphql-mesh.com/protobuf/v0.1`                            |
-| Mesh SQL / …  | `https://specs.graphql-mesh.com/sql/v0.1`, … ([Protocols](/v2/protocols)) |
+```graphql
+extend schema @link(url: "https://specs.apollo.dev/link/v1.0")
+```
+
+| Family        | Typical URL                                    | Typical `import`                          |
+| ------------- | ---------------------------------------------- | ----------------------------------------- |
+| Connect       | `https://specs.apollo.dev/connect/v0.4`        | `@connect`, `@source`                     |
+| Federation    | `https://specs.apollo.dev/federation/v2.6`     | `@key`, `@composeDirective`, …            |
+| Mesh core     | `https://specs.graphql-mesh.com/core/v0.1`     | `@transport`, …                           |
+| Mesh SQL      | `https://specs.graphql-mesh.com/sql/v0.1`      | `@sql`                                    |
+| Mesh Mongo    | `https://specs.graphql-mesh.com/mongo/v0.1`    | `@mongo__findOne`, …                      |
+| Mesh protobuf | `https://specs.graphql-mesh.com/protobuf/v0.1` | `@protobuf__rpc`                          |
+| Mesh Thrift   | `https://specs.graphql-mesh.com/thrift/v0.1`   | `@thrift__rpc`                            |
+| Mesh Neo4j    | `https://specs.graphql-mesh.com/neo4j/v0.1`    | (transport stamp; Neo4j natives separate) |
 
 Mesh Compose injects matching definitions when you compose; loaders stamp the same imports on
 generated subgraphs.
@@ -274,6 +382,7 @@ generated subgraphs.
 ## See also
 
 <Cards>
+  <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />

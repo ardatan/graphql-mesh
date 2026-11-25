@@ -19,14 +19,14 @@ serve the same SDL on **Hive Gateway** (JS/TS) and **Apollo Router** (<ConceptRe
 peers).
 
 <V2FlowDiagram
-  ariaLabel="FHIR how-we-built: schema to generate to join SDL to Compose to gateways"
-  caption="What existed → generate → join → Compose → dual-run."
+  ariaLabel="FHIR how-we-built: schema to generate to join SDL to Composition to Serve Supergraph"
+  caption="What existed → generate → join → Composition → Serve Supergraph."
   steps={[
     { title: 'Existed', lines: ['FHIR R4 REST'] },
     { title: 'Generate', lines: ['Patient · Observation'], accent: true },
     { title: 'Join SDL', lines: ['Resource · Reference'], accent: true },
-    { title: 'Compose', accent: true },
-    { title: 'Serve API', lines: ['Hive · Apollo Router'] }
+    { title: 'Composition', accent: true },
+    { title: 'Serve Supergraph', lines: ['Hive · Apollo Router'] }
   ]}
 />
 
@@ -233,9 +233,9 @@ Opt-in stubs document only the federation surface you query. Add `DiagnosticRepo
 etc. when a query needs them -- extend the hand SDL (implementor + `->match` branch), do not ask the
 loader to invent all Resource types.
 
-## 5. Compose once, serve twice
+## 5. Composition once, serve twice
 
-Skill: [Compose](/v2/compose) · [Hive Gateway](/v2/serve/hive-gateway) ·
+Skill: [Composition](/v2/compose) · [Hive Gateway](/v2/serve/hive-gateway) ·
 [Apollo Router](/v2/serve/apollo-router)
 
 Compose to GraphQL SDL, then execute the **same** file on Hive Gateway and Apollo Router (this
@@ -295,7 +295,7 @@ from the Patient subgraph.
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
-  <Cards.Card arrow title="Compose" href="/v2/compose" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
   <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
 </Cards>
