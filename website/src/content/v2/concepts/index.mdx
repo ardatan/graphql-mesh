@@ -1,7 +1,7 @@
 ---
 description:
-  Mesh v2 concepts -- Mesh, HTTP/REST Connectors, Federation, Stitching, Gateway, Composition,
-  Schema registry
+  Mesh v2 concepts -- Mesh, HTTP/REST Connectors, Federation, Schema Stitching, Gateway,
+  Composition, Schema registry
 ---
 
 import { Cards } from '@theguild/components'
@@ -24,15 +24,15 @@ Short definitions for terms that show up across Mesh v2 docs. Each page answers:
   ]}
 />
 
-| Concept                  | One line                                                                                    | Page                                            |
-| ------------------------ | ------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| **Mesh**                 | Turns sources + SDL into Federation-ready subgraphs and transports                          | [Mesh](/v2/concepts/mesh)                       |
-| **HTTP/REST Connectors** | HTTP/REST `@connect` / `@source` mapping (not Mesh-only protocols)                          | [HTTP/REST Connectors](/v2/concepts/connectors) |
-| **Federation**           | Standardized type merging (entities / `@key`) + federation gateway runtime                  | [Federation](/v2/concepts/federation)           |
-| **Stitching**            | `@graphql-tools/stitch` type-merging runtime; Stitching Directives are optional config only | [Stitching](/v2/concepts/stitching)             |
-| **Gateway**              | Runtime that executes the graph (federation gateway peers in Mesh v2)                       | [Gateway](/v2/concepts/gateway)                 |
-| **Composition**          | Combining subgraph SDL into a supergraph (Mesh Compose, Hive, Rover, ...)                   | [Composition](/v2/concepts/composition)         |
-| **Schema registry**      | Stores and distributes subgraph / supergraph SDL                                            | [Schema registry](/v2/concepts/schema-registry) |
+| Concept                  | One line                                                                   | Page                                            |
+| ------------------------ | -------------------------------------------------------------------------- | ----------------------------------------------- |
+| **Mesh**                 | Turns sources + SDL into Federation-ready subgraphs and transports         | [Mesh](/v2/concepts/mesh)                       |
+| **HTTP/REST Connectors** | HTTP/REST `@connect` / `@source` mapping (not Mesh-only protocols)         | [HTTP/REST Connectors](/v2/concepts/connectors) |
+| **Federation**           | Standardized type merging (entities / `@key`) + federation gateway runtime | [Federation](/v2/concepts/federation)           |
+| **Schema Stitching**     | Programmatic type-merging runtime (`stitchSchemas`); can run Federation    | [Schema Stitching](/v2/concepts/stitching)      |
+| **Gateway**              | Runtime that executes the graph (federation gateway peers in Mesh v2)      | [Gateway](/v2/concepts/gateway)                 |
+| **Composition**          | Combining subgraph SDL into a supergraph (Mesh Compose, Hive, Rover, ...)  | [Composition](/v2/concepts/composition)         |
+| **Schema registry**      | Stores and distributes subgraph / supergraph SDL                           | [Schema registry](/v2/concepts/schema-registry) |
 
 ## Where to go next
 

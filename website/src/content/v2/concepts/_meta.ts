@@ -3,7 +3,7 @@ export default {
   mesh: 'Mesh',
   connectors: 'HTTP/REST Connectors',
   federation: 'Federation',
-  stitching: 'Stitching',
+  stitching: 'Schema Stitching',
   gateway: 'Gateway',
   composition: 'Composition',
   'schema-registry': 'Schema registry',
