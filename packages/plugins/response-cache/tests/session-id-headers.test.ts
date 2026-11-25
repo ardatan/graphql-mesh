@@ -531,6 +531,76 @@ describe('response-cache Schema Coordinates', () => {
     });
   });
 
+  it('keeps exact zero TTL when global is also 0 and a selector matches', async () => {
+    const upstreamSchema = createSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          greeting: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          greeting: () => 'hello',
+        },
+      },
+    });
+    await using upstreamServer = createYoga({
+      schema: upstreamSchema,
+    });
+    const cache = createMemoryCache();
+    await using gw = createGatewayRuntime({
+      supergraph: () =>
+        getUnifiedGraphGracefully([
+          {
+            name: 'upstream',
+            schema: upstreamSchema,
+            url: 'http://localhost:4001/graphql',
+          },
+        ]),
+      plugins: ctx => [
+        useCustomFetch(function (url, options) {
+          if (String(url) === 'http://localhost:4001/graphql') {
+            return upstreamServer.fetch(url, options);
+          }
+          return Response.error();
+        }),
+        useMeshResponseCache({
+          ...ctx,
+          cache,
+          includeExtensionMetadata: true,
+          sessionId: 'exact-zero',
+          ttl: 0,
+          ttlPerCoordinate: [
+            { coordinate: 'Query.greeting', ttl: 0 },
+            { coordinate: 'Query.*', ttl: 12_345 },
+          ],
+        }),
+      ],
+    });
+
+    const res = await gw.fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          query {
+            greeting
+          }
+        `,
+      }),
+    });
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toMatchObject({
+      data: { greeting: 'hello' },
+      extensions: {
+        responseCache: {
+          didCache: false,
+          hit: false,
+        },
+      },
+    });
+  });
+
   it('lets selector TTL override a global ttl of 0', async () => {
     const upstreamSchema = createSchema({
       typeDefs: /* GraphQL */ `

@@ -309,7 +309,7 @@ export default function useMeshResponseCache(
     partitionTtlCoordinates(ttlPerSchemaCoordinate);
 
   // Envelop default when `ttl` is omitted (see @envelop/response-cache).
-  const globalTtl =
+  const configuredGlobalTtl =
     'ttl' in options && options.ttl != null ? (options.ttl as number) : Number.POSITIVE_INFINITY;
 
   // Stored TTL by the context
@@ -345,18 +345,23 @@ export default function useMeshResponseCache(
     cache: getCacheForResponseCache(options.cache),
     ttlPerType,
     ttlPerSchemaCoordinate: exactTtlPerSchemaCoordinate,
-    // Mesh selectors / upstream Cache-Control are coordinate-like constraints.
-    // When Envelop only applied the global fallback, let those constraints win
-    // (same as exact ttlPerSchemaCoordinate overriding global). Otherwise take min.
+    // Pass Infinity so Envelop's `currentTtl ?? globalTtl` never folds the configured
+    // global into `onTtl`'s value. That way `ttl === Infinity` means "no explicit
+    // Envelop constraint", and an explicit exact `0` stays distinguishable from global `0`.
+    ttl: Number.POSITIVE_INFINITY,
     onTtl({ ttl, context }) {
       const meshTtl = ttlByContext.get(context);
-      if (meshTtl == null) {
-        return ttl;
+      const envelopHasConstraint = ttl !== Number.POSITIVE_INFINITY;
+      if (meshTtl != null && envelopHasConstraint) {
+        return Math.min(meshTtl, ttl);
       }
-      if (ttl === globalTtl) {
+      if (meshTtl != null) {
         return meshTtl;
       }
-      return Math.min(meshTtl, ttl);
+      if (envelopHasConstraint) {
+        return ttl;
+      }
+      return configuredGlobalTtl;
     },
   });
 
