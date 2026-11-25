@@ -24,7 +24,7 @@ Valid Mesh SDL the assistant (or you) can drop into Compose without custom one-o
 
 - Spec `@link` imports for every directive family you use
 - Local `directive @…` **definitions** for each `@composeDirective` name
-  ([why](/v2/reference/directives#federation))
+  ([why](/v2/directives#federation))
 - Binders (`$args`, `$this`, `selection`, protocol `args`) that match
   [Selection mapping](/v2/guides/selection-mapping)
 - Honest gateway matrix: Connect → dual-run; `@sql` / `@protobuf__rpc` / … → Hive Gateway only
@@ -38,7 +38,7 @@ Give the model **Mesh truth**, not a generic GraphQL tutorial:
 | [Hand-write](/v2/paths/hand-write) (or this page + Hand-write)                              | Authoring contract and Compose entry                      |
 | [Reading generated SDL](/v2/guides/reading-generated-sdl)                                   | How to interpret stamps before editing                    |
 | Emitted subgraph SDL (when you have one)                                                    | Concrete `@connect` / `@sql` / … shapes to mirror or trim |
-| [Directives reference](/v2/reference/directives) excerpt                                    | Arg names and scenario samples                            |
+| [Directives reference](/v2/directives) excerpt                                              | Arg names and scenario samples                            |
 | Protocol page for the upstream ([Protocols](/v2/protocols))                                 | Dual-run limits and loader vs hand-write notes            |
 | Target gateway ([Hive Gateway](/v2/serve/hive-gateway) / [Router](/v2/serve/apollo-router)) | Avoid inventing Router support for Mesh-only dirs         |
 
@@ -108,8 +108,8 @@ type User
 }
 ```
 
-Ask the model to explain `$args` vs `$this` against
-[Directives: @connect](/v2/reference/directives#connect) -- if it cannot, treat the draft as unsafe.
+Ask the model to explain `$args` vs `$this` against [Directives: @connect](/v2/directives#connect)
+-- if it cannot, treat the draft as unsafe.
 
 ## Do / don't
 
@@ -136,7 +136,7 @@ Ask the model to explain `$args` vs `$this` against
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
   <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
-  <Cards.Card arrow title="Directives reference" href="/v2/reference/directives" />
+  <Cards.Card arrow title="Directives reference" href="/v2/directives" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
 </Cards>
