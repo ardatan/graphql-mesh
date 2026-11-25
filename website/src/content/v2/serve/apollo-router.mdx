@@ -3,7 +3,7 @@ description: Serve Connect-compatible Mesh supergraphs with Apollo Router
 ---
 
 import { Callout, Cards } from '@theguild/components'
-import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
 
 # Apollo Router
 
@@ -14,10 +14,16 @@ the Mesh Serve Supergraph section (equal nav weight). Use it when your composed 
 
 ## Honest limits
 
-- Stock Apollo Router does **not** run Mesh <DirectiveRef name="sql" />,
-  <DirectiveRef name="protobuf__rpc" />, SOAP, or other non-Connect Mesh transports.
-- For multi-protocol Music Store Example graphs, run the **full** supergraph on Hive Gateway;
-  dual-run the Connect slice on Apollo Router when demonstrating compatibility.
+Stock Apollo Router executes **Connect** only. It does **not** run Mesh protocol transports:
+
+| Surface                                                                                                                                                       | On Apollo Router?           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| <ProtocolRef name="http-rest" /> JSON Connect (OpenAPI / JSON Schema / OData when Connect-shaped)                                                             | Yes when Connect-compatible |
+| SOAP-as-Connect (XML envelope)                                                                                                                                | No (expect Hive Gateway)    |
+| <ProtocolRef name="sql" />, <ProtocolRef name="mongo" />, <ProtocolRef name="protobuf" />, <ProtocolRef name="thrift" /> binary, <ProtocolRef name="neo4j" /> | No                          |
+
+For multi-protocol Music Store graphs, run the **full** supergraph on
+[Hive Gateway](/v2/serve/hive-gateway); dual-run only the Connect slice here.
 
 ## Dual-run
 
@@ -32,12 +38,25 @@ hive-gateway supergraph
 ./router --supergraph supergraph.graphql
 ```
 
-FHIR (`e2e/json-schema-fhir`) is a Connect-compatible how-we-built that dual-runs. In the
-[Music Store Example](/v2/examples/music-store), dual-run the **Reviews** slice after stage 2 -- not
-the full SQL + gRPC graph.
+### What dual-runs in the repo
+
+| Example                             | Dual-run?    | Notes                                                               |
+| ----------------------------------- | ------------ | ------------------------------------------------------------------- |
+| `e2e/json-schema-fhir`              | Yes          | Connect emit + join-only hand SDL                                   |
+| `e2e/openapi-entity-stubs`          | Yes          | `entity: true` / type-level `$this` Connect                         |
+| Music Store after stage 2           | Reviews only | REST `@connect` slice; not SQL catalog or gRPC recommendations      |
+| Music Store full (SQL+Connect+gRPC) | No           | Needs Hive Gateway for `@sql` / `@protobuf__rpc`                    |
+| `e2e/thrift-calculator` TJSON       | Often        | `protocol: 'json'` emits `@connect`; binary `@thrift__rpc` does not |
+| `e2e/soap-demo`                     | No           | SOAP envelope Connect is Hive-oriented                              |
 
 Upstream Connect mapping:
 [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
+
+<Callout type="info">
+  Prefer [Hive Gateway](/v2/serve/hive-gateway) whenever any Mesh protocol directive is on the
+  supergraph. Use Apollo Router to prove Connect compatibility, not as the only runtime for mixed
+  graphs.
+</Callout>
 
 <Cards>
   <Cards.Card arrow title="Gateway (concept)" href="/v2/concepts/gateway" />

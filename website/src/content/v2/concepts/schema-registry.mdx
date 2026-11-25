@@ -37,10 +37,22 @@ composition in the stack ([Architecture](/v2/architecture)).
 
 ## Short example
 
-1. Compose subgraphs (loader + hand SDL).
-2. Publish each subgraph SDL to the registry (same CLI UX for both).
-3. Point <ApiRef name="hive-gateway" /> (or Router) at the registry supergraph -- or at a local
-   Compose file for local dual-run.
+1. Compose subgraphs (loader + hand SDL) -- same pipeline for both ([Composition](/v2/compose)).
+2. Publish each **subgraph** SDL to the registry (same CLI UX whether the SDL came from
+   `loadSqlSubgraph` or a checked-in `.graphql`).
+3. Point <ApiRef name="hive-gateway" /> (or Apollo Router for Connect-only) at the registry
+   supergraph -- or at a local Compose file for local dual-run / CI.
+
+### Edge cases
+
+- **Connect vs Mesh protocols:** publishing does not change dual-run rules. A registry supergraph
+  with `@sql` / `@protobuf__rpc` still needs Hive Gateway; Connect-only graphs can pull into Apollo
+  Router.
+- **`@composeDirective`:** Mesh / Connect directives must be composed into the published SDL or the
+  gateway will not see them -- loaders usually stamp this
+  ([Directives](/v2/reference/directives#federation)).
+- **Join-only subgraphs** (FHIR `reference-resource.graphql`): valid registry citizens with `@key`
+  stubs and no root Query.
 
 Details expand on [Composition](/v2/compose) (registry publish section).
 

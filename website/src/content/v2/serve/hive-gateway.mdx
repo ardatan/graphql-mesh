@@ -3,7 +3,7 @@ description: Serve Mesh supergraphs with Hive Gateway (JavaScript / TypeScript)
 ---
 
 import { Callout, Cards } from '@theguild/components'
-import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
 
 # Hive Gateway
 
@@ -57,6 +57,17 @@ hive-gateway supergraph
 
 HTTP/REST Connectors often need no extra transport entry (Connect is built in). Protobuf example
 with an explicit transport: `e2e/protobuf-http/mesh.config.ts`.
+
+## Edge cases
+
+| Situation                                       | What to register / enable                                 |
+| ----------------------------------------------- | --------------------------------------------------------- |
+| <ProtocolRef name="sql" /> only                 | `transports.sql`                                          |
+| Music Store SQL + Connect + gRPC                | `sql` + `protobuf` (Connect built in)                     |
+| <ProtocolRef name="thrift" /> binary            | `transports.thrift`                                       |
+| Thrift TJSON (`protocol: 'json'`)               | Connect path -- no thrift transport                       |
+| OpenAPI callbacks (`e2e/openapi-subscriptions`) | `webhooks: true` (+ `@resolveTo(pubsubTopic:)` when used) |
+| Neo4j / Mongo                                   | `transports.neo4j` / `transports.mongo`                   |
 
 ## In the Music Store Example
 
