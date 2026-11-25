@@ -11,14 +11,14 @@ ops, ObjectId keys, and Federation entity fill -- without inventing a REST facad
 protocol** (not HTTP/REST Connectors). The loader stamps `@mongo__*` ops; Hive Gateway runs
 `transport-mongo`. Stock Apollo Router does **not** execute them.
 
-| Piece      | Detail                                           |
-| ---------- | ------------------------------------------------ |
-| Loader     | `@omnigraph/mongo` (`loadMongoSubgraph`)         |
-| Directives | `@mongo__findOne`, `@mongo__find`, CRUD, ...     |
-| Transport  | `@graphql-mesh/transport-mongo`                  |
-| Spec       | `https://specs.graphql-mesh.com/mongo/v0.1`      |
-| Dual-run   | Hive Gateway only                                |
-| Anchors    | `e2e/mongoose-users`; loader `mongo-schema` snap |
+| Piece      | Detail                                       |
+| ---------- | -------------------------------------------- |
+| Loader     | `@omnigraph/mongo` (`loadMongoSubgraph`)     |
+| Directives | `@mongo__findOne`, `@mongo__find`, CRUD, ... |
+| Transport  | `@graphql-mesh/transport-mongo`              |
+| Spec       | `https://specs.graphql-mesh.com/mongo/v0.1`  |
+| Dual-run   | Hive Gateway only                            |
+| Anchors    | `e2e/mongoose-users`                         |
 
 ## Generate from a Mongoose model
 
@@ -40,8 +40,7 @@ export const composeConfig = defineConfig({
 
 ## Find by id and entity fill
 
-From the mongo loader schema snapshot: Query `findUserById` uses `$args`; type-level
-`@mongo__findOne` uses `$this` for Federation:
+Query `findUserById` uses `$args`; type-level `@mongo__findOne` uses `$this` for Federation:
 
 ```graphql
 extend schema

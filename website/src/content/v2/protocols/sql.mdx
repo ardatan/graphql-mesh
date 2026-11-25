@@ -41,7 +41,7 @@ export const composeConfig = defineComposeConfig({
 ## Single row + entity fill
 
 Query by primary key (`kind: ROW` + `$args`). The object type repeats `ROW` with `$this` so
-Federation can resolve the entity (from the SQL loader snapshot):
+Federation can resolve the entity:
 
 ```graphql
 extend schema
@@ -91,7 +91,7 @@ type Album
 ## FK navigation and lists
 
 Child collections use `kind: ROWS` with `$this` plus optional `$args.where` (Artist -> albums).
-Many-to-many uses `through:` (Playlist -> tracks via `playlist_track` in the Chinook e2e snapshot):
+Many-to-many uses `through:` (Playlist -> tracks via `playlist_track` in Chinook):
 
 ```graphql
 type Artist @key(fields: "id") {
@@ -144,7 +144,7 @@ type Playlist {
 
 ## Mutations
 
-`INSERT` / `UPDATE` / `DELETE` bind columns from `$args` (loader snapshot):
+`INSERT` / `UPDATE` / `DELETE` bind columns from `$args`:
 
 ```graphql
 type Mutation {

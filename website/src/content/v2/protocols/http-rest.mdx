@@ -44,7 +44,7 @@ export const composeConfig = defineComposeConfig({
 })
 ```
 
-Emitted shape (simplified from the e2e snapshot):
+Emitted shape:
 
 ```graphql
 extend schema
@@ -126,7 +126,7 @@ export const composeConfig = defineConfig({
 })
 ```
 
-Simplified emit (real snapshot also maps `@odata.type` unions):
+Emitted shape (OData also maps `@odata.type` unions in selection):
 
 ```graphql
 type Person
@@ -178,7 +178,7 @@ export const composeConfig = defineConfig({
 })
 ```
 
-Conceptual field (names shortened from the e2e join snapshot):
+Example field:
 
 ```graphql
 type Query {
