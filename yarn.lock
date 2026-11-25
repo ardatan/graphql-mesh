@@ -4836,12 +4836,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commander-js/extra-typings@npm:^15.0.0":
-  version: 15.0.0
-  resolution: "@commander-js/extra-typings@npm:15.0.0"
+"@commander-js/extra-typings@npm:^15.1.0":
+  version: 15.1.0
+  resolution: "@commander-js/extra-typings@npm:15.1.0"
   peerDependencies:
-    commander: ~15.0.0
-  checksum: 10c0/4282857c0acb2da1b893fe8c39a939bdfae2d7cbb43a22c1fe8ef5bef4cf615ddb34d96239f7603294ef5014728799c8212f4451fa9d2e469cce087eb89f0218
+    commander: ~15.1.0
+  checksum: 10c0/0bbc94dfae6141ff95e0aafb508d4d0177d8af24d43f12ba194ff8ac2e7a0da94b44172aff960c976da196139c7d7dafed8c6cf3222c8d2396c1b4629ca95cbf
   languageName: node
   linkType: hard
 
@@ -8691,7 +8691,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
-    "@commander-js/extra-typings": "npm:^15.0.0"
+    "@commander-js/extra-typings": "npm:^15.1.0"
     "@graphql-hive/importer": "npm:^2.0.0"
     "@graphql-hive/logger": "npm:^1.2.0"
     "@graphql-mesh/fusion-composition": "npm:^0.11.4"
