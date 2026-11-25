@@ -3353,10 +3353,10 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
       args: {
         representations: {
           type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
-          // GraphQL 17 GraphQLArgument shape; ignored on 16.
-          ...({ default: undefined } as object),
+          // GraphQL 17 requires `default`; GraphQL 16 only knows `defaultValue`.
+          default: undefined,
           extensions: Object.create(null),
-        },
+        } as any,
       },
       resolve: entitiesResolve,
       extensions: Object.create(null),

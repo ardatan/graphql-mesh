@@ -1,75 +1,19 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Discriminator with invalid key in the mapping should generate correct schema: discriminator-invalid-key 1`] = `
-"schema @source(name: "test", http: { baseURL: "http://localhost" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Cat implements Pet {
-  color: String
-  name: String!
-  petType: String
-}
-
-interface Pet {
-  name: String!
-  petType: String
-}
-
-type Dog implements Pet {
-  age: String
-  name: String!
-  petType: String
-}
-
-type Query {
-  pets_by_id(id: String!): Pet @connect(source: "test", http: { GET: "/pets/{$args.id}" }, selection: """
-  name
-  petType
-  ... $.petType->match(["pet-cat", { __typename: "Cat", color }], ["pet-dog", { __typename: "Dog", age }])
-  """)
-}
-
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
-  headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
-}
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
+schema @source(name:"test" http:{baseURL:"http://localhost"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query}
+directive @connect(source:String http:ConnectHTTP selection:JSONSelection! entity:Boolean errors:ConnectorErrors isSuccess:JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess:JSONSelection) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Cat implements Pet {color:String name:String! petType:String}
+interface Pet {name:String! petType:String}
+type Dog implements Pet {age:String name:String! petType:String}
+type Query {pets_by_id(id:String!):Pet @connect(source:"test" http:{GET:"/pets/{$args.id}"} selection:"""name petType ... $.petType->match(["pet-cat",{__typename:"Cat",color}],["pet-dog",{__typename:"Dog",age}])""")}
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters,mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-"""A custom syntax for mapping JSON data to GraphQL schema"""
+input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection
+input ConnectorErrors {message:JSONSelection extensions:JSONSelection}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:JSONSelection}
 
-input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
-}"
 `;

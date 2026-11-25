@@ -1,89 +1,27 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Merge attributes correctly in allOfs should generate correct schema: allof-properties-schema 1`] = `
-"schema @source(name: "test", http: { baseURL: "" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-  mutation: Mutation
-}
-
-directive @length(subgraph: String, min: Int, max: Int) repeatable on SCALAR
-
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Admin implements User {
-  """The name"""
-  name: User_name
-  """The type"""
-  type: String!
-  """The admin"""
-  admin: Boolean
-}
-
-interface User {
-  """The name"""
-  name: User_name
-  """The type"""
-  type: String!
-}
-
-"""The name"""
-scalar User_name @length(subgraph: "test", max: 100)
-
-type Query {
-  """Get admin"""
-  getAdmin: Admin @connect(source: "test", http: { GET: "/admin" }, selection: """
-  name
-  type
-  admin
-  """)
-}
-
-type Mutation {
-  """Create users"""
-  createUsers: Void @connect(source: "test", http: { POST: "/create" }, selection: "$")
-}
-
-"""Represents empty values"""
+schema @source(name:"test" http:{baseURL:""}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query mutation:Mutation}
+directive @length(subgraph:String min:Int max:Int) repeatable on SCALAR
+directive @connect(source:String http:ConnectHTTP selection:JSONSelection! entity:Boolean errors:ConnectorErrors isSuccess:JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess:JSONSelection) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Admin implements User {"""The name""" name:User_name """The
+type"""
+type:String! """The admin""" admin:Boolean}
+interface User {"""The name""" name:User_name """The
+type"""
+type:String!} """The name"""
+scalar User_name @length(subgraph:"test" max:100)
+type Query {"""Get admin""" getAdmin:Admin @connect(source:"test" http:{GET:"/admin"} selection:"""name
+type admin""")}
+type Mutation {"""Create users""" createUsers:Void @connect(source:"test" http:{POST:"/create"} selection:"$")} """Represents empty values"""
 scalar Void
-
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
-  headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
-}
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters,mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-"""A custom syntax for mapping JSON data to GraphQL schema"""
+input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection
+input ConnectorErrors {message:JSONSelection extensions:JSONSelection}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:JSONSelection}
 
-input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
-}"
 `;

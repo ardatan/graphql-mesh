@@ -7,4 +7,4 @@
 '@graphql-mesh/utils': patch
 ---
 
-CI dual GraphQL 16/17 matrix (`yarn match-graphql`) plus type/runtime shims so Mesh packages keep building and testing against both peer majors. Jest snapshot resolver keeps GraphQL 17 snaps at the historical path and writes sibling `*.gql16.snap` files for print/default diffs.
+CI dual GraphQL 16/17 matrix (`yarn match-graphql`). Printed-schema Jest snapshots are canonicalized (whitespace / optional commas) so one snap file works on both majors — no per-version snap forks.

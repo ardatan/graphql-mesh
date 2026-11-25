@@ -1,96 +1,24 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Example API Combined should generate correct schema: example_oas_combined-schema 1`] = `
-"schema @source(name: "example_api_combined", http: { baseURL: "http://localhost:3000/api" }) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  """Returns information about all employee cars"""
-  getAllCars: [query_getAllCars_items] @connect(source: "example_api_combined", http: { GET: "/cars" }, selection: """
-  model
-  color
-  features
-  tags
-  kind
-  rating: rating->match([100, "_100"], [101, "_101"], [200, "_200"], [@, rating])
-  """)
-}
-
-type query_getAllCars_items {
-  """The model of the car."""
-  model: String
-  """The color of the car."""
-  color: String
-  features: JSON
-  """Arbitrary (string) tags describing an entity."""
-  tags: JSON
-  kind: car_kind
-  rating: car_rating
-}
-
-"""
-The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
-
-enum car_kind {
-  SEDAN
-  SUV
-  MINIVAN
-  LIMOSINE
-  RACE_CAR
-}
-
-"""The rating of the car."""
-enum car_rating {
-  _100
-  _101
-  _200
-}
-
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
-  headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
-}
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
+schema @source(name:"example_api_combined" http:{baseURL:"http://localhost:3000/api"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query}
+directive @connect(source:String http:ConnectHTTP selection:JSONSelection! entity:Boolean errors:ConnectorErrors isSuccess:JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess:JSONSelection) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {"""Returns information about all employee cars""" getAllCars:[query_getAllCars_items] @connect(source:"example_api_combined" http:{GET:"/cars"} selection:"""model color features tags kind rating:rating->match([100,"_100"],[101,"_101"],[200,"_200"],[@,rating])""")}
+type query_getAllCars_items {"""The model of the car.""" model:String """The color of the car.""" color:String features:JSON """Arbitrary (string) tags describing an entity.""" tags:JSON kind:car_kind rating:car_rating} """The \`JSON\`
+scalar
+type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."""
+scalar JSON @specifiedBy(url:"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+enum car_kind {SEDAN SUV MINIVAN LIMOSINE RACE_CAR} """The rating of the car."""
+enum car_rating {_100 _101 _200}
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters,mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-"""A custom syntax for mapping JSON data to GraphQL schema"""
+input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection
+input ConnectorErrors {message:JSONSelection extensions:JSONSelection}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:JSONSelection}
 
-input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
-}"
 `;
 
 exports[`Example API Combined should handle allOf correctly: example_oas_combined-query-result 1`] = `
