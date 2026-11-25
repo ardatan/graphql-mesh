@@ -23,18 +23,18 @@ flowchart LR
   D -.-> E[Optional: edit and re-compose]
 ```
 
-## In the Music store
+## In the Music Store Example
 
-Stage 1 of the [Music store](/v2/examples/music-store) tutorial generates the **Chinook SQL
-catalog** first -- the federation hub -- then asks you to read the emitted SDL (especially Track
-`@key`) before anything else is authored.
+Stage 1 of the [Music Store Example](/v2/examples/music-store) generates the **Chinook SQL catalog**
+first -- the federation hub -- then asks you to read the emitted SDL (especially Track `@key`)
+before anything else is authored.
 
 | What you generate   | Why it leads                                                 |
 | ------------------- | ------------------------------------------------------------ |
 | Chinook SQL catalog | Domain starts with catalog; generate-first lesson stays true |
 
 ```ts
-// Sketch -- Music store stage 1
+// Sketch -- Music Store Example stage 1
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
@@ -45,8 +45,8 @@ export const composeConfig = defineComposeConfig({
 ```
 
 After compose, query a Track, then open the emitted SDL and find the directives that made the query
-work. Full stage walkthrough: [Music store](/v2/examples/music-store). How to read what you got:
-[Reading generated SDL](/v2/guides/reading-generated-sdl).
+work. Full stage walkthrough: [Music Store Example](/v2/examples/music-store). How to read what you
+got: [Reading generated SDL](/v2/guides/reading-generated-sdl).
 
 ## Loaders (reference)
 
@@ -56,5 +56,5 @@ story is the emitted subgraph; loader names are the API you call when configurin
 <Cards>
   <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
-  <Cards.Card arrow title="Music store" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>

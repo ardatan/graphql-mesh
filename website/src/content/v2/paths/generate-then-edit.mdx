@@ -17,12 +17,12 @@ flowchart LR
   C --> D[Re-compose + query]
 ```
 
-## In the Music store
+## In the Music Store Example
 
-Stage 2 of the [Music store](/v2/examples/music-store) generates **Reviews** from a REST / OpenAPI
-source (Connect emit), then edits the `@connect` SDL before it joins the catalog.
+Stage 2 of the [Music Store Example](/v2/examples/music-store) generates **Reviews** from a REST /
+OpenAPI source (Connect emit), then edits the `@connect` SDL before it joins the catalog.
 
-| Step       | Music store move                                                                                |
+| Step       | Music Store Example move                                                                        |
 | ---------- | ----------------------------------------------------------------------------------------------- |
 | Generate   | Reviews OpenAPI → Connect subgraph beside Chinook                                               |
 | Dislike    | Naming, selection, or entity wiring that does not match the catalog keys                        |
@@ -34,11 +34,11 @@ edit. When the dislike is mostly naming and you still want the loader emit as th
 Compose [Transforms](/v2/transforms) can help -- they are not required once you are editing the SDL
 yourself.
 
-Full stage walkthrough: [Music store](/v2/examples/music-store).
+Full stage walkthrough: [Music Store Example](/v2/examples/music-store).
 
 <Cards>
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Transforms (optional)" href="/v2/transforms" />
-  <Cards.Card arrow title="Music store" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>
