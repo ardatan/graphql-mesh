@@ -38,7 +38,7 @@ Use this page when [reading generated SDL](/v2/guides/reading-generated-sdl) or
 
 <a id="connect" />
 
-## Connect HTTP {#connect}
+## Connect HTTP
 
 `@connect` / `@source`
 
@@ -73,7 +73,7 @@ type Track @key(fields: "id", resolvable: false) {
 
 <a id="transport" />
 
-## Mesh core {#transport}
+## Mesh core
 
 `@transport`
 
@@ -100,7 +100,7 @@ rewritten to `@join__directive` the way `@connect` / `@source` are.
 
 <a id="sql" />
 
-## SQL {#sql}
+## SQL
 
 `@sql__query` / `@sql__mutation` / `@sql__relation`
 
@@ -148,7 +148,7 @@ Details expand with the SQL protocol chapter; Music Store Example stage 1 uses C
 
 <a id="mongo" />
 
-## Mongo {#mongo}
+## Mongo
 
 `@mongo`
 
@@ -175,7 +175,7 @@ schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localho
 
 <a id="protobuf" />
 
-## Protobuf / gRPC {#protobuf}
+## Protobuf / gRPC
 
 `@protobuf__rpc`
 
@@ -215,7 +215,7 @@ type Query {
 
 <a id="thrift" />
 
-## Thrift {#thrift}
+## Thrift
 
 `@thrift__rpc`
 
@@ -226,7 +226,7 @@ Binary Thrift path uses `@thrift__rpc` (`args` / `selection` / `throws`, …). T
 
 <a id="neo4j" />
 
-## Neo4j {#neo4j}
+## Neo4j
 
 Mesh uses **native** `@neo4j/graphql` directives (not a Mesh `@neo4j__*` dialect). Loader may
 introspect or accept author SDL; transport filters by `subgraph:` vs `@transport(subgraph:)`. Full
@@ -236,7 +236,7 @@ catalog TBD -- see [Protocols](/v2/protocols).
 
 <a id="federation" />
 
-## Federation / join {#federation}
+## Federation / join
 
 `@key` / `@composeDirective`
 
@@ -252,7 +252,7 @@ with Connect or protocol directives -- not Mesh `@resolveTo`.
 
 <a id="link" />
 
-## Spec imports {#link}
+## Spec imports
 
 `@link`
 
