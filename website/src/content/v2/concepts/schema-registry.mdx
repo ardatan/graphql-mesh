@@ -38,10 +38,26 @@ composition in the stack ([Architecture](/v2/architecture)).
 ## Short example
 
 1. Compose subgraphs (loader + hand SDL) -- same pipeline for both ([Composition](/v2/compose)).
-2. Publish each **subgraph** SDL to the registry (same CLI UX whether the SDL came from
-   `loadSqlSubgraph` or a checked-in `.graphql`).
+2. Emit one subgraph file per service, then publish (same CLI UX whether the SDL came from
+   `loadSqlSubgraph` or a checked-in `.graphql`):
+
+```bash
+mesh-compose --subgraph catalog -o catalog-subgraph.graphql
+
+hive schema:publish \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --service="catalog" \
+  --url="http://localhost:4001/graphql" \
+  --author "you" \
+  --commit "catalog-v1" \
+  catalog-subgraph.graphql
+```
+
 3. Point <ApiRef name="hive-gateway" /> (or Apollo Router for Connect-only) at the registry
-   supergraph -- or at a local Compose file for local dual-run / CI.
+   supergraph -- or at a local `mesh-compose -o supergraph.graphql` file for dual-run / CI.
+
+Full step-through (multi-subgraph Music Store names):
+[Composition → Registry publish](/v2/compose#registry-publish).
 
 ### Use cases
 

@@ -1,0 +1,117 @@
+---
+description: Mesh GraphQL HTTP / Federation subgraphs -- loadGraphQLHTTPSubgraph
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+
+# GraphQL HTTP / Federation
+
+Use this family when the upstream is **already GraphQL** -- a plain GraphQL HTTP API or a Federation
+subgraph. Mesh loads the schema (introspection or a `.graphql` / URL source), stamps
+
+<DirectiveRef name="transport" /> for Hive Gateway's HTTP transport, and composes it beside
+Omnigraph-generated or hand-written subgraphs.
+
+This is **not** HTTP/REST Connectors. There is no `@connect` emit unless you also author Connect
+fields. Dual-run on Apollo Router applies only when the **composed** supergraph is Connect-shaped; a
+pure GraphQL-HTTP subgraph is a normal Federation peer.
+
+| Piece     | Detail                                                       |
+| --------- | ------------------------------------------------------------ |
+| Loader    | `loadGraphQLHTTPSubgraph` from `@graphql-mesh/compose-cli`   |
+| Transport | `kind: "http"` (default) on Hive Gateway                     |
+| Dual-run  | N/A as a Connect family -- Federation / GraphQL upstream     |
+| Options   | `federation: true` when the source is already a Fed subgraph |
+
+## Generate
+
+```ts
+import {
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('users', {
+        // Runtime GraphQL endpoint
+        endpoint: 'http://localhost:4001/graphql',
+        // Optional: SDL file or URL instead of introspection
+        // source: './users.graphql',
+        operationHeaders: {
+          Authorization: 'Bearer {$env.USERS_TOKEN}'
+        },
+        // Set true when the upstream already speaks Federation
+        federation: false
+      })
+    }
+  ]
+})
+```
+
+Compose stamps `@transport(kind: "http", subgraph: "users", location: ...)` so Hive Gateway proxies
+operations to that endpoint. Read the stamp with
+[Reading generated SDL](/v2/guides/reading-generated-sdl).
+
+## Use cases
+
+### Existing Federation subgraph in a Mesh supergraph
+
+When `users` is already a Federation subgraph (has `@key`, ...), keep its Fed semantics:
+
+```ts
+loadGraphQLHTTPSubgraph('users', {
+  endpoint: 'http://localhost:4001/graphql',
+  federation: true
+})
+```
+
+Mesh Compose treats it as a Federation peer next to SQL / Connect / gRPC subgraphs -- see
+[Music Store Example](/v2/examples/music-store) for multi-protocol composition (swap in a GraphQL
+HTTP source the same way).
+
+### SDL file instead of live introspection
+
+Pin schema for CI offline builds:
+
+```ts
+loadGraphQLHTTPSubgraph('users', {
+  endpoint: 'http://localhost:4001/graphql', // still used as transport location
+  source: './users.graphql' // schema from file; skip introspection
+})
+```
+
+### Headers and GET queries
+
+```ts
+loadGraphQLHTTPSubgraph('users', {
+  endpoint: 'http://localhost:4001/graphql',
+  useGETForQueries: true,
+  operationHeaders: {
+    Authorization: 'Bearer {$env.USERS_TOKEN}'
+  }
+})
+```
+
+## Serve
+
+Hive Gateway executes `kind: "http"` without an extra `transports` map entry in typical setups.
+Apollo Router can run the **supergraph** when every subgraph is Connect-compatible -- a GraphQL-HTTP
+subgraph alone does not make the graph Connect; it participates as Federation GraphQL.
+
+<Callout type="info">
+  Prefer Omnigraph loaders when the source is REST, SQL, gRPC, ... -- those emit Mesh / Connect
+  directives. Use GraphQL HTTP when the upstream is already GraphQL.
+</Callout>
+
+## Related
+
+<Cards>
+  <Cards.Card arrow title="Loaders" href="/v2/concepts/loaders" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Federation" href="/v2/concepts/federation" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+</Cards>

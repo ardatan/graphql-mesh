@@ -1,6 +1,7 @@
 export default {
   index: 'Overview',
   'http-rest': 'HTTP / REST',
+  graphql: 'GraphQL HTTP',
   sql: 'SQL',
   protobuf: 'Protobuf / gRPC',
   mongo: 'Mongo',

@@ -116,14 +116,60 @@ export const composeConfig = defineComposeConfig({
 ## Registry publish
 
 Publish composed **subgraph** SDL to Hive schema registry / GraphOS with the same CLI UX whether the
-SDL came from a loader or a file. See [Schema registry](/v2/concepts/schema-registry).
+SDL came from a loader or a hand-written file. See [Schema registry](/v2/concepts/schema-registry).
+
+### 1. Emit one subgraph SDL
+
+Use `--subgraph` with the subgraph name from your Compose config (loader name or `name:` for a
+file). Output is Federation-compatible subgraph SDL -- same shape for SQL emit, Connect emit, or
+authored `.graphql`:
+
+```bash
+mesh-compose --subgraph catalog -o catalog-subgraph.graphql
+mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+mesh-compose --subgraph recommendations -o recommendations-subgraph.graphql
+```
+
+Or compose the full supergraph for local serve without a registry:
+
+```bash
+mesh-compose -o supergraph.graphql
+```
+
+### 2. Publish to a registry
+
+Example with [Hive CLI](https://the-guild.dev/graphql/hive/docs/api-reference/cli) (GraphOS / Rover
+and other Federation registries use their own publish commands against the same subgraph file):
+
+```bash
+hive schema:publish \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --service="catalog" \
+  --url="http://localhost:4001/graphql" \
+  --author "you" \
+  --commit "catalog-v1" \
+  catalog-subgraph.graphql
+```
+
+Repeat per subgraph (`reviews`, `recommendations`, ...). Hand-written and generated subgraphs share
+this path -- Compose does not care how the SDL was authored.
+
+### 3. Gateway pull
+
+Point [Hive Gateway](/v2/serve/hive-gateway) (or Apollo Router for a Connect-only graph) at the
+registry supergraph, or keep serving the local `supergraph.graphql` file in CI / dual-run demos.
+
+Mesh / Connect directives must survive composition via `@composeDirective` **and** matching
+`directive` definitions, or they are stripped before publish -- see
+[Schema registry](/v2/concepts/schema-registry) and
+[Directives](/v2/reference/directives#federation).
 
 Worked multi-subgraph config: [Music Store Example](/v2/examples/music-store) (catalog + reviews +
 recommendations, then compose all). Serve: [Serve Supergraph](/v2/serve).
 
 <Callout type="info">
-  Some first-class Compose + registry helpers landed in recent Mesh releases; example pages cite the
-  APIs as fixtures fill in.
+  First-class hand-written SDL Compose + registry helpers continue to land in Mesh releases; the
+  `--subgraph` emit + registry CLI pattern above is the stable consumer UX.
 </Callout>
 
 <Cards>

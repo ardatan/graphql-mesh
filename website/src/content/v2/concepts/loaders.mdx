@@ -8,15 +8,21 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Loaders
 
-A **loader** (`@omnigraph/*`) turns an upstream description -- OpenAPI, SQL database, `.thrift` IDL,
-`$metadata`, … -- into **subgraph GraphQL SDL** stamped with
+A **loader** turns an upstream description -- OpenAPI, SQL database, `.thrift` IDL, `$metadata`, ...
+-- into **subgraph GraphQL SDL** stamped with
 
 <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> and/or Mesh protocol directives.
 Loaders do **not** serve traffic; they only emit (or supply) schema for
 <ConceptRef name="composition">composition</ConceptRef>.
 
+**Omnigraph** is the Mesh package family for those loaders (`@omnigraph/openapi`, `@omnigraph/sql`,
+`@omnigraph/soap`, ...). In docs and npm you mostly see the package name; Omnigraph is the shared
+brand for "source → subgraph SDL" emit, not a separate product from Mesh Compose or Hive Gateway.
+
 Hand-written `.graphql` is the other input to Compose -- same pipeline, no loader required
-([Hand-write](/v2/paths/hand-write)).
+([Hand-write](/v2/paths/hand-write)). Existing GraphQL HTTP / Federation upstreams use
+`loadGraphQLHTTPSubgraph` from `@graphql-mesh/compose-cli` (not an `@omnigraph/*` package) -- see
+[GraphQL HTTP](/v2/protocols/graphql).
 
 ## Where it lives
 
@@ -32,8 +38,8 @@ Hand-written `.graphql` is the other input to Compose -- same pipeline, no loade
 
 | Piece                          | Role                                                       |
 | ------------------------------ | ---------------------------------------------------------- |
-| `@omnigraph/openapi`, `sql`, … | Introspect / read source → emit directives + often `@key`  |
-| `sourceHandler: load…`         | Compose config entry that runs a loader                    |
+| `@omnigraph/openapi`, `sql`, ... | Introspect / read source → emit directives + often `@key`  |
+| `sourceHandler: load...`         | Compose config entry that runs a loader                    |
 | Output                         | Subgraph SDL (readable GraphQL -- not a runtime black box) |
 
 Loaders are **optional**. Authored SDL and loader emit are peers at Compose time.
@@ -42,7 +48,7 @@ Loaders are **optional**. Authored SDL and loader emit are peers at Compose time
 
 Typical emit (family-dependent):
 
-- Protocol or Connect directives (`@sql`, `@connect` / `@source`, `@protobuf__rpc`, …)
+- Protocol or Connect directives (`@sql`, `@connect` / `@source`, `@protobuf__rpc`, ...)
 - <DirectiveRef name="transport" /> for Hive Gateway transport kind / location
 - Federation <DirectiveRef name="key" /> / `entity: true` when conventions match
 - `@link` + `@composeDirective` so Mesh directives survive composition (with matching `directive`

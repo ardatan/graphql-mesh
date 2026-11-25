@@ -210,6 +210,12 @@ const PROTOCOLS = {
     slug: 'protobuf',
     description: 'Protobuf / gRPC protocol: @protobuf__rpc field-number maps, transport-protobuf.',
   },
+  graphql: {
+    label: 'GraphQL HTTP',
+    slug: 'graphql',
+    description:
+      'GraphQL HTTP / Federation subgraphs: loadGraphQLHTTPSubgraph, transport kind http.',
+  },
 } as const;
 
 export type ProtocolName = keyof typeof PROTOCOLS;
