@@ -31,15 +31,16 @@ function normalizePrintedSchema(sdl) {
         const prev = local.length ? local[local.length - 1] : '';
         const next = j < m ? text[j] : '';
         // Keep a space before `@directive` (next==='@'); drop space after `@`.
+        // Inside block strings (stripCommas=false) keep spaces around commas —
+        // description prose like `letters, numerals` must stay readable/stable.
         const skipAround =
           !prev ||
           !next ||
           '{([@'.includes(prev) ||
-          '})],'.includes(next) ||
+          (stripCommas ? '})],'.includes(next) : '})]'.includes(next)) ||
           prev === ':' ||
           next === ':' ||
-          prev === ',' ||
-          next === ',';
+          (stripCommas && (prev === ',' || next === ','));
         if (!skipAround) local += ' ';
         k = j;
         continue;
@@ -132,9 +133,7 @@ function normalizePrintedSchema(sdl) {
 
 function looksLikePrintedSchema(val) {
   if (typeof val !== 'string') return false;
-  return /^\s*"?(?:schema|type|interface|union|enum|input|scalar|extend|directive)\b/m.test(
-    val,
-  );
+  return /^\s*"?(?:schema|type|interface|union|enum|input|scalar|extend|directive)\b/m.test(val);
 }
 
 module.exports = {

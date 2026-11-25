@@ -48,8 +48,8 @@ scalar BigInt """Integers that will have a value of 0 or more."""
 scalar UnsignedInt """The \`Byte\`
 scalar
 type represents byte value as a Buffer"""
-scalar Byte """A date string,such as 2007-12-03,compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
-scalar Date """A date-time string at UTC,such as 2007-12-03T10:15:30Z,compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
+scalar Byte """A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
+scalar Date """A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
 scalar DateTime """Integers that will have a value of 0 or more."""
 scalar NonNegativeInt """Integers that will have a value of 0 or less."""
 scalar NonPositiveInt """Integers that will have a value greater than 0."""
@@ -106,7 +106,7 @@ input tns_FileClass_Input {Mode:tns_EntityMode ClassIntID:BigInt CreatedBy:Strin
 enum tns_EntityMode {New Deleted Changed Unchanged} """The \`BigInt\`
 scalar
 type represents non-fractional signed whole numeric values."""
-scalar BigInt """A date-time string at UTC,such as 2007-12-03T10:15:30Z,compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
+scalar BigInt """A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
 scalar DateTime
 enum tns_PeriodType {Days Weeks Months Years} """The \`Byte\`
 scalar
@@ -144,7 +144,7 @@ type represents JSON values as specified by [ECMA-404](http://www.ecma-internati
 scalar JSON
 type AdminServiceType_GetFileClassByClassIDResponse {GetFileClassByClassIDResult:tns_FileClass}
 type tns_FileClass {Mode:tns_EntityMode ClassIntID:BigInt CreatedBy:String CreatedDtTm:DateTime Entityclasses:tns_EntityClassList FirmGuid:tns_guid FirmIntID:BigInt LastUpdatedBy:String LastUpdatedDtTm:DateTime Name:String NeedANotification:Boolean PeriodType:tns_PeriodType PreventPublishFlg:Boolean Retention:Int RetentionChanged:String Subclasses:tns_FileSubclassList Timestamp:Byte}
-enum tns_EntityMode {New Deleted Changed Unchanged} """A date-time string at UTC,such as 2007-12-03T10:15:30Z,compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
+enum tns_EntityMode {New Deleted Changed Unchanged} """A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
 scalar DateTime
 type tns_EntityClassList {EntityClass:[tns_EntityClass]}
 type tns_EntityClass {Mode:tns_EntityMode ClassIntID:BigInt EntityClassIntID:BigInt EntityIntID:BigInt EntityType:tns_EntityType FirmIntID:BigInt}

@@ -7,7 +7,7 @@ directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess
 directive @link(url:String! import:[String]) repeatable on SCHEMA
 type Query {"""Get a list of products""" listOfProducts("""Get approved products""" isApproved:Boolean = true):[Product] @connect(source:"query-params" http:{GET:"/listOfProducts" queryParams:"""{isApproved:$args.isApproved}"""} selection:"""id name""")}
 type Product {id:String name:String}
-input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters,mapping to GraphQL fields or arguments"""
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
 input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection

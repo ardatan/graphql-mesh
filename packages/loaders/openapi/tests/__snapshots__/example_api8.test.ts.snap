@@ -7,7 +7,7 @@ directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess
 directive @link(url:String! import:[String]) repeatable on SCHEMA
 type Query {"""Return a user.""" user:user @connect(source:"test" http:{GET:"/user"} selection:"name")} """A user represents a natural person"""
 type user {"""The legal name of a user""" name:String}
-input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters,mapping to GraphQL fields or arguments"""
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
 input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection

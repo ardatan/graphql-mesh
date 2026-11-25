@@ -8,8 +8,8 @@ directive @link(url:String! import:[String]) repeatable on SCHEMA
 type Dog implements Pet {dog_exclusive:String name:String! petType:String}
 interface Pet {name:String! petType:String}
 type Cat implements Pet {cat_exclusive:String name:String! petType:String}
-type Query {pets_by_id(id:String!):Pet @connect(source:"Pet" http:{GET:"/pets/{$args.id}"} selection:"""name petType ... $.petType->match(["Dog",{__typename:"Dog",dog_exclusive}],["Cat",{__typename:"Cat",cat_exclusive}])""")}
-input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters,mapping to GraphQL fields or arguments"""
+type Query {pets_by_id(id:String!):Pet @connect(source:"Pet" http:{GET:"/pets/{$args.id}"} selection:"""name petType ... $.petType->match(["Dog", {__typename:"Dog", dog_exclusive}], ["Cat", {__typename:"Cat", cat_exclusive}])""")}
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
 input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection

@@ -23,7 +23,7 @@ input mutation_post_formUrlEncoded_history_Input {data:String}
 input post_inputUnion_request_Input @oneOf(subgraph:"example_api6") {mutationInput_post_inputUnion_input_oneOf_0_Input:mutationInput_post_inputUnion_input_oneOf_0_Input mutationInput_post_inputUnion_input_oneOf_1_Input:mutationInput_post_inputUnion_input_oneOf_1_Input}
 input mutationInput_post_inputUnion_input_oneOf_0_Input {dogBreed:String}
 input mutationInput_post_inputUnion_input_oneOf_1_Input {catBreed:String}
-input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters,mapping to GraphQL fields or arguments"""
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
 input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection

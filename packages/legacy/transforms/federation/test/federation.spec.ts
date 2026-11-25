@@ -44,7 +44,7 @@ schema @link(url:"https://specs.apollo.dev/federation/v2.0" import:[]) {query:Qu
 type Query {foo:Foo _entities(representations:[_Any!]!):[_Entity]! _service:_Service!}
 union _Entity
 scalar _Any
-type _Service {"""The sdl representing the federated service capabilities. Includes federation directives,removes federation types,and includes rest of full schema after schema directives have been applied""" sdl:String}
+type _Service {"""The sdl representing the federated service capabilities. Includes federation directives, removes federation types, and includes rest of full schema after schema directives have been applied""" sdl:String}
 type Foo {bar:String}
 
 `);

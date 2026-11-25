@@ -18,7 +18,7 @@ type getNumericalEnum_200_response {data:query_getNumericalEnum_data}
 enum query_getNumericalEnum_data {_1 _2 _3 _4 _5}
 type getObjectEnum_200_response {data:query_getObjectEnum_data}
 enum query_getObjectEnum_data {_LEFT_SQUARE_BRACE_object_Object_RIGHT_SQUARE_BRACE_}
-input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters,mapping to GraphQL fields or arguments"""
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
 input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection

@@ -21,7 +21,7 @@ scalar JSON @specifiedBy(url:"http://www.ecma-international.org/publications/fil
 input TestType_Input @oneOf(subgraph:"test") {A_const:A_const mutation_test_endpoint_oneOf_1_Input:mutation_test_endpoint_oneOf_1_Input}
 input mutation_test_endpoint_oneOf_1_Input {B:String}
 scalar ObjMap
-input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters,mapping to GraphQL fields or arguments"""
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
 input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection
