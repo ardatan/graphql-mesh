@@ -594,8 +594,11 @@ export async function getSqlExecutor({
   // Soft-delete / `$fn` computed columns live on the GraphQL.js planner path.
   // MySQL / SQLite / Bun.SQL keep the GraphQL.js + JOIN planner path.
   // Dynamic import keeps grafast off the static graph (Jest --detectLeaks).
+  // grafast@1.x peers graphql^16 only (`buildExecutionContext` removed in graphql 17).
+  const { version: graphqlVersion } = await import('graphql');
+  const graphqlMajor = Number.parseInt(String(graphqlVersion).split('.')[0], 10);
   const usesPlannerExtras = Boolean(softDelete) || printSchemaHasPlannerExtras(subgraph);
-  if (adapter === 'postgres' && sqlClient.pgPool && !usesPlannerExtras) {
+  if (adapter === 'postgres' && sqlClient.pgPool && !usesPlannerExtras && graphqlMajor < 17) {
     const { createPostgresGrafastExecutor } = await import('./pg-executor.js');
     const grafastExecutor = createPostgresGrafastExecutor({
       subgraph,

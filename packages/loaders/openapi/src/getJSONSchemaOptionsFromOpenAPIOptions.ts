@@ -1286,18 +1286,20 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                   }
                   return false;
                 };
-                // Only set timeout if we're not in batch mode (no context provided)
-                if (!hateoasContext) {
-                  timeout = setTimeout(() => {
-                    log.warn(
-                      `Could not find operation for link ${linkName} in ${name} for ${xLinkHref}`,
-                    );
-                    contextFutureLinks.delete(findActualOperationAndPath);
-                    deferred.resolve();
-                  }, 5000);
-                }
                 if (!tryResolveAgainstLoaded()) {
                   contextFutureLinks.add(findActualOperationAndPath);
+                  // Only arm timeout when the link is still pending and we're not in
+                  // batch mode (no context). Avoids leaking timers after Jest finishes.
+                  if (!hateoasContext) {
+                    timeout = setTimeout(() => {
+                      log.warn(
+                        `Could not find operation for link ${linkName} in ${name} for ${xLinkHref}`,
+                      );
+                      contextFutureLinks.delete(findActualOperationAndPath);
+                      deferred.resolve();
+                    }, 5000);
+                    timeout.unref?.();
+                  }
                 }
 
                 // In batch mode, resolve immediately since we'll handle resolution later

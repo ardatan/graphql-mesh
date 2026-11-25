@@ -2243,7 +2243,7 @@ type Query {
   "Find administrative divisions, filtering by optional criteria. If no criteria are set, you will get back all\\nknown divisions.\\n"
   findAdminDivisionsUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """
     Only places in these countries (comma-delimited country codes or WikiData ids)
@@ -2295,7 +2295,7 @@ type Query {
     namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
 
     """The location radius within which to find places"""
     radius: Int
@@ -2314,7 +2314,7 @@ type Query {
   "Find cities near the given administrative division, filtering by optional criteria. If no criteria are set, you\\nwill get back all known cities.\\n"
   findCitiesNearAdminDivisionUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """
     Only places in these countries (comma-delimited country codes or WikiData ids)
@@ -2364,7 +2364,7 @@ type Query {
     namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
 
     """The location radius within which to find places"""
     radius: Int
@@ -2386,7 +2386,7 @@ type Query {
   "Find cities near the given origin city, filtering by optional criteria. If no criteria are set, you will get\\nback all known cities.\\n"
   findCitiesNearCityUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """A city id (either native 'id' or 'wikiDataId')"""
     cityId: String!
@@ -2436,7 +2436,7 @@ type Query {
     namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
 
     """The location radius within which to find places"""
     radius: Int
@@ -2458,7 +2458,7 @@ type Query {
   "Find cities near the given location, filtering by optional criteria. If no criteria are set, you will get back\\nall known cities.\\n"
   findCitiesNearLocationUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """
     Only places in these countries (comma-delimited country codes or WikiData ids)
@@ -2508,7 +2508,7 @@ type Query {
     namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
 
     """The location radius within which to find places"""
     radius: Int
@@ -2530,7 +2530,7 @@ type Query {
   "Find cities, filtering by optional criteria. If no criteria are set, you will get back all known cities.\\n"
   findCitiesUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """
     Only places in these countries (comma-delimited country codes or WikiData ids)
@@ -2582,7 +2582,7 @@ type Query {
     namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
 
     """The location radius within which to find places"""
     radius: Int
@@ -2604,7 +2604,7 @@ type Query {
   "Find administrative divisions near the given origin division, filtering by optional criteria. If no criteria\\nare set, you will get back all known divisions.\\n"
   findDivisionsNearAdminDivisionUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """
     Only places in these countries (comma-delimited country codes or WikiData ids)
@@ -2654,7 +2654,7 @@ type Query {
     namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
 
     """The location radius within which to find places"""
     radius: Int
@@ -2673,7 +2673,7 @@ type Query {
   "Find administrative divisions near the given location, filtering by optional criteria. If no criteria are set,\\nyou will get back all known divisions.\\n"
   findDivisionsNearLocationUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """
     Only places in these countries (comma-delimited country codes or WikiData ids)
@@ -2723,7 +2723,7 @@ type Query {
     namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
 
     """The location radius within which to find places"""
     radius: Int
@@ -2742,7 +2742,7 @@ type Query {
   "Get the cities in a specific country region. The country and region info is omitted in the response.\\n"
   findRegionCitiesUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """An ISO-3166 country code or WikiData id"""
     countryId: String!
@@ -2779,7 +2779,7 @@ type Query {
     namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
 
     """An ISO-3166 or FIPS region code"""
     regionCode: String!
@@ -2801,7 +2801,7 @@ type Query {
   "Get the administrative divisions in a specific country region. The country and region info is omitted in the\\nresponse.\\n"
   findRegionDivisionsUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """An ISO-3166 country code or WikiData id"""
     countryId: String!
@@ -2838,7 +2838,7 @@ type Query {
     namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
 
     """An ISO-3166 or FIPS region code"""
     regionCode: String!
@@ -3038,7 +3038,7 @@ type Query {
   "Get the details for a specific administrative division, including location coordinates, population, and\\nelevation above sea-level (if available).\\n"
   getAdminDivisionUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """An admin-division id (either native 'id' or 'wikiDataId')"""
     divisionId: String!
@@ -3068,7 +3068,7 @@ type Query {
   "Get the details for the containing populated place (e.g., its county or other administrative division), including location coordinates, population, and elevation above sea-level\\n(if available).\\n"
   getCityLocatedInUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """A city id (either native 'id' or 'wikiDataId')"""
     cityId: String!
@@ -3086,7 +3086,7 @@ type Query {
   "Get the details for a specific city, including location coordinates, population, and elevation above sea-level\\n(if available).\\n"
   getCityUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """A city id (either native 'id' or 'wikiDataId')"""
     cityId: String!
@@ -3098,7 +3098,7 @@ type Query {
   "Find countries, filtering by optional criteria. If no criteria are set, you will get back all known countries.\\n"
   getCountriesUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """Only countries supporting this currency"""
     currencyCode: String
@@ -3124,7 +3124,7 @@ type Query {
     namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
 
     """
     How to sort countries. 
@@ -3137,7 +3137,7 @@ type Query {
   """Get the details for a specific country, including number of regions."""
   getCountryUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """An ISO-3166 country code or WikiData id"""
     countryId: String!
@@ -3160,7 +3160,7 @@ type Query {
     limit: Int = 10
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
   ): Currencies_Response
 
   """Get all supported languages"""
@@ -3172,7 +3172,7 @@ type Query {
     limit: Int = 10
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
   ): Languages_Response
 
   """Get all known locales"""
@@ -3184,7 +3184,7 @@ type Query {
     limit: Int = 10
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
   ): Locales_Response
 
   """
@@ -3192,7 +3192,7 @@ type Query {
   """
   getRegionUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """An ISO-3166 country code or WikiData id"""
     countryId: String!
@@ -3207,7 +3207,7 @@ type Query {
   "Get all regions in a specific country. These could be states, provinces, districts, or otherwise major\\npolitical divisions.\\n"
   getRegionsUsingGET(
     """Display results using ASCII characters"""
-    asciiMode: Boolean
+    asciiMode: Boolean = false
 
     """An ISO-3166 country code or WikiData id"""
     countryId: String!
@@ -3233,7 +3233,7 @@ type Query {
     namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
 
     """
     How to sort regions. 
@@ -3270,7 +3270,7 @@ type Query {
     limit: Int = 10
 
     """The zero-ary offset index into the results"""
-    offset: Int
+    offset: Int = 0
   ): Time_Zones_Response
 
   """

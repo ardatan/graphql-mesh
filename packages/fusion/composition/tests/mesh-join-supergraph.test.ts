@@ -2,12 +2,14 @@ import { finalizeMeshJoinDirectives } from '../src/mesh-join-supergraph.js';
 
 /** Collapse insignificant GraphQL print whitespace (GQL17 spaces inside `{}`). */
 function compactGql(s: string): string {
-  return s
-    .replace(/\s*([{}\[\](),:])\s*/g, '$1')
-    .replace(/\s+/g, ' ')
-    // GQL17 multiline input objects omit commas; restore them for stable asserts.
-    .replace(/((?:"(?:\\.|[^"\\])*"|true|false|null|\d+|\]))\s+(?=[A-Za-z_@])/g, '$1,')
-    .trim();
+  return (
+    s
+      .replace(/\s*([{}\[\](),:])\s*/g, '$1')
+      .replace(/\s+/g, ' ')
+      // GQL17 multiline input objects omit commas; restore them for stable asserts.
+      .replace(/((?:"(?:\\.|[^"\\])*"|true|false|null|\d+|\]))\s+(?=[A-Za-z_@])/g, '$1,')
+      .trim()
+  );
 }
 
 describe('finalizeMeshJoinDirectives (GM-41)', () => {
@@ -74,7 +76,9 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/(?<!directive )@transport\s*\(/);
     expect(out).toMatch(/directive @transport/);
     expect(out).toMatch(/scalar TransportOptions/);
-    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[CHINOOK\],name:"transport",args:\{kind:"sql",location:"file:chinook.db",options:\{pool:2\}\}\)/);
+    expect(compactGql(out)).toMatch(
+      /@join__directive\(graphs:\[CHINOOK\],name:"transport",args:\{kind:"sql",location:"file:chinook.db",options:\{pool:2\}\}\)/,
+    );
     // Join transport args omit subgraph (graphs: owns it); def may still declare the arg.
     expect(out).not.toMatch(/name: "transport", args: \{[^}]*subgraph:/);
     expect(out).toMatch(/specs\.apollo\.dev\/join\/v0\.5/);
@@ -96,7 +100,9 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       }
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[API\],name:"transport",args:\{kind:"http",location:"http:\/\/override:9999"\}\)/);
+    expect(compactGql(out)).toMatch(
+      /@join__directive\(graphs:\[API\],name:"transport",args:\{kind:"http",location:"http:\/\/override:9999"\}\)/,
+    );
     expect(out).not.toMatch(/@transport\s*\(/);
   });
 
@@ -121,7 +127,9 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       }
     `;
     const out = finalizeMeshJoinDirectives(sdl);
-    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[CALC\],name:"transport",args:\{kind:"thrift",location:"http:\/\/localhost\/thrift"\}\)/);
+    expect(compactGql(out)).toMatch(
+      /@join__directive\(graphs:\[CALC\],name:"transport",args:\{kind:"thrift",location:"http:\/\/localhost\/thrift"\}\)/,
+    );
     expect(out).not.toMatch(/headers:/);
   });
 
@@ -189,7 +197,9 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     const out = finalizeMeshJoinDirectives(sdl);
     // Native `@transport` with def-required kind/subgraph - not join-carried
     // (Apollo Connectors reject Mesh join transport reconstitution).
-    expect(compactGql(out)).toMatch(/@transport\(kind:"connect",subgraph:"MicrosoftGraph",location:"http:\/\/127\.0\.0\.1:4000",options:\{odata:\{batch:"json"\}\}\)/);
+    expect(compactGql(out)).toMatch(
+      /@transport\(kind:"connect",subgraph:"MicrosoftGraph",location:"http:\/\/127\.0\.0\.1:4000",options:\{odata:\{batch:"json"\}\}\)/,
+    );
     expect(out).toMatch(/directive @transport/);
     expect(out).toMatch(/TransportOptions/);
     expect(out).not.toMatch(/name: "transport"/);
@@ -272,10 +282,16 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/directive @merge/);
     expect(out).not.toMatch(/directive @meshSource/);
     // Join-carried Mesh dirs keep the core `@link` import (no native apps/defs).
-    expect(compactGql(out)).toMatch(/specs\.graphql-mesh\.com\/core\/v0\.1",import:\["@merge",\{name:"@source",as:"@meshSource"\}\]/);
+    expect(compactGql(out)).toMatch(
+      /specs\.graphql-mesh\.com\/core\/v0\.1",import:\["@merge",\{name:"@source",as:"@meshSource"\}\]/,
+    );
     // meshSource keeps subgraph (Gateway rename filter); merge drops it.
-    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[VACCINATION\],name:"meshSource",args:\{name:"pet_by_id",type:"Pet",subgraph:"vaccination"\}/);
-    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[VACCINATION\],name:"merge",args:\{keyField:"id",keyArg:"id"\}/);
+    expect(compactGql(out)).toMatch(
+      /@join__directive\(graphs:\[VACCINATION\],name:"meshSource",args:\{name:"pet_by_id",type:"Pet",subgraph:"vaccination"\}/,
+    );
+    expect(compactGql(out)).toMatch(
+      /@join__directive\(graphs:\[VACCINATION\],name:"merge",args:\{keyField:"id",keyArg:"id"\}/,
+    );
     expect(out).not.toMatch(/name: "merge", args: \{[^}]*subgraph:/);
   });
 
@@ -366,8 +382,12 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/ThriftMessageType/);
     expect(out).toMatch(/directive @transport/);
     expect(out).toMatch(/TransportOptions/);
-    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[CALCULATOR\],name:"transport",args:\{kind:"thrift",location:"http:\/\/localhost\/thrift"\}/);
-    expect(compactGql(out)).toMatch(/@join__directive\(graphs:\[CALCULATOR\],name:"thrift__rpc",args:\{function:"add"/);
+    expect(compactGql(out)).toMatch(
+      /@join__directive\(graphs:\[CALCULATOR\],name:"transport",args:\{kind:"thrift",location:"http:\/\/localhost\/thrift"\}/,
+    );
+    expect(compactGql(out)).toMatch(
+      /@join__directive\(graphs:\[CALCULATOR\],name:"thrift__rpc",args:\{function:"add"/,
+    );
     // Supergraph: no `"""` blocks - newlines stay as `\n` escapes inside `"…"`.
     // Subgraph SDL may still print thrift args as multiline `"""`.
     expect(compactGql(out)).toMatch(/args:"1\(i32\):\$args\.left\\n2\(i32\):\$args\.right"/);

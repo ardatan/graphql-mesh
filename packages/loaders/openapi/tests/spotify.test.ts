@@ -44,7 +44,9 @@ describe('Spotify', () => {
       `),
     });
 
-    const expectedURL = 'https://api.spotify.com/v1/search?q=test&type=album%2Cartist&limit=20';
+    // GraphQL 17 surfaces OpenAPI Int defaults (offset=0) into the executed args.
+    const expectedURL =
+      'https://api.spotify.com/v1/search?q=test&type=album%2Cartist&limit=20&offset=0';
     expect(result).toEqual({
       data: {
         search: {

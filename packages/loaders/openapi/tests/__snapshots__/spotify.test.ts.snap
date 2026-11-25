@@ -301,7 +301,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingSimplifiedTrackObject @connect(source: "test", http: {
     GET: "/albums/{$args.id}/tracks"
     queryParams: """
@@ -455,7 +455,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingSimplifiedAlbumObject @connect(source: "test", http: {
     GET: "/artists/{$args.id}/albums"
     queryParams: """
@@ -849,7 +849,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingSimplifiedEpisodeObject @connect(source: "test", http: {
     GET: "/shows/{$args.id}/episodes"
     queryParams: """
@@ -1306,7 +1306,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingSimplifiedChapterObject @connect(source: "test", http: {
     GET: "/audiobooks/{$args.id}/chapters"
     queryParams: """
@@ -1369,7 +1369,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingSimplifiedAudiobookObject @connect(source: "test", http: {
     GET: "/me/audiobooks"
     queryParams: """
@@ -1903,7 +1903,7 @@ type Query {
     The index of the first result to return. Use
     with limit to get the next page of search results.
     """
-    offset: NonNegativeInt
+    offset: NonNegativeInt = 0
     include_external: Include_External
   ): SearchItems_response @connect(source: "test", http: {
     GET: "/search"
@@ -2443,7 +2443,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
     """
     A comma-separated list of item types that your client supports besides the default \`track\` type. Valid types are: \`track\` and \`episode\`.<br/>
     _**Note**: This parameter was introduced to allow existing clients to maintain their current behaviour and might be deprecated in the future._<br/>
@@ -2501,7 +2501,7 @@ type Query {
     0 (the first object). Maximum offset: 100.000\\. Use with \`limit\` to get the
     next set of playlists.'
     """
-    offset: Int
+    offset: Int = 0
   ): PagingPlaylistObject @connect(source: "test", http: {
     GET: "/me/playlists"
     queryParams: """
@@ -2567,7 +2567,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
     """
     An [ISO 3166-1 alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
       If a country code is specified, only content that is available in that market will be returned.<br/>
@@ -2736,7 +2736,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingSavedTrackObject @connect(source: "test", http: {
     GET: "/me/tracks"
     queryParams: """
@@ -2888,7 +2888,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingSavedEpisodeObject @connect(source: "test", http: {
     GET: "/me/episodes"
     queryParams: """
@@ -2997,7 +2997,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingSavedShowObject @connect(source: "test", http: {
     GET: "/me/shows"
     queryParams: """
@@ -3076,7 +3076,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingArtistOrTrackObject_response @connect(source: "test", http: {
     GET: "/me/top/{$args.type}"
     queryParams: """
@@ -3140,7 +3140,7 @@ type Query {
     0 (the first object). Maximum offset: 100.000\\. Use with \`limit\` to get the
     next set of playlists.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingPlaylistObject @connect(source: "test", http: {
     GET: "/users/{$args.user_id}/playlists"
     queryParams: """
@@ -3219,7 +3219,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingFeaturedPlaylistObject @connect(source: "test", http: {
     GET: "/browse/featured-playlists"
     queryParams: """
@@ -3300,7 +3300,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagedCategories_response @connect(source: "test", http: {
     GET: "/browse/categories"
     queryParams: """
@@ -3377,7 +3377,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagingFeaturedPlaylistObject @connect(source: "test", http: {
     GET: "/browse/categories/{$args.category_id}/playlists"
     queryParams: """
@@ -3465,7 +3465,7 @@ type Query {
     """
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
-    offset: Int
+    offset: Int = 0
   ): PagedAlbums_response @connect(source: "test", http: {
     GET: "/browse/new-releases"
     queryParams: """

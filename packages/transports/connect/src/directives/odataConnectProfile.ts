@@ -503,10 +503,7 @@ function expandPartsFromQueryOptionsObject(obj: Record<string, unknown>): string
 /** GraphQL 16: plain map. GraphQL 17: `VariableValues` with `.coerced`. */
 function getCoercedVariableValues(info: GraphQLResolveInfo): Record<string, unknown> {
   const vv = info.variableValues as
-    | Record<string, unknown>
-    | { coerced?: Record<string, unknown> }
-    | undefined
-    | null;
+    Record<string, unknown> | { coerced?: Record<string, unknown> } | undefined | null;
   if (vv == null) {
     return {};
   }

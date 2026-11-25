@@ -50,7 +50,8 @@ function withXsdDateCoercion(scalar: GraphQLScalarType): GraphQLScalarType {
           )
       : serialize;
   const coerceInputValue =
-    typeof (scalar as { coerceInputValue?: (v: unknown) => unknown }).coerceInputValue === 'function'
+    typeof (scalar as { coerceInputValue?: (v: unknown) => unknown }).coerceInputValue ===
+    'function'
       ? (value: unknown) =>
           (scalar as { coerceInputValue: (v: unknown) => unknown }).coerceInputValue(
             coerceXsdDateString(value),

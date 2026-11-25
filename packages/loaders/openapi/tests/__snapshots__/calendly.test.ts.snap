@@ -1043,7 +1043,7 @@ type Query {
     """
     Order results by the specified field and direction. List of {field}:{direction} values.
     """
-    sort: [queryInput_activityLog_sort_items] = [occurred_at:desc]
+    sort: [queryInput_activityLog_sort_items] = [occurred_at_desc]
     """
     Include entries that occurred after this time (sample time format: "2020-01-02T03:04:05.678Z"). This time should use the UTC timezone.
     """
