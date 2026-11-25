@@ -78,6 +78,18 @@ transform.
 - Selection shape, entity rules, or join logic need real authorship -- transforms will not replace
   that.
 
+## Applicability matrix
+
+| Transform family                         | Rewrites `@connect` / `@source` binders     | Rewrites Mesh protocol dirs (`@sql`, `@protobuf__rpc`, …) | Dual-run impact                                      |
+| ---------------------------------------- | ------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------- |
+| Rename / naming-convention / prefix      | Yes (`$args` / `$this` follow)              | Yes where binders exist                                   | Keep Connect-compatible when you only rename GraphQL |
+| Filter / prune                           | Drops fields/types; remaining Connect stays | Same                                                      | Smaller Connect surface still Router-ok              |
+| Federation (`createFederationTransform`) | N/A (adds `@key` / resolveReference)        | Same on GraphQL sources                                   | Hive Gateway entity path; not a Connect rewrite      |
+| Hoist / encapsulate / wrap               | Case-by-case; re-read SDL after             | Case-by-case                                              | Re-check Apollo Router if Connect shape changes      |
+
+Always re-[read the SDL](/v2/guides/reading-generated-sdl) after transforms: binders must still
+match the public GraphQL names.
+
 ## Deeper catalog
 
 Individual transform reference today: [v1 Transforms](/v1/transforms) (v2 per-transform pages will
