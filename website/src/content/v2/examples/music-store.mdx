@@ -4,6 +4,7 @@ description:
 ---
 
 import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
 
 # Music Store Example
 
@@ -23,8 +24,9 @@ flowchart LR
 
 <Callout type="info">
   User-facing copy says **REST / OpenAPI** for Reviews. feTS may power the OpenAPI server for
-  dogfood; it is not the product brand. Snippets below match Mesh Compose shape; wire fixtures from
-  the repo anchors as you expand the runnable example.
+  dogfood; it is not the product brand. Snippets below match{' '}
+  <ConceptRef name="composition" label="Mesh Compose" /> shape; wire fixtures from the repo anchors
+  as you expand the runnable example.
 </Callout>
 
 ## What you build
@@ -35,8 +37,8 @@ flowchart LR
 | **2. Generate-then-edit** | [Generate-then-edit](/v2/paths/generate-then-edit) | **Reviews** REST / OpenAPI | Generate `@connect`, dislike/edit, re-compose |
 | **3. Hand-write**         | [Hand-write](/v2/paths/hand-write)                 | **gRPC / Protobuf**        | Authored `@protobuf__rpc` + `@link` imports   |
 
-Federation hub: stage 1 emits `Track @key`. Stages 2–3 extend Track (`@connect(entity: true)` /
-`@protobuf__rpc` + `@key`).
+Federation hub: stage 1 emits Track <DirectiveRef name="key" />. Stages 2–3 extend Track
+(<DirectiveRef name="connect" /> `entity: true` / `@protobuf__rpc` + `@key`).
 
 ## Gateway matrix
 

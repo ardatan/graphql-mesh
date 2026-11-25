@@ -3,17 +3,20 @@ description: Serve Connect-compatible Mesh supergraphs with Apollo Router
 ---
 
 import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
 
 # Apollo Router
 
-**Apollo Router** is a **peer** to Hive Gateway in the Mesh Serve docs (equal nav weight). Use it
-when your composed SDL is **Connect-compatible** (`@connect` / `@source` on connect/v0.4-style
-emit).
+**Apollo Router** is a **peer** <ConceptRef name="gateway">gateway</ConceptRef> to Hive Gateway in
+the Mesh Serve docs (equal nav weight). Use it when your composed SDL is
+**<ConceptRef name="connectors">Connect</ConceptRef>-compatible** (<DirectiveRef name="connect" /> /
+
+<DirectiveRef name="source" /> on connect/v0.4-style emit).
 
 ## Honest limits
 
-- Stock Apollo Router does **not** run Mesh `@sql`, `@protobuf__rpc`, SOAP, or other non-Connect
-  Mesh transports.
+- Stock Apollo Router does **not** run Mesh <DirectiveRef name="sql" />,
+  <DirectiveRef name="protobuf__rpc" />, SOAP, or other non-Connect Mesh transports.
 - For multi-protocol Music Store Example graphs, run the **full** supergraph on Hive Gateway;
   dual-run the Connect slice on Apollo Router when demonstrating compatibility.
 
@@ -24,6 +27,8 @@ schema stays on Connect. In the [Music Store Example](/v2/examples/music-store),
 **Reviews** slice after stage 2 -- not the full SQL + gRPC graph.
 
 <Cards>
+  <Cards.Card arrow title="Gateway (concept)" href="/v2/concepts/gateway" />
+  <Cards.Card arrow title="Connectors (concept)" href="/v2/concepts/connectors" />
   <Cards.Card arrow title="Hive Gateway (peer)" href="/v2/serve/hive-gateway" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>

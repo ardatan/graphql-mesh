@@ -3,23 +3,29 @@ description: Mesh v2 documentation -- GraphQL SDL, Compose, Hive Gateway, and Ap
 ---
 
 import { Callout, Cards } from '@theguild/components'
+import { ConceptRef } from '../../components/v2-directive-ref'
 import { V2JourneyCards } from '../../components/v2-journey-cards'
 
 # Mesh v2 (draft)
 
 <Callout type="info">
   This is a **draft** of the Mesh v2 docs IA. Content is incomplete and under review. Prefer [Mesh
-  v1](/v1) for production docs until this section ships.
+  v1](/v1) for production docs until this section ships. Coming from an older Mesh? Read the [Mesh
+  journey (v0 → v1 → v2)](/v2/guides/mesh-journey).
 </Callout>
 
-**Mesh** turns GraphQL and non-GraphQL sources into Federation-ready subgraphs (and optionally a
-composed supergraph). Authors work in GraphQL SDL with Mesh / Connectors-style directives.
+<ConceptRef name="mesh">Mesh</ConceptRef> turns GraphQL and non-GraphQL sources into
+<ConceptRef name="federation">Federation</ConceptRef>-ready subgraphs (and optionally a composed
+supergraph). Authors work in GraphQL SDL with Mesh /
+<ConceptRef name="connectors">Connectors</ConceptRef>-style directives.
 
-- **Hive Gateway** (JavaScript / TypeScript) is the preferred runtime for the full Mesh transport
-  surface.
-- **Apollo Router** is a first-class peer for **Connect-compatible** supergraphs.
-- Composition is flexible: Mesh Compose, Hive composition, Rover, or another Federation-compatible
-  composer.
+- <ConceptRef name="gateway">Gateway</ConceptRef>: **Hive Gateway** (JavaScript / TypeScript) is the
+  preferred runtime for the full Mesh transport surface; **Apollo Router** is a first-class peer for
+  **Connect-compatible** supergraphs.
+- <ConceptRef name="composition">Composition</ConceptRef> is flexible: Mesh Compose, Hive
+  composition, Rover, or another Federation-compatible composer.
+- <ConceptRef name="schema-registry">Schema registry</ConceptRef> (optional) stores and distributes
+  subgraph / supergraph SDL.
 
 ```mermaid
 flowchart LR
@@ -40,10 +46,13 @@ Three equal journeys. No primary funnel.
 ## Where to go next
 
 <Cards>
+  <Cards.Card arrow title="Mesh journey (v0 → v2)" href="/v2/guides/mesh-journey" />
+  <Cards.Card arrow title="Concepts" href="/v2/concepts" />
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
   <Cards.Card arrow title="Compose" href="/v2/compose" />
   <Cards.Card arrow title="Serve: Hive Gateway" href="/v2/serve/hive-gateway" />
   <Cards.Card arrow title="Serve: Apollo Router" href="/v2/serve/apollo-router" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Directives reference" href="/v2/reference/directives" />
 </Cards>

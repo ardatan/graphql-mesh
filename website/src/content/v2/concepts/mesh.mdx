@@ -1,0 +1,53 @@
+---
+description: What Mesh is -- Federation-ready subgraphs from sources or authored SDL
+---
+
+import { Cards } from '@theguild/components'
+import { ApiRef, DirectiveRef } from '../../../components/v2-directive-ref'
+
+# Mesh
+
+**Mesh** is a GraphQL Federation framework: it turns GraphQL and non-GraphQL sources into
+**Federation-ready subgraphs** (and optionally a composed supergraph). Authors work in GraphQL SDL
+with Mesh / Connectors-style directives. Loaders can emit that SDL; humans and AI can hand-write it.
+Compose and the gateway treat both the same.
+
+## Where it lives
+
+```mermaid
+flowchart LR
+  A[Sources or .graphql] --> B[Mesh loaders / Compose]
+  B --> C[Subgraph SDL]
+  C --> D[Gateway + transports]
+```
+
+| Layer                                    | Mesh role                                                                                                  |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Loaders (`@omnigraph/*`)                 | Optional: introspect → emit subgraph SDL                                                                   |
+| [Compose](/v2/compose)                   | Subgraph / supergraph output, transforms, registry publish                                                 |
+| Transports (`@graphql-mesh/transport-*`) | Execute directives at request time                                                                         |
+| Gateways                                 | [Hive Gateway](/v2/serve/hive-gateway) (full surface) · [Apollo Router](/v2/serve/apollo-router) (Connect) |
+
+Mesh is **not** the gateway binary itself, **not** a schema registry, and **not** Apollo Federation
+spec ownership -- it produces and executes Federation-compatible SDL.
+
+## Short example
+
+```ts
+// mesh.config.ts -- generate SQL catalog, compose with hand-written gRPC SDL
+subgraphs: [
+  { sourceHandler: loadSqlSubgraph('catalog', { endpoint: 'file:chinook.db' }) },
+  { name: 'recommendations', schema: './recommendations.graphql' }
+]
+```
+
+Emitted / authored SDL carries <DirectiveRef name="transport" />, protocol directives, and often
+
+<DirectiveRef name="connect" /> / <DirectiveRef name="key" />. Walkthrough: [Music Store
+Example](/v2/examples/music-store).
+
+<Cards>
+  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="Compose" href="/v2/compose" />
+  <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
+</Cards>
