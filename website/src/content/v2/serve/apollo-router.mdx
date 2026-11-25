@@ -45,6 +45,7 @@ hive-gateway supergraph
 | Example                             | Dual-run?    | Notes                                                               |
 | ----------------------------------- | ------------ | ------------------------------------------------------------------- |
 | FHIR (JSON Schema + join SDL)       | Yes          | Connect emit + join-only hand SDL                                   |
+| Microsoft Graph (OData → Connect)   | Yes          | Large Graph `$metadata` emit; auth via `{$env.…}`                   |
 | OpenAPI entity stubs                | Yes          | `entity: true` / type-level `$this` Connect                         |
 | Music Store after stage 2           | Reviews only | REST `@connect` slice; not SQL catalog or gRPC recommendations      |
 | Music Store full (SQL+Connect+gRPC) | No           | Needs Hive Gateway for `@sql` / `@protobuf__rpc`                    |

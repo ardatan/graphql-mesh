@@ -1,0 +1,54 @@
+---
+description: Migrate toward Mesh v2 /v2 docs -- v0 YAML and v1 Compose generate-first
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# Migration (v0 / v1 → v2)
+
+Mesh v2 docs live under **`/v2`**. Older trees stay available while you migrate:
+
+| Path    | Era                         | What to keep in mind                                         |
+| ------- | --------------------------- | ------------------------------------------------------------ |
+| `/docs` | Mesh v0                     | YAML `.meshrc`, built-in serve, handlers/plugins             |
+| `/v1`   | Mesh v1                     | Compose CLI + Hive Gateway, still mostly generate-first      |
+| `/v2`   | Mesh today (this docs tree) | SDL + directives; Generate / Hand-write / Generate-then-edit |
+
+<Callout type="info">
+  Hard redirects and banner copy for `/docs` and `/v1` are a separate site-ops decision. Until then,
+  use this page as the map and prefer `/v2` for new work.
+</Callout>
+
+## From Mesh v0 (YAML)
+
+1. Treat `.meshrc` sources as **inputs to loaders**, not the long-term contract -- the contract is
+   emitted / authored subgraph SDL.
+2. Move compose into `mesh.config.ts` with `@graphql-mesh/compose-cli` (see
+   [Composition](/v2/compose)).
+3. Serve on [Hive Gateway](/v2/serve/hive-gateway) (JS/TS). Use
+   [Apollo Router](/v2/serve/apollo-router) only for Connect-compatible slices.
+4. Walk the [Mesh journey](/v2/guides/mesh-journey) for the positioning shift (YAML black box →
+   SDL).
+
+## From Mesh v1 docs
+
+1. Keep Compose + Hive Gateway -- v2 still uses them.
+2. Add the three paths explicitly: [Generate](/v2/paths/generate),
+   [Generate-then-edit](/v2/paths/generate-then-edit), [Hand-write](/v2/paths/hand-write).
+3. Learn to [read generated SDL](/v2/guides/reading-generated-sdl) before renaming fields.
+4. Prefer the [Music Store Example](/v2/examples/music-store) over Petstore-only tutorials.
+
+## Protocol cutovers
+
+When a v0/v1 handler name differs from today's Omnigraph loader, open the matching
+[Protocols](/v2/protocols) page (SQL, Mongo, Thrift, Protobuf, HTTP/REST, Neo4j) and copy the
+`load*Subgraph` + transport pair. Do not invent ad-hoc `sourceHandler` demos.
+
+## Related
+
+<Cards>
+  <Cards.Card arrow title="Mesh journey" href="/v2/guides/mesh-journey" />
+  <Cards.Card arrow title="Introduction" href="/v2" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+</Cards>
