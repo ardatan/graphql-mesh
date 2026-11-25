@@ -53,8 +53,7 @@ export default class StitchingMerger implements MeshMerger {
     };
     for (const rawSource of rawSources) {
       const fromSub = (rawSource.schema.extensions as any)?.directives as
-        | Record<string, unknown[]>
-        | undefined;
+        Record<string, unknown[]> | undefined;
       if (!fromSub) continue;
       for (const [name, vals] of Object.entries(fromSub)) {
         const list = Array.isArray(vals) ? vals : [vals];

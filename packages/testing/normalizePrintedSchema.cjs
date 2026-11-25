@@ -97,9 +97,12 @@ function normalizePrintedSchema(sdl) {
       const prev = out.length ? out[out.length - 1] : '';
       const next = j < n ? sdl[j] : '';
       // Keep a space before `@directive` (next==='@'); drop space after `@`.
+      // Also skip when `prev` is already a space — empty `""""""` removals
+      // would otherwise leave `PRIVATE  PUBLIC`.
       const skipAround =
         !prev ||
         !next ||
+        prev === ' ' ||
         '{([@'.includes(prev) ||
         '})],'.includes(next) ||
         prev === ':' ||
@@ -123,8 +126,6 @@ function normalizePrintedSchema(sdl) {
   // Re-insert readable newlines before top-level definitions so inline
   // snapshots stay reviewable while remaining version-stable.
   let pretty = out.trim();
-  // Dropping empty `""""""` descriptions can leave doubled spaces.
-  pretty = pretty.replace(/ {2,}/g, ' ');
   pretty = pretty.replace(
     /\}(?=(?:schema|type|interface|union|enum|input|scalar|extend|directive)\b)/g,
     '}\n',

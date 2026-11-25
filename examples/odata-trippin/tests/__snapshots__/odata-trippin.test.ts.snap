@@ -6357,3 +6357,32 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
   },
 }
 `;
+
+exports[`OData TripPin should give correct response for example queries: example-query.graphql-query-result 1`] = `
+{
+  "data": {
+    "Me": {
+      "AddressInfo": [
+        {
+          "Address": "P.O. Box 555",
+          "City": {
+            "CountryRegion": "United States",
+            "Name": "Lander",
+            "Region": "WY",
+          },
+        },
+      ],
+      "FavoriteFeature": "Feature1",
+      "FirstName": "April",
+      "Gender": "Female",
+      "LastName": "Cline",
+      "Trips": [
+        {
+          "Description": "Trip in US",
+        },
+      ],
+      "UserName": "aprilcline",
+    },
+  },
+}
+`;

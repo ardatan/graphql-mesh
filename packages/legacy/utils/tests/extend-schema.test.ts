@@ -1,8 +1,8 @@
 import {
+  extendSchema as graphqlExtendSchema,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
-  extendSchema as graphqlExtendSchema,
   parse,
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
