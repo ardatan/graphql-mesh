@@ -9,11 +9,10 @@ import { DirectiveRef } from '../../../components/v2-directive-ref'
 
 # Directives reference
 
-Apollo-style **directive reference** for Mesh subgraph SDL --
-[HTTP/REST Connectors](/v2/concepts/connectors) (`@connect` / `@source`), Mesh protocol directives,
-Mesh join helpers (`@merge` / `@resolveTo`), Federation `@key`, and `@link` / `@transport`. Modeled
-on
-[Apollo's HTTP Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
+**Directive reference** for Mesh subgraph SDL -- [HTTP/REST Connectors](/v2/concepts/connectors)
+(`@connect` / `@source`), Mesh protocol directives, Mesh join helpers (`@merge` / `@resolveTo`),
+Federation `@key`, and `@link` / `@transport`. Full `@connect` / `@source` arg tables:
+[HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
 
 Use this page when [reading generated SDL](/v2/guides/reading-generated-sdl) or
 [hand-writing](/v2/paths/hand-write) subgraphs. How `selection` / `args` binders work:
@@ -25,18 +24,18 @@ stamp the same imports) plus a short real snippet from repo e2e / Music Store sh
 
 ## Table of contents
 
-| Family               | Directives                                 | On this page                                           |
-| -------------------- | ------------------------------------------ | ------------------------------------------------------ |
-| HTTP/REST Connectors | `@connect`, `@source`                      | Import + dual-run notes; Apollo for full arg tables    |
-| Mesh core            | `@transport`                               | Args + schema stamp                                    |
-| Mesh join helpers    | `@merge`, `@resolveTo`                     | Args; prefer Federation entity maps for new joins      |
-| SQL                  | `@sql` (kind: query / mutation / relation) | Args + Chinook snippet (Mesh protocol, not Connectors) |
-| Mongo                | `@mongo__*`                                | Import + findOne shape (Mesh protocol, not Connectors) |
-| Protobuf / gRPC      | `@protobuf__rpc`                           | Args + movies / recommendation snippets                |
-| Thrift               | `@thrift__rpc`                             | Import + args overview; TJSON may use `@connect`       |
-| Neo4j                | Native `@neo4j/graphql` directives         | Mesh `@link` / `@transport` stamp                      |
-| Federation / join    | `@key`, `@composeDirective`, ...           | Join-stub notes                                        |
-| Spec imports         | `@link`                                    | Spec URL table                                         |
+| Family               | Directives                                 | On this page                                            |
+| -------------------- | ------------------------------------------ | ------------------------------------------------------- |
+| HTTP/REST Connectors | `@connect`, `@source`                      | Import + dual-run notes; upstream Connectors arg tables |
+| Mesh core            | `@transport`                               | Args + schema stamp                                     |
+| Mesh join helpers    | `@merge`, `@resolveTo`                     | Args; prefer Federation entity maps for new joins       |
+| SQL                  | `@sql` (kind: query / mutation / relation) | Args + Chinook snippet (Mesh protocol, not Connectors)  |
+| Mongo                | `@mongo__*`                                | Import + findOne shape (Mesh protocol, not Connectors)  |
+| Protobuf / gRPC      | `@protobuf__rpc`                           | Args + movies / recommendation snippets                 |
+| Thrift               | `@thrift__rpc`                             | Import + args overview; TJSON may use `@connect`        |
+| Neo4j                | Native `@neo4j/graphql` directives         | Mesh `@link` / `@transport` stamp                       |
+| Federation / join    | `@key`, `@composeDirective`, ...           | Join-stub notes                                         |
+| Spec imports         | `@link`                                    | Spec URL table                                          |
 
 ---
 
@@ -48,7 +47,7 @@ stamp the same imports) plus a short real snippet from repo e2e / Music Store sh
 
 HTTP/REST Connectors-compatible mapping (connect/v0.4). Full arg tables live upstream:
 
-- [Apollo's HTTP Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives)
+- [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives)
 - [JSONSelection / mapping](https://www.apollographql.com/docs/graphos/connectors/mapping) / Mesh:
   [Selection mapping](/v2/guides/selection-mapping)
 
@@ -526,7 +525,7 @@ generated subgraphs.
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />
   <Cards.Card
     arrow
-    title="Apollo's HTTP Connectors reference"
+    title="HTTP/REST Connectors reference"
     href="https://www.apollographql.com/docs/graphos/connectors/reference/directives"
   />
   <Cards.Card arrow title="HTTP/REST Connectors (concept)" href="/v2/concepts/connectors" />

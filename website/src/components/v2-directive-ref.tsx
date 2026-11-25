@@ -123,8 +123,7 @@ const CONCEPTS = {
   connectors: {
     label: 'HTTP/REST Connectors',
     href: '/v2/concepts/connectors',
-    description:
-      'HTTP/REST @connect / @source mapping Mesh shares with Apollo (not Mesh-only protocols).',
+    description: 'HTTP/REST Connectors: @connect / @source mapping (not Mesh-only protocols).',
   },
   federation: {
     label: 'Federation',
