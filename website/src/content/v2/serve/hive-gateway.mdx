@@ -55,10 +55,11 @@ mesh-compose -o supergraph.graphql
 hive-gateway supergraph
 ```
 
-HTTP/REST Connectors often need no extra transport entry (Connect is built in). Protobuf example
-with an explicit transport: `e2e/protobuf-http/mesh.config.ts`.
+HTTP/REST Connectors often need no extra transport entry (Connect is built in). Register
+`transport-protobuf` (and other Mesh protocol transports) only when the supergraph stamps those
+kinds.
 
-## Complex Use Cases
+## Use cases
 
 Register only the transports your supergraph actually stamps. A mixed Music Store graph needs SQL
 and protobuf; Connect needs no extra entry. Thrift TJSON is Connect, so it does not load
@@ -73,7 +74,7 @@ export const gatewayConfig = defineGatewayConfig({
     protobuf: import('@graphql-mesh/transport-protobuf')
     // thrift: only for binary @thrift__rpc -- omit for TJSON @connect
   },
-  // e2e/openapi-subscriptions style callback fields
+  // OpenAPI callback / webhook subscription fields
   webhooks: true
 })
 ```

@@ -43,7 +43,7 @@ composition in the stack ([Architecture](/v2/architecture)).
 3. Point <ApiRef name="hive-gateway" /> (or Apollo Router for Connect-only) at the registry
    supergraph -- or at a local Compose file for local dual-run / CI.
 
-### Complex Use Cases
+### Use cases
 
 Publishing does not change dual-run rules: a registry supergraph that still carries `@sql` or
 `@protobuf__rpc` needs Hive Gateway; Connect-only graphs can pull into Apollo Router.

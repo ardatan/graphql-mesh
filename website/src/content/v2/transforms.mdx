@@ -55,8 +55,8 @@ without regenerating or hand-editing every `@protobuf__rpc(args:)` line:
 
 After Compose, clients call `moviesByYear(releaseYear: ...)` (`Query.moviesByYear(releaseYear:)`)
 and the directive `args` mapping tracks `$args.releaseYear`. Same idea for OpenAPI / `@connect` emit
-with `createPrefixTransform` or naming-convention. Repo proof: `e2e/protobuf-http` (hand protobuf
-SDL + rename transform).
+with `createPrefixTransform` or naming-convention, and for hand-written protobuf SDL plus a rename
+transform.
 
 ## When transforms help
 

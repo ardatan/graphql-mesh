@@ -84,7 +84,7 @@ type Track @key(fields: "id", resolvable: false) {
 }
 ```
 
-### Scenario: ById Query gets `entity: true` (`e2e/openapi-entity-stubs`)
+### Scenario: ById Query gets `entity: true`
 
 Composition semantic conventions (`get_<Type>` + key-typed arg matching the key field) stamp
 `entity: true` and `@key` -- no Mesh `@merge` on Connect subgraphs:
@@ -146,7 +146,7 @@ type User
 See [Entity resolution](/v2/concepts/federation#entity-resolution) and
 [Composition semantic conventions](/v2/compose#semantic-conventions).
 
-### Scenario: SOAP envelope body (`e2e/soap-demo`)
+### Scenario: SOAP envelope body
 
 Same `@connect` / `@source`, but `http.body` is a SOAP envelope selection (Hive Gateway XML codec;
 not a stock Apollo Router dual-run target):
@@ -174,7 +174,7 @@ type Query {
 }
 ```
 
-### Scenario: OData entity + nav (`e2e/odata-trippin`)
+### Scenario: OData entity + nav
 
 OData emit uses `@connect(entity: true)` on types and `$this` paths for navigation (e.g.
 `/People/{$this.UserName}/Friends/{$args.id}/`). See <ProtocolRef name="http-rest" />.
@@ -207,7 +207,7 @@ Shared Mesh core also exports `@merge`, `@hoist`, `@resolveTo`, and pubsub helpe
 | `headers`  | Optional header map                              |
 | `options`  | Transport-specific options (dialect, auth, ...)  |
 
-### Scenario: SQL file DB (`e2e/sqlite-chinook`)
+### Scenario: SQL file DB
 
 ```graphql
 schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db") {
@@ -215,7 +215,7 @@ schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db")
 }
 ```
 
-### Scenario: protobuf with header options (`e2e/protobuf-grpc-example`)
+### Scenario: protobuf with header options
 
 ```graphql
 schema
@@ -241,8 +241,8 @@ Mesh type-merging helper on Hive Gateway: how an entity (or ById Query field) is
 subgraphs when you are **not** on HTTP/REST Connectors / protocol `entity: true` maps. Composition
 may stamp `@merge` on non-Connect Mesh subgraphs that follow
 [semantic ById conventions](/v2/compose#semantic-conventions). Connect subgraphs prefer
-`entity: true` / type-level `$this` instead (`e2e/auto-type-merging`: Petstore Connect has no
-`@merge`; vaccination GraphQL subgraph still uses `@merge`).
+`entity: true` / type-level `$this` instead (Petstore Connect has no `@merge`; vaccination GraphQL
+subgraph still uses `@merge`).
 
 **Import**
 
@@ -285,7 +285,7 @@ type-merging path on Hive Gateway (including plain GraphQL subgraphs).
 Mesh field-level **delegation / join**: resolve this field by calling another subgraph's Query (or
 type) field, optionally with batched args. Still valid Mesh core; for new joins prefer Federation
 `@key` stubs plus Connect / protocol directives (Music Store / FHIR). Compose validates `sourceName`
-/ field / arg names at compose time (`packages/compose-cli/tests/validate.test.ts`).
+/ field / arg names at compose time.
 
 **Import**
 
@@ -305,7 +305,7 @@ extend schema @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@
 | `pubsubTopic`          | Subscription / webhook wiring without a subgraph target            |
 | `filterBy`             | Optional JS-ish filter for pubsub payloads                         |
 
-### Scenario: batch join by foreign key (`e2e/type-merging-batching`)
+### Scenario: batch join by foreign key
 
 Books carry `authorId`; Authors expose `authors(ids:)`:
 
@@ -322,7 +322,7 @@ extend type Book {
 }
 ```
 
-### Scenario: batch join with different value key (`e2e/resolve-to-value-key-field`)
+### Scenario: batch join with different value key
 
 Shop search results join CMS products by SKU, but the CMS list arg is `filters.SKU.in` and the
 returned product key field is `SKU` (issue #9607 shape):
@@ -341,7 +341,7 @@ extend type SearchResult {
 }
 ```
 
-### Scenario: webhook subscription (`e2e/json-schema-subscriptions`)
+### Scenario: webhook subscription
 
 No subgraph target -- Hive Gateway `webhooks: true` + pubsub topic:
 
@@ -362,8 +362,7 @@ type Subscription {
 `@sql`
 
 Emitted by `@omnigraph/sql`; executed by `transport-sql`. Hive Gateway only. One directive + `kind`
-discriminator. Protocol: <ProtocolRef name="sql" />. Anchor: `e2e/sqlite-chinook` / Music Store
-stage 1.
+discriminator. Protocol: <ProtocolRef name="sql" />. Examples: Chinook / Music Store stage 1.
 
 **Import**
 
@@ -526,8 +525,7 @@ In `selection`, the loader maps **original SQL columns to GraphQL fields** (`id:
 
 `@mongo__*`
 
-Op-specific directives. Hive Gateway only. Protocol: <ProtocolRef name="mongo" />. Anchor:
-`e2e/mongoose-users`.
+Op-specific directives. Hive Gateway only. Protocol: <ProtocolRef name="mongo" />.
 
 **Import**
 
@@ -649,7 +647,7 @@ type Mutation {
 `@protobuf__rpc`
 
 Unary or server-streaming RPC. Hive Gateway only. Protocol: <ProtocolRef name="protobuf" />.
-Anchors: `e2e/protobuf-http` (hand SDL), `e2e/protobuf-grpc-example` (loader + `stream: true`).
+Examples: hand SDL unary RPCs; loader emit with `stream: true` for server streaming.
 
 **Import**
 
@@ -668,7 +666,7 @@ extend schema
 | `stream`    | Server-streaming when true                      |
 | `entity`    | Wire `_entities` / `resolveReference` when true |
 
-### Scenario: unary hand SDL (`e2e/protobuf-http`)
+### Scenario: unary hand SDL
 
 Flat `$args.*`; rename transforms rewrite binders the same way as `@connect`:
 
@@ -696,7 +694,7 @@ type Query {
 }
 ```
 
-### Scenario: server streaming (`e2e/protobuf-grpc-example`)
+### Scenario: server streaming
 
 Loader emit for `SearchMoviesByCast` sets `stream: true` and uses `input.*` paths against an Input
 type:
@@ -733,7 +731,7 @@ type Query {
 Binary Thrift path. TJSON over HTTP can emit HTTP/REST Connectors `@connect` instead (dual-run when
 Connect-compatible). Do **not** brand binary Thrift as Connectors. Protocol:
 
-<ProtocolRef name="thrift" />. Anchor: `e2e/thrift-calculator`.
+<ProtocolRef name="thrift" />.
 
 **Import**
 
@@ -792,7 +790,7 @@ Same IDL, Connect body is a TJSON request array -- see <ProtocolRef name="thrift
 Mesh does **not** invent a `@neo4j__*` dialect. Cypher / schema mapping is **Neo4j GraphQL under the
 hood**. Mesh only stamps `@link` + `@transport` so Hive Gateway loads `transport-neo4j`. Protocol:
 
-<ProtocolRef name="neo4j" />. Anchor: `e2e/neo4j-example`.
+<ProtocolRef name="neo4j" />.
 
 | Piece                         | Who owns it                                                                                   |
 | ----------------------------- | --------------------------------------------------------------------------------------------- |

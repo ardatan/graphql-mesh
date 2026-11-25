@@ -88,14 +88,13 @@ Naming is matched in snake_case. Typical patterns (key field often `id`):
 | Field / arg (examples)                                 | Intent                 | Connect / protocol result                                                               |
 | ------------------------------------------------------ | ---------------------- | --------------------------------------------------------------------------------------- |
 | `Query.bookById` / `Query.bookById(id:)`               | Singular ById          | `entity: true` (or type-level `$this` / `@merge`)                                       |
-| `Query.getCustomer` / `Query.getCustomer(id:)`         | `get_<Type>` + key arg | Same (`e2e/openapi-entity-stubs`)                                                       |
+| `Query.getCustomer` / `Query.getCustomer(id:)`         | `get_<Type>` + key arg | Same                                                                                    |
 | `Query.getCustomerById` / `Query.getCustomerById(id:)` | Explicit ById suffix   | Same                                                                                    |
 | `Query.customer` / `Query.customer(id:)`               | Type name + key arg    | Same                                                                                    |
 | `Query.customersByIds` / `Query.customersByIds(ids:)`  | Batch ByIds            | Batch merge / batch Connect (no singular `_entities` claim without a singular resolver) |
 | `Query.getFoosByIds` / `Query.getFoosByIds(ids:)`      | Batch with `get_`      | Same                                                                                    |
 
-Repo anchors: `e2e/semantic-conventions` (`Query.bookById`), `e2e/openapi-entity-stubs`
-(`Query.getCustomer` + `entity: true`).
+Examples: `Query.bookById`, OpenAPI Billing `getCustomer` (`Query.getCustomer` + `entity: true`).
 
 If your schema almost matches but names differ, use a
 [rename / naming-convention transform](/v2/transforms) so the field fits the convention -- or stamp
@@ -103,7 +102,7 @@ entities yourself with `createFederationTransform` (see
 [Federation](/v2/concepts/federation#entity-resolution)).
 
 Disable with `ignoreSemanticConventions: true` on the compose config when you want full manual
-control (`e2e/semantic-conventions/mesh.config.conventions-disabled.ts`):
+control:
 
 ```ts
 export const composeConfig = defineComposeConfig({
