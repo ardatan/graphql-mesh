@@ -41,7 +41,7 @@ export function getRootFieldsWithArgs(
   // Preserve GraphQL 17 `{ coerced, sources }` — dropping `sources` breaks variable
   // substitution inside complex scalar input literals via getArgumentValues.
   const normalized = coerceGetVariableValuesResult(coercedVariables);
-  if (normalized.errors) {
+  if ('errors' in normalized) {
     throw new AggregateError(normalized.errors);
   }
   const selectionHandlerCtx: SelectionHandlerCtx = {
