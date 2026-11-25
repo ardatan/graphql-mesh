@@ -1,0 +1,93 @@
+---
+description: Field-level rate limiting on Mesh supergraphs -- @rateLimit directive + Hive Gateway
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# Rate limiting
+
+Rate limits protect Hive Gateway (and upstreams) at the **field** level -- GraphQL clients pick
+fields, so HTTP-only throttles are not enough. Two complementary approaches on Hive Gateway:
+
+1. Programmatic rules in `gateway.config.ts`
+2. `@rateLimit` annotations on subgraph SDL (survives Mesh Compose via `@composeDirective`)
+
+Full gateway reference:
+[Hive Gateway rate limiting](https://the-guild.dev/graphql/hive/docs/gateway/other-features/security/rate-limiting).
+
+## Enable on Hive Gateway
+
+Directive-based limits need the plugin turned on:
+
+```ts
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+
+export const gatewayConfig = defineGatewayConfig({
+  rateLimiting: true
+  // Or: rateLimiting: { config: [ /* programmatic rules */ ] }
+})
+```
+
+Multi-instance deployments should share a Redis (or other) cache so counters are not per-process --
+see the Hive Gateway rate limiting page.
+
+## Annotate subgraph SDL
+
+Define `@rateLimit`, import it with `@link`, and register `@composeDirective` so composition keeps
+it:
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+  @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@rateLimit"])
+  @composeDirective(name: "@rateLimit")
+
+directive @rateLimit(
+  max: Int
+  window: String
+  message: String
+  identityArgs: [String]
+  arrayLengthField: String
+) on FIELD_DEFINITION
+
+type Query {
+  searchProducts(query: String!): [Product!]!
+    @rateLimit(window: "1m", max: 30, message: "Too many searches")
+  getProduct(id: ID!): Product @rateLimit(window: "1m", max: 10, identityArgs: ["id"])
+}
+
+type Mutation {
+  createOrder(input: OrderInput!): Order
+    @rateLimit(window: "1m", max: 5, message: "Too many orders")
+}
+```
+
+| Arg                | Role                                           |
+| ------------------ | ---------------------------------------------- |
+| `window`           | Human duration (`"1s"`, `"1m"`, `"1h"`, ...)   |
+| `max`              | Max calls in that window                       |
+| `identityArgs`     | Bucket by argument values (e.g. per `id`)      |
+| `message`          | Error message when exceeded                    |
+| `arrayLengthField` | Count array length as N calls (bulk mutations) |
+
+Hand-written and loader-emitted subgraphs share this path -- stamp `@rateLimit` on the SDL you
+publish (or edit after generate).
+
+<Callout type="info">
+  Prefer programmatic `rateLimiting.config` when limits are ops-owned and should not live in
+  subgraph SDL. Prefer `@rateLimit` when the subgraph author owns the budget next to the field.
+</Callout>
+
+## Related
+
+<Cards>
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Authentication" href="/v2/guides/auth" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card
+    arrow
+    title="Hive Gateway rate limiting (external)"
+    href="https://the-guild.dev/graphql/hive/docs/gateway/other-features/security/rate-limiting"
+  />
+</Cards>
