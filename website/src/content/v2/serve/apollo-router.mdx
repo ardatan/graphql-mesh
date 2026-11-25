@@ -33,21 +33,23 @@ schema stays on Connect:
 ```bash
 mesh-compose -o supergraph.graphql
 # Hive Gateway
+
 hive-gateway supergraph
 # Apollo Router (Connect-compatible SDL only)
+
 ./router --supergraph supergraph.graphql
 ```
 
-### What dual-runs in the repo
+### What dual-runs
 
 | Example                             | Dual-run?    | Notes                                                               |
 | ----------------------------------- | ------------ | ------------------------------------------------------------------- |
-| `e2e/json-schema-fhir`              | Yes          | Connect emit + join-only hand SDL                                   |
-| `e2e/openapi-entity-stubs`          | Yes          | `entity: true` / type-level `$this` Connect                         |
+| FHIR (JSON Schema + join SDL)       | Yes          | Connect emit + join-only hand SDL                                   |
+| OpenAPI entity stubs                | Yes          | `entity: true` / type-level `$this` Connect                         |
 | Music Store after stage 2           | Reviews only | REST `@connect` slice; not SQL catalog or gRPC recommendations      |
 | Music Store full (SQL+Connect+gRPC) | No           | Needs Hive Gateway for `@sql` / `@protobuf__rpc`                    |
-| `e2e/thrift-calculator` TJSON       | Often        | `protocol: 'json'` emits `@connect`; binary `@thrift__rpc` does not |
-| `e2e/soap-demo`                     | No           | SOAP envelope Connect is Hive-oriented                              |
+| Thrift TJSON                        | Often        | `protocol: 'json'` emits `@connect`; binary `@thrift__rpc` does not |
+| SOAP-as-Connect                     | No           | SOAP envelope Connect is Hive-oriented                              |
 
 Upstream Connect mapping:
 [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).

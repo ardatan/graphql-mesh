@@ -22,7 +22,7 @@ Connectors. Hive Gateway only.
 | Transport  | `@graphql-mesh/transport-neo4j`                         |
 | Spec stamp | `https://specs.graphql-mesh.com/neo4j/v0.1`             |
 | Dual-run   | Hive Gateway only                                       |
-| Anchor     | `e2e/neo4j-example` (Movies dataset)                    |
+| Examples   | Movies dataset (ACTED_IN / DIRECTED / REVIEWED)         |
 
 Upstream type definitions: [Relationships](https://neo4j.com/docs/graphql/current/relationships/) /
 [Database mapping](https://neo4j.com/docs/graphql/current/directives/database-mapping/).
@@ -91,7 +91,7 @@ schema @transport(subgraph: "Movies", kind: "neo4j", location: "neo4j://localhos
 }
 ```
 
-## Complex Use Cases
+## Use cases
 
 ### Introspected pluralization + both directions
 
@@ -148,6 +148,7 @@ type Movie @node(subgraph: "Movies") {
 }
 
 # Transport stamp matches the subgraph name on the natives
+
 extend schema @transport(subgraph: "Movies", kind: "neo4j", location: "bolt://...")
 ```
 

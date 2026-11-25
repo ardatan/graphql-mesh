@@ -75,8 +75,8 @@ That wires Hive Gateway / Apollo Router `_entities` -> `resolveReference` withou
 | Join-only stub (`resolvable: false`)          | `@key` only -- another subgraph owns the resolver                                |
 | Batch ByIds only                              | Batch field kept; singular `_entities` not claimed without a singular resolver   |
 
-<ProtocolRef name="http-rest" /> Connectors (`e2e/openapi-entity-stubs` -- `getCustomer` matches
-[ById conventions](/v2/compose#semantic-conventions)):
+<ProtocolRef name="http-rest" /> Connectors (`getCustomer` matches [ById
+conventions](/v2/compose#semantic-conventions)):
 
 ```graphql
 type Query {
@@ -98,7 +98,7 @@ type Customer @key(fields: "id") {
 }
 ```
 
-<ProtocolRef name="sql" /> type-level entity fill (`e2e/sqlite-chinook` -- `$this.id` on `Track`):
+<ProtocolRef name="sql" /> type-level entity fill (`$this.id` on `Track`):
 
 ```graphql
 type Track
@@ -164,12 +164,14 @@ Federation transform when you need to **annotate** an existing GraphQL schema in
 
 ```graphql
 # Catalog subgraph (SQL hub)
+
 type Track @key(fields: "id") {
   id: ID!
   name: String
 }
 
 # Reviews subgraph -- join stub + field Connect
+
 type Track @key(fields: "id", resolvable: false) {
   id: ID!
   reviews: [Review!]

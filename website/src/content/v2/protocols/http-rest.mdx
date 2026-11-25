@@ -23,7 +23,7 @@ shape.
 SOAP-as-Connect uses the same directives plus an XML body codec; stock Apollo Router dual-run is
 **not** expected for SOAP envelopes.
 
-## OpenAPI entity lookup (`e2e/openapi-entity-stubs`)
+## OpenAPI entity lookup
 
 Billing OpenAPI: a ById-shaped Query arg becomes `entity: true` so Federation can fill `Customer`
 from its key ([semantic conventions](/v2/compose#semantic-conventions)):
@@ -67,7 +67,7 @@ type Query {
 
 Music Store stage 2 (Reviews) is the same pattern for REST reviews on tracks.
 
-## JSON Schema / FHIR (`e2e/json-schema-fhir`)
+## JSON Schema / FHIR
 
 Point operations at JSON Schema definition pointers; the loader emits `@connect` with an auto
 `selection`. FHIR also shows join-only hand SDL beside generated patients / observations:
@@ -105,7 +105,7 @@ export const composeConfig = defineComposeConfig({
 
 Walkthrough: [FHIR](/v2/examples/fhir).
 
-## OData TripPin (`e2e/odata-trippin`)
+## OData TripPin
 
 OData becomes Connect with `$this` entity paths and query options. Entity fill for `Person`:
 
@@ -157,7 +157,7 @@ type Person
 }
 ```
 
-## SOAP-as-Connect (`e2e/soap-demo`)
+## SOAP-as-Connect
 
 WSDL operations become `POST` Connect fields whose `body` is a SOAP envelope selection string (Hive
 Gateway XML codec). Dual-run on stock Apollo Router is not the goal:
@@ -203,10 +203,10 @@ type Query {
 }
 ```
 
-## OpenAPI callbacks / subscriptions (`e2e/openapi-subscriptions`)
+## OpenAPI callbacks / subscriptions
 
-Callback-style OpenAPI can emit a mutation that returns subscription info (Hive Gateway
-`webhooks: true` in that e2e):
+Callback-style OpenAPI can emit a mutation that returns subscription info. Serve it on Hive Gateway
+with `webhooks: true`:
 
 ```graphql
 type Mutation {
@@ -219,7 +219,7 @@ type Mutation {
 }
 ```
 
-## Complex Use Cases
+## Use cases
 
 ### Arg name differs from key -- type-level `$this`
 
@@ -242,6 +242,7 @@ type Query {
 }
 
 # Type-level connector: Federation fills User from key id
+
 type User
   @key(fields: "id")
   @connect(
@@ -289,20 +290,20 @@ type Reference @key(fields: "reference") {
 ```
 
 `Patient` / `Observation` on that join subgraph are `@key(..., resolvable: false)` stubs -- see
-[FHIR](/v2/examples/fhir) and `e2e/json-schema-fhir`.
+[FHIR](/v2/examples/fhir).
 
 ### Rename transforms rewrite `$args` in `@connect`
 
 If you rename a GraphQL argument (e.g. `input` -> `requestBody`), Compose rewrites binders inside
 `@connect` the same way it rewrites `@protobuf__rpc` / `@thrift__rpc`. After rename, the HTTP body
-must read `$args.requestBody`, not `$args.input` (`e2e/openapi-arg-rename`).
+must read `$args.requestBody`, not `$args.input`.
 
 ### OData `@odata.type` unions
 
 OData payloads tag polymorphic values with `@odata.type`. Emit uses `->match` on that tag so a
 single nav field can return `Location` / `AirportLocation` / `EventLocation` (and similar for
-people). Dual-run only when the resulting Connect surface stays Router-compatible -- see
-`e2e/odata-trippin` and the TripPin section above.
+people). Dual-run only when the resulting Connect surface stays Router-compatible -- see the TripPin
+section above.
 
 ## Dialect and dual-run
 

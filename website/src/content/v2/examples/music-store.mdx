@@ -81,8 +81,7 @@ export const composeConfig = defineComposeConfig({
 })
 ```
 
-Emitted shape (simplified from `e2e/sqlite-chinook` compose snapshot -- GraphQL names are camelCase;
-SQL columns stay in `where` / `selection`):
+Emitted shape (GraphQL names are camelCase; SQL columns stay in `where` / `selection`):
 
 ```graphql
 extend schema
@@ -133,8 +132,6 @@ Type-level `@sql` with `$this.id` is the entity fill for `_entities`. Details:
 [Selection mapping](/v2/guides/selection-mapping) /
 [Entity resolution](/v2/concepts/federation#entity-resolution).
 
-Repo anchor: `e2e/sqlite-chinook`.
-
 ---
 
 ## Stage 2 -- Generate Reviews, then edit
@@ -142,14 +139,14 @@ Repo anchor: `e2e/sqlite-chinook`.
 Skill: [Generate-then-edit](/v2/paths/generate-then-edit) | Protocol:
 [HTTP / REST](/v2/protocols/http-rest)
 
-1. Stand up (or reuse) a **REST** Reviews API with an OpenAPI document. For the Mesh dogfood path,
-   build it with [feTS](https://fets.dev/) (see [feTS OpenAPI](https://fets.dev/server/openapi) for
+1. Stand up (or reuse) a **REST** Reviews API with an OpenAPI document. You can build it with
+   [feTS](https://fets.dev/) (see [feTS OpenAPI](https://fets.dev/server/openapi) for
    `/openapi.json`); any OpenAPI server works the same for the loader.
 2. Generate a Reviews subgraph with the OpenAPI loader -> Connect emit.
 3. Query a review; [read the SDL](/v2/guides/reading-generated-sdl) (`@source`, `@connect`,
    `selection`).
 4. **Dislike** something concrete (field names, noisy types, Track join shape).
-5. Edit the checked-in `.graphql` (or apply optional [Transforms](/v2/transforms) for rename-only
+5. Edit the emitted `.graphql` (or apply optional [Transforms](/v2/transforms) for rename-only
    cases).
 6. Re-compose. Dual-run the Connect slice on **Hive Gateway** and **Apollo Router**.
 
@@ -165,8 +162,8 @@ import { loadOpenAPISubgraph } from '@omnigraph/openapi'
 }
 ```
 
-Loader emit for a ById root (from `e2e/openapi-entity-stubs` Billing -- Composition stamps
-`entity: true` when the Query matches [semantic conventions](/v2/compose#semantic-conventions)):
+Loader emit for a ById root (Billing-style OpenAPI -- Composition stamps `entity: true` when the
+Query matches [semantic conventions](/v2/compose#semantic-conventions)):
 
 ```graphql
 extend schema
@@ -205,8 +202,7 @@ type Track @key(fields: "id", resolvable: false) {
 }
 ```
 
-Align `id` / stage-1 keys when you merge. Repo anchors: `e2e/openapi-entity-stubs`,
-`e2e/petstore-subgraph`.
+Align `id` / stage-1 keys when you merge.
 
 ---
 
@@ -220,8 +216,7 @@ Skill: [Hand-write](/v2/paths/hand-write) | Protocol: [Protobuf / gRPC](/v2/prot
 4. Load the `.graphql` as a schema subgraph in Compose (same path as edited SDL).
 5. Serve on **Hive Gateway** only for this slice.
 
-Compact field-number mapping (shape from `e2e/protobuf-http/subgraphs/movies.graphql`, adapted to a
-recommendation field):
+Compact field-number mapping adapted to a recommendation field:
 
 ```graphql
 extend schema
@@ -263,8 +258,7 @@ type Recommendation @key(fields: "id") {
 ```
 
 Optional rename transforms rewrite `$args` inside `@protobuf__rpc` the same way they rewrite
-`@connect` -- see `e2e/protobuf-http/mesh.config.ts`. Repo anchors: `e2e/protobuf-http`,
-`e2e/protobuf-grpc-example`.
+`@connect`.
 
 ---
 

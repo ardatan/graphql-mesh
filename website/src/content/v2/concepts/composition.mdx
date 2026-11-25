@@ -41,11 +41,10 @@ Beyond merging Federation types, Mesh Compose may:
   non-Connect subgraphs) -- see [Composition](/v2/compose#semantic-conventions).
 - Rewrite `$args` inside <ProtocolRef name="http-rest" /> `@connect`,
   <ProtocolRef name="protobuf" /> `@protobuf__rpc`, and <ProtocolRef name="thrift" /> `@thrift__rpc`
-  when rename transforms change GraphQL arg names (`e2e/protobuf-http`, `e2e/openapi-arg-rename`).
+  when rename transforms change GraphQL arg names.
 - Inject `@composeDirective` so Mesh / Connect directives survive into the supergraph.
 
-Opt out of conventions with `ignoreSemanticConventions: true` when you need full manual control
-(`e2e/semantic-conventions`).
+Opt out of conventions with `ignoreSemanticConventions: true` when you need full manual control.
 
 ## Short example
 

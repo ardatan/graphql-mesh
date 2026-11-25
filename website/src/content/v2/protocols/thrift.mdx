@@ -8,7 +8,7 @@ import { DirectiveRef } from '../../../components/v2-directive-ref'
 # Thrift
 
 Use Thrift when you already have a **`.thrift` IDL** and want GraphQL fields that call those
-functions. Mesh has two emit paths from the same IDL (`e2e/thrift-calculator`):
+functions. Mesh has two emit paths from the same IDL:
 
 | Path            | What you get                                             | Dual-run                              |
 | --------------- | -------------------------------------------------------- | ------------------------------------- |
@@ -82,7 +82,7 @@ type Query {
 }
 ```
 
-## Complex Use Cases
+## Use cases
 
 ### `throws` as GraphQL unions
 
@@ -92,6 +92,7 @@ to wire field ids:
 
 ```graphql
 # PostTweetResult = Tweet | TwitterUnavailable (union from throws)
+
 union PostTweetResult = Tweet | TwitterUnavailable
 
 type Query {

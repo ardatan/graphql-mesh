@@ -18,7 +18,7 @@ protocol** (not HTTP/REST Connectors). The loader stamps `@mongo__*` ops; Hive G
 | Transport  | `@graphql-mesh/transport-mongo`              |
 | Spec       | `https://specs.graphql-mesh.com/mongo/v0.1`  |
 | Dual-run   | Hive Gateway only                            |
-| Anchors    | `e2e/mongoose-users`                         |
+| Examples   | Mongoose users model                         |
 
 ## Generate from a Mongoose model
 
@@ -131,7 +131,7 @@ type Mutation {
 }
 ```
 
-## Complex Use Cases
+## Use cases
 
 ### Batch ByIds
 
@@ -198,8 +198,7 @@ type Query {
 
 Models with ObjectId keys, Decimal128 money fields, or schemaless blobs emit GraphQL scalars such as
 `ObjectID`, `Decimal128`, and `JSON`. Transport options may list which collection fields are
-ObjectIds (`objectIdFieldsByCollection`) so the executor coerces correctly -- see
-`e2e/mongoose-users`.
+ObjectIds (`objectIdFieldsByCollection`) so the executor coerces correctly.
 
 Binders: [Selection mapping](/v2/guides/selection-mapping). Directives catalog:
 [Mongo](/v2/reference/directives#mongo).

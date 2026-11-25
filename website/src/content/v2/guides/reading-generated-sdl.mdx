@@ -27,7 +27,7 @@ directives. Before you edit or hand-write, learn to recognize the important stam
 | `selection` / `args`                                                    | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs.                                                                    | [Selection mapping](/v2/guides/selection-mapping) / [Connectors mapping](https://www.apollographql.com/docs/graphos/connectors/mapping)                       |
 | <DirectiveRef name="link" /> / <DirectiveRef name="composeDirective" /> | Spec imports and which directives survive <ConceptRef name="composition">composition</ConceptRef>.                                                         | [Directives](/v2/reference/directives#link) / [Composition](/v2/compose)                                                                                      |
 
-## Walk a Chinook root field (`e2e/sqlite-chinook`)
+## Walk a Chinook root field
 
 Start at `Query.album`, then the type:
 
@@ -76,7 +76,7 @@ type Album
 }
 ```
 
-## Walk a Connect entity field (`e2e/openapi-entity-stubs`)
+## Walk a Connect entity field
 
 1. `@source(name: "Billing", http: { baseURL: ... })` names the HTTP base.
 2. `getCustomer(id:)` with `entity: true` -- ById convention matched; no Mesh `@merge` on Connect.
@@ -106,7 +106,7 @@ type Query {
    [Selection mapping](/v2/guides/selection-mapping).
 3. Treat emitted SDL as the contract you will either keep, edit, or rewrite by hand.
 4. For harder shapes (M2M `through`, streaming RPC, Thrift `throws`, FHIR `->match`), jump to the
-   protocol **Complex Use Cases** section or the directives scenarios.
+   protocol **Use cases** section or the directives scenarios.
 
 <Callout type="info">
   Shared by [Generate](/v2/paths/generate), [Generate-then-edit](/v2/paths/generate-then-edit), and

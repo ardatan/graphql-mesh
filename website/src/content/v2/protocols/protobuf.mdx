@@ -11,17 +11,17 @@ Use Protobuf / gRPC when RPCs should become GraphQL fields with **field-number**
 Connectors). Hand-author or loader-emit `@protobuf__rpc`; Hive Gateway runs `transport-protobuf`.
 Stock Apollo Router does **not** execute `@protobuf__rpc`.
 
-| Piece     | Detail                                                                               |
-| --------- | ------------------------------------------------------------------------------------ |
-| Directive | `@protobuf__rpc` (`service`, `method`, `args`, `selection`, `stream`, `entity`)      |
-| Transport | `@graphql-mesh/transport-protobuf`                                                   |
-| Spec      | `https://specs.graphql-mesh.com/protobuf/v0.1`                                       |
-| Dual-run  | Hive Gateway only                                                                    |
-| Anchors   | `e2e/protobuf-http` (hand SDL); Music Store recommendations; `protobuf-grpc-example` |
+| Piece     | Detail                                                                          |
+| --------- | ------------------------------------------------------------------------------- |
+| Directive | `@protobuf__rpc` (`service`, `method`, `args`, `selection`, `stream`, `entity`) |
+| Transport | `@graphql-mesh/transport-protobuf`                                              |
+| Spec      | `https://specs.graphql-mesh.com/protobuf/v0.1`                                  |
+| Dual-run  | Hive Gateway only                                                               |
+| Examples  | Hand SDL movies subgraph; Music Store recommendations; streaming RPCs           |
 
-## Hand SDL (`e2e/protobuf-http`)
+## Hand SDL
 
-Compose loads a checked-in `.graphql` (location filled at compose time). Optional rename transform
+Compose can load a `.graphql` file (location filled at compose time). Optional rename transform
 rewrites `$args` inside `@protobuf__rpc` the same way it rewrites `@connect`:
 
 ```ts
@@ -54,7 +54,7 @@ export const gatewayConfig = defineGatewayConfig({
 })
 ```
 
-Compact field-number mapping (from `e2e/protobuf-http/subgraphs/movies.graphql`):
+Compact field-number mapping:
 
 ```graphql
 extend schema
@@ -106,7 +106,7 @@ enum Genre {
 }
 ```
 
-## Complex Use Cases
+## Use cases
 
 ### Rename transforms rewrite `@protobuf__rpc(args:)`
 
@@ -160,9 +160,8 @@ type Query {
 ### ConnectRPC vs Twirp HTTP
 
 The same hand SDL can target ConnectRPC or Twirp by swapping `@transport` `location` and headers.
-Twirp typically needs `Content-Type: application/protobuf`; ConnectRPC uses its own path style. E2e
-toggles this with `PROTOBUF_HTTP_STYLE=twirp` vs the ConnectRPC default -- the `@protobuf__rpc`
-`args` / `selection` stay identical.
+Twirp typically needs `Content-Type: application/protobuf`; ConnectRPC uses its own path style. The
+`@protobuf__rpc` `args` / `selection` stay identical either way.
 
 ### Nested message / timestamp / enum maps
 

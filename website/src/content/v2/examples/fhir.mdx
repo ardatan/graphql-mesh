@@ -13,10 +13,9 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
   Example](/v2/examples/music-store) for the staged Generate -> edit -> Hand-write tutorial.
 </Callout>
 
-How we built the Mesh FHIR e2e (`e2e/json-schema-fhir` on `master`): pin HL7 R4 JSON Schema,
-generate Patient and Observation subgraphs, hand-write a join-only Resource subgraph, compose once,
-serve the same SDL on **Hive Gateway** (JS/TS) and **Apollo Router** (<ConceptRef name="gateway" />
-peers).
+How we built the Mesh FHIR example: pin HL7 R4 JSON Schema, generate Patient and Observation
+subgraphs, hand-write a join-only Resource subgraph, compose once, serve the same SDL on **Hive
+Gateway** (JS/TS) and **Apollo Router** (<ConceptRef name="gateway" /> peers).
 
 <V2FlowDiagram
   ariaLabel="FHIR how-we-built: schema to generate to join SDL to Composition to Serve Supergraph"
@@ -312,13 +311,6 @@ from the Patient subgraph.
   transports on [Hive Gateway](/v2/serve/hive-gateway).
 - Binders on `Reference.resource`: [Selection mapping](/v2/guides/selection-mapping). Protocol
   notes: [HTTP / REST](/v2/protocols/http-rest).
-
-## Repo anchors
-
-- `e2e/json-schema-fhir/mesh.config.ts`
-- `e2e/json-schema-fhir/reference-resource.graphql`
-- `e2e/json-schema-fhir/ensure-fhir-schema.ts`
-- `e2e/json-schema-fhir/json-schema-fhir.test.ts`
 
 <Cards>
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />

@@ -66,7 +66,7 @@ type Track @key(fields: "id", resolvable: false) {
   [HTTP/REST Connectors mapping](https://www.apollographql.com/docs/graphos/connectors/mapping) and
   [Entity resolution](/v2/concepts/federation#entity-resolution).
 
-ById root with Composition-stamped `entity: true` (`e2e/openapi-entity-stubs`):
+ById root with Composition-stamped `entity: true`:
 
 ```graphql
 type Query {
@@ -83,7 +83,7 @@ type Query {
 }
 ```
 
-Richer Connect expressions (FHIR `Reference.resource` -- `e2e/json-schema-fhir`):
+Richer Connect expressions (FHIR `Reference.resource`):
 
 ```graphql
 resource: Resource
@@ -112,8 +112,7 @@ page: [HTTP / REST](/v2/protocols/http-rest).
 
 SQL emit uses <DirectiveRef name="sql" /> (kind discriminator: `ROW` / `ROWS` / `CONNECTION` /
 `COUNT` / `INSERT` / `UPDATE` / `DELETE`). Request binders land in `where` / structured `args`;
-column maps land in `selection`. Chinook (`e2e/sqlite-chinook`) aliases SQL columns to GraphQL
-names:
+column maps land in `selection`. Chinook aliases SQL columns to GraphQL names:
 
 ```graphql
 type Query {
@@ -162,7 +161,7 @@ Hive Gateway only -- stock Apollo Router does not execute `@sql`. Protocol:
 ## Protobuf / gRPC (`args` + `selection`)
 
 <DirectiveRef name="protobuf__rpc" /> uses a **compact field-number** dialect (not JSONSelection).
-From `e2e/protobuf-http`:
+Protobuf field-number map:
 
 ```graphql
 type Query {
