@@ -134,7 +134,7 @@ describe('Federation', () => {
       });
       expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
       expect(() => transform(schema, subgraphConfig)).toThrow(
-        /Missing fieldName in resolveReference config for @key directive on Foo type/,
+        /Missing resolveReference\.fieldName for @key on Foo/,
       );
     });
 
@@ -152,7 +152,7 @@ describe('Federation', () => {
       });
       expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
       expect(() => transform(schema, subgraphConfig)).toThrow(
-        /Field "nonExistentField" not found in root type "Query" for @key directive on Foo type/,
+        /Query\.nonExistentField not found for @key resolveReference on Foo/,
       );
     });
 
@@ -169,7 +169,7 @@ describe('Federation', () => {
         },
       });
       expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
-      expect(() => transform(schema, subgraphConfig)).toThrow(/Did you mean "fooById"/);
+      expect(() => transform(schema, subgraphConfig)).toThrow(/Did you mean "Query\.fooById"/);
     });
 
     it('throws TransformValidationError when operation type is invalid', () => {
@@ -188,7 +188,7 @@ describe('Federation', () => {
       });
       expect(() => transform(schema, subgraphConfig)).toThrow(TransformValidationError);
       expect(() => transform(schema, subgraphConfig)).toThrow(
-        /Invalid operation type "invalid" in resolveReference config/,
+        /Invalid operation type "invalid" in resolveReference for @key on Foo/,
       );
     });
   });
