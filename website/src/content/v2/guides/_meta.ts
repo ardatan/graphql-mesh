@@ -6,4 +6,7 @@ export default {
   'schema-coordinates': 'Schema Coordinates',
   'selection-mapping': 'Selection mapping',
   'subscriptions-pubsub': 'Subscriptions and pubsub',
+  auth: 'Authentication',
+  'rate-limit': 'Rate limiting',
+  monitoring: 'Monitoring and tracing',
 };

@@ -1,0 +1,68 @@
+---
+description: Monitoring and tracing Mesh supergraphs -- OpenTelemetry and Prometheus on Hive Gateway
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# Monitoring and tracing
+
+Observability for a Mesh-composed supergraph is configured on **Hive Gateway** (or Apollo Router for
+a Connect-only slice). Mesh Compose stamps directive SDL; it does not ship metrics exporters.
+
+Hive Gateway supports:
+
+- **OpenTelemetry** traces (HTTP, GraphQL phases, upstream / transport calls, context propagation)
+- **Prometheus** metrics (request / phase histograms, subgraph execute, errors, ...)
+
+Product docs:
+[Hive Gateway monitoring and tracing](https://the-guild.dev/graphql/hive/docs/gateway/monitoring-tracing).
+
+## Minimal Prometheus enable
+
+```ts
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+
+export const gatewayConfig = defineGatewayConfig({
+  prometheus: {
+    metrics: {
+      graphql_envelop_request: true,
+      graphql_envelop_request_duration: true,
+      graphql_gateway_subgraph_execute_duration: true,
+      graphql_gateway_subgraph_execute_errors: true
+    }
+  }
+})
+```
+
+Scrape `/metrics` (default) with Prometheus or a compatible agent. Tune the metric set on the Hive
+Gateway page -- defaults and histogram buckets live there.
+
+## OpenTelemetry
+
+Initialize OpenTelemetry **before** other imports (Hive docs recommend a `telemetry.ts` imported
+first from `gateway.config.ts`), then enable the gateway OTEL plugin. Mesh transports participate as
+upstream spans when the gateway instruments outbound calls -- no separate Mesh monitoring package.
+
+## What Mesh docs do not duplicate
+
+Logging detail, custom spans, Hive Console export, and Apollo Router's own telemetry stay on the
+gateway product docs. From Mesh, the important link is: compose → serve on Hive Gateway → turn on
+the same monitoring you would for any Hive Gateway supergraph.
+
+<Callout type="info">
+  Dual-run Connect graphs on Apollo Router use Router's observability story for that slice; full
+  multi-protocol Music Store graphs stay on Hive Gateway monitoring.
+</Callout>
+
+## Related
+
+<Cards>
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
+  <Cards.Card arrow title="Authentication" href="/v2/guides/auth" />
+  <Cards.Card
+    arrow
+    title="Hive Gateway monitoring (external)"
+    href="https://the-guild.dev/graphql/hive/docs/gateway/monitoring-tracing"
+  />
+</Cards>

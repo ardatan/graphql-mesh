@@ -23,6 +23,26 @@ shape.
 SOAP stays in this HTTP/REST chapter (not a separate Protocols nav entry). Same `@connect` /
 `@source` author API plus a Mesh JSON↔XML codec -- see [SOAP-as-Connect](#soap-as-connect).
 
+## Compatible with HTTP/REST Connectors SDL
+
+Mesh OpenAPI / JSON Schema / OData (and SOAP-as-Connect) emit the same **`@connect` / `@source`**
+contract that upstream GraphOS Connectors document. Hand-authored Connect SDL is a peer input.
+
+| Layer              | What Mesh docs say                                                                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Directive contract | Prefer upstream [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) for arg tables |
+| Mesh generate      | `@omnigraph/openapi` (and siblings) → Connect emit; Music Store Reviews is the staged edit example                                          |
+| Mesh serve         | Hive Gateway `transport-connect`; Apollo Router dual-run when the surface stays Connect-compatible                                          |
+| Mesh-only deltas   | SOAP / XML codec (Hive Gateway only); non-Connect protocols (`@sql`, `@protobuf__rpc`, ...) are **not** Connectors                          |
+
+Do **not** brand every mention **Apollo Connector(s)** -- say **HTTP/REST Connectors** (or
+**Connectors** when the family is already clear). Spec URLs (`https://specs.apollo.dev/connect/...`)
+stay as-is in SDL.
+
+Community `@connect` schemas (Stripe, JSONPlaceholder, ...) can also compose under Mesh Compose +
+Hive Gateway / Apollo Router when the SDL is stock Connect -- Mesh does not require Rover / GraphOS
+for that path. Prefer Mesh Compose + Hive Gateway as the default getting started.
+
 ## OpenAPI entity lookup
 
 Billing OpenAPI: a ById-shaped Query arg becomes `entity: true` so Federation can fill `Customer`

@@ -1,0 +1,78 @@
+---
+description:
+  Authentication and authorization on Mesh supergraphs -- Federation auth directives + Hive Gateway
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# Authentication and authorization
+
+Auth on a Mesh supergraph is mostly a **Hive Gateway** concern. Annotate subgraph SDL with
+Federation auth directives (and Mesh `@skipAuth` when you need opt-outs), then enable the matching
+gateway plugins. Full gateway setup:
+[Hive Gateway authorization and authentication](https://the-guild.dev/graphql/hive/docs/gateway/authorization-authentication).
+
+<Callout type="info">
+  Directives alone do nothing until Hive Gateway (or your peer gateway) is configured to enforce
+  them. Mesh Compose only needs the SDL + `@composeDirective` so auth directives survive
+  composition.
+</Callout>
+
+## Federation auth directives
+
+Import Federation auth directives and protect fields:
+
+```graphql
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.6"
+    import: ["@authenticated", "@requiresScopes", "@policy", "@composeDirective"]
+  )
+
+type Query {
+  me: User! @authenticated
+  adminStats: Stats @requiresScopes(scopes: [["admin"]])
+  # publicField: String
+}
+```
+
+Configure JWT / Generic Auth on Hive Gateway so those directives are enforced -- see the Hive
+Gateway auth guide linked above.
+
+## Opt out with `@skipAuth`
+
+When the gateway runs **complete protection** (everything authenticated by default), mark public
+fields with Mesh `@skipAuth`. Include the directive definition and `@composeDirective` or
+composition / the gateway will drop it:
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@skipAuth"])
+  @composeDirective(name: "@skipAuth")
+
+directive @skipAuth on FIELD_DEFINITION | OBJECT | INTERFACE
+
+type Query {
+  me: User!
+  protectedField: String
+  publicField: String @skipAuth
+}
+```
+
+## Related
+
+Gateway product docs own JWT extraction, Generic Auth modes, and HMAC to subgraphs. Mesh docs own
+how auth directives sit on composed SDL.
+
+<Cards>
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Directives" href="/v2/reference/directives" />
+  <Cards.Card
+    arrow
+    title="Hive Gateway auth (external)"
+    href="https://the-guild.dev/graphql/hive/docs/gateway/authorization-authentication"
+  />
+</Cards>

@@ -64,8 +64,8 @@ kinds.
 Register only the transports your supergraph actually stamps. A mixed Music Store graph needs SQL
 and protobuf; Connect needs no extra entry. Thrift TJSON is Connect, so it does not load
 `transport-thrift`. OpenAPI callback / JSON Schema webhook subscriptions need `webhooks: true` when
-fields use `@pubsubOperation` / `@resolveTo` with `webhook:…` topics. For multi-instance EDFS, pass
-a shared `pubsub` broker -- see [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub):
+fields use `@pubsubOperation` / `@resolveTo` with `webhook:...` topics. For multi-instance EDFS,
+pass a shared `pubsub` broker -- see [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub):
 
 ```ts
 export const gatewayConfig = defineGatewayConfig({
@@ -92,11 +92,18 @@ Hive Gateway product docs live on the Hive site. Mesh docs focus on how Compose 
 transports plug in. Concept overview: [Gateway](/v2/concepts/gateway). Serve section:
 [Serve Supergraph](/v2/serve).
 
+Gateway-owned cross-cuts (configure on Hive Gateway; annotate SDL in Mesh when directives apply):
+[Authentication](/v2/guides/auth), [Rate limiting](/v2/guides/rate-limit),
+[Monitoring](/v2/guides/monitoring), [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub).
+
 <Callout type="info">
   Always say **Hive Gateway** in Mesh docs -- never bare "Hive" when meaning the gateway.
 </Callout>
 
 <Cards>
+  <Cards.Card arrow title="Authentication" href="/v2/guides/auth" />
+  <Cards.Card arrow title="Rate limiting" href="/v2/guides/rate-limit" />
+  <Cards.Card arrow title="Monitoring" href="/v2/guides/monitoring" />
   <Cards.Card
     arrow
     title="Hive Gateway docs"

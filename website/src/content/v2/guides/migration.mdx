@@ -40,9 +40,23 @@ Mesh v2 docs live under **`/v2`**. Older trees stay available while you migrate:
 
 ## Protocol cutovers
 
-When a v0/v1 handler name differs from today's Omnigraph loader, open the matching
-[Protocols](/v2/protocols) page (SQL, Mongo, Thrift, Protobuf, HTTP/REST, Neo4j) and copy the
-`load*Subgraph` + transport pair. Do not invent ad-hoc `sourceHandler` demos.
+When a v0/v1 handler name differs from today's loader, open the matching [Protocols](/v2/protocols)
+page and copy the `load*Subgraph` + transport pair.
+
+| v0 / older handler flavor       | Today (Compose)                                | Protocol page                          |
+| ------------------------------- | ---------------------------------------------- | -------------------------------------- |
+| OpenAPI / JSON Schema           | `loadOpenAPISubgraph` / JSON Schema            | [HTTP / REST](/v2/protocols/http-rest) |
+| SOAP / WSDL                     | `loadSOAPSubgraph` (Connect + XML)             | [HTTP / REST](/v2/protocols/http-rest) |
+| GraphQL HTTP                    | `loadGraphQLHTTPSubgraph`                      | [GraphQL HTTP](/v2/protocols/graphql)  |
+| SQL / Postgres / MySQL / SQLite | `loadSqlSubgraph` (`@omnigraph/sql`)           | [SQL](/v2/protocols/sql)               |
+| Mongo / Mongoose                | `loadMongoSubgraph`                            | [Mongo](/v2/protocols/mongo)           |
+| gRPC / Protobuf                 | `loadProtobufSubgraph` / hand `@protobuf__rpc` | [Protobuf](/v2/protocols/protobuf)     |
+| Thrift                          | `loadThriftSubgraph`                           | [Thrift](/v2/protocols/thrift)         |
+| Neo4j                           | `loadNeo4jSubgraph`                            | [Neo4j](/v2/protocols/neo4j)           |
+
+Gateway-owned plugins (auth, rate limit, metrics) move with Hive Gateway -- see
+[Authentication](/v2/guides/auth), [Rate limiting](/v2/guides/rate-limit), and
+[Monitoring](/v2/guides/monitoring).
 
 ## Related
 
@@ -51,4 +65,5 @@ When a v0/v1 handler name differs from today's Omnigraph loader, open the matchi
   <Cards.Card arrow title="Introduction" href="/v2" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
 </Cards>
