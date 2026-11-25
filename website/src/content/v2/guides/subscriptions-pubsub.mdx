@@ -1,0 +1,224 @@
+---
+description:
+  Mesh v2 subscriptions -- @pubsubOperation, @pubsubPublish, webhooks, and Hive Gateway EDFS
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { DirectiveRef } from '../../../components/v2-directive-ref'
+
+# Subscriptions and pubsub
+
+Use Mesh pubsub directives when clients should **subscribe** to events and mutations (or external
+services) should **publish** payloads onto the same topics. Hive Gateway runs the subscriptions;
+configure a shared `pubsub` broker when you need multi-instance EDFS.
+
+| Piece                                           | Role                                                               |
+| ----------------------------------------------- | ------------------------------------------------------------------ |
+| <DirectiveRef name="pubsubOperation" />         | Subscribe a field (usually on `Subscription`) to a topic           |
+| <DirectiveRef name="pubsubPublish" />           | Publish the field's result to a topic after it resolves            |
+| <DirectiveRef name="resolveTo" /> `pubsubTopic` | Gateway-side / `additionalTypeDefs` subscribe (older webhook path) |
+| Hive Gateway `webhooks: true`                   | Bind `webhook:method:path` topics to HTTP webhook endpoints        |
+| Hive Gateway `pubsub`                           | NATS / Redis / … broker for Event-Driven Federated Subscriptions   |
+
+Directive catalog: [Directives: pubsub](/v2/reference/directives#pubsub). Upstream Hive Gateway:
+[Subscriptions](https://the-guild.dev/graphql/hive/docs/gateway/subscriptions).
+
+## Choose a path
+
+| Goal                                           | Prefer                                                      |
+| ---------------------------------------------- | ----------------------------------------------------------- |
+| Subgraph owns subscribe + publish              | `@pubsubOperation` + `@pubsubPublish` + `@composeDirective` |
+| OpenAPI callbacks / JSON Schema subscription   | Loader-emitted `@pubsubOperation` + `webhooks: true`        |
+| Compose-only subscription without subgraph SDL | `@resolveTo(pubsubTopic:)` in `additionalTypeDefs`          |
+| Scale subscriptions across gateway instances   | Shared `pubsub` (e.g. NATS) -- Hive Gateway EDFS            |
+
+## Use cases
+
+### Subgraph EDFS: publish from a mutation, subscribe on a topic
+
+Hand-write (or edit) subgraph SDL so a mutation publishes and a subscription listens. Import Mesh
+core directives and compose them:
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  @link(
+    url: "https://specs.graphql-mesh.com/core/v0.1"
+    import: ["@pubsubOperation", "@pubsubPublish"]
+  )
+  # Keep both on the supergraph or the gateway never sees them
+  @composeDirective(name: "@pubsubOperation")
+  @composeDirective(name: "@pubsubPublish")
+
+type Product @key(fields: "id") {
+  id: ID!
+  name: String!
+  price: Float!
+}
+
+type Mutation {
+  createProduct(name: String!, price: Float!): Product! @pubsubPublish(pubsubTopic: "new_product") # publish resolved Product
+}
+
+type Subscription {
+  newProduct: Product! @pubsubOperation(pubsubTopic: "new_product") # listen on same topic
+}
+```
+
+Clients subscribe as usual:
+
+```graphql
+subscription {
+  newProduct {
+    name
+    price
+  }
+}
+```
+
+With a broker-backed `pubsub`, other services can also publish onto the topic (Hive Gateway EDFS
+uses an `edfs:` prefix on the wire for some brokers -- see
+[Hive Gateway subscriptions](https://the-guild.dev/graphql/hive/docs/gateway/subscriptions)).
+
+### JSON Schema / webhook subscription
+
+Declare a subscription operation with `pubsubTopic: "webhook:…"`. The loader emits
+`@pubsubOperation`; Hive Gateway needs `webhooks: true` so `POST /webhooks/todo_added` publishes
+onto that topic:
+
+```ts
+import { OperationTypeNode } from 'graphql'
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadJSONSchemaSubgraph('API', {
+        endpoint: 'http://localhost:4001',
+        operations: [
+          {
+            type: OperationTypeNode.SUBSCRIPTION,
+            field: 'todoAdded',
+            // method + path become the HTTP webhook route
+            pubsubTopic: 'webhook:post:/webhooks/todo_added',
+            responseSample: './todo.json',
+            responseTypeName: 'Todo'
+          }
+        ]
+      })
+    }
+  ]
+})
+
+export const gatewayConfig = defineGatewayConfig({
+  webhooks: true // required for webhook: topics
+})
+```
+
+Emitted subscription field:
+
+```graphql
+type Subscription {
+  todoAdded: Todo
+    @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added")
+}
+```
+
+OpenAPI **callbacks** follow the same `webhook:method:path` shape when the loader walks callback
+objects.
+
+### Filter events per subscriber
+
+When many clients share a topic, filter in SDL so each subscription only sees matching payloads:
+
+```graphql
+type Subscription {
+  todoUpdated(id: ID!): Todo
+    @pubsubOperation(
+      pubsubTopic: "webhook:post:/webhooks/todo_updated"
+      filterBy: "root.id === args.id"
+    )
+}
+```
+
+The same `filterBy` pattern works on `@resolveTo(pubsubTopic:)` when you wire subscriptions in
+`additionalTypeDefs`.
+
+### Gateway `additionalTypeDefs` with `@resolveTo(pubsubTopic:)`
+
+When the subscription field is not owned by a subgraph file, extend the schema at compose time. This
+is the path Hive Gateway's EDFS intro shows with `@resolveTo`; use it for compose-only wiring, or
+migrate to `@pubsubOperation` on the subgraph when you own that SDL:
+
+```ts
+import {
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('products', {
+        endpoint: 'http://localhost:3000/graphql'
+      })
+    }
+  ],
+  additionalTypeDefs: /* GraphQL */ `
+    extend schema {
+      subscription: Subscription
+    }
+    type Subscription {
+      newProduct: Product! @resolveTo(pubsubTopic: "new_product")
+    }
+  `
+})
+```
+
+### Shared broker for multi-instance gateways
+
+In-memory pubsub is fine for a single process. For horizontal scale, pass a Hive PubSub adapter
+(NATS, Redis, …) into gateway config -- same topics your `@pubsubOperation` / `@pubsubPublish`
+fields use:
+
+```ts
+import { defineConfig } from '@graphql-hive/gateway'
+import { NATSPubSub } from '@graphql-hive/pubsub/nats'
+import { connect } from '@nats-io/transport-node'
+
+export const gatewayConfig = defineConfig({
+  pubsub: new NATSPubSub(
+    await connect({
+      servers: [`nats://${process.env.NATS_HOST}:${process.env.NATS_PORT}`]
+    }),
+    {
+      // share channels across gateway replicas
+      subjectPrefix: 'my-shared-gateways'
+    }
+  )
+})
+```
+
+Install the adapter packages your broker needs (`@graphql-hive/pubsub` plus the NATS/Redis peer).
+Details:
+[Hive Gateway subscriptions](https://the-guild.dev/graphql/hive/docs/gateway/subscriptions).
+
+## Related
+
+<Callout type="info">
+  `@pubsubPublish` / `@pubsubOperation` run on **Hive Gateway**. They are not an Apollo Router
+  Connect surface. Webhook topics also need `webhooks: true` on the gateway config.
+</Callout>
+
+<Cards>
+  <Cards.Card arrow title="Directives: pubsub" href="/v2/reference/directives#pubsub" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="HTTP / REST" href="/v2/protocols/http-rest" />
+  <Cards.Card
+    arrow
+    title="Hive Gateway: Subscriptions"
+    href="https://the-guild.dev/graphql/hive/docs/gateway/subscriptions"
+  />
+</Cards>

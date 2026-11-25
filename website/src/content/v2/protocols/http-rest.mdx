@@ -205,8 +205,9 @@ type Query {
 
 ## OpenAPI callbacks / subscriptions
 
-Callback-style OpenAPI can emit a mutation that returns subscription info. Serve it on Hive Gateway
-with `webhooks: true`:
+Callback-style OpenAPI can emit a mutation that returns subscription info, and stamp subscription
+fields with `@pubsubOperation` for `webhook:method:path` topics. Serve on Hive Gateway with
+`webhooks: true` -- see [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub):
 
 ```graphql
 type Mutation {
@@ -215,6 +216,15 @@ type Mutation {
       source: "OpenAPICallbackExample"
       http: { POST: "/streams", body: "$args.input" }
       selection: "subscriptionId"
+    )
+}
+
+type Subscription {
+  # Loader-emitted from OpenAPI callbacks
+  onStreamEvent: StreamEvent
+    @pubsubOperation(
+      subgraph: "OpenAPICallbackExample"
+      pubsubTopic: "webhook:post:/callbacks/stream"
     )
 }
 ```
