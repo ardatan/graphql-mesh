@@ -17,10 +17,10 @@ serve the same SDL on **Hive Gateway** (JS/TS) and **Apollo Router**.
 
 ```mermaid
 flowchart LR
-  A[What existed<br/>FHIR R4 REST + schema] --> B[Generate<br/>patients + observations]
-  B --> C[Hand-write join<br/>Resource + Reference]
-  C --> D[Compose]
-  D --> E[Hive Gateway<br/>+ Apollo Router]
+  A[FHIR R4 REST + schema] --> B[Generate patients + observations]
+  B --> C[Hand-write join SDL]
+  C --> D[Mesh Compose]
+  D --> E[Hive Gateway / Apollo Router]
 ```
 
 ## What you end up with
