@@ -618,19 +618,19 @@ export async function getSqlExecutor({
       executionRequest.context && typeof executionRequest.context === 'object'
         ? executionRequest.context
         : {};
-    // Grafast/`@dataplan/pg` applies `context.pgSettings` via set_config; that path
-    // peers graphql^16 only. Refuse to silently run under the pool role on GraphQL 17.
+    // Grafast/`@dataplan/pg` applies `context.pgSettings` via set_config on the
+    // graphql^16-only fast path above. Every other PostgreSQL path (GraphQL 17,
+    // Bun.SQL without pgPool, softDelete / planner-extras on GraphQL 16) uses this
+    // default executor and must not silently ignore request-local settings.
     const pgSettings = (context as { pgSettings?: Record<string, unknown> }).pgSettings;
     if (
-      graphqlMajor >= 17 &&
       adapter === 'postgres' &&
-      sqlClient.pgPool &&
       pgSettings &&
       typeof pgSettings === 'object' &&
       Object.keys(pgSettings).length > 0
     ) {
       throw new Error(
-        'context.pgSettings is not applied on GraphQL 17 (Grafast PostgreSQL executor peers graphql^16). Remove pgSettings or run on GraphQL 16.',
+        'context.pgSettings is not applied on the PostgreSQL default executor (only the Grafast/`@dataplan/pg` path applies set_config). Remove pgSettings or use a GraphQL 16 subgraph without soft-delete / planner extras so the Grafast executor is selected.',
       );
     }
     return defaultExecutor({

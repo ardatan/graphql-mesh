@@ -32,8 +32,12 @@ by taking `index.ts` as an endpoint.
 You can find the bundle in `dist/index.js` and deploy it either `yarn deploy` or manually with `wsk`
 like `wsk action update /guest/mesh/swapi --kind nodejs:16 dist/index.js --web raw`.
 
-> This example pins `graphql@16` because OpenWhisk’s Node action images stop at Node 16/20; GraphQL
-> 17 requires Node 22+.
+> **Deploy note:** this monorepo pins `graphql@17` (Node 22+). Stock OpenWhisk
+> `action-nodejs-v16` / `nodejs:16` images are **not** a supported runtime for that
+> GraphQL major. Use the example for local `yarn start` / bundling against the
+> workspace, or deploy with a custom Node 22+ action image. Yarn root
+> `resolutions.graphql` intentionally keeps the workspace on a single GraphQL
+> major — per-example `graphql@16` pins cannot override it.
 
 > `--web raw` needs to be added to configure the action as a _raw_ web action.
 

@@ -212,7 +212,13 @@ export class ProtobufTransportHelper extends DisposableStack {
     return credentials.createInsecure();
   }
 
-  processDirectives({ schema, creds }: { schema: GraphQLSchema; creds: ChannelCredentials }) {
+  processDirectives({
+    schema,
+    creds,
+  }: {
+    schema: GraphQLSchema;
+    creds: ChannelCredentials;
+  }): GraphQLSchema {
     this.channelCreds = creds;
     const location = stringInterpolator.parse(this.endpoint, { env: process.env }) ?? this.endpoint;
     const channelOptions = Array.isArray(this.config.channelOptions)
@@ -299,7 +305,7 @@ export class ProtobufTransportHelper extends DisposableStack {
         }
       }
     }
-    ensureFederationEntitiesField(schema);
+    return ensureFederationEntitiesField(schema);
   }
 
   private createRpcResolverFromDirectiveArgs(
@@ -456,17 +462,17 @@ export class ProtobufTransportHelper extends DisposableStack {
   }
 }
 
-function ensureFederationEntitiesField(schema: GraphQLSchema) {
+function ensureFederationEntitiesField(schema: GraphQLSchema): GraphQLSchema {
   const queryType = schema.getQueryType();
   if (!queryType) {
-    return;
+    return schema;
   }
   const entityTypes = Object.values(schema.getTypeMap()).filter(
     (t): t is GraphQLObjectType =>
       isObjectType(t) && !t.name.startsWith('__') && !!getTypeResolveReference(t),
   );
   if (!entityTypes.length) {
-    return;
+    return schema;
   }
 
   const typeMap = schema.getTypeMap() as Record<string, any>;
@@ -505,7 +511,7 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return entitiesResolver({ representations, context, info });
   };
 
-  installQueryField(schema, '_entities', {
+  return installQueryField(schema, '_entities', {
     description: 'Federation entity resolver for protobuf RPC transport (Hive `_entities` path)',
     type: new GraphQLNonNull(new GraphQLList(entityUnion)),
     args: {
@@ -681,8 +687,8 @@ const transport: Transport<ProtobufTransportOptions> = {
           ? credentials.createInsecure()
           : helper.getCredentials(),
       creds => {
-        helper.processDirectives({ schema: subgraph, creds });
-        const executor = createDefaultExecutor(subgraph);
+        const schema = helper.processDirectives({ schema: subgraph, creds });
+        const executor = createDefaultExecutor(schema);
         executor[DisposableSymbols.dispose] = () => helper.dispose();
         return executor;
       },

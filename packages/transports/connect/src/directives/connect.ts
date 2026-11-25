@@ -3216,7 +3216,7 @@ export function processConnectDirectives(
   }
   // Hive stitches `@key` entities via `Query._entities`. Apollo Router uses `@connect`
   // natively and never calls this field - but without it Hive needed Mesh `@merge`.
-  ensureFederationEntitiesField(schema);
+  schema = ensureFederationEntitiesField(schema);
   // Same-subgraph Connectors stubs (`customer: { id: customerId }`) leave a partial
   // object in Hive - unlike Router, the gateway won't auto `_entities` for missing
   // fields on that object. Fill them via `resolveReference` when a field is absent.
@@ -3284,17 +3284,17 @@ function hydrateEntityStubFieldResolvers(schema: GraphQLSchema) {
  * whenever Hive planned `_entities` against a Connectors REST subgraph (e.g. OData
  * owner + GraphQL/Connectors stub). Always install the resolveReference dispatcher.
  */
-function ensureFederationEntitiesField(schema: GraphQLSchema) {
+function ensureFederationEntitiesField(schema: GraphQLSchema): GraphQLSchema {
   const queryType = schema.getQueryType();
   if (!queryType) {
-    return;
+    return schema;
   }
   const entityTypes = Object.values(schema.getTypeMap()).filter(
     (t): t is GraphQLObjectType =>
       isObjectType(t) && !t.name.startsWith('__') && !!getTypeResolveReference(t),
   );
   if (!entityTypes.length) {
-    return;
+    return schema;
   }
 
   const typeMap = schema.getTypeMap() as Record<string, any>;
@@ -3334,7 +3334,7 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return entitiesResolver({ representations, context, info });
   };
 
-  installQueryField(schema, '_entities', {
+  return installQueryField(schema, '_entities', {
     description: 'Federation entity resolver for Connectors REST transport (Hive `_entities` path)',
     type: new GraphQLNonNull(new GraphQLList(entityUnion)),
     args: {

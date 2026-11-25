@@ -127,17 +127,17 @@ function hydrateEntityStubFieldResolvers(schema: GraphQLSchema) {
 /**
  * Add / repair Federation `Query._entities` (same contract as Connectors REST transport).
  */
-function ensureFederationEntitiesField(schema: GraphQLSchema) {
+function ensureFederationEntitiesField(schema: GraphQLSchema): GraphQLSchema {
   const queryType = schema.getQueryType();
   if (!queryType) {
-    return;
+    return schema;
   }
   const entityTypes = Object.values(schema.getTypeMap()).filter(
     (t): t is GraphQLObjectType =>
       isObjectType(t) && !t.name.startsWith('__') && !!getTypeResolveReference(t),
   );
   if (!entityTypes.length) {
-    return;
+    return schema;
   }
 
   const typeMap = schema.getTypeMap() as Record<string, any>;
@@ -176,7 +176,7 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return entitiesResolver({ representations, context, info });
   };
 
-  installQueryField(schema, '_entities', {
+  return installQueryField(schema, '_entities', {
     description: 'Federation entity resolver for SQL transport (Hive `_entities` path)',
     type: new GraphQLNonNull(new GraphQLList(entityUnion)),
     args: {
@@ -221,7 +221,7 @@ export function wireSqlEntityResolvers(
     );
   }
 
-  ensureFederationEntitiesField(schema);
+  schema = ensureFederationEntitiesField(schema);
   hydrateEntityStubFieldResolvers(schema);
   return schema;
 }
