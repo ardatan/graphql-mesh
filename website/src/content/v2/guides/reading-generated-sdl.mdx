@@ -9,8 +9,11 @@ import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
 
 Generated <ConceptRef name="mesh">Mesh</ConceptRef> subgraphs are ordinary GraphQL SDL with
 directives. Before you edit or hand-write, learn to recognize the important stamps. This page is a
-**reading guide** -- for arg tables see the [Directives reference](/v2/reference/directives) (draft)
-and <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> upstream.
+**reading guide** -- for arg tables see the [Directives reference](/v2/reference/directives) and
+
+<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> upstream. How we name one type,
+field, arg, or directive: [Schema Coordinates](/v2/guides/schema-coordinates) (Spec `Type.field`,
+`Type.field(arg:)`, ...).
 
 ## What to look for
 
@@ -27,10 +30,14 @@ and <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> upstream.
 
 ## Conventions that help
 
-1. Start from a **root field** you already queried, then follow its `@connect` / protocol directive.
+1. Start from a **root field** you already queried (coordinate `Query.<field>`), then follow its
+   `@connect` / protocol directive.
 2. Trace `$args` and `$this` in `selection` before renaming anything -- see
-   [Selection mapping](/v2/guides/selection-mapping).
+   [Selection mapping](/v2/guides/selection-mapping). Name the GraphQL arg with Spec form
+   `Type.field(arg:)` when you talk about it outside binders.
 3. Treat emitted SDL as the contract you will either keep, edit, or rewrite by hand.
+4. Prefer [Schema Coordinates](/v2/guides/schema-coordinates) for unique element ids; keep Mesh
+   **schema selectors** (`Query.*`, filter globs) labeled as selectors, not Spec coordinates.
 
 <Callout type="info">
   Shared by [Generate](/v2/paths/generate), [Generate-then-edit](/v2/paths/generate-then-edit), and
@@ -41,6 +48,7 @@ and <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> upstream.
 ## See also
 
 <Cards>
+  <Cards.Card arrow title="Schema Coordinates" href="/v2/guides/schema-coordinates" />
   <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
   <Cards.Card arrow title="Directives reference" href="/v2/reference/directives" />
   <Cards.Card arrow title="Concepts" href="/v2/concepts" />

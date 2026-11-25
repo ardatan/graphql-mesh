@@ -188,7 +188,7 @@ export function V2ArchitectureDiagram() {
         </svg>
       </div>
       <figcaption className="mt-2 text-center text-sm text-neutral-500 dark:text-neutral-400">
-        Generated or authored SDL enters the same Composition -> Serve Supergraph -> transport path.
+        Generated or authored SDL enters the same Composition to Serve Supergraph to transport path.
       </figcaption>
     </figure>
   );
