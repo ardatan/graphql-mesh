@@ -159,9 +159,123 @@ type Query {
 
 ### ConnectRPC vs Twirp HTTP
 
-The same hand SDL can target ConnectRPC or Twirp by swapping `@transport` `location` and headers.
-Twirp typically needs `Content-Type: application/protobuf`; ConnectRPC uses its own path style. The
-`@protobuf__rpc` `args` / `selection` stay identical either way.
+The same `@protobuf__rpc` field can talk to ConnectRPC or Twirp. Only `@transport` changes:
+ConnectRPC uses the service root and the default `application/proto` content type; Twirp puts
+`/twirp` on the base URL and sets `Content-Type: application/protobuf`.
+
+**ConnectRPC** -- location is the HTTP root; no header override (transport default
+`application/proto`):
+
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
+
+# ConnectRPC: root location; default Content-Type application/proto
+schema @transport(subgraph: "movies", kind: "protobuf", location: "https://movies.example.com") {
+  query: Query
+}
+
+type Query {
+  moviesByYear(year: Int!): MoviesResult!
+    @protobuf__rpc(
+      service: "Example"
+      method: "GetMovies"
+      args: """
+      1(message): {
+        2(int64): $args.year
+      }
+      """
+      selection: """
+      1(repeated message): result {
+        1(string): name
+        2(int64): year
+        3(float): rating
+        4(repeated string): cast
+        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+      }
+      """
+    )
+}
+
+type MoviesResult {
+  result: [Movie!]!
+}
+
+type Movie {
+  name: String!
+  year: Int!
+  rating: Float
+  cast: [String!]
+  genre: Genre
+}
+
+enum Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+```
+
+**Twirp** -- same `@protobuf__rpc` body; `/twirp` on `location` plus an explicit protobuf header:
+
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
+
+# Twirp: /twirp base path + application/protobuf (not the ConnectRPC default)
+schema
+  @transport(
+    subgraph: "movies"
+    kind: "protobuf"
+    location: "https://movies.example.com/twirp"
+    headers: [["Content-Type", "application/protobuf"]]
+  ) {
+  query: Query
+}
+
+type Query {
+  # Identical RPC mapping -- only @transport differs from ConnectRPC
+  moviesByYear(year: Int!): MoviesResult!
+    @protobuf__rpc(
+      service: "Example"
+      method: "GetMovies"
+      args: """
+      1(message): {
+        2(int64): $args.year
+      }
+      """
+      selection: """
+      1(repeated message): result {
+        1(string): name
+        2(int64): year
+        3(float): rating
+        4(repeated string): cast
+        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+      }
+      """
+    )
+}
+
+type MoviesResult {
+  result: [Movie!]!
+}
+
+type Movie {
+  name: String!
+  year: Int!
+  rating: Float
+  cast: [String!]
+  genre: Genre
+}
+
+enum Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+```
 
 ### Nested message / timestamp / enum maps
 

@@ -161,7 +161,25 @@ type Query {
 
 If you rename a GraphQL argument, Compose rewrites binders inside `@thrift__rpc` the same way as
 `@connect` / `@protobuf__rpc`. After renaming `request` -> `input`, the `args` string must read
-`$args.input`, not `$args.request`.
+`$args.input`, not `$args.request`:
+
+```graphql
+type Query {
+  # GraphQL arg renamed to input; binder follows
+  add(input: AddRequestInput): Int
+    @thrift__rpc(
+      function: "add"
+      args: """
+      1(struct): $args.input { # was $args.request before rename
+        1(i32): left
+        2(i32): right
+      }
+      """
+      selection: "$(i32)"
+      messageType: CALL
+    )
+}
+```
 
 ## Generate (TJSON -> Connect)
 

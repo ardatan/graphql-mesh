@@ -296,7 +296,25 @@ type Reference @key(fields: "reference") {
 
 If you rename a GraphQL argument (e.g. `input` -> `requestBody`), Compose rewrites binders inside
 `@connect` the same way it rewrites `@protobuf__rpc` / `@thrift__rpc`. After rename, the HTTP body
-must read `$args.requestBody`, not `$args.input`.
+must read `$args.requestBody`, not `$args.input`:
+
+```graphql
+type Mutation {
+  # Arg renamed to requestBody; body binder follows
+  createReview(requestBody: CreateReviewInput!): Review
+    @connect(
+      source: "reviews"
+      http: {
+        POST: "/reviews"
+        body: "$args.requestBody" # was $args.input before rename
+      }
+      selection: """
+      id
+      rating
+      """
+    )
+}
+```
 
 ### OData `@odata.type` unions
 
