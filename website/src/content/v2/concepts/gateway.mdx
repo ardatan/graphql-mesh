@@ -11,8 +11,8 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 A **gateway** is the runtime that accepts client GraphQL operations, plans them, and executes
 subgraphs / transports. In Mesh v2 the default story is a **federation gateway** against a
 **supergraph** ([Federation](/v2/concepts/federation)). Another type-merging runtime in the same job
-family is `@graphql-tools/stitch` (`stitchSchemas`) -- see [Stitching](/v2/concepts/stitching); that
-is the runtime, not Stitching Directives. Two peers share the **Serve Supergraph** nav:
+family is **Schema Stitching** (`stitchSchemas`) -- see [Schema Stitching](/v2/concepts/stitching).
+Two peers share the **Serve Supergraph** nav:
 
 | Gateway                         | Role                                                        |
 | ------------------------------- | ----------------------------------------------------------- |
@@ -47,7 +47,7 @@ See [Music Store Example](/v2/examples/music-store) gateway matrix and
 
 <Cards>
   <Cards.Card arrow title="Federation" href="/v2/concepts/federation" />
-  <Cards.Card arrow title="Stitching" href="/v2/concepts/stitching" />
+  <Cards.Card arrow title="Schema Stitching" href="/v2/concepts/stitching" />
   <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
   <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
   <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />

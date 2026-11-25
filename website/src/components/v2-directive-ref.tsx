@@ -131,10 +131,10 @@ const CONCEPTS = {
     description: 'Standardized type merging: entities/@key plus a federation gateway runtime.',
   },
   stitching: {
-    label: 'Stitching',
+    label: 'Schema Stitching',
     href: '/v2/concepts/stitching',
     description:
-      '@graphql-tools/stitch type-merging runtime; Stitching Directives are optional SDL config only.',
+      'Programmatic type-merging runtime (stitchSchemas); can run Federation. Not Schema Stitching Directives.',
   },
   gateway: {
     label: 'Gateway',
