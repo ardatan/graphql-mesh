@@ -8,29 +8,35 @@ import { Cards } from '@theguild/components'
 # Protocols
 
 Each family has an optional loader, directive emit, transport, and honest Apollo Router dual-run
-notes. **HTTP/REST Connectors** (`@connect` / `@source`) are one family -- do not brand Mesh-only
+notes. Pick the page that matches **what the source is for** -- each one leads with concrete e2e
+excerpts, not an arg laundry list.
+
+**HTTP/REST Connectors** (`@connect` / `@source`) are one family. Do **not** brand Mesh-only
 protocols (SQL, Mongo, Protobuf, ...) as Connectors.
 
-| Family                                      | Page                                      | Transport                            | Apollo Router dual-run   |
-| ------------------------------------------- | ----------------------------------------- | ------------------------------------ | ------------------------ |
-| REST / OpenAPI / JSON Schema / RAML / OData | [HTTP / REST](/v2/protocols/http-rest)    | `transport-connect`                  | Yes (Connect-compatible) |
-| SOAP / WSDL                                 | [HTTP / REST](/v2/protocols/http-rest)    | `transport-connect` (+ XML codec)    | No                       |
-| SQL                                         | [SQL](/v2/protocols/sql)                  | `transport-sql`                      | No (Hive Gateway)        |
-| Mongo                                       | [Mongo](/v2/protocols/mongo)              | `transport-mongo`                    | No                       |
-| Neo4j                                       | [Neo4j](/v2/protocols/neo4j)              | `transport-neo4j`                    | No                       |
-| Thrift                                      | [Thrift](/v2/protocols/thrift)            | `transport-thrift` / Connect (TJSON) | TJSON `@connect` only    |
-| Protobuf / gRPC                             | [Protobuf / gRPC](/v2/protocols/protobuf) | `transport-protobuf`                 | No                       |
-| GraphQL HTTP / Federation                   | --                                        | `http` / federation                  | N/A                      |
+| Family                                      | When to open it                                  | Transport                            | Apollo Router dual-run   |
+| ------------------------------------------- | ------------------------------------------------ | ------------------------------------ | ------------------------ |
+| REST / OpenAPI / JSON Schema / RAML / OData | HTTP JSON APIs, entity lookups, FHIR             | `transport-connect`                  | Yes (Connect-compatible) |
+| SOAP / WSDL                                 | Legacy SOAP ops as Connect + XML body            | `transport-connect` (+ XML codec)    | No                       |
+| SQL                                         | Tables, FKs, CRUD, Federation entity fill        | `transport-sql`                      | No (Hive Gateway)        |
+| Mongo                                       | Collections, find/filter/CRUD, ObjectId entities | `transport-mongo`                    | No                       |
+| Neo4j                                       | Nodes / relationships via Neo4j GraphQL natives  | `transport-neo4j`                    | No                       |
+| Thrift                                      | `.thrift` IDL -- binary RPC or TJSON Connect     | `transport-thrift` / Connect (TJSON) | TJSON `@connect` only    |
+| Protobuf / gRPC                             | RPC field-number maps (`@protobuf__rpc`)         | `transport-protobuf`                 | No                       |
+| GraphQL HTTP / Federation                   | Existing GraphQL / Federation subgraphs          | `http` / federation                  | N/A                      |
 
 Shared skills: [Selection mapping](/v2/guides/selection-mapping),
 [Entity resolution](/v2/concepts/federation#entity-resolution),
 [Directives](/v2/reference/directives).
 
-## Examples
+## Pages
 
 <Cards>
   <Cards.Card arrow title="HTTP / REST" href="/v2/protocols/http-rest" />
   <Cards.Card arrow title="SQL" href="/v2/protocols/sql" />
+  <Cards.Card arrow title="Mongo" href="/v2/protocols/mongo" />
+  <Cards.Card arrow title="Neo4j" href="/v2/protocols/neo4j" />
+  <Cards.Card arrow title="Thrift" href="/v2/protocols/thrift" />
   <Cards.Card arrow title="Protobuf / gRPC" href="/v2/protocols/protobuf" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="FHIR (JSON Schema)" href="/v2/examples/fhir" />

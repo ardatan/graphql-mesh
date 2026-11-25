@@ -7,10 +7,10 @@ import { DirectiveRef } from '../../../components/v2-directive-ref'
 
 # SQL
 
-SQL is a **Mesh protocol** (not HTTP/REST Connectors). The SQL loader emits
-
-<DirectiveRef name="sql" /> with a `kind` discriminator; Hive Gateway runs `transport-sql`. Stock
-Apollo Router does **not** execute `@sql`.
+Use SQL when tables should become GraphQL types with **typed** query / mutation fields, FK
+navigation, and Federation `@key` entity fill -- without wrapping the DB in REST. This is a **Mesh
+protocol** (not HTTP/REST Connectors). The loader emits <DirectiveRef name="sql" /> with a `kind`
+discriminator; Hive Gateway runs `transport-sql`. Stock Apollo Router does **not** execute `@sql`.
 
 | Piece     | Detail                                                                            |
 | --------- | --------------------------------------------------------------------------------- |
@@ -19,8 +19,9 @@ Apollo Router does **not** execute `@sql`.
 | Transport | `@graphql-mesh/transport-sql`                                                     |
 | Spec      | `https://specs.graphql-mesh.com/sql/v0.1`                                         |
 | Dual-run  | Hive Gateway only                                                                 |
+| Anchors   | `e2e/sqlite-chinook`, Music Store stage 1; also MySQL / Postgres e2e              |
 
-## Chinook generate (`e2e/sqlite-chinook`)
+## Generate Chinook
 
 ```ts
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
@@ -37,8 +38,10 @@ export const composeConfig = defineComposeConfig({
 })
 ```
 
-Emitted Query + type-level entity fill (simplified from the compose snapshot -- GraphQL names are
-camelCase; SQL columns stay in `where` / `selection`):
+## Single row + entity fill
+
+Query by primary key (`kind: ROW` + `$args`). The object type repeats `ROW` with `$this` so
+Federation can resolve the entity (from the SQL loader snapshot):
 
 ```graphql
 extend schema
@@ -50,42 +53,135 @@ schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db")
 }
 
 type Query {
-  track(id: ID!): Track
+  album(id: ID!): Album
     @sql(
-      table: "tracks"
+      table: "albums"
       kind: ROW
       where: """
-      TrackId: $args.id
+      AlbumId: $args.id
       """
       selection: """
-      id: TrackId
-      name: Name
-      albumId: AlbumId
+      id: AlbumId
+      title: Title
+      artistId: ArtistId
       """
     )
 }
 
-type Track
+type Album
   @key(fields: "id")
   @sql(
-    table: "tracks"
+    table: "albums"
     kind: ROW
     where: """
-    TrackId: $this.id
+    AlbumId: $this.id
     """
     selection: """
-    id: TrackId
-    name: Name
-    albumId: AlbumId
+    id: AlbumId
+    title: Title
+    artistId: ArtistId
     """
   ) {
   id: ID!
-  name: String
-  albumId: ID
+  title: String!
+  artistId: Int!
 }
 ```
 
-`$args` vs `$this`: [Selection mapping](/v2/guides/selection-mapping). Entity / ById stamping:
+## FK navigation and lists
+
+Child collections use `kind: ROWS` with `$this` plus optional `$args.where` (Artist -> albums).
+Many-to-many uses `through:` (Playlist -> tracks via `playlist_track` in the Chinook e2e snapshot):
+
+```graphql
+type Artist @key(fields: "id") {
+  id: ID!
+  name: String
+  albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]!
+    @sql(
+      table: "albums"
+      kind: ROWS
+      where: """
+      ArtistId: $this.id
+      ...$args.where
+      """
+      orderBy: "$args.orderBy"
+      limit: "$args.limit"
+      offset: "$args.offset"
+      selection: """
+      id: AlbumId
+      title: Title
+      artistId: ArtistId
+      """
+    )
+}
+
+type Playlist {
+  tracks(where: TrackFilter, limit: Int, offset: Int): [Track!]!
+    @sql(
+      table: "tracks"
+      kind: ROWS
+      through: """
+      table: playlist_track
+      local: PlaylistId
+      remote: TrackId
+      parent: $this.id
+      target: TrackId
+      """
+      where: "$args.where"
+      limit: "$args.limit"
+      offset: "$args.offset"
+      selection: """
+      id: TrackId
+      name: Name
+      """
+    )
+}
+```
+
+`albums(...)` list roots, `allAlbums` connections (`kind: CONNECTION`), and `albumsCount`
+(`kind: COUNT`) follow the same table / selection dialect.
+
+## Mutations
+
+`INSERT` / `UPDATE` / `DELETE` bind columns from `$args` (loader snapshot):
+
+```graphql
+type Mutation {
+  createAlbum(input: CreateAlbumInput!): AlbumPayload!
+    @sql(
+      table: "albums"
+      kind: INSERT
+      set: """
+      Title: $args.input.title
+      ArtistId: $args.input.artistId
+      """
+      selection: """
+      album {
+        id: AlbumId
+        title: Title
+        artistId: ArtistId
+      }
+      """
+    )
+
+  deleteAlbum(id: ID!): DeleteAlbumPayload!
+    @sql(
+      table: "albums"
+      kind: DELETE
+      where: """
+      AlbumId: $args.id
+      """
+      selection: """
+      ok: $affectedRows
+      affectedRows: $affectedRows
+      """
+    )
+}
+```
+
+GraphQL field names are camelCase; SQL column names stay in `where` / `set` / `selection`. Binders:
+[Selection mapping](/v2/guides/selection-mapping). Entity / ById:
 [Composition semantic conventions](/v2/compose#semantic-conventions).
 
 Walkthrough: [Music Store Example](/v2/examples/music-store) stage 1.

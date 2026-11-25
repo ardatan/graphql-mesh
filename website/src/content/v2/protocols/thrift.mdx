@@ -7,17 +7,17 @@ import { DirectiveRef } from '../../../components/v2-directive-ref'
 
 # Thrift
 
-Thrift has two Mesh paths. Anchor: `e2e/thrift-calculator` (`.thrift` IDL + binary compose vs JSON
-compose).
+Use Thrift when you already have a **`.thrift` IDL** and want GraphQL fields that call those
+functions. Mesh has two emit paths from the same IDL (`e2e/thrift-calculator`):
 
-| Path            | Directives                                               | Dual-run                              |
+| Path            | What you get                                             | Dual-run                              |
 | --------------- | -------------------------------------------------------- | ------------------------------------- |
 | Binary Thrift   | <DirectiveRef name="thrift__rpc" /> + `transport-thrift` | Hive Gateway only                     |
-| TJSON over HTTP | May emit HTTP/REST Connectors `@connect`                 | Apollo Router when Connect-compatible |
+| TJSON over HTTP | HTTP/REST Connectors `@source` + `@connect`              | Apollo Router when Connect-compatible |
+
+Do **not** call binary Thrift "Connectors" -- only the TJSON path shares that contract.
 
 ## Generate (binary)
-
-`loadThriftSubgraph` with `protocol: 'binary'` emits `@thrift__rpc` + thrift `@transport`:
 
 ```ts
 import { defineConfig } from '@graphql-mesh/compose-cli'
@@ -37,12 +37,32 @@ export const composeConfig = defineConfig({
 })
 ```
 
-Compact hand / emitted shape (same idea as the loader docstring and composition tests):
+IDL (`calculator.thrift` in the e2e):
+
+```thrift
+struct AddRequest {
+  1: required i32 left;
+  2: required i32 right;
+}
+
+service Calculator {
+  i32 add(1: AddRequest request)
+  i32 subtract(1: i32 left, 2: i32 right)
+  i32 divide(1: i32 left, 2: i32 right) throws (1: CalcError error)
+  oneway void zip()
+}
+```
+
+Emitted / hand `@thrift__rpc` (loader + composition tests) -- wire types in `args` / `selection`:
 
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"])
   @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+
+schema @transport(subgraph: "Calc", kind: "thrift", location: "http://localhost:4000/thrift") {
+  query: Query
+}
 
 type Query {
   add(request: AddRequestInput): Int
@@ -57,18 +77,19 @@ type Query {
       selection: "$(i32)"
       messageType: CALL
     )
+
+  zip: Void @thrift__rpc(function: "zip", selection: "$(void)", messageType: ONEWAY)
 }
 ```
 
-`args` / `selection` / `throws` use Thrift wire types (`i32`, `struct`, ...) instead of Protobuf
-field numbers. See [Selection mapping](/v2/guides/selection-mapping) and
-[Directives](/v2/reference/directives#thrift).
+`throws:` on the directive maps Thrift exceptions into the selection dialect (see Twitter-style
+fixtures in the thrift loader tests). Rename transforms rewrite `$args` inside `@thrift__rpc` the
+same way they rewrite `@connect`.
 
-## Generate (TJSON)
+## Generate (TJSON -> Connect)
 
-Same IDL, `protocol: 'json'` -- emit switches to HTTP/REST Connectors `@source` + `@connect` (Hive
-Gateway and, when Connect-compatible, Apollo Router). Do **not** call binary Thrift "Connectors";
-only the TJSON path shares that contract.
+Same IDL, `protocol: 'json'`. Emit switches to Connect with a TJSON request array in `http.body`
+(loader snapshot `Calc-json-connect-schema`):
 
 ```ts
 loadThriftSubgraph('calculator', {
@@ -77,6 +98,47 @@ loadThriftSubgraph('calculator', {
   protocol: 'json'
 })
 ```
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+  @source(
+    name: "Calc"
+    http: {
+      baseURL: "http://localhost:4000/thrift-json"
+      headers: [
+        { name: "Content-Type", value: "application/vnd.apache.thrift.json" }
+        { name: "Accept", value: "application/vnd.apache.thrift.json" }
+      ]
+    }
+  )
+
+type Query {
+  add(request: AddRequestInput): Int
+    @connect(
+      source: "Calc"
+      http: {
+        POST: "/"
+        body: """
+        $([1, "add", 1, 1, {
+          "1": {
+            "rec": {
+              "1": { "i32": $args.request.left },
+              "2": { "i32": $args.request.right }
+            }
+          }
+        }])
+        """
+      }
+      selection: """
+      $->get(4)->get("0")->get("i32")
+      """
+    )
+}
+```
+
+Dialect: [Selection mapping](/v2/guides/selection-mapping). Catalog:
+[Directives: Thrift](/v2/reference/directives#thrift).
 
 <Cards>
   <Cards.Card arrow title="Directives: Thrift" href="/v2/reference/directives#thrift" />

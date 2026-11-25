@@ -6,16 +6,18 @@ import { Cards } from '@theguild/components'
 
 # Protobuf / gRPC
 
-Protobuf / gRPC is a **Mesh protocol** (not HTTP/REST Connectors). Hand-author or loader-emit
-`@protobuf__rpc`; Hive Gateway runs `transport-protobuf`. Stock Apollo Router does **not** execute
-`@protobuf__rpc`.
+Use Protobuf / gRPC when RPCs should become GraphQL fields with **field-number** `args` /
+`selection` maps (encode request, decode response). This is a **Mesh protocol** (not HTTP/REST
+Connectors). Hand-author or loader-emit `@protobuf__rpc`; Hive Gateway runs `transport-protobuf`.
+Stock Apollo Router does **not** execute `@protobuf__rpc`.
 
-| Piece     | Detail                                                                          |
-| --------- | ------------------------------------------------------------------------------- |
-| Directive | `@protobuf__rpc` (`service`, `method`, `args`, `selection`, `stream`, `entity`) |
-| Transport | `@graphql-mesh/transport-protobuf`                                              |
-| Spec      | `https://specs.graphql-mesh.com/protobuf/v0.1`                                  |
-| Dual-run  | Hive Gateway only                                                               |
+| Piece     | Detail                                                                               |
+| --------- | ------------------------------------------------------------------------------------ |
+| Directive | `@protobuf__rpc` (`service`, `method`, `args`, `selection`, `stream`, `entity`)      |
+| Transport | `@graphql-mesh/transport-protobuf`                                                   |
+| Spec      | `https://specs.graphql-mesh.com/protobuf/v0.1`                                       |
+| Dual-run  | Hive Gateway only                                                                    |
+| Anchors   | `e2e/protobuf-http` (hand SDL); Music Store recommendations; `protobuf-grpc-example` |
 
 ## Hand SDL (`e2e/protobuf-http`)
 
@@ -77,18 +79,44 @@ type Query {
       1(repeated message): result {
         1(string): name
         2(int64): year
+        3(float): rating
+        4(repeated string): cast
+        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
       }
       """
     )
 }
+
+type MoviesResult {
+  result: [Movie!]!
+}
+
+type Movie {
+  name: String!
+  year: Int!
+  rating: Float
+  cast: [String!]
+  genre: Genre
+}
+
+enum Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
 ```
 
-Dialect notes: [Selection mapping](/v2/guides/selection-mapping). Music Store stage 3 uses the same
-pattern for recommendations.
+Flat GraphQL args use `$args.*`. Loader-emitted RPCs often wrap an Input type (`input.<field>`).
+`stream: true` marks streaming methods when the proto service declares them. `entity: true` follows
+the same ById idea as Connect / SQL when a method is the entity resolver.
+
+Dialect: [Selection mapping](/v2/guides/selection-mapping). Music Store stage 3 uses this pattern
+for recommendations over gRPC.
 
 <Cards>
   <Cards.Card arrow title="Directives: @protobuf__rpc" href="/v2/reference/directives#protobuf" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Transforms" href="/v2/transforms" />
   <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
 </Cards>
