@@ -51,6 +51,16 @@ export function compactGql(s: string): string {
       }
       restored += out.slice(i, j);
       i = j;
+      // After a closing quote, GQL17 may omit the comma before the next field/key.
+      // Must run here (not via a global /"\s+/ replace) so leading spaces and
+      // escaped quotes inside the literal stay intact.
+      if (i < out.length) {
+        const gap = out.slice(i).match(/^(\s+)(?=[A-Za-z_@])/);
+        if (gap) {
+          restored += ',';
+          i += gap[1].length;
+        }
+      }
       continue;
     }
     let j = i;
@@ -58,7 +68,5 @@ export function compactGql(s: string): string {
     restored += out.slice(i, j).replace(/((?:true|false|null|\d+|\]))\s+(?=[A-Za-z_@])/g, '$1,');
     i = j;
   }
-  // After a closing quote, GQL17 may omit the comma before the next field/key.
-  restored = restored.replace(/"(\s+)(?=[A-Za-z_@])/g, '",');
   return restored.trim();
 }
