@@ -20,6 +20,7 @@
 
 html {
   scrollbar-gutter: stable;
+  scroll-padding-top: 1rem;
 }
 
 body {
@@ -269,6 +270,8 @@ code {
   .lede {
     grid-column: 1 / -1;
   }
+  /* TOC at row 4, column 1; span into implicit rows (not -1: with no
+     grid-template-rows, -1 is explicit end/line 1 and collapses 4/-1). */
   .spec-toc {
     position: sticky;
     top: 1rem;
@@ -276,14 +279,18 @@ code {
     width: 100%;
     margin: 0;
     grid-column: 1;
-    grid-row: 4 / -1;
+    grid-row: 4 / span 200;
     align-self: start;
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
   }
   .spec-page > section {
     grid-column: 2;
   }
   .home .spec-toc {
     grid-row: auto;
+    max-height: none;
+    overflow: visible;
   }
   .home > section {
     grid-column: 1 / -1;
