@@ -3,9 +3,8 @@
 Static site for Mesh `@link` directive families hosted at
 [https://specs.graphql-mesh.dev](https://specs.graphql-mesh.dev).
 
-UX / IA follows Apollo’s `specs.apollo.dev` family pages: index with Current Specs
-+ All Schemas, per-family TOC, numbered directive / schema-addition sections, and
-a sibling raw `.graphql` artifact.
+Index lists Current Specs and All Schemas. Each family page has a TOC, numbered
+directive / schema-addition sections, and a sibling raw `.graphql` artifact.
 
 ## Layout
 

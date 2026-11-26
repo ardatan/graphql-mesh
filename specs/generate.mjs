@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Build static HTML for https://specs.graphql-mesh.dev from content/*.graphql
- * and families.json. Layout follows Apollo specs.apollo.dev family pages:
- * index (Current Specs + All Schemas), per-family TOC, numbered directive sections.
+ * and families.json. Index lists Current Specs + All Schemas; each family page
+ * has a TOC and numbered directive / schema-addition sections.
  */
 import { mkdirSync, readFileSync, rmSync, writeFileSync, cpSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -113,7 +113,7 @@ function layout({ title, body, canonical }) {
 </header>
 ${body}
 <footer class="site-bar foot">
-  <p>Family URLs are Mesh <code>@link</code> identifiers. Pages mirror Apollo-style family docs: TOC, numbered definitions, raw <code>.graphql</code>.</p>
+  <p>Family URLs are Mesh <code>@link</code> identifiers. Each page includes a TOC, numbered definitions, and raw <code>.graphql</code>.</p>
   <p><a href="https://github.com/ardatan/graphql-mesh">ardatan/graphql-mesh</a></p>
 </footer>
 </body>
@@ -274,7 +274,7 @@ writeFileSync(
 <article class="spec-page home">
   <h1 class="page-title">GraphQL Mesh Specs</h1>
   <p class="lede">Directive families for Mesh <code>@link</code> stamps at
-  <code>${esc(origin)}/&lt;family&gt;/v0.1</code>. Layout follows Apollo-style family pages
+  <code>${esc(origin)}/&lt;family&gt;/v0.1</code>
   (overview, TOC, numbered definitions, raw GraphQL).</p>
   <nav class="spec-toc">
     <div class="title">Contents</div>
@@ -299,8 +299,8 @@ writeFileSync(
     <ul class="all-schemas">${allSchemas.join('\n')}</ul>
     <h2>Outside this host</h2>
     <ul>
-      <li>Apollo Connectors <code>@connect</code> / Connectors <code>@source</code>: <a href="https://specs.apollo.dev/connect/v0.2">specs.apollo.dev/connect</a></li>
-      <li>Federation / join / link: <a href="https://specs.apollo.dev/">specs.apollo.dev</a></li>
+      <li>HTTP/REST Connectors <code>@connect</code> / <code>@source</code>: <a href="https://specs.apollo.dev/connect/v0.2">specs.apollo.dev/connect</a></li>
+      <li>Federation / join / link specs: <a href="https://specs.apollo.dev/">specs.apollo.dev</a></li>
       <li>Legacy Mesh catch-all (read-only): <code>https://the-guild.dev/graphql/mesh/spec/v1.0</code></li>
     </ul>
   </section>
