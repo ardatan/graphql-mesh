@@ -29,6 +29,9 @@ import {
   withRenamedEnumDefaultsForType,
 } from './shared.js';
 
+/** Helper input shape — GQL17 `default` is not on GraphQLArgumentConfig under v16 types. */
+type ArgDefaultFields = Parameters<typeof hasRewritableEnumDefaultForType>[0];
+
 export declare type GraphQLTypePointer =
   | GraphQLList<GraphQLOutputType>
   | GraphQLNonNull<
@@ -161,13 +164,17 @@ export default class NamingConventionTransform implements MeshTransform {
           const origArg =
             (origArgName && origField?.args.find(a => a.name === origArgName)) ||
             origField?.args.find(a => a.type === config.type);
-          const sourceConfig = origArg
+          const sourceConfig: ArgDefaultFields = origArg
             ? {
                 defaultValue: origArg.defaultValue,
-                default: (origArg as { default?: (typeof config)['default'] }).default,
+                default: (origArg as { default?: ArgDefaultFields['default'] }).default,
                 astNode: origArg.astNode ?? undefined,
               }
-            : config;
+            : {
+                defaultValue: config.defaultValue,
+                default: (config as ArgDefaultFields).default,
+                astNode: config.astNode,
+              };
           const sourceType = origArg?.type ?? config.type;
           const named = getNamedType(sourceType);
           // Enum args + input-object args with nested enum / key-only defaults
@@ -182,18 +189,16 @@ export default class NamingConventionTransform implements MeshTransform {
           const applyNamingConvention = this.config.enumValues
             ? NAMING_CONVENTIONS[this.config.enumValues]
             : (s: string) => s;
-          const rewritten = withRenamedEnumDefaultsForType(
-            sourceConfig,
-            sourceType,
-            applyNamingConvention,
-            fieldNamingConventionFn,
-          );
+          // Cast: helper `default` is a loose snapshot; GQL16 GraphQLArgumentConfig has no `default`.
           return {
             ...config,
-            defaultValue: rewritten.defaultValue,
-            default: rewritten.default,
-            astNode: rewritten.astNode,
-          };
+            ...withRenamedEnumDefaultsForType(
+              sourceConfig,
+              sourceType,
+              applyNamingConvention,
+              fieldNamingConventionFn,
+            ),
+          } as typeof config;
         },
       }),
       ...(this.config.enumValues && {
@@ -306,34 +311,35 @@ export default class NamingConventionTransform implements MeshTransform {
               origInput && isInputObjectType(origInput)
                 ? origInput.getFields()[fieldName]
                 : undefined;
-            const sourceConfig = origField
+            const sourceConfig: ArgDefaultFields = origField
               ? {
                   defaultValue: origField.defaultValue,
-                  default: (origField as { default?: (typeof inputFieldConfig)['default'] })
-                    .default,
+                  default: (origField as { default?: ArgDefaultFields['default'] }).default,
                   astNode: origField.astNode ?? undefined,
                 }
-              : inputFieldConfig;
+              : {
+                  defaultValue: inputFieldConfig.defaultValue,
+                  default: (inputFieldConfig as ArgDefaultFields).default,
+                  astNode: inputFieldConfig.astNode,
+                };
             const sourceType = origField?.type ?? inputFieldConfig.type;
             const namedFieldType = getNamedType(sourceType);
             if (
               (isEnumType(namedFieldType) || isInputObjectType(namedFieldType)) &&
               hasRewritableEnumDefaultForType(sourceConfig, sourceType, namingConventionFn)
             ) {
-              const rewritten = withRenamedEnumDefaultsForType(
-                sourceConfig,
-                sourceType,
-                this.config.enumValues
-                  ? NAMING_CONVENTIONS[this.config.enumValues]
-                  : (s: string) => s,
-                namingConventionFn,
-              );
+              // Cast: GQL16 GraphQLInputFieldConfig has no `default` field.
               nextConfig = {
                 ...inputFieldConfig,
-                defaultValue: rewritten.defaultValue,
-                default: rewritten.default,
-                astNode: rewritten.astNode,
-              };
+                ...withRenamedEnumDefaultsForType(
+                  sourceConfig,
+                  sourceType,
+                  this.config.enumValues
+                    ? NAMING_CONVENTIONS[this.config.enumValues]
+                    : (s: string) => s,
+                  namingConventionFn,
+                ),
+              } as typeof inputFieldConfig;
             }
           }
           if (newName === fieldName) {

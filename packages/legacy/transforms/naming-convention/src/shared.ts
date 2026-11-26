@@ -195,6 +195,14 @@ function rewriteEnumValueNode(
   while (type && isNonNullType(type)) {
     type = type.ofType;
   }
+  // Custom scalars may use list/object AST literals (`[fast]`, `{ choice: fast }`).
+  // Stop before the list walk — otherwise ofType is dropped and `fast` → `FAST`.
+  if (type != null) {
+    const namedEarly = getNamedType(type);
+    if (isScalarType(namedEarly) && !isEnumType(namedEarly)) {
+      return node;
+    }
+  }
   if (node.kind === Kind.LIST) {
     const ofType = type && isListType(type) ? type.ofType : undefined;
     return {
@@ -204,10 +212,6 @@ function rewriteEnumValueNode(
   }
   if (node.kind === Kind.OBJECT) {
     const named = type ? getNamedType(type) : undefined;
-    // Structured custom-scalar literals must stay intact (do not walk into them).
-    if (named && isScalarType(named) && !isEnumType(named)) {
-      return node;
-    }
     const fields = isInputObjectType(named) ? named.getFields() : undefined;
     return {
       ...node,

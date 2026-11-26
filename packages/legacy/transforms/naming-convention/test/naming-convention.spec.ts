@@ -365,6 +365,45 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(enumDefault).toBe('NEWBIE');
   });
 
+  it('does not rewrite enum tokens inside custom-scalar list/object defaults', () => {
+    // Custom scalars may accept list/object AST literals; EnumValue tokens inside
+    // those literals are scalar payload, not GraphQL enum members.
+    const inputSchema = buildSchema(/* GraphQL */ `
+      scalar Choice
+      input Filter {
+        raw_payload: Choice = [fast]
+        nested: Choice = { choice: fast }
+      }
+      type Query {
+        search(filter: Filter = { raw_payload: [fast], nested: { choice: fast } }): String
+      }
+    `);
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+          enumValues: 'upperCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const printed = printSchemaWithDirectives(newSchema).replace(/\s+/g, ' ');
+    expect(printed).toContain('rawPayload');
+    // GraphQL may print scalar EnumValue tokens as strings (`"fast"`); either form
+    // must stay lowercase — never upperCased as if they were enum members.
+    expect(printed).toMatch(/\[(?:fast|"fast")\]/);
+    expect(printed).not.toMatch(/\[(?:FAST|"FAST")\]/);
+    expect(printed).toMatch(/choice: (?:fast|"fast")/);
+    expect(printed).not.toMatch(/choice: (?:FAST|"FAST")/);
+  });
+
   it('renames keys in input-object argument defaults with fieldNames', () => {
     const inputSchema = buildSchema(/* GraphQL */ `
       enum E {

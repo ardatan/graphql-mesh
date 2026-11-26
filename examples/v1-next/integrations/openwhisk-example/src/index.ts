@@ -3,6 +3,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createGatewayRuntime } from '@graphql-hive/gateway-runtime';
 
+// CJS free variable when tsx/Node select CommonJS (package has no `"type": "module"`).
+declare const __filename: string | undefined;
+
 const graphqlEndpoint = '/api/v1/web/guest/mesh/swapi/graphql';
 
 const httpHandler = createGatewayRuntime({
@@ -43,18 +46,12 @@ function currentModulePath(): string | undefined {
   } catch {
     // import.meta may be an empty object under some CJS compilations
   }
-  // CJS: `__filename` is module-local (not on globalThis). Read via Function so the
-  // source stays valid when esbuild bundles this file as the OpenWhisk action.
-  try {
-    // eslint-disable-next-line no-new-func
-    const cjsFilename = new Function(
-      'return typeof __filename === "string" ? __filename : undefined',
-    )();
-    if (typeof cjsFilename === 'string') {
-      return cjsFilename;
-    }
-  } catch {
-    // ignore
+  // CJS: `__filename` is module-local. Direct reference (not `new Function`) so tsx
+  // CommonJS selection can resolve it; esbuild CJS bundle still sees the binding.
+  // eslint-disable-next-line camelcase -- CJS free variable
+  if (typeof __filename === 'string') {
+    // eslint-disable-next-line camelcase -- CJS free variable
+    return __filename;
   }
   return undefined;
 }
