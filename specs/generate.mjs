@@ -35,6 +35,21 @@ function prose(text) {
     .join('\n');
 }
 
+/** Plain prose as Markdown paragraphs (already mostly Markdown-friendly). */
+function mdProse(text) {
+  if (!text) return '';
+  return String(text)
+    .split(/\n\n+/)
+    .map(block => block.trim())
+    .filter(Boolean)
+    .join('\n\n');
+}
+
+function mdFence(code, lang = 'graphql') {
+  const text = decodeExample(code).trim();
+  return `\`\`\`${lang}\n${text}\n\`\`\``;
+}
+
 /** Expand JSON-escaped newlines/tabs so <pre> examples wrap instead of showing literal \n. */
 function decodeExample(code) {
   return String(code).replaceAll('\\n', '\n').replaceAll('\\r', '\r').replaceAll('\\t', '\t');
@@ -248,7 +263,8 @@ function companionDocBlock({ def, secid, docs }) {
   </section>`;
 }
 
-function layout({ title, body, canonical }) {
+function layout({ title, body, canonical, markdownHref }) {
+  const md = markdownHref || (canonical.endsWith('/') ? `${origin}/index.md` : `${canonical}.md`);
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -256,6 +272,8 @@ function layout({ title, body, canonical }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <link rel="canonical" href="${esc(canonical)}">
+<link rel="alternate" type="text/markdown" href="${esc(md)}">
+<link rel="describedby" href="${esc(origin)}/llms.txt">
 <link rel="stylesheet" href="/assets/spec.css">
 </head>
 <body>
@@ -411,6 +429,7 @@ function familyPage(family, sdl, docs) {
   return layout({
     title: `${family.title} ${version} · ${siteTitle}`,
     canonical: url,
+    markdownHref: `${url}.md`,
     body: `
 <article class="spec-page">
   <p class="crumb"><a href="/">${esc(siteBrand)}</a> / ${esc(family.name)} / ${esc(version)}</p>
@@ -424,6 +443,165 @@ function familyPage(family, sdl, docs) {
 </article>
 `,
   });
+}
+
+/** LLM-friendly Markdown twin of a family page (same URL + `.md`). */
+function familyPageMd(family, sdl, docs) {
+  const version = family.version || 'v0.1';
+  const url = `${origin}/${family.name}/${version}`;
+  const defs = splitDefinitions(sdl).map(defMeta);
+  const directives = defs.filter(d => d.kind === 'directive');
+  const companions = defs.filter(d => d.kind !== 'directive');
+  const dirDocs = docs.directives || {};
+  const companionDocs = { ...(docs.scalars || {}), ...(docs.enums || {}), ...(docs.types || {}) };
+
+  const parts = [
+    `# ${family.title} ${version}`,
+    '',
+    `> ${family.summary}`,
+    '',
+    `- HTML: ${url}`,
+    `- Raw GraphQL: ${url}.graphql`,
+    `- @link: \`${url}\``,
+    '',
+    family.stamp ? `**How to import:** ${family.stamp}` : '',
+    '',
+    '```graphql',
+    'extend schema',
+    '  @link(',
+    `    url: "${url}"`,
+    `    import: [${family.imports.map(i => `"${i}"`).join(', ')}]`,
+    '  )',
+    '```',
+    '',
+  ];
+
+  if (family.notes?.length) {
+    parts.push('## Notes', '');
+    for (const n of family.notes) parts.push(`- ${n}`);
+    parts.push('');
+  }
+
+  if (companions.length) {
+    parts.push('## Schema additions', '');
+    for (const c of companions) {
+      const d = companionDocs[c.name] || {};
+      parts.push(`### ${c.name}`, '', mdFence(c.text), '');
+      if (d.summary) parts.push(mdProse(d.summary), '');
+      if (d.authors) parts.push('#### For schema authors', '', mdProse(d.authors), '');
+      if (d.implementers) parts.push('#### For implementers', '', mdProse(d.implementers), '');
+      if (d.example) parts.push(mdFence(d.example), '');
+    }
+  }
+
+  parts.push('## Directives', '');
+  for (const d of directives) {
+    const dd = dirDocs[d.name] || {};
+    parts.push(`### ${d.name}`, '');
+    if (dd.summary) parts.push(mdProse(dd.summary), '');
+    parts.push(mdFence(d.text), '');
+
+    parts.push('#### For schema authors', '');
+    if (dd.authors?.intro) parts.push(mdProse(dd.authors.intro), '');
+    if (dd.authors?.example) parts.push(mdFence(dd.authors.example), '');
+
+    parts.push('#### For implementers', '');
+    if (dd.implementers?.intro) parts.push(mdProse(dd.implementers.intro), '');
+    if (dd.implementers?.compose) {
+      parts.push('**Compose**', '', mdProse(dd.implementers.compose), '');
+    }
+    if (dd.implementers?.loaders) {
+      parts.push('**Schema linking**', '', mdProse(dd.implementers.loaders), '');
+    }
+    if (dd.implementers?.runtime) {
+      parts.push('**Runtime**', '', mdProse(dd.implementers.runtime), '');
+    }
+    if (dd.implementers?.validation) {
+      parts.push('**Validation**', '', mdProse(dd.implementers.validation), '');
+    }
+    if (dd.implementers?.example) parts.push(mdFence(dd.implementers.example), '');
+
+    const args = parseDirectiveArgs(d.text);
+    for (const a of args) {
+      const ad = (dd.args || {})[a.name] || {};
+      parts.push(`#### ${a.name}: ${a.type}`, '');
+      if (ad.defaults) parts.push(`- Defaults: ${ad.defaults}`);
+      if (ad.constraints) parts.push(`- Constraints: ${ad.constraints}`);
+      if (ad.validation) parts.push(`- Validation: ${ad.validation}`);
+      if (ad.defaults || ad.constraints || ad.validation) parts.push('');
+      if (ad.authors) {
+        parts.push('##### For schema authors', '', mdProse(ad.authors), '');
+      }
+      if (ad.example) parts.push(mdFence(ad.example), '');
+      if (ad.implementers) {
+        parts.push('##### For implementers', '', mdProse(ad.implementers), '');
+      }
+    }
+  }
+
+  return parts.filter((line, i, arr) => !(line === '' && arr[i - 1] === '')).join('\n') + '\n';
+}
+
+function indexPageMd(families) {
+  const lines = [
+    `# ${siteTitle}`,
+    '',
+    `> Specification of GraphQL Mesh directive families published at \`${origin}/<family>/v0.1\`.`,
+    '',
+    'Each family page documents **schema authors** and **implementers**, with numbered definitions and raw GraphQL.',
+    'Prefer the Markdown twins linked from [`/llms.txt`](./llms.txt) when indexing for agents.',
+    '',
+    '## Current Specs',
+    '',
+  ];
+  for (const f of families) {
+    const version = f.version || 'v0.1';
+    lines.push(
+      `- [${f.title} ${version}](./${f.name}/${version}.md): ${f.summary} ([HTML](./${f.name}/${version}), [GraphQL](./${f.name}/${version}.graphql))`,
+    );
+  }
+  lines.push(
+    '',
+    '## Outside this host',
+    '',
+    '- HTTP/REST Connectors `@connect` / `@source`: https://specs.apollo.dev/connect/v0.2',
+    '- Federation / join / link specs: https://specs.apollo.dev/',
+    '- Federation Spec draft `@lookup` / `@is` / `@internal`: https://graphql.github.io/graphql-federation-spec/draft',
+    '- Legacy catch-all (read-only): `https://the-guild.dev/graphql/mesh/spec/v1.0`',
+    '',
+  );
+  return lines.join('\n');
+}
+
+function llmsTxt(families) {
+  const lines = [
+    `# ${siteTitle}`,
+    '',
+    `> GraphQL Mesh \`@link\` directive families for schema authors and implementers. Family URLs are Federation \`@link\` identifiers under \`${origin}/<family>/v0.1\`.`,
+    '',
+    'Use the Markdown pages below (not the HTML skins) when retrieving directive contracts, examples, and implementer requirements. Each family also publishes raw SDL at the sibling `.graphql` URL.',
+    '',
+    '## Families',
+    '',
+  ];
+  for (const f of families) {
+    const version = f.version || 'v0.1';
+    const imports = f.imports.join(', ');
+    lines.push(
+      `- [${f.title} ${version}](${origin}/${f.name}/${version}.md): ${f.summary} Imports: ${imports}.`,
+    );
+  }
+  lines.push(
+    '',
+    '## Optional',
+    '',
+    `- [Site index](${origin}/index.md): Current Specs list and external pointers`,
+    `- [Raw GraphQL index](${origin}/): HTML home (sibling \`.graphql\` per family)`,
+    '- HTTP/REST Connectors: https://specs.apollo.dev/connect/v0.2',
+    '- Federation Spec draft (`@lookup` / `@is` / `@internal`): https://graphql.github.io/graphql-federation-spec/draft',
+    '',
+  );
+  return lines.join('\n');
 }
 
 rmSync(outDir, { recursive: true, force: true });
@@ -442,6 +620,7 @@ families.forEach((family, index) => {
   const pageDir = join(outDir, family.name);
   mkdirSync(pageDir, { recursive: true });
   writeFileSync(join(pageDir, `${version}.html`), familyPage(family, sdl, docs));
+  writeFileSync(join(pageDir, `${version}.md`), familyPageMd(family, sdl, docs));
   writeFileSync(join(pageDir, `${version}.graphql`), sdl);
   redirects.push(`/${family.name}/${version}/ /${family.name}/${version} 301`);
 
@@ -453,15 +632,19 @@ families.forEach((family, index) => {
   <p>${esc(family.summary)}</p>
 </section>`);
   allSchemas.push(
-    `<li><a href="/${esc(family.name)}/${esc(version)}">${esc(family.name)}/${esc(version)}</a> (<a href="/${esc(family.name)}/${esc(version)}.graphql">graphql</a>)</li>`,
+    `<li><a href="/${esc(family.name)}/${esc(version)}">${esc(family.name)}/${esc(version)}</a> (<a href="/${esc(family.name)}/${esc(version)}.graphql">graphql</a> · <a href="/${esc(family.name)}/${esc(version)}.md">md</a>)</li>`,
   );
 });
+
+writeFileSync(join(outDir, 'index.md'), indexPageMd(families));
+writeFileSync(join(outDir, 'llms.txt'), llmsTxt(families));
 
 writeFileSync(
   join(outDir, 'index.html'),
   layout({
     title: siteTitle,
     canonical: `${origin}/`,
+    markdownHref: `${origin}/index.md`,
     body: `
 <article class="spec-page home">
   <h1 class="page-title">${esc(siteTitle)}</h1>
@@ -527,9 +710,18 @@ writeFileSync(
   Content-Type: text/plain; charset=utf-8
   Access-Control-Allow-Origin: *
 
+/*.md
+  Content-Type: text/markdown; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Link: </llms.txt>; rel="describedby"
+
+/llms.txt
+  Content-Type: text/markdown; charset=utf-8
+  Access-Control-Allow-Origin: *
+
 /
   Access-Control-Allow-Origin: *
 `,
 );
 
-console.log(`Wrote ${families.length} families to ${outDir}`);
+console.log(`Wrote ${families.length} families + llms.txt to ${outDir}`);

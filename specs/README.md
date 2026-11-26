@@ -14,7 +14,7 @@ numbered definitions, and a sibling raw `.graphql` artifact.
 | `families.json`                   | Family metadata (title, summary, imports, stamp notes)           |
 | `content/<family>/v0.1.graphql`   | Directive SDL source of truth (loader / compose shapes)          |
 | `content/<family>/v0.1.docs.json` | Dual-audience prose per directive / arg (not GraphQL `"""` docs) |
-| `generate.mjs`                    | Builds `out/` HTML + copies SDL                                  |
+| `generate.mjs`                    | Builds `out/` HTML, Markdown twins, `llms.txt`, and copies SDL   |
 | `assets/spec.css`                 | Spec-md-like styles                                              |
 | `out/`                            | Deploy artifact (generated in CI; local via `node generate.mjs`) |
 
@@ -23,7 +23,14 @@ URL contract:
 ```text
 https://specs.graphql-mesh.dev/<family>/v0.1
 https://specs.graphql-mesh.dev/<family>/v0.1.graphql
+https://specs.graphql-mesh.dev/<family>/v0.1.md
+https://specs.graphql-mesh.dev/llms.txt
+https://specs.graphql-mesh.dev/index.md
 ```
+
+`llms.txt` is the agent index ([llmstxt.org](https://llmstxt.org/)); each HTML page advertises its
+Markdown twin via `rel="alternate" type="text/markdown"` and points at `/llms.txt` with
+`rel="describedby"`.
 
 Directive inventory (stamp status + family lists) lives in the Project store doc
 `docs/mesh-specs-directive-inventory.md`.
