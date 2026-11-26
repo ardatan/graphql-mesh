@@ -1,18 +1,18 @@
 import {
-  DocumentNode,
   getNamedType,
-  GraphQLSchema,
   isAbstractType,
   isListType,
   isNonNullType,
   Kind,
-  ListTypeNode,
-  NamedTypeNode,
-  NameNode,
-  OperationTypeNode,
-  SelectionSetNode,
-  TypeNode,
+  type DocumentNode,
+  type GraphQLSchema,
   type GraphQLType,
+  type ListTypeNode,
+  type NamedTypeNode,
+  type NameNode,
+  type OperationTypeNode,
+  type SelectionSetNode,
+  type TypeNode,
 } from 'graphql';
 import type { MergedTypeEntryPoint, Subschema } from '@graphql-tools/delegate';
 import { parseSelectionSet } from '@graphql-tools/utils';
@@ -162,8 +162,8 @@ function typeToAST(type: GraphQLType): TypeNode {
     return { kind: Kind.LIST_TYPE, type: typeToAST(type.ofType) };
   }
   return {
-    kind: 'NamedType' as const,
-    name: { kind: 'Name' as const, value: type.name },
+    kind: Kind.NAMED_TYPE,
+    name: { kind: Kind.NAME, value: type.name },
   };
 }
 
@@ -186,13 +186,13 @@ function mergeFieldSelection(
     return aliases[0]!.selectionSet;
   }
   return {
-    kind: 'SelectionSet' as const,
+    kind: Kind.SELECTION_SET,
     selections: aliases.map(a => ({
-      kind: 'InlineFragment' as const,
+      kind: Kind.INLINE_FRAGMENT,
       typeCondition: {
-        kind: 'NamedType' as const,
+        kind: Kind.NAMED_TYPE,
         name: {
-          kind: 'Name' as const,
+          kind: Kind.NAME,
           value: a.entityTypeName,
         },
       },
@@ -231,35 +231,35 @@ export function buildBatchedMergeDocument(
   }
   const nameValue = typeof operationName === 'string' ? operationName : operationName?.value;
   return {
-    kind: 'Document' as const,
+    kind: Kind.DOCUMENT,
     definitions: [
       {
-        kind: 'OperationDefinition' as const,
+        kind: Kind.OPERATION_DEFINITION,
         operation: 'query' as OperationTypeNode,
-        name: nameValue ? { kind: 'Name' as const, value: nameValue } : undefined,
+        name: nameValue ? { kind: Kind.NAME, value: nameValue } : undefined,
         variableDefinitions: [
           {
-            kind: 'VariableDefinition' as const,
+            kind: Kind.VARIABLE_DEFINITION,
             variable: {
-              kind: 'Variable' as const,
-              name: { kind: 'Name' as const, value: argName },
+              kind: Kind.VARIABLE,
+              name: { kind: Kind.NAME, value: argName },
             },
             type: typeToAST(argDef.type),
           },
         ],
         selectionSet: {
-          kind: 'SelectionSet' as const,
+          kind: Kind.SELECTION_SET,
           selections: [
             {
-              kind: 'Field' as const,
-              name: { kind: 'Name' as const, value: entry.fieldName },
+              kind: Kind.FIELD,
+              name: { kind: Kind.NAME, value: entry.fieldName },
               arguments: [
                 {
                   kind: Kind.ARGUMENT,
-                  name: { kind: 'Name' as const, value: argName },
+                  name: { kind: Kind.NAME, value: argName },
                   value: {
-                    kind: 'Variable' as const,
-                    name: { kind: 'Name' as const, value: argName },
+                    kind: Kind.VARIABLE,
+                    name: { kind: Kind.NAME, value: argName },
                   },
                 },
               ],
