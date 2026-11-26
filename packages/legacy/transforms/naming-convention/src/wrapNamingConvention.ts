@@ -40,9 +40,10 @@ import {
 
 type NamingFn = (input: string) => string;
 
-/** Snapshot + helper input shape (GQL17 `default` is stricter on GraphQLArgumentConfig). */
-type ArgDefaultSnapshot = Parameters<typeof hasRewritableEnumDefaultForType>[0] & {
-  /** Pre-transform arg type — needed to map wire enum defaults to member names. */
+/** Helper input shape (GQL17 `default` is stricter on GraphQLArgumentConfig). */
+type ArgDefaultFields = Parameters<typeof hasRewritableEnumDefaultForType>[0];
+/** Snapshot + original arg type — needed to map wire enum defaults to member names. */
+type ArgDefaultSnapshot = ArgDefaultFields & {
   originalArgType: GraphQLInputType;
 };
 
@@ -118,12 +119,12 @@ function reapplyArgDefaultsFromOriginal(
       }
       // Prefer original defaults — post-rename GraphQL 16 coercion may have emptied them.
       const { originalArgType, ...snapDefaults } = snap;
-      const source: Parameters<typeof hasRewritableEnumDefaultForType>[0] = {
+      const source: ArgDefaultFields = {
         defaultValue:
           snapDefaults.defaultValue !== undefined
             ? snapDefaults.defaultValue
             : argConfig.defaultValue,
-        default: snapDefaults.default ?? (argConfig as ArgDefaultSnapshot).default,
+        default: snapDefaults.default ?? (argConfig as ArgDefaultFields).default,
         astNode: snapDefaults.astNode ?? argConfig.astNode,
       };
       // Rewrite against the original arg type so wire enum values (newbie→'wire')
