@@ -974,6 +974,13 @@ function collectEntitiesAtPath(data: any, path: PathSegment[]): Array<Record<str
         }
       } else if (value != null && typeof value === 'object') {
         next.push(value);
+      } else if (value != null && typeof item === 'object') {
+        // Encapsulate `@resolveTo(__typename)` leaves a string (`"Query"`) at
+        // the path. Promote in place to `{}` so nested Islands can attach —
+        // same shape graphql-js builds when nested resolvers run on that parent.
+        const promoted: Record<string, any> = {};
+        item[segment] = promoted;
+        next.push(promoted);
       }
     }
     current = next;
@@ -1486,7 +1493,7 @@ function executeIslandNode(
       return handleMaybePromise(
         () => resolve!(parent, args, ctx.contextValue, info),
         result => {
-          parent[responseKey] = coerceIslandParentForContinue(result, field.type, node);
+          parent[responseKey] = result;
         },
         err => {
           ctx.errors.push(errorFromIslandThrow(err, responseKey, node.fieldNode));
@@ -1516,7 +1523,7 @@ function executeIslandNode(
   return handleMaybePromise(
     () => resolve!(ctx.rootValue, args, ctx.contextValue, info),
     result => {
-      ctx.data[responseKey] = coerceIslandParentForContinue(result, field.type, node);
+      ctx.data[responseKey] = result;
       // continue: dataflow hop, not tree execute
     },
     err => {
@@ -1526,29 +1533,6 @@ function executeIslandNode(
       ctx.data[responseKey] = null;
     },
   );
-}
-
-/**
- * Encapsulate `@resolveTo(sourceFieldName: "__typename")` returns a string
- * (`"Query"`). graphql-js still runs nested field resolvers and assembles an
- * object; the backbone writes the Island result into `ctx.data` and runs
- * `continue` via `collectEntitiesAtPath`, which only walks objects.
- * When the field is an object type and this Island has continue hops, replace
- * a non-object result with a fresh `{}` so nested Islands can attach.
- */
-function coerceIslandParentForContinue(
-  result: any,
-  returnType: GraphQLOutputType,
-  node: Extract<StitchPlanNode, { kind: 'Island' }>,
-): any {
-  if (result == null || typeof result === 'object' || !node.continue) {
-    return result;
-  }
-  const named = getNamedType(returnType);
-  if (!isObjectType(named) && !isInterfaceType(named)) {
-    return result;
-  }
-  return Object.create(null);
 }
 
 type ExecutableHop = ScheduledHop;

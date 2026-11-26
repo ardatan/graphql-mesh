@@ -161,6 +161,32 @@ jobs:
               console.log(`Overlaid ${name} <- ${rel}/dist -> ${path.relative(process.cwd(), target)}`);
             }
           }
+          // Mesh bob builds import newer @graphql-tools/utils helpers (e.g.
+          // asGetArgumentValuesVariables). Overlay Mesh's installed copy so
+          // Gateway's older utils does not break compose/memtest.
+          {
+            const name = '@graphql-tools/utils';
+            const src = path.join(meshRoot, 'node_modules', ...name.split('/'));
+            if (!fs.existsSync(path.join(src, 'package.json'))) {
+              throw new Error(`Missing Mesh install: ${src}`);
+            }
+            let targets = findInstalls(name);
+            if (targets.length === 0) {
+              const top = path.join(process.cwd(), 'node_modules', ...name.split('/'));
+              fs.mkdirSync(top, { recursive: true });
+              targets = [top];
+            }
+            for (const target of targets) {
+              for (const ent of fs.readdirSync(target)) {
+                if (ent === 'node_modules') continue;
+                rmrf(path.join(target, ent));
+              }
+              copyDir(src, target);
+              console.log(
+                `Overlaid ${name} <- node_modules/@graphql-tools/utils -> ${path.relative(process.cwd(), target)}`,
+              );
+            }
+          }
           NODE
       - name: Hash Docker Images
         id: hash-docker-images
