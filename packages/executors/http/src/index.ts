@@ -1,6 +1,7 @@
 import { GraphQLError, type DocumentNode, type GraphQLResolveInfo } from 'graphql';
-import { abortSignalAny } from '@graphql-hive/signal';
+import * as hiveSignal from '@graphql-hive/signal';
 import {
+  copyJson,
   defaultPrintFn,
   serializeExecutionRequest,
   type SerializedExecutionRequest,
@@ -30,6 +31,20 @@ import { handleMultipartMixedResponse } from './handleMultipartMixedResponse.js'
 import { isLiveQueryOperationDefinitionNode } from './isLiveQueryOperationDefinitionNode.js';
 import { prepareGETUrl } from './prepareGETUrl.js';
 import { createGraphQLErrorForAbort, createResultForAbort, hashSHA256 } from './utils.js';
+
+const { abortSignalAny } = hiveSignal;
+
+/**
+ * Soft-call: `@graphql-hive/signal` publishes `disposeAbortSignal` in a later release.
+ * Until then this is a no-op so Mesh can ship the cleanup call site now.
+ */
+function disposeAbortSignal(signal: AbortSignal | undefined): void {
+  (
+    hiveSignal as typeof hiveSignal & {
+      disposeAbortSignal?: (signal: AbortSignal | undefined) => void;
+    }
+  ).disposeAbortSignal?.(signal);
+}
 
 export type SyncFetchFn = (
   url: string,
@@ -238,7 +253,8 @@ export function buildHTTPExecutor(
   options?: HTTPExecutorOptions,
 ): DisposableExecutor<any, HTTPExecutorOptions> {
   const printFn = options?.print ?? defaultPrintFn;
-  const sharedInflightRequests = new WeakSet<Promise<ExecutionResult>>();
+  /** How many consumers of an inflight request have not taken its result yet. */
+  const inflightRequestConsumers = new WeakMap<Promise<ExecutionResult>, number>();
   // inflight requests are scoped per executor and per context because the fetch
   // fn receives the context and may behave differently for each
   const inflightRequestsByContext = new WeakMap<
@@ -653,14 +669,14 @@ export function buildHTTPExecutor(
       let inflightRequest: MaybePromise<ExecutionResult> | undefined =
         inflightRequests.get(inflightRequestId);
       if (inflightRequest) {
-        // Isolate every consumer when a request is actually shared, including
-        // the consumer that originally started the request.
-        sharedInflightRequests.add(inflightRequest as Promise<ExecutionResult>);
+        const promise = inflightRequest as Promise<ExecutionResult>;
+        inflightRequestConsumers.set(promise, inflightRequestConsumers.get(promise)! + 1);
         joinedExisting = true;
       }
       if (!inflightRequest) {
         inflightRequest = runInflightRequest();
         if (isPromise(inflightRequest)) {
+          inflightRequestConsumers.set(inflightRequest, 1);
           inflightRequests.set(inflightRequestId, inflightRequest);
           // Clean up on both fulfillment and rejection without leaving the
           // cleanup chain's rejection unobserved.
@@ -674,7 +690,6 @@ export function buildHTTPExecutor(
           );
         }
       }
-      // TODO: Find a way better than cloning
       return handleMaybePromise(
         () => inflightRequest,
         result => {
@@ -685,23 +700,38 @@ export function buildHTTPExecutor(
             }
             return result;
           }
-          if (
-            result == null ||
-            !result.data ||
-            !sharedInflightRequests.has(inflightRequest as Promise<ExecutionResult>)
-          ) {
+          const promise = inflightRequest as Promise<ExecutionResult>;
+          const consumers = inflightRequestConsumers.get(promise);
+          if (consumers == null) {
             return result;
           }
-          const clonedResult: ExecutionResult = {
-            ...result,
-          };
-          if (result.data) {
-            clonedResult.data = structuredClone(result.data);
+          inflightRequestConsumers.set(promise, consumers - 1);
+          // Consumers may change the result; every one gets its own copy. They take the result
+          // in the order they came, after the request left the inflight map, so the last one
+          // can take the original.
+          if (result == null || consumers === 1) {
+            return result;
           }
-          return clonedResult;
+          if (!result.data) {
+            return result;
+          }
+          return {
+            ...result,
+            data: copyJson(result.data),
+          };
         },
       );
     }
+
+    // Once the result is in, the request's signal is done with. A stream still reads with it.
+    const releaseSignal = <TResult>(result: TResult): TResult => {
+      if (!isAsyncIterable(result)) {
+        // It would otherwise keep a listener on the executor's dispose signal until GC, and
+        // every request adding one makes adding them slower.
+        disposeAbortSignal(signal);
+      }
+      return result;
+    };
 
     return handleMaybePromise(
       () => serializeFn(),
@@ -729,7 +759,10 @@ export function buildHTTPExecutor(
             if (options?.exposeHTTPDetailsInExtensions) {
               upstreamErrorExtensions.request.url = finalUrl;
             }
-            return handleInflightRequest(inflightRequestOptions, request.context, request.info);
+            return handleMaybePromise(
+              () => handleInflightRequest(inflightRequestOptions, request.context, request.info),
+              releaseSignal,
+            );
           }
           case 'POST': {
             if (options?.exposeHTTPDetailsInExtensions) {
@@ -756,7 +789,11 @@ export function buildHTTPExecutor(
                   credentials: options?.credentials,
                   signal,
                 };
-                return handleInflightRequest(inflightRequestOptions, request.context, request.info);
+                return handleMaybePromise(
+                  () =>
+                    handleInflightRequest(inflightRequestOptions, request.context, request.info),
+                  releaseSignal,
+                );
               },
               handleError,
             );

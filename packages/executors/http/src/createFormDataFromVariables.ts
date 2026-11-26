@@ -48,6 +48,52 @@ function isExtractableUpload(v: any): boolean {
   return false;
 }
 
+/** Like `is-plain-obj`, which `extractFiles` goes into. */
+function isPlainObject(value: object): boolean {
+  const prototype = Object.getPrototypeOf(value);
+  return (
+    (prototype === null ||
+      prototype === Object.prototype ||
+      Object.getPrototypeOf(prototype) === null) &&
+    !(Symbol.toStringTag in value) &&
+    !(Symbol.iterator in value)
+  );
+}
+
+/**
+ * Whether `extractFiles` might find an upload in `value`, going into the same lists and plain
+ * objects, but without cloning them or tracking their paths. Very deep values, like cyclic
+ * ones, are left to `extractFiles`.
+ */
+function mayHaveUpload(value: unknown, depth: number): boolean {
+  // Only objects and functions can be uploads.
+  if (value === null || (typeof value !== 'object' && typeof value !== 'function')) {
+    return false;
+  }
+  if (isExtractableUpload(value)) {
+    return true;
+  }
+  if (depth > 64) {
+    return true;
+  }
+  if (Array.isArray(value) || (typeof FileList !== 'undefined' && value instanceof FileList)) {
+    for (const item of value as ArrayLike<unknown> & Iterable<unknown>) {
+      if (mayHaveUpload(item, depth + 1)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  if (typeof value === 'object' && isPlainObject(value)) {
+    for (const key in value) {
+      if (mayHaveUpload((value as Record<string, unknown>)[key], depth + 1)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 export function createFormDataFromVariables(
   body: SerializedExecutionRequest,
   {
@@ -62,6 +108,17 @@ export function createFormDataFromVariables(
     return JSON.stringify(body);
   }
   const vars = Object.assign({}, body.variables);
+  // Nearly every request has no files; finding that out should not clone all its variables.
+  let mayHaveFiles = false;
+  for (const key in vars) {
+    if (mayHaveUpload(vars[key], 0)) {
+      mayHaveFiles = true;
+      break;
+    }
+  }
+  if (!mayHaveFiles) {
+    return JSON.stringify(body);
+  }
   const { clone, files } = extractFiles(vars, isExtractableUpload as any, 'variables');
   if (files.size === 0) {
     return JSON.stringify(body);
