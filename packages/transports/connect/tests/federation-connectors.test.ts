@@ -1065,6 +1065,71 @@ describe('Federation Connectors HTTP / templates', () => {
     ]);
   });
 
+  it('promotes bare resolveReference into extensions before _entities mapSchema rebuild', async () => {
+    // preserveExistingFieldResolvers accepts a bare Product.resolveReference and skips
+    // replacement. Without promoting into Apollo extensions first, installQueryField's
+    // mapSchema drops the bare property and remirror cannot restore it — stub hydration
+    // then skips the type and missing fields stay null.
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "shop", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      type Query {
+        product(id: ID!): Product
+          @connect(
+            source: "shop"
+            http: { GET: "/products/{$args.id}" }
+            selection: "id name"
+            entity: true
+          )
+      }
+
+      type Product @key(fields: "id") {
+        id: ID!
+        name: String
+      }
+    `;
+    const schema = buildSchema(sdl);
+    const productBefore = schema.getType('Product') as any;
+    const bareResolveReference = (ref: { id: string }) => ({
+      id: ref.id,
+      name: 'from-bare',
+    });
+    productBefore.resolveReference = bareResolveReference;
+    expect(productBefore.extensions?.apollo?.subgraph?.resolveReference).toBeUndefined();
+
+    const out = processConnectDirectives(schema, {
+      preserveExistingFieldResolvers: true,
+      globalFetch: (async () => Response.json({ id: 'p1', name: 'ignored' })) as any,
+    });
+    const productAfter = out.getType('Product') as any;
+    expect(typeof productAfter.resolveReference).toBe('function');
+    expect(typeof productAfter.extensions?.apollo?.subgraph?.resolveReference).toBe('function');
+    expect(productAfter.resolveReference).toBe(
+      productAfter.extensions.apollo.subgraph.resolveReference,
+    );
+
+    const result = await execute({
+      schema: out,
+      document: parse(/* GraphQL */ `
+        {
+          _entities(representations: [{ __typename: "Product", id: "p1" }]) {
+            ... on Product {
+              id
+              name
+            }
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      _entities: [{ id: 'p1', name: 'from-bare' }],
+    });
+  });
+
   it('repairs bare Federation-extracted Query._entities (Hive subgraph path)', async () => {
     // Hive extracts subgraph SDL from the supergraph - Query already has `_entities`
     // with no resolver. processConnectDirectives must install resolveReference dispatch

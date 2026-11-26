@@ -1,5 +1,6 @@
 import type { DocumentNode, GraphQLOutputType, GraphQLSchema, GraphQLType } from 'graphql';
-import { extendSchema, isOutputType, parse, parseType, typeFromAST } from 'graphql';
+import { isOutputType, parse, parseType, typeFromAST } from 'graphql';
+import { extendSchemaPreservingExtensions } from '@graphql-mesh/utils';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import type { SubgraphTransform } from './compose.js';
 import { TransformValidationError } from './transforms/utils.js';
@@ -37,7 +38,7 @@ export function createExtendTransform(typeDefs: string | DocumentNode) {
   const typeDefsDoc =
     typeof typeDefs === 'string' ? parse(typeDefs, { noLocation: true }) : typeDefs;
   return function extendTransform(schema: GraphQLSchema) {
-    return extendSchema(schema, typeDefsDoc, {
+    return extendSchemaPreservingExtensions(schema, typeDefsDoc, {
       assumeValid: true,
       assumeValidSDL: true,
     });

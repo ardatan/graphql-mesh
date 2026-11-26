@@ -109,7 +109,7 @@ export default class HiveTransform implements MeshTransform {
     result: ExecutionResult,
     _delegationContext: DelegationContext,
     transformationContext: TransformationContext,
-  ) {
+  ): ExecutionResult {
     try {
       const typeInfo = getTypeInfo(this.schema);
       transformationContext.collectUsageCallback

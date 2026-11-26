@@ -5,9 +5,13 @@ import type {
   GraphQLSchema,
   SelectionNode,
 } from 'graphql';
-import { getArgumentValues, getVariableValues, GraphQLError, Kind } from 'graphql';
+import { getArgumentValues, getVariableValues, GraphQLError, Kind, versionInfo } from 'graphql';
 import type { ExecutionRequest } from '@graphql-tools/utils';
-import { getRootTypeMap } from '@graphql-tools/utils';
+import {
+  asGetArgumentValuesVariables,
+  coerceGetVariableValuesResult,
+  getRootTypeMap,
+} from '@graphql-tools/utils';
 import { getOperationsAndFragments } from './getOperationsAndFragments.js';
 
 export function getRootFieldsWithArgs(
@@ -34,14 +38,21 @@ export function getRootFieldsWithArgs(
     operation.variableDefinitions || [],
     variables || {},
   );
-  if (coercedVariables.errors) {
-    throw new AggregateError(coercedVariables.errors);
+  // coerceGetVariableValuesResult always yields `{ coerced, sources }`. GraphQL 17
+  // getArgumentValues needs that full object (sources matter for complex scalars);
+  // GraphQL 16 only accepts a flat map — passing the wrapper makes required args
+  // look unset.
+  const normalized = coerceGetVariableValuesResult(coercedVariables);
+  if ('errors' in normalized) {
+    throw new AggregateError(normalized.errors);
   }
+  const variableValuesForArgs =
+    versionInfo.major >= 17 ? normalized.variableValues : normalized.variableValues.coerced;
   const selectionHandlerCtx: SelectionHandlerCtx = {
     rootFieldMap,
     rootFieldsWithArgs,
     fragments,
-    variables: coercedVariables.coerced,
+    variables: variableValuesForArgs as Record<string, any>,
   };
   for (const selection of operation.selectionSet.selections) {
     handleSelection(selection, selectionHandlerCtx);
@@ -66,7 +77,11 @@ function handleFieldNode(fieldNode: FieldNode, ctx: SelectionHandlerCtx) {
   if (!rootField) {
     throw new GraphQLError(`No root field found for field ${originalFieldName}`);
   }
-  const args = getArgumentValues(rootField, fieldNode, ctx.variables);
+  const args = getArgumentValues(
+    rootField,
+    fieldNode,
+    asGetArgumentValuesVariables(ctx.variables)!,
+  );
   ctx.rootFieldsWithArgs.set(originalFieldName, args);
 }
 function handleSelection(selection: SelectionNode, ctx: SelectionHandlerCtx) {

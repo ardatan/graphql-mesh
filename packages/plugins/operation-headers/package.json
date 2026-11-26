@@ -43,7 +43,7 @@
   "devDependencies": {
     "@graphql-mesh/runtime": "workspace:*",
     "@whatwg-node/fetch": "^0.12.1",
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   },
   "publishConfig": {
     "access": "public",

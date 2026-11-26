@@ -20,9 +20,16 @@ import {
   isEnumType,
   isInputObjectType,
   isInterfaceType,
+  isListType,
+  isNonNullType,
   isObjectType,
   isSpecifiedScalarType,
+  Kind,
+  type ConstValueNode,
   type GraphQLFieldConfigArgumentMap,
+  type GraphQLInputObjectType,
+  type GraphQLInputType,
+  type ValueNode,
 } from 'graphql';
 import { resolvers } from 'graphql-scalars';
 import {
@@ -61,6 +68,101 @@ const EnumValueDirective = new GraphQLDirective({
 
 function isFromGraphQLScalars(name: string) {
   return Object.keys(resolvers).includes(name);
+}
+
+function containsEnumValueNode(node: ValueNode | null | undefined): boolean {
+  if (!node) {
+    return false;
+  }
+  if (node.kind === Kind.ENUM) {
+    return true;
+  }
+  if (node.kind === Kind.LIST) {
+    return node.values.some(containsEnumValueNode);
+  }
+  if (node.kind === Kind.OBJECT) {
+    return node.fields.some(f => containsEnumValueNode(f.value));
+  }
+  return false;
+}
+
+function rewriteEnumValueNode(node: ValueNode, rename: (value: string) => string): ValueNode {
+  if (node.kind === Kind.ENUM) {
+    return { ...node, value: rename(node.value) };
+  }
+  if (node.kind === Kind.LIST) {
+    return {
+      ...node,
+      values: node.values.map(v => rewriteEnumValueNode(v, rename)),
+    };
+  }
+  if (node.kind === Kind.OBJECT) {
+    return {
+      ...node,
+      fields: node.fields.map(f => ({
+        ...f,
+        value: rewriteEnumValueNode(f.value, rename),
+      })),
+    };
+  }
+  return node;
+}
+
+function jsDefaultContainsString(value: unknown): boolean {
+  if (typeof value === 'string') {
+    return true;
+  }
+  if (Array.isArray(value)) {
+    return value.some(jsDefaultContainsString);
+  }
+  if (value && typeof value === 'object') {
+    return Object.values(value as Record<string, unknown>).some(jsDefaultContainsString);
+  }
+  return false;
+}
+
+function rewriteEnumJsDefault(value: unknown, rename: (value: string) => string): unknown {
+  if (typeof value === 'string') {
+    return rename(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map(v => rewriteEnumJsDefault(v, rename));
+  }
+  return value;
+}
+
+function rewriteJsDefaultForInputType(
+  value: unknown,
+  inputType: GraphQLInputType,
+  rename: (value: string) => string,
+): unknown {
+  let type: GraphQLInputType = inputType;
+  while (isNonNullType(type)) {
+    type = type.ofType;
+  }
+  if (isListType(type)) {
+    if (!Array.isArray(value)) {
+      return value;
+    }
+    const ofType = type.ofType;
+    return value.map(item => rewriteJsDefaultForInputType(item, ofType, rename));
+  }
+  const named = getNamedType(type);
+  if (isEnumType(named)) {
+    return typeof value === 'string' ? rename(value) : value;
+  }
+  if (isInputObjectType(named) && value && typeof value === 'object' && !Array.isArray(value)) {
+    const fields = (named as GraphQLInputObjectType).getFields();
+    const out: Record<string, unknown> = { ...(value as Record<string, unknown>) };
+    for (const [fieldName, field] of Object.entries(fields)) {
+      if (!(fieldName in out)) {
+        continue;
+      }
+      out[fieldName] = rewriteJsDefaultForInputType(out[fieldName], field.type, rename);
+    }
+    return out;
+  }
+  return value;
 }
 
 /** Federation Connectors directive input types — field names (GET/POST/baseURL) are spec-fixed. */
@@ -209,21 +311,80 @@ export function createNamingConventionTransform(
             if (newArgName !== argName) {
               argRenameMap.set(argName, newArgName);
             }
-            const argConfig = fieldConfig.args[argName];
-            if (!argConfig.defaultValue || !enumValuesFn) {
-              newArgs[newArgName] = argConfig;
-              continue;
-            }
-            const namedArgType = getNamedType(argConfig.type);
-            if (!isEnumType(namedArgType)) {
-              newArgs[newArgName] = argConfig;
-              continue;
-            }
-            const newDefaultValue = enumValuesFn(argConfig.defaultValue.toString());
-            newArgs[newArgName] = {
-              ...argConfig,
-              defaultValue: newDefaultValue,
+            const argConfig = fieldConfig.args[argName] as (typeof fieldConfig.args)[string] & {
+              default?: { literal?: ConstValueNode; value?: unknown };
             };
+            const namedArgType = getNamedType(argConfig.type);
+            if (!enumValuesFn || (!isEnumType(namedArgType) && !isInputObjectType(namedArgType))) {
+              newArgs[newArgName] = argConfig;
+              continue;
+            }
+            // Explicit null must not fall back to a stale AST enum default.
+            // Enum args + input-object args (`Filter = { status: newbie }`).
+            const hasJsStringDefault =
+              argConfig.defaultValue != null && jsDefaultContainsString(argConfig.defaultValue);
+            const hasDefaultValue =
+              argConfig.defaultValue !== undefined || argConfig.default != null;
+            const literal: ValueNode | undefined =
+              argConfig.default?.literal ??
+              (!hasDefaultValue ? argConfig.astNode?.defaultValue : undefined);
+            const hasLiteralEnum = containsEnumValueNode(literal);
+            const hasValueString =
+              argConfig.default?.value != null && jsDefaultContainsString(argConfig.default.value);
+            if (argConfig.defaultValue === null) {
+              newArgs[newArgName] = argConfig;
+              continue;
+            }
+            if (!hasJsStringDefault && !hasLiteralEnum && !hasValueString) {
+              newArgs[newArgName] = argConfig;
+              continue;
+            }
+            const nextArg: typeof argConfig = { ...argConfig };
+            if (hasJsStringDefault) {
+              nextArg.defaultValue = (
+                isInputObjectType(namedArgType)
+                  ? rewriteJsDefaultForInputType(
+                      argConfig.defaultValue,
+                      argConfig.type as GraphQLInputType,
+                      enumValuesFn,
+                    )
+                  : rewriteEnumJsDefault(argConfig.defaultValue, enumValuesFn)
+              ) as typeof argConfig.defaultValue;
+            }
+            if (argConfig.default?.literal && containsEnumValueNode(argConfig.default.literal)) {
+              // Literal-only ConstValueNode arm (literal XOR value).
+              nextArg.default = {
+                literal: rewriteEnumValueNode(
+                  argConfig.default.literal,
+                  enumValuesFn,
+                ) as ConstValueNode,
+              };
+            } else if (hasValueString) {
+              nextArg.default = {
+                value: isInputObjectType(namedArgType)
+                  ? rewriteJsDefaultForInputType(
+                      argConfig.default!.value,
+                      argConfig.type as GraphQLInputType,
+                      enumValuesFn,
+                    )
+                  : rewriteEnumJsDefault(argConfig.default!.value, enumValuesFn),
+              };
+            } else if (argConfig.default != null) {
+              nextArg.default = undefined;
+            }
+            if (
+              argConfig.astNode?.defaultValue &&
+              containsEnumValueNode(argConfig.astNode.defaultValue)
+            ) {
+              nextArg.astNode = {
+                ...argConfig.astNode,
+                defaultValue: rewriteEnumValueNode(
+                  argConfig.astNode.defaultValue,
+                  enumValuesFn,
+                ) as typeof argConfig.astNode.defaultValue,
+              };
+            }
+            newArgs[newArgName] = nextArg;
           }
         }
         if (argRenameMap.size) {
@@ -289,6 +450,87 @@ export function createNamingConventionTransform(
       };
     }
     if (enumValuesFn) {
+      // Preferential over MapperKind.FIELD for input objects — must also apply fieldNames
+      // renames or snake_case input fields never become camelCase on the public schema.
+      schemaMapper[MapperKind.INPUT_OBJECT_FIELD] = (inputFieldConfig, fieldName, typeName) => {
+        if (CONNECTORS_INPUT_TYPES.has(typeName)) {
+          return undefined;
+        }
+        const newFieldName = fieldNamesFn?.(fieldName) || fieldName;
+        if (newFieldName !== fieldName) {
+          let typeFieldRenameMap = fieldRenameMap.get(typeName);
+          if (!typeFieldRenameMap) {
+            typeFieldRenameMap = new Map();
+            fieldRenameMap.set(typeName, typeFieldRenameMap);
+          }
+          typeFieldRenameMap.set(fieldName, newFieldName);
+        }
+        const namedFieldType = getNamedType(inputFieldConfig.type);
+        const fieldCfg = inputFieldConfig as typeof inputFieldConfig & {
+          default?: { literal?: ConstValueNode; value?: unknown };
+        };
+        const canRewriteDefault =
+          (isEnumType(namedFieldType) || isInputObjectType(namedFieldType)) &&
+          fieldCfg.defaultValue !== null &&
+          ((fieldCfg.defaultValue != null && jsDefaultContainsString(fieldCfg.defaultValue)) ||
+            (fieldCfg.default?.literal && containsEnumValueNode(fieldCfg.default.literal)) ||
+            (fieldCfg.default?.value != null && jsDefaultContainsString(fieldCfg.default.value)) ||
+            (fieldCfg.astNode?.defaultValue &&
+              containsEnumValueNode(fieldCfg.astNode.defaultValue)));
+        let nextConfig: typeof inputFieldConfig = inputFieldConfig;
+        if (canRewriteDefault) {
+          const next = { ...fieldCfg };
+          if (fieldCfg.defaultValue != null && jsDefaultContainsString(fieldCfg.defaultValue)) {
+            next.defaultValue = (
+              isInputObjectType(namedFieldType)
+                ? rewriteJsDefaultForInputType(
+                    fieldCfg.defaultValue,
+                    fieldCfg.type as GraphQLInputType,
+                    enumValuesFn,
+                  )
+                : rewriteEnumJsDefault(fieldCfg.defaultValue, enumValuesFn)
+            ) as typeof fieldCfg.defaultValue;
+          }
+          if (fieldCfg.default?.literal && containsEnumValueNode(fieldCfg.default.literal)) {
+            next.default = {
+              literal: rewriteEnumValueNode(
+                fieldCfg.default.literal,
+                enumValuesFn,
+              ) as ConstValueNode,
+            };
+          } else if (
+            fieldCfg.default?.value != null &&
+            jsDefaultContainsString(fieldCfg.default.value)
+          ) {
+            next.default = {
+              value: isInputObjectType(namedFieldType)
+                ? rewriteJsDefaultForInputType(
+                    fieldCfg.default!.value,
+                    fieldCfg.type as GraphQLInputType,
+                    enumValuesFn,
+                  )
+                : rewriteEnumJsDefault(fieldCfg.default.value, enumValuesFn),
+            };
+          }
+          if (
+            fieldCfg.astNode?.defaultValue &&
+            containsEnumValueNode(fieldCfg.astNode.defaultValue)
+          ) {
+            next.astNode = {
+              ...fieldCfg.astNode,
+              defaultValue: rewriteEnumValueNode(
+                fieldCfg.astNode.defaultValue,
+                enumValuesFn,
+              ) as typeof fieldCfg.astNode.defaultValue,
+            };
+          }
+          nextConfig = next;
+        }
+        if (newFieldName === fieldName) {
+          return nextConfig === inputFieldConfig ? undefined : nextConfig;
+        }
+        return [newFieldName, nextConfig];
+      };
       schemaMapper[MapperKind.ENUM_VALUE] = (valueConfig, _typeName, _schema, externalValue) => {
         const newExternalValue = enumValuesFn(externalValue);
         if (newExternalValue === externalValue) {

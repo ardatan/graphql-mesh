@@ -1,1181 +1,293 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Examples should generate schema for any-simple-type: any-simple-type 1`] = `
-"schema @source(name: "any-simple-type", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-}
+schema @source(name:"any-simple-type" http:{baseURL:"http://example.com" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {AnySimpleType_AttributeService_AttributePort_getAttributes(GetAttributes:AnySimpleType_GetAttributes_Input):AnySimpleType_GetAttributesResponse @connect(source:"any-simple-type" http:{POST:"/attributes" headers:[{name:"SOAPAction" value:"getAttributes"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/any-simple-type\\") } \\"soap:Body\\": { \\"body:GetAttributes\\": $args.GetAttributes } }"} selection:"$.Envelope.Body.GetAttributesResponse")}
+type AnySimpleType_GetAttributesResponse {attribute:[AnySimpleType_Attribute]}
+type AnySimpleType_Attribute {name:String value:String}
+input AnySimpleType_GetAttributes_Input {filter:String}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  AnySimpleType_AttributeService_AttributePort_getAttributes(GetAttributes: AnySimpleType_GetAttributes_Input): AnySimpleType_GetAttributesResponse @connect(source: "any-simple-type", http: {POST: "/attributes", headers: [{name: "SOAPAction", value: "getAttributes"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/any-simple-type\\") } \\"soap:Body\\": { \\"body:GetAttributes\\": $args.GetAttributes } }"}, selection: "$.Envelope.Body.GetAttributesResponse")
-}
-
-type AnySimpleType_GetAttributesResponse {
-  attribute: [AnySimpleType_Attribute]
-}
-
-type AnySimpleType_Attribute {
-  name: String
-  value: String
-}
-
-input AnySimpleType_GetAttributes_Input {
-  filter: String
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;
 
 exports[`Examples should generate schema for any-wildcard-namespace: any-wildcard-namespace 1`] = `
-"schema @source(name: "any-wildcard-namespace", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-  mutation: Mutation
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  placeholder: Void
-}
-
-"""Represents NULL values"""
+schema @source(name:"any-wildcard-namespace" http:{baseURL:"http://example.com" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query mutation:Mutation}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {placeholder:Void} """Represents NULL values"""
 scalar Void
+type Mutation {AnyWildcardNamespace_WildcardService_WildcardPort_processItem(ProcessItem:AnyWildcardNamespace_ProcessItem_Input):AnyWildcardNamespace_ProcessItemResponse @connect(source:"any-wildcard-namespace" http:{POST:"/wildcard" headers:[{name:"SOAPAction" value:"processItem"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/any-wildcard-namespace\\") } \\"soap:Body\\": { \\"body:ProcessItem\\": $args.ProcessItem } }"} selection:"$.Envelope.Body.ProcessItemResponse")}
+type AnyWildcardNamespace_ProcessItemResponse {result:AnyWildcardNamespace_WildcardContainer}
+type AnyWildcardNamespace_WildcardContainer {name:String}
+input AnyWildcardNamespace_ProcessItem_Input {item:AnyWildcardNamespace_WildcardContainer_Input}
+input AnyWildcardNamespace_WildcardContainer_Input {name:String}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-type Mutation {
-  AnyWildcardNamespace_WildcardService_WildcardPort_processItem(ProcessItem: AnyWildcardNamespace_ProcessItem_Input): AnyWildcardNamespace_ProcessItemResponse @connect(source: "any-wildcard-namespace", http: {POST: "/wildcard", headers: [{name: "SOAPAction", value: "processItem"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/any-wildcard-namespace\\") } \\"soap:Body\\": { \\"body:ProcessItem\\": $args.ProcessItem } }"}, selection: "$.Envelope.Body.ProcessItemResponse")
-}
-
-type AnyWildcardNamespace_ProcessItemResponse {
-  result: AnyWildcardNamespace_WildcardContainer
-}
-
-type AnyWildcardNamespace_WildcardContainer {
-  name: String
-}
-
-input AnyWildcardNamespace_ProcessItem_Input {
-  item: AnyWildcardNamespace_WildcardContainer_Input
-}
-
-input AnyWildcardNamespace_WildcardContainer_Input {
-  name: String
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;
 
 exports[`Examples should generate schema for axis: axis 1`] = `
-"schema @source(name: "axis", http: {baseURL: "http://the-guild.dev", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-  mutation: Mutation
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  placeholder: Void
-}
-
-"""Represents NULL values"""
+schema @source(name:"axis" http:{baseURL:"http://the-guild.dev" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query mutation:Mutation}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {placeholder:Void} """Represents NULL values"""
 scalar Void
-
-type Mutation {
-  impl_TestService_TestService_createTest(createTestRequest: impl_createTestRequestType_Input): impl_createTestResponseType @connect(source: "axis", http: {POST: "/graphql/mesh/soap/TestService", body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"urn:com.guild:operations/test\\") } \\"soap:Body\\": { \\"body:createTestRequest\\": $args.createTestRequest } }"}, selection: "$.Envelope.Body.createTestResponse")
-}
-
-type impl_createTestResponseType {
-  name: String
-  intCount: Int
-  integerCount: Int
-  doubleCount: Float
-  floatCount: Float
-  longCount: BigInt
-  shortCount: Int
-  unsignedIntCount: UnsignedInt
-  unsignedLongCount: BigInt
-  unsignedShortCount: UnsignedInt
-  unsignedByteField: Byte
-  booleanField: Boolean
-  byteField: Byte
-  dateField: Date
-  dateTimeField: DateTime
-  decimalField: Float
-  nonNegIntField: NonNegativeInt
-  nonPosIntField: NonPositiveInt
-  posIntField: PositiveInt
-  negIntField: NegativeInt
-  weekday: impl_weekday
-  status: impl_testStatusInfoType
-  weekdays: impl_weekDays
-}
-
-"""
-The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
-
-"""Integers that will have a value of 0 or more."""
-scalar UnsignedInt
-
-"""The \`Byte\` scalar type represents byte value as a Buffer"""
-scalar Byte
-
-"""
-A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
-"""
-scalar Date
-
-"""
-A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
-"""
-scalar DateTime
-
-"""Integers that will have a value of 0 or more."""
-scalar NonNegativeInt
-
-"""Integers that will have a value of 0 or less."""
-scalar NonPositiveInt
-
-"""Integers that will have a value greater than 0."""
-scalar PositiveInt
-
-"""Integers that will have a value less than 0."""
+type Mutation {impl_TestService_TestService_createTest(createTestRequest:impl_createTestRequestType_Input):impl_createTestResponseType @connect(source:"axis" http:{POST:"/graphql/mesh/soap/TestService" body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"urn:com.guild:operations/test\\") } \\"soap:Body\\": { \\"body:createTestRequest\\": $args.createTestRequest } }"} selection:"$.Envelope.Body.createTestResponse")}
+type impl_createTestResponseType {name:String intCount:Int integerCount:Int doubleCount:Float floatCount:Float longCount:BigInt shortCount:Int unsignedIntCount:UnsignedInt unsignedLongCount:BigInt unsignedShortCount:UnsignedInt unsignedByteField:Byte booleanField:Boolean byteField:Byte dateField:Date dateTimeField:DateTime decimalField:Float nonNegIntField:NonNegativeInt nonPosIntField:NonPositiveInt posIntField:PositiveInt negIntField:NegativeInt weekday:impl_weekday status:impl_testStatusInfoType weekdays:impl_weekDays} """The \`BigInt\`
+scalar
+type represents non-fractional signed whole numeric values."""
+scalar BigInt """Integers that will have a value of 0 or more."""
+scalar UnsignedInt """The \`Byte\`
+scalar
+type represents byte value as a Buffer"""
+scalar Byte """A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
+scalar Date """A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
+scalar DateTime """Integers that will have a value of 0 or more."""
+scalar NonNegativeInt """Integers that will have a value of 0 or less."""
+scalar NonPositiveInt """Integers that will have a value greater than 0."""
+scalar PositiveInt """Integers that will have a value less than 0."""
 scalar NegativeInt
+enum impl_weekday {MONDAY TUESDAY WEDNESDAY THURSDAY FRIDAY}
+type impl_testStatusInfoType {status:String}
+type impl_weekDays {option:[impl_weekday]}
+input impl_createTestRequestType_Input {name:String intCount:Int integerCount:Int doubleCount:Float floatCount:Float longCount:BigInt shortCount:Int unsignedIntCount:UnsignedInt unsignedLongCount:BigInt unsignedShortCount:UnsignedInt unsignedByteField:Byte booleanField:Boolean byteField:Byte dateField:Date dateTimeField:DateTime decimalField:Float nonNegIntField:NonNegativeInt nonPosIntField:NonPositiveInt posIntField:PositiveInt negIntField:NegativeInt weekday:impl_weekday weekdays:impl_weekDays_Input}
+input impl_weekDays_Input {option:[impl_weekday]}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-enum impl_weekday {
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-}
-
-type impl_testStatusInfoType {
-  status: String
-}
-
-type impl_weekDays {
-  option: [impl_weekday]
-}
-
-input impl_createTestRequestType_Input {
-  name: String
-  intCount: Int
-  integerCount: Int
-  doubleCount: Float
-  floatCount: Float
-  longCount: BigInt
-  shortCount: Int
-  unsignedIntCount: UnsignedInt
-  unsignedLongCount: BigInt
-  unsignedShortCount: UnsignedInt
-  unsignedByteField: Byte
-  booleanField: Boolean
-  byteField: Byte
-  dateField: Date
-  dateTimeField: DateTime
-  decimalField: Float
-  nonNegIntField: NonNegativeInt
-  nonPosIntField: NonPositiveInt
-  posIntField: PositiveInt
-  negIntField: NegativeInt
-  weekday: impl_weekday
-  weekdays: impl_weekDays_Input
-}
-
-input impl_weekDays_Input {
-  option: [impl_weekday]
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;
 
 exports[`Examples should generate schema for empty-complextype: empty-complextype 1`] = `
-"schema @source(name: "empty-complextype", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-  mutation: Mutation
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  placeholder: Void
-}
-
-"""Represents NULL values"""
+schema @source(name:"empty-complextype" http:{baseURL:"http://example.com" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query mutation:Mutation}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {placeholder:Void} """Represents NULL values"""
 scalar Void
-
-type Mutation {
-  EmptyComplexType_ProcessService_ProcessPort_process(Process: EmptyComplexType_Process_Input): EmptyComplexType_ProcessResponse @connect(source: "empty-complextype", http: {POST: "/process", headers: [{name: "SOAPAction", value: "process"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/empty-complextype\\") } \\"soap:Body\\": { \\"body:Process\\": $args.Process } }"}, selection: "$.Envelope.Body.ProcessResponse")
-}
-
-type EmptyComplexType_ProcessResponse {
-  result: EmptyComplexType_Container
-}
-
-type EmptyComplexType_Container {
-  extensions: [JSON]
-}
-
-"""
-The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
+type Mutation {EmptyComplexType_ProcessService_ProcessPort_process(Process:EmptyComplexType_Process_Input):EmptyComplexType_ProcessResponse @connect(source:"empty-complextype" http:{POST:"/process" headers:[{name:"SOAPAction" value:"process"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/empty-complextype\\") } \\"soap:Body\\": { \\"body:Process\\": $args.Process } }"} selection:"$.Envelope.Body.ProcessResponse")}
+type EmptyComplexType_ProcessResponse {result:EmptyComplexType_Container}
+type EmptyComplexType_Container {extensions:[JSON]} """The \`JSON\`
+scalar
+type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."""
 scalar JSON
+input EmptyComplexType_Process_Input {payload:EmptyComplexType_Container_Input}
+input EmptyComplexType_Container_Input {extensions:[JSON]}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-input EmptyComplexType_Process_Input {
-  payload: EmptyComplexType_Container_Input
-}
-
-input EmptyComplexType_Container_Input {
-  extensions: [JSON]
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;
 
 exports[`Examples should generate schema for example1: example1 1`] = `
-"schema @source(name: "example1", http: {baseURL: "http://localhost:8088", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-  mutation: Mutation
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  TodoService_TodoService_BasicHttpBinding_ITodoService_GetTodos(GetTodos: JSON = ""): TodoService_GetTodosResponse @connect(source: "example1", http: {POST: "/TodoService/basichttp", headers: [{name: "SOAPAction", value: "http://tempuri.org/ITodoService/GetTodos"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:GetTodos\\": $args.GetTodos } }"}, selection: "$.Envelope.Body.GetTodosResponse")
-}
-
-type TodoService_GetTodosResponse {
-  GetTodosResult: tns_ArrayOfTodoMessage
-}
-
-type tns_ArrayOfTodoMessage {
-  TodoMessage: [tns_TodoMessage]
-}
-
-type tns_TodoMessage {
-  Author: tns_Name
-  Description: String
-}
-
-type tns_Name {
-  First: String
-  Last: String
-  Middle: String
-}
-
-"""
-The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
+schema @source(name:"example1" http:{baseURL:"http://localhost:8088" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query mutation:Mutation}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {TodoService_TodoService_BasicHttpBinding_ITodoService_GetTodos(GetTodos:JSON = ""):TodoService_GetTodosResponse @connect(source:"example1" http:{POST:"/TodoService/basichttp" headers:[{name:"SOAPAction" value:"http://tempuri.org/ITodoService/GetTodos"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:GetTodos\\": $args.GetTodos } }"} selection:"$.Envelope.Body.GetTodosResponse")}
+type TodoService_GetTodosResponse {GetTodosResult:tns_ArrayOfTodoMessage}
+type tns_ArrayOfTodoMessage {TodoMessage:[tns_TodoMessage]}
+type tns_TodoMessage {Author:tns_Name Description:String}
+type tns_Name {First:String Last:String Middle:String} """The \`JSON\`
+scalar
+type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."""
 scalar JSON
-
-type Mutation {
-  TodoService_TodoService_BasicHttpBinding_ITodoService_UpdateFileClass(UpdateFileClass: TodoService_UpdateFileClass_Input): JSON @connect(source: "example1", http: {POST: "/TodoService/basichttp", headers: [{name: "SOAPAction", value: "http://tempuri.org/ITodoService/UpdateFileClass"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:UpdateFileClass\\": $args.UpdateFileClass } }"}, selection: "$.Envelope.Body.UpdateFileClassResponse")
-  TodoService_TodoService_BasicHttpBinding_ITodoService_AddUpdateClass(AddUpdateClass: TodoService_AddUpdateClass_Input): TodoService_AddUpdateClassResponse @connect(source: "example1", http: {POST: "/TodoService/basichttp", headers: [{name: "SOAPAction", value: "http://tempuri.org/ITodoService/AddUpdateClass"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:AddUpdateClass\\": $args.AddUpdateClass } }"}, selection: "$.Envelope.Body.AddUpdateClassResponse")
-  TodoService_TodoService_BasicHttpBinding_ITodoService_AddTodo(AddTodo: TodoService_AddTodo_Input): TodoService_AddTodoResponse @connect(source: "example1", http: {POST: "/TodoService/basichttp", headers: [{name: "SOAPAction", value: "http://tempuri.org/ITodoService/AddTodo"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:AddTodo\\": $args.AddTodo } }"}, selection: "$.Envelope.Body.AddTodoResponse")
-  TodoService_TodoService_BasicHttpBinding_ITodoService_FaultAddTodo(FaultAddTodo: TodoService_FaultAddTodo_Input): TodoService_FaultAddTodoResponse @connect(source: "example1", http: {POST: "/TodoService/basichttp", headers: [{name: "SOAPAction", value: "http://tempuri.org/ITodoService/FaultAddTodo"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:FaultAddTodo\\": $args.FaultAddTodo } }"}, selection: "$.Envelope.Body.FaultAddTodoResponse")
-  TodoService_TodoService_BasicHttpBinding_ITodoService_FailGetTodo(FailGetTodo: JSON = ""): TodoService_FailGetTodoResponse @connect(source: "example1", http: {POST: "/TodoService/basichttp", headers: [{name: "SOAPAction", value: "http://tempuri.org/ITodoService/FailGetTodo"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:FailGetTodo\\": $args.FailGetTodo } }"}, selection: "$.Envelope.Body.FailGetTodoResponse")
-}
-
-input TodoService_UpdateFileClass_Input {
-  cls: tns_FileClass_Input
-}
-
-input tns_FileClass_Input {
-  Mode: tns_EntityMode
-  ClassIntID: BigInt
-  CreatedBy: String
-  CreatedDtTm: DateTime
-  FirmIntID: String
-  LastUpdatedBy: String
-  LastUpdatedDtTm: DateTime
-  Name: String
-  PeriodType: tns_PeriodType
-  Retention: Int
-  Timestamp: Byte
-}
-
-enum tns_EntityMode {
-  New
-  Deleted
-  Changed
-  Unchanged
-}
-
-"""
-The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
-
-"""
-A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
-"""
+type Mutation {TodoService_TodoService_BasicHttpBinding_ITodoService_UpdateFileClass(UpdateFileClass:TodoService_UpdateFileClass_Input):JSON @connect(source:"example1" http:{POST:"/TodoService/basichttp" headers:[{name:"SOAPAction" value:"http://tempuri.org/ITodoService/UpdateFileClass"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:UpdateFileClass\\": $args.UpdateFileClass } }"} selection:"$.Envelope.Body.UpdateFileClassResponse") TodoService_TodoService_BasicHttpBinding_ITodoService_AddUpdateClass(AddUpdateClass:TodoService_AddUpdateClass_Input):TodoService_AddUpdateClassResponse @connect(source:"example1" http:{POST:"/TodoService/basichttp" headers:[{name:"SOAPAction" value:"http://tempuri.org/ITodoService/AddUpdateClass"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:AddUpdateClass\\": $args.AddUpdateClass } }"} selection:"$.Envelope.Body.AddUpdateClassResponse") TodoService_TodoService_BasicHttpBinding_ITodoService_AddTodo(AddTodo:TodoService_AddTodo_Input):TodoService_AddTodoResponse @connect(source:"example1" http:{POST:"/TodoService/basichttp" headers:[{name:"SOAPAction" value:"http://tempuri.org/ITodoService/AddTodo"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:AddTodo\\": $args.AddTodo } }"} selection:"$.Envelope.Body.AddTodoResponse") TodoService_TodoService_BasicHttpBinding_ITodoService_FaultAddTodo(FaultAddTodo:TodoService_FaultAddTodo_Input):TodoService_FaultAddTodoResponse @connect(source:"example1" http:{POST:"/TodoService/basichttp" headers:[{name:"SOAPAction" value:"http://tempuri.org/ITodoService/FaultAddTodo"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:FaultAddTodo\\": $args.FaultAddTodo } }"} selection:"$.Envelope.Body.FaultAddTodoResponse") TodoService_TodoService_BasicHttpBinding_ITodoService_FailGetTodo(FailGetTodo:JSON = ""):TodoService_FailGetTodoResponse @connect(source:"example1" http:{POST:"/TodoService/basichttp" headers:[{name:"SOAPAction" value:"http://tempuri.org/ITodoService/FailGetTodo"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body:FailGetTodo\\": $args.FailGetTodo } }"} selection:"$.Envelope.Body.FailGetTodoResponse")}
+input TodoService_UpdateFileClass_Input {cls:tns_FileClass_Input}
+input tns_FileClass_Input {Mode:tns_EntityMode ClassIntID:BigInt CreatedBy:String CreatedDtTm:DateTime FirmIntID:String LastUpdatedBy:String LastUpdatedDtTm:DateTime Name:String PeriodType:tns_PeriodType Retention:Int Timestamp:Byte}
+enum tns_EntityMode {New Deleted Changed Unchanged} """The \`BigInt\`
+scalar
+type represents non-fractional signed whole numeric values."""
+scalar BigInt """A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
 scalar DateTime
-
-enum tns_PeriodType {
-  Days
-  Weeks
-  Months
-  Years
-}
-
-"""The \`Byte\` scalar type represents byte value as a Buffer"""
+enum tns_PeriodType {Days Weeks Months Years} """The \`Byte\`
+scalar
+type represents byte value as a Buffer"""
 scalar Byte
+type TodoService_AddUpdateClassResponse {AddUpdateClassResult:Boolean}
+input TodoService_AddUpdateClass_Input {updateClass:tns_UpdateClass_Input}
+input tns_UpdateClass_Input {ClassIndId:String}
+type TodoService_AddTodoResponse {AddTodoResult:Boolean}
+input TodoService_AddTodo_Input {todo:tns_TodoMessage_Input}
+input tns_TodoMessage_Input {Author:tns_Name_Input Description:String}
+input tns_Name_Input {First:String Last:String Middle:String}
+type TodoService_FaultAddTodoResponse {FaultAddTodoResult:String}
+input TodoService_FaultAddTodo_Input {text:String}
+type TodoService_FailGetTodoResponse {FailGetTodoResult:String}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-type TodoService_AddUpdateClassResponse {
-  AddUpdateClassResult: Boolean
-}
-
-input TodoService_AddUpdateClass_Input {
-  updateClass: tns_UpdateClass_Input
-}
-
-input tns_UpdateClass_Input {
-  ClassIndId: String
-}
-
-type TodoService_AddTodoResponse {
-  AddTodoResult: Boolean
-}
-
-input TodoService_AddTodo_Input {
-  todo: tns_TodoMessage_Input
-}
-
-input tns_TodoMessage_Input {
-  Author: tns_Name_Input
-  Description: String
-}
-
-input tns_Name_Input {
-  First: String
-  Last: String
-  Middle: String
-}
-
-type TodoService_FaultAddTodoResponse {
-  FaultAddTodoResult: String
-}
-
-input TodoService_FaultAddTodo_Input {
-  text: String
-}
-
-type TodoService_FailGetTodoResponse {
-  FailGetTodoResult: String
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;
 
 exports[`Examples should generate schema for example2: example2 1`] = `
-"schema @source(name: "example2", http: {baseURL: "http://[::]", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-  mutation: Mutation
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetServiceHealth(GetServiceHealth: JSON = ""): tns_GetServiceHealthResponse @connect(source: "example2", http: {POST: "/AdminServiceType", headers: [{name: "SOAPAction", value: "http://tempuri.org/IPfxServiceHealth/GetServiceHealth"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body2\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body2:GetServiceHealth\\": $args.GetServiceHealth } }"}, selection: "$.Envelope.Body.GetServiceHealthResponse")
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetFileClassByClassID(GetFileClassByClassID: AdminServiceType_GetFileClassByClassID_Input): AdminServiceType_GetFileClassByClassIDResponse @connect(source: "example2", http: {POST: "/AdminServiceType", headers: [{name: "SOAPAction", value: "http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassID"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:GetFileClassByClassID\\": $args.GetFileClassByClassID } }"}, selection: "$.Envelope.Body.GetFileClassByClassIDResponse")
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetFileClassByClassIntIDCaasToMonolith(GetFileClassByClassIntIDCaasToMonolith: AdminServiceType_GetFileClassByClassIntIDCaasToMonolith_Input): AdminServiceType_GetFileClassByClassIntIDCaasToMonolithResponse @connect(source: "example2", http: {POST: "/AdminServiceType", headers: [{name: "SOAPAction", value: "http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIntIDCaasToMonolith"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:GetFileClassByClassIntIDCaasToMonolith\\": $args.GetFileClassByClassIntIDCaasToMonolith } }"}, selection: "$.Envelope.Body.GetFileClassByClassIntIDCaasToMonolithResponse")
-}
-
-type tns_GetServiceHealthResponse {
-  GetServiceHealthResult: tns_ServiceHealth
-}
-
-type tns_ServiceHealth {
-  IsHealthy: Boolean
-  UniqueValue: BigInt
-}
-
-"""
-The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
-
-"""
-The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
+schema @source(name:"example2" http:{baseURL:"http://[::]" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query mutation:Mutation}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetServiceHealth(GetServiceHealth:JSON = ""):tns_GetServiceHealthResponse @connect(source:"example2" http:{POST:"/AdminServiceType" headers:[{name:"SOAPAction" value:"http://tempuri.org/IPfxServiceHealth/GetServiceHealth"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body2\\": $(\\"http://tempuri.org/\\") } \\"soap:Body\\": { \\"body2:GetServiceHealth\\": $args.GetServiceHealth } }"} selection:"$.Envelope.Body.GetServiceHealthResponse") AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetFileClassByClassID(GetFileClassByClassID:AdminServiceType_GetFileClassByClassID_Input):AdminServiceType_GetFileClassByClassIDResponse @connect(source:"example2" http:{POST:"/AdminServiceType" headers:[{name:"SOAPAction" value:"http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassID"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:GetFileClassByClassID\\": $args.GetFileClassByClassID } }"} selection:"$.Envelope.Body.GetFileClassByClassIDResponse") AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetFileClassByClassIntIDCaasToMonolith(GetFileClassByClassIntIDCaasToMonolith:AdminServiceType_GetFileClassByClassIntIDCaasToMonolith_Input):AdminServiceType_GetFileClassByClassIntIDCaasToMonolithResponse @connect(source:"example2" http:{POST:"/AdminServiceType" headers:[{name:"SOAPAction" value:"http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIntIDCaasToMonolith"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:GetFileClassByClassIntIDCaasToMonolith\\": $args.GetFileClassByClassIntIDCaasToMonolith } }"} selection:"$.Envelope.Body.GetFileClassByClassIntIDCaasToMonolithResponse")}
+type tns_GetServiceHealthResponse {GetServiceHealthResult:tns_ServiceHealth}
+type tns_ServiceHealth {IsHealthy:Boolean UniqueValue:BigInt} """The \`BigInt\`
+scalar
+type represents non-fractional signed whole numeric values."""
+scalar BigInt """The \`JSON\`
+scalar
+type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."""
 scalar JSON
-
-type AdminServiceType_GetFileClassByClassIDResponse {
-  GetFileClassByClassIDResult: tns_FileClass
-}
-
-type tns_FileClass {
-  Mode: tns_EntityMode
-  ClassIntID: BigInt
-  CreatedBy: String
-  CreatedDtTm: DateTime
-  Entityclasses: tns_EntityClassList
-  FirmGuid: tns_guid
-  FirmIntID: BigInt
-  LastUpdatedBy: String
-  LastUpdatedDtTm: DateTime
-  Name: String
-  NeedANotification: Boolean
-  PeriodType: tns_PeriodType
-  PreventPublishFlg: Boolean
-  Retention: Int
-  RetentionChanged: String
-  Subclasses: tns_FileSubclassList
-  Timestamp: Byte
-}
-
-enum tns_EntityMode {
-  New
-  Deleted
-  Changed
-  Unchanged
-}
-
-"""
-A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
-"""
+type AdminServiceType_GetFileClassByClassIDResponse {GetFileClassByClassIDResult:tns_FileClass}
+type tns_FileClass {Mode:tns_EntityMode ClassIntID:BigInt CreatedBy:String CreatedDtTm:DateTime Entityclasses:tns_EntityClassList FirmGuid:tns_guid FirmIntID:BigInt LastUpdatedBy:String LastUpdatedDtTm:DateTime Name:String NeedANotification:Boolean PeriodType:tns_PeriodType PreventPublishFlg:Boolean Retention:Int RetentionChanged:String Subclasses:tns_FileSubclassList Timestamp:Byte}
+enum tns_EntityMode {New Deleted Changed Unchanged} """A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
 scalar DateTime
-
-type tns_EntityClassList {
-  EntityClass: [tns_EntityClass]
-}
-
-type tns_EntityClass {
-  Mode: tns_EntityMode
-  ClassIntID: BigInt
-  EntityClassIntID: BigInt
-  EntityIntID: BigInt
-  EntityType: tns_EntityType
-  FirmIntID: BigInt
-}
-
-enum tns_EntityType {
-  Firm
-  Office
-  Staff
-  StaffList
-  BusinessUnit
-  Client
-  ClientList
-  DocumentEntityType
-  OtherClient
-  ClientOtherEntity
-  OfficeBusinessUnit
-  NonClient
-  NonClientList
-}
-
-"""
-A field whose value matches /[\\da-fA-F]{8}-[\\da-fA-F]{4}-[\\da-fA-F]{4}-[\\da-fA-F]{4}-[\\da-fA-F]{12}/.
-"""
+type tns_EntityClassList {EntityClass:[tns_EntityClass]}
+type tns_EntityClass {Mode:tns_EntityMode ClassIntID:BigInt EntityClassIntID:BigInt EntityIntID:BigInt EntityType:tns_EntityType FirmIntID:BigInt}
+enum tns_EntityType {Firm Office Staff StaffList BusinessUnit Client ClientList DocumentEntityType OtherClient ClientOtherEntity OfficeBusinessUnit NonClient NonClientList} """A field whose value matches /[\\da-fA-F]{8}-[\\da-fA-F]{4}-[\\da-fA-F]{4}-[\\da-fA-F]{4}-[\\da-fA-F]{12}/."""
 scalar tns_guid
-
-enum tns_PeriodType {
-  Days
-  Weeks
-  Months
-  Years
-}
-
-type tns_FileSubclassList {
-  FileSubclass: [tns_FileSubclass]
-}
-
-type tns_FileSubclass {
-  Mode: tns_EntityMode
-  ClassIntID: BigInt
-  CreatedBy: String
-  CreatedDtTm: DateTime
-  EffectivePeriodType: tns_PeriodType
-  EffectiveRetention: Int
-  LastUpdatedBy: String
-  LastUpdatedDtTm: DateTime
-  Name: String
-  PeriodType: tns_PeriodType
-  Permanent: Boolean
-  Retention: Int
-  RetentionChanged: String
-  SubClassIntID: BigInt
-  Timestamp: Byte
-}
-
-"""The \`Byte\` scalar type represents byte value as a Buffer"""
+enum tns_PeriodType {Days Weeks Months Years}
+type tns_FileSubclassList {FileSubclass:[tns_FileSubclass]}
+type tns_FileSubclass {Mode:tns_EntityMode ClassIntID:BigInt CreatedBy:String CreatedDtTm:DateTime EffectivePeriodType:tns_PeriodType EffectiveRetention:Int LastUpdatedBy:String LastUpdatedDtTm:DateTime Name:String PeriodType:tns_PeriodType Permanent:Boolean Retention:Int RetentionChanged:String SubClassIntID:BigInt Timestamp:Byte} """The \`Byte\`
+scalar
+type represents byte value as a Buffer"""
 scalar Byte
+input AdminServiceType_GetFileClassByClassID_Input {classIntID:BigInt}
+type AdminServiceType_GetFileClassByClassIntIDCaasToMonolithResponse {GetFileClassByClassIntIDCaasToMonolithResult:tns_FileClass}
+input AdminServiceType_GetFileClassByClassIntIDCaasToMonolith_Input {classIntID:BigInt}
+type Mutation {AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_CreateFileClass(CreateFileClass:AdminServiceType_CreateFileClass_Input):AdminServiceType_CreateFileClassResponse @connect(source:"example2" http:{POST:"/AdminServiceType" headers:[{name:"SOAPAction" value:"http://Pfx.Net/Document/IAdminService/IAdminService/CreateFileClass"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:CreateFileClass\\": $args.CreateFileClass } }"} selection:"$.Envelope.Body.CreateFileClassResponse") AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_UpdateFileClass(UpdateFileClass:AdminServiceType_UpdateFileClass_Input):JSON @connect(source:"example2" http:{POST:"/AdminServiceType" headers:[{name:"SOAPAction" value:"http://Pfx.Net/Document/IAdminService/IAdminService/UpdateFileClass"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:UpdateFileClass\\": $args.UpdateFileClass } }"} selection:"$.Envelope.Body.UpdateFileClassResponse") AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_DeleteFileClass(DeleteFileClass:AdminServiceType_DeleteFileClass_Input):JSON @connect(source:"example2" http:{POST:"/AdminServiceType" headers:[{name:"SOAPAction" value:"http://Pfx.Net/Document/IAdminService/IAdminService/DeleteFileClass"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:DeleteFileClass\\": $args.DeleteFileClass } }"} selection:"$.Envelope.Body.DeleteFileClassResponse") AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_DeleteEntityClass(DeleteEntityClass:AdminServiceType_DeleteEntityClass_Input):JSON @connect(source:"example2" http:{POST:"/AdminServiceType" headers:[{name:"SOAPAction" value:"http://Pfx.Net/Document/IAdminService/IAdminService/DeleteEntityClass"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:DeleteEntityClass\\": $args.DeleteEntityClass } }"} selection:"$.Envelope.Body.DeleteEntityClassResponse")}
+type AdminServiceType_CreateFileClassResponse {CreateFileClassResult:BigInt}
+input AdminServiceType_CreateFileClass_Input {classData:tns_FileClass_Input}
+input tns_FileClass_Input {Mode:tns_EntityMode ClassIntID:BigInt CreatedBy:String CreatedDtTm:DateTime Entityclasses:tns_EntityClassList_Input FirmGuid:tns_guid FirmIntID:BigInt LastUpdatedBy:String LastUpdatedDtTm:DateTime Name:String NeedANotification:Boolean PeriodType:tns_PeriodType PreventPublishFlg:Boolean Retention:Int RetentionChanged:String Subclasses:tns_FileSubclassList_Input Timestamp:Byte}
+input tns_EntityClassList_Input {EntityClass:[tns_EntityClass_Input]}
+input tns_EntityClass_Input {Mode:tns_EntityMode ClassIntID:BigInt EntityClassIntID:BigInt EntityIntID:BigInt EntityType:tns_EntityType FirmIntID:BigInt}
+input tns_FileSubclassList_Input {FileSubclass:[tns_FileSubclass_Input]}
+input tns_FileSubclass_Input {Mode:tns_EntityMode ClassIntID:BigInt CreatedBy:String CreatedDtTm:DateTime EffectivePeriodType:tns_PeriodType EffectiveRetention:Int LastUpdatedBy:String LastUpdatedDtTm:DateTime Name:String PeriodType:tns_PeriodType Permanent:Boolean Retention:Int RetentionChanged:String SubClassIntID:BigInt Timestamp:Byte}
+input AdminServiceType_UpdateFileClass_Input {classData:tns_FileClass_Input}
+input AdminServiceType_DeleteFileClass_Input {classIntID:BigInt timestamp:Byte}
+input AdminServiceType_DeleteEntityClass_Input {entityclassIntID:BigInt}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-input AdminServiceType_GetFileClassByClassID_Input {
-  classIntID: BigInt
-}
-
-type AdminServiceType_GetFileClassByClassIntIDCaasToMonolithResponse {
-  GetFileClassByClassIntIDCaasToMonolithResult: tns_FileClass
-}
-
-input AdminServiceType_GetFileClassByClassIntIDCaasToMonolith_Input {
-  classIntID: BigInt
-}
-
-type Mutation {
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_CreateFileClass(CreateFileClass: AdminServiceType_CreateFileClass_Input): AdminServiceType_CreateFileClassResponse @connect(source: "example2", http: {POST: "/AdminServiceType", headers: [{name: "SOAPAction", value: "http://Pfx.Net/Document/IAdminService/IAdminService/CreateFileClass"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:CreateFileClass\\": $args.CreateFileClass } }"}, selection: "$.Envelope.Body.CreateFileClassResponse")
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_UpdateFileClass(UpdateFileClass: AdminServiceType_UpdateFileClass_Input): JSON @connect(source: "example2", http: {POST: "/AdminServiceType", headers: [{name: "SOAPAction", value: "http://Pfx.Net/Document/IAdminService/IAdminService/UpdateFileClass"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:UpdateFileClass\\": $args.UpdateFileClass } }"}, selection: "$.Envelope.Body.UpdateFileClassResponse")
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_DeleteFileClass(DeleteFileClass: AdminServiceType_DeleteFileClass_Input): JSON @connect(source: "example2", http: {POST: "/AdminServiceType", headers: [{name: "SOAPAction", value: "http://Pfx.Net/Document/IAdminService/IAdminService/DeleteFileClass"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:DeleteFileClass\\": $args.DeleteFileClass } }"}, selection: "$.Envelope.Body.DeleteFileClassResponse")
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_DeleteEntityClass(DeleteEntityClass: AdminServiceType_DeleteEntityClass_Input): JSON @connect(source: "example2", http: {POST: "/AdminServiceType", headers: [{name: "SOAPAction", value: "http://Pfx.Net/Document/IAdminService/IAdminService/DeleteEntityClass"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"http://Pfx.Net/Document/IAdminService\\") } \\"soap:Body\\": { \\"body:DeleteEntityClass\\": $args.DeleteEntityClass } }"}, selection: "$.Envelope.Body.DeleteEntityClassResponse")
-}
-
-type AdminServiceType_CreateFileClassResponse {
-  CreateFileClassResult: BigInt
-}
-
-input AdminServiceType_CreateFileClass_Input {
-  classData: tns_FileClass_Input
-}
-
-input tns_FileClass_Input {
-  Mode: tns_EntityMode
-  ClassIntID: BigInt
-  CreatedBy: String
-  CreatedDtTm: DateTime
-  Entityclasses: tns_EntityClassList_Input
-  FirmGuid: tns_guid
-  FirmIntID: BigInt
-  LastUpdatedBy: String
-  LastUpdatedDtTm: DateTime
-  Name: String
-  NeedANotification: Boolean
-  PeriodType: tns_PeriodType
-  PreventPublishFlg: Boolean
-  Retention: Int
-  RetentionChanged: String
-  Subclasses: tns_FileSubclassList_Input
-  Timestamp: Byte
-}
-
-input tns_EntityClassList_Input {
-  EntityClass: [tns_EntityClass_Input]
-}
-
-input tns_EntityClass_Input {
-  Mode: tns_EntityMode
-  ClassIntID: BigInt
-  EntityClassIntID: BigInt
-  EntityIntID: BigInt
-  EntityType: tns_EntityType
-  FirmIntID: BigInt
-}
-
-input tns_FileSubclassList_Input {
-  FileSubclass: [tns_FileSubclass_Input]
-}
-
-input tns_FileSubclass_Input {
-  Mode: tns_EntityMode
-  ClassIntID: BigInt
-  CreatedBy: String
-  CreatedDtTm: DateTime
-  EffectivePeriodType: tns_PeriodType
-  EffectiveRetention: Int
-  LastUpdatedBy: String
-  LastUpdatedDtTm: DateTime
-  Name: String
-  PeriodType: tns_PeriodType
-  Permanent: Boolean
-  Retention: Int
-  RetentionChanged: String
-  SubClassIntID: BigInt
-  Timestamp: Byte
-}
-
-input AdminServiceType_UpdateFileClass_Input {
-  classData: tns_FileClass_Input
-}
-
-input AdminServiceType_DeleteFileClass_Input {
-  classIntID: BigInt
-  timestamp: Byte
-}
-
-input AdminServiceType_DeleteEntityClass_Input {
-  entityclassIntID: BigInt
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;
 
 exports[`Examples should generate schema for forward-ref-elements: forward-ref-elements 1`] = `
-"schema @source(name: "forward-ref-elements", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-  mutation: Mutation
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  placeholder: Void
-}
-
-"""Represents NULL values"""
+schema @source(name:"forward-ref-elements" http:{baseURL:"http://example.com" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query mutation:Mutation}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {placeholder:Void} """Represents NULL values"""
 scalar Void
+type Mutation {ForwardRefService_ForwardRefService_ForwardRefPort_doWork(DoWork:ForwardRefService_DoWork_Input):ForwardRefService_DoWorkResponse @connect(source:"forward-ref-elements" http:{POST:"/forward-ref" headers:[{name:"SOAPAction" value:"doWork"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"urn:forward-ref-service\\") } \\"soap:Body\\": { \\"body:DoWork\\": $args.DoWork } }"} selection:"$.Envelope.Body.DoWorkResponse")}
+type ForwardRefService_DoWorkResponse {result:String}
+input ForwardRefService_DoWork_Input {request:undefined_ServiceRequest_Input}
+input undefined_ServiceRequest_Input {id:String}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-type Mutation {
-  ForwardRefService_ForwardRefService_ForwardRefPort_doWork(DoWork: ForwardRefService_DoWork_Input): ForwardRefService_DoWorkResponse @connect(source: "forward-ref-elements", http: {POST: "/forward-ref", headers: [{name: "SOAPAction", value: "doWork"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"urn:forward-ref-service\\") } \\"soap:Body\\": { \\"body:DoWork\\": $args.DoWork } }"}, selection: "$.Envelope.Body.DoWorkResponse")
-}
-
-type ForwardRefService_DoWorkResponse {
-  result: String
-}
-
-input ForwardRefService_DoWork_Input {
-  request: undefined_ServiceRequest_Input
-}
-
-input undefined_ServiceRequest_Input {
-  id: String
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;
 
 exports[`Examples should generate schema for greeting: greeting 1`] = `
-"schema @source(name: "greeting", http: {baseURL: "https://www.dataaccess.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-  mutation: Mutation
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  placeholder: Void
-}
-
-"""Represents NULL values"""
+schema @source(name:"greeting" http:{baseURL:"https://www.dataaccess.com" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query mutation:Mutation}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {placeholder:Void} """Represents NULL values"""
 scalar Void
-
-type Mutation {
-  NumberConversion_NumberConversion_NumberConversionSoap_NumberToWords(NumberToWords: NumberConversion_NumberToWords_Input): NumberConversion_NumberToWordsResponse @connect(source: "greeting", http: {POST: "/webservicesserver/NumberConversion.wso", body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://www.dataaccess.com/webservicesserver/\\") } \\"soap:Body\\": { \\"body:NumberToWords\\": $args.NumberToWords } }"}, selection: "$.Envelope.Body.NumberToWordsResponse")
-  NumberConversion_NumberConversion_NumberConversionSoap_NumberToDollars(NumberToDollars: NumberConversion_NumberToDollars_Input): NumberConversion_NumberToDollarsResponse @connect(source: "greeting", http: {POST: "/webservicesserver/NumberConversion.wso", body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://www.dataaccess.com/webservicesserver/\\") } \\"soap:Body\\": { \\"body:NumberToDollars\\": $args.NumberToDollars } }"}, selection: "$.Envelope.Body.NumberToDollarsResponse")
-}
-
-type NumberConversion_NumberToWordsResponse {
-  NumberToWordsResult: String
-}
-
-input NumberConversion_NumberToWords_Input {
-  ubiNum: BigInt
-}
-
-"""
-The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
-"""
+type Mutation {NumberConversion_NumberConversion_NumberConversionSoap_NumberToWords(NumberToWords:NumberConversion_NumberToWords_Input):NumberConversion_NumberToWordsResponse @connect(source:"greeting" http:{POST:"/webservicesserver/NumberConversion.wso" body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://www.dataaccess.com/webservicesserver/\\") } \\"soap:Body\\": { \\"body:NumberToWords\\": $args.NumberToWords } }"} selection:"$.Envelope.Body.NumberToWordsResponse") NumberConversion_NumberConversion_NumberConversionSoap_NumberToDollars(NumberToDollars:NumberConversion_NumberToDollars_Input):NumberConversion_NumberToDollarsResponse @connect(source:"greeting" http:{POST:"/webservicesserver/NumberConversion.wso" body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://www.dataaccess.com/webservicesserver/\\") } \\"soap:Body\\": { \\"body:NumberToDollars\\": $args.NumberToDollars } }"} selection:"$.Envelope.Body.NumberToDollarsResponse")}
+type NumberConversion_NumberToWordsResponse {NumberToWordsResult:String}
+input NumberConversion_NumberToWords_Input {ubiNum:BigInt} """The \`BigInt\`
+scalar
+type represents non-fractional signed whole numeric values."""
 scalar BigInt
+type NumberConversion_NumberToDollarsResponse {NumberToDollarsResult:String}
+input NumberConversion_NumberToDollars_Input {dNum:Float}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-type NumberConversion_NumberToDollarsResponse {
-  NumberToDollarsResult: String
-}
-
-input NumberConversion_NumberToDollars_Input {
-  dNum: Float
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;
 
 exports[`Examples should generate schema for illegal-gql-names: illegal-gql-names 1`] = `
-"schema @source(name: "illegal-gql-names", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-}
+schema @source(name:"illegal-gql-names" http:{baseURL:"http://example.com" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {IllegalGqlNames_IllegalGqlNames_IllegalGqlNamesSoap_GetState(GetState:IllegalGqlNames_GetState_Input):IllegalGqlNames_GetStateResponse @connect(source:"illegal-gql-names" http:{POST:"/illegal-gql-names/soap" body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/illegal-gql-names/\\") } \\"soap:Body\\": { \\"body:GetState\\": $args.GetState } }"} selection:"$.Envelope.Body.GetStateResponse")}
+type IllegalGqlNames_GetStateResponse {result:IllegalGqlNames_X721_Type extended:IllegalGqlNames_Extended_Type}
+type IllegalGqlNames_X721_Type {code:String}
+type IllegalGqlNames_Extended_Type {code:String extra_field:String}
+input IllegalGqlNames_GetState_Input {input:IllegalGqlNames_My_ComplexType_Input}
+input IllegalGqlNames_My_ComplexType_Input {state:IllegalGqlNames_X721_Type_Input response_data:String}
+input IllegalGqlNames_X721_Type_Input {code:String}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  IllegalGqlNames_IllegalGqlNames_IllegalGqlNamesSoap_GetState(GetState: IllegalGqlNames_GetState_Input): IllegalGqlNames_GetStateResponse @connect(source: "illegal-gql-names", http: {POST: "/illegal-gql-names/soap", body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/illegal-gql-names/\\") } \\"soap:Body\\": { \\"body:GetState\\": $args.GetState } }"}, selection: "$.Envelope.Body.GetStateResponse")
-}
-
-type IllegalGqlNames_GetStateResponse {
-  result: IllegalGqlNames_X721_Type
-  extended: IllegalGqlNames_Extended_Type
-}
-
-type IllegalGqlNames_X721_Type {
-  code: String
-}
-
-type IllegalGqlNames_Extended_Type {
-  code: String
-  extra_field: String
-}
-
-input IllegalGqlNames_GetState_Input {
-  input: IllegalGqlNames_My_ComplexType_Input
-}
-
-input IllegalGqlNames_My_ComplexType_Input {
-  state: IllegalGqlNames_X721_Type_Input
-  response_data: String
-}
-
-input IllegalGqlNames_X721_Type_Input {
-  code: String
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;
 
 exports[`Examples should generate schema for inline-type-collision: inline-type-collision 1`] = `
-"schema @source(name: "inline-type-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-}
+schema @source(name:"inline-type-collision" http:{baseURL:"http://example.com" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {InlineTypeCollision_CollisionService_CollisionPort_getA(GetA:InlineTypeCollision_GetA_Input):InlineTypeCollision_GetAResponse @connect(source:"inline-type-collision" http:{POST:"/collision" headers:[{name:"SOAPAction" value:"getA"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/inline-collision\\") } \\"soap:Body\\": { \\"body:GetA\\": $args.GetA } }"} selection:"$.Envelope.Body.GetAResponse") InlineTypeCollision_CollisionService_CollisionPort_getB(GetB:InlineTypeCollision_GetB_Input):InlineTypeCollision_GetBResponse @connect(source:"inline-type-collision" http:{POST:"/collision" headers:[{name:"SOAPAction" value:"getB"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/inline-collision\\") } \\"soap:Body\\": { \\"body:GetB\\": $args.GetB } }"} selection:"$.Envelope.Body.GetBResponse")}
+type InlineTypeCollision_GetAResponse {result:InlineTypeCollision_TypeA}
+type InlineTypeCollision_TypeA {details:InlineTypeCollision_TypeA_details}
+type InlineTypeCollision_TypeA_details {valueA:String}
+input InlineTypeCollision_GetA_Input {input:InlineTypeCollision_TypeA_Input}
+input InlineTypeCollision_TypeA_Input {details:InlineTypeCollision_TypeA_details_Input}
+input InlineTypeCollision_TypeA_details_Input {valueA:String}
+type InlineTypeCollision_GetBResponse {result:InlineTypeCollision_TypeB}
+type InlineTypeCollision_TypeB {details:InlineTypeCollision_TypeB_details}
+type InlineTypeCollision_TypeB_details {valueB:Int}
+input InlineTypeCollision_GetB_Input {input:InlineTypeCollision_TypeB_Input}
+input InlineTypeCollision_TypeB_Input {details:InlineTypeCollision_TypeB_details_Input}
+input InlineTypeCollision_TypeB_details_Input {valueB:Int}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  InlineTypeCollision_CollisionService_CollisionPort_getA(GetA: InlineTypeCollision_GetA_Input): InlineTypeCollision_GetAResponse @connect(source: "inline-type-collision", http: {POST: "/collision", headers: [{name: "SOAPAction", value: "getA"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/inline-collision\\") } \\"soap:Body\\": { \\"body:GetA\\": $args.GetA } }"}, selection: "$.Envelope.Body.GetAResponse")
-  InlineTypeCollision_CollisionService_CollisionPort_getB(GetB: InlineTypeCollision_GetB_Input): InlineTypeCollision_GetBResponse @connect(source: "inline-type-collision", http: {POST: "/collision", headers: [{name: "SOAPAction", value: "getB"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/inline-collision\\") } \\"soap:Body\\": { \\"body:GetB\\": $args.GetB } }"}, selection: "$.Envelope.Body.GetBResponse")
-}
-
-type InlineTypeCollision_GetAResponse {
-  result: InlineTypeCollision_TypeA
-}
-
-type InlineTypeCollision_TypeA {
-  details: InlineTypeCollision_TypeA_details
-}
-
-type InlineTypeCollision_TypeA_details {
-  valueA: String
-}
-
-input InlineTypeCollision_GetA_Input {
-  input: InlineTypeCollision_TypeA_Input
-}
-
-input InlineTypeCollision_TypeA_Input {
-  details: InlineTypeCollision_TypeA_details_Input
-}
-
-input InlineTypeCollision_TypeA_details_Input {
-  valueA: String
-}
-
-type InlineTypeCollision_GetBResponse {
-  result: InlineTypeCollision_TypeB
-}
-
-type InlineTypeCollision_TypeB {
-  details: InlineTypeCollision_TypeB_details
-}
-
-type InlineTypeCollision_TypeB_details {
-  valueB: Int
-}
-
-input InlineTypeCollision_GetB_Input {
-  input: InlineTypeCollision_TypeB_Input
-}
-
-input InlineTypeCollision_TypeB_Input {
-  details: InlineTypeCollision_TypeB_details_Input
-}
-
-input InlineTypeCollision_TypeB_details_Input {
-  valueB: Int
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;
 
 exports[`Examples should generate schema for prefix-collision: prefix-collision 1`] = `
-"schema @source(name: "prefix-collision", http: {baseURL: "http://example.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-}
+schema @source(name:"prefix-collision" http:{baseURL:"http://example.com" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {PrefixCollision_ItemsService_ItemsPort_getNs1Items(GetNs1Items:PrefixCollision_GetNs1Items_Input):PrefixCollision_GetNs1ItemsResponse @connect(source:"prefix-collision" http:{POST:"/items" headers:[{name:"SOAPAction" value:"getNs1Items"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/service\\") } \\"soap:Body\\": { \\"body:GetNs1Items\\": $args.GetNs1Items } }"} selection:"$.Envelope.Body.GetNs1ItemsResponse") PrefixCollision_ItemsService_ItemsPort_getNs2Items(GetNs2Items:PrefixCollision_GetNs2Items_Input):PrefixCollision_GetNs2ItemsResponse @connect(source:"prefix-collision" http:{POST:"/items" headers:[{name:"SOAPAction" value:"getNs2Items"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/service\\") } \\"soap:Body\\": { \\"body:GetNs2Items\\": $args.GetNs2Items } }"} selection:"$.Envelope.Body.GetNs2ItemsResponse")}
+type PrefixCollision_GetNs1ItemsResponse {item:[tns_Item]}
+type tns_Item {id:String label:String}
+input PrefixCollision_GetNs1Items_Input {filter:String}
+type PrefixCollision_GetNs2ItemsResponse {item:[example_com_ns2_Item]}
+type example_com_ns2_Item {code:Int description:String}
+input PrefixCollision_GetNs2Items_Input {filter:String}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  PrefixCollision_ItemsService_ItemsPort_getNs1Items(GetNs1Items: PrefixCollision_GetNs1Items_Input): PrefixCollision_GetNs1ItemsResponse @connect(source: "prefix-collision", http: {POST: "/items", headers: [{name: "SOAPAction", value: "getNs1Items"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/service\\") } \\"soap:Body\\": { \\"body:GetNs1Items\\": $args.GetNs1Items } }"}, selection: "$.Envelope.Body.GetNs1ItemsResponse")
-  PrefixCollision_ItemsService_ItemsPort_getNs2Items(GetNs2Items: PrefixCollision_GetNs2Items_Input): PrefixCollision_GetNs2ItemsResponse @connect(source: "prefix-collision", http: {POST: "/items", headers: [{name: "SOAPAction", value: "getNs2Items"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://schemas.xmlsoap.org/soap/envelope/\\") \\"xmlns:body\\": $(\\"http://example.com/service\\") } \\"soap:Body\\": { \\"body:GetNs2Items\\": $args.GetNs2Items } }"}, selection: "$.Envelope.Body.GetNs2ItemsResponse")
-}
-
-type PrefixCollision_GetNs1ItemsResponse {
-  item: [tns_Item]
-}
-
-type tns_Item {
-  id: String
-  label: String
-}
-
-input PrefixCollision_GetNs1Items_Input {
-  filter: String
-}
-
-type PrefixCollision_GetNs2ItemsResponse {
-  item: [example_com_ns2_Item]
-}
-
-type example_com_ns2_Item {
-  code: Int
-  description: String
-}
-
-input PrefixCollision_GetNs2Items_Input {
-  filter: String
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;
 
 exports[`Examples should generate schema for tempconvert: tempconvert 1`] = `
-"schema @source(name: "tempconvert", http: {baseURL: "http://www.w3schools.com", headers: [{name: "Content-Type", value: "text/xml; charset=utf-8"}]}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-  mutation: Mutation
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  placeholder: Void
-}
-
-"""Represents NULL values"""
+schema @source(name:"tempconvert" http:{baseURL:"http://www.w3schools.com" headers:[{name:"Content-Type" value:"text/xml; charset=utf-8"}]}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query mutation:Mutation}
+directive @connect(source:String http:ConnectHTTP selection:String! entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP!) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {placeholder:Void} """Represents NULL values"""
 scalar Void
+type Mutation {tns_TempConvert_TempConvertSoap_FahrenheitToCelsius(FahrenheitToCelsius:tns_FahrenheitToCelsius_Input):tns_FahrenheitToCelsiusResponse @connect(source:"tempconvert" http:{POST:"/xml/tempconvert.asmx" headers:[{name:"SOAPAction" value:"https://www.w3schools.com/xml/FahrenheitToCelsius"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:FahrenheitToCelsius\\": $args.FahrenheitToCelsius } }"} selection:"$.Envelope.Body.FahrenheitToCelsiusResponse") tns_TempConvert_TempConvertSoap_CelsiusToFahrenheit(CelsiusToFahrenheit:tns_CelsiusToFahrenheit_Input):tns_CelsiusToFahrenheitResponse @connect(source:"tempconvert" http:{POST:"/xml/tempconvert.asmx" headers:[{name:"SOAPAction" value:"https://www.w3schools.com/xml/CelsiusToFahrenheit"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:CelsiusToFahrenheit\\": $args.CelsiusToFahrenheit } }"} selection:"$.Envelope.Body.CelsiusToFahrenheitResponse") tns_TempConvert_TempConvertSoap12_FahrenheitToCelsius(FahrenheitToCelsius:tns_FahrenheitToCelsius_Input):tns_FahrenheitToCelsiusResponse @connect(source:"tempconvert" http:{POST:"/xml/tempconvert.asmx" headers:[{name:"SOAPAction" value:"https://www.w3schools.com/xml/FahrenheitToCelsius"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:FahrenheitToCelsius\\": $args.FahrenheitToCelsius } }"} selection:"$.Envelope.Body.FahrenheitToCelsiusResponse") tns_TempConvert_TempConvertSoap12_CelsiusToFahrenheit(CelsiusToFahrenheit:tns_CelsiusToFahrenheit_Input):tns_CelsiusToFahrenheitResponse @connect(source:"tempconvert" http:{POST:"/xml/tempconvert.asmx" headers:[{name:"SOAPAction" value:"https://www.w3schools.com/xml/CelsiusToFahrenheit"}] body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:CelsiusToFahrenheit\\": $args.CelsiusToFahrenheit } }"} selection:"$.Envelope.Body.CelsiusToFahrenheitResponse") tns_TempConvert_TempConvertHttpPost_FahrenheitToCelsius(Fahrenheit:String = ""):String @connect(source:"tempconvert" http:{POST:"/xml/tempconvert.asmx" body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:Fahrenheit\\": $args.Fahrenheit } }"} selection:"$.Envelope.Body.string") tns_TempConvert_TempConvertHttpPost_CelsiusToFahrenheit(Celsius:String = ""):String @connect(source:"tempconvert" http:{POST:"/xml/tempconvert.asmx" body:"\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:Celsius\\": $args.Celsius } }"} selection:"$.Envelope.Body.string")}
+type tns_FahrenheitToCelsiusResponse {FahrenheitToCelsiusResult:String}
+input tns_FahrenheitToCelsius_Input {Fahrenheit:String}
+type tns_CelsiusToFahrenheitResponse {CelsiusToFahrenheitResult:String}
+input tns_CelsiusToFahrenheit_Input {Celsius:String}
+input ConnectHTTP {GET:String HEAD:String POST:String PUT:String PATCH:String DELETE:String headers:[HTTPHeaderMapping!] body:String queryParams:String}
+input HTTPHeaderMapping {name:String! value:String from:String}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:String}
 
-type Mutation {
-  tns_TempConvert_TempConvertSoap_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse @connect(source: "tempconvert", http: {POST: "/xml/tempconvert.asmx", headers: [{name: "SOAPAction", value: "https://www.w3schools.com/xml/FahrenheitToCelsius"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:FahrenheitToCelsius\\": $args.FahrenheitToCelsius } }"}, selection: "$.Envelope.Body.FahrenheitToCelsiusResponse")
-  tns_TempConvert_TempConvertSoap_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse @connect(source: "tempconvert", http: {POST: "/xml/tempconvert.asmx", headers: [{name: "SOAPAction", value: "https://www.w3schools.com/xml/CelsiusToFahrenheit"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:CelsiusToFahrenheit\\": $args.CelsiusToFahrenheit } }"}, selection: "$.Envelope.Body.CelsiusToFahrenheitResponse")
-  tns_TempConvert_TempConvertSoap12_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse @connect(source: "tempconvert", http: {POST: "/xml/tempconvert.asmx", headers: [{name: "SOAPAction", value: "https://www.w3schools.com/xml/FahrenheitToCelsius"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:FahrenheitToCelsius\\": $args.FahrenheitToCelsius } }"}, selection: "$.Envelope.Body.FahrenheitToCelsiusResponse")
-  tns_TempConvert_TempConvertSoap12_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse @connect(source: "tempconvert", http: {POST: "/xml/tempconvert.asmx", headers: [{name: "SOAPAction", value: "https://www.w3schools.com/xml/CelsiusToFahrenheit"}], body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:CelsiusToFahrenheit\\": $args.CelsiusToFahrenheit } }"}, selection: "$.Envelope.Body.CelsiusToFahrenheitResponse")
-  tns_TempConvert_TempConvertHttpPost_FahrenheitToCelsius(Fahrenheit: String = ""): String @connect(source: "tempconvert", http: {POST: "/xml/tempconvert.asmx", body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:Fahrenheit\\": $args.Fahrenheit } }"}, selection: "$.Envelope.Body.string")
-  tns_TempConvert_TempConvertHttpPost_CelsiusToFahrenheit(Celsius: String = ""): String @connect(source: "tempconvert", http: {POST: "/xml/tempconvert.asmx", body: "\\"soap:Envelope\\": { attributes: { \\"xmlns:soap\\": $(\\"http://www.w3.org/2003/05/soap-envelope\\") \\"xmlns:body\\": $(\\"https://www.w3schools.com/xml/\\") } \\"soap:Body\\": { \\"body:Celsius\\": $args.Celsius } }"}, selection: "$.Envelope.Body.string")
-}
-
-type tns_FahrenheitToCelsiusResponse {
-  FahrenheitToCelsiusResult: String
-}
-
-input tns_FahrenheitToCelsius_Input {
-  Fahrenheit: String
-}
-
-type tns_CelsiusToFahrenheitResponse {
-  CelsiusToFahrenheitResult: String
-}
-
-input tns_CelsiusToFahrenheit_Input {
-  Celsius: String
-}
-
-input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-}"
 `;

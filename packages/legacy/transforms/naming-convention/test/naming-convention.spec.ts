@@ -351,9 +351,17 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(fieldUsersByType.args).toBeDefined();
     const userTypeArg = fieldUsersByType.args[0];
     expect(userTypeArg).toBeDefined();
-    expect(userTypeArg.defaultValue).toBeDefined();
-    expect(userTypeArg.defaultValue).not.toBeNull();
-    expect(userTypeArg.defaultValue).toBe('NEWBIE');
+    // GraphQL 16: defaultValue string; GraphQL 17: default.literal EnumValue
+    const gql17Default = (
+      userTypeArg as unknown as { default?: { literal?: { kind: string; value: string } } }
+    ).default;
+    const enumDefault =
+      typeof userTypeArg.defaultValue === 'string'
+        ? userTypeArg.defaultValue
+        : gql17Default?.literal?.kind === 'EnumValue'
+          ? gql17Default.literal.value
+          : undefined;
+    expect(enumDefault).toBe('NEWBIE');
   });
 
   it('should resolves the data of a renamed fields correctly when arguments did not changed', async () => {
@@ -415,5 +423,63 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(data.cartGetCart).toBeDefined();
     expect(data.cartGetCart).not.toBeNull();
     expect(data.cartGetCart.id).toBe('asdf');
+  });
+
+  it('should preserve Apollo Connectors ConnectHTTP type and HTTP method fields', () => {
+    const connectSchema = buildSchema(/* GraphQL */ `
+      scalar JSONSelection
+      scalar URLPathTemplate
+
+      input HTTPHeaderMapping {
+        name: String!
+        value: String
+        from: String
+      }
+
+      input ConnectHTTP {
+        GET: URLPathTemplate
+        POST: URLPathTemplate
+        PUT: URLPathTemplate
+        headers: [HTTPHeaderMapping!]
+        body: JSONSelection
+      }
+
+      directive @connect(http: ConnectHTTP, selection: JSONSelection!) on FIELD_DEFINITION
+
+      type Query {
+        me: String @connect(http: { GET: "/me" }, selection: "id")
+      }
+    `);
+
+    const newSchema = transformSchema(
+      connectSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          typeNames: 'pascalCase',
+          fieldNames: 'camelCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+
+    expect(newSchema.getType('ConnectHTTP')).toBeDefined();
+    expect(newSchema.getType('ConnectHttp')).toBeUndefined();
+    expect(newSchema.getType('HTTPHeaderMapping')).toBeDefined();
+    expect(newSchema.getType('JSONSelection')).toBeDefined();
+    expect(newSchema.getType('URLPathTemplate')).toBeDefined();
+
+    const connectHttp = newSchema.getType(
+      'ConnectHTTP',
+    ) as import('graphql').GraphQLInputObjectType;
+    expect(Object.keys(connectHttp.getFields())).toEqual(
+      expect.arrayContaining(['GET', 'POST', 'PUT', 'headers', 'body']),
+    );
+    expect(connectHttp.getFields().get).toBeUndefined();
   });
 });

@@ -11,10 +11,16 @@ import type {
   GraphQLSchema,
   GraphQLUnionType,
 } from 'graphql';
-import { defaultFieldResolver, getNamedType, isEnumType, isInputObjectType, Kind } from 'graphql';
+import { defaultFieldResolver, getNamedType, isEnumType, isInputObjectType } from 'graphql';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
-import { IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES, NAMING_CONVENTIONS } from './shared.js';
+import {
+  hasRewritableEnumDefaultForType,
+  IGNORED_ROOT_FIELD_NAMES,
+  IGNORED_TYPE_NAMES,
+  NAMING_CONVENTIONS,
+  withRenamedEnumDefaultsForType,
+} from './shared.js';
 
 export declare type GraphQLTypePointer =
   | GraphQLList<GraphQLOutputType>
@@ -123,17 +129,17 @@ export default class NamingConventionTransform implements MeshTransform {
       }),
       ...(this.config.enumValues && {
         [MapperKind.ARGUMENT]: config => {
-          const shouldRenameEnumDefaultValue =
-            this.config.enumValues &&
-            config.astNode?.defaultValue?.kind === Kind.ENUM &&
-            typeof config.defaultValue === 'string' &&
-            config.defaultValue;
-          if (shouldRenameEnumDefaultValue) {
-            const applyNamingConvention = NAMING_CONVENTIONS[this.config.enumValues];
-            config.defaultValue = applyNamingConvention(config.defaultValue as string);
+          const named = getNamedType(config.type);
+          // Enum args + input-object args with nested enum defaults
+          // (`filter: Filter = { status: newbie }`). Skip String/ID/scalars.
+          if (!isEnumType(named) && !isInputObjectType(named)) {
+            return config;
           }
-
-          return config;
+          if (!hasRewritableEnumDefaultForType(config, config.type)) {
+            return config;
+          }
+          const applyNamingConvention = NAMING_CONVENTIONS[this.config.enumValues];
+          return withRenamedEnumDefaultsForType(config, config.type, applyNamingConvention);
         },
       }),
       ...(this.config.enumValues && {
@@ -230,17 +236,32 @@ export default class NamingConventionTransform implements MeshTransform {
           return [newFieldName || fieldName, fieldConfig];
         },
       }),
-      ...(this.config.fieldNames && {
-        [MapperKind.INPUT_OBJECT_FIELD]: (inputFieldConfig, fieldName) => {
-          const namingConventionFn =
-            this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
-          const newName = namingConventionFn(fieldName);
-
-          if (newName === fieldName) {
+      ...((this.config.fieldNames || this.config.enumValues) && {
+        [MapperKind.INPUT_OBJECT_FIELD]: (inputFieldConfig, fieldName, typeName) => {
+          if (IGNORED_TYPE_NAMES.includes(typeName)) {
             return undefined;
           }
-
-          return [newName, inputFieldConfig];
+          const namingConventionFn =
+            this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
+          const newName = namingConventionFn ? namingConventionFn(fieldName) : fieldName;
+          let nextConfig = inputFieldConfig;
+          if (this.config.enumValues) {
+            const namedFieldType = getNamedType(inputFieldConfig.type);
+            if (
+              (isEnumType(namedFieldType) || isInputObjectType(namedFieldType)) &&
+              hasRewritableEnumDefaultForType(inputFieldConfig, inputFieldConfig.type)
+            ) {
+              nextConfig = withRenamedEnumDefaultsForType(
+                inputFieldConfig,
+                inputFieldConfig.type,
+                NAMING_CONVENTIONS[this.config.enumValues],
+              );
+            }
+          }
+          if (newName === fieldName) {
+            return nextConfig === inputFieldConfig ? undefined : nextConfig;
+          }
+          return [newName, nextConfig];
         },
       }),
     });
@@ -254,11 +275,13 @@ function generateArgsMapForInput(
   const inputConfig = input.toConfig();
   const inputFields = inputConfig.fields;
   const argsMap: ArgsMap = {};
+  const skipFieldRename = IGNORED_TYPE_NAMES.includes(input.name);
 
   Object.keys(inputFields).forEach(argName => {
     if (typeof argName === 'number') return;
 
-    const newArgName = fieldNamingConventionFn ? fieldNamingConventionFn(argName) : argName;
+    const newArgName =
+      !skipFieldRename && fieldNamingConventionFn ? fieldNamingConventionFn(argName) : argName;
     const argConfig = inputFields[argName];
 
     // Unwind any list / nulls etc

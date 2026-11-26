@@ -7,13 +7,13 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "node build.js",
-    "deploy": "wsk action update /guest/mesh/swapi dist/index.js  --docker openwhisk/action-nodejs-v16 --web raw",
-    "dev": "mesh serve"
+    "deploy": "wsk action update /guest/mesh/swapi dist/index.js --docker your-registry/openwhisk-nodejs22:latest --web raw",
+    "dev": "tsx src/index.ts"
   },
   "dependencies": {
     "@graphql-hive/gateway": "^2.15.12",
     "esbuild": "^0.28.2",
-    "graphql": "16.14.0",
+    "graphql": "17.1.0",
     "typescript": "^6.0.3"
   }
 }

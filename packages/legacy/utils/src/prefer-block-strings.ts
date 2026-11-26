@@ -44,20 +44,20 @@ function attachBlockStringDirectiveAst(field: GraphQLField<any, any>): void {
   const dirs = getDirectivesInExtensions(field);
   if (!dirs?.length) return;
   const directiveNodes = dirs.map(dir => ({
-    kind: Kind.DIRECTIVE as const,
-    name: { kind: Kind.NAME as const, value: dir.name },
+    kind: Kind.DIRECTIVE,
+    name: { kind: Kind.NAME, value: dir.name },
     arguments: Object.entries(dir.args ?? {}).flatMap(([argName, argValue]) => {
       const value = constValueNodePreferBlockString(argName, argValue);
       if (value == null) return [];
       return [
         {
-          kind: Kind.ARGUMENT as const,
-          name: { kind: Kind.NAME as const, value: argName },
+          kind: Kind.ARGUMENT,
+          name: { kind: Kind.NAME, value: argName },
           value,
         },
       ];
     }),
-  }));
+  })) as NonNullable<typeof field.astNode>['directives'];
   // Preserve existing type/args AST - a placeholder `String` type broke compose
   // (`getDirectiveExtensions` WeakMap on bad nodes from graphql-compose fields).
   if (field.astNode) {
@@ -119,8 +119,8 @@ function constValueNodePreferBlockString(argName: string, value: unknown): Const
         if (childNode == null) return [];
         return [
           {
-            kind: Kind.OBJECT_FIELD as const,
-            name: { kind: Kind.NAME as const, value: key },
+            kind: Kind.OBJECT_FIELD,
+            name: { kind: Kind.NAME, value: key },
             value: childNode,
           },
         ];

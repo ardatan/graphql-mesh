@@ -1,3 +1,4 @@
+import { matchPrintedFieldBlock } from '@e2e/printed-sdl';
 import { createTenv, type Container, type ServeRunner } from '@e2e/tenv';
 
 const { compose, serve, container } = createTenv(__dirname);
@@ -22,7 +23,7 @@ it('should generate the subgraph schema correctly', async () => {
 
   // arg ≠ key → type-level `$this.id`, Query keeps `$args.petId`, no Mesh `@merge`.
   expect(result).toMatch(/type Pet[\s\S]*@connect\([\s\S]*\$this\.id/);
-  const getPetByIdField = result.match(/getPetById\([\s\S]*?\):\s*Pet[^\n]*/)?.[0] || '';
+  const getPetByIdField = matchPrintedFieldBlock(result, /getPetById\([\s\S]*?\):\s*Pet/);
   expect(getPetByIdField).toContain('$args.petId');
   expect(getPetByIdField).not.toContain('@merge');
 });

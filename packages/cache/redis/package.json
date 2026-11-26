@@ -74,7 +74,7 @@
     "@smithy/protocol-http": "^5.6.2",
     "@smithy/signature-v4": "^5.6.12",
     "@types/ioredis-mock": "8.2.8",
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   },
   "publishConfig": {
     "access": "public",

@@ -48,7 +48,7 @@
     "@graphql-mesh/runtime": "^0.109.3",
     "@types/http-cache-semantics": "4.2.0",
     "@whatwg-node/server": "^0.13.3",
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   },
   "publishConfig": {
     "access": "public",

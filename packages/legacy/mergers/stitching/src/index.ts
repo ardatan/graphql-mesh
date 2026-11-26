@@ -1,3 +1,4 @@
+import { GraphQLSchema } from 'graphql';
 import { type Logger } from '@graphql-hive/logger';
 import type {
   MeshMerger,
@@ -5,6 +6,7 @@ import type {
   MeshMergerOptions,
   RawSourceOutput,
 } from '@graphql-mesh/types';
+import { omitIntrospectionTypes } from '@graphql-mesh/utils';
 import type { StitchingInfo } from '@graphql-tools/delegate';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 
@@ -18,10 +20,15 @@ export default class StitchingMerger implements MeshMerger {
   getUnifiedSchema(context: MeshMergerContext) {
     const { rawSources, typeDefs, resolvers } = context;
     this.log.debug(`Stitching the source schemas`);
-    const unifiedSchema = stitchSchemas({
+    // Third-party schemas (e.g. GitHub) can violate GraphQL 17 rules such as
+    // interface/implementation deprecation consistency. Handlers already load
+    // with assumeValid; stitchSchemas' extendSchema path drops that flag, so
+    // re-mark the unified schema (same approach as the bare merger).
+    const stitchedSchema = stitchSchemas({
       subschemas: rawSources,
       typeDefs,
       resolvers,
+      assumeValid: true,
       resolverValidationOptions: {
         requireResolversForAllFields: 'ignore',
         requireResolversForArgs: 'ignore',
@@ -36,8 +43,36 @@ export default class StitchingMerger implements MeshMerger {
       },
       mergeDirectives: true,
     });
+    // GraphQL 17 toConfig() includes introspection types; rebuilding without
+    // omitting them can throw `multiple types named "__Schema"` across dual packages.
+    const stitchedConfig = stitchedSchema.toConfig();
+    const unifiedSchema = new GraphQLSchema({
+      ...stitchedConfig,
+      types: omitIntrospectionTypes(stitchedConfig.types),
+      assumeValid: true,
+    });
+    // stitchSchemas replaces extensions with stitchingInfo only — restore schema
+    // directive apps (Connectors `@source` / `@link`) from subschemas.
+    // Null prototype: a directive named `constructor` must not resolve
+    // Object.prototype.constructor (spread would throw TypeError).
+    const mergedSchemaDirectives = Object.assign(
+      Object.create(null) as Record<string, unknown[]>,
+      ((unifiedSchema.extensions as any)?.directives as Record<string, unknown[]>) || {},
+    );
+    for (const rawSource of rawSources) {
+      const fromSub = (rawSource.schema.extensions as any)?.directives as
+        Record<string, unknown[]> | undefined;
+      if (!fromSub) continue;
+      for (const [name, vals] of Object.entries(fromSub)) {
+        const list = Array.isArray(vals) ? vals : [vals];
+        mergedSchemaDirectives[name] = [...(mergedSchemaDirectives[name] || []), ...list];
+      }
+    }
     this.log.debug(`sourceMap is being generated and attached to the unified schema`);
     unifiedSchema.extensions = unifiedSchema.extensions || {};
+    if (Object.keys(mergedSchemaDirectives).length) {
+      (unifiedSchema.extensions as any).directives = mergedSchemaDirectives;
+    }
     Object.assign(unifiedSchema.extensions, {
       sourceMap: new Proxy({} as any, {
         get: (_, pKey) => {

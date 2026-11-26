@@ -140,12 +140,9 @@ enum ExampleEnum {
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as EnumTypeComposer;
     expect(outputComposer.toSDL()).toMatchInlineSnapshot(`
-      "enum ExampleEnum {
-        _0_foo @enum(subgraph: "Test", value: "\\"0-foo\\"")
-        _1_PLUS_bar @enum(subgraph: "Test", value: "\\"1+bar\\"")
-        _2_RIGHT_PARENTHESIS_qux @enum(subgraph: "Test", value: "\\"2)qux\\"")
-      }"
-    `);
+enum ExampleEnum {_0_foo @enum(subgraph:"Test" value:"\\"0-foo\\"") _1_PLUS_bar @enum(subgraph:"Test" value:"\\"1+bar\\"") _2_RIGHT_PARENTHESIS_qux @enum(subgraph:"Test" value:"\\"2)qux\\"")}
+
+`);
   });
   it('should generate union types from oneOf object types', async () => {
     const inputSchema: JSONSchema = {
@@ -1333,29 +1330,14 @@ ${printType(GraphQLString)}
     expect(output instanceof SchemaComposer).toBeTruthy();
     const schema = (output as SchemaComposer).buildSchema();
     expect(printSchemaWithDirectives(schema)).toMatchInlineSnapshot(`
-      "schema {
-        query: Query
-      }
+schema {query:Query}
+directive @resolveRootField(subgraph:String field:String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+type Query {foo(_0BarId:String @resolveRootField(subgraph:"Test" field:"0BarId") _1BazId:String @resolveRootField(subgraph:"Test" field:"1BazId")):Foo}
+type Foo {_0Bar:Bar @resolveRootField(subgraph:"Test" field:"0Bar") _1Baz:Baz @resolveRootField(subgraph:"Test" field:"1Baz")}
+type Bar {barId:String}
+type Baz {bazId:String}
 
-      directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
-
-      type Query {
-        foo(_0BarId: String @resolveRootField(subgraph: "Test", field: "0BarId"), _1BazId: String @resolveRootField(subgraph: "Test", field: "1BazId")): Foo
-      }
-
-      type Foo {
-        _0Bar: Bar @resolveRootField(subgraph: "Test", field: "0Bar")
-        _1Baz: Baz @resolveRootField(subgraph: "Test", field: "1Baz")
-      }
-
-      type Bar {
-        barId: String
-      }
-
-      type Baz {
-        bazId: String
-      }"
-    `);
+`);
   });
   it('should workaround GraphQLjs falsy enum values bug', async () => {
     const values = [false, ''];

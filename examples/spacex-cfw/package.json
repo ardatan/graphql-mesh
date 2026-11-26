@@ -9,7 +9,7 @@
     "@graphql-mesh/graphql": "0.107.3",
     "@graphql-mesh/plugin-rate-limit": "0.109.3",
     "@graphql-mesh/plugin-response-cache": "0.107.4",
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   },
   "devDependencies": {
     "wrangler": "4.158.0"

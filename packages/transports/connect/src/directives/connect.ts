@@ -6,6 +6,7 @@ import {
   GraphQLScalarType,
   GraphQLUnionType,
   isEnumType,
+  isInterfaceType,
   isListType,
   isNonNullType,
   isObjectType,
@@ -25,7 +26,7 @@ import { Logger, type Logger as HiveLogger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
-import { getHeadersObj } from '@graphql-mesh/utils';
+import { getHeadersObj, installQueryField } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
 import { Blob, fetch as defaultFetch, File, FormData } from '@whatwg-node/fetch';
 import { fakePromise } from '@whatwg-node/promise-helpers';
@@ -72,6 +73,46 @@ function getTypeResolveReference(type: GraphQLNamedType): ResolveReferenceFn | u
   }
   const fromType = (type as any).resolveReference;
   return typeof fromType === 'function' ? fromType : undefined;
+}
+
+/**
+ * `installQueryField` / `mapSchema` rebuilds every type from `toConfig()`, which
+ * keeps `extensions.apollo.subgraph.resolveReference` but drops the non-config
+ * `type.resolveReference` mirror. Re-attach it for Hive helpers / tests that
+ * read the bare property.
+ */
+function remirrorTypeResolveReferences(schema: GraphQLSchema): void {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) && !isInterfaceType(type)) {
+      continue;
+    }
+    const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
+    if (typeof fromExtensions === 'function') {
+      (type as any).resolveReference = fromExtensions;
+    }
+  }
+}
+
+/**
+ * With `preserveExistingFieldResolvers`, a prior pass / Hive wrapper may leave
+ * only a bare `type.resolveReference` (no Apollo extension). `mapSchema` drops
+ * that property and remirror cannot restore it. Promote bare fns into
+ * extensions before the rebuild; leave already extension-backed resolvers alone.
+ */
+function promoteBareResolveReferencesToExtensions(schema: GraphQLSchema): void {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) && !isInterfaceType(type)) {
+      continue;
+    }
+    const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
+    if (typeof fromExtensions === 'function') {
+      continue;
+    }
+    const bare = (type as any).resolveReference;
+    if (typeof bare === 'function') {
+      setTypeResolveReference(type, bare);
+    }
+  }
 }
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(
@@ -3216,7 +3257,11 @@ export function processConnectDirectives(
   }
   // Hive stitches `@key` entities via `Query._entities`. Apollo Router uses `@connect`
   // natively and never calls this field - but without it Hive needed Mesh `@merge`.
-  ensureFederationEntitiesField(schema);
+  // Bare-only resolveReference must land in extensions before mapSchema rebuilds types.
+  promoteBareResolveReferencesToExtensions(schema);
+  schema = ensureFederationEntitiesField(schema);
+  // mapSchema inside installQueryField drops the non-config resolveReference mirror.
+  remirrorTypeResolveReferences(schema);
   // Same-subgraph Connectors stubs (`customer: { id: customerId }`) leave a partial
   // object in Hive - unlike Router, the gateway won't auto `_entities` for missing
   // fields on that object. Fill them via `resolveReference` when a field is absent.
@@ -3284,18 +3329,17 @@ function hydrateEntityStubFieldResolvers(schema: GraphQLSchema) {
  * whenever Hive planned `_entities` against a Connectors REST subgraph (e.g. OData
  * owner + GraphQL/Connectors stub). Always install the resolveReference dispatcher.
  */
-function ensureFederationEntitiesField(schema: GraphQLSchema) {
+function ensureFederationEntitiesField(schema: GraphQLSchema): GraphQLSchema {
   const queryType = schema.getQueryType();
   if (!queryType) {
-    return;
+    return schema;
   }
-  const queryFields = queryType.getFields();
   const entityTypes = Object.values(schema.getTypeMap()).filter(
     (t): t is GraphQLObjectType =>
       isObjectType(t) && !t.name.startsWith('__') && !!getTypeResolveReference(t),
   );
   if (!entityTypes.length) {
-    return;
+    return schema;
   }
 
   const typeMap = schema.getTypeMap() as Record<string, any>;
@@ -3335,31 +3379,18 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return entitiesResolver({ representations, context, info });
   };
 
-  if (queryFields._entities) {
-    // Federation-extracted subgraph: field exists, resolver does not - wire it.
-    queryFields._entities.resolve = entitiesResolve;
-    return;
-  }
-
-  queryFields._entities = {
-    name: '_entities',
+  return installQueryField(schema, '_entities', {
     description: 'Federation entity resolver for Connectors REST transport (Hive `_entities` path)',
     type: new GraphQLNonNull(new GraphQLList(entityUnion)),
-    args: [
-      {
-        name: 'representations',
-        description: undefined,
+    args: {
+      representations: {
         type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
-        defaultValue: undefined,
-        deprecationReason: undefined,
-        extensions: {},
-        astNode: undefined,
-      },
-    ],
+        // GraphQL 17 requires `default`; GraphQL 16 only knows `defaultValue`.
+        default: undefined,
+        extensions: Object.create(null),
+      } as any,
+    },
     resolve: entitiesResolve,
-    subscribe: undefined,
-    deprecationReason: undefined,
-    extensions: {},
-    astNode: undefined,
-  };
+    extensions: Object.create(null),
+  });
 }

@@ -500,6 +500,19 @@ function expandPartsFromQueryOptionsObject(obj: Record<string, unknown>): string
   return parts;
 }
 
+/** GraphQL 16: plain map. GraphQL 17: `VariableValues` with `.coerced`. */
+function getCoercedVariableValues(info: GraphQLResolveInfo): Record<string, unknown> {
+  const vv = info.variableValues as
+    Record<string, unknown> | { coerced?: Record<string, unknown> } | undefined | null;
+  if (vv == null) {
+    return {};
+  }
+  if (typeof vv === 'object' && 'coerced' in vv && vv.coerced && typeof vv.coerced === 'object') {
+    return vv.coerced as Record<string, unknown>;
+  }
+  return vv as Record<string, unknown>;
+}
+
 function expandOptionsFromFieldArgs(field: FieldNode, info: GraphQLResolveInfo): string[] {
   const parts: string[] = [];
   if (!field.arguments?.length) return parts;
@@ -507,7 +520,7 @@ function expandOptionsFromFieldArgs(field: FieldNode, info: GraphQLResolveInfo):
     if (arg.name.value !== 'queryOptions') continue;
     // Whole-object variable: `friends(queryOptions: $options)`.
     if (arg.value.kind === Kind.VARIABLE) {
-      const vars = info.variableValues || {};
+      const vars = getCoercedVariableValues(info);
       const name = arg.value.name.value;
       if (!Object.prototype.hasOwnProperty.call(vars, name) || vars[name] == null) {
         return ['__odata_expand_unsupported__'];
@@ -563,7 +576,7 @@ function graphqlValueToExpandLiteral(value: ValueNode, info: GraphQLResolveInfo)
     return value.value;
   }
   if (value.kind === Kind.VARIABLE) {
-    const vars = info.variableValues || {};
+    const vars = getCoercedVariableValues(info);
     if (!Object.prototype.hasOwnProperty.call(vars, value.name.value)) {
       return null;
     }

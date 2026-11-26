@@ -151,7 +151,20 @@ export function processDirectives(
   // HTTP headers come from `@source` / `@connect` only (WSDL emit already bakes yaml
   // operationHeaders into `@source`); no separate runtime header bag.
   const odataOpts = transportOpts.odata;
-  processConnectDirectives(schema, {
+  // Wire scalar serialize/parse on the *pre-rebuild* type identities first so
+  // connector closures captured inside processConnectDirectives keep working
+  // after mapSchema clones the type map (installQueryField / `_entities`).
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (isSpecifiedScalarType(type) || isIntrospectionType(type)) {
+      continue;
+    }
+    if (isScalarType(type)) {
+      processScalarType(type);
+    }
+  }
+  // `processConnectDirectives` may rebuild Query via `mapSchema` when installing
+  // Federation `_entities` — callers must use the returned schema.
+  schema = processConnectDirectives(schema, {
     globalFetch,
     log,
     timeout: globalOptions.timeout,
@@ -195,6 +208,7 @@ export function processDirectives(
       (type.extensions as any).examples = examples;
     }
     if (isScalarType(type)) {
+      // Rebind on post-rebuild clones used for parse/coerce against the returned schema.
       processScalarType(type);
     }
     // Abstract resolveType: `__typename`, OData `@odata.type`, then structural /

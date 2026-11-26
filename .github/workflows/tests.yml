@@ -53,9 +53,15 @@ jobs:
           command: yarn bob check
 
   unit-bun:
-    name: unit / bun
+    name: unit / bun / graphql v${{matrix.graphql-version}}
     timeout-minutes: 15
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        graphql-version:
+          - 16
+          - 17
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
@@ -63,6 +69,9 @@ jobs:
         name: set up env
         with:
           node-version-file: .node-version
+      - if: matrix.graphql-version != 17
+        name: Use GraphQL v${{matrix.graphql-version}}
+        run: yarn match-graphql ^${{matrix.graphql-version}}.0.0 && yarn install --no-immutable
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           # Pin so required CI reruns stay reproducible.
@@ -71,7 +80,7 @@ jobs:
         run: yarn workspace @graphql-mesh/transport-sql test:bun
 
   unit:
-    name: unit / node ${{matrix.node-version}}
+    name: unit / node ${{matrix.node-version}} / graphql v${{matrix.graphql-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
@@ -80,6 +89,9 @@ jobs:
         node-version:
           - 22
           - 26
+        graphql-version:
+          - 16
+          - 17
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
@@ -89,12 +101,19 @@ jobs:
         with:
           node-version: ${{matrix.node-version}}
 
+      - if: matrix.graphql-version != 17
+        name: Use GraphQL v${{matrix.graphql-version}}
+        run: yarn match-graphql ^${{matrix.graphql-version}}.0.0 && yarn install --no-immutable
+
       - name: Cache Jest
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .cache/jest
-          key: jest-unit-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
+          key:
+            jest-unit-${{ runner.os }}-${{matrix.node-version}}-gql${{matrix.graphql-version}}-${{
+            hashFiles('yarn.lock') }}
           restore-keys: |
+            jest-unit-${{runner.os}}-${{matrix.node-version}}-gql${{matrix.graphql-version}}-
             jest-unit-${{runner.os}}-${{matrix.node-version}}-
             jest-unit-${{runner.os}}-
             jest-unit-
@@ -122,7 +141,7 @@ jobs:
               command: yarn test:leak
 
   integration:
-    name: integration / node ${{matrix.node-version}}
+    name: integration / node ${{matrix.node-version}} / graphql v${{matrix.graphql-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
@@ -131,6 +150,9 @@ jobs:
         node-version:
           - 22
           - 26
+        graphql-version:
+          - 16
+          - 17
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -175,13 +197,19 @@ jobs:
         with:
           node-version: ${{matrix.node-version}}
 
+      - if: matrix.graphql-version != 17
+        name: Use GraphQL v${{matrix.graphql-version}}
+        run: yarn match-graphql ^${{matrix.graphql-version}}.0.0 && yarn install --no-immutable
+
       - name: Cache Jest
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .cache/jest
           key:
-            jest-integration-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
+            jest-integration-${{ runner.os
+            }}-${{matrix.node-version}}-gql${{matrix.graphql-version}}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
+            jest-integration-${{runner.os}}-${{matrix.node-version}}-gql${{matrix.graphql-version}}-
             jest-integration-${{runner.os}}-${{matrix.node-version}}-
             jest-integration-${{runner.os}}-
             jest-integration-
@@ -217,12 +245,15 @@ jobs:
               command: yarn test:integration:leak
 
   e2e:
-    name: e2e / node v${{matrix.node-version}}
+    name: e2e / node v${{matrix.node-version}} / graphql v${{matrix.graphql-version}}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         node-version: [22, 26]
+        graphql-version:
+          - 16
+          - 17
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
@@ -243,12 +274,18 @@ jobs:
         uses: the-guild-org/shared-config/setup@v1
         with:
           node-version: ${{matrix.node-version}}
+      - if: matrix.graphql-version != 17
+        name: Use GraphQL v${{matrix.graphql-version}}
+        run: yarn match-graphql ^${{matrix.graphql-version}}.0.0 && yarn install --no-immutable
       - name: Cache Jest
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .cache/jest
-          key: jest-e2e-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
+          key:
+            jest-e2e-${{ runner.os }}-${{matrix.node-version}}-gql${{matrix.graphql-version}}-${{
+            hashFiles('yarn.lock') }}
           restore-keys: |
+            jest-e2e-${{runner.os}}-${{matrix.node-version}}-gql${{matrix.graphql-version}}-
             jest-e2e-${{runner.os}}-${{matrix.node-version}}-
             jest-e2e-${{runner.os}}-
             jest-e2e-

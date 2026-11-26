@@ -63,14 +63,9 @@ describe('Hoist Field', () => {
     expect(fields.users).toBeDefined();
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users(limit: Int!, page: Int): [User!]!
-}
+type Query {users(limit:Int! page:Int):[User!]!}
+type User {id:ID! name:String!}
 
-type User {
-  id: ID!
-  name: String!
-}"
 `);
   });
   it('hoists field with mixed pathConfig array', async () => {
@@ -103,14 +98,9 @@ type User {
     expect(fields.users).toBeDefined();
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users(limit: Int!, page: Int): [User!]!
-}
+type Query {users(limit:Int! page:Int):[User!]!}
+type User {id:ID! name:String!}
 
-type User {
-  id: ID!
-  name: String!
-}"
 `);
   });
   it('hoists field and filter args with global flag', async () => {
@@ -141,14 +131,9 @@ type User {
     expect(args.length).toEqual(0);
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users: [User!]!
-}
+type Query {users:[User!]!}
+type User {id:ID! name:String!}
 
-type User {
-  id: ID!
-  name: String!
-}"
 `);
   });
   it('hoists field and filter individual args via pathConfig', async () => {
@@ -185,14 +170,9 @@ type User {
     expect(args[0].name).toEqual('page');
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users(page: Int): [User!]!
-}
+type Query {users(page:Int):[User!]!}
+type User {id:ID! name:String!}
 
-type User {
-  id: ID!
-  name: String!
-}"
 `);
   });
   it('hoists field and filter individual args via pathConfig independent of global flag', async () => {
@@ -232,14 +212,9 @@ type User {
     expect(args[0].name).toEqual('page');
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users(page: Int): [User!]!
-}
+type Query {users(page:Int):[User!]!}
+type User {id:ID! name:String!}
 
-type User {
-  id: ID!
-  name: String!
-}"
 `);
   });
   it('executes correctly', async () => {
@@ -307,19 +282,10 @@ type User {
     expect(fields.users).toBeDefined();
 
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users(limit: Int!, page: Int): UserSearchResult
-  usersResults(limit: Int!, page: Int): [User!]!
-}
+type Query {users(limit:Int! page:Int):UserSearchResult usersResults(limit:Int! page:Int):[User!]!}
+type User {id:ID! name:String!}
+type UserSearchResult {page:Int!}
 
-type User {
-  id: ID!
-  name: String!
-}
-
-type UserSearchResult {
-  page: Int!
-}"
 `);
   });
   it('executes the new field correctly', async () => {

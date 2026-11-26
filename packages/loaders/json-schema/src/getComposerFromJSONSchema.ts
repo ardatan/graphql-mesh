@@ -203,6 +203,58 @@ function asObjectTypeComposer(tc: unknown): ObjectTypeComposer | undefined {
   return current instanceof ObjectTypeComposer ? current : undefined;
 }
 
+/**
+ * Normalize JSON Schema defaults for GraphQL 17 printing:
+ * - Enum wire names are sanitized strings (numeric OpenAPI defaults must become keys).
+ * - Unrepresentable scalar defaults (e.g. '' on NonEmptyString) are omitted so print
+ *   does not throw; representable falsy values (0 / false / '') are kept.
+ */
+function coerceFieldDefaultValue(
+  inputTc: AnyTypeComposer<any> | undefined,
+  defaultValue: unknown,
+): unknown {
+  if (defaultValue == null && defaultValue !== 0 && defaultValue !== false) {
+    return defaultValue;
+  }
+  let tc: AnyTypeComposer<any> | undefined = inputTc;
+  // Unwrap NonNull only — List wrappers must stay so array defaults keep structure.
+  while (tc instanceof NonNullComposer) {
+    tc = tc.ofType as AnyTypeComposer<any>;
+  }
+  if (tc instanceof ListComposer) {
+    if (!Array.isArray(defaultValue)) {
+      return defaultValue;
+    }
+    return defaultValue.map(item =>
+      coerceFieldDefaultValue(tc.ofType as AnyTypeComposer<any>, item),
+    );
+  }
+  if (tc instanceof EnumTypeComposer) {
+    let enumKey = sanitizeNameForGraphQL(String(defaultValue));
+    if (enumKey === 'false' || enumKey === 'true' || enumKey === 'null') {
+      enumKey = enumKey.toUpperCase();
+    }
+    if (enumKey.length === 0) {
+      enumKey = '_';
+    }
+    return tc.hasField(enumKey) ? enumKey : defaultValue;
+  }
+  if (tc instanceof ScalarTypeComposer) {
+    // JSON Schema allows defaults that fail the associated scalar (e.g. '' on
+    // NonEmptyString). Omit those so print/schema generation does not throw;
+    // keep representable falsy defaults (0 / false / '').
+    try {
+      const serialize = tc.getSerialize?.();
+      if (typeof serialize === 'function') {
+        serialize(defaultValue);
+      }
+    } catch {
+      return undefined;
+    }
+  }
+  return defaultValue;
+}
+
 function isJsonPrimitiveSchema(schema: JSONSchemaObject): boolean {
   if (
     schema.properties ||
@@ -1555,10 +1607,12 @@ export function getComposerFromJSONSchema({
                 description:
                   subSchemaAndTypeComposers.properties[propertyName].description ||
                   subSchemaAndTypeComposers.properties[propertyName].input?.description,
-                defaultValue:
-                  subSchemaAndTypeComposers.properties[propertyName]?.default ||
-                  subSchemaAndTypeComposers.properties[propertyName]?.extensions?.default ||
-                  subSchemaAndTypeComposers.properties[propertyName]?.input?.default,
+                defaultValue: coerceFieldDefaultValue(
+                  subSchemaAndTypeComposers.properties[propertyName]?.input,
+                  subSchemaAndTypeComposers.properties[propertyName]?.default ??
+                    subSchemaAndTypeComposers.properties[propertyName]?.extensions?.default ??
+                    subSchemaAndTypeComposers.properties[propertyName]?.input?.default,
+                ),
                 // deprecationReason: subSchemaAndTypeComposers.properties[propertyName].deprecated ? 'deprecated' : undefined,
               };
             }

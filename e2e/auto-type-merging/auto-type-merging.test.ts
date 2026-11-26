@@ -1,4 +1,5 @@
 import { Kind, parse } from 'graphql';
+import { matchPrintedFieldBlock } from '@e2e/printed-sdl';
 import { createTenv, type Container } from '@e2e/tenv';
 
 const { compose, service, serve, container } = createTenv(__dirname);
@@ -26,7 +27,7 @@ it('should compose the appropriate schema', async () => {
   expect(result).toMatch(
     /type Pet[\s\S]*@join__directive\([\s\S]*name:\s*"connect"[\s\S]*\$this\.id/,
   );
-  const getPetByIdField = result.match(/getPetById\([\s\S]*?\):\s*Pet[^\n]*/)?.[0] || '';
+  const getPetByIdField = matchPrintedFieldBlock(result, /getPetById\([\s\S]*?\):\s*Pet/);
   expect(getPetByIdField).toContain('$args.petId');
   expect(getPetByIdField).not.toContain('@merge');
   // GraphQL vaccination subgraph still uses Mesh `@merge` (auto-type-merging intent),

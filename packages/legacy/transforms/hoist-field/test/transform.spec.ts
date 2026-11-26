@@ -62,18 +62,10 @@ describe('hoist', () => {
     expect(fields.users).toBeDefined();
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users(limit: Int!, page: Int): [User!]!
-}
+type Query {users(limit:Int! page:Int):[User!]!}
+type UserSearchResult {page:Int!}
+type User {id:ID! name:String!}
 
-type UserSearchResult {
-  page: Int!
-}
-
-type User {
-  id: ID!
-  name: String!
-}"
 `);
   });
 
@@ -114,18 +106,10 @@ type User {
     expect(fields.users).toBeDefined();
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users(limit: Int!, page: Int): [User!]!
-}
+type Query {users(limit:Int! page:Int):[User!]!}
+type UserSearchResult {page:Int!}
+type User {id:ID! name:String!}
 
-type UserSearchResult {
-  page: Int!
-}
-
-type User {
-  id: ID!
-  name: String!
-}"
 `);
   });
 
@@ -164,18 +148,10 @@ type User {
     expect(args.length).toEqual(0);
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users: [User!]!
-}
+type Query {users:[User!]!}
+type UserSearchResult {page:Int!}
+type User {id:ID! name:String!}
 
-type UserSearchResult {
-  page: Int!
-}
-
-type User {
-  id: ID!
-  name: String!
-}"
 `);
   });
 
@@ -220,18 +196,10 @@ type User {
     expect(args[0].name).toEqual('page');
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users(page: Int): [User!]!
-}
+type Query {users(page:Int):[User!]!}
+type UserSearchResult {page:Int!}
+type User {id:ID! name:String!}
 
-type UserSearchResult {
-  page: Int!
-}
-
-type User {
-  id: ID!
-  name: String!
-}"
 `);
   });
 
@@ -277,18 +245,10 @@ type User {
     expect(args[0].name).toEqual('page');
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users(page: Int): [User!]!
-}
+type Query {users(page:Int):[User!]!}
+type UserSearchResult {page:Int!}
+type User {id:ID! name:String!}
 
-type UserSearchResult {
-  page: Int!
-}
-
-type User {
-  id: ID!
-  name: String!
-}"
 `);
   });
   it('should respect the new field name', () => {
@@ -322,19 +282,10 @@ type User {
     expect(fields.usersResults).toBeDefined();
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
-  users(limit: Int!, page: Int): UserSearchResult
-  usersResults(limit: Int!, page: Int): [User!]!
-}
+type Query {users(limit:Int! page:Int):UserSearchResult usersResults(limit:Int! page:Int):[User!]!}
+type UserSearchResult {page:Int!}
+type User {id:ID! name:String!}
 
-type UserSearchResult {
-  page: Int!
-}
-
-type User {
-  id: ID!
-  name: String!
-}"
 `);
   });
 });

@@ -594,8 +594,11 @@ export async function getSqlExecutor({
   // Soft-delete / `$fn` computed columns live on the GraphQL.js planner path.
   // MySQL / SQLite / Bun.SQL keep the GraphQL.js + JOIN planner path.
   // Dynamic import keeps grafast off the static graph (Jest --detectLeaks).
+  // grafast@1.x peers graphql^16 only (`buildExecutionContext` removed in graphql 17).
+  const { version: graphqlVersion } = await import('graphql');
+  const graphqlMajor = Number.parseInt(String(graphqlVersion).split('.')[0], 10);
   const usesPlannerExtras = Boolean(softDelete) || printSchemaHasPlannerExtras(subgraph);
-  if (adapter === 'postgres' && sqlClient.pgPool && !usesPlannerExtras) {
+  if (adapter === 'postgres' && sqlClient.pgPool && !usesPlannerExtras && graphqlMajor < 17) {
     const { createPostgresGrafastExecutor } = await import('./pg-executor.js');
     const grafastExecutor = createPostgresGrafastExecutor({
       subgraph,
@@ -615,6 +618,21 @@ export async function getSqlExecutor({
       executionRequest.context && typeof executionRequest.context === 'object'
         ? executionRequest.context
         : {};
+    // Grafast/`@dataplan/pg` applies `context.pgSettings` via set_config on the
+    // graphql^16-only fast path above. Every other PostgreSQL path (GraphQL 17,
+    // Bun.SQL without pgPool, softDelete / planner-extras on GraphQL 16) uses this
+    // default executor and must not silently ignore request-local settings.
+    const pgSettings = (context as { pgSettings?: Record<string, unknown> }).pgSettings;
+    if (
+      adapter === 'postgres' &&
+      pgSettings &&
+      typeof pgSettings === 'object' &&
+      Object.keys(pgSettings).length > 0
+    ) {
+      throw new Error(
+        'context.pgSettings is not applied on the PostgreSQL default executor (only the Grafast/`@dataplan/pg` path applies set_config). Remove pgSettings, or use the Grafast executor (GraphQL 16 + Node pg.Pool, without soft-delete / planner extras).',
+      );
+    }
     return defaultExecutor({
       ...executionRequest,
       context,

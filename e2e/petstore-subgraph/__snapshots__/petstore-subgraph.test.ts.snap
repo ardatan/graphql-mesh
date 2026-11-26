@@ -1,274 +1,51 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should generate the subgraph schema correctly 1`] = `
-"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@shareable", "@key", "@composeDirective"]) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@regexp", "@typescript", "@extraSchemaDefinitionDirective"]) @composeDirective(name: "@regexp") @composeDirective(name: "@typescript") @composeDirective(name: "@extraSchemaDefinitionDirective") {
-  query: Query
-  mutation: Mutation
-}
-
-directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
-
-directive @typescript(subgraph: String, type: String) repeatable on SCALAR | ENUM
-
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query @shareable @extraSchemaDefinitionDirective(directives: {source: [{name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}], meshComposeSubgraph: [{name: "petstore"}]}) {
-  """Multiple status values can be provided with comma separated strings"""
-  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @connect(source: "petstore", http: {GET: "/pet/findByStatus", queryParams: "{\\n  status: $args.status\\n}"}, selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus")
-  """
-  Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-  """
-  findPetsByTags(
-    """Tags to filter by"""
-    tags: [String]
-  ): [Pet] @connect(source: "petstore", http: {GET: "/pet/findByTags", queryParams: "{\\n  tags: $args.tags\\n}"}, selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus")
-  """Returns a single pet"""
-  getPetById(
-    """ID of pet to return"""
-    petId: BigInt!
-  ): Pet @connect(source: "petstore", http: {GET: "/pet/{$args.petId}"}, selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus")
-  """Returns a map of status codes to quantities"""
-  getInventory: JSON @connect(source: "petstore", http: {GET: "/store/inventory"}, selection: "$")
-  """
-  For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
-  """
-  getOrderById(
-    """ID of order that needs to be fetched"""
-    orderId: BigInt!
-  ): Order @connect(source: "petstore", http: {GET: "/store/order/{$args.orderId}"}, selection: "id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete")
-  """Logs user into the system"""
-  loginUser(
-    """The user name for login"""
-    username: String
-    """The password for login in clear text"""
-    password: String
-  ): String @connect(source: "petstore", http: {GET: "/user/login", queryParams: "{\\n  username: $args.username\\n  password: $args.password\\n}"}, selection: "$")
-  """Logs out current logged in user session"""
-  logoutUser: JSON @connect(source: "petstore", http: {GET: "/user/logout"}, selection: "$")
-  """Get user by user name"""
-  getUserByName(
-    """The name that needs to be fetched. Use user1 for testing."""
-    username: String!
-  ): User @connect(source: "petstore", http: {GET: "/user/{$args.username}"}, selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus")
-}
-
-"""Pet object that needs to be added to the store"""
-type Pet @connect(source: "petstore", selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus", http: {GET: "/pet/{$this.id}"}) @key(fields: "id") @shareable {
-  id: BigInt
-  name: String!
-  category: Category
-  photoUrls: [String]!
-  tags: [Tag]
-  status: code
-}
-
-"""
-The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
-"""
+schema @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@shareable" "@key" "@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@regexp" "@typescript" "@extraSchemaDefinitionDirective"]) @composeDirective(name:"@regexp") @composeDirective(name:"@typescript") @composeDirective(name:"@extraSchemaDefinitionDirective") {query:Query mutation:Mutation}
+directive @regexp(subgraph:String pattern:String) repeatable on SCALAR
+directive @typescript(subgraph:String
+type:String) repeatable on SCALAR | ENUM
+directive @connect(source:String http:ConnectHTTP selection:JSONSelection! entity:Boolean errors:ConnectorErrors isSuccess:JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess:JSONSelection) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query @shareable @extraSchemaDefinitionDirective(directives:{source:[{name:"petstore" http:{baseURL:"http://localhost:<petstore_port>/api/v3"}}] meshComposeSubgraph:[{name:"petstore"}]}) {"""Multiple status values can be provided with comma separated strings""" findPetsByStatus(status:queryInput_findPetsByStatus_status = available):[Pet] @connect(source:"petstore" http:{GET:"/pet/findByStatus" queryParams:"{\\n  status: $args.status\\n}"} selection:"id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus") """Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.""" findPetsByTags("""Tags to filter by""" tags:[String]):[Pet] @connect(source:"petstore" http:{GET:"/pet/findByTags" queryParams:"{\\n  tags: $args.tags\\n}"} selection:"id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus") """Returns a single pet""" getPetById("""ID of pet to return""" petId:BigInt!):Pet @connect(source:"petstore" http:{GET:"/pet/{$args.petId}"} selection:"id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus") """Returns a map of status codes to quantities""" getInventory:JSON @connect(source:"petstore" http:{GET:"/store/inventory"} selection:"$") """For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions""" getOrderById("""ID of order that needs to be fetched""" orderId:BigInt!):Order @connect(source:"petstore" http:{GET:"/store/order/{$args.orderId}"} selection:"id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete") """Logs user into the system""" loginUser("""The user name for login""" username:String """The password for login in clear text""" password:String):String @connect(source:"petstore" http:{GET:"/user/login" queryParams:"{\\n  username: $args.username\\n  password: $args.password\\n}"} selection:"$") """Logs out current logged in user session""" logoutUser:JSON @connect(source:"petstore" http:{GET:"/user/logout"} selection:"$") """Get user by user name""" getUserByName("""The name that needs to be fetched. Use user1 for testing.""" username:String!):User @connect(source:"petstore" http:{GET:"/user/{$args.username}"} selection:"id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus")} """Pet object that needs to be added to the store"""
+type Pet @connect(source:"petstore" selection:"id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus" http:{GET:"/pet/{$this.id}"}) @key(fields:"id") @shareable {id:BigInt name:String! category:Category photoUrls:[String]! tags:[Tag] status:code} """The \`BigInt\`
+scalar
+type represents non-fractional signed whole numeric values."""
 scalar BigInt
-
-type Category @shareable {
-  id: BigInt
-  name: String
-}
-
-type Tag @shareable {
-  id: BigInt
-  name: String
-}
-
-scalar code @regexp(subgraph: "petstore", pattern: "^[^\\\\s]+(\\\\s[^\\\\s]+)*$") @typescript(subgraph: "petstore", type: "string")
-
-"""Status values that need to be considered for filter"""
-enum queryInput_findPetsByStatus_status {
-  available
-  pending
-  sold
-}
-
-"""
-The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
-
-type Order @connect(source: "petstore", selection: "id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete", http: {GET: "/store/order/{$this.id}"}) @key(fields: "id") @shareable {
-  id: BigInt
-  petId: BigInt
-  quantity: Int
-  shipDate: DateTime
-  status: code
-  complete: Boolean
-}
-
-"""
-A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
-"""
+type Category @shareable {id:BigInt name:String}
+type Tag @shareable {id:BigInt name:String}
+scalar code @regexp(subgraph:"petstore" pattern:"^[^\\\\s]+(\\\\s[^\\\\s]+)*$") @typescript(subgraph:"petstore"
+type:"string") """Status values that need to be considered for filter"""
+enum queryInput_findPetsByStatus_status {available pending sold} """The \`JSON\`
+scalar
+type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."""
+scalar JSON @specifiedBy(url:"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+type Order @connect(source:"petstore" selection:"id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete" http:{GET:"/store/order/{$this.id}"}) @key(fields:"id") @shareable {id:BigInt petId:BigInt quantity:Int shipDate:DateTime status:code complete:Boolean} """A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."""
 scalar DateTime
-
-type User @shareable {
-  id: BigInt
-  username: String
-  firstName: String
-  lastName: String
-  email: EmailAddress
-  password: String
-  phone: String
-  """User Status"""
-  userStatus: Int
-}
-
-"""
-A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
-"""
-scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
-
-type Mutation @shareable {
-  """Update an existing pet by Id"""
-  updatePet(input: Pet_Input): Pet @connect(source: "petstore", http: {PUT: "/pet", body: "$args.input"}, selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus")
-  """Add a new pet to the store"""
-  addPet(input: Pet_Input): Pet @connect(source: "petstore", http: {POST: "/pet", body: "$args.input"}, selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus")
-  """Updates a pet in the store with form data"""
-  updatePetWithForm(
-    """ID of pet that needs to be updated"""
-    petId: BigInt!
-    """Name of pet that needs to be updated"""
-    name: String
-    """Status of pet that needs to be updated"""
-    status: String
-  ): JSON @connect(source: "petstore", http: {POST: "/pet/{$args.petId}", queryParams: "{\\n  name: $args.name\\n  status: $args.status\\n}"}, selection: "$")
-  """Deletes a pet"""
-  deletePet(
-    api_key: String
-    """Pet id to delete"""
-    petId: BigInt!
-  ): JSON @connect(source: "petstore", http: {DELETE: "/pet/{$args.petId}", headers: [{name: "api_key", value: "{$args.api_key}"}]}, selection: "$")
-  """uploads an image"""
-  uploadFile(
-    """ID of pet to update"""
-    petId: BigInt!
-    """Additional Metadata"""
-    additionalMetadata: String
-    input: File
-  ): ApiResponse @connect(source: "petstore", http: {POST: "/pet/{$args.petId}/uploadImage", headers: [{name: "Content-Type", value: "application/octet-stream"}], body: "$args.input", queryParams: "{\\n  additionalMetadata: $args.additionalMetadata\\n}"}, selection: "code\\ntype\\nmessage")
-  """Place a new order in the store"""
-  placeOrder(input: Order_Input): Order @connect(source: "petstore", http: {POST: "/store/order", body: "$args.input"}, selection: "id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete")
-  """
-  For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
-  """
-  deleteOrder(
-    """ID of the order that needs to be deleted"""
-    orderId: BigInt!
-  ): JSON @connect(source: "petstore", http: {DELETE: "/store/order/{$args.orderId}"}, selection: "$")
-  """This can only be done by the logged in user."""
-  createUser(input: User_Input): User @connect(source: "petstore", http: {POST: "/user", body: "$args.input"}, selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus")
-  """Creates list of users with given input array"""
-  createUsersWithListInput(input: [User_Input]): User @connect(source: "petstore", http: {POST: "/user/createWithList", body: "$args.input"}, selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus")
-  """This can only be done by the logged in user."""
-  updateUser(
-    """name that need to be deleted"""
-    username: String!
-    input: User_Input
-  ): JSON @connect(source: "petstore", http: {PUT: "/user/{$args.username}", body: "$args.input"}, selection: "$")
-  """This can only be done by the logged in user."""
-  deleteUser(
-    """The name that needs to be deleted"""
-    username: String!
-  ): JSON @connect(source: "petstore", http: {DELETE: "/user/{$args.username}"}, selection: "$")
-}
-
-"""Pet object that needs to be added to the store"""
-input Pet_Input {
-  id: BigInt
-  name: String!
-  category: Category_Input
-  photoUrls: [String]!
-  tags: [Tag_Input]
-  status: code
-}
-
-input Category_Input {
-  id: BigInt
-  name: String
-}
-
-input Tag_Input {
-  id: BigInt
-  name: String
-}
-
-type ApiResponse @shareable {
-  code: Int
-  type: String
-  message: String
-}
-
-"""The \`File\` scalar type represents a file upload."""
+type User @shareable {id:BigInt username:String firstName:String lastName:String email:EmailAddress password:String phone:String """User Status""" userStatus:Int} """A field whose value conforms to the standard internet email address format as specified in HTML Spec:https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address."""
+scalar EmailAddress @specifiedBy(url:"https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
+type Mutation @shareable {"""Update an existing pet by Id""" updatePet(input:Pet_Input):Pet @connect(source:"petstore" http:{PUT:"/pet" body:"$args.input"} selection:"id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus") """Add a new pet to the store""" addPet(input:Pet_Input):Pet @connect(source:"petstore" http:{POST:"/pet" body:"$args.input"} selection:"id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus") """Updates a pet in the store with form data""" updatePetWithForm("""ID of pet that needs to be updated""" petId:BigInt! """Name of pet that needs to be updated""" name:String """Status of pet that needs to be updated""" status:String):JSON @connect(source:"petstore" http:{POST:"/pet/{$args.petId}" queryParams:"{\\n  name: $args.name\\n  status: $args.status\\n}"} selection:"$") """Deletes a pet""" deletePet(api_key:String """Pet id to delete""" petId:BigInt!):JSON @connect(source:"petstore" http:{DELETE:"/pet/{$args.petId}" headers:[{name:"api_key" value:"{$args.api_key}"}]} selection:"$") """uploads an image""" uploadFile("""ID of pet to update""" petId:BigInt! """Additional Metadata""" additionalMetadata:String
+input:File):ApiResponse @connect(source:"petstore" http:{POST:"/pet/{$args.petId}/uploadImage" headers:[{name:"Content-Type" value:"application/octet-stream"}] body:"$args.input" queryParams:"{\\n  additionalMetadata: $args.additionalMetadata\\n}"} selection:"code\\ntype\\nmessage") """Place a new order in the store""" placeOrder(input:Order_Input):Order @connect(source:"petstore" http:{POST:"/store/order" body:"$args.input"} selection:"id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete") """For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors""" deleteOrder("""ID of the order that needs to be deleted""" orderId:BigInt!):JSON @connect(source:"petstore" http:{DELETE:"/store/order/{$args.orderId}"} selection:"$") """This can only be done by the logged in user.""" createUser(input:User_Input):User @connect(source:"petstore" http:{POST:"/user" body:"$args.input"} selection:"id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus") """Creates list of users with given
+input array""" createUsersWithListInput(input:[User_Input]):User @connect(source:"petstore" http:{POST:"/user/createWithList" body:"$args.input"} selection:"id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus") """This can only be done by the logged in user.""" updateUser("""name that need to be deleted""" username:String!
+input:User_Input):JSON @connect(source:"petstore" http:{PUT:"/user/{$args.username}" body:"$args.input"} selection:"$") """This can only be done by the logged in user.""" deleteUser("""The name that needs to be deleted""" username:String!):JSON @connect(source:"petstore" http:{DELETE:"/user/{$args.username}"} selection:"$")} """Pet object that needs to be added to the store"""
+input Pet_Input {id:BigInt name:String! category:Category_Input photoUrls:[String]! tags:[Tag_Input] status:code}
+input Category_Input {id:BigInt name:String}
+input Tag_Input {id:BigInt name:String}
+type ApiResponse @shareable {code:Int
+type:String message:String} """The \`File\`
+scalar
+type represents a file upload."""
 scalar File
-
-input Order_Input {
-  id: BigInt
-  petId: BigInt
-  quantity: Int
-  shipDate: DateTime
-  status: code
-  complete: Boolean
-}
-
-input User_Input {
-  id: BigInt
-  username: String
-  firstName: String
-  lastName: String
-  email: EmailAddress
-  password: String
-  phone: String
-  """User Status"""
-  userStatus: Int
-}
-
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
-  headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
-}
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
+input Order_Input {id:BigInt petId:BigInt quantity:Int shipDate:DateTime status:code complete:Boolean}
+input User_Input {id:BigInt username:String firstName:String lastName:String email:EmailAddress password:String phone:String """User Status""" userStatus:Int}
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-"""A custom syntax for mapping JSON data to GraphQL schema"""
+input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection
-
-input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
-}
-
+input ConnectorErrors {message:JSONSelection extensions:JSONSelection}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:JSONSelection}
 scalar _DirectiveExtensions
+directive @extraSchemaDefinitionDirective(directives:_DirectiveExtensions) repeatable on OBJECT
 
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
-"
 `;

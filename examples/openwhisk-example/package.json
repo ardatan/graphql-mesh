@@ -7,14 +7,14 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "mesh build && node build.js",
-    "deploy": "wsk action update /guest/mesh/swapi dist/index.js  --docker openwhisk/action-nodejs-v16 --web raw",
+    "deploy": "wsk action update /guest/mesh/swapi dist/index.js --docker your-registry/openwhisk-nodejs22:latest --web raw",
     "start": "mesh dev"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.103.4",
     "@graphql-mesh/graphql": "0.107.3",
     "esbuild": "^0.28.2",
-    "graphql": "16.14.0",
+    "graphql": "17.1.0",
     "typescript": "^6.0.3"
   }
 }

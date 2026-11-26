@@ -14,7 +14,7 @@
     "@graphql-mesh/transport-protobuf": "workspace:*",
     "@protobuf-ts/runtime": "2.11.1",
     "@protobuf-ts/runtime-rpc": "2.11.1",
-    "graphql": "16.14.0",
+    "graphql": "17.1.0",
     "twirp-ts": "2.5.0"
   },
   "devDependencies": {

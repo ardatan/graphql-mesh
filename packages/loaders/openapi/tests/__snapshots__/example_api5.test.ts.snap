@@ -1,119 +1,28 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI Loader: Testing the naming convention should generate the schema correctly 1`] = `
-"schema @source(name: "example_api", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  """Basic simpleNames option test"""
-  o_d_d___n_a_m_e: o_d_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/o_d_d___n_a_m_e"}, selection: "data")
-  """Basic simpleNames option test with GraphQL unsafe values"""
-  w_e_i_r_d___n_a_m_e: w_e_i_r_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e"}, selection: "data")
-  """Basic simpleNames option test with links with hard-coded parameters"""
-  w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e2/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}"}, selection: "data")
-  """Basic simpleNames option test with links with exposed parameters"""
-  w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e3/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}"}, selection: "data")
-  """Basic simpleEnumValues option test"""
-  getEnum: getEnum_200_response @connect(source: "example_api", http: {GET: "/getEnum"}, selection: "data: data->match([\\"r-e-d\\", \\"r_e_d\\"], [\\"a-m-b-e-r\\", \\"a_m_b_e_r\\"], [\\"g-r-e-e-n\\", \\"g_r_e_e_n\\"], [@, data])")
-  """Basic simpleEnumValues option test on numerical enum"""
-  getNumericalEnum: getNumericalEnum_200_response @connect(source: "example_api", http: {GET: "/getNumericalEnum"}, selection: "data: data->match([1, \\"_1\\"], [2, \\"_2\\"], [3, \\"_3\\"], [4, \\"_4\\"], [5, \\"_5\\"], [@, data])")
-  """Basic simpleEnumValues option test on object enum"""
-  getObjectEnum: getObjectEnum_200_response @connect(source: "example_api", http: {GET: "/getObjectEnum"}, selection: "data: data->match([{\\"goodbye\\":\\"world\\"}, \\"_LEFT_SQUARE_BRACE_object_Object_RIGHT_SQUARE_BRACE_\\"], [@, data])")
-}
-
-type o_d_d___n_a_m_e_200_response {
-  data: String
-  """Basic link"""
-  w_e_i_r_d___n_a_m_e___l_i_n_k: w_e_i_r_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e"}, selection: "data")
-  """Hardcoded link parameter"""
-  w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e2/Charles"}, selection: "data")
-  """Exposed link parameter"""
-  w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e3/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}"}, selection: "data")
-}
-
-type w_e_i_r_d___n_a_m_e_200_response {
-  data: String
-}
-
-type w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response {
-  data: String
-}
-
-type w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response {
-  data: String
-}
-
-type getEnum_200_response {
-  data: query_getEnum_data
-}
-
-enum query_getEnum_data {
-  r_e_d
-  a_m_b_e_r
-  g_r_e_e_n
-}
-
-type getNumericalEnum_200_response {
-  data: query_getNumericalEnum_data
-}
-
-enum query_getNumericalEnum_data {
-  _1
-  _2
-  _3
-  _4
-  _5
-}
-
-type getObjectEnum_200_response {
-  data: query_getObjectEnum_data
-}
-
-enum query_getObjectEnum_data {
-  _LEFT_SQUARE_BRACE_object_Object_RIGHT_SQUARE_BRACE_
-}
-
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
-  headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
-}
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
+schema @source(name:"example_api" http:{baseURL:"http://localhost:3000/api"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query}
+directive @connect(source:String http:ConnectHTTP selection:JSONSelection! entity:Boolean errors:ConnectorErrors isSuccess:JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess:JSONSelection) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {"""Basic simpleNames option test""" o_d_d___n_a_m_e:o_d_d___n_a_m_e_200_response @connect(source:"example_api" http:{GET:"/o_d_d___n_a_m_e"} selection:"data") """Basic simpleNames option test with GraphQL unsafe values""" w_e_i_r_d___n_a_m_e:w_e_i_r_d___n_a_m_e_200_response @connect(source:"example_api" http:{GET:"/w-e-i-r-d___n-a-m-e"} selection:"data") """Basic simpleNames option test with links with hard-coded parameters""" w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r:String!):w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source:"example_api" http:{GET:"/w-e-i-r-d___n-a-m-e2/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}"} selection:"data") """Basic simpleNames option test with links with exposed parameters""" w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r:String!):w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source:"example_api" http:{GET:"/w-e-i-r-d___n-a-m-e3/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}"} selection:"data") """Basic simpleEnumValues option test""" getEnum:getEnum_200_response @connect(source:"example_api" http:{GET:"/getEnum"} selection:"data: data->match([\\"r-e-d\\", \\"r_e_d\\"], [\\"a-m-b-e-r\\", \\"a_m_b_e_r\\"], [\\"g-r-e-e-n\\", \\"g_r_e_e_n\\"], [@, data])") """Basic simpleEnumValues option test on numerical
+enum""" getNumericalEnum:getNumericalEnum_200_response @connect(source:"example_api" http:{GET:"/getNumericalEnum"} selection:"data: data->match([1, \\"_1\\"], [2, \\"_2\\"], [3, \\"_3\\"], [4, \\"_4\\"], [5, \\"_5\\"], [@, data])") """Basic simpleEnumValues option test on object
+enum""" getObjectEnum:getObjectEnum_200_response @connect(source:"example_api" http:{GET:"/getObjectEnum"} selection:"data: data->match([{\\"goodbye\\":\\"world\\"}, \\"_LEFT_SQUARE_BRACE_object_Object_RIGHT_SQUARE_BRACE_\\"], [@, data])")}
+type o_d_d___n_a_m_e_200_response {data:String """Basic link""" w_e_i_r_d___n_a_m_e___l_i_n_k:w_e_i_r_d___n_a_m_e_200_response @connect(source:"example_api" http:{GET:"/w-e-i-r-d___n-a-m-e"} selection:"data") """Hardcoded link parameter""" w_e_i_r_d___n_a_m_e2___l_i_n_k:w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source:"example_api" http:{GET:"/w-e-i-r-d___n-a-m-e2/Charles"} selection:"data") """Exposed link parameter""" w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r:String!):w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source:"example_api" http:{GET:"/w-e-i-r-d___n-a-m-e3/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}"} selection:"data")}
+type w_e_i_r_d___n_a_m_e_200_response {data:String}
+type w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response {data:String}
+type w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response {data:String}
+type getEnum_200_response {data:query_getEnum_data}
+enum query_getEnum_data {r_e_d a_m_b_e_r g_r_e_e_n}
+type getNumericalEnum_200_response {data:query_getNumericalEnum_data}
+enum query_getNumericalEnum_data {_1 _2 _3 _4 _5}
+type getObjectEnum_200_response {data:query_getObjectEnum_data}
+enum query_getObjectEnum_data {_LEFT_SQUARE_BRACE_object_Object_RIGHT_SQUARE_BRACE_}
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-"""A custom syntax for mapping JSON data to GraphQL schema"""
+input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection
+input ConnectorErrors {message:JSONSelection extensions:JSONSelection}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:JSONSelection}
 
-input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
-}"
 `;

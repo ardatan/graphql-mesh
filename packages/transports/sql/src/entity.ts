@@ -11,7 +11,7 @@ import {
   type GraphQLSchema,
 } from 'graphql';
 import { entitiesResolver } from '@apollo/subgraph';
-import { getDefDirectives } from '@graphql-mesh/utils';
+import { getDefDirectives, installQueryField } from '@graphql-mesh/utils';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 
 type ResolveReferenceFn = (reference: any, context: any, info: GraphQLResolveInfo) => any;
@@ -40,6 +40,39 @@ export function getTypeResolveReference(type: GraphQLNamedType): ResolveReferenc
   }
   const fromType = (type as any).resolveReference;
   return typeof fromType === 'function' ? fromType : undefined;
+}
+
+/**
+ * Bare `type.resolveReference` is not in toConfig(); copy into Apollo extensions
+ * before installQueryField/mapSchema so remirror can restore after rebuild.
+ */
+function promoteBareResolveReferencesToExtensions(schema: GraphQLSchema): void {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type)) {
+      continue;
+    }
+    const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
+    if (typeof fromExtensions === 'function') {
+      continue;
+    }
+    const bare = (type as any).resolveReference;
+    if (typeof bare === 'function') {
+      setTypeResolveReference(type, bare);
+    }
+  }
+}
+
+/** mapSchema drops the non-config resolveReference mirror — re-attach from extensions. */
+function remirrorTypeResolveReferences(schema: GraphQLSchema): void {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type)) {
+      continue;
+    }
+    const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
+    if (typeof fromExtensions === 'function') {
+      (type as any).resolveReference = fromExtensions;
+    }
+  }
 }
 
 type JoinDirectiveArgs = { name?: string; args?: Record<string, unknown> };
@@ -127,18 +160,17 @@ function hydrateEntityStubFieldResolvers(schema: GraphQLSchema) {
 /**
  * Add / repair Federation `Query._entities` (same contract as Connectors REST transport).
  */
-function ensureFederationEntitiesField(schema: GraphQLSchema) {
+function ensureFederationEntitiesField(schema: GraphQLSchema): GraphQLSchema {
   const queryType = schema.getQueryType();
   if (!queryType) {
-    return;
+    return schema;
   }
-  const queryFields = queryType.getFields();
   const entityTypes = Object.values(schema.getTypeMap()).filter(
     (t): t is GraphQLObjectType =>
       isObjectType(t) && !t.name.startsWith('__') && !!getTypeResolveReference(t),
   );
   if (!entityTypes.length) {
-    return;
+    return schema;
   }
 
   const typeMap = schema.getTypeMap() as Record<string, any>;
@@ -177,31 +209,20 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return entitiesResolver({ representations, context, info });
   };
 
-  if (queryFields._entities) {
-    queryFields._entities.resolve = entitiesResolve;
-    return;
-  }
-
-  queryFields._entities = {
-    name: '_entities',
+  return installQueryField(schema, '_entities', {
     description: 'Federation entity resolver for SQL transport (Hive `_entities` path)',
     type: new GraphQLNonNull(new GraphQLList(entityUnion)),
-    args: [
-      {
-        name: 'representations',
-        description: undefined,
+    args: {
+      representations: {
         type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
-        defaultValue: undefined,
-        deprecationReason: undefined,
-        extensions: {},
-        astNode: undefined,
-      },
-    ],
+        // GraphQL 17 requires `default`; GraphQL 16 only knows `defaultValue`.
+        default: undefined,
+        extensions: Object.create(null),
+      } as any,
+    },
     resolve: entitiesResolve,
-    deprecationReason: undefined,
-    extensions: {},
-    astNode: undefined,
-  };
+    extensions: Object.create(null),
+  });
 }
 
 export type TypeLevelSqlExecutor = (
@@ -233,7 +254,9 @@ export function wireSqlEntityResolvers(
     );
   }
 
-  ensureFederationEntitiesField(schema);
+  promoteBareResolveReferencesToExtensions(schema);
+  schema = ensureFederationEntitiesField(schema);
+  remirrorTypeResolveReferences(schema);
   hydrateEntityStubFieldResolvers(schema);
   return schema;
 }

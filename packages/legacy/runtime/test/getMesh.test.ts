@@ -129,24 +129,12 @@ describe('getMesh', () => {
     });
 
     expect(printSchemaWithDirectives(mesh.schema)).toMatchInlineSnapshot(`
-      "schema {
-        query: Query
-        mutation: Mutation
-        subscription: Subscription
-      }
+schema {query:Query mutation:Mutation subscription:Subscription}
+type Query {hello:String}
+type Mutation {bye:String}
+type Subscription {wave:String}
 
-      type Query {
-        hello: String
-      }
-
-      type Mutation {
-        bye: String
-      }
-
-      type Subscription {
-        wave: String
-      }"
-    `);
+`);
 
     const result = await mesh.execute(
       `
@@ -366,30 +354,12 @@ describe('getMesh', () => {
     );
 
     expect(printSchemaWithDirectives(mesh1.schema)).toMatchInlineSnapshot(`
-      "schema {
-        query: Query
-        mutation: Mutation
-        subscription: Subscription
-      }
+schema {query:Query mutation:Mutation subscription:Subscription}
+type Query {helloLarge:String hello0:String hello1:String}
+type Mutation {byeLarge:String bye0:String bye1:String}
+type Subscription {waveLarge:String wave0:String wave1:String}
 
-      type Query {
-        helloLarge: String
-        hello0: String
-        hello1: String
-      }
-
-      type Mutation {
-        byeLarge: String
-        bye0: String
-        bye1: String
-      }
-
-      type Subscription {
-        waveLarge: String
-        wave0: String
-        wave1: String
-      }"
-    `);
+`);
   });
 
   it('generates valid schema from multiple JSON Schema sources with bare merger', async () => {

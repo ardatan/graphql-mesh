@@ -21,13 +21,14 @@ export default async function startServer() {
   });
   const playgroundGrpcObject = loadPackageDefinition(playgroundPackageDefinition);
   server.addService(playgroundGrpcObject.artnet.coredata.playground.Playground.service, {});
+  const port = Number(process.env.GRPC_REFLECTION_PORT || 50052);
   return new Promise<Server>((resolve, reject) => {
-    server.bindAsync('0.0.0.0:50052', ServerCredentials.createInsecure(), (error, port) => {
+    server.bindAsync(`0.0.0.0:${port}`, ServerCredentials.createInsecure(), (error, bound) => {
       if (error) {
         reject(error);
         return;
       }
-      console.log('gRPC Server started, listening: 0.0.0.0:' + port);
+      console.log('gRPC Server started, listening: 0.0.0.0:' + bound);
       resolve(server);
     });
   });

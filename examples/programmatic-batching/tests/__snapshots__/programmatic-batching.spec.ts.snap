@@ -1,80 +1,22 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Batching Example should generate correct schema 1`] = `
-"schema {
-  query: Query
-  mutation: Mutation
-}
-
-directive @connect(entity: Boolean, errors: ConnectorErrors, http: ConnectHTTP, isSuccess: JSONSelection, selection: JSONSelection!, source: String) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @link(import: [String], url: String!) repeatable on SCHEMA
-
-directive @source(errors: ConnectorErrors, http: SourceHTTP!, isSuccess: JSONSelection, name: String!) repeatable on SCHEMA
-
-input ConnectHTTP {
-  DELETE: URLPathTemplate
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  PATCH: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  body: JSONSelection
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
-}
-
-input ConnectorErrors {
-  extensions: JSONSelection
-  message: JSONSelection
-}
-
-input HTTPHeaderMapping {
-  from: String
-  name: String!
-  value: String
-}
-
-"""A custom syntax for mapping JSON data to GraphQL schema"""
+schema @source(name:"ExampleAPI" http:{baseURL:"http://localhost:4001"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query mutation:Mutation}
+directive @connect(entity:Boolean errors:ConnectorErrors http:ConnectHTTP isSuccess:JSONSelection selection:JSONSelection! source:String) repeatable on FIELD_DEFINITION | OBJECT
+directive @link(import:[String] url:String!) repeatable on SCHEMA
+directive @source(errors:ConnectorErrors http:SourceHTTP! isSuccess:JSONSelection name:String!) repeatable on SCHEMA
+input ConnectHTTP {DELETE:URLPathTemplate GET:URLPathTemplate HEAD:URLPathTemplate PATCH:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate body:JSONSelection headers:[HTTPHeaderMapping!] queryParams:JSONSelection}
+input ConnectorErrors {extensions:JSONSelection message:JSONSelection}
+input HTTPHeaderMapping {from:String name:String! value:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection
-
-type Mutation {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @connect(source: "ExampleAPI", http: {POST: "/users_by_ids", body: "$args.input"}, selection: """
-  results {
-    id
-    name
-  }
-  """)
-}
-
-type Query {
-  dummy: String @connect(selection: "$(\\"dummy\\")")
-  user(id: Float!): User
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
-}
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
+type Mutation {usersByIds(input:UsersByIdRequest_Input):UsersByIdResponse @connect(source:"ExampleAPI" http:{POST:"/users_by_ids" body:"$args.input"} selection:"""results {id name}""")}
+type Query {dummy:String @connect(selection:"$(\\"dummy\\")") user(id:Float!):User}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
+type User {id:Float! name:String!}
+input UsersByIdRequest_Input {ids:[Float]!}
+type UsersByIdResponse {results:[User]!}
 
-type User {
-  id: Float!
-  name: String!
-}
-
-input UsersByIdRequest_Input {
-  ids: [Float]!
-}
-
-type UsersByIdResponse {
-  results: [User]!
-}"
 `;
 
 exports[`Batching Example should give correct response for the batched example query: example-query-result 1`] = `

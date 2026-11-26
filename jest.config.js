@@ -136,6 +136,8 @@ module.exports = {
   },
   transformIgnorePatterns: [`node_modules/(?!(${ESM_PACKAGES.join('|')})/)`],
   resolver: 'bob-the-bundler/jest-resolver',
+  // One snap file for GraphQL 16+17: canonicalize printSchema* cosmetics.
+  snapshotSerializers: ['<rootDir>/jest.sdl-snapshot-serializer.cjs'],
   testMatch,
   setupFilesAfterEnv: ['<rootDir>/setup-jest.js'],
 };

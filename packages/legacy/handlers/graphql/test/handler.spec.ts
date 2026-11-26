@@ -194,14 +194,10 @@ describe('graphql', () => {
     });
     const printedSDL = printSchemaWithDirectives(schema);
     expect(printedSDL).toMatchInlineSnapshot(`
-      "schema {
-        query: Query
-      }
+schema {query:Query}
+type Query {hello:String!}
 
-      type Query {
-        hello: String!
-      }"
-    `);
+`);
     const result = await executor({
       document: parse(/* GraphQL */ `
         query {

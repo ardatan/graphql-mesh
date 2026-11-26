@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { parse, type ExecutionResult } from 'graphql';
+import { buildSchema, parse, type ExecutionResult } from 'graphql';
 import { loadGraphQLSchemaFromSql } from '@omnigraph/sql';
 import { getSqlExecutor } from '../src/execution.js';
 import type { SqlClient } from '../src/types.js';
@@ -306,5 +306,169 @@ describe('getSqlExecutor sqlite', () => {
     } finally {
       await (executor as any)[Symbol.asyncDispose]?.();
     }
+  });
+});
+
+describe('getSqlExecutor postgres pgSettings fail-closed', () => {
+  function postgresSchema(optionsBody: string) {
+    return buildSchema(/* GraphQL */ `
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        options: TransportOptions
+      ) on SCHEMA
+
+      input SoftDeleteOptions {
+        column: String
+      }
+
+      input TransportOptions {
+        adapter: String
+        softDelete: SoftDeleteOptions
+      }
+
+      schema
+        @transport(
+          subgraph: "pg"
+          kind: "sql"
+          location: "postgres://localhost/db"
+          options: { ${optionsBody} }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        hello: String
+      }
+    `);
+  }
+
+  const bunStyleClient: SqlClient = {
+    adapter: 'postgres',
+    // No pgPool — Bun.SQL / non-pool postgres path.
+    async query() {
+      return { rows: [], rowCount: 0 };
+    },
+    dispose() {},
+  };
+
+  const clientWithPool: SqlClient = {
+    ...bunStyleClient,
+    pgPool: { query: async () => ({ rows: [] }) } as any,
+  };
+
+  async function expectPgSettingsRejected(
+    schema: ReturnType<typeof buildSchema>,
+    client: SqlClient,
+  ) {
+    const executor = await getSqlExecutor({ subgraph: schema, client });
+    try {
+      await expect(
+        executor({
+          document: parse(`query { hello }`),
+          context: { pgSettings: { role: 'app_user' } },
+        }),
+      ).rejects.toThrow(/pgSettings is not applied/);
+    } finally {
+      await (executor as any)[Symbol.asyncDispose]?.();
+    }
+  }
+
+  it('rejects pgSettings when postgres has no pgPool (Bun.SQL-style)', async () => {
+    await expectPgSettingsRejected(postgresSchema('adapter: "postgres"'), bunStyleClient);
+  });
+
+  it('rejects pgSettings when softDelete selects the default executor', async () => {
+    // Even with a fake pgPool, softDelete forces the GraphQL.js default path.
+    await expectPgSettingsRejected(
+      postgresSchema('adapter: "postgres", softDelete: { column: "deleted_at" }'),
+      clientWithPool,
+    );
+  });
+
+  // printSchemaHasPlannerExtras scans @sql(selection/through). Keep a pgPool so
+  // only the planner-extras gate (not missing pool) forces the default path.
+  // Separate fixtures so $fn cannot hide a through regression (and vice versa).
+  function plannerExtrasSchema(queryFieldsSdl: string) {
+    return buildSchema(/* GraphQL */ `
+      directive @transport(
+        subgraph: String!
+        kind: String!
+        location: String
+        options: TransportOptions
+      ) on SCHEMA
+      directive @sql(
+        table: String!
+        kind: String!
+        selection: String
+        through: String
+      ) on FIELD_DEFINITION | OBJECT
+
+      input TransportOptions {
+        adapter: String
+      }
+
+      schema
+        @transport(
+          subgraph: "pg"
+          kind: "sql"
+          location: "postgres://localhost/db"
+          options: { adapter: "postgres" }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        hello: String
+        ${queryFieldsSdl}
+      }
+
+      type User {
+        id: ID
+        fullName: String
+      }
+
+      type Track {
+        id: ID
+      }
+    `);
+  }
+
+  it('rejects pgSettings when $fn planner extras select the default executor', async () => {
+    await expectPgSettingsRejected(
+      plannerExtrasSchema(/* GraphQL */ `
+        user: User
+          @sql(
+            table: "users"
+            kind: "ROW"
+            selection: """
+            id: id
+            fullName: $fn.public.users_full_name
+            """
+          )
+      `),
+      clientWithPool,
+    );
+  });
+
+  it('rejects pgSettings when through planner extras select the default executor', async () => {
+    await expectPgSettingsRejected(
+      plannerExtrasSchema(/* GraphQL */ `
+        playlistTracks: [Track]
+          @sql(
+            table: "tracks"
+            kind: "ROWS"
+            through: """
+            table: playlist_track
+            local: TrackId
+            remote: PlaylistId
+            parent: $this.id
+            target: id
+            """
+          )
+      `),
+      clientWithPool,
+    );
   });
 });

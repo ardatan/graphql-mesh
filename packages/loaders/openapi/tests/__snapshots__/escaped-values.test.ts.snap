@@ -1,68 +1,18 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Escaped Values should generate the correct schema: escaped_values-schema 1`] = `
-"schema @source(name: "escaped_values", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  test: test_200_response @connect(source: "escaped_values", http: {GET: "/test"}, selection: "test: test->match([-1, \\"NEGATIVE_1\\"], [0, \\"_0\\"], [10, \\"_10\\"], [15, \\"_15\\"], [30, \\"_30\\"], [45, \\"_45\\"], [60, \\"_60\\"], [@, test])")
-}
-
-type test_200_response {
-  test: query_test_test
-}
-
-enum query_test_test {
-  NEGATIVE_1
-  _0
-  _10
-  _15
-  _30
-  _45
-  _60
-}
-
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
-  headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
-}
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
+schema @source(name:"escaped_values" http:{baseURL:"http://localhost:3000/api"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query}
+directive @connect(source:String http:ConnectHTTP selection:JSONSelection! entity:Boolean errors:ConnectorErrors isSuccess:JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess:JSONSelection) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {test:test_200_response @connect(source:"escaped_values" http:{GET:"/test"} selection:"test: test->match([-1, \\"NEGATIVE_1\\"], [0, \\"_0\\"], [10, \\"_10\\"], [15, \\"_15\\"], [30, \\"_30\\"], [45, \\"_45\\"], [60, \\"_60\\"], [@, test])")}
+type test_200_response {test:query_test_test}
+enum query_test_test {NEGATIVE_1 _0 _10 _15 _30 _45 _60}
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-"""A custom syntax for mapping JSON data to GraphQL schema"""
+input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection
+input ConnectorErrors {message:JSONSelection extensions:JSONSelection}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:JSONSelection}
 
-input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
-}"
 `;

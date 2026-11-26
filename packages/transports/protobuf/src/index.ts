@@ -20,6 +20,7 @@ import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-c
 import type { MeshFetch } from '@graphql-mesh/types';
 import {
   assertSupportedMeshSpecOnSchema,
+  installQueryField,
   MESH_SUPPORTED_SPEC_VERSIONS,
   validateMeshDirectives,
 } from '@graphql-mesh/utils';
@@ -211,7 +212,13 @@ export class ProtobufTransportHelper extends DisposableStack {
     return credentials.createInsecure();
   }
 
-  processDirectives({ schema, creds }: { schema: GraphQLSchema; creds: ChannelCredentials }) {
+  processDirectives({
+    schema,
+    creds,
+  }: {
+    schema: GraphQLSchema;
+    creds: ChannelCredentials;
+  }): GraphQLSchema {
     this.channelCreds = creds;
     const location = stringInterpolator.parse(this.endpoint, { env: process.env }) ?? this.endpoint;
     const channelOptions = Array.isArray(this.config.channelOptions)
@@ -298,7 +305,7 @@ export class ProtobufTransportHelper extends DisposableStack {
         }
       }
     }
-    ensureFederationEntitiesField(schema);
+    return ensureFederationEntitiesField(schema);
   }
 
   private createRpcResolverFromDirectiveArgs(
@@ -455,18 +462,17 @@ export class ProtobufTransportHelper extends DisposableStack {
   }
 }
 
-function ensureFederationEntitiesField(schema: GraphQLSchema) {
+function ensureFederationEntitiesField(schema: GraphQLSchema): GraphQLSchema {
   const queryType = schema.getQueryType();
   if (!queryType) {
-    return;
+    return schema;
   }
-  const queryFields = queryType.getFields();
   const entityTypes = Object.values(schema.getTypeMap()).filter(
     (t): t is GraphQLObjectType =>
       isObjectType(t) && !t.name.startsWith('__') && !!getTypeResolveReference(t),
   );
   if (!entityTypes.length) {
-    return;
+    return schema;
   }
 
   const typeMap = schema.getTypeMap() as Record<string, any>;
@@ -505,32 +511,20 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
     return entitiesResolver({ representations, context, info });
   };
 
-  if (queryFields._entities) {
-    queryFields._entities.resolve = entitiesResolve;
-    return;
-  }
-
-  queryFields._entities = {
-    name: '_entities',
+  return installQueryField(schema, '_entities', {
     description: 'Federation entity resolver for protobuf RPC transport (Hive `_entities` path)',
     type: new GraphQLNonNull(new GraphQLList(entityUnion)),
-    args: [
-      {
-        name: 'representations',
-        description: undefined,
+    args: {
+      representations: {
         type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
-        defaultValue: undefined,
-        deprecationReason: undefined,
-        extensions: {},
-        astNode: undefined,
-      },
-    ],
+        // GraphQL 17 requires `default`; GraphQL 16 only knows `defaultValue`.
+        default: undefined,
+        extensions: Object.create(null),
+      } as any,
+    },
     resolve: entitiesResolve,
-    subscribe: undefined,
-    deprecationReason: undefined,
-    extensions: {},
-    astNode: undefined,
-  } as GraphQLField<any, any>;
+    extensions: Object.create(null),
+  });
 }
 
 function grpcUnary(opts: {
@@ -693,8 +687,8 @@ const transport: Transport<ProtobufTransportOptions> = {
           ? credentials.createInsecure()
           : helper.getCredentials(),
       creds => {
-        helper.processDirectives({ schema: subgraph, creds });
-        const executor = createDefaultExecutor(subgraph);
+        const schema = helper.processDirectives({ schema: subgraph, creds });
+        const executor = createDefaultExecutor(schema);
         executor[DisposableSymbols.dispose] = () => helper.dispose();
         return executor;
       },

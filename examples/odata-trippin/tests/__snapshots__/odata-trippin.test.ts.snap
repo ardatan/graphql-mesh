@@ -5210,103 +5210,123 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "enumValues": [
           {
             "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "QUERY",
-          },
-          {
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "MUTATION",
-          },
-          {
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "SUBSCRIPTION",
-          },
-          {
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "FIELD",
-          },
-          {
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "FRAGMENT_DEFINITION",
-          },
-          {
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "FRAGMENT_SPREAD",
-          },
-          {
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "INLINE_FRAGMENT",
-          },
-          {
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "VARIABLE_DEFINITION",
-          },
-          {
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "SCHEMA",
-          },
-          {
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "SCALAR",
-          },
-          {
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "OBJECT",
-          },
-          {
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "FIELD_DEFINITION",
-          },
-          {
-            "deprecationReason": null,
+            "description": null,
             "isDeprecated": false,
             "name": "ARGUMENT_DEFINITION",
           },
           {
             "deprecationReason": null,
+            "description": null,
             "isDeprecated": false,
-            "name": "INTERFACE",
+            "name": "DIRECTIVE_DEFINITION",
           },
           {
             "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "UNION",
-          },
-          {
-            "deprecationReason": null,
+            "description": null,
             "isDeprecated": false,
             "name": "ENUM",
           },
           {
             "deprecationReason": null,
+            "description": null,
             "isDeprecated": false,
             "name": "ENUM_VALUE",
           },
           {
             "deprecationReason": null,
+            "description": null,
             "isDeprecated": false,
-            "name": "INPUT_OBJECT",
+            "name": "FIELD",
           },
           {
             "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "FIELD_DEFINITION",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "FRAGMENT_DEFINITION",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "FRAGMENT_SPREAD",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "INLINE_FRAGMENT",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
             "isDeprecated": false,
             "name": "INPUT_FIELD_DEFINITION",
           },
           {
             "deprecationReason": null,
+            "description": null,
             "isDeprecated": false,
-            "name": "DIRECTIVE_DEFINITION",
+            "name": "INPUT_OBJECT",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "INTERFACE",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "MUTATION",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "OBJECT",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "QUERY",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "SCALAR",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "SCHEMA",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "SUBSCRIPTION",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "UNION",
+          },
+          {
+            "deprecationReason": null,
+            "description": null,
+            "isDeprecated": false,
+            "name": "VARIABLE_DEFINITION",
           },
         ],
         "fields": null,
@@ -5668,13 +5688,9 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "isDeprecated": false,
                 "name": "includeDeprecated",
                 "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                  },
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
                 },
               },
             ],
@@ -5977,7 +5993,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
   },
 }
 `;
-
 exports[`OData TripPin should give correct response for example queries: example-query.graphql-query-result 1`] = `
 {
   "data": {

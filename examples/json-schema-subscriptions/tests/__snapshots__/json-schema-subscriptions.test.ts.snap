@@ -1,104 +1,26 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`JSON Schema Subscriptions should generate correct schema 1`] = `
-"schema {
-  query: Query
-  mutation: Mutation
-  subscription: Subscription
-}
-
-directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
-
-directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFINITION
-
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
+schema @source(name:"Example" http:{baseURL:"http://localhost:4002"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@pubsubOperation"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @composeDirective(name:"@pubsubOperation") {query:Query mutation:Mutation subscription:Subscription}
+directive @example(subgraph:String value:ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+directive @pubsubOperation(subgraph:String pubsubTopic:String) on FIELD_DEFINITION
+directive @connect(source:String http:ConnectHTTP selection:JSONSelection! entity:Boolean errors:ConnectorErrors isSuccess:JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess:JSONSelection) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
 directive @live on QUERY
-
-type Query {
-  todos: [query_todos_items] @connect(source: "Example", http: {GET: "/todos"}, selection: """
-  id
-  name
-  content
-  """)
-}
-
-type query_todos_items {
-  id: Int
-  name: String
-  content: String
-}
-
-type Mutation {
-  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @connect(source: "Example", http: {POST: "/todo", body: "$args.input"}, selection: """
-  id
-  name
-  content
-  """)
-}
-
-type mutation_addTodo @example(subgraph: "Example", value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
-  id: Int
-  name: String
-  content: String
-}
-
-input mutationInput_addTodo_input_Input @example(subgraph: "Example", value: "{\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
-  name: String
-  content: String
-}
-
-type Subscription {
-  """PubSub Topic: webhook:post:/webhooks/todo_added"""
-  todoAdded: subscription_todoAdded @pubsubOperation(subgraph: "Example", pubsubTopic: "webhook:post:/webhooks/todo_added")
-}
-
-type subscription_todoAdded @example(subgraph: "Example", value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
-  id: Int
-  name: String
-  content: String
-}
-
+type Query {todos:[query_todos_items] @connect(source:"Example" http:{GET:"/todos"} selection:"""id name content""")}
+type query_todos_items {id:Int name:String content:String}
+type Mutation {addTodo(input:mutationInput_addTodo_input_Input):mutation_addTodo @connect(source:"Example" http:{POST:"/todo" body:"$args.input"} selection:"""id name content""")}
+type mutation_addTodo @example(subgraph:"Example" value:"{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {id:Int name:String content:String}
+input mutationInput_addTodo_input_Input @example(subgraph:"Example" value:"{\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {name:String content:String}
+type Subscription {"""PubSub Topic:webhook:post:/webhooks/todo_added""" todoAdded:subscription_todoAdded @pubsubOperation(subgraph:"Example" pubsubTopic:"webhook:post:/webhooks/todo_added")}
+type subscription_todoAdded @example(subgraph:"Example" value:"{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {id:Int name:String content:String}
 scalar ObjMap
-
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
-  headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
-}
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-"""A custom syntax for mapping JSON data to GraphQL schema"""
+input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection
+input ConnectorErrors {message:JSONSelection extensions:JSONSelection}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:JSONSelection}
 
-input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
-}"
 `;

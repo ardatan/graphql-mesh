@@ -1,3 +1,4 @@
+import { matchPrintedFieldBlock } from '@e2e/printed-sdl';
 import { createTenv, type ServeRunner, type Service } from '@e2e/tenv';
 
 describe('OpenAPI entity stubs (FK + getById)', () => {
@@ -18,14 +19,13 @@ describe('OpenAPI entity stubs (FK + getById)', () => {
     });
     expect(result).toMatchSnapshot();
     // Invoice selection stubs customer via FK (shared fusion/loader contract).
-    // Invoice selection stubs customer via FK (shared fusion/loader contract).
-    const invoiceConnect = result.match(/getInvoice\([\s\S]*?\):\s*Invoice[^\n]*/)?.[0] || '';
+    const invoiceConnect = matchPrintedFieldBlock(result, /getInvoice\([\s\S]*?\):\s*Invoice/);
     expect(invoiceConnect).toContain('customerId');
     expect(invoiceConnect).toMatch(/customer:\s*\{\s*__typename/);
     expect(invoiceConnect).not.toMatch(/customer:\s*\{[^}]*\bname\b/);
     // `getCustomer(id:)` — single key-typed arg is enough for entity: true.
-    const getCustomer = result.match(/getCustomer\([\s\S]*?\):\s*Customer[^\n]*/)?.[0] || '';
-    expect(getCustomer).toContain('entity: true');
+    const getCustomer = matchPrintedFieldBlock(result, /getCustomer\([\s\S]*?\):\s*Customer/);
+    expect(getCustomer).toMatch(/entity:\s*true/);
   });
 
   describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {

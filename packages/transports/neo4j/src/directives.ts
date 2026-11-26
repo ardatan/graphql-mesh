@@ -39,9 +39,9 @@ export function getNeo4jDirectiveDefinitions(): DocumentNode['definitions'] {
 
 function subgraphArg(subgraph: string) {
   return {
-    kind: Kind.ARGUMENT as const,
-    name: { kind: Kind.NAME as const, value: 'subgraph' },
-    value: { kind: Kind.STRING as const, value: subgraph },
+    kind: Kind.ARGUMENT,
+    name: { kind: Kind.NAME, value: 'subgraph' },
+    value: { kind: Kind.STRING, value: subgraph },
   };
 }
 

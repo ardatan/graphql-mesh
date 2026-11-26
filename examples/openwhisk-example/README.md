@@ -29,8 +29,28 @@ You can see an example script to bundle the project with `ESBuild` in `build.js`
 build the artifacts of GraphQL Mesh first then bundle all the code needed for the OpenWhisk action
 by taking `index.ts` as an endpoint.
 
-You can find the bundle in `dist/index.js` and deploy it either `yarn deploy` or manually with `wsk`
-like `wsk action update /guest/mesh/swapi --kind nodejs:16 dist/index.js --web raw`.
+You can find the bundle in `dist/index.js`.
+
+> **Deploy note:** this monorepo pins `graphql@17` (Node 22+). Stock OpenWhisk `action-nodejs-v16` /
+> `nodejs:16` images are **not** a supported runtime for that GraphQL major. Yarn root
+> `resolutions.graphql` intentionally keeps the workspace on a single GraphQL major — per-example
+> `graphql@16` pins cannot override it. Use the example for local `yarn start` / bundling, or deploy
+> with a **custom Node 22+** action image as below.
+
+### Deploy with a custom Node 22+ action image
+
+1. Build or pull a Node 22+ OpenWhisk action image your cluster can run (stock Apache OpenWhisk
+   images stop at Node 16/20). Example placeholder: `your-registry/openwhisk-nodejs22:latest`.
+2. Point `build.js` `target` at `node22` (already set in this example) and run `yarn build`.
+3. Deploy the bundle against that image (not `--kind nodejs:16`):
+
+```sh
+wsk action update /guest/mesh/swapi dist/index.js \
+  --docker your-registry/openwhisk-nodejs22:latest \
+  --web raw
+```
+
+`yarn deploy` uses the same `--docker` form — replace the image name in `package.json` with yours.
 
 > `--web raw` needs to be added to configure the action as a _raw_ web action.
 

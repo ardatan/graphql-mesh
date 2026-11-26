@@ -1,4 +1,4 @@
-schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"]) @transport(subgraph: "Pets", kind: "connect", location: "http://localhost:{$context.headers['x-upstream-port']:4001}") @join__directive(graphs: [PETS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PETS], name: "source", args: {name: "Pets", http: {baseURL: "http://localhost:{$context.headers['x-upstream-port']:4001}"}}) {
+schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @join__directive(graphs: [PETS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PETS], name: "source", args: {name: "Pets", http: {baseURL: "http://localhost:{$context.headers['x-upstream-port']:4001}"}}) {
   query: Query
 }
 
@@ -39,16 +39,12 @@ type Query @join__type(graph: PETS) {
   pet_by_petId(
     """ID of pet to return"""
     petId: String!
-  ): Pet @join__directive(graphs: [PETS], name: "connect", args: {source: "Pets", http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}, selection: "name"})
+  ): Pet @join__directive(graphs: [PETS], name: "connect", args: {source: "Pets", http: {GET: "/pet/{$args.petId}"}, selection: "name"})
 }
 
 type Pet @join__type(graph: PETS) {
   name: String!
 }
-
-scalar ObjMap
-
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 

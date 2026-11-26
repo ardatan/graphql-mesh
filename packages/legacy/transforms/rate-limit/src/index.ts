@@ -91,7 +91,7 @@ export default class RateLimitTransform implements MeshTransform {
     return executionRequest;
   }
 
-  transformResult(result: ExecutionResult, delegationContext: DelegationContext) {
+  transformResult(result: ExecutionResult, delegationContext: DelegationContext): ExecutionResult {
     const errors = this.errors.get(delegationContext);
     if (errors?.length) {
       return {

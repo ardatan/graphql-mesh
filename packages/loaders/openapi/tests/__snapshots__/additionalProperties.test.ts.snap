@@ -1,92 +1,21 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`additionalProperties should generate the schema correctly: schema 1`] = `
-"schema @source(name: "additionalPropertiesTest", http: {baseURL: "http://localhost:3000"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
-  query: Query
-}
-
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
-
-directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-type Query {
-  test: test_200_response @connect(source: "additionalPropertiesTest", http: {GET: "/test"}, selection: """
-  id
-  foo {
-    bar
-  }
-  qux {
-    quux
-    additionalProperties: $->entries->filter(@.key->ne("quux"))->filter(@.key->ne("additionalProperties")) {
-      key
-      value {
-        corge
-      }
-    }
-  }
-  """)
-}
-
-type test_200_response {
-  id: String
-  foo: query_test_foo
-  qux: query_test_qux
-}
-
-type query_test_foo {
-  bar: String
-}
-
-type query_test_qux {
-  quux: String
-  additionalProperties: [query_test_qux_additionalProperties_entry]
-}
-
-type query_test_qux_additionalProperties_entry {
-  key: ID!
-  value: query_test_qux_additionalProperties
-}
-
-type query_test_qux_additionalProperties {
-  corge: String
-}
-
-input ConnectHTTP {
-  GET: URLPathTemplate
-  HEAD: URLPathTemplate
-  POST: URLPathTemplate
-  PUT: URLPathTemplate
-  PATCH: URLPathTemplate
-  DELETE: URLPathTemplate
-  headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
-}
-
-"""
-A URL path with optional parameters, mapping to GraphQL fields or arguments
-"""
+schema @source(name:"additionalPropertiesTest" http:{baseURL:"http://localhost:3000"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) {query:Query}
+directive @connect(source:String http:ConnectHTTP selection:JSONSelection! entity:Boolean errors:ConnectorErrors isSuccess:JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess:JSONSelection) repeatable on SCHEMA
+directive @link(url:String! import:[String]) repeatable on SCHEMA
+type Query {test:test_200_response @connect(source:"additionalPropertiesTest" http:{GET:"/test"} selection:"""id foo {bar} qux {quux additionalProperties:$->entries->filter(@.key->ne("quux"))->filter(@.key->ne("additionalProperties")) {key value {corge}}}""")}
+type test_200_response {id:String foo:query_test_foo qux:query_test_qux}
+type query_test_foo {bar:String}
+type query_test_qux {quux:String additionalProperties:[query_test_qux_additionalProperties_entry]}
+type query_test_qux_additionalProperties_entry {key:ID! value:query_test_qux_additionalProperties}
+type query_test_qux_additionalProperties {corge:String}
+input ConnectHTTP {GET:URLPathTemplate HEAD:URLPathTemplate POST:URLPathTemplate PUT:URLPathTemplate PATCH:URLPathTemplate DELETE:URLPathTemplate headers:[HTTPHeaderMapping!] body:JSONSelection queryParams:JSONSelection} """A URL path with optional parameters, mapping to GraphQL fields or arguments"""
 scalar URLPathTemplate
-
-input HTTPHeaderMapping {
-  name: String!
-  value: String
-  from: String
-}
-
-"""A custom syntax for mapping JSON data to GraphQL schema"""
+input HTTPHeaderMapping {name:String! value:String from:String} """A custom syntax for mapping JSON data to GraphQL schema"""
 scalar JSONSelection
+input ConnectorErrors {message:JSONSelection extensions:JSONSelection}
+input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:JSONSelection}
 
-input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
-}
-
-input SourceHTTP {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
-}"
 `;

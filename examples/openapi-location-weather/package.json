@@ -12,6 +12,6 @@
     "@graphql-mesh/runtime": "0.109.3",
     "@graphql-mesh/transform-cache": "0.108.3",
     "@graphql-mesh/transform-rename": "0.108.3",
-    "graphql": "16.14.0"
+    "graphql": "17.1.0"
   }
 }

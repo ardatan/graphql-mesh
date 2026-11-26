@@ -1,4 +1,4 @@
-import type { GraphQLScalarType } from 'graphql';
+import type { GraphQLScalarType, ValueNode } from 'graphql';
 
 export function processRegExpAnnotations(scalar: GraphQLScalarType, pattern: string) {
   function coerceString(value: any) {
@@ -12,12 +12,20 @@ export function processRegExpAnnotations(scalar: GraphQLScalarType, pattern: str
     }
   }
 
-  scalar.serialize = coerceString;
-  scalar.parseValue = coerceString;
-  scalar.parseLiteral = ast => {
+  function parseLiteral(ast: ValueNode) {
     if ('value' in ast) {
       return coerceString(ast.value);
     }
     return null;
-  };
+  }
+
+  // GraphQL 16: serialize/parse*. GraphQL 17: coerceOutputValue/coerceInput*.
+  Object.defineProperties(scalar, {
+    serialize: { value: coerceString, configurable: true },
+    parseValue: { value: coerceString, configurable: true },
+    parseLiteral: { value: parseLiteral, configurable: true },
+    coerceOutputValue: { value: coerceString, configurable: true },
+    coerceInputValue: { value: coerceString, configurable: true },
+    coerceInputLiteral: { value: parseLiteral, configurable: true },
+  });
 }

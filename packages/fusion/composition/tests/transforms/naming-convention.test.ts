@@ -347,9 +347,17 @@ describe('Naming Convention', () => {
     expect(fieldUsersByType.args).toBeDefined();
     const userTypeArg = fieldUsersByType.args[0];
     expect(userTypeArg).toBeDefined();
-    expect(userTypeArg.defaultValue).toBeDefined();
-    expect(userTypeArg.defaultValue).not.toBeNull();
-    expect(userTypeArg.defaultValue).toBe('NEWBIE');
+    // GraphQL 16: defaultValue string; GraphQL 17: default.literal EnumValue
+    const gql17Default = (
+      userTypeArg as unknown as { default?: { literal?: { kind: string; value: string } } }
+    ).default;
+    const enumDefault =
+      typeof userTypeArg.defaultValue === 'string'
+        ? userTypeArg.defaultValue
+        : gql17Default?.literal?.kind === 'EnumValue'
+          ? gql17Default.literal.value
+          : undefined;
+    expect(enumDefault).toBe('NEWBIE');
   });
 
   it('resolves the data of renamed fields correctly when arguments are not changed', async () => {
