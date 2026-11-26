@@ -295,10 +295,19 @@ export default class NamingConventionTransform implements MeshTransform {
 function generateArgsMapForInput(
   input: GraphQLInputObjectType,
   fieldNamingConventionFn?: null | ((input: string) => string),
+  memo: Map<string, ArgsMap> = new Map(),
 ): ArgsMap {
+  const cached = memo.get(input.name);
+  if (cached) {
+    return cached;
+  }
+  // Memoize before visiting fields so recursive inputs (`Filter { and: [Filter!] }`)
+  // reuse this map instead of overflowing the stack.
+  const argsMap: ArgsMap = {};
+  memo.set(input.name, argsMap);
+
   const inputConfig = input.toConfig();
   const inputFields = inputConfig.fields;
-  const argsMap: ArgsMap = {};
   const skipFieldRename = IGNORED_TYPE_NAMES.includes(input.name);
 
   Object.keys(inputFields).forEach(argName => {
@@ -316,7 +325,11 @@ function generateArgsMapForInput(
     if (argIsInputObjectType) {
       argsMap[newArgName] = {
         originalName: argName,
-        fields: generateArgsMapForInput(type as GraphQLInputObjectType, fieldNamingConventionFn),
+        fields: generateArgsMapForInput(
+          type as GraphQLInputObjectType,
+          fieldNamingConventionFn,
+          memo,
+        ),
       };
     } else {
       argsMap[newArgName] = argName;

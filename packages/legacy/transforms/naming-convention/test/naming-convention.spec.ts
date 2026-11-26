@@ -432,6 +432,36 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(printed).toMatch(/search\(filter: Filter = \{ ?retryCount: 3 ?\}\)/);
   });
 
+  it('builds reverse maps for recursive input args without overflowing', () => {
+    const inputSchema = buildSchema(/* GraphQL */ `
+      input Filter {
+        and: [Filter!]
+        retry_count: Int
+      }
+      type Query {
+        search(filters: [Filter]): Int
+      }
+    `);
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const printed = printSchemaWithDirectives(newSchema);
+    expect(printed).toContain('retryCount');
+    expect(printed).not.toContain('retry_count');
+  });
+
   it('keeps nested input-object defaults when the argument is omitted (wrap + bare)', () => {
     const inputSchema = buildSchema(/* GraphQL */ `
       enum E {

@@ -1,4 +1,14 @@
-import { buildSchema, GraphQLEnumType, GraphQLObjectType, GraphQLUnionType } from 'graphql';
+import {
+  buildSchema,
+  DirectiveLocation,
+  GraphQLDirective,
+  GraphQLEnumType,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+  GraphQLUnionType,
+  validateSchema,
+} from 'graphql';
 import { createNamingConventionTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
@@ -658,6 +668,47 @@ describe('Naming Convention', () => {
           ? gql17Default.literal.value
           : undefined;
     expect(enumDefault).toBe('NEWBIE');
+  });
+
+  it('keeps internal-only directive enum defaults when the wire value differs from the name', () => {
+    const E = new GraphQLEnumType({
+      name: 'E',
+      values: {
+        newbie: { value: 'wire' },
+      },
+    });
+    const d = new GraphQLDirective({
+      name: 'd',
+      locations: [DirectiveLocation.FIELD_DEFINITION],
+      args: {
+        e: {
+          type: E,
+          defaultValue: 'wire',
+        },
+      },
+    });
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          q: {
+            type: GraphQLString,
+            astNode: undefined,
+          },
+        },
+      }),
+      directives: [d],
+    });
+    const transform = createNamingConventionTransform({
+      enumValues: 'upperCase',
+    });
+    const transformed = transform(schema, { name: 'SUBGRAPH1', schema });
+    expect(validateSchema(transformed)).toEqual([]);
+    const arg = transformed.getDirective('d')?.args.find(a => a.name === 'e');
+    expect(arg?.defaultValue).toBe('wire');
+    const gql17Default = (arg as unknown as { default?: { value?: unknown } })?.default;
+    // Must not invent `default: { value: 'WIRE' }` — public enum is NEWBIE, not WIRE.
+    expect(gql17Default?.value).not.toBe('WIRE');
   });
 
   it('rewrites key-only directive-argument defaults when only fieldNames is set', async () => {

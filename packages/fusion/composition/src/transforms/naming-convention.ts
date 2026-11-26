@@ -888,11 +888,11 @@ export function createNamingConventionTransform(
                     )
                   : rewriteEnumJsDefault(sourceDefault!.value, enumValuesFn!),
               };
-            } else if (hasJsStringDefault && isEnumType(namedArgType) && enumValuesFn) {
-              nextArg.default = {
-                value: rewriteEnumJsDefault(sourceDefaultValue, enumValuesFn),
-              };
             }
+            // Do not invent `default` from internal `defaultValue` via rename — when the
+            // enum wire value differs from its name (`newbie` → value `'wire'`), renaming
+            // `'wire'` yields a non-existent public enum value. Keep defaultValue internal;
+            // AST / explicit `default` paths above supply the external form when present.
             if (
               sourceAstDefault &&
               (containsEnumValueNode(sourceAstDefault) ||
