@@ -1,0 +1,46 @@
+name: specs
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'specs/**'
+      - '.github/workflows/specs.yml'
+  pull_request:
+    paths:
+      - 'specs/**'
+      - '.github/workflows/specs.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  deployments: write
+  pull-requests: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.pull_request.head.repo.full_name == github.repository ||
+      github.event_name == 'push'
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+
+      - name: build static site
+        run: node specs/generate.mjs
+
+      - name: deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@da0e0dfe58b7a431659754fdf3f186c529afbe65 # v3.14.1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          command: >
+            pages deploy specs/out
+            --project-name=graphql-mesh-specs
+            --branch=${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'master' }}

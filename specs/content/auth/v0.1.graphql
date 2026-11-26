@@ -1,0 +1,4 @@
+# Mesh auth v0.1
+# @link(url: "https://specs.graphql-mesh.dev/auth/v0.1", import: ["@skipAuth"])
+
+directive @skipAuth on FIELD_DEFINITION | OBJECT | INTERFACE

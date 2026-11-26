@@ -1,0 +1,101 @@
+# Mesh Mongo v0.1
+# @link(url: "https://specs.graphql-mesh.dev/mongo/v0.1", import: [...])
+
+directive @mongo__findOne(
+  subgraph: String
+  collection: String!
+  query: String
+  sort: String
+  skip: String
+  selection: String
+) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @mongo__find(
+  subgraph: String
+  collection: String!
+  query: String
+  sort: String
+  limit: String
+  skip: String
+  selection: String
+) repeatable on FIELD_DEFINITION
+
+directive @mongo__count(
+  subgraph: String
+  collection: String!
+  query: String
+  selection: String
+) repeatable on FIELD_DEFINITION
+
+directive @mongo__connection(
+  subgraph: String
+  collection: String!
+  query: String
+  sort: String
+  first: String
+  after: String
+  selection: String
+) repeatable on FIELD_DEFINITION
+
+directive @mongo__pagination(
+  subgraph: String
+  collection: String!
+  query: String
+  sort: String
+  page: String
+  perPage: String
+  selection: String
+) repeatable on FIELD_DEFINITION
+
+directive @mongo__aggregate(
+  subgraph: String
+  collection: String!
+  query: String
+  pipeline: String
+  selection: String
+) repeatable on FIELD_DEFINITION
+
+directive @mongo__insertOne(
+  subgraph: String
+  collection: String!
+  set: String
+  selection: String
+) repeatable on FIELD_DEFINITION
+
+directive @mongo__insertMany(
+  subgraph: String
+  collection: String!
+  set: String
+  selection: String
+  graphqlDocumentInputs: Boolean
+) repeatable on FIELD_DEFINITION
+
+directive @mongo__updateOne(
+  subgraph: String
+  collection: String!
+  query: String
+  set: String
+  selection: String
+) repeatable on FIELD_DEFINITION
+
+directive @mongo__updateMany(
+  subgraph: String
+  collection: String!
+  query: String
+  set: String
+  selection: String
+) repeatable on FIELD_DEFINITION
+
+directive @mongo__deleteOne(
+  subgraph: String
+  collection: String!
+  query: String
+  selection: String
+) repeatable on FIELD_DEFINITION
+
+directive @mongo__deleteMany(
+  subgraph: String
+  collection: String!
+  query: String
+  selection: String
+) repeatable on FIELD_DEFINITION

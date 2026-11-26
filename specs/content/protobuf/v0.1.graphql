@@ -1,0 +1,12 @@
+# Mesh Protobuf v0.1
+# @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
+
+directive @protobuf__rpc(
+  subgraph: String
+  service: String
+  method: String
+  args: String
+  selection: String
+  stream: Boolean
+  entity: Boolean
+) repeatable on FIELD_DEFINITION | OBJECT
