@@ -19,7 +19,7 @@ import {
 } from 'graphql';
 import type { StitchingInfo, Subschema } from '@graphql-tools/delegate';
 import { handleOverrideByDelegation, leftOverByDelegationPlan } from '@graphql-tools/delegate';
-import { getDefinedRootType } from '@graphql-tools/utils';
+import { getDefinedRootType, getDirectiveExtensions } from '@graphql-tools/utils';
 import { isLocalField } from './localFields.js';
 import { getBatchedMergeEntry, inferMergeArgName } from './mergeEntry.js';
 import { buildPlanSchedule, collectExecutableHops, planHasCondition } from './planSchedule.js';
@@ -1545,10 +1545,172 @@ function collectFieldsForConcreteType(
   return fields;
 }
 
+/** `@resolveTo` directive args used by the backbone planner. */
+interface ResolveToPlanConfig {
+  sourceName: string;
+  sourceTypeName: string;
+  sourceFieldName: string;
+  sourceArgs?: Record<string, string>;
+  result?: string;
+}
+
+function readResolveToConfig(
+  field: { extensions?: unknown; astNode?: unknown } | undefined,
+): ResolveToPlanConfig | undefined {
+  if (field == null) {
+    return undefined;
+  }
+  const dirs = getDirectiveExtensions<{ resolveTo: ResolveToPlanConfig }>(field as any);
+  const first = dirs?.resolveTo?.[0];
+  if (first?.sourceName && first?.sourceTypeName && first?.sourceFieldName) {
+    return first;
+  }
+  return undefined;
+}
+
+function findSubschemaByName(
+  stitchingInfo: StitchingInfo,
+  sourceName: string,
+): Subschema | undefined {
+  for (const sub of stitchingInfo.subschemaMap.values()) {
+    if (sub.name === sourceName) {
+      return sub;
+    }
+  }
+  return undefined;
+}
+
+/** Map `@resolveTo(sourceArgs: { id: "{root.id}" })` -> `{ id: "id" }`. */
+function argsFromParentTemplates(
+  sourceArgs: Record<string, string> | undefined,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!sourceArgs) {
+    return out;
+  }
+  for (const [argName, expr] of Object.entries(sourceArgs)) {
+    if (typeof expr !== 'string') {
+      continue;
+    }
+    const m = /^\{root\.([^}]+)\}$/.exec(expr);
+    if (m?.[1]) {
+      out[argName] = m[1];
+    }
+  }
+  return out;
+}
+
+/** Map `@resolveTo(sourceArgs: { id: "{args.id}" })` -> `{ id: "id" }`. */
+function argsFromFieldArgTemplates(
+  sourceArgs: Record<string, string> | undefined,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!sourceArgs) {
+    return out;
+  }
+  for (const [argName, expr] of Object.entries(sourceArgs)) {
+    if (typeof expr !== 'string') {
+      continue;
+    }
+    const m = /^\{args\.([^}]+)\}$/.exec(expr);
+    if (m?.[1]) {
+      out[argName] = m[1];
+    }
+  }
+  return out;
+}
+
+/** Wrap client selections under a `result` path (e.g. `items` then index skip). */
+function wrapSelectionUnderResultPath(
+  selectionSet: SelectionSetNode | undefined,
+  resultPath: string | undefined,
+): SelectionSetNode {
+  const clientSels = selectionSet?.selections ?? [];
+  if (!resultPath) {
+    return { kind: Kind.SELECTION_SET, selections: [...clientSels] };
+  }
+  const parts = resultPath.split('.').filter(p => p.length && !/^\d+$/.test(p));
+  let sel: SelectionSetNode = {
+    kind: Kind.SELECTION_SET,
+    selections: [...clientSels],
+  };
+  for (let i = parts.length - 1; i >= 0; i--) {
+    sel = {
+      kind: Kind.SELECTION_SET,
+      selections: [
+        {
+          kind: Kind.FIELD,
+          name: { kind: Kind.NAME, value: parts[i]! },
+          selectionSet: sel.selections.length ? sel : undefined,
+        },
+      ],
+    };
+  }
+  return sel;
+}
+
+function planContinueAfterLocalField(
+  schema: GraphQLSchema,
+  stitchingInfo: StitchingInfo,
+  field: { type: any },
+  fieldNode: FieldNode,
+  fragments: Record<string, FragmentDefinitionNode>,
+  variableValues: Record<string, any>,
+  childPath: PathSegment[],
+  incompleteReasons: string[],
+): StitchPlanNode | undefined {
+  if (!fieldNode.selectionSet) {
+    return undefined;
+  }
+  const returnType = getNamedType(field.type);
+  const nestedFields = flattenToFieldNodes(fieldNode.selectionSet.selections, fragments);
+  if (
+    (isObjectType(returnType) || isAbstractType(returnType)) &&
+    stitchingInfo.mergedTypes[returnType.name]
+  ) {
+    const merged = stitchingInfo.mergedTypes[returnType.name]!;
+    const someSource = merged.targetSubschemas.keys().next().value as Subschema | undefined;
+    if (someSource) {
+      return (
+        planMergedTypeFollowUps(
+          schema,
+          stitchingInfo,
+          returnType.name,
+          someSource,
+          nestedFields,
+          fragments,
+          variableValues,
+          childPath,
+          incompleteReasons,
+        ) ?? undefined
+      );
+    }
+  }
+  if (isObjectType(returnType) || isInterfaceType(returnType)) {
+    const nestedIslands = planLocalFieldIslands(
+      schema,
+      stitchingInfo,
+      returnType.name,
+      nestedFields,
+      fragments,
+      variableValues,
+      childPath,
+      incompleteReasons,
+    );
+    if (nestedIslands.length === 1) {
+      return nestedIslands[0];
+    }
+    if (nestedIslands.length > 1) {
+      return { kind: 'Sequence', nodes: nestedIslands };
+    }
+  }
+  return undefined;
+}
+
 /**
- * Gateway-local field (additionalResolvers / @resolveTo) -> Island, with an
- * optional merge `continue` when the return type is federated, and nested
- * Islands for local fields on the return type (Foo.bar -> Bar.foo).
+ * Gateway-local field (additionalResolvers / @resolveTo).
+ * Prefer a first-class Fetch hop when `@resolveTo` names a subgraph field;
+ * `__typename` (encapsulate) stays an Island. Nested locals hang on `continue`.
  */
 function planLocalFieldIsland(
   schema: GraphQLSchema,
@@ -1560,60 +1722,98 @@ function planLocalFieldIsland(
   flattenPath: PathSegment[],
   incompleteReasons: string[],
 ): StitchPlanNode {
-  let continuePlan: StitchPlanNode | undefined;
   const parentType = schema.getType(parentTypeName);
   const field =
     parentType && (isObjectType(parentType) || isInterfaceType(parentType))
       ? parentType.getFields()[fieldNode.name.value]
       : undefined;
-  if (field && fieldNode.selectionSet) {
-    const returnType = getNamedType(field.type);
-    const responseKey = fieldNode.alias?.value ?? fieldNode.name.value;
-    const childPath = [...flattenPath, responseKey];
-    const nestedFields = flattenToFieldNodes(fieldNode.selectionSet.selections, fragments);
-    if (
-      (isObjectType(returnType) || isAbstractType(returnType)) &&
-      stitchingInfo.mergedTypes[returnType.name]
-    ) {
-      const merged = stitchingInfo.mergedTypes[returnType.name]!;
-      const someSource = merged.targetSubschemas.keys().next().value as Subschema | undefined;
-      if (someSource) {
-        // appendNestedForFields inside also emits nested local-field Islands.
-        continuePlan =
-          planMergedTypeFollowUps(
-            schema,
-            stitchingInfo,
-            returnType.name,
-            someSource,
-            nestedFields,
-            fragments,
-            variableValues,
-            childPath,
-            incompleteReasons,
-          ) ?? undefined;
-      }
-    }
-
-    // Non-merged return (Foo.bar -> Bar): still plan nested local Islands
-    // (Bar.foo). Skip when merge continue already covered nested locals.
-    if (!continuePlan && (isObjectType(returnType) || isInterfaceType(returnType))) {
-      const nestedIslands = planLocalFieldIslands(
+  const responseKey = fieldNode.alias?.value ?? fieldNode.name.value;
+  const childPath = [...flattenPath, responseKey];
+  const continuePlan = field
+    ? planContinueAfterLocalField(
         schema,
         stitchingInfo,
-        returnType.name,
-        nestedFields,
+        field,
+        fieldNode,
         fragments,
         variableValues,
         childPath,
         incompleteReasons,
-      );
-      if (nestedIslands.length === 1) {
-        continuePlan = nestedIslands[0];
-      } else if (nestedIslands.length > 1) {
-        continuePlan = { kind: 'Sequence', nodes: nestedIslands };
+      )
+    : undefined;
+
+  const resolveTo = readResolveToConfig(field);
+  if (resolveTo && resolveTo.sourceFieldName === '__typename') {
+    return {
+      kind: 'Island',
+      parentTypeName,
+      fieldNode,
+      flattenPaths: [flattenPath],
+      continue: continuePlan,
+    };
+  }
+
+  if (resolveTo) {
+    const subschema = findSubschemaByName(stitchingInfo, resolveTo.sourceName);
+    // Prefer the field as it exists on the transport subgraph. Encapsulate
+    // stamps `_encapsulated_<sourceName>_<field>` on the gateway; the remote
+    // still exposes the original field name.
+    const encPrefix = `_encapsulated_${resolveTo.sourceName}_`;
+    const remoteFieldName = resolveTo.sourceFieldName.startsWith(encPrefix)
+      ? resolveTo.sourceFieldName.slice(encPrefix.length)
+      : resolveTo.sourceFieldName;
+    const remoteRoot =
+      resolveTo.sourceTypeName === 'Query'
+        ? subschema?.schema.getQueryType()
+        : resolveTo.sourceTypeName === 'Mutation'
+          ? subschema?.schema.getMutationType()
+          : subschema?.schema.getType(resolveTo.sourceTypeName);
+    const remoteHasField =
+      remoteRoot &&
+      (isObjectType(remoteRoot) || isInterfaceType(remoteRoot)) &&
+      remoteRoot.getFields()[remoteFieldName] != null;
+    if (subschema && remoteHasField) {
+      const sourceArgs = resolveTo.sourceArgs;
+      const argNodes: FieldNode['arguments'] = [];
+      if (sourceArgs) {
+        for (const argName of Object.keys(sourceArgs)) {
+          // Values filled at execute from parent / variables; AST placeholders
+          // keep the field name for buildRootDocument / delegate.
+          argNodes.push({
+            kind: Kind.ARGUMENT,
+            name: { kind: Kind.NAME, value: argName },
+            value: { kind: Kind.STRING, value: '' },
+          });
+        }
       }
+      const sourceSelection = wrapSelectionUnderResultPath(
+        fieldNode.selectionSet,
+        resolveTo.result,
+      );
+      const sourceFieldNode: FieldNode = {
+        kind: Kind.FIELD,
+        name: { kind: Kind.NAME, value: remoteFieldName },
+        arguments: argNodes.length ? argNodes : undefined,
+        selectionSet: sourceSelection.selections.length ? sourceSelection : undefined,
+      };
+      return {
+        kind: 'Fetch',
+        subschema,
+        rootField: sourceFieldNode,
+        selectionSet: sourceSelection,
+        flattenPaths: [flattenPath],
+        resolveToWrite: {
+          responseKey,
+          argsFromParent: argsFromParentTemplates(sourceArgs),
+          argsFromFieldArgs: argsFromFieldArgTemplates(sourceArgs),
+          clientFieldNode: fieldNode,
+          resultPath: resolveTo.result,
+        },
+        continue: continuePlan,
+      };
     }
   }
+
   return {
     kind: 'Island',
     parentTypeName,
@@ -2156,62 +2356,17 @@ function planRootField(
   }
 
   if (isLocalField(stitchingInfo.localFields, rootType.name, fieldName)) {
-    let continuePlan: StitchPlanNode | undefined;
-    const field = rootType.getFields()[fieldName];
-    if (field && fieldNode.selectionSet) {
-      const returnType = getNamedType(field.type);
-      const nestedFields = flattenToFieldNodes(fieldNode.selectionSet.selections, fragments);
-      if (
-        (isObjectType(returnType) || isAbstractType(returnType)) &&
-        stitchingInfo.mergedTypes[returnType.name]
-      ) {
-        // After local resolve, hydrate missing federated fields from any
-        // subschema that can merge this type - pick the first target.
-        const merged = stitchingInfo.mergedTypes[returnType.name]!;
-        const someSource = merged.targetSubschemas.keys().next().value as Subschema | undefined;
-        if (someSource) {
-          continuePlan =
-            planMergedTypeFollowUps(
-              schema,
-              stitchingInfo,
-              returnType.name,
-              someSource,
-              nestedFields,
-              fragments,
-              variableValues,
-              [responseKey],
-              incompleteReasons,
-            ) ?? undefined;
-        }
-      }
-      // Encapsulate `@resolveTo(__typename)` and other non-merged wrappers:
-      // plan nested local Islands (SubgraphA.foo) the same way nested
-      // planLocalFieldIsland does — otherwise the root Island leaves a string
-      // typename and projectDataToOperation returns `"SubgraphA": "Query"`.
-      if (!continuePlan && (isObjectType(returnType) || isInterfaceType(returnType))) {
-        const nestedIslands = planLocalFieldIslands(
-          schema,
-          stitchingInfo,
-          returnType.name,
-          nestedFields,
-          fragments,
-          variableValues,
-          [responseKey],
-          incompleteReasons,
-        );
-        if (nestedIslands.length === 1) {
-          continuePlan = nestedIslands[0];
-        } else if (nestedIslands.length > 1) {
-          continuePlan = { kind: 'Sequence', nodes: nestedIslands };
-        }
-      }
-    }
-    return {
-      kind: 'Island',
-      parentTypeName: rootType.name,
+    // Same planner as nested locals: `@resolveTo` -> Fetch, `__typename` -> Island.
+    return planLocalFieldIsland(
+      schema,
+      stitchingInfo,
+      rootType.name,
       fieldNode,
-      continue: continuePlan,
-    };
+      fragments,
+      variableValues,
+      [],
+      incompleteReasons,
+    );
   }
 
   const allOwners = findOwningSubschemasForRootField(stitchingInfo, operation.operation, fieldName);
@@ -5394,6 +5549,9 @@ function collectExecutableFetches(
 ): void {
   if (node.kind === 'Fetch') {
     out.push(node);
+    if (node.continue) {
+      collectExecutableFetches(node.continue, out);
+    }
     return;
   }
   if (node.kind === 'BatchFetch') {
@@ -6644,6 +6802,7 @@ function assignDepsOnly(
         id: meta.id,
         dependsOn: [...new Set([...meta.dependsOn, ...islandBarrier])],
         completesIds: [meta.id],
+        continue: node.continue ? assign(node.continue, [...islandBarrier, meta.id]) : undefined,
       };
       annotatedFetches.push(annotated as AnnotatedFetch);
       return annotated;
@@ -6730,7 +6889,7 @@ function collectAnnotatedIds(node: StitchPlanNode, out: string[]): void {
     } else if (node.id) {
       out.push(node.id);
     }
-    if (node.kind === 'Island' && node.continue) {
+    if ((node.kind === 'Island' || node.kind === 'Fetch') && node.continue) {
       collectAnnotatedIds(node.continue, out);
     }
     return;

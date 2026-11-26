@@ -346,6 +346,116 @@ describe('stitching backbone', () => {
     });
   });
 
+  it('plans @resolveTo as Fetch with resolveToWrite (first-class hop)', async () => {
+    const source = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Item {
+          key: String
+        }
+        type Bundle {
+          items: [Item]
+        }
+        type Query {
+          complexData(id: String!): Bundle
+        }
+      `,
+      resolvers: {
+        Query: {
+          complexData: (_: unknown, { id }: { id: string }) =>
+            id === 'full' ? { items: [{ key: 'key1' }] } : { items: [] },
+        },
+      },
+    });
+    const schema = stitchSchemas({
+      subschemas: [
+        {
+          name: 'Subgraph1',
+          schema: source,
+          executor: createDefaultExecutor(source),
+        },
+      ],
+      typeDefs: /* GraphQL */ `
+        type Target {
+          id: String
+          complexDataItem: Item
+        }
+        extend type Query {
+          targets: [Target]
+        }
+      `,
+      resolvers: {
+        Query: {
+          targets: () => [{ id: 'full' }, { id: 'empty' }],
+        },
+        Target: {
+          complexDataItem: () => null,
+        },
+      },
+    });
+    // Stamp @resolveTo the same way compose does (extensions.directives).
+    const targetType = schema.getType('Target') as any;
+    const field = targetType.getFields().complexDataItem;
+    field.extensions = {
+      ...field.extensions,
+      directives: {
+        resolveTo: [
+          {
+            sourceName: 'Subgraph1',
+            sourceTypeName: 'Query',
+            sourceFieldName: 'complexData',
+            sourceArgs: { id: '{root.id}' },
+            result: 'items.0',
+          },
+        ],
+      },
+    };
+
+    const document = parse(/* GraphQL */ `
+      {
+        targets {
+          id
+          complexDataItem {
+            key
+          }
+        }
+      }
+    `);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    expect(plan.incompleteReasons).toEqual([]);
+    const findResolveToFetch = (n: any): any => {
+      if (!n) return null;
+      if (n.kind === 'Fetch' && n.resolveToWrite?.responseKey === 'complexDataItem') return n;
+      if (n.continue) {
+        const c = findResolveToFetch(n.continue);
+        if (c) return c;
+      }
+      if (n.nodes) {
+        for (const c of n.nodes) {
+          const f = findResolveToFetch(c);
+          if (f) return f;
+        }
+      }
+      return null;
+    };
+    // Root may be Parallel[Island/Fetch targets, Fetch complexDataItem] or nested continue.
+    const resolveFetch = findResolveToFetch(plan.root);
+    expect(resolveFetch).toBeTruthy();
+    expect(resolveFetch.subschema.name).toBe('Subgraph1');
+    expect(resolveFetch.rootField.name.value).toBe('complexData');
+    expect(resolveFetch.resolveToWrite.argsFromParent).toEqual({ id: 'id' });
+    expect(resolveFetch.resolveToWrite.resultPath).toBe('items.0');
+
+    const executor = createBackboneExecutor(schema);
+    const result = await exec(executor, { document, context: {} });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      targets: [
+        { id: 'full', complexDataItem: { key: 'key1' } },
+        { id: 'empty', complexDataItem: null },
+      ],
+    });
+  });
+
   // reproduction-9435: gateway-local field under a non-local list path
   // (TargetQuery.targets[] -> TargetType.complexDataItem @resolveTo).
   it('plans deeper locals under non-local nested list paths', async () => {

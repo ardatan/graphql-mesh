@@ -28,7 +28,7 @@ export function collectExecutableHops(
 ): void {
   if (node.kind === 'Fetch' || node.kind === 'BatchFetch' || node.kind === 'Island') {
     out.push(node);
-    if (node.kind === 'Island' && node.continue) {
+    if ((node.kind === 'Island' || node.kind === 'Fetch') && node.continue) {
       collectExecutableHops(node.continue, out, variableValues);
     }
     return;
@@ -51,7 +51,7 @@ export function planHasCondition(node: StitchPlanNode): boolean {
   if (node.kind === 'Condition') {
     return true;
   }
-  if (node.kind === 'Island' && node.continue) {
+  if ((node.kind === 'Island' || node.kind === 'Fetch') && node.continue) {
     return planHasCondition(node.continue);
   }
   if (node.kind === 'Sequence' || node.kind === 'Parallel') {
