@@ -286,13 +286,89 @@ export function hasRewritableEnumDefault(config: EnumDefaultConfig): boolean {
   return containsEnumValueNode(config.astNode?.defaultValue);
 }
 
+/** True when a JS/literal default has input-object keys that `renameField` would change. */
+function jsDefaultNeedsInputFieldRename(
+  value: unknown,
+  inputType: GraphQLInputType,
+  renameField?: NamingConventionFn,
+): boolean {
+  if (!renameField) {
+    return false;
+  }
+  let type: GraphQLInputType = inputType;
+  while (isNonNullType(type)) {
+    type = type.ofType;
+  }
+  if (isListType(type)) {
+    return (
+      Array.isArray(value) &&
+      value.some(item => jsDefaultNeedsInputFieldRename(item, type.ofType, renameField))
+    );
+  }
+  const named = getNamedType(type);
+  if (!isInputObjectType(named) || !value || typeof value !== 'object' || Array.isArray(value)) {
+    return false;
+  }
+  const fields = named.getFields();
+  for (const fieldName of Object.keys(value as Record<string, unknown>)) {
+    const renamed = renameInputObjectFieldName(fieldName, named.name, renameField);
+    if (!(fieldName in fields) && !(renamed in fields)) {
+      continue;
+    }
+    if (renamed !== fieldName) {
+      return true;
+    }
+    if (
+      jsDefaultNeedsInputFieldRename(
+        (value as Record<string, unknown>)[fieldName],
+        fields[fieldName]?.type ?? fields[renamed]?.type,
+        renameField,
+      )
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function configDefaultNeedsKeyRename(
+  config: EnumDefaultConfig,
+  inputType: GraphQLInputType,
+  renameField?: NamingConventionFn,
+): boolean {
+  if (!renameField) {
+    return false;
+  }
+  if (
+    config.defaultValue != null &&
+    jsDefaultNeedsInputFieldRename(config.defaultValue, inputType, renameField)
+  ) {
+    return true;
+  }
+  if (
+    config.default?.value != null &&
+    jsDefaultNeedsInputFieldRename(config.default.value, inputType, renameField)
+  ) {
+    return true;
+  }
+  const literal = config.default?.literal ?? config.astNode?.defaultValue;
+  if (literal && (literal.kind === Kind.OBJECT || literal.kind === Kind.LIST)) {
+    // OBJECT/LIST literals always need a pass when fieldNames is set so keys rename.
+    return true;
+  }
+  return false;
+}
+
 /**
  * Like {@link hasRewritableEnumDefault}, but for input-object args
  * (`Filter = { status: newbie }`) uses the GraphQL input type to decide.
+ * When `renameField` is set, also admits key-only defaults (`{ retry_count: 3 }`)
+ * that have no string/enum leaves.
  */
 export function hasRewritableEnumDefaultForType(
   config: EnumDefaultConfig,
   inputType: GraphQLInputType,
+  renameField?: NamingConventionFn,
 ): boolean {
   const named = getNamedType(inputType);
   if (isEnumType(named)) {
@@ -301,7 +377,10 @@ export function hasRewritableEnumDefaultForType(
   if (!isInputObjectType(named)) {
     return false;
   }
-  return hasRewritableEnumDefault(config);
+  if (hasRewritableEnumDefault(config)) {
+    return true;
+  }
+  return configDefaultNeedsKeyRename(config, inputType, renameField);
 }
 
 /**

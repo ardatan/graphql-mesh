@@ -127,20 +127,28 @@ export default class NamingConventionTransform implements MeshTransform {
           return undefined;
         },
       }),
-      ...(this.config.enumValues && {
+      ...((this.config.enumValues || this.config.fieldNames) && {
         [MapperKind.ARGUMENT]: config => {
           const named = getNamedType(config.type);
-          // Enum args + input-object args with nested enum defaults
-          // (`filter: Filter = { status: newbie }`). Skip String/ID/scalars.
+          // Enum args + input-object args with nested enum / key-only defaults
+          // (`filter: Filter = { status: newbie }` / `{ retry_count: 3 }`).
           if (!isEnumType(named) && !isInputObjectType(named)) {
             return config;
           }
-          if (!hasRewritableEnumDefaultForType(config, config.type)) {
-            return config;
-          }
-          const applyNamingConvention = NAMING_CONVENTIONS[this.config.enumValues];
           const fieldNamingConventionFn =
             this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
+          if (
+            !hasRewritableEnumDefaultForType(
+              config,
+              config.type,
+              fieldNamingConventionFn || undefined,
+            )
+          ) {
+            return config;
+          }
+          const applyNamingConvention = this.config.enumValues
+            ? NAMING_CONVENTIONS[this.config.enumValues]
+            : (s: string) => s;
           return withRenamedEnumDefaultsForType(
             config,
             config.type,
@@ -252,16 +260,22 @@ export default class NamingConventionTransform implements MeshTransform {
             this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
           const newName = namingConventionFn ? namingConventionFn(fieldName) : fieldName;
           let nextConfig = inputFieldConfig;
-          if (this.config.enumValues) {
+          if (this.config.enumValues || this.config.fieldNames) {
             const namedFieldType = getNamedType(inputFieldConfig.type);
             if (
               (isEnumType(namedFieldType) || isInputObjectType(namedFieldType)) &&
-              hasRewritableEnumDefaultForType(inputFieldConfig, inputFieldConfig.type)
+              hasRewritableEnumDefaultForType(
+                inputFieldConfig,
+                inputFieldConfig.type,
+                namingConventionFn || undefined,
+              )
             ) {
               nextConfig = withRenamedEnumDefaultsForType(
                 inputFieldConfig,
                 inputFieldConfig.type,
-                NAMING_CONVENTIONS[this.config.enumValues],
+                this.config.enumValues
+                  ? NAMING_CONVENTIONS[this.config.enumValues]
+                  : (s: string) => s,
                 namingConventionFn || undefined,
               );
             }

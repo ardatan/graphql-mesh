@@ -121,7 +121,9 @@ function reapplyArgDefaultsFromOriginal(
         default: snap.default ?? (argConfig as { default?: ArgDefaultSnapshot['default'] }).default,
         astNode: (snap.astNode as typeof argConfig.astNode) ?? argConfig.astNode,
       };
-      if (!hasRewritableEnumDefaultForType(source, argConfig.type as GraphQLInputType)) {
+      if (
+        !hasRewritableEnumDefaultForType(source, argConfig.type as GraphQLInputType, fieldNamesFn)
+      ) {
         continue;
       }
       const rewritten = withRenamedEnumDefaultsForType(
@@ -234,7 +236,9 @@ export default class NamingConventionTransform implements MeshTransform {
             if (!isEnumType(named) && !isInputObjectType(named)) {
               continue;
             }
-            if (!hasRewritableEnumDefaultForType(argConfig, argConfig.type)) {
+            if (
+              !hasRewritableEnumDefaultForType(argConfig, argConfig.type, fieldNamingConventionFn)
+            ) {
               continue;
             }
             changed = true;

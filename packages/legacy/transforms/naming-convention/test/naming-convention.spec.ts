@@ -401,6 +401,37 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(printed).toMatch(/search\(filter: Filter = \{ ?userStatus: NEWBIE ?\}\)/);
   });
 
+  it('renames key-only input-object defaults without string/enum leaves', () => {
+    const inputSchema = buildSchema(/* GraphQL */ `
+      input Filter {
+        retry_count: Int
+      }
+      type Query {
+        search(filter: Filter = { retry_count: 3 }): String
+      }
+    `);
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+          enumValues: 'upperCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const printed = printSchemaWithDirectives(newSchema).replace(/\s+/g, ' ');
+    expect(printed).toContain('retryCount');
+    expect(printed).not.toContain('retry_count');
+    expect(printed).toMatch(/search\(filter: Filter = \{ ?retryCount: 3 ?\}\)/);
+  });
+
   it('keeps nested input-object defaults when the argument is omitted (wrap + bare)', () => {
     const inputSchema = buildSchema(/* GraphQL */ `
       enum E {
