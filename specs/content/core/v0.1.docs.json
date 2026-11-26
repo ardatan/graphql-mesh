@@ -75,42 +75,50 @@
       },
       "implementers": {
         "intro": "Consumed by Mesh stitching / federation runtime when building merged-type configs.",
-        "compose": "Federation transform writes `@merge` and stamps it under core. Join optimization may drop unused definitions.",
-        "runtime": "Map onto stitching merge config: key selection, key args, and optional `argsExpr` for computed merge args."
+        "compose": "Federation transform writes `@merge` and stamps it under core (often with `subgraph: String!` on the emitted def). Join optimization may drop unused definitions.",
+        "runtime": "Map onto stitching merge config: key selection, key args, optional `argsExpr`, and `additionalArgs`. Align with stitching-directives (`key: [String!]`) / federation compose (`key: [String]`)."
       },
       "args": {
         "subgraph": {
-          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "defaults": "Optional in this family SDL for hand-authored schemas; federation compose stamps it as required (`String!`).",
           "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the transform will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Federation’s stamped definition uses `String!`; keep optional on the published stub so local SDL can omit it before stamping.",
           "example": "subgraph: \"shop\""
         },
         "key": {
           "defaults": "Optional.",
-          "constraints": "Selection / key expression understood by the merge transformer.",
-          "authors": "Alternate key expression when not using `keyField` alone.",
-          "implementers": "Interpret consistently with `@graphql-tools` stitching merge keys."
+          "constraints": "List of key expression pieces (`[String]`). Stitching-directives may treat elements as non-null (`[String!]`); accept either when reading.",
+          "authors": "Alternate key expression fragments when not using `keyField` alone.",
+          "implementers": "Feed into `buildKeyExpr` / stitching merge-key construction. Prefer list form; a lone string is a legacy shape seen only in older helpers.",
+          "example": "key: [\"id\"]"
         },
         "keyField": {
           "defaults": "Optional.",
           "constraints": "Field name on the returned type used as the merge key.",
           "authors": "Usually the entity id field (e.g. `id`).",
-          "implementers": "Build selection sets / key extractors from this name.",
+          "implementers": "Build selection sets / key extractors from this name; federation often stamps from `@key(fields:)`.",
           "example": "keyField: \"id\""
         },
         "keyArg": {
-          "defaults": "Optional.",
-          "constraints": "Argument name on this field that receives the key.",
+          "defaults": "Optional (stitching may default to the first field argument).",
+          "constraints": "Argument name (supports dotted paths) on this field that receives the key.",
           "authors": "Pairs with `keyField` when the lookup arg name differs from the type field.",
-          "implementers": "Wire key values into this argument when delegating.",
+          "implementers": "Wire key values into this argument when delegating; list return types may wrap as `[[keyExpr]]`.",
           "example": "keyArg: \"id\""
         },
         "argsExpr": {
-          "defaults": "Optional.",
-          "constraints": "Expression string for computed merge arguments.",
+          "defaults": "Optional; may be auto-built from `key` / `keyField` / `keyArg`.",
+          "constraints": "Expression string for computed merge arguments (stitching `argsExpr` language).",
           "authors": "Advanced: supply extra / computed args for the merge call.",
-          "implementers": "Evaluate with the same expression language as stitching `argsExpr`."
+          "implementers": "Evaluate with the same expression language as stitching `argsExpr` (`$key…`, `[[$key]]`, …)."
+        },
+        "additionalArgs": {
+          "defaults": "Optional.",
+          "constraints": "String carrying extra GraphQL object fields merged into parsed merge args (stitching + federation transform).",
+          "authors": "Rare hand use; transforms may emit when merge needs constant extra args.",
+          "implementers": "Parse and merge into the merge-args object after `argsExpr` / key wiring.",
+          "example": "additionalArgs: \"lang: \\\"en\\\"\""
         }
       }
     },

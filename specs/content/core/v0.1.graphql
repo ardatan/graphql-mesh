@@ -15,10 +15,11 @@ directive @transport(
 
 directive @merge(
   subgraph: String
-  key: String
+  key: [String]
   keyField: String
   keyArg: String
   argsExpr: String
+  additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
 directive @source(
