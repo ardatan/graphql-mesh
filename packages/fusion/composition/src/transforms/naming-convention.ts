@@ -237,43 +237,35 @@ export function createNamingConventionTransform(
               continue;
             }
             const newDefaultValue = enumValuesFn(enumDefault);
-            // GraphQL 16: `defaultValue` string. GraphQL 17: `default.literal` /
-            // `default.value` / AST — rewrite those in place; clearing `default` drops the value.
-            newArgs[newArgName] = {
+            // GraphQL 16: `defaultValue` string. GraphQL 17: `default` is a
+            // discriminant (`literal` XOR `value`) — build one arm at a time.
+            const nextArg: typeof argConfig = {
               ...argConfig,
               defaultValue: newDefaultValue,
-              ...(argConfig.default?.literal?.kind === 'EnumValue'
-                ? {
-                    // Literal-only: a string `value` makes printSchema emit `"NEWBIE"`.
-                    default: {
-                      literal: {
-                        ...argConfig.default.literal,
-                        value: newDefaultValue,
-                      },
-                    },
-                  }
-                : typeof argConfig.default?.value === 'string'
-                  ? {
-                      default: {
-                        ...argConfig.default,
-                        value: newDefaultValue,
-                      },
-                    }
-                  : argConfig.default != null
-                    ? { default: undefined }
-                    : {}),
-              ...(argConfig.astNode?.defaultValue?.kind === 'EnumValue'
-                ? {
-                    astNode: {
-                      ...argConfig.astNode,
-                      defaultValue: {
-                        ...argConfig.astNode.defaultValue,
-                        value: newDefaultValue,
-                      },
-                    },
-                  }
-                : {}),
             };
+            if (argConfig.default?.literal?.kind === 'EnumValue') {
+              // Literal-only: a string `value` makes printSchema emit `"NEWBIE"`.
+              nextArg.default = {
+                literal: {
+                  ...argConfig.default.literal,
+                  value: newDefaultValue,
+                },
+              };
+            } else if (typeof argConfig.default?.value === 'string') {
+              nextArg.default = { value: newDefaultValue };
+            } else if (argConfig.default != null) {
+              nextArg.default = undefined;
+            }
+            if (argConfig.astNode?.defaultValue?.kind === 'EnumValue') {
+              nextArg.astNode = {
+                ...argConfig.astNode,
+                defaultValue: {
+                  ...argConfig.astNode.defaultValue,
+                  value: newDefaultValue,
+                },
+              };
+            }
+            newArgs[newArgName] = nextArg;
           }
         }
         if (argRenameMap.size) {
