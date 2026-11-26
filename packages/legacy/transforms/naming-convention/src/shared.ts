@@ -102,23 +102,55 @@ function containsEnumValueNode(node: ValueNode | null | undefined): boolean {
   return false;
 }
 
-function rewriteEnumValueNode(node: ValueNode, rename: NamingConventionFn): ValueNode {
+function renameInputObjectFieldName(
+  fieldName: string,
+  parentTypeName: string,
+  renameField?: NamingConventionFn,
+): string {
+  if (!renameField || IGNORED_TYPE_NAMES.includes(parentTypeName)) {
+    return fieldName;
+  }
+  return renameField(fieldName);
+}
+
+function rewriteEnumValueNode(
+  node: ValueNode,
+  renameEnum: NamingConventionFn,
+  renameField?: NamingConventionFn,
+  inputType?: GraphQLInputType,
+): ValueNode {
   if (node.kind === Kind.ENUM) {
-    return { ...node, value: rename(node.value) };
+    return { ...node, value: renameEnum(node.value) };
+  }
+  let type = inputType;
+  while (type && isNonNullType(type)) {
+    type = type.ofType;
   }
   if (node.kind === Kind.LIST) {
+    const ofType = type && isListType(type) ? type.ofType : undefined;
     return {
       ...node,
-      values: node.values.map(v => rewriteEnumValueNode(v, rename)),
+      values: node.values.map(v => rewriteEnumValueNode(v, renameEnum, renameField, ofType)),
     };
   }
   if (node.kind === Kind.OBJECT) {
+    const named = type ? getNamedType(type) : undefined;
+    const fields = isInputObjectType(named) ? named.getFields() : undefined;
     return {
       ...node,
-      fields: node.fields.map(f => ({
-        ...f,
-        value: rewriteEnumValueNode(f.value, rename),
-      })),
+      fields: node.fields.map(f => {
+        const oldName = f.name.value;
+        const field = fields?.[oldName];
+        const newName =
+          fields && named
+            ? renameInputObjectFieldName(oldName, named.name, renameField)
+            : oldName;
+        return {
+          ...f,
+          name: newName !== oldName ? { ...f.name, value: newName } : f.name,
+          value: rewriteEnumValueNode(f.value, renameEnum, renameField, field?.type),
+        };
+      }),
     };
   }
   return node;
@@ -151,7 +183,8 @@ function rewriteEnumJsDefault(value: unknown, rename: NamingConventionFn): unkno
 function rewriteJsDefaultForInputType(
   value: unknown,
   inputType: GraphQLInputType,
-  rename: NamingConventionFn,
+  renameEnum: NamingConventionFn,
+  renameField?: NamingConventionFn,
 ): unknown {
   let type: GraphQLInputType = inputType;
   while (isNonNullType(type)) {
@@ -162,20 +195,28 @@ function rewriteJsDefaultForInputType(
       return value;
     }
     const ofType = type.ofType;
-    return value.map(item => rewriteJsDefaultForInputType(item, ofType, rename));
+    return value.map(item =>
+      rewriteJsDefaultForInputType(item, ofType, renameEnum, renameField),
+    );
   }
   const named = getNamedType(type);
   if (isEnumType(named)) {
-    return typeof value === 'string' ? rename(value) : value;
+    return typeof value === 'string' ? renameEnum(value) : value;
   }
   if (isInputObjectType(named) && value && typeof value === 'object' && !Array.isArray(value)) {
     const fields = (named as GraphQLInputObjectType).getFields();
-    const out: Record<string, unknown> = { ...(value as Record<string, unknown>) };
+    const out: Record<string, unknown> = {};
     for (const [fieldName, field] of Object.entries(fields)) {
-      if (!(fieldName in out)) {
+      if (!(fieldName in (value as Record<string, unknown>))) {
         continue;
       }
-      out[fieldName] = rewriteJsDefaultForInputType(out[fieldName], field.type, rename);
+      const newName = renameInputObjectFieldName(fieldName, named.name, renameField);
+      out[newName] = rewriteJsDefaultForInputType(
+        (value as Record<string, unknown>)[fieldName],
+        field.type,
+        renameEnum,
+        renameField,
+      );
     }
     return out;
   }
@@ -304,6 +345,7 @@ export function withRenamedEnumDefaultsForType<T extends EnumDefaultConfig>(
   config: T,
   inputType: GraphQLInputType,
   rename: NamingConventionFn,
+  renameField?: NamingConventionFn,
 ): T {
   const named = getNamedType(inputType);
   if (isEnumType(named)) {
@@ -318,23 +360,46 @@ export function withRenamedEnumDefaultsForType<T extends EnumDefaultConfig>(
       config.defaultValue,
       inputType,
       rename,
+      renameField,
     ) as T['defaultValue'];
   }
-  if (config.default?.literal && containsEnumValueNode(config.default.literal)) {
+  if (
+    config.default?.literal &&
+    (containsEnumValueNode(config.default.literal) || config.default.literal.kind === Kind.OBJECT)
+  ) {
     next.default = {
-      literal: rewriteEnumValueNode(config.default.literal, rename) as ConstValueNode,
+      literal: rewriteEnumValueNode(
+        config.default.literal,
+        rename,
+        renameField,
+        inputType,
+      ) as ConstValueNode,
     };
   } else if (config.default?.value != null) {
     next.default = {
-      value: rewriteJsDefaultForInputType(config.default.value, inputType, rename),
+      value: rewriteJsDefaultForInputType(
+        config.default.value,
+        inputType,
+        rename,
+        renameField,
+      ),
     };
   } else if (config.default != null) {
     next.default = undefined;
   }
-  if (config.astNode?.defaultValue && containsEnumValueNode(config.astNode.defaultValue)) {
+  if (
+    config.astNode?.defaultValue &&
+    (containsEnumValueNode(config.astNode.defaultValue) ||
+      config.astNode.defaultValue.kind === Kind.OBJECT)
+  ) {
     next.astNode = {
       ...config.astNode,
-      defaultValue: rewriteEnumValueNode(config.astNode.defaultValue, rename) as ConstValueNode,
+      defaultValue: rewriteEnumValueNode(
+        config.astNode.defaultValue,
+        rename,
+        renameField,
+        inputType,
+      ) as ConstValueNode,
     };
   }
   return next;

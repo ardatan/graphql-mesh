@@ -364,6 +364,39 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(enumDefault).toBe('NEWBIE');
   });
 
+  it('renames keys in input-object argument defaults with fieldNames', () => {
+    const inputSchema = buildSchema(/* GraphQL */ `
+      enum E {
+        newbie
+      }
+      input Filter {
+        user_status: E
+      }
+      type Query {
+        search(filter: Filter = { user_status: newbie }): String
+      }
+    `);
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+          enumValues: 'upperCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    expect(printSchemaWithDirectives(newSchema)).toContain(
+      'search(filter: Filter = { userStatus: NEWBIE })',
+    );
+  });
+
   it('should resolves the data of a renamed fields correctly when arguments did not changed', async () => {
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `

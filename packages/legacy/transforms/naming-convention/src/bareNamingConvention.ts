@@ -139,7 +139,14 @@ export default class NamingConventionTransform implements MeshTransform {
             return config;
           }
           const applyNamingConvention = NAMING_CONVENTIONS[this.config.enumValues];
-          return withRenamedEnumDefaultsForType(config, config.type, applyNamingConvention);
+          const fieldNamingConventionFn =
+            this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
+          return withRenamedEnumDefaultsForType(
+            config,
+            config.type,
+            applyNamingConvention,
+            fieldNamingConventionFn || undefined,
+          );
         },
       }),
       ...(this.config.enumValues && {
@@ -255,6 +262,7 @@ export default class NamingConventionTransform implements MeshTransform {
                 inputFieldConfig,
                 inputFieldConfig.type,
                 NAMING_CONVENTIONS[this.config.enumValues],
+                namingConventionFn || undefined,
               );
             }
           }

@@ -73,6 +73,9 @@ export default class NamingConventionTransform implements MeshTransform {
 
     if (options.config.enumValues) {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.enumValues];
+      const fieldNamingConventionFn = options.config.fieldNames
+        ? NAMING_CONVENTIONS[options.config.fieldNames]
+        : undefined;
 
       this.transforms.push(
         new TransformEnumValues((_typeName, externalValue, enumValueConfig) => {
@@ -108,6 +111,7 @@ export default class NamingConventionTransform implements MeshTransform {
               argConfig,
               argConfig.type,
               namingConventionFn,
+              fieldNamingConventionFn,
             );
           }
           return [fieldName, changed ? { ...fieldConfig, args: newArgs } : fieldConfig];

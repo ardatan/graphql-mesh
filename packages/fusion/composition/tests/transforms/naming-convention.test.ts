@@ -586,4 +586,80 @@ describe('Naming Convention', () => {
     const similar = (next.getType('Movie') as GraphQLObjectType).getFields().similar;
     expect(similar.args.map(arg => arg.name)).toEqual(['SearchTerm']);
   });
+
+  it('renames keys in input-object argument defaults with fieldNames', async () => {
+    const schema = buildSchema(/* GraphQL */ `
+      enum E {
+        newbie
+      }
+      input Filter {
+        user_status: E
+      }
+      type Query {
+        search(filter: Filter = { user_status: newbie }): String
+      }
+    `);
+    const transform = createNamingConventionTransform({
+      fieldNames: 'camelCase',
+      enumValues: 'upperCase',
+    });
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        name: 'SUBGRAPH1',
+        schema,
+        transforms: [transform],
+      },
+    ]);
+    expectTheSchemaSDLToBe(
+      newSchema,
+      /* GraphQL */ `
+        enum E {
+          NEWBIE
+        }
+
+        input Filter {
+          userStatus: E
+        }
+
+        type Query {
+          search(filter: Filter = { userStatus: NEWBIE }): String
+        }
+      `,
+    );
+  });
+
+  it('rewrites enum defaults on directive arguments', async () => {
+    const schema = buildSchema(/* GraphQL */ `
+      enum E {
+        newbie
+      }
+      directive @d(e: E = newbie) on FIELD_DEFINITION
+      type Query {
+        q: String @d
+      }
+    `);
+    const transform = createNamingConventionTransform({
+      enumValues: 'upperCase',
+    });
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        name: 'SUBGRAPH1',
+        schema,
+        transforms: [transform],
+      },
+    ]);
+    const directive = newSchema.getDirective('d');
+    expect(directive).toBeDefined();
+    const arg = directive!.args.find(a => a.name === 'e');
+    const gql17Default = (
+      arg as unknown as { default?: { literal?: { kind: string; value: string } } }
+    ).default;
+    const enumDefault =
+      typeof arg?.defaultValue === 'string'
+        ? arg.defaultValue
+        : gql17Default?.literal?.kind === 'EnumValue'
+          ? gql17Default.literal.value
+          : undefined;
+    expect(enumDefault).toBe('NEWBIE');
+  });
 });
