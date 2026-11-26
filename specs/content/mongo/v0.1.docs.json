@@ -275,7 +275,7 @@
       "summary": "Run an aggregation pipeline. Runtime kind `AGGREGATE`.",
       "authors": {
         "intro": "Run an aggregation pipeline. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "userStats: Stats!\n  @mongo__aggregate(collection: \"users\", pipeline: \"$args.pipeline\")"
+        "example": "userStats(pipeline: [ObjMap!]!): Stats!\n  @mongo__aggregate(collection: \"users\", pipeline: \"$args.pipeline\")"
       },
       "implementers": {
         "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",

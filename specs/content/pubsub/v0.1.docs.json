@@ -34,7 +34,7 @@
         "example": "type Mutation {\n  addTodo(text: String!): Todo\n    @pubsubPublish(pubsubTopic: \"todoAdded\")\n}"
       },
       "implementers": {
-        "runtime": "After the field resolves, call `context.pubsub.publish(pubsubTopic, payload)` for each app. Failures should not break the main response unless a transport defines stricter rules."
+        "runtime": "After the field resolves, publish each `@pubsubPublish` topic and `await Promise.all(jobs)` before returning the payload. A rejected publish becomes a field error; it does not roll back a mutation that already completed its side effect."
       },
       "args": {
         "subgraph": {

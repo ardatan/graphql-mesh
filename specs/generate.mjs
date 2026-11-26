@@ -475,6 +475,22 @@ writeFileSync(
   }),
 );
 
+writeFileSync(
+  join(outDir, '404.html'),
+  layout({
+    title: 'Not found — GraphQL Mesh Specs',
+    canonical: `${origin}/404.html`,
+    body: `
+<article class="spec-page">
+  <h1 class="page-title">Not found</h1>
+  <p class="lede">No Mesh spec page at this path. Published families live under
+  <code>${esc(origin)}/&lt;family&gt;/v0.1</code> (and sibling <code>.graphql</code>).</p>
+  <p><a href="/">Back to Current Specs</a></p>
+</article>
+`,
+  }),
+);
+
 writeFileSync(join(outDir, '_redirects'), redirects.join('\n') + '\n');
 writeFileSync(
   join(outDir, '_headers'),

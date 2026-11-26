@@ -4,10 +4,10 @@
       "summary": "Field-level rate limit hint consumed when Hive Gateway `rateLimiting` is enabled (graphql-rate-limit style).",
       "authors": {
         "intro": "Import from `https://specs.graphql-mesh.dev/rate-limit/v0.1`. Enable rate limiting in Gateway config or the directive is inert.",
-        "example": "extend schema\n  @link(url: \"https://specs.graphql-mesh.dev/rate-limit/v0.1\", import: [\"@rateLimit\"])\n\ntype Query {\n  search(q: String!): [Item!]!\n    @rateLimit(max: 10, window: \"1s\", identityArgs: [\"q\"])\n}"
+        "example": "extend schema\n  @link(url: \"https://specs.apollo.dev/federation/v2.6\", import: [\"@composeDirective\"])\n  @link(url: \"https://specs.graphql-mesh.dev/rate-limit/v0.1\", import: [\"@rateLimit\"])\n  @composeDirective(name: \"@rateLimit\")\n\ntype Query {\n  search(q: String!): [Item!]!\n    @rateLimit(max: 10, window: \"1s\", identityArgs: [\"q\"])\n}"
       },
       "implementers": {
-        "compose": "Hand `@link` today; preserve args on SG.",
+        "compose": "Hand `@link` + `@composeDirective(name: \"@rateLimit\")` so composition exposes the directive on the SG; preserve args.",
         "runtime": "Gateway rateLimiting plugin reads apps and enforces windows per identity key."
       },
       "args": {

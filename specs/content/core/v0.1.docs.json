@@ -181,10 +181,11 @@
           "example": "sourceName: \"A\""
         },
         "sourceTypeName": {
-          "defaults": "Optional (often `Query` / `Mutation` / `Subscription`).",
-          "constraints": "Type that owns `sourceFieldName`.",
-          "authors": "Usually `Query` for root lookups.",
-          "implementers": "Resolve field node under this type in the source schema."
+          "defaults": "Required for source delegation; omit only for pure PubSub. No runtime default (does not fall back to `Query`).",
+          "constraints": "Type that owns `sourceFieldName` in the source schema (commonly `Query`, `Mutation`, or `Subscription` when those are the owners).",
+          "authors": "Must name the source type that owns the delegated field. Omitting it for delegation makes runtime look up an undefined type and throw.",
+          "implementers": "Call `schema.getType(sourceTypeName)` then the field; do not invent a default type name.",
+          "example": "sourceTypeName: \"Query\""
         },
         "sourceFieldName": {
           "defaults": "Optional for pure PubSub.",
@@ -239,10 +240,11 @@
           "example": "filterBy: \"root.userId === args.userId\""
         },
         "additionalArgs": {
-          "defaults": "Optional.",
-          "constraints": "`ResolveToSourceArgs` map merged into the call.",
-          "authors": "Extra constant / interpolated args.",
-          "implementers": "Merge after `sourceArgs`."
+          "defaults": "Optional; honored only on the batch path (`keysArg` present).",
+          "constraints": "`ResolveToSourceArgs` map. Without `keysArg`, the non-batch resolver reads only `sourceArgs` and silently ignores `additionalArgs`.",
+          "authors": "Use for extra args on batched delegation. For ordinary (non-batch) delegation, put those values in `sourceArgs` instead.",
+          "implementers": "Merge into batch call args when `keysArg` is set; do not apply on the non-batch branch.",
+          "example": "additionalArgs: { lang: \"en\" }"
         },
         "result": {
           "defaults": "Optional.",
@@ -278,10 +280,11 @@
           "example": "subgraph: \"shop\""
         },
         "pathConfig": {
-          "defaults": "Optional but expected when the transform stamped the field.",
-          "constraints": "`_HoistConfig` — array of field names and/or `{ fieldName, filterArgs }` objects.",
-          "authors": "Path from the original nested field to the hoist target.",
-          "implementers": "Drive selection rewrites and argument filtering along the path."
+          "defaults": "Required for any executable `@hoist` app. The hoist transform always stamps it; omitting it makes Gateway call `.map` on `undefined` during subgraph transform setup and fail schema init.",
+          "constraints": "`_HoistConfig` — non-empty array of field names and/or `{ fieldName, filterArgs }` objects.",
+          "authors": "Do not hand-write `@hoist` without `pathConfig`. Prefer the hoist-field transform, which emits the path.",
+          "implementers": "Require an array before building `HoistField` transforms; drive selection rewrites along the path.",
+          "example": "pathConfig: [\"users\", \"results\"]"
         }
       }
     }
