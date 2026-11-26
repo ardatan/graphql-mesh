@@ -18,7 +18,7 @@ import {
   Kind,
 } from 'graphql';
 import { getVariableValues } from '@graphql-tools/delegate';
-import { collectFields, getDefinedRootType } from '@graphql-tools/utils';
+import { collectFields, getDefinedRootType, shouldIncludeNode } from '@graphql-tools/utils';
 
 function isPlainObject(value: object): boolean {
   const proto = Object.getPrototypeOf(value);
@@ -235,20 +235,25 @@ function projectInterfaceObjectValue(
     );
   };
 
+  const varsForDirectives = getVariableValues(variableValues);
+
   for (const sel of selectionSet.selections) {
+    if (!shouldIncludeNode(varsForDirectives, sel)) {
+      continue;
+    }
     if (sel.kind === Kind.FIELD) {
       applyField(sel);
     } else if (sel.kind === Kind.INLINE_FRAGMENT) {
       const cond = sel.typeCondition?.name.value;
       if (!cond || cond === abstractType.name) {
         for (const nested of sel.selectionSet.selections) {
-          if (nested.kind === Kind.FIELD) {
+          if (nested.kind === Kind.FIELD && shouldIncludeNode(varsForDirectives, nested)) {
             applyField(nested);
           }
         }
       } else if (value.__typename === cond) {
         for (const nested of sel.selectionSet.selections) {
-          if (nested.kind === Kind.FIELD) {
+          if (nested.kind === Kind.FIELD && shouldIncludeNode(varsForDirectives, nested)) {
             applyField(nested);
           }
         }
@@ -262,7 +267,7 @@ function projectInterfaceObjectValue(
           schema.isSubType(abstractType, concrete)
         ) {
           for (const nested of sel.selectionSet.selections) {
-            if (nested.kind !== Kind.FIELD) {
+            if (nested.kind !== Kind.FIELD || !shouldIncludeNode(varsForDirectives, nested)) {
               continue;
             }
             const key = nested.alias?.value ?? nested.name.value;
@@ -281,7 +286,7 @@ function projectInterfaceObjectValue(
       const cond = fragment.typeCondition.name.value;
       if (cond === abstractType.name || value.__typename === cond) {
         for (const nested of fragment.selectionSet.selections) {
-          if (nested.kind === Kind.FIELD) {
+          if (nested.kind === Kind.FIELD && shouldIncludeNode(varsForDirectives, nested)) {
             applyField(nested);
           }
         }
@@ -293,7 +298,7 @@ function projectInterfaceObjectValue(
           schema.isSubType(abstractType, concrete)
         ) {
           for (const nested of fragment.selectionSet.selections) {
-            if (nested.kind !== Kind.FIELD) {
+            if (nested.kind !== Kind.FIELD || !shouldIncludeNode(varsForDirectives, nested)) {
               continue;
             }
             const key = nested.alias?.value ?? nested.name.value;
