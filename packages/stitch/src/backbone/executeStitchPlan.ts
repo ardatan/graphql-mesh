@@ -1110,7 +1110,7 @@ function executeFetchNode(
           document,
           variables,
           context: ctx.contextValue,
-          rootValue: ctx.rootValue,
+          rootValue: node.subschema.rootValue ?? ctx.rootValue,
           operationType: ctx.operation.operation,
           operationName: ctx.operation.name?.value,
           signal: ctx.signal,
@@ -1633,8 +1633,13 @@ function runSameKeyRootFetches(
   fetches: Array<Extract<StitchPlanNode, { kind: 'Fetch' }>>,
   ctx: BackboneExecutionContext,
 ): MaybePromise<void> {
-  const responseKey = rootResponseKey(fetches[0]!)!;
-  const jobs = fetches.map(child => {
+  // Grouped shared-root path bypasses executeHop's runIf check; filter here.
+  const runnable = fetches.filter(child => evaluateRunIf(child.runIf, ctx.variableValues));
+  if (!runnable.length) {
+    return;
+  }
+  const responseKey = rootResponseKey(runnable[0]!)!;
+  const jobs = runnable.map(child => {
     const childErrors: any[] = [];
     const childCtx: BackboneExecutionContext = {
       ...ctx,
@@ -1665,7 +1670,7 @@ function runSameKeyRootFetches(
         if (!part.errors.length) {
           continue;
         }
-        if (merged === undefined || failedFetchExplainsHole(fetches[i]!, merged)) {
+        if (merged === undefined || failedFetchExplainsHole(runnable[i]!, merged)) {
           ctx.errors.push(...part.errors);
         }
       }
@@ -1719,6 +1724,7 @@ export function executeDataflowPlan(
   let inFlight = 0;
   let settled = false;
   let sawAsync = false;
+  let failed = false;
   let pumping = false;
   let resolveAll!: () => void;
   let rejectAll!: (err: unknown) => void;
@@ -1742,6 +1748,7 @@ export function executeDataflowPlan(
       return;
     }
     settled = true;
+    failed = true;
     rejectAll(err);
   };
 
@@ -1918,8 +1925,10 @@ export function executeDataflowPlan(
 
   pump();
   tryFinish();
+  // Sync success: nothing to await. Sync failure: return the rejected promise
+  // so callers do not finalize as if the plan succeeded.
   if (settled && !sawAsync) {
-    return;
+    return failed ? allDone : undefined;
   }
   return allDone;
 }
@@ -2226,13 +2235,13 @@ export function executeStitchPlan(
 
   return handleMaybePromise(
     () => executeDataflowPlan(plan.root, ctx, plan.schedule),
+    () => finalizeRootResult(ctx),
+    undefined,
     () => {
-      try {
-        return finalizeRootResult(ctx);
-      } finally {
-        delete (contextValue as any)[BACKBONE_EXECUTING];
-        (contextValue as any)[BACKBONE_HYDRATED] = true;
-      }
+      // Clear even when the plan rejects so later field wrappers do not take
+      // the in-progress Island path on a dead execution.
+      delete (contextValue as any)[BACKBONE_EXECUTING];
+      (contextValue as any)[BACKBONE_HYDRATED] = true;
     },
   );
 }

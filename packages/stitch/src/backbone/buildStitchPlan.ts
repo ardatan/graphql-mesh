@@ -4734,12 +4734,19 @@ function tryCrossBatchSequences(
 
   const batchPaths = best.flatMap(l => fetchFlattenPaths(l.fetch));
   const template = best[0]!.fetch;
+  // Preserve shared runIf: entityBatchKey groups by gate, so every loc in
+  // `best` shares the same gate. Dropping it would dispatch when false.
+  let batchRunIf = template.runIf;
+  for (let i = 1; i < best.length; i++) {
+    batchRunIf = orRunIf(batchRunIf, best[i]!.fetch.runIf);
+  }
   const batchFetch: Extract<StitchPlanNode, { kind: 'Fetch' }> = {
     kind: 'Fetch',
     subschema: template.subschema,
     entityTypeName: template.entityTypeName,
     selectionSet: template.selectionSet,
     flattenPaths: batchPaths,
+    runIf: batchRunIf,
   };
 
   const locBySeq = new Map(best.map(l => [l.seqIdx, l]));

@@ -1,5 +1,29 @@
 import type { StitchPlanNode, StitchRunIf, StitchRunIfClause } from './types.js';
 
+/**
+ * Sentinel AND-group that never matches variable values. Used when
+ * simplification collapses to a contradiction (e.g. `v=true` AND `v=false`).
+ * Distinct from an absent gate (`undefined`), which means always runnable.
+ */
+const NEVER_RUN_IF_CLAUSE: StitchRunIfClause = {
+  variable: '\0never',
+  equals: true,
+};
+
+/** DNF that never evaluates to true. */
+export function neverRunIf(): StitchRunIf {
+  return [[NEVER_RUN_IF_CLAUSE]];
+}
+
+export function isNeverRunIf(runIf: StitchRunIf | StitchRunIfClause[] | undefined): boolean {
+  const dnf = asRunIfDnf(runIf);
+  return (
+    dnf?.length === 1 &&
+    dnf[0]!.length === 1 &&
+    dnf[0]![0]!.variable === NEVER_RUN_IF_CLAUSE.variable
+  );
+}
+
 /** Normalize legacy AND-list or DNF into DNF (`OR` of `AND` groups). */
 export function asRunIfDnf(
   runIf: StitchRunIf | StitchRunIfClause[] | undefined,
@@ -37,6 +61,9 @@ export function andRunIf(
   a: StitchRunIf | StitchRunIfClause[] | undefined,
   b: StitchRunIf | StitchRunIfClause[] | undefined,
 ): StitchRunIf | undefined {
+  if (isNeverRunIf(a) || isNeverRunIf(b)) {
+    return neverRunIf();
+  }
   const left = asRunIfDnf(a);
   const right = asRunIfDnf(b);
   if (!left?.length) {
@@ -54,6 +81,10 @@ export function andRunIf(
       }
     }
   }
+  // Every AND-group contradicted → never, not ungated.
+  if (!out.length) {
+    return neverRunIf();
+  }
   return simplifyRunIf(out);
 }
 
@@ -62,11 +93,21 @@ export function orRunIf(
   a: StitchRunIf | StitchRunIfClause[] | undefined,
   b: StitchRunIf | StitchRunIfClause[] | undefined,
 ): StitchRunIf | undefined {
-  const left = asRunIfDnf(a) ?? [];
-  const right = asRunIfDnf(b) ?? [];
-  if (!left.length && !right.length) {
+  // Absent gate = always. always OR x = always.
+  if (a == null || (Array.isArray(a) && a.length === 0)) {
     return undefined;
   }
+  if (b == null || (Array.isArray(b) && b.length === 0)) {
+    return undefined;
+  }
+  if (isNeverRunIf(a)) {
+    return asRunIfDnf(b);
+  }
+  if (isNeverRunIf(b)) {
+    return asRunIfDnf(a);
+  }
+  const left = asRunIfDnf(a) ?? [];
+  const right = asRunIfDnf(b) ?? [];
   return simplifyRunIf([...left, ...right]);
 }
 
@@ -99,10 +140,14 @@ function andClauseLists(
 /**
  * Drop empty/duplicate groups; if any group is empty AND (always), whole expr
  * is always. If ($v=true) OR ($v=false) for same-only var, tautology → always.
+ * An empty input DNF (no surviving AND-groups) is never, not ungated.
  */
 export function simplifyRunIf(dnf: StitchRunIf | undefined): StitchRunIf | undefined {
-  if (!dnf?.length) {
+  if (dnf == null) {
     return undefined;
+  }
+  if (!dnf.length) {
+    return neverRunIf();
   }
   const uniq = new Map<string, StitchRunIfClause[]>();
   for (const and of dnf) {
