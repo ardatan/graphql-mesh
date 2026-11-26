@@ -217,13 +217,15 @@ export default class NamingConventionTransform implements MeshTransform {
               (args, [argName, argConfig]) => {
                 const newArgName = this.config.fieldArgumentNames && argNamingConventionFn(argName);
                 const useArgName = newArgName || argName;
-                const argIsInputObjectType = isInputObjectType(argConfig.type);
+                // `[Filter]` / `Filter!` — reverse-map via the named input object.
+                const namedArgType = getNamedType(argConfig.type);
+                const argIsInputObjectType = isInputObjectType(namedArgType);
 
                 if (argIsInputObjectType) {
                   argsMap[useArgName] = {
                     originalName: argName,
                     fields: generateArgsMapForInput(
-                      argConfig.type as GraphQLInputObjectType,
+                      namedArgType as GraphQLInputObjectType,
                       fieldNamingConventionFn,
                     ),
                   };

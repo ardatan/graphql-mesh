@@ -31,10 +31,34 @@ export function compactGql(s: string): string {
       .replace(/\s+/g, ' ');
     i = j;
   }
-  return (
-    out
-      // GQL17 multiline input objects omit commas; restore them for stable asserts.
-      .replace(/((?:"(?:\\.|[^"\\])*"|true|false|null|\d+|\]))\s+(?=[A-Za-z_@])/g, '$1,')
-      .trim()
-  );
+  // GQL17 multiline input objects omit commas; restore them for stable asserts.
+  // Walk again so we never rewrite inside quoted strings (`"retry 2 times"`).
+  let restored = '';
+  i = 0;
+  while (i < out.length) {
+    if (out[i] === '"') {
+      let j = i + 1;
+      while (j < out.length) {
+        if (out[j] === '\\') {
+          j += 2;
+          continue;
+        }
+        if (out[j] === '"') {
+          j += 1;
+          break;
+        }
+        j += 1;
+      }
+      restored += out.slice(i, j);
+      i = j;
+      continue;
+    }
+    let j = i;
+    while (j < out.length && out[j] !== '"') j += 1;
+    restored += out.slice(i, j).replace(/((?:true|false|null|\d+|\]))\s+(?=[A-Za-z_@])/g, '$1,');
+    i = j;
+  }
+  // After a closing quote, GQL17 may omit the comma before the next field/key.
+  restored = restored.replace(/"(\s+)(?=[A-Za-z_@])/g, '",');
+  return restored.trim();
 }

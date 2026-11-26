@@ -299,10 +299,16 @@ describe('healJSONSchema', () => {
           items: { type: 'string' },
           default: '["200","201"]',
         },
+        flags: {
+          type: 'array',
+          items: { type: 'boolean' },
+          default: 'false',
+        },
       },
     };
     const healed = (await healJSONSchema(schema)) as JSONSchemaObject;
     expect((healed.properties.expected_codes as JSONSchemaObject).default).toBe('200');
     expect((healed.properties.encoded as JSONSchemaObject).default).toEqual(['200', '201']);
+    expect((healed.properties.flags as JSONSchemaObject).default).toBe(false);
   });
 });

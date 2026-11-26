@@ -191,10 +191,13 @@ function rewriteJsDefaultForInputType(
     type = type.ofType;
   }
   if (isListType(type)) {
-    if (!Array.isArray(value)) {
-      return value;
-    }
     const ofType = type.ofType;
+    if (!Array.isArray(value)) {
+      // Singleton list default (`{ retry_count: 3 }` for `[Filter]`).
+      return value == null
+        ? value
+        : [rewriteJsDefaultForInputType(value, ofType, renameEnum, renameField)];
+    }
     return value.map(item => rewriteJsDefaultForInputType(item, ofType, renameEnum, renameField));
   }
   const named = getNamedType(type);
@@ -300,10 +303,11 @@ function jsDefaultNeedsInputFieldRename(
     type = type.ofType;
   }
   if (isListType(type)) {
-    return (
-      Array.isArray(value) &&
-      value.some(item => jsDefaultNeedsInputFieldRename(item, type.ofType, renameField))
-    );
+    // GraphQL 17 may store a singleton list default as a bare item value.
+    if (Array.isArray(value)) {
+      return value.some(item => jsDefaultNeedsInputFieldRename(item, type.ofType, renameField));
+    }
+    return value != null && jsDefaultNeedsInputFieldRename(value, type.ofType, renameField);
   }
   const named = getNamedType(type);
   if (!isInputObjectType(named) || !value || typeof value !== 'object' || Array.isArray(value)) {
@@ -351,7 +355,12 @@ function configDefaultNeedsKeyRename(
   ) {
     return true;
   }
-  const literal = config.default?.literal ?? config.astNode?.defaultValue;
+  // Prefer explicit GQL17 `default` / `defaultValue` over a stale AST (e.g. value: null).
+  const literal =
+    config.default?.literal ??
+    (config.default == null && config.defaultValue === undefined
+      ? config.astNode?.defaultValue
+      : undefined);
   if (literal && (literal.kind === Kind.OBJECT || literal.kind === Kind.LIST)) {
     // OBJECT/LIST literals always need a pass when fieldNames is set so keys rename.
     return true;
@@ -445,7 +454,9 @@ export function withRenamedEnumDefaultsForType<T extends EnumDefaultConfig>(
   }
   if (
     config.default?.literal &&
-    (containsEnumValueNode(config.default.literal) || config.default.literal.kind === Kind.OBJECT)
+    (containsEnumValueNode(config.default.literal) ||
+      config.default.literal.kind === Kind.OBJECT ||
+      config.default.literal.kind === Kind.LIST)
   ) {
     next.default = {
       literal: rewriteEnumValueNode(
@@ -465,7 +476,8 @@ export function withRenamedEnumDefaultsForType<T extends EnumDefaultConfig>(
   if (
     config.astNode?.defaultValue &&
     (containsEnumValueNode(config.astNode.defaultValue) ||
-      config.astNode.defaultValue.kind === Kind.OBJECT)
+      config.astNode.defaultValue.kind === Kind.OBJECT ||
+      config.astNode.defaultValue.kind === Kind.LIST)
   ) {
     next.astNode = {
       ...config.astNode,

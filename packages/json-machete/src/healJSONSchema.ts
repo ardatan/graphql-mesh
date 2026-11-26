@@ -759,14 +759,25 @@ export async function healJSONSchema(
             subSchema.type !== 'string' &&
             typeof subSchema.default === 'string'
           ) {
-            // Only decode JSON-encoded object/array defaults (`"{…}"` / `"[…]"`).
-            // Bare scalars like `"200"` on `type: array` are singleton item defaults
-            // (common in OpenAPI); `JSON.parse("200")` would wrongly yield a number.
+            // Decode JSON-encoded object/array defaults (`"{…}"` / `"[…]"`).
+            // Bare scalars on `type: array` are often OpenAPI singleton item defaults:
+            // - string items: keep `"200"` / `"*"` as strings (do not JSON.parse → number)
+            // - boolean/number/integer items: decode `'false'` / `'1'` to real scalars
             const trimmedDefault = subSchema.default.trim();
             const type = subSchema.type;
+            const itemsType =
+              type === 'array' &&
+              subSchema.items &&
+              !Array.isArray(subSchema.items) &&
+              typeof subSchema.items === 'object'
+                ? (subSchema.items as { type?: string }).type
+                : undefined;
             const looksLikeJsonContainer =
               (type === 'object' && trimmedDefault.startsWith('{')) ||
               (type === 'array' && trimmedDefault.startsWith('[')) ||
+              (type === 'array' &&
+                !trimmedDefault.startsWith('[') &&
+                (itemsType === 'boolean' || itemsType === 'number' || itemsType === 'integer')) ||
               (type !== 'object' && type !== 'array');
             if (looksLikeJsonContainer) {
               debugLogFn?.(

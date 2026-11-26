@@ -179,10 +179,10 @@ function jsDefaultNeedsInputFieldRename(
     type = type.ofType;
   }
   if (isListType(type)) {
-    return (
-      Array.isArray(value) &&
-      value.some(item => jsDefaultNeedsInputFieldRename(item, type.ofType, renameField))
-    );
+    if (Array.isArray(value)) {
+      return value.some(item => jsDefaultNeedsInputFieldRename(item, type.ofType, renameField));
+    }
+    return value != null && jsDefaultNeedsInputFieldRename(value, type.ofType, renameField);
   }
   const named = getNamedType(type);
   if (!isInputObjectType(named) || !value || typeof value !== 'object' || Array.isArray(value)) {
@@ -237,10 +237,12 @@ function rewriteJsDefaultForInputType(
     type = type.ofType;
   }
   if (isListType(type)) {
-    if (!Array.isArray(value)) {
-      return value;
-    }
     const ofType = type.ofType;
+    if (!Array.isArray(value)) {
+      return value == null
+        ? value
+        : [rewriteJsDefaultForInputType(value, ofType, renameEnum, renameField, renameEnumLeaves)];
+    }
     return value.map(item =>
       rewriteJsDefaultForInputType(item, ofType, renameEnum, renameField, renameEnumLeaves),
     );
@@ -792,7 +794,8 @@ export function createNamingConventionTransform(
               nextArgs[argName] = argConfig;
               continue;
             }
-            const inputType = typedArg.type as GraphQLInputType;
+            // Traverse original defaults with the pre-rename type (avoids field-name collisions).
+            const sourceInputType = (sourceArg.type ?? typedArg.type) as GraphQLInputType;
             // Prefer original JS/literal defaults — post-rename coercion may have emptied them.
             const sourceDefaultValue = sourceArg.defaultValue;
             const sourceDefault = sourceArg.default ?? typedArg.default;
@@ -803,8 +806,12 @@ export function createNamingConventionTransform(
             const needsKeyRewrite =
               !!fieldNamesFn &&
               isInputObjectType(namedArgType) &&
-              (jsDefaultNeedsInputFieldRename(sourceDefaultValue, inputType, fieldNamesFn) ||
-                jsDefaultNeedsInputFieldRename(sourceDefault?.value, inputType, fieldNamesFn) ||
+              (jsDefaultNeedsInputFieldRename(sourceDefaultValue, sourceInputType, fieldNamesFn) ||
+                jsDefaultNeedsInputFieldRename(
+                  sourceDefault?.value,
+                  sourceInputType,
+                  fieldNamesFn,
+                ) ||
                 (sourceDefault?.literal != null &&
                   (containsEnumValueNode(sourceDefault.literal) ||
                     sourceDefault.literal.kind === Kind.OBJECT ||
@@ -845,16 +852,14 @@ export function createNamingConventionTransform(
             ) {
               nextArg.defaultValue = rewriteJsDefaultForInputType(
                 sourceDefaultValue,
-                inputType,
+                sourceInputType,
                 enumValuesFn,
                 fieldNamesFn,
                 false,
               ) as typeof typedArg.defaultValue;
             } else if (hasJsStringDefault && isEnumType(namedArgType) && enumValuesFn) {
-              nextArg.defaultValue = rewriteEnumJsDefault(
-                sourceDefaultValue,
-                enumValuesFn,
-              ) as typeof typedArg.defaultValue;
+              // Keep GraphQL 16 internal enum defaultValue; rename only external forms below.
+              nextArg.defaultValue = sourceDefaultValue as typeof typedArg.defaultValue;
             }
             if (
               sourceDefault?.literal &&
@@ -868,7 +873,7 @@ export function createNamingConventionTransform(
                   sourceDefault.literal,
                   enumValuesFn,
                   fieldNamesFn,
-                  inputType,
+                  sourceInputType,
                 ) as ConstValueNode,
               };
             } else if (hasValueString || (needsKeyRewrite && sourceDefault?.value != null)) {
@@ -876,12 +881,16 @@ export function createNamingConventionTransform(
                 value: isInputObjectType(namedArgType)
                   ? rewriteJsDefaultForInputType(
                       sourceDefault!.value,
-                      inputType,
+                      sourceInputType,
                       enumValuesFn,
                       fieldNamesFn,
                       true,
                     )
                   : rewriteEnumJsDefault(sourceDefault!.value, enumValuesFn!),
+              };
+            } else if (hasJsStringDefault && isEnumType(namedArgType) && enumValuesFn) {
+              nextArg.default = {
+                value: rewriteEnumJsDefault(sourceDefaultValue, enumValuesFn),
               };
             }
             if (
@@ -897,7 +906,7 @@ export function createNamingConventionTransform(
                   sourceAstDefault,
                   enumValuesFn,
                   fieldNamesFn,
-                  inputType,
+                  sourceInputType,
                 ) as NonNullable<typeof typedArg.astNode>['defaultValue'],
               };
             }

@@ -81,7 +81,8 @@ function reapplyArgDefaultsFromOriginal(
     for (const [fieldName, field] of Object.entries(type.getFields())) {
       const newFieldName = renameField(fieldName);
       for (const arg of field.args) {
-        const newArgName = renameArg(arg.name);
+        // RenameObjectFieldArguments renames object field arguments only.
+        const newArgName = isInterfaceType(type) ? arg.name : renameArg(arg.name);
         const key = `${newTypeName}.${newFieldName}.${newArgName}`;
         snapshots.set(key, {
           defaultValue: arg.defaultValue,
