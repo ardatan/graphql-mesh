@@ -49,7 +49,7 @@ const schema = buildSubgraphSchema([
         __resolveReference: (ref: { id: string }) => ref,
         name: () => 'Widget',
         description: async () => {
-          await delay(150);
+          await delay(1000);
           return 'A carefully deferred product description';
         },
       },
