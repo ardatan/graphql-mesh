@@ -36,6 +36,7 @@ npx --yes serve specs/out
 ## Deploy
 
 GitHub Actions workflow `.github/workflows/specs.yml` deploys `specs/out` to the Cloudflare Pages
-project `graphql-mesh-specs` (same account secrets as the main website). After the first production
-deploy, bind the custom domain `specs.graphql-mesh.dev` in the Cloudflare Pages project settings
-(DNS is already on Cloudflare for `graphql-mesh.dev`).
+project `graphql-mesh-specs` (same account secrets as the main website). Production URLs:
+
+- https://specs.graphql-mesh.dev
+- https://graphql-mesh-specs.pages.dev
