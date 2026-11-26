@@ -7,14 +7,9 @@ function emptySources(): Record<string, unknown> {
 /**
  * GraphQL 17 `getArgumentValues` expects `{ coerced, sources }`; GraphQL 16 accepts a flat map.
  * Local copy so overlaid stitch works against older `@graphql-tools/utils` (Gateway memtest).
+ * Returns `any` to stay assignable to GraphQL 16/17 `VariableValues` across dual CI.
  */
-export function asGetArgumentValuesVariables(
-  variableValues:
-    Record<string, any> | { coerced: Record<string, any>; sources?: any } | null | undefined,
-):
-  | Record<string, any>
-  | { coerced: Record<string, any>; sources: Record<string, unknown> }
-  | undefined {
+export function asGetArgumentValuesVariables(variableValues: any): any {
   if (variableValues == null) {
     return undefined;
   }
