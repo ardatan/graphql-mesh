@@ -34,7 +34,7 @@ You can find the bundle in `dist/index.js`.
 > **Deploy note:** this monorepo pins `graphql@17` (Node 22+). Stock OpenWhisk `action-nodejs-v16` /
 > `nodejs:16` images are **not** a supported runtime for that GraphQL major. Yarn root
 > `resolutions.graphql` intentionally keeps the workspace on a single GraphQL major — per-example
-> `graphql@16` pins cannot override it. Use the example for local `yarn start` / bundling, or deploy
+> `graphql@16` pins cannot override it. Use the example for local `yarn dev` / bundling, or deploy
 > with a **custom Node 22+** action image as below.
 
 ### Deploy with a custom Node 22+ action image
@@ -56,8 +56,8 @@ wsk action update /guest/mesh/swapi dist/index.js \
 
 ## Running the project locally
 
-`start` command will start Mesh server to mimic your API endpoint locally without deployment;
+`dev` command will start Mesh server to mimic your API endpoint locally without deployment;
 
 ```sh
-yarn start
+yarn dev
 ```
