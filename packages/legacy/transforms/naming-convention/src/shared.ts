@@ -142,9 +142,7 @@ function rewriteEnumValueNode(
         const oldName = f.name.value;
         const field = fields?.[oldName];
         const newName =
-          fields && named
-            ? renameInputObjectFieldName(oldName, named.name, renameField)
-            : oldName;
+          fields && named ? renameInputObjectFieldName(oldName, named.name, renameField) : oldName;
         return {
           ...f,
           name: newName !== oldName ? { ...f.name, value: newName } : f.name,
@@ -195,9 +193,7 @@ function rewriteJsDefaultForInputType(
       return value;
     }
     const ofType = type.ofType;
-    return value.map(item =>
-      rewriteJsDefaultForInputType(item, ofType, renameEnum, renameField),
-    );
+    return value.map(item => rewriteJsDefaultForInputType(item, ofType, renameEnum, renameField));
   }
   const named = getNamedType(type);
   if (isEnumType(named)) {
@@ -377,12 +373,7 @@ export function withRenamedEnumDefaultsForType<T extends EnumDefaultConfig>(
     };
   } else if (config.default?.value != null) {
     next.default = {
-      value: rewriteJsDefaultForInputType(
-        config.default.value,
-        inputType,
-        rename,
-        renameField,
-      ),
+      value: rewriteJsDefaultForInputType(config.default.value, inputType, rename, renameField),
     };
   } else if (config.default != null) {
     next.default = undefined;

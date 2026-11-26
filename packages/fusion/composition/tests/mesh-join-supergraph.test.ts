@@ -418,9 +418,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     // Supergraph: no `"""` blocks - newlines stay as `\n` escapes inside `"…"`.
     // Subgraph SDL may still print thrift args as multiline `"""`.
     // Spaces inside the quoted thrift arg template are preserved (string-safe compact).
-    expect(compactGql(out)).toMatch(
-      /args:"1\(i32\):\s*\$args\.left\\n2\(i32\):\s*\$args\.right"/,
-    );
+    expect(compactGql(out)).toMatch(/args:"1\(i32\):\s*\$args\.left\\n2\(i32\):\s*\$args\.right"/);
     expect(out).not.toMatch(/args: """/);
     expect(out).not.toMatch(/name: "thrift__rpc", args: \{[^}]*subgraph:/);
     expect(compactGql(out)).toMatch(/thrift\/v0\.1",import:\["@thrift__rpc"\]/);

@@ -56,8 +56,8 @@ wsk action update /guest/mesh/swapi dist/index.js \
 
 ## Running the project locally
 
-`yarn dev` runs `src/index.ts` with a local HTTP listener (same gateway runtime the
-OpenWhisk `main` export uses), so you can hit the example without deploying:
+`yarn dev` runs `src/index.ts` with a local HTTP listener (same gateway runtime the OpenWhisk `main`
+export uses), so you can hit the example without deploying:
 
 ```sh
 yarn dev

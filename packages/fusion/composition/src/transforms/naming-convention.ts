@@ -139,18 +139,11 @@ function rewriteEnumValueNode(
         const oldName = f.name.value;
         const field = fields?.[oldName];
         const newName =
-          fields && named
-            ? renameInputObjectFieldName(oldName, named.name, renameField)
-            : oldName;
+          fields && named ? renameInputObjectFieldName(oldName, named.name, renameField) : oldName;
         return {
           ...f,
           name: newName !== oldName ? { ...f.name, value: newName } : f.name,
-          value: rewriteEnumValueNode(
-            f.value,
-            renameEnum,
-            renameField,
-            field?.type,
-          ),
+          value: rewriteEnumValueNode(f.value, renameEnum, renameField, field?.type),
         };
       }),
     };
@@ -250,9 +243,7 @@ function rewriteJsDefaultForInputType(
   }
   const named = getNamedType(type);
   if (isEnumType(named)) {
-    return typeof value === 'string' && renameEnum && renameEnumLeaves
-      ? renameEnum(value)
-      : value;
+    return typeof value === 'string' && renameEnum && renameEnumLeaves ? renameEnum(value) : value;
   }
   if (isInputObjectType(named) && value && typeof value === 'object' && !Array.isArray(value)) {
     const fields = (named as GraphQLInputObjectType).getFields();
