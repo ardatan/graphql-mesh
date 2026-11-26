@@ -55,6 +55,7 @@ export function createStitchingInfo<TContext extends Record<string, any> = Recor
     fieldNodesByField: Object.create(null),
     dynamicSelectionSetsByField: Object.create(null),
     mergedTypes,
+    localFields: new Map(),
   };
 }
 

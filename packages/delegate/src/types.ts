@@ -254,6 +254,12 @@ export interface StitchingInfo<TContext = Record<string, any>> {
     Record<string, Array<(node: FieldNode) => SelectionSetNode>>
   >;
   mergedTypes: Record<string, MergedTypeInfo<TContext>>;
+  /**
+   * Gateway-local fields (additionalResolvers / @resolveTo / late root
+   * overrides) that have no subschema owner. Backbone planner emits Island
+   * nodes for these.
+   */
+  localFields: Map<string, Set<string>>;
 }
 
 export interface ExternalObject<TContext = Record<string, any>> {

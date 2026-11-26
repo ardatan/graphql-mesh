@@ -3,3 +3,5 @@ export * from './unifiedGraphManager.js';
 export * from './federation/supergraph.js';
 export * from './federation/subgraph.js';
 export * from './executor.js';
+export * from './pubsubPublish.js';
+export * from './realSubgraphNameMap.js';

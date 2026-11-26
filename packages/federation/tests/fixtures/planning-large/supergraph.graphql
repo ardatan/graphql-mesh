@@ -1,0 +1,2009 @@
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) {
+  query: Query
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__implements(
+  graph: join__Graph!
+  interface: String!
+) repeatable on OBJECT | INTERFACE
+
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+directive @link(
+  url: String
+  as: String
+  for: link__Purpose
+  import: [link__Import]
+) repeatable on SCHEMA
+
+type Address @join__type(graph: ADDRESSES) {
+  line1: String!
+  city: String!
+  postalCode: String
+  countryCode: String!
+}
+
+type BankTransfer implements PaymentMethod
+  @join__implements(graph: PAYMENT_RISK, interface: "PaymentMethod")
+  @join__implements(graph: PAYMENT_TOKENS, interface: "PaymentMethod")
+  @join__implements(graph: PAYMENTS, interface: "PaymentMethod")
+  @join__type(graph: PAYMENT_RISK, key: "id")
+  @join__type(graph: PAYMENT_TOKENS, key: "id")
+  @join__type(graph: PAYMENTS, key: "id") {
+  id: ID!
+  verified: Boolean! @join__field(graph: PAYMENT_RISK)
+  riskLevel: String @join__field(graph: PAYMENT_RISK)
+  tokenProvider: String @join__field(graph: PAYMENT_TOKENS)
+  lastUsedAt: String @join__field(graph: PAYMENT_TOKENS)
+  label: String! @join__field(graph: PAYMENTS)
+  isDefault: Boolean! @join__field(graph: PAYMENTS)
+  addedAt: String @join__field(graph: PAYMENTS)
+  ibanLast4: String @join__field(graph: PAYMENTS)
+  bankName: String @join__field(graph: PAYMENTS)
+}
+
+type Brand
+  @join__type(graph: BRAND_STORIES, key: "id")
+  @join__type(graph: BRANDS, key: "id")
+  @join__type(graph: CATALOG, key: "id", resolvable: false)
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: MEDIA, key: "id")
+  @join__type(graph: MERCHANDISING, key: "id")
+  @join__type(graph: SEARCH, key: "id", resolvable: false)
+  @join__type(graph: SEO, key: "id")
+  @join__type(graph: SUSTAINABILITY, key: "id") {
+  id: ID!
+  story: String @join__field(graph: BRAND_STORIES)
+  foundedYear: Int @join__field(graph: BRAND_STORIES)
+  name: String! @join__field(graph: BRANDS)
+  slug: String! @join__field(graph: BRANDS)
+  logoUrl: String @join__field(graph: BRANDS)
+  country: String @join__field(graph: BRANDS)
+  heroImageUrl: String @join__field(graph: MEDIA)
+  products(first: Int = 10): [Product!]! @join__field(graph: MERCHANDISING)
+  metaTitle: String @join__field(graph: SEO)
+  sustainabilityRating: String @join__field(graph: SUSTAINABILITY)
+}
+
+type BrandSpotlight @join__type(graph: CONTENT) {
+  tagline: String
+  brand: Brand
+  products: [Product!]!
+}
+
+type BundleDeal implements Promotion
+  @join__implements(graph: CONTENT, interface: "Promotion")
+  @join__implements(graph: PROMO_CONTENT, interface: "Promotion")
+  @join__implements(graph: PROMO_ELIGIBILITY, interface: "Promotion")
+  @join__implements(graph: PROMOTIONS, interface: "Promotion")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: PROMO_CONTENT, key: "id")
+  @join__type(graph: PROMO_ELIGIBILITY, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id") {
+  id: ID!
+  bannerText: String @join__field(graph: PROMO_CONTENT)
+  termsUrl: String @join__field(graph: PROMO_CONTENT)
+  eligibleSegments: [String!]! @join__field(graph: PROMO_ELIGIBILITY)
+  usageCount: Int @join__field(graph: PROMO_ELIGIBILITY)
+  usageLimit: Int @join__field(graph: PROMO_ELIGIBILITY)
+  code: String! @join__field(graph: PROMOTIONS)
+  title: String! @join__field(graph: PROMOTIONS)
+  startsAt: String @join__field(graph: PROMOTIONS)
+  endsAt: String @join__field(graph: PROMOTIONS)
+  stackable: Boolean @join__field(graph: PROMOTIONS)
+  requiredItems: Int! @join__field(graph: PROMOTIONS)
+}
+
+type BundleProduct implements Product
+  @join__implements(graph: ANALYTICS, interface: "Product")
+  @join__implements(graph: ATTRIBUTES, interface: "Product")
+  @join__implements(graph: AVAILABILITY, interface: "Product")
+  @join__implements(graph: BADGES, interface: "Product")
+  @join__implements(graph: CARTS, interface: "Product")
+  @join__implements(graph: CATALOG, interface: "Product")
+  @join__implements(graph: COMPLIANCE, interface: "Product")
+  @join__implements(graph: CONTENT, interface: "Product")
+  @join__implements(graph: CUSTOMS, interface: "Product")
+  @join__implements(graph: DELIVERY_ESTIMATES, interface: "Product")
+  @join__implements(graph: MARGINS, interface: "Product")
+  @join__implements(graph: MEDIA, interface: "Product")
+  @join__implements(graph: MERCHANDISING, interface: "Product")
+  @join__implements(graph: ORDERS, interface: "Product")
+  @join__implements(graph: PERSONALIZATION, interface: "Product")
+  @join__implements(graph: PRICE_HISTORY, interface: "Product")
+  @join__implements(graph: PRICING, interface: "Product")
+  @join__implements(graph: PROCUREMENT, interface: "Product")
+  @join__implements(graph: PROMOTIONS, interface: "Product")
+  @join__implements(graph: QUESTIONS, interface: "Product")
+  @join__implements(graph: RANKING, interface: "Product")
+  @join__implements(graph: RECOMMENDATIONS, interface: "Product")
+  @join__implements(graph: REVIEWS, interface: "Product")
+  @join__implements(graph: SALE_PRICING, interface: "Product")
+  @join__implements(graph: SELLER_CATALOG, interface: "Product")
+  @join__implements(graph: SELLERS, interface: "Product")
+  @join__implements(graph: SEO, interface: "Product")
+  @join__implements(graph: SIZE_GUIDES, interface: "Product")
+  @join__implements(graph: SUSTAINABILITY, interface: "Product")
+  @join__implements(graph: TAX, interface: "Product")
+  @join__implements(graph: TRANSLATIONS, interface: "Product")
+  @join__implements(graph: TRENDING, interface: "Product")
+  @join__implements(graph: VARIANTS, interface: "Product")
+  @join__implements(graph: WARRANTIES, interface: "Product")
+  @join__implements(graph: WISHLISTS, interface: "Product")
+  @join__type(graph: ANALYTICS, key: "id")
+  @join__type(graph: ATTRIBUTES, key: "id")
+  @join__type(graph: AVAILABILITY, key: "id")
+  @join__type(graph: BADGES, key: "id")
+  @join__type(graph: BUNDLES, key: "id")
+  @join__type(graph: CARTS, key: "id", resolvable: false)
+  @join__type(graph: CATALOG, key: "id")
+  @join__type(graph: COMPLIANCE, key: "id")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: CUSTOMS, key: "id")
+  @join__type(graph: DELIVERY_ESTIMATES, key: "id")
+  @join__type(graph: MARGINS, key: "id")
+  @join__type(graph: MEDIA, key: "id")
+  @join__type(graph: MERCHANDISING, key: "id", resolvable: false)
+  @join__type(graph: ORDERS, key: "id", resolvable: false)
+  @join__type(graph: PERSONALIZATION, key: "id")
+  @join__type(graph: PRICE_HISTORY, key: "id")
+  @join__type(graph: PRICING, key: "id")
+  @join__type(graph: PROCUREMENT, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id")
+  @join__type(graph: QUESTIONS, key: "id")
+  @join__type(graph: RANKING, key: "id")
+  @join__type(graph: RECOMMENDATIONS, key: "id")
+  @join__type(graph: REVIEWS, key: "id")
+  @join__type(graph: SALE_PRICING, key: "id")
+  @join__type(graph: SEARCH, key: "id", resolvable: false)
+  @join__type(graph: SELLER_CATALOG, key: "id", resolvable: false)
+  @join__type(graph: SELLERS, key: "id")
+  @join__type(graph: SEO, key: "id")
+  @join__type(graph: SIZE_GUIDES, key: "id")
+  @join__type(graph: SUSTAINABILITY, key: "id")
+  @join__type(graph: TAX, key: "id")
+  @join__type(graph: TRANSLATIONS, key: "id")
+  @join__type(graph: TRENDING, key: "id")
+  @join__type(graph: VARIANTS, key: "id", resolvable: false)
+  @join__type(graph: WARRANTIES, key: "id")
+  @join__type(graph: WISHLISTS, key: "id") {
+  id: ID!
+  viewCount: Int @join__field(graph: ANALYTICS)
+  purchaseCount: Int @join__field(graph: ANALYTICS)
+  conversionRate: Float @join__field(graph: ANALYTICS)
+  attributes: [ProductAttribute!]! @join__field(graph: ATTRIBUTES)
+  availability: String @join__field(graph: AVAILABILITY)
+  restockDate: String @join__field(graph: AVAILABILITY)
+  badges: [String!]! @join__field(graph: BADGES, requires: "rankScore onSale")
+  rankScore: Float
+    @join__field(graph: BADGES, external: true)
+    @join__field(graph: RANKING, requires: "salePriceCents ratingAverage marginPercent")
+  onSale: Boolean @join__field(graph: BADGES, external: true) @join__field(graph: SALE_PRICING)
+  bundleSavingsCents: Int @join__field(graph: BUNDLES)
+  bundleSize: Int @join__field(graph: BUNDLES)
+  sku: String! @join__field(graph: CATALOG)
+  name: String! @join__field(graph: CATALOG)
+  slug: String! @join__field(graph: CATALOG)
+  description: String @join__field(graph: CATALOG)
+  brand: Brand @join__field(graph: CATALOG)
+  categories: [Category!]! @join__field(graph: CATALOG)
+  variants: [Variant!]! @join__field(graph: CATALOG)
+  createdAt: String @join__field(graph: CATALOG)
+  bundleItems: [Product!]! @join__field(graph: CATALOG)
+  ageRestricted: Boolean @join__field(graph: COMPLIANCE)
+  hazmat: Boolean @join__field(graph: COMPLIANCE)
+  countryRestrictions: [String!]! @join__field(graph: COMPLIANCE)
+  hsCode: String @join__field(graph: CUSTOMS)
+  deliveryEstimateDays: Int @join__field(graph: DELIVERY_ESTIMATES)
+  expressEligible: Boolean @join__field(graph: DELIVERY_ESTIMATES)
+  marginPercent: Float
+    @join__field(graph: MARGINS, requires: "salePriceCents costCents")
+    @join__field(graph: RANKING, external: true)
+  salePriceCents: Int
+    @join__field(graph: MARGINS, external: true)
+    @join__field(graph: PRICE_HISTORY, external: true)
+    @join__field(graph: RANKING, external: true)
+    @join__field(graph: SALE_PRICING, requires: "listPriceCents")
+  costCents: Int @join__field(graph: MARGINS, external: true) @join__field(graph: PROCUREMENT)
+  images: [String!]! @join__field(graph: MEDIA)
+  thumbnailUrl: String @join__field(graph: MEDIA)
+  videoUrl: String @join__field(graph: MEDIA)
+  personalizedRank: Float @join__field(graph: PERSONALIZATION)
+  recentlyViewed: Boolean @join__field(graph: PERSONALIZATION)
+  lowestPrice30dCents: Int @join__field(graph: PRICE_HISTORY, requires: "salePriceCents")
+  listPriceCents: Int!
+    @join__field(graph: PRICING)
+    @join__field(graph: SALE_PRICING, external: true)
+  priceCurrency: String! @join__field(graph: PRICING)
+  supplierName: String @join__field(graph: PROCUREMENT)
+  promotions: [Promotion!]! @join__field(graph: PROMOTIONS)
+  questionCount: Int @join__field(graph: QUESTIONS)
+  topQuestion: String @join__field(graph: QUESTIONS)
+  ratingAverage: Float @join__field(graph: RANKING, external: true) @join__field(graph: REVIEWS)
+  related: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  frequentlyBoughtWith: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  reviews(first: Int = 5): [Review!]! @join__field(graph: REVIEWS)
+  reviewCount: Int @join__field(graph: REVIEWS)
+  seller: Seller @join__field(graph: SELLERS)
+  metaTitle: String @join__field(graph: SEO)
+  metaDescription: String @join__field(graph: SEO)
+  canonicalUrl: String @join__field(graph: SEO)
+  sizeGuideUrl: String @join__field(graph: SIZE_GUIDES)
+  ecoScore: String @join__field(graph: SUSTAINABILITY)
+  carbonGrams: Int @join__field(graph: SUSTAINABILITY)
+  taxCategory: String @join__field(graph: TAX)
+  localizedName(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  localizedDescription(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  trendingRank: Int @join__field(graph: TRENDING)
+  warrantyMonths: Int @join__field(graph: WARRANTIES)
+  extendedWarrantyAvailable: Boolean @join__field(graph: WARRANTIES)
+  wishlistCount: Int @join__field(graph: WISHLISTS)
+}
+
+type BuyNowPayLater implements PaymentMethod
+  @join__implements(graph: PAYMENT_RISK, interface: "PaymentMethod")
+  @join__implements(graph: PAYMENT_TOKENS, interface: "PaymentMethod")
+  @join__implements(graph: PAYMENTS, interface: "PaymentMethod")
+  @join__type(graph: PAYMENT_RISK, key: "id")
+  @join__type(graph: PAYMENT_TOKENS, key: "id")
+  @join__type(graph: PAYMENTS, key: "id") {
+  id: ID!
+  verified: Boolean! @join__field(graph: PAYMENT_RISK)
+  riskLevel: String @join__field(graph: PAYMENT_RISK)
+  tokenProvider: String @join__field(graph: PAYMENT_TOKENS)
+  lastUsedAt: String @join__field(graph: PAYMENT_TOKENS)
+  label: String! @join__field(graph: PAYMENTS)
+  isDefault: Boolean! @join__field(graph: PAYMENTS)
+  addedAt: String @join__field(graph: PAYMENTS)
+  installments: Int! @join__field(graph: PAYMENTS)
+  provider: String @join__field(graph: PAYMENTS)
+}
+
+type BuyXGetYDeal implements Promotion
+  @join__implements(graph: CONTENT, interface: "Promotion")
+  @join__implements(graph: PROMO_CONTENT, interface: "Promotion")
+  @join__implements(graph: PROMO_ELIGIBILITY, interface: "Promotion")
+  @join__implements(graph: PROMOTIONS, interface: "Promotion")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: PROMO_CONTENT, key: "id")
+  @join__type(graph: PROMO_ELIGIBILITY, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id") {
+  id: ID!
+  bannerText: String @join__field(graph: PROMO_CONTENT)
+  termsUrl: String @join__field(graph: PROMO_CONTENT)
+  eligibleSegments: [String!]! @join__field(graph: PROMO_ELIGIBILITY)
+  usageCount: Int @join__field(graph: PROMO_ELIGIBILITY)
+  usageLimit: Int @join__field(graph: PROMO_ELIGIBILITY)
+  code: String! @join__field(graph: PROMOTIONS)
+  title: String! @join__field(graph: PROMOTIONS)
+  startsAt: String @join__field(graph: PROMOTIONS)
+  endsAt: String @join__field(graph: PROMOTIONS)
+  stackable: Boolean @join__field(graph: PROMOTIONS)
+  buyQuantity: Int! @join__field(graph: PROMOTIONS)
+  getQuantity: Int! @join__field(graph: PROMOTIONS)
+}
+
+type Cart
+  @join__type(graph: CART_MESSAGES, key: "id")
+  @join__type(graph: CART_TOTALS, key: "id")
+  @join__type(graph: CARTS, key: "id")
+  @join__type(graph: CHECKOUT, key: "id")
+  @join__type(graph: DISCOUNTS, key: "id")
+  @join__type(graph: FRAUD, key: "id")
+  @join__type(graph: INSTALLMENTS, key: "id")
+  @join__type(graph: LOYALTY, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id")
+  @join__type(graph: RECOMMENDATIONS, key: "id")
+  @join__type(graph: SHIPPING_RATES, key: "id")
+  @join__type(graph: TAX, key: "id") {
+  id: ID!
+  messages: [String!]! @join__field(graph: CART_MESSAGES)
+  freeShippingThresholdCents: Int @join__field(graph: CART_MESSAGES)
+  subtotalCents: Int!
+    @join__field(graph: CART_TOTALS)
+    @join__field(graph: CHECKOUT, external: true)
+    @join__field(graph: DISCOUNTS, external: true)
+    @join__field(graph: SHIPPING_RATES, external: true)
+    @join__field(graph: TAX, external: true)
+  itemCount: Int! @join__field(graph: CART_TOTALS) @join__field(graph: FRAUD, external: true)
+  currency: String! @join__field(graph: CARTS)
+  updatedAt: String @join__field(graph: CARTS)
+  customer: Customer @join__field(graph: CARTS)
+  items: [CartItem!]! @join__field(graph: CARTS)
+  grandTotalCents: Int!
+    @join__field(
+      graph: CHECKOUT
+      requires: "subtotalCents discountTotalCents shippingTotalCents taxTotalCents"
+    )
+    @join__field(graph: FRAUD, external: true)
+    @join__field(graph: INSTALLMENTS, external: true)
+    @join__field(graph: LOYALTY, external: true)
+  checkoutUrl: String @join__field(graph: CHECKOUT)
+  discountTotalCents: Int!
+    @join__field(graph: CHECKOUT, external: true)
+    @join__field(graph: DISCOUNTS, requires: "subtotalCents")
+    @join__field(graph: SHIPPING_RATES, external: true)
+    @join__field(graph: TAX, external: true)
+  shippingTotalCents: Int!
+    @join__field(graph: CHECKOUT, external: true)
+    @join__field(graph: SHIPPING_RATES, requires: "subtotalCents discountTotalCents")
+    @join__field(graph: TAX, external: true)
+  taxTotalCents: Int!
+    @join__field(graph: CHECKOUT, external: true)
+    @join__field(graph: TAX, requires: "subtotalCents discountTotalCents shippingTotalCents")
+  riskScore: Float! @join__field(graph: FRAUD, requires: "grandTotalCents itemCount")
+  installmentPlans: [InstallmentPlan!]!
+    @join__field(graph: INSTALLMENTS, requires: "grandTotalCents")
+  pointsToEarn: Int! @join__field(graph: LOYALTY, requires: "grandTotalCents")
+  appliedPromotions: [Promotion!]! @join__field(graph: PROMOTIONS)
+  upsells: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  shippingOptions: [ShippingOption!]! @join__field(graph: SHIPPING_RATES)
+}
+
+type CartItem
+  @join__type(graph: CART_MESSAGES, key: "id")
+  @join__type(graph: CARTS, key: "id")
+  @join__type(graph: CHECKOUT, key: "id")
+  @join__type(graph: DELIVERY_ESTIMATES, key: "id")
+  @join__type(graph: DISCOUNTS, key: "id")
+  @join__type(graph: FULFILLMENT, key: "id")
+  @join__type(graph: GIFT_OPTIONS, key: "id")
+  @join__type(graph: PRICING, key: "id")
+  @join__type(graph: SHIPPING_RATES, key: "id")
+  @join__type(graph: TAX, key: "id") {
+  id: ID!
+  messages: [String!]! @join__field(graph: CART_MESSAGES)
+  quantity: Int!
+    @join__field(graph: CARTS)
+    @join__field(graph: CHECKOUT, external: true)
+    @join__field(graph: DISCOUNTS, external: true)
+    @join__field(graph: FULFILLMENT, external: true)
+    @join__field(graph: SHIPPING_RATES, external: true)
+  addedAt: String @join__field(graph: CARTS)
+  variant: Variant! @join__field(graph: CARTS)
+  product: Product! @join__field(graph: CARTS)
+  totalCents: Int!
+    @join__field(
+      graph: CHECKOUT
+      requires: "unitPriceCents quantity discountCents shippingCents taxCents"
+    )
+  unitPriceCents: Int!
+    @join__field(graph: CHECKOUT, external: true)
+    @join__field(graph: DISCOUNTS, external: true)
+    @join__field(graph: PRICING)
+    @join__field(graph: TAX, external: true)
+  discountCents: Int!
+    @join__field(graph: CHECKOUT, external: true)
+    @join__field(graph: DISCOUNTS, requires: "unitPriceCents quantity")
+    @join__field(graph: TAX, external: true)
+  shippingCents: Int!
+    @join__field(graph: CHECKOUT, external: true)
+    @join__field(graph: SHIPPING_RATES, requires: "shippingWeightGrams quantity")
+    @join__field(graph: TAX, external: true)
+  taxCents: Int!
+    @join__field(graph: CHECKOUT, external: true)
+    @join__field(graph: TAX, requires: "unitPriceCents discountCents shippingCents")
+  estimatedDelivery: String @join__field(graph: DELIVERY_ESTIMATES)
+  shippingWeightGrams: Int!
+    @join__field(graph: FULFILLMENT, requires: "quantity")
+    @join__field(graph: SHIPPING_RATES, external: true)
+  giftWrapAvailable: Boolean @join__field(graph: GIFT_OPTIONS)
+  giftWrapCents: Int @join__field(graph: GIFT_OPTIONS)
+}
+
+type Category
+  @join__type(graph: ANALYTICS, key: "id")
+  @join__type(graph: CATALOG, key: "id", resolvable: false)
+  @join__type(graph: CATEGORIES, key: "id")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: MEDIA, key: "id")
+  @join__type(graph: MERCHANDISING, key: "id")
+  @join__type(graph: SEARCH, key: "id", resolvable: false)
+  @join__type(graph: SEO, key: "id")
+  @join__type(graph: TRANSLATIONS, key: "id") {
+  id: ID!
+  popularity: Float @join__field(graph: ANALYTICS)
+  name: String! @join__field(graph: CATEGORIES)
+  slug: String! @join__field(graph: CATEGORIES)
+  level: Int @join__field(graph: CATEGORIES)
+  parent: Category @join__field(graph: CATEGORIES)
+  children: [Category!]! @join__field(graph: CATEGORIES)
+  bannerUrl: String @join__field(graph: MEDIA)
+  products(first: Int = 10): [Product!]! @join__field(graph: MERCHANDISING)
+  featured: [Product!]! @join__field(graph: MERCHANDISING)
+  metaTitle: String @join__field(graph: SEO)
+  metaDescription: String @join__field(graph: SEO)
+  localizedName(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+}
+
+type CategoryGrid @join__type(graph: CONTENT) {
+  heading: String
+  categories: [Category!]!
+}
+
+type ConfigurableProduct implements Product
+  @join__implements(graph: ANALYTICS, interface: "Product")
+  @join__implements(graph: ATTRIBUTES, interface: "Product")
+  @join__implements(graph: AVAILABILITY, interface: "Product")
+  @join__implements(graph: BADGES, interface: "Product")
+  @join__implements(graph: CARTS, interface: "Product")
+  @join__implements(graph: CATALOG, interface: "Product")
+  @join__implements(graph: COMPLIANCE, interface: "Product")
+  @join__implements(graph: CONTENT, interface: "Product")
+  @join__implements(graph: CUSTOMS, interface: "Product")
+  @join__implements(graph: DELIVERY_ESTIMATES, interface: "Product")
+  @join__implements(graph: MARGINS, interface: "Product")
+  @join__implements(graph: MEDIA, interface: "Product")
+  @join__implements(graph: MERCHANDISING, interface: "Product")
+  @join__implements(graph: ORDERS, interface: "Product")
+  @join__implements(graph: PERSONALIZATION, interface: "Product")
+  @join__implements(graph: PRICE_HISTORY, interface: "Product")
+  @join__implements(graph: PRICING, interface: "Product")
+  @join__implements(graph: PROCUREMENT, interface: "Product")
+  @join__implements(graph: PROMOTIONS, interface: "Product")
+  @join__implements(graph: QUESTIONS, interface: "Product")
+  @join__implements(graph: RANKING, interface: "Product")
+  @join__implements(graph: RECOMMENDATIONS, interface: "Product")
+  @join__implements(graph: REVIEWS, interface: "Product")
+  @join__implements(graph: SALE_PRICING, interface: "Product")
+  @join__implements(graph: SELLER_CATALOG, interface: "Product")
+  @join__implements(graph: SELLERS, interface: "Product")
+  @join__implements(graph: SEO, interface: "Product")
+  @join__implements(graph: SIZE_GUIDES, interface: "Product")
+  @join__implements(graph: SUSTAINABILITY, interface: "Product")
+  @join__implements(graph: TAX, interface: "Product")
+  @join__implements(graph: TRANSLATIONS, interface: "Product")
+  @join__implements(graph: TRENDING, interface: "Product")
+  @join__implements(graph: VARIANTS, interface: "Product")
+  @join__implements(graph: WARRANTIES, interface: "Product")
+  @join__implements(graph: WISHLISTS, interface: "Product")
+  @join__type(graph: ANALYTICS, key: "id")
+  @join__type(graph: ATTRIBUTES, key: "id")
+  @join__type(graph: AVAILABILITY, key: "id")
+  @join__type(graph: BADGES, key: "id")
+  @join__type(graph: CARTS, key: "id", resolvable: false)
+  @join__type(graph: CATALOG, key: "id")
+  @join__type(graph: COMPLIANCE, key: "id")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: CUSTOMS, key: "id")
+  @join__type(graph: DELIVERY_ESTIMATES, key: "id")
+  @join__type(graph: MARGINS, key: "id")
+  @join__type(graph: MEDIA, key: "id")
+  @join__type(graph: MERCHANDISING, key: "id", resolvable: false)
+  @join__type(graph: ORDERS, key: "id", resolvable: false)
+  @join__type(graph: PERSONALIZATION, key: "id")
+  @join__type(graph: PRICE_HISTORY, key: "id")
+  @join__type(graph: PRICING, key: "id")
+  @join__type(graph: PROCUREMENT, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id")
+  @join__type(graph: QUESTIONS, key: "id")
+  @join__type(graph: RANKING, key: "id")
+  @join__type(graph: RECOMMENDATIONS, key: "id")
+  @join__type(graph: REVIEWS, key: "id")
+  @join__type(graph: SALE_PRICING, key: "id")
+  @join__type(graph: SEARCH, key: "id", resolvable: false)
+  @join__type(graph: SELLER_CATALOG, key: "id", resolvable: false)
+  @join__type(graph: SELLERS, key: "id")
+  @join__type(graph: SEO, key: "id")
+  @join__type(graph: SIZE_GUIDES, key: "id")
+  @join__type(graph: SUSTAINABILITY, key: "id")
+  @join__type(graph: TAX, key: "id")
+  @join__type(graph: TRANSLATIONS, key: "id")
+  @join__type(graph: TRENDING, key: "id")
+  @join__type(graph: VARIANTS, key: "id", resolvable: false)
+  @join__type(graph: WARRANTIES, key: "id")
+  @join__type(graph: WISHLISTS, key: "id") {
+  id: ID!
+  viewCount: Int @join__field(graph: ANALYTICS)
+  purchaseCount: Int @join__field(graph: ANALYTICS)
+  conversionRate: Float @join__field(graph: ANALYTICS)
+  attributes: [ProductAttribute!]! @join__field(graph: ATTRIBUTES)
+  availability: String @join__field(graph: AVAILABILITY)
+  restockDate: String @join__field(graph: AVAILABILITY)
+  badges: [String!]! @join__field(graph: BADGES, requires: "rankScore onSale")
+  rankScore: Float
+    @join__field(graph: BADGES, external: true)
+    @join__field(graph: RANKING, requires: "salePriceCents ratingAverage marginPercent")
+  onSale: Boolean @join__field(graph: BADGES, external: true) @join__field(graph: SALE_PRICING)
+  sku: String! @join__field(graph: CATALOG)
+  name: String! @join__field(graph: CATALOG)
+  slug: String! @join__field(graph: CATALOG)
+  description: String @join__field(graph: CATALOG)
+  brand: Brand @join__field(graph: CATALOG)
+  categories: [Category!]! @join__field(graph: CATALOG)
+  variants: [Variant!]! @join__field(graph: CATALOG)
+  createdAt: String @join__field(graph: CATALOG)
+  optionNames: [String!]! @join__field(graph: CATALOG)
+  ageRestricted: Boolean @join__field(graph: COMPLIANCE)
+  hazmat: Boolean @join__field(graph: COMPLIANCE)
+  countryRestrictions: [String!]! @join__field(graph: COMPLIANCE)
+  hsCode: String @join__field(graph: CUSTOMS)
+  deliveryEstimateDays: Int @join__field(graph: DELIVERY_ESTIMATES)
+  expressEligible: Boolean @join__field(graph: DELIVERY_ESTIMATES)
+  marginPercent: Float
+    @join__field(graph: MARGINS, requires: "salePriceCents costCents")
+    @join__field(graph: RANKING, external: true)
+  salePriceCents: Int
+    @join__field(graph: MARGINS, external: true)
+    @join__field(graph: PRICE_HISTORY, external: true)
+    @join__field(graph: RANKING, external: true)
+    @join__field(graph: SALE_PRICING, requires: "listPriceCents")
+  costCents: Int @join__field(graph: MARGINS, external: true) @join__field(graph: PROCUREMENT)
+  images: [String!]! @join__field(graph: MEDIA)
+  thumbnailUrl: String @join__field(graph: MEDIA)
+  videoUrl: String @join__field(graph: MEDIA)
+  personalizedRank: Float @join__field(graph: PERSONALIZATION)
+  recentlyViewed: Boolean @join__field(graph: PERSONALIZATION)
+  lowestPrice30dCents: Int @join__field(graph: PRICE_HISTORY, requires: "salePriceCents")
+  listPriceCents: Int!
+    @join__field(graph: PRICING)
+    @join__field(graph: SALE_PRICING, external: true)
+  priceCurrency: String! @join__field(graph: PRICING)
+  supplierName: String @join__field(graph: PROCUREMENT)
+  promotions: [Promotion!]! @join__field(graph: PROMOTIONS)
+  questionCount: Int @join__field(graph: QUESTIONS)
+  topQuestion: String @join__field(graph: QUESTIONS)
+  ratingAverage: Float @join__field(graph: RANKING, external: true) @join__field(graph: REVIEWS)
+  related: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  frequentlyBoughtWith: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  reviews(first: Int = 5): [Review!]! @join__field(graph: REVIEWS)
+  reviewCount: Int @join__field(graph: REVIEWS)
+  seller: Seller @join__field(graph: SELLERS)
+  metaTitle: String @join__field(graph: SEO)
+  metaDescription: String @join__field(graph: SEO)
+  canonicalUrl: String @join__field(graph: SEO)
+  sizeGuideUrl: String @join__field(graph: SIZE_GUIDES)
+  ecoScore: String @join__field(graph: SUSTAINABILITY)
+  carbonGrams: Int @join__field(graph: SUSTAINABILITY)
+  taxCategory: String @join__field(graph: TAX)
+  localizedName(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  localizedDescription(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  trendingRank: Int @join__field(graph: TRENDING)
+  warrantyMonths: Int @join__field(graph: WARRANTIES)
+  extendedWarrantyAvailable: Boolean @join__field(graph: WARRANTIES)
+  wishlistCount: Int @join__field(graph: WISHLISTS)
+}
+
+union ContentBlock
+  @join__type(graph: CONTENT)
+  @join__unionMember(graph: CONTENT, member: "HeroBanner")
+  @join__unionMember(graph: CONTENT, member: "ProductCarousel")
+  @join__unionMember(graph: CONTENT, member: "CategoryGrid")
+  @join__unionMember(graph: CONTENT, member: "PromoBanner")
+  @join__unionMember(graph: CONTENT, member: "BrandSpotlight")
+  @join__unionMember(graph: CONTENT, member: "RichText") =
+  | HeroBanner
+  | ProductCarousel
+  | CategoryGrid
+  | PromoBanner
+  | BrandSpotlight
+  | RichText
+
+type CreditCard implements PaymentMethod
+  @join__implements(graph: PAYMENT_RISK, interface: "PaymentMethod")
+  @join__implements(graph: PAYMENT_TOKENS, interface: "PaymentMethod")
+  @join__implements(graph: PAYMENTS, interface: "PaymentMethod")
+  @join__type(graph: PAYMENT_RISK, key: "id")
+  @join__type(graph: PAYMENT_TOKENS, key: "id")
+  @join__type(graph: PAYMENTS, key: "id") {
+  id: ID!
+  verified: Boolean! @join__field(graph: PAYMENT_RISK)
+  riskLevel: String @join__field(graph: PAYMENT_RISK)
+  tokenProvider: String @join__field(graph: PAYMENT_TOKENS)
+  lastUsedAt: String @join__field(graph: PAYMENT_TOKENS)
+  label: String! @join__field(graph: PAYMENTS)
+  isDefault: Boolean! @join__field(graph: PAYMENTS)
+  addedAt: String @join__field(graph: PAYMENTS)
+  last4: String! @join__field(graph: PAYMENTS)
+  cardBrand: String @join__field(graph: PAYMENTS)
+  expiryMonth: Int @join__field(graph: PAYMENTS)
+  expiryYear: Int @join__field(graph: PAYMENTS)
+}
+
+type Customer
+  @join__type(graph: ADDRESSES, key: "id")
+  @join__type(graph: CARTS, key: "id")
+  @join__type(graph: CUSTOMER_CREDIT, key: "id")
+  @join__type(graph: CUSTOMERS, key: "id")
+  @join__type(graph: FRAUD, key: "id")
+  @join__type(graph: LOYALTY, key: "id")
+  @join__type(graph: NOTIFICATIONS, key: "id")
+  @join__type(graph: ORDERS, key: "id")
+  @join__type(graph: PAYMENTS, key: "id")
+  @join__type(graph: PERSONALIZATION, key: "id")
+  @join__type(graph: PREFERENCES, key: "id")
+  @join__type(graph: RECOMMENDATIONS, key: "id")
+  @join__type(graph: REFERRALS, key: "id")
+  @join__type(graph: REVIEWS, key: "id")
+  @join__type(graph: STOCK_ALERTS, key: "id")
+  @join__type(graph: SUBSCRIPTIONS, key: "id")
+  @join__type(graph: SUPPORT, key: "id")
+  @join__type(graph: WISHLISTS, key: "id") {
+  id: ID!
+  addresses: [Address!]! @join__field(graph: ADDRESSES)
+  cart: Cart @join__field(graph: CARTS)
+  storeCreditCents: Int @join__field(graph: CUSTOMER_CREDIT)
+  creditLimitCents: Int @join__field(graph: CUSTOMER_CREDIT)
+  email: String! @join__field(graph: CUSTOMERS)
+  displayName: String! @join__field(graph: CUSTOMERS) @join__field(graph: REVIEWS, external: true)
+  firstName: String @join__field(graph: CUSTOMERS)
+  lastName: String @join__field(graph: CUSTOMERS)
+  createdAt: String @join__field(graph: CUSTOMERS)
+  trustLevel: String @join__field(graph: FRAUD)
+  loyaltyTier: String @join__field(graph: LOYALTY)
+  loyaltyPoints: Int @join__field(graph: LOYALTY)
+  unreadNotificationCount: Int @join__field(graph: NOTIFICATIONS)
+  orders(first: Int = 5): [Order!]! @join__field(graph: ORDERS)
+  paymentMethods: [PaymentMethod!]! @join__field(graph: PAYMENTS)
+  segments: [String!]! @join__field(graph: PERSONALIZATION)
+  locale: String @join__field(graph: PREFERENCES)
+  currency: String @join__field(graph: PREFERENCES)
+  marketingOptIn: Boolean @join__field(graph: PREFERENCES)
+  recommended: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  referralCode: String @join__field(graph: REFERRALS)
+  referralCount: Int @join__field(graph: REFERRALS)
+  reviews: [Review!]! @join__field(graph: REVIEWS)
+  stockAlerts: [Variant!]! @join__field(graph: STOCK_ALERTS)
+  activeSubscriptions: [SubscriptionProduct!]! @join__field(graph: SUBSCRIPTIONS)
+  openTicketCount: Int @join__field(graph: SUPPORT)
+  wishlist: [Product!]! @join__field(graph: WISHLISTS)
+}
+
+type DigitalProduct implements Product
+  @join__implements(graph: ANALYTICS, interface: "Product")
+  @join__implements(graph: ATTRIBUTES, interface: "Product")
+  @join__implements(graph: AVAILABILITY, interface: "Product")
+  @join__implements(graph: BADGES, interface: "Product")
+  @join__implements(graph: CARTS, interface: "Product")
+  @join__implements(graph: CATALOG, interface: "Product")
+  @join__implements(graph: COMPLIANCE, interface: "Product")
+  @join__implements(graph: CONTENT, interface: "Product")
+  @join__implements(graph: CUSTOMS, interface: "Product")
+  @join__implements(graph: DELIVERY_ESTIMATES, interface: "Product")
+  @join__implements(graph: MARGINS, interface: "Product")
+  @join__implements(graph: MEDIA, interface: "Product")
+  @join__implements(graph: MERCHANDISING, interface: "Product")
+  @join__implements(graph: ORDERS, interface: "Product")
+  @join__implements(graph: PERSONALIZATION, interface: "Product")
+  @join__implements(graph: PRICE_HISTORY, interface: "Product")
+  @join__implements(graph: PRICING, interface: "Product")
+  @join__implements(graph: PROCUREMENT, interface: "Product")
+  @join__implements(graph: PROMOTIONS, interface: "Product")
+  @join__implements(graph: QUESTIONS, interface: "Product")
+  @join__implements(graph: RANKING, interface: "Product")
+  @join__implements(graph: RECOMMENDATIONS, interface: "Product")
+  @join__implements(graph: REVIEWS, interface: "Product")
+  @join__implements(graph: SALE_PRICING, interface: "Product")
+  @join__implements(graph: SELLER_CATALOG, interface: "Product")
+  @join__implements(graph: SELLERS, interface: "Product")
+  @join__implements(graph: SEO, interface: "Product")
+  @join__implements(graph: SIZE_GUIDES, interface: "Product")
+  @join__implements(graph: SUSTAINABILITY, interface: "Product")
+  @join__implements(graph: TAX, interface: "Product")
+  @join__implements(graph: TRANSLATIONS, interface: "Product")
+  @join__implements(graph: TRENDING, interface: "Product")
+  @join__implements(graph: VARIANTS, interface: "Product")
+  @join__implements(graph: WARRANTIES, interface: "Product")
+  @join__implements(graph: WISHLISTS, interface: "Product")
+  @join__type(graph: ANALYTICS, key: "id")
+  @join__type(graph: ATTRIBUTES, key: "id")
+  @join__type(graph: AVAILABILITY, key: "id")
+  @join__type(graph: BADGES, key: "id")
+  @join__type(graph: CARTS, key: "id", resolvable: false)
+  @join__type(graph: CATALOG, key: "id")
+  @join__type(graph: COMPLIANCE, key: "id")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: CUSTOMS, key: "id")
+  @join__type(graph: DELIVERY_ESTIMATES, key: "id")
+  @join__type(graph: DIGITAL_DELIVERY, key: "id")
+  @join__type(graph: MARGINS, key: "id")
+  @join__type(graph: MEDIA, key: "id")
+  @join__type(graph: MERCHANDISING, key: "id", resolvable: false)
+  @join__type(graph: ORDERS, key: "id", resolvable: false)
+  @join__type(graph: PERSONALIZATION, key: "id")
+  @join__type(graph: PRICE_HISTORY, key: "id")
+  @join__type(graph: PRICING, key: "id")
+  @join__type(graph: PROCUREMENT, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id")
+  @join__type(graph: QUESTIONS, key: "id")
+  @join__type(graph: RANKING, key: "id")
+  @join__type(graph: RECOMMENDATIONS, key: "id")
+  @join__type(graph: REVIEWS, key: "id")
+  @join__type(graph: SALE_PRICING, key: "id")
+  @join__type(graph: SEARCH, key: "id", resolvable: false)
+  @join__type(graph: SELLER_CATALOG, key: "id", resolvable: false)
+  @join__type(graph: SELLERS, key: "id")
+  @join__type(graph: SEO, key: "id")
+  @join__type(graph: SIZE_GUIDES, key: "id")
+  @join__type(graph: SUSTAINABILITY, key: "id")
+  @join__type(graph: TAX, key: "id")
+  @join__type(graph: TRANSLATIONS, key: "id")
+  @join__type(graph: TRENDING, key: "id")
+  @join__type(graph: VARIANTS, key: "id", resolvable: false)
+  @join__type(graph: WARRANTIES, key: "id")
+  @join__type(graph: WISHLISTS, key: "id") {
+  id: ID!
+  viewCount: Int @join__field(graph: ANALYTICS)
+  purchaseCount: Int @join__field(graph: ANALYTICS)
+  conversionRate: Float @join__field(graph: ANALYTICS)
+  attributes: [ProductAttribute!]! @join__field(graph: ATTRIBUTES)
+  availability: String @join__field(graph: AVAILABILITY)
+  restockDate: String @join__field(graph: AVAILABILITY)
+  badges: [String!]! @join__field(graph: BADGES, requires: "rankScore onSale")
+  rankScore: Float
+    @join__field(graph: BADGES, external: true)
+    @join__field(graph: RANKING, requires: "salePriceCents ratingAverage marginPercent")
+  onSale: Boolean @join__field(graph: BADGES, external: true) @join__field(graph: SALE_PRICING)
+  sku: String! @join__field(graph: CATALOG)
+  name: String! @join__field(graph: CATALOG)
+  slug: String! @join__field(graph: CATALOG)
+  description: String @join__field(graph: CATALOG)
+  brand: Brand @join__field(graph: CATALOG)
+  categories: [Category!]! @join__field(graph: CATALOG)
+  variants: [Variant!]! @join__field(graph: CATALOG)
+  createdAt: String @join__field(graph: CATALOG)
+  downloadSizeMb: Int @join__field(graph: CATALOG)
+  fileFormat: String @join__field(graph: CATALOG)
+  ageRestricted: Boolean @join__field(graph: COMPLIANCE)
+  hazmat: Boolean @join__field(graph: COMPLIANCE)
+  countryRestrictions: [String!]! @join__field(graph: COMPLIANCE)
+  hsCode: String @join__field(graph: CUSTOMS)
+  deliveryEstimateDays: Int @join__field(graph: DELIVERY_ESTIMATES)
+  expressEligible: Boolean @join__field(graph: DELIVERY_ESTIMATES)
+  licenseType: String @join__field(graph: DIGITAL_DELIVERY)
+  drmProtected: Boolean @join__field(graph: DIGITAL_DELIVERY)
+  marginPercent: Float
+    @join__field(graph: MARGINS, requires: "salePriceCents costCents")
+    @join__field(graph: RANKING, external: true)
+  salePriceCents: Int
+    @join__field(graph: MARGINS, external: true)
+    @join__field(graph: PRICE_HISTORY, external: true)
+    @join__field(graph: RANKING, external: true)
+    @join__field(graph: SALE_PRICING, requires: "listPriceCents")
+  costCents: Int @join__field(graph: MARGINS, external: true) @join__field(graph: PROCUREMENT)
+  images: [String!]! @join__field(graph: MEDIA)
+  thumbnailUrl: String @join__field(graph: MEDIA)
+  videoUrl: String @join__field(graph: MEDIA)
+  personalizedRank: Float @join__field(graph: PERSONALIZATION)
+  recentlyViewed: Boolean @join__field(graph: PERSONALIZATION)
+  lowestPrice30dCents: Int @join__field(graph: PRICE_HISTORY, requires: "salePriceCents")
+  listPriceCents: Int!
+    @join__field(graph: PRICING)
+    @join__field(graph: SALE_PRICING, external: true)
+  priceCurrency: String! @join__field(graph: PRICING)
+  supplierName: String @join__field(graph: PROCUREMENT)
+  promotions: [Promotion!]! @join__field(graph: PROMOTIONS)
+  questionCount: Int @join__field(graph: QUESTIONS)
+  topQuestion: String @join__field(graph: QUESTIONS)
+  ratingAverage: Float @join__field(graph: RANKING, external: true) @join__field(graph: REVIEWS)
+  related: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  frequentlyBoughtWith: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  reviews(first: Int = 5): [Review!]! @join__field(graph: REVIEWS)
+  reviewCount: Int @join__field(graph: REVIEWS)
+  seller: Seller @join__field(graph: SELLERS)
+  metaTitle: String @join__field(graph: SEO)
+  metaDescription: String @join__field(graph: SEO)
+  canonicalUrl: String @join__field(graph: SEO)
+  sizeGuideUrl: String @join__field(graph: SIZE_GUIDES)
+  ecoScore: String @join__field(graph: SUSTAINABILITY)
+  carbonGrams: Int @join__field(graph: SUSTAINABILITY)
+  taxCategory: String @join__field(graph: TAX)
+  localizedName(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  localizedDescription(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  trendingRank: Int @join__field(graph: TRENDING)
+  warrantyMonths: Int @join__field(graph: WARRANTIES)
+  extendedWarrantyAvailable: Boolean @join__field(graph: WARRANTIES)
+  wishlistCount: Int @join__field(graph: WISHLISTS)
+}
+
+type FixedAmountDiscount implements Promotion
+  @join__implements(graph: CONTENT, interface: "Promotion")
+  @join__implements(graph: PROMO_CONTENT, interface: "Promotion")
+  @join__implements(graph: PROMO_ELIGIBILITY, interface: "Promotion")
+  @join__implements(graph: PROMOTIONS, interface: "Promotion")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: PROMO_CONTENT, key: "id")
+  @join__type(graph: PROMO_ELIGIBILITY, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id") {
+  id: ID!
+  bannerText: String @join__field(graph: PROMO_CONTENT)
+  termsUrl: String @join__field(graph: PROMO_CONTENT)
+  eligibleSegments: [String!]! @join__field(graph: PROMO_ELIGIBILITY)
+  usageCount: Int @join__field(graph: PROMO_ELIGIBILITY)
+  usageLimit: Int @join__field(graph: PROMO_ELIGIBILITY)
+  code: String! @join__field(graph: PROMOTIONS)
+  title: String! @join__field(graph: PROMOTIONS)
+  startsAt: String @join__field(graph: PROMOTIONS)
+  endsAt: String @join__field(graph: PROMOTIONS)
+  stackable: Boolean @join__field(graph: PROMOTIONS)
+  amountOffCents: Int! @join__field(graph: PROMOTIONS)
+}
+
+type FreeShippingOffer implements Promotion
+  @join__implements(graph: CONTENT, interface: "Promotion")
+  @join__implements(graph: PROMO_CONTENT, interface: "Promotion")
+  @join__implements(graph: PROMO_ELIGIBILITY, interface: "Promotion")
+  @join__implements(graph: PROMOTIONS, interface: "Promotion")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: PROMO_CONTENT, key: "id")
+  @join__type(graph: PROMO_ELIGIBILITY, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id") {
+  id: ID!
+  bannerText: String @join__field(graph: PROMO_CONTENT)
+  termsUrl: String @join__field(graph: PROMO_CONTENT)
+  eligibleSegments: [String!]! @join__field(graph: PROMO_ELIGIBILITY)
+  usageCount: Int @join__field(graph: PROMO_ELIGIBILITY)
+  usageLimit: Int @join__field(graph: PROMO_ELIGIBILITY)
+  code: String! @join__field(graph: PROMOTIONS)
+  title: String! @join__field(graph: PROMOTIONS)
+  startsAt: String @join__field(graph: PROMOTIONS)
+  endsAt: String @join__field(graph: PROMOTIONS)
+  stackable: Boolean @join__field(graph: PROMOTIONS)
+  minimumSpendCents: Int @join__field(graph: PROMOTIONS)
+}
+
+type GiftCardBalance implements PaymentMethod
+  @join__implements(graph: PAYMENT_RISK, interface: "PaymentMethod")
+  @join__implements(graph: PAYMENT_TOKENS, interface: "PaymentMethod")
+  @join__implements(graph: PAYMENTS, interface: "PaymentMethod")
+  @join__type(graph: GIFT_CARDS, key: "id")
+  @join__type(graph: PAYMENT_RISK, key: "id")
+  @join__type(graph: PAYMENT_TOKENS, key: "id")
+  @join__type(graph: PAYMENTS, key: "id") {
+  id: ID!
+  cardNumberLast4: String @join__field(graph: GIFT_CARDS)
+  verified: Boolean! @join__field(graph: PAYMENT_RISK)
+  riskLevel: String @join__field(graph: PAYMENT_RISK)
+  tokenProvider: String @join__field(graph: PAYMENT_TOKENS)
+  lastUsedAt: String @join__field(graph: PAYMENT_TOKENS)
+  label: String! @join__field(graph: PAYMENTS)
+  isDefault: Boolean! @join__field(graph: PAYMENTS)
+  addedAt: String @join__field(graph: PAYMENTS)
+  balanceCents: Int! @join__field(graph: PAYMENTS)
+}
+
+type GiftCardProduct implements Product
+  @join__implements(graph: ANALYTICS, interface: "Product")
+  @join__implements(graph: ATTRIBUTES, interface: "Product")
+  @join__implements(graph: AVAILABILITY, interface: "Product")
+  @join__implements(graph: BADGES, interface: "Product")
+  @join__implements(graph: CARTS, interface: "Product")
+  @join__implements(graph: CATALOG, interface: "Product")
+  @join__implements(graph: COMPLIANCE, interface: "Product")
+  @join__implements(graph: CONTENT, interface: "Product")
+  @join__implements(graph: CUSTOMS, interface: "Product")
+  @join__implements(graph: DELIVERY_ESTIMATES, interface: "Product")
+  @join__implements(graph: MARGINS, interface: "Product")
+  @join__implements(graph: MEDIA, interface: "Product")
+  @join__implements(graph: MERCHANDISING, interface: "Product")
+  @join__implements(graph: ORDERS, interface: "Product")
+  @join__implements(graph: PERSONALIZATION, interface: "Product")
+  @join__implements(graph: PRICE_HISTORY, interface: "Product")
+  @join__implements(graph: PRICING, interface: "Product")
+  @join__implements(graph: PROCUREMENT, interface: "Product")
+  @join__implements(graph: PROMOTIONS, interface: "Product")
+  @join__implements(graph: QUESTIONS, interface: "Product")
+  @join__implements(graph: RANKING, interface: "Product")
+  @join__implements(graph: RECOMMENDATIONS, interface: "Product")
+  @join__implements(graph: REVIEWS, interface: "Product")
+  @join__implements(graph: SALE_PRICING, interface: "Product")
+  @join__implements(graph: SELLER_CATALOG, interface: "Product")
+  @join__implements(graph: SELLERS, interface: "Product")
+  @join__implements(graph: SEO, interface: "Product")
+  @join__implements(graph: SIZE_GUIDES, interface: "Product")
+  @join__implements(graph: SUSTAINABILITY, interface: "Product")
+  @join__implements(graph: TAX, interface: "Product")
+  @join__implements(graph: TRANSLATIONS, interface: "Product")
+  @join__implements(graph: TRENDING, interface: "Product")
+  @join__implements(graph: VARIANTS, interface: "Product")
+  @join__implements(graph: WARRANTIES, interface: "Product")
+  @join__implements(graph: WISHLISTS, interface: "Product")
+  @join__type(graph: ANALYTICS, key: "id")
+  @join__type(graph: ATTRIBUTES, key: "id")
+  @join__type(graph: AVAILABILITY, key: "id")
+  @join__type(graph: BADGES, key: "id")
+  @join__type(graph: CARTS, key: "id", resolvable: false)
+  @join__type(graph: CATALOG, key: "id")
+  @join__type(graph: COMPLIANCE, key: "id")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: CUSTOMS, key: "id")
+  @join__type(graph: DELIVERY_ESTIMATES, key: "id")
+  @join__type(graph: GIFT_CARDS, key: "id")
+  @join__type(graph: MARGINS, key: "id")
+  @join__type(graph: MEDIA, key: "id")
+  @join__type(graph: MERCHANDISING, key: "id", resolvable: false)
+  @join__type(graph: ORDERS, key: "id", resolvable: false)
+  @join__type(graph: PERSONALIZATION, key: "id")
+  @join__type(graph: PRICE_HISTORY, key: "id")
+  @join__type(graph: PRICING, key: "id")
+  @join__type(graph: PROCUREMENT, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id")
+  @join__type(graph: QUESTIONS, key: "id")
+  @join__type(graph: RANKING, key: "id")
+  @join__type(graph: RECOMMENDATIONS, key: "id")
+  @join__type(graph: REVIEWS, key: "id")
+  @join__type(graph: SALE_PRICING, key: "id")
+  @join__type(graph: SEARCH, key: "id", resolvable: false)
+  @join__type(graph: SELLER_CATALOG, key: "id", resolvable: false)
+  @join__type(graph: SELLERS, key: "id")
+  @join__type(graph: SEO, key: "id")
+  @join__type(graph: SIZE_GUIDES, key: "id")
+  @join__type(graph: SUSTAINABILITY, key: "id")
+  @join__type(graph: TAX, key: "id")
+  @join__type(graph: TRANSLATIONS, key: "id")
+  @join__type(graph: TRENDING, key: "id")
+  @join__type(graph: VARIANTS, key: "id", resolvable: false)
+  @join__type(graph: WARRANTIES, key: "id")
+  @join__type(graph: WISHLISTS, key: "id") {
+  id: ID!
+  viewCount: Int @join__field(graph: ANALYTICS)
+  purchaseCount: Int @join__field(graph: ANALYTICS)
+  conversionRate: Float @join__field(graph: ANALYTICS)
+  attributes: [ProductAttribute!]! @join__field(graph: ATTRIBUTES)
+  availability: String @join__field(graph: AVAILABILITY)
+  restockDate: String @join__field(graph: AVAILABILITY)
+  badges: [String!]! @join__field(graph: BADGES, requires: "rankScore onSale")
+  rankScore: Float
+    @join__field(graph: BADGES, external: true)
+    @join__field(graph: RANKING, requires: "salePriceCents ratingAverage marginPercent")
+  onSale: Boolean @join__field(graph: BADGES, external: true) @join__field(graph: SALE_PRICING)
+  sku: String! @join__field(graph: CATALOG)
+  name: String! @join__field(graph: CATALOG)
+  slug: String! @join__field(graph: CATALOG)
+  description: String @join__field(graph: CATALOG)
+  brand: Brand @join__field(graph: CATALOG)
+  categories: [Category!]! @join__field(graph: CATALOG)
+  variants: [Variant!]! @join__field(graph: CATALOG)
+  createdAt: String @join__field(graph: CATALOG)
+  denominations: [Int!]! @join__field(graph: CATALOG)
+  ageRestricted: Boolean @join__field(graph: COMPLIANCE)
+  hazmat: Boolean @join__field(graph: COMPLIANCE)
+  countryRestrictions: [String!]! @join__field(graph: COMPLIANCE)
+  hsCode: String @join__field(graph: CUSTOMS)
+  deliveryEstimateDays: Int @join__field(graph: DELIVERY_ESTIMATES)
+  expressEligible: Boolean @join__field(graph: DELIVERY_ESTIMATES)
+  customMessageAllowed: Boolean @join__field(graph: GIFT_CARDS)
+  expiryMonths: Int @join__field(graph: GIFT_CARDS)
+  marginPercent: Float
+    @join__field(graph: MARGINS, requires: "salePriceCents costCents")
+    @join__field(graph: RANKING, external: true)
+  salePriceCents: Int
+    @join__field(graph: MARGINS, external: true)
+    @join__field(graph: PRICE_HISTORY, external: true)
+    @join__field(graph: RANKING, external: true)
+    @join__field(graph: SALE_PRICING, requires: "listPriceCents")
+  costCents: Int @join__field(graph: MARGINS, external: true) @join__field(graph: PROCUREMENT)
+  images: [String!]! @join__field(graph: MEDIA)
+  thumbnailUrl: String @join__field(graph: MEDIA)
+  videoUrl: String @join__field(graph: MEDIA)
+  personalizedRank: Float @join__field(graph: PERSONALIZATION)
+  recentlyViewed: Boolean @join__field(graph: PERSONALIZATION)
+  lowestPrice30dCents: Int @join__field(graph: PRICE_HISTORY, requires: "salePriceCents")
+  listPriceCents: Int!
+    @join__field(graph: PRICING)
+    @join__field(graph: SALE_PRICING, external: true)
+  priceCurrency: String! @join__field(graph: PRICING)
+  supplierName: String @join__field(graph: PROCUREMENT)
+  promotions: [Promotion!]! @join__field(graph: PROMOTIONS)
+  questionCount: Int @join__field(graph: QUESTIONS)
+  topQuestion: String @join__field(graph: QUESTIONS)
+  ratingAverage: Float @join__field(graph: RANKING, external: true) @join__field(graph: REVIEWS)
+  related: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  frequentlyBoughtWith: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  reviews(first: Int = 5): [Review!]! @join__field(graph: REVIEWS)
+  reviewCount: Int @join__field(graph: REVIEWS)
+  seller: Seller @join__field(graph: SELLERS)
+  metaTitle: String @join__field(graph: SEO)
+  metaDescription: String @join__field(graph: SEO)
+  canonicalUrl: String @join__field(graph: SEO)
+  sizeGuideUrl: String @join__field(graph: SIZE_GUIDES)
+  ecoScore: String @join__field(graph: SUSTAINABILITY)
+  carbonGrams: Int @join__field(graph: SUSTAINABILITY)
+  taxCategory: String @join__field(graph: TAX)
+  localizedName(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  localizedDescription(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  trendingRank: Int @join__field(graph: TRENDING)
+  warrantyMonths: Int @join__field(graph: WARRANTIES)
+  extendedWarrantyAvailable: Boolean @join__field(graph: WARRANTIES)
+  wishlistCount: Int @join__field(graph: WISHLISTS)
+}
+
+type HeroBanner @join__type(graph: CONTENT) {
+  headline: String
+  imageUrl: String
+  linkUrl: String
+}
+
+type InstallmentPlan @join__type(graph: INSTALLMENTS) {
+  months: Int!
+  monthlyCents: Int!
+  aprPercent: Float
+}
+
+scalar join__FieldSet
+
+enum join__Graph {
+  ADDRESSES @join__graph(name: "addresses", url: "http://0.0.0.0:4200/ecommerce/addresses")
+  ANALYTICS @join__graph(name: "analytics", url: "http://0.0.0.0:4200/ecommerce/analytics")
+  ATTRIBUTES @join__graph(name: "attributes", url: "http://0.0.0.0:4200/ecommerce/attributes")
+  AVAILABILITY @join__graph(name: "availability", url: "http://0.0.0.0:4200/ecommerce/availability")
+  BADGES @join__graph(name: "badges", url: "http://0.0.0.0:4200/ecommerce/badges")
+  BRAND_STORIES
+    @join__graph(name: "brand-stories", url: "http://0.0.0.0:4200/ecommerce/brand-stories")
+  BRANDS @join__graph(name: "brands", url: "http://0.0.0.0:4200/ecommerce/brands")
+  BUNDLES @join__graph(name: "bundles", url: "http://0.0.0.0:4200/ecommerce/bundles")
+  CARRIERS @join__graph(name: "carriers", url: "http://0.0.0.0:4200/ecommerce/carriers")
+  CART_MESSAGES
+    @join__graph(name: "cart-messages", url: "http://0.0.0.0:4200/ecommerce/cart-messages")
+  CART_TOTALS @join__graph(name: "cart-totals", url: "http://0.0.0.0:4200/ecommerce/cart-totals")
+  CARTS @join__graph(name: "carts", url: "http://0.0.0.0:4200/ecommerce/carts")
+  CATALOG @join__graph(name: "catalog", url: "http://0.0.0.0:4200/ecommerce/catalog")
+  CATEGORIES @join__graph(name: "categories", url: "http://0.0.0.0:4200/ecommerce/categories")
+  CHECKOUT @join__graph(name: "checkout", url: "http://0.0.0.0:4200/ecommerce/checkout")
+  COMPLIANCE @join__graph(name: "compliance", url: "http://0.0.0.0:4200/ecommerce/compliance")
+  CONTENT @join__graph(name: "content", url: "http://0.0.0.0:4200/ecommerce/content")
+  CUSTOMER_CREDIT
+    @join__graph(name: "customer-credit", url: "http://0.0.0.0:4200/ecommerce/customer-credit")
+  CUSTOMERS @join__graph(name: "customers", url: "http://0.0.0.0:4200/ecommerce/customers")
+  CUSTOMS @join__graph(name: "customs", url: "http://0.0.0.0:4200/ecommerce/customs")
+  DELIVERY_ESTIMATES
+    @join__graph(
+      name: "delivery-estimates"
+      url: "http://0.0.0.0:4200/ecommerce/delivery-estimates"
+    )
+  DIGITAL_DELIVERY
+    @join__graph(name: "digital-delivery", url: "http://0.0.0.0:4200/ecommerce/digital-delivery")
+  DISCOUNTS @join__graph(name: "discounts", url: "http://0.0.0.0:4200/ecommerce/discounts")
+  FRAUD @join__graph(name: "fraud", url: "http://0.0.0.0:4200/ecommerce/fraud")
+  FULFILLMENT @join__graph(name: "fulfillment", url: "http://0.0.0.0:4200/ecommerce/fulfillment")
+  GIFT_CARDS @join__graph(name: "gift-cards", url: "http://0.0.0.0:4200/ecommerce/gift-cards")
+  GIFT_OPTIONS @join__graph(name: "gift-options", url: "http://0.0.0.0:4200/ecommerce/gift-options")
+  INSTALLMENTS @join__graph(name: "installments", url: "http://0.0.0.0:4200/ecommerce/installments")
+  INVENTORY @join__graph(name: "inventory", url: "http://0.0.0.0:4200/ecommerce/inventory")
+  INVOICES @join__graph(name: "invoices", url: "http://0.0.0.0:4200/ecommerce/invoices")
+  LOYALTY @join__graph(name: "loyalty", url: "http://0.0.0.0:4200/ecommerce/loyalty")
+  MARGINS @join__graph(name: "margins", url: "http://0.0.0.0:4200/ecommerce/margins")
+  MEDIA @join__graph(name: "media", url: "http://0.0.0.0:4200/ecommerce/media")
+  MERCHANDISING
+    @join__graph(name: "merchandising", url: "http://0.0.0.0:4200/ecommerce/merchandising")
+  NOTIFICATIONS
+    @join__graph(name: "notifications", url: "http://0.0.0.0:4200/ecommerce/notifications")
+  ORDER_TOTALS @join__graph(name: "order-totals", url: "http://0.0.0.0:4200/ecommerce/order-totals")
+  ORDER_TRACKING
+    @join__graph(name: "order-tracking", url: "http://0.0.0.0:4200/ecommerce/order-tracking")
+  ORDERS @join__graph(name: "orders", url: "http://0.0.0.0:4200/ecommerce/orders")
+  PAYMENT_RISK @join__graph(name: "payment-risk", url: "http://0.0.0.0:4200/ecommerce/payment-risk")
+  PAYMENT_TOKENS
+    @join__graph(name: "payment-tokens", url: "http://0.0.0.0:4200/ecommerce/payment-tokens")
+  PAYMENTS @join__graph(name: "payments", url: "http://0.0.0.0:4200/ecommerce/payments")
+  PERSONALIZATION
+    @join__graph(name: "personalization", url: "http://0.0.0.0:4200/ecommerce/personalization")
+  PREFERENCES @join__graph(name: "preferences", url: "http://0.0.0.0:4200/ecommerce/preferences")
+  PRICE_HISTORY
+    @join__graph(name: "price-history", url: "http://0.0.0.0:4200/ecommerce/price-history")
+  PRICING @join__graph(name: "pricing", url: "http://0.0.0.0:4200/ecommerce/pricing")
+  PROCUREMENT @join__graph(name: "procurement", url: "http://0.0.0.0:4200/ecommerce/procurement")
+  PROMO_CONTENT
+    @join__graph(name: "promo-content", url: "http://0.0.0.0:4200/ecommerce/promo-content")
+  PROMO_ELIGIBILITY
+    @join__graph(name: "promo-eligibility", url: "http://0.0.0.0:4200/ecommerce/promo-eligibility")
+  PROMOTIONS @join__graph(name: "promotions", url: "http://0.0.0.0:4200/ecommerce/promotions")
+  QUESTIONS @join__graph(name: "questions", url: "http://0.0.0.0:4200/ecommerce/questions")
+  RANKING @join__graph(name: "ranking", url: "http://0.0.0.0:4200/ecommerce/ranking")
+  RECOMMENDATIONS
+    @join__graph(name: "recommendations", url: "http://0.0.0.0:4200/ecommerce/recommendations")
+  REFERRALS @join__graph(name: "referrals", url: "http://0.0.0.0:4200/ecommerce/referrals")
+  REFUNDS @join__graph(name: "refunds", url: "http://0.0.0.0:4200/ecommerce/refunds")
+  RETURNS @join__graph(name: "returns", url: "http://0.0.0.0:4200/ecommerce/returns")
+  REVIEW_MODERATION
+    @join__graph(name: "review-moderation", url: "http://0.0.0.0:4200/ecommerce/review-moderation")
+  REVIEWS @join__graph(name: "reviews", url: "http://0.0.0.0:4200/ecommerce/reviews")
+  SALE_PRICING @join__graph(name: "sale-pricing", url: "http://0.0.0.0:4200/ecommerce/sale-pricing")
+  SEARCH @join__graph(name: "search", url: "http://0.0.0.0:4200/ecommerce/search")
+  SELLER_CATALOG
+    @join__graph(name: "seller-catalog", url: "http://0.0.0.0:4200/ecommerce/seller-catalog")
+  SELLER_POLICIES
+    @join__graph(name: "seller-policies", url: "http://0.0.0.0:4200/ecommerce/seller-policies")
+  SELLER_RATINGS
+    @join__graph(name: "seller-ratings", url: "http://0.0.0.0:4200/ecommerce/seller-ratings")
+  SELLERS @join__graph(name: "sellers", url: "http://0.0.0.0:4200/ecommerce/sellers")
+  SEO @join__graph(name: "seo", url: "http://0.0.0.0:4200/ecommerce/seo")
+  SHIPMENTS @join__graph(name: "shipments", url: "http://0.0.0.0:4200/ecommerce/shipments")
+  SHIPPING_RATES
+    @join__graph(name: "shipping-rates", url: "http://0.0.0.0:4200/ecommerce/shipping-rates")
+  SIZE_GUIDES @join__graph(name: "size-guides", url: "http://0.0.0.0:4200/ecommerce/size-guides")
+  STOCK_ALERTS @join__graph(name: "stock-alerts", url: "http://0.0.0.0:4200/ecommerce/stock-alerts")
+  STORE_INVENTORY
+    @join__graph(name: "store-inventory", url: "http://0.0.0.0:4200/ecommerce/store-inventory")
+  STORES @join__graph(name: "stores", url: "http://0.0.0.0:4200/ecommerce/stores")
+  SUBSCRIPTIONS
+    @join__graph(name: "subscriptions", url: "http://0.0.0.0:4200/ecommerce/subscriptions")
+  SUPPORT @join__graph(name: "support", url: "http://0.0.0.0:4200/ecommerce/support")
+  SUSTAINABILITY
+    @join__graph(name: "sustainability", url: "http://0.0.0.0:4200/ecommerce/sustainability")
+  TAX @join__graph(name: "tax", url: "http://0.0.0.0:4200/ecommerce/tax")
+  TRANSLATIONS @join__graph(name: "translations", url: "http://0.0.0.0:4200/ecommerce/translations")
+  TRENDING @join__graph(name: "trending", url: "http://0.0.0.0:4200/ecommerce/trending")
+  VARIANTS @join__graph(name: "variants", url: "http://0.0.0.0:4200/ecommerce/variants")
+  WAREHOUSES @join__graph(name: "warehouses", url: "http://0.0.0.0:4200/ecommerce/warehouses")
+  WARRANTIES @join__graph(name: "warranties", url: "http://0.0.0.0:4200/ecommerce/warranties")
+  WISHLISTS @join__graph(name: "wishlists", url: "http://0.0.0.0:4200/ecommerce/wishlists")
+}
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  `SECURITY` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+
+  """
+  `EXECUTION` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+type Order
+  @join__type(graph: ADDRESSES, key: "id")
+  @join__type(graph: FRAUD, key: "id")
+  @join__type(graph: INVOICES, key: "id")
+  @join__type(graph: LOYALTY, key: "id")
+  @join__type(graph: NOTIFICATIONS, key: "id")
+  @join__type(graph: ORDER_TOTALS, key: "id")
+  @join__type(graph: ORDER_TRACKING, key: "id")
+  @join__type(graph: ORDERS, key: "id")
+  @join__type(graph: PAYMENTS, key: "id")
+  @join__type(graph: REFUNDS, key: "id")
+  @join__type(graph: RETURNS, key: "id")
+  @join__type(graph: SHIPMENTS, key: "id")
+  @join__type(graph: SUPPORT, key: "id") {
+  id: ID!
+  shippingCity: String @join__field(graph: ADDRESSES)
+  shippingCountryCode: String @join__field(graph: ADDRESSES)
+  riskScore: Float @join__field(graph: FRAUD)
+  invoiceUrl: String @join__field(graph: INVOICES)
+  invoiceTotalCents: Int! @join__field(graph: INVOICES, requires: "totalCents refundableCents")
+  totalCents: Int!
+    @join__field(graph: INVOICES, external: true)
+    @join__field(graph: ORDER_TOTALS)
+    @join__field(graph: REFUNDS, external: true)
+  refundableCents: Int!
+    @join__field(graph: INVOICES, external: true)
+    @join__field(graph: REFUNDS, requires: "totalCents")
+  pointsEarned: Int @join__field(graph: LOYALTY)
+  lastNotificationAt: String @join__field(graph: NOTIFICATIONS)
+  subtotalCents: Int! @join__field(graph: ORDER_TOTALS)
+  trackingUrl: String @join__field(graph: ORDER_TRACKING)
+  estimatedDelivery: String @join__field(graph: ORDER_TRACKING)
+  number: String! @join__field(graph: ORDERS)
+  status: OrderStatus! @join__field(graph: ORDERS)
+  placedAt: String! @join__field(graph: ORDERS) @join__field(graph: RETURNS, external: true)
+  customer: Customer! @join__field(graph: ORDERS)
+  items: [OrderItem!]! @join__field(graph: ORDERS)
+  paymentMethod: PaymentMethod @join__field(graph: PAYMENTS)
+  paymentStatus: String @join__field(graph: PAYMENTS)
+  returnWindowEndsAt: String @join__field(graph: RETURNS, requires: "placedAt")
+  shipments: [Shipment!]! @join__field(graph: SHIPMENTS)
+  supportTickets: [SupportTicket!]! @join__field(graph: SUPPORT)
+}
+
+type OrderItem
+  @join__type(graph: DIGITAL_DELIVERY, key: "id")
+  @join__type(graph: ORDERS, key: "id")
+  @join__type(graph: REFUNDS, key: "id")
+  @join__type(graph: RETURNS, key: "id")
+  @join__type(graph: WARRANTIES, key: "id") {
+  id: ID!
+  downloadUrl: String @join__field(graph: DIGITAL_DELIVERY)
+  quantity: Int!
+    @join__field(graph: ORDERS)
+    @join__field(graph: REFUNDS, external: true)
+    @join__field(graph: RETURNS, external: true)
+  unitPriceCents: Int! @join__field(graph: ORDERS) @join__field(graph: REFUNDS, external: true)
+  variant: Variant! @join__field(graph: ORDERS, provides: "title")
+  product: Product! @join__field(graph: ORDERS)
+  refundableCents: Int!
+    @join__field(graph: REFUNDS, requires: "unitPriceCents quantity")
+    @join__field(graph: RETURNS, external: true)
+  returnEligible: Boolean @join__field(graph: RETURNS, requires: "quantity refundableCents")
+  warrantyExpiresAt: String @join__field(graph: WARRANTIES)
+}
+
+enum OrderStatus @join__type(graph: ORDERS) {
+  PENDING @join__enumValue(graph: ORDERS)
+  PAID @join__enumValue(graph: ORDERS)
+  SHIPPED @join__enumValue(graph: ORDERS)
+  DELIVERED @join__enumValue(graph: ORDERS)
+  CANCELLED @join__enumValue(graph: ORDERS)
+}
+
+type Page @join__type(graph: CONTENT) {
+  slug: String!
+  title: String
+  blocks: [ContentBlock!]!
+}
+
+interface PaymentMethod
+  @join__type(graph: PAYMENT_RISK)
+  @join__type(graph: PAYMENT_TOKENS)
+  @join__type(graph: PAYMENTS) {
+  id: ID!
+  verified: Boolean! @join__field(graph: PAYMENT_RISK)
+  riskLevel: String @join__field(graph: PAYMENT_RISK)
+  tokenProvider: String @join__field(graph: PAYMENT_TOKENS)
+  lastUsedAt: String @join__field(graph: PAYMENT_TOKENS)
+  label: String! @join__field(graph: PAYMENTS)
+  isDefault: Boolean! @join__field(graph: PAYMENTS)
+  addedAt: String @join__field(graph: PAYMENTS)
+}
+
+type PayPalAccount implements PaymentMethod
+  @join__implements(graph: PAYMENT_RISK, interface: "PaymentMethod")
+  @join__implements(graph: PAYMENT_TOKENS, interface: "PaymentMethod")
+  @join__implements(graph: PAYMENTS, interface: "PaymentMethod")
+  @join__type(graph: PAYMENT_RISK, key: "id")
+  @join__type(graph: PAYMENT_TOKENS, key: "id")
+  @join__type(graph: PAYMENTS, key: "id") {
+  id: ID!
+  verified: Boolean! @join__field(graph: PAYMENT_RISK)
+  riskLevel: String @join__field(graph: PAYMENT_RISK)
+  tokenProvider: String @join__field(graph: PAYMENT_TOKENS)
+  lastUsedAt: String @join__field(graph: PAYMENT_TOKENS)
+  label: String! @join__field(graph: PAYMENTS)
+  isDefault: Boolean! @join__field(graph: PAYMENTS)
+  addedAt: String @join__field(graph: PAYMENTS)
+  payerEmail: String @join__field(graph: PAYMENTS)
+}
+
+type PercentageDiscount implements Promotion
+  @join__implements(graph: CONTENT, interface: "Promotion")
+  @join__implements(graph: PROMO_CONTENT, interface: "Promotion")
+  @join__implements(graph: PROMO_ELIGIBILITY, interface: "Promotion")
+  @join__implements(graph: PROMOTIONS, interface: "Promotion")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: PROMO_CONTENT, key: "id")
+  @join__type(graph: PROMO_ELIGIBILITY, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id") {
+  id: ID!
+  bannerText: String @join__field(graph: PROMO_CONTENT)
+  termsUrl: String @join__field(graph: PROMO_CONTENT)
+  eligibleSegments: [String!]! @join__field(graph: PROMO_ELIGIBILITY)
+  usageCount: Int @join__field(graph: PROMO_ELIGIBILITY)
+  usageLimit: Int @join__field(graph: PROMO_ELIGIBILITY)
+  code: String! @join__field(graph: PROMOTIONS)
+  title: String! @join__field(graph: PROMOTIONS)
+  startsAt: String @join__field(graph: PROMOTIONS)
+  endsAt: String @join__field(graph: PROMOTIONS)
+  stackable: Boolean @join__field(graph: PROMOTIONS)
+  percentOff: Int! @join__field(graph: PROMOTIONS)
+}
+
+type PhysicalProduct implements Product
+  @join__implements(graph: ANALYTICS, interface: "Product")
+  @join__implements(graph: ATTRIBUTES, interface: "Product")
+  @join__implements(graph: AVAILABILITY, interface: "Product")
+  @join__implements(graph: BADGES, interface: "Product")
+  @join__implements(graph: CARTS, interface: "Product")
+  @join__implements(graph: CATALOG, interface: "Product")
+  @join__implements(graph: COMPLIANCE, interface: "Product")
+  @join__implements(graph: CONTENT, interface: "Product")
+  @join__implements(graph: CUSTOMS, interface: "Product")
+  @join__implements(graph: DELIVERY_ESTIMATES, interface: "Product")
+  @join__implements(graph: MARGINS, interface: "Product")
+  @join__implements(graph: MEDIA, interface: "Product")
+  @join__implements(graph: MERCHANDISING, interface: "Product")
+  @join__implements(graph: ORDERS, interface: "Product")
+  @join__implements(graph: PERSONALIZATION, interface: "Product")
+  @join__implements(graph: PRICE_HISTORY, interface: "Product")
+  @join__implements(graph: PRICING, interface: "Product")
+  @join__implements(graph: PROCUREMENT, interface: "Product")
+  @join__implements(graph: PROMOTIONS, interface: "Product")
+  @join__implements(graph: QUESTIONS, interface: "Product")
+  @join__implements(graph: RANKING, interface: "Product")
+  @join__implements(graph: RECOMMENDATIONS, interface: "Product")
+  @join__implements(graph: REVIEWS, interface: "Product")
+  @join__implements(graph: SALE_PRICING, interface: "Product")
+  @join__implements(graph: SELLER_CATALOG, interface: "Product")
+  @join__implements(graph: SELLERS, interface: "Product")
+  @join__implements(graph: SEO, interface: "Product")
+  @join__implements(graph: SIZE_GUIDES, interface: "Product")
+  @join__implements(graph: SUSTAINABILITY, interface: "Product")
+  @join__implements(graph: TAX, interface: "Product")
+  @join__implements(graph: TRANSLATIONS, interface: "Product")
+  @join__implements(graph: TRENDING, interface: "Product")
+  @join__implements(graph: VARIANTS, interface: "Product")
+  @join__implements(graph: WARRANTIES, interface: "Product")
+  @join__implements(graph: WISHLISTS, interface: "Product")
+  @join__type(graph: ANALYTICS, key: "id")
+  @join__type(graph: ATTRIBUTES, key: "id")
+  @join__type(graph: AVAILABILITY, key: "id")
+  @join__type(graph: BADGES, key: "id")
+  @join__type(graph: CARTS, key: "id", resolvable: false)
+  @join__type(graph: CATALOG, key: "id")
+  @join__type(graph: COMPLIANCE, key: "id")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: CUSTOMS, key: "id")
+  @join__type(graph: DELIVERY_ESTIMATES, key: "id")
+  @join__type(graph: MARGINS, key: "id")
+  @join__type(graph: MEDIA, key: "id")
+  @join__type(graph: MERCHANDISING, key: "id", resolvable: false)
+  @join__type(graph: ORDERS, key: "id", resolvable: false)
+  @join__type(graph: PERSONALIZATION, key: "id")
+  @join__type(graph: PRICE_HISTORY, key: "id")
+  @join__type(graph: PRICING, key: "id")
+  @join__type(graph: PROCUREMENT, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id")
+  @join__type(graph: QUESTIONS, key: "id")
+  @join__type(graph: RANKING, key: "id")
+  @join__type(graph: RECOMMENDATIONS, key: "id")
+  @join__type(graph: REVIEWS, key: "id")
+  @join__type(graph: SALE_PRICING, key: "id")
+  @join__type(graph: SEARCH, key: "id", resolvable: false)
+  @join__type(graph: SELLER_CATALOG, key: "id", resolvable: false)
+  @join__type(graph: SELLERS, key: "id")
+  @join__type(graph: SEO, key: "id")
+  @join__type(graph: SIZE_GUIDES, key: "id")
+  @join__type(graph: SUSTAINABILITY, key: "id")
+  @join__type(graph: TAX, key: "id")
+  @join__type(graph: TRANSLATIONS, key: "id")
+  @join__type(graph: TRENDING, key: "id")
+  @join__type(graph: VARIANTS, key: "id", resolvable: false)
+  @join__type(graph: WARRANTIES, key: "id")
+  @join__type(graph: WISHLISTS, key: "id") {
+  id: ID!
+  viewCount: Int @join__field(graph: ANALYTICS)
+  purchaseCount: Int @join__field(graph: ANALYTICS)
+  conversionRate: Float @join__field(graph: ANALYTICS)
+  attributes: [ProductAttribute!]! @join__field(graph: ATTRIBUTES)
+  availability: String @join__field(graph: AVAILABILITY)
+  restockDate: String @join__field(graph: AVAILABILITY)
+  badges: [String!]! @join__field(graph: BADGES, requires: "rankScore onSale")
+  rankScore: Float
+    @join__field(graph: BADGES, external: true)
+    @join__field(graph: RANKING, requires: "salePriceCents ratingAverage marginPercent")
+  onSale: Boolean @join__field(graph: BADGES, external: true) @join__field(graph: SALE_PRICING)
+  sku: String! @join__field(graph: CATALOG)
+  name: String! @join__field(graph: CATALOG)
+  slug: String! @join__field(graph: CATALOG)
+  description: String @join__field(graph: CATALOG)
+  brand: Brand @join__field(graph: CATALOG)
+  categories: [Category!]! @join__field(graph: CATALOG)
+  variants: [Variant!]! @join__field(graph: CATALOG)
+  createdAt: String @join__field(graph: CATALOG)
+  weightGrams: Int @join__field(graph: CATALOG)
+  material: String @join__field(graph: CATALOG)
+  ageRestricted: Boolean @join__field(graph: COMPLIANCE)
+  hazmat: Boolean @join__field(graph: COMPLIANCE)
+  countryRestrictions: [String!]! @join__field(graph: COMPLIANCE)
+  hsCode: String @join__field(graph: CUSTOMS)
+  deliveryEstimateDays: Int @join__field(graph: DELIVERY_ESTIMATES)
+  expressEligible: Boolean @join__field(graph: DELIVERY_ESTIMATES)
+  marginPercent: Float
+    @join__field(graph: MARGINS, requires: "salePriceCents costCents")
+    @join__field(graph: RANKING, external: true)
+  salePriceCents: Int
+    @join__field(graph: MARGINS, external: true)
+    @join__field(graph: PRICE_HISTORY, external: true)
+    @join__field(graph: RANKING, external: true)
+    @join__field(graph: SALE_PRICING, requires: "listPriceCents")
+  costCents: Int @join__field(graph: MARGINS, external: true) @join__field(graph: PROCUREMENT)
+  images: [String!]! @join__field(graph: MEDIA)
+  thumbnailUrl: String @join__field(graph: MEDIA)
+  videoUrl: String @join__field(graph: MEDIA)
+  personalizedRank: Float @join__field(graph: PERSONALIZATION)
+  recentlyViewed: Boolean @join__field(graph: PERSONALIZATION)
+  lowestPrice30dCents: Int @join__field(graph: PRICE_HISTORY, requires: "salePriceCents")
+  listPriceCents: Int!
+    @join__field(graph: PRICING)
+    @join__field(graph: SALE_PRICING, external: true)
+  priceCurrency: String! @join__field(graph: PRICING)
+  supplierName: String @join__field(graph: PROCUREMENT)
+  promotions: [Promotion!]! @join__field(graph: PROMOTIONS)
+  questionCount: Int @join__field(graph: QUESTIONS)
+  topQuestion: String @join__field(graph: QUESTIONS)
+  ratingAverage: Float @join__field(graph: RANKING, external: true) @join__field(graph: REVIEWS)
+  related: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  frequentlyBoughtWith: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  reviews(first: Int = 5): [Review!]! @join__field(graph: REVIEWS)
+  reviewCount: Int @join__field(graph: REVIEWS)
+  seller: Seller @join__field(graph: SELLERS)
+  metaTitle: String @join__field(graph: SEO)
+  metaDescription: String @join__field(graph: SEO)
+  canonicalUrl: String @join__field(graph: SEO)
+  sizeGuideUrl: String @join__field(graph: SIZE_GUIDES)
+  ecoScore: String @join__field(graph: SUSTAINABILITY)
+  carbonGrams: Int @join__field(graph: SUSTAINABILITY)
+  taxCategory: String @join__field(graph: TAX)
+  localizedName(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  localizedDescription(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  trendingRank: Int @join__field(graph: TRENDING)
+  warrantyMonths: Int @join__field(graph: WARRANTIES)
+  extendedWarrantyAvailable: Boolean @join__field(graph: WARRANTIES)
+  wishlistCount: Int @join__field(graph: WISHLISTS)
+}
+
+interface Product
+  @join__type(graph: ANALYTICS)
+  @join__type(graph: ATTRIBUTES)
+  @join__type(graph: AVAILABILITY)
+  @join__type(graph: BADGES)
+  @join__type(graph: CARTS)
+  @join__type(graph: CATALOG)
+  @join__type(graph: COMPLIANCE)
+  @join__type(graph: CONTENT)
+  @join__type(graph: CUSTOMS)
+  @join__type(graph: DELIVERY_ESTIMATES)
+  @join__type(graph: MARGINS)
+  @join__type(graph: MEDIA)
+  @join__type(graph: MERCHANDISING)
+  @join__type(graph: ORDERS)
+  @join__type(graph: PERSONALIZATION)
+  @join__type(graph: PRICE_HISTORY)
+  @join__type(graph: PRICING)
+  @join__type(graph: PROCUREMENT)
+  @join__type(graph: PROMOTIONS)
+  @join__type(graph: QUESTIONS)
+  @join__type(graph: RANKING)
+  @join__type(graph: RECOMMENDATIONS)
+  @join__type(graph: REVIEWS)
+  @join__type(graph: SALE_PRICING)
+  @join__type(graph: SELLER_CATALOG)
+  @join__type(graph: SELLERS)
+  @join__type(graph: SEO)
+  @join__type(graph: SIZE_GUIDES)
+  @join__type(graph: SUSTAINABILITY)
+  @join__type(graph: TAX)
+  @join__type(graph: TRANSLATIONS)
+  @join__type(graph: TRENDING)
+  @join__type(graph: VARIANTS)
+  @join__type(graph: WARRANTIES)
+  @join__type(graph: WISHLISTS) {
+  id: ID!
+  viewCount: Int @join__field(graph: ANALYTICS)
+  purchaseCount: Int @join__field(graph: ANALYTICS)
+  conversionRate: Float @join__field(graph: ANALYTICS)
+  attributes: [ProductAttribute!]! @join__field(graph: ATTRIBUTES)
+  availability: String @join__field(graph: AVAILABILITY)
+  restockDate: String @join__field(graph: AVAILABILITY)
+  badges: [String!]! @join__field(graph: BADGES)
+  sku: String! @join__field(graph: CATALOG)
+  name: String! @join__field(graph: CATALOG)
+  slug: String! @join__field(graph: CATALOG)
+  description: String @join__field(graph: CATALOG)
+  brand: Brand @join__field(graph: CATALOG)
+  categories: [Category!]! @join__field(graph: CATALOG)
+  variants: [Variant!]! @join__field(graph: CATALOG)
+  createdAt: String @join__field(graph: CATALOG)
+  ageRestricted: Boolean @join__field(graph: COMPLIANCE)
+  hazmat: Boolean @join__field(graph: COMPLIANCE)
+  countryRestrictions: [String!]! @join__field(graph: COMPLIANCE)
+  hsCode: String @join__field(graph: CUSTOMS)
+  deliveryEstimateDays: Int @join__field(graph: DELIVERY_ESTIMATES)
+  expressEligible: Boolean @join__field(graph: DELIVERY_ESTIMATES)
+  marginPercent: Float @join__field(graph: MARGINS)
+  images: [String!]! @join__field(graph: MEDIA)
+  thumbnailUrl: String @join__field(graph: MEDIA)
+  videoUrl: String @join__field(graph: MEDIA)
+  personalizedRank: Float @join__field(graph: PERSONALIZATION)
+  recentlyViewed: Boolean @join__field(graph: PERSONALIZATION)
+  lowestPrice30dCents: Int @join__field(graph: PRICE_HISTORY)
+  listPriceCents: Int! @join__field(graph: PRICING)
+  priceCurrency: String! @join__field(graph: PRICING)
+  costCents: Int @join__field(graph: PROCUREMENT)
+  supplierName: String @join__field(graph: PROCUREMENT)
+  promotions: [Promotion!]! @join__field(graph: PROMOTIONS)
+  questionCount: Int @join__field(graph: QUESTIONS)
+  topQuestion: String @join__field(graph: QUESTIONS)
+  rankScore: Float @join__field(graph: RANKING)
+  related: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  frequentlyBoughtWith: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  reviews(first: Int = 5): [Review!]! @join__field(graph: REVIEWS)
+  ratingAverage: Float @join__field(graph: REVIEWS)
+  reviewCount: Int @join__field(graph: REVIEWS)
+  salePriceCents: Int @join__field(graph: SALE_PRICING)
+  onSale: Boolean @join__field(graph: SALE_PRICING)
+  seller: Seller @join__field(graph: SELLERS)
+  metaTitle: String @join__field(graph: SEO)
+  metaDescription: String @join__field(graph: SEO)
+  canonicalUrl: String @join__field(graph: SEO)
+  sizeGuideUrl: String @join__field(graph: SIZE_GUIDES)
+  ecoScore: String @join__field(graph: SUSTAINABILITY)
+  carbonGrams: Int @join__field(graph: SUSTAINABILITY)
+  taxCategory: String @join__field(graph: TAX)
+  localizedName(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  localizedDescription(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  trendingRank: Int @join__field(graph: TRENDING)
+  warrantyMonths: Int @join__field(graph: WARRANTIES)
+  extendedWarrantyAvailable: Boolean @join__field(graph: WARRANTIES)
+  wishlistCount: Int @join__field(graph: WISHLISTS)
+}
+
+type ProductAttribute @join__type(graph: ATTRIBUTES) {
+  name: String!
+  value: String
+  unit: String
+}
+
+type ProductCarousel @join__type(graph: CONTENT) {
+  heading: String
+  products: [Product!]!
+}
+
+type PromoBanner @join__type(graph: CONTENT) {
+  text: String
+  promotion: Promotion
+}
+
+interface Promotion
+  @join__type(graph: CONTENT)
+  @join__type(graph: PROMO_CONTENT)
+  @join__type(graph: PROMO_ELIGIBILITY)
+  @join__type(graph: PROMOTIONS) {
+  id: ID!
+  bannerText: String @join__field(graph: PROMO_CONTENT)
+  termsUrl: String @join__field(graph: PROMO_CONTENT)
+  eligibleSegments: [String!]! @join__field(graph: PROMO_ELIGIBILITY)
+  usageCount: Int @join__field(graph: PROMO_ELIGIBILITY)
+  usageLimit: Int @join__field(graph: PROMO_ELIGIBILITY)
+  code: String! @join__field(graph: PROMOTIONS)
+  title: String! @join__field(graph: PROMOTIONS)
+  startsAt: String @join__field(graph: PROMOTIONS)
+  endsAt: String @join__field(graph: PROMOTIONS)
+  stackable: Boolean @join__field(graph: PROMOTIONS)
+}
+
+type Query
+  @join__type(graph: ADDRESSES)
+  @join__type(graph: ANALYTICS)
+  @join__type(graph: ATTRIBUTES)
+  @join__type(graph: AVAILABILITY)
+  @join__type(graph: BADGES)
+  @join__type(graph: BRAND_STORIES)
+  @join__type(graph: BRANDS)
+  @join__type(graph: BUNDLES)
+  @join__type(graph: CARRIERS)
+  @join__type(graph: CART_MESSAGES)
+  @join__type(graph: CART_TOTALS)
+  @join__type(graph: CARTS)
+  @join__type(graph: CATALOG)
+  @join__type(graph: CATEGORIES)
+  @join__type(graph: CHECKOUT)
+  @join__type(graph: COMPLIANCE)
+  @join__type(graph: CONTENT)
+  @join__type(graph: CUSTOMER_CREDIT)
+  @join__type(graph: CUSTOMERS)
+  @join__type(graph: CUSTOMS)
+  @join__type(graph: DELIVERY_ESTIMATES)
+  @join__type(graph: DIGITAL_DELIVERY)
+  @join__type(graph: DISCOUNTS)
+  @join__type(graph: FRAUD)
+  @join__type(graph: FULFILLMENT)
+  @join__type(graph: GIFT_CARDS)
+  @join__type(graph: GIFT_OPTIONS)
+  @join__type(graph: INSTALLMENTS)
+  @join__type(graph: INVENTORY)
+  @join__type(graph: INVOICES)
+  @join__type(graph: LOYALTY)
+  @join__type(graph: MARGINS)
+  @join__type(graph: MEDIA)
+  @join__type(graph: MERCHANDISING)
+  @join__type(graph: NOTIFICATIONS)
+  @join__type(graph: ORDER_TOTALS)
+  @join__type(graph: ORDER_TRACKING)
+  @join__type(graph: ORDERS)
+  @join__type(graph: PAYMENT_RISK)
+  @join__type(graph: PAYMENT_TOKENS)
+  @join__type(graph: PAYMENTS)
+  @join__type(graph: PERSONALIZATION)
+  @join__type(graph: PREFERENCES)
+  @join__type(graph: PRICE_HISTORY)
+  @join__type(graph: PRICING)
+  @join__type(graph: PROCUREMENT)
+  @join__type(graph: PROMO_CONTENT)
+  @join__type(graph: PROMO_ELIGIBILITY)
+  @join__type(graph: PROMOTIONS)
+  @join__type(graph: QUESTIONS)
+  @join__type(graph: RANKING)
+  @join__type(graph: RECOMMENDATIONS)
+  @join__type(graph: REFERRALS)
+  @join__type(graph: REFUNDS)
+  @join__type(graph: RETURNS)
+  @join__type(graph: REVIEW_MODERATION)
+  @join__type(graph: REVIEWS)
+  @join__type(graph: SALE_PRICING)
+  @join__type(graph: SEARCH)
+  @join__type(graph: SELLER_CATALOG)
+  @join__type(graph: SELLER_POLICIES)
+  @join__type(graph: SELLER_RATINGS)
+  @join__type(graph: SELLERS)
+  @join__type(graph: SEO)
+  @join__type(graph: SHIPMENTS)
+  @join__type(graph: SHIPPING_RATES)
+  @join__type(graph: SIZE_GUIDES)
+  @join__type(graph: STOCK_ALERTS)
+  @join__type(graph: STORE_INVENTORY)
+  @join__type(graph: STORES)
+  @join__type(graph: SUBSCRIPTIONS)
+  @join__type(graph: SUPPORT)
+  @join__type(graph: SUSTAINABILITY)
+  @join__type(graph: TAX)
+  @join__type(graph: TRANSLATIONS)
+  @join__type(graph: TRENDING)
+  @join__type(graph: VARIANTS)
+  @join__type(graph: WAREHOUSES)
+  @join__type(graph: WARRANTIES)
+  @join__type(graph: WISHLISTS) {
+  brand(id: ID!): Brand @join__field(graph: BRANDS)
+  cart(id: ID!): Cart @join__field(graph: CARTS)
+  product(id: ID!): Product @join__field(graph: CATALOG)
+  products(first: Int = 10): [Product!]! @join__field(graph: CATALOG)
+  category(id: ID!): Category @join__field(graph: CATEGORIES)
+  categories: [Category!]! @join__field(graph: CATEGORIES)
+  page(slug: String!): Page @join__field(graph: CONTENT)
+  me: Customer @join__field(graph: CUSTOMERS)
+  customer(id: ID!): Customer @join__field(graph: CUSTOMERS)
+  order(id: ID!): Order @join__field(graph: ORDERS)
+  promotions: [Promotion!]! @join__field(graph: PROMOTIONS)
+  search(term: String!, first: Int = 10): [SearchResult!]! @join__field(graph: SEARCH)
+  seller(id: ID!): Seller @join__field(graph: SELLERS)
+  stores: [Store!]! @join__field(graph: STORES)
+  trending(first: Int = 10): [Product!]! @join__field(graph: TRENDING)
+}
+
+type Review
+  @join__type(graph: REVIEW_MODERATION, key: "id")
+  @join__type(graph: REVIEWS, key: "id") {
+  id: ID!
+  verifiedPurchase: Boolean @join__field(graph: REVIEW_MODERATION)
+  helpfulCount: Int @join__field(graph: REVIEW_MODERATION)
+  moderationStatus: String @join__field(graph: REVIEW_MODERATION)
+  rating: Int! @join__field(graph: REVIEWS)
+  title: String @join__field(graph: REVIEWS)
+  body: String @join__field(graph: REVIEWS)
+  createdAt: String @join__field(graph: REVIEWS)
+  author: Customer! @join__field(graph: REVIEWS, provides: "displayName")
+  product: Product! @join__field(graph: REVIEWS)
+}
+
+type RichText @join__type(graph: CONTENT) {
+  html: String
+}
+
+union SearchResult
+  @join__type(graph: SEARCH)
+  @join__unionMember(graph: SEARCH, member: "PhysicalProduct")
+  @join__unionMember(graph: SEARCH, member: "DigitalProduct")
+  @join__unionMember(graph: SEARCH, member: "BundleProduct")
+  @join__unionMember(graph: SEARCH, member: "GiftCardProduct")
+  @join__unionMember(graph: SEARCH, member: "SubscriptionProduct")
+  @join__unionMember(graph: SEARCH, member: "ConfigurableProduct")
+  @join__unionMember(graph: SEARCH, member: "Category")
+  @join__unionMember(graph: SEARCH, member: "Brand")
+  @join__unionMember(graph: SEARCH, member: "Seller")
+  @join__unionMember(graph: SEARCH, member: "Store") =
+  | PhysicalProduct
+  | DigitalProduct
+  | BundleProduct
+  | GiftCardProduct
+  | SubscriptionProduct
+  | ConfigurableProduct
+  | Category
+  | Brand
+  | Seller
+  | Store
+
+type Seller
+  @join__type(graph: SEARCH, key: "id", resolvable: false)
+  @join__type(graph: SELLER_CATALOG, key: "id")
+  @join__type(graph: SELLER_POLICIES, key: "id")
+  @join__type(graph: SELLER_RATINGS, key: "id")
+  @join__type(graph: SELLERS, key: "id") {
+  id: ID!
+  products(first: Int = 10): [Product!]! @join__field(graph: SELLER_CATALOG)
+  productCount: Int @join__field(graph: SELLER_CATALOG)
+  returnPolicy: String @join__field(graph: SELLER_POLICIES)
+  shippingPolicy: String @join__field(graph: SELLER_POLICIES)
+  ratingCount: Int @join__field(graph: SELLER_RATINGS)
+  positivePercent: Float @join__field(graph: SELLER_RATINGS)
+  responseTimeHours: Int @join__field(graph: SELLER_RATINGS)
+  name: String! @join__field(graph: SELLERS)
+  slug: String! @join__field(graph: SELLERS)
+  rating: Float @join__field(graph: SELLERS)
+  since: String @join__field(graph: SELLERS)
+}
+
+type Shipment
+  @join__type(graph: CARRIERS, key: "id")
+  @join__type(graph: CUSTOMS, key: "id")
+  @join__type(graph: DELIVERY_ESTIMATES, key: "id")
+  @join__type(graph: ORDER_TRACKING, key: "id")
+  @join__type(graph: SHIPMENTS, key: "id") {
+  id: ID!
+  carrierName: String @join__field(graph: CARRIERS)
+  carrierLogoUrl: String @join__field(graph: CARRIERS)
+  serviceLevel: String @join__field(graph: CARRIERS)
+  customsStatus: String @join__field(graph: CUSTOMS)
+  dutiesCents: Int @join__field(graph: CUSTOMS)
+  estimatedArrival: String @join__field(graph: DELIVERY_ESTIMATES)
+  events: [TrackingEvent!]! @join__field(graph: ORDER_TRACKING)
+  trackingNumber: String @join__field(graph: SHIPMENTS)
+  carrier: String @join__field(graph: SHIPMENTS)
+  status: String @join__field(graph: SHIPMENTS)
+  shippedAt: String @join__field(graph: SHIPMENTS)
+  warehouse: Warehouse @join__field(graph: SHIPMENTS, provides: "code")
+}
+
+type ShippingOption @join__type(graph: SHIPPING_RATES) {
+  code: String!
+  label: String
+  priceCents: Int!
+  estimatedDays: Int
+}
+
+type Store
+  @join__type(graph: SEARCH, key: "id", resolvable: false)
+  @join__type(graph: STORE_INVENTORY, key: "id")
+  @join__type(graph: STORES, key: "id") {
+  id: ID!
+  pickupEnabled: Boolean @join__field(graph: STORE_INVENTORY)
+  name: String! @join__field(graph: STORES)
+  city: String @join__field(graph: STORES)
+  countryCode: String @join__field(graph: STORES)
+  latitude: Float @join__field(graph: STORES)
+  longitude: Float @join__field(graph: STORES)
+  openingHours: String @join__field(graph: STORES)
+}
+
+type SubscriptionPlan @join__type(graph: SUBSCRIPTIONS) {
+  code: String!
+  intervalMonths: Int!
+  priceCents: Int!
+}
+
+type SubscriptionProduct implements Product
+  @join__implements(graph: ANALYTICS, interface: "Product")
+  @join__implements(graph: ATTRIBUTES, interface: "Product")
+  @join__implements(graph: AVAILABILITY, interface: "Product")
+  @join__implements(graph: BADGES, interface: "Product")
+  @join__implements(graph: CARTS, interface: "Product")
+  @join__implements(graph: CATALOG, interface: "Product")
+  @join__implements(graph: COMPLIANCE, interface: "Product")
+  @join__implements(graph: CONTENT, interface: "Product")
+  @join__implements(graph: CUSTOMS, interface: "Product")
+  @join__implements(graph: DELIVERY_ESTIMATES, interface: "Product")
+  @join__implements(graph: MARGINS, interface: "Product")
+  @join__implements(graph: MEDIA, interface: "Product")
+  @join__implements(graph: MERCHANDISING, interface: "Product")
+  @join__implements(graph: ORDERS, interface: "Product")
+  @join__implements(graph: PERSONALIZATION, interface: "Product")
+  @join__implements(graph: PRICE_HISTORY, interface: "Product")
+  @join__implements(graph: PRICING, interface: "Product")
+  @join__implements(graph: PROCUREMENT, interface: "Product")
+  @join__implements(graph: PROMOTIONS, interface: "Product")
+  @join__implements(graph: QUESTIONS, interface: "Product")
+  @join__implements(graph: RANKING, interface: "Product")
+  @join__implements(graph: RECOMMENDATIONS, interface: "Product")
+  @join__implements(graph: REVIEWS, interface: "Product")
+  @join__implements(graph: SALE_PRICING, interface: "Product")
+  @join__implements(graph: SELLER_CATALOG, interface: "Product")
+  @join__implements(graph: SELLERS, interface: "Product")
+  @join__implements(graph: SEO, interface: "Product")
+  @join__implements(graph: SIZE_GUIDES, interface: "Product")
+  @join__implements(graph: SUSTAINABILITY, interface: "Product")
+  @join__implements(graph: TAX, interface: "Product")
+  @join__implements(graph: TRANSLATIONS, interface: "Product")
+  @join__implements(graph: TRENDING, interface: "Product")
+  @join__implements(graph: VARIANTS, interface: "Product")
+  @join__implements(graph: WARRANTIES, interface: "Product")
+  @join__implements(graph: WISHLISTS, interface: "Product")
+  @join__type(graph: ANALYTICS, key: "id")
+  @join__type(graph: ATTRIBUTES, key: "id")
+  @join__type(graph: AVAILABILITY, key: "id")
+  @join__type(graph: BADGES, key: "id")
+  @join__type(graph: CARTS, key: "id", resolvable: false)
+  @join__type(graph: CATALOG, key: "id")
+  @join__type(graph: COMPLIANCE, key: "id")
+  @join__type(graph: CONTENT, key: "id", resolvable: false)
+  @join__type(graph: CUSTOMS, key: "id")
+  @join__type(graph: DELIVERY_ESTIMATES, key: "id")
+  @join__type(graph: MARGINS, key: "id")
+  @join__type(graph: MEDIA, key: "id")
+  @join__type(graph: MERCHANDISING, key: "id", resolvable: false)
+  @join__type(graph: ORDERS, key: "id", resolvable: false)
+  @join__type(graph: PERSONALIZATION, key: "id")
+  @join__type(graph: PRICE_HISTORY, key: "id")
+  @join__type(graph: PRICING, key: "id")
+  @join__type(graph: PROCUREMENT, key: "id")
+  @join__type(graph: PROMOTIONS, key: "id")
+  @join__type(graph: QUESTIONS, key: "id")
+  @join__type(graph: RANKING, key: "id")
+  @join__type(graph: RECOMMENDATIONS, key: "id")
+  @join__type(graph: REVIEWS, key: "id")
+  @join__type(graph: SALE_PRICING, key: "id")
+  @join__type(graph: SEARCH, key: "id", resolvable: false)
+  @join__type(graph: SELLER_CATALOG, key: "id", resolvable: false)
+  @join__type(graph: SELLERS, key: "id")
+  @join__type(graph: SEO, key: "id")
+  @join__type(graph: SIZE_GUIDES, key: "id")
+  @join__type(graph: SUBSCRIPTIONS, key: "id")
+  @join__type(graph: SUSTAINABILITY, key: "id")
+  @join__type(graph: TAX, key: "id")
+  @join__type(graph: TRANSLATIONS, key: "id")
+  @join__type(graph: TRENDING, key: "id")
+  @join__type(graph: VARIANTS, key: "id", resolvable: false)
+  @join__type(graph: WARRANTIES, key: "id")
+  @join__type(graph: WISHLISTS, key: "id") {
+  id: ID!
+  viewCount: Int @join__field(graph: ANALYTICS)
+  purchaseCount: Int @join__field(graph: ANALYTICS)
+  conversionRate: Float @join__field(graph: ANALYTICS)
+  attributes: [ProductAttribute!]! @join__field(graph: ATTRIBUTES)
+  availability: String @join__field(graph: AVAILABILITY)
+  restockDate: String @join__field(graph: AVAILABILITY)
+  badges: [String!]! @join__field(graph: BADGES, requires: "rankScore onSale")
+  rankScore: Float
+    @join__field(graph: BADGES, external: true)
+    @join__field(graph: RANKING, requires: "salePriceCents ratingAverage marginPercent")
+  onSale: Boolean @join__field(graph: BADGES, external: true) @join__field(graph: SALE_PRICING)
+  sku: String! @join__field(graph: CATALOG)
+  name: String! @join__field(graph: CATALOG)
+  slug: String! @join__field(graph: CATALOG)
+  description: String @join__field(graph: CATALOG)
+  brand: Brand @join__field(graph: CATALOG)
+  categories: [Category!]! @join__field(graph: CATALOG)
+  variants: [Variant!]! @join__field(graph: CATALOG)
+  createdAt: String @join__field(graph: CATALOG)
+  billingInterval: String @join__field(graph: CATALOG)
+  trialDays: Int @join__field(graph: CATALOG)
+  ageRestricted: Boolean @join__field(graph: COMPLIANCE)
+  hazmat: Boolean @join__field(graph: COMPLIANCE)
+  countryRestrictions: [String!]! @join__field(graph: COMPLIANCE)
+  hsCode: String @join__field(graph: CUSTOMS)
+  deliveryEstimateDays: Int @join__field(graph: DELIVERY_ESTIMATES)
+  expressEligible: Boolean @join__field(graph: DELIVERY_ESTIMATES)
+  marginPercent: Float
+    @join__field(graph: MARGINS, requires: "salePriceCents costCents")
+    @join__field(graph: RANKING, external: true)
+  salePriceCents: Int
+    @join__field(graph: MARGINS, external: true)
+    @join__field(graph: PRICE_HISTORY, external: true)
+    @join__field(graph: RANKING, external: true)
+    @join__field(graph: SALE_PRICING, requires: "listPriceCents")
+  costCents: Int @join__field(graph: MARGINS, external: true) @join__field(graph: PROCUREMENT)
+  images: [String!]! @join__field(graph: MEDIA)
+  thumbnailUrl: String @join__field(graph: MEDIA)
+  videoUrl: String @join__field(graph: MEDIA)
+  personalizedRank: Float @join__field(graph: PERSONALIZATION)
+  recentlyViewed: Boolean @join__field(graph: PERSONALIZATION)
+  lowestPrice30dCents: Int @join__field(graph: PRICE_HISTORY, requires: "salePriceCents")
+  listPriceCents: Int!
+    @join__field(graph: PRICING)
+    @join__field(graph: SALE_PRICING, external: true)
+  priceCurrency: String! @join__field(graph: PRICING)
+  supplierName: String @join__field(graph: PROCUREMENT)
+  promotions: [Promotion!]! @join__field(graph: PROMOTIONS)
+  questionCount: Int @join__field(graph: QUESTIONS)
+  topQuestion: String @join__field(graph: QUESTIONS)
+  ratingAverage: Float @join__field(graph: RANKING, external: true) @join__field(graph: REVIEWS)
+  related: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  frequentlyBoughtWith: [Product!]! @join__field(graph: RECOMMENDATIONS)
+  reviews(first: Int = 5): [Review!]! @join__field(graph: REVIEWS)
+  reviewCount: Int @join__field(graph: REVIEWS)
+  seller: Seller @join__field(graph: SELLERS)
+  metaTitle: String @join__field(graph: SEO)
+  metaDescription: String @join__field(graph: SEO)
+  canonicalUrl: String @join__field(graph: SEO)
+  sizeGuideUrl: String @join__field(graph: SIZE_GUIDES)
+  plans: [SubscriptionPlan!]! @join__field(graph: SUBSCRIPTIONS)
+  ecoScore: String @join__field(graph: SUSTAINABILITY)
+  carbonGrams: Int @join__field(graph: SUSTAINABILITY)
+  taxCategory: String @join__field(graph: TAX)
+  localizedName(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  localizedDescription(locale: String = "en"): String @join__field(graph: TRANSLATIONS)
+  trendingRank: Int @join__field(graph: TRENDING)
+  warrantyMonths: Int @join__field(graph: WARRANTIES)
+  extendedWarrantyAvailable: Boolean @join__field(graph: WARRANTIES)
+  wishlistCount: Int @join__field(graph: WISHLISTS)
+}
+
+type SupportTicket @join__type(graph: SUPPORT) {
+  subject: String!
+  status: String!
+  openedAt: String
+}
+
+type TrackingEvent @join__type(graph: ORDER_TRACKING) {
+  status: String!
+  location: String
+  occurredAt: String
+}
+
+type Variant
+  @join__type(graph: ATTRIBUTES, key: "id")
+  @join__type(graph: AVAILABILITY, key: "id")
+  @join__type(graph: CARTS, key: "id", resolvable: false)
+  @join__type(graph: CATALOG, key: "id", resolvable: false)
+  @join__type(graph: FULFILLMENT, key: "id")
+  @join__type(graph: INVENTORY, key: "sku")
+  @join__type(graph: MEDIA, key: "id")
+  @join__type(graph: ORDERS, key: "id")
+  @join__type(graph: PRICING, key: "id")
+  @join__type(graph: SALE_PRICING, key: "id")
+  @join__type(graph: SIZE_GUIDES, key: "id")
+  @join__type(graph: STOCK_ALERTS, key: "id")
+  @join__type(graph: STORE_INVENTORY, key: "id")
+  @join__type(graph: VARIANTS, key: "id")
+  @join__type(graph: VARIANTS, key: "sku") {
+  id: ID!
+    @join__field(graph: ATTRIBUTES)
+    @join__field(graph: AVAILABILITY)
+    @join__field(graph: CARTS)
+    @join__field(graph: CATALOG)
+    @join__field(graph: FULFILLMENT)
+    @join__field(graph: MEDIA)
+    @join__field(graph: ORDERS)
+    @join__field(graph: PRICING)
+    @join__field(graph: SALE_PRICING)
+    @join__field(graph: SIZE_GUIDES)
+    @join__field(graph: STOCK_ALERTS)
+    @join__field(graph: STORE_INVENTORY)
+    @join__field(graph: VARIANTS)
+  optionValues: [String!]! @join__field(graph: ATTRIBUTES)
+  availableForPickup: Boolean @join__field(graph: AVAILABILITY)
+  shippingWeightGrams: Int @join__field(graph: FULFILLMENT)
+  shippingClass: String @join__field(graph: FULFILLMENT)
+  sku: String! @join__field(graph: INVENTORY) @join__field(graph: VARIANTS)
+  inStock: Boolean! @join__field(graph: INVENTORY)
+  stockLevel: Int! @join__field(graph: INVENTORY)
+  warehouses: [Warehouse!]! @join__field(graph: INVENTORY)
+  imageUrl: String @join__field(graph: MEDIA)
+  title: String! @join__field(graph: ORDERS, external: true) @join__field(graph: VARIANTS)
+  listPriceCents: Int!
+    @join__field(graph: PRICING)
+    @join__field(graph: SALE_PRICING, external: true)
+  priceCurrency: String! @join__field(graph: PRICING)
+  salePriceCents: Int @join__field(graph: SALE_PRICING, requires: "listPriceCents")
+  fitNote: String @join__field(graph: SIZE_GUIDES)
+  backInStockSubscribers: Int @join__field(graph: STOCK_ALERTS)
+  pickupStores: [Store!]! @join__field(graph: STORE_INVENTORY)
+  color: String @join__field(graph: VARIANTS)
+  size: String @join__field(graph: VARIANTS)
+  position: Int @join__field(graph: VARIANTS)
+  product: Product! @join__field(graph: VARIANTS)
+}
+
+type Warehouse
+  @join__type(graph: INVENTORY, key: "id", resolvable: false)
+  @join__type(graph: SHIPMENTS, key: "id")
+  @join__type(graph: WAREHOUSES, key: "id") {
+  id: ID!
+  code: String! @join__field(graph: SHIPMENTS, external: true) @join__field(graph: WAREHOUSES)
+  name: String @join__field(graph: WAREHOUSES)
+  region: String @join__field(graph: WAREHOUSES)
+  countryCode: String @join__field(graph: WAREHOUSES)
+}
