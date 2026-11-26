@@ -30,12 +30,12 @@ import {
 import { CRITICAL_ERROR, getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
   asGetArgumentValuesVariables,
-  ExecutionRequest,
-  ExecutionResult,
   getDefinedRootType,
   getOperationASTFromRequest,
   mergeDeep,
   relocatedError,
+  type ExecutionRequest,
+  type ExecutionResult,
 } from '@graphql-tools/utils';
 import { handleMaybePromise, isPromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 import { getBatchedMergeEntry } from './mergeEntry.js';

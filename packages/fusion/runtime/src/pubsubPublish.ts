@@ -1,15 +1,15 @@
 import { getNamedType, GraphQLSchema, type SelectionSetNode } from 'graphql';
 import {
-  ExecutionRequest,
-  ExecutionResult,
-  Executor,
   getDirectiveInExtensions,
   getOperationASTFromRequest,
   isAsyncIterable,
   memoize2,
-  ResultVisitorMap,
-  ValueVisitor,
   visitResult,
+  type ExecutionRequest,
+  type ExecutionResult,
+  type Executor,
+  type ResultVisitorMap,
+  type ValueVisitor,
 } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 

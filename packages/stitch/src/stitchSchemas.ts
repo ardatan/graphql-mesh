@@ -30,7 +30,7 @@ import {
   assertResolversPresent,
   extendResolversFromInterfaces,
 } from '@graphql-tools/schema';
-import { inspect, IResolvers } from '@graphql-tools/utils';
+import { inspect, type IResolvers } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { attachBackboneExecutor } from './backbone/attachBackboneExecutor.js';
 import { defaultMergedResolver as backboneDefaultMergedResolver } from './backbone/defaultMergedResolver.js';
