@@ -546,6 +546,30 @@ function errorFromFetchThrow(
   });
 }
 
+/** Local Island resolver throw → GraphQLError on the field path (no serviceName). */
+function errorFromIslandThrow(
+  err: unknown,
+  responseKey: string,
+  fieldNode?: FieldNode,
+): GraphQLError {
+  if (err instanceof GraphQLError || isGraphQLErrorLike(err)) {
+    const gqlErr = err as GraphQLError;
+    return new GraphQLError(gqlErr.message, {
+      originalError: gqlErr instanceof Error ? gqlErr : undefined,
+      nodes: gqlErr.nodes?.length ? gqlErr.nodes : fieldNode ? [fieldNode] : undefined,
+      source: gqlErr.source,
+      positions: gqlErr.positions,
+      path: gqlErr.path?.length ? gqlErr.path : [responseKey],
+      extensions: gqlErr.extensions,
+    });
+  }
+  return new GraphQLError(err instanceof Error ? err.message : String(err), {
+    originalError: err instanceof Error ? err : undefined,
+    nodes: fieldNode ? [fieldNode] : undefined,
+    path: [responseKey],
+  });
+}
+
 /** After plan execute: fill missing nullable roots with null; bubble non-null. */
 function finalizeRootResult(ctx: BackboneExecutionContext): ExecutionResult {
   const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
@@ -1464,6 +1488,10 @@ function executeIslandNode(
         result => {
           parent[responseKey] = result;
         },
+        err => {
+          ctx.errors.push(errorFromIslandThrow(err, responseKey, node.fieldNode));
+          parent[responseKey] = null;
+        },
       );
     });
     // `continue` is a separate dataflow hop gated on this Island's id -
@@ -1490,6 +1518,12 @@ function executeIslandNode(
     result => {
       ctx.data[responseKey] = result;
       // continue: dataflow hop, not tree execute
+    },
+    err => {
+      // Local/gateway Island throws must become GraphQL errors (classic parity),
+      // not reject the whole plan — otherwise result.errors is empty.
+      ctx.errors.push(errorFromIslandThrow(err, responseKey, node.fieldNode));
+      ctx.data[responseKey] = null;
     },
   );
 }
