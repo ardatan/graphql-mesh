@@ -2,7 +2,7 @@
   "enums": {
     "SqlKind": {
       "summary": "Discriminates `@sql` operation shape. GraphQL lists every arg on `@sql`; only the args relevant to each kind are honored at runtime.",
-      "authors": "Pick the kind that matches the field’s GraphQL return shape (single row, list, connection, count, or mutation).",
+      "authors": "Pick the kind that matches the field's GraphQL return shape (single row, list, connection, count, or mutation).",
       "implementers": "Branch executor / planner on `kind`. Ignore args that do not apply to that kind (e.g. `through` on ROW).",
       "example": "kind: ROWS"
     }
@@ -16,13 +16,13 @@
       },
       "implementers": {
         "loaders": "Schemas that use `@sql` must `@link` this family; pair with `@transport` from core/v0.1.",
-        "runtime": "Plan SQL from `kind`, `table`, binders, and `selection`. Support `$fn…` computed columns and M2M `through` blocks for ROWS.",
+        "runtime": "Plan SQL from `kind`, `table`, binders, and `selection`. Support `$fn...` computed columns and M2M `through` blocks for ROWS.",
         "validation": "Require `table` and `kind`. `kind` must be one of ROW, ROWS, CONNECTION, COUNT, INSERT, UPDATE, DELETE. Ignore args that do not apply to that kind. `subgraph`, when present, must match the composition subgraph name."
       },
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -89,14 +89,14 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "GraphQL field → SQL column / `$fn…` mapping; nested blocks for CONNECTION/payloads.",
-          "authors": "Map GraphQL fields to SQL columns or `$fn…` computed expressions; use nested blocks for connection/payload shapes.",
-          "implementers": "When it runs: When projecting SQL row(s) / mutation payloads into the GraphQL field result.\n\nInput: Result rows (and helpers like `$affectedRows`) plus `selection` lines (`graphqlField: Column` or `$fn…`, with nested blocks for CONNECTION/payload wrappers).\n\nOutput: GraphQL-shaped objects/lists/payloads.\n\nErrors: Unknown columns / bad `$fn` references fail planning or the field.",
+          "constraints": "GraphQL field -> SQL column / `$fn...` mapping; nested blocks for CONNECTION/payloads.",
+          "authors": "Map GraphQL fields to SQL columns or `$fn...` computed expressions; use nested blocks for connection/payload shapes.",
+          "implementers": "When it runs: When projecting SQL row(s) / mutation payloads into the GraphQL field result.\n\nInput: Result rows (and helpers like `$affectedRows`) plus `selection` lines (`graphqlField: Column` or `$fn...`, with nested blocks for CONNECTION/payload wrappers).\n\nOutput: GraphQL-shaped objects/lists/payloads.\n\nErrors: Unknown columns / bad `$fn` references fail planning or the field.",
           "example": "selection: \"id: AlbumId\\ntitle: Title\""
         },
         "through": {
           "defaults": "Optional (ROWS M2M).",
-          "constraints": "Junction block: `table` / `local` / `remote` / `parent: $this…` / `target`.",
+          "constraints": "Junction block: `table` / `local` / `remote` / `parent: $this...` / `target`.",
           "authors": "Many-to-many via join table.",
           "implementers": "Emit junction join plan."
         }

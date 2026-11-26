@@ -14,7 +14,7 @@
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -31,7 +31,7 @@
           "defaults": "Optional.",
           "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
           "authors": "How to build the Mongo filter from args/parent.",
-          "implementers": "Compile binder → filter document.",
+          "implementers": "Compile binder -> filter document.",
           "example": "query: \"$args.filter\""
         },
         "sort": {
@@ -69,7 +69,7 @@
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -86,7 +86,7 @@
           "defaults": "Optional.",
           "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
           "authors": "How to build the Mongo filter from args/parent.",
-          "implementers": "Compile binder → filter document.",
+          "implementers": "Compile binder -> filter document.",
           "example": "query: \"$args.filter\""
         },
         "sort": {
@@ -124,13 +124,13 @@
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
-        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "runtime": "On resolve: build the Mongo count for this directive, run it against `collection`, and return the count as a GraphQL scalar (`Int!`). `selection` does not apply to `@mongo__count` (the runtime returns the numeric count directly). Store/operation errors become GraphQL field errors.",
         "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
       },
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -147,15 +147,14 @@
           "defaults": "Optional.",
           "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
           "authors": "How to build the Mongo filter from args/parent.",
-          "implementers": "Compile binder → filter document.",
+          "implementers": "Compile binder -> filter document.",
           "example": "query: \"$args.filter\""
         },
         "selection": {
-          "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "defaults": "Optional; unused for `@mongo__count`.",
+          "constraints": "Does not apply to count. The field result is the numeric count (`Int!`), not a document projection.",
+          "authors": "Omit on `@mongo__count`. Count fields return a scalar `Int!`; there is no document to project.",
+          "implementers": "When it runs: Does not run for `@mongo__count`. After `countDocuments` (or equivalent), return the count number as the field value.\n\nInput: Not applicable (no document bag).\n\nOutput: Scalar `Int!` (the count).\n\nErrors: Store/operation errors become GraphQL field errors. Do not treat `selection` as document-in / object-out for this directive."
         }
       }
     },
@@ -173,7 +172,7 @@
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -190,7 +189,7 @@
           "defaults": "Optional.",
           "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
           "authors": "How to build the Mongo filter from args/parent.",
-          "implementers": "Compile binder → filter document.",
+          "implementers": "Compile binder -> filter document.",
           "example": "query: \"$args.filter\""
         },
         "sort": {
@@ -234,7 +233,7 @@
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -251,7 +250,7 @@
           "defaults": "Optional.",
           "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
           "authors": "How to build the Mongo filter from args/parent.",
-          "implementers": "Compile binder → filter document.",
+          "implementers": "Compile binder -> filter document.",
           "example": "query: \"$args.filter\""
         },
         "sort": {
@@ -295,7 +294,7 @@
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -312,7 +311,7 @@
           "defaults": "Optional.",
           "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
           "authors": "How to build the Mongo filter from args/parent.",
-          "implementers": "Compile binder → filter document.",
+          "implementers": "Compile binder -> filter document.",
           "example": "query: \"$args.filter\""
         },
         "pipeline": {
@@ -344,7 +343,7 @@
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -361,7 +360,7 @@
           "defaults": "Optional.",
           "constraints": "Document / update binder.",
           "authors": "Values to insert or update.",
-          "implementers": "Build insert docs or update operators (`$set`, …)."
+          "implementers": "Build insert docs or update operators (`$set`, ...)."
         },
         "selection": {
           "defaults": "Optional.",
@@ -386,7 +385,7 @@
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -403,7 +402,7 @@
           "defaults": "Optional.",
           "constraints": "Document / update binder.",
           "authors": "Values to insert or update.",
-          "implementers": "Build insert docs or update operators (`$set`, …)."
+          "implementers": "Build insert docs or update operators (`$set`, ...)."
         },
         "selection": {
           "defaults": "Optional.",
@@ -414,7 +413,7 @@
         },
         "graphqlDocumentInputs": {
           "defaults": "Optional boolean.",
-          "constraints": "When true, map generated DocumentInput aliases (`id`→`_id`, `storedId`→`id`) for String-`_id` collections.",
+          "constraints": "When true, map generated DocumentInput aliases (`id`->`_id`, `storedId`->`id`) for String-`_id` collections.",
           "authors": "Enable when bulk inserts use GraphQL field names that must be rewritten to BSON names; omit when binders already use BSON names.",
           "implementers": "Apply alias rewrite before insertMany."
         }
@@ -434,7 +433,7 @@
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -451,14 +450,14 @@
           "defaults": "Optional.",
           "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
           "authors": "How to build the Mongo filter from args/parent.",
-          "implementers": "Compile binder → filter document.",
+          "implementers": "Compile binder -> filter document.",
           "example": "query: \"$args.filter\""
         },
         "set": {
           "defaults": "Optional.",
           "constraints": "Document / update binder.",
           "authors": "Values to insert or update.",
-          "implementers": "Build insert docs or update operators (`$set`, …)."
+          "implementers": "Build insert docs or update operators (`$set`, ...)."
         },
         "selection": {
           "defaults": "Optional.",
@@ -483,7 +482,7 @@
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -500,14 +499,14 @@
           "defaults": "Optional.",
           "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
           "authors": "How to build the Mongo filter from args/parent.",
-          "implementers": "Compile binder → filter document.",
+          "implementers": "Compile binder -> filter document.",
           "example": "query: \"$args.filter\""
         },
         "set": {
           "defaults": "Optional.",
           "constraints": "Document / update binder.",
           "authors": "Values to insert or update.",
-          "implementers": "Build insert docs or update operators (`$set`, …)."
+          "implementers": "Build insert docs or update operators (`$set`, ...)."
         },
         "selection": {
           "defaults": "Optional.",
@@ -532,7 +531,7 @@
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -549,7 +548,7 @@
           "defaults": "Optional.",
           "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
           "authors": "How to build the Mongo filter from args/parent.",
-          "implementers": "Compile binder → filter document.",
+          "implementers": "Compile binder -> filter document.",
           "example": "query: \"$args.filter\""
         },
         "selection": {
@@ -575,7 +574,7 @@
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -592,7 +591,7 @@
           "defaults": "Optional.",
           "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
           "authors": "How to build the Mongo filter from args/parent.",
-          "implementers": "Compile binder → filter document.",
+          "implementers": "Compile binder -> filter document.",
           "example": "query: \"$args.filter\""
         },
         "selection": {

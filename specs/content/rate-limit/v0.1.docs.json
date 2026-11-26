@@ -46,7 +46,7 @@
           "defaults": "Optional.",
           "constraints": "Argument name whose array length multiplies cost.",
           "authors": "Charge N tokens for an array input of length N.",
-          "implementers": "Multiply token cost by that argument’s array length."
+          "implementers": "Multiply token cost by that argument's array length."
         }
       }
     }

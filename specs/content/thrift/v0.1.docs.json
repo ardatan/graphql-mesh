@@ -15,13 +15,13 @@
       },
       "implementers": {
         "loaders": "Schemas that use `@thrift__rpc` must `@link` this family; include compact `args` / `selection` / `throws` as required.",
-        "runtime": "On resolve: encode `args` → send Thrift `function` to `@transport(location:)` with `messageType` → if CALL, decode success via `selection` or map `throws`. ONEWAY skips reply decode.",
+        "runtime": "On resolve: encode `args` -> send Thrift `function` to `@transport(location:)` with `messageType` -> if CALL, decode success via `selection` or map `throws`. ONEWAY skips reply decode.",
         "validation": "Require non-empty `function` and `selection`. `messageType`, when present, must be `CALL` or `ONEWAY`. `subgraph`, when present, must match the composition subgraph name."
       },
       "args": {
         "subgraph": {
           "defaults": "Optional.",
-          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
           "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
           "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
@@ -42,9 +42,9 @@
         },
         "args": {
           "defaults": "Optional; omit entirely when the RPC takes no arguments (do not emit empty string).",
-          "constraints": "Compact `id(wire): $args…` mapping.",
+          "constraints": "Compact `id(wire): $args...` mapping.",
           "authors": "Map GraphQL arguments into Thrift request fields.",
-          "implementers": "When it runs: Before writing the Thrift CALL/ONEWAY message.\n\nInput: GraphQL field arguments and the compact `args` mapping (`id(wire): $args…` with nested structs).\n\nOutput: The Thrift request struct fields on the wire for `function`.\n\nErrors: Invalid mapping fails resolver setup or the field; omit `args` entirely when the RPC takes no arguments (do not send an empty string mapping)."
+          "implementers": "When it runs: Before writing the Thrift CALL/ONEWAY message.\n\nInput: GraphQL field arguments and the compact `args` mapping (`id(wire): $args...` with nested structs).\n\nOutput: The Thrift request struct fields on the wire for `function`.\n\nErrors: Invalid mapping fails resolver setup or the field; omit `args` entirely when the RPC takes no arguments (do not send an empty string mapping)."
         },
         "selection": {
           "defaults": "Required (`String!`).",
