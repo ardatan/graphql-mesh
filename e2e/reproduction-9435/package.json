@@ -6,6 +6,6 @@
     "@graphql-hive/gateway": "^2.15.12",
     "@graphql-mesh/compose-cli": "workspace:*",
     "graphql": "17.1.0",
-    "graphql-yoga": "^6.1.0"
+    "graphql-yoga": "^6.1.1"
   }
 }

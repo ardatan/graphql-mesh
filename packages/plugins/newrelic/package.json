@@ -45,14 +45,14 @@
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@whatwg-node/promise-helpers": "^2.0.2",
-    "graphql-yoga": "^6.1.0",
+    "graphql-yoga": "^6.1.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@newrelic/test-utilities": "9.2.0",
     "@types/newrelic": "9.14.8",
     "graphql": "17.1.0",
-    "graphql-yoga": "^6.1.0",
+    "graphql-yoga": "^6.1.1",
     "newrelic": "13.19.0"
   },
   "publishConfig": {
