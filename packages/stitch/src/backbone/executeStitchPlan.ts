@@ -31,7 +31,6 @@ import {
 // annotateExternalObject's Object.defineProperties on large entity lists.
 import { CRITICAL_ERROR, getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
-  asGetArgumentValuesVariables,
   getDefinedRootType,
   getOperationASTFromRequest,
   mergeDeep,
@@ -40,6 +39,7 @@ import {
   type ExecutionResult,
 } from '@graphql-tools/utils';
 import { handleMaybePromise, isPromise, type MaybePromise } from '@whatwg-node/promise-helpers';
+import { asGetArgumentValuesVariables } from '../variableValues.js';
 import { getBatchedMergeEntry } from './mergeEntry.js';
 import {
   buildPlanSchedule,
@@ -882,6 +882,11 @@ function rewriteNullabilityConflicts(
   return { ...selectionSet, selections: selections as readonly SelectionNode[] };
 }
 
+function isPlainObject(value: object): boolean {
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
 /** Map `_nullable_id` / `_nonNullable_id` response keys back to `id`. */
 function unwrapNullabilityAliases(value: any): any {
   if (value == null || typeof value !== 'object') {
@@ -889,6 +894,10 @@ function unwrapNullabilityAliases(value: any): any {
   }
   if (Array.isArray(value)) {
     return value.map(unwrapNullabilityAliases);
+  }
+  // Date/Buffer/ObjectId: Object.entries is empty → would become `{}`.
+  if (!isPlainObject(value)) {
+    return value;
   }
   const out: Record<string, any> = {};
   for (const [key, v] of Object.entries(value)) {

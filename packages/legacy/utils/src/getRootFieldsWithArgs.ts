@@ -7,12 +7,9 @@ import type {
 } from 'graphql';
 import { getArgumentValues, getVariableValues, GraphQLError, Kind, versionInfo } from 'graphql';
 import type { ExecutionRequest } from '@graphql-tools/utils';
-import {
-  asGetArgumentValuesVariables,
-  coerceGetVariableValuesResult,
-  getRootTypeMap,
-} from '@graphql-tools/utils';
+import { getRootTypeMap } from '@graphql-tools/utils';
 import { getOperationsAndFragments } from './getOperationsAndFragments.js';
+import { asGetArgumentValuesVariables, coerceGetVariableValuesResult } from './variableValues.js';
 
 export function getRootFieldsWithArgs(
   schema: GraphQLSchema,
