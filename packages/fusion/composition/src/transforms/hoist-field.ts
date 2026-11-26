@@ -107,7 +107,7 @@ export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): 
                 while (pathConfigArr.length > 0) {
                   if (!field) {
                     throw new TransformValidationError(
-                      `${type.name}.${fieldName} not found, so you cannot apply hoisting`,
+                      `Field ${fieldName} not found for the hoisting of ${type.name}, so you cannot apply hoisting`,
                     );
                   }
                   for (const arg of field.args) {

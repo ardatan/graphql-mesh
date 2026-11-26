@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`JSON Schema Subscriptions should generate correct schema 1`] = `
-schema @source(name:"Example" http:{baseURL:"http://localhost:4002"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@pubsubOperation"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @composeDirective(name:"@pubsubOperation") {query:Query mutation:Mutation subscription:Subscription}
+schema @source(name:"Example" http:{baseURL:"http://localhost:4002"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@pubsubOperation"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @composeDirective(name:"@pubsubOperation") {query:Query mutation:Mutation subscription:Subscription}
 directive @example(subgraph:String value:ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 directive @pubsubOperation(subgraph:String pubsubTopic:String) on FIELD_DEFINITION
 directive @connect(source:String http:ConnectHTTP selection:JSONSelection! entity:Boolean errors:ConnectorErrors isSuccess:JSONSelection) repeatable on FIELD_DEFINITION | OBJECT

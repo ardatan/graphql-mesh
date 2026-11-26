@@ -15,8 +15,8 @@ describe('subgraphs[].schema config', () => {
         subgraphName: 'shop',
         schema: /* GraphQL */ `
           extend schema
-            @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"])
-            @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+            @link(url: "https://specs.graphql-mesh.dev/sql/v0.1", import: ["@sql"])
+            @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
             @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
             @composeDirective(name: "@sql")
             @composeDirective(name: "@transport")
@@ -36,7 +36,7 @@ describe('subgraphs[].schema config', () => {
       expect.arrayContaining([{ name: '@sql' }, { name: '@transport' }]),
     );
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toContain('https://specs.graphql-mesh.com/');
+    expect(sdl).toContain('https://specs.graphql-mesh.dev/');
     expect(sdl).toContain('@composeDirective');
   });
 

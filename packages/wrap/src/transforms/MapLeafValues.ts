@@ -1,0 +1,272 @@
+import {
+  astFromValue,
+  isInputType,
+  isLeafType,
+  Kind,
+  typeFromAST,
+  valueFromAST,
+  valueFromASTUntyped,
+  visit,
+  visitWithTypeInfo,
+  type ArgumentNode,
+  type FieldNode,
+  type FragmentDefinitionNode,
+  type GraphQLInputType,
+  type GraphQLSchema,
+  type OperationDefinitionNode,
+  type TypeInfo,
+  type TypeNode,
+  type VariableDefinitionNode,
+} from 'graphql';
+import {
+  getTypeInfo,
+  type DelegationContext,
+  type SubschemaConfig,
+  type Transform,
+} from '@graphql-tools/delegate';
+import {
+  astFromValueUntyped,
+  transformInputValue,
+  visitResult,
+  type ExecutionRequest,
+  type ExecutionResult,
+  type ResultVisitorMap,
+} from '@graphql-tools/utils';
+import { type LeafValueTransformer } from '../types.js';
+
+export interface MapLeafValuesTransformationContext {
+  transformedRequest: ExecutionRequest;
+}
+
+export default class MapLeafValues<TContext = Record<string, any>> implements Transform<
+  MapLeafValuesTransformationContext,
+  TContext
+> {
+  private readonly inputValueTransformer: LeafValueTransformer;
+  private readonly outputValueTransformer: LeafValueTransformer;
+  private readonly resultVisitorMap: ResultVisitorMap;
+  private typeInfo?: TypeInfo;
+
+  constructor(
+    inputValueTransformer: LeafValueTransformer,
+    outputValueTransformer: LeafValueTransformer,
+  ) {
+    this.inputValueTransformer = inputValueTransformer;
+    this.outputValueTransformer = outputValueTransformer;
+    this.resultVisitorMap = Object.create(null);
+  }
+
+  private originalWrappingSchema?: GraphQLSchema;
+
+  public transformSchema(
+    originalWrappingSchema: GraphQLSchema,
+    _subschemaConfig: SubschemaConfig<any, any, any, TContext>,
+  ): GraphQLSchema {
+    this.originalWrappingSchema = originalWrappingSchema;
+    const typeMap = originalWrappingSchema.getTypeMap();
+    for (const typeName in typeMap) {
+      const type = typeMap[typeName];
+      if (!typeName.startsWith('__')) {
+        if (isLeafType(type)) {
+          this.resultVisitorMap[typeName] = (value: any) =>
+            this.outputValueTransformer(typeName, value);
+        }
+      }
+    }
+    this.typeInfo = getTypeInfo(originalWrappingSchema);
+    return originalWrappingSchema;
+  }
+
+  public transformRequest(
+    originalRequest: ExecutionRequest,
+    _delegationContext: DelegationContext<TContext>,
+    transformationContext: MapLeafValuesTransformationContext,
+  ): ExecutionRequest {
+    const document = originalRequest.document;
+    const variableValues = { ...(originalRequest.variables ?? {}) };
+
+    const operations: Array<OperationDefinitionNode> = document.definitions.filter(
+      def => def.kind === Kind.OPERATION_DEFINITION,
+    ) as Array<OperationDefinitionNode>;
+    const fragments: Array<FragmentDefinitionNode> = document.definitions.filter(
+      def => def.kind === Kind.FRAGMENT_DEFINITION,
+    ) as Array<FragmentDefinitionNode>;
+
+    const newOperations = this.transformOperations(operations, variableValues);
+    const newFragments = this.transformFragments(fragments, variableValues);
+
+    const transformedRequest = {
+      ...originalRequest,
+      document: {
+        ...document,
+        definitions: [...newOperations, ...newFragments],
+      },
+      variables: variableValues,
+    };
+
+    transformationContext.transformedRequest = transformedRequest;
+
+    return transformedRequest;
+  }
+
+  public transformResult(
+    originalResult: ExecutionResult,
+    _delegationContext: DelegationContext<TContext>,
+    transformationContext: MapLeafValuesTransformationContext,
+  ): ExecutionResult {
+    if (!this.originalWrappingSchema) {
+      throw new Error(
+        `The MapLeafValues transform's  "transformRequest" and "transformResult" methods cannot be used without first calling "transformSchema".`,
+      );
+    }
+    return visitResult(
+      originalResult,
+      transformationContext.transformedRequest,
+      this.originalWrappingSchema,
+      this.resultVisitorMap,
+    );
+  }
+
+  private transformOperations(
+    operations: Array<OperationDefinitionNode>,
+    variableValues: Record<string, any>,
+  ): Array<OperationDefinitionNode> {
+    if (this.typeInfo == null) {
+      throw new Error(
+        `The MapLeafValues transform's "transformRequest" and "transformResult" methods cannot be used without first calling "transformSchema".`,
+      );
+    }
+    return operations.map((operation: OperationDefinitionNode) => {
+      this.mapOperationVariables(operation.variableDefinitions, variableValues);
+      return visit(
+        operation,
+        visitWithTypeInfo(this.typeInfo!, {
+          [Kind.FIELD]: node => this.transformFieldNode(node, variableValues),
+        }),
+      );
+    });
+  }
+
+  private transformFragments(
+    fragments: Array<FragmentDefinitionNode>,
+    variableValues: Record<string, any>,
+  ): Array<FragmentDefinitionNode> {
+    if (this.typeInfo == null) {
+      throw new Error(
+        `The MapLeafValues transform's "transformRequest" and "transformResult" methods cannot be used without first calling "transformSchema".`,
+      );
+    }
+    return fragments.map((fragment: FragmentDefinitionNode) => {
+      return visit(
+        fragment,
+        visitWithTypeInfo(this.typeInfo!, {
+          [Kind.FIELD]: node => this.transformFieldNode(node, variableValues),
+        }),
+      );
+    });
+  }
+
+  private mapOperationVariables(
+    variableDefinitions: ReadonlyArray<VariableDefinitionNode> | undefined,
+    variableValues: Record<string, any>,
+  ): void {
+    if (variableDefinitions == null || this.originalWrappingSchema == null) {
+      return;
+    }
+
+    for (const variableDef of variableDefinitions) {
+      const varName = variableDef.variable.name.value;
+      // Keep omitted variables absent; preserve explicit nulls.
+      if (!Object.prototype.hasOwnProperty.call(variableValues, varName)) {
+        continue;
+      }
+
+      const varType = typeFromAST(this.originalWrappingSchema, variableDef.type as TypeNode);
+      if (!isInputType(varType)) {
+        continue;
+      }
+
+      const transformedValue = transformInputValue(
+        varType as GraphQLInputType,
+        variableValues[varName],
+        (t, v) => {
+          const newValue = this.inputValueTransformer(t.name, v);
+          return newValue === undefined ? v : newValue;
+        },
+      );
+      variableValues[varName] = transformedValue;
+    }
+  }
+
+  private transformFieldNode(
+    field: FieldNode,
+    variableValues: Record<string, any>,
+  ): FieldNode | undefined {
+    if (this.typeInfo == null) {
+      throw new Error(
+        `The MapLeafValues transform's "transformRequest" and "transformResult" methods cannot be used without first calling "transformSchema".`,
+      );
+    }
+    const targetField = this.typeInfo.getFieldDef();
+
+    if (!targetField) {
+      return;
+    }
+
+    if (!targetField.name.startsWith('__')) {
+      const argumentNodes = field.arguments;
+      if (argumentNodes != null) {
+        const argumentNodeMap: Record<string, ArgumentNode> = argumentNodes.reduce(
+          (prev, argument) => ({
+            ...prev,
+            [argument.name.value]: argument,
+          }),
+          Object.create(null),
+        );
+
+        for (const argument of targetField.args) {
+          const argName = argument.name;
+          const argType = argument.type;
+
+          const argumentNode = argumentNodeMap[argName];
+          const argValue = argumentNode?.value;
+
+          // Variables are mapped once per operation from their definitions.
+          // Only transform literal argument values here (including in fragments).
+          if (argValue == null || argValue.kind === Kind.VARIABLE) {
+            continue;
+          }
+
+          let value: any = valueFromAST(argValue, argType, variableValues);
+          if (value == null) {
+            value = valueFromASTUntyped(argValue, variableValues);
+          }
+
+          const transformedValue = transformInputValue(argType, value, (t, v) => {
+            const newValue = this.inputValueTransformer(t.name, v);
+            return newValue === undefined ? v : newValue;
+          });
+
+          let newValueNode: any;
+          try {
+            newValueNode = astFromValue(transformedValue, argType);
+          } catch {
+            newValueNode = astFromValueUntyped(transformedValue);
+          }
+          if (newValueNode != null) {
+            argumentNodeMap[argName] = {
+              ...argumentNode!,
+              value: newValueNode,
+            };
+          }
+        }
+
+        return {
+          ...field,
+          arguments: Object.values(argumentNodeMap),
+        };
+      }
+    }
+    return undefined;
+  }
+}

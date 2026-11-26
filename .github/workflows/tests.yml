@@ -334,8 +334,11 @@ jobs:
           failOnWarning: true
           failOnRequired: true
           debug: true
-      # Apollo uploads compatibility-results with default retention. overwrite:true
-      # still 409s against that upload, so delete first then re-upload short-lived.
+      # Apollo's action uploads `compatibility-results` with default retention.
+      # Re-uploading under the same name races with GitHub's soft-delete (409 Conflict)
+      # even after a successful delete — that flake was failing this job while the
+      # actual subgraph compatibility check was green. Delete Apollo's long-lived
+      # artifact, then upload under a distinct short-retention name.
       # Skip on fork PRs (read-only token). Only replace when this attempt produced results.md.
       - name: Remove default-retention compatibility-results
         if: >-
@@ -345,6 +348,7 @@ jobs:
               || github.event.pull_request.head.repo.full_name == github.repository)
             && hashFiles('examples/v1-next/apollo-federation-compatibility/results.md') != ''
           }}
+        continue-on-error: true
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
@@ -375,7 +379,7 @@ jobs:
           }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v5
         with:
-          name: compatibility-results
+          name: compatibility-results-short
           path: examples/v1-next/apollo-federation-compatibility/results.md
           retention-days: 5
           if-no-files-found: ignore

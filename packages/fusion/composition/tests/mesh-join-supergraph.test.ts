@@ -7,7 +7,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       schema
         @link(url: "https://specs.apollo.dev/link/v1.0")
         @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+        @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
         @transport(subgraph: "users", kind: "http", location: "http://localhost:4001") {
         query: Query
       }
@@ -151,7 +151,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
   it('rewrites connect @transport with options: drop matching location and kind', () => {
     const sdl = /* GraphQL */ `
       schema
-        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+        @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
         @transport(
           kind: "connect"
           subgraph: "MicrosoftGraph"
@@ -198,7 +198,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     const sdl = /* GraphQL */ `
       schema
         @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@source"]) {
+        @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@source"]) {
         query: Query
       }
 
@@ -232,7 +232,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       schema
         @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
         @link(
-          url: "https://specs.graphql-mesh.com/core/v0.1"
+          url: "https://specs.graphql-mesh.dev/core/v0.1"
           import: ["@merge", { name: "@source", as: "@meshSource" }]
         ) {
         query: Query
@@ -288,7 +288,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     const sdl = /* GraphQL */ `
       schema
         @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@merge"]) {
+        @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@merge"]) {
         query: Query
       }
 
@@ -318,8 +318,8 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     const sdl = /* GraphQL */ `
       schema
         @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-        @link(url: "https://specs.graphql-mesh.com/thrift/v0.1", import: ["@thrift__rpc"])
-        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+        @link(url: "https://specs.graphql-mesh.dev/thrift/v0.1", import: ["@thrift__rpc"])
+        @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
         @transport(
           subgraph: "calculator"
           kind: "thrift"
@@ -397,7 +397,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
           import: ["@join__graph", "@join__type", "@join__field"]
         )
         @link(
-          url: "https://specs.graphql-mesh.com/core/v0.1"
+          url: "https://specs.graphql-mesh.dev/core/v0.1"
           import: ["@typescript", "@regexp", "@example"]
         )
 
@@ -428,7 +428,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
       extend schema
         @link(url: "https://specs.apollo.dev/link/v1.0")
         @link(url: "https://specs.apollo.dev/join/v0.3", import: ["@join__graph", "@join__type"])
-        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@regexp"])
+        @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@regexp"])
 
       directive @regexp(subgraph: String, pattern: String) repeatable on SCALAR
 

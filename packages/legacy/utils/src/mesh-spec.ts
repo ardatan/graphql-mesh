@@ -1,10 +1,10 @@
 /**
- * Origin for Mesh protocol `@link` URLs (Apollo-style `specs.*.com/<name>/<version>`).
+ * Origin for Mesh protocol `@link` URLs (Apollo-style `specs.*.dev/<name>/<version>`).
  * Per-loader stamps enable independent directive-schema versioning.
  */
-export const MESH_SPECS_ORIGIN = 'https://specs.graphql-mesh.com';
+export const MESH_SPECS_ORIGIN = 'https://specs.graphql-mesh.dev';
 
-/** Versions this Mesh release supports for modern `specs.graphql-mesh.com` URLs. */
+/** Versions this Mesh release supports for modern `specs.graphql-mesh.dev` URLs. */
 export const MESH_SUPPORTED_SPEC_VERSIONS = ['v0.1'] as const;
 
 /**
@@ -35,7 +35,7 @@ function trimSlashes(value: string): string {
 }
 
 /**
- * Build a Mesh-spec `@link` URL, e.g. `https://specs.graphql-mesh.com/thrift/v0.1`.
+ * Build a Mesh-spec `@link` URL, e.g. `https://specs.graphql-mesh.dev/thrift/v0.1`.
  */
 export function meshSpecUrl(protocol: string, version = 'v0.1'): string {
   const name = trimSlashes(protocol);
@@ -52,7 +52,7 @@ export function meshSpecUrl(protocol: string, version = 'v0.1'): string {
  */
 export const MESH_SPEC_URL = meshSpecUrl('core');
 
-/** Alias of {@link MESH_SPEC_URL} (`https://specs.graphql-mesh.com/core/v0.1`). */
+/** Alias of {@link MESH_SPEC_URL} (`https://specs.graphql-mesh.dev/core/v0.1`). */
 export const MESH_CORE_SPEC_URL = MESH_SPEC_URL;
 
 /**
@@ -64,12 +64,12 @@ export const MESH_GATEWAY_SOURCE_SPEC_URL = 'https://the-guild.dev/graphql/mesh/
 
 /**
  * Recognized Mesh-spec `@link` URL prefixes.
- * Keep the current `specs.graphql-mesh.com` origin plus the prior guild.dev stamp
+ * Keep the current `specs.graphql-mesh.dev` origin plus the prior guild.dev stamp
  * still seen on existing supergraphs. Unpublished middle URLs
  * (`graphql-mesh.com/spec/`, `spec.graphql-mesh.dev/`) are not recognized.
  */
 export const MESH_SPEC_URL_PREFIXES = [
-  'https://specs.graphql-mesh.com/',
+  'https://specs.graphql-mesh.dev/',
   'https://the-guild.dev/graphql/mesh/spec/',
 ] as const;
 
@@ -86,7 +86,7 @@ export interface ParsedMeshSpecUrl {
   /** Version string including leading `v` when present (`v0.1`, `v1.0`). */
   version: string;
   url: string;
-  /** True for Mesh `@link` URLs outside `specs.graphql-mesh.com`. */
+  /** True for Mesh `@link` URLs outside `specs.graphql-mesh.dev`. */
   legacy: boolean;
 }
 
@@ -98,7 +98,7 @@ export function parseMeshSpecUrl(url: string | null | undefined): ParsedMeshSpec
   if (typeof url !== 'string' || !isMeshSpecLinkUrl(url)) {
     return null;
   }
-  // Modern: https://specs.graphql-mesh.com/<name>/vX.Y
+  // Modern: https://specs.graphql-mesh.dev/<name>/vX.Y
   if (url.startsWith(MESH_SPECS_ORIGIN + '/')) {
     const rest = url.slice(MESH_SPECS_ORIGIN.length + 1);
     let end = rest.length;

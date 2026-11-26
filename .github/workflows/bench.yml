@@ -1,0 +1,76 @@
+# Hive Gateway package-level federation/stitch benches (moved into Mesh).
+# Runs when Mesh-owned stitch/fusion/executor/transport packages or benches change,
+# so regressions show up as Gateway-facing performance impact before publish.
+name: Bench
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    paths:
+      - 'bench/**'
+      - 'packages/stitch/**'
+      - 'packages/stitching-directives/**'
+      - 'packages/delegate/**'
+      - 'packages/wrap/**'
+      - 'packages/batch-delegate/**'
+      - 'packages/batch-execute/**'
+      - 'packages/federation/**'
+      - 'packages/executors/**'
+      - 'packages/fusion/runtime/**'
+      - 'packages/transports/common/**'
+      - 'packages/transports/http/**'
+      - 'packages/transports/http-callback/**'
+      - 'packages/transports/ws/**'
+      - '.github/workflows/bench.yml'
+      - 'vitest.bench.config.mts'
+      - 'package.json'
+      - 'yarn.lock'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_NO_WARNINGS: 1
+  APOLLO_TELEMETRY_DISABLED: 1
+  CI: true
+
+jobs:
+  bench:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [node, bun]
+    name: ${{ matrix.runner }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+      - name: Set up env
+        uses: the-guild-org/shared-config/setup@v1
+        with:
+          node-version-file: .node-version
+      - if: matrix.runner == 'bun'
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.4
+      - name: Build
+        run: yarn build
+      - name: Bench
+        run: ${{ matrix.runner == 'bun' && 'bun' || 'yarn' }} bench
+        env:
+          BENCH_DURATION: '30000'
+          BENCH_WARMUP_TIME: '5000'
+          BENCH_WARMUP_ITERATIONS: '10'
+      - name: Upload bench results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bench-results-${{ matrix.runner }}
+          path: bench/results.json
+          if-no-files-found: ignore

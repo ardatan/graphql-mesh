@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.com/sql/v0.1" import:["@sql"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @join__directive(graphs:[EMPLOYEES] name:"transport" args:{kind:"sql" location:"mysql://root:passwd@localhost:<employees_port>/employees"}) {query:Query mutation:Mutation}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.dev/sql/v0.1" import:["@sql"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @join__directive(graphs:[EMPLOYEES] name:"transport" args:{kind:"sql" location:"mysql://root:passwd@localhost:<employees_port>/employees"}) {query:Query mutation:Mutation}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet

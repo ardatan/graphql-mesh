@@ -81,7 +81,16 @@ export default defineConfig([
         },
       ],
     },
-    ignores: ['dist', 'node_modules', 'examples', 'website', 'scripts', '.bob', 'config-schema.ts'],
+    ignores: [
+      'dist',
+      'node_modules',
+      'examples',
+      'website',
+      'scripts',
+      'bench',
+      '.bob',
+      'config-schema.ts',
+    ],
   },
   {
     files: ['**/test/**/*.{ts,js}', '*.spec.ts'],
@@ -98,6 +107,34 @@ export default defineConfig([
     files: ['e2e/**/*'],
     rules: {
       'import/no-nodejs-modules': 'off',
+    },
+  },
+  // Packages moved from Hive Gateway: keep Gateway runtime patterns for now.
+  {
+    files: [
+      'packages/delegate/**/*.ts',
+      'packages/wrap/**/*.ts',
+      'packages/stitch/**/*.ts',
+      'packages/stitching-directives/**/*.ts',
+      'packages/batch-delegate/**/*.ts',
+      'packages/batch-execute/**/*.ts',
+      'packages/federation/**/*.ts',
+      'packages/executors/**/*.ts',
+      'packages/fusion/runtime/**/*.ts',
+      'packages/transports/common/**/*.ts',
+      'packages/transports/http/**/*.ts',
+      'packages/transports/http-callback/**/*.ts',
+      'packages/transports/ws/**/*.ts',
+    ],
+    rules: {
+      'no-void': 'off',
+      'no-labels': 'off',
+      'no-case-declarations': 'off',
+      'no-useless-escape': 'off',
+      'n/no-callback-literal': 'off',
+      'import/no-nodejs-modules': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
     },
   },
 ]);

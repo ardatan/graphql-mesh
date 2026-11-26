@@ -27,6 +27,8 @@ if (process.env.LEAK_TEST) {
 let testMatch = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'];
 // Bun-native suites (`*.bun.test.ts`) run with `bun test`, not Jest/Node.
 testMatch.push('!**/*.bun.test.ts');
+testMatch.push('!**/bench/**');
+testMatch.push('!**/*.bench.ts');
 
 if (process.env.LEAK_TEST) {
   testMatch.push('!**/examples/grpc-reflection-example/**');
@@ -83,6 +85,11 @@ const ESM_PACKAGES = [
   'auto-bind',
   'commander',
   '@commander-js/extra-typings',
+  // executor-http (moved from Gateway) depends on ESM-only extract-files@14
+  'extract-files',
+  'is-plain-obj',
+  // multipart e2es (defer/stream ports from Gateway)
+  'meros',
 ];
 
 /** @type {import('jest').Config} */
@@ -97,17 +104,7 @@ module.exports = {
   modulePathIgnorePatterns: ['dist', 'fixtures', '.bob'],
   moduleNameMapper: {
     '@graphql-mesh/cross-helpers': '<rootDir>/packages/cross-helpers/node.js',
-    // Packages outside this repo
-    '@graphql-mesh/fusion-runtime':
-      '<rootDir>/node_modules/@graphql-mesh/fusion-runtime/dist/index.cjs',
-    '@graphql-mesh/transport-common':
-      '<rootDir>/node_modules/@graphql-mesh/transport-common/dist/index.cjs',
-    '@graphql-mesh/transport-http':
-      '<rootDir>/node_modules/@graphql-mesh/transport-http/dist/index.cjs',
-    '@graphql-mesh/transport-ws':
-      '<rootDir>/node_modules/@graphql-mesh/transport-ws/dist/index.cjs',
-    '@graphql-mesh/transport-http-callback':
-      '<rootDir>/node_modules/transport-http-callback/dist/index.cjs',
+    // Packages still published outside this repo (Gateway plugins)
     '@graphql-mesh/hmac-upstream-signature':
       '<rootDir>/node_modules/@graphql-mesh/hmac-upstream-signature/dist/index.cjs',
     '@graphql-mesh/opentelemetry':

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`gRPC Handler Interpreting Protos should load the Comments proto 1`] = `
-schema @transport(subgraph:"Comments" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query mutation:Mutation}
+schema @transport(subgraph:"Comments" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query mutation:Mutation}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -23,7 +23,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Custom Message proto 1`] = `
-schema @transport(subgraph:"Custom Message" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"Custom Message" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -42,7 +42,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Custom Message2 proto 1`] = `
-schema @transport(subgraph:"Custom Message2" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"Custom Message2" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -59,7 +59,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Empty proto 1`] = `
-schema @transport(subgraph:"Empty" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query subscription:Subscription}
+schema @transport(subgraph:"Empty" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query subscription:Subscription}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -89,7 +89,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Enums proto 1`] = `
-schema @transport(subgraph:"Enums" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"Enums" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -102,7 +102,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Import Nested proto 1`] = `
-schema @transport(subgraph:"Import Nested" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"Import Nested" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -118,7 +118,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Input bug 5880 proto 1`] = `
-schema @transport(subgraph:"Input bug 5880" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"Input bug 5880" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -134,7 +134,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Map proto 1`] = `
-schema @transport(subgraph:"Map" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"Map" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -150,7 +150,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Movie proto 1`] = `
-schema @transport(subgraph:"Movie" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query subscription:Subscription}
+schema @transport(subgraph:"Movie" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query subscription:Subscription}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -178,7 +178,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Nested proto 1`] = `
-schema @transport(subgraph:"Nested" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"Nested" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -193,7 +193,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the No Package Nested proto 1`] = `
-schema @transport(subgraph:"No Package Nested" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"No Package Nested" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -208,7 +208,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Outside proto 1`] = `
-schema @transport(subgraph:"Outside" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query subscription:Subscription}
+schema @transport(subgraph:"Outside" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query subscription:Subscription}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -239,7 +239,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the With All Values proto 1`] = `
-schema @transport(subgraph:"With All Values" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"With All Values" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -274,7 +274,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the With Underscores proto 1`] = `
-schema @transport(subgraph:"With Underscores" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query subscription:Subscription}
+schema @transport(subgraph:"With Underscores" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query subscription:Subscription}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -302,7 +302,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Load proto with prefixQueryMethod and selectQueryOrMutationField should load the retrieve-movie.proto with prefixQueryMethod 1`] = `
-schema @transport(subgraph:"prefixQueryMethod" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query mutation:Mutation subscription:Subscription}
+schema @transport(subgraph:"prefixQueryMethod" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query mutation:Mutation subscription:Subscription}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
@@ -334,7 +334,7 @@ scalar TransportOptions
 `;
 
 exports[`gRPC Handler Load proto with prefixQueryMethod and selectQueryOrMutationField should load the retrieve-movie.proto with selectQueryOrMutationField 1`] = `
-schema @transport(subgraph:"selectQueryOrMutationField" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query subscription:Subscription}
+schema @transport(subgraph:"selectQueryOrMutationField" kind:"protobuf" location:"localhost") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query subscription:Subscription}
 directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA

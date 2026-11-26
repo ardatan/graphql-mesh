@@ -40,7 +40,7 @@
   "dependencies": {
     "@apollo/subgraph": "^2.16.0",
     "@dataplan/pg": "^1.2.1",
-    "@graphql-mesh/transport-common": "^1.1.3",
+    "@graphql-mesh/transport-common": "^2.0.0",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/utils": "^13.2.2",
     "@whatwg-node/disposablestack": "^0.1.0",

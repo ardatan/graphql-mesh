@@ -117,7 +117,7 @@ function meshDirectiveImportsEqual(a: unknown, b: MeshDirectiveImport): boolean 
 export interface ImportMeshDirectivesOptions {
   /**
    * `@link` URL to stamp / extend. Defaults to {@link MESH_SPEC_URL}
-   * (`https://specs.graphql-mesh.com/core/v0.1`) for shared Mesh core directives.
+   * (`https://specs.graphql-mesh.dev/core/v0.1`) for shared Mesh core directives.
    * Protocol loaders pass {@link meshSpecUrl} e.g. `meshSpecUrl('thrift')` for
    * protocol-only imports; stamp `@transport` separately under the core URL.
    */
