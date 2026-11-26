@@ -1660,8 +1660,7 @@ function planLocalFieldIslands(
     }
     // Non-local nested object/list (TargetQuery.targets -> TargetType): still
     // plan deeper gateway-local fields (TargetType.complexDataItem @resolveTo).
-    // Mirror appendNestedForFields' non-merged Island walk; collectEntitiesAtPath
-    // expands list segments so flattenPaths stay index-free.
+    // collectEntitiesAtPath expands list segments so flattenPaths stay index-free.
     if (!fieldNode.selectionSet) {
       continue;
     }
@@ -1676,12 +1675,35 @@ function planLocalFieldIslands(
     if (!isObjectType(namedReturn) && !isInterfaceType(namedReturn)) {
       continue;
     }
-    if (stitchingInfo.mergedTypes[namedReturn.name]) {
-      continue;
-    }
     const responseKey = fieldNode.alias?.value ?? fieldNode.name.value;
     const childPath = [...flattenPath, responseKey];
     const nestedFieldNodes = flattenToFieldNodes(fieldNode.selectionSet.selections, fragments);
+    // Merged return types: only emit Islands for gateway-local fields on that
+    // type. Entity hops stay with planMergedTypeFollowUps / appendNestedForFields;
+    // under encapsulate Island chains those paths never run, so locals like
+    // TargetType.complexDataItem would otherwise be dropped.
+    if (stitchingInfo.mergedTypes[namedReturn.name]) {
+      for (const nested of nestedFieldNodes) {
+        if (nested.name.value === '__typename') {
+          continue;
+        }
+        if (isLocalField(stitchingInfo.localFields, namedReturn.name, nested.name.value)) {
+          islands.push(
+            planLocalFieldIsland(
+              schema,
+              stitchingInfo,
+              namedReturn.name,
+              nested,
+              fragments,
+              variableValues,
+              childPath,
+              incompleteReasons,
+            ),
+          );
+        }
+      }
+      continue;
+    }
     islands.push(
       ...planLocalFieldIslands(
         schema,
