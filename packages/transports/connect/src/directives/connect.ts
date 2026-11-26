@@ -93,6 +93,28 @@ function remirrorTypeResolveReferences(schema: GraphQLSchema): void {
   }
 }
 
+/**
+ * With `preserveExistingFieldResolvers`, a prior pass / Hive wrapper may leave
+ * only a bare `type.resolveReference` (no Apollo extension). `mapSchema` drops
+ * that property and remirror cannot restore it. Promote bare fns into
+ * extensions before the rebuild; leave already extension-backed resolvers alone.
+ */
+function promoteBareResolveReferencesToExtensions(schema: GraphQLSchema): void {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) && !isInterfaceType(type)) {
+      continue;
+    }
+    const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
+    if (typeof fromExtensions === 'function') {
+      continue;
+    }
+    const bare = (type as any).resolveReference;
+    if (typeof bare === 'function') {
+      setTypeResolveReference(type, bare);
+    }
+  }
+}
+
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(
   type: GraphQLOutputType,
 ) {
@@ -3235,6 +3257,8 @@ export function processConnectDirectives(
   }
   // Hive stitches `@key` entities via `Query._entities`. Apollo Router uses `@connect`
   // natively and never calls this field - but without it Hive needed Mesh `@merge`.
+  // Bare-only resolveReference must land in extensions before mapSchema rebuilds types.
+  promoteBareResolveReferencesToExtensions(schema);
   schema = ensureFederationEntitiesField(schema);
   // mapSchema inside installQueryField drops the non-config resolveReference mirror.
   remirrorTypeResolveReferences(schema);
