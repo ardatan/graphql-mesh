@@ -12,9 +12,16 @@ import {
   snakeCase,
 } from 'change-case';
 import {
+  getNamedType,
+  isEnumType,
+  isInputObjectType,
+  isListType,
+  isNonNullType,
   Kind,
   type ConstValueNode,
   type GraphQLArgumentConfig,
+  type GraphQLInputObjectType,
+  type GraphQLInputType,
   type ValueNode,
 } from 'graphql';
 import { resolvers as scalarsResolversMap } from 'graphql-scalars';
@@ -89,6 +96,9 @@ function containsEnumValueNode(node: ValueNode | null | undefined): boolean {
   if (node.kind === Kind.LIST) {
     return node.values.some(containsEnumValueNode);
   }
+  if (node.kind === Kind.OBJECT) {
+    return node.fields.some(f => containsEnumValueNode(f.value));
+  }
   return false;
 }
 
@@ -102,7 +112,30 @@ function rewriteEnumValueNode(node: ValueNode, rename: NamingConventionFn): Valu
       values: node.values.map(v => rewriteEnumValueNode(v, rename)),
     };
   }
+  if (node.kind === Kind.OBJECT) {
+    return {
+      ...node,
+      fields: node.fields.map(f => ({
+        ...f,
+        value: rewriteEnumValueNode(f.value, rename),
+      })),
+    };
+  }
   return node;
+}
+
+/** Recursive string detect for nested JS defaults (lists / plain objects). */
+function jsDefaultContainsString(value: unknown): boolean {
+  if (typeof value === 'string') {
+    return true;
+  }
+  if (Array.isArray(value)) {
+    return value.some(jsDefaultContainsString);
+  }
+  if (value && typeof value === 'object') {
+    return Object.values(value as Record<string, unknown>).some(jsDefaultContainsString);
+  }
+  return false;
 }
 
 function rewriteEnumJsDefault(value: unknown, rename: NamingConventionFn): unknown {
@@ -111,6 +144,40 @@ function rewriteEnumJsDefault(value: unknown, rename: NamingConventionFn): unkno
   }
   if (Array.isArray(value)) {
     return value.map(v => rewriteEnumJsDefault(v, rename));
+  }
+  return value;
+}
+
+function rewriteJsDefaultForInputType(
+  value: unknown,
+  inputType: GraphQLInputType,
+  rename: NamingConventionFn,
+): unknown {
+  let type: GraphQLInputType = inputType;
+  while (isNonNullType(type)) {
+    type = type.ofType;
+  }
+  if (isListType(type)) {
+    if (!Array.isArray(value)) {
+      return value;
+    }
+    const ofType = type.ofType;
+    return value.map(item => rewriteJsDefaultForInputType(item, ofType, rename));
+  }
+  const named = getNamedType(type);
+  if (isEnumType(named)) {
+    return typeof value === 'string' ? rename(value) : value;
+  }
+  if (isInputObjectType(named) && value && typeof value === 'object' && !Array.isArray(value)) {
+    const fields = (named as GraphQLInputObjectType).getFields();
+    const out: Record<string, unknown> = { ...(value as Record<string, unknown>) };
+    for (const [fieldName, field] of Object.entries(fields)) {
+      if (!(fieldName in out)) {
+        continue;
+      }
+      out[fieldName] = rewriteJsDefaultForInputType(out[fieldName], field.type, rename);
+    }
+    return out;
   }
   return value;
 }
@@ -148,26 +215,25 @@ export function getEnumDefaultName(config: EnumDefaultConfig): string | undefine
   return undefined;
 }
 
-/** True when the arg has a (possibly nested list) enum default worth renaming. */
+/** True when the arg has a (possibly nested list/object) enum default worth renaming. */
 export function hasRewritableEnumDefault(config: EnumDefaultConfig): boolean {
   if (typeof config.defaultValue === 'string') {
     return true;
   }
-  if (Array.isArray(config.defaultValue) && config.defaultValue.some(v => typeof v === 'string')) {
-    return true;
-  }
-  // Explicit null / non-string non-array — preserve; no AST fallback.
   if (config.defaultValue !== undefined) {
-    return false;
+    // Explicit null — preserve. Nested lists/objects: recursive string detect.
+    if (config.defaultValue === null) {
+      return false;
+    }
+    return jsDefaultContainsString(config.defaultValue);
   }
   if (typeof config.default?.value === 'string') {
     return true;
   }
-  if (
-    Array.isArray(config.default?.value) &&
-    (config.default!.value as unknown[]).some(v => typeof v === 'string')
-  ) {
-    return true;
+  if (config.default?.value !== undefined && config.default.value !== null) {
+    if (jsDefaultContainsString(config.default.value)) {
+      return true;
+    }
   }
   if (config.default?.literal && containsEnumValueNode(config.default.literal)) {
     return true;
@@ -176,6 +242,24 @@ export function hasRewritableEnumDefault(config: EnumDefaultConfig): boolean {
     return false;
   }
   return containsEnumValueNode(config.astNode?.defaultValue);
+}
+
+/**
+ * Like {@link hasRewritableEnumDefault}, but for input-object args
+ * (`Filter = { status: newbie }`) uses the GraphQL input type to decide.
+ */
+export function hasRewritableEnumDefaultForType(
+  config: EnumDefaultConfig,
+  inputType: GraphQLInputType,
+): boolean {
+  const named = getNamedType(inputType);
+  if (isEnumType(named)) {
+    return hasRewritableEnumDefault(config);
+  }
+  if (!isInputObjectType(named)) {
+    return false;
+  }
+  return hasRewritableEnumDefault(config);
 }
 
 /**
@@ -195,10 +279,7 @@ export function withRenamedEnumDefaults<T extends EnumDefaultConfig>(
     next.default = {
       literal: rewriteEnumValueNode(config.default.literal, rename) as ConstValueNode,
     };
-  } else if (
-    typeof config.default?.value === 'string' ||
-    Array.isArray(config.default?.value)
-  ) {
+  } else if (typeof config.default?.value === 'string' || Array.isArray(config.default?.value)) {
     next.default = {
       value: rewriteEnumJsDefault(config.default.value, rename),
     };
@@ -209,10 +290,51 @@ export function withRenamedEnumDefaults<T extends EnumDefaultConfig>(
   if (config.astNode?.defaultValue && containsEnumValueNode(config.astNode.defaultValue)) {
     next.astNode = {
       ...config.astNode,
-      defaultValue: rewriteEnumValueNode(
-        config.astNode.defaultValue,
-        rename,
-      ) as ConstValueNode,
+      defaultValue: rewriteEnumValueNode(config.astNode.defaultValue, rename) as ConstValueNode,
+    };
+  }
+  return next;
+}
+
+/**
+ * Rewrite defaults using the GraphQL input type so input-object arg defaults
+ * (`filter: Filter = { status: newbie }`) only rename enum fields.
+ */
+export function withRenamedEnumDefaultsForType<T extends EnumDefaultConfig>(
+  config: T,
+  inputType: GraphQLInputType,
+  rename: NamingConventionFn,
+): T {
+  const named = getNamedType(inputType);
+  if (isEnumType(named)) {
+    return withRenamedEnumDefaults(config, rename);
+  }
+  if (!isInputObjectType(named)) {
+    return config;
+  }
+  const next: T = { ...config };
+  if (config.defaultValue != null) {
+    next.defaultValue = rewriteJsDefaultForInputType(
+      config.defaultValue,
+      inputType,
+      rename,
+    ) as T['defaultValue'];
+  }
+  if (config.default?.literal && containsEnumValueNode(config.default.literal)) {
+    next.default = {
+      literal: rewriteEnumValueNode(config.default.literal, rename) as ConstValueNode,
+    };
+  } else if (config.default?.value != null) {
+    next.default = {
+      value: rewriteJsDefaultForInputType(config.default.value, inputType, rename),
+    };
+  } else if (config.default != null) {
+    next.default = undefined;
+  }
+  if (config.astNode?.defaultValue && containsEnumValueNode(config.astNode.defaultValue)) {
+    next.astNode = {
+      ...config.astNode,
+      defaultValue: rewriteEnumValueNode(config.astNode.defaultValue, rename) as ConstValueNode,
     };
   }
   return next;

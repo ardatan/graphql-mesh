@@ -1193,8 +1193,7 @@ ${printType(GraphQLString)}
           "subgraph": "Test",
           "value": "-1",
         },
-        "name": enum
-,
+        "name": "enum",
       },
     ],
     "extensions": {},
@@ -1209,8 +1208,7 @@ ${printType(GraphQLString)}
           "subgraph": "Test",
           "value": "1",
         },
-        "name": enum
-,
+        "name": "enum",
       },
     ],
     "extensions": {},
@@ -1245,8 +1243,7 @@ ${printType(GraphQLString)}
           "subgraph": "Test",
           "value": ""כן"",
         },
-        "name": enum
-,
+        "name": "enum",
       },
     ],
     "extensions": {},
@@ -1261,8 +1258,7 @@ ${printType(GraphQLString)}
           "subgraph": "Test",
           "value": ""לא"",
         },
-        "name": enum
-,
+        "name": "enum",
       },
     ],
     "extensions": {},

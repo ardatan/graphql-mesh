@@ -42,6 +42,39 @@ export function getTypeResolveReference(type: GraphQLNamedType): ResolveReferenc
   return typeof fromType === 'function' ? fromType : undefined;
 }
 
+/**
+ * Bare `type.resolveReference` is not in toConfig(); copy into Apollo extensions
+ * before installQueryField/mapSchema so remirror can restore after rebuild.
+ */
+function promoteBareResolveReferencesToExtensions(schema: GraphQLSchema): void {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type)) {
+      continue;
+    }
+    const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
+    if (typeof fromExtensions === 'function') {
+      continue;
+    }
+    const bare = (type as any).resolveReference;
+    if (typeof bare === 'function') {
+      setTypeResolveReference(type, bare);
+    }
+  }
+}
+
+/** mapSchema drops the non-config resolveReference mirror — re-attach from extensions. */
+function remirrorTypeResolveReferences(schema: GraphQLSchema): void {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type)) {
+      continue;
+    }
+    const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
+    if (typeof fromExtensions === 'function') {
+      (type as any).resolveReference = fromExtensions;
+    }
+  }
+}
+
 type JoinDirectiveArgs = { name?: string; args?: Record<string, unknown> };
 
 /** Raw `@sql` plus composed `@join__directive(name: "sql")` payloads. */
@@ -221,7 +254,9 @@ export function wireSqlEntityResolvers(
     );
   }
 
+  promoteBareResolveReferencesToExtensions(schema);
   schema = ensureFederationEntitiesField(schema);
+  remirrorTypeResolveReferences(schema);
   hydrateEntityStubFieldResolvers(schema);
   return schema;
 }

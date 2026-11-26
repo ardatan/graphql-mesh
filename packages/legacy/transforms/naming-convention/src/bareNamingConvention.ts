@@ -15,11 +15,11 @@ import { defaultFieldResolver, getNamedType, isEnumType, isInputObjectType } fro
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
 import {
-  hasRewritableEnumDefault,
+  hasRewritableEnumDefaultForType,
   IGNORED_ROOT_FIELD_NAMES,
   IGNORED_TYPE_NAMES,
   NAMING_CONVENTIONS,
-  withRenamedEnumDefaults,
+  withRenamedEnumDefaultsForType,
 } from './shared.js';
 
 export declare type GraphQLTypePointer =
@@ -129,16 +129,17 @@ export default class NamingConventionTransform implements MeshTransform {
       }),
       ...(this.config.enumValues && {
         [MapperKind.ARGUMENT]: config => {
-          // Only rewrite defaults on enum args — String/ID/scalar defaults must stay intact.
-          if (!isEnumType(getNamedType(config.type))) {
+          const named = getNamedType(config.type);
+          // Enum args + input-object args with nested enum defaults
+          // (`filter: Filter = { status: newbie }`). Skip String/ID/scalars.
+          if (!isEnumType(named) && !isInputObjectType(named)) {
             return config;
           }
-          if (this.config.enumValues && hasRewritableEnumDefault(config)) {
-            const applyNamingConvention = NAMING_CONVENTIONS[this.config.enumValues];
-            return withRenamedEnumDefaults(config, applyNamingConvention);
+          if (!hasRewritableEnumDefaultForType(config, config.type)) {
+            return config;
           }
-
-          return config;
+          const applyNamingConvention = NAMING_CONVENTIONS[this.config.enumValues];
+          return withRenamedEnumDefaultsForType(config, config.type, applyNamingConvention);
         },
       }),
       ...(this.config.enumValues && {
@@ -235,20 +236,32 @@ export default class NamingConventionTransform implements MeshTransform {
           return [newFieldName || fieldName, fieldConfig];
         },
       }),
-      ...(this.config.fieldNames && {
+      ...((this.config.fieldNames || this.config.enumValues) && {
         [MapperKind.INPUT_OBJECT_FIELD]: (inputFieldConfig, fieldName, typeName) => {
           if (IGNORED_TYPE_NAMES.includes(typeName)) {
             return undefined;
           }
           const namingConventionFn =
             this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
-          const newName = namingConventionFn(fieldName);
-
-          if (newName === fieldName) {
-            return undefined;
+          const newName = namingConventionFn ? namingConventionFn(fieldName) : fieldName;
+          let nextConfig = inputFieldConfig;
+          if (this.config.enumValues) {
+            const namedFieldType = getNamedType(inputFieldConfig.type);
+            if (
+              (isEnumType(namedFieldType) || isInputObjectType(namedFieldType)) &&
+              hasRewritableEnumDefaultForType(inputFieldConfig, inputFieldConfig.type)
+            ) {
+              nextConfig = withRenamedEnumDefaultsForType(
+                inputFieldConfig,
+                inputFieldConfig.type,
+                NAMING_CONVENTIONS[this.config.enumValues],
+              );
+            }
           }
-
-          return [newName, inputFieldConfig];
+          if (newName === fieldName) {
+            return nextConfig === inputFieldConfig ? undefined : nextConfig;
+          }
+          return [newName, nextConfig];
         },
       }),
     });

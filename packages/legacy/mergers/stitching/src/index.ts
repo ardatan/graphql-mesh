@@ -6,6 +6,7 @@ import type {
   MeshMergerOptions,
   RawSourceOutput,
 } from '@graphql-mesh/types';
+import { omitIntrospectionTypes } from '@graphql-mesh/utils';
 import type { StitchingInfo } from '@graphql-tools/delegate';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 
@@ -42,8 +43,12 @@ export default class StitchingMerger implements MeshMerger {
       },
       mergeDirectives: true,
     });
+    // GraphQL 17 toConfig() includes introspection types; rebuilding without
+    // omitting them can throw `multiple types named "__Schema"` across dual packages.
+    const stitchedConfig = stitchedSchema.toConfig();
     const unifiedSchema = new GraphQLSchema({
-      ...stitchedSchema.toConfig(),
+      ...stitchedConfig,
+      types: omitIntrospectionTypes(stitchedConfig.types),
       assumeValid: true,
     });
     // stitchSchemas replaces extensions with stitchingInfo only — restore schema

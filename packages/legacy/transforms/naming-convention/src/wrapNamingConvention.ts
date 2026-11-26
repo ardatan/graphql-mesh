@@ -1,4 +1,4 @@
-import { getNamedType, isEnumType, type GraphQLSchema } from 'graphql';
+import { getNamedType, isEnumType, isInputObjectType, type GraphQLSchema } from 'graphql';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
@@ -16,11 +16,11 @@ import {
   TransformObjectFields,
 } from '@graphql-tools/wrap';
 import {
-  hasRewritableEnumDefault,
+  hasRewritableEnumDefaultForType,
   IGNORED_ROOT_FIELD_NAMES,
   IGNORED_TYPE_NAMES,
   NAMING_CONVENTIONS,
-  withRenamedEnumDefaults,
+  withRenamedEnumDefaultsForType,
 } from './shared.js';
 
 export default class NamingConventionTransform implements MeshTransform {
@@ -96,14 +96,19 @@ export default class NamingConventionTransform implements MeshTransform {
           let changed = false;
           const newArgs = { ...fieldConfig.args };
           for (const [argName, argConfig] of Object.entries(newArgs)) {
-            if (!isEnumType(getNamedType(argConfig.type))) {
+            const named = getNamedType(argConfig.type);
+            if (!isEnumType(named) && !isInputObjectType(named)) {
               continue;
             }
-            if (!hasRewritableEnumDefault(argConfig)) {
+            if (!hasRewritableEnumDefaultForType(argConfig, argConfig.type)) {
               continue;
             }
             changed = true;
-            newArgs[argName] = withRenamedEnumDefaults(argConfig, namingConventionFn);
+            newArgs[argName] = withRenamedEnumDefaultsForType(
+              argConfig,
+              argConfig.type,
+              namingConventionFn,
+            );
           }
           return [fieldName, changed ? { ...fieldConfig, args: newArgs } : fieldConfig];
         }) as any,

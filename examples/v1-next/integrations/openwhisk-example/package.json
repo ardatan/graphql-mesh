@@ -8,7 +8,7 @@
   "scripts": {
     "build": "node build.js",
     "deploy": "wsk action update /guest/mesh/swapi dist/index.js --docker your-registry/openwhisk-nodejs22:latest --web raw",
-    "dev": "mesh serve"
+    "dev": "tsx src/index.ts"
   },
   "dependencies": {
     "@graphql-hive/gateway": "^2.15.12",

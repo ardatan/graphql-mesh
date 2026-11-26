@@ -11,8 +11,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "entity",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "Boolean",
               "ofType": null,
@@ -23,8 +22,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "errors",
-            type
-: {
+            "type": {
               "kind": "INPUT_OBJECT",
               "name": "ConnectorErrors",
               "ofType": null,
@@ -35,8 +33,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "http",
-            type
-: {
+            "type": {
               "kind": "INPUT_OBJECT",
               "name": "ConnectHTTP",
               "ofType": null,
@@ -47,8 +44,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isSuccess",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSONSelection",
               "ofType": null,
@@ -59,8 +55,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "selection",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -75,8 +70,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "source",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -97,8 +91,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "reason",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -122,8 +115,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "if",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -149,8 +141,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "import",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -165,8 +156,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "url",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -198,8 +188,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "if",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -225,8 +214,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "errors",
-            type
-: {
+            "type": {
               "kind": "INPUT_OBJECT",
               "name": "ConnectorErrors",
               "ofType": null,
@@ -237,8 +225,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "http",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -253,8 +240,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isSuccess",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSONSelection",
               "ofType": null,
@@ -265,8 +251,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -290,8 +275,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "url",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -315,8 +299,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "headers",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -335,8 +318,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "kind",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -351,8 +333,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "location",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -363,8 +344,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "options",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "TransportOptions",
               "ofType": null,
@@ -375,8 +355,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "subgraph",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -412,8 +391,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AirlineCode",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -428,8 +406,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Name",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -440,8 +417,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "_odataId",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -465,8 +441,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AirlineCode",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -481,8 +456,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Name",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -505,8 +479,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AirlineCode",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -517,8 +490,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Name",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -540,8 +512,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "IataCode",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -552,8 +523,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "IcaoCode",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -568,8 +538,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Location",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "AirportLocation",
               "ofType": null,
@@ -580,8 +549,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Name",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -592,8 +560,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "_odataId",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -617,8 +584,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "IataCode",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -629,8 +595,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "IcaoCode",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -645,8 +610,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Location",
-            type
-: {
+            "type": {
               "kind": "INPUT_OBJECT",
               "name": "AirportLocationInput",
               "ofType": null,
@@ -657,8 +621,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Name",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -680,8 +643,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Address",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -692,8 +654,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "City",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "City",
               "ofType": null,
@@ -704,8 +665,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Loc",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -729,8 +689,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Address",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -741,8 +700,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "City",
-            type
-: {
+            "type": {
               "kind": "INPUT_OBJECT",
               "name": "CityInput",
               "ofType": null,
@@ -753,8 +711,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Loc",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -777,8 +734,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "IataCode",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -789,8 +745,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "IcaoCode",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -801,8 +756,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Location",
-            type
-: {
+            "type": {
               "kind": "INPUT_OBJECT",
               "name": "AirportLocationInput",
               "ofType": null,
@@ -813,8 +767,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Name",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -858,8 +811,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "CountryRegion",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -870,8 +822,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Name",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -882,8 +833,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Region",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -907,8 +857,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "CountryRegion",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -919,8 +868,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Name",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -931,8 +879,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Region",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -955,8 +902,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "DELETE",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "URLPathTemplate",
               "ofType": null,
@@ -967,8 +913,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GET",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "URLPathTemplate",
               "ofType": null,
@@ -979,8 +924,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "HEAD",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "URLPathTemplate",
               "ofType": null,
@@ -991,8 +935,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PATCH",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "URLPathTemplate",
               "ofType": null,
@@ -1003,8 +946,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "POST",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "URLPathTemplate",
               "ofType": null,
@@ -1015,8 +957,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PUT",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "URLPathTemplate",
               "ofType": null,
@@ -1027,8 +968,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "body",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSONSelection",
               "ofType": null,
@@ -1039,8 +979,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "headers",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -1059,8 +998,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "queryParams",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSONSelection",
               "ofType": null,
@@ -1083,8 +1021,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "extensions",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSONSelection",
               "ofType": null,
@@ -1095,8 +1032,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "message",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSONSelection",
               "ofType": null,
@@ -1129,8 +1065,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AddressInfo",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -1145,8 +1080,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Age",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "BigInt",
               "ofType": null,
@@ -1157,8 +1091,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "BestFriend",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -1169,8 +1102,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Cost",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1185,8 +1117,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Emails",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -1201,8 +1132,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FavoriteFeature",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1217,8 +1147,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Features",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1237,8 +1166,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FirstName",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1255,8 +1183,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -1266,8 +1193,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Friends",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -1284,8 +1210,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "id",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "ID",
                   "ofType": null,
@@ -1295,8 +1220,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FriendsById",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -1307,8 +1231,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Gender",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1325,8 +1248,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "person",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -1336,8 +1258,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFavoriteAirline",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airline",
               "ofType": null,
@@ -1350,8 +1271,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "person",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -1362,8 +1282,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "userName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -1377,8 +1296,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFriendsTrips",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -1393,8 +1311,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "HomeAddress",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "ILocation",
               "ofType": null,
@@ -1405,8 +1322,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "LastName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -1417,8 +1333,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "MiddleName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -1431,8 +1346,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -1442,8 +1356,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Peers",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -1460,8 +1373,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "id",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "ID",
                   "ofType": null,
@@ -1471,8 +1383,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PeersById",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -1485,8 +1396,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "personInstance",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -1497,8 +1407,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "tripId",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -1513,8 +1422,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "userName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -1528,8 +1436,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ShareTrip",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSON",
               "ofType": null,
@@ -1542,8 +1449,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -1553,8 +1459,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Trips",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -1571,8 +1476,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "id",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "ID",
                   "ofType": null,
@@ -1582,8 +1486,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "TripsById",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Trip",
               "ofType": null,
@@ -1596,8 +1499,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "lastName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -1612,8 +1514,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "person",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -1623,8 +1524,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "UpdateLastName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSON",
               "ofType": null,
@@ -1635,8 +1535,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "UserName",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1651,8 +1550,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "_odataId",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -1675,8 +1573,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ConfirmationCode",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -1687,8 +1584,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Description",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -1699,8 +1595,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Duration",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1715,8 +1610,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "EndsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1731,8 +1625,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "OccursAt",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "EventLocation",
               "ofType": null,
@@ -1743,8 +1636,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PlanItemId",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1759,8 +1651,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "StartsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1775,8 +1666,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "_odataId",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -1799,8 +1689,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Address",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -1811,8 +1700,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "BuildingInfo",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -1823,8 +1711,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "City",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "City",
               "ofType": null,
@@ -1879,8 +1766,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Airline",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airline",
               "ofType": null,
@@ -1891,8 +1777,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ConfirmationCode",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -1903,8 +1788,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Duration",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1919,8 +1803,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "EndsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1935,8 +1818,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FlightNumber",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -1947,8 +1829,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "From",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airport",
               "ofType": null,
@@ -1959,8 +1840,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PlanItemId",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -1975,8 +1855,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "SeatNumber",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -1987,8 +1866,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "StartsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -2003,8 +1881,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "To",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airport",
               "ofType": null,
@@ -2015,8 +1892,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "_odataId",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -2062,8 +1938,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "from",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -2074,8 +1949,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -2090,8 +1964,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "value",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -2276,8 +2149,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Address",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -2288,8 +2160,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "City",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "City",
               "ofType": null,
@@ -2313,8 +2184,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Address",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -2325,8 +2195,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "City",
-            type
-: {
+            "type": {
               "kind": "INPUT_OBJECT",
               "name": "CityInput",
               "ofType": null,
@@ -2348,8 +2217,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AddressInfo",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -2364,8 +2232,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Age",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "BigInt",
               "ofType": null,
@@ -2376,8 +2243,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "BestFriend",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -2388,8 +2254,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "BossOffice",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "ILocation",
               "ofType": null,
@@ -2400,8 +2265,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Budget",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -2418,8 +2282,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -2429,8 +2292,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "DirectReports",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -2447,8 +2309,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "id",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "ID",
                   "ofType": null,
@@ -2458,8 +2319,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "DirectReportsById",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -2470,8 +2330,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Emails",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -2486,8 +2345,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FavoriteFeature",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -2502,8 +2360,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Features",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -2522,8 +2379,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FirstName",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -2540,8 +2396,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -2551,8 +2406,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Friends",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -2569,8 +2423,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "id",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "ID",
                   "ofType": null,
@@ -2580,8 +2433,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FriendsById",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -2592,8 +2444,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Gender",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -2610,8 +2461,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "person",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -2621,8 +2471,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFavoriteAirline",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airline",
               "ofType": null,
@@ -2635,8 +2484,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "person",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -2647,8 +2495,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "userName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -2662,8 +2509,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFriendsTrips",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -2678,8 +2524,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "HomeAddress",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "ILocation",
               "ofType": null,
@@ -2690,8 +2535,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "LastName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -2702,8 +2546,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "MiddleName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -2716,8 +2559,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "personInstance",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -2728,8 +2570,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "tripId",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -2744,8 +2585,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "userName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -2759,8 +2599,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ShareTrip",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSON",
               "ofType": null,
@@ -2773,8 +2612,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -2784,8 +2622,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Trips",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -2802,8 +2639,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "id",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "ID",
                   "ofType": null,
@@ -2813,8 +2649,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "TripsById",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Trip",
               "ofType": null,
@@ -2827,8 +2662,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "lastName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -2843,8 +2677,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "person",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -2854,8 +2687,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "UpdateLastName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSON",
               "ofType": null,
@@ -2866,8 +2698,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "UserName",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -2882,8 +2713,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "_odataId",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -2908,8 +2738,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -2919,8 +2748,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Airlines",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -2937,8 +2765,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "AirlineCode",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -2952,8 +2779,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AirlinesByAirlineCode",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airline",
               "ofType": null,
@@ -2966,8 +2792,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -2977,8 +2802,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Airports",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -2995,8 +2819,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "IcaoCode",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3010,8 +2833,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AirportsByIcaoCode",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airport",
               "ofType": null,
@@ -3024,8 +2846,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -3035,8 +2856,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "People",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -3053,8 +2873,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "UserName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3068,8 +2887,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PeopleByUserName",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -3080,8 +2898,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ResetDataSource",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSON",
               "ofType": null,
@@ -3093,10 +2910,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": input
-,
-                type
-: {
+                "name": "input",
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "AirlineInput",
                   "ofType": null,
@@ -3106,8 +2921,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createAirlines",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airline",
               "ofType": null,
@@ -3119,10 +2933,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": input
-,
-                type
-: {
+                "name": "input",
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "AirportInput",
                   "ofType": null,
@@ -3132,8 +2944,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createAirports",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airport",
               "ofType": null,
@@ -3145,10 +2956,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": input
-,
-                type
-: {
+                "name": "input",
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -3158,8 +2967,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createPeople",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -3172,8 +2980,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "AirlineCode",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3187,8 +2994,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deleteAirlinesByAirlineCode",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSON",
               "ofType": null,
@@ -3201,8 +3007,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "IcaoCode",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3216,8 +3021,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deleteAirportsByIcaoCode",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSON",
               "ofType": null,
@@ -3230,8 +3034,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "UserName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3245,8 +3048,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deletePeopleByUserName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSON",
               "ofType": null,
@@ -3259,8 +3061,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "AirlineCode",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3274,10 +3075,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": input
-,
-                type
-: {
+                "name": "input",
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "AirlineUpdateInput",
                   "ofType": null,
@@ -3287,8 +3086,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updateAirlinesByAirlineCode",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airline",
               "ofType": null,
@@ -3301,8 +3099,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "IcaoCode",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3316,10 +3113,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": input
-,
-                type
-: {
+                "name": "input",
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "AirportUpdateInput",
                   "ofType": null,
@@ -3329,8 +3124,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updateAirportsByIcaoCode",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airport",
               "ofType": null,
@@ -3343,8 +3137,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "UserName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3358,10 +3151,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
-                "name": input
-,
-                type
-: {
+                "name": "input",
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonUpdateInput",
                   "ofType": null,
@@ -3371,8 +3162,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updatePeopleByUserName",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -3395,8 +3185,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AddressInfo",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -3411,8 +3200,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Age",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "BigInt",
               "ofType": null,
@@ -3423,8 +3211,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "BestFriend",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -3435,8 +3222,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Emails",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -3451,8 +3237,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FavoriteFeature",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -3467,8 +3252,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Features",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -3487,8 +3271,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FirstName",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -3505,8 +3288,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -3516,8 +3298,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Friends",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -3534,8 +3315,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "id",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "ID",
                   "ofType": null,
@@ -3545,8 +3325,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FriendsById",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -3557,8 +3336,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Gender",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -3575,8 +3353,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "person",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -3586,8 +3363,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFavoriteAirline",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airline",
               "ofType": null,
@@ -3600,8 +3376,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "person",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -3612,8 +3387,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "userName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3627,8 +3401,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetFriendsTrips",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -3643,8 +3416,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "HomeAddress",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "ILocation",
               "ofType": null,
@@ -3655,8 +3427,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "LastName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -3667,8 +3438,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "MiddleName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -3681,8 +3451,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "personInstance",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -3693,8 +3462,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "tripId",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3709,8 +3477,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "userName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3724,8 +3491,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ShareTrip",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSON",
               "ofType": null,
@@ -3738,8 +3504,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -3749,8 +3514,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Trips",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -3767,8 +3531,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "id",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "ID",
                   "ofType": null,
@@ -3778,8 +3541,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "TripsById",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Trip",
               "ofType": null,
@@ -3792,8 +3554,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "lastName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -3808,8 +3569,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "person",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PersonInput",
                   "ofType": null,
@@ -3819,8 +3579,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "UpdateLastName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSON",
               "ofType": null,
@@ -3831,8 +3590,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "UserName",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -3847,8 +3605,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "_odataId",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -3899,8 +3656,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AddressInfo",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -3915,8 +3671,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Age",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "BigInt",
               "ofType": null,
@@ -3927,8 +3682,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Emails",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -3943,8 +3697,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FavoriteFeature",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -3959,8 +3712,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Features",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -3979,8 +3731,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FirstName",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -3995,8 +3746,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Gender",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4011,8 +3761,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "HomeAddress",
-            type
-: {
+            "type": {
               "kind": "INPUT_OBJECT",
               "name": "LocationInput",
               "ofType": null,
@@ -4023,8 +3772,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "LastName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4035,8 +3783,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "MiddleName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4047,8 +3794,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "UserName",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4075,8 +3821,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AddressInfo",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -4091,8 +3836,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Age",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "BigInt",
               "ofType": null,
@@ -4103,8 +3847,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Emails",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -4119,8 +3862,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FavoriteFeature",
-            type
-: {
+            "type": {
               "kind": "ENUM",
               "name": "Feature",
               "ofType": null,
@@ -4131,8 +3873,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Features",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -4147,8 +3888,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FirstName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4159,8 +3899,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Gender",
-            type
-: {
+            "type": {
               "kind": "ENUM",
               "name": "PersonGender",
               "ofType": null,
@@ -4171,8 +3910,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "HomeAddress",
-            type
-: {
+            "type": {
               "kind": "INPUT_OBJECT",
               "name": "LocationInput",
               "ofType": null,
@@ -4183,8 +3921,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "LastName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4195,8 +3932,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "MiddleName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4207,8 +3943,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "UserName",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4230,8 +3965,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ConfirmationCode",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4242,8 +3976,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Duration",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4258,8 +3991,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "EndsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4274,8 +4006,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PlanItemId",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4290,8 +4021,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "StartsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4306,8 +4036,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "_odataId",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4330,8 +4059,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ConfirmationCode",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4342,8 +4070,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Duration",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4358,8 +4085,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "EndsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4374,8 +4100,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PlanItemId",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4390,8 +4115,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "SeatNumber",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4402,8 +4126,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "StartsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4418,8 +4141,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "_odataId",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4444,8 +4166,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -4455,8 +4176,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Airlines",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -4473,8 +4193,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "AirlineCode",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -4488,8 +4207,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AirlinesByAirlineCode",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airline",
               "ofType": null,
@@ -4502,8 +4220,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -4513,8 +4230,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AirlinesCount",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null,
@@ -4527,8 +4243,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -4538,8 +4253,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Airports",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -4556,8 +4270,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "IcaoCode",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -4571,8 +4284,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AirportsByIcaoCode",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airport",
               "ofType": null,
@@ -4585,8 +4297,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -4596,8 +4307,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "AirportsCount",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null,
@@ -4610,8 +4320,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "lat",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -4626,8 +4335,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "lon",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -4641,8 +4349,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetNearestAirport",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "Airport",
               "ofType": null,
@@ -4653,8 +4360,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetPersonWithMostFriends",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -4665,8 +4371,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Me",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -4679,8 +4384,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -4690,8 +4394,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "People",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -4708,8 +4411,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "UserName",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -4723,8 +4425,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PeopleByUserName",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPerson",
               "ofType": null,
@@ -4737,8 +4438,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -4748,8 +4448,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PeopleCount",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null,
@@ -4762,8 +4461,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "representations",
-                type
-: {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
@@ -4785,8 +4483,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "_entities",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4818,8 +4515,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "count",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "Boolean",
               "ofType": null,
@@ -4830,8 +4526,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "filter",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4842,8 +4537,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "inlinecount",
-            type
-: {
+            "type": {
               "kind": "ENUM",
               "name": "InlineCount",
               "ofType": null,
@@ -4854,8 +4548,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "orderby",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4866,8 +4559,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "search",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4878,8 +4570,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "skip",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null,
@@ -4890,8 +4581,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "top",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null,
@@ -4914,8 +4604,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "baseURL",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -4930,8 +4619,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "headers",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -4950,8 +4638,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "queryParams",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "JSONSelection",
               "ofType": null,
@@ -4995,8 +4682,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Budget",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5011,8 +4697,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Description",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5023,8 +4708,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "EndsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5041,8 +4725,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "trip",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "TripInput",
                   "ofType": null,
@@ -5052,8 +4735,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "GetInvolvedPeople",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -5068,8 +4750,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Name",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5082,8 +4763,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "queryOptions",
-                type
-: {
+                "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "QueryOptions",
                   "ofType": null,
@@ -5093,8 +4773,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PlanItems",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -5111,8 +4790,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "id",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "ID",
                   "ofType": null,
@@ -5122,8 +4800,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "PlanItemsById",
-            type
-: {
+            "type": {
               "kind": "UNION",
               "name": "IPlanItem",
               "ofType": null,
@@ -5134,8 +4811,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ShareId",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5150,8 +4826,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "StartsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5166,8 +4841,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Tags",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -5182,8 +4856,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "TripId",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5198,8 +4871,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "_odataId",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5223,8 +4895,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Budget",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5239,8 +4910,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Description",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5251,8 +4921,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "EndsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5267,8 +4936,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Name",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5279,8 +4947,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ShareId",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5295,8 +4962,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "StartsAt",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5311,8 +4977,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Tags",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -5327,8 +4992,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "TripId",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5413,8 +5077,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5429,8 +5092,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5441,8 +5103,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isRepeatable",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5457,8 +5118,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "locations",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5483,8 +5143,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "includeDeprecated",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
@@ -5494,8 +5153,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "args",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5518,8 +5176,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isDeprecated",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5534,8 +5191,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deprecationReason",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5690,8 +5346,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5706,8 +5361,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5718,8 +5372,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isDeprecated",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5734,8 +5387,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deprecationReason",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5758,8 +5410,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5774,8 +5425,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5788,8 +5438,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "includeDeprecated",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
@@ -5799,8 +5448,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "args",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5822,10 +5470,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": type
-,
-            type
-: {
+            "name": "type",
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5840,8 +5486,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isDeprecated",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5856,8 +5501,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deprecationReason",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5880,8 +5524,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5896,8 +5539,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5907,10 +5549,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": type
-,
-            type
-: {
+            "name": "type",
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5925,8 +5565,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "defaultValue",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5937,8 +5576,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isDeprecated",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5953,8 +5591,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deprecationReason",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5977,8 +5614,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5989,8 +5625,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "types",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -6013,8 +5648,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "queryType",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -6029,8 +5663,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "mutationType",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "__Type",
               "ofType": null,
@@ -6041,8 +5674,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "subscriptionType",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "__Type",
               "ofType": null,
@@ -6055,8 +5687,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "includeDeprecated",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
@@ -6066,8 +5697,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "directives",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -6102,8 +5732,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "kind",
-            type
-: {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -6118,8 +5747,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -6130,8 +5758,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -6142,8 +5769,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "specifiedByURL",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -6156,8 +5782,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "includeDeprecated",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
@@ -6167,8 +5792,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "fields",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -6187,8 +5811,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "interfaces",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -6207,8 +5830,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "possibleTypes",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -6229,8 +5851,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "includeDeprecated",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
@@ -6240,8 +5861,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "enumValues",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -6262,8 +5882,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "includeDeprecated",
-                type
-: {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
@@ -6273,8 +5892,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "inputFields",
-            type
-: {
+            "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
@@ -6293,8 +5911,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ofType",
-            type
-: {
+            "type": {
               "kind": "OBJECT",
               "name": "__Type",
               "ofType": null,
@@ -6305,8 +5922,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isOneOf",
-            type
-: {
+            "type": {
               "kind": "SCALAR",
               "name": "Boolean",
               "ofType": null,
@@ -6377,7 +5993,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
   },
 }
 `;
-
 exports[`OData TripPin should give correct response for example queries: example-query.graphql-query-result 1`] = `
 {
   "data": {

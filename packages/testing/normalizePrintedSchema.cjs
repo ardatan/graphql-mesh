@@ -104,11 +104,14 @@ function normalizePrintedSchema(sdl) {
       // covered by execution tests, not SDL snaps.
       const inner = collapseWs(sdl.slice(i + 3, j), false).trim();
       const end = Math.min(j + 3, n);
-      // Keep empty block strings (`""""""`) so empty defaults / directive args
-      // survive normalization; dropping them left `a:String=` in snaps.
-      const chunk = '"""' + inner + '"""';
-      parts.push(chunk);
-      lastOut = '"';
+      // Keep empty block strings only after `=` (empty defaults / directive args).
+      // Standalone empty descriptions (`""""""` before type/field) must stay dropped
+      // or SDL snaps fill with noise under GraphQL 17 printSchema.
+      if (inner.length > 0 || lastOut === '=') {
+        const chunk = '"""' + inner + '"""';
+        parts.push(chunk);
+        lastOut = '"';
+      }
       i = end;
       continue;
     }
