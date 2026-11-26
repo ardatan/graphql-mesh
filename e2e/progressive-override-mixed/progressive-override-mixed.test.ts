@@ -145,7 +145,7 @@ describe('Progressive Override', () => {
       const AReceivedQueries = ALogs.split('\n').filter(line => line.includes('received query'));
       expect(AReceivedQueries).toMatchInlineSnapshot(`
         [
-          "[service-a] received query: {aFeed{__typename id}}",
+          "[service-a] received query: {aFeed{id __typename}}",
         ]
       `);
       const BLogs = serviceB.getStd('out');
@@ -157,7 +157,8 @@ describe('Progressive Override', () => {
       expect(BReceivedQueries[1]).toContain(
         '[service-b] received query: query($representations:[_Any!]!){_entities(representations:',
       );
-      expect(BReceivedQueries[1]).toContain('...on Post{createdAt');
+      // Backbone entity hops ensure __typename on the fragment selection.
+      expect(BReceivedQueries[1]).toMatch(/\.\.\.on Post\{(__typename )?createdAt/);
     }
 
     {
@@ -216,12 +217,13 @@ describe('Progressive Override', () => {
       expect(AReceivedQueries[1]).toContain(
         '[service-a] received query: query($representations:[_Any!]!){_entities(representations:',
       );
-      expect(AReceivedQueries[1]).toContain('...on Post{createdAt');
+      // Backbone entity hops ensure __typename on the fragment selection.
+      expect(AReceivedQueries[1]).toMatch(/\.\.\.on Post\{(__typename )?createdAt/);
       const BLogs = serviceB.getStd('out');
       const BReceivedQueries = BLogs.split('\n').filter(line => line.includes('received query'));
       expect(BReceivedQueries).toMatchInlineSnapshot(`
         [
-          "[service-b] received query: {bFeed{__typename id}}",
+          "[service-b] received query: {bFeed{id __typename}}",
         ]
       `);
     }

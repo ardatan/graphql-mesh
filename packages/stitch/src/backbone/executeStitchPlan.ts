@@ -1486,7 +1486,7 @@ function executeIslandNode(
       return handleMaybePromise(
         () => resolve!(parent, args, ctx.contextValue, info),
         result => {
-          parent[responseKey] = result;
+          parent[responseKey] = coerceIslandParentForContinue(result, field.type, node);
         },
         err => {
           ctx.errors.push(errorFromIslandThrow(err, responseKey, node.fieldNode));
@@ -1516,7 +1516,7 @@ function executeIslandNode(
   return handleMaybePromise(
     () => resolve!(ctx.rootValue, args, ctx.contextValue, info),
     result => {
-      ctx.data[responseKey] = result;
+      ctx.data[responseKey] = coerceIslandParentForContinue(result, field.type, node);
       // continue: dataflow hop, not tree execute
     },
     err => {
@@ -1526,6 +1526,29 @@ function executeIslandNode(
       ctx.data[responseKey] = null;
     },
   );
+}
+
+/**
+ * Encapsulate `@resolveTo(sourceFieldName: "__typename")` returns a string
+ * (`"Query"`). graphql-js still runs nested field resolvers and assembles an
+ * object; the backbone writes the Island result into `ctx.data` and runs
+ * `continue` via `collectEntitiesAtPath`, which only walks objects.
+ * When the field is an object type and this Island has continue hops, replace
+ * a non-object result with a fresh `{}` so nested Islands can attach.
+ */
+function coerceIslandParentForContinue(
+  result: any,
+  returnType: GraphQLOutputType,
+  node: Extract<StitchPlanNode, { kind: 'Island' }>,
+): any {
+  if (result == null || typeof result === 'object' || !node.continue) {
+    return result;
+  }
+  const named = getNamedType(returnType);
+  if (!isObjectType(named) && !isInterfaceType(named)) {
+    return result;
+  }
+  return Object.create(null);
 }
 
 type ExecutableHop = ScheduledHop;

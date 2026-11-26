@@ -77,16 +77,16 @@ function projectValue(
       projectValue(schema, fragments, variableValues, runtimeType, fieldNodes, item),
     );
   }
-  if (typeof value !== 'object') {
-    // Enum intersection / @inaccessible values: serialize through the gateway
-    // leaf type so unknown/removed enum values become null (GraphQL.js parity).
-    if (runtimeType && isLeafType(runtimeType)) {
-      try {
-        return runtimeType.serialize(value);
-      } catch {
-        return null;
-      }
+  // Leaf scalars first — Date/Buffer/etc. are typeof 'object' but must serialize
+  // (otherwise `{...date}` becomes `{}` and odata DateTime fields go empty).
+  if (runtimeType && isLeafType(runtimeType)) {
+    try {
+      return runtimeType.serialize(value);
+    } catch {
+      return null;
     }
+  }
+  if (typeof value !== 'object') {
     return value;
   }
 
