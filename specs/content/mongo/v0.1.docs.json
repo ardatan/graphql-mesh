@@ -162,7 +162,7 @@
       "summary": "Relay-style connection read. Runtime kind `CONNECTION`.",
       "authors": {
         "intro": "Relay-style connection read. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "allUsers(first: Int, after: String): UserConnection!\n  @mongo__connection(\n    collection: \"users\"\n    first: \"$args.first\"\n    after: \"$args.after\"\n    selection: \"\"\"\nnodes {\n  id: _id\n  name\n}\n\"\"\"\n  )"
+        "example": "allUsers(first: Int, after: String): UserConnection!\n  @mongo__connection(\n    collection: \"users\"\n    first: \"$args.first\"\n    after: \"$args.after\"\n    selection: \"\"\"\nnodes {\n  id: _id\n  name\n}\nedges {\n  node {\n    id: _id\n    name\n  }\n}\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -213,9 +213,9 @@
         "selection": {
           "defaults": "Optional.",
           "constraints": "Connection payload map. Nest document fields under `nodes { ... }` (and optionally `edges { node { ... } }`). Flat `id: _id` at the root maps the connection object, not each node.",
-          "authors": "Shape the connection: put entity fields under `nodes { ... }` (and `edges { node { ... } }` when using edges).",
-          "implementers": "When it runs: After the page of documents is loaded.\n\nInput: Connection selection; runtime reads nested `nodes` (and `edges.node`) via nestedSelection, then mapDocumentToGraphql per document.\n\nOutput: `{ nodes, edges, pageInfo, totalCount }` with mapped node objects.\n\nErrors: Flat document maps at the root produce empty nodes; nest under `nodes { ... }`. Mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\nnodes {\n  id: _id\n  name\n}\n\"\"\""
+          "authors": "Shape the connection: put entity fields under `nodes { ... }`. Also map `edges { node { ... } }` when clients may query edges (runtime maps edge nodes from that nested selection separately).",
+          "implementers": "When it runs: After the page of documents is loaded.\n\nInput: Connection selection; runtime reads nested `nodes` and `edges.node` via nestedSelection, then mapDocumentToGraphql per document.\n\nOutput: `{ nodes, edges, pageInfo, totalCount }` with mapped node objects.\n\nErrors: Flat document maps at the root produce empty nodes; nest under `nodes { ... }`. Omitting `edges.node` leaves edge nodes empty if clients query them. Mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\nnodes {\n  id: _id\n  name\n}\nedges {\n  node {\n    id: _id\n    name\n  }\n}\n\"\"\""
         }
       }
     },
