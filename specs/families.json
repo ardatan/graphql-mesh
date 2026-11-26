@@ -15,7 +15,7 @@
   },
   {
     "name": "pubsub",
-    "title": "Event-driven Subscription (EDFS) Directives",
+    "title": "pubsub",
     "version": "v0.1",
     "summary": "Event-driven federated subscription (EDFS) field directives for topic and webhook bindings (@pubsubOperation, @pubsubPublish).",
     "imports": ["@pubsubOperation", "@pubsubPublish"],

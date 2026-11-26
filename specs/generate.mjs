@@ -35,11 +35,17 @@ function prose(text) {
     .join('\n');
 }
 
+/** Expand JSON-escaped newlines/tabs so <pre> examples wrap instead of showing literal \n. */
+function decodeExample(code) {
+  return String(code).replaceAll('\\n', '\n').replaceAll('\\r', '\r').replaceAll('\\t', '\t');
+}
+
 function exampleFigure(code, caption = 'Example') {
   if (!code) return '';
+  const text = decodeExample(code).trim();
   return `<figure class="spec-example">
     <figcaption>${esc(caption)}</figcaption>
-    <pre class="graphql"><code>${esc(code.trim())}</code></pre>
+    <pre class="graphql"><code>${esc(text)}</code></pre>
   </figure>`;
 }
 
