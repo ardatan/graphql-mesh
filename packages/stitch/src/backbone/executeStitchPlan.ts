@@ -1,19 +1,21 @@
 import {
-  FieldNode,
   getArgumentValues,
   getNamedType,
   GraphQLError,
-  GraphQLOutputType,
-  GraphQLSchema,
   isInterfaceType,
   isNullableType,
   isObjectType,
   Kind,
   OperationTypeNode,
-  SelectionNode,
-  SelectionSetNode,
-  VariableDefinitionNode,
   visit,
+  type DocumentNode,
+  type FieldNode,
+  type GraphQLObjectType,
+  type GraphQLOutputType,
+  type GraphQLSchema,
+  type SelectionNode,
+  type SelectionSetNode,
+  type VariableDefinitionNode,
 } from 'graphql';
 import {
   createDefaultExecutor,
@@ -21,9 +23,9 @@ import {
   FIELD_SUBSCHEMA_MAP_SYMBOL,
   mergeFields,
   OBJECT_SUBSCHEMA_SYMBOL,
-  Subschema,
   UNPATHED_ERRORS_SYMBOL,
   type StitchingInfo,
+  type Subschema,
 } from '@graphql-tools/delegate';
 // Annotation uses Symbol keys (JSON-invisible) via direct assign - cheaper than
 // annotateExternalObject's Object.defineProperties on large entity lists.
@@ -152,7 +154,7 @@ function selectionSatisfiedByDeep(
       }
     } else if (sel.kind === Kind.INLINE_FRAGMENT) {
       if (sel.typeCondition) {
-        const tn = value['__typename'];
+        const tn = value.__typename;
         if (tn != null && tn !== sel.typeCondition.name.value) {
           continue;
         }
@@ -203,16 +205,16 @@ function copySelectionFromCached(
         parent[k] = cached[k];
       }
     }
-    if (cached['__typename'] != null && parent['__typename'] == null) {
-      parent['__typename'] = cached['__typename'];
+    if (cached.__typename != null && parent.__typename == null) {
+      parent.__typename = cached.__typename;
     }
     return;
   }
   for (const sel of selectionSet.selections) {
     if (sel.kind === Kind.FIELD) {
       if (sel.name.value === '__typename') {
-        if (parent['__typename'] == null && cached['__typename'] != null) {
-          parent['__typename'] = cached['__typename'];
+        if (parent.__typename == null && cached.__typename != null) {
+          parent.__typename = cached.__typename;
         }
         continue;
       }
@@ -255,7 +257,7 @@ function copySelectionFromCached(
       }
     } else if (sel.kind === Kind.INLINE_FRAGMENT) {
       if (sel.typeCondition) {
-        const tn = parent['__typename'] ?? cached['__typename'];
+        const tn = parent.__typename ?? cached.__typename;
         if (tn != null && tn !== sel.typeCondition.name.value) {
           continue;
         }
@@ -675,8 +677,8 @@ function mergeEntityIntoParent(
       break;
     }
   }
-  const priorTypename = parent['__typename'] as string | undefined;
-  const resultTypename = resolverResult['__typename'] as string | undefined;
+  const priorTypename = parent.__typename as string | undefined;
+  const resultTypename = resolverResult.__typename as string | undefined;
   if (!hasNested) {
     for (const key in resolverResult) {
       if (
@@ -689,7 +691,7 @@ function mergeEntityIntoParent(
       }
       parent[key] = resolverResult[key];
     }
-    parent['__typename'] = resolveMergedTypename(priorTypename, resultTypename, schema);
+    parent.__typename = resolveMergedTypename(priorTypename, resultTypename, schema);
     stampSubschema(parent, subschema);
     return;
   }
@@ -697,7 +699,7 @@ function mergeEntityIntoParent(
   // copies enumerable props only).
   const merged = mergeDeep([parent, resolverResult], false, true, true);
   Object.assign(parent, merged);
-  parent['__typename'] = resolveMergedTypename(priorTypename, resultTypename, schema);
+  parent.__typename = resolveMergedTypename(priorTypename, resultTypename, schema);
   stampSubschema(parent, subschema);
   // Annotate fresh nested objects from the hop so later entity hops can find
   // OBJECT_SUBSCHEMA_SYMBOL on children.
@@ -805,7 +807,7 @@ function rewriteNullabilityConflicts(
     if (!type || !('getFields' in type) || !sel.selectionSet) {
       return sel;
     }
-    const fields = (type as import('graphql').GraphQLObjectType).getFields();
+    const fields = (type as GraphQLObjectType).getFields();
     const nextSels = sel.selectionSet.selections.map(sub => {
       if (sub.kind !== Kind.FIELD || sub.alias) {
         if (sub.kind === Kind.FIELD && sub.selectionSet) {
@@ -830,7 +832,7 @@ function rewriteNullabilityConflicts(
         return {
           ...sub,
           alias: {
-            kind: 'Name' as const,
+            kind: Kind.NAME,
             value: nullable ? `_nullable_${sub.name.value}` : `_nonNullable_${sub.name.value}`,
           },
           selectionSet: sub.selectionSet
@@ -847,10 +849,13 @@ function rewriteNullabilityConflicts(
     });
     return {
       ...sel,
-      selectionSet: { ...sel.selectionSet, selections: nextSels },
+      selectionSet: {
+        ...sel.selectionSet,
+        selections: nextSels as readonly SelectionNode[],
+      },
     };
   });
-  return { ...selectionSet, selections };
+  return { ...selectionSet, selections: selections as readonly SelectionNode[] };
 }
 
 /** Map `_nullable_id` / `_nonNullable_id` response keys back to `id`. */
@@ -898,21 +903,23 @@ function buildRootDocument(
       filteredVars[name] = variableValues[name];
     }
   }
-  const op = {
-    kind: 'OperationDefinition' as const,
-    operation: operationType,
-    name: operationName ? { kind: 'Name' as const, value: operationName } : undefined,
-    variableDefinitions: filteredDefs,
-    selectionSet: {
-      kind: 'SelectionSet' as const,
-      selections: [cleaned],
-    },
+  const document: DocumentNode = {
+    kind: Kind.DOCUMENT,
+    definitions: [
+      {
+        kind: Kind.OPERATION_DEFINITION,
+        operation: operationType,
+        name: operationName ? { kind: Kind.NAME, value: operationName } : undefined,
+        variableDefinitions: filteredDefs,
+        selectionSet: {
+          kind: Kind.SELECTION_SET,
+          selections: [cleaned],
+        },
+      },
+    ],
   };
   return {
-    document: {
-      kind: 'Document' as const,
-      definitions: [op],
-    },
+    document,
     variables: filteredVars,
   };
 }
@@ -1098,18 +1105,18 @@ function executeFetchNode(
     if (p == null) {
       return false;
     }
-    if (p['__typename'] === node.entityTypeName) {
+    if (p.__typename === node.entityTypeName) {
       return true;
     }
     // Typeless parents: only valid for @interfaceObject interface hops.
     // Concrete Cast (Cat vs Dog) must not claim every typeless list item.
-    if (p['__typename'] == null) {
+    if (p.__typename == null) {
       return isInterfaceType(entityType);
     }
     if (!isInterfaceType(entityType)) {
       return false;
     }
-    const runtime = ctx.schema.getType(p['__typename']);
+    const runtime = ctx.schema.getType(p.__typename);
     return (
       isObjectType(runtime) && runtime.getInterfaces().some(i => i.name === node.entityTypeName)
     );
@@ -1139,7 +1146,7 @@ function executeFetchNode(
     }
   }
 
-  const stitchingInfo = ctx.schema.extensions?.['stitchingInfo'] as StitchingInfo | undefined;
+  const stitchingInfo = ctx.schema.extensions?.stitchingInfo as StitchingInfo | undefined;
   const mergedTypeInfo = stitchingInfo?.mergedTypes[node.entityTypeName];
   if (!mergedTypeInfo) {
     return;
@@ -1158,8 +1165,8 @@ function executeFetchNode(
   if (!resolver) {
     // Fall back to mergeFields when no explicit merge resolver is registered.
     const planningParentField: FieldNode = {
-      kind: 'Field' as const,
-      name: { kind: 'Name' as const, value: node.entityTypeName },
+      kind: Kind.FIELD,
+      name: { kind: Kind.NAME, value: node.entityTypeName },
       selectionSet: node.selectionSet,
     };
     const jobs: MaybePromise<any>[] = [];
@@ -1207,8 +1214,8 @@ function executeFetchNode(
     fieldName: node.entityTypeName,
     fieldNodes: [
       {
-        kind: 'Field' as const,
-        name: { kind: 'Name' as const, value: node.entityTypeName },
+        kind: Kind.FIELD,
+        name: { kind: Kind.NAME, value: node.entityTypeName },
         selectionSet: node.selectionSet,
       },
     ],
@@ -1595,7 +1602,7 @@ function runSameKeyRootFetches(
   return handleMaybePromise(
     () => allMaybePromises(jobs),
     (parts: Array<{ data: any; errors: any[] }>) => {
-      let merged: any = undefined;
+      let merged: any;
       for (const part of parts) {
         // Errors-only siblings set `data[responseKey] = null`; skip that null
         // so a successful sibling's object is not replaced by root null.
@@ -1824,7 +1831,7 @@ export function executeDataflowPlan(
             track(
               group.map(g => g.index),
               () => {
-                let chain: MaybePromise<void> = undefined;
+                let chain: MaybePromise<void>;
                 for (const item of group) {
                   chain = handleMaybePromise(
                     () => chain,
@@ -1875,17 +1882,17 @@ function matchEntityParent(
   if (parent == null) {
     return false;
   }
-  if (parent['__typename'] === entityTypeName) {
+  if (parent.__typename === entityTypeName) {
     return true;
   }
   const entityType = schema.getType(entityTypeName);
-  if (parent['__typename'] == null) {
+  if (parent.__typename == null) {
     return isInterfaceType(entityType);
   }
   if (!isInterfaceType(entityType)) {
     return false;
   }
-  const runtime = schema.getType(parent['__typename']);
+  const runtime = schema.getType(parent.__typename);
   return isObjectType(runtime) && runtime.getInterfaces().some(i => i.name === entityTypeName);
 }
 
