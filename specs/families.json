@@ -9,15 +9,14 @@
     "notes": [
       "Mesh stitching `@source` uses `subgraph:` (and optional `type:`). HTTP/REST Connectors `@source` uses `http:` and lives under specs.apollo.dev/connect.",
       "PubSub directives are published under https://specs.graphql-mesh.dev/pubsub/v0.1 (not on this core page).",
-      "`@merge` is legacy back-compat only and is not published on this family page. New entity-resolution annotations use Federation Spec `@lookup` / `@is` / `@internal` via https://graphql.github.io/graphql-federation-spec/draft (not published here).",
       "Validation: Mesh `@link` family URLs must use supported versions (`v0.1`). `@transport` is SCHEMA-only; `kind` required; `@hoist.pathConfig` must be an array when present."
     ]
   },
   {
     "name": "pubsub",
-    "title": "pubsub",
+    "title": "Event-driven Subscription (EDFS) Directives",
     "version": "v0.1",
-    "summary": "PubSub subscription and publish field directives for topic and webhook bindings (EDFS).",
+    "summary": "Event-driven federated subscription (EDFS) field directives for topic and webhook bindings (@pubsubOperation, @pubsubPublish).",
     "imports": ["@pubsubOperation", "@pubsubPublish"],
     "stamp": "Import with `@link(url: \"https://specs.graphql-mesh.dev/pubsub/v0.1\", import: [\"@pubsubOperation\", \"@pubsubPublish\"])`.",
     "notes": ["Import `@pubsubOperation` and `@pubsubPublish` from this family URL."]
