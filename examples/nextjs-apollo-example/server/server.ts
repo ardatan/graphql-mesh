@@ -1,4 +1,4 @@
-import { ApolloServer } from 'apollo-server-micro';
+import { ApolloServer } from '@apollo/server';
 import { getBuiltMesh } from './.mesh';
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -12,13 +12,19 @@ export default async function createApolloServer() {
     schema,
     introspection: !isProd,
     cache,
+    // Custom executor keeps Mesh envelop + GraphQL 17 without apollo-server-micro's
+    // graphql.formatError dependency (removed in GraphQL 17).
     executor: async requestContext => {
-      const { schema, execute, contextFactory } = getEnveloped({
+      const {
+        schema: envelopedSchema,
+        execute,
+        contextFactory,
+      } = getEnveloped({
         request: requestContext.request.http,
       });
 
       return execute({
-        schema: schema,
+        schema: envelopedSchema,
         document: requestContext.document,
         contextValue: await contextFactory(),
         variableValues: requestContext.request.variables,
@@ -27,5 +33,6 @@ export default async function createApolloServer() {
     },
   });
 
+  await apolloServer.start();
   return apolloServer;
 }

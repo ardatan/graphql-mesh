@@ -2,10 +2,37 @@ import { finalizeMeshJoinDirectives } from '../src/mesh-join-supergraph.js';
 
 /** Collapse insignificant GraphQL print whitespace (GQL17 spaces inside `{}`). */
 function compactGql(s: string): string {
-  return (
-    s
+  // Compact only outside string literals so values like `https: //host` stay intact.
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    if (s[i] === '"') {
+      let j = i + 1;
+      while (j < s.length) {
+        if (s[j] === '\\') {
+          j += 2;
+          continue;
+        }
+        if (s[j] === '"') {
+          j += 1;
+          break;
+        }
+        j += 1;
+      }
+      out += s.slice(i, j);
+      i = j;
+      continue;
+    }
+    let j = i;
+    while (j < s.length && s[j] !== '"') j += 1;
+    out += s
+      .slice(i, j)
       .replace(/\s*([{}\[\](),:])\s*/g, '$1')
-      .replace(/\s+/g, ' ')
+      .replace(/\s+/g, ' ');
+    i = j;
+  }
+  return (
+    out
       // GQL17 multiline input objects omit commas; restore them for stable asserts.
       .replace(/((?:"(?:\\.|[^"\\])*"|true|false|null|\d+|\]))\s+(?=[A-Za-z_@])/g, '$1,')
       .trim()
@@ -390,7 +417,10 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     );
     // Supergraph: no `"""` blocks - newlines stay as `\n` escapes inside `"…"`.
     // Subgraph SDL may still print thrift args as multiline `"""`.
-    expect(compactGql(out)).toMatch(/args:"1\(i32\):\$args\.left\\n2\(i32\):\$args\.right"/);
+    // Spaces inside the quoted thrift arg template are preserved (string-safe compact).
+    expect(compactGql(out)).toMatch(
+      /args:"1\(i32\):\s*\$args\.left\\n2\(i32\):\s*\$args\.right"/,
+    );
     expect(out).not.toMatch(/args: """/);
     expect(out).not.toMatch(/name: "thrift__rpc", args: \{[^}]*subgraph:/);
     expect(compactGql(out)).toMatch(/thrift\/v0\.1",import:\["@thrift__rpc"\]/);

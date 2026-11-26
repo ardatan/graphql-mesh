@@ -1,3 +1,4 @@
+import { Logger } from '@graphql-hive/logger';
 import {
   loadGraphQLSchemaFromJSONSchemas,
   loadNonExecutableGraphQLSchemaFromJSONSchemas,
@@ -30,15 +31,23 @@ function createEphemeralHateoasContext(): HATEOASContext {
  * then load it with `loadGraphQLSchemaFromBundle`.
  */
 export async function loadGraphQLSchemaFromOpenAPI(name: string, options: OpenAPILoaderOptions) {
+  const hateoasContext = createEphemeralHateoasContext();
   const extraJSONSchemaOptions = await getJSONSchemaOptionsFromOpenAPIOptions(
     name,
     options,
-    createEphemeralHateoasContext(),
+    hateoasContext,
   );
-  return loadGraphQLSchemaFromJSONSchemas(name, {
+  const schema = await loadGraphQLSchemaFromJSONSchemas(name, {
     ...options,
     ...extraJSONSchemaOptions,
   });
+  // Ephemeral context disables the global unresolved-link timer — report leftovers here.
+  if (hateoasContext.futureLinks.size > 0 && !process.env.JEST) {
+    new Logger({ prefix: 'loadGraphQLSchemaFromOpenAPI' }).warn(
+      `${hateoasContext.futureLinks.size} HATEOAS links could not be resolved for "${name}". This may indicate missing operations or circular dependencies.`,
+    );
+  }
+  return schema;
 }
 
 export async function loadNonExecutableGraphQLSchemaFromOpenAPI(

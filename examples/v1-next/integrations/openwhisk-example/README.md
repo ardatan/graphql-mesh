@@ -56,8 +56,10 @@ wsk action update /guest/mesh/swapi dist/index.js \
 
 ## Running the project locally
 
-`dev` command will start Mesh server to mimic your API endpoint locally without deployment;
+`yarn dev` runs `src/index.ts` with a local HTTP listener (same gateway runtime the
+OpenWhisk `main` export uses), so you can hit the example without deploying:
 
 ```sh
 yarn dev
+# → http://localhost:4000/api/v1/web/guest/mesh/swapi/graphql
 ```

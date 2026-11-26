@@ -343,7 +343,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server@npm:5.5.2, @apollo/server@npm:^5.5.2":
+"@apollo/server@npm:5.5.2, @apollo/server@npm:^5.0.0, @apollo/server@npm:^5.5.2":
   version: 5.5.2
   resolution: "@apollo/server@npm:5.5.2"
   dependencies:
@@ -740,6 +740,16 @@ __metadata:
   peerDependencies:
     graphql: "*"
   checksum: 10c0/b40e03611f21cf3e60e9d515a29dc2149f4f9b6bb3102c31c04aab17ccc4669658688c4bac5d57a75187a63502a6add7b705818eb052006b9c0f2f22a11957e9
+  languageName: node
+  linkType: hard
+
+"@as-integrations/next@npm:^4.0.0":
+  version: 4.1.0
+  resolution: "@as-integrations/next@npm:4.1.0"
+  peerDependencies:
+    "@apollo/server": ^5.0.0
+    next: ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/c6030fbe9e38dc3d0b171e54fefcd25a10268300969ace83f8195fef3fde30092beb78effe2e17658689a8d6d5481d4d67f368e97fcd0aa501af89bdcc83a0a8
   languageName: node
   linkType: hard
 
@@ -6878,14 +6888,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/nextjs-apollo-example@workspace:examples/nextjs-apollo-example"
   dependencies:
+    "@apollo/server": "npm:^5.0.0"
+    "@as-integrations/next": "npm:^4.0.0"
     "@graphql-mesh/cli": "npm:0.103.4"
     "@graphql-mesh/config": "npm:0.111.3"
     "@graphql-mesh/openapi": "npm:0.112.7"
     "@graphql-mesh/runtime": "npm:0.109.3"
     "@types/react": "npm:19.3.0"
-    apollo-server-micro: "npm:3.13.0"
     graphql: "npm:17.1.0"
-    micro: "npm:10.0.1"
     next: "npm:16.4.5"
     react: "npm:19.3.1"
     react-dom: "npm:19.3.1"

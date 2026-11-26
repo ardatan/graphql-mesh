@@ -7,6 +7,7 @@ import {
   isObjectType,
   isUnionType,
   Kind,
+  versionInfo,
   type FieldNode,
   type FragmentDefinitionNode,
   type GraphQLField,
@@ -507,8 +508,19 @@ function getCoercedVariableValues(info: GraphQLResolveInfo): Record<string, unkn
   if (vv == null) {
     return {};
   }
-  if (typeof vv === 'object' && 'coerced' in vv && vv.coerced && typeof vv.coerced === 'object') {
-    return vv.coerced as Record<string, unknown>;
+  // Prefer installed GraphQL major — a user variable named `coerced` on GraphQL 16
+  // must stay a normal map entry, not be mistaken for VariableValues.
+  if (versionInfo.major >= 17) {
+    if (
+      typeof vv === 'object' &&
+      vv != null &&
+      'coerced' in vv &&
+      vv.coerced &&
+      typeof vv.coerced === 'object'
+    ) {
+      return vv.coerced as Record<string, unknown>;
+    }
+    return {};
   }
   return vv as Record<string, unknown>;
 }
