@@ -765,12 +765,38 @@ export async function healJSONSchema(
             // - boolean/number/integer items: decode `'false'` / `'1'` to real scalars
             const trimmedDefault = subSchema.default.trim();
             const type = subSchema.type;
+            // Resolve item type the same way child healing will (single-element
+            // allOf/anyOf/oneOf collapse) so `'false'` still decodes for boolean items.
+            const resolveItemsType = (items: unknown): string | string[] | undefined => {
+              if (!items || typeof items !== 'object' || Array.isArray(items)) {
+                return undefined;
+              }
+              const obj = items as {
+                type?: string | string[];
+                allOf?: unknown[];
+                anyOf?: unknown[];
+                oneOf?: unknown[];
+              };
+              if (obj.type != null) {
+                return obj.type;
+              }
+              for (const key of ['allOf', 'anyOf', 'oneOf'] as const) {
+                const arr = obj[key];
+                if (Array.isArray(arr) && arr.length === 1) {
+                  const nested = resolveItemsType(arr[0]);
+                  if (nested != null) {
+                    return nested;
+                  }
+                }
+              }
+              return undefined;
+            };
             const rawItemsType =
               type === 'array' &&
               subSchema.items &&
               !Array.isArray(subSchema.items) &&
               typeof subSchema.items === 'object'
-                ? (subSchema.items as { type?: string | string[] }).type
+                ? resolveItemsType(subSchema.items)
                 : undefined;
             // Nullable unions like `['boolean','null']` collapse to the non-null item type
             // (same idea as getComposerFromJSONSchema) so singleton defaults still decode.

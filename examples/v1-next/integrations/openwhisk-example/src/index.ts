@@ -1,5 +1,6 @@
 import { createServer } from 'node:http';
-import { pathToFileURL } from 'node:url';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createGatewayRuntime } from '@graphql-hive/gateway-runtime';
 
 const graphqlEndpoint = '/api/v1/web/guest/mesh/swapi/graphql';
@@ -33,9 +34,40 @@ export async function main(params) {
   };
 }
 
-// Local `yarn dev`: listen so the OpenWhisk handler path can be exercised without deploy.
+/** Resolve this file under both ESM (`import.meta.url`) and CJS (`__filename` via tsx). */
+function currentModulePath(): string | undefined {
+  try {
+    if (typeof import.meta !== 'undefined' && import.meta.url) {
+      return fileURLToPath(import.meta.url);
+    }
+  } catch {
+    // import.meta may be an empty object under some CJS compilations
+  }
+  // CJS: `__filename` is module-local (not on globalThis). Read via Function so the
+  // source stays valid when esbuild bundles this file as the OpenWhisk action.
+  try {
+    // eslint-disable-next-line no-new-func
+    const cjsFilename = new Function(
+      'return typeof __filename === "string" ? __filename : undefined',
+    )();
+    if (typeof cjsFilename === 'string') {
+      return cjsFilename;
+    }
+  } catch {
+    // ignore
+  }
+  return undefined;
+}
+
+// Local `yarn dev` (`tsx src/index.ts`): listen under ESM or CJS. Deployed
+// `dist/index.js` must not start a listener even if required as main.
+const entry = process.argv[1];
+const self = currentModulePath();
 const isMain =
-  typeof process.argv[1] === 'string' && import.meta.url === pathToFileURL(process.argv[1]).href;
+  typeof entry === 'string' &&
+  self != null &&
+  path.resolve(entry) === path.resolve(self) &&
+  /[/\\]src[/\\]index\.[cm]?[jt]s$/.test(self);
 if (isMain) {
   const port = Number(process.env.PORT || 4000);
   createServer(httpHandler).listen(port, () => {

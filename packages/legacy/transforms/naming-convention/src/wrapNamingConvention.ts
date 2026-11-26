@@ -206,8 +206,10 @@ export default class NamingConventionTransform implements MeshTransform {
             : fieldNamingConventionFn(fieldName) || fieldName,
           fieldConfig,
         ]) as any,
-        new RenameInterfaceFields(
-          (_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName,
+        new RenameInterfaceFields((_, fieldName) =>
+          IGNORED_ROOT_FIELD_NAMES.includes(fieldName)
+            ? fieldName
+            : fieldNamingConventionFn(fieldName) || fieldName,
         ) as any,
       );
     }

@@ -23,6 +23,7 @@ import {
   isListType,
   isNonNullType,
   isObjectType,
+  isScalarType,
   isSpecifiedScalarType,
   Kind,
   type ConstValueNode,
@@ -185,6 +186,52 @@ function jsDefaultContainsString(value: unknown): boolean {
   return false;
 }
 
+/**
+ * Type-aware string detect: stop at non-enum scalars so cyclic custom-scalar
+ * JS values are not traversed when only `fieldNames` admits a rewrite.
+ */
+function jsDefaultContainsStringForInputType(value: unknown, inputType: GraphQLInputType): boolean {
+  let type: GraphQLInputType = inputType;
+  while (isNonNullType(type)) {
+    type = type.ofType;
+  }
+  if (isListType(type)) {
+    if (Array.isArray(value)) {
+      return value.some(item => jsDefaultContainsStringForInputType(item, type.ofType));
+    }
+    if (isListIterable(value)) {
+      return Array.from(value as Iterable<unknown>).some(item =>
+        jsDefaultContainsStringForInputType(item, type.ofType),
+      );
+    }
+    return value != null && jsDefaultContainsStringForInputType(value, type.ofType);
+  }
+  const named = getNamedType(type);
+  if (isEnumType(named)) {
+    return (
+      typeof value === 'string' || (Array.isArray(value) && value.some(v => typeof v === 'string'))
+    );
+  }
+  if (isInputObjectType(named) && value && typeof value === 'object' && !Array.isArray(value)) {
+    const fields = named.getFields();
+    for (const [key, raw] of Object.entries(value as Record<string, unknown>)) {
+      const field = fields[key];
+      if (!field) {
+        continue;
+      }
+      if (jsDefaultContainsStringForInputType(raw, field.type)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  // Custom / specified scalars: do not walk JS contents (may be cyclic).
+  if (isScalarType(named)) {
+    return false;
+  }
+  return jsDefaultContainsString(value);
+}
+
 function jsDefaultNeedsInputFieldRename(
   value: unknown,
   inputType: GraphQLInputType,
@@ -284,6 +331,10 @@ function rewriteJsDefaultForInputType(
     const out: Record<string, unknown> = {};
     // Iterate defaultValue keys (may still be pre-rename after field rename maps).
     for (const [valueKey, raw] of Object.entries(value as Record<string, unknown>)) {
+      // GraphQL 17 ignores `undefined` properties; do not let them clobber a renamed key.
+      if (raw === undefined) {
+        continue;
+      }
       const renamedKey = renameInputObjectFieldName(valueKey, named.name, renameField);
       // Prefer the original key: a custom rename can map onto another original field name.
       const field = fields[valueKey] ?? fields[renamedKey];
@@ -489,13 +540,15 @@ export function createNamingConventionTransform(
             }
             // Explicit null must not fall back to a stale AST enum default.
             const hasJsStringDefault =
-              sourceDefaultValue != null && jsDefaultContainsString(sourceDefaultValue);
+              sourceDefaultValue != null &&
+              jsDefaultContainsStringForInputType(sourceDefaultValue, sourceInputType);
             const hasDefaultValue = sourceDefaultValue !== undefined || sourceDefault != null;
             const literal: ValueNode | undefined =
               sourceDefault?.literal ?? (!hasDefaultValue ? sourceAstDefault : undefined);
             const hasLiteralEnum = containsEnumValueNode(literal);
             const hasValueString =
-              sourceDefault?.value != null && jsDefaultContainsString(sourceDefault.value);
+              sourceDefault?.value != null &&
+              jsDefaultContainsStringForInputType(sourceDefault.value, sourceInputType);
             const hasObjectLiteral = literal?.kind === Kind.OBJECT || literal?.kind === Kind.LIST;
             // Legacy null must not suppress an explicit GraphQL 17 `default`.
             if (sourceDefaultValue === null && sourceDefault == null) {
@@ -684,7 +737,7 @@ export function createNamingConventionTransform(
           (isEnumType(namedFieldType) || isInputObjectType(namedFieldType)) &&
           !(sourceFieldDefaultValue === null && sourceFieldDefault == null) &&
           ((sourceFieldDefaultValue != null &&
-            (jsDefaultContainsString(sourceFieldDefaultValue) ||
+            (jsDefaultContainsStringForInputType(sourceFieldDefaultValue, sourceFieldInputType) ||
               jsDefaultNeedsInputFieldRename(
                 sourceFieldDefaultValue,
                 sourceFieldInputType,
@@ -695,7 +748,10 @@ export function createNamingConventionTransform(
                 sourceFieldDefault.literal.kind === Kind.OBJECT ||
                 sourceFieldDefault.literal.kind === Kind.LIST)) ||
             (sourceFieldDefault?.value != null &&
-              (jsDefaultContainsString(sourceFieldDefault.value) ||
+              (jsDefaultContainsStringForInputType(
+                sourceFieldDefault.value,
+                sourceFieldInputType,
+              ) ||
                 jsDefaultNeedsInputFieldRename(
                   sourceFieldDefault.value,
                   sourceFieldInputType,
@@ -712,7 +768,7 @@ export function createNamingConventionTransform(
           if (
             sourceFieldDefaultValue != null &&
             isInputObjectType(getNamedType(sourceFieldInputType)) &&
-            (jsDefaultContainsString(sourceFieldDefaultValue) ||
+            (jsDefaultContainsStringForInputType(sourceFieldDefaultValue, sourceFieldInputType) ||
               jsDefaultNeedsInputFieldRename(
                 sourceFieldDefaultValue,
                 sourceFieldInputType,
@@ -743,7 +799,7 @@ export function createNamingConventionTransform(
             };
           } else if (
             sourceFieldDefault?.value != null &&
-            (jsDefaultContainsString(sourceFieldDefault.value) ||
+            (jsDefaultContainsStringForInputType(sourceFieldDefault.value, sourceFieldInputType) ||
               jsDefaultNeedsInputFieldRename(
                 sourceFieldDefault.value,
                 sourceFieldInputType,
@@ -908,13 +964,15 @@ export function createNamingConventionTransform(
               continue;
             }
             const hasJsStringDefault =
-              sourceDefaultValue != null && jsDefaultContainsString(sourceDefaultValue);
+              sourceDefaultValue != null &&
+              jsDefaultContainsStringForInputType(sourceDefaultValue, sourceInputType);
             const hasDefaultValue = sourceDefaultValue !== undefined || sourceDefault != null;
             const literal: ValueNode | undefined =
               sourceDefault?.literal ?? (!hasDefaultValue ? sourceAstDefault : undefined);
             const hasLiteralEnum = containsEnumValueNode(literal);
             const hasValueString =
-              sourceDefault?.value != null && jsDefaultContainsString(sourceDefault.value);
+              sourceDefault?.value != null &&
+              jsDefaultContainsStringForInputType(sourceDefault.value, sourceInputType);
             const hasObjectLiteral = literal?.kind === Kind.OBJECT || literal?.kind === Kind.LIST;
             if (
               !hasJsStringDefault &&

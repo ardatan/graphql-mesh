@@ -17,6 +17,7 @@ import {
   isInputObjectType,
   isListType,
   isNonNullType,
+  isScalarType,
   Kind,
   type ConstValueNode,
   type GraphQLArgumentConfig,
@@ -203,6 +204,10 @@ function rewriteEnumValueNode(
   }
   if (node.kind === Kind.OBJECT) {
     const named = type ? getNamedType(type) : undefined;
+    // Structured custom-scalar literals must stay intact (do not walk into them).
+    if (named && isScalarType(named) && !isEnumType(named)) {
+      return node;
+    }
     const fields = isInputObjectType(named) ? named.getFields() : undefined;
     return {
       ...node,
@@ -290,6 +295,10 @@ function rewriteJsDefaultForInputType(
     // Iterate defaultValue keys (may still be pre-rename, e.g. wrap mode after
     // RenameInputObjectFields already renamed the input type fields).
     for (const [valueKey, raw] of Object.entries(value as Record<string, unknown>)) {
+      // GraphQL 17 ignores `undefined` properties; do not let them clobber a renamed key.
+      if (raw === undefined) {
+        continue;
+      }
       const renamedKey = renameInputObjectFieldName(valueKey, named.name, renameField);
       // Prefer the original key: a custom rename can map onto another original field name.
       const field = fields[valueKey] ?? fields[renamedKey];

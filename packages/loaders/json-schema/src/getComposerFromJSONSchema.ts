@@ -268,9 +268,18 @@ function coerceFieldDefaultValue(
     // accepts (healed numeric literals on string list items).
     try {
       const parseValue = tc.getParseValue?.();
+      let parsed: unknown = defaultValue;
       if (typeof parseValue === 'function') {
-        return parseValue(defaultValue);
+        parsed = parseValue(defaultValue);
       }
+      // Always validate output serialization when present — GraphQL may supply an
+      // identity parseValue while serialize still rejects (e.g. empty string).
+      // Return the parsed value (not serialize's result) so BigInt stays a bigint.
+      const serialize = tc.getSerialize?.();
+      if (typeof serialize === 'function') {
+        serialize(parsed);
+      }
+      return parsed;
     } catch {
       try {
         const serialize = tc.getSerialize?.();
