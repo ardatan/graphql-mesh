@@ -1,4 +1,4 @@
-import { getNamedType, GraphQLSchema, type SelectionSetNode } from 'graphql';
+import { getNamedType, type GraphQLSchema, type SelectionSetNode } from 'graphql';
 import {
   getDirectiveInExtensions,
   getOperationASTFromRequest,

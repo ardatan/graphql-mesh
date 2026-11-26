@@ -237,7 +237,7 @@ export const handleFederationSupergraph = function ({
 
   const unifiedGraphDirectives = getDirectiveExtensions(unifiedGraph);
 
-  let executableUnifiedGraph = getStitchedSchemaFromSupergraphSdl({
+  const executableUnifiedGraph = getStitchedSchemaFromSupergraphSdl({
     supergraphSdl: getDocumentNodeFromSchema(unifiedGraph),
     batchDelegateOptions,
     /**

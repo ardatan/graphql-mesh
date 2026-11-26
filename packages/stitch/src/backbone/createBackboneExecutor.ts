@@ -1,4 +1,4 @@
-import { GraphQLError, GraphQLSchema, Kind } from 'graphql';
+import { GraphQLError, Kind, type GraphQLSchema } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {

@@ -1,10 +1,10 @@
 import {
   defaultFieldResolver,
-  GraphQLError,
-  GraphQLFieldResolver,
-  GraphQLSchema,
   isObjectType,
   Kind,
+  type GraphQLError,
+  type GraphQLFieldResolver,
+  type GraphQLSchema,
   type SelectionNode,
 } from 'graphql';
 import { annotateExternalObject, UNPATHED_ERRORS_SYMBOL } from '@graphql-tools/delegate';

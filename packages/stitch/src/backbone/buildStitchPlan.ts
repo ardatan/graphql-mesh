@@ -1,21 +1,21 @@
 import {
-  FieldNode,
-  FragmentDefinitionNode,
   getNamedType,
-  GraphQLInterfaceType,
-  GraphQLObjectType,
-  GraphQLSchema,
-  GraphQLUnionType,
   isAbstractType,
   isInterfaceType,
   isLeafType,
   isObjectType,
   isUnionType,
   Kind,
-  OperationDefinitionNode,
-  SelectionNode,
-  SelectionSetNode,
   valueFromASTUntyped,
+  type FieldNode,
+  type FragmentDefinitionNode,
+  type GraphQLInterfaceType,
+  type GraphQLObjectType,
+  type GraphQLSchema,
+  type GraphQLUnionType,
+  type OperationDefinitionNode,
+  type SelectionNode,
+  type SelectionSetNode,
 } from 'graphql';
 import type { StitchingInfo, Subschema } from '@graphql-tools/delegate';
 import { handleOverrideByDelegation, leftOverByDelegationPlan } from '@graphql-tools/delegate';
@@ -51,7 +51,7 @@ function selectionSetOf(selections: readonly SelectionNode[]): SelectionSetNode 
  * `delegationPlanBuilder` can evaluate progressive-override handlers without
  * threading context through every recursive plan helper.
  */
-let planningContext: any = undefined;
+let planningContext: any;
 
 /**
  * Fill omitted operation variables from their GraphQL default values so
@@ -125,10 +125,7 @@ function findConcreteImplementerSubschema(
   return targets.find(t => possibles.some(c => t.transformedSchema.getType(c.name) != null));
 }
 
-function rootTypeOf(
-  schema: import('graphql').GraphQLSchema,
-  operation: OperationDefinitionNode['operation'],
-) {
+function rootTypeOf(schema: GraphQLSchema, operation: OperationDefinitionNode['operation']) {
   return operation === 'mutation'
     ? schema.getMutationType()
     : operation === 'subscription'
@@ -3197,7 +3194,7 @@ export function buildStitchPlan(
   options: BuildStitchPlanOptions = {},
 ): StitchPlan {
   const incompleteReasons: string[] = [];
-  const stitchingInfo = schema.extensions?.['stitchingInfo'] as StitchingInfo | undefined;
+  const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
 
   if (!stitchingInfo) {
     return {
@@ -6263,7 +6260,7 @@ function foldSameWaveSubgraphFetches(
   const depsKey = (hop: FoldableEntityHop): string => [...(hop.dependsOn ?? [])].sort().join('\0');
 
   // Pass 1: exact ready-set (never delays independent chains).
-  let next = foldEntityHopsByKey(
+  const next = foldEntityHopsByKey(
     root,
     stitchingInfo,
     hop => `${depsKey(hop)}::${subKey(hop.subschema)}`,
@@ -6286,10 +6283,8 @@ function foldSameWaveSubgraphFetches(
  * Field response-key → nested selection (null = leaf). Inline fragments are
  * flattened into the map (union). Fragment spreads → null (unprovable).
  */
-function collectFieldTrees(
-  ss: import('graphql').SelectionSetNode,
-): Map<string, import('graphql').SelectionSetNode | null> | null {
-  const m = new Map<string, import('graphql').SelectionSetNode | null>();
+function collectFieldTrees(ss: SelectionSetNode): Map<string, SelectionSetNode | null> | null {
+  const m = new Map<string, SelectionSetNode | null>();
   for (const sel of ss.selections) {
     if (sel.kind === Kind.FIELD) {
       if (sel.name.value === '__typename') {
@@ -6332,10 +6327,7 @@ function collectFieldTrees(
  * `needed` asks for. Inline fragments on `needed` are treated as always-needed
  * (plan-time; no runtime typename).
  */
-function selectionCovers(
-  source: import('graphql').SelectionSetNode,
-  needed: import('graphql').SelectionSetNode,
-): boolean {
+function selectionCovers(source: SelectionSetNode, needed: SelectionSetNode): boolean {
   const have = collectFieldTrees(source);
   if (!have) {
     return false;
