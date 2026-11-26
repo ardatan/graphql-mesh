@@ -1,14 +1,16 @@
 {
   "directives": {
     "@skipAuth": {
-      "summary": "Marks a field, object, or interface as exempt from Hive Gateway generic-auth complete protection.",
+      "summary": "Marks a field, object, or interface as exempt from complete-protection authentication checks.",
       "authors": {
-        "intro": "Import from `https://specs.graphql-mesh.dev/auth/v0.1` (not core). Use with Federation `@authenticated` / `@requiresScopes` / `@policy` as needed. Requires Gateway generic auth in complete-protection mode.",
+        "intro": "Import with `@link(url: \"https://specs.graphql-mesh.dev/auth/v0.1\", import: [\"@skipAuth\"])` and `@composeDirective` when the Supergraph must carry it. Place on fields/types that must remain reachable when the gateway otherwise requires authentication on every field. Combine with Federation `@authenticated` / `@requiresScopes` / `@policy` as needed.",
         "example": "extend schema\n  @link(url: \"https://specs.graphql-mesh.dev/auth/v0.1\", import: [\"@skipAuth\"])\n  @composeDirective(name: \"@skipAuth\")\n\ntype Query {\n  publicField: String @skipAuth\n  me: User!\n}"
       },
       "implementers": {
-        "compose": "Hand-authored `@link` + `@composeDirective` today (not loader-stamped).",
-        "runtime": "Generic auth plugin skips auth checks for annotated fields/types when complete protection is enabled. No arguments."
+        "intro": "When complete-protection auth is active, skip authentication/authorization checks for locations annotated with `@skipAuth`. No arguments. Locations without the directive remain subject to the default policy.",
+        "compose": "Preserve `@skipAuth` on the Supergraph (`@composeDirective` or equivalent).",
+        "runtime": "During auth enforcement, treat annotated fields/types/interfaces as exempt. Unannotated neighbors still require auth.",
+        "validation": "No arguments allowed. Location must be FIELD_DEFINITION, OBJECT, or INTERFACE."
       },
       "args": {}
     }

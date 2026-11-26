@@ -1,9 +1,9 @@
 {
   "scalars": {
     "TransportOptions": {
-      "summary": "Opaque JSON-like bag for kind-specific transport knobs (timeouts, OData batch, Neo4j auth extras, \u2026). Top-level `@transport` args stay shared; protocol details go here.",
-      "authors": "Pass only keys your transport documents. Unknown keys may be ignored or rejected by a strict executor.",
-      "implementers": "Map 1:1 onto Hive `TransportEntry.options`. Do not add sibling `@transport` args for kind-specific fields \u2014 nest under `options`."
+      "summary": "Transport-specific options for a `@transport` configuration. What keys mean varies by transport (`kind`).",
+      "authors": "Optional bag of extras for the chosen transport. See that transport’s docs for which keys it accepts.",
+      "implementers": "Forward as the `options` field on the transport configuration. Do not invent new top-level `@transport` args for transport-specific settings."
     },
     "_HoistConfig": {
       "summary": "Serialized hoist path (string list and/or `{ fieldName, filterArgs }` objects) describing how a nested field was lifted.",
@@ -11,71 +11,78 @@
       "implementers": "Preserve through composition so Gateway / Connectors selection rewrites can re-apply the path. Treat as structured JSON, not free text."
     },
     "ResolveToSourceArgs": {
-      "summary": "Map of argument name \u2192 value expression (often with `{root\u2026}` / `{args\u2026}` interpolation) forwarded when delegating to a source field.",
+      "summary": "Map of argument name → value expression (often with `{root…}` / `{args…}` interpolation) forwarded when delegating to a source field.",
       "authors": "Use object syntax in SDL: `sourceArgs: { id: \"{root.id}\" }`.",
-      "implementers": "Parse as a string-keyed map. Interpolate with the same resolver-data rules as Mesh additional resolvers before calling the source field."
+      "implementers": "Parse as a string-keyed map. Interpolate with the same resolver-data rules as other additional-field binders before calling the source field."
     }
   },
   "directives": {
     "@transport": {
-      "summary": "Declares how Gateway reaches a subgraph: kind, location, optional headers, and kind-specific `options`. Repeatable on SCHEMA so one schema document can describe multiple subgraphs.",
+      "summary": "Declares how the gateway reaches a subgraph: kind, location, optional headers, and `options`. Repeatable on SCHEMA so one schema document can describe multiple subgraphs.",
       "authors": {
-        "intro": "Every non-Connectors Mesh subgraph should carry `@transport` (often stamped by the loader). Pair protocol field directives (`@sql`, `@mongo__*`, \u2026) with a matching `kind`. Do not use this for HTTP/REST Connectors `@source(http:)` \u2014 that lives under specs.apollo.dev/connect.",
+        "intro": "Every non-Connectors subgraph should carry `@transport`. Pair protocol field directives (`@sql`, `@mongo__*`, …) with a matching `kind`. Do not use this for HTTP/REST Connectors `@source(http:)` — that lives under specs.apollo.dev/connect.",
         "example": "extend schema\n  @link(url: \"https://specs.graphql-mesh.dev/core/v0.1\", import: [\"@transport\"])\n  @transport(\n    subgraph: \"shop\"\n    kind: \"sql\"\n    location: \"postgres://localhost/shop\"\n  )"
       },
       "implementers": {
-        "intro": "Canonical shape mirrors Hive `TransportEntry`.",
-        "compose": "Loaders stamp via `importMeshDirectives(..., [\"@transport\"])` on the core URL. Compose may rewrite or drop pure-http transports that duplicate `join__graph` URLs, or rewrite non-http transports into `join__directive` for Apollo-safe SG printing while keeping a reconstitutable definition.",
-        "loaders": "Always stamp `subgraph` + `kind`. Put protocol-only knobs in `options`, not new top-level args.",
-        "runtime": "Build a transport entry map from SCHEMA apps. Reject unsupported Mesh `@link` versions. Executors select by `kind` then read `location` / `headers` / `options`."
+        "intro": "Each `@transport` application is transport configuration: which subgraph, which transport (`kind`), where to connect (`location`), optional default `headers`, and optional transport-specific `options` (keys vary by transport). The directive contract is fully described here.",
+        "compose": "Schemas emit `@link(url: \"https://specs.graphql-mesh.dev/core/v0.1\", import: [\"@transport\"])` and apply `@transport` on the schema. Composition may rewrite or drop pure-http transports that duplicate `join__graph` URLs, or rewrite non-http transports into `join__directive` for Apollo-safe Supergraph printing while keeping a reconstitutable definition.",
+        "loaders": "Always include `subgraph` + `kind`. Put transport-specific settings in `options`, not new top-level args.",
+        "runtime": "Build a map of transport configurations from SCHEMA apps. Reject unsupported `@link` versions for this family. Executors select by `kind`, then use `location` / `headers` / `options`.",
+        "validation": "Requires: `@transport` is SCHEMA-only (reject apps on types/fields). `kind` is required and must be a non-empty string, except options/headers-only apps used for inferred Connectors transports. When present: `subgraph` and `location` must be strings; `options` must be an object (not an array); `headers` must be an array of `[name, value]` pairs.\n\n@link: Mesh family `@link` URLs under `https://specs.graphql-mesh.dev/` must use a supported version (`v0.1`). Unrecognized Mesh family versions are rejected. If any core Mesh directives are used on the schema, a supported `core` `@link` must be present (legacy `https://the-guild.dev/graphql/mesh/spec/…` core links remain accepted when reading)."
       },
       "args": {
         "subgraph": {
           "defaults": "Required (`String!`).",
-          "constraints": "Non-empty; must uniquely identify the subgraph in the composed graph.",
-          "authors": "Name of the Mesh subgraph this entry configures.",
-          "implementers": "Key into the transport entry map and match protocol directive `subgraph:` args.",
-          "example": "subgraph: \"Users\""
+          "constraints": "Non-empty. Must be the same subgraph name used for this source in composition (unique among composed subgraphs).",
+          "authors": "Name of the subgraph this entry configures — the same identifier used for that source everywhere in composition.",
+          "implementers": "Key this `@transport` configuration with the composition subgraph name; match protocol directive `subgraph:` args to the same string.",
+          "example": "subgraph: \"Users\"",
+          "validation": "When present must be a string; for ordinary Mesh transports it should be non-empty and match the composition subgraph name."
         },
         "kind": {
           "defaults": "Required (`String!`).",
-          "constraints": "Transport id such as `http`, `sql`, `mongo`, `thrift`, `neo4j`, `grpc`/`protobuf`, `connect`, \u2026",
-          "authors": "Selects which executor implementation Gateway loads.",
-          "implementers": "Dispatch table key. Do not overload `kind` with options \u2014 use `options` for variants.",
-          "example": "kind: \"sql\""
+          "constraints": "Transport id such as `http`, `sql`, `mongo`, `thrift`, `neo4j`, `grpc`/`protobuf`, `connect`, …",
+          "authors": "Selects which transport implementation the gateway runs.",
+          "implementers": "Dispatch table key. Transport-specific variants belong in `options`, not in `kind`.",
+          "example": "kind: \"sql\"",
+          "validation": "Required non-empty string, unless this is an options/headers-only Connectors-inferred transport app."
         },
         "location": {
           "defaults": "Optional.",
-          "constraints": "URI / DSN / endpoint string understood by that kind (Postgres URL, Mongo URI, Thrift HTTP endpoint, \u2026).",
-          "authors": "Where to connect. May be omitted when Gateway config injects the endpoint.",
-          "implementers": "May be dropped from printed SG when it duplicates `join__graph(url:)` for pure HTTP. Still required at execution unless overridden by gateway config.",
-          "example": "location: \"postgres://localhost/shop\""
+          "constraints": "URI / DSN / endpoint string understood by that kind (Postgres URL, Mongo URI, Thrift HTTP endpoint, …).",
+          "authors": "Where to connect. May be omitted when the runtime injects the endpoint.",
+          "implementers": "May be dropped from the printed Supergraph when it duplicates `join__graph(url:)` for pure HTTP. Still required at execution unless overridden by runtime configuration.",
+          "example": "location: \"postgres://localhost/shop\"",
+          "validation": "When present must be a string."
         },
         "headers": {
           "defaults": "Optional.",
-          "constraints": "List of `[name, value]` pairs (or ObjMap round-trip in some loaders). Values may include interpolations depending on transport.",
-          "authors": "Static default headers for upstream calls.",
-          "implementers": "Normalize to `TransportEntry.headers`. Merge with per-request headers without dropping security header partitioning rules (e.g. OData batch).",
-          "example": "headers: [[\"authorization\", \"Bearer \u2026\"]]"
+          "constraints": "List of `[name, value]` pairs (a map may be normalized to pairs). Values may include interpolations depending on the transport.",
+          "authors": "Default HTTP (or transport) headers sent with upstream calls for this subgraph.",
+          "implementers": "Keep these as the default headers for this transport. Merge with per-request headers the way that transport expects — do not drop headers the transport treats as security-sensitive.",
+          "example": "headers: [[\"authorization\", \"Bearer …\"]]",
+          "validation": "When present must be an array (list of pairs)."
         },
         "options": {
           "defaults": "Optional.",
-          "constraints": "Must be valid `TransportOptions` for the chosen `kind`.",
-          "authors": "Kind-specific config (timeouts, query string defaults, OData batch mode, \u2026).",
-          "implementers": "Pass through as `TransportEntry.options`. Document per-transport keys in that transport package \u2014 not as new `@transport` args.",
-          "example": "options: { timeout: 30000 }"
+          "constraints": "`TransportOptions` — transport-specific; keys vary by `kind`.",
+          "authors": "Extra options for that transport. They are not shared across transports; check the transport you use.",
+          "implementers": "Attach as this configuration’s `options`. Leave interpretation to the transport for that `kind`.",
+          "example": "options: { timeout: 30000 }",
+          "validation": "When present must be an object, not an array or scalar."
         }
       }
     },
     "@source": {
-      "summary": "Mesh stitching provenance: records the original subgraph type/field name when renames occur. Not Connectors `@source(http:)` from specs.apollo.dev/connect.",
+      "summary": "Composition provenance: records the original subgraph type/field name when renames occur. Not Connectors `@source(http:)` from specs.apollo.dev/connect.",
       "authors": {
         "intro": "Usually stamped by Compose when types/fields are renamed. When Connectors `@source` is also present, Mesh may alias this as `@meshSource` via `@link(as:)`.",
         "example": "type User @source(name: \"User_users\", subgraph: \"users\") {\n  id: ID! @source(name: \"id\", subgraph: \"users\")\n}"
       },
       "implementers": {
-        "compose": "Emit on renamed elements; keep `subgraph` aligned with transport entries. Alias to `@meshSource` if Apollo Connectors `@source` shares the schema.",
-        "runtime": "Use to recover original names for executor selection / error coordinates. Ignore Connectors `http:` shape \u2014 different directive."
+        "compose": "Emit on renamed elements; keep `subgraph` aligned with transport configurations. Alias to `@meshSource` if Apollo Connectors `@source` shares the schema.",
+        "runtime": "Use to recover original names for executor selection / error coordinates. Ignore Connectors `http:` shape — different directive.",
+        "validation": "Require `name` and `subgraph` as non-empty strings for Mesh stitching provenance apps (args shaped with `subgraph:`, not Connectors `http:`)."
       },
       "args": {
         "name": {
@@ -93,9 +100,9 @@
         },
         "subgraph": {
           "defaults": "Required (`String!`).",
-          "constraints": "Owning subgraph name.",
-          "authors": "Which source owned the original name.",
-          "implementers": "Scope provenance per subgraph; repeatable apps accumulate across sources.",
+          "constraints": "Owning subgraph name — the same identifier used for that source in composition (and on `@transport(subgraph:)` when present).",
+          "authors": "Which composed subgraph owned the original name. Use the same subgraph name as elsewhere for that source.",
+          "implementers": "Scope provenance per composition subgraph name; repeatable apps accumulate across sources.",
           "example": "subgraph: \"users\""
         }
       }
@@ -107,8 +114,9 @@
         "example": "type User {\n  repositories: [Repository]\n    @resolveTo(\n      sourceName: \"A\"\n      sourceTypeName: \"Query\"\n      sourceFieldName: \"repositoriesByUserId\"\n      requiredSelectionSet: \"{ id }\"\n      sourceArgs: { id: \"{root.id}\" }\n    )\n}"
       },
       "implementers": {
-        "compose": "Encapsulate / additionalTypeDefs import `@resolveTo` under core when used. Preserve args through SG printing.",
-        "runtime": "Convert each app into an additional resolver (`resolveAdditionalResolvers`). Support batching via `keyField`/`keysArg`/`valueKeyField`, PubSub via `pubsubTopic`, and result projection via `result` / `filterBy`."
+        "compose": "Encapsulate / additional type definitions import `@resolveTo` under core when used. Preserve args through Supergraph printing.",
+        "runtime": "For each annotated field, install a gateway resolver that delegates to the named source field, optionally batches via `keyField`/`keysArg`/`valueKeyField`, optionally listens on `pubsubTopic`, and optionally projects with `result` / `filterBy`.",
+        "validation": "For source delegation, require `sourceTypeName` and `sourceFieldName` (and usually `sourceName`). Pure PubSub apps may omit source fields when `pubsubTopic` is set. Do not default `sourceTypeName` to `Query`."
       },
       "args": {
         "requiredSelectionSet": {
@@ -129,8 +137,9 @@
           "defaults": "Required for source delegation; omit only for pure PubSub. No runtime default (does not fall back to `Query`).",
           "constraints": "Type that owns `sourceFieldName` in the source schema (commonly `Query`, `Mutation`, or `Subscription` when those are the owners).",
           "authors": "Must name the source type that owns the delegated field. Omitting it for delegation makes runtime look up an undefined type and throw.",
-          "implementers": "Call `schema.getType(sourceTypeName)` then the field; do not invent a default type name.",
-          "example": "sourceTypeName: \"Query\""
+          "implementers": "Look up that type on the source schema and call `sourceFieldName` on it; do not invent a default type name.",
+          "example": "sourceTypeName: \"Query\"",
+          "validation": "Required for source delegation; must name an existing type on the source schema. No implicit `Query` default."
         },
         "sourceFieldName": {
           "defaults": "Optional for pure PubSub.",
@@ -195,41 +204,43 @@
           "defaults": "Optional.",
           "constraints": "Dot path into the source payload to return.",
           "authors": "Project a nested property as the field value.",
-          "implementers": "Apply lodash-style path get on the resolver result.",
+          "implementers": "Read the nested property at this path from the delegated result and return that as the field value.",
           "example": "result: \"data.items\""
         },
         "resultType": {
           "defaults": "Optional.",
           "constraints": "Type name hint when the projected result needs an explicit runtime type.",
           "authors": "Rare; use when projection changes the effective type.",
-          "implementers": "Use when wrapping / asserting return types in additional resolvers."
+          "implementers": "Use when asserting or wrapping the projected return type after applying `result`."
         }
       }
     },
     "@hoist": {
       "summary": "Records that a field was hoisted from a nested path onto a parent type. Repeatable on FIELD_DEFINITION.",
       "authors": {
-        "intro": "Emitted by the hoist-field Compose transform. Prefer configuring the transform over hand-writing `@hoist`.",
+        "intro": "Usually produced by a hoist-field compose transform; prefer that over hand-writing `@hoist`.",
         "example": "type Query {\n  users: [User!]! @hoist(subgraph: \"api\", pathConfig: [\"users\", \"results\"])\n}"
       },
       "implementers": {
         "compose": "Transform adds the field and stamps `@hoist` with `pathConfig` for downstream Connectors selection rewrites.",
-        "runtime": "Follow `pathConfig` when mapping selections back to the nested source shape."
+        "runtime": "Follow `pathConfig` when mapping selections back to the nested source shape.",
+        "validation": "When `pathConfig` is present it must be an array. Executable `@hoist` apps require a non-empty `pathConfig` array; omit the directive entirely rather than shipping an empty/missing path."
       },
       "args": {
         "subgraph": {
-          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
-          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
         },
         "pathConfig": {
-          "defaults": "Required for any executable `@hoist` app. The hoist transform always stamps it; omitting it makes Gateway call `.map` on `undefined` during subgraph transform setup and fail schema init.",
-          "constraints": "`_HoistConfig` \u2014 non-empty array of field names and/or `{ fieldName, filterArgs }` objects.",
-          "authors": "Do not hand-write `@hoist` without `pathConfig`. Prefer the hoist-field transform, which emits the path.",
-          "implementers": "Require an array before building `HoistField` transforms; drive selection rewrites along the path.",
-          "example": "pathConfig: [\"users\", \"results\"]"
+          "defaults": "Required for any executable `@hoist` app.",
+          "constraints": "`_HoistConfig` — non-empty array of field names and/or `{ fieldName, filterArgs }` objects.",
+          "authors": "Do not hand-write `@hoist` without `pathConfig`. Prefer a hoist-field compose transform, which emits the path.",
+          "implementers": "Require an array of path segments (strings and/or `{ fieldName, filterArgs }` objects). Use it to rewrite selections along the hoisted path. Reject non-arrays at validation time.",
+          "example": "pathConfig: [\"users\", \"results\"]",
+          "validation": "Must be an array when present. Reject non-array values. Executable apps require a non-empty array."
         }
       }
     }

@@ -1,4 +1,4 @@
-# Mesh SQL v0.1
+# sql v0.1
 # @link(url: "https://specs.graphql-mesh.dev/sql/v0.1", import: ["@sql"])
 
 enum SqlKind {

@@ -10,6 +10,8 @@ import { fileURLToPath } from 'node:url';
 const root = dirname(fileURLToPath(import.meta.url));
 const outDir = join(root, 'out');
 const origin = 'https://specs.graphql-mesh.dev';
+const siteTitle = 'GraphQL Mesh Directives Specification';
+const siteBrand = 'Directives Spec';
 
 const families = JSON.parse(readFileSync(join(root, 'families.json'), 'utf8'));
 
@@ -146,17 +148,30 @@ function parseDirectiveArgs(text) {
     .filter(Boolean);
 }
 
-function audienceBlock({ id, secid, title, intro, compose, loaders, runtime, example }) {
+function audienceBlock({
+  id,
+  secid,
+  title,
+  intro,
+  compose,
+  loaders,
+  runtime,
+  validation,
+  example,
+}) {
   const parts = [];
   if (intro) parts.push(prose(intro));
   if (compose) {
     parts.push(`<h4 class="spec-subhead">Compose</h4>${prose(compose)}`);
   }
   if (loaders) {
-    parts.push(`<h4 class="spec-subhead">Loaders</h4>${prose(loaders)}`);
+    parts.push(`<h4 class="spec-subhead">Schema linking</h4>${prose(loaders)}`);
   }
   if (runtime) {
-    parts.push(`<h4 class="spec-subhead">Gateway / runtime</h4>${prose(runtime)}`);
+    parts.push(`<h4 class="spec-subhead">Runtime</h4>${prose(runtime)}`);
+  }
+  if (validation) {
+    parts.push(`<h4 class="spec-subhead">Validation</h4>${prose(validation)}`);
   }
   if (example) parts.push(exampleFigure(example));
   return `
@@ -177,6 +192,11 @@ function argDocBlock({ argId, secid, name, type, doc }) {
   if (d.constraints) {
     meta.push(
       `<dt>Constraints</dt><dd>${esc(d.constraints).replace(/`([^`]+)`/g, '<code>$1</code>')}</dd>`,
+    );
+  }
+  if (d.validation) {
+    meta.push(
+      `<dt>Validation</dt><dd>${esc(d.validation).replace(/`([^`]+)`/g, '<code>$1</code>')}</dd>`,
     );
   }
   return `
@@ -234,12 +254,12 @@ function layout({ title, body, canonical }) {
 </head>
 <body>
 <header class="site-bar">
-  <a class="brand" href="/">Mesh Specs</a>
+  <a class="brand" href="/">${esc(siteBrand)}</a>
   <span class="origin">${esc(origin)}</span>
 </header>
 ${body}
 <footer class="site-bar foot">
-  <p>Family URLs are Mesh <code>@link</code> identifiers. Each page includes a TOC, numbered definitions, dual-audience argument docs, and raw <code>.graphql</code>.</p>
+  <p>${esc(siteTitle)}. Family URLs are Federation <code>@link</code> identifiers. Each page documents schema authors and implementers, with numbered definitions and raw <code>.graphql</code>.</p>
   <p><a href="https://github.com/ardatan/graphql-mesh">ardatan/graphql-mesh</a></p>
 </footer>
 </body>
@@ -270,8 +290,8 @@ function familyPage(family, sdl, docs) {
   <p>${esc(family.summary)}</p>
   <p class="url"><code>${esc(url)}</code>
     · <a href="/${esc(family.name)}/${esc(version)}.graphql">raw GraphQL</a></p>
-  <p class="stamp"><strong>Stamp:</strong> ${esc(family.stamp || 'see inventory')}</p>
-  <p>Each directive below has separate guidance for <strong>schema authors</strong> (how to write and use the annotation) and <strong>implementers</strong> (compose, loaders, Gateway/runtime) so another stack can reimplement from this page alone.</p>
+  <p class="stamp"><strong>How to import:</strong> ${esc(family.stamp || 'see @link example below')}</p>
+  <p>This is a specification: each directive explains <strong>how it works for schema authors</strong> and <strong>what an implementer must do</strong>. Import names with Federation <code>@link</code> as shown.</p>
   <figure class="spec-example">
     <figcaption>Example @link usage</figcaption>
     <pre class="graphql"><code>extend schema
@@ -368,6 +388,7 @@ function familyPage(family, sdl, docs) {
       compose: dd.implementers?.compose,
       loaders: dd.implementers?.loaders,
       runtime: dd.implementers?.runtime,
+      validation: dd.implementers?.validation,
       example: dd.implementers?.example,
     })}
     ${argBlocks}
@@ -382,11 +403,11 @@ function familyPage(family, sdl, docs) {
 </section>`);
 
   return layout({
-    title: `${family.title} ${version}`,
+    title: `${family.title} ${version} · ${siteTitle}`,
     canonical: url,
     body: `
 <article class="spec-page">
-  <p class="crumb"><a href="/">specs</a> / ${esc(family.name)} / ${esc(version)}</p>
+  <p class="crumb"><a href="/">${esc(siteBrand)}</a> / ${esc(family.name)} / ${esc(version)}</p>
   <h1 class="page-title">${esc(family.title)} <span class="ver">${esc(version)}</span></h1>
   <p class="lede">${esc(family.summary)}</p>
   <nav class="spec-toc">
@@ -433,15 +454,16 @@ families.forEach((family, index) => {
 writeFileSync(
   join(outDir, 'index.html'),
   layout({
-    title: 'GraphQL Mesh Specs',
+    title: siteTitle,
     canonical: `${origin}/`,
     body: `
 <article class="spec-page home">
-  <h1 class="page-title">GraphQL Mesh Specs</h1>
-  <p class="lede">Directive families for Mesh <code>@link</code> stamps at
+  <h1 class="page-title">${esc(siteTitle)}</h1>
+  <p class="lede">Specification of GraphQL Mesh directive families published at
   <code>${esc(origin)}/&lt;family&gt;/v0.1</code>.
-  Family pages include overview, TOC, numbered definitions, dual-audience argument docs
-  (schema authors vs implementers), and raw GraphQL.</p>
+  Each family page is written for <strong>schema authors</strong> and <strong>implementers</strong>:
+  how the directive works, and what a conforming implementation must do — with overview, TOC,
+  numbered definitions, and raw GraphQL.</p>
   <nav class="spec-toc">
     <div class="title">Contents</div>
     <ol>
@@ -467,8 +489,8 @@ writeFileSync(
     <ul>
       <li>HTTP/REST Connectors <code>@connect</code> / <code>@source</code>: <a href="https://specs.apollo.dev/connect/v0.2">specs.apollo.dev/connect</a></li>
       <li>Federation / join / link specs: <a href="https://specs.apollo.dev/">specs.apollo.dev</a></li>
-      <li>Federation Spec draft <code>@lookup</code> / <code>@is</code> / <code>@internal</code>: <a href="https://graphql.github.io/graphql-federation-spec/draft">graphql.github.io/graphql-federation-spec/draft</a> (not Mesh-owned; not published here)</li>
-      <li>Legacy Mesh catch-all (read-only): <code>https://the-guild.dev/graphql/mesh/spec/v1.0</code></li>
+      <li>Federation Spec draft <code>@lookup</code> / <code>@is</code> / <code>@internal</code>: <a href="https://graphql.github.io/graphql-federation-spec/draft">graphql.github.io/graphql-federation-spec/draft</a> (not published here)</li>
+      <li>Legacy catch-all (read-only): <code>https://the-guild.dev/graphql/mesh/spec/v1.0</code></li>
     </ul>
   </section>
 </article>
@@ -479,14 +501,14 @@ writeFileSync(
 writeFileSync(
   join(outDir, '404.html'),
   layout({
-    title: 'Not found — GraphQL Mesh Specs',
+    title: `Not found · ${siteTitle}`,
     canonical: `${origin}/404.html`,
     body: `
 <article class="spec-page">
   <h1 class="page-title">Not found</h1>
-  <p class="lede">No Mesh spec page at this path. Published families live under
+  <p class="lede">No specification page at this path. Published directive families live under
   <code>${esc(origin)}/&lt;family&gt;/v0.1</code> (and sibling <code>.graphql</code>).</p>
-  <p><a href="/">Back to Current Specs</a></p>
+  <p><a href="/">Back to ${esc(siteTitle)}</a></p>
 </article>
 `,
   }),

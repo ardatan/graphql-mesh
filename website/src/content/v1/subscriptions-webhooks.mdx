@@ -15,10 +15,8 @@ built-in PubSub implementation
 
 ## Add a new Subscription field
 
-You can use `additionalTypeDefs` and the `@resolveTo` directive (see
-[core/v0.1](https://specs.graphql-mesh.dev/core/v0.1#@resolveTo); PubSub-only binders also live
-under [pubsub/v0.1](https://specs.graphql-mesh.dev/pubsub/v0.1)) to add subscription root fields to
-your unified schema.
+You can use `additionalTypeDefs` and `resolveTo` directive to add subscription root fields to your
+unified schema.
 
 If you subscribe a pubSub topic with `webhook:EXPECTED_METHOD:EXPECTED_PATH`, the server will
 automatically bind that path to that topic.

@@ -3,57 +3,60 @@
     "@protobuf__rpc": {
       "summary": "Protobuf / gRPC RPC mapping for fields or entity object types.",
       "authors": {
-        "intro": "Emitted by the protobuf loader. Pair with `@transport` for the gRPC endpoint.",
+        "intro": "Pair with `@transport` for the gRPC endpoint.",
         "example": "type Query {\n  moviesByYear(year: Int!): MoviesResult!\n    @protobuf__rpc(\n      service: \"Example\"\n      method: \"GetMovies\"\n      args: \"\"\"\n        1(message): $args {\n          2(int64): $args.year\n        }\n      \"\"\"\n      selection: \"\"\"\n        1(repeated message): result {\n          1(string): name\n          2(int64): year\n        }\n      \"\"\"\n    )\n}"
       },
       "implementers": {
-        "loaders": "`meshSpecUrl(\"protobuf\")` stamps.",
+        "loaders": "Schemas that use `@protobuf__rpc` must `@link` this family and import the directive.",
         "compose": "May rewrite mapping binds under renames.",
-        "runtime": "Encode `args`, invoke `service`/`method`, decode `selection`. `stream: true` yields AsyncIterable; `entity: true` wires entity resolve."
+        "runtime": "On resolve: encode request from `args` → send to `service`/`method` at `@transport(location:)` → decode response with `selection`. If `stream`, yield an AsyncIterable of decoded chunks. Transport/RPC failures become GraphQL field errors.",
+        "validation": "Require `method` (and `service` for a real call). `stream: true` is invalid on unary-only HTTP transports. `subgraph`, when present, must match the composition subgraph name."
       },
       "args": {
         "subgraph": {
-          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
-          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
         },
         "service": {
           "defaults": "Optional in SDL; required for a real call.",
           "constraints": "Protobuf service name (package-qualified or short).",
           "authors": "Service hosting the method.",
-          "implementers": "gRPC path / stub selection."
+          "implementers": "Resolve the gRPC/Connect service path together with `method`. Required to place the call."
         },
         "method": {
           "defaults": "Optional in SDL; required for a real call.",
           "constraints": "RPC method name.",
           "authors": "Method to invoke.",
-          "implementers": "RPC name on the wire."
+          "implementers": "RPC method name on the wire, combined with `service`.",
+          "validation": "Must be a non-empty string for executable apps."
         },
         "args": {
           "defaults": "Optional.",
           "constraints": "Compact GraphQL → protobuf request mapping with `$args` / `$this`.",
-          "authors": "Request body mapping.",
-          "implementers": "Request encoder."
+          "authors": "Describe how GraphQL arguments (and `$this` for entity roots) build the protobuf request.",
+          "implementers": "When it runs: Before the RPC is sent, when resolving the annotated field (or entity fill).\n\nInput: GraphQL `args` (and parent/`$this` for entity-style roots) plus the parsed `args` mapping (`fieldId(type): $args…` / `$this…` with nested messages).\n\nOutput: Encoded protobuf request bytes for `service`/`method`.\n\nErrors: Invalid mapping or unbound required fields fail the field with a GraphQL error; do not send a partial request."
         },
         "selection": {
           "defaults": "Optional.",
           "constraints": "Compact protobuf → GraphQL field mapping.",
-          "authors": "Response projection.",
-          "implementers": "Response decoder."
+          "authors": "Describe how each protobuf response field becomes a GraphQL value. Use nested blocks for messages and `repeated` for lists.",
+          "implementers": "When it runs: After a successful RPC response (unary bytes, or each streamed chunk), before the GraphQL field value is returned.\n\nInput: Wire response bytes from the RPC, plus the parsed `selection` mapping (`fieldId(type): graphqlBind` with nested `{ … }`; optional leading `@TypeName { … }` reusable defs).\n\nOutput: A GraphQL-shaped value: scalars/enums/messages projected into objects/lists per the mapping. Absent implicit-presence fields materialize wire defaults; explicit/`optional` fields stay unset when absent.\n\nErrors: Malformed mapping text fails schema/resolver setup. Decode/wire errors become GraphQL field errors (do not return a partial object unless the mapping explicitly allows sparse binds)."
         },
         "stream": {
           "defaults": "Optional boolean (false).",
           "constraints": "True for server-streaming RPCs.",
           "authors": "Mark streaming methods (Subscription or `@stream` AsyncIterable).",
-          "implementers": "Use streaming stub; return AsyncIterable."
+          "implementers": "When true, use a server-streaming call and return an AsyncIterable of decoded messages (one `selection` decode per chunk). Unary HTTP transports must reject streaming.",
+          "validation": "If true, the transport must support server streaming; otherwise reject."
         },
         "entity": {
           "defaults": "Optional boolean.",
           "constraints": "True to register as Mesh entity resolver on Query fields / OBJECT apps.",
           "authors": "Entity fill RPCs.",
-          "implementers": "Wire `_entities` / `resolveReference`."
+          "implementers": "When true, treat the field/type as an entity/reference resolver: encode from the representation/`$this`, invoke the RPC, decode with `selection`, and return the entity object."
         }
       }
     }

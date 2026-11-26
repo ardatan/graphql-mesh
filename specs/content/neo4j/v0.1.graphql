@@ -1,4 +1,4 @@
-# Mesh Neo4j v0.1
+# neo4j v0.1
 # @link(url: "https://specs.graphql-mesh.dev/neo4j/v0.1", import: [...])
 
 enum _RelationDirections {

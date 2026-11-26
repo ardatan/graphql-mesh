@@ -10,65 +10,69 @@
     "@thrift__rpc": {
       "summary": "Binary Thrift RPC field mapping. JSON Thrift uses Connectors `@connect`, not this directive.",
       "authors": {
-        "intro": "Emitted by the Thrift loader in binary mode. Pair with `@transport(kind: \"thrift\")`.",
+        "intro": "Pair with `@transport(kind: \"thrift\")`.",
         "example": "type Query {\n  add(request: AddRequestInput): Int\n    @thrift__rpc(\n      function: \"add\"\n      args: \"\"\"\n        1(struct): $args.request {\n          1(i32): left\n          2(i32): right\n        }\n      \"\"\"\n      selection: \"$(i32)\"\n      messageType: CALL\n    )\n}"
       },
       "implementers": {
-        "loaders": "`meshSpecUrl(\"thrift\")`; compact `args`/`selection`/`throws` emitters.",
-        "runtime": "Encode request from `args`, call `function` on `@transport(location:)`, decode with `selection`. Honor `messageType` and `throws`."
+        "loaders": "Schemas that use `@thrift__rpc` must `@link` this family; include compact `args` / `selection` / `throws` as required.",
+        "runtime": "On resolve: encode `args` → send Thrift `function` to `@transport(location:)` with `messageType` → if CALL, decode success via `selection` or map `throws`. ONEWAY skips reply decode.",
+        "validation": "Require non-empty `function` and `selection`. `messageType`, when present, must be `CALL` or `ONEWAY`. `subgraph`, when present, must match the composition subgraph name."
       },
       "args": {
         "subgraph": {
-          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
-          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
         },
         "service": {
           "defaults": "Optional.",
           "constraints": "Documentation / tooling name; binary executor does not use it for HTTP path (location carries the endpoint).",
           "authors": "Optional service label on hand SDL.",
-          "implementers": "Do not require for binary path selection."
+          "implementers": "Optional label only; the binary executor uses `@transport(location:)` for the endpoint."
         },
         "function": {
           "defaults": "Required (`String!`).",
           "constraints": "IDL function name.",
           "authors": "RPC method invoked on the wire.",
-          "implementers": "Thrift message name.",
-          "example": "function: \"add\""
+          "implementers": "Thrift message/function name written on the CALL/ONEWAY.",
+          "example": "function: \"add\"",
+          "validation": "Must be a non-empty string."
         },
         "args": {
           "defaults": "Optional; omit entirely when the RPC takes no arguments (do not emit empty string).",
           "constraints": "Compact `id(wire): $args…` mapping.",
-          "authors": "GraphQL args → Thrift fields.",
-          "implementers": "Request encoder input."
+          "authors": "Map GraphQL arguments into Thrift request fields.",
+          "implementers": "When it runs: Before writing the Thrift CALL/ONEWAY message.\n\nInput: GraphQL field arguments and the compact `args` mapping (`id(wire): $args…` with nested structs).\n\nOutput: The Thrift request struct fields on the wire for `function`.\n\nErrors: Invalid mapping fails resolver setup or the field; omit `args` entirely when the RPC takes no arguments (do not send an empty string mapping)."
         },
         "selection": {
           "defaults": "Required (`String!`).",
           "constraints": "Compact result mapping (`field: id(wire)` or `$(wire)`).",
-          "authors": "Thrift result → GraphQL value.",
-          "implementers": "Response decoder.",
-          "example": "selection: \"$(i32)\""
+          "authors": "Map the Thrift success value into the GraphQL field result (`$(i32)` for scalars, or named fields for structs).",
+          "implementers": "When it runs: After a successful Thrift reply is read (skipped entirely for `messageType: ONEWAY`).\n\nInput: The success payload from the reply (field-id map or scalar) and the compact `selection` string (`$(wire)` for a scalar result, or `graphqlName: id(wire)` / nested blocks for structs; optional `->match` arms).\n\nOutput: The GraphQL field value: a scalar, object, or list projected from wire fields. `$(void)` yields null.\n\nErrors: Declared `throws` mappings decode exception structs into GraphQL errors (or union members when modeled). Unknown exception ids / decode failures are field errors. ONEWAY never decodes a body.",
+          "example": "selection: \"$(i32)\"",
+          "validation": "Must be a non-empty compact selection string."
         },
         "throws": {
           "defaults": "Optional.",
           "constraints": "Compact IDL throws mapping when errors are modeled.",
           "authors": "Map declared exceptions into GraphQL error/union handling.",
-          "implementers": "Decode exception fields when `ignoreErrorResponses` is false."
+          "implementers": "When it runs: When the reply carries an exception field instead of success (ignored for ONEWAY).\n\nInput: Exception field id/struct from the reply and the compact `throws` mapping.\n\nOutput: A GraphQL error (or modeled union member) describing the exception.\n\nErrors: Unmapped exception ids are field errors unless the runtime is configured to ignore them."
         },
         "messageType": {
           "defaults": "Default `CALL`.",
           "constraints": "`CALL` | `ONEWAY`.",
           "authors": "Use `ONEWAY` for void fire-and-forget.",
-          "implementers": "Set Thrift message type; skip reply decode for ONEWAY.",
-          "example": "messageType: ONEWAY"
+          "implementers": "`CALL` waits for and decodes a reply; `ONEWAY` sends and returns without reading a body.",
+          "example": "messageType: ONEWAY",
+          "validation": "If present, must be `CALL` or `ONEWAY`."
         },
         "entity": {
           "defaults": "Optional boolean.",
           "constraints": "When true on a Query field, treat as entity resolver for Mesh `_entities`.",
           "authors": "Mark entity lookup RPCs.",
-          "implementers": "Wire `resolveReference` / entity batching."
+          "implementers": "When true on a Query field, register as an entity/reference resolver for federation entity flows."
         }
       }
     }

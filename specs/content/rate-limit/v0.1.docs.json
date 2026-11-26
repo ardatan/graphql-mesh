@@ -1,48 +1,52 @@
 {
   "directives": {
     "@rateLimit": {
-      "summary": "Field-level rate limit hint consumed when Hive Gateway `rateLimiting` is enabled (graphql-rate-limit style).",
+      "summary": "Declares a per-field rate limit (max requests in a time window, optionally keyed by identity and arguments).",
       "authors": {
-        "intro": "Import from `https://specs.graphql-mesh.dev/rate-limit/v0.1`. Enable rate limiting in Gateway config or the directive is inert.",
+        "intro": "Import with `@link(url: \"https://specs.graphql-mesh.dev/rate-limit/v0.1\", import: [\"@rateLimit\"])` and `@composeDirective` so composition keeps the directive. Annotate fields that should be throttled. Without a conforming enforcer the annotation is inert.",
         "example": "extend schema\n  @link(url: \"https://specs.apollo.dev/federation/v2.6\", import: [\"@composeDirective\"])\n  @link(url: \"https://specs.graphql-mesh.dev/rate-limit/v0.1\", import: [\"@rateLimit\"])\n  @composeDirective(name: \"@rateLimit\")\n\ntype Query {\n  search(q: String!): [Item!]!\n    @rateLimit(max: 10, window: \"1s\", identityArgs: [\"q\"])\n}"
       },
       "implementers": {
-        "compose": "Hand `@link` + `@composeDirective(name: \"@rateLimit\")` so composition exposes the directive on the SG; preserve args.",
-        "runtime": "Gateway rateLimiting plugin reads apps and enforces windows per identity key."
+        "intro": "On each annotated field resolve, compute an identity key (viewer + optional `identityArgs` + optional array-length cost), then allow or reject according to `max` / `window`. On reject, return a GraphQL field error using `message` when set.",
+        "compose": "Preserve `@rateLimit` and its args on the Supergraph.",
+        "runtime": "Enforce before or around the field resolver. Track counts per identity key for the window; exceeding `max` fails the field.",
+        "validation": "When enforcing, require a positive `max` and a parseable `window`. `identityArgs` / `arrayLengthField`, when present, must name existing field arguments."
       },
       "args": {
         "max": {
           "defaults": "Optional Int; required for enforcement in practice.",
-          "constraints": "Positive maximum requests per window.",
-          "authors": "Tokens allowed in the window.",
-          "implementers": "Ceiling for the rate limiter.",
-          "example": "max: 10"
+          "constraints": "Positive maximum requests (or tokens) per window.",
+          "authors": "How many allowed hits in the window.",
+          "implementers": "Ceiling for the counter / token bucket.",
+          "example": "max: 10",
+          "validation": "If present, must be a positive integer."
         },
         "window": {
           "defaults": "Optional.",
-          "constraints": "Duration string (e.g. `1s`, `1m`) per graphql-rate-limit conventions.",
-          "authors": "How long the window lasts.",
-          "implementers": "Parse to TTL / window ms.",
-          "example": "window: \"1s\""
+          "constraints": "Duration string (e.g. `1s`, `1m`).",
+          "authors": "Length of the rate window.",
+          "implementers": "Parse to a time-to-live / window length.",
+          "example": "window: \"1s\"",
+          "validation": "If present, must parse as a duration (e.g. `1s`, `1m`)."
         },
         "message": {
           "defaults": "Optional.",
           "constraints": "Error message when limited.",
-          "authors": "Client-facing limit error text.",
-          "implementers": "Attach to GraphQL error."
+          "authors": "Client-facing text when the limit is hit.",
+          "implementers": "Attach to the GraphQL error on reject."
         },
         "identityArgs": {
           "defaults": "Optional.",
           "constraints": "Argument names included in the rate-limit identity key.",
           "authors": "Scope limits per argument values (e.g. per search query).",
-          "implementers": "Hash into identity alongside viewer identity.",
+          "implementers": "Include these arg values in the identity hash alongside viewer identity.",
           "example": "identityArgs: [\"q\"]"
         },
         "arrayLengthField": {
           "defaults": "Optional.",
           "constraints": "Argument name whose array length multiplies cost.",
-          "authors": "Charge N tokens for array inputs of length N.",
-          "implementers": "Multiply token cost by array length."
+          "authors": "Charge N tokens for an array input of length N.",
+          "implementers": "Multiply token cost by that argument’s array length."
         }
       }
     }

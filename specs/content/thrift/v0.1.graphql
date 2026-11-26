@@ -1,4 +1,4 @@
-# Mesh Thrift v0.1
+# thrift v0.1
 # @link(url: "https://specs.graphql-mesh.dev/thrift/v0.1", import: ["@thrift__rpc"])
 
 enum ThriftMessageType {

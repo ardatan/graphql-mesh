@@ -1,4 +1,4 @@
-# Mesh Protobuf v0.1
+# protobuf v0.1
 # @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
 
 directive @protobuf__rpc(

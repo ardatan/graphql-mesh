@@ -15,23 +15,7 @@ This approach follows the pattern of
 [`graphql-rate-limit`](https://github.com/teamplanes/graphql-rate-limit/blob/master/README.md#field-config).
 
 To set rate limit hints in your subgraph schema, the `@rateLimit` directive definition should be
-included in the subgraph schema (Mesh family
-[rate-limit/v0.1](https://specs.graphql-mesh.dev/rate-limit/v0.1)):
-
-```graphql
-extend schema
-  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
-  @link(url: "https://specs.graphql-mesh.dev/rate-limit/v0.1", import: ["@rateLimit"])
-  @composeDirective(name: "@rateLimit")
-
-directive @rateLimit(
-  max: Int
-  window: String
-  message: String
-  identityArgs: [String]
-  arrayLengthField: String
-) on FIELD_DEFINITION
-```
+included in the subgraph schema
 
 <Callout>
   The gateway's rate limiting feature should be enabled.

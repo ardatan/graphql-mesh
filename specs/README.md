@@ -1,11 +1,11 @@
-# GraphQL Mesh Specs
+# GraphQL Mesh Directives Specification
 
-Static site for Mesh `@link` directive families hosted at
+Static site for the GraphQL Mesh Directives Specification hosted at
 [https://specs.graphql-mesh.dev](https://specs.graphql-mesh.dev).
 
-Index lists Current Specs and All Schemas. Each family page has a TOC, numbered directive /
-schema-addition sections, dual-audience argument docs (schema authors vs implementers), and a
-sibling raw `.graphql` artifact.
+Index lists Current Specs and All Schemas. Each family page is written for schema authors and
+implementers (how each directive works, and what a conforming implementation must do), with a TOC,
+numbered definitions, and a sibling raw `.graphql` artifact.
 
 ## Layout
 
@@ -37,8 +37,10 @@ npx --yes serve specs/out
 
 ## Deploy
 
-GitHub Actions workflow `.github/workflows/specs.yml` deploys `specs/out` to the Cloudflare Pages
-project `graphql-mesh-specs` (same account secrets as the main website). Production URLs:
+GitHub Actions workflow `.github/workflows/specs.yml` runs only when `specs/**` or the workflow file
+changes (not on every PR). It deploys `specs/out` to the Cloudflare Pages project
+`graphql-mesh-specs` (same account secrets as the main website). On pull requests it posts a sticky
+preview comment with the Pages alias URL (same pattern as the website workflow). Production URLs:
 
 - https://specs.graphql-mesh.dev
 - https://graphql-mesh-specs.pages.dev

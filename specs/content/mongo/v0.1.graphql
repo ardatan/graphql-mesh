@@ -1,4 +1,4 @@
-# Mesh Mongo v0.1
+# mongo v0.1
 # @link(url: "https://specs.graphql-mesh.dev/mongo/v0.1", import: [...])
 
 directive @mongo__findOne(

@@ -1,173 +1,194 @@
 {
   "enums": {
     "_RelationDirections": {
-      "summary": "Neo4j relationship direction relative to the annotated field.",
-      "authors": "`IN` or `OUT` as in `@neo4j/graphql`.",
-      "implementers": "Pass through to `@neo4j/graphql`; strip Mesh-only `subgraph` before handing model SDL to Neo4j GraphQL."
+      "summary": "Direction of a relationship relative to the annotated field.",
+      "authors": "`IN` means the relationship points into this node; `OUT` means it points out from this node.",
+      "implementers": "Treat as the edge direction when planning traversals for `@relationship`. Reject values other than `IN` / `OUT`."
     }
   },
   "directives": {
     "@node": {
-      "summary": "Neo4j GraphQL node type. Mesh adds optional `subgraph` for multi-source attribution.",
+      "summary": "Marks a GraphQL object type as a graph node. Optional `subgraph` attributes multi-source ownership; optional `labels` name the node labels in the graph store.",
       "authors": {
-        "intro": "Author Neo4j GraphQL SDL as usual; prefer explicit `subgraph` when composing multiple Neo4j sources. The loader stamps it when missing.",
+        "intro": "Put `@node` on object types that represent graph nodes. Queries and mutations over that type then treat it as a node (labels default to the GraphQL type name unless you set `labels`). When several Neo4j sources are composed, set `subgraph` to the same composition name used elsewhere for that source.",
         "example": "type Movie @node(labels: [\"Film\"]) { title: String! }"
       },
       "implementers": {
-        "loaders": "Stamp `subgraph`; `meshSpecUrl(\"neo4j\")`.",
-        "runtime": "Strip `subgraph` before `@neo4j/graphql` schema construction; keep labels for DB identity across renames."
+        "intro": "`subgraph` is composition metadata only — it does not change graph labels. Use `labels` (or the type name) as the node’s store identity. Do not require a particular library API.",
+        "loaders": "Schemas that use `@node` must `@link` this family and import the directive. Preserve apps through Supergraph composition.",
+        "runtime": "Resolve the type as a node with the given labels. Ignore `subgraph` for store I/O; use it only to attribute ownership in a multi-source Supergraph.",
+        "validation": "Reject unknown args. When `labels` is present it must be a list of strings. When `subgraph` is present it must be a string matching the composition subgraph name for that source."
       },
       "args": {
         "subgraph": {
-          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
-          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
-          "example": "subgraph: \"shop\""
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Never invent a second name for the same source. Do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
         },
         "labels": {
-          "defaults": "Optional.",
-          "constraints": "Neo4j labels for the node.",
-          "authors": "Override default label (= type name).",
-          "implementers": "Forward to Neo4j GraphQL `@node(labels:)`.",
+          "defaults": "Optional; default label is the GraphQL type name.",
+          "constraints": "List of node label strings in the graph store.",
+          "validation": "If present, must be a list of strings (may be empty only if the runtime documents that case; prefer at least one label).",
+          "authors": "Override the default label when the store uses different label names than the GraphQL type.",
+          "implementers": "Use these labels for node identity and Cypher/MATCH planning. If omitted, use the GraphQL type name as the sole label.",
           "example": "labels: [\"Film\"]"
         }
       }
     },
     "@relationshipProperties": {
-      "summary": "Marks an object type as Neo4j relationship properties.",
+      "summary": "Marks an object type as the property bag carried on a relationship (not a node).",
       "authors": {
-        "intro": "Same as `@neo4j/graphql`; Mesh may stamp `subgraph`."
+        "intro": "Put `@relationshipProperties` on the object type that holds edge properties. Reference that type name from `@relationship(properties:)`."
       },
       "implementers": {
-        "runtime": "Strip `subgraph`; pass through to Neo4j GraphQL."
+        "runtime": "Treat the type as relationship properties, not as a node. `subgraph` is composition metadata only.",
+        "validation": "Reject unknown args. `subgraph`, when present, must be a string matching the composition subgraph name."
       },
       "args": {
         "subgraph": {
-          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
-          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
-          "example": "subgraph: \"shop\""
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute ownership only; do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
         }
       }
     },
     "@relationship": {
-      "summary": "Neo4j relationship field.",
+      "summary": "Declares that a field is a graph relationship to another node type, with a relationship type name and direction.",
       "authors": {
-        "intro": "Declare relationship type, direction, and optional properties type name.",
+        "intro": "Annotate fields that traverse to related nodes. `type` is the relationship type in the store; `direction` is relative to this field’s node; `properties` names an optional `@relationshipProperties` type.",
         "example": "actors: [Person!]! @relationship(type: \"ACTED_IN\", direction: IN)"
       },
       "implementers": {
-        "runtime": "Strip `subgraph`; forward remaining args to Neo4j GraphQL."
+        "runtime": "Plan traversals using `type` + `direction` (+ `properties` when set). `subgraph` is composition metadata only.",
+        "validation": "Require `type` for an executable relationship. `direction`, when present, must be `IN` or `OUT`. `properties`, when present, must name a type marked `@relationshipProperties`."
       },
       "args": {
         "subgraph": {
-          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
-          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
-          "example": "subgraph: \"shop\""
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute ownership only; do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
         },
         "type": {
-          "defaults": "Optional in Mesh SDL; required for a real relationship in Neo4j GraphQL.",
-          "constraints": "Relationship type name in the graph.",
-          "authors": "Neo4j relationship type.",
-          "implementers": "Pass through as `type`."
+          "defaults": "Required for a usable relationship.",
+          "constraints": "Relationship type name in the graph store.",
+          "validation": "Reject empty or missing `type` for executable apps.",
+          "authors": "The relationship type stored on the edge.",
+          "implementers": "Use as the relationship type in traversal planning."
         },
         "direction": {
           "defaults": "Optional.",
           "constraints": "`IN` | `OUT`.",
-          "authors": "Edge direction relative to this field.",
-          "implementers": "Pass through as `direction`."
+          "validation": "If present, must be exactly `IN` or `OUT`.",
+          "authors": "Edge direction relative to this field’s node.",
+          "implementers": "Orient MATCH/expand accordingly."
         },
         "properties": {
           "defaults": "Optional.",
-          "constraints": "Name of the `@relationshipProperties` type.",
-          "authors": "Attach properties type.",
-          "implementers": "Pass through as `properties`."
+          "constraints": "Name of a type marked `@relationshipProperties`.",
+          "validation": "If present, must refer to a type that carries `@relationshipProperties`.",
+          "authors": "Attach a properties type to this relationship.",
+          "implementers": "Bind edge properties to that type’s fields."
         }
       }
     },
     "@alias": {
-      "summary": "Maps a GraphQL field to a Neo4j property name.",
+      "summary": "Maps a GraphQL field to a different property key in the graph store.",
       "authors": {
-        "intro": "Keep database property identity when GraphQL names differ (important under renames).",
+        "intro": "Use when the GraphQL field name differs from the stored property key (including after renames). Queries still use the GraphQL name; persistence uses `property`.",
         "example": "title: String! @alias(property: \"movie_title\")"
       },
       "implementers": {
-        "runtime": "Strip `subgraph`; forward `property` to Neo4j GraphQL."
+        "runtime": "Read/write the store property named by `property` for this GraphQL field. `subgraph` is composition metadata only.",
+        "validation": "Require non-empty `property`. `subgraph`, when present, must match the composition subgraph name."
       },
       "args": {
         "subgraph": {
-          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
-          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
-          "example": "subgraph: \"shop\""
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute ownership only; do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
         },
         "property": {
           "defaults": "Required (`String!`).",
-          "constraints": "Neo4j property key.",
-          "authors": "DB property name.",
-          "implementers": "Pass through as `property`.",
+          "constraints": "Property key in the graph store.",
+          "validation": "Must be a non-empty string.",
+          "authors": "Stored property name for this field.",
+          "implementers": "Map GraphQL field ↔ this property key on read/write.",
           "example": "property: \"movie_title\""
         }
       }
     },
     "@cypher": {
-      "summary": "Custom Cypher resolver for a field.",
+      "summary": "Resolves a field with a custom Cypher statement, taking the named return column as the field value.",
       "authors": {
-        "intro": "Provide `statement` and `columnName` per Neo4j GraphQL.",
+        "intro": "Provide `statement` (Cypher) and `columnName` (the return alias used as the field result). `this` refers to the current node when the field is on a node type.",
         "example": "friends: [Person!]! @cypher(statement: \"MATCH (this)-[:KNOWS]->(p) RETURN p\", columnName: \"p\")"
       },
       "implementers": {
-        "runtime": "Strip `subgraph`; forward Cypher args to Neo4j GraphQL."
+        "runtime": "Run `statement` in the field’s context; take the value of `columnName` from the result as the GraphQL field value. `subgraph` is composition metadata only.",
+        "validation": "Require non-empty `statement` and `columnName`. Reject unknown args."
       },
       "args": {
         "subgraph": {
-          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
-          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
-          "example": "subgraph: \"shop\""
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute ownership only; do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
         },
         "statement": {
           "defaults": "Required (`String!`).",
           "constraints": "Cypher query string.",
-          "authors": "Query body; `this` is the current node when applicable.",
-          "implementers": "Pass through as `statement`."
+          "validation": "Must be a non-empty string.",
+          "authors": "Query body; use `this` for the current node when applicable.",
+          "implementers": "Execute as the field’s Cypher body."
         },
         "columnName": {
           "defaults": "Required (`String!`).",
-          "constraints": "Return column alias.",
-          "authors": "Column selected from the Cypher result.",
-          "implementers": "Pass through as `columnName`."
+          "constraints": "Return column alias from the Cypher result.",
+          "validation": "Must be a non-empty string naming a returned column.",
+          "authors": "Which returned column becomes the GraphQL field value.",
+          "implementers": "Project that column as the field result."
         }
       }
     },
     "@plural": {
-      "summary": "Overrides plural naming for a type in Neo4j GraphQL generated API.",
+      "summary": "Overrides the plural name used for generated list/connection field names for this type.",
       "authors": {
-        "intro": "Set `value` to the plural form Neo4j GraphQL should use.",
+        "intro": "Set `value` when the default pluralization of the type name is wrong (e.g. `people` instead of `persons`).",
         "example": "type Person @node @plural(value: \"people\") { name: String! }"
       },
       "implementers": {
-        "runtime": "Strip `subgraph`; forward `value`."
+        "runtime": "Use `value` wherever plural field names are generated for this type. `subgraph` is composition metadata only.",
+        "validation": "Require non-empty `value`."
       },
       "args": {
         "subgraph": {
-          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
-          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
-          "example": "subgraph: \"shop\""
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute ownership only; do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
         },
         "value": {
           "defaults": "Required (`String!`).",
           "constraints": "Plural name string.",
-          "authors": "Plural form for generated fields.",
-          "implementers": "Pass through as `value`."
+          "validation": "Must be a non-empty string.",
+          "authors": "Plural form for generated list/connection fields.",
+          "implementers": "Substitute this string for default pluralization."
         }
       }
     }

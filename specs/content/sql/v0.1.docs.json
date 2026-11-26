@@ -9,21 +9,22 @@
   },
   "directives": {
     "@sql": {
-      "summary": "Maps a GraphQL field or object type to a SQL table/view operation for transport-sql.",
+      "summary": "Maps a GraphQL field or object type to a SQL table/view operation backed by SQL.",
       "authors": {
-        "intro": "Emitted by the SQL loader; can be hand-authored. Pair with `@transport(kind: \"sql\")` from core. Binders use `$args.*`, `$this.*`, and spreads like `...$args.where`.",
+        "intro": "Pair with `@transport(kind: \"sql\")` from core. Binders use `$args.*`, `$this.*`, and spreads like `...$args.where`.",
         "example": "albums(where: AlbumFilter, limit: Int): [Album!]!\n  @sql(\n    table: \"albums\"\n    kind: ROWS\n    where: \"$args.where\"\n    limit: \"$args.limit\"\n    selection: \"id: AlbumId\\ntitle: Title\"\n  )"
       },
       "implementers": {
-        "loaders": "`meshSpecUrl(\"sql\")` + `importMeshDirectives` for `@sql`; stamp `@transport` on core.",
-        "runtime": "Plan SQL from `kind`, `table`, binders, and `selection`. Support `$fn…` computed columns and M2M `through` blocks for ROWS."
+        "loaders": "Schemas that use `@sql` must `@link` this family; pair with `@transport` from core/v0.1.",
+        "runtime": "Plan SQL from `kind`, `table`, binders, and `selection`. Support `$fn…` computed columns and M2M `through` blocks for ROWS.",
+        "validation": "Require `table` and `kind`. `kind` must be one of ROW, ROWS, CONNECTION, COUNT, INSERT, UPDATE, DELETE. Ignore args that do not apply to that kind. `subgraph`, when present, must match the composition subgraph name."
       },
       "args": {
         "subgraph": {
-          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
-          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition — the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
           "example": "subgraph: \"shop\""
         },
         "table": {
@@ -31,14 +32,16 @@
           "constraints": "Physical table or view name.",
           "authors": "Target relation for this field/type.",
           "implementers": "FROM / DML target.",
-          "example": "table: \"albums\""
+          "example": "table: \"albums\"",
+          "validation": "Must be a non-empty string."
         },
         "kind": {
           "defaults": "Required (`SqlKind!`).",
           "constraints": "One of ROW, ROWS, CONNECTION, COUNT, INSERT, UPDATE, DELETE.",
           "authors": "Selects read vs write and cardinality.",
           "implementers": "Discriminator for planning (see enum docs).",
-          "example": "kind: CONNECTION"
+          "example": "kind: CONNECTION",
+          "validation": "Must be a defined `SqlKind` value."
         },
         "where": {
           "defaults": "Optional.",
@@ -87,8 +90,8 @@
         "selection": {
           "defaults": "Optional.",
           "constraints": "GraphQL field → SQL column / `$fn…` mapping; nested blocks for CONNECTION/payloads.",
-          "authors": "Shape returned GraphQL fields from SQL columns.",
-          "implementers": "Projection + payload wrappers.",
+          "authors": "Map GraphQL fields to SQL columns or `$fn…` computed expressions; use nested blocks for connection/payload shapes.",
+          "implementers": "When it runs: When projecting SQL row(s) / mutation payloads into the GraphQL field result.\n\nInput: Result rows (and helpers like `$affectedRows`) plus `selection` lines (`graphqlField: Column` or `$fn…`, with nested blocks for CONNECTION/payload wrappers).\n\nOutput: GraphQL-shaped objects/lists/payloads.\n\nErrors: Unknown columns / bad `$fn` references fail planning or the field.",
           "example": "selection: \"id: AlbumId\\ntitle: Title\""
         },
         "through": {

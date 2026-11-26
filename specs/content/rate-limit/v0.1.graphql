@@ -1,4 +1,4 @@
-# Mesh rate-limit v0.1
+# rate-limit v0.1
 # @link(url: "https://specs.graphql-mesh.dev/rate-limit/v0.1", import: ["@rateLimit"])
 
 directive @rateLimit(
