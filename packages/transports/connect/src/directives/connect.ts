@@ -2373,6 +2373,8 @@ export function addConnectFieldResolver(
   field: GraphQLField<any, any>,
   connectArgs: ConnectArgs,
   opts: ConnectFieldResolverOptions = {},
+  /** Declaring type of `field` — required to tell same-name fields on other types apart. */
+  declaringTypeName?: string,
 ) {
   // Second pass after `additionalTypeDefs` / wrapSchema: keep rename proxies and any
   // already-wired connect resolver - never assign `field.resolve` again.
@@ -2403,8 +2405,13 @@ export function addConnectFieldResolver(
         : undefined;
     // hydrateEntityStubFieldResolvers forwards another field's `info` into
     // resolveReference → this connector. Keep the connector's own field for
-    // argument metadata when `info` names a different field (e.g. Product.name).
-    const activeField = runtimeField && runtimeField.name === field.name ? runtimeField : field;
+    // argument metadata when `info` is a different coordinate (same name on
+    // another type, e.g. Product.product vs Query.product).
+    const sameCoordinate =
+      !!runtimeField &&
+      runtimeField.name === field.name &&
+      (!declaringTypeName || info?.parentType?.name === declaringTypeName);
+    const activeField = sameCoordinate ? runtimeField : field;
     const activeSchema = info?.schema || schema;
 
     // When `$expand` / parent selection already put this field on `root`, skip HTTP.
@@ -3227,7 +3234,7 @@ export function processConnectDirectives(
           args: [],
           extensions: {},
         } as unknown as GraphQLField<any, any>;
-        addConnectFieldResolver(schema, syntheticField, connectArgs, fieldOpts);
+        addConnectFieldResolver(schema, syntheticField, connectArgs, fieldOpts, typeName);
         const resolve = syntheticField.resolve;
         if (resolve) {
           setTypeResolveReference(type, (reference, context, info) =>
@@ -3252,7 +3259,13 @@ export function processConnectDirectives(
       }
       // First connect wins for execution (repeatable for schema merge cases)
       const connectArgs = directives[0];
-      addConnectFieldResolver(schema, field as GraphQLField<any, any>, connectArgs, fieldOpts);
+      addConnectFieldResolver(
+        schema,
+        field as GraphQLField<any, any>,
+        connectArgs,
+        fieldOpts,
+        typeName,
+      );
       // Query `@connect(entity: true)` → type.resolveReference (Federation `_entities`).
       if (connectArgs.entity && type === queryType && isObjectType(getNamedType(field.type))) {
         const returnType = getNamedType(field.type) as GraphQLObjectType;

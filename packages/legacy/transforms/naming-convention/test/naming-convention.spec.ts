@@ -396,12 +396,48 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     // GraphQL 16 prints `{userStatus: NEWBIE}`; GraphQL 17 prints `{ userStatus: NEWBIE }`.
     const printed = printSchemaWithDirectives(newSchema).replace(/\s+/g, ' ');
     expect(printed).toContain('userStatus');
-    // Bare mode rewrites defaults in one mapSchema pass. Wrap's RenameInputObjectFields
-    // rebuilds the schema between renames on GraphQL 16 and can strip default keys to {}.
-    // Keep the exact default assertion for bare mode and GraphQL 17 wrap mode.
-    if (mode === 'bare' || !String(graphqlVersion).startsWith('16.')) {
-      expect(printed).toMatch(/search\(filter: Filter = \{ ?userStatus: NEWBIE ?\}\)/);
-    }
+    // Wrap + GraphQL 16 must still keep the default after RenameInputObjectFields
+    // (reapplied from the original schema in wrapNamingConvention.transformSchema).
+    expect(printed).toMatch(/search\(filter: Filter = \{ ?userStatus: NEWBIE ?\}\)/);
+  });
+
+  it('keeps nested input-object defaults when the argument is omitted (wrap + bare)', () => {
+    const inputSchema = buildSchema(/* GraphQL */ `
+      enum E {
+        newbie
+      }
+      input Inner {
+        user_status: E
+      }
+      input Filter {
+        outer_field: Inner
+      }
+      type Query {
+        search(filter: Filter = { outer_field: { user_status: newbie } }): String
+      }
+    `);
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+          enumValues: 'upperCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const printed = printSchemaWithDirectives(newSchema).replace(/\s+/g, ' ');
+    expect(printed).toContain('outerField');
+    expect(printed).toContain('userStatus');
+    expect(printed).toMatch(
+      /search\(filter: Filter = \{ ?outerField: \{ ?userStatus: NEWBIE ?\} ?\}\)/,
+    );
   });
 
   it('should resolves the data of a renamed fields correctly when arguments did not changed', async () => {

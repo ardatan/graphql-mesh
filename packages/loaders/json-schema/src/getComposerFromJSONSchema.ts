@@ -229,9 +229,17 @@ function coerceFieldDefaultValue(
       const item = coerceFieldDefaultValue(tc.ofType as AnyTypeComposer<any>, defaultValue);
       return item === undefined ? undefined : [item];
     }
-    return defaultValue.map(item =>
-      coerceFieldDefaultValue(tc.ofType as AnyTypeComposer<any>, item),
-    );
+    const items: unknown[] = [];
+    for (const entry of defaultValue) {
+      const item = coerceFieldDefaultValue(tc.ofType as AnyTypeComposer<any>, entry);
+      // Match singleton behavior: one failed item drops the whole default so
+      // print (`[]`) and runtime (`[undefined]`) cannot diverge.
+      if (item === undefined) {
+        return undefined;
+      }
+      items.push(item);
+    }
+    return items;
   }
   if (tc instanceof EnumTypeComposer) {
     let enumKey = sanitizeNameForGraphQL(String(defaultValue));
@@ -253,13 +261,14 @@ function coerceFieldDefaultValue(
   }
   if (tc instanceof ScalarTypeComposer) {
     // JSON Schema allows defaults that fail the associated scalar (e.g. '' on
-    // NonEmptyString). Omit those so print/schema generation does not throw;
-    // keep the serialized form so list singleton paths store coerced items
-    // (e.g. Int `"42"` → `42`) rather than the raw JSON Schema value.
+    // NonEmptyString). Omit those so print/schema generation does not throw.
+    // Store the *input*-coerced value (`parseValue`): GraphQL serves legacy
+    // `defaultValue` without further coercion, and `serialize` can diverge
+    // (e.g. GraphQLBigInt serialize→string vs parseValue→bigint).
     try {
-      const serialize = tc.getSerialize?.();
-      if (typeof serialize === 'function') {
-        return serialize(defaultValue);
+      const parseValue = tc.getParseValue?.();
+      if (typeof parseValue === 'function') {
+        return parseValue(defaultValue);
       }
     } catch {
       return undefined;

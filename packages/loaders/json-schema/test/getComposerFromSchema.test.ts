@@ -608,6 +608,31 @@ type ExampleAnyOf {
     expect(result.input.getType()).toBe(GraphQLBigInt);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLBigInt);
   });
+  it('stores BigInt list singleton defaults via parseValue (not serialize)', async () => {
+    // serialize("9007199254740993") → string; parseValue → bigint. Legacy defaultValue
+    // is served without input coercion, so we must store the parseValue result.
+    const big = '9007199254740993';
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'BigDefaults',
+      properties: {
+        ids: {
+          type: 'array',
+          items: { type: 'integer', format: 'int64' },
+          default: big,
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const input = result.input as InputTypeComposer;
+    const idsField = input.getField('ids');
+    expect(idsField.defaultValue).toEqual([BigInt(big)]);
+    expect(typeof (idsField.defaultValue as unknown[])[0]).toBe('bigint');
+  });
   it('should return Int for int32 definition', async () => {
     const inputSchema: JSONSchema = {
       type: 'integer',
