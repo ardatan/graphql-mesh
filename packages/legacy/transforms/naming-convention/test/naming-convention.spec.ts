@@ -392,8 +392,9 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
         log,
       }),
     );
-    expect(printSchemaWithDirectives(newSchema)).toContain(
-      'search(filter: Filter = { userStatus: NEWBIE })',
+    // GraphQL 16 prints `{userStatus: NEWBIE}`; GraphQL 17 prints `{ userStatus: NEWBIE }`.
+    expect(printSchemaWithDirectives(newSchema).replace(/\s+/g, ' ')).toMatch(
+      /search\(filter: Filter = \{ ?userStatus: NEWBIE ?\}\)/,
     );
   });
 

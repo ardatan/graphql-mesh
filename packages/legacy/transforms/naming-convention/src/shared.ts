@@ -202,17 +202,15 @@ function rewriteJsDefaultForInputType(
   if (isInputObjectType(named) && value && typeof value === 'object' && !Array.isArray(value)) {
     const fields = (named as GraphQLInputObjectType).getFields();
     const out: Record<string, unknown> = {};
-    for (const [fieldName, field] of Object.entries(fields)) {
-      if (!(fieldName in (value as Record<string, unknown>))) {
+    // Iterate defaultValue keys (may still be pre-rename, e.g. wrap mode after
+    // RenameInputObjectFields already renamed the input type fields).
+    for (const [valueKey, raw] of Object.entries(value as Record<string, unknown>)) {
+      const renamedKey = renameInputObjectFieldName(valueKey, named.name, renameField);
+      const field = fields[renamedKey] ?? fields[valueKey];
+      if (!field) {
         continue;
       }
-      const newName = renameInputObjectFieldName(fieldName, named.name, renameField);
-      out[newName] = rewriteJsDefaultForInputType(
-        (value as Record<string, unknown>)[fieldName],
-        field.type,
-        renameEnum,
-        renameField,
-      );
+      out[renamedKey] = rewriteJsDefaultForInputType(raw, field.type, renameEnum, renameField);
     }
     return out;
   }

@@ -191,10 +191,12 @@ function jsDefaultNeedsInputFieldRename(
   }
   const fields = named.getFields();
   for (const fieldName of Object.keys(value as Record<string, unknown>)) {
-    if (!(fieldName in fields)) {
+    const renamed = renameInputObjectFieldName(fieldName, named.name, renameField);
+    // Default keys may still be pre-rename while the input type fields are already renamed.
+    if (!(fieldName in fields) && !(renamed in fields)) {
       continue;
     }
-    if (renameInputObjectFieldName(fieldName, named.name, renameField) !== fieldName) {
+    if (renamed !== fieldName) {
       return true;
     }
     if (
@@ -248,13 +250,15 @@ function rewriteJsDefaultForInputType(
   if (isInputObjectType(named) && value && typeof value === 'object' && !Array.isArray(value)) {
     const fields = (named as GraphQLInputObjectType).getFields();
     const out: Record<string, unknown> = {};
-    for (const [fieldName, field] of Object.entries(fields)) {
-      if (!(fieldName in (value as Record<string, unknown>))) {
+    // Iterate defaultValue keys (may still be pre-rename after field rename maps).
+    for (const [valueKey, raw] of Object.entries(value as Record<string, unknown>)) {
+      const renamedKey = renameInputObjectFieldName(valueKey, named.name, renameField);
+      const field = fields[renamedKey] ?? fields[valueKey];
+      if (!field) {
         continue;
       }
-      const newName = renameInputObjectFieldName(fieldName, named.name, renameField);
-      out[newName] = rewriteJsDefaultForInputType(
-        (value as Record<string, unknown>)[fieldName],
+      out[renamedKey] = rewriteJsDefaultForInputType(
+        raw,
         field.type,
         renameEnum,
         renameField,
@@ -453,7 +457,8 @@ export function createNamingConventionTransform(
               continue;
             }
             const nextArg: typeof argConfig = { ...argConfig };
-            // `defaultValue` holds internal enum values — rename keys only, not enum leaves.
+            // Rename keys and enum leaves together so GraphQL 16 schema rebuild /
+            // federation compose SDL keep `Filter = { userStatus: NEWBIE }` instead of `{}`.
             if (
               argConfig.defaultValue != null &&
               (hasJsStringDefault || needsKeyRewrite) &&
@@ -464,7 +469,7 @@ export function createNamingConventionTransform(
                 inputType,
                 enumValuesFn,
                 fieldNamesFn,
-                false,
+                true,
               ) as typeof argConfig.defaultValue;
             } else if (hasJsStringDefault && isEnumType(namedArgType)) {
               // Leave coerced internal defaultValue alone (fusion keeps original wire value).
