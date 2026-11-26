@@ -20,6 +20,11 @@ import {
 import { getVariableValues } from '@graphql-tools/delegate';
 import { collectFields, getDefinedRootType } from '@graphql-tools/utils';
 
+function isPlainObject(value: object): boolean {
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
 /**
  * Project execution data down to the client operation selection set.
  * Drops planning-only fields such as unrequested `__typename`.
@@ -87,6 +92,21 @@ function projectValue(
     }
   }
   if (typeof value !== 'object') {
+    return value;
+  }
+  // Non-plain objects (Date, Buffer, ObjectId, …) with unknown/missing leaf type:
+  // do not spread into `{}` — prefer serialize when we have a leaf, else ISO/string.
+  if (!isPlainObject(value) && !Array.isArray(value)) {
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    if (typeof (value as any).toJSON === 'function') {
+      try {
+        return (value as any).toJSON();
+      } catch {
+        /* fall through */
+      }
+    }
     return value;
   }
 
