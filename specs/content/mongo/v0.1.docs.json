@@ -162,7 +162,7 @@
       "summary": "Relay-style connection read. Runtime kind `CONNECTION`.",
       "authors": {
         "intro": "Relay-style connection read. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "allUsers(first: Int, after: String): UserConnection!\n  @mongo__connection(collection: \"users\", first: \"$args.first\", after: \"$args.after\", selection: \"nodes { id: _id }\")"
+        "example": "allUsers(first: Int, after: String): UserConnection!\n  @mongo__connection(\n    collection: \"users\"\n    first: \"$args.first\"\n    after: \"$args.after\"\n    selection: \"\"\"\nnodes {\n  id: _id\n  name\n}\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -212,10 +212,10 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: _id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
+          "constraints": "Connection payload map. Nest document fields under `nodes { ... }` (and optionally `edges { node { ... } }`). Flat `id: _id` at the root maps the connection object, not each node.",
+          "authors": "Shape the connection: put entity fields under `nodes { ... }` (and `edges { node { ... } }` when using edges).",
+          "implementers": "When it runs: After the page of documents is loaded.\n\nInput: Connection selection; runtime reads nested `nodes` (and `edges.node`) via nestedSelection, then mapDocumentToGraphql per document.\n\nOutput: `{ nodes, edges, pageInfo, totalCount }` with mapped node objects.\n\nErrors: Flat document maps at the root produce empty nodes; nest under `nodes { ... }`. Mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\nnodes {\n  id: _id\n  name\n}\n\"\"\""
         }
       }
     },
@@ -223,7 +223,7 @@
       "summary": "Page/perPage pagination read. Runtime kind `PAGINATION`.",
       "authors": {
         "intro": "Page/perPage pagination read. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "usersPage(page: Int, perPage: Int): UserPage!\n  @mongo__pagination(collection: \"users\", page: \"$args.page\", perPage: \"$args.perPage\")"
+        "example": "usersPage(page: Int, perPage: Int): UserPage!\n  @mongo__pagination(\n    collection: \"users\"\n    page: \"$args.page\"\n    perPage: \"$args.perPage\"\n    selection: \"\"\"\nitems {\n  id: _id\n  name\n}\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -273,10 +273,10 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: _id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
+          "constraints": "Pagination payload map. Nest document fields under `items { ... }`. Flat `id: _id` at the root maps the page object, not each item.",
+          "authors": "Shape the page: put entity fields under `items { ... }`.",
+          "implementers": "When it runs: After the page of documents is loaded.\n\nInput: Pagination selection; runtime reads nested `items` via nestedSelection, then mapDocumentToGraphql per document.\n\nOutput: `{ items, pageInfo, ... }` with mapped item objects.\n\nErrors: Flat document maps at the root produce empty items; nest under `items { ... }`. Mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\nitems {\n  id: _id\n  name\n}\n\"\"\""
         }
       }
     },
