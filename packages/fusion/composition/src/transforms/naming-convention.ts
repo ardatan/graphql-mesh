@@ -210,29 +210,41 @@ export function createNamingConventionTransform(
               argRenameMap.set(argName, newArgName);
             }
             const argConfig = fieldConfig.args[argName] as (typeof fieldConfig.args)[string] & {
-              default?: { literal?: { kind?: string; value?: string; [k: string]: unknown } };
+              default?: {
+                literal?: { kind?: string; value?: string; [k: string]: unknown };
+                value?: unknown;
+              };
             };
             const namedArgType = getNamedType(argConfig.type);
-            const enumDefault =
-              typeof argConfig.defaultValue === 'string'
-                ? argConfig.defaultValue
-                : argConfig.default?.literal?.kind === 'EnumValue'
-                  ? argConfig.default.literal.value
-                  : argConfig.astNode?.defaultValue?.kind === 'EnumValue'
-                    ? argConfig.astNode.defaultValue.value
-                    : undefined;
+            // Explicit null / non-string defaultValue must not fall back to a
+            // stale AST enum default. Prefer default.value (GQL17) then literal.
+            let enumDefault: string | undefined;
+            if (typeof argConfig.defaultValue === 'string') {
+              enumDefault = argConfig.defaultValue;
+            } else if (argConfig.defaultValue !== undefined) {
+              enumDefault = undefined;
+            } else if (typeof argConfig.default?.value === 'string') {
+              enumDefault = argConfig.default.value;
+            } else if (argConfig.default?.literal?.kind === 'EnumValue') {
+              enumDefault = argConfig.default.literal.value;
+            } else if (argConfig.default != null) {
+              enumDefault = undefined;
+            } else if (argConfig.astNode?.defaultValue?.kind === 'EnumValue') {
+              enumDefault = argConfig.astNode.defaultValue.value;
+            }
             if (!enumDefault || !enumValuesFn || !isEnumType(namedArgType)) {
               newArgs[newArgName] = argConfig;
               continue;
             }
             const newDefaultValue = enumValuesFn(enumDefault);
             // GraphQL 16: `defaultValue` string. GraphQL 17: `default.literal` /
-            // AST — rewrite those in place; clearing `default` drops the value.
+            // `default.value` / AST — rewrite those in place; clearing `default` drops the value.
             newArgs[newArgName] = {
               ...argConfig,
               defaultValue: newDefaultValue,
               ...(argConfig.default?.literal?.kind === 'EnumValue'
                 ? {
+                    // Literal-only: a string `value` makes printSchema emit `"NEWBIE"`.
                     default: {
                       literal: {
                         ...argConfig.default.literal,
@@ -240,9 +252,16 @@ export function createNamingConventionTransform(
                       },
                     },
                   }
-                : argConfig.default != null
-                  ? { default: undefined }
-                  : {}),
+                : typeof argConfig.default?.value === 'string'
+                  ? {
+                      default: {
+                        ...argConfig.default,
+                        value: newDefaultValue,
+                      },
+                    }
+                  : argConfig.default != null
+                    ? { default: undefined }
+                    : {}),
               ...(argConfig.astNode?.defaultValue?.kind === 'EnumValue'
                 ? {
                     astNode: {

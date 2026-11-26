@@ -92,11 +92,11 @@ function normalizePrintedSchema(sdl) {
       // covered by execution tests, not SDL snaps.
       const inner = collapseWs(sdl.slice(i + 3, j), false).trim();
       const end = Math.min(j + 3, n);
-      if (inner.length > 0) {
-        const chunk = '"""' + inner + '"""';
-        parts.push(chunk);
-        lastOut = '"';
-      }
+      // Keep empty block strings (`""""""`) so empty defaults / directive args
+      // survive normalization; dropping them left `a:String=` in snaps.
+      const chunk = '"""' + inner + '"""';
+      parts.push(chunk);
+      lastOut = '"';
       i = end;
       continue;
     }
@@ -204,7 +204,11 @@ function normalizePrintedSchema(sdl) {
 
 function looksLikePrintedSchema(val) {
   if (typeof val !== 'string') return false;
-  return /^\s*"?(?:schema|type|interface|union|enum|input|scalar|extend|directive)\b/m.test(val);
+  // Require declaration structure after the keyword — bare `"type"` / `"enum"`
+  // (and unquoted response values) must not be treated as SDL.
+  return /^\s*"?(?:schema\s*[@{]|type\s+[A-Za-z_]|interface\s+[A-Za-z_]|union\s+[A-Za-z_]|enum\s+[A-Za-z_]|input\s+[A-Za-z_]|scalar\s+[A-Za-z_]|extend\s+(?:schema|type|interface|union|enum|input|scalar)\b|directive\s+@)/m.test(
+    val,
+  );
 }
 
 module.exports = {

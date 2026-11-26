@@ -48,9 +48,12 @@ export default class StitchingMerger implements MeshMerger {
     });
     // stitchSchemas replaces extensions with stitchingInfo only — restore schema
     // directive apps (Connectors `@source` / `@link`) from subschemas.
-    const mergedSchemaDirectives: Record<string, unknown[]> = {
-      ...(((unifiedSchema.extensions as any)?.directives as Record<string, unknown[]>) || {}),
-    };
+    // Null prototype: a directive named `constructor` must not resolve
+    // Object.prototype.constructor (spread would throw TypeError).
+    const mergedSchemaDirectives = Object.assign(
+      Object.create(null) as Record<string, unknown[]>,
+      ((unifiedSchema.extensions as any)?.directives as Record<string, unknown[]>) || {},
+    );
     for (const rawSource of rawSources) {
       const fromSub = (rawSource.schema.extensions as any)?.directives as
         Record<string, unknown[]> | undefined;

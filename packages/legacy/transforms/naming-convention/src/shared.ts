@@ -72,7 +72,11 @@ export const IGNORED_TYPE_NAMES = [
 
 /**
  * GraphQL 16 stores enum arg defaults on `defaultValue` (string).
- * GraphQL 17 often leaves `defaultValue` unset and keeps `default.literal` / AST instead.
+ * GraphQL 17 often leaves `defaultValue` unset and keeps `default.literal` /
+ * `default.value` / AST instead.
+ *
+ * An explicit `defaultValue: null` (or a present `default` object without a
+ * usable enum string) must not fall back to a stale AST default.
  */
 export function getEnumDefaultName(
   config: Pick<GraphQLArgumentConfig, 'defaultValue' | 'astNode'> & {
@@ -82,7 +86,21 @@ export function getEnumDefaultName(
   if (typeof config.defaultValue === 'string') {
     return config.defaultValue;
   }
-  const literal = config.default?.literal ?? config.astNode?.defaultValue;
+  // Explicit non-string defaultValue (typically null) — preserve; no AST fallback.
+  if (config.defaultValue !== undefined) {
+    return undefined;
+  }
+  if (typeof config.default?.value === 'string') {
+    return config.default.value;
+  }
+  if (config.default?.literal?.kind === Kind.ENUM) {
+    return config.default.literal.value;
+  }
+  // Authoritative `default` present but not a renameable enum string — no AST fallback.
+  if (config.default != null) {
+    return undefined;
+  }
+  const literal = config.astNode?.defaultValue;
   if (literal?.kind === Kind.ENUM) {
     return literal.value;
   }
@@ -100,11 +118,18 @@ export function withRenamedEnumDefault<
     defaultValue: newDefault,
   };
   if (config.default?.literal?.kind === Kind.ENUM) {
+    // Literal-only rewrite: carrying a string `value` makes printSchema emit
+    // `"NEWBIE"` instead of the enum `NEWBIE`.
     next.default = {
       literal: {
         ...config.default.literal,
         value: newDefault,
       },
+    };
+  } else if (typeof config.default?.value === 'string') {
+    next.default = {
+      ...config.default,
+      value: newDefault,
     };
   } else if (config.default != null) {
     // Drop uncoerced default so `defaultValue` wins when the schema is rebuilt.
