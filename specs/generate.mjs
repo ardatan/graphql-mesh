@@ -4,7 +4,7 @@
  * and families.json. Index lists Current Specs + All Schemas; each family page
  * has a TOC and numbered directive / schema-addition sections.
  */
-import { mkdirSync, readFileSync, rmSync, writeFileSync, cpSync } from 'node:fs';
+import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -76,7 +76,12 @@ function defMeta(text) {
   if (sc) return { kind: 'scalar', name: sc[1], id: sc[1], text: t };
   const ty = t.match(/^(?:type|input|union)\s+(\w+)/);
   if (ty) return { kind: 'type', name: ty[1], id: ty[1], text: t };
-  return { kind: 'other', name: 'Definition', id: `def-${Math.random().toString(36).slice(2, 8)}`, text: t };
+  return {
+    kind: 'other',
+    name: 'Definition',
+    id: `def-${Math.random().toString(36).slice(2, 8)}`,
+    text: t,
+  };
 }
 
 function parseDirectiveArgs(text) {
@@ -133,7 +138,9 @@ function familyPage(family, sdl) {
   const sections = [];
 
   sec += 1;
-  tocItems.push(`<li><a href="#sec-Overview"><span class="spec-secid">${sec}</span>Overview</a></li>`);
+  tocItems.push(
+    `<li><a href="#sec-Overview"><span class="spec-secid">${sec}</span>Overview</a></li>`,
+  );
   sections.push(`
 <section id="sec-Overview" secid="${sec}">
   <h1 class="spec-definition-head"><span class="spec-secid"><a href="#sec-Overview">${sec}</a></span>Overview</h1>
@@ -161,7 +168,10 @@ function familyPage(family, sdl) {
     const cSec = sec;
     tocItems.push(
       `<li><a href="#sec-Schema-additions"><span class="spec-secid">${cSec}</span>Schema additions</a><ol>${companions
-        .map((c, i) => `<li><a href="#${esc(c.id)}"><span class="spec-secid">${cSec}.${i + 1}</span>${esc(c.name)}</a></li>`)
+        .map(
+          (c, i) =>
+            `<li><a href="#${esc(c.id)}"><span class="spec-secid">${cSec}.${i + 1}</span>${esc(c.name)}</a></li>`,
+        )
         .join('')}</ol></li>`,
     );
     sections.push(`
@@ -184,7 +194,10 @@ function familyPage(family, sdl) {
   const dSec = sec;
   tocItems.push(
     `<li><a href="#sec-Directives"><span class="spec-secid">${dSec}</span>Directives</a><ol>${directives
-      .map((d, i) => `<li><a href="#${esc(d.id)}"><span class="spec-secid">${dSec}.${i + 1}</span>${esc(d.name)}</a></li>`)
+      .map(
+        (d, i) =>
+          `<li><a href="#${esc(d.id)}"><span class="spec-secid">${dSec}.${i + 1}</span>${esc(d.name)}</a></li>`,
+      )
       .join('')}</ol></li>`,
   );
 

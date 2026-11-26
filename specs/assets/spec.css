@@ -1,10 +1,11 @@
 :root {
   color: #333;
   background: #faf9f6;
-  font-family: Cambria, "Palatino Linotype", Palatino, "Liberation Serif", "Book Antiqua", Georgia, serif;
+  font-family:
+    Cambria, 'Palatino Linotype', Palatino, 'Liberation Serif', 'Book Antiqua', Georgia, serif;
   font-size: 17px;
   line-height: 1.5;
-  --mono: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
   --mono-size: 0.82rem;
   --indent: 1.25rem;
   --accent: #1a4d3e;
@@ -13,13 +14,14 @@
   --sidebar: min(280px, calc(100vw - 48px));
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    linear-gradient(180deg, #f3f1ea 0%, #faf9f6 180px);
+  background: linear-gradient(180deg, #f3f1ea 0%, #faf9f6 180px);
 }
 
 .site-bar {
@@ -73,11 +75,24 @@ body {
   font-weight: 500;
 }
 
-.lede { max-width: 68ch; color: #2c2c2c; }
-.crumb { color: #666; font-size: 0.92rem; }
-.crumb a { color: var(--accent); }
-.url, .stamp { font-size: 0.95rem; }
-.url a { color: var(--accent); }
+.lede {
+  max-width: 68ch;
+  color: #2c2c2c;
+}
+.crumb {
+  color: #666;
+  font-size: 0.92rem;
+}
+.crumb a {
+  color: var(--accent);
+}
+.url,
+.stamp {
+  font-size: 0.95rem;
+}
+.url a {
+  color: var(--accent);
+}
 
 .spec-toc {
   margin: 1.5rem 0 2rem;
@@ -125,8 +140,13 @@ body {
   scroll-margin-top: 1rem;
 }
 
-h2.spec-definition-head { font-size: 1.1rem; }
-h3.spec-definition-head { font-size: 1rem; color: #444; }
+h2.spec-definition-head {
+  font-size: 1.1rem;
+}
+h3.spec-definition-head {
+  font-size: 1rem;
+  color: #444;
+}
 
 .spec-definition-head .spec-secid a {
   color: #888;

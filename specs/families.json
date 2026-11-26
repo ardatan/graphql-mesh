@@ -4,13 +4,7 @@
     "title": "core",
     "version": "v0.1",
     "summary": "Shared Mesh compose and runtime directives stamped under core/v0.1.",
-    "imports": [
-      "@transport",
-      "@merge",
-      "@source",
-      "@resolveTo",
-      "@hoist"
-    ],
+    "imports": ["@transport", "@merge", "@source", "@resolveTo", "@hoist"],
     "stamp": "importMeshDirectives defaults to this URL (MESH_SPEC_URL). Protocol loaders stamp @transport here separately from their protocol family URL.",
     "notes": [
       "Mesh stitching @source uses subgraph: (and optional type:). HTTP/REST Connectors @source uses http: and lives under specs.apollo.dev/connect.",
@@ -45,9 +39,7 @@
     "summary": "Thrift binary RPC field mapping directive.",
     "imports": ["@thrift__rpc"],
     "stamp": "meshSpecUrl('thrift') in packages/loaders/thrift.",
-    "notes": [
-      "Pair with @transport from core/v0.1. JSON Thrift uses Connectors @connect instead."
-    ]
+    "notes": ["Pair with @transport from core/v0.1. JSON Thrift uses Connectors @connect instead."]
   },
   {
     "name": "mongo",
@@ -105,9 +97,7 @@
     "summary": "Mesh-owned auth helper used with Hive Gateway generic auth.",
     "imports": ["@skipAuth"],
     "stamp": "Hand-authored subgraph SDL + docs @link today (not loader importMeshDirectives). Product family URL is auth/v0.1.",
-    "notes": [
-      "Use alongside Federation @authenticated / @requiresScopes / @policy as needed."
-    ]
+    "notes": ["Use alongside Federation @authenticated / @requiresScopes / @policy as needed."]
   },
   {
     "name": "rate-limit",

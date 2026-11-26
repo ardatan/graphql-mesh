@@ -25,8 +25,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.head.repo.full_name == github.repository ||
-      github.event_name == 'push'
+      github.event.pull_request.head.repo.full_name == github.repository || github.event_name ==
+      'push'
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
@@ -41,6 +41,5 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           command: >
-            pages deploy specs/out
-            --project-name=graphql-mesh-specs
-            --branch=${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'master' }}
+            pages deploy specs/out --project-name=graphql-mesh-specs --branch=${{ github.event_name
+            == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'master' }}

@@ -43,7 +43,4 @@ directive @resolveTo(
   resultType: String
 ) on FIELD_DEFINITION
 
-directive @hoist(
-  subgraph: String
-  pathConfig: _HoistConfig
-) repeatable on FIELD_DEFINITION
+directive @hoist(subgraph: String, pathConfig: _HoistConfig) repeatable on FIELD_DEFINITION
