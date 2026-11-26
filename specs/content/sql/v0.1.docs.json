@@ -12,7 +12,7 @@
       "summary": "Maps a GraphQL field or object type to a SQL table/view operation backed by SQL.",
       "authors": {
         "intro": "Pair with `@transport(kind: \"sql\")` from core. Binders use `$args.*`, `$this.*`, and spreads like `...$args.where`.",
-        "example": "albums(where: AlbumFilter, limit: Int): [Album!]!\n  @sql(\n    table: \"albums\"\n    kind: ROWS\n    where: \"$args.where\"\n    limit: \"$args.limit\"\n    selection: \"id: AlbumId\\ntitle: Title\"\n  )"
+        "example": "albums(where: AlbumFilter, limit: Int): [Album!]!\n  @sql(\n    table: \"albums\"\n    kind: ROWS\n    where: \"$args.where\"\n    limit: \"$args.limit\"\n    selection: \"\"\"\nid: AlbumId\ntitle: Title\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@sql` must `@link` this family; pair with `@transport` from core/v0.1.",
@@ -48,7 +48,7 @@
           "constraints": "Binder block: column predicates, `$args.where`, `$this.*`, spreads.",
           "authors": "Filter / join predicates.",
           "implementers": "Compile to SQL WHERE / JOIN conditions.",
-          "example": "where: \"ArtistId: $this.id\\n...$args.where\""
+          "example": "where: \"\"\"\nArtistId: $this.id\n...$args.where\n\"\"\""
         },
         "orderBy": {
           "defaults": "Optional (ROWS / CONNECTION).",
@@ -92,7 +92,7 @@
           "constraints": "GraphQL field -> SQL column / `$fn...` mapping; nested blocks for CONNECTION/payloads.",
           "authors": "Map GraphQL fields to SQL columns or `$fn...` computed expressions; use nested blocks for connection/payload shapes.",
           "implementers": "When it runs: When projecting SQL row(s) / mutation payloads into the GraphQL field result.\n\nInput: Result rows (and helpers like `$affectedRows`) plus `selection` lines (`graphqlField: Column` or `$fn...`, with nested blocks for CONNECTION/payload wrappers).\n\nOutput: GraphQL-shaped objects/lists/payloads.\n\nErrors: Unknown columns / bad `$fn` references fail planning or the field.",
-          "example": "selection: \"id: AlbumId\\ntitle: Title\""
+          "example": "selection: \"\"\"\nid: AlbumId\ntitle: Title\n\"\"\""
         },
         "through": {
           "defaults": "Optional (ROWS M2M).",

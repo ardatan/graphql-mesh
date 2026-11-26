@@ -108,9 +108,9 @@
       }
     },
     "@merge": {
-      "summary": "Marks a Query (or other) field as a type-merging entry point: the gateway uses it to fill an entity by key, including batched list lookups.",
+      "summary": "Marks a Query-root field as a type-merging entry point: the gateway uses it to fill an entity by key, including batched list lookups. Mutation-root `@merge` is supported when that same field name exists on Mutation (merge then runs as a mutation). Do not place `@merge` on arbitrary object fields (e.g. `User.byId`); entity recall looks up the entry field on Query (or Mutation).",
       "authors": {
-        "intro": "Put `@merge` on a field that can resolve an entity (or a list of entities) from keys. Mesh keeps `@merge` supported for stitching-style type merging.\n\nSingle-object entity resolution: prefer Federation Spec `@lookup` / `@is` / `@internal` (https://graphql.github.io/graphql-federation-spec/draft) when you are modeling federation entity recall for one object.\n\nList / batch: use `@merge` when the entry point returns a list and should batch many keys in one call (`keyField` + `keyArg`, or `argsExpr` with a list expansion). That is the author-facing Mesh path for N+1-safe type merging across subgraphs.",
+        "intro": "Put `@merge` on a Query-root field that can resolve an entity (or a list of entities) from keys (or on Mutation when that entry field lives there). Mesh keeps `@merge` supported for stitching-style type merging.\n\nSingle-object entity resolution: prefer Federation Spec `@lookup` / `@is` / `@internal` (https://graphql.github.io/graphql-federation-spec/draft) when you are modeling federation entity recall for one object.\n\nList / batch: use `@merge` when the entry point returns a list and should batch many keys in one call (`keyField` + `keyArg`, or `argsExpr` with a list expansion). That is the author-facing Mesh path for N+1-safe type merging across subgraphs.",
         "example": "type Query {\n  user(id: ID!): User @merge(keyField: \"id\", keyArg: \"id\", subgraph: \"users\")\n  users(ids: [ID!]!): [User!]! @merge(keyField: \"id\", keyArg: \"ids\", subgraph: \"users\")\n}"
       },
       "implementers": {
@@ -171,7 +171,7 @@
       },
       "implementers": {
         "compose": "Encapsulate / additional type definitions import `@resolveTo` under core when used. Preserve args through Supergraph printing so runtime can rebuild the from->to binding. Single-object entity recall may use Federation `@lookup`; list/batch type-merging entry points use Mesh `@merge` (documented on this family).",
-        "runtime": "For each annotated field (from), install a gateway resolver:\n- Source delegation: resolve `sourceName` -> executor; look up `sourceTypeName.sourceFieldName` (to); ensure `requiredSelectionSet` on the parent; interpolate `sourceArgs` (and `additionalArgs` only when `keysArg` is set); build the delegated operation (apply `sourceSelectionSet` when present); return the payload, optionally projected by `result` / `resultType`.\n- Batch: collect `keyField` values across parents, pass them as `keysArg` on one call to the same to field, rematch with `valueKeyField` when set.\n- PubSub: subscribe/publish on the gateway's topic bus for `pubsubTopic`; apply `filterBy`; register webhook routes for `webhook:` topics when ingress is on.",
+        "runtime": "For each annotated field (from), install a gateway resolver:\n- Source delegation: resolve `sourceName` -> executor; look up `sourceTypeName.sourceFieldName` (to); ensure `requiredSelectionSet` on the parent; interpolate `sourceArgs` on the non-batch path; on the batch path (`keysArg`) use `additionalArgs` for non-key args (`sourceArgs` is ignored); build the delegated operation (apply `sourceSelectionSet` when present); return the payload, optionally projected by `result` / `resultType`.\n- Batch: collect `keyField` values across parents, pass them as `keysArg` on one call to the same to field, rematch with `valueKeyField` when set.\n- PubSub: subscribe/publish on the gateway's topic bus for `pubsubTopic`; apply `filterBy`; register webhook routes for `webhook:` topics when ingress is on.",
         "validation": "For source delegation, require `sourceTypeName` and `sourceFieldName` (and usually `sourceName`). Pure PubSub apps may omit source fields when `pubsubTopic` is set. Do not default `sourceTypeName` to `Query`."
       },
       "args": {
@@ -212,8 +212,8 @@
         "sourceArgs": {
           "defaults": "Optional.",
           "constraints": "`ResolveToSourceArgs` map; values often use `{root.*}` / `{args.*}` interpolation.",
-          "authors": "Map values from the from parent / field args into arguments of the to field (e.g. `{ id: \"{root.id}\" }`).",
-          "implementers": "Interpolate against parent (`root`) and field `args`, then pass as GraphQL args on the delegated to call.",
+          "authors": "Non-batch path only: map values from the from parent / field args into arguments of the to field (e.g. `{ id: \"{root.id}\" }`). When using `keysArg` (batch), `sourceArgs` is ignored; put non-key upstream args in `additionalArgs` instead.",
+          "implementers": "Non-batch (`keysArg` absent): interpolate against parent (`root`) and field `args`, then pass as GraphQL args on the delegated to call. Batch (`keysArg` set): do not read `sourceArgs`; only `keysArg` plus `additionalArgs` build the batched call args.",
           "example": "sourceArgs: { id: \"{root.id}\" }"
         },
         "keyField": {
@@ -252,8 +252,8 @@
         "additionalArgs": {
           "defaults": "Optional; honored only on the batch path (`keysArg` present).",
           "constraints": "`ResolveToSourceArgs` map. Without `keysArg`, the non-batch resolver reads only `sourceArgs` and silently ignores `additionalArgs`.",
-          "authors": "Extra args merged into the batched to call when `keysArg` is set. For ordinary (non-batch) delegation, put those values in `sourceArgs` instead.",
-          "implementers": "Merge into batch call args when `keysArg` is set; do not apply on the non-batch branch.",
+          "authors": "Batch path (`keysArg`): map extra to-field arguments beyond the keys list (e.g. `{ lang: \"en\" }`). Non-batch path ignores `additionalArgs` and uses `sourceArgs` only.",
+          "implementers": "When `keysArg` is set: interpolate and merge into the batched args alongside the keys array. Without `keysArg`, the non-batch resolver reads only `sourceArgs` and silently ignores `additionalArgs`.",
           "example": "additionalArgs: { lang: \"en\" }"
         },
         "result": {

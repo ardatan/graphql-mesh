@@ -4,7 +4,7 @@
       "summary": "Find a single document. Runtime kind `FIND_ONE`.",
       "authors": {
         "intro": "Find a single document. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "user(id: ID!): User\n  @mongo__findOne(collection: \"users\", query: \"_id: $args.id\", selection: \"id: $_id\\nname\")"
+        "example": "user(id: ID!): User\n  @mongo__findOne(\n    collection: \"users\"\n    query: \"_id: $args.id\"\n    selection: \"\"\"\nid: $_id\nname\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -59,7 +59,7 @@
       "summary": "Find many documents. Runtime kind `FIND_MANY`.",
       "authors": {
         "intro": "Find many documents. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "users(filter: UserFilterInput): [User!]!\n  @mongo__find(collection: \"users\", query: \"$args.filter\", selection: \"id: $_id\\nname\")"
+        "example": "users(filter: UserFilterInput): [User!]!\n  @mongo__find(\n    collection: \"users\"\n    query: \"$args.filter\"\n    selection: \"\"\"\nid: $_id\nname\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -284,7 +284,7 @@
       "summary": "Run an aggregation pipeline. Runtime kind `AGGREGATE`.",
       "authors": {
         "intro": "Run an aggregation pipeline. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "userStats(pipeline: [ObjMap!]!): Stats!\n  @mongo__aggregate(collection: \"users\", pipeline: \"$args.pipeline\")"
+        "example": "userStats(pipeline: [ObjMap!]!): [Stats!]!\n  @mongo__aggregate(collection: \"users\", pipeline: \"$args.pipeline\")"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -333,7 +333,7 @@
       "summary": "Insert one document. Runtime kind `INSERT_ONE`.",
       "authors": {
         "intro": "Insert one document. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "createUser(document: CreateUserInput!): User!\n  @mongo__insertOne(collection: \"users\", set: \"name: $args.document.name\", selection: \"id: $_id\\nname\")"
+        "example": "createUser(document: CreateUserInput!): User!\n  @mongo__insertOne(\n    collection: \"users\"\n    set: \"name: $args.document.name\"\n    selection: \"\"\"\nid: $_id\nname\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -472,7 +472,7 @@
       "summary": "Update many documents. Runtime kind `UPDATE_MANY`.",
       "authors": {
         "intro": "Update many documents. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "updateUsers(filter: UserFilterInput!, update: UpdateUserInput!): Int!\n  @mongo__updateMany(collection: \"users\", query: \"$args.filter\", set: \"$args.update\")"
+        "example": "updateUsers(filter: UserFilterInput!, update: UpdateUserInput!): UpdateUsersPayload!\n  @mongo__updateMany(\n    collection: \"users\"\n    query: \"$args.filter\"\n    set: \"$args.update\"\n    selection: \"\"\"\nmatchedCount: $matchedCount\nmodifiedCount: $modifiedCount\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -509,11 +509,11 @@
           "implementers": "Build insert docs or update operators (`$set`, ...)."
         },
         "selection": {
-          "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "defaults": "Optional; maps the count envelope (not document fields).",
+          "constraints": "Mutation envelope binders such as `matchedCount: $matchedCount` / `modifiedCount: $modifiedCount`.",
+          "authors": "Project updateMany counts into the GraphQL payload. Do not use document field maps here; updateMany has no returned documents.",
+          "implementers": "When it runs: After `updateMany`, against `{ matchedCount, modifiedCount }`.\n\nInput: Count bag + envelope `selection` (`matchedCount: $matchedCount`, `modifiedCount: $modifiedCount`).\n\nOutput: GraphQL payload object with those fields.\n\nErrors: Mapping parse errors fail setup. Unlike `@mongo__count`, selection does apply (envelope), but it does not map stored documents.",
+          "example": "selection: \"\"\"\nmatchedCount: $matchedCount\nmodifiedCount: $modifiedCount\n\"\"\""
         }
       }
     },
@@ -521,7 +521,7 @@
       "summary": "Delete one document. Runtime kind `DELETE_ONE`.",
       "authors": {
         "intro": "Delete one document. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "deleteUser(id: ID!): Boolean!\n  @mongo__deleteOne(collection: \"users\", query: \"_id: $args.id\")"
+        "example": "deleteUser(id: ID!): User\n  @mongo__deleteOne(\n    collection: \"users\"\n    query: \"_id: $args.id\"\n    selection: \"\"\"\nid: $_id\nname\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -553,10 +553,10 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "constraints": "Document map of the deleted record, or envelope keys (`record: $record { ... }`, `recordId: $_id`).",
+          "authors": "Project the deleted document (document-only mode) or a Connectors-style payload. Not a bare Boolean scalar.",
+          "implementers": "When it runs: After findOneAndDelete, against `{ record, _id }`.\n\nInput: Deleted document bag + `selection`.\n\nOutput: Mapped GraphQL object (or envelope payload).\n\nErrors: Missing paths follow GraphQL nullability; mapping parse errors fail setup. Selection applies (unlike `@mongo__count`).",
+          "example": "selection: \"\"\"\nid: $_id\nname\n\"\"\""
         }
       }
     },
@@ -564,7 +564,7 @@
       "summary": "Delete many documents. Runtime kind `DELETE_MANY`.",
       "authors": {
         "intro": "Delete many documents. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "deleteUsers(filter: UserFilterInput!): Int!\n  @mongo__deleteMany(collection: \"users\", query: \"$args.filter\")"
+        "example": "deleteUsers(filter: UserFilterInput!): DeleteUsersPayload!\n  @mongo__deleteMany(\n    collection: \"users\"\n    query: \"$args.filter\"\n    selection: \"\"\"\ndeletedCount: $deletedCount\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -595,11 +595,11 @@
           "example": "query: \"$args.filter\""
         },
         "selection": {
-          "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "defaults": "Optional; maps the count envelope (not document fields).",
+          "constraints": "Envelope binder such as `deletedCount: $deletedCount`.",
+          "authors": "Project deleteMany's deletedCount into the GraphQL payload. Do not use document field maps; deleteMany has no returned documents.",
+          "implementers": "When it runs: After `deleteMany`, against `{ deletedCount }`.\n\nInput: Count bag + envelope `selection` (`deletedCount: $deletedCount`).\n\nOutput: GraphQL payload object.\n\nErrors: Mapping parse errors fail setup. Selection applies for the envelope (unlike `@mongo__count`), but does not map stored documents.",
+          "example": "selection: \"\"\"\ndeletedCount: $deletedCount\n\"\"\""
         }
       }
     }
