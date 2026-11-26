@@ -5777,7 +5777,6 @@ function tryCoalesceOverlappingEntityFetches(
     entityTypeName: cover.f.entityTypeName,
     selectionSet,
     flattenPaths: fetchFlattenPaths(cover.f),
-    path: cover.f.path,
     runIf,
     id: cover.f.id,
     dependsOn: cover.f.dependsOn,
@@ -5988,8 +5987,12 @@ function groupParallelBatchFetches(
         continue;
       }
       const run: EntityFetchHop[] = [];
-      while (i < mapped.length && isEntityFetchHop(mapped[i]!)) {
-        run.push(mapped[i]!);
+      while (i < mapped.length) {
+        const hop = mapped[i]!;
+        if (!isEntityFetchHop(hop)) {
+          break;
+        }
+        run.push(hop);
         i++;
       }
       if (run.length < 2) {

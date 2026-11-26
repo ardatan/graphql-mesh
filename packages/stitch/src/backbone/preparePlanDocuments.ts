@@ -22,8 +22,8 @@ import {
 import type { StitchBatchAlias, StitchPlanNode } from './types.js';
 
 const TYPENAME_FIELD: FieldNode = {
-  kind: Kind.FIELD,
-  name: { kind: Kind.NAME, value: '__typename' },
+  kind: 'Field' as const,
+  name: { kind: 'Name' as const, value: '__typename' },
 };
 
 function pushOrMergeField(next: SelectionNode[], seen: Map<string, number>, sel: FieldNode): void {
@@ -38,7 +38,7 @@ function pushOrMergeField(next: SelectionNode[], seen: Map<string, number>, sel:
       ];
       next[idx] = {
         ...prev,
-        selectionSet: sels.length ? { kind: Kind.SELECTION_SET, selections: sels } : undefined,
+        selectionSet: sels.length ? { kind: 'SelectionSet' as const, selections: sels } : undefined,
       };
     }
     return;
@@ -74,7 +74,7 @@ export function filterSelectionSetForSubschema(
 ): SelectionSetNode {
   const type = schema.getType(typeName);
   if (!type) {
-    return { kind: Kind.SELECTION_SET, selections: [TYPENAME_FIELD] };
+    return { kind: 'SelectionSet' as const, selections: [TYPENAME_FIELD] };
   }
 
   if (isUnionType(type)) {
@@ -126,10 +126,10 @@ export function filterSelectionSetForSubschema(
         );
         if (filtered.selections.length) {
           next.push({
-            kind: Kind.INLINE_FRAGMENT,
+            kind: 'InlineFragment' as const,
             typeCondition: {
-              kind: Kind.NAMED_TYPE,
-              name: { kind: Kind.NAME, value: on },
+              kind: 'NamedType' as const,
+              name: { kind: 'Name' as const, value: on },
             },
             selectionSet: filtered,
           });
@@ -139,11 +139,11 @@ export function filterSelectionSetForSubschema(
     if (!hasTypename) {
       next.unshift(TYPENAME_FIELD);
     }
-    return { kind: Kind.SELECTION_SET, selections: next };
+    return { kind: 'SelectionSet' as const, selections: next };
   }
 
   if (!('getFields' in type)) {
-    return { kind: Kind.SELECTION_SET, selections: [TYPENAME_FIELD] };
+    return { kind: 'SelectionSet' as const, selections: [TYPENAME_FIELD] };
   }
   const fields = (type as { getFields(): Record<string, { type: any }> }).getFields();
   const next: SelectionNode[] = [];
@@ -236,10 +236,10 @@ export function filterSelectionSetForSubschema(
       );
       if (filtered.selections.length) {
         next.push({
-          kind: Kind.INLINE_FRAGMENT,
+          kind: 'InlineFragment' as const,
           typeCondition: {
-            kind: Kind.NAMED_TYPE,
-            name: { kind: Kind.NAME, value: on },
+            kind: 'NamedType' as const,
+            name: { kind: 'Name' as const, value: on },
           },
           selectionSet: filtered,
         });
@@ -249,7 +249,7 @@ export function filterSelectionSetForSubschema(
   if (!hasTypename) {
     next.unshift(TYPENAME_FIELD);
   }
-  return { kind: Kind.SELECTION_SET, selections: next };
+  return { kind: 'SelectionSet' as const, selections: next };
 }
 
 function targetSchema(subschema: Subschema): GraphQLSchema {
@@ -323,7 +323,7 @@ function rewriteNullabilityConflicts(
         return {
           ...sub,
           alias: {
-            kind: Kind.NAME as const,
+            kind: 'Name' as const,
             value: nullable ? `_nullable_${sub.name.value}` : `_nonNullable_${sub.name.value}`,
           },
           selectionSet: sub.selectionSet
@@ -371,15 +371,15 @@ function buildRootFetchDocument(
   const usedVars = collectUsedVariableNames(cleaned);
   const filteredDefs = filterVariableDefinitions(operation.variableDefinitions, usedVars);
   return {
-    kind: Kind.DOCUMENT,
+    kind: 'Document' as const,
     definitions: [
       {
-        kind: Kind.OPERATION_DEFINITION,
+        kind: 'OperationDefinition' as const,
         operation: operation.operation,
         name: operation.name,
         variableDefinitions: filteredDefs,
         selectionSet: {
-          kind: Kind.SELECTION_SET,
+          kind: 'SelectionSet' as const,
           selections: [cleaned],
         },
       },

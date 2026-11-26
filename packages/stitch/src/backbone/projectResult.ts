@@ -207,8 +207,8 @@ function projectInterfaceObjectValue(
       schema,
       fragments,
       variableValues,
-      field
-        ? (getNamedType(field.type as any) as import('graphql').GraphQLNamedType | undefined)
+      field?.type != null
+        ? getNamedType(field.type as import('graphql').GraphQLOutputType)
         : undefined,
       [fieldNode],
       raw,
