@@ -4,7 +4,7 @@
       "summary": "Find a single document. Runtime kind `FIND_ONE`.",
       "authors": {
         "intro": "Find a single document. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "user(id: ID!): User\n  @mongo__findOne(\n    collection: \"users\"\n    query: \"_id: $args.id\"\n    selection: \"\"\"\nid: $_id\nname\n\"\"\"\n  )"
+        "example": "user(id: ID!): User\n  @mongo__findOne(\n    collection: \"users\"\n    query: \"_id: $args.id\"\n    selection: \"\"\"\nid: _id\nname\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -48,10 +48,10 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
         }
       }
     },
@@ -59,7 +59,7 @@
       "summary": "Find many documents. Runtime kind `FIND_MANY`.",
       "authors": {
         "intro": "Find many documents. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "users(filter: UserFilterInput): [User!]!\n  @mongo__find(\n    collection: \"users\"\n    query: \"$args.filter\"\n    selection: \"\"\"\nid: $_id\nname\n\"\"\"\n  )"
+        "example": "users(filter: UserFilterInput): [User!]!\n  @mongo__find(\n    collection: \"users\"\n    query: \"$args.filter\"\n    selection: \"\"\"\nid: _id\nname\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -109,10 +109,10 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
         }
       }
     },
@@ -162,7 +162,7 @@
       "summary": "Relay-style connection read. Runtime kind `CONNECTION`.",
       "authors": {
         "intro": "Relay-style connection read. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "allUsers(first: Int, after: String): UserConnection!\n  @mongo__connection(collection: \"users\", first: \"$args.first\", after: \"$args.after\", selection: \"nodes { id: $_id }\")"
+        "example": "allUsers(first: Int, after: String): UserConnection!\n  @mongo__connection(collection: \"users\", first: \"$args.first\", after: \"$args.after\", selection: \"nodes { id: _id }\")"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -212,10 +212,10 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
         }
       }
     },
@@ -273,10 +273,10 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
         }
       }
     },
@@ -322,10 +322,10 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
         }
       }
     },
@@ -333,7 +333,7 @@
       "summary": "Insert one document. Runtime kind `INSERT_ONE`.",
       "authors": {
         "intro": "Insert one document. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "createUser(document: CreateUserInput!): User!\n  @mongo__insertOne(\n    collection: \"users\"\n    set: \"name: $args.document.name\"\n    selection: \"\"\"\nid: $_id\nname\n\"\"\"\n  )"
+        "example": "createUser(document: CreateUserInput!): User!\n  @mongo__insertOne(\n    collection: \"users\"\n    set: \"name: $args.document.name\"\n    selection: \"\"\"\nid: _id\nname\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -364,10 +364,10 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
         }
       }
     },
@@ -406,10 +406,10 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
         },
         "graphqlDocumentInputs": {
           "defaults": "Optional boolean.",
@@ -461,10 +461,10 @@
         },
         "selection": {
           "defaults": "Optional.",
-          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
-          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: $_id`). Nested blocks shape connection payloads.",
-          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `$_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: $_id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
-          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
         }
       }
     },
@@ -521,7 +521,7 @@
       "summary": "Delete one document. Runtime kind `DELETE_ONE`.",
       "authors": {
         "intro": "Delete one document. Pair with `@transport(kind: \"mongo\")`.",
-        "example": "deleteUser(id: ID!): User\n  @mongo__deleteOne(\n    collection: \"users\"\n    query: \"_id: $args.id\"\n    selection: \"\"\"\nid: $_id\nname\n\"\"\"\n  )"
+        "example": "deleteUser(id: ID!): User\n  @mongo__deleteOne(\n    collection: \"users\"\n    query: \"_id: $args.id\"\n    selection: \"\"\"\nid: _id\nname\n\"\"\"\n  )"
       },
       "implementers": {
         "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
@@ -556,7 +556,7 @@
           "constraints": "Document map of the deleted record, or envelope keys (`record: $record { ... }`, `recordId: $_id`).",
           "authors": "Project the deleted document (document-only mode) or a Connectors-style payload. Not a bare Boolean scalar.",
           "implementers": "When it runs: After findOneAndDelete, against `{ record, _id }`.\n\nInput: Deleted document bag + `selection`.\n\nOutput: Mapped GraphQL object (or envelope payload).\n\nErrors: Missing paths follow GraphQL nullability; mapping parse errors fail setup. Selection applies (unlike `@mongo__count`).",
-          "example": "selection: \"\"\"\nid: $_id\nname\n\"\"\""
+          "example": "selection: \"\"\"\nid: _id\nname\n\"\"\""
         }
       }
     },
