@@ -7,7 +7,11 @@ import {
   type GraphQLSchema,
   type SelectionNode,
 } from 'graphql';
-import { annotateExternalObject, UNPATHED_ERRORS_SYMBOL } from '@graphql-tools/delegate';
+import {
+  annotateExternalObject,
+  getCoercedVariableValues,
+  UNPATHED_ERRORS_SYMBOL,
+} from '@graphql-tools/delegate';
 import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import type { ExecutionRequest, Executor } from '@graphql-tools/utils';
 import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
@@ -133,12 +137,15 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
 
         let pending = (context as any)[CONTEXT_PLAN_PROMISE] as MaybePromise<any> | undefined;
         if (!pending) {
+          // GraphQL 17: info.variableValues is `{ coerced, sources }` — unwrap
+          // so File/upload scalars and other runtime values reach subgraphs
+          // (same as classic delegate/createRequest).
           const request: ExecutionRequest = {
             document: {
               kind: Kind.DOCUMENT,
               definitions: [info.operation, ...Object.values(info.fragments ?? {})],
             },
-            variables: info.variableValues ?? {},
+            variables: getCoercedVariableValues(info.variableValues) ?? {},
             context,
             rootValue: root,
             operationName: info.operation.name?.value,
