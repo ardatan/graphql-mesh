@@ -162,8 +162,8 @@ function typeToAST(type: GraphQLType): TypeNode {
     return { kind: Kind.LIST_TYPE, type: typeToAST(type.ofType) };
   }
   return {
-    kind: Kind.NAMED_TYPE,
-    name: { kind: Kind.NAME, value: type.name },
+    kind: 'NamedType' as const,
+    name: { kind: 'Name' as const, value: type.name },
   };
 }
 
@@ -186,13 +186,13 @@ function mergeFieldSelection(
     return aliases[0]!.selectionSet;
   }
   return {
-    kind: Kind.SELECTION_SET,
+    kind: 'SelectionSet' as const,
     selections: aliases.map(a => ({
-      kind: Kind.INLINE_FRAGMENT as const,
+      kind: 'InlineFragment' as const,
       typeCondition: {
-        kind: Kind.NAMED_TYPE as const,
+        kind: 'NamedType' as const,
         name: {
-          kind: Kind.NAME as const,
+          kind: 'Name' as const,
           value: a.entityTypeName,
         },
       },
@@ -231,35 +231,35 @@ export function buildBatchedMergeDocument(
   }
   const nameValue = typeof operationName === 'string' ? operationName : operationName?.value;
   return {
-    kind: Kind.DOCUMENT,
+    kind: 'Document' as const,
     definitions: [
       {
-        kind: Kind.OPERATION_DEFINITION,
+        kind: 'OperationDefinition' as const,
         operation: 'query' as OperationTypeNode,
-        name: nameValue ? { kind: Kind.NAME, value: nameValue } : undefined,
+        name: nameValue ? { kind: 'Name' as const, value: nameValue } : undefined,
         variableDefinitions: [
           {
-            kind: Kind.VARIABLE_DEFINITION,
+            kind: 'VariableDefinition' as const,
             variable: {
-              kind: Kind.VARIABLE,
-              name: { kind: Kind.NAME, value: argName },
+              kind: 'Variable' as const,
+              name: { kind: 'Name' as const, value: argName },
             },
             type: typeToAST(argDef.type),
           },
         ],
         selectionSet: {
-          kind: Kind.SELECTION_SET,
+          kind: 'SelectionSet' as const,
           selections: [
             {
-              kind: Kind.FIELD,
-              name: { kind: Kind.NAME, value: entry.fieldName },
+              kind: 'Field' as const,
+              name: { kind: 'Name' as const, value: entry.fieldName },
               arguments: [
                 {
                   kind: Kind.ARGUMENT,
-                  name: { kind: Kind.NAME, value: argName },
+                  name: { kind: 'Name' as const, value: argName },
                   value: {
-                    kind: Kind.VARIABLE,
-                    name: { kind: Kind.NAME, value: argName },
+                    kind: 'Variable' as const,
+                    name: { kind: 'Name' as const, value: argName },
                   },
                 },
               ],

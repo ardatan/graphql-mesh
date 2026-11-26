@@ -317,7 +317,7 @@ function addLocalFieldResolvers<TContext extends Record<string, any>>(
       if (!isObjectType(candidate.type) && !isInterfaceType(candidate.type)) {
         continue;
       }
-      const fieldNames = Object.keys(candidate.type.getFields());
+      const fieldNames = Object.keys(candidate.type.getFields()) as string[];
       if (candidate.transformedSubschema != null || candidate.subschema != null) {
         for (const fieldName of fieldNames) {
           subschemaFields.add(`${typeName}.${fieldName}`);
@@ -329,7 +329,7 @@ function addLocalFieldResolvers<TContext extends Record<string, any>>(
           localFields.set(typeName, fields);
         }
         for (const fieldName of fieldNames) {
-          fields.add(fieldName);
+          fields.add(String(fieldName));
         }
       }
     }
@@ -348,7 +348,7 @@ function addLocalFieldResolvers<TContext extends Record<string, any>>(
       if (fieldName.startsWith('__')) {
         continue;
       }
-      fields.add(fieldName);
+      fields.add(String(fieldName));
     }
   }
   // Persist for the backbone planner (Island nodes).
@@ -400,7 +400,9 @@ function addLocalFieldResolvers<TContext extends Record<string, any>>(
           const responseKey =
             typeof info.path?.key === 'string'
               ? info.path.key
-              : (info.fieldName as string | undefined);
+              : typeof info.fieldName === 'string'
+                ? info.fieldName
+                : undefined;
           if (responseKey != null && Object.prototype.hasOwnProperty.call(parent, responseKey)) {
             return gatewayDefaultFieldResolver(parent, args, context, info);
           }

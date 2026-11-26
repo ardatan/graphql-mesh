@@ -29,6 +29,7 @@ import {
 // annotateExternalObject's Object.defineProperties on large entity lists.
 import { CRITICAL_ERROR, getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
+  asGetArgumentValuesVariables,
   ExecutionRequest,
   ExecutionResult,
   getDefinedRootType,
@@ -829,7 +830,7 @@ function rewriteNullabilityConflicts(
         return {
           ...sub,
           alias: {
-            kind: Kind.NAME as const,
+            kind: 'Name' as const,
             value: nullable ? `_nullable_${sub.name.value}` : `_nonNullable_${sub.name.value}`,
           },
           selectionSet: sub.selectionSet
@@ -898,18 +899,18 @@ function buildRootDocument(
     }
   }
   const op = {
-    kind: Kind.OPERATION_DEFINITION as const,
+    kind: 'OperationDefinition' as const,
     operation: operationType,
-    name: operationName ? { kind: Kind.NAME as const, value: operationName } : undefined,
+    name: operationName ? { kind: 'Name' as const, value: operationName } : undefined,
     variableDefinitions: filteredDefs,
     selectionSet: {
-      kind: Kind.SELECTION_SET as const,
+      kind: 'SelectionSet' as const,
       selections: [cleaned],
     },
   };
   return {
     document: {
-      kind: Kind.DOCUMENT as const,
+      kind: 'Document' as const,
       definitions: [op],
     },
     variables: filteredVars,
@@ -991,7 +992,13 @@ function executeFetchNode(
       const hopSubschema = node.subschema;
       const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
       const fieldDef = rootType.getFields()[rootFieldNode.name.value];
-      const args = fieldDef ? getArgumentValues(fieldDef, rootFieldNode, ctx.variableValues) : {};
+      const args = fieldDef
+        ? getArgumentValues(
+            fieldDef,
+            rootFieldNode,
+            asGetArgumentValuesVariables(ctx.variableValues),
+          )
+        : {};
       const info = {
         ...(ctx.infoStub as any),
         schema: ctx.schema,
@@ -1151,8 +1158,8 @@ function executeFetchNode(
   if (!resolver) {
     // Fall back to mergeFields when no explicit merge resolver is registered.
     const planningParentField: FieldNode = {
-      kind: Kind.FIELD,
-      name: { kind: Kind.NAME, value: node.entityTypeName },
+      kind: 'Field' as const,
+      name: { kind: 'Name' as const, value: node.entityTypeName },
       selectionSet: node.selectionSet,
     };
     const jobs: MaybePromise<any>[] = [];
@@ -1200,8 +1207,8 @@ function executeFetchNode(
     fieldName: node.entityTypeName,
     fieldNodes: [
       {
-        kind: Kind.FIELD,
-        name: { kind: Kind.NAME, value: node.entityTypeName },
+        kind: 'Field' as const,
+        name: { kind: 'Name' as const, value: node.entityTypeName },
         selectionSet: node.selectionSet,
       },
     ],
@@ -1405,7 +1412,11 @@ function executeIslandNode(
   const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
   const isRootIsland = parentType === rootType;
   const resolve = (isRootIsland ? getOriginalRootResolve(field) : undefined) ?? field.resolve;
-  const args = getArgumentValues(field, node.fieldNode, ctx.variableValues);
+  const args = getArgumentValues(
+    field,
+    node.fieldNode,
+    asGetArgumentValuesVariables(ctx.variableValues),
+  );
 
   const flattenPaths = node.flattenPaths;
 
