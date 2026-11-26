@@ -765,13 +765,18 @@ export async function healJSONSchema(
             // - boolean/number/integer items: decode `'false'` / `'1'` to real scalars
             const trimmedDefault = subSchema.default.trim();
             const type = subSchema.type;
-            const itemsType =
+            const rawItemsType =
               type === 'array' &&
               subSchema.items &&
               !Array.isArray(subSchema.items) &&
               typeof subSchema.items === 'object'
-                ? (subSchema.items as { type?: string }).type
+                ? (subSchema.items as { type?: string | string[] }).type
                 : undefined;
+            // Nullable unions like `['boolean','null']` collapse to the non-null item type
+            // (same idea as getComposerFromJSONSchema) so singleton defaults still decode.
+            const itemsType = Array.isArray(rawItemsType)
+              ? rawItemsType.find(t => t !== 'null')
+              : rawItemsType;
             const looksLikeJsonContainer =
               (type === 'object' && trimmedDefault.startsWith('{')) ||
               (type === 'array' && trimmedDefault.startsWith('[')) ||

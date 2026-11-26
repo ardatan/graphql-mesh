@@ -127,9 +127,20 @@ function reapplyArgDefaultsFromOriginal(
         default: snapDefaults.default ?? (argConfig as ArgDefaultFields).default,
         astNode: snapDefaults.astNode ?? argConfig.astNode,
       };
+      // Key renames must follow the public type's ignore rules (e.g. `obj_map` →
+      // `ObjMap` stays ignored). Enum wire mapping still uses the original type.
+      const originalNamed = getNamedType(originalArgType);
+      const publicTypeName = IGNORED_TYPE_NAMES.includes(originalNamed.name)
+        ? originalNamed.name
+        : renameType(originalNamed.name);
+      const keyRenameFn =
+        IGNORED_TYPE_NAMES.includes(publicTypeName) ||
+        IGNORED_TYPE_NAMES.includes(originalNamed.name)
+          ? undefined
+          : fieldNamesFn;
       // Rewrite against the original arg type so wire enum values (newbie→'wire')
       // resolve to member names before rename; apply onto the post-rename arg config.
-      if (!hasRewritableEnumDefaultForType(source, originalArgType, fieldNamesFn)) {
+      if (!hasRewritableEnumDefaultForType(source, originalArgType, keyRenameFn)) {
         continue;
       }
       // Cast: helper `default` is a loose snapshot; GQL17 GraphQLDefaultInput is a
@@ -140,7 +151,7 @@ function reapplyArgDefaultsFromOriginal(
           source,
           originalArgType,
           enumValuesFn || ((s: string) => s),
-          fieldNamesFn,
+          keyRenameFn,
         ),
       } as typeof argConfig;
       changed = true;

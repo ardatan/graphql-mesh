@@ -631,8 +631,14 @@ describe('Naming Convention', () => {
         transforms: [transform],
       },
     ]);
-    // Public schema still exposes the renamed input field after compose.
-    expect(printSortedSchema(newSchema)).toContain('userStatus');
+    const composed = printSortedSchema(newSchema).replace(/\s+/g, ' ');
+    // GraphQL 16 federation compose can still drop input-object arg defaults to `{}`;
+    // when the default survives, require the exact rewritten shape (not just the field name).
+    if (composed.includes('filter: Filter = {}')) {
+      expect(composed).toContain('userStatus');
+    } else {
+      expect(composed).toMatch(/search\(filter: Filter = \{ ?userStatus: NEWBIE ?\}\)/);
+    }
   });
 
   it('rewrites enum defaults on directive arguments', async () => {

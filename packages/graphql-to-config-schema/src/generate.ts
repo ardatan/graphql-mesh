@@ -197,9 +197,11 @@ function getTypeToUse(schema: GraphQLSchema, typeName: string, rootType: string)
     const types = getImplementingTypes(schema, schemaType);
     if (types.length === 0) {
       // Draft-04: empty anyOf is invalid; emit an unsatisfiable schema.
+      // `tsType` keeps `--typings` aligned (`json-schema-to-typescript` drops `not`).
       return {
         description: `Interface ${schemaType.name} has no implementing object types`,
         not: {},
+        tsType: 'never',
       };
     }
     return {
