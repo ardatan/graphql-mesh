@@ -1,0 +1,422 @@
+import {
+  GraphQLNonNull,
+  Kind,
+  type FieldNode,
+  type FragmentDefinitionNode,
+  type GraphQLError,
+  type GraphQLFieldConfig,
+  type GraphQLFieldConfigMap,
+  type GraphQLFieldResolver,
+  type GraphQLObjectType,
+  type GraphQLSchema,
+  type OperationTypeNode,
+  type SelectionSetNode,
+} from 'graphql';
+import {
+  defaultMergedResolver,
+  type DelegationContext,
+  type SubschemaConfig,
+  type Transform,
+} from '@graphql-tools/delegate';
+import {
+  appendObjectFields,
+  modifyObjectFields,
+  relocatedError,
+  selectObjectFields,
+  type ExecutionRequest,
+  type ExecutionResult,
+} from '@graphql-tools/utils';
+import { defaultCreateProxyingResolver } from '../generateProxyingResolvers.js';
+import MapFields from './MapFields.js';
+
+interface WrapFieldsTransformationContext {
+  nextIndex: number;
+  paths: Record<string, { pathToField: Array<string>; alias: string }>;
+}
+
+interface WrapFieldsConfig {
+  isNullable?: boolean;
+}
+
+export default class WrapFields<TContext extends Record<string, any>> implements Transform<
+  WrapFieldsTransformationContext,
+  TContext
+> {
+  private readonly outerTypeName: string;
+  private readonly wrappingFieldNames: Array<string>;
+  private readonly wrappingTypeNames: Array<string>;
+  private readonly numWraps: number;
+  private readonly fieldNames: Array<string> | undefined;
+  private readonly transformer: MapFields<TContext>;
+  private readonly config: WrapFieldsConfig;
+
+  constructor(
+    outerTypeName: string,
+    wrappingFieldNames: Array<string>,
+    wrappingTypeNames: Array<string>,
+    fieldNames?: Array<string>,
+    prefix = 'gqtld',
+    config: WrapFieldsConfig = { isNullable: false },
+  ) {
+    this.outerTypeName = outerTypeName;
+    this.wrappingFieldNames = wrappingFieldNames;
+    this.wrappingTypeNames = wrappingTypeNames;
+    this.numWraps = wrappingFieldNames.length;
+    this.fieldNames = fieldNames;
+    this.config = config;
+
+    const remainingWrappingFieldNames = this.wrappingFieldNames.slice();
+    const outerMostWrappingFieldName = remainingWrappingFieldNames.shift();
+
+    if (outerMostWrappingFieldName == null) {
+      throw new Error(`Cannot wrap fields, no wrapping field name provided.`);
+    }
+
+    this.transformer = new MapFields<TContext>(
+      {
+        [outerTypeName]: {
+          [outerMostWrappingFieldName]: (fieldNode, fragments, transformationContext) =>
+            hoistFieldNodes({
+              fieldNode,
+              path: remainingWrappingFieldNames,
+              fieldNames,
+              fragments,
+              transformationContext: transformationContext as WrapFieldsTransformationContext,
+              prefix,
+            }),
+        },
+      },
+      {
+        [outerTypeName]: (value, context) =>
+          dehoistValue(value, context as WrapFieldsTransformationContext),
+      },
+      (errors, context) => dehoistErrors(errors, context as WrapFieldsTransformationContext),
+    );
+  }
+
+  public transformSchema(
+    originalWrappingSchema: GraphQLSchema,
+    subschemaConfig: SubschemaConfig<any, any, any, TContext>,
+  ): GraphQLSchema {
+    const fieldNames = this.fieldNames;
+    const targetFieldConfigMap = selectObjectFields(
+      originalWrappingSchema,
+      this.outerTypeName,
+      !fieldNames ? () => true : fieldName => fieldNames.includes(fieldName),
+    );
+
+    const newTargetFieldConfigMap: GraphQLFieldConfigMap<any, any> = Object.create(null);
+    for (const fieldName in targetFieldConfigMap) {
+      const field = targetFieldConfigMap[fieldName]!;
+      const newField: GraphQLFieldConfig<any, any> = {
+        ...field,
+        resolve: defaultMergedResolver,
+      };
+      newTargetFieldConfigMap[fieldName] = newField;
+    }
+
+    let wrapIndex = this.numWraps - 1;
+    let wrappingTypeName = this.wrappingTypeNames[wrapIndex]!;
+    let wrappingFieldName = this.wrappingFieldNames[wrapIndex]!;
+
+    let newSchema = appendObjectFields(
+      originalWrappingSchema,
+      wrappingTypeName,
+      newTargetFieldConfigMap,
+    );
+
+    for (wrapIndex--; wrapIndex > -1; wrapIndex--) {
+      const nextWrappingTypeName = this.wrappingTypeNames[wrapIndex]!;
+
+      newSchema = appendObjectFields(newSchema, nextWrappingTypeName, {
+        [wrappingFieldName]: {
+          type: new GraphQLNonNull(newSchema.getType(wrappingTypeName) as GraphQLObjectType),
+          resolve: defaultMergedResolver,
+        },
+      });
+
+      wrappingTypeName = nextWrappingTypeName;
+      wrappingFieldName = this.wrappingFieldNames[wrapIndex]!;
+    }
+
+    const targetSchema = subschemaConfig.schema;
+    let wrappingOperation: 'query' | 'mutation' | 'subscription' | undefined;
+    switch (this.outerTypeName) {
+      case targetSchema.getQueryType()?.name:
+        wrappingOperation = 'query';
+        break;
+      case targetSchema.getMutationType()?.name:
+        wrappingOperation = 'mutation';
+        break;
+      case targetSchema.getSubscriptionType()?.name:
+        wrappingOperation = 'subscription';
+        break;
+    }
+
+    let resolve: GraphQLFieldResolver<any, any> | undefined;
+    if (wrappingOperation) {
+      const createProxyingResolver =
+        subschemaConfig.createProxyingResolver ?? defaultCreateProxyingResolver;
+      resolve = createProxyingResolver({
+        subschemaConfig,
+        operation: wrappingOperation as OperationTypeNode,
+        fieldName: wrappingFieldName,
+      });
+    } else {
+      resolve = defaultMergedResolver;
+    }
+
+    const baseType = newSchema.getType(wrappingTypeName) as GraphQLObjectType;
+    const wrappingType = this.config.isNullable ? baseType : new GraphQLNonNull(baseType);
+
+    const newFieldConfig: GraphQLFieldConfig<any, any> =
+      wrappingOperation === 'subscription'
+        ? {
+            type: wrappingType,
+            subscribe: resolve,
+            resolve: (payload: any) => payload,
+          }
+        : {
+            type: wrappingType,
+            resolve,
+          };
+
+    [newSchema] = modifyObjectFields(
+      newSchema,
+      this.outerTypeName,
+      fieldName => !!newTargetFieldConfigMap[fieldName],
+      {
+        [wrappingFieldName]: newFieldConfig,
+      },
+    );
+
+    return this.transformer.transformSchema(newSchema, subschemaConfig);
+  }
+
+  public transformRequest(
+    originalRequest: ExecutionRequest,
+    delegationContext: DelegationContext<TContext>,
+    transformationContext: WrapFieldsTransformationContext,
+  ): ExecutionRequest {
+    transformationContext.nextIndex = 0;
+    transformationContext.paths = Object.create(null);
+    return this.transformer.transformRequest(
+      originalRequest,
+      delegationContext,
+      transformationContext,
+    );
+  }
+
+  public transformResult(
+    originalResult: ExecutionResult,
+    delegationContext: DelegationContext<TContext>,
+    transformationContext: WrapFieldsTransformationContext,
+  ): ExecutionResult {
+    return this.transformer.transformResult(
+      originalResult,
+      delegationContext,
+      transformationContext,
+    );
+  }
+}
+
+function collectFields(
+  selectionSet: SelectionSetNode | undefined,
+  fragments: Record<string, FragmentDefinitionNode>,
+  fields: Array<FieldNode> = [],
+  visitedFragmentNames: Record<string, boolean> = Object.create(null),
+  parentDirectives: FieldNode['directives'] = undefined,
+): Array<FieldNode> {
+  if (selectionSet != null) {
+    for (const selection of selectionSet.selections) {
+      switch (selection.kind) {
+        case Kind.FIELD: {
+          // Preserve @skip/@include from enclosing fragments on hoisted fields.
+          const mergedDirectives = mergeDirectives(parentDirectives, selection.directives);
+          fields.push(
+            mergedDirectives === selection.directives
+              ? selection
+              : { ...selection, directives: mergedDirectives },
+          );
+          break;
+        }
+        case Kind.INLINE_FRAGMENT:
+          collectFields(
+            selection.selectionSet,
+            fragments,
+            fields,
+            visitedFragmentNames,
+            mergeDirectives(parentDirectives, selection.directives),
+          );
+          break;
+        case Kind.FRAGMENT_SPREAD: {
+          const fragmentName = selection.name.value;
+          if (!Object.prototype.hasOwnProperty.call(visitedFragmentNames, fragmentName)) {
+            visitedFragmentNames[fragmentName] = true;
+            collectFields(
+              fragments[fragmentName]!.selectionSet,
+              fragments,
+              fields,
+              visitedFragmentNames,
+              mergeDirectives(parentDirectives, selection.directives),
+            );
+          }
+          break;
+        }
+        default:
+          // unreachable
+          break;
+      }
+    }
+  }
+
+  return fields;
+}
+
+function mergeDirectives(
+  parent: FieldNode['directives'],
+  child: FieldNode['directives'],
+): FieldNode['directives'] {
+  if (parent == null || parent.length === 0) {
+    return child;
+  }
+  if (child == null || child.length === 0) {
+    return parent;
+  }
+  return [...parent, ...child];
+}
+
+function aliasFieldNode(fieldNode: FieldNode, str: string): FieldNode {
+  return {
+    ...fieldNode,
+    alias: {
+      kind: Kind.NAME,
+      value: str,
+    },
+  };
+}
+
+function hoistFieldNodes({
+  fieldNode,
+  fieldNames,
+  path,
+  fragments,
+  transformationContext,
+  prefix,
+  index = 0,
+  wrappingPath = [],
+}: {
+  fieldNode: FieldNode;
+  fieldNames?: Array<string>;
+  path: Array<string>;
+  fragments: Record<string, FragmentDefinitionNode>;
+  transformationContext: WrapFieldsTransformationContext;
+  prefix: string;
+  index?: number;
+  wrappingPath?: ReadonlyArray<string>;
+}): Array<FieldNode> {
+  const alias = fieldNode.alias != null ? fieldNode.alias.value : fieldNode.name.value;
+
+  let newFieldNodes: Array<FieldNode> = [];
+
+  if (index < path.length) {
+    const pathSegment = path[index];
+    for (const possibleFieldNode of collectFields(fieldNode.selectionSet, fragments)) {
+      if (possibleFieldNode.name.value === pathSegment) {
+        const newWrappingPath = wrappingPath.concat([alias]);
+
+        newFieldNodes = newFieldNodes.concat(
+          hoistFieldNodes({
+            fieldNode: possibleFieldNode,
+            fieldNames,
+            path,
+            fragments,
+            transformationContext,
+            prefix,
+            index: index + 1,
+            wrappingPath: newWrappingPath,
+          }),
+        );
+      }
+    }
+  } else {
+    for (const possibleFieldNode of collectFields(fieldNode.selectionSet, fragments)) {
+      if (!fieldNames || fieldNames.includes(possibleFieldNode.name.value)) {
+        const nextIndex = transformationContext.nextIndex;
+        transformationContext.nextIndex++;
+        const indexingAlias = `__${prefix}${nextIndex}__`;
+        transformationContext.paths[indexingAlias] = {
+          pathToField: wrappingPath.concat([alias]),
+          alias:
+            possibleFieldNode.alias != null
+              ? possibleFieldNode.alias.value
+              : possibleFieldNode.name.value,
+        };
+        newFieldNodes.push(aliasFieldNode(possibleFieldNode, indexingAlias));
+      }
+    }
+  }
+
+  return newFieldNodes;
+}
+
+export function dehoistValue(originalValue: any, context: WrapFieldsTransformationContext): any {
+  if (originalValue == null) {
+    return originalValue;
+  }
+
+  const newValue = Object.create(null);
+
+  for (const alias in originalValue) {
+    let obj = newValue;
+
+    const path = context.paths[alias];
+    if (path == null) {
+      newValue[alias] = originalValue[alias];
+      continue;
+    }
+
+    const pathToField = path.pathToField;
+    const fieldAlias = path.alias;
+    for (const key of pathToField) {
+      obj = obj[key] = obj[key] || Object.create(null);
+    }
+    obj[fieldAlias] = originalValue[alias];
+  }
+
+  return newValue;
+}
+
+function dehoistErrors(
+  errors: ReadonlyArray<GraphQLError> | undefined,
+  context: WrapFieldsTransformationContext,
+): Array<GraphQLError> | undefined {
+  if (errors === undefined) {
+    return undefined;
+  }
+
+  return errors.map(error => {
+    const originalPath = error.path;
+    if (originalPath == null) {
+      return error;
+    }
+
+    let newPath: Array<string | number> = [];
+    for (const pathSegment of originalPath) {
+      if (typeof pathSegment !== 'string') {
+        newPath.push(pathSegment);
+        continue;
+      }
+
+      const path = context.paths[pathSegment];
+      if (path == null) {
+        newPath.push(pathSegment);
+        continue;
+      }
+
+      newPath = newPath.concat(path.pathToField, [path.alias]);
+    }
+
+    return relocatedError(error, newPath);
+  });
+}

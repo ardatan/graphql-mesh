@@ -388,11 +388,11 @@ export function createTenv(cwd: string): Tenv {
 
       return { ...proc, output, result };
     },
-    async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG'), args = [] } = {}) {
+    async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG'), args = [], env } = {}) {
       port ||= await getAvailablePort();
       const ctrl = new AbortController();
       const [proc, waitForExit] = await spawn(
-        { cwd, pipeLogs, signal: ctrl.signal },
+        { cwd, pipeLogs, signal: ctrl.signal, env },
         'node',
         '--import',
         'tsx',

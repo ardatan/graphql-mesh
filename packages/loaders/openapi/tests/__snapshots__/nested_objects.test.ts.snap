@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpanAPI: nested objects should generate the schema correctly 1`] = `
-schema @source(name:"example_api" http:{baseURL:"http://localhost:3000"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @transport(subgraph:"example_api" kind:"connect" location:"http://localhost:3000" options:{queryStringOptions:{allowDots:true}}) @composeDirective(name:"@transport") {query:Query}
+schema @source(name:"example_api" http:{baseURL:"http://localhost:3000"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @transport(subgraph:"example_api" kind:"connect" location:"http://localhost:3000" options:{queryStringOptions:{allowDots:true}}) @composeDirective(name:"@transport") {query:Query}
 directive @connect(source:String http:ConnectHTTP selection:JSONSelection! entity:Boolean errors:ConnectorErrors isSuccess:JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess:JSONSelection) repeatable on SCHEMA
 directive @link(url:String! import:[String]) repeatable on SCHEMA

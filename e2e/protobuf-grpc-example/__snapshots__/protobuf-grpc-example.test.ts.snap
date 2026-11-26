@@ -35,7 +35,7 @@ exports[`gRPC Example fetches movies by cast as a subscription correctly: 1 1`] 
 `;
 
 exports[`gRPC Example generates the correct schema 1`] = `
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.com/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @join__directive(graphs:[MOVIES] name:"transport" args:{kind:"protobuf" location:"localhost:<movies_port>" options:{metaData:[["someKey" "someValue"] ["connection-type" "{context.headers.connection}"]]}}) {query:Query subscription:Subscription}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @join__directive(graphs:[MOVIES] name:"transport" args:{kind:"protobuf" location:"localhost:<movies_port>" options:{metaData:[["someKey" "someValue"] ["connection-type" "{context.headers.connection}"]]}}) {query:Query subscription:Subscription}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet

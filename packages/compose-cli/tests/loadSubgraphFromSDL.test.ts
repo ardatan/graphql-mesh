@@ -12,8 +12,8 @@ describe('loadSubgraphFromSDL', () => {
       'shop',
       /* GraphQL */ `
         extend schema
-          @link(url: "https://specs.graphql-mesh.com/sql/v0.1", import: ["@sql"])
-          @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+          @link(url: "https://specs.graphql-mesh.dev/sql/v0.1", import: ["@sql"])
+          @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
           @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
           @composeDirective(name: "@sql")
           @composeDirective(name: "@transport")
@@ -49,7 +49,7 @@ describe('loadSubgraphFromSDL', () => {
       expect.arrayContaining([{ name: '@sql' }, { name: '@transport' }]),
     );
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toContain('https://specs.graphql-mesh.com/');
+    expect(sdl).toContain('https://specs.graphql-mesh.dev/');
     expect(sdl).toContain('@composeDirective');
   });
 
@@ -61,8 +61,8 @@ describe('loadSubgraphFromSDL', () => {
       file,
       /* GraphQL */ `
         extend schema
-          @link(url: "https://specs.graphql-mesh.com/protobuf/v0.1", import: ["@protobuf__rpc"])
-          @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+          @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
+          @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
           @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
           @composeDirective(name: "@protobuf__rpc")
           @composeDirective(name: "@transport")

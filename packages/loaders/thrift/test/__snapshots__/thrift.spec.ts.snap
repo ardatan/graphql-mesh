@@ -17,7 +17,7 @@ input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:JSONS
 `;
 
 exports[`thrift Calc: Calc-schema 1`] = `
-schema @transport(subgraph:"Calc" kind:"thrift" location:"http://localhost:4000/thrift-with-imports" headers:[["x-api-key" "123"]]) @link(url:"https://specs.graphql-mesh.com/thrift/v0.1" import:["@thrift__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@thrift__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"Calc" kind:"thrift" location:"http://localhost:4000/thrift-with-imports" headers:[["x-api-key" "123"]]) @link(url:"https://specs.graphql-mesh.dev/thrift/v0.1" import:["@thrift__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@thrift__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @thrift__rpc(subgraph:String service:String function:String! args:String selection:String! throws:String messageType:ThriftMessageType = CALL entity:Boolean) repeatable on FIELD_DEFINITION
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
 enum ThriftMessageType {CALL ONEWAY}
@@ -28,7 +28,7 @@ scalar TransportOptions
 `;
 
 exports[`thrift Twitter: Twitter-schema 1`] = `
-schema @transport(subgraph:"Twitter" kind:"thrift" location:"http://localhost:4000/twitter" headers:[["x-api-key" "123"]]) @link(url:"https://specs.graphql-mesh.com/thrift/v0.1" import:["@thrift__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @composeDirective(name:"@thrift__rpc") @composeDirective(name:"@transport") {query:Query}
+schema @transport(subgraph:"Twitter" kind:"thrift" location:"http://localhost:4000/twitter" headers:[["x-api-key" "123"]]) @link(url:"https://specs.graphql-mesh.dev/thrift/v0.1" import:["@thrift__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@thrift__rpc") @composeDirective(name:"@transport") {query:Query}
 directive @thrift__rpc(subgraph:String service:String function:String! args:String selection:String! throws:String messageType:ThriftMessageType = CALL entity:Boolean) repeatable on FIELD_DEFINITION
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
 enum ThriftMessageType {CALL ONEWAY}

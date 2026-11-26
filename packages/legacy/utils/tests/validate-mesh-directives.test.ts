@@ -5,7 +5,7 @@ describe('validateMeshDirectives (GM-37)', () => {
   it('accepts core @link + valid @transport', () => {
     const schema = buildSchema(/* GraphQL */ `
       extend schema
-        @link(url: "https://specs.graphql-mesh.com/core/v0.1", import: ["@transport"])
+        @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
         @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db")
 
       directive @link(url: String, import: [String]) repeatable on SCHEMA
@@ -19,7 +19,7 @@ describe('validateMeshDirectives (GM-37)', () => {
       directives: {
         link: [
           {
-            url: 'https://specs.graphql-mesh.com/core/v0.1',
+            url: 'https://specs.graphql-mesh.dev/core/v0.1',
             import: ['@transport'],
           },
         ],
@@ -37,7 +37,7 @@ describe('validateMeshDirectives (GM-37)', () => {
     `);
     (schema.extensions as any) = {
       directives: {
-        link: [{ url: 'https://specs.graphql-mesh.com/core/v0.1', import: ['@transport'] }],
+        link: [{ url: 'https://specs.graphql-mesh.dev/core/v0.1', import: ['@transport'] }],
         transport: [{ kind: 1 }],
       },
     };
@@ -52,7 +52,7 @@ describe('validateMeshDirectives (GM-37)', () => {
     `);
     (schema.extensions as any) = {
       directives: {
-        link: [{ url: 'https://specs.graphql-mesh.com/core/v9.9', import: ['@transport'] }],
+        link: [{ url: 'https://specs.graphql-mesh.dev/core/v9.9', import: ['@transport'] }],
         transport: [{ kind: 'sql' }],
       },
     };
@@ -67,7 +67,7 @@ describe('validateMeshDirectives (GM-37)', () => {
     `);
     (schema.extensions as any) = {
       directives: {
-        link: [{ url: 'https://specs.graphql-mesh.com/core/v0.1', import: ['@transport'] }],
+        link: [{ url: 'https://specs.graphql-mesh.dev/core/v0.1', import: ['@transport'] }],
         transport: [{ subgraph: 'chinook', location: 'file:chinook.db' }],
       },
     };
@@ -82,7 +82,7 @@ describe('validateMeshDirectives (GM-37)', () => {
     `);
     (schema.extensions as any) = {
       directives: {
-        link: [{ url: 'https://specs.graphql-mesh.com/core/v0.1', import: ['@transport'] }],
+        link: [{ url: 'https://specs.graphql-mesh.dev/core/v0.1', import: ['@transport'] }],
         transport: [{ options: { odata: { batch: 'json' } } }],
       },
     };
@@ -97,7 +97,7 @@ describe('validateMeshDirectives (GM-37)', () => {
     `);
     (schema.extensions as any) = {
       directives: {
-        link: [{ url: 'https://specs.graphql-mesh.com/core/v0.1', import: ['@hoist'] }],
+        link: [{ url: 'https://specs.graphql-mesh.dev/core/v0.1', import: ['@hoist'] }],
       },
     };
     const query = schema.getType('Query') as any;

@@ -25977,7 +25977,7 @@ input SourceHTTP {baseURL:String! headers:[HTTPHeaderMapping!] queryParams:JSONS
 `;
 
 exports[`Schemas SubscriptionType 1`] = `
-schema @source(name:"SubscriptionType" http:{baseURL:"http://api.example.com/v1"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@pubsubOperation"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @composeDirective(name:"@pubsubOperation") {query:Query mutation:Mutation subscription:Subscription}
+schema @source(name:"SubscriptionType" http:{baseURL:"http://api.example.com/v1"}) @link(url:"https://specs.apollo.dev/connect/v0.4" import:["@connect" "@source"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@pubsubOperation"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @composeDirective(name:"@pubsubOperation") {query:Query mutation:Mutation subscription:Subscription}
 directive @pubsubOperation(subgraph:String pubsubTopic:String) on FIELD_DEFINITION
 directive @connect(source:String http:ConnectHTTP selection:JSONSelection! entity:Boolean errors:ConnectorErrors isSuccess:JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 directive @source(name:String! http:SourceHTTP! errors:ConnectorErrors isSuccess:JSONSelection) repeatable on SCHEMA

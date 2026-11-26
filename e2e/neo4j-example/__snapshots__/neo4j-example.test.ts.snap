@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.com/neo4j/v0.1" import:["@node" "@relationship" "@relationshipProperties" "@alias" "@cypher" "@plural"]) @link(url:"https://specs.graphql-mesh.com/core/v0.1" import:["@transport"]) @join__directive(graphs:[MOVIES] name:"transport" args:{kind:"neo4j" location:"neo4j://localhost:<neo4j_port>" options:{database:"neo4j" auth:{type:"basic" username:"neo4j" password:"password"}}}) {query:Query mutation:Mutation}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.dev/neo4j/v0.1" import:["@node" "@relationship" "@relationshipProperties" "@alias" "@cypher" "@plural"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @join__directive(graphs:[MOVIES] name:"transport" args:{kind:"neo4j" location:"neo4j://localhost:<neo4j_port>" options:{database:"neo4j" auth:{type:"basic" username:"neo4j" password:"password"}}}) {query:Query mutation:Mutation}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet

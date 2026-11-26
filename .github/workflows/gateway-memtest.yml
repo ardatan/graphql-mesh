@@ -1,0 +1,181 @@
+# Runs Hive Gateway federation-related memtests against Mesh workspace builds of
+# the moved packages, so Mesh PRs surface Gateway leak/perf impact before publish.
+# Full Gateway memtest matrix remains on graphql-hive/gateway; this is the Mesh
+# ownership signal for stitch/fusion/executor/transport changes.
+name: Gateway memtest
+on:
+  pull_request:
+    paths:
+      - 'packages/stitch/**'
+      - 'packages/stitching-directives/**'
+      - 'packages/delegate/**'
+      - 'packages/wrap/**'
+      - 'packages/batch-delegate/**'
+      - 'packages/batch-execute/**'
+      - 'packages/federation/**'
+      - 'packages/executors/**'
+      - 'packages/fusion/runtime/**'
+      - 'packages/transports/common/**'
+      - 'packages/transports/http/**'
+      - 'packages/transports/http-callback/**'
+      - 'packages/transports/ws/**'
+      - '.github/workflows/gateway-memtest.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_NO_WARNINGS: 1
+  CI: true
+  K6_VERSION: v0.56.0
+
+jobs:
+  memtest:
+    strategy:
+      fail-fast: false
+      matrix:
+        test:
+          - auto-type-merging
+          - federation-example
+          - federation-mixed
+          - programmatic-batching
+    name: node / ${{ matrix.test }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Mesh
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+      - name: Checkout Hive Gateway
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+        with:
+          repository: graphql-hive/gateway
+          path: gateway
+      - name: Install k6
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          cd "$HOME/.local/bin"
+          curl https://github.com/grafana/k6/releases/download/${{ env.K6_VERSION }}/k6-${{ env.K6_VERSION }}-linux-amd64.tar.gz -L | tar xvz --strip-components 1
+          echo "$PWD" >> $GITHUB_PATH
+      - name: Set up Mesh env
+        uses: the-guild-org/shared-config/setup@v1
+        with:
+          node-version-file: .node-version
+      - name: Build Mesh packages
+        run: yarn build
+      - name: Set up Gateway env
+        uses: the-guild-org/shared-config/setup@v1
+        with:
+          node-version-file: gateway/.node-version
+          working-directory: gateway
+      # Avoid yarn portal/resolutions (YN0071 vs Gateway workspaces). Install Gateway
+      # normally, then overwrite the moved packages' installs with Mesh bob builds.
+      - name: Overlay Mesh builds into Gateway node_modules
+        working-directory: gateway
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const { createRequire } = require('node:module');
+          const meshRoot = path.resolve('..');
+          const packages = {
+            '@graphql-tools/stitch': 'packages/stitch',
+            '@graphql-tools/stitching-directives': 'packages/stitching-directives',
+            '@graphql-tools/delegate': 'packages/delegate',
+            '@graphql-tools/wrap': 'packages/wrap',
+            '@graphql-tools/batch-delegate': 'packages/batch-delegate',
+            '@graphql-tools/batch-execute': 'packages/batch-execute',
+            '@graphql-tools/federation': 'packages/federation',
+            '@graphql-tools/executor-common': 'packages/executors/common',
+            '@graphql-tools/executor-http': 'packages/executors/http',
+            '@graphql-tools/executor-graphql-ws': 'packages/executors/graphql-ws',
+            '@graphql-mesh/fusion-runtime': 'packages/fusion/runtime',
+            '@graphql-mesh/transport-common': 'packages/transports/common',
+            '@graphql-mesh/transport-http': 'packages/transports/http',
+            '@graphql-mesh/transport-http-callback': 'packages/transports/http-callback',
+            '@graphql-mesh/transport-ws': 'packages/transports/ws',
+          };
+          const requireFromGateway = createRequire(path.join(process.cwd(), 'package.json'));
+          function rmrf(p) {
+            fs.rmSync(p, { recursive: true, force: true });
+          }
+          function copyDir(src, dest) {
+            fs.mkdirSync(dest, { recursive: true });
+            for (const ent of fs.readdirSync(src, { withFileTypes: true })) {
+              const from = path.join(src, ent.name);
+              const to = path.join(dest, ent.name);
+              if (ent.isDirectory()) copyDir(from, to);
+              else fs.copyFileSync(from, to);
+            }
+          }
+          function rewriteWorkspaceDeps(pkgJsonPath) {
+            const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf8'));
+            let changed = false;
+            for (const field of ['dependencies', 'peerDependencies', 'optionalDependencies']) {
+              const deps = pkg[field];
+              if (!deps) continue;
+              for (const [dep, range] of Object.entries(deps)) {
+                if (typeof range === 'string' && range.startsWith('workspace:')) {
+                  deps[dep] = '*';
+                  changed = true;
+                }
+              }
+            }
+            if (changed) fs.writeFileSync(pkgJsonPath, JSON.stringify(pkg, null, 2) + '\n');
+          }
+          function findInstalls(name) {
+            const targets = new Set();
+            try {
+              targets.add(path.dirname(requireFromGateway.resolve(`${name}/package.json`)));
+            } catch {
+              /* optional until overlay creates it */
+            }
+            const top = path.join(process.cwd(), 'node_modules', ...name.split('/'));
+            if (fs.existsSync(path.join(top, 'package.json'))) targets.add(top);
+            return [...targets];
+          }
+          for (const [name, rel] of Object.entries(packages)) {
+            const dist = path.join(meshRoot, rel, 'dist');
+            if (!fs.existsSync(dist)) {
+              throw new Error(`Missing Mesh build output: ${dist}`);
+            }
+            let targets = findInstalls(name);
+            if (targets.length === 0) {
+              const top = path.join(process.cwd(), 'node_modules', ...name.split('/'));
+              fs.mkdirSync(top, { recursive: true });
+              targets = [top];
+            }
+            for (const target of targets) {
+              for (const ent of fs.readdirSync(target)) {
+                if (ent === 'node_modules') continue;
+                rmrf(path.join(target, ent));
+              }
+              copyDir(dist, target);
+              rewriteWorkspaceDeps(path.join(target, 'package.json'));
+              console.log(`Overlaid ${name} <- ${rel}/dist -> ${path.relative(process.cwd(), target)}`);
+            }
+          }
+          NODE
+      - name: Hash Docker Images
+        id: hash-docker-images
+        working-directory: gateway
+        run: |
+          echo "result=$(grep -r -h "image: '" e2e | shasum | base64)" >> "$GITHUB_OUTPUT"
+      - name: Cache Docker Images
+        uses: ScribeMD/docker-cache@e1be5d7e63cc5f0c6400d8cb86d3d899a7fd71e2 # 0.5.0
+        continue-on-error: true
+        with:
+          key:
+            docker-images-gateway-impact-${{ runner.os }}-${{
+            steps.hash-docker-images.outputs.result }}
+      - name: Memtest
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 60
+          max_attempts: 3
+          command: bash -lc 'cd "$GITHUB_WORKSPACE/gateway" && yarn test:mem ${{ matrix.test }}'
+        env:
+          E2E_GATEWAY_RUNNER: node

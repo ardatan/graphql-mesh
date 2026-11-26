@@ -233,7 +233,7 @@ function finalizeSchema(
     (l: { url?: string; import?: unknown[] }) => {
       if (typeof l?.url !== 'string') return false;
       if (
-        !l.url.includes('specs.graphql-mesh.com/core/') &&
+        !l.url.includes('specs.graphql-mesh.dev/core/') &&
         !l.url.includes('the-guild.dev/graphql/mesh/spec/')
       ) {
         return false;
