@@ -2,11 +2,11 @@ import { GraphQLError, GraphQLSchema, Kind } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
-  ExecutionRequest,
-  ExecutionResult,
-  Executor,
   getOperationASTFromRequest,
   isAsyncIterable,
+  type ExecutionRequest,
+  type ExecutionResult,
+  type Executor,
 } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { buildStitchPlan, coerceOperationVariables } from './buildStitchPlan.js';
