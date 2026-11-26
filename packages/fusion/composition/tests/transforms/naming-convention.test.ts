@@ -659,4 +659,44 @@ describe('Naming Convention', () => {
           : undefined;
     expect(enumDefault).toBe('NEWBIE');
   });
+
+  it('rewrites key-only directive-argument defaults when only fieldNames is set', async () => {
+    const schema = buildSchema(/* GraphQL */ `
+      input Filter {
+        item_count: Int
+      }
+      directive @d(f: Filter = { item_count: 1 }) on FIELD_DEFINITION
+      type Query {
+        q: String @d
+      }
+    `);
+    const transform = createNamingConventionTransform({
+      fieldNames: 'camelCase',
+    });
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        name: 'SUBGRAPH1',
+        schema,
+        transforms: [transform],
+      },
+    ]);
+    const printed = printSortedSchema(newSchema);
+    expect(printed).toContain('itemCount');
+    expect(printed).not.toContain('item_count');
+    const directive = newSchema.getDirective('d');
+    const arg = directive?.args.find(a => a.name === 'f');
+    const jsDefault = arg?.defaultValue as { itemCount?: number; item_count?: number } | undefined;
+    if (jsDefault && typeof jsDefault === 'object') {
+      expect(jsDefault).toEqual({ itemCount: 1 });
+    } else {
+      // GraphQL 17 may keep the default as a literal only.
+      const lit = (
+        arg as unknown as {
+          default?: { literal?: { kind: string; fields?: { name: { value: string } }[] } };
+        }
+      ).default?.literal;
+      expect(lit?.kind).toBe('ObjectValue');
+      expect(lit?.fields?.map(f => f.name.value)).toEqual(['itemCount']);
+    }
+  });
 });

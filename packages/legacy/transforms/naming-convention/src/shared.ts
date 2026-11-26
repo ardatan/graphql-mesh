@@ -141,9 +141,10 @@ function rewriteEnumValueNode(
       ...node,
       fields: node.fields.map(f => {
         const oldName = f.name.value;
-        const field = fields?.[oldName];
         const newName =
           fields && named ? renameInputObjectFieldName(oldName, named.name, renameField) : oldName;
+        // After RenameInputObjectFields, lookup may only hit the renamed key.
+        const field = fields?.[oldName] ?? fields?.[newName];
         return {
           ...f,
           name: newName !== oldName ? { ...f.name, value: newName } : f.name,

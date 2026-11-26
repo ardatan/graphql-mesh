@@ -243,14 +243,23 @@ function coerceFieldDefaultValue(
     }
     return tc.hasField(enumKey) ? enumKey : defaultValue;
   }
+  if (tc instanceof InputTypeComposer) {
+    // Singleton list defaults for input-object items must be plain objects;
+    // omit unrepresentable values (e.g. `42`) so print/runtime stay aligned.
+    if (defaultValue == null || typeof defaultValue !== 'object' || Array.isArray(defaultValue)) {
+      return undefined;
+    }
+    return defaultValue;
+  }
   if (tc instanceof ScalarTypeComposer) {
     // JSON Schema allows defaults that fail the associated scalar (e.g. '' on
     // NonEmptyString). Omit those so print/schema generation does not throw;
-    // keep representable falsy defaults (0 / false / '').
+    // keep the serialized form so list singleton paths store coerced items
+    // (e.g. Int `"42"` → `42`) rather than the raw JSON Schema value.
     try {
       const serialize = tc.getSerialize?.();
       if (typeof serialize === 'function') {
-        serialize(defaultValue);
+        return serialize(defaultValue);
       }
     } catch {
       return undefined;
