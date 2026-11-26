@@ -41,7 +41,10 @@ import {
 type NamingFn = (input: string) => string;
 
 /** Snapshot + helper input shape (GQL17 `default` is stricter on GraphQLArgumentConfig). */
-type ArgDefaultSnapshot = Parameters<typeof hasRewritableEnumDefaultForType>[0];
+type ArgDefaultSnapshot = Parameters<typeof hasRewritableEnumDefaultForType>[0] & {
+  /** Pre-transform arg type — needed to map wire enum defaults to member names. */
+  originalArgType: GraphQLInputType;
+};
 
 /**
  * GraphQL 16 wrap: `RenameInputObjectFields` rebuilds the schema before default
@@ -88,6 +91,7 @@ function reapplyArgDefaultsFromOriginal(
           defaultValue: arg.defaultValue,
           default: (arg as { default?: ArgDefaultSnapshot['default'] }).default,
           astNode: arg.astNode ?? undefined,
+          originalArgType: arg.type as GraphQLInputType,
         });
       }
     }
@@ -113,14 +117,18 @@ function reapplyArgDefaultsFromOriginal(
         continue;
       }
       // Prefer original defaults — post-rename GraphQL 16 coercion may have emptied them.
-      const source: ArgDefaultSnapshot = {
-        defaultValue: snap.defaultValue !== undefined ? snap.defaultValue : argConfig.defaultValue,
-        default: snap.default ?? (argConfig as ArgDefaultSnapshot).default,
-        astNode: snap.astNode ?? argConfig.astNode,
+      const { originalArgType, ...snapDefaults } = snap;
+      const source: Parameters<typeof hasRewritableEnumDefaultForType>[0] = {
+        defaultValue:
+          snapDefaults.defaultValue !== undefined
+            ? snapDefaults.defaultValue
+            : argConfig.defaultValue,
+        default: snapDefaults.default ?? (argConfig as ArgDefaultSnapshot).default,
+        astNode: snapDefaults.astNode ?? argConfig.astNode,
       };
-      if (
-        !hasRewritableEnumDefaultForType(source, argConfig.type as GraphQLInputType, fieldNamesFn)
-      ) {
+      // Rewrite against the original arg type so wire enum values (newbie→'wire')
+      // resolve to member names before rename; apply onto the post-rename arg config.
+      if (!hasRewritableEnumDefaultForType(source, originalArgType, fieldNamesFn)) {
         continue;
       }
       // Cast: helper `default` is a loose snapshot; GQL17 GraphQLDefaultInput is a
@@ -129,7 +137,7 @@ function reapplyArgDefaultsFromOriginal(
         ...argConfig,
         ...withRenamedEnumDefaultsForType(
           source,
-          argConfig.type as GraphQLInputType,
+          originalArgType,
           enumValuesFn || ((s: string) => s),
           fieldNamesFn,
         ),

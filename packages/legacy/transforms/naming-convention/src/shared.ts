@@ -20,6 +20,7 @@ import {
   Kind,
   type ConstValueNode,
   type GraphQLArgumentConfig,
+  type GraphQLEnumType,
   type GraphQLInputObjectType,
   type GraphQLInputType,
   type ValueNode,
@@ -114,6 +115,39 @@ function renameInputObjectFieldName(
   return renameField(fieldName) || fieldName;
 }
 
+/** GraphQL list coercion accepts iterables; strings must stay singletons. */
+function isListIterable(value: unknown): boolean {
+  return (
+    value != null &&
+    typeof value !== 'string' &&
+    typeof (value as { [Symbol.iterator]?: unknown })[Symbol.iterator] === 'function'
+  );
+}
+
+/**
+ * Map an enum default wire/internal value to the renamed member's public name
+ * (also the usual post-transform internal value).
+ */
+function mapEnumWireDefault(
+  value: unknown,
+  enumType: GraphQLEnumType,
+  rename: NamingConventionFn,
+): unknown {
+  if (typeof value === 'string') {
+    for (const [name, cfg] of Object.entries(enumType.toConfig().values)) {
+      const wire = cfg.value !== undefined ? cfg.value : name;
+      if (wire === value || name === value) {
+        return rename(name);
+      }
+    }
+    return rename(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map(v => mapEnumWireDefault(v, enumType, rename));
+  }
+  return value;
+}
+
 function rewriteEnumValueNode(
   node: ValueNode,
   renameEnum: NamingConventionFn,
@@ -121,6 +155,11 @@ function rewriteEnumValueNode(
   inputType?: GraphQLInputType,
 ): ValueNode {
   if (node.kind === Kind.ENUM) {
+    if (inputType != null) {
+      const named = getNamedType(inputType);
+      // EnumValue tokens on custom scalars must stay intact.
+      return isEnumType(named) ? { ...node, value: renameEnum(node.value) } : node;
+    }
     return { ...node, value: renameEnum(node.value) };
   }
   let type = inputType;
@@ -192,17 +231,21 @@ function rewriteJsDefaultForInputType(
   }
   if (isListType(type)) {
     const ofType = type.ofType;
-    if (!Array.isArray(value)) {
-      // Singleton list default (`{ retry_count: 3 }` for `[Filter]`).
-      return value == null
-        ? value
-        : [rewriteJsDefaultForInputType(value, ofType, renameEnum, renameField)];
+    if (Array.isArray(value)) {
+      return value.map(item => rewriteJsDefaultForInputType(item, ofType, renameEnum, renameField));
     }
-    return value.map(item => rewriteJsDefaultForInputType(item, ofType, renameEnum, renameField));
+    // Set/other iterables: leave intact (GraphQL coerces); do not wrap as [Set].
+    if (isListIterable(value)) {
+      return value;
+    }
+    // Singleton list default (`{ retry_count: 3 }` for `[Filter]`).
+    return value == null
+      ? value
+      : [rewriteJsDefaultForInputType(value, ofType, renameEnum, renameField)];
   }
   const named = getNamedType(type);
   if (isEnumType(named)) {
-    return typeof value === 'string' ? renameEnum(value) : value;
+    return typeof value === 'string' ? mapEnumWireDefault(value, named, renameEnum) : value;
   }
   if (isInputObjectType(named) && value && typeof value === 'object' && !Array.isArray(value)) {
     const fields = (named as GraphQLInputObjectType).getFields();
@@ -307,6 +350,11 @@ function jsDefaultNeedsInputFieldRename(
     if (Array.isArray(value)) {
       return value.some(item => jsDefaultNeedsInputFieldRename(item, type.ofType, renameField));
     }
+    if (isListIterable(value)) {
+      return Array.from(value as Iterable<unknown>).some(item =>
+        jsDefaultNeedsInputFieldRename(item, type.ofType, renameField),
+      );
+    }
     return value != null && jsDefaultNeedsInputFieldRename(value, type.ofType, renameField);
   }
   const named = getNamedType(type);
@@ -341,6 +389,11 @@ function configDefaultNeedsKeyRename(
   renameField?: NamingConventionFn,
 ): boolean {
   if (!renameField) {
+    return false;
+  }
+  // GraphQL 17 prefers `default`; an explicit null there is the active default —
+  // do not admit a rewrite based on a legacy `defaultValue` object.
+  if (config.default != null && config.default.value === null && config.default.literal == null) {
     return false;
   }
   if (
@@ -438,7 +491,46 @@ export function withRenamedEnumDefaultsForType<T extends EnumDefaultConfig>(
 ): T {
   const named = getNamedType(inputType);
   if (isEnumType(named)) {
-    return withRenamedEnumDefaults(config, rename);
+    // Resolve wire values via the (original) enum members, then rename the member name —
+    // do not upperCase('wire') when newbie → value 'wire'.
+    const next: T = { ...config };
+    if (typeof config.defaultValue === 'string' || Array.isArray(config.defaultValue)) {
+      next.defaultValue = mapEnumWireDefault(
+        config.defaultValue,
+        named,
+        rename,
+      ) as T['defaultValue'];
+    }
+    if (config.default?.literal && containsEnumValueNode(config.default.literal)) {
+      next.default = {
+        literal: rewriteEnumValueNode(
+          config.default.literal,
+          rename,
+          renameField,
+          inputType,
+        ) as ConstValueNode,
+      };
+    } else if (typeof config.default?.value === 'string' || Array.isArray(config.default?.value)) {
+      next.default = {
+        value: mapEnumWireDefault(config.default.value, named, rename),
+      };
+    } else if (config.default != null && config.default.value === null) {
+      next.default = { value: null };
+    } else if (config.default != null) {
+      next.default = undefined;
+    }
+    if (config.astNode?.defaultValue && containsEnumValueNode(config.astNode.defaultValue)) {
+      next.astNode = {
+        ...config.astNode,
+        defaultValue: rewriteEnumValueNode(
+          config.astNode.defaultValue,
+          rename,
+          renameField,
+          inputType,
+        ) as ConstValueNode,
+      };
+    }
+    return next;
   }
   if (!isInputObjectType(named)) {
     return config;
@@ -466,6 +558,9 @@ export function withRenamedEnumDefaultsForType<T extends EnumDefaultConfig>(
         inputType,
       ) as ConstValueNode,
     };
+  } else if (config.default != null && config.default.value === null) {
+    // Preserve explicit GraphQL 17 null — do not clear and fall back to defaultValue.
+    next.default = { value: null };
   } else if (config.default?.value != null) {
     next.default = {
       value: rewriteJsDefaultForInputType(config.default.value, inputType, rename, renameField),

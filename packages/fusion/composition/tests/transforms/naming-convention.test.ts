@@ -743,11 +743,18 @@ describe('Naming Convention', () => {
       // GraphQL 17 may keep the default as a literal only.
       const lit = (
         arg as unknown as {
-          default?: { literal?: { kind: string; fields?: { name: { value: string } }[] } };
+          default?: {
+            literal?: {
+              kind: string;
+              fields?: { name: { value: string }; value: { kind: string; value?: string } }[];
+            };
+          };
         }
       ).default?.literal;
       expect(lit?.kind).toBe('ObjectValue');
       expect(lit?.fields?.map(f => f.name.value)).toEqual(['itemCount']);
+      const itemCount = lit?.fields?.find(f => f.name.value === 'itemCount');
+      expect(itemCount?.value).toMatchObject({ kind: 'IntValue', value: '1' });
     }
   });
 });
