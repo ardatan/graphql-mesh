@@ -1419,7 +1419,7 @@ function tryExecuteEntitiesBatch(
         document: node.document!,
         variables: args,
         context: ctx.contextValue,
-        rootValue: ctx.rootValue,
+        rootValue: hopSubschema.rootValue ?? ctx.rootValue,
         operationType: OperationTypeNode.QUERY,
         signal: ctx.signal,
         subgraphName: hopSubschema.name,
@@ -1885,6 +1885,7 @@ export function executeDataflowPlan(
           }
           if (overlapping) {
             // Serialize overlapping same-path writers; release as one unit.
+            // Use runOneHop so runIf gates apply (same as non-overlapping path).
             track(
               group.map(g => g.index),
               () => {
@@ -1892,7 +1893,7 @@ export function executeDataflowPlan(
                 for (const item of group) {
                   chain = handleMaybePromise(
                     () => chain,
-                    () => executeFetchNode(item.hop, ctx),
+                    () => runOneHop(item.hop, ctx),
                   );
                 }
                 return chain;
@@ -2131,7 +2132,7 @@ function executeBatchFetchNode(
             document: node.document!,
             variables,
             context: ctx.contextValue,
-            rootValue: ctx.rootValue,
+            rootValue: node.subschema.rootValue ?? ctx.rootValue,
             operationType: OperationTypeNode.QUERY,
             signal: ctx.signal,
             subgraphName: node.subschema.name,
