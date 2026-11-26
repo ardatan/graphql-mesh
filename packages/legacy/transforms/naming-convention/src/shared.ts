@@ -126,30 +126,44 @@ function isListIterable(value: unknown): boolean {
 }
 
 /**
- * Map a legacy `defaultValue` wire/internal value to the renamed member name.
- * Prefer wire matches so `other: { value: 'newbie' }` wins over the name `newbie`
- * when GraphQL 16 stored the internal value.
+ * Internal value the renamed enum member should carry.
+ * Name-default members (`value === name`) sync to `rename(name)`; custom wire
+ * values (e.g. `1` or `'wire'`) are preserved under the new external name.
+ */
+function renamedEnumMemberInternal(
+  name: string,
+  cfg: { value?: unknown },
+  rename: NamingConventionFn,
+): unknown {
+  const prev = cfg.value !== undefined ? cfg.value : name;
+  return prev === name ? rename(name) : prev;
+}
+
+/**
+ * Map a legacy `defaultValue` wire/internal value to the renamed member's
+ * internal value. Prefer wire matches so `other: { value: 'newbie' }` wins
+ * over the name `newbie` when GraphQL 16 stored the internal value.
  */
 function mapEnumWireDefault(
   value: unknown,
   enumType: GraphQLEnumType,
   rename: NamingConventionFn,
 ): unknown {
-  if (typeof value === 'string') {
-    const values = enumType.toConfig().values;
-    for (const [name, cfg] of Object.entries(values)) {
-      const wire = cfg.value !== undefined ? cfg.value : name;
-      if (wire === value) {
-        return rename(name);
-      }
-    }
-    if (Object.prototype.hasOwnProperty.call(values, value)) {
-      return rename(value);
-    }
-    return rename(value);
-  }
   if (Array.isArray(value)) {
     return value.map(v => mapEnumWireDefault(v, enumType, rename));
+  }
+  const values = enumType.toConfig().values;
+  for (const [name, cfg] of Object.entries(values)) {
+    const wire = cfg.value !== undefined ? cfg.value : name;
+    if (wire === value) {
+      return renamedEnumMemberInternal(name, cfg, rename);
+    }
+  }
+  if (typeof value === 'string') {
+    if (Object.prototype.hasOwnProperty.call(values, value)) {
+      return renamedEnumMemberInternal(value, values[value], rename);
+    }
+    return rename(value);
   }
   return value;
 }
@@ -164,6 +178,9 @@ function mapEnumExternalDefault(
   enumType: GraphQLEnumType,
   rename: NamingConventionFn,
 ): unknown {
+  if (Array.isArray(value)) {
+    return value.map(v => mapEnumExternalDefault(v, enumType, rename));
+  }
   if (typeof value === 'string') {
     const values = enumType.toConfig().values;
     if (Object.prototype.hasOwnProperty.call(values, value)) {
@@ -171,10 +188,8 @@ function mapEnumExternalDefault(
     }
     return mapEnumWireDefault(value, enumType, rename);
   }
-  if (Array.isArray(value)) {
-    return value.map(v => mapEnumExternalDefault(v, enumType, rename));
-  }
-  return value;
+  // Non-string GQL17 `default.value` is an internal/wire value, not an external name.
+  return mapEnumWireDefault(value, enumType, rename);
 }
 
 function rewriteEnumValueNode(
@@ -286,9 +301,6 @@ function rewriteJsDefaultForInputType(
   }
   const named = getNamedType(type);
   if (isEnumType(named)) {
-    if (typeof value !== 'string') {
-      return value;
-    }
     return externalEnumNames
       ? mapEnumExternalDefault(value, named, renameEnum)
       : mapEnumWireDefault(value, named, renameEnum);
@@ -477,11 +489,99 @@ function configDefaultNeedsKeyRename(
   return false;
 }
 
+/** True when `value` matches an enum member by wire/internal value or by name. */
+function jsValueMatchesEnumMember(value: unknown, enumType: GraphQLEnumType): boolean {
+  if (value === undefined || value === null) {
+    return false;
+  }
+  if (Array.isArray(value)) {
+    return value.some(item => jsValueMatchesEnumMember(item, enumType));
+  }
+  const values = enumType.toConfig().values;
+  for (const [name, cfg] of Object.entries(values)) {
+    const wire = cfg.value !== undefined ? cfg.value : name;
+    if (wire === value) {
+      return true;
+    }
+  }
+  return typeof value === 'string' && Object.prototype.hasOwnProperty.call(values, value);
+}
+
+/**
+ * Typed walk for enum / key-rename detection. Descends only through NonNull,
+ * List, and input-object fields; stops at scalars (including custom scalars
+ * whose values may be cyclic objects).
+ */
+function typedJsDefaultHasRewritableEnum(value: unknown, inputType: GraphQLInputType): boolean {
+  if (value === undefined || value === null) {
+    return false;
+  }
+  let type: GraphQLInputType = inputType;
+  while (isNonNullType(type)) {
+    type = type.ofType;
+  }
+  if (isListType(type)) {
+    if (Array.isArray(value)) {
+      return value.some(item => typedJsDefaultHasRewritableEnum(item, type.ofType));
+    }
+    if (isListIterable(value)) {
+      return Array.from(value as Iterable<unknown>).some(item =>
+        typedJsDefaultHasRewritableEnum(item, type.ofType),
+      );
+    }
+    return typedJsDefaultHasRewritableEnum(value, type.ofType);
+  }
+  const named = getNamedType(type);
+  if (isEnumType(named)) {
+    return jsValueMatchesEnumMember(value, named) || typeof value === 'string';
+  }
+  if (!isInputObjectType(named) || typeof value !== 'object' || Array.isArray(value)) {
+    // Scalar (incl. custom): do not inspect contents.
+    return false;
+  }
+  const fields = named.getFields();
+  for (const [fieldName, raw] of Object.entries(value as Record<string, unknown>)) {
+    const field = fields[fieldName];
+    if (!field) {
+      continue;
+    }
+    if (typedJsDefaultHasRewritableEnum(raw, field.type)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function configHasTypedRewritableEnumDefault(
+  config: EnumDefaultConfig,
+  inputType: GraphQLInputType,
+): boolean {
+  if (typedJsDefaultHasRewritableEnum(config.defaultValue, inputType)) {
+    return true;
+  }
+  if (typedJsDefaultHasRewritableEnum(config.default?.value, inputType)) {
+    return true;
+  }
+  if (config.default?.literal && containsEnumValueNode(config.default.literal)) {
+    return true;
+  }
+  if (config.default != null) {
+    return false;
+  }
+  if (config.defaultValue !== undefined) {
+    return false;
+  }
+  return containsEnumValueNode(config.astNode?.defaultValue);
+}
+
 /**
  * Like {@link hasRewritableEnumDefault}, but for input-object args
  * (`Filter = { status: newbie }`) uses the GraphQL input type to decide.
  * When `renameField` is set, also admits key-only defaults (`{ retry_count: 3 }`)
  * that have no string/enum leaves.
+ *
+ * Walks only typed input-object fields / list wrappers — never into custom-scalar
+ * values (those may be cyclic).
  */
 export function hasRewritableEnumDefaultForType(
   config: EnumDefaultConfig,
@@ -490,12 +590,17 @@ export function hasRewritableEnumDefaultForType(
 ): boolean {
   const named = getNamedType(inputType);
   if (isEnumType(named)) {
+    // Prefer typed membership (incl. non-string internals) over the untyped
+    // string-only scan so `defaultValue: 1` for `newbie → 1` is rewritten.
+    if (configHasTypedRewritableEnumDefault(config, inputType)) {
+      return true;
+    }
     return hasRewritableEnumDefault(config);
   }
   if (!isInputObjectType(named)) {
     return false;
   }
-  if (hasRewritableEnumDefault(config)) {
+  if (configHasTypedRewritableEnumDefault(config, inputType)) {
     return true;
   }
   return configDefaultNeedsKeyRename(config, inputType, renameField);
@@ -547,10 +652,11 @@ export function withRenamedEnumDefaultsForType<T extends EnumDefaultConfig>(
 ): T {
   const named = getNamedType(inputType);
   if (isEnumType(named)) {
-    // Resolve wire values via the (original) enum members, then rename the member name —
-    // do not upperCase('wire') when newbie → value 'wire'.
+    // Resolve wire/internal values via the (original) enum members, then map to
+    // the renamed member's internal value — do not upperCase('wire') when
+    // newbie → value 'wire', and keep numeric internals like `1`.
     const next: T = { ...config };
-    if (typeof config.defaultValue === 'string' || Array.isArray(config.defaultValue)) {
+    if (config.defaultValue !== undefined && config.defaultValue !== null) {
       next.defaultValue = mapEnumWireDefault(
         config.defaultValue,
         named,
@@ -566,7 +672,7 @@ export function withRenamedEnumDefaultsForType<T extends EnumDefaultConfig>(
           inputType,
         ) as ConstValueNode,
       };
-    } else if (typeof config.default?.value === 'string' || Array.isArray(config.default?.value)) {
+    } else if (config.default?.value !== undefined && config.default.value !== null) {
       next.default = {
         value: mapEnumExternalDefault(config.default.value, named, rename),
       };

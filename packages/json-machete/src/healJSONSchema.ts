@@ -767,10 +767,17 @@ export async function healJSONSchema(
             const type = subSchema.type;
             // Resolve item type the same way child healing will (single-element
             // allOf/anyOf/oneOf collapse) so `'false'` still decodes for boolean items.
-            const resolveItemsType = (items: unknown): string | string[] | undefined => {
+            const resolveItemsType = (
+              items: unknown,
+              visitedItems = new Set<object>(),
+            ): string | string[] | undefined => {
               if (!items || typeof items !== 'object' || Array.isArray(items)) {
                 return undefined;
               }
+              if (visitedItems.has(items)) {
+                return undefined;
+              }
+              visitedItems.add(items);
               const obj = items as {
                 type?: string | string[];
                 allOf?: unknown[];
@@ -783,7 +790,7 @@ export async function healJSONSchema(
               for (const key of ['allOf', 'anyOf', 'oneOf'] as const) {
                 const arr = obj[key];
                 if (Array.isArray(arr) && arr.length === 1) {
-                  const nested = resolveItemsType(arr[0]);
+                  const nested = resolveItemsType(arr[0], visitedItems);
                   if (nested != null) {
                     return nested;
                   }

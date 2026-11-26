@@ -48,6 +48,52 @@ type ArgDefaultSnapshot = ArgDefaultFields & {
 };
 
 /**
+ * `@graphql-tools/wrap` TransformEnumValues forces `value: undefined`, so GraphQL
+ * defaults the internal value to the renamed external name. Restore custom
+ * wire/internal values (e.g. `newbie → 1`) from the pre-transform schema.
+ */
+function restoreCustomEnumInternals(
+  originalSchema: GraphQLSchema,
+  nextSchema: GraphQLSchema,
+  opts: { typeNamesFn?: NamingFn; enumValuesFn?: NamingFn },
+): GraphQLSchema {
+  const { typeNamesFn, enumValuesFn } = opts;
+  if (!enumValuesFn) {
+    return nextSchema;
+  }
+  const renameType = (name: string) =>
+    IGNORED_TYPE_NAMES.includes(name) ? name : typeNamesFn?.(name) || name;
+  const customInternals = new Map<string, unknown>();
+  for (const gqlType of Object.values(originalSchema.getTypeMap())) {
+    if (!isEnumType(gqlType) || gqlType.name.startsWith('__')) {
+      continue;
+    }
+    const newTypeName = renameType(gqlType.name);
+    for (const v of gqlType.getValues()) {
+      if (v.value === v.name) {
+        continue;
+      }
+      customInternals.set(`${newTypeName}.${enumValuesFn(v.name)}`, v.value);
+    }
+  }
+  if (customInternals.size === 0) {
+    return nextSchema;
+  }
+  return mapSchema(nextSchema, {
+    [MapperKind.ENUM_VALUE]: (valueConfig, typeName, _schema, externalValue) => {
+      const key = `${typeName}.${externalValue}`;
+      if (!customInternals.has(key)) {
+        return undefined;
+      }
+      return {
+        ...valueConfig,
+        value: customInternals.get(key),
+      };
+    },
+  });
+}
+
+/**
  * GraphQL 16 wrap: `RenameInputObjectFields` rebuilds the schema before default
  * rewriting runs, so `{ user_status: newbie }` becomes `{}` against `userStatus`.
  * Re-apply defaults from the pre-transform schema against post-rename types.
@@ -233,13 +279,16 @@ export default class NamingConventionTransform implements MeshTransform {
       this.transforms.push(
         new TransformEnumValues((_typeName, externalValue, enumValueConfig) => {
           const newEnumValue = namingConventionFn(externalValue) || externalValue;
-          // Keep internal value in sync with the renamed external name (same as bare mode)
-          // so rewritten argument defaults match what resolvers receive.
+          // Name-default members sync internal → renamed name; custom wire/internal
+          // values stay so rewritten defaults match what resolvers receive.
+          const prevInternal =
+            enumValueConfig.value !== undefined ? enumValueConfig.value : externalValue;
+          const newInternal = prevInternal === externalValue ? newEnumValue : prevInternal;
           return [
             newEnumValue,
             {
               ...enumValueConfig,
-              value: newEnumValue,
+              value: newInternal,
             },
           ];
         }) as any,
@@ -289,7 +338,11 @@ export default class NamingConventionTransform implements MeshTransform {
       transformedSchema,
       this.transforms,
     );
-    return reapplyArgDefaultsFromOriginal(originalWrappingSchema, next, {
+    const withInternals = restoreCustomEnumInternals(originalWrappingSchema, next, {
+      typeNamesFn: this.typeNamesFn,
+      enumValuesFn: this.enumValuesFn,
+    });
+    return reapplyArgDefaultsFromOriginal(originalWrappingSchema, withInternals, {
       typeNamesFn: this.typeNamesFn,
       fieldNamesFn: this.fieldNamesFn,
       fieldArgumentNamesFn: this.fieldArgumentNamesFn,

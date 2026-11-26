@@ -1,5 +1,6 @@
 import type {
   GraphQLAbstractType,
+  GraphQLArgument,
   GraphQLEnumType,
   GraphQLInputObjectType,
   GraphQLInterfaceType,
@@ -105,6 +106,22 @@ export default class NamingConventionTransform implements MeshTransform {
     const renameFieldForLookup = (name: string) =>
       IGNORED_ROOT_FIELD_NAMES.includes(name) ? name : fieldNamesFn?.(name) || name;
 
+    // ARGUMENT mapper is not given the arg name. Pair by definition order under
+    // `${typeName}::${renamedFieldName}` so same-typed args without astNode each
+    // get their own original default (not the first type match).
+    const originalArgQueues = new Map<string, GraphQLArgument[]>();
+    if (this.config.enumValues || this.config.fieldNames) {
+      for (const [typeName, gqlType] of Object.entries(schema.getTypeMap())) {
+        if (!isObjectType(gqlType) && !isInterfaceType(gqlType)) {
+          continue;
+        }
+        for (const [fieldName, field] of Object.entries(gqlType.getFields())) {
+          const key = `${typeName}::${renameFieldForLookup(fieldName)}`;
+          originalArgQueues.set(key, field.args.slice());
+        }
+      }
+    }
+
     return mapSchema(schema, {
       ...(this.config.typeNames && {
         [MapperKind.TYPE]: type => {
@@ -159,11 +176,20 @@ export default class NamingConventionTransform implements MeshTransform {
             ([fname]) => renameFieldForLookup(fname) === fieldName,
           );
           const origField = origFieldEntry?.[1];
-          // COMPOSITE_FIELD renames arg map keys but leaves astNode.name original.
+          // Prefer AST name when present; otherwise consume the next original arg
+          // in definition order (same as mapArguments key order after COMPOSITE_FIELD).
           const origArgName = config.astNode?.name?.value;
-          const origArg =
-            (origArgName && origField?.args.find(a => a.name === origArgName)) ||
-            origField?.args.find(a => a.type === config.type);
+          const argQueue = originalArgQueues.get(`${typeName}::${fieldName}`);
+          let origArg =
+            (origArgName && origField?.args.find(a => a.name === origArgName)) || undefined;
+          if (origArg && argQueue) {
+            const idx = argQueue.findIndex(a => a.name === origArg!.name);
+            if (idx >= 0) {
+              argQueue.splice(idx, 1);
+            }
+          } else if (argQueue?.length) {
+            origArg = argQueue.shift();
+          }
           const sourceConfig: ArgDefaultFields = origArg
             ? {
                 defaultValue: origArg.defaultValue,
@@ -210,18 +236,27 @@ export default class NamingConventionTransform implements MeshTransform {
             return undefined;
           }
 
+          // Name-default members sync internal → renamed name; custom wire/internal
+          // values (e.g. `1`, `'wire'`) stay so omitted-arg defaults keep matching.
+          const prevInternal = valueConfig.value !== undefined ? valueConfig.value : externalValue;
+          const newInternal = prevInternal === externalValue ? newEnumValue : prevInternal;
+
           return [
             newEnumValue,
             {
               ...valueConfig,
-              value: newEnumValue,
-              astNode: {
-                ...valueConfig.astNode,
-                name: {
-                  ...valueConfig.astNode.name,
-                  value: newEnumValue,
-                },
-              },
+              value: newInternal,
+              ...(valueConfig.astNode
+                ? {
+                    astNode: {
+                      ...valueConfig.astNode,
+                      name: {
+                        ...valueConfig.astNode.name,
+                        value: newEnumValue,
+                      },
+                    },
+                  }
+                : {}),
             },
           ];
         },

@@ -2,7 +2,12 @@ import {
   buildSchema,
   execute,
   GraphQLEnumType,
+  GraphQLInputObjectType,
+  GraphQLInt,
   GraphQLObjectType,
+  GraphQLScalarType,
+  GraphQLSchema,
+  GraphQLString,
   GraphQLUnionType,
   version as graphqlVersion,
   parse,
@@ -363,6 +368,142 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
           ? gql17Default.literal.value
           : undefined;
     expect(enumDefault).toBe('NEWBIE');
+  });
+
+  // wrapSchema's createWrappingSchema forces enum `value: undefined` before any
+  // transform runs, so custom internals are unrecoverable in wrap mode.
+  (mode === 'bare' ? it : it.skip)(
+    'keeps non-string enum internal defaults under the renamed member',
+    () => {
+      const userType = new GraphQLEnumType({
+        name: 'userType',
+        values: {
+          newbie: { value: 1 },
+          admin: { value: 2 },
+        },
+      });
+      const inputSchema = new GraphQLSchema({
+        query: new GraphQLObjectType({
+          name: 'Query',
+          fields: {
+            usersByType: {
+              type: GraphQLString,
+              args: {
+                type: { type: userType, defaultValue: 1 },
+              },
+            },
+          },
+        }),
+      });
+      const newSchema = transformSchema(
+        inputSchema,
+        new NamingConventionTransform({
+          apiName: '',
+          importFn,
+          config: {
+            mode,
+            typeNames: 'pascalCase',
+            enumValues: 'upperCase',
+          },
+          cache,
+          pubsub,
+          baseDir,
+          log,
+        }),
+      );
+      const renamedEnum = newSchema.getType('UserType') as GraphQLEnumType;
+      expect(renamedEnum.getValue('NEWBIE')?.value).toBe(1);
+      const arg = (newSchema.getType('Query') as GraphQLObjectType).getFields().usersByType.args[0];
+      expect(arg.defaultValue).toBe(1);
+    },
+  );
+
+  it('pairs same-typed args without astNode to their own defaults', () => {
+    const filter = new GraphQLInputObjectType({
+      name: 'Filter',
+      fields: {
+        retry_count: { type: GraphQLInt },
+      },
+    });
+    const inputSchema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          search: {
+            type: GraphQLString,
+            args: {
+              left: { type: filter, defaultValue: { retry_count: 1 } },
+              right: { type: filter, defaultValue: { retry_count: 2 } },
+            },
+          },
+        },
+      }),
+    });
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const args = (newSchema.getType('Query') as GraphQLObjectType).getFields().search.args;
+    const left = args.find(a => a.name === 'left');
+    const right = args.find(a => a.name === 'right');
+    expect(left?.defaultValue).toEqual({ retryCount: 1 });
+    expect(right?.defaultValue).toEqual({ retryCount: 2 });
+  });
+
+  it('does not walk custom-scalar default values when detecting rewritable enums', () => {
+    // Programmatic custom scalar with a cyclic JS default — untyped recursion would hang.
+    const cyclic: Record<string, unknown> = {};
+    cyclic.self = cyclic;
+    const Raw = new GraphQLScalarType({ name: 'Raw', serialize: v => v });
+    const Filter = new GraphQLInputObjectType({
+      name: 'Filter',
+      fields: {
+        raw_payload: { type: Raw, defaultValue: cyclic },
+        retry_count: { type: GraphQLInt },
+      },
+    });
+    const inputSchema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          search: {
+            type: GraphQLString,
+            args: {
+              filter: { type: Filter, defaultValue: { raw_payload: cyclic, retry_count: 3 } },
+            },
+          },
+        },
+      }),
+    });
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const arg = (newSchema.getType('Query') as GraphQLObjectType).getFields().search.args[0];
+    expect(arg.defaultValue).toMatchObject({ retryCount: 3 });
+    expect(arg.defaultValue).toHaveProperty('rawPayload');
   });
 
   it('does not rewrite enum tokens inside custom-scalar list/object defaults', () => {
