@@ -4,7 +4,6 @@
 scalar TransportOptions
 scalar _HoistConfig
 scalar ResolveToSourceArgs
-scalar _DirectiveExtensions
 
 directive @transport(
   subgraph: String!
@@ -48,7 +47,3 @@ directive @hoist(
   subgraph: String
   pathConfig: _HoistConfig
 ) repeatable on FIELD_DEFINITION
-
-directive @extraSchemaDefinitionDirective(
-  directives: _DirectiveExtensions
-) repeatable on OBJECT

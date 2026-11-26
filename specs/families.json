@@ -9,13 +9,13 @@
       "@merge",
       "@source",
       "@resolveTo",
-      "@hoist",
-      "@extraSchemaDefinitionDirective"
+      "@hoist"
     ],
     "stamp": "importMeshDirectives defaults to this URL (MESH_SPEC_URL). Protocol loaders stamp @transport here separately from their protocol family URL.",
     "notes": [
       "Mesh stitching @source uses subgraph: (and optional type:). Apollo Connectors @source uses http: and lives under specs.apollo.dev/connect.",
-      "Older Mesh stamps may still import @pubsubOperation / @pubsubPublish from core/v0.1. Prefer the pubsub family for new schemas."
+      "Older Mesh stamps may still import @pubsubOperation / @pubsubPublish from core/v0.1. Prefer the pubsub family for new schemas.",
+      "@extraSchemaDefinitionDirective is Compose-internal SCHEMA-usage parking (lifted before the final SG) and is not published here."
     ]
   },
   {
