@@ -489,7 +489,7 @@ writeFileSync(
     <ul>
       <li>HTTP/REST Connectors <code>@connect</code> / <code>@source</code>: <a href="https://specs.apollo.dev/connect/v0.2">specs.apollo.dev/connect</a></li>
       <li>Federation / join / link specs: <a href="https://specs.apollo.dev/">specs.apollo.dev</a></li>
-      <li>Federation Spec draft <code>@lookup</code> / <code>@is</code> / <code>@internal</code> (entity resolution): <a href="https://graphql.github.io/graphql-federation-spec/draft">graphql.github.io/graphql-federation-spec/draft</a> (not published here)</li>
+      <li>Federation Spec draft <code>@lookup</code> / <code>@is</code> / <code>@internal</code> (prefer for single-object entity resolution): <a href="https://graphql.github.io/graphql-federation-spec/draft">graphql.github.io/graphql-federation-spec/draft</a>. Mesh <code>@merge</code> for list/batch type merging is published under <a href="/core/v0.1">core/v0.1</a>.</li>
       <li>Legacy catch-all (read-only): <code>https://the-guild.dev/graphql/mesh/spec/v1.0</code></li>
     </ul>
   </section>

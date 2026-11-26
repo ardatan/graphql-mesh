@@ -19,6 +19,15 @@ directive @source(
   subgraph: String!
 ) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
+directive @merge(
+  subgraph: String
+  keyField: String
+  keyArg: String
+  key: [String!]
+  argsExpr: String
+  additionalArgs: String
+) repeatable on FIELD_DEFINITION
+
 directive @resolveTo(
   requiredSelectionSet: String
   sourceName: String

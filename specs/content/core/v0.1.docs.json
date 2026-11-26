@@ -107,14 +107,70 @@
         }
       }
     },
+    "@merge": {
+      "summary": "Marks a Query (or other) field as a type-merging entry point: the gateway uses it to fill an entity by key, including batched list lookups.",
+      "authors": {
+        "intro": "Put `@merge` on a field that can resolve an entity (or a list of entities) from keys. Mesh keeps `@merge` supported for stitching-style type merging.\n\nSingle-object entity resolution: prefer Federation Spec `@lookup` / `@is` / `@internal` (https://graphql.github.io/graphql-federation-spec/draft) when you are modeling federation entity recall for one object.\n\nList / batch: use `@merge` when the entry point returns a list and should batch many keys in one call (`keyField` + `keyArg`, or `argsExpr` with a list expansion). That is the author-facing Mesh path for N+1-safe type merging across subgraphs.",
+        "example": "type Query {\n  user(id: ID!): User @merge(keyField: \"id\", keyArg: \"id\", subgraph: \"users\")\n  users(ids: [ID!]!): [User!]! @merge(keyField: \"id\", keyArg: \"ids\", subgraph: \"users\")\n}"
+      },
+      "implementers": {
+        "intro": "Type-merging entry point. When planning entity fills, map keys to this field's arguments and invoke it (single or batched). Supported and first-class on this family - not a deprecated alias.\n\nSingle-object federation recall may instead use Federation `@lookup` when that contract applies. List-returning `@merge` fields must accept a key list (via `keyArg` or `argsExpr` expansion) so the runtime can batch.",
+        "compose": "Schemas `@link` this family and import `@merge`. Preserve apps through Supergraph printing (or rewrite into `join__directive` when required) so runtime can rebuild merge config. `subgraph`, when present, must match the composition subgraph name.",
+        "runtime": "Register the annotated field as a merged-type entry point: extract keys from origin objects (`keyField` / `key` / selection), pass them through `keyArg` or `argsExpr`, call the field, and map results back onto waiting objects. For list return types, batch keys into one call when `keyArg`/`argsExpr` accepts a list.",
+        "validation": "FIELD_DEFINITION only (as published). Reject combining `argsExpr` with `keyArg`/`additionalArgs`. List-returning fields that use `argsExpr` must use a list expansion. `subgraph`, when present, must match a composition subgraph name."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "Composition subgraph name for this merge entry point.",
+          "authors": "Name which composed subgraph owns this merge field. Use the same subgraph name elsewhere for that source.",
+          "implementers": "Attribute the merge entry to that composition subgraph name.",
+          "example": "subgraph: \"users\""
+        },
+        "keyField": {
+          "defaults": "Optional when `key` or `argsExpr` supplies keys.",
+          "constraints": "Dotted field path on the origin object used as the merge key (e.g. `id`, `organization.id`).",
+          "authors": "Which parent/origin field provides the key value for this merge.",
+          "implementers": "Read this path from each origin object to build keys (and selection sets).",
+          "example": "keyField: \"id\""
+        },
+        "keyArg": {
+          "defaults": "Optional when the field has a single argument or `argsExpr` is set.",
+          "constraints": "Argument name (possibly dotted) that receives the merge key or key list.",
+          "authors": "For batch/list merges, name the list argument that receives collected keys (e.g. `ids`).",
+          "implementers": "Pass collected keys into this argument; required when the field has more than one argument and `argsExpr` is absent.",
+          "example": "keyArg: \"ids\""
+        },
+        "key": {
+          "defaults": "Optional.",
+          "constraints": "Explicit key field names when not using `keyField`.",
+          "authors": "Alternate to `keyField` for declaring which fields form the object key.",
+          "implementers": "Build the key expression from these field names when `keyField` is omitted.",
+          "example": "key: [\"id\"]"
+        },
+        "argsExpr": {
+          "defaults": "Optional; mutually exclusive with `keyArg` / `additionalArgs`.",
+          "constraints": "Expression mapping `$key` into field arguments. List-returning fields need a list expansion (`[[...]]`).",
+          "authors": "Advanced key->args mapping when a single `keyArg` is not enough.",
+          "implementers": "Parse and apply as merge args expression; validate expansion rules for list vs singleton return types.",
+          "example": "argsExpr: \"ids: [[$key.id]]\""
+        },
+        "additionalArgs": {
+          "defaults": "Optional; not combined with `argsExpr`.",
+          "constraints": "Extra static/argument expression string merged into the call.",
+          "authors": "Rare; prefer `keyArg` + field args for ordinary batch merges.",
+          "implementers": "Merge into the delegated args when `argsExpr` is not used."
+        }
+      }
+    },
     "@resolveTo": {
       "summary": "Binds a Supergraph field to another source field, a batched key lookup, and/or a PubSub topic (webhooks / subscriptions). The gateway resolves the annotated field by routing from that field to the configured target.",
       "authors": {
-        "intro": "Put `@resolveTo` on the Supergraph field the client selects (from). The gateway does not run a hand-written resolver for that field; it routes to a target (to) described by the args.\n\nSource delegation (from -> to): `sourceName` picks the subgraph; `sourceTypeName` + `sourceFieldName` name the field on that subgraph's schema (e.g. `Query.repositoriesByUserId`). The gateway builds a delegated operation to that field. `requiredSelectionSet` guarantees parent fields needed before the hop (often keys used in `sourceArgs`). `sourceArgs` maps parent / field args into the target field's arguments (`{root.*}`, `{args.*}`). Optional `sourceSelectionSet` shapes what is requested under the target field; `result` / `resultType` project the return value.\n\nBatch path: With `keyField` + `keysArg`, many parent objects share one call: keys come from each parent's `keyField`, are passed as the target's list argument named by `keysArg`, and (when set) `valueKeyField` rematches unordered results. `additionalArgs` is only merged on this batch path.\n\nPubSub path: With `pubsubTopic` (and no source field), the annotated field listens on the gateway's topic bus instead of delegating to a subgraph field. Optional `filterBy` limits which payloads reach the subscriber. Webhook-form topics (`webhook:<method>:<path>`) also accept matching HTTP ingress when enabled.\n\nFor entity resolution, prefer Federation Spec `@lookup` / `@is` / `@internal` (https://graphql.github.io/graphql-federation-spec/draft).",
+        "intro": "Put `@resolveTo` on the Supergraph field the client selects (from). The gateway does not run a hand-written resolver for that field; it routes to a target (to) described by the args.\n\nSource delegation (from -> to): `sourceName` picks the subgraph; `sourceTypeName` + `sourceFieldName` name the field on that subgraph's schema (e.g. `Query.repositoriesByUserId`). The gateway builds a delegated operation to that field. `requiredSelectionSet` guarantees parent fields needed before the hop (often keys used in `sourceArgs`). `sourceArgs` maps parent / field args into the target field's arguments (`{root.*}`, `{args.*}`). Optional `sourceSelectionSet` shapes what is requested under the target field; `result` / `resultType` project the return value.\n\nBatch path: With `keyField` + `keysArg`, many parent objects share one call: keys come from each parent's `keyField`, are passed as the target's list argument named by `keysArg`, and (when set) `valueKeyField` rematches unordered results. `additionalArgs` is only merged on this batch path.\n\nPubSub path: With `pubsubTopic` (and no source field), the annotated field listens on the gateway's topic bus instead of delegating to a subgraph field. Optional `filterBy` limits which payloads reach the subscriber. Webhook-form topics (`webhook:<method>:<path>`) also accept matching HTTP ingress when enabled.\n\nFor single-object entity resolution, prefer Federation Spec `@lookup` / `@is` / `@internal` (https://graphql.github.io/graphql-federation-spec/draft). For list/batch type merging entry points, use Mesh `@merge` on this family (supported; see `@merge`).",
         "example": "type User {\n  repositories: [Repository]\n    @resolveTo(\n      sourceName: \"A\"\n      sourceTypeName: \"Query\"\n      sourceFieldName: \"repositoriesByUserId\"\n      requiredSelectionSet: \"{ id }\"\n      sourceArgs: { id: \"{root.id}\" }\n    )\n}"
       },
       "implementers": {
-        "compose": "Encapsulate / additional type definitions import `@resolveTo` under core when used. Preserve args through Supergraph printing so runtime can rebuild the from->to binding. Entity resolution uses Federation `@lookup` / `@is` / `@internal` (or `@resolveTo` field binding as documented here).",
+        "compose": "Encapsulate / additional type definitions import `@resolveTo` under core when used. Preserve args through Supergraph printing so runtime can rebuild the from->to binding. Single-object entity recall may use Federation `@lookup`; list/batch type-merging entry points use Mesh `@merge` (documented on this family).",
         "runtime": "For each annotated field (from), install a gateway resolver:\n- Source delegation: resolve `sourceName` -> executor; look up `sourceTypeName.sourceFieldName` (to); ensure `requiredSelectionSet` on the parent; interpolate `sourceArgs` (and `additionalArgs` only when `keysArg` is set); build the delegated operation (apply `sourceSelectionSet` when present); return the payload, optionally projected by `result` / `resultType`.\n- Batch: collect `keyField` values across parents, pass them as `keysArg` on one call to the same to field, rematch with `valueKeyField` when set.\n- PubSub: subscribe/publish on the gateway's topic bus for `pubsubTopic`; apply `filterBy`; register webhook routes for `webhook:` topics when ingress is on.",
         "validation": "For source delegation, require `sourceTypeName` and `sourceFieldName` (and usually `sourceName`). Pure PubSub apps may omit source fields when `pubsubTopic` is set. Do not default `sourceTypeName` to `Query`."
       },
