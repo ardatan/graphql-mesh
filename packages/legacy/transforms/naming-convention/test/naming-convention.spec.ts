@@ -4,8 +4,8 @@ import {
   GraphQLEnumType,
   GraphQLObjectType,
   GraphQLUnionType,
-  parse,
   version as graphqlVersion,
+  parse,
 } from 'graphql';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';

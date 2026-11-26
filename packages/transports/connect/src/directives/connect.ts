@@ -2404,8 +2404,7 @@ export function addConnectFieldResolver(
     // hydrateEntityStubFieldResolvers forwards another field's `info` into
     // resolveReference → this connector. Keep the connector's own field for
     // argument metadata when `info` names a different field (e.g. Product.name).
-    const activeField =
-      runtimeField && runtimeField.name === field.name ? runtimeField : field;
+    const activeField = runtimeField && runtimeField.name === field.name ? runtimeField : field;
     const activeSchema = info?.schema || schema;
 
     // When `$expand` / parent selection already put this field on `root`, skip HTTP.
