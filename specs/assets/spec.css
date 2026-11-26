@@ -196,6 +196,63 @@ code {
   font-size: 0.88em;
 }
 
+.spec-subhead {
+  font-size: 0.95rem;
+  margin: 1rem 0 0.35rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.spec-audience {
+  margin: 1rem 0 1.25rem;
+}
+
+.spec-audience-pair {
+  display: grid;
+  gap: 1rem;
+  margin: 0.75rem 0 1rem;
+}
+
+@media (min-width: 720px) {
+  .spec-audience-pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.spec-audience-col {
+  padding: 0.75rem 0.9rem;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+}
+
+.spec-audience-col > p:first-of-type {
+  margin-top: 0.35rem;
+}
+
+.spec-arg {
+  margin: 1.25rem 0 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.spec-arg-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.85rem;
+  margin: 0.5rem 0 0.75rem;
+  font-size: 0.92rem;
+}
+
+.spec-arg-meta dt {
+  font-weight: 700;
+  color: #555;
+}
+
+.spec-arg-meta dd {
+  margin: 0;
+}
+
 @media (min-width: 1100px) {
   .spec-page {
     display: grid;

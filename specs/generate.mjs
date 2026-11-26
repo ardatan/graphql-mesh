@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 /**
- * Build static HTML for https://specs.graphql-mesh.dev from content/*.graphql
- * and families.json. Index lists Current Specs + All Schemas; each family page
- * has a TOC and numbered directive / schema-addition sections.
+ * Build static HTML for https://specs.graphql-mesh.dev from content/*.graphql,
+ * optional content/<family>/<version>.docs.json (dual-audience prose), and families.json.
  */
-import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -20,6 +19,32 @@ function esc(s) {
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;');
+}
+
+/** Plain prose → paragraphs; inline `code` spans. */
+function prose(text) {
+  if (!text) return '';
+  return String(text)
+    .split(/\n\n+/)
+    .map(block => {
+      const html = esc(block.trim()).replace(/`([^`]+)`/g, '<code>$1</code>');
+      return `<p>${html.replaceAll('\n', '<br>')}</p>`;
+    })
+    .join('\n');
+}
+
+function exampleFigure(code, caption = 'Example') {
+  if (!code) return '';
+  return `<figure class="spec-example">
+    <figcaption>${esc(caption)}</figcaption>
+    <pre class="graphql"><code>${esc(code.trim())}</code></pre>
+  </figure>`;
+}
+
+function loadDocs(familyName, version) {
+  const path = join(root, 'content', familyName, `${version}.docs.json`);
+  if (!existsSync(path)) return {};
+  return JSON.parse(readFileSync(path, 'utf8'));
 }
 
 /** Split SDL into top-level definitions (directive / enum / scalar / type). */
@@ -53,7 +78,6 @@ function splitDefinitions(sdl) {
     depth -= (line.match(/\}/g) || []).length;
     if (depth < 0) depth = 0;
     if (depth === 0 && buf.length > 0 && /\)\s*(repeatable\s+)?on\b/.test(buf.join('\n'))) {
-      // Directive defs often have no braces; flush when locations line complete.
       const joined = buf.join('\n');
       if (/^directive\s+@/.test(joined.trim()) && !joined.includes('{')) {
         flush();
@@ -84,21 +108,118 @@ function defMeta(text) {
   };
 }
 
+function splitArgsAtCommas(segment) {
+  const parts = [];
+  let buf = '';
+  let depth = 0;
+  for (const ch of segment) {
+    if (ch === '[' || ch === '(') depth += 1;
+    if (ch === ']' || ch === ')') depth = Math.max(0, depth - 1);
+    if (ch === ',' && depth === 0) {
+      if (buf.trim()) parts.push(buf.trim());
+      buf = '';
+      continue;
+    }
+    buf += ch;
+  }
+  if (buf.trim()) parts.push(buf.trim());
+  return parts;
+}
+
 function parseDirectiveArgs(text) {
   const m = text.match(/directive\s+@\w+\s*\(([\s\S]*?)\)\s*(repeatable\s+)?on\b/);
   if (!m) return [];
   const body = m[1].trim();
   if (!body) return [];
-  return body
+  // Newline-separated args (common) and comma-separated single-line arg lists.
+  const parts = body
     .split('\n')
     .map(l => l.trim())
     .filter(Boolean)
-    .map(l => {
-      const am = l.match(/^(\w+)\s*:\s*(.+?)(?:,)?$/);
+    .flatMap(splitArgsAtCommas);
+  return parts
+    .map(part => {
+      const am = part.match(/^(\w+)\s*:\s*(.+)$/);
       if (!am) return null;
       return { name: am[1], type: am[2].replace(/,$/, '').trim() };
     })
     .filter(Boolean);
+}
+
+function audienceBlock({ id, secid, title, intro, compose, loaders, runtime, example }) {
+  const parts = [];
+  if (intro) parts.push(prose(intro));
+  if (compose) {
+    parts.push(`<h4 class="spec-subhead">Compose</h4>${prose(compose)}`);
+  }
+  if (loaders) {
+    parts.push(`<h4 class="spec-subhead">Loaders</h4>${prose(loaders)}`);
+  }
+  if (runtime) {
+    parts.push(`<h4 class="spec-subhead">Gateway / runtime</h4>${prose(runtime)}`);
+  }
+  if (example) parts.push(exampleFigure(example));
+  return `
+    <section id="${esc(id)}" secid="${esc(secid)}" class="spec-audience">
+      <h3 class="spec-definition-head"><span class="spec-secid"><a href="#${esc(id)}">${esc(secid)}</a></span>${esc(title)}</h3>
+      ${parts.join('\n')}
+    </section>`;
+}
+
+function argDocBlock({ argId, secid, name, type, doc }) {
+  const d = doc || {};
+  const meta = [];
+  if (d.defaults) {
+    meta.push(
+      `<dt>Defaults</dt><dd>${esc(d.defaults).replace(/`([^`]+)`/g, '<code>$1</code>')}</dd>`,
+    );
+  }
+  if (d.constraints) {
+    meta.push(
+      `<dt>Constraints</dt><dd>${esc(d.constraints).replace(/`([^`]+)`/g, '<code>$1</code>')}</dd>`,
+    );
+  }
+  return `
+    <section id="${esc(argId)}" secid="${esc(secid)}" class="spec-arg">
+      <h3 class="spec-definition-head"><span class="spec-secid"><a href="#${esc(argId)}">${esc(secid)}</a></span>${esc(name)}: ${esc(type)}</h3>
+      ${meta.length ? `<dl class="spec-arg-meta">${meta.join('')}</dl>` : ''}
+      <div class="spec-audience-pair">
+        <div class="spec-audience-col">
+          <h4 class="spec-subhead">For schema authors</h4>
+          ${prose(d.authors || 'Not specified.')}
+          ${d.example ? exampleFigure(d.example, 'Author example') : ''}
+        </div>
+        <div class="spec-audience-col">
+          <h4 class="spec-subhead">For implementers</h4>
+          ${prose(d.implementers || 'Not specified.')}
+        </div>
+      </div>
+    </section>`;
+}
+
+function companionDocBlock({ def, secid, docs }) {
+  const d = docs || {};
+  return `
+  <section id="${esc(def.id)}" secid="${esc(secid)}">
+    <h2 class="spec-definition-head"><span class="spec-secid"><a href="#${esc(def.id)}">${esc(secid)}</a></span>${esc(def.name)}</h2>
+    <figure class="spec-definition"><pre class="graphql"><code>${esc(def.text)}</code></pre></figure>
+    ${d.summary ? prose(d.summary) : ''}
+    ${
+      d.authors || d.implementers
+        ? `<div class="spec-audience-pair">
+        <div class="spec-audience-col">
+          <h4 class="spec-subhead">For schema authors</h4>
+          ${prose(d.authors || '')}
+        </div>
+        <div class="spec-audience-col">
+          <h4 class="spec-subhead">For implementers</h4>
+          ${prose(d.implementers || '')}
+        </div>
+      </div>`
+        : ''
+    }
+    ${d.example ? exampleFigure(d.example) : ''}
+  </section>`;
 }
 
 function layout({ title, body, canonical }) {
@@ -118,7 +239,7 @@ function layout({ title, body, canonical }) {
 </header>
 ${body}
 <footer class="site-bar foot">
-  <p>Family URLs are Mesh <code>@link</code> identifiers. Each page includes a TOC, numbered definitions, and raw <code>.graphql</code>.</p>
+  <p>Family URLs are Mesh <code>@link</code> identifiers. Each page includes a TOC, numbered definitions, dual-audience argument docs, and raw <code>.graphql</code>.</p>
   <p><a href="https://github.com/ardatan/graphql-mesh">ardatan/graphql-mesh</a></p>
 </footer>
 </body>
@@ -126,12 +247,14 @@ ${body}
 `;
 }
 
-function familyPage(family, sdl) {
+function familyPage(family, sdl, docs) {
   const version = family.version || 'v0.1';
   const url = `${origin}/${family.name}/${version}`;
   const defs = splitDefinitions(sdl).map(defMeta);
   const directives = defs.filter(d => d.kind === 'directive');
   const companions = defs.filter(d => d.kind !== 'directive');
+  const dirDocs = docs.directives || {};
+  const companionDocs = { ...(docs.scalars || {}), ...(docs.enums || {}), ...(docs.types || {}) };
 
   let sec = 0;
   const tocItems = [];
@@ -148,6 +271,7 @@ function familyPage(family, sdl) {
   <p class="url"><code>${esc(url)}</code>
     · <a href="/${esc(family.name)}/${esc(version)}.graphql">raw GraphQL</a></p>
   <p class="stamp"><strong>Stamp:</strong> ${esc(family.stamp || 'see inventory')}</p>
+  <p>Each directive below has separate guidance for <strong>schema authors</strong> (how to write and use the annotation) and <strong>implementers</strong> (compose, loaders, Gateway/runtime) so another stack can reimplement from this page alone.</p>
   <figure class="spec-example">
     <figcaption>Example @link usage</figcaption>
     <pre class="graphql"><code>extend schema
@@ -178,47 +302,74 @@ function familyPage(family, sdl) {
 <section id="sec-Schema-additions" secid="${cSec}">
   <h1 class="spec-definition-head"><span class="spec-secid"><a href="#sec-Schema-additions">${cSec}</a></span>Schema additions</h1>
   ${companions
-    .map((c, i) => {
-      const id = `${cSec}.${i + 1}`;
-      return `
-  <section id="${esc(c.id)}" secid="${id}">
-    <h2 class="spec-definition-head"><span class="spec-secid"><a href="#${esc(c.id)}">${id}</a></span>${esc(c.name)}</h2>
-    <figure class="spec-definition"><pre class="graphql"><code>${esc(c.text)}</code></pre></figure>
-  </section>`;
-    })
+    .map((c, i) =>
+      companionDocBlock({ def: c, secid: `${cSec}.${i + 1}`, docs: companionDocs[c.name] }),
+    )
     .join('')}
 </section>`);
   }
 
   sec += 1;
   const dSec = sec;
+
+  const dirToc = directives
+    .map((d, i) => {
+      const id = `${dSec}.${i + 1}`;
+      const args = parseDirectiveArgs(d.text);
+      const sub = [
+        `<li><a href="#${esc(d.id)}-authors"><span class="spec-secid">${id}.A</span>For schema authors</a></li>`,
+        `<li><a href="#${esc(d.id)}-implementers"><span class="spec-secid">${id}.I</span>For implementers</a></li>`,
+        ...args.map(
+          (a, j) =>
+            `<li><a href="#${esc(d.id)}.${esc(a.name)}"><span class="spec-secid">${id}.${j + 1}</span>${esc(a.name)}</a></li>`,
+        ),
+      ];
+      return `<li><a href="#${esc(d.id)}"><span class="spec-secid">${id}</span>${esc(d.name)}</a><ol>${sub.join('')}</ol></li>`;
+    })
+    .join('');
+
   tocItems.push(
-    `<li><a href="#sec-Directives"><span class="spec-secid">${dSec}</span>Directives</a><ol>${directives
-      .map(
-        (d, i) =>
-          `<li><a href="#${esc(d.id)}"><span class="spec-secid">${dSec}.${i + 1}</span>${esc(d.name)}</a></li>`,
-      )
-      .join('')}</ol></li>`,
+    `<li><a href="#sec-Directives"><span class="spec-secid">${dSec}</span>Directives</a><ol>${dirToc}</ol></li>`,
   );
 
   const dirSections = directives
     .map((d, i) => {
       const id = `${dSec}.${i + 1}`;
+      const dd = dirDocs[d.name] || {};
       const args = parseDirectiveArgs(d.text);
       const argBlocks = args
-        .map((a, j) => {
-          const aid = `${id}.${j + 1}`;
-          const argId = `${d.id}.${a.name}`;
-          return `
-    <section id="${esc(argId)}" secid="${aid}">
-      <h3 class="spec-definition-head"><span class="spec-secid"><a href="#${esc(argId)}">${aid}</a></span>${esc(a.name)}: ${esc(a.type)}</h3>
-    </section>`;
-        })
+        .map((a, j) =>
+          argDocBlock({
+            argId: `${d.id}.${a.name}`,
+            secid: `${id}.${j + 1}`,
+            name: a.name,
+            type: a.type,
+            doc: (dd.args || {})[a.name],
+          }),
+        )
         .join('');
       return `
   <section id="${esc(d.id)}" secid="${id}">
     <h2 class="spec-definition-head"><span class="spec-secid"><a href="#${esc(d.id)}">${id}</a></span>${esc(d.name)}</h2>
+    ${dd.summary ? prose(dd.summary) : ''}
     <figure class="spec-definition"><pre class="graphql"><code>${esc(d.text)}</code></pre></figure>
+    ${audienceBlock({
+      id: `${d.id}-authors`,
+      secid: `${id}.A`,
+      title: 'For schema authors',
+      intro: dd.authors?.intro,
+      example: dd.authors?.example,
+    })}
+    ${audienceBlock({
+      id: `${d.id}-implementers`,
+      secid: `${id}.I`,
+      title: 'For implementers',
+      intro: dd.implementers?.intro,
+      compose: dd.implementers?.compose,
+      loaders: dd.implementers?.loaders,
+      runtime: dd.implementers?.runtime,
+      example: dd.implementers?.example,
+    })}
     ${argBlocks}
   </section>`;
     })
@@ -260,9 +411,10 @@ families.forEach((family, index) => {
   const version = family.version || 'v0.1';
   const sdlPath = join(root, 'content', family.name, `${version}.graphql`);
   const sdl = readFileSync(sdlPath, 'utf8');
+  const docs = loadDocs(family.name, version);
   const pageDir = join(outDir, family.name);
   mkdirSync(pageDir, { recursive: true });
-  writeFileSync(join(pageDir, `${version}.html`), familyPage(family, sdl));
+  writeFileSync(join(pageDir, `${version}.html`), familyPage(family, sdl, docs));
   writeFileSync(join(pageDir, `${version}.graphql`), sdl);
   redirects.push(`/${family.name}/${version}/ /${family.name}/${version} 301`);
 
@@ -287,8 +439,9 @@ writeFileSync(
 <article class="spec-page home">
   <h1 class="page-title">GraphQL Mesh Specs</h1>
   <p class="lede">Directive families for Mesh <code>@link</code> stamps at
-  <code>${esc(origin)}/&lt;family&gt;/v0.1</code>
-  (overview, TOC, numbered definitions, raw GraphQL).</p>
+  <code>${esc(origin)}/&lt;family&gt;/v0.1</code>.
+  Family pages include overview, TOC, numbered definitions, dual-audience argument docs
+  (schema authors vs implementers), and raw GraphQL.</p>
   <nav class="spec-toc">
     <div class="title">Contents</div>
     <ol>

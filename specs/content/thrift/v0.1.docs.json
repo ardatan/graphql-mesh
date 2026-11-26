@@ -1,0 +1,76 @@
+{
+  "enums": {
+    "ThriftMessageType": {
+      "summary": "Thrift binary message type for `@thrift__rpc`.",
+      "authors": "`CALL` waits for a reply; `ONEWAY` is fire-and-forget.",
+      "implementers": "Map to Thrift message type codes (CALL=1, ONEWAY=4)."
+    }
+  },
+  "directives": {
+    "@thrift__rpc": {
+      "summary": "Binary Thrift RPC field mapping. JSON Thrift uses Connectors `@connect`, not this directive.",
+      "authors": {
+        "intro": "Emitted by the Thrift loader in binary mode. Pair with `@transport(kind: \"thrift\")`.",
+        "example": "type Query {\n  add(request: AddRequestInput): Int\n    @thrift__rpc(\n      function: \"add\"\n      args: \"\"\"\n        1(struct): $args.request {\n          1(i32): left\n          2(i32): right\n        }\n      \"\"\"\n      selection: \"$(i32)\"\n      messageType: CALL\n    )\n}"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"thrift\")`; compact `args`/`selection`/`throws` emitters.",
+        "runtime": "Encode request from `args`, call `function` on `@transport(location:)`, decode with `selection`. Honor `messageType` and `throws`."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "service": {
+          "defaults": "Optional.",
+          "constraints": "Documentation / tooling name; binary executor does not use it for HTTP path (location carries the endpoint).",
+          "authors": "Optional service label on hand SDL.",
+          "implementers": "Do not require for binary path selection."
+        },
+        "function": {
+          "defaults": "Required (`String!`).",
+          "constraints": "IDL function name.",
+          "authors": "RPC method invoked on the wire.",
+          "implementers": "Thrift message name.",
+          "example": "function: \"add\""
+        },
+        "args": {
+          "defaults": "Optional; omit entirely when the RPC takes no arguments (do not emit empty string).",
+          "constraints": "Compact `id(wire): $args…` mapping.",
+          "authors": "GraphQL args → Thrift fields.",
+          "implementers": "Request encoder input."
+        },
+        "selection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "Compact result mapping (`field: id(wire)` or `$(wire)`).",
+          "authors": "Thrift result → GraphQL value.",
+          "implementers": "Response decoder.",
+          "example": "selection: \"$(i32)\""
+        },
+        "throws": {
+          "defaults": "Optional.",
+          "constraints": "Compact IDL throws mapping when errors are modeled.",
+          "authors": "Map declared exceptions into GraphQL error/union handling.",
+          "implementers": "Decode exception fields when `ignoreErrorResponses` is false."
+        },
+        "messageType": {
+          "defaults": "Default `CALL`.",
+          "constraints": "`CALL` | `ONEWAY`.",
+          "authors": "Use `ONEWAY` for void fire-and-forget.",
+          "implementers": "Set Thrift message type; skip reply decode for ONEWAY.",
+          "example": "messageType: ONEWAY"
+        },
+        "entity": {
+          "defaults": "Optional boolean.",
+          "constraints": "When true on a Query field, treat as entity resolver for Mesh `_entities`.",
+          "authors": "Mark entity lookup RPCs.",
+          "implementers": "Wire `resolveReference` / entity batching."
+        }
+      }
+    }
+  }
+}

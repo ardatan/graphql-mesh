@@ -9,7 +9,9 @@ import { Callout } from '@theguild/components'
 # Apache Thrift
 
 This handler allows you to consume [Apache Thrift](https://thrift.apache.org) `.thrift` files and
-generate a remote executable schema for those services.
+generate a remote executable schema for those services. Binary mode stamps `@thrift__rpc` (see
+[thrift/v0.1](https://specs.graphql-mesh.dev/thrift/v0.1)); JSON Thrift uses Connectors `@connect`
+instead.
 
 To get started, install the handler library:
 

@@ -1,0 +1,103 @@
+{
+  "enums": {
+    "SqlKind": {
+      "summary": "Discriminates `@sql` operation shape. GraphQL lists every arg on `@sql`; only the args relevant to each kind are honored at runtime.",
+      "authors": "Pick the kind that matches the field’s GraphQL return shape (single row, list, connection, count, or mutation).",
+      "implementers": "Branch executor / planner on `kind`. Ignore args that do not apply to that kind (e.g. `through` on ROW).",
+      "example": "kind: ROWS"
+    }
+  },
+  "directives": {
+    "@sql": {
+      "summary": "Maps a GraphQL field or object type to a SQL table/view operation for transport-sql.",
+      "authors": {
+        "intro": "Emitted by the SQL loader; can be hand-authored. Pair with `@transport(kind: \"sql\")` from core. Binders use `$args.*`, `$this.*`, and spreads like `...$args.where`.",
+        "example": "albums(where: AlbumFilter, limit: Int): [Album!]!\n  @sql(\n    table: \"albums\"\n    kind: ROWS\n    where: \"$args.where\"\n    limit: \"$args.limit\"\n    selection: \"id: AlbumId\\ntitle: Title\"\n  )"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"sql\")` + `importMeshDirectives` for `@sql`; stamp `@transport` on core.",
+        "runtime": "Plan SQL from `kind`, `table`, binders, and `selection`. Support `$fn…` computed columns and M2M `through` blocks for ROWS."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "table": {
+          "defaults": "Required (`String!`).",
+          "constraints": "Physical table or view name.",
+          "authors": "Target relation for this field/type.",
+          "implementers": "FROM / DML target.",
+          "example": "table: \"albums\""
+        },
+        "kind": {
+          "defaults": "Required (`SqlKind!`).",
+          "constraints": "One of ROW, ROWS, CONNECTION, COUNT, INSERT, UPDATE, DELETE.",
+          "authors": "Selects read vs write and cardinality.",
+          "implementers": "Discriminator for planning (see enum docs).",
+          "example": "kind: CONNECTION"
+        },
+        "where": {
+          "defaults": "Optional.",
+          "constraints": "Binder block: column predicates, `$args.where`, `$this.*`, spreads.",
+          "authors": "Filter / join predicates.",
+          "implementers": "Compile to SQL WHERE / JOIN conditions.",
+          "example": "where: \"ArtistId: $this.id\\n...$args.where\""
+        },
+        "orderBy": {
+          "defaults": "Optional (ROWS / CONNECTION).",
+          "constraints": "Binder such as `$args.orderBy`.",
+          "authors": "Order-by input binding.",
+          "implementers": "ORDER BY; CONNECTION also uses order columns for keyset cursors."
+        },
+        "limit": {
+          "defaults": "Optional (ROWS).",
+          "constraints": "Binder e.g. `$args.limit`.",
+          "authors": "Max rows for list reads.",
+          "implementers": "SQL LIMIT."
+        },
+        "offset": {
+          "defaults": "Optional (ROWS).",
+          "constraints": "Binder e.g. `$args.offset`.",
+          "authors": "Offset pagination for lists.",
+          "implementers": "SQL OFFSET."
+        },
+        "first": {
+          "defaults": "Optional (CONNECTION).",
+          "constraints": "Binder e.g. `$args.first`.",
+          "authors": "Connection page size.",
+          "implementers": "Keyset page size."
+        },
+        "after": {
+          "defaults": "Optional (CONNECTION).",
+          "constraints": "Binder e.g. `$args.after`.",
+          "authors": "Opaque keyset cursor from the client.",
+          "implementers": "Decode cursor; apply as keyset bound."
+        },
+        "set": {
+          "defaults": "Optional (required in practice for UPDATE).",
+          "constraints": "Column value binders for INSERT/UPDATE.",
+          "authors": "Map GraphQL inputs to columns.",
+          "implementers": "INSERT column list / UPDATE SET clause.",
+          "example": "set: \"Title: $args.input.title\""
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "GraphQL field → SQL column / `$fn…` mapping; nested blocks for CONNECTION/payloads.",
+          "authors": "Shape returned GraphQL fields from SQL columns.",
+          "implementers": "Projection + payload wrappers.",
+          "example": "selection: \"id: AlbumId\\ntitle: Title\""
+        },
+        "through": {
+          "defaults": "Optional (ROWS M2M).",
+          "constraints": "Junction block: `table` / `local` / `remote` / `parent: $this…` / `target`.",
+          "authors": "Many-to-many via join table.",
+          "implementers": "Emit junction join plan."
+        }
+      }
+    }
+  }
+}

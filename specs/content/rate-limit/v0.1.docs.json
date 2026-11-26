@@ -1,0 +1,50 @@
+{
+  "directives": {
+    "@rateLimit": {
+      "summary": "Field-level rate limit hint consumed when Hive Gateway `rateLimiting` is enabled (graphql-rate-limit style).",
+      "authors": {
+        "intro": "Import from `https://specs.graphql-mesh.dev/rate-limit/v0.1`. Enable rate limiting in Gateway config or the directive is inert.",
+        "example": "extend schema\n  @link(url: \"https://specs.graphql-mesh.dev/rate-limit/v0.1\", import: [\"@rateLimit\"])\n\ntype Query {\n  search(q: String!): [Item!]!\n    @rateLimit(max: 10, window: \"1s\", identityArgs: [\"q\"])\n}"
+      },
+      "implementers": {
+        "compose": "Hand `@link` today; preserve args on SG.",
+        "runtime": "Gateway rateLimiting plugin reads apps and enforces windows per identity key."
+      },
+      "args": {
+        "max": {
+          "defaults": "Optional Int; required for enforcement in practice.",
+          "constraints": "Positive maximum requests per window.",
+          "authors": "Tokens allowed in the window.",
+          "implementers": "Ceiling for the rate limiter.",
+          "example": "max: 10"
+        },
+        "window": {
+          "defaults": "Optional.",
+          "constraints": "Duration string (e.g. `1s`, `1m`) per graphql-rate-limit conventions.",
+          "authors": "How long the window lasts.",
+          "implementers": "Parse to TTL / window ms.",
+          "example": "window: \"1s\""
+        },
+        "message": {
+          "defaults": "Optional.",
+          "constraints": "Error message when limited.",
+          "authors": "Client-facing limit error text.",
+          "implementers": "Attach to GraphQL error."
+        },
+        "identityArgs": {
+          "defaults": "Optional.",
+          "constraints": "Argument names included in the rate-limit identity key.",
+          "authors": "Scope limits per argument values (e.g. per search query).",
+          "implementers": "Hash into identity alongside viewer identity.",
+          "example": "identityArgs: [\"q\"]"
+        },
+        "arrayLengthField": {
+          "defaults": "Optional.",
+          "constraints": "Argument name whose array length multiplies cost.",
+          "authors": "Charge N tokens for array inputs of length N.",
+          "implementers": "Multiply token cost by array length."
+        }
+      }
+    }
+  }
+}

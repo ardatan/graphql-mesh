@@ -11,7 +11,8 @@ import { Callout } from '@theguild/components'
 Type merging allows _partial definitions_ of a type to exist in any subschema, all of which are
 merged into one unified type in the gateway schema. When querying for a merged type, the gateway
 smartly delegates portions of a request to each relevant subschema in dependency order and then
-combines all results for the final return.
+combines all results for the final return. Mesh stamps merge entry points with `@merge` (see
+[core/v0.1#@merge](https://specs.graphql-mesh.dev/core/v0.1#@merge)).
 
 Type merging is now the preferred method of including GraphQL types across subschemas, replacing the
 need for [schema extensions](/v1/schema-extensions) (though does not preclude their use). To migrate

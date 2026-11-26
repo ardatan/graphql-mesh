@@ -1,0 +1,61 @@
+{
+  "directives": {
+    "@protobuf__rpc": {
+      "summary": "Protobuf / gRPC RPC mapping for fields or entity object types.",
+      "authors": {
+        "intro": "Emitted by the protobuf loader. Pair with `@transport` for the gRPC endpoint.",
+        "example": "type Query {\n  moviesByYear(year: Int!): MoviesResult!\n    @protobuf__rpc(\n      service: \"Example\"\n      method: \"GetMovies\"\n      args: \"\"\"\n        1(message): $args {\n          2(int64): $args.year\n        }\n      \"\"\"\n      selection: \"\"\"\n        1(repeated message): result {\n          1(string): name\n          2(int64): year\n        }\n      \"\"\"\n    )\n}"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"protobuf\")` stamps.",
+        "compose": "May rewrite mapping binds under renames.",
+        "runtime": "Encode `args`, invoke `service`/`method`, decode `selection`. `stream: true` yields AsyncIterable; `entity: true` wires entity resolve."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "service": {
+          "defaults": "Optional in SDL; required for a real call.",
+          "constraints": "Protobuf service name (package-qualified or short).",
+          "authors": "Service hosting the method.",
+          "implementers": "gRPC path / stub selection."
+        },
+        "method": {
+          "defaults": "Optional in SDL; required for a real call.",
+          "constraints": "RPC method name.",
+          "authors": "Method to invoke.",
+          "implementers": "RPC name on the wire."
+        },
+        "args": {
+          "defaults": "Optional.",
+          "constraints": "Compact GraphQL → protobuf request mapping with `$args` / `$this`.",
+          "authors": "Request body mapping.",
+          "implementers": "Request encoder."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Compact protobuf → GraphQL field mapping.",
+          "authors": "Response projection.",
+          "implementers": "Response decoder."
+        },
+        "stream": {
+          "defaults": "Optional boolean (false).",
+          "constraints": "True for server-streaming RPCs.",
+          "authors": "Mark streaming methods (Subscription or `@stream` AsyncIterable).",
+          "implementers": "Use streaming stub; return AsyncIterable."
+        },
+        "entity": {
+          "defaults": "Optional boolean.",
+          "constraints": "True to register as Mesh entity resolver on Query fields / OBJECT apps.",
+          "authors": "Entity fill RPCs.",
+          "implementers": "Wire `_entities` / `resolveReference`."
+        }
+      }
+    }
+  }
+}

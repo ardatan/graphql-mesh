@@ -1,0 +1,16 @@
+{
+  "directives": {
+    "@skipAuth": {
+      "summary": "Marks a field, object, or interface as exempt from Hive Gateway generic-auth complete protection.",
+      "authors": {
+        "intro": "Import from `https://specs.graphql-mesh.dev/auth/v0.1` (not core). Use with Federation `@authenticated` / `@requiresScopes` / `@policy` as needed. Requires Gateway generic auth in complete-protection mode.",
+        "example": "extend schema\n  @link(url: \"https://specs.graphql-mesh.dev/auth/v0.1\", import: [\"@skipAuth\"])\n  @composeDirective(name: \"@skipAuth\")\n\ntype Query {\n  publicField: String @skipAuth\n  me: User!\n}"
+      },
+      "implementers": {
+        "compose": "Hand-authored `@link` + `@composeDirective` today (not loader-stamped).",
+        "runtime": "Generic auth plugin skips auth checks for annotated fields/types when complete protection is enabled. No arguments."
+      },
+      "args": {}
+    }
+  }
+}

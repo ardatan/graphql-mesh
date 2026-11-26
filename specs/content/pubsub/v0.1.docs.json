@@ -1,0 +1,57 @@
+{
+  "directives": {
+    "@pubsubOperation": {
+      "summary": "Binds a Subscription (or field) to a PubSub topic for inbound events (including webhook topics).",
+      "authors": {
+        "intro": "Prefer importing from `pubsub/v0.1`. Existing schemas may still import this name from `core/v0.1` until stamp cutover.",
+        "example": "type Subscription {\n  todoAdded: Todo\n    @pubsubOperation(pubsubTopic: \"webhook:post:/webhooks/todo_added\")\n}"
+      },
+      "implementers": {
+        "compose": "json-schema / OpenAPI loaders stamp via `importMeshDirectives` (currently core URL). Site publishes under pubsub.",
+        "runtime": "Register subscribe resolvers that listen on `pubsubTopic`. For `webhook:` topics, Gateway must expose matching HTTP routes when `webhooks: true`."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "pubsubTopic": {
+          "defaults": "Optional in SDL but required for useful runtime behavior.",
+          "constraints": "Topic string; webhook pattern `webhook:<method>:<path>`.",
+          "authors": "Topic to subscribe. Method is lowercase in the webhook form.",
+          "implementers": "Pass to `pubsub.subscribe`. Parse webhook topics to bind HTTP handlers.",
+          "example": "pubsubTopic: \"webhook:post:/webhooks/todo_added\""
+        }
+      }
+    },
+    "@pubsubPublish": {
+      "summary": "Publishes the field’s result to a PubSub topic after resolution (fan-out to subscribers).",
+      "authors": {
+        "intro": "Annotate Mutation/Query fields that should notify subscribers.",
+        "example": "type Mutation {\n  addTodo(text: String!): Todo\n    @pubsubPublish(pubsubTopic: \"todoAdded\")\n}"
+      },
+      "implementers": {
+        "runtime": "After the field resolves, call `context.pubsub.publish(pubsubTopic, payload)` for each app. Failures should not break the main response unless a transport defines stricter rules."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "pubsubTopic": {
+          "defaults": "Optional in SDL but required to publish.",
+          "constraints": "Topic string shared with `@pubsubOperation` subscribers.",
+          "authors": "Destination topic for the resolved payload.",
+          "implementers": "Publish the field payload (or documented projection) to this topic.",
+          "example": "pubsubTopic: \"todoAdded\""
+        }
+      }
+    }
+  }
+}

@@ -9,7 +9,9 @@ import { Callout } from '@theguild/components'
 # Schema Extensions
 
 Schema extensions add gateway-level type definitions and resolvers into a combined API, which is
-useful for establishing connections between types that exist in separate subgraphs.
+useful for establishing connections between types that exist in separate subgraphs. Field binders
+use Mesh `@resolveTo` — argument reference:
+[specs.graphql-mesh.dev/core/v0.1#@resolveTo](https://specs.graphql-mesh.dev/core/v0.1#@resolveTo).
 
 When considering these capabilities, be sure to compare them with the newer automated features
 available through [type merging](/v1/type-merging). While type merging frequently eliminates the

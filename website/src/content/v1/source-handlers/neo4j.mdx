@@ -45,7 +45,8 @@ Omit database introspection by passing author Neo4j GraphQL SDL (`@node`, `@rela
 `@cypher`, `@alias`, …) as `typeDefs`. Prefer `@node(subgraph: "MyNeo4j")` (and the same on other
 Neo4j directives) when you compose multiple Neo4j sources; the loader stamps `subgraph` when it is
 missing. Rename transforms keep database identity via `@node(labels:)` / `@alias(property:)` (not
-Mesh `@source` / `@meshSource`).
+Mesh `@source` / `@meshSource`). Directive family reference:
+[neo4j/v0.1](https://specs.graphql-mesh.dev/neo4j/v0.1).
 
 <Callout>
   [You can find a working example here](

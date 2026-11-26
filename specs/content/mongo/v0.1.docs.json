@@ -1,0 +1,584 @@
+{
+  "directives": {
+    "@mongo__findOne": {
+      "summary": "Find a single document. Runtime kind `FIND_ONE`.",
+      "authors": {
+        "intro": "Find a single document. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "user(id: ID!): User\n  @mongo__findOne(collection: \"users\", query: \"_id: $args.id\", selection: \"id: $_id\\nname\")"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind FIND_ONE; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder → filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "sort": {
+          "defaults": "Optional.",
+          "constraints": "Sort binder (e.g. `$args.sort`).",
+          "authors": "Sort input binding.",
+          "implementers": "Mongo sort document."
+        },
+        "skip": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.skip`.",
+          "authors": "Skip offset.",
+          "implementers": "Mongo `skip`."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__find": {
+      "summary": "Find many documents. Runtime kind `FIND_MANY`.",
+      "authors": {
+        "intro": "Find many documents. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "users(filter: UserFilterInput): [User!]!\n  @mongo__find(collection: \"users\", query: \"$args.filter\", selection: \"id: $_id\\nname\")"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind FIND_MANY; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder → filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "sort": {
+          "defaults": "Optional.",
+          "constraints": "Sort binder (e.g. `$args.sort`).",
+          "authors": "Sort input binding.",
+          "implementers": "Mongo sort document."
+        },
+        "limit": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.limit`.",
+          "authors": "Max documents.",
+          "implementers": "Mongo `limit`."
+        },
+        "skip": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.skip`.",
+          "authors": "Skip offset.",
+          "implementers": "Mongo `skip`."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__count": {
+      "summary": "Count matching documents. Runtime kind `COUNT`.",
+      "authors": {
+        "intro": "Count matching documents. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "userCount(filter: UserFilterInput): Int!\n  @mongo__count(collection: \"users\", query: \"$args.filter\")"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind COUNT; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder → filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__connection": {
+      "summary": "Relay-style connection read. Runtime kind `CONNECTION`.",
+      "authors": {
+        "intro": "Relay-style connection read. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "allUsers(first: Int, after: String): UserConnection!\n  @mongo__connection(collection: \"users\", first: \"$args.first\", after: \"$args.after\", selection: \"nodes { id: $_id }\")"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind CONNECTION; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder → filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "sort": {
+          "defaults": "Optional.",
+          "constraints": "Sort binder (e.g. `$args.sort`).",
+          "authors": "Sort input binding.",
+          "implementers": "Mongo sort document."
+        },
+        "first": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.first`.",
+          "authors": "Connection page size.",
+          "implementers": "Cursor page size."
+        },
+        "after": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.after`.",
+          "authors": "Connection cursor.",
+          "implementers": "Decode cursor bound."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__pagination": {
+      "summary": "Page/perPage pagination read. Runtime kind `PAGINATION`.",
+      "authors": {
+        "intro": "Page/perPage pagination read. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "usersPage(page: Int, perPage: Int): UserPage!\n  @mongo__pagination(collection: \"users\", page: \"$args.page\", perPage: \"$args.perPage\")"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind PAGINATION; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder → filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "sort": {
+          "defaults": "Optional.",
+          "constraints": "Sort binder (e.g. `$args.sort`).",
+          "authors": "Sort input binding.",
+          "implementers": "Mongo sort document."
+        },
+        "page": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.page`.",
+          "authors": "1-based page number.",
+          "implementers": "Compute skip/limit."
+        },
+        "perPage": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.perPage`.",
+          "authors": "Page size.",
+          "implementers": "Compute skip/limit."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__aggregate": {
+      "summary": "Run an aggregation pipeline. Runtime kind `AGGREGATE`.",
+      "authors": {
+        "intro": "Run an aggregation pipeline. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "userStats: Stats!\n  @mongo__aggregate(collection: \"users\", pipeline: \"$args.pipeline\")"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind AGGREGATE; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder → filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "pipeline": {
+          "defaults": "Optional.",
+          "constraints": "Aggregation pipeline binder.",
+          "authors": "Pipeline stages from args or literal binder.",
+          "implementers": "Pass to `aggregate`."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__insertOne": {
+      "summary": "Insert one document. Runtime kind `INSERT_ONE`.",
+      "authors": {
+        "intro": "Insert one document. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "createUser(document: CreateUserInput!): User!\n  @mongo__insertOne(collection: \"users\", set: \"name: $args.document.name\", selection: \"id: $_id\\nname\")"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind INSERT_ONE; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "set": {
+          "defaults": "Optional.",
+          "constraints": "Document / update binder.",
+          "authors": "Values to insert or update.",
+          "implementers": "Build insert docs or update operators (`$set`, …)."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__insertMany": {
+      "summary": "Insert many documents. Runtime kind `INSERT_MANY`.",
+      "authors": {
+        "intro": "Insert many documents. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "createUsers(documents: [CreateUserInput!]!): [User!]!\n  @mongo__insertMany(collection: \"users\", set: \"$args.documents\", graphqlDocumentInputs: true)"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind INSERT_MANY; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "set": {
+          "defaults": "Optional.",
+          "constraints": "Document / update binder.",
+          "authors": "Values to insert or update.",
+          "implementers": "Build insert docs or update operators (`$set`, …)."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        },
+        "graphqlDocumentInputs": {
+          "defaults": "Optional boolean.",
+          "constraints": "When true, map generated DocumentInput aliases (`id`→`_id`, `storedId`→`id`) for String-`_id` collections.",
+          "authors": "Enable for loader-generated bulk inserts; omit on hand binders that already use BSON names.",
+          "implementers": "Apply alias rewrite before insertMany."
+        }
+      }
+    },
+    "@mongo__updateOne": {
+      "summary": "Update one document. Runtime kind `UPDATE_ONE`.",
+      "authors": {
+        "intro": "Update one document. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "updateUser(id: ID!, update: UpdateUserInput!): User\n  @mongo__updateOne(collection: \"users\", query: \"_id: $args.id\", set: \"$args.update\")"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind UPDATE_ONE; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder → filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "set": {
+          "defaults": "Optional.",
+          "constraints": "Document / update binder.",
+          "authors": "Values to insert or update.",
+          "implementers": "Build insert docs or update operators (`$set`, …)."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__updateMany": {
+      "summary": "Update many documents. Runtime kind `UPDATE_MANY`.",
+      "authors": {
+        "intro": "Update many documents. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "updateUsers(filter: UserFilterInput!, update: UpdateUserInput!): Int!\n  @mongo__updateMany(collection: \"users\", query: \"$args.filter\", set: \"$args.update\")"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind UPDATE_MANY; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder → filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "set": {
+          "defaults": "Optional.",
+          "constraints": "Document / update binder.",
+          "authors": "Values to insert or update.",
+          "implementers": "Build insert docs or update operators (`$set`, …)."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__deleteOne": {
+      "summary": "Delete one document. Runtime kind `DELETE_ONE`.",
+      "authors": {
+        "intro": "Delete one document. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "deleteUser(id: ID!): Boolean!\n  @mongo__deleteOne(collection: \"users\", query: \"_id: $args.id\")"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind DELETE_ONE; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder → filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__deleteMany": {
+      "summary": "Delete many documents. Runtime kind `DELETE_MANY`.",
+      "authors": {
+        "intro": "Delete many documents. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "deleteUsers(filter: UserFilterInput!): Int!\n  @mongo__deleteMany(collection: \"users\", query: \"$args.filter\")"
+      },
+      "implementers": {
+        "loaders": "`meshSpecUrl(\"mongo\")` stamps all `@mongo__*` ops.",
+        "runtime": "Dispatch on directive name / kind DELETE_MANY; execute binder-built driver call."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional locally; loaders usually stamp the subgraph name when composing.",
+          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
+          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the loader will stamp it.",
+          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Transports filter apps by the active subgraph. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Collection handle for the driver call.",
+          "example": "collection: \"users\""
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder → filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: $_id`, nested blocks).",
+          "authors": "Map Mongo documents to GraphQL fields.",
+          "implementers": "Projection + response mapping.",
+          "example": "selection: \"\"\"\\n id: $_id\\n name\\n\"\"\""
+        }
+      }
+    }
+  }
+}
