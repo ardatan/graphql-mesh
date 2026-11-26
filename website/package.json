@@ -19,7 +19,7 @@
     "react-icons": "^5.7.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
+    "@playwright/test": "^1.65.1",
     "@theguild/tailwind-config": "0.6.4",
     "@types/node": "^26.2.0",
     "@types/react": "19.3.0",
