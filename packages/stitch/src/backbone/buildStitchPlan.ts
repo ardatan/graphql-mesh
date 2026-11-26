@@ -2101,6 +2101,7 @@ function planRootField(
     const field = rootType.getFields()[fieldName];
     if (field && fieldNode.selectionSet) {
       const returnType = getNamedType(field.type);
+      const nestedFields = flattenToFieldNodes(fieldNode.selectionSet.selections, fragments);
       if (
         (isObjectType(returnType) || isAbstractType(returnType)) &&
         stitchingInfo.mergedTypes[returnType.name]
@@ -2109,19 +2110,40 @@ function planRootField(
         // subschema that can merge this type - pick the first target.
         const merged = stitchingInfo.mergedTypes[returnType.name]!;
         const someSource = merged.targetSubschemas.keys().next().value as Subschema | undefined;
-        if (someSource && fieldNode.selectionSet) {
+        if (someSource) {
           continuePlan =
             planMergedTypeFollowUps(
               schema,
               stitchingInfo,
               returnType.name,
               someSource,
-              flattenToFieldNodes(fieldNode.selectionSet.selections, fragments),
+              nestedFields,
               fragments,
               variableValues,
               [responseKey],
               incompleteReasons,
             ) ?? undefined;
+        }
+      }
+      // Encapsulate `@resolveTo(__typename)` and other non-merged wrappers:
+      // plan nested local Islands (SubgraphA.foo) the same way nested
+      // planLocalFieldIsland does — otherwise the root Island leaves a string
+      // typename and projectDataToOperation returns `"SubgraphA": "Query"`.
+      if (!continuePlan && (isObjectType(returnType) || isInterfaceType(returnType))) {
+        const nestedIslands = planLocalFieldIslands(
+          schema,
+          stitchingInfo,
+          returnType.name,
+          nestedFields,
+          fragments,
+          variableValues,
+          [responseKey],
+          incompleteReasons,
+        );
+        if (nestedIslands.length === 1) {
+          continuePlan = nestedIslands[0];
+        } else if (nestedIslands.length > 1) {
+          continuePlan = { kind: 'Sequence', nodes: nestedIslands };
         }
       }
     }

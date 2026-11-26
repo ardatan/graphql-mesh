@@ -290,6 +290,62 @@ describe('stitching backbone', () => {
     expect(result.data).toEqual({ __typename: 'Query' });
   });
 
+  // Encapsulate `@resolveTo(__typename)` returns a string parent; nested locals
+  // must be planned on the root Island continue or projectDataToOperation
+  // leaves `"Group": "Query"`.
+  it('plans nested locals under non-merged root Island continue (encapsulate)', async () => {
+    const schema = stitchSchemas({
+      subschemas: [
+        {
+          schema: authors,
+          executor: createDefaultExecutor(authors),
+        },
+      ],
+      typeDefs: /* GraphQL */ `
+        type GroupQuery {
+          echo(argument: String): String
+        }
+        extend type Query {
+          Group: GroupQuery!
+        }
+      `,
+      resolvers: {
+        Query: {
+          Group: () => 'Query',
+        },
+        GroupQuery: {
+          echo: (_root: unknown, { argument }: { argument?: string | null }) => argument ?? null,
+        },
+      },
+    });
+
+    const stitchingInfo = schema.extensions?.['stitchingInfo'] as StitchingInfo;
+    expect(stitchingInfo.localFields.get('Query')?.has('Group')).toBe(true);
+    expect(stitchingInfo.localFields.get('GroupQuery')?.has('echo')).toBe(true);
+
+    const document = parse(/* GraphQL */ `
+      {
+        Group {
+          echo(argument: "hi")
+        }
+      }
+    `);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    expect(plan.incompleteReasons).toEqual([]);
+    expect(plan.root.kind).toBe('Island');
+    expect((plan.root as any).fieldNode.name.value).toBe('Group');
+    expect((plan.root as any).continue).toBeDefined();
+    expect((plan.root as any).continue.kind).toBe('Island');
+    expect((plan.root as any).continue.fieldNode.name.value).toBe('echo');
+
+    const executor = createBackboneExecutor(schema);
+    const result = await exec(executor, { document, context: {} });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      Group: { echo: 'hi' },
+    });
+  });
+
   it('plans nested additionalResolvers as Island under a Fetch path', async () => {
     const books = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
