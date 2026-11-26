@@ -93,9 +93,6 @@ jobs:
             '@graphql-tools/executor-http': 'packages/executors/http',
             '@graphql-tools/executor-graphql-ws': 'packages/executors/graphql-ws',
             '@graphql-mesh/fusion-runtime': 'packages/fusion/runtime',
-            // fusion-runtime imports parseMeshSpecUrl from utils; without this
-            // overlay Gateway keeps a published utils that lacks the export.
-            '@graphql-mesh/utils': 'packages/legacy/utils',
             '@graphql-mesh/transport-common': 'packages/transports/common',
             '@graphql-mesh/transport-http': 'packages/transports/http',
             '@graphql-mesh/transport-http-callback': 'packages/transports/http-callback',
