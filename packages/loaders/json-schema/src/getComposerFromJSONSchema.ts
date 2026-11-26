@@ -225,7 +225,9 @@ function coerceFieldDefaultValue(
     if (!Array.isArray(defaultValue)) {
       // JSON Schema may use a singleton default for an array field; GraphQL 17
       // prints list defaults via the item type, so normalize through ofType.
-      return [coerceFieldDefaultValue(tc.ofType as AnyTypeComposer<any>, defaultValue)];
+      // Omit the default when item coercion fails (avoid `[undefined]` → `[]`).
+      const item = coerceFieldDefaultValue(tc.ofType as AnyTypeComposer<any>, defaultValue);
+      return item === undefined ? undefined : [item];
     }
     return defaultValue.map(item =>
       coerceFieldDefaultValue(tc.ofType as AnyTypeComposer<any>, item),

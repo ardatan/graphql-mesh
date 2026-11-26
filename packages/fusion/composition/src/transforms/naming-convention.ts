@@ -107,7 +107,8 @@ function renameInputObjectFieldName(
   if (!renameField || CONNECTORS_INPUT_TYPES.has(parentTypeName)) {
     return fieldName;
   }
-  return renameField(fieldName);
+  // camelCase("_") → ""; keep the original key so defaults stay valid.
+  return renameField(fieldName) || fieldName;
 }
 
 function rewriteEnumValueNode(
@@ -253,8 +254,11 @@ function rewriteJsDefaultForInputType(
     // Iterate defaultValue keys (may still be pre-rename after field rename maps).
     for (const [valueKey, raw] of Object.entries(value as Record<string, unknown>)) {
       const renamedKey = renameInputObjectFieldName(valueKey, named.name, renameField);
-      const field = fields[renamedKey] ?? fields[valueKey];
+      // Prefer the original key: a custom rename can map onto another original field name.
+      const field = fields[valueKey] ?? fields[renamedKey];
       if (!field) {
+        // Keep unmatched keys under the renamed name rather than dropping them.
+        out[renamedKey] = raw;
         continue;
       }
       out[renamedKey] = rewriteJsDefaultForInputType(
@@ -422,10 +426,13 @@ export function createNamingConventionTransform(
               (jsDefaultNeedsInputFieldRename(argConfig.defaultValue, inputType, fieldNamesFn) ||
                 jsDefaultNeedsInputFieldRename(argConfig.default?.value, inputType, fieldNamesFn) ||
                 (argConfig.default?.literal != null &&
-                  containsEnumValueNode(argConfig.default.literal)) ||
+                  (containsEnumValueNode(argConfig.default.literal) ||
+                    argConfig.default.literal.kind === Kind.OBJECT ||
+                    argConfig.default.literal.kind === Kind.LIST)) ||
                 (argConfig.astNode?.defaultValue != null &&
                   (containsEnumValueNode(argConfig.astNode.defaultValue) ||
-                    argConfig.astNode.defaultValue.kind === Kind.OBJECT)));
+                    argConfig.astNode.defaultValue.kind === Kind.OBJECT ||
+                    argConfig.astNode.defaultValue.kind === Kind.LIST)));
             if (!needsEnumRewrite && !needsKeyRewrite) {
               newArgs[newArgName] = argConfig;
               continue;
@@ -464,12 +471,13 @@ export function createNamingConventionTransform(
               (hasJsStringDefault || needsKeyRewrite) &&
               isInputObjectType(namedArgType)
             ) {
+              // Keep internal enum leaves (false); input-field path does the same.
               nextArg.defaultValue = rewriteJsDefaultForInputType(
                 argConfig.defaultValue,
                 inputType,
                 enumValuesFn,
                 fieldNamesFn,
-                true,
+                false,
               ) as typeof argConfig.defaultValue;
             } else if (hasJsStringDefault && isEnumType(namedArgType)) {
               // Leave coerced internal defaultValue alone (fusion keeps original wire value).
@@ -478,6 +486,7 @@ export function createNamingConventionTransform(
               argConfig.default?.literal &&
               (containsEnumValueNode(argConfig.default.literal) ||
                 argConfig.default.literal.kind === Kind.OBJECT ||
+                argConfig.default.literal.kind === Kind.LIST ||
                 needsKeyRewrite)
             ) {
               nextArg.default = {
@@ -616,13 +625,15 @@ export function createNamingConventionTransform(
               jsDefaultNeedsInputFieldRename(fieldCfg.defaultValue, inputType, fieldNamesFn))) ||
             (fieldCfg.default?.literal &&
               (containsEnumValueNode(fieldCfg.default.literal) ||
-                fieldCfg.default.literal.kind === Kind.OBJECT)) ||
+                fieldCfg.default.literal.kind === Kind.OBJECT ||
+                fieldCfg.default.literal.kind === Kind.LIST)) ||
             (fieldCfg.default?.value != null &&
               (jsDefaultContainsString(fieldCfg.default.value) ||
                 jsDefaultNeedsInputFieldRename(fieldCfg.default.value, inputType, fieldNamesFn))) ||
             (fieldCfg.astNode?.defaultValue &&
               (containsEnumValueNode(fieldCfg.astNode.defaultValue) ||
-                fieldCfg.astNode.defaultValue.kind === Kind.OBJECT)));
+                fieldCfg.astNode.defaultValue.kind === Kind.OBJECT ||
+                fieldCfg.astNode.defaultValue.kind === Kind.LIST)));
         let nextConfig: typeof inputFieldConfig = inputFieldConfig;
         if (canRewriteDefault) {
           const next = { ...fieldCfg };
@@ -644,7 +655,8 @@ export function createNamingConventionTransform(
           if (
             fieldCfg.default?.literal &&
             (containsEnumValueNode(fieldCfg.default.literal) ||
-              fieldCfg.default.literal.kind === Kind.OBJECT)
+              fieldCfg.default.literal.kind === Kind.OBJECT ||
+              fieldCfg.default.literal.kind === Kind.LIST)
           ) {
             next.default = {
               literal: rewriteEnumValueNode(
@@ -676,7 +688,8 @@ export function createNamingConventionTransform(
           if (
             fieldCfg.astNode?.defaultValue &&
             (containsEnumValueNode(fieldCfg.astNode.defaultValue) ||
-              fieldCfg.astNode.defaultValue.kind === Kind.OBJECT)
+              fieldCfg.astNode.defaultValue.kind === Kind.OBJECT ||
+              fieldCfg.astNode.defaultValue.kind === Kind.LIST)
           ) {
             next.astNode = {
               ...fieldCfg.astNode,
@@ -736,7 +749,8 @@ export function createNamingConventionTransform(
           if (
             typedArg.default?.literal &&
             (containsEnumValueNode(typedArg.default.literal) ||
-              typedArg.default.literal.kind === Kind.OBJECT)
+              typedArg.default.literal.kind === Kind.OBJECT ||
+              typedArg.default.literal.kind === Kind.LIST)
           ) {
             next.default = {
               literal: rewriteEnumValueNode(

@@ -5,6 +5,7 @@ import {
   GraphQLObjectType,
   GraphQLUnionType,
   parse,
+  version as graphqlVersion,
 } from 'graphql';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
@@ -397,7 +398,8 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(printed).toContain('userStatus');
     // Bare mode rewrites defaults in one mapSchema pass. Wrap's RenameInputObjectFields
     // rebuilds the schema between renames on GraphQL 16 and can strip default keys to {}.
-    if (mode === 'bare') {
+    // Keep the exact default assertion for bare mode and GraphQL 17 wrap mode.
+    if (mode === 'bare' || !String(graphqlVersion).startsWith('16.')) {
       expect(printed).toMatch(/search\(filter: Filter = \{ ?userStatus: NEWBIE ?\}\)/);
     }
   });

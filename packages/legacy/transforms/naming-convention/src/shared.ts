@@ -110,7 +110,8 @@ function renameInputObjectFieldName(
   if (!renameField || IGNORED_TYPE_NAMES.includes(parentTypeName)) {
     return fieldName;
   }
-  return renameField(fieldName);
+  // camelCase("_") → ""; keep the original key so defaults stay valid.
+  return renameField(fieldName) || fieldName;
 }
 
 function rewriteEnumValueNode(
@@ -206,8 +207,13 @@ function rewriteJsDefaultForInputType(
     // RenameInputObjectFields already renamed the input type fields).
     for (const [valueKey, raw] of Object.entries(value as Record<string, unknown>)) {
       const renamedKey = renameInputObjectFieldName(valueKey, named.name, renameField);
-      const field = fields[renamedKey] ?? fields[valueKey];
+      // Prefer the original key: a custom rename can map onto another original field name.
+      const field = fields[valueKey] ?? fields[renamedKey];
       if (!field) {
+        // Wrap mode: input type fields may already be renamed while default keys
+        // are still pre-rename. Keep the value under the renamed key rather than
+        // dropping unmatched keys (would turn `{ outer_field: … }` into `{}`).
+        out[renamedKey] = raw;
         continue;
       }
       out[renamedKey] = rewriteJsDefaultForInputType(raw, field.type, renameEnum, renameField);

@@ -43,7 +43,7 @@ export async function loadGraphQLSchemaFromOpenAPI(name: string, options: OpenAP
   });
   // Ephemeral context disables the global unresolved-link timer — report leftovers here.
   if (hateoasContext.futureLinks.size > 0 && !process.env.JEST) {
-    new Logger({ prefix: 'loadGraphQLSchemaFromOpenAPI' }).warn(
+    (options.log ?? new Logger({ prefix: 'loadGraphQLSchemaFromOpenAPI' })).warn(
       `${hateoasContext.futureLinks.size} HATEOAS links could not be resolved for "${name}". This may indicate missing operations or circular dependencies.`,
     );
   }

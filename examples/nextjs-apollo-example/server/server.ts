@@ -33,6 +33,7 @@ export default async function createApolloServer() {
     },
   });
 
-  await apolloServer.start();
+  // startServerAndCreateNextHandler owns ApolloServer.start(); calling it here
+  // makes the handler's start fail and GraphQL requests error at runtime.
   return apolloServer;
 }
