@@ -1,5 +1,6 @@
 import type {
   GraphQLAbstractType,
+  GraphQLArgument,
   GraphQLEnumType,
   GraphQLInputObjectType,
   GraphQLInterfaceType,
@@ -11,7 +12,14 @@ import type {
   GraphQLSchema,
   GraphQLUnionType,
 } from 'graphql';
-import { defaultFieldResolver, getNamedType, isEnumType, isInputObjectType } from 'graphql';
+import {
+  defaultFieldResolver,
+  getNamedType,
+  isEnumType,
+  isInputObjectType,
+  isInterfaceType,
+  isObjectType,
+} from 'graphql';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
 import {
@@ -21,6 +29,9 @@ import {
   NAMING_CONVENTIONS,
   withRenamedEnumDefaultsForType,
 } from './shared.js';
+
+/** Helper input shape — GQL17 `default` is not on GraphQLArgumentConfig under v16 types. */
+type ArgDefaultFields = Parameters<typeof hasRewritableEnumDefaultForType>[0];
 
 export declare type GraphQLTypePointer =
   | GraphQLList<GraphQLOutputType>
@@ -85,11 +96,37 @@ export default class NamingConventionTransform implements MeshTransform {
   }
 
   transformSchema(schema: GraphQLSchema) {
+    // mapSchema serializes defaults before enum rename, then may pass the
+    // external name through when the renamed enum rejects the wire value
+    // (newbie→'wire' becomes 'newbie', which is also other's internal value).
+    // Always rewrite from the original default + original input type together.
+    const originalSchema = schema;
+    const typeNamesFn = this.config.typeNames && NAMING_CONVENTIONS[this.config.typeNames];
+    const fieldNamesFn = this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
+    const renameFieldForLookup = (name: string) =>
+      IGNORED_ROOT_FIELD_NAMES.includes(name) ? name : fieldNamesFn?.(name) || name;
+
+    // ARGUMENT mapper is not given the arg name. Pair by definition order under
+    // `${typeName}::${renamedFieldName}` so same-typed args without astNode each
+    // get their own original default (not the first type match).
+    const originalArgQueues = new Map<string, GraphQLArgument[]>();
+    if (this.config.enumValues || this.config.fieldNames) {
+      for (const [typeName, gqlType] of Object.entries(schema.getTypeMap())) {
+        if (!isObjectType(gqlType) && !isInterfaceType(gqlType)) {
+          continue;
+        }
+        for (const [fieldName, field] of Object.entries(gqlType.getFields())) {
+          const key = `${typeName}::${renameFieldForLookup(fieldName)}`;
+          originalArgQueues.set(key, field.args.slice());
+        }
+      }
+    }
+
     return mapSchema(schema, {
       ...(this.config.typeNames && {
         [MapperKind.TYPE]: type => {
           const oldName = type.name;
-          const namingConventionFn = NAMING_CONVENTIONS[this.config.typeNames];
+          const namingConventionFn = typeNamesFn!;
           const newName = IGNORED_TYPE_NAMES.includes(oldName)
             ? oldName
             : namingConventionFn(oldName);
@@ -103,7 +140,7 @@ export default class NamingConventionTransform implements MeshTransform {
         [MapperKind.ABSTRACT_TYPE]: type => {
           const currentName = type.name;
           const existingResolver = type.resolveType;
-          const namingConventionFn = NAMING_CONVENTIONS[this.config.typeNames];
+          const namingConventionFn = typeNamesFn!;
           const newName = IGNORED_TYPE_NAMES.includes(currentName)
             ? currentName
             : namingConventionFn(currentName);
@@ -127,19 +164,67 @@ export default class NamingConventionTransform implements MeshTransform {
           return undefined;
         },
       }),
-      ...(this.config.enumValues && {
-        [MapperKind.ARGUMENT]: config => {
-          const named = getNamedType(config.type);
-          // Enum args + input-object args with nested enum defaults
-          // (`filter: Filter = { status: newbie }`). Skip String/ID/scalars.
+      ...((this.config.enumValues || this.config.fieldNames) && {
+        [MapperKind.ARGUMENT]: (config, fieldName, typeName) => {
+          // typeName is still the pre-rewire map key (original). fieldName may
+          // already be renamed by COMPOSITE_FIELD; resolve via original schema.
+          const origParent = originalSchema.getType(typeName);
+          if (!origParent || (!isObjectType(origParent) && !isInterfaceType(origParent))) {
+            return config;
+          }
+          const origFieldEntry = Object.entries(origParent.getFields()).find(
+            ([fname]) => renameFieldForLookup(fname) === fieldName,
+          );
+          const origField = origFieldEntry?.[1];
+          // Prefer AST name when present; otherwise consume the next original arg
+          // in definition order (same as mapArguments key order after COMPOSITE_FIELD).
+          const origArgName = config.astNode?.name?.value;
+          const argQueue = originalArgQueues.get(`${typeName}::${fieldName}`);
+          let origArg =
+            (origArgName && origField?.args.find(a => a.name === origArgName)) || undefined;
+          if (origArg && argQueue) {
+            const idx = argQueue.findIndex(a => a.name === origArg!.name);
+            if (idx >= 0) {
+              argQueue.splice(idx, 1);
+            }
+          } else if (argQueue?.length) {
+            origArg = argQueue.shift();
+          }
+          const sourceConfig: ArgDefaultFields = origArg
+            ? {
+                defaultValue: origArg.defaultValue,
+                default: (origArg as { default?: ArgDefaultFields['default'] }).default,
+                astNode: origArg.astNode ?? undefined,
+              }
+            : {
+                defaultValue: config.defaultValue,
+                default: (config as ArgDefaultFields).default,
+                astNode: config.astNode,
+              };
+          const sourceType = origArg?.type ?? config.type;
+          const named = getNamedType(sourceType);
+          // Enum args + input-object args with nested enum / key-only defaults
+          // (`filter: Filter = { status: newbie }` / `{ retry_count: 3 }`).
           if (!isEnumType(named) && !isInputObjectType(named)) {
             return config;
           }
-          if (!hasRewritableEnumDefaultForType(config, config.type)) {
+          const fieldNamingConventionFn = fieldNamesFn || undefined;
+          if (!hasRewritableEnumDefaultForType(sourceConfig, sourceType, fieldNamingConventionFn)) {
             return config;
           }
-          const applyNamingConvention = NAMING_CONVENTIONS[this.config.enumValues];
-          return withRenamedEnumDefaultsForType(config, config.type, applyNamingConvention);
+          const applyNamingConvention = this.config.enumValues
+            ? NAMING_CONVENTIONS[this.config.enumValues]
+            : (s: string) => s;
+          // Cast: helper `default` is a loose snapshot; GQL16 GraphQLArgumentConfig has no `default`.
+          return {
+            ...config,
+            ...withRenamedEnumDefaultsForType(
+              sourceConfig,
+              sourceType,
+              applyNamingConvention,
+              fieldNamingConventionFn,
+            ),
+          } as typeof config;
         },
       }),
       ...(this.config.enumValues && {
@@ -151,18 +236,27 @@ export default class NamingConventionTransform implements MeshTransform {
             return undefined;
           }
 
+          // Name-default members sync internal → renamed name; custom wire/internal
+          // values (e.g. `1`, `'wire'`) stay so omitted-arg defaults keep matching.
+          const prevInternal = valueConfig.value !== undefined ? valueConfig.value : externalValue;
+          const newInternal = prevInternal === externalValue ? newEnumValue : prevInternal;
+
           return [
             newEnumValue,
             {
               ...valueConfig,
-              value: newEnumValue,
-              astNode: {
-                ...valueConfig.astNode,
-                name: {
-                  ...valueConfig.astNode.name,
-                  value: newEnumValue,
-                },
-              },
+              value: newInternal,
+              ...(valueConfig.astNode
+                ? {
+                    astNode: {
+                      ...valueConfig.astNode,
+                      name: {
+                        ...valueConfig.astNode.name,
+                        value: newEnumValue,
+                      },
+                    },
+                  }
+                : {}),
             },
           ];
         },
@@ -202,13 +296,15 @@ export default class NamingConventionTransform implements MeshTransform {
               (args, [argName, argConfig]) => {
                 const newArgName = this.config.fieldArgumentNames && argNamingConventionFn(argName);
                 const useArgName = newArgName || argName;
-                const argIsInputObjectType = isInputObjectType(argConfig.type);
+                // `[Filter]` / `Filter!` — reverse-map via the named input object.
+                const namedArgType = getNamedType(argConfig.type);
+                const argIsInputObjectType = isInputObjectType(namedArgType);
 
                 if (argIsInputObjectType) {
                   argsMap[useArgName] = {
                     originalName: argName,
                     fields: generateArgsMapForInput(
-                      argConfig.type as GraphQLInputObjectType,
+                      namedArgType as GraphQLInputObjectType,
                       fieldNamingConventionFn,
                     ),
                   };
@@ -241,21 +337,44 @@ export default class NamingConventionTransform implements MeshTransform {
           if (IGNORED_TYPE_NAMES.includes(typeName)) {
             return undefined;
           }
-          const namingConventionFn =
-            this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
+          const namingConventionFn = fieldNamesFn || undefined;
           const newName = namingConventionFn ? namingConventionFn(fieldName) : fieldName;
           let nextConfig = inputFieldConfig;
-          if (this.config.enumValues) {
-            const namedFieldType = getNamedType(inputFieldConfig.type);
+          if (this.config.enumValues || this.config.fieldNames) {
+            const origInput = originalSchema.getType(typeName);
+            const origField =
+              origInput && isInputObjectType(origInput)
+                ? origInput.getFields()[fieldName]
+                : undefined;
+            const sourceConfig: ArgDefaultFields = origField
+              ? {
+                  defaultValue: origField.defaultValue,
+                  default: (origField as { default?: ArgDefaultFields['default'] }).default,
+                  astNode: origField.astNode ?? undefined,
+                }
+              : {
+                  defaultValue: inputFieldConfig.defaultValue,
+                  default: (inputFieldConfig as ArgDefaultFields).default,
+                  astNode: inputFieldConfig.astNode,
+                };
+            const sourceType = origField?.type ?? inputFieldConfig.type;
+            const namedFieldType = getNamedType(sourceType);
             if (
               (isEnumType(namedFieldType) || isInputObjectType(namedFieldType)) &&
-              hasRewritableEnumDefaultForType(inputFieldConfig, inputFieldConfig.type)
+              hasRewritableEnumDefaultForType(sourceConfig, sourceType, namingConventionFn)
             ) {
-              nextConfig = withRenamedEnumDefaultsForType(
-                inputFieldConfig,
-                inputFieldConfig.type,
-                NAMING_CONVENTIONS[this.config.enumValues],
-              );
+              // Cast: GQL16 GraphQLInputFieldConfig has no `default` field.
+              nextConfig = {
+                ...inputFieldConfig,
+                ...withRenamedEnumDefaultsForType(
+                  sourceConfig,
+                  sourceType,
+                  this.config.enumValues
+                    ? NAMING_CONVENTIONS[this.config.enumValues]
+                    : (s: string) => s,
+                  namingConventionFn,
+                ),
+              } as typeof inputFieldConfig;
             }
           }
           if (newName === fieldName) {
@@ -271,10 +390,19 @@ export default class NamingConventionTransform implements MeshTransform {
 function generateArgsMapForInput(
   input: GraphQLInputObjectType,
   fieldNamingConventionFn?: null | ((input: string) => string),
+  memo: Map<string, ArgsMap> = new Map(),
 ): ArgsMap {
+  const cached = memo.get(input.name);
+  if (cached) {
+    return cached;
+  }
+  // Memoize before visiting fields so recursive inputs (`Filter { and: [Filter!] }`)
+  // reuse this map instead of overflowing the stack.
+  const argsMap: ArgsMap = {};
+  memo.set(input.name, argsMap);
+
   const inputConfig = input.toConfig();
   const inputFields = inputConfig.fields;
-  const argsMap: ArgsMap = {};
   const skipFieldRename = IGNORED_TYPE_NAMES.includes(input.name);
 
   Object.keys(inputFields).forEach(argName => {
@@ -292,7 +420,11 @@ function generateArgsMapForInput(
     if (argIsInputObjectType) {
       argsMap[newArgName] = {
         originalName: argName,
-        fields: generateArgsMapForInput(type as GraphQLInputObjectType, fieldNamingConventionFn),
+        fields: generateArgsMapForInput(
+          type as GraphQLInputObjectType,
+          fieldNamingConventionFn,
+          memo,
+        ),
       };
     } else {
       argsMap[newArgName] = argName;

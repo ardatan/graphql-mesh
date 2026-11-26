@@ -1065,6 +1065,65 @@ describe('Federation Connectors HTTP / templates', () => {
     ]);
   });
 
+  it('keeps connector arg metadata when a same-named entity field is hydrated', async () => {
+    // Query.product and Product.product share a field name. Stub hydration forwards
+    // Product.product's info into resolveReference → Query.product; activeField must
+    // compare the full coordinate or the connector's `id` arg metadata is lost.
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "shop", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      type Query {
+        product(id: ID!): Product
+          @connect(
+            source: "shop"
+            http: { GET: "/products/{$args.id}" }
+            selection: "id name product"
+            entity: true
+          )
+      }
+
+      type Product @key(fields: "id") {
+        id: ID!
+        name: String
+        product: String
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json({
+          id: 'p1',
+          name: 'Widget',
+          product: 'SKU-1',
+        });
+      }) as any,
+    });
+
+    const productType = schema.getType('Product') as any;
+    expect(typeof productType.resolveReference).toBe('function');
+    // Simulate Hive stub hydration: missing Product.product forwards that field's info.
+    const productFields = productType.getFields();
+    const productFieldInfo = {
+      fieldName: 'product',
+      parentType: productType,
+      schema,
+      returnType: productFields.product.type,
+      path: { key: 'product', typename: 'Product' },
+      fragments: {},
+      graphQLErrors: [],
+      rootValue: null,
+      operation: null,
+      variableValues: {},
+    } as any;
+    const full = await productType.resolveReference({ id: 'p1' }, {}, productFieldInfo);
+    expect(full).toMatchObject({ id: 'p1', name: 'Widget', product: 'SKU-1' });
+    expect(urls).toEqual(['https://api.example.com/products/p1']);
+  });
+
   it('promotes bare resolveReference into extensions before _entities mapSchema rebuild', async () => {
     // preserveExistingFieldResolvers accepts a bare Product.resolveReference and skips
     // replacement. Without promoting into Apollo extensions first, installQueryField's

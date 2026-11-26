@@ -39,7 +39,7 @@ const LEGACY_RESOLVER_TO_OP: Record<string, keyof MongoQueryAndMutations> = {
 
 /** Map compose `resolvers` flags; only `false` disables emission. */
 function mapLegacyQueryAndMutations(
-  resolvers?: YamlConfig.TypeConverterResolversOpts1,
+  resolvers?: YamlConfig.TypeConverterResolversOpts,
 ): MongoQueryAndMutations | undefined {
   if (!resolvers) return undefined;
   const out: MongoQueryAndMutations = {};

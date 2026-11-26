@@ -2,8 +2,14 @@ import {
   buildSchema,
   execute,
   GraphQLEnumType,
+  GraphQLInputObjectType,
+  GraphQLInt,
   GraphQLObjectType,
+  GraphQLScalarType,
+  GraphQLSchema,
+  GraphQLString,
   GraphQLUnionType,
+  version as graphqlVersion,
   parse,
 } from 'graphql';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
@@ -362,6 +368,317 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
           ? gql17Default.literal.value
           : undefined;
     expect(enumDefault).toBe('NEWBIE');
+  });
+
+  // wrapSchema's createWrappingSchema forces enum `value: undefined` before any
+  // transform runs, so custom internals are unrecoverable in wrap mode.
+  (mode === 'bare' ? it : it.skip)(
+    'keeps non-string enum internal defaults under the renamed member',
+    () => {
+      const userType = new GraphQLEnumType({
+        name: 'userType',
+        values: {
+          newbie: { value: 1 },
+          admin: { value: 2 },
+        },
+      });
+      const inputSchema = new GraphQLSchema({
+        query: new GraphQLObjectType({
+          name: 'Query',
+          fields: {
+            usersByType: {
+              type: GraphQLString,
+              args: {
+                type: { type: userType, defaultValue: 1 },
+              },
+            },
+          },
+        }),
+      });
+      const newSchema = transformSchema(
+        inputSchema,
+        new NamingConventionTransform({
+          apiName: '',
+          importFn,
+          config: {
+            mode,
+            typeNames: 'pascalCase',
+            enumValues: 'upperCase',
+          },
+          cache,
+          pubsub,
+          baseDir,
+          log,
+        }),
+      );
+      const renamedEnum = newSchema.getType('UserType') as GraphQLEnumType;
+      expect(renamedEnum.getValue('NEWBIE')?.value).toBe(1);
+      const arg = (newSchema.getType('Query') as GraphQLObjectType).getFields().usersByType.args[0];
+      expect(arg.defaultValue).toBe(1);
+    },
+  );
+
+  it('pairs same-typed args without astNode to their own defaults', () => {
+    const filter = new GraphQLInputObjectType({
+      name: 'Filter',
+      fields: {
+        retry_count: { type: GraphQLInt },
+      },
+    });
+    const inputSchema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          search: {
+            type: GraphQLString,
+            args: {
+              left: { type: filter, defaultValue: { retry_count: 1 } },
+              right: { type: filter, defaultValue: { retry_count: 2 } },
+            },
+          },
+        },
+      }),
+    });
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const args = (newSchema.getType('Query') as GraphQLObjectType).getFields().search.args;
+    const left = args.find(a => a.name === 'left');
+    const right = args.find(a => a.name === 'right');
+    expect(left?.defaultValue).toEqual({ retryCount: 1 });
+    expect(right?.defaultValue).toEqual({ retryCount: 2 });
+  });
+
+  it('does not walk custom-scalar default values when detecting rewritable enums', () => {
+    // Programmatic custom scalar with a cyclic JS default — untyped recursion would hang.
+    const cyclic: Record<string, unknown> = {};
+    cyclic.self = cyclic;
+    const Raw = new GraphQLScalarType({ name: 'Raw', serialize: v => v });
+    const Filter = new GraphQLInputObjectType({
+      name: 'Filter',
+      fields: {
+        raw_payload: { type: Raw, defaultValue: cyclic },
+        retry_count: { type: GraphQLInt },
+      },
+    });
+    const inputSchema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          search: {
+            type: GraphQLString,
+            args: {
+              filter: { type: Filter, defaultValue: { raw_payload: cyclic, retry_count: 3 } },
+            },
+          },
+        },
+      }),
+    });
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const arg = (newSchema.getType('Query') as GraphQLObjectType).getFields().search.args[0];
+    expect(arg.defaultValue).toMatchObject({ retryCount: 3 });
+    expect(arg.defaultValue).toHaveProperty('rawPayload');
+  });
+
+  it('does not rewrite enum tokens inside custom-scalar list/object defaults', () => {
+    // Custom scalars may accept list/object AST literals; EnumValue tokens inside
+    // those literals are scalar payload, not GraphQL enum members.
+    const inputSchema = buildSchema(/* GraphQL */ `
+      scalar Choice
+      input Filter {
+        raw_payload: Choice = [fast]
+        nested: Choice = { choice: fast }
+      }
+      type Query {
+        search(filter: Filter = { raw_payload: [fast], nested: { choice: fast } }): String
+      }
+    `);
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+          enumValues: 'upperCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const printed = printSchemaWithDirectives(newSchema).replace(/\s+/g, ' ');
+    expect(printed).toContain('rawPayload');
+    // GraphQL may print scalar EnumValue tokens as strings (`"fast"`); either form
+    // must stay lowercase — never upperCased as if they were enum members.
+    expect(printed).toMatch(/\[(?:fast|"fast")\]/);
+    expect(printed).not.toMatch(/\[(?:FAST|"FAST")\]/);
+    expect(printed).toMatch(/choice: (?:fast|"fast")/);
+    expect(printed).not.toMatch(/choice: (?:FAST|"FAST")/);
+  });
+
+  it('renames keys in input-object argument defaults with fieldNames', () => {
+    const inputSchema = buildSchema(/* GraphQL */ `
+      enum E {
+        newbie
+      }
+      input Filter {
+        user_status: E
+      }
+      type Query {
+        search(filter: Filter = { user_status: newbie }): String
+      }
+    `);
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+          enumValues: 'upperCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    // GraphQL 16 prints `{userStatus: NEWBIE}`; GraphQL 17 prints `{ userStatus: NEWBIE }`.
+    const printed = printSchemaWithDirectives(newSchema).replace(/\s+/g, ' ');
+    expect(printed).toContain('userStatus');
+    // Wrap + GraphQL 16 must still keep the default after RenameInputObjectFields
+    // (reapplied from the original schema in wrapNamingConvention.transformSchema).
+    expect(printed).toMatch(/search\(filter: Filter = \{ ?userStatus: NEWBIE ?\}\)/);
+  });
+
+  it('renames key-only input-object defaults without string/enum leaves', () => {
+    const inputSchema = buildSchema(/* GraphQL */ `
+      input Filter {
+        retry_count: Int
+      }
+      type Query {
+        search(filter: Filter = { retry_count: 3 }): String
+      }
+    `);
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+          enumValues: 'upperCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const printed = printSchemaWithDirectives(newSchema).replace(/\s+/g, ' ');
+    expect(printed).toContain('retryCount');
+    expect(printed).not.toContain('retry_count');
+    expect(printed).toMatch(/search\(filter: Filter = \{ ?retryCount: 3 ?\}\)/);
+  });
+
+  it('builds reverse maps for recursive input args without overflowing', () => {
+    const inputSchema = buildSchema(/* GraphQL */ `
+      input Filter {
+        and: [Filter!]
+        retry_count: Int
+      }
+      type Query {
+        search(filters: [Filter]): Int
+      }
+    `);
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const printed = printSchemaWithDirectives(newSchema);
+    expect(printed).toContain('retryCount');
+    expect(printed).not.toContain('retry_count');
+  });
+
+  it('keeps nested input-object defaults when the argument is omitted (wrap + bare)', () => {
+    const inputSchema = buildSchema(/* GraphQL */ `
+      enum E {
+        newbie
+      }
+      input Inner {
+        user_status: E
+      }
+      input Filter {
+        outer_field: Inner
+      }
+      type Query {
+        search(filter: Filter = { outer_field: { user_status: newbie } }): String
+      }
+    `);
+    const newSchema = transformSchema(
+      inputSchema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+          enumValues: 'upperCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        log,
+      }),
+    );
+    const printed = printSchemaWithDirectives(newSchema).replace(/\s+/g, ' ');
+    expect(printed).toContain('outerField');
+    expect(printed).toContain('userStatus');
+    expect(printed).toMatch(
+      /search\(filter: Filter = \{ ?outerField: \{ ?userStatus: NEWBIE ?\} ?\}\)/,
+    );
   });
 
   it('should resolves the data of a renamed fields correctly when arguments did not changed', async () => {

@@ -281,4 +281,53 @@ describe('healJSONSchema', () => {
     ).properties.when as JSONSchemaObject;
     expect((when.items as JSONSchemaObject).title).toBe('Timing_Repeat_when_items');
   });
+
+  it('guards resolveItemsType against cyclic allOf/anyOf/oneOf wrappers', async () => {
+    const cyclicItems: Record<string, unknown> = {};
+    cyclicItems.allOf = [cyclicItems];
+    const schema: JSONSchemaObject = {
+      type: 'object',
+      title: 'CyclicItems',
+      properties: {
+        flags: {
+          type: 'array',
+          items: cyclicItems,
+          default: 'false',
+        },
+      },
+    };
+    const healed = (await healJSONSchema(schema)) as JSONSchemaObject;
+    // Cycle → no resolvable item type → leave the string default intact (no JSON.parse).
+    expect((healed.properties.flags as JSONSchemaObject).default).toBe('false');
+  });
+
+  it('keeps bare scalar string defaults on array schemas as singleton items', async () => {
+    // OpenAPI often sets `default: "200"` on `type: array` to mean `["200"]`.
+    // `JSON.parse("200")` must not turn that into the number 200.
+    const schema: JSONSchemaObject = {
+      type: 'object',
+      title: 'HttpConfig',
+      properties: {
+        expected_codes: {
+          type: 'array',
+          items: { type: 'string' },
+          default: '200',
+        },
+        encoded: {
+          type: 'array',
+          items: { type: 'string' },
+          default: '["200","201"]',
+        },
+        flags: {
+          type: 'array',
+          items: { type: 'boolean' },
+          default: 'false',
+        },
+      },
+    };
+    const healed = (await healJSONSchema(schema)) as JSONSchemaObject;
+    expect((healed.properties.expected_codes as JSONSchemaObject).default).toBe('200');
+    expect((healed.properties.encoded as JSONSchemaObject).default).toEqual(['200', '201']);
+    expect((healed.properties.flags as JSONSchemaObject).default).toBe(false);
+  });
 });

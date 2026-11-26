@@ -183,8 +183,11 @@ function normalizePrintedSchema(sdl) {
         lastOut &&
         next &&
         lastOut !== ' ' &&
+        // Match the whitespace handler: keep a separator between adjacent
+        // object/list closers+openers (`},{` / `][`) as well as word/string glue.
         ((/[\w.]/.test(lastOut) && (/[\w.]/.test(next) || next === '-')) ||
-          (lastOut === '"' && next === '"'))
+          (lastOut === '"' && next === '"') ||
+          ((lastOut === '}' || lastOut === ']') && (next === '{' || next === '[')))
       ) {
         parts.push(' ');
         lastOut = ' ';

@@ -2373,6 +2373,8 @@ export function addConnectFieldResolver(
   field: GraphQLField<any, any>,
   connectArgs: ConnectArgs,
   opts: ConnectFieldResolverOptions = {},
+  /** Declaring type of `field` — required to tell same-name fields on other types apart. */
+  declaringTypeName?: string,
 ) {
   // Second pass after `additionalTypeDefs` / wrapSchema: keep rename proxies and any
   // already-wired connect resolver - never assign `field.resolve` again.
@@ -2393,6 +2395,25 @@ export function addConnectFieldResolver(
   const preferEmbeddedNav = expandNavProps && hasODataMetadataAcceptHeader(source?.http?.headers);
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
+    // After `installQueryField` / `mapSchema`, prefer the runtime field from `info`
+    // so scalar serialize/parse match the schema GraphQL executed against (not the
+    // pre-rebuild instances captured when this resolver was first attached).
+    const runtimeField =
+      info?.parentType && 'getFields' in info.parentType
+        ? ((info.parentType as GraphQLObjectType).getFields()[info.fieldName] as
+            GraphQLField<any, any> | undefined)
+        : undefined;
+    // hydrateEntityStubFieldResolvers forwards another field's `info` into
+    // resolveReference → this connector. Keep the connector's own field for
+    // argument metadata when `info` is a different coordinate (same name on
+    // another type, e.g. Product.product vs Query.product).
+    const sameCoordinate =
+      !!runtimeField &&
+      runtimeField.name === field.name &&
+      (!declaringTypeName || info?.parentType?.name === declaringTypeName);
+    const activeField = sameCoordinate ? runtimeField : field;
+    const activeSchema = info?.schema || schema;
+
     // When `$expand` / parent selection already put this field on `root`, skip HTTP.
     // Apollo may skip via planner; Hive always invokes the field resolver.
     // Non-queryOptions nav args are excluded from `$expand` - never reuse embedded
@@ -2508,7 +2529,7 @@ export function addConnectFieldResolver(
     const argsSerializeProxy = new Proxy(rawArgs, {
       get(target, argName) {
         const value = target[argName as string];
-        const argDef = field.args?.find(arg => arg.name === String(argName));
+        const argDef = activeField.args?.find(arg => arg.name === String(argName));
         if (argDef) {
           return serializeArgumentsForInterpolation(value, argDef.type);
         }
@@ -2537,11 +2558,11 @@ export function addConnectFieldResolver(
       : urlJoin(baseURL || '', path) || path;
 
     const resolveArg = (argName: string, value: any) => {
-      const argDef = field.args?.find(arg => arg.name === argName);
+      const argDef = activeField.args?.find(arg => arg.name === argName);
       if (!argDef || value == null || typeof value !== 'object') {
         return value;
       }
-      return resolveDataByUnionInputType(structuredClone(value), argDef.type, schema);
+      return resolveDataByUnionInputType(structuredClone(value), argDef.type, activeSchema);
     };
     fullPath = applyQueryParams(
       fullPath,
@@ -3213,7 +3234,7 @@ export function processConnectDirectives(
           args: [],
           extensions: {},
         } as unknown as GraphQLField<any, any>;
-        addConnectFieldResolver(schema, syntheticField, connectArgs, fieldOpts);
+        addConnectFieldResolver(schema, syntheticField, connectArgs, fieldOpts, typeName);
         const resolve = syntheticField.resolve;
         if (resolve) {
           setTypeResolveReference(type, (reference, context, info) =>
@@ -3238,7 +3259,13 @@ export function processConnectDirectives(
       }
       // First connect wins for execution (repeatable for schema merge cases)
       const connectArgs = directives[0];
-      addConnectFieldResolver(schema, field as GraphQLField<any, any>, connectArgs, fieldOpts);
+      addConnectFieldResolver(
+        schema,
+        field as GraphQLField<any, any>,
+        connectArgs,
+        fieldOpts,
+        typeName,
+      );
       // Query `@connect(entity: true)` → type.resolveReference (Federation `_entities`).
       if (connectArgs.entity && type === queryType && isObjectType(getNamedType(field.type))) {
         const returnType = getNamedType(field.type) as GraphQLObjectType;

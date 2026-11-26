@@ -759,14 +759,74 @@ export async function healJSONSchema(
             subSchema.type !== 'string' &&
             typeof subSchema.default === 'string'
           ) {
-            debugLogFn?.(
-              `${path} has a default value as a JSON string for the type ${subSchema.type}. Converting it to JSON.`,
-            );
-            try {
-              subSchema.default = JSON.parse(subSchema.default);
-            } catch (e) {
-              debugLogFn?.(`${path} has a default value but it is not a valid JSON.`);
-              delete subSchema.default;
+            // Decode JSON-encoded object/array defaults (`"{…}"` / `"[…]"`).
+            // Bare scalars on `type: array` are often OpenAPI singleton item defaults:
+            // - string items: keep `"200"` / `"*"` as strings (do not JSON.parse → number)
+            // - boolean/number/integer items: decode `'false'` / `'1'` to real scalars
+            const trimmedDefault = subSchema.default.trim();
+            const type = subSchema.type;
+            // Resolve item type the same way child healing will (single-element
+            // allOf/anyOf/oneOf collapse) so `'false'` still decodes for boolean items.
+            const resolveItemsType = (
+              items: unknown,
+              visitedItems = new Set<object>(),
+            ): string | string[] | undefined => {
+              if (!items || typeof items !== 'object' || Array.isArray(items)) {
+                return undefined;
+              }
+              if (visitedItems.has(items)) {
+                return undefined;
+              }
+              visitedItems.add(items);
+              const obj = items as {
+                type?: string | string[];
+                allOf?: unknown[];
+                anyOf?: unknown[];
+                oneOf?: unknown[];
+              };
+              if (obj.type != null) {
+                return obj.type;
+              }
+              for (const key of ['allOf', 'anyOf', 'oneOf'] as const) {
+                const arr = obj[key];
+                if (Array.isArray(arr) && arr.length === 1) {
+                  const nested = resolveItemsType(arr[0], visitedItems);
+                  if (nested != null) {
+                    return nested;
+                  }
+                }
+              }
+              return undefined;
+            };
+            const rawItemsType =
+              type === 'array' &&
+              subSchema.items &&
+              !Array.isArray(subSchema.items) &&
+              typeof subSchema.items === 'object'
+                ? resolveItemsType(subSchema.items)
+                : undefined;
+            // Nullable unions like `['boolean','null']` collapse to the non-null item type
+            // (same idea as getComposerFromJSONSchema) so singleton defaults still decode.
+            const itemsType = Array.isArray(rawItemsType)
+              ? rawItemsType.find(t => t !== 'null')
+              : rawItemsType;
+            const looksLikeJsonContainer =
+              (type === 'object' && trimmedDefault.startsWith('{')) ||
+              (type === 'array' && trimmedDefault.startsWith('[')) ||
+              (type === 'array' &&
+                !trimmedDefault.startsWith('[') &&
+                (itemsType === 'boolean' || itemsType === 'number' || itemsType === 'integer')) ||
+              (type !== 'object' && type !== 'array');
+            if (looksLikeJsonContainer) {
+              debugLogFn?.(
+                `${path} has a default value as a JSON string for the type ${subSchema.type}. Converting it to JSON.`,
+              );
+              try {
+                subSchema.default = JSON.parse(subSchema.default);
+              } catch (e) {
+                debugLogFn?.(`${path} has a default value but it is not a valid JSON.`);
+                delete subSchema.default;
+              }
             }
           }
         }

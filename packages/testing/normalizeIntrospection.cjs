@@ -17,13 +17,19 @@ function normalizeIntrospection(value) {
   return canonicalize(structuredClone(value));
 }
 
-function canonicalize(node) {
+function canonicalize(node, opts = {}) {
   if (Array.isArray(node)) {
-    return node.map(canonicalize);
+    return node.map(child => canonicalize(child, opts));
   }
   if (node == null || typeof node !== 'object') {
     return node;
   }
+
+  const inIntrospectionType =
+    opts.inIntrospectionType ||
+    (typeof node.name === 'string' &&
+      node.name.startsWith('__') &&
+      (node.kind === 'OBJECT' || node.kind === 'INTERFACE' || node.kind === 'INPUT_OBJECT'));
 
   // __DirectiveLocation enum values (16 vs 17: FRAGMENT_* presence + description copy)
   if (
@@ -51,13 +57,13 @@ function canonicalize(node) {
     node.locations = [...node.locations].sort();
   }
 
-  // includeDeprecated: Boolean! (17) vs Boolean (16)
-  if (node.name === 'includeDeprecated' && node.type) {
+  // includeDeprecated: Boolean! (17) vs Boolean (16) — only on built-in introspection fields.
+  if (inIntrospectionType && node.name === 'includeDeprecated' && node.type) {
     node.type = unwrapNonNullToNamed(node.type, 'Boolean');
   }
 
   for (const key of Object.keys(node)) {
-    node[key] = canonicalize(node[key]);
+    node[key] = canonicalize(node[key], { inIntrospectionType });
   }
   return node;
 }

@@ -1,8 +1,23 @@
-import { buildSchema, GraphQLEnumType, GraphQLObjectType, GraphQLUnionType } from 'graphql';
+import {
+  buildSchema,
+  DirectiveLocation,
+  GraphQLDirective,
+  GraphQLEnumType,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+  GraphQLUnionType,
+  validateSchema,
+} from 'graphql';
 import { createNamingConventionTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
-import { composeAndGetExecutor, composeAndGetPublicSchema, expectTheSchemaSDLToBe } from './utils';
+import {
+  composeAndGetExecutor,
+  composeAndGetPublicSchema,
+  expectTheSchemaSDLToBe,
+  printSortedSchema,
+} from './utils';
 
 describe('Naming Convention', () => {
   it('changes the name of a types, enums, fields and fieldArguments', async () => {
@@ -585,5 +600,167 @@ describe('Naming Convention', () => {
     expect(actors.args.map(arg => arg.name)).toEqual(['where']);
     const similar = (next.getType('Movie') as GraphQLObjectType).getFields().similar;
     expect(similar.args.map(arg => arg.name)).toEqual(['SearchTerm']);
+  });
+
+  it('renames keys in input-object argument defaults with fieldNames', async () => {
+    const schema = buildSchema(/* GraphQL */ `
+      enum E {
+        newbie
+      }
+      input Filter {
+        user_status: E
+      }
+      type Query {
+        search(filter: Filter = { user_status: newbie }): String
+      }
+    `);
+    const transform = createNamingConventionTransform({
+      fieldNames: 'camelCase',
+      enumValues: 'upperCase',
+    });
+    // Assert on the transform output: federation compose on GraphQL 16 can drop
+    // input-object argument defaults when re-printing subgraph SDL.
+    const transformed = transform(schema, { name: 'SUBGRAPH1', schema });
+    expect(printSortedSchema(transformed).replace(/\s+/g, ' ')).toMatch(
+      /search\(filter: Filter = \{ ?userStatus: NEWBIE ?\}\)/,
+    );
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        name: 'SUBGRAPH1',
+        schema,
+        transforms: [transform],
+      },
+    ]);
+    const composed = printSortedSchema(newSchema).replace(/\s+/g, ' ');
+    // GraphQL 16 federation compose can still drop input-object arg defaults to `{}`;
+    // when the default survives, require the exact rewritten shape (not just the field name).
+    if (composed.includes('filter: Filter = {}')) {
+      expect(composed).toContain('userStatus');
+    } else {
+      expect(composed).toMatch(/search\(filter: Filter = \{ ?userStatus: NEWBIE ?\}\)/);
+    }
+  });
+
+  it('rewrites enum defaults on directive arguments', async () => {
+    const schema = buildSchema(/* GraphQL */ `
+      enum E {
+        newbie
+      }
+      directive @d(e: E = newbie) on FIELD_DEFINITION
+      type Query {
+        q: String @d
+      }
+    `);
+    const transform = createNamingConventionTransform({
+      enumValues: 'upperCase',
+    });
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        name: 'SUBGRAPH1',
+        schema,
+        transforms: [transform],
+      },
+    ]);
+    const directive = newSchema.getDirective('d');
+    expect(directive).toBeDefined();
+    const arg = directive!.args.find(a => a.name === 'e');
+    const gql17Default = (
+      arg as unknown as { default?: { literal?: { kind: string; value: string } } }
+    ).default;
+    const enumDefault =
+      typeof arg?.defaultValue === 'string'
+        ? arg.defaultValue
+        : gql17Default?.literal?.kind === 'EnumValue'
+          ? gql17Default.literal.value
+          : undefined;
+    expect(enumDefault).toBe('NEWBIE');
+  });
+
+  it('keeps internal-only directive enum defaults when the wire value differs from the name', () => {
+    const E = new GraphQLEnumType({
+      name: 'E',
+      values: {
+        newbie: { value: 'wire' },
+      },
+    });
+    const d = new GraphQLDirective({
+      name: 'd',
+      locations: [DirectiveLocation.FIELD_DEFINITION],
+      args: {
+        e: {
+          type: E,
+          defaultValue: 'wire',
+        },
+      },
+    });
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          q: {
+            type: GraphQLString,
+            astNode: undefined,
+          },
+        },
+      }),
+      directives: [d],
+    });
+    const transform = createNamingConventionTransform({
+      enumValues: 'upperCase',
+    });
+    const transformed = transform(schema, { name: 'SUBGRAPH1', schema });
+    expect(validateSchema(transformed)).toEqual([]);
+    const arg = transformed.getDirective('d')?.args.find(a => a.name === 'e');
+    expect(arg?.defaultValue).toBe('wire');
+    const gql17Default = (arg as unknown as { default?: { value?: unknown } })?.default;
+    // Must not invent `default: { value: 'WIRE' }` — public enum is NEWBIE, not WIRE.
+    expect(gql17Default?.value).not.toBe('WIRE');
+  });
+
+  it('rewrites key-only directive-argument defaults when only fieldNames is set', async () => {
+    const schema = buildSchema(/* GraphQL */ `
+      input Filter {
+        item_count: Int
+      }
+      directive @d(f: Filter = { item_count: 1 }) on FIELD_DEFINITION
+      type Query {
+        q: String @d
+      }
+    `);
+    const transform = createNamingConventionTransform({
+      fieldNames: 'camelCase',
+    });
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        name: 'SUBGRAPH1',
+        schema,
+        transforms: [transform],
+      },
+    ]);
+    const printed = printSortedSchema(newSchema);
+    expect(printed).toContain('itemCount');
+    expect(printed).not.toContain('item_count');
+    const directive = newSchema.getDirective('d');
+    const arg = directive?.args.find(a => a.name === 'f');
+    const jsDefault = arg?.defaultValue as { itemCount?: number; item_count?: number } | undefined;
+    if (jsDefault && typeof jsDefault === 'object') {
+      expect(jsDefault).toEqual({ itemCount: 1 });
+    } else {
+      // GraphQL 17 may keep the default as a literal only.
+      const lit = (
+        arg as unknown as {
+          default?: {
+            literal?: {
+              kind: string;
+              fields?: { name: { value: string }; value: { kind: string; value?: string } }[];
+            };
+          };
+        }
+      ).default?.literal;
+      expect(lit?.kind).toBe('ObjectValue');
+      expect(lit?.fields?.map(f => f.name.value)).toEqual(['itemCount']);
+      const itemCount = lit?.fields?.find(f => f.name.value === 'itemCount');
+      expect(itemCount?.value).toMatchObject({ kind: 'IntValue', value: '1' });
+    }
   });
 });

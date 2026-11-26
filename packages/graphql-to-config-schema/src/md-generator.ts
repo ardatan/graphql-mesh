@@ -54,8 +54,8 @@ export function transformTypeToMdFormat(
       const named = getNamedType(field.type);
       const hasChildObject = isObjectType(named);
       const hasMultipleTypes = isUnionType(named);
-      const isRequired =
-        isNonNullType(field.type) || (isListType(field.type) && isNonNullType(field.type.ofType));
+      // Only the outer wrapper decides required — `[String!]` is optional, `[String]!` required.
+      const isRequired = isNonNullType(field.type);
       const isList =
         isListType(field.type) || (isNonNullType(field.type) && isListType(field.type.ofType));
       const typeToUse = transformTypeToMdFormat(field.type, level + 1, nextPath);

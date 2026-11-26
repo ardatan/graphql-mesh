@@ -16,18 +16,7 @@ import {
 } from '../src/index.js';
 import { createPrefixTransform } from '../src/transforms/prefix.js';
 import { createRenameTransform } from '../src/transforms/rename.js';
-
-/** Collapse insignificant GraphQL print whitespace (GQL17 spaces inside `{}`). */
-function compactGql(s: string): string {
-  return (
-    s
-      .replace(/\s*([{}\[\](),:])\s*/g, '$1')
-      .replace(/\s+/g, ' ')
-      // GQL17 multiline input objects omit commas; restore them for stable asserts.
-      .replace(/((?:"(?:\\.|[^"\\])*"|true|false|null|\d+|\]))\s+(?=[A-Za-z_@])/g, '$1,')
-      .trim()
-  );
-}
+import { compactGql } from './compactGql.js';
 
 describe('Federation Connectors composition', () => {
   const connectorsSchema = buildSchema(/* GraphQL */ `

@@ -41,7 +41,7 @@ async function main() {
   });
 
   const jsonSchema = generateFromSchema(unifiedSchema, rootType);
-  const schemaFilePath = resolve(process.cwd(), `./${json}`);
+  const schemaFilePath = resolve(process.cwd(), json);
 
   // Preserve Mesh's historical `Any` scalar expansion in the JSON Schema file.
   const jsonSchemaFileContent = JSON.stringify(jsonSchema, null, 2)
@@ -68,7 +68,7 @@ async function main() {
 
   if (typings) {
     const tsTypes = await compile(jsonSchema, 'Config');
-    const tsFilePath = resolve(process.cwd(), `./${typings}`);
+    const tsFilePath = resolve(process.cwd(), typings);
     await writeFile(
       tsFilePath,
       tsTypes
@@ -95,7 +95,7 @@ async function main() {
 
   if (markdown) {
     const mdFiles = await generatedMarkdown(unifiedSchema);
-    const mdDir = resolve(process.cwd(), `./${markdown}`);
+    const mdDir = resolve(process.cwd(), markdown);
     await mkdir(mdDir, { recursive: true });
     await Promise.all(
       mdFiles.map(async result => {

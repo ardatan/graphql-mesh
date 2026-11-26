@@ -223,11 +223,23 @@ function coerceFieldDefaultValue(
   }
   if (tc instanceof ListComposer) {
     if (!Array.isArray(defaultValue)) {
-      return defaultValue;
+      // JSON Schema may use a singleton default for an array field; GraphQL 17
+      // prints list defaults via the item type, so normalize through ofType.
+      // Omit the default when item coercion fails (avoid `[undefined]` → `[]`).
+      const item = coerceFieldDefaultValue(tc.ofType as AnyTypeComposer<any>, defaultValue);
+      return item === undefined ? undefined : [item];
     }
-    return defaultValue.map(item =>
-      coerceFieldDefaultValue(tc.ofType as AnyTypeComposer<any>, item),
-    );
+    const items: unknown[] = [];
+    for (const entry of defaultValue) {
+      const item = coerceFieldDefaultValue(tc.ofType as AnyTypeComposer<any>, entry);
+      // Match singleton behavior: one failed item drops the whole default so
+      // print (`[]`) and runtime (`[undefined]`) cannot diverge.
+      if (item === undefined) {
+        return undefined;
+      }
+      items.push(item);
+    }
+    return items;
   }
   if (tc instanceof EnumTypeComposer) {
     let enumKey = sanitizeNameForGraphQL(String(defaultValue));
@@ -239,16 +251,44 @@ function coerceFieldDefaultValue(
     }
     return tc.hasField(enumKey) ? enumKey : defaultValue;
   }
+  if (tc instanceof InputTypeComposer) {
+    // Singleton list defaults for input-object items must be plain objects;
+    // omit unrepresentable values (e.g. `42`) so print/runtime stay aligned.
+    if (defaultValue == null || typeof defaultValue !== 'object' || Array.isArray(defaultValue)) {
+      return undefined;
+    }
+    return defaultValue;
+  }
   if (tc instanceof ScalarTypeComposer) {
     // JSON Schema allows defaults that fail the associated scalar (e.g. '' on
-    // NonEmptyString). Omit those so print/schema generation does not throw;
-    // keep representable falsy defaults (0 / false / '').
+    // NonEmptyString). Omit those so print/schema generation does not throw.
+    // Prefer `parseValue` so legacy `defaultValue` matches input coercion
+    // (e.g. GraphQLBigInt serialize→string vs parseValue→bigint). Fall back to
+    // `serialize` when input coercion rejects values that output coerce still
+    // accepts (healed numeric literals on string list items).
     try {
+      const parseValue = tc.getParseValue?.();
+      let parsed: unknown = defaultValue;
+      if (typeof parseValue === 'function') {
+        parsed = parseValue(defaultValue);
+      }
+      // Always validate output serialization when present — GraphQL may supply an
+      // identity parseValue while serialize still rejects (e.g. empty string).
+      // Return the parsed value (not serialize's result) so BigInt stays a bigint.
       const serialize = tc.getSerialize?.();
       if (typeof serialize === 'function') {
-        serialize(defaultValue);
+        serialize(parsed);
       }
+      return parsed;
     } catch {
+      try {
+        const serialize = tc.getSerialize?.();
+        if (typeof serialize === 'function') {
+          return serialize(defaultValue);
+        }
+      } catch {
+        return undefined;
+      }
       return undefined;
     }
   }

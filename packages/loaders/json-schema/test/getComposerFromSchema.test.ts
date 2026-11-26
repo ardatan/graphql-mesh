@@ -608,6 +608,56 @@ type ExampleAnyOf {
     expect(result.input.getType()).toBe(GraphQLBigInt);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLBigInt);
   });
+  it('stores BigInt list singleton defaults via parseValue (not serialize)', async () => {
+    // serialize("9007199254740993") → string; parseValue → bigint. Legacy defaultValue
+    // is served without input coercion, so we must store the parseValue result.
+    const big = '9007199254740993';
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'BigDefaults',
+      properties: {
+        ids: {
+          type: 'array',
+          items: { type: 'integer', format: 'int64' },
+          default: big,
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const input = result.input as InputTypeComposer;
+    const idsField = input.getField('ids');
+    expect(idsField.defaultValue).toEqual([BigInt(big)]);
+    expect(typeof (idsField.defaultValue as unknown[])[0]).toBe('bigint');
+  });
+  it('keeps string list singleton defaults (incl. numeric serialize fallback)', async () => {
+    // CloudFlare-style: array default `"200"` (string) → `["200"]`.
+    // Also accept a numeric leftover (healJSONSchema historically JSON.parsed
+    // bare `"200"` → `200`) via serialize fallback when parseValue rejects it.
+    for (const singleton of ['200', 200] as const) {
+      const inputSchema: JSONSchema = {
+        type: 'object',
+        title: `HttpConfig_${typeof singleton}`,
+        properties: {
+          expected_codes: {
+            type: 'array',
+            items: { type: 'string' },
+            default: singleton as any,
+          },
+        },
+      };
+      const result = await getComposerFromJSONSchema({
+        subgraphName: 'Test',
+        schema: inputSchema,
+        log,
+      });
+      const input = result.input as InputTypeComposer;
+      expect(input.getField('expected_codes').defaultValue).toEqual(['200']);
+    }
+  });
   it('should return Int for int32 definition', async () => {
     const inputSchema: JSONSchema = {
       type: 'integer',
