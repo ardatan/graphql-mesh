@@ -467,6 +467,7 @@ writeFileSync(
     <ul>
       <li>HTTP/REST Connectors <code>@connect</code> / <code>@source</code>: <a href="https://specs.apollo.dev/connect/v0.2">specs.apollo.dev/connect</a></li>
       <li>Federation / join / link specs: <a href="https://specs.apollo.dev/">specs.apollo.dev</a></li>
+      <li>Federation Spec draft <code>@lookup</code> / <code>@is</code> / <code>@internal</code>: <a href="https://graphql.github.io/graphql-federation-spec/draft">graphql.github.io/graphql-federation-spec/draft</a> (not Mesh-owned; not published here)</li>
       <li>Legacy Mesh catch-all (read-only): <code>https://the-guild.dev/graphql/mesh/spec/v1.0</code></li>
     </ul>
   </section>

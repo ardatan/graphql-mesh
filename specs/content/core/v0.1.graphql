@@ -13,15 +13,6 @@ directive @transport(
   options: TransportOptions
 ) repeatable on SCHEMA
 
-directive @merge(
-  subgraph: String
-  key: [String]
-  keyField: String
-  keyArg: String
-  argsExpr: String
-  additionalArgs: String
-) repeatable on FIELD_DEFINITION
-
 directive @source(
   name: String!
   type: String

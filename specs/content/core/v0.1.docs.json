@@ -1,9 +1,9 @@
 {
   "scalars": {
     "TransportOptions": {
-      "summary": "Opaque JSON-like bag for kind-specific transport knobs (timeouts, OData batch, Neo4j auth extras, …). Top-level `@transport` args stay shared; protocol details go here.",
+      "summary": "Opaque JSON-like bag for kind-specific transport knobs (timeouts, OData batch, Neo4j auth extras, \u2026). Top-level `@transport` args stay shared; protocol details go here.",
       "authors": "Pass only keys your transport documents. Unknown keys may be ignored or rejected by a strict executor.",
-      "implementers": "Map 1:1 onto Hive `TransportEntry.options`. Do not add sibling `@transport` args for kind-specific fields — nest under `options`."
+      "implementers": "Map 1:1 onto Hive `TransportEntry.options`. Do not add sibling `@transport` args for kind-specific fields \u2014 nest under `options`."
     },
     "_HoistConfig": {
       "summary": "Serialized hoist path (string list and/or `{ fieldName, filterArgs }` objects) describing how a nested field was lifted.",
@@ -11,7 +11,7 @@
       "implementers": "Preserve through composition so Gateway / Connectors selection rewrites can re-apply the path. Treat as structured JSON, not free text."
     },
     "ResolveToSourceArgs": {
-      "summary": "Map of argument name → value expression (often with `{root…}` / `{args…}` interpolation) forwarded when delegating to a source field.",
+      "summary": "Map of argument name \u2192 value expression (often with `{root\u2026}` / `{args\u2026}` interpolation) forwarded when delegating to a source field.",
       "authors": "Use object syntax in SDL: `sourceArgs: { id: \"{root.id}\" }`.",
       "implementers": "Parse as a string-keyed map. Interpolate with the same resolver-data rules as Mesh additional resolvers before calling the source field."
     }
@@ -20,7 +20,7 @@
     "@transport": {
       "summary": "Declares how Gateway reaches a subgraph: kind, location, optional headers, and kind-specific `options`. Repeatable on SCHEMA so one schema document can describe multiple subgraphs.",
       "authors": {
-        "intro": "Every non-Connectors Mesh subgraph should carry `@transport` (often stamped by the loader). Pair protocol field directives (`@sql`, `@mongo__*`, …) with a matching `kind`. Do not use this for HTTP/REST Connectors `@source(http:)` — that lives under specs.apollo.dev/connect.",
+        "intro": "Every non-Connectors Mesh subgraph should carry `@transport` (often stamped by the loader). Pair protocol field directives (`@sql`, `@mongo__*`, \u2026) with a matching `kind`. Do not use this for HTTP/REST Connectors `@source(http:)` \u2014 that lives under specs.apollo.dev/connect.",
         "example": "extend schema\n  @link(url: \"https://specs.graphql-mesh.dev/core/v0.1\", import: [\"@transport\"])\n  @transport(\n    subgraph: \"shop\"\n    kind: \"sql\"\n    location: \"postgres://localhost/shop\"\n  )"
       },
       "implementers": {
@@ -39,14 +39,14 @@
         },
         "kind": {
           "defaults": "Required (`String!`).",
-          "constraints": "Transport id such as `http`, `sql`, `mongo`, `thrift`, `neo4j`, `grpc`/`protobuf`, `connect`, …",
+          "constraints": "Transport id such as `http`, `sql`, `mongo`, `thrift`, `neo4j`, `grpc`/`protobuf`, `connect`, \u2026",
           "authors": "Selects which executor implementation Gateway loads.",
-          "implementers": "Dispatch table key. Do not overload `kind` with options — use `options` for variants.",
+          "implementers": "Dispatch table key. Do not overload `kind` with options \u2014 use `options` for variants.",
           "example": "kind: \"sql\""
         },
         "location": {
           "defaults": "Optional.",
-          "constraints": "URI / DSN / endpoint string understood by that kind (Postgres URL, Mongo URI, Thrift HTTP endpoint, …).",
+          "constraints": "URI / DSN / endpoint string understood by that kind (Postgres URL, Mongo URI, Thrift HTTP endpoint, \u2026).",
           "authors": "Where to connect. May be omitted when Gateway config injects the endpoint.",
           "implementers": "May be dropped from printed SG when it duplicates `join__graph(url:)` for pure HTTP. Still required at execution unless overridden by gateway config.",
           "example": "location: \"postgres://localhost/shop\""
@@ -56,69 +56,14 @@
           "constraints": "List of `[name, value]` pairs (or ObjMap round-trip in some loaders). Values may include interpolations depending on transport.",
           "authors": "Static default headers for upstream calls.",
           "implementers": "Normalize to `TransportEntry.headers`. Merge with per-request headers without dropping security header partitioning rules (e.g. OData batch).",
-          "example": "headers: [[\"authorization\", \"Bearer …\"]]"
+          "example": "headers: [[\"authorization\", \"Bearer \u2026\"]]"
         },
         "options": {
           "defaults": "Optional.",
           "constraints": "Must be valid `TransportOptions` for the chosen `kind`.",
-          "authors": "Kind-specific config (timeouts, query string defaults, OData batch mode, …).",
-          "implementers": "Pass through as `TransportEntry.options`. Document per-transport keys in that transport package — not as new `@transport` args.",
+          "authors": "Kind-specific config (timeouts, query string defaults, OData batch mode, \u2026).",
+          "implementers": "Pass through as `TransportEntry.options`. Document per-transport keys in that transport package \u2014 not as new `@transport` args.",
           "example": "options: { timeout: 30000 }"
-        }
-      }
-    },
-    "@merge": {
-      "summary": "Marks a Query/Mutation field as a type-merge entry point (stitching / federation-style entity read). Repeatable on FIELD_DEFINITION.",
-      "authors": {
-        "intro": "Used when Compose federation / type-merging transforms expose merge resolvers. Prefer generated output from those transforms unless you are extending merge behavior by hand.",
-        "example": "type Query {\n  user(id: ID!): User\n    @merge(subgraph: \"users\", keyField: \"id\", keyArg: \"id\")\n}"
-      },
-      "implementers": {
-        "intro": "Consumed by Mesh stitching / federation runtime when building merged-type configs.",
-        "compose": "Federation transform writes `@merge` and stamps it under core (often with `subgraph: String!` on the emitted def). Join optimization may drop unused definitions.",
-        "runtime": "Map onto stitching merge config: key selection, key args, optional `argsExpr`, and `additionalArgs`. Align with stitching-directives (`key: [String!]`) / federation compose (`key: [String]`)."
-      },
-      "args": {
-        "subgraph": {
-          "defaults": "Optional in this family SDL for hand-authored schemas; federation compose stamps it as required (`String!`).",
-          "constraints": "String subgraph name. When present, must match the owning Mesh subgraph / `@transport(subgraph:)` entry used at runtime.",
-          "authors": "Identify which Mesh subgraph owns this annotation when several sources are composed. Omit for single-source hand SDL if the transform will stamp it.",
-          "implementers": "Compose and join rewrites use `subgraph` to attribute directive apps. Federation’s stamped definition uses `String!`; keep optional on the published stub so local SDL can omit it before stamping.",
-          "example": "subgraph: \"shop\""
-        },
-        "key": {
-          "defaults": "Optional.",
-          "constraints": "List of key expression pieces (`[String]`). Stitching-directives may treat elements as non-null (`[String!]`); accept either when reading.",
-          "authors": "Alternate key expression fragments when not using `keyField` alone.",
-          "implementers": "Feed into `buildKeyExpr` / stitching merge-key construction. Prefer list form; a lone string is a legacy shape seen only in older helpers.",
-          "example": "key: [\"id\"]"
-        },
-        "keyField": {
-          "defaults": "Optional.",
-          "constraints": "Field name on the returned type used as the merge key.",
-          "authors": "Usually the entity id field (e.g. `id`).",
-          "implementers": "Build selection sets / key extractors from this name; federation often stamps from `@key(fields:)`.",
-          "example": "keyField: \"id\""
-        },
-        "keyArg": {
-          "defaults": "Optional (stitching may default to the first field argument).",
-          "constraints": "Argument name (supports dotted paths) on this field that receives the key.",
-          "authors": "Pairs with `keyField` when the lookup arg name differs from the type field.",
-          "implementers": "Wire key values into this argument when delegating; list return types may wrap as `[[keyExpr]]`.",
-          "example": "keyArg: \"id\""
-        },
-        "argsExpr": {
-          "defaults": "Optional; may be auto-built from `key` / `keyField` / `keyArg`.",
-          "constraints": "Expression string for computed merge arguments (stitching `argsExpr` language).",
-          "authors": "Advanced: supply extra / computed args for the merge call.",
-          "implementers": "Evaluate with the same expression language as stitching `argsExpr` (`$key…`, `[[$key]]`, …)."
-        },
-        "additionalArgs": {
-          "defaults": "Optional.",
-          "constraints": "String carrying extra GraphQL object fields merged into parsed merge args (stitching + federation transform).",
-          "authors": "Rare hand use; transforms may emit when merge needs constant extra args.",
-          "implementers": "Parse and merge into the merge-args object after `argsExpr` / key wiring.",
-          "example": "additionalArgs: \"lang: \\\"en\\\"\""
         }
       }
     },
@@ -130,7 +75,7 @@
       },
       "implementers": {
         "compose": "Emit on renamed elements; keep `subgraph` aligned with transport entries. Alias to `@meshSource` if Apollo Connectors `@source` shares the schema.",
-        "runtime": "Use to recover original names for executor selection / error coordinates. Ignore Connectors `http:` shape — different directive."
+        "runtime": "Use to recover original names for executor selection / error coordinates. Ignore Connectors `http:` shape \u2014 different directive."
       },
       "args": {
         "name": {
@@ -281,7 +226,7 @@
         },
         "pathConfig": {
           "defaults": "Required for any executable `@hoist` app. The hoist transform always stamps it; omitting it makes Gateway call `.map` on `undefined` during subgraph transform setup and fail schema init.",
-          "constraints": "`_HoistConfig` — non-empty array of field names and/or `{ fieldName, filterArgs }` objects.",
+          "constraints": "`_HoistConfig` \u2014 non-empty array of field names and/or `{ fieldName, filterArgs }` objects.",
           "authors": "Do not hand-write `@hoist` without `pathConfig`. Prefer the hoist-field transform, which emits the path.",
           "implementers": "Require an array before building `HoistField` transforms; drive selection rewrites along the path.",
           "example": "pathConfig: [\"users\", \"results\"]"
