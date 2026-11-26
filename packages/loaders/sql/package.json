@@ -39,7 +39,7 @@
     "@graphql-mesh/transport-sql": "0.1.0",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/utils": "^13.2.2",
+    "@graphql-tools/utils": "^13.2.3",
     "change-case": "^4.1.2",
     "graphql-compose": "^9.3.0",
     "graphql-scalars": "^2.0.1",

@@ -57,7 +57,7 @@
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/executor-graphql-ws": "workspace:*",
-    "@graphql-tools/utils": "^13.2.2",
+    "@graphql-tools/utils": "^13.2.3",
     "graphql-ws": "^6.4.3",
     "tslib": "^2.9.1",
     "ws": "^8.23.0"

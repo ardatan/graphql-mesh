@@ -53,7 +53,7 @@
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/schema": "^11.0.9",
     "@graphql-tools/stitching-directives": "workspace:*",
-    "@graphql-tools/utils": "^13.2.2",
+    "@graphql-tools/utils": "^13.2.3",
     "@theguild/federation-composition": "^0.27.0",
     "change-case": "^4.1.2",
     "graphql-scalars": "^2.0.1",
