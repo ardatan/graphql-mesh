@@ -346,6 +346,89 @@ describe('stitching backbone', () => {
     });
   });
 
+  // reproduction-9435: gateway-local field under a non-local list path
+  // (TargetQuery.targets[] -> TargetType.complexDataItem @resolveTo).
+  it('plans deeper locals under non-local nested list paths', async () => {
+    const schema = stitchSchemas({
+      subschemas: [
+        {
+          schema: authors,
+          executor: createDefaultExecutor(authors),
+        },
+      ],
+      typeDefs: /* GraphQL */ `
+        type TargetType {
+          id: String
+        }
+        type TargetQuery {
+          targets: [TargetType]
+        }
+        type GroupQuery {
+          targetQuery: TargetQuery
+        }
+        extend type Query {
+          Group: GroupQuery!
+        }
+        extend type TargetType {
+          label: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          Group: () => 'Query',
+        },
+        GroupQuery: {
+          targetQuery: () => ({
+            targets: [{ id: 'full' }, { id: 'empty' }],
+          }),
+        },
+        TargetType: {
+          label: (root: { id?: string }) => (root.id === 'full' ? 'ok' : null),
+        },
+      },
+    });
+
+    const stitchingInfo = schema.extensions?.['stitchingInfo'] as StitchingInfo;
+    expect(stitchingInfo.localFields.get('TargetType')?.has('label')).toBe(true);
+
+    const document = parse(/* GraphQL */ `
+      {
+        Group {
+          targetQuery {
+            targets {
+              id
+              label
+            }
+          }
+        }
+      }
+    `);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    expect(plan.incompleteReasons).toEqual([]);
+    const hasLabelIsland = (n: any): boolean => {
+      if (!n) return false;
+      if (n.kind === 'Island' && n.fieldNode?.name?.value === 'label') return true;
+      if (n.continue && hasLabelIsland(n.continue)) return true;
+      if (n.nodes) return n.nodes.some(hasLabelIsland);
+      return false;
+    };
+    expect(hasLabelIsland(plan.root)).toBe(true);
+
+    const executor = createBackboneExecutor(schema);
+    const result = await exec(executor, { document, context: {} });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      Group: {
+        targetQuery: {
+          targets: [
+            { id: 'full', label: 'ok' },
+            { id: 'empty', label: null },
+          ],
+        },
+      },
+    });
+  });
+
   it('plans nested additionalResolvers as Island under a Fetch path', async () => {
     const books = makeExecutableSchema({
       typeDefs: /* GraphQL */ `

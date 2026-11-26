@@ -1638,22 +1638,59 @@ function planLocalFieldIslands(
   incompleteReasons: string[],
 ): StitchPlanNode[] {
   const islands: StitchPlanNode[] = [];
+  const parentType = schema.getType(parentTypeName);
   for (const fieldNode of fieldNodes) {
     if (fieldNode.name.value === '__typename') {
       continue;
     }
-    if (!isLocalField(stitchingInfo.localFields, parentTypeName, fieldNode.name.value)) {
+    if (isLocalField(stitchingInfo.localFields, parentTypeName, fieldNode.name.value)) {
+      islands.push(
+        planLocalFieldIsland(
+          schema,
+          stitchingInfo,
+          parentTypeName,
+          fieldNode,
+          fragments,
+          variableValues,
+          flattenPath,
+          incompleteReasons,
+        ),
+      );
       continue;
     }
+    // Non-local nested object/list (TargetQuery.targets -> TargetType): still
+    // plan deeper gateway-local fields (TargetType.complexDataItem @resolveTo).
+    // Mirror appendNestedForFields' non-merged Island walk; collectEntitiesAtPath
+    // expands list segments so flattenPaths stay index-free.
+    if (!fieldNode.selectionSet) {
+      continue;
+    }
+    if (!isObjectType(parentType) && !isInterfaceType(parentType)) {
+      continue;
+    }
+    const field = parentType.getFields()[fieldNode.name.value];
+    if (!field) {
+      continue;
+    }
+    const namedReturn = getNamedType(field.type);
+    if (!isObjectType(namedReturn) && !isInterfaceType(namedReturn)) {
+      continue;
+    }
+    if (stitchingInfo.mergedTypes[namedReturn.name]) {
+      continue;
+    }
+    const responseKey = fieldNode.alias?.value ?? fieldNode.name.value;
+    const childPath = [...flattenPath, responseKey];
+    const nestedFieldNodes = flattenToFieldNodes(fieldNode.selectionSet.selections, fragments);
     islands.push(
-      planLocalFieldIsland(
+      ...planLocalFieldIslands(
         schema,
         stitchingInfo,
-        parentTypeName,
-        fieldNode,
+        namedReturn.name,
+        nestedFieldNodes,
         fragments,
         variableValues,
-        flattenPath,
+        childPath,
         incompleteReasons,
       ),
     );
