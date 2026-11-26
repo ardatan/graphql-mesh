@@ -35,7 +35,7 @@ export function markChangedRootResolvesAsLocal(
   schema: GraphQLSchema,
   before: RootResolveSnapshot,
 ): void {
-  const stitchingInfo = schema.extensions?.['stitchingInfo'] as StitchingInfo | undefined;
+  const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
   if (!stitchingInfo) {
     return;
   }
@@ -78,7 +78,7 @@ export function resolveBackboneExecutorOptions(
     overrideLabels:
       options.overrideLabels ??
       stored?.overrideLabels ??
-      (schema.extensions?.['overrideLabels'] as Iterable<string> | undefined),
+      (schema.extensions?.overrideLabels as Iterable<string> | undefined),
   };
 }
 

@@ -2,9 +2,6 @@ import {
   concatAST,
   extendSchema,
   getNamedType,
-  GraphQLDirective,
-  GraphQLNamedType,
-  GraphQLObjectType,
   GraphQLSchema,
   isEnumType,
   isInputObjectType,
@@ -12,7 +9,10 @@ import {
   isObjectType,
   isSpecifiedDirective,
   specifiedDirectives,
+  type GraphQLDirective,
   type GraphQLFieldResolver,
+  type GraphQLNamedType,
+  type GraphQLObjectType,
 } from 'graphql';
 import {
   getSubschema,
@@ -20,9 +20,9 @@ import {
   isExternalObject,
   isSubschemaConfig,
   resolveExternalValue,
-  StitchingInfo,
   Subschema,
-  SubschemaConfig,
+  type StitchingInfo,
+  type SubschemaConfig,
 } from '@graphql-tools/delegate';
 import { applyExtensions, mergeExtensions, mergeResolvers } from '@graphql-tools/merge';
 import {
@@ -42,7 +42,11 @@ import {
   splitMergedTypeEntryPointsTransformer,
 } from './subschemaConfigTransforms/index.js';
 import { buildTypeCandidates, buildTypes } from './typeCandidates.js';
-import { IStitchSchemasOptions, MergeTypeCandidate, SubschemaConfigTransform } from './types.js';
+import {
+  type IStitchSchemasOptions,
+  type MergeTypeCandidate,
+  type SubschemaConfigTransform,
+} from './types.js';
 
 const BACKBONE_HYDRATED = Symbol.for('graphql-tools.stitch.backboneHydrated');
 const BACKBONE_EXECUTING_SYM = Symbol.for('graphql-tools.stitch.backboneExecuting');

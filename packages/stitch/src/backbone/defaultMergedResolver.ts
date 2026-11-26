@@ -82,7 +82,7 @@ function readParentField(
 }
 
 function hydrateIfMerged(value: any, context: Record<string, any>, info: GraphQLResolveInfo): any {
-  const stitchingInfo = info.schema.extensions?.['stitchingInfo'] as StitchingInfo | undefined;
+  const stitchingInfo = info.schema.extensions?.stitchingInfo as StitchingInfo | undefined;
   if (stitchingInfo == null || value == null) {
     return value;
   }

@@ -3,6 +3,7 @@ import type {
   FieldNode,
   FragmentDefinitionNode,
   GraphQLResolveInfo,
+  GraphQLSchema,
   OperationDefinitionNode,
   SelectionSetNode,
 } from 'graphql';
@@ -206,7 +207,7 @@ export interface BuildStitchPlanOptions extends BackboneExecutorOptions {
 }
 
 export interface BackboneExecutionContext {
-  schema: import('graphql').GraphQLSchema;
+  schema: GraphQLSchema;
   document: DocumentNode;
   operation: OperationDefinitionNode;
   fragments: Record<string, FragmentDefinitionNode>;

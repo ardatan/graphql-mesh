@@ -1,4 +1,4 @@
-import { GraphQLSchema, isEnumType } from 'graphql';
+import { isEnumType, type GraphQLSchema } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 
 /**
