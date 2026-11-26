@@ -3,14 +3,18 @@
 Static site for Mesh `@link` directive families hosted at
 [https://specs.graphql-mesh.dev](https://specs.graphql-mesh.dev).
 
+UX / IA follows Apollo’s `specs.apollo.dev` family pages: index with Current Specs
++ All Schemas, per-family TOC, numbered directive / schema-addition sections, and
+a sibling raw `.graphql` artifact.
+
 ## Layout
 
 | Path | Role |
 | --- | --- |
-| `families.json` | Family metadata (title, summary, imports, notes) |
-| `content/<family>/v0.1.graphql` | Directive SDL source of truth |
+| `families.json` | Family metadata (title, summary, imports, stamp notes) |
+| `content/<family>/v0.1.graphql` | Directive SDL source of truth (loader / compose shapes) |
 | `generate.mjs` | Builds `out/` HTML + copies SDL |
-| `assets/spec.css` | Shared styles |
+| `assets/spec.css` | Spec-md-like styles |
 | `out/` | Deploy artifact (generated in CI; local via `node generate.mjs`) |
 
 URL contract:
@@ -20,7 +24,8 @@ https://specs.graphql-mesh.dev/<family>/v0.1
 https://specs.graphql-mesh.dev/<family>/v0.1.graphql
 ```
 
-Families: `core`, `pubsub`, `auth`, `rate-limit`, `sql`, `thrift`, `mongo`, `neo4j`, `protobuf`.
+Directive inventory (stamp status + family lists) lives in the Project store doc
+`docs/mesh-specs-directive-inventory.md`.
 
 ## Local preview
 

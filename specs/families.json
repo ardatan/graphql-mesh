@@ -1,8 +1,9 @@
 [
   {
     "name": "core",
-    "title": "Mesh core",
-    "summary": "Shared Mesh compose and runtime directives stamped under core/v0.1 (@transport, @merge, @source, @resolveTo, @hoist, @extraSchemaDefinitionDirective).",
+    "title": "core",
+    "version": "v0.1",
+    "summary": "Shared Mesh compose and runtime directives stamped under core/v0.1.",
     "imports": [
       "@transport",
       "@merge",
@@ -11,6 +12,7 @@
       "@hoist",
       "@extraSchemaDefinitionDirective"
     ],
+    "stamp": "importMeshDirectives defaults to this URL (MESH_SPEC_URL). Protocol loaders stamp @transport here separately from their protocol family URL.",
     "notes": [
       "Mesh stitching @source uses subgraph: (and optional type:). Apollo Connectors @source uses http: and lives under specs.apollo.dev/connect.",
       "Older Mesh stamps may still import @pubsubOperation / @pubsubPublish from core/v0.1. Prefer the pubsub family for new schemas."
@@ -18,51 +20,40 @@
   },
   {
     "name": "pubsub",
-    "title": "Mesh pubsub",
-    "summary": "PubSub subscription and publish field directives for webhook / topic bindings.",
+    "title": "pubsub",
+    "version": "v0.1",
+    "summary": "PubSub subscription and publish field directives for topic / webhook bindings.",
     "imports": ["@pubsubOperation", "@pubsubPublish"],
+    "stamp": "Target family URL. Compose / loaders still list and stamp these under core/v0.1 today; stamp cutover is a follow-up.",
     "notes": [
-      "Family URL for new Mesh @link stamps. Readers may still accept the same directive names imported from core/v0.1 on older SDL."
-    ]
-  },
-  {
-    "name": "auth",
-    "title": "Mesh auth",
-    "summary": "Mesh-owned auth helpers used with Hive Gateway generic auth (alongside Federation @authenticated / @requiresScopes).",
-    "imports": ["@skipAuth"],
-    "notes": []
-  },
-  {
-    "name": "rate-limit",
-    "title": "Mesh rate-limit",
-    "summary": "Field-level rate limit hints consumed by Hive Gateway rateLimiting.",
-    "imports": ["@rateLimit"],
-    "notes": [
-      "Enable rateLimiting in the gateway config so directive annotations are enforced."
+      "json-schema / OpenAPI loaders stamp @pubsubOperation via importMeshDirectives when the directive is used (currently on the core URL)."
     ]
   },
   {
     "name": "sql",
-    "title": "Mesh SQL",
-    "summary": "SQL table mapping directive emitted by the Mesh SQL loader and executed by transport-sql.",
+    "title": "sql",
+    "version": "v0.1",
+    "summary": "SQL table mapping directive from the Mesh SQL loader (transport-sql).",
     "imports": ["@sql"],
-    "notes": [
-      "Pair with @transport from core/v0.1 for subgraph location and kind."
-    ]
+    "stamp": "meshSpecUrl('sql') in packages/loaders/sql.",
+    "notes": ["Pair with @transport from core/v0.1."]
   },
   {
     "name": "thrift",
-    "title": "Mesh Thrift",
+    "title": "thrift",
+    "version": "v0.1",
     "summary": "Thrift binary RPC field mapping directive.",
     "imports": ["@thrift__rpc"],
+    "stamp": "meshSpecUrl('thrift') in packages/loaders/thrift.",
     "notes": [
-      "Pair with @transport from core/v0.1. JSON Thrift uses Connectors @connect instead."
+      "Pair with @transport from core/v0.1. JSON Thrift uses Apollo @connect instead."
     ]
   },
   {
     "name": "mongo",
-    "title": "Mesh Mongo",
-    "summary": "MongoDB operation binders emitted by the Mesh Mongo loader.",
+    "title": "mongo",
+    "version": "v0.1",
+    "summary": "MongoDB operation binders from the Mesh Mongo loader.",
     "imports": [
       "@mongo__findOne",
       "@mongo__find",
@@ -77,13 +68,13 @@
       "@mongo__deleteOne",
       "@mongo__deleteMany"
     ],
-    "notes": [
-      "Pair with @transport from core/v0.1."
-    ]
+    "stamp": "meshSpecUrl('mongo') in packages/loaders/mongo.",
+    "notes": ["Pair with @transport from core/v0.1."]
   },
   {
     "name": "neo4j",
-    "title": "Mesh Neo4j",
+    "title": "neo4j",
+    "version": "v0.1",
     "summary": "Neo4j GraphQL model directives with optional Mesh subgraph attribution.",
     "imports": [
       "@node",
@@ -93,17 +84,38 @@
       "@cypher",
       "@plural"
     ],
+    "stamp": "meshSpecUrl('neo4j') in packages/loaders/neo4j.",
     "notes": [
       "Mesh adds optional subgraph: for multi-source attribution; strip before handing model SDL to @neo4j/graphql."
     ]
   },
   {
     "name": "protobuf",
-    "title": "Mesh Protobuf",
+    "title": "protobuf",
+    "version": "v0.1",
     "summary": "Protobuf / gRPC RPC mapping directive.",
     "imports": ["@protobuf__rpc"],
+    "stamp": "meshSpecUrl('protobuf') in packages/loaders/protobuf.",
+    "notes": ["Pair with @transport from core/v0.1."]
+  },
+  {
+    "name": "auth",
+    "title": "auth",
+    "version": "v0.1",
+    "summary": "Mesh-owned auth helper used with Hive Gateway generic auth.",
+    "imports": ["@skipAuth"],
+    "stamp": "Hand-authored subgraph SDL + docs @link today (not loader importMeshDirectives). Product family URL is auth/v0.1.",
     "notes": [
-      "Pair with @transport from core/v0.1."
+      "Use alongside Federation @authenticated / @requiresScopes / @policy as needed."
     ]
+  },
+  {
+    "name": "rate-limit",
+    "title": "rate-limit",
+    "version": "v0.1",
+    "summary": "Field-level rate limit hints for Hive Gateway rateLimiting.",
+    "imports": ["@rateLimit"],
+    "stamp": "Hand-authored subgraph SDL + Hive Gateway docs @link today (not loader importMeshDirectives). Product family URL is rate-limit/v0.1.",
+    "notes": ["Enable rateLimiting in the gateway config so directive annotations are enforced."]
   }
 ]
