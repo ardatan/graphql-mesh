@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { getApolloServerHandler } from '../../server';
 
 // `@as-integrations/next` reads `req.body` for Pages Router — keep Next's

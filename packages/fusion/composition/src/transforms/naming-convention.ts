@@ -560,14 +560,16 @@ export function createNamingConventionTransform(
             } else if (sourceDefault != null && (hasLiteralEnum || hasValueString)) {
               nextArg.default = undefined;
             }
+            const baseArgAst = argConfig.astNode ?? origArg?.astNode;
             if (
               sourceAstDefault &&
+              baseArgAst &&
               (containsEnumValueNode(sourceAstDefault) ||
                 sourceAstDefault.kind === Kind.OBJECT ||
                 needsKeyRewrite)
             ) {
               nextArg.astNode = {
-                ...(argConfig.astNode ?? origArg?.astNode!),
+                ...baseArgAst,
                 defaultValue: rewriteEnumValueNode(
                   sourceAstDefault,
                   enumValuesFn,
@@ -762,14 +764,16 @@ export function createNamingConventionTransform(
                   : sourceFieldDefault.value,
             };
           }
+          const baseFieldAst = fieldCfg.astNode ?? origInputField?.astNode;
           if (
             sourceFieldAstDefault &&
+            baseFieldAst &&
             (containsEnumValueNode(sourceFieldAstDefault) ||
               sourceFieldAstDefault.kind === Kind.OBJECT ||
               sourceFieldAstDefault.kind === Kind.LIST)
           ) {
             next.astNode = {
-              ...(fieldCfg.astNode ?? origInputField?.astNode!),
+              ...baseFieldAst,
               defaultValue: rewriteEnumValueNode(
                 sourceFieldAstDefault,
                 enumValuesFn,
