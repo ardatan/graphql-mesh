@@ -206,7 +206,8 @@ function asObjectTypeComposer(tc: unknown): ObjectTypeComposer | undefined {
 /**
  * Normalize JSON Schema defaults for GraphQL 17 printing:
  * - Enum wire names are sanitized strings (numeric OpenAPI defaults must become keys).
- * - Empty-string defaults on URL/email scalars throw in `serialize` during print.
+ * - Unrepresentable scalar defaults (e.g. '' on NonEmptyString) are omitted so print
+ *   does not throw; representable falsy values (0 / false / '') are kept.
  */
 function coerceFieldDefaultValue(
   inputTc: AnyTypeComposer<any> | undefined,
@@ -238,9 +239,16 @@ function coerceFieldDefaultValue(
     }
     return tc.hasField(enumKey) ? enumKey : defaultValue;
   }
-  if (tc instanceof ScalarTypeComposer && defaultValue === '') {
-    const name = tc.getTypeName();
-    if (name === 'URL' || name === 'EmailAddress' || name === 'UUID') {
+  if (tc instanceof ScalarTypeComposer) {
+    // JSON Schema allows defaults that fail the associated scalar (e.g. '' on
+    // NonEmptyString). Omit those so print/schema generation does not throw;
+    // keep representable falsy defaults (0 / false / '').
+    try {
+      const serialize = tc.getSerialize?.();
+      if (typeof serialize === 'function') {
+        serialize(defaultValue);
+      }
+    } catch {
       return undefined;
     }
   }

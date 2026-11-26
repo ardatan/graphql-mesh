@@ -15,11 +15,11 @@ import { defaultFieldResolver, getNamedType, isEnumType, isInputObjectType } fro
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
 import {
-  getEnumDefaultName,
+  hasRewritableEnumDefault,
   IGNORED_ROOT_FIELD_NAMES,
   IGNORED_TYPE_NAMES,
   NAMING_CONVENTIONS,
-  withRenamedEnumDefault,
+  withRenamedEnumDefaults,
 } from './shared.js';
 
 export declare type GraphQLTypePointer =
@@ -133,10 +133,9 @@ export default class NamingConventionTransform implements MeshTransform {
           if (!isEnumType(getNamedType(config.type))) {
             return config;
           }
-          const enumDefault = getEnumDefaultName(config);
-          if (this.config.enumValues && enumDefault) {
+          if (this.config.enumValues && hasRewritableEnumDefault(config)) {
             const applyNamingConvention = NAMING_CONVENTIONS[this.config.enumValues];
-            return withRenamedEnumDefault(config, applyNamingConvention(enumDefault));
+            return withRenamedEnumDefaults(config, applyNamingConvention);
           }
 
           return config;

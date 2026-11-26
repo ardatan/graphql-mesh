@@ -387,10 +387,11 @@ describe('getSqlExecutor postgres pgSettings fail-closed', () => {
     );
   });
 
-  it('rejects pgSettings when $fn / through planner extras select the default executor', async () => {
-    // printSchemaHasPlannerExtras scans @sql(selection/through). Keep a pgPool so
-    // only the planner-extras gate (not missing pool) forces the default path.
-    const schema = buildSchema(/* GraphQL */ `
+  // printSchemaHasPlannerExtras scans @sql(selection/through). Keep a pgPool so
+  // only the planner-extras gate (not missing pool) forces the default path.
+  // Separate fixtures so $fn cannot hide a through regression (and vice versa).
+  function plannerExtrasSchema(queryFieldsSdl: string) {
+    return buildSchema(/* GraphQL */ `
       directive @transport(
         subgraph: String!
         kind: String!
@@ -420,6 +421,23 @@ describe('getSqlExecutor postgres pgSettings fail-closed', () => {
 
       type Query {
         hello: String
+        ${queryFieldsSdl}
+      }
+
+      type User {
+        id: ID
+        fullName: String
+      }
+
+      type Track {
+        id: ID
+      }
+    `);
+  }
+
+  it('rejects pgSettings when $fn planner extras select the default executor', async () => {
+    await expectPgSettingsRejected(
+      plannerExtrasSchema(/* GraphQL */ `
         user: User
           @sql(
             table: "users"
@@ -429,6 +447,14 @@ describe('getSqlExecutor postgres pgSettings fail-closed', () => {
             fullName: $fn.public.users_full_name
             """
           )
+      `),
+      clientWithPool,
+    );
+  });
+
+  it('rejects pgSettings when through planner extras select the default executor', async () => {
+    await expectPgSettingsRejected(
+      plannerExtrasSchema(/* GraphQL */ `
         playlistTracks: [Track]
           @sql(
             table: "tracks"
@@ -441,18 +467,8 @@ describe('getSqlExecutor postgres pgSettings fail-closed', () => {
             target: id
             """
           )
-      }
-
-      type User {
-        id: ID
-        fullName: String
-      }
-
-      type Track {
-        id: ID
-      }
-    `);
-
-    await expectPgSettingsRejected(schema, clientWithPool);
+      `),
+      clientWithPool,
+    );
   });
 });

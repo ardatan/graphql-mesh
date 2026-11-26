@@ -87,9 +87,11 @@ export default class GrpcHandler implements MeshHandler {
     );
     return Promise.all([this.transport.getCredentials(), this.getCachedNonExecutableSchema()]).then(
       ([creds, schema]) => {
-        this.transport!.processDirectives({ schema, creds });
+        // processDirectives may rebuild via ensureFederationEntitiesField/mapSchema —
+        // callers must use the returned schema (installQueryField contract).
+        const processedSchema = this.transport!.processDirectives({ schema, creds });
         return {
-          schema,
+          schema: processedSchema,
         };
       },
     );

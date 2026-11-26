@@ -16,11 +16,11 @@ import {
   TransformObjectFields,
 } from '@graphql-tools/wrap';
 import {
-  getEnumDefaultName,
+  hasRewritableEnumDefault,
   IGNORED_ROOT_FIELD_NAMES,
   IGNORED_TYPE_NAMES,
   NAMING_CONVENTIONS,
-  withRenamedEnumDefault,
+  withRenamedEnumDefaults,
 } from './shared.js';
 
 export default class NamingConventionTransform implements MeshTransform {
@@ -99,16 +99,11 @@ export default class NamingConventionTransform implements MeshTransform {
             if (!isEnumType(getNamedType(argConfig.type))) {
               continue;
             }
-            const enumDefault = getEnumDefaultName(argConfig);
-            if (!enumDefault) {
-              continue;
-            }
-            const newDefault = namingConventionFn(enumDefault) || enumDefault;
-            if (newDefault === enumDefault && argConfig.defaultValue === newDefault) {
+            if (!hasRewritableEnumDefault(argConfig)) {
               continue;
             }
             changed = true;
-            newArgs[argName] = withRenamedEnumDefault(argConfig, newDefault);
+            newArgs[argName] = withRenamedEnumDefaults(argConfig, namingConventionFn);
           }
           return [fieldName, changed ? { ...fieldConfig, args: newArgs } : fieldConfig];
         }) as any,

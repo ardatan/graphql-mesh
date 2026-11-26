@@ -22,7 +22,10 @@ import {
   isInterfaceType,
   isObjectType,
   isSpecifiedScalarType,
+  Kind,
+  type ConstValueNode,
   type GraphQLFieldConfigArgumentMap,
+  type ValueNode,
 } from 'graphql';
 import { resolvers } from 'graphql-scalars';
 import {
@@ -61,6 +64,45 @@ const EnumValueDirective = new GraphQLDirective({
 
 function isFromGraphQLScalars(name: string) {
   return Object.keys(resolvers).includes(name);
+}
+
+function containsEnumValueNode(node: ValueNode | null | undefined): boolean {
+  if (!node) {
+    return false;
+  }
+  if (node.kind === Kind.ENUM) {
+    return true;
+  }
+  if (node.kind === Kind.LIST) {
+    return node.values.some(containsEnumValueNode);
+  }
+  return false;
+}
+
+function rewriteEnumValueNode(
+  node: ValueNode,
+  rename: (value: string) => string,
+): ValueNode {
+  if (node.kind === Kind.ENUM) {
+    return { ...node, value: rename(node.value) };
+  }
+  if (node.kind === Kind.LIST) {
+    return {
+      ...node,
+      values: node.values.map(v => rewriteEnumValueNode(v, rename)),
+    };
+  }
+  return node;
+}
+
+function rewriteEnumJsDefault(value: unknown, rename: (value: string) => string): unknown {
+  if (typeof value === 'string') {
+    return rename(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map(v => rewriteEnumJsDefault(v, rename));
+  }
+  return value;
 }
 
 /** Federation Connectors directive input types — field names (GET/POST/baseURL) are spec-fixed. */
@@ -210,59 +252,74 @@ export function createNamingConventionTransform(
               argRenameMap.set(argName, newArgName);
             }
             const argConfig = fieldConfig.args[argName] as (typeof fieldConfig.args)[string] & {
-              default?: {
-                literal?: { kind?: string; value?: string; [k: string]: unknown };
-                value?: unknown;
-              };
+              default?: { literal?: ConstValueNode; value?: unknown };
             };
             const namedArgType = getNamedType(argConfig.type);
-            // Explicit null / non-string defaultValue must not fall back to a
-            // stale AST enum default. Prefer default.value (GQL17) then literal.
-            let enumDefault: string | undefined;
-            if (typeof argConfig.defaultValue === 'string') {
-              enumDefault = argConfig.defaultValue;
-            } else if (argConfig.defaultValue !== undefined) {
-              enumDefault = undefined;
-            } else if (typeof argConfig.default?.value === 'string') {
-              enumDefault = argConfig.default.value;
-            } else if (argConfig.default?.literal?.kind === 'EnumValue') {
-              enumDefault = argConfig.default.literal.value;
-            } else if (argConfig.default != null) {
-              enumDefault = undefined;
-            } else if (argConfig.astNode?.defaultValue?.kind === 'EnumValue') {
-              enumDefault = argConfig.astNode.defaultValue.value;
-            }
-            if (!enumDefault || !enumValuesFn || !isEnumType(namedArgType)) {
+            if (!enumValuesFn || !isEnumType(namedArgType)) {
               newArgs[newArgName] = argConfig;
               continue;
             }
-            const newDefaultValue = enumValuesFn(enumDefault);
-            // GraphQL 16: `defaultValue` string. GraphQL 17: `default` is a
-            // discriminant (`literal` XOR `value`) — build one arm at a time.
-            const nextArg: typeof argConfig = {
-              ...argConfig,
-              defaultValue: newDefaultValue,
-            };
-            if (argConfig.default?.literal?.kind === 'EnumValue') {
-              // Literal-only: a string `value` makes printSchema emit `"NEWBIE"`.
+            // Explicit null must not fall back to a stale AST enum default.
+            // Rewrite single enums and nested list defaults ([newbie] → [NEWBIE]).
+            const hasJsStringDefault =
+              typeof argConfig.defaultValue === 'string' ||
+              (Array.isArray(argConfig.defaultValue) &&
+                argConfig.defaultValue.some(v => typeof v === 'string'));
+            const hasDefaultValue =
+              argConfig.defaultValue !== undefined || argConfig.default != null;
+            const literal: ValueNode | undefined =
+              argConfig.default?.literal ??
+              (!hasDefaultValue ? argConfig.astNode?.defaultValue : undefined);
+            const hasLiteralEnum = containsEnumValueNode(literal);
+            const hasValueString =
+              typeof argConfig.default?.value === 'string' ||
+              (Array.isArray(argConfig.default?.value) &&
+                (argConfig.default!.value as unknown[]).some(v => typeof v === 'string'));
+            if (
+              argConfig.defaultValue !== undefined &&
+              !hasJsStringDefault &&
+              !Array.isArray(argConfig.defaultValue)
+            ) {
+              // Explicit null / non-string — preserve.
+              newArgs[newArgName] = argConfig;
+              continue;
+            }
+            if (!hasJsStringDefault && !hasLiteralEnum && !hasValueString) {
+              newArgs[newArgName] = argConfig;
+              continue;
+            }
+            const nextArg: typeof argConfig = { ...argConfig };
+            if (hasJsStringDefault) {
+              nextArg.defaultValue = rewriteEnumJsDefault(
+                argConfig.defaultValue,
+                enumValuesFn,
+              ) as typeof argConfig.defaultValue;
+            }
+            if (argConfig.default?.literal && containsEnumValueNode(argConfig.default.literal)) {
+              // Literal-only ConstValueNode arm (literal XOR value).
               nextArg.default = {
-                literal: {
-                  ...argConfig.default.literal,
-                  value: newDefaultValue,
-                },
+                literal: rewriteEnumValueNode(
+                  argConfig.default.literal,
+                  enumValuesFn,
+                ) as ConstValueNode,
               };
-            } else if (typeof argConfig.default?.value === 'string') {
-              nextArg.default = { value: newDefaultValue };
+            } else if (hasValueString) {
+              nextArg.default = {
+                value: rewriteEnumJsDefault(argConfig.default!.value, enumValuesFn),
+              };
             } else if (argConfig.default != null) {
               nextArg.default = undefined;
             }
-            if (argConfig.astNode?.defaultValue?.kind === 'EnumValue') {
+            if (
+              argConfig.astNode?.defaultValue &&
+              containsEnumValueNode(argConfig.astNode.defaultValue)
+            ) {
               nextArg.astNode = {
                 ...argConfig.astNode,
-                defaultValue: {
-                  ...argConfig.astNode.defaultValue,
-                  value: newDefaultValue,
-                },
+                defaultValue: rewriteEnumValueNode(
+                  argConfig.astNode.defaultValue,
+                  enumValuesFn,
+                ) as typeof argConfig.astNode.defaultValue,
               };
             }
             newArgs[newArgName] = nextArg;

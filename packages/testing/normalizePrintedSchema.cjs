@@ -77,6 +77,18 @@ function normalizePrintedSchema(sdl) {
     if (sdl.charCodeAt(i) === 34 && sdl.charCodeAt(i + 1) === 34 && sdl.charCodeAt(i + 2) === 34) {
       let j = i + 3;
       while (j + 2 < n) {
+        // GraphQL `\"""` is an escaped triple-quote inside the block string,
+        // not the closing delimiter — skip the full escape sequence.
+        if (
+          sdl.charCodeAt(j) === 92 &&
+          j + 3 < n &&
+          sdl.charCodeAt(j + 1) === 34 &&
+          sdl.charCodeAt(j + 2) === 34 &&
+          sdl.charCodeAt(j + 3) === 34
+        ) {
+          j += 4;
+          continue;
+        }
         if (
           sdl.charCodeAt(j) === 34 &&
           sdl.charCodeAt(j + 1) === 34 &&
