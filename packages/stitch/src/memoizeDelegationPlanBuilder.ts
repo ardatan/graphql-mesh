@@ -85,7 +85,7 @@ export function parentFieldPresenceKey(parent: any, depth = 0): string {
     return '';
   }
   const keys: string[] = [];
-  for (const key of Object.keys(parent)) {
+  for (const key of Object.keys(parent) as string[]) {
     if (key.startsWith('_') && key !== '__typename') {
       continue;
     }

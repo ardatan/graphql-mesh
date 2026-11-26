@@ -568,7 +568,8 @@ export function getTransportEntryMapUsingFusionAndFederationDirectives(
       if (typeof url !== 'string' || !url.startsWith('https://specs.graphql-mesh.dev/')) {
         continue;
       }
-      const mm = url.match(/^https:\/\/specs\.graphql-mesh\.com\/([^/]+)\/(v\d+(?:\.\d+)*)\/?$/);
+      // Compose stamps specs.graphql-mesh.dev (not .com).
+      const mm = url.match(/^https:\/\/specs\.graphql-mesh\.dev\/([^/]+)\/(v\d+(?:\.\d+)*)\/?$/);
       if (!mm) {
         throw new Error(`@graphql-mesh/fusion-runtime: unrecognized Mesh @link URL: ${url}`);
       }
