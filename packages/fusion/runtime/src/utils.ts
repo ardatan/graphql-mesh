@@ -19,7 +19,7 @@ import {
   type TransportGetSubgraphExecutor,
   type TransportGetSubgraphExecutorOptions,
 } from '@graphql-mesh/transport-common';
-import { isDisposable, iterateAsync, parseMeshSpecUrl } from '@graphql-mesh/utils';
+import { isDisposable, iterateAsync } from '@graphql-mesh/utils';
 import { getBatchingExecutor } from '@graphql-tools/batch-execute';
 import {
   getDirectiveExtensions,
@@ -568,13 +568,14 @@ export function getTransportEntryMapUsingFusionAndFederationDirectives(
       if (typeof url !== 'string' || !url.startsWith('https://specs.graphql-mesh.dev/')) {
         continue;
       }
-      const parsed = parseMeshSpecUrl(url);
-      if (!parsed || parsed.legacy) {
+      // Compose stamps specs.graphql-mesh.dev (not .com).
+      const mm = url.match(/^https:\/\/specs\.graphql-mesh\.dev\/([^/]+)\/(v\d+(?:\.\d+)*)\/?$/);
+      if (!mm) {
         throw new Error(`@graphql-mesh/fusion-runtime: unrecognized Mesh @link URL: ${url}`);
       }
-      if (parsed.version !== 'v0.1') {
+      if (mm[2] !== 'v0.1') {
         throw new Error(
-          `@graphql-mesh/fusion-runtime: unsupported Mesh spec "${parsed.name}" version ${parsed.version} (supported: v0.1). Found: ${url}`,
+          `@graphql-mesh/fusion-runtime: unsupported Mesh spec "${mm[1]}" version ${mm[2]} (supported: v0.1). Found: ${url}`,
         );
       }
     }

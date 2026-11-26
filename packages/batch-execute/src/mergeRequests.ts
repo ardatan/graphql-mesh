@@ -2,7 +2,6 @@
 
 import {
   Kind,
-  OperationTypeNode,
   visit,
   type DefinitionNode,
   type DocumentNode,
@@ -11,6 +10,7 @@ import {
   type FragmentSpreadNode,
   type InlineFragmentNode,
   type OperationDefinitionNode,
+  type OperationTypeNode,
   type SelectionNode,
   type VariableDefinitionNode,
   type VariableNode,
