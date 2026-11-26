@@ -262,15 +262,24 @@ function coerceFieldDefaultValue(
   if (tc instanceof ScalarTypeComposer) {
     // JSON Schema allows defaults that fail the associated scalar (e.g. '' on
     // NonEmptyString). Omit those so print/schema generation does not throw.
-    // Store the *input*-coerced value (`parseValue`): GraphQL serves legacy
-    // `defaultValue` without further coercion, and `serialize` can diverge
-    // (e.g. GraphQLBigInt serialize→string vs parseValue→bigint).
+    // Prefer `parseValue` so legacy `defaultValue` matches input coercion
+    // (e.g. GraphQLBigInt serialize→string vs parseValue→bigint). Fall back to
+    // `serialize` when input coercion rejects values that output coerce still
+    // accepts (healed numeric literals on string list items).
     try {
       const parseValue = tc.getParseValue?.();
       if (typeof parseValue === 'function') {
         return parseValue(defaultValue);
       }
     } catch {
+      try {
+        const serialize = tc.getSerialize?.();
+        if (typeof serialize === 'function') {
+          return serialize(defaultValue);
+        }
+      } catch {
+        return undefined;
+      }
       return undefined;
     }
   }

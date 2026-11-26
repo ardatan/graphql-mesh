@@ -633,6 +633,31 @@ type ExampleAnyOf {
     expect(idsField.defaultValue).toEqual([BigInt(big)]);
     expect(typeof (idsField.defaultValue as unknown[])[0]).toBe('bigint');
   });
+  it('keeps string list singleton defaults (incl. numeric serialize fallback)', async () => {
+    // CloudFlare-style: array default `"200"` (string) → `["200"]`.
+    // Also accept a numeric leftover (healJSONSchema historically JSON.parsed
+    // bare `"200"` → `200`) via serialize fallback when parseValue rejects it.
+    for (const singleton of ['200', 200] as const) {
+      const inputSchema: JSONSchema = {
+        type: 'object',
+        title: `HttpConfig_${typeof singleton}`,
+        properties: {
+          expected_codes: {
+            type: 'array',
+            items: { type: 'string' },
+            default: singleton as any,
+          },
+        },
+      };
+      const result = await getComposerFromJSONSchema({
+        subgraphName: 'Test',
+        schema: inputSchema,
+        log,
+      });
+      const input = result.input as InputTypeComposer;
+      expect(input.getField('expected_codes').defaultValue).toEqual(['200']);
+    }
+  });
   it('should return Int for int32 definition', async () => {
     const inputSchema: JSONSchema = {
       type: 'integer',

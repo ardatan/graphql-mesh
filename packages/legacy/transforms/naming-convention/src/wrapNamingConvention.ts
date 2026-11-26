@@ -40,11 +40,8 @@ import {
 
 type NamingFn = (input: string) => string;
 
-type ArgDefaultSnapshot = {
-  defaultValue?: unknown;
-  default?: { literal?: unknown; value?: unknown };
-  astNode?: { defaultValue?: unknown } | null;
-};
+/** Snapshot + helper input shape (GQL17 `default` is stricter on GraphQLArgumentConfig). */
+type ArgDefaultSnapshot = Parameters<typeof hasRewritableEnumDefaultForType>[0];
 
 /**
  * GraphQL 16 wrap: `RenameInputObjectFields` rebuilds the schema before default
@@ -89,7 +86,7 @@ function reapplyArgDefaultsFromOriginal(
         snapshots.set(key, {
           defaultValue: arg.defaultValue,
           default: (arg as { default?: ArgDefaultSnapshot['default'] }).default,
-          astNode: arg.astNode as ArgDefaultSnapshot['astNode'],
+          astNode: arg.astNode ?? undefined,
         });
       }
     }
@@ -115,24 +112,27 @@ function reapplyArgDefaultsFromOriginal(
         continue;
       }
       // Prefer original defaults — post-rename GraphQL 16 coercion may have emptied them.
-      const source = {
-        ...argConfig,
+      const source: ArgDefaultSnapshot = {
         defaultValue: snap.defaultValue !== undefined ? snap.defaultValue : argConfig.defaultValue,
-        default: snap.default ?? (argConfig as { default?: ArgDefaultSnapshot['default'] }).default,
-        astNode: (snap.astNode as typeof argConfig.astNode) ?? argConfig.astNode,
+        default: snap.default ?? (argConfig as ArgDefaultSnapshot).default,
+        astNode: snap.astNode ?? argConfig.astNode,
       };
       if (
         !hasRewritableEnumDefaultForType(source, argConfig.type as GraphQLInputType, fieldNamesFn)
       ) {
         continue;
       }
-      const rewritten = withRenamedEnumDefaultsForType(
-        source,
-        argConfig.type as GraphQLInputType,
-        enumValuesFn || ((s: string) => s),
-        fieldNamesFn,
-      );
-      newArgs[argName] = rewritten;
+      // Cast: helper `default` is a loose snapshot; GQL17 GraphQLDefaultInput is a
+      // discriminated union (`literal` required xor `value`).
+      newArgs[argName] = {
+        ...argConfig,
+        ...withRenamedEnumDefaultsForType(
+          source,
+          argConfig.type as GraphQLInputType,
+          enumValuesFn || ((s: string) => s),
+          fieldNamesFn,
+        ),
+      } as typeof argConfig;
       changed = true;
     }
     return changed ? { ...fieldConfig, args: newArgs } : undefined;

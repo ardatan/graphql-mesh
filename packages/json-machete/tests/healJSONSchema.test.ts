@@ -281,4 +281,28 @@ describe('healJSONSchema', () => {
     ).properties.when as JSONSchemaObject;
     expect((when.items as JSONSchemaObject).title).toBe('Timing_Repeat_when_items');
   });
+
+  it('keeps bare scalar string defaults on array schemas as singleton items', async () => {
+    // OpenAPI often sets `default: "200"` on `type: array` to mean `["200"]`.
+    // `JSON.parse("200")` must not turn that into the number 200.
+    const schema: JSONSchemaObject = {
+      type: 'object',
+      title: 'HttpConfig',
+      properties: {
+        expected_codes: {
+          type: 'array',
+          items: { type: 'string' },
+          default: '200',
+        },
+        encoded: {
+          type: 'array',
+          items: { type: 'string' },
+          default: '["200","201"]',
+        },
+      },
+    };
+    const healed = (await healJSONSchema(schema)) as JSONSchemaObject;
+    expect((healed.properties.expected_codes as JSONSchemaObject).default).toBe('200');
+    expect((healed.properties.encoded as JSONSchemaObject).default).toEqual(['200', '201']);
+  });
 });

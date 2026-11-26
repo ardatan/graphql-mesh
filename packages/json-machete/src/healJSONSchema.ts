@@ -759,14 +759,25 @@ export async function healJSONSchema(
             subSchema.type !== 'string' &&
             typeof subSchema.default === 'string'
           ) {
-            debugLogFn?.(
-              `${path} has a default value as a JSON string for the type ${subSchema.type}. Converting it to JSON.`,
-            );
-            try {
-              subSchema.default = JSON.parse(subSchema.default);
-            } catch (e) {
-              debugLogFn?.(`${path} has a default value but it is not a valid JSON.`);
-              delete subSchema.default;
+            // Only decode JSON-encoded object/array defaults (`"{…}"` / `"[…]"`).
+            // Bare scalars like `"200"` on `type: array` are singleton item defaults
+            // (common in OpenAPI); `JSON.parse("200")` would wrongly yield a number.
+            const trimmedDefault = subSchema.default.trim();
+            const type = subSchema.type;
+            const looksLikeJsonContainer =
+              (type === 'object' && trimmedDefault.startsWith('{')) ||
+              (type === 'array' && trimmedDefault.startsWith('[')) ||
+              (type !== 'object' && type !== 'array');
+            if (looksLikeJsonContainer) {
+              debugLogFn?.(
+                `${path} has a default value as a JSON string for the type ${subSchema.type}. Converting it to JSON.`,
+              );
+              try {
+                subSchema.default = JSON.parse(subSchema.default);
+              } catch (e) {
+                debugLogFn?.(`${path} has a default value but it is not a valid JSON.`);
+                delete subSchema.default;
+              }
             }
           }
         }
