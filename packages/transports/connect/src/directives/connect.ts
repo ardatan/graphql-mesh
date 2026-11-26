@@ -6,6 +6,7 @@ import {
   GraphQLScalarType,
   GraphQLUnionType,
   isEnumType,
+  isInterfaceType,
   isListType,
   isNonNullType,
   isObjectType,
@@ -72,6 +73,24 @@ function getTypeResolveReference(type: GraphQLNamedType): ResolveReferenceFn | u
   }
   const fromType = (type as any).resolveReference;
   return typeof fromType === 'function' ? fromType : undefined;
+}
+
+/**
+ * `installQueryField` / `mapSchema` rebuilds every type from `toConfig()`, which
+ * keeps `extensions.apollo.subgraph.resolveReference` but drops the non-config
+ * `type.resolveReference` mirror. Re-attach it for Hive helpers / tests that
+ * read the bare property.
+ */
+function remirrorTypeResolveReferences(schema: GraphQLSchema): void {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) && !isInterfaceType(type)) {
+      continue;
+    }
+    const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
+    if (typeof fromExtensions === 'function') {
+      (type as any).resolveReference = fromExtensions;
+    }
+  }
 }
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(
@@ -3217,6 +3236,8 @@ export function processConnectDirectives(
   // Hive stitches `@key` entities via `Query._entities`. Apollo Router uses `@connect`
   // natively and never calls this field - but without it Hive needed Mesh `@merge`.
   schema = ensureFederationEntitiesField(schema);
+  // mapSchema inside installQueryField drops the non-config resolveReference mirror.
+  remirrorTypeResolveReferences(schema);
   // Same-subgraph Connectors stubs (`customer: { id: customerId }`) leave a partial
   // object in Hive - unlike Router, the gateway won't auto `_entities` for missing
   // fields on that object. Fill them via `resolveReference` when a field is absent.
