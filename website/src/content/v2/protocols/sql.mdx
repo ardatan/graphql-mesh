@@ -18,8 +18,15 @@ discriminator; Hive Gateway runs `transport-sql`. Stock Apollo Router does **not
 | Directive | `@sql` (`ROW` / `ROWS` / `CONNECTION` / `COUNT` / `INSERT` / `UPDATE` / `DELETE`) |
 | Transport | `@graphql-mesh/transport-sql`                                                     |
 | Spec      | `https://specs.graphql-mesh.dev/sql/v0.1`                                         |
-| Dual-run  | Hive Gateway only                                                                 |
+| Dual-run  | Hive Gateway; Apollo Router via [Serve Subgraph](/v2/serve-subgraph)              |
 | Examples  | Chinook (SQLite); Music Store stage 1; MySQL / Postgres                           |
+
+## Packages
+
+```bash
+pnpm add @graphql-mesh/compose-cli @omnigraph/sql @graphql-hive/gateway @graphql-mesh/transport-sql
+# npm i @graphql-mesh/compose-cli @omnigraph/sql @graphql-hive/gateway @graphql-mesh/transport-sql
+```
 
 ## Generate Chinook
 

@@ -46,6 +46,12 @@ gateway must call that URL.
 
 ## Compose community SDL
 
+```bash
+pnpm add @graphql-mesh/compose-cli @graphql-hive/gateway @graphql-mesh/transport-connect
+# Optional Yoga Fed peer: pnpm add graphql graphql-yoga @graphql-mesh/subgraph
+# npm i … (same package names)
+```
+
 Point a subgraph at the `.graphql` file (same hand-write Compose path as Music Store stage 3):
 
 ```ts
@@ -95,8 +101,9 @@ type Query {
 ```
 
 ```bash
-mesh-compose -o supergraph.graphql
-hive-gateway supergraph
+pnpm exec mesh-compose -o supergraph.graphql
+pnpm exec hive-gateway supergraph
+./router --supergraph supergraph.graphql # Connect dual-run
 ```
 
 Same `supergraph.graphql` can dual-run on [Apollo Router](/v2/serve/apollo-router) when you stay on
@@ -105,7 +112,7 @@ stock Connect (no `@sql` / `@protobuf__rpc` / SOAP beside it).
 ## Serve as a Federation subgraph
 
 Community Connect SDL is still Mesh subgraph SDL. When you need a **standalone Federation subgraph
-URL** (existing GraphOS / Router fleet, mixed gateway, smoke the connector alone), use
+URL** (existing GraphOS / Router fleet, mixed gateway, or exercise the connector alone), use
 [Serve Subgraph](/v2/serve-subgraph) instead of (or beside) Serve Supergraph.
 
 ### Hive Gateway subgraph
@@ -113,8 +120,8 @@ URL** (existing GraphOS / Router fleet, mixed gateway, smoke the connector alone
 Emit one subgraph file, then run Hive in subgraph mode -- foreign routers talk GraphQL to this URL:
 
 ```bash
-mesh-compose --subgraph jsonplaceholder -o jsonplaceholder-subgraph.graphql
-hive-gateway subgraph jsonplaceholder-subgraph.graphql
+pnpm exec mesh-compose --subgraph jsonplaceholder -o jsonplaceholder-subgraph.graphql
+pnpm exec hive-gateway subgraph jsonplaceholder-subgraph.graphql
 # default http://0.0.0.0:4000 -- register this URL in GraphOS / your supergraph
 ```
 

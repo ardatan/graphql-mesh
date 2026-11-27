@@ -60,9 +60,72 @@ Router as Federation subgraphs; they are not drop-in replacements for each other
 Apollo library docs: [@apollo/subgraph](https://www.npmjs.com/package/@apollo/subgraph) /
 [Federation subgraphs](https://www.apollographql.com/docs/graphos/schema-design/federated-schemas/subgraphs).
 
-## Package and export
+## Step-by-step: Yoga Federation subgraph
 
-```ts {8,11-12}
+Minimal path from empty folder to a Mesh-backed subgraph URL that Rover, Hive, or Apollo Router can
+compose against.
+
+### 1. Create the project files
+
+```text
+my-subgraph/
+  package.json
+  subgraph.graphql      # Mesh / Federation subgraph SDL
+  subgraph-server.ts    # Yoga + buildSubgraphSchema
+  mesh.config.ts        # optional -- Compose / Generate
+```
+
+Hand-write `subgraph.graphql`, or emit it with `mesh-compose --subgraph <name> -o subgraph.graphql`
+from [Generate](/v2/paths/generate) / [Generate-then-edit](/v2/paths/generate-then-edit). Example
+SDL (Connect + `@key`):
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+  @source(name: "Reviews", http: { baseURL: "http://localhost:4001" })
+
+type Query {
+  reviewById(id: ID!): Review
+    @connect(
+      source: "Reviews"
+      http: { GET: "/reviews/{$args.id}" }
+      selection: """
+        id
+        body
+      """
+      entity: true
+    )
+}
+
+type Review @key(fields: "id") {
+  id: ID!
+  body: String
+}
+```
+
+### 2. Install packages
+
+```bash
+npm install graphql graphql-yoga @graphql-mesh/subgraph
+# TypeScript runner (pick one)
+npm install -D tsx typescript @types/node
+```
+
+Add transports your SDL needs (example for Connect):
+
+```bash
+npm install @graphql-mesh/transport-connect
+```
+
+Protocol subgraphs add the matching transport (`@graphql-mesh/transport-sql`, `transport-protobuf`,
+…) the same way [Hive Gateway](/v2/serve/hive-gateway) registers them.
+
+### 3. Serve with `buildSubgraphSchema`
+
+```ts filename="subgraph-server.ts"
 import { createServer } from 'node:http'
 import { createYoga } from 'graphql-yoga'
 import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
@@ -77,8 +140,13 @@ const schema = buildSubgraphSchema(typeDefs, {
   // fetch: globalThis.fetch,
 })
 
-const yoga = createYoga({ schema })
-createServer(yoga).listen(4001)
+createServer(createYoga({ schema })).listen(4002)
+console.log('Subgraph ready on http://localhost:4002/graphql')
+```
+
+```bash
+npx tsx subgraph-server.ts
+# GraphQL IDE / curl against http://localhost:4002/graphql
 ```
 
 **Signature (shape):**
@@ -94,11 +162,71 @@ buildSubgraphSchema(
 ): GraphQLSchema
 ```
 
-`typeDefs` may be:
+`typeDefs` may be generated Mesh subgraph SDL, hand-written / edited `.graphql`, or an existing
+`GraphQLSchema` that already carries Mesh / Federation directives.
 
-- Generated Mesh subgraph SDL (string or `DocumentNode`)
-- Hand-written / edited `.graphql`
-- An existing `GraphQLSchema` already carrying Mesh / Federation directives
+### 4. Compose with Mesh, Rover, or Hive
+
+You still need a **supergraph** (or registry composition). The subgraph process above is one
+Federation peer; composition stays outside Yoga.
+
+**Mesh Compose** (local file):
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      name: 'reviews',
+      // SDL file, or schema: { kind: 'url', url: 'http://localhost:4002/graphql' }
+      schema: './subgraph.graphql'
+    }
+  ]
+})
+```
+
+```bash
+npm install -D @graphql-mesh/compose-cli
+npx mesh-compose -o supergraph.graphql
+# or refresh only this subgraph's emit:
+npx mesh-compose --subgraph reviews -o subgraph.graphql
+```
+
+**Apollo Rover** (GraphOS / local supergraph):
+
+```bash
+# subgraph.yaml -- routing URL is the Yoga process from step 3
+rover supergraph compose --config ./supergraph.yaml -o supergraph.graphql
+```
+
+```yaml filename="supergraph.yaml"
+federation_version: '=2.6'
+subgraphs:
+  reviews:
+    routing_url: http://localhost:4002/graphql
+    schema:
+      file: ./subgraph.graphql
+```
+
+**Hive** (CLI / app): publish or check the same `subgraph.graphql` (or introspect the Yoga URL) as
+the `reviews` subgraph, then let Hive compose for [Hive Gateway](/v2/serve/hive-gateway) -- see
+[Hive schema registry](https://the-guild.dev/graphql/hive/docs/schema-registry).
+
+### 5. Point the gateway
+
+```bash
+# Hive Gateway (full Mesh transports on the supergraph, or subgraph mode)
+hive-gateway supergraph
+
+# Apollo Router -- Connect-compatible supergraph SDL only
+./router --supergraph supergraph.graphql
+```
+
+When Apollo Router (or another non-Hive gateway) must call a **non-Connect** Mesh subgraph, keep
+this Yoga URL as the Federation subgraph endpoint (or run
+[Hive Gateway as a subgraph](/v2/serve-subgraph#hive-gateway-as-a-subgraph) instead of Yoga).
+Details: [Serve Subgraph](/v2/serve-subgraph).
 
 ## What it wires
 
@@ -149,11 +277,11 @@ Prefer Federation `@lookup` / `@is` / `@internal` for one-object entity entry fi
 Point Hive Gateway or Apollo Router at your composed supergraph. The subgraph URL is whatever host
 runs Yoga (or your server) with the schema from `buildSubgraphSchema`. Connect-compatible slices can
 dual-run on Apollo Router when the SDL stays within Connect; protocol transports (`@sql`,
-`@protobuf__rpc`, ...) need **Hive Gateway** (JS/TS) or a Mesh-aware subgraph process.
+`@protobuf__rpc`, ...) need **Hive Gateway** for the supergraph, **or** this `buildSubgraphSchema` /
+Hive-subgraph process behind Apollo Router -- [Serve Subgraph](/v2/serve-subgraph).
 
-Why / when / Hive Gateway subgraph option / `@lookup` resolvers:
-[Serve Subgraph](/v2/serve-subgraph). Also [Hive Gateway](/v2/serve/hive-gateway) /
-[Apollo Router](/v2/serve/apollo-router) / [Composition](/v2/compose).
+Also [Hive Gateway](/v2/serve/hive-gateway) / [Apollo Router](/v2/serve/apollo-router) /
+[Composition](/v2/compose).
 
 <Cards>
   <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />

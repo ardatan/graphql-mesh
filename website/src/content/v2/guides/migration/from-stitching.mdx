@@ -25,9 +25,18 @@ background: [Schema Stitching](/v2/concepts/stitching) vs [Federation](/v2/conce
 | --------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | One process calls `stitchSchemas({ subschemas })`         | Each source is **subgraph SDL**; Compose (or a registry) builds a **supergraph**         |
 | Programmatic `merge: { User: { fieldName, args } }`       | Federation `@key` + `@lookup` (one-object) or Type Merging `@merge` (list/batch) on SDL  |
-| Optional Schema Stitching Directives (`@merge` on Tools)  | Mesh / Federation directives -- not GraphQL Tools stitching `@merge`                     |
+| GraphQL Tools Schema Stitching Directives (`@merge`, …)   | Do **not** copy Tools stitching `@merge` -- use Fed `@lookup` or Mesh Type Merging       |
 | Gateway schema is the stitched `GraphQLSchema` in-process | [Serve Supergraph](/v2/serve) on Hive Gateway / Apollo Router, or registry + your router |
 | Remote executors only                                     | Mesh loaders / Hand-write SDL + transports; optional `buildSubgraphSchema` subgraph URLs |
+
+Do not mix up these “merge” / hop ideas:
+
+| Name                                               | What it is                                                                                         | Use in Mesh?                                                                 |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Stitching `merge: { Type: { fieldName, … } }`      | Programmatic config on `stitchSchemas`                                                             | Replace with SDL `@key` + `@lookup` / Type Merging                           |
+| GraphQL Tools Schema Stitching Directives `@merge` | SDL directive from the **stitching package**                                                       | **No** -- do not paste into Mesh subgraph SDL                                |
+| Mesh Type Merging `@merge`                         | Mesh core directive for **list / batch** entry fields ([Directives: @merge](/v2/directives#merge)) | Yes -- only for ByIds-style hops; prefer Federation `@lookup` for one-object |
+| Federation `@lookup`                               | Spec draft entry field that returns **one** object                                                 | Yes -- default for single-id hops                                            |
 
 ## Mapping cheat sheet
 
@@ -36,7 +45,7 @@ background: [Schema Stitching](/v2/concepts/stitching) vs [Federation](/v2/conce
 | `subschemas[].schema` + `executor`  | Subgraph SDL (`schema: './….graphql'` or a loader) + transport / Connect directives              |
 | `merge.Type.selectionSet: '{ id }'` | `type Type @key(fields: "id")`                                                                   |
 | `merge.Type.fieldName: 'userById'`  | `Query.userById(...): User @lookup` (one object) -- [Directives: @lookup](/v2/directives#lookup) |
-| Batch `users(ids:)` merge           | Type Merging `@merge` on the list entry field -- [Directives: @merge](/v2/directives#merge)      |
+| Batch `users(ids:)` merge           | Mesh Type Merging `@merge` on the list entry field -- [Directives: @merge](/v2/directives#merge) |
 | `stitchSchemas` as the gateway      | [Serve Supergraph](/v2/serve) (Hive Gateway preferred; Apollo Router for Connect-compatible SDL) |
 | Keep a foreign router               | [Serve Subgraph](/v2/serve-subgraph) so Router / GraphOS can call Mesh-backed Federation URLs    |
 
@@ -86,7 +95,7 @@ Users subgraph -- entity key + one-object `@lookup` entry (prefer this over stit
 single-id hops):
 
 {/* prettier-ignore */}
-```graphql {5-7,14-18,20-23}
+```graphql {5-7,13,16}
 extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
@@ -132,13 +141,14 @@ type User @key(fields: "id") {
 }
 ```
 
-List / batch hops that used stitching multi-key merge become Type Merging `@merge` on a list entry
-field -- see [Directives: @merge](/v2/directives#merge). Do not copy GraphQL Tools stitching
-`@merge` into Mesh SDL.
+List / batch hops that used stitching multi-key merge become **Mesh Type Merging** `@merge` on a
+list entry field -- see [Directives: @merge](/v2/directives#merge). That is a different directive
+from GraphQL Tools Schema Stitching Directives `@merge`; do not copy the stitching-package directive
+into Mesh SDL.
 
 ### 2. Wire Compose (replace `stitchSchemas`)
 
-```ts {3-12}
+```ts {5-12}
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
 
 export const composeConfig = defineComposeConfig({
@@ -159,7 +169,7 @@ export const composeConfig = defineComposeConfig({
 # Supergraph for Hive Gateway / Apollo Router / registry
 mesh-compose -o supergraph.graphql
 
-# Or emit one subgraph SDL (Generate / smoke / Serve Subgraph)
+# Or emit one subgraph SDL for Generate / Serve Subgraph
 mesh-compose --subgraph users -o users-subgraph.graphql
 ```
 

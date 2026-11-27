@@ -40,21 +40,25 @@ Edited generate output and scratch-authored SDL use the same Compose input -- an
 
 ## Import directive definitions
 
-Hand SDL imports directive names with <DirectiveRef name="link" /> (Apollo / Mesh spec URLs) and
-must also include a local `directive @...` **definition** for each Mesh directive you
-`@composeDirective`. Federation composition looks up that definition by name -- Mesh Compose does
-**not** invent missing defs for you (loaders stamp both the `@link` / `@composeDirective` apps and
-the matching definitions on generated subgraphs).
+Hand SDL imports directive names with <DirectiveRef name="link" /> (Apollo / Mesh spec URLs). For
+**non-Connect** Mesh directives you `@composeDirective`, also include a local `directive @...`
+**definition** -- Federation composition looks up that definition by name; Mesh Compose does **not**
+invent missing defs (loaders stamp both the `@link` / `@composeDirective` apps and the matching
+definitions on generated subgraphs).
 
-| Family                 | Typical `@link` import                                                                       |
-| ---------------------- | -------------------------------------------------------------------------------------------- |
-| Connect HTTP           | `https://specs.apollo.dev/connect/v0.4` -> `@connect`, `@source`                             |
-| Federation             | `https://specs.apollo.dev/federation/v2.6` -> `@key`, ...                                    |
-| Mesh core              | `https://specs.graphql-mesh.dev/core/v0.1` -> `@transport`, ...                              |
-| Mesh protobuf          | `https://specs.graphql-mesh.dev/protobuf/v0.1` -> `@protobuf__rpc`                           |
-| Mesh SQL / others      | `https://specs.graphql-mesh.dev/sql/v0.1`, ... (see [Protocols](/v2/protocols))              |
-| Mesh auth / rate-limit | `https://specs.graphql-mesh.dev/auth/v0.1`, `.../rate-limit/v0.1` (not under core)           |
-| Federation entity hops | `https://graphql.github.io/graphql-federation-spec/draft` -> `@lookup` / `@is` / `@internal` |
+**HTTP/REST Connect** `@connect` / `@source` use the Connect composition path -- import them with
+`@link` only; they do **not** need `@composeDirective` or hand-written Connect directive defs for
+composition.
+
+| Family                 | Typical `@link` import                                                                       | `@composeDirective`? |
+| ---------------------- | -------------------------------------------------------------------------------------------- | -------------------- |
+| Connect HTTP           | `https://specs.apollo.dev/connect/v0.4` -> `@connect`, `@source`                             | No                   |
+| Federation             | `https://specs.apollo.dev/federation/v2.6` -> `@key`, ...                                    | No (core)            |
+| Mesh core              | `https://specs.graphql-mesh.dev/core/v0.1` -> `@transport`, ...                              | Yes                  |
+| Mesh protobuf          | `https://specs.graphql-mesh.dev/protobuf/v0.1` -> `@protobuf__rpc`                           | Yes                  |
+| Mesh SQL / others      | `https://specs.graphql-mesh.dev/sql/v0.1`, ... (see [Protocols](/v2/protocols))              | Yes                  |
+| Mesh auth / rate-limit | `https://specs.graphql-mesh.dev/auth/v0.1`, `.../rate-limit/v0.1` (not under core)           | Yes                  |
+| Federation entity hops | `https://graphql.github.io/graphql-federation-spec/draft` -> `@lookup` / `@is` / `@internal` | Yes                  |
 
 Mesh directive TOC + known args: [Directives](/v2/directives). How `selection` / `args` binders
 work: [Selection mapping](/v2/guides/selection-mapping). Deeper Connect arg tables:

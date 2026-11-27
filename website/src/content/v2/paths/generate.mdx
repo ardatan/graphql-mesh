@@ -40,13 +40,21 @@ serve the subgraph on Yoga (or any GraphQL server) yourself -- see
 
 ## Config: `composeConfig` in `mesh.config.ts`
 
-Install `@graphql-mesh/compose-cli` and the loader for your source (e.g. `@omnigraph/sql`,
-`@omnigraph/openapi`). Export **`composeConfig`** with `defineConfig` (docs often alias it as
-`defineComposeConfig`):
+Install Compose CLI, the loader for your source, Hive Gateway, and the matching transport(s):
+
+```bash
+# SQL example
+pnpm add @graphql-mesh/compose-cli @omnigraph/sql @graphql-hive/gateway @graphql-mesh/transport-sql
+# OpenAPI / Connect example
+pnpm add @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway @graphql-mesh/transport-connect
+# npm i … (same package names)
+```
+
+Export **`composeConfig`** with `defineConfig` (docs often alias it as `defineComposeConfig`):
 
 ### SQL catalog
 
-```ts filename="mesh.config.ts" {7-13}
+```ts filename="mesh.config.ts" {7-9}
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
 import { loadSqlSubgraph } from '@omnigraph/sql'
 
@@ -64,7 +72,7 @@ export const composeConfig = defineComposeConfig({
 
 ### OpenAPI / REST (Connect emit)
 
-```ts filename="mesh.config.ts" {7-14}
+```ts filename="mesh.config.ts" {7-10}
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
 import { loadOpenAPISubgraph } from '@omnigraph/openapi'
 
@@ -97,15 +105,17 @@ binary. Default config discovery looks for `mesh.config.ts` (also `.mts` / `.cts
 explicit `name:` on a `schema:` entry:
 
 ```bash
+# Packages: @graphql-mesh/compose-cli + loader (e.g. @omnigraph/sql) -- see install above
+
 # stdout
-mesh-compose --subgraph chinook
+pnpm exec mesh-compose --subgraph chinook
 
 # file (typical Generate → read / commit / registry publish)
-mesh-compose --subgraph chinook -o chinook-subgraph.graphql
-mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+pnpm exec mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+pnpm exec mesh-compose --subgraph reviews -o reviews-subgraph.graphql
 
 # custom config path
-mesh-compose -c ./configs/mesh.config.ts --subgraph chinook -o chinook-subgraph.graphql
+pnpm exec mesh-compose -c ./configs/mesh.config.ts --subgraph chinook -o chinook-subgraph.graphql
 
 # skim the emit
 less chinook-subgraph.graphql
@@ -121,8 +131,9 @@ When every subgraph is listed in `composeConfig`, compose them together for
 [Serve Supergraph](/v2/serve):
 
 ```bash
-mesh-compose -o supergraph.graphql
-hive-gateway supergraph
+# Also: @graphql-hive/gateway + matching @graphql-mesh/transport-* packages
+pnpm exec mesh-compose -o supergraph.graphql
+pnpm exec hive-gateway supergraph
 
 # Connect-only dual-run peer
 ./router --supergraph supergraph.graphql
@@ -131,13 +142,6 @@ hive-gateway supergraph
 Registry publish uses the same `--subgraph` files --
 [Composition: registry](/v2/compose#registry-publish) /
 [Schema registry](/v2/concepts/schema-registry).
-
-<Callout type="info">
-  **CLI gap / follow-up:** Generate already has a clean emit path (`mesh-compose --subgraph` +
-  `composeConfig`). Optional polish (separate follow-up PR on `@graphql-mesh/compose-cli`): a
-  `mesh-compose generate` alias and Generate-oriented bin help. This page documents the stable
-  surface only.
-</Callout>
 
 ## In the Music Store Example
 
@@ -150,7 +154,7 @@ before anything else is authored.
 | Chinook SQL catalog | Domain starts with catalog; generate-first lesson stays true |
 
 ```bash
-mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+pnpm exec mesh-compose --subgraph chinook -o chinook-subgraph.graphql
 ```
 
 After emit (or full compose), query a Track (`Query.track` / `Query.track(id:)`), then open the SDL
@@ -173,7 +177,12 @@ Compose + Hive Gateway / Apollo Router is the default Mesh story. When you need 
 process** that executes Mesh transports from the generated SDL (for example Yoga beside other
 services), pass the `--subgraph` file into `buildSubgraphSchema`:
 
-```ts {3}
+```bash
+pnpm add graphql graphql-yoga @graphql-mesh/subgraph
+# plus the transport(s) your SDL uses, e.g. @graphql-mesh/transport-sql
+```
+
+```ts {1,4}
 import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
 import { readFileSync } from 'node:fs'
 

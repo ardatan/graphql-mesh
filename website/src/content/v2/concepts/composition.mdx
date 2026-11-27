@@ -47,9 +47,9 @@ Beyond merging Federation types, Mesh Compose may:
 - Rewrite `$args` inside <ProtocolRef name="http-rest" /> `@connect`,
   <ProtocolRef name="protobuf" /> `@protobuf__rpc`, and <ProtocolRef name="thrift" /> `@thrift__rpc`
   when rename transforms change GraphQL arg names.
-- Stamp `@composeDirective` (loaders) so Mesh directives survive into the supergraph -- hand SDL
-  must pair each stamp with a local `directive` definition
-  ([Directives](/v2/directives#federation)).
+- Stamp `@composeDirective` (loaders) so **non-Connect** Mesh directives survive into the supergraph
+  -- hand SDL must pair each stamp with a local `directive` definition. Connect `@connect` /
+  `@source` do **not** need `@composeDirective` ([Directives](/v2/directives#federation)).
 
 Opt out of conventions with `ignoreSemanticConventions: true` when you need full manual control.
 

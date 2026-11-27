@@ -99,8 +99,10 @@ wins when the prune is one-off or you want the slim file reviewed in git.
 ## Worked example: stamp Federation by editing SDL
 
 Plain GraphQL source, no entity annotations -- add `@key` and a Federation draft `@lookup` entry
-field for one-object hops (Type Merging `@merge` only if the entry field returns a **list** / batch
--- [Directives](/v2/directives#lookup)):
+field for one-object hops. Type Merging `@merge` only if the entry field returns a **list** / batch
+-- [Directives: @lookup](/v2/directives#lookup).
+
+Minimal case (arg name matches the entity field -- no `@is` / `@internal` required):
 
 {/* prettier-ignore */}
 ```diff
@@ -111,17 +113,11 @@ field for one-object hops (Type Merging `@merge` only if the entry field returns
 +  )
 +  @link(
 +    url: "https://graphql.github.io/graphql-federation-spec/draft"
-+    import: ["@lookup", "@is", "@internal"]
++    import: ["@lookup"]
 +  )
 +  @composeDirective(name: "@lookup")
-+  @composeDirective(name: "@is")
-+  @composeDirective(name: "@internal")
 +
 +directive @lookup on FIELD_DEFINITION
-+directive @is(field: FieldSelectionMap!) on ARGUMENT_DEFINITION
-+directive @internal on OBJECT | FIELD_DEFINITION
-+
-+scalar FieldSelectionMap
 +
 -type Product {
 +type Product @key(fields: "upc") {
@@ -134,6 +130,16 @@ type Query {
 +  product(upc: String!): Product @lookup
 }
 ```
+
+Optional later:
+
+- **`@is`** -- when the Query arg name differs from the entity field
+  (`product(productId: ID! @is(field: "id")): Product @lookup`)
+- **`@internal`** -- hide the lookup entry from the client-facing schema
+  (`product(...): Product @lookup @internal`)
+
+Import those from the same Federation draft `@link` only when you need them -- full tables:
+[Directives: @lookup](/v2/directives#lookup).
 
 Automatic equivalent: `createFederationTransform({ Type: { key: ..., fields: ... } })` -- see
 [Entity resolution](/v2/concepts/federation#entity-resolution). Prefer By hand when the subgraph

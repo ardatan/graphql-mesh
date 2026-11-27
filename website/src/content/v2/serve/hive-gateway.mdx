@@ -23,6 +23,16 @@ Neo4j, ...).
 
 ## Compose, then serve
 
+Install Compose CLI, Hive Gateway, loaders, and the transports your SDL needs:
+
+```bash
+pnpm add @graphql-mesh/compose-cli @graphql-hive/gateway @omnigraph/sql @graphql-mesh/transport-sql
+# Add more loaders/transports as needed, e.g.:
+#   @omnigraph/openapi @graphql-mesh/transport-connect
+#   @graphql-mesh/transport-protobuf @graphql-mesh/transport-mongo
+# npm i … (same package names)
+```
+
 Same `mesh.config.ts` can export compose + gateway config. Register Mesh transports the supergraph
 needs:
 
@@ -52,12 +62,12 @@ export const gatewayConfig = defineGatewayConfig({
 
 ```bash
 # Serve Supergraph
-mesh-compose -o supergraph.graphql
-hive-gateway supergraph
+pnpm exec mesh-compose -o supergraph.graphql
+pnpm exec hive-gateway supergraph
 
 # Serve Subgraph (foreign router talks GraphQL to this process)
-mesh-compose --subgraph chinook -o chinook-subgraph.graphql
-hive-gateway subgraph chinook-subgraph.graphql
+pnpm exec mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+pnpm exec hive-gateway subgraph chinook-subgraph.graphql
 ```
 
 HTTP/REST Connectors often need no extra transport entry (Connect is built in). Register

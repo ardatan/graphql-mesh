@@ -19,6 +19,9 @@ package-lock.json
 /.husky/_/
 newrelic-agent.log
 website/public/_redirects
+website/public/llms.txt
+website/public/v2.md
+website/public/v2/
 website/playwright/
 packages/legacy/types/src/config-schema.ts
 newrelic_agent.log

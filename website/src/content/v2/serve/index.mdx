@@ -32,11 +32,11 @@ hive-gateway supergraph
 ./router --supergraph supergraph.graphql
 ```
 
-| Your SDL surface                                                | Prefer                                                                 |
-| --------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| HTTP/REST Connectors only (`@connect` / `@source`)              | Hive Gateway **or** Apollo Router (dual-run)                           |
-| Any Mesh protocol (`@sql`, `@protobuf__rpc`, ...)               | Hive Gateway                                                           |
-| Mixed Music Store (<ProtocolRef name="sql" /> + Connect + gRPC) | Hive Gateway for the full supergraph; Connect slice can still dual-run |
+| Your SDL surface                                                | Prefer                                                                                                       |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| HTTP/REST Connectors only (`@connect` / `@source`)              | Hive Gateway **or** Apollo Router (dual-run)                                                                 |
+| Any Mesh protocol (`@sql`, `@protobuf__rpc`, ...)               | Hive Gateway for the supergraph, **or** [Serve Subgraph](/v2/serve-subgraph) behind Apollo Router            |
+| Mixed Music Store (<ProtocolRef name="sql" /> + Connect + gRPC) | Hive Gateway for the full supergraph; Connect slice can still dual-run; non-Connect peers via Serve Subgraph |
 
 <Callout type="info">
   If the gateway is **not** Hive Gateway, Mesh protocol subgraphs still need a Federation subgraph
