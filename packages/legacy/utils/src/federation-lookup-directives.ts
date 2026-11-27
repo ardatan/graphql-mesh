@@ -131,8 +131,18 @@ export function importFederationLookupDirectives(
     types.push(FieldSelectionMapScalar);
   }
   const toAdd: GraphQLDirective[] = [];
-  if (wanted.has('lookup') && !existingNames.has('lookup')) {
-    toAdd.push(LookupDirective);
+  let directiveDefs = [...config.directives];
+  let replacedLookupDef = false;
+  if (wanted.has('lookup')) {
+    const existingLookup = directiveDefs.find(d => d.name === 'lookup');
+    if (!existingLookup) {
+      toAdd.push(LookupDirective);
+    } else if (!existingLookup.args['subgraph']) {
+      // Retained Fed-draft `directive @lookup on FIELD_DEFINITION` cannot accept
+      // Mesh compose `subgraph:` stamps — replace with the Mesh def that does.
+      directiveDefs = directiveDefs.map(d => (d.name === 'lookup' ? LookupDirective : d));
+      replacedLookupDef = true;
+    }
   }
   if (wanted.has('is') && !existingNames.has('is')) {
     // Reuse the schema's FieldSelectionMap instance to avoid GraphQL.js duplicate-type errors.
@@ -155,11 +165,11 @@ export function importFederationLookupDirectives(
   if (wanted.has('internal') && !existingNames.has('internal')) {
     toAdd.push(InternalDirective);
   }
-  if (toAdd.length) {
+  if (toAdd.length || replacedLookupDef) {
     subgraph = new GraphQLSchema({
       ...config,
       types,
-      directives: [...config.directives, ...toAdd],
+      directives: [...directiveDefs, ...toAdd],
     });
   }
 

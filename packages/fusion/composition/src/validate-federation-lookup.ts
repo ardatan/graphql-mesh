@@ -7,12 +7,13 @@ import {
   isInputObjectType,
   isInterfaceType,
   isListType,
-  isNonNullType,
   isObjectType,
+  isRequiredArgument,
   isScalarType,
   isUnionType,
   type GraphQLArgument,
   type GraphQLField,
+  type GraphQLInterfaceType,
   type GraphQLObjectType,
   type GraphQLSchema,
 } from 'graphql';
@@ -332,6 +333,23 @@ function validateLookupArgument(opts: {
     if (pathResult === true) {
       continue;
     }
+    // Plain paths must supply required args and end on a leaf whether the map
+    // came from explicit `@is` or the implicit arg-name → field-name mapping.
+    if (pathResult === 'required-args' || pathResult === 'non-leaf') {
+      const reason =
+        pathResult === 'required-args'
+          ? `selects a field with a required argument that the plain path cannot supply`
+          : `must end on a scalar or enum field`;
+      const prefix = isApps?.length
+        ? `@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:)`
+        : `@lookup on ${locationLabel}: argument ${arg.name} path "${keyPath}"`;
+      errors.push(
+        new GraphQLError(`${prefix} ${reason}`, {
+          nodes: arg.astNode || undefined,
+        }),
+      );
+      continue;
+    }
     // Spec: matched field need not exist on *this* source schema, but must exist
     // on the return type in at least one source schema. Within a single subgraph
     // validate we check local return types; missing path is an error when the
@@ -348,16 +366,13 @@ function validateLookupArgument(opts: {
         ),
       );
     } else if (isApps?.length) {
-      const reason =
-        pathResult === 'required-args'
-          ? `selects a field with a required argument that the plain path cannot supply`
-          : pathResult === 'non-leaf'
-            ? `must end on a scalar or enum field`
-            : `does not match a field path on ${objectType.name}`;
       errors.push(
-        new GraphQLError(`@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:) ${reason}`, {
-          nodes: arg.astNode || undefined,
-        }),
+        new GraphQLError(
+          `@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:) does not match a field path on ${objectType.name}`,
+          {
+            nodes: arg.astNode || undefined,
+          },
+        ),
       );
     }
   }
@@ -370,7 +385,8 @@ function fieldHasUnsatisfiedRequiredArgs(
   schema: GraphQLSchema,
 ): boolean {
   return field.args.some(arg => {
-    if (!isNonNullType(arg.type) || arg.defaultValue !== undefined) {
+    // GraphQL 17 stores defaults on `arg.default`; isRequiredArgument covers both majors.
+    if (!isRequiredArgument(arg)) {
       return false;
     }
     // Federation Spec `@require` can satisfy a required arg; Mesh DX does not
@@ -381,11 +397,11 @@ function fieldHasUnsatisfiedRequiredArgs(
 }
 
 function objectHasFieldPath(
-  type: GraphQLObjectType,
+  type: GraphQLObjectType | GraphQLInterfaceType,
   pathParts: string[],
   schema: GraphQLSchema,
 ): FieldPathResult {
-  let current: GraphQLObjectType | null = type;
+  let current: GraphQLObjectType | GraphQLInterfaceType | null = type;
   for (let i = 0; i < pathParts.length; i++) {
     if (!current) {
       return false;
@@ -405,33 +421,12 @@ function objectHasFieldPath(
       return 'non-leaf';
     }
     const next = getNamedType(field.type);
-    if (isObjectType(next)) {
+    if (isObjectType(next) || isInterfaceType(next)) {
+      // Walk declared fields on the object/interface — do not accept a path that
+      // only exists on some interface implementation.
       current = next;
-    } else if (isInterfaceType(next) || isUnionType(next)) {
-      // Nested abstract: accept if any possible type continues the path.
-      const rest = pathParts.slice(i + 1);
-      let sawRequiredArgs = false;
-      let sawNonLeaf = false;
-      for (const t of schema.getPossibleTypes(next)) {
-        if (!isObjectType(t)) {
-          continue;
-        }
-        const r = objectHasFieldPath(t, rest, schema);
-        if (r === true) {
-          return true;
-        }
-        if (r === 'required-args') {
-          sawRequiredArgs = true;
-        } else if (r === 'non-leaf') {
-          sawNonLeaf = true;
-        }
-      }
-      if (sawRequiredArgs) {
-        return 'required-args';
-      }
-      if (sawNonLeaf) {
-        return 'non-leaf';
-      }
+    } else if (isUnionType(next)) {
+      // Plain paths have no type condition; unions are not traversable.
       return false;
     } else if (isInputObjectType(next)) {
       return false;

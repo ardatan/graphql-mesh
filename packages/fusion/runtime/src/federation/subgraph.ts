@@ -706,11 +706,13 @@ function joinDirectiveTargetsSubgraph(
   if (!graphs?.length) {
     return true;
   }
+  // When the join__Graph enum id is known (pre-rename), match only that —
+  // name-normalization can accept a foreign graph (e.g. PRODUCTS vs CATALOG→products).
+  if (subgraphEnumName) {
+    return graphs.some(g => g === subgraphEnumName);
+  }
   return graphs.some(
-    g =>
-      g === subgraphEnumName ||
-      compareSubgraphNames(g, subgraphName) ||
-      g === subgraphName.toUpperCase(),
+    g => compareSubgraphNames(g, subgraphName) || g === subgraphName.toUpperCase(),
   );
 }
 

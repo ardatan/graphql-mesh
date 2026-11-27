@@ -966,9 +966,11 @@ function collectPublicFederationCoords(schema: GraphQLSchema, publicCoords: Set<
       continue;
     }
     const typeDirs = getDirectiveExtensions(type, schema);
-    if (!typeDirs?.internal?.length) {
-      publicCoords.add(type.name);
+    // Fields of `@internal` object types are not public merge contributions.
+    if (typeDirs?.internal?.length) {
+      continue;
     }
+    publicCoords.add(type.name);
     for (const [fieldName, field] of Object.entries(type.getFields())) {
       const fieldDirs = getDirectiveExtensions(field, schema);
       if (!fieldDirs?.internal?.length) {

@@ -522,8 +522,14 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                 fieldDirectives.lookup.push({ subgraph: subgraphConfig.name });
               }
               lookupDirectiveUsed = true;
-              if (keyArg && keyField && keyArg !== keyField && fieldConfig.args?.[keyArg]) {
-                const argConfig = fieldConfig.args[keyArg];
+              // Prefer inferred keyArg when omitted (e.g. productId → Product.id).
+              if (
+                effectiveKeyArg &&
+                keyField &&
+                effectiveKeyArg !== keyField &&
+                fieldConfig.args?.[effectiveKeyArg]
+              ) {
+                const argConfig = fieldConfig.args[effectiveKeyArg];
                 const argDirs = getDirectiveExtensions(argConfig) || {};
                 argDirs.is ||= [];
                 if (!argDirs.is.some((d: { field?: string }) => d?.field === keyField)) {

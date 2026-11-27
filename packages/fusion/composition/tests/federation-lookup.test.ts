@@ -1,4 +1,4 @@
-import { buildSchema, print } from 'graphql';
+import { buildSchema, Kind, parse, print } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import {
   composeSubgraphs,
@@ -311,7 +311,17 @@ describe('Federation Spec @lookup / @is / @internal', () => {
       { name: 'B', schema: b },
     ]);
     expect(errors ?? []).toEqual([]);
-    expect(supergraphSdl).toMatch(/status:\s*String(?!\s*@inaccessible)/);
+    expect(supergraphSdl).toBeTruthy();
+    const queryType = parse(supergraphSdl!).definitions.find(
+      d => d.kind === Kind.OBJECT_TYPE_DEFINITION && d.name.value === 'Query',
+    );
+    expect(queryType?.kind).toBe(Kind.OBJECT_TYPE_DEFINITION);
+    if (queryType?.kind !== Kind.OBJECT_TYPE_DEFINITION) {
+      return;
+    }
+    const status = queryType.fields?.find(f => f.name.value === 'status');
+    expect(status).toBeDefined();
+    expect((status!.directives ?? []).some(d => d.name.value === 'inaccessible')).toBe(false);
   });
 
   it('keeps @merge when resolveReference keyArg is not a direct field argument', () => {
