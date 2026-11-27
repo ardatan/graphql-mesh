@@ -11,4 +11,5 @@ export default {
   protocols: 'Protocols',
   guides: 'Guides',
   directives: 'Directives',
+  faq: 'FAQ',
 };
