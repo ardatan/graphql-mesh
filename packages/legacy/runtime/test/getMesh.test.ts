@@ -130,8 +130,8 @@ describe('getMesh', () => {
 
     expect(printSchemaWithDirectives(mesh.schema)).toMatchInlineSnapshot(`
 schema {query:Query mutation:Mutation subscription:Subscription}
-type Query {hello:String}
-type Mutation {bye:String}
+type Query @shareable {hello:String}
+type Mutation @shareable {bye:String}
 type Subscription {wave:String}
 
 `);
@@ -360,6 +360,162 @@ type Mutation {byeLarge:String bye0:String bye1:String}
 type Subscription {waveLarge:String wave0:String wave1:String}
 
 `);
+  });
+
+  it('composes a supergraph under the hood for multi-source stitching', async () => {
+    const mesh = await getMesh({
+      cache,
+      pubsub,
+      log,
+      merger,
+      sources: [
+        createGraphQLSource({
+          suffix: 'Foo',
+          suffixRootTypeNames: false,
+          suffixFieldNames: true,
+          suffixResponses: true,
+        }),
+        createGraphQLSource({
+          suffix: 'Bar',
+          suffixRootTypeNames: false,
+          suffixFieldNames: true,
+          suffixResponses: true,
+        }),
+      ],
+    });
+
+    const supergraphSdl = (mesh.schema.extensions as { supergraphSdl?: string } | undefined)
+      ?.supergraphSdl;
+    expect(supergraphSdl).toEqual(expect.any(String));
+    expect(supergraphSdl).toContain('join__Graph');
+    expect(supergraphSdl).toContain('mesh://legacy/');
+
+    const result = await mesh.execute(
+      /* GraphQL */ `
+        {
+          helloFoo
+          helloBar
+        }
+      `,
+      {},
+    );
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "data": {
+          "helloBar": "Hello from serviceBar",
+          "helloFoo": "Hello from serviceFoo",
+        },
+      }
+    `);
+
+    await mesh.destroy();
+  });
+
+  it('resolves entity hops via under-the-hood supergraph type merging', async () => {
+    const authorsSchema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          author(id: ID!): Author!
+        }
+        type Author {
+          id: ID!
+          name: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          author: (_, { id }) => ({ id, name: `Author ${id}` }),
+        },
+      },
+    });
+    const booksSchema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          book(id: ID!): Book!
+          author(id: ID!): Author!
+        }
+        type Book {
+          id: ID!
+          title: String!
+          author: Author!
+        }
+        type Author {
+          id: ID!
+        }
+      `,
+      resolvers: {
+        Query: {
+          book: (_, { id }) => ({
+            id,
+            title: `Book ${id}`,
+            author: { id: '1' },
+          }),
+          author: (_, { id }) => ({ id }),
+        },
+      },
+    });
+
+    const mesh = await getMesh({
+      cache,
+      pubsub,
+      log,
+      merger,
+      sources: [
+        {
+          name: 'authors',
+          handler: {
+            getMeshSource: async () => ({ schema: authorsSchema }),
+          } as MeshResolvedSource['handler'],
+          transforms: [],
+        },
+        {
+          name: 'books',
+          handler: {
+            getMeshSource: async () => ({ schema: booksSchema }),
+          } as MeshResolvedSource['handler'],
+          transforms: [],
+        },
+      ],
+    });
+
+    const supergraphSdl = (mesh.schema.extensions as { supergraphSdl?: string } | undefined)
+      ?.supergraphSdl;
+    expect(supergraphSdl).toEqual(expect.any(String));
+    // Semantic conventions stamp Mesh @merge (join-rewritten). Federation Spec
+    // @lookup/@is/@internal is preferred when the compose lookup work lands.
+    expect(supergraphSdl).toMatch(/name:\s*"merge"|@merge/);
+
+    const result = await mesh.execute(
+      /* GraphQL */ `
+        {
+          book(id: "42") {
+            id
+            title
+            author {
+              id
+              name
+            }
+          }
+        }
+      `,
+      {},
+    );
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "data": {
+          "book": {
+            "author": {
+              "id": "1",
+              "name": "Author 1",
+            },
+            "id": "42",
+            "title": "Book 42",
+          },
+        },
+      }
+    `);
+
+    await mesh.destroy();
   });
 
   it('generates valid schema from multiple JSON Schema sources with bare merger', async () => {
