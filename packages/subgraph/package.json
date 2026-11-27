@@ -44,6 +44,7 @@
     "@graphql-mesh/transport-connect": "^0.12.4",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-tools/delegate": "workspace:*",
     "@graphql-tools/schema": "^11.0.9",
     "@graphql-tools/utils": "^13.2.3",
     "@graphql-tools/wrap": "workspace:*",

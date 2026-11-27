@@ -5352,13 +5352,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/mesh-subgraph-apollo-router@workspace:e2e/mesh-subgraph-apollo-router"
   dependencies:
-    "@apollo/server": "npm:^5.5.2"
-    "@apollo/subgraph": "npm:^2.16.0"
     "@graphql-hive/gateway": "npm:^2.15.12"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-mesh/subgraph": "workspace:*"
+    "@graphql-mesh/transport-http": "workspace:*"
     "@whatwg-node/fetch": "npm:^0.12.1"
-    fets: "npm:^0.8.14"
     graphql: "npm:17.1.0"
     graphql-yoga: "npm:^6.1.1"
   languageName: unknown
@@ -9556,6 +9554,7 @@ __metadata:
     "@graphql-mesh/transport-connect": "npm:^0.12.4"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
+    "@graphql-tools/delegate": "workspace:*"
     "@graphql-tools/schema": "npm:^11.0.9"
     "@graphql-tools/utils": "npm:^13.2.3"
     "@graphql-tools/wrap": "workspace:*"

@@ -15,3 +15,5 @@ const yoga = createYoga({ schema });
 ```
 
 Mesh `@merge` remains supported for list/batch entry fields; `@lookup` is single-object only.
+
+Mesh stitching `@source` / `@meshSource` (not Apollo SCHEMA `@source`) apply reverse-rename transforms like stamped subgraph SDL. Pass optional `pubsub` to wire `@pubsubOperation` / `@pubsubPublish`; omit it for a clear no-op.

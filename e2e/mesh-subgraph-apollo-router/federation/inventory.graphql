@@ -1,0 +1,6 @@
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@shareable"])
+
+type Product @key(fields: "id") {
+  id: ID!
+  inStock: Boolean!
+}
