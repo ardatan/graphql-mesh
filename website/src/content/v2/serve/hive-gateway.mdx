@@ -7,10 +7,9 @@ import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-di
 
 # Hive Gateway
 
-**Hive Gateway** is the preferred gateway runtime for <ConceptRef name="mesh">Mesh</ConceptRef>. In
-Mesh docs it means the **JavaScript / TypeScript** <ConceptRef name="gateway">gateway</ConceptRef>.
-It executes the full Mesh transport surface (HTTP/REST Connectors, SQL, Mongo, Protobuf, Thrift,
-Neo4j, ...).
+**Hive Gateway** is the preferred gateway runtime for <ConceptRef name="mesh">Mesh</ConceptRef> --
+the **JavaScript / TypeScript** <ConceptRef name="gateway">gateway</ConceptRef>. It executes the
+full Mesh transport surface (HTTP/REST Connectors, SQL, Mongo, Protobuf, Thrift, Neo4j, ...).
 
 ## When to use it
 
@@ -103,17 +102,13 @@ Dual-run only the Connect Reviews slice on [Apollo Router](/v2/serve/apollo-rout
 
 ## Related
 
-Hive Gateway product docs live on the Hive site. Mesh docs focus on how Compose output and
+Full Hive Gateway product docs live on the Hive site; this page covers how Mesh Compose output and
 transports plug in. Concept overview: [Gateway](/v2/concepts/gateway). Serve section:
 [Serve Supergraph](/v2/serve).
 
 Gateway-owned cross-cuts (configure on Hive Gateway; annotate SDL in Mesh when directives apply):
 [Authentication](/v2/guides/auth), [Rate limiting](/v2/guides/rate-limit),
 [Monitoring](/v2/guides/monitoring), [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub).
-
-<Callout type="info">
-  Always say **Hive Gateway** in Mesh docs -- never bare "Hive" when meaning the gateway.
-</Callout>
 
 <Cards>
   <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />

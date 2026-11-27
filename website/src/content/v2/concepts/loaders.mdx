@@ -16,8 +16,8 @@ Loaders do **not** serve traffic; they only emit (or supply) schema for
 <ConceptRef name="composition">composition</ConceptRef>.
 
 **Omnigraph** is the Mesh package family for those loaders (`@omnigraph/openapi`, `@omnigraph/sql`,
-`@omnigraph/soap`, ...). In docs and npm you mostly see the package name; Omnigraph is the shared
-brand for "source → subgraph SDL" emit, not a separate product from Mesh Compose or Hive Gateway.
+`@omnigraph/soap`, ...). Omnigraph packages emit source → subgraph SDL for Mesh Compose; they are
+not a separate runtime from Mesh Compose or Hive Gateway.
 
 Hand-written `.graphql` is the other input to Compose -- same pipeline, no loader required
 ([Hand-write](/v2/paths/hand-write)). Existing GraphQL HTTP / Federation upstreams use

@@ -28,27 +28,25 @@ pnpm add @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway @gra
 # npm i … (same package names)
 ```
 
-SOAP stays in this HTTP/REST chapter (not a separate Protocols nav entry). Same `@connect` /
-`@source` author API plus a Mesh JSON↔XML codec -- see [SOAP-as-Connect](#soap-as-connect).
+SOAP uses the same `@connect` / `@source` author API plus a Mesh JSON↔XML codec -- see
+[SOAP-as-Connect](#soap-as-connect).
 
 ## Compatible with HTTP/REST Connectors SDL
 
 Mesh OpenAPI / JSON Schema / OData (and SOAP-as-Connect) emit the same **`@connect` / `@source`**
-contract that upstream GraphOS Connectors document. Hand-authored Connect SDL is a peer input.
+**HTTP/REST Connectors** contract that upstream GraphOS Connectors document. Hand-authored Connect
+SDL is a peer input.
 
-| Layer              | What Mesh docs say                                                                                                                          |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Directive contract | Prefer upstream [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) for arg tables |
-| Mesh generate      | `@omnigraph/openapi` (and siblings) → Connect emit; Music Store Reviews is the staged edit example                                          |
-| Mesh serve         | Hive Gateway `transport-connect`; Apollo Router dual-run when the surface stays Connect-compatible                                          |
-| Mesh-only deltas   | SOAP / XML codec (Hive Gateway only); non-Connect protocols (`@sql`, `@protobuf__rpc`, ...) are **not** Connectors                          |
-
-Mesh docs call this family **HTTP/REST Connectors** (or **Connectors** when the context is clear).
-Spec URLs (`https://specs.apollo.dev/connect/...`) stay as-is in SDL.
+| Layer              | Detail                                                                                                                                    |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Directive contract | Upstream [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) for full arg tables |
+| Mesh generate      | `@omnigraph/openapi` (and siblings) → Connect emit; Music Store Reviews is the staged edit example                                        |
+| Mesh serve         | Hive Gateway `transport-connect`; Apollo Router dual-run when the surface stays Connect-compatible                                        |
+| Mesh-only deltas   | SOAP / XML codec (Hive Gateway only); non-Connect protocols (`@sql`, `@protobuf__rpc`, ...) are separate Mesh protocol families           |
 
 Community `@connect` schemas (Stripe, JSONPlaceholder, ...) can also compose under Mesh Compose +
 Hive Gateway / Apollo Router when the SDL is stock Connect -- Mesh does not require Rover / GraphOS
-for that path. Prefer Mesh Compose + Hive Gateway as the default getting started. Worked example:
+for that path. Default local path: Mesh Compose + Hive Gateway. Worked example:
 [Community Connectors](/v2/examples/community-connectors).
 
 ## OpenAPI entity lookup

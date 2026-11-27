@@ -15,7 +15,8 @@ functions. Mesh has two emit paths from the same IDL:
 | Binary Thrift   | <DirectiveRef name="thrift__rpc" /> + `transport-thrift` | Hive Gateway; Apollo Router via [Serve Subgraph](/v2/serve-subgraph) |
 | TJSON over HTTP | HTTP/REST Connectors `@source` + `@connect`              | Apollo Router when Connect-compatible                                |
 
-Do **not** call binary Thrift "Connectors" -- only the TJSON path shares that contract.
+Only the TJSON path emits HTTP/REST Connectors (`@connect` / `@source`). Binary Thrift stays on
+`@thrift__rpc` + `transport-thrift`.
 
 ## Packages
 

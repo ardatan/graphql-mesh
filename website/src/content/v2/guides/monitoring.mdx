@@ -43,11 +43,11 @@ Initialize OpenTelemetry **before** other imports (Hive docs recommend a `teleme
 first from `gateway.config.ts`), then enable the gateway OTEL plugin. Mesh transports participate as
 upstream spans when the gateway instruments outbound calls -- no separate Mesh monitoring package.
 
-## What Mesh docs do not duplicate
+## Gateway product docs
 
-Logging detail, custom spans, Hive Console export, and Apollo Router's own telemetry stay on the
-gateway product docs. From Mesh, the important link is: compose → serve on Hive Gateway → turn on
-the same monitoring you would for any Hive Gateway supergraph.
+Logging detail, custom spans, Hive Console export, and Apollo Router's own telemetry live on the
+gateway product docs. From Mesh, the path is: compose → serve on Hive Gateway → turn on the same
+monitoring you would for any Hive Gateway supergraph.
 
 <Callout type="info">
   Dual-run Connect graphs on Apollo Router use Router's observability story for that slice; full
