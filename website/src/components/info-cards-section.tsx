@@ -4,7 +4,7 @@ export function InfoCardsSection() {
   return (
     <section className="px-4 py-6 sm:py-12 md:px-6 xl:px-[120px] lg:py-24">
       <Heading as="h2" size="md" className="text-balance text-center">
-        Generate → Transform → Serve → Compose → Gateway
+        Generate, Transform, Serve Subgraph, Compose, Serve Supergraph
       </Heading>
       <ul className="mt-6 flex flex-row flex-wrap justify-center gap-2 md:mt-16 md:gap-6">
         <InfoCard
