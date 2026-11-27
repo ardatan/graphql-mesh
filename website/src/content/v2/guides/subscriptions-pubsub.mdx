@@ -18,7 +18,7 @@ configure a shared `pubsub` broker when you need multi-instance EDFS.
 | <DirectiveRef name="pubsubPublish" />           | Publish the field's result to a topic after it resolves            |
 | <DirectiveRef name="resolveTo" /> `pubsubTopic` | Gateway-side / `additionalTypeDefs` subscribe (older webhook path) |
 | Hive Gateway `webhooks: true`                   | Bind `webhook:method:path` topics to HTTP webhook endpoints        |
-| Hive Gateway `pubsub`                           | NATS / Redis / … broker for Event-Driven Federated Subscriptions   |
+| Hive Gateway `pubsub`                           | NATS / Redis / ... broker for Event-Driven Federated Subscriptions |
 
 Directive catalog: [Directives: pubsub](/v2/directives#pubsub). Upstream Hive Gateway:
 [Subscriptions](https://the-guild.dev/graphql/hive/docs/gateway/subscriptions).
@@ -92,7 +92,7 @@ uses an `edfs:` prefix on the wire for some brokers -- see
 
 ### JSON Schema / webhook subscription
 
-Declare a subscription operation with `pubsubTopic: "webhook:…"`. The loader emits
+Declare a subscription operation with `pubsubTopic: "webhook:..."`. The loader emits
 `@pubsubOperation`; Hive Gateway needs `webhooks: true` so `POST /webhooks/todo_added` publishes
 onto that topic:
 
@@ -197,7 +197,7 @@ export const composeConfig = defineComposeConfig({
 ### Shared broker for multi-instance gateways
 
 In-memory pubsub is fine for a single process. For horizontal scale, pass a Hive PubSub adapter
-(NATS, Redis, …) into gateway config -- same topics your `@pubsubOperation` / `@pubsubPublish`
+(NATS, Redis, ...) into gateway config -- same topics your `@pubsubOperation` / `@pubsubPublish`
 fields use:
 
 ```ts

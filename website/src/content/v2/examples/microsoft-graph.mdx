@@ -40,9 +40,9 @@ Gateway** (JS/TS) and **Apollo Router**.
 | ------------------- | ----------------------------------------------------------------------------------- |
 | Source              | Microsoft Graph OData (`/$metadata` + REST entity sets)                             |
 | Loader              | `@omnigraph/odata` → `@connect` / `@source`                                         |
-| Auth                | `Authorization: Bearer …` from env / context                                        |
+| Auth                | `Authorization: Bearer ...` from env / context                                      |
 | Dual-run            | Hive Gateway **and** Apollo Router when the Connect surface stays Router-compatible |
-| Typical Query roots | `me`, `groups`, `messages`, `drives`, …                                             |
+| Typical Query roots | `me`, `groups`, `messages`, `drives`, ...                                           |
 
 Clients ask for exactly the Graph resources they need in one GraphQL operation instead of chaining
 REST calls for me → messages → from.
@@ -176,7 +176,7 @@ Reading tips: [Reading generated SDL](/v2/guides/reading-generated-sdl) /
 args on list fields.
 
 Hive Gateway also keeps OData batch / expand knobs on
-`@transport(kind: "connect", options: { odata: … })` -- Apollo Router runs the Connect apps; those
+`@transport(kind: "connect", options: { odata: ... })` -- Apollo Router runs the Connect apps; those
 transport options stay Mesh-side.
 
 ---
@@ -258,7 +258,7 @@ query fetchFilesFromOneDrive {
 
 | Topic              | Guidance                                                                                         |
 | ------------------ | ------------------------------------------------------------------------------------------------ |
-| Token source       | App-only or delegated Microsoft identity; map into `{$env.…}` or gateway context headers         |
+| Token source       | App-only or delegated Microsoft identity; map into `{$env....}` or gateway context headers       |
 | Metadata pin       | Prefer a checked-in `$metadata` snapshot for CI; refresh deliberately when Graph versions change |
 | Scope              | Mail / Files / Group queries need matching Graph permissions                                     |
 | Generate-then-edit | Trim the huge emit with [Transforms](/v2/transforms) or commit edited SDL                        |

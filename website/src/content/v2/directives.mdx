@@ -1,7 +1,7 @@
 ---
 description:
-  Mesh subgraph directive reference -- HTTP/REST Connectors, Mesh protocols, @merge / @resolveTo,
-  Federation join
+  Mesh subgraph directive reference -- HTTP/REST Connectors, Mesh protocols, Federation @lookup /
+  @is / @internal, legacy @merge / @resolveTo
 ---
 
 import { Callout, Cards } from '@theguild/components'
@@ -10,8 +10,8 @@ import { DirectiveRef, ProtocolRef } from '../../components/v2-directive-ref'
 # Directives
 
 **Directive reference** for Mesh subgraph SDL -- [HTTP/REST Connectors](/v2/concepts/connectors)
-(`@connect` / `@source`), Mesh protocol directives, Mesh join helpers (`@merge` / `@resolveTo`),
-Federation `@key`, and `@link` / `@transport`. Full `@connect` / `@source` arg tables:
+(`@connect` / `@source`), Mesh protocol directives, Federation entity hops (`@lookup` / `@is` /
+`@internal`), Federation `@key`, and `@link` / `@transport`. Full `@connect` / `@source` arg tables:
 [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
 
 Use this page when [reading generated SDL](/v2/guides/reading-generated-sdl) or
@@ -21,21 +21,22 @@ not just arg lists. Binders: [Selection mapping](/v2/guides/selection-mapping). 
 
 ## Table of contents
 
-| Family               | Directives                                                   | Scenarios on this page                                      |
-| -------------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
-| HTTP/REST Connectors | `@connect`, `@source`                                        | Entity ById, type-level `$this`, nested `$this`, SOAP/OData |
-| Mesh core            | `@transport`                                                 | Kind / location stamp                                       |
-| Mesh join helpers    | `@merge`, `@resolveTo`                                       | Auto-merge, batch keysArg, valueKeyField, pubsubTopic       |
-| Mesh pubsub / EDFS   | `@pubsubOperation`, `@pubsubPublish`                         | Subgraph subscribe / publish; webhooks                      |
-| SQL                  | `@sql`                                                       | ROW/entity, ROWS, through, INSERT/DELETE                    |
-| Mongo                | `@mongo__*`                                                  | findOne/entity, find filter, insert/update                  |
-| Protobuf / gRPC      | `@protobuf__rpc`                                             | Unary hand SDL, streaming SearchMoviesByCast                |
-| Thrift               | `@thrift__rpc`                                               | Binary CALL/ONEWAY, TJSON `@connect`                        |
-| Neo4j                | `@node`, `@relationship`, `@relationshipProperties` (native) | Mesh stamp vs Neo4j GraphQL natives                         |
-| Federation / join    | `@key`, `@composeDirective`                                  | Join stubs + composeDirective                               |
-| Gateway auth         | `@authenticated`, `@requiresScopes`, `@policy`, `@skipAuth`  | Field protect / complete-protection opt-out                 |
-| Gateway rate limit   | `@rateLimit`                                                 | Field budgets on subgraph SDL                               |
-| Spec imports         | `@link`                                                      | Spec URL table                                              |
+| Family                 | Directives                                                   | Scenarios on this page                                      |
+| ---------------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
+| HTTP/REST Connectors   | `@connect`, `@source`                                        | Entity ById, type-level `$this`, nested `$this`, SOAP/OData |
+| Mesh core              | `@transport`                                                 | Kind / location stamp                                       |
+| Federation entity hops | `@lookup`, `@is`, `@internal`                                | Singular ById recall; arg rename; hide lookup from clients  |
+| Mesh legacy hops       | `@merge` (back-compat), `@resolveTo`                         | Legacy Mesh hop; batch keysArg / valueKeyField / pubsub     |
+| Mesh pubsub / EDFS     | `@pubsubOperation`, `@pubsubPublish`                         | Subgraph subscribe / publish; webhooks                      |
+| SQL                    | `@sql`                                                       | ROW/entity, ROWS, through, INSERT/DELETE                    |
+| Mongo                  | `@mongo__*`                                                  | findOne/entity, find filter, insert/update                  |
+| Protobuf / gRPC        | `@protobuf__rpc`                                             | Unary hand SDL, streaming SearchMoviesByCast                |
+| Thrift                 | `@thrift__rpc`                                               | Binary CALL/ONEWAY, TJSON `@connect`                        |
+| Neo4j                  | `@node`, `@relationship`, `@relationshipProperties` (native) | Mesh stamp vs Neo4j GraphQL natives                         |
+| Federation / join      | `@key`, `@composeDirective`                                  | Join stubs + composeDirective                               |
+| Gateway auth           | `@authenticated`, `@requiresScopes`, `@policy`, `@skipAuth`  | Field protect / complete-protection opt-out                 |
+| Gateway rate limit     | `@rateLimit`                                                 | Field budgets on subgraph SDL                               |
+| Spec imports           | `@link`                                                      | Spec URL table                                              |
 
 ---
 
@@ -103,7 +104,7 @@ type Track @key(fields: "id", resolvable: false) {
 ### Scenario: ById Query gets `entity: true`
 
 Composition semantic conventions (`get_<Type>` + key-typed arg matching the key field) stamp
-`entity: true` and `@key` -- no Mesh `@merge` on Connect subgraphs:
+`entity: true` and `@key` -- Connect entity fill does not need Mesh `@merge`:
 
 ```graphql
 type Query {
@@ -212,8 +213,10 @@ schema directive (not rewritten to `@join__directive` the way `@connect` / `@sou
 extend schema @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 ```
 
-Shared Mesh core also exports `@merge`, `@hoist`, `@resolveTo`, and pubsub helpers under the same
-`core/v0.1` URL when needed -- import the names you use.
+Shared Mesh core also exports `@hoist`, `@resolveTo`, pubsub helpers, and **legacy** `@merge` under
+the same `core/v0.1` URL when needed -- import the names you use. For **new** entity hops prefer
+Federation `@lookup` / `@is` / `@internal` from the
+[Federation Spec draft](https://graphql.github.io/graphql-federation-spec/draft) (not Mesh core).
 
 | Arg        | Meaning                                          |
 | ---------- | ------------------------------------------------ |
@@ -247,20 +250,97 @@ schema
 
 ---
 
+<a id="lookup" />
+
+## Federation `@lookup` / `@is` / `@internal`
+
+`@lookup` / `@is` / `@internal`
+
+**Recommended** singular entity hops for Mesh subgraphs. These are **Federation Spec** directives --
+import them from the official draft URL, **not** from `specs.graphql-mesh.dev`. Full normative text:
+[GraphQL Federation Spec draft](https://graphql.github.io/graphql-federation-spec/draft) (`@lookup`,
+`@is`, `@internal`).
+
+**Import** (plus `@composeDirective` so composition keeps them):
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  @link(
+    url: "https://graphql.github.io/graphql-federation-spec/draft"
+    import: ["@lookup", "@is", "@internal"]
+  )
+  @composeDirective(name: "@lookup")
+  @composeDirective(name: "@is")
+  @composeDirective(name: "@internal")
+```
+
+| Directive   | Role                                                                                             |
+| ----------- | ------------------------------------------------------------------------------------------------ |
+| `@lookup`   | Query field that **recalls** an entity by stable key args (args match fields on the return type) |
+| `@is`       | On a lookup **argument** when the arg name does not match the entity field (selection map)       |
+| `@internal` | Hide a lookup field / type from the client-facing composite schema                               |
+
+### Scenario: singular ById lookup
+
+```graphql
+type Query {
+  productById(id: ID!): Product @lookup
+}
+
+type Product @key(fields: "id") {
+  id: ID!
+  name: String
+}
+```
+
+### Scenario: arg name differs -- `@is`
+
+When the Query arg is not the same name as the entity field, annotate the argument:
+
+```graphql
+type Query {
+  product(productId: ID! @is(field: "id")): Product @lookup
+}
+
+type Product @key(fields: "id") {
+  id: ID!
+  name: String
+}
+```
+
+### Scenario: hide lookup from clients -- `@internal`
+
+```graphql
+type Query {
+  productById(id: ID!): Product @lookup @internal
+}
+```
+
+Connect / protocol `entity: true` and type-level `$this` maps remain the Mesh-native path for
+loader-emitted entity fill -- see [Entity resolution](/v2/concepts/federation#entity-resolution).
+Hand-written GraphQL subgraphs that need a singular hop should stamp `@lookup` (not Mesh `@merge`).
+
+<Callout type="info">
+  Spec `@lookup` is **singular** (non-list). Batch / list entry points that still need Mesh hops may
+  keep legacy `@merge` until a Fed-shaped batch story lands -- runtime back-compat only.
+</Callout>
+
+---
+
 <a id="merge" />
 
-## Mesh `@merge`
+## Mesh `@merge` (legacy / back-compat)
 
 `@merge`
 
-Mesh type-merging helper on Hive Gateway: how an entity (or ById Query field) is looked up across
-subgraphs when you are **not** on HTTP/REST Connectors / protocol `entity: true` maps. Composition
-may stamp `@merge` on non-Connect Mesh subgraphs that follow
-[semantic ById conventions](/v2/compose#semantic-conventions). Connect subgraphs prefer
-`entity: true` / type-level `$this` instead (Petstore Connect has no `@merge`; vaccination GraphQL
-subgraph still uses `@merge`).
+**Not** the recommended public surface for new entity hops. Prefer Federation `@lookup` / `@is` /
+`@internal` above (or Connect / protocol `entity: true`). Hive Gateway still **parses and executes**
+hand-authored or previously emitted `@merge` for runtime back-compat. Composition may still emit
+`@merge` for **list / batch** ByIds cases where spec `@lookup` is not list-shaped.
 
-**Import**
+**Import** (legacy only)
 
 ```graphql
 extend schema @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@merge"])
@@ -273,11 +353,12 @@ extend schema @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@
 | `keyArg`   | Query argument that carries that key (e.g. `id`)           |
 | `argsExpr` | Optional richer arg expression when `keyArg` is not enough |
 
-### Scenario: Query ById merge (composition / vaccination-style)
+### Scenario: legacy batch / list hop
 
 ```graphql
 type Query {
-  vaccination(id: ID!): Vaccination @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")
+  vaccinations(ids: [ID!]!): [Vaccination]!
+    @merge(subgraph: "vaccination", keyField: "id", keyArg: "ids")
 }
 
 type Vaccination @key(fields: "id") {
@@ -286,9 +367,9 @@ type Vaccination @key(fields: "id") {
 }
 ```
 
-For new Federation-first work, prefer `@key` + Connect / protocol entity resolution
-([Entity resolution](/v2/concepts/federation#entity-resolution)). Use `@merge` when you need Mesh's
-type-merging path on Hive Gateway (including plain GraphQL subgraphs).
+Do **not** teach `@merge` as the default singular ById pattern. See
+[Entity resolution](/v2/concepts/federation#entity-resolution) and [Federation `@lookup`](#lookup)
+above.
 
 ---
 
@@ -299,9 +380,9 @@ type-merging path on Hive Gateway (including plain GraphQL subgraphs).
 `@resolveTo`
 
 Mesh field-level **delegation / join**: resolve this field by calling another subgraph's Query (or
-type) field, optionally with batched args. Still valid Mesh core; for new joins prefer Federation
-`@key` stubs plus Connect / protocol directives (Music Store / FHIR). Compose validates `sourceName`
-/ field / arg names at compose time.
+type) field, optionally with batched args. Still valid Mesh core; for new entity joins prefer
+Federation `@key` stubs plus Connect / protocol directives, or singular `@lookup` hops (Music Store
+/ FHIR). Compose validates `sourceName` / field / arg names at compose time.
 
 **Import**
 
@@ -1172,24 +1253,25 @@ spec:
 extend schema @link(url: "https://specs.apollo.dev/link/v1.0")
 ```
 
-| Family            | Typical URL                                      | Typical `import`                                                                |
-| ----------------- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
-| HTTP/REST Connect | `https://specs.apollo.dev/connect/v0.4`          | `@connect`, `@source`                                                           |
-| Federation        | `https://specs.apollo.dev/federation/v2.6`       | `@key`, `@composeDirective`, ...                                                |
-| Mesh core         | `https://specs.graphql-mesh.dev/core/v0.1`       | `@transport`, `@merge`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, ... |
-| Mesh auth         | `https://specs.graphql-mesh.dev/auth/v0.1`       | `@skipAuth` (not Federation `@authenticated`)                                   |
-| Mesh rate-limit   | `https://specs.graphql-mesh.dev/rate-limit/v0.1` | `@rateLimit`                                                                    |
-| Mesh SQL          | `https://specs.graphql-mesh.dev/sql/v0.1`        | `@sql`                                                                          |
-| Mesh Mongo        | `https://specs.graphql-mesh.dev/mongo/v0.1`      | `@mongo__findOne`, ...                                                          |
-| Mesh protobuf     | `https://specs.graphql-mesh.dev/protobuf/v0.1`   | `@protobuf__rpc`                                                                |
-| Mesh Thrift       | `https://specs.graphql-mesh.dev/thrift/v0.1`     | `@thrift__rpc`                                                                  |
-| Mesh Neo4j        | `https://specs.graphql-mesh.dev/neo4j/v0.1`      | `@node`, `@relationship`, ...                                                   |
+| Family            | Typical URL                                               | Typical `import`                                                                             |
+| ----------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| HTTP/REST Connect | `https://specs.apollo.dev/connect/v0.4`                   | `@connect`, `@source`                                                                        |
+| Federation        | `https://specs.apollo.dev/federation/v2.6`                | `@key`, `@composeDirective`, ...                                                             |
+| Federation hops   | `https://graphql.github.io/graphql-federation-spec/draft` | `@lookup`, `@is`, `@internal` (not Mesh-owned; not under `specs.graphql-mesh.dev`)           |
+| Mesh core         | `https://specs.graphql-mesh.dev/core/v0.1`                | `@transport`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, ... (legacy `@merge` only) |
+| Mesh auth         | `https://specs.graphql-mesh.dev/auth/v0.1`                | `@skipAuth` (not Federation `@authenticated`)                                                |
+| Mesh rate-limit   | `https://specs.graphql-mesh.dev/rate-limit/v0.1`          | `@rateLimit`                                                                                 |
+| Mesh SQL          | `https://specs.graphql-mesh.dev/sql/v0.1`                 | `@sql`                                                                                       |
+| Mesh Mongo        | `https://specs.graphql-mesh.dev/mongo/v0.1`               | `@mongo__findOne`, ...                                                                       |
+| Mesh protobuf     | `https://specs.graphql-mesh.dev/protobuf/v0.1`            | `@protobuf__rpc`                                                                             |
+| Mesh Thrift       | `https://specs.graphql-mesh.dev/thrift/v0.1`              | `@thrift__rpc`                                                                               |
+| Mesh Neo4j        | `https://specs.graphql-mesh.dev/neo4j/v0.1`               | `@node`, `@relationship`, ...                                                                |
 
 Do **not** import `@skipAuth` or `@rateLimit` from Mesh `core` -- those are separate **family**
 specs (`auth`, `rate-limit`), not core.
 
 **Spec host:** Document Mesh `@link` URLs only as **`https://specs.graphql-mesh.dev/<family>/v0.1`**
-(core, sql, auth, rate-limit, …). Do **not** use `specs.graphql-mesh.com` -- that host was never
+(core, sql, auth, rate-limit, ...). Do **not** use `specs.graphql-mesh.com` -- that host was never
 published. Older Hive / Mesh v1 snippets may show `https://the-guild.dev/graphql/mesh/spec/v1.0` as
 a legacy catch-all; do not use that for new SDL.
 
@@ -1211,6 +1293,11 @@ definitions -- Mesh Compose does not invent them (it only special-cases a few st
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />
   <Cards.Card arrow title="Entity resolution" href="/v2/concepts/federation#entity-resolution" />
+  <Cards.Card
+    arrow
+    title="Federation Spec draft (@lookup)"
+    href="https://graphql.github.io/graphql-federation-spec/draft"
+  />
   <Cards.Card
     arrow
     title="HTTP/REST Connectors reference"

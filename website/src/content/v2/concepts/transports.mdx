@@ -10,11 +10,11 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 A **transport** (`@graphql-mesh/transport-*`) runs at **gateway request time**. It reads Mesh /
 Connect directives on the supergraph (or subgraph) and talks to the upstream -- SQL, HTTP Connect,
-gRPC, Thrift, … Transports do **not** design schema; <ConceptRef name="loaders">loaders</ConceptRef>
-and hand SDL do that earlier.
+gRPC, Thrift, ... Transports do **not** design schema;
+<ConceptRef name="loaders">loaders</ConceptRef> and hand SDL do that earlier.
 
-Hive Gateway loads transports from `@transport(kind: …)` (and built-in Connect). Stock Apollo Router
-executes Connect-compatible `@connect` / `@source` without Mesh transport packages.
+Hive Gateway loads transports from `@transport(kind: ...)` (and built-in Connect). Stock Apollo
+Router executes Connect-compatible `@connect` / `@source` without Mesh transport packages.
 
 ## Where it lives
 
@@ -28,11 +28,11 @@ executes Connect-compatible `@connect` / `@source` without Mesh transport packag
   ]}
 />
 
-| Piece                             | Role                                                                 |
-| --------------------------------- | -------------------------------------------------------------------- |
-| <DirectiveRef name="transport" /> | Schema stamp: `kind`, `location`, optional headers / options         |
-| `@graphql-mesh/transport-sql`, …  | Package Hive Gateway imports for that `kind`                         |
-| Connect (`transport-connect`)     | Often built into Hive Gateway; dual-run on Apollo Router when shaped |
+| Piece                              | Role                                                                 |
+| ---------------------------------- | -------------------------------------------------------------------- |
+| <DirectiveRef name="transport" />  | Schema stamp: `kind`, `location`, optional headers / options         |
+| `@graphql-mesh/transport-sql`, ... | Package Hive Gateway imports for that `kind`                         |
+| Connect (`transport-connect`)      | Often built into Hive Gateway; dual-run on Apollo Router when shaped |
 
 Transports are **not** Compose, **not** the schema registry, and **not** Omnigraph loaders.
 
@@ -41,7 +41,7 @@ Transports are **not** Compose, **not** the schema registry, and **not** Omnigra
 | Surface                                    | Hive Gateway                 | Apollo Router               |
 | ------------------------------------------ | ---------------------------- | --------------------------- |
 | `@connect` / `@source` (JSON HTTP Connect) | Yes (`transport-connect`)    | Yes when Connect-compatible |
-| `@sql`, `@mongo__*`, `@protobuf__rpc`, …   | Yes (matching `transport-*`) | No                          |
+| `@sql`, `@mongo__*`, `@protobuf__rpc`, ... | Yes (matching `transport-*`) | No                          |
 | Thrift TJSON `@connect`                    | Yes                          | Often                       |
 | Binary `@thrift__rpc`                      | Yes (`transport-thrift`)     | No                          |
 

@@ -15,9 +15,10 @@ loader emit ([Hand-write](/v2/paths/hand-write), [Composition](/v2/compose)).
 
 <Callout type="info">
   Prefer <DirectiveRef name="key" /> stubs +{' '}
-  <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> / protocol entity maps for new
-  work. Mesh <DirectiveRef name="resolveTo" /> / <DirectiveRef name="merge" /> remain available; see{' '}
-  [Directives](/v2/directives#merge).
+  <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> / protocol entity maps, or
+  Federation `@lookup` / `@is` / `@internal` for singular GraphQL hops. Mesh{' '}
+  <DirectiveRef name="resolveTo" /> remains for field delegation; <DirectiveRef name="merge" /> is
+  back-compat only -- see [Directives: @lookup](/v2/directives#lookup).
 </Callout>
 
 ## Prefer entity joins
@@ -59,7 +60,7 @@ fields: [Transforms](/v2/transforms).
 <Cards>
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Federation" href="/v2/concepts/federation" />
-  <Cards.Card arrow title="Directives: @merge" href="/v2/directives#merge" />
+  <Cards.Card arrow title="Directives: @lookup" href="/v2/directives#lookup" />
   <Cards.Card arrow title="FHIR join example" href="/v2/examples/fhir" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>
