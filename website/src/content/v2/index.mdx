@@ -20,13 +20,13 @@ import { V2JourneyCards } from '../../components/v2-journey-cards'
 supergraph). Authors work in GraphQL SDL with Mesh
 <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> and Mesh protocol directives.
 
+- Platform / registry / gateway **independent**: Mesh fits any Federation environment -- Compose
+  with Mesh Compose, Hive, Rover, or another Federation-compatible composer; publish to any
+  <ConceptRef name="schema-registry">schema registry</ConceptRef> (or none); run on any
+  Federation-compatible <ConceptRef name="gateway">gateway</ConceptRef>.
 - <ConceptRef name="gateway">Gateway</ConceptRef>: **Hive Gateway** (JavaScript / TypeScript) is the
   preferred runtime for the full Mesh transport surface; **Apollo Router** is a first-class peer for
   **Connect-compatible** supergraphs.
-- <ConceptRef name="composition">Composition</ConceptRef> is flexible: Mesh Compose, Hive
-  composition, Rover, or another Federation-compatible composer.
-- <ConceptRef name="schema-registry">Schema registry</ConceptRef> (optional) stores and distributes
-  subgraph / supergraph SDL.
 
 <V2FlowDiagram
   ariaLabel="Mesh v2 stack from sources through Composition to gateway transports"
@@ -58,8 +58,9 @@ Optional reshape after you have SDL -- [Automatic](/v2/transforms/automatic) (Co
 Run subgraph SDL as its own Federation endpoint --
 [Hive Gateway subgraph](/v2/serve-subgraph#hive-gateway-as-a-subgraph) or
 [`buildSubgraphSchema`](/v2/serve-subgraph#buildsubgraphschema-with-other-graphql-servers) on Yoga
-(or any GraphQL server). Overview: [Serve Subgraph](/v2/serve-subgraph). For the composed graph, see
-[Serve Supergraph](/v2/serve).
+(or any GraphQL server). That lets the subgraph work with **any Federation-compatible gateway**
+(Apollo Router, Hive Gateway, and others). Overview: [Serve Subgraph](/v2/serve-subgraph). For the
+composed graph, see [Serve Supergraph](/v2/serve).
 
 ## Where to go next
 

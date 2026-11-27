@@ -48,6 +48,14 @@ Most Mesh deployments [compose](/v2/compose) and [serve the supergraph](/v2/serv
 Default path remains Compose → Serve Supergraph. Serve Subgraph is the opt-in when the subgraph must
 be a real Federation peer.
 
+<Callout type="info">
+  If you [Serve Supergraph](/v2/serve) on **Hive Gateway**, you often **do not** need a separate
+  Serve Subgraph step -- Hive can run Mesh subgraphs under the hood as part of the supergraph
+  runtime. Use this page when another Federation-compatible gateway (Apollo Router, etc.) must call
+  a Mesh-backed subgraph URL, or when you host the subgraph yourself with{' '}
+  <code>buildSubgraphSchema</code>.
+</Callout>
+
 ## Hive Gateway as a subgraph
 
 Hive Gateway can run **one Mesh subgraph** (not only a supergraph) so another router can treat it as

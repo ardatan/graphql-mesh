@@ -2,15 +2,16 @@
 description: Serve Supergraph -- run Mesh-composed SDL on Hive Gateway or Apollo Router
 ---
 
-import { Cards } from '@theguild/components'
+import { Callout, Cards } from '@theguild/components'
 import { ConceptRef, ProtocolRef } from '../../../components/v2-directive-ref'
 
 # Serve Supergraph
 
 After [Composition](/v2/compose) you have subgraph or supergraph GraphQL SDL. **Serve Supergraph**
 means running the **composed** SDL on a <ConceptRef name="gateway">federation gateway</ConceptRef>
-runtime. To run one Mesh subgraph as its own Federation endpoint (Hive Gateway subgraph mode or
-`buildSubgraphSchema` on Yoga / any GraphQL server), see [Serve Subgraph](/v2/serve-subgraph).
+runtime. Mesh is gateway-independent: use Hive Gateway, Apollo Router, or another
+Federation-compatible gateway. To run one Mesh subgraph as its own Federation endpoint, see
+[Serve Subgraph](/v2/serve-subgraph).
 
 | Runtime                                        | Role in Mesh docs               | What it executes                                                                                                                                                                                                |
 | ---------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -36,6 +37,15 @@ hive-gateway supergraph
 | Any Mesh protocol (`@sql`, `@protobuf__rpc`, ...)               | Hive Gateway                                                           |
 | Mixed Music Store (<ProtocolRef name="sql" /> + Connect + gRPC) | Hive Gateway for the full supergraph; Connect slice can still dual-run |
 
+<Callout type="info">
+  If the gateway is **not** Hive Gateway, Mesh protocol subgraphs still need a Federation subgraph
+  process that understands Mesh SDL -- typically
+  [`buildSubgraphSchema`](/v2/guides/build-subgraph-schema) from `@graphql-mesh/subgraph` (Yoga /
+  any GraphQL server), or Hive Gateway in subgraph mode. Point Apollo Router (or another gateway) at
+  that subgraph URL. Connect-only subgraphs can often stay on the Router alone. Details: [Serve
+  Subgraph](/v2/serve-subgraph) and the [FAQ](/v2/faq).
+</Callout>
+
 Concept overview: [Gateway](/v2/concepts/gateway). Worked example:
 [Music Store Example](/v2/examples/music-store). Protocol map: [Protocols](/v2/protocols).
 
@@ -43,6 +53,7 @@ Concept overview: [Gateway](/v2/concepts/gateway). Worked example:
   <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
   <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
   <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
   <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="HTTP/REST Connectors" href="/v2/concepts/connectors" />
 </Cards>
