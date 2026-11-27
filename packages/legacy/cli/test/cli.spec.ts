@@ -110,5 +110,28 @@ describe('runtime', () => {
       // renderGraphiQL should not be present in regular (non-offline-playground) artifacts
       expect(builtMesh).not.toMatch(/@graphql-yoga\/render-graphiql/);
     });
+
+    it('writes under-the-hood supergraph.graphql and supergraph.ts for multi-source builds', async () => {
+      const configFolder = 'multi-source-config';
+      await graphqlMesh(DEFAULT_CLI_PARAMS, [
+        'build',
+        `--dir=${pathModule.resolve(__dirname, configFolder)}`,
+      ]);
+
+      const artifactsDir = pathModule.resolve(__dirname, configFolder, generatedMeshConfiguration);
+      const supergraphGraphql = await fs.promises.readFile(
+        pathModule.join(artifactsDir, 'supergraph.graphql'),
+        'utf8',
+      );
+      const supergraphTs = await fs.promises.readFile(
+        pathModule.join(artifactsDir, 'supergraph.ts'),
+        'utf8',
+      );
+
+      expect(supergraphGraphql).toContain('join__Graph');
+      expect(supergraphGraphql).toContain('mesh://legacy/');
+      expect(supergraphTs).toContain('export const supergraphSdl');
+      expect(supergraphTs).toContain('join__Graph');
+    });
   });
 });

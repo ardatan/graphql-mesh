@@ -12,6 +12,7 @@ export async function startNodeHttpServer({
   graphqlPath,
   hostname,
   port,
+  graphqlWsOptions,
 }: ServerStartOptions): Promise<ServerStartResult> {
   let server: HttpServer | HttpsServer;
   if (sslCredentials) {
@@ -25,11 +26,11 @@ export async function startNodeHttpServer({
         key,
         cert,
       },
-      meshHTTPHandler,
+      meshHTTPHandler as any,
     );
   } else {
     const nodeHttp = await import('http');
-    server = nodeHttp.createServer(meshHTTPHandler);
+    server = nodeHttp.createServer(meshHTTPHandler as any);
   }
   const ws = await import('ws');
   const wsServer = new ws.WebSocketServer({
@@ -39,7 +40,7 @@ export async function startNodeHttpServer({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore - GraphQL WS has some issues with Bob
   const { useServer } = await import('graphql-ws/use/ws');
-  useServer(getGraphQLWSOptions(getBuiltMesh), wsServer);
+  useServer(graphqlWsOptions ?? getGraphQLWSOptions(getBuiltMesh), wsServer);
   const { promise, resolve, reject } = Promise.withResolvers<ServerStartResult>();
   server.once('error', err => reject(err));
   server.listen(port, hostname, () => {

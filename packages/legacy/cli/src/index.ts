@@ -13,6 +13,7 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
+import { writeSupergraphArtifacts } from './commands/write-supergraph-artifacts.js';
 import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
 import { include, registerTsconfigPaths } from './include.js';
@@ -133,6 +134,14 @@ export async function graphqlMesh(
                 pathModule.join(outputDir, 'schema.graphql'),
                 printSchemaWithDirectives(meshInstance.schema),
               ).catch(e => log.error(`An error occured while writing the schema file: `, e));
+
+              writeSupergraphArtifacts({
+                outputDir,
+                schema: meshInstance.schema,
+                log,
+              }).catch(e =>
+                log.error(`An error occured while writing the under-the-hood supergraph: `, e),
+              );
 
               generateTsArtifacts(
                 {
@@ -401,6 +410,11 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             pathModule.join(outputDir, 'schema.graphql'),
             printSchemaWithDirectives(schema),
           );
+          await writeSupergraphArtifacts({
+            outputDir,
+            schema,
+            log,
+          });
 
           log.info(`Generating artifacts`);
           meshConfig.importCodes.add(

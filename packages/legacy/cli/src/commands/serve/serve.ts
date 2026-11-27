@@ -3,14 +3,22 @@
 import cluster from 'cluster';
 import os from 'os';
 import open from 'open';
+import {
+  createGatewayRuntime,
+  getGraphQLWSOptions as getGatewayGraphQLWSOptions,
+  type GatewayRuntime,
+} from '@graphql-hive/gateway-runtime';
 import { type Logger } from '@graphql-hive/logger';
-import { process } from '@graphql-mesh/cross-helpers';
+import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler, resolvePlaygroundConfig } from '@graphql-mesh/http';
 import type { ServeMeshOptions } from '@graphql-mesh/runtime';
+import { pathExists } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { GraphQLMeshCLIParams } from '../../index.js';
 import { getMaxConcurrency } from './getMaxConcurency.js';
+import { createInProcessMeshTransport } from './mesh-transport.js';
 import { startNodeHttpServer } from './node-http.js';
+import type { MeshOrGatewayHTTPHandler } from './types.js';
 
 type RenderGraphiQL = (options?: any) => string | Promise<string>;
 
@@ -164,13 +172,58 @@ export async function serveMesh(
         .catch(e => eventLogger.error(e));
     });
 
-    const meshHTTPHandler = createMeshHTTPHandler({
-      baseDir,
-      getBuiltMesh,
-      rawServeConfig,
-      playgroundTitle,
-      ...(renderGraphiQL ? { renderGraphiQL } : {}),
-    });
+    const supergraphPath = pathModule.join(baseDir, cliParams.artifactsDir, 'supergraph.graphql');
+    const hasSupergraph = await pathExists(supergraphPath);
+
+    let meshHTTPHandler: MeshOrGatewayHTTPHandler;
+    let graphqlWsOptions: object | undefined;
+    let gateway: GatewayRuntime | undefined;
+
+    if (hasSupergraph) {
+      // Under-the-hood compose wrote a join SG. Serve it with Hive Gateway and
+      // bridge mesh://legacy/* subgraphs to in-process Mesh source executors —
+      // same execution model as handleFederationSupergraph inside getMesh.
+      log.info(`Starting Hive Gateway with under-the-hood supergraph (${supergraphPath})`);
+      const mesh = await getBuiltMesh();
+      gateway = createGatewayRuntime({
+        supergraph: supergraphPath,
+        graphqlEndpoint: graphqlPath,
+        landingPage: false,
+        graphiql: playgroundTitle ? { title: playgroundTitle } : true,
+        logging: log,
+        ...(renderGraphiQL ? { renderGraphiQL } : {}),
+        transportEntries: {
+          '*': { kind: 'mesh' },
+        },
+        transports: {
+          mesh: createInProcessMeshTransport(mesh.rawSources),
+        },
+      });
+      meshHTTPHandler = gateway;
+      graphqlWsOptions = getGatewayGraphQLWSOptions(gateway, () => ({}));
+      registerTerminateHandler(eventName => {
+        const eventLogger = log.child({ terminateEvent: eventName });
+        eventLogger.info(`Destroying Hive Gateway...`);
+        const disposable = gateway as AsyncDisposable;
+        handleMaybePromise(
+          () => disposable[Symbol.asyncDispose](),
+          () => {
+            eventLogger.debug(`Hive Gateway has been destroyed`);
+          },
+          e => {
+            eventLogger.error(e);
+          },
+        );
+      });
+    } else {
+      meshHTTPHandler = createMeshHTTPHandler({
+        baseDir,
+        getBuiltMesh,
+        rawServeConfig,
+        playgroundTitle,
+        ...(renderGraphiQL ? { renderGraphiQL } : {}),
+      });
+    }
 
     const { stop } = await startNodeHttpServer({
       meshHTTPHandler,
@@ -179,6 +232,7 @@ export async function serveMesh(
       graphqlPath,
       hostname,
       port,
+      graphqlWsOptions,
     });
 
     registerTerminateHandler(eventName => {
