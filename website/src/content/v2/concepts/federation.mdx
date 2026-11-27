@@ -84,6 +84,7 @@ For **hand-written GraphQL** subgraphs that need an entity hop, use Federation S
 <ProtocolRef name="http-rest" /> Connectors (`getCustomer` matches [ById
 conventions](/v2/compose#semantic-conventions)):
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   getCustomer(id: String!): Customer
@@ -91,8 +92,8 @@ type Query {
       source: "Billing"
       http: { GET: "/customers/{$args.id}" }
       selection: """
-      id
-      name
+        id
+        name
       """
       entity: true
     )
@@ -106,6 +107,7 @@ type Customer @key(fields: "id") {
 
 <ProtocolRef name="sql" /> type-level entity fill (`$this.id` on `Track`):
 
+<!-- prettier-ignore -->
 ```graphql
 type Track
   @key(fields: "id")
@@ -113,11 +115,11 @@ type Track
     table: "tracks"
     kind: ROW
     where: """
-    TrackId: $this.id
+      TrackId: $this.id
     """
     selection: """
-    id: TrackId
-    name: Name
+      id: TrackId
+      name: Name
     """
   ) {
   id: ID!
@@ -168,6 +170,7 @@ Federation transform when you need to **annotate** an existing GraphQL schema in
 
 ## Short example
 
+<!-- prettier-ignore -->
 ```graphql
 # Catalog subgraph (SQL hub)
 
@@ -185,8 +188,8 @@ type Track @key(fields: "id", resolvable: false) {
       source: "reviews"
       http: { GET: "/reviews?trackId={$this.id}" }
       selection: """
-      id
-      rating
+        id
+        rating
       """
     )
 }

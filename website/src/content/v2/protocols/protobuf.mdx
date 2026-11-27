@@ -56,6 +56,7 @@ export const gatewayConfig = defineGatewayConfig({
 
 Compact field-number mapping:
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
@@ -71,18 +72,18 @@ type Query {
       service: "Example"
       method: "GetMovies"
       args: """
-      1(message): {
-        2(int64): $args.year
-      }
+        1(message): {
+          2(int64): $args.year
+        }
       """
       selection: """
-      1(repeated message): result {
-        1(string): name
-        2(int64): year
-        3(float): rating
-        4(repeated string): cast
-        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
-      }
+        1(repeated message): result {
+          1(string): name
+          2(int64): year
+          3(float): rating
+          4(repeated string): cast
+          6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        }
       """
     )
 }
@@ -113,6 +114,7 @@ enum Genre {
 If a transform renames `moviesByYear(year:)` to `releaseYear`, Compose rewrites the compact `args`
 binder so the wire field still binds the new GraphQL name (same path as `@connect`):
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   # After rename: GraphQL arg is releaseYear, binder must follow
@@ -121,11 +123,11 @@ type Query {
       service: "Example"
       method: "MoviesByYear"
       args: """
-      1(int32): $args.releaseYear # was $args.year before rename
+        1(int32): $args.releaseYear # was $args.year before rename
       """
       selection: """
-      1(string): name
-      2(int64): year
+        1(string): name
+        2(int64): year
       """
     )
 }
@@ -136,6 +138,7 @@ type Query {
 `SearchMoviesByCast` is a server-streaming RPC. Emit sets `stream: true` and binds through an Input
 type (`input.castName`), not flat `$args.*`:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie]
@@ -143,14 +146,14 @@ type Query {
       service: "Example"
       method: "SearchMoviesByCast"
       args: """
-      # Field 1 of the request message = castName on the Input type
-      1(string): input.castName
+        # Field 1 of the request message = castName on the Input type
+        1(string): input.castName
       """
       selection: """
-      1(string): name
-      2(int64): year
-      # Enum wire values stay in the selection map
-      6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        1(string): name
+        2(int64): year
+        # Enum wire values stay in the selection map
+        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
       """
       stream: true # server streaming -- list of Movie messages
     )
@@ -166,6 +169,7 @@ ConnectRPC uses the service root and the default `application/proto` content typ
 **ConnectRPC** -- location is the HTTP root; no header override (transport default
 `application/proto`):
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
@@ -182,18 +186,18 @@ type Query {
       service: "Example"
       method: "GetMovies"
       args: """
-      1(message): {
-        2(int64): $args.year
-      }
+        1(message): {
+          2(int64): $args.year
+        }
       """
       selection: """
-      1(repeated message): result {
-        1(string): name
-        2(int64): year
-        3(float): rating
-        4(repeated string): cast
-        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
-      }
+        1(repeated message): result {
+          1(string): name
+          2(int64): year
+          3(float): rating
+          4(repeated string): cast
+          6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        }
       """
     )
 }
@@ -219,6 +223,7 @@ enum Genre {
 
 **Twirp** -- same `@protobuf__rpc` body; `/twirp` on `location` plus an explicit protobuf header:
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
@@ -242,18 +247,18 @@ type Query {
       service: "Example"
       method: "GetMovies"
       args: """
-      1(message): {
-        2(int64): $args.year
-      }
+        1(message): {
+          2(int64): $args.year
+        }
       """
       selection: """
-      1(repeated message): result {
-        1(string): name
-        2(int64): year
-        3(float): rating
-        4(repeated string): cast
-        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
-      }
+        1(repeated message): result {
+          1(string): name
+          2(int64): year
+          3(float): rating
+          4(repeated string): cast
+          6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        }
       """
     )
 }
@@ -282,6 +287,7 @@ enum Genre {
 Nested messages and well-known types are not flat scalars. Field-number maps nest inside `args` /
 `selection` (e.g. `@Movie` blocks, `@google_protobuf_Timestamp`):
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   exampleGetMovie(input: GetMovieRequest_Input): Movie
@@ -289,17 +295,17 @@ type Query {
       service: "Example"
       method: "GetMovie"
       args: """
-      1(string): input.name
+        1(string): input.name
       """
       selection: """
-      1(string): name
-      2(int64): year
-      # Nested message: field 3 is a Timestamp
-      3(message): released {
-        1(int64): seconds
-        2(int32): nanos
-      }
-      6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        1(string): name
+        2(int64): year
+        # Nested message: field 3 is a Timestamp
+        3(message): released {
+          1(int64): seconds
+          2(int32): nanos
+        }
+        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
       """
     )
 }

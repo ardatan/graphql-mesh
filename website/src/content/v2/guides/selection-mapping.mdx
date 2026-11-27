@@ -44,6 +44,7 @@ Mongo / Protobuf dialects reuse `$args` / `$this` but not the full Apollo expres
 <DirectiveRef name="connect" /> maps HTTP responses with Connectors `selection`, and puts path /
 query / body binders in `http` (and related args):
 
+<!-- prettier-ignore -->
 ```graphql
 type Track @key(fields: "id", resolvable: false) {
   id: ID!
@@ -52,9 +53,9 @@ type Track @key(fields: "id", resolvable: false) {
       source: "reviews"
       http: { GET: "/reviews?trackId={$this.id}" }
       selection: """
-      id
-      rating
-      body
+        id
+        rating
+        body
       """
     )
 }
@@ -68,6 +69,7 @@ type Track @key(fields: "id", resolvable: false) {
 
 ById root with Composition-stamped `entity: true`:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   getCustomer(id: String!): Customer
@@ -75,8 +77,8 @@ type Query {
       source: "Billing"
       http: { GET: "/customers/{$args.id}" }
       selection: """
-      id
-      name
+        id
+        name
       """
       entity: true
     )
@@ -85,21 +87,22 @@ type Query {
 
 Richer Connect expressions (FHIR `Reference.resource`):
 
+<!-- prettier-ignore -->
 ```graphql
 resource: Resource
   @connect(
     selection: """
-    $this.reference->split("/")->get(0)->match(
-      ["Patient", {
-        __typename: $("Patient")
-        id: $this.reference->split("/")->get(1)
-      }],
-      ["Observation", {
-        __typename: $("Observation")
-        id: $this.reference->split("/")->get(1)
-      }],
-      [@, null]
-    )
+      $this.reference->split("/")->get(0)->match(
+        ["Patient", {
+          __typename: $("Patient")
+          id: $this.reference->split("/")->get(1)
+        }],
+        ["Observation", {
+          __typename: $("Observation")
+          id: $this.reference->split("/")->get(1)
+        }],
+        [@, null]
+      )
     """
   )
 ```
@@ -114,6 +117,7 @@ SQL emit uses <DirectiveRef name="sql" /> (kind discriminator: `ROW` / `ROWS` / 
 `COUNT` / `INSERT` / `UPDATE` / `DELETE`). Request binders land in `where` / structured `args`;
 column maps land in `selection`. Chinook aliases SQL columns to GraphQL names:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   track(id: ID!): Track
@@ -121,12 +125,12 @@ type Query {
       table: "tracks"
       kind: ROW
       where: """
-      TrackId: $args.id
+        TrackId: $args.id
       """
       selection: """
-      id: TrackId
-      name: Name
-      albumId: AlbumId
+        id: TrackId
+        name: Name
+        albumId: AlbumId
       """
     )
 }
@@ -137,12 +141,12 @@ type Track
     table: "tracks"
     kind: ROW
     where: """
-    TrackId: $this.id
+      TrackId: $this.id
     """
     selection: """
-    id: TrackId
-    name: Name
-    albumId: AlbumId
+      id: TrackId
+      name: Name
+      albumId: AlbumId
     """
   ) {
   id: ID!
@@ -163,6 +167,7 @@ Hive Gateway only -- stock Apollo Router does not execute `@sql`. Protocol:
 <DirectiveRef name="protobuf__rpc" /> uses a **compact field-number** dialect (not JSONSelection).
 Protobuf field-number map:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   moviesByYear(year: Int!): MoviesResult!
@@ -170,15 +175,15 @@ type Query {
       service: "Example"
       method: "GetMovies"
       args: """
-      1(message): {
-        2(int64): $args.year
-      }
+        1(message): {
+          2(int64): $args.year
+        }
       """
       selection: """
-      1(repeated message): result {
-        1(string): name
-        2(int64): year
-      }
+        1(repeated message): result {
+          1(string): name
+          2(int64): year
+        }
       """
     )
 }

@@ -29,6 +29,7 @@ loader emit ([Hand-write](/v2/paths/hand-write), [Composition](/v2/compose)).
 3. Optional join-only file (no `Query`) for polymorphic references -- FHIR
    `reference-resource.graphql` is the supporting example ([FHIR](/v2/examples/fhir)).
 
+<!-- prettier-ignore -->
 ```graphql
 # reviews.graphql -- extend Track owned by catalog
 type Track @key(fields: "id", resolvable: false) {
@@ -38,8 +39,8 @@ type Track @key(fields: "id", resolvable: false) {
       source: "reviews"
       http: { GET: "/reviews?trackId={$this.id}" }
       selection: """
-      id
-      rating
+        id
+        rating
       """
     )
 }

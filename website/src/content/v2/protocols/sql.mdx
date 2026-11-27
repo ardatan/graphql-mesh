@@ -43,6 +43,7 @@ export const composeConfig = defineComposeConfig({
 Query by primary key (`kind: ROW` + `$args`). The object type repeats `ROW` with `$this` so
 Federation can resolve the entity:
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.dev/sql/v0.1", import: ["@sql"])
@@ -58,12 +59,12 @@ type Query {
       table: "albums"
       kind: ROW
       where: """
-      AlbumId: $args.id
+        AlbumId: $args.id
       """
       selection: """
-      id: AlbumId
-      title: Title
-      artistId: ArtistId
+        id: AlbumId
+        title: Title
+        artistId: ArtistId
       """
     )
 }
@@ -74,12 +75,12 @@ type Album
     table: "albums"
     kind: ROW
     where: """
-    AlbumId: $this.id
+      AlbumId: $this.id
     """
     selection: """
-    id: AlbumId
-    title: Title
-    artistId: ArtistId
+      id: AlbumId
+      title: Title
+      artistId: ArtistId
     """
   ) {
   id: ID!
@@ -93,6 +94,7 @@ type Album
 Child collections use `kind: ROWS` with `$this` plus optional `$args.where` (Artist -> albums).
 Many-to-many uses `through:` (Playlist -> tracks via `playlist_track` in Chinook):
 
+<!-- prettier-ignore -->
 ```graphql
 type Artist @key(fields: "id") {
   id: ID!
@@ -102,16 +104,16 @@ type Artist @key(fields: "id") {
       table: "albums"
       kind: ROWS
       where: """
-      ArtistId: $this.id
-      ...$args.where
+        ArtistId: $this.id
+        ...$args.where
       """
       orderBy: "$args.orderBy"
       limit: "$args.limit"
       offset: "$args.offset"
       selection: """
-      id: AlbumId
-      title: Title
-      artistId: ArtistId
+        id: AlbumId
+        title: Title
+        artistId: ArtistId
       """
     )
 }
@@ -132,8 +134,8 @@ type Playlist {
       limit: "$args.limit"
       offset: "$args.offset"
       selection: """
-      id: TrackId
-      name: Name
+        id: TrackId
+        name: Name
       """
     )
 }
@@ -146,6 +148,7 @@ type Playlist {
 
 `INSERT` / `UPDATE` / `DELETE` bind columns from `$args`:
 
+<!-- prettier-ignore -->
 ```graphql
 type Mutation {
   createAlbum(input: CreateAlbumInput!): AlbumPayload!
@@ -157,11 +160,11 @@ type Mutation {
       ArtistId: $args.input.artistId
       """
       selection: """
-      album {
-        id: AlbumId
-        title: Title
-        artistId: ArtistId
-      }
+        album {
+          id: AlbumId
+          title: Title
+          artistId: ArtistId
+        }
       """
     )
 
@@ -170,11 +173,11 @@ type Mutation {
       table: "albums"
       kind: DELETE
       where: """
-      AlbumId: $args.id
+        AlbumId: $args.id
       """
       selection: """
-      ok: $affectedRows
-      affectedRows: $affectedRows
+        ok: $affectedRows
+        affectedRows: $affectedRows
       """
     )
 }
@@ -193,6 +196,7 @@ rule. Binders: [Selection mapping](/v2/guides/selection-mapping). Entity / ById:
 Offset lists (`kind: ROWS`) are not the only list shape. `CONNECTION` builds Relay-style `nodes` /
 `pageInfo` / `$totalCount` from the same table; `COUNT` returns a scalar:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   allAlbums(
@@ -209,15 +213,15 @@ type Query {
       first: "$args.first"
       after: "$args.after"
       selection: """
-      nodes {
-        id: AlbumId # SQL AlbumId -> GraphQL id
-        title: Title
-      }
-      pageInfo {
-        hasNextPage: $hasNextPage
-        endCursor: $endCursor
-      }
-      totalCount: $totalCount
+        nodes {
+          id: AlbumId # SQL AlbumId -> GraphQL id
+          title: Title
+        }
+        pageInfo {
+          hasNextPage: $hasNextPage
+          endCursor: $endCursor
+        }
+        totalCount: $totalCount
       """
     )
 
@@ -232,6 +236,7 @@ type Query {
 Related lists pin the parent key with `$this`, then splice in optional client filters via
 `...$args.where` so callers can still page or filter the related set:
 
+<!-- prettier-ignore -->
 ```graphql
 type Artist @key(fields: "id") {
   id: ID!
@@ -240,14 +245,14 @@ type Artist @key(fields: "id") {
       table: "albums"
       kind: ROWS
       where: """
-      ArtistId: $this.id # always constrain to this artist
-      ...$args.where # optional client filter merged in
+        ArtistId: $this.id # always constrain to this artist
+        ...$args.where # optional client filter merged in
       """
       limit: "$args.limit"
       offset: "$args.offset"
       selection: """
-      id: AlbumId
-      title: Title
+        id: AlbumId
+        title: Title
       """
     )
 }
@@ -258,6 +263,7 @@ type Artist @key(fields: "id") {
 When there is no direct FK on the target table, `through` describes the join table. Playlist tracks
 go through `playlist_track`: `local` is the parent column, `remote` / `target` reach `tracks`:
 
+<!-- prettier-ignore -->
 ```graphql
 type Playlist {
   tracks(where: TrackFilter, limit: Int, offset: Int): [Track!]!
@@ -275,8 +281,8 @@ type Playlist {
       limit: "$args.limit"
       offset: "$args.offset"
       selection: """
-      id: TrackId
-      name: Name
+        id: TrackId
+        name: Name
       """
     )
 }

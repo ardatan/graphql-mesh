@@ -105,6 +105,7 @@ types. Abstract OData bases become unions discriminated by `@odata.type` → `__
 
 Emitted shape (abbreviated -- real Graph emit is large):
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
@@ -125,9 +126,9 @@ type Query {
       source: "MicrosoftGraph"
       http: { GET: "/me" }
       selection: """
-      id
-      displayName
-      officeLocation
+        id
+        displayName
+        officeLocation
       """
     )
 
@@ -142,12 +143,12 @@ type Query {
         """
       }
       selection: """
-      $.value {
-        id
-        subject
-        isRead
-        from { emailAddress { name address } }
-      }
+        $.value {
+          id
+          subject
+          isRead
+          from { emailAddress { name address } }
+        }
       """
     )
 }
@@ -158,10 +159,10 @@ type message
     source: "MicrosoftGraph"
     http: { GET: "/messages/{$this.id}/" }
     selection: """
-    id
-    subject
-    isRead
-    from { emailAddress { name address } }
+      id
+      subject
+      isRead
+      from { emailAddress { name address } }
     """
     entity: true
   ) {

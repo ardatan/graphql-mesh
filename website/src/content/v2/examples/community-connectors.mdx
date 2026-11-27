@@ -60,6 +60,7 @@ export const composeConfig = defineComposeConfig({
 Minimal excerpt (full fixture lives in the Mesh Connect transport tests /
 `JSONPlaceholder/users.graphql`):
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key"])
@@ -79,10 +80,10 @@ type Query {
       source: "JSONPlaceholder"
       http: { GET: "/users/{$args.id}" }
       selection: """
-      id
-      name
-      username
-      email
+        id
+        name
+        username
+        email
       """
       entity: true
     )

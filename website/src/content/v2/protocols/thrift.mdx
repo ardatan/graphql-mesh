@@ -55,6 +55,7 @@ service Calculator {
 
 Emitted / hand `@thrift__rpc` -- wire types in `args` / `selection`:
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.dev/thrift/v0.1", import: ["@thrift__rpc"])
@@ -69,10 +70,10 @@ type Query {
     @thrift__rpc(
       function: "add"
       args: """
-      1(struct): $args.request {
-        1(i32): left
-        2(i32): right
-      }
+        1(struct): $args.request {
+          1(i32): left
+          2(i32): right
+        }
       """
       selection: "$(i32)"
       messageType: CALL
@@ -90,6 +91,7 @@ When `ignoreErrorResponses` is false, declared Thrift exceptions become GraphQL 
 success type and each exception share a result union; `@thrift__rpc(throws:)` maps exception names
 to wire field ids:
 
+<!-- prettier-ignore -->
 ```graphql
 # PostTweetResult = Tweet | TwitterUnavailable (union from throws)
 
@@ -100,16 +102,16 @@ type Query {
     @thrift__rpc(
       function: "postTweet"
       args: """
-      1(struct): $args.tweet {
-        1(string): text
-      }
+        1(struct): $args.tweet {
+          1(string): text
+        }
       """
       selection: """
-      # success slot -> Tweet fields
-      0(struct): {
-        1(i32): id
-        2(string): text
-      }
+        # success slot -> Tweet fields
+        0(struct): {
+          1(i32): id
+          2(string): text
+        }
       """
       # wire id 1 = TwitterUnavailable exception
       throws: """
@@ -139,16 +141,17 @@ loadThriftSubgraph('calculator', {
 })
 ```
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   add(request: AddRequestInput): Int
     @thrift__rpc(
       function: "add"
       args: """
-      1(struct): $args.request {
-        1(i32): left
-        2(i32): right
-      }
+        1(struct): $args.request {
+          1(i32): left
+          2(i32): right
+        }
       """
       selection: "$(i32)"
       messageType: CALL
@@ -163,6 +166,7 @@ If you rename a GraphQL argument, Compose rewrites binders inside `@thrift__rpc`
 `@connect` / `@protobuf__rpc`. After renaming `request` -> `input`, the `args` string must read
 `$args.input`, not `$args.request`:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   # GraphQL arg renamed to input; binder follows
@@ -170,10 +174,10 @@ type Query {
     @thrift__rpc(
       function: "add"
       args: """
-      1(struct): $args.input { # was $args.request before rename
-        1(i32): left
-        2(i32): right
-      }
+        1(struct): $args.input { # was $args.request before rename
+          1(i32): left
+          2(i32): right
+        }
       """
       selection: "$(i32)"
       messageType: CALL
@@ -193,6 +197,7 @@ loadThriftSubgraph('calculator', {
 })
 ```
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
@@ -225,7 +230,7 @@ type Query {
         """
       }
       selection: """
-      $->get(4)->get("0")->get("i32")
+        $->get(4)->get("0")->get("i32")
       """
     )
 }
