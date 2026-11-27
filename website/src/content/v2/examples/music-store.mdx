@@ -156,8 +156,8 @@ Skill: [Generate-then-edit](/v2/paths/generate-then-edit) | Protocol:
 3. Query a review; [read the SDL](/v2/guides/reading-generated-sdl) (`@source`, `@connect`,
    `selection`).
 4. **Dislike** something concrete (field names, noisy types, Track join shape).
-5. Edit the emitted `.graphql` (or apply optional [Transforms](/v2/transforms) for rename-only
-   cases).
+5. Edit the emitted `.graphql` ([By hand](/v2/transforms/by-hand)) or apply optional
+   [Automatic](/v2/transforms/automatic) transforms for rename-only cases.
 6. Re-compose. Dual-run the Connect slice on **Hive Gateway** and **Apollo Router**.
 
 ```ts
@@ -349,8 +349,8 @@ hive-gateway supergraph
 - Dig into binders and entity wiring: [Selection mapping](/v2/guides/selection-mapping) /
   [Entity resolution](/v2/concepts/federation#entity-resolution) /
   [Semantic conventions](/v2/compose#semantic-conventions).
-- Optional renames without rewriting SDL: [Transforms](/v2/transforms) (including Federation
-  transform).
+- Optional renames without rewriting SDL: [Automatic](/v2/transforms/automatic) Transform Subgraph
+  (including Federation transform); or edit SDL [By hand](/v2/transforms/by-hand).
 - Publish subgraph SDL after Composition: [Schema registry](/v2/concepts/schema-registry).
 - Protocol family pages: [SQL](/v2/protocols/sql) / [HTTP / REST](/v2/protocols/http-rest) /
   [Protobuf](/v2/protocols/protobuf).

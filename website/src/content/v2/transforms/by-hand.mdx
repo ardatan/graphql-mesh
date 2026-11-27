@@ -1,0 +1,198 @@
+---
+description: Transform Subgraph by hand -- edit subgraph SDL instead of Compose transform config
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# By hand
+
+**By hand** Transform Subgraph means the reshape lives in the committed `.graphql` -- not in
+`transforms: []`. You change GraphQL names, drop fields, and update directive binders in the same
+file Compose (or `buildSubgraphSchema`) will load. Use this when the edited schema is the source of
+truth; use [Automatic](/v2/transforms/automatic) when you want Compose to rewrite for you.
+
+This is the same edit muscle as [Generate-then-edit](/v2/paths/generate-then-edit), scoped to
+**transform** jobs (rename, prune, stamp keys) rather than inventing a new subgraph from scratch.
+
+<Callout type="info">
+  After any hand edit, re-[read the SDL](/v2/guides/reading-generated-sdl): `$args` / `$this` inside
+  `@connect`, `@source`, `@protobuf__rpc`, `@sql`, and friends must match the **public** GraphQL
+  names you left in the file.
+</Callout>
+
+## Worked example: rename an arg (and its binder)
+
+**Before** -- loader emit (or an earlier commit) exposes `year`; clients should say `releaseYear`:
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  moviesByYear(year: Int!): [Movie!]!
+    @protobuf__rpc(
+      method: "Movies/ByYear"
+      args: """
+        year: $args.year
+      """
+      selection: """
+        id
+        title
+      """
+    )
+}
+```
+
+**After** -- rename the GraphQL arg **and** the binder in one edit (Automatic would do both via
+`createRenameTransform`):
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  moviesByYear(releaseYear: Int!): [Movie!]!
+    @protobuf__rpc(
+      method: "Movies/ByYear"
+      args: """
+        year: $args.releaseYear
+      """
+      selection: """
+        id
+        title
+      """
+    )
+}
+```
+
+Wire the file in Compose without a transform list:
+
+```ts
+{
+  name: 'movies',
+  schema: './movies.graphql',
+}
+```
+
+Same pattern for HTTP/REST Connectors: rename `Query.getCustomer(id:)` args and rewrite `{$args.id}`
+→ `{$args.customerId}` (or whatever public name you chose) inside `@connect(http:)`.
+
+## Worked example: prune generated noise
+
+**Before** -- OpenAPI emit includes admin fields you do not want in the supergraph:
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  customer(id: ID!): Customer
+    @connect(
+      source: "Billing"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+        id
+        name
+        internalScore
+      """
+      entity: true
+    )
+  adminDump: String
+    @connect(
+      source: "Billing"
+      http: { GET: "/admin/dump" }
+      selection: """
+        $
+      """
+    )
+}
+
+type Customer @key(fields: "id") {
+  id: ID!
+  name: String
+  internalScore: Int
+}
+```
+
+**After** -- delete the field (and selection lines) you do not want; keep binders consistent:
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  customer(id: ID!): Customer
+    @connect(
+      source: "Billing"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+        id
+        name
+      """
+      entity: true
+    )
+}
+
+type Customer @key(fields: "id") {
+  id: ID!
+  name: String
+}
+```
+
+Automatic equivalent: a filter / prune transform with schema selectors such as `Query.!adminDump`
+and `Customer.!internalScore` -- see [Schema Coordinates](/v2/guides/schema-coordinates). By hand
+wins when the prune is one-off or you want the slim file reviewed in git.
+
+## Worked example: stamp Federation by editing SDL
+
+**Before** -- plain GraphQL source, no entity annotations:
+
+```graphql
+type Product {
+  upc: String!
+  name: String
+}
+
+type Query {
+  product(upc: String!): Product
+}
+```
+
+**After** -- add `@key` and a Federation draft `@lookup` entry field for one-object hops (Mesh
+`@merge` only if the entry field returns a **list** / batch -- [Directives](/v2/directives#lookup)):
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.6"
+    import: ["@key", "@composeDirective"]
+  )
+  @link(
+    url: "https://graphql.github.io/graphql-federation-spec/draft"
+    import: ["@lookup", "@is", "@internal"]
+  )
+
+type Product @key(fields: "upc") {
+  upc: String!
+  name: String
+}
+
+type Query {
+  product(upc: String!): Product @lookup
+}
+```
+
+Automatic equivalent: `createFederationTransform({ Type: { key: ..., fields: ... } })` -- see
+[Entity resolution](/v2/concepts/federation#entity-resolution). Prefer By hand when the subgraph
+file is already under authorship (Hand-write / Generate-then-edit).
+
+## Checklist after a hand transform
+
+1. Public GraphQL names match what clients and other subgraphs expect.
+2. Every `$args.*` / `$this.*` / compact `args:` map still points at those names.
+3. Dropped fields are gone from both the type **and** any `selection` / `args` blocks.
+4. Re-compose (and dual-run Hive Gateway + Apollo Router on Connect slices when relevant).
+5. Optional: serve the same file with `buildSubgraphSchema` from `@graphql-mesh/subgraph` --
+   [buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+
+<Cards>
+  <Cards.Card arrow title="Automatic" href="/v2/transforms/automatic" />
+  <Cards.Card arrow title="Transform Subgraph overview" href="/v2/transforms" />
+  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
+</Cards>

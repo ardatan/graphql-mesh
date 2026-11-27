@@ -257,12 +257,12 @@ query fetchFilesFromOneDrive {
 
 ## 5. Auth and production notes
 
-| Topic              | Guidance                                                                                         |
-| ------------------ | ------------------------------------------------------------------------------------------------ |
-| Token source       | App-only or delegated Microsoft identity; map into `{$env....}` or gateway context headers       |
-| Metadata pin       | Prefer a checked-in `$metadata` snapshot for CI; refresh deliberately when Graph versions change |
-| Scope              | Mail / Files / Group queries need matching Graph permissions                                     |
-| Generate-then-edit | Trim the huge emit with [Transforms](/v2/transforms) or commit edited SDL                        |
+| Topic              | Guidance                                                                                                                          |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| Token source       | App-only or delegated Microsoft identity; map into `{$env....}` or gateway context headers                                        |
+| Metadata pin       | Prefer a checked-in `$metadata` snapshot for CI; refresh deliberately when Graph versions change                                  |
+| Scope              | Mail / Files / Group queries need matching Graph permissions                                                                      |
+| Generate-then-edit | Trim the huge emit with [Automatic](/v2/transforms/automatic) transforms or commit edited SDL ([By hand](/v2/transforms/by-hand)) |
 
 ---
 
