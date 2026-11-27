@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mongoose",
-  "version": "0.107.3",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,11 +36,11 @@
     "mongoose": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "^0.107.3",
-    "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
-    "@omnigraph/mongo": "0.1.0",
+    "@graphql-mesh/store": "^1.0.0",
+    "@graphql-mesh/string-interpolation": "^0.6.0",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
+    "@omnigraph/mongo": "1.0.0",
     "@whatwg-node/disposablestack": "^0.1.0",
     "tslib": "^2.4.0"
   },

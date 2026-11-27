@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-common",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "type": "module",
   "description": "Common transport utilities for GraphQL Mesh",
   "repository": {
@@ -55,7 +55,7 @@
     "@graphql-hive/logger": "^2.0.0",
     "@graphql-hive/pubsub": "^3.0.0",
     "@graphql-hive/signal": "^3.0.0",
-    "@graphql-mesh/types": "^0.107.3",
+    "@graphql-mesh/types": "^1.0.0",
     "@graphql-tools/executor": "^4.1.8",
     "@graphql-tools/executor-common": "workspace:*",
     "@graphql-tools/utils": "^13.2.3",
@@ -63,8 +63,8 @@
     "tslib": "^2.9.1"
   },
   "devDependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.18",
-    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-mesh/cross-helpers": "^0.4.19",
+    "@graphql-mesh/utils": "^1.0.0",
     "graphql": "17.1.0"
   },
   "publishConfig": {

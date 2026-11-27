@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-http",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "type": "module",
   "description": "HTTP transport for GraphQL Mesh",
   "repository": {
@@ -51,11 +51,11 @@
     "graphql": "^16.9.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.18",
-    "@graphql-mesh/string-interpolation": "^0.5.18",
+    "@graphql-mesh/cross-helpers": "^0.4.19",
+    "@graphql-mesh/string-interpolation": "^0.6.0",
     "@graphql-mesh/transport-common": "workspace:*",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
     "@graphql-tools/executor-http": "workspace:*",
     "@graphql-tools/utils": "^13.2.3",
     "@whatwg-node/promise-helpers": "^2.0.2",

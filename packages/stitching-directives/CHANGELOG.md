@@ -1,156 +1,240 @@
 # @graphql-tools/stitching-directives
 
+## 6.0.0
+
+### Patch Changes
+
+- [#9868](https://github.com/ardatan/graphql-mesh/pull/9868)
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^13.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/13.2.3)
+    (from `^13.2.2`, in `dependencies`)
+
+- [#9860](https://github.com/ardatan/graphql-mesh/pull/9860)
+  [`2c4a150`](https://github.com/ardatan/graphql-mesh/commit/2c4a150f2b5838cccfe1655e3b628d8314df61bc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Source of these packages moved from
+  `graphql-hive/gateway` into this repo. npm names and import paths are unchanged. Hive Gateway will
+  consume published versions from Mesh after cutover. Package-level federation benches live under
+  `bench/federation`; Gateway e2e memtest/bench CI stays on the Gateway repo and continues to
+  measure Gateway impact.
+
+- Updated dependencies
+  [[`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`c36d9b8`](https://github.com/ardatan/graphql-mesh/commit/c36d9b8930c971558cd7471c67edf0b3783d808c),
+  [`2c4a150`](https://github.com/ardatan/graphql-mesh/commit/2c4a150f2b5838cccfe1655e3b628d8314df61bc)]:
+  - @graphql-tools/delegate@14.0.0
+
 ## 5.0.0
+
 ### Major Changes
 
+- [#2670](https://github.com/graphql-hive/gateway/pull/2670)
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Drop GraphQL v15 (and older) support. Only
+  GraphQL v16 and v17 are supported now.
 
+  Upgrade to `graphql@^16` or `graphql@^17`. Hive Gateway packages require `graphql@^16.9.0` or
+  later.
 
-- [#2670](https://github.com/graphql-hive/gateway/pull/2670) [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Drop GraphQL v15 (and older) support. Only GraphQL v16 and v17 are supported now.
-  
-  Upgrade to `graphql@^16` or `graphql@^17`. Hive Gateway packages require `graphql@^16.9.0` or later.
-  
-  `@graphql-tools/stitch` no longer reads legacy `#` comment descriptions (`commentDescriptions`, removed in GraphQL v16) from type definitions; use string descriptions (`"""..."""`) instead.
+  `@graphql-tools/stitch` no longer reads legacy `#` comment descriptions (`commentDescriptions`,
+  removed in GraphQL v16) from type definitions; use string descriptions (`"""..."""`) instead.
 
+- [#2670](https://github.com/graphql-hive/gateway/pull/2670)
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Drop Node.js 20 support. The minimum
+  supported Node.js version is now 22.15.0.
 
-- [#2670](https://github.com/graphql-hive/gateway/pull/2670) [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Drop Node.js 20 support. The minimum supported Node.js version is now 22.15.0.
-  
   Upgrade to Node.js 22.15.0 or later.
 
+- [#2670](https://github.com/graphql-hive/gateway/pull/2670)
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Remove the `stitchingDirectivesTypeDefs`
+  alias. Use `allStitchingDirectivesTypeDefs`.
 
-- [#2670](https://github.com/graphql-hive/gateway/pull/2670) [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Remove the `stitchingDirectivesTypeDefs` alias. Use `allStitchingDirectivesTypeDefs`.
+- [#2670](https://github.com/graphql-hive/gateway/pull/2670)
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Align with GraphQL Yoga 6 / GraphQL Tools
+  majors / whatwg-node: stop using removed helpers.
 
+  | Removed                                        | Replacement                                                                               |
+  | ---------------------------------------------- | ----------------------------------------------------------------------------------------- |
+  | `createGraphQLError`                           | `new GraphQLError(...)`                                                                   |
+  | `YogaLogger` / `createLogger` / `yoga.logger`  | `Logger` / `yoga.log`                                                                     |
+  | `crypto` from `@whatwg-node/fetch`             | platform `crypto` (Node >=22.15); Gateway still exposes it on `fetchAPI` for Yoga 5 peers |
+  | `mapMaybePromise` and related utils re-exports | `@whatwg-node/promise-helpers` (`handleMaybePromise`, …)                                  |
+  | `createDeferred` / `createDeferredPromise`     | `Promise.withResolvers()`                                                                 |
 
-
-- [#2670](https://github.com/graphql-hive/gateway/pull/2670) [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Align with GraphQL Yoga 6 / GraphQL Tools majors / whatwg-node: stop using removed helpers.
-  
-  | Removed | Replacement |
-  | --- | --- |
-  | `createGraphQLError` | `new GraphQLError(...)` |
-  | `YogaLogger` / `createLogger` / `yoga.logger` | `Logger` / `yoga.log` |
-  | `crypto` from `@whatwg-node/fetch` | platform `crypto` (Node >=22.15); Gateway still exposes it on `fetchAPI` for Yoga 5 peers |
-  | `mapMaybePromise` and related utils re-exports | `@whatwg-node/promise-helpers` (`handleMaybePromise`, …) |
-  | `createDeferred` / `createDeferredPromise` | `Promise.withResolvers()` |
-  
-  See [graphql-tools#8515](https://github.com/ardatan/graphql-tools/pull/8515) and [yoga#4623](https://github.com/graphql-hive/graphql-yoga/pull/4623).
+  See [graphql-tools#8515](https://github.com/ardatan/graphql-tools/pull/8515) and
+  [yoga#4623](https://github.com/graphql-hive/graphql-yoga/pull/4623).
 
 ### Minor Changes
 
+- [#2763](https://github.com/graphql-hive/gateway/pull/2763)
+  [`4eb4a6c`](https://github.com/graphql-hive/gateway/commit/4eb4a6c89176a04a38ced9cd99608e6c639fd5ee)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support GraphQL v17
 
+  Hive Gateway and the stitching, wrapping and federation packages work with GraphQL v17 alongside
+  v16. The `graphql` peer dependency range stays `^16 || ^17`, so projects that install the packages
+  themselves keep the GraphQL version they already use.
 
-- [#2763](https://github.com/graphql-hive/gateway/pull/2763) [`4eb4a6c`](https://github.com/graphql-hive/gateway/commit/4eb4a6c89176a04a38ced9cd99608e6c639fd5ee) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support GraphQL v17
-  
-  Hive Gateway and the stitching, wrapping and federation packages work with GraphQL v17 alongside v16. The `graphql` peer dependency range stays `^16 || ^17`, so projects that install the packages themselves keep the GraphQL version they already use.
-  
-  Schema stitching, schema wrapping (including `TransformEnumValues` with defaults defined in SDL), `federationToStitchingSDL` and demand control behave the same on both versions.
-  
+  Schema stitching, schema wrapping (including `TransformEnumValues` with defaults defined in SDL),
+  `federationToStitchingSDL` and demand control behave the same on both versions.
+
   ## Docker images and binary ship GraphQL v17
-  
-  The Hive Gateway Docker images and the standalone binary come with `graphql@17.1.0`. Custom code loaded by the gateway configuration, like plugins, additional resolvers, transforms and hooks, runs against GraphQL v17. Code that only uses the gateway APIs needs no changes. Code that uses GraphQL internals directly might, see the [GraphQL.js v16 to v17 upgrade guide](https://www.graphql-js.org/upgrade-guides/v16-v17/) for all changes.
-  
+
+  The Hive Gateway Docker images and the standalone binary come with `graphql@17.1.0`. Custom code
+  loaded by the gateway configuration, like plugins, additional resolvers, transforms and hooks,
+  runs against GraphQL v17. Code that only uses the gateway APIs needs no changes. Code that uses
+  GraphQL internals directly might, see the
+  [GraphQL.js v16 to v17 upgrade guide](https://www.graphql-js.org/upgrade-guides/v16-v17/) for all
+  changes.
+
   ### Variable values in resolver info
-  
-  `info.variableValues` is an object of `{ sources, coerced }` instead of a flat map of variable names to values. Read the variable values from `info.variableValues.coerced`, or use `getCoercedVariableValues` from `@graphql-tools/delegate` to support both versions.
-  
+
+  `info.variableValues` is an object of `{ sources, coerced }` instead of a flat map of variable
+  names to values. Read the variable values from `info.variableValues.coerced`, or use
+  `getCoercedVariableValues` from `@graphql-tools/delegate` to support both versions.
+
   ```ts
-  import { getCoercedVariableValues } from '@graphql-tools/delegate';
-  
-  const variables = getCoercedVariableValues(info.variableValues);
+  import { getCoercedVariableValues } from '@graphql-tools/delegate'
+
+  const variables = getCoercedVariableValues(info.variableValues)
   ```
-  
+
   ### Calling `getArgumentValues` and `getDirectiveValues`
-  
-  The `variableValues` argument of `getArgumentValues` and `getDirectiveValues` from `graphql` expects the `{ sources, coerced }` shape too. Wrap a flat map of variables with `asGetArgumentValuesVariables` from `@graphql-tools/utils`, which works with both versions.
-  
+
+  The `variableValues` argument of `getArgumentValues` and `getDirectiveValues` from `graphql`
+  expects the `{ sources, coerced }` shape too. Wrap a flat map of variables with
+  `asGetArgumentValuesVariables` from `@graphql-tools/utils`, which works with both versions.
+
   ```ts
-  import { asGetArgumentValuesVariables } from '@graphql-tools/utils';
-  import { getArgumentValues } from 'graphql';
-  
-  const args = getArgumentValues(
-    field,
-    fieldNode,
-    asGetArgumentValuesVariables(variables),
-  );
+  import { getArgumentValues } from 'graphql'
+  import { asGetArgumentValuesVariables } from '@graphql-tools/utils'
+
+  const args = getArgumentValues(field, fieldNode, asGetArgumentValuesVariables(variables))
   ```
-  
+
   ### Empty lists in parsed documents
-  
-  Parsed documents leave out empty lists. For example, a field without arguments has `arguments` set to `undefined` instead of `[]`, and the same goes for `directives`, `variableDefinitions`, `interfaces` and `fields`. Use optional chaining or a fallback like `node.directives ?? []` when reading them.
-  
+
+  Parsed documents leave out empty lists. For example, a field without arguments has `arguments` set
+  to `undefined` instead of `[]`, and the same goes for `directives`, `variableDefinitions`,
+  `interfaces` and `fields`. Use optional chaining or a fallback like `node.directives ?? []` when
+  reading them.
+
   ### Default values defined in SDL
-  
-  Default values of arguments and input fields defined in SDL are kept as an AST node in `default.literal`, and `defaultValue` is `undefined`. Read `default` first and fall back to `defaultValue` to support both versions. When mapping a schema and changing a default, set `default` to `undefined` next to the new `defaultValue`, otherwise the literal from SDL is still used.
-  
+
+  Default values of arguments and input fields defined in SDL are kept as an AST node in
+  `default.literal`, and `defaultValue` is `undefined`. Read `default` first and fall back to
+  `defaultValue` to support both versions. When mapping a schema and changing a default, set
+  `default` to `undefined` next to the new `defaultValue`, otherwise the literal from SDL is still
+  used.
+
   ### Custom scalars
-  
-  Scalars have the `coerceOutputValue`, `coerceInputValue`, `coerceInputLiteral` and `valueToLiteral` functions next to the deprecated `serialize`, `parseValue` and `parseLiteral`. When building a scalar from another scalar's `toConfig()` and replacing its coercion, replace the new functions too, otherwise they keep coercing with the original implementation.
-  
+
+  Scalars have the `coerceOutputValue`, `coerceInputValue`, `coerceInputLiteral` and
+  `valueToLiteral` functions next to the deprecated `serialize`, `parseValue` and `parseLiteral`.
+  When building a scalar from another scalar's `toConfig()` and replacing its coercion, replace the
+  new functions too, otherwise they keep coercing with the original implementation.
+
   ### Errors
-  
-  `GraphQLError` sets the standard `cause` property to its original error. Errors from subgraphs that the gateway relays to clients have the subgraph error as `cause`. What clients receive stays the same.
-  
+
+  `GraphQLError` sets the standard `cause` property to its original error. Errors from subgraphs
+  that the gateway relays to clients have the subgraph error as `cause`. What clients receive stays
+  the same.
+
   ### Printing and introspection
-  
-  `print` formats object values with spaces, like `{ a: 1 }` instead of `{a: 1}`, and breaks long ones over several lines. The `reason` argument of `@deprecated` and the `includeDeprecated` argument of introspection fields are non-nullable. Update snapshots or string comparisons of printed documents and introspection results.
-  
+
+  `print` formats object values with spaces, like `{ a: 1 }` instead of `{a: 1}`, and breaks long
+  ones over several lines. The `reason` argument of `@deprecated` and the `includeDeprecated`
+  argument of introspection fields are non-nullable. Update snapshots or string comparisons of
+  printed documents and introspection results.
+
   Closes [#2750](https://github.com/graphql-hive/gateway/issues/2750)
 
 ### Patch Changes
 
-- Updated dependencies [[`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)]:
+- Updated dependencies
+  [[`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)]:
   - @graphql-tools/delegate@13.0.0
 
 ## 4.1.8
+
 ### Patch Changes
 
-- Updated dependencies [[`a0bd5e8`](https://github.com/graphql-hive/gateway/commit/a0bd5e8882d04c1211c244adc991e62bb4e5c369)]:
+- Updated dependencies
+  [[`a0bd5e8`](https://github.com/graphql-hive/gateway/commit/a0bd5e8882d04c1211c244adc991e62bb4e5c369)]:
   - @graphql-tools/delegate@12.3.6
 
 ## 4.1.7
+
 ### Patch Changes
 
-- Updated dependencies [[`b180423`](https://github.com/graphql-hive/gateway/commit/b1804230911a8cd047ee0953304469ff4cb6b131), [`ad89e84`](https://github.com/graphql-hive/gateway/commit/ad89e8443b1839e79fa6c34a0347a2f3c67d3ec2)]:
+- Updated dependencies
+  [[`b180423`](https://github.com/graphql-hive/gateway/commit/b1804230911a8cd047ee0953304469ff4cb6b131),
+  [`ad89e84`](https://github.com/graphql-hive/gateway/commit/ad89e8443b1839e79fa6c34a0347a2f3c67d3ec2)]:
   - @graphql-tools/delegate@12.3.5
 
 ## 4.1.6
+
 ### Patch Changes
 
-- Updated dependencies [[`3e0a896`](https://github.com/graphql-hive/gateway/commit/3e0a896cf110d8a6290e20b10b6865813301f5ca)]:
+- Updated dependencies
+  [[`3e0a896`](https://github.com/graphql-hive/gateway/commit/3e0a896cf110d8a6290e20b10b6865813301f5ca)]:
   - @graphql-tools/delegate@12.3.4
 
 ## 4.1.5
+
 ### Patch Changes
 
+- [`e288224`](https://github.com/graphql-hive/gateway/commit/e28822460e2189e3b1e112bf2ad9072d68c01f90)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/utils@^12.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.1.0)
+    (from `^12.0.1`, in `dependencies`)
 
-- [`e288224`](https://github.com/graphql-hive/gateway/commit/e28822460e2189e3b1e112bf2ad9072d68c01f90) Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/utils@^12.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.1.0) (from `^12.0.1`, in `dependencies`)
-- Updated dependencies [[`e288224`](https://github.com/graphql-hive/gateway/commit/e28822460e2189e3b1e112bf2ad9072d68c01f90)]:
+- Updated dependencies
+  [[`e288224`](https://github.com/graphql-hive/gateway/commit/e28822460e2189e3b1e112bf2ad9072d68c01f90)]:
   - @graphql-tools/delegate@12.3.3
 
 ## 4.1.4
+
 ### Patch Changes
 
 - Updated dependencies []:
   - @graphql-tools/delegate@12.3.2
 
 ## 4.1.3
+
 ### Patch Changes
 
-- Updated dependencies [[`aabe28a`](https://github.com/graphql-hive/gateway/commit/aabe28a87cc4e85f590bbf4340a9c8700d544223), [`a558eea`](https://github.com/graphql-hive/gateway/commit/a558eeae3c94deb60d40f98232b9d4d82ae9d9a1)]:
+- Updated dependencies
+  [[`aabe28a`](https://github.com/graphql-hive/gateway/commit/aabe28a87cc4e85f590bbf4340a9c8700d544223),
+  [`a558eea`](https://github.com/graphql-hive/gateway/commit/a558eeae3c94deb60d40f98232b9d4d82ae9d9a1)]:
   - @graphql-tools/delegate@12.3.1
 
 ## 4.1.2
+
 ### Patch Changes
 
+- [#2671](https://github.com/graphql-hive/gateway/pull/2671)
+  [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59)
+  Thanks [@ardatan](https://github.com/ardatan)! - Allow `@merge` without `keyArg` when the resolver
+  takes zero arguments, and make keyless type merges work when the initial subschema cannot satisfy
+  the requested fields ([graphql-tools#4337](https://github.com/ardatan/graphql-tools/pull/4337)).
 
+  Previously the validator rejected `@merge` on zero-arg fields (`args.length !== 1`). It now allows
+  zero or one argument and only errors when there are multiple args without `keyArg` / `argsExpr`.
 
-- [#2671](https://github.com/graphql-hive/gateway/pull/2671) [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59) Thanks [@ardatan](https://github.com/ardatan)! - Allow `@merge` without `keyArg` when the resolver takes zero arguments, and make keyless type merges work when the initial subschema cannot satisfy the requested fields ([graphql-tools#4337](https://github.com/ardatan/graphql-tools/pull/4337)).
-  
-  Previously the validator rejected `@merge` on zero-arg fields (`args.length !== 1`). It now allows zero or one argument and only errors when there are multiple args without `keyArg` / `argsExpr`.
-  
   Separately, keyless merges such as:
-  
+
   ```ts
   merge: {
     Stats: {
@@ -159,331 +243,470 @@
     },
   }
   ```
-  
-  had no key `selectionSet`. When the subschema that owned `Query.stats` did not have the requested fields (for example querying only `totalChirps` while that field lived on the other subschema), `finalizeGatewayRequest` stripped the empty nested selection and failed with "The request must contain at least one operation."
-  
-  For merged types that have resolvers but no key `selectionSet`, stitching now injects `__typename` into `fieldNodesByType` so a stub object remains and type merging can fill the remaining fields. This matches the partial-field failure called out in [this discussion](https://github.com/ardatan/graphql-tools/pull/4337#issuecomment-1086893317). Keyed merges (`selectionSet: '{ id }'`) are unchanged.
 
+  had no key `selectionSet`. When the subschema that owned `Query.stats` did not have the requested
+  fields (for example querying only `totalChirps` while that field lived on the other subschema),
+  `finalizeGatewayRequest` stripped the empty nested selection and failed with "The request must
+  contain at least one operation."
 
-- [#2671](https://github.com/graphql-hive/gateway/pull/2671) [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59) Thanks [@ardatan](https://github.com/ardatan)! - Fix type merging for unions queried with inline fragments ([graphql-tools#4965](https://github.com/ardatan/graphql-tools/pull/4965) / [#4966](https://github.com/ardatan/graphql-tools/issues/4966)).
-  
-  Typical setup: one subschema returns a stub member (`StubMajor { id }`) while another resolves the real union members via `@merge`:
-  
+  For merged types that have resolvers but no key `selectionSet`, stitching now injects `__typename`
+  into `fieldNodesByType` so a stub object remains and type merging can fill the remaining fields.
+  This matches the partial-field failure called out in
+  [this discussion](https://github.com/ardatan/graphql-tools/pull/4337#issuecomment-1086893317).
+  Keyed merges (`selectionSet: '{ id }'`) are unchanged.
+
+- [#2671](https://github.com/graphql-hive/gateway/pull/2671)
+  [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix type merging for unions queried with inline
+  fragments ([graphql-tools#4965](https://github.com/ardatan/graphql-tools/pull/4965) /
+  [#4966](https://github.com/ardatan/graphql-tools/issues/4966)).
+
+  Typical setup: one subschema returns a stub member (`StubMajor { id }`) while another resolves the
+  real union members via `@merge`:
+
   ```graphql
   # students
   union Major = StubMajor
-  type StubMajor { id: String! }
-  
+  type StubMajor {
+    id: String!
+  }
+
   # majors
   type Query {
     major(id: String!): Major @merge(keyField: "id")
   }
   union Major = MajorSuccess | MajorError
   ```
-  
+
   Client query:
-  
+
   ```graphql
   major {
     ... on MajorSuccess { id name }
     ... on MajorError { id code }
   }
   ```
-  
+
   Three problems stacked:
-  
-  1. `@merge` on a union only registered concrete members (`MajorSuccess` / `MajorError`), not `Major` itself, so a `StubMajor` result never triggered merge.
-  2. `MergedTypeInfo` was not built for union types, and planners assumed object/interface `getFields()`.
-  3. Expanding a bare merge-key field (`id`) on a union into `... on StubMajor { id }` returned an **array** from the FIELD visitor; graphql-js `visit` nests that array as one selection instead of splicing it, so execution ignored the fragment and the merge key was never queried (`major(id: $id)` ran with empty variables).
-  
+
+  1. `@merge` on a union only registered concrete members (`MajorSuccess` / `MajorError`), not
+     `Major` itself, so a `StubMajor` result never triggered merge.
+  2. `MergedTypeInfo` was not built for union types, and planners assumed object/interface
+     `getFields()`.
+  3. Expanding a bare merge-key field (`id`) on a union into `... on StubMajor { id }` returned an
+     **array** from the FIELD visitor; graphql-js `visit` nests that array as one selection instead
+     of splicing it, so execution ignored the fragment and the merge key was never queried
+     (`major(id: $id)` ran with empty variables).
+
   Fixes:
-  
+
   - Register the abstract union/interface name for `@merge` as well as concrete members.
-  - Build merge info for unions; treat unions as field-less so the abstract planner re-fetches via inline fragments.
+  - Build merge info for unions; treat unions as field-less so the abstract planner re-fetches via
+    inline fragments.
   - Flatten nested selection arrays after union field expansion so stub keys are actually requested.
-  
-  This goes beyond the [schema-extension workaround](https://github.com/ardatan/graphql-tools/issues/4966#issuecomment-1670713991) discussed on the issue.
-- Updated dependencies [[`127576a`](https://github.com/graphql-hive/gateway/commit/127576a9e823cd2425c69432166a175464882b7f), [`befdb8e`](https://github.com/graphql-hive/gateway/commit/befdb8e3e352650c9f6c4e5fbeadfcf3615ee6ae), [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59)]:
+
+  This goes beyond the
+  [schema-extension workaround](https://github.com/ardatan/graphql-tools/issues/4966#issuecomment-1670713991)
+  discussed on the issue.
+
+- Updated dependencies
+  [[`127576a`](https://github.com/graphql-hive/gateway/commit/127576a9e823cd2425c69432166a175464882b7f),
+  [`befdb8e`](https://github.com/graphql-hive/gateway/commit/befdb8e3e352650c9f6c4e5fbeadfcf3615ee6ae),
+  [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59)]:
   - @graphql-tools/delegate@12.3.0
 
 ## 4.1.1
+
 ### Patch Changes
 
-- Updated dependencies [[`abf4091`](https://github.com/graphql-hive/gateway/commit/abf40919725f57d81ede935bee27a7b408e7d99b)]:
+- Updated dependencies
+  [[`abf4091`](https://github.com/graphql-hive/gateway/commit/abf40919725f57d81ede935bee27a7b408e7d99b)]:
   - @graphql-tools/delegate@12.2.1
 
 ## 4.1.0
+
 ### Minor Changes
 
+- [#2604](https://github.com/graphql-hive/gateway/pull/2604)
+  [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support GraphQL 16 with @graphql-tools/utils
+  v12
 
+  Preserves GraphQL 16 compatibility while upgrading to `@graphql-tools/utils` v12,
+  `@graphql-tools/executor` v2, and the compatible `@graphql-tools/schema` and
+  `@graphql-tools/merge` releases. Consumers now receive consistent resolver and execution request
+  types without conflicts between different GraphQL Tools versions.
 
-- [#2604](https://github.com/graphql-hive/gateway/pull/2604) [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support GraphQL 16 with @graphql-tools/utils v12
-  
-  Preserves GraphQL 16 compatibility while upgrading to `@graphql-tools/utils` v12, `@graphql-tools/executor` v2, and the compatible `@graphql-tools/schema` and `@graphql-tools/merge` releases. Consumers now receive consistent resolver and execution request types without conflicts between different GraphQL Tools versions.
-  
-  Stitched and delegated operations handle the new executor variable result shape correctly, including variables used by directives. Resolver execution also supports the executor's cancellation and asynchronous work helpers while remaining compatible with the GraphQL 16 `GraphQLResolveInfo` API.
+  Stitched and delegated operations handle the new executor variable result shape correctly,
+  including variables used by directives. Resolver execution also supports the executor's
+  cancellation and asynchronous work helpers while remaining compatible with the GraphQL 16
+  `GraphQLResolveInfo` API.
 
 ### Patch Changes
 
+- [#2604](https://github.com/graphql-hive/gateway/pull/2604)
+  [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/utils@^12.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.0.1)
+    (from `^11.0.0`, in `dependencies`)
 
-- [#2604](https://github.com/graphql-hive/gateway/pull/2604) [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830) Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/utils@^12.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.0.1) (from `^11.0.0`, in `dependencies`)
-- Updated dependencies [[`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830), [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830)]:
+- Updated dependencies
+  [[`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830),
+  [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830)]:
   - @graphql-tools/delegate@12.2.0
 
 ## 4.0.30
+
 ### Patch Changes
 
-- Updated dependencies [[`e5ea5f4`](https://github.com/graphql-hive/gateway/commit/e5ea5f419bb27abe24e6962f07fd98fb886464f7)]:
+- Updated dependencies
+  [[`e5ea5f4`](https://github.com/graphql-hive/gateway/commit/e5ea5f419bb27abe24e6962f07fd98fb886464f7)]:
   - @graphql-tools/delegate@12.1.4
 
 ## 4.0.29
+
 ### Patch Changes
 
-- Updated dependencies [[`eb6569b`](https://github.com/graphql-hive/gateway/commit/eb6569b3ee21bdc16c67c6d356101e66e206d520)]:
+- Updated dependencies
+  [[`eb6569b`](https://github.com/graphql-hive/gateway/commit/eb6569b3ee21bdc16c67c6d356101e66e206d520)]:
   - @graphql-tools/delegate@12.1.3
 
 ## 4.0.28
+
 ### Patch Changes
 
-- Updated dependencies [[`af2cccb`](https://github.com/graphql-hive/gateway/commit/af2cccb7150db504ce42ab6b463166341377614f)]:
+- Updated dependencies
+  [[`af2cccb`](https://github.com/graphql-hive/gateway/commit/af2cccb7150db504ce42ab6b463166341377614f)]:
   - @graphql-tools/delegate@12.1.2
 
 ## 4.0.27
+
 ### Patch Changes
 
-- Updated dependencies [[`9ff0daf`](https://github.com/graphql-hive/gateway/commit/9ff0dafdfaa1db829dbde2c28e98c78e47fc7b24)]:
+- Updated dependencies
+  [[`9ff0daf`](https://github.com/graphql-hive/gateway/commit/9ff0dafdfaa1db829dbde2c28e98c78e47fc7b24)]:
   - @graphql-tools/delegate@12.1.1
 
 ## 4.0.26
+
 ### Patch Changes
 
-- Updated dependencies [[`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc), [`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc)]:
+- Updated dependencies
+  [[`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc),
+  [`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc)]:
   - @graphql-tools/delegate@12.1.0
 
 ## 4.0.25
+
 ### Patch Changes
 
-- Updated dependencies [[`8a08de3`](https://github.com/graphql-hive/gateway/commit/8a08de36be598f975ba500a28a9bd9710ead2d66), [`65ce370`](https://github.com/graphql-hive/gateway/commit/65ce3702231068c946d4f95147b556cab57ad28c)]:
+- Updated dependencies
+  [[`8a08de3`](https://github.com/graphql-hive/gateway/commit/8a08de36be598f975ba500a28a9bd9710ead2d66),
+  [`65ce370`](https://github.com/graphql-hive/gateway/commit/65ce3702231068c946d4f95147b556cab57ad28c)]:
   - @graphql-tools/delegate@12.0.20
 
 ## 4.0.24
+
 ### Patch Changes
 
-- Updated dependencies [[`0bbdbbc`](https://github.com/graphql-hive/gateway/commit/0bbdbbc22b75d9705a77f96144af002c796a695d)]:
+- Updated dependencies
+  [[`0bbdbbc`](https://github.com/graphql-hive/gateway/commit/0bbdbbc22b75d9705a77f96144af002c796a695d)]:
   - @graphql-tools/delegate@12.0.19
 
 ## 4.0.23
+
 ### Patch Changes
 
 - Updated dependencies []:
   - @graphql-tools/delegate@12.0.18
 
 ## 4.0.22
+
 ### Patch Changes
 
-- Updated dependencies [[`3e774e0`](https://github.com/graphql-hive/gateway/commit/3e774e050bc2d3c33e0f36a258ab6a8d94bf0750)]:
+- Updated dependencies
+  [[`3e774e0`](https://github.com/graphql-hive/gateway/commit/3e774e050bc2d3c33e0f36a258ab6a8d94bf0750)]:
   - @graphql-tools/delegate@12.0.17
 
 ## 4.0.21
+
 ### Patch Changes
 
-- Updated dependencies [[`deafdc0`](https://github.com/graphql-hive/gateway/commit/deafdc00e388ed195c2cdf77e98cd19e7d496d48)]:
+- Updated dependencies
+  [[`deafdc0`](https://github.com/graphql-hive/gateway/commit/deafdc00e388ed195c2cdf77e98cd19e7d496d48)]:
   - @graphql-tools/delegate@12.0.16
 
 ## 4.0.20
+
 ### Patch Changes
 
-- Updated dependencies [[`dff525f`](https://github.com/graphql-hive/gateway/commit/dff525f214d3525434c5a73a5b3fb22c46550163)]:
+- Updated dependencies
+  [[`dff525f`](https://github.com/graphql-hive/gateway/commit/dff525f214d3525434c5a73a5b3fb22c46550163)]:
   - @graphql-tools/delegate@12.0.14
 
 ## 4.0.19
+
 ### Patch Changes
 
 - Updated dependencies []:
   - @graphql-tools/delegate@12.0.13
 
 ## 4.0.18
+
 ### Patch Changes
 
-- Updated dependencies [[`da68d27`](https://github.com/graphql-hive/gateway/commit/da68d2710dff1f8bca5b17bcd5368e631f72114e)]:
+- Updated dependencies
+  [[`da68d27`](https://github.com/graphql-hive/gateway/commit/da68d2710dff1f8bca5b17bcd5368e631f72114e)]:
   - @graphql-tools/delegate@12.0.12
 
 ## 4.0.17
+
 ### Patch Changes
 
 - Updated dependencies []:
   - @graphql-tools/delegate@12.0.11
 
 ## 4.0.16
+
 ### Patch Changes
 
-- Updated dependencies [[`dae3fe4`](https://github.com/graphql-hive/gateway/commit/dae3fe4fbb9c78598d1bbf91c2ed07ab1b90f05d)]:
+- Updated dependencies
+  [[`dae3fe4`](https://github.com/graphql-hive/gateway/commit/dae3fe4fbb9c78598d1bbf91c2ed07ab1b90f05d)]:
   - @graphql-tools/delegate@12.0.10
 
 ## 4.0.15
+
 ### Patch Changes
 
-- Updated dependencies [[`43aaa6a`](https://github.com/graphql-hive/gateway/commit/43aaa6ab8c1c64cae92e9cdff7016ebdf1afa756)]:
+- Updated dependencies
+  [[`43aaa6a`](https://github.com/graphql-hive/gateway/commit/43aaa6ab8c1c64cae92e9cdff7016ebdf1afa756)]:
   - @graphql-tools/delegate@12.0.9
 
 ## 4.0.14
+
 ### Patch Changes
 
-- Updated dependencies [[`4065b7f`](https://github.com/graphql-hive/gateway/commit/4065b7fbb08d9e75c5f0d3b2b4d42d665aa9dbd9)]:
+- Updated dependencies
+  [[`4065b7f`](https://github.com/graphql-hive/gateway/commit/4065b7fbb08d9e75c5f0d3b2b4d42d665aa9dbd9)]:
   - @graphql-tools/delegate@12.0.8
 
 ## 4.0.13
+
 ### Patch Changes
 
-- Updated dependencies [[`584a293`](https://github.com/graphql-hive/gateway/commit/584a293e3dafa7cd2d0210f80299c81b6707bcd4)]:
+- Updated dependencies
+  [[`584a293`](https://github.com/graphql-hive/gateway/commit/584a293e3dafa7cd2d0210f80299c81b6707bcd4)]:
   - @graphql-tools/delegate@12.0.7
 
 ## 4.0.12
+
 ### Patch Changes
 
-- Updated dependencies [[`2200fc3`](https://github.com/graphql-hive/gateway/commit/2200fc3e9b94db77a642835bbf2d646c65b3e8d0)]:
+- Updated dependencies
+  [[`2200fc3`](https://github.com/graphql-hive/gateway/commit/2200fc3e9b94db77a642835bbf2d646c65b3e8d0)]:
   - @graphql-tools/delegate@12.0.6
 
 ## 4.0.11
+
 ### Patch Changes
 
-- Updated dependencies [[`e92c5a9`](https://github.com/graphql-hive/gateway/commit/e92c5a9702a2aea395a4a4e3a482b92f528655e8)]:
+- Updated dependencies
+  [[`e92c5a9`](https://github.com/graphql-hive/gateway/commit/e92c5a9702a2aea395a4a4e3a482b92f528655e8)]:
   - @graphql-tools/delegate@12.0.5
 
 ## 4.0.10
+
 ### Patch Changes
 
+- [#1842](https://github.com/graphql-hive/gateway/pull/1842)
+  [`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/utils@^11.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.0.0)
+    (from `^10.10.3`, in `dependencies`)
 
-- [#1842](https://github.com/graphql-hive/gateway/pull/1842) [`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/utils@^11.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.0.0) (from `^10.10.3`, in `dependencies`)
-- Updated dependencies [[`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f)]:
+- Updated dependencies
+  [[`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f)]:
   - @graphql-tools/delegate@12.0.4
 
 ## 4.0.9
+
 ### Patch Changes
 
-- Updated dependencies [[`dcd8f0e`](https://github.com/graphql-hive/gateway/commit/dcd8f0e93fd220cb99f79cadea759ea49bc15308)]:
+- Updated dependencies
+  [[`dcd8f0e`](https://github.com/graphql-hive/gateway/commit/dcd8f0e93fd220cb99f79cadea759ea49bc15308)]:
   - @graphql-tools/delegate@12.0.3
 
 ## 4.0.8
+
 ### Patch Changes
 
-- Updated dependencies [[`da8b8e3`](https://github.com/graphql-hive/gateway/commit/da8b8e3f3545487249b11c6577e3889f68527249)]:
+- Updated dependencies
+  [[`da8b8e3`](https://github.com/graphql-hive/gateway/commit/da8b8e3f3545487249b11c6577e3889f68527249)]:
   - @graphql-tools/delegate@12.0.2
 
 ## 4.0.7
+
 ### Patch Changes
 
-- Updated dependencies [[`0d14faf`](https://github.com/graphql-hive/gateway/commit/0d14fafdbaf3fb27eef123016ef2ca977d6688d8)]:
+- Updated dependencies
+  [[`0d14faf`](https://github.com/graphql-hive/gateway/commit/0d14fafdbaf3fb27eef123016ef2ca977d6688d8)]:
   - @graphql-tools/delegate@12.0.1
 
 ## 4.0.6
+
 ### Patch Changes
 
-- Updated dependencies [[`1dbc653`](https://github.com/graphql-hive/gateway/commit/1dbc6536cb992a705cac7894acca6fe5431b72de), [`bc6cddd`](https://github.com/graphql-hive/gateway/commit/bc6cddd1c53a012dd02a1d8a7217a28e65cc6ae9), [`b520eb2`](https://github.com/graphql-hive/gateway/commit/b520eb2309f627578519826d6b9e0056252c6c46)]:
+- Updated dependencies
+  [[`1dbc653`](https://github.com/graphql-hive/gateway/commit/1dbc6536cb992a705cac7894acca6fe5431b72de),
+  [`bc6cddd`](https://github.com/graphql-hive/gateway/commit/bc6cddd1c53a012dd02a1d8a7217a28e65cc6ae9),
+  [`b520eb2`](https://github.com/graphql-hive/gateway/commit/b520eb2309f627578519826d6b9e0056252c6c46)]:
   - @graphql-tools/delegate@12.0.0
 
 ## 4.0.5
+
 ### Patch Changes
 
+- [#1691](https://github.com/graphql-hive/gateway/pull/1691)
+  [`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/utils@^10.10.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.3)
+    (from `^10.10.1`, in `dependencies`)
 
-- [#1691](https://github.com/graphql-hive/gateway/pull/1691) [`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/utils@^10.10.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.3) (from `^10.10.1`, in `dependencies`)
-- Updated dependencies [[`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb)]:
+- Updated dependencies
+  [[`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb)]:
   - @graphql-tools/delegate@11.1.3
 
 ## 4.0.4
+
 ### Patch Changes
 
+- [#1608](https://github.com/graphql-hive/gateway/pull/1608)
+  [`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/utils@^10.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.1)
+    (from `^10.9.1`, in `dependencies`)
 
-- [#1608](https://github.com/graphql-hive/gateway/pull/1608) [`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/utils@^10.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.1) (from `^10.9.1`, in `dependencies`)
+- [#1662](https://github.com/graphql-hive/gateway/pull/1662)
+  [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/utils@^10.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.1)
+    (from `^10.10.0`, in `dependencies`)
 
-- [#1662](https://github.com/graphql-hive/gateway/pull/1662) [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/utils@^10.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.1) (from `^10.10.0`, in `dependencies`)
-- Updated dependencies [[`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea), [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff), [`d678113`](https://github.com/graphql-hive/gateway/commit/d678113debfe28095ed6e09c2abba4451a42608a)]:
+- Updated dependencies
+  [[`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea),
+  [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff),
+  [`d678113`](https://github.com/graphql-hive/gateway/commit/d678113debfe28095ed6e09c2abba4451a42608a)]:
   - @graphql-tools/delegate@11.1.2
 
 ## 4.0.3
+
 ### Patch Changes
 
+- [#1654](https://github.com/graphql-hive/gateway/pull/1654)
+  [`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/utils@^10.10.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.0)
+    (from `^10.9.1`, in `dependencies`)
 
-- [#1654](https://github.com/graphql-hive/gateway/pull/1654) [`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/utils@^10.10.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.0) (from `^10.9.1`, in `dependencies`)
-- Updated dependencies [[`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851)]:
+- Updated dependencies
+  [[`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851)]:
   - @graphql-tools/delegate@11.1.1
 
 ## 4.0.2
+
 ### Patch Changes
 
-- Updated dependencies [[`a54b0c1`](https://github.com/graphql-hive/gateway/commit/a54b0c1777229aaeea295bcd15d4f4d6e4e615f7), [`058ef2f`](https://github.com/graphql-hive/gateway/commit/058ef2f8373ea822fed985b705416cb39d5b6efc), [`a8458b2`](https://github.com/graphql-hive/gateway/commit/a8458b24e71fda37a515eaf9ac9af43a73e7823f), [`20f7a50`](https://github.com/graphql-hive/gateway/commit/20f7a50c5ddb862c2921e91ca43d9858bae1bce8)]:
+- Updated dependencies
+  [[`a54b0c1`](https://github.com/graphql-hive/gateway/commit/a54b0c1777229aaeea295bcd15d4f4d6e4e615f7),
+  [`058ef2f`](https://github.com/graphql-hive/gateway/commit/058ef2f8373ea822fed985b705416cb39d5b6efc),
+  [`a8458b2`](https://github.com/graphql-hive/gateway/commit/a8458b24e71fda37a515eaf9ac9af43a73e7823f),
+  [`20f7a50`](https://github.com/graphql-hive/gateway/commit/20f7a50c5ddb862c2921e91ca43d9858bae1bce8)]:
   - @graphql-tools/delegate@11.1.0
 
 ## 4.0.1
+
 ### Patch Changes
 
-- Updated dependencies [[`838ffec`](https://github.com/graphql-hive/gateway/commit/838ffecb2ad3d4ef6bbb65607a56302cb45e2f14)]:
+- Updated dependencies
+  [[`838ffec`](https://github.com/graphql-hive/gateway/commit/838ffecb2ad3d4ef6bbb65607a56302cb45e2f14)]:
   - @graphql-tools/delegate@11.0.1
 
 ## 4.0.0
+
 ### Major Changes
 
+- [#956](https://github.com/graphql-hive/gateway/pull/956)
+  [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Drop Node 18 support
 
-
-- [#956](https://github.com/graphql-hive/gateway/pull/956) [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a) Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Drop Node 18 support
-  
   Least supported Node version is now v20.
 
 ### Patch Changes
 
-- Updated dependencies [[`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a), [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a), [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a)]:
+- Updated dependencies
+  [[`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a),
+  [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a),
+  [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a)]:
   - @graphql-tools/delegate@11.0.0
 
 ## 3.1.38
 
 ### Patch Changes
 
-- [#1358](https://github.com/graphql-hive/gateway/pull/1358) [`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/utils@^10.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.9.1) (from `^10.9.0`, in `dependencies`)
+- [#1358](https://github.com/graphql-hive/gateway/pull/1358)
+  [`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.9.1)
+    (from `^10.9.0`, in `dependencies`)
 
-- Updated dependencies [[`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1)]:
+- Updated dependencies
+  [[`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1)]:
   - @graphql-tools/delegate@10.2.23
 
 ## 3.1.37
 
 ### Patch Changes
 
-- [#1344](https://github.com/graphql-hive/gateway/pull/1344) [`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/utils@^10.9.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.9.0) (from `^10.8.1`, in `dependencies`)
+- [#1344](https://github.com/graphql-hive/gateway/pull/1344)
+  [`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.9.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.9.0)
+    (from `^10.8.1`, in `dependencies`)
 
-- Updated dependencies [[`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a)]:
+- Updated dependencies
+  [[`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a)]:
   - @graphql-tools/delegate@10.2.22
 
 ## 3.1.36
 
 ### Patch Changes
 
-- Updated dependencies [[`b69c80b`](https://github.com/graphql-hive/gateway/commit/b69c80b259bd0565eb9826f7ee9bc8e6c32076d1)]:
+- Updated dependencies
+  [[`b69c80b`](https://github.com/graphql-hive/gateway/commit/b69c80b259bd0565eb9826f7ee9bc8e6c32076d1)]:
   - @graphql-tools/delegate@10.2.21
 
 ## 3.1.35
 
 ### Patch Changes
 
-- Updated dependencies [[`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56), [`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56), [`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56)]:
+- Updated dependencies
+  [[`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56),
+  [`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56),
+  [`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56)]:
   - @graphql-tools/delegate@10.2.20
 
 ## 3.1.34
@@ -497,110 +720,142 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`0512be3`](https://github.com/graphql-hive/gateway/commit/0512be32399268eb7926db48675ddb5763fd8578)]:
+- Updated dependencies
+  [[`0512be3`](https://github.com/graphql-hive/gateway/commit/0512be32399268eb7926db48675ddb5763fd8578)]:
   - @graphql-tools/delegate@10.2.18
 
 ## 3.1.32
 
 ### Patch Changes
 
-- Updated dependencies [[`c7ea2c5`](https://github.com/graphql-hive/gateway/commit/c7ea2c5ae71b6b338ef22edd927a3fc93803965f), [`0af3485`](https://github.com/graphql-hive/gateway/commit/0af3485abb1b3dfba4126f09d291b2096d23aa32)]:
+- Updated dependencies
+  [[`c7ea2c5`](https://github.com/graphql-hive/gateway/commit/c7ea2c5ae71b6b338ef22edd927a3fc93803965f),
+  [`0af3485`](https://github.com/graphql-hive/gateway/commit/0af3485abb1b3dfba4126f09d291b2096d23aa32)]:
   - @graphql-tools/delegate@10.2.17
 
 ## 3.1.31
 
 ### Patch Changes
 
-- Updated dependencies [[`4e33933`](https://github.com/graphql-hive/gateway/commit/4e339333945f4c4547d9ae719e67b4671fe89f04)]:
+- Updated dependencies
+  [[`4e33933`](https://github.com/graphql-hive/gateway/commit/4e339333945f4c4547d9ae719e67b4671fe89f04)]:
   - @graphql-tools/delegate@10.2.16
 
 ## 3.1.30
 
 ### Patch Changes
 
-- Updated dependencies [[`278618a`](https://github.com/graphql-hive/gateway/commit/278618a1383a01016041ce0a40adec8803c62448)]:
+- Updated dependencies
+  [[`278618a`](https://github.com/graphql-hive/gateway/commit/278618a1383a01016041ce0a40adec8803c62448)]:
   - @graphql-tools/delegate@10.2.15
 
 ## 3.1.29
 
 ### Patch Changes
 
-- Updated dependencies [[`6334b2e`](https://github.com/graphql-hive/gateway/commit/6334b2e5d4942693121ab7d44a96fa80408aace1), [`2a54e85`](https://github.com/graphql-hive/gateway/commit/2a54e85f2848aea7525703ea33918a21db96b26b)]:
+- Updated dependencies
+  [[`6334b2e`](https://github.com/graphql-hive/gateway/commit/6334b2e5d4942693121ab7d44a96fa80408aace1),
+  [`2a54e85`](https://github.com/graphql-hive/gateway/commit/2a54e85f2848aea7525703ea33918a21db96b26b)]:
   - @graphql-tools/delegate@10.2.14
 
 ## 3.1.28
 
 ### Patch Changes
 
-- Updated dependencies [[`2318393`](https://github.com/graphql-hive/gateway/commit/2318393bc7b3aca7f53806a44b59277cd176702d)]:
+- Updated dependencies
+  [[`2318393`](https://github.com/graphql-hive/gateway/commit/2318393bc7b3aca7f53806a44b59277cd176702d)]:
   - @graphql-tools/delegate@10.2.13
 
 ## 3.1.27
 
 ### Patch Changes
 
-- [#620](https://github.com/graphql-hive/gateway/pull/620) [`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/utils@^10.8.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.8.1) (from `^10.7.0`, in `dependencies`)
+- [#620](https://github.com/graphql-hive/gateway/pull/620)
+  [`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.8.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.8.1)
+    (from `^10.7.0`, in `dependencies`)
 
-- Updated dependencies [[`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9)]:
+- Updated dependencies
+  [[`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9)]:
   - @graphql-tools/delegate@10.2.12
 
 ## 3.1.26
 
 ### Patch Changes
 
-- Updated dependencies [[`9144222`](https://github.com/graphql-hive/gateway/commit/91442220b2242a0fa082d4b544d03621572eecd0)]:
+- Updated dependencies
+  [[`9144222`](https://github.com/graphql-hive/gateway/commit/91442220b2242a0fa082d4b544d03621572eecd0)]:
   - @graphql-tools/delegate@10.2.11
 
 ## 3.1.25
 
 ### Patch Changes
 
-- Updated dependencies [[`18682e6`](https://github.com/graphql-hive/gateway/commit/18682e6873091afe63f09414f02f93649a4da141)]:
+- Updated dependencies
+  [[`18682e6`](https://github.com/graphql-hive/gateway/commit/18682e6873091afe63f09414f02f93649a4da141)]:
   - @graphql-tools/delegate@10.2.10
 
 ## 3.1.24
 
 ### Patch Changes
 
-- [#373](https://github.com/graphql-hive/gateway/pull/373) [`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/utils@^10.7.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.7.0) (from `^10.6.2`, in `dependencies`)
+- [#373](https://github.com/graphql-hive/gateway/pull/373)
+  [`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.7.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.7.0)
+    (from `^10.6.2`, in `dependencies`)
 
-- Updated dependencies [[`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2)]:
+- Updated dependencies
+  [[`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2)]:
   - @graphql-tools/delegate@10.2.9
 
 ## 3.1.23
 
 ### Patch Changes
 
-- Updated dependencies [[`23b8987`](https://github.com/graphql-hive/gateway/commit/23b89874fcf10b4cb6b1b941f29fa5f5aecf0ef2)]:
+- Updated dependencies
+  [[`23b8987`](https://github.com/graphql-hive/gateway/commit/23b89874fcf10b4cb6b1b941f29fa5f5aecf0ef2)]:
   - @graphql-tools/delegate@10.2.8
 
 ## 3.1.22
 
 ### Patch Changes
 
-- [#291](https://github.com/graphql-hive/gateway/pull/291) [`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency [`tslib@^2.8.1` ↗︎](https://www.npmjs.com/package/tslib/v/2.8.1) (from `^2.4.0`, in `dependencies`)
+- [#291](https://github.com/graphql-hive/gateway/pull/291)
+  [`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency [`tslib@^2.8.1` ↗︎](https://www.npmjs.com/package/tslib/v/2.8.1) (from
+    `^2.4.0`, in `dependencies`)
 
-- Updated dependencies [[`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151)]:
+- Updated dependencies
+  [[`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151)]:
   - @graphql-tools/delegate@10.2.7
 
 ## 3.1.21
 
 ### Patch Changes
 
-- [#269](https://github.com/graphql-hive/gateway/pull/269) [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/utils@^10.6.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.2) (from `^10.6.0`, in `dependencies`)
+- [#269](https://github.com/graphql-hive/gateway/pull/269)
+  [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.6.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.2)
+    (from `^10.6.0`, in `dependencies`)
 
-- Updated dependencies [[`7df2215`](https://github.com/graphql-hive/gateway/commit/7df2215abd309dc1dfd91f4ec91ce975f3982c62), [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4)]:
+- Updated dependencies
+  [[`7df2215`](https://github.com/graphql-hive/gateway/commit/7df2215abd309dc1dfd91f4ec91ce975f3982c62),
+  [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4)]:
   - @graphql-tools/delegate@10.2.6
 
 ## 3.1.20
 
 ### Patch Changes
 
-- Updated dependencies [[`9ce705c`](https://github.com/graphql-hive/gateway/commit/9ce705c5ccc5e6f4ac26af6e6471a6d2f4e995db)]:
+- Updated dependencies
+  [[`9ce705c`](https://github.com/graphql-hive/gateway/commit/9ce705c5ccc5e6f4ac26af6e6471a6d2f4e995db)]:
   - @graphql-tools/delegate@10.2.5
 
 ## 3.1.19
@@ -614,38 +869,47 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`7ca0ff3`](https://github.com/graphql-hive/gateway/commit/7ca0ff331e42c133c4218a8086bbf0a7607f45d0)]:
+- Updated dependencies
+  [[`7ca0ff3`](https://github.com/graphql-hive/gateway/commit/7ca0ff331e42c133c4218a8086bbf0a7607f45d0)]:
   - @graphql-tools/delegate@10.2.3
 
 ## 3.1.17
 
 ### Patch Changes
 
-- Updated dependencies [[`2e0add3`](https://github.com/graphql-hive/gateway/commit/2e0add3ea9b237ad385d5b5cd4c12eeeb847805a)]:
+- Updated dependencies
+  [[`2e0add3`](https://github.com/graphql-hive/gateway/commit/2e0add3ea9b237ad385d5b5cd4c12eeeb847805a)]:
   - @graphql-tools/delegate@10.2.2
 
 ## 3.1.16
 
 ### Patch Changes
 
-- [#164](https://github.com/graphql-hive/gateway/pull/164) [`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/utils@^10.6.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.0) (from `^10.5.6`, in `dependencies`)
+- [#164](https://github.com/graphql-hive/gateway/pull/164)
+  [`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.6.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.0)
+    (from `^10.5.6`, in `dependencies`)
 
-- Updated dependencies [[`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf)]:
+- Updated dependencies
+  [[`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf)]:
   - @graphql-tools/delegate@10.2.1
 
 ## 3.1.15
 
 ### Patch Changes
 
-- Updated dependencies [[`f32cb2a`](https://github.com/graphql-hive/gateway/commit/f32cb2a0289aa32e4811ced5dc1aac3efb0674f1)]:
+- Updated dependencies
+  [[`f32cb2a`](https://github.com/graphql-hive/gateway/commit/f32cb2a0289aa32e4811ced5dc1aac3efb0674f1)]:
   - @graphql-tools/delegate@10.2.0
 
 ## 3.1.14
 
 ### Patch Changes
 
-- Updated dependencies [[`73c621d`](https://github.com/graphql-hive/gateway/commit/73c621d98a4e6ca134527e349bc71223c03d06db)]:
+- Updated dependencies
+  [[`73c621d`](https://github.com/graphql-hive/gateway/commit/73c621d98a4e6ca134527e349bc71223c03d06db)]:
   - @graphql-tools/delegate@10.1.3
 
 ## 3.1.12

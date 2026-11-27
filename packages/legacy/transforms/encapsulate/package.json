@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-encapsulate",
-  "version": "0.107.3",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,11 +36,11 @@
   },
   "dependencies": {
     "@graphql-hive/pubsub": "^3.0.0",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/delegate": "^13.0.0",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
+    "@graphql-tools/delegate": "^14.0.0",
     "@graphql-tools/utils": "^13.2.3",
-    "@graphql-tools/wrap": "^12.0.0",
+    "@graphql-tools/wrap": "^13.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

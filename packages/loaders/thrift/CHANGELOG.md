@@ -1,5 +1,530 @@
 # @omnigraph/thrift
 
+## 1.0.0
+
+### Minor Changes
+
+- [#9847](https://github.com/ardatan/graphql-mesh/pull/9847)
+  [`f9b41bc`](https://github.com/ardatan/graphql-mesh/commit/f9b41bc23325f130e39244b1748ba4e7eecd2b4f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Loader-generated subgraphs are federation-ready
+  at load time, and hand-written SDL gets a first-class Compose entry point.
+
+  ### Why
+
+  Mesh Compose previously had to invent Mesh-spec `@link` imports and `@composeDirective` for every
+  loader subgraph. That made loader/hand SDL incomplete for schema registries until after a Compose
+  pass, and forced hand-written flows to copy-paste `buildASTSchema(parse(readFileSync(...)))`.
+
+  ### What changed
+  - **`importMeshDirectives`** lives in **`@graphql-mesh/utils`** so protocol loaders do not depend
+    on `@graphql-mesh/fusion-composition`. Fusion composition re-exports it for Compose.
+  - Loaders stamp Mesh `@link` + `@composeDirective` via `importMeshDirectives([...])` (explicit
+    list). **Connectors loaders keep full `directive @connect` / `@source` defs** so printed
+    subgraph SDL is GraphQL.js-valid, but **do not stamp `@composeDirective(name: "@connect")`**.
+    Mesh Compose stamps composeDirective (+ any missing connect defs) **only on Guild input**
+    (`prepareConnectorsBeforeGuild`), then `finalizeConnectorsSupergraph` emits `@join__directive`
+    and drops composeDirective / native connect defs from the final supergraph.
+  - Mesh-spec `@link` URLs start at **`https://specs.graphql-mesh.dev/<name>/v0.1`**. Shared Mesh
+    **core** directives (`@transport`, `@merge`, `@hoist`, `@source`/`@meshSource`, `@resolveTo`,
+    `@pubsubOperation`, `@pubsubPublish`, `@extraSchemaDefinitionDirective`, …) use **`core/v0.1`**.
+    Protocol loaders use a separate protocol URL (e.g. `sql/v0.1` for `@sql` only) plus `core/v0.1`
+    for `@transport`. Older Mesh `@link` prefixes remain accepted when reading existing supergraphs;
+    Compose only stamps `specs.graphql-mesh.dev`.
+  - **Spec contract:** `parseMeshSpecUrl` / `assertSupportedMeshSpec` (/`OnSchema`) - transports
+    validate supported protocol/`core` versions when a matching `@link` is present; Compose asserts
+    after stamping. Hive Gateway can reuse the same helpers later.
+  - Hand-written SDL: prefer **`subgraphs: [{ name?, schema }]`** where `schema` is
+    `MaybePromise<GraphQLSchema | DocumentNode | string>` (inline SDL, path, or URL). **`name` is
+    optional** when the schema has `@transport(subgraph: ...)` (conflict if both differ; error if
+    neither). Or use **`loadSubgraphFromSDL(name?, schema, options?)`**. Mesh `@link` /
+    `@composeDirective` belong in that SDL (or come from a loader).
+  - **GM-41:** after Guild composition, **`finalizeMeshJoinDirectives`** rewrites schema
+    `@transport` to **`@join__directive(graphs:, name: "transport", args:)`** for protocol kinds
+    (sql/thrift/protobuf/neo4j/…), dropping `subgraph` when it matches `@join__graph`. Pure `http`
+    with matching location is dropped. **Connect:** bare connect omits transport (Gateway infers
+    `kind: "connect"` from join connect/source). Remaining connect options/headers stay a **native**
+    `@transport(kind: "connect", subgraph, location?, options/headers)` - Apollo Router Connectors
+    reject Mesh `@transport` reconstituted from `@join__directive`. Join-carried protocol transport
+    keeps `directive @transport` (+ `TransportOptions`) for Apollo reconstitution of non-connect
+    kinds. Unused orphan transport artifacts are pruned when nothing remains.
+  - **SDL print (loaders/compose):** subgraph `@connect` / selection use GraphQL `"""` only when the
+    value has newlines; omit empty thrift `args`; omit default `Accept` /
+    `Content-Type: application/json` from connect header mappings (runtime still defaults Accept
+    when unset). Supergraph join args stay dense (escaped `\n`, no prefer-`"""`).
+  - **GM-37 first slice:** **`validateMeshDirectives`** - Mesh `@link` version contract +
+    `@transport` arg shapes at Compose ingest / hand SDL; soft on transports.
+  - **`convertSubgraphToFederationv2`:** skip type-level `@shareable` on `@key` entities; import
+    only used Fed directives (+ `@shareable`).
+  - Hive Gateway **`@graphql-mesh/fusion-runtime` yarn patch:** read
+    `join__directive(name: "transport")`, infer `kind: "connect"` from join connect/source
+    (including selection-only / virtual connectors with empty `join__graph(url:)` and no SCHEMA
+    `@source`), accept `@source` from core URL, reject unsupported Mesh `@link` versions.
+
+  Object-level `@shareable` / full Fed v2 conversion remains Compose-time
+  (`convertSubgraphToFederationv2`) - loaders do not blanket-stamp `@shareable`.
+
+  ### Migration
+
+  Printed loader SDL includes Mesh `@link` / `@composeDirective` for Mesh directives, plus full
+  Connectors `@connect` / `@source` defs - **not** `@composeDirective(name: "@connect")`. Supergraph
+  SDL carries protocol transports as `@join__directive(name: "transport")` (native `@transport` may
+  remain for connect options). Update snapshots. Hive Gateway must read join transport
+  (fusion-runtime yarn patch until upstreamed).
+
+  Hand-written Compose configs can replace custom file loaders:
+
+  ```ts
+  // Before
+  sourceHandler: () => ({
+    name: 'movies',
+    schema$: buildASTSchema(parse(readFileSync('./movies.graphql', 'utf8')), {
+      assumeValidSDL: true,
+      assumeValid: true
+    })
+  })
+
+  // After
+  subgraphs: [
+    {
+      name: 'movies',
+      schema: './movies.graphql' // or inline SDL / DocumentNode / GraphQLSchema / Promise
+    }
+  ]
+  ```
+
+  For registry publish, prefer `mesh-compose --subgraph <name>` (still adds `@shareable` / full Fed
+  v2 object conversion) then Hive / GraphOS publish. Loader and hand-written SDL already carry Mesh
+  `@link` / `@composeDirective` so Compose does not invent them.
+
+  OpenAPI / RAML emit goes through `@omnigraph/json-schema`, so those subgraphs pick up the same
+  federation-ready behavior without separate package bumps in this changeset.
+
+  ### Follow-up (not in this PR)
+
+  **GM-41 remainder:** Mesh field/type dirs (`@hoist`, `@merge`, `@source`, …) → `@join__directive`.
+  Upstream Hive Gateway `fusion-runtime` should absorb the yarn patch (join transport read, connect
+  infer, `@source` from core URL, Mesh `@link` version assert).
+
+- [#9843](https://github.com/ardatan/graphql-mesh/pull/9843)
+  [`61c3885`](https://github.com/ardatan/graphql-mesh/commit/61c38858c19b30c5801ad3a289edf19ad62e2f70)
+  Thanks [@ardatan](https://github.com/ardatan)! - ### Why
+
+  Loader error modeling shares one flag name and polarity across protocols: `ignoreErrorResponses`
+  (`true` = do not model protocol failures in the GraphQL result / throw-gate; `false` = model
+  failures in GraphQL `data`). Thrift still used the older `ignoreExceptions` name.
+
+  ### What
+  - **`@omnigraph/thrift`:** rename loader option `ignoreExceptions` -> `ignoreErrorResponses` (same
+    polarity). Default stays `true`. No alias for the old name.
+  - OpenAPI / JSON Schema / RAML: TSDoc-only polarity clarification on the existing
+    `ignoreErrorResponses` option (defaults unchanged). No package bump.
+
+  ### Migration
+
+  **Thrift**
+
+  Before:
+
+  ```ts
+  loadThriftSubgraph('calc', {
+    source: './calc.thrift',
+    endpoint: 'http://localhost:8080/thrift',
+    ignoreExceptions: false
+  })
+  ```
+
+  After:
+
+  ```ts
+  loadThriftSubgraph('calc', {
+    source: './calc.thrift',
+    endpoint: 'http://localhost:8080/thrift',
+    ignoreErrorResponses: false
+  })
+  ```
+
+  Omit the option (or set `true`) for the previous default throw behavior.
+
+  **OpenAPI / JSON Schema / RAML**
+
+  No config migration. Unset still models non-2xx response schemas.
+
+- [#9745](https://github.com/ardatan/graphql-mesh/pull/9745)
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)
+  Thanks [@ardatan](https://github.com/ardatan)! - ## Motivation
+
+  Mesh still had its own logging, pubsub, and teardown model next to Yoga 6 / Hive Gateway:
+
+  - Mesh `DefaultLogger` and Mesh PubSub / `HivePubSub` re-exports beside `@graphql-hive/logger` and
+    `@graphql-hive/pubsub`
+  - Shutdown via `pubsub.publish('destroy')`, with handlers and caches subscribing to that topic
+    (easy to miss, leaks pools/clients/timers)
+  - Node 18/20 engines and loose `graphql` peers that drift from Yoga 6 / GraphQL Tools
+
+  This major aligns Mesh with that shared platform in one release.
+
+  ## Design decisions
+  1. **Node `>=22.18.0`**: matches current Yoga / Hive / WHATWG engines.
+  2. **GraphQL peer `^16 || ^17`**: what Yoga 6 and `@graphql-tools/utils` / `schema` / `merge` /
+     `executor` support (not `*`).
+  3. **Request path prefers context**: use Yoga/Gateway `context.log` / `context.pubsub` when
+     present. Constructor `log` / `pubsub` stay only where init-time wiring is required (for example
+     live-query subscribe, New Relic agent missing).
+  4. **Teardown via Explicit Resource Management**: Mesh tore down with `destroy` pubsub. Now
+     components implement `[DisposableSymbols]` and `getMesh` registers them with
+     `disposables.use(...)`. Handler/transform/plugin/cache constructors never took a `disposables`
+     option; that is unchanged.
+  5. **No Mesh re-exports** for Logger, PubSub, or promise helpers; import Hive/WHATWG packages
+     directly.
+
+  ## Shared platform changes ()
+  - **Node.js `>=22.18.0`** (18/20 dropped).
+  - **`graphql` peer `^16.0.0 || ^17.0.0`**.
+  - **Logging**: Mesh `Logger` / `DefaultLogger` removed. Use `@graphql-hive/logger`. Prefer
+    `context.log` on the request path. Option fields renamed from `logger` to `log` where they
+    remain.
+  - **PubSub**: Mesh PubSub re-exports removed. Use `@graphql-hive/pubsub`. The **`destroy` pubsub
+    lifecycle event is removed**; tear down with the disposable stack / `mesh.destroy()` instead of
+    `pubsub.publish('destroy')`.
+  - **Lifecycle**: `getMesh` owns an `AsyncDisposableStack` and calls `disposables.use(...)` on
+    disposable cache/handler/transform/plugin/pubsub instances. the change is destroy-pubsub
+    subscribers replaced by `[DisposableSymbols]`, not "stop injecting disposables into options"
+    (those options did not exist ).
+  - **Promises**: `handleMaybePromise` / `fakePromise` / `fakeRejectPromise` /
+    `Promise.withResolvers` from `@whatwg-node/promise-helpers` (no Mesh re-exports).
+
+  ## Migration checklist
+
+  ```bash
+  node -v # >= 22.18.0
+  yarn add graphql@^16 @graphql-hive/logger @graphql-hive/pubsub
+  yarn add @whatwg-node/promise-helpers @whatwg-node/disposablestack
+  ```
+
+  ```ts
+  import { Logger } from '@graphql-hive/logger'
+  import { MemPubSub } from '@graphql-hive/pubsub'
+  import { AsyncDisposableStack } from '@whatwg-node/disposablestack'
+  import { fakePromise, handleMaybePromise } from '@whatwg-node/promise-helpers'
+
+  // Before on before:
+  // import { DefaultLogger, PubSub, handleMaybePromise } from '@graphql-mesh/utils'
+  // await pubsub.publish('destroy', undefined)
+
+  const log = new Logger()
+  const pubsub = new MemPubSub()
+  await using disposables = new AsyncDisposableStack()
+  disposables.use(cache)
+  disposables.use(handler)
+  ```
+
+  ### Import map (common breakages)
+
+  | Before                                                | After                                                        |
+  | ----------------------------------------------------- | ------------------------------------------------------------ |
+  | `DefaultLogger` / Mesh `Logger`                       | `Logger` from `@graphql-hive/logger`                         |
+  | Mesh `PubSub` / `MemPubSub` / `HivePubSub`            | `@graphql-hive/pubsub`                                       |
+  | `handleMaybePromise` / `MaybePromise` from Mesh utils | `@whatwg-node/promise-helpers`                               |
+  | `pubsub.publish('destroy')` + destroy subscribers     | `[DisposableSymbols]` + `disposables.use` / `mesh.destroy()` |
+  | cache ctor `pubsub` (destroy subscribe)               | removed; dispose the cache instead                           |
+  | option field `logger`                                 | `log`                                                        |
+
+  Package-specific breaks (filter globs, cache `pubsub`, http-cache logging, Hive/live-query
+  options, OpenAPI `futureLinks`, disposable handlers/transports, ...) are in each package's
+  `*-node22-yoga6.md`.
+
+- [#9836](https://github.com/ardatan/graphql-mesh/pull/9836)
+  [`db730d1`](https://github.com/ardatan/graphql-mesh/commit/db730d1c9d3ecef18e47c879501eac242df486c6)
+  Thanks [@ardatan](https://github.com/ardatan)! - ### TL;DR
+
+  If you load Thrift from IDL and **recompose** after upgrading, you are mostly done.
+
+  - **Breaking:** `@fieldTypeMap` / `@thrift__method` / `topTypeMap` / `clientAnnotations` are
+    removed (no dual-read). Regenerate composed SDL.
+  - **Default:** binary HTTP Thrift via slim `@transport` + per-field `@thrift__rpc` (readable
+    compact `args` / `selection`).
+  - **Opt-in:** `protocol: 'json'` emits Federation `@source` / `@connect` (TJSON) for Hive and
+    Apollo Router.
+  - **Optional:** `ignoreErrorResponses`, `entityMethods`, `serviceName`.
+
+  ### Why
+
+  The old surface stamped opaque `@fieldTypeMap` bags and a large `@transport.options`
+  (`clientAnnotations`, `topTypeMap`). Field ids and exact Thrift types (`i16` vs `i32`) were hard
+  to hand-write or review; GraphQL `Int` cannot carry that distinction. Binary was Mesh-only (no
+  Router-friendly TJSON emit). IDL `throws` / `oneway` were ignored, so JSON throws could become
+  silent `null`.
+
+  ### Breaking
+
+  **Removed / no longer executed:** `@fieldTypeMap`, `@thrift__method` (older draft name),
+  `@transport.options.clientAnnotations` / `topTypeMap`, and any transport path that preferred those
+  bags when the new directive was absent.
+
+  **Required:** recompose / regenerate Thrift subgraphs from IDL. Hand-written `@fieldTypeMap` /
+  `@thrift__method` SDL will not run until rewritten to `@thrift__rpc` (binary) or `@connect`
+  (JSON).
+
+  ### What changed
+
+  #### Binary - `protocol: 'binary'` (default)
+  - Slim `@transport(subgraph, kind: "thrift", location, headers)` - no options bag.
+  - Per-field `@thrift__rpc(function, args, selection, throws?, messageType, entity?)`.
+  - Compact mapping keeps wire types explicit (`1(i32): left`, `$(i16)`, containers, nested maps);
+    multiline values print as `"""`.
+  - `map<*, struct>` args expand the value struct field ids (same recursion as list/set-of-struct).
+    `list/set<map<*, scalar>>` keeps the full nested wire token (e.g. `list<map<string, i32>>`) so
+    binary regenerate does not drop the method. Nested scalar containers (e.g. `list<list<i32>>`)
+    keep the full token; nested containers that would drop struct field ids (e.g.
+    `list<map<string, list<Item>>>`) fail at generate until descriptors are preserved.
+  - `function` is always the IDL name. Single-service generate **omits** `service:` (path is on
+    `@transport`).
+  - `messageType: ONEWAY` does not wait for / decode a reply.
+  - `entity: true` only via loader `entityMethods` (Federation entity Query fields).
+  - Transport executes `@thrift__rpc` by field id (no `topTypeMap`). Compact parse keeps
+    `map<*, struct>` as MAP (`keyType` + `valType.fields`), not STRUCT, and
+    `list/set<map<*, struct>>` as LIST/SET → MAP → STRUCT so value field ids (e.g. `7: value`)
+    survive.
+  - Example/e2e calculator codegen runs `scripts/patch-thrift-oneway-zip.mjs` after
+    `@creditkarma/thrift-typescript` so oneway `process_zip` keeps an empty body (upstream 3.7.6
+    still emits REPLY/EXCEPTION).
+  - Service mappings and typedef aliases resolve only after every named type is registered (forward
+    refs resolve correctly).
+  - GraphQL enum members always use **names**. Binary uses plain `i32` leaves with Connectors-style
+    `->match` on `@thrift__rpc` args/selection (same shape as TJSON `@connect`); no Mesh `@enum` on
+    thrift. Recursive struct **arguments** fail at generate (no silent empty truncation).
+
+  #### JSON - `protocol: 'json'`
+
+  Emits `@source` + `@connect` (TJSON) instead of thrift `@transport`:
+
+  - `Content-Type` / `Accept`: `application/vnd.apache.thrift.json`
+  - Path `/`, or `/<service>` when `serviceName` is set
+  - Body message types CALL=`1`, ONEWAY=`4`
+  - `isSuccess` / `errors` so declared throws and `TApplicationException` are not silent nulls;
+    ONEWAY omits `isSuccess`
+  - Bool scalars encode as TJSON integers `0`/`1` (`->match`). Enum args/selections bake name <->
+    i32 `->match` (root scalars, root list/set, and list/set enum fields inside structs, including
+    union `$({ … })` selections).
+  - **Fail at generate** (prefer scalar/struct args, binary, or hand-author `@connect`; Hive Mesh
+    supports `->concat`): `map<*, bool>`, **list/set args**, and maps whose values are
+    struct/list/set/map (Connectors cannot rewrite map values / LitArray has no element spread).
+  - Void/ONEWAY `@connect(selection:)` uses `$(null)` (bare `null` is a field path).
+    `ignoreErrorResponses: false` unions emit a single `$({ … })` selection; void success is
+    `ok: $->get(4)->size->eq(0)`; struct success stamps `field0: $->get(4)->get("0")->ne(null)` and
+    both the loader and REST `processDirectives` resolveType treat that stamp as authoritative when
+    present (Hive may keep `value: { left: undefined }` / `message: undefined` on replies). Declared
+    throws also stamp `__throw_<TypeName>` from the reply field id; shared exception field
+    projections gate on throw-field presence then coalesce with `$(a ?? b)` so an absent throw’s
+    empty `$({…})` projection cannot hide the active exception’s struct/scalar value. Binary still
+    uses `__typename`. Nested enum containers (e.g. `list<list<State>>`) fail at generate on the
+    binary path (same spirit as nested struct containers) until name↔i32 `->match` can be preserved.
+
+  #### Exceptions
+  1. **`TApplicationException`:** binary throws; JSON uses `isSuccess` / `errors`.
+  2. **IDL `throws`:** `ignoreErrorResponses` defaults to `true`. Set `false` for GraphQL unions +
+     `@thrift__rpc(throws:)`. Union `resolveType` matches exception members on **defined** field
+     values (not key presence alone).
+
+  #### Transforms / Connectors eval
+  - Mesh rename / naming-convention rewrite `$args…` inside `@thrift__rpc(args/selection/throws)`
+    the same way as `@connect`. HTTP path templates still rename `$args` when the literal path
+    contains apostrophes. No `@merge` / `@meshSource` for thrift.
+  - Mesh Connectors eval: trailing NamedSelection after `$()` stays on the subselection path;
+    `->map` / `->filter` preserve bare `@` match-arm wildcards (`[@, "other"]`).
+
+  ### Migration
+  1. Upgrade and **recompose** (prefer regenerate from IDL).
+  2. Replace hand-written `@fieldTypeMap` / `@thrift__method` + transport `options` with
+     `@thrift__rpc` or `protocol: 'json'`.
+  3. Keep binary `@transport` to `location` + `headers` only.
+  4. Single-service: no `service:` required on `@thrift__rpc`. TJSON multiplex: set `serviceName`.
+  5. Optional: `ignoreErrorResponses: false`; `entityMethods: ['getX']` only for Federation entity
+     resolvers.
+  6. If IDL uses list/set args or composite/bool map values on the JSON path, switch those RPCs to
+     binary, change the IDL, or hand-author the `@connect` body.
+
+  **Before** (old composed field):
+
+  ```graphql
+  add(request: AddRequestInput): Int @fieldTypeMap(…)
+  # wire layout lived in @transport(options: { topTypeMap, clientAnnotations })
+  ```
+
+  **After** (binary generate):
+
+  ```graphql
+  add(request: AddRequestInput): Int @thrift__rpc(
+    function: "add"
+    args: """
+    1(struct): $args.request {
+      1(i32): left
+      2(i32): right
+    }
+    """
+    selection: "$(i32)"
+    messageType: CALL
+  )
+  ```
+
+  ### Packages
+  - `@omnigraph/thrift` - loader emit; `protocol`, `entityMethods`, `ignoreErrorResponses`,
+    `serviceName`
+  - `@graphql-mesh/transport-thrift` - execute compact mapping (incl. `i32->match` coerce), ONEWAY,
+    throws unions
+  - `@graphql-mesh/transport-connect` - Connectors helpers for TJSON / `$()` / match wildcards
+  - `@graphql-mesh/fusion-composition` - `$args` rewrite for `@thrift__rpc` and HTTP paths
+
+### Patch Changes
+
+- [#9731](https://github.com/ardatan/graphql-mesh/pull/9731)
+  [`a7d4506`](https://github.com/ardatan/graphql-mesh/commit/a7d4506630217bd9e7ab2b594609698e7e5e1649)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`graphql-scalars@^2.0.1` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/2.0.1) (from
+    `^1.22.4`, in `dependencies`)
+
+- [#9745](https://github.com/ardatan/graphql-mesh/pull/9745)
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/fetch@^0.12.1` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.12.1)
+    (from `^0.10.6`, in `dependencies`)
+  - Added dependency
+    [`@graphql-hive/logger@^1.1.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/logger/v/1.1.1)
+    (to `dependencies`)
+  - Updated dependency
+    [`graphql@^16.0.0 || ^17.0.0` ↗︎](https://www.npmjs.com/package/graphql/v/16.0.0) (from `*`, in
+    `peerDependencies`)
+
+- [#9775](https://github.com/ardatan/graphql-mesh/pull/9775)
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/cross-helpers@^0.4.18` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.4.18)
+    (to `dependencies`)
+
+- [#9777](https://github.com/ardatan/graphql-mesh/pull/9777)
+  [`fb5beb6`](https://github.com/ardatan/graphql-mesh/commit/fb5beb6419a7fdd816c0de734b740eef9a7b9b1f)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`thrift@^0.25.0` ↗︎](https://www.npmjs.com/package/thrift/v/0.25.0) (from
+    `^0.24.0`, in `dependencies`)
+
+- [#9827](https://github.com/ardatan/graphql-mesh/pull/9827)
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/transport-connect@^0.12.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-connect/v/0.12.4)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/transport-rest@^0.12.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-rest/v/0.12.4)
+    (from `dependencies`)
+
+- [#9836](https://github.com/ardatan/graphql-mesh/pull/9836)
+  [`db730d1`](https://github.com/ardatan/graphql-mesh/commit/db730d1c9d3ecef18e47c879501eac242df486c6)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/transport-connect@^0.12.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-connect/v/0.12.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/utils@^13.2.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/13.2.2)
+    (to `dependencies`)
+
+- [#9856](https://github.com/ardatan/graphql-mesh/pull/9856)
+  [`6aac64d`](https://github.com/ardatan/graphql-mesh/commit/6aac64dd64ccd396285e52e3db9e2f07b07fbf21)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/logger@^1.2.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/logger/v/1.2.0)
+    (from `^1.1.1`, in `dependencies`)
+
+- [#9868](https://github.com/ardatan/graphql-mesh/pull/9868)
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^13.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/13.2.3)
+    (from `^13.2.2`, in `dependencies`)
+
+- [#9890](https://github.com/ardatan/graphql-mesh/pull/9890)
+  [`d7d6055`](https://github.com/ardatan/graphql-mesh/commit/d7d605581f2324c563a0b0f4e998915528dacbae)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/logger@^2.0.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/logger/v/2.0.0)
+    (from `^1.2.0`, in `dependencies`)
+- Updated dependencies
+  [[`06a77f4`](https://github.com/ardatan/graphql-mesh/commit/06a77f419a2574fa77b63b7ac84c3b446344d332),
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`6aac64d`](https://github.com/ardatan/graphql-mesh/commit/6aac64dd64ccd396285e52e3db9e2f07b07fbf21),
+  [`2c4a150`](https://github.com/ardatan/graphql-mesh/commit/2c4a150f2b5838cccfe1655e3b628d8314df61bc),
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`d7d6055`](https://github.com/ardatan/graphql-mesh/commit/d7d605581f2324c563a0b0f4e998915528dacbae),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`d80446d`](https://github.com/ardatan/graphql-mesh/commit/d80446d2ce4111fdcb329fedd2652800e53ecf8f),
+  [`06a77f4`](https://github.com/ardatan/graphql-mesh/commit/06a77f419a2574fa77b63b7ac84c3b446344d332),
+  [`493d5ff`](https://github.com/ardatan/graphql-mesh/commit/493d5ffa5bceeb1fc2ec0b4c6584ba66d8181183),
+  [`6aac64d`](https://github.com/ardatan/graphql-mesh/commit/6aac64dd64ccd396285e52e3db9e2f07b07fbf21),
+  [`2c4a150`](https://github.com/ardatan/graphql-mesh/commit/2c4a150f2b5838cccfe1655e3b628d8314df61bc),
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`06a77f4`](https://github.com/ardatan/graphql-mesh/commit/06a77f419a2574fa77b63b7ac84c3b446344d332),
+  [`493d5ff`](https://github.com/ardatan/graphql-mesh/commit/493d5ffa5bceeb1fc2ec0b4c6584ba66d8181183),
+  [`20c6601`](https://github.com/ardatan/graphql-mesh/commit/20c6601c4eece0bc0eb99f7416516b3d705026ab),
+  [`6aac64d`](https://github.com/ardatan/graphql-mesh/commit/6aac64dd64ccd396285e52e3db9e2f07b07fbf21),
+  [`2c4a150`](https://github.com/ardatan/graphql-mesh/commit/2c4a150f2b5838cccfe1655e3b628d8314df61bc),
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`d7d6055`](https://github.com/ardatan/graphql-mesh/commit/d7d605581f2324c563a0b0f4e998915528dacbae),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`d466ccc`](https://github.com/ardatan/graphql-mesh/commit/d466ccc4475c0973c4c8352db27bf1c3b92eb9fc),
+  [`06a77f4`](https://github.com/ardatan/graphql-mesh/commit/06a77f419a2574fa77b63b7ac84c3b446344d332),
+  [`493d5ff`](https://github.com/ardatan/graphql-mesh/commit/493d5ffa5bceeb1fc2ec0b4c6584ba66d8181183),
+  [`20c6601`](https://github.com/ardatan/graphql-mesh/commit/20c6601c4eece0bc0eb99f7416516b3d705026ab),
+  [`6aac64d`](https://github.com/ardatan/graphql-mesh/commit/6aac64dd64ccd396285e52e3db9e2f07b07fbf21),
+  [`2c4a150`](https://github.com/ardatan/graphql-mesh/commit/2c4a150f2b5838cccfe1655e3b628d8314df61bc),
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`d7d6055`](https://github.com/ardatan/graphql-mesh/commit/d7d605581f2324c563a0b0f4e998915528dacbae),
+  [`c472c2f`](https://github.com/ardatan/graphql-mesh/commit/c472c2f0f57655cefcafcd82ec448500895b982c),
+  [`612f565`](https://github.com/ardatan/graphql-mesh/commit/612f565a13ab5178767ad58898482c587fb7c434),
+  [`61da679`](https://github.com/ardatan/graphql-mesh/commit/61da679fc946374cbb6e18c9de1f4b158df9cc88),
+  [`f9b41bc`](https://github.com/ardatan/graphql-mesh/commit/f9b41bc23325f130e39244b1748ba4e7eecd2b4f),
+  [`f9b41bc`](https://github.com/ardatan/graphql-mesh/commit/f9b41bc23325f130e39244b1748ba4e7eecd2b4f),
+  [`c1aa88e`](https://github.com/ardatan/graphql-mesh/commit/c1aa88eda5339764dbcc7a347ae6e459a61ff2ca),
+  [`c1aa88e`](https://github.com/ardatan/graphql-mesh/commit/c1aa88eda5339764dbcc7a347ae6e459a61ff2ca),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`dc79228`](https://github.com/ardatan/graphql-mesh/commit/dc792289aca741ff81449c996ea38d50a5cb22cf),
+  [`94be224`](https://github.com/ardatan/graphql-mesh/commit/94be224fac53773992df7984057545f3404979d9),
+  [`c1aa88e`](https://github.com/ardatan/graphql-mesh/commit/c1aa88eda5339764dbcc7a347ae6e459a61ff2ca),
+  [`6deb4fd`](https://github.com/ardatan/graphql-mesh/commit/6deb4fdb80465779f0a0c44d26c5810d12d23181),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`612f565`](https://github.com/ardatan/graphql-mesh/commit/612f565a13ab5178767ad58898482c587fb7c434),
+  [`c1aa88e`](https://github.com/ardatan/graphql-mesh/commit/c1aa88eda5339764dbcc7a347ae6e459a61ff2ca),
+  [`db730d1`](https://github.com/ardatan/graphql-mesh/commit/db730d1c9d3ecef18e47c879501eac242df486c6)]:
+  - @graphql-mesh/cross-helpers@0.4.19
+  - @graphql-mesh/transport-connect@1.0.0
+  - @graphql-mesh/transport-thrift@1.0.0
+  - @graphql-mesh/types@1.0.0
+  - @graphql-mesh/utils@1.0.0
+
 ## 0.12.3
 
 ### Patch Changes

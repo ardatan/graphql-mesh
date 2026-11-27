@@ -1,6 +1,6 @@
 {
   "name": "@graphql-tools/executor-graphql-ws",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "type": "module",
   "description": "graphql-ws GraphQL executor",
   "repository": {

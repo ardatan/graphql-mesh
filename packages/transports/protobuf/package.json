@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-protobuf",
-  "version": "0.7.2",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,11 +37,11 @@
   "dependencies": {
     "@apollo/subgraph": "^2.16.0",
     "@graphql-hive/logger": "^2.0.0",
-    "@graphql-mesh/cross-helpers": "^0.4.18",
-    "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/transport-common": "^2.0.0",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-mesh/cross-helpers": "^0.4.19",
+    "@graphql-mesh/string-interpolation": "^0.6.0",
+    "@graphql-mesh/transport-common": "^3.0.0",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
     "@graphql-tools/utils": "^13.2.3",
     "@grpc/grpc-js": "^1.14.5",
     "@grpc/proto-loader": "^0.8.1",

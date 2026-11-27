@@ -1,5 +1,253 @@
 # @graphql-mesh/odata
 
+## 1.0.0
+
+### Minor Changes
+
+- [#9745](https://github.com/ardatan/graphql-mesh/pull/9745)
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)
+  Thanks [@ardatan](https://github.com/ardatan)! - ## Motivation
+
+  Mesh still had its own logging, pubsub, and teardown model next to Yoga 6 / Hive Gateway:
+
+  - Mesh `DefaultLogger` and Mesh PubSub / `HivePubSub` re-exports beside `@graphql-hive/logger` and
+    `@graphql-hive/pubsub`
+  - Shutdown via `pubsub.publish('destroy')`, with handlers and caches subscribing to that topic
+    (easy to miss, leaks pools/clients/timers)
+  - Node 18/20 engines and loose `graphql` peers that drift from Yoga 6 / GraphQL Tools
+
+  This major aligns Mesh with that shared platform in one release.
+
+  ## Design decisions
+  1. **Node `>=22.18.0`**: matches current Yoga / Hive / WHATWG engines.
+  2. **GraphQL peer `^16 || ^17`**: what Yoga 6 and `@graphql-tools/utils` / `schema` / `merge` /
+     `executor` support (not `*`).
+  3. **Request path prefers context**: use Yoga/Gateway `context.log` / `context.pubsub` when
+     present. Constructor `log` / `pubsub` stay only where init-time wiring is required (for example
+     live-query subscribe, New Relic agent missing).
+  4. **Teardown via Explicit Resource Management**: Mesh tore down with `destroy` pubsub. Now
+     components implement `[DisposableSymbols]` and `getMesh` registers them with
+     `disposables.use(...)`. Handler/transform/plugin/cache constructors never took a `disposables`
+     option; that is unchanged.
+  5. **No Mesh re-exports** for Logger, PubSub, or promise helpers; import Hive/WHATWG packages
+     directly.
+
+  ## Shared platform changes ()
+  - **Node.js `>=22.18.0`** (18/20 dropped).
+  - **`graphql` peer `^16.0.0 || ^17.0.0`**.
+  - **Logging**: Mesh `Logger` / `DefaultLogger` removed. Use `@graphql-hive/logger`. Prefer
+    `context.log` on the request path. Option fields renamed from `logger` to `log` where they
+    remain.
+  - **PubSub**: Mesh PubSub re-exports removed. Use `@graphql-hive/pubsub`. The **`destroy` pubsub
+    lifecycle event is removed**; tear down with the disposable stack / `mesh.destroy()` instead of
+    `pubsub.publish('destroy')`.
+  - **Lifecycle**: `getMesh` owns an `AsyncDisposableStack` and calls `disposables.use(...)` on
+    disposable cache/handler/transform/plugin/pubsub instances. the change is destroy-pubsub
+    subscribers replaced by `[DisposableSymbols]`, not "stop injecting disposables into options"
+    (those options did not exist ).
+  - **Promises**: `handleMaybePromise` / `fakePromise` / `fakeRejectPromise` /
+    `Promise.withResolvers` from `@whatwg-node/promise-helpers` (no Mesh re-exports).
+
+  ## Migration checklist
+
+  ```bash
+  node -v # >= 22.18.0
+  yarn add graphql@^16 @graphql-hive/logger @graphql-hive/pubsub
+  yarn add @whatwg-node/promise-helpers @whatwg-node/disposablestack
+  ```
+
+  ```ts
+  import { Logger } from '@graphql-hive/logger'
+  import { MemPubSub } from '@graphql-hive/pubsub'
+  import { AsyncDisposableStack } from '@whatwg-node/disposablestack'
+  import { fakePromise, handleMaybePromise } from '@whatwg-node/promise-helpers'
+
+  // Before on before:
+  // import { DefaultLogger, PubSub, handleMaybePromise } from '@graphql-mesh/utils'
+  // await pubsub.publish('destroy', undefined)
+
+  const log = new Logger()
+  const pubsub = new MemPubSub()
+  await using disposables = new AsyncDisposableStack()
+  disposables.use(cache)
+  disposables.use(handler)
+  ```
+
+  ### Import map (common breakages)
+
+  | Before                                                | After                                                        |
+  | ----------------------------------------------------- | ------------------------------------------------------------ |
+  | `DefaultLogger` / Mesh `Logger`                       | `Logger` from `@graphql-hive/logger`                         |
+  | Mesh `PubSub` / `MemPubSub` / `HivePubSub`            | `@graphql-hive/pubsub`                                       |
+  | `handleMaybePromise` / `MaybePromise` from Mesh utils | `@whatwg-node/promise-helpers`                               |
+  | `pubsub.publish('destroy')` + destroy subscribers     | `[DisposableSymbols]` + `disposables.use` / `mesh.destroy()` |
+  | cache ctor `pubsub` (destroy subscribe)               | removed; dispose the cache instead                           |
+  | option field `logger`                                 | `log`                                                        |
+
+  Package-specific breaks (filter globs, cache `pubsub`, http-cache logging, Hive/live-query
+  options, OpenAPI `futureLinks`, disposable handlers/transports, ...) are in each package's
+  `*-node22-yoga6.md`.
+
+- [#9818](https://github.com/ardatan/graphql-mesh/pull/9818)
+  [`dc79228`](https://github.com/ardatan/graphql-mesh/commit/dc792289aca741ff81449c996ea38d50a5cb22cf)
+  Thanks [@ardatan](https://github.com/ardatan)! - **Breaking (0.x):** OData subgraphs emit
+  Federation Connectors (`@source` / `@connect` / `@key`) and run on
+  `@graphql-mesh/transport-connect` (`kind: "connect"`). Package `@graphql-mesh/transport-odata` is
+  removed, as are Mesh OData HTTP resolvers and public Mesh OData directives (`@entitySet*`,
+  `@pluralNav`, `@boundFunction`, `@entityInfo`, `@abstractType`, …).
+
+  - `@source` sets `Accept: application/json;odata.metadata=minimal`. Hive appends `$select` /
+    `$expand` from the GraphQL selection; Apollo Router runs the same SDL as plain Connectors.
+  - Entity-set nav: `/EntitySet/{$this.key}/Nav`; nested-only: `{$this._odataId}/Nav` (`_odataId`
+    from `@odata.id`, `@inaccessible`).
+  - Abstract resolveType in `transport-connect` reads `@odata.type` (plus `__typename` / structural
+    fallback).
+  - Loader uses private emit-time `extensions.odata` hints, then drops them after `@connect` emit.
+    `$select` / `$expand` uses `@key` + `@connect` heuristics.
+  - Mesh `@transport` only when `options.odata` is set (`batch` / `expandNavProps`); otherwise
+    `@source` alone and compose injects a minimal `kind: connect` entry.
+  - Shared connect/v0.4 defs (`JSONSelection` / `URLPathTemplate`) live in `transport-connect`;
+    composition strips those scalars from the finalized supergraph.
+  - MS Graph load/compose hardening + `e2e/odata-msgraph`; TripPin e2e covers entity-set nav on Hive
+    and Apollo Router.
+
+- [#9827](https://github.com/ardatan/graphql-mesh/pull/9827)
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd)
+  Thanks [@ardatan](https://github.com/ardatan)! - **Breaking (0.x) migration:**
+  `@graphql-mesh/transport-rest` + `@transport(kind: "rest")` → `@graphql-mesh/transport-connect` +
+  `@transport(kind: "connect")`. Cut over package name, imports, and `kind` together (no compat
+  shim).
+
+  Types rename: `RESTTransportOptions` / `RESTTransportDirectiveOptions` → `ConnectTransportOptions`
+  / `ConnectTransportDirectiveOptions`.
+
+  Hive Gateway loads transports as `@graphql-mesh/transport-${kind}`. This package runs Federation
+  Connectors (`@connect` / `@source`, Apollo `connect/v0.4`) for OpenAPI/JSON Schema/RAML, OData,
+  and SOAP, so `connect` matches the Apollo Connect spec name. Apollo Router ignores Mesh
+  `@transport` and only runs `@connect` / `@source`.
+
+  ### Before
+
+  ```ts
+  import rest from '@graphql-mesh/transport-rest'
+
+  defineGatewayConfig({
+    transports: { rest }
+  })
+  ```
+
+  ```graphql
+  schema @transport(subgraph: "API", kind: "rest", location: "https://api.example.com") {
+    query: Query
+  }
+  ```
+
+  ### After
+
+  ```ts
+  import connect from '@graphql-mesh/transport-connect'
+
+  defineGatewayConfig({
+    transports: { connect }
+  })
+  ```
+
+  ```graphql
+  schema @transport(subgraph: "API", kind: "connect", location: "https://api.example.com") {
+    query: Query
+  }
+  ```
+
+### Patch Changes
+
+- [#9745](https://github.com/ardatan/graphql-mesh/pull/9745)
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-hive/logger@^1.1.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/logger/v/1.1.1)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-hive/pubsub@^2.2.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/pubsub/v/2.2.1)
+    (to `dependencies`)
+  - Updated dependency
+    [`graphql@^16.0.0 || ^17.0.0` ↗︎](https://www.npmjs.com/package/graphql/v/16.0.0) (from `*`, in
+    `peerDependencies`)
+
+- [#9856](https://github.com/ardatan/graphql-mesh/pull/9856)
+  [`6aac64d`](https://github.com/ardatan/graphql-mesh/commit/6aac64dd64ccd396285e52e3db9e2f07b07fbf21)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/logger@^1.2.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/logger/v/1.2.0)
+    (from `^1.1.1`, in `dependencies`)
+
+- [#9890](https://github.com/ardatan/graphql-mesh/pull/9890)
+  [`d7d6055`](https://github.com/ardatan/graphql-mesh/commit/d7d605581f2324c563a0b0f4e998915528dacbae)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/logger@^2.0.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/logger/v/2.0.0)
+    (from `^1.2.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-hive/pubsub@^3.0.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/pubsub/v/3.0.0)
+    (from `^2.2.1`, in `dependencies`)
+
+- [#9828](https://github.com/ardatan/graphql-mesh/pull/9828)
+  [`94be224`](https://github.com/ardatan/graphql-mesh/commit/94be224fac53773992df7984057545f3404979d9)
+  Thanks [@ardatan](https://github.com/ardatan)! - OData Federation entity resolution without Mesh
+  `@merge`:
+
+  - Entity-set-backed types keep resolvable `@key` + type-level `@connect(entity: true)` so Hive
+    `Query._entities` and Apollo Router entity fill both work from the same Connectors SDL.
+  - Nested-only (or ambiguous entity-set) types keep `@key` for Hive `$expand` heuristics but emit
+    `@key(fields: "…", resolvable: false)` when there is no type-level entity `@connect`.
+  - `finalizeConnectorsSupergraph` attributes type-level `@connect` by `source` name before the
+    first `@join__type`, so stub/extension graphs listed first no longer steal the owner connector.
+  - `transport-connect` repairs bare Federation-extracted `Query._entities` (no resolver) by
+    installing `@apollo/subgraph`'s `entitiesResolver` (Connectors `resolveReference` recorded on
+    `extensions.apollo.subgraph`). Without this, Hive planned `_entities` against Connectors
+    subgraphs and hit `Cannot return null for non-nullable field Query._entities` whenever another
+    GraphQL Federation subgraph stubbed the entity.
+  - Unit + e2e (`federation-connectors`, composition, OData handler, `e2e/odata-entities`) prove
+    Airline stubs resolve Name across a catalog subgraph on Hive and Apollo Router with no `@merge`.
+
+- Updated dependencies
+  [[`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`06a77f4`](https://github.com/ardatan/graphql-mesh/commit/06a77f419a2574fa77b63b7ac84c3b446344d332),
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`06a77f4`](https://github.com/ardatan/graphql-mesh/commit/06a77f419a2574fa77b63b7ac84c3b446344d332),
+  [`493d5ff`](https://github.com/ardatan/graphql-mesh/commit/493d5ffa5bceeb1fc2ec0b4c6584ba66d8181183),
+  [`20c6601`](https://github.com/ardatan/graphql-mesh/commit/20c6601c4eece0bc0eb99f7416516b3d705026ab),
+  [`6aac64d`](https://github.com/ardatan/graphql-mesh/commit/6aac64dd64ccd396285e52e3db9e2f07b07fbf21),
+  [`2c4a150`](https://github.com/ardatan/graphql-mesh/commit/2c4a150f2b5838cccfe1655e3b628d8314df61bc),
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`d7d6055`](https://github.com/ardatan/graphql-mesh/commit/d7d605581f2324c563a0b0f4e998915528dacbae),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`a7d4506`](https://github.com/ardatan/graphql-mesh/commit/a7d4506630217bd9e7ab2b594609698e7e5e1649),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`a2fc2be`](https://github.com/ardatan/graphql-mesh/commit/a2fc2be8178c5f8052e4f3b9ec04bc068caaef66),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`06a77f4`](https://github.com/ardatan/graphql-mesh/commit/06a77f419a2574fa77b63b7ac84c3b446344d332),
+  [`dc79228`](https://github.com/ardatan/graphql-mesh/commit/dc792289aca741ff81449c996ea38d50a5cb22cf),
+  [`493d5ff`](https://github.com/ardatan/graphql-mesh/commit/493d5ffa5bceeb1fc2ec0b4c6584ba66d8181183),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd),
+  [`20c6601`](https://github.com/ardatan/graphql-mesh/commit/20c6601c4eece0bc0eb99f7416516b3d705026ab),
+  [`6aac64d`](https://github.com/ardatan/graphql-mesh/commit/6aac64dd64ccd396285e52e3db9e2f07b07fbf21),
+  [`2c4a150`](https://github.com/ardatan/graphql-mesh/commit/2c4a150f2b5838cccfe1655e3b628d8314df61bc),
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`d7d6055`](https://github.com/ardatan/graphql-mesh/commit/d7d605581f2324c563a0b0f4e998915528dacbae),
+  [`f9b41bc`](https://github.com/ardatan/graphql-mesh/commit/f9b41bc23325f130e39244b1748ba4e7eecd2b4f),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`dc79228`](https://github.com/ardatan/graphql-mesh/commit/dc792289aca741ff81449c996ea38d50a5cb22cf),
+  [`94be224`](https://github.com/ardatan/graphql-mesh/commit/94be224fac53773992df7984057545f3404979d9),
+  [`1b57413`](https://github.com/ardatan/graphql-mesh/commit/1b574137cd68ab82e33a2ad51a7501c67c8cd8fd)]:
+  - @graphql-mesh/store@1.0.0
+  - @graphql-mesh/types@1.0.0
+  - @omnigraph/odata@1.0.0
+
 ## 0.109.3
 
 ### Patch Changes

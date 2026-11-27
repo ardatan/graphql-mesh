@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/sql",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,10 +35,10 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.18",
-    "@graphql-mesh/transport-sql": "0.1.0",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-mesh/cross-helpers": "^0.4.19",
+    "@graphql-mesh/transport-sql": "1.0.0",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
     "@graphql-tools/utils": "^13.2.3",
     "change-case": "^4.1.2",
     "graphql-compose": "^9.3.0",

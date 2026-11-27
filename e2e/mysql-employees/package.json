@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "@graphql-hive/gateway": "^3.0.0",
-    "@omnigraph/sql": "0.1.0",
+    "@omnigraph/sql": "1.0.0",
     "graphql": "^16.14.0"
   }
 }

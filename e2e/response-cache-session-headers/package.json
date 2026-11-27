@@ -3,8 +3,8 @@
   "private": true,
   "dependencies": {
     "@graphql-hive/gateway": "^3.0.0",
-    "@graphql-mesh/compose-cli": "^1.8.4",
-    "@graphql-mesh/plugin-response-cache": "^0.107.4",
+    "@graphql-mesh/compose-cli": "^2.0.0",
+    "@graphql-mesh/plugin-response-cache": "^1.0.0",
     "graphql": "17.1.0",
     "graphql-yoga": "^6.1.1"
   }

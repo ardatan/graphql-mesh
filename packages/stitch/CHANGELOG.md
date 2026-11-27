@@ -1,55 +1,119 @@
 # @graphql-tools/stitch
 
-## 11.0.0
+## 12.0.0
+
 ### Major Changes
 
+- [#9867](https://github.com/ardatan/graphql-mesh/pull/9867)
+  [`c36d9b8`](https://github.com/ardatan/graphql-mesh/commit/c36d9b8930c971558cd7471c67edf0b3783d808c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Stitched Query and Mutation execution uses the
+  planned backbone executor (plan once, then dataflow Fetch / Parallel / Sequence / Island /
+  BatchFetch). Resolve-time `mergeFields` / leftover merge plans are no longer the stitched execute
+  path.
 
+  Field resolution on this path uses a slim `defaultMergedResolver` (alias / external value + local
+  hydration). `onStitchedSchema` root overrides are planned as Islands.
 
-- [#2670](https://github.com/graphql-hive/gateway/pull/2670) [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Drop GraphQL v15 (and older) support. Only GraphQL v16 and v17 are supported now.
-  
-  Upgrade to `graphql@^16` or `graphql@^17`. Hive Gateway packages require `graphql@^16.9.0` or later.
-  
-  `@graphql-tools/stitch` no longer reads legacy `#` comment descriptions (`commentDescriptions`, removed in GraphQL v16) from type definitions; use string descriptions (`"""..."""`) instead.
+  Subscriptions, `@defer`, `@stream`, and full SDL introspection (`__schema` / `__type`) still use
+  schema execute until those operations are planned end-to-end.
 
+  `@pubsubPublish` result handling and the `join__Graph` name map live in fusion-runtime (executor
+  wrap + helpers) instead of mapping Mutation fields after stitch.
 
-- [#2670](https://github.com/graphql-hive/gateway/pull/2670) [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Drop Node.js 20 support. The minimum supported Node.js version is now 22.15.0.
-  
+### Patch Changes
+
+- [#9868](https://github.com/ardatan/graphql-mesh/pull/9868)
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^13.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/13.2.3)
+    (from `^13.2.2`, in `dependencies`)
+
+- [#9867](https://github.com/ardatan/graphql-mesh/pull/9867)
+  [`c36d9b8`](https://github.com/ardatan/graphql-mesh/commit/c36d9b8930c971558cd7471c67edf0b3783d808c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Surface shared-root Parallel subgraph errors when
+  they explain a hole in the merged object (for example a downed subgraph), forward them through
+  root proxying into graphql-js, and keep internal `CRITICAL_ERROR` / speculative `@provides` probe
+  failures off successful partial results.
+
+- [#9860](https://github.com/ardatan/graphql-mesh/pull/9860)
+  [`2c4a150`](https://github.com/ardatan/graphql-mesh/commit/2c4a150f2b5838cccfe1655e3b628d8314df61bc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Source of these packages moved from
+  `graphql-hive/gateway` into this repo. npm names and import paths are unchanged. Hive Gateway will
+  consume published versions from Mesh after cutover. Package-level federation benches live under
+  `bench/federation`; Gateway e2e memtest/bench CI stays on the Gateway repo and continues to
+  measure Gateway impact.
+
+- Updated dependencies
+  [[`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`31a23d2`](https://github.com/ardatan/graphql-mesh/commit/31a23d2c4e2f22cd9a5bcbab93bb768e9da8f67b),
+  [`c36d9b8`](https://github.com/ardatan/graphql-mesh/commit/c36d9b8930c971558cd7471c67edf0b3783d808c),
+  [`2c4a150`](https://github.com/ardatan/graphql-mesh/commit/2c4a150f2b5838cccfe1655e3b628d8314df61bc)]:
+  - @graphql-tools/batch-delegate@12.0.0
+  - @graphql-tools/delegate@14.0.0
+  - @graphql-tools/wrap@13.0.0
+
+## 11.0.0
+
+### Major Changes
+
+- [#2670](https://github.com/graphql-hive/gateway/pull/2670)
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Drop GraphQL v15 (and older) support. Only
+  GraphQL v16 and v17 are supported now.
+
+  Upgrade to `graphql@^16` or `graphql@^17`. Hive Gateway packages require `graphql@^16.9.0` or
+  later.
+
+  `@graphql-tools/stitch` no longer reads legacy `#` comment descriptions (`commentDescriptions`,
+  removed in GraphQL v16) from type definitions; use string descriptions (`"""..."""`) instead.
+
+- [#2670](https://github.com/graphql-hive/gateway/pull/2670)
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Drop Node.js 20 support. The minimum
+  supported Node.js version is now 22.15.0.
+
   Upgrade to Node.js 22.15.0 or later.
 
+- [#2670](https://github.com/graphql-hive/gateway/pull/2670)
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - **Breaking:** Remove
+  `isolateComputedFieldsTransformer` and isolation-clone planning.
 
-- [#2670](https://github.com/graphql-hive/gateway/pull/2670) [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - **Breaking:** Remove `isolateComputedFieldsTransformer` and isolation-clone planning.
-  
   ### What changed
-  
-  Computed / `@requires` fields used to live on **cloned** subschema copies so the initial Query hop could not select them early. That N-clone tax is gone. Computed fields stay on the single subschema schema; `deferComputedFieldsTransformer` strips them from non-merge outbound requests and injects merge-key fields (including nested selections) so later entity hops still have identity. Aliased key fields (for example `aliasId: id`) are not treated as the literal merge key.
-  
-  Default `stitchSchemas` / federation presets already include deferral. Most apps need no config change.
-  
+
+  Computed / `@requires` fields used to live on **cloned** subschema copies so the initial Query hop
+  could not select them early. That N-clone tax is gone. Computed fields stay on the single
+  subschema schema; `deferComputedFieldsTransformer` strips them from non-merge outbound requests
+  and injects merge-key fields (including nested selections) so later entity hops still have
+  identity. Aliased key fields (for example `aliasId: id`) are not treated as the literal merge key.
+
+  Default `stitchSchemas` / federation presets already include deferral. Most apps need no config
+  change.
+
   ### Migration
-  
+
   If you previously passed isolation explicitly, drop it:
-  
+
   ```ts
   // before
-  import {
-    isolateComputedFieldsTransformer,
-    stitchSchemas,
-  } from '@graphql-tools/stitch';
-  
+  import { isolateComputedFieldsTransformer, stitchSchemas } from '@graphql-tools/stitch'
+
   stitchSchemas({
     subschemas,
-    subschemaConfigTransforms: [isolateComputedFieldsTransformer],
-  });
-  
+    subschemaConfigTransforms: [isolateComputedFieldsTransformer]
+  })
+
   // after
-  import { stitchSchemas } from '@graphql-tools/stitch';
-  
-  stitchSchemas({ subschemas });
+  import { stitchSchemas } from '@graphql-tools/stitch'
+
+  stitchSchemas({ subschemas })
   // defaults already defer computed fields without cloning
   ```
-  
+
   Computed field config is unchanged. Example inventory-style merge:
-  
+
   ```ts
   merge: {
     Product: {
@@ -66,36 +130,47 @@
     },
   }
   ```
-  
-  `shippingEstimate` stays on the schema for merge hops, but the initial `products` selection no longer resolves it before `price` / `weight` are available.
 
+  `shippingEstimate` stays on the schema for merge hops, but the initial `products` selection no
+  longer resolves it before `price` / `weight` are available.
 
-- [#2670](https://github.com/graphql-hive/gateway/pull/2670) [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Align with GraphQL Yoga 6 / GraphQL Tools majors / whatwg-node: stop using removed helpers.
-  
-  | Removed | Replacement |
-  | --- | --- |
-  | `createGraphQLError` | `new GraphQLError(...)` |
-  | `YogaLogger` / `createLogger` / `yoga.logger` | `Logger` / `yoga.log` |
-  | `crypto` from `@whatwg-node/fetch` | platform `crypto` (Node >=22.15); Gateway still exposes it on `fetchAPI` for Yoga 5 peers |
-  | `mapMaybePromise` and related utils re-exports | `@whatwg-node/promise-helpers` (`handleMaybePromise`, …) |
-  | `createDeferred` / `createDeferredPromise` | `Promise.withResolvers()` |
-  
-  See [graphql-tools#8515](https://github.com/ardatan/graphql-tools/pull/8515) and [yoga#4623](https://github.com/graphql-hive/graphql-yoga/pull/4623).
+- [#2670](https://github.com/graphql-hive/gateway/pull/2670)
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Align with GraphQL Yoga 6 / GraphQL Tools
+  majors / whatwg-node: stop using removed helpers.
+
+  | Removed                                        | Replacement                                                                               |
+  | ---------------------------------------------- | ----------------------------------------------------------------------------------------- |
+  | `createGraphQLError`                           | `new GraphQLError(...)`                                                                   |
+  | `YogaLogger` / `createLogger` / `yoga.logger`  | `Logger` / `yoga.log`                                                                     |
+  | `crypto` from `@whatwg-node/fetch`             | platform `crypto` (Node >=22.15); Gateway still exposes it on `fetchAPI` for Yoga 5 peers |
+  | `mapMaybePromise` and related utils re-exports | `@whatwg-node/promise-helpers` (`handleMaybePromise`, …)                                  |
+  | `createDeferred` / `createDeferredPromise`     | `Promise.withResolvers()`                                                                 |
+
+  See [graphql-tools#8515](https://github.com/ardatan/graphql-tools/pull/8515) and
+  [yoga#4623](https://github.com/graphql-hive/graphql-yoga/pull/4623).
 
 ### Minor Changes
 
+- [#2670](https://github.com/graphql-hive/gateway/pull/2670)
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Keep multiple merged-type `entryPoints` on
+  **one** subschema instead of cloning a `SubschemaConfig` per entry.
 
-
-- [#2670](https://github.com/graphql-hive/gateway/pull/2670) [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Keep multiple merged-type `entryPoints` on **one** subschema instead of cloning a `SubschemaConfig` per entry.
-  
   ### Before
-  
-  Two keys on the same subgraph used to become two registered subschemas (via `splitMergedTypeEntryPointsTransformer`). That duplicated stitching bookkeeping and could split work that should be one merge.
-  
+
+  Two keys on the same subgraph used to become two registered subschemas (via
+  `splitMergedTypeEntryPointsTransformer`). That duplicated stitching bookkeeping and could split
+  work that should be one merge.
+
   ### After
-  
-  Declare every key on the same `merge` config. The planner treats the target as proxiable when **any** entry's keys are present; at hop time stitching picks the entry that matches the parent (including nested keys like `{ organization { id } }`). Parent merge defaults (`argsFromKeys`, `valuesFromResults`, `dataLoaderOptions`, shared `key` / `args` / `fieldName`) overlay onto each entry, and a per-entry custom `resolve` is honored when set.
-  
+
+  Declare every key on the same `merge` config. The planner treats the target as proxiable when
+  **any** entry's keys are present; at hop time stitching picks the entry that matches the parent
+  (including nested keys like `{ organization { id } }`). Parent merge defaults (`argsFromKeys`,
+  `valuesFromResults`, `dataLoaderOptions`, shared `key` / `args` / `fieldName`) overlay onto each
+  entry, and a per-entry custom `resolve` is honored when set.
+
   ```ts
   stitchSchemas({
     subschemas: [
@@ -104,121 +179,152 @@
         merge: {
           Product: {
             // shared batching defaults apply to every entry unless overridden
-            argsFromKeys: (keys) => ({ keys }),
-            valuesFromResults: (results) => results,
+            argsFromKeys: keys => ({ keys }),
+            valuesFromResults: results => results,
             entryPoints: [
               {
                 selectionSet: '{ upc }',
                 fieldName: 'productsByKey',
-                key: ({ upc }) => ({ upc }),
+                key: ({ upc }) => ({ upc })
               },
               {
                 selectionSet: '{ id }',
                 fieldName: 'productsByKey',
-                key: ({ id }) => ({ id }),
-              },
-            ],
-          },
-        },
-      },
-    ],
-  });
+                key: ({ id }) => ({ id })
+              }
+            ]
+          }
+        }
+      }
+    ]
+  })
   ```
-  
-  With a parent that only has `upc`, the first entry runs; with only `id`, the second. Nested keys work the same way:
-  
+
+  With a parent that only has `upc`, the first entry runs; with only `id`, the second. Nested keys
+  work the same way:
+
   ```ts
   entryPoints: [
     {
       selectionSet: '{ organization { id } }',
       fieldName: 'productByOrg',
       key: ({ organization }) => organization?.id,
-      argsFromKeys: (ids) => ({ ids }),
+      argsFromKeys: ids => ({ ids })
     },
     {
       selectionSet: '{ upc }',
       fieldName: 'productByUpc',
       key: ({ upc }) => upc,
-      argsFromKeys: (upcs) => ({ upcs }),
-    },
+      argsFromKeys: upcs => ({ upcs })
+    }
   ]
   ```
-  
+
   No caller API change is required if you already used `entryPoints`; clones simply stop happening.
 
+- [#2763](https://github.com/graphql-hive/gateway/pull/2763)
+  [`4eb4a6c`](https://github.com/graphql-hive/gateway/commit/4eb4a6c89176a04a38ced9cd99608e6c639fd5ee)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support GraphQL v17
 
-- [#2763](https://github.com/graphql-hive/gateway/pull/2763) [`4eb4a6c`](https://github.com/graphql-hive/gateway/commit/4eb4a6c89176a04a38ced9cd99608e6c639fd5ee) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support GraphQL v17
-  
-  Hive Gateway and the stitching, wrapping and federation packages work with GraphQL v17 alongside v16. The `graphql` peer dependency range stays `^16 || ^17`, so projects that install the packages themselves keep the GraphQL version they already use.
-  
-  Schema stitching, schema wrapping (including `TransformEnumValues` with defaults defined in SDL), `federationToStitchingSDL` and demand control behave the same on both versions.
-  
+  Hive Gateway and the stitching, wrapping and federation packages work with GraphQL v17 alongside
+  v16. The `graphql` peer dependency range stays `^16 || ^17`, so projects that install the packages
+  themselves keep the GraphQL version they already use.
+
+  Schema stitching, schema wrapping (including `TransformEnumValues` with defaults defined in SDL),
+  `federationToStitchingSDL` and demand control behave the same on both versions.
+
   ## Docker images and binary ship GraphQL v17
-  
-  The Hive Gateway Docker images and the standalone binary come with `graphql@17.1.0`. Custom code loaded by the gateway configuration, like plugins, additional resolvers, transforms and hooks, runs against GraphQL v17. Code that only uses the gateway APIs needs no changes. Code that uses GraphQL internals directly might, see the [GraphQL.js v16 to v17 upgrade guide](https://www.graphql-js.org/upgrade-guides/v16-v17/) for all changes.
-  
+
+  The Hive Gateway Docker images and the standalone binary come with `graphql@17.1.0`. Custom code
+  loaded by the gateway configuration, like plugins, additional resolvers, transforms and hooks,
+  runs against GraphQL v17. Code that only uses the gateway APIs needs no changes. Code that uses
+  GraphQL internals directly might, see the
+  [GraphQL.js v16 to v17 upgrade guide](https://www.graphql-js.org/upgrade-guides/v16-v17/) for all
+  changes.
+
   ### Variable values in resolver info
-  
-  `info.variableValues` is an object of `{ sources, coerced }` instead of a flat map of variable names to values. Read the variable values from `info.variableValues.coerced`, or use `getCoercedVariableValues` from `@graphql-tools/delegate` to support both versions.
-  
+
+  `info.variableValues` is an object of `{ sources, coerced }` instead of a flat map of variable
+  names to values. Read the variable values from `info.variableValues.coerced`, or use
+  `getCoercedVariableValues` from `@graphql-tools/delegate` to support both versions.
+
   ```ts
-  import { getCoercedVariableValues } from '@graphql-tools/delegate';
-  
-  const variables = getCoercedVariableValues(info.variableValues);
+  import { getCoercedVariableValues } from '@graphql-tools/delegate'
+
+  const variables = getCoercedVariableValues(info.variableValues)
   ```
-  
+
   ### Calling `getArgumentValues` and `getDirectiveValues`
-  
-  The `variableValues` argument of `getArgumentValues` and `getDirectiveValues` from `graphql` expects the `{ sources, coerced }` shape too. Wrap a flat map of variables with `asGetArgumentValuesVariables` from `@graphql-tools/utils`, which works with both versions.
-  
+
+  The `variableValues` argument of `getArgumentValues` and `getDirectiveValues` from `graphql`
+  expects the `{ sources, coerced }` shape too. Wrap a flat map of variables with
+  `asGetArgumentValuesVariables` from `@graphql-tools/utils`, which works with both versions.
+
   ```ts
-  import { asGetArgumentValuesVariables } from '@graphql-tools/utils';
-  import { getArgumentValues } from 'graphql';
-  
-  const args = getArgumentValues(
-    field,
-    fieldNode,
-    asGetArgumentValuesVariables(variables),
-  );
+  import { getArgumentValues } from 'graphql'
+  import { asGetArgumentValuesVariables } from '@graphql-tools/utils'
+
+  const args = getArgumentValues(field, fieldNode, asGetArgumentValuesVariables(variables))
   ```
-  
+
   ### Empty lists in parsed documents
-  
-  Parsed documents leave out empty lists. For example, a field without arguments has `arguments` set to `undefined` instead of `[]`, and the same goes for `directives`, `variableDefinitions`, `interfaces` and `fields`. Use optional chaining or a fallback like `node.directives ?? []` when reading them.
-  
+
+  Parsed documents leave out empty lists. For example, a field without arguments has `arguments` set
+  to `undefined` instead of `[]`, and the same goes for `directives`, `variableDefinitions`,
+  `interfaces` and `fields`. Use optional chaining or a fallback like `node.directives ?? []` when
+  reading them.
+
   ### Default values defined in SDL
-  
-  Default values of arguments and input fields defined in SDL are kept as an AST node in `default.literal`, and `defaultValue` is `undefined`. Read `default` first and fall back to `defaultValue` to support both versions. When mapping a schema and changing a default, set `default` to `undefined` next to the new `defaultValue`, otherwise the literal from SDL is still used.
-  
+
+  Default values of arguments and input fields defined in SDL are kept as an AST node in
+  `default.literal`, and `defaultValue` is `undefined`. Read `default` first and fall back to
+  `defaultValue` to support both versions. When mapping a schema and changing a default, set
+  `default` to `undefined` next to the new `defaultValue`, otherwise the literal from SDL is still
+  used.
+
   ### Custom scalars
-  
-  Scalars have the `coerceOutputValue`, `coerceInputValue`, `coerceInputLiteral` and `valueToLiteral` functions next to the deprecated `serialize`, `parseValue` and `parseLiteral`. When building a scalar from another scalar's `toConfig()` and replacing its coercion, replace the new functions too, otherwise they keep coercing with the original implementation.
-  
+
+  Scalars have the `coerceOutputValue`, `coerceInputValue`, `coerceInputLiteral` and
+  `valueToLiteral` functions next to the deprecated `serialize`, `parseValue` and `parseLiteral`.
+  When building a scalar from another scalar's `toConfig()` and replacing its coercion, replace the
+  new functions too, otherwise they keep coercing with the original implementation.
+
   ### Errors
-  
-  `GraphQLError` sets the standard `cause` property to its original error. Errors from subgraphs that the gateway relays to clients have the subgraph error as `cause`. What clients receive stays the same.
-  
+
+  `GraphQLError` sets the standard `cause` property to its original error. Errors from subgraphs
+  that the gateway relays to clients have the subgraph error as `cause`. What clients receive stays
+  the same.
+
   ### Printing and introspection
-  
-  `print` formats object values with spaces, like `{ a: 1 }` instead of `{a: 1}`, and breaks long ones over several lines. The `reason` argument of `@deprecated` and the `includeDeprecated` argument of introspection fields are non-nullable. Update snapshots or string comparisons of printed documents and introspection results.
-  
+
+  `print` formats object values with spaces, like `{ a: 1 }` instead of `{a: 1}`, and breaks long
+  ones over several lines. The `reason` argument of `@deprecated` and the `includeDeprecated`
+  argument of introspection fields are non-nullable. Update snapshots or string comparisons of
+  printed documents and introspection results.
+
   Closes [#2750](https://github.com/graphql-hive/gateway/issues/2750)
 
+- [#2670](https://github.com/graphql-hive/gateway/pull/2670)
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - **Breaking:** Remove the `onDelegationPlan`
+  and `onDelegationStageExecute` plugin hooks (and the debug plugin that only existed for them).
+  Those hooks blocked delegation-plan memoization and were rarely used.
 
-- [#2670](https://github.com/graphql-hive/gateway/pull/2670) [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - **Breaking:** Remove the `onDelegationPlan` and `onDelegationStageExecute` plugin hooks (and the debug plugin that only existed for them). Those hooks blocked delegation-plan memoization and were rarely used.
-  
   Delegation-plan memoization is restored with a parent field-presence seed key:
-  
-  - Types **without** computed / `@requires` field selections ignore parent shape and share one cached plan per `(schema, sourceSubschema, variables, fragments, fieldNodes)` tuple (same as the previous always-on `memoize5of7` path).
-  - Types **with** `fieldSelectionSets` (computed / `@requires`) still memoize when parents expose the same fields, so list merges reuse plans without breaking clone-less requires.
+
+  - Types **without** computed / `@requires` field selections ignore parent shape and share one
+    cached plan per `(schema, sourceSubschema, variables, fragments, fieldNodes)` tuple (same as the
+    previous always-on `memoize5of7` path).
+  - Types **with** `fieldSelectionSets` (computed / `@requires`) still memoize when parents expose
+    the same fields, so list merges reuse plans without breaking clone-less requires.
   - Progressive override still skips memoize.
-  
+
   `onDelegate` is unchanged.
-  
+
   ### Migration
-  
+
   Delete hook usage from gateway / fusion plugins:
-  
+
   ```ts
   // before
   const gateway = createGatewayRuntime({
@@ -230,11 +336,11 @@
         },
         onDelegationStageExecute() {
           /* ... */
-        },
-      },
-    ],
-  });
-  
+        }
+      }
+    ]
+  })
+
   // after: remove those hooks
   const gateway = createGatewayRuntime({
     supergraph,
@@ -242,73 +348,100 @@
       {
         onDelegate({ typeName, fieldName }) {
           // still supported for per-delegation instrumentation
-        },
-      },
-    ],
-  });
+        }
+      }
+    ]
+  })
   ```
-  
-  If you relied on plan/stage hooks only for debugging, use existing logging / OpenTelemetry plugins instead. No stitchSchemas merge-config change is required for the memoize restore.
+
+  If you relied on plan/stage hooks only for debugging, use existing logging / OpenTelemetry plugins
+  instead. No stitchSchemas merge-config change is required for the memoize restore.
 
 ### Patch Changes
 
-- Updated dependencies [[`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`4eb4a6c`](https://github.com/graphql-hive/gateway/commit/4eb4a6c89176a04a38ced9cd99608e6c639fd5ee), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2), [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)]:
+- Updated dependencies
+  [[`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`4eb4a6c`](https://github.com/graphql-hive/gateway/commit/4eb4a6c89176a04a38ced9cd99608e6c639fd5ee),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2),
+  [`1204709`](https://github.com/graphql-hive/gateway/commit/12047092208631559c48d147d861815d63d953c2)]:
   - @graphql-tools/delegate@13.0.0
   - @graphql-tools/batch-delegate@11.0.0
   - @graphql-tools/wrap@12.0.0
 
 ## 10.4.6
+
 ### Patch Changes
 
-- Updated dependencies [[`a0bd5e8`](https://github.com/graphql-hive/gateway/commit/a0bd5e8882d04c1211c244adc991e62bb4e5c369)]:
+- Updated dependencies
+  [[`a0bd5e8`](https://github.com/graphql-hive/gateway/commit/a0bd5e8882d04c1211c244adc991e62bb4e5c369)]:
   - @graphql-tools/delegate@12.3.6
   - @graphql-tools/batch-delegate@10.1.8
   - @graphql-tools/wrap@11.2.8
 
 ## 10.4.5
+
 ### Patch Changes
 
+- [#2767](https://github.com/graphql-hive/gateway/pull/2767)
+  [`ad89e84`](https://github.com/graphql-hive/gateway/commit/ad89e8443b1839e79fa6c34a0347a2f3c67d3ec2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Keep fields of named fragments spread on an
+  interface when fetching the concrete type from the implementing subgraph
 
+  For example, `node { ...NodeFields }` with `fragment NodeFields on Node { ... on Leaf { extra } }`
+  now fetches `extra` instead of returning `null` for it.
 
-- [#2767](https://github.com/graphql-hive/gateway/pull/2767) [`ad89e84`](https://github.com/graphql-hive/gateway/commit/ad89e8443b1839e79fa6c34a0347a2f3c67d3ec2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Keep fields of named fragments spread on an interface when fetching the concrete type from the implementing subgraph
-  
-  For example, `node { ...NodeFields }` with `fragment NodeFields on Node { ... on Leaf { extra } }` now fetches `extra` instead of returning `null` for it.
-  
   Closes [#2463](https://github.com/graphql-hive/gateway/issues/2463)
 
+- [#2767](https://github.com/graphql-hive/gateway/pull/2767)
+  [`ad89e84`](https://github.com/graphql-hive/gateway/commit/ad89e8443b1839e79fa6c34a0347a2f3c67d3ec2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Fetch `@requires` fields of an
+  `@interfaceObject` field when it is selected through an inline fragment on an implementation
 
-- [#2767](https://github.com/graphql-hive/gateway/pull/2767) [`ad89e84`](https://github.com/graphql-hive/gateway/commit/ad89e8443b1839e79fa6c34a0347a2f3c67d3ec2) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Fetch `@requires` fields of an `@interfaceObject` field when it is selected through an inline fragment on an implementation
-  
-  For example, `location { ... on Store { events } }` where `events` is `@requires(fields: "code")` on the `Location` interface object now sends `code` to the contributing subgraph.
-  
+  For example, `location { ... on Store { events } }` where `events` is `@requires(fields: "code")`
+  on the `Location` interface object now sends `code` to the contributing subgraph.
+
   Closes [#2737](https://github.com/graphql-hive/gateway/issues/2737)
-- Updated dependencies [[`b180423`](https://github.com/graphql-hive/gateway/commit/b1804230911a8cd047ee0953304469ff4cb6b131), [`ad89e84`](https://github.com/graphql-hive/gateway/commit/ad89e8443b1839e79fa6c34a0347a2f3c67d3ec2)]:
+
+- Updated dependencies
+  [[`b180423`](https://github.com/graphql-hive/gateway/commit/b1804230911a8cd047ee0953304469ff4cb6b131),
+  [`ad89e84`](https://github.com/graphql-hive/gateway/commit/ad89e8443b1839e79fa6c34a0347a2f3c67d3ec2)]:
   - @graphql-tools/delegate@12.3.5
   - @graphql-tools/batch-delegate@10.1.7
   - @graphql-tools/wrap@11.2.7
 
 ## 10.4.4
+
 ### Patch Changes
 
-- Updated dependencies [[`3e0a896`](https://github.com/graphql-hive/gateway/commit/3e0a896cf110d8a6290e20b10b6865813301f5ca)]:
+- Updated dependencies
+  [[`3e0a896`](https://github.com/graphql-hive/gateway/commit/3e0a896cf110d8a6290e20b10b6865813301f5ca)]:
   - @graphql-tools/delegate@12.3.4
   - @graphql-tools/batch-delegate@10.1.6
   - @graphql-tools/wrap@11.2.6
 
 ## 10.4.3
+
 ### Patch Changes
 
+- [`e288224`](https://github.com/graphql-hive/gateway/commit/e28822460e2189e3b1e112bf2ad9072d68c01f90)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/utils@^12.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.1.0)
+    (from `^12.0.1`, in `dependencies`)
 
-- [`e288224`](https://github.com/graphql-hive/gateway/commit/e28822460e2189e3b1e112bf2ad9072d68c01f90) Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/utils@^12.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.1.0) (from `^12.0.1`, in `dependencies`)
-- Updated dependencies [[`e288224`](https://github.com/graphql-hive/gateway/commit/e28822460e2189e3b1e112bf2ad9072d68c01f90)]:
+- Updated dependencies
+  [[`e288224`](https://github.com/graphql-hive/gateway/commit/e28822460e2189e3b1e112bf2ad9072d68c01f90)]:
   - @graphql-tools/batch-delegate@10.1.5
   - @graphql-tools/delegate@12.3.3
   - @graphql-tools/wrap@11.2.5
 
 ## 10.4.2
+
 ### Patch Changes
 
 - Updated dependencies []:
@@ -317,50 +450,72 @@
   - @graphql-tools/wrap@11.2.4
 
 ## 10.4.1
+
 ### Patch Changes
 
-- Updated dependencies [[`4c1d3f0`](https://github.com/graphql-hive/gateway/commit/4c1d3f01c4e2842d9fd2c1f81a3f753da1d57405), [`aabe28a`](https://github.com/graphql-hive/gateway/commit/aabe28a87cc4e85f590bbf4340a9c8700d544223), [`a558eea`](https://github.com/graphql-hive/gateway/commit/a558eeae3c94deb60d40f98232b9d4d82ae9d9a1)]:
+- Updated dependencies
+  [[`4c1d3f0`](https://github.com/graphql-hive/gateway/commit/4c1d3f01c4e2842d9fd2c1f81a3f753da1d57405),
+  [`aabe28a`](https://github.com/graphql-hive/gateway/commit/aabe28a87cc4e85f590bbf4340a9c8700d544223),
+  [`a558eea`](https://github.com/graphql-hive/gateway/commit/a558eeae3c94deb60d40f98232b9d4d82ae9d9a1)]:
   - @graphql-tools/batch-delegate@10.1.3
   - @graphql-tools/delegate@12.3.1
   - @graphql-tools/wrap@11.2.3
 
 ## 10.4.0
+
 ### Minor Changes
 
+- [#2672](https://github.com/graphql-hive/gateway/pull/2672)
+  [`befdb8e`](https://github.com/graphql-hive/gateway/commit/befdb8e3e352650c9f6c4e5fbeadfcf3615ee6ae)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support `@defer` / `@stream` incremental delivery
+  within schema stitching.
 
+  **Gateway-owned `@defer` (default):** deferred selections are omitted from subgraph requests (only
+  `@requires` / key dependencies are kept), so nested `@defer` can flush before slow fields resolve.
+  Missing fields are filled later via type-merging or source resolvers.
 
-- [#2672](https://github.com/graphql-hive/gateway/pull/2672) [`befdb8e`](https://github.com/graphql-hive/gateway/commit/befdb8e3e352650c9f6c4e5fbeadfcf3615ee6ae) Thanks [@ardatan](https://github.com/ardatan)! - Support `@defer` / `@stream` incremental delivery within schema stitching.
-  
-  **Gateway-owned `@defer` (default):** deferred selections are omitted from subgraph requests (only `@requires` / key dependencies are kept), so nested `@defer` can flush before slow fields resolve. Missing fields are filled later via type-merging or source resolvers.
-  
-  **Subgraph-forwarded `@defer`:** set `defer: true` on a `SubschemaConfig` (or `defer: true` on `getStitchedSchemaFromSupergraphSdl`) to forward `@defer` to that subgraph and merge incremental patches via `IncrementalReceiver`. With `batch: true` and `batchingOptions.defer` (or `subschema.defer`), multi-request batches wrap each root selection in `@defer` for subgraph compatibility; results are still collected before DataLoader waiters resolve. Single-request batches pass the AsyncIterable through so the initial payload can flush before deferred patches arrive.
-  
+  **Subgraph-forwarded `@defer`:** set `defer: true` on a `SubschemaConfig` (or `defer: true` on
+  `getStitchedSchemaFromSupergraphSdl`) to forward `@defer` to that subgraph and merge incremental
+  patches via `IncrementalReceiver`. With `batch: true` and `batchingOptions.defer` (or
+  `subschema.defer`), multi-request batches wrap each root selection in `@defer` for subgraph
+  compatibility; results are still collected before DataLoader waiters resolve. Single-request
+  batches pass the AsyncIterable through so the initial payload can flush before deferred patches
+  arrive.
+
   **Hive Gateway config:** extend `deferStream` instead of a separate flag:
-  
+
   ```ts
   deferStream: true // client-facing only (gateway-owned omit)
   deferStream: { subgraph: true } // also forward @defer to every subgraph
   deferStream: { subgraph: { users: true, '*': false } } // per-subgraph
   ```
-  
-  `@graphql-tools/executor-http` adds `mergeIncremental` (default `true`: legacy growing snapshots). Set `mergeIncremental: false` to yield raw multipart parts like the default schema executor. Hive Gateway's `@graphql-mesh/transport-http` always uses passthrough (`mergeIncremental: false`).
-  
-  `IncrementalReceiver` prefers raw patches and cheaply tolerates accumulated snapshots (only fills missing keys). The HTTP executor preserves `hasNext` in accumulate mode.
-  
-  `@stream` continues to be forwarded on field directives as before. List streaming in `@graphql-tools/delegate` uses a plain async generator (no `@repeaterjs/repeater` dependency).
-  
-  Hive Router runtime does not plan incremental delivery yet; `deferStream.subgraph` applies to the stitching federation path.
+
+  `@graphql-tools/executor-http` adds `mergeIncremental` (default `true`: legacy growing snapshots).
+  Set `mergeIncremental: false` to yield raw multipart parts like the default schema executor. Hive
+  Gateway's `@graphql-mesh/transport-http` always uses passthrough (`mergeIncremental: false`).
+
+  `IncrementalReceiver` prefers raw patches and cheaply tolerates accumulated snapshots (only fills
+  missing keys). The HTTP executor preserves `hasNext` in accumulate mode.
+
+  `@stream` continues to be forwarded on field directives as before. List streaming in
+  `@graphql-tools/delegate` uses a plain async generator (no `@repeaterjs/repeater` dependency).
+
+  Hive Router runtime does not plan incremental delivery yet; `deferStream.subgraph` applies to the
+  stitching federation path.
 
 ### Patch Changes
 
+- [#2671](https://github.com/graphql-hive/gateway/pull/2671)
+  [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59)
+  Thanks [@ardatan](https://github.com/ardatan)! - Allow `@merge` without `keyArg` when the resolver
+  takes zero arguments, and make keyless type merges work when the initial subschema cannot satisfy
+  the requested fields ([graphql-tools#4337](https://github.com/ardatan/graphql-tools/pull/4337)).
 
+  Previously the validator rejected `@merge` on zero-arg fields (`args.length !== 1`). It now allows
+  zero or one argument and only errors when there are multiple args without `keyArg` / `argsExpr`.
 
-- [#2671](https://github.com/graphql-hive/gateway/pull/2671) [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59) Thanks [@ardatan](https://github.com/ardatan)! - Allow `@merge` without `keyArg` when the resolver takes zero arguments, and make keyless type merges work when the initial subschema cannot satisfy the requested fields ([graphql-tools#4337](https://github.com/ardatan/graphql-tools/pull/4337)).
-  
-  Previously the validator rejected `@merge` on zero-arg fields (`args.length !== 1`). It now allows zero or one argument and only errors when there are multiple args without `keyArg` / `argsExpr`.
-  
   Separately, keyless merges such as:
-  
+
   ```ts
   merge: {
     Stats: {
@@ -369,246 +524,370 @@
     },
   }
   ```
-  
-  had no key `selectionSet`. When the subschema that owned `Query.stats` did not have the requested fields (for example querying only `totalChirps` while that field lived on the other subschema), `finalizeGatewayRequest` stripped the empty nested selection and failed with "The request must contain at least one operation."
-  
-  For merged types that have resolvers but no key `selectionSet`, stitching now injects `__typename` into `fieldNodesByType` so a stub object remains and type merging can fill the remaining fields. This matches the partial-field failure called out in [this discussion](https://github.com/ardatan/graphql-tools/pull/4337#issuecomment-1086893317). Keyed merges (`selectionSet: '{ id }'`) are unchanged.
 
+  had no key `selectionSet`. When the subschema that owned `Query.stats` did not have the requested
+  fields (for example querying only `totalChirps` while that field lived on the other subschema),
+  `finalizeGatewayRequest` stripped the empty nested selection and failed with "The request must
+  contain at least one operation."
 
-- [#2671](https://github.com/graphql-hive/gateway/pull/2671) [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59) Thanks [@ardatan](https://github.com/ardatan)! - Merged type resolvers now preserve the parent `mutation` operation when the merge entry point lives on `Mutation` ([graphql-tools#4549](https://github.com/ardatan/graphql-tools/pull/4549)).
-  
-  Previously `createMergedTypeResolver` always used `operation: 'query'`. When type merging ran during a mutation and the merge entry point existed only under `Mutation` (or the subgraph rejected mutation fields executed as queries), merged fields came back null.
-  
-  Example: two subschemas each expose `Mutation.zeroUser` / `Mutation.oneUser` as merge entry points for `User`. A client mutation that selects fields from both users now re-delegates those merges as mutations, so subgraphs that distinguish mutation vs query resolvers keep working.
-  
-  Query-only merge fields (Federation `_entities`) still delegate as `query` even when the gateway operation is a mutation. Subscriptions are also unchanged: merges while resolving a subscription event use `query`, because you cannot re-subscribe for entity fields. Scope follows the [mutation-vs-query discussion](https://github.com/ardatan/graphql-tools/pull/4549#issuecomment-1173573076).
+  For merged types that have resolvers but no key `selectionSet`, stitching now injects `__typename`
+  into `fieldNodesByType` so a stub object remains and type merging can fill the remaining fields.
+  This matches the partial-field failure called out in
+  [this discussion](https://github.com/ardatan/graphql-tools/pull/4337#issuecomment-1086893317).
+  Keyed merges (`selectionSet: '{ id }'`) are unchanged.
 
+- [#2671](https://github.com/graphql-hive/gateway/pull/2671)
+  [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59)
+  Thanks [@ardatan](https://github.com/ardatan)! - Merged type resolvers now preserve the parent
+  `mutation` operation when the merge entry point lives on `Mutation`
+  ([graphql-tools#4549](https://github.com/ardatan/graphql-tools/pull/4549)).
 
-- [#2671](https://github.com/graphql-hive/gateway/pull/2671) [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59) Thanks [@ardatan](https://github.com/ardatan)! - Fix type merging for unions queried with inline fragments ([graphql-tools#4965](https://github.com/ardatan/graphql-tools/pull/4965) / [#4966](https://github.com/ardatan/graphql-tools/issues/4966)).
-  
-  Typical setup: one subschema returns a stub member (`StubMajor { id }`) while another resolves the real union members via `@merge`:
-  
+  Previously `createMergedTypeResolver` always used `operation: 'query'`. When type merging ran
+  during a mutation and the merge entry point existed only under `Mutation` (or the subgraph
+  rejected mutation fields executed as queries), merged fields came back null.
+
+  Example: two subschemas each expose `Mutation.zeroUser` / `Mutation.oneUser` as merge entry points
+  for `User`. A client mutation that selects fields from both users now re-delegates those merges as
+  mutations, so subgraphs that distinguish mutation vs query resolvers keep working.
+
+  Query-only merge fields (Federation `_entities`) still delegate as `query` even when the gateway
+  operation is a mutation. Subscriptions are also unchanged: merges while resolving a subscription
+  event use `query`, because you cannot re-subscribe for entity fields. Scope follows the
+  [mutation-vs-query discussion](https://github.com/ardatan/graphql-tools/pull/4549#issuecomment-1173573076).
+
+- [#2671](https://github.com/graphql-hive/gateway/pull/2671)
+  [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix type merging for unions queried with inline
+  fragments ([graphql-tools#4965](https://github.com/ardatan/graphql-tools/pull/4965) /
+  [#4966](https://github.com/ardatan/graphql-tools/issues/4966)).
+
+  Typical setup: one subschema returns a stub member (`StubMajor { id }`) while another resolves the
+  real union members via `@merge`:
+
   ```graphql
   # students
   union Major = StubMajor
-  type StubMajor { id: String! }
-  
+  type StubMajor {
+    id: String!
+  }
+
   # majors
   type Query {
     major(id: String!): Major @merge(keyField: "id")
   }
   union Major = MajorSuccess | MajorError
   ```
-  
+
   Client query:
-  
+
   ```graphql
   major {
     ... on MajorSuccess { id name }
     ... on MajorError { id code }
   }
   ```
-  
+
   Three problems stacked:
-  
-  1. `@merge` on a union only registered concrete members (`MajorSuccess` / `MajorError`), not `Major` itself, so a `StubMajor` result never triggered merge.
-  2. `MergedTypeInfo` was not built for union types, and planners assumed object/interface `getFields()`.
-  3. Expanding a bare merge-key field (`id`) on a union into `... on StubMajor { id }` returned an **array** from the FIELD visitor; graphql-js `visit` nests that array as one selection instead of splicing it, so execution ignored the fragment and the merge key was never queried (`major(id: $id)` ran with empty variables).
-  
+
+  1. `@merge` on a union only registered concrete members (`MajorSuccess` / `MajorError`), not
+     `Major` itself, so a `StubMajor` result never triggered merge.
+  2. `MergedTypeInfo` was not built for union types, and planners assumed object/interface
+     `getFields()`.
+  3. Expanding a bare merge-key field (`id`) on a union into `... on StubMajor { id }` returned an
+     **array** from the FIELD visitor; graphql-js `visit` nests that array as one selection instead
+     of splicing it, so execution ignored the fragment and the merge key was never queried
+     (`major(id: $id)` ran with empty variables).
+
   Fixes:
-  
+
   - Register the abstract union/interface name for `@merge` as well as concrete members.
-  - Build merge info for unions; treat unions as field-less so the abstract planner re-fetches via inline fragments.
+  - Build merge info for unions; treat unions as field-less so the abstract planner re-fetches via
+    inline fragments.
   - Flatten nested selection arrays after union field expansion so stub keys are actually requested.
-  
-  This goes beyond the [schema-extension workaround](https://github.com/ardatan/graphql-tools/issues/4966#issuecomment-1670713991) discussed on the issue.
-- Updated dependencies [[`127576a`](https://github.com/graphql-hive/gateway/commit/127576a9e823cd2425c69432166a175464882b7f), [`befdb8e`](https://github.com/graphql-hive/gateway/commit/befdb8e3e352650c9f6c4e5fbeadfcf3615ee6ae), [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59)]:
+
+  This goes beyond the
+  [schema-extension workaround](https://github.com/ardatan/graphql-tools/issues/4966#issuecomment-1670713991)
+  discussed on the issue.
+
+- Updated dependencies
+  [[`127576a`](https://github.com/graphql-hive/gateway/commit/127576a9e823cd2425c69432166a175464882b7f),
+  [`befdb8e`](https://github.com/graphql-hive/gateway/commit/befdb8e3e352650c9f6c4e5fbeadfcf3615ee6ae),
+  [`cd30482`](https://github.com/graphql-hive/gateway/commit/cd30482174173564e7a292f36b8dd12cc7cfab59)]:
   - @graphql-tools/delegate@12.3.0
   - @graphql-tools/batch-delegate@10.1.2
   - @graphql-tools/wrap@11.2.2
 
 ## 10.3.2
+
 ### Patch Changes
 
-- Updated dependencies [[`abf4091`](https://github.com/graphql-hive/gateway/commit/abf40919725f57d81ede935bee27a7b408e7d99b)]:
+- Updated dependencies
+  [[`abf4091`](https://github.com/graphql-hive/gateway/commit/abf40919725f57d81ede935bee27a7b408e7d99b)]:
   - @graphql-tools/delegate@12.2.1
   - @graphql-tools/batch-delegate@10.1.1
   - @graphql-tools/wrap@11.2.1
 
 ## 10.3.1
+
 ### Patch Changes
 
+- [#2591](https://github.com/graphql-hive/gateway/pull/2591)
+  [`8f582af`](https://github.com/graphql-hive/gateway/commit/8f582af7e2cd250d9538495487c33a64b038bcb4)
+  Thanks [@kpiotr](https://github.com/kpiotr)! - `stitchSchemas` no longer mutates the resolver
+  objects passed in `resolvers`.
 
+  The wrapper it adds around resolvers of fields that return a merged type (so the merged type's
+  fields get resolved) used to be written back into the caller's field config
+  (`existing.resolve = wrappedResolve`). A resolver map reused across `stitchSchemas` calls — a
+  gateway's additional resolvers on every supergraph reload — therefore gained one wrapper per call,
+  and every wrapper kept its call's `stitchingInfo`, and with it the entire superseded schema,
+  subschemas and executors, reachable: a heap leak of one schema generation per reload.
 
-- [#2591](https://github.com/graphql-hive/gateway/pull/2591) [`8f582af`](https://github.com/graphql-hive/gateway/commit/8f582af7e2cd250d9538495487c33a64b038bcb4) Thanks [@kpiotr](https://github.com/kpiotr)! - `stitchSchemas` no longer mutates the resolver objects passed in `resolvers`.
-  
-  The wrapper it adds around resolvers of fields that return a merged type (so the merged type's fields get resolved) used to be written back into the caller's field config (`existing.resolve = wrappedResolve`). A resolver map reused across `stitchSchemas` calls — a gateway's additional resolvers on every supergraph reload — therefore gained one wrapper per call, and every wrapper kept its call's `stitchingInfo`, and with it the entire superseded schema, subschemas and executors, reachable: a heap leak of one schema generation per reload.
-  
-  Nesting also changed behaviour, because `wrappedResolve` closes over its own call's `stitchingInfo` and the innermost (oldest) wrapper runs first: such a field hydrated through a superseded call's stitching plan and executors, and once that hydration satisfied the selection the newest wrapper found nothing left to resolve.
-  
-  The merged resolver map is now cloned before the wrappers are added. Enum value maps, scalars, union and input type resolvers and plain resolver functions are still passed through by reference, so their identities are unchanged.
+  Nesting also changed behaviour, because `wrappedResolve` closes over its own call's
+  `stitchingInfo` and the innermost (oldest) wrapper runs first: such a field hydrated through a
+  superseded call's stitching plan and executors, and once that hydration satisfied the selection
+  the newest wrapper found nothing left to resolve.
+
+  The merged resolver map is now cloned before the wrappers are added. Enum value maps, scalars,
+  union and input type resolvers and plain resolver functions are still passed through by reference,
+  so their identities are unchanged.
 
 ## 10.3.0
+
 ### Minor Changes
 
+- [#2604](https://github.com/graphql-hive/gateway/pull/2604)
+  [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support GraphQL 16 with @graphql-tools/utils
+  v12
 
+  Preserves GraphQL 16 compatibility while upgrading to `@graphql-tools/utils` v12,
+  `@graphql-tools/executor` v2, and the compatible `@graphql-tools/schema` and
+  `@graphql-tools/merge` releases. Consumers now receive consistent resolver and execution request
+  types without conflicts between different GraphQL Tools versions.
 
-- [#2604](https://github.com/graphql-hive/gateway/pull/2604) [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support GraphQL 16 with @graphql-tools/utils v12
-  
-  Preserves GraphQL 16 compatibility while upgrading to `@graphql-tools/utils` v12, `@graphql-tools/executor` v2, and the compatible `@graphql-tools/schema` and `@graphql-tools/merge` releases. Consumers now receive consistent resolver and execution request types without conflicts between different GraphQL Tools versions.
-  
-  Stitched and delegated operations handle the new executor variable result shape correctly, including variables used by directives. Resolver execution also supports the executor's cancellation and asynchronous work helpers while remaining compatible with the GraphQL 16 `GraphQLResolveInfo` API.
+  Stitched and delegated operations handle the new executor variable result shape correctly,
+  including variables used by directives. Resolver execution also supports the executor's
+  cancellation and asynchronous work helpers while remaining compatible with the GraphQL 16
+  `GraphQLResolveInfo` API.
 
 ### Patch Changes
 
+- [#2604](https://github.com/graphql-hive/gateway/pull/2604)
+  [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/executor@^2.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/2.0.1)
+    (from `^1.4.13`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/merge@^9.2.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.2.4)
+    (from `^9.1.5`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.1.1)
+    (from `^10.0.29`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^12.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.0.1)
+    (from `^11.0.0`, in `dependencies`)
 
-- [#2604](https://github.com/graphql-hive/gateway/pull/2604) [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830) Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/executor@^2.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/2.0.1) (from `^1.4.13`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/merge@^9.2.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.2.4) (from `^9.1.5`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/schema@^10.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.1.1) (from `^10.0.29`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@^12.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.0.1) (from `^11.0.0`, in `dependencies`)
-- Updated dependencies [[`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830), [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830), [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830), [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830)]:
+- Updated dependencies
+  [[`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830),
+  [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830),
+  [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830),
+  [`ee4cc07`](https://github.com/graphql-hive/gateway/commit/ee4cc07097926293a8628c075a264e272cad8830)]:
   - @graphql-tools/batch-delegate@10.1.0
   - @graphql-tools/delegate@12.2.0
   - @graphql-tools/wrap@11.2.0
 
 ## 10.2.5
+
 ### Patch Changes
 
-- Updated dependencies [[`e5ea5f4`](https://github.com/graphql-hive/gateway/commit/e5ea5f419bb27abe24e6962f07fd98fb886464f7)]:
+- Updated dependencies
+  [[`e5ea5f4`](https://github.com/graphql-hive/gateway/commit/e5ea5f419bb27abe24e6962f07fd98fb886464f7)]:
   - @graphql-tools/delegate@12.1.4
   - @graphql-tools/batch-delegate@10.0.32
   - @graphql-tools/wrap@11.1.24
 
 ## 10.2.4
+
 ### Patch Changes
 
+- [#2555](https://github.com/graphql-hive/gateway/pull/2555)
+  [`eb6569b`](https://github.com/graphql-hive/gateway/commit/eb6569b3ee21bdc16c67c6d356101e66e206d520)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Flush deferred merged fields without blocking
+  the initial payload
 
+  Deferred fields on merged entity types are now delegated when their deferred resolvers run instead
+  of being included in the initial delegation plan. This allows the initial payload to be delivered
+  before slower merged subgraph fields resolve.
 
-- [#2555](https://github.com/graphql-hive/gateway/pull/2555) [`eb6569b`](https://github.com/graphql-hive/gateway/commit/eb6569b3ee21bdc16c67c6d356101e66e206d520) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Flush deferred merged fields without blocking the initial payload
-  
-  Deferred fields on merged entity types are now delegated when their deferred resolvers run instead of being included in the initial delegation plan. This allows the initial payload to be delivered before slower merged subgraph fields resolve.
-- Updated dependencies [[`eb6569b`](https://github.com/graphql-hive/gateway/commit/eb6569b3ee21bdc16c67c6d356101e66e206d520)]:
+- Updated dependencies
+  [[`eb6569b`](https://github.com/graphql-hive/gateway/commit/eb6569b3ee21bdc16c67c6d356101e66e206d520)]:
   - @graphql-tools/delegate@12.1.3
   - @graphql-tools/batch-delegate@10.0.31
   - @graphql-tools/wrap@11.1.23
 
 ## 10.2.3
+
 ### Patch Changes
 
-- Updated dependencies [[`af2cccb`](https://github.com/graphql-hive/gateway/commit/af2cccb7150db504ce42ab6b463166341377614f)]:
+- Updated dependencies
+  [[`af2cccb`](https://github.com/graphql-hive/gateway/commit/af2cccb7150db504ce42ab6b463166341377614f)]:
   - @graphql-tools/delegate@12.1.2
   - @graphql-tools/batch-delegate@10.0.30
   - @graphql-tools/wrap@11.1.22
 
 ## 10.2.2
+
 ### Patch Changes
 
-- Updated dependencies [[`9ff0daf`](https://github.com/graphql-hive/gateway/commit/9ff0dafdfaa1db829dbde2c28e98c78e47fc7b24)]:
+- Updated dependencies
+  [[`9ff0daf`](https://github.com/graphql-hive/gateway/commit/9ff0dafdfaa1db829dbde2c28e98c78e47fc7b24)]:
   - @graphql-tools/delegate@12.1.1
   - @graphql-tools/batch-delegate@10.0.29
   - @graphql-tools/wrap@11.1.21
 
 ## 10.2.1
+
 ### Patch Changes
 
-
-
-- [#2484](https://github.com/graphql-hive/gateway/pull/2484) [`a589a2d`](https://github.com/graphql-hive/gateway/commit/a589a2d9797e67623b28439d0bd30a17e3a247d6) Thanks [@jdolle](https://github.com/jdolle)! - Reduce peak memory consumption for `stitchSchemas` function
+- [#2484](https://github.com/graphql-hive/gateway/pull/2484)
+  [`a589a2d`](https://github.com/graphql-hive/gateway/commit/a589a2d9797e67623b28439d0bd30a17e3a247d6)
+  Thanks [@jdolle](https://github.com/jdolle)! - Reduce peak memory consumption for `stitchSchemas`
+  function
 
 ## 10.2.0
+
 ### Minor Changes
 
+- [#2473](https://github.com/graphql-hive/gateway/pull/2473)
+  [`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Automatically resolve plain merged-type
+  references returned by local stitching resolvers
 
-
-- [#2473](https://github.com/graphql-hive/gateway/pull/2473) [`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Automatically resolve plain merged-type references returned by local stitching resolvers
-  
-  Local fields introduced through `typeDefs` or `resolvers` are wrapped by `stitchSchemas`. When they return a partial merged type containing a usable key, stitching performs one initial delegation with type merging enabled. The existing stitching planner then handles computed fields, `@requires` dependencies, batching, nested entities, and fields owned by other subschemas.
+  Local fields introduced through `typeDefs` or `resolvers` are wrapped by `stitchSchemas`. When
+  they return a partial merged type containing a usable key, stitching performs one initial
+  delegation with type merging enabled. The existing stitching planner then handles computed fields,
+  `@requires` dependencies, batching, nested entities, and fields owned by other subschemas.
 
 ### Patch Changes
 
+- [#2473](https://github.com/graphql-hive/gateway/pull/2473)
+  [`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Fields that are not provided by any subschema
+  (added through `typeDefs` or `resolvers`) can now return partial objects of merged types; the
+  missing fields are resolved from the owning subschema automatically
 
-
-- [#2473](https://github.com/graphql-hive/gateway/pull/2473) [`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Fields that are not provided by any subschema (added through `typeDefs` or `resolvers`) can now return partial objects of merged types; the missing fields are resolved from the owning subschema automatically
-  
   ```graphql
   type Query {
     personCreated: PersonCreated
   }
-  
+
   type PersonCreated {
     person: Person # merged type, owned by a subschema
     cursor: String
   }
   ```
-  
+
   ```ts
   const resolvers = {
     Query: {
       // only the key of `Person` is provided locally
-      personCreated: () => ({ person: { id: '1' }, cursor: 'c1' }),
-    },
-  };
+      personCreated: () => ({ person: { id: '1' }, cursor: 'c1' })
+    }
+  }
   ```
-  
-  Before, `person` had to be resolved manually even though the stitched schema knows `Person` and its keys. Now the key is enough: `{ person { name } }` runs through the standard stitching planner, while local data (`cursor`) and local field resolvers on `Person` keep working as before. Computed fields, `@requires` dependencies, batching, and fields from other subschemas use the same type-merging flow as regular delegated results.
-- Updated dependencies [[`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc), [`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc)]:
+
+  Before, `person` had to be resolved manually even though the stitched schema knows `Person` and
+  its keys. Now the key is enough: `{ person { name } }` runs through the standard stitching
+  planner, while local data (`cursor`) and local field resolvers on `Person` keep working as before.
+  Computed fields, `@requires` dependencies, batching, and fields from other subschemas use the same
+  type-merging flow as regular delegated results.
+
+- Updated dependencies
+  [[`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc),
+  [`6f2c3b6`](https://github.com/graphql-hive/gateway/commit/6f2c3b64b05f6ba17928fd098915c2167f3daedc)]:
   - @graphql-tools/delegate@12.1.0
   - @graphql-tools/batch-delegate@10.0.28
   - @graphql-tools/wrap@11.1.20
 
 ## 10.1.25
+
 ### Patch Changes
 
-- Updated dependencies [[`8a08de3`](https://github.com/graphql-hive/gateway/commit/8a08de36be598f975ba500a28a9bd9710ead2d66), [`65ce370`](https://github.com/graphql-hive/gateway/commit/65ce3702231068c946d4f95147b556cab57ad28c)]:
+- Updated dependencies
+  [[`8a08de3`](https://github.com/graphql-hive/gateway/commit/8a08de36be598f975ba500a28a9bd9710ead2d66),
+  [`65ce370`](https://github.com/graphql-hive/gateway/commit/65ce3702231068c946d4f95147b556cab57ad28c)]:
   - @graphql-tools/delegate@12.0.20
   - @graphql-tools/batch-delegate@10.0.27
   - @graphql-tools/wrap@11.1.19
 
 ## 10.1.24
+
 ### Patch Changes
 
+- [#2351](https://github.com/graphql-hive/gateway/pull/2351)
+  [`0bbdbbc`](https://github.com/graphql-hive/gateway/commit/0bbdbbc22b75d9705a77f96144af002c796a695d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix `@provides` so the gateway only requests the
+  provided fields the client actually selected, and stops delegating to the owner subgraph when
+  `@provides` already covers the request.
 
+  Previously, when a subgraph declared `@provides(fields: "...")` on a field, the gateway would
+  still:
 
-- [#2351](https://github.com/graphql-hive/gateway/pull/2351) [`0bbdbbc`](https://github.com/graphql-hive/gateway/commit/0bbdbbc22b75d9705a77f96144af002c796a695d) Thanks [@ardatan](https://github.com/ardatan)! - Fix `@provides` so the gateway only requests the provided fields the client actually selected, and stops delegating to the owner subgraph when `@provides` already covers the request.
-  
-  Previously, when a subgraph declared `@provides(fields: "...")` on a field, the gateway would still:
-  
-  1. Forward **every** field listed in `@provides` to that subgraph, even when the client never asked for them.
-  2. After receiving the response, plan additional delegations to the owner subgraph for `@provides`-covered fields whenever the providing subgraph declared them as `@external`, even though the data was already returned.
-  
+  1. Forward **every** field listed in `@provides` to that subgraph, even when the client never
+     asked for them.
+  2. After receiving the response, plan additional delegations to the owner subgraph for
+     `@provides`-covered fields whenever the providing subgraph declared them as `@external`, even
+     though the data was already returned.
+
   For example with:
-  
+
   ```graphql
   # subgraph B (provider)
   type Query {
     entity: Entity @provides(fields: "name description")
   }
-  
+
   type Entity @key(fields: "id") {
     id: ID!
     name: String! @external
     description: String! @external
   }
   ```
-  
-  a client query of `{ entity { id name } }` would still cause the gateway to ask subgraph B for `description` *and* fetch `name` again from subgraph A (the owner of `Entity`).
-  
+
+  a client query of `{ entity { id name } }` would still cause the gateway to ask subgraph B for
+  `description` _and_ fetch `name` again from subgraph A (the owner of `Entity`).
+
   After this fix:
-  
-  - Only the `@provides` fields the client actually selected are forwarded to the providing subgraph (request side).
-  - The delegation planner now recognises `@provides` declarations at every nested level (e.g. `@provides(fields: "nested { nestedNested { name description } }")`) and `@provides` declarations made via inline fragments on union/interface members (e.g. `@provides(fields: "... on Book { title }")`), so the gateway no longer round-trips to the owner subgraph for fields that the providing subgraph has already returned.
-  - Fragment spreads in the client query are correctly handled when selecting nested `@provides`-covered fields. Previously, using a fragment spread (e.g. `...MyFrag`) for nested `@external` fields could cause an unnecessary delegation to the owner because selection subtraction compared only the spread name with the explicit `@provides` fields. The planner now resolves fragment spreads before subtracting provided selections, while preserving the fragment type condition and directives when only part of a fragment remains.
-  
-  Aliases, direct field selections, fragments, fragment spreads, `@include`/`@skip` directives wrapping a `@provides` field, and nested `@provides` selections are preserved without unnecessary owner delegations.
-- Updated dependencies [[`0bbdbbc`](https://github.com/graphql-hive/gateway/commit/0bbdbbc22b75d9705a77f96144af002c796a695d)]:
+
+  - Only the `@provides` fields the client actually selected are forwarded to the providing subgraph
+    (request side).
+  - The delegation planner now recognises `@provides` declarations at every nested level (e.g.
+    `@provides(fields: "nested { nestedNested { name description } }")`) and `@provides`
+    declarations made via inline fragments on union/interface members (e.g.
+    `@provides(fields: "... on Book { title }")`), so the gateway no longer round-trips to the owner
+    subgraph for fields that the providing subgraph has already returned.
+  - Fragment spreads in the client query are correctly handled when selecting nested
+    `@provides`-covered fields. Previously, using a fragment spread (e.g. `...MyFrag`) for nested
+    `@external` fields could cause an unnecessary delegation to the owner because selection
+    subtraction compared only the spread name with the explicit `@provides` fields. The planner now
+    resolves fragment spreads before subtracting provided selections, while preserving the fragment
+    type condition and directives when only part of a fragment remains.
+
+  Aliases, direct field selections, fragments, fragment spreads, `@include`/`@skip` directives
+  wrapping a `@provides` field, and nested `@provides` selections are preserved without unnecessary
+  owner delegations.
+
+- Updated dependencies
+  [[`0bbdbbc`](https://github.com/graphql-hive/gateway/commit/0bbdbbc22b75d9705a77f96144af002c796a695d)]:
   - @graphql-tools/delegate@12.0.19
   - @graphql-tools/batch-delegate@10.0.26
   - @graphql-tools/wrap@11.1.18
 
 ## 10.1.23
+
 ### Patch Changes
 
 - Updated dependencies []:
@@ -617,59 +896,74 @@
   - @graphql-tools/wrap@11.1.17
 
 ## 10.1.22
+
 ### Patch Changes
 
+- [#2401](https://github.com/graphql-hive/gateway/pull/2401)
+  [`83465de`](https://github.com/graphql-hive/gateway/commit/83465def4d854d1f0912f635bd9621433fd33c8b)
+  Thanks [@n1ru4l](https://github.com/n1ru4l)! - Fix `mergeDirectives` option and default it to
+  `true`
 
+  Custom directive definitions from subschemas were silently dropped from the stitched schema unless
+  `mergeDirectives: true` was explicitly passed to `stitchSchemas`. This meant a schema like:
 
-- [#2401](https://github.com/graphql-hive/gateway/pull/2401) [`83465de`](https://github.com/graphql-hive/gateway/commit/83465def4d854d1f0912f635bd9621433fd33c8b) Thanks [@n1ru4l](https://github.com/n1ru4l)! - Fix `mergeDirectives` option and default it to `true`
-  
-  Custom directive definitions from subschemas were silently dropped from the stitched schema unless `mergeDirectives: true` was explicitly passed to `stitchSchemas`. This meant a schema like:
-  
   ```graphql
   directive @public on SCHEMA | OBJECT | FIELD_DEFINITION
-  
+
   type Query @public {
     isAnExample: Boolean @public
   }
   ```
-  
+
   would stitch into a broken schema where `@public` was used on types and fields but never defined.
-  
-  The default is now `true`, so directive definitions are always collected and retained in the stitched schema, this is the expected behaviour since the merging was partial before this fix (usages got merged, but definitions not).
-  
-  Passing `mergeDirectives: false` now produces a fully clean result - both directive definitions and all their usages on types, fields, input fields, and enum values are stripped.
+
+  The default is now `true`, so directive definitions are always collected and retained in the
+  stitched schema, this is the expected behaviour since the merging was partial before this fix
+  (usages got merged, but definitions not).
+
+  Passing `mergeDirectives: false` now produces a fully clean result - both directive definitions
+  and all their usages on types, fields, input fields, and enum values are stripped.
 
 ## 10.1.21
+
 ### Patch Changes
 
-- Updated dependencies [[`b6230c9`](https://github.com/graphql-hive/gateway/commit/b6230c97709065c2f540b6d263af492379eca359)]:
+- Updated dependencies
+  [[`b6230c9`](https://github.com/graphql-hive/gateway/commit/b6230c97709065c2f540b6d263af492379eca359)]:
   - @graphql-tools/batch-delegate@10.0.24
 
 ## 10.1.20
+
 ### Patch Changes
 
-- Updated dependencies [[`3e774e0`](https://github.com/graphql-hive/gateway/commit/3e774e050bc2d3c33e0f36a258ab6a8d94bf0750)]:
+- Updated dependencies
+  [[`3e774e0`](https://github.com/graphql-hive/gateway/commit/3e774e050bc2d3c33e0f36a258ab6a8d94bf0750)]:
   - @graphql-tools/delegate@12.0.17
   - @graphql-tools/batch-delegate@10.0.23
   - @graphql-tools/wrap@11.1.16
 
 ## 10.1.19
+
 ### Patch Changes
 
-- Updated dependencies [[`deafdc0`](https://github.com/graphql-hive/gateway/commit/deafdc00e388ed195c2cdf77e98cd19e7d496d48)]:
+- Updated dependencies
+  [[`deafdc0`](https://github.com/graphql-hive/gateway/commit/deafdc00e388ed195c2cdf77e98cd19e7d496d48)]:
   - @graphql-tools/delegate@12.0.16
   - @graphql-tools/batch-delegate@10.0.22
   - @graphql-tools/wrap@11.1.15
 
 ## 10.1.18
+
 ### Patch Changes
 
-- Updated dependencies [[`dff525f`](https://github.com/graphql-hive/gateway/commit/dff525f214d3525434c5a73a5b3fb22c46550163)]:
+- Updated dependencies
+  [[`dff525f`](https://github.com/graphql-hive/gateway/commit/dff525f214d3525434c5a73a5b3fb22c46550163)]:
   - @graphql-tools/delegate@12.0.14
   - @graphql-tools/batch-delegate@10.0.20
   - @graphql-tools/wrap@11.1.14
 
 ## 10.1.17
+
 ### Patch Changes
 
 - Updated dependencies []:
@@ -678,14 +972,17 @@
   - @graphql-tools/wrap@11.1.13
 
 ## 10.1.16
+
 ### Patch Changes
 
-- Updated dependencies [[`da68d27`](https://github.com/graphql-hive/gateway/commit/da68d2710dff1f8bca5b17bcd5368e631f72114e)]:
+- Updated dependencies
+  [[`da68d27`](https://github.com/graphql-hive/gateway/commit/da68d2710dff1f8bca5b17bcd5368e631f72114e)]:
   - @graphql-tools/delegate@12.0.12
   - @graphql-tools/batch-delegate@10.0.18
   - @graphql-tools/wrap@11.1.12
 
 ## 10.1.15
+
 ### Patch Changes
 
 - Updated dependencies []:
@@ -694,261 +991,361 @@
   - @graphql-tools/wrap@11.1.11
 
 ## 10.1.14
+
 ### Patch Changes
 
-- Updated dependencies [[`dae3fe4`](https://github.com/graphql-hive/gateway/commit/dae3fe4fbb9c78598d1bbf91c2ed07ab1b90f05d)]:
+- Updated dependencies
+  [[`dae3fe4`](https://github.com/graphql-hive/gateway/commit/dae3fe4fbb9c78598d1bbf91c2ed07ab1b90f05d)]:
   - @graphql-tools/wrap@11.1.10
   - @graphql-tools/delegate@12.0.10
   - @graphql-tools/batch-delegate@10.0.16
 
 ## 10.1.13
+
 ### Patch Changes
 
+- [#2022](https://github.com/graphql-hive/gateway/pull/2022)
+  [`43aaa6a`](https://github.com/graphql-hive/gateway/commit/43aaa6ab8c1c64cae92e9cdff7016ebdf1afa756)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix redundant extra calls to the same subschema
+  in case of `@canonical` annotation
 
-
-- [#2022](https://github.com/graphql-hive/gateway/pull/2022) [`43aaa6a`](https://github.com/graphql-hive/gateway/commit/43aaa6ab8c1c64cae92e9cdff7016ebdf1afa756) Thanks [@ardatan](https://github.com/ardatan)! - Fix redundant extra calls to the same subschema in case of `@canonical` annotation
-
-- Updated dependencies [[`43aaa6a`](https://github.com/graphql-hive/gateway/commit/43aaa6ab8c1c64cae92e9cdff7016ebdf1afa756)]:
+- Updated dependencies
+  [[`43aaa6a`](https://github.com/graphql-hive/gateway/commit/43aaa6ab8c1c64cae92e9cdff7016ebdf1afa756)]:
   - @graphql-tools/delegate@12.0.9
   - @graphql-tools/batch-delegate@10.0.15
   - @graphql-tools/wrap@11.1.9
 
 ## 10.1.12
+
 ### Patch Changes
 
-- Updated dependencies [[`4065b7f`](https://github.com/graphql-hive/gateway/commit/4065b7fbb08d9e75c5f0d3b2b4d42d665aa9dbd9)]:
+- Updated dependencies
+  [[`4065b7f`](https://github.com/graphql-hive/gateway/commit/4065b7fbb08d9e75c5f0d3b2b4d42d665aa9dbd9)]:
   - @graphql-tools/delegate@12.0.8
   - @graphql-tools/batch-delegate@10.0.14
   - @graphql-tools/wrap@11.1.8
 
 ## 10.1.11
+
 ### Patch Changes
 
-- Updated dependencies [[`584a293`](https://github.com/graphql-hive/gateway/commit/584a293e3dafa7cd2d0210f80299c81b6707bcd4)]:
+- Updated dependencies
+  [[`584a293`](https://github.com/graphql-hive/gateway/commit/584a293e3dafa7cd2d0210f80299c81b6707bcd4)]:
   - @graphql-tools/delegate@12.0.7
   - @graphql-tools/batch-delegate@10.0.13
   - @graphql-tools/wrap@11.1.7
 
 ## 10.1.10
+
 ### Patch Changes
 
-
-
-- [#1916](https://github.com/graphql-hive/gateway/pull/1916) [`2200fc3`](https://github.com/graphql-hive/gateway/commit/2200fc3e9b94db77a642835bbf2d646c65b3e8d0) Thanks [@ardatan](https://github.com/ardatan)! - - Handle the type merging order correctly with custom labels and percentage labels for progressive override
+- [#1916](https://github.com/graphql-hive/gateway/pull/1916)
+  [`2200fc3`](https://github.com/graphql-hive/gateway/commit/2200fc3e9b94db77a642835bbf2d646c65b3e8d0)
+  Thanks [@ardatan](https://github.com/ardatan)! - - Handle the type merging order correctly with
+  custom labels and percentage labels for progressive override
   - Do not pass `percent(x)` labels to the progressive override handler
   - Apply progressive override to the shared root fields
-- Updated dependencies [[`2200fc3`](https://github.com/graphql-hive/gateway/commit/2200fc3e9b94db77a642835bbf2d646c65b3e8d0)]:
+- Updated dependencies
+  [[`2200fc3`](https://github.com/graphql-hive/gateway/commit/2200fc3e9b94db77a642835bbf2d646c65b3e8d0)]:
   - @graphql-tools/delegate@12.0.6
   - @graphql-tools/batch-delegate@10.0.12
   - @graphql-tools/wrap@11.1.6
 
 ## 10.1.9
+
 ### Patch Changes
 
-- Updated dependencies [[`e92c5a9`](https://github.com/graphql-hive/gateway/commit/e92c5a9702a2aea395a4a4e3a482b92f528655e8)]:
+- Updated dependencies
+  [[`e92c5a9`](https://github.com/graphql-hive/gateway/commit/e92c5a9702a2aea395a4a4e3a482b92f528655e8)]:
   - @graphql-tools/delegate@12.0.5
   - @graphql-tools/batch-delegate@10.0.11
   - @graphql-tools/wrap@11.1.5
 
 ## 10.1.8
+
 ### Patch Changes
 
+- [#1842](https://github.com/graphql-hive/gateway/pull/1842)
+  [`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/utils@^11.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.0.0)
+    (from `^10.10.3`, in `dependencies`)
 
-- [#1842](https://github.com/graphql-hive/gateway/pull/1842) [`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/utils@^11.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.0.0) (from `^10.10.3`, in `dependencies`)
-- Updated dependencies [[`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f), [`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f), [`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f)]:
+- Updated dependencies
+  [[`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f),
+  [`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f),
+  [`93aa767`](https://github.com/graphql-hive/gateway/commit/93aa76755afc93085280646fb7cb14e6d02b4a7f)]:
   - @graphql-tools/batch-delegate@10.0.10
   - @graphql-tools/delegate@12.0.4
   - @graphql-tools/wrap@11.1.4
 
 ## 10.1.7
+
 ### Patch Changes
 
-- Updated dependencies [[`dcd8f0e`](https://github.com/graphql-hive/gateway/commit/dcd8f0e93fd220cb99f79cadea759ea49bc15308)]:
+- Updated dependencies
+  [[`dcd8f0e`](https://github.com/graphql-hive/gateway/commit/dcd8f0e93fd220cb99f79cadea759ea49bc15308)]:
   - @graphql-tools/delegate@12.0.3
   - @graphql-tools/batch-delegate@10.0.9
   - @graphql-tools/wrap@11.1.3
 
 ## 10.1.6
+
 ### Patch Changes
 
-- Updated dependencies [[`da8b8e3`](https://github.com/graphql-hive/gateway/commit/da8b8e3f3545487249b11c6577e3889f68527249)]:
+- Updated dependencies
+  [[`da8b8e3`](https://github.com/graphql-hive/gateway/commit/da8b8e3f3545487249b11c6577e3889f68527249)]:
   - @graphql-tools/delegate@12.0.2
   - @graphql-tools/batch-delegate@10.0.8
   - @graphql-tools/wrap@11.1.2
 
 ## 10.1.5
+
 ### Patch Changes
 
-- Updated dependencies [[`0d14faf`](https://github.com/graphql-hive/gateway/commit/0d14fafdbaf3fb27eef123016ef2ca977d6688d8)]:
+- Updated dependencies
+  [[`0d14faf`](https://github.com/graphql-hive/gateway/commit/0d14fafdbaf3fb27eef123016ef2ca977d6688d8)]:
   - @graphql-tools/delegate@12.0.1
   - @graphql-tools/batch-delegate@10.0.7
   - @graphql-tools/wrap@11.1.1
 
 ## 10.1.4
+
 ### Patch Changes
 
+- [#1735](https://github.com/graphql-hive/gateway/pull/1735)
+  [`55173a5`](https://github.com/graphql-hive/gateway/commit/55173a55344a07fdf9531efcbaa4cb142fff655e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Ensure key fields propagate correctly for
+  interface/object combinations
 
+- [#1727](https://github.com/graphql-hive/gateway/pull/1727)
+  [`1dbc653`](https://github.com/graphql-hive/gateway/commit/1dbc6536cb992a705cac7894acca6fe5431b72de)
+  Thanks [@ardatan](https://github.com/ardatan)! - Avoid extra `__typename` in the root selection
 
-- [#1735](https://github.com/graphql-hive/gateway/pull/1735) [`55173a5`](https://github.com/graphql-hive/gateway/commit/55173a55344a07fdf9531efcbaa4cb142fff655e) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Ensure key fields propagate correctly for interface/object combinations
-
-
-
-- [#1727](https://github.com/graphql-hive/gateway/pull/1727) [`1dbc653`](https://github.com/graphql-hive/gateway/commit/1dbc6536cb992a705cac7894acca6fe5431b72de) Thanks [@ardatan](https://github.com/ardatan)! - Avoid extra `__typename` in the root selection
-  
   ```diff
   query {
   - __typename
     hello
   }
   ```
-- Updated dependencies [[`bc6cddd`](https://github.com/graphql-hive/gateway/commit/bc6cddd1c53a012dd02a1d8a7217a28e65cc6ae9), [`1dbc653`](https://github.com/graphql-hive/gateway/commit/1dbc6536cb992a705cac7894acca6fe5431b72de), [`bc6cddd`](https://github.com/graphql-hive/gateway/commit/bc6cddd1c53a012dd02a1d8a7217a28e65cc6ae9), [`b520eb2`](https://github.com/graphql-hive/gateway/commit/b520eb2309f627578519826d6b9e0056252c6c46)]:
+
+- Updated dependencies
+  [[`bc6cddd`](https://github.com/graphql-hive/gateway/commit/bc6cddd1c53a012dd02a1d8a7217a28e65cc6ae9),
+  [`1dbc653`](https://github.com/graphql-hive/gateway/commit/1dbc6536cb992a705cac7894acca6fe5431b72de),
+  [`bc6cddd`](https://github.com/graphql-hive/gateway/commit/bc6cddd1c53a012dd02a1d8a7217a28e65cc6ae9),
+  [`b520eb2`](https://github.com/graphql-hive/gateway/commit/b520eb2309f627578519826d6b9e0056252c6c46)]:
   - @graphql-tools/wrap@11.1.0
   - @graphql-tools/delegate@12.0.0
   - @graphql-tools/batch-delegate@10.0.6
 
 ## 10.1.3
+
 ### Patch Changes
 
+- [#1691](https://github.com/graphql-hive/gateway/pull/1691)
+  [`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/executor@^1.4.13` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.13)
+    (from `^1.4.11`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/merge@^9.1.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.5)
+    (from `^9.1.3`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.29` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.29)
+    (from `^10.0.27`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.10.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.3)
+    (from `^10.10.1`, in `dependencies`)
 
-- [#1691](https://github.com/graphql-hive/gateway/pull/1691) [`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/executor@^1.4.13` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.13) (from `^1.4.11`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/merge@^9.1.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.5) (from `^9.1.3`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/schema@^10.0.29` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.29) (from `^10.0.27`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@^10.10.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.3) (from `^10.10.1`, in `dependencies`)
-- Updated dependencies [[`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb), [`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb), [`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb)]:
+- Updated dependencies
+  [[`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb),
+  [`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb),
+  [`7ecaf7e`](https://github.com/graphql-hive/gateway/commit/7ecaf7e8f658c4e4c1a91d1e8db3c1a8ceca51cb)]:
   - @graphql-tools/batch-delegate@10.0.5
   - @graphql-tools/delegate@11.1.3
   - @graphql-tools/wrap@11.0.5
 
 ## 10.1.2
+
 ### Patch Changes
 
+- [#1608](https://github.com/graphql-hive/gateway/pull/1608)
+  [`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/executor@^1.4.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.11)
+    (from `^1.4.9`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/merge@^9.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.3)
+    (from `^9.1.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.27` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.27)
+    (from `^10.0.25`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.1)
+    (from `^10.9.1`, in `dependencies`)
 
-- [#1608](https://github.com/graphql-hive/gateway/pull/1608) [`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/executor@^1.4.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.11) (from `^1.4.9`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/merge@^9.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.3) (from `^9.1.1`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/schema@^10.0.27` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.27) (from `^10.0.25`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@^10.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.1) (from `^10.9.1`, in `dependencies`)
+- [#1662](https://github.com/graphql-hive/gateway/pull/1662)
+  [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/utils@^10.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.1)
+    (from `^10.10.0`, in `dependencies`)
 
-- [#1662](https://github.com/graphql-hive/gateway/pull/1662) [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/utils@^10.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.1) (from `^10.10.0`, in `dependencies`)
+- [#1663](https://github.com/graphql-hive/gateway/pull/1663)
+  [`d678113`](https://github.com/graphql-hive/gateway/commit/d678113debfe28095ed6e09c2abba4451a42608a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/executor@^1.4.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.11)
+    (from `^1.4.10`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/merge@^9.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.3)
+    (from `^9.1.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.27` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.27)
+    (from `^10.0.26`, in `dependencies`)
 
-- [#1663](https://github.com/graphql-hive/gateway/pull/1663) [`d678113`](https://github.com/graphql-hive/gateway/commit/d678113debfe28095ed6e09c2abba4451a42608a) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/executor@^1.4.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.11) (from `^1.4.10`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/merge@^9.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.3) (from `^9.1.2`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/schema@^10.0.27` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.27) (from `^10.0.26`, in `dependencies`)
-- Updated dependencies [[`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea), [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff), [`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea), [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff), [`d678113`](https://github.com/graphql-hive/gateway/commit/d678113debfe28095ed6e09c2abba4451a42608a), [`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea), [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff), [`d678113`](https://github.com/graphql-hive/gateway/commit/d678113debfe28095ed6e09c2abba4451a42608a)]:
+- Updated dependencies
+  [[`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea),
+  [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff),
+  [`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea),
+  [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff),
+  [`d678113`](https://github.com/graphql-hive/gateway/commit/d678113debfe28095ed6e09c2abba4451a42608a),
+  [`9c789fb`](https://github.com/graphql-hive/gateway/commit/9c789fb11f6de80e781ff056cb5b98c548938bea),
+  [`27789de`](https://github.com/graphql-hive/gateway/commit/27789de7967cb5299d471c00434591f309b978ff),
+  [`d678113`](https://github.com/graphql-hive/gateway/commit/d678113debfe28095ed6e09c2abba4451a42608a)]:
   - @graphql-tools/batch-delegate@10.0.4
   - @graphql-tools/delegate@11.1.2
   - @graphql-tools/wrap@11.0.4
 
 ## 10.1.1
+
 ### Patch Changes
 
+- [#1654](https://github.com/graphql-hive/gateway/pull/1654)
+  [`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
 
+  - Updated dependency
+    [`@graphql-tools/executor@^1.4.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.10)
+    (from `^1.4.9`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/merge@^9.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.2)
+    (from `^9.1.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.26` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.26)
+    (from `^10.0.25`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.10.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.0)
+    (from `^10.9.1`, in `dependencies`)
 
-- [#1654](https://github.com/graphql-hive/gateway/pull/1654) [`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  
-  - Updated dependency [`@graphql-tools/executor@^1.4.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.10) (from `^1.4.9`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/merge@^9.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.2) (from `^9.1.1`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/schema@^10.0.26` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.26) (from `^10.0.25`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@^10.10.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.10.0) (from `^10.9.1`, in `dependencies`)
+- [#1656](https://github.com/graphql-hive/gateway/pull/1656)
+  [`3226919`](https://github.com/graphql-hive/gateway/commit/3226919d58930289491696fa3b56ed85c766e3f5)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Fix Progressive Override to prevent caching
+  on different variations of override
 
-
-- [#1656](https://github.com/graphql-hive/gateway/pull/1656) [`3226919`](https://github.com/graphql-hive/gateway/commit/3226919d58930289491696fa3b56ed85c766e3f5) Thanks [@enisdenjo](https://github.com/enisdenjo)! - Fix Progressive Override to prevent caching on different variations of override
-
-- Updated dependencies [[`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851), [`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851), [`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851)]:
+- Updated dependencies
+  [[`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851),
+  [`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851),
+  [`efed5e0`](https://github.com/graphql-hive/gateway/commit/efed5e0c257edcacb51dae7f670c2026a747a851)]:
   - @graphql-tools/batch-delegate@10.0.3
   - @graphql-tools/delegate@11.1.1
   - @graphql-tools/wrap@11.0.3
 
 ## 10.1.0
+
 ### Minor Changes
 
+- [#1624](https://github.com/graphql-hive/gateway/pull/1624)
+  [`a8458b2`](https://github.com/graphql-hive/gateway/commit/a8458b24e71fda37a515eaf9ac9af43a73e7823f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Progressive Override for Safer Field Migrations
 
+  Introduces Progressive Override, allowing you to safely migrate fields between subgraphs using the
+  `@override` directive with a label. Control the rollout using custom logic in the gateway (e.g.,
+  percentage, headers) or the built-in percent(x) label for gradual, incremental traffic migration.
 
-- [#1624](https://github.com/graphql-hive/gateway/pull/1624) [`a8458b2`](https://github.com/graphql-hive/gateway/commit/a8458b24e71fda37a515eaf9ac9af43a73e7823f) Thanks [@ardatan](https://github.com/ardatan)! - Progressive Override for Safer Field Migrations
-  
-  Introduces Progressive Override, allowing you to safely migrate fields between subgraphs using the `@override` directive with a label. Control the rollout using custom logic in the gateway (e.g., percentage, headers) or the built-in percent(x) label for gradual, incremental traffic migration.
-  
-  Detailed documentation can be found [here](https://the-guild.dev/graphql/hive/docs/gateway/other-features/progressive-override).
+  Detailed documentation can be found
+  [here](https://the-guild.dev/graphql/hive/docs/gateway/other-features/progressive-override).
 
 ### Patch Changes
 
-- Updated dependencies [[`a54b0c1`](https://github.com/graphql-hive/gateway/commit/a54b0c1777229aaeea295bcd15d4f4d6e4e615f7), [`058ef2f`](https://github.com/graphql-hive/gateway/commit/058ef2f8373ea822fed985b705416cb39d5b6efc), [`a8458b2`](https://github.com/graphql-hive/gateway/commit/a8458b24e71fda37a515eaf9ac9af43a73e7823f), [`20f7a50`](https://github.com/graphql-hive/gateway/commit/20f7a50c5ddb862c2921e91ca43d9858bae1bce8)]:
+- Updated dependencies
+  [[`a54b0c1`](https://github.com/graphql-hive/gateway/commit/a54b0c1777229aaeea295bcd15d4f4d6e4e615f7),
+  [`058ef2f`](https://github.com/graphql-hive/gateway/commit/058ef2f8373ea822fed985b705416cb39d5b6efc),
+  [`a8458b2`](https://github.com/graphql-hive/gateway/commit/a8458b24e71fda37a515eaf9ac9af43a73e7823f),
+  [`20f7a50`](https://github.com/graphql-hive/gateway/commit/20f7a50c5ddb862c2921e91ca43d9858bae1bce8)]:
   - @graphql-tools/delegate@11.1.0
   - @graphql-tools/batch-delegate@10.0.2
   - @graphql-tools/wrap@11.0.2
 
 ## 10.0.2
+
 ### Patch Changes
 
+- [#1546](https://github.com/graphql-hive/gateway/pull/1546)
+  [`818461e`](https://github.com/graphql-hive/gateway/commit/818461e6ea55bb10ba4ead9ed214848e1ba4bfd2)
+  Thanks [@ardatan](https://github.com/ardatan)! - Normalize the subschemas with root types in a
+  custom names like `query_root` instead of `Query`, then stitch them
 
-
-- [#1546](https://github.com/graphql-hive/gateway/pull/1546) [`818461e`](https://github.com/graphql-hive/gateway/commit/818461e6ea55bb10ba4ead9ed214848e1ba4bfd2) Thanks [@ardatan](https://github.com/ardatan)! - Normalize the subschemas with root types in a custom names like `query_root` instead of `Query`, then stitch them
-  
   ```graphql
   schema {
-      query: query_root
-      subscription: subscription_root
+    query: query_root
+    subscription: subscription_root
   }
-  
-  type Post {
-      id: ID!
-      text: String
-      userId: ID!
-  }
-  
-  type query_root {
-      postById(id: ID!): Post
-  }
-  
-  type subscription_root {
-      postsByUserId(userId: ID!): [Post]!
-  }
-  ```
-  
-  and
-  ```graphql
-  type User {
-      id: ID!
-      email: String
-  }
-  
-  type Query {
-      userById(id: ID!): User
-  }
-  ```
-  
-  should be stitched as;
-  
-  ```graphql
-  type Query {
-    postById(id: ID!): Post
-    userById(id: ID!): User
-  }
-  
-  type Subscription {
-    postsByUserId(userId: ID!): [Post]!
-  }
-  
+
   type Post {
     id: ID!
     text: String
     userId: ID!
   }
-  
+
+  type query_root {
+    postById(id: ID!): Post
+  }
+
+  type subscription_root {
+    postsByUserId(userId: ID!): [Post]!
+  }
+  ```
+
+  and
+
+  ```graphql
+  type User {
+    id: ID!
+    email: String
+  }
+
+  type Query {
+    userById(id: ID!): User
+  }
+  ```
+
+  should be stitched as;
+
+  ```graphql
+  type Query {
+    postById(id: ID!): Post
+    userById(id: ID!): User
+  }
+
+  type Subscription {
+    postsByUserId(userId: ID!): [Post]!
+  }
+
+  type Post {
+    id: ID!
+    text: String
+    userId: ID!
+  }
+
   type User {
     id: ID!
     email: String
@@ -956,52 +1353,78 @@
   ```
 
 ## 10.0.1
+
 ### Patch Changes
 
+- [#1473](https://github.com/graphql-hive/gateway/pull/1473)
+  [`838ffec`](https://github.com/graphql-hive/gateway/commit/838ffecb2ad3d4ef6bbb65607a56302cb45e2f14)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
 
+  - Updated dependency
+    [`@whatwg-node/promise-helpers@^1.3.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.3.2)
+    (from `^1.3.0`, in `dependencies`)
 
-- [#1473](https://github.com/graphql-hive/gateway/pull/1473) [`838ffec`](https://github.com/graphql-hive/gateway/commit/838ffecb2ad3d4ef6bbb65607a56302cb45e2f14) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  
-  - Updated dependency [`@whatwg-node/promise-helpers@^1.3.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.3.2) (from `^1.3.0`, in `dependencies`)
-- Updated dependencies [[`838ffec`](https://github.com/graphql-hive/gateway/commit/838ffecb2ad3d4ef6bbb65607a56302cb45e2f14), [`838ffec`](https://github.com/graphql-hive/gateway/commit/838ffecb2ad3d4ef6bbb65607a56302cb45e2f14), [`838ffec`](https://github.com/graphql-hive/gateway/commit/838ffecb2ad3d4ef6bbb65607a56302cb45e2f14)]:
+- Updated dependencies
+  [[`838ffec`](https://github.com/graphql-hive/gateway/commit/838ffecb2ad3d4ef6bbb65607a56302cb45e2f14),
+  [`838ffec`](https://github.com/graphql-hive/gateway/commit/838ffecb2ad3d4ef6bbb65607a56302cb45e2f14),
+  [`838ffec`](https://github.com/graphql-hive/gateway/commit/838ffecb2ad3d4ef6bbb65607a56302cb45e2f14)]:
   - @graphql-tools/batch-delegate@10.0.1
   - @graphql-tools/delegate@11.0.1
   - @graphql-tools/wrap@11.0.1
 
 ## 10.0.0
+
 ### Major Changes
 
+- [#956](https://github.com/graphql-hive/gateway/pull/956)
+  [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Drop Node 18 support
 
-
-- [#956](https://github.com/graphql-hive/gateway/pull/956) [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a) Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Drop Node 18 support
-  
   Least supported Node version is now v20.
 
 ### Patch Changes
 
-- Updated dependencies [[`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a), [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a), [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a)]:
+- Updated dependencies
+  [[`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a),
+  [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a),
+  [`46d2661`](https://github.com/graphql-hive/gateway/commit/46d26615c2c3c5f936c1d1bca1d03b025c1ce86a)]:
   - @graphql-tools/batch-delegate@10.0.0
   - @graphql-tools/delegate@11.0.0
   - @graphql-tools/wrap@11.0.0
 
 ## 9.4.29
+
 ### Patch Changes
 
-
-
-- [#1405](https://github.com/graphql-hive/gateway/pull/1405) [`29f0409`](https://github.com/graphql-hive/gateway/commit/29f0409fe851b45d717ab5d0f5651dde3012e913) Thanks [@ardatan](https://github.com/ardatan)! - Handle `@oneOf` directive properly while stitching subschemas
+- [#1405](https://github.com/graphql-hive/gateway/pull/1405)
+  [`29f0409`](https://github.com/graphql-hive/gateway/commit/29f0409fe851b45d717ab5d0f5651dde3012e913)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle `@oneOf` directive properly while
+  stitching subschemas
 
 ## 9.4.28
 
 ### Patch Changes
 
-- [#1358](https://github.com/graphql-hive/gateway/pull/1358) [`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/executor@^1.4.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.9) (from `^1.4.8`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/merge@^9.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.1) (from `^9.1.0`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/schema@^10.0.25` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.25) (from `^10.0.24`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@^10.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.9.1) (from `^10.9.0`, in `dependencies`)
+- [#1358](https://github.com/graphql-hive/gateway/pull/1358)
+  [`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/executor@^1.4.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.9)
+    (from `^1.4.8`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/merge@^9.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.1)
+    (from `^9.1.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.25` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.25)
+    (from `^10.0.24`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.9.1)
+    (from `^10.9.0`, in `dependencies`)
 
-- Updated dependencies [[`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1), [`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1), [`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1)]:
+- Updated dependencies
+  [[`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1),
+  [`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1),
+  [`8e37851`](https://github.com/graphql-hive/gateway/commit/8e3785194d97edbe82c7fce316104b81bb0362f1)]:
   - @graphql-tools/batch-delegate@9.0.41
   - @graphql-tools/delegate@10.2.23
   - @graphql-tools/wrap@10.1.4
@@ -1010,13 +1433,26 @@
 
 ### Patch Changes
 
-- [#1344](https://github.com/graphql-hive/gateway/pull/1344) [`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a) Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/executor@^1.4.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.8) (from `^1.4.7`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/merge@^9.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.0) (from `^9.0.12`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/schema@^10.0.24` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.24) (from `^10.0.11`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@^10.9.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.9.0) (from `^10.8.1`, in `dependencies`)
+- [#1344](https://github.com/graphql-hive/gateway/pull/1344)
+  [`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/executor@^1.4.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.4.8)
+    (from `^1.4.7`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/merge@^9.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.0)
+    (from `^9.0.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.24` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.24)
+    (from `^10.0.11`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.9.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.9.0)
+    (from `^10.8.1`, in `dependencies`)
 
-- Updated dependencies [[`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a), [`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a), [`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a)]:
+- Updated dependencies
+  [[`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a),
+  [`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a),
+  [`a71236d`](https://github.com/graphql-hive/gateway/commit/a71236d6ba356741bc85fe27757bea45576dcf1a)]:
   - @graphql-tools/batch-delegate@9.0.40
   - @graphql-tools/delegate@10.2.22
   - @graphql-tools/wrap@10.1.3
@@ -1025,7 +1461,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`b69c80b`](https://github.com/graphql-hive/gateway/commit/b69c80b259bd0565eb9826f7ee9bc8e6c32076d1)]:
+- Updated dependencies
+  [[`b69c80b`](https://github.com/graphql-hive/gateway/commit/b69c80b259bd0565eb9826f7ee9bc8e6c32076d1)]:
   - @graphql-tools/delegate@10.2.21
   - @graphql-tools/batch-delegate@9.0.39
   - @graphql-tools/wrap@10.1.2
@@ -1034,7 +1471,10 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56), [`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56), [`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56)]:
+- Updated dependencies
+  [[`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56),
+  [`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56),
+  [`0655d1f`](https://github.com/graphql-hive/gateway/commit/0655d1fc604179b6cc0c148d73e38d6e8d839c56)]:
   - @graphql-tools/delegate@10.2.20
   - @graphql-tools/batch-delegate@9.0.38
   - @graphql-tools/wrap@10.1.1
@@ -1043,7 +1483,10 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`4a80de1`](https://github.com/graphql-hive/gateway/commit/4a80de1a2884dc42a5f09202b6215c3e6780efc4), [`f634b53`](https://github.com/graphql-hive/gateway/commit/f634b53478199c2b783a608e22fbe51401942039), [`dca6529`](https://github.com/graphql-hive/gateway/commit/dca6529b234f1e178ad87a8992c5a7de12831128)]:
+- Updated dependencies
+  [[`4a80de1`](https://github.com/graphql-hive/gateway/commit/4a80de1a2884dc42a5f09202b6215c3e6780efc4),
+  [`f634b53`](https://github.com/graphql-hive/gateway/commit/f634b53478199c2b783a608e22fbe51401942039),
+  [`dca6529`](https://github.com/graphql-hive/gateway/commit/dca6529b234f1e178ad87a8992c5a7de12831128)]:
   - @graphql-tools/wrap@10.1.0
   - @graphql-tools/batch-delegate@9.0.37
   - @graphql-tools/delegate@10.2.19
@@ -1052,11 +1495,16 @@
 
 ### Patch Changes
 
-- [#1117](https://github.com/graphql-hive/gateway/pull/1117) [`0512be3`](https://github.com/graphql-hive/gateway/commit/0512be32399268eb7926db48675ddb5763fd8578) Thanks [@ardatan](https://github.com/ardatan)! - Optimizes `@provides` handling by avoiding the generation of new query plans when a parent subgraph already supplies the requested fields.
+- [#1117](https://github.com/graphql-hive/gateway/pull/1117)
+  [`0512be3`](https://github.com/graphql-hive/gateway/commit/0512be32399268eb7926db48675ddb5763fd8578)
+  Thanks [@ardatan](https://github.com/ardatan)! - Optimizes `@provides` handling by avoiding the
+  generation of new query plans when a parent subgraph already supplies the requested fields.
   - Refactors and inlines `subtractSelectionSets` to compute leftover selections.
   - Threads a `providedSelectionNode` through planning to subtract out provided fields early.
-  - Updates stitching and federation logic to conditionally skip planning when selections are already available.
-- Updated dependencies [[`0512be3`](https://github.com/graphql-hive/gateway/commit/0512be32399268eb7926db48675ddb5763fd8578)]:
+  - Updates stitching and federation logic to conditionally skip planning when selections are
+    already available.
+- Updated dependencies
+  [[`0512be3`](https://github.com/graphql-hive/gateway/commit/0512be32399268eb7926db48675ddb5763fd8578)]:
   - @graphql-tools/delegate@10.2.18
   - @graphql-tools/batch-delegate@9.0.36
   - @graphql-tools/wrap@10.0.36
@@ -1065,9 +1513,14 @@
 
 ### Patch Changes
 
-- [#950](https://github.com/graphql-hive/gateway/pull/950) [`c7ea2c5`](https://github.com/graphql-hive/gateway/commit/c7ea2c5ae71b6b338ef22edd927a3fc93803965f) Thanks [@kroupacz](https://github.com/kroupacz)! - Errors should not be swallowed when it is thrown from the shared root
+- [#950](https://github.com/graphql-hive/gateway/pull/950)
+  [`c7ea2c5`](https://github.com/graphql-hive/gateway/commit/c7ea2c5ae71b6b338ef22edd927a3fc93803965f)
+  Thanks [@kroupacz](https://github.com/kroupacz)! - Errors should not be swallowed when it is
+  thrown from the shared root
 
-- Updated dependencies [[`c7ea2c5`](https://github.com/graphql-hive/gateway/commit/c7ea2c5ae71b6b338ef22edd927a3fc93803965f), [`0af3485`](https://github.com/graphql-hive/gateway/commit/0af3485abb1b3dfba4126f09d291b2096d23aa32)]:
+- Updated dependencies
+  [[`c7ea2c5`](https://github.com/graphql-hive/gateway/commit/c7ea2c5ae71b6b338ef22edd927a3fc93803965f),
+  [`0af3485`](https://github.com/graphql-hive/gateway/commit/0af3485abb1b3dfba4126f09d291b2096d23aa32)]:
   - @graphql-tools/delegate@10.2.17
   - @graphql-tools/batch-delegate@9.0.35
   - @graphql-tools/wrap@10.0.35
@@ -1076,12 +1529,22 @@
 
 ### Patch Changes
 
-- [#532](https://github.com/graphql-hive/gateway/pull/532) [`4e33933`](https://github.com/graphql-hive/gateway/commit/4e339333945f4c4547d9ae719e67b4671fe89f04) Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
-  - Updated dependency [`@whatwg-node/promise-helpers@^1.3.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.3.0) (from `^1.2.5`, in `dependencies`)
+- [#532](https://github.com/graphql-hive/gateway/pull/532)
+  [`4e33933`](https://github.com/graphql-hive/gateway/commit/4e339333945f4c4547d9ae719e67b4671fe89f04)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/promise-helpers@^1.3.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.3.0)
+    (from `^1.2.5`, in `dependencies`)
 
-- [#906](https://github.com/graphql-hive/gateway/pull/906) [`7b86c09`](https://github.com/graphql-hive/gateway/commit/7b86c097f5d424b82c84b87c743d5ed4ebe6aa5c) Thanks [@ardatan](https://github.com/ardatan)! - Extract unavailable fields for the target subschema from the fragments provided in the original query
+- [#906](https://github.com/graphql-hive/gateway/pull/906)
+  [`7b86c09`](https://github.com/graphql-hive/gateway/commit/7b86c097f5d424b82c84b87c743d5ed4ebe6aa5c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Extract unavailable fields for the target
+  subschema from the fragments provided in the original query
 
-- Updated dependencies [[`4e33933`](https://github.com/graphql-hive/gateway/commit/4e339333945f4c4547d9ae719e67b4671fe89f04), [`4e33933`](https://github.com/graphql-hive/gateway/commit/4e339333945f4c4547d9ae719e67b4671fe89f04), [`4e33933`](https://github.com/graphql-hive/gateway/commit/4e339333945f4c4547d9ae719e67b4671fe89f04)]:
+- Updated dependencies
+  [[`4e33933`](https://github.com/graphql-hive/gateway/commit/4e339333945f4c4547d9ae719e67b4671fe89f04),
+  [`4e33933`](https://github.com/graphql-hive/gateway/commit/4e339333945f4c4547d9ae719e67b4671fe89f04),
+  [`4e33933`](https://github.com/graphql-hive/gateway/commit/4e339333945f4c4547d9ae719e67b4671fe89f04)]:
   - @graphql-tools/batch-delegate@9.0.34
   - @graphql-tools/delegate@10.2.16
   - @graphql-tools/wrap@10.0.34
@@ -1090,10 +1553,17 @@
 
 ### Patch Changes
 
-- [#862](https://github.com/graphql-hive/gateway/pull/862) [`278618a`](https://github.com/graphql-hive/gateway/commit/278618a1383a01016041ce0a40adec8803c62448) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency [`@whatwg-node/promise-helpers@^1.2.5` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.2.5) (from `^1.0.0`, in `dependencies`)
+- [#862](https://github.com/graphql-hive/gateway/pull/862)
+  [`278618a`](https://github.com/graphql-hive/gateway/commit/278618a1383a01016041ce0a40adec8803c62448)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/promise-helpers@^1.2.5` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.2.5)
+    (from `^1.0.0`, in `dependencies`)
 
-- Updated dependencies [[`278618a`](https://github.com/graphql-hive/gateway/commit/278618a1383a01016041ce0a40adec8803c62448), [`278618a`](https://github.com/graphql-hive/gateway/commit/278618a1383a01016041ce0a40adec8803c62448), [`278618a`](https://github.com/graphql-hive/gateway/commit/278618a1383a01016041ce0a40adec8803c62448)]:
+- Updated dependencies
+  [[`278618a`](https://github.com/graphql-hive/gateway/commit/278618a1383a01016041ce0a40adec8803c62448),
+  [`278618a`](https://github.com/graphql-hive/gateway/commit/278618a1383a01016041ce0a40adec8803c62448),
+  [`278618a`](https://github.com/graphql-hive/gateway/commit/278618a1383a01016041ce0a40adec8803c62448)]:
   - @graphql-tools/batch-delegate@9.0.33
   - @graphql-tools/delegate@10.2.15
   - @graphql-tools/wrap@10.0.33
@@ -1102,10 +1572,18 @@
 
 ### Patch Changes
 
-- [#726](https://github.com/graphql-hive/gateway/pull/726) [`6334b2e`](https://github.com/graphql-hive/gateway/commit/6334b2e5d4942693121ab7d44a96fa80408aace1) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Added dependency [`@whatwg-node/promise-helpers@^1.0.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.0.0) (to `dependencies`)
+- [#726](https://github.com/graphql-hive/gateway/pull/726)
+  [`6334b2e`](https://github.com/graphql-hive/gateway/commit/6334b2e5d4942693121ab7d44a96fa80408aace1)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@whatwg-node/promise-helpers@^1.0.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.0.0)
+    (to `dependencies`)
 
-- Updated dependencies [[`6334b2e`](https://github.com/graphql-hive/gateway/commit/6334b2e5d4942693121ab7d44a96fa80408aace1), [`6334b2e`](https://github.com/graphql-hive/gateway/commit/6334b2e5d4942693121ab7d44a96fa80408aace1), [`6334b2e`](https://github.com/graphql-hive/gateway/commit/6334b2e5d4942693121ab7d44a96fa80408aace1), [`2a54e85`](https://github.com/graphql-hive/gateway/commit/2a54e85f2848aea7525703ea33918a21db96b26b)]:
+- Updated dependencies
+  [[`6334b2e`](https://github.com/graphql-hive/gateway/commit/6334b2e5d4942693121ab7d44a96fa80408aace1),
+  [`6334b2e`](https://github.com/graphql-hive/gateway/commit/6334b2e5d4942693121ab7d44a96fa80408aace1),
+  [`6334b2e`](https://github.com/graphql-hive/gateway/commit/6334b2e5d4942693121ab7d44a96fa80408aace1),
+  [`2a54e85`](https://github.com/graphql-hive/gateway/commit/2a54e85f2848aea7525703ea33918a21db96b26b)]:
   - @graphql-tools/batch-delegate@9.0.32
   - @graphql-tools/delegate@10.2.14
   - @graphql-tools/wrap@10.0.32
@@ -1114,7 +1592,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`2318393`](https://github.com/graphql-hive/gateway/commit/2318393bc7b3aca7f53806a44b59277cd176702d)]:
+- Updated dependencies
+  [[`2318393`](https://github.com/graphql-hive/gateway/commit/2318393bc7b3aca7f53806a44b59277cd176702d)]:
   - @graphql-tools/delegate@10.2.13
   - @graphql-tools/batch-delegate@9.0.31
   - @graphql-tools/wrap@10.0.31
@@ -1123,17 +1602,30 @@
 
 ### Patch Changes
 
-- [#620](https://github.com/graphql-hive/gateway/pull/620) [`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/utils@^10.8.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.8.1) (from `^10.7.0`, in `dependencies`)
+- [#620](https://github.com/graphql-hive/gateway/pull/620)
+  [`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.8.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.8.1)
+    (from `^10.7.0`, in `dependencies`)
 
-- [#614](https://github.com/graphql-hive/gateway/pull/614) [`7146f8d`](https://github.com/graphql-hive/gateway/commit/7146f8decca808ab2c68f4971ba9b64ca27a9b87) Thanks [@ardatan](https://github.com/ardatan)! - Fix a bug while isolating computed abstract type fields
+- [#614](https://github.com/graphql-hive/gateway/pull/614)
+  [`7146f8d`](https://github.com/graphql-hive/gateway/commit/7146f8decca808ab2c68f4971ba9b64ca27a9b87)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix a bug while isolating computed abstract type
+  fields
 
-  When a field in an interface needs to be isolated,
-  it should not remove the field from the base subschema if it is used by other members of the base subschema.
+  When a field in an interface needs to be isolated, it should not remove the field from the base
+  subschema if it is used by other members of the base subschema.
 
-- [#614](https://github.com/graphql-hive/gateway/pull/614) [`7146f8d`](https://github.com/graphql-hive/gateway/commit/7146f8decca808ab2c68f4971ba9b64ca27a9b87) Thanks [@ardatan](https://github.com/ardatan)! - While calculating the best subschema for a selection set, respect fragments
+- [#614](https://github.com/graphql-hive/gateway/pull/614)
+  [`7146f8d`](https://github.com/graphql-hive/gateway/commit/7146f8decca808ab2c68f4971ba9b64ca27a9b87)
+  Thanks [@ardatan](https://github.com/ardatan)! - While calculating the best subschema for a
+  selection set, respect fragments
 
-- Updated dependencies [[`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9), [`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9), [`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9)]:
+- Updated dependencies
+  [[`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9),
+  [`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9),
+  [`d72209a`](https://github.com/graphql-hive/gateway/commit/d72209ad82ec53689f93ce5d81bfa52493919ad9)]:
   - @graphql-tools/batch-delegate@9.0.30
   - @graphql-tools/delegate@10.2.12
   - @graphql-tools/wrap@10.0.30
@@ -1142,7 +1634,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`9144222`](https://github.com/graphql-hive/gateway/commit/91442220b2242a0fa082d4b544d03621572eecd0)]:
+- Updated dependencies
+  [[`9144222`](https://github.com/graphql-hive/gateway/commit/91442220b2242a0fa082d4b544d03621572eecd0)]:
   - @graphql-tools/delegate@10.2.11
   - @graphql-tools/batch-delegate@9.0.29
   - @graphql-tools/wrap@10.0.29
@@ -1151,7 +1644,9 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`18682e6`](https://github.com/graphql-hive/gateway/commit/18682e6873091afe63f09414f02f93649a4da141), [`e9f78cd`](https://github.com/graphql-hive/gateway/commit/e9f78cd29681ca9b4371e12953a31d2b8f5e4c17)]:
+- Updated dependencies
+  [[`18682e6`](https://github.com/graphql-hive/gateway/commit/18682e6873091afe63f09414f02f93649a4da141),
+  [`e9f78cd`](https://github.com/graphql-hive/gateway/commit/e9f78cd29681ca9b4371e12953a31d2b8f5e4c17)]:
   - @graphql-tools/delegate@10.2.10
   - @graphql-tools/wrap@10.0.28
   - @graphql-tools/batch-delegate@9.0.28
@@ -1160,31 +1655,45 @@
 
 ### Patch Changes
 
-- [#443](https://github.com/graphql-hive/gateway/pull/443) [`a625269`](https://github.com/graphql-hive/gateway/commit/a62526936680d030339fc26cc55d76507134b022) Thanks [@ardatan](https://github.com/ardatan)! - Respect fragments while calculating the selection score
+- [#443](https://github.com/graphql-hive/gateway/pull/443)
+  [`a625269`](https://github.com/graphql-hive/gateway/commit/a62526936680d030339fc26cc55d76507134b022)
+  Thanks [@ardatan](https://github.com/ardatan)! - Respect fragments while calculating the selection
+  score
 
 ## 9.4.13
 
 ### Patch Changes
 
-- Updated dependencies [[`da65b2d`](https://github.com/graphql-hive/gateway/commit/da65b2d8a66714fb5a135e66ebbe59fa37182600)]:
+- Updated dependencies
+  [[`da65b2d`](https://github.com/graphql-hive/gateway/commit/da65b2d8a66714fb5a135e66ebbe59fa37182600)]:
   - @graphql-tools/batch-delegate@9.0.27
 
 ## 9.4.12
 
 ### Patch Changes
 
-- Updated dependencies [[`21e1f05`](https://github.com/graphql-hive/gateway/commit/21e1f05373a78c93b52b5321f1f4e8d7aba17151)]:
+- Updated dependencies
+  [[`21e1f05`](https://github.com/graphql-hive/gateway/commit/21e1f05373a78c93b52b5321f1f4e8d7aba17151)]:
   - @graphql-tools/batch-delegate@9.0.26
 
 ## 9.4.11
 
 ### Patch Changes
 
-- [#373](https://github.com/graphql-hive/gateway/pull/373) [`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/executor@^1.3.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.3.10) (from `^1.3.6`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@^10.7.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.7.0) (from `^10.6.2`, in `dependencies`)
+- [#373](https://github.com/graphql-hive/gateway/pull/373)
+  [`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/executor@^1.3.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.3.10)
+    (from `^1.3.6`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.7.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.7.0)
+    (from `^10.6.2`, in `dependencies`)
 
-- Updated dependencies [[`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2), [`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2), [`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2)]:
+- Updated dependencies
+  [[`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2),
+  [`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2),
+  [`e606975`](https://github.com/graphql-hive/gateway/commit/e60697593290255fb9ac407e591ae3e8cb752df2)]:
   - @graphql-tools/batch-delegate@9.0.25
   - @graphql-tools/delegate@10.2.9
   - @graphql-tools/wrap@10.0.27
@@ -1193,7 +1702,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`23b8987`](https://github.com/graphql-hive/gateway/commit/23b89874fcf10b4cb6b1b941f29fa5f5aecf0ef2)]:
+- Updated dependencies
+  [[`23b8987`](https://github.com/graphql-hive/gateway/commit/23b89874fcf10b4cb6b1b941f29fa5f5aecf0ef2)]:
   - @graphql-tools/delegate@10.2.8
   - @graphql-tools/batch-delegate@9.0.24
   - @graphql-tools/wrap@10.0.26
@@ -1202,10 +1712,16 @@
 
 ### Patch Changes
 
-- [#291](https://github.com/graphql-hive/gateway/pull/291) [`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency [`tslib@^2.8.1` ↗︎](https://www.npmjs.com/package/tslib/v/2.8.1) (from `^2.4.0`, in `dependencies`)
+- [#291](https://github.com/graphql-hive/gateway/pull/291)
+  [`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency [`tslib@^2.8.1` ↗︎](https://www.npmjs.com/package/tslib/v/2.8.1) (from
+    `^2.4.0`, in `dependencies`)
 
-- Updated dependencies [[`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151), [`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151), [`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151)]:
+- Updated dependencies
+  [[`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151),
+  [`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151),
+  [`34d1224`](https://github.com/graphql-hive/gateway/commit/34d12249ead65b8277df976f6318dca757df1151)]:
   - @graphql-tools/batch-delegate@9.0.23
   - @graphql-tools/delegate@10.2.7
   - @graphql-tools/wrap@10.0.25
@@ -1214,13 +1730,29 @@
 
 ### Patch Changes
 
-- [#269](https://github.com/graphql-hive/gateway/pull/269) [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/executor@^1.3.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.3.6) (from `^1.3.3`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/merge@^9.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.0.12) (from `^9.0.9`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/schema@^10.0.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.11) (from `^10.0.8`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@^10.6.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.2) (from `^10.6.0`, in `dependencies`)
+- [#269](https://github.com/graphql-hive/gateway/pull/269)
+  [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/executor@^1.3.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.3.6)
+    (from `^1.3.3`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/merge@^9.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.0.12)
+    (from `^9.0.9`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.11)
+    (from `^10.0.8`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.6.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.2)
+    (from `^10.6.0`, in `dependencies`)
 
-- Updated dependencies [[`6f56083`](https://github.com/graphql-hive/gateway/commit/6f56083028402780f505db1492b9e84ab4227a4f), [`7df2215`](https://github.com/graphql-hive/gateway/commit/7df2215abd309dc1dfd91f4ec91ce975f3982c62), [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4), [`7df2215`](https://github.com/graphql-hive/gateway/commit/7df2215abd309dc1dfd91f4ec91ce975f3982c62), [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4), [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4)]:
+- Updated dependencies
+  [[`6f56083`](https://github.com/graphql-hive/gateway/commit/6f56083028402780f505db1492b9e84ab4227a4f),
+  [`7df2215`](https://github.com/graphql-hive/gateway/commit/7df2215abd309dc1dfd91f4ec91ce975f3982c62),
+  [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4),
+  [`7df2215`](https://github.com/graphql-hive/gateway/commit/7df2215abd309dc1dfd91f4ec91ce975f3982c62),
+  [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4),
+  [`cdca511`](https://github.com/graphql-hive/gateway/commit/cdca5116ce30c2bfced1130c9fbead67280af9d4)]:
   - @graphql-tools/batch-delegate@9.0.22
   - @graphql-tools/delegate@10.2.6
   - @graphql-tools/wrap@10.0.24
@@ -1229,7 +1761,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`9ce705c`](https://github.com/graphql-hive/gateway/commit/9ce705c5ccc5e6f4ac26af6e6471a6d2f4e995db)]:
+- Updated dependencies
+  [[`9ce705c`](https://github.com/graphql-hive/gateway/commit/9ce705c5ccc5e6f4ac26af6e6471a6d2f4e995db)]:
   - @graphql-tools/delegate@10.2.5
   - @graphql-tools/batch-delegate@9.0.21
   - @graphql-tools/wrap@10.0.23
@@ -1238,7 +1771,10 @@
 
 ### Patch Changes
 
-- [#247](https://github.com/graphql-hive/gateway/pull/247) [`76642d8`](https://github.com/graphql-hive/gateway/commit/76642d84b722bae28115310f25a6ac4865b41598) Thanks [@ardatan](https://github.com/ardatan)! - Fixes the bug when interfaces extended by \`additionalTypeDefs\`
+- [#247](https://github.com/graphql-hive/gateway/pull/247)
+  [`76642d8`](https://github.com/graphql-hive/gateway/commit/76642d84b722bae28115310f25a6ac4865b41598)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fixes the bug when interfaces extended by
+  \`additionalTypeDefs\`
 
 ## 9.4.5
 
@@ -1253,9 +1789,13 @@
 
 ### Patch Changes
 
-- [#231](https://github.com/graphql-hive/gateway/pull/231) [`7ca0ff3`](https://github.com/graphql-hive/gateway/commit/7ca0ff331e42c133c4218a8086bbf0a7607f45d0) Thanks [@ardatan](https://github.com/ardatan)! - Avoid extensions and use \`stitchingInfo\` for provided fields
+- [#231](https://github.com/graphql-hive/gateway/pull/231)
+  [`7ca0ff3`](https://github.com/graphql-hive/gateway/commit/7ca0ff331e42c133c4218a8086bbf0a7607f45d0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Avoid extensions and use \`stitchingInfo\` for
+  provided fields
 
-- Updated dependencies [[`7ca0ff3`](https://github.com/graphql-hive/gateway/commit/7ca0ff331e42c133c4218a8086bbf0a7607f45d0)]:
+- Updated dependencies
+  [[`7ca0ff3`](https://github.com/graphql-hive/gateway/commit/7ca0ff331e42c133c4218a8086bbf0a7607f45d0)]:
   - @graphql-tools/delegate@10.2.3
   - @graphql-tools/batch-delegate@9.0.19
   - @graphql-tools/wrap@10.0.21
@@ -1264,9 +1804,12 @@
 
 ### Patch Changes
 
-- [#205](https://github.com/graphql-hive/gateway/pull/205) [`2e0add3`](https://github.com/graphql-hive/gateway/commit/2e0add3ea9b237ad385d5b5cd4c12eeeb847805a) Thanks [@ardatan](https://github.com/ardatan)! - Fix missing key fields in the nested queries
+- [#205](https://github.com/graphql-hive/gateway/pull/205)
+  [`2e0add3`](https://github.com/graphql-hive/gateway/commit/2e0add3ea9b237ad385d5b5cd4c12eeeb847805a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix missing key fields in the nested queries
 
-- Updated dependencies [[`2e0add3`](https://github.com/graphql-hive/gateway/commit/2e0add3ea9b237ad385d5b5cd4c12eeeb847805a)]:
+- Updated dependencies
+  [[`2e0add3`](https://github.com/graphql-hive/gateway/commit/2e0add3ea9b237ad385d5b5cd4c12eeeb847805a)]:
   - @graphql-tools/delegate@10.2.2
   - @graphql-tools/batch-delegate@9.0.18
   - @graphql-tools/wrap@10.0.20
@@ -1275,16 +1818,35 @@
 
 ### Patch Changes
 
-- [#164](https://github.com/graphql-hive/gateway/pull/164) [`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/utils@^10.6.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.0) (from `^10.5.6`, in `dependencies`)
+- [#164](https://github.com/graphql-hive/gateway/pull/164)
+  [`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.6.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.0)
+    (from `^10.5.6`, in `dependencies`)
 
-- [#185](https://github.com/graphql-hive/gateway/pull/185) [`f0b6921`](https://github.com/graphql-hive/gateway/commit/f0b69219fefc1b24c5511a1c623a5e3bbaf5ca0b) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Removed dependency [`value-or-promise@^1.0.11` ↗︎](https://www.npmjs.com/package/value-or-promise/v/1.0.11) (from `dependencies`)
+- [#185](https://github.com/graphql-hive/gateway/pull/185)
+  [`f0b6921`](https://github.com/graphql-hive/gateway/commit/f0b69219fefc1b24c5511a1c623a5e3bbaf5ca0b)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Removed dependency
+    [`value-or-promise@^1.0.11` ↗︎](https://www.npmjs.com/package/value-or-promise/v/1.0.11) (from
+    `dependencies`)
 
-- [#188](https://github.com/graphql-hive/gateway/pull/188) [`f71366d`](https://github.com/graphql-hive/gateway/commit/f71366d234fe8f30a419814fe1460f1e22663241) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Removed dependency [`value-or-promise@^1.0.11` ↗︎](https://www.npmjs.com/package/value-or-promise/v/1.0.11) (from `dependencies`)
+- [#188](https://github.com/graphql-hive/gateway/pull/188)
+  [`f71366d`](https://github.com/graphql-hive/gateway/commit/f71366d234fe8f30a419814fe1460f1e22663241)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Removed dependency
+    [`value-or-promise@^1.0.11` ↗︎](https://www.npmjs.com/package/value-or-promise/v/1.0.11) (from
+    `dependencies`)
 
-- Updated dependencies [[`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf), [`f0b6921`](https://github.com/graphql-hive/gateway/commit/f0b69219fefc1b24c5511a1c623a5e3bbaf5ca0b), [`f71366d`](https://github.com/graphql-hive/gateway/commit/f71366d234fe8f30a419814fe1460f1e22663241), [`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf), [`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf), [`f0b6921`](https://github.com/graphql-hive/gateway/commit/f0b69219fefc1b24c5511a1c623a5e3bbaf5ca0b), [`f71366d`](https://github.com/graphql-hive/gateway/commit/f71366d234fe8f30a419814fe1460f1e22663241)]:
+- Updated dependencies
+  [[`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf),
+  [`f0b6921`](https://github.com/graphql-hive/gateway/commit/f0b69219fefc1b24c5511a1c623a5e3bbaf5ca0b),
+  [`f71366d`](https://github.com/graphql-hive/gateway/commit/f71366d234fe8f30a419814fe1460f1e22663241),
+  [`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf),
+  [`310613d`](https://github.com/graphql-hive/gateway/commit/310613d68d1df3e2bceafbd0730084a4c83527bf),
+  [`f0b6921`](https://github.com/graphql-hive/gateway/commit/f0b69219fefc1b24c5511a1c623a5e3bbaf5ca0b),
+  [`f71366d`](https://github.com/graphql-hive/gateway/commit/f71366d234fe8f30a419814fe1460f1e22663241)]:
   - @graphql-tools/batch-delegate@9.0.17
   - @graphql-tools/delegate@10.2.1
   - @graphql-tools/wrap@10.0.19
@@ -1293,17 +1855,22 @@
 
 ### Patch Changes
 
-- [`725d5b7`](https://github.com/graphql-hive/gateway/commit/725d5b7952be3a2fb2caeb40d26c194fb03b35d5) Thanks [@ardatan](https://github.com/ardatan)! - Fix regression on override type interface
+- [`725d5b7`](https://github.com/graphql-hive/gateway/commit/725d5b7952be3a2fb2caeb40d26c194fb03b35d5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix regression on override type interface
 
 ## 9.4.0
 
 ### Minor Changes
 
-- [#148](https://github.com/graphql-hive/gateway/pull/148) [`f32cb2a`](https://github.com/graphql-hive/gateway/commit/f32cb2a0289aa32e4811ced5dc1aac3efb0674f1) Thanks [@ardatan](https://github.com/ardatan)! - Introduce \`onDelegationPlan\` and \`onDelegationStageExecuteDone\` hooks
+- [#148](https://github.com/graphql-hive/gateway/pull/148)
+  [`f32cb2a`](https://github.com/graphql-hive/gateway/commit/f32cb2a0289aa32e4811ced5dc1aac3efb0674f1)
+  Thanks [@ardatan](https://github.com/ardatan)! - Introduce \`onDelegationPlan\` and
+  \`onDelegationStageExecuteDone\` hooks
 
 ### Patch Changes
 
-- Updated dependencies [[`f32cb2a`](https://github.com/graphql-hive/gateway/commit/f32cb2a0289aa32e4811ced5dc1aac3efb0674f1)]:
+- Updated dependencies
+  [[`f32cb2a`](https://github.com/graphql-hive/gateway/commit/f32cb2a0289aa32e4811ced5dc1aac3efb0674f1)]:
   - @graphql-tools/delegate@10.2.0
   - @graphql-tools/batch-delegate@9.0.16
   - @graphql-tools/wrap@10.0.18
@@ -1312,7 +1879,9 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`73c621d`](https://github.com/graphql-hive/gateway/commit/73c621d98a4e6ca134527e349bc71223c03d06db), [`19bc6a4`](https://github.com/graphql-hive/gateway/commit/19bc6a4c222ff157553785ea16760888cdfe10bb)]:
+- Updated dependencies
+  [[`73c621d`](https://github.com/graphql-hive/gateway/commit/73c621d98a4e6ca134527e349bc71223c03d06db),
+  [`19bc6a4`](https://github.com/graphql-hive/gateway/commit/19bc6a4c222ff157553785ea16760888cdfe10bb)]:
   - @graphql-tools/delegate@10.1.3
   - @graphql-tools/wrap@10.0.17
   - @graphql-tools/batch-delegate@9.0.15
@@ -2685,8 +3254,8 @@
     [`@graphql-tools/delegate@9.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.3)
     (was `9.0.2`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.3)
-    (was `9.0.2`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.3) (was
+    `9.0.2`, in `dependencies`)
 
 - Updated dependencies
   [[`27bdc237`](https://github.com/ardatan/graphql-tools/commit/27bdc23713a5176485ac940fc5431256b4f2de8d),

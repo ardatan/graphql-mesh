@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/protobuf",
-  "version": "0.3.2",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,10 +37,10 @@
   "dependencies": {
     "@ardatan/grpc-reflection-js": "^0.0.2",
     "@graphql-hive/logger": "^2.0.0",
-    "@graphql-mesh/cross-helpers": "^0.4.18",
-    "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/transport-common": "^2.0.0",
-    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-mesh/cross-helpers": "^0.4.19",
+    "@graphql-mesh/string-interpolation": "^0.6.0",
+    "@graphql-mesh/transport-common": "^3.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
     "@graphql-tools/load-files": "^8.0.9",
     "@graphql-tools/utils": "^13.2.3",
     "@grpc/grpc-js": "^1.14.5",

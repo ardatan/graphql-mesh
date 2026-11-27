@@ -1,5 +1,153 @@
 # json-machete
 
+## 0.98.0
+
+### Minor Changes
+
+- [#9745](https://github.com/ardatan/graphql-mesh/pull/9745)
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)
+  Thanks [@ardatan](https://github.com/ardatan)! - ## Motivation
+
+  Mesh still had its own logging, pubsub, and teardown model next to Yoga 6 / Hive Gateway:
+
+  - Mesh `DefaultLogger` and Mesh PubSub / `HivePubSub` re-exports beside `@graphql-hive/logger` and
+    `@graphql-hive/pubsub`
+  - Shutdown via `pubsub.publish('destroy')`, with handlers and caches subscribing to that topic
+    (easy to miss, leaks pools/clients/timers)
+  - Node 18/20 engines and loose `graphql` peers that drift from Yoga 6 / GraphQL Tools
+
+  This major aligns Mesh with that shared platform in one release.
+
+  ## Design decisions
+  1. **Node `>=22.18.0`**: matches current Yoga / Hive / WHATWG engines.
+  2. **GraphQL peer `^16 || ^17`**: what Yoga 6 and `@graphql-tools/utils` / `schema` / `merge` /
+     `executor` support (not `*`).
+  3. **Request path prefers context**: use Yoga/Gateway `context.log` / `context.pubsub` when
+     present. Constructor `log` / `pubsub` stay only where init-time wiring is required (for example
+     live-query subscribe, New Relic agent missing).
+  4. **Teardown via Explicit Resource Management**: Mesh tore down with `destroy` pubsub. Now
+     components implement `[DisposableSymbols]` and `getMesh` registers them with
+     `disposables.use(...)`. Handler/transform/plugin/cache constructors never took a `disposables`
+     option; that is unchanged.
+  5. **No Mesh re-exports** for Logger, PubSub, or promise helpers; import Hive/WHATWG packages
+     directly.
+
+  ## Shared platform changes ()
+  - **Node.js `>=22.18.0`** (18/20 dropped).
+  - **`graphql` peer `^16.0.0 || ^17.0.0`**.
+  - **Logging**: Mesh `Logger` / `DefaultLogger` removed. Use `@graphql-hive/logger`. Prefer
+    `context.log` on the request path. Option fields renamed from `logger` to `log` where they
+    remain.
+  - **PubSub**: Mesh PubSub re-exports removed. Use `@graphql-hive/pubsub`. The **`destroy` pubsub
+    lifecycle event is removed**; tear down with the disposable stack / `mesh.destroy()` instead of
+    `pubsub.publish('destroy')`.
+  - **Lifecycle**: `getMesh` owns an `AsyncDisposableStack` and calls `disposables.use(...)` on
+    disposable cache/handler/transform/plugin/pubsub instances. the change is destroy-pubsub
+    subscribers replaced by `[DisposableSymbols]`, not "stop injecting disposables into options"
+    (those options did not exist ).
+  - **Promises**: `handleMaybePromise` / `fakePromise` / `fakeRejectPromise` /
+    `Promise.withResolvers` from `@whatwg-node/promise-helpers` (no Mesh re-exports).
+
+  ## Migration checklist
+
+  ```bash
+  node -v # >= 22.18.0
+  yarn add graphql@^16 @graphql-hive/logger @graphql-hive/pubsub
+  yarn add @whatwg-node/promise-helpers @whatwg-node/disposablestack
+  ```
+
+  ```ts
+  import { Logger } from '@graphql-hive/logger'
+  import { MemPubSub } from '@graphql-hive/pubsub'
+  import { AsyncDisposableStack } from '@whatwg-node/disposablestack'
+  import { fakePromise, handleMaybePromise } from '@whatwg-node/promise-helpers'
+
+  // Before on before:
+  // import { DefaultLogger, PubSub, handleMaybePromise } from '@graphql-mesh/utils'
+  // await pubsub.publish('destroy', undefined)
+
+  const log = new Logger()
+  const pubsub = new MemPubSub()
+  await using disposables = new AsyncDisposableStack()
+  disposables.use(cache)
+  disposables.use(handler)
+  ```
+
+  ### Import map (common breakages)
+
+  | Before                                                | After                                                        |
+  | ----------------------------------------------------- | ------------------------------------------------------------ |
+  | `DefaultLogger` / Mesh `Logger`                       | `Logger` from `@graphql-hive/logger`                         |
+  | Mesh `PubSub` / `MemPubSub` / `HivePubSub`            | `@graphql-hive/pubsub`                                       |
+  | `handleMaybePromise` / `MaybePromise` from Mesh utils | `@whatwg-node/promise-helpers`                               |
+  | `pubsub.publish('destroy')` + destroy subscribers     | `[DisposableSymbols]` + `disposables.use` / `mesh.destroy()` |
+  | cache ctor `pubsub` (destroy subscribe)               | removed; dispose the cache instead                           |
+  | option field `logger`                                 | `log`                                                        |
+
+  Package-specific breaks (filter globs, cache `pubsub`, http-cache logging, Hive/live-query
+  options, OpenAPI `futureLinks`, disposable handlers/transports, ...) are in each package's
+  `*-node22-yoga6.md`.
+
+### Patch Changes
+
+- [#9847](https://github.com/ardatan/graphql-mesh/pull/9847)
+  [`f9b41bc`](https://github.com/ardatan/graphql-mesh/commit/f9b41bc23325f130e39244b1748ba4e7eecd2b4f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix Connectors reprocess / multipart / entity-key
+  edge cases and finalize type-level `@connect` attribution.
+
+  - Compose entity stamp: name-only single-arg fallback only for `String` arg + JSON-Schema `string`
+    key
+  - `processDirectives({ preserveExistingFieldResolvers })` skips already-wired `@connect` fields
+    (legacy `additionalTypeDefs` reprocess keeps rename proxies)
+  - Multipart takes precedence over raw-binary when a File arg is named `input`; `recoverInput`
+    keeps live uploads (no `structuredClone` on File / `createReadStream`); multipart buffers
+    `createReadStream` into `File` parts
+  - Empty unsupported-MIME body fallback only after a successful 0-byte drain; nonempty unsupported
+    MIME (e.g. Wiki `image/png`) drains via `arrayBuffer` then maps `$` → `null` (Apollo Connectors
+    parity)
+  - Finalize type-level `@connect` prefers the sole keyed `@join__type` when a value-type sibling is
+    present
+  - Opt-in JSON Schema `scalarMap` (title → scalar) for pattern scalars; FHIR e2e force-maps
+    date/DateTime/URL/UUID/String/ID (incl. `oid`→`ID`) for a cleaner SG
+  - healJSONSchema: untitled enums (and array-item enums) under `$resolvedRef` get
+    `{Definition}_{property}` titles so shared FHIR types (Duration, Extension, Timing_Repeat, ...)
+    stay identical across subgraphs - not operation-path names; skip `type: boolean` (FHIR
+    `deceasedBoolean` pattern) so Boolean cleanup still removes the pattern; prefer shared FHIR
+    primitive titles (`valueCanonical` -> `canonical`, `status` -> `code`, `id` via `$resolvedRef`)
+    for scalarMap/`ID`; collapse single-literal `resourceType` to plain string (no
+    `Parent_resourceType` enum)
+  - Compose finalize: strip Mesh codegen `@typescript`/`@example` apps from the lean SG (Router
+    rejects duplicate `@typescript`); **keep `@regexp`** for Connect `processScalarType` runtime
+    validation (Gateway execute match/reject covered in transport-connect; composition has no
+    transport-connect dep)
+  - `fusion-composition` / `@graphql-mesh/runtime` do not depend on `transport-connect` (inline
+    Guild connect SDL stubs; optional dynamic import for additionalTypeDefs reprocess)
+  - JSON Schema `@connect(selection:)`: when passthrough visit-budget truncates mid-type, rebuild
+    with soft-depth `leavesOnly` before `$`; cycle-only omission keeps sibling nests (no rebuild)
+  - Connect path templates: default Apollo `encodeURIComponent`; opt-in `|preEncoded` (OpenAPI path
+    params whose docs say URI-encoded, e.g. Wiki titles) keeps valid `%XX` and avoids `%253F`
+    double-encode
+  - Legacy FHIR example: `.meshrc.yml` inline `scalarMap: { id: ID, oid: ID }` (JSON Schema handler
+    resolves type-name strings; omnigraph takes scalar instances; module path still optional for
+    custom scalars)
+  - Connect XML: sniff `<?xml` on `text/plain` responses (Node `Response(string)` defaults
+    Content-Type) before treating body as Apollo plain text
+  - Compose entity stamp: `String` path arg + `ID` key field (FHIR `scalarMap.id → GraphQLID`) gets
+    `@connect(entity: true)` / `@key` like the `string` pattern-scalar case
+  - FHIR e2e: pin schema download to HL7 **R4** zip
+    (`https://hl7.org/fhir/R4/fhir.schema.json.zip`); invalidate cache unless `Patient.id` →
+    `#/definitions/id` **and** `Observation.status` is an inline enum; extract via system `unzip`
+    (avoid `unzip-stream` SIGSEGV on Node 26)
+  - FHIR e2e: full emit; `process.env.FHIR_BASE` at compose; inline `scalarMap`; hive + Router HAPI
+    execution. Join-only `./reference-resource.graphql`. Legacy `.meshrc.yml` keeps Mesh
+    `@resolveTo` with `sourceArgs` split via `{root.reference|path_head}` /
+    `{root.reference|path_rest}`; endpoint `{env.FHIR_BASE}`
+  - string-interpolation: `path_head` / `path_rest` modifiers for `Type/id` refs in Mesh
+    `sourceArgs`
+  - `processDirectives({ preserveExistingFieldResolvers })`: mark Mesh-generated abstract
+    `resolveType` callbacks; rebuild when union/interface members change; leave application-provided
+    callbacks unchanged
+
 ## 0.97.8
 
 ### Patch Changes
@@ -1298,8 +1446,8 @@
 
 - [#4235](https://github.com/Urigo/graphql-mesh/pull/4235)
   [`b162269f7`](https://github.com/Urigo/graphql-mesh/commit/b162269f70a90594962792ffaaa40d3a7ee9f4e4)
-  Thanks [@gilgardosh](https://github.com/gilgardosh)! - - Support
-  "$request.query" and "$request.path" usages in
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - - Support "$request.query" and
+  "$request.path" usages in
   [OpenAPI runtime expressions](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#runtimeExpression)
   - Fix `Field not found` error when an OpenAPI link refers to an operation which is not `Mutation`
   - Do not use AJV and check field names in the received object to resolve the type name for a union
