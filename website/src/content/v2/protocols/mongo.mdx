@@ -42,7 +42,7 @@ export const composeConfig = defineConfig({
 
 Query `findUserById` uses `$args`; type-level `@mongo__findOne` uses `$this` for Federation:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 extend schema
   @link(
@@ -105,7 +105,7 @@ type User
 
 ## Mutations
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Mutation {
   insertOneUser(document: UserDocumentInput!): User
@@ -140,7 +140,7 @@ type Mutation {
 Beside singular `findUserById`, batch lookup passes an id list into `_id`. Federation / entity
 batching can use this when many parents need the same collection filled at once:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   findUsersByIds(ids: [ObjectID!]!, limit: Int = 100, sort: [UserSort!]): [User!]!
@@ -164,7 +164,7 @@ type Query {
 `@mongo__aggregate` forwards a client `pipeline` JSON; `@mongo__connection` is the cursor-style list
 companion to offset `find`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   # Pass-through aggregation stages from the client

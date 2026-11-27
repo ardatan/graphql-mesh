@@ -44,7 +44,7 @@ yourself.
 Loader emit for a ById root (`Query.getCustomer` / `Query.getCustomer(id:)`). Composition may stamp
 `entity: true`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   getCustomer(id: String!): Customer
@@ -63,7 +63,7 @@ type Query {
 After edit -- extend a catalog entity (join stub + field Connect). Binders use `$this.id` on
 `Track.reviews`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Track @key(fields: "id", resolvable: false) {
   id: ID!

@@ -56,7 +56,7 @@ export const gatewayConfig = defineGatewayConfig({
 
 Compact field-number mapping:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
@@ -114,7 +114,7 @@ enum Genre {
 If a transform renames `moviesByYear(year:)` to `releaseYear`, Compose rewrites the compact `args`
 binder so the wire field still binds the new GraphQL name (same path as `@connect`):
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   # After rename: GraphQL arg is releaseYear, binder must follow
@@ -138,7 +138,7 @@ type Query {
 `SearchMoviesByCast` is a server-streaming RPC. Emit sets `stream: true` and binds through an Input
 type (`input.castName`), not flat `$args.*`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie]
@@ -169,7 +169,7 @@ ConnectRPC uses the service root and the default `application/proto` content typ
 **ConnectRPC** -- location is the HTTP root; no header override (transport default
 `application/proto`):
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
@@ -223,7 +223,7 @@ enum Genre {
 
 **Twirp** -- same `@protobuf__rpc` body; `/twirp` on `location` plus an explicit protobuf header:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
@@ -287,7 +287,7 @@ enum Genre {
 Nested messages and well-known types are not flat scalars. Field-number maps nest inside `args` /
 `selection` (e.g. `@Movie` blocks, `@google_protobuf_Timestamp`):
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   exampleGetMovie(input: GetMovieRequest_Input): Movie

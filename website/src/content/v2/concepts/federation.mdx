@@ -68,23 +68,24 @@ On Connect / protocol Query fields that look up one entity by its key, compositi
 stamp `entity: true` (or a type-level `@connect` / `@sql` / `@protobuf__rpc` with `$this.<key>`).
 That wires Hive Gateway / Apollo Router `_entities` -> `resolveReference`.
 
-For **hand-written GraphQL** subgraphs that need an entity hop, use Federation Spec `@lookup` /
-`@is` / `@internal` imported from
+For **hand-written GraphQL** subgraphs, prefer Federation Spec `@lookup` / `@is` / `@internal` for
+an entity entry field that returns **one object**, imported from
 [graphql-federation-spec/draft](https://graphql.github.io/graphql-federation-spec/draft) -- not from
-`specs.graphql-mesh.dev`. See [Directives: @lookup](/v2/directives#lookup).
+`specs.graphql-mesh.dev`. For **list/batch** entry fields use Mesh `@merge` -- see
+[Directives: @lookup](/v2/directives#lookup) and [Directives: @merge](/v2/directives#merge).
 
-| Pattern                                       | What you get                                                                   |
-| --------------------------------------------- | ------------------------------------------------------------------------------ |
-| Arg name **matches** key field (`id` -> `id`) | Query field `@connect(entity: true)` (or protocol equivalent) / `@lookup`      |
-| Arg name **differs** (`petId` -> `id`)        | Type-level `$this` map, or `@lookup` + `@is(field: "id")` on the arg           |
-| Join-only stub (`resolvable: false`)          | `@key` only -- another subgraph owns the resolver                              |
-| Batch ByIds only                              | Batch field kept; singular `_entities` not claimed without a singular resolver |
-| Hide lookup from clients                      | `@lookup` + `@internal` on the field (or internal type)                        |
+| Pattern                                       | What you get                                                              |
+| --------------------------------------------- | ------------------------------------------------------------------------- |
+| Arg name **matches** key field (`id` -> `id`) | Query field `@connect(entity: true)` (or protocol equivalent) / `@lookup` |
+| Arg name **differs** (`petId` -> `id`)        | Type-level `$this` map, or `@lookup` + `@is(field: "id")` on the arg      |
+| Join-only stub (`resolvable: false`)          | `@key` only -- another subgraph owns the resolver                         |
+| Batch ByIds only                              | Batch Connect / protocol maps, or Mesh `@merge` on a list entry field     |
+| Hide lookup from clients                      | `@lookup` + `@internal` on the field (or internal type)                   |
 
 <ProtocolRef name="http-rest" /> Connectors (`getCustomer` matches [ById
 conventions](/v2/compose#semantic-conventions)):
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   getCustomer(id: String!): Customer
@@ -107,7 +108,7 @@ type Customer @key(fields: "id") {
 
 <ProtocolRef name="sql" /> type-level entity fill (`$this.id` on `Track`):
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Track
   @key(fields: "id")
@@ -138,8 +139,9 @@ See [Selection mapping](/v2/guides/selection-mapping) for `$this` / `$batch` bin
 
 Composition recognizes Query names like `bookById`, `getCustomer`, `customersByIds` (snake_case
 match) when the key arg lines up with a key field. Connect / protobuf get `entity: true` or
-type-level `$this` maps; GraphQL hops use Federation `@lookup` (+ `@is` when needed). Full table and
-opt-out: [Composition semantic conventions](/v2/compose#semantic-conventions).
+type-level `$this` maps; GraphQL one-object hops use Federation `@lookup` (+ `@is` when needed), and
+list/batch hops may use Mesh `@merge`. Full table and opt-out:
+[Composition semantic conventions](/v2/compose#semantic-conventions).
 
 ### Federation transform
 
@@ -170,7 +172,7 @@ Federation transform when you need to **annotate** an existing GraphQL schema in
 
 ## Short example
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 # Catalog subgraph (SQL hub)
 
@@ -198,10 +200,11 @@ type Track @key(fields: "id", resolvable: false) {
 See [Music Store Example](/v2/examples/music-store) and [FHIR](/v2/examples/fhir) for entity joins.
 Semantic ById conventions: [Composition](/v2/compose#semantic-conventions).
 
-Recommend Federation `@lookup` / `@is` / `@internal` (or `@key` + Connect / protocol `entity: true`)
-for entity hops -- [Directives: @lookup](/v2/directives#lookup).
+Prefer Federation `@lookup` / `@is` / `@internal` (or `@key` + Connect / protocol `entity: true`)
+for one-object entity entry fields -- [Directives: @lookup](/v2/directives#lookup). Use Mesh
 
-<DirectiveRef name="resolveTo" /> remains for field delegation when entity stubs are not enough.
+<DirectiveRef name="merge" /> for list/batch entry fields. <DirectiveRef name="resolveTo" />
+remains for field delegation when entity stubs are not enough.
 
 <Cards>
   <Cards.Card arrow title="Schema Stitching" href="/v2/concepts/stitching" />

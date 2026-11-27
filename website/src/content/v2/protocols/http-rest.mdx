@@ -67,7 +67,7 @@ export const composeConfig = defineComposeConfig({
 
 Emitted shape:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
@@ -151,7 +151,7 @@ export const composeConfig = defineConfig({
 
 Emitted shape (OData also maps `@odata.type` unions in selection):
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Person
   @key(fields: "UserName")
@@ -267,7 +267,7 @@ When the Query arg is not the same name as the entity key (e.g. `userId` vs `id`
 `entity: true` is invalid. Keep the Query as the client entrypoint with `$args.userId`, and put a
 second `@connect` on the **type** that looks the entity up by `$this.id` for Federation `_entities`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   # Client entrypoint -- arg name stays userId; no entity: true here
@@ -307,7 +307,7 @@ FHIR `Reference.reference` is a string like `Patient/123`. Hand SDL (no `@source
 string and `->match`es the type segment onto abstract `Resource` stubs so other subgraphs can own
 `Patient` / `Observation` roots:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Reference @key(fields: "reference") {
   reference: String!
@@ -340,7 +340,7 @@ If you rename a GraphQL argument (e.g. `input` -> `requestBody`), Compose rewrit
 `@connect` the same way it rewrites `@protobuf__rpc` / `@thrift__rpc`. After rename, the HTTP body
 must read `$args.requestBody`, not `$args.input`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Mutation {
   # Arg renamed to requestBody; body binder follows
