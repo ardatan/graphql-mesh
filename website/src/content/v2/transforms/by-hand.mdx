@@ -150,7 +150,7 @@ file is already under authorship (Hand-write / Generate-then-edit).
 1. Public GraphQL names match what clients and other subgraphs expect.
 2. Every `$args.*` / `$this.*` / compact `args:` map still points at those names.
 3. Dropped fields are gone from both the type **and** any `selection` / `args` blocks.
-4. Re-compose (and dual-run Hive Gateway + Apollo Router on Connect slices when relevant).
+4. Re-compose (and run Connect slices on Hive Gateway + Apollo Router when relevant).
 5. Optional: serve the same file with `buildSubgraphSchema` from `@graphql-mesh/subgraph` --
    [buildSubgraphSchema](/v2/guides/build-subgraph-schema).
 

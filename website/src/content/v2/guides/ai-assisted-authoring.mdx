@@ -27,7 +27,8 @@ Valid Mesh SDL the assistant (or you) can drop into Compose without custom one-o
   ([why](/v2/directives#federation))
 - Binders (`$args`, `$this`, `selection`, protocol `args`) that match
   [Selection mapping](/v2/guides/selection-mapping)
-- Honest gateway matrix: Connect → dual-run; `@sql` / `@protobuf__rpc` / ... → Hive Gateway only
+- Honest gateway matrix: Connect → native on both; `@sql` / `@protobuf__rpc` / ... → Hive Gateway
+  only
 
 ## Context to paste
 
@@ -39,7 +40,7 @@ Give the model **Mesh truth**, not a generic GraphQL tutorial:
 | [Reading generated SDL](/v2/guides/reading-generated-sdl)                                   | How to interpret stamps before editing                      |
 | Emitted subgraph SDL (when you have one)                                                    | Concrete `@connect` / `@sql` / ... shapes to mirror or trim |
 | [Directives reference](/v2/directives) excerpt                                              | Arg names and scenario samples                              |
-| Protocol page for the upstream ([Protocols](/v2/protocols))                                 | Dual-run limits and loader vs hand-write notes              |
+| Protocol page for the upstream ([Protocols](/v2/protocols))                                 | Apollo Router limits and loader vs hand-write notes         |
 | Target gateway ([Hive Gateway](/v2/serve/hive-gateway) / [Router](/v2/serve/apollo-router)) | Avoid inventing Router support for Mesh-only dirs           |
 
 Optional: one working query you already run against generated SDL, so the model preserves field
@@ -128,7 +129,7 @@ Ask the model to explain `$args` vs `$this` against [Directives: @connect](/v2/d
    directive definitions mean the assistant skipped defs.
 2. [Reading generated SDL](/v2/guides/reading-generated-sdl) checklist still makes sense on the
    edited file.
-3. Run one client query on [Hive Gateway](/v2/serve/hive-gateway); dual-run Connect-only slices on
+3. Run one client query on [Hive Gateway](/v2/serve/hive-gateway); run Connect-only slices on
    [Apollo Router](/v2/serve/apollo-router) when relevant.
 
 ## Related

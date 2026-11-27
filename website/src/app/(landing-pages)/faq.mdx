@@ -12,16 +12,18 @@
   Use Mesh when you need **non-GraphQL sources as Federation subgraphs** without replacing Router,
   GraphOS, Hive Gateway, or your registry. Generate subgraph SDL, optionally transform it, compose
   with your existing GraphQL subgraphs, and drop the Mesh peers into the gateway you already run.
-  Connect-compatible slices can dual-run on Apollo Router; protocol transports use Hive Gateway or
-  [Serve Subgraph](/v2/serve-subgraph). [FAQ: why Mesh](/v2/faq#already-have-federation-why-mesh).
+  Mesh uses **Connectors** natively in Apollo Router and Hive Gateway; non-Connect protocols (SQL,
+  etc.) still work on Apollo Router by serving the subgraph separately
+  ([`buildSubgraphSchema`](/v2/guides/build-subgraph-schema) / Hive subgraph serve).
+  [FAQ: why Mesh](/v2/faq#already-have-federation-why-mesh).
 
 - New to Federation: why Mesh?
 
   Mesh **generates Federation-ready subgraphs** from the APIs and databases you already have, so you
   do not have to hand-author every directive to get a first working graph. Compose with Mesh Compose
-  (or a registry), then **run with any Federation Gateway** -- Hive Gateway, Apollo Router for
-  Connect-compatible SDL, or another Federation-compatible gateway.
-  [FAQ: new to Federation](/v2/faq#new-to-federation-why-mesh).
+  (or a registry), then **run with any Federation Gateway**. Connectors run natively on Hive Gateway
+  and Apollo Router; non-Connect protocols use Hive Gateway on the supergraph or a served Mesh
+  subgraph peer. [FAQ: new to Federation](/v2/faq#new-to-federation-why-mesh).
 
 - How do I go from a source to a running graph?
 
@@ -43,8 +45,9 @@
 - Where can Mesh run?
 
   **Hive Gateway** across any JS environment (Node.js, Bun, Docker, serverless), **Apollo Router**
-  (Rust) for Connect-compatible supergraphs, **any Federation Gateway** for composed SDL, and a Mesh
+  (Rust) with Connectors native in both, **any Federation Gateway** for composed SDL, and a Mesh
   subgraph process on Yoga or any GraphQL server via
-  [`buildSubgraphSchema`](/v2/guides/build-subgraph-schema) from `@graphql-mesh/subgraph`.
-  [Serve Supergraph](/v2/serve) / [Hive Gateway](/v2/serve/hive-gateway) /
-  [Apollo Router](/v2/serve/apollo-router).
+  [`buildSubgraphSchema`](/v2/guides/build-subgraph-schema) from `@graphql-mesh/subgraph` -- same
+  Federation wiring job as Apollo's `buildSubgraphSchema`, plus Mesh directive / Mesh specification
+  execution (including non-Connect protocols behind Apollo Router). [Serve Supergraph](/v2/serve) /
+  [Hive Gateway](/v2/serve/hive-gateway) / [Apollo Router](/v2/serve/apollo-router).

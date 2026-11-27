@@ -50,8 +50,8 @@ not just arg lists. Binders: [Selection mapping](/v2/guides/selection-mapping). 
 `@connect` / `@source`
 
 HTTP/REST Connectors-compatible mapping (connect/v0.4). OpenAPI, JSON Schema, OData, and
-SOAP-as-Connect loaders **emit** these; authors can hand-write them. Dual-run Connect-compatible SDL
-on Hive Gateway and Apollo Router. Full arg tables:
+SOAP-as-Connect loaders **emit** these; authors can hand-write them. Connectors are native on Hive
+Gateway and Apollo Router when the SDL is Connect-compatible. Full arg tables:
 [upstream Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
 Protocol: <ProtocolRef name="http-rest" />.
 
@@ -172,7 +172,7 @@ See [Entity resolution](/v2/concepts/federation#entity-resolution) and
 ### Scenario: SOAP envelope body
 
 Same `@connect` / `@source`, but `http.body` is a SOAP envelope selection (Hive Gateway XML codec;
-not a stock Apollo Router dual-run target):
+not native on stock Apollo Router):
 
 ```graphql
 type Query {
@@ -1004,8 +1004,9 @@ type Query {
 
 `@thrift__rpc`
 
-Binary Thrift path. TJSON over HTTP can emit HTTP/REST Connectors `@connect` instead (dual-run when
-Connect-compatible). Binary Thrift is a Mesh protocol -- not HTTP/REST Connectors. Protocol:
+Binary Thrift path. TJSON over HTTP can emit HTTP/REST Connectors `@connect` instead (native on
+Apollo Router when Connect-compatible). Binary Thrift is a Mesh protocol -- not HTTP/REST
+Connectors. Protocol:
 
 <ProtocolRef name="thrift" />.
 

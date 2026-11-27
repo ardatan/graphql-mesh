@@ -12,7 +12,9 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 `@graphql-mesh/subgraph` turns **Mesh subgraph SDL** into an executable `GraphQLSchema` you can
 serve on **Yoga** (or any GraphQL server) as a Federation subgraph for **Hive Gateway** or **Apollo
-Router**.
+Router**. Mesh `buildSubgraphSchema` does **what Apollo's** `@apollo/subgraph` export does for
+Federation wiring, **plus** Mesh directive / Mesh specification execution (protocol transports,
+Connect in-process, entity hops).
 
 The same call accepts SDL from every authoring path:
 
@@ -39,18 +41,19 @@ hops -- not only publish SDL into a supergraph.
 ## vs `@apollo/subgraph`
 
 Apollo's [`@apollo/subgraph`](https://www.npmjs.com/package/@apollo/subgraph) also exports
-`buildSubgraphSchema`. The **name matches on purpose** (executable Federation subgraph schema), but
-the jobs differ:
+`buildSubgraphSchema`. The **name matches on purpose**: Mesh does the same job as Apollo's
+`buildSubgraphSchema` for Federation wiring, plus Mesh directive execution (protocol transports,
+Connect in-process, entity hops). The jobs differ in what each package executes:
 
-|                     | **`@apollo/subgraph`**                                                                                    | **`@graphql-mesh/subgraph`**                                                                                                       |
-| ------------------- | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Job                 | Make a **hand-coded** GraphQL schema Federation-compatible                                                | Make **Mesh subgraph SDL** executable (transports + entity hops)                                                                   |
-| Typical input       | `[{ typeDefs, resolvers }]` or SDL + your resolver map                                                    | Generated / edited / hand Mesh SDL (`string` / `DocumentNode` / `GraphQLSchema`)                                                   |
-| What you write      | Field resolvers + `__resolveReference` for entities                                                       | Mostly directives on SDL; optional `resolvers` for fields you own in code                                                          |
-| Federation plumbing | Adds Fed types / directives (`_Entity`, `_Any`, ...) and wires `_entities` from your `__resolveReference` | Wires entity entry from Fed `@lookup` / `@is` / `@internal` (one-object) and Type Merging `@merge` (list/batch)                    |
-| HTTP/REST Connect   | `@connect` / `@source` may appear in SDL; **Router executes** Connectors, not this library                | `@connect` / `@source` run via Mesh transports in **this** subgraph process (and still dual-run on Router when Connect-compatible) |
-| Mesh protocols      | Not in scope (`@sql`, `@protobuf__rpc`, `@transport`, ...)                                                | First-class: `@transport` + protocol / Connect directive executors                                                                 |
-| When to use         | Pure GraphQL subgraph with code resolvers                                                                 | Mesh Generate / Generate-then-edit / Hand-write SDL as a Yoga (or any) Federation subgraph                                         |
+|                     | **`@apollo/subgraph`**                                                                                    | **`@graphql-mesh/subgraph`**                                                                                                                        |
+| ------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Job                 | Make a **hand-coded** GraphQL schema Federation-compatible                                                | Same Federation wiring job, **plus** execute Mesh directives / Mesh spec on **Mesh subgraph SDL**                                                   |
+| Typical input       | `[{ typeDefs, resolvers }]` or SDL + your resolver map                                                    | Generated / edited / hand Mesh SDL (`string` / `DocumentNode` / `GraphQLSchema`)                                                                    |
+| What you write      | Field resolvers + `__resolveReference` for entities                                                       | Mostly directives on SDL; optional `resolvers` for fields you own in code                                                                           |
+| Federation plumbing | Adds Fed types / directives (`_Entity`, `_Any`, ...) and wires `_entities` from your `__resolveReference` | Wires entity entry from Fed `@lookup` / `@is` / `@internal` (one-object) and Type Merging `@merge` (list/batch)                                     |
+| HTTP/REST Connect   | `@connect` / `@source` may appear in SDL; **Router executes** Connectors, not this library                | `@connect` / `@source` run via Mesh transports in **this** subgraph process; Connectors are also native on Apollo Router when the SDL is compatible |
+| Mesh protocols      | Not in scope (`@sql`, `@protobuf__rpc`, `@transport`, ...)                                                | First-class: `@transport` + protocol / Connect directive executors                                                                                  |
+| When to use         | Pure GraphQL subgraph with code resolvers                                                                 | Mesh Generate / Generate-then-edit / Hand-write SDL as a Yoga (or any) Federation subgraph                                                          |
 
 Use **`@apollo/subgraph`** when the subgraph is ordinary GraphQL you implement in resolvers. Use
 **`@graphql-mesh/subgraph`** when the subgraph SDL already carries Mesh / Connect / protocol
@@ -275,10 +278,10 @@ Prefer Federation `@lookup` / `@is` / `@internal` for one-object entity entry fi
 ## Serve as a Federation subgraph
 
 Point Hive Gateway or Apollo Router at your composed supergraph. The subgraph URL is whatever host
-runs Yoga (or your server) with the schema from `buildSubgraphSchema`. Connect-compatible slices can
-dual-run on Apollo Router when the SDL stays within Connect; protocol transports (`@sql`,
-`@protobuf__rpc`, ...) need **Hive Gateway** for the supergraph, **or** this `buildSubgraphSchema` /
-Hive-subgraph process behind Apollo Router -- [Serve Subgraph](/v2/serve-subgraph).
+runs Yoga (or your server) with the schema from `buildSubgraphSchema`. Mesh uses **Connectors**
+natively in Apollo Router and Hive Gateway. Non-Connect protocols (`@sql`, `@protobuf__rpc`, …)
+still work on Apollo Router when you serve this subgraph separately (`buildSubgraphSchema` / Hive
+subgraph mode) -- [Serve Subgraph](/v2/serve-subgraph).
 
 Also [Hive Gateway](/v2/serve/hive-gateway) / [Apollo Router](/v2/serve/apollo-router) /
 [Composition](/v2/compose).

@@ -48,10 +48,11 @@ Typical pattern:
 4. Recompose (Rover, Hive composition, or Mesh Compose) and keep [Serve Supergraph](/v2/serve) on
    the gateway you already run.
 
-Connect-only Mesh slices can dual-run on Apollo Router beside your GraphQL subgraphs. Mesh protocol
-transports (`@sql`, `@protobuf__rpc`, …) need Hive Gateway on the supergraph **or** a served Mesh
-subgraph peer. Short answers:
-[FAQ: existing Federation](/v2/faq#can-mesh-drop-into-an-existing-federation-setup).
+Mesh uses [HTTP/REST Connectors](/v2/protocols/http-rest) (`@connect` / `@source`) natively in
+**Apollo Router** and **Hive Gateway**. Non-Connect protocols (SQL, gRPC, …) still work with Apollo
+Router when you [Serve Subgraph](/v2/serve-subgraph) separately --
+[`buildSubgraphSchema`](/v2/guides/build-subgraph-schema) or Hive Gateway in subgraph mode. Short
+answers: [FAQ: existing Federation](/v2/faq#can-mesh-drop-into-an-existing-federation-setup).
 
 <V2FlowDiagram
   ariaLabel="Mesh v2 stack from sources through Composition to gateway transports"

@@ -10,10 +10,10 @@ import { DirectiveRef } from '../../../components/v2-directive-ref'
 Use Thrift when you already have a **`.thrift` IDL** and want GraphQL fields that call those
 functions. Mesh has two emit paths from the same IDL:
 
-| Path            | What you get                                             | Dual-run                                                             |
-| --------------- | -------------------------------------------------------- | -------------------------------------------------------------------- |
-| Binary Thrift   | <DirectiveRef name="thrift__rpc" /> + `transport-thrift` | Hive Gateway; Apollo Router via [Serve Subgraph](/v2/serve-subgraph) |
-| TJSON over HTTP | HTTP/REST Connectors `@source` + `@connect`              | Apollo Router when Connect-compatible                                |
+| Path            | What you get                                             | On Apollo Router?                                                  |
+| --------------- | -------------------------------------------------------- | ------------------------------------------------------------------ |
+| Binary Thrift   | <DirectiveRef name="thrift__rpc" /> + `transport-thrift` | Via [Serve Subgraph](/v2/serve-subgraph) (Hive Gateway for binary) |
+| TJSON over HTTP | HTTP/REST Connectors `@source` + `@connect`              | Yes when Connect-compatible                                        |
 
 Only the TJSON path emits HTTP/REST Connectors (`@connect` / `@source`). Binary Thrift stays on
 `@thrift__rpc` + `transport-thrift`.

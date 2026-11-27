@@ -20,7 +20,7 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 [connectors-community](https://github.com/apollographql/connectors-community) publishes working
 `@connect` / `@source` schemas (JSONPlaceholder, Stripe, Google Maps, ...). Mesh already vendors
 several under the Connect transport test fixtures. Drop the same SDL into Mesh Compose, then
-[Serve Supergraph](/v2/serve) (Hive Gateway / Apollo Router dual-run) **or**
+[Serve Supergraph](/v2/serve) (Connectors native on Hive Gateway and Apollo Router) **or**
 [Serve Subgraph](/v2/serve-subgraph) (Hive Gateway subgraph / `buildSubgraphSchema`) when another
 gateway must call that URL.
 
@@ -40,7 +40,7 @@ gateway must call that URL.
 | ---------------- | -------------------------------------------------------------------- |
 | Source           | Public JSONPlaceholder REST (`https://jsonplaceholder.typicode.com`) |
 | Authoring        | Hand-checked community `.graphql` (or copy from the fixture)         |
-| Serve Supergraph | Hive Gateway **and** Apollo Router (Connect-compatible dual-run)     |
+| Serve Supergraph | Hive Gateway **and** Apollo Router (Connectors native in both)       |
 | Serve Subgraph   | Hive Gateway subgraph **or** `buildSubgraphSchema` as a Fed peer     |
 | No Rover         | Mesh Compose + Hive Gateway is enough for local serve                |
 
@@ -103,11 +103,11 @@ type Query {
 ```bash
 pnpm exec mesh-compose -o supergraph.graphql
 pnpm exec hive-gateway supergraph
-./router --supergraph supergraph.graphql # Connect dual-run
+./router --supergraph supergraph.graphql # Apollo Router (Connectors native)
 ```
 
-Same `supergraph.graphql` can dual-run on [Apollo Router](/v2/serve/apollo-router) when you stay on
-stock Connect (no `@sql` / `@protobuf__rpc` / SOAP beside it).
+Same `supergraph.graphql` can run on [Apollo Router](/v2/serve/apollo-router) when you stay on stock
+Connect (no `@sql` / `@protobuf__rpc` / SOAP beside it).
 
 ## Serve as a Federation subgraph
 
@@ -158,7 +158,7 @@ Hive Gateway vs `buildSubgraphSchema`:
 
 ## Use cases
 
-### Prove dual-run with a public API
+### Prove Connectors on both gateways with a public API
 
 JSONPlaceholder needs no API key. Compose, query `getUser(id: "1")` on Hive Gateway, then point
 Apollo Router at the same supergraph file for a Connect-only smoke.
@@ -186,7 +186,8 @@ vocabulary -- selection, entity, errors -- without changing Mesh product identit
 
 Upstream catalog:
 [apollographql/connectors-community](https://github.com/apollographql/connectors-community). Mesh
-vendored copies: Connect transport `connectors-community` fixtures (used in dual-run smoke tests).
+vendored copies: Connect transport `connectors-community` fixtures (used in Connect smoke tests on
+both gateways).
 
 <Cards>
   <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />

@@ -12,7 +12,7 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 `@connect` and `@source` (connect/v0.4), plus `selection` / entity flags
 (<DirectiveRef name="connect" /> / <DirectiveRef name="source" />). Mesh OpenAPI, JSON Schema,
 OData, and SOAP-as-Connect loaders **emit** that shape. Hand authors can write the same directives.
-Dual-run Connect-compatible SDL on Hive Gateway and Apollo Router.
+Connectors are native on Hive Gateway and Apollo Router when the SDL is Connect-compatible.
 
 ## Where it lives
 
@@ -30,7 +30,7 @@ Dual-run Connect-compatible SDL on Hive Gateway and Apollo Router.
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
 | Directive contract | [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) (upstream) |
 | Mesh transport     | `@graphql-mesh/transport-connect` on Hive Gateway                                                                       |
-| Dual-run           | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when compatible                                            |
+| Apollo Router      | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when compatible                                            |
 | Protocol page      | <ProtocolRef name="http-rest" />                                                                                        |
 
 HTTP/REST Connectors are **not** Mesh-only protocol mapping.

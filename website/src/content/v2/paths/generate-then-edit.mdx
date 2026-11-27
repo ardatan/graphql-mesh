@@ -138,12 +138,12 @@ Stage 2 of the [Music Store Example](/v2/examples/music-store) generates **Revie
 OpenAPI source (HTTP/REST Connectors emit), then edits the `@connect` SDL before it joins the
 catalog.
 
-| Step       | Music Store Example move                                                                       |
-| ---------- | ---------------------------------------------------------------------------------------------- |
-| Generate   | Reviews OpenAPI -> Connect subgraph beside Chinook (config **1**)                              |
-| Dislike    | Naming, selection, or entity wiring that does not match the catalog keys                       |
-| Edit       | Checked-in `.graphql` with the fixes you want                                                  |
-| Re-compose | Config **2** (`schema: './reviews.graphql'`); dual-run Hive Gateway + Apollo Router on Connect |
+| Step       | Music Store Example move                                                                      |
+| ---------- | --------------------------------------------------------------------------------------------- |
+| Generate   | Reviews OpenAPI -> Connect subgraph beside Chinook (config **1**)                             |
+| Dislike    | Naming, selection, or entity wiring that does not match the catalog keys                      |
+| Edit       | Checked-in `.graphql` with the fixes you want                                                 |
+| Re-compose | Config **2** (`schema: './reviews.graphql'`); run Connect SDL on Hive Gateway + Apollo Router |
 
 ## What edits usually look like
 

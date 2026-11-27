@@ -1,5 +1,5 @@
 ---
-description: How we built the FHIR JSON Schema Mesh example -- generate, join SDL, Compose, dual-run
+description: How we built the FHIR JSON Schema Mesh example -- generate, join SDL, Compose, serve
 ---
 
 import { Callout, Cards } from '@theguild/components'
@@ -271,7 +271,7 @@ pnpm add @graphql-mesh/compose-cli @omnigraph/json-schema @graphql-hive/gateway 
 
 pnpm exec mesh-compose -o supergraph.graphql
 pnpm exec hive-gateway supergraph
-./router --supergraph supergraph.graphql # Connect dual-run
+./router --supergraph supergraph.graphql # Apollo Router (Connectors native)
 ```
 
 Compose to GraphQL SDL, then execute the **same** file on Hive Gateway and Apollo Router (this
@@ -310,7 +310,7 @@ from the Patient subgraph.
 4. Generate JSON Schema subgraphs for each root operation (start with Patient + Observation).
 5. Add **`reference-resource.graphql`**: `Resource` + only the implementations you federate +
    `Reference.resource` `->match` branches.
-6. Compose; dual-run Hive Gateway and Apollo Router when the SDL is Connect-compatible.
+6. Compose; run the same Connect SDL on Hive Gateway and Apollo Router when Connect-compatible.
 
 ## Further / what else you can do next
 
@@ -320,8 +320,8 @@ from the Patient subgraph.
   config.
 - Generate more FHIR resource roots the same way (Patient + Observation first; add Resource
   implementors + `->match` branches as you need them).
-- Dual-run Connect-compatible SDL on [Apollo Router](/v2/serve/apollo-router); keep non-Connect Mesh
-  transports on [Hive Gateway](/v2/serve/hive-gateway).
+- Run Connect-compatible SDL on [Apollo Router](/v2/serve/apollo-router) as well (Connectors are
+  native in both); keep non-Connect Mesh transports on [Hive Gateway](/v2/serve/hive-gateway).
 - Binders on `Reference.resource`: [Selection mapping](/v2/guides/selection-mapping). Protocol
   notes: [HTTP / REST](/v2/protocols/http-rest).
 
