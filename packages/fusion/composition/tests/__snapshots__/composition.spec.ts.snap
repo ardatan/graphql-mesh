@@ -15,11 +15,10 @@ directive @link(url:String as:String for:link__Purpose import:[link__Import]) re
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {A @join__graph(name:"A" url:"") B @join__graph(name:"B" url:"")}
-directive @lookup on FIELD_DEFINITION
-type Query @join__type(graph:A) @join__type(graph:B) {myFoo:Foo! @join__field(graph:A) foo(id:ID!):Foo! @lookup @join__field(graph:B) foos(ids:[ID!]!):[Foo!]! @join__directive(graphs:[B] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__field(graph:B) foosByFilter(where:FooFilter!):[Foo!]! @join__field(graph:B)}
+type Query @join__type(graph:A) @join__type(graph:B) {myFoo:Foo! @join__field(graph:A) foo(id:ID!):Foo! @join__directive(graphs:[B] name:"lookup" args:{}) @join__field(graph:B) foos(ids:[ID!]!):[Foo!]! @join__directive(graphs:[B] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__field(graph:B) foosByFilter(where:FooFilter!):[Foo!]! @join__field(graph:B)}
 type Foo @join__type(graph:A) @join__type(graph:B key:"id") {id:ID! bar:String! @join__field(graph:B)}
 input FooFilter @join__type(graph:B) {id:ID id_in:[ID!]}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;
@@ -41,17 +40,16 @@ enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to secur
 enum join__Graph {A @join__graph(name:"A" url:"") B @join__graph(name:"B" url:"")}
 directive @source(name:String!
 type:String subgraph:String) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
-directive @lookup on FIELD_DEFINITION
-type Query @join__directive(graphs:[A] name:"source" args:{name:"Query" subgraph:"A"}) @join__directive(graphs:[B] name:"source" args:{name:"Query" subgraph:"A"}) @join__directive(graphs:[A] name:"source" args:{name:"Query" subgraph:"B"}) @join__directive(graphs:[B] name:"source" args:{name:"Query" subgraph:"B"}) @join__type(graph:A) @join__type(graph:B) {A_myFoo:A_Foo! @join__directive(graphs:[A] name:"source" args:{name:"myFoo"
+type Query @join__directive(graphs:[A] name:"source" args:{name:"Query" subgraph:"A"}) @join__directive(graphs:[B] name:"source" args:{name:"Query" subgraph:"B"}) @join__type(graph:A) @join__type(graph:B) {A_myFoo:A_Foo! @join__directive(graphs:[A] name:"source" args:{name:"myFoo"
 type:"Foo!" subgraph:"A"}) @join__field(graph:A) B_foo(id:ID!):B_Foo! @join__directive(graphs:[B] name:"source" args:{name:"foo"
-type:"Foo!" subgraph:"B"}) @lookup @join__field(graph:B) B_foos(ids:[ID!]!):[B_Foo!]! @join__directive(graphs:[B] name:"source" args:{name:"foos"
+type:"Foo!" subgraph:"B"}) @join__directive(graphs:[B] name:"lookup" args:{}) @join__field(graph:B) B_foos(ids:[ID!]!):[B_Foo!]! @join__directive(graphs:[B] name:"source" args:{name:"foos"
 type:"[Foo!]!" subgraph:"B"}) @join__directive(graphs:[B] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__field(graph:B) B_foosByFilter(where:B_FooFilter! @source(name:"where"
 type:"FooFilter!" subgraph:"B")):[B_Foo!]! @join__directive(graphs:[B] name:"source" args:{name:"foosByFilter"
 type:"[Foo!]!" subgraph:"B"}) @join__field(graph:B)}
 type A_Foo @join__directive(graphs:[A] name:"source" args:{name:"Foo" subgraph:"A"}) @join__type(graph:A) {id:ID!}
 type B_Foo @join__directive(graphs:[B] name:"source" args:{name:"Foo" subgraph:"B"}) @join__type(graph:B key:"id") {id:ID! bar:String!}
 input B_FooFilter @source(name:"FooFilter" subgraph:"B") @join__type(graph:B) {id:ID id_in:[ID!]}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;
@@ -71,12 +69,11 @@ directive @link(url:String as:String for:link__Purpose import:[link__Import]) re
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {A @join__graph(name:"A" url:"") B @join__graph(name:"B" url:"") C @join__graph(name:"C" url:"")}
-directive @lookup on FIELD_DEFINITION
 directive @foo on FIELD_DEFINITION
-type Query @join__type(graph:A) @join__type(graph:B) @join__type(graph:C) {myFoo:Foo! @join__field(graph:A) foo(id:ID!):Foo! @lookup @join__field(graph:B) foos(ids:[ID!]!):[Foo!]! @join__directive(graphs:[B] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__field(graph:B) foosByFilter(where:FooFilter!):[Foo!]! @join__field(graph:B) cFoo:Foo! @foo @join__field(graph:C)}
+type Query @join__type(graph:A) @join__type(graph:B) @join__type(graph:C) {myFoo:Foo! @join__field(graph:A) foo(id:ID!):Foo! @join__directive(graphs:[B] name:"lookup" args:{}) @join__field(graph:B) foos(ids:[ID!]!):[Foo!]! @join__directive(graphs:[B] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__field(graph:B) foosByFilter(where:FooFilter!):[Foo!]! @join__field(graph:B) cFoo:Foo! @foo @join__field(graph:C)}
 type Foo @join__type(graph:A) @join__type(graph:B key:"id") @join__type(graph:C) {id:ID! bar:String! @join__field(graph:B)}
 input FooFilter @join__type(graph:B) {id:ID id_in:[ID!]}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;

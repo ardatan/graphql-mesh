@@ -690,10 +690,19 @@ function synthesizeMergeFromLookup(
   for (const argName of argNames) {
     const argConfig = args[argName]!;
     const argDirs = getDirectiveExtensions(argConfig);
-    const keyField = resolveLookupKeyField(
-      String(argName),
-      argDirs?.is as Array<{ field?: string }> | undefined,
-    );
+    // Native `@is` (subgraph SDL / reconstituted) or Supergraph
+    // `@join__directive(name: "is")` left on ARGUMENT_DEFINITION by extract.
+    const isFromJoin = (
+      (argDirs?.join__directive as
+        | Array<{ name?: string; args?: { field?: string } }>
+        | undefined) || []
+    )
+      .filter(d => d?.name === 'is')
+      .map(d => ({ field: d.args?.field }));
+    const keyField = resolveLookupKeyField(String(argName), [
+      ...((argDirs?.is as Array<{ field?: string }> | undefined) || []),
+      ...isFromJoin,
+    ]);
     // Nested paths (`address.id`) are not expressible as a simple stitching keyField;
     // fall back to the first path segment for hop planning.
     const keyArg = String(argName);
