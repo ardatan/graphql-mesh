@@ -10,8 +10,9 @@ import { ConceptRef, ProtocolRef } from '../../../components/v2-directive-ref'
 After [Composition](/v2/compose) you have subgraph or supergraph GraphQL SDL. **Serve Supergraph**
 means running the **composed** SDL on a <ConceptRef name="gateway">federation gateway</ConceptRef>
 runtime. Mesh is gateway-independent: use Hive Gateway, Apollo Router, or another
-Federation-compatible gateway. To run one Mesh subgraph as its own Federation endpoint, see
-[Serve Subgraph](/v2/serve-subgraph).
+Federation-compatible gateway -- including the one that already serves your base Federation graph
+when you [enhance it with Mesh subgraphs](/v2#enhance-an-existing-federation). To run one Mesh
+subgraph as its own Federation endpoint, see [Serve Subgraph](/v2/serve-subgraph).
 
 | Runtime                                        | Role in Mesh docs               | What it executes                                                                                                                                                                                                |
 | ---------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

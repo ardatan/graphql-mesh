@@ -76,14 +76,13 @@ export function InfoCardsSection() {
 
       <div className="mx-auto mt-10 max-w-3xl rounded-2xl bg-beige-100 px-6 py-6 text-center md:mt-14 md:px-10 md:py-8">
         <Heading as="h3" size="sm" className="text-balance">
-          Platform, registry, and gateway independent
+          Enhance the Federation you already run
         </Heading>
         <p className="mt-3 text-balance text-green-800">
-          Mesh works in any Federation environment. Compose with the tool you already use, publish
-          to any schema registry (or none), and run on any Federation-compatible gateway -- Hive
-          Gateway, Apollo Router, and others. Hive Gateway remains preferred for the full Mesh
-          transport surface; Serve Subgraph (or <code>buildSubgraphSchema</code>) when another
-          gateway must call a Mesh-backed subgraph URL.
+          Mesh is platform, registry, and gateway independent. Keep GraphOS, Hive, Rover, or your
+          current gateway -- add Mesh Federation subgraphs for REST, SQL, gRPC, and more. Publish
+          SDL or Serve Subgraph when another gateway must call a Mesh-backed URL. Hive Gateway
+          remains preferred for the full Mesh transport surface.
         </p>
         <p className="mt-4">
           <Anchor

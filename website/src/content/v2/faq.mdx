@@ -161,17 +161,30 @@ is what matters. [Composition](/v2/compose).
 ## Can Mesh drop into an existing Federation setup?
 
 Yes. Mesh is platform / registry / gateway **independent**. Keep Apollo GraphOS + Router, Hive
-Gateway + Registry, or any other Federation-compatible stack. Add Mesh where it helps:
+Gateway + Registry, or any other Federation-compatible stack. Mesh **enhances** the graph you
+already run -- add REST/SQL/gRPC (and more) as Federation subgraphs without ripping out GraphOS,
+Hive, Rover, or your CI.
 
-- **Drop in subgraphs** -- emit or Hand-write Mesh Federation subgraph SDL, publish to your
-  registry, or [Serve Subgraph](/v2/serve-subgraph) (`buildSubgraphSchema` / Hive subgraph mode) so
-  the existing gateway can call those URLs.
-- **Compose** -- use Mesh Compose for some or all subgraphs, or keep Rover / Hive composition and
-  only supply Mesh subgraph SDL.
+### How to enhance an existing Federation with Mesh
 
-You do **not** need to replace the whole gateway, registry, or CI. Hive Gateway remains preferred
-when Mesh protocol transports must run inside the supergraph process; otherwise Mesh peers as normal
-Federation subgraphs. See [Serve Supergraph](/v2/serve),
+1. **Keep the base** -- existing GraphQL subgraphs, composer, registry, and gateway stay.
+2. **Add a Mesh subgraph** -- [Build your Subgraph](/v2/paths/generate) (Generate / Hand-write /
+   Generate-then-edit) for the new API or database.
+3. **Wire it in** -- either:
+   - publish the Mesh subgraph SDL into your registry (same as any Federation subgraph), or
+   - [Serve Subgraph](/v2/serve-subgraph) (`buildSubgraphSchema` / Hive subgraph mode) and point the
+     gateway at that URL.
+4. **Recompose + serve** -- Rover, Hive composition, or Mesh Compose; keep
+   [Serve Supergraph](/v2/serve) on your current gateway when the SDL surface allows it.
+
+| What you add                         | With your existing gateway                                                                                         |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| HTTP/REST Connectors only            | Often dual-run on Apollo Router / Hive -- no stack swap                                                            |
+| Mesh protocols (`@sql`, protobuf, …) | Serve Subgraph (Hive or `buildSubgraphSchema`) as a Federation peer, **or** Hive Gateway for that supergraph slice |
+
+You do **not** need to replace the whole gateway, registry, or CI. See also
+[Introduction: Enhance an existing Federation](/v2#enhance-an-existing-federation),
+[Architecture: patterns](/v2/architecture#patterns),
 [From Schema Stitching](/v2/guides/migration/from-stitching).
 
 ## How is `@graphql-mesh/subgraph` different from `@apollo/subgraph`?
