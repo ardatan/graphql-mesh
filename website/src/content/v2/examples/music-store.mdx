@@ -176,7 +176,7 @@ Loader emit for a ById root (Billing-style OpenAPI -- Composition stamps `entity
 Query matches [semantic conventions](/v2/compose#semantic-conventions)):
 
 {/* prettier-ignore */}
-```graphql
+```graphql {15}
 extend schema
   @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
   @source(name: "Billing", http: { baseURL: "http://localhost:4001" })
@@ -198,7 +198,7 @@ type Query {
 After edit -- Reviews extend catalog Track (join stub + field-level Connect):
 
 {/* prettier-ignore */}
-```graphql
+```graphql {1,6}
 type Track @key(fields: "id", resolvable: false) {
   id: ID!
   reviews: [Review!]

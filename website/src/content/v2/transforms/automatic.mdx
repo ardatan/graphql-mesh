@@ -35,7 +35,7 @@ repeatable. For editing the `.graphql` itself, see [By hand](/v2/transforms/by-h
 Loader (or hand SDL) exposes `Query.moviesByYear(year:)`. Public API should say `releaseYear`
 without regenerating or hand-editing every `@protobuf__rpc(args:)` line:
 
-```ts
+```ts {4-9}
 {
   name: 'movies',
   schema: './movies.graphql', // or sourceHandler: load...
@@ -48,10 +48,25 @@ without regenerating or hand-editing every `@protobuf__rpc(args:)` line:
 }
 ```
 
-After Compose, clients call `moviesByYear(releaseYear: ...)` (`Query.moviesByYear(releaseYear:)`)
-and the directive `args` mapping tracks `$args.releaseYear`. Same idea for OpenAPI / `@connect` emit
-with `createPrefixTransform` or naming-convention, and for hand-written protobuf SDL plus a rename
-transform.
+After Compose, the public arg and binder both follow (Compose rewrites `$args` for you):
+
+{/* prettier-ignore */}
+```diff
+type Query {
+-  moviesByYear(year: Int!): [Movie!]!
++  moviesByYear(releaseYear: Int!): [Movie!]!
+     @protobuf__rpc(
+       method: "Movies/ByYear"
+       args: """
+-        year: $args.year
++        year: $args.releaseYear
+       """
+     )
+}
+```
+
+Same idea for OpenAPI / `@connect` emit with `createPrefixTransform` or naming-convention, and for
+hand-written protobuf SDL plus a rename transform.
 
 ## When automatic helps
 

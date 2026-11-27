@@ -49,7 +49,7 @@ Loader emit for a ById root (`Query.getCustomer` / `Query.getCustomer(id:)`). Co
 `entity: true`:
 
 {/* prettier-ignore */}
-```graphql
+```graphql {11}
 type Query {
   getCustomer(id: String!): Customer
     @connect(
@@ -68,7 +68,7 @@ After edit -- extend a catalog entity (join stub + field Connect). Binders use `
 `Track.reviews`:
 
 {/* prettier-ignore */}
-```graphql
+```graphql {1,6}
 type Track @key(fields: "id", resolvable: false) {
   id: ID!
   reviews: [Review!]

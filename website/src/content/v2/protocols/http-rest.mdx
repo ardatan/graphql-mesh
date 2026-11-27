@@ -341,21 +341,22 @@ If you rename a GraphQL argument (e.g. `input` -> `requestBody`), Compose rewrit
 must read `$args.requestBody`, not `$args.input`:
 
 {/* prettier-ignore */}
-```graphql
+```diff
 type Mutation {
-  # Arg renamed to requestBody; body binder follows
-  createReview(requestBody: CreateReviewInput!): Review
-    @connect(
-      source: "reviews"
-      http: {
-        POST: "/reviews"
-        body: "$args.requestBody" # was $args.input before rename
-      }
-      selection: """
-        id
-        rating
-      """
-    )
+-  createReview(input: CreateReviewInput!): Review
++  createReview(requestBody: CreateReviewInput!): Review
+     @connect(
+       source: "reviews"
+       http: {
+         POST: "/reviews"
+-        body: "$args.input"
++        body: "$args.requestBody"
+       }
+       selection: """
+         id
+         rating
+       """
+     )
 }
 ```
 

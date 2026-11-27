@@ -167,21 +167,22 @@ If you rename a GraphQL argument, Compose rewrites binders inside `@thrift__rpc`
 `$args.input`, not `$args.request`:
 
 {/* prettier-ignore */}
-```graphql
+```diff
 type Query {
-  # GraphQL arg renamed to input; binder follows
-  add(input: AddRequestInput): Int
-    @thrift__rpc(
-      function: "add"
-      args: """
-        1(struct): $args.input { # was $args.request before rename
-          1(i32): left
-          2(i32): right
-        }
-      """
-      selection: "$(i32)"
-      messageType: CALL
-    )
+-  add(request: AddRequestInput): Int
++  add(input: AddRequestInput): Int
+     @thrift__rpc(
+       function: "add"
+       args: """
+-        1(struct): $args.request {
++        1(struct): $args.input {
+           1(i32): left
+           2(i32): right
+         }
+       """
+       selection: "$(i32)"
+       messageType: CALL
+     )
 }
 ```
 

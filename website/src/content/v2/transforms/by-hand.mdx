@@ -17,53 +17,36 @@ This is the same edit muscle as [Generate-then-edit](/v2/paths/generate-then-edi
 <Callout type="info">
   After any hand edit, re-[read the SDL](/v2/guides/reading-generated-sdl): `$args` / `$this` inside
   `@connect`, `@source`, `@protobuf__rpc`, `@sql`, and friends must match the **public** GraphQL
-  names you left in the file.
+  names you left in the file (highlighted binders in the diffs below).
 </Callout>
 
 ## Worked example: rename an arg (and its binder)
 
-**Before** -- loader emit (or an earlier commit) exposes `year`; clients should say `releaseYear`:
+Loader emit (or an earlier commit) exposes `year`; clients should say `releaseYear`. Rename the
+GraphQL arg **and** the binder in one edit (Automatic would do both via `createRenameTransform`):
 
 {/* prettier-ignore */}
-```graphql
+```diff
 type Query {
-  moviesByYear(year: Int!): [Movie!]!
-    @protobuf__rpc(
-      method: "Movies/ByYear"
-      args: """
-        year: $args.year
-      """
-      selection: """
-        id
-        title
-      """
-    )
-}
-```
-
-**After** -- rename the GraphQL arg **and** the binder in one edit (Automatic would do both via
-`createRenameTransform`):
-
-{/* prettier-ignore */}
-```graphql
-type Query {
-  moviesByYear(releaseYear: Int!): [Movie!]!
-    @protobuf__rpc(
-      method: "Movies/ByYear"
-      args: """
-        year: $args.releaseYear
-      """
-      selection: """
-        id
-        title
-      """
-    )
+-  moviesByYear(year: Int!): [Movie!]!
++  moviesByYear(releaseYear: Int!): [Movie!]!
+     @protobuf__rpc(
+       method: "Movies/ByYear"
+       args: """
+-        year: $args.year
++        year: $args.releaseYear
+       """
+       selection: """
+         id
+         title
+       """
+     )
 }
 ```
 
 Wire the file in Compose without a transform list:
 
-```ts
+```ts {3}
 {
   name: 'movies',
   schema: './movies.graphql',
@@ -75,59 +58,37 @@ Same pattern for HTTP/REST Connectors: rename `Query.getCustomer(id:)` args and 
 
 ## Worked example: prune generated noise
 
-**Before** -- OpenAPI emit includes admin fields you do not want in the supergraph:
+OpenAPI emit includes admin fields you do not want in the supergraph. Delete the field (and
+selection lines); keep binders consistent:
 
 {/* prettier-ignore */}
-```graphql
+```diff
 type Query {
-  customer(id: ID!): Customer
-    @connect(
-      source: "Billing"
-      http: { GET: "/customers/{$args.id}" }
-      selection: """
-        id
-        name
-        internalScore
-      """
-      entity: true
-    )
-  adminDump: String
-    @connect(
-      source: "Billing"
-      http: { GET: "/admin/dump" }
-      selection: """
-        $
-      """
-    )
+   customer(id: ID!): Customer
+     @connect(
+       source: "Billing"
+       http: { GET: "/customers/{$args.id}" }
+       selection: """
+         id
+         name
+-        internalScore
+       """
+       entity: true
+     )
+-  adminDump: String
+-    @connect(
+-      source: "Billing"
+-      http: { GET: "/admin/dump" }
+-      selection: """
+-        $
+-      """
+-    )
 }
 
 type Customer @key(fields: "id") {
   id: ID!
   name: String
-  internalScore: Int
-}
-```
-
-**After** -- delete the field (and selection lines) you do not want; keep binders consistent:
-
-{/* prettier-ignore */}
-```graphql
-type Query {
-  customer(id: ID!): Customer
-    @connect(
-      source: "Billing"
-      http: { GET: "/customers/{$args.id}" }
-      selection: """
-        id
-        name
-      """
-      entity: true
-    )
-}
-
-type Customer @key(fields: "id") {
-  id: ID!
-  name: String
+-  internalScore: Int
 }
 ```
 
@@ -137,41 +98,31 @@ wins when the prune is one-off or you want the slim file reviewed in git.
 
 ## Worked example: stamp Federation by editing SDL
 
-**Before** -- plain GraphQL source, no entity annotations:
-
-```graphql
-type Product {
-  upc: String!
-  name: String
-}
-
-type Query {
-  product(upc: String!): Product
-}
-```
-
-**After** -- add `@key` and a Federation draft `@lookup` entry field for one-object hops (Mesh
-`@merge` only if the entry field returns a **list** / batch -- [Directives](/v2/directives#lookup)):
+Plain GraphQL source, no entity annotations -- add `@key` and a Federation draft `@lookup` entry
+field for one-object hops (Mesh `@merge` only if the entry field returns a **list** / batch --
+[Directives](/v2/directives#lookup)):
 
 {/* prettier-ignore */}
-```graphql
-extend schema
-  @link(
-    url: "https://specs.apollo.dev/federation/v2.6"
-    import: ["@key", "@composeDirective"]
-  )
-  @link(
-    url: "https://graphql.github.io/graphql-federation-spec/draft"
-    import: ["@lookup", "@is", "@internal"]
-  )
-
-type Product @key(fields: "upc") {
-  upc: String!
-  name: String
+```diff
++extend schema
++  @link(
++    url: "https://specs.apollo.dev/federation/v2.6"
++    import: ["@key", "@composeDirective"]
++  )
++  @link(
++    url: "https://graphql.github.io/graphql-federation-spec/draft"
++    import: ["@lookup", "@is", "@internal"]
++  )
++
+-type Product {
++type Product @key(fields: "upc") {
+   upc: String!
+   name: String
 }
 
 type Query {
-  product(upc: String!): Product @lookup
+-  product(upc: String!): Product
++  product(upc: String!): Product @lookup
 }
 ```
 
