@@ -34,7 +34,6 @@ concurrency:
 
 permissions:
   contents: read
-  pull-requests: write
 
 env:
   NODE_NO_WARNINGS: 1
@@ -80,8 +79,15 @@ jobs:
   comment:
     name: sticky PR comment
     needs: bench
-    if: github.event_name == 'pull_request' && always()
+    # Same-repo PRs only: fork GITHUB_TOKEN is read-only for comments and would
+    # fail this reporting check even when benches succeed (website.yml pattern).
+    if: >
+      github.event_name == 'pull_request' && always() &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Download bench artifacts
         uses: actions/download-artifact@v4
@@ -91,7 +97,7 @@ jobs:
           merge-multiple: false
       - name: Format bench markdown
         id: md
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffb93a87bf3c8c # v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const fs = require('fs');
@@ -105,6 +111,9 @@ jobs:
               const p = path.join(root, `bench-results-${runner}`, 'results.json');
               if (!fs.existsSync(p)) return null;
               return JSON.parse(fs.readFileSync(p, 'utf8'));
+            }
+            function isFiniteNumber(n) {
+              return typeof n === 'number' && Number.isFinite(n);
             }
             function rows(data) {
               const out = [];
@@ -122,6 +131,7 @@ jobs:
                       name: b.name,
                       hz: b.hz,
                       rme: b.rme,
+                      complete: isFiniteNumber(b.hz) && isFiniteNumber(b.rme),
                     });
                   }
                 }
@@ -139,13 +149,13 @@ jobs:
               byKey.set(k, cur);
             }
             const fmt = (r) =>
-              r == null ? '—' : `${r.hz.toFixed(2)} Hz ±${r.rme.toFixed(2)}%`;
+              r == null || !r.complete ? '—' : `${r.hz.toFixed(2)} Hz ±${r.rme.toFixed(2)}%`;
             let table = `| Suite | Benchmark | Node | Bun |\n|---|---|---:|---:|\n`;
             for (const row of byKey.values()) {
               table += `| \`${row.suite}\` | ${row.name} | ${fmt(row.node)} | ${fmt(row.bun)} |\n`;
             }
-            const stitchNode = node.find((r) => r.name === 'Stitching');
-            const apolloNode = node.find((r) => r.name === 'Apollo Gateway');
+            const stitchNode = node.find((r) => r.name === 'Stitching' && r.complete);
+            const apolloNode = node.find((r) => r.name === 'Apollo Gateway' && r.complete);
             let ratio = '';
             if (stitchNode && apolloNode && apolloNode.hz > 0) {
               ratio = `\n**Stitching / Apollo (node):** **${(stitchNode.hz / apolloNode.hz).toFixed(2)}×**\n`;
